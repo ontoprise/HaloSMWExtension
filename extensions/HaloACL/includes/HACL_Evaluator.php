@@ -42,7 +42,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class HACLEvaluator {
 	
 	//--- Constants ---
-//	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
 	
@@ -53,14 +52,10 @@ class HACLEvaluator {
 	 * 		Name of the notification
 	 */		
 	function __construct() {
-//		$this->mXY = $xy;
 	}
 	
 
 	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
-//	public function setXY($xy)               {$this->mXY = $xy;}
 	
 	//--- Public methods ---
 	
@@ -110,6 +105,9 @@ class HACLEvaluator {
 	    }
 		
 		$articleID = (int) $title->getArticleID();
+		if ($articleID == 0) {
+			$articleID = haclfArticleID($title->getFullText());
+		}
 		$userID = $user->getId();
 		
 		if ($articleID == 0) {
@@ -467,7 +465,11 @@ class HACLEvaluator {
 			}
 		}
 		
-		// we should never end up here
+		// Sysops and bureaucrats can modify the SD
+		$groups = $user->getGroups();
+		if (in_array('sysop', $groups) || in_array('bureaucrat', $groups)) {
+			return array(true, true);
+		}
 		return array(false, true);
 	}
 }
