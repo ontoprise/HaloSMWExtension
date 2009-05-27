@@ -168,15 +168,7 @@ class  HACLGroup  {
 			return $group; 
 		} else if (is_string($group)) {
 			// Name of group given
-			$etc = haclfDisableTitlePatch();
-			$nt = Title::newFromText($group, HACL_NS_ACL);
-			haclfRestoreTitlePatch($etc);
-			if  (is_null($nt)) {
-				# Illegal name
-				return null;
-			}
-			
-			return $nt->getArticleID();
+			return haclfArticleID($group, HACL_NS_ACL);
 		} else if (is_a($group, 'HACLGroup')) {
 			// group object given
 			return $group->getGroupID();
