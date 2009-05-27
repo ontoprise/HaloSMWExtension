@@ -155,8 +155,8 @@ class  HACLDefaultSD  {
 		$content = $defaultSDArticle->getContent();
 		
 		// Create the new SD
-		$prefix = $haclgContLang->getPetPrefix(HACLSecurityDescriptor::PET_PAGE);
-		$newSDName = "$ns:$prefix/{$article->getTitle()->getText()}";
+		$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
+													  HACLSecurityDescriptor::PET_PAGE);
 		
 		$etc = haclfDisableTitlePatch();
 		$newSD = Title::newFromText($newSDName);
