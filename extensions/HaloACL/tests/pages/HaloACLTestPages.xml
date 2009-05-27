@@ -390,5 +390,24 @@ PR: PR1, PR2</text>
       </text>
     </revision>
   </page>
+
+   <page>
+    <title>Permission denied</title>
+    <id>84</id>
+    <revision>
+      <id>84</id>
+      <timestamp>2009-04-23T16:27:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Comment</comment>
+      <text xml:space="preserve">
+You are not allowed to perform the requested action on this page.
+
+Return to [[Main Page]].      
+      </text>
+    </revision>
+  </page>
   
 </mediawiki>
