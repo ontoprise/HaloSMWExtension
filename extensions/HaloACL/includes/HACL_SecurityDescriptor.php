@@ -169,15 +169,7 @@ class  HACLSecurityDescriptor  {
 			return false;
 		}
 		// return the page id
-		$etc = haclfDisableTitlePatch();
-		$nt = Title::newFromText($peName);
-		haclfRestoreTitlePatch($etc);
-		if  (is_null($nt)) {
-			# Illegal name
-			return false;
-		}
-		
-		$id = $nt->getArticleID();
+		$id = haclfArticleID($peName);
 		return $id == 0 ? false : $id;
 		
 	}
@@ -237,15 +229,7 @@ class  HACLSecurityDescriptor  {
 	 * 
 	 */
 	public static function idForSD($SDName) {
-		$etc = haclfDisableTitlePatch();
-		$nt = Title::newFromText($SDName, HACL_NS_ACL);
-		haclfRestoreTitlePatch($etc);
-		if  (is_null($nt)) {
-			# Illegal name
-			return null;
-		}
-		
-		return $nt->getArticleID();
+		return haclfArticleID($SDName, HACL_NS_ACL);
 	}
 	
 	/**
@@ -424,6 +408,37 @@ class  HACLSecurityDescriptor  {
 		}
 		// SD ist probably a right
 		return array(null, self::PET_RIGHT);
+	}
+
+	/**
+	 * The name of the protected element and its type determine the name of
+	 * its security descriptor.
+	 * This method returns the complete name of the SD (with namespace) for a 
+	 * given protected element.
+	 *
+	 * @param string $nameOfPE
+	 * 		The full name of the protected element
+	 * @param string $peType
+	 * 		The type of the protected element which is one of
+	 * 		- HACLSecurityDescriptor::PET_CATEGORY
+	 *		- HACLSecurityDescriptor::PET_NAMESPACE
+	 *		- HACLSecurityDescriptor::PET_PAGE
+	 *		- HACLSecurityDescriptor::PET_PROPERTY
+	 * 
+	 * @return array(string, string)
+	 * 		Name of the protected element and its type (one of self::PET_CATEGORY
+	 *      etc). It the type is self::PET_RIGHT, the name is <null>.
+	 */
+	public static function nameOfSD($nameOfPE, $peType) {
+
+		global $haclgContLang;
+		$ns = $haclgContLang->getNamespaces();
+		$ns = $ns[HACL_NS_ACL].':';
+		$prefix = $haclgContLang->getPetPrefix($peType).'/';
+		
+		$sdName = $ns.$prefix.$nameOfPE;
+		return $sdName;
+		 
 	}
 
 	/**
