@@ -1,20 +1,20 @@
 <?php
 /*  Copyright 2007, ontoprise GmbH
-*  This file is part of the halo-Extension.
-*
-*   The halo-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The halo-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /*
  * Created on 22.05.2007
  *
@@ -73,16 +73,27 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 
 	$success = false;
 	$created = true;
-	
+
 	$title = strip_tags($title);
 	if ($title == '') return "false";
-	
+
 	if (!smwf_om_userCan($title, 'create')) {
 		return "false,denied,$title";
-	}	
-	
+	}
+
 	$title = Title::newFromText($title);
 	
+	// add predefined content if configured
+	global $smwhgAutoTemplates, $smwhgAutoTemplatesParameters;
+	if (isset($smwhgAutoTemplates)) {
+		if (array_key_exists($title->getNamespace(), $smwhgAutoTemplates)) {
+			require_once('SMW_Predefinitions.php');
+			$mappings = array_key_exists($title->getNamespace(), $smwhgAutoTemplatesParameters) ? $smwhgAutoTemplatesParameters[$title->getNamespace()] : array();
+			$metadataText = SMWPredefinitions::getPredefinitions($title, $smwhgAutoTemplates[$title->getNamespace()], $mappings);
+			$content = $metadataText.$content;
+		}
+	}
+
 	$article = new Article($title);
 
 	if ($article->exists()) {
@@ -112,17 +123,17 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 		for ($i = 0; $i < $num; $i++) {
 			$constant = $supportedConstants[$i];
 
- 			$pos = strpos($optionalText, $constant);
- 			if ($pos) {
- 				$langString = "Unsupported constant";
- 				if (strpos($constant, "SMW_SSP_") !== false) {
- 					$langString = $ssp[constant($constant)];
- 				} else {
- 					$langString = $sp[$constant];
- 				}
- 				$optionalText = str_replace($constant,
- 				                            $langString,
- 				                            $optionalText);
+			$pos = strpos($optionalText, $constant);
+			if ($pos) {
+				$langString = "Unsupported constant";
+				if (strpos($constant, "SMW_SSP_") !== false) {
+					$langString = $ssp[constant($constant)];
+				} else {
+					$langString = $sp[$constant];
+				}
+				$optionalText = str_replace($constant,
+				$langString,
+				$optionalText);
 			}
 		}
 
@@ -143,23 +154,23 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	$success = $article->doEdit($content, $creationComment);
 
 	return ($success ? "true," : "false,").
-	       ($created ? "true," : "false,").
-	       $title->getNsText().":".$title->getText();
+	($created ? "true," : "false,").
+	$title->getNsText().":".$title->getText();
 }
 
 /**
  * Replaces the complete content of an article in the wiki. If the article
  * does not exist, it will be created.
- * 
- * @param string title 
+ *
+ * @param string title
  * 			Title of the article.
  * @param string $user
  * 			The name of the user
- * @param string content 
+ * @param string content
  * 			New content of the article.
  * @param string editComment
- * 			This text describes why the article has been edited. 
- * 
+ * 			This text describes why the article has been edited.
+ *
  * @return string Comma separated list:
  * 			bool success
  * 	 			<true> if the operation was successful.
@@ -177,16 +188,16 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 
 	$success = false;
 	$created = true;
-	
+
 	$title = strip_tags($title);
 	if ($title == '') return "false";
 
 	if (!smwf_om_userCan($title, 'edit')) {
 		return "false,denied,$title";
-	}	
-	
+	}
+
 	$title = Title::newFromText($title);
-	
+
 	$article = new Article($title);
 
 	if ($article->exists()) {
@@ -198,8 +209,8 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 	$success = $article->doEdit($content, $editComment);
 
 	return ($success ? "true," : "false,").
-	       ($created ? "true," : "false,").
-	       $title->getNsText().":".$title->getText();
+	($created ? "true," : "false,").
+	$title->getNsText().":".$title->getText();
 }
 
 /**
@@ -215,15 +226,15 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 function smwf_om_TouchArticle($title) {
 	if (!smwf_om_userCan($title, 'edit')) {
 		return "false,denied,$title";
-	}	
-	
+	}
+
 	$title = Title::newFromText($title);
 
 	$article = new Article($title);
 
 	if ($article->exists()) {
 		// The article exists => invalidate its cache
-		
+
 		// The resolution of the article's timestamp is only one second
 		// => wait a little bit to get a 'new' timestamp
 		sleep(1);
@@ -231,7 +242,7 @@ function smwf_om_TouchArticle($title) {
 		return "true";
 	}
 	return "false";
-	
+
 }
 
 /**
@@ -246,14 +257,14 @@ function smwf_om_TouchArticle($title) {
 function smwf_om_ExistsArticle($title) {
 	if (!smwf_om_userCan($title, 'read')) {
 		return "false,denied,$title";
-	}	
-	
+	}
+
 	global $wgContLang;
 
 	if (strpos($title,"Attribute:") == 0) {
 		$title = str_replace("Attribute:",
-		                     $wgContLang->getNsText(SMW_NS_PROPERTY).":",
-		                     $title);
+		$wgContLang->getNsText(SMW_NS_PROPERTY).":",
+		$title);
 	}
 	$titleObj = Title::newFromText($title);
 	$article = new Article($titleObj);
@@ -263,7 +274,7 @@ function smwf_om_ExistsArticle($title) {
 	}
 
 	if ($titleObj->getNamespace() == SMW_NS_RELATION) {
-	    // Attributes and relations are deprecated. They are replaced by Properties.
+		// Attributes and relations are deprecated. They are replaced by Properties.
 		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
 		$article = new Article($titleObj);
 
@@ -271,11 +282,11 @@ function smwf_om_ExistsArticle($title) {
 			return "true";
 		}
 	}
-	
+
 	// Is the article a special property?
 	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);
 	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
-	
+
 	global $smwgContLang, $smwgHaloContLang;
 	$specialProps = $smwgContLang->getPropertyLabels();
 	foreach ($specialProps as $prop) {
@@ -310,12 +321,12 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 
 	if (!smwf_om_userCan($title, 'read')) {
 		return "false,denied,$title";
-	}	
-	
+	}
+
 	if (strpos($title,"Attribute:") == 0) {
 		$title = str_replace("Attribute:",
-		                     $wgContLang->getNsText(SMW_NS_PROPERTY).":",
-		                     $title);
+		$wgContLang->getNsText(SMW_NS_PROPERTY).":",
+		$title);
 	}
 	$titleObj = Title::newFromText($title);
 	$article = new Article($titleObj);
@@ -325,7 +336,7 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	}
 
 	if ($titleObj->getNamespace() == SMW_NS_RELATION) {
-	    // Attributes and relations are deprecated. They are replaced by Properties.
+		// Attributes and relations are deprecated. They are replaced by Properties.
 		$titleObj = Title::newFromText($wgContLang->getNsText(SMW_NS_PROPERTY).":".$titleObj->getText());
 		$article = new Article($titleObj);
 
@@ -333,11 +344,11 @@ function smwf_om_ExistsArticleIgnoreRedirect($title) {
 			return "true";
 		}
 	}
-	
+
 	// Is the article a special property?
 	$title = str_replace($wgContLang->getNsText(SMW_NS_PROPERTY).":", "", $title);
 	$title = strtolower ( substr ( $title , 0 , 1 ) ) . substr ( $title , 1 ) ;
-	
+
 	global $smwgContLang, $smwgHaloContLang;
 	$specialProps = $smwgContLang->getPropertyLabels();
 	foreach ($specialProps as $prop) {
@@ -405,42 +416,42 @@ function smwf_om_RelationSchemaData($relationName) {
 
 			// get arity
 			$arity = count($typeLabels) + 1;  // +1 because of subject
-	   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
+			$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 
-	   		// If first parameter is a wikipage, take the property name as label, otherwise use type label.
-	   		$firstParam = $typeValues[0] instanceof SMWWikiPageValue ? $relationName : $typeLabels[0];
-	   		$relSchema .= '<param name="'.$firstParam.'"/>';
-	   		for($i = 1, $n = $arity-1; $i < $n; $i++) {
+			// If first parameter is a wikipage, take the property name as label, otherwise use type label.
+			$firstParam = $typeValues[0] instanceof SMWWikiPageValue ? $relationName : $typeLabels[0];
+			$relSchema .= '<param name="'.$firstParam.'"/>';
+			for($i = 1, $n = $arity-1; $i < $n; $i++) {
 
-	   			// for all other wikipage parameters, use the range hint as label. If no range hint exists, simply print 'Page'.
-	   			// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
-	   			if ($typeValues[$i] instanceof SMWWikiPageValue) {
+				// for all other wikipage parameters, use the range hint as label. If no range hint exists, simply print 'Page'.
+				// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
+				if ($typeValues[$i] instanceof SMWWikiPageValue) {
 
-	   				
-	   				
-	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, smwfGetSemanticStore()->domainRangeHintProp);
-	   				if (count($rangeHints) > 0) {
-	   					$dvs = $rangeHints->getDVs();
-	   					if ($dvs[1] !== NULL) {
-	   						$labelToPaste = htmlspecialchars($dvs[1]->getTitle()->getText());
-	   					} else {
-	   						$labelToPaste = 'Page';
-	   					}
-		   			} else {
-		   				$labelToPaste = 'Page';
-		   			}
-		   		} else {
-		   			$labelToPaste = $typeLabels[$i];
-		   		}
-	  	 		$relSchema .= '<param name="'.$labelToPaste.'"/>';
-	 	  }
-	 	  $relSchema .= '</relationSchema>';
+
+
+					$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, smwfGetSemanticStore()->domainRangeHintProp);
+					if (count($rangeHints) > 0) {
+						$dvs = $rangeHints->getDVs();
+						if ($dvs[1] !== NULL) {
+							$labelToPaste = htmlspecialchars($dvs[1]->getTitle()->getText());
+						} else {
+							$labelToPaste = 'Page';
+						}
+					} else {
+						$labelToPaste = 'Page';
+					}
+				} else {
+					$labelToPaste = $typeLabels[$i];
+				}
+				$relSchema .= '<param name="'.$labelToPaste.'"/>';
+			}
+			$relSchema .= '</relationSchema>';
 
 		} else { // this should never happen, huh?
-		$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
+			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
 						'<param name="Page"/>'.
            	  		 '</relationSchema>';
-	}
+		}
 	}
 	return $relSchema;
 }
@@ -455,10 +466,10 @@ function smwf_om_RelationSchemaData($relationName) {
  *
  */
 function smwf_om_GetWikiText($pagename) {
-	
+
 	if (!smwf_om_userCan($pagename, 'read')) {
 		return "false,denied,$pagename";
-	}	
+	}
 	$titleObj = Title::newFromText($pagename);
 	$article = new Article($titleObj);
 
@@ -471,7 +482,7 @@ function smwf_om_GetWikiText($pagename) {
 
 /**
  * Deletes an article. This function is invoked by an ajax call.
- * 
+ *
  * @param string $pagename The name of the article.
  * @param string $reason A reason why it was deleted.
  * @param string $user The name of the user who wants to delete the article
@@ -479,21 +490,21 @@ function smwf_om_GetWikiText($pagename) {
 function smwf_om_DeleteArticle($pagename, $user, $reason) {
 	if (!smwf_om_userCan($pagename, 'delete')) {
 		return "false,denied,$pagename";
-	}	
-	
+	}
+
 	$titleObj = Title::newFromText($pagename);
-	
+
 	$article = new Article($titleObj);
 
 	if ($article->exists()) {
 		$article->doDelete($reason);
-	} 
-	return "true"; 
+	}
+	return "true";
 }
 
 /**
  * Rename an article. This function is invoked by an ajax call.
- * 
+ *
  * @param string $pagename The name of the article.
  * @param string $newpagename The new name of the article.
  * @param string $reason A reason why it was renamed.
@@ -502,13 +513,13 @@ function smwf_om_DeleteArticle($pagename, $user, $reason) {
 function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	$newpagename = strip_tags($newpagename);
 	if ($newpagename == '') return "false";
-	
+
 	if (!smwf_om_userCan($pagename, 'move')) {
 		return "false,denied,$pagename";
-	}	
-	
+	}
+
 	$titleObj = Title::newFromText($pagename);
-	
+
 	$newTitleObj = Title::newFromText($newpagename);
 	$success = false;
 	if ($titleObj->exists() && !$newTitleObj->exists()) {
@@ -521,59 +532,59 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 		$dummyForm = "";
 		wfRunHooks( 'SpecialMovepageAfterMove', array( &$dummyForm , &$titleObj , &$newTitleObj ) )	;
 	}
-	return $success === true ? "true" : "false"; 
+	return $success === true ? "true" : "false";
 }
 
 /**
  * Moves a category to a new super category.
- * 
+ *
  * @param $draggedCategory Title of category to move (String)
  * @param $oldSuperCategory Title of old supercategory. (String) May be NULL
  * @param $newSuperCategory Title of new supercategory. (String) May be NULL
  */
 function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
-	
+
 	if (!smwf_om_userCan($draggedCategory, 'move')) {
 		return "false";
-	}	
-	
+	}
+
 	$newSuperCategory = strip_tags($newSuperCategory);
 	if ($newSuperCategory == '') return "false";
-	
+
 	$draggedOnRootLevel = $oldSuperCategory == 'null' || $oldSuperCategory == NULL;
 	$draggedCategoryTitle = Title::newFromText($draggedCategory, NS_CATEGORY);
 	$oldSuperCategoryTitle = Title::newFromText($oldSuperCategory, NS_CATEGORY);
 	$newSuperCategoryTitle = Title::newFromText($newSuperCategory, NS_CATEGORY);
-	
-	
+
+
 	if ($draggedCategoryTitle == NULL) {
 		// invalid titles
 		return "false";
 	}
-	
-	
+
+
 	$draggedCategoryRevision = Revision::newFromTitle($draggedCategoryTitle);
 	$draggedCategoryArticle = new Article($draggedCategoryTitle);
-	
+
 	if ($draggedCategoryRevision == NULL || $draggedCategoryArticle == NULL) {
 		// some problem occured.
 		return "false";
 	}
-	
+
 	$text = $draggedCategoryRevision->getText();
-	
-	
+
+
 	if ($newSuperCategory == NULL || $newSuperCategory == 'null') {
 		// remove all category links
 		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "", $text);
-		
+
 	} else if ($draggedOnRootLevel) {
 		// dragged category was on root level
 		$newText .= $text."\n[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]";
 	} else {
-		// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]  
+		// replace on article $draggedCategory [[category:$oldSuperCategory]] with [[category:$newSuperCategory]]
 		$newText = preg_replace("/\[\[\s*".$draggedCategoryTitle->getNsText()."\s*:\s*".preg_quote($oldSuperCategoryTitle->getText())."\s*\]\]/i", "[[".$draggedCategoryTitle->getNsText().":".$newSuperCategoryTitle->getText()."]]", $text);
-		
+
 	}
 	$draggedCategoryArticle->doEdit($newText, $draggedCategoryRevision->getComment(), EDIT_UPDATE);
 	return "true";
@@ -581,7 +592,7 @@ function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCate
 
 /**
  * Moves a property to a new super property.
- * 
+ *
  * @param $draggedProperty Title of property to move (String)
  * @param $oldSuperProperty Title of old superproperty. (String) May be NULL
  * @param $newSuperProperty Title of new superproperty. (String) May be NULL
@@ -590,36 +601,36 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 
 	$newSuperProperty = strip_tags($newSuperProperty);
 	if ($newSuperProperty == '') return "false";
-	
+
 	if (!smwf_om_userCan($draggedProperty, 'move')) {
 		return "false";
-	}	
-	
+	}
+
 	$draggedOnRootLevel = $oldSuperProperty == 'null' || $oldSuperProperty == NULL;
 	$draggedPropertyTitle = Title::newFromText($draggedProperty, SMW_NS_PROPERTY);
 	$oldSuperPropertyTitle = Title::newFromText($oldSuperProperty, SMW_NS_PROPERTY);
 	$newSuperPropertyTitle = Title::newFromText($newSuperProperty, SMW_NS_PROPERTY);
-	
+
 	if ($draggedPropertyTitle == NULL || $newSuperPropertyTitle == NULL) {
 		// invalid titles
 		return "false";
 	}
-	
-	
+
+
 	$draggedPropertyRevision = Revision::newFromTitle($draggedPropertyTitle);
 	$draggedPropertyArticle = new Article($draggedPropertyTitle);
-	
+
 	if ($draggedPropertyRevision == NULL || $draggedPropertyArticle == NULL) {
 		// some problem occured.
 		return "false";
 	}
-	
+
 	$text = $draggedPropertyRevision->getText();
-	
+
 	global $smwgContLang,$wgParser;
- 	$options = new ParserOptions();
+	$options = new ParserOptions();
 	$sp = $smwgContLang->getPropertyLabels();
-	
+
 	if ($newSuperProperty == NULL || $newSuperProperty == 'null') {
 		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "", $text);
 	} else if ($draggedOnRootLevel) {
@@ -629,11 +640,11 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 		// replace on article $draggedProperty [[Subproperty of::$oldSuperProperty]] with [[Subproperty of::$newSuperProperty]]
 		$newText = preg_replace("/\[\[\s*".$sp["_SUBP"]."\s*:[:|=]\s*".preg_quote($oldSuperPropertyTitle->getPrefixedText())."\s*\]\]/i", "[[".$sp["_SUBP"]."::".$newSuperPropertyTitle->getPrefixedText()."]]", $text);
 	}
-	
+
 	// save article
 	$draggedPropertyArticle->doEdit($newText, $draggedPropertyRevision->getComment(), EDIT_UPDATE);
 	$wgParser->parse($newText, $draggedPropertyTitle, $options, true, true, $draggedPropertyRevision->getID());
-	SMWFactbox::storeData(true);	
+	SMWFactbox::storeData(true);
 	return "true";
 }
 
@@ -643,14 +654,14 @@ function smwf_om_invalidateAllPages() {
 }
 
 /**
- * Checks if the current user can perform the given $action on the article with 
+ * Checks if the current user can perform the given $action on the article with
  * the given $titleName.
  *
  * @param string $titleName
  * 		Name of the article
  * @param string $action
  * 		Name of the action
- * 
+ *
  * @return bool
  * 		<true> if the action is permitted
  * 		<false> otherwise
