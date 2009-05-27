@@ -77,7 +77,7 @@ class HACLStorageSQL {
 		$table = $db->tableName('halo_acl_pe_rights');
 
 		HACLDBHelper::setupTable($table, array(
-				'pe_id' 	=> 'INT(8) UNSIGNED NOT NULL',
+				'pe_id' 	=> 'INT(8) NOT NULL',
 				'type' 		=> 'ENUM(\'category\', \'page\', \'namespace\', \'property\', \'whitelist\') DEFAULT \'page\' NOT NULL',
 				'right_id' 	=> 'INT(8) UNSIGNED NOT NULL'), 
 				$db, $verbose, "pe_id,type,right_id");				
@@ -99,7 +99,7 @@ class HACLStorageSQL {
 
 		HACLDBHelper::setupTable($table, array(
 				'sd_id' 	=> 'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
-				'pe_id' 	=> 'INT(8) UNSIGNED',
+				'pe_id' 	=> 'INT(8)',
 				'type' 		=> 'ENUM(\'category\', \'page\', \'namespace\', \'property\', \'right\') DEFAULT \'page\' NOT NULL',
 				'mr_groups' => 'TEXT',
 				'mr_users' 	=> 'TEXT'),
@@ -128,6 +128,16 @@ class HACLStorageSQL {
 				'child_id' 			=> 'INT(8) NOT NULL'),
 				$db, $verbose, "parent_group_id,child_type,child_id");
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "parent_group_id, child_type, child_id");
+
+		// halo_acl_special_pages:
+		//		stores the IDs of special pages that have no article ID
+		$table = $db->tableName('halo_acl_special_pages');
+
+		HACLDBHelper::setupTable($table, array(
+				'id' 	=> 'INT(8) NOT NULL AUTO_INCREMENT',
+				'name' 	=> 'VARCHAR(255) NOT NULL'),
+				$db, $verbose, "id,name");
+		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "id,name");
 		
 		return true;
 
@@ -1154,6 +1164,59 @@ class HACLStorageSQL {
 		
 	}
 	
+	/***************************************************************************
+	 * 
+	 * Functions for special page IDs
+	 * 
+	 **************************************************************************/
+	
+	/**
+	 * Special pages do not have an article ID, however access control relies
+	 * on IDs. This method assigns a (negative) ID to each Special Page whose ID
+	 * is requested. If no ID is stored yet for a given name, a new one is created.
+	 *
+	 * @param string $name
+	 * 		Full name of the special page
+	 * 
+	 * @return int id
+	 * 		The ID of the page. These IDs are negative, so they do not collide
+	 * 		with normal page IDs.
+	 */
+	public static function idForSpecial($name) {
+		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_special_pages');
+		
+		$obj = $db->selectRow($t, array('id'), 
+								  array('name'  => $name));
+		if ($obj === false) {
+			// ID not found => create a new one
+			$db->insert($t, array('name' => $name));
+						// retrieve the auto-incremented ID of the right
+			return -$db->insertId();
+		} else {
+			return -$obj->id;
+		}
+	}
+	
+	/**
+	 * Special pages do not have an article ID, however access control relies
+	 * on IDs. This method retrieves the name of a special page for its ID.
+	 *
+	 * @param int $id
+	 * 		ID of the special page
+	 * 
+	 * @return string name
+	 * 		The name of the page if the ID is valid. <0> otherwise
+	 */
+	public static function specialForID($id) {
+		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_special_pages');
+		
+		$obj = $db->selectRow($t, array('name'),
+		                          array('id' => -$id));
+		return ($obj === false) ? 0 : $obj->name;
+	}
+	
 	/**
 	 * Lists of users and groups are stored as comma separated string of IDs.
 	 * This function converts the string to an array of integers. Non-numeric
@@ -1177,5 +1240,7 @@ class HACLStorageSQL {
 		}
 		return (count($intValues) > 0 ? $intValues : null);
 	}
+
+	
 }
 ?>
