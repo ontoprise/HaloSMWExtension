@@ -120,6 +120,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$res = $ddp2->applyConfigurations("testcases/resources/TestSettings.php");
 
 		global $ret2;
+		unset($ret2); // hack: Linux needs this, global variables got not deleted!
 		eval($res);
 
 		$this->assertTrue(!isset($ret2));
