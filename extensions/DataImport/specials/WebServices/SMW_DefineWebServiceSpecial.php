@@ -160,16 +160,16 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step1-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
-		$html .= "<p>".wfMsg("smw_wws_spec_protocol");
+		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_spec_protocol");
 		$html .= "<td><input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input>";
-		$html .= "<td><input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input></p>";
+		$html .= "<td><input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input></div>";
 			
-		$html .= "<p>".wfMsg("smw_wws_s1-uri");
-		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></p>";
+		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_s1-uri");
+		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></div>";
 			
-		$html .= "<p>".wfMsg('smw_wws_spec_auth');
+		$html .= "<div>".wfMsg('smw_wws_spec_auth');
 		$html .= "<td><input id=\"step1-auth-yes\" ".$auth." onfocus=\"webServiceSpecial.showAuthenticationBox('Yes')\" type=\"radio\" name=\"step1-auth\" value=\"yes\">".wfMsg('smw_wws_yes')."</input>";
-		$html .= "<td><input id=\"step1-auth-no\" ".$noauth." onfocus=\"webServiceSpecial.showAuthenticationBox('no')\" type=\"radio\" name=\"step1-auth\" value=\"no\">".wfMsg('smw_wws_no')."</input></p>";
+		$html .= "<td><input id=\"step1-auth-no\" ".$noauth." onfocus=\"webServiceSpecial.showAuthenticationBox('no')\" type=\"radio\" name=\"step1-auth\" value=\"no\">".wfMsg('smw_wws_no')."</input></div>";
 			
 		$html .= "<span id=\"step1-auth-box\" style=\"".$authVisibility."\">";
 		$html .= wfMsg('smw_wws_username');
@@ -180,10 +180,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			
 		$html .= "<div id=\"step1-help\" style=\"display:none\">".wfMsg("smw_wws_s1-help")."</div>";
 
-		$html .= "<br/>";
-		$html .= "<span id=\"step1-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step1-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step1-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep1()\" style=\"".$showButton."\">";
-		$html .= "</span>";
+		$html .= "</div>";
 
 		$html .= "</div>";
 
@@ -195,19 +194,18 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<p class=\"step-headline\">".wfMsg("smw_wws_s2-intro");
 		$html .= "<img id=\"step2-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
-		$html .= wfMsg("smw_wws_s2-method");
+		$html .= "<div>".wfMsg("smw_wws_s2-method");
 			
 		$html .= "<select id=\"step2-methods\" size=\"1\">";
 		$html .= $method;
-		$html .= "</select>";
+		$html .= "</select></div>";
 			
 		$html .= "<div id=\"step2-help\" style=\"display:none\">".wfMsg("smw_wws_s2-help")."</div>";
 		$html .= "<div id=\"step2-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s2-REST-help")."</div>";
 			
-		$html .= "<br/>";
-		$html .= "<span id=\"step2-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step2-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step2-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" style=\"".$showButton."\" onclick=\"webServiceSpecial.processStep2()\">";
-		$html .= "</span>";
+		$html .= "</div>";
 			
 		$html .= "</div>";
 
@@ -229,10 +227,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";
 
-		$html .= "<br/>";
-		$html .= "<span id=\"step3-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step3-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step3-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep3()\">";
-		$html .= "</span>";
+		$html .= "</div>";
 
 		$html .= "</div>";
 
@@ -254,10 +251,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
 
-		$html .= "<br/>";
-		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step4-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep4()\">";
-		$html .= "</span>";
+		$html .= "</div>";
 
 		$html .= "</div>";
 
@@ -310,10 +306,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step5-help\" style=\"display:none\">".wfMsg("smw_wws_s5-help")."</div>";
 
-		$html .= "<br/>";
-		$html .= "<span id=\"step5-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step5-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step5-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep5()\">";
-		$html .= "</span>";
+		$html .= "</div>";
 
 		$html .= "</div>";
 
@@ -328,10 +323,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step6-help\" style=\"display:none\">".wfMsg("smw_wws_s6-help")."</div>";
 
-		$html .= "<br/>";
-		$html .= "<span id=\"step6-go\" class=\"OKButton\">";
+		$html .= "<div id=\"step6-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step6-go-img\" value=\"".wfMsg("smw_wsgui_savebutton")."\" onclick=\"webServiceSpecial.processStep6()\">";
-		$html .= "</span>";
+		$html .= "</div>";
 
 		$html .= "</div>";
 

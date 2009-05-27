@@ -3853,7 +3853,7 @@ DefineWebServiceSpecial.prototype = {
 		
 		var outerRow = document.createElement("tr");
 		var outerTd = document.createElement("td");
-		outerTd.setAttribute("colspan", "5");
+		outerTd.setAttribute("colspan", "4");
 		
 		var table = document.createElement("table");
 		table.style.width = "100%";
@@ -3872,6 +3872,7 @@ DefineWebServiceSpecial.prototype = {
 		var inputButton = document.createElement("input");
 		inputButton.type = "button";
 		inputButton.value = "<![CDATA[";
+		inputButton.style.marginTop = "3px";
 		inputButton.realValue = "<![CDATA[";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
 		td.appendChild(inputButton);
@@ -3881,6 +3882,7 @@ DefineWebServiceSpecial.prototype = {
 		inputButton.value = "]]>";
 		inputButton.realValue = "]]>";
 		inputButton.style.marginLeft = "8px";
+		inputButton.style.marginTop = "3px";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
 		td.appendChild(inputButton);
 		
@@ -3891,15 +3893,17 @@ DefineWebServiceSpecial.prototype = {
 		inputButton.type = "button";
 		inputButton.value = "<subparameter.../>";
 		inputButton.realValue = "<subparameter name=\"\" optional=\"\" defaultValue=\"\"/>";
+		inputButton.style.marginTop = "3px";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
 		td.appendChild(inputButton);
-		
 		row.appendChild(td);
 
 		td = document.createElement("td");
 		td.style.width = "100%";
 		var textArea = document.createElement("textarea");
-		textArea.setAttribute("rows", "2");
+		textArea.setAttribute("rows", "3");
+		textArea.style.width = "100%"
+		
 		td.appendChild(textArea);
 		row.appendChild(td);
 		
@@ -3968,6 +3972,7 @@ DefineWebServiceSpecial.prototype = {
 		var inputButton = document.createElement("input");
 		inputButton.type = "button";
 		inputButton.value = "<![CDATA[";
+		inputButton.style.marginTop = "3px";
 		inputButton.realValue = "<![CDATA[";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
 		td.appendChild(inputButton);
@@ -3975,6 +3980,7 @@ DefineWebServiceSpecial.prototype = {
 		inputButton = document.createElement("input");
 		inputButton.type = "button";
 		inputButton.value = "]]>";
+		inputButton.style.marginTop = "3px";
 		inputButton.realValue = "]]>";
 		inputButton.style.marginLeft = "8px";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
@@ -3988,6 +3994,7 @@ DefineWebServiceSpecial.prototype = {
 		inputButton.value = "<subparameter.../>";
 		inputButton.realValue = "<subparameter name=\"\" optional=\"\" defaultValue=\"\"/>";
 		inputButton.setAttribute("onclick", "webServiceSpecial.addSubParameterConstruct(event)");
+		inputButton.style.marginTop = "3px";
 		td.appendChild(inputButton);
 		
 		row.appendChild(td);
@@ -3996,6 +4003,7 @@ DefineWebServiceSpecial.prototype = {
 		td.style.width = "100%";
 		var textArea = document.createElement("textarea");
 		textArea.setAttribute("rows", "3");
+		textArea.style.width = "100%";
 		td.appendChild(textArea);
 		row.appendChild(td);
 		
