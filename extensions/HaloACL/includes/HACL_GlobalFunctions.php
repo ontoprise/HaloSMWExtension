@@ -98,6 +98,7 @@ function haclfSetupExtension() {
 	$wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
 	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
+	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 
 	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
@@ -354,4 +355,36 @@ function haclfRestoreTitlePatch($etc) {
 	$haclgEnableTitleCheck = $etc;
 }
 
+/**
+ * Returns the article ID for a given article name. This function has a special
+ * handling for Special pages, which do not have an article ID. HaloACL stores
+ * special IDs for these pages. Their IDs are always negative while the IDs of
+ * normal pages are positive.
+ *
+ * @param string $articleName
+ * 		Name of the article
+ * @param int $defaultNS
+ * 		The default namespace if no namespace is given in the name
+ * 
+ * @return int
+ * 		ID of the article:
+ * 		>0: ID of an article in a normal namespace
+ * 		=0: Name of the article is invalid
+ * 		<0: ID of a Special Page
+ * 
+ */
+function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
+	$etc = haclfDisableTitlePatch();
+	$t = Title::newFromText($articleName, $defaultNS);
+	haclfRestoreTitlePatch($etc);
+	if (is_null($t)) {
+		return 0;
+	}
+	$id = $t->getArticleID();
+	if ($id == 0 && $t->getNamespace() == NS_SPECIAL) {
+		$id = HACLStorage::getDatabase()->idForSpecial($articleName);
+	}
+	return $id;
+
+}
 
