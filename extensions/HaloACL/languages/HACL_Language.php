@@ -51,6 +51,7 @@ abstract class HACLLanguage {
 	protected $mNamespaces;
 	protected $mNamespaceAliases = array();
 	protected $mPermissionDeniedPage;
+	protected $mPermissionDeniedPageContent;
 	protected $mParserFunctions = array();
 	protected $mParserFunctionsParameters = array();
 	protected $mActionNames = array();
@@ -80,6 +81,15 @@ abstract class HACLLanguage {
 	 */
 	public function getPermissionDeniedPage() {
 		return $this->mPermissionDeniedPage;
+	}
+	
+	/**
+	 * Returns the content of the page that informs the user, that access to
+	 * a requested page is denied. The page is created during setup of the 
+	 * extension.
+	 */
+	public function getPermissionDeniedPageContent() {
+		return $this->mPermissionDeniedPageContent;
 	}
 	
 	/**

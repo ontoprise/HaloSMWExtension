@@ -41,6 +41,7 @@ class HACLLanguageDe extends HACLLanguage {
 	);
 	
 	protected $mPermissionDeniedPage = "Zugriff verweigert";
+	protected $mPermissionDeniedPageContent = "Sie dürfen die gewünschte Aktion auf dieser Seite nicht durchführen.\n\nZurück zur [[Hauptseite]].";
 	
 	protected $mParserFunctions = array(
 		HACLLanguage::PF_ACCESS			=> 'Zugriff', 
