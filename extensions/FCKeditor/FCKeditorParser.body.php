@@ -8,6 +8,7 @@ class FCKeditorParser extends Parser
 	protected $fck_mw_taghook;
 	protected $fck_internal_parse_text;
 	protected $fck_matches = array();
+	protected $fck_mw_propertyAtPage= array();
 
 	private $FCKeditorMagicWords = array(
 	'__NOTOC__',
@@ -27,7 +28,7 @@ class FCKeditorParser extends Parser
 
 	function __construct() {
 		global $wgParser;
-		parent::Parser();
+		parent::__construct();
 
 		foreach ($wgParser->getTags() as $h) {
 			if (!in_array($h, array("pre"))) {
@@ -396,6 +397,46 @@ class FCKeditorParser extends Parser
 		return $text;
 	}
 
+	/**
+	 * replace property links like [[someProperty::value]] with FCK_PROPERTY_X_FOUND where X is
+	 * the number of the replaced property. The actual property string is stored in
+	 * $this->fck_mw_propertyAtPage[X] with X being the same number as in the replaced text
+	 * 
+	 * @access private
+	 * @param string $wikitext
+	 * @return string $wikitext
+	 */
+	private function fck_replaceProperties( $text ) {
+		// use the call back function to let the parser do the work to find each link
+		// that looks like [[something whatever is inside these brakets]]
+		$callback = array('[' =>
+		array(
+		'end'=>']',
+		'cb' => array(
+		2=>array('FCKeditorParser', 'fck_leaveTemplatesAlone'),
+		3=>array('', ''),
+		),
+		'min' =>2,
+		'max' =>2,
+		)
+		);
+		$text = $this->replace_callback($text, $callback);
+
+		// now each property string is prefixed with <!--FCK_SKIP_START--> and
+		// tailed with <!--FCK_SKIP_END-->
+		// use this knowledge to find properties within these comments
+		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
+		// by the current property string
+		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
+			$replacement = $this->replacePropertyValue($matches[1]);
+			$pos = strpos($text, $matches[0]);
+			$before = substr($text, 0, $pos);
+			$after = substr($text, $pos + strlen($matches[0]));
+			$text = $before . $replacement . $after;
+		}
+		return $text;		
+	}
+
 	function internalParse ( $text ) {
 
 		$this->fck_internal_parse_text =& $text;
@@ -409,6 +450,8 @@ class FCKeditorParser extends Parser
 		$text = $this->fck_replaceHTMLcomments( $text );
 		//as well as templates
 		$text = $this->fck_replaceTemplates( $text );
+		// as well as properties
+		$text = $this->fck_replaceProperties( $text );
 
 		$finalString = parent::internalParse($text);
 
@@ -445,6 +488,27 @@ class FCKeditorParser extends Parser
 		return strtr( $text, $strtr );
 	}
 
+	/**
+	 * check the parser match from inside the [[ ]] and see if it's a property.
+	 * If thats the case, safe the property string in the array
+	 * $this->fck_mw_propertyAtPage and return a placeholder FCK_PROPERTY_X_FOUND
+	 * for the Xth occurence. Otherwise return the link content unmodified.
+	 * The missing [[ ]] have to be added again, so that the original remains untouched
+	 * 
+	 * @access private
+	 * @param  string $match
+	 * @return string replacement or "[[$match]]"
+	 */
+	private function replacePropertyValue($match) {
+		$prop = explode('::', $match);
+  		if ((count($prop) == 2) && (strlen($prop[0]) > 0) && (strlen($prop[1]) > 0)) {
+    		$p = count($this->fck_mw_propertyAtPage);
+    		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property">'.$prop[0].'::'.$prop[1].'</span>';
+    		return 'FCK_PROPERTY_'.$p.'_FOUND';
+  		}
+  		return "[[".$match."]]";
+	}
+
 	function parse( $text, &$title, $options, $linestart = true, $clearState = true, $revid = null ) {
 		$text = preg_replace("/^#REDIRECT/", "<!--FCK_REDIRECT-->", $text);
 		$parserOutput = parent::parse($text, $title, $options, $linestart , $clearState , $revid );
@@ -471,6 +535,15 @@ class FCKeditorParser extends Parser
 				}
 			}
 			$parserOutput->setText(strtr($parserOutput->getText(), $this->fck_mw_strtr_span));
+		}
+
+		// there were properties, look for the placeholder FCK_PROPERTY_X_FOUND and replace
+		// it with <span class="fck_mw_property">property string without brakets</span>
+		if (count($this->fck_mw_propertyAtPage) > 0) {
+			$tmpText = $parserOutput->getText();
+			foreach ($this->fck_mw_propertyAtPage as $p => $val)
+				$tmpText = str_replace('FCK_PROPERTY_'.$p.'_FOUND', $val, $tmpText);
+			$parserOutput->setText($tmpText);
 		}
 
 		if (!empty($this->fck_matches)) {
@@ -659,4 +732,181 @@ class FCKeditorParser extends Parser
 		wfProfileOut( $fname );
 		return $output;
 	}
+	// function added from the old Mediawiki parser object, to make this file work actually.
+
+	/**
+	 * parse any parentheses in format ((title|part|part))
+	 * and call callbacks to get a replacement text for any found piece
+	 *
+	 * @param string $text The text to parse
+	 * @param array $callbacks rules in form:
+	 *     '{' => array(				# opening parentheses
+	 *					'end' => '}',   # closing parentheses
+	 *					'cb' => array(2 => callback,	# replacement callback to call if {{..}} is found
+	 *								  3 => callback 	# replacement callback to call if {{{..}}} is found
+	 *								  )
+	 *					)
+	 * 					'min' => 2,     # Minimum parenthesis count in cb
+	 * 					'max' => 3,     # Maximum parenthesis count in cb
+	 * @private
+	 */
+	private function replace_callback ($text, $callbacks) {
+		wfProfileIn( __METHOD__ );
+		$openingBraceStack = array();	# this array will hold a stack of parentheses which are not closed yet
+		$lastOpeningBrace = -1;			# last not closed parentheses
+
+		$validOpeningBraces = implode( '', array_keys( $callbacks ) );
+
+		$i = 0;
+		while ( $i < strlen( $text ) ) {
+			# Find next opening brace, closing brace or pipe
+			if ( $lastOpeningBrace == -1 ) {
+				$currentClosing = '';
+				$search = $validOpeningBraces;
+			} else {
+				$currentClosing = $openingBraceStack[$lastOpeningBrace]['braceEnd'];
+				$search = $validOpeningBraces . '|' . $currentClosing;
+			}
+			$rule = null;
+			$i += strcspn( $text, $search, $i );
+			if ( $i < strlen( $text ) ) {
+				if ( $text[$i] == '|' ) {
+					$found = 'pipe';
+				} elseif ( $text[$i] == $currentClosing ) {
+					$found = 'close';
+				} elseif ( isset( $callbacks[$text[$i]] ) ) {
+					$found = 'open';
+					$rule = $callbacks[$text[$i]];
+				} else {
+					# Some versions of PHP have a strcspn which stops on null characters
+					# Ignore and continue
+					++$i;
+					continue;
+				}
+			} else {
+				# All done
+				break;
+			}
+
+			if ( $found == 'open' ) {
+				# found opening brace, let's add it to parentheses stack
+				$piece = array('brace' => $text[$i],
+							   'braceEnd' => $rule['end'],
+							   'title' => '',
+							   'parts' => null);
+
+				# count opening brace characters
+				$piece['count'] = strspn( $text, $piece['brace'], $i );
+				$piece['startAt'] = $piece['partStart'] = $i + $piece['count'];
+				$i += $piece['count'];
+
+				# we need to add to stack only if opening brace count is enough for one of the rules
+				if ( $piece['count'] >= $rule['min'] ) {
+					$lastOpeningBrace ++;
+					$openingBraceStack[$lastOpeningBrace] = $piece;
+				}
+			} elseif ( $found == 'close' ) {
+				# lets check if it is enough characters for closing brace
+				$maxCount = $openingBraceStack[$lastOpeningBrace]['count'];
+				$count = strspn( $text, $text[$i], $i, $maxCount );
+
+				# check for maximum matching characters (if there are 5 closing
+				# characters, we will probably need only 3 - depending on the rules)
+				$matchingCount = 0;
+				$matchingCallback = null;
+				$cbType = $callbacks[$openingBraceStack[$lastOpeningBrace]['brace']];
+				if ( $count > $cbType['max'] ) {
+					# The specified maximum exists in the callback array, unless the caller
+					# has made an error
+					$matchingCount = $cbType['max'];
+				} else {
+					# Count is less than the maximum
+					# Skip any gaps in the callback array to find the true largest match
+					# Need to use array_key_exists not isset because the callback can be null
+					$matchingCount = $count;
+					while ( $matchingCount > 0 && !array_key_exists( $matchingCount, $cbType['cb'] ) ) {
+						--$matchingCount;
+					}
+				}
+
+				if ($matchingCount <= 0) {
+					$i += $count;
+					continue;
+				}
+				$matchingCallback = $cbType['cb'][$matchingCount];
+
+				# let's set a title or last part (if '|' was found)
+				if (null === $openingBraceStack[$lastOpeningBrace]['parts']) {
+					$openingBraceStack[$lastOpeningBrace]['title'] =
+						substr($text, $openingBraceStack[$lastOpeningBrace]['partStart'],
+						$i - $openingBraceStack[$lastOpeningBrace]['partStart']);
+				} else {
+					$openingBraceStack[$lastOpeningBrace]['parts'][] =
+						substr($text, $openingBraceStack[$lastOpeningBrace]['partStart'],
+						$i - $openingBraceStack[$lastOpeningBrace]['partStart']);
+				}
+
+				$pieceStart = $openingBraceStack[$lastOpeningBrace]['startAt'] - $matchingCount;
+				$pieceEnd = $i + $matchingCount;
+
+				if( is_callable( $matchingCallback ) ) {
+					$cbArgs = array (
+									 'text' => substr($text, $pieceStart, $pieceEnd - $pieceStart),
+									 'title' => trim($openingBraceStack[$lastOpeningBrace]['title']),
+									 'parts' => $openingBraceStack[$lastOpeningBrace]['parts'],
+									 'lineStart' => (($pieceStart > 0) && ($text[$pieceStart-1] == "\n")),
+									 );
+					# finally we can call a user callback and replace piece of text
+					$replaceWith = call_user_func( $matchingCallback, $cbArgs );
+					$text = substr($text, 0, $pieceStart) . $replaceWith . substr($text, $pieceEnd);
+					$i = $pieceStart + strlen($replaceWith);
+				} else {
+					# null value for callback means that parentheses should be parsed, but not replaced
+					$i += $matchingCount;
+				}
+
+				# reset last opening parentheses, but keep it in case there are unused characters
+				$piece = array('brace' => $openingBraceStack[$lastOpeningBrace]['brace'],
+							   'braceEnd' => $openingBraceStack[$lastOpeningBrace]['braceEnd'],
+							   'count' => $openingBraceStack[$lastOpeningBrace]['count'],
+							   'title' => '',
+							   'parts' => null,
+							   'startAt' => $openingBraceStack[$lastOpeningBrace]['startAt']);
+				$openingBraceStack[$lastOpeningBrace--] = null;
+
+				if ($matchingCount < $piece['count']) {
+					$piece['count'] -= $matchingCount;
+					$piece['startAt'] -= $matchingCount;
+					$piece['partStart'] = $piece['startAt'];
+					# do we still qualify for any callback with remaining count?
+					$currentCbList = $callbacks[$piece['brace']]['cb'];
+					while ( $piece['count'] ) {
+						if ( array_key_exists( $piece['count'], $currentCbList ) ) {
+							$lastOpeningBrace++;
+							$openingBraceStack[$lastOpeningBrace] = $piece;
+							break;
+						}
+						--$piece['count'];
+					}
+				}
+			} elseif ( $found == 'pipe' ) {
+				# lets set a title if it is a first separator, or next part otherwise
+				if (null === $openingBraceStack[$lastOpeningBrace]['parts']) {
+					$openingBraceStack[$lastOpeningBrace]['title'] =
+						substr($text, $openingBraceStack[$lastOpeningBrace]['partStart'],
+						$i - $openingBraceStack[$lastOpeningBrace]['partStart']);
+					$openingBraceStack[$lastOpeningBrace]['parts'] = array();
+				} else {
+					$openingBraceStack[$lastOpeningBrace]['parts'][] =
+						substr($text, $openingBraceStack[$lastOpeningBrace]['partStart'],
+						$i - $openingBraceStack[$lastOpeningBrace]['partStart']);
+				}
+				$openingBraceStack[$lastOpeningBrace]['partStart'] = ++$i;
+			}
+		}
+
+		wfProfileOut( __METHOD__ );
+		return $text;
+	}
+	
 }

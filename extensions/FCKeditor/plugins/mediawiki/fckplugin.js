@@ -52,6 +52,10 @@ var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Qu
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
 FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
 
+var tbButton = new FCKToolbarButton( 'SMW_Property', 'Property', 'Insert/Edit Property' ) ;
+tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_property.gif' ;
+FCKToolbarItems.RegisterItem( 'SMW_Property', tbButton );
+
 
 // Override some dialogs.
 FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 400, 330 ) ) ;
@@ -61,6 +65,7 @@ FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', '
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
 FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'QueryInterface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 800, 600 ) ) ;
+FCKCommands.RegisterCommand( 'SMW_Property', new FCKDialogCommand( 'SMW_Property', 'Property', FCKConfig.PluginsPath + 'mediawiki/dialogs/property.html', 400, 330 ) ) ;
 
 // MediaWiki Wikitext Data Processor implementation.
 FCK.DataProcessor =
@@ -496,6 +501,10 @@ FCK.DataProcessor =
 									stringBuilder.push( htmlNode.innerHTML ) ;
 									return ;
 
+								case 'fck_mw_property' :
+									stringBuilder.push( '[[' + htmlNode.innerHTML + ']]' ) ;
+									return ;
+
 								case 'fck_mw_nowiki' :
 									sNodeName = 'nowiki' ;
 									break ;
@@ -758,6 +767,9 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_askquery' :
 				if ( className == null )
 					className = 'FCK__SMWask' ;
+			case 'fck_mw_property' :
+				if ( className == null )
+					className = 'FCK__SMWProperty' ;
 			case 'fck_mw_magic' :
 				if ( className == null )
 					className = 'FCK__MWMagicWord' ;
@@ -782,12 +794,14 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_onlyinclude' :
 				if ( className == null )
 					className = 'FCK__MWOnlyinclude' ;
-					
-				var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;
-				oImg.setAttribute( '_' + eSpan.className, 'true', 0 ) ;
+				// Property element remains as span, don't replace the span with an img
+				if (className != 'FCK__SMWProperty') {
+					var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;
+					oImg.setAttribute( '_' + eSpan.className, 'true', 0 ) ;
 
-				eSpan.parentNode.insertBefore( oImg, eSpan ) ;
-				eSpan.parentNode.removeChild( eSpan ) ;
+					eSpan.parentNode.insertBefore( oImg, eSpan ) ;
+					eSpan.parentNode.removeChild( eSpan ) ;
+				}
 			break ;
 		}
 	}
@@ -843,5 +857,12 @@ FCK.ContextMenu.RegisterListener({
 				contextMenu.AddItem( 'MW_Special', 'Special Tag Properties' ) ;
 			}
 		}
+		else {
+			oSpan = FCK.Selection.MoveToAncestorNode( 'SPAN' );
+			if ( oSpan && oSpan.getAttribute('class') == 'fck_mw_property') {
+				contextMenu.AddSeparator() ;
+				contextMenu.AddItem( 'SMW_Property', 'Edit Property' ) ;
+			}
+		} 
 	}
 }) ;

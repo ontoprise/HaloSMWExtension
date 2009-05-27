@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * Link dialog window.
+-->
+<html>
+<head>
+	<title>Manage Properties</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex, nofollow" />
+	<script type="text/javascript">
+
+var oEditor		= window.parent.InnerDialogLoaded() ;
+var FCK			= oEditor.FCK ;
+var FCKLang		= oEditor.FCKLang ;
+var FCKConfig	= oEditor.FCKConfig ;
+var FCKRegexLib	= oEditor.FCKRegexLib ;
+var FCKTools	= oEditor.FCKTools ;
+
+document.write( '<script src="' + FCKConfig.BasePath + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
+
+	</script>
+	<script type="text/javascript">
+
+// oPropertySpan: The actual selected link in the editor.
+var oPropertySpan = FCK.Selection.MoveToAncestorNode( 'SPAN' ) ;
+if ( oPropertySpan && oPropertySpan.getAttribute('class') == 'fck_mw_property')
+	FCK.Selection.SelectNode( oPropertySpan ) ;
+else oPropertySpan = null;
+
+window.onload = function()
+{
+	// Translate the dialog box texts.
+	oEditor.FCKLanguageManager.TranslatePage(document) ;
+
+	// Load the selected link information (if any).
+	LoadSelection() ;
+
+	// Activate the "OK" button.
+	window.parent.SetOkButton( true ) ;
+	window.parent.SetAutoSize( true ) ;
+}
+
+function LoadSelection()
+{
+	if ( !oPropertySpan ) return ;
+
+	var sContent = oPropertySpan.innerHTML;
+	var nVar = sContent.split('::');
+	
+	GetE('txtPropName').value = nVar[0] ;
+	if (nVar.length < 2)
+		return;
+	GetE('txtPropVal').value = nVar[1] ;
+}
+
+//#### The OK button was hit.
+function Ok()
+{
+	var sPname = GetE('txtPropName').value ;
+	var sPval =  GetE('txtPropVal').value ;
+	
+	if ( !sPname || !sPval ) {
+		alert ("Property name and value must be set");
+		return;
+	}
+
+	if ( !oPropertySpan )
+	{
+		oPropertySpan = FCK.EditorDocument.createElement( 'SPAN' ) ;
+		oPropertySpan.className = 'fck_mw_property' ;
+	}
+	
+	oPropertySpan.innerHTML = sPname + '::' + sPval ;
+
+	oPropertySpan = FCK.InsertElement( oPropertySpan ) ;
+
+	return true ;
+}
+
+	</script>
+</head>
+<body scroll="no" style="overflow: hidden">
+	<div id="divInfo">
+		<div id="divPropName">
+			<span>Property name</span><br />
+			<input id="txtPropName" style="width: 100%" type="text" />
+			<br />
+			<span>Property value</span><br />
+			<input id="txtPropVal" style="width: 100%; type="text" />
+		</div>
+	</div>
+</body>
+</html>

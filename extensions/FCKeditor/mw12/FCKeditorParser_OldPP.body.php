@@ -8,6 +8,7 @@ class FCKeditorParser extends Parser_OldPP
 	protected $fck_mw_taghook;
 	protected $fck_internal_parse_text;
 	protected $fck_matches = array();
+	protected $fck_mw_propertyAtPage = array();
 
 	private $FCKeditorMagicWords = array(
 	'__NOTOC__',
@@ -395,6 +396,46 @@ class FCKeditorParser extends Parser_OldPP
 		return $text;
 	}
 
+	/**
+	 * replace property links like [[someProperty::value]] with FCK_PROPERTY_X_FOUND where X is
+	 * the number of the replaced property. The actual property string is stored in
+	 * $this->fck_mw_propertyAtPage[X] with X being the same number as in the replaced text
+	 * 
+	 * @access private
+	 * @param string $wikitext
+	 * @return string $wikitext
+	 */
+	private function fck_replaceProperties( $text ) {
+		// use the call back function to let the parser do the work to find each link
+		// that looks like [[something whatever is inside these brakets]]
+		$callback = array('[' =>
+		array(
+		'end'=>']',
+		'cb' => array(
+		2=>array('FCKeditorParser', 'fck_leaveTemplatesAlone'),
+		3=>array('', ''),
+		),
+		'min' =>2,
+		'max' =>2,
+		)
+		);
+		$text = $this->replace_callback($text, $callback);
+		
+		// now each property string is prefixed with <!--FCK_SKIP_START--> and
+		// tailed with <!--FCK_SKIP_END-->
+		// use this knowledge to find properties within these comments
+		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
+		// by the current property string
+		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
+			$replacement = $this->replacePropertyValue($matches[1]);
+			$pos = strpos($text, $matches[0]);
+			$before = substr($text, 0, $pos);
+			$after = substr($text, $pos + strlen($matches[0]));
+			$text = $before . $replacement . $after;
+		}
+		return $text;		
+	}
+
 	function internalParse ( $text ) {
 
 		$this->fck_internal_parse_text =& $text;
@@ -408,7 +449,8 @@ class FCKeditorParser extends Parser_OldPP
 		$text = $this->fck_replaceHTMLcomments( $text );
 		//as well as templates
 		$text = $this->fck_replaceTemplates( $text );
-
+		// as well as Properties
+		$text = $this->fck_replaceProperties( $text );
 		$finalString = parent::internalParse($text);
 
 		return $finalString;
@@ -443,6 +485,26 @@ class FCKeditorParser extends Parser_OldPP
 
 		return strtr( $text, $strtr );
 	}
+	/**
+	 * check the parser match from inside the [[ ]] and see if it's a property.
+	 * If thats the case, safe the property string in the array
+	 * $this->fck_mw_propertyAtPage and return a placeholder FCK_PROPERTY_X_FOUND
+	 * for the Xth occurence. Otherwise return the link content unmodified.
+	 * The missing [[ ]] have to be added again, so that the original remains untouched
+	 * 
+	 * @access private
+	 * @param  string $match
+	 * @return string replacement or "[[$match]]"
+	 */
+	private function replacePropertyValue($match) {
+		$prop = explode('::', $match);
+  		if ((count($prop) == 2) && (strlen($prop[0]) > 0) && (strlen($prop[1]) > 0)) {
+    		$p = count($this->fck_mw_propertyAtPage);
+    		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property">'.$prop[0].'::'.$prop[1].'</span>';
+    		return 'FCK_PROPERTY_'.$p.'_FOUND';
+  		}
+  		return "[[".$match."]]";
+	}
 
 	function parse( $text, &$title, $options, $linestart = true, $clearState = true, $revid = null ) {
 		$text = preg_replace("/^#REDIRECT/", "<!--FCK_REDIRECT-->", $text);
@@ -471,6 +533,14 @@ class FCKeditorParser extends Parser_OldPP
 			}
 			$parserOutput->setText(strtr($parserOutput->getText(), $this->fck_mw_strtr_span));
 		}
+		// there were properties, look for the placeholder FCK_PROPERTY_X_FOUND and replace
+		// it with <span class="fck_mw_property">property string without brakets</span>
+		if (count($this->fck_mw_propertyAtPage) > 0) {
+			$tmpText = $parserOutput->getText();
+			foreach ($this->fck_mw_propertyAtPage as $p => $val)
+				$tmpText = str_replace('FCK_PROPERTY_'.$p.'_FOUND', $val, $tmpText);
+			$parserOutput->setText($tmpText);
+		}
 		if (!empty($this->fck_matches)) {
 			$text = $parserOutput->getText() ;
 			foreach ($this->fck_matches as $key => $m) {
@@ -486,7 +556,6 @@ class FCKeditorParser extends Parser_OldPP
 		}
 		
 		$parserOutput->setText(str_replace("<!--FCK_REDIRECT-->", "#REDIRECT", $parserOutput->getText()));
-
 		return $parserOutput;
 	}
 
