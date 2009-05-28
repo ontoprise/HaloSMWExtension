@@ -1,0 +1,272 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>TestDBWiki</sitename>
+    <base>http://localhost/TestDBWiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">TestDBWiki</namespace>
+      <namespace key="5">TestDBWiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="200">WebService</namespace>
+      <namespace key="201">WebService talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>1</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2009-05-26T11:37:27Z</timestamp>
+      <contributor>
+        <ip>MediaWiki default</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;big&gt;'''MediaWiki has been successfully installed.'''&lt;/big&gt;
+
+Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
+
+== Getting started ==
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has domain and range</title>
+    <id>2</id>
+    <revision>
+      <id>2</id>
+      <timestamp>2009-05-26T11:51:49Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
+
+[[Has type::Type:Page; Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWS</title>
+    <id>3</id>
+    <revision>
+      <id>9</id>
+      <timestamp>2009-05-26T12:14:23Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:GardeningLog</title>
+    <id>4</id>
+    <revision>
+      <id>4</id>
+      <timestamp>2009-05-26T12:04:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>This is the Gardening log category</comment>
+      <text xml:space="preserve">This is the Gardening log category</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSOnce</title>
+    <id>5</id>
+    <revision>
+      <id>5</id>
+      <timestamp>2009-05-26T12:06:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;result&quot; &gt; &lt;part name=&quot;co...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;once/&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;once/&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSUnused</title>
+    <id>6</id>
+    <revision>
+      <id>6</id>
+      <timestamp>2009-05-26T12:09:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;result&quot; &gt; &lt;part name=&quot;co...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSOutdated</title>
+    <id>7</id>
+    <revision>
+      <id>7</id>
+      <timestamp>2009-05-26T12:11:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWS | ?result.complete | _format=list }}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWS
+| ?result.complete
+| _format=list
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSUpToDate</title>
+    <id>8</id>
+    <revision>
+      <id>8</id>
+      <timestamp>2009-05-26T12:12:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWS | dontCare=ignore | ?result.complete | _format=list }}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWS
+| dontCare=ignore
+| ?result.complete
+| _format=list
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSOnce</title>
+    <id>9</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2009-05-26T12:17:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSOnce | ?result.complete | _format=list }}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSOnce
+| ?result.complete
+| _format=list
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSUnconfirmed</title>
+    <id>10</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2009-05-27T13:50:20Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page:  WebService:TimeTestWSUnused From TestDBWiki Jump to: navigation, search  &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;RE...</comment>
+      <text xml:space="preserve">
+WebService:TimeTestWSUnused
+From TestDBWiki
+Jump to: navigation, search
+
+&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSUnconfirmed</title>
+    <id>11</id>
+    <revision>
+      <id>12</id>
+      <timestamp>2009-05-27T13:52:16Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSUnconfirmed | ?result.complete }}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSUnconfirmed
+| ?result.complete
+}}</text>
+    </revision>
+  </page>
+</mediawiki>

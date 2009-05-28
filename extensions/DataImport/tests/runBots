@@ -1,0 +1,2 @@
+#!/bin/sh
+php ../../SemanticGardening/maintenance/SGA_startBot.php -nolog -b $*
