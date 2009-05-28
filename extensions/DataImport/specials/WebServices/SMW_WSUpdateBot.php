@@ -104,6 +104,7 @@ class WSUpdateBot extends GardeningBot {
 		$webServices = WSStorage::getDatabase()->getWebservices();
 		$this->setNumberOfTasks(count($webServices) + 1);
 		foreach($webServices as $ws){
+			echo("\n\n".$ws->getName()."\n");
 			if($ws->getConfirmationStatus() == "once"
 			|| $ws->getConfirmationStatus() == "false"){
 				$log->addGardeningIssueAboutValue(
@@ -176,7 +177,7 @@ class WSUpdateBot extends GardeningBot {
 					serialize($response),
 					wfTimeStamp(TS_MW, wfTime()),
 					wfTimeStamp(TS_MW, wfTime()));
-					echo("\t\t update was successfully\t");
+					echo("\t\t update was successfully\n");
 
 					//get articles which have to be refreshed
 				}

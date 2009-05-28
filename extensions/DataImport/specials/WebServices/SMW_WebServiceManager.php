@@ -268,6 +268,9 @@ class WebServiceManager {
 	 * @return boolean true
 	 */
 	public static function articleSavedHook(&$article, &$user, &$text) {
+		if($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
+			return true;
+		}
 		// check if an wwsd was change and delete the old wwsd and the
 		// related cache entries from the db
 		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
@@ -293,6 +296,8 @@ class WebServiceManager {
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
 		}
+		self::$mNewWebService = null;
+		self::$mOldWebservice = null;
 		return true;
 	}
 
@@ -301,11 +306,16 @@ class WebServiceManager {
 	 * This function is a hook for 'ArticleDelete'
 	 */
 	function articleDeleteHook(&$article, &$user, $reason){
+	if ($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
+			return true;
+		}
 		WebServiceCache::removeWS($article->getID());
 		$ws = WebService::newFromID($article->getID());
 		if ($ws) {
 			$ws->removeFromDB();
 		}
+		self::$mNewWebService = null;
+		self::$mOldWebservice = null;
 		return true;
 	}
 

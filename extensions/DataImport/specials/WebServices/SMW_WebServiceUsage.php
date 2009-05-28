@@ -444,7 +444,7 @@ function detectRemovedWebServiceUsages($articleId){
 			}
 		}
 	}
-
+	$wgsmwRememberedWSUsages = array();
 	return true;
 }
 
