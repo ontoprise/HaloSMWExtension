@@ -29,7 +29,7 @@ require_once $IP . "/includes/GlobalFunctions.php";
 require_once $IP . "/includes/parser/ParserOptions.php";
 require_once $IP . "/includes/EditPage.php";
 
-if (version_compare("1.12", $wgVersion, ">")) {
+if (version_compare("1.12", $wgVersion, "<")) {
     require_once $IP . "/includes/parser/Parser_OldPP.php";
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "mw12/FCKeditorParser_OldPP.body.php";
 }
