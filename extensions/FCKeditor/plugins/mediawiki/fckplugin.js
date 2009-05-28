@@ -52,11 +52,6 @@ var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Qu
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
 FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
 
-var tbButton = new FCKToolbarButton( 'SMW_Property', 'Property', 'Insert/Edit Property' ) ;
-tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_property.gif' ;
-FCKToolbarItems.RegisterItem( 'SMW_Property', tbButton );
-
-
 // Override some dialogs.
 FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 400, 330 ) ) ;
 FCKCommands.RegisterCommand( 'MW_Ref', new FCKDialogCommand( 'MW_Ref', 'Reference Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/ref.html', 400, 250 ) ) ;
@@ -65,7 +60,6 @@ FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', '
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
 FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'QueryInterface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 800, 600 ) ) ;
-FCKCommands.RegisterCommand( 'SMW_Property', new FCKDialogCommand( 'SMW_Property', 'Property', FCKConfig.PluginsPath + 'mediawiki/dialogs/property.html', 400, 330 ) ) ;
 
 // MediaWiki Wikitext Data Processor implementation.
 FCK.DataProcessor =
@@ -502,7 +496,8 @@ FCK.DataProcessor =
 									return ;
 
 								case 'fck_mw_property' :
-									stringBuilder.push( '[[' + htmlNode.innerHTML + ']]' ) ;
+								case 'fck_mw_category' :
+									stringBuilder.push( this._formatSemanticValues(htmlNode) ) ;
 									return ;
 
 								case 'fck_mw_nowiki' :
@@ -703,7 +698,33 @@ FCK.DataProcessor =
 			}
 		}
 		return attStr ;
+	},
+	
+	// Property and Category values must be of a certain format. Otherwise this will break
+	// the semantic annotation when switching between wikitext and WYSIWYG view
+	_formatSemanticValues : function (htmlNode) {
+		var text = htmlNode.innerHTML;
+
+		// remove any &nbsp;
+		text = text.replace('&nbsp;', ' ');
+		// remove any possible linebreaks
+		text = text.replace('<br>', ' ');
+		// ltrim
+		text = text.replace(/^\s+/, '');
+		// rtrim
+		text = text.replace(/\s+$/, '');
+		// no value set, then don't add any wikitext
+		if (text.length == 0)
+			return;
+
+		switch (htmlNode.className) {
+			case 'fck_mw_property' :
+				return '[[' + htmlNode.getAttribute('property') + '::' + text + ']]' ;
+			case 'fck_mw_category' :
+				return '[[Category:' + text + ']]'
+		}
 	}
+	
 } ;
 
 // Here we change the SwitchEditMode function to make the Ajax call when
@@ -767,9 +788,6 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_askquery' :
 				if ( className == null )
 					className = 'FCK__SMWask' ;
-			case 'fck_mw_property' :
-				if ( className == null )
-					className = 'FCK__SMWProperty' ;
 			case 'fck_mw_magic' :
 				if ( className == null )
 					className = 'FCK__MWMagicWord' ;
@@ -795,7 +813,7 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 				if ( className == null )
 					className = 'FCK__MWOnlyinclude' ;
 				// Property element remains as span, don't replace the span with an img
-				if (className != 'FCK__SMWProperty') {
+				if (className != null) {
 					var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;
 					oImg.setAttribute( '_' + eSpan.className, 'true', 0 ) ;
 
@@ -857,12 +875,5 @@ FCK.ContextMenu.RegisterListener({
 				contextMenu.AddItem( 'MW_Special', 'Special Tag Properties' ) ;
 			}
 		}
-		else {
-			oSpan = FCK.Selection.MoveToAncestorNode( 'SPAN' );
-			if ( oSpan && oSpan.getAttribute('class') == 'fck_mw_property') {
-				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'SMW_Property', 'Edit Property' ) ;
-			}
-		} 
 	}
 }) ;

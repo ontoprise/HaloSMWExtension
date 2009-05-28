@@ -51,25 +51,19 @@ window.onload = function()
 	// Translate the dialog box texts.
 	oEditor.FCKLanguageManager.TranslatePage(document) ;
 
-	// Load the selected link information (if any).
-	LoadSelection() ;
-
+	// check if there is no property selected, then show an error message
+	if ( !oPropertySpan ) {
+		GetE('divChangeProp').setAttribute('style', 'display: none;');
+		GetE('divNewProp').removeAttribute('style');
+		return ;
+	}
+	// read the values of the selected property
+	GetE('txtPropName').value = oPropertySpan.getAttribute('property');
+	GetE('txtPropVal').value = oPropertySpan.innerHTML;
+	
 	// Activate the "OK" button.
 	window.parent.SetOkButton( true ) ;
 	window.parent.SetAutoSize( true ) ;
-}
-
-function LoadSelection()
-{
-	if ( !oPropertySpan ) return ;
-
-	var sContent = oPropertySpan.innerHTML;
-	var nVar = sContent.split('::');
-	
-	GetE('txtPropName').value = nVar[0] ;
-	if (nVar.length < 2)
-		return;
-	GetE('txtPropVal').value = nVar[1] ;
 }
 
 //#### The OK button was hit.
@@ -87,9 +81,10 @@ function Ok()
 	{
 		oPropertySpan = FCK.EditorDocument.createElement( 'SPAN' ) ;
 		oPropertySpan.className = 'fck_mw_property' ;
+		oPropertySpan.setAttribute('property', sPname); 
 	}
 	
-	oPropertySpan.innerHTML = sPname + '::' + sPval ;
+	oPropertySpan.innerHTML = sPval ;
 
 	oPropertySpan = FCK.InsertElement( oPropertySpan ) ;
 
@@ -98,14 +93,19 @@ function Ok()
 
 	</script>
 </head>
-<body scroll="no" style="overflow: hidden">
+<body scroll="no" style="overflow: hidden; background-color: #ffcd87;">
 	<div id="divInfo">
-		<div id="divPropName">
+		<div id="divChangeProp">
 			<span>Property name</span><br />
-			<input id="txtPropName" style="width: 100%" type="text" />
+			<input id="txtPropName" style="width: 100%" type="text" readonly="true" />
 			<br />
 			<span>Property value</span><br />
 			<input id="txtPropVal" style="width: 100%; type="text" />
+		</div>
+		<div id="divNewProp" style="display: none;">
+			Within this Editor property values can be changed only. To create a new
+			property at this page, please use the annotation mode. You can do this by
+			click at the tab "annotate" in the horizontal navigation above this edit window.  
 		</div>
 	</div>
 </body>
