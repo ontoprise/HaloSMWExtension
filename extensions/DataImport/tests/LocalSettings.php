@@ -1,4 +1,6 @@
 
+$wgDefaultSkin = 'ontoskin2';
+
 #Import SMW, SMWHalo and the Webservice extension
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('http://wiki', true);
