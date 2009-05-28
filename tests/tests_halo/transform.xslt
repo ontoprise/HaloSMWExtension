@@ -51,6 +51,7 @@
 			<xsl:attribute name="time"><xsl:value-of select="@time" />
             </xsl:attribute>
 			<xsl:apply-templates select="failure" />
+			<xsl:apply-templates select="error" />
 		</xsl:copy>
 
 	</xsl:template>
@@ -62,5 +63,14 @@
             <xsl:value-of select="."/>
 		</xsl:copy>
 	</xsl:template>
+	
+	<xsl:template match="error">
+        <xsl:copy>
+            <xsl:attribute name="type"><xsl:value-of
+                    select="@type" />
+            </xsl:attribute>
+            <xsl:value-of select="."/>
+        </xsl:copy>
+    </xsl:template>
 
 </xsl:stylesheet>
