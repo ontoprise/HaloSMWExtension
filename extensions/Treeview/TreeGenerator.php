@@ -391,10 +391,20 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @param  string querystring ask query 
 	 */
 	private function getCondition($querystring) {
+		global $smwgDefaultStore;
 		$fixparams = array(
 			"format" => "ul",
 		);
-		$result = SMWQueryProcessor::getResultFromQueryString($querystring, $fixparams, array(), SMW_OUTPUT_WIKI);
+		
+		// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
+		// the tripplestore gets used
+		if ($smwgDefaultStore == "SMWTripleStore") {
+			$result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring, $fixparams, array(), SMW_OUTPUT_WIKI);
+			if (stripos($result, "Could not connect to host") !== false)
+				$result = SMWQueryProcessor::getResultFromQueryString($querystring, $fixparams, array(), SMW_OUTPUT_WIKI);
+		}
+		else
+			$result = SMWQueryProcessor::getResultFromQueryString($querystring, $fixparams, array(), SMW_OUTPUT_WIKI);
 
 		// the list contains some html and wiki text, we need to extract the page values
 		$result = strip_tags($result);
@@ -407,6 +417,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			$title = Title::newFromDBkey($page);
 			if (is_null($title)) continue;
 			$smw_id = $this->getSmwIdByTitle($title);
+			if (is_null($smw_id)) continue;
 			$smwIds[] = $smw_id;
 
 			// fill the elementProperties variable for this element. Almost all neccessary data
