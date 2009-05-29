@@ -3,6 +3,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
+$wgAjaxExportList[] = 'smwf_qi_getPage';
 
 
 function smwf_qi_QIAccess($method, $params) {
@@ -228,4 +229,82 @@ function parseWikiText($text) {
 	}
     return $result;           
 }
+
+/**
+ * returns the complete HTML for the query interface without the Wiki toolbars etc.
+ * so that the QI can be embedded into another application such as the FCK editor or
+ * the Excel Client
+ * 
+ * @param  string key=value pairs
+ * @return string $html
+ */
+function smwf_qi_getPage($args= "") {
+	global $wgServer, $wgScript;
+
+	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
+	// save the source code of the above URL in $page 
+	$page = "";
+
+	$fp = fopen($wgServer.$wgScript."/Special:QueryInterface", "r");
+	// this happens at any error (also if the URL can be called but a 404 is returned)
+	if (!$fp) return false;
+
+	// fetch data from URL into $page
+	while ($data = fgets($fp, 4096))
+		$page .= $data;
+	fclose($fp);
+
+	// create the new source code, by removing the wiki stuff,
+	// keep the header (because of all css and javascripts) and the main content part only
+	$newPage = "";
+	mvDataFromPage($page, $newPage, '<body');
+	$newPage.= '<body style="background-image:none; background-color: #ffffff;">';
+	mvDataFromPage($page, $newPage, "<!-- start content -->", false);
+	mvDataFromPage($page, $newPage, "<!-- end content -->");
+	$newPage.="</body></html>";
+
+	// remove the Switch to Semantic Notification button, incase it's there
+	$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+	
+	// check params 
+	$params = array();
+	parse_str($args, $params);
+	if (isset($params['noPreview']))
+		delDataFromPage($newPage, '<div id="previewlayout">', '<div id="querylayout">'); 
+	if (isset($params['noLayout']))
+		delDataFromPage($newPage, '<div id="querylayout">', '<div id="qimenubar">'); 
+	
+	return $newPage;
+		
+}
+
+/**
+ * copy data from page to newPage by defing a pattern, up to where
+ * the string is copied from the begining. If $copy is set to false
+ * the data will be deleted from $page without copying it to $newPage 
+ */
+function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
+	$pos = strpos($page, $pattern);
+	if ($pos === false) return;
+	if ($copy) {
+		$newPage.= substr($page, 0, $pos);
+	}
+	$page = substr($page, $pos -1); 
+}
+
+/**
+ * delete data from page by defing a start string and a end string.
+ * the string is copied from the begining. If $copy is set to false
+ * the data will be deleted from $page without copying it to $newPage 
+ */
+function delDataFromPage(&$page, $start, $end) {
+	$pos1 = strpos($page, $start);
+	if ($pos1 === false) return;
+	$pos2 = strpos($page, $end, $pos1);
+	if ($pos2 === false) return;
+	$new = substr($page, 0, $pos1);
+	$new.= substr($page, $pos2);
+	$page = $new;
+}
+
 ?>

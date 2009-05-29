@@ -23,41 +23,39 @@
  */
 
 // fetch the Query Interface by calling the URL http://host/wiki/Special:QueryInterface
-$url = "http";
-// check for SSL
-if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
-    isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
-	$url.= "s";
-// add hostname and build correct path, assuming that the QI can be accessed as a special page
-$url.= "://".$_SERVER['HTTP_HOST'].
-       substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/')).
-       "index.php/Special:QueryInterface";
+// This is implemented in a file at the SMW Query Interface as a ajax function. The best
+// solution would be just to do an Ajax call and receive the HTML of the Query Interface.
+// However this would be one call to the ajax function and another call to the QI URL.
+// In order to save the first call to the ajax function we include it here. Therefore
+// some "workarounds" must be done before the include.
+global $wgServer, $wgScript;
+if( !defined( 'MEDIAWIKI' ) ) define('MEDIAWIKI', "fake");
+if (is_null($wgServer)) {
+	$wgServer = "http";
+	// check for SSL
+	if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
+    	isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+		$wgServer.= "s";
+	// add hostname and build correct path, assuming that the QI can be accessed as a special page
+	$wgServer.= "://".$_SERVER['HTTP_HOST'];
+}
+if (is_null($wgScript)) {
+    $wgScript = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/')).
+       "index.php";
+}
+// now actually include the file with the ajax function
+$QIAjaxFuncFile = '../../../../SMWHalo/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
+if (!file_exists($QIAjaxFuncFile))
+	dieNice("SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.");
+include_once($QIAjaxFuncFile);
+
 // save the source code of the above URL in $page 
-$page = "";
+$page = smwf_qi_getPage();
 
-$fp = fopen($url, "r");
-// this happens at any error (also if the URL can be called but a 404 is returned)
-if (!$fp) dieNice("SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.");
-
-// fetch data from URL into $page
-while ($data = fgets($fp, 4096))
-  $page .= $data;
-fclose($fp);
-
-// create the new source code, by removing the wiki stuff,
-// keep the header (because of all css and javascripts) and the main content part only
-$newPage = "";
-copyData($page, $newPage, '<body');
-$newPage.= '<body style="background-image:none; background-color: #ffffff;">';
-copyData($page, $newPage, "<!-- start content -->", false);
-copyData($page, $newPage, "<!-- end content -->");
-$newPage.="</body></html>";
-
-// remove the Switch to Semantic Notification button, incase it's there
-$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+if (!$page) dieNice("SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.");
 
 // add the FCK specific Javascript above the body tag
-$newPage= str_replace('<body', jsData()."\n<body", $newPage);
+$newPage= str_replace('<body', jsData()."\n<body", $page);
 
 // suround QI code by div with id = divQiGui for managing the tabs
 $newPage= str_replace('<body', '<div id="divQiGui">'."\n<body", $newPage);
@@ -65,7 +63,6 @@ $newPage= str_replace('</body>', "</div>\n</body>", $newPage);
 
 // add div container for raw query source code at the end
 $newPage= str_replace('</body>', getDivQiSrc()."\n</body>", $newPage);
-
 
 // output the page
 echo $newPage;
@@ -195,20 +192,6 @@ function getDivQiSrc() {
 		</table>
 	</div>
 	';
-}
-
-/**
- * copy data from page to newPage by defing a pattern, up to where
- * the string is copied from the begining. If $copy is set to false
- * the data will be deleted from $page without copying it to $newPage 
- */
-function copyData(&$page, &$newPage, $pattern, $copy= true) {
-	$pos = strpos($page, $pattern);
-	if ($pos === false) return;
-	if ($copy) {
-		$newPage.= substr($page, 0, $pos);
-	}
-	$page = substr($page, $pos -1); 
 }
 
 /**
