@@ -233,9 +233,13 @@ function parseWikiText($text) {
 /**
  * returns the complete HTML for the query interface without the Wiki toolbars etc.
  * so that the QI can be embedded into another application such as the FCK editor or
- * the Excel Client
+ * the Excel Client.
+ * Within the parameter string the options noPreview and noLayout can be set (value
+ * is not required). If the parameter is set, in the html the div for the result
+ * preview of the current query is not show, and/or the layout manager is not
+ * displayed.
  * 
- * @param  string key=value pairs
+ * @param  string key=value pairs urlencoded i.e. noPreview%26noLayout
  * @return string $html
  */
 function smwf_qi_getPage($args= "") {
