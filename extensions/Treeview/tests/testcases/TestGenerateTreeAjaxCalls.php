@@ -6,9 +6,7 @@ class TestGenerateTreeAjaxCalls extends PHPUnit_Framework_TestCase {
 	function setUp() {
 		global $wgServer, $wgScript;
 
-		if (strpos($wgServer, '/localhost.localdomain') !== false)
-			$this->wikiurl = str_replace('.localdomain', '', $wgServer);
-		$this->wikiurl .= $wgScript.'?action=ajax&rs=smw_treeview_getTree&rsargs[]=';
+		$this->wikiurl = $wgServer.$wgScript.'?action=ajax&rs=smw_treeview_getTree&rsargs[]=';
 	}
 
 	function tearDown() {
