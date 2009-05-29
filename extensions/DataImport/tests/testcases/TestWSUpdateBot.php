@@ -4,6 +4,7 @@ require_once 'Util.php';
 
 class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 
+	protected $backupGlobals = false;
 
 	function setUp() {
 		//create wwsds and confirm them
@@ -19,13 +20,9 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		
 		$titles = array('TimeTestWSOutdated', 'TimeTestWSUpToDate', 'TimeTestWSOnce', 'TimeTestWSUnconfirmed');
 		foreach($titles as $title){
-			global $forTCount;
-			$forTCount += 1;
 			$text = smwf_om_GetWikiText($title);
 			smwf_om_EditArticle($title, 'PHPUnit', $text, '');
 		}
-		//error();
-		
 		
 		//set timestamp of TimeTestWSOutdated back
 		$wsId = $this->getWSId('TimeTestWS');
@@ -56,7 +53,6 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		WSStorage::getDatabase()->storeCacheEntry($wsId, $paramSetId, "phpunit3");
 		
 //		//set cache value of TimeTestWSOnce to phpunit4
-		//WSStorage::getDatabase()->setWWSDConfirmationStatus($ws->getArticleID(), "once");
 		$wsId = $this->getWSId('TimeTestWSUnconfirmed');
 		$pId = $this->getPageId("TimeTestWSUnconfirmed");
 		$paramSetId = $this->getParamSetId($wsId, $pId);
