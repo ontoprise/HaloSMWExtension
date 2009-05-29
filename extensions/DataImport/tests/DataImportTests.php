@@ -8,7 +8,7 @@ class DataImportTests
 {
     public static function suite()
     {
-        $suite = new PHPUnit_Framework_TestSuite('DataImportTests');
+        $suite = new PHPUnit_Framework_TestSuite('DataImport');
 
         // add test suites
         $suite->addTestSuite("TestWSUpdateBot");
