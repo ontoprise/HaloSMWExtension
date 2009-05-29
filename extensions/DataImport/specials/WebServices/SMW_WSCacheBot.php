@@ -93,11 +93,10 @@ class WSCacheBot extends GardeningBot {
 			//echo($ws->getArticleID());
 			$deletedCacheEntries = 0;
 			foreach($cacheResults as $cacheResult){
-				if(!$ws->doesExpireAfterUpdate()){
-					$compareTS = 0;
+				if($ws->doesExpireAfterUpdate() == "false"){
 					if($cacheResult["lastAccess"]){
-						if($cacheResult["lastAccess"]
-						< $cacheResult["lastUpdate"]){
+						if(wfTimestamp(TS_UNIX, $cacheResult["lastAccess"])
+						< wfTimestamp(TS_UNIX, $cacheResult["lastUpdate"])){
 							$compareTS = $cacheResult["lastUpdate"];
 						} else {
 							$compareTS = $cacheResult["lastAccess"];
@@ -108,7 +107,7 @@ class WSCacheBot extends GardeningBot {
 				} else {
 					$compareTS = $cacheResult["lastUpdate"];
 				}
-
+				
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
 				> $ws->getSpanOfLife() *24*60*60){

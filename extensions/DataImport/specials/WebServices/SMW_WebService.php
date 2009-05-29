@@ -305,11 +305,11 @@ class WebService {
 				//$ws->mExpiresAfterUpdate =
 			}
 		}
-		$ws->mExpiresAfterUpdate = false;
+		$ws->mExpiresAfterUpdate = "true";
 
 		$ws->mConfirmationStatus = "false";
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
-
+		
 		return ($valid) ? $ws : $msg;
 	}
 

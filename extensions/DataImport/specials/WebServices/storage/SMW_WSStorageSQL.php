@@ -137,7 +137,7 @@ class WSStorageSQL {
 					  'update_delay'    =>  $webService->getUpdateDelay(),
 					  'span_of_life'    =>  $webService->getSpanOfLife() ,
 					  'expires_after_update'
-					  =>  $webService->doesExpireAfterUpdate() ? 'true' : 'false',
+					  =>  $webService->doesExpireAfterUpdate() == "true" ? 'true' : 'false',
 					  'confirmed'       =>  $webService->getConfirmationStatus(),
 					  'authentication_type' => $webService->getAuthenticationType(),
 					  'authentication_login' => $webService->getAuthenticationLogin(),
@@ -181,7 +181,7 @@ class WSStorageSQL {
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->update_delay, $row->span_of_life,
-			$row->expires_after_update == 'true',
+			$row->expires_after_update,
 			$row->confirmed);
 		}
 		$db->freeResult($res);
@@ -693,7 +693,7 @@ class WSStorageSQL {
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->update_delay, $row->span_of_life,
-			$row->expires_after_update == 'true',
+			$row->expires_after_update,
 			$row->confirmed);
 				
 			$webServices[$ws->getName()] = $ws;
