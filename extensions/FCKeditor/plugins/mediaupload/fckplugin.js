@@ -11,7 +11,8 @@ OpenUploadWindowCommand.GetState=function() {
         return FCK_TRISTATE_OFF; //we dont want the button to be toggled
 }
 OpenUploadWindowCommand.Execute=function() {
-	top.fb.loadAnchor('index.php?title=Special:UploadWindow&sfInputID=myWpDestFile&RMUpload[RelatedArticles]=RichMedia11&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
+	var article = window.parent.wgTitle;
+	top.fb.loadAnchor('index.php?title=Special:UploadWindow&sfInputID=myWpDestFile&RMUpload[RelatedArticles]='+article+'&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
 	// do stuff here if you want
 }
 FCKCommands.RegisterCommand( 'MW_MediaUpload', OpenUploadWindowCommand) ;
