@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="all" name="SMWHalo">
+	<!-- install build file that can be used instead of the install.bat -->
+	<target name="mime">
+	
+		<echo message="Installing patches for MIME-Type extension"/>
+		
+		<copy file="includes/Article.php" todir="../includes"/>
+		<copy file="includes/CategoryPage.php" todir="../includes"/>
+		<copy file="includes/EditPage.php" todir="../includes"/>
+		<copy file="includes/Export.php" todir="../includes"/>
+		<copy file="includes/Image.php" todir="../includes"/>
+		<copy file="includes/ImageGallery.php" todir="../includes"/>
+		<copy file="includes/ImagePage.php" todir="../includes"/>
+		<copy file="includes/ImageQueryPage.php" todir="../includes"/>
+		<copy file="includes/Linker.php" todir="../includes"/>
+		<copy file="includes/Namespace.php" todir="../includes"/>
+		<copy file="includes/Title.php" todir="../includes"/>
+		<copy file="includes/Wiki.php" todir="../includes"/>
+		<copy file="includes/mime.types" todir="../includes"/>
+		<copy file="includes/specials/SpecialFileDuplicateSearch.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialFilepath.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialImagelist.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialMIMEsearch.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialNewimages.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialRecentchangeslinked.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialSearch.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialUncategorizedimages.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialUndelete.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialUpload.php" todir="../includes/specials"/>
+		<copy file="includes/specials/SpecialWhatlinkshere.php" todir="../includes/specials"/>
+		<copy file="includes/filerepo/ArchivedFile.php" todir="../includes/filerepo"/>
+		<copy file="includes/filerepo/FileRepo.php" todir="../includes/filerepo"/>
+		<copy file="includes/parser/Parser_OldPP.php" todir="../includes/parser"/>
+		<copy file="includes/parser/Parser.php" todir="../includes/parser"/>
+		
+		<copy todir="../extensions">
+			<fileset dir="extensions/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+
+		<copy todir="../skins">
+			<fileset dir="skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+
+		<echo message="Installing patch for Delete/Move extension" />
+		
+		<copy file="includes/specials/SpecialMovepage.php" todir="../includes/specials"/>
+		<copy file="includes/FileDeleteForm.php" todir="../includes"/>
+
+		<echo>Add &quot;include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');&quot; to your LocalSettings.php;</echo>
+	</target>
+	
+	<target name="wysiwyg">
+		<echo message="Installing patches for WYSIWYG extension" />
+
+		<copy file="includes/EditPage.php" todir="../includes"/>
+		<copy file="includes/Sanitizer.php" todir="../includes"/>
+
+		<echo>Add &quot;include_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');&quot; to your LocalSettings.php;</echo>
+	</target>
+
+	<target depends="mime,wysiwyg" name="all" />
+	
+</project>
