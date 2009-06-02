@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project default="testBasic">
+
+	<target name="testBasic">
+
+		<webtest name="LoadGardeningPage">
+			 &goToGardening;
+
+		</webtest>
+		<webtest name="ChooseConsistencyBot">
+			 &goToLogin;  
+			
+			 &goToGardening;
+			<clickElement xpath="//div[@id='smw_consistencybot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors." />
+		</webtest>
+
+		<webtest name="RunConsistencyBot">
+		             &goToLogin;  
+		            
+		            &goToGardening;
+			<clickElement xpath="//div[@id='smw_consistencybot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors." />
+			<clickButton htmlId="runBotButton" description="Start the consistencyBot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Check wiki consistency" />
+		</webtest>
+
+		<webtest name="RunAnomaliesBot">
+		                     &goToLogin;  
+		                    
+		                    &goToGardening;
+			<clickElement xpath="//div[@id='smw_anomaliesbot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="This bot identifies  Category leafs (Categories that contain neither subcategories nor instances) and Subcategory number anomalies (Categories with only one or more than eight subcategories)." />
+			<clickButton htmlId="runBotButton" description="Start the anomaly bot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Find anomalies" />
+		</webtest>
+
+		<webtest name="RunExportBot">
+		                       &goToLogin;  
+		                            
+		                       &goToGardening;
+			<clickElement xpath="//div[@id='smw_exportontologybot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="This bot exports the wiki ontology in the OWL format." />
+			<setCheckbox description="Export only schema" xpath="//form[@id='gardeningParamForm']/span[2]/input" value="Export only schema" />
+			<clickButton htmlId="runBotButton" description="Start the export bot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Export ontology" />
+			  &goToGardening;
+			<clickLink xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[5]/a" />
+			<clickLink xpath="//div[@id='bodyContent']/p/a" />
+			<verifyContent referenceFile="resources/exporttest.owl" />
+		</webtest>
+
+		<webtest name="RunMissingAnnotationsBot">
+		                             &goToLogin;  
+		                            
+		                            &goToGardening;
+		            <clickElement xpath="//div[@id='smw_missingannotationsbot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="This bot identifies pages in the Wiki that are not annotated." />
+			<clickButton htmlId="runBotButton" description="Start the missing annotations bot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Find pages without annotations" />
+		</webtest>
+
+		<webtest name="RunUndefinedEntitiesBot">
+		                                     &goToLogin;  
+		                                    
+		                                    &goToGardening;
+		                    <clickElement xpath="//div[@id='smw_undefinedentitiesbot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="The undefined entities bot searches for categories and properties that are used within the wiki but not defined, as well as instances that have no category." />
+			<clickButton htmlId="runBotButton" description="Start the undefined entities bot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Find undefined entities" />
+		</webtest>
+
+		<webtest name="RunTemplateMaterializerBot">
+		                                             &goToLogin;  
+		                                            
+		                                            &goToGardening;
+		                            <clickElement xpath="//div[@id='smw_templatematerializerbot']" />
+
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if the parameters appear" xpath="//div[@id='gardening-tooldetails-content']/div" text="This bot updates the wikipages which use templates that got new annotations to includes these annotations in the results of an ASK query." />
+			<clickButton htmlId="runBotButton" description="Start the template materializer bot" />
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath description="Check if bot log entry appears" xpath="//div[@id='gardening-runningbots']/table/tbody/tr[2]/td[2]" text="Materialize template content" />
+		</webtest>
+	</target>
+</project>

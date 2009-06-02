@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE owl [
+<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >
+<!ENTITY a  "http://www.halowiki.org#" >
+<!ENTITY prop  "http://www.halowiki.org/property#" >
+<!ENTITY cat  "http://www.halowiki.org/category#" > ]>
+<rdf:RDF
+xmlns:a   ="&a;"
+xmlns:cat ="&cat;"
+xmlns:prop ="&prop;"
+xmlns:owl ="http://www.w3.org/2002/07/owl#"
+xmlns:rdf ="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+<owl:Ontology rdf:about="http://www.halowiki.org">
+	<rdfs:comment>HaloWiki Export</rdfs:comment>
+	<rdfs:label>HaloWiki Ontology</rdfs:label>
+</owl:Ontology>
+<owl:Class rdf:about="&cat;DefaultRootConcept">
+	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>
+
+</owl:Class>
+<owl:Class rdf:about="&cat;Car">
+	<rdfs:label xml:lang="en">Car</rdfs:label>
+	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />
+</owl:Class>
+<owl:Class rdf:about="&cat;Sports_car">
+	<rdfs:label xml:lang="en">Sports car</rdfs:label>
+	<rdfs:subClassOf rdf:resource="&cat;Car" />
+</owl:Class>
+<owl:Class rdf:about="&cat;Electric_car">
+	<rdfs:label xml:lang="en">Electric car</rdfs:label>
+	<rdfs:subClassOf rdf:resource="&cat;Car" />
+
+</owl:Class>
+<owl:Class rdf:about="&cat;Engine">
+	<rdfs:label xml:lang="en">Engine</rdfs:label>
+	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />
+</owl:Class>
+<owl:Class rdf:about="&cat;GardeningLog">
+	<rdfs:label xml:lang="en">GardeningLog</rdfs:label>
+	<rdfs:subClassOf rdf:resource="&cat;DefaultRootConcept" />
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Body_Form">
+	<rdfs:label xml:lang="en">Body Form</rdfs:label>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;Car">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Body_Form" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+
+<owl:DatatypeProperty rdf:about="&prop;Description">
+	<rdfs:label xml:lang="en">Description</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Description" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;DiscourseState">
+	<rdfs:label xml:lang="en">DiscourseState</rdfs:label>
+
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;DiscourseState" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;Glossary">
+	<rdfs:label xml:lang="en">Glossary</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Glossary" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Ancestor">
+	<rdfs:label xml:lang="en">Has Ancestor</rdfs:label>
+	<rdfs:subPropertyOf rdf:resource="&prop;Has_Father"/>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Ancestor" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Child">
+	<rdfs:label xml:lang="en">Has Child</rdfs:label>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;Person">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Child" />
+				<owl:allValuesFrom rdf:resource="&cat;Person" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Child" />
+				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:maxCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Child" />
+				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;Has_Daughter">
+	<rdfs:label xml:lang="en">Has Daughter</rdfs:label>
+	<rdfs:subPropertyOf rdf:resource="&prop;Has_Child"/>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Daughter" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Daughter" />
+				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">-1</owl:minCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Electric_engine">
+	<rdfs:label xml:lang="en">Has Electric engine</rdfs:label>
+	<rdfs:subPropertyOf rdf:resource="&prop;Has_Engine"/>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;Person">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Electric_engine" />
+				<owl:allValuesFrom rdf:resource="&cat;Person" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Electric_engine" />
+				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:maxCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Engine">
+	<rdfs:label xml:lang="en">Has Engine</rdfs:label>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;Car">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Engine" />
+				<owl:allValuesFrom rdf:resource="&cat;Engine" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Engine" />
+				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Engine" />
+				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Father">
+	<rdfs:label xml:lang="en">Has Father</rdfs:label>
+	<rdfs:subPropertyOf rdf:resource="&prop;Has_Ancestor"/>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Father" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Has_Gears">
+	<rdfs:label xml:lang="en">Has Gears</rdfs:label>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Gears" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="&prop;Has_Son">
+	<rdfs:label xml:lang="en">Has Son</rdfs:label>
+	<rdfs:subPropertyOf rdf:resource="&prop;Has_Child"/>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_Son" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;Has_adress">
+	<rdfs:label xml:lang="en">Has adress</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_adress" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+
+<owl:DatatypeProperty rdf:about="&prop;Has_name">
+	<rdfs:label xml:lang="en">Has name</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_name" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_name" />
+				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">2</owl:maxCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_name" />
+				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:minCardinality>
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;Has_torsional_moment">
+	<rdfs:label xml:lang="en">Has torsional moment</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;Engine">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Has_torsional_moment" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+
+<owl:ObjectProperty rdf:about="&prop;Is_equal_to">
+	<rdfs:label xml:lang="en">Is equal to</rdfs:label>
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Is_equal_to" />
+               <owl:allValuesFrom rdf:resource="&cat;DefaultRootConcept" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+<owl:ObjectProperty rdf:about="&prop;Is_parent_of">
+	<rdfs:label xml:lang="en">Is parent of</rdfs:label>
+	<owl:inverseOf rdf:resource="&prop;Has_Child"/>
+	<owl:equivalentProperty rdf:resource="&prop;Parent_of"/>
+
+</owl:ObjectProperty>
+	<owl:Class rdf:about="&cat;Car">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Is_parent_of" />
+				<owl:allValuesFrom rdf:resource="&cat;Car" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+</owl:Class>
+<owl:DatatypeProperty rdf:about="&prop;Question">
+	<rdfs:label xml:lang="en">Question</rdfs:label>
+</owl:DatatypeProperty>
+	<owl:Class rdf:about="&cat;DefaultRootConcept">
+		<rdfs:subClassOf>
+			<owl:Restriction>
+				<owl:onProperty rdf:resource="&prop;Question" />
+				<owl:allValuesFrom rdf:resource="&xsd;string" />
+			</owl:Restriction>
+		</rdfs:subClassOf>
+
+</owl:Class>
+</rdf:RDF>
