@@ -98,6 +98,7 @@ function haclfSetupExtension() {
 	$wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
 	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
+	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 
 	
@@ -324,6 +325,24 @@ function haclfGetUserID($user = null) {
  */
 function haclfIsFileCacheable($article) {
 	return $article->getTitle()->getNamespace() != HACL_NS_ACL;
+}
+
+/**
+ * The hash for the page cache depends on the user.
+ *
+ * @param string $hash
+ * 		A reference to the hash. This the ID of the current user is appended
+ * 		to this hash.
+ * 
+ *
+ */
+function haclfPageRenderingHash($hash) {
+	
+	global $wgUser;
+	if (is_object($wgUser)) {
+		$hash .= '!'.$wgUser->getId();
+	}
+	return true;
 }
 
 /**
