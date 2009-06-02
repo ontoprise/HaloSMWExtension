@@ -48,7 +48,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$wgOut->setPageTitle("Web Service Repository");
 
 		global $wgCookiePrefix;
-		 
+			
 		$allowed = false;
 		global $wgUser;
 		$user = $wgUser;
@@ -60,7 +60,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 				}
 			}
 		}
-		 
+			
 		$html = "";
 
 
@@ -72,11 +72,11 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_wwsr_intro')."</span></h2>";
 
+		$html .= "<p>".wfMsg('smw_wwsr_rep_intro')."</p>";
 		if($allowed){
-			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: right\">".wfMsg('smw_wwsr_update')."</th><th style=\"text-align: right\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
-			$html .= "<p>".wfMsg('smw_wwsr_noconfirm')."</p>";
-			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
+			$html .= "<table width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
 		}
 		foreach($webServices as $ws){
 			$wsUrl = Title::newFromID($ws->getArticleID())->getFullURL();
@@ -107,13 +107,22 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
-				$html .= "<td style=\"text-align: right\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
-				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none\">".wfMsg('smw_wwsr_updating')."</div></td>";
+				$html .= "<td style=\"text-align: center\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
+				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\">".wfMsg('smw_wwsr_updating')."</div></td>";
+			}
+			global $wgArticlePath;
+			if(strpos($wgArticlePath, "?") > 0){
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
+			} else {
+				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
+			}
+			$html .= "<td style=\"text-align: center\"><button id=\"edit".$ws->getArticleID()."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\">".wfMsg('smw_wwsr_rep_edit')."</button>";
 
+			if($allowed){
 				if($ws->getConfirmationStatus() != "true"){
-					$html .= "<td style=\"text-align: right\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
+					$html .= "<td style=\"text-align: center\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
 				} else {
-					$html .= "<td style=\"text-align: right\">".wfMsg('smw_wwsr_confirmed')."</td></tr>";
+					$html .= "<td style=\"text-align: center\">".wfMsg('smw_wwsr_confirmed')."</td></tr>";
 				}
 			} else {
 				$html .= "</tr>";
