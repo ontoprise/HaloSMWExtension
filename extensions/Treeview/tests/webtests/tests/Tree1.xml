@@ -23,7 +23,7 @@
                 description="Check for addSmwData"
                 text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, null, null, null, null, null, 1);"
             />
-            <verifyText
+        	<verifyText
                 description="Check node exists: Contents"
                 text="tv#{treeId}.add(1,0,'&lt;a href=\&quot;${wgScript}/Help:Contents\&quot; title=\&quot;Help:Contents\&quot;&gt;Contents&lt;/a&gt;');"
             />
