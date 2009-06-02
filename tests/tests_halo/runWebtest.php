@@ -33,7 +33,7 @@ if ($testDir == null) {
     echo "\nTestdir missing. Use -t to set the extension's test directory.\n$USAGE\n";
     die();
 }
-$buildTarget = isWindows() ? $testDir.'\\makeWebtests.xml' : $testDir.'/makeWebtests.xml';
+$buildTarget = isWindows() ? $testDir.'\makeWebtests.xml' : $testDir.'/makeWebtests.xml';
 if (!file_exists($buildTarget)) {
     echo "\nmakeWebtests.xml in Testdir not found. Make sure that there is a build file for webtests existing.\n$USAGE\n";
     die();
@@ -48,13 +48,18 @@ if ($webtestDir == null) {
     }
 }
 
-$tp= strpos(strtolower($webtestDir), "bin");
-if ($tp !== false)
-    $webtestBaseDir = substr($webtestDir, 0, $tp - 1);
+
+if (preg_match('/sh|bat$/i', $webtestDir)) {
+  $tp = strrpos($webtestDir, isWindows() ? '\\' : '/');
+  $webtestDir = substr($webtestDir, 0, $tp);
+}
+if (preg_match('@bin(\\|/)?$@i', $webtestDir))
+  $webtestBaseDir = substr($webtestDir, 0, -4);
 else $webtestBaseDir = $webtestDir;
+
 if (isWindows()) {
-    $webtestExec = $webtestBaseDir.'\\bin\\webtest.bat';
-    $webtestXML = $webtestBaseDir.'\\webtest.xml';
+    $webtestExec = $webtestBaseDir.'\bin\webtest.bat';
+    $webtestXML = $webtestBaseDir.'\webtest.xml';
 }
 else {
     $webtestExec = $webtestBaseDir.'/bin/webtest.sh';
