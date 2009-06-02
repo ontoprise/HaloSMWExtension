@@ -1,11 +1,21 @@
 <?xml version="1.0"?>
 
-<project name="testHalo" default="testAll">
+<project name="testHaloACL" default="testAll">
 	
-	<property name="wikipath" value="mediawiki"/>
+	<property name="wikipath" value="develwiki"/>
 	
 	<target name="testAll" description="runs all the tests">
-		<ant antfile="basictests.xml"/>
+<!--
+-->		
+		
+		<ant antfile="createUsers.xml"/> 
+		<ant antfile="createArticles.xml"/>
+		<ant antfile="pageTransclusion.xml"/>
+		<ant antfile="hiddenInstanceOfSubcat.xml"/>
+		<ant antfile="preloading.xml"/>
+<!--
+		<ant antfile="exportPages.xml"/>
+-->		
 		
 	</target>
 </project>

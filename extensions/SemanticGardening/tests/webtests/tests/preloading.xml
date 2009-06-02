@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="PageTransclusion" default="testPreloading">
+
+	&login;
+
+	<target name="testPreloading">
+			<antcall target="loadPage">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="This page is not accessible for.*"/>
+			</antcall>
+			<antcall target="loadPage">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="Instances of the.*"/>
+			</antcall>
+			<antcall target="loadPage">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="Instances of the.*"/>
+			</antcall>
+			<antcall target="loadPage">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="The '''namespace User'''.*"/>
+			</antcall>
+	</target>
+		
+	<target name="loadPage">
+		<webtest name="Preloading as NormalUser: ${page}">
+
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
+			description="Preload page ${page} as NormalUser." />
+		
+		<verifyTextarea name="wpTextbox1"
+						regex="true"
+					    text="${content}"/>
+		</webtest>
+			
+		<webtest name="Preloading as RestrictedUser: ${page}">
+		
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
+			description="Preload page ${page} as RestrictedUser" />
+		
+		<verifyTextarea name="wpTextbox1"
+						regex="true"
+					    text="^$"/>
+		</webtest>
+	</target>
+	
+</project>
