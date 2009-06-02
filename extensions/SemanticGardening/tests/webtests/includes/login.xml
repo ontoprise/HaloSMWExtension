@@ -1,0 +1,8 @@
+<target name="login">
+	<invoke
+    	url="http://localhost/${wikipath}/index.php?title=Special:UserLogin"
+    	description="Login into the wiki" />
+	<setInputField htmlId="wpName1" value="${user}" />
+	<setInputField htmlId="wpPassword1" value="${pwd}" />
+	<clickButton htmlId="wpLoginattempt" />
+</target>   
