@@ -5,6 +5,7 @@ This file is generated automatically from the information contained in the folde
 Do not edit it else you risk to lose your changes.
 -->
 
-<!ENTITY goToGardening SYSTEM "../includes/goToGardening.xml">
-<!ENTITY goToLogin SYSTEM "../includes/goToLogin.xml">
+<!ENTITY createArticle SYSTEM "../includes/createArticle.xml">
+<!ENTITY goToLogout SYSTEM "../includes/goToLogout.xml">
+<!ENTITY login SYSTEM "../includes/login.xml">
 
