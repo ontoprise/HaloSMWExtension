@@ -1238,7 +1238,7 @@ Query.prototype = {
 			for(var j=0; j<this.categories[i].length; j++){
 				asktext += this.categories[i][j].unescapeHTML();
 				if(j<this.categories[i].length-1){ //add disjunction operator
-					asktext += "||" + gLanguage.getMessage('CATEGORY_NS');
+					asktext += "||";
 				}
 			}
 			asktext += "]]";
@@ -1375,6 +1375,7 @@ Query.prototype = {
 *  QIHelper.js
 *  Manages major functionalities and GUI of the Query Interface
 *  @author Markus Nitsche [fitsch@gmail.com]
+*  @author Joerg Heizmann
 */
 
 var qihelper = null;
@@ -1603,6 +1604,15 @@ previewResultPrinter:function(){
 		params += $('layout_order').value=="ascending"?'ascending,':'descending,';
 		params += $('layout_default').value==""?',':$('layout_default').value;
 		params += $('layout_headers').checked?'show':'hide';
+		if ($('layout_format').value == "exhibit"){
+			if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
+				params += ",'tiles,tabular'";
+			} else if ($('x_tiles_check').checked) {
+				params += ",tiles";
+			} else {
+				params += ",tabular";
+			}
+		}	
 		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openResultPreview.bind(this));
 	}
 	else { // query is empty
@@ -1632,6 +1642,13 @@ openResultPreview:function(request){
 	this.pendingElement.hide();
 	$('previewcontent').innerHTML = request.responseText;
 	smw_tooltipInit();
+	
+	// post processing of javascript for resultprinters:
+	switch ($('layout_format').value) {
+		case "timeline": smw_timeline_init(); break;
+		case "eventline": smw_timeline_init(); break;
+		case "exhibit": createExhibit(); break;
+	}		
 },
 
 
@@ -1705,7 +1722,16 @@ getFullAsk:function(){
 	} else if ($('layout_format').value == "rss"){
 		starttag += $('rsstitle').value == "" ? '' : 'rsstitle="' + $('rsstitle').value + '" ';
 		starttag += $('rssdescription').value == "" ? '' : 'rssdescription="' + $('rssdescription').value + '" ';
+	} else if ($('layout_format').value == "exhibit"){
+		if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
+			params += ",views=tiles,tabular";
+		} else if ($('x_tiles_check').checked) {
+			params += ",views=tiles";
+		} else {
+			params += ",views=tabular";
+		}		
 	}
+
 	starttag += ">";
 	return starttag + asktext + "</ask>";
 },
@@ -1731,14 +1757,24 @@ getFullParserAsk:function(){
 	} else if ($('layout_format').value == "rss"){
 		fullQuery += $('rsstitle').value == "" ? '' : ' | rsstitle=' + $('rsstitle').value;
 		fullQuery += $('rssdescription').value == "" ? '' : ' | rssdescription=' + $('rssdescription').value;
+ 	} else if ($('layout_format').value == "exhibit"){
+		if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
+			fullQuery += "| views=tiles,tabular";
+		} else if ($('x_tiles_check').checked) {
+			fullQuery += "| views=tiles";
+		} else {
+			fullQuery += "| views=tabular";
+		} 		
 	}
+
+	
 	fullQuery += "|}}";
 	
 	return fullQuery;
 },
 
 insertAsNotification: function() {
-	var query = this.recurseQuery(0);
+	var query = this.getFullParserAsk();
 	document.cookie = "NOTIFICATION_QUERY=<snq>"+query+"</snq>";
 	if (query != "") {
 		var snPage = $('qi-insert-notification-btn').readAttribute('specialpage');
@@ -1856,16 +1892,16 @@ newPropertyDialogue:function(reset){
 	if (cats != null) {
 		for(var i=0, n = cats.length; i<n; i++) {
 			catconstraint = cats[i];
-			constraintstring += "[["			
+			if (i>0) {
+			constraintstring += ",";
+			}			
 			for (var j=0, m = catconstraint.length; j<m; j++) {
-				orconstraint = catconstraint[j];				
+				orconstraint = catconstraint[j];
 				if (j>0) {
-					constraintstring += "||" + orconstraint;
-				} else {
-					constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont') + orconstraint;
+					constraintstring += "|";
 				}
+				constraintstring += gLanguage.getMessage('CATEGORY_NS', 'cont')+orconstraint;
 			}
-			constraintstring += "]]";			
 		}
 	}
 	
@@ -1966,9 +2002,9 @@ addDialogueInput:function(){
 
 		cell = newrow.insertCell(2);
 		if(this.propIsEnum){ // if enumeration, a select box is used instead of a text input field
-			var tmphtml = '<select id="input' + this.activeInputs + '" style="width:100%">';
+			var tmphtml = '<select id="input' + this.activeInputs + '">';
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + this.enumValues[i] + '">' + this.enumValues[i] + '</option>';
+				tmphtml += '<option value="' + this.enumValues[i] + '" style="width:100%">' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			cell.innerHTML = tmphtml;
@@ -2077,10 +2113,10 @@ adaptDialogueToProperty:function(request){
 				this.propIsEnum = true;
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
-				var option = '<select id="input3" style="width:100%">'; //create html for option box
+				var option = '<select id="input3">'; //create html for option box
 				for(var i = 0; i < possibleValues.length; i++){
 					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
-					option += '<option value="' + possibleValues[i] + '">' + possibleValues[i] + '</option>';
+					option += '<option value="' + possibleValues[i] + '" style="width:100%">' + possibleValues[i] + '</option>';
 				}
 				option += "</select>";
 				$('dialoguecontent').rows[3].cells[2].innerHTML = option;
@@ -2199,10 +2235,10 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration())
 			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
-			var tmphtml = '<select id="input3" style="width:100%">';
+			var tmphtml = '<select id="input3">';
 			this.enumValues = prop.getEnumValues();
 			for(var i = 0; i < this.enumValues.length; i++){
-				tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
+				tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
 			tmphtml += '</select>';
 			$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
@@ -2212,17 +2248,17 @@ loadPropertyDialogue:function(id){
 		if(!prop.isEnumeration()){
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				$('input' + (i+2)).value = unescapeQueryHTML(vals[i][2]);
+				$('input' + (i+3)).value = unescapeQueryHTML(vals[i][2]);
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
 			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				var tmphtml = '<select id="input' + (i+2) + '" style="width:100%">';
+				var tmphtml = '<select id="input' + (i+2) + '">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
-					tmphtml += '<option value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
+					tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
 				}
 				tmphtml += '</select>';
 				$('dialoguecontent').rows[i+3].cells[2].innerHTML = tmphtml;
@@ -2491,7 +2527,7 @@ copyToClipboard:function(){
 		    smwhgLogger.log("Copy query to clipboard","QI","query_copied");
 		}
 		/*ENDLOG*/
-		var text = this.getFullAsk();
+		var text = this.getFullParserAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
 			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
@@ -2560,7 +2596,7 @@ showFullAsk:function(type, toggle){
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
 	if(type == "parser")
-		ask = ask.replace(/\|/g, "\n|");
+		ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
 	$('fullAskText').value = ask;
 },
 
@@ -2665,13 +2701,20 @@ initializeDownload:function(request){
 checkFormat:function(){
 	if($('layout_format').value == "template"){
 		$('templatenamefield').style.display = "";
+		$('exhibitfield').style.display = "none";		
 		$('rssfield').style.display = "none";
 	} else if ($('layout_format').value == "rss"){
 		$('rssfield').style.display = "";
+		$('exhibitfield').style.display = "none";
 		$('templatenamefield').style.display = "none";
+	} else if ($('layout_format').value == "exhibit") {
+		$('exhibitfield').style.display = "";
+		$('templatenamefield').style.display = "none";
+		$('rssfield').style.display = "none";		
 	} else {
 		$('templatenamefield').style.display = "none";
 		$('rssfield').style.display = "none";
+		$('exhibitfield').style.display = "none";
 	}
 	// update result preview
 	this.updatePreview();
