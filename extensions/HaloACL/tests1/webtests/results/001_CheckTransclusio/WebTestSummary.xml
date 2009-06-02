@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <summary starttime="Tue Jun 02 10:29:42 CEST 2009" duration="60953" name="CheckTransclusion" successful="yes">
+<topsteps notexecuted="0" failed="0" successful="5" total="5"/>
+<steps notexecuted="0" failed="0" successful="87" total="87"/>
+<timingprofile number="31" average="1948">
+<range number="0" to="1" from="0"/>
+<range number="29" to="3" from="1"/>
+<range number="2" to="5" from="3"/>
+<range number="0" to="10" from="5"/>
+<range number="0" to="30" from="10"/>
+<range number="0" from="30"/>
+</timingprofile>
+</summary>

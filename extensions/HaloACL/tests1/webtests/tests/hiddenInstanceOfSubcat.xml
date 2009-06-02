@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="PageTransclusion" default="testHiddenInstanceOfSubcat">
+
+	&login;
+
+	<target name="testHiddenInstanceOfSubcat">
+
+		<webtest name="HiddenInstanceOfSubcat">
+			<antcall target="loadPage">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="heading" value="HiddenInstanceOfSubcat.*"/>
+			</antcall>
+		</webtest>
+	</target>
+		
+	<target name="loadPage">
+
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as NormalUser." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//div[@id='innercontent']/h1" 
+					 regex="true"
+			         text="${heading}" />
+
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as anonymous user." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//div[@id='innercontent']/h1" 
+			         text="Permission denied" />
+	</target>
+	
+</project>

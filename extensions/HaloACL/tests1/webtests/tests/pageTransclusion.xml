@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="PageTransclusion" default="testPageTransclusion">
+
+	&login;
+
+	<target name="testPageTransclusion">
+
+		<webtest name="CheckTransclusion">
+			<antcall target="transcludePage">
+				<param name="page" value="ACLPageTransclusion"/>
+				<param name="heading" value="Hidden page"/>
+				<param name="content" value="This page is not accessible for.*"/>
+			</antcall>
+			<antcall target="transcludePage">
+				<param name="page" value="ACLCategoryTransclusion"/>
+				<param name="heading" value="Hidden instance"/>
+				<param name="content" value="Instances of the category ProtectedCategory.*"/>
+			</antcall>
+			<antcall target="transcludePage">
+				<param name="page" value="ACLSubcategoryTransclusion"/>
+				<param name="heading" value="Hidden instance of a subcategory"/>
+				<param name="content" value="Instances of the.*"/>
+			</antcall>
+			<antcall target="transcludePage">
+				<param name="page" value="ACLNamespaceTransclusion "/>
+				<param name="heading" value="Hidden namespace"/>
+				<param name="content" value="The namespace User is not accessible for.*"/>
+			</antcall>
+			<antcall target="transcludeRedirect">
+			</antcall>
+		</webtest>
+	</target>
+		
+	<target name="transcludePage">
+
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as NormalUser." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//span[@class='mw-headline']" 
+			         text="${heading}" />
+     	<verifyXPath description="Verify transcluded text is contained in the page"
+			         xpath="//div[@id='bodyContent']/p[1]"
+			         regex="true"
+			         text="${content}"/>
+
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as anonymous user." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//span[@class='mw-headline']" 
+			         text="${heading}" />
+	 	<verifyXPath description="Verify transcluded text is not contained in the page"
+			         xpath="//div[@id='bodyContent']/p[1]"
+			         regex="true"
+			         text="Permission denied.*"/>
+	</target>
+	
+	<target name="transcludeRedirect">
+
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/ACLRedirectTransclusion "
+			description="Open page ACLRedirectTransclusion as NormalUser." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//div[@id='bodyContent']/p[1]"
+					 regex="true"
+			         text="A protected page is included:.*" />
+     	<verifyXPath description="Verify transcluded text is contained in the page"
+			         xpath="//div[@id='bodyContent']/p[2]"
+			         regex="true"
+			         text="This page is not accessible for.*"/>
+
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/ACLRedirectTransclusion"
+			description="Open page ACLRedirectTransclusion as anonymous user." />
+		<verifyXPath description="Check if page is included" 
+			         xpath="//div[@id='bodyContent']/p[1]"
+					 regex="true"
+			         text="A protected page is included:.*" />
+	 	<verifyXPath description="Verify transcluded text is not contained in the page"
+			         xpath="//div[@id='bodyContent']/ol/li"
+			         regex="true"
+			         text="REDIRECT HiddenPage.*"/>
+		<clickLink label="HiddenPage"/>
+		<verifyText description="Verify that text is contained in the page" 
+					text="Permission denied"/>		
+	</target>
+	
+</project>

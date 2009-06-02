@@ -1,0 +1,3 @@
+<invoke
+    url="http://localhost/${wikipath}/index.php?title=Special:UserLogout"
+    description="Log out" />

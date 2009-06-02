@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="PageTransclusion" default="testCreateUsers">
+
+	<target name="testCreateUsers">
+		<antcall target="createUser">
+			<param name="user" value="RestrictedUser"/>
+		</antcall>
+		<antcall target="createUser">
+			<param name="user" value="NormalUser"/>
+		</antcall>
+	</target>
+
+	<target name="createUser">
+		<webtest name="CreateUser">
+			<invoke url="http://localhost/${wikipath}/index.php/Special:UserLogin"
+				description="Create new user ${user}" />
+			<clickLink label="Create an account"/>
+			<setInputField name="wpName" 
+						   value="${user}"/>
+			<setInputField description="Set password field wpPassword: acl" 
+				           name="wpPassword" 
+				           value="acl"/>
+			<setInputField description="Set password field wpRetype: acl" 
+				           name="wpRetype" 
+						   value="acl"/>
+			<clickButton label="Create account"/>
+			<verifyTitle text="Login successful - Halo3wiki"/>
+			<clickLink label="Log out"/>
+		</webtest>
+	</target>
+</project>
+

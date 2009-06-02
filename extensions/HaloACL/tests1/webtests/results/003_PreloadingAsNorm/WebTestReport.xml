@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<summary Implementation-Title="Canoo Webtest" Implementation-Version="R_1758">
+    <testresult endtime="Tue Jun 02 10:31:02 CEST 2009"
+        location="C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests1\webtests\tests\preloading.xml:27: "
+        starttime="Tue Jun 02 10:30:55 CEST 2009" successful="yes" testspecname="Preloading as NormalUser: HiddenPage">
+        <config>
+            <parameter name="port" value="80"/>
+            <parameter name="summary" value="yes"/>
+            <parameter name="protocol" value="http"/>
+            <parameter name="host" value="localhost"/>
+            <parameter name="resultpath" value="C:\Programme\MediaWiki\HaloSMWExtension\extensions\HaloACL\tests1\webtests\results"/>
+            <parameter name="saveprefix" value="response"/>
+            <parameter name="basepath" value="null"/>
+            <parameter name="resultfile" value="WebTestReport.xml"/>
+            <parameter name="haltonerror" value="no"/>
+            <parameter name="errorproperty" value="webtest.error"/>
+            <parameter name="saveresponse" value="yes"/>
+            <parameter name="haltonfailure" value="no"/>
+            <parameter name="failureproperty" value="webtest.failure"/>
+            <parameter name="autorefresh" value="false"/>
+            <parameter name="showhtmlparseroutput" value="yes"/>
+            <parameter name="timeout" value="300"/>
+        </config>
+        <results>
+            <step duration="3532" result="completed" taskName="antcall">
+                <parameter name="target" value="login"/>
+                <step description="Login into the wiki" duration="2141" result="completed" taskName="invoke">
+                    <parameter name="url" value="http://localhost/develwiki/index.php?title=Special:UserLogin"/>
+                    <resultFile name="001_response_invoke.html"/>
+                    <htmlparser>
+                        <error col="70" line="4" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="53" line="10" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="50" line="11" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="136" line="12" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="117" line="13" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="49" line="14" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="128" line="15" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="164" line="16" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="167" line="17" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="110" line="19" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="110" line="20" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <warning col="17" line="23" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Character content found within element &lt;head&gt;. Inserting proper parent element &lt;body&gt;.</warning>
+                        <error col="105" line="23" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                        <error col="48" line="26" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="52" line="26" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                        <error col="42" line="1" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing whitespace before attribute "src".</error>
+                        <error col="144" line="77" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="144" line="88" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="143" line="89" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <warning col="150" line="89" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Bare ampersand found.</warning>
+                        <error col="250" line="89" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="320" line="125" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="314" line="160" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="207" line="179" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="25" line="215" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="25" line="223" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="11" line="232" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="96" line="238" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="34" line="240" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                        <error col="175" line="262" url="http://localhost/develwiki/index.php?title=Special:UserLogin">Missing attribute name.</error>
+                    </htmlparser>
+                </step>
+                <step duration="0" result="completed" taskName="setInputField">
+                    <parameter name="htmlId" value="wpName1"/>
+                    <parameter name="value" value="NormalUser"/>
+                </step>
+                <step duration="0" result="completed" taskName="setInputField">
+                    <parameter name="htmlId" value="wpPassword1"/>
+                    <parameter name="value" value="acl"/>
+                </step>
+                <step duration="1329" result="completed" taskName="clickButton">
+                    <parameter name="htmlId" value="wpLoginattempt"/>
+                    <resultFile name="002_response_clickButton.html"/>
+                    <htmlparser>
+                        <error col="70" line="4" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="53" line="10" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="50" line="11" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="136" line="12" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="117" line="13" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="49" line="14" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="128" line="15" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="164" line="16" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="167" line="17" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="110" line="19" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="110" line="20" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <warning col="17" line="23" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Character content found within element &lt;head&gt;. Inserting proper parent element &lt;body&gt;.</warning>
+                        <error col="105" line="23" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                        <error col="48" line="26" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="52" line="26" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                        <error col="42" line="1" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing whitespace before attribute "src".</error>
+                        <error col="144" line="79" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="144" line="93" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="143" line="94" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <warning col="150" line="94" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Bare ampersand found.</warning>
+                        <error col="250" line="94" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="320" line="130" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="314" line="165" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="207" line="184" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                        <error col="175" line="223" url="http://localhost/develwiki/index.php?title=Special:UserLogin&amp;action=submitlogin&amp;type=login">Missing attribute name.</error>
+                    </htmlparser>
+                </step>
+            </step>
+            <step description="Preload page HiddenPage as NormalUser." duration="3578"
+                result="completed" taskName="invoke">
+                <parameter name="url" value="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage"/>
+                <resultFile name="003_response_invoke.html"/>
+                <htmlparser>
+                    <error col="70" line="4" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="53" line="10" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="50" line="11" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="136" line="12" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="123" line="13" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="117" line="14" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="128" line="15" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="49" line="16" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="128" line="17" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="160" line="18" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="163" line="19" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="110" line="21" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="110" line="22" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <warning col="17" line="25" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Character content found within element &lt;head&gt;. Inserting proper parent element &lt;body&gt;.</warning>
+                    <error col="105" line="25" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                    <error col="48" line="28" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="52" line="28" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Unsupported syntax starting with "&lt;!". Skipping to &gt;.</error>
+                    <error col="42" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing whitespace before attribute "src".</error>
+                    <error col="144" line="82" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="144" line="96" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="143" line="97" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <warning col="150" line="97" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Bare ampersand found.</warning>
+                    <error col="250" line="97" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="320" line="153" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="314" line="188" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="207" line="211" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="48" line="261" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="64" line="262" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="63" line="264" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="67" line="266" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="90" line="298" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="100" line="307" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="185" line="307" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="191" line="307" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="97" line="309" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="97" line="310" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="123" line="313" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="167" line="314" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="149" line="316" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="84" line="320" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="175" line="351" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="76" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <error col="230" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <warning col="237" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Element &lt;div&gt; not closed properly.</warning>
+                    <warning col="183" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Element &lt;div&gt; not closed properly.</warning>
+                    <warning col="191" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Element &lt;div&gt; not closed properly.</warning>
+                    <warning col="183" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Element &lt;div&gt; not closed properly.</warning>
+                    <warning col="638" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">End element &lt;td&gt; automatically closes element &lt;span&gt;.</warning>
+                    <warning col="638" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">End element &lt;td&gt; automatically closes element &lt;span&gt;.</warning>
+                    <error col="782" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Missing attribute name.</error>
+                    <warning col="793" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">End element &lt;tr&gt; automatically closes element &lt;td&gt;.</warning>
+                    <warning col="189" line="1" url="http://localhost/develwiki/index.php?title=abc&amp;action=edit&amp;preload=HiddenPage">Element &lt;div&gt; not closed properly.</warning>
+                </htmlparser>
+            </step>
+            <step duration="0" result="completed" taskName="verifyTextarea">
+                <parameter name="name" value="wpTextbox1"/>
+                <parameter name="regex" value="true"/>
+                <parameter name="text" value="This page is not accessible for.*"/>
+            </step>
+        </results>
+    </testresult>
+</summary>

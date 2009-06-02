@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="ExportPages" default="testExportPages">
+
+	&login;
+
+	<target name="testExportPages">
+		<antcall target="export">
+			<param name="user" value="NormalUser"/>
+		</antcall>
+		<verifyText description="Verify presence of page: Hiddenpage"
+					text="HiddenPage" />
+<!--		
+		<verifyText description="Verify presence of page: HiddenInstance"
+					text="HiddenInstance" />
+		<verifyText description="Verify presence of page: HiddenInstanceOfSubcat"
+					text="HiddenInstanceOfSubcat" />
+		<verifyText description="Verify presence of page: User:HiddenUser"
+					text="User:HiddenUser" />
+
+		<antcall target="export">
+			<param name="user" value="RestrictedUser"/>
+		</antcall>
+-->		
+	</target>
+		
+	<target name="export">
+		<webtest name="Exporting as ${user}">
+
+		<antcall target="login">
+			<param name="user" value="${user}"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Export"
+			description="Open Special:Export." />
+			
+		<setCheckbox name="wpDownload"
+					 checked="false"
+					 description="Do not save as file."/>
+		<setInputField name="pages" value="HiddenPage&#10;HiddenInstance&#10;HiddenInstanceOfSubcat&#10;User:HiddenUser"/>
+		<clickButton label="Export"/>		
+		</webtest>
+			
+	</target>
+	
+</project>
