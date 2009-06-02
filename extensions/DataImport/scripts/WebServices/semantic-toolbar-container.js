@@ -66,7 +66,7 @@ WebServiceToolBar.prototype = {
 	},
 	
 	createLinkToSpecialPage : function(){
-		var response = "<span onmousedown=\"wsToolBar.submitEditForm()\" onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">" + gLanguage.getMessage("smw_wwsu_addwscall") + "</span>";
+		var response = "<a onmousedown=\"wsToolBar.submitEditForm()\" onclick=\"wsToolBar.openSpecialPage()\" style=\"cursor: pointer\">" + gLanguage.getMessage("smw_wwsu_addwscall") + "</a>";
 		return response;	
 	},
 	
