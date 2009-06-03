@@ -139,7 +139,7 @@ class ACLManager {
             } else if ($category != NULL) {
                 $data .= "\t'category' => \"".str_replace(" ","_",trim($category[0]))."\",\n";
             } else {
-                $data .= "\t'page' => \"".str_replace(" ","_",trim($page[0]))."\",\n";
+                $data .= "\t'page' => \"".$page[0]."\",\n";
             }
                         
             $data .= "\t'action' => \"".$action[0]."\",\n";
