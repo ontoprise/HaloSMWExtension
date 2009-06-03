@@ -1233,6 +1233,7 @@ wgAjaxLicensePreview = {$alp};
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
 		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
+		$destFileTooltipTitle = wfMsg('smw_rm_dest_file_help_tooltip');
 		
 		$wgOut->addHTML( <<<EOT
 <fieldset style='padding:0px 10px;'>
@@ -1254,7 +1255,8 @@ wgAjaxLicensePreview = {$alp};
 			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
-					value="$encDestName" $destOnkeyup />
+					value="$encDestName" $destOnkeyup /></label>
+				<img title="{$destFileTooltipTitle}" class="help-image" src="{$smwgRMScriptPath}/skins/help.gif"></img>
 			</td>
 		</tr>
 		<!--
@@ -1319,7 +1321,7 @@ EOT
 			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>-->
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' $warningChecked/>
 			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . 
-			"</label><img id=\"step1-help-img\" title=\"".wfMsg("smw_rm_ignore_warning_help_tooltip")."\" class=\"help-image\" src=\"".$smwgRMScriptPath."/skins/help.gif\"></img>
+			"</label><img title=\"".wfMsg("smw_rm_ignore_warning_help_tooltip")."\" class=\"help-image\" src=\"".$smwgRMScriptPath."/skins/help.gif\"></img>
 		</td>
 	</tr>
 	$warningRow
