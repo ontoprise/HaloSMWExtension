@@ -125,7 +125,7 @@ init: function() {
 	this.timeouts = {};
 	this.pos = {};
 	var path = this.urlGraphics;
-	var fullPath = wgScriptPath + '/extensions/SemanticForms';
+	var fullPath = wgScriptPath + '/extensions/SemanticForms/';
 	this.slowZoomImg = fullPath + path + 'loading_white.gif';
 	this.slowLoadImg = fullPath + path + 'loading_black.gif';
 	this.iframeSrc = fullPath + path + 'loading_iframe.html';
