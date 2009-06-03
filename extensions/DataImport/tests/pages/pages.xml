@@ -73,11 +73,10 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>WebService:TimeTestWS</title>
     <id>3</id>
     <revision>
-      <id>9</id>
-      <timestamp>2009-05-26T12:14:23Z</timestamp>
+      <id>14</id>
+      <timestamp>2009-05-29T10:28:25Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
@@ -94,7 +93,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
 &lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
 &lt;delay value=&quot;0&quot;/&gt;
 &lt;/queryPolicy&gt;
-&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
 &lt;/WebService&gt;</text>
     </revision>
   </page>
@@ -115,13 +114,11 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>WebService:TimeTestWSOnce</title>
     <id>5</id>
     <revision>
-      <id>5</id>
-      <timestamp>2009-05-26T12:06:25Z</timestamp>
+      <id>13</id>
+      <timestamp>2009-05-28T13:38:36Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;result&quot; &gt; &lt;part name=&quot;co...</comment>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
 &lt;protocol&gt;REST&lt;/protocol&gt;
@@ -136,7 +133,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
 &lt;once/&gt;
 &lt;delay value=&quot;0&quot;/&gt;
 &lt;/queryPolicy&gt;
-&lt;spanOfLife value=&quot;0&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
 &lt;/WebService&gt;</text>
     </revision>
   </page>
@@ -267,6 +264,317 @@ Jump to: navigation, search
       <text xml:space="preserve">{{#ws:TimeTestWSUnconfirmed
 | ?result.complete
 }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSExpires</title>
+    <id>12</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2009-05-29T11:11:46Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;false&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSExpires</title>
+    <id>13</id>
+    <revision>
+      <id>16</id>
+      <timestamp>2009-05-29T11:15:55Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSExpires | ?result.complete }}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSExpires
+| ?result.complete
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreate</title>
+    <id>14</id>
+    <revision>
+      <id>18</id>
+      <timestamp>2009-06-02T14:20:21Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSDelete</title>
+    <id>15</id>
+    <revision>
+      <id>19</id>
+      <timestamp>2009-06-02T15:33:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSDelete</title>
+    <id>16</id>
+    <revision>
+      <id>20</id>
+      <timestamp>2009-06-02T15:34:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSDelete | ?result.complete}}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSDelete | ?result.complete}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSMove</title>
+    <id>17</id>
+    <revision>
+      <id>22</id>
+      <timestamp>2009-06-02T16:08:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSMove</title>
+    <id>18</id>
+    <revision>
+      <id>23</id>
+      <timestamp>2009-06-02T16:09:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSMove | ?result.complete}}</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSMove | ?result.complete}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreateFailure1</title>
+    <id>22</id>
+    <revision>
+      <id>30</id>
+      <timestamp>2009-06-03T10:35:41Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreateFailure2</title>
+    <id>23</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2009-06-03T10:35:59Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;SOAP&lt;/protocol&gt; &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;pass...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;SOAP&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreateFailure3</title>
+    <id>24</id>
+    <revision>
+      <id>34</id>
+      <timestamp>2009-06-03T10:58:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;&quot; /&gt;
+&lt;protocol&gt;SOAP&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreateFailure4</title>
+    <id>25</id>
+    <revision>
+      <id>35</id>
+      <timestamp>2009-06-03T11:02:11Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt; &lt;method name=&quot;&quot; /&gt; &lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  p...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSCreateRESTMissingURI</title>
+    <id>26</id>
+    <revision>
+      <id>36</id>
+      <timestamp>2009-06-03T11:10:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;authentication type=&quot;http&quot; login=&quot;userlogin&quot; password=&quot;password&quot;/&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot;  optional=&quot;true&quot;  path=&quot;dontCare&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;10&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;20&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
     </revision>
   </page>
 </mediawiki>
