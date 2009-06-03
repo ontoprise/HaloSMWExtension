@@ -15,7 +15,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var wgUserLanguageStrings = {
+var wgDIUserLanguageStrings = {
 		'smw_ti_sourceinfo'			: 	'Die folgenden Informationen werden benötigt, damit der Import gestartet werden kann',
 		'smw_ti_source'				: 	'Quelle',
 		'smw_ti_edit'				: 	'editiere',

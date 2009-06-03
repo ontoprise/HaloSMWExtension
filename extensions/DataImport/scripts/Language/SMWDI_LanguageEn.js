@@ -15,6 +15,6 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var wgContLanguageStrings = {
+var wgDIContLanguageStrings = {
 	'WEBSERVICE_NS'           : 'WebService:' //namespace identifier with colon
 }

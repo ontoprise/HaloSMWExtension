@@ -53,22 +53,22 @@ DILanguage.prototype = {
 	getMessage: function(id, type) {
 		switch (type) {
 			case "user":
-				var msg = wgUserLanguageStrings[id];
+				var msg = wgDIUserLanguageStrings[id];
 				if (!msg) {
 					msg = id;
 				} 
 				break;
 				
 			case "cont":
-				var msg = wgContLanguageStrings[id];
+				var msg = wgDIContLanguageStrings[id];
 				if (!msg) {
 					msg = id;
 				} 
 				break;
 			default: 
-				var msg = wgUserLanguageStrings[id];
+				var msg = wgDIUserLanguageStrings[id];
 				if (!msg) {
-					var msg = wgContLanguageStrings[id];
+					var msg = wgDIContLanguageStrings[id];
 					if (!msg) {
 						msg = id;
 					}
