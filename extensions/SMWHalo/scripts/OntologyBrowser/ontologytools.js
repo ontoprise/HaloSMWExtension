@@ -692,7 +692,15 @@ OBOntologyModifier.prototype = {
     renameInstanceNode: function(newInstanceTitle, instanceID) {
         var instanceNode = GeneralXMLTools.getNodeById(dataAccess.OB_cachedInstances, instanceID);
         instanceNode.removeAttribute("title");
-        instanceNode.setAttribute("title", newInstanceTitle);
+        instanceNode.removeAttribute("namespace");
+        var newTitleAndNamespace = newInstanceTitle.split(":");
+        if (newTitleAndNamespace.length == 2) {
+            instanceNode.setAttribute("title", newTitleAndNamespace[1]);
+            instanceNode.setAttribute("namespace",newTitleAndNamespace[0]);
+        } else {
+        	instanceNode.setAttribute("title", newInstanceTitle);
+        	instanceNode.setAttribute("namespace","");
+        }
     },
     
     

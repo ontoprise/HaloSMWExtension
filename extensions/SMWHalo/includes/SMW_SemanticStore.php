@@ -79,7 +79,7 @@
  	/**
  	 * Returns pages of the given namespace.
  	 * 
- 	 * @param $namespaces Array of ns constants.
+ 	 * @param $namespaces Array of ns constants, positive ns constants get or'ed, negative get and'ed and excluded.
  	 * @param $requestoptions SMWRequestOptions object.
  	 * @param $addRedirectTargets If false, redirect are completely ignored. Otherwise their targets are added. 
  	 * 
@@ -132,7 +132,7 @@
 	public abstract function getCategoriesForInstance(Title $instanceTitle, $requestoptions = NULL);
 	
 	/**
-	 * Returns all instances of $categoryTitle including instances of all subcategories of $categoryTitle.
+	 * Returns all articles of $categoryTitle lying in NS_MAIN including articles of all subcategories of $categoryTitle.
 	 * 
 	 * In the case of a cycle in the category inheritance graph, this method has a treshhold
 	 * to stop execution before a stack overflow occurs.
@@ -140,6 +140,17 @@
 	 * @return if $withCategories == true array of tuples (Title instance, Title category), otherwise array of Title
 	 */
 	public abstract function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true); 
+	
+	/**
+     * Returns all instances of $categoryTitle including instances of all subcategories of $categoryTitle.
+     * Articles of any namespace except the category namespace can be returned.
+     * 
+     * In the case of a cycle in the category inheritance graph, this method has a treshhold
+     * to stop execution before a stack overflow occurs.
+     * 
+     * @return if $withCategories == true array of tuples (Title instance, Title category), otherwise array of Title
+     */
+    public abstract function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true); 
 	
 	/**
 	 * Returns all direct instances of $categoryTitle

@@ -708,7 +708,7 @@ OBInstanceActionListener.prototype = {
    	
 	},
 	
-	selectInstance: function (event, node, id, instanceName) {
+	selectInstance: function (event, node, id, instanceName, instanceNamespace) {
 	
 	var e = GeneralTools.getEvent(event);
 	
@@ -726,7 +726,7 @@ OBInstanceActionListener.prototype = {
 		var categoryDIV = $('categoryTree');
 		
 		
-		selectionProvider.fireSelectionChanged(id, instanceName, SMW_INSTANCE_NS, node);
+		selectionProvider.fireSelectionChanged(id, instanceNamespace+":"+instanceName, SMW_INSTANCE_NS, node);
 		smwhgLogger.log(instanceName, "OB","clicked");
 		
 		function callbackOnInstanceSelectToRight(request) {
@@ -765,11 +765,11 @@ OBInstanceActionListener.prototype = {
 	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
-		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName], callbackOnInstanceSelectToRight);
+		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+","+instanceNamespace], callbackOnInstanceSelectToRight);
 	  	} 
 	  	if (OB_LEFT_ARROW == 1) {
 	  		OB_tree_pendingIndicator.show();
-	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceName], callbackOnInstanceSelectToLeft);
+	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceName+","+instanceNamespace], callbackOnInstanceSelectToLeft);
 	  	}
 	
 		}

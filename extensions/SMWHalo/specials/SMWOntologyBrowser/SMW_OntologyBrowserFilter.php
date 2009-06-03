@@ -96,7 +96,7 @@ class SMWOntologyBrowserFilter {
 		}
 			
 		$reqfilter->isCaseSensitive = false;
-		$foundInstances = smwfGetSemanticStore()->getPages(array(NS_MAIN), $reqfilter, true);
+		$foundInstances = smwfGetSemanticStore()->getPages(array(-NS_CATEGORY), $reqfilter, true);
 
 		$result = "";
 		$id = uniqid (rand());
@@ -104,10 +104,11 @@ class SMWOntologyBrowserFilter {
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($foundInstances as $instance) {
 			$title_esc = htmlspecialchars($instance->getDBkey());
+			$namespace = $instance->getNsText();
 			$titleURLEscaped = htmlspecialchars(SMWOntologyBrowserXMLGenerator::urlescape($instance->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instance);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			$result .= "<instance title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" id=\"ID_$id$count\">$gi_issues</instance>";
+			$result .= "<instance title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" namespace=\"$namespace\" id=\"ID_$id$count\">$gi_issues</instance>";
 			$count++;
 		}
 		return $result == '' ? "<instanceList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_instances')."\"/>"  : '<instanceList>'.$result.'</instanceList>';

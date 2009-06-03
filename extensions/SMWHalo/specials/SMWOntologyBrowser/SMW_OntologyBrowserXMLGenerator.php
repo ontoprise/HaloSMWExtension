@@ -87,14 +87,15 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 			$instanceTitle = $instanceTitle->getTitle();
 		}
 		$titleEscaped = htmlspecialchars($instanceTitle->getDBkey()); 
+		$namespace = $instanceTitle->getNsText();
 		$titleURLEscaped = htmlspecialchars(self::urlescape($instanceTitle->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instanceTitle);
  		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
  		if ($instWithCat && $t[1] != NULL) {
  			$categoryTitle = htmlspecialchars($t[1]->getDBkey());
- 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
+ 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
  		} else {
- 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+ 			$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
  		}
 		$count++;
 	}
@@ -166,8 +167,9 @@ public static function encapsulateAsAnnotationList(array & $propertyAnnotations,
 	$issues = $gi_store->getGardeningIssues('smw_consistencybot', SMW_GARDISSUE_MISSING_ANNOTATIONS, NULL, $instance);
 	$result .= SMWOntologyBrowserErrorHighlighting::getMissingAnnotations($issues);	
 	$instanceTitleEscaped = htmlspecialchars($instance->getDBkey()); 
+	$namespaceInstance = $instance->getNsText();
 	$titleURLEscaped = htmlspecialchars(self::urlescape($instance->getDBkey()));
-	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\"/>" : "<annotationsList>".$result."</annotationsList>";
+	return $result == '' ? "<annotationsList isEmpty=\"true\" textToDisplay=\"".wfMsg('smw_ob_no_annotations')."\" title_url=\"$titleURLEscaped\" title=\"$instanceTitleEscaped\" namespace=\"$namespaceInstance\"/>" : "<annotationsList>".$result."</annotationsList>";
 }
 
 

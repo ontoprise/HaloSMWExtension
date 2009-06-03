@@ -235,10 +235,17 @@
 					<xsl:attribute name="class">instance inherited</xsl:attribute>
 				</xsl:when>
 			</xsl:choose>
-			<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this, '<xsl:value-of select="@id"/>', '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+			<xsl:attribute name="onclick">instanceActionListener.selectInstance(event, this, '<xsl:value-of select="@id"/>', '<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>', '<xsl:value-of select="@namespace"/>')</xsl:attribute>
 			<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 			<xsl:variable name="title" select="@title"/>
-			<xsl:value-of select="translate($title, '_', ' ')"/>
+			<xsl:choose>
+			     <xsl:when test="@namespace=''">
+						<xsl:value-of select="translate($title, '_', ' ')"/>
+			     </xsl:when>
+			     <xsl:otherwise>
+			            <xsl:value-of select="@namespace"/>:<xsl:value-of select="translate($title, '_', ' ')"/>
+			     </xsl:otherwise>
+			</xsl:choose>
 			
 		</a>
 		<xsl:call-template name="gissues">
@@ -249,7 +256,14 @@
 		<td>
 		
 		<a class="navigationLink" style="margin-left:5px;">
-		    <xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@title_url"/></xsl:attribute> 
+		<xsl:choose>
+		  <xsl:when test="@namespace=''">
+		      <xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@title_url"/></xsl:attribute>
+		  </xsl:when>
+		  <xsl:otherwise>
+		      <xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@namespace"/>:<xsl:value-of select="@title_url"/></xsl:attribute> 
+		  </xsl:otherwise>
+	    </xsl:choose>
 			{{SMW_OB_OPEN}}
 		</a>
 		
@@ -277,7 +291,7 @@
 	<xsl:otherwise>
 		<xsl:value-of select="@textToDisplay"></xsl:value-of>
 		<a class="navigationLink" style="margin-left:5px;">
-			<xsl:attribute name="href"><xsl:value-of select="$param-wiki-path"/>/<xsl:value-of select="@title"/>?action=annotate</xsl:attribute> 
+			<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@namespace"/>:<xsl:value-of select="@title"/>?action=annotate</xsl:attribute> 
 			{{SMW_OB_ADDSOME}}
 		</a>
 	</xsl:otherwise>
@@ -557,7 +571,7 @@
 							<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="$param-ns-property"/>:<xsl:value-of select="@title_url"/>?action=edit</xsl:attribute> 
 						</xsl:when>
 						<xsl:when test="$typeOfEntity='instance'">
-							<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@title_url"/>?action=edit</xsl:attribute> 
+							<xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="@namespace"/>:<xsl:value-of select="@title_url"/>?action=edit</xsl:attribute> 
 						</xsl:when>
 				</xsl:choose>
 				{{SMW_OB_EDIT}}

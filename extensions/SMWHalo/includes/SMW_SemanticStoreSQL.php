@@ -54,17 +54,38 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
 		$sql = "";
+		$addedNS = 0;
 		if ($namespaces != NULL) {
 			$sql .= '(';
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
 				if ($i > 0) $sql .= ' OR ';
-				$sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
+				if ($namespaces[$i] >= 0) {
+				    $sql .= 'page_namespace='.$db->addQuotes($namespaces[$i]);
+				    $addedNS++;
+				}
 			}
-			if (count($namespaces) == 0) $sql .= 'true';
+			if ($addedNS == 0) $sql .= 'true';
 			$sql .= ') ';
 		} else  {
 			$sql = 'true';
 		}
+		
+	   $sql .= " AND ";	
+	   $addedNS = 0;
+	   if ($namespaces != NULL) {
+            $sql .= '(';
+            for ($i = 0, $n = count($namespaces); $i < $n; $i++) { 
+                if ($i > 0) $sql .= ' AND ';
+                if ($namespaces[$i] < 0) {
+                    $sql .= 'page_namespace!='.$db->addQuotes(-$namespaces[$i]);
+                    $addedNS++;
+                }
+            }
+            if ($addedNS == 0) $sql .= 'true';
+            $sql .= ') ';
+        } else  {
+            $sql = 'true';
+        }
 		
 		$sql .= DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 		
@@ -233,15 +254,23 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
         return $result;
     }
 	
-	function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
+    function getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
+    	return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, true);
+    }
+    
+    function getAllInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true) {
+        return $this->_getInstances($categoryTitle, $requestoptions, $withCategories, false);
+    }
+    
+	private function _getInstances(Title $categoryTitle, $requestoptions = NULL, $withCategories = true, $onlyMain = true) {
 		$db =& wfGetDB( DB_SLAVE ); 
-		$this->createVirtualTableWithInstances($categoryTitle, $db);
+		$this->createVirtualTableWithInstances($categoryTitle, $db, $onlyMain);
 		$sqlCond = DBHelper::getSQLConditions($requestoptions, 'instance', 'instance');
 		
 		if ($withCategories) {
-		  $res = $db->query('SELECT DISTINCT instance, category FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
+		  $res = $db->query('SELECT DISTINCT instance,namespace, category FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
 		} else {
-		  $res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
+		  $res = $db->query('SELECT DISTINCT instance,namespace FROM smw_ob_instances WHERE TRUE '.$sqlCond." ".DBHelper::getSQLOptionsAsString($requestoptions,'instance'));
 		}
 		$results = array();
 		if($db->numRows( $res ) > 0)
@@ -250,7 +279,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			if ($withCategories) {
 			   while($row)
                 {   
-                    $instance = Title::newFromText($row->instance, NS_MAIN);
+                    $instance = Title::newFromText($row->instance, $row->namespace);
                     $category = Title::newFromText($row->category, NS_CATEGORY);
                     $results[] = array($instance, $category);
                     $row = $db->fetchObject($res);
@@ -258,7 +287,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			} else {
 			   while($row)
                 {   
-                    $instance = Title::newFromText($row->instance, NS_MAIN);
+                    $instance = Title::newFromText($row->instance, $row->namespace);
                     $results[] = $instance;
                     $row = $db->fetchObject($res);
                 }
@@ -277,8 +306,9 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 	 * 
 	 * @param Title $categoryTitle
 	 * @param & $db DB reference
+	 * @param boolean $onlyMain True, if only articles from NS_MAIN should be returned. False, if all namespaces (except category) should be returned.
 	 */
-	protected function createVirtualTableWithInstances($categoryTitle, & $db) {
+	protected function createVirtualTableWithInstances($categoryTitle, & $db, $onlyMain = true) {
 		global $smwgDefaultCollation;
 		
 		$page = $db->tableName('page');
@@ -290,7 +320,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255), category VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255), namespace INT(11), category VARCHAR(255) '.$collation.')
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
@@ -299,10 +329,14 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		            TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 		
 		// initialize with direct instances
-				           
-		$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, NULL AS category FROM '.$page.' ' .
+        if ($onlyMain) {
+        	$articleNamespaces = "page_namespace = ".NS_MAIN;				           
+        } else {
+        	$articleNamespaces = "page_namespace != ".NS_CATEGORY;  
+        }
+		$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance,page_namespace AS namespace, NULL AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
+						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
 	
 		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 		
@@ -315,9 +349,9 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 			$db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
 			
 			// insert direct instances of current subcategory level
-			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, cl_to AS category FROM '.$page.' ' .
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace, cl_to AS category FROM '.$page.' ' .
 						'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-						'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
+						'WHERE page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub))');
 			
 			// copy subcatgegories to supercategories of next iteration
 			$db->query('DELETE FROM smw_ob_instances_super');

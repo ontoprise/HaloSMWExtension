@@ -57,7 +57,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  $p_array[1] + 0;
  		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
- 		$instances = smwfGetSemanticStore()->getInstances($cat,  $reqfilter);
+ 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
  		 		 		 		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $p_array[1] + 0, $p_array[2] + 0);
  		
@@ -66,7 +66,8 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$propertyAnnotations = array();
  		
- 		$instance = Title::newFromText($p_array[0]);
+ 		$instance = Title::newFromText($p_array[1].":".$p_array[0]);
+ 		
  		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
  		foreach($properties as $a) { 
  			if (!$a->isShown() || !$a->isVisible()) continue;
@@ -125,7 +126,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$instanceTitle = Title::newFromText($p_array[0]);
+ 		$instanceTitle = Title::newFromText($p_array[1].":".$p_array[0]);
 		return $browserFilter->filterForCategoriesWithInstance($instanceTitle, $reqfilter);
  	} else if ($method == 'getCategoryForProperty') {
  		$browserFilter = new SMWOntologyBrowserFilter();
