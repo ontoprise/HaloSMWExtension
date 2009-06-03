@@ -232,8 +232,17 @@ class WebService {
 
 		$ws = new WebService();
 		$ws->mName = $name;
-		$valid &= self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $msg);
 		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
+		$tempMSG = array();
+		$tempValid = self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $tempMSG); 
+		if(strtolower($ws->mProtocol) == "rest"){
+			if(!$tempValid){
+				$ws->mURI = "";
+			}
+		} else {
+			$valid &= $tempValid;
+			$msg = array_merge($msg, $tempMSG);
+		}
 		$valid &= self::getWWSDElement($parser, '/WebService/method', 'name', $ws->mMethod, false, 1, 1, $msg);
 
 		if(self::getWWSDElement($parser, '/WebService/authentication', null, $ignore, false, 1, 1, $ignoreMsg = array())){

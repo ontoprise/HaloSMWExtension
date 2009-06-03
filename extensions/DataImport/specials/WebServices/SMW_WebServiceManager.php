@@ -306,12 +306,29 @@ class WebServiceManager {
 	 * This function is a hook for 'ArticleDelete'
 	 */
 	function articleDeleteHook(&$article, &$user, $reason){
-	if ($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
+		if ($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
-		WebServiceCache::removeWS($article->getID());
 		$ws = WebService::newFromID($article->getID());
 		if ($ws) {
+			WebServiceCache::removeWS($ws->getArticleID());
+
+			$options = new SMWRequestOptions();
+			$pageIds = WSStorage::getDatabase()->getWSArticles($ws->getArticleID(), $options);
+			foreach($pageIds as $articleId){
+				$usedWSs = WSStorage::getDatabase()->getWSsUsedInArticle($articleId);
+				foreach($usedWSs as $usedWS){
+					if($usedWS[0] == $ws->getArticleID()){
+						WSStorage::getDatabase()->removeWSArticle(
+						$ws->getArticleID(), $usedWS[1], $articleId);
+						$parameterSetIds = WSStorage::getDatabase()->getUsedParameterSetIds($usedWS[1]);
+						if(sizeof($parameterSetIds) == 0){
+							WSStorage::getDatabase()->removeParameterSet($usedWS[1]);
+						}
+					}
+				}
+			}
+				
 			$ws->removeFromDB();
 		}
 		self::$mNewWebService = null;
@@ -341,7 +358,7 @@ class WebServiceManager {
 			if(!$mNewWebService){
 				return true;
 			}
-			
+				
 			if(self::$mOldWebservice->getArticleID() != $mNewWebService->getArticleID()){
 				$remove = true;
 			} else if(self::$mOldWebservice->getMethod() != $mNewWebService->getMethod()){
@@ -388,7 +405,7 @@ function wwsdParserHook($input, $args, $parser) {
 	require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
 
 	WebServiceManager::rememberWWSD(WebService::newFromID($parser->getTitle()->getArticleID()));
-	
+
 	$attr = "";
 	foreach ($args as $k => $v) {
 		$attr .= " ". $k . '="' . $v . '"';
