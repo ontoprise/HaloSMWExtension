@@ -1,0 +1,17 @@
+Installation instructions.
+
+Requirements: 
+    MediaWiki 1.13 or higher
+    
+For POM-API (Page-Object-Model):   
+include_once('extensions/DataAPI/POM.php');
+
+For PCP-API (Page-CRUD-Plus):
+include_once('extensions/DataAPI/PCP.php');
+
+The patch 'semanticforms_dataAPI is valid for SemanticForms 1.6
+
+Dependencies of the API layers:
+MW API < PCP 
+MW API < POM < SF API
+
