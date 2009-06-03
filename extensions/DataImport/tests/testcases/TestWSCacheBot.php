@@ -3,25 +3,20 @@
 require_once 'Util.php';
 require_once 'DI_Utils.php';
 
-/*
- * test wsupdatebot
- */
-class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
+class TestWSCacheBot extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = false;
 
 	function setUp() {
 		//create wwsds and confirm them
-		$titles = array('TimeTestWS', 'TimeTestWSOnce', 
-			'TimeTestWSUnconfirmed', 'TimeTestWSUnused', 'TimeTestWSExpires');
+		$titles = array('TimeTestWS', 'TimeTestWSOnce', 'TimeTestWSExpires', 'TimeTestWSUnused');
 		di_utils_setupWebServices($titles);
 		
 		//use the web services
-		$titles = array('TimeTestWSOutdated', 'TimeTestWSUpToDate', 
-			'TimeTestWSOnce', 'TimeTestWSUnconfirmed', 'TimeTestWSExpires');
+		$titles = array('TimeTestWSOutdated', 'TimeTestWSUpToDate', 'TimeTestWSOnce', 'TimeTestWSUnconfirmed', 'TimeTestWSExpires');
 		di_utils_setupWSUsages($titles);
 		
-		//swtup testOutdatedResult
+		//setup testOutdatedResult()
 		$wsId = di_utils_getWSId('TimeTestWS');
 		$pId = di_utils_getPageId("TimeTestWSOutdated");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);
@@ -36,24 +31,24 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 					  'result'   => "phpunit",
 						'last_update' => wfTimeStamp(TS_MW, $timeStamp),
 						'last_access' => wfTimeStamp(TS_MW, $timeStamp)));
+		WSStorage::getDatabase()->updateCacheLastAccess($wsId, $paramSetId);
 		
-		//setup testUpToDateResult 
+		//setup testUpToDateResult() 
 		$wsId = di_utils_getWSId('TimeTestWS');
 		$pId = di_utils_getPageId("TimeTestWSUpToDate");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);$db =& wfGetDB( DB_SLAVE );
 		WSStorage::getDatabase()->storeCacheEntry($wsId, $paramSetId, "phpunit2");
 		
-		//setup testPolicyOnceResult 
+//		//setup testNoCleanupPolicyResult() 
 		$wsId = di_utils_getWSId('TimeTestWSOnce');
 		$pId = di_utils_getPageId("TimeTestWSOnce");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);
 		WSStorage::getDatabase()->storeCacheEntry($wsId, $paramSetId, "phpunit3");
 		
-		//setup testUnconfirmedWS
-		$wsId = di_utils_getWSId('TimeTestWSUnconfirmed');
-		$pId = di_utils_getPageId("TimeTestWSUnconfirmed");
+		//setup testLastAccessResult()
+		$wsId = di_utils_getWSId('TimeTestWSExpires');
+		$pId = di_utils_getPageId("TimeTestWSExpires");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);
-		WSStorage::getDatabase()->setWWSDConfirmationStatus($wsId, "once");
 		$db =& wfGetDB( DB_SLAVE );
 		$timeStamp = wfTimeStamp(TS_UNIX, $db->timestamp()) - 1000000;
 		$db->delete($db->tableName('smw_ws_cache'), array(
@@ -65,25 +60,17 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 					  'result'   => "phpunit4",
 						'last_update' => wfTimeStamp(TS_MW, $timeStamp),
 						'last_access' => wfTimeStamp(TS_MW, $timeStamp)));
-		
-		//setup testRemovedFromCacheResult 
-		$wsId = di_utils_getWSId('TimeTestWSExpires');
-		$pId = di_utils_getPageId("TimeTestWSExpires");
-		$paramSetId = di_utils_getParamSetId($wsId, $pId);
-		WSStorage::getDatabase()->removeWSEntryFromCache($wsId, $patamSetId);
+		WSStorage::getDatabase()->updateCacheLastAccess($wsId, $paramSetId);
 		
 		//run ws update bot
 		$cd = isWindows() ? "" : "./";
-		exec($cd.'runBots smw_wsupdatebot -nolog');
+		exec($cd.'runBots smw_wscachebot -nolog');
 	}
 
 	function tearDown() {
 		di_utils_truncateWSTables();
 	}
 
-	/*
-	 * test if an outdated ws result does get updated
-	 */
 	function testOutdatedResult() {
 		$wsId = di_utils_getWSId('TimeTestWS');
 		$pId = di_utils_getPageId("TimeTestWSOutdated");
@@ -91,12 +78,9 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($wsId, $paramSetId);
 		
-		$this->assertNotEquals($cacheResult["result"], "phpunit");
+		$this->assertEquals($cacheResult["result"], null);
 	}
 	
-	/*
-	 * test if an uptodate result does not get updated
-	 */
 	function testUpToDateResult() {
 		$wsId = di_utils_getWSId('TimeTestWS');
 		$pId = di_utils_getPageId("TimeTestWSUpToDate");
@@ -107,10 +91,7 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($cacheResult["result"], "phpunit2");
 	}
 	
-	/*
-	 * test if a ws-usage with update policy once does not get updated
-	 */
-	function testPolicyOnceResult() {
+	function testNoCleanupPolicyResult() {
 		$wsId = di_utils_getWSId('TimeTestWSOnce');
 		$pId = di_utils_getPageId("TimeTestWSOnce");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);
@@ -120,30 +101,14 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($cacheResult["result"], "phpunit3");
 	}
 	
-	/*
-	 * Test if a ws-usage of an unconfirmed ws does not get updated
-	 */
-	function testUnconfirmedWS() {
-		$wsId = di_utils_getWSId('TimeTestWSUnconfirmed');
-		$pId = di_utils_getPageId("TimeTestWSUnconfirmed");
-		$paramSetId = di_utils_getParamSetId($wsId, $pId);
-		
-		$cacheResult = WSStorage::getDatabase()->getResultFromCache($wsId, $paramSetId);
-		
-		$this->assertEquals($cacheResult["result"], "phpunit4");
-	}
-
-	/*
-	 * Test if a ws usage without a cached value gets updated
-	 */
-function testRemovedFromCacheResult() {
+	function testLastAccessResult() {
 		$wsId = di_utils_getWSId('TimeTestWSExpires');
 		$pId = di_utils_getPageId("TimeTestWSExpires");
 		$paramSetId = di_utils_getParamSetId($wsId, $pId);
 		
 		$cacheResult = WSStorage::getDatabase()->getResultFromCache($wsId, $paramSetId);
 		
-		$this->assertNotEquals($cacheResult["result"], null);
+		$this->assertEquals($cacheResult["result"], "phpunit4");
 	}
 }
 ?>

@@ -2,6 +2,8 @@
 require_once 'PHPUnit/Framework.php';
 
 require_once 'testcases/TestWSUpdateBot.php';
+require_once 'testcases/TestWSCacheBot.php';
+require_once 'testcases/TestWSManagement.php';
 
 
 class DataImportTests
@@ -12,6 +14,8 @@ class DataImportTests
 
         // add test suites
         $suite->addTestSuite("TestWSUpdateBot");
+        $suite->addTestSuite("TestWSCacheBot");
+        $suite->addTestSuite("TestWSManagement");
                 
 
         return $suite;
