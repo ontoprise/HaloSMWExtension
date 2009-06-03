@@ -51,7 +51,7 @@ class WSStorageSQL {
 
 		DBHelper::reportProgress("   ... Creating WWSD table \n",$verbose);
 		$wwsdTable = $db->tableName('smw_ws_wwsd');
-		
+
 		DBHelper::setupTable($wwsdTable, array(
 				  'web_service_id'		 =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
 				  'uri'  	             =>  'VARCHAR(1024) NOT NULL' ,
@@ -70,7 +70,7 @@ class WSStorageSQL {
 				'authentication_password'    =>  'VARCHAR(20) NOT NULL' ),
 		$db, $verbose);
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-		
+
 		// create ws value cache table
 		DBHelper::reportProgress("   ... Creating web service cache table \n",$verbose);
 		$cacheTable = $db->tableName('smw_ws_cache');
@@ -82,11 +82,11 @@ class WSStorageSQL {
 				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id');
 		DBHelper::reportProgress("   ... done!\n",$verbose);
-		
+
 		$db =& wfGetDB( DB_MASTER );
 		$query = "ALTER TABLE ".$cacheTable." MODIFY result LONGTEXT NOT NULL";
 		$db->query($query);
-		 
+			
 		// create parameter table
 		DBHelper::reportProgress("   ... Creating parameter table \n",$verbose);
 		$paramTable = $db->tableName('smw_ws_parameters');
@@ -94,10 +94,10 @@ class WSStorageSQL {
 				  'name'		    =>  'VARCHAR(255) NOT NULL',
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'value'      	    =>  'LONGTEXT NOT NULL'), $db, $verbose);
-		
+
 		$query = "ALTER TABLE ".$paramTable." MODIFY value LONGTEXT NOT NULL";
 		$db->query($query);
-		
+
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 		// create articles table
@@ -177,7 +177,7 @@ class WSStorageSQL {
 		if ($db->numRows($res) == 1) {
 			$row = $db->fetchObject($res);
 			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
-			$row->method, $row->authentication_type, $row->authentication_login, 
+			$row->method, $row->authentication_type, $row->authentication_login,
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->update_delay, $row->span_of_life,
@@ -240,7 +240,7 @@ class WSStorageSQL {
 		$opt = DBHelper::getSQLOptionsAsString($options, 'p.page_title');
 
 		$articles = array();
-		
+
 		$res = $db->query($sql.$cond.' '.$opt);
 
 		if ($db->numRows($res) > 0) {
@@ -253,7 +253,7 @@ class WSStorageSQL {
 
 	}
 
-	
+
 	/**
 	 * This function stores a new parameter set for the given
 	 * parameters if no such parameter set allready exists.
@@ -689,13 +689,13 @@ class WSStorageSQL {
 
 		while($row = $db->fetchObject($res)){
 			$ws = new WebService($row->web_service_id, $row->uri, $row->protocol,
-			$row->method, $row->authentication_type, $row->authentication_login, 
+			$row->method, $row->authentication_type, $row->authentication_login,
 			$row->authentication_password, $row->parameters, $row->result,
 			$row->display_policy, $row->query_policy,
 			$row->update_delay, $row->span_of_life,
 			$row->expires_after_update,
 			$row->confirmed);
-				
+
 			$webServices[$ws->getName()] = $ws;
 		}
 
@@ -733,7 +733,7 @@ class WSStorageSQL {
 		$result = array();
 		$tbn = $db->tableName('smw_ws_articles');
 
-		$sql = "SELECT DISTINCT articles.param_set_id FROM ".$tbn. " articles 
+		$sql = "SELECT DISTINCT articles.param_set_id FROM ".$tbn. " articles
 		WHERE articles.web_service_id = \"".$wsId."\"";
 			
 		$res = $db->query($sql);
