@@ -1,5 +1,4 @@
 <?php
-#TODO: merge to the new UploadForm!!!
 /**
  * SF_UploadWindow - used for uploading files from within a form
  * This class is nearly identical to MediaWiki's SpecialUpload class, with
@@ -1089,7 +1088,7 @@ wgAjaxLicensePreview = {$alp};
 		$wgOut->addHTML( "</td></tr>");
 		$wgOut->addHTML( "<tr><td width=\"42%\" align=\"right\"><img class=\"help-image\" src=\"$smwgRMScriptPath/skins/this_file_pointer.png\" style=\"padding:5px;\" /></td>" );
 		$wgOut->addHTML( "<td align=\"left\"><b>" . $uploadTemplateArray['RelatedArticles'] . "</b></td></tr>" );
-		$wgOut->addHTML( '</table>' );
+		$wgOut->addHTML( '</table><hr/>' );
 		
 		# Print a list of allowed file extensions, if so configured.  We ignore
 		# MIME type here, it's incomprehensible to most people and too long.
@@ -1226,7 +1225,7 @@ wgAjaxLicensePreview = {$alp};
 		$wgOut->addHTML("<div id=\"contentSub\"></div>");
 		if ( '' != $msg ) {
 			$sub = wfMsgHtml( 'uploaderror' );
-			$wgOut->addHTML( "<div border='1' style='margin:2px;padding:10px;border:1px solid red;'><font color='red'><h2>{$sub}</h2>\n" .
+			$wgOut->addHTML( "<div border='1' style='margin:2px;padding:5px 10px 10px 10px;border:1px solid red;'><font color='red'><h2 style=\"margin-top:0px;\">{$sub}</h2>\n" .
 			  "<span class='error'>{$msg}</span>\n</font></div>" );
 			$fontColor = "red";
 		}
@@ -1236,9 +1235,9 @@ wgAjaxLicensePreview = {$alp};
 		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
 		
 		$wgOut->addHTML( <<<EOT
-<fieldset>
-<legend>{$uploadlegend}<legend>
-	<form id='upload' method='post' enctype='multipart/form-data' action="$action" onSubmit='richMediaPage.doUpload();' >
+<fieldset style='padding:0px 10px;'>
+<legend style="font-size:100%;font-weight:bold">{$uploadlegend}</legend>
+	<form id='upload' method='post' enctype='multipart/form-data' action="$action" onSubmit='return richMediaPage.doUpload();' style='margin:0px;'>
 		<table border='0' style="width:100%; margin:0px;">
 		<tr>
 			<td style="width:30%"/>
@@ -1356,8 +1355,8 @@ EOT
 		$sflegend = wfMsgHtml('smw_rm_sflegend');
 		$wgOut->addHTML( "
 			<div>
-			<fieldset>
-				<legend>{$sflegend}</legend>
+			<fieldset style='padding:0px 10px;'>
+				<legend style='font-size:100%;font-weight:bold'>{$sflegend}</legend>
 		");
 		$form_add= new SFAddData();
 		$form_add_test = $form_add->execute( $rMUploadName );
