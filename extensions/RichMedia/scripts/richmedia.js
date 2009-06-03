@@ -26,6 +26,13 @@ var RichMediaPage = Class.create({
 	 */
 	doUpload: function() {
 		
+		//validate the form fields!
+		var error = validate_all();
+
+		if (!error) {
+			return false;
+		}
+		
 		var sForm = $$('form.createbox')[0]; //array
 		var destForm = $('upload');
 
@@ -45,6 +52,7 @@ var RichMediaPage = Class.create({
 	   	destForm.appendChild(el);
 	   	
 		destForm.submit();
+		return true;
 	},
 	
 	/**
