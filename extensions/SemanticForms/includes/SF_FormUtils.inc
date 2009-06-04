@@ -706,7 +706,8 @@ END;
 
 	static function mainFCKJavascript($showFCKEditor) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
-
+		
+		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;	
 		$newWinMsg = wfMsg('rich_editor_new_window');
 		$javascript_text = '
 var showFCKEditor = '. $showFCKEditor .';
@@ -750,7 +751,7 @@ function onLoadFCKeditor()
 	if ( realTextarea )
 	{
 		// Create the editor instance and replace the textarea.
-		oFCKeditor.Height = 300;
+		oFCKeditor.Height = $FCKEditorHeight;
 		oFCKeditor.ReplaceTextarea() ;
 		
 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
