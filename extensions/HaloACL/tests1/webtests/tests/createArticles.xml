@@ -6,8 +6,7 @@
 	&login;
 
 	<target name="testCreateArticles">
-		<webtest name="createArticle">
-			<steps>
+		<webtest name="createArticle: ACL:Property/HiddenProperty">
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -16,20 +15,37 @@
 				<param name="article" value="ACL:Property/HiddenProperty"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
+		</webtest>			
+		<webtest name="createArticle: ACL:Category/ProtectedCategory">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
 			<antcall target="createArticle">
 				<param name="article" value="ACL:Category/ProtectedCategory"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
+		</webtest>			
+		<webtest name="createArticle: ACL:Namespace/User">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
 			<antcall target="createArticle">
 				<param name="article" value="ACL:Namespace/User"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>			
+		<webtest name="createArticle: ACL:Page/HiddenPage">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
 			</antcall>
 			<antcall target="createArticle">
 				<param name="article" value="ACL:Page/HiddenPage"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
 			&goToLogout;
-			</steps>
 		</webtest>
 	</target>
 				

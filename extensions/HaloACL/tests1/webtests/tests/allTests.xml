@@ -13,8 +13,10 @@
 		<ant antfile="pageTransclusion.xml"/>
 		<ant antfile="hiddenInstanceOfSubcat.xml"/>
 		<ant antfile="preloading.xml"/>
-<!--
 		<ant antfile="exportPages.xml"/>
+		<ant antfile="listings.xml"/>
+		<ant antfile="revisions.xml"/>
+<!--
 -->		
 		
 	</target>

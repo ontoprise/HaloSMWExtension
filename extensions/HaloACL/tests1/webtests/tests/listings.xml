@@ -1,0 +1,397 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Listings" default="testListings">
+
+	&login;
+
+	<target name="testListings">
+		
+		<webtest name="Test listings as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<antcall target="openListingsNormal" />
+		</webtest>
+		
+		<webtest name="Test listings as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<antcall target="openListingsRestricted" />
+				
+		</webtest>
+		
+	</target>
+		
+	<target name="openListingsNormal">
+		<steps>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Category:ProtectedCategory"
+				description="Open Category:ProtectedCategory." />
+
+		<verifyText text="HiddenInstance" />
+		<verifyText text="ProtectedSubCategory" />
+		<verifyText text="TestAuthorBackdoor" />
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:DeadendPages"
+				description="Open Special:DeadendPages." />	
+		<verifyText text="TestAuthorBackdoor" />
+			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:LongPages"
+				description="Open Special:LongPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:AncientPages"
+				description="Open Special:AncientPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:LonelyPages"
+				description="Open Special:LonelyPages." />	
+			<verifyText text="TestAuthorBackdoor" />
+
+<!--			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:FewestRevisions"
+				description="Open Special:FewestRevisions." />	
+		<verifyText text="‎HiddenInstanceOfSubcat" />
+		<verifyText text="‎HiddenInstance" />
+		<verifyText text="‎HiddenPage" />
+-->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:WithoutInterwiki"
+				description="Open Special:WithoutInterwiki." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ShortPages"
+				description="Open Special:ShortPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:UncategorizedPages"
+				description="Open Special:UncategorizedPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:AllPages"
+				description="Open Special:AllPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//a[contains(text(),"TestAuthorBackdoor")]'/>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ListRedirects"
+				description="Open Special:ListRedirects." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenRedirect")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+			
+		<!-- Pages with prefix Hidden should not appear. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:PrefixIndex"
+				description="Open Special:PrefixIndex." />
+		<setInputField name="from" value="Hidden"/>
+		<clickButton label="Go"/>			
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+			
+<!--			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:NewPages"
+				description="Open Special:NewPages." />	
+		<verifyText text="" />
+-->
+		<!-- Make sure that differences and histories of the articles can not be viewed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:RecentChanges"
+				description="Open Special:RecentChanges." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<!-- Enter LinkHiddenPages and make sure the hidden articles are not revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:RecentChangesLinked"
+				description="Open Special:RecentChangesLinked." />	
+		<setInputField name="target" value="LinkHiddenPages"/>
+		<clickButton label="Go"/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:PopularPages"
+				description="Open Special:PopularPages." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+
+		<!-- Enter LinkHiddenPages and make sure the hidden articles are not revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:WhatLinksHere"
+				description="Open Special:WhatLinksHere." />	
+		<setInputField name="target" value="LinkHiddenPages"/>
+		<clickButton label="Go"/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//a[contains(text(),"User:HiddenUser")]'/>
+			
+		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=HiddenPage"
+				description="Open Special:Browse for HiddenPage." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=‎HiddenInstanceOfSubcat"
+				description="Open Special:Browse for ‎HiddenInstanceOfSubcat." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=‎HiddenInstance"
+				description="Open Special:Browse for ‎HiddenInstance." />	
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+			
+		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF"
+				description="Open Special:ExportRDF." />	
+
+		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User:HiddenUser"/>
+		<clickElement xpath="//input[not(@id) and @type='submit']"/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//*[contains(text(),"User:HiddenUser")]'/>
+			
+		<!-- Enter is hidden and true. The protected pages should not be revealed. -->
+<!--
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SearchByProperty"
+				description="Open Special:SearchByProperty." />	
+		<verifyText text="" />
+-->
+			
+		<!-- Open the category ProtectedCategory. The article HiddenInstance should not be shown. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open Special:OntologyBrowser." />	
+		<sleep seconds="3"/>	
+		<clickLink xpath="//a[@title='ProtectedCategory']" />			
+		<sleep seconds="3"/>	
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
+
+<!--  
+		(Create a query for the property is hidden and show the preview. Make sure the protected articles are not shown.
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SemanticNotifications"
+				description="Open Special:SemanticNotifications." />	
+		<verifyText text="" />
+
+		SemanticNotifications (Make sure, changes for the hidden pages are not sent by email
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SemanticNotifications"
+				description="Open Special:SemanticNotifications." />	
+		<verifyText text="" /> 
+-->
+			
+		</steps>
+	</target>
+
+	<target name="openListingsRestricted">
+		<steps>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Category:ProtectedCategory"
+				description="Open Category:ProtectedCategory." />
+		<not>
+		<verifyText text="HiddenInstance" />
+		<verifyText text="ProtectedSubCategory" />
+		<verifyText text="TestAuthorBackdoor" />
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:DeadendPages"
+				description="Open Special:DeadendPages." />	
+		<not>
+		<verifyText text="TestAuthorBackdoor" />
+		</not>
+			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:LongPages"
+				description="Open Special:LongPages." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:AncientPages"
+				description="Open Special:AncientPages." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:LonelyPages"
+				description="Open Special:LonelyPages." />	
+		<not>
+		<verifyText text="TestAuthorBackdoor" />
+		</not>
+
+<!--			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:FewestRevisions"
+				description="Open Special:FewestRevisions." />	
+		<not>
+		<verifyText text="‎HiddenInstanceOfSubcat" />
+		<verifyText text="‎HiddenInstance" />
+		<verifyText text="‎HiddenPage" />
+		</not>
+-->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:WithoutInterwiki"
+				description="Open Special:WithoutInterwiki." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ShortPages"
+				description="Open Special:ShortPages." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:UncategorizedPages"
+				description="Open Special:UncategorizedPages." />	
+		<not>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:AllPages"
+				description="Open Special:AllPages." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		<verifyXPath xpath='//a[contains(text(),"TestAuthorBackdoor")]'/>
+		</not>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ListRedirects"
+				description="Open Special:ListRedirects." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenRedirect")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		</not>
+			
+		<!-- Pages with prefix Hidden should not appear. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:PrefixIndex"
+				description="Open Special:PrefixIndex." />
+		<setInputField name="from" value="Hidden"/>
+		<clickButton label="Go"/>			
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		</not>
+			
+<!--			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:NewPages"
+				description="Open Special:NewPages." />	
+		<verifyText text="" />
+-->
+		<!-- Make sure that differences and histories of the articles can not be viewed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:RecentChanges"
+				description="Open Special:RecentChanges." />	
+		<not>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<!-- Enter LinkHiddenPages and make sure the hidden articles are not revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:RecentChangesLinked"
+				description="Open Special:RecentChangesLinked." />	
+		<setInputField name="target" value="LinkHiddenPages"/>
+		<clickButton label="Go"/>
+		<not>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+			
+		<invoke url="http://localhost/${wikipath}/index.php/Special:PopularPages"
+				description="Open Special:PopularPages." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		</not>
+
+		<!-- Enter LinkHiddenPages and make sure the hidden articles are not revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:WhatLinksHere"
+				description="Open Special:WhatLinksHere." />	
+		<setInputField name="target" value="LinkHiddenPages"/>
+		<clickButton label="Go"/>
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
+		<verifyXPath xpath='//a[contains(text(),"User:HiddenUser")]'/>
+		</not>
+			
+		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=HiddenPage"
+				description="Open Special:Browse for HiddenPage." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		</not>
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=‎HiddenInstanceOfSubcat"
+				description="Open Special:Browse for ‎HiddenInstanceOfSubcat." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		</not>
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=‎HiddenInstance"
+				description="Open Special:Browse for ‎HiddenInstance." />	
+		<not>
+		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
+		</not>
+			
+		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF"
+				description="Open Special:ExportRDF." />	
+
+		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User:HiddenUser"/>
+		<clickElement xpath="//input[not(@id) and @type='submit']"/>
+		<not>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//*[contains(text(),"User:HiddenUser")]'/>
+		</not>
+			
+		<!-- Enter is hidden and true. The protected pages should not be revealed. -->
+<!--
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SearchByProperty"
+				description="Open Special:SearchByProperty." />	
+		<not>
+		<verifyText text="" />
+		</not>
+-->
+			
+		<!-- Open the category ProtectedCategory. The article HiddenInstance should not be shown. -->
+		<invoke url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open Special:OntologyBrowser." />	
+		<sleep seconds="3"/>	
+		<clickLink xpath="//a[@title='ProtectedCategory']" />			
+		<sleep seconds="3"/>	
+		<not>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
+		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
+		</not>
+
+<!--  
+		(Create a query for the property is hidden and show the preview. Make sure the protected articles are not shown.
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SemanticNotifications"
+				description="Open Special:SemanticNotifications." />	
+		<not>
+		<verifyText text="" />
+		</not>
+
+		SemanticNotifications (Make sure, changes for the hidden pages are not sent by email
+		<invoke url="http://localhost/${wikipath}/index.php/Special:SemanticNotifications"
+				description="Open Special:SemanticNotifications." />	
+		<not>
+		<verifyText text="" /> 
+		</not>
+-->
+			
+		</steps>
+	</target>
+	
+</project>

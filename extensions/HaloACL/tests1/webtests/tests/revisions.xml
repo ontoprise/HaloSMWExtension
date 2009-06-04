@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Revisions" default="testRevisions">
+
+	&login;
+
+	<target name="testRevisions">
+		<webtest name="Create revision of HiddenPage">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createRevision">
+				<param name="page" value="HiddenPage"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Create revision of HiddenInstance">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createRevision">
+				<param name="page" value="HiddenInstance"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Create revision of HiddenInstanceOfSubcat">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createRevision">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Create revision of User:HiddenUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createRevision">
+				<param name="page" value="User:HiddenUser"/>
+			</antcall>
+		</webtest>			
+
+				
+		<webtest name="Test revisions as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenPage"/>
+			<param name="content" value="HiddenPage"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenInstance"/>
+			<param name="content" value="HiddenInstance"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenInstanceOfSubcat"/>
+			<param name="content" value="HiddenInstanceOfSubcat"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="User:HiddenUser"/>
+			<param name="content" value="User:HiddenUser"/>
+		</antcall>
+
+		</webtest>
+
+		<webtest name="Test revisions as RestrictedUser">
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+			
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenPage"/>
+			<param name="content" value="Permission error"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenInstance"/>
+			<param name="content" value="Permission error"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="HiddenInstanceOfSubcat"/>
+			<param name="content" value="Permission error"/>
+		</antcall>
+
+		<antcall target="loadPage">
+			<param name="user" value="NormalUser"/>
+			<param name="page" value="User:HiddenUser"/>
+			<param name="content" value="Permission error"/>
+		</antcall>
+
+		</webtest>
+		
+		<webtest name="Test direct access to revisions as RestrictedUser">
+			<antcall target="openRevision">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenPage"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openRevision">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenInstance"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openRevision">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenInstanceOfSubcat"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openRevision">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="User:HiddenUser"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+		</webtest>
+
+		<webtest name="Test direct access to differences as RestrictedUser">
+			<antcall target="openDiff">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenPage"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openDiff">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenInstance"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openDiff">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="HiddenInstanceOfSubcat"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openDiff">
+					<param name="user" value="NormalUser"/>
+					<param name="page" value="User:HiddenUser"/>
+					<param name="content" value="Permission error"/>
+			</antcall>
+		</webtest>
+		
+		
+	</target>
+		
+	<target name="loadPage">
+		<invoke url="http://localhost/${wikipath}/index.php/${page}?action=history"
+			description="Open history of ${page} as ${user}." />
+		<verifyText description="Check for content" 
+			        text="${content}" />
+	</target>
+	
+	<target name="createRevision">
+		<invoke url="http://localhost/${wikipath}/index.php/${page}?action=edit"
+			description="Create a new revision of ${page}." />
+		<storeXPath
+			description="Extract content of textbox"
+		    xpath='//textarea[@id="wpTextbox1"]'
+			propertyType="ant"
+		    property="content" />
+		
+		<setInputField 
+			name="wpTextbox1" 
+			value="${content} 
+			       New revision."/>
+		
+		<clickButton label="Save page"/>
+		
+	</target>
+	
+	
+
+	<target name="openRevision">
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}?action=history"
+			description="Open history of ${page} as ${user}." />
+		<storeXPath
+			description="Extract href of first revision on page"
+		    xpath='//ul[@id="pagehistory"]/li[1]/a[contains(text(),"200")]/@href'
+			propertyType="ant"
+		    property="uri" />
+		
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+        <invoke
+            description="Invoke target page: ${uri}"
+            url="http://localhost${uri}" />	
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+		
+	</target>
+
+	<target name="openDiff">
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}?action=history"
+			description="Open history of ${page} as ${user}." />
+		<storeXPath
+			description="Extract href of first revision on page"
+		    xpath='//ul[@id="pagehistory"]/li[1]/a[text()="last"]/@href'
+			propertyType="ant"
+		    property="uri" />
+		
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+        <invoke
+            description="Invoke target page: ${uri}"
+            url="http://localhost${uri}" />	
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+		
+	</target>
+	
+</project>

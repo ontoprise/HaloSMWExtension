@@ -37,7 +37,7 @@
 			description="Open page ${page} as anonymous user." />
 		<verifyXPath description="Check if page is included" 
 			         xpath="//div[@id='innercontent']/h1" 
-			         text="Permission denied" />
+			         text="Permission error" />
 	</target>
 	
 </project>

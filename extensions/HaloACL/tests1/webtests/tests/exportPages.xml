@@ -5,30 +5,10 @@
 	&login;
 
 	<target name="testExportPages">
-		<antcall target="export">
-			<param name="user" value="NormalUser"/>
-		</antcall>
-		<verifyText description="Verify presence of page: Hiddenpage"
-					text="HiddenPage" />
-<!--		
-		<verifyText description="Verify presence of page: HiddenInstance"
-					text="HiddenInstance" />
-		<verifyText description="Verify presence of page: HiddenInstanceOfSubcat"
-					text="HiddenInstanceOfSubcat" />
-		<verifyText description="Verify presence of page: User:HiddenUser"
-					text="User:HiddenUser" />
-
-		<antcall target="export">
-			<param name="user" value="RestrictedUser"/>
-		</antcall>
--->		
-	</target>
-		
-	<target name="export">
-		<webtest name="Exporting as ${user}">
-
+		<webtest name="Exporting as NormalUser">
+		<steps>
 		<antcall target="login">
-			<param name="user" value="${user}"/>
+			<param name="user" value="NormalUser"/>
 			<param name="pwd" value="acl"/>
 		</antcall>
 
@@ -40,8 +20,39 @@
 					 description="Do not save as file."/>
 		<setInputField name="pages" value="HiddenPage&#10;HiddenInstance&#10;HiddenInstanceOfSubcat&#10;User:HiddenUser"/>
 		<clickButton label="Export"/>		
+		<verifyText text="HiddenPage"/>
+		<verifyText text="HiddenInstance"/>
+		<verifyText text="HiddenInstanceOfSubcat"/>
+		<verifyText text="User:HiddenUser"/>
+		</steps>
 		</webtest>
+		
+
+		<webtest name="Exporting as RestrictedUser">
+		<steps>
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:Export"
+			description="Open Special:Export." />
 			
+		<setCheckbox name="wpDownload"
+					 checked="false"
+					 description="Do not save as file."/>
+		<setInputField name="pages" value="HiddenPage&#10;HiddenInstance&#10;HiddenInstanceOfSubcat&#10;User:HiddenUser"/>
+		<clickButton label="Export"/>	
+		<not>			
+			<verifyText text="HiddenPage"/>
+			<verifyText text="HiddenInstance"/>
+			<verifyText text="HiddenInstanceOfSubcat"/>
+			<verifyText text="User:HiddenUser"/>
+		</not>
+		</steps>
+		</webtest>
+		
 	</target>
+		
 	
 </project>
