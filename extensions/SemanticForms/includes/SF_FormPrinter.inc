@@ -9,6 +9,14 @@
  * @author Daniel Hansch
  */
 
+// SF v1.7.1
+// patches included:
+// 1. WYSIWYG parameter in info tag
+//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
+//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
+
+
+
 class SFFormPrinter {
 
   var $mSemanticTypeHooks;
@@ -142,6 +150,10 @@ class SFFormPrinter {
     $new_text = "";
     // flag for placing "<includeonly>" and "<noinclude>" tags in form output
     $includeonly_free_text = false;
+    
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+$show_FCKEditor = false;
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
     
     // if we have existing content and we're not in an active replacement
     // situation, preserve the original content. We do this because we want
@@ -980,6 +992,11 @@ END;
             elseif($tag == 'includeonly free text') {           		
               $includeonly_free_text = true;
             }
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+            elseif($tag == 'WYSIWYG') {          
+              $show_FCKEditor = true;
+            }
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
           }
           $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
         // =====================================================
@@ -1120,7 +1137,12 @@ END;
     }
     // if the FCKeditor extension is installed, use that for the free text input
     global $wgFCKEditorDir;
-    if ($wgFCKEditorDir) {
+
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+// code was:
+//  if ($wgFCKEditorDir) {
+    if ($wgFCKEditorDir && $show_FCKEditor) {
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
       $showFCKEditor = SFFormUtils::getShowFCKEditor();
       $free_text = htmlspecialchars( $free_text );
       if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {

@@ -5,6 +5,11 @@
  * @author Yaron Koren
  */
 
+// SF v1.7.1
+// patches included:
+// 1. NAMESPACE-safe autocomplete
+//    tag: op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete
+
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
 class SFUtils {
@@ -266,6 +271,14 @@ END;
 								}
 							} else {
 								$cur_value = str_replace("_", " ", $row['page_title']);
+/*op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete|start*/
+if ($page_namespace != NS_MAIN) {
+global $wgContLang;
+$cur_value = $wgContLang->getNsText($page_namespace).":".$cur_value;
+}
+/*op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete|end*/
+								
+								
 								if ($substring == null)
 									$pages[] = $cur_value;
 								else
