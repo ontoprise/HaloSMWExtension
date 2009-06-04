@@ -1836,7 +1836,7 @@ EOT
 	 */
 	static function showSuccessfulMsg() {
 		
-		global $wgRequest;
+		global $wgRequest, $wgScriptPath;
 		
 		$filename = $wgRequest->getText( 'uploadedFile' );
 		// create the message for the successsful upload
@@ -1844,6 +1844,9 @@ EOT
 		$sk = $wgUser->getSkin();
 		$nt = Title::newFromText($filename);
 		$imageDescLink = $sk->makeKnownLinkObj( $nt );
+		$image = Image::newFromTitle($nt);
+		$imagePath = $image->getURL();
+		unset($image);
 		
 		$relatedArticles = $wgRequest->getText('RelatedArticles');
 				
@@ -1868,10 +1871,12 @@ EOT
 		
 		$wgOut->addHTML($uploadSuccessHTML);
 		
-		$script = '	<script type="text/javascript">' . "\n";
+		$script = '	<script type="text/javascript" src="'.$wgScriptPath.'/extensions/RichMedia/scripts/fck_connect.js"></script>' . "\n";
 		$script .=<<<END
-			parent.fb.loadPageOnClose ='self';
-		</script>
+		<script type="text/javascript">
+			saveRichMediaData('$filename', '$imagePath');
+		</script>		
+		
 END;
 		$wgOut->addHTML( $script );
 	}
