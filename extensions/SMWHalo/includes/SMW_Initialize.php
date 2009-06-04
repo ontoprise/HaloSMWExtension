@@ -770,8 +770,8 @@ function smwfAnnotateTab ($content_actions) {
 	if($wgUser->getSkin()->isSemantic() != true)
 	return true;
 	//Check if edit tab is present, if not don't at annote tab
-	if (!array_key_exists('edit',$content_actions) )
-	return true;
+	//if (!array_key_exists('edit',$content_actions) )
+	//return true;
 	global $wgUser, $wgRequest;
 	$action = $wgRequest->getText( 'action' );
 	//Build annotate tab
