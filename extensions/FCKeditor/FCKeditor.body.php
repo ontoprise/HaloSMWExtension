@@ -1,4 +1,19 @@
 <?php
+/**
+ * Options for FCKeditor
+ * [start with FCKeditor]
+ */
+define("RTE_VISIBLE", 1);
+/**
+ * Options for FCKeditor
+ * [show toggle link]
+ */
+define('RTE_TOGGLE_LINK', 2);
+/**
+ * Options for FCKeditor
+ * [show popup link]
+ */
+define('RTE_POPUP', 4);
 
 class FCKeditor_MediaWiki
 {
