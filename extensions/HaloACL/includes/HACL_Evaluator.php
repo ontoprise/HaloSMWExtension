@@ -95,10 +95,13 @@ class HACLEvaluator {
 			return true;
 		}
 		
-		// reading the page "Permission denied" is allowed.
+		// no access to the page "Permission denied" is allowed.
+		// together with the TitlePatch which returns this page, this leads
+		// to MediaWiki's "Permission error"
 		global $haclgContLang;
 		if ($title->getText() == $haclgContLang->getPermissionDeniedPage()) {
-			$r = $actionID == HACLRight::READ;
+//			$r = $actionID == HACLRight::READ;
+			$r = false;
 			haclfRestoreTitlePatch($etc);
 			$result = $r;
 			return $r;
