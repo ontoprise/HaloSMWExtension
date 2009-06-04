@@ -70,13 +70,13 @@ END;
 	static function validationJavascript() {
 		global $sfgJSValidationCalls;
 
-		$form_errors_header = wfMsg('sf_formerrors_header');
-		$blank_error_str = wfMsg('sf_blank_error');
-		$bad_url_error_str = wfMsg('sf_bad_url_error');
-		$bad_email_error_str = wfMsg('sf_bad_email_error');
-		$bad_number_error_str = wfMsg('sf_bad_number_error');
-		$bad_integer_error_str = wfMsg('sf_bad_integer_error');
-		$bad_date_error_str = wfMsg('sf_bad_date_error');
+		$form_errors_header = Xml::escapeJsString(wfMsg('sf_formerrors_header'));
+		$blank_error_str = Xml::escapeJsString(wfMsg('sf_blank_error'));
+		$bad_url_error_str = Xml::escapeJsString(wfMsg('sf_bad_url_error'));
+		$bad_email_error_str = Xml::escapeJsString(wfMsg('sf_bad_email_error'));
+		$bad_number_error_str = Xml::escapeJsString(wfMsg('sf_bad_number_error'));
+		$bad_integer_error_str = Xml::escapeJsString(wfMsg('sf_bad_integer_error'));
+		$bad_date_error_str = Xml::escapeJsString(wfMsg('sf_bad_date_error'));
 
 		$javascript_text =<<<END
 
@@ -651,6 +651,26 @@ END;
 		}
 	} 
 
+	/**
+	 * Used by 'RunQuery' page
+	 */
+	static function queryFormBottom() {
+		global $sfgTabIndex;
+
+		$sfgTabIndex++;
+		$label = wfMsg('runquery');
+		$temp = array(
+			'id'        => 'wpRunQuery',
+			'name'      => 'wpRunQuery',
+			'type'      => 'submit',
+			'tabindex'  => $sfgTabIndex,
+			'value'     => $label,
+			'title'     => $label,
+		);
+		$text = "		" . wfElement('input', $temp, '') . "\n";
+		return $text;
+	}
+
 	static function getMonthNames() {
 		return array(
 			wfMsgForContent('january'),
@@ -706,8 +726,7 @@ END;
 
 	static function mainFCKJavascript($showFCKEditor) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
-		
-		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;	
+
 		$newWinMsg = wfMsg('rich_editor_new_window');
 		$javascript_text = '
 var showFCKEditor = '. $showFCKEditor .';
@@ -751,7 +770,7 @@ function onLoadFCKeditor()
 	if ( realTextarea )
 	{
 		// Create the editor instance and replace the textarea.
-		oFCKeditor.Height = $FCKEditorHeight;
+		oFCKeditor.Height = 300;
 		oFCKeditor.ReplaceTextarea() ;
 		
 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
@@ -890,10 +909,8 @@ function initEditor()
 	var toolbar = document.getElementById('free_text');
 	//show popup or toogle link
 	if (showFCKEditor & (RTE_POPUP|RTE_TOGGLE_LINK)){
-		//add new toolbar before wiki toolbar
 		var fckTools = document.createElement('div');
 		fckTools.setAttribute('id', 'fckTools');
-		toolbar.parentNode.insertBefore( fckTools, toolbar );
 		
 		var SRCtextarea = document.getElementById( "free_text" ) ;
 		if (showFCKEditor & RTE_VISIBLE) SRCtextarea.style.display = "none";
@@ -901,12 +918,17 @@ function initEditor()
 
 	if (showFCKEditor & RTE_TOGGLE_LINK)
 	{
-		fckTools.innerHTML='[<a class="fckToogle" id="toggle_wpTextbox1" href="javascript:void(0)" onclick="ToggleFCKEditor(\'toggle\',\'free_text\')">'+ editorLink +'</a>] ';
+		fckTools.innerHTML='[<a class="fckToogle" id="toggle_free_text" href="javascript:void(0)" onclick="ToggleFCKEditor(\'toggle\',\'free_text\')">'+ editorLink +'</a>] ';
 	}
 	if (showFCKEditor & RTE_POPUP)
 	{
 		var style = (showFCKEditor & RTE_VISIBLE) ? 'style="display:none"' : "";
-		fckTools.innerHTML+='<span ' + style + ' id="popup_wpTextbox1">[<a class="fckPopup" href="javascript:void(0)" onclick="ToggleFCKEditor(\'popup\',\'free_text\')">{$newWinMsg}</a>]</span>';
+		fckTools.innerHTML+='<span ' + style + ' id="popup_free_text">[<a class="fckPopup" href="javascript:void(0)" onclick="ToggleFCKEditor(\'popup\',\'free_text\')">{$newWinMsg}</a>]</span>';
+	}
+
+	if (showFCKEditor & (RTE_POPUP|RTE_TOGGLE_LINK)){
+		//add new toolbar before wiki toolbar
+		toolbar.parentNode.insertBefore( fckTools, toolbar );
 	}
 
 	if (showFCKEditor & RTE_VISIBLE)
@@ -956,7 +978,13 @@ function ToggleFCKEditor(mode, objId)
 	if ( firstLoad )
 	{
 		// firstLoad = true => FCKeditor start invisible
-		if (oToggleLink) oToggleLink.innerHTML = "Loading...";
+		// "innerHTML" fails for IE - use "innerText" instead
+		if (oToggleLink) {
+			if (oToggleLink.innerText)
+				oToggleLink.innerText = "Loading...";
+			else
+				oToggleLink.innerHTML = "Loading...";
+		}
 		sajax_request_type = 'POST' ;
 		oFCKeditor.ready = false;
 		sajax_do_call('wfSajaxWikiToHTML', [SRCtextarea.value], function ( result ){
@@ -964,7 +992,13 @@ function ToggleFCKEditor(mode, objId)
 			{
 				SRCtextarea.value = result.responseText; //insert parsed text
 				onLoadFCKeditor();
-				if (oToggleLink) oToggleLink.innerHTML = editorMsgOff;
+				// "innerHTML" fails for IE - use "innerText" instead
+				if (oToggleLink) {
+					if (oToggleLink.innerText)
+						oToggleLink.innerText = editorMsgOff;
+					else
+						oToggleLink.innerHTML = editorMsgOff;
+				}
 				oFCKeditor.ready = true;
 			}
 		});
@@ -992,7 +1026,12 @@ function ToggleFCKEditor(mode, objId)
 			sajax_request_type = 'GET' ;
 			sajax_do_call( 'wfSajaxToggleFCKeditor', ['hide'], function(){} ) ;		//remember closing in session
 		}
-		if (oToggleLink) oToggleLink.innerHTML = editorMsgOn;
+		if (oToggleLink) {
+			if (oToggleLink.innerText)
+				oToggleLink.innerText = editorMsgOn;
+			else
+				oToggleLink.innerHTML = editorMsgOn;
+		}
 		if (oPopupLink) oPopupLink.style.display = '';
 		showFCKEditor -= RTE_VISIBLE;
 		oEditorIframe.style.display = 'none';
@@ -1009,8 +1048,13 @@ function ToggleFCKEditor(mode, objId)
 		//FCKtoolbar.style.display = 'none';
 		oEditorIframe.style.display = '';
 		if ( !bIsWysiwyg ) oEditorIns.SwitchEditMode();		//switch to WYSIWYG
-		showFCKEditor += RTE_VISIBLE; // showFCKEditor+=RTE_VISIBLE
-		if (oToggleLink) oToggleLink.innerHTML = editorMsgOff;
+		showFCKEditor += RTE_VISIBLE;
+		if (oToggleLink) {
+			if (oToggleLink.innerText)
+				oToggleLink.innerText = editorMsgOff;
+			else
+				oToggleLink.innerHTML = editorMsgOff;
+		}
 		if (oPopupLink) oPopupLink.style.display = 'none';
 	}
 	return true;

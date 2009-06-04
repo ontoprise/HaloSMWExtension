@@ -87,9 +87,25 @@ $aliases['fa'] = array(
 
 /** French (Français) */
 $aliases['fr'] = array(
+	'AddData' => array( 'AjouterDonnées', 'Ajouter données' ),
+	'AddPage' => array( 'AjouterPage', 'Ajouter page' ),
 	'CreateCategory' => array( 'Créer catégorie', 'CréerCatégorie' ),
 	'CreateTemplate' => array( 'Créer modèle', 'CréerModèle' ),
 	'Templates' => array( 'Modèles' ),
+);
+
+/** Franco-Provençal (Arpetan) */
+$aliases['frp'] = array(
+	'AddData' => array( 'Apondre des balyês', 'ApondreDesBalyês' ),
+	'AddPage' => array( 'Apondre una pâge', 'ApondreUnaPâge' ),
+	'CreateCategory' => array( 'Fâre una catègorie', 'FâreUnaCatègorie' ),
+	'CreateForm' => array( 'Fâre un formulèro', 'FâreUnFormulèro' ),
+	'CreateProperty' => array( 'Dèfenir una propriètât', 'DèfenirUnaPropriètât' ),
+	'CreateTemplate' => array( 'Fâre un modèlo', 'FâreUnModèlo' ),
+	'EditData' => array( 'Changiér les balyês', 'ChangiérLesBalyês' ),
+	'Forms' => array( 'Formulèros' ),
+	'Templates' => array( 'Modèlos' ),
+	'UploadWindow' => array( 'Fenétra de tèlèchargement', 'FenétraDeTèlèchargement' ),
 );
 
 /** Galician (Galego) */
@@ -146,6 +162,20 @@ $aliases['ia'] = array(
 	'UploadWindow' => array( 'Cargar fenestra' ),
 );
 
+/** Italian (Italiano) */
+$aliases['it'] = array(
+	'AddData' => array( 'AggiungiDati' ),
+	'AddPage' => array( 'AggiungiPagina' ),
+	'CreateCategory' => array( 'CreaCategoria' ),
+	'CreateForm' => array( 'CreaModulo' ),
+	'CreateProperty' => array( 'CreaProprietà' ),
+	'CreateTemplate' => array( 'CreaTemplate' ),
+	'EditData' => array( 'ModificaDati' ),
+	'Forms' => array( 'Moduli' ),
+	'Templates' => array( 'Template' ),
+	'UploadWindow' => array( 'AggiornaFinestra' ),
+);
+
 /** Japanese (日本語) */
 $aliases['ja'] = array(
 	'AddData' => array( 'データ追加' ),
@@ -175,6 +205,20 @@ $aliases['km'] = array(
 	'EditData' => array( 'កែប្រែទិន្នន័យ' ),
 	'Forms' => array( 'ទម្រង់​នានា' ),
 	'Templates' => array( 'ទំព័រគំរូ' ),
+);
+
+/** Ripoarisch (Ripoarisch) */
+$aliases['ksh'] = array(
+	'AddData' => array( 'Date dobei donn' ),
+	'AddPage' => array( 'Sigg dobei donn' ),
+	'CreateCategory' => array( 'Saachjropp aanlääje' ),
+	'CreateForm' => array( 'Fommulaa aanlääje' ),
+	'CreateProperty' => array( 'Eijeschaff aanlääje' ),
+	'CreateTemplate' => array( 'Schabloon aanlääje' ),
+	'EditData' => array( 'Date ändere' ),
+	'Forms' => array( 'Fommulaare' ),
+	'Templates' => array( 'Schabloone' ),
+	'UploadWindow' => array( 'Finster zum Huhlaade', 'Finster zom Huhlaade' ),
 );
 
 /** Luxembourgish (Lëtzebuergesch) */
@@ -209,6 +253,7 @@ $aliases['mt'] = array(
 	'AddData' => array( 'ŻidDati' ),
 	'AddPage' => array( 'ŻidPaġna' ),
 	'CreateCategory' => array( 'OħloqKategorija' ),
+	'Templates' => array( 'Mudelli' ),
 );
 
 /** Nedersaksisch (Nedersaksisch) */
@@ -218,7 +263,7 @@ $aliases['nds-nl'] = array(
 	'CreateCategory' => array( 'Kattegerie_anmaken' ),
 	'CreateForm' => array( 'Formelier_anmaken' ),
 	'CreateProperty' => array( 'Eigenschap_anmaken' ),
-	'CreateTemplate' => array( 'Sjabloon_anmaken' ),
+	'CreateTemplate' => array( 'Mal_anmaken' ),
 	'EditData' => array( 'Gegevens_bewarken' ),
 	'Forms' => array( 'Formelieren' ),
 	'UploadWindow' => array( 'Bestanstoevoegingsscharm' ),
@@ -299,6 +344,15 @@ $aliases['sw'] = array(
 	'Forms' => array( 'Fomu' ),
 	'Templates' => array( 'Vigezo' ),
 	'UploadWindow' => array( 'DirishalaKupakizia' ),
+);
+
+/** Thai (ไทย) */
+$aliases['th'] = array(
+	'CreateCategory' => array( 'สร้างหมวดหมู่' ),
+	'CreateForm' => array( 'สร้างฟอร์ม' ),
+	'CreateTemplate' => array( 'สร้างแม่แบบ' ),
+	'Forms' => array( 'ฟอร์ม' ),
+	'Templates' => array( 'แม่แบบ' ),
 );
 
 /** Tagalog (Tagalog) */
