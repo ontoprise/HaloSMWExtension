@@ -22,8 +22,8 @@
  * Author: kai
  */
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
-	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
-	return;
+    echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+    return;
 }
 
 $mediaWikiLocation = dirname(__FILE__) . '/../../..';
@@ -31,8 +31,8 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 global $smwgHaloIP;
 if (!file_exists($smwgHaloIP . '/includes/SMW_DBHelper.php')) {
-	echo "\nSeems that SMWHalo is not installed. Abort here.\n";
-	die();
+    echo "\nSeems that SMWHalo is not installed. Abort here.\n";
+    die();
 }
 require_once($smwgHaloIP . '/includes/SMW_DBHelper.php');
 
@@ -40,22 +40,22 @@ $removeHelpPages = array_key_exists("deinstall", $options);
 $installHelpPages = array_key_exists("install", $options);
 
 if (!$removeHelpPages && !$installHelpPages) {
-	print "\nSyntax: php setup.php [--install] | [--deinstall]\n";
-	die();
+    print "\nSyntax: php setup.php [--install] | [--deinstall]\n";
+    die();
 }
 
 if ($removeHelpPages) {
-	smwfRemoveHelppages();
-	die();
+    smwfRemoveHelppages();
+    die();
 }
 
 if ($installHelpPages) {
-	DBHelper::reportProgress("\nImport delivered pages...",true);
-	
-	smwfInstallImages('../help_pages/images');
-	smwfInstallHelppages('../help_pages', 12, 'Help' );
-	smwfInstallHelppages('../help_pages', 104, 'Type' );
-	DBHelper::reportProgress("\n\nAll pages imported!\n",true);
+    DBHelper::reportProgress("\nImport delivered pages...",true);
+    
+    smwfInstallImages('../help_pages/images');
+    smwfInstallHelppages('../help_pages', 12, 'Help' );
+    smwfInstallHelppages('../help_pages', 104, 'Type' );
+    DBHelper::reportProgress("\n\nAll pages imported!\n",true);
     die();
 };
 
@@ -64,13 +64,13 @@ if ($installHelpPages) {
  *
  */
 function smwfRemoveHelppages() {
-	$pages = smwfGetSemanticStore()->getPages(array(NS_HELP));
-	foreach($pages as $p) {
-		print "\nRemove page: ".$p->getText();
-		smwfRemoveImages($p);
-		$a = new Article($p);
-		$a->doDelete("SMW+ Update");	
-	}
+    $pages = smwfGetSemanticStore()->getPages(array(NS_HELP));
+    foreach($pages as $p) {
+        print "\nRemove page: ".$p->getText();
+        smwfRemoveImages($p);
+        $a = new Article($p);
+        $a->doDelete("SMW+ Update");    
+    }
 }
 
 /**
@@ -79,23 +79,23 @@ function smwfRemoveHelppages() {
  * @param Title $title
  */
 function smwfRemoveImages($title) {
-	$db =& wfGetDB( DB_MASTER );
-	$res = $db->select( 'imagelinks' ,
-	array( 'il_to' ),
-	array("il_from" => $title->getArticleID()),
+    $db =& wfGetDB( DB_MASTER );
+    $res = $db->select( 'imagelinks' ,
+    array( 'il_to' ),
+    array("il_from" => $title->getArticleID()),
             'SMW_setup::smwfGetImages',
-	NULL );
-	if ( $db->numRows( $res ) ) {
-		while ( $row = $db->fetchObject( $res ) ) {
-			if ( $titleObj = Title::makeTitle( NS_IMAGE, $row->il_to ) ) {
-				print "\nRemove image: ".$titleObj->getText();
-				$im_file = wfLocalFile($titleObj);
+    NULL );
+    if ( $db->numRows( $res ) ) {
+        while ( $row = $db->fetchObject( $res ) ) {
+            if ( $titleObj = Title::makeTitle( NS_IMAGE, $row->il_to ) ) {
+                print "\nRemove image: ".$titleObj->getText();
+                $im_file = wfLocalFile($titleObj);
                 $im_file->delete("SMW+ Update");
-				$a = new Article($titleObj);
-				$a->doDelete("SMW+ Update");
-			}
-		}
-	}
+                $a = new Article($titleObj);
+                $a->doDelete("SMW+ Update");
+            }
+        }
+    }
 }
 /**
  * Reads help pages files (.whp) below the given
@@ -106,92 +106,98 @@ function smwfRemoveImages($title) {
  * @param $SourceDirectory directory which contains .whp files.
  */
 function smwfInstallHelppages($SourceDirectory, $ns, $ext) {
-	global $mediaWikiLocation;
+    global $mediaWikiLocation;
 
-	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
-		return;
-	}
-	// add trailing slashes
-	if (substr($SourceDirectory,-1)!='/'){
-		$SourceDirectory .= '/';
-	}
-	 
-	$handle = @opendir($SourceDirectory);
-	if (!$handle) {
-		die("\nDirectory '$SourceDirectory' could not be opened.\n");
-	}
+    if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
+        return;
+    }
+    // add trailing slashes
+    if (substr($SourceDirectory,-1)!='/'){
+        $SourceDirectory .= '/';
+    }
+     
+    $handle = @opendir($SourceDirectory);
+    if (!$handle) {
+        die("\nDirectory '$SourceDirectory' could not be opened.\n");
+    }
 
-	while ( ($entry = readdir($handle)) !== false ){
-		if ($entry[0] == '.'){
-			continue;
-		}
+    while ( ($entry = readdir($handle)) !== false ){
+        if ($entry[0] == '.'){
+            continue;
+        }
 
-		if (is_dir($SourceDirectory.$entry)) {
-			// Unterverzeichnis
-			$success = smwfInstallHelppages($SourceDirectory.$entry, $ns, $ext);
+        if (is_dir($SourceDirectory.$entry)) {
+            // Unterverzeichnis
+            $success = smwfInstallHelppages($SourceDirectory.$entry, $ns, $ext);
 
-		} else{
-			 
-			if (strpos($SourceDirectory.$entry, ".".$ext) !== false) {
-				smwfImportHelppage($SourceDirectory.$entry, $ns, $ext);
-				 
-			}
-		}
-	}
+        } else{
+             
+            if (strpos($SourceDirectory.$entry, ".".$ext) !== false) {
+                smwfImportHelppage($SourceDirectory.$entry, $ns, $ext);
+                 
+            }
+        }
+    }
 }
 
 /**
  * Copies images
  */
 function smwfInstallImages($SourceDirectory) {
-	global $mediaWikiLocation, $smwgHaloIP;
-	//print "\nCopying images...\n";
-	//print $SourceDirectory;
-	if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
-		return;
-	}
-	// add trailing slashes
-	if (substr($SourceDirectory,-1)!='/'){
-		$SourceDirectory .= '/';
-	}
-	 
-	$handle = @opendir($SourceDirectory);
-	if (!$handle) {
-		die("\nDirectory '$SourceDirectory' could not be opened.\n");
-	}
-	while ( ($entry = readdir($handle)) !== false ){
+    global $mediaWikiLocation;
+   
+    if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
+        return;
+    }
+    if (basename($SourceDirectory) == ".svn") { // ignore .svn dirs
+        return;
+    }
+    // add trailing slashes
+    if (substr($SourceDirectory,-1)!='/'){
+        $SourceDirectory .= '/';
+    }
+     
+    $handle = @opendir($SourceDirectory);
+    if (!$handle) {
+        die("\nDirectory '$SourceDirectory' could not be opened.\n");
+    }
+    while ( ($entry = readdir($handle)) !== false ){
 
-		if ($entry[0] == '.'){
-			continue;
-		}
+        if ($entry[0] == '.'){
+            continue;
+        }
 
-		//print "\nProcessing ".$SourceDirectory.$entry;
-		if (is_dir($SourceDirectory.$entry)) {
-			// Unterverzeichnis
-			$success = smwfInstallImages($SourceDirectory.$entry);
+       
+        if (is_dir($SourceDirectory.$entry)) {
+            // Unterverzeichnis
+            $success = smwfInstallImages($SourceDirectory.$entry);
 
-		} else{
-			 
+        } else{
+             
+            // build path: take suffix from source (everything behind /help_pages/)
+            // and add it to the destination (mediawiki installation directory)
+            $im_dir_abs = dirname($SourceDirectory.$entry);
+        
+            $img_dir_rel = substr($im_dir_abs, strpos($im_dir_abs,'/help_pages/')+strlen('/help_pages/'));
+            $dest_dir = $mediaWikiLocation."/".$img_dir_rel;
+            echo "\nCreating dir: ".$dest_dir;
+            if (!file_exists($dest_dir)) {
+                mkpath($dest_dir);
+            }
+             
+            // copy image into filesystem.
+            DBHelper::reportProgress("\nCopy image: ".basename($SourceDirectory.$entry), true);
+           
+            //echo "\nCopy to:".$dest_dir."/".basename($SourceDirectory.$entry);
+            copy($SourceDirectory.$entry, $dest_dir."/".basename($SourceDirectory.$entry));
+             
+            // simulate an upload
+            $im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
+            $im_file->recordUpload2("", "auto-inserted image", "noText");
+             
+        }
 
-			$im_dir_abs = dirname($SourceDirectory.$entry);
-			$img_dir_rel = substr($im_dir_abs, strlen($smwgHaloIP.'/lib/predef_pages/'));
-			$dest_dir = $mediaWikiLocation.$img_dir_rel;
-			if (!file_exists($dest_dir)) {
-				mkpath($dest_dir);
-			}
-			 
-			// copy image into filesystem.
-			DBHelper::reportProgress("\nCopy image: ".basename($SourceDirectory.$entry), true);
-			//." to ".$dest_dir."/".basename($SourceDirectory.$entry)."  ";
-			copy($SourceDirectory.$entry, $dest_dir."/".basename($SourceDirectory.$entry));
-			 
-			// simulate an upload
-			$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
-			$im_file->recordUpload2("", "auto-inserted image", "noText");
-			 
-		}
-
-	}
+    }
 }
 
 /**
@@ -201,23 +207,23 @@ function smwfInstallImages($SourceDirectory) {
  * @param path to a file containing wiki markup
  */
 function smwfImportHelppage($filepath, $ns, $ext) {
-	$handle = fopen($filepath, "rb");
-	$contents = fread ($handle, filesize ($filepath));
-	$filename = basename($filepath, ".".$ext);
-	$filename = str_replace("_", " ", rawurldecode($filename));
+    $handle = fopen($filepath, "rb");
+    $contents = fread ($handle, filesize ($filepath));
+    $filename = basename($filepath, ".".$ext);
+    $filename = str_replace("_", " ", rawurldecode($filename));
 
-	$helpPageTitle = Title::newFromText($filename, $ns);
-	$helpPageArticle = new Article($helpPageTitle);
-	if (!$helpPageArticle->exists()) {
-		DBHelper::reportProgress("\nImport: ".$filename."...", true);
-		$helpPageArticle->insertNewArticle($contents, $helpPageTitle->getText(), false, false);
-		print "done!";
-	} else {
-		DBHelper::reportProgress("\nUpdate: ".$filename."...", true);
-		$helpPageArticle->updateArticle($contents, $helpPageTitle->getText(), false, false);
-		print "done!";
-	}
-	fclose($handle);
+    $helpPageTitle = Title::newFromText($filename, $ns);
+    $helpPageArticle = new Article($helpPageTitle);
+    if (!$helpPageArticle->exists()) {
+        DBHelper::reportProgress("\nImport: ".$filename."...", true);
+        $helpPageArticle->insertNewArticle($contents, $helpPageTitle->getText(), false, false);
+        print "done!";
+    } else {
+        DBHelper::reportProgress("\nUpdate: ".$filename."...", true);
+        $helpPageArticle->updateArticle($contents, $helpPageTitle->getText(), false, false);
+        print "done!";
+    }
+    fclose($handle);
 }
 
 /**
@@ -227,8 +233,8 @@ function smwfImportHelppage($filepath, $ns, $ext) {
  * @param $path path of directory.
  */
 function mkpath($path) {
-	if(@mkdir($path) || file_exists($path)) return true;
-	return (mkpath(dirname($path)) && mkdir($path));
+    if(@mkdir($path) || file_exists($path)) return true;
+    return (mkpath(dirname($path)) && mkdir($path));
 }
 
 ?>
