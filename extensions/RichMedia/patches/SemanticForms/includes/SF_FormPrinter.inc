@@ -1241,11 +1241,18 @@ END;
     $form_text = str_replace('{{{choosers}}}', $chooser_text, $form_text);
 
     // add form bottom, if no custom "standard inputs" have been defined
-    //Rich media extension: get the upload form name and do not display standard inputs for that
-    global $smwgRMFormByNamespace;
-    if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
-    	if (! $this->standardInputsIncluded)
-      		$form_text .= SFFormUtils::formBottom($form_is_disabled);
+    if ($is_query)
+      $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
+    elseif (! $this->standardInputsIncluded) {
+		/*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
+		// get the upload form name and do not display standard inputs for that
+		// code was:
+		// $form_text .= SFFormUtils::formBottom($form_is_disabled);
+		global $smwgRMFormByNamespace;
+	 	if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
+	     		$form_text .= SFFormUtils::formBottom($form_is_disabled);
+	 	}
+		/*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
     }
     $starttime = wfTimestampNow();
     $page_article = new Article($this->mPageTitle);
