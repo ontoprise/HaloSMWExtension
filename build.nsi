@@ -675,7 +675,7 @@ Function configCustomizationsForNew
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
-    DetailPrint "Installing helppages"
+    /*DetailPrint "Installing helppages"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
         Exec "$INSTDIR\xampp_start.bat"
@@ -683,6 +683,7 @@ Function configCustomizationsForNew
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
         SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
+    */    
 FunctionEnd
 
 
@@ -726,7 +727,7 @@ Function configCustomizationsForUpdate
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
-    DetailPrint "Updating helppages"
+    /*DetailPrint "Updating helppages"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
         #Exec "$INSTDIR\xampp_start.bat"
@@ -735,6 +736,7 @@ Function configCustomizationsForUpdate
         SetOutPath "$INSTDIR\htdocs\mediawiki"
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --deinstall'
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
+     */
 FunctionEnd
 
 Function checkForSkype
