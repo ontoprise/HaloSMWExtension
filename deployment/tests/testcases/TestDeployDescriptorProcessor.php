@@ -115,6 +115,22 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$this->assertEquals("http://localhost:8080", $ret1);
 	}
 
+	function testFunctionCallInsertion2() {
+		$ddp2 = new DeployDescriptorParser('testcases/resources/test_deploy_function.xml');
+		$res = $ddp2->applyConfigurations("testcases/resources/TestSettings.php");
+
+		global $server;
+		global $port;
+		global $protocol;
+		
+		eval($res);
+
+		$this->assertTrue(isset($server) && isset($port) && isset($protocol));
+		$this->assertEquals("localhost", $server);
+		$this->assertEquals("80", $port);
+		$this->assertEquals("http", $protocol);
+	}
+
 	function testFunctionCallRemoval() {
 		$ddp2 = new DeployDescriptorParser('testcases/resources/test_deploy_function.xml');
 		$res = $ddp2->applyConfigurations("testcases/resources/TestSettings.php");
@@ -176,7 +192,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	function testPHPRemove() {
 		$ddp2 = new DeployDescriptorParser('testcases/resources/test_deploy_php.xml');
 		$res = $ddp2->applyConfigurations("testcases/resources/TestSettings.php");
-		 
+			
 		global $testphp2;
 		eval($res);
 
@@ -195,5 +211,14 @@ function testfunc2($url, $arr) {
 	global $ret3;
 	$ret2 = $url;
 	$ret3 = $arr;
+}
+
+function testfunc3($arr) {
+	global $server;
+	global $port;
+	global $protocol;
+	$server = $arr['server'];
+	$port = $arr['port'];
+	$protocol = $arr['protocol'];
 }
 ?>

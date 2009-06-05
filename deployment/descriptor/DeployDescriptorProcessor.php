@@ -149,18 +149,24 @@ abstract class ConfigElement {
 			switch($ch->getName()) {
 				case "string": {
 					$name = (string) $ch->attributes()->name;
+					$key = (string) $ch->attributes()->key;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$resultsStr .= ($resultsStr == "" ? "'$p'" : ", '$p'");break;
+					$key = $key != NULL ? "'$key'=>" : ""; 
+					$resultsStr .= ($resultsStr == "" ? "$key'$p'" : ", $key'$p'");break;
 				}
 				case "number": {
 					$name = (string) $ch->attributes()->name;
+					$key = (string) $ch->attributes()->key;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$resultsStr .= ($resultsStr == "" ? "$p" : ", $p");break;
+					$key = $key != NULL ? "'$key'=>" : ""; 
+					$resultsStr .= ($resultsStr == "" ? "$key $p" : ", $key $p");break;
 				}
 				case "boolean": {
 					$name = (string) $ch->attributes()->name;
+					$key = (string) $ch->attributes()->key;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$resultsStr .= ($resultsStr == "" ? "$p" : ", $p");break;
+					$key = $key != NULL ? "'$key'=>" : ""; 
+					$resultsStr .= ($resultsStr == "" ? "$key $p" : ", $key $p");break;
 				}
 				case "array": {
 					$p = $this->serializeParameters($ch, $mappings);
@@ -193,21 +199,25 @@ abstract class ConfigElement {
 			switch($ch->getName()) {
 				case "string": {
 					$name = (string) $ch->attributes()->name;
-					$p = $phpArg[$i];
+					$key = (string) $ch->attributes()->key;
+					$p = $phpArg[($key != NULL ? $key : $i)];
 					$mappings[$name] = $p;break;
 				}
 				case "number": {
 					$name = (string) $ch->attributes()->name;
-					$p = $phpArg[$i];
+					$key = (string) $ch->attributes()->key;
+					$p = $phpArg[($key != NULL ? $key : $i)];
 					$mappings[$name] = $p;break;
 				}
 				case "boolean": {
 					$name = (string) $ch->attributes()->name;
-					$p = $phpArg[$i];
+					$key = (string) $ch->attributes()->key;
+					$p = $phpArg[($key != NULL ? $key : $i)];
 					$mappings[$name] = $p;break;
 				}
 				case "array": {
-					$p = $phpArg[$i];
+					$key = (string) $ch->attributes()->key;
+					$p = $phpArg[($key != NULL ? $key : $i)];
 					$this->_deserialize($ch, $p, $mappings);
 				}
 			}
@@ -227,10 +237,10 @@ abstract class ConfigElement {
  *
  */
 class VariableConfigElement extends ConfigElement {
-	var $name;
+	var $name; 
 	var $value;
 	var $remove;
-	var $external;
+	var $external; // indicates that variable is defined elsewhere and not in the extensions's section
 	var $requireUserValue;
 
 	public function __construct($child) {

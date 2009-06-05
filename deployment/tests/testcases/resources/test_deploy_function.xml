@@ -8,8 +8,8 @@
 		<description>Enhances your Semantic Mediawiki</description>
 		<dependencies>
 			<dependency from="100" to="140">
-                SemanticMediawiki
-            </dependency>
+				SemanticMediawiki
+			</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
@@ -24,7 +24,7 @@
 	</resources>
 	<configs>
 		<precedes ext="SemanticMediawiki" />
-	
+
 		<new>
 			<function name="testfunc">
 				<string name="param0">http://localhost:8080</string>
@@ -38,6 +38,13 @@
 				<array name="paramset0">
 					<string name="param1">1</string>
 					<string name="param2">2</string>
+				</array>
+			</function>
+			<function name="testfunc3">
+				<array>
+					<string key="server" name="param0">localhost</string>
+					<number key="port" name="param1">80</number>
+					<string key="protocol" name="param2">http</string>
 				</array>
 			</function>
 		</new>
