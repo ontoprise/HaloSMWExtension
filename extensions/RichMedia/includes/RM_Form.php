@@ -10,7 +10,7 @@ END;
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		
 		global $wgRequest;
-		$articleTitle = $wgRequest->getText('title');
+		$articleTitle = urlencode($wgRequest->getText('title'));
 		global $smwgRMFormByNamespace;
 		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 		$queryString = "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
