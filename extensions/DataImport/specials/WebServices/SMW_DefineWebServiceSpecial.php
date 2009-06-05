@@ -73,7 +73,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<span id=\"menue-step4\"".$rClass.">".wfMsg("smw_wws_s4-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step5\"".$rClass.">".wfMsg("smw_wws_s5-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step6\"".$rClass.">".wfMsg("smw_wws_s6-menue")."</span>";
-		$html .= "</div>";
+		$html .= "</div></div>";
 
 
 
