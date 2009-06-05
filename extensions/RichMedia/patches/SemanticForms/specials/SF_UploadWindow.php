@@ -650,6 +650,7 @@ END;
 				}
 			}*/
 			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
+			$relatedArticles = urlencode($relatedArticles);
 			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles";
 			$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
 			$output .=<<<END
@@ -1079,6 +1080,13 @@ wgAjaxLicensePreview = {$alp};
 
 		global $smwgRMFormByNamespace;
 		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
+		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
+			// no related article was set, so set it to user page by default
+			// That's ok, because User has to be logged in, so see this page
+			global $wgCanonicalNamespaceNames;
+			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
+			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
+		}
 		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
 		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
 		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
@@ -1348,11 +1356,6 @@ EOT
 //		
 		
 		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
-		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
-			global $wgCanonicalNamespaceNames;
-			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
-			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
-		}
 		
 		$sflegend = wfMsgHtml('smw_rm_sflegend');
 		$wgOut->addHTML( "
@@ -1847,7 +1850,7 @@ EOT
 		$image = Image::newFromTitle($nt);
 		$imagePath = $image->getURL();
 		unset($image);
-		
+
 		$relatedArticles = $wgRequest->getText('RelatedArticles');
 				
 		$uploadSuccessHTML = '<div style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">';
