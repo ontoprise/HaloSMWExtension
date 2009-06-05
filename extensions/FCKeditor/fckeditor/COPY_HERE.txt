@@ -1,3 +1,6 @@
 Go to http://www.fckeditor.net/download and download the latest version. Then
  uncompress the contents of the "fckeditor" directory of the download file to
  this folder (extensions/FCKeditor/fckeditor).
+ 
+Build the packed version from sources is explained here:
+http://docs.fckeditor.net/FCKeditor_2.x/Developers_Guide/Customization/Scripts_Compression
