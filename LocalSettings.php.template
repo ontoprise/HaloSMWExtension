@@ -158,7 +158,6 @@ $phpInterpreter="{{xamp-install}}/php/php.exe";
 
 $smwgOWLFullExport = true;
 
-$smwgEnableWikiWebServices = true;
 $smwgEnableUploadConverter = true;
 $smwgUseEditDistance = true;
 
