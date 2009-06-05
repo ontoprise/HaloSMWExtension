@@ -215,7 +215,7 @@ class WebService {
 		global $smwgDIIP;
 
 		try {
-			$parser = new SimpleXMLElement($wwsd);
+			$parser = @ new SimpleXMLElement($wwsd);
 		} catch (Exception $e) {
 			$msg = $e->getMessage();
 			return array($msg);
