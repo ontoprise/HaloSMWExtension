@@ -10,7 +10,7 @@ class HttpDownload {
 	private $header;
 	
 	/**
-	 * Download a resource via HTTP protocol
+	 * Downloads a resource via HTTP protocol and stores it into a file.
 	 *
 	 * @param string $path
 	 * @param int $port
@@ -21,7 +21,7 @@ class HttpDownload {
 	 *                     downloadFinished($filename)
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 */
-	public function download($path, $port, $host, $filename, $callback = NULL) {
+	public function downloadAsFile($path, $port, $host, $filename, $callback = NULL) {
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -59,6 +59,59 @@ class HttpDownload {
 		fclose($handle);
 		socket_close($socket);
 	}
+	
+    /**
+     * Downloads a resource via HTTP protocol returns the content as string.
+     *
+     * @param string $path
+     * @param int $port
+     * @param string $host
+     * @param object $callback: An object with 2 methods: 
+     *                     downloadProgres($percentage).
+     *                     downloadFinished($filename)
+     *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
+     * @return string
+     */
+    public function downloadAsString($path, $port, $host, $callback = NULL) {
+        $address = gethostbyname($host);
+        $res = "";
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        socket_connect($socket, $address, $port);
+        $in = "GET $path HTTP/1.0\r\n\r\n";
+        socket_write($socket, $in, strlen($in));
+        $this->headerFound = false;
+        $this->header = "";
+        $length = 0;
+        $cb = is_null($callback) ? $this : $callback;
+        while ($out = socket_read($socket, 2048)) {
+            if (! $this->headerFound) {
+                $this->header .= $out;
+                $index = strpos($this->header, "\r\n\r\n");
+                if ($index !== false) {
+                    $out = substr($this->header, $index+4);
+                    $length = strlen($out);
+                    $this->header = substr($this->header, 0, $index);
+                    $contentLength = $this->getContentLength();
+                    
+                    $this->headerFound = true;
+                } else {
+                    continue;
+                }
+            }
+            $length += strlen($out);
+            $res .= $out;
+            $percentage = $length / $contentLength;
+            
+            call_user_func(array(&$cb,"downloadProgres"), $percentage > 1 ? 1 : $percentage);
+            
+        }
+        if ($percentage < 1) call_user_func(array(&$callback,"progress"), 1);
+        call_user_func(array(&$cb,"downloadFinished"), $filename);
+      
+        socket_close($socket);
+        return $res;
+    }
+	
 	
 	/**
 	 * Parser content length from HTTP header
@@ -101,10 +154,11 @@ class HttpError extends Exception {
 	
 }
 
-$path = "/job/smwhalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticNotifications/deploy/bin/smwhalo-semnot-1.0.zip";
+// testcode
+/*$path = "/job/smwhalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticNotifications/deploy/bin/smwhalo-semnot-1.0.zip";
 $port = 8080;
 $host = "dailywikibuilds.ontoprise.com";
 $d = new HttpDownload();
-$d->download($path, $port, $host, "result.zip");
-
+$d->downloadAsFile($path, $port, $host, "result.zip");
+*/
 ?>
