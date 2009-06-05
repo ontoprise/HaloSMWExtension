@@ -227,12 +227,7 @@ FCK.InitializeBehaviors = function()
 	// Hooks for data object drops
 	if ( FCKBrowserInfo.IsGecko )
 	{
-		if (DndHook.DND_HOOK_ACTIVE) {
-			this.EditorWindow.addEventListener( 'dragdrop', DndHook._ExecDrop2, true ) ;
-			this.EditorWindow.addEventListener( 'dragover', DndHook._ExecDrop2dragover, true ) ;
-		} else {
-		    this.EditorWindow.addEventListener( 'dragdrop', this._ExecDrop, true ) ;
-		}
+	    this.EditorWindow.addEventListener( 'dragdrop', this._ExecDrop, true ) ;
 	}
 	else if ( FCKBrowserInfo.IsSafari )
 	{
