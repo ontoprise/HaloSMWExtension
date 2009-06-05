@@ -1246,13 +1246,13 @@ wgAjaxLicensePreview = {$alp};
 		</tr>
 		<tr>
 	  {$this->uploadFormTextTop}
-			<td align='$align1' valign='top'><label for='wpUploadFile'><font color='{$fontColor}'>{$sourcefilename}</font></label></td>
+			<td align='$align1' valign='top'><label for='wpUploadFile' style='font-weight:bold'><font color='{$fontColor}'>{$sourcefilename}</font></label></td>
 			<td align='$align2'>
 				{$filename_form}
 			</td>
 		</tr>
 		<tr>
-			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
+			<td align='$align1'><label for='wpDestFile' style='font-weight:bold'>{$destfilename}</label></td>
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 					value="$encDestName" $destOnkeyup /></label>
@@ -1366,7 +1366,7 @@ EOT
 		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 		global $smwgRMScriptPath;
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input  type=\"button\" value=\"$saveButtonText\" onclick=\"richMediaPage.doUpload()\"/></td></tr></table>");
+		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input type=\"button\" value=\"$saveButtonText\" onclick=\"richMediaPage.doUpload()\"/ style=\"font-weight:bold\"></td></tr></table>");
 	}
 
 	/* -------------------------------------------------------------- */
