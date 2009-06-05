@@ -2,7 +2,7 @@
 
 <project name="testHaloACL" default="testAll">
 	
-	<property name="wikipath" value="develwiki"/>
+	<property name="wikipath" value="mediawiki"/>
 	
 	<target name="testAll" description="runs all the tests">
 <!--
