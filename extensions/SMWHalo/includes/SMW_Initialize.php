@@ -783,7 +783,9 @@ function smwfAnnotateTab ($content_actions) {
 	);
 
 	//Find position of edit button
-	$editpos = count(range(0,$content_actions['edit']))+1;
+	$editpos = isset($content_actions['edit'])
+				? count(range(0,$content_actions['edit']))+1
+				: count($content_actions);
 	//Split array
 	$beforeedit = array_slice($content_actions,0,$editpos-1);
 	$afteredit = array_slice($content_actions,$editpos-1,count($content_actions));
