@@ -1262,7 +1262,7 @@ END;
     $javascript_text .= SFFormUtils::autocompletionJavascript();
     if ($free_text_was_included && $showFCKEditor > 0) {
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $field_args['cols']);
+      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $field_args['rows']);
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
         $javascript_text .= SFFormUTils::FCKToggleJavascript();
