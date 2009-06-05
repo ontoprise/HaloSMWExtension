@@ -5,23 +5,16 @@ class RMForm {
 		global $wgOut, $wgParser;
 
 		$size = "35";
-		$inputId = "myWpDestFile";
-		$inputName = "myWpDestFile";
-		
 		$html =<<<END
 <form onsubmit="fb.loadAnchor($('link_id'));return false;">
 END;
-		$delimiter = "";
-
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
-		$queryString = "sfInputID=$inputId";
-		if ($delimiter != null)
-		$queryString .= "&sfDelimiter=$delimiter";
+		
 		global $wgRequest;
 		$articleTitle = $wgRequest->getText('title');
 		global $smwgRMFormByNamespace;
 		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$queryString .= "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
+		$queryString = "&".$smwgRMUploadFormName."[RelatedArticles]=".$articleTitle."&wpIgnoreWarning=true";
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 		
 		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
