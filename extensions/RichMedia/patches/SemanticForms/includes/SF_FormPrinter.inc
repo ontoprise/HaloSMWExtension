@@ -6,7 +6,16 @@
  * @author Nils Oppermann
  * @author Jeffrey Stuckman
  * @author Harold Solbrig
+ * @author Daniel Hansch
  */
+
+// SF v1.7.1
+// patches included:
+// 1. WYSIWYG parameter in info tag
+//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
+//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
+
+
 
 class SFFormPrinter {
 
@@ -39,7 +48,7 @@ class SFFormPrinter {
       $enum_type = 'enumeration'; // not a real type
       $page_type = $datatypeLabels['_wpg'];
       $this->setSemanticTypeHook($string_type, false, array('SFFormInputs', 'textEntryHTML'), array('field_type' => 'string'));
-      $this->setSemanticTypeHook($string_type, true, array('SFFormInputs', 'textEntryHTML'), array('field_type' => 'string', 'is_list' => 'true'));
+      $this->setSemanticTypeHook($string_type, true, array('SFFormInputs', 'textEntryHTML'), array('field_type' => 'string', 'is_list' => 'true', 'size' => '100'));
       $this->setSemanticTypeHook($text_type, false, array('SFFormInputs', 'textAreaHTML'), array());
       $this->setSemanticTypeHook($code_type, false, array('SFFormInputs', 'textAreaHTML'), array());
       $this->setSemanticTypeHook($url_type, false, array('SFFormInputs', 'textEntryHTML'), array('field_type' => 'URL'));
@@ -60,9 +69,11 @@ class SFFormPrinter {
     $this->setInputTypeHook('datetime with timezone', array('SFFormInputs', 'dateTimeEntryHTML'), array('include_timezone' => true));
     $this->setInputTypeHook('year', array('SFFormInputs', 'textEntryHTML'), array('size' => 4));
     $this->setInputTypeHook('checkbox', array('SFFormInputs', 'checkboxHTML'), array());
-    $this->setInputTypeHook('radiobutton', array('SFFormInputs', 'radioButtonHTML'), array());
+    $this->setInputTypeHook('radiobutton', array('SFFormInputs', 'radiobuttonHTML'), array());
     $this->setInputTypeHook('checkboxes', array('SFFormInputs', 'checkboxesHTML'), array());
     $this->setInputTypeHook('listbox', array('SFFormInputs', 'listboxHTML'), array());
+    $this->setInputTypeHook('category', array('SFFormInputs', 'categoryHTML'), array());
+    $this->setInputTypeHook('categories', array('SFFormInputs', 'categoriesHTML'), array());
 
     // initialize other variables
     $this->standardInputsIncluded = false;
@@ -76,7 +87,49 @@ class SFFormPrinter {
     $this->mInputTypeHooks[$input_type] = array($function_name, $default_args);
   }
 
-  function formHTML($form_def, $form_submitted, $source_is_page, $existing_page_content = null, $page_title = null, $page_name_formula = null) {
+
+  /**
+   * Show the set of previous deletions for the page being added.
+   * This function is copied almost exactly from EditPage::showDeletionLog() -
+   * unfortunately, neither that function nor Article::showDeletionLog() can
+   * be called from here, since they're both protected
+   */
+  function showDeletionLog( $out ) {
+    // if MW doesn't have LogEventsList defined, exit immediately
+    if (! class_exists('LogEventsList'))
+      return false;
+
+    global $wgUser;
+    $loglist = new LogEventsList( $wgUser->getSkin(), $out );
+    $pager = new LogPager( $loglist, 'delete', false, $this->mPageTitle->getPrefixedText() );
+    $count = $pager->getNumRows();
+    if ( $count > 0 ) {
+      $pager->mLimit = 10;
+      $out->addHTML( '<div class="mw-warning-with-logexcerpt">' );
+      $out->addWikiMsg( 'recreate-deleted-warn' );
+      $out->addHTML(
+        $loglist->beginLogEventsList() .
+        $pager->getBody() .
+        $loglist->endLogEventsList()
+      );
+      if($count > 10){
+        $out->addHTML( $wgUser->getSkin()->link(
+          SpecialPage::getTitleFor( 'Log' ),
+          wfMsgHtml( 'deletelog-fulllog' ),
+          array(),
+          array(
+            'type' => 'delete',
+            'page' => $this->mPageTitle->getPrefixedText() ) ) );
+      }
+      $out->addHTML( '</div>' );
+      return true;
+    }
+
+    return false;
+  }
+
+
+  function formHTML($form_def, $form_submitted, $source_is_page, $existing_page_content = null, $page_title = null, $page_name_formula = null, $is_query = false) {
     global $wgRequest, $wgUser, $wgParser;
     global $sfgTabIndex; // used to represent the current tab index in the form
     global $sfgFieldNum; // used for setting various HTML IDs
@@ -95,6 +148,12 @@ class SFFormPrinter {
     // the parsing, so we have to assume that it will become a possibility
     $form_is_partial = false;
     $new_text = "";
+    // flag for placing "<includeonly>" and "<noinclude>" tags in form output
+    $includeonly_free_text = false;
+    
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+$show_FCKEditor = false;
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
     
     // if we have existing content and we're not in an active replacement
     // situation, preserve the original content. We do this because we want
@@ -123,7 +182,11 @@ class SFFormPrinter {
       $this->mPageTitle = Title::newFromText("Semantic Forms permissions test");
     else
       $this->mPageTitle = Title::newFromText($page_title);
-    if ($wgUser->isAllowed('edit') && $this->mPageTitle->userCanEdit()) {
+    global $wgOut;
+    // show previous set of deletions for this page, if it's been deleted before
+    if (! $form_submitted && ! $this->mPageTitle->exists())
+      $this->showDeletionLog($wgOut);
+    if ($wgUser->isAllowed('edit') && $this->mPageTitle->userCan('edit')) {
       $form_is_disabled = false;
       $form_text = "";
       // show "Your IP address will be recorded" warning if user is
@@ -499,6 +562,9 @@ class SFFormPrinter {
                   $possible_values = SFUtils::getAllPagesForConcept($sub_components[1]);
                 } elseif ($sub_components[0] == 'property') {
                   $semantic_property = $sub_components[1];
+                } elseif ($sub_components[0] == 'default filename') {
+                  $default_filename = str_replace('&lt;page name&gt;', $page_title, $sub_components[1]);
+                  $field_args['default filename'] = $default_filename;
                 } else {
                   $field_args[$sub_components[0]] = $sub_components[1];
                 }
@@ -585,7 +651,7 @@ END;
             $data_text .= "<free_text>\n";
           }
 
-          if ($template_name == '') {
+          if ($template_name == '' || $field_name == '<freetext>') {
             $section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
           } else {
             if (is_array($cur_value)) {
@@ -737,6 +803,9 @@ END;
               if ($input_type == 'date' || $input_type == 'datetime' ||
                   $input_type == 'datetime with timezone' ||
                   ($input_type == '' && $form_field->template_field->propertyIsOfType('_dat'))) {
+                // get current time, for the time zone specified in the wiki
+                global $wgLocaltimezone;
+                putenv('TZ=' . $wgLocaltimezone);
                 $cur_time = time();
                 $year = date("Y", $cur_time);
                 $month = date("n", $cur_time);
@@ -846,6 +915,12 @@ END;
         // standard input processing
         // =====================================================
         } elseif ($tag_title == 'standard input') {
+          // if it's a query, ignore all standard inputs
+          if ($is_query) {
+            $new_text = "";
+            $section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
+            continue;
+          }
           // set a flag so that the standard 'form bottom' won't get displayed
           $this->standardInputsIncluded = true;
           // handle all the possible values
@@ -913,8 +988,16 @@ END;
               $form_is_partial = true;
               // replacement pages may have minimal matches...
               $source_page_matches_this_form = true;
-              }
+           }
+            elseif($tag == 'includeonly free text') {           		
+              $includeonly_free_text = true;
             }
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+            elseif($tag == 'WYSIWYG') {          
+              $show_FCKEditor = true;
+            }
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
+          }
           $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
         // =====================================================
         // default outer level processing
@@ -1041,9 +1124,25 @@ END;
     } else {
       $free_text = null;
     }
+    // modify free text and data text to insert <noinclude> and <includeonly>
+    // tags, if necessary
+    if ($includeonly_free_text) {
+      $free_text = str_replace("<noinclude>",'', $free_text);
+      $free_text = str_replace("</noinclude>",'', $free_text);
+      $free_text = str_replace("<includeonly>",'', $free_text);
+      $free_text = str_replace("</includeonly>",'', $free_text);
+      $free_text = trim($free_text);
+      $data_text = str_replace('<free_text>','</noinclude><includeonly><free_text></includeonly><noinclude>', $data_text);
+      $data_text = "<noinclude>".$data_text."</noinclude>";
+    }
     // if the FCKeditor extension is installed, use that for the free text input
     global $wgFCKEditorDir;
-    if ($wgFCKEditorDir) {
+
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
+// code was:
+//  if ($wgFCKEditorDir) {
+    if ($wgFCKEditorDir && $show_FCKEditor) {
+/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
       $showFCKEditor = SFFormUtils::getShowFCKEditor();
       $free_text = htmlspecialchars( $free_text );
       if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
@@ -1166,7 +1265,7 @@ END;
     if ($free_text_was_included && $showFCKEditor > 0) {
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
       $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $field_args['rows']);
-      /*op-patch|SR|2009-06-04|n.a.|use rows parameter for editor window height|end*/
+      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
         $javascript_text .= SFFormUTils::FCKToggleJavascript();
       }
