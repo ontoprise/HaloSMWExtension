@@ -333,12 +333,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step7\" style=\"display: none\">";
 		$html .= "<span>".wfMsg('smw_wws_yourws')."\"";
 		$html .= "<span id=\"step7-name\"></span>";
-		$html .= "\"".wfMsg('smw_wws_succ_created')."</span>";
-		$html .= "<br><br>";
+		$html .= "\"".wfMsg('smw_wws_succ_created');
 		$url = Title::makeTitleSafe(NS_SPECIAL, "webservicerepository")->getInternalURL();
-		$html .= "<div id=\"step7-container\"></div>";
-		$html .= "<br><br>";
-		$html .= "<span>".wfMsg('smw_wws_succ_created-2')."<a href=\"".$url."\">".wfMsg('smw_wws_succ_created-3')."</a>".wfMsg('smw_wws_succ_created-4')."</span>";
+		//$html .= "<div id=\"step7-container\"></div>";
+		$html .= "<a href=\"".$url."\">".wfMsg('smw_wws_succ_created-3')."</a>".wfMsg('smw_wws_succ_created-4')."</span>";
 		//$html .= "<img onclick=\"webServiceSpecial.processStep7()\" src=\"".$smwgDIScriptPath."/skins/webservices/Control_play.png\" class=\"OKButton\"></img>";
 		$html .= "<br/><input type=\"button\" class=\"OKButton\" id=\"step7-go-img\" value=\"".wfMsg('smw_wws_new')."\" onclick=\"webServiceSpecial.processStep7()\"/>";
 		$html .= "</div>";
