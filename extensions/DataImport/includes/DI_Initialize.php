@@ -8,7 +8,7 @@
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'SMW_HALO_VERSION' ) ) die;
 
-define('SMW_DI_VERSION', '1.4-for-SMW-1.4');
+define('SMW_DI_VERSION', '1.1');
 
 global $smwgDIIP, $wgHooks; 
 $smwgDIIP = $IP . '/extensions/DataImport';
