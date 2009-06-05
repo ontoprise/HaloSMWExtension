@@ -114,7 +114,8 @@ if ($buildAll || $build == 'smw') {  // standard scripts which are loaded always
 	 				  'SMW_SaveAnnotations.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'def-webservices.js' => GPL_LICENSE_ONTOPRISE,
 	                  'webservices-rep.js' => GPL_LICENSE_ONTOPRISE,
-	                  'termImport.js' => GPL_LICENSE_ONTOPRISE
+	                  'termImport.js' => GPL_LICENSE_ONTOPRISE,
+					  'materialize.js' => GPL_LICENSE_ONTOPRISE
 	/*'edit_area_loader.js',
 	 'SMWEditInterface.js'*/
 
