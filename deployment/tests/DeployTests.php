@@ -3,6 +3,7 @@ require_once 'PHPUnit/Framework.php';
 
 require_once 'testcases/TestDeployDescriptorParser.php';
 require_once 'testcases/TestDeployDescriptorProcessor.php';
+require_once 'testcases/TestPackageRepository.php';
 
 class DeployTests
 {
@@ -12,6 +13,7 @@ class DeployTests
 
         $suite->addTestSuite("TestDeployDescriptorParser");
         $suite->addTestSuite("TestDeployDescriptorProcessor");
+        $suite->addTestSuite("TestPackageRepository");
         return $suite;
     }
 }
