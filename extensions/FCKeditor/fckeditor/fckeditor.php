@@ -36,8 +36,9 @@ function FCKeditor_IsCompatibleBrowser()
 		
 	if ( isset( $HTTP_USER_AGENT ) )
 		$sAgent = $HTTP_USER_AGENT ;
-	else
+	elseif ( isset($_SERVER['HTTP_USER_AGENT']) )
 		$sAgent = $_SERVER['HTTP_USER_AGENT'] ;
+	else return;
 
 	if ( strpos($sAgent, 'MSIE') !== false && strpos($sAgent, 'mac') === false && strpos($sAgent, 'Opera') === false )
 	{
