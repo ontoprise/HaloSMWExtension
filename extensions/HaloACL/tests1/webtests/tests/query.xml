@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Query" default="testQueryHiddenPages">
+
+	&login;
+
+	<target name="testQueryHiddenPages">
+
+		<webtest name="Testing queries as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/QueryHiddenPages"
+				description="Open page with queries." />
+			<verifyXPath 
+				description="Check label of first row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a"		
+				text="HiddenInstance" />
+			<verifyXPath 
+				description="Check label of second row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
+				text="HiddenInstanceOfSubcat" />
+			<verifyXPath 
+				description="Check label of third row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a"		
+				text="HiddenPage" />
+			<verifyXPath 
+				description="Check label of fourth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[5]/td/a"		
+				text="HiddenProperty" />
+			<verifyXPath 
+				description="Check label of fifth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a"		
+				text="HiddenUser" />
+
+			<verifyXPath 
+				description="Check link of first row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a/@href"
+				regex="true"
+				text=".*HiddenInstance.*" />
+			<verifyXPath 
+				description="Check link of second row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a/@href"		
+				regex="true"
+				text=".*HiddenInstanceOfSubcat.*" />
+			<verifyXPath 
+				description="Check link of third row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a/@href"		
+				regex="true"
+				text=".*HiddenPage.*" />
+			<verifyXPath 
+				description="Check link of fourth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[5]/td/a/@href"		
+				regex="true"
+				text=".*HiddenProperty.*" />
+			<verifyXPath 
+				description="Check link of fifth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a/@href"		
+				regex="true"
+				text=".*HiddenUser.*" />
+
+		</webtest>
+		
+		
+		<webtest name="Testing queries as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/QueryHiddenPages"
+				description="Open page with queries." />
+			<verifyXPath 
+				description="Check label of first row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a"		
+				text="HiddenInstance" />
+			<verifyXPath 
+				description="Check label of second row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
+				text="HiddenInstanceOfSubcat" />
+			<verifyXPath 
+				description="Check label of third row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a"		
+				text="HiddenPage" />
+			<verifyXPath 
+				description="Check label of fourth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[5]/td/a"		
+				text="HiddenProperty" />
+			<verifyXPath 
+				description="Check label of fifth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a"		
+				text="HiddenUser" />
+
+			<verifyXPath 
+				description="Check link of first row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a/@href"
+				regex="true"
+				text=".*Permission.*" />
+			<verifyXPath 
+				description="Check link of second row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a/@href"		
+				regex="true"
+				text=".*Permission.*" />
+			<verifyXPath 
+				description="Check link of third row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a/@href"		
+				regex="true"
+				text=".*Permission.*" />
+			<verifyXPath 
+				description="Check link of fifth row of result"
+				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a/@href"		
+				regex="true"
+				text=".*Permission.*" />
+			
+		</webtest>
+		
+	</target>
+		
+	
+</project>

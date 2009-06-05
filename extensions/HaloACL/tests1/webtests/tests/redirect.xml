@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Redirect" default="testRedirect">
+
+	&login;
+
+	<target name="testRedirect">
+
+		<webtest name="Test redirect as NormalUser">
+			<antcall target="checkRedirect">
+				<param name="user" value="NormalUser"/>
+				<param name="content" value="HiddenPage"/>
+			</antcall>
+		</webtest>
+		<webtest name="Test redirect as RestrictedUser">
+			<antcall target="checkRedirect">
+				<param name="user" value="RestrictedUser"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+		</webtest>
+	</target>
+		
+	<target name="checkRedirect">
+
+		<antcall target="login">
+			<param name="user" value="${user}"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/HiddenRedirect"
+			description="Open page HiddenRedirect." />
+		<verifyText description="Check if page is loaded" 
+			         text="HiddenPage" />
+		<clickLink label="HiddenPage"/>		
+		<verifyText description="Check if redirected page is loaded" 
+			         text="${content}" />
+		
+	</target>
+	
+</project>

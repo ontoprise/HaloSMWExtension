@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Authorbackdoor" default="testAuthorBackdoor">
+
+	&login;
+
+	<target name="testAuthorBackdoor">
+
+		<webtest name="Test author backdoor as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/TestAuthorBackdoor"
+				description="Try to open article TestAuthorBackdoor" />
+			<verifyText 
+				description="Check for content" 
+				text="Permission error" />
+
+		</webtest>
+		
+	</target>
+	
+</project>

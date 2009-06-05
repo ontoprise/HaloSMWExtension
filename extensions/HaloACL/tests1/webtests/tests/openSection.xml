@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Sections" default="testSections">
+
+	&login;
+
+	<target name="testSections">
+
+		<webtest name="Test opening sections as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<antcall target="openSection">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="HiddenPage"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="HiddenInstance"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="HiddenInstanceOfSubcat"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="User:HiddenUser"/>
+			</antcall>
+		</webtest>
+		
+		
+		<webtest name="Test opening sections as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<antcall target="openSection">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="openSection">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+		</webtest>
+		
+	</target>
+		
+	<target name="openSection">
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}#Section_4"
+			description="Open section 4 of page ${page}." />
+		<verifyText description="Check if page is loaded" 
+			         text="${content}" />
+		
+	</target>
+	
+</project>

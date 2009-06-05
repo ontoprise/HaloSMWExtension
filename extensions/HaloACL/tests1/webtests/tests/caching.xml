@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Caching" default="testCaching">
+
+	&login;
+
+	<target name="testCaching">
+
+		<webtest name="Test caching">
+			<antcall target="checkCache">
+				<param name="page" value="HiddenPage"/>
+			</antcall>
+			<antcall target="checkCache">
+				<param name="page" value="HiddenInstance"/>
+			</antcall>
+			<antcall target="checkCache">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+			</antcall>
+			<antcall target="checkCache">
+				<param name="page" value="User:HiddenUser"/>
+			</antcall>
+		</webtest>
+	</target>
+		
+	<target name="checkCache">
+
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as NormalUser." />
+		<verifyText description="Check if page is loaded" 
+			         text="${page}" />
+
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as RestrictedUser." />
+		<verifyText description="Check if page is loaded" 
+			         text="Permission error" />
+		
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} a second time as NormalUser." />
+		<verifyText description="Check if page is loaded" 
+			         text="${page}" />
+		
+	</target>
+	
+</project>

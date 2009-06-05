@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="DeletePages" default="testDeletePages">
+
+	&login;
+
+	<target name="testDeletePages">
+
+		<webtest name="Test action links as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="deletePage">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="Permission denied"/>
+			</antcall>
+			<antcall target="deletePage">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="Permission denied"/>
+			</antcall>
+			<antcall target="deletePage">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="Permission denied"/>
+			</antcall>
+			<antcall target="deletePage">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="Permission denied"/>
+			</antcall>
+		</webtest>
+		
+	</target>
+		
+	<target name="deletePage">
+
+		<invoke 
+			url="http://localhost/${wikipath}/index.php/${page}?action=delete "
+			description="Try to delete ${page}" />
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+
+	</target>
+	
+</project>

@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 
 <project name="testHaloACL" default="testAll">
-	
+
+
 	<property name="wikipath" value="mediawiki"/>
+		
 	
 	<target name="testAll" description="runs all the tests">
 <!--
 -->		
-		
 		<ant antfile="createUsers.xml"/> 
 		<ant antfile="createArticles.xml"/>
 		<ant antfile="pageTransclusion.xml"/>
@@ -16,6 +17,14 @@
 		<ant antfile="exportPages.xml"/>
 		<ant antfile="listings.xml"/>
 		<ant antfile="revisions.xml"/>
+		<ant antfile="actionLinks.xml"/>
+		<ant antfile="movePages.xml"/>
+		<ant antfile="deletePages.xml"/>
+		<ant antfile="authorBackdoor.xml"/>
+		<ant antfile="caching.xml"/>
+ 		<ant antfile="redirect.xml"/>
+		<ant antfile="openSection.xml"/>
+		<ant antfile="query.xml"/>
 <!--
 -->		
 		

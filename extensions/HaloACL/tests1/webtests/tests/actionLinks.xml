@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="ActionLinks" default="testActionLinks">
+
+	&login;
+
+	<target name="testActionLinks">
+
+		<webtest name="Test action links as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="HiddenPage"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="HiddenInstance"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="HiddenInstanceOfSubcat"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="User:HiddenUser"/>
+			</antcall>
+		</webtest>
+		
+		
+		<webtest name="Test action links as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+			<antcall target="loadPages">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+		</webtest>
+		
+	</target>
+		
+	<target name="loadPages">
+
+		<invoke 
+			url="http://localhost/${wikipath}/index.php/${page}?printable=yes"
+			description="Open page ${page} with action printable=yes." />
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+
+		<invoke 
+			url="http://localhost/${wikipath}/index.php/${page}?action=render"
+			description="Open page ${page} with action action=render." />
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+
+		<invoke 
+			url="http://localhost/${wikipath}/index.php/${page}?$action=raw"
+			description="Open page ${page} with action printable=raw." />
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+
+	</target>
+	
+</project>

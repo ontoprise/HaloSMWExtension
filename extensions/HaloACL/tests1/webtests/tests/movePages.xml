@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="MovePages" default="testMovePages">
+
+	&login;
+
+	<target name="testMovePages">
+
+		<webtest name="Test moving as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="HiddenPage"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="HiddenInstance"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="HiddenInstanceOfSubcat"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="User:HiddenUser"/>
+			</antcall>
+		</webtest>
+		
+		
+		<webtest name="Test moving as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="No such target page"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="No such target page"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="No such target page"/>
+			</antcall>
+			<antcall target="movePage">
+				<param name="page" value="User:HiddenUser"/>
+				<param name="content" value="No such target page"/>
+			</antcall>
+		</webtest>
+		
+	</target>
+		
+	<target name="movePage">
+
+		<invoke 
+			url="http://localhost/${wikipath}/index.php/Special:MovePage/${page}"
+			description="Try to move ${page}" />
+		<verifyText 
+			description="Check for content" 
+			text="${content}" />
+
+	</target>
+	
+</project>
