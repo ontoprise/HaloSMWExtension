@@ -46,7 +46,7 @@ enableCookies:   false    ,// true|false
 cookieScope:    'site'    ,// 'site'|'folder'
 language:       'auto'    ,// 'auto'|'en'|... (see the languages folder)
 graphicsType:   'auto'    ,// 'auto'|'international'|'english'
-urlGraphics:    '../skins/graphics/'   ,// change this if you install in another folder
+urlGraphics:    '/skins/graphics/'   ,// change this if you install in another folder
 urlLanguages:   '/floatbox/languages/'  ,// change this if you install in another folder
 /*** </General Options> ***/
 
@@ -125,7 +125,7 @@ init: function() {
 	this.timeouts = {};
 	this.pos = {};
 	var path = this.urlGraphics;
-	var fullPath = wgScriptPath + '/extensions/SemanticForms/';
+	var fullPath = wgScriptPath + '/extensions/SemanticForms';
 	this.slowZoomImg = fullPath + path + 'loading_white.gif';
 	this.slowLoadImg = fullPath + path + 'loading_black.gif';
 	this.iframeSrc = fullPath + path + 'loading_iframe.html';
