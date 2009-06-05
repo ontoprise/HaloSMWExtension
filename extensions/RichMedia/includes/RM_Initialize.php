@@ -8,7 +8,7 @@
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'SMW_HALO_VERSION' ) ) die;
 
-define('SMW_RM_VERSION', '1.0-for-SMW-1.4');
+define('SMW_RM_VERSION', '1.1-for-SMW-1.4.4');
 
 global $smwgRMIP, $wgHooks; 
 $smwgRMIP = $IP . '/extensions/RichMedia';
@@ -37,9 +37,12 @@ function enableRichMediaExtension() {
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
+	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMLink';
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMFormUsage_Magic';
+	//Add a hook to initialise the magic word for the {{#rml:}} Syntax Parser
+	$wgHooks['LanguageGetMagic'][] = 'RMLinkUsage_Magic';
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
 	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 }
@@ -79,6 +82,12 @@ function smwfRegisterRMForm( &$parser ) {
 
 	return true; // always return true, in order not to stop MW's hook processing!	
 }
+function smwfRegisterRMLink( &$parser ) {
+	
+	$parser->setFunctionHook( 'RMLinkUsage', 'smwfProcessRMLinkParserFunction' );
+
+	return true; // always return true, in order not to stop MW's hook processing!	
+}
 
 /**
  * The {{#rmf }} parser function processing part.
@@ -94,9 +103,27 @@ function smwfProcessRMFormParserFunction(&$parser) {
 	return RMForm::createRichMediaForm($params);
 }
 
+/**
+ * The {{#rml }} parser function processing part.
+ */
+function smwfProcessRMLinkParserFunction(&$parser) {
+	$params = func_get_args();
+	array_shift( $params ); // we already know the $parser ...
+	
+	// now we need the css and scripts. so add them
+	global $wgHooks; 
+	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+
+	return RMForm::createRichMediaLink($params);
+}
 
 function RMFormUsage_Magic(&$magicWords, $langCode){
 	$magicWords['RMFormUsage'] = array( 0, 'rmf' );
+	return true;
+}
+
+function RMLinkUsage_Magic(&$magicWords, $langCode){
+	$magicWords['RMLinkUsage'] = array( 0, 'rml' );
 	return true;
 }
 
