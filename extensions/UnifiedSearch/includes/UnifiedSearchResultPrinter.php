@@ -132,7 +132,7 @@ class UnifiedSearchResultPrinter {
             case NS_HELP:
             case NS_IMAGE:
               return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
-                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle()->getPartialURL() .
+                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle()->getPrefixedText() .
                                $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';           
             default:
               return '<li><span class="nosearchprev">&nbsp;</span>';        

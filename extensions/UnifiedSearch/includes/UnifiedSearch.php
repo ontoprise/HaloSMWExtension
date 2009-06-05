@@ -241,7 +241,7 @@ function smwf_ca_GetHTMLBody($page) {
 		$article = new Article($title);
 		$out = $psr->parse($revision->getText(),$wgTitle,$opt,true,true);
 	} else {
-		return null;
+		return "Error: Could not fetch revision";
 	}
 	
 	// fetch current skin
