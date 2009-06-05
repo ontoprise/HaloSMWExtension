@@ -9,18 +9,19 @@
 */
 
 function saveRichMediaData(mediaTitle, mediaLink) {
-	// get editor instance
-	if (window.top.wgAction == "formedit") // Semantic Forms
+	// get FCK editor instance
+	try {
+		if (window.top.wgAction == "formedit") // Semantic Forms
 		oEditor = window.parent.FCKeditorAPI.GetInstance('free_text');
-	else	// normal edit
-		oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
-		
+		else	// normal WYSIWYG edit
+			oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
+	}
 	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
-	if (! oEditor) {
+	catch(err) {
 		parent.fb.loadPageOnClose ='self';
 		return;
 	}
-
+			
 	document.write( '<script src="' + oEditor.Config['BasePath'] + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
 
 	var oElement;	// selected element, if any
