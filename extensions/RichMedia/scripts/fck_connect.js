@@ -9,9 +9,13 @@
 */
 
 function saveRichMediaData(mediaTitle, mediaLink) {
-	var oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
-	
-	// we didn't come from the FCK Editor, then reload the main page and quit.
+	// get editor instance
+	if (window.top.wgAction == "formedit") // Semantic Forms
+		oEditor = window.parent.FCKeditorAPI.GetInstance('free_text');
+	else	// normal edit
+		oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
+		
+	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
 	if (! oEditor) {
 		parent.fb.loadPageOnClose ='self';
 		return;
