@@ -35,6 +35,7 @@ Materialize.prototype = {
 		text = text.replace(/{{#materialize:/g, "{{subst:#materialize:");
 		text = text.replace(/##mcoll##/g, "{");
 		text = text.replace(/##mcolr##/g, "}");
+		text = text.replace(/##pipe##/g, "}");
 		$("wpTextbox1").value = text;
 	}
 }
