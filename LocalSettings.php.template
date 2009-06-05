@@ -217,6 +217,13 @@ require_once("extensions/SemanticResultFormats/SRF_Settings.php");
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
 
+#ACL
+require_once( "$IP/extensions/PermissionACL/PermissionACL.php" );
+
+#Semantic Notifications
+include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
+enableSemanticNotifications(); 
+
 #URL Arguments
 include_once('extensions/URLArguments/URLArguments.php');
 
