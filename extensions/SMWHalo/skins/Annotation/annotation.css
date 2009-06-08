@@ -11,6 +11,10 @@
 	border: 1px solid #000000;
 }
 
+.aam_selection_highlight{
+	background-color: #ffff00;
+}
+
 .aam_new_category_highlight{
 	background-color: #94B0F3;
 	border: 1px solid #000000;
