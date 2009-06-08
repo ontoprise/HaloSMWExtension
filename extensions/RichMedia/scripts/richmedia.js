@@ -72,9 +72,14 @@ var RichMediaPage = Class.create({
 	mergeFormsToForm: function(sourceForms, destForm) {  
   		var clone; 
   		sourceForms.each(function(sourceForm) { 
-			sourceForm.getElements().each(function(formControl) { 
+			sourceForm.getElements().each(function(formControl) {
 				clone = formControl.cloneNode(true);
-				
+
+				if (formControl.type == 'textarea') { 
+					/* Fix for firefox (values of textareas are just ignored) */ 
+					clone.value = formControl.value;
+				} 
+
 				/* if we find an id that contains the string 'day'
 				 * we search for the according year and month, build up a new date string 
 				 * and append this to the destForm
