@@ -20,8 +20,7 @@ END;
 		$buttonText = wfMsgNoTrans('smw_rm_formbuttontext');
 		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a><input type=\"submit\" value=\"$buttonText\"/></form>";
 
-		//return array($html, 'noparse' => true, 'isHTML' => true);
-		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+		return array($html, 'noparse' => true, 'isHTML' => true);
 	}
 	
 static function createRichMediaLink(&$parameter) {
@@ -55,9 +54,9 @@ static function createRichMediaLink(&$parameter) {
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 
-		$html .= "<a href=\"$uploadWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_name</a>";
+		$html = "<a href=\"$uploadWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_name</a>";
 
-		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+		return array($html, 'noparse' => true, 'isHTML' => true);
 	}
 }
 ?>
