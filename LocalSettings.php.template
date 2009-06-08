@@ -226,6 +226,9 @@ enableSemanticNotifications();
 #URL Arguments
 include_once('extensions/URLArguments/URLArguments.php');
 
+# NewUserMessage
+require_once( "extensions/NewUserMessage/NewUserMessage.php" );
+
 $wgGroupPermissions['darkmatter']['*'] = true;
 $wgGroupPermissions['gardener']['*'] = true;
 
