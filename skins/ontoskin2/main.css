@@ -506,11 +506,11 @@ dd {
 */
 
 table.smwfacttable{
-	clear: none !important;
+	clear: right !important;
 }
 
 div.smwfact{
-	clear: none !important;
+	clear: right !important;
 }
 
 /**
