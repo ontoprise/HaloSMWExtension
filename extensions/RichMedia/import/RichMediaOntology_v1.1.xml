@@ -98,8 +98,8 @@ Edit the page to see the template text.
     <title>Template:RMImage</title>
     <id>13</id>
     <revision>
-      <id>460</id>
-      <timestamp>2009-06-03T09:51:27Z</timestamp>
+      <id>573</id>
+      <timestamp>2009-06-08T16:32:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -124,25 +124,25 @@ Edit the page to see the template text.
 |&lt;u&gt;Meta data&lt;/u&gt;
 |-
 {| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
-! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+! style=&quot;width:12em&quot; align=&quot;left&quot; | Filename:
 |align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+! align=&quot;left&quot; | Copyright by:
 |align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+! align=&quot;left&quot; | Creation date:
 |align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+! align=&quot;left&quot; | Uploaded by:
 |align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+! align=&quot;left&quot; | Upload date:
 |align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+! align=&quot;left&quot; | Related articles:
 |align=&quot;left&quot; | {{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Short Description:
+! align=&quot;left&quot; | Short Description:
 |align=&quot;left&quot; | [[HasDescription::{{{Description|}}}]]
 |}
 |-
@@ -156,8 +156,8 @@ Edit the page to see the template text.
     <title>Template:RMPdf</title>
     <id>14</id>
     <revision>
-      <id>456</id>
-      <timestamp>2009-06-03T09:49:56Z</timestamp>
+      <id>574</id>
+      <timestamp>2009-06-08T16:32:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -182,25 +182,25 @@ Edit the page to see the template text.
 |&lt;u&gt;Meta data&lt;/u&gt;
 |-
 {| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
-! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+! style=&quot;width:12em&quot; align=&quot;left&quot; | Filename:
 |align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+! align=&quot;left&quot; | Copyright by:
 |align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+! align=&quot;left&quot; | Creation date:
 |align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+! align=&quot;left&quot; | Uploaded by:
 |align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+! align=&quot;left&quot; | Upload date:
 |align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+! align=&quot;left&quot; | Related articles:
 |align=&quot;left&quot; | {{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Short Description:
+! align=&quot;left&quot; | Short Description:
 |align=&quot;left&quot; | [[HasDescription::{{{Description|}}}]]
 |}
 |-
@@ -214,8 +214,8 @@ Edit the page to see the template text.
     <title>Template:RMDocument</title>
     <id>15</id>
     <revision>
-      <id>457</id>
-      <timestamp>2009-06-03T09:50:26Z</timestamp>
+      <id>575</id>
+      <timestamp>2009-06-08T16:33:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -241,28 +241,28 @@ Edit the page to see the template text.
 |&lt;u&gt;Meta data&lt;/u&gt;
 |-
 {| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
-! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+! style=&quot;width:12em&quot; align=&quot;left&quot; | Filename:
 |align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+! align=&quot;left&quot; | Copyright by:
 |align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+! align=&quot;left&quot; | Creation date:
 |align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+! align=&quot;left&quot; | Uploaded by:
 |align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+! align=&quot;left&quot; | Upload date:
 |align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Sub section of:
+! align=&quot;left&quot; | Sub section of:
 |align=&quot;left&quot; | [[IsSubSectionOf::Document:{{{SubSectionOf|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+! align=&quot;left&quot; | Related articles:
 |align=&quot;left&quot; | {{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Short Description:
+! align=&quot;left&quot; | Short Description:
 |align=&quot;left&quot; | [[HasDescription::{{{Description|}}}]]
 |}
 |-
@@ -276,8 +276,8 @@ Edit the page to see the template text.
     <title>Template:RMAudio</title>
     <id>16</id>
     <revision>
-      <id>458</id>
-      <timestamp>2009-06-03T09:50:49Z</timestamp>
+      <id>576</id>
+      <timestamp>2009-06-08T16:34:43Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -302,25 +302,25 @@ Edit the page to see the template text.
 |&lt;u&gt;Meta data&lt;/u&gt;
 |-
 {| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
-! width=&quot;10%&quot; align=&quot;left&quot; | Filename:
+! style=&quot;width:12em&quot; align=&quot;left&quot; | Filename:
 |align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Copyright by:
+! align=&quot;left&quot; | Copyright by:
 |align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Creation date:
+! align=&quot;left&quot; | Creation date:
 |align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Uploaded by:
+! align=&quot;left&quot; | Uploaded by:
 |align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Upload date:
+! align=&quot;left&quot; | Upload date:
 |align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Related articles:
+! align=&quot;left&quot; | Related articles:
 |align=&quot;left&quot; | {{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Short Description:
+! align=&quot;left&quot; | Short Description:
 |align=&quot;left&quot; | [[HasDescription::{{{Description|}}}]]
 |}
 |-
@@ -334,8 +334,8 @@ Edit the page to see the template text.
     <title>Template:RMVideo</title>
     <id>17</id>
     <revision>
-      <id>459</id>
-      <timestamp>2009-06-03T09:51:09Z</timestamp>
+      <id>577</id>
+      <timestamp>2009-06-08T16:35:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -360,25 +360,25 @@ Edit the page to see the template text.
 |&lt;u&gt;Meta data&lt;/u&gt;
 |-
 {| class=&quot;wikitable&quot; width=&quot;100%&quot; align=&quot;left&quot; style=&quot;border: 1px solid #AAAAAA&quot;
-! width=&quot;20%&quot; align=&quot;left&quot; | Filename:
+! style=&quot;width:12em&quot; align=&quot;left&quot; | Filename:
 |align=&quot;left&quot; | [[HasFilename::{{{Filename|}}}]]
 |-
-! width=&quot;20%&quot; align=&quot;left&quot; | Copyright by:
+! align=&quot;left&quot; | Copyright by:
 |align=&quot;left&quot; | [[HasCopyrightBy::{{{CopyrightBy|}}}]]
 |-
-! width=&quot;20%&quot; align=&quot;left&quot; | Creation date:
+! align=&quot;left&quot; | Creation date:
 |align=&quot;left&quot; | [[HasCreationDate::{{{CreationDate|}}}]]
 |-
-! width=&quot;20%&quot; align=&quot;left&quot; | Uploaded by:
+! align=&quot;left&quot; | Uploaded by:
 |align=&quot;left&quot; | [[HasUploader::{{{Uploader|}}}]]
 |-
-! width=&quot;20%&quot; align=&quot;left&quot; | Upload date:
+! align=&quot;left&quot; | Upload date:
 |align=&quot;left&quot; | [[HasUploadDate::{{{UploadDate|}}}]]
 |-
-! width=&quot;20%&quot; align=&quot;left&quot; | Related articles:
+! align=&quot;left&quot; | Related articles:
 |align=&quot;left&quot; | {{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
 |-
-! width=&quot;10%&quot; align=&quot;left&quot; | Short Description:
+! align=&quot;left&quot; | Short Description:
 |align=&quot;left&quot; | [[HasDescription::{{{Description|}}}]]
 |}
 |-
@@ -426,8 +426,8 @@ Edit the page to see the template text.
     <title>Template:RMListInnerTable</title>
     <id>19</id>
     <revision>
-      <id>302</id>
-      <timestamp>2009-06-02T09:12:46Z</timestamp>
+      <id>550</id>
+      <timestamp>2009-06-08T12:46:17Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -485,8 +485,8 @@ Edit the page to see the template text.
     <title>Form:RMUpload</title>
     <id>21</id>
     <revision>
-      <id>479</id>
-      <timestamp>2009-06-03T10:25:18Z</timestamp>
+      <id>554</id>
+      <timestamp>2009-06-08T14:02:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -505,7 +505,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | width=&quot;70%&quot; |
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|default=current user|size=40|maxlength=40}}}
+| {{{field|Uploader|mandatory|autocomplete on category=Person|default=current user|size=40|maxlength=40}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -527,7 +527,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |-
@@ -544,8 +544,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>22</id>
     <revision>
-      <id>446</id>
-      <timestamp>2009-06-03T09:38:15Z</timestamp>
+      <id>557</id>
+      <timestamp>2009-06-08T14:06:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -580,7 +580,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -593,7 +593,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |- 
@@ -610,8 +610,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>23</id>
     <revision>
-      <id>444</id>
-      <timestamp>2009-06-03T09:36:08Z</timestamp>
+      <id>555</id>
+      <timestamp>2009-06-08T14:04:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -646,7 +646,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -659,7 +659,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |- 
@@ -680,8 +680,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>24</id>
     <revision>
-      <id>449</id>
-      <timestamp>2009-06-03T09:42:09Z</timestamp>
+      <id>556</id>
+      <timestamp>2009-06-08T14:05:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -716,7 +716,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -729,7 +729,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |-
@@ -750,8 +750,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMAudio</title>
     <id>25</id>
     <revision>
-      <id>450</id>
-      <timestamp>2009-06-03T09:43:07Z</timestamp>
+      <id>558</id>
+      <timestamp>2009-06-08T14:07:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -786,7 +786,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -799,7 +799,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |- 
@@ -813,8 +813,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVideo</title>
     <id>26</id>
     <revision>
-      <id>451</id>
-      <timestamp>2009-06-03T09:43:31Z</timestamp>
+      <id>559</id>
+      <timestamp>2009-06-08T14:07:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -849,7 +849,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|default=current user}}}
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
 |- 
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
@@ -862,7 +862,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
-| {{{field|RelatedArticles|autocomplete|size=40}}}
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
 |- 
