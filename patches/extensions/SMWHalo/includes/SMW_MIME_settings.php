@@ -4,9 +4,10 @@ define('MIME_TYPE_EXTENSION', "1.0");
 // begin AdditionalMIMETypes:
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',
- 	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw'));
-// other possible extensions: ('pwz', 'ppz', 'pot'(Vorlage))(Powerpoint), xls?
-// 'rtf', 'mp2', 'ott' + 'stw' (OpenOfficeTextvorlage)
+ 	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
+ 	'rar', 'xls', 'docx', 'xlsx', 'pptx'));
+// other possible extensions: ('pwz', 'ppz', 'pot' (draft))(Powerpoint)
+// 'rtf', 'mp2', 'ott' + 'stw' (OpenOffice drafts)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
 
 define('NS_DOCUMENT', 120);
@@ -43,32 +44,38 @@ $wgNamespaceAliases = $wgNamespaceAliases +
 	    );
       
 global $wgNamespaceByExtension;
-$wgNamespaceByExtension =
-	array('png' => NS_IMAGE,
-		'gif' => NS_IMAGE,
-		'jpg' => NS_IMAGE,
-		'jpeg' => NS_IMAGE,
-		'pdf' => NS_PDF, 
-		'doc' => NS_DOCUMENT,
-		'ac3' => NS_AUDIO,
-		'avi' => NS_VIDEO,
-		'mp3' => NS_AUDIO,
-		'ogg' => NS_AUDIO,
-		'mpg' => NS_VIDEO,
-		'mpeg' => NS_VIDEO,
-		'mov' => NS_VIDEO,
-		'wmv' => NS_VIDEO,
-		'ppt' => NS_DOCUMENT,
-		'pps' => NS_DOCUMENT,
-		'odt' => NS_DOCUMENT,
-		'ods' => NS_DOCUMENT,
-		'odp' => NS_DOCUMENT,
-		'odg' => NS_DOCUMENT,
-		'odf' => NS_DOCUMENT,
-		'sxw' => NS_DOCUMENT,
-		'svg' => NS_IMAGE,
-		'owl' => NS_IMAGE
-	);
+$wgNamespaceByExtension = array(
+	'png' => NS_IMAGE,
+	'gif' => NS_IMAGE,
+	'jpg' => NS_IMAGE,
+	'jpeg' => NS_IMAGE,
+	'pdf' => NS_PDF, 
+	'doc' => NS_DOCUMENT,
+	'ac3' => NS_AUDIO,
+	'avi' => NS_VIDEO,
+	'mp3' => NS_AUDIO,
+	'ogg' => NS_AUDIO,
+	'mpg' => NS_VIDEO,
+	'mpeg' => NS_VIDEO,
+	'mov' => NS_VIDEO,
+	'wmv' => NS_VIDEO,
+	'ppt' => NS_DOCUMENT,
+	'pps' => NS_DOCUMENT,
+	'odt' => NS_DOCUMENT,
+	'ods' => NS_DOCUMENT,
+	'odp' => NS_DOCUMENT,
+	'odg' => NS_DOCUMENT,
+	'odf' => NS_DOCUMENT,
+	'sxw' => NS_DOCUMENT,
+	'svg' => NS_IMAGE,
+	'owl' => NS_IMAGE,
+	'zip' => NS_IMAGE,
+	'rar' => NS_IMAGE,
+	'xls' => NS_DOCUMENT,
+	'docx' => NS_DOCUMENT,
+	'xlsx' => NS_DOCUMENT,
+	'pptx' => NS_DOCUMENT
+);
 	
 //We want semantic data in this namespaces!
 global $smwgNamespacesWithSemanticLinks;
