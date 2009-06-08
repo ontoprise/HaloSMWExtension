@@ -248,8 +248,13 @@ function smwf_qi_getPage($args= "") {
 	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
+	$fp = null;
+	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+		$serverWithAuth = preg_replace('%^(http(s)?://)%i', "\$1".$_SERVER['PHP_AUTH_USER'].':'.$_SERVER['PHP_AUTH_PW'].'@', $wgServer);
+		$fp = fopen($serverWithAuth.$wgScript."/Special:QueryInterface", "r");
+	}
+	else $fp = fopen($wgServer.$wgScript."/Special:QueryInterface", "r");
 
-	$fp = fopen($wgServer.$wgScript."/Special:QueryInterface", "r");
 	// this happens at any error (also if the URL can be called but a 404 is returned)
 	if (!$fp) return false;
 
