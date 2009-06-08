@@ -661,7 +661,7 @@ a.menulink{
 
 
 /* Save annotations Container */
-#stb_cont12-headline{
+#stb_cont13-headline{
     background-color: #ee2222;
     font-weight: bold;
     color: #FFF;
@@ -671,7 +671,7 @@ a.menulink{
     margin-top: 3px;
 }
 
-#stb_cont12-content{
+#stb_cont13-content{
     border: 1px solid #ee2222;
     background-color: #ee8888;
     overflow: auto;
@@ -708,7 +708,7 @@ a.menulink{
 }
 
 /* Annotation hint Container */
-#stb_cont11-headline{
+#stb_cont12-headline{
     background-color: #557844;
     font-weight: bold;
     color: #FFF;
@@ -718,7 +718,7 @@ a.menulink{
     margin-top: 3px;
 }
 
-#stb_cont11-content{
+#stb_cont12-content{
     border: 1px solid #557844;
     background-color: #6CA252;
     overflow: auto;
@@ -895,6 +895,30 @@ a.menulink{
 	vertical-align: top;
 	width: 20%;
 }
+
+#stb_cont11-headline{
+    background-color: #E6E600;
+    font-weight: bold;
+    color: #FFF;
+/*  padding-top: 1px; */
+    padding-left: 3px;
+    border: 1px solid #E6E600;
+    margin-top: 3px;
+}
+
+#stb_cont11-content{
+    background-color: #FFFFCC;
+    border: 1px solid #E6E600;
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    line-height:13px;
+    font-size: 11px;
+    overflow: auto;
+}
+
+
 
 /*
 #bodyContent{
