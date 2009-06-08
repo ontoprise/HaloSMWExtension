@@ -178,8 +178,9 @@ $wgGroupPermissions['sysop']['wysiwyg']=true;
 
 
 // auto-templates
-$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'));
-$smwhgAutoTemplates = array(NS_CATEGORY => "Category");
+$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
+                                       SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'));
+$smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
 
 
 // extensions
