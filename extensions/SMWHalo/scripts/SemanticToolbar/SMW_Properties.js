@@ -765,13 +765,13 @@ apply: function() {
 	
 	// append new annotations
 	if (maxCardAnno == null && maxCard != null) {
-		this.wtp.addRelation(gLanguage.getMessage('MAX_CARDINALITY'), maxCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MAX_CARDINALITY'), maxCard, " ", true);
 	}
 	if (minCardAnno == null && minCard != null) {
-		this.wtp.addRelation(gLanguage.getMessage('MIN_CARDINALITY'), minCard, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('MIN_CARDINALITY'), minCard, " ", true);
 	}
 	if (inverseAnno == null && inverse != null) {
-		this.wtp.addRelation(gLanguage.getMessage('IS_INVERSE_OF'), inverse, null, true);
+		this.wtp.addRelation(gLanguage.getMessage('IS_INVERSE_OF'), inverse, " ", true);
 	}
 	if (transitive != null && transitive.down('input').checked && transitiveAnno == null) {
 		this.wtp.addCategory(gLanguage.getMessage('TRANSITIVE_RELATION'), true);
@@ -802,7 +802,7 @@ apply: function() {
 				var r = (range == '') ? '' : gLanguage.getMessage('CATEGORY_NS')+range;
 				r = ((domain == null) ? "" : domain) + "; " + r;
 				typeString += gLanguage.getMessage('TYPE_PAGE',"cont")+';';
-				this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), r, null, true);
+				this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), r, " ", true);
 				domainAdded = true;
 			} else {
 				// type is not Page
@@ -814,7 +814,7 @@ apply: function() {
 	if (!domainAdded && domain != null) {
 		// A domain is given but it has not been added yet, as the property has
 		// no range.
-		this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), domain + "; ", null, true);
+		this.wtp.addRelation(gLanguage.getMessage('RANGE_HINT'), domain + "; ", " ", true);
 	}
 	
 	// add the (n-ary) type definition
@@ -825,7 +825,7 @@ apply: function() {
 		if (attrTypeAnno != null) {
 			attrTypeAnno[0].changeValue(typeString);
 		} else {			
-			this.wtp.addRelation(gLanguage.getMessage('HAS_TYPE'), typeString, null, true);
+			this.wtp.addRelation(gLanguage.getMessage('HAS_TYPE'), typeString, " ", true);
 		}
 	} else {
 		attrTypeAnno[0].remove("");
