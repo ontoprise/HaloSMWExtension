@@ -10,7 +10,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = false;
 
 	function tearDown() {
-		//di_utils_truncateWSTables();
+		di_utils_truncateWSTables();
 	}
 
 	/*
