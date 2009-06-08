@@ -622,4 +622,116 @@ Jump to: navigation, search
 }}</text>
     </revision>
   </page>
+  <page>
+    <title>WebService:TimeTestWSUse</title>
+    <id>30</id>
+    <revision>
+      <id>42</id>
+      <timestamp>2009-06-08T12:23:01Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSUse</title>
+    <id>31</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2009-06-08T13:01:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#ws:TimeTestWSUse
+| dontCare=something
+| ?result.complete
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>WebService:TimeTestWSUse2</title>
+    <id>32</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2009-06-08T13:06:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: &lt;WebService&gt; &lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt; &lt;protocol&gt;REST&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;parameter name=&quot;dontCare&quot; path=&quot;dontC...</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;dontCare&quot; path=&quot;dontCare&quot; optional=&quot;true&quot;/&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;complete&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TimeTestWSRemoveUse</title>
+    <id>33</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2009-06-08T13:41:25Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#ws:TimeTestWSUse | dontCare=something | ?result.complete }}   {{#ws:TimeTestWSUse | dontCare=something | ?result.complete }}   {{#ws:TimeTestWSUse | dontCare=something else | ?result.co...</comment>
+      <text xml:space="preserve">{{#ws:TimeTestWSUse
+| dontCare=something
+| ?result.complete
+}} 
+
+{{#ws:TimeTestWSUse
+| dontCare=something
+| ?result.complete
+}} 
+
+{{#ws:TimeTestWSUse
+| dontCare=something else
+| ?result.complete
+}} 
+
+{{#ws:TimeTestWSUse2
+| dontCare=something else
+| ?result.complete
+}} 
+
+{{#ws:TimeTestWSUse2
+| ?result.complete
+}}</text>
+    </revision>
+  </page>
 </mediawiki>
