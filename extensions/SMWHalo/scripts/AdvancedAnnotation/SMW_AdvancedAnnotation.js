@@ -47,8 +47,9 @@ AdvancedAnnotation.prototype = {
 		this.loadWikiText();
 		this.annoCount = 10000;
 		this.annotationsChanged = false;
-		
+		this.selectionHighlightID = 0;
 		this.contextMenu = null;
+		this.annotationConfirmed = false;
 		
 		// Invalidate the HTML-cache for this article
 //		this.om.touchArticle(wgPageName);
@@ -321,7 +322,11 @@ AdvancedAnnotation.prototype = {
 					"(i)Wikitext found for selection:<br><b>"+this.selectedText+"</b>",
 					this.wikiTextParser.text.substring(start,end),
 					event.clientX, event.clientY);
-*/					
+*/
+				// Bug 7018 -start
+				this.highlightSelection();
+				// Bug 7018 -end
+					
 				// Show toolbar at the cursor position
 				this.annotateWithToolbar(event);
 
@@ -376,6 +381,10 @@ AdvancedAnnotation.prototype = {
 		this.annotatedNode = null;
 		this.annotationProposal = null;
 		this.wikiTextParser.setSelection(-1, -1);
+
+		if (!this.annotationConfirmed) {		
+			this.removeSelectionHighlight();
+		}
 	},
 	
 	searchWtoAnchorWoCat: function(node, parameters) {
@@ -786,7 +795,8 @@ AdvancedAnnotation.prototype = {
 	 * 		Name of the new category.
 	 */
 	categoryAdded: function(startPos, endPos, name) {
-		this.highlightSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
+//		this.highlightSelection(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
+		this.confirmAnnotation(AA_CATEGORY, 'aam_new_category_highlight', startPos, endPos);
 		catToolBar.fillList();
 		smwhgSaveAnnotations.markDirty();
 		this.annotationsChanged = true;
@@ -814,7 +824,7 @@ AdvancedAnnotation.prototype = {
 			this.annotationProposal = null;
 		} else {
 //			this.markSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
-			this.highlightSelection(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
+			this.confirmAnnotation(AA_RELATION, 'aam_new_anno_prop_highlight', startPos, endPos);
 		}
 		relToolBar.fillList();
 		smwhgSaveAnnotations.markDirty();
@@ -852,38 +862,35 @@ AdvancedAnnotation.prototype = {
 	
 	/**
 	 * Embraces the currently selected text with a <span> tag with the css style
-	 * <cssClass>.
-	 * @param int type
-	 * 		The selection is either AA_RELATION or AA_CATEGORY
-	 * @param string cssClass
-	 * 		Name of the css style that is added as class to the <span> tag.
-	 * @param int startPos
-	 * 		Wikitextoffset of the new annotation's start that has been created 
-	 * 		for the	selection.
-	 * @param int endPos
-	 * 		Wikitextoffset of the new annotation's end.
+	 * <cssClass>. 
+	 * As a fresh selection always vanishes when the annotation popup opens,
+	 * the current selection is highlighted in yellow. The HTML is extended as like
+	 * for complete annotations with edit and delete buttons. Thus it is much 
+	 * easier to create the correct HTML when the annotation is confirmed. 
+	 * (See function confirmAnnotation).
+	 * 
 	 */
-	highlightSelection: function(type, cssClass, startPos, endPos) {
+	highlightSelection: function() {
 
 		if (!this.annotatedNode || this.selectedText === "") {
 			return;
 		}
 		
 		var imgPath = wgScriptPath + "/extensions/SMWHalo/skins/Annotation/images/"
+		this.selectionHighlightID = this.annoCount;
 		var annoDecoStart =
-			'<a href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
-			((type == AA_RELATION) 
-				? '<img src="' + imgPath + 'edit.gif"/>'
-				: "" ) +
-			'</a>' +
-			'<span id="anno' + this.annoCount +
-				'" class="' +cssClass +
-				'" type="annotationHighlight">';
-		var annoDecoEnd =
-			'</span>'+
-			'<a href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
-   			'<img src="' + imgPath + 'delete.png"/></a>';
-   		
+				'<a icon="edit" style="display:none" href="javascript:AdvancedAnnotation.smwhfEditAnno('+this.annoCount+')">'+
+					'<img src="' + imgPath + 'edit.gif"/>' +
+				'</a>';
+		annoDecoStart += '<span id="anno' + this.annoCount +
+							'" class="aam_selection_highlight"' +
+							' type="annotationHighlight">';
+		var annoDecoEnd = '</span>';
+		
+		annoDecoEnd += 
+			'<a icon="delete" style="display:none" href="javascript:AdvancedAnnotation.smwhfDeleteAnno('+this.annoCount+')">'+
+				'<img src="' + imgPath + 'delete.png"/>' +
+			'</a>';
    		// add a wrapper span
    		if (this.selectedText.length <= 20) {
 			annoDecoStart = '<span id="anno'+this.annoCount+'w" style="white-space:nowrap">'+
@@ -895,14 +902,10 @@ AdvancedAnnotation.prototype = {
 			annoDecoEnd += '</span>';
    		}
    		
-   		var annoType = (type == AA_RELATION) 
-   						? 'annoType="relation"'
-   						: 'annoType="category"';
-
 		// add wiki text offset anchors around the highlight   						
-   		annoDecoStart = '<a type="wikiTextOffset" name="'+startPos+'" '+annoType+'></a>' 
+   		annoDecoStart = '<a type="wikiTextOffset" name="0"></a>' 
    		                + annoDecoStart;
-		annoDecoEnd += '<a type="wikiTextOffset" name="'+endPos+'" '+annoType+'></a>';
+		annoDecoEnd += '<a type="wikiTextOffset" name="0"></a>';
 
 		var first = this.annotatedNode;
 		var second = this.focusNode;
@@ -950,6 +953,73 @@ AdvancedAnnotation.prototype = {
 			}
 		} 
 		this.annoCount++;
+		this.annotationConfirmed = false;
+	},
+
+	/**
+	 * Confirms the previously highlighted selection as annotation for a relation
+	 * or a category.
+	 * @param int type
+	 * 		The selection is either AA_RELATION or AA_CATEGORY
+	 * @param string cssClass
+	 * 		Name of the css style that is added as class to the <span> tag.
+	 * @param int startPos
+	 * 		Wikitextoffset of the new annotation's start that has been created 
+	 * 		for the	selection.
+	 * @param int endPos
+	 * 		Wikitextoffset of the new annotation's end.
+	 */
+	confirmAnnotation: function(type, cssClass, startPos, endPos) {
+
+		if (this.selectionHighlightID == 0) {
+			return;
+		}
+		// find the span that marks the start of the selection highlight
+		var wrapper = $('bodyContent').down('span[id="anno'+this.selectionHighlightID+'w"]');
+		if (!wrapper) {
+//			alert("Wrapper for selection highlight not found.")
+			return;
+		}
+
+   		var annoType = (type == AA_RELATION) 
+   						? 'relation'
+   						: 'category';
+		
+		// Set the wiki text start position in the <a> before the selection
+		var start = wrapper.previous('a');
+		if (start) {
+			start.writeAttribute('name', startPos);
+			start.writeAttribute('annoType', annoType);
+		}
+		// There is always the highlighting span within the wrapper span 
+		// => update the class
+		var span = wrapper.down('span');
+		if (span) {
+			span.writeAttribute('class', cssClass);
+		}
+		
+		// Show the hidden edit and delete icons
+		var icon = wrapper.down('a[icon="edit"]');
+		if (icon) {
+			if (type == AA_RELATION) {
+				icon.show();
+			} else {
+				icon.remove();
+			} 
+		}
+		var icon = wrapper.down('a[icon="delete"]');
+		if (icon) {
+			icon.show();
+		}
+		
+		// Set the wiki text start position in the <a> before the selection
+		var end = wrapper.next('a');
+		if (end) {
+			end.writeAttribute('name', endPos);
+			end.writeAttribute('annoType', annoType);
+		}
+
+		this.annotationConfirmed = true;
 	},
 
 	
@@ -1305,6 +1375,64 @@ AdvancedAnnotation.prototype = {
 		if (nextWtoAnchor) {
 			nextWtoAnchor.remove();
 		}
+		
+	},
+	
+	/**
+	 * @private
+	 * 
+	 * Removes the highlight of the current selection.
+	 * 
+	 */
+	removeSelectionHighlight: function() {
+		
+		// find the span that marks the start of the selection highlight
+		var wrapper = $('bodyContent').down('span[id="anno'+this.selectionHighlightID+'w"]');
+		if (!wrapper) {
+//			alert("Wrapper for selection highlight not found.")
+			return;
+		}
+		
+		// Remove the anchors with wikitext offset before and after the wrapper
+		var wto = wrapper.previous('a');
+		if (wto) {
+			wto.remove();
+		}
+		wto = wrapper.next('a');
+		if (wto) {
+			wto.remove();
+		}
+		// There is always the highlighting span within the wrapper span.
+		var span = $(wrapper).down('span');
+		
+		// The highlighted section may contain hidden annotation proposal 
+		// => restore them
+		// Normal links are replaced by their text content
+		var proposals = $(span).descendants();
+		for (var i = 0; i < proposals.length; ++i) {
+			var p = proposals[i];
+			if (p.id.match(/anno\d*w/)) {
+				this.restoreProposal(p);
+			} else if (p.tagName == 'A') {
+				// found a link
+				var href = p.getAttribute("href");
+				if (href && href.startsWith(wgScriptPath)) {
+					// found an internal link.
+					if (p.parentNode.className != "aam_page_link_highlight") {
+						// its parent is not an annotation proposal
+						//  => replace it by the text content
+						p.replace(getTextContent(p));
+					}
+				}
+			}
+		} 
+		
+		
+		var htmlContent =  span.innerHTML;
+		
+		// replace the wrapper by the content i.e. create normal text
+		wrapper.replace(htmlContent);
+		this.selectionHighlightID = 0;
 		
 	},
 	
