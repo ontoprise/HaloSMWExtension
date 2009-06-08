@@ -10,7 +10,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 	protected $backupGlobals = false;
 
 	function tearDown() {
-		di_utils_truncateWSTables();
+		//di_utils_truncateWSTables();
 	}
 
 	/*
@@ -38,6 +38,33 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($ws->doesExpireAfterUpdate(), "true");
 		$this->assertEquals($ws->getConfirmationStatus(), "false");
 	}
+
+	/*
+	 * test editing a web service -> the cache must be cleaned
+	 * but the data about pages that use the ws must be kept 
+	 */
+	function testEditWS() {
+		global $wgScriptPath;
+		di_utils_setupWebServices(array("TimeTestWSEdit"));
+		$wsId = di_utils_getWSId("TimeTestWSEdit");
+		di_utils_setupWSUsages(array("TimeTestWSEdit"));
+
+		$this->assertNotEquals($wsId, null);
+		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
+		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId)), 1);
+		
+		$text = smwf_om_GetWikiText('WebService:TimeTestWSEdit');
+		$text = str_replace("http://localhost".$wgScriptPath
+			, "http://localhost/MashupWiki", $text);
+		smwf_om_EditArticle('WebService:TimeTestWSEdit', 'PHPUnit', $text, '');
+		
+		$wsId = di_utils_getWSId("TimeTestWSEdit");
+		$this->assertNotEquals($wsId, null);
+		
+		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
+		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId)), 0);
+	}
+
 
 	/*
 	 * Test missing <webservice> tag
@@ -79,8 +106,8 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($wsId, null);
 	}
 
-/*
-	 * Test soap ws with missing method
+	/*
+	 * Test soap rest ws with missing uri
 	 */
 	function testCreateWSRESTWithMissingURI(){
 		di_utils_setupWebServices(array("TimeTestWSCreateRESTMissingURI"), false);
@@ -88,7 +115,10 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 
 		$this->assertNotEquals($wsId, null);
 	}
-	
+
+	/*
+	 * Test deleting a wwsd
+	 */
 	function testDeleteWS() {
 		global $wgUser;
 		$wgUser->addGroup("sysop");
@@ -112,6 +142,12 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		$this->tearDownTestDeleteWS($text);
 	}
 
+	/*
+	 * test move a wwsd article
+	 * Note: Moving an rticle means that the page with the old name
+	 * gets a new page_id and the page with the new name gets the old page_id.
+	 * Therefore no updates to the web service tables are necessary.
+	 */
 	function testMoveWS(){
 		global $wgUser;
 		$wgUser->addGroup("sysop");
@@ -132,8 +168,8 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		$wsId2 = $ws->getArticleID();
 		$this->assertEquals($wsId, $wsId2);
 
-		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 0);
-		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId)), 0);
+		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId2)), 1);
+		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId2)), 1);
 
 		$this->tearDownTestMoveWS($text);
 	}
