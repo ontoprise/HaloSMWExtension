@@ -75,8 +75,8 @@ initializeTree: function (param) {
 	
 	// high priority: searchTerm in URL
 	if (searchTerm != undefined) {
-		var inputs = document.getElementsByTagName("input");
-	 	inputs[0].value = searchTerm;
+		var searchInput = $("FilterBrowserInput");
+	 	searchInput.value = searchTerm;
 		globalActionListener.filterBrowsing(null, true);
 		return;
 	}
