@@ -48,14 +48,16 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 		oNew.setAttribute('src', mediaLink);
 		oNew.setAttribute('_fcksavedurl', mediaLink);
 	}
-	else { // other media (ns = Media:) will be created as a link
-		var basename = mediaTitle.replace(/^[^:].*:(.*)/, '\$1');
+	else { // other media (ns != Image:) will be created as a link
+		//var basename = mediaTitle.replace(/^[^:].*:(.*)/, '\$1');
+		var basename = mediaTitle.substring(mediaTitle.indexOf(':') + 1);
+		var ns = mediaTitle.substring(0, mediaTitle.indexOf(':'))
 		oNew = oEditor.EditorDocument.createElement( 'A' );
 		oNew.className = 'internal';
 		oNew.setAttribute('title', basename);
-		oNew.setAttribute('_fck_mw_type', 'media');
+		oNew.setAttribute('_fck_mw_type', ns);
 		oNew.setAttribute('_fck_mw_filename', basename);
-		oNew.setAttribute('_fcksavedurl', basename);
+		oNew.setAttribute('_fcksavedurl', mediaTitle);
 		oNew.setAttribute('href', basename);
 		oNew.innerHTML = mediaTitle;
 	}
