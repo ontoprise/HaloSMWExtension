@@ -383,13 +383,13 @@ class SMWTripleStore extends SMWStore {
 	///// Query answering /////
 
 	function getQueryResult(SMWQuery $query) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
 
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
+			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
 			try {
 				global $smwgTripleStoreGraph;
