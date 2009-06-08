@@ -719,8 +719,14 @@ FCK.DataProcessor =
 
 		switch (htmlNode.className) {
 			case 'fck_mw_property' :
-				return '[[' + htmlNode.getAttribute('property') + '::' + text + ']]' ;
+				var name = htmlNode.getAttribute('property');
+				if (name.indexOf('::') != -1)
+					return '[[' + name + '|' + text + ']]' ;
+				else
+					return '[[' + name + '::' + text + ']]' ;
 			case 'fck_mw_category' :
+				var name = htmlNode.getAttribute('category');
+				if (name) return '[[Category:' + name + '|' + text + ']]';
 				return '[[Category:' + text + ']]'
 		}
 	}

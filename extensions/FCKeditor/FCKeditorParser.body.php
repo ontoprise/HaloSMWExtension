@@ -502,7 +502,10 @@ class FCKeditorParser extends Parser
 	private function replacePropertyValue($match) {
 		$prop = explode('::', $match);
   		if ((count($prop) == 2) && (strlen($prop[0]) > 0) && (strlen($prop[1]) > 0)) {
-  			if (($p = strpos($prop[1], '|')) !== false) $prop[1] = substr($prop[1], 0, $p);
+  			if (($p = strpos($prop[1], '|')) !== false) {
+  				$prop[0] .= '::'.substr($prop[1], 0, $p);
+  				$prop[1] = substr($prop[1], $p + 1);
+  			}
     		$p = count($this->fck_mw_propertyAtPage);
     		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span> ';
     		return 'FCK_PROPERTY_'.$p.'_FOUND';
@@ -518,7 +521,10 @@ class FCKeditorParser extends Parser
 		if ($categories) {
 			$appendString = "<p>";
 			foreach ($categories as $cat=>$val) {
-				$appendString .= '<span class="fck_mw_category">'.str_replace('_', ' ', $cat).'</span> ';
+				if ($val != $title->mTextform)
+					$appendString .= '<span class="fck_mw_category" category="'.$cat.'">'.str_replace('_', ' ', $val).'</span> ';
+				else
+					$appendString .= '<span class="fck_mw_category">'.str_replace('_', ' ', $cat).'</span> ';
 			}
 			$appendString .= "</p>";
 			$parserOutput->setText($parserOutput->getText() . $appendString);
