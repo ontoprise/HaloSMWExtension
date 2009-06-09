@@ -45,36 +45,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 				  'log'				=>	'VARCHAR(255) '.$collation.'',
 				  'progress'		=>	'DOUBLE'), $db, $verbose);
 
-
-			
-
-		// fetch all user IDs and add group SMW_GARD_ALL_USERS
-		SGADBHelper::reportProgress("Add exsiting users to gardening groups ...\n",$verbose);
-		$res = $db->select( $db->tableName('user'),
-		array('user_id'),
-		array(),
-		             "SMW::initGardeningLog",array());
-		if($db->numRows( $res ) > 0) {
-			while ($row = $db->fetchObject($res)) {
-				$user = User::newFromId($row->user_id);
-				$user->addGroup(SMW_GARD_ALL_USERS);
-			}
-		}
-		$db->freeResult($res);
-
-		// fetch all sysop IDs and add group SMW_GARD_GARDENERS
-		$res = $db->select( $db->tableName('user_groups'),
-		array('ug_user'),
-		array('ug_group' => 'sysop'),
-		             "SMW::initGardeningLog",array());
-		if($db->numRows( $res ) > 0) {
-			while ($row = $db->fetchObject($res)) {
-				$user = User::newFromId($row->ug_user);
-				$user->addGroup(SMW_GARD_GARDENERS);
-			}
-		}
-		$db->freeResult($res);
-		SGADBHelper::reportProgress("   ... done!\n",$verbose);
+		
 	}
 
 	public function createPredefinedPages($verbose) {

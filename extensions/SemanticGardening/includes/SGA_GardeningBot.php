@@ -9,7 +9,8 @@
   
  require_once("SGA_GardeningLog.php");
  
- // user groups  
+ // user groups 
+ // @deprecated  
  define('SMW_GARD_ALL_USERS', 'darkmatter');
  define('SMW_GARD_GARDENERS', 'gardener');
  define('SMW_GARD_SYSOPS' , 'sysop');
@@ -135,14 +136,7 @@ function sgagImportBots($botDir) {
  		return true;
  	}
  	
- 	/**
- 	 * Returns array of user group names which may
- 	 * use this bot.
- 	 * 
- 	 * see user groups constants above
- 	 */
- 	public abstract function allowedForUserGroups();
- 	
+ 	 	
  	/**
  	 * Method which starts the actual gardening operations.
  	 * Should return a log as wiki markup.
@@ -257,8 +251,10 @@ function sgagImportBots($botDir) {
  	
  	/**
  	 * Checks if user is member of at least one of the given groups.
+ 	 * 
+ 	 * @deprecated
  	 */
- 	public static function isUserAllowed($user, $allowedGroupsForBot) {
+ 	/*public static function isUserAllowed($user, $allowedGroupsForBot) {
  		global $wgUser;
  		$allowed = false;
  		if ($user == NULL) $user = $wgUser;
@@ -270,7 +266,7 @@ function sgagImportBots($botDir) {
  			}
  		} 		
  		return $allowed;
- 	}
+ 	}*/
  	
  	/**
  	 * Aborts a bot.
@@ -331,7 +327,8 @@ function sgagImportBots($botDir) {
  		$bot = $registeredBots[$botID];
  		
  		// check if user is allowed to start the bot
- 		if (!GardeningBot::isUserAllowed($user, $bot->allowedForUserGroups())) {
+ 		$user = is_null($user) ? $wgUser : $user;
+ 		if (is_null($user) || !$user->isAllowed('gardening')) {
  			return "ERROR:gardening-tooldetails:".wfMsg('smw_gard_no_permission'); 
  		}
  		

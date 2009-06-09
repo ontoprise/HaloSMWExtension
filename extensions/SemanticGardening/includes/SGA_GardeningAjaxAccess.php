@@ -159,11 +159,11 @@ function smwf_ga_GetBotParameters($botID) {
  */
 function smwf_ga_GetRegisteredBots() {
 
-	global $registeredBots;
+	global $registeredBots, $wgUser;
 	$htmlResult = "";
 	$first = true;
 	foreach($registeredBots as $botID => $bot) {
-		if (!GardeningBot::isUserAllowed($bot->allowedForUserGroups())) {
+		if (is_null($wgUser) || !$wgUser->isAllowed('gardening')) {
 			continue; // do not add this bot, because the user must not access it.
 		}
 		$htmlResult .= "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\"" .

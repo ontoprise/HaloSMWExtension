@@ -29,9 +29,7 @@ class UndefinedEntitiesBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	public function allowedForUserGroups() {
-		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
-	}
+	
 
 	/**
 	 * Returns an array mapping parameter IDs to parameter objects

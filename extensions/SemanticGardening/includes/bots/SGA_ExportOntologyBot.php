@@ -54,9 +54,7 @@ class ExportOntologyBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	public function allowedForUserGroups() {
-		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS);
-	}
+	
 
 	/**
 	 * Returns an array of GardeningParamObjects

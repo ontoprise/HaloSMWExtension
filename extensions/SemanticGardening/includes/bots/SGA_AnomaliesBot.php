@@ -38,9 +38,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  		return wfMsg($this->id);
  	}
  	
- 	public function allowedForUserGroups() {
- 		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
- 	}
+ 	
  	
  	/**
  	 * Returns an array of parameter objects

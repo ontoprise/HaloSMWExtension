@@ -97,7 +97,7 @@ class SGAGardening extends SpecialPage {
 		 $htmlResult = "";
 		 $first = true;
 		 foreach($registeredBots as $botID => $bot) {
-		 	if (!GardeningBot::isUserAllowed($wgUser, $bot->allowedForUserGroups())) {
+		 	if (is_null($wgUser) || !$wgUser->isAllowed('gardening')) {
 		 		continue; // do not add this bot, because the user must not access it.
 		 	}
 		 	
