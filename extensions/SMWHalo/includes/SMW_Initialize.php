@@ -342,8 +342,10 @@ function smwgHaloSetupExtension() {
 	global $smwgWebserviceEndpoint;
 	if (isset($smwgWebserviceEndpoint)) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
-
 	}
+
+	// make hook for red links
+	$wgHooks['BrokenLink'][] = 'smwfBrokenLinkForPage';
 
 	return true;
 }
@@ -1455,5 +1457,26 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 	return true;
 }
 
+/**
+ * If a redlink is returned, change the links to use the Create_new_page in case this one exists
+ * and if the page to create is within the main namespace
+ * This function is a parser hook for "BrokenLink" and works with Mediawiki 1.13 and higher
+ */
+function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix, &$text, &$inside, &$trail) {
+	// check if page Create_new_page exists in the wiki, if not quit here
+	if (!Title::newFromDBkey('Create_new_page')->exists())
+		return true;
+	// check if this is an unmodified red link, if not, quit here
+	if (strpos($u, 'action=edit&amp;redlink=1') === false)
+		return true;
+	// get the namespace of the new page, if it's not NS_MAIN, quit
+	if ( NS_MAIN != $title->getNamespace())
+		return true;
+	// build title string for new page and create link to Create_new_page with target param
+	$title_text = ucfirst($title->getText());
+	global $wgScript;
+	$u = $wgScript.'?title=Create_new_page&target='.urlencode($title_text);
+	return true;
+}
 
 ?>

@@ -256,13 +256,6 @@ class SFLinkUtils {
 		if ($add_data_link = self::getAddDataLinkForPage($title, $namespace, NS_PROJECT)) {
 			return $add_data_link;
 		}
-		/*op-patch|SR|2009-06-09|use Create_new_page with target for red links|start*/		
-		// check if an article Create_new_page exists and use this one to create a new page
-		if (Title::newFromDBkey('Create_new_page')->exists()) {
-			global $wgScript;
-			return $wgScript.'?title=Create_new_page&target='.urlencode($title_text);
-		}
-		/*op-patch|SR|2009-06-09|use Create_new_page with target for red links|end*/
 		// if nothing found still, return null
 		return null;
 	}
