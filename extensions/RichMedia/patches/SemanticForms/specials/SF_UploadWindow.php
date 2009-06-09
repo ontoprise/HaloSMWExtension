@@ -1846,7 +1846,7 @@ EOT
 		global $wgUser, $wgOut;
 		$sk = $wgUser->getSkin();
 		$nt = Title::newFromText($filename);
-		$imageDescLink = $sk->makeKnownLinkObj( $nt );
+		$imageDescLink = $sk->makeKnownLinkObj( $nt, '','','','','target="_top"' );
 		$image = Image::newFromTitle($nt);
 		$imagePath = $image->getURL();
 		unset($image);
