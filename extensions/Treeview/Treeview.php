@@ -17,6 +17,7 @@ require_once('TreeGenerator.php');
 // file for responding to Ajax calls
 require_once('getTree.php');
 
+require_once('TreeviewResize.php');
 # Set any unset images to default titles
 if (!isset($wgTreeViewImages) || !is_array($wgTreeViewImages)) $wgTreeViewImages = array();
  
