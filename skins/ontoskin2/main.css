@@ -287,7 +287,7 @@
 
 #smwf_browserview .dtree{
 	overflow-x: auto;
-	height: 700px;
+	/*height: 700px;*/
 }
 
 #maintree .dtree{
