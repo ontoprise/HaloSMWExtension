@@ -1170,6 +1170,44 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	deleteAnnotation: function(id) {
+		
+		function relationSchema(request) {
+			if (request.status != 200) {
+				// call for schema data failed, do nothing.
+				alert(gLanguage.getMessage('RETRIEVE_SCHEMA_DATA'));
+				return;
+			}
+	
+			var relTypes = [];
+	
+			if (request.responseText != 'noSchemaData') {
+	
+				var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
+				if (schemaData.documentElement.tagName != 'parsererror') {
+					// read parameter names
+					for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
+						relTypes.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+					}
+				}
+			}
+
+			if (relTypes.size() == 0 || 
+				relTypes[0].toLowerCase() != gLanguage.getMessage('TYPE_PAGE_WONS').toLowerCase()) {
+				// No schema retrieved for relation or range is not of type 'Page'
+				anno.remove(value);
+			} else {
+				// Relation is of type page
+				anno.remove('[['+value+']]');
+			}
+			
+			if (type && type == 'category') {
+				catToolBar.fillList();
+			} else {
+				relToolBar.fillList();
+			}
+			
+		}
+		
 		var annoDescr = this.findAnnotationWithId(id);
 		if (!annoDescr) {
 			return;
@@ -1187,13 +1225,14 @@ AdvancedAnnotation.prototype = {
 		} else if (anno.getValue) {
 			value = anno.getValue();
 		}
-		anno.remove(value);
+//--- Bugfix 8935 ---		
+		var name = anno.getName();
+		sajax_do_call('smwf_om_RelationSchemaData',
+	              [name],
+	              relationSchema.bind(this));
 		
-		if (type && type == 'category') {
-			catToolBar.fillList();
-		} else {
-			relToolBar.fillList();
-		}
+//--- Bugfix end ---		
+		
 	},
 	
 	/**
@@ -1219,7 +1258,7 @@ AdvancedAnnotation.prototype = {
 	},
 	
 	/**
-	 * The system highlight annotation proposals with a green border. This 
+	 * The system highlights annotation proposals with a green border. This 
 	 * function is called to annotate the proposal with the id <id>.
 	 * 
 	 * 
@@ -1333,6 +1372,11 @@ AdvancedAnnotation.prototype = {
 //			return alert("Corresponding annotation not found.");
 			return;
 		}
+//----
+
+		var annoText = annotation.getAnnotation();
+		var isLink = annoText.match(/^\[\[.*?\]\]$/);
+//----		
 		// There is always the highlighting span within the wrapper span.
 		var span = $(wrapper).down('span');
 		
@@ -1344,7 +1388,7 @@ AdvancedAnnotation.prototype = {
 			var p = proposals[i];
 			if (p.id.match(/anno\d*w/)) {
 				this.restoreProposal(p);
-			} else if (p.tagName == 'A') {
+			} else if (p.tagName == 'A' && !isLink) {
 				// found a link
 				var href = p.getAttribute("href");
 				if (href && href.startsWith(wgScriptPath)) {
@@ -1361,19 +1405,35 @@ AdvancedAnnotation.prototype = {
 		
 		var htmlContent =  span.innerHTML;
 		
+		// A link is rendered as proposal
+		if (isLink) {
+			var preHTML = 
+				'<span id="anno'+ this.annoCount+'w" style="white-space: nowrap;">'+
+					'<a href="javascript:AdvancedAnnotation.smwhfEditLink('+this.annoCount+')">'+
+						'<img src="/develwiki/extensions/SMWHalo/skins/Annotation/images/add.png"/>'+
+					'</a>'+
+					'<span id="anno2" class="aam_page_link_highlight">';
+			var postHTML =				
+					'</span>'+
+				'</span>';		
+			this.annoCount++;
+			htmlContent = preHTML + htmlContent + postHTML;
+		}
 		// There is a wiki text offset anchor after the wrapper span.
 		var nextWtoAnchor = wtoAnchor.next('a[type="wikiTextOffset"]');
 		
 		// replace the wrapper by the content i.e. create normal text
 		wrapper.replace(htmlContent);
 		
-		// remove the wiki text offset anchor around the annotation
-		if (wtoAnchor.getAttribute("name") != "0") {
-			// do not remove the very first anchor
-			wtoAnchor.remove();
-		}
-		if (nextWtoAnchor) {
-			nextWtoAnchor.remove();
+		if (!isLink) {
+			// remove the wiki text offset anchor around the annotation
+			if (wtoAnchor.getAttribute("name") != "0") {
+				// do not remove the very first anchor
+				wtoAnchor.remove();
+			}
+			if (nextWtoAnchor) {
+				nextWtoAnchor.remove();
+			}
 		}
 		
 	},
