@@ -1,4 +1,7 @@
-<invoke url="http://localhost/${wikipath}/index.php/Special:Gardening"
-	description="Run the export bot" />
-<verifyTitle text="Gardening - Halo3wiki" />
-<sleep description="4s pause" seconds="4" />
+<target name="goToGardening">
+	<invoke
+		url="http://localhost/${wikipath}/index.php/Special:Gardening"
+		description="Run the export bot" />
+	<verifyTitle text="Gardening - Halo3wiki" />
+	<sleep description="4s pause" seconds="4" />
+</target>
