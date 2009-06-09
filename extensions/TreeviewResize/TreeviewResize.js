@@ -15,7 +15,6 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var smwhgRating;
 var smwhg_oldonload = new Array();
 if (typeof window.onload == 'function'){
 	smwhg_oldonload.push(window.onload);
@@ -24,6 +23,18 @@ if (typeof window.onload == 'function'){
 window.onload= function(){  
 		for(var i = smwhg_oldonload.length-1; i >= 0; i--) {
 			var func = smwhg_oldonload[i];
+			func();
+		}
+};
+
+var smwhg_oldonresize = new Array();
+if (typeof window.onresize == 'function'){
+	smwhg_oldonresize.push(window.onresize);
+}
+
+window.onresize= function(){  
+		for(var i = smwhg_oldonresize.length-1; i >= 0; i--) {
+			var func = smwhg_oldonresize[i];
 			func();
 		}
 };
@@ -83,7 +94,9 @@ SmwhgTreeviewResize.prototype = {
 var smwhgTreeviewResize = new SmwhgTreeviewResize();
 //Resize on Startup
 smwhgTreeviewResize.resize();
+smwhg_oldonresize.push(smwhgTreeviewResize.resize);
 
 }
+
 
 smwhg_oldonload.push(initializeTreeviewResize);
