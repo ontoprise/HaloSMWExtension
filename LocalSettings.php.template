@@ -161,9 +161,12 @@ $smwgOWLFullExport = true;
 $smwgEnableUploadConverter = true;
 $smwgUseEditDistance = true;
 
+$wgVerifyMimeType=false;
+array_push($wgFileExtensions, "owl");
 
 // rights
 $wgGroupPermissions['*']['edit']=false;
+$wgGroupPermissions['*']['gardening']=false;
 
 $wgGroupPermissions['user']['annotate']=true;
 $wgGroupPermissions['user']['edit']=true;
@@ -173,9 +176,21 @@ $wgGroupPermissions['user']['move']=false;
 $wgGroupPermissions['ontologist']['annotate']=true;
 $wgGroupPermissions['ontologist']['edit']=true;
 $wgGroupPermissions['ontologist']['wysiwyg']=false;
+$wgGroupPermissions['ontologist']['gardening']=true;
 
 $wgGroupPermissions['sysop']['wysiwyg']=true;
+$wgGroupPermissions['sysop']['gardening']=true;
 
+#Enable semantic annotations for pages in the following namespaces
+$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
+$smwgNamespacesWithSemanticLinks[NS_CATEGORY] = true;
+$smwgNamespacesWithSemanticLinks[SMW_NS_PROPERTY] = true;
+$smwgNamespacesWithSemanticLinks[SMWH_NS_RULE] = true;
+$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
+$smwgNamespacesWithSemanticLinks[NS_HELP] = true;
+$smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
+$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
+$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 
 // auto-templates
 $smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
@@ -200,8 +215,10 @@ enableSMWHalo();
 #Semantic Gardening
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 
+#Data import
 include_once('extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension();
+$wgAllowExternalImages=true;
 
 include("extensions/DynamicPageList/DynamicPageList.php");
 require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
@@ -230,8 +247,8 @@ include_once('extensions/URLArguments/URLArguments.php');
 # NewUserMessage
 require_once( "extensions/NewUserMessage/NewUserMessage.php" );
 
-$wgGroupPermissions['darkmatter']['*'] = true;
-$wgGroupPermissions['gardener']['*'] = true;
+#NoTitle extension
+require_once("$IP/extensions/notitle.php");
 
 #Set default searching for document and pdf namespace
 $wgNamespacesToBeSearchedDefault = array(
