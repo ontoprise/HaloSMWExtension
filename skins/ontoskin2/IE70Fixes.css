@@ -18,6 +18,11 @@
 	margin-top: 160px;
 }
 
+.smwfact{
+	float: right;
+	width: 100%;	
+}
+
 /* the tabs */
 
 #p-cactions {
