@@ -57,7 +57,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
                               
                 while ( ($object = $field->getNextObject()) !== false ) {
                     if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
-                        //JJZ Some changes: Test
+                        
                     	//$text = $object->getTitle()->getPrefixedText();
                         //$text=str_replace("&","&amp;",$object->getTitle()->getPrefixedText() );
                     	$text=htmlentities($object->getTitle()->getPrefixedText());
