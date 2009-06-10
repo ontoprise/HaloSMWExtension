@@ -680,8 +680,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>24</id>
     <revision>
-      <id>627</id>
-      <timestamp>2009-06-10T07:49:05Z</timestamp>
+      <id>556</id>
+      <timestamp>2009-06-08T14:05:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -740,10 +740,6 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp;
 |}
 {{{end template}}}
-'''Free text:'''
-
-{{{standard input|free text}}}
-
 {{{standard input|minor edit}}} {{{standard input|watch}}}
 
 {{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
