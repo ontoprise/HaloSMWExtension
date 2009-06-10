@@ -9,6 +9,7 @@ class FCKeditorParser extends Parser
 	protected $fck_internal_parse_text;
 	protected $fck_matches = array();
 	protected $fck_mw_propertyAtPage= array();
+	protected $fck_mw_richmediaLinkAtPage = array();
 
 	private $FCKeditorMagicWords = array(
 	'__NOTOC__',
@@ -400,13 +401,17 @@ class FCKeditorParser extends Parser
 	/**
 	 * replace property links like [[someProperty::value]] with FCK_PROPERTY_X_FOUND where X is
 	 * the number of the replaced property. The actual property string is stored in
-	 * $this->fck_mw_propertyAtPage[X] with X being the same number as in the replaced text
+	 * $this->fck_mw_propertyAtPage[X] with X being the same number as in the replaced text.
+	 * This affects also links that are created with the RichMedia extension like:
+	 * [[Document:My_Document.doc|Document:My Document.doc]]. These are replaced with
+	 * FCK_RICHMEDIA_X_FOUND where X is the number of the replaced link. The actual link
+	 * value is stored in $this->fck_mw_richmediaLinkAtPage[X].
 	 * 
 	 * @access private
 	 * @param string $wikitext
 	 * @return string $wikitext
 	 */
-	private function fck_replaceProperties( $text ) {
+	private function fck_replaceSpecialLinks( $text ) {
 		// use the call back function to let the parser do the work to find each link
 		// that looks like [[something whatever is inside these brakets]]
 		$callback = array('[' =>
@@ -428,7 +433,7 @@ class FCKeditorParser extends Parser
 		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
 		// by the current property string
 		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
-			$replacement = $this->replacePropertyValue($matches[1]);
+			$replacement = $this->replaceSpecialLinkValue($matches[1]);
 			$pos = strpos($text, $matches[0]);
 			$before = substr($text, 0, $pos);
 			$after = substr($text, $pos + strlen($matches[0]));
@@ -451,7 +456,7 @@ class FCKeditorParser extends Parser
 		//as well as templates
 		$text = $this->fck_replaceTemplates( $text );
 		// as well as properties
-		$text = $this->fck_replaceProperties( $text );
+		$text = $this->fck_replaceSpecialLinks( $text );
 
 		$finalString = parent::internalParse($text);
 
@@ -487,7 +492,23 @@ class FCKeditorParser extends Parser
 
 		return strtr( $text, $strtr );
 	}
-
+	/**
+	 * Checks for replacments by replacePropertyValue() and replaceRichmediaLinkValue()
+	 * If a property was replaces, don't try to find and replace a richmedia link
+	 * 
+	 * @access private
+	 * @param  string match
+	 * @return string replaced placeholder or [[match]]
+	 */
+	private function replaceSpecialLinkValue($match) {
+		$res = $this->replacePropertyValue($match);
+		if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
+			return $res;
+		$res = $this->replaceRichmediaLinkValue($match);
+		// here we don't check, if something was replaced, even if not we have to return the
+		// original value.
+		return $res;
+	}
 	/**
 	 * check the parser match from inside the [[ ]] and see if it's a property.
 	 * If thats the case, safe the property string in the array
@@ -509,6 +530,35 @@ class FCKeditorParser extends Parser
     		$p = count($this->fck_mw_propertyAtPage);
     		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span> ';
     		return 'FCK_PROPERTY_'.$p.'_FOUND';
+  		}
+  		return "[[".$match."]]";
+	}
+
+	/**
+	 * check the parser match from inside the [[ ]] and see if it's a link from
+	 * the RichMedia extension.
+	 * If thats the case, safe the richmedia string in the array
+	 * $this->fck_mw_richmediaLinkAtPage and return a placeholder FCK_RICHMEDIA_X_FOUND
+	 * for the Xth occurence. Otherwise return the link content unmodified.
+	 * The missing [[ ]] have to be added again, so that the original remains untouched
+	 * 
+	 * @access private
+	 * @param  string $match
+	 * @return string replacement or "[[$match]]"
+	 */
+	private function replaceRichmediaLinkValue($match) {
+		if ($match{0} == ":") $match = substr($match, 1);
+		if (strpos($match, ":") === false)
+			return "[[".$match."]]";
+		$ns = substr($match, 0, strpos($match, ':'));
+		if (in_array(strtolower($ns), array('pdf', 'document', 'audio', 'video'))) { //$wgExtraNamespaces doesn't help really 
+  			$link = explode('|', $match);
+  			$basename = substr($link[0], strlen($ns) + 1);
+    		$p = count($this->fck_mw_richmediaLinkAtPage);
+    		$this->fck_mw_richmediaLinkAtPage[$p]= '<a title="'.str_replace('_', ' ', $basename).'" _fck_mw_type="'.$ns.'" '.
+    			'_fck_mw_filename="'.$basename.'" _fcksavedurl="'.$link[0].'" href="'.$basename.'">'.
+    			((count($link) > 1) ? $link[1] : str_replace('_', ' ', $link[0])).'</a> ';
+    		return 'FCK_RICHMEDIA_'.$p.'_FOUND';
   		}
   		return "[[".$match."]]";
 	}
@@ -546,6 +596,15 @@ class FCKeditorParser extends Parser
 			$tmpText = $parserOutput->getText();
 			foreach ($this->fck_mw_propertyAtPage as $p => $val)
 				$tmpText = str_replace('FCK_PROPERTY_'.$p.'_FOUND', $val, $tmpText);
+			$parserOutput->setText($tmpText);
+		}
+		// there were Richmedia links, look for the placeholder FCK_RICHMEDIA_X_FOUND and replace
+		// it with <a title="My Document.doc" _fck_mw_type="Document" _fck_mw_filename="My Document.doc"
+		// _fcksavedurl="Document:MyDocument.doc" href="My_Document.doc">Document:My Document.doc</a>
+		if (count($this->fck_mw_richmediaLinkAtPage) > 0) {
+			$tmpText = $parserOutput->getText();
+			foreach ($this->fck_mw_richmediaLinkAtPage as $p => $val)
+				$tmpText = str_replace('FCK_RICHMEDIA_'.$p.'_FOUND', $val, $tmpText);
 			$parserOutput->setText($tmpText);
 		}
 
