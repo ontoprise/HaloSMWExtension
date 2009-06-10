@@ -56,7 +56,8 @@ var SMW_CAT_ALL_VALID_ANNOTATED =
  		': (hide:cat-confirm, hide:cat-addandcreate, call:catToolBar.finalCategoryCheck)"';
 
 var SMW_CAT_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
+	'typeHint = "' + SMW_CATEGORY_NS + 
+	((wgAction == 'annotate') ? '" position="fixed"' : '');
 
 var SMW_CAT_SUB_SUPER_CHECK_CATEGORY = 
 	'smwCheckType="category: exists ' +

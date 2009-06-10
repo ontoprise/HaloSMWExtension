@@ -90,13 +90,16 @@ var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
 var SMW_REL_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" position="fixed"';
+	'typeHint = "' + SMW_CATEGORY_NS + 
+	((wgAction == 'annotate') ? '" position="fixed"' : '');
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="'+ SMW_PROPERTY_NS + '" position="fixed"';
+	'typeHint="'+ SMW_PROPERTY_NS + 
+	((wgAction == 'annotate') ? '" position="fixed"' : '');
 
 var SMW_REL_HINT_INSTANCE =
-	'typeHint="'+ SMW_INSTANCE_NS + '" position="fixed"';
+	'typeHint="'+ SMW_INSTANCE_NS + 
+	((wgAction == 'annotate') ? '" position="fixed"' : '');
 
 var SMW_REL_TYPE_CHANGED =
 	'smwChanged="(call:relToolBar.relTypeChanged)"';
@@ -368,10 +371,13 @@ updateNewItem: function(request) {
 		var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
 
 		// read arity and parameter names
-		arity = parseInt(schemaData.documentElement.getAttribute("arity"));
-		parameterNames = [];
-		for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
-			parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+		a = parseInt(schemaData.documentElement.getAttribute("arity"));
+		if (a > 0) {
+			arity = a;
+			parameterNames = [];
+			for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
+				parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+			}
 		}
 	}
 	// build new INPUT tags
@@ -1010,24 +1016,18 @@ getselectedItem: function(selindex) {
 		}
 
 		var parameterNames = [];
-		var schemaValid = true;
 
 		if (request.responseText != 'noSchemaData') {
 
 			var schemaData = GeneralXMLTools.createDocumentFromString(request.responseText);
-			if (schemaData.documentElement.tagName == 'parsererror') {
-				schemaValid = false;
-			} else {
+			if (schemaData.documentElement.tagName != 'parsererror') {
 				// read parameter names
-				parameterNames = [];
 				for (var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
 					parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
 				}
 			}
-		} else {
-			schemaValid = false; 
 		}
-		if (!schemaValid) {
+		if (parameterNames.size() == 0) {
 			// schema data could not be retrieved for some reason (property may 
 			// not yet exist). Show "Value" as default.
 			for (var i = 0; i < relation.getArity()-1; i++) {
