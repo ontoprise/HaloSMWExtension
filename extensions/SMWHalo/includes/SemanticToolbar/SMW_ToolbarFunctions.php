@@ -225,13 +225,13 @@ function smwf_tb_GetUserDatatypes(){
 }
 
 function smwf_tb_getTripleStoreStatus() {
-	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
+	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 	global $smwgWebserviceEndpoint;
 	if (!isset($smwgWebserviceEndpoint)) {
 		return 'false';
 	}
 	if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-	$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
+	$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	try {
 		global $smwgTripleStoreGraph;
 		$statusJSON = $client->getTripleStoreStatus($smwgTripleStoreGraph);

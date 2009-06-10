@@ -206,9 +206,9 @@ END;
 	
 	function getExplanationForQuery($query){
 		try {
-			global $wgServer, $wgScript, $smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebServicePassword, $smwgDeployVersion;
+			global $wgServer, $wgScript, $smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_explanation", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));          
+			$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_explanation", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));          
 	 		$explanation = $_client->explain($smwgTripleStoreGraph, $query);
 			
 	 		if($explanation == "-1"){

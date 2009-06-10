@@ -1054,9 +1054,9 @@ class TSConnection {
 			$this->con = new StompConnection("tcp://$smwgMessageBroker:61613");
 			$this->con->connect();
 		} else {
-			global $smwgWebserviceUser, $smwgWebServicePassword, $wgServer, $wgScript;
+			global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript;
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebServicePassword));
+			$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
 		}
 	}
