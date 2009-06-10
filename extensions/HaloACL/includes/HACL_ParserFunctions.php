@@ -1441,7 +1441,16 @@ class HACLParserFunctions  {
 	 */
 	private function showRights($rights) {
 		$text = "";
+		global $wgContLang;
+		$aclNS = $wgContLang->getNsText(HACL_NS_ACL);
+		
 		foreach ($rights as $r) {
+			// Rights can be given without the namespace "ACL". However, the 
+			// right should be linked correctly. So if the namespace is missing,  
+			// the link is adapted.
+			if (strpos($r, $aclNS) === false) {
+				$r = "$aclNS:$r|$r";	
+			}
 			$text .= '*[['.$r."]]\n";
 		}
 		return $text;	
