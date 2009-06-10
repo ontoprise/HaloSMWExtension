@@ -1189,9 +1189,10 @@ function smwfCreateLinks($name) {
 		$nav = new Article(Title::newFromText($name.'_'.$g, NS_MEDIAWIKI));
 		$content = $nav->fetchContent(0,false,false);
 		$matches = array();
-		preg_match_all('/\*\s*([^|]+)\|\s*(.*)/', $content, $matches);
+		preg_match_all('/\*\s*([^|]+)\|\s*([^|\n]*)(\|.*)?/', $content, $matches);
 		for($i = 0; $i < count($matches[0]); $i++) {
 			$links[$matches[2][$i]] = $matches[1][$i];
+			$extraAttributes[$matches[2][$i]] = isset($matches[3][$i]) ? substr(trim($matches[3][$i]),1): "";
 		}
 	}
 	$links = array_unique($links);
@@ -1217,9 +1218,9 @@ function smwfCreateLinks($name) {
 		//Check if ontoskin is available else return code for new skins
 		global $wgUser;
 		if($wgUser->getSkin() == 'ontoskin'){
-			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></li>';
+			$result .= '<li><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></li>';
 		} else {
-			$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'">'.$name.'</a></div></td></tr>';
+			$result .= '<tr><td><div class="smwf_naviitem"><a href="'.Skin::makeUrl($page_title, $query).'" '.$extraAttributes[$name].'>'.$name.'</a></div></td></tr>';
 		}
 	}
 	return $result;
