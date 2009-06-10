@@ -50,10 +50,6 @@ class SemanticNotificationBot extends GardeningBot {
         return 'extensions/SemanticNotifications/skins';
     }
     
-	public function allowedForUserGroups() {
-		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS);
-	}
-
 	/**
 	 * Returns an array of parameter objects
 	 */
