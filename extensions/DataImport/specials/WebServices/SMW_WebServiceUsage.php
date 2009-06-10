@@ -230,7 +230,9 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		//remove <p>-tag around ws-result
 		if(substr($wsFormattedResult, 0, 3) == "<p>"){
-			$wsFormattedResult = trim(substr($wsFormattedResult, 3, strlen($wsFormattedResult) - 7));
+			$wsFormattedResult = trim(substr($wsFormattedResult, 3));
+			$fpos = strpos($wsFormattedResult, "</p>");
+			$wsFormattedResult = substr($wsFormattedResult, 0 , $fpos).substr($wsFormattedResult, $fpos+4); 
 			
 		}
 		return $wsFormattedResult;
