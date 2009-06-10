@@ -275,12 +275,48 @@ openResultPreview:function(request){
 	
 	// post processing of javascript for resultprinters:
 	switch ($('layout_format').value) {
-		case "timeline": smw_timeline_init(); break;
-		case "eventline": smw_timeline_init(); break;
+		case "timeline":
+		case "eventline":
+			this.parseWikilinks2Html();
+			smw_timeline_init();
+			break;
 		case "exhibit": createExhibit(); break;
-	}		
+	}
 },
-
+/**
+* Creates valid links for Wiki Links in Preview div for
+* elements like in timeline
+* div with id="previewcontent" innerHtml is changed directly
+*/
+parseWikilinks2Html:function(){
+	if ($('layout_link').value == "none") return;
+	var text = $('previewcontent').innerHTML;
+	var newt = '';
+	var seek = '[[';
+	var p = text.indexOf(seek);
+	while (p != -1) {
+  		if (seek == "[[") {
+    		newt += text.substring(0, p);
+    		text = text.substring(p + 2);
+    		seek = "]]";
+  		}
+  		else {
+    		var wikilink = text.substr(0, p);
+    		text = text.substr(p + 2);
+		    if (wikilink.indexOf(':') == 0)
+      			wikilink = wikilink.substring(1);
+    		var link = wikilink.split('|');
+    		var url = link[0];
+    		var title = link[0];
+    		if (link.length == 2) title = link[1];
+    		newt += '<a href="' + wgServer + wgScript + '/' + GeneralTools.URLEncode(link[0].replace(' ', '_')) + '">' + title + '</a>';
+	    	seek = "[[";
+  		}
+  		p = text.indexOf(seek);
+	}
+	newt += text;
+	$('previewcontent').innerHTML = newt;
+},
 
 /**
 * Update breadcrumb navigation on top of the query tree. The BN
@@ -1416,6 +1452,3 @@ function unescapeQueryHTML(string){
 	string = string.replace(/&quot;/g, "\"");
 	return string;
 }
-
-
-
