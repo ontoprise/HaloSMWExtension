@@ -57,14 +57,25 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
                               
                 while ( ($object = $field->getNextObject()) !== false ) {
                     if ($object->getTypeID() == '_wpg') {  // print whole title with prefix in this case
-                        $text = $object->getTitle()->getPrefixedText();
+                        //JJZ Some changes: Test
+                    	//$text = $object->getTitle()->getPrefixedText();
+                        //$text=str_replace("&","&amp;",$object->getTitle()->getPrefixedText() );
+                    	$text=htmlentities($object->getTitle()->getPrefixedText());
+                    	
+                    	
                     } else if ($object->getTypeID() == '_dat') {
-                        $text = $object->getXSDValue();
+                        //$text = $object->getXSDValue();
+                        //$text =str_replace("&","&amp;",$object->getXSDValue() );
+                        $text=htmlentities($object->getXSDValue() );
                     } else {
                         if ($object->isNumeric()) { // does this have any effect?
-                            $text = $object->getNumericValue();
+                            //$text = $object->getNumericValue();
+                            //$text =str_replace("&","&amp;",$object->getNumericValue() );
+                            $text=htmlentities($object->getNumericValue());
                         } else {
-                            $text = $object->getXSDValue();
+                            //$text = $object->getXSDValue();
+                            //$text =str_replace("&","&amp;",$object->getXSDValue() );
+                            $text=htmlentities($object->getXSDValue());
                         }
                     }
                                       
