@@ -3,7 +3,9 @@
 <!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
 
 <project default="testBasic">
-
+    
+	&goToOntologyBrowser;
+	
 	<target name="testBasic">
 
 		<webtest name="LoadMainPage">
@@ -14,7 +16,7 @@
 			<verifyTitle text="Search results - Halo3wiki" />-->
 		</webtest>
 		<webtest name="LoadOntologyBrowser">
-			&goToOntologyBrowser;
+			<antcall target="goToOntologyBrowser"/>
 			<verifyXPath description="Check if the heading element exists" xpath="//h1[@class='firstHeading']" text="OntologyBrowser" />
 
 		</webtest>
