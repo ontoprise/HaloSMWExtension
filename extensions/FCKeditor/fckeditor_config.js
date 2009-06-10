@@ -98,20 +98,18 @@ FCKConfig.EditorAreaStyles = '\
 	width: 66px; \
 	height: 15px; \
 } \
-.fck_mw_property:before \
-{ \
-	content:url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_property.gif); \
-} \
 .fck_mw_property \
 { \
+    background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_property.gif); \
+    background-repeat: no-repeat; \
 	background-color: #ffcd87; \
-} \
-.fck_mw_category:before \
-{ \
-	content:url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_category.gif); \
+	padding-left: 16px; \
 } \
 .fck_mw_category \
 { \
+    background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_category.gif); \
+    background-repeat: no-repeat; \
 	background-color: #94b0f3; \
+    padding-left: 16px; \
 } \
 ' ;
