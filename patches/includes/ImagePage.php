@@ -57,6 +57,23 @@ class ImagePage extends Article {
 		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
 		$this->loadFile();
 
+		/*op-patch|BL|2009-06-10|AdditionalMIMEType|NS-check|start*/
+		// checks if the entered namespace fits the related namespace
+		global $wgNamespaceByExtension;
+		list( $partname, $ext ) = UploadForm::splitExtensions( $this->mTitle->getFullText() );
+		if( count( $ext ) ) {
+			$finalExt = $ext[count( $ext ) - 1];
+		} else {
+			$finalExt = '';
+		}
+		$additionalNS = NS_IMAGE;
+		if ( isset( $finalExt ) )
+			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
+				$additionalNS = $wgNamespaceByExtension[$finalExt];
+		if($this->mTitle->getNamespace() != $additionalNS)
+			$this->img->fileExists = false;
+		/*op-patch|BL|2009-06-10|end*/
+		
 		if ( Namespace::isImage( $this->mTitle->getNamespace() ) && $this->img->getRedirected() ) {
 			if ( $this->mTitle->getDBkey() == $this->img->getName() ) {
 				// mTitle is the same as the redirect target so ask Article
