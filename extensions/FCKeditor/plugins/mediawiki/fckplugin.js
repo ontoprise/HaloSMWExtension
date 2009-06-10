@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  *
@@ -713,9 +713,9 @@ FCK.DataProcessor =
 		text = text.replace(/^\s+/, '');
 		// rtrim
 		text = text.replace(/\s+$/, '');
-		// no value set, then don't add any wikitext
+		// no value set, then add an space to fix problems with [[prop:val| ]]
 		if (text.length == 0)
-			return;
+			text = " ";
 
 		switch (htmlNode.className) {
 			case 'fck_mw_property' :
