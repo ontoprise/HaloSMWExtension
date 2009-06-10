@@ -6,13 +6,13 @@ Ploticus to create plots, charts and graphics out of query results.
 The following should be installed and running.
 
 1) Semantic MediaWiki
-2) Ploticus 2.40 (http://ploticus.sourceforge.net).  
-   Patch required if you plan to use SVG/SVGZ formats with imagemaps. (see Imagemap section below)
+2) Ploticus 2.41 (http://ploticus.sourceforge.net).  
 
-When both of them are up and running, you can install this extension like
-any other semantic result printer (refer to the separate README for that).
+When both required systems are up and running, you can install this extension like
+any other semantic result printer (refer to the Semantic Result Formats README for that).
 
 LocalSettings.php Modifications:
+-------------------------------
  * $srfgPloticusPath (REQUIRED)
    - path to ploticus executable. Typically /usr/bin/ploticus (Debian/Ubuntu) or /usr/bin/pl (RedHat/CentOS, most other envs)
  
@@ -24,11 +24,12 @@ LocalSettings.php Modifications:
      E.g. if you plan to use additional fonts in SWF files
        SWF_FONTS_DIR=/usr/share/ming/fonts/ttf-dejavu/fdb
        
-     E.g. set global ploticus config parameters with a config file.  See http://ploticus.sourceforge.net/doc/config.html for details.
-       PLOTICUS_CONFIG=/etc/ploticus/ploticus.conf
+     E.g. if you plan to set global ploticus config parameters with a config file.
+     See ./ploticus-addons/ploticus.config for a sample config file and http://ploticus.sourceforge.net/doc/config.html for more info.
+       PLOTICUS_CONFIG=/etc/ploticus/ploticus.config
      
     Remember, you can pass multiple environment variables, e.g.
-      GDFONTPATH=/usr/share/fonts/truetype/freefont PLOTICUS_CONFIG=/etc/ploticus/ploticus.conf
+      GDFONTPATH=/usr/share/fonts/truetype/freefont PLOTICUS_CONFIG=/etc/ploticus/ploticus.config
    
  * $srfgPloticusCacheAgeHours (default: 168 - 7 days)
    - number of hours cached plot files are stored in the ploticus cache before they are forcibly purged.
@@ -46,10 +47,10 @@ LocalSettings.php Modifications:
    0 0 * * * MW_INSTALL_PATH=/var/www/wiki /usr/bin/php /var/www/wiki/extension/SemanticResultFormats/Ploticus/SRF_Ploticus_cleanCache.php -v 2>&1 > /var/log/ploticus_cleanCache.log
 
  * $wgEnableUploads (default: false - this is a MediaWiki setting)
-   - must be true. Be sure the upload directory has the proper permissions.  If you wish to use SRF-Ploticus without enabling uploads,
-   you can manually create the 'ploticus' directory under the MW upload.  Further, under the ploticus directory, subdirectories from 0 to f hex
-   (e.g. 0,1,2,3...9,a,b,c,d,e,f) should also be created, all with permission 777.
-   (see http://www.mediawiki.org/wiki/Manual:$wgUploadPath)
+   - must be true. Be sure the upload directory has the proper permissions.  (see http://www.mediawiki.org/wiki/Manual:$wgUploadPath)
+   If you MUST use SRF-Ploticus without enabling uploads, you can manually create the 'ploticus' directory under the
+   MediaWiki upload directory (Typically, MW_INSTALL_PATH/images).  Further, under the ploticus directory, subdirectories from
+   0 to f hex (e.g. 0,1,2...9,a,b,c,d,e,f) should also be created, all with permission 777.
 
 == Configuration and Usage ==
 
@@ -66,19 +67,27 @@ The SRF-ploticus Result Format has the following parameters:
    can and should be used in script mode.  Otherwise, the ploticus script parser will fail.
         
  * imageformat (enum/optional)
-   - png (default), gif, jpeg, svg, svgz, swf, eps, ps, drawdump, drawdumpa (drawdump append).
+   - png (default), gif, jpeg, svg, svgz, swf, eps, ps, drawdump and drawdumpa (drawdump append).
    Availability of format depends on how ploticus is built.  When using svgz, make sure Apache
    is configured properly, i.e. you have the svgz mime-type and svgz encoding.
         AddType image/svg+xml svg svgz
         AddEncoding gzip svgz
         
- * alttext (string/optional)
-   - alternate text displayed on mouseover. Ignored when client-side imagemap is generated.
+ * titletext (string/optional)
+   - text displayed underneath the chart.  Its also displayed on mouseover for raster formats (PNG/JPEG/GIF) and
+   when imagemaps are not used.
  
  * showcsv (bool/optional)
    - 0 (default). When 1, displays link to CSV file used to generate plot.  Beware that the CSV
    ALWAYS shows the latest query result, which may sometimes fall out of sync with the "cached" plot.
    (See liveupdating, showtimestamp & updatefrequency parameters below)
+   
+   Also note that the Inline query headers parameter influences how the CSV file is generated.
+   If "headers=show", a header row will be inserted.
+   
+   Keep in mind that most Ploticus prefabs automatically create legends when header=show is set.
+   If you want to suppress legends, be sure to specify the legend parameter accordingly.
+   (http://ploticus.sourceforge.net/doc/prefab_stdparms.html#legend)
  
  * debug (bool/optional)
    - 0 (default). When 1, displays ploticus prefab cmdline or script used to generate plot.
@@ -201,19 +210,6 @@ Client-side imagemaps are automatically generated by SRF-Ploticus if it detects 
 
 Typically, imagemaps "links/labels" should be set to resolve to "Article URL/Article Name".
 Note that imagemaps are only valid for PNG, GIF, JPEG and SVG.
-
-However, Ploticus 2.40 currently uses plus signs (+) instead of underscores (_) when generating
-clickmap URL targets.  This won't work in SMW.
-
-A patch has been submitted to Steve Grubb (Ploticus creator) to change this behavior.
-(http://tech.groups.yahoo.com/group/ploticus/message/2166).  A copy of the patch is also in the ploticus-addons directory.
-
-At the moment, SRF-Ploticus corrects the clickmap URL targets for PNG, GIF and JPEG raster formats, swapping out the + for _.
-SVG clickmaps will require the patch to work properly.
-
-Once the patch is applied, a new PLOTICUS_CONFIG parameter is now available - encodeclickmapurls.  This should be set to
-yes in the PLOTICUS_CONFIG file (e.g. encodeclickmapurls: yes).  See http://ploticus.sourceforge.net/doc/config.html.
-
 
 CREDITS:
 =======

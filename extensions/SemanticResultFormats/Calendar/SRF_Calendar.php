@@ -2,8 +2,6 @@
 
 /**
  * A class to print query results in a monthly calendar.
- *
- * @author Yaron Koren
  */
 
 if (!defined('MEDIAWIKI')) die();
@@ -13,7 +11,29 @@ $wgAutoloadClasses['SRFCHistoricalDate'] = $srfgIP . '/Calendar/SRFC_HistoricalD
 
 class SRFCalendar extends SMWResultPrinter {
 
+	protected $mTemplate = '';
+	protected $mUserParam = '';
+
+	protected function readParameters($params,$outputmode) {
+		SMWResultPrinter::readParameters($params,$outputmode);
+
+		if (array_key_exists('template', $params)) {
+			$this->mTemplate = trim($params['template']);
+		}
+		if (array_key_exists('userparam', $params)) {
+			$this->mUserParam = trim($params['userparam']);
+		}
+	}
+
+	public function getName() {
+		wfLoadExtensionMessages('SemanticResultFormats');
+		return wfMsg('srf_printername_calendar');
+	}
+
 	public function getResult($results, $params, $outputmode) {
+		$this->isHTML = false;
+		$this->hasTemplates = false;
+
 		// skip checks, results with 0 entries are normal
 		$this->readParameters($params, $outputmode);
 		return $this->getResultText($results, SMW_OUTPUT_HTML);
@@ -27,40 +47,57 @@ class SRFCalendar extends SMWResultPrinter {
 		$locations = array();
 		// print all result rows
 		while ( $row = $res->getNext() ) {
-			$date = $title = $text = $color = "";
-			foreach ($row as $i => $field) {
-				$pr = $field->getPrintRequest();
-				if ($i == 2)
-					$text .= " (";
-				elseif ($i > 2)
-					$text .= ", ";
-				while ( ($object = $field->getNextObject()) !== false ) {
-					if ($object->getTypeID() == '_dat') { // use shorter "LongText" for wikipage
-						// don't add date values to the display
-					} elseif ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
-						if ($i == 0) {
-							$title = Title::newFromText($object->getShortWikiText(false));
+			$dates = array();
+			$title = $text = $color = "";
+			
+			if ($this->mTemplate != '') { // build template code
+				$this->hasTemplates = true;
+				if ($this->mUserParam)
+					$text = "|userparam=$this->mUserParam";
+				foreach ($row as $i => $field) {
+					$pr = $field->getPrintRequest();
+					$text .= '|' . ($i + 1) . '=';
+					while ( ($object = $field->getNextObject()) !== false ) {
+						if ($object->getTypeID() == '_dat') {
+							$text .= SRFCalendar::formatDateStr($object);
+						} elseif ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
+							$text .= $object->getLongText($outputmode, NULL);
 						} else {
-							$text .= $pr->getHTMLText($skin) . " " . $object->getLongText($outputmode, $skin);
+							$text .= $object->getShortText($outputmode, NULL);
 						}
-					} else {
-						$text .= $pr->getHTMLText($skin) . " " . $object->getShortText($outputmode, $skin);
-					}
-					if ($pr->getMode() == SMWPrintRequest::PRINT_PROP && $pr->getTypeID() == '_dat') {
-						if (method_exists('SMWTimeValue', 'getYear')) { // SMW 1.4 and higher
-							// for some reason, getMonth() and getDay() sometimes return a number with a leading zero -
-							// get rid of it using (int)
-							$date = $object->getYear() . '-' . (int)$object->getMonth() . '-' . (int)$object->getDay();
-						} else {
-							$date = date("Y-n-j", $event_date->getNumericValue());
+						if ($pr->getMode() == SMWPrintRequest::PRINT_PROP && $pr->getTypeID() == '_dat') {
+							$dates[] = SRFCalendar::formatDateStr($object);
 						}
-
 					}
 				}
+			} else {  // build simple text
+				foreach ($row as $i => $field) {
+					$pr = $field->getPrintRequest();
+					if ($i == 2)
+						$text .= " (";
+					elseif ($i > 2)
+						$text .= ", ";
+					while ( ($object = $field->getNextObject()) !== false ) {
+						if ($object->getTypeID() == '_dat') { // use shorter "LongText" for wikipage
+							// don't add date values to the display
+						} elseif ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
+							if ($i == 0) {
+								$title = Title::newFromText($object->getShortWikiText(false));
+							} else {
+								$text .= $pr->getHTMLText($skin) . " " . $object->getLongText($outputmode, $skin);
+							}
+						} else {
+							$text .= $pr->getHTMLText($skin) . " " . $object->getShortText($outputmode, $skin);
+						}
+						if ($pr->getMode() == SMWPrintRequest::PRINT_PROP && $pr->getTypeID() == '_dat') {
+							$dates[] = SRFCalendar::formatDateStr($object);
+						}
+					}
+				}
+				if ($i > 1)
+					$text .= ")";
 			}
-			if ($i > 1)
-				$text .= ")";
-			if ($date != '') {
+			if (count($dates) > 0) {
 				// handle the 'color=' value, whether it came
 				// from a compound query or a regular one
 				if (property_exists($row[0], 'display_options')) {
@@ -68,13 +105,17 @@ class SRFCalendar extends SMWResultPrinter {
 						$color = $row[0]->display_options['color'];
 				} elseif (array_key_exists('color', $this->m_params))
 					$color = $this->m_params['color'];
-				$events[] = array($title, $text, $date, $color);
+				foreach ($dates as $date)
+					$events[] = array($title, $text, $date, $color);
 			}
 		}
 
 		$result = SRFCalendar::displayCalendar($events);
-
-		return array($result, 'noparse' => 'true', 'isHTML' => 'true');
+		global $wgParser;
+		if (is_null($wgParser->getTitle()))
+			return $result;
+		else
+			return array($result, 'noparse' => 'true', 'isHTML' => 'true');
 	}
 
 
@@ -94,8 +135,21 @@ class SRFCalendar extends SMWResultPrinter {
 		return wfMsg('january');
 	}
 
+
+	function formatDateStr($object) {
+		if (method_exists('SMWTimeValue', 'getYear')) { // SMW 1.4 and higher
+			// for some reason, getMonth() and getDay() sometimes return a number with a leading zero -
+			// get rid of it using (int)
+			return $object->getYear() . '-' . (int)$object->getMonth() . '-' . (int)$object->getDay();
+		} else {
+			return date("Y-n-j", $event_date->getNumericValue());
+		}
+	}
+
 	function displayCalendar($events) {
 		global $wgOut, $srfgScriptPath, $wgParser, $wgRequest;
+
+		$wgParser->disableCache();
 
 		$wgOut->addLink( array(
 			'rel' => 'stylesheet',
@@ -105,8 +159,26 @@ class SRFCalendar extends SMWResultPrinter {
 		));
 		wfLoadExtensionMessages('SemanticResultFormats');
 
+		// set variables differently depending on whether this is
+		// being called from an #ask call or the Special:Ask page
 		$page_title = $wgParser->getTitle();
-		$skin = $wgParser->getOptions()->getSkin();
+		$additional_query_string = '';
+		$hidden_inputs = '';
+		$in_ask_page = is_null($page_title);
+		if ($in_ask_page) {
+			global $wgTitle;
+			$page_title = $wgTitle;
+			global $wgUser;
+			$skin = $wgUser->getSkin();
+			foreach ($wgRequest->getValues() as $key => $value) {
+				if ($key != 'month' && $key != 'year') {
+					$additional_query_string .= "&$key=$value";
+					$hidden_inputs .= "<input type=\"hidden\" name=\"$key\" value=\"$value\" />\n";
+				}
+			}
+		} else {
+			$skin = $wgParser->getOptions()->getSkin();
+		}
 		// get all the date-based values we need - the current month
 		// and year (i.e., the one the user is looking at - not
 		// necessarily the "current" ones), the previous and next months
@@ -146,8 +218,8 @@ class SRFCalendar extends SMWResultPrinter {
 		if ($cur_year == "0") {$cur_year = "1"; }
 		if ($next_year == "0") {$next_year = "1"; }
 		if ($prev_year == "0") {$prev_year = "-1"; }
-		$prev_month_url = $page_title->getLocalURL("month=$prev_month_num&year=$prev_year");
-		$next_month_url = $page_title->getLocalURL("month=$next_month_num&year=$next_year");
+		$prev_month_url = $page_title->getLocalURL("month=$prev_month_num&year=$prev_year" . $additional_query_string);
+		$next_month_url = $page_title->getLocalURL("month=$next_month_num&year=$next_year" . $additional_query_string);
 		$today_url = $page_title->getLocalURL();
 		$today_text = wfMsg('srfc_today');
 		$prev_month_text = wfMsg('srfc_previousmonth');
@@ -191,6 +263,7 @@ END;
 		$text .=<<<END
 </select>
 <input name="year" type="text" value="$cur_year" size="4">
+$hidden_inputs
 <input type="submit" value="$go_to_month_text">
 </form>
 </td>
@@ -253,14 +326,25 @@ END;
 			foreach ($events as $event) {
 				list($event_title, $other_text, $event_date, $color) = $event;
 				if ($event_date == $date_str) {
-					$event_name = str_replace('_', ' ', $event_title->getPrefixedDbKey());
-					if ($color != '') {
-						$event_url = $event_title->getPrefixedDbKey();
-						$event_str = '<a href="' . $event_url . '" style="color: ' . $color . '">' . $event_name . "</a>";
+					if ($this->mTemplate != '') {
+						$templatetext = '{{' . $this->mTemplate . $other_text . '}}';
+						$templatetext = $wgParser->replaceVariables($templatetext);
+						$templatetext = $wgParser->recursiveTagParse($templatetext);
+						if ($color != '') {
+							$text .= '<span style="color: ' . $color . '">' . $templatetext . '</span>';
+						} else {
+							$text .= $templatetext;
+						}
 					} else {
-						$event_str = $skin->makeLinkObj($event_title, $event_name);
+						$event_name = str_replace('_', ' ', $event_title->getPrefixedDbKey());
+						if ($color != '') {
+							$event_url = $event_title->getPrefixedDbKey();
+							$event_str = '<a href="' . $event_url . '" style="color: ' . $color . '">' . $event_name . "</a>";
+						} else {
+							$event_str = $skin->makeLinkObj($event_title, $event_name);
+						}
+						$text .= "$event_str $other_text\n\n";
 					}
-					$text .= "$event_str $other_text\n\n";
 				}
 			}
 			$text .=<<<END
