@@ -772,7 +772,7 @@ release: function() {
  * attribute is set with a long string bt javascript
  */
 setInputValue: function(id,presetvalue){
-	if (OB_bd.isIE) {
+	if (navigator.appVersion.match(/MSIE 7.0/)) {
 		var parentwidth = $(id).getWidth();
 		$(id).value = presetvalue;
 		$(id).setStyle({width: parentwidth + "px"});
