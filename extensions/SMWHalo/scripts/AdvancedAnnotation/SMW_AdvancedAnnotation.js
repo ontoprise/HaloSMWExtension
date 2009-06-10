@@ -1404,7 +1404,7 @@ AdvancedAnnotation.prototype = {
 		
 		
 		var htmlContent =  span.innerHTML;
-		
+//		TODO: grüne box bleibt, wenn Relation unbekannt ist
 		// A link is rendered as proposal
 		if (isLink) {
 			var preHTML = 
