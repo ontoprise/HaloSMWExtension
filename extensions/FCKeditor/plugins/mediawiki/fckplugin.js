@@ -716,17 +716,27 @@ FCK.DataProcessor =
 		// no value set, then add an space to fix problems with [[prop:val| ]]
 		if (text.length == 0)
 			text = " ";
+		// regex to check for empty value
+		var emptyVal = /^\s+$/;
 
 		switch (htmlNode.className) {
 			case 'fck_mw_property' :
 				var name = htmlNode.getAttribute('property');
-				if (name.indexOf('::') != -1)
+				if (name.indexOf('::') != -1) {
+					if ( emptyVal.exec( name.substring(name.indexOf('::') + 2) ) ) return '';
 					return '[[' + name + '|' + text + ']]' ;
-				else
+				}
+				else {
+					if (emptyVal.exec(text)) return '';
 					return '[[' + name + '::' + text + ']]' ;
+				}
 			case 'fck_mw_category' :
 				var name = htmlNode.getAttribute('category');
-				if (name) return '[[Category:' + name + '|' + text + ']]';
+				if (name) {
+					if (emptyVal.exec(name)) return ''; 
+					return '[[Category:' + name + '|' + text + ']]';
+				}
+				if (emptyVal.exec(text)) return '';
 				return '[[Category:' + text + ']]'
 		}
 	}
