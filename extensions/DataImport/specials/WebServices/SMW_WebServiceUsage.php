@@ -227,17 +227,17 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			return $wsFormattedResult;
 		}
 		
-		$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
+		//$wsFormattedResult = $parser->doBlockLevels($wsFormattedResult, true);
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		
 		
 		//remove <p>-tag around ws-result
-		if(substr($wsFormattedResult, 0, 3) == "<p>"){
-			$wsFormattedResult = trim(substr($wsFormattedResult, 3));
-			$fpos = strpos($wsFormattedResult, "</p>");
-			$wsFormattedResult = substr($wsFormattedResult, 0 , $fpos).substr($wsFormattedResult, $fpos+4); 
-			
-		}
+//		if(substr($wsFormattedResult, 0, 3) == "<p>"){
+//			$wsFormattedResult = trim(substr($wsFormattedResult, 3));
+//			$fpos = strpos($wsFormattedResult, "</p>");
+//			$wsFormattedResult = substr($wsFormattedResult, 0 , $fpos).substr($wsFormattedResult, $fpos+4); 
+//			
+//		}
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);
