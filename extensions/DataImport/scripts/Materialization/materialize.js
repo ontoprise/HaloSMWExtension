@@ -31,14 +31,17 @@ Materialize.prototype = {
 	 * also renders ##mcoll## and ##mcolr## as { respectively }
 	 */
 	callme: function() {
-		var text = $("wpTextbox1").value;
-		text = text.replace(/{{#materialize:/g, "{{subst:#materialize:");
-		text = text.replace(/##mcoll##/g, "{");
-		text = text.replace(/##mcolr##/g, "}");
-		text = text.replace(/##pipe##/g, "|");
-		$("wpTextbox1").value = text;
+		if (wgAction == "edit"){
+			var text = $("wpTextbox1").value;
+			text = text.replace(/{{#materialize:/g, "{{subst:#materialize:");
+			text = text.replace(/##mcoll##/g, "{");
+			text = text.replace(/##mcolr##/g, "}");
+			text = text.replace(/##pipe##/g, "|");
+			$("wpTextbox1").value = text;
+		}
 	}
 }
 
+		
 materialize = new Materialize();
 Event.observe(window, 'load', materialize.callme.bindAsEventListener(materialize));
