@@ -1390,14 +1390,31 @@ class elementProperty {
 	public function getWikitext() {
 		$link = $this->getLink();
 		// parameter display was set to use some property value for node name and link it with the page
-		if ($this->displayProperty != null)
-			return "[[".$link."|".$this->displayProperty."]]";
+		if ($this->displayProperty != null) {
+			switch($this->ns) {
+				// add a colon before NS_CATEGORY and NS_IMAGE
+				// otherwise they are rendered as category annotations or images.
+				case NS_CATEGORY:
+	            case NS_IMAGE:
+	                return "[[:".$link."|".$this->displayProperty."]]";
+	            default:
+	                return "[[".$link."|".$this->displayProperty."]]";
+	        }
+    	}
 	    // just the page name is used for the node
 		// if the page is in the main namespace it's sufficient to display [[page name]] and the
 		// wiki rendering will do the rest. Otherwise display [[Prefix:page_name|page name]]
-		if ($this->ns != NS_MAIN)
-			return "[[".$link."|".$this->title."]]";
-        return "[[".$this->title."]]";
+		switch($this->ns) {
+			// add a colon before NS_CATEGORY and NS_IMAGE
+            // otherwise they are rendered as category annotations or images.
+			case NS_CATEGORY:
+			case NS_IMAGE:
+				return "[[:".$link."|".$this->title."]]";
+			case NS_MAIN: 
+				return "[[".$this->title."]]";
+			default:
+				return "[[".$link."|".$this->title."]]"; 
+		}
 	}	
 }
 
