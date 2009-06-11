@@ -248,20 +248,24 @@ function smwf_qi_getPage($args= "") {
 	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
-	$fp = null;
+	
+	$c = curl_init();
+	curl_setopt($c, CURLOPT_URL, $wgServer.$wgScript."/Special:QueryInterface");
+	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+	// needs authentication?	
 	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-		$serverWithAuth = preg_replace('%^(http(s)?://)%i', "\$1".$_SERVER['PHP_AUTH_USER'].':'.$_SERVER['PHP_AUTH_PW'].'@', $wgServer);
-		$fp = fopen($serverWithAuth.$wgScript."/Special:QueryInterface", "r");
+		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
 	}
-	else $fp = fopen($wgServer.$wgScript."/Special:QueryInterface", "r");
+	// user agent (important i.e. for Popup in FCK Editor)
+	if (isset($_SERVER['HTTP_USER_AGENT']))
+		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+
+	$page = curl_exec($c); 
+	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
+	curl_close($c);
 
 	// this happens at any error (also if the URL can be called but a 404 is returned)
-	if (!$fp) return false;
-
-	// fetch data from URL into $page
-	while ($data = fgets($fp, 4096))
-		$page .= $data;
-	fclose($fp);
+	if ($page === false || $httpErr != 200) return false;
 
 	// create the new source code, by removing the wiki stuff,
 	// keep the header (because of all css and javascripts) and the main content part only
