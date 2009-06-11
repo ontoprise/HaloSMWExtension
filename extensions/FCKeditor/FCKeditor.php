@@ -73,7 +73,7 @@ $wgAjaxExportList[] = 'wfSajaxSearchSpecialTagFCKeditor';
 $wgExtensionCredits['other'][] = array(
 "name" => "FCKeditor extension",
 "author" => "FCKeditor.net (inspired by the code written by Mafs [Meta])",
-"version" => 'fckeditor/mw-extension $Rev$ 2008',
+"version" => 'fckeditor/mw-extension version $Rev$ 2008, FCK 2.6.4 Build 21629',
 "url" => "http://meta.wikimedia.org/wiki/FCKeditor",
 "description" => "FCKeditor extension"
 );
