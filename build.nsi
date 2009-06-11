@@ -148,6 +148,7 @@ Var WIKINAME
 Var WIKILOGO 
 Var WIKILANG 
 Var WIKISKIN 
+Var DEFAULTLOGO
 
 
 ; Helper
@@ -641,12 +642,15 @@ Function configCustomizationsForNew
     ${Switch} $WIKISKIN
         ${Case} 'ontoskin (grayish, based on monobook)'
             StrCpy $WIKISKIN "ontoskin"
+            StrCpy $DEFAULTLOGO "skins/ontoskin/images/wiki.jpg"
             ${Break}
         ${Case} 'ontoskin2 (blue)'
             StrCpy $WIKISKIN "ontoskin2"
+            StrCpy $DEFAULTLOGO "skins/ontoskin2/images/wiki.jpg"
             ${Break}
          ${Default}
             StrCpy $WIKISKIN "ontoskin2"
+            StrCpy $DEFAULTLOGO "skins/ontoskin2/images/wiki.jpg"
         ${Break}
     ${EndSwitch}
     ${Switch} $WIKILANG
@@ -668,7 +672,7 @@ Function configCustomizationsForNew
         StrCpy $WIKILOGO "$R0"
         goto updateLocalSettings
     logo_not_exists:
-        StrCpy $WIKILOGO "__notset__"
+        StrCpy $WIKILOGO $DEFAULTLOGO
     updateLocalSettings:    
         ${GetFileName} $WIKILOGO $R0
         nsExec::ExecToLog ' "$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\changeLS.php" \
