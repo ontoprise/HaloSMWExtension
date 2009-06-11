@@ -9,7 +9,7 @@ global $wgHooks;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
 
 // do not load WW if and only if in plain edit mode
-$plainEditmode = (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'edit') &&
+$plainEditmode = (array_key_exists('action', $_REQUEST) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit')) &&
 !(array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg');
 if (!$plainEditmode) {
 	require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
