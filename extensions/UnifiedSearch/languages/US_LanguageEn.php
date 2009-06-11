@@ -27,7 +27,7 @@ class US_LanguageEn {
         'us_results' => '<b>Results</b>',
         'us_noresults' => 'No results',
         'us_search_tooltip_refine' => 'Refine for $1',
-        'us_noresults_text' => 'There are <b>no</b> results which match your search terms: <b>$1</b>  
+        'us_noresults_text' => 'There are <b>no</b> fulltext results which match your search terms: <b>$1</b>  
                    <br><br>Proposals: <ul>
                    <li>Try other search terms.</li>
                    <li>Try search terms which are more general.</li>
