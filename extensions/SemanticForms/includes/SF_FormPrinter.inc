@@ -136,6 +136,9 @@ class SFFormPrinter {
     global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
 
     // initialize some variables
+     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
+    $fck_options = array();
+     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|end*/
     $sfgTabIndex = 1;
     $sfgFieldNum = 1;
     $source_page_matches_this_form = false;
@@ -626,9 +629,15 @@ $show_FCKEditor = false;
               $new_text = SFFormUtils::hiddenFieldHTML('free_text', '<free_text>');
             } else {
               if (! array_key_exists('rows', $field_args))
-                $field_args['rows'] = 5;
+              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
+                $fck_options['rows'] = 5;
+                else $fck_options['rows'] =$field_args['rows'];
+              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/  
               if (! array_key_exists('cols', $field_args))
-                $field_args['cols'] = 80;
+               /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
+                $fck_options['cols'] = 80;
+            	 else $fck_options['cols'] =$field_args['cols'];
+            	  /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/
               $sfgTabIndex++;
               $sfgFieldNum++;
               list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('<free_text>', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
@@ -1243,7 +1252,7 @@ END;
     // add form bottom, if no custom "standard inputs" have been defined
     if ($is_query)
       $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
-    elseif (! $this->standardInputsIncluded)
+     elseif (! $this->standardInputsIncluded)
       $form_text .= SFFormUtils::formBottom($form_is_disabled);
     $starttime = wfTimestampNow();
     $page_article = new Article($this->mPageTitle);
@@ -1262,7 +1271,7 @@ END;
     $javascript_text .= SFFormUtils::autocompletionJavascript();
     if ($free_text_was_included && $showFCKEditor > 0) {
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-      $rowParam = isset($field_args['rows']) && $field_args['rows'] > 0 ? $field_args['rows'] : 5;
+      $rowParam = isset($fck_options['rows']) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
       $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $rowParam);
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
