@@ -133,7 +133,7 @@ var wgUserLanguageStrings = {
 	'CATEGORY_ALREADY_ANNOTATED': '(w)Diese Kategorie ist bereits annotiert.',
 
 	// Annotation hints
-	'ANNOTATION_HINTS'        : 'Annotations Hinweise',
+	'ANNOTATION_HINTS'        : 'Annotationshinweise',
 	'ANNOTATION_ERRORS'       : 'Annotationsfehler',
 	'AH_NO_HINTS'			  : '(i)Keine Hinweise für diesen Artikel.',
 	'AH_SAVE_COMMENT'		  : 'Annotationen wurden im Advanced Annotation Mode hinzugefügt.',
@@ -310,5 +310,7 @@ var wgUserLanguageStrings = {
 	'PC_headline'		: 'Der Wert des Properties $1 von $2 ist $3, falls',
 	'PC_DERIVE_BY'		: 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.',
 	
-	'smw_wwsu_addwscall'			:	'Web Service Aufruf hinzufügen'
+	'smw_wwsu_addwscall'			:	'Web Service Aufruf hinzufügen',
+	'smw_wwsu_headline'			:	'Web Service',
+	'Help'			:	'Hilfe'
 };

@@ -323,5 +323,7 @@ var wgUserLanguageStrings = {
 	'PC_headline'		: 'The value of the property $1 of $2 is $3, if',
 	'PC_DERIVE_BY'		: 'Derive property $1 by a property chaining rule',
 	
-	'smw_wwsu_addwscall'			:	'Add web service call'
+	'smw_wwsu_addwscall'			:	'Add web service call',
+	'smw_wwsu_headline'			:	'Web Service',
+	'Help'			:	'Help'
 };
