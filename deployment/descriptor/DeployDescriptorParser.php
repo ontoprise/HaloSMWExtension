@@ -22,12 +22,10 @@ class DeployDescriptorParser {
 	var $precedings;
 	var $userReqs;
 
-	function __construct($fileloc) {
+	function __construct($xml) {
 			
-		$contents = file_get_contents($fileloc);
-
 		// parse xml results
-		$dom = simplexml_load_string($contents);
+		$dom = simplexml_load_string($xml);
 
 		$this->globalElement = $dom->xpath('/deploydescriptor/global');
 		$this->codefiles = $dom->xpath('/deploydescriptor/codefiles/file');
@@ -36,6 +34,7 @@ class DeployDescriptorParser {
 		$this->createConfigElements($dom);
 	}
 
+	
 	public function getPrecedings() {
 		return $this->precedings;
 	}

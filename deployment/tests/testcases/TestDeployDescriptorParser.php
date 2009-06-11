@@ -12,7 +12,8 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 	var $ddp;
 
 	function setUp() {
-		$this->ddp = new DeployDescriptorParser('testcases/resources/test_deploy_variables.xml');
+		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
+		$this->ddp = new DeployDescriptorParser($xml);
 	}
 
 	function tearDown() {

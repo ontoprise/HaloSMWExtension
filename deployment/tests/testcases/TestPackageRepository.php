@@ -9,7 +9,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 
 	function setUp() {
-		PackageRepository::getPackageRepositoryFromString(file_get_contents("testcases/resources/repository.xml"));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents("testcases/resources/repository.xml"));
 	}
 
 	function tearDown() {
@@ -24,6 +24,15 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	function testGetVersion2() {
 		$this->assertNull(PackageRepository::getVersion("SMWHalo",170));
 	}
+	
+    function testGetVersion3() {
+        $versions = PackageRepository::getAllVersions("SMWHalo");
+       
+        $this->assertTrue(count($versions) === 3);
+        $this->assertEquals(160, $versions[0]);
+        $this->assertEquals(150, $versions[1]);
+        $this->assertEquals(144, $versions[2]);
+    }
 
 	function testLatestVersion() {
 		$this->assertNotNull(PackageRepository::getLatestVersion("SMWHalo"));
