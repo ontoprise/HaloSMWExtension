@@ -55,7 +55,7 @@ WebServiceToolBar.prototype = {
 
 	showToolbar : function() {
 		// todo:use language file
-		this.wsContainer.setHeadline("Web services");
+		this.wsContainer.setHeadline(gLanguage.getMessage("smw_wwsu_headline"));
 		this.fill();
 	},
 	
