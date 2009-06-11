@@ -136,6 +136,9 @@ class SFFormPrinter {
     global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
 
     // initialize some variables
+     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
+    $fck_options = array();
+     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|end*/
     $sfgTabIndex = 1;
     $sfgFieldNum = 1;
     $source_page_matches_this_form = false;
@@ -298,7 +301,7 @@ $show_FCKEditor = false;
           $query_template_name = str_replace('.', '_', $query_template_name);
           $chooser_name = false;
           $chooser_caption = false;
-	  // cycle through the other components
+      // cycle through the other components
           for ($i = 2; $i < count($tag_components); $i++) {
             $component = $tag_components[$i];
             if ($component == 'multiple') $allow_multiple = true;
@@ -405,7 +408,7 @@ $show_FCKEditor = false;
               // now remove this template from the text being edited
               // if this is a partial form, establish a new insertion point
               if ($existing_page_content && $form_is_partial && $wgRequest->getCheck('partial')) {
-              	// if something already exists, set the new insertion point
+                // if something already exists, set the new insertion point
                 // to its position; otherwise just let it lie
                 if (strpos($existing_page_content, $existing_template_text) !== false) {
                   $existing_page_content = str_replace('{{{insertionpoint}}}', '', $existing_page_content);
@@ -626,9 +629,15 @@ $show_FCKEditor = false;
               $new_text = SFFormUtils::hiddenFieldHTML('free_text', '<free_text>');
             } else {
               if (! array_key_exists('rows', $field_args))
-                $field_args['rows'] = 5;
+              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
+                $fck_options['rows'] = 5;
+                else $fck_options['rows'] =$field_args['rows'];
+              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/  
               if (! array_key_exists('cols', $field_args))
-                $field_args['cols'] = 80;
+               /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
+                $fck_options['cols'] = 80;
+                 else $fck_options['cols'] =$field_args['cols'];
+                  /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/
               $sfgTabIndex++;
               $sfgFieldNum++;
               list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('<free_text>', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
@@ -638,9 +647,9 @@ $show_FCKEditor = false;
                 $edittools_text = wfMsgExt( 'edittools', array( 'parse' ), array( 'content' ) );
 
                 $new_text .=<<<END
-		<div class="mw-editTools">
-		$edittools_text
-		</div>
+        <div class="mw-editTools">
+        $edittools_text
+        </div>
 
 END;
               }
@@ -984,12 +993,12 @@ END;
                 $form_page_title = $val;
               }
             }
-            elseif($tag == 'partial form') {           		
+            elseif($tag == 'partial form') {                
               $form_is_partial = true;
               // replacement pages may have minimal matches...
               $source_page_matches_this_form = true;
            }
-            elseif($tag == 'includeonly free text') {           		
+            elseif($tag == 'includeonly free text') {                   
               $includeonly_free_text = true;
             }
 /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
@@ -1049,7 +1058,7 @@ END;
           $section = str_replace('[num]', "[{$instance_num}a]", $section);
           $remove_text = wfMsg('sf_editdata_remove');
           $form_text .=<<<END
-	<div id="wrapper_$sfgFieldNum" class="multipleTemplate">
+    <div id="wrapper_$sfgFieldNum" class="multipleTemplate">
         $section
         <input type="button" onclick="removeInstance('wrapper_$sfgFieldNum');" value="$remove_text" tabindex="$sfgTabIndex" class="remove" />
         </div>
@@ -1064,7 +1073,7 @@ END;
           // this is the last instance of this template - stick an 'add'
           // button in the form
         $form_text .=<<<END
-	<div id="starter_$query_template_name" class="multipleTemplate" style="display: none;">
+    <div id="starter_$query_template_name" class="multipleTemplate" style="display: none;">
         $section
         </div>
          <div id="main_$query_template_name"></div>
@@ -1072,8 +1081,8 @@ END;
 END;
           $add_another = wfMsg('sf_editdata_addanother');
           $form_text .=<<<END
-	<p style="margin-left:10px;">
-	<p><input type="button" onclick="addInstance('starter_$query_template_name', 'main_$query_template_name', '$sfgFieldNum');" value="$add_another" tabindex="$sfgTabIndex" class="addAnother" /></p>
+    <p style="margin-left:10px;">
+    <p><input type="button" onclick="addInstance('starter_$query_template_name', 'main_$query_template_name', '$sfgFieldNum');" value="$add_another" tabindex="$sfgTabIndex" class="addAnother" /></p>
 
 END;
            // if a chooser is being used for this template, add the template
@@ -1159,7 +1168,7 @@ END;
     // add a warning in, if we're editing an existing page and that page
     // appears to not have been created with this form
     if ($this->mPageTitle->exists() && ($existing_page_content != '') && ! $source_page_matches_this_form) {
-      $form_text = '	<div class="warningMessage">' . wfMsg('sf_editdata_formwarning', $this->mPageTitle->getFullURL()) . "</div>\n" . $form_text;
+      $form_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_formwarning', $this->mPageTitle->getFullURL()) . "</div>\n" . $form_text;
     }
 
     //Substitute the choosers in here too.
@@ -1177,46 +1186,46 @@ END;
 
 function updatechooserbutton(f,n)
 {
-	document.getElementById(n).disabled = (f.options[f.selectedIndex].value=="invalid");
+    document.getElementById(n).disabled = (f.options[f.selectedIndex].value=="invalid");
 }
 
 function addInstanceFromChooser(chooserid)
 {
-	var chooser = document.getElementById(chooserid);
-	var optionstring = chooser.options[chooser.selectedIndex].value;
-	var pos = optionstring.indexOf(",");
-	var tabindex = optionstring.substr(0,pos);
-	var chooservalue = optionstring.substr(pos+1);
-	addInstance('starter_' + chooservalue, 'main_' + chooservalue, parseInt(tabindex));
+    var chooser = document.getElementById(chooserid);
+    var optionstring = chooser.options[chooser.selectedIndex].value;
+    var pos = optionstring.indexOf(",");
+    var tabindex = optionstring.substr(0,pos);
+    var chooservalue = optionstring.substr(pos+1);
+    addInstance('starter_' + chooservalue, 'main_' + chooservalue, parseInt(tabindex));
 }
 
 //The fieldset containing the given element was just updated. If the fieldset is associated with a chooser,
 //ensure that the fieldset is hidden if and only if there are no template instances inside.
 function hideOrShowFieldset(element)
 {
-	//Find fieldset
-	while (element.tagName.toLowerCase() != "fieldset")
-		element = element.parentNode;
-	//Bail out if fieldset is not part of chooser
-	if (!element.getAttribute("haschooser"))
-		return;
-	//Now look for "input" or "select" tags that don't look like they're part of the starter template
-	var inputs = element.getElementsByTagName("input");
-	var x;
-	var show = false;
-	for (x=0;x<inputs.length;x++)
-	{
-		if (inputs[x].type=="text" && inputs[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	var selects = element.getElementsByTagName("select");
-	for (x=0;x<selects.length;x++)
-	{
-		if (selects[x].name.indexOf("[num]") == -1)
-			show = true;
-	}
-	//Now show or hide fieldset
-	element.style.display = (show?"block":"none");
+    //Find fieldset
+    while (element.tagName.toLowerCase() != "fieldset")
+        element = element.parentNode;
+    //Bail out if fieldset is not part of chooser
+    if (!element.getAttribute("haschooser"))
+        return;
+    //Now look for "input" or "select" tags that don't look like they're part of the starter template
+    var inputs = element.getElementsByTagName("input");
+    var x;
+    var show = false;
+    for (x=0;x<inputs.length;x++)
+    {
+        if (inputs[x].type=="text" && inputs[x].name.indexOf("[num]") == -1)
+            show = true;
+    }
+    var selects = element.getElementsByTagName("select");
+    for (x=0;x<selects.length;x++)
+    {
+        if (selects[x].name.indexOf("[num]") == -1)
+            show = true;
+    }
+    //Now show or hide fieldset
+    element.style.display = (show?"block":"none");
 }
 /* ]]> */ </script>
 
@@ -1237,31 +1246,31 @@ END;
       }
       $chooser_text .= "<input type='button' onclick=\"addInstanceFromChooser('chooserselect$chooser_count');\" value='" . wfMsg('sf_editdata_addanother') . "' disabled='true' id='chooserbutton$chooser_count'></p>";
     }
-	
+    
     $form_text = str_replace('{{{choosers}}}', $chooser_text, $form_text);
 
     // add form bottom, if no custom "standard inputs" have been defined
     if ($is_query)
       $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
     elseif (! $this->standardInputsIncluded) {
-		/*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
-		// get the upload form name and do not display standard inputs for that
-		// code was:
-		// $form_text .= SFFormUtils::formBottom($form_is_disabled);
-		global $smwgRMFormByNamespace;
-	 	if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
-	     		$form_text .= SFFormUtils::formBottom($form_is_disabled);
-	 	}
-		/*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
+        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
+        // get the upload form name and do not display standard inputs for that
+        // code was:
+        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
+        global $smwgRMFormByNamespace;
+        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
+                $form_text .= SFFormUtils::formBottom($form_is_disabled);
+        }
+        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
     }
     $starttime = wfTimestampNow();
     $page_article = new Article($this->mPageTitle);
     $edittime = $page_article->getTimestamp();
     $form_text .=<<<END
 
-	<input type="hidden" value="$starttime" name="wpStarttime" />
-	<input type="hidden" value="$edittime" name="wpEdittime" />
-	</form>
+    <input type="hidden" value="$starttime" name="wpStarttime" />
+    <input type="hidden" value="$edittime" name="wpEdittime" />
+    </form>
 
 END;
 
@@ -1271,7 +1280,7 @@ END;
     $javascript_text .= SFFormUtils::autocompletionJavascript();
     if ($free_text_was_included && $showFCKEditor > 0) {
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-      $rowParam = isset($field_args['rows']) && $field_args['rows'] > 0 ? $field_args['rows'] : 5;
+      $rowParam = isset($fck_options['rows']) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
       $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $rowParam);
       /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
