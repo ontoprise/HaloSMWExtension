@@ -162,6 +162,7 @@ function materializePF_updateDB($articleId){
  * @return array<string> 
  */
 function materializePF_getParameters($parameters){
+	$materialized = "";
 	for($i=2; $i < sizeof($parameters); $i++){
 		$parameter = trim($parameters[$i]);
 		if (substr($parameter,0, 6) == "update"){
