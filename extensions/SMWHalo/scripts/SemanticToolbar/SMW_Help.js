@@ -47,7 +47,7 @@ function smw_help_callme(){
 	    || wgCanonicalSpecialPageName == "Search")
 	   && stb_control.isToolbarAvailable()){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
-		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> Help');
+		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> ' + gLanguage.getMessage('Help'));
 		
 		// KK: initalize help only when Help container is open.
 		var helpLoaded = false;
