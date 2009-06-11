@@ -413,20 +413,20 @@ UseWebService.prototype = {
 		var text = this.createWSSyn();
 		if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
-			alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+			alert(diLanguage.getMessage('smw_wwsu_clipboard_success'));
 		}
 	  	else if (window.netscape) {
 			try {
 				netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
 				var clip = Components.classes['@mozilla.org/widget/clipboard;1'].createInstance(Components.interfaces.nsIClipboard);
 				if (!clip){
-					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					alert(diLanguage.getMessage('smw_wwsu_clipboard_fail'));
 					return;
 				}
 				
 				var trans = Components.classes['@mozilla.org/widget/transferable;1'].createInstance(Components.interfaces.nsITransferable);
 				if (!trans){
-					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					alert(diLanguage.getMessage('smw_wwsu_clipboard_fail'));
 					return;
 				}
 				
@@ -438,19 +438,19 @@ UseWebService.prototype = {
 				trans.setTransferData("text/unicode",str,this.createWSSyn().length*2);
 				var clipid=Components.interfaces.nsIClipboard;
 				if (!clip){
-					alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+					alert(diLanguage.getMessage('smw_wwsu_clipboard_fail'));
 					return;
 				} 
 				
 				clip.setData(trans,null,clipid.kGlobalClipboard);
-				alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+				alert(dLanguage.getMessage('smw_wwsu_clipboard_success'));
 			}
 			catch (e) {
-				alert(gLanguage.getMessage('smw_wwsu_clipboard_fail'));
+				alert(diLanguage.getMessage('smw_wwsu_clipboard_fail'));
 			}
 		}
 		else{
-			alert(gLanguage.getMessage('smw_wwsu_clipboard_success'));
+			alert(diLanguage.getMessage('smw_wwsu_clipboard_success'));
 		}
 		
 	}
