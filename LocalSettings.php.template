@@ -180,6 +180,8 @@ $wgGroupPermissions['ontologist']['gardening']=true;
 
 $wgGroupPermissions['sysop']['wysiwyg']=true;
 $wgGroupPermissions['sysop']['gardening']=true;
+$wgGroupPermissions['sysop']['userrights']=true;
+ 
 
 #Enable semantic annotations for pages in the following namespaces
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
