@@ -114,7 +114,10 @@ function LoadSelection()
 
 function SetUrl(link)
 {
-	var urlTemplate = oEditor.window.parent.location.pathname + '?title=Template:' + link + '&printable=yes';
+    var urlTemplate = oEditor.window.parent.location.pathname;
+    var p = urlTemplate.indexOf(oEditor.window.parent.wgScript);
+    var l = oEditor.window.parent.wgScript.length;
+    urlTemplate = urlTemplate.substring(0, p + l) + '?title=Template:' + link + '&printable=yes';
 	SetAttribute(GetE('xTemplateManual'),'src',urlTemplate);
 	GetE('xTemplateRaw').value = "{{" + link + "}}";
 }
