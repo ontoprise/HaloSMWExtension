@@ -53,9 +53,9 @@ class WSUpdateBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	public function allowedForUserGroups() {
-		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
-	}
+	//	public function allowedForUserGroups() {
+	//		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
+	//	}
 
 	public function createParameters() {
 		return array();
@@ -77,11 +77,11 @@ class WSUpdateBot extends GardeningBot {
 		}
 
 		ksort($affectedArticles);
-		
+
 		$affectedArticles = array_flip($affectedArticles);
-		
+
 		echo("\nRefreshing articles: \n");
-		
+
 		foreach($affectedArticles as $articleId => $dontCare){
 			echo("\t refreshing articleId: " . $articleId . "\n");
 			$title = Title::newFromID($articleId);
@@ -182,10 +182,10 @@ class WSUpdateBot extends GardeningBot {
 					//get articles which have to be refreshed
 				}
 			}
-				
+
 			$tempAffectedArticles = WSStorage::getDatabase()
-				->getUsedWSParameterSetPairs($ws->getArticleID(), $parameterSet["paramSetId"]);
-			
+			->getUsedWSParameterSetPairs($ws->getArticleID(), $parameterSet["paramSetId"]);
+				
 			if($ws->getQueryPolicy() > 0){
 				if($refresh || count($tempAffectedArticles) > 1){
 					$affectedArticles = array_merge($affectedArticles, $tempAffectedArticles);

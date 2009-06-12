@@ -47,24 +47,24 @@ class WSCacheBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	public function allowedForUserGroups() {
-		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
-	}
+	//	public function allowedForUserGroups() {
+	//		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
+	//	}
+	//
+	//	public function createParameters() {
+	//
+	//		$params = array();
+	//		return $params;
+	//	}
+	//
+	//	public function run($paramArray, $isAsync, $delay) {
+	//		$this->cleanCompleteCache();
+	//		return '';
+	//	}
 
-	public function createParameters() {
-
-		$params = array();
-		return $params;
+	public function getImageDirectory() {
+		return 'extensions/DataImport/skins/webservices';
 	}
-
-	public function run($paramArray, $isAsync, $delay) {
-		$this->cleanCompleteCache();
-		return '';
-	}
-	
-    public function getImageDirectory() {
-        return 'extensions/DataImport/skins/webservices';
-    }
 	/**
 	 * this method calls cleanWSCacheEntries for
 	 * each existing webservice
@@ -107,7 +107,7 @@ class WSCacheBot extends GardeningBot {
 				} else {
 					$compareTS = $cacheResult["lastUpdate"];
 				}
-				
+
 				//todo: change to days again
 				if(wfTime() - wfTimestamp(TS_UNIX, $compareTS)
 				> $ws->getSpanOfLife() *24*60*60){
