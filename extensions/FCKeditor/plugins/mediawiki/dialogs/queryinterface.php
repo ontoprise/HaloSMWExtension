@@ -101,7 +101,6 @@ function OnDialogTabChange( tabCode ) {
 var oFakeImage = FCK.Selection.GetSelectedElement();
 var oAskSpan;
 
-
 if ( oFakeImage ) {
 	if ( oFakeImage.tagName == \'IMG\' && oFakeImage.getAttribute(\'_fck_mw_askquery\') )
 		oAskSpan = FCK.GetRealElement( oFakeImage ) ;
@@ -132,8 +131,12 @@ function LoadSelection() {
 
 
 // the OK button was hit
-function Ok() {
+function Ok(enterHit) {
 	var ask;
+
+	/*op-patch|SR|2009-06-12|FCK mediawiki plugin QI popup|param enterHit added|start*/
+	// with the patch in fckdialog.html pevent that hitting ENTER closes the window 
+	if (enterHit) return false;
 
 	// use ask query from field in source code tab if active
 	if (GetE(\'divQiSrc\').style.display.indexOf("none") == -1) {

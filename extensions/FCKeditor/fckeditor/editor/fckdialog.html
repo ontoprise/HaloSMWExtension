@@ -549,7 +549,7 @@ var onReadyRegister = function()
 					var oTarget = e.srcElement || e.target ;
 					if ( oTarget.tagName == 'TEXTAREA' )
 						return true ;
-					Ok() ;
+					Ok(true) ;  /*op-patch|SR|2009-06-12|FCK mediawiki plugin QI popup|param enterHit added|start*/
 					return false ;
 
 				case 27 :		// ESC
@@ -689,13 +689,13 @@ var onReadyRegister = function()
 		$('btnOk').style.visibility = ( showIt ? '' : 'hidden' ) ;
 	} ;
 
-	window.Ok = function()
+	window.Ok = function(enterHit)  /*op-patch|SR|2009-06-12|FCK mediawiki plugin QI popup|param enterHit added|start*/
 	{
 		Selection.EnsureSelection() ;
 
 		var frmMain = window.frames["frmMain"] ;
 
-		if ( frmMain.Ok && frmMain.Ok() )
+		if ( frmMain.Ok && frmMain.Ok(enterHit) )  /*op-patch|SR|2009-06-12|FCK mediawiki plugin QI popup|param enterHit added|start*/
 			CloseDialog() ;
 		else
 			frmMain.focus() ;
