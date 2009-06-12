@@ -57,21 +57,14 @@ function smwfRMSetupExtension() {
 
 	smwfRMInitMessages();
 
-	// add some AJAX calls
-	$action = $wgRequest->getVal('action');
-	if ($action == 'ajax') {
-		// Do not install the extension for ajax calls
-		return;
-				
-	} else { 
-		$wgAutoloadClasses['RMForm'] = $smwgRMIP . '/includes/RM_Form.php';	
+	$wgAutoloadClasses['RMForm'] = $smwgRMIP . '/includes/RM_Form.php';	
 		
-		// Register Credits
-		$wgExtensionCredits['parserhook'][]=array('name'=>'Rich&nbsp;Media&nbsp;Extension', 'version'=>SMW_RM_VERSION,
-			'author'=>"Benjamin&nbsp;Langguth, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
-			'url'=>'https://sourceforge.net/projects/halo-extension', 
-			'description' => 'The Rich Media Extension provides an ontology to allow easy handling of media such as documents, images, doc, pdf etc. The ontology comprises templates and forms and examples. It enhances a one-click media upload of files and enables annotation of media in a simple way.');
-	}
+	// Register Credits
+	$wgExtensionCredits['parserhook'][]=array('name'=>'Rich&nbsp;Media&nbsp;Extension', 'version'=>SMW_RM_VERSION,
+		'author'=>"Benjamin&nbsp;Langguth, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
+		'url'=>'https://sourceforge.net/projects/halo-extension', 
+		'description' => 'The Rich Media Extension provides an ontology to allow easy handling of media such as documents, images, doc, pdf etc. The ontology comprises templates and forms and examples. It enhances a one-click media upload of files and enables annotation of media in a simple way.');
+	
 	return true;
 }
 
