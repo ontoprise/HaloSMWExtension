@@ -1031,7 +1031,7 @@ function smwfQIAddHTMLHeader(&$out){
 	global $wgTitle;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
-	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgScriptPath;
+	global $smwgHaloScriptPath, $smwgDeployVersion, $smwgScriptPath, $srfgScriptPath;
 
 
 	$jsm = SMWResourceManager::SINGLETON();
@@ -1049,7 +1049,6 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SemanticToolbar/SMW_Help.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		// add result format javascripts for query interface
-		global $srfgScriptPath;
 		if ($srfgScriptPath != null || $srfgScriptPath != "") {
 			// timeline
 			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
