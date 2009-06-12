@@ -51,8 +51,9 @@ include_once($QIAjaxFuncFile);
 
 // save the source code of the above URL in $page 
 $page = smwf_qi_getPage();
-
-if (!$page) dieNice("SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.");
+if (substr($page, 0, 7) == "Error: ") {
+  $page = getErrorPage($page);
+}
 
 // add the FCK specific Javascript above the body tag
 $newPage= str_replace('<body', jsData()."\n<body", $page);
@@ -198,8 +199,7 @@ function getDivQiSrc() {
  * send a nice message to the user, in case the Query Interface was not
  * called successfully.
  */
-function dieNice($msg) {
-
+function getErrorPage($msg) {
   echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
     <html>
       <head>
@@ -207,8 +207,7 @@ function dieNice($msg) {
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	    <meta name="robots" content="noindex, nofollow" />
       </head>
-      <body style="overflow: hidden">'.$msg.'</body>
+      <body>'.$msg.'</body>
     </html>';
-  exit(1);
 }
 ?>

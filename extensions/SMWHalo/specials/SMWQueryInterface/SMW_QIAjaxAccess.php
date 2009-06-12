@@ -248,24 +248,30 @@ function smwf_qi_getPage($args= "") {
 	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
-	
-	$c = curl_init();
-	curl_setopt($c, CURLOPT_URL, $wgServer.$wgScript."/Special:QueryInterface");
-	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-	// needs authentication?	
-	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+	if (function_exists('curl_init')) {
+	   $c = curl_init();
+	   curl_setopt($c, CURLOPT_URL, $wgServer.$wgScript."/Special:QueryInterface");
+	   curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    	// needs authentication?	
+    	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+	       curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+    	}
+        // user agent (important i.e. for Popup in FCK Editor)
+    	if (isset($_SERVER['HTTP_USER_AGENT']))
+	       curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+
+    	$page = curl_exec($c); 
+    	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
+    	curl_close($c);
 	}
-	// user agent (important i.e. for Popup in FCK Editor)
-	if (isset($_SERVER['HTTP_USER_AGENT']))
-		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-
-	$page = curl_exec($c); 
-	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
-	curl_close($c);
-
+	else {
+	  if (strtolower(substr($wgServer, 0, 5)) == "https")
+	       return "Error: for HTTPS connections please activate the Curl module in your PHP configuration";
+	  list ($httpErr, $page) = doHttpRequest(preg_replace('/^http(s)?:\/\//i', '', $wgServer), $_SERVER['SERVER_PORT'], $wgScript."/Special:QueryInterface");
+	}
 	// this happens at any error (also if the URL can be called but a 404 is returned)
-	if ($page === false || $httpErr != 200) return false;
+	if ($page === false || $httpErr != 200)
+	   return "Error: SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.<br/>HTTP Error code ".$httpErr;
 
 	// create the new source code, by removing the wiki stuff,
 	// keep the header (because of all css and javascripts) and the main content part only
@@ -321,4 +327,35 @@ function delDataFromPage(&$page, $start, $end) {
 	$page = $new;
 }
 
+/**
+ * If no curl is available, the page must retrieved manually
+ */ 
+function doHttpRequest($server, $port, $file) {
+    $cont = "";
+    $ip = gethostbyname($server);
+    $fp = fsockopen($ip, $port);
+    if (!$fp) return;
+    $com = "GET $file HTTP/1.1\r\nAccept: */*\r\n".
+           "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n".
+           "Host: $server:$port\r\n".
+           "Connection: Keep-Alive\r\n";
+    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']))
+        $com .= "Authorization: Basic ".base64_encode($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW'])."\r\n";
+    $com .= "\r\n";
+    fputs($fp, $com);
+    while (!feof($fp))
+        $cont .= fread($fp, 500);
+    fclose($fp);
+    $httpHeaders= explode("\r\n", substr($cont, 0, strpos($cont, "\r\n\r\n")));
+    list($protocol, $httpErr, $message) = explode(' ', $httpHeaders[0]);
+    $offset = 4;
+    foreach ($httpHeaders as $h) {
+        if (preg_match('/^Server:.*win(\d+)/i', $h)) {
+            $offset = 8;
+            break;
+        }
+    }
+    $cont = substr($cont, strpos($cont, "\r\n\r\n") + $offset );
+    return array($httpErr, $cont);
+}
 ?>
