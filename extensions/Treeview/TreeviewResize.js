@@ -64,6 +64,7 @@ SmwhgTreeviewResize.prototype = {
 								};
 									
 			});
+            
 	},
 	
 	
@@ -93,9 +94,8 @@ SmwhgTreeviewResize.prototype = {
 //Initialize Treeview resizing
 var smwhgTreeviewResize = new SmwhgTreeviewResize();
 //Resize on Startup
-smwhgTreeviewResize.resize();
+setTimeout(smwhgTreeviewResize.resize,1000);
 smwhg_oldonresize.push(smwhgTreeviewResize.resize);
-
 }
 
 
