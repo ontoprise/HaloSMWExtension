@@ -1237,14 +1237,14 @@ function smwfNavTree() {
 	if (!$nav_title->exists()) return true;
 	$nav = new Article($nav_title);
 	$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
-	echo $out->getText() . '<br/>';
+	echo $out->getText();
 	$groups = $wgUser->getGroups();
 	foreach($groups as $g) {
 		$title = Title::newFromText('NavTree_'.$g, NS_MEDIAWIKI);
 		if ($title->exists()) {
 			$nav = new Article($title);
 			$out = $psr->parse($nav->fetchContent(0,false,false),$wgTitle,$opt,true,true);
-			echo $out->getText() . '<br/>';
+			echo '<br/>'.$out->getText();
 		}
 	}
 	return true;
