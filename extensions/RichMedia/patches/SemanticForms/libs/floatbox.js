@@ -2452,10 +2452,12 @@ if (document.addEventListener) {
 	/*@end @*/
 	if (!initfb.done) setTimeout(arguments.callee, 50);
 })();
-fb_prevOnload = window.onload;
-window.onload = function() {
+// Commented out because it leads to problems with other extensions
+// using window.onload
+//fb_prevOnload = window.onload;
+/*window.onload = function() {
 	if (arguments.callee.done) return;
 	arguments.callee.done = true;
 	if (typeof fb_prevOnload === 'function') fb_prevOnload();
 	initfb();
-};
+};*/
