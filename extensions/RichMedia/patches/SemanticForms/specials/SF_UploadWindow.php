@@ -599,14 +599,14 @@ class UploadWindowForm {
 			global $wgRequest;
 			// set Filename
 			$wgRequest->data["$rMUploadFormName"]['Filename'] = $target;
-			// set UploadDate (don't trust the "default=now" setting of the form)
-			$uploadDateString = $this->mLocalFile->getTimestamp();
+			// use default=now again!
+			/*$uploadDateString = $this->mLocalFile->getTimestamp();
 			$uploadYear = substr($uploadDateString, 0, 4);
 			$uploadMonth = substr($uploadDateString, 4, 2);
 			$uploadDay = substr($uploadDateString, 6, 2);
 			$wgRequest->data["$rMUploadFormName"]['UploadDate']['year'] = $uploadYear;
 			$wgRequest->data["$rMUploadFormName"]['UploadDate']['month'] = $uploadMonth;
-			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;
+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;*/
 			// set anything else?
 			// save relatedArticles
 			$relatedArticles = $wgRequest->data["$rMUploadFormName"]['RelatedArticles'];
