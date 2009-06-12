@@ -23,25 +23,51 @@ global $smwgRMIP;
 include_once($smwgRMIP . '/languages/SMW_RMLanguage.php');
 
 class SMW_RMLanguageDe extends SMW_RMLanguage {
-
+	
 	protected $smwUserMessages = array(
 		//'specialpages-group-di_group' => 'Data Import',
-
+	
 		/* Messages of the Document and Media Ontology */
-		'smw_ti_welcome' => 'welcome message...',
-
+		
+		
 		/* Messages for the Media File Upload */
-		'smw_wws_articles_header' => 'Seiten, die den Web-Service "$1" benutzen',
+		'smw_rm_formbuttontext' => 'Datei anhängen',
+		'smw_rm_savebuttontext' => 'Datei anhängen und Meta-Informationen speichern',
+	
+		'smw_rm_uploadheadline' => 'Hochladen von Dateien',
+		'smw_rm_uploadtext' => 'Benutzen Sie diese Form um Dokumente, Bilder oder Multimediadateien an diesen Artikel anzuhängen.<br/>',
+		'smw_rm_upload_size' => '<b>Maximale</b> Dateigröße:<b> $1 </b>',
+		'smw_rm_upload_permtypes' => 'Erlaubte Dateitypen:',
+		'smw_rm_upload_type_image' => '<li><b>Bilder: </b>$1',
+		//'smw_rm_upload_type_pdf' => '<li><b>Pdf: </b><li>$1',
+		'smw_rm_upload_type_doc' => '<li><b>Dokumente: </b>$1',
+		'smw_rm_upload_type_audio' => '<li><b>Audio: </b>$1',
+		'smw_rm_upload_type_video' => '<li><b>Video: </b>$1',
+		'smw_rm_upload_error_ext_ns'=> 'Für diese Dateierweiterung ist kein gültiger Namespace vorhanden: $1',
+		'smw_rm_uploadlegend' => 'Datei hochladen',
+		'smw_rm_dest_file_help_tooltip' => 'In diesem Feld können sie den Zielnamen im Wiki eintragen.',
+		'smw_rm_ignore_warning_help_tooltip' => 'Wenn dieses Feld aktiviert ist, wird jede Art von Warnungmeldungen während des Upload-Prozesses ignoriert.',
+		'smw_rm_sflegend' => 'Meta-Information',
+//		'smw_rm_upload-permitted'            => 'permitted file types: <br>$1.',
+//		'smw_rm_upload-preferred'            => 'preferred file types: <br>$1.',
+//		'smw_rm_upload-prohibited'           => 'prohibited file types: <br>$1.',
+		//'smw_rm_upload-maxfilesize'          => 'Maximum $1',
+	
+		'smw_rm_uploadsuccess_headline' => 'Upload erfolgreich!',
+		'smw_rm_uploadsuccess_message' => 'Ihre ausgewählte Datei wurde erfolgreich an den Artikel angehangen.',
+		'smw_rm_uploadsuccess_legend' => 'Details',
+		'smw_rm_uploadsuccess_filename' => '<b>Datei:</b> $1 <br/>',
+		'smw_rm_uploadsuccess_articlename' => '<b>Artikel:</b> $1',
+		'smw_rm_uploadsuccess_closewindow' => 'Sie können jetzt dieses Fenster schließen.',	
 	);
 
 	protected $smwRMNamespaces = array(
-
+		
 	);
 
 	protected $smwRMNamespaceAliases = array(
-
+		 
 	);
-
 }
 
 
