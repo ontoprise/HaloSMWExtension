@@ -396,7 +396,7 @@ SemanticNotifications.prototype = {
 		if (p >= 0) {
 			query = query.substr(p+7);
 			p = query.lastIndexOf('|}}');
-			if (p == 0) {
+			if (p == -1) {
 				p = query.lastIndexOf('}}');
 			}
 			if (p >= 0) {
