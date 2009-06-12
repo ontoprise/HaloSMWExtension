@@ -155,11 +155,12 @@ SemanticNotifications.prototype = {
 		function ajaxResponseShowPreview(request) {
 			this.hidePendingIndicator();			
 			if (request.status == 200) {
-				var pos = request.responseText.indexOf(',');
-				success = request.responseText.substring(0, pos);
-				var res = request.responseText.substr(pos+1);
+//				var pos = request.responseText.indexOf(',');
+//				success = request.responseText.substring(0, pos);
+//				var res = request.responseText.substr(pos+1);
+				var res = request.responseText;
 				$('sn-previewbox').innerHTML = res;
-				if (success.indexOf('true')>= 0) {
+//				if (success.indexOf('true')>= 0) {
 					this.previewOK = true;
 					$('sn-notification-name').enable();
 					$('sn-notification-name').focus();
@@ -169,7 +170,7 @@ SemanticNotifications.prototype = {
 					} else {
 						this.enable('sn-add-notification', true);
 					}
-				}
+	//			}
 			} else {
 				$('sn-notification-name').disable();
 				this.enable('sn-add-notification', false);
@@ -187,9 +188,12 @@ SemanticNotifications.prototype = {
 		this.showPendingIndicator(e);
 		var query = $('sn-querytext').value;
 		query = this.stripQuery(query);
-		sajax_do_call('snf_sn_ShowPreview', 
-                      [query], 
+		query += ",table,all,,,50,,ascending,,";
+		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", query], 
                       ajaxResponseShowPreview.bind(this));
+//		sajax_do_call('snf_sn_ShowPreview', 
+//                      [query], 
+//                      ajaxResponseShowPreview.bind(this));
 		
 	},
 	
@@ -391,17 +395,16 @@ SemanticNotifications.prototype = {
 		var p = query.indexOf('{{#ask:');
 		if (p >= 0) {
 			query = query.substr(p+7);
-			p = query.indexOf('|');
+			p = query.lastIndexOf('|}}');
+			if (p == 0) {
+				p = query.lastIndexOf('}}');
+			}
 			if (p >= 0) {
 				query = query.substring(0, p);
-			} else {
-				p = query.lastIndexOf('}}');
-				if (p >= 0) {
-					query = query.substring(0, p);
-				}
 			}
 		}
-		
+		query = query.replace(/\s*(\|\s*[^\?]{2}.*?)[\n|\|]/g,'');
+		query = query.replace(/\n/g, ' ');
 		return query;
 		
 	}
