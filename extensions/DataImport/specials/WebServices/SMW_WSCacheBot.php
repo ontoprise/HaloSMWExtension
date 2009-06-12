@@ -51,16 +51,16 @@ class WSCacheBot extends GardeningBot {
 	//		return array(SMW_GARD_GARDENERS, SMW_GARD_SYSOPS, SMW_GARD_ALL_USERS);
 	//	}
 	//
-	//	public function createParameters() {
-	//
-	//		$params = array();
-	//		return $params;
-	//	}
-	//
-	//	public function run($paramArray, $isAsync, $delay) {
-	//		$this->cleanCompleteCache();
-	//		return '';
-	//	}
+	public function createParameters() {
+
+		$params = array();
+		return $params;
+	}
+
+	public function run($paramArray, $isAsync, $delay) {
+		$this->cleanCompleteCache();
+		return '';
+	}
 
 	public function getImageDirectory() {
 		return 'extensions/DataImport/skins/webservices';
