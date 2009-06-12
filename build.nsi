@@ -679,13 +679,14 @@ Function configCustomizationsForNew
         wgSitename="$WIKINAME" wgDBname="semwiki_$WIKILANG" wgLogo=$$wgScriptPath/url:("$WIKILOGO") wgLanguageCode=$WIKILANG wgDefaultSkin="$WIKISKIN" \
         smwgAllowNewHelpQuestions="true" ls=LocalSettings.php'
     
-    /*DetailPrint "Installing helppages"
+    ;DetailPrint "Installing helppages"
+    DetailPrint "Starting XAMPP"
         DetailPrint "Starting XAMPP"
         SetOutPath "$INSTDIR"
         Exec "$INSTDIR\xampp_start.bat"
         CALL waitForApacheAndMySQL
         MessageBox MB_OK|MB_ICONINFORMATION $(FIREWALL_COMPLAIN_INFO)
-        SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
+    /*    SetOutPath "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance"
         nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\extensions\SMWHaloHelp\maintenance\setup.php" --install'
     */    
 FunctionEnd
