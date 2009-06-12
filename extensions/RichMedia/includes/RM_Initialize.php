@@ -98,7 +98,7 @@ function smwfProcessRMFormParserFunction(&$parser) {
 	
 	// now we need the css and scripts. so add them
 	global $wgHooks; 
-	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+	//$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 
 	return RMForm::createRichMediaForm($params);
 }
@@ -112,7 +112,7 @@ function smwfProcessRMLinkParserFunction(&$parser) {
 	
 	// now we need the css and scripts. so add them
 	global $wgHooks; 
-	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+	//$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 
 	return RMForm::createRichMediaLink($params);
 }
@@ -130,17 +130,22 @@ function RMLinkUsage_Magic(&$magicWords, $langCode){
 function smwRMFormAddHTMLHeader(&$out){
 	global $smwgRMScriptPath, $smwgHaloScriptPath, $sfgScriptPath;
 	
-	$jsm = SMWResourceManager::SINGLETON();
-	# Prototype needed!
-	$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-	$jsm->addScriptIf($smwgRMScriptPath. '/scripts/richmedia.js');
-	# Floatbox needed!
-	$jsm->addScriptIf($sfgScriptPath .  '/libs/floatbox.js');
-	$jsm->serializeScripts($out);
+	static $rmScriptLoaded = false;
 	
-	#Floatbox css file:
-	$jsm->addCSSIf($sfgScriptPath . '/skins/floatbox.css');
-	$jsm->serializeCSS($out);
+	if(!$rmScriptLoaded){
+		$jsm = SMWResourceManager::SINGLETON();
+		# Prototype needed!
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+		$jsm->addScriptIf($smwgRMScriptPath. '/scripts/richmedia.js');
+		# Floatbox needed!
+		$jsm->addScriptIf($sfgScriptPath .  '/libs/floatbox.js');
+		$jsm->serializeScripts($out);
+	
+		#Floatbox css file:
+		$jsm->addCSSIf($sfgScriptPath . '/skins/floatbox.css');
+		$jsm->serializeCSS($out);
+		$rmScriptLoaded = true;
+	}
 	return true;
 }
 
