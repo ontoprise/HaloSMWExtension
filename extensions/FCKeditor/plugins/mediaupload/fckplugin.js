@@ -14,13 +14,13 @@ OpenUploadWindowCommand.Execute=function() {
 	var uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=Special:UploadWindow";
 	var article = window.parent.wgTitle;
 	if (window.parent.wgPageName == 'Special:AddData') {
-		//obviously we are in Special:AddData and wgTitle is containing what we're loooking for...
+		//obviously we are in Special:AddData and wgTitle is not containing what we're loooking for...
 		// try target= ...first
 		var regexS = "[\\?&]target=([^&#]*)";
 		var regex = new RegExp( regexS );
 		var result = regex.exec( window.parent.location.href );
 		if (result == null) {
-			//target not found, it has to be it the path now!
+			//target not found, it has to be the path now!
 			article = window.parent.location.pathname.match( /[^\/]+\/?$/ )[0];
 		}
 		else {
