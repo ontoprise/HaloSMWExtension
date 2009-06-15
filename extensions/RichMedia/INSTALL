@@ -7,7 +7,7 @@ Installation instructions
 
     MediaWiki 1.13
     SMW 1.4.2
-    Halo extension 1.4.3
+    Halo extension 1.4.4
     Semantic Forms 1.7.1
     Parser Functions 
     String Functions 2.0 or higher
@@ -23,18 +23,18 @@ Installation instructions
     include_once('extensions/RichMedia/includes/RM_Initialize.php');
     enableRichMediaExtension();
     
-    $wgAllowExternalImages=true;   //This need to be set to allow the templates creating image links.
+    $wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
     ---
 
-2. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.0.xml'
+2. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.1.xml'
 
-Now you can enter {{RMList|{{FULLPAGENAME}}}} to any article where you want to get a
+Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 
 
 #
 # Notice 
 #
-
+This template call has changed since last version. Please make sure that you are using the right call now.
 If you already used a version of the MIME-Type extension, 
 then be sure, that '/extensions/SMWHalo/includes/SMW_MIME_settings.php' sets the namespaces
 'Document','Pdf','Audio' and 'Video' as namespaces with semantic links.
@@ -53,3 +53,5 @@ If that's not the case, you will have to add to this file:
     
 Otherwise it is not possible to do inline queries with articles placed in those namespaces
 and that's what is needed for the media list!
+If you have already used version 1.0 of RichMedia extension and you have done changes to your templates,
+make sure that you merge them with the new ones delivered in this version.
