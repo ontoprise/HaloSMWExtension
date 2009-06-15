@@ -249,25 +249,13 @@ function smwf_qi_getPage($args= "") {
 	// save the source code of the above URL in $page 
 	$page = "";
 	if (function_exists('curl_init')) {
-	   $c = curl_init();
-	   curl_setopt($c, CURLOPT_URL, $wgServer.$wgScript."/Special:QueryInterface");
-	   curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-    	// needs authentication?	
-    	if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
-	       curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
-    	}
-        // user agent (important i.e. for Popup in FCK Editor)
-    	if (isset($_SERVER['HTTP_USER_AGENT']))
-	       curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-
-    	$page = curl_exec($c); 
-    	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
-    	curl_close($c);
+		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $wgScript."/Special:QueryInterface");
 	}
 	else {
 	  if (strtolower(substr($wgServer, 0, 5)) == "https")
 	       return "Error: for HTTPS connections please activate the Curl module in your PHP configuration";
-	  list ($httpErr, $page) = doHttpRequest(preg_replace('/^http(s)?:\/\//i', '', $wgServer), $_SERVER['SERVER_PORT'], $wgScript."/Special:QueryInterface");
+	  list ($httpErr, $page) =
+	  	doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $wgScript."/Special:QueryInterface");
 	}
 	// this happens at any error (also if the URL can be called but a 404 is returned)
 	if ($page === false || $httpErr != 200)
@@ -290,9 +278,9 @@ function smwf_qi_getPage($args= "") {
 	$params = array();
 	parse_str($args, $params);
 	if (isset($params['noPreview']))
-		delDataFromPage($newPage, '<div id="previewlayout">', '<div id="querylayout">'); 
+		$newPage = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $newPage); 
 	if (isset($params['noLayout']))
-		delDataFromPage($newPage, '<div id="querylayout">', '<div id="qimenubar">'); 
+		$newPage = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $newPage); 
 	
 	return $newPage;
 		
@@ -313,28 +301,20 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
 }
 
 /**
- * delete data from page by defing a start string and a end string.
- * the string is copied from the begining. If $copy is set to false
- * the data will be deleted from $page without copying it to $newPage 
- */
-function delDataFromPage(&$page, $start, $end) {
-	$pos1 = strpos($page, $start);
-	if ($pos1 === false) return;
-	$pos2 = strpos($page, $end, $pos1);
-	if ($pos2 === false) return;
-	$new = substr($page, 0, $pos1);
-	$new.= substr($page, $pos2);
-	$page = $new;
-}
-
-/**
  * If no curl is available, the page must retrieved manually
+ * 
+ * @param string server i.e. www.domain.com 
+ * @param string port i.e. 80 (https will probably not work)
+ * @param string file	i.e. /path/to/script.cgi or /some/file.html
+ * @return array(int, string) with httpCode, page
  */ 
 function doHttpRequest($server, $port, $file) {
+	if ($file{0} != "/") $file = "/".$file;
+	$server = preg_replace('/^http(s)?:\/\//i', '', $server);
     $cont = "";
     $ip = gethostbyname($server);
     $fp = fsockopen($ip, $port);
-    if (!$fp) return;
+    if (!$fp) return array(-1, false);
     $com = "GET $file HTTP/1.1\r\nAccept: */*\r\n".
            "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n".
            "Host: $server:$port\r\n".
@@ -344,18 +324,38 @@ function doHttpRequest($server, $port, $file) {
     $com .= "\r\n";
     fputs($fp, $com);
     while (!feof($fp))
-        $cont .= fread($fp, 500);
+        $cont .= fread($fp, 1024);
     fclose($fp);
     $httpHeaders= explode("\r\n", substr($cont, 0, strpos($cont, "\r\n\r\n")));
     list($protocol, $httpErr, $message) = explode(' ', $httpHeaders[0]);
-    $offset = 4;
-    foreach ($httpHeaders as $h) {
-        if (preg_match('/^Server:.*win(\d+)/i', $h)) {
-            $offset = 8;
-            break;
-        }
-    }
+    $offset = 8;
     $cont = substr($cont, strpos($cont, "\r\n\r\n") + $offset );
     return array($httpErr, $cont);
+}
+
+/**
+ * retrieve a web page via curl
+ *
+ * @param string server i.e. http://www.domain.com (incl protocol prefix) 
+ * @param string file	i.e. /path/to/script.cgi or /some/file.html
+ * @return array(int, string) with httpCode, page 
+ */
+function doHttpRequestWithCurl($server, $file) {
+	if ($file{0} != "/") $file = "/".$file;
+	$c = curl_init();
+	curl_setopt($c, CURLOPT_URL, $server.$file);
+	curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+    // needs authentication?	
+    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+		curl_setopt($c, CURLOPT_USERPWD, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+	}
+    // user agent (important i.e. for Popup in FCK Editor)
+	if (isset($_SERVER['HTTP_USER_AGENT']))
+		curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+
+	$page = curl_exec($c); 
+	$httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE); 
+	curl_close($c);
+	return array($httpErr, $page);
 }
 ?>
