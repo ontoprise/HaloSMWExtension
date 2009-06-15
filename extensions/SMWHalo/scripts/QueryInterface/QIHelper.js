@@ -457,6 +457,7 @@ insertAsNotification: function() {
 * @param id ID of query to start
 */
 recurseQuery:function(id, type){
+	if ( !this.queries[id] ) return '';
 	var sq = this.queries[id].getSubqueryIds();
 	if(sq.length == 0){
 		if(type == "parser")
@@ -721,6 +722,7 @@ adaptDialogueToProperty:function(request){
 	if (this.activeDialogue != null){ //check if user cancelled the dialogue whilst ajax call
 		var oldval = $('input3').value;
 		var oldcheck = $('usesub')?$('usesub').checked:false;
+		var oldsubid = $('usesub') ? $('usesub').value : this.nextQueryId;
 		for(var i=4, n = $('dialoguecontent').rows.length; i<n; i++){
 			$('dialoguecontent').deleteRow(4); //delete all rows for value inputs
 		}
@@ -765,7 +767,7 @@ adaptDialogueToProperty:function(request){
 			$('dialoguecontent').rows[3].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 
 			if(parameterNames[0] == gLanguage.getMessage('QI_PAGE')){ //if type is page, we need a subquery checkbox
-				$('dialoguecontent').rows[3].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
+				$('dialoguecontent').rows[3].cells[4].innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" value="' + oldsubid + '" onclick="qihelper.useSub(this.checked)"/>';
 				$('dialoguecontent').rows[3].cells[4].className = "subquerycell";
 				$('usesub').checked = oldcheck;
 				this.activeInputs = 4;
@@ -780,6 +782,7 @@ adaptDialogueToProperty:function(request){
 				this.enumValues = new Array();
 				autoCompleter.deregisterAllInputs();
 				var option = '<select id="input3">'; //create html for option box
+				option += '<option value="" style="width:100%">*</option>';
 				for(var i = 0; i < possibleValues.length; i++){
 					this.enumValues.push(possibleValues[i]); //save enumeration values for later use
 					option += '<option value="' + possibleValues[i] + '" style="width:100%">' + possibleValues[i] + '</option>';
@@ -897,12 +900,16 @@ loadPropertyDialogue:function(id){
 	if(vals[0][0] == "subquery"){ //grey out input field and check checkbox
 		this.useSub(true);
 		$('usesub').checked = true;
+		$('usesub').value = vals[0][2];
 	} else {
 		if(!prop.isEnumeration())
 			$('input3').value = unescapeQueryHTML(vals[0][2]); //enter the value into the input box
 		else { //create option box for enumeration
+			this.propIsEnum = true;
 			var tmphtml = '<select id="input3">';
 			this.enumValues = prop.getEnumValues();
+			//create the options; check which one was selected and add the 'selected' param then
+			tmphtml += '<option style="width:100%" value="">*</option>'; // empty value first
 			for(var i = 0; i < this.enumValues.length; i++){
 				tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[i]) + '" ' + (this.enumValues[i]==vals[0][2]?'selected="selected"':'') + '>' + this.enumValues[i] + '</option>';
 			}
@@ -918,10 +925,11 @@ loadPropertyDialogue:function(id){
 				$('dialoguecontent').rows[i+3].cells[1].innerHTML = this.createRestrictionSelector(vals[i][1], disabled);
 			}
 		} else { //enumeration
+			this.propIsEnum = true;
 			this.enumValues = prop.getEnumValues();
 			for(var i=1; i<vals.length; i++){
 				this.addDialogueInput();
-				var tmphtml = '<select id="input' + (i+2) + '">';
+				var tmphtml = '<select id="input' + (i+3) + '">';
 				//create the options; check which one was selected and add the 'selected' param then
 				for(var j = 0; j < this.enumValues.length; j++){
 					tmphtml += '<option style="width:100%" value="' + unescapeQueryHTML(this.enumValues[j]) + '" ' + (this.enumValues[j]==vals[i][2]?'selected="selected"':'') + '>' + unescapeQueryHTML(this.enumValues[j]) + '</option>';
@@ -1015,6 +1023,7 @@ deleteActivePart:function(){
 * @param id ID of the query to start with
 */
 deleteSubqueries:function(id){
+	if ( !this.queries[id] ) return;
 	if(this.queries[id].hasSubqueries()){
 		for(var i = 0; i < this.queries[id].getSubqueryIds().length; i++){
 			this.deleteSubqueries(this.queries[id].getSubqueryIds()[i]);
@@ -1145,15 +1154,33 @@ addPropertyGroup:function(){
 		var pmust = $('input2').checked;
 		var arity = this.proparity;
 		var pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust, this.propIsEnum, this.enumValues); //create propertyGroup
-		for(var i = 3; i<$('dialoguecontent').rows.length; i++){
-			var paramvalue = $('input' + i).value;
+		var allValueRows = $('dialoguecontent').rows.length;
+		var cHtmlRow = 3;
+		for(var i = 3; i<allValueRows; i++){
+			// for a property several values were selected  but if in the list a value
+			// in the middle has been deleted, the inputX doesn't exist anymore, so skip this one and
+			// continue with the next one. For example if the 3rd value was deleted (input5) then: 
+			// variable i contains the logical value i.e. input3 = 3, input4 = 4, input6 = 6
+			// variable cHtmlRow is the current html row, i.e. input3 = 3, input4 = 4, input6 = 5
+			try {
+				var paramvalue = $('input' + i).value;
+			}
+			catch(e) {
+				allValueRows++;
+				continue;
+			}
 			paramvalue = paramvalue==""?"*":paramvalue; //no value is replaced by "*" which means all values
-			var paramname = $('dialoguecontent').rows[i].cells[0].innerHTML;
+			var paramname = $('dialoguecontent').rows[cHtmlRow].cells[0].innerHTML;
 			if(paramname == gLanguage.getMessage('QI_PAGE') && arity == 2 && $('usesub').checked){ //Subquery?
 				paramname = "subquery";
-				paramvalue = this.nextQueryId;
-				subqueryIds.push(this.nextQueryId);
-				this.addQuery(this.activeQueryId, pname);
+				var cSubQueryId = parseInt($('usesub').value);
+				if (cSubQueryId < this.nextQueryId) // Subquery does exists already
+					paramvalue = cSubQueryId;
+				else { // Sub Query does not yet exist
+					paramvalue = this.nextQueryId;
+					subqueryIds.push(this.nextQueryId);
+					this.addQuery(this.activeQueryId, pname);
+				}
 				/*STARTLOG*/
 				if(window.smwhgLogger){
 					var logstr = "Add subquery to query, property '" + pname + "'";
@@ -1162,8 +1189,9 @@ addPropertyGroup:function(){
 				/*ENDLOG*/
 			}
 
-			var restriction = $('dialoguecontent').rows[i].cells[1].firstChild.value;
+			var restriction = $('dialoguecontent').rows[cHtmlRow].cells[1].firstChild.value;
 			pgroup.addValue(paramname, restriction, escapeQueryHTML(paramvalue)); // add a value group to the property group
+			cHtmlRow++;
 		}
 		/*STARTLOG*/
 		if(window.smwhgLogger){
