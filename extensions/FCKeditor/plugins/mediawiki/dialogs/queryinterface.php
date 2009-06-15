@@ -51,19 +51,26 @@ include_once($QIAjaxFuncFile);
 
 // save the source code of the above URL in $page 
 $page = smwf_qi_getPage();
+
+// check if an error occured, the the returned string starts with "Error: " 
 if (substr($page, 0, 7) == "Error: ") {
-  $page = getErrorPage($page);
+	$page = "<h2>Error</h2>".substr($page, 6);
+	$page = getErrorPage($page);
+	// add the FCK specific Javascript above the body tag, set error flag
+	// that prevents to display the Ok button
+	$newPage= str_replace('<body', jsData(true)."\n<body", $page);
 }
+else {
+	// add the FCK specific Javascript above the body tag
+	$newPage= str_replace('<body', jsData()."\n<body", $page);
 
-// add the FCK specific Javascript above the body tag
-$newPage= str_replace('<body', jsData()."\n<body", $page);
+	// suround QI code by div with id = divQiGui for managing the tabs
+	$newPage= str_replace('<body', '<div id="divQiGui">'."\n<body", $newPage);
+	$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
 
-// suround QI code by div with id = divQiGui for managing the tabs
-$newPage= str_replace('<body', '<div id="divQiGui">'."\n<body", $newPage);
-$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
-
-// add div container for raw query source code at the end
-$newPage= str_replace('</body>', getDivQiSrc()."\n</body>", $newPage);
+	// add div container for raw query source code at the end
+	$newPage= str_replace('</body>', getDivQiSrc()."\n</body>", $newPage);
+}
 
 // output the page
 echo $newPage;
@@ -71,9 +78,12 @@ echo $newPage;
 
 /**
  * return Javacript, that needs to be placed in the header and that handles the communication
- * with the FCKEditor 
+ * with the FCKEditor
+ *  
+ * @param  boolean error default false
+ * @return string FCK javascript that must be inserted before the <body>
  */
-function jsData() {
+function jsData($error = false) {
 	return '<script type="text/javascript">
 
 var oEditor		= window.parent.InnerDialogLoaded() ;
@@ -88,6 +98,9 @@ document.write( \'<script src="\' + FCKConfig.BasePath + \'dialog/common/fck_dia
 	</script>
 	<script type="text/javascript">
 
+'.($error
+? ''  // dont set any tabs on error
+: '
 // Set the dialog tabs.
 window.parent.AddTab( \'GUI\', \'Query Interface\' ) ;
 window.parent.AddTab( \'SRC\', \'Query sourcecode\' ) ;
@@ -96,6 +109,7 @@ function OnDialogTabChange( tabCode ) {
 	ShowE(\'divQiGui\' , ( tabCode == \'GUI\' ) ) ;
 	ShowE(\'divQiSrc\' , ( tabCode == \'SRC\' ) ) ;
 }
+').'
 
 // Get the selected query embed (if available).
 var oFakeImage = FCK.Selection.GetSelectedElement();
@@ -113,7 +127,7 @@ window.onload = function() {
 	oEditor.FCKLanguageManager.TranslatePage(document) ;
 
 	// Activate the "OK" button.
-	window.parent.SetOkButton( true ) ;
+	window.parent.SetOkButton( '.($error ? 'false' : 'true').' ) ;
 	window.parent.SetAutoSize( true ) ;
 	
 	// load selected query if any
@@ -203,7 +217,7 @@ function getDivQiSrc() {
  * called successfully.
  */
 function getErrorPage($msg) {
-  echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+  return '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
     <html>
       <head>
 	    <title>Query Interface</title>
