@@ -38,9 +38,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		//add a second ws call
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text .= " {{#ws:TimeTestWSUse"
-					."| dontCare=something"
-					."| ?result.complete"
-					."}}";
+		."| dontCare=something"
+		."| ?result.complete"
+		."}}";
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
@@ -51,9 +51,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		//add a third ws call that uses another parameter value
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text .= " {{#ws:TimeTestWSUse"
-					."| dontCare=something else"
-					."| ?result.complete"
-					."}}";
+		."| dontCare=something else"
+		."| ?result.complete"
+		."}}";
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 2);
@@ -67,9 +67,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text .= " {{#ws:TimeTestWSUse2"
-					."| dontCare=something else"
-					."| ?result.complete"
-					."}}";
+		."| dontCare=something else"
+		."| ?result.complete"
+		."}}";
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 2);
@@ -78,13 +78,13 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId2)), 1);
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSsUsedInArticle($pId)), 3);
 		$this->assertEquals($this->getParameterSetIdCount(), 2);
-		
-		
+
+
 		// add a fiftg web service that does not use a parameter
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text .= " {{#ws:TimeTestWSUse2"
-					."| ?result.complete"
-					."}}";
+		."| ?result.complete"
+		."}}";
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 2);
@@ -94,9 +94,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSsUsedInArticle($pId)), 4);
 		$this->assertEquals($this->getParameterSetIdCount(), 2);
 	}
-	
-	
-/*
+
+
+	/*
 	 * adding of web service usages and test if the database is updated correctly
 	 * (number of ws usages, number of cache values, number of parameter sets)
 	 * 		1. test with one ws usage
@@ -125,9 +125,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		//remove first ws call which exists two times
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text = str_replace(" {{#ws:TimeTestWSUse"
-					."| dontCare=something"
-					."| ?result.complete"
-					."}}", "", $text);
+		."| dontCare=something"
+		."| ?result.complete"
+		."}}", "", $text);
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 2);
@@ -140,9 +140,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		//remove second ws call that uses another parameter value
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text = str_replace("{{#ws:TimeTestWSUse"
-					."| dontCare=something else"
-					."| ?result.complete"
-					."}}", "", $text);
+		."| dontCare=something else"
+		."| ?result.complete"
+		."}}", "", $text);
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
@@ -155,9 +155,9 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		// remove third ws call that uses the same parameter but different ws
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text = str_replace("{{#ws:TimeTestWSUse2"
-					."| dontCare=something else"
-					."| ?result.complete"
-					."}}", "", $text);
+		."| dontCare=something else"
+		."| ?result.complete"
+		."}}", "", $text);
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
@@ -166,13 +166,13 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId2)), 1);
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSsUsedInArticle($pId)), 2);
 		$this->assertEquals($this->getParameterSetIdCount(), 1);
-		
-		
+
+
 		// remove fourth web service that does not use a parameter
 		$text = smwf_om_GetWikiText('TimeTestWSUse');
 		$text = str_replace("{{#ws:TimeTestWSUse2"
-					."| ?result.complete"
-					."}}", "", $text);
+		."| ?result.complete"
+		."}}", "", $text);
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
 
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
@@ -181,7 +181,7 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId2)), 0);
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSsUsedInArticle($pId)), 1);
 		$this->assertEquals($this->getParameterSetIdCount(), 1);
-		
+
 		// remove last web service call
 		$text = "no web service is used";
 		smwf_om_EditArticle('TimeTestWSUse', 'PHPUnit', $text, '');
@@ -192,7 +192,74 @@ class TestWSUsage extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId2)), 0);
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSsUsedInArticle($pId)), 0);
 		$this->assertEquals($this->getParameterSetIdCount(), 0);
-		
+
+	}
+
+	public function testValidateWSUsageNotExistingResultPart(){
+		di_utils_setupWebServices(array("ValidateWSUsage"));
+		$wsId = di_utils_getWSId("ValidateWSUsage");
+
+		$wsReturnValues = array("result.doesNotExist" => "");
+		$wsParameters = array("nonOptionalParameter" => "value",
+			"parameterWithSubParameters.nonOptionalSubParameter" => "value");
+
+		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$this->assertEquals($response[0][0],
+			"The result-part \"result.doesNotExist\" does not exist in the Wiki Web Service Definition.");
+	}
+
+	public function testValidateWSUsageNotExistingResult(){
+		di_utils_setupWebServices(array("ValidateWSUsage"));
+		$wsId = di_utils_getWSId("ValidateWSUsage");
+
+		$wsReturnValues = array("doesNotExist.result" => "");
+		$wsParameters = array("nonOptionalParameter" => "value",
+			"parameterWithSubParameters.nonOptionalSubParameter" => "value");
+
+		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+		$this->assertEquals($response[0][0],
+			"The result-part \"doesNotExist.result\" does not exist in the Wiki Web Service Definition.");
+	}
+
+	public function testValidateMissingParameter(){
+		di_utils_setupWebServices(array("ValidateWSUsage"));
+		$wsId = di_utils_getWSId("ValidateWSUsage");
+
+		$wsReturnValues = array("result" => "");
+		$wsParameters = array("parameterWithSubParameters.nonOptionalSubParameter" => "value");
+
+		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+
+		$this->assertEquals($response[0][0],
+			"The parameter \"nonOptionalParameter\" is not optional and no default value was provided by the Wiki Web Service Definition.");
+	}
+
+	public function testValidateMissingSubParameter(){
+		di_utils_setupWebServices(array("ValidateWSUsage"));
+		$wsId = di_utils_getWSId("ValidateWSUsage");
+
+		$wsReturnValues = array("result" => "");
+		$wsParameters = array("nonOptionalParameter" => "value");
+
+		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+
+		$this->assertEquals($response[0][0],
+			"The parameter \"parameterWithSubParameters.nonOptionalSubParameter\" is not optional and no default value was provided by the Wiki Web Service Definition.");
+	}
+
+	public function testSubParameterCreation(){
+		di_utils_setupWebServices(array("ValidateWSUsage"));
+		$wsId = di_utils_getWSId("ValidateWSUsage");
+
+		$wsReturnValues = array("result" => "");
+		$wsParameters = array("nonOptionalParameter" => "value",
+							"parameterWithSubParameters" => "dontCare",
+							"parameterWithSubParameters.nonOptionalSubParameter" => "nopt");
+
+		$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
+
+		$this->assertEquals($response[1]["nonOptionalParameter"], "value");
+		$this->assertEquals($response[1]["parameterWithSubParameters"], "some<thingnoptelsedefault");
 	}
 
 	private function getParameterSetIdCount(){
