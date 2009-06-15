@@ -49,10 +49,10 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
+		<copy todir="bin/zip/extensions/SMWHalo">
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-${version}.zip" basedir="bin/zip" />
