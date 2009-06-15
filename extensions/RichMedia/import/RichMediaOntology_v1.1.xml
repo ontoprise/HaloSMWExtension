@@ -464,6 +464,579 @@
     </revision>
   </page>
   <page>
+    <title>Template:!</title>
+    <id>323</id>
+    <revision>
+      <id>2834</id>
+      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">|&lt;noinclude&gt;
+{{documentation}}
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cite web in help</title>
+    <id>320</id>
+    <revision>
+      <id>2828</id>
+      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Cite web in help
+|Has author=Daniel
+|part of=SMWforum User Manuals Section
+|rationale=Displays a box in articles which fall under GFDL.
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{Cite web in help
+|wiki=
+|url=
+|title=
+|retrieved=
+|publisher=
+}}
+&lt;/pre&gt;
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;References &lt;br/&gt;
+The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br/&gt;
+This article is licensed under the [[GNU Free Documentation License]].
+&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Copyright of article</title>
+    <id>321</id>
+    <revision>
+      <id>2830</id>
+      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Copyright of article
+|Has author=Daniel
+|part of=SMWforum User Manuals Section
+|rationale=Displays a box for an article containing copy right info.
+|long description=__NOTITLE__
+
+|parameters=&lt;pre&gt;
+{{Copyright of article
+|own work=
+|year=
+|copyright holder=
+|url=
+|title=
+|date retrieved=
+}}
+&lt;/pre&gt;
+|hints for templates and forms=Set &quot;own work&quot; to &quot;True&quot; if you have the copyright of the article, false otherwise.
+|Calls template=Template:GNU Free Documentation License,Template:Cite web in help
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+|date retrieved=2009/03/29
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{own work|}}}|True|{{GNU Free Documentation License
+|year={{{year|}}}
+|copyright holder={{{copyright holder|}}} }}
+|{{ Cite web in help
+|url={{{url|}}}
+|title={{{title|}}}
+|retrieved={{{date retrieved|}}}
+|publisher={{{copyright holder|}}} }}
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GNU Free Documentation License</title>
+    <id>324</id>
+    <revision>
+      <id>2836</id>
+      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
+
+Permission is granted to copy, distribute and/or modify this document 
+under the terms of the GNU Free Documentation License, Version 1.2 
+or any later version published by the Free Software Foundation; 
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. 
+A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU 
+Free Documentation License]]&quot;. 
+&lt;/div&gt;
+
+&lt;noinclude&gt;
+&lt;pre&gt;
+{{
+GNU Free Documentation License
+|year=
+|copyright holder=
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Header for wiki parts</title>
+    <id>319</id>
+    <revision>
+      <id>3475</id>
+      <timestamp>2009-06-08T12:13:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Header for wiki parts
+|Has author=Daniel
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{Header for wiki parts
+|Category=Form
+|Icon=Image:Cog-green.png
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}}
+&lt;/pre&gt;
+|hints for templates and forms=The following values for category are allowed: Form, Template
+|Calls template=Template:Tablelongrow, Template:Tablerow,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
+|Template=&lt;!--
+
+case: Template
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Template ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{#ifeq:{{{Short description|}}}||
+{{Tablelongrow|Label=Overview:|Value=}}
+|
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Template
+
+--&gt;
+|Form=&lt;!--
+
+case: Form
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Has special namespace|}}}||
+{{Tablerow|Label=Namespace:|Value=''main namespace''}}
+|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Example article|}}}||
+{{Tablerow|Label=Example:|Value=''not specified...''}}
+|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Form
+
+--&gt;
+|Category=&lt;!--
+
+case: Category
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Category ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Category
+
+--&gt;
+|Content section=&lt;!--
+
+case: Content section
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Content section ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Content section END
+
+--&gt;
+|Property=&lt;!--
+
+case: Property
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Property ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Property END
+
+--&gt;
+|User defined rule=&lt;!--
+
+case: User defined rule
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: User defined rule END
+
+--&gt;
+|All content sections=&lt;!--
+
+case: All content sections
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''All Content Sections of ''{{SITENAME}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: All content sections END
+
+--&gt;
+|#default=&lt;!-- unknown category
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
+{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+&lt;!-- end case: Software Product Release --&gt;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Note</title>
+    <id>347</id>
+    <revision>
+      <id>2884</id>
+      <timestamp>2009-06-02T09:01:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;includeonly&gt;
+&lt;hr&gt;
+'''Note &amp;ndash;''' {{{1}}}
+&lt;hr&gt;
+&lt;/includeonly&gt;
+&lt;noinclude&gt;
+&lt;pre&gt;
+{{Note|Note Text}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablelongrow</title>
+    <id>165</id>
+    <revision>
+      <id>2886</id>
+      <timestamp>2009-06-02T09:01:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablelongrow
+|part of=SMWforum User Manuals Section
+|rationale=This is a helper template to display a table row spanning 2 columns.
+|parameters=&lt;pre&gt;
+{{Tablelongrow
+|Align=center|left|right
+|Color=white|..
+|Font size=100%
+|Value=text to display
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablerow</title>
+    <id>164</id>
+    <revision>
+      <id>2888</id>
+      <timestamp>2009-06-02T09:01:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Tablerow
+|part of=SMWforum User Manuals Section
+|rationale=This is helper template to display a table row containing two columns.
+|parameters=&lt;pre&gt;
+{{Tablerow
+|Label=name of the label
+|Value=text right to the label
+}}&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
+{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Template</title>
+    <id>332</id>
+    <revision>
+      <id>3598</id>
+      <timestamp>2009-06-09T08:03:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Template
+|Has author=Daniel
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to annotate any template in the Wiki and to assign it to a content section in the wiki.
+|long description=__NOTITLE__Call this template whenever making a template accessible for other wiki users. It helps bookkeeping of the templates belonging to a particular wiki section.
+|Example article=Template:Form
+|parameters=&lt;pre&gt;{{Template
+|PAGENAME=Template:Header for content
+|part of=SMWforum User Manuals Section
+|rationale=This generates the green bar at the top of each article in the Help-section.
+|parameters=
+|hints for templates and forms=The parameter &quot;depth&quot; must be included unchanged (as given in the example above).
+}}&lt;/pre&gt;
+|Calls template=Template:Header for wiki parts,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
+|Category=Template
+|Icon=Image:smw_plus_template_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}]]}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+}}
+{{{long description|}}}
+== Parameters ==
+{{#ifeq:{{{parameters|}}}||''no parameters given...''|{{{parameters|}}} }}
+{{#ifeq:{{{hints for templates and forms|}}}|||
+{{Note|{{{hints for templates and forms|}}}}}
+}}
+
+== Interaction with other templates and forms ==
+This template calls:
+{{#ifeq:{{{Calls template|}}}||* no template|
+&lt;ul&gt;
+{{#arraymap:{{{Calls template|}}}|,|x|&lt;li&gt;[[Calls template::x]]|}}
+&lt;/ul&gt;
+}}
+
+This template is called by:
+{{#ask:[[Calls template::{{{PAGENAME}}}]]|format=ul|default=* no other template or form}}
+
+This template is populated by 
+{{#ask:[[Category:Form]][[Populates template::{{{PAGENAME}}}]]|format=ul|default=* not populated by any form}}
+
+[[Category:Template]]
+Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
     <title>Form:RMUpload</title>
     <id>416</id>
     <revision>
@@ -1097,512 +1670,6 @@ if a page with that name already exists, you will be sent to a form to edit that
     </revision>
   </page>
   <page>
-    <title>Template:!</title>
-    <id>323</id>
-    <revision>
-      <id>2834</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">|&lt;noinclude&gt;
-{{documentation}}
-&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
-helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Cite web in help</title>
-    <id>320</id>
-    <revision>
-      <id>2828</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Cite web in help
-|Has author=Daniel
-|part of=SMWforum User Manuals Section
-|rationale=Displays a box in articles which fall under GFDL.
-|long description=__NOTITLE__
-|parameters=&lt;pre&gt;
-{{Cite web in help
-|wiki=
-|url=
-|title=
-|retrieved=
-|publisher=
-}}
-&lt;/pre&gt;
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
-margin-bottom: 15px; 
-padding-left: 10px;
-font-family: tahoma, sans-serif; 
-font-size:x-small;&quot;&gt;
-;References &lt;br/&gt;
-The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br/&gt;
-This article is licensed under the [[GNU Free Documentation License]].
-&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Copyright of article</title>
-    <id>321</id>
-    <revision>
-      <id>2830</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Copyright of article
-|Has author=Daniel
-|part of=SMWforum User Manuals Section
-|rationale=Displays a box for an article containing copy right info.
-|long description=__NOTITLE__
-
-|parameters=&lt;pre&gt;
-{{Copyright of article
-|own work=
-|year=
-|copyright holder=
-|url=
-|title=
-|date retrieved=
-}}
-&lt;/pre&gt;
-|hints for templates and forms=Set &quot;own work&quot; to &quot;True&quot; if you have the copyright of the article, false otherwise.
-|Calls template=Template:GNU Free Documentation License,Template:Cite web in help
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=ontoprise GmbH
-|year=2009
-|date retrieved=2009/03/29
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{own work|}}}|True|{{GNU Free Documentation License
-|year={{{year|}}}
-|copyright holder={{{copyright holder|}}} }}
-|{{ Cite web in help
-|url={{{url|}}}
-|title={{{title|}}}
-|retrieved={{{date retrieved|}}}
-|publisher={{{copyright holder|}}} }}
-}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:GNU Free Documentation License</title>
-    <id>324</id>
-    <revision>
-      <id>2836</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
-margin-bottom: 15px; 
-padding-left: 10px;
-font-family: tahoma, sans-serif; 
-font-size:x-small;&quot;&gt;
-;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
-
-Permission is granted to copy, distribute and/or modify this document 
-under the terms of the GNU Free Documentation License, Version 1.2 
-or any later version published by the Free Software Foundation; 
-with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. 
-A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU 
-Free Documentation License]]&quot;. 
-&lt;/div&gt;
-
-&lt;noinclude&gt;
-&lt;pre&gt;
-{{
-GNU Free Documentation License
-|year=
-|copyright holder=
-}}
-&lt;/pre&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Header for wiki parts</title>
-    <id>319</id>
-    <revision>
-      <id>3475</id>
-      <timestamp>2009-06-08T12:13:56Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Header for wiki parts
-|Has author=Daniel
-|part of=SMWplus Basic Ontology Section
-|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
-|long description=__NOTITLE__
-|parameters=&lt;pre&gt;
-{{Header for wiki parts
-|Category=Form
-|Icon=Image:Cog-green.png
-|Pagetitle={{PAGENAME}}
-|Thumbnail image={{{Form thumbnail|}}}
-|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
-|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
-|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
-|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
-|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
-}}
-&lt;/pre&gt;
-|hints for templates and forms=The following values for category are allowed: Form, Template
-|Calls template=Template:Tablelongrow, Template:Tablerow,
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
-|Template=&lt;!--
-
-case: Template
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Template ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{#ifeq:{{{Short description|}}}||
-{{Tablelongrow|Label=Overview:|Value=}}
-|
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
-|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Template
-
---&gt;
-|Form=&lt;!--
-
-case: Form
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
-|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{#ifeq:{{{Has special namespace|}}}||
-{{Tablerow|Label=Namespace:|Value=''main namespace''}}
-|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
-{{!}}-
-{{#ifeq:{{{Example article|}}}||
-{{Tablerow|Label=Example:|Value=''not specified...''}}
-|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Form
-
---&gt;
-|Category=&lt;!--
-
-case: Category
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Category ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
-|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-end case: Category
-
---&gt;
-|Content section=&lt;!--
-
-case: Content section
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Content section ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: Content section END
-
---&gt;
-|Property=&lt;!--
-
-case: Property
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''Property ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
-|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: Property END
-
---&gt;
-|User defined rule=&lt;!--
-
-case: User defined rule
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{#ifeq:{{{Thumbnail image|}}}|||
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{#ifeq:{{{Wiki section|}}}||
-{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
-|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: User defined rule END
-
---&gt;
-|All content sections=&lt;!--
-
-case: All content sections
-
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
-{{!}} '''All Content Sections of ''{{SITENAME}}'' '''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-{{!}}-
-{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
-{{!}}-
-{{Tablerow|Label=Author:|Value={{{author|}}} }}
-{{!}}}&lt;!--
-
-case: All content sections END
-
---&gt;
-|#default=&lt;!-- unknown category
---&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
-{{!}}- 
-{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
-{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
-{{!}}-
-{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
-{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
-{{!}}}&lt;/div&gt;
-{{!}}}&lt;/div&gt;
-{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
-&lt;!-- end case: Software Product Release --&gt;
-}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Note</title>
-    <id>347</id>
-    <revision>
-      <id>2884</id>
-      <timestamp>2009-06-02T09:01:17Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;includeonly&gt;
-&lt;hr&gt;
-'''Note &amp;ndash;''' {{{1}}}
-&lt;hr&gt;
-&lt;/includeonly&gt;
-&lt;noinclude&gt;
-&lt;pre&gt;
-{{Note|Note Text}}
-&lt;/pre&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Tablelongrow</title>
-    <id>165</id>
-    <revision>
-      <id>2886</id>
-      <timestamp>2009-06-02T09:01:18Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Tablelongrow
-|part of=SMWforum User Manuals Section
-|rationale=This is a helper template to display a table row spanning 2 columns.
-|parameters=&lt;pre&gt;
-{{Tablelongrow
-|Align=center|left|right
-|Color=white|..
-|Font size=100%
-|Value=text to display
-}}
-&lt;/pre&gt;
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
-&lt;/includeonly&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Tablerow</title>
-    <id>164</id>
-    <revision>
-      <id>2888</id>
-      <timestamp>2009-06-02T09:01:18Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Tablerow
-|part of=SMWforum User Manuals Section
-|rationale=This is helper template to display a table row containing two columns.
-|parameters=&lt;pre&gt;
-{{Tablerow
-|Label=name of the label
-|Value=text right to the label
-}}&lt;/pre&gt;
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
-{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
     <title>Template:Template</title>
     <id>332</id>
     <revision>
@@ -1667,6 +1734,65 @@ This template is populated by
 [[Category:Template]]
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Documentation</title>
+    <id>346</id>
+    <revision>
+      <id>2882</id>
+      <timestamp>2009-06-02T09:01:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;div class=&quot;template-documentation&quot;&gt;&lt;!--
+
+These are the literal class definitions in common.css:
+ 
+/* For template documentation */
+.template-documentation {
+    clear: both;
+    margin: 1em 0 0 0;
+    border: 1px solid #aaa; 
+    background-color: #ecfcf4; 
+    padding: 5px;
+}
+
+
+ --&gt;{{#ifeq:{{{heading|μ}}}|&lt;!--**DEFINED BUT EMPTY**--&gt;
+  |&lt;!--**NOTHING**--&gt;
+  |&lt;div style=&quot;padding-bottom:3px; border-bottom: 1px solid #aaa; margin-bottom:1ex&quot;&gt;{{#ifeq:{{{content|μ}}}|μ
+   |&lt;span class=&quot;editsection plainlinks&quot; id=&quot;doc_editlinks&quot;&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
+    |&lt;!--**    /doc EXISTS**   --&gt;[[{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit]]
+    |&lt;!--**/doc DOESN'T EXIST**--&gt;[[{{fullurl:{{{1|{{Documentation/docname }}}}}|action=edit&amp;preload=Template:Documentation/preload}} create]]
+   }}&lt;/span&gt;
+  }} &lt;span style=&quot;{{#if:{{{heading-style|}}}|{{{heading-style}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|font-weight: bold; font-size: 125%|font-size: 150%}}}}&quot;&gt;{{#if:{{{heading|}}}|{{{heading}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|[[Image:Template-info.svg|50px]] Template documentation|Documentation}}}}&lt;/span&gt;&lt;/div&gt;
+ }}&lt;!--
+
+ --&gt;&lt;div id=&quot;template_doc_page_transcluded&quot; class=&quot;dablink plainlinks&quot;&gt;&lt;!--
+  --&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
+  |&lt;!--**/doc EXISTS**--&gt;This [[Wikipedia:Template documentation|documentation]] is [[Wikipedia:Transclusion|transcluded]] from [[{{{1|{{Documentation/docname}}}}}]]. &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit] &amp;#124; [{{fullurl:{{{1|{{Documentation/docname}}}}}|action=history}} history])&lt;/small&gt;&lt;br /&gt;
+ }}&lt;!--
+
+ --&gt;{{#switch: {{SUBPAGENAME}}
+   |sandbox|testcases=&lt;!--**DO NOT SHOW THESE LINKS ON THE SANDBOX/TESTCASES PAGES**--&gt;
+   |#default=
+    {{#switch: {{SUBJECTSPACE}}
+     |{{ns:template}}
+     |{{ns:user}}=
+      {{#ifexist: {{FULLPAGENAME}}/sandbox
+       |This template has a [[/sandbox|sandbox]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /sandbox }}|action=edit}} edit])&lt;/small&gt; &lt;!--
+        --&gt;{{#ifexist: {{FULLPAGENAME}}/testcases
+         |and [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt;}} for editors to experiment.
+       |{{#ifexist: {{FULLPAGENAME}}/testcases
+        |This template has [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt; for editors to experiment.}}
+ }}}}}}
+ &lt;/div&gt;
+{{#if:{{{content|}}}|{{{content}}}|{{#ifexist:{{{1|{{Documentation/docname}}}}} | {{ {{{1|{{Documentation/docname}}}}} }} }}}}
+&lt;/div&gt;</text>
     </revision>
   </page>
 </mediawiki>
