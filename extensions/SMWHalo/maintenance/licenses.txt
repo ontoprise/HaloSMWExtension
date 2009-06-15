@@ -53,7 +53,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 */
 
 
-/* Wlater Zorn Tooltip License
+/* Walter Zorn Tooltip License
 
 This notice must be untouched at all times.
 
