@@ -13,6 +13,10 @@ OpenUploadWindowCommand.GetState=function() {
 OpenUploadWindowCommand.Execute=function() {
 	var uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=Special:UploadWindow";
 	var article = window.parent.wgTitle;
+	if (window.parent.wgPageName == 'Special:AddData') {
+	//obviously we are in Special:AddData and wgTitle is containing what we're loooking for... 
+		var article = window.parent.location.pathname.match( /[^\/]+\/?$/ )[0];
+	}	
 	top.fb.loadAnchor(uri+'&sfInputID=myWpDestFile&RMUpload[RelatedArticles]='+article+'&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
 	// do stuff here if you want
 }
