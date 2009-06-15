@@ -483,6 +483,13 @@ dd {
 	padding-right: 12px;
 }
 
+/* this can be used in the content area to switch off
+special external link styling */
+#bodyContent .plainlinks a {
+	background: none !important;
+	padding: 0 !important;
+}
+
 /**
 * My Preferences
 */
