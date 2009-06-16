@@ -1357,7 +1357,8 @@
  		if ($this->details[$id][PSC_SMWDATA_TYPE] != NS_MAIN)
  			$link = $wgContLang->getNsText($this->details[$id][PSC_SMWDATA_TYPE]).":$name";
  		else $link = $name;
- 		return '<a href="'.$wgServer.$wgScriptPath.'/index.php/'.$link.'">'.$name.'</a>';
+ 		$link = str_replace(' ', '_', $link);
+ 		return '<a href="'.$wgScriptPath.'/index.php/'.$link.'">'.$name.'</a>';
  	}
  	
  	private function smwDataGetType($id) {
