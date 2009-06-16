@@ -734,4 +734,37 @@ Jump to: navigation, search
 }}</text>
     </revision>
   </page>
+  <page>
+    <title>WebService:ValidateWSUsage</title>
+    <id>34</id>
+    <revision>
+      <id>57</id>
+      <timestamp>2009-06-15T15:34:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/MashupWiki/extensions/DataImport/tests/DI_TimeTestWS.php&quot; /&gt;
+&lt;protocol&gt;REST&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;parameter name=&quot;nonOptionalParameter&quot; path=&quot;dontCare&quot; optional=&quot;false&quot;/&gt;
+&lt;parameter name=&quot;nonOptionalParameterWithDefault&quot; path=&quot;dontCare&quot; optional=&quot;false&quot; defaultValue=&quot;default&quot;/&gt;
+&lt;parameter name=&quot;parameterWithSubParameters&quot; path=&quot;dontCareEither&quot;&gt;
+&lt;![CDATA[some&lt;thing]]&gt;&lt;subparameter name=&quot;nonOptionalSubParameter&quot; optional=&quot;false&quot;/&gt;&lt;![CDATA[else]]&gt;&lt;subparameter name=&quot;optionalSubParameter&quot; optional=&quot;true&quot;/&gt;&lt;subparameter name=&quot;nonOptionalSubParameterWD&quot; optional=&quot;false&quot; defaultValue=&quot;default&quot;/&gt;
+&lt;/parameter&gt;
+&lt;result name=&quot;result&quot; &gt;
+&lt;part name=&quot;part1&quot; path=&quot;&quot;/&gt;
+&lt;part name=&quot;part2&quot; path=&quot;&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
 </mediawiki>
