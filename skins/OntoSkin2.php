@@ -88,7 +88,7 @@
 			@import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>"; 
 			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
 		</style>
-		<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftyCorners.css?>"; </style>
+		<style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftyCorners.css"; </style>
 		<?php $this->html('headlinks') ?>
 		<title><?php $this->text('pagetitle') ?></title>
 		<link rel="stylesheet" type="text/css" <?php if(empty($this->data['printable']) ) { ?>media="print"<?php } ?> href="<?php $this->text('stylepath') ?>/ontoskin2/commonPrint.css?<?php echo $GLOBALS['wgStyleVersion'] ?>" />
