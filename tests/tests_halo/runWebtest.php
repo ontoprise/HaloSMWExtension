@@ -72,7 +72,7 @@ if (!file_exists($webtestExec) || !file_exists($webtestXML)) {
 
 require_once( dirname(__FILE__) . '/../../maintenance/commandLine.inc' );
 
-$cmd = "$webtestExec -f $buildTarget -Dwebtest.home=\"$webtestBaseDir\" -DwgSitename=\"$wgSitename\" -DwgServer=\"$wgServer\" -DwgScriptPath=\"$wgScriptPath\"";
+$cmd = "$webtestExec -f $buildTarget -Dwebtest.home=\"$webtestBaseDir\" -DwgSitename=\"$wgSitename\" -DwgServer=\"$wgServer\" -DwgScriptPath=\"$wgScriptPath\" -Dwikipath=\"$wgScriptPath\"";
 echo "\nexecute Webtests:\n$cmd\n";
 runProcess($cmd);
 
