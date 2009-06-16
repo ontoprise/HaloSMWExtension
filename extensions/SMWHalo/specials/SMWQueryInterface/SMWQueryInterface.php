@@ -236,8 +236,7 @@ class SMWQueryInterface extends SpecialPage {
 						'</div>'.
 		
 				'<div id="showAsk" class="topDialogue" style="display:none; width:350px">' .
-						'<span id="showParserAskButton" class="qibutton" onclick="qihelper.showFullAsk(\'parser\', false)">' . wfMsg('smw_qi_parserask') . '</span>' .
-						'<span id="showAskButton" class="qibutton" onclick="qihelper.showFullAsk(\'ask\', false)">' . wfMsg('smw_qi_ask') . '</span><br/><hr/>' .
+						'<span id="showParserAskButton" class="qibutton" style="font-weight: bold; text-decoration: none; cursor: default;">' . wfMsg('smw_qi_parserask') . '</span><br/><hr/>' .
 						'<div><textarea id="fullAskText" style="width:95%" rows="10" readonly></textarea></div>' .
 						'<span class="qibutton" onclick="$(\'showAsk\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_close') . '</span>' .
 						'</div>'.

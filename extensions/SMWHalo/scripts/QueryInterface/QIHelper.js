@@ -366,42 +366,6 @@ updateColumnPreview:function(){
 	$('tcpcontent').innerHTML = tcp_html;
 },
 
-/**
-* Get the full ask syntax and the layout parameters of the whole query
-* @return string containing full ask
-*/
-getFullAsk:function(){
-	var asktext = this.recurseQuery(0, "ask");
-	//get Layout parameters
-	var starttag = "<ask "; //create ask tags and display params
-	starttag += 'format="' + $('layout_format').value + '" ';
-	starttag += $('layout_link').value == "subject" ? "" : ('link="' + $('layout_link').value + '" ');
-	starttag += $('layout_intro').value == "" ? "" : ('intro="' + $('layout_intro').value + '" ');
-	starttag += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE') ? "" : ('sort="' + $('layout_sort').value + '" ');
-	starttag += $('layout_limit').value == "" ? '' : ('limit="' + $('layout_limit').value + '" ');
-	starttag += $('layout_label').value == "" ? "" : ('mainlabel="' + $('layout_label').value + '" ');
-	starttag += $('layout_order').value == "ascending" ? '' : 'order="descending" ';
-	starttag += $('layout_headers').checked ? '' : 'headers="hide" ';
-	starttag += $('layout_default').value == "" ? '' : 'default="' + $('layout_default').value +'" ';
-	if ($('layout_format').value == "template"){
-		starttag += 'template="' + $('template_name').value + '" ';
-	} else if ($('layout_format').value == "rss"){
-		starttag += $('rsstitle').value == "" ? '' : 'rsstitle="' + $('rsstitle').value + '" ';
-		starttag += $('rssdescription').value == "" ? '' : 'rssdescription="' + $('rssdescription').value + '" ';
-	} else if ($('layout_format').value == "exhibit"){
-		if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
-			params += ",views=tiles,tabular";
-		} else if ($('x_tiles_check').checked) {
-			params += ",views=tiles";
-		} else {
-			params += ",views=tabular";
-		}		
-	}
-
-	starttag += ">";
-	return starttag + asktext + "</ask>";
-},
-
 getFullParserAsk:function(){
 	var asktext = this.recurseQuery(0, "parser");
 	var displays = this.queries[0].getDisplayStatements();
@@ -1275,17 +1239,7 @@ showFullAsk:function(type, toggle){
 		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_TEMPLATE');
 		return;
 	}
-	var ask = null;
-	if(type == "ask"){
-		ask = this.getFullAsk();
-		$("showAskButton").setStyle({fontWeight: 'bold', textDecoration: 'none', cursor: 'default'});
-		$("showParserAskButton").setStyle({fontWeight: 'normal', textDecoration: 'underline', cursor: 'pointer'});
-	}
-	else{
-		ask = this.getFullParserAsk();
-		$("showAskButton").setStyle({fontWeight: 'normal', textDecoration: 'underline', cursor: 'pointer'});
-		$("showParserAskButton").setStyle({fontWeight: 'bold', textDecoration: 'none', cursor: 'default'});
-	}
+	var ask = this.getFullParserAsk();
 	ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
 	ask = ask.replace(/>\[\[/g, ">\n[[");
 	ask = ask.replace(/\]\]</g, "]]\n<");
@@ -1324,7 +1278,7 @@ doSave:function(){
 		this.pendingElement = new OBPendingIndicator($('savedialogue'));
 		this.pendingElement.show();
 		var params = $('saveName').value + ",";
-		params += this.getFullAsk();
+		params += this.getFullParserAsk();
 		sajax_do_call('smwf_qi_QIAccess', ["saveQuery", params], this.saveDone.bind(this));
 	}
 	else {
