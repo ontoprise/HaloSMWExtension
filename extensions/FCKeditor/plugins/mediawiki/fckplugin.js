@@ -807,9 +807,6 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_magic' :
 				if ( className == null )
 					className = 'FCK__MWMagicWord' ;
-			case 'fck_mw_magic' :
-				if ( className == null )
-					className = 'FCK__MWMagicWord' ;
 			case 'fck_mw_special' : //YC
 				if ( className == null )
 					className = 'FCK__MWSpecial' ;
@@ -828,7 +825,7 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_onlyinclude' :
 				if ( className == null )
 					className = 'FCK__MWOnlyinclude' ;
-				// Property element remains as span, don't replace the span with an img
+				// Property and Category elements remains as span, don't replace the span with an img
 				if (className != null) {
 					var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;
 					oImg.setAttribute( '_' + eSpan.className, 'true', 0 ) ;
