@@ -37,7 +37,7 @@ if ( !defined( 'SGA_GARDENING_EXTENSION_VERSION' ) ) {
 	     "Please read 'extensions/SemanticNotifications/INSTALL' for further information.\n" );
 }
 
-define('SN_SEMANTIC_NOTIFICATIONS_VERSION', '1.4.4');
+define('SN_SEMANTIC_NOTIFICATIONS_VERSION', '1.1');
 
 // constant for special schema properties
 
