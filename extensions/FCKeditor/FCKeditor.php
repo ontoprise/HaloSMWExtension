@@ -9,6 +9,12 @@ HEREDOC;
 	exit( 1 );
 }
 
+# quit when comming from the command line, i.e. no User Agent send
+if (isset($_SERVER) && !in_array('HTTP_USER_AGENT', array_keys($_SERVER)))
+	return;
+if (isset($HTTP_SERVER_VARS) && !in_array('HTTP_USER_AGENT', array_keys($HTTP_SERVER_VARS)))
+    return;
+
 /*
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
