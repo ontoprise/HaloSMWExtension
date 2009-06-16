@@ -60,7 +60,7 @@ class SemanticNotification {
 	                     $queryResult = "", $timestamp = 0) {
 		$this->mName = $name;
 		$this->mUserName = $userName;
-		$this->mQueryText = $queryText;	                     	
+		$this->mQueryText = self::stripQuery($queryText);	                     	
 		$this->mUpdateInterval = $updateInterval;	
 		$this->mQueryResult = $queryResult;
 		$this->mTimestamp = $timestamp;                 	
@@ -77,7 +77,7 @@ class SemanticNotification {
 
 	public function setName($name)               {$this->mName = $name;}
 	public function setUserName($userName)       {$this->mUserName = $userName;}
-	public function setQueryText($query)         {$this->mQueryText = $query;}
+	public function setQueryText($query)         {$this->mQueryText = SemanticNotification::stripQuery($query);}
 	public function setQueryResult($result)      {$this->mQueryResult = $result;}
 	public function setUpdateInterval($updtIntv) {$this->mUpdateInterval = $updtIntv;}
 	public function setTimestamp($ts)            {$this->mTimestamp = $ts;}
@@ -113,6 +113,31 @@ class SemanticNotification {
 	 */
 	public static function deleteFromDB($name, $userName) {
 		return SNStorage::getDatabase()->deleteSN($name, $userName);
+	}
+	
+	/**
+	 * Removes {{#ask: ... }} or <ask> ... </ask> that surrounds the query.
+	 *
+	 * @param string $queryText
+	 * 		The query text that may be surrounded with ask-tags
+	 * @return string
+	 * 		The query text without ask-tags
+	 */
+	public static function stripQuery($queryText) {
+		$queryText = trim($queryText);
+		if (strpos($queryText, '{{#ask:') === 0) {
+			$queryText = trim(substr($queryText, 7));
+			if (strrpos($queryText, '}}') == strlen($queryText) - 2) {
+				$queryText = trim(substr($queryText, 0, strlen($queryText) - 2));
+			}
+		} 
+		if (strpos($queryText, '<ask>') === 0) {
+			$queryText = trim(substr($queryText, 5));
+			if (strrpos($queryText, '</ask>') == strlen($queryText) - 6) {
+				$queryText = trim(substr($queryText, 0, strlen($queryText) - 6));
+			}
+		} 
+		return $queryText;
 	}
 		
 	/**
@@ -159,7 +184,7 @@ class SemanticNotification {
 					: $removed;
 								  
 		$changed = $this->qac2HTML($diff, 'changed');
-		$tchanged .= (is_int($changed)) 
+		$tchanged = (is_int($changed)) 
 					? (($changed > 0) ? wfMsg('sn_msg_numchanged', $changed) : '')
 					: $changed;
 								  
@@ -238,17 +263,6 @@ HTML;
 		require_once("$sngIP/includes/SN_QP_SNXML.php");
 		require_once($smwgIP . '/includes/SMW_QueryProcessor.php');
 
-		// find the variables for sorting the result		
-		$q = SMWQueryProcessor::createQuery($this->mQueryText, new ParserOptions());
-		$desc = $q->getDescription();
-		$requests = $desc->getPrintRequests();
-		$sortvars = "";
-		foreach ($requests as $pr) {
-			if ($pr->getMode() == SMWPrintRequest::PRINT_PROP) {
-				$sortvars .= "," . $pr->getLabel();
-			}
-		}
-		
 		global $smwgQMaxLimit;
 	    if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
 			SMWQueryProcessor::$formats['snxml'] = 'SN_XMLResultPrinter';
@@ -257,13 +271,35 @@ HTML;
 			$smwgResultFormats['snxml'] = 'SN_XMLResultPrinter';
 		}
 		
-		$this->mQueryResult = SMWQueryProcessor::getResultFromHookParams(
-								$this->mQueryText, 
-								array('format' => 'snxml', 
-								      'sort' => $sortvars,
-									  'limit' => $smwgQMaxLimit), 
-								SMW_OUTPUT_FILE);
-										
+		global $smwgQMaxLimit;
+		$fixparams = array('format' => 'snxml', 
+					 	   'limit'  => $smwgQMaxLimit);
+
+		$ps = preg_split('/[^\|]{1}\|{1}(?!\|)/s', $this->mQueryText);
+		if (count($ps) > 1) {
+			// last char of query condition is missing (matched with [^\|]{1}) therefore copy from original
+			$rawparams[] = trim(substr($this->mQueryText, 0, strlen($ps[0]) + 1));
+			array_shift($ps); // remove the query condition
+			// add other params for formating etc.
+			foreach ($ps as $param)
+				$rawparams[] = trim($param);
+		} else {
+			// no single pipe found, no params specified in query
+			$rawparams[] = trim($this->mQueryText);
+		}
+		// parse params and answer query
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		$sortvars = "";
+		foreach ($printouts as $pr) {
+			if ($pr->getMode() == SMWPrintRequest::PRINT_PROP) {
+				$sortvars .= "," . $pr->getLabel();
+			}
+		}
+		$fixparams["sort"] = substr($sortvars, 1);
+        $params = array_merge($params, $fixparams);
+        
+		$this->mQueryResult = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
+
 	}
 	
 	/**
@@ -306,7 +342,7 @@ HTML;
 	 * 		The HTML representation of the result
 	 */
 	public function qac2HTML($qacResult, $type) {
-		
+		$html = "";
 		if ($type == 'header') {
 			$html .= '<table class="smwtable">';
 			
@@ -418,11 +454,11 @@ HTML;
 		}
 				
 		$r = $this->getCompareAction($oldXML, $newXML);
-		if ($r == RESULT_EQUAL) {
+		if ($r == self::RESULT_EQUAL) {
 			return false;
-		} else if ($r == COMPARE_HASHES) {
+		} else if ($r == self::COMPARE_HASHES) {
 			return $this->compareHashes($oldXML, $newXML);
-		} else if ($r == COMPARE_RESULT) {
+		} else if ($r == self::COMPARE_RESULT) {
 			$r = $this->compareCompleteResult($oldXML, $newXML);
 			$c = $newXML->table->columnnames;
 			$columns = array();
@@ -463,7 +499,7 @@ HTML;
 		if ($oldXML && $newXML 
 		    && ((string) $oldXML->table->hash == (string) $newXML->table->hash)) {
 			// hash codes are identical => no change
-			return RESULT_EQUAL;
+			return self::RESULT_EQUAL;
 		}
 		
 		// Get the number of results as it is stored in the table header
@@ -482,13 +518,13 @@ HTML;
 		
 		if ($hashedOld && $hashedNew) {
 			// both result sets are hashed
-			return COMPARE_HASHES;
+			return self::COMPARE_HASHES;
 		}
 		
 		if ($numResultOld > 0 && $numResultNew > 0
 		    && !$hashedOld && !$hashedNew) {
 			// both result sets are fully stored
-			return COMPARE_RESULT;
+			return self::COMPARE_RESULT;
 		}
 		
 		// No comparison possible => just compare the number results
@@ -596,17 +632,17 @@ HTML;
 			// Compare the rows of the tables
 			$c = $this->compareRow($oldCont, $newCont);
 			switch ($c) {
-				case RESULT_REMOVED:
+				case self::RESULT_REMOVED:
 					$removed[] = $oldCont;
 					++$io;
 					break;
-				case RESULT_CHANGED:
+				case self::RESULT_CHANGED:
 					$changed[] = array("old" => $oldCont, "new" => $newCont);
-				case RESULT_EQUAL:
+				case self::RESULT_EQUAL:
 					++$in;
 					++$io;
 					break;
-				case RESULT_ADDED:
+				case self::RESULT_ADDED:
 					$added[] = $newCont;
 					++$in;
 					break;
@@ -654,22 +690,22 @@ HTML;
 			for  ($i = 0; $i < $num; ++$i) {
 				$cmp = strcmp($oldCont->cell[$i], $newCont->cell[$i]);
 				if ($cmp < 0) {
-					return $sameSubject ? RESULT_CHANGED : RESULT_REMOVED;
+					return $sameSubject ? self::RESULT_CHANGED : self::RESULT_REMOVED;
 				} else if ($cmp > 0) {
-					return $sameSubject ? RESULT_CHANGED : RESULT_ADDED;
+					return $sameSubject ? self::RESULT_CHANGED : self::RESULT_ADDED;
 				}
 			}
-			return RESULT_EQUAL;
+			return self::RESULT_EQUAL;
 		} else {
 			// only one column
 			$cmp = strcmp($oldCont->cell, $newCont->cell);
 			switch ($cmp) {
 				case -1:
-					return RESULT_REMOVED;
+					return self::RESULT_REMOVED;
 				case 0:
-					return RESULT_EQUAL;
+					return self::RESULT_EQUAL;
 				case 1:
-					return RESULT_ADDED;
+					return self::RESULT_ADDED;
 			}
 		}
 	}

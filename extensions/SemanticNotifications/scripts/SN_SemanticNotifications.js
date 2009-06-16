@@ -84,7 +84,7 @@ SemanticNotifications.prototype = {
 		var val = $('sn-update-interval').value;
 		val = parseInt(val); 
 		if (isNaN(val) || val < this.minInterval) {
-			var msg = gLanguage.getMessage('SMW_SN_INVALID_UPDATE_INTERVAL');
+			var msg = gSNLanguage.getMessage('SMW_SN_INVALID_UPDATE_INTERVAL');
 			msg = msg.replace(/\$1/g, this.minInterval);
 			alert(msg);
 			val = this.minInterval;
@@ -131,7 +131,7 @@ SemanticNotifications.prototype = {
 		
 		// does the name already exist?
 		if (this.notifications.indexOf(name) >= 0) {
-			var msg = gLanguage.getMessage('SN_OVERWRITE_EXISTING');
+			var msg = gSNLanguage.getMessage('SN_OVERWRITE_EXISTING');
 			msg = msg.replace(/\$1/g, name);
 			
 			if (!confirm(msg)) {
@@ -139,6 +139,7 @@ SemanticNotifications.prototype = {
 			}
 		}
 		var query = $('sn-querytext').value;
+		query = this.stripQuery(query);
 		this.showPendingIndicator(e);
 		var ui = $('sn-update-interval').value;
 		sajax_do_call('snf_sn_AddNotification', 
@@ -305,7 +306,7 @@ SemanticNotifications.prototype = {
 			}
 		};
 		
-		var msg = gLanguage.getMessage('SN_DELETE');
+		var msg = gSNLanguage.getMessage('SN_DELETE');
 		msg = msg.replace(/\$1/g, notification);
 		
 		if (!confirm(msg)) {

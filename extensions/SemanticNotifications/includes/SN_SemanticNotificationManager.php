@@ -165,6 +165,7 @@ class SemanticNotificationManager {
 		global $sngIP, $wgLanguageCode, $sngScriptPath, $wgUser;
 
 		// content language file
+		$jsm->addScriptIf($sngScriptPath . '/scripts/Language/SN_Language.js', $mode, $namespace, $pages);
 		$lng = '/scripts/Language/SN_Language';
 		if (!empty($wgLanguageCode)) {
 			$lng .= ucfirst($wgLanguageCode).'.js';
