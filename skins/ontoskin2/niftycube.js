@@ -26,15 +26,16 @@ return(this.indexOf(what)>=0 ? true : false);
 var oldonload=window.onload;
 if(typeof(NiftyLoad)!='function') NiftyLoad=function(){};
 if(typeof(oldonload)=='function')
-    window.onload=function(){oldonload();AddCss();NiftyLoad()};
-else window.onload=function(){AddCss();NiftyLoad()};
+    window.onload=function(){oldonload();AddCss(stylepath + '/' + skin);NiftyLoad()};
+else window.onload=function(){AddCss(stylepath + '/' + skin);NiftyLoad()};
 
-function AddCss(){
+function AddCss(path){
+if (path) path += '/';
 niftyCss=true;
 var l=CreateEl("link");
 l.setAttribute("type","text/css");
 l.setAttribute("rel","stylesheet");
-l.setAttribute("href","niftyCorners.css");
+l.setAttribute("href",path + "niftyCorners.css");
 l.setAttribute("media","screen");
 document.getElementsByTagName("head")[0].appendChild(l);
 }
