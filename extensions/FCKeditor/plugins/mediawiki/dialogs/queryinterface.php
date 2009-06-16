@@ -172,10 +172,10 @@ function Ok(enterHit) {
 
 	if ( !oAskSpan ) {
 		oAskSpan = FCK.EditorDocument.createElement( \'SPAN\' ) ;
-		oAskSpan.className = \'_fck_mw_askquery\' ;
+		oAskSpan.className = \'fck_mw_askquery\' ;
 	}
 	
-	oAskSpan.innerHTML = ask;
+	oAskSpan.innerHTML = ask.replace(/\n/g, \'fckLR\');
 
 	if ( !oFakeImage ) {
 		oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( \'FCK__SMWask\', oAskSpan ) ;
@@ -185,7 +185,6 @@ function Ok(enterHit) {
 
 	return true;
 }
-
 </script>';
 }
 
