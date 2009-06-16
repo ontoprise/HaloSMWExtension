@@ -258,7 +258,9 @@
  		while ($id = end($c2check)) {
  			$sub = self::getSubCategories($id);
  			if (count($sub) > 0) {
- 				foreach ($sub as $c) array_unshift($c2check, $c);
+ 				foreach ($sub as $c) {
+ 					if (!in_array($c, $c2check)) array_unshift($c2check, $c);
+ 				}
  			}
  			else 
  				$cats[] = $id;
