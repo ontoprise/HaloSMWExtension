@@ -10,7 +10,7 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 	<property name="wgServer" value="http://localhost" />
     <property name="wgScriptPath" value="/mediawiki" />
     <property name="wgSitename" value="Halo3wiki" />
-    <property name="wgScript" value="${wikipath}/index.php" />
+    <property name="wgScript" value="/${wikipath}/index.php" />
 
 	<import file="definitions.xml" description="Import custom definitions (if any)"/>
 	<import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
