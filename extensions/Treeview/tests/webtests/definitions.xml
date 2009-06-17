@@ -9,7 +9,7 @@ Do not edit it else you risk to lose your changes.
 [
  <!ENTITY definitions__callWikiPage__xml SYSTEM "definitions/callWikiPage.xml">
  <!ENTITY definitions__checkTreeNode__xml SYSTEM "definitions/checkTreeNode.xml">
-
+ <!ENTITY definitions__checkAjaxResponse__xml SYSTEM "definitions/checkAjaxResponse.xml">
 ]
 >
 
@@ -22,6 +22,7 @@ Do not edit it else you risk to lose your changes.
 
  &definitions__callWikiPage__xml; 
  &definitions__checkTreeNode__xml; 
+ &definitions__checkAjaxResponse__xml;
 
 	</target>
 	
