@@ -1,7 +1,7 @@
 Index: includes/Namespace.php
 ===================================================================
---- extensions/includes/Namespace.php	(revision 4094)
-+++ extensions/includes/Namespace.php	(working copy)
+--- includes/Namespace.php	(revision 4094)
++++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,7 @@
  	 */
  	public static function isMovable( $index ) {
