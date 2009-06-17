@@ -1021,7 +1021,7 @@ handleResponseOpen = function() {
     	newSerialData += '{' + dTree.aNodes[newId].serialize() + '}';
     }
     dTree.saveCookiesAndDisplay(newSerialData);
-};
+}
 
 handleResponseRefresh = function() {
 
@@ -1141,7 +1141,9 @@ function createRequestObject() {
 		} catch (e) {
 			try {
 				reqObj = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (e) {}
+			} catch (e) {
+			    alert('Could not create connection object, Ajax calls are not possible.');
+			}
 		}
 	}
 	return reqObj;
