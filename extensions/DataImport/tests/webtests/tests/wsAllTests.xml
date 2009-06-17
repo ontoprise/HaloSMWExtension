@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<project name="all data import extension tests" default="testAll">
+	<property name="wikipath" value="mediawiki"/>
+	
+	<target name="testAll" description="runs all the tests">
+		<ant antfile="wsRepositoryTests.xml"/>
+		<ant antfile="wsPageTest.xml"/>
+	</target>
+</project>

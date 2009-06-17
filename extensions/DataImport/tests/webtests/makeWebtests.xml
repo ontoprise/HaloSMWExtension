@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project name="data import extension tests" default="wt.full">
+
+	<property name="webtest.home" value="c:\Programme\webtest"/>
+
+	<import file="definitions.xml" description="Import custom definitions (if any)"/> 
+	<import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
+	
+	<property name="wt.testInWork" value="tests/wsAllTests.xml"/> 
+
+</project>

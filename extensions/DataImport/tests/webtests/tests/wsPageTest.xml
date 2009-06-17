@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSPage">
+	
+	&goToLogin;
+
+	<target name="testWSPage">
+		<webtest name="WSManualCreate">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit"
+				description="Open new ws for editing" />
+			<setInputField description="Enter new wwsd."
+				xpath="//textarea[@id='wpTextbox1']">
+				<![CDATA[
+					<WebService>
+				<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
+				<protocol>REST</protocol>
+				<method name="get" />
+				<parameter name="dontCare" path="dontCare" optional="true"/>
+				<result name="result" >
+					<part name="complete" path=""/>
+				</result>
+				<displayPolicy>
+					<maxAge value="1">
+					</maxAge>
+				</displayPolicy>
+				<queryPolicy>
+					<maxAge value="1">
+					</maxAge>
+					<delay value="0"/>
+				</queryPolicy>
+				<spanOfLife value="1" expiresAfterUpdate="true" />
+			</WebService>]]>
+			</setInputField>
+			<clickButton description="Save new wwsd." htmlId="wpSave" />
+
+			<verifyText
+				text="Please click here to edit the WWSD in the graphical user interface."
+				description="Does edit link exist" />
+			<verifyText text='Pages using the web service "WebTestWS"'
+				description="Is ws usage displayed" />
+		</webtest>
+
+
+		<webtest name="WSPageCheckEditButton">
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
+			<clickLink xpath="//div[@id='bodyContent']/h2/a"
+				description="Click edit button" />
+			<verifyTitle text="Define Web Service - Halo3wiki"
+				description="Was define ws gui opened" />
+		</webtest>
+
+		<webtest name="WSPageWSUsageAdd">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Create new ws usage" />
+			<setInputField description="Enter new ws usage."
+				xpath="//textarea[@id='wpTextbox1']">
+				{{#ws:WebTestWS | ?result.complete}}
+			</setInputField>
+			<clickButton description="Save ws usage." htmlId="wpSave" />
+			<sleep seconds="5" />
+
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS"
+				description="Open wwsd" />
+			<verifyText text="Showing 1 pages using this web service."
+				description="Is number of usages updated?" />
+			<verifyText text="WebTestWSUsage" description="Is ws usage displayed?" />
+		</webtest>
+
+		<webtest name="WSPageCheckEditButton">
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
+			<clickLink xpath="//div[@id='bodyContent']/h2/a"
+				description="Click edit button" />
+			<verifyTitle text="Define Web Service - Halo3wiki"
+				description="Was define ws gui opened" />
+		</webtest>
+
+		<webtest name="WSPageWSUsageRemove">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Remove ws usage" />
+			<setInputField description="Remove ws usage."
+				xpath="//textarea[@id='wpTextbox1']">
+				this is not a ws usage
+			</setInputField>
+			<clickButton description="Save ws usage." htmlId="wpSave" />
+			<sleep seconds="5" />
+
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS"
+				description="Open wwsd" />
+			<verifyText text="Showing 0 pages using this web service."
+				description="Is number of usages updated?" />
+			<not>
+				<verifyText text="WebTestWSUsage" description="Is ws usage displayed?" />
+			</not>
+		</webtest>
+
+		<webtest name="WSCreateFailure">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit"
+				description="Open new ws for editing" />
+			<setInputField description="Enter wrong wwsd."
+				xpath="//textarea[@id='wpTextbox1']">
+				<![CDATA[
+					<WebService>
+				<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
+				protocol>REST</protocol>
+			</WebService>]]>
+			</setInputField>
+			<clickButton description="Save new wwsd." htmlId="wpSave" />
+
+			<verifyText text="The Wiki Web Service Definition is erroneous:"
+				description="Is error detected" />
+			<not description="Does edit link not exist">
+				<verifyText
+					text="Please click here to edit the WWSD in the graphical user interface."
+					description="Does edit link exist" />
+			</not>
+		</webtest>
+
+
+
+
+	</target>
+</project>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><testsuite time="101.375" tests="11" name="WebTest" failures="0" errors="0">
+<!--
+			This is an overview of the WebTest results in JUnit "standard" format.
+			It doesn't present all the information available in WebTest reports but can be easily be integrated
+			in reports of continuous integration tools like Cruise Control.
+			-->
+<testcase time="9.765" name="WSRepositoryLoggedOut" classname="WebTest"/>
+<testcase time="7.078" name="WSRepositoryLoggedIn" classname="WebTest"/>
+<testcase time="13.484" name="WSRepositoryCheckConfirmButton" classname="WebTest"/>
+<testcase time="11.453" name="WSRepositoryCheckUpdateButton" classname="WebTest"/>
+<testcase time="14.063" name="WSRepositoryCheckEditButton" classname="WebTest"/>
+<testcase time="5.594" name="WSManualCreate" classname="WebTest"/>
+<testcase time="4.407" name="WSPageCheckEditButton" classname="WebTest"/>
+<testcase time="12.953" name="WSPageWSUsageAdd" classname="WebTest"/>
+<testcase time="4.281" name="WSPageCheckEditButton" classname="WebTest"/>
+<testcase time="12.687" name="WSPageWSUsageRemove" classname="WebTest"/>
+<testcase time="5.61" name="WSCreateFailure" classname="WebTest"/>
+</testsuite>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<overview Implementation-Title="Canoo Webtest" Implementation-Version="R_1758">
+	<folder name="001_WSRepositoryLogg">
+<summary duration='9765' starttime='Wed Jun 17 13:45:06 CEST 2009' name='WSRepositoryLoggedOut' successful='yes'><topsteps total='6' notexecuted='0' failed='0' successful='6'></topsteps><steps total='8' notexecuted='0' failed='0' successful='8'></steps><timingprofile number='3' average='3255'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="002_WSRepositoryLogg">
+<summary duration='7078' starttime='Wed Jun 17 13:45:16 CEST 2009' name='WSRepositoryLoggedIn' successful='yes'><topsteps total='8' notexecuted='0' failed='0' successful='8'></topsteps><steps total='18' notexecuted='0' failed='0' successful='18'></steps><timingprofile number='3' average='2349'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="003_WSRepositoryChec">
+<summary duration='13484' starttime='Wed Jun 17 13:45:23 CEST 2009' name='WSRepositoryCheckConfirmButton' successful='yes'><topsteps total='6' notexecuted='0' failed='0' successful='6'></topsteps><steps total='11' notexecuted='0' failed='0' successful='11'></steps><timingprofile number='5' average='1687'><range to='1' number='1' from='0'></range><range to='3' number='4' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="004_WSRepositoryChec">
+<summary duration='11453' starttime='Wed Jun 17 13:45:37 CEST 2009' name='WSRepositoryCheckUpdateButton' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='10' notexecuted='0' failed='0' successful='10'></steps><timingprofile number='4' average='1613'><range to='1' number='1' from='0'></range><range to='3' number='3' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="005_WSRepositoryChec">
+<summary duration='14063' starttime='Wed Jun 17 13:45:48 CEST 2009' name='WSRepositoryCheckEditButton' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='9' notexecuted='0' failed='0' successful='9'></steps><timingprofile number='4' average='2258'><range to='1' number='0' from='0'></range><range to='3' number='4' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="006_WSManualCreate">
+<summary duration='5594' starttime='Wed Jun 17 13:46:02 CEST 2009' name='WSManualCreate' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='5' notexecuted='0' failed='0' successful='5'></steps><timingprofile number='2' average='2797'><range to='1' number='0' from='0'></range><range to='3' number='1' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="007_WSPageCheckEditB">
+<summary duration='4407' starttime='Wed Jun 17 13:46:08 CEST 2009' name='WSPageCheckEditButton' successful='yes'><topsteps total='3' notexecuted='0' failed='0' successful='3'></topsteps><steps total='3' notexecuted='0' failed='0' successful='3'></steps><timingprofile number='2' average='2204'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="008_WSPageWSUsageAdd">
+<summary duration='12953' starttime='Wed Jun 17 13:46:12 CEST 2009' name='WSPageWSUsageAdd' successful='yes'><topsteps total='7' notexecuted='0' failed='0' successful='7'></topsteps><steps total='7' notexecuted='0' failed='0' successful='7'></steps><timingprofile number='3' average='2651'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="009_WSPageCheckEditB">
+<summary duration='4281' starttime='Wed Jun 17 13:46:25 CEST 2009' name='WSPageCheckEditButton' successful='yes'><topsteps total='3' notexecuted='0' failed='0' successful='3'></topsteps><steps total='3' notexecuted='0' failed='0' successful='3'></steps><timingprofile number='2' average='2141'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='0' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="010_WSPageWSUsageRem">
+<summary duration='12687' starttime='Wed Jun 17 13:46:30 CEST 2009' name='WSPageWSUsageRemove' successful='yes'><topsteps total='7' notexecuted='0' failed='0' successful='7'></topsteps><steps total='8' notexecuted='0' failed='1' successful='7'></steps><timingprofile number='3' average='2562'><range to='1' number='0' from='0'></range><range to='3' number='2' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+<folder name="011_WSCreateFailure">
+<summary duration='5610' starttime='Wed Jun 17 13:46:42 CEST 2009' name='WSCreateFailure' successful='yes'><topsteps total='5' notexecuted='0' failed='0' successful='5'></topsteps><steps total='6' notexecuted='0' failed='1' successful='5'></steps><timingprofile number='2' average='2805'><range to='1' number='0' from='0'></range><range to='3' number='1' from='1'></range><range to='5' number='1' from='3'></range><range to='10' number='0' from='5'></range><range to='30' number='0' from='10'></range><range number='0' from='30'></range></timingprofile></summary>
+</folder>
+
+</overview>
