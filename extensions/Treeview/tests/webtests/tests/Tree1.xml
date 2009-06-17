@@ -91,7 +91,6 @@
             <clickElement
         	   description="Click to open node Help:Content"
         	   xpath="//a[@href='javascript: tv#{treeId}.o(1);']"
-               save="contentOpen18"
         	/>
 
    	        <verifyXPath
@@ -105,7 +104,24 @@
         	   xpath="count(//div[@id='dtv#{treeId}18'])"
         	   text="0"
             />
+        	
+            <verifyXPath
+               description="Check for link Grimm"
+               xpath="//a[@href='javascript: tv#{treeId}.o(8);']"
+            />
 
+        	<clickLink
+        	   description="and click to open node"
+        	   xpath="//a[@href='javascript: tv#{treeId}.o(8);']"
+        	/>
+<!--
+        	<checkAjaxResponse>
+        		<verifyXPath
+        		   description="and receive two children"
+        		   xpath="count(//div[@id='dtv#{treeId}8']/div)"
+        		   test="2" />
+        	</checkAjaxResponse>
+-->
         </webtest>
 
     </target>

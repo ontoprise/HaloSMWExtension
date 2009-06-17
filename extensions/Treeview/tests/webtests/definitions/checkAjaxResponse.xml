@@ -1,0 +1,13 @@
+<!-- 
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="checkAjaxResponse" description="check response of an ajax request">
+    <element name="value" implicit="yes"/>
+    <sequential>
+        <retry maxcount="10">
+            <sleep seconds="1"/>
+            <value/>
+        </retry>
+    </sequential>   
+</macrodef>
