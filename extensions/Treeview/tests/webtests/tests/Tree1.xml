@@ -6,20 +6,10 @@
     <target name="test">
 
         <webtest name="check page Tree1 in Wiki">
-            <invoke url="${wgScript}/Tree1" description="Go to page Tree1"/>
-            <verifyText
-                description="small headline above the tree"
-                text="Testpage for Webtest of Tree1" />
-            <storeRegEx 
-                description="Get id of tree"
-                text="new dTree\('tv([a-f0-9]{13})',"
-                group="1"
-                property="treeId" />
-            <verifyXPath
-                description="Check id in div element"
-                xpath="//div[@class='Treeview']/@id"
-                text="#{treeId}" />
-            <verifyText
+        	
+        	<callWikiPage pageName="Tree1" />
+
+        	<verifyText
                 description="Check for addSmwData"
                 text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, null, null, null, null, null, 1);"
             />
