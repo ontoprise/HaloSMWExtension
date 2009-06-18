@@ -128,7 +128,7 @@ window.onload = function() {
 
 	// Activate the "OK" button.
 	window.parent.SetOkButton( '.($error ? 'false' : 'true').' ) ;
-	window.parent.SetAutoSize( true ) ;
+	//window.parent.SetAutoSize( true ) ;
 	
 	// load selected query if any
 	LoadSelection();
