@@ -510,4 +510,148 @@ Search keyword: HiddenByACL
 [[Has type::Type:String]]</text>
     </revision>
   </page>
+  <page>
+    <title>Category:Event</title>
+    <id>38</id>
+    <revision>
+      <id>42</id>
+      <timestamp>2009-06-18T10:25:34Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is the category for events.</comment>
+      <text xml:space="preserve">This is the category for events.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Event 1</title>
+    <id>41</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2009-06-18T10:28:03Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is event 1.  [[Date::Today]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 1.
+
+
+[[Date::Today]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>  
+  <page>
+    <title>Event 2</title>
+    <id>40</id>
+    <revision>
+      <id>44</id>
+      <timestamp>2009-06-18T10:28:03Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is event 2.  [[Related event::Event 3]]  [[Date::Tomorrow]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 2.
+
+[[Related event::Event 3]]
+
+[[Date::Tomorrow]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Event 3</title>
+    <id>41</id>
+    <revision>
+      <id>45</id>
+      <timestamp>2009-06-18T10:28:40Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is event 3.  [[Date::Today]]  [[Related event::Event 1]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 3.
+
+[[Date::Today]]
+
+[[Related event::Event 1]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Date</title>
+    <id>42</id>
+    <revision>
+      <id>46</id>
+      <timestamp>2009-06-18T10:29:16Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; | ]]  [[has type::Type:String| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; | ]]
+
+[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Related event</title>
+    <id>43</id>
+    <revision>
+      <id>47</id>
+      <timestamp>2009-06-18T10:29:40Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; Category:Event| ]]  [[has type::Type:Page| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; Category:Event| ]]
+
+[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Query events with ask</title>
+    <id>46</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2009-06-18T11:09:07Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">==Ask for all events==
+{{#ask: [[Category:Event]] | format = table | mainlabel=Event}}
+
+==Ask for all events and their dates==
+{{#ask: [[Category:Event]] [[Date::+]] | ?Date | format = table}}
+
+==Ask for all events their dates and related events==
+{{#ask: [[Category:Event]] [[Date::+]] | ?Date | ?related event | format = table}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Query events with sparql</title>
+    <id>42</id>
+    <revision>
+      <id>43</id>
+      <timestamp>2009-06-18T13:04:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Event]] | format = table | mainlabel=Event}}
+
+{{#sparql: [[Category:Event]] [[Date::+]] | ?Date | | format = table}}
+
+{{#sparql: [[Category:Event]] [[Date::+]] [[Related event::+]] | ?Related event | ?Date | format = table}}</text>
+    </revision>
+  </page>
 </mediawiki>

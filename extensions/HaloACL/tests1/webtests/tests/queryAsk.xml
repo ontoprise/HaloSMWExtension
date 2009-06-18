@@ -1,0 +1,196 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Query" default="testQueryHiddenPagesWithAsk">
+
+	&login;
+	&resaveArticle;
+	
+	<target name="testQueryHiddenPagesWithAsk">
+<!--
+	The articles Event 1, Event 2 and Event 3 have to be saved again, as the
+	import of pages does not create the semantic data for SMW.
+-->		
+		<webtest name="Save Event 1 again">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="resaveArticle">
+				<param name="article" value="Event 1"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Save Event 2 again">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="resaveArticle">
+				<param name="article" value="Event 2"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Save Event 3 again">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="resaveArticle">
+				<param name="article" value="Event 3"/>
+			</antcall>
+		</webtest>			
+
+		<webtest name="Testing ASK-queries as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Query events with ask"
+				description="Open page with queries." />
+			
+			<verifyXPath 
+				description="Check label of row 1 of query 1"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a"		
+				text="Event 1" />
+			<verifyXPath 
+				description="Check label of row 1 of query 1"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check label of row 2 of query 1"
+				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a"		
+				text="Event 3" />
+			
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[2]/td[1]"		
+				text="Event 1" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[2]/td[2]"		
+				text="Today" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]"		
+				text="Tomorrow" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[4]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[4]/td[2]"		
+				text="Today" />
+						
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[1]"		
+				text="Event 1" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[2]"		
+				text="Today" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[3]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[2]"		
+				text="Tomorrow" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[3]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[4]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[4]/td[2]"		
+				text="Today" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[4]/td[3]"		
+				text="Event 1" />
+
+		</webtest>
+		
+		
+		<webtest name="Testing ASK-queries as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Query events with ask"
+				description="Open page with queries." />
+
+			<verifyXPath 
+				description="Check label of row 1 of query 1"
+				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check label of row 2 of query 1"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
+				text="Event 3" />
+			
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[2]/td[2]"		
+				text="Tomorrow" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[3]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 2"
+				xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]"		
+				text="Today" />
+						
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[2]"		
+				text="Tomorrow" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[2]/td[3]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[2]"		
+				text="Today" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 3"
+				xpath="//table[@id='querytable3']/tbody/tr[3]/td[3]"		
+				text="" />
+			
+		</webtest>
+		
+	</target>
+		
+	
+</project>

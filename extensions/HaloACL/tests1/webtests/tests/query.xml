@@ -76,45 +76,18 @@
 			<verifyXPath 
 				description="Check label of first row of result"
 				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a"		
-				text="HiddenInstance" />
-			<verifyXPath 
-				description="Check label of second row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
-				text="HiddenInstanceOfSubcat" />
-			<verifyXPath 
-				description="Check label of third row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a"		
-				text="HiddenPage" />
-			<verifyXPath 
-				description="Check label of fourth row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[5]/td/a"		
 				text="HiddenProperty" />
+			<not>
 			<verifyXPath 
-				description="Check label of fifth row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a"		
-				text="HiddenUser" />
+				description="Make sure there is no second row"
+				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a" />
+			</not>
 
 			<verifyXPath 
 				description="Check link of first row of result"
 				xpath="//table[@id='querytable1']/tbody/tr[2]/td/a/@href"
 				regex="true"
-				text=".*Permission.*" />
-			<verifyXPath 
-				description="Check link of second row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a/@href"		
-				regex="true"
-				text=".*Permission.*" />
-			<verifyXPath 
-				description="Check link of third row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[4]/td/a/@href"		
-				regex="true"
-				text=".*Permission.*" />
-			<verifyXPath 
-				description="Check link of fifth row of result"
-				xpath="//table[@id='querytable1']/tbody/tr[6]/td/a/@href"		
-				regex="true"
-				text=".*Permission.*" />
-			
+				text=".*Property:HiddenProperty.*" />
 		</webtest>
 		
 	</target>

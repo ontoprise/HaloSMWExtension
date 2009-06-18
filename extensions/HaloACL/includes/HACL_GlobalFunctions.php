@@ -59,6 +59,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
 	$wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
 	$wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
+	$wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
 	
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -67,7 +68,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
 	$wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
 	$wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';
-	
+		
 	return true;
 }
 
@@ -100,7 +101,8 @@ function haclfSetupExtension() {
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
 	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
-
+	$wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
+	
 	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
 

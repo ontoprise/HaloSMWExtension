@@ -1,0 +1,6 @@
+<target name="resaveArticle">
+	<invoke
+    	url="http://localhost/${wikipath}/index.php/${article}?action=edit"
+    	description="Go to edit page" />
+	<clickButton label="Save page"/>
+</target>	

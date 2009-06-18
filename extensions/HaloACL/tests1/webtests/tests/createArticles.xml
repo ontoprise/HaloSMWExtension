@@ -36,6 +36,16 @@
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
 		</webtest>			
+		<webtest name="createArticle: ACL:Page/Event 1">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Event 1"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>			
 		<webtest name="createArticle: ACL:Page/HiddenPage">
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
