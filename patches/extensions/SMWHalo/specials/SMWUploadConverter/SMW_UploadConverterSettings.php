@@ -25,7 +25,24 @@
 
 global $smwgHaloIP;
 // Definition of converters for various mime types.
-$smwgUploadConverter = array(
-	'application/pdf' => "$smwgHaloIP/bin/xpdf/pdftotext.exe -enc UTF-8 -layout {infile} {outfile}",
-	'application/msword' => $smwgHaloIP.'/bin/antiword/antiword.exe -m UTF-8.txt "{infile}" > "{outfile}"'
-);
+
+// check OS is windows?
+if (strpos(strtolower(php_uname('s')) == "win")) {
+	$smwgUploadConverter = array(
+		'application/pdf' => "$smwgHaloIP/bin/xpdf/pdftotext.exe -enc UTF-8 -layout {infile} {outfile}",
+		'application/msword' => $smwgHaloIP.'/bin/antiword/antiword.exe -m UTF-8.txt "{infile}" > "{outfile}"'
+	);
+}
+// some Unix flavour
+else {
+	$smwgUploadConverter = array();
+	// check for antiword
+	$exe = @exec('which antiword');
+	if (strlen($exe) > 0) {
+		$smwgUploadConverter['application/msword'] = $exe.' -m '.$smwgHaloIP.'/bin/antiword/UTF-8.txt "{infile}" > "{outfile}"';
+	}
+	$exe = @exec('which pdftotext');
+	if (strlen($exe) > 0) {
+		$smwgUploadConverter['application/pdf'] = $exe.' -enc UTF-8 -layout "{infile}" "{outfile}"';
+	}	
+}
