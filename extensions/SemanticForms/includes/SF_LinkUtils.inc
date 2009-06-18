@@ -5,13 +5,6 @@
  * @author Yaron Koren
  */
 
-// SF v1.7.1
-// patches included:
-// 1. "edit with form"-tab for Categories. DH Apr 22 09
-//    tag of patch: op-patch|DH|2009-04-22|"edit with form"-tab for Categories
-
-
-
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
 class SFLinkUtils {
@@ -295,19 +288,7 @@ class SFLinkUtils {
 		// if this is not a category page, look for a default form
 		// for its parent categories
 		$namespace = $obj->mTitle->getNamespace();
-
-/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
-// code was:
-//		if (NS_CATEGORY !== $namespace) {
-//			$default_forms = array();
-//			$categories = self::getCategoriesForArticle($obj);
-//			foreach ($categories as $category) {
-//				$default_forms = array_merge($default_forms, self::getDefaultForms($category, NS_CATEGORY));
-//			}
-//			if (count($default_forms) > 0)
-//				return $default_forms;
-//		}
-  
+		if (NS_CATEGORY !== $namespace) {
 			$default_forms = array();
 			$categories = self::getCategoriesForArticle($obj);
 			foreach ($categories as $category) {
@@ -315,9 +296,7 @@ class SFLinkUtils {
 			}
 			if (count($default_forms) > 0)
 				return $default_forms;
-/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/	
-		
-		
+		}
 		// if we're still here, just return the default form for the
 		// namespace, which may well be null
 		if (NS_MAIN === $namespace) {

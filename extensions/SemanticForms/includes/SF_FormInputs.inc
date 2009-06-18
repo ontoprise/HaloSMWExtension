@@ -43,9 +43,7 @@ class SFFormInputs {
       $query_string .= "&wpDestFile=$default_filename";
     $upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
     $upload_label = wfMsg('upload');
-    /*op-patch|KK|2009-06-09|increase upload window size|start*/
-    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:660\">$upload_label</a>";
-    /*op-patch|KK|2009-06-09|increase upload window size|end*/
+    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:550 height:380\">$upload_label</a>";
     return $text;
   }
 

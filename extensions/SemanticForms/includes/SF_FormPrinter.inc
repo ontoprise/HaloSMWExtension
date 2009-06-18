@@ -9,14 +9,6 @@
  * @author Daniel Hansch
  */
 
-// SF v1.7.1
-// patches included:
-// 1. WYSIWYG parameter in info tag
-//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
-//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
-
-
-
 class SFFormPrinter {
 
   var $mSemanticTypeHooks;
@@ -136,9 +128,6 @@ class SFFormPrinter {
     global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
 
     // initialize some variables
-     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
-    $fck_options = array();
-     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|end*/
     $sfgTabIndex = 1;
     $sfgFieldNum = 1;
     $source_page_matches_this_form = false;
@@ -153,10 +142,6 @@ class SFFormPrinter {
     $new_text = "";
     // flag for placing "<includeonly>" and "<noinclude>" tags in form output
     $includeonly_free_text = false;
-    
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-$show_FCKEditor = false;
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
     
     // if we have existing content and we're not in an active replacement
     // situation, preserve the original content. We do this because we want
@@ -629,15 +614,9 @@ $show_FCKEditor = false;
               $new_text = SFFormUtils::hiddenFieldHTML('free_text', '<free_text>');
             } else {
               if (! array_key_exists('rows', $field_args))
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
-                $fck_options['rows'] = 5;
-                else $fck_options['rows'] =$field_args['rows'];
-              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/  
+                $field_args['rows'] = 5;
               if (! array_key_exists('cols', $field_args))
-               /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
-                $fck_options['cols'] = 80;
-            	 else $fck_options['cols'] =$field_args['cols'];
-            	  /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/
+                $field_args['cols'] = 80;
               $sfgTabIndex++;
               $sfgFieldNum++;
               list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('<free_text>', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
@@ -1001,11 +980,6 @@ END;
             elseif($tag == 'includeonly free text') {           		
               $includeonly_free_text = true;
             }
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-            elseif($tag == 'WYSIWYG') {          
-              $show_FCKEditor = true;
-            }
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
           }
           $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
         // =====================================================
@@ -1036,15 +1010,15 @@ END;
           // doing a replace
           if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
             $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
-              preg_replace('/\}\}/m', '}ï¿½',
-                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+              preg_replace('/\}\}/m', '}²',
+                preg_replace('/\{\{/m', '²{', $template_text)) .
               "\n{{{insertionpoint}}}",
               $existing_page_content);
           // otherwise, if it's a partial form, we have to add the new
           // text somewhere
           } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
-            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
-              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+            $existing_page_content = preg_replace('/\}\}/m', '}²',
+              preg_replace('/\{\{/m', '²{', $template_text)) .
                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
           }
         }
@@ -1113,7 +1087,7 @@ END;
          $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
        } else {
          $free_text = null;
-         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
+         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
          $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
          $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
        }
@@ -1146,12 +1120,7 @@ END;
     }
     // if the FCKeditor extension is installed, use that for the free text input
     global $wgFCKEditorDir;
-
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-// code was:
-//  if ($wgFCKEditorDir) {
-    if ($wgFCKEditorDir && $show_FCKEditor) {
-/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
+    if ($wgFCKEditorDir) {
       $showFCKEditor = SFFormUtils::getShowFCKEditor();
       $free_text = htmlspecialchars( $free_text );
       if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
@@ -1252,7 +1221,7 @@ END;
     // add form bottom, if no custom "standard inputs" have been defined
     if ($is_query)
       $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
-     elseif (! $this->standardInputsIncluded)
+    elseif (! $this->standardInputsIncluded)
       $form_text .= SFFormUtils::formBottom($form_is_disabled);
     $starttime = wfTimestampNow();
     $page_article = new Article($this->mPageTitle);
@@ -1270,10 +1239,7 @@ END;
     $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
     $javascript_text .= SFFormUtils::autocompletionJavascript();
     if ($free_text_was_included && $showFCKEditor > 0) {
-      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-      $rowParam = isset($fck_options['rows']) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
-      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $rowParam);
-      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor);
       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
         $javascript_text .= SFFormUTils::FCKToggleJavascript();
       }

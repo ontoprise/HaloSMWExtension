@@ -724,12 +724,9 @@ END;
 		return $text;
 	}
 
-	static function mainFCKJavascript($showFCKEditor, $rowsHeight= 5) {
+	static function mainFCKJavascript($showFCKEditor) {
 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
 
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
 		$newWinMsg = wfMsg('rich_editor_new_window');
 		$javascript_text = '
 var showFCKEditor = '. $showFCKEditor .';
@@ -764,33 +761,6 @@ function FCK_sajax(func_name, args, target) {
 	);
 }
 
-/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-// if the rows attribute was defined in the form, use fontsize to calculate the editor window height
-function getfontsize(el) { 
-	var x = document.getElementById(el); 
- 	if (x.currentStyle) { 
-		// IE 
-		var y = x.currentStyle['lineheight']; 
- 	} else if (window.getComputedStyle) { 
-		// FF, Opera 
-  		var y = document.defaultView.getComputedStyle(x,null).getPropertyValue('line-height'); 
- 	} 
- 	return y; 
-}
-function getWindowHeight4editor() {
-	var fsize = getfontsize('free_text');
-	// if value was not determined, return default val from $wgFCKEditorHeight
-	if (!fsize) return $FCKEditorHeight;
-	if (fsize.indexOf('px') == -1)  // we didn't get pixels
-		// arbitary value, don't hassle with caluclating
-		return $FCKEditorHeight;
-	var px = parseFloat(fsize.replace(/\w{2}$/, ''));
-	// the text in the edit window is slightly larger than the determined value
-	px = px * 1.25;
-	return Math.round (px * $rowsHeight);
-}
-/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
-
 function onLoadFCKeditor()
 {
 	if (!(showFCKEditor & RTE_VISIBLE)) 
@@ -800,15 +770,7 @@ function onLoadFCKeditor()
 	if ( realTextarea )
 	{
 		// Create the editor instance and replace the textarea.
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
-		var height = getWindowHeight4editor();
-		// apply caluclations of height from the FCKEditor function itself
-		// Add the height to the offset of the toolbar.
-		height += 50;
-		// Add a small space to be left in the bottom.
-		height += 20 ;
-		oFCKeditor.Height = height;
-		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+		oFCKeditor.Height = 300;
 		oFCKeditor.ReplaceTextarea() ;
 		
 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
