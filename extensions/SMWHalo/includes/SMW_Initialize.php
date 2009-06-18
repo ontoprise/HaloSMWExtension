@@ -363,6 +363,8 @@ function smwfRegisterSPARQLInlineQueries( &$parser, &$text, &$stripstate ) {
 function smwfProcessSPARQLInlineQueryParserFunction(&$parser) {
 	global $smwgWebserviceEndpoint;
 	if (isset($smwgWebserviceEndpoint)) {
+		global $smwgIQRunningNumber;
+		$smwgIQRunningNumber++;
 		$params = func_get_args();
 		array_shift( $params ); // we already know the $parser ...
 		return SMWSPARQLQueryProcessor::getResultFromFunctionParams($params,SMW_OUTPUT_WIKI);
