@@ -1,0 +1,311 @@
+Index: extensions/SemanticForms/includes/SF_FormInputs.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4111)
++++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
+@@ -43,7 +43,9 @@
+       $query_string .= "&wpDestFile=$default_filename";
+     $upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
+     $upload_label = wfMsg('upload');
+-    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:550 height:380\">$upload_label</a>";
++    /*op-patch|KK|2009-06-09|increase upload window size|start*/
++    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:660\">$upload_label</a>";
++    /*op-patch|KK|2009-06-09|increase upload window size|end*/
+     return $text;
+   }
+ 
+Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4111)
++++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
+@@ -9,6 +9,14 @@
+  * @author Daniel Hansch
+  */
+ 
++// SF v1.7.1
++// patches included:
++// 1. WYSIWYG parameter in info tag
++//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
++//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
++
++
++
+ class SFFormPrinter {
+ 
+   var $mSemanticTypeHooks;
+@@ -128,6 +136,9 @@
+     global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
+ 
+     // initialize some variables
++     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
++    $fck_options = array();
++     /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|end*/
+     $sfgTabIndex = 1;
+     $sfgFieldNum = 1;
+     $source_page_matches_this_form = false;
+@@ -143,6 +154,10 @@
+     // flag for placing "<includeonly>" and "<noinclude>" tags in form output
+     $includeonly_free_text = false;
+     
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
++$show_FCKEditor = false;
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
++    
+     // if we have existing content and we're not in an active replacement
+     // situation, preserve the original content. We do this because we want
+     // to pass the original content on IF this is a partial form
+@@ -614,9 +629,15 @@
+               $new_text = SFFormUtils::hiddenFieldHTML('free_text', '<free_text>');
+             } else {
+               if (! array_key_exists('rows', $field_args))
+-                $field_args['rows'] = 5;
++              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
++                $fck_options['rows'] = 5;
++                else $fck_options['rows'] =$field_args['rows'];
++              /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/  
+               if (! array_key_exists('cols', $field_args))
+-                $field_args['cols'] = 80;
++               /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|start*/
++                $fck_options['cols'] = 80;
++            	 else $fck_options['cols'] =$field_args['cols'];
++            	  /*op-patch|KK|2009-11-04|FCKeditor|use rows parameter for editor window height|end*/
+               $sfgTabIndex++;
+               $sfgFieldNum++;
+               list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('<free_text>', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
+@@ -980,6 +1001,11 @@
+             elseif($tag == 'includeonly free text') {           		
+               $includeonly_free_text = true;
+             }
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
++            elseif($tag == 'WYSIWYG') {          
++              $show_FCKEditor = true;
++            }
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
+           }
+           $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
+         // =====================================================
+@@ -1010,15 +1036,15 @@
+           // doing a replace
+           if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
+             $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
+-              preg_replace('/\}\}/m', '}²',
+-                preg_replace('/\{\{/m', '²{', $template_text)) .
++              preg_replace('/\}\}/m', '}ï¿½',
++                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+               "\n{{{insertionpoint}}}",
+               $existing_page_content);
+           // otherwise, if it's a partial form, we have to add the new
+           // text somewhere
+           } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
+-            $existing_page_content = preg_replace('/\}\}/m', '}²',
+-              preg_replace('/\{\{/m', '²{', $template_text)) .
++            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
++              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
+           }
+         }
+@@ -1087,7 +1113,7 @@
+          $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
+        } else {
+          $free_text = null;
+-         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
++         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
+          $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
+          $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
+        }
+@@ -1120,7 +1146,12 @@
+     }
+     // if the FCKeditor extension is installed, use that for the free text input
+     global $wgFCKEditorDir;
+-    if ($wgFCKEditorDir) {
++
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
++// code was:
++//  if ($wgFCKEditorDir) {
++    if ($wgFCKEditorDir && $show_FCKEditor) {
++/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
+       $showFCKEditor = SFFormUtils::getShowFCKEditor();
+       $free_text = htmlspecialchars( $free_text );
+       if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
+@@ -1221,7 +1252,7 @@
+     // add form bottom, if no custom "standard inputs" have been defined
+     if ($is_query)
+       $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
+-    elseif (! $this->standardInputsIncluded)
++     elseif (! $this->standardInputsIncluded)
+       $form_text .= SFFormUtils::formBottom($form_is_disabled);
+     $starttime = wfTimestampNow();
+     $page_article = new Article($this->mPageTitle);
+@@ -1239,7 +1270,10 @@
+     $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
+     $javascript_text .= SFFormUtils::autocompletionJavascript();
+     if ($free_text_was_included && $showFCKEditor > 0) {
+-      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor);
++      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
++      $rowParam = isset($fck_options['rows']) && $fck_options['rows'] > 0 ? $fck_options['rows'] : 5;
++      $javascript_text .= SFFormUtils::mainFCKJavascript($showFCKEditor, $rowParam);
++      /*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+       if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
+         $javascript_text .= SFFormUTils::FCKToggleJavascript();
+       }
+Index: extensions/SemanticForms/includes/SF_FormUtils.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4111)
++++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
+@@ -724,9 +724,12 @@
+ 		return $text;
+ 	}
+ 
+-	static function mainFCKJavascript($showFCKEditor) {
++	static function mainFCKJavascript($showFCKEditor, $rowsHeight= 5) {
+ 		global $wgUser, $wgScriptPath, $wgFCKEditorExtDir, $wgFCKEditorDir, $wgFCKEditorToolbarSet, $wgFCKEditorHeight;
+ 
++		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
++		$FCKEditorHeight = ($wgFCKEditorHeight < 300) ? 300 : $wgFCKEditorHeight;
++		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+ 		$newWinMsg = wfMsg('rich_editor_new_window');
+ 		$javascript_text = '
+ var showFCKEditor = '. $showFCKEditor .';
+@@ -761,6 +764,33 @@
+ 	);
+ }
+ 
++/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
++// if the rows attribute was defined in the form, use fontsize to calculate the editor window height
++function getfontsize(el) { 
++	var x = document.getElementById(el); 
++ 	if (x.currentStyle) { 
++		// IE 
++		var y = x.currentStyle['lineheight']; 
++ 	} else if (window.getComputedStyle) { 
++		// FF, Opera 
++  		var y = document.defaultView.getComputedStyle(x,null).getPropertyValue('line-height'); 
++ 	} 
++ 	return y; 
++}
++function getWindowHeight4editor() {
++	var fsize = getfontsize('free_text');
++	// if value was not determined, return default val from $wgFCKEditorHeight
++	if (!fsize) return $FCKEditorHeight;
++	if (fsize.indexOf('px') == -1)  // we didn't get pixels
++		// arbitary value, don't hassle with caluclating
++		return $FCKEditorHeight;
++	var px = parseFloat(fsize.replace(/\w{2}$/, ''));
++	// the text in the edit window is slightly larger than the determined value
++	px = px * 1.25;
++	return Math.round (px * $rowsHeight);
++}
++/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
++
+ function onLoadFCKeditor()
+ {
+ 	if (!(showFCKEditor & RTE_VISIBLE)) 
+@@ -770,7 +800,15 @@
+ 	if ( realTextarea )
+ 	{
+ 		// Create the editor instance and replace the textarea.
+-		oFCKeditor.Height = 300;
++		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|start*/
++		var height = getWindowHeight4editor();
++		// apply caluclations of height from the FCKEditor function itself
++		// Add the height to the offset of the toolbar.
++		height += 50;
++		// Add a small space to be left in the bottom.
++		height += 20 ;
++		oFCKeditor.Height = height;
++		/*op-patch|SR|2009-06-04|FCKeditor|use rows parameter for editor window height|end*/
+ 		oFCKeditor.ReplaceTextarea() ;
+ 		
+ 		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
+Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4111)
++++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
+@@ -5,6 +5,13 @@
+  * @author Yaron Koren
+  */
+ 
++// SF v1.7.1
++// patches included:
++// 1. "edit with form"-tab for Categories. DH Apr 22 09
++//    tag of patch: op-patch|DH|2009-04-22|"edit with form"-tab for Categories
++
++
++
+ if ( !defined( 'MEDIAWIKI' ) ) die();
+ 
+ class SFLinkUtils {
+@@ -288,7 +295,19 @@
+ 		// if this is not a category page, look for a default form
+ 		// for its parent categories
+ 		$namespace = $obj->mTitle->getNamespace();
+-		if (NS_CATEGORY !== $namespace) {
++
++/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|start*/
++// code was:
++//		if (NS_CATEGORY !== $namespace) {
++//			$default_forms = array();
++//			$categories = self::getCategoriesForArticle($obj);
++//			foreach ($categories as $category) {
++//				$default_forms = array_merge($default_forms, self::getDefaultForms($category, NS_CATEGORY));
++//			}
++//			if (count($default_forms) > 0)
++//				return $default_forms;
++//		}
++  
+ 			$default_forms = array();
+ 			$categories = self::getCategoriesForArticle($obj);
+ 			foreach ($categories as $category) {
+@@ -296,7 +315,9 @@
+ 			}
+ 			if (count($default_forms) > 0)
+ 				return $default_forms;
+-		}
++/*op-patch|DH|2009-04-22|"edit with form"-tab for Categories|end*/	
++		
++		
+ 		// if we're still here, just return the default form for the
+ 		// namespace, which may well be null
+ 		if (NS_MAIN === $namespace) {
+Index: extensions/SemanticForms/includes/SF_Utils.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4111)
++++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
+@@ -5,6 +5,11 @@
+  * @author Yaron Koren
+  */
+ 
++// SF v1.7.1
++// patches included:
++// 1. NAMESPACE-safe autocomplete
++//    tag: op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete
++
+ if ( !defined( 'MEDIAWIKI' ) ) die();
+ 
+ class SFUtils {
+@@ -134,7 +139,10 @@
+ 		$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'datasource/datasource-min.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
+-		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
++		/*op-patch|BL|2009-06-11|RichMedia|NotLoadFloatboxAgain|start*/
++		//commented out loading of floatbox
++		//$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
++		/*op-patch|BL|2009-06-11|end*/  
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
+ 		if ($wgFCKEditorDir)
+ 			$wgOut->addScript('<script type="text/javascript" src="' . "$wgScriptPath/$wgFCKEditorDir" . '/fckeditor.js"></script>' . "\n");
+@@ -266,6 +274,14 @@
+ 								}
+ 							} else {
+ 								$cur_value = str_replace("_", " ", $row['page_title']);
++/*op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete|start*/
++if ($page_namespace != NS_MAIN) {
++global $wgContLang;
++$cur_value = $wgContLang->getNsText($page_namespace).":".$cur_value;
++}
++/*op-patch|DH|2009-04-22|NAMESPACE-safe autocomplete|end*/
++								
++								
+ 								if ($substring == null)
+ 									$pages[] = $cur_value;
+ 								else
