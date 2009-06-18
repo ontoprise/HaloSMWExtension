@@ -5,36 +5,11 @@
 <project default="testWSPage">
 	
 	&goToLogin;
+	&createWebTestWS;
 
 	<target name="testWSPage">
 		<webtest name="WSManualCreate">
-			<invoke
-				url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit"
-				description="Open new ws for editing" />
-			<setInputField description="Enter new wwsd."
-				xpath="//textarea[@id='wpTextbox1']">
-				<![CDATA[
-					<WebService>
-				<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
-				<protocol>REST</protocol>
-				<method name="get" />
-				<parameter name="dontCare" path="dontCare" optional="true"/>
-				<result name="result" >
-					<part name="complete" path=""/>
-				</result>
-				<displayPolicy>
-					<maxAge value="1">
-					</maxAge>
-				</displayPolicy>
-				<queryPolicy>
-					<maxAge value="1">
-					</maxAge>
-					<delay value="0"/>
-				</queryPolicy>
-				<spanOfLife value="1" expiresAfterUpdate="true" />
-			</WebService>]]>
-			</setInputField>
-			<clickButton description="Save new wwsd." htmlId="wpSave" />
+			<antcall target="createWebTestWS" />
 
 			<verifyText
 				text="Please click here to edit the WWSD in the graphical user interface."

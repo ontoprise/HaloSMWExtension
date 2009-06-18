@@ -6,5 +6,6 @@
 	<target name="testAll" description="runs all the tests">
 		<ant antfile="wsRepositoryTests.xml"/>
 		<ant antfile="wsPageTest.xml"/>
+		<ant antfile="wsUseGUITests.xml"/>
 	</target>
 </project>

@@ -1,0 +1,15 @@
+<target name="invalidateWebTestWS">
+
+	<invoke
+		url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit"
+		description="Open new ws for editing" />
+	<setInputField description="Enter wrong wwsd." xpath="//textarea[@id='wpTextbox1']">
+				<![CDATA[
+					<WebService>
+				<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
+				protocol>REST</protocol>
+			</WebService>]]>
+	</setInputField>
+	<clickButton description="Save new wwsd." htmlId="wpSave" />
+
+</target>

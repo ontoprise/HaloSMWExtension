@@ -5,108 +5,83 @@
 <project default="testWebServiceRepository">
 	
 	&goToLogin;
+	&createWebTestWS;
 	
 	<target name="testWebServiceRepository">
 		<webtest name="WSRepositoryLoggedOut">
-			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit" 
-				description="Open new ws for editing"/>
-			<setInputField description="Enter new wwsd."
-				xpath="//textarea[@id='wpTextbox1']">
-				<![CDATA[
-					<WebService>
-				<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
-				<protocol>REST</protocol>
-				<method name="get" />
-				<parameter name="dontCare" path="dontCare" optional="true"/>
-				<result name="result" >
-					<part name="complete" path=""/>
-				</result>
-				<displayPolicy>
-					<maxAge value="1">
-					</maxAge>
-				</displayPolicy>
-				<queryPolicy>
-					<maxAge value="1">
-					</maxAge>
-					<delay value="0"/>
-				</queryPolicy>
-				<spanOfLife value="1" expiresAfterUpdate="true" />
-			</WebService>]]>
-			</setInputField>
-		<clickButton description="Save new wwsd."
-				htmlId="wpSave"/>
+			<antcall target="createWebTestWS" />
 
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository"/>
-		<verifyText text="Edit" description="Is there only the edit column?">
-			<table htmlId="webservicetable" row="0" column="2"/>
-		</verifyText>
-		<verifyText text="Edit" description="Is there only the edit button?">
-			<table htmlId="webservicetable" row="1" column="2"/>
-		</verifyText>
-	</webtest>
-	<webtest name="WSRepositoryLoggedIn">
-		<antcall target="goToLogin" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<verifyText text="Edit" description="Is there only the edit column?">
+				<table htmlId="webservicetable" row="0" column="2" />
+			</verifyText>
+			<verifyText text="Edit" description="Is there only the edit button?">
+				<table htmlId="webservicetable" row="1" column="2" />
+			</verifyText>
+		</webtest>
+		<webtest name="WSRepositoryLoggedIn">
+			<antcall target="goToLogin" />
 
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
-		<verifyText text="Manual update" description="Is there the update column?">
-			<table htmlId="webservicetable" row="0" column="2" />
-		</verifyText>
-		<verifyText text="Update" description="Is there the update button?">
-			<table htmlId="webservicetable" row="1" column="2" />
-		</verifyText>
-		<verifyText text="Edit" description="Is there the edit column?">
-			<table htmlId="webservicetable" row="0" column="3" />
-		</verifyText>
-		<verifyText text="Edit" description="Is there the edit button?">
-			<table htmlId="webservicetable" row="1" column="3" />
-		</verifyText>
-		<verifyText text="Confirm" description="Is there the confirm column?">
-			<table htmlId="webservicetable" row="0" column="4" />
-		</verifyText>
-		<verifyText text="Confirm" description="Is there the confirm button?">
-			<table htmlId="webservicetable" row="1" column="4" />
-		</verifyText>
-	</webtest>
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<verifyText text="Manual update" description="Is there the update column?">
+				<table htmlId="webservicetable" row="0" column="2" />
+			</verifyText>
+			<verifyText text="Update" description="Is there the update button?">
+				<table htmlId="webservicetable" row="1" column="2" />
+			</verifyText>
+			<verifyText text="Edit" description="Is there the edit column?">
+				<table htmlId="webservicetable" row="0" column="3" />
+			</verifyText>
+			<verifyText text="Edit" description="Is there the edit button?">
+				<table htmlId="webservicetable" row="1" column="3" />
+			</verifyText>
+			<verifyText text="Confirm" description="Is there the confirm column?">
+				<table htmlId="webservicetable" row="0" column="4" />
+			</verifyText>
+			<verifyText text="Confirm" description="Is there the confirm button?">
+				<table htmlId="webservicetable" row="1" column="4" />
+			</verifyText>
+		</webtest>
 
-	<webtest name="WSRepositoryCheckConfirmButton">
-		<antcall target="goToLogin" />
+		<webtest name="WSRepositoryCheckConfirmButton">
+			<antcall target="goToLogin" />
 
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
-		<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
 
-		<sleep seconds="5" />
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
-		<verifyText text="confirmed" description="Was the WWSD confirmed?">
-			<table htmlId="webservicetable" row="1" column="4" />
-		</verifyText>
-	</webtest>
+			<sleep seconds="5" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<verifyText text="confirmed" description="Was the WWSD confirmed?">
+				<table htmlId="webservicetable" row="1" column="4" />
+			</verifyText>
+		</webtest>
 
-	<webtest name="WSRepositoryCheckUpdateButton">
-		<antcall target="goToLogin" />
+		<webtest name="WSRepositoryCheckUpdateButton">
+			<antcall target="goToLogin" />
 
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
-		<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[3]/button" description="Click update button"/>
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[3]/button" description="Click update button"/>
 
-		<sleep seconds="5" />
+			<sleep seconds="5" />
 
-		<verifyText text="updating" description="Was update started?">
-			<table htmlId="webservicetable" row="1" column="2" />
-		</verifyText>
-	</webtest>
+			<verifyText text="updating" description="Was update started?">
+				<table htmlId="webservicetable" row="1" column="2" />
+			</verifyText>
+		</webtest>
 
 
-	<webtest name="WSRepositoryCheckEditButton">
-		<antcall target="goToLogin" />
+		<webtest name="WSRepositoryCheckEditButton">
+			<antcall target="goToLogin" />
 
-		<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
-		<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
-		<sleep seconds="5" />
-		
-		<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
+			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
+			<sleep seconds="5" />
 
-		
-	</webtest>
+			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
 
 
-</target>
+		</webtest>
+
+
+	</target>
 </project>

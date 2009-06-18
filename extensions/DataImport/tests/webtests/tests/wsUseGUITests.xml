@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSUseGUI">
+	
+	&goToLogin;
+	&createWebTestWS;
+	&invalidateWebTestWS;
+
+	<target name="testWSUseGUI">
+
+		<webtest name="WSUseGUIinvoke1">
+			<antcall target="invalidateWebTestWS" />
+			<sleep seconds="5" />
+
+		</webtest>
+
+		<webtest name="WSUseGUINoWSError">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Open article for adding ws" />
+
+			<clickLink xpath="//div[@id='stb_cont10-content']/a"
+				description="Click add ws button" />
+			<sleep seconds="5" />
+
+			<verifyText text="No Wiki Web Service Definitions are available yet."
+				description="Was define ws gui opened" />
+		</webtest>
+
+		<webtest name="WSUseGUIinvoke1">
+			<antcall target="createWebTestWS" />
+			<sleep seconds="5" />
+
+		</webtest>
+
+		<webtest name="WSUseGUIContentLoaded">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Open article for adding ws" />
+
+			<clickLink xpath="//div[@id='stb_cont10-content']/a"
+				description="Click add ws button" />
+			<sleep seconds="3" />
+
+			<verifyText text="Choose web service" description="Was define ws gui opened" />
+
+			<verifySelectField value="WebTestWS" htmlId="step1-webservice"
+				description="Is web test ws available" />
+
+			<clickButton htmlId="step1-go-img" description="go to step2" />
+			<sleep seconds="5" />
+
+			<verifyText text="optionalParameter" description="is parameter there">
+				<table htmlId="step2-parameters" row="1" column="0" />
+			</verifyText>
+			<verifyText text="nonOptionalParameterNoDefault"
+				description="is parameter there">
+				<table htmlId="step2-parameters" row="2" column="0" />
+			</verifyText>
+			<verifyText text="nonOptionalParameterWithDefault"
+				description="is parameter there">
+				<table htmlId="step2-parameters" row="3" column="0" />
+			</verifyText>
+			<verifyText text="parameterWithSubparameters" description="is parameter there">
+				<table htmlId="step2-parameters" row="4" column="0" />
+			</verifyText>
+			<verifyText
+				text="parameterWithSubparameters.nonOptionalSubParameterNoDefault"
+				description="is parameter there">
+				<table htmlId="step2-parameters" row="5" column="0" />
+			</verifyText>
+			<verifyText text="parameterWithSubparameters.optionalSubParameter"
+				description="is parameter there">
+				<table htmlId="step2-parameters" row="6" column="0" />
+			</verifyText>
+			<verifyText
+				text="parameterWithSubparameters.nonOptionalSubParameterWithDefault"
+				description="is parameter there">
+				<table htmlId="step2-parameters" row="7" column="0" />
+			</verifyText>
+
+			<verifyCheckbox checked="false"
+				xpath="//table[@id='step2-parameters']/tbody/tr[2]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="true"
+				xpath="//table[@id='step2-parameters']/tbody/tr[3]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="true"
+				xpath="//table[@id='step2-parameters']/tbody/tr[4]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="true"
+				xpath="//table[@id='step2-parameters']/tbody/tr[5]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="true"
+				xpath="//table[@id='step2-parameters']/tbody/tr[6]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="false"
+				xpath="//table[@id='step2-parameters']/tbody/tr[7]/td[2]/input"
+				description="is checkbox set correctly" />
+			<verifyCheckbox checked="true"
+				xpath="//table[@id='step2-parameters']/tbody/tr[8]/td[2]/input"
+				description="is checkbox set correctly" />
+
+			<verifyInputField value="Not available"
+				xpath="//table[@id='step2-parameters']/tbody/tr[2]/td[4]/input[2]"
+				description="are defaults displayed correctly" />
+			<verifyInputField value="Not available"
+				xpath="//table[@id='step2-parameters']/tbody/tr[3]/td[4]/input[2]"
+				description="are defaults displayed correctly" />
+			<verifyText text="default" description="are defaults displayed correctly">
+				<table htmlId="step2-parameters" row="3" column="3" />
+			</verifyText>
+			<verifyInputField value="Not available"
+				xpath="//table[@id='step2-parameters']/tbody/tr[5]/td[4]/input[2]"
+				description="are defaults displayed correctly" />
+			<verifyInputField value="Not available"
+				xpath="//table[@id='step2-parameters']/tbody/tr[6]/td[4]/input[2]"
+				description="are defaults displayed correctly" />
+			<!--
+				<verifyInputField value="Not available"
+				xpath="//table[@id='step2-parameters']/tbody/tr[7]/td[4]/input[2]"
+				description="are defaults displayed correctly"/>
+			-->
+			<verifyText text="default" description="are defaults displayed correctly">
+				<table htmlId="step2-parameters" row="7" column="3" />
+			</verifyText>
+
+			<clickButton htmlId="step2-go-img" description="go to step3" />
+			<sleep seconds="5" />
+
+			<verifyText text="result.complete" description="are result parts displayed correctly">
+				<table htmlId="step3-results" row="1" column="0" />
+			</verifyText>
+
+			<verifyText text="result.xmlSubPath" description="are result parts displayed correctly">
+				<table htmlId="step3-results" row="2" column="0" />
+			</verifyText>
+
+			<verifyText text="result.jsonSubPath" description="are result parts displayed correctly">
+				<table htmlId="step3-results" row="3" column="0" />
+			</verifyText>
+
+
+
+		</webtest>
+
+		
+
+
+	</target>
+</project>
