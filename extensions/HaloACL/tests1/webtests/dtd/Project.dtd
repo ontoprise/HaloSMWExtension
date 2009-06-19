@@ -8,4 +8,5 @@ Do not edit it else you risk to lose your changes.
 <!ENTITY createArticle SYSTEM "../includes/createArticle.xml">
 <!ENTITY goToLogout SYSTEM "../includes/goToLogout.xml">
 <!ENTITY login SYSTEM "../includes/login.xml">
+<!ENTITY resaveArticle SYSTEM "../includes/resaveArticle.xml">
 
