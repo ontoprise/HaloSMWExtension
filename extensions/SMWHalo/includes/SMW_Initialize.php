@@ -803,6 +803,13 @@ function smwfAnnotateTab ($content_actions) {
  * @param unknown_type $strip_stat
  */
 function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
+	$popts = $parser->getOptions();
+	if (method_exists($popts, "getParsingContext")) {
+		if ($popts->getParsingContext() != "Main article") {
+			return true; 
+		}
+	}
+		
 	global $smwgDisableAAMParser;
 	if ($smwgDisableAAMParser) {
 		return true;
