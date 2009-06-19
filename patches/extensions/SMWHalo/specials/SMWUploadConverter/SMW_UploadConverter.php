@@ -39,8 +39,8 @@ class UploadConverter {
 	 * 		true
 	 */
 	public static function convertUpload(&$uploadedFile) {
-		global $smwgHaloIP;
-		require_once("$smwgHaloIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
+		global $smwgRMIP;
+		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
 		
 		$file = $uploadedFile->mLocalFile; // can't avoid to access private field :(  
 		$mimeType = $file->getMimeType();
