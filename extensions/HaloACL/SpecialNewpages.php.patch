@@ -1,0 +1,17 @@
+Index: includes/specials/SpecialNewpages.php
+===================================================================
+--- includes/specials/SpecialNewpages.php	(revision 3749)
++++ includes/specials/SpecialNewpages.php	(working copy)
+@@ -232,6 +232,12 @@
+ 		$dm = $wgContLang->getDirMark();
+ 
+ 		$title = Title::makeTitleSafe( $result->page_namespace, $result->page_title );
++/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++		if (!$title->userCanReadEx()) {
++			return;
++		}
++/*op-patch|TS|2009-06-19|end*/  
++		
+ 		$time = $wgLang->timeAndDate( $result->rc_timestamp, true );
+ 		$plink = $this->skin->makeKnownLinkObj( $title, '', $this->patrollable( $result ) ? 'rcid=' . $result->rc_id : '' );
+ 		$hist = $this->skin->makeKnownLinkObj( $title, wfMsgHtml( 'hist' ), 'action=history' );

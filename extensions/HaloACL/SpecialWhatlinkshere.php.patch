@@ -1,0 +1,16 @@
+Index: includes/specials/SpecialWhatlinkshere.php
+===================================================================
+--- includes/specials/SpecialWhatlinkshere.php	(revision 3749)
++++ includes/specials/SpecialWhatlinkshere.php	(working copy)
+@@ -238,6 +238,11 @@
+ 		$wgOut->addHTML( $this->listStart() );
+ 		foreach ( $rows as $row ) {
+ 			$nt = Title::makeTitle( $row->page_namespace, $row->page_title );
++/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++			if (!$nt->userCanReadEx()) {
++				continue;
++			}
++/*op-patch|TS|2009-06-19|end*/  
+ 
+ 			if ( $row->page_is_redirect && $level < 2 ) {
+ 				$wgOut->addHTML( $this->listItem( $row, $nt, true ) );

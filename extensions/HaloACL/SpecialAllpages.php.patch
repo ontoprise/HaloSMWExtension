@@ -1,0 +1,16 @@
+Index: includes/specials/SpecialAllpages.php
+===================================================================
+--- includes/specials/SpecialAllpages.php	(revision 3749)
++++ includes/specials/SpecialAllpages.php	(working copy)
+@@ -263,6 +263,11 @@
+ 	
+ 			while( ($n < $this->maxPerPage) && ($s = $dbr->fetchObject( $res )) ) {
+ 				$t = Title::makeTitle( $s->page_namespace, $s->page_title );
++/*op-patch|TS|2009-06-19|HaloACL|SafeTitle|start*/
++				if ($t && !$t->userCanReadEx()) {
++					continue; 
++				}
++/*op-patch|TS|2009-06-19|end*/  
+ 				if( $t ) {
+ 					$link = ($s->page_is_redirect ? '<div class="allpagesredirect">' : '' ) .
+ 						$sk->makeKnownLinkObj( $t, htmlspecialchars( $t->getText() ), false, false ) .
