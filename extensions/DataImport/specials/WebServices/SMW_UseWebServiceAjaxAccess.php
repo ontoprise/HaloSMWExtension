@@ -64,14 +64,22 @@ function smwf_wsu_processStep1($name){
 		foreach($nonOptionalSubParameters as $name => $value){
 			$response .= $param->attributes()->name.".".$name.";";
 			$response .= "false;";
-			$response .= $value.";";
+		if($value == null){
+				$response .= ";";
+			} else {
+				$response .= $value.";";
+			}
 		}
 
 		$optionalSubParameters = $subParameterProcessor->getOptionalSubParameters();
 		foreach($optionalSubParameters as $name => $value){
 			$response .= $param->attributes()->name.".".$name.";";
 			$response .= "true;";
-			$response .= $value.";";
+			if($value == null){
+				$response .= ";";
+			} else {
+				$response .= $value.";";
+			}
 		}
 
 		$defaultSubParameters = $subParameterProcessor->getDefaultSubParameters();

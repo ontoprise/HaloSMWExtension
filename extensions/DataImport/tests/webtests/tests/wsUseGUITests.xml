@@ -118,11 +118,9 @@
 			<verifyInputField value="Not available"
 				xpath="//table[@id='step2-parameters']/tbody/tr[6]/td[4]/input[2]"
 				description="are defaults displayed correctly" />
-			<!--
-				<verifyInputField value="Not available"
+			<verifyInputField value="Not available"
 				xpath="//table[@id='step2-parameters']/tbody/tr[7]/td[4]/input[2]"
 				description="are defaults displayed correctly"/>
-			-->
 			<verifyText text="default" description="are defaults displayed correctly">
 				<table htmlId="step2-parameters" row="7" column="3" />
 			</verifyText>
