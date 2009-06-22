@@ -14,7 +14,7 @@ global $smwgRMIP, $wgHooks;
 $smwgRMIP = $IP . '/extensions/RichMedia';
 $smwgRMScriptPath = $wgScriptPath . '/extensions/RichMedia';
 
-include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
+include_once('RM_AdditionalMIMETypes.php');
 global $smwgRMFormByNamespace;
 
 $smwgRMFormByNamespace = array(
