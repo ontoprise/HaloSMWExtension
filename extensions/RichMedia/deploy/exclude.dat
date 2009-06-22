@@ -1,3 +1,5 @@
 .svn
 deploy\
 patches\
+patch.txt
+RichMediaPatchForMW1_13_2.txt
