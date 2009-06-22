@@ -32,7 +32,7 @@ $smwgRMFormByNamespace = array(
  */
 function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
-	global $wgExtensionFunctions, $smwgRMIP, $wgHooks;
+	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses;
 				
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
@@ -45,6 +45,16 @@ function enableRichMediaExtension() {
 	$wgHooks['LanguageGetMagic'][] = 'RMLinkUsage_Magic';
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
 	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+	
+	// Conversion of documents (PDF, MS Office)
+	global $smwgEnableUploadConverter;
+	if ($smwgEnableUploadConverter) {
+		global $wgExtensionMessagesFiles;
+		$wgAutoloadClasses['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
+		$wgExtensionMessagesFiles['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
+
+		$wgHooks['UploadComplete'][] = 'UploadConverter::convertUpload';
+	}
 }
 
 /**
