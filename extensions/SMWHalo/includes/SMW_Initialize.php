@@ -149,16 +149,6 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
 	$wgHooks['ExtDeleteOutput'][] = 'smwfExtDeleteOutput';
 
-	// Conversion of documents (PDF, MS Office)
-	global $smwgEnableUploadConverter;
-	if ($smwgEnableUploadConverter) {
-		global $wgExtensionMessagesFiles;
-		$wgAutoloadClasses['UploadConverter'] = $smwgHaloIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
-		$wgExtensionMessagesFiles['UploadConverter'] = $smwgHaloIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
-
-		$wgHooks['UploadComplete'][] = 'UploadConverter::convertUpload';
-	}
-
 	global $wgRequest, $wgContLang, $wgCommandLineMode;
 
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
