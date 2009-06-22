@@ -310,6 +310,8 @@
 #smwf_pageblock{
 	position: relative;
 	margin-left: 220px;
+    font-size: small;
+    font-family: Sans-serif;
 }
 
 #smwf_pageblock ul{
@@ -349,7 +351,9 @@
 	border-bottom: 1px solid #4B595C;
 }
 
-#smwf_pageblock pre{
+#smwf_pageblock pre, #smwf_pageblock code{
+    border: 1px dotted #CCCCCC;
+    background-color: #F2F2F2;
 	display: inline-block;
 }
 
