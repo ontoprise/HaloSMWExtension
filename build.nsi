@@ -291,8 +291,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
       !ifndef NOFILES
             
             File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php * 
-            File /oname=extensions\SMWHalo\bin\xpdf\pdftotext.exe extensions\SMWHalo\bin\xpdf\pdftotext.exe
-            File /oname=extensions\SMWHalo\bin\antiword\antiword.exe extensions\SMWHalo\bin\antiword\antiword.exe
+            File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
+            File /oname=extensions\RichMedia\bin\antiword\antiword.exe extensions\RichMedia\bin\antiword\antiword.exe
             File /oname=AdminSettings.php AdminSettingsTemplate.php            
       !endif  
   ;Create uninstaller
