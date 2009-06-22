@@ -8,6 +8,7 @@
 	
 	<target name="testAll" description="runs all the tests">
 <!--
+-->		
 		<ant antfile="createUsers.xml"/> 
 		<ant antfile="createArticles.xml"/>
 		<ant antfile="pageTransclusion.xml"/>
@@ -25,7 +26,6 @@
 		<ant antfile="openSection.xml"/>
 		<ant antfile="query.xml"/>
 		<ant antfile="queryAsk.xml"/>
--->		
 		<ant antfile="querySparql.xml"/>
 <!--
 -->		
