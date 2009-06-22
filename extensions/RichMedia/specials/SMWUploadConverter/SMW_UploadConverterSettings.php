@@ -27,7 +27,7 @@ global $smwgRMIP;
 // Definition of converters for various mime types.
 
 // check OS is windows?
-if (strpos(strtolower(php_uname('s')) == "win")) {
+if (strpos(strtolower(php_uname('s')), "win") !== false) {
 	$smwgUploadConverter = array(
 		'application/pdf' => "$smwgRMIP/bin/xpdf/pdftotext.exe -enc UTF-8 -layout {infile} {outfile}",
 		'application/msword' => $smwgRMIP.'/bin/antiword/antiword.exe -m UTF-8.txt "{infile}" > "{outfile}"'
