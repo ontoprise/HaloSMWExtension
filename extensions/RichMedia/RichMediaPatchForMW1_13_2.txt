@@ -1,0 +1,1060 @@
+Index: includes/Article.php
+===================================================================
+--- includes/Article.php	(revision 4133)
++++ includes/Article.php	(working copy)
+@@ -1189,7 +1189,12 @@
+ 				$dbw->delete( 'redirect', $where, __METHOD__);
+ 			}
+ 
+-			if( $this->getTitle()->getNamespace() == NS_IMAGE )
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if( $this->getTitle()->getNamespace() == NS_IMAGE )
++			if( Namespace::isImage( $this->getTitle()->getNamespace() ) )
++			/*op-patch|BL|2009-06-17|end*/
+ 				RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $this->getTitle() );
+ 			wfProfileOut( __METHOD__ );
+ 			return ( $dbw->affectedRows() != 0 );
+@@ -2235,6 +2240,8 @@
+ 			}
+ 
+ 		$wgOut->addHTML( $form );
++		wfRunHooks('ExtDeleteOutput', array(&$this, &$output));
++		$wgOut->addHTML( $output );
+ 		$this->showLogExtract( $wgOut );
+ 	}
+ 
+@@ -3120,7 +3127,12 @@
+ 			$wgMessageCache->replace( $title->getDBkey(), false );
+ 		}
+ 		# Images
+-		if( $title->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $title->getNamespace() == NS_IMAGE ) {
++		if( Namespace::isImage( $title->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$update = new HTMLCacheUpdate( $title, 'imagelinks' );
+ 			$update->doUpdate();
+ 		}
+@@ -3479,7 +3491,12 @@
+ 		if( $ns == NS_CATEGORY ) {
+ 			$addFields[]    = 'cat_subcats = cat_subcats + 1';
+ 			$removeFields[] = 'cat_subcats = cat_subcats - 1';
+-		} elseif( $ns == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// } elseif( $ns == NS_IMAGE ) {
++		} elseif( Namespace::isImage( $ns ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$addFields[]    = 'cat_files = cat_files + 1';
+ 			$removeFields[] = 'cat_files = cat_files - 1';
+ 		}
+Index: includes/CategoryPage.php
+===================================================================
+--- includes/CategoryPage.php	(revision 4133)
++++ includes/CategoryPage.php	(working copy)
+@@ -249,7 +249,12 @@
+ 			if( $title->getNamespace() == NS_CATEGORY ) {
+ 				$cat = Category::newFromRow( $x, $title );
+ 				$this->addSubcategoryObject( $cat, $x->cl_sortkey, $x->page_len );
+-			} elseif( $this->showGallery && $title->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// } elseif( $this->showGallery && $title->getNamespace() == NS_IMAGE ) {
++			} elseif( $this->showGallery && Namespace::isImage( Namespace::isImage( $title->getNamespace() ) ) ) {
++			/*op-patch|BL|2009-06-17|end*/
+ 				$this->addImage( $title, $x->cl_sortkey, $x->page_len, $x->page_is_redirect );
+ 			} else {
+ 				$this->addPage( $title, $x->cl_sortkey, $x->page_len, $x->page_is_redirect );
+Index: includes/EditPage.php
+===================================================================
+--- includes/EditPage.php	(revision 4133)
++++ includes/EditPage.php	(working copy)
+@@ -728,7 +728,12 @@
+ 		}
+ 
+ 		# Check image redirect
+-		if ( $this->mTitle->getNamespace() == NS_IMAGE &&
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if ( $this->mTitle->getNamespace() == NS_IMAGE &&
++		if ( Namespace::isImage( $this->mTitle->getNamespace() ) &&
++		/*op-patch|BL|2009-06-17|end*/
+ 			Title::newFromRedirect( $this->textbox1 ) instanceof Title &&
+ 			!$wgUser->isAllowed( 'upload' ) ) {
+ 				if( $wgUser->isAnon() ) {
+Index: includes/Export.php
+===================================================================
+--- includes/Export.php	(revision 4133)
++++ includes/Export.php	(working copy)
+@@ -487,7 +487,12 @@
+ 	 * Warning! This data is potentially inconsistent. :(
+ 	 */
+ 	function writeUploads( $row ) {
+-		if( $row->page_namespace == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $row->page_namespace == NS_IMAGE ) {
++		if( Namespace::isImage( $row->page_namespace ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$img = wfFindFile( $row->page_title );
+ 			if( $img ) {
+ 				$out = '';
+Index: includes/Image.php
+===================================================================
+--- includes/Image.php	(revision 4133)
++++ includes/Image.php	(working copy)
+@@ -2020,7 +2020,12 @@
+ 			throw new MWException( 'Image constructor given bogus title.' );
+ 		}
+ 		$conds = ($id) ? "fa_id = $id" : "fa_storage_key = '$key'";
+-		if( $title->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $title->getNamespace() == NS_IMAGE ) {
++		if( Namespace::isImage( $title->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$dbr = wfGetDB( DB_SLAVE );
+ 			$res = $dbr->select( 'filearchive',
+ 				array(
+Index: includes/ImageGallery.php
+===================================================================
+--- includes/ImageGallery.php	(revision 4133)
++++ includes/ImageGallery.php	(working copy)
+@@ -243,8 +243,12 @@
+ 			wfRunHooks( 'BeforeGalleryFindFile', array( &$this, &$nt, &$time, &$descQuery ) );
+ 
+ 			$img = wfFindFile( $nt, $time );
+-
+-			if( $nt->getNamespace() != NS_IMAGE || !$img ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if( $nt->getNamespace() != NS_IMAGE || !$img ) {
++			if( !( Namespace::isImage( $nt->getNamespace() ) ) || !$img ) {
++			/*op-patch|BL|2009-06-17|end*/
+ 				# We're dealing with a non-image, spit out the name and be done with it.
+ 				$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">'
+ 					. htmlspecialchars( $nt->getText() ) . '</div>';
+Index: includes/ImagePage.php
+===================================================================
+--- includes/ImagePage.php	(revision 4133)
++++ includes/ImagePage.php	(working copy)
+@@ -57,7 +57,27 @@
+ 		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
+ 		$this->loadFile();
+ 
+-		if ( $this->mTitle->getNamespace() == NS_IMAGE && $this->img->getRedirected() ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		// set fileExists to false if extension does not fit the Namespace (quick hack)
++		// content was:
++		// if ( $this->mTitle->getNamespace() == NS_IMAGE && $this->img->getRedirected() ) {
++		global $wgNamespaceByExtension;
++		list( $partname, $ext ) = UploadForm::splitExtensions( $this->mTitle->getFullText() );
++		if( count( $ext ) ) {
++			$finalExt = $ext[count( $ext ) - 1];
++		} else {
++			$finalExt = '';
++		}
++		$additionalNS = NS_IMAGE;
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$additionalNS = $wgNamespaceByExtension[$finalExt];
++		if($this->mTitle->getNamespace() != $additionalNS)
++			$this->img->fileExists = false;
++		
++		if ( Namespace::isImage( $this->mTitle->getNamespace() ) && $this->img->getRedirected() ) {
++		/*op-patch|BL|2009-06-10|end*/
+ 			if ( $this->mTitle->getDBkey() == $this->img->getName() ) {
+ 				// mTitle is the same as the redirect target so ask Article
+ 				// to perform the redirect for us.
+@@ -75,13 +95,17 @@
+ 
+ 		$diff = $wgRequest->getVal( 'diff' );
+ 		$diffOnly = $wgRequest->getBool( 'diffonly', $wgUser->getOption( 'diffonly' ) );
+-
+-		if ( $this->mTitle->getNamespace() != NS_IMAGE || ( isset( $diff ) && $diffOnly ) )
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if ( $this->mTitle->getNamespace() != NS_IMAGE || ( isset( $diff ) && $diffOnly ) )
++		if ( !( Namespace::isImage( $this->mTitle->getNamespace() ) ) || ( isset( $diff ) && $diffOnly ) )
++		/*op-patch|BL|2009-06-17|end*/
+ 			return Article::view();
+-
+-		if ( $wgShowEXIF && $this->displayImg->exists() ) {
+-			// FIXME: bad interface, see note on MediaHandler::formatMetadata().
+-			$formattedMetadata = $this->displayImg->formatMetadata();
++		
++		if ($wgShowEXIF && $this->img->exists()) {
++			// FIXME: bad interface, see note on MediaHandler::formatMetadata(). 
++			$formattedMetadata = $this->img->formatMetadata();
+ 			$showmeta = $formattedMetadata !== false;
+ 		} else {
+ 			$showmeta = false;
+@@ -422,14 +446,19 @@
+ 				}
+ 			} else {
+ 				#if direct link is allowed but it's not a renderable image, show an icon.
++				$icon= $this->displayImg->iconThumb();
+ 				if ( $this->displayImg->isSafeFile() ) {
+-					$icon= $this->displayImg->iconThumb();
+-
+ 					$wgOut->addHTML( '<div class="fullImageLink" id="file">' .
+ 					$icon->toHtml( array( 'desc-link' => true ) ) .
+ 					'</div>' );
+ 				}
+-
++				/*op-patch|BL|2009-06-17|RichMedia|PrintDangerousLinks|start*/
++				// printing out a dangerous link if file is not safe
++				else {
++					$wgOut->addHTML( '<div class="dangerousLink" id="file">' .
++									$icon->toHtml( array( 'desc-link' => true ) ) . '</div>' );
++				}
++				/*op-patch|BL|2009-06-17|end*/
+ 				$showLink = true;
+ 			}
+ 
+@@ -693,7 +722,7 @@
+ 	}
+ 
+ 	function imageDupes() {
+-		global $wgOut, $wgUser;
++		global $wgOut, $wgUser, $wgNamespaceByExtension;
+ 
+ 		$this->loadFile();
+ 
+@@ -706,8 +735,22 @@
+ 
+ 		$sk = $wgUser->getSkin();
+ 		foreach ( $dupes as $file ) {
+-			if ( $file->isLocal() )
++			if ( $file->isLocal() ) {
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE may not be the correct Namespace for this MIME type
++				list( $partname, $ext ) = UploadForm::splitExtensions( $file->name );
++				if( count( $ext ) ) {
++					$finalExt = $ext[count( $ext ) - 1];
++				} else {
++					$finalExt = '';
++				}
++				if ( isset( $finalExt ) )
++					if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
++						$file->title->mNamespace = $wgNamespaceByExtension[$finalExt];
++					}
++				/*op-patch|BL|2009-06-17|end*/
+ 				$link = $sk->makeKnownLinkObj( $file->getTitle(), "" );
++			}
+ 			else
+ 				$link = $sk->makeExternalLink( $file->getDescriptionUrl(), 
+ 					$file->getTitle()->getPrefixedText() );
+Index: includes/ImageQueryPage.php
+===================================================================
+--- includes/ImageQueryPage.php	(revision 4133)
++++ includes/ImageQueryPage.php	(working copy)
+@@ -45,9 +45,26 @@
+ 	 * @return Image
+ 	 */
+ 	private function prepareImage( $row ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		global $wgNamespaceByExtension;
+ 		$namespace = isset( $row->namespace ) ? $row->namespace : NS_IMAGE;
++		list( $partname, $ext ) = UploadForm::splitExtensions( $row->title );
++		if( count( $ext ) ) {
++			$finalExt = $ext[count( $ext ) - 1];
++		} else {
++			$finalExt = '';
++		}
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$namespace = $wgNamespaceByExtension[$finalExt];
++		/*op-patch|BL|2009-06-17|end*/
+ 		$title = Title::makeTitleSafe( $namespace, $row->title );
+-		return ( $title instanceof Title && $title->getNamespace() == NS_IMAGE )
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		return ( $title instanceof Title  && Namespace::isImage( $title->getNamespace() ) )
++		/*op-patch|BL|2009-06-17|end*/
+ 			? wfFindFile( $title )
+ 			: null;
+ 	}
+Index: includes/Linker.php
+===================================================================
+--- includes/Linker.php	(revision 4133)
++++ includes/Linker.php	(working copy)
+@@ -581,7 +581,12 @@
+ 		global $wgContLang, $wgUser, $wgThumbLimits, $wgThumbUpright;
+ 		if ( $file && !$file->allowInlineDisplay() ) {
+ 			wfDebug( __METHOD__.': '.$title->getPrefixedDBkey()." does not allow inline display\n" );
+-			return $this->makeKnownLinkObj( $title );
++			/*op-patch|BL|2009-06-17|RichMedia|AltParams|start*/
++			// set the alt params of LinkObj
++			// content was:
++			// return $this->makeKnownLinkObj( $title );
++			return $this->makeKnownLinkObj( $title, $frameParams['alt'] );
++			/*op-patch|BL|2009-06-17|end*/
+ 		}
+ 
+ 		// Shortcuts
+@@ -658,7 +663,13 @@
+ 		}
+ 
+ 		if ( !$thumb ) {
+-			$s = $this->makeBrokenImageLinkObj( $title, '', '', '', '', $time==true );
++			/*op-patch|BL|2009-06-17|RichMedia|AltParams|start*/
++			// set the alt params of LinkObj
++			// content was:
++			// $s = $this->makeBrokenImageLinkObj( $title, '', '', '', '', $time==true );
++			// return $this->makeKnownLinkObj( $title );
++			$s = $this->makeBrokenImageLinkObj( $title, $fp['alt'], '', '', '', $time==true );
++			/*op-patch|BL|2009-06-17|end*/
+ 		} else {
+ 			$s = $thumb->toHtml( array(
+ 				'desc-link' => true,
+Index: includes/Namespace.php
+===================================================================
+--- includes/Namespace.php	(revision 4133)
++++ includes/Namespace.php	(working copy)
+@@ -53,7 +53,12 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );	
++		return !( $index < NS_MAIN || (self::isImage($index) && !$wgAllowImageMoving) || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-06-17|end*/
+ 	}
+ 
+ 	/**
+@@ -177,5 +182,18 @@
+ 		global $wgNamespacesWithSubpages;
+ 		return !empty( $wgNamespacesWithSubpages[$index] );
+ 	}
+-
++	
++	/*op-patch|BL|2009-06-17|RichMedia|NewFuncForAdditionalNamespaces|start*/
++	/**
++	 * Is the namespace one of the (new) image-namespaces?
++	 * created for AdditionalMIMETypes
++	 * 
++	 * @param int $index
++	 * @return bool
++	 */
++	public static function isImage( $index ) {
++			return ($index == NS_IMAGE || $index == NS_DOCUMENT ||
++				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
++	}
++	/*op-patch|BL|2009-06-17|end*/
+ }
+Index: includes/Title.php
+===================================================================
+--- includes/Title.php	(revision 4133)
++++ includes/Title.php	(working copy)
+@@ -382,8 +382,12 @@
+ 		$t = preg_replace( "/([{$lc}]+)s'( |$)/", "\\1s ", $t );
+ 
+ 		$t = preg_replace( "/\\s+/", ' ', $t );
+-
+-		if ( $ns == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if ( $ns == NS_IMAGE ) {
++		if ( Namespace::isImage( $ns ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$t = preg_replace( "/ (png|gif|jpg|jpeg|ogg)$/", "", $t );
+ 		}
+ 		return trim( $t );
+@@ -1645,8 +1649,12 @@
+ 		wfProfileIn( __METHOD__ );
+ 
+ 		$dbr = wfGetDb( DB_SLAVE );
+-
+-		if ( $this->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if ( $this->getNamespace() == NS_IMAGE ) {
++		if ( Namespace::isImage( $this->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$tables = array ('imagelinks', 'page_restrictions');
+ 			$where_clauses = array(
+ 				'il_to' => $this->getDBkey(),
+@@ -1869,7 +1877,12 @@
+ 			$dbr = wfGetDB( DB_SLAVE );
+ 			$n = $dbr->selectField( 'archive', 'COUNT(*)', array( 'ar_namespace' => $this->getNamespace(),
+ 				'ar_title' => $this->getDBkey() ), $fname );
+-			if( $this->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if( $this->getNamespace() == NS_IMAGE ) {
++			if ( Namespace::isImage( $this->getNamespace() )  ) {
++			/*op-patch|BL|2009-06-17|end*/
+ 				$n += $dbr->selectField( 'filearchive', 'COUNT(*)',
+ 					array( 'fa_name' => $this->getDBkey() ), $fname );
+ 			}
+@@ -2444,10 +2457,18 @@
+ 		}
+ 
+ 		// Image-specific checks
+-		if( $this->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->getNamespace() == NS_IMAGE ) {
++		//   $file = wfLocalFile( $this );
++		//	 if( $file->exists() ) {
++		//     if( $nt->getNamespace() != NS_IMAGE ) {
++		if ( Namespace::isImage( $this->getNamespace() )  ) {
+ 			$file = wfLocalFile( $this );
+ 			if( $file->exists() ) {
+-				if( $nt->getNamespace() != NS_IMAGE ) {
++				if ( !Namespace::isImage( $nt->getNamespace() )  ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 					$errors[] = array('imagenocrossnamespace');
+ 				}
+ 				if( $nt->getText() != wfStripIllegalFilenameChars( $nt->getText() ) ) {
+@@ -2688,7 +2709,12 @@
+ 		}
+ 		
+ 		# Move an image if this is a file
+-		if( $this->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->getNamespace() == NS_IMAGE ) {
++		if ( Namespace::isImage( $this->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$file = wfLocalFile( $this );
+ 			if( $file->exists() ) {
+ 				$status = $file->move( $nt );
+@@ -2782,7 +2808,12 @@
+ 		}
+ 		
+ 		# Move an image if this is a file
+-		if( $this->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->getNamespace() == NS_IMAGE ) {
++		if ( Namespace::isImage( $this->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$file = wfLocalFile( $this );
+ 			if( $file->exists() ) {
+ 				$status = $file->move( $nt );
+@@ -2819,7 +2850,12 @@
+ 		$dbw = wfGetDB( DB_MASTER );
+ 
+ 		# Is it an existsing file?
+-		if( $nt->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $nt->getNamespace() == NS_IMAGE ) {
++		if ( Namespace::isImage( $nt->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$file = wfLocalFile( $nt );
+ 			if( $file->exists() ) {
+ 				wfDebug( __METHOD__ . ": file exists\n" );
+@@ -3148,6 +3184,14 @@
+ 				return 'nstab-project';
+ 			case NS_IMAGE:
+ 			case NS_IMAGE_TALK:
++			case NS_AUDIO:
++			case NS_AUDIO_TALK:
++			case NS_VIDEO:
++			case NS_VIDEO_TALK:
++			case NS_DOCUMENT:
++			case NS_DOCUMENT_TALK:
++			case NS_PDF:
++			case NS_PDF_TALK:
+ 				return 'nstab-image';
+ 			case NS_MEDIAWIKI:
+ 			case NS_MEDIAWIKI_TALK:
+Index: includes/Wiki.php
+===================================================================
+--- includes/Wiki.php	(revision 4133)
++++ includes/Wiki.php	(working copy)
+@@ -249,9 +249,18 @@
+ 		if( $article ) {
+ 			return $article;
+ 		}
+-
++		
+ 		switch( $title->getNamespace() ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// case NS_IMAGE:
+ 		case NS_IMAGE:
++		case NS_AUDIO:
++		case NS_VIDEO:
++		case NS_DOCUMENT:
++		case NS_PDF:
++		/*op-patch|BL|2009-06-17|end*/
+ 			return new ImagePage( $title );
+ 		case NS_CATEGORY:
+ 			return new CategoryPage( $title );
+Index: includes/mime.types
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: includes/filerepo/ArchivedFile.php
+===================================================================
+--- includes/filerepo/ArchivedFile.php	(revision 4133)
++++ includes/filerepo/ArchivedFile.php	(working copy)
+@@ -62,7 +62,12 @@
+ 			return true;
+ 		}
+ 		$conds = ($this->id) ? "fa_id = {$this->id}" : "fa_storage_key = '{$this->key}'";
+-		if( $this->title->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->title->getNamespace() == NS_IMAGE ) {
++		if( Namespace::isImage( $this->title->getNamespace() ) ) {
++		/*op-patch|BL|2009-00-17|end*/
+ 			$dbr = wfGetDB( DB_SLAVE );
+ 			$res = $dbr->select( 'filearchive',
+ 				array(
+Index: includes/filerepo/FileRepo.php
+===================================================================
+--- includes/filerepo/FileRepo.php	(revision 4133)
++++ includes/filerepo/FileRepo.php	(working copy)
+@@ -112,8 +112,13 @@
+ 		if ( $flags & FileRepo::FIND_IGNORE_REDIRECT ) {
+ 			return false;
+ 		}
+-		$redir = $this->checkRedirect( $title );		
+-		if( $redir && $redir->getNamespace() == NS_IMAGE) {
++		$redir = $this->checkRedirect( $title );
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $redir && $redir->getNamespace() == NS_IMAGE) {
++		if( $redir && Namespace::isImage( $redir->getNamespace() ) ) {
++		/*op-patch|BL|2009-00-17|end*/  
+ 			$img = $this->newFile( $redir );
+ 			if( !$img ) {
+ 				return false;
+Index: includes/parser/Parser.php
+===================================================================
+--- includes/parser/Parser.php	(revision 4133)
++++ includes/parser/Parser.php	(working copy)
+@@ -1643,7 +1643,12 @@
+ 
+ 			if ($might_be_img) { # if this is actually an invalid link
+ 				wfProfileIn( "$fname-might_be_img" );
+-				if ($ns == NS_IMAGE && $noforce) { #but might be an image
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE is not the only Namespace now, so check them all
++				// content was:
++				// if ($ns == NS_IMAGE && $noforce) { #but might be an image
++				if (Namespace::isImage( $ns ) && $noforce) { #but might be an image
++				/*op-patch|BL|2009-00-17|end*/
+ 					$found = false;
+ 					while (isset ($a[$k+1]) ) {
+ 						#look at the next 'line' to see if we can close it there
+@@ -1699,8 +1704,13 @@
+ 					continue;
+ 				}
+ 				wfProfileOut( "$fname-interwiki" );
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE is not the only Namespace now, so check them all
++				// content was:
++				// if ($ns == NS_IMAGE) {
++				if ( Namespace::isImage( $ns )  ) {
++				/*op-patch|BL|2009-00-17|end*/
+ 
+-				if ( $ns == NS_IMAGE ) {
+ 					wfProfileIn( "$fname-image" );
+ 					if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
+ 						# recursively parse links inside the image caption
+@@ -1777,7 +1787,12 @@
+ 					$s .= $this->makeLinkHolder( $nt, $text, '', $trail, $prefix );
+ 				}
+ 				continue;
+-			} elseif( $ns == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// } elseif( $ns == NS_IMAGE ) {
++			} elseif ( Namespace::isImage( $nt ) ) {
++			/*op-patch|BL|2009-00-17|end*/
+ 				$img = wfFindFile( $nt );
+ 				if( $img ) {
+ 					// Force a blue link if the file exists; may be a remote
+@@ -4415,7 +4430,12 @@
+ 			$ig->add( $nt, $html );
+ 
+ 			# Only add real images (bug #5586)
+-			if ( $nt->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if ( $nt->getNamespace() == NS_IMAGE ) {
++			if ( Namespace::isImage( $nt->getNamespace() ) ) {
++			/*op-patch|BL|2009-00-17|end*/
+ 				$this->mOutput->addImage( $nt->getDBkey() );
+ 			}
+ 		}
+Index: includes/parser/Parser_OldPP.php
+===================================================================
+--- includes/parser/Parser_OldPP.php	(revision 4133)
++++ includes/parser/Parser_OldPP.php	(working copy)
+@@ -1657,7 +1657,12 @@
+ 
+ 			if ($might_be_img) { # if this is actually an invalid link
+ 				wfProfileIn( "$fname-might_be_img" );
+-				if ($ns == NS_IMAGE && $noforce) { #but might be an image
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE is not the only Namespace now, so check them all
++				// content was:
++				// if ($ns == NS_IMAGE && $noforce) { #but might be an image
++				if (Namespace::isImage( $ns ) && $noforce) { #but might be an image
++				/*op-patch|BL|2009-00-17|end*/  
+ 					$found = false;
+ 					while (isset ($a[$k+1]) ) {
+ 						#look at the next 'line' to see if we can close it there
+@@ -1714,7 +1719,12 @@
+ 				}
+ 				wfProfileOut( "$fname-interwiki" );
+ 
+-				if ( $ns == NS_IMAGE ) {
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE is not the only Namespace now, so check them all
++				// content was:
++				// if ( $ns == NS_IMAGE ) {
++				if ( Namespace::isImage( $ns ) ) {
++				/*op-patch|BL|2009-00-17|end*/
+ 					wfProfileIn( "$fname-image" );
+ 					if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
+ 						# recursively parse links inside the image caption
+@@ -1791,7 +1801,12 @@
+ 					$s .= $this->makeLinkHolder( $nt, $text, '', $trail, $prefix );
+ 				}
+ 				continue;
+-			} elseif( $ns == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// } elseif( $ns == NS_IMAGE ) {
++			} elseif( Namespace::isImage( $ns ) ) {
++			/*op-patch|BL|2009-00-17|end*/
+ 				$img = wfFindFile( $nt );
+ 				if( $img ) {
+ 					// Force a blue link if the file exists; may be a remote
+@@ -4477,7 +4492,12 @@
+ 			$ig->add( $nt, $html );
+ 
+ 			# Only add real images (bug #5586)
+-			if ( $nt->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if ( $nt->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-00-17|end*/
++			if ( Namespace::isImage( $nt->getNamespace() ) ) {
+ 				$this->mOutput->addImage( $nt->getDBkey() );
+ 			}
+ 		}
+Index: includes/specials/SpecialFileDuplicateSearch.php
+===================================================================
+--- includes/specials/SpecialFileDuplicateSearch.php	(revision 4133)
++++ includes/specials/SpecialFileDuplicateSearch.php	(working copy)
+@@ -47,9 +47,24 @@
+ 	}
+ 
+ 	function formatResult( $skin, $result ) {
+-		global $wgContLang, $wgLang;
+-
+-		$nt = Title::makeTitle( NS_IMAGE, $result->title );
++		global $wgContLang, $wgLang, $wgNamespaceByExtension;
++		
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		// content was:
++		// $nt = Title::makeTitle( NS_IMAGE, $result->title );
++		list( $partname, $ext ) = UploadForm::splitExtensions( $result->title );
++		if( count( $ext ) ) {
++			$finalExt = $ext[count( $ext ) - 1];
++		} else {
++			$finalExt = '';
++		}
++		$my_ns = NS_IMAGE;
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$my_ns = $wgNamespaceByExtension[$finalExt];
++		$nt = Title::makeTitle( $my_ns, $result->title );
++		/*op-patch|BL|2009-00-17|end*/
+ 		$text = $wgContLang->convert( $nt->getText() );
+ 		$plink = $skin->makeLink( $nt->getPrefixedText(), $text );
+ 
+Index: includes/specials/SpecialFilepath.php
+===================================================================
+--- includes/specials/SpecialFilepath.php	(revision 4133)
++++ includes/specials/SpecialFilepath.php	(working copy)
+@@ -10,8 +10,12 @@
+ 	$file = isset( $par ) ? $par : $wgRequest->getText( 'file' );
+ 
+ 	$title = Title::newFromText( $file, NS_IMAGE );
+-
+-	if ( ! $title instanceof Title || $title->getNamespace() != NS_IMAGE ) {
++	/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++	// NS_IMAGE is not the only Namespace now, so check them all
++	// content was:
++	// if ( ! $title instanceof Title || $title->getNamespace() != NS_IMAGE ) {
++	if ( ! $title instanceof Title || !Namespace::isImage( $title->getNamespace() ) ) {
++	/*op-patch|BL|2009-00-17|end*/
+ 		$cform = new FilepathForm( $title );
+ 		$cform->execute();
+ 	} else {
+Index: includes/specials/SpecialImagelist.php
+===================================================================
+--- includes/specials/SpecialImagelist.php	(revision 4133)
++++ includes/specials/SpecialImagelist.php	(working copy)
+@@ -97,7 +97,7 @@
+ 	}
+ 
+ 	function formatValue( $field, $value ) {
+-		global $wgLang;
++		global $wgLang, $wgNamespaceByExtension;
+ 		switch ( $field ) {
+ 			case 'img_timestamp':
+ 				return $wgLang->timeanddate( $value, true );
+@@ -106,7 +106,22 @@
+ 				if ( $imgfile === null ) $imgfile = wfMsg( 'imgfile' );
+ 
+ 				$name = $this->mCurrentRow->img_name;
+-				$link = $this->getSkin()->makeKnownLinkObj( Title::makeTitle( NS_IMAGE, $name ), $value );
++				/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_IMAGE may not be the correct Namespace for this MIME type
++				// content was:
++				// $link = $this->getSkin()->makeKnownLinkObj( Title::makeTitle( NS_IMAGE, $name ), $value );
++				list( $partname, $ext ) = UploadForm::splitExtensions( $name );
++				if( count( $ext ) ) {
++					$finalExt = $ext[count( $ext ) - 1];
++				} else {
++					$finalExt = '';
++				}
++				$my_ns = NS_IMAGE;
++				if ( isset( $finalExt ) )
++					if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++						$my_ns = $wgNamespaceByExtension[$finalExt];
++				$link = $this->getSkin()->makeKnownLinkObj( Title::makeTitle( $my_ns, $name ), $value );
++				/*op-patch|BL|2009-06-17|end*/
+ 				$image = wfLocalFile( $value );
+ 				$url = $image->getURL();
+ 				$download = Xml::element('a', array( 'href' => $url ), $imgfile );
+Index: includes/specials/SpecialMIMEsearch.php
+===================================================================
+--- includes/specials/SpecialMIMEsearch.php	(revision 4133)
++++ includes/specials/SpecialMIMEsearch.php	(working copy)
+@@ -61,9 +61,23 @@
+ 	}
+ 
+ 	function formatResult( $skin, $result ) {
+-		global $wgContLang, $wgLang;
+-
+-		$nt = Title::makeTitle( $result->namespace, $result->title );
++		global $wgContLang, $wgLang, $wgNamespaceByExtension;
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		// content was:
++		// $nt = Title::makeTitle( $result->namespace, $result->title );
++		list( $partname, $ext ) = UploadForm::splitExtensions( $result->title );
++		if( count( $ext ) ) {
++			$finalExt = $ext[count( $ext ) - 1];
++		} else {
++			$finalExt = '';
++		}
++		$my_ns = NS_IMAGE;
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$my_ns = $wgNamespaceByExtension[$finalExt];				
++		$nt = Title::makeTitle( $my_ns, $result->title );
++		/*op-patch|BL|2009-06-17|end*/
+ 		$text = $wgContLang->convert( $nt->getText() );
+ 		$plink = $skin->makeLink( $nt->getPrefixedText(), $text );
+ 
+Index: includes/specials/SpecialNewimages.php
+===================================================================
+--- includes/specials/SpecialNewimages.php	(revision 4133)
++++ includes/specials/SpecialNewimages.php	(working copy)
+@@ -9,7 +9,7 @@
+  *
+  */
+ function wfSpecialNewimages( $par, $specialPage ) {
+-	global $wgUser, $wgOut, $wgLang, $wgRequest, $wgGroupPermissions, $wgMiserMode;
++	global $wgUser, $wgOut, $wgLang, $wgRequest, $wgGroupPermissions, $wgMiserMode, $wgNamespaceByExtension;
+ 
+ 	$wpIlMatch = $wgRequest->getText( 'wpIlMatch' );
+ 	$dbr = wfGetDB( DB_SLAVE );
+@@ -134,8 +134,23 @@
+ 
+ 		$name = $s->img_name;
+ 		$ut = $s->img_user_text;
+-
+-		$nt = Title::newFromText( $name, NS_IMAGE );
++		
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		// content was:
++		// $nt = Title::newFromText( $name, NS_IMAGE );
++		list( $partname, $ext ) = UploadForm::splitExtensions( $name );
++		if( count( $ext ) ) {
++			$finalExt = $ext[count( $ext ) - 1];
++		} else {
++			$finalExt = '';
++		}
++		$my_ns = NS_IMAGE;
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$my_ns = $wgNamespaceByExtension[$finalExt];
++		$nt = Title::newFromText( $name, $my_ns );
++		/*op-patch|BL|2009-06-17|end*/
+ 		$ul = $sk->makeLinkObj( Title::makeTitle( NS_USER, $ut ), $ut );
+ 
+ 		$gallery->add( $nt, "$ul<br />\n<i>".$wgLang->timeanddate( $s->img_timestamp, true )."</i><br />\n" );
+Index: includes/specials/SpecialRecentchangeslinked.php
+===================================================================
+--- includes/specials/SpecialRecentchangeslinked.php	(revision 4133)
++++ includes/specials/SpecialRecentchangeslinked.php	(working copy)
+@@ -93,7 +93,13 @@
+ 			// for now, always join on these tables; really should be configurable as in whatlinkshere
+ 			$link_tables = array( 'pagelinks', 'templatelinks' );
+ 			// imagelinks only contains links to pages in NS_IMAGE
+-			if( $ns == NS_IMAGE || !$showlinkedto ) $link_tables[] = 'imagelinks';
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// imagelinks only contains links to pages in one of the image-NS
++			// content was:
++			// if( $ns == NS_IMAGE || !$showlinkedto ) $link_tables[] = 'imagelinks';
++			if( Namespace::isImage( $ns ) || !$showlinkedto ) $link_tables[] = 'imagelinks';
++			/*op-patch|BL|2009-06-17|end*/
+ 		}
+ 
+ 		// field name prefixes for all the various tables we might want to join with
+Index: includes/specials/SpecialSearch.php
+===================================================================
+--- includes/specials/SpecialSearch.php	(revision 4133)
++++ includes/specials/SpecialSearch.php	(working copy)
+@@ -439,7 +439,12 @@
+ 		}
+ 				
+ 		// Include a thumbnail for media files...
+-		if( $t->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $t->getNamespace() == NS_IMAGE ) {
++		if( Namespace::isImage( $t->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$img = wfFindFile( $t );
+ 			if( $img ) {
+ 				$thumb = $img->getThumbnail( 120, 120 );
+Index: includes/specials/SpecialUncategorizedimages.php
+===================================================================
+--- includes/specials/SpecialUncategorizedimages.php	(revision 4133)
++++ includes/specials/SpecialUncategorizedimages.php	(working copy)
+@@ -31,14 +31,28 @@
+ 	function getSQL() {
+ 		$dbr = wfGetDB( DB_SLAVE );
+ 		list( $page, $categorylinks ) = $dbr->tableNamesN( 'page', 'categorylinks' );
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so get them all
++		// content was:
++		// $ns = NS_IMAGE;
++		//	return "SELECT 'Uncategorizedimages' AS type, page_namespace AS namespace,
++		//			page_title AS title, page_title AS value
++		//			FROM {$page} LEFT JOIN {$categorylinks} ON page_id = cl_from
++		//			WHERE cl_from IS NULL AND page_namespace = {$ns} AND page_is_redirect = 0";
+ 		$ns = NS_IMAGE;
+-
++		$ns2 = NS_DOCUMENT;
++		$ns3 = NS_PDF;
++		$ns4 = NS_AUDIO;
++		$ns5 = NS_VIDEO;
++		
+ 		return "SELECT 'Uncategorizedimages' AS type, page_namespace AS namespace,
+ 				page_title AS title, page_title AS value
+ 				FROM {$page} LEFT JOIN {$categorylinks} ON page_id = cl_from
+-				WHERE cl_from IS NULL AND page_namespace = {$ns} AND page_is_redirect = 0";
++				WHERE cl_from IS NULL AND ( page_namespace = {$ns} OR page_namespace = {$ns2}
++				OR page_namespace = {$ns3} OR page_namespace = {$ns4} OR page_namespace = {$ns5} )
++				AND page_is_redirect = 0";
++		/*op-patch|BL|2009-06-17|end*/
+ 	}
+-
+ }
+ 
+ function wfSpecialUncategorizedimages() {
+Index: includes/specials/SpecialUndelete.php
+===================================================================
+--- includes/specials/SpecialUndelete.php	(revision 4133)
++++ includes/specials/SpecialUndelete.php	(working copy)
+@@ -119,7 +119,12 @@
+ 	 * @todo Does this belong in Image for fuller encapsulation?
+ 	 */
+ 	function listFiles() {
+-		if( $this->title->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->title->getNamespace() == NS_IMAGE ) {
++		if( Namespace::isImage( $this->title->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$dbr = wfGetDB( DB_SLAVE );
+ 			$res = $dbr->select( 'filearchive',
+ 				array(
+@@ -335,8 +340,12 @@
+ 
+ 		$restoreText = $restoreAll || !empty( $timestamps );
+ 		$restoreFiles = $restoreAll || !empty( $fileVersions );
+-
+-		if( $restoreFiles && $this->title->getNamespace() == NS_IMAGE ) {
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $restoreFiles && $this->title->getNamespace() == NS_IMAGE ) {
++		if( $restoreFiles && Namespace::isImage( $this->title->getNamespace() ) ) {
++		/*op-patch|BL|2009-06-17|end*/
+ 			$img = wfLocalFile( $this->title );
+ 			$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
+ 			$filesRestored = $this->fileStatus->successCount;
+@@ -540,8 +549,12 @@
+ 				wfRunHooks( 'ArticleUndelete', array( &$this->title, false ) );
+ 				Article::onArticleEdit( $this->title );
+ 			}
+-
+-			if( $this->title->getNamespace() == NS_IMAGE ) {
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE is not the only Namespace now, so check them all
++			// content was:
++			// if( $this->title->getNamespace() == NS_IMAGE ) {
++			if( Namespace::isImage( $this->title->getNamespace() ) ) {
++			/*op-patch|BL|2009-06-17|end*/
+ 				$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
+ 				$update->doUpdate();
+ 			}
+Index: includes/specials/SpecialUpload.php
+===================================================================
+--- includes/specials/SpecialUpload.php	(revision 4133)
++++ includes/specials/SpecialUpload.php	(working copy)
+@@ -371,7 +371,7 @@
+ 	 * @access private
+ 	 */
+ 	function internalProcessUpload( &$resultDetails ) {
+-		global $wgUser;
++		global $wgUser, $wgNamespaceByExtension;
+ 
+ 		if( !wfRunHooks( 'UploadForm:BeforeProcessing', array( &$this ) ) )
+ 		{
+@@ -425,8 +425,16 @@
+ 		if( strlen( $partname ) < 1 ) {
+ 			return self::MIN_LENGHT_PARTNAME;
+ 		}
+-
+-		$nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		// content was:
++		// $nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
++		$my_ns = NS_IMAGE;
++		if ( isset( $finalExt ) )
++			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++				$my_ns = $wgNamespaceByExtension[$finalExt];
++		$nt = Title::makeTitleSafe( $my_ns, $filtered );
++		/*op-patch|BL|2009-06-17|end*/
+ 		if( is_null( $nt ) ) {
+ 			$resultDetails = array( 'filtered' => $filtered );
+ 			return self::ILLEGAL_FILENAME;
+@@ -587,7 +595,7 @@
+ 	 * Returns an empty string if there is no warning
+ 	 */
+ 	static function getExistsWarning( $file ) {
+-		global $wgUser, $wgContLang;
++		global $wgUser, $wgContLang, $wgNamespaceByExtension;
+ 		// Check for uppercase extension. We allow these filenames but check if an image
+ 		// with lowercase extension exists already
+ 		$warning = '';
+@@ -603,14 +611,30 @@
+ 		}
+ 
+ 		$sk = $wgUser->getSkin();
+-
++		
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE may not be the correct Namespace for this MIME type
++		$my_ns = NS_IMAGE;
++		if ( isset( $rawExtension ) )
++			if ( isset( $wgNamespaceByExtension[$rawExtension] ) ) {
++				$my_ns = $wgNamespaceByExtension[$rawExtension];
++				$file->title->mNamespace = $my_ns;
++			}
++		/*op-patch|BL|2009-06-17|end*/
++		
+ 		if ( $rawExtension != $file->getExtension() ) {
+ 			// We're not using the normalized form of the extension.
+ 			// Normal form is lowercase, using most common of alternate
+ 			// extensions (eg 'jpg' rather than 'JPEG').
+ 			//
+ 			// Check for another file using the normalized form...
+-			$nt_lc = Title::makeTitle( NS_IMAGE, $partname . '.' . $file->getExtension() );
++			
++			/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_IMAGE may not be the correct Namespace for this MIME type
++			// content was:
++			//$nt_lc = Title::makeTitle( NS_IMAGE, $partname . '.' . $file->getExtension() );
++			$nt_lc = Title::makeTitle( $my_ns, $partname . '.' . $file->getExtension() );
++			/*op-patch|BL|2009-06-17|end*/
+ 			$file_lc = wfLocalFile( $nt_lc );
+ 		} else {
+ 			$file_lc = false;
+Index: includes/specials/SpecialWhatlinkshere.php
+===================================================================
+--- includes/specials/SpecialWhatlinkshere.php	(revision 4133)
++++ includes/specials/SpecialWhatlinkshere.php	(working copy)
+@@ -98,7 +98,12 @@
+ 		$hidelinks = $this->opts->getValue( 'hidelinks' );
+ 		$hideredirs = $this->opts->getValue( 'hideredirs' );
+ 		$hidetrans = $this->opts->getValue( 'hidetrans' );
+-		$hideimages = $target->getNamespace() != NS_IMAGE || $this->opts->getValue( 'hideimages' );
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// $hideimages = $target->getNamespace() != NS_IMAGE || $this->opts->getValue( 'hideimages' );
++		$hideimages = !Namespace::isImage( $target->getNamespace() ) || $this->opts->getValue( 'hideimages' );
++		/*op-patch|BL|2009-06-17|end*/
+ 
+ 		$fetchlinks = (!$hidelinks || !$hideredirs);
+ 
+@@ -395,7 +400,12 @@
+ 
+ 		$links = array();
+ 		$types = array( 'hidetrans', 'hidelinks', 'hideredirs' );
+-		if( $this->target->getNamespace() == NS_IMAGE )
++		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_IMAGE is not the only Namespace now, so check them all
++		// content was:
++		// if( $this->target->getNamespace() == NS_IMAGE )
++		if( Namespace::isImage( $this->target->getNamespace() ) )
++		/*op-patch|BL|2009-06-17|end*/
+ 			$types[] = 'hideimages';
+ 		foreach( $types as $type ) {
+ 			$chosen = $this->opts->getValue( $type );
