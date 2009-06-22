@@ -5,7 +5,7 @@ Installation instructions
 #Requirements:
 # 
 
-    MediaWiki 1.13
+    MediaWiki 1.13.2
     SMW 1.4.2
     Halo extension 1.4.4
     Semantic Forms 1.7.1
@@ -16,8 +16,14 @@ Installation instructions
 # Installation
 #
 
-1. Add to your LocalSettings.php: (After the Halo and the 
-   Semantic Forms extensions were included)
+1. Add to your LocalSettings.php:
+	(if you want pdf and doc files to be converted, set this line before SMW_Initialize.php is included)
+	---
+	$smwgEnableUploadConverter = true;
+	--- 
+
+2. Add to your LocalSettings.php:
+	(After the Halo and the Semantic Forms extensions were included)
    
     ---
     include_once('extensions/RichMedia/includes/RM_Initialize.php');
@@ -26,7 +32,7 @@ Installation instructions
     $wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
     ---
 
-2. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.1.xml'
+3. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.1.xml'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 
@@ -34,24 +40,11 @@ list of all 'related documents and media' which also allows you to directly uplo
 #
 # Notice 
 #
-This template call has changed since last version. Please make sure that you are using the right call now.
-If you already used a version of the MIME-Type extension, 
-then be sure, that '/extensions/SMWHalo/includes/SMW_MIME_settings.php' sets the namespaces
-'Document','Pdf','Audio' and 'Video' as namespaces with semantic links.
-If that's not the case, you will have to add to this file:
+The Rich Media extension now fully includes the MIME-Type extension.
+If you already used a version of the MIME-Type extension, then be sure, 
+that you have deleted '/extensions/SMWHalo/includes/SMW_MIME_settings.php' and no longer include this file in your LocalSettings.php.
 
-    ---
-    global $smwgNamespacesWithSemanticLinks;
-    $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks + 
-    	array( 
-    		NS_DOCUMENT => true,
-    	 	NS_AUDIO => true,
-    	    NS_VIDEO => true,
-    		NS_PDF	=> true
-    	);
-    ---
-    
-Otherwise it is not possible to do inline queries with articles placed in those namespaces
-and that's what is needed for the media list!
-If you have already used version 1.0 of RichMedia extension and you have done changes to your templates,
+The template call has changed since version 1.0. Please make sure that you are using the right call now.
+
+If you have already used a prior version of RichMedia extension and you have done changes to your templates,
 make sure that you merge them with the new ones delivered in this version.
