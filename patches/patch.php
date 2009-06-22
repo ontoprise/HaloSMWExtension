@@ -11,6 +11,7 @@
  * @author: Kai Kühn / ontoprise / 2009
  */
 
+// get parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-d => absolute path to extend relative
 	if ($arg == '-d') {
@@ -25,6 +26,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 }
 
+// usage message if wrong or missing params
 if (!isset($absPath) || !isset($patchFile)) {
 	echo "\nUsage: php patch.php -d <wiki path> -p <patch file>\n";
 	die();
@@ -58,21 +60,34 @@ foreach($patches as $p) {
 		$p = str_replace("\r\n","\n",$p);
 	}
 
-	echo "\nWrite patch file:\n $absPath$path/__patch__.txt";
 	// write patch file
+	echo "\nWrite patch file:\n $absPath$path/__patch__.txt";
 	$handle = fopen($absPath.$path.'/__patch__.txt', 'w');
 	fwrite($handle, $p);
 	fclose($handle);
-
-	echo "\nExecute patch:\n ".'patch -u -l -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
+    
+	/*
+	 * GNU-Patch parameters:
+	 * 
+	 * -u: unified format
+	 * -l: ignore whitespaces
+	 * -t: batch (no questions)
+	 * -s: quiet
+	 * -no-backup-if-mismatch: Back up mismatches only if otherwise requested.
+	 * -i patch file
+	 * -d directory of patch file
+	 * 
+	 */
+	
 	// run patch
-	exec('patch -u -l -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"');
+	echo "\nExecute patch:\n ".'patch -u -l -t -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
+	exec('patch -u -l -t -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"');
 
-	echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';
 	// delete patch file
+	echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';
 	unlink($absPath.$path.'/__patch__.txt');
 	
-	echo "\n\n------------";
+	echo "\n------------\n";
 }
 
 function isWindows() {
