@@ -1037,6 +1037,63 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
     </revision>
   </page>
   <page>
+    <title>Template:Display content navigation box</title>
+    <id>499</id>
+    <revision>
+      <id>4372</id>
+      <timestamp>2009-06-10T14:58:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Display content navigation box
+|Has author=WikiSysop
+|part of=Teamwork section
+|rationale=This template is used for providing and annotating meta data fields for arbitrary content.
+|long description=__NOTITLE__
+The template does the following
+*sets &quot;subsection of&quot; relationship and prints it as supersection(s)
+*queries for subsections and prints them
+*sets a title
+*sets author(s) if given
+*sets and prints a summary if given
+|parameters=The template should be called in the following format:
+&lt;pre&gt;
+{{Display content navigation box
+|Title
+|Summary
+|Author
+|Creation date
+|SubsectionOf
+}}
+&lt;/pre&gt;
+|hints for templates and forms=This template does include NO annotations!
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
+! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; | {{{Title|''no title specified''}}}
+|-
+{{Tablelongrow|Label=Overview:|Value={{{Summary|}}} }}
+|-
+{{Tablerow|Label=Author(s):|Value={{{Author|''not specified''}}} }}
+|-
+{{Tablerow|Label=Creation date:|Value={{{Creation date|''not specified''}}} }}
+|-
+{{#ifeq:{{{SubsectionOf|}}}||
+{{Tablerow|Label=Belongs to:|Value=no article}}|
+{{Tablerow|Label=Belongs to:|Value={{{SubsectionOf|}}} }} }}
+|-
+{{Tablerow|Label=Includes:|Value={{#sparql:[[subsection of::{{FULLPAGENAME}}]][[subsection of::+]]|format=ul|link=all|default=&lt;ul&gt;&lt;li&gt;no article&lt;/ul&gt;}} }}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
     <title>Form:RMUpload</title>
     <id>416</id>
     <revision>
@@ -1793,6 +1850,63 @@ These are the literal class definitions in common.css:
  &lt;/div&gt;
 {{#if:{{{content|}}}|{{{content}}}|{{#ifexist:{{{1|{{Documentation/docname}}}}} | {{ {{{1|{{Documentation/docname}}}}} }} }}}}
 &lt;/div&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Display content navigation box</title>
+    <id>499</id>
+    <revision>
+      <id>4372</id>
+      <timestamp>2009-06-10T14:58:02Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Display content navigation box
+|Has author=WikiSysop
+|part of=Teamwork section
+|rationale=This template is used for providing and annotating meta data fields for arbitrary content.
+|long description=__NOTITLE__
+The template does the following
+*sets &quot;subsection of&quot; relationship and prints it as supersection(s)
+*queries for subsections and prints them
+*sets a title
+*sets author(s) if given
+*sets and prints a summary if given
+|parameters=The template should be called in the following format:
+&lt;pre&gt;
+{{Display content navigation box
+|Title
+|Summary
+|Author
+|Creation date
+|SubsectionOf
+}}
+&lt;/pre&gt;
+|hints for templates and forms=This template does include NO annotations!
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
+! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; | {{{Title|''no title specified''}}}
+|-
+{{Tablelongrow|Label=Overview:|Value={{{Summary|}}} }}
+|-
+{{Tablerow|Label=Author(s):|Value={{{Author|''not specified''}}} }}
+|-
+{{Tablerow|Label=Creation date:|Value={{{Creation date|''not specified''}}} }}
+|-
+{{#ifeq:{{{SubsectionOf|}}}||
+{{Tablerow|Label=Belongs to:|Value=no article}}|
+{{Tablerow|Label=Belongs to:|Value={{{SubsectionOf|}}} }} }}
+|-
+{{Tablerow|Label=Includes:|Value={{#sparql:[[subsection of::{{FULLPAGENAME}}]][[subsection of::+]]|format=ul|link=all|default=&lt;ul&gt;&lt;li&gt;no article&lt;/ul&gt;}} }}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
 </mediawiki>
