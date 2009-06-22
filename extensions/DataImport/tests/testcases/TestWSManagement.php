@@ -89,7 +89,7 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 	/*
 	 * Test soap ws with missing uri
 	 */
-	function testCreateWSFailureMissingURI(){
+	function testCreateWSFailureMissingURITag(){
 		di_utils_setupWebServices(array("TimeTestWSCreateFailure3"), false);
 		$wsId = di_utils_getWSId("TimeTestWSCreateFailure3");
 

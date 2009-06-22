@@ -8,6 +8,7 @@
 	&createWebTestWS;
 
 	<target name="testWSPage">
+		
 		<webtest name="WSManualCreate">
 			<antcall target="createWebTestWS" />
 
@@ -27,17 +28,22 @@
 				description="Was define ws gui opened" />
 		</webtest>
 
-		<webtest name="WSPageWSUsageAdd">
+		<webtest name="WSPageWSUsageAddPart1">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Create new ws usage" />
 			<setInputField description="Enter new ws usage."
 				xpath="//textarea[@id='wpTextbox1']">
-				{{#ws:WebTestWS | ?result.complete}}
+				{{#ws:WebTestWS 
+				| parameterWithSubparameters.nonOptionalSubParameterNoDefault = dontcare
+				| nonOptionalParameterNoDefault = dontcare | ?result.complete}}
+
 			</setInputField>
 			<clickButton description="Save ws usage." htmlId="wpSave" />
-			<sleep seconds="5" />
-
+					<sleep seconds="5" />
+		</webtest>
+		
+		<webtest name="WSPageWSUsageAddPart2">
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS"
 				description="Open wwsd" />
 			<verifyText text="Showing 1 pages using this web service."

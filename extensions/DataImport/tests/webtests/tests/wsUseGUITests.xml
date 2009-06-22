@@ -10,13 +10,13 @@
 
 	<target name="testWSUseGUI">
 
-		<webtest name="WSUseGUIinvoke1">
+		<webtest name="WSUseGUINoWSErrorPart1">
 			<antcall target="invalidateWebTestWS" />
 			<sleep seconds="5" />
 
 		</webtest>
 
-		<webtest name="WSUseGUINoWSError">
+		<webtest name="WSUseGUINoWSErrorPart2">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Open article for adding ws" />
@@ -27,15 +27,15 @@
 
 			<verifyText text="No Wiki Web Service Definitions are available yet."
 				description="Was define ws gui opened" />
-		</webtest>
+		</webtest> 
 
-		<webtest name="WSUseGUIinvoke1">
+		<webtest name="WSUseGUIContentLoadedPart1">
 			<antcall target="createWebTestWS" />
 			<sleep seconds="5" />
 
 		</webtest>
 
-		<webtest name="WSUseGUIContentLoaded">
+		<webtest name="WSUseGUIContentLoadedPart2">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Open article for adding ws" />
@@ -141,10 +141,69 @@
 			<verifyText text="result.jsonSubPath" description="are result parts displayed correctly">
 				<table htmlId="step3-results" row="3" column="0" />
 			</verifyText>
-
-
-
 		</webtest>
+		
+		<webtest name="WSUseGUIClickthrough">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Open article for adding ws" />
+
+			<clickLink xpath="//div[@id='stb_cont10-content']/a"
+				description="Click add ws button" />
+			<sleep seconds="3" />
+
+			<clickButton htmlId="step1-go-img" description="go to step2" />
+			<sleep seconds="5" />
+			
+			<clickButton htmlId="step2-go-img" description="go to step3" />
+			<sleep seconds="5" />
+			
+			<clickButton htmlId="step3-go-img" description="go to step4" />
+			<sleep seconds="5" />
+			
+			<clickButton htmlId="step4-go-img" description="go to step5" />
+			<sleep seconds="5" />
+			
+			<clickButton xpath="//input[@id='step5-preview-button-img']"
+				description="display preview" />
+			<sleep seconds="5"/>				
+			<verifyElementText htmlId="step5-preview"
+				description="is missing parameter warning displayed" 
+				text='Warning: The parameter "parameterWithSubparameters.nonOptionalSubParameterNoDefault" is not optional and no default value was provided by the Wiki Web Service Definition. The parameter "nonOptionalParameterNoDefault" is not optional and no default value was provided by the Wiki Web Service Definition.'/>
+				
+				<clickButton xpath="//div[@id='step5']/p[2]/input[1]"
+				description="display #ws-syntax" />
+			<verifyElementText htmlId="step5-preview" 
+				description="is #ws-sybtax displayed"
+				text='.*WebTestWS.*nonOptionalParameterNoDefault =.*nonOptionalParameterWithDefault =.*parameterWithSubparameters =.*parameterWithSubparameters.nonOptionalSubParameterNoDefault =.*parameterWithSubparameters.nonOptionalSubParameterWithDefault =.*result.complete.*result.xmlSubPath.*result.jsonSubPath.*format=list.*'
+				regex="true"/>
+			
+			<setInputField value="dontcare" xpath="//table[@id='step2-parameters']/tbody/tr[3]/td[3]/input" description="set value for nonoptional parameter"/> 
+			<setInputField value="dontcare" xpath="//table[@id='step2-parameters']/tbody/tr[6]/td[3]/input" description="set value for nonoptional parameter"/>
+			
+			<clickButton xpath="//input[@id='step5-preview-button-img']"
+				description="display preview" />
+			<sleep seconds="5"/>				
+			<verifyElementText htmlId="step5-preview"
+				description="is preview displayed" 
+				text='.*200.*' regex="true"/>
+				
+			<clickButton xpath="//div[@id='step5']/p[2]/input[3]"
+				description="add ws call to article" />
+			<sleep seconds="5"/>
+			<verifyElementText htmlId="wpTextbox1" 
+				description="is #ws-sybtax displayed"
+				text='.*WebTestWS.*nonOptionalParameterNoDefault =.*dontcare.*nonOptionalParameterWithDefault =.*parameterWithSubparameters =.*parameterWithSubparameters.nonOptionalSubParameterNoDefault =.*dontcare.*parameterWithSubparameters.nonOptionalSubParameterWithDefault =.*result.complete.*result.xmlSubPath.*result.jsonSubPath.*format=list.*'
+				regex="true"/>
+			
+			
+				
+			
+			
+			
+			
+		</webtest>
+		
 
 		
 
