@@ -48,3 +48,6 @@ The template call has changed since version 1.0. Please make sure that you are u
 
 If you have already used a prior version of RichMedia extension and you have done changes to your templates,
 make sure that you merge them with the new ones delivered in this version.
+
+If you are running on Unix and want to use the UploadConverter make sure that you have installed the right packages
+of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/).
