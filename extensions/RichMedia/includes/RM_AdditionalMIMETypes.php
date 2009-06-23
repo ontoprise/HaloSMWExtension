@@ -8,14 +8,14 @@ $wgFileExtensions = array_merge($wgFileExtensions, array(
 // 'rtf', 'mp2', 'ott' + 'stw' (OpenOffice drafts)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
 
-define('NS_DOCUMENT', 120);
-define('NS_DOCUMENT_TALK', 121);
-define('NS_AUDIO', 122);
-define('NS_AUDIO_TALK', 123);
-define('NS_VIDEO', 124);
-define('NS_VIDEO_TALK', 125);
-define('NS_PDF', 126);
-define('NS_PDF_TALK', 127);
+if (!defined('NS_DOCUMENT')) define('NS_DOCUMENT', 120);
+if (!defined('NS_DOCUMENT_TALK')) define('NS_DOCUMENT_TALK', 121);
+if (!defined('NS_AUDIO')) define('NS_AUDIO', 122);
+if (!defined('NS_AUDIO_TALK')) define('NS_AUDIO_TALK', 123);
+if (!defined('NS_VIDEO')) define('NS_VIDEO', 124);
+if (!defined('NS_VIDEO_TALK')) define('NS_VIDEO_TALK', 125);
+if (!defined('NS_PDF')) define('NS_PDF', 126);
+if (!defined('NS_PDF_TALK')) define('NS_PDF_TALK', 127);
 
 global $wgExtraNamespaces;
 $wgExtraNamespaces = $wgExtraNamespaces +
