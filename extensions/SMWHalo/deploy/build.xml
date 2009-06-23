@@ -123,21 +123,7 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip_ext/extensions/SMWHalo">
-			<fileset dir="../../../patches/extensions/SMWHalo/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/skins">
-			<fileset dir="../../../patches/skins/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/includes">
-			<fileset dir="../../../patches/includes/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 		<copy todir="bin/zip_ext/extensions">
 			<fileset file="../../LdapAuthentication.php/" />
 			<fileset file="../../Cite.php/" />
