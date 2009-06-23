@@ -297,7 +297,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<tr></tr>";
 
 		$html .= "<tr><td><span> Span of life (".wfMsg('smw_wws_indays')."): </span></td>";
-		$html .= "<td><input type=\"text\" id=\"step5-spanoflife\" text\" size=\"7\" maxlength=\"10\" ".$spanOfLife."/></td>";
+		$html .= "<td><input type=\"text\" id=\"step5-spanoflife\" size=\"7\" maxlength=\"10\" ".$spanOfLife."/></td>";
 		$html .= "<td><span> Expires after update: </span>";
 		$html .= "<input id=\"step5-expires-yes\" ".$expires." type=\"radio\" name=\"step5-expires\" value=\"once\">".wfMsg('smw_wws_yes')."</input>";
 		$html .= "<input id=\"step5-expires-no\" ".$expiresno." type=\"radio\" name=\"step5-expires\" value=\"\">".wfMsg('smw_wws_no')."</input>";
