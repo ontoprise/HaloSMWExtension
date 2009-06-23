@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSEditGUI">
+	
+	&goToLogin;
+	&createWebTestWS;
+
+	<target name="testWSEditGUI">
+		
+		<webtest name="WSEditRESTPart1">
+			<antcall target="createWebTestWS" />
+		</webtest>
+
+		<webtest name="WSEditRESTPart1">
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
+			<clickLink xpath="//div[@id='bodyContent']/h2/a"
+				description="Click edit button" />
+			<sleep seconds="10"/>
+			
+			<verifyTitle text="Define Web Service - Halo3wiki"
+				description="Was define ws gui opened" />
+			
+			<verifyRadioButton htmlId="step1-protocol-rest" checked="true" 
+				description="check if protocol is rest" />
+			<verifyRadioButton htmlId="step1-auth-no" checked="true" 
+				description="check that authentication is not required" />
+				
+			<verifySelectField htmlId="step2-methods" value="get"
+				description="verify that the method is get"/>
+			
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[2]/input" 
+				value="optionalParameter"
+				description="verify that parameter aliases are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[2]/input" 
+				value="nonOptionalParameterNoDefault"
+				description="verify that parameter aliases are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[2]/input" 
+				value="nonOptionalParameterWithDefault"
+				description="verify that parameter aliases are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[2]/input" 
+				value="parameterWithSubparameters"
+				description="verify that parameter aliases are loaded correctly" />
+				
+			<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[3]/input[1]" 
+				checked="true" 
+				description="check if optional is set correctly" />
+			<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[3]/input[1]" 
+				checked="false" 
+				description="check if optional is set correctly" />
+			<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[3]/input[1]" 
+				checked="false" 
+				description="check if optional is set correctly" />
+			<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[3]/input[1]" 
+				checked="false" 
+				description="check if optional is set correctly" />
+			
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[4]/input" 
+				value=""
+				description="verify that defaults are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[4]/input" 
+				value=""
+				description="verify that defaults are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[4]/input" 
+				value="default"
+				description="verify that defaults are loaded correctly" />
+			<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[4]/input" 
+				value=""
+				description="verify that defaults are loaded correctly" />
+			
+			<verifyElementText description="verify that subparameters are loaded correctly" regex="true"
+					type="textarea"
+					text='&lt;subparameter name="optionalSubParameter" optional="true"/&gt;.*&lt;subparameter name="nonOptionalSubParameterNoDefault" optional="false"/&gt;.*&lt;subparameter name="nonOptionalSubParameterWithDefault" optional="false" defaultValue="default"/&gt;'> 
+				<!--   <table htmlId="step3-parameters" row="5" column="0"/> --> 
+			</verifyElementText>
+			
+			<verifyCheckbox description="verify that the complete result is used"
+				xpath="//div[@id='step4-rest-intro']/input[1]" checked="true"/>
+			<verifyInputField description="verify that complete result name is loaded correctly"
+				xpath="//div[@id='step4-rest-intro']/input[2]" value="complete"/>
+				
+			<verifyInputField description="verify that result alias is loaded correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input" 
+				value="xmlSubPath"/>
+			<verifyInputField description="verify that result alias is loaded correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[3]/td[1]/input" 
+				value="jsonSubPath"/>
+				
+			<verifySelectField description="verify that format is set correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/select"
+				value="xpath" />
+			<verifySelectField description="verify that format is set correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[3]/td[2]/select"
+				value="json" />
+			
+			<verifyInputField description="verify that result subpath is loaded correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[2]/td[3]/input" 
+				value="//dont/care"/>
+			<verifyInputField description="verify that result alias is loaded correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[3]/td[3]/input" 
+				value="//either"/>
+			
+			<verifyRadioButton htmlId="step5-display-max" checked="true"
+				description="verify display policy"/>
+			<verifyRadioButton htmlId="step5-query-max" checked="true"
+				description="verify query policy"/>
+			
+			<verifyInputField htmlId="step5-display-minutes" value="1"
+				description="verify query minutes"/>
+			<verifyInputField htmlId="step5-query-minutes" value="1"
+				description="verify query minutes"/>
+			
+			<verifyInputField htmlId="step5-delay" value=""
+				description="verify delay value"/>
+			
+			<verifyInputField htmlId="step5-spanoflife" value="1"
+				description="verify span of life"/>
+			
+			<verifyRadioButton htmlId="step5-expires-yes" checked="true"
+				description="validate that it expires after update"/>
+			
+			<verifyInputField htmlId="step6-name" value="WebTestWS"
+				description="verify ws name"/>
+			
+			<clickButton htmlId="step6-go-img" description="save wwsd"/>
+			<sleep seconds="10"/>
+			
+			<verifyText text="Now you can use that web service in an article"
+				description="check if step7 is displayed"/>
+			</webtest>
+
+	</target>
+</project>

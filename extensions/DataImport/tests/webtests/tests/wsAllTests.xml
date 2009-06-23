@@ -7,5 +7,6 @@
 		<ant antfile="wsRepositoryTests.xml"/>
 		<ant antfile="wsPageTest.xml"/>
 		<ant antfile="wsUseGUITests.xml"/>
+		<ant antfile="wsEditGUITests.xml"/>
 	</target>
 </project>
