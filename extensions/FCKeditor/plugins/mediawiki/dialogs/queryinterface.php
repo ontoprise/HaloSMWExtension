@@ -108,6 +108,17 @@ window.parent.AddTab( \'SRC\', \'Query sourcecode\' ) ;
 function OnDialogTabChange( tabCode ) {
 	ShowE(\'divQiGui\' , ( tabCode == \'GUI\' ) ) ;
 	ShowE(\'divQiSrc\' , ( tabCode == \'SRC\' ) ) ;
+	if (tabCode == \'GUI\') {
+		initialize_qi_from_querystring( GetE(\'xAskQueryRaw\').value.replace(/fckLR/g,\'\').replace( /&quot;/g, \'"\'));
+	}
+	else {
+		ask = qihelper.getFullParserAsk();
+   		ask = ask.replace(/\]\]\[\[/g, "]]\n[[");
+		ask = ask.replace(/>\[\[/g, ">\n[[");
+		ask = ask.replace(/\]\]</g, "]]\n<");
+    	ask = ask.replace(/([^\|]{1})\|{1}(?!\|)/g, "$1\n|");
+    	GetE(\'xAskQueryRaw\').value = ask;	
+	}
 }
 ').'
 
@@ -139,8 +150,9 @@ function LoadSelection() {
 	if ( !oAskSpan ) return ;
 
 	var inputText = FCKTools.HTMLDecode(oAskSpan.innerHTML);
+	initialize_qi_from_querystring(inputText.replace(/fckLR/g,\'\').replace( /&quot;/g, \'"\'));
 	GetE(\'xAskQueryRaw\').value = inputText.replace(/fckLR/g,\'\r\n\').replace( /&quot;/g, \'"\');
-	window.parent.SetSelectedTab(\'SRC\');
+	//window.parent.SetSelectedTab(\'SRC\');
 }
 
 
