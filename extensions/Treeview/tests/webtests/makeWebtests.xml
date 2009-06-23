@@ -13,7 +13,7 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 	<!-- set here wiki wariables which will be used later in the tests
 	     only these are used in the tests --> 
 	<property name="wgServer" value="http://localhost" />
-    <property name="wgScriptPath" value="/$wikipath}" />
+    <property name="wgScriptPath" value="/${wikipath}" />
     <property name="wgSitename" value="Halo3wiki" />
     <property name="wgScript" value="${wgScriptPath}/index.php" />
 
