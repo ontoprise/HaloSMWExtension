@@ -739,7 +739,7 @@ class SMWTripleStore extends SMWStore {
 				$allValues = array();
 
 				foreach($multiValue as $sv) {
-					$this->addValueToResult($sv, $allValues);
+					$this->addValueToResult($sv, $prs[$resultColumn], $allValues);
 				}
 				$columnIndex++;
 				$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
@@ -755,10 +755,11 @@ class SMWTripleStore extends SMWStore {
 	/**
 	 * Add a resource or property value to an array of results
 	 *
-	 * @param string $sv
+	 * @param string $sv A single value (literal or URI)
+	 * @param PrintRequest prs
 	 * @param array & $allValues
 	 */
-	private function addValueToResult($sv, & $allValues) {
+	private function addValueToResult($sv, $prs, & $allValues) {
 		// category result
 		if (stripos($sv, self::$CAT_NS) === 0) {
 			$local = substr($sv, strlen(self::$CAT_NS));
@@ -819,9 +820,9 @@ class SMWTripleStore extends SMWStore {
 
 			// property value result
 		} else {
-
+            
 			$literal = $this->unquote($this->removeXSDType($sv));
-			$value = SMWDataValueFactory::newPropertyValue($literal);
+			$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
 			if ($value->getTypeID() == '_dat') { // exception for dateTime
 				if ($literal != '') $value->setXSDValue(utf8_decode($literal));
 			} else {
