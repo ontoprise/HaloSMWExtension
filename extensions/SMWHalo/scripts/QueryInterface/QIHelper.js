@@ -129,6 +129,23 @@ addQuery:function(parent, name){
 },
 
 /**
+* Insert a query, works similar to add query but a given index is replaced with
+* the new query data. This is needed when parsing the ask query string and
+* creating the query objects in the QI.
+* @param parent ID of parent query
+* @param name name of the property which is referencing this query
+*/
+insertQuery:function(id, parent, name){
+	if (this.queries[id]) {
+		this.queries[id] = new Query(id, parent, name);
+		return;
+	}
+	while (this.nextQueryId <= id)
+		this.addQuery(parent, name);
+},
+
+
+/**
 * Set a certain query as active query.
 * @param id IS of the query to switch to
 */
@@ -1366,6 +1383,206 @@ checkFormat:function(){
 	}
 	// update result preview
 	this.updatePreview();
+},
+
+initFromQueryString:function(ask) {
+	this.doReset();
+	// split of query parts to handle subqueries seperately
+	var sub = this.splitQueryParts(ask);
+	// main query must exist, otherwise quit right away
+	if (sub.length == 0) return;
+	// properties that must be shown in the result
+	var pMustShow = this.applyOptionParams(sub[0]);
+	
+	// run over all query strings and start parsing
+	for (i = 0; i < sub.length; i++) {
+		// set current query to active, do this manually (treeview is not updated)
+		this.activeQuery = this.queries[i];
+		this.activeQueryId = i;
+		// extact the arguments, i.e. all between [[...]]
+		var args = sub[i].split(/\]\]\s*\[\[/);
+		// remove the ]] from the last element
+		args[args.length -1] = args[args.length - 1].substring(0, args[args.length - 1].indexOf(']]'));
+		// and [[ from the first element
+		args[0]=args[0].replace(/^\s*\[\[/, '');
+		this.handleQueryString(args, i, pMustShow);
+	}
+	this.setActiveQuery(0); // set main query to active
+	this.updatePreview();	// update result preview
+},
+
+	
+handleQueryString:function(args, queryId, pMustShow) {
+	
+	// list of properties (each property has an own pgoup)
+	var propList = new PropertyList();
+	
+	for (var i = 0; i < args.length; i++) {
+		// Category
+		if (args[i].indexOf('Category:') == 0) {
+			var vals = args[i].substring(9).split(/\s*\|\|\s*/);
+			this.activeQuery.addCategoryGroup(vals); //add to query
+		}
+		// Instance
+		else if (args[i].indexOf('::') == -1) {
+			var vals = args[i].split(/\s*\|\|\s*/);
+			this.activeQuery.addInstanceGroup(vals); //add to query
+		}
+		// Property
+		else {
+			var pname = args[i].substring(0, args[i].indexOf('::'));
+			var pval = args[i].substring(args[i].indexOf('::') + 2, args[i].length);
+
+			// if the property was already once in the arguments, we already have details about the property
+		    var pgroup = propList.getPgroup(pname);
+		    if (!pgroup) {
+		    	// show in results? if queryId == 0 then this is the main query and we check the params
+				var pshow = (queryId == 0) ? pMustShow.inArray(pname) : false;
+				// must be set?
+				var pmust = args.inArray('[[' + pname + '::+]]');
+				var arity = 2; // default value
+		    	pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust); //create propertyGroup
+			}
+			var subqueryIds = propList.getSubqueryIds(pname);
+			var paramname = "Page"
+			var paramvalue = pval == "" ? "*" : pval; //no value is replaced by "*" which means all values
+			var restriction = '=';
+			
+			// Subquery
+			if (pval.match(/___q\d+q___/)) {
+				paramname = "subquery";
+				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
+				this.insertQuery(paramvalue, queryId, pname);
+				subqueryIds.push(paramvalue);
+				pgroup.addValue(paramname, restriction, paramvalue); // add a value group to the property group
+			}
+			else { // check for restricion (makes sence for numeric properties)
+				var vals = pval.split(/\s*\|\|\s*/);
+				for (var j = 0; j < vals.length; j++) {
+					var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
+					if (op[1].length > 0) {
+						restriction = op[1].indexOf('=') == -1 ? op[1] + '=' : op[1];
+						paramvalue = op[2];
+					}
+					pgroup.addValue(paramname, restriction, escapeQueryHTML(paramvalue)); // add a value group to the property group
+				}
+			}
+			propList.add(pname, pgroup, subqueryIds); // add current property to property list
+			//sajax_do_call('smwf_qi_QIAccess', ["getPropertyInformation", escapeQueryHTML(propname)], this.adaptDialogueToProperty.bind(this));
+		}
+	}
+
+	// if a property must be shown in results only, it may not appear in the [[...]] part
+	// therfore check now that in the main query we also have all "must show" properties included
+	if (queryId == 0) { // do this only for the main query
+		for (var i=0; i < pMustShow.length; i++) {	// loop over all properties to show
+			if (propList.getPgroup(pMustShow[i]) == null) { // property does not exist yet
+				var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i]), 2, true, false); //create propertyGroup
+				pgroup.addValue('Page', '=', '*');	// add default values
+				propList.add(pMustShow[i], pgroup, []); // add current property to property list
+			}
+		}
+	}
+	
+	// we are done with all agruments, now add the collected property information to the active query
+	propList.reset();
+	var cProp = propList.next();
+	while (cProp != null) {
+		var pgroup = propList.getPgroup(cProp);
+		var subqueryIds = propList.getSubqueryIds(cProp);
+		this.activeQuery.addPropertyGroup(pgroup, subqueryIds);
+		cProp = propList.next();
+	}
+
+},
+
+applyOptionParams:function(query) {
+	var options = query.split('|');
+	// parameters to show
+	var mustShow = [];
+	// assume that the headers will be shown (parameter headers=show or is missing)
+	$('layout_headers').setAttribute('checked', 'checked');
+	// start by 1, first element is the query itself
+	for (var i = 1; i < options.length; i++) {
+		// search for something line ?prop_name, then the property must be displayed 
+		var m = options[i].match(/^\s*\?(.*?)\s*$/);
+		if (m) {
+			mustShow.push(m[1]);
+			continue;
+		}
+		var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
+		if (kv.length == 1) continue;
+		// check if layout_kv[0] exists, then a correct parameter was defined
+		// and we set the form element with its value
+		var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
+		var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
+		switch (key) {
+			case 'headers':
+				if (val == 'hide') $('layout_headers').removeAttribute('checked');
+				break;
+			case 'mainlabel':
+				$('layout_label').value = val;
+				break;
+			case 'template' :
+				$('template_name').value = val;
+				break;
+			default:
+				$('layout_' + key).value = val;
+				break;
+		}
+	}
+	// check if output format is template, then show the template name field
+	if ( $('layout_format').value == 'template') 
+		$('templatenamefield').style.display = "";
+	else
+		$('templatenamefield').style.display = "none";
+	// return the properties, that must be shown in the query
+	return mustShow;
+},		
+		
+splitQueryParts:function(ask) {
+	// ltrim and rtrim
+	ask = ask.replace(/^\s*\{\{#ask:\s*/, '');
+	ask = ask.replace(/\s*\}\}\s*$/, '');
+
+	// store here all queries (sub[0] is the main query
+	var sub = [];
+	sub.push(ask);
+	var todo;
+	while (1) {
+		todo = null;
+		if(sub.length > 0) {
+			for (var i = 0; i < sub.length; i++) {
+				if (sub[i].indexOf('<q>') != -1) {
+					todo = true;
+					var pa = sub[i].indexOf('<q>');  // first occurence of <q>
+					var pe = -4;	// position of </q>
+					var po = pa;	// start position where to look for the next <q> after the first one
+					// look now for the closing part
+					var op = 0; // number of opened brakets of sub queries
+					do {
+						// look for the first closing </q>
+						pe = sub[i].indexOf('</q>', pe + 4);
+						// and for another opening <q>
+						var po = sub[i].indexOf('<q>', po + 3);
+						// if a <q> is found and it's before the </q> then
+						// the already know </q> belongs to a inner subquery
+						// the </q> for the outer query part is more on the right
+						if (po > -1 &&  po < pe)
+							op++;
+						else
+							op--;
+					} while(op > 0); // keep on going if we still have open brakets
+					// add the new found sub query to the list of queries
+					sub.push(sub[i].substring(sub[i].indexOf('<q>') + 3, pe));
+					// replace the sub query with a placeholder in the orignal query
+					sub[i] = sub[i].substring(0, sub[i].indexOf('<q>')) + '___q' + (sub.length - 1) + 'q___' + sub[i].substring(pe+4);
+				}
+			}
+		}
+		if (!todo) break;
+	}
+	return sub;	
 }
 
 } //end class qiHelper
@@ -1416,10 +1633,68 @@ PropertyGroup.prototype = {
 	}
 }
 
+var PropertyList = Class.create();
+PropertyList.prototype = {
+
+	initialize:function() {
+		this.name = Array();
+		this.pgroup = Array();
+		this.subqueries = Array();
+		this.pointer = -1;
+	},
+
+	add:function(name, pgroup, subqueries){
+		for (var i=0; i < this.name.length; i++) {
+			if (this.name[i] == name) {
+				this.pgroup[i] = pgroup;
+				this.subqueries[i] = subqueries;
+				return;
+			}
+		}
+		this.name.push(name);
+		this.pgroup.push(pgroup);
+		this.subqueries.push(subqueries);
+	},
+
+	getPgroup:function(name){
+		for (var i=0; i < this.name.length; i++) {
+			if (this.name[i] == name) {
+				return this.pgroup[i];
+			}
+		}
+		return;
+	},
+
+	getSubqueryIds:function(name){
+		for (var i=0; i < this.name.length; i++) {
+			if (this.name[i] == name) {
+				return this.subqueries[i];
+			}
+		}
+		return new Array();
+	},
+	
+	reset:function() {
+		this.pointer = -1;
+	},
+	
+	next:function() {
+		this.pointer++;
+		if (this.name[this.pointer])
+			return this.name[this.pointer];
+	}
+}
+
 Event.observe(window, 'load', initialize_qi);
 
 function initialize_qi(){
+	if (!qihelper)
+		qihelper = new QIHelper();
+}
+
+function initialize_qi_from_querystring(ask) {
 	qihelper = new QIHelper();
+	qihelper.initFromQueryString(ask);
 }
 
 function escapeQueryHTML(string){
@@ -1434,3 +1709,14 @@ function unescapeQueryHTML(string){
 	string = string.replace(/&quot;/g, "\"");
 	return string;
 }
+
+// add function iArray (like PHP in_array() ) to Array Object
+if (!Array.prototype.inArray) {
+	Array.prototype.inArray = function in_array(val) {
+		for (var i=0; i<this.length; i++) {
+			if (val == this[i]) return true;
+		}
+		return false;
+	}
+};
+
