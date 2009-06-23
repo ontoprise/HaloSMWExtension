@@ -5,7 +5,7 @@
 		description="Open new ws for editing" />
 	<setInputField description="Enter new wwsd." xpath="//textarea[@id='wpTextbox1']">
 				<![CDATA[<WebService>
-<uri name="http://localhost/HaloSMWExtension/extensions/DataImport/tests/DI_TimeTestWS.php" />
+<uri name="http://localhost/]]>${wikipath}<![CDATA[/extensions/DataImport/tests/DI_TimeTestWS.php" />
 <protocol>REST</protocol>
 <method name="get" />
 <parameter name="optionalParameter" path="dontCare" optional="true"/>
