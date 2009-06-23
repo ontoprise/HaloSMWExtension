@@ -1,15 +1,25 @@
 <?php
 
-require_once '../tools/smwadmin/PackageRepository.php';
+// activate for debugging
+//define('DEBUG_MODE', true);
+
+if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
+	require_once 'deployment/tools/smwadmin/PackageRepository.php';
+} else {
+	require_once '../tools/smwadmin/PackageRepository.php';
+}
 /**
  * Tests the installer clazz
  *
  */
 class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
+	static $rootDir;
 
 	function setUp() {
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents("testcases/resources/repository.xml"));
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/repository.xml" : "testcases/resources/installer/repository.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		self::$rootDir = realpath(dirname($path));
 	}
 
 	function tearDown() {
@@ -18,21 +28,21 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 
 	function testGetVersion() {
-		$this->assertNotNull(PackageRepository::getVersion("SMWHalo",160));
+		$this->assertNotNull(PackageRepository::getVersion("SMWHalo",150));
 	}
 
 	function testGetVersion2() {
 		$this->assertNull(PackageRepository::getVersion("SMWHalo",170));
 	}
-	
-    function testGetVersion3() {
-        $versions = PackageRepository::getAllVersions("SMWHalo");
-       
-        $this->assertTrue(count($versions) === 3);
-        $this->assertEquals(160, $versions[0]);
-        $this->assertEquals(150, $versions[1]);
-        $this->assertEquals(144, $versions[2]);
-    }
+
+	function testGetVersion3() {
+		$versions = PackageRepository::getAllVersions("SMWHalo");
+
+		$this->assertTrue(count($versions) === 3);
+		$this->assertEquals(150, $versions[0]);
+		$this->assertEquals(144, $versions[1]);
+		$this->assertEquals(130, $versions[2]);
+	}
 
 	function testLatestVersion() {
 		$this->assertNotNull(PackageRepository::getLatestVersion("SMWHalo"));
@@ -43,11 +53,23 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testExistsVersion2() {
-		$this->assertTrue(PackageRepository::existsPackage("SMWHalo", 160));
+		$this->assertTrue(PackageRepository::existsPackage("SMWHalo", 150));
 	}
 
 	function testExistsVersion3() {
 		$this->assertFalse(PackageRepository::existsPackage("SMWHalo", 170));
+	}
+
+	function testLocalPackageRepository() {
+		$exp_packages = array('SMWHalo', 'SemanticGardening', 'SMW');
+
+		$packages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$this->assertTrue(count($packages) === 3);
+		foreach($packages as $p) {
+			$this->assertContains($p->getID(), $exp_packages);
+		}
+
+			
 	}
 
 }

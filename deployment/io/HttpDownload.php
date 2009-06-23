@@ -12,6 +12,24 @@ class HttpDownload {
 	/**
 	 * Downloads a resource via HTTP protocol and stores it into a file.
 	 *
+	 * @param URL $url
+	 * @param string $filename
+	 * @param object $callback: An object with 2 methods: 
+     *                     downloadProgres($percentage).
+     *                     downloadFinished($filename)
+	 */
+	public function downloadAsFileByURL($url, $filename, $callback = NULL) {
+		$partsOfURL = parse_url($url);
+
+        $path = $partsOfURL['path'];
+        $host = $partsOfURL['host'];
+        $port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
+        $this->downloadAsFile($path, $port, $host, $filename, $callback);
+	}
+	
+	/**
+	 * Downloads a resource via HTTP protocol and stores it into a file.
+	 *
 	 * @param string $path
 	 * @param int $port
 	 * @param string $host

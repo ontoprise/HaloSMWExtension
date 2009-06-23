@@ -1,10 +1,15 @@
 <?php
 
-require_once '../io/HttpDownload.php';
-require_once '../descriptor/DeployDescriptorParser.php';
+if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
+	require_once 'deployment/io/HttpDownload.php';
+	require_once 'deployment/descriptor/DeployDescriptorParser.php';
+} else {
+	require_once '../io/HttpDownload.php';
+    require_once '../descriptor/DeployDescriptorParser.php';
+}
 
 // this URL is supposed to be fix forever
-define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/");
+define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/installer/");
 
 /**
  * Allows access on the global HALO package repository.
@@ -30,6 +35,7 @@ class PackageRepository {
 		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. 'repository.xml');
 
 		$path = $partsOfURL['path'];
+		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
 
@@ -54,10 +60,11 @@ class PackageRepository {
 		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. "extensions/$ext_id/deploy.xml");
 
 		$path = $partsOfURL['path'];
+		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
 
-		$dd =  new DeployDescriptor($res);
+		$dd =  new DeployDescriptorParser($res);
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
@@ -68,13 +75,14 @@ class PackageRepository {
 
 		// download descriptor
 		$d = new HttpDownload();
-		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. "extensions/$ext_id/deploy$version.xml");
+		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. "extensions/$ext_id/deploy-$version.xml");
 
 		$path = $partsOfURL['path'];
+		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
 
-		$dd =  new DeployDescriptor($res);
+		$dd =  new DeployDescriptorParser($res);
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
@@ -86,7 +94,7 @@ class PackageRepository {
      * @return array of results
      */
 	public static function getAllVersions($packageID) {
-		$versions = self::getPackageRepository()->xpath("/root/extensions/extension/version");
+		$versions = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version");
         if (count($versions) == 0) return NULL;
         $results = array();
         foreach($versions as $v) {
@@ -148,12 +156,12 @@ class PackageRepository {
 		$packages = array();
 		// add trailing slashes
 		if (substr($ext_dir,-1)!='/'){
-			$SourceDirectory .= '/';
+			$ext_dir .= '/';
 		}
 
 		$handle = @opendir($ext_dir);
 		if (!$handle) {
-			throw new IllegalArgument('Extension directory does not exist.');
+			throw new IllegalArgument('Extension directory does not exist: '.$ext_dir);
 		}
 
 		while ($entry = readdir($handle) ){
@@ -161,10 +169,10 @@ class PackageRepository {
 				continue;
 			}
 
-			if (is_dir($SourceDirectory.$entry)) {
+			if (is_dir($ext_dir.$entry)) {
 				// check if there is a deploy.xml
-				if (file_exits($SourceDirectory.$entry.'/deploy.xml')) {
-					$dd[] = new DeployDescriptorParser($SourceDirectory.$entry.'/deploy.xml');
+				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
+					$packages[] = new DeployDescriptorParser(file_get_contents($ext_dir.$entry.'/deploy.xml'));
 
 				}
 			}

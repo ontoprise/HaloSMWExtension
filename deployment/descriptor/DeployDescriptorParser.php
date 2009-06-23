@@ -21,6 +21,7 @@ class DeployDescriptorParser {
 	var $configs;
 	var $precedings;
 	var $userReqs;
+	var $dependencies;
 
 	function __construct($xml) {
 			
@@ -105,14 +106,24 @@ class DeployDescriptorParser {
 	}
 
 	function getDependencies() {
-		$deps = array();
+		if (!is_null($this->dependencies)) return $this->dependencies;
+		$this->dependencies = array();
 		foreach($this->globalElement[0]->dependencies as $dep) {
 			$depID = trim((string) $dep->dependency);
 			$depFrom = intval((string) $dep->dependency->attributes()->from);
 			$depTo = intval((string) $dep->dependency->attributes()->to);
-			$deps[] = array($depID, $depFrom, $depTo);
+			$this->dependencies[] = array($depID, $depFrom, $depTo);
 		}
-		return $deps;
+		return $this->dependencies;
+	}
+	
+	function getDependency($ext_id) {
+		$dependencies = $this->getDependencies();
+		foreach($dependencies as $d) {
+			list($id, $from, $to) = $d;
+			if ($ext_id === $id) return $d;
+		}
+		return NULL;
 	}
 
 	function getCodefiles() {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>130</version>
+        <id>SMW</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions\SemanticMediaWiki</instdir>
+        <description>Dummy</description>
+        <dependencies>
+            <dependency from="120" to="150">MW</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+        <file loc="extensions/SMWHalo/SMW_Initialize.php" />
+        <file loc="extensions/SMWHalo/SMW_QP_XML.php" />
+    </codefiles>
+    <wikidumps>
+        <file loc="wikidumps/ontology1.xml" />
+    </wikidumps>
+    <resources>
+        <file loc="resources/img1.png" />
+    </resources>
+    <configs>
+
+        <new>
+            <require name="sga"
+                file="extensions/SemanticGardening/SGA_GardeningInitialize.php" />
+            <function name="enableSemantics">
+                <string name="url" userValueRequired="true"
+                    description="URL">
+                </string>
+            </function>
+        </new>
+    </configs>
+</deploydescriptor>

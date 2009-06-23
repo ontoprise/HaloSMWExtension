@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<extensions>
+		<extension id="SMWHalo">
+			<version
+				url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+				ver="130" />
+			<version
+				url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+				ver="144" />
+			<version
+				url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+				ver="150" />
+		</extension>
+		<extension id="SMW">
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+                ver="130" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+                ver="142" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+                ver="150" />
+        </extension>
+		<extension id="SemanticGardening">
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticGardening/deploy/bin/smwhalo-gardening-1.0.zip"
+                ver="100" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticGardening/deploy/bin/smwhalo-gardening-1.0.zip"
+                ver="110" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticGardening/deploy/bin/smwhalo-gardening-1.0.zip"
+                ver="120" />
+        </extension>
+	</extensions>
+</root>

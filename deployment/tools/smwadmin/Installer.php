@@ -2,6 +2,7 @@
 
 define('DEPLOY_FRAMEWORK_DOWNGRADE_NEEDED', 0);
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
+define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
 
 require_once 'PackageRepository.php';
 require_once 'Tools.php';
@@ -19,21 +20,33 @@ class Installer {
 
 	static $tmpFolder;
 	static $rootDir;
-
-	public function __construct() {
+    
+	private $instDir;
+	  /**
+	   * Creates new Installer.
+	   * 
+	   * @param string $rootDir Explicit root dir. Only necessary for testing
+	   */
+	public function __construct($rootDir = NULL) {
 		self::$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
-		Tools::mkpath(self::$tmpFolder);
-		self::$rootDir = realpath(dirname(__FILE__)."/../../../");
+		if (!file_exists(self::$tmpFolder)) Tools::mkpath(self::$tmpFolder);
+		if (!file_exists(self::$tmpFolder)) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
+		}
+		self::$rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
 	}
-
+    
+	public function setInstDir($instdir) {
+		$this->instDir = $instDir;
+	}
 
 	public function installPackage($packageID, $version = NULL) {
 
 		// 1. Connect to package repository.
-		PackageRepository::getPackageRepository();
+		//PackageRepository::getPackageRepository();
 
 		// 2. Check if package is installed
-		$localPackages = PackageRepository::getLocalPackages(dirname(__FILE__).'/../../extensions');
+		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
 		$ext = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
@@ -53,16 +66,16 @@ class Installer {
 		}
 
 
+			$updatesNeeded = array();
 		if (is_null($ext)) {
 			// new installation
-			$updatesNeeded = array();
 			$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 			$this->checkForSuperExtensions($dd, $updatesNeeded, $localPackages);
 
 		} else {
 
 			// check version if lower
-			if (is_number($version) && $ext->getVersion() < $version) {
+			if (is_numeric($version) && $ext->getVersion() > $version) {
 				throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version?", $ext);
 			}
 			// update
@@ -75,6 +88,7 @@ class Installer {
 		foreach($updatesNeeded as $un) {
 			list($un, $from, $to) = $un;
 			if (!array_key_exists($un->getID(), $extensions_to_update)) {
+				
 				$extensions_to_update[$un->getID()] = array($from, $to);
 			} else {
 				list($min, $max) = $extensions_to_update[$un->getID()];
@@ -86,23 +100,24 @@ class Installer {
 
 		// 4. Install/update all dependant extensions
 		$d = new HttpDownload();
-		foreach($extensions_to_update as $etu) {
-			$url = $this->getVersion($etu->getID());
-			$d->downloadAsFileByURL($url, self::$tmpFolder."/".$etu->getID()."zip");
+		foreach($extensions_to_update as $id=>$arr) {
+			$url = PackageRepository::getVersion($id, $arr[0]); // 0: min, 1: max
+			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$arr[0].zip");
 			 
 			// unzip (requires 7-zip installed)
-			exec('7z x -o'.self::$rootDir." ".self::$tmpFolder."/".$etu->getID()."zip");
+			exec('7z x -o'.$this->instDir." ".self::$tmpFolder."/$id-$arr[0].zip");
 			 
 			// apply deploy descriptor
 		}
-
+		
+        /*
 		// 5. Install update this extension
 		$url = $this->getVersion($dd->getID());
 		$d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."zip");
 
 		// unzip (requires 7-zip installed)
 		exec('7z x -o'.self::$rootDir." ".self::$tmpFolder."/".$dd->getID()."zip");
-
+*/
 		// apply deploy descriptor
 	}
 

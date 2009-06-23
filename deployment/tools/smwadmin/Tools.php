@@ -26,7 +26,7 @@ class Tools {
 		}
 		return $thisBoxRunsWindows;
 	}
-    
+
 	/**
 	 * Creates the given directory.
 	 *
@@ -36,6 +36,21 @@ class Tools {
 	public static function mkpath($path) {
 		if(mkdir($path) || file_exists($path)) return true;
 		return (mkpath(dirname($path)) && mkdir($path));
+	}
+
+	public static function remove_dir($current_dir) {
+		if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
+		if($dir = @opendir($current_dir)) {
+			while (($f = readdir($dir)) !== false) {
+				if($f > '0' and filetype($current_dir.$f) == "file") {
+					unlink($current_dir.$f);
+				} elseif($f > '0' and filetype($current_dir.$f) == "dir") {
+					remove_dir($current_dir.$f."\\");
+				}
+			}
+			closedir($dir);
+			rmdir($current_dir);
+		}
 	}
 }
 ?>
