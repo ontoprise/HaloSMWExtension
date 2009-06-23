@@ -12,3 +12,4 @@ include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php'
 
 include_once('extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension();
+$wgGroupPermissions['sysop']['gardening']=true;
