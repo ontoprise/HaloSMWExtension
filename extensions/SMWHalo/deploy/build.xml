@@ -49,6 +49,20 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/skins">
+			<fileset file="../../../skins/OntoSkin*" />
+		</copy>
+		<copy todir="bin/zip/skins/ontoskin">
+			<fileset dir="../../../skins/ontoskin">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/skins/ontoskin2">
+			<fileset dir="../../../skins/ontoskin2">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+
 		<copy todir="bin/zip/extensions/SMWHalo">
 			<fileset dir="../">
 				<include name="COPYING" />
@@ -123,7 +137,7 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="bin/zip_ext/extensions">
 			<fileset file="../../LdapAuthentication.php/" />
 			<fileset file="../../Cite.php/" />
