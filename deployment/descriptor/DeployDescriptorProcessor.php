@@ -4,15 +4,24 @@
  * Modifications are specified in the deploy descriptor.
  *
  *  @author: Kai Kühn / Ontoprise / 2009
- * 
+ *
  */
 
 class DeployDescriptionProcessor {
 
-	private $localSettingsContent;
 	private $ls_loc;
-	private $insertions;
+	private $dd_parser;
 
+
+	private $localSettingsContent;
+
+	/**
+	 * Creates new DeployDescriptorProcessor.
+	 *
+	 * @param string $ls_loc Location of LocalSettings
+	 * @param DeployDescriptorParser $dd_parser
+	 *
+	 */
 	function __construct($ls_loc, $dd_parser) {
 		$this->dd_parser = $dd_parser;
 
@@ -29,30 +38,78 @@ class DeployDescriptionProcessor {
 		throw new IllegalArgument("$ls_loc does not exist!");
 	}
 
-
-	function makeChanges($userValues) {
+	/**
+	 * Reads the LocalSettings.php file, applies changes and return it as string.
+	 *
+	 * @param array $userValues Mappings for required values.
+	 * @return string changed LocalSettings.php file
+	 */
+	function applyLocalSettingsChanges($userValues) {
 		// calculate changes
-		$this->insertions = ""; // reset
+		$insertions = ""; // reset
 			
 		foreach($this->dd_parser->getConfigs() as $ce) {
-			$this->insertions .= $ce->apply($this->localSettingsContent, $this->dd_parser->getID(), $userValues);
+			$insertions .= $ce->apply($this->localSettingsContent, $this->dd_parser->getID(), $userValues);
 		}
 		list($insertpos, $ext_found) = $this->getInsertPosition($this->dd_parser->getID());
+
 		$prefix = substr($this->localSettingsContent, 0 , $insertpos);
+
 
 		$suffix = substr($this->localSettingsContent, $insertpos + 1);
 
 		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
 		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/";
-		$this->localSettingsContent = $prefix . $startTag . $this->insertions . $endTag . $suffix;
-
+		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
 
 		return $this->localSettingsContent;
 	}
 
-	function writeFile() {
-		$handle = fopen($this->ls_loc, "w");
-		fwrite($handle, $this->localSettingsContent);
+	/**
+	 * Runs the given setup scripts.
+	 *
+	 * Needs php interpreter in PATH
+	 *
+	 */
+	function applySetups($dryRun = false) {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		foreach($this->dd_parser->getSetups() as $setup) {
+			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			if (substr($instDir, -1) != '/') $instDir .= "/";
+			$script = self::makeUnixPath($setup['script']);
+			if (!$dryRun) {
+				print "\n\nRun script:\nphp ".$rootDir."/".$instDir.$script." ".$setup['params'];
+				exec("php ".$rootDir."/".$instDir.$script." ".$setup['params']);
+			}
+		}
+	}
+
+	/**
+	 * Applies patches
+	 *
+	 * Needs php Interpreter and GNU-patch in PATH.
+	 *
+	 */
+	function applyPatches($dryRun = false) {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		foreach($this->dd_parser->getPatches() as $patch) {
+			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			if (substr($instDir, -1) != '/') $instDir .= "/";
+			$patch = self::makeUnixPath($patch);
+			if (!$dryRun) {
+			 print "\n\nApply patch:\nphp ".$rootDir."/patches/patch.php -p ".$rootDir."/".$instDir.$patch." -d ".$rootDir;
+			 exec("php ".$rootDir."/patches/patch.php -p ".$rootDir."/".$instDir."/".$patch." -d ".$rootDir);
+			}
+		}
+	}
+
+	/**
+	 * Writes LocalSettings.php
+	 *
+	 */
+	function writeLocalSettingsFile(& $content) {
+		$handle = fopen($this->ls_loc, "wb");
+		fwrite($handle, $content);
 		fclose($handle);
 	}
 
@@ -72,18 +129,22 @@ class DeployDescriptionProcessor {
 		if ($pos === false) {
 			$ext_found = false;
 			$pos = strlen($this->localSettingsContent);
-			return $pos;
+			return array($pos - 2, $ext_found);
 		}
 		$ext_found = true;
 		return array($pos - 2, $ext_found);
 	}
 
-
+	private static function makeUnixPath($path) {
+		return str_replace("\\", "/", $path);
+	}
 }
+
+
 
 /**
  * Represents a configuration change in the localsettings file.
- * 
+ *
  * @author: Kai Kühn / Ontoprise / 2009
  *
  */
@@ -91,7 +152,7 @@ abstract class ConfigElement {
 	var $type;
 	public function __construct($type) { $this->type = $type; }
 	public function getType() { return $this->type; }
-	
+
 	/**
 	 * Applies the changes described by the config element to the local settings.
 	 *
@@ -100,25 +161,25 @@ abstract class ConfigElement {
 	 * @param array $userValues Hash arrays with user values for required variables.
 	 */
 	public abstract function apply(& $ls, $ext_id, $userValues);
-    
+
 	/**
 	 * Returns the configuration fragement of the extension. The text between
-	 * 
+	 *
 	 *     start-$ext_id ... end-$ext_id
 	 *
 	 * @param string $ext_id extension ID
 	 * @param string $ls localsettings text
-	 * @return string
+	 * @return string Fragment or NULL if it does not exist.
 	 */
 	protected function getExtensionFragment($ext_id, & $ls) {
 		$start = strpos($ls, "/*start-$ext_id*/");
 		$end = strpos($ls, "/*end-$ext_id*/");
 		if ($start === false || $end === false) {
-			throw new IllegalArgument("$ext_id is not installed.");
+			return NULL; // fragment does not exist
 		}
 		return substr($ls, $start, $end-$start);
 	}
-    
+
 	/**
 	 *  Replaces the configuration fragement of the extension by the given.
 	 *
@@ -150,22 +211,29 @@ abstract class ConfigElement {
 				case "string": {
 					$name = (string) $ch->attributes()->name;
 					$key = (string) $ch->attributes()->key;
+					$null = (string) $ch->attributes()->null;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$key = $key != NULL ? "'$key'=>" : ""; 
-					$resultsStr .= ($resultsStr == "" ? "$key'$p'" : ", $key'$p'");break;
+					$p = (strtolower($null) === "true") ? "NULL" : "'".$p."'";
+
+					$key = $key != NULL ? "'$key'=>" : "";
+					$resultsStr .= ($resultsStr == "" ? "$key$p" : ", $key$p");break;
 				}
 				case "number": {
 					$name = (string) $ch->attributes()->name;
 					$key = (string) $ch->attributes()->key;
+					$null = (string) $ch->attributes()->null;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$key = $key != NULL ? "'$key'=>" : ""; 
+					$p = (strtolower($null) === "true") ? "NULL" : $p;
+					$key = $key != NULL ? "'$key'=>" : "";
 					$resultsStr .= ($resultsStr == "" ? "$key $p" : ", $key $p");break;
 				}
 				case "boolean": {
 					$name = (string) $ch->attributes()->name;
 					$key = (string) $ch->attributes()->key;
+					$null = (string) $ch->attributes()->null;
 					$p = array_key_exists($name, $mappings) ? $mappings[$name] : (string) $ch[0];
-					$key = $key != NULL ? "'$key'=>" : ""; 
+					$p = (strtolower($null) === "true") ? "NULL" : $p;
+					$key = $key != NULL ? "'$key'=>" : "";
 					$resultsStr .= ($resultsStr == "" ? "$key $p" : ", $key $p");break;
 				}
 				case "array": {
@@ -176,7 +244,7 @@ abstract class ConfigElement {
 		}
 		return $resultsStr;
 	}
-    
+
 	/**
 	 * Parses a PHP array content and interprete it using the XML representation.
 	 *
@@ -232,12 +300,12 @@ abstract class ConfigElement {
 
 /**
  * Represents a variable setting.
- * 
+ *
  * e.g. $smwgMySetting = true;
  *
  */
 class VariableConfigElement extends ConfigElement {
-	var $name; 
+	var $name;
 	var $value;
 	var $remove;
 	var $external; // indicates that variable is defined elsewhere and not in the extensions's section
@@ -305,7 +373,7 @@ class VariableConfigElement extends ConfigElement {
 
 /**
  * Represents a require/include statement in the settings.
- * 
+ *
  * @author: Kai Kühn / Ontoprise / 2009
  *
  */
@@ -339,7 +407,7 @@ class RequireConfigElement extends ConfigElement {
 
 /**
  * Represents a arbitrary PHP statement in the settings.
- * 
+ *
  * @author: Kai Kühn / Ontoprise / 2009
  *
  */
@@ -372,9 +440,9 @@ class PHPConfigElement extends ConfigElement {
 
 /**
  * Represents a function call in the settings.
- * 
+ *
  * e.g. enableSemantics('http://localhost:8080', true);
- * 
+ *
  * @author: Kai Kühn / Ontoprise / 2009
  *
  */
@@ -401,6 +469,7 @@ class FunctionCallConfigElement extends ConfigElement {
 		} else {
 
 			$fragment = $this->getExtensionFragment($ext_id, $ls);
+			if (is_null($fragment)) return $appliedCommand;
 			$start = strpos($fragment, '/*param-start-'.$this->functionname);
 			$end = strpos($fragment, '/*param-end-'.$this->functionname);
 			if ($start !== false && $end !== false) {

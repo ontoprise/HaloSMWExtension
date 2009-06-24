@@ -67,5 +67,16 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 	    $this->assertEquals("string", $reqs['avalue'][0]);
 	    $this->assertEquals("Required value", $reqs['avalue'][1]);
 	}
+	
+	function testSetups() {
+		$setups = $this->ddp->getSetups();
+		 $this->assertEquals("maintenance/setup.php", $setups[0]['script']);
+		 $this->assertEquals("param1 param2", $setups[0]['params']);
+	}
+	
+	function testPatches() {
+		$patches = $this->ddp->getPatches();
+		 $this->assertEquals("patch.txt", $patches[0]);
+	}
 }
 ?>

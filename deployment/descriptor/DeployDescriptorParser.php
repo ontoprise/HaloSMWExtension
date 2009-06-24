@@ -16,23 +16,27 @@ class DeployDescriptorParser {
 
 	var $globalElement;
 	var $codefiles;
+	var $patchfiles;
 	var $wikidumps;
 	var $resources;
 	var $configs;
 	var $precedings;
 	var $userReqs;
 	var $dependencies;
+	var $setups;
+	var $patches;
 
-	function __construct($xml) {
+	function __construct($xml, $fromVersion = NULL) {
 			
 		// parse xml results
 		$dom = simplexml_load_string($xml);
 
 		$this->globalElement = $dom->xpath('/deploydescriptor/global');
 		$this->codefiles = $dom->xpath('/deploydescriptor/codefiles/file');
+		$this->patchfiles = $dom->xpath('/deploydescriptor/codefiles/patch');
 		$this->wikidumps = $dom->xpath('/deploydescriptor/wikidumps/file');
 		$this->resources = $dom->xpath('/deploydescriptor/resources/file');
-		$this->createConfigElements($dom);
+		$this->createConfigElements($dom, $fromVersion);
 	}
 
 	
@@ -43,6 +47,12 @@ class DeployDescriptorParser {
 	public function getConfigs() {
 		return $this->configs;
 	}
+	
+	public function getSetups() {
+		return $this->setups;
+	}
+	
+   
 
 	private function createConfigElements(& $dom, $from = NULL) {
 		if ($from == NULL) {
@@ -55,9 +65,12 @@ class DeployDescriptorParser {
 		$function = $dom->xpath($path.'/function');
 		$require = $dom->xpath($path.'/require');
 		$php = $dom->xpath($path.'/php');
+		$setup = $dom->xpath($path.'/setup');
+		
 
 		$this->configs = array();
-		$this->precedes = array();
+		$this->precedings = array();
+		$this->setups = array();
 		foreach($precedings as $p) {
 			$this->precedings[] = (string) $p->attributes()->ext;
 		}
@@ -77,6 +90,13 @@ class DeployDescriptorParser {
 		foreach($php as $p) {
 			$this->configs[] = new PHPConfigElement($p);
 		}
+	   foreach($setup as $p) {
+	   	    $script = (string) $p->attributes()->script;
+	   	    if (is_null($script) && $script == '') throw new IllegalArgument("Setup 'script'-attribute missing");
+	   	    $params = (string) $p->attributes()->params;
+	   	    if (is_null($params)) $params = "";
+            $this->setups[] = array('script'=>$script, 'params'=>$params);
+        }
 	}
 
     function getUserRequirements() {
@@ -124,6 +144,18 @@ class DeployDescriptorParser {
 			if ($ext_id === $id) return $d;
 		}
 		return NULL;
+	}
+	
+	function getPatches() {
+		if (!is_null($this->patches)) return $this->patches;
+        $this->patches = array();
+        
+        foreach($this->patchfiles as $p) {
+            $patchFile = trim((string) $p->attributes()->file);
+            if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+            $this->patches[] = $patchFile;
+        }
+        return $this->patches;
 	}
 
 	function getCodefiles() {
@@ -215,15 +247,25 @@ class DeployDescriptorParser {
 		return (count($warnings) == 0 ? true : $warnings);
 	}
 
-	function applyConfigurations($ls_loc) {
+	/**
+	 * Applies all necessary configurations.
+	 *
+	 * @param string $ls_loc Location of LocalSettings.php
+	 * @param boolean $dryRun If true, nothing gets actually changed.
+	 * @return string updated LocalSettings.php
+	 */
+	function applyConfigurations($ls_loc, $dryRun = false) {
 		if ($this->configs === false) {
 			// no configs, nothing to do
 			return DEPLOY_MSG_NOTHING_TODO;
 		}
 
 		$dp = new DeployDescriptionProcessor($ls_loc, $this);
-		return $dp->makeChanges($userValues);
-
+		$content = $dp->applyLocalSettingsChanges($userValues);
+		$dp->applySetups($dryRun);
+		$dp->applyPatches($dryRun);
+		if (!$dryRun) $dp->writeLocalSettingsFile($content);
+        return $content;
 	}
 
 }

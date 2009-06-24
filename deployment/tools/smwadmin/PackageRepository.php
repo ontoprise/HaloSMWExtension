@@ -9,7 +9,7 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 }
 
 // this URL is supposed to be fix forever
-define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/installer/");
+define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
 
 /**
  * Allows access on the global HALO package repository.
@@ -107,13 +107,14 @@ class PackageRepository {
 	 * Returns URL of latest available version of a package
 	 *
 	 * @param string $packageID The package ID
-	 * @return URL (as string)
+	 * @return array (URL (as string), version)
 	 */
 	public static function getLatestVersion($packageID) {
 		$package = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
 		if (count($package) == 0) return NULL;
 		$download_url = (string) $package[0]->attributes()->url;
-		return $download_url;
+		$version = (string) $package[0]->attributes()->ver;
+		return array($download_url, $version);
 	}
 
 	/**

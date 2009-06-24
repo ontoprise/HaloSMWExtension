@@ -50,6 +50,7 @@ class HttpDownload {
 		$this->header = "";
 		$length = 0;
 		$cb = is_null($callback) ? $this : $callback;
+		call_user_func(array(&$cb,"downloadStart"), basename($path));
 		while ($out = socket_read($socket, 2048)) {
 			if (! $this->headerFound) {
 				$this->header .= $out;
@@ -101,6 +102,7 @@ class HttpDownload {
         $this->header = "";
         $length = 0;
         $cb = is_null($callback) ? $this : $callback;
+    	call_user_func(array(&$cb,"downloadStart"), basename($path));
         while ($out = socket_read($socket, 2048)) {
             if (! $this->headerFound) {
                 $this->header .= $out;
@@ -124,7 +126,7 @@ class HttpDownload {
             
         }
         if ($percentage < 1) call_user_func(array(&$callback,"progress"), 1);
-        call_user_func(array(&$cb,"downloadFinished"), $filename);
+        call_user_func(array(&$cb,"downloadFinished"), NULL);
       
         socket_close($socket);
         return $res;
@@ -163,8 +165,12 @@ class HttpDownload {
 		$lastLength = strlen($show);
 	}
 	
+    public function downloadStart($filename) {
+        if (!is_null($filename)) echo "\nDownloading $filename...\n";
+    }
+	
 	public function downloadFinished($filename) {
-		echo "\n$filename was downloaded.";
+		if (!is_null($filename)) echo "\n$filename was downloaded.";
 	}
 }
 

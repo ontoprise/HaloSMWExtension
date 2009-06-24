@@ -17,16 +17,28 @@ require_once 'Tools.php';
 
 
 class Installer {
-
+    
+	/*
+	 * Temporary folder for storing downloaded files
+	 */
 	static $tmpFolder;
+	
+	/*
+	 * Mediawiki installation directory
+	 */
 	static $rootDir;
     
+	/*
+	 * Installation directory
+	 * Normally identical with $rootDir except for testing.
+	 */
 	private $instDir;
-	  /**
-	   * Creates new Installer.
-	   * 
-	   * @param string $rootDir Explicit root dir. Only necessary for testing
-	   */
+	
+	/**
+	 * Creates new Installer.
+	 *
+	 * @param string $rootDir Explicit root dir. Only necessary for testing
+	 */
 	public function __construct($rootDir = NULL) {
 		self::$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 		if (!file_exists(self::$tmpFolder)) Tools::mkpath(self::$tmpFolder);
@@ -35,8 +47,8 @@ class Installer {
 		}
 		self::$rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
 	}
-    
-	public function setInstDir($instdir) {
+
+	public function setInstDir($instDir) {
 		$this->instDir = $instDir;
 	}
 
@@ -66,7 +78,7 @@ class Installer {
 		}
 
 
-			$updatesNeeded = array();
+		$updatesNeeded = array();
 		if (is_null($ext)) {
 			// new installation
 			$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
@@ -88,37 +100,58 @@ class Installer {
 		foreach($updatesNeeded as $un) {
 			list($un, $from, $to) = $un;
 			if (!array_key_exists($un->getID(), $extensions_to_update)) {
-				
-				$extensions_to_update[$un->getID()] = array($from, $to);
+
+				$extensions_to_update[$un->getID()] = array($un, $from, $to);
 			} else {
 				list($min, $max) = $extensions_to_update[$un->getID()];
 				if ($from > $min) $min = $from;
 				if ($to < $max) $max = $to;
-				$extensions_to_update[$un->getID()] = array($min, $max);
+				$extensions_to_update[$un->getID()] = array($un, $min, $max);
 			}
 		}
 
 		// 4. Install/update all dependant extensions
 		$d = new HttpDownload();
 		foreach($extensions_to_update as $id=>$arr) {
-			$url = PackageRepository::getVersion($id, $arr[0]); // 0: min, 1: max
-			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$arr[0].zip");
-			 
-			// unzip (requires 7-zip installed)
-			exec('7z x -o'.$this->instDir." ".self::$tmpFolder."/$id-$arr[0].zip");
-			 
-			// apply deploy descriptor
-		}
-		
-        /*
-		// 5. Install update this extension
-		$url = $this->getVersion($dd->getID());
-		$d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."zip");
+			list($desc, $min, $max) = $arr;
+			$url = PackageRepository::getVersion($id, $min);
+			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$min.zip");
 
-		// unzip (requires 7-zip installed)
-		exec('7z x -o'.self::$rootDir." ".self::$tmpFolder."/".$dd->getID()."zip");
-*/
+			// unzip (requires 7-zip installed on Windows, unzip on Linux)
+			if (Tools::isWindows()) {
+				print "\\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\$id-$min.zip";
+				exec('7z x -o'.$this->instDir." ".self::$tmpFolder."\\$id-$min.zip");
+			} else {
+				print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/$id-$min.zip -d ".$this->instDir;
+				exec('unzip '.self::$tmpFolder."/$id-$min.zip -d ".$this->instDir);
+			}
+				
+			// apply deploy descriptor and save local settings
+			$desc->applyConfigurations($this->instDir."/LocalSettings.php");
+			print "\n-------\n";
+		}
+
+
+		// 5. Install update this extension
+		if (is_null($version)) {
+		  list($url,$version) = PackageRepository::getLatestVersion($dd->getID());
+		 
+		} else {
+		  $url = PackageRepository::getVersion($dd->getID(), $version);
+		}
+		  $d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."-$version.zip");
+
+		if (Tools::isWindows()) {
+			print "\n\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip";
+			exec('7z x -o'.$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip");
+		} else {
+			print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir;
+			exec('unzip '.self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir);
+		}
+
 		// apply deploy descriptor
+		$dd->applyConfigurations($this->instDir."/LocalSettings.php");
+		
 	}
 
 	public function downloadProgres($percentage) {
@@ -177,7 +210,7 @@ class Installer {
 	private function checkForSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$updatesNeeded = array();
 		foreach($localPackages as $p) {
-				
+
 			// check if a local extension has $dd as a dependency
 			$dep = $p->getDependency($dd->getID());
 			if ($dep == NULL) continue;

@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>100</version>
+        <version>120</version>
         <id>SemanticGardening</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions\SemanticGardening</instdir>
         <description>Dummy</description>
         <dependencies>
-           <dependency from="142" to="142">SMWHalo</dependency>
+            <dependency from="144" to="144">SMWHalo</dependency>
         </dependencies>
     </global>
     <codefiles>
-        <file loc="extensions/SemanticGardening/SGA_GardeningInitialize.php" />
+    
+        <patch file="patch.txt" />
+   
+        <file
+            loc="extensions/SemanticGardening/SGA_GardeningInitialize.php" />
         <!-- TODO: add all others -->
     </codefiles>
     <wikidumps>
         <!-- empty -->
     </wikidumps>
     <resources>
-         <!-- empty -->
+        <!-- empty -->
     </resources>
+    
     <configs>
         <precedes ext="SMWHalo" />
 
@@ -27,8 +32,10 @@
             <require name="sga"
                 file="extensions/SemanticGardening/SGA_GardeningInitialize.php" />
             <variable name="phpInterpreter">
-                <string name="phpInterpreterPath" userValueRequired="true" description="Path of PHP interpreter"/>
-            </variable>    
+                <string name="phpInterpreterPath"
+                    userValueRequired="true" description="Path of PHP interpreter" />
+            </variable>
+            <setup script="maintenance/SGA_setup.php" params="" />
         </new>
     </configs>
 </deploydescriptor>

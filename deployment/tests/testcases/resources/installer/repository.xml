@@ -34,5 +34,16 @@
                 url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticGardening/deploy/bin/smwhalo-gardening-1.0.zip"
                 ver="120" />
         </extension>
+        <extension id="UnifiedSearch">
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/UnifiedSearch/deploy/bin/smwhalo-search-1.1.zip"
+                ver="100" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/UnifiedSearch/deploy/bin/smwhalo-search-1.1.zip"
+                ver="110" />
+            <version
+                url="http://halo-build-serv:8080/job/Build%20SMWHalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/UnifiedSearch/deploy/bin/smwhalo-search-1.1.zip"
+                ver="120" />
+        </extension>
 	</extensions>
 </root>
