@@ -35,6 +35,8 @@ initialize:function(){
 	this.setActiveQuery(0);
 	this.updateColumnPreview();
 	this.pendingElement = null;
+	this.queryPartsFromInitByAsk = Array();
+	this.propertyTypesList = new PropertyList();
 },
 
 /**
@@ -1391,9 +1393,66 @@ initFromQueryString:function(ask) {
 	var sub = this.splitQueryParts(ask);
 	// main query must exist, otherwise quit right away
 	if (sub.length == 0) return;
+
+	// save current query parts in an object variabke to have access on these later
+	this.queryPartsFromInitByAsk = sub;
+	
+	// run over all query strings and fetch property names
+	var propertiesInQuery = new Array();
+	for (i = 0; i < sub.length; i++) {
+		var props = sub[i].match(/\[\[([\w\d _]*)::.*?\]\]/g);
+		for (var j = 0; j < props.length; j++) {
+			var pname = escapeQueryHTML(props[i].substring(2, props[i].indexOf('::')));
+			if ( !propertiesInQuery.inArray(pname) )
+				propertiesInQuery.push(pname);
+		}
+	}
+	// check all properties that exist in parameter "must show" only (like | ?myproperty)
+	var props = sub[0].split('|');
+	for (var i = 1; i < props.length; i++) {
+  		if (props[i].match(/^\s*\?/)) {
+  			var pname = props[i].substring(props[i].indexOf('?') +1, props[i].length);
+  			pname = escapeQueryHTML(pname.replace(/\s*$/));
+  			if ( !propertiesInQuery.inArray(pname) )
+				propertiesInQuery.push(pname);
+  		}
+  	}	
+	
+	// add function to fetch property information
+	propertiesInQuery.unshift('getPropertyTypes');
+	//sajax_do_call('smwf_qi_QIAccess', propertiesInQuery, this.parsePropertyTypes.bind(this));
+	this.parseQueryString(sub);
+	
+},
+
+parsePropertyTypes:function(request) {
+	if (request.status == 200) {
+		var xmlDoc = GeneralXMLTools.createDocumentFromString(request.responseText);
+		var prop = xmlDoc.getElementsByTagName('relationSchema');
+		for (var i = 0; i < prop.length; i++) {
+			var pname = prop.item(i).getAttribute('name');
+			alert(pname);
+			var arity = parseInt(prop.item(i).getAttribute('arity'));
+			var ptype = prop.item(i).getElementsByTagName('param')[0].getAttribute('name');
+			var noval = prop.item(i).getElementsByTagName('allowedValue');
+			var isEnum = noval.length > 0 ? true : false;
+			var enumValues = [];
+			for (var j = 0; j < noval.length; j++) {
+				enumValues.push(noval.item(j).getAttribute('value'));
+			}
+			var pgroup = new PropertyGroup(name, arity, false, must, isEnum, enumValues);
+			this.propertyTypesList.add(name, pgroup, [], ptype);
+		}
+		this.parseQueryString();
+	}
+},
+
+parseQueryString:function(sub) {
+	//var sub = this.queryPartsFromInitByAsk;
+	
 	// properties that must be shown in the result
 	var pMustShow = this.applyOptionParams(sub[0]);
-	
+		
 	// run over all query strings and start parsing
 	for (i = 0; i < sub.length; i++) {
 		// set current query to active, do this manually (treeview is not updated)
@@ -1436,15 +1495,19 @@ handleQueryString:function(args, queryId, pMustShow) {
 			// if the property was already once in the arguments, we already have details about the property
 		    var pgroup = propList.getPgroup(pname);
 		    if (!pgroup) {
+		    	// get property data from definitions
+		    	var propdef = this.propertyTypesList.getPgroup(pname);
 		    	// show in results? if queryId == 0 then this is the main query and we check the params
 				var pshow = (queryId == 0) ? pMustShow.inArray(pname) : false;
 				// must be set?
 				var pmust = args.inArray('[[' + pname + '::+]]');
-				var arity = 2; // default value
-		    	pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust); //create propertyGroup
+				var arity = propdef ? propdef.getArity() : 2;
+				var isEnum = propdef ? propdef.isEnumeration() : false;
+				var enumValues = propdef ? propdef.getEnumValues() : [];
+		    	pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust, isEnum, enumValues); //create propertyGroup
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
-			var paramname = "Page"
+			var paramname = this.propertyTypeList && this.propertyTypeList.getType(pname) ? this.propertyTypeList.getType(pname) : 'Page';
 			var paramvalue = pval == "" ? "*" : pval; //no value is replaced by "*" which means all values
 			var restriction = '=';
 			
@@ -1640,40 +1703,48 @@ PropertyList.prototype = {
 		this.name = Array();
 		this.pgroup = Array();
 		this.subqueries = Array();
+		this.type = Array();
 		this.pointer = -1;
 	},
 
-	add:function(name, pgroup, subqueries){
+	add:function(name, pgroup, subqueries, type){
 		for (var i=0; i < this.name.length; i++) {
 			if (this.name[i] == name) {
 				this.pgroup[i] = pgroup;
 				this.subqueries[i] = subqueries;
+				this.type[i] = type;
 				return;
 			}
 		}
 		this.name.push(name);
 		this.pgroup.push(pgroup);
 		this.subqueries.push(subqueries);
+		this.type.push(type);
 	},
 
 	getPgroup:function(name){
 		for (var i=0; i < this.name.length; i++) {
-			if (this.name[i] == name) {
+			if (this.name[i] == name)
 				return this.pgroup[i];
-			}
 		}
 		return;
 	},
 
 	getSubqueryIds:function(name){
 		for (var i=0; i < this.name.length; i++) {
-			if (this.name[i] == name) {
+			if (this.name[i] == name)
 				return this.subqueries[i];
-			}
 		}
 		return new Array();
 	},
 	
+	getType:function(name){
+		for (var i=0; i < this.name.length; i++) {
+			if (this.name[i] == name)
+				return this.type[i];
+		}
+	},
+		
 	reset:function() {
 		this.pointer = -1;
 	},
