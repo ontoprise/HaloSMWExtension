@@ -10,69 +10,18 @@ function smwf_qi_QIAccess($method, $params) {
 	$p_array = explode(",", $params);
 	global $smwgQEnabled;
 
-
 	if($method == "getPropertyInformation"){
-		$relationName = htmlspecialchars_decode($p_array[0]);
-		global $smwgContLang, $smwgHaloContLang;
-
-		//$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
-
-		// get type definition (if it exists)
-		try {
-			$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
-			if(!($relationTitle instanceof Title)){
-				$relSchema = '<relationSchema name="'.htmlspecialchars($relationName).'" arity="2">'.
-								'<param name="Page"/>'.
-		           	  		 '</relationSchema>';
-				return $relSchema;
-			}
-			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
-			$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
-			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
-	
-			// if no 'has type' annotation => normal binary relation
-			if (count($type) == 0) {
-				// return binary schema (arity = 2)
-				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page"/>'.
-		           	  		 '</relationSchema>';
-			} else {
-				$typeLabels = $type[0]->getTypeLabels();
-				$typeValues = $type[0]->getTypeValues();
-				if ($type[0] instanceof SMWTypesValue) {
-	
-					// get arity
-					$arity = count($typeLabels) + 1;  // +1 because of subject
-			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
-	
-			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
-			   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
-			   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
-			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
-			   			for($j = 0; $j < sizeof($pvalues); $j++){
-			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
-			   			}
-						$relSchema .= '</param>';
-					}
-					$relSchema .= '</relationSchema>';
-	
-				} else { // this should never happen, huh?
-				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page"/>'.
-		           	  		 '</relationSchema>';
-				}
-			}
-			return $relSchema;
-		} catch (Exception $e){
-			echo "c";
-			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-				'<param name="Page"/>'.
-		        '</relationSchema>';
-			return $relSchema;
-		}
+		return qiGetPropertyInformation($p_array[0]);
 	}
-
+	else if ($method == "getPropertyTypes") {
+		$p_array = func_get_args();
+		$types = "<propertyTypes>";
+		for ($i = 1; $i < count($p_array); $i++) {
+			$types .= qiGetPropertyInformation($p_array[$i]);
+		}
+		$types.= "</propertyTypes>";
+		return $types;
+	}
 	else if($method == "getNumericTypes"){
 		$numtypes = array();
 
@@ -358,4 +307,68 @@ function doHttpRequestWithCurl($server, $file) {
 	curl_close($c);
 	return array($httpErr, $page);
 }
+
+
+function qiGetPropertyInformation($relationName) {		
+		$relationName = htmlspecialchars_decode($relationName);
+		global $smwgContLang, $smwgHaloContLang;
+
+		//$smwSpecialSchemaProperties = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+
+		// get type definition (if it exists)
+		try {
+			$relationTitle = Title::newFromText($relationName, SMW_NS_PROPERTY);
+			if(!($relationTitle instanceof Title)){
+				$relSchema = '<relationSchema name="'.htmlspecialchars($relationName).'" arity="2">'.
+								'<param name="Page"/>'.
+		           	  		 '</relationSchema>';
+				return $relSchema;
+			}
+			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+			$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
+			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
+	
+			// if no 'has type' annotation => normal binary relation
+			if (count($type) == 0) {
+				// return binary schema (arity = 2)
+				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
+								'<param name="Page"/>'.
+		           	  		 '</relationSchema>';
+			} else {
+				$typeLabels = $type[0]->getTypeLabels();
+				$typeValues = $type[0]->getTypeValues();
+				if ($type[0] instanceof SMWTypesValue) {
+	
+					// get arity
+					$arity = count($typeLabels) + 1;  // +1 because of subject
+			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
+	
+			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
+			   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
+			   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
+			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
+			   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
+			   			for($j = 0; $j < sizeof($pvalues); $j++){
+			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
+			   			}
+						$relSchema .= '</param>';
+					}
+					$relSchema .= '</relationSchema>';
+	
+				} else { // this should never happen, huh?
+				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
+								'<param name="Page"/>'.
+		           	  		 '</relationSchema>';
+				}
+			}
+			return $relSchema;
+		} catch (Exception $e){
+			echo "c";
+			$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
+				'<param name="Page"/>'.
+		        '</relationSchema>';
+			return $relSchema;
+		}
+	}
+
 ?>
