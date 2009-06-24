@@ -8,5 +8,6 @@
 		<ant antfile="wsPageTest.xml"/>
 		<ant antfile="wsUseGUITests.xml"/>
 		<ant antfile="wsEditGUITests.xml"/>
+		<ant antfile="wsDefineGUITest.xml"/>
 	</target>
 </project>

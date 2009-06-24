@@ -43,13 +43,13 @@
 			</verifyText>
 		</webtest>
 
-		<webtest name="WSRepositoryCheckConfirmButton">
+		<webtest name="WSRepositoryCheckConfirmButtonPart1">
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
-
-			<sleep seconds="5" />
+		</webtest>
+		<webtest name="WSRepositoryCheckConfirmButtonPart2">
 			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
 			<verifyText text="confirmed" description="Was the WWSD confirmed?">
 				<table htmlId="webservicetable" row="1" column="4" />

@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSDefineGUI">
+	
+	&goToLogin;
+	&createWebTestWS;
+
+	<target name="testWSDefineGUI">
+
+		<webtest name="WSDefineRESTPart1">
+			<antcall target="createWebTestWS" />
+		</webtest>
+
+		<webtest name="WSDefineRESTPart2">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
+
+			<setInputField htmlId="step1-uri" value="htto://localhost/webtest" />
+
+			<setRadioButton description="Check radio button step1-auth: yes"
+				htmlId="step1-auth-yes" />
+
+			<setInputField description="enter user name" htmlId="step1-username"
+				value="user" />
+			<setInputField description="Set password field : password"
+				htmlId="step1-password" value="password" />
+
+			<clickButton description="go to step2" htmlId="step1-go-img" />
+			<setSelectField description="choose post method"
+				htmlId="step2-methods" text="post" />
+
+			<clickButton description="go to step3" htmlId="step2-go-img" />
+
+			<clickButton xpath="//div[@id='step3-rest-intro']/input"
+				description="Add first parameter" />
+
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[1]/input"
+				value="optionalParameter" />
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[2]/input"
+				value="optionalParameter" />
+			<setRadioButton description="Check radio button s3-optional-radio1: Yes"
+				xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[3]/input[1]" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[5]/input" />
+
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[1]/input"
+				value="nonOptionalParameterNoDefault" />
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[2]/input"
+				value="nonOptionalParameterNoDefault" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/input" />
+
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[1]/input"
+				value="nonOptionalParameterWithDefault" />
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[2]/input"
+				value="nonOptionalParameterWithDefault" />
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[4]/input"
+				value="default" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[5]/input" />
+
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[1]/input"
+				value="parameterWithSubParameter" />
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[2]/input"
+				value="parameterWithSubParameter" />
+			<setSelectField
+				xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[5]/select"
+				text="Add subparameters" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[5]/td[5]/input" />
+
+			<setInputField
+				xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[1]/table/row/td[2]/textarea"
+				value='&lt;![CDATA[Hello]]&gt;&lt;subparameter name="optionalSubParameter" optional="true"/&gt;' />
+
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[5]/input" />
+			<setSelectField
+				xpath="//table[@id='step3-parameters']/tbody/tr[7]/td[5]/select"
+				text="Remove parameter" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[7]/td[5]/input" />
+
+			<setSelectField
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/select"
+				text="Add subparameters" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/input"></clickButton>
+			<setSelectField
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/select"
+				text="Remove subparameters" />
+			<clickButton
+				xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/input" />
+
+			<clickButton description="go to step4" htmlId="step3-go-img" />
+
+			<setCheckbox xpath="//div[@id='step4-rest-intro']/input[1]" />
+
+			<clickButton xpath="//div[@id='step4-rest-intro']/input[3]" />
+
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"
+				value="xpathSubPath" />
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[3]/input"
+				value="//dont/care" />
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[2]/td[4]/input" />
+
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[3]/td[1]/input"
+				value="jsonSubPath" />
+			<setSelectField
+				xpath="//table[@id='step4-results']/tbody/tr[3]/td[2]/select" text="json" />
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[3]/td[3]/input"
+				value="//either" />
+
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[2]/td[4]/input" />
+			<setSelectField
+				xpath="//table[@id='step4-results']/tbody/tr[4]/td[4]/select" text="Remove result part" />
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[4]/td[4]/input" />
+
+			<clickButton description="go to step5" htmlId="step4-go-img" />
+
+			<setInputField xpath="//input[@id='step5-display-hours']"
+				value="1" />
+			<setInputField xpath="//input[@id='step5-display-minutes']"
+				value="20" />
+			<setInputField xpath="//input[@id='step5-delay']"
+				value="100" />
+			<setInputField xpath="//input[@id='step5-spanoflife']"
+				value="10" />
+
+			<clickButton description="go to step6" htmlId="step5-go-img" />
+
+			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSREST" />
+			<clickButton description="go to step6" htmlId="step6-go-img" />
+
+		</webtest>
+
+		<webtest name="WSDefineRESTPart3">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSREST" />
+				
+			<verifyText text='WebService.*uri name=.*htto:.*localhost.*webtest.* .*protocol.*REST.*protocol.*authentication type=.*http.* login=.*user.* password=.*password.*method name=.*post.* .*parameter name=.*optionalParameter.*  optional=.*true.*  path=.*optionalParameter.*parameter name=.*nonOptionalParameterNoDefault.*  optional=.*false.*  path=.*nonOptionalParameterNoDefault.*parameter name=.*nonOptionalParameterWithDefault.*  optional=.*false.*  defaultValue=.*default.*  path=.*nonOptionalParameterWithDefault.*parameter name=.*parameterWithSubParameter.*  optional=.*false.*  path=.*parameterWithSubParameter.*!.*CDATA.*Hello.*subparameter name=.*optionalSubParameter.* optional=.*true.*parameter.*result name=.*result.* .*part name=.*complete.* path=.*.*part name=.*xpathSubPath.* xpath=.*dont.*care.*part name=.*jsonSubPath.* json=.*either.*result.*displayPolicy.*maxAge value=.*80.*maxAge.*displayPolicy.*queryPolicy.*once.*delay value=.*100.*queryPolicy.*spanOfLife value=.*10.* expiresAfterUpdate=.*true.* .*WebService' 
+			regex="true"/>
+			
+		</webtest>
+		
+		<webtest name="WSDefineRESTPart4">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+				
+			<verifyText text='NewWebTestWSREST'/>
+			
+		</webtest>
+
+	</target>
+</project>
