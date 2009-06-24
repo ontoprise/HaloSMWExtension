@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>120</version>
+        <id>UnifiedSearch</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/UnifiedSearch</instdir>
+        <description>Dummy</description>
+        <dependencies>
+            <dependency from="140" to="142">SMW</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+    
+        <patch file="patch.txt" />
+   
+        <file
+            loc="extensions/UnifiedSearch/US_Initialize.php" />
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    
+    <configs>
+       
+        <new>
+            <require name="sga"
+                file="extensions/SemanticGardening/US_Initialize.php" />
+            
+            <setup script="maintenance/US_setup.php" params="" />
+        </new>
+    </configs>
+</deploydescriptor>
