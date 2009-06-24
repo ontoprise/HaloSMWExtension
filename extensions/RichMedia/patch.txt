@@ -1,6 +1,21 @@
+Index: extensions/SemanticForms/includes/SF_FormInputs.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4182)
++++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
+@@ -43,7 +43,9 @@
+       $query_string .= "&wpDestFile=$default_filename";
+     $upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
+     $upload_label = wfMsg('upload');
+-    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:550 height:380\">$upload_label</a>";
++	/*op-patch|KK|2009-06-09|increase upload window size|start*/
++    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:660\">$upload_label</a>";
++	/*op-patch|KK|2009-06-09|increase upload window size|end*/
+     return $text;
+   }
+ 
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4144)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4182)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -1221,8 +1221,17 @@
      // add form bottom, if no custom "standard inputs" have been defined
@@ -24,7 +39,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4133)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4182)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -204,7 +219,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -				$output .=<<<END
 -		parent.document.getElementById("{$this->mInputID}").value = '$basename';
 -
-+			/*if ( $this->mInputID ) {
++			if ( $this->mInputID ) {
 +				if ($this->mDelimiter == null) {
 +					$output .=<<<END
 +					parent.document.getElementById("{$this->mInputID}").value = '$basename';
@@ -247,9 +262,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +						}
 +					}
  END;
--			}
 +				}
-+			}*/
+ 			}
 +			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 +			$relatedArticles = urlencode($relatedArticles);
 +			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles";
@@ -421,14 +435,11 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			global $wgCanonicalNamespaceNames;
 +			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
 +			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
- 		}
--		$wgOut->addHTML( '<div id="uploadtext">' );
--		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
++		}
 +		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
 +		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
 +		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
- 		$wgOut->addHTML( '</div>' );
--
++		$wgOut->addHTML( '</div>' );
 +		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;"><tr><td colspan="2">' );
 +		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext' ));
 +		$wgOut->addHTML( "</td></tr>");
@@ -459,13 +470,16 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +				break;
 +			default:
 +				$val2 = $val;
-+		}
+ 		}
+-		$wgOut->addHTML( '<div id="uploadtext">' );
+-		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
 +		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
 +		#end max file size
 +		
 +		$wgOut->addHTML( '<div id="upload-size">' );
 +		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_size', $wgLang->formatSize( $val2 ) )); 
-+		$wgOut->addHTML( '</div>' );
+ 		$wgOut->addHTML( '</div>' );
+-
 +		$wgOut->addHTML( '<div id="upload-perm-types">' );
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_permtypes' ));
 +		//sort file types!
