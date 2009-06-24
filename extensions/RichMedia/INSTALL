@@ -17,7 +17,7 @@ Installation instructions
 #
 
 1. Add to your LocalSettings.php:
-	(if you want pdf and doc files to be converted, set this line before SMW_Initialize.php is included)
+	(if you want pdf and doc files to be converted, set this line before RM_Initialize.php is included)
 	---
 	$smwgEnableUploadConverter = true;
 	--- 
