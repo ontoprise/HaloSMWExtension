@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4114)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4144)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -1221,8 +1221,17 @@
      // add form bottom, if no custom "standard inputs" have been defined
@@ -24,8 +24,17 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4114)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4133)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
+@@ -20,7 +20,7 @@
+ 	 * Constructor
+ 	 */
+ 	function SFUploadWindow() {
+-		SpecialPage::SpecialPage('UploadWindow');
++		UnlistedSpecialPage::UnlistedSpecialPage('UploadWindow');
+ 		wfLoadExtensionMessages('SemanticForms');
+ 	}
+ 
 @@ -37,7 +37,7 @@
  	global $wgRequest, $wgOut, $wgUser, $wgServer;
  	global $wgScript, $wgJsMimeType, $wgStylePath, $wgStyleVersion;
