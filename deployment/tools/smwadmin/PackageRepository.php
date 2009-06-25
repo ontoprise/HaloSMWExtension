@@ -173,7 +173,8 @@ class PackageRepository {
 			if (is_dir($ext_dir.$entry)) {
 				// check if there is a deploy.xml
 				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
-					$packages[] = new DeployDescriptorParser(file_get_contents($ext_dir.$entry.'/deploy.xml'));
+					$dd = new DeployDescriptorParser(file_get_contents($ext_dir.$entry.'/deploy.xml'));
+					$packages[$dd->getID()] = $dd;
 
 				}
 			}

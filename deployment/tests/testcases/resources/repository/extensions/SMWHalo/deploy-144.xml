@@ -1,37 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<deploydescriptor>
-    <global>
-        <version>144</version>
-        <id>SMWHalo</id>
-        <vendor>Ontoprise GmbH</vendor>
-        <instdir>extensions\SMWHalo</instdir>
-        <description>Dummy</description>
-        <dependencies>
-            <dependency from="142" to="142">SMW</dependency>
-        </dependencies>
-    </global>
-    <codefiles>
-        <file loc="extensions/SMWHalo/SMW_Initialize.php" />
-        <file loc="extensions/SMWHalo/SMW_QP_XML.php" />
-        <!-- TODO: add others -->
-    </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
-    <configs>
-        <precedes ext="SemanticMediawiki" />
+<deploydescriptor xmlns:dd="http://www.ontoprise.de/smwhalo/deploy">
+	<global>
+		<version>144</version>
+		<id>SMWHalo</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions\SMWHalo</instdir>
+		<description>Dummy</description>
+		<dependencies>
+			<dependency from="142" to="142">SMW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/SMWHalo/SMW_Initialize.php" />
+		<file loc="extensions/SMWHalo/SMW_QP_XML.php" />
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="SemanticMediawiki" />
 
-        <new>
-            <require name="smwhalo"
-                file="extensions/SMWHalo/SMW_Initialize.php" />
-            <function name="enableSMWHalo">
-                <string name="sql_storage">SMWHaloStore2</string>
-                <string name="ts_storage" null="true" />
-                <string name="ts-url" null="true" />
-            </function>
-        </new>
-    </configs>
+		<new>
+			<require name="smwhalo"
+				file="extensions/SMWHalo/SMW_Initialize.php" />
+			<function name="enableSMWHalo">
+				<string name="sql_storage">SMWHaloStore2</string>
+				<string name="ts_storage" null="true" />
+				<string name="ts-url" null="true" />
+			</function>
+		</new>
+		<dd:update from="142">
+			<variable name="testforupdate">
+				<string name="testforupdateVar" userValueRequired="true"
+					description="testforupdate" />
+			</variable>
+		</dd:update>
+	</configs>
 </deploydescriptor>

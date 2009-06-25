@@ -13,7 +13,8 @@ require_once ('DeployDescriptorProcessor.php');
  *
  */
 class DeployDescriptorParser {
-
+    
+	var $dom;
 	var $globalElement;
 	var $codefiles;
 	var $patchfiles;
@@ -29,14 +30,15 @@ class DeployDescriptorParser {
 	function __construct($xml, $fromVersion = NULL) {
 			
 		// parse xml results
-		$dom = simplexml_load_string($xml);
+		$this->dom = simplexml_load_string($xml);
+		print_r($xml);
 
-		$this->globalElement = $dom->xpath('/deploydescriptor/global');
-		$this->codefiles = $dom->xpath('/deploydescriptor/codefiles/file');
-		$this->patchfiles = $dom->xpath('/deploydescriptor/codefiles/patch');
-		$this->wikidumps = $dom->xpath('/deploydescriptor/wikidumps/file');
-		$this->resources = $dom->xpath('/deploydescriptor/resources/file');
-		$this->createConfigElements($dom, $fromVersion);
+		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
+		$this->codefiles = $this->dom->xpath('/deploydescriptor/codefiles/file');
+		$this->patchfiles = $this->dom->xpath('/deploydescriptor/codefiles/patch');
+		$this->wikidumps = $this->dom->xpath('/deploydescriptor/wikidumps/file');
+		$this->resources = $this->dom->xpath('/deploydescriptor/resources/file');
+		$this->createConfigElements($fromVersion); // assume new config, not update
 	}
 
 	
@@ -54,18 +56,27 @@ class DeployDescriptorParser {
 	
    
 
-	private function createConfigElements(& $dom, $from = NULL) {
+	private function createConfigElements($from = NULL) {
+		
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
-			$path = "/deploydescriptor/configs/update[@from='$from']";
+			// namespace is needed due to a bug in xpath processor
+			$path = "//dd:update[@from='$from']";
+			print_r($this->dom);
+			$this->dom->registerXPathNamespace('dd', 'http://www.ontoprise.de/smwhalo/deploy');
+			$update = $this->dom->xpath($path);
+			if (count($update) === 0) {
+				// if update config missing, use new 
+				$path = "/deploydescriptor/configs/new";
+			}
 		}
-		$precedings = $dom->xpath('/deploydescriptor/configs/precedes');
-		$variables = $dom->xpath($path.'/variable');
-		$function = $dom->xpath($path.'/function');
-		$require = $dom->xpath($path.'/require');
-		$php = $dom->xpath($path.'/php');
-		$setup = $dom->xpath($path.'/setup');
+		$precedings = $this->dom->xpath('/deploydescriptor/configs/precedes');
+		$variables = $this->dom->xpath($path.'/variable');
+		$function = $this->dom->xpath($path.'/function');
+		$require = $this->dom->xpath($path.'/require');
+		$php = $this->dom->xpath($path.'/php');
+		$setup = $this->dom->xpath($path.'/setup');
 		
 
 		$this->configs = array();
@@ -252,14 +263,17 @@ class DeployDescriptorParser {
 	 *
 	 * @param string $ls_loc Location of LocalSettings.php
 	 * @param boolean $dryRun If true, nothing gets actually changed.
+	 * @param int $version Update from version or NULL if no update.
 	 * @return string updated LocalSettings.php
 	 */
-	function applyConfigurations($ls_loc, $dryRun = false) {
+	function applyConfigurations($ls_loc, $dryRun = false, $version = NULL) {
 		if ($this->configs === false) {
 			// no configs, nothing to do
 			return DEPLOY_MSG_NOTHING_TODO;
 		}
-
+        if (!is_null($version)) {
+        	$this->createConfigElements($version);
+        }
 		$dp = new DeployDescriptionProcessor($ls_loc, $this);
 		$content = $dp->applyLocalSettingsChanges($userValues);
 		$dp->applySetups($dryRun);

@@ -78,5 +78,13 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 		$patches = $this->ddp->getPatches();
 		 $this->assertEquals("patch.txt", $patches[0]);
 	}
+	
+	function testUpdateSection() {
+		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
+        $this->ddp = new DeployDescriptorParser($xml, 142);
+        print_r($this->ddp->getConfigs());
+        $configs = $this->ddp->getConfigs();
+        $this->assertTrue(count($configs) > 0);
+	}
 }
 ?>

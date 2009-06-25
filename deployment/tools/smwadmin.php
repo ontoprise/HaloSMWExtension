@@ -12,6 +12,20 @@
  *
  */
 
+require_once('smwadmin/Tools.php');
+
+// check tools and rights
+$check = Tools::checkEnvironment();
+if ($check !== true) {
+	fatalError($check);
+}
+$check = Tools::checkPriviledges();
+if ($check !== true) {
+    fatalError($check);
+}
+
+
+
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;
@@ -65,7 +79,7 @@ if ($help) {
 	echo "\n\t-d : De-Install";
 	echo "\n\t-u : Update";
 	echo "\n";
-    die();
+	die();
 }
 
 if ($globalUpdate) {
@@ -79,15 +93,17 @@ foreach($packageToInstall as $toInstall) {
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
-    deinstallPackage($toDeInstall);
+	deinstallPackage($toDeInstall);
 }
 
 foreach($packageToUpdate as $toUpdate) {
-   updatePackage($toUpdate);
+	updatePackage($toUpdate);
 }
 
 function fatalError($msg) {
 	echo "\nError: $msg";
 	die();
 }
+
+
 ?>
