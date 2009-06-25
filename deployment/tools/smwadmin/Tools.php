@@ -137,5 +137,22 @@ class Tools {
 		}
 		return "Missing rights. Please start as admin or root.";
 	}
+	
+	/**
+	 * Returns Mediawiki version or NULL if it could not be determined.
+	 * 
+	 * @param $rootDir
+	 * @return string
+	 */
+	public static function getMediawikiVersion($rootDir) {
+		$version = NULL;
+		$defaultSettings = file_get_contenets($rootDir.'/includes/DefaultSettings.php');
+		preg_match('/\$wgVersion\s*=\s*([^;]+)/', $defaultSettings, $matches);
+		if (isset($matches[1])) {
+			$version = substr(trim($matches[1]),1,-1);
+					
+		} 
+		return $version;
+	}
 }
 ?>
