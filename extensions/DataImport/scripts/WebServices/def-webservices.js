@@ -2999,16 +2999,24 @@ DefineWebServiceSpecial.prototype = {
 		input.type = "button";
 		input.value = "OK";
 		input.style.cursor = "pointer";
-		input.setAttribute("onclick",
-				"webServiceSpecial.processRESTParameterButton(" + id + ")");
+		//input.setAttribute("onclick",
+		//		"webServiceSpecial.processRESTParameterButton(" + id + ")");
+		if(window.addEventListener){
+			input.addEventListener("click", webServiceSpecial.processRESTParameterButton, false);
+		} else {
+			input.attachEvent("onclick", webServiceSpecial.processRESTParameterButton, false);
+		}
+		input.clickEventId = id;
+		
 		td.appendChild(input);
-
+		
 		row.appendChild(td);
-
-		$("step3-parameters").childNodes[0].appendChild(row);
+		
+		$("step3-parameters").childNodes[0].appendChild(row);		
 	},
 
-	processRESTParameterButton : function(id) {
+	processRESTParameterButton : function(event) {
+		var id = Event.element(event).clickEventId;
 		//for subparameter handlingvar offset = 0;
 		var offset = 0;
 		for(var i = 1; i < $("step3-parameters").childNodes[0].childNodes.length; i++){
@@ -3025,7 +3033,7 @@ DefineWebServiceSpecial.prototype = {
 		var action = select.value;
 
 		if (action == diLanguage.getMessage('smw_wws_add_parameter')) {
-			this.appendRESTParameter();
+			webServiceSpecial.appendRESTParameter();
 		} else if (action == diLanguage.getMessage('smw_wws_remove_parameter')) {
 			$("step3-parameters").childNodes[0].childNodes[id].removed = true;
 			$("step3-parameters").childNodes[0].childNodes[id].style.display = "none";
@@ -3048,10 +3056,10 @@ DefineWebServiceSpecial.prototype = {
 				$("step3-parameters").style.display = "none";
 			}
 		} else if (action == diLanguage.getMessage('smw_wws_add_subparameters')) {
-			this.appendRESTSubParameters(id);
+			webServiceSpecial.appendRESTSubParameters(id);
 		} else if (action == diLanguage
 				.getMessage('smw_wws_remove_subparameters')) {
-			this.removeRESTSubParameters(id);
+			webServiceSpecial.removeRESTSubParameters(id);
 		}
 	},
 
@@ -3082,8 +3090,13 @@ DefineWebServiceSpecial.prototype = {
 			button.setAttribute("type", "button");
 			button.setAttribute("value", diLanguage
 					.getMessage('smw_wws_add_parameters'));
-			button.setAttribute("onclick",
-					"webServiceSpecial.displayRestParameterTable()");
+			
+			if(window.addEventListener){
+				button.addEventListener("click", webServiceSpecial.displayRestParameterTable, false);
+			} else {
+				button.attachEvent("onclick", webServiceSpecial.displayRestParameterTable, false);
+			}
+			
 			$("step3-rest-intro").appendChild(button);
 		}
 
@@ -3157,8 +3170,13 @@ DefineWebServiceSpecial.prototype = {
 		input = document.createElement("input");
 		input.type = "button";
 		input.value = "OK";
-		input.setAttribute("onclick",
-				"webServiceSpecial.processRESTResultPartButton(" + id + ")");
+		if(window.addEventListener){
+			input.addEventListener("click", webServiceSpecial.processRESTResultPartButton, false);
+		} else {
+			input.attachEvent("onclick", webServiceSpecial.processRESTResultPartButton, false);
+		}
+		input.clickEventId = id;
+		
 		input.style.cursor = "pointer";
 		td.appendChild(input);
 
@@ -3213,8 +3231,12 @@ DefineWebServiceSpecial.prototype = {
 			button.setAttribute("type", "button");
 			button.setAttribute("value", diLanguage
 					.getMessage('smw_wws_add_resultparts'));
-			button.setAttribute("onclick",
-					"webServiceSpecial.displayRestResultsTable()");
+			if(window.addEventListener){
+				button.addEventListener("click", webServiceSpecial.displayRestResultsTable, false);
+			} else {
+				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
+			}
+			
 			$("step4-rest-intro").appendChild(button);
 		} else {
 			$("step4-rest-intro").childNodes[1].checked = false;
@@ -3242,12 +3264,13 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-results").childNodes[0].childNodes[1].removed = true;
 	},
 
-	processRESTResultPartButton : function(id) {
+	processRESTResultPartButton : function(event) {
+		var id = Event.element(event).clickEventId;
 		var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
 		var action = select.value;
 
 		if (action == diLanguage.getMessage('smw_wws_add_resultpart')) {
-			this.appendRESTResultPart();
+			webServiceSpecial.appendRESTResultPart();
 		} else if (action == diLanguage.getMessage('smw_wws_remove_resultpart')) {
 			$("step4-results").childNodes[0].childNodes[id].removed = true;
 			$("step4-results").childNodes[0].childNodes[id].style.display = "none";
@@ -3366,7 +3389,7 @@ DefineWebServiceSpecial.prototype = {
 					result += "\"/>\n";
 				}
 			}
-
+			
 			result += "<result name=\"result\" >\n";
 
 			//for alias generation
@@ -3587,7 +3610,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step3-rest-intro").style.display = "none";
 		$("step3-parameters").style.display = "";
 		if ($("step3-parameters").childNodes[0].childNodes[1] == null) {
-			this.appendRESTParameter();
+			webServiceSpecial.appendRESTParameter();
 		}
 		$("step3-parameters").childNodes[0].childNodes[1].style.display = "";
 		$("step3-parameters").childNodes[0].childNodes[1].removed = false;
@@ -3596,7 +3619,7 @@ DefineWebServiceSpecial.prototype = {
 	displayRestResultsTable : function() {
 		$("step4-rest-intro").childNodes[6].style.display = "none";
 		if ($("step4-results").childNodes[0].childNodes[1] == null) {
-			this.appendRESTResultPart();
+			webServiceSpecial.appendRESTResultPart();
 		}
 		$("step4-results").style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].style.display = "";
