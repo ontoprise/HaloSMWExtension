@@ -10,10 +10,6 @@
 	<target name="testWSDefineGUI">
 
 		<webtest name="WSDefineRESTPart1">
-			<antcall target="createWebTestWS" />
-		</webtest>
-
-		<webtest name="WSDefineRESTPart2">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
 
@@ -141,11 +137,13 @@
 			<clickButton description="go to step6" htmlId="step5-go-img" />
 
 			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSREST" />
-			<clickButton description="go to step6" htmlId="step6-go-img" />
+			<clickButton description="go to step7" htmlId="step6-go-img" />
+			
+			<sleep seconds ="10" description="wait until the web service is created completely"/> 
 
 		</webtest>
 
-		<webtest name="WSDefineRESTPart3">
+		<webtest name="WSDefineRESTPart2">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSREST" />
 				
@@ -154,12 +152,92 @@
 			
 		</webtest>
 		
-		<webtest name="WSDefineRESTPart4">
+		<webtest name="WSDefineRESTPart3">
 			<invoke
 				url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
 				
 			<verifyText text='NewWebTestWSREST'/>
-			
+		</webtest>
+
+		<webtest name="WSDefineSOAPPart1">
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
+
+			<setInputField htmlId="step1-uri" value="http://localhost/${wikipath}/extensions/DataImport/tests/webTestSoapWS.wsdl" />
+
+			<setRadioButton description="Select Soap web service" htmlId="step1-protocol-soap" />
+
+			<clickButton description="go to step2" htmlId="step1-go-img" />
+			<sleep seconds="3" />
+
+			<setSelectField description="choose method" htmlId="step2-methods" text="testMethod2" />
+			<setSelectField description="choose method" htmlId="step2-methods" text="testMethod1" />
+
+			<clickButton description="go to step3" htmlId="step2-go-img" />
+			<sleep seconds="3" />
+
+			<setCheckbox xpath="//table[@id='step3-parameters']/tbody/tr[1]/th[2]/span/input" checked="true" />
+			<clickElement xpath="//table[@id='step3-parameters']/tbody/tr[1]/th[2]/span" description="use all parameters" />
+
+			<setCheckbox xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[2]/input" checked="false" description="dont use first parameter" />
+			<clickElement xpath="//table[@id='step3-parameters']/tbody/tr[1]/th[3]/span" description="autogenerate aliases" />
+
+			<setRadioButton description="make slLeaveParameter1 optional" htmlId="s3-optional-true1" />
+
+			<setInputField htmlId="s3-default3" value="default" description="set default for flLeafParameter2" />
+
+			<clickButton xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[6]/input" description="add subparameter" />
+			<clickButton xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[6]/input" description="remove subparameter" />
+
+			<clickButton xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[6]/input" description="add subparameter" />
+
+			<setInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[1]/table/row/td[2]/textarea" value='&lt;![CDATA[Hello]]&gt;&lt;subparameter name="optionalSubParameter" optional="true"/&gt;' />
+
+
+
+			<clickButton description="go to step4" htmlId="step3-go-img" />
+			<sleep seconds="3" />
+
+			<setCheckbox xpath="//table[@id='step4-results']/tbody/tr[4]/td[2]/input" checked="false" description="dont use second result part" />
+			<clickElement xpath="//table[@id='step4-results']/tbody/tr[1]/th[3]/span" description="autogenerate aliases" />
+
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[4]/td[4]/input" description="add subpath" />
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[4]/td[4]/input" description="add subpath" />
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[4]/td[4]/input" description="add subpath" />
+			<clickButton xpath="//table[@id='step4-results']/tbody/tr[7]/td[3]/input" description="remove subpath" />
+			<setSelectField xpath="//table[@id='step4-results']/tbody/tr[6]/td[1]/select" text="json" />
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[5]/td[1]/input" value="//dont/care" />
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[6]/td[1]/input" value="//either" />
+
+			<setCheckbox xpath="//table[@id='step4-results']/tbody/tr[1]/th[2]/span/input" checked="true" />
+			<clickElement xpath="//table[@id='step4-results']/tbody/tr[1]/th[2]/span" description="use all result parts" />
+
+			<clickButton description="go to step5" htmlId="step4-go-img" />
+
+			<setInputField xpath="//input[@id='step5-query-hours']" value="1" />
+			<setInputField xpath="//input[@id='step5-query-minutes']" value="20" />
+
+			<clickButton description="go to step6" htmlId="step5-go-img" />
+
+			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSSOAP" />
+			<clickButton description="go to step7" htmlId="step6-go-img" />
+
+			<sleep seconds="15"/>
+		</webtest> 
+
+		<webtest name="WSDefineSOAPPart2">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSSOAP" />
+
+			<verifyText text='WebService.*uri name=.*http://localhost/mediawiki/extensions/DataImport/tests/webTestSoapWS.wsdl.*/.*protocol.*SOAP.*/protocol.*method name=.*testMethod1.*/.*parameter name=.*slLeafParameter1.*optional=.*true.*path=.*/parameters/flTreeParameter/slLeafParameter1.*!.*CDATA.*Hello.*subparameter name=.*optionalSubParameter.*optional=.*true.*/.*/parameter.*parameter name=.*slLeafParameter2.*optional=.*false.*path=.*/parameters/flTreeParameter/slLeafParameter2.*/.*parameter name=.*flLeafParameter2.*optional=.*false.*defaultValue=.*default.*path=.*/parameters/flLeafParameter2.*/.*result name=.*result.*part name=.*flLeafParameter1.*path=.*//flLeafParameter1.*/.*part name=.*slLeafParameter1.*path=.*//flTreeParameter/slLeafParameter1.*/.*part name=.*slLeafParameter2.*path=.*//flTreeParameter/slLeafParameter2.*/.*part name=.*slLeafParameter2-0.*path=.*//flTreeParameter/slLeafParameter2.*xpath=.*//dont/care.*/.*part name=.*slLeafParameter2-1.*path=.*//flTreeParameter/slLeafParameter2.*json=.*//either.*/.*part name=.*flLeafParameter2.*path=.*//flLeafParameter2.*/.*/result.*displayPolicy.*once/.*/displayPolicy.*queryPolicy.*maxAge value=.*80.*/maxAge.*delay value=.*0.*/.*/queryPolicy.*spanOfLife value=.*0.*expiresAfterUpdate=.*true.*/.*/WebService' 
+					regex="true"/>
+
+		</webtest>
+
+		<webtest name="WSDefineSOAPPart3">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+
+			<verifyText text='NewWebTestWSSOAP'/>
 		</webtest>
 
 	</target>

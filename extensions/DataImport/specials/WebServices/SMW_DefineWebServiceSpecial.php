@@ -222,7 +222,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step3-rest-intro\" style=\"display:none\"></div>";
 
-		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useParameters()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px\" onclick=\"webServiceSpecial.generateParameterAliases(true)\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-parameter")."\" id=\"step-3-alias-generate-button\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
+		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-parameter")."\" id=\"step-3-alias-generate-button\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help", $smwgDIScriptPath."/skins/webservices/Pencil_go.png")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";

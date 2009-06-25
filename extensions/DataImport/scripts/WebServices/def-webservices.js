@@ -289,6 +289,7 @@ DefineWebServiceSpecial.prototype = {
 			$("step3-parameters").removeChild(
 					$("step3-parameters").childNodes[0]);
 			$("step3-parameters").appendChild(tempTable);
+
 			$("step3-parameters").childNodes[0].appendChild(tempHead);
 
 			this.parameterContainer = $("step3-parameters").cloneNode(true);
@@ -536,8 +537,12 @@ DefineWebServiceSpecial.prototype = {
 				addSubParameterButton.type = "button";
 				addSubParameterButton.value = 
 					diLanguage.getMessage('smw_wws_add_subparameters');
-				addSubParameterButton.setAttribute("onclick",
-						"webServiceSpecial.appendSubParameters(" + (i) + ")");
+				if(window.addEventListener){
+					addSubParameterButton.addEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
+				} else {
+					addSubParameterButton.attachEvent("onclick", webServiceSpecial.appendSubParametersEventAdapter, false);
+				}
+				addSubParameterButton.clickEventId = i;
 				paramTD4.appendChild(addSubParameterButton);
 
 				if (aTreeRoot || treeView) {
@@ -554,6 +559,19 @@ DefineWebServiceSpecial.prototype = {
 			parent.removeChild($("step3-parameters"));
 			var parent = $("step3");
 			parent.insertBefore(this.parameterContainer, parent.childNodes[2]);
+			
+			if(window.addEventListener){
+				$("step3-parameters").firstChild.firstChild.childNodes[1].childNodes[1]
+					.addEventListener("click", webServiceSpecial.useParameters, false);
+				$("step3-parameters").firstChild.firstChild.childNodes[2].childNodes[1]
+				     .addEventListener("click", webServiceSpecial.generateParameterAliases, false);
+			} else {
+				$("step3-parameters").firstChild.firstChild.childNodes[1].childNodes[1]
+					.attachEvent("onclick", webServiceSpecial.useParameters, false);
+				$("step3-parameters").firstChild.firstChild.childNodes[2].childNodes[1]
+				    .attachEvent("onclick", webServiceSpecial.generateParameterAliases, false);
+			}
+			
 
 			// hide or display widgets of other steps
 			if (!edit) {
@@ -609,7 +627,7 @@ DefineWebServiceSpecial.prototype = {
 			return;
 		}
 
-		this.generateParameterAliases(false);
+		this.generateParameterAliases();
 		var method = $("step2-methods").value;
 		var uri = $("step1-uri").value;
 		var parameters = "";
@@ -926,8 +944,14 @@ DefineWebServiceSpecial.prototype = {
 						.getMessage('smw_wws_add_subpath');
 				subPathButton.style.cursor = "pointer";
 				subPathButton.style.cursor = "pointer";
-				subPathButton.setAttribute("onclick",
-						"webServiceSpecial.addSubPath(" + i + ")");
+				
+				if(window.addEventListener){
+					subPathButton.addEventListener("click", webServiceSpecial.addSubPathEventAdapter, false);
+				} else {
+					subPathButton.attachEvent("onclick", webServiceSpecial.addSubPathEventAdapter, false);
+				}
+				subPathButton.clickEventId = i;
+				
 				resultTD3.appendChild(subPathButton);
 
 				if (aTreeRoot || treeView) {
@@ -1052,7 +1076,7 @@ DefineWebServiceSpecial.prototype = {
 			return;
 		}
 
-		this.generateParameterAliases(false);
+		this.generateParameterAliases();
 		this.generateResultAliases(false);
 
 		this.showPendingIndicator("step6-go");
@@ -1350,22 +1374,22 @@ DefineWebServiceSpecial.prototype = {
 	 * parameters boolean createAll : create aliases for empty alias-fields
 	 * 
 	 */
-	generateParameterAliases : function(createAll) {
+	generateParameterAliases : function() {
 		var aliases = new Array();
 		var aliasesObject = new Object();
 
 		var offset = 0;
-		for (i = 0; i < this.preparedPathSteps.length; i++) {
-			if (this.preparedPathSteps[i] != "null") {
-				if (this.parameterContainer.firstChild.childNodes[i + 1
+		for (i = 0; i < webServiceSpecial.preparedPathSteps.length; i++) {
+			if (webServiceSpecial.preparedPathSteps[i] != "null") {
+				if (webServiceSpecial.parameterContainer.firstChild.childNodes[i + 1
 						- offset].childNodes[1].firstChild.checked != true) {
 					continue;
 				}
 
-				var alias = this.parameterContainer.firstChild.childNodes[i + 1
+				var alias = webServiceSpecial.parameterContainer.firstChild.childNodes[i + 1
 						- offset].childNodes[2].firstChild.value;
 				if (alias.length == 0) {
-					alias = this.preparedPathSteps[i][this.preparedPathSteps[i].length - 1]["value"];
+					alias = webServiceSpecial.preparedPathSteps[i][webServiceSpecial.preparedPathSteps[i].length - 1]["value"];
 
 					var openBracketPos = alias.lastIndexOf("(");
 					if (openBracketPos > 0) {
@@ -1396,11 +1420,11 @@ DefineWebServiceSpecial.prototype = {
 					}
 				}
 
-				this.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = alias;
+				webServiceSpecial.parameterContainer.firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = alias;
 				aliases.push(alias);
 				
 				//handle subparameters
-				if(this.parameterContainer.firstChild.childNodes[i + 1 - offset].hasSubParameter){
+				if(webServiceSpecial.parameterContainer.firstChild.childNodes[i + 1 - offset].hasSubParameter){
 					offset -= 1;
 				}
 			} else {
@@ -2751,7 +2775,12 @@ DefineWebServiceSpecial.prototype = {
 			$("step1-auth-box").style.display = "none";
 		}
 	},
-
+	
+	addSubPathEventAdapter : function(event) {
+		var id = Event.element(event).clickEventId;
+		webServiceSpecial.addSubPath(id);
+	},
+	
 	addSubPath : function(id) {
 		if ($("step4-resultRow-" + id).subPathOffset == null) {
 			$("step4-resultRow-" + id).subPathOffset = 1;
@@ -2811,8 +2840,14 @@ DefineWebServiceSpecial.prototype = {
 		var removeButton = document.createElement("input");
 		removeButton.type = "button";
 		removeButton.value = diLanguage.getMessage('smw_wws_remove_subpath');
-		removeButton.setAttribute("onclick", "webServiceSpecial.removeSubPath("
-				+ id + "," + sid + ")");
+		if(window.addEventListener){
+			removeButton.addEventListener("click", webServiceSpecial.removeSubPathEventAdapter, false);
+		} else {
+			removeButton.attachEvent("onclick", webServiceSpecial.removeSubPathEventAdapter, false);
+		}
+		removeButton.clickEventId = id;
+		removeButton.clickEventSid = sid;
+		
 		removeButton.style.cursor = "pointer";
 
 		td3.appendChild(removeButton);
@@ -2828,6 +2863,12 @@ DefineWebServiceSpecial.prototype = {
 			$("step-4-alias-generate-button").style.cursor = "pointer";
 		}
 		this.numberOfUsedResultParts += 1;
+	},
+	
+	removeSubPathEventAdapter : function(event) {
+		var id = Event.element(event).clickEventId;
+		var sid = Event.element(event).clickEventSid;
+		webServiceSpecial.removeSubPath(id, sid);
 	},
 
 	removeSubPath : function(id, sid) {
@@ -3632,14 +3673,14 @@ DefineWebServiceSpecial.prototype = {
 			checked = true;
 		}
 
-		for ( var i = 0; i < this.preparedPathSteps.length; i++) {
-			if (this.preparedPathSteps[i] != "null") {
+		for ( var i = 0; i < webServiceSpecial.preparedPathSteps.length; i++) {
+			if (webServiceSpecial.preparedPathSteps[i] != "null") {
 				if($("s3-use" + i).checked != checked){
 					if(checked){
-						this.numberOfUsedParameters += 1;
+						webServiceSpecial.numberOfUsedParameters += 1;
 						$("s3-path" + i).lastChild.style.fontWeight = "bold";
 					} else {
-						this.numberOfUsedParameters -= 1;
+						webServiceSpecial.numberOfUsedParameters -= 1;
 						$("s3-alias" + i).value = "";
 						$("s3-path" + i).lastChild.style.fontWeight = "normal";
 					}
@@ -3647,7 +3688,6 @@ DefineWebServiceSpecial.prototype = {
 				
 				$("s3-use" + i).checked = checked;
 				if(!checked){
-					
 				}
 			}
 		}
@@ -3960,12 +4000,27 @@ DefineWebServiceSpecial.prototype = {
 			.removeChild($("step3-parameters").childNodes[0].childNodes[id].nextSibling);
 	},
 	
+	appendSubParametersEventAdapter : function(event){
+		var id = Event.element(event).clickEventId;
+		webServiceSpecial.appendSubParameters(id);
+	},
+	
 	appendSubParameters : function(id) {
 		// add remove option
 		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
 			.getMessage('smw_wws_remove_subparameters');
-		$("step3-paramRow-" + id).childNodes[5].childNodes[0].setAttribute("onclick",
-				"webServiceSpecial.removeSubParameters(" + id + ")");
+		
+		if(window.addEventListener){
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .addEventListener("click", webServiceSpecial.removeSubParametersEventAdapter, false);                                               
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .removeEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
+		} else {
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			     .attachEvent("onclick", webServiceSpecial.removeSubParametersEventAdapter);
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .detachEvent("onclick", webServiceSpecial.appendSubParametersEventAdapter, false);
+		}
 		
 		//add subparameter row
 		$("step3-paramRow-" + id).hasSubParameter = true;
@@ -4045,12 +4100,28 @@ DefineWebServiceSpecial.prototype = {
 
 	},
 	
+	removeSubParametersEventAdapter : function(event){
+		var id = Event.element(event).clickEventId;
+		webServiceSpecial.removeSubParameters(id);
+	},
+	
 	removeSubParameters : function(id) {
 		// add remove option
 		$("step3-paramRow-" + id).childNodes[5].childNodes[0].value = diLanguage
 			.getMessage('smw_wws_add_subparameters');
-		$("step3-paramRow-" + id).childNodes[5].childNodes[0].setAttribute("onclick",
-			"webServiceSpecial.appendSubParameters(" + id + ")");
+		
+		if(window.addEventListener){
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .removeEventListener("click", webServiceSpecial.removeSubParametersEventAdapter, false);                                               
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .addEventListener("click", webServiceSpecial.appendSubParametersEventAdapter, false);
+		} else {
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			     .detachEvent("onclick", webServiceSpecial.removeSubParametersEventAdapter);
+			$("step3-paramRow-" + id).childNodes[5].childNodes[0]
+			    .attachEvent("onclick", webServiceSpecial.appendSubParametersEventAdapter, false);
+		}
+		
 	
 		//add subparameter row
 		$("step3-paramRow-" + id).hasSubParameter = false;
