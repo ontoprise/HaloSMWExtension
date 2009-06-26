@@ -69,6 +69,10 @@ class WSStorageSQL {
 				'authentication_login'       =>  'VARCHAR(20) NOT NULL' ,
 				'authentication_password'    =>  'VARCHAR(20) NOT NULL' ),
 		$db, $verbose);
+		
+		$query = "ALTER TABLE ".$wwsdTable." ENGINE=MyISAM; ";
+		$db->query($query);
+
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 		// create ws value cache table
@@ -81,12 +85,15 @@ class WSStorageSQL {
 				  'last_update'    	=>  'VARCHAR(14) NOT NULL' ,
 				  'last_access'    	=>  'VARCHAR(14) NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id');
-		DBHelper::reportProgress("   ... done!\n",$verbose);
-
-		$db =& wfGetDB( DB_MASTER );
+		
+		$query = "ALTER TABLE ".$cacheTable." ENGINE=MyISAM; ";
+		$db->query($query);
+		
 		$query = "ALTER TABLE ".$cacheTable." MODIFY result LONGTEXT NOT NULL";
 		$db->query($query);
-			
+		
+		DBHelper::reportProgress("   ... done!\n",$verbose);
+
 		// create parameter table
 		DBHelper::reportProgress("   ... Creating parameter table \n",$verbose);
 		$paramTable = $db->tableName('smw_ws_parameters');
@@ -96,6 +103,9 @@ class WSStorageSQL {
 				  'value'      	    =>  'LONGTEXT NOT NULL'), $db, $verbose);
 
 		$query = "ALTER TABLE ".$paramTable." MODIFY value LONGTEXT NOT NULL";
+		$db->query($query);
+		
+		$query = "ALTER TABLE ".$paramTable." ENGINE=MyISAM; ";
 		$db->query($query);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);
@@ -108,6 +118,10 @@ class WSStorageSQL {
 				  'param_set_id'  	=>  'INT(8) UNSIGNED NOT NULL' ,
 				  'page_id'      	=>  'INT(8) UNSIGNED NOT NULL'), 
 		$db, $verbose, 'web_service_id,param_set_id,page_id');
+		
+		$query = "ALTER TABLE ".$articlesTable." ENGINE=MyISAM; ";
+		$db->query($query);
+		
 		DBHelper::reportProgress("   ... done!\n",$verbose);
 
 	}
