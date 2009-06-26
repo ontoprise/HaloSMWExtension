@@ -1024,7 +1024,7 @@ class WikiTypeToXSD {
 				// if builtin (starts with _) then regard it as string
 				if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
 				// if n-ary, regard it as string
-				if (preg_match('\w+(;\w+)+', $wikiTypeID) !== false) return "xsd:string";
+				if (preg_match('/\w+(;\w+)+/', $wikiTypeID) !== false) return "xsd:string";
 				// otherwise assume a unit
 				return 'xsd:unit';
 		}
