@@ -69,7 +69,13 @@ $messages['en'] = array(
 	'hacl_anonymous_users'			=> 'anonymous users',
 	'hacl_registered_users'			=> 'registered users',
 	'hacl_acl_element_not_in_db'	=> 'There is no entry in the ACL database for this article. Presumably it was deleted and restored. Please store it and all articles which use it again.',
-	'halo_whitelist_mismatch'		=> 'The whitelist in this article contains articles that do not exist. Please remove them and save the whitelist again.',
+	'hacl_whitelist_mismatch'		=> 'The whitelist in this article contains articles that do not exist. Please remove them and save the whitelist again.',
+
+	/* Messages for semantic protection (properties etc.) */
+
+	'hacl_sp_query_modified'		=> "- The query was modified because it contains protected properties.\n",
+	'hacl_sp_empty_query'			=> "- Your query consists only of protected properties. It was not executed.\n",
+	'hacl_sp_results_removed'		=> "- Because of access restrictions some results were removed.\n",
 
 	/* Messages for Special:ACL */
 	'hacl_tab_create_acl' => 'Create ACL',
@@ -195,8 +201,14 @@ $messages['de'] = array(
 	'hacl_anonymous_users'			=> 'anonyme Benutzer',
 	'hacl_registered_users'			=> 'registrierte Benutzer',
 	'hacl_acl_element_not_in_db'	=> 'Zu diesem Artikel gibt es keinen Eintrag in der Rechtedatenbank. Vermutlich wurde er gelöscht und wiederhergestellt. Bitte speichern Sie ihn und alle Artikel die ihn verwenden neu.',
-	'halo_whitelist_mismatch'		=> 'Die "Weiße Liste" in diesem Artikel enthält Artikel, die nicht existieren. Bitte entfernen Sie diese und speichern Sie die "Weiße Liste" erneut.' ,
-	
+	'hacl_whitelist_mismatch'		=> 'Die "Weiße Liste" in diesem Artikel enthält Artikel, die nicht existieren. Bitte entfernen Sie diese und speichern Sie die "Weiße Liste" erneut.' ,
+
+	/* Messages for semantic protection (properties etc.) */
+
+	'hacl_sp_query_modified'		=> "- Ihre Anfrage wurde modifiziert, das sie geschützte Attribute enthält.\n",
+	'hacl_sp_empty_query'			=> "- Ihre Anfrage besteht nur aus geschützten Attributen und konnte deshalb nicht ausgeführt werden.of protected properties.\n",
+	'hacl_sp_results_removed'		=> "- Wegen Zugriffbeschränkungen wurden einige Resultate entfernt.\n",
+
 	/* Messages for 'Create ACL' tab */
 	/* Messages for 'Manage ACLs' tab */
 	/* Messages for 'Manage User' tab */
