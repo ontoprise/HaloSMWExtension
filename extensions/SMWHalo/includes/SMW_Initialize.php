@@ -147,7 +147,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
 	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
-	$wgHooks['ExtDeleteOutput'][] = 'smwfExtDeleteOutput';
+	
 
 	global $wgRequest, $wgContLang, $wgCommandLineMode;
 
@@ -1278,18 +1278,7 @@ function wfGetCustomVariable(&$parser,&$cache,&$index,&$ret) {
 	return true;
 }
 
-/**
- * Returns additional HTML for delete page.
- *
- * @param $article Article which is about to be deleted.
- * @param $output HTML output.
- */
-function smwfExtDeleteOutput(& $article, & $output) {
-	global $smwgHaloIP;
-	require_once($smwgHaloIP . '/includes/SMW_DeleteMoveExtension.php');
-	$output = SMWDeleteMoveExtension::showLinksToArticle($article);
-	return true;
-}
+
 
 /**
  * Parses additinal semantic data need for a triple store:
