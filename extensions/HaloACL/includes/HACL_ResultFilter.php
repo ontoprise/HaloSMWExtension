@@ -72,6 +72,7 @@ class  HACLResultFilter  {
 	 * 		The query result that is modified
 	 */
 	public static function filterResult(SMWQueryResult &$qr) {
+		$msgAdded = false;
 		$newqr = SMWQueryResult::newFromQueryResult($qr);
         while ( $row = $qr->getNext() ) {
 			$newRow = array();
@@ -92,6 +93,11 @@ class  HACLResultFilter  {
 	                if ($allowed) {
 	                	$values[] = $object;
 	                	$fieldEmpty = false;
+	                } else {
+	                	if (!$msgAdded) {
+	                		$newqr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
+	                		$msgAdded = true;
+	                	}
 	                }
                 }
                 if ($fieldEmpty && $firstField) {

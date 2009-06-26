@@ -772,7 +772,7 @@ class HACLParserFunctions  {
 			$inArticle = array_diff(self::$mInstance->mWhitelist, $wl);
 			if (!empty($inArticle)) {
 				// There are more pages in the article than in the database
-				$m = wfMsgForContent('halo_whitelist_mismatch');
+				$m = wfMsgForContent('hacl_whitelist_mismatch');
 				$m .= '<ul>';
 				foreach ($inArticle as $ia) {
 					$m .= '<li>'.$ia.'</li>';

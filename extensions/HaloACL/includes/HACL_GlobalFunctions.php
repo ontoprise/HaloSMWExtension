@@ -60,6 +60,7 @@ function enableHaloACL() {
 	$wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
 	$wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
 	$wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
+	$wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
 	
 	//--- Autoloading for exception classes ---
 	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -102,6 +103,8 @@ function haclfSetupExtension() {
 	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 	$wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
+	$wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
+	$wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
 	
 	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
