@@ -51,7 +51,7 @@
 			<verifyXPath 
 				description="Check labels of row 3 of query 2"
 				xpath="//table[@id='querytable2']/tbody/tr[4]/td[2]"		
-				text="Today" />
+				text="Tomorrow" />
 						
 			<verifyXPath 
 				description="Check labels of row 2 of query 3"
@@ -84,12 +84,17 @@
 			<verifyXPath 
 				description="Check labels of row 3 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[4]/td[2]"		
-				text="Today" />
+				text="Tomorrow" />
 			<verifyXPath 
 				description="Check labels of row 3 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[4]/td[3]"		
 				text="Event 1" />
 
+			<verifyXPath 
+				description="Check labels of row 2 of query 4"
+				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			
 		</webtest>
 		
 		
@@ -116,19 +121,22 @@
 				description="Check labels of row 2 of query 2"
 				xpath="//table[@id='querytable2']/tbody/tr[2]/td[1]"		
 				text="Event 2" />
-			<verifyXPath 
-				description="Check labels of row 2 of query 2"
-				xpath="//table[@id='querytable2']/tbody/tr[2]/td[2]"		
-				text="Tomorrow" />
+			<not>
+				<verifyXPath 
+					description="Check labels of row 2 of query 2"
+					xpath="//table[@id='querytable2']/tbody/tr[2]/td[2]" />
+			</not>
 			<verifyXPath 
 				description="Check labels of row 3 of query 2"
 				xpath="//table[@id='querytable2']/tbody/tr[3]/td[1]"		
 				text="Event 3" />
-			<verifyXPath 
-				description="Check labels of row 3 of query 2"
-				xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]"		
-				text="Today" />
-						
+			<not>
+				<verifyXPath 
+					description="Check labels of row 3 of query 2"
+					xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]" />
+			</not>
+			
+			
 			<verifyXPath 
 				description="Check labels of row 2 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[2]/td[1]"		
@@ -136,10 +144,6 @@
 			<verifyXPath 
 				description="Check labels of row 2 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[2]/td[2]"		
-				text="Tomorrow" />
-			<verifyXPath 
-				description="Check labels of row 2 of query 3"
-				xpath="//table[@id='querytable3']/tbody/tr[2]/td[3]"		
 				text="Event 3" />
 			<verifyXPath 
 				description="Check labels of row 3 of query 3"
@@ -148,11 +152,17 @@
 			<verifyXPath 
 				description="Check labels of row 3 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[3]/td[2]"		
-				text="Today" />
-			<verifyXPath 
-				description="Check labels of row 3 of query 3"
-				xpath="//table[@id='querytable3']/tbody/tr[3]/td[3]"		
 				text="" />
+
+			<verifyXPath 
+				description="Check labels of row 2 of query 4"
+				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 4"
+				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+
 			
 		</webtest>
 		

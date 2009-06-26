@@ -57,6 +57,26 @@
 			</antcall>
 			&goToLogout;
 		</webtest>
+		<webtest name="createArticle: ACL:Property/Date">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Property/Date"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#property access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>			
+		<webtest name="createArticle: ACL:Property/Related event">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Property/Related event"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#property access: assigned to =#,User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>			
 	</target>
 				
 </project>
