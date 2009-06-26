@@ -172,9 +172,17 @@ class WebService {
 	 */
 	public static function newFromName($name) {
 		$t = Title::makeTitleSafe(SMW_NS_WEB_SERVICE, $name);
+		
+		if($t == null){
+			return null;
+		}
+		
 		while($t->isRedirect()){
 			$article = new Article($t);
 			$t = $article->getRedirectTarget();
+			if($t == null){
+				return null;
+			}
 		}
 
 		$id = $t->getArticleID();
