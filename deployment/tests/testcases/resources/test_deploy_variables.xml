@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<deploydescriptor xmlns:dd="http://www.ontoprise.de/smwhalo/deploy">
+<deploydescriptor>
 	<global>
 		<version>1.0</version>
 		<id>SMWHalo</id>
@@ -55,11 +55,11 @@
 				</array>
 			</variable>
 		</new>
-		<dd:update from="142">
+		<update from="142">
 		<setup script="maintenance/setup.php" params="param1 param2" />
             <variable name="testvar1">
                 <string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
             </variable>
-		</dd:update>
+		</update>
 	</configs>
 </deploydescriptor>

@@ -115,7 +115,7 @@ class Installer {
 			// unzip (requires 7-zip installed on Windows, unzip on Linux)
 			if (Tools::isWindows()) {
 				print "\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\$id-$min.zip";
-				exec('7z x -o'.$this->instDir." ".self::$tmpFolder."\\$id-$min.zip");
+				exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\$id-$min.zip");
 			} else {
 				print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/$id-$min.zip -d ".$this->instDir;
 				exec('unzip '.self::$tmpFolder."/$id-$min.zip -d ".$this->instDir);
@@ -146,7 +146,7 @@ class Installer {
 
 		if (Tools::isWindows()) {
 			print "\n\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip";
-			exec('7z x -o'.$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip");
+			exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip");
 		} else {
 			print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir;
 			exec('unzip '.self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir);
@@ -247,6 +247,7 @@ class Installer {
 		foreach($updatesNeeded as $up) {
 			list($p, $minVersion, $maxVersion) = $up;
 			$dd = PackageRepository::getDeployDescriptor($p->getID(), $minVersion);
+			
 			$packagesToUpdate[] = array($dd, $minVersion, $maxVersion);
 			$this->checkForDependingExtensions($dd, $packagesToUpdate, $localPackages);
 		}

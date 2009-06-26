@@ -36,11 +36,37 @@ class TestInstaller extends PHPUnit_Framework_TestCase {
 		Tools::remove_dir(Tools::isWindows() ? 'c:/temp/install_test' : '/tmp/install_test');
 	}
 
-	
+	function testNewInstallation() {
+		$this->installer->installOrUpdatePackage('UnifiedSearch');
+		$this->assertTrue(file_exists($this->instPath."/extensions/UnifiedSearch"));
+		 
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-UnifiedSearch*/") !== false);
+		 
+	}
+
+	function testInstallation() {
+		$this->installer->installOrUpdatePackage('SemanticGardening', 120);
+		$this->assertTrue(file_exists($this->instPath."/extensions/SMWHalo"));
+		$this->assertTrue(file_exists($this->instPath."/extensions/SemanticGardening"));
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-SMWHalo*/") !== false);
+		$this->assertTrue(strpos($lsText, "/*start-SemanticGardening*/") !== false);
+	}
+
+	function testLatestInstallation() {
+		$this->installer->installOrUpdatePackage('SemanticGardening');
+		$this->assertTrue(file_exists($this->instPath."/extensions/SMWHalo"));
+		$this->assertTrue(file_exists($this->instPath."/extensions/SemanticGardening"));
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-SMWHalo*/") !== false);
+		$this->assertTrue(strpos($lsText, "/*start-SemanticGardening*/") !== false);
+	}
 
 	function testUpdate() {
 		$this->installer->updateAll();
-		$this->assertTrue(true);
+		$content = file_get_contents($this->instPath.'/LocalSettings.php');
+		$this->assertTrue(strpos($content, '$testforupdate') !== false);
 	}
 
 }

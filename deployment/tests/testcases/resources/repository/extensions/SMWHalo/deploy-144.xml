@@ -33,11 +33,11 @@
 				<string name="ts-url" null="true" />
 			</function>
 		</new>
-		<dd:update from="142">
+		<update from="142">
 			<variable name="testforupdate">
 				<string name="testforupdateVar" userValueRequired="true"
 					description="testforupdate" />
 			</variable>
-		</dd:update>
+		</update>
 	</configs>
 </deploydescriptor>

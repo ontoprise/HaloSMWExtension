@@ -31,7 +31,7 @@ class DeployDescriptorParser {
 			
 		// parse xml results
 		$this->dom = simplexml_load_string($xml);
-		print_r($xml);
+		
 
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
 		$this->codefiles = $this->dom->xpath('/deploydescriptor/codefiles/file');
@@ -61,10 +61,9 @@ class DeployDescriptorParser {
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
-			// namespace is needed due to a bug in xpath processor
-			$path = "//dd:update[@from='$from']";
-			print_r($this->dom);
-			$this->dom->registerXPathNamespace('dd', 'http://www.ontoprise.de/smwhalo/deploy');
+						
+			$path = "//update[@from='$from']";
+			
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
 				// if update config missing, use new 

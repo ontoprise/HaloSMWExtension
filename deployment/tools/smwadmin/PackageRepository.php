@@ -81,8 +81,9 @@ class PackageRepository {
 		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
-
+	
 		$dd =  new DeployDescriptorParser($res);
+		
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
