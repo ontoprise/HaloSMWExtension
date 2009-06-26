@@ -573,10 +573,10 @@ Search keyword: HiddenByACL
         <username>NormalUser</username>
         <id>3</id>
       </contributor>
-      <comment>New page: This is event 3.  [[Date::Today]]  [[Related event::Event 1]]  [[Category:Event]]</comment>
+      <comment>New page: This is event 3.  [[Date::Tomorrow]]  [[Related event::Event 1]]  [[Category:Event]]</comment>
       <text xml:space="preserve">This is event 3.
 
-[[Date::Today]]
+[[Date::Tomorrow]]
 
 [[Related event::Event 1]]
 
