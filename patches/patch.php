@@ -11,6 +11,8 @@
  * @author: Kai Kühn / ontoprise / 2009
  */
 
+$reversePatch = "";
+
 // get parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-d => absolute path to extend relative
@@ -23,7 +25,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$patchFile = next($argv);
 		continue;
 	}
-
+    
+	//-r => reverse patch
+    if ($arg == '-r') {
+       $reversePatch = "-R";
+        continue;
+    }
 }
 
 // usage message if wrong or missing params
@@ -76,12 +83,12 @@ foreach($patches as $p) {
 	 * -no-backup-if-mismatch: Back up mismatches only if otherwise requested.
 	 * -i patch file
 	 * -d directory of patch file
-	 * 
+	 * -R reverse patch
 	 */
 	
 	// run patch
-	echo "\nExecute patch:\n ".'patch -u -l -t -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
-	exec('patch -u -l -t -s --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"');
+	echo "\nExecute patch:\n ".'patch -u -l -t -s '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
+	exec('patch -u -l -t -s '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"');
 
 	// delete patch file
 	echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';

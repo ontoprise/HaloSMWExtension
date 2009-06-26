@@ -21,7 +21,7 @@ if ($check !== true) {
 }
 $check = Tools::checkPriviledges();
 if ($check !== true) {
-    fatalError($check);
+	fatalError($check);
 }
 
 
@@ -71,33 +71,53 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $help = array_key_exists("help", $options);
 
 if ($help) {
-	echo "\nSMWAdmin utility, Ontoprise 2009";
-	echo "\n\nUsage: smwadmin [ -i | -d ] <package>";
-	echo "\n       smwadmin -u [ <package> ]";
+	echo "\nSMWHalo Admin utility, Ontoprise 2009";
+	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
+	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n";
 	echo "\n\t-i : Install";
 	echo "\n\t-d : De-Install";
 	echo "\n\t-u : Update";
 	echo "\n";
+	echo "\nExample: smwadmin -i smwhalo-1.4.4 -u smw-1.4.2";
+	echo "\n\tsmwadmin -u";
 	die();
 }
 
+$installer = new Installer(realpath(dirname(__FILE__)."/../.."));
+
 if ($globalUpdate) {
-	doGlobalUpdate();
+	$installer->updateAll();
 	echo "\n\nYour installation is now up-to-date!";
 	die();
 }
 
+
 foreach($packageToInstall as $toInstall) {
-	installPackage($toInstall);
+	$toInstall = str_replace(".", "", $toInstall);
+	try {
+		$installer->installOrUpdate($toInstall);
+	} catch(InstallationError $e) {
+		fatal($e->getMsg());
+	}
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
-	deinstallPackage($toDeInstall);
+	$toDeInstall = str_replace(".", "", $toDeInstall);
+	try {
+		$installer->deinstall($toDeInstall);
+	} catch(InstallationError $e) {
+		fatal($e->getMsg());
+	}
 }
 
 foreach($packageToUpdate as $toUpdate) {
-	updatePackage($toUpdate);
+	$toInstall = str_replace(".", "", $toInstall);
+	try {
+		$installer->installOrUpdate($toInstall);
+	} catch(InstallationError $e) {
+		fatal($e->getMsg());
+	}
 }
 
 function fatalError($msg) {

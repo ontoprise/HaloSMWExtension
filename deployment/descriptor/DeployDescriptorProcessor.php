@@ -65,11 +65,21 @@ class DeployDescriptionProcessor {
 		return $this->localSettingsContent;
 	}
 
+	function unapplyLocalSettingsChanges() {
+		//TODO: external variables get not re-set. hard to fix.
+		$fragment = ConfigElement::getExtensionFragment($this->dd_parser->getID(), $this->localSettingsContent);
+		if (!is_null($fragment)) {
+			$ls = str_replace($fragment, "", $this->localSettingsContent);
+		}
+		return $ls;
+	}
+
 	/**
 	 * Runs the given setup scripts.
 	 *
 	 * Needs php interpreter in PATH
 	 *
+	 * @param boolean $dryRun
 	 */
 	function applySetups($dryRun = false) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
@@ -83,12 +93,33 @@ class DeployDescriptionProcessor {
 			}
 		}
 	}
+    
+	/**
+	 * Runs the given setup scripts in de-install mode.
+	 * 
+	 * Needs php interpreter in PATH
+	 * 
+	 * @param boolean $dryRun
+	 */
+	function unapplySetups($dryRun = false) {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		foreach($this->dd_parser->getSetups() as $setup) {
+			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			if (substr($instDir, -1) != '/') $instDir .= "/";
+			$script = self::makeUnixPath($setup['script']);
+			if (!$dryRun) {
+				print "\n\nRun script:\nphp ".$rootDir."/".$instDir.$script." ".$setup['params'];
+				exec("php ".$rootDir."/".$instDir.$script." --deinstall");
+			}
+		}
+	}
 
 	/**
 	 * Applies patches
 	 *
 	 * Needs php Interpreter and GNU-patch in PATH.
-	 *
+	 * 
+	 * @param boolean $dryRun
 	 */
 	function applyPatches($dryRun = false) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
@@ -102,6 +133,26 @@ class DeployDescriptionProcessor {
 			}
 		}
 	}
+	
+    /**
+     * Removes patches
+     *
+     * Needs php Interpreter and GNU-patch in PATH.
+     * 
+     * @param boolean $dryRun
+     */
+    function unapplyPatches($dryRun = false) {
+        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
+        foreach($this->dd_parser->getPatches() as $patch) {
+            $instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+            if (substr($instDir, -1) != '/') $instDir .= "/";
+            $patch = self::makeUnixPath($patch);
+            if (!$dryRun) {
+             print "\n\nRemove patch:\nphp ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$instDir.$patch." -d ".$rootDir;
+             exec("php ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$instDir."/".$patch." -d ".$rootDir);
+            }
+        }
+    }
 
 	/**
 	 * Writes LocalSettings.php
@@ -162,6 +213,7 @@ abstract class ConfigElement {
 	 */
 	public abstract function apply(& $ls, $ext_id, $userValues);
 
+
 	/**
 	 * Returns the configuration fragement of the extension. The text between
 	 *
@@ -171,7 +223,7 @@ abstract class ConfigElement {
 	 * @param string $ls localsettings text
 	 * @return string Fragment or NULL if it does not exist.
 	 */
-	protected function getExtensionFragment($ext_id, & $ls) {
+	public static function getExtensionFragment($ext_id, & $ls) {
 		$start = strpos($ls, "/*start-$ext_id*/");
 		$end = strpos($ls, "/*end-$ext_id*/");
 		if ($start === false || $end === false) {
@@ -333,7 +385,7 @@ class VariableConfigElement extends ConfigElement {
 			}
 			return;
 		} else {
-			$fragment = $this->getExtensionFragment($ext_id, $ls);
+			$fragment = self::getExtensionFragment($ext_id, $ls);
 			$res = $this->changeVariable($fragment, $this->name, $this->remove ? NULL : $this->value);
 
 			if ($res === true) {
@@ -422,7 +474,7 @@ class PHPConfigElement extends ConfigElement {
 
 	public function apply(& $ls, $ext_id, $userValues) {
 		if ($this->remove) {
-			$fragment = $this->getExtensionFragment($ext_id, $ls);
+			$fragment = self::getExtensionFragment($ext_id, $ls);
 			$start = strpos($fragment, "/*php-start-$this->name*/");
 			$end = strpos($fragment, "/*php-end-$this->name*/");
 			if ($start !== false && $end !== false) {
@@ -462,13 +514,13 @@ class FunctionCallConfigElement extends ConfigElement {
 		$appliedCommand = "\n".$this->functionname."(/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/);";
 		if ($this->remove) {
 
-			$fragment = $this->getExtensionFragment($ext_id, $ls);
+			$fragment = self::getExtensionFragment($ext_id, $ls);
 			$fragment = str_replace($appliedCommand, "", $fragment);
 			$this->replaceExtensionFragment($ext_id, $fragment, $ls);
 
 		} else {
 
-			$fragment = $this->getExtensionFragment($ext_id, $ls);
+			$fragment = self::getExtensionFragment($ext_id, $ls);
 			if (is_null($fragment)) return $appliedCommand;
 			$start = strpos($fragment, '/*param-start-'.$this->functionname);
 			$end = strpos($fragment, '/*param-end-'.$this->functionname);

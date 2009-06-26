@@ -146,7 +146,7 @@ class Tools {
 	 */
 	public static function getMediawikiVersion($rootDir) {
 		$version = NULL;
-		$defaultSettings = file_get_contenets($rootDir.'/includes/DefaultSettings.php');
+		$defaultSettings = file_get_contents($rootDir.'/includes/DefaultSettings.php');
 		preg_match('/\$wgVersion\s*=\s*([^;]+)/', $defaultSettings, $matches);
 		if (isset($matches[1])) {
 			$version = substr(trim($matches[1]),1,-1);

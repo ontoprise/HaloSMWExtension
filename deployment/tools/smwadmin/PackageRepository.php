@@ -5,7 +5,7 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 	require_once 'deployment/descriptor/DeployDescriptorParser.php';
 } else {
 	require_once '../io/HttpDownload.php';
-    require_once '../descriptor/DeployDescriptorParser.php';
+	require_once '../descriptor/DeployDescriptorParser.php';
 }
 
 // this URL is supposed to be fix forever
@@ -81,28 +81,28 @@ class PackageRepository {
 		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
-	
+
 		$dd =  new DeployDescriptorParser($res);
-		
+
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
 
-    /**
-     * Returns all available versions in descendant order.
-     *
-     * @param string $packageID
-     * @return array of results
-     */
+	/**
+	 * Returns all available versions in descendant order.
+	 *
+	 * @param string $packageID
+	 * @return array of results
+	 */
 	public static function getAllVersions($packageID) {
 		$versions = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version");
-        if (count($versions) == 0) return NULL;
-        $results = array();
-        foreach($versions as $v) {
-            $results[] = (string) $v->attributes()->ver;
-        }
-        sort($results, SORT_NUMERIC);
-        return array_reverse($results);
+		if (count($versions) == 0) return NULL;
+		$results = array();
+		foreach($versions as $v) {
+			$results[] = (string) $v->attributes()->ver;
+		}
+		sort($results, SORT_NUMERIC);
+		return array_reverse($results);
 	}
 	/**
 	 * Returns URL of latest available version of a package
@@ -181,7 +181,31 @@ class PackageRepository {
 			}
 
 		}
+		// create special deploy descriptor for Mediawiki itself
+		$packages[] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
 		return $packages;
+	}
+
+	private static function createMWDeployDescriptor($rootDir) {
+		$version = Tools::getMediawikiVersion($rootDir);
+		$version = intval(str_replace(".","", $version));
+		$xml = '<?xml version="1.0" encoding="UTF-8"?>
+				<deploydescriptor>
+				    <global>
+				        <version>'.$version.'</version>
+				        <id>MW</id>
+				        <vendor>Ontoprise GmbH</vendor>
+				        <instdir/>
+				        <description>Mediawiki software</description>
+				       
+    			    </global>
+				    <codefiles/>
+				    <wikidumps/>
+				    <resources/>
+				    <configs/>
+				    </deploydescriptor>';
+		
+		return new DeployDescriptorParser($xml);
 	}
 }
 ?>

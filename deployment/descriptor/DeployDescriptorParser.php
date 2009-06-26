@@ -13,7 +13,7 @@ require_once ('DeployDescriptorProcessor.php');
  *
  */
 class DeployDescriptorParser {
-    
+
 	var $dom;
 	var $globalElement;
 	var $codefiles;
@@ -31,7 +31,7 @@ class DeployDescriptorParser {
 			
 		// parse xml results
 		$this->dom = simplexml_load_string($xml);
-		
+
 
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
 		$this->codefiles = $this->dom->xpath('/deploydescriptor/codefiles/file');
@@ -41,7 +41,7 @@ class DeployDescriptorParser {
 		$this->createConfigElements($fromVersion); // assume new config, not update
 	}
 
-	
+
 	public function getPrecedings() {
 		return $this->precedings;
 	}
@@ -49,24 +49,24 @@ class DeployDescriptorParser {
 	public function getConfigs() {
 		return $this->configs;
 	}
-	
+
 	public function getSetups() {
 		return $this->setups;
 	}
-	
-   
+
+	 
 
 	private function createConfigElements($from = NULL) {
-		
+
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
-						
+
 			$path = "//update[@from='$from']";
-			
+				
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
-				// if update config missing, use new 
+				// if update config missing, use new
 				$path = "/deploydescriptor/configs/new";
 			}
 		}
@@ -76,7 +76,7 @@ class DeployDescriptorParser {
 		$require = $this->dom->xpath($path.'/require');
 		$php = $this->dom->xpath($path.'/php');
 		$setup = $this->dom->xpath($path.'/setup');
-		
+
 
 		$this->configs = array();
 		$this->precedings = array();
@@ -84,7 +84,7 @@ class DeployDescriptorParser {
 		foreach($precedings as $p) {
 			$this->precedings[] = (string) $p->attributes()->ext;
 		}
-		
+
 		$this->userReqs = array();
 		foreach($variables as $p) {
 			$this->userReqs = array_merge($this->userReqs, $this->extractUserRequirements($p));
@@ -100,18 +100,18 @@ class DeployDescriptorParser {
 		foreach($php as $p) {
 			$this->configs[] = new PHPConfigElement($p);
 		}
-	   foreach($setup as $p) {
-	   	    $script = (string) $p->attributes()->script;
-	   	    if (is_null($script) && $script == '') throw new IllegalArgument("Setup 'script'-attribute missing");
-	   	    $params = (string) $p->attributes()->params;
-	   	    if (is_null($params)) $params = "";
-            $this->setups[] = array('script'=>$script, 'params'=>$params);
-        }
+		foreach($setup as $p) {
+			$script = (string) $p->attributes()->script;
+			if (is_null($script) && $script == '') throw new IllegalArgument("Setup 'script'-attribute missing");
+			$params = (string) $p->attributes()->params;
+			if (is_null($params)) $params = "";
+			$this->setups[] = array('script'=>$script, 'params'=>$params);
+		}
 	}
 
-    function getUserRequirements() {
-    	return $this->userReqs;
-    }
+	function getUserRequirements() {
+		return $this->userReqs;
+	}
 
 
 	// global properties
@@ -146,7 +146,7 @@ class DeployDescriptorParser {
 		}
 		return $this->dependencies;
 	}
-	
+
 	function getDependency($ext_id) {
 		$dependencies = $this->getDependencies();
 		foreach($dependencies as $d) {
@@ -155,17 +155,17 @@ class DeployDescriptorParser {
 		}
 		return NULL;
 	}
-	
+
 	function getPatches() {
 		if (!is_null($this->patches)) return $this->patches;
-        $this->patches = array();
-        
-        foreach($this->patchfiles as $p) {
-            $patchFile = trim((string) $p->attributes()->file);
-            if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-            $this->patches[] = $patchFile;
-        }
-        return $this->patches;
+		$this->patches = array();
+
+		foreach($this->patchfiles as $p) {
+			$patchFile = trim((string) $p->attributes()->file);
+			if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+			$this->patches[] = $patchFile;
+		}
+		return $this->patches;
 	}
 
 	function getCodefiles() {
@@ -199,7 +199,7 @@ class DeployDescriptorParser {
 		$this->_extractUserRequirements($child, $userReqs);
 		return $userReqs;
 	}
-	
+
 	private function _extractUserRequirements($child, & $userReqs) {
 
 		$children = $child->children();
@@ -270,15 +270,25 @@ class DeployDescriptorParser {
 			// no configs, nothing to do
 			return DEPLOY_MSG_NOTHING_TODO;
 		}
-        if (!is_null($version)) {
-        	$this->createConfigElements($version);
-        }
+		if (!is_null($version)) {
+			$this->createConfigElements($version);
+		}
 		$dp = new DeployDescriptionProcessor($ls_loc, $this);
 		$content = $dp->applyLocalSettingsChanges($userValues);
 		$dp->applySetups($dryRun);
 		$dp->applyPatches($dryRun);
 		if (!$dryRun) $dp->writeLocalSettingsFile($content);
-        return $content;
+		return $content; // return for testing purposes.
+	}
+
+
+	function unapplyConfigurations($ls_loc, $dryRun = false) {
+		$dp = new DeployDescriptionProcessor($ls_loc, $this);
+		$content = $dp->unapplyLocalSettingsChanges();
+		$dp->unapplySetups($dryRun);
+		$dp->unapplyPatches($dryRun);
+		if (!$dryRun) $dp->writeLocalSettingsFile($content);
+		return $content; // return for testing purposes.
 	}
 
 }

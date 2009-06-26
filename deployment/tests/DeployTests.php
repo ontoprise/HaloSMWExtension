@@ -15,7 +15,7 @@ class DeployTests
         $suite->addTestSuite("TestDeployDescriptorParser");
         $suite->addTestSuite("TestDeployDescriptorProcessor");
         $suite->addTestSuite("TestPackageRepository");
-        //$suite->addTestSuite("TestInstaller");
+        $suite->addTestSuite("TestInstaller");
         return $suite;
     }
 }

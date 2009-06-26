@@ -1,9 +1,11 @@
 <?php
 
-define('DEPLOY_FRAMEWORK_DOWNGRADE_NEEDED', 0);
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
 define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
 define('DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE', 3);
+define('DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS', 4);
+define('DEPLOY_FRAMEWORK_DEPENDENCY_EXIST',5);
+
 
 require_once 'PackageRepository.php';
 require_once 'Tools.php';
@@ -30,10 +32,17 @@ class Installer {
 	static $rootDir;
 
 	/*
+	 * Mediawiki version
+	 */
+	static $mw_version;
+
+	/*
 	 * Installation directory
 	 * Normally identical with $rootDir except for testing.
 	 */
 	private $instDir;
+
+
 
 	/**
 	 * Creates new Installer.
@@ -47,6 +56,7 @@ class Installer {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
 		}
 		self::$rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
+		self::$mw_version = Tools::getMediawikiVersion(self::$rootDir);
 	}
 
 	public function setInstDir($instDir) {
@@ -59,7 +69,7 @@ class Installer {
 	 * @param string $packageID
 	 * @param int $version If omitted (or NULL), the latest version is installed.
 	 */
-	public function installOrUpdatePackage($packageID, $version = NULL) {
+	public function installOrUpdate($packageID, $version = NULL) {
 
 		// 1. Check if package is installed
 		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
@@ -90,96 +100,61 @@ class Installer {
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
 		// 4. Install/update all dependant and super extensions
-		$this->installExtensions($extensions_to_update, $localPackages);
+		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
 
 
 		// 5. Install update this extension
-		$this->installExtension($dd, $version, !is_null($ext) ? $ext->getVersion : NULL);
+		$this->installOrUpdatePackage($dd, $version, !is_null($ext) ? $ext->getVersion : NULL);
 
 	}
 
-
 	/**
-	 * Install extensions.
+	 * De-Installs extension
 	 *
-	 * @param array(descriptor, minVersion, maxVersion) $extensions_to_update
-	 * @param int fromVersion Update from this version 
+	 * @param string $packageID
 	 */
-	private function installExtensions($extensions_to_update, $localPackages) {
-		$d = new HttpDownload();
-		foreach($extensions_to_update as $id=>$arr) {
-			list($desc, $min, $max) = $arr;
-			$url = PackageRepository::getVersion($id, $min);
-			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$min.zip");
-
-			// unzip (requires 7-zip installed on Windows, unzip on Linux)
-			if (Tools::isWindows()) {
-				print "\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\$id-$min.zip";
-				exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\$id-$min.zip");
-			} else {
-				print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/$id-$min.zip -d ".$this->instDir;
-				exec('unzip '.self::$tmpFolder."/$id-$min.zip -d ".$this->instDir);
+	public function deInstall($packageID) {
+		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$ext = NULL;
+		foreach($localPackages as $p) {
+			if ($p->getID() == $packageID) {
+				$ext = $p;
+				break;
 			}
-
-			// apply deploy descriptor and save local settings
-			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
-			$desc->applyConfigurations($this->instDir."/LocalSettings.php", false, $fromVersion);
-			print "\n-------\n";
 		}
-	}
-
-	/**
-	 * Install extension
-	 *
-	 * @param descriptor $dd
-	 * @param int $version
-	 */
-	private function installExtension($dd, $version, $fromVersion) {
-		$d = new HttpDownload();
-		if (is_null($version)) {
-			list($url,$version) = PackageRepository::getLatestVersion($dd->getID());
-
-		} else {
-			$url = PackageRepository::getVersion($dd->getID(), $version);
-		}
-		$d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."-$version.zip");
-
-		if (Tools::isWindows()) {
-			print "\n\nUncompressing:\n7z x -o".$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip";
-			exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\".$dd->getID()."-$version.zip");
-		} else {
-			print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir;
-			exec('unzip '.self::$tmpFolder."/".$dd->getID()."-$version.zip -d ".$this->instDir);
+		if (is_null($ext)) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS, "Package does not exist", $packageID);
 		}
 
-		// apply deploy descriptor
-		$dd->applyConfigurations($this->instDir."/LocalSettings.php", $fromVersion);
-	}
-	
-	/**
-	 * Calculates for any extension individually the interval of min/max version, so that it is a subset of all.  
-	 *
-	 * @param array($dd, $min, $max) $updatesNeeded
-	 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
-	 */
-	private function calculateVersionRange($updatesNeeded, & $extensions_to_update) {
-	    $extensions_to_update = array();
-        foreach($updatesNeeded as $un) {
-            list($un, $from, $to) = $un;
-            if (!array_key_exists($un->getID(), $extensions_to_update)) {
+		// check if there are depending extensions
+		$existDependency = false;
+		foreach($localPackages as $p) {
+			$dependencies = $p->getDependencies();
 
-                $extensions_to_update[$un->getID()] = array($un, $from, $to);
-            } else {
-                list($min, $max) = $extensions_to_update[$un->getID()];
-                if ($from > $min) $min = $from;
-                if ($to < $max) $max = $to;
-                $extensions_to_update[$un->getID()] = array($un, $min, $max);
-            }
+			foreach($dependencies as $dep) {
+				list($id, $from, $to) = $dep;
+				if ($id == $packageID) {
+					$existDependency = true;
+				}
+			}
+		}
+		
+	   if ($existDependency) {
+            throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to this package exists.", $packageID);
         }
+
+		// remove extension code
+		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
+
+		// undo all config changes
+		// - from LocalSettings.php
+		// - from database (setup scripts)
+		// - patches
+		$ext->unapplyConfigurations($this->instDir."/LocalSettings.php", false);
 	}
 
 	public function updateAll() {
-		
+
 		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
 
 		// get top level extensions, ie. those which have no super extensions.
@@ -201,11 +176,98 @@ class Installer {
 
 			$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 		}
-        
+
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
-		
-		$this->installExtensions($extensions_to_update, $localPackages);
+
+		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
 	}
+	/**
+	 * Install extensions.
+	 *
+	 * @param array(descriptor, minVersion, maxVersion) $extensions_to_update
+	 * @param int fromVersion Update from this version
+	 */
+	private function installOrUpdatePackages($extensions_to_update, $localPackages) {
+		$d = new HttpDownload();
+		foreach($extensions_to_update as $id=>$arr) {
+			list($desc, $min, $max) = $arr;
+			$url = PackageRepository::getVersion($id, $min);
+			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$min.zip");
+
+			// unzip
+			$this->unzip($id, $min);
+
+			// apply deploy descriptor and save local settings
+			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
+			$desc->applyConfigurations($this->instDir."/LocalSettings.php", false, $fromVersion);
+			print "\n-------\n";
+		}
+	}
+
+	/**
+	 * Install extension
+	 *
+	 * @param descriptor $dd
+	 * @param int $version
+	 */
+	private function installOrUpdatePackage($dd, $version, $fromVersion) {
+		$d = new HttpDownload();
+		if (is_null($version)) {
+			list($url,$version) = PackageRepository::getLatestVersion($dd->getID());
+
+		} else {
+			$url = PackageRepository::getVersion($dd->getID(), $version);
+		}
+		$d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."-$version.zip");
+
+		// unzip
+		$this->unzip($dd->getID(), $version);
+
+		// apply deploy descriptor
+		$dd->applyConfigurations($this->instDir."/LocalSettings.php", false, $fromVersion);
+	}
+
+	/**
+	 * Unzips the package denoted by $id and $version
+	 *
+	 *  (requires 7-zip installed on Windows, unzip on Linux)
+	 *
+	 * @param string $id
+	 * @param int $version
+	 */
+	private function unzip($id, $version) {
+		if (Tools::isWindows()) {
+			print "\n\nUncompressing:\n7z x -y -o".$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip";
+			exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip");
+		} else {
+			print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
+			exec('unzip '.self::$tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
+		}
+	}
+
+	/**
+	 * Calculates for any extension individually the interval of min/max version, so that it is a subset of all.
+	 *
+	 * @param array($dd, $min, $max) $updatesNeeded
+	 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
+	 */
+	private function calculateVersionRange($updatesNeeded, & $extensions_to_update) {
+		$extensions_to_update = array();
+		foreach($updatesNeeded as $un) {
+			list($un, $from, $to) = $un;
+			if (!array_key_exists($un->getID(), $extensions_to_update)) {
+
+				$extensions_to_update[$un->getID()] = array($un, $from, $to);
+			} else {
+				list($min, $max) = $extensions_to_update[$un->getID()];
+				if ($from > $min) $min = $from;
+				if ($to < $max) $max = $to;
+				$extensions_to_update[$un->getID()] = array($un, $min, $max);
+			}
+		}
+	}
+
+
 
 	public function downloadProgres($percentage) {
 		// do nothing
@@ -247,7 +309,7 @@ class Installer {
 		foreach($updatesNeeded as $up) {
 			list($p, $minVersion, $maxVersion) = $up;
 			$dd = PackageRepository::getDeployDescriptor($p->getID(), $minVersion);
-			
+
 			$packagesToUpdate[] = array($dd, $minVersion, $maxVersion);
 			$this->checkForDependingExtensions($dd, $packagesToUpdate, $localPackages);
 		}
