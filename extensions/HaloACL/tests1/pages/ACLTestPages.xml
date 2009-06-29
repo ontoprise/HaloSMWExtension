@@ -1,0 +1,723 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/develwiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="300">ACL</namespace>
+      <namespace key="301">ACL talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>ACLNamespaceTransclusion</title>
+    <id>14</id>
+    <revision>
+      <id>14</id>
+      <timestamp>2009-03-06T07:57:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">==Hidden namespace==
+{{:User:HiddenUser}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACLPageTransclusion</title>
+    <id>15</id>
+    <revision>
+      <id>15</id>
+      <timestamp>2009-03-06T07:57:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">==Hidden page==
+{{:HiddenPage}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACLRedirectTransclusion</title>
+    <id>16</id>
+    <revision>
+      <id>16</id>
+      <timestamp>2009-03-06T07:57:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">A protected page is included:
+
+{{:HiddenRedirect}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>ACLSubcategoryTransclusion</title>
+    <id>17</id>
+    <revision>
+      <id>17</id>
+      <timestamp>2009-03-06T07:57:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">==Hidden instance of a subcategory==
+{{:HiddenInstanceOfSubcat}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>HiddenInstance</title>
+    <id>18</id>
+    <revision>
+      <id>18</id>
+      <timestamp>2009-03-06T07:57:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">Instances of the '''category ProtectedCategory''' are not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+
+[[is hidden::true]]
+
+==Section 1==
+
+Section 1
+
+==Section 2==
+
+Section 2
+
+==Section 3==
+
+Section 3
+
+==Section 4==
+
+Section 4
+
+[[Category:ProtectedCategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>HiddenPage</title>
+    <id>19</id>
+    <revision>
+      <id>19</id>
+      <timestamp>2009-03-06T07:57:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This page is not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+[[is hidden::true]]
+
+==Section 1==
+
+Section 1
+
+==Section 2==
+
+Section 2
+
+==Section 3==
+
+Section 3
+
+==Section 4==
+
+Section 4</text>
+    </revision>
+  </page>
+  <page>
+    <title>HiddenInstanceOfSubcat</title>
+    <id>20</id>
+    <revision>
+      <id>20</id>
+      <timestamp>2009-03-06T07:57:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">Instances of the '''category ProtectedSubCategory''' are not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+[[is hidden::true]]
+
+==Section 1==
+
+Section 1
+
+==Section 2==
+
+Section 2
+
+==Section 3==
+
+Section 3
+
+==Section 4==
+
+Section 4
+
+[[Category:ProtectedSubCategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>HiddenRedirect</title>
+    <id>21</id>
+    <revision>
+      <id>21</id>
+      <timestamp>2009-03-06T07:57:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">#REDIRECT [[HiddenPage]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>LinkHiddenPages</title>
+    <id>22</id>
+    <revision>
+      <id>22</id>
+      <timestamp>2009-03-06T07:57:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">This page links to the hidden pages:
+*[[HiddenPage]]
+*[[HiddenInstance]]
+*[[HiddenInstanceOfSubcat]]
+*[[User:HiddenUser]]
+*[[Property:HiddenProperty]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Open Page</title>
+    <id>23</id>
+    <revision>
+      <id>23</id>
+      <timestamp>2009-03-06T11:44:21Z</timestamp>
+      <contributor>
+        <ip>RestrictedUser</ip>
+      </contributor>
+      <comment>New page: This page can be opened by everyone.</comment>
+      <text xml:space="preserve">This page can be opened by everyone.</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryHiddenPages</title>
+    <id>24</id>
+    <revision>
+      <id>24</id>
+      <timestamp>2009-03-06T07:57:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{#ask:[[is hidden::true]]|format=table}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestActionLinks</title>
+    <id>25</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2009-03-06T15:39:19Z</timestamp>
+      <contributor>
+        <ip>RestrictedUser</ip>
+      </contributor>
+      <text xml:space="preserve">==Testing Action links==
+;Goal:Hide protected pages even if they are accessed with action links.
+;Running the test:
+:*Login as ''RestrictedUser'' and ''RGBUser'', respectively.
+:*Try to open:
+:**[{{SERVER}}{{localurl:HiddenPage|printable=yes}} HiddenPage (printable)]
+:**[{{SERVER}}{{localurl:HiddenPage|action=render}} HiddenPage (render)]
+:**[{{SERVER}}{{localurl:HiddenPage|action=raw}} HiddenPage (raw)]
+:**[{{SERVER}}{{localurl:HiddenInstance|printable=yes}} HiddenInstance(printable)]
+:**[{{SERVER}}{{localurl:HiddenInstance|action=render}} HiddenInstance(render)]
+:**[{{SERVER}}{{localurl:HiddenInstance|action=raw}} HiddenInstance(raw)]
+:**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|printable=yes}} HiddenInstanceOfSubcat(printable)]
+:**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=render}} HiddenInstanceOfSubcat(render)]
+:**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=raw}} HiddenInstanceOfSubcat(raw)]
+:**[{{SERVER}}{{localurl:User:HiddenUser|printable=yes}} User:HiddenUser(printable)]
+:**[{{SERVER}}{{localurl:User:HiddenUser|action=render}} User:HiddenUser(render)]
+:**[{{SERVER}}{{localurl:User:HiddenUser|action=raw}} User:HiddenUser(raw)]
+:The links to these pages are stored in the article ''TestActionLinks'' (in the database dump)
+:*Repeat this for ''HiddenInstance'', ''HiddenInstanceOfSubcat'' and ''User:HiddenUser''
+;Expected result:The content of the protected pages must not be revealed.</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestAuthorBackdoor</title>
+    <id>26</id>
+    <revision>
+      <id>26</id>
+      <timestamp>2009-03-09T06:09:16Z</timestamp>
+      <contributor>
+        <ip>RestrictedUser</ip>
+      </contributor>
+      <comment>New page: Author backdoor test.  [[Category:ProtectedCategory]]</comment>
+      <text xml:space="preserve">Author backdoor test.
+
+[[Category:ProtectedCategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestDeletePages</title>
+    <id>27</id>
+    <revision>
+      <id>27</id>
+      <timestamp>2009-03-06T16:25:15Z</timestamp>
+      <contributor>
+        <ip>RestrictedUser</ip>
+      </contributor>
+      <text xml:space="preserve">==Testing Deleting protected pages==
+;Goal:Make sure, protected pages can not be deleted.
+;Running the test:
+:*Log in as ''RestrictedUser'' and ''RGBUser'', respectively.
+:*Try to delete these pages:
+:**[{{SERVER}}{{localurl:HiddenPage|action=delete}} HiddenPage]
+:**[{{SERVER}}{{localurl:HiddenInstance|action=delete}} HiddenInstance]
+:**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=delete}} HiddenInstanceOfSubcat]
+:**[{{SERVER}}{{localurl:User:HiddenUser|action=delete}} User:HiddenUser]
+;Expected result:It must not be possible to delete the protected page.</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestMovePages</title>
+    <id>28</id>
+    <revision>
+      <id>28</id>
+      <timestamp>2009-03-06T16:12:49Z</timestamp>
+      <contributor>
+        <ip>RestrictedUser</ip>
+      </contributor>
+      <comment>New page: ==Testing Moving protected pages== ;Goal:Make sure, protected pages can not be moved. ;Running the test: :*Log in as ''RestrictedUser'' and ''RGBUser'', respectively. :*Try to open  :**[[S...</comment>
+      <text xml:space="preserve">==Testing Moving protected pages==
+;Goal:Make sure, protected pages can not be moved.
+;Running the test:
+:*Log in as ''RestrictedUser'' and ''RGBUser'', respectively.
+:*Try to open 
+:**[[Special:MovePage/HiddenPage]]
+:**[[Special:MovePage/HiddenInstance]]
+:**[[Special:MovePage/HiddenInstanceOfSubcat]]
+:**[[Special:MovePage/User:HiddenUser]]
+;Expected result:It must not be possible to move the protected page.</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestSpecialPages</title>
+    <id>29</id>
+    <revision>
+      <id>29</id>
+      <timestamp>2009-03-06T13:49:38Z</timestamp>
+      <contributor>
+        <ip>RBGUser</ip>
+      </contributor>
+      <comment>New page: ==ACL test for Listings== ;Goal:The titles of restricted pages (or at least their content) must not appear in listings like recent changes, all pages etc. ;Running the test: Run the test a...</comment>
+      <text xml:space="preserve">==ACL test for Listings==
+;Goal:The titles of restricted pages (or at least their content) must not appear in listings like recent changes, all pages etc.
+;Running the test: Run the test as ''RestrictedUser'' and ''RGBUser''. Check if the following pages list the hidden articles ''HiddenPage'', ''HiddenInstance'', ''HiddenInstanceOfSubcat'', ''Property:HiddenProperty'' and ''User:HiddenUser'':
+:*[[Special:DeadendPages]]
+:*[[Special:LongPages]]
+:*[[Special:AncientPages]]
+:*[[Special:LonelyPages]]
+:*[[Special:FewestRevisions]]
+:*[[Special:WithoutInterwiki]]
+:*[[Special:ShortPages]]
+:*[[Special:UncategorizedPages]]
+:*[[Special:AllPages]]
+:*[[Special:ListRedirects]] (''HiddenRedirect'' should not appear.)
+:*[[Special:PrefixIndex]] (Pages with prefix ''Hidden'' should not appear.)
+:*[[Special:Properties]] (''Property:HiddenProperty'' should not appear)
+:*[[Special:NewPages]]
+:*[[Special:RecentChanges]] (Make sure that differences and histories of the articles can not be viewed.)
+:*[[Special:RecentChangesLinked]] (Enter ''LinkHiddenPages'' and make sure the hidden articles are not revealed.)
+:*[[Special:PopularPages]]
+:*[[Special:WhatLinksHere]] (Enter ''LinkHiddenPages'' and make sure the hidden articles are not revealed.)
+:*[[Special:Browse]] (Enter the names of the protected pages and make sure nothing is revealed.)
+:*[[Special:ExportRDF]] (Enter the names of the protected pages and make sure nothing is revealed.)
+:*[[Special:SearchByProperty]] (Enter ''is hidden'' and ''true''. The protected pages should not be revealed.)
+:*[[Special:OntologyBrowser]] (Open the category ''ProtectedCategory''. The article ''HiddenInstance'' should not be shown.)
+:*[[Special:SemanticNotifications]] (Create a query for the property ''is hidden'' and show the preview. Make sure the protected articles are not shown.)
+:*[[Special:SemanticNotifications]] (Make sure, changes for the hidden pages are not sent by email)</text>
+    </revision>
+  </page>
+  <page>
+    <title>User:HiddenUser</title>
+    <id>30</id>
+    <revision>
+      <id>30</id>
+      <timestamp>2009-05-28T10:13:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: The '''namespace User''' is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  ==Section 1==  Section 1  ==Sectio...</comment>
+      <text xml:space="preserve">The '''namespace User''' is not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+[[is hidden::true]]
+
+==Section 1==
+
+Section 1
+
+==Section 2==
+
+Section 2
+
+==Section 3==
+
+Section 3
+
+==Section 4==
+
+Section 4</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:ProtectedCategory</title>
+    <id>31</id>
+    <revision>
+      <id>31</id>
+      <timestamp>2009-05-28T10:00:59Z</timestamp>
+      <contributor>
+        <ip>RGBUser</ip>
+      </contributor>
+      <comment>New page: This is ProtectedCategory.</comment>
+      <text xml:space="preserve">This is ProtectedCategory.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:ProtectedSubCategory</title>
+    <id>32</id>
+    <revision>
+      <id>32</id>
+      <timestamp>2009-05-28T10:00:07Z</timestamp>
+      <contributor>
+        <ip>RGBUser</ip>
+      </contributor>
+      <comment>New page: [[Category:ProtectedCategory]]</comment>
+      <text xml:space="preserve">[[Category:ProtectedCategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HiddenProperty</title>
+    <id>33</id>
+    <revision>
+      <id>33</id>
+      <timestamp>2009-05-28T10:18:06Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This page is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  [[Has type::Type:String]]</comment>
+      <text xml:space="preserve">This page is not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+[[is hidden::true]]
+
+[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Event</title>
+    <id>34</id>
+    <revision>
+      <id>34</id>
+      <timestamp>2009-06-18T10:25:34Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: This is the category for events.</comment>
+      <text xml:space="preserve">This is the category for events.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Event 1</title>
+    <id>35</id>
+    <revision>
+      <id>35</id>
+      <timestamp>2009-06-18T10:28:03Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: This is event 1.  [[Date::Today]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 1.
+
+
+[[Date::Today]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Event 2</title>
+    <id>36</id>
+    <revision>
+      <id>36</id>
+      <timestamp>2009-06-18T10:28:03Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: This is event 2.  [[Related event::Event 3]]  [[Date::Tomorrow]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 2.
+
+[[Related event::Event 3]]
+
+[[Date::Tomorrow]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Event 3</title>
+    <id>37</id>
+    <revision>
+      <id>37</id>
+      <timestamp>2009-06-18T10:28:40Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: This is event 3.  [[Date::Tomorrow]]  [[Related event::Event 1]]  [[Category:Event]]</comment>
+      <text xml:space="preserve">This is event 3.
+
+[[Date::Tomorrow]]
+
+[[Related event::Event 1]]
+
+[[Category:Event]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Date</title>
+    <id>38</id>
+    <revision>
+      <id>38</id>
+      <timestamp>2009-06-18T10:29:16Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; | ]]  [[has type::Type:String| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; | ]]
+
+[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Related event</title>
+    <id>39</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2009-06-18T10:29:40Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; Category:Event| ]]  [[has type::Type:Page| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; Category:Event| ]]
+
+[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Query events with sparql</title>
+    <id>41</id>
+    <revision>
+      <id>42</id>
+      <timestamp>2009-06-29T10:11:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">==Ask for all events==
+
+{{#sparql: [[Category:Event]] | format = table | mainlabel=Event}}
+
+==Ask for all events and their dates==
+
+{{#sparql: [[Category:Event]] [[Date::+]] | ?Date | | format = table}}
+
+==Ask for all events their dates and related events==
+{{#sparql: [[Category:Event]] [[Date::+]] | ?Date | ?Related event | format = table}}
+
+==Ask with sub-query==
+(The restriction to events with date &quot;Tomorrow&quot; must be ignored for restricted user.)
+
+{{#sparql:[[Category:Event]][[Related event::&lt;q&gt;[[Category:Event]][[Date::Tomorrow]]&lt;/q&gt;]] | format=table}}
+
+==A SPARQL query in SPARQL syntax==
+
+{{#sparql:   SELECT ?x ?re ?Date WHERE { ?x rdf:type cat:Event . ?x prop:Related_event ?re . ?re rdf:type cat:Event . ?re prop:Date ?Date  .  FILTER ( ?Date = &quot;Today&quot;^^xsd:string )} }}
+
+{{#sparql:   
+SELECT ?x ?re
+WHERE { 
+  optional {
+    ?re prop:Date &quot;Today&quot;^^xsd:string .
+  } 
+  optional {
+    ?re prop:Date &quot;Tomorrow&quot;^^xsd:string .
+  }
+  ?x rdf:type cat:Event . 
+  ?x prop:Related_event ?re . 
+  ?re rdf:type cat:Event . 
+}
+}}
+
+{{#sparql:   
+SELECT ?x ?re
+WHERE {
+  {
+  {
+    ?re prop:Date &quot;Today&quot;^^xsd:string .
+  } union {
+    ?re prop:Date &quot;Tomorrow&quot;^^xsd:string .
+  }
+  }
+  ?x rdf:type cat:Event . 
+  ?x prop:Related_event ?re . 
+  ?re rdf:type cat:Event . 
+}
+}}
+
+
+
+{{#sparql:   
+SELECT ?x ?re
+WHERE {
+  {
+    ?re prop:Date &quot;Today&quot;^^xsd:string .
+  } union {
+    ?re prop:Date &quot;Tomorrow&quot;^^xsd:string .
+  }
+  ?x rdf:type cat:Event . 
+  ?x prop:Related_event ?re . 
+  ?re rdf:type cat:Event . 
+}
+}}
+
+
+{{#sparql:   
+SELECT ?x ?re
+WHERE { 
+  ?x rdf:type cat:Event . 
+  ?x prop:Related_event ?re . 
+  ?re rdf:type cat:Event . 
+  {
+    {
+      ?re prop:Date &quot;1&quot;^^xsd:string .
+    } union {
+      {
+        ?re prop:Date &quot;2&quot;^^xsd:string .
+      } union {
+        ?re prop:Date &quot;3&quot;^^xsd:string .
+      }
+    }
+  } union {
+    ?re prop:Date &quot;Tomorrow&quot;^^xsd:string .
+  }
+}
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Query events with ask</title>
+    <id>42</id>
+    <revision>
+      <id>44</id>
+      <timestamp>2009-06-29T10:11:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">==Ask for all events==
+{{#ask: [[Category:Event]] | format = table | mainlabel=Event}}
+
+==Ask for all events and their dates==
+{{#ask: [[Category:Event]] [[Date::+]] | ?Date | format = table}}
+
+==Ask for all events their dates and related events==
+{{#ask: [[Category:Event]] [[Date::+]] | ?Date | ?related event | format = table}}
+
+==Ask with sub-query==
+(The restriction to events with date &quot;Tomorrow&quot; must be ignored for restricted user.)
+
+{{#ask:[[Category:Event]][[Related event::&lt;q&gt;[[Category:Event]][[Date::Tomorrow]]&lt;/q&gt;]] | format=table}}</text>
+    </revision>
+  </page>
+</mediawiki>
