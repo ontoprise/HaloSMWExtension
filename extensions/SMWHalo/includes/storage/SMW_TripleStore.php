@@ -402,7 +402,8 @@ class SMWTripleStore extends SMWStore {
 					$response = $client->query($query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 
 				}
-
+                
+				$response = utf8_decode($response);
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -763,7 +764,7 @@ class SMWTripleStore extends SMWStore {
 		// category result
 		if (stripos($sv, self::$CAT_NS) === 0) {
 			$local = substr($sv, strlen(self::$CAT_NS));
-			$title = Title::newFromText(utf8_decode($local), NS_CATEGORY);
+			$title = Title::newFromText($local, NS_CATEGORY);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
 			$allValues[] = $v;
@@ -772,7 +773,7 @@ class SMWTripleStore extends SMWStore {
 		} else if (stripos($sv, self::$PROP_NS) === 0) {
 
 			$local = substr($sv, strlen(self::$PROP_NS));
-			$title = Title::newFromText(utf8_decode($local), SMW_NS_PROPERTY);
+			$title = Title::newFromText($local, SMW_NS_PROPERTY);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
 			$allValues[] = $v;
@@ -781,7 +782,7 @@ class SMWTripleStore extends SMWStore {
 		} else if (stripos($sv, self::$INST_NS) === 0) {
 
 			$local = substr($sv, strlen(self::$INST_NS));
-			$title = Title::newFromText(utf8_decode($local), NS_MAIN);
+			$title = Title::newFromText($local, NS_MAIN);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), NS_MAIN, $title->getArticleID());
 			$allValues[] = $v;
@@ -790,7 +791,7 @@ class SMWTripleStore extends SMWStore {
 		} else if (stripos($sv, self::$HELP_NS) === 0) {
 
 			$local = substr($sv, strlen(self::$HELP_NS));
-			$title = Title::newFromText(utf8_decode($local), NS_HELP);
+			$title = Title::newFromText($local, NS_HELP);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), NS_HELP, $title->getArticleID());
 			$allValues[] = $v;
@@ -799,7 +800,7 @@ class SMWTripleStore extends SMWStore {
 		} else if (stripos($sv, self::$IMAGE_NS) === 0) {
 
 			$local = substr($sv, strlen(self::$IMAGE_NS));
-			$title = Title::newFromText(utf8_decode($local), NS_IMAGE);
+			$title = Title::newFromText($local, NS_IMAGE);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), NS_IMAGE, $title->getArticleID());
 			$allValues[] = $v;
@@ -813,7 +814,7 @@ class SMWTripleStore extends SMWStore {
 
 			$local = substr($sv, strpos($sv, "#")+1);
 
-			$title = Title::newFromText(utf8_decode($local), $ns);
+			$title = Title::newFromText($local, $ns);
 			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
 			$allValues[] = $v;
@@ -824,9 +825,9 @@ class SMWTripleStore extends SMWStore {
 			$literal = $this->unquote($this->removeXSDType($sv));
 			$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
 			if ($value->getTypeID() == '_dat') { // exception for dateTime
-				if ($literal != '') $value->setXSDValue(utf8_decode($literal));
+				if ($literal != '') $value->setXSDValue($literal);
 			} else {
-				$value->setUserValue(utf8_decode($literal));
+				$value->setUserValue($literal);
 			}
 			$allValues[] = $value;
 
