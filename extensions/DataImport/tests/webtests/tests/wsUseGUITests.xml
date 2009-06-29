@@ -186,13 +186,13 @@
 				description="is preview displayed" 
 				text='.*200.*' regex="true"/>
 				
-			<clickButton xpath="//div[@id='step5']/p[2]/input[3]"
+			<!-- <clickButton xpath="//div[@id='step5']/p[2]/input[3]"
 				description="add ws call to article" />
 			<sleep seconds="5"/>
 			<verifyElementText htmlId="wpTextbox1" 
 				description="is #ws-sybtax displayed"
 				text='.*WebTestWS.*nonOptionalParameterNoDefault =.*dontcare.*nonOptionalParameterWithDefault =.*parameterWithSubparameters =.*parameterWithSubparameters.nonOptionalSubParameterNoDefault =.*dontcare.*parameterWithSubparameters.nonOptionalSubParameterWithDefault =.*result.complete.*result.xmlSubPath.*result.jsonSubPath.*format=list.*'
-				regex="true"/>
+				regex="true"/> -->
 			
 			
 				

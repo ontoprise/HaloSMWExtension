@@ -8,12 +8,12 @@
 	&createWebTestWS;
 
 	<target name="testWSEditGUI">
-		
-		<webtest name="WSEditRESTPart1">
+
+		<!-- <webtest name="WSEditRESTPart1">
 			<antcall target="createWebTestWS" />
 		</webtest>
 
-		<webtest name="WSEditRESTPart1">
+		<webtest name="WSEditRESTPart2">
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
 			<clickLink xpath="//div[@id='bodyContent']/h2/a"
 				description="Click edit button" />
@@ -72,7 +72,6 @@
 			<verifyElementText description="verify that subparameters are loaded correctly" regex="true"
 					type="textarea"
 					text='&lt;subparameter name="optionalSubParameter" optional="true"/&gt;.*&lt;subparameter name="nonOptionalSubParameterNoDefault" optional="false"/&gt;.*&lt;subparameter name="nonOptionalSubParameterWithDefault" optional="false" defaultValue="default"/&gt;'> 
-				<!--   <table htmlId="step3-parameters" row="5" column="0"/> --> 
 			</verifyElementText>
 			
 			<verifyCheckbox description="verify that the complete result is used"
@@ -128,7 +127,148 @@
 			
 			<verifyText text="Now you can use that web service in an article"
 				description="check if step7 is displayed"/>
-			</webtest>
+			</webtest> -->
 
-	</target>
+		<webtest name="WSEditSOAPPart1">
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2?action=edit" description="Open new ws for editing" />
+			<setInputField description="Enter new wwsd." xpath="//textarea[@id='wpTextbox1']">
+				<![CDATA[<WebService>
+				<uri name="http://localhost/]]>${wikipath}<![CDATA[/extensions/DataImport/tests/webTestSoapWS.wsdl" />
+				<protocol>SOAP</protocol>
+				<method name="testMethod1" />
+				<parameter name="slLeafParameter1"  optional="true"  path="/parameters/flTreeParameter/slLeafParameter1">
+					Hello
+				</parameter>
+				<parameter name="slLeafParameter2"  optional="false"  path="/parameters/flTreeParameter/slLeafParameter2" />
+				<parameter name="flLeafParameter2"  optional="false"  defaultValue="default"  path="/parameters/flLeafParameter2" />
+				<result name="result" >
+					<part name="flLeafParameter1"  path="//flLeafParameter1" />
+					<part name="slLeafParameter1"  path="//flTreeParameter/slLeafParameter1" />
+					<part name="slLeafParameter2"  path="//flTreeParameter/slLeafParameter2" />
+					<part name="slLeafParameter2-0"  path="//flTreeParameter/slLeafParameter2" xpath="//dont/care"/>
+					<part name="slLeafParameter2-1"  path="//flTreeParameter/slLeafParameter2" json="//either"/>
+					<part name="flLeafParameter2"  path="//flLeafParameter2" />
+				</result>
+				<displayPolicy>
+					<once/>
+				</displayPolicy>
+				<queryPolicy>
+					<maxAge value="80">
+					</maxAge>
+					<delay value="0"/>
+				</queryPolicy>
+				<spanOfLife value="0" expiresAfterUpdate="true" />
+			</WebService>]]>
+			</setInputField>
+		<clickButton description="Save new wwsd." htmlId="wpSave" />
+	</webtest>
+
+	<webtest name="WSEditSOAPPart2">
+		<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2" />
+		<clickLink xpath="//div[@id='bodyContent']/h2/a" description="Click edit button" />
+		<sleep seconds="10" />
+
+		<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened" />
+
+		<verifyRadioButton htmlId="step1-protocol-rest" checked="false" description="check if protocol is soap" />
+
+		<verifySelectField htmlId="step2-methods" value="testMethod1" description="verify that the method is get" />
+
+		<verifyText description="verify that parameter path is loaded correctly" text="flLeafParameter1">
+			<table htmlId="step3-parameters" row="1" column="0" />
+		</verifyText>
+		<verifyText description="verify that parameter path is loaded correctly" text="flLeafParameter2">
+			<table htmlId="step3-parameters" row="2" column="0" />
+		</verifyText>
+		<verifyText description="verify that parameter path is loaded correctly" text="flTreeParameter" regex="true">
+			<table htmlId="step3-parameters" row="3" column="0" />
+		</verifyText>
+		<verifyXPath description="verify that parameter path is loaded correctly" text="slLeafParameter1" xpath="//span[@id='s3-pathstep-2-1']/text()" />
+		<verifyXPath description="verify that parameter path is loaded correctly" 
+			text="flTreeParameter" 
+			xpath="//span[@id='s3-pathstep-3-0']/text()" />
+		<verifyXPath description="verify that parameter path is loaded correctly" 
+			text="slLeafParameter2" 
+			xpath="//span[@id='s3-pathstep-3-1']/text()" />
+		
+		<verifyCheckbox htmlId="s3-use0" checked="false" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s3-use1" checked="true" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s3-use2" checked="true" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s3-use3" checked="true" description="check if use checkbox is set correctly" />
+		
+		
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[3]/input" value="" description="verify that parameter aliases are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[3]/input" value="flLeafParameter2" description="verify that parameter aliases are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[3]/input" value="slLeafParameter1" description="verify that parameter aliases are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[3]/input" value="slLeafParameter2" description="verify that parameter aliases are loaded correctly" />
+
+		<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[4]/input[1]" checked="false" description="check if optional is set correctly" />
+		<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[4]/input[1]" checked="false" description="check if optional is set correctly" />
+		<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[4]/input[1]" checked="true" description="check if optional is set correctly" />
+		<verifyRadioButton xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[4]/input[1]" checked="false" description="check if optional is set correctly" />
+
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[2]/td[5]/input" value="" description="verify that defaults are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[3]/td[5]/input" value="default" description="verify that defaults are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[4]/td[5]/input" value="" description="verify that defaults are loaded correctly" />
+		<verifyInputField xpath="//table[@id='step3-parameters']/tbody/tr[6]/td[5]/input" value="" description="verify that defaults are loaded correctly" />
+
+		<verifyElementText description="verify that subparameters are loaded correctly" regex="true" type="textarea" text='Hello'>
+		</verifyElementText>
+
+
+		<verifyText description="verify that result path is loaded correctly" text="flLeafParameter1">
+			<table htmlId="step4-results" row="1" column="0" />
+		</verifyText>
+		<verifyText description="verify that result path is loaded correctly" text="flLeafParameter2">
+			<table htmlId="step4-results" row="2" column="0" />
+		</verifyText>
+		<verifyText description="verify that result path is loaded correctly" 
+			text="flTreeParameter">
+			<table htmlId="step4-results" row="3" column="0" />
+		</verifyText>
+		<verifyXPath description="verify that result path is loaded correctly" text="slLeafParameter1" xpath="//span[@id='s4-pathstep-2-1']/text()" />
+		<verifyXPath description="verify that result path is loaded correctly" text="flTreeParameter" xpath="//span[@id='s4-pathstep-3-0']/text()" />
+		<verifyXPath description="verify that result path is loaded correctly" text="slLeafParameter2" xpath="//span[@id='s4-pathstep-3-1']/text()" />
+		
+		
+		<verifyCheckbox htmlId="s4-use0" checked="true" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s4-use1" checked="true" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s4-use2" checked="true" description="check if use checkbox is set correctly" />
+		<verifyCheckbox htmlId="s4-use3" checked="true" description="check if use checkbox is set correctly" />
+		
+		
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[2]/td[3]/input" value="flLeafParameter1" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[3]/td[3]/input" value="flLeafParameter2" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[4]/td[3]/input" value="slLeafParameter1" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[5]/td[3]/input" value="slLeafParameter2" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[2]/input" value="slLeafParameter2-0" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[7]/td[2]/input" value="slLeafParameter2-1" />
+
+		<verifySelectField description="verify that format is set correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[1]/select" value="xpath" />
+
+		<verifySelectField description="verify that format is set correctly" xpath="//table[@id='step4-results']/tbody/tr[7]/td[1]/select" value="json" />
+
+		<verifyInputField description="verify that result subpath is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[6]/td[1]/input" value="//dont/care" />
+		<verifyInputField description="verify that result alias is loaded correctly" xpath="//table[@id='step4-results']/tbody/tr[7]/td[1]/input" value="//either" />
+
+		<verifyRadioButton htmlId="step5-display-max" checked="false" description="verify display policy" />
+		<verifyRadioButton htmlId="step5-query-max" checked="true" description="verify query policy" />
+
+		<verifyInputField htmlId="step5-query-minutes" value="80" description="verify query minutes" />
+
+		<verifyInputField htmlId="step5-delay" value="" description="verify delay value" />
+
+		<verifyInputField htmlId="step5-spanoflife" value="" description="verify span of life" />
+
+		<verifyRadioButton htmlId="step5-expires-yes" checked="true" description="validate that it expires after update" />
+
+		<verifyInputField htmlId="step6-name" value="WebTestWSSOAP2" description="verify ws name" />
+
+		<clickButton htmlId="step6-go-img" description="save wwsd" />
+		<sleep seconds="10" />
+
+		<verifyText text="Now you can use that web service in an article" description="check if step7 is displayed" />
+	</webtest>
+
+</target>
 </project>

@@ -50,6 +50,8 @@
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
 		</webtest>
 		<webtest name="WSRepositoryCheckConfirmButtonPart2">
+			<antcall target="goToLogin" />
+			
 			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
 			<verifyText text="confirmed" description="Was the WWSD confirmed?">
 				<table htmlId="webservicetable" row="1" column="4" />
