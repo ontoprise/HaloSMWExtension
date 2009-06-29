@@ -15,11 +15,14 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 	static $rootDir;
+	static $instDir;
 
 	function setUp() {
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository/repository.xml" : "testcases/resources/repository/repository.xml";
 		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
 		self::$rootDir = realpath(dirname($path));
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/" : "testcases/resources/installer/";
+		self::$instDir = realpath($path);
 	}
 
 	function tearDown() {
@@ -61,9 +64,9 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testLocalPackageRepository() {
-		$exp_packages = array('SMWHalo', 'SemanticGardening', 'SMW', 'UnifiedSearch');
-
-		$packages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$exp_packages = array('SMWHalo', 'SemanticGardening', 'SMW', 'MW');
+        
+		$packages = PackageRepository::getLocalPackages(self::$instDir.'/extensions');
 		$this->assertTrue(count($packages) === 4);
 		foreach($packages as $p) {
 			$this->assertContains($p->getID(), $exp_packages);

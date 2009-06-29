@@ -46,7 +46,38 @@ class TestInstaller extends PHPUnit_Framework_TestCase {
 		$this->assertEquals('1.13.2', $version);
 	}
 
-	
+	function testNewInstallation() {
+		$this->installer->installOrUpdate('UnifiedSearch');
+		$this->assertTrue(file_exists($this->instPath."/extensions/UnifiedSearch"));
+		 
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-UnifiedSearch*/") !== false);
+		 
+	}
+
+	function testInstallation() {
+		$this->installer->installOrUpdate('SemanticGardening', 120);
+		$this->assertTrue(file_exists($this->instPath."/extensions/SMWHalo"));
+		$this->assertTrue(file_exists($this->instPath."/extensions/SemanticGardening"));
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-SMWHalo*/") !== false);
+		$this->assertTrue(strpos($lsText, "/*start-SemanticGardening*/") !== false);
+	}
+
+	function testLatestInstallation() {
+		$this->installer->installOrUpdate('SemanticGardening');
+		$this->assertTrue(file_exists($this->instPath."/extensions/SMWHalo"));
+		$this->assertTrue(file_exists($this->instPath."/extensions/SemanticGardening"));
+		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
+		$this->assertTrue(strpos($lsText, "/*start-SMWHalo*/") !== false);
+		$this->assertTrue(strpos($lsText, "/*start-SemanticGardening*/") !== false);
+	}
+
+	function testUpdate() {
+		$this->installer->updateAll();
+		$content = file_get_contents($this->instPath.'/LocalSettings.php');
+		$this->assertTrue(strpos($content, '$testforupdate') !== false);
+	}
 
 	function testRemoveExtension() {
 		// install Unified Search
@@ -60,7 +91,7 @@ class TestInstaller extends PHPUnit_Framework_TestCase {
 
 		$this->installer->deInstall('SemanticGardening');
 		$this->assertTrue(!file_exists($this->instPath."/extensions/SemanticGardening"));
-		 
+			
 		$lsText = file_get_contents($this->instPath."/LocalSettings.php");
 		$this->assertTrue(strpos($lsText, "/*start-SemanticGardening*/") === false);
 	}

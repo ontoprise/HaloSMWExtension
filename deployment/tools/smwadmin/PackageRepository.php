@@ -2,9 +2,11 @@
 
 if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 	require_once 'deployment/io/HttpDownload.php';
+	require_once 'deployment/tools/smwadmin/Tools.php';
 	require_once 'deployment/descriptor/DeployDescriptorParser.php';
 } else {
 	require_once '../io/HttpDownload.php';
+	require_once '../tools/smwadmin/Tools.php';
 	require_once '../descriptor/DeployDescriptorParser.php';
 }
 
