@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="Query" default="testConcept">
+
+	&login;
+	&resaveArticle;
+	
+	<target name="testConcept">
+		<webtest name="Testing Concept as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Concept:EventsToday"
+				description="Open page with concept." />
+			
+			<verifyXPath 
+				description="Check presence of Event 1"
+				xpath="//div[@id='bodyContent']/div[@id='mw-pages']/ul/li/a"		
+				text="Event 1" />
+		</webtest>
+		
+		
+		<webtest name="Testing Concept as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Concept:EventsToday"
+				description="Open page with concept." />
+
+			<verifyXPath 
+				description="Check absence of Event 1"
+				xpath="//div[@id='bodyContent']/div[@id='mw-pages']"	
+				regex="true"
+				text=".*Showing 0 pages belonging to that concept.- Because of access restrictions some results were removed.*" />
+			
+		</webtest>
+		
+	</target>
+		
+	
+</project>

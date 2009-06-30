@@ -749,4 +749,20 @@ WHERE {
 {{#ask:[[Category:Event]][[Related event::&lt;q&gt;[[Category:Event]][[Date::Tomorrow]]&lt;/q&gt;]] | format=table}}</text>
     </revision>
   </page>
+  <page>
+    <title>Concept:EventsToday</title>
+    <id>50</id>
+    <revision>
+      <id>56</id>
+      <timestamp>2009-06-30T11:28:35Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: {{#concept: [[Category:Event]] [[Date::Today]]  | Events of today }}</comment>
+      <text xml:space="preserve">{{#concept: [[Category:Event]] [[Date::Today]] 
+| Events of today
+}}</text>
+    </revision>
+  </page>  
 </mediawiki>
