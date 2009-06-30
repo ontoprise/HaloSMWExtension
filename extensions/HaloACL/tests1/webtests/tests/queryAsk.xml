@@ -194,7 +194,7 @@
 				text="Event 2" />
 			<verifyXPath 
 				description="Check labels of row 3 of query 4"
-				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
+				xpath="//table[@id='querytable4']/tbody/tr[3]/td[1]"		
 				text="Event 3" />
 
 			

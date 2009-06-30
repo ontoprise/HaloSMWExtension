@@ -12,7 +12,7 @@
 				<param name="pwd" value="acl"/>
 			</antcall>
 			<invoke 
-				url="http://localhost/${wikipath}/index.php/Query events with sparql"
+				url="http://localhost/${wikipath}/index.php/Query events with sparql?action=purge"
 				description="Open page with queries." />
 			
 			<verifyXPath 
@@ -39,18 +39,10 @@
 			<verifyXPath 
 				description="Check labels of row 2 of query 2"
 				xpath="//table[@id='querytable2']/tbody/tr[3]/td[1]"		
-				text="Event 2" />
+				text="Event 2Event 3" />
 			<verifyXPath 
 				description="Check labels of row 2 of query 2"
 				xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]"		
-				text="Tomorrow" />
-			<verifyXPath 
-				description="Check labels of row 3 of query 2"
-				xpath="//table[@id='querytable2']/tbody/tr[4]/td[1]"		
-				text="Event 3" />
-			<verifyXPath 
-				description="Check labels of row 3 of query 2"
-				xpath="//table[@id='querytable2']/tbody/tr[4]/td[2]"		
 				text="Tomorrow" />
 						
 			<verifyXPath 
@@ -94,6 +86,134 @@
 				description="Check labels of row 2 of query 4"
 				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
 				text="Event 2" />
+
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[1]/th[3]/span"		
+				text="Date" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[2]/td[2]"		
+				text="Event 1" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[2]/td[3]"		
+				text="Today" />
+
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[2]/td[2]"		
+				text="Event 1" />
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 7"
+				xpath="//table[@id='querytable7']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 7"
+				xpath="//table[@id='querytable7']/tbody/tr[1]/th[2]/span"		
+				text="D" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 7"
+				xpath="//table[@id='querytable7']/tbody/tr[2]/td[1]"		
+				text="Event 1" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 7"
+				xpath="//table[@id='querytable7']/tbody/tr[2]/td[2]"		
+				text="Today" />
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[2]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[3]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[3]/td[2]"		
+				text="Event 1" />
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[2]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[3]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[3]/td[2]"		
+				text="Event 1" />
+
+			<verifyXPath 
+				description="Check labels of row 1 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[2]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[2]/td[2]"		
+				text="Event 3" />
 			
 		</webtest>
 		
@@ -116,6 +236,12 @@
 				description="Check label of row 2 of query 1"
 				xpath="//table[@id='querytable1']/tbody/tr[3]/td/a"		
 				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 1"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[1]/span"		
+				regex="true"
+				text=".*Because of access restrictions some results were removed.*" />
+			
 			
 			<verifyXPath 
 				description="Check labels of row 2 of query 2"
@@ -135,6 +261,16 @@
 					description="Check labels of row 3 of query 2"
 					xpath="//table[@id='querytable2']/tbody/tr[3]/td[2]" />
 			</not>
+			<verifyXPath 
+				description="Check warning of query 2"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[2]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning of query 2"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[1]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
 			
 			
 			<verifyXPath 
@@ -153,6 +289,16 @@
 				description="Check labels of row 3 of query 3"
 				xpath="//table[@id='querytable3']/tbody/tr[3]/td[2]"		
 				text="" />
+			<verifyXPath 
+				description="Check warning of query 3"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[4]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning of query 3"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[2]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
 
 			<verifyXPath 
 				description="Check labels of row 2 of query 4"
@@ -160,9 +306,213 @@
 				text="Event 2" />
 			<verifyXPath 
 				description="Check labels of row 3 of query 4"
-				xpath="//table[@id='querytable4']/tbody/tr[2]/td[1]"		
+				xpath="//table[@id='querytable4']/tbody/tr[3]/td[1]"		
 				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 4"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[7]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			
+			
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<not>
+				<verifyXPath 
+					description="Check labels of row 1 of query 5"
+					xpath="//table[@id='querytable5']/tbody/tr[1]/th[3]/span"/>
+			</not>
+			<verifyXPath 
+				description="Check labels of row 2 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[2]/td[2]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 5"
+				xpath="//table[@id='querytable5']/tbody/tr[3]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 5"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[8]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning for result of query 5"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[3]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
 
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[2]/td[2]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 6"
+				xpath="//table[@id='querytable6']/tbody/tr[3]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 6"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[10]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning for result of query 6"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[4]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
+			
+			<not>
+			<verifyXPath 
+				description="Check labels of row 1 of query 7"
+				xpath="//table[@id='querytable7']"/>
+			</not>
+			<verifyXPath 
+				description="Check warning of query 7"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[12]/span"		
+				regex="true"
+				text=".*- Your query consists only of protected properties. It was not executed.*" />
+			<verifyXPath 
+				description="Check warning for result of query 7"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[5]"	
+				regex="true" 
+				text=".*- The query was modified because it contains protected properties.*Query was neither in ASK nor SPARQL syntax. Check the syntax.*" />
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[2]/td[2]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 8"
+				xpath="//table[@id='querytable8']/tbody/tr[3]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 8"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[14]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning for result of query 8"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[6]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
+			
+			<verifyXPath 
+				description="Check labels of row 1 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[2]/td[2]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 9"
+				xpath="//table[@id='querytable9']/tbody/tr[3]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 9"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[17]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning for result of query 9"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[7]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
+
+			<verifyXPath 
+				description="Check labels of row 1 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[1]/th[1]/span"		
+				text="X" />
+			<verifyXPath 
+				description="Check labels of row 1 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[1]/th[2]/span"		
+				text="Re" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[2]/td[1]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check labels of row 2 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[2]/td[2]"		
+				text="" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[3]/td[1]"		
+				text="Event 2" />
+			<verifyXPath 
+				description="Check labels of row 3 of query 10"
+				xpath="//table[@id='querytable10']/tbody/tr[3]/td[2]"		
+				text="Event 3" />
+			<verifyXPath 
+				description="Check warning of query 10"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/p[20]/span"		
+				regex="true"
+				text=".*- The query was modified because it contains protected properties.*" />
+			<verifyXPath 
+				description="Check warning for result of query 10"
+				xpath="//div[@id='innercontent']/div[@id='bodyContent']/pre[8]"	
+				regex="true" 
+				text=".*Because of access restrictions some results were removed.*" />
+			
 			
 		</webtest>
 		
