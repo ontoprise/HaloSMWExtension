@@ -531,11 +531,14 @@
 							</a></div>
 							</td></tr>
 							<?php }						
-							$result=array();
-							wfRunHooks( 'OntoSkinTemplateNavigationEnd', array(&$this, &$result));
-							foreach($result as $templatelink){
-								echo '<tr><td>'.$templatelink.'</tr></td>';
-							} 								
+                                                        //Executes a new hook, allowing other extensions to add new items to the navigationbar
+                                                        if($bar=='navigation') {
+                                                            $result=array();
+                                                            wfRunHooks( 'OntoSkinTemplateNavigationEnd', array(&$this, &$result));
+                                                            foreach($result as $templatelink){
+                                                                echo '<tr><td>'.$templatelink.'</tr></td>';
+                                                            }
+                                                        }
 							?>		
 								
 													
