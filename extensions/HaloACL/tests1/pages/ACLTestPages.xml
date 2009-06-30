@@ -99,6 +99,21 @@
     </revision>
   </page>
   <page>
+    <title>ACLCategoryTransclusion</title>
+    <id>48</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2009-06-30T07:56:16Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: ==Hidden instance== {{:HiddenInstance}}</comment>
+      <text xml:space="preserve">==Hidden instance==
+{{:HiddenInstance}}</text>
+    </revision>
+  </page>
+  <page>
     <title>HiddenInstance</title>
     <id>18</id>
     <revision>
@@ -592,10 +607,10 @@ Search keyword: HiddenByACL
   </page>
   <page>
     <title>Query events with sparql</title>
-    <id>41</id>
+    <id>48</id>
     <revision>
-      <id>42</id>
-      <timestamp>2009-06-29T10:11:28Z</timestamp>
+      <id>49</id>
+      <timestamp>2009-06-30T09:51:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -637,6 +652,18 @@ WHERE {
 }
 }}
 
+
+{{#sparql:   
+SELECT ?x ?d
+WHERE { 
+  optional {
+    ?x prop:Date &quot;Today&quot;^^xsd:string .
+  } 
+  ?x prop:Date ?d . 
+}
+}}
+
+
 {{#sparql:   
 SELECT ?x ?re
 WHERE {
@@ -651,7 +678,8 @@ WHERE {
   ?x prop:Related_event ?re . 
   ?re rdf:type cat:Event . 
 }
-}}
+|sort=X
+|order=desc}}
 
 
 
@@ -667,7 +695,8 @@ WHERE {
   ?x prop:Related_event ?re . 
   ?re rdf:type cat:Event . 
 }
-}}
+|sort=X
+|order=desc}}
 
 
 {{#sparql:   
@@ -695,10 +724,10 @@ WHERE {
   </page>
   <page>
     <title>Query events with ask</title>
-    <id>42</id>
+    <id>49</id>
     <revision>
-      <id>44</id>
-      <timestamp>2009-06-29T10:11:28Z</timestamp>
+      <id>51</id>
+      <timestamp>2009-06-30T09:51:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
