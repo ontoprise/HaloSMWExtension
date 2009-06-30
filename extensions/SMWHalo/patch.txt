@@ -87,4 +87,24 @@ Index: includes/parser/ParserOptions.php
     function __construct( $user = null ) {
         $this->initialiseFromUser( $user );
     }
+Index: extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php
+===================================================================
+--- extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php	(revision 4126)
++++ extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php	(working copy)
+@@ -740,6 +740,15 @@
+ 		if ( '' == $this->post_ns_buffer ) return; // nothing to flush (every non-empty pre_ns_buffer also requires a non-empty post_ns_buffer)
+ 		if ( (0 != $this->delay_flush) && !$force ) return; // wait a little longer
+ 
++/*op-patch|TS|2009-06-30|SMWHalo|Remove newline at beginning of XML export|start*/
++		// Sometimes the first line of the XML-export contains a newline
++		// => remove it
++		$obcontent = ob_get_contents();
++		if ($obcontent == "\r\n") {
++			ob_clean();
++		}
++/*op-patch|TS|2009-06-30|end*/
++		
+ 		print $this->pre_ns_buffer;
+ 		$this->pre_ns_buffer = '';
+ 		foreach ($this->extra_namespaces as $nsshort => $nsuri) {
 
