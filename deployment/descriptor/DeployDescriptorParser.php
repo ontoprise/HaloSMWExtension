@@ -54,7 +54,7 @@ class DeployDescriptorParser {
 		return $this->setups;
 	}
 
-	 
+
 
 	private function createConfigElements($from = NULL) {
 
@@ -63,7 +63,7 @@ class DeployDescriptorParser {
 		} else {
 
 			$path = "//update[@from='$from']";
-				
+
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
 				// if update config missing, use new
@@ -233,7 +233,7 @@ class DeployDescriptorParser {
 				}
 			}
 		}
-		return $resultsStr;
+
 	}
 	/**
 	 * Validates the code files.
@@ -260,12 +260,13 @@ class DeployDescriptorParser {
 	/**
 	 * Applies all necessary configurations.
 	 *
-	 * @param string $ls_loc Location of LocalSettings.php
-	 * @param boolean $dryRun If true, nothing gets actually changed.
+	 * @param string $rootDir Location of Mediawiki
+	 * @param boolean $dryRun If true, nothing gets actually changed or asked.
 	 * @param int $version Update from version or NULL if no update.
+	 * @param function(array($name, $description)) $userValueCallback
 	 * @return string updated LocalSettings.php
 	 */
-	function applyConfigurations($ls_loc, $dryRun = false, $version = NULL) {
+	function applyConfigurations($rootDir, $dryRun = false, $version = NULL, $userValueCallback = NULL) {
 		if ($this->configs === false) {
 			// no configs, nothing to do
 			return DEPLOY_MSG_NOTHING_TODO;
@@ -273,17 +274,29 @@ class DeployDescriptorParser {
 		if (!is_null($version)) {
 			$this->createConfigElements($version);
 		}
-		$dp = new DeployDescriptionProcessor($ls_loc, $this);
-		$content = $dp->applyLocalSettingsChanges($userValues);
+		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
+		$userValueMappings = array();
+		if (!$dryRun) {
+			call_user_func(array(&$userValueCallback,"getUserReqParams"), $this->getUserRequirements(), $userValueMappings);
+		}
+		$content = $dp->applyLocalSettingsChanges($userValueMappings);
 		$dp->applySetups($dryRun);
 		$dp->applyPatches($dryRun);
-		if (!$dryRun) $dp->writeLocalSettingsFile($content);
+		if (!$dryRun) {
+			$dp->writeLocalSettingsFile($content);
+		}
 		return $content; // return for testing purposes.
 	}
 
-
-	function unapplyConfigurations($ls_loc, $dryRun = false) {
-		$dp = new DeployDescriptionProcessor($ls_loc, $this);
+    /**
+     * Reverses configuration changes 
+     *
+     * @param string $rootDir Location of Mediawiki
+     * @param boolean $dryRun
+     * @return 
+     */
+	function unapplyConfigurations($rootDir, $dryRun = false) {
+		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 		$content = $dp->unapplyLocalSettingsChanges();
 		$dp->unapplySetups($dryRun);
 		$dp->unapplyPatches($dryRun);

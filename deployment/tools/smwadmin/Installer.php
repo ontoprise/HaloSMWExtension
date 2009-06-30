@@ -138,10 +138,10 @@ class Installer {
 				}
 			}
 		}
-		
-	   if ($existDependency) {
-            throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to this package exists.", $packageID);
-        }
+
+		if ($existDependency) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to this package exists.", $packageID);
+		}
 
 		// remove extension code
 		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
@@ -150,7 +150,7 @@ class Installer {
 		// - from LocalSettings.php
 		// - from database (setup scripts)
 		// - patches
-		$ext->unapplyConfigurations($this->instDir."/LocalSettings.php", false);
+		$ext->unapplyConfigurations($this->instDir, false);
 	}
 
 	public function updateAll() {
@@ -199,7 +199,7 @@ class Installer {
 
 			// apply deploy descriptor and save local settings
 			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
-			$desc->applyConfigurations($this->instDir."/LocalSettings.php", false, $fromVersion);
+			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 			print "\n-------\n";
 		}
 	}
@@ -224,7 +224,7 @@ class Installer {
 		$this->unzip($dd->getID(), $version);
 
 		// apply deploy descriptor
-		$dd->applyConfigurations($this->instDir."/LocalSettings.php", false, $fromVersion);
+		$dd->applyConfigurations($this->instDir, false, $fromVersion, $this);
 	}
 
 	/**
@@ -351,6 +351,25 @@ class Installer {
 				$packagesToUpdate = array_merge($packagesToUpdate, $updatesNeeded);
 				$this->checkForSuperExtensions($p, $packagesToUpdate, $localPackages);
 			}
+		}
+
+	}
+    
+	/**
+	 * Callback method. Reads user for required parameters. 
+	 *
+	 * @param array($name=>(array($type, $description)) $userParams
+	 * @param array($name=>$value) $mapping
+	 * 
+	 */
+	public function getUserReqParams($userParams, & $mapping) {
+		print "\n\nRequired parameters:";
+		foreach($userParams as $name => $up) {
+			list($type, $desc) = $up;
+			print "\n$desc\n";
+			print "$name ($type): ";
+			$line = trim(fgets(STDIN));
+			$mapping[$name] = $line;
 		}
 
 	}

@@ -31,7 +31,7 @@
             <require name="sga"
                 file="extensions/SemanticGardening/US_Initialize.php" />
             
-            <setup script="maintenance/US_setup.php" params="" />
+            <setup script="maintenance/setup.php" params="" />
         </new>
     </configs>
 </deploydescriptor>

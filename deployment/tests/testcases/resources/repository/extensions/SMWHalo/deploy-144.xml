@@ -36,7 +36,7 @@
 		<update from="142">
 			<variable name="testforupdate">
 				<string name="testforupdateVar" userValueRequired="true"
-					description="testforupdate" />
+					description="This is a description..." />
 			</variable>
 		</update>
 	</configs>

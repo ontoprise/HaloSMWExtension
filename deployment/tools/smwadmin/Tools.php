@@ -50,7 +50,7 @@ class Tools {
 				if($f > '0' and filetype($current_dir.$f) == "file") {
 					unlink($current_dir.$f);
 				} elseif($f > '0' and filetype($current_dir.$f) == "dir") {
-					self::remove_dir($current_dir.$f."\\");
+					self::remove_dir($current_dir.$f);
 				}
 			}
 			closedir($dir);
