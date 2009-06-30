@@ -146,10 +146,10 @@ class  HACLQueryRewriter  {
 		$descr->setPrintRequests($printRequests);
 		
 		if (!($descr instanceof SMWConjunction ||
-		      $descr instanceof SMWDisjunction ||
-		      $descr instanceof SMWSomeProperty )) {
+		      $descr instanceof SMWDisjunction)) {
 		   	return;
 		}
+		
 		$descriptions = $descr->getDescriptions();
 		$remDescr = array();
 		for ($i = 0, $num = count($descriptions); $i < $num; ++$i) {
