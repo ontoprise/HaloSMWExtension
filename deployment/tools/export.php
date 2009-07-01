@@ -28,7 +28,7 @@ $optionsWithArgs = array( 'pagelist', 'start', 'end' );
 
 require_once( '../../maintenance/commandLine.inc' );
 require_once( '../../maintenance/backup.inc' );
-require_once('../io/export/WikiExporter.php');
+require_once('../io/export/DeployWikiExporter.php');
 
 $dumper = new DeployBackupDumper( $argv );
 

@@ -43,7 +43,8 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 	function testCodeFiles() {
 		$exp_files = array("extensions/SMWHalo/SMW_Initialize.php", "extensions/SMWHalo/SMW_QP_XML.php");
 		foreach($this->ddp->getCodefiles() as $cf) {
-			$this->assertContains($cf, $exp_files);
+			list($loc, $hash) = $cf;
+			$this->assertContains($loc, $exp_files);
 		}
 	}
 

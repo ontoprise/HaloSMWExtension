@@ -15,7 +15,7 @@
         <patch file="patch.txt" />
    
         <file
-            loc="extensions/UnifiedSearch/US_Initialize.php" />
+            loc="extensions/UnifiedSearch/deploy.xml" />
         <!-- TODO: add all others -->
     </codefiles>
     <wikidumps>

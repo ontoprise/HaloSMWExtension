@@ -11,8 +11,7 @@
 		</dependencies>
 	</global>
 	<codefiles>
-		<file loc="extensions/SMWHalo/SMW_Initialize.php" />
-		<file loc="extensions/SMWHalo/SMW_QP_XML.php" />
+		<file loc="extensions/SMWHalo/deploy.xml" />
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>

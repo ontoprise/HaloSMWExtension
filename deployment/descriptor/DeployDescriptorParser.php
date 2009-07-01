@@ -1,6 +1,5 @@
 <?php
 
-define ('DEPLOY_MSG_NOTHING_TODO', 1);
 
 require_once ('DeployDescriptorProcessor.php');
 
@@ -14,10 +13,9 @@ require_once ('DeployDescriptorProcessor.php');
  */
 class DeployDescriptorParser {
 
-	var $dom;
+	// extracted data from deploy descriptor
 	var $globalElement;
 	var $codefiles;
-	var $patchfiles;
 	var $wikidumps;
 	var $resources;
 	var $configs;
@@ -26,6 +24,13 @@ class DeployDescriptorParser {
 	var $dependencies;
 	var $setups;
 	var $patches;
+	
+    // xml	
+	var $dom;
+	var $wikidumps_xml;
+	var $codefiles_xml;
+	var $patches_xml;
+	var $resources_xml;
 
 	function __construct($xml, $fromVersion = NULL) {
 			
@@ -34,10 +39,10 @@ class DeployDescriptorParser {
 
 
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
-		$this->codefiles = $this->dom->xpath('/deploydescriptor/codefiles/file');
-		$this->patchfiles = $this->dom->xpath('/deploydescriptor/codefiles/patch');
-		$this->wikidumps = $this->dom->xpath('/deploydescriptor/wikidumps/file');
-		$this->resources = $this->dom->xpath('/deploydescriptor/resources/file');
+		$this->codefiles_xml = $this->dom->xpath('/deploydescriptor/codefiles/file');
+		$this->patches_xml = $this->dom->xpath('/deploydescriptor/codefiles/patch');
+		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
+		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file');
 		$this->createConfigElements($fromVersion); // assume new config, not update
 	}
 
@@ -160,7 +165,7 @@ class DeployDescriptorParser {
 		if (!is_null($this->patches)) return $this->patches;
 		$this->patches = array();
 
-		foreach($this->patchfiles as $p) {
+		foreach($this->patches_xml as $p) {
 			$patchFile = trim((string) $p->attributes()->file);
 			if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
 			$this->patches[] = $patchFile;
@@ -169,29 +174,32 @@ class DeployDescriptorParser {
 	}
 
 	function getCodefiles() {
-		$loc = array();
+		if (!is_null($this->codefiles)) return $this->codefiles;
+		$this->codefiles = array();
 
-		foreach($this->codefiles as $file) {
+		foreach($this->codefiles_xml as $file) {
 
-			$loc[] = (string) $file->attributes()->loc;
+			$this->codefiles[] = array((string) $file->attributes()->loc, (string) $file->attributes()->hash);
 		}
-		return $loc;
+		return $this->codefiles;
 	}
 
 	function getWikidumps() {
-		$loc = array();
-		foreach($this->wikidumps as $file) {
-			$loc[] = (string) $file->attributes()->loc;
+		if (!is_null($this->wikidumps)) return $this->wikidumps;
+		$this->wikidumps = array();
+		foreach($this->wikidumps_xml as $file) {
+			$this->wikidumps[] = (string) $file->attributes()->loc;
 		}
-		return $loc;
+		return $this->wikidumps;
 	}
 
 	function getResources() {
-		$loc = array();
-		foreach($this->resources as $file) {
-			$loc[] = (string) $file->attributes()->loc;
+		if (!is_null($this->resources)) return $this->resources;
+		$this->resources = array();
+		foreach($this->resources_xml as $file) {
+			$this->resources[] = (string) $file->attributes()->loc;
 		}
-		return $loc;
+		return $this->resources;
 	}
 
 	private function extractUserRequirements($child) {
@@ -240,21 +248,23 @@ class DeployDescriptorParser {
 	 *
 	 * @return Mixed. True if all files are valid, otherwise array of invalid files.
 	 */
-	function validatecode() {
-		$warnings = array();
-		foreach($this->codefiles[0]->file as $file) {
-			$loc = (string) $file->attributes()->loc;
-			$exp_hash = (string) $file->attributes()->hash;
+	function validatecode($rootDir) {
+		$invalids = array();
+		$codeFiles = $this->getCodefiles();
+		foreach($codeFiles as $file) {
+			list($loc, $exp_hash) = $file;
 
-			if (file_exists($loc)) {
-				$contents = file_get_contents($loc);
+			if (file_exists($rootDir."/".$loc)) {
+				$contents = file_get_contents($rootDir."/".$loc);
 				$actual_hash = md5($contents);
-				if ($actual_hash !== $exp_hash) {
-					$warnings[] = "$loc is invalid.\n";
+				if (!empty($exp_hash) && $actual_hash !== $exp_hash) {
+					$invalids[] = array($loc);
 				}
+			} else {
+				$missing[] = array($loc);
 			}
 		}
-		return (count($warnings) == 0 ? true : $warnings);
+		return (count($invalids) == 0 && count($missing) == 0 ? true : array($invalids,$missing));
 	}
 
 	/**
@@ -268,17 +278,18 @@ class DeployDescriptorParser {
 	 */
 	function applyConfigurations($rootDir, $dryRun = false, $version = NULL, $userValueCallback = NULL) {
 		if ($this->configs === false) {
-			// no configs, nothing to do
-			return DEPLOY_MSG_NOTHING_TODO;
+    		return;
 		}
 		if (!is_null($version)) {
 			$this->createConfigElements($version);
 		}
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 		$userValueMappings = array();
-		if (!$dryRun) {
-			call_user_func(array(&$userValueCallback,"getUserReqParams"), $this->getUserRequirements(), $userValueMappings);
-		}
+		
+	    if (!is_null($userValueCallback)) {
+	       call_user_func(array(&$userValueCallback,"getUserReqParams"), $this->getUserRequirements(), $userValueMappings);
+	    }
+		
 		$content = $dp->applyLocalSettingsChanges($userValueMappings);
 		$dp->applySetups($dryRun);
 		$dp->applyPatches($dryRun);
@@ -288,13 +299,13 @@ class DeployDescriptorParser {
 		return $content; // return for testing purposes.
 	}
 
-    /**
-     * Reverses configuration changes 
-     *
-     * @param string $rootDir Location of Mediawiki
-     * @param boolean $dryRun
-     * @return 
-     */
+	/**
+	 * Reverses configuration changes
+	 *
+	 * @param string $rootDir Location of Mediawiki
+	 * @param boolean $dryRun
+	 * @return
+	 */
 	function unapplyConfigurations($rootDir, $dryRun = false) {
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 		$content = $dp->unapplyLocalSettingsChanges();

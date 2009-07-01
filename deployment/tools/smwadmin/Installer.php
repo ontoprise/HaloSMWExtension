@@ -1,10 +1,13 @@
 <?php
 
+// Error constants
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
 define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
 define('DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE', 3);
 define('DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS', 4);
 define('DEPLOY_FRAMEWORK_DEPENDENCY_EXIST',5);
+define('DEPLOY_FRAMEWORK_CODE_CHANGED',6);
+define('DEPLOY_FRAMEWORK_MISSING_FILE', 7);
 
 
 require_once 'PackageRepository.php';
@@ -32,16 +35,24 @@ class Installer {
 	static $rootDir;
 
 	/*
-	 * Mediawiki version
+	 * Mediawiki versiohttp://www.heise.de/newsticker/foren/S-Re-Pendlerfamilien-werden-nicht-danken/forum-161573/msg-16980630/read/n
 	 */
 	static $mw_version;
 
 	/*
 	 * Installation directory
-	 * Normally identical with $rootDir except for testing.
+	 * Normally identical with $rootDir except for testing or dry runs.
 	 */
 	private $instDir;
-
+	
+	// dry run, ie. nothing is actually changed 
+	private $dryRun;
+	
+	// force installation even on warnings
+	private $force;
+	
+	// no questions (for testing)
+	private $noAsk;
 
 
 	/**
@@ -49,14 +60,18 @@ class Installer {
 	 *
 	 * @param string $rootDir Explicit root dir. Only necessary for testing
 	 */
-	public function __construct($rootDir = NULL) {
+	public function __construct($rootDir = NULL, $dryRun = false, $force = false, $noAsk = false) {
 		self::$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 		if (!file_exists(self::$tmpFolder)) Tools::mkpath(self::$tmpFolder);
 		if (!file_exists(self::$tmpFolder)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
 		}
 		self::$rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
+		$this->instDir = $rootDir; // normally rootDir == instDir
 		self::$mw_version = Tools::getMediawikiVersion(self::$rootDir);
+		$this->dryRun = $dryRun;
+		$this->force = $force;
+		$this->noAsk = $noAsk;
 	}
 
 	public function setInstDir($instDir) {
@@ -82,10 +97,23 @@ class Installer {
 		}
 
 		if (!is_null($ext) && is_numeric($version) && $ext->getVersion() > $version) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version?", $ext);
+			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $ext);
 		}
 
-		// 2. Check dependencies for install/update
+		// 2. Check code integrity of existing package
+		if (!is_null($ext)) {
+			$status = $ext->validatecode(self::$rootDir);
+			if ($status !== true) {
+				if (!$this->force) {
+					throw new InstallationError(DEPLOY_FRAMEWORK_CODE_CHANGED, "Code files were modified. Use -f (force)", $status);
+				} else {
+					print "\nWarning: Code files contain differences. Patches may get lost.";
+				}
+			}
+
+		}
+
+		// 3. Check dependencies for install/update
 		// get package to install
 		if ($version == NULL) {
 			$dd = PackageRepository::getLatestDeployDescriptor($packageID);
@@ -96,16 +124,18 @@ class Installer {
 		$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 		$this->checkForSuperExtensions($dd, $updatesNeeded, $localPackages);
 
-		// 3. calculate version which matches all depdencies of an extension.
+		// 4. calculate version which matches all depdencies of an extension.
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
-		// 4. Install/update all dependant and super extensions
+		// 5. Install/update all dependant and super extensions
 		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
 
 
-		// 5. Install update this extension
+		// 6. Install update this extension
 		$this->installOrUpdatePackage($dd, $version, !is_null($ext) ? $ext->getVersion : NULL);
 
+
+			
 	}
 
 	/**
@@ -199,7 +229,10 @@ class Installer {
 
 			// apply deploy descriptor and save local settings
 			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
-			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
+			$desc->applyConfigurations($this->instDir, $this->dryRun, $fromVersion, $this);
+				
+				
+			$this->installResources($desc);
 			print "\n-------\n";
 		}
 	}
@@ -224,7 +257,43 @@ class Installer {
 		$this->unzip($dd->getID(), $version);
 
 		// apply deploy descriptor
-		$dd->applyConfigurations($this->instDir, false, $fromVersion, $this);
+		$dd->applyConfigurations($this->instDir, $this->dryRun, $fromVersion, $this);
+
+		// install wiki pages
+		$this->installResources($dd);
+
+	}
+    
+	/**
+	 * Installs wiki dumps and other resources.
+	 *
+	 * @param DeployDescriptorParser $dd
+	 */
+	private function installResources($dd) {
+		
+		// wiki dumps
+		require_once( '../../maintenance/commandLine.inc' );
+		require_once('../io/import/DeployWikiImporter.php');
+		require_once('../io/import/BackupReader.php');
+		$reader = new BackupReader($this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
+		$wikidumps = $dd->getWikidumps();
+		foreach($wikidumps as $file) {
+			if (!$this->dryRun) $result = $reader->importFromFile( self::$rootDir."/".$file );
+		}
+		
+		// resources files
+		$resources = $dd->getResources();
+	       foreach($resources as $file) {
+            if (!$this->dryRun) {
+            	if (is_dir(self::$rootDir."/".$file)) {
+            		Tools::mkpath(dirname(self::$rootDir."/images/".$file));
+            		Tools::copy_dir(self::$rootDir."/".$file, self::$rootDir."/images/".$file);
+            	} else {
+            		Tools::mkpath(dirname(self::$rootDir."/images/".$file));
+            		copy(self::$rootDir."/".$file, self::$rootDir."/images/".$file);
+            	}
+            }
+        }
 	}
 
 	/**
@@ -236,6 +305,7 @@ class Installer {
 	 * @param int $version
 	 */
 	private function unzip($id, $version) {
+		if ($this->dryRun) return;
 		if (Tools::isWindows()) {
 			print "\n\nUncompressing:\n7z x -y -o".$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip";
 			exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip");
@@ -354,15 +424,16 @@ class Installer {
 		}
 
 	}
-    
+
 	/**
-	 * Callback method. Reads user for required parameters. 
+	 * Callback method. Reads user for required parameters.
 	 *
 	 * @param array($name=>(array($type, $description)) $userParams
 	 * @param array($name=>$value) $mapping
-	 * 
+	 *
 	 */
 	public function getUserReqParams($userParams, & $mapping) {
+		if ($this->noAsk) return;
 		print "\n\nRequired parameters:";
 		foreach($userParams as $name => $up) {
 			list($type, $desc) = $up;
@@ -372,6 +443,27 @@ class Installer {
 			$mapping[$name] = $line;
 		}
 
+	}
+
+	/**
+	 * Checks the integrity of the package.
+	 *
+	 * @param DeployDescriptorParser $ext
+	 */
+	private function checkIntegrity($ext) {
+
+		$dumps = $ext->getWikidumps();
+		foreach($dumps as $loc) {
+			if (!is_dir(self::$rootDir."/".$loc) && !file_exists(self::$rootDir."/".$loc)) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", self::$rootDir."/".$loc);
+			}
+		}
+		$resources = $ext->getResources();
+		foreach($dumps as $loc) {
+			if (!is_dir(self::$rootDir."/".$loc) && !file_exists(self::$rootDir."/".$loc)) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", self::$rootDir."/".$loc);
+			}
+		}
 	}
 }
 

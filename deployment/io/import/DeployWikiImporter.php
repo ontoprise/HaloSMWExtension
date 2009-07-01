@@ -2,7 +2,7 @@
 
 /**
  * @author: Kai Kühn / ontoprise / 2009
- * 
+ *
  * derived from
  * MediaWiki page data importer
  * Copyright (C) 2003,2005 Brion Vibber <brion@pobox.com>
@@ -22,7 +22,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
- * 
+ *
  * Extends the default wiki import mechanism.
  *
  *  1. Version control
@@ -31,6 +31,15 @@
  *
  */
 class DeployWikiImporter extends WikiImporter {
+
+	var $mode;
+	var $callback;
+
+	function __construct($source, $mode, $callback) {
+		parent::__construct($source);
+		$this->mode = $mode;
+		$this->callback = $callback;
+	}
 
 	function in_page( $parser, $name, $attribs ) {
 		$this->debug( "in_page $name" );
@@ -46,7 +55,7 @@ class DeployWikiImporter extends WikiImporter {
 			case "revision":
 				$this->push( "revision" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevision;
+					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->workRevisionCount++;
 				} else {
@@ -58,7 +67,7 @@ class DeployWikiImporter extends WikiImporter {
 			case "upload":
 				$this->push( "upload" );
 				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevision;
+					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
 					$this->workRevision->setTitle( $this->pageTitle );
 					$this->uploadCount++;
 				} else {
@@ -154,11 +163,31 @@ class DeployWikiImporter extends WikiImporter {
 
 }
 
+// only print information (dry run)
+define('DEPLOYWIKIREVISION_INFO', 0);
+// warn before continueing
+define('DEPLOYWIKIREVISION_WARN', 1);
+// overwrite always without warning
+define('DEPLOYWIKIREVISION_FORCE', 2);
+
 class DeployWikiRevision extends WikiRevision {
+
+	// ontology metadata
 	var $oversion;
 	var $partofbundle;
-    var $md5_hash;
-    
+	var $md5_hash;
+
+	// import mode
+	var $mode;
+
+	// callback function for user interaction
+	var $callback;
+
+	public function __construct($mode = 0, $callback = NULL) {
+		$this->mode = $mode;
+		$this->callback = $callback;
+	}
+
 	public function setVersion($version) {
 		$this->oversion = $version;
 	}
@@ -166,16 +195,45 @@ class DeployWikiRevision extends WikiRevision {
 	public function setPartOfBundle($partofbundle) {
 		$this->partofbundle = $partofbundle;
 	}
-	
+
 	public function setHash($md5_hash) {
 		$this->md5_hash = $md5_hash;
 	}
 
+	/**
+	 * Just like original importOldRevision,
+	 * but asks before overwriting a page.
+	 *
+	 * @return unknown
+	 */
 	function importOldRevision() {
+		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
-		echo "version: ".$this->oversion."\n";
-		echo "version: ".$this->partofbundle."\n";
-		echo "version: ".$this->md5_hash."\n";
+		$linkCache = LinkCache::singleton();
+		$linkCache->clear();
+
+		$article = new Article( $this->title );
+		$pageId = $article->getId();
+		if( $pageId == 0 ) {
+			# must create the page...
+			return parent::importOldRevision();
+		} else {
+
+			$prior = Revision::loadFromTitle( $dbw, $this->title );
+			if( !is_null( $prior ) ) {
+				// FIXME: this could fail slightly for multiple matches :P
+				$hash = md5($prior->getRawText());
+				if ($hash != $this->md5_hash) {
+					$result = false;
+					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, $result);
+					if ($result == true) {
+						return parent::importOldRevision();
+					}
+				}
+			}
+		}
+		return false;
+
 	}
 }
 

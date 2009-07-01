@@ -61,6 +61,14 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$packageToUpdate[] = $package;
 		continue;
 	}
+	if ($arg == '--dryRun') {
+		$dryRun = true;
+		continue;
+	}
+    if ($arg == '-f') {
+        $force = true;
+        continue;
+    }
 	$params[] = $arg;
 }
 
@@ -84,7 +92,7 @@ if ($help) {
 	die();
 }
 
-$installer = new Installer(realpath(dirname(__FILE__)."/../.."));
+$installer = new Installer(realpath(dirname(__FILE__)."/../.."), $dryRun, $force);
 
 if ($globalUpdate) {
 	$installer->updateAll();

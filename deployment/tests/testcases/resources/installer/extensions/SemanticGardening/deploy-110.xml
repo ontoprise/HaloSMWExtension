@@ -11,7 +11,7 @@
         </dependencies>
     </global>
     <codefiles>
-        <file loc="extensions/SemanticGardening/SGA_GardeningInitialize.php" />
+        <file loc="extensions/SemanticGardening/deploy.xml" />
         <!-- TODO: add all others -->
     </codefiles>
     <wikidumps>
