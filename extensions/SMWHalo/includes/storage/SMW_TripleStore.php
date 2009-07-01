@@ -62,6 +62,9 @@ class SMWTripleStore extends SMWStore {
 	protected static $ALL_PREFIXES;
 
 	public static $fullSemanticData;
+	
+	public static function getAllPrefixes() { return self::$ALL_PREFIXES; }
+	 
 	/**
 	 * Creates and initializes Triple store connector.
 	 *
@@ -84,6 +87,7 @@ class SMWTripleStore extends SMWStore {
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
 		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> ';
+		
 	}
 
 
@@ -336,6 +340,9 @@ class SMWTripleStore extends SMWStore {
 				}
 				// ...and add new
 				foreach($new_rules as $ruleID => $ruleText) {
+					// The F-Logic parser does not accept linebreaks
+					// => remove them 
+					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$sparulCommands[] = "INSERT RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"";
 				}
 			}
@@ -387,7 +394,10 @@ class SMWTripleStore extends SMWStore {
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
-
+/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
+			wfRunHooks('RewriteSparqlQuery', array(&$query) );
+/*op-patch|TS|2009-06-19|end*/
+			
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
@@ -413,6 +423,11 @@ class SMWTripleStore extends SMWStore {
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
 			}
+			
+/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
+			wfRunHooks('FilterQueryResults', array(&$queryResult) );
+/*op-patch|TS|2009-06-19|end*/
+			
 			return $queryResult;
 
 		} else {
@@ -821,16 +836,17 @@ class SMWTripleStore extends SMWStore {
 
 			// property value result
 		} else {
-            
-			$literal = $this->unquote($this->removeXSDType($sv));
-			$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
-			if ($value->getTypeID() == '_dat') { // exception for dateTime
-				if ($literal != '') $value->setXSDValue($literal);
-			} else {
-				$value->setUserValue($literal);
-			}
-			$allValues[] = $value;
 
+            if (!empty($sv)) {
+				$literal = $this->unquote($this->removeXSDType($sv));
+				$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
+				if ($value->getTypeID() == '_dat') { // exception for dateTime
+					if ($literal != '') $value->setXSDValue($literal);
+				} else {
+					$value->setUserValue($literal);
+				}
+				$allValues[] = $value;
+            }
 
 		}
 	}
