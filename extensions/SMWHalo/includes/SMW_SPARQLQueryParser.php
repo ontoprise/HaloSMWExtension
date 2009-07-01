@@ -41,15 +41,19 @@ class SMWSPARQLQueryParser extends SMWQueryParser {
 	 * no meaningful condition was extracted).
 	 */
 	public function getQueryDescription($querystring) {
-		wfProfileIn('SMWSPARQLQueryParser::getQueryDescription (SMW)');
-		$this->m_errors = array();
-		$this->m_label = '';
-		$this->m_curstring = $querystring;
-		$this->m_sepstack = array();
-		$setNS = false;
-		$result = new SMWSPARQLDescription();
-		wfProfileOut('SMWSPARQLQueryParser::getQueryDescription (SMW)');
-		return $result;
+		if (stripos($querystring, "select") === 0) {
+			wfProfileIn('SMWSPARQLQueryParser::getQueryDescription (SMW)');
+			$this->m_errors = array();
+			$this->m_label = '';
+			$this->m_curstring = $querystring;
+			$this->m_sepstack = array();
+			$setNS = false;
+			$result = new SMWSPARQLDescription();
+			wfProfileOut('SMWSPARQLQueryParser::getQueryDescription (SMW)');
+			return $result;
+		} else {
+			return parent::getQueryDescription($querystring);
+		}
 	}
 
 	/**
