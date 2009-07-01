@@ -412,8 +412,13 @@ class SMWTripleStore extends SMWStore {
 					$response = $client->query($query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 
 				}
-                
-				$response = utf8_decode($response);
+
+				global $smwgSPARQLResultEncoding;
+				if (!isset($smwgSPARQLResultEncoding) || $smwgSPARQLResultEncoding == 'ISO-8859-1') {
+					$response = utf8_decode($response);
+				}
+				$response = urldecode($response);
+				
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -709,24 +714,15 @@ class SMWTripleStore extends SMWStore {
 			// do not generate new PrintRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
 
+			$data = SMWPropertyValue::makeUserProperty($var_name);
 			// otherwise create one
-			if (stripos($b, self::$CAT_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_CATEGORY));
-			} else if (stripos($b, self::$PROP_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), SMWPropertyValue::makeUserProperty($var_name, SMW_NS_PROPERTY));
-			} else if (stripos($b, self::$INST_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_MAIN));
-			} else if (stripos($b, self::$HELP_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_HELP));
-			} else if (stripos($b, self::$IMAGE_NS) === 0) {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, NS_IMAGE));
-			} else if (stripos($b, self::$UNKNOWN_NS) === 0) {
+			if (stripos($b, self::$UNKNOWN_NS) === 0) {
 				$startNS = strlen(self::$UNKNOWN_NS);
 				$length = strpos($b, "#") - $startNS;
 				$ns = intval(substr($b, $startNS, $length));
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), Title::newFromText($var_name, $ns));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
 			} else {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), SMWPropertyValue::makeUserProperty($var_name, SMW_NS_PROPERTY));
+				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
 			}
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
@@ -767,7 +763,7 @@ class SMWTripleStore extends SMWStore {
 		}
 		return $queryResult;
 	}
-    
+
 	/**
 	 * Add a resource or property value to an array of results
 	 *
@@ -778,66 +774,41 @@ class SMWTripleStore extends SMWStore {
 	private function addValueToResult($sv, $prs, & $allValues) {
 		// category result
 		if (stripos($sv, self::$CAT_NS) === 0) {
-			$local = substr($sv, strlen(self::$CAT_NS));
-			$title = Title::newFromText($local, NS_CATEGORY);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), NS_CATEGORY, $title->getArticleID());
-			$allValues[] = $v;
-
+			$allValues[] = $this->createSMWDataValue($sv, self::$CAT_NS, NS_CATEGORY);
 			// property result
 		} else if (stripos($sv, self::$PROP_NS) === 0) {
-
-			$local = substr($sv, strlen(self::$PROP_NS));
-			$title = Title::newFromText($local, SMW_NS_PROPERTY);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), SMW_NS_PROPERTY, $title->getArticleID());
-			$allValues[] = $v;
-
+			$allValues[] = $this->createSMWDataValue($sv, self::$PROP_NS, SMW_NS_PROPERTY);
 			// instance result
 		} else if (stripos($sv, self::$INST_NS) === 0) {
-
-			$local = substr($sv, strlen(self::$INST_NS));
-			$title = Title::newFromText($local, NS_MAIN);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), NS_MAIN, $title->getArticleID());
-			$allValues[] = $v;
-
+			$allValues[] = $this->createSMWDataValue($sv, self::$INST_NS, NS_MAIN);
 			// help result
 		} else if (stripos($sv, self::$HELP_NS) === 0) {
-
-			$local = substr($sv, strlen(self::$HELP_NS));
-			$title = Title::newFromText($local, NS_HELP);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), NS_HELP, $title->getArticleID());
-			$allValues[] = $v;
-
+			$allValues[] = $this->createSMWDataValue($sv, self::$HELP_NS, NS_HELP);
 			// image result
 		} else if (stripos($sv, self::$IMAGE_NS) === 0) {
-
-			$local = substr($sv, strlen(self::$IMAGE_NS));
-			$title = Title::newFromText($local, NS_IMAGE);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), NS_IMAGE, $title->getArticleID());
-			$allValues[] = $v;
+			$allValues[] = $this->createSMWDataValue($sv, self::$IMAGE_NS, NS_IMAGE);
 
 			// result with unknown namespace
 		} else if (stripos($sv, self::$UNKNOWN_NS) === 0) {
-			$startNS = strlen(self::$UNKNOWN_NS);
-			$length = strpos($sv, "#") - $startNS;
-			$ns = intval(substr($sv, $startNS, $length));
+				
+			if (empty($sv)) {
+				$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+				$allValues[] = $v;
+			} else {
+				$startNS = strlen(self::$UNKNOWN_NS);
+				$length = strpos($sv, "#") - $startNS;
+				$ns = intval(substr($sv, $startNS, $length));
 
+				$local = substr($sv, strpos($sv, "#")+1);
 
-			$local = substr($sv, strpos($sv, "#")+1);
-
-			$title = Title::newFromText($local, $ns);
-			$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-			$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-			$allValues[] = $v;
-
+				$title = Title::newFromText($local, $ns);
+				$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+				$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+				$allValues[] = $v;
+			}
 			// property value result
 		} else {
-
-            if (!empty($sv)) {
+			if (!empty($sv)) {
 				$literal = $this->unquote($this->removeXSDType($sv));
 				$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
 				if ($value->getTypeID() == '_dat') { // exception for dateTime
@@ -845,10 +816,37 @@ class SMWTripleStore extends SMWStore {
 				} else {
 					$value->setUserValue($literal);
 				}
-				$allValues[] = $value;
-            }
+			} else {
+				$property = $prs->getData();
+				if ($property instanceof SMWPropertyValue ) {
+					$value = SMWDataValueFactory::newPropertyObjectValue($property);
+				} else {
+					$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+
+				}
+
+			}
+			$allValues[] = $value;
 
 		}
+	}
+    
+	/**
+	 * Creates  SWMDataValue object from a (possibly) merged result.
+	 *
+	 * @param string $sv 
+	 * @param string $nsFragment
+	 * @param int $ns
+	 * @return SMWDataValue
+	 */
+	private function createSMWDataValue($sv, $nsFragment, $ns) {
+
+		$local = substr($sv, strlen($nsFragment));
+		$title = Title::newFromText($local, $ns);
+		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+		return $v;
+
 	}
 
 	/**
