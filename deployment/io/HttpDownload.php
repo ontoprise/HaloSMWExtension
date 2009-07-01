@@ -170,7 +170,7 @@ class HttpDownload {
     }
 	
 	public function downloadFinished($filename) {
-		if (!is_null($filename)) echo "\n$filename was downloaded.";
+		//if (!is_null($filename)) echo "\n$filename was downloaded.";
 	}
 }
 

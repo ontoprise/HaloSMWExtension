@@ -19,7 +19,7 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip/extensions/SMWHalo">
+		<copy todir="bin/zip/deployment">
 			<fileset dir="../">
 				<include name="COPYING" />
 				<include name="INSTALL" />

@@ -13,6 +13,7 @@
  */
 
 require_once('smwadmin/Tools.php');
+require_once('smwadmin/Installer.php');
 
 // check tools and rights
 $check = Tools::checkEnvironment();
@@ -42,7 +43,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	if ($arg == '-i') {
 		$package = next($argv);
 		if ($package === false) fatalError("No package found");
-		$packageToInstall = next($argv);
+		$packageToInstall[] = $package;
 		continue;
 	} // -d => De-install
 	if ($arg == '-d') {
@@ -103,8 +104,9 @@ if ($globalUpdate) {
 
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
+	$parts = $explode("-", $toInstall);
 	try {
-		$installer->installOrUpdate($toInstall);
+		$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
 	} catch(InstallationError $e) {
 		fatal($e->getMsg());
 	}
@@ -127,6 +129,8 @@ foreach($packageToUpdate as $toUpdate) {
 		fatal($e->getMsg());
 	}
 }
+
+print "\n\nInstallation successful.\n";
 
 function fatalError($msg) {
 	echo "\nError: $msg";
