@@ -4,7 +4,7 @@
         <version>130</version>
         <id>SMW</id>
         <vendor>Ontoprise GmbH</vendor>
-        <instdir>extensions\SemanticMediaWiki</instdir>
+        <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Dummy</description>
         <dependencies>
             <dependency from="120" to="150">MW</dependency>

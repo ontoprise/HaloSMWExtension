@@ -4,7 +4,7 @@
         <version>110</version>
         <id>SemanticGardening</id>
         <vendor>Ontoprise GmbH</vendor>
-        <instdir>extensions\SemanticGardening</instdir>
+        <instdir>extensions/SemanticGardening</instdir>
         <description>Dummy</description>
         <dependencies>
            <dependency from="143" to="143">SMWHalo</dependency>

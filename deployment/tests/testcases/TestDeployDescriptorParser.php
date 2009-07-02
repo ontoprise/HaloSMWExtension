@@ -21,10 +21,10 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGlobals() {
-		$exp_deps = array("SemanticMediawiki", 100, 140);
-		$this->assertEquals("SMWHalo", $this->ddp->getID());
+		$exp_deps = array("semanticmediawiki", 100, 140);
+		$this->assertEquals("smwhalo", $this->ddp->getID());
 		$this->assertEquals("Ontoprise GmbH", $this->ddp->getVendor());
-		$this->assertEquals("extensions\SMWHalo", $this->ddp->getInstallationDirectory());
+		$this->assertEquals("extensions/SMWHalo", $this->ddp->getInstallationDirectory());
 		$this->assertEquals("Enhances your Semantic Mediawiki", $this->ddp->getDescription());
 		foreach($this->ddp->getDependencies() as $dep) {
 							

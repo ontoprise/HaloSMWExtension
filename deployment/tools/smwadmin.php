@@ -104,12 +104,14 @@ if ($globalUpdate) {
 
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
-	$parts = $explode("-", $toInstall);
+	$parts = explode("-", $toInstall);
 	try {
 		$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
 	} catch(InstallationError $e) {
-		fatal($e->getMsg());
-	}
+		fatalError($e);
+	} catch(HttpError $e) {
+        fatalError($e);
+    }
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
@@ -117,8 +119,10 @@ foreach($packageToDeinstall as $toDeInstall) {
 	try {
 		$installer->deinstall($toDeInstall);
 	} catch(InstallationError $e) {
-		fatal($e->getMsg());
-	}
+		fatalError($e);
+	} catch(HttpError $e) {
+        fatalError($e);
+    }
 }
 
 foreach($packageToUpdate as $toUpdate) {
@@ -126,14 +130,25 @@ foreach($packageToUpdate as $toUpdate) {
 	try {
 		$installer->installOrUpdate($toInstall);
 	} catch(InstallationError $e) {
-		fatal($e->getMsg());
+		fatalError($e);
 	}
 }
 
-print "\n\nInstallation successful.\n";
+print "\n\Operation successful.\n";
 
-function fatalError($msg) {
-	echo "\nError: $msg";
+function fatalError($e) {
+	switch($e->getErrorCode()) {
+		case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
+			$packages = $e->getArg1();
+			print "\n".$e->getMsg();
+			foreach($packages as $p) {
+				print "\n\t$p";
+			}
+		  break;
+		}
+		default: echo "\nError: ".$e->getMsg(); break;
+	}
+	// stop installation
 	die();
 }
 

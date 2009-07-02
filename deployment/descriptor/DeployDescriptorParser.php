@@ -131,7 +131,7 @@ class DeployDescriptorParser {
     }
 
     function getID() {
-        return trim((string) $this->globalElement[0]->id);
+        return strtolower(trim((string) $this->globalElement[0]->id));
     }
 
     function getVendor() {
@@ -150,7 +150,7 @@ class DeployDescriptorParser {
         if (!is_null($this->dependencies)) return $this->dependencies;
         $this->dependencies = array();
         foreach($this->globalElement[0]->dependencies as $dep) {
-            $depID = trim((string) $dep->dependency);
+            $depID = strtolower(trim((string) $dep->dependency));
             $depFrom = intval((string) $dep->dependency->attributes()->from);
             $depTo = intval((string) $dep->dependency->attributes()->to);
             $this->dependencies[] = array($depID, $depFrom, $depTo);
@@ -159,6 +159,7 @@ class DeployDescriptorParser {
     }
 
     function getDependency($ext_id) {
+    	$ext_id = strtolower($ext_id);
         $dependencies = $this->getDependencies();
         foreach($dependencies as $d) {
             list($id, $from, $to) = $d;
@@ -293,7 +294,7 @@ class DeployDescriptorParser {
         $userValueMappings = array();
         
         if (!is_null($userValueCallback)) {
-           call_user_func(array(&$userValueCallback,"getUserReqParams"), $this->getUserRequirements(), $userValueMappings);
+           call_user_func(array(&$userValueCallback,"getUserReqParams"), $this->getUserRequirements(), & $userValueMappings);
         }
         
         $content = $dp->applyLocalSettingsChanges($userValueMappings);

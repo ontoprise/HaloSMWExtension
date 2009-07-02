@@ -148,8 +148,8 @@ class DeployDescriptionProcessor {
             if (substr($instDir, -1) != '/') $instDir .= "/";
             $patch = self::makeUnixPath($patch);
             if (!$dryRun) {
-             print "\n\nRemove patch:\nphp ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$instDir.$patch." -d ".$rootDir;
-             exec("php ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$instDir."/".$patch." -d ".$rootDir);
+             print "\n\nRemove patch:\nphp ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
+             exec("php ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
             }
         }
     }
@@ -211,7 +211,7 @@ abstract class ConfigElement {
 	 * @param string $ext_id Extension_ID
 	 * @param array $userValues Hash arrays with user values for required variables.
 	 */
-	public abstract function apply(& $ls, $ext_id, $userValues);
+	public abstract function apply(& $ls, $ext_id, $userValues = array());
 
 
 	/**
@@ -229,7 +229,7 @@ abstract class ConfigElement {
 		if ($start === false || $end === false) {
 			return NULL; // fragment does not exist
 		}
-		return substr($ls, $start, $end-$start);
+		return substr($ls, $start, $end-$start+strlen("/*end-$ext_id*/"));
 	}
 
 	/**
@@ -365,16 +365,16 @@ class VariableConfigElement extends ConfigElement {
 
 	public function __construct($child) {
 		parent::__construct("var");
+		$this->argumentsAsXML = $child;
 		$this->name = $child->attributes()->name;
-		$this->value = $this->serializeParameters($child);
-		$this->value = count($child->children()) > 1 ? 'array('.$this->value.')' : $this->value;
 		$this->remove = $child->attributes()->remove;
 		$this->external = $child->attributes()->external;
 
 	}
 
-	public function apply(& $ls, $ext_id, $userValues) {
-
+	public function apply(& $ls, $ext_id, $userValues = array()) {
+        $this->value = $this->serializeParameters($this->argumentsAsXML, $userValues);
+        $this->value = count($this->argumentsAsXML->children()) > 1 ? 'array('.$this->value.')' : $this->value;
 		$remove = ($this->remove == "true");
 
 		if ($this->external) {
@@ -439,7 +439,7 @@ class RequireConfigElement extends ConfigElement {
 		$this->remove = ($this->remove == "true");
 	}
 
-	public function apply(& $ls, $ext_id, $userValues) {
+	public function apply(& $ls, $ext_id, $userValues = array()) {
 		if ($this->remove) {
 			$this->removeRequireonce($ls, $this->file);
 		} else {
@@ -472,7 +472,7 @@ class PHPConfigElement extends ConfigElement {
 		$this->content = (string) $child[0];
 	}
 
-	public function apply(& $ls, $ext_id, $userValues) {
+	public function apply(& $ls, $ext_id, $userValues = array()) {
 		if ($this->remove) {
 			$fragment = self::getExtensionFragment($ext_id, $ls);
 			$start = strpos($fragment, "/*php-start-$this->name*/");
@@ -509,8 +509,8 @@ class FunctionCallConfigElement extends ConfigElement {
 
 	}
 
-	public function apply(& $ls, $ext_id, $userValues) {
-		$arguments = $this->serializeParameters($this->argumentsAsXML);
+	public function apply(& $ls, $ext_id, $userValues = array()) {
+		$arguments = $this->serializeParameters($this->argumentsAsXML, $userValues);
 		$appliedCommand = "\n".$this->functionname."(/*param-start-".$this->functionname."*/".$arguments."/*param-end-".$this->functionname."*/);";
 		if ($this->remove) {
 

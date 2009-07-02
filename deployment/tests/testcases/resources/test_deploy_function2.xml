@@ -4,7 +4,7 @@
         <version>1.0</version>
         <id>SMWHalo</id>
         <vendor>Ontoprise GmbH</vendor>
-        <instdir>extensions\SMWHalo</instdir>
+        <instdir>extensions/SMWHalo</instdir>
         <description>Enhances your Semantic Mediawiki</description>
         <dependencies>
            <dependency from="100" to="140">
