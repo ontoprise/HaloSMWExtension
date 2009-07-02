@@ -132,7 +132,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 	 * @param $taskID taskID
 	 * @param $logContent content of log as wiki markup
 	 */
-	public function markGardeningTaskAsFinished($taskID, $logContent) {
+	public function markGardeningTaskAsFinished($taskID, $logContent, $logPageTitle = null) {
 
 		$fname = 'SMW::markGardeningTaskAsFinished';
 		$db =& wfGetDB( DB_MASTER );
@@ -151,7 +151,7 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 
 		$title = NULL;
 		if ($logContent != NULL && $logContent != '') {
-			$title = $this->createGardeningLogFile($botID, $date, $logContent);
+			$title = $this->createGardeningLogFile($botID, $date, $logContent, $logPageTitle);
 		}
 		$gardeningLogPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 		$db->update( $db->tableName('smw_gardening'),
@@ -242,9 +242,13 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 	 * Creates a log article.
 	 * Returns: Title of log article.
 	 */
-	private  function createGardeningLogFile($botID, $date, $logContent) {
-		$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
-		$title = Title::newFromText($botID."_at_".$timeInTitle);
+	private  function createGardeningLogFile($botID, $date, $logContent, $logPageTitle = null) {
+		if($logPageTitle == null){
+			$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
+			$title = Title::newFromText($botID."_at_".$timeInTitle);
+		} else {
+			$title = Title::newFromText($logPageTitle);
+		}
 
 		$article = new Article($title);
 		$article->insertNewArticle($logContent, "Logging of $botID at ".$this->getDBDate($date), false, false);

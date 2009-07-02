@@ -39,8 +39,9 @@
 	 * 
 	 * @param $taskID taskID
 	 * @param $logContent content of log as wiki markup
+	 * @param $logPageTitle optional title of a gardening log page
 	 */
-	public abstract function markGardeningTaskAsFinished($taskID, $logContent);
+	public abstract function markGardeningTaskAsFinished($taskID, $logContent, $logPageTitle = null);
 	
 	/**
 	 * Update progress information. Allows database updates every 15s at max. 
