@@ -17,7 +17,7 @@ require_once 'Tools.php';
 /**
  * Provides the basic installation routines for the smwadmin tool.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 
@@ -235,6 +235,24 @@ class Installer {
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
 		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
+	}
+	
+	public function listPackages() {
+		print "\nInstalled packages:";
+		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		foreach($localPackages as $id => $lp) {
+			print "\n\t".$id."-".$lp->getVersion();
+		}
+	}
+	
+	public function listAvailablePackages() {
+		$allPackages = PackageRepository::getAllPackages();
+		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		print "\nAll available packages:";
+		foreach($allPackages as $p_id => $versions) {
+			$installed = array_key_exists($p_id, $localPackages) ? "[installed]" : "";
+			print "\n\t$p_id: (".implode(",", $versions).")\t\t$installed";
+		}
 	}
 	/**
 	 * Install extensions.

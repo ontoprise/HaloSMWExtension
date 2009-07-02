@@ -2,7 +2,7 @@
 /**
  * Central configuration tool.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Usage:
  *
@@ -62,14 +62,24 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$packageToUpdate[] = $package;
 		continue;
 	}
+	if ($arg == '-l') {
+		$listPackages = true;
+		continue;
+	}
+
+	if ($arg == '-lall') {
+		$listAvailablePackages = true;
+		continue;
+	}
+
 	if ($arg == '--dryRun') {
 		$dryRun = true;
 		continue;
 	}
-    if ($arg == '-f') {
-        $force = true;
-        continue;
-    }
+	if ($arg == '-f') {
+		$force = true;
+		continue;
+	}
 	$params[] = $arg;
 }
 
@@ -101,6 +111,16 @@ if ($globalUpdate) {
 	die();
 }
 
+if ($listPackages) {
+	$installer->listPackages();
+	die();
+}
+
+if ($listAvailablePackages) {
+	$installer->listAvailablePackages();
+	die();
+}
+
 
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
@@ -110,8 +130,8 @@ foreach($packageToInstall as $toInstall) {
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
-        fatalError($e);
-    }
+		fatalError($e);
+	}
 }
 
 foreach($packageToDeinstall as $toDeInstall) {
@@ -121,8 +141,8 @@ foreach($packageToDeinstall as $toDeInstall) {
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
-        fatalError($e);
-    }
+		fatalError($e);
+	}
 }
 
 foreach($packageToUpdate as $toUpdate) {
@@ -144,7 +164,7 @@ function fatalError($e) {
 			foreach($packages as $p) {
 				print "\n\t$p";
 			}
-		  break;
+			break;
 		}
 		default: echo "\nError: ".$e->getMsg(); break;
 	}

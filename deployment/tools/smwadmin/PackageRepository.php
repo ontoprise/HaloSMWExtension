@@ -16,7 +16,7 @@ define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testca
 /**
  * Allows access on the global HALO package repository.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  */
 class PackageRepository {
@@ -94,7 +94,7 @@ class PackageRepository {
 	 * Returns all available versions in descendant order.
 	 *
 	 * @param string $packageID
-	 * @return array of results
+	 * @return array of versions (descendant)
 	 */
 	public static function getAllVersions($packageID) {
 		$versions = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version");
@@ -105,6 +105,28 @@ class PackageRepository {
 		}
 		sort($results, SORT_NUMERIC);
 		return array_reverse($results);
+	}
+
+	/**
+	 * Returns all available packages and their versions
+	 * 
+	 * @return array of package ids pointing to array of versions (ascending)
+	 */
+	public static function getAllPackages() {
+		$packages = self::getPackageRepository()->xpath("/root/extensions/extension");
+		if (count($packages) == 0) return NULL;
+		$results = array();
+		foreach($packages as $p) {
+			$id = (string) $p->attributes()->id;
+			$results[$id] = array();
+			$versions = $p->xpath("version");
+			foreach($version as $v) {
+				$results[$id][] = (string) $v->attributes()->ver;
+			}
+			sort($results[$id], SORT_NUMERIC);
+
+		}
+		return $results;
 	}
 	/**
 	 * Returns URL of latest available version of a package
@@ -206,7 +228,7 @@ class PackageRepository {
 				    <resources/>
 				    <configs/>
 				    </deploydescriptor>';
-		
+
 		return new DeployDescriptorParser($xml);
 	}
 }
