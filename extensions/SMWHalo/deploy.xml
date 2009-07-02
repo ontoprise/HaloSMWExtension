@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>144</version>
+		<id>SMWHalo</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/SMWHalo</instdir>
+		<description>Eases the usage and enhances the benefits of Semantic Mediawiki</description>
+		<dependencies>
+			<dependency from="142" to="142">SMW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/SMWHalo/deploy.xml" />
+		<patch file="extensions/SMWHalo/patch.txt"/>
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="SemanticMediawiki" />
+
+		<new>
+			<require name="smwhalo"
+				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
+			<function name="enableSMWHalo">
+				<string name="sql_storage">SMWHaloStore2</string>
+				<string name="ts_storage" null="true" />
+				<string name="ts-url" null="true" />
+			</function>
+		</new>
+	</configs>
+</deploydescriptor>

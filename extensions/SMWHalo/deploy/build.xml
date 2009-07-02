@@ -67,6 +67,8 @@
 			<fileset dir="../">
 				<include name="COPYING" />
 				<include name="INSTALL" />
+				<include name="patch.txt" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-${version}.zip" basedir="bin/zip" />

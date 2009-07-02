@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>142</version>
+		<id>SMW</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/SemanticMediaWiki</instdir>
+		<description>Enhances the wiki with semantic annotations</description>
+		<dependencies>
+			<dependency from="1120" to="1150">MW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/SMWHalo/deploy.xml" />
+	
+	</codefiles>
+	<wikidumps>
+		
+	</wikidumps>
+	<resources>
+	
+	</resources>
+	<configs>
+
+		<new>
+			<require name="smw"
+				file="extensions/SemanticMediaWiki/includes/SMW_Settings.php" />
+			<function name="enableSemantics">
+				<string name="namespace" userValueRequired="true"
+					description="Namespace of wiki (arbitrary value)">localhost:8080</string>
+			</function>
+		</new>
+	</configs>
+</deploydescriptor>
