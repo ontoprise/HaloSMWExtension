@@ -43,6 +43,7 @@
 				<include name="INSTALL" />
 				<include name="README" />
 				<include name="RELEASE-NOTES" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smw-${version}.zip" basedir="bin/zip" />
