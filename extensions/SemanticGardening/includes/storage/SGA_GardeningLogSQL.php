@@ -246,12 +246,12 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 		if($logPageTitle == null){
 			$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
 			$title = Title::newFromText($botID."_at_".$timeInTitle);
+			$article = new Article($title);
+			$article->insertNewArticle($logContent, "Logging of $botID at ".$this->getDBDate($date), false, false);
 		} else {
 			$title = Title::newFromText($logPageTitle);
 		}
 
-		$article = new Article($title);
-		$article->insertNewArticle($logContent, "Logging of $botID at ".$this->getDBDate($date), false, false);
 		return $title;
 	}
 
