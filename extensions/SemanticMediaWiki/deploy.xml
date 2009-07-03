@@ -29,6 +29,8 @@
 				<string name="namespace" userValueRequired="true"
 					description="Namespace of wiki (arbitrary value)">localhost:8080</string>
 			</function>
+			<setup script="extensions/SemanticMediaWiki/maintenance/SMW_setup.php"/>
+			<setup script="extensions/SemanticMediaWiki/maintenance/SMW_refreshData.php" params="-v"/>
 		</new>
 	</configs>
 </deploydescriptor>
