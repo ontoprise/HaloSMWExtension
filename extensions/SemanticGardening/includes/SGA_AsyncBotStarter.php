@@ -106,7 +106,15 @@ if ($bot != null) {
 			print "\n - Bot was aborted by user! - \n";
 			die();
 		}
-		echo $log;
+		
+		//allow bots to return the title of the associated log page
+		$logPageTitle = null;
+		if(is_array($log)){
+			$logPageTitle = $log[1];
+			$log = $log[0];
+		}
+		
+		echo "\n".$log."\n";
 	    if ($log != NULL && $log != '') {
             // create link to GardeningLog
             $glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
@@ -115,7 +123,7 @@ if ($bot != null) {
         }
             
         // mark task as finished
-        $title = SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+        $title = SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log, $logPageTitle);
         if ($title != NULL) echo "Log saved at: ".$title->getLocalURL()."\n";
             
     } catch(Exception $e) {

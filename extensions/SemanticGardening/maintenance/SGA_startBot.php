@@ -118,10 +118,19 @@ require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/SGA_G
             print "\n - Bot was aborted by user! - \n";
             die();
         }
-        echo $log;
+        //allow bots to return the title of the associated log page
+		$logPageTitle = null;
+		if(is_array($log)){
+			$logPageTitle = $log[1];
+			$log = $log[0];
+		}
+		
+		echo "\n".$log."\n";
+        
         if ($log != NULL && $log != '') {
             $glp = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
-            $log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
+            //$log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
+           	$log .= "\n\n".wfMsg('smw_gardeninglog_link', "[".$glp->getFullURL("bot=$botID")." ".$glp->getText()."]");
         }
         
         // mark as finished
@@ -135,7 +144,7 @@ require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/SGA_G
         $log .= "\n[[".$wgContLang->getNsText(NS_CATEGORY).":".wfMsg('smw_gardening_log_cat')."]]";
         echo $log;
         if ($noLog) $log = NULL;
-        $title = $gl->markGardeningTaskAsFinished($taskid, $log);
+        $title = $gl->markGardeningTaskAsFinished($taskid, $log, $log, $logPageTitle);
         if ($title != NULL) {
             echo "\nLog saved at: ".$title->getLocalURL();
         }
