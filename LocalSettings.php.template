@@ -228,7 +228,7 @@ require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
 require_once( "$IP/extensions/Variables/Variables.php" );
 
 #MIME-Type
-include_once('extensions/SMWHalo/includes/SMW_MIME_settings.php');
+include_once('extensions/RichMedia/includes/RM_AdditionalMIMETypes.php');
 
 #Semantic Results formats
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
