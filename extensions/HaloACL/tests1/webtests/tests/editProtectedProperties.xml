@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<!---
+
+This test checks if an article that contains protected properties can be edited
+by NormalUser and RestrictedUser.
+
+-->
+<project name="Query" default="testEditProtectedProperties">
+
+	&login;
+	
+	<target name="testEditProtectedProperties">
+		<webtest name="Testing as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Event_3"
+				description="Open page with the protected property 'Date'." />
+			
+			<verifyXPath 
+				description="Check presence of Event 1"
+				xpath="//div[@id='ca-edit']/a"/>
+		</webtest>
+		
+		
+		<webtest name="Testing Concept as RestrictedUser">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="JavaScriptEnabled" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Event_3"
+				description="Open page with the protected property 'Date'." />
+			
+			<not>
+				<verifyXPath 
+					description="Check presence of Event 1"
+					xpath="//div[@id='ca-edit']/a"/>
+			</not>
+<!--
+Disabled because of JavaScript bug.
+-->
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Event_3?action=edit"
+				description="Edit page with the protected property Date." />
+			<verifyXPath 
+				description="Check presence of Event 1"
+				xpath="//td[@id='contentcol1']/div[@id='innercontent']/h1"
+				regex="true"
+				text=".*Permission.*"/>
+<!--			
+-->
+			
+		</webtest>
+		
+	</target>
+		
+	
+</project>
