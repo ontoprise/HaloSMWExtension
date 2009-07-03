@@ -1,6 +1,6 @@
 <?php
 /**
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  * 
  * Created on: 27.01.2009
  *
@@ -39,7 +39,7 @@ class SGA_LanguageEn {
     'smw_renamingbot' => 'Rename page',
     'smw_importontologybot' => 'Import an ontology',
     'smw_gardissue_class_all' => 'All',
-    'smw_termimportbot' => 'Import terms of a vocabulary',
+    
     
     /* Messages for Gardening Bot: ImportOntology Bot*/
     'smw_gard_import_choosefile' => 'The following $1 files are available.',

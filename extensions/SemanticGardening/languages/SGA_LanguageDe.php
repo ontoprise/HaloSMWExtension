@@ -39,8 +39,7 @@ class SGA_LanguageDe {
     'smw_renamingbot' => 'Benenne Seiten um',
     'smw_importontologybot' => 'Importiere eine Ontologie',
     'smw_gardissue_class_all' => 'Alle',
-    'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
-
+    
     'smw_gard_import_choosefile' => 'Die folgenden $1-Dateien sind auf dem Server verf�gbar.',
     'smw_gard_import_addfiles' => 'Weitere $2-Dateien k�nnen �ber $1 hinzugef�gt werden.',
     'smw_gard_import_nofiles' => 'Keine Dateien des Typs $1 auf dem Server verf�gbar.',
