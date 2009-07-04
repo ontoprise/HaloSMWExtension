@@ -5,14 +5,17 @@
 		<id>SMWHalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
-		<description>Eases the usage and enhances the benefits of Semantic Mediawiki</description>
+		<description>
+			Eases the usage and enhances the benefits of Semantic
+			Mediawiki
+		</description>
 		<dependencies>
 			<dependency from="142" to="142">SMW</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
 		<file loc="extensions/SMWHalo/deploy.xml" />
-		<patch file="extensions/SMWHalo/patch.txt"/>
+		<patch file="extensions/SMWHalo/patch.txt" />
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
@@ -32,6 +35,11 @@
 				<string name="ts_storage" null="true" />
 				<string name="ts-url" null="true" />
 			</function>
+			<script file="extensions/SMWHalo/maintenance/SMW_setup.php" />
 		</new>
+		<uninstall>
+			<script file="extensions/SMWHalo/maintenance/SMW_setup.php"
+				params="--delete" />
+		</uninstall>
 	</configs>
 </deploydescriptor>

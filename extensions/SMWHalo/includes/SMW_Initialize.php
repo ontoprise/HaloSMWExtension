@@ -125,7 +125,7 @@ function smwgHaloSetupExtension() {
 
 
 	// register SMW hooks
-	$wgHooks['smwInitializeTables'][] = 'smwfHaloInitializeTables';
+	
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
@@ -413,16 +413,7 @@ function smwfHaloShowListPage(&$title, &$article){
 	return true;
 }
 
-/**
- * Creates or updates additional tables needed by HALO.
- * Called from SMW when admin re-initializes tables
- */
-function smwfHaloInitializeTables() {
 
-	smwfGetSemanticStore()->setup(true);
-
-	return true;
-}
 /**
  * Registers SMW Halo Content messages.
  */
