@@ -72,8 +72,8 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 
-	if ($arg == '--dryRun') {
-		$dryRun = true;
+	if ($arg == '--checkdep') {
+		$checkDep = true;
 		continue;
 	}
 	if ($arg == '-f') {
@@ -103,11 +103,17 @@ if ($help) {
 	die();
 }
 
-$installer = new Installer(realpath(dirname(__FILE__)."/../.."), $dryRun, $force);
+$rootDir = realpath(dirname(__FILE__)."/../..");
+$installer = Installer::getInstance($rootDir, $force);
+$rollback = Rollback::getInstance($rootDir);
 
 if ($globalUpdate) {
-	$installer->updateAll();
-	echo "\n\nYour installation is now up-to-date!";
+	$updated = $installer->updateAll();
+	if ($updated) {
+	   echo "\n\nYour installation is now up-to-date!\n";
+	} else {
+		echo "\n\nYour installation is already up-to-date!\n";
+	}
 	die();
 }
 
@@ -131,6 +137,8 @@ foreach($packageToInstall as $toInstall) {
 		fatalError($e);
 	} catch(HttpError $e) {
 		fatalError($e);
+	} catch(RollbackInstallation $e) {
+		$rollback->rollback();
 	}
 }
 
@@ -142,19 +150,26 @@ foreach($packageToDeinstall as $toDeInstall) {
 		fatalError($e);
 	} catch(HttpError $e) {
 		fatalError($e);
-	}
+	} catch(RollbackInstallation $e) {
+        // currently not supported
+    }
 }
 
 foreach($packageToUpdate as $toUpdate) {
-	$toInstall = str_replace(".", "", $toInstall);
+	$toUpdate = str_replace(".", "", $toUpdate);
+	$parts = explode("-", $toUpdate);
 	try {
-		$installer->installOrUpdate($toInstall);
+		$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
 	} catch(InstallationError $e) {
 		fatalError($e);
-	}
+	} catch(HttpError $e) {
+		fatalError($e);
+	} catch(RollbackInstallation $e) {
+        $rollback->rollback();
+    }
 }
 
-print "\n\Operation successful.\n";
+print "\n\nOK.\n";
 
 function fatalError($e) {
 	switch($e->getErrorCode()) {

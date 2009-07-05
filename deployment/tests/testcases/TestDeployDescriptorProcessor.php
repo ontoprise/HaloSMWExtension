@@ -43,6 +43,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 		$ddp = new DeployDescriptorParser($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 		global $testvar;
+		
 		eval($res);
 		$this->assertTrue(isset($testvar));
 	}

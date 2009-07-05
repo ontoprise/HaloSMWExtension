@@ -70,7 +70,7 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testSetups() {
-		$setups = $this->ddp->getSetups();
+		$setups = $this->ddp->getInstallScripts();
 		 $this->assertEquals("maintenance/setup.php", $setups[0]['script']);
 		 $this->assertEquals("param1 param2", $setups[0]['params']);
 	}

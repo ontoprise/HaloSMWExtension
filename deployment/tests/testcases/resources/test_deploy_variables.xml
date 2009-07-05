@@ -29,7 +29,7 @@
 		<precedes ext="SemanticGardening" />
 
 		<new>
-		    <setup script="maintenance/setup.php" params="param1 param2" />
+		    <script file="maintenance/setup.php" params="param1 param2" />
 			<variable name="testvar">
 				<string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
 			</variable>
@@ -56,7 +56,7 @@
 			</variable>
 		</new>
 		<update from="142">
-		<setup script="maintenance/setup.php" params="param1 param2" />
+		<script file="maintenance/setup.php" params="param1 param2" />
             <variable name="testvar1">
                 <string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
             </variable>

@@ -15,6 +15,8 @@ class DeployDescriptionProcessor {
 
 	private $localSettingsContent;
 
+	
+
 	/**
 	 * Creates new DeployDescriptorProcessor.
 	 *
@@ -41,10 +43,16 @@ class DeployDescriptionProcessor {
 	/**
 	 * Reads the LocalSettings.php file, applies changes and return it as string.
 	 *
-	 * @param array $userValues Mappings for required values.
+	 * 
+	 * @param callback $userCallback Requests for values
 	 * @return string changed LocalSettings.php file
 	 */
-	function applyLocalSettingsChanges($userValues) {
+	function applyLocalSettingsChanges($userCallback, $userRequirements, $dryRun) {
+	    $userValues = array();
+
+        if (!is_null($userCallback)) {
+            call_user_func(array(&$userCallback,"getUserReqParams"), $userRequirements, & $userValues);
+        }
 		// calculate changes
 		$insertions = ""; // reset
 			
@@ -61,7 +69,8 @@ class DeployDescriptionProcessor {
 		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
 		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/";
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
-
+        
+		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
 		return $this->localSettingsContent;
 	}
 
@@ -71,6 +80,7 @@ class DeployDescriptionProcessor {
 		if (!is_null($fragment)) {
 			$ls = str_replace($fragment, "", $this->localSettingsContent);
 		}
+		$this->writeLocalSettingsFile($ls);
 		return $ls;
 	}
 
@@ -79,38 +89,48 @@ class DeployDescriptionProcessor {
 	 *
 	 * Needs php interpreter in PATH
 	 *
-	 * @param boolean $dryRun
+	 *
 	 */
-	function applySetups($dryRun = false) {
+	function applySetups() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		foreach($this->dd_parser->getSetups() as $setup) {
+		foreach($this->dd_parser->getInstallScripts() as $setup) {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
-			if (!$dryRun) {
-				print "\n\nRun script:\nphp ".$rootDir."/".$instDir.$script." ".$setup['params'];
-				exec("php ".$rootDir."/".$instDir.$script." ".$setup['params']);
-			}
+			
+				print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+				exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+				foreach($out as $line) print "\n".$line;
+				if ($ret != 0) {
+					print "\n\nScript ".$rootDir."/".$script." failed!";
+					throw new RollbackInstallation();
+				}
+			
 		}
 	}
-    
+
 	/**
 	 * Runs the given setup scripts in de-install mode.
-	 * 
+	 *
 	 * Needs php interpreter in PATH
-	 * 
-	 * @param boolean $dryRun
+	 *
+	 *
 	 */
-	function unapplySetups($dryRun = false) {
+	function unapplySetups() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		foreach($this->dd_parser->getSetups() as $setup) {
+		foreach($this->dd_parser->getUninstallScripts() as $setup) {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
-			if (!$dryRun) {
-				print "\n\nRun script:\nphp ".$rootDir."/".$instDir.$script." ".$setup['params'];
-				exec("php ".$rootDir."/".$instDir.$script." --deinstall");
-			}
+			
+				print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+				exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+				foreach($out as $line) print "\n".$line;
+				if ($ret != 0) {
+					print "\n\nScript ".$rootDir."/".$script." failed!";
+					throw new RollbackInstallation();
+				}
+			
 		}
 	}
 
@@ -118,41 +138,65 @@ class DeployDescriptionProcessor {
 	 * Applies patches
 	 *
 	 * Needs php Interpreter and GNU-patch in PATH.
+	 *
 	 * 
-	 * @param boolean $dryRun
+	 * @param callback $userCallback
 	 */
-	function applyPatches($dryRun = false) {
+	function applyPatches($userCallback) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
 		foreach($this->dd_parser->getPatches() as $patch) {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
-			if (!$dryRun) {
-			 print "\n\nApply patch:\nphp ".$rootDir."/patches/patch.php -p ".$rootDir."/".$instDir.$patch." -d ".$rootDir;
-			 exec("php ".$rootDir."/patches/patch.php -p ".$rootDir."/".$instDir."/".$patch." -d ".$rootDir);
+			$patchFailed = false;
+            
+			// do dry-run at first to check for rejected patches
+			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			foreach($out as $line) {
+				if (strpos($line, "FAILED") !== false) {
+					$patchFailed = true;
+				}
 			}
+			
+			// ask user to continue/rollback in case of failed patches
+			$result = 'y';
+			if (!is_null($userValueCallback) && $patchFailed) {
+				call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
+			}
+			
+			 switch($result) {
+
+			 	case 'y': // apply the patches 
+			 	print "\n\nApply patch:\nphp ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir;
+			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
+			 	break;
+			 	case 'r': throw new RollbackInstallation();
+			 	case 'n': break; // just ignore the patches completely
+			 }
+			 	
+			
 		}
 	}
-	
-    /**
-     * Removes patches
-     *
-     * Needs php Interpreter and GNU-patch in PATH.
-     * 
-     * @param boolean $dryRun
-     */
-    function unapplyPatches($dryRun = false) {
-        $rootDir = self::makeUnixPath(dirname($this->ls_loc));
-        foreach($this->dd_parser->getPatches() as $patch) {
-            $instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
-            if (substr($instDir, -1) != '/') $instDir .= "/";
-            $patch = self::makeUnixPath($patch);
-            if (!$dryRun) {
-             print "\n\nRemove patch:\nphp ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
-             exec("php ".$rootDir."/patches/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
-            }
-        }
-    }
+
+	/**
+	 * Removes patches
+	 *
+	 * Needs php Interpreter and GNU-patch in PATH.
+	 *
+	 * 
+	 */
+	function unapplyPatches() {
+		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
+		foreach($this->dd_parser->getPatches() as $patch) {
+			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
+			if (substr($instDir, -1) != '/') $instDir .= "/";
+			$patch = self::makeUnixPath($patch);
+			
+				print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
+				exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
+			
+		}
+	}
 
 	/**
 	 * Writes LocalSettings.php
@@ -180,10 +224,10 @@ class DeployDescriptionProcessor {
 		if ($pos === false) {
 			$ext_found = false;
 			$pos = strlen($this->localSettingsContent);
-			return array($pos - 2, $ext_found);
+			return array($pos, $ext_found);
 		}
 		$ext_found = true;
-		return array($pos - 2, $ext_found);
+		return array($pos-1, $ext_found);
 	}
 
 	private static function makeUnixPath($path) {
@@ -373,8 +417,8 @@ class VariableConfigElement extends ConfigElement {
 	}
 
 	public function apply(& $ls, $ext_id, $userValues = array()) {
-        $this->value = $this->serializeParameters($this->argumentsAsXML, $userValues);
-        $this->value = count($this->argumentsAsXML->children()) > 1 ? 'array('.$this->value.')' : $this->value;
+		$this->value = $this->serializeParameters($this->argumentsAsXML, $userValues);
+		$this->value = count($this->argumentsAsXML->children()) > 1 ? 'array('.$this->value.')' : $this->value;
 		$remove = ($this->remove == "true");
 
 		if ($this->external) {
@@ -540,6 +584,10 @@ class FunctionCallConfigElement extends ConfigElement {
 }
 
 class IllegalArgument extends Exception {
+
+}
+
+class RollbackInstallation extends Exception {
 
 }
 ?>

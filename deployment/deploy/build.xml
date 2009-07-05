@@ -18,6 +18,9 @@
 			<fileset dir="../tools/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
+			<fileset dir="../../patches/">
+				<include name="patch.php" />
+			</fileset>
 		</copy>
 		<copy todir="bin/zip/deployment">
 			<fileset dir="../">

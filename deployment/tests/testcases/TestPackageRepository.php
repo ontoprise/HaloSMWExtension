@@ -64,7 +64,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testLocalPackageRepository() {
-		$exp_packages = array('SMWHalo', 'SemanticGardening', 'SMW', 'MW');
+		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'mw');
         
 		$packages = PackageRepository::getLocalPackages(self::$instDir.'/extensions');
 		$this->assertTrue(count($packages) === 4);

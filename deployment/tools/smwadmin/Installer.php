@@ -13,6 +13,7 @@ define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
 
 require_once 'PackageRepository.php';
 require_once 'Tools.php';
+require_once 'Rollback.php';
 
 /**
  * Provides the basic installation routines for the smwadmin tool.
@@ -25,35 +26,42 @@ require_once 'Tools.php';
 
 class Installer {
 
+	static $instance = NULL; // singleton
+
+	public function getInstance($rootDir = NULL, $force = false, $noAsk = false) {
+		if (!is_null(self::$instance)) return self::$instance;
+		self::$instance = new Installer($rootDir, $force, $noAsk);
+		return self::$instance;
+	}
 	/*
 	 * Temporary folder for storing downloaded files
 	 */
-	static $tmpFolder;
+	var $tmpFolder;
 
 	/*
 	 * Mediawiki installation directory
 	 */
-	static $rootDir;
+	var $rootDir;
 
 	/*
-	 * Mediawiki versiohttp://www.heise.de/newsticker/foren/S-Re-Pendlerfamilien-werden-nicht-danken/forum-161573/msg-16980630/read/n
+	 * Mediawiki version
 	 */
-	static $mw_version;
+	var $mw_version;
 
 	/*
 	 * Installation directory
 	 * Normally identical with $rootDir except for testing or dry runs.
 	 */
 	private $instDir;
-	
-	// dry run, ie. nothing is actually changed 
-	private $dryRun;
-	
+
+
 	// force installation even on warnings
 	private $force;
-	
+
 	// no questions (for testing)
 	private $noAsk;
+
+	private $rollback;
 
 
 	/**
@@ -61,16 +69,23 @@ class Installer {
 	 *
 	 * @param string $rootDir Explicit root dir. Only necessary for testing
 	 */
-	public function __construct($rootDir = NULL, $dryRun = false, $force = false, $noAsk = false) {
-		self::$tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
-		if (!file_exists(self::$tmpFolder)) Tools::mkpath(self::$tmpFolder);
-		if (!file_exists(self::$tmpFolder)) {
+	private function __construct($rootDir = NULL, $force = false, $noAsk = false) {
+		// create temp folder
+		$this->tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
+		if (!file_exists($this->tmpFolder)) Tools::mkpath($this->tmpFolder);
+		if (!file_exists($this->tmpFolder)) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_NO_TMP_DIR, "Could not create temporary directory. Not Logged in as root?");
 		}
-		self::$rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
+
+		// get root dir
+		$this->rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
 		$this->instDir = $rootDir; // normally rootDir == instDir
-		self::$mw_version = Tools::getMediawikiVersion(self::$rootDir);
-		$this->dryRun = $dryRun;
+
+		// obtain MW version
+		$this->mw_version = Tools::getMediawikiVersion($this->rootDir);
+
+		$this->rollback = Rollback::getInstance($this->instDir);
+
 		$this->force = $force;
 		$this->noAsk = $noAsk;
 	}
@@ -89,7 +104,7 @@ class Installer {
 
 		// 1. Check if package is installed
 		print "\nCheck if package installed...";
-		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		$ext = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
@@ -98,7 +113,7 @@ class Installer {
 				break;
 			}
 		}
-		
+
 		if (is_null($ext)) {
 			print "not found.";
 		}
@@ -106,15 +121,15 @@ class Installer {
 		if (!is_null($ext) && is_numeric($version) && $ext->getVersion() > $version) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $ext);
 		}
-		
-	    if (!is_null($ext) && is_numeric($version) && $ext->getVersion() == $version) {
-            throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $ext);
-        }
+
+		if (!is_null($ext) && is_numeric($version) && $ext->getVersion() == $version) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $ext);
+		}
 
 		// 2. Check code integrity of existing package
 		if (!is_null($ext)) {
 			print "\nCheck code integrity...";
-			$status = $ext->validatecode(self::$rootDir);
+			$status = $ext->validatecode($this->rootDir);
 			if ($status !== true) {
 				if (!$this->force) {
 					throw new InstallationError(DEPLOY_FRAMEWORK_CODE_CHANGED, "Code files were modified. Use -f (force)", $status);
@@ -123,9 +138,9 @@ class Installer {
 				}
 			}
 
-	        print "done!";
+			print "done!";
 		}
-        
+
 		// 3. Check dependencies for install/update
 		// get package to install
 		if ($version == NULL) {
@@ -139,18 +154,18 @@ class Installer {
 		print "\nCheck for updates...";
 		$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 		$this->checkForSuperExtensions($dd, $updatesNeeded, $localPackages);
-        
+
 		// 4. calculate version which matches all depdencies of an extension.
 		print "\nCalculate matching versions";
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
 		// 5. Install/update all dependant and super extensions
-        print "\nInstall dependant extensions or super extensions";		
+		print "\nInstall dependant extensions or super extensions";
 		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
 
 
 		// 6. Install update this extension
-		print "\nInstall ".$dd->getID()." or super extensions";       
+		print "\nInstall ".$dd->getID()." or super extensions";
 		$this->installOrUpdatePackage($dd, $version, !is_null($ext) ? $ext->getVersion : NULL);
 
 
@@ -163,9 +178,9 @@ class Installer {
 	 * @param string $packageID
 	 */
 	public function deInstall($packageID) {
-		
+
 		print "\nChecking for package $packageID...";
-		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		$ext = NULL;
 		foreach($localPackages as $p) {
 			if ($p->getID() == $packageID) {
@@ -180,19 +195,21 @@ class Installer {
 		// check if there are depending extensions
 		print "\nChecking for dependant packages of $packageID...";
 		$existDependency = false;
+		$dependantPackages = array();
 		foreach($localPackages as $p) {
 			$dependencies = $p->getDependencies();
 
 			foreach($dependencies as $dep) {
 				list($id, $from, $to) = $dep;
 				if ($id == $packageID) {
+					$dependantPackages[] = $p->getID();
 					$existDependency = true;
 				}
 			}
 		}
 
 		if ($existDependency) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to the following packages exists:", $packageID);
+			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to the following packages exists:", $dependantPackages);
 		}
 
 		// undo all config changes
@@ -201,16 +218,21 @@ class Installer {
 		// - patches
 		print "\nUnapply configurations of $packageID...";
 		$ext->unapplyConfigurations($this->instDir, false);
-		
+
 		// remove extension code
 		print "\nRemove code of $packageID...";
 		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
 
 	}
 
+	/**
+	 * Updates all packages if possible
+	 *
+	 * @return true, if anything was updated.
+	 */
 	public function updateAll() {
 
-		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 
 		// get top level extensions, ie. those which have no super extensions.
 		$topLevelExtensions = array();
@@ -235,24 +257,31 @@ class Installer {
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
 		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
+
+		return count($extensions_to_update) > 0;
 	}
-	
+
 	public function listPackages() {
-		print "\nInstalled packages:";
-		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
+		print "\nInstalled packages:\n";
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		foreach($localPackages as $id => $lp) {
 			print "\n\t".$id."-".$lp->getVersion();
 		}
+		print "\n";
 	}
-	
+
 	public function listAvailablePackages() {
+
 		$allPackages = PackageRepository::getAllPackages();
-		$localPackages = PackageRepository::getLocalPackages(self::$rootDir.'/extensions');
-		print "\nAll available packages:";
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		print "\nAll available packages:\n";
 		foreach($allPackages as $p_id => $versions) {
-			$installed = array_key_exists($p_id, $localPackages) ? "[installed]" : "";
-			print "\n\t$p_id: (".implode(",", $versions).")\t\t$installed";
+			$installed = array_key_exists($p_id, $localPackages) ? "[installed ".$localPackages[$p_id]->getVersion()."]" : "";
+			$id_shown = $p_id;
+			for ($i = 20-strlen($p_id); $i >0; $i--) $id_shown .= " ";
+			print "\n\t$id_shown: \t(".implode(",", $versions).")\t$installed";
 		}
+		print "\n";
 	}
 	/**
 	 * Install extensions.
@@ -264,17 +293,21 @@ class Installer {
 		$d = new HttpDownload();
 		foreach($extensions_to_update as $id=>$arr) {
 			list($desc, $min, $max) = $arr;
+				
+			// log extension for possible rollback
+			// does not hold for updated extensions. The cannot be rolled back.
+			$this->rollback->addExtension($desc);
+				
 			$url = PackageRepository::getVersion($id, $min);
-			$d->downloadAsFileByURL($url, self::$tmpFolder."/$id-$min.zip");
+			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-$min.zip");
 
 			// unzip
 			$this->unzip($id, $min);
 
 			// apply deploy descriptor and save local settings
 			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
-			$desc->applyConfigurations($this->instDir, $this->dryRun, $fromVersion, $this);
-				
-				
+			$desc->applyConfigurations($this->instDir, $fromVersion, $this);
+
 			$this->installResources($desc);
 			print "\n-------\n";
 		}
@@ -294,26 +327,26 @@ class Installer {
 		} else {
 			$url = PackageRepository::getVersion($dd->getID(), $version);
 		}
-		$d->downloadAsFileByURL($url, self::$tmpFolder."/".$dd->getID()."-$version.zip");
+		$d->downloadAsFileByURL($url, $this->tmpFolder."/".$dd->getID()."-$version.zip");
 
 		// unzip
 		$this->unzip($dd->getID(), $version);
 
 		// apply deploy descriptor
-		$dd->applyConfigurations($this->instDir, $this->dryRun, $fromVersion, $this);
+		$dd->applyConfigurations($this->instDir, $fromVersion, $this);
 
 		// install wiki pages
 		$this->installResources($dd);
 
 	}
-    
+
 	/**
 	 * Installs wiki dumps and other resources.
 	 *
 	 * @param DeployDescriptorParser $dd
 	 */
 	private function installResources($dd) {
-		
+
 		// wiki dumps
 		require_once( '../../maintenance/commandLine.inc' );
 		require_once('../io/import/DeployWikiImporter.php');
@@ -321,22 +354,22 @@ class Installer {
 		$reader = new BackupReader($this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 		$wikidumps = $dd->getWikidumps();
 		foreach($wikidumps as $file) {
-			if (!$this->dryRun) $result = $reader->importFromFile( self::$rootDir."/".$file );
+			$result = $reader->importFromFile( $this->rootDir."/".$file );
 		}
-		
+
 		// resources files
 		$resources = $dd->getResources();
-	       foreach($resources as $file) {
-            if (!$this->dryRun) {
-            	if (is_dir(self::$rootDir."/".$file)) {
-            		Tools::mkpath(dirname(self::$rootDir."/images/".$file));
-            		Tools::copy_dir(self::$rootDir."/".$file, self::$rootDir."/images/".$file);
-            	} else {
-            		Tools::mkpath(dirname(self::$rootDir."/images/".$file));
-            		copy(self::$rootDir."/".$file, self::$rootDir."/images/".$file);
-            	}
-            }
-        }
+		foreach($resources as $file) {
+
+			if (is_dir($this->rootDir."/".$file)) {
+				Tools::mkpath(dirname($this->rootDir."/images/".$file));
+				Tools::copy_dir($this->rootDir."/".$file, $this->rootDir."/images/".$file);
+			} else {
+				Tools::mkpath(dirname($this->rootDir."/images/".$file));
+				copy($this->rootDir."/".$file, $this->rootDir."/images/".$file);
+			}
+
+		}
 	}
 
 	/**
@@ -348,13 +381,13 @@ class Installer {
 	 * @param int $version
 	 */
 	private function unzip($id, $version) {
-		if ($this->dryRun) return;
+
 		if (Tools::isWindows()) {
-			print "\n\nUncompressing:\n7z x -y -o".$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip";
-			exec('7z x -y -o'.$this->instDir." ".self::$tmpFolder."\\".$id."-$version.zip");
+			print "\n\nUncompressing:\n7z x -y -o".$this->instDir." ".$this->tmpFolder."\\".$id."-$version.zip";
+			exec('7z x -y -o'.$this->instDir." ".$this->tmpFolder."\\".$id."-$version.zip");
 		} else {
-			print "\n\nUncompressing:\nunzip ".self::$tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
-			exec('unzip '.self::$tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
+			print "\n\nUncompressing:\nunzip ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
+			exec('unzip '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
 		}
 	}
 
@@ -400,12 +433,12 @@ class Installer {
 	private function checkForDependingExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$dependencies = $dd->getDependencies();
 		$updatesNeeded = array();
-        
+
 		// find packages which need to get updated
 		// or installed.
 		foreach($dependencies as $dep) {
 			list($id, $from, $to) = $dep;
-		    $packageFound = false;
+			$packageFound = false;
 			foreach($localPackages as $p) {
 				if ($id === $p->getID()) {
 					$packageFound = true;
@@ -436,7 +469,7 @@ class Installer {
 			$packagesToUpdate[] = array($dd, $minVersion, $maxVersion);
 			$this->checkForDependingExtensions($dd, $packagesToUpdate, $localPackages);
 		}
-	   
+
 	}
 
 	/**
@@ -501,6 +534,20 @@ class Installer {
 	}
 
 	/**
+	 * Callback method. Requests a confirmation by the user.
+	 *
+	 * @param string $message
+	 * @param boolean $result
+	 * @return unknown
+	 */
+	public function getUserConfirmation($message, & $result) {
+		if ($this->noAsk) return 'y';
+		print "\n\n$message [(y)es/(n)o/(r)ollback]";
+		$line = trim(fgets(STDIN));
+		return strtolower($line);
+	}
+
+	/**
 	 * Checks the integrity of the package.
 	 *
 	 * @param DeployDescriptorParser $ext
@@ -509,14 +556,14 @@ class Installer {
 
 		$dumps = $ext->getWikidumps();
 		foreach($dumps as $loc) {
-			if (!is_dir(self::$rootDir."/".$loc) && !file_exists(self::$rootDir."/".$loc)) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", self::$rootDir."/".$loc);
+			if (!is_dir($this->rootDir."/".$loc) && !file_exists($this->rootDir."/".$loc)) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", $this->rootDir."/".$loc);
 			}
 		}
 		$resources = $ext->getResources();
 		foreach($dumps as $loc) {
-			if (!is_dir(self::$rootDir."/".$loc) && !file_exists(self::$rootDir."/".$loc)) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", self::$rootDir."/".$loc);
+			if (!is_dir($this->rootDir."/".$loc) && !file_exists($this->rootDir."/".$loc)) {
+				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", $this->rootDir."/".$loc);
 			}
 		}
 	}
@@ -531,24 +578,24 @@ class InstallationError extends Exception {
 	public function __construct($errCode, $msg = '', $arg1 = NULL, $arg2 = NULL) {
 		$this->errCode = $errCode;
 		$this->msg = $msg;
-		$this->arg1;
-		$this->arg2;
+		$this->arg1 = $arg1;
+		$this->arg2 = $arg2;
 	}
 
 	public function getMsg() {
 		return $this->msg;
 	}
-	
+
 	public function getErrorCode() {
 		return $this->errCode;
 	}
-	
+
 	public function getArg1() {
 		return $this->arg1;
 	}
-	
-    public function getArg2() {
-        return $this->arg2;
-    }
+
+	public function getArg2() {
+		return $this->arg2;
+	}
 }
 ?>

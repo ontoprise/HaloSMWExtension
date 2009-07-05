@@ -11,6 +11,8 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 }
 
 // this URL is supposed to be fix forever
+//define("SMWPLUS_REPOSITORY", "http://localhost/repository/");
+//define("SMWPLUS_REPOSITORY", "http://halo-build-serv/repository/");
 define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
 
 /**
@@ -24,6 +26,8 @@ class PackageRepository {
 	// repository DOM
 	static $repo_dom = NULL;
 	static $deploy_descs = array();
+	
+	static $localPackages = NULL;
 
 	/**
 	 * Downloads the package repository from remote.
@@ -120,7 +124,7 @@ class PackageRepository {
 			$id = (string) $p->attributes()->id;
 			$results[$id] = array();
 			$versions = $p->xpath("version");
-			foreach($version as $v) {
+			foreach($versions as $v) {
 				$results[$id][] = (string) $v->attributes()->ver;
 			}
 			sort($results[$id], SORT_NUMERIC);
@@ -179,7 +183,8 @@ class PackageRepository {
 	 * @return array of DeployDescriptorParser
 	 */
 	public static function getLocalPackages($ext_dir) {
-		$packages = array();
+		if (!is_null(self::$localPackages)) return self::$localPackages;
+		self::$localPackages = array();
 		// add trailing slashes
 		if (substr($ext_dir,-1)!='/'){
 			$ext_dir .= '/';
@@ -199,15 +204,15 @@ class PackageRepository {
 				// check if there is a deploy.xml
 				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
 					$dd = new DeployDescriptorParser(file_get_contents($ext_dir.$entry.'/deploy.xml'));
-					$packages[$dd->getID()] = $dd;
+					self::$localPackages[$dd->getID()] = $dd;
 
 				}
 			}
 
 		}
 		// create special deploy descriptor for Mediawiki itself
-		$packages['MW'] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
-		return $packages;
+		self::$localPackages['MW'] = self::createMWDeployDescriptor(realpath($ext_dir."/.."));
+		return self::$localPackages;
 	}
 
 	private static function createMWDeployDescriptor($rootDir) {
