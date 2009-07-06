@@ -13,7 +13,7 @@
 		</dependencies>
 	</global>
 	<codefiles>
-	<patch file="patch.txt" />
+	
 		<file loc="extensions/SMWHalo/SMW_Initialize.php" />
 		<file loc="extensions/SMWHalo/SMW_QP_XML.php" />
 	</codefiles>
@@ -29,6 +29,7 @@
 		<precedes ext="SemanticGardening" />
 
 		<new>
+		    <patch file="patch.txt" />
 		    <script file="maintenance/setup.php" params="param1 param2" />
 			<variable name="testvar">
 				<string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
@@ -61,5 +62,8 @@
                 <string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
             </variable>
 		</update>
+		<uninstall>
+		  <patch file="patch.txt" />
+		</uninstall>
 	</configs>
 </deploydescriptor>

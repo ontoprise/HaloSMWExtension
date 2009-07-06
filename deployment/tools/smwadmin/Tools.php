@@ -235,5 +235,20 @@ class Tools {
 		} 
 		return $version;
 	}
+	
+	/**
+	 * Add separators (.) to distinguish between minor and major version.
+	 *
+	 * @param string $version
+	 * @return string
+	 */
+	public static function addVersionSeparators($version) {
+		$version = trim($version);
+		if (strlen($version) == 3) {
+			return substr($version, 0, 1).".".substr($version, 1);
+		} else {
+			return substr($version, 0, 1).".".substr($version, 1,2).".".substr($version,3);
+		}
+	}
 }
 ?>

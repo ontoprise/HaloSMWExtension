@@ -55,7 +55,10 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 	if ($arg == '-u') { // u => update
 		$package = next($argv);
-		if ($package === false) {
+		if ($package === false || $package == '-c') {
+			if ($package == '-c') {
+				$checkDep = true;
+			}
 			$globalUpdate = true;
 			continue;
 		}
@@ -72,7 +75,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 
-	if ($arg == '--checkdep') {
+	if ($arg == '-c') {
 		$checkDep = true;
 		continue;
 	}
@@ -90,16 +93,22 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $help = array_key_exists("help", $options);
 
 if ($help) {
-	echo "\nSMWHalo Admin utility, Ontoprise 2009";
+	echo "\nsmwhalo admin utility, Ontoprise 2009";
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n";
 	echo "\n\t-i : Install";
 	echo "\n\t-d : De-Install";
 	echo "\n\t-u : Update";
+	echo "\n\t-c : Check only dependencies but do not install.";
+	echo "\n\t-l : List installed packages.";
+	echo "\n\t-lall : List all available packages.";
 	echo "\n";
-	echo "\nExample: smwadmin -i smwhalo-1.4.4 -u smw-1.4.2";
-	echo "\n\tsmwadmin -u";
+	echo "\nExamples:\n\tsmwadmin -i smwhalo-1.4.4 -u smw-1.4.2: Installs the given packages";
+	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
+	echo "\n\tsmwadmin -u: Updates complete installation";
+	echo "\n\tsmwadmin -u -c: Shows what would be updated.";
+	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	die();
 }
 
@@ -108,9 +117,10 @@ $installer = Installer::getInstance($rootDir, $force);
 $rollback = Rollback::getInstance($rootDir);
 
 if ($globalUpdate) {
-	$updated = $installer->updateAll();
+	$updated = $installer->updateAll($checkDep);
+	if ($checkDep) die();
 	if ($updated) {
-	   echo "\n\nYour installation is now up-to-date!\n";
+		echo "\n\nYour installation is now up-to-date!\n";
 	} else {
 		echo "\n\nYour installation is already up-to-date!\n";
 	}
@@ -132,7 +142,11 @@ foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
 	try {
-		$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		if ($checkDep) {
+			$installer->checkDependencies($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		} else {
+			$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		}
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
@@ -151,38 +165,48 @@ foreach($packageToDeinstall as $toDeInstall) {
 	} catch(HttpError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
-        // currently not supported
-    }
+		// currently not supported
+	}
 }
 
 foreach($packageToUpdate as $toUpdate) {
 	$toUpdate = str_replace(".", "", $toUpdate);
 	$parts = explode("-", $toUpdate);
 	try {
-		$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		if ($checkDep) {
+			$installer->checkDependencies($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		} else {
+			$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+		}
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
-        $rollback->rollback();
-    }
+		$rollback->rollback();
+	}
 }
 
 print "\n\nOK.\n";
 
+/**
+ * Shows a fatal error which aborts installation.
+ *
+ * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
+ */
 function fatalError($e) {
 	switch($e->getErrorCode()) {
 		case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
 			$packages = $e->getArg1();
-			print "\n".$e->getMsg();
+			print "\n".$e->getMsg()."\n";
 			foreach($packages as $p) {
-				print "\n\t$p";
+				print "\n\t*$p";
 			}
 			break;
 		}
 		default: echo "\nError: ".$e->getMsg(); break;
 	}
+	print "\n\n";
 	// stop installation
 	die();
 }

@@ -63,8 +63,7 @@ class DeployDescriptionProcessor {
 
 		$prefix = substr($this->localSettingsContent, 0 , $insertpos);
 
-
-		$suffix = substr($this->localSettingsContent, $insertpos + 1);
+		$suffix = substr($this->localSettingsContent, $insertpos);
 
 		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
 		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/";
@@ -187,7 +186,7 @@ class DeployDescriptionProcessor {
 	 */
 	function unapplyPatches() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		foreach($this->dd_parser->getPatches() as $patch) {
+		foreach($this->dd_parser->getUninstallPatches() as $patch) {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);

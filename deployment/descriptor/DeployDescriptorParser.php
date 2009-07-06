@@ -25,12 +25,12 @@ class DeployDescriptorParser {
 	var $install_scripts;
 	var $uninstall_scripts;
 	var $patches;
+	var $uninstallpatches;
 
 	// xml
 	var $dom;
 	var $wikidumps_xml;
 	var $codefiles_xml;
-	var $patches_xml;
 	var $resources_xml;
 
 	function __construct($xml, $fromVersion = NULL) {
@@ -40,7 +40,7 @@ class DeployDescriptorParser {
 
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
 		$this->codefiles_xml = $this->dom->xpath('/deploydescriptor/codefiles/file');
-		$this->patches_xml = $this->dom->xpath('/deploydescriptor/codefiles/patch');
+
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file');
 		$this->createConfigElements($fromVersion); // assume new config, not update
@@ -70,6 +70,8 @@ class DeployDescriptorParser {
 		$this->install_scripts = array();
 		$this->uninstall_scripts = array();
 		$this->userReqs = array();
+		$this->patches = array();
+		$this->uninstallpatches = array();
 
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
@@ -90,6 +92,8 @@ class DeployDescriptorParser {
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
+		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
+		$patches = $this->dom->xpath($path.'/patch');
 
 		if (count($precedings) > 0 && $precedings != '') {
 			foreach($precedings as $p) {
@@ -129,6 +133,28 @@ class DeployDescriptorParser {
 				$params = (string) $p->attributes()->params;
 				if (is_null($params)) $params = "";
 				$this->uninstall_scripts[] = array('script'=>$script, 'params'=>$params);
+			}
+		}
+
+		if (count($patches) > 0 && $patches != '') {
+			$this->patches = array();
+
+			foreach($patches as $p) {
+				$patchFile = trim((string) $p->attributes()->file);
+
+				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+				$this->patches[] = $patchFile;
+			}
+		}
+
+		if (count($uninstall_patches) > 0 && $uninstall_patches != '') {
+			$this->uninstallpatches = array();
+
+			foreach($uninstall_patches as $p) {
+				$patchFile = trim((string) $p->attributes()->file);
+
+				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
+				$this->uninstallpatches[] = $patchFile;
 			}
 		}
 	}
@@ -182,15 +208,13 @@ class DeployDescriptorParser {
 	}
 
 	function getPatches() {
-		if (!is_null($this->patches)) return $this->patches;
-		$this->patches = array();
 
-		foreach($this->patches_xml as $p) {
-			$patchFile = trim((string) $p->attributes()->file);
-			if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-			$this->patches[] = $patchFile;
-		}
 		return $this->patches;
+	}
+
+	function getUninstallPatches() {
+
+		return $this->uninstallpatches;
 	}
 
 	function getCodefiles() {
@@ -304,7 +328,7 @@ class DeployDescriptorParser {
 			$this->createConfigElements($fromVersion);
 		}
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
-		
+
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
 		if (!$dryRun) $dp->applyPatches($userCallback);
 		if (!$dryRun) $dp->applySetups();
@@ -323,7 +347,7 @@ class DeployDescriptorParser {
 		$dp->unapplySetups();
 		$dp->unapplyPatches();
 		$content = $dp->unapplyLocalSettingsChanges();
-		
+
 		return $content; // return for testing purposes.
 	}
 

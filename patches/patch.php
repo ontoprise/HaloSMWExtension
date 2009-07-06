@@ -12,6 +12,8 @@
  */
 
 $reversePatch = "";
+$dryRun = "";
+$onlypatch = false;
 
 // get parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -31,6 +33,17 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
        $reversePatch = "-R";
         continue;
     }
+    
+    //--dry => reverse patch
+    if ($arg == '--dry-run') {
+        $dryRun = "--dry-run";
+        continue;
+    }
+    //--onlypatch => only patch output
+    if ($arg == '--onlypatch') {
+        $onlypatch = true;
+        continue;
+    }
 }
 
 // usage message if wrong or missing params
@@ -44,7 +57,7 @@ $absPath = trim(str_replace("\\","/", $absPath));
 $patchFile = trim(str_replace("\\","/", $patchFile));
 if (substr($absPath, -1) != '/') $absPath .= "/";
 
-echo "\nRead patch file:\n $patchFile";
+if (!$onlypatch) echo "\nRead patch file:\n $patchFile";
 $patchFileContent = file_get_contents($patchFile);
 
 // split patch file in array of single patches for each file.
@@ -57,7 +70,7 @@ foreach($patches as $p) {
 	preg_match('/\+\+\+\s+([^\s]+)/', $p, $matches);
 	$path = dirname($matches[1]);
 	 
-	echo "\nApplying patch to:\n $matches[1]";
+	if (!$onlypatch) echo "\nApplying patch to:\n $matches[1]";
 	if (isWindows()) {
 		// make sure patch file is windows style
 		$p = str_replace("\r\n","\n",$p);
@@ -68,7 +81,7 @@ foreach($patches as $p) {
 	}
 
 	// write patch file
-	echo "\nWrite patch file:\n $absPath$path/__patch__.txt";
+	if (!$onlypatch) echo "\nWrite patch file:\n $absPath$path/__patch__.txt";
 	$handle = fopen($absPath.$path.'/__patch__.txt', 'w');
 	fwrite($handle, $p);
 	fclose($handle);
@@ -87,14 +100,17 @@ foreach($patches as $p) {
 	 */
 	
 	// run patch
-	echo "\nExecute patch:\n ".'patch -u -l -t -s '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
-	exec('patch -u -l -t -s '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"');
-
+	if (!$onlypatch) echo "\nExecute patch:\n ".'patch -u -l -t '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"';
+	exec('patch -u -l -t -s '.$dryRun.' '.$reversePatch.' --no-backup-if-mismatch -i __patch__.txt -d "'.$absPath.$path.'"', $out, $ret);
+	
+	foreach($out as $line) print "\n".$line;
+	
 	// delete patch file
-	echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';
+	if (!$onlypatch) echo "\nDelete patch file:\n ".$absPath.$path.'/__patch__.txt';
 	unlink($absPath.$path.'/__patch__.txt');
 	
-	echo "\n------------\n";
+	if (!$onlypatch) echo "\n------------\n";
+	exit($ret);
 }
 
 function isWindows() {

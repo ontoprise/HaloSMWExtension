@@ -23,7 +23,7 @@ class Rollback {
 		$this->inst_dir = $inst_dir;
 	}
 	
-	public function addExtension($dd, $localPackages) {
+	public function addExtension($dd) {
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		$this->alreadyInstalledExtensions[] = $dd;
 		if (array_key_exists($dd->getID(), $localPackages)) {
@@ -36,15 +36,23 @@ class Rollback {
 		$this->originalLocalSettings = $ls;
 	}
 	
+	/**
+	 * Rolls back the current installation.
+	 *
+	 */
 	public function rollback() {
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		print "\n\nRollback installation...";
 		 foreach($this->alreadyInstalledExtensions as $ext) {
-		 	print "\nUnapply configurations of $packageID...";
-		 	$ext->unapplyConfigurations($this->instDir, false);
-		 	
+		 	$dp = new DeployDescriptionProcessor($this->inst_dir."/LocalSettings.php", $ext);
+		 	print "\nUnapply patches of $packageID...";
+            $dp->unapplyPatches();
+            print "done.";
+            // FIXME: cannot unapply setup operations. Would need a database backup
+            
 		 	print "\nRemove code of $packageID...";
             Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
+            print "done.";
             
             // rename old
             rename($inst_dir."/".$localPackages[$ext->getID()]->getInstallationDirectory().".bak", $inst_dir."/".$localPackages[$ext->getID()]->getInstallationDirectory());
@@ -56,13 +64,19 @@ class Rollback {
 		 fclose($handle);
 	}
 	
+	/**
+	 * Cleans up after a successful installation.
+	 *
+	 */
 	public function cleanup() {
+		print "\nCleanup rollback storage...";
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		 foreach($this->alreadyInstalledExtensions as $ext) {
 		 	if (file_exists($inst_dir."/".$localPackages[$ext->getID()]->getInstallationDirectory().".bak")) {
 		 		Tools::remove_dir($inst_dir."/".$localPackages[$ext->getID()]->getInstallationDirectory().".bak");
 		 	}
 		 }
+		 print "done.";
 	}
 }
 ?>

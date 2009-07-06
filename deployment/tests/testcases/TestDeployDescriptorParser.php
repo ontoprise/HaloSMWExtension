@@ -27,7 +27,7 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 		$this->assertEquals("extensions/SMWHalo", $this->ddp->getInstallationDirectory());
 		$this->assertEquals("Enhances your Semantic Mediawiki", $this->ddp->getDescription());
 		foreach($this->ddp->getDependencies() as $dep) {
-							
+				
 			$this->assertDependency($dep, $exp_deps);
 		}
 	}
@@ -61,31 +61,36 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 			$this->assertContains($cf, $exp_files);
 		}
 	}
-	
+
 	function testUserRequirements() {
-	    $reqs = $this->ddp->getUserRequirements() ;
-	   
-	    $this->assertEquals("string", $reqs['avalue'][0]);
-	    $this->assertEquals("Required value", $reqs['avalue'][1]);
+		$reqs = $this->ddp->getUserRequirements() ;
+
+		$this->assertEquals("string", $reqs['avalue'][0]);
+		$this->assertEquals("Required value", $reqs['avalue'][1]);
 	}
-	
+
 	function testSetups() {
 		$setups = $this->ddp->getInstallScripts();
-		 $this->assertEquals("maintenance/setup.php", $setups[0]['script']);
-		 $this->assertEquals("param1 param2", $setups[0]['params']);
+		$this->assertEquals("maintenance/setup.php", $setups[0]['script']);
+		$this->assertEquals("param1 param2", $setups[0]['params']);
 	}
-	
+
 	function testPatches() {
 		$patches = $this->ddp->getPatches();
-		 $this->assertEquals("patch.txt", $patches[0]);
+		$this->assertEquals("patch.txt", $patches[0]);
 	}
-	
+
+	function testUninstallPatches() {
+		$patches = $this->ddp->getUninstallPatches();
+		$this->assertEquals("patch.txt", $patches[0]);
+	}
+
 	function testUpdateSection() {
 		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
-        $this->ddp = new DeployDescriptorParser($xml, 142);
-       
-        $configs = $this->ddp->getConfigs();
-        $this->assertTrue(count($configs) > 0);
+		$this->ddp = new DeployDescriptorParser($xml, 142);
+		 
+		$configs = $this->ddp->getConfigs();
+		$this->assertTrue(count($configs) > 0);
 	}
 }
 ?>
