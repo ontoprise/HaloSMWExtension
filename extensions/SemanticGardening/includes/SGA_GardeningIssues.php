@@ -32,6 +32,11 @@ global $wgAjaxExportList;
  	 */
  	public abstract function setup($verbose);
  	
+ 	
+ 	/**
+     * Drops GardeningIssues table(s).
+     */
+    public abstract function drop($verbose);
  	/**
  	 * Clear all Gardening issues
  	 * 
