@@ -84,7 +84,7 @@ class WebServiceManager {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Initializes the namespaces that are used by the Wiki Web Service extension.
 	 * Normally the base index starts at 200. It must be an even number greater than
@@ -112,6 +112,7 @@ class WebServiceManager {
 	 *
 	 */
 	static function registerWWSNamespaces() {
+		//also registers TermImport namespace
 		global $wgExtraNamespaces, $wgNamespaceAliases, $smwgDIContLang, $wgContLang;
 
 		// Register namespace identifiers
@@ -141,7 +142,7 @@ class WebServiceManager {
 			
 		// Install the extended representation of articles in the namespace 'WebService'.
 		$wgHooks['ArticleFromTitle'][] = 'WebServiceManager::showWebServicePage';
-
+		
 		$wgParser->setHook('WebService', 'wwsdParserHook');
 		$wgHooks['ArticleSaveComplete'][] = 'WebServiceManager::articleSavedHook';
 		$wgHooks['ArticleDelete'][] = 'WebServiceManager::articleDeleteHook';
