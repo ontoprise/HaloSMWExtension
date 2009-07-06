@@ -40,6 +40,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_viewMappingPage' => 'View',
 	'smw_ti_editMappingPage' => 'Edit',
 	'smw_ti_conflictpolicy' => 'Please define a conflict policy. The conflict policy defines what happens if articles are imported that already exist in this wiki:',
+	'smw_ti_ti_name' => 'Please enter a name for this term import. An article with that name will be created in the namespace TermImport. It will contain all information you define here:',
+	'smw_ti_update_policy' => 'Please enter a Update Policy in minutes. Please enter 0 or nothing if the Term Import should never be updated.',
 	'smw_ti_nomappingpage' => 'The entered article that should contain the mapping policies does not exist',
 
 	'smw_ti_succ_connected' => 'Successfully connected to "$1".',
@@ -239,18 +241,27 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	
 	'smw_wwsm_update_msg' => 'The source has changed sinse the last materialization.',
 	
+	'smw_termimportbot' => 'Import terms of a vocabulary',
+	'smw_gard_termimportbothelp' => 'Start the bot for importing the terms of a vocabulary.',
+	'smw_termimportupdatebot' => 'Update defined Term Imports',
+	'smw_gard_termimportupdatebothelp' => 'Start the bot for updating defined Term Imports.',
+	
 	
 	
 	);
 
 	protected $smwDINamespaces = array(
 		SMW_NS_WEB_SERVICE       => 'WebService',
-		SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
+		SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk',
+		SMW_NS_TERM_IMPORT => 'TermImport',
+		SMW_NS_TERM_IMPORT_TALK => 'TermImport_talk'
 	);
 
 	protected $smwDINamespaceAliases = array(
 		'WebService'       => SMW_NS_WEB_SERVICE,
-		'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
+		'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK,
+	'TermImport'       => SMW_NS_TERM_IMPORT,
+		'TermImport_talk'  => SMW_NS_TERM_IMPORT_TALK 
 	);
 }
 

@@ -197,6 +197,20 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 #bottom-container #extras #extras-left #conflict #conflict-input-field{
 	border: 1px solid #AAAAAA;
 }
+#bottom-container #extras #extras-left #ti-name{
+	width: 100%;
+	float: left;
+}
+#bottom-container #extras #extras-left #ti-name #ti-name-input-field{
+	border: 1px solid #AAAAAA;
+}
+#bottom-container #extras #extras-left #ti-update-policy{
+	width: 100%;
+	float: left;
+}
+#bottom-container #extras #extras-left #ti-update-policy #ti-update-policy-input-field{
+	border: 1px solid #AAAAAA;
+}
 #bottom-container #extras #extras-right #attrib-articles{
 	width: 100%;
 	float: left;

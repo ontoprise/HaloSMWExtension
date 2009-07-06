@@ -8,7 +8,7 @@
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'SMW_HALO_VERSION' ) ) die;
 
-define('SMW_DI_VERSION', '1.1');
+define('SMW_DI_VERSION', '1.2');
 
 global $smwgDIIP, $wgHooks; 
 $smwgDIIP = $IP . '/extensions/DataImport';
@@ -27,6 +27,7 @@ function enableDataImportExtension() {
 	//the Data Import Extension
 	$smwgEnableDataImportExtension = true;
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
+	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
 	
 	//require the materialize parser function
 	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
@@ -57,8 +58,12 @@ function smwfDISetupExtension() {
 	$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
 	
 	smwfDIInitMessages();
+	
+	
+	
+	//also registers TermImport namespace
 	WebServiceManager::registerWWSNamespaces();
-
+	
 	// add some AJAX calls
 	$action = $wgRequest->getVal('action');
 	if ($action == 'ajax') {
@@ -77,12 +82,12 @@ function smwfDISetupExtension() {
 				
 	} else { // otherwise register special pages
 		WebServiceManager::initWikiWebServiceExtension();
+		TermImportManager::initTermImportFramework();
 		
 		$wgAutoloadClasses['SMWTermImportSpecial'] = $smwgDIIP . '/specials/TermImport/SMW_TermImportSpecial.php';
 		$wgSpecialPages['TermImport'] = array('SMWTermImportSpecial');
 		$wgSpecialPageGroups['TermImport'] = 'di_group';
-		//todo:add to proper group
-
+		
 		$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositorySpecial.php';
 		$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceRepositorySpecial');
 		$wgSpecialPageGroups['WebServiceRepository'] = 'di_group';
@@ -105,6 +110,7 @@ function smwfDISetupExtension() {
 	//load the Gardening Bots
 	
 	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
+	require_once("$smwgDIIP/specials/TermImport/SMW_TermImportUpdateBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 	
@@ -150,7 +156,7 @@ function smwfDIInitContentLanguage($langcode) {
 	if (file_exists($smwgDIIP . '/languages/'. $smwContLangClass . '.php')) {
 		include_once( $smwgDIIP . '/languages/'. $smwContLangClass . '.php' );
 	}
-
+	
 	// fallback if language not supported
 	if ( !class_exists($smwContLangClass)) {
 		include_once($smwgDIIP . '/languages/SMW_DILanguageEn.php');
@@ -165,7 +171,7 @@ function smwfDIInitContentLanguage($langcode) {
 function smwfDIInitUserMessages() {
 	global $wgMessageCache, $smwgDIContLang, $wgLanguageCode;
 	smwfDIInitContentLanguage($wgLanguageCode);
-
+	
 	global $smwgDIIP, $smwgDILang;
 	if (!empty($smwgDILang)) { return; }
 	global $wgMessageCache, $wgLang;

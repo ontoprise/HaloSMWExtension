@@ -415,6 +415,9 @@ TermImportPage.prototype = {
 			$('extras-bottom').style.display = "inline";
 			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
 				"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";
+			
+			$('extras-bottom').innerHTML += "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to save term import</b>"+
+			"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";;
 		}
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -806,7 +809,27 @@ TermImportPage.prototype = {
 	 * Do the import!
 	 */
 	importItNow: function(e, node, tlID, dalID){
-				
+		var result = termImportPage.getImportCredentials(e, node, tlID, dalID);
+		if(result == null){
+			return;
+		} else {
+			var dataSource = result[0];  
+			var importSetName= result[1]; 
+			var inputPolicy = result[2]; 
+			var mappingPage = result[3]; 
+			var conflictPol = result[4];
+			//var termImportName = result[5];
+			//var updatePolicy = result[6];
+			//todo error handling
+			var termImportName = $("ti-name-input-field").value;
+			var updatePolicy = $("ti-update-policy-input-field").value;
+			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
+			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy]
+			                                    , this.importItNowCallback.bind(this, tlID, dalID));
+		}
+	},
+	
+	getImportCredentials: function(e, node, tlID, dalID){
 		//DataSource
 		try {
 			var source = document.getElementsByName("source");
@@ -827,7 +850,6 @@ TermImportPage.prototype = {
 								'(2) Right click and select New->Boolean; (3) Enter "signed.applets.codebase_principal_support" ' +
 								'(without the quotes) as a new preference name; (4) Click OK and try loading the file again.');
 	    				return;
-						
 					}
 				}
 				sourcearray[i] = document.getElementById(source[i].id).value;
@@ -931,7 +953,14 @@ TermImportPage.prototype = {
 			}
 			return;
 		}
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, inputPolicy, mappingPage, conflictPol, 1], this.importItNowCallback.bind(this, tlID, dalID));				
+		
+		var result = new Array();
+		result[0] = dataSource;  
+		result[1] = importSetName; 
+		result[2] = inputPolicy; 
+		result[3] = mappingPage; 
+		result[4] = conflictPol;
+		return result;
 	},
 	importItNowCallback: function(tlID, dalID, request){
 		var message= '';

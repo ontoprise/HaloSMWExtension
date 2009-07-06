@@ -40,6 +40,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_viewMappingPage' => 'Anzeigen',
 	'smw_ti_editMappingPage' => 'Editieren',
 	'smw_ti_conflictpolicy' => 'Bitte definiere eine Conflict Policy. Diese definiert, was passiert wenn ein Artikel importiert werden soll, der bereits existiert:',
+	'smw_ti_ti_name' => 'Bitte geben Sie einen Namen für diesen Term Import an. Ein Artikel mit diesem Namen wird im Namensraum TermImport erstellt. Dieser wird alle Informationen, die Sie hier angeben enthalten:',
+	'smw_ti_update_policy' => 'Bitte geben Sie eine Update Policy in Minuten an. Falls der Term Import nie wiederholt werden soll geben Sie bitte eine "0" oder nichts ein.',
 	'smw_ti_nomappingpage' => 'Der angegebene Artikel, der die Mapping Policy enthalten soll, existiert nicht.',
 
 	'smw_ti_succ_connected' => 'Erfolgreich mit "$1" verbunden.',
@@ -237,16 +239,25 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_copytoclipboard' => 'In Zwischenablage kopieren',
 	
 	'smw_wwsm_update_msg' => 'Die Quelle der letzten Materialisierung wurde geändert.',
+	
+	'smw_termimportbot' => 'Begriffe aus einem Vokabular importieren',
+	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren der Begriffe eines Vokabulars.',
+	'smw_termimportupdatebot' => 'Update Definierte Term Imports aktualisieren.',
+	'smw_gard_termimportupdatebothelp' => 'Startet den Bot zum aktualisieren von definierten Term Imports',
 	);
 
 	protected $smwDINamespaces = array(
-	SMW_NS_WEB_SERVICE       => 'WebService',
-	SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk'
+		SMW_NS_WEB_SERVICE       => 'WebService',
+		SMW_NS_WEB_SERVICE_TALK  => 'WebService_talk',
+		SMW_NS_TERM_IMPORT => 'TermImport',
+		SMW_NS_TERM_IMPORT_TALK => 'TermImport_talk',
 	);
 
 	protected $smwDINamespaceAliases = array(
-	'WebService'       => SMW_NS_WEB_SERVICE,
-	'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK 
+		'WebService'       => SMW_NS_WEB_SERVICE,
+		'WebService_talk'  => SMW_NS_WEB_SERVICE_TALK,
+	'TermImport'       => SMW_NS_TERM_IMPORT,
+		'TermImport_talk'  => SMW_NS_TERM_IMPORT_TALK 
 	);
 
 }
