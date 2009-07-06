@@ -72,6 +72,14 @@ $haclgEnableTitleCheck = true;
 $haclgOpenWikiAccess = true;
 
 ###
+# true
+#    If this value is <true>, semantic properties can be protected.  
+# false
+#    If it is <false>, semantic properties are not protected even if they have 
+#	 security descriptors.  
+$haclgProtectProperties = true;
+
+###
 # By design several databases can be connected to HaloACL. (However, in the first
 # version there is only an implementation for MySQL.) With this variable you can
 # specify which store will actually be used.
@@ -79,6 +87,16 @@ $haclgOpenWikiAccess = true;
 # - HACL_STORE_SQL
 ##
 $haclgBaseStore = HACL_STORE_SQL;
+
+###
+# This array contains the names of all namespaces that can not be protected by
+# HaloACL. This bears the risk that users can block all articles of a namespace 
+# if it has no security descriptor yet. 
+# On the other hand, if each namespace would have a security descriptor, then
+# all authorized users for that namespace will be able to access all articles
+# in that namespace, even if security descriptors for individual articles define
+# another set authorized users.
+$haclgUnprotectableNamespaces = array('Main');
 
 # load global functions
 require_once('HACL_GlobalFunctions.php');

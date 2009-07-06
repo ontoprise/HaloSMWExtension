@@ -938,7 +938,8 @@ class HACLParserFunctions  {
 	 *  - Namespace must be ACL
 	 *	- must have managers (users or groups)
 	 *  - must have inline or predefined rights 
-	 *   
+	 *  - a namespace can only be protected if it is not member of $haclgUnprotectableNamespaces
+	 *  
 	 * Whitelist:
 	 *  - must have a list of pages
 	 * 
@@ -1064,7 +1065,21 @@ class HACLParserFunctions  {
 			}
 			
 		}
-		
+
+		// a namespace can only be protected if it is not member of 
+		// $haclgUnprotectableNamespaces
+		global $haclgUnprotectableNamespaces;
+		if ($isSD) {
+			$sdName = self::$mInstance->mTitle->getFullText();
+			list($pe, $peType) = HACLSecurityDescriptor::nameOfPE($sdName);
+			if ($peType == HACLSecurityDescriptor::PET_NAMESPACE) {
+				if (in_array($pe, $haclgUnprotectableNamespaces)) {
+					// This namespace can not be protected
+					$msg[] = wfMsgForContent('hacl_unprotectable_namespace');
+				}
+			}
+		}
+
 		if (count($msg) == 0 && !$this->mDefinitionValid) {
 			$msg[] = wfMsgForContent('hacl_errors_in_definition');
 		}

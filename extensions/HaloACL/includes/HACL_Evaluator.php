@@ -152,6 +152,15 @@ class HACLEvaluator {
 			return $r;
 		}
 		
+		// Check if the article contains protected properties that avert
+		// editing the article
+		$allowed = self::checkProperties($title, $userID, $actionID);
+		if (!$allowed) {
+			haclfRestoreTitlePatch($etc);
+			$result = false;
+			return false;
+		}
+		
 		// Check if there is a security descriptor for the article.
 		$hasSD = HACLSecurityDescriptor::getSDForPE($articleID, HACLSecurityDescriptor::PET_PAGE) !== false;
 		
@@ -234,7 +243,7 @@ class HACLEvaluator {
 	public static function hasRight($titleID, $type, $userID, $actionID) {
 		// retrieve all appropriate rights from the database
 		$rightIDs = HACLStorage::getDatabase()->getRights($titleID, $type, $actionID);
-				
+		
 		// Check for all rights, if they are granted for the given user
 		foreach ($rightIDs as $r) {
 			$right = HACLRight::newFromID($r);
@@ -247,6 +256,39 @@ class HACLEvaluator {
 		
 	}
 
+	/**
+	 * Checks, if the given user has the right to perform the given action on
+	 * the given proptery.
+	 *
+	 * @param mixed(Title|int) $propertyTitle
+	 * 		ID or title of the property whose rights are evaluated
+	 * @param int $userID
+	 * 		ID of the user who wants to perform an action
+	 * @param int $actionID
+	 * 		The action, the user wants to perform. One of the constant defined
+	 * 		in HACLRight: READ, FORMEDIT, EDIT
+	 * @return bool
+	 *		<true>, if the user has the right to perform the action
+	 * 		<false>, otherwise
+	 */
+	public static function hasPropertyRight($propertyTitle, $userID, $actionID) {
+		if ($propertyTitle instanceof Title) {
+			$propertyTitle = $propertyTitle->getArticleID();
+		}
+		
+		$hasSD = HACLSecurityDescriptor::getSDForPE($propertyTitle, HACLSecurityDescriptor::PET_PROPERTY) !== false;
+			
+		if (!$hasSD) {
+			global $haclgOpenWikiAccess;
+			// Properties with no SD are not protected if $haclgOpenWikiAccess is
+			// true. Otherwise access is denied
+			return $haclgOpenWikiAccess;
+		}
+		return self::hasRight($propertyTitle, 
+							  HACLSecurityDescriptor::PET_PROPERTY,
+		                      $userID, HACLRight::READ);
+		
+	}
 		
 	//--- Private methods ---
 	
@@ -474,5 +516,72 @@ class HACLEvaluator {
 			return array(true, true);
 		}
 		return array(false, true);
+	}
+	
+	/**
+	 * This method checks if a user wants to edit an article with protected 
+	 * properties. 
+	 *
+	 * @param Title $t
+	 * 		The title.
+	 * @param int $userID
+	 * 		ID of the user.
+	 * @param int $actionID
+	 * 		ID of the action. The actions FORMEDIT, WYSIWYG, EDIT, ANNOTATE, 
+	 *      CREATE, MOVE and DELETE are relevant for managing an ACL object.
+	 * 
+	 * @return bool
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to perform the action
+	 * 			<false>, otherwise
+	 */
+	private static function checkProperties(Title $t, $userID, $actionID) {
+		global $haclgProtectProperties;
+		if (!$haclgProtectProperties) {
+			// Properties are not protected.
+			return true;
+		}
+		
+		// Articles with protected properties are protected if an unauthorized
+		// user wants to edit it
+		if ($actionID != HACLRight::WYSIWYG &&
+			$actionID != HACLRight::EDIT &&
+			$actionID != HACLRight::ANNOTATE) {
+
+			global $wgRequest;
+			$a = @$wgRequest->data['action'];
+			if (isset($a)) {
+				// Some web request are translated to other actions before they
+				// are passed to the userCan hook. E.g. action=history is passed
+				// as action=read.
+				// Articles with protected properties can be viewed, because the
+				// property values are replaced by dummy text but showing the wikitext
+				// (e.g. in the history) must be prohibited.
+				
+				// Define exceptions for actions that display only rendered text
+				static $actionExceptions = array("purge","render","raw");
+				if (in_array($a,$actionExceptions)) {
+					return true;
+				}
+				
+			} else {
+				return true;
+			}	
+		}
+		// Get all properties of the page
+		$semdata = smwfGetStore()->getSemanticData($t);
+		$props = $semdata->getProperties();
+		foreach ($props as $p) {
+			if (!$p->isShown()) {
+				// Ignore invisible(internal) properties
+				continue;
+			}
+			// Check if a property is protected
+			$t = $p->getWikiPageValue()->getTitle();
+			if (!self::hasPropertyRight($t, $userID, $actionID)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

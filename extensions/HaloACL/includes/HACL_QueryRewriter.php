@@ -161,8 +161,7 @@ class  HACLQueryRewriter  {
 				if ($wpv) {
 					$id = $wpv->getTitle()->getArticleID();
 					global $wgUser;
-					$allowed = HACLEvaluator::hasRight($id, 
-													   HACLSecurityDescriptor::PET_PROPERTY,
+					$allowed = HACLEvaluator::hasPropertyRight($id, 
 					                                   $wgUser->getId(), HACLRight::READ);
 					if ($allowed) {
 						// Access to property is allowed => check for further
@@ -202,8 +201,7 @@ class  HACLQueryRewriter  {
 				if ($wpv) {
 					$id = $wpv->getTitle()->getArticleID();
 					global $wgUser;
-					$allowed = HACLEvaluator::hasRight($id, 
-													   HACLSecurityDescriptor::PET_PROPERTY,
+					$allowed = HACLEvaluator::hasPropertyRight($id, 
 					                                   $wgUser->getId(), HACLRight::READ);
 					if (!$allowed) {			
 						// Invalid print request => remove it   
@@ -434,8 +432,7 @@ class  HACLQueryRewriter  {
 					haclfRestoreTitlePatch($etc);
 					$id = $prop->getArticleID();
 					global $wgUser;
-					$allowed = HACLEvaluator::hasRight($id, 
-													   HACLSecurityDescriptor::PET_PROPERTY,
+					$allowed = HACLEvaluator::hasPropertyRight($id, 
 					                                   $wgUser->getId(), HACLRight::READ);
 				}
 			}

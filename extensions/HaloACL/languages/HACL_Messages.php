@@ -70,7 +70,8 @@ $messages['en'] = array(
 	'hacl_registered_users'			=> 'registered users',
 	'hacl_acl_element_not_in_db'	=> 'There is no entry in the ACL database for this article. Presumably it was deleted and restored. Please store it and all articles which use it again.',
 	'hacl_whitelist_mismatch'		=> 'The whitelist in this article contains articles that do not exist. Please remove them and save the whitelist again.',
-
+	'hacl_unprotectable_namespace'  => 'This namespace can not be protected. Please ask your wiki administrator.',
+	
 	/* Messages for semantic protection (properties etc.) */
 
 	'hacl_sp_query_modified'		=> "- The query was modified because it contains protected properties.\n",
@@ -202,6 +203,7 @@ $messages['de'] = array(
 	'hacl_registered_users'			=> 'registrierte Benutzer',
 	'hacl_acl_element_not_in_db'	=> 'Zu diesem Artikel gibt es keinen Eintrag in der Rechtedatenbank. Vermutlich wurde er gelöscht und wiederhergestellt. Bitte speichern Sie ihn und alle Artikel die ihn verwenden neu.',
 	'hacl_whitelist_mismatch'		=> 'Die "Weiße Liste" in diesem Artikel enthält Artikel, die nicht existieren. Bitte entfernen Sie diese und speichern Sie die "Weiße Liste" erneut.' ,
+	'hacl_unprotectable_namespace'  => 'Dieser Namensraum kann nicht geschützt werden. Bitte fragen Sie Ihren Wikiadministrator.',
 
 	/* Messages for semantic protection (properties etc.) */
 

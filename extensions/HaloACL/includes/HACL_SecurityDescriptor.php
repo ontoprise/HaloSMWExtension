@@ -164,6 +164,9 @@ class  HACLSecurityDescriptor  {
 			// $peName is a namespace => get its ID
 			global $wgContLang;
 			$idx = $wgContLang->getNsIndex($peName);
+			if ($idx == false) {
+				return (strtolower($peName) == 'main') ? 0 : false;
+			}
 			return $idx;
 		} else if ($peType === self::PET_RIGHT) {
 			return false;

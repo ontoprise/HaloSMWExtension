@@ -102,9 +102,13 @@ function haclfSetupExtension() {
 	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
 	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
 	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
-	$wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
-	$wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
-	$wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
+	
+	global $haclgProtectProperties;
+	if ($haclgProtectProperties) {
+		$wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
+		$wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
+		$wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
+	}
 	
 	
 #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
