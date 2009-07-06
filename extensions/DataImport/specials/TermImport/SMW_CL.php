@@ -15,13 +15,13 @@ class CL {
 	function __construct() {
 	}
 
-public function execute() {
+	public function execute() {
 		global $smwgDIIP, $wgOut, $wgRequest, $wgScriptPath;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
-		
+
 		$wil = new WIL();
 		$tlModules = $wil->getTLModules();
-		
+
 		$t = Title::newFromText('super123');
 		if( !$t->exists() ){
 			$msg = wfMsg('smw_ti_mappingPageNotExist');
@@ -34,18 +34,18 @@ public function execute() {
 						"<div id=\"tldesc\">" . "Info: " . "</div></div>" .
 						"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
 					"</div>";
-					
+			
 		$html .= "<div><div id=\"dal-content\">DAM:" .
 				 	"<div id=\"dalid\">" . "<div class=\"myinfo\">" . wfMsg('smw_ti_firstselectTLM') . "</div>" . "</div>" .
 				 	"<div id=\"daldesc\">" . "</div></div>" .
 					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
 				 "</div>";
-		
-		$html .= "<div id=\"source-spec\">" . 
+
+		$html .= "<div id=\"source-spec\">" .
 				"<table height=\"200px\"><tr><td valign=\"middle\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
 				"</div>";
 		$html .= "</div>"; //top-container
-		
+
 		$html .= "<div id=\"bottom-container\">" .
 					"<div id=\"extras\">" .
 							"<div id=\"extras-left\">" .
@@ -79,7 +79,14 @@ public function execute() {
 										"<option>preserve current versions</option>" .
 									"</select>" .
 								"</div>" . //conflict
-								
+								"<div id=\"ti-name\">" .
+									"<br><br>".wfMsg('smw_ti_ti_name')."&nbsp;" .
+									"<input id=\"ti-name-input-field\"/>" .
+								"</div>" . //ti name
+								"<div id=\"ti-update-policy\">" .
+									"<br><br>".wfMsg('smw_ti_update_policy')."&nbsp;" .
+									"<input id=\"ti-update-policy-input-field\"/>" .
+								"</div>" . //ti name
 							"</div>" . //extras-left
 							"<div id=\"extras-right\">" .
 								"<div id=\"attrib-articles\">" .
@@ -89,16 +96,16 @@ public function execute() {
 							"</div>" . //extras-right
 					"</div>". //extras
 					"<div id=\"extras-bottom\" align=\"center\"></div>";
-		
+
 		$html .= "</div>"; //bottom-container
-		
-		$wgOut->addHTML($html);		
+
+		$wgOut->addHTML($html);
 	}
-		
+
 	/*
-	 * 
+	 *
 	 * lists all available TL modules
-	 * 
+	 *
 	 */
 	public function getTLIDs( $tlModules ){
 		global $smwgDIIP;
@@ -127,41 +134,42 @@ public function execute() {
  * @param $source_input an XML structure of the given source inputs
  * @param $givenImportSetName the given import set name (String)
  * @param $givenInputPol an XML structure with the given input policy
- * @param $mappingPage The name of the mapping article 
- * @param $givenConflictPol Boolean: overwrite=true, preserve=false 
+ * @param $mappingPage The name of the mapping article
+ * @param $givenConflictPol Boolean: overwrite=true, preserve=false
  * @param $runBot run the bot???
- * 
+ *
  * @return $result an XML structure
  */
-function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName, 
-							$givenInputPol, $mappingPage, $givenConflictPol = true, $runBot) {
-	
+function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
+$givenInputPol, $mappingPage, $givenConflictPol = true,
+$runBot, $termImportName = null, $updatePolicy = "") {
+
 	global $smwgDIIP, $wgOut;
 	require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
 	require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 	$wil = new WIL();
-	$tlModules = $wil->getTLModules(); 
-	
+	$tlModules = $wil->getTLModules();
+
 	//TODO Errorhandling!!!
-	
+
 	if(!$tlID) {
 		// Error,keine TLID angegeben!!!
 	}
-	
+
 	$res = $wil->connectTL( $tlID , $tlModules );
-	
+
 	$dalModules = $wil->getDALModules();
 
 	//return if no dalID is given
 	if ( !$dalID ) {
 		$tlModules =  str_replace( "<?xml version=\"1.0\"?>", "", $tlModules );
 		$dalModules =  str_replace( "<?xml version=\"1.0\"?>", "", $dalModules );
-		return '<result>' . $tlModules . $dalModules . '</result>';	
+		return '<result>' . $tlModules . $dalModules . '</result>';
 	}
-	
+
 	$res = $wil->connectDAL($dalID, $dalModules);
 	$source = $wil->getSourceSpecification();
-	
+
 	// return if no source is given
 	if ( (!$source_input || $source_input == '') && $res ) {
 		$tlModules =  str_replace( "<?xml version=\"1.0\"?>", "", $tlModules );
@@ -169,33 +177,33 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		$source =  str_replace( "<?xml version=\"1.0\"?>", "", $source );
 		return '<result>' . $tlModules . $dalModules . $source . '</result>';
 	}
-	
+
 	if(isset($source_input)){
-			$source_xml = new SimpleXMLElement($source_input);
-			$source_xml_alt = new SimpleXMLElement($source);
+		$source_xml = new SimpleXMLElement($source_input);
+		$source_xml_alt = new SimpleXMLElement($source);
 			
-			foreach ($source_xml->children() as $second_gen) {
-				$tag = $second_gen->getName();
-				$value = (string) $second_gen;
-				$result = $source_xml_alt->xpath($tag);
-				
-				//Change the old tag
-				$source_xml_alt->$tag = $value;
-			}
-			//get the xml-string
-			$source_result = $source_xml_alt->asXML();
+		foreach ($source_xml->children() as $second_gen) {
+			$tag = $second_gen->getName();
+			$value = (string) $second_gen;
+			$result = $source_xml_alt->xpath($tag);
+
+			//Change the old tag
+			$source_xml_alt->$tag = $value;
+		}
+		//get the xml-string
+		$source_result = $source_xml_alt->asXML();
 	}
-		
-	$importSets = $wil->getImportSets($source_result);	
+
+	$importSets = $wil->getImportSets($source_result);
 	$p = new XMLParser($importSets);
 	$result = $p->parse();
 	if ($result == TRUE && $givenImportSetName && $givenImportSetName != '' && $givenImportSetName != 'ALL') {
-			$p->removeAllParentElements('NAME', $givenImportSetName);
+		$p->removeAllParentElements('NAME', $givenImportSetName);
 	}
 	$importSets = $p->serialize();
-	
+
 	$properties = $wil->getProperties($source_result, $importSets);
-	
+
 	if (!$givenInputPol || $givenInputPol == '') {
 		// no input policy defined, create an empty one for getting the term-information
 		$givenInputPol =
@@ -211,12 +219,13 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 				'</InputPolicy>'."\n";
 	}
 	$terms = $wil->getTermList($source_result, $importSets, $givenInputPol);
-		
+
 	if ( $runBot == 0 ) {
 		// prepare XML strings for return...
-		$xmlResult = '<result>' . $tlModules . $dalModules . $source_result . $importSets . $properties . $terms . '</result>'; 
+		$xmlResult = '<result>' . $tlModules . $dalModules . $source_result . $importSets . $properties . $terms . '</result>';
 		$xmlResult = '<?xml version="1.0"?>'.
-					str_replace('<?xml version="1.0"?>', "", $xmlResult);	
+		str_replace('<?xml version="1.0"?>', "", $xmlResult);
+
 		return $xmlResult;
 	}
 	elseif ( $runBot == 1 ){
@@ -248,7 +257,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 			'<MappingPolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".
    	 		'	<page>' . $mappingPage . '</page>'."\n".
 			'</MappingPolicy >';
-		
+
 		if($givenConflictPol && $givenConflictPol != '') {
 			$conflictPolicy =
 				'<?xml version="1.0"?>'."\n".
@@ -258,10 +267,24 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		}
 		else {
 			//Error!no conflict policy given... is it possible with <select>?!?
-		}		
+		}
+
+		//todo: error handling
+		if($updatePolicy == 0 || $updatePolicy == ""){
+			$updatePolicy = "<once/>";
+		} else {
+			$updatePolicy = "<maxAge value=\"".$updatePolicy."\"/>";
+		}
+		$updatePolicy = '<?xml version="1.0"?>'."\n".
+			'<UpdatePolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".$updatePolicy
+			.'</UpdatePolicy>';
 		
+
+		smwf_ti_createTIArticle($moduleConfig, $source_result, $mappingPolicy, $conflictPolicy,
+		$givenInputPol, $importSets, $termImportName, $updatePolicy);
+
 		$terms = $wil->importTerms($moduleConfig, $source_result, $importSets, $givenInputPol,
-					$mappingPolicy, $conflictPolicy);
+		$mappingPolicy, $conflictPolicy, $termImportName);
 		if ( $terms == false) {
 			//error while running bot
 		}
@@ -274,4 +297,56 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 	}
 	return null;
 }
+
+function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $conflictConfig,
+$inputConfig, $importSetConfig, $termImportName, $updatePolicy) {
+	$moduleConfig = str_replace('<?xml version="1.0"?>',"",$moduleConfig);
+	$moduleConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$moduleConfig);
+	$moduleConfig = trim($moduleConfig);
+
+	$sourceConfig = str_replace('<?xml version="1.0"?>',"",$sourceConfig);
+	$sourceConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$sourceConfig);
+	$sourceConfig = trim($sourceConfig);
+
+	$mappingConfig = str_replace('<?xml version="1.0"?>',"",$mappingConfig);
+	$mappingConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$mappingConfig);
+	$mappingConfig = trim($mappingConfig);
+
+	$conflictConfig = str_replace('<?xml version="1.0"?>',"",$conflictConfig);
+	$conflictConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$conflictConfig);
+	$conflictConfig = trim($conflictConfig);
+
+	$inputConfig = str_replace('<?xml version="1.0"?>',"",$inputConfig);
+	$inputConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$inputConfig);
+	$inputConfig = trim($inputConfig);
+
+	$updatePolicy = str_replace('<?xml version="1.0"?>',"",$updatePolicy);
+	$updatePolicy = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$updatePolicy);
+	$updatePolicy = trim($updatePolicy);
+	
+	$importSetConfig = str_replace('<?xml version="1.0"?>',"",$importSetConfig);
+	$importSetConfig = str_replace(' XMLNS="http://www.ontoprise.de/smwplus#"',"",$importSetConfig);
+	$importSetConfig = str_replace('IMPORTSETS>',"ImportSets>",$importSetConfig);
+	$importSetConfig = str_replace('IMPORTSET>',"ImportSet>",$importSetConfig);
+	$importSetConfig = str_replace('NAME>',"Name>",$importSetConfig);
+	$importSetConfig = trim($importSetConfig);
+
+	$tiConfig = "<ImportSettings>".$moduleConfig.$sourceConfig.
+	$mappingConfig.$conflictConfig.$inputConfig.$importSetConfig.$updatePolicy
+	."</ImportSettings>";
+
+	//pretty print
+	$xml = explode("\n", preg_replace('/>\s*</', ">\n<", $tiConfig));
+	$tiConfig = implode("\n", $xml);
+
+	$articleContent = $tiConfig;
+
+	$articleContent .= "\n=== Runs of this Term Import ===\n";
+	$articleContent .= "{{#ask: [[belongsToTermImport::TermImport:".$termImportName."]]\n| format=ul}}";
+	$articleContent .= "\n[[Category:TermImport]]";
+	smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');
+
+}
+
+
 ?>

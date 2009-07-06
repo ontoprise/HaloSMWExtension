@@ -268,6 +268,6 @@ interface IWIL {
 	 *		</ReturnValue >
      */
 	public function importTerms($moduleConfig, $dataSource, $importSet, 
-								$inputPolicy, $mappingPolicy, $conflictPolicy);
+								$inputPolicy, $mappingPolicy, $conflictPolicy, $termImportName);
 }	                            
 ?>

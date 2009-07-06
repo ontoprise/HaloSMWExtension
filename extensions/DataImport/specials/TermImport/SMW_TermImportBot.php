@@ -29,6 +29,10 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
  */
 class TermImportBot extends GardeningBot {
 
+	private $ignoredArticles = array();
+	private $updatedArticles = array();
+	private $addedArticles = array();
+	private $dateString = null;
 
 	function __construct() {
 		parent::GardeningBot("smw_termimportbot");
@@ -50,11 +54,13 @@ class TermImportBot extends GardeningBot {
 	 * Returns an array of parameter objects
 	 */
 	public function createParameters() {
-
 		$params = array();
-
 		return $params;
 	}
+	
+	public function isVisible() {
+ 		return false;
+ 	}
 
 	/**
 	 * This method is called by the bot framework. $paramArray contains the
@@ -63,14 +69,23 @@ class TermImportBot extends GardeningBot {
 	public function run($paramArray, $isAsync, $delay) {
 		echo "...started!\n";
 		$result = "";
-
+		
 		$filename = $paramArray["settings"];
+		$termImportName = $paramArray["termImportName"];
 		$settings = file_get_contents($filename);
 		//unlink($filename);
-
+		
 		$result = $this->importTerms($settings);
-
-		return $result;
+		
+		$result = $this->createTermImportResultContent($result, $termImportName);
+		
+		$timeInTitle = $this->getDateString();
+		
+		smwf_om_EditArticle("TermImport:".$termImportName."/".$timeInTitle, 'TermImportBot', $result, '');
+		smwf_om_TouchArticle("TermImport:".$termImportName);
+		
+		return array("dontcare", "TermImport:".$termImportName."/".$timeInTitle);
+		
 
 	}
 
@@ -89,7 +104,6 @@ class TermImportBot extends GardeningBot {
 	 *
 	 */
 	public function importTerms($settings) {
-
 		echo "Starting to import terms...\n";
 
 		global $smwgDIIP;
@@ -131,6 +145,7 @@ class TermImportBot extends GardeningBot {
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
 
 		echo("\n get Terms");
+		
 		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
 
 		echo("\n Terms in place");
@@ -214,7 +229,7 @@ class TermImportBot extends GardeningBot {
 		$numTerms = 0;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
 			++$numTerms;
-			echo("\n".$numTerms);
+			echo("\nParsed term: ".$numTerms);
 		}
 		echo "Number of terms: $numTerms \n";
 
@@ -288,6 +303,7 @@ class TermImportBot extends GardeningBot {
 			if (!$overwriteExistingArticle) {
 				echo wfMsg('smw_ti_articleNotUpdated', $title)."\n";
 				$log->addGardeningIssueAboutArticle($this->id, SMW_GARDISSUE_UPDATE_SKIPPED, $title);
+				$this->ignoredArticles[] = $title;
 				return wfMsg('smw_ti_articleNotUpdated', $title);
 			}
 			$updated = true;
@@ -314,7 +330,10 @@ class TermImportBot extends GardeningBot {
 		$updated == true ? SMW_GARDISSUE_UPDATED_ARTICLE
 		: SMW_GARDISSUE_ADDED_ARTICLE,
 		$title);
-
+		
+		$updated == true ? $this->updatedArticles[] = $title
+			: $this->addedArticles[] = $title;
+		
 		return true;
 	}
 
@@ -456,8 +475,6 @@ class TermImportBot extends GardeningBot {
 		$namespace = '';
 
 		//edit! referenzen, wenn nicht null. sonst direkter zugriff
-		$temp = print_r(&$term, true);
-		//$temp();
 		$isCat     = &$term['ISCATEGORY'];
 		$isProp    = &$term['ISPROPERTY'];
 		$cat       = &$term['ISOFCATEGORY'];
@@ -488,7 +505,63 @@ class TermImportBot extends GardeningBot {
 		$result = array($anno, $namespace);
 
 		return $result;
-
+	}
+	
+	private function createTermImportResultContent($termImportResult, $termImportName){
+		if($termImportResult != wfMsg('smw_ti_import_successful')){
+			$result = $termImportResult;
+			return $result;
+		}
+	
+		$result = "=== Summary ===";
+		$result .= "\nRun of: [[belongsToTermImport::TermImport:".$termImportName."|"
+		.$termImportName."]]";
+		$result .= "\n\nImport date: [[hasImportDate::";
+		$result .= $this->getDateString()."]]";
+	
+		$result .= "=== Added terms ===\n";
+		$result .= $this->createTermImportResultList(
+			$this->addedArticles, 'hasAddedTermDuringImport');
+		
+		$result .= "\n=== Updated terms ===\n";
+		$result .= $this->createTermImportResultList(
+				$this->updatedArticles, 'hasUpdatedTermDuringImport');
+		
+		$result .= "\n=== Ignored terms ===\n";
+		$result .= $this->createTermImportResultList(
+		$this->ignoredArticles, 'hasIgnoredTermDuringImport');
+		
+		$result .= "\n[[Category:TermImportRun]]";
+		
+		return $result;
+	}
+	
+	private function createTermImportResultList($list, $propertyName){
+		$first = true;
+		foreach($list as $articleName){
+			if(!$first){
+				$result .= ", ";
+			} else {
+				$first = false;
+			}
+			$result .="[[".$propertyName."::".$articleName."]]";
+		}
+		return $result;
+	}
+	
+	private function getDateString(){
+		if($this->dateString == null){
+			$date = getdate();
+			$mon = $date["mon"]<10 ? "0".$date["mon"] : $date["mon"];
+			$mday = $date["mday"]<10 ? "0".$date["mday"] : $date["mday"];
+			$hours = $date["hours"]<10 ? "0".$date["hours"] : $date["hours"];
+			$minutes = $date["minutes"]<10 ? "0".$date["minutes"] : $date["minutes"];
+			$seconds = $date["seconds"]<10 ? "0".$date["seconds"] : $date["seconds"];
+		
+			$this->dateString = $date["year"]."/".$mon."/".$mday." "
+					.$hours.":".$minutes.":".$seconds;
+		}
+		return $this->dateString;
 	}
 
 }
@@ -564,7 +637,6 @@ class TermImportBotFilter extends GardeningIssueFilter {
 		$gic = array();
 		$gis = $gi_store->getGardeningIssues('smw_termimportbot', NULL, $gi_class, $title, SMW_GARDENINGLOG_SORTFORTITLE, NULL);
 		$gic[] = new GardeningIssueContainer($title, $gis);
-
 
 		return $gic;
 	}
