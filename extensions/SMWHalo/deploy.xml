@@ -15,7 +15,7 @@
 	</global>
 	<codefiles>
 		<file loc="extensions/SMWHalo/deploy.xml" />
-		<patch file="extensions/SMWHalo/patch.txt" />
+
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
@@ -28,6 +28,7 @@
 		<precedes ext="SemanticMediawiki" />
 
 		<new>
+			<patch file="extensions/SMWHalo/patch.txt" />
 			<require name="smwhalo"
 				file="extensions/SMWHalo/includes/SMW_Initialize.php" />
 			<function name="enableSMWHalo">
@@ -38,6 +39,7 @@
 			<script file="extensions/SMWHalo/maintenance/SMW_setup.php" />
 		</new>
 		<uninstall>
+			<patch file="extensions/SMWHalo/patch.txt" />
 			<script file="extensions/SMWHalo/maintenance/SMW_setup.php"
 				params="--delete" />
 		</uninstall>
