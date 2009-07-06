@@ -361,13 +361,12 @@
     <title>Template:RMListOuterTable</title>
     <id>510</id>
     <revision>
-      <id>3848</id>
-      <timestamp>2009-06-09T16:58:48Z</timestamp>
+      <id>5460</id>
+      <timestamp>2009-07-06T09:48:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: &lt;noinclude&gt;{{Template |PAGENAME=Template:RMListOuterTable |Has author=WikiSysop |part of=SMWplus Basic Ontology Section,  |rationale=Builds the outer table |long description=__NOTITLE__ }}...</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMListOuterTable
 |Has author=WikiSysop
@@ -399,7 +398,7 @@
 | 
 {| style=&quot;width:100%;&quot;
 |-
-| Manual refresh list: &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; || align=&quot;right&quot; | {{#rmf: {{FULLPAGENAME}} }}
+| Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; || align=&quot;right&quot; | {{#rmf: {{FULLPAGENAME}} }}
 |}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
@@ -409,8 +408,8 @@
     <title>Template:RMMedia</title>
     <id>502</id>
     <revision>
-      <id>3843</id>
-      <timestamp>2009-06-09T16:56:00Z</timestamp>
+      <id>5457</id>
+      <timestamp>2009-06-24T11:18:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
