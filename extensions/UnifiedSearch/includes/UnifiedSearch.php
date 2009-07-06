@@ -17,7 +17,7 @@ define('US_EXACTMATCH', 2);
 
 $wgExtensionCredits['other'][] = array(
         'name' => 'Enhanced Retrieval extension v'.US_SEARCH_EXTENSION_VERSION,
-        'author' => 'Kai Kï¿½hn',
+        'author' => 'Kai Kühn',
         'url' => 'http://sourceforge.net/projects/halo-extension/',
         'description' => 'Provides access to a Lucene backend.',
 );
@@ -29,10 +29,7 @@ $wgAjaxExportList[] = 'smwf_ca_GetHTMLBody';
 
 $wgExtensionFunctions[] = 'wfUSSetupExtension';
 
-//synsets
-$wgHooks['smwInitializeTables'][] = 'smwfSynsetsInitializeTables';
-global $IP;
-require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+
 
 // enable path search if set in LocalSettings.php
 if (isset($wgUSPathSearch) && $wgUSPathSearch) {
@@ -56,7 +53,7 @@ function wfUSAddHeader(& $out) {
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
                     if (!defined("SMW_HALO_VERSION")) {
-                        $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
+                    	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
                     }
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
                     // add GreyBox
@@ -81,24 +78,24 @@ function wfUSAddHeader(& $out) {
  */
 function wfUSSetupExtension() {
 	global $wgAutoloadClasses, $wgSpecialPages, $wgScriptPath, $wgHooks, $wgSpecialPageGroups,
-	       $usgAllNamespaces;
-    if (!isset($wgAdvancedSearchHighlighting)) $wgAdvancedSearchHighlighting = true;	       
-    $wgHooks['BeforePageDisplay'][]='wfUSAddHeader';	       
+	$usgAllNamespaces;
+	if (!isset($wgAdvancedSearchHighlighting)) $wgAdvancedSearchHighlighting = true;
+	$wgHooks['BeforePageDisplay'][]='wfUSAddHeader';
 	wfUSInitUserMessages();
 	wfUSInitContentMessages();
 	$dir = 'extensions/UnifiedSearch/';
 	global $smwgHaloIP;
 	$wgAutoloadClasses['USDBHelper'] = $dir . 'storage/US_DBHelper.php';
 	$wgAutoloadClasses['USStore'] = $dir . 'storage/US_Store.php';
-    $wgAutoloadClasses['SmithWaterman'] = $dir . 'includes/SmithWaterman.php';
+	$wgAutoloadClasses['SmithWaterman'] = $dir . 'includes/SmithWaterman.php';
 	$wgAutoloadClasses['SKOSVocabulary'] = $dir . 'includes/SKOSVocabulary.php';
 	$wgAutoloadClasses['USSpecialPage'] = $dir . 'includes/UnifiedSearchSpecialPage.php';
 	$wgAutoloadClasses['UnifiedSearchResultPrinter'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchResult'] = $dir . 'includes/UnifiedSearchResultPrinter.php';
 	$wgAutoloadClasses['UnifiedSearchStatistics'] = $dir . 'includes/UnifiedSearchStatistics.php';
-    
+
 	if (file_exists($dir . 'SKOSExpander.php')) {
-	   $wgAutoloadClasses['SKOSExpander'] = $dir . 'includes/SKOSExpander.php';
+		$wgAutoloadClasses['SKOSExpander'] = $dir . 'includes/SKOSExpander.php';
 	}
 	$wgAutoloadClasses['QueryExpander'] = $dir . 'includes/QueryExpander.php';
 	$wgAutoloadClasses['LuceneSearch'] = $dir . 'MWSearch/MWSearch_body.php';
@@ -113,11 +110,11 @@ function wfUSSetupExtension() {
 	// use default namespaces unless explicitly specified
 	if (!isset($usgAllNamespaces)) {
 		$usgAllNamespaces = array(NS_MAIN => "smw_plus_instances_icon_16x16.png",
-		                          NS_CATEGORY => "smw_plus_category_icon_16x16.png", 
-		                          SMW_NS_PROPERTY => "smw_plus_property_icon_16x16.png", 
-		                          NS_TEMPLATE => "smw_plus_template_icon_16x16.png",
-		                          NS_HELP => "smw_plus_help_icon_16x16.png",
-		                          NS_IMAGE => "smw_plus_image_icon_16x16.png");
+		NS_CATEGORY => "smw_plus_category_icon_16x16.png",
+		SMW_NS_PROPERTY => "smw_plus_property_icon_16x16.png",
+		NS_TEMPLATE => "smw_plus_template_icon_16x16.png",
+		NS_HELP => "smw_plus_help_icon_16x16.png",
+		NS_IMAGE => "smw_plus_image_icon_16x16.png");
 
 		// check Multimedia namespaces from MIME-type extension and add if existing
 		if (defined("NS_AUDIO")) $usgAllNamespaces[NS_AUDIO] = "smw_plus_music_icon_16x16.png";
@@ -175,15 +172,21 @@ function wfUSInitContentMessages() {
  */
 function wfUSInitialize($onlyTables) {
 	global $usgSKOSExpansion;
-    if (!$onlyTables && isset($usgSKOSExpansion) && $usgSKOSExpansion === true) {
-    	wfUSInitializeSKOSOntology();
-    }
-    wfUSInitializeTables();
-    return true;
+	if (!$onlyTables && isset($usgSKOSExpansion) && $usgSKOSExpansion === true) {
+		wfUSInitializeSKOSOntology();
+	}
+	wfUSInitializeTables();
+	return true;
 }
 
 function wfUSInitializeTables() {
+	require_once "../storage/US_StoreSQL.php";
 	USStore::getStore()->setup(true);
+}
+
+function wfUSDeInitializeTables() {
+	require_once "../storage/US_StoreSQL.php";
+	USStore::getStore()->drop(true);
 }
 
 function wfUSInitializeSKOSOntology() {
@@ -232,7 +235,7 @@ function smwf_ca_GetHTMLBody($page) {
 	// set standard color for terms >count($color) terms.
 	$wgDefaultColor = "#00FF00";
 
-	// fetch MediaWiki page 
+	// fetch MediaWiki page
 	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
 	$opt = ParserOptions::newFromUser($wgUser);
 	$title = Title::newFromText($page);
@@ -243,7 +246,7 @@ function smwf_ca_GetHTMLBody($page) {
 	} else {
 		return "Error: Could not fetch revision";
 	}
-	
+
 	// fetch current skin
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
@@ -253,19 +256,19 @@ function smwf_ca_GetHTMLBody($page) {
 	$head .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
 	$head .= '<style type="text/css" media="screen,projection"> @import "'. $wgStylePath .'/'. $skinName .'/main.css?164";</style>';
 	$head .= '</head>';
-	
+
 	// fetch main HTML content of page
 	$htmlcontent = $out->getText();
 
-	// finally highlight search terms but leave links as they are 
+	// finally highlight search terms but leave links as they are
 	$numargs = func_num_args();
 	$arg_list = func_get_args();
 	if ($numargs > 1) {
-		for ($i = 1; $i < $numargs; $i++) {			
+		for ($i = 1; $i < $numargs; $i++) {
 			$currcolor = $color[$i-1] !== NULL ? $color[$i-1] : $wgDefaultColor;
 			$replacement_phrase = "<span style=\'background-color: ". $currcolor . ";\'>".$arg_list[$i]."</span>";
 			$htmlcontent = preg_replace("/(>|^)([^<]+)(?=<|$)/iesx", "'\\1'.str_ireplace('$arg_list[$i]',
-'$replacement_phrase', '\\2')", $htmlcontent);
+			'$replacement_phrase', '\\2')", $htmlcontent);
 		}
 	}
 
@@ -277,10 +280,23 @@ function smwf_ca_GetHTMLBody($page) {
  * Called from SMW when admin re-initializes tables
  */
 function smwfSynsetsInitializeTables() {
+
+	global $IP;
+	require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
 	$s = new Synsets();
 	$s->setup();
 
 	return true;
 }
+
+function smwfSynsetsDeInitializeTables() {
+
+    global $IP;
+    require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+    $s = new Synsets();
+    $s->drop();
+
+    return true;
+} 
 
 ?>

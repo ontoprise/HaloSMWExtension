@@ -10,50 +10,50 @@ require_once('US_Store.php');
  */
 class USStoreSQL extends USStore {
 
-	
 
-    function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
-        $result = "";
-        $db =& wfGetDB( DB_SLAVE );
-        $sql = 'page_namespace=' . NS_CATEGORY .
+
+	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
+		$result = "";
+		$db =& wfGetDB( DB_SLAVE );
+		$sql = 'page_namespace=' . NS_CATEGORY .
                ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id'.
-               USDBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+		USDBHelper::getSQLConditions($requestoptions,'page_title','page_title');
 
-        $res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')), 
+		$res = $db->select(  array($db->tableName('page'), $db->tableName('categorylinks')),
                             'page_title',
-                            $sql, 'SMW::getDirectSubCategories', USDBHelper::getSQLOptions($requestoptions,'page_title') );
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                $result[] = Title::newFromText($row->page_title, NS_CATEGORY);
-            }
-        }
-        $db->freeResult($res);
-        return $result;
-    }
+		$sql, 'SMW::getDirectSubCategories', USDBHelper::getSQLOptions($requestoptions,'page_title') );
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title, NS_CATEGORY);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 
-    function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
-        
-        $result = "";
-        $db =& wfGetDB( DB_SLAVE );
-        $smw_ids = $db->tableName('smw_ids');
-        $smw_subs2 = $db->tableName('smw_subs2');
-        $page = $db->tableName('page');
-        $sqlOptions = USDBHelper::getSQLOptionsAsString($requestoptions);
+	function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 
-        $res = $db->query('SELECT o.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
+		$result = "";
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_subs2 = $db->tableName('smw_subs2');
+		$page = $db->tableName('page');
+		$sqlOptions = USDBHelper::getSQLOptionsAsString($requestoptions);
+
+		$res = $db->query('SELECT o.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
         ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND s.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' '.$sqlOptions);
-            
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                $result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
 
-            }
-        }
-        $db->freeResult($res);
-        return $result;
-    }
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 
 	public function getPropertySubjects(array $properties, array $namespace, $requestoptions) {
 		$db =& wfGetDB( DB_SLAVE );
@@ -79,7 +79,7 @@ class USStoreSQL extends USStore {
 			$propertyIDConstraint .= ' OR r.p_id = '.$p_id;
 		}
 
-	
+
 		$titleConstraint1 = USDBHelper::getSQLConditions($requestoptions,'r.value_xsd','r.value_xsd');
 		$titleConstraint2 = USDBHelper::getSQLConditions($requestoptions,'o.smw_title','o.smw_title');
 		$query = '(SELECT s.smw_title AS title, s.smw_namespace AS ns FROM '.
@@ -111,7 +111,7 @@ class USStoreSQL extends USStore {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
 		$term = mysql_real_escape_string(strtoupper(str_replace(" ", "_", $term)));
-		
+
 		if ($ns !== NULL) {
 			$namespaceCond = " AND page_namespace = ".$ns;
 		} else {
@@ -119,10 +119,10 @@ class USStoreSQL extends USStore {
 		}
 		global $smwgUseEditDistance;
 		if (isset($smwgUseEditDistance) && $smwgUseEditDistance === true) {
-		  $res = $db->query('SELECT page_title, page_namespace, JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).') AS score FROM '.$page.
+			$res = $db->query('SELECT page_title, page_namespace, JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).') AS score FROM '.$page.
 		                      ' WHERE JAROWINKLER(UPPER(page_title), '.$db->addQuotes($term).") > 0.90 $namespaceCond ORDER BY score DESC");
 		} else {
-		  $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));	
+			$res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) = '.$db->addQuotes($term));
 		}
 		$numRows = $db->numRows($res);
 		if ($numRows > 1) {
@@ -236,30 +236,30 @@ class USStoreSQL extends USStore {
 		return $result;
 	}
 
-    public function getPageTitles($terms) {
-        $db =& wfGetDB( DB_SLAVE );
-        $page = $db->tableName('page');
-       
-        $requestoptions = new SMWRequestOptions();
-        $requestoptions->isCaseSensitive = false;
-        $requestoptions->limit = 50;
-        $requestoptions->disjunctiveStrings = true;
-        foreach($terms as $t) {
-             if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
-             $t = str_replace(" ", "_", $t);
-             $requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
-        }
-        $sql = USDBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-        $res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE TRUE '.$sql);
-        $result = array();
-        if($db->numRows( $res ) > 0) {
-            while($row = $db->fetchObject($res)) {
-                $result[] = Title::newFromText($row->page_title, $row->page_namespace);
-            }
-        }
-        $db->freeResult($res);
-        return $result;
-    }
+	public function getPageTitles($terms) {
+		$db =& wfGetDB( DB_SLAVE );
+		$page = $db->tableName('page');
+		 
+		$requestoptions = new SMWRequestOptions();
+		$requestoptions->isCaseSensitive = false;
+		$requestoptions->limit = 50;
+		$requestoptions->disjunctiveStrings = true;
+		foreach($terms as $t) {
+			if (strlen($t) < 3) continue; // do not add SKOS elements for matches with less than 3 letters .
+			$t = str_replace(" ", "_", $t);
+			$requestoptions->addStringCondition($t, SMWStringCondition::STRCOND_MID);
+		}
+		$sql = USDBHelper::getSQLConditions($requestoptions,'page_title','page_title');
+		$res = $db->query('SELECT page_title, page_namespace FROM '.$page.' WHERE TRUE '.$sql);
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
 	/**
 	 * Setups database for UnifiedSearch extension
 	 *
@@ -271,6 +271,21 @@ class USStoreSQL extends USStore {
 		$smw_searchmatch = $db->tableName('smw_searchmatches');
 		$db->query('CREATE TABLE IF NOT EXISTS '.$smw_searchmatch.' (searchterm VARCHAR(255), tries INTEGER, hits INTEGER)');
 		if ($verbose) print("..done\n");
+	}
+
+	function drop($verbose) {
+		global $wgDBtype;
+		if ($verbose) print ("Deleting all database content and tables generated by Unified Search ...\n\n");
+		$db =& wfGetDB( DB_MASTER );
+		$tables = array('smw_searchmatches');
+		foreach ($tables as $table) {
+			$name = $db->tableName($table);
+			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'USStoreSQL::drop');
+			if ($verbose) print (" ... dropped table $name.\n");
+		}
+		
+		
+		return true;
 	}
 }
 ?>

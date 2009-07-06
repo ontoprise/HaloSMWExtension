@@ -15,12 +15,12 @@ class SynsetStorageSQL implements ISynsetStorage{
 
 	private $db;
 	private $smw_synsets;
-	
+
 	public function __construct(){
 		$this->db =& wfGetDB( DB_MASTER );
 		$this->smw_synsets = $this->db->tableName('smw_synsets');
 	}
-	
+
 	/**
 	 * Setups database for Synsets
 	 *
@@ -31,6 +31,12 @@ class SynsetStorageSQL implements ISynsetStorage{
 		$this->db->query('DROP TABLE IF EXISTS '.$this->smw_synsets);
 		$this->db->query('CREATE TABLE '.$this->smw_synsets.' (term VARCHAR(255), synset_id INTEGER)');
 		if ($verbose) print("..done\n");
+	}
+
+	public function drop($verbose) {
+		if ($verbose) print ("Dropping tables for Synsets...\n");
+		$this->db->query('DROP TABLE IF EXISTS '.$this->smw_synsets);
+		if ($verbose) print (" ... dropped table ".$this->smw_synsets.".\n");
 	}
 
 	/**
@@ -48,25 +54,25 @@ class SynsetStorageSQL implements ISynsetStorage{
 
 	/**
 	 * Get all synonyms of a term. A term can in theory belong to
-	 * several synsets. This method returns therefore an array of 
+	 * several synsets. This method returns therefore an array of
 	 * arrays, which each contain the synonyms belonging to one
 	 * of the synsets.
 	 *
 	 * @param string $term
-	 * 
+	 *
 	 * @return Array<Array<String>>
 	 */
 	public function getSynsets($term) {
 		$term = utf8_decode($term);
-		
+
 		$query = "SELECT synset_id FROM ".$this->smw_synsets." WHERE term=".$this->db->addQuotes($term);
 		$res = $this->db->query($query );
-		
+
 		$result = array();
 		while($row = $this->db->fetchObject($res)) {
 			$synsetId = $row->synset_id;
 			$query = "SELECT term FROM ".$this->smw_synsets." WHERE synset_id=".$synsetId;
-			
+				
 			$res2 = $this->db->query($query );
 			$resultTerms = array();
 			while($row2 = $this->db->fetchObject($res2)) {
@@ -78,16 +84,16 @@ class SynsetStorageSQL implements ISynsetStorage{
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Fills the database with all synonyms contained in a sql dump
-	 * 
-	 * @param $file: a file handler	
+	 *
+	 * @param $file: a file handler
 	 */
 	public function importSQLDump($file){
 		$res = $this->db->sourceStream($file);
 	}
-	
+
 }
 
 ?>

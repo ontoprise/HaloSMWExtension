@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>110</version>
+        <id>RichMedia</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/RichMedia</instdir>
+        <description>Store richmedia files in our your wiki</description>
+        <dependencies>
+            <dependency from="1120" to="1150">MW</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+
+        <file loc="extensions/RichMedia/deploy.xml" />
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+
+        <new>
+
+            <variable name="smwgEnableUploadConverter">
+                <boolean name="smwgEnableUploadConverter"
+                    description="enables the upload converter">true</boolean>
+            </variable>
+            <require name="us_init"
+                file="extensions/RichMedia/includes/RM_Initialize.php" />
+           <function name="enableRichMediaExtension">
+                
+            </function>
+            <variable name="wgLucenePort">
+                <string name="wgLucenePort" description="Port">8123</string>
+            </variable>
+            <variable name="wgAllowExternalImagesFrom">
+                <string name="wgAllowExternalImagesFrom"
+                    description="This need to be set to allow the templates creating image links">wgAllowExternalImagesFrom</string>
+           </variable>
+           <patch file="extensions/RichMedia/patch.txt" />
+           <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+        </new>
+    </configs>
+    <uninstall>
+        <patch file="extensions/RichMedia/patch.txt" />
+        <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+    </uninstall>
+</deploydescriptor>
+

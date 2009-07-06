@@ -43,9 +43,10 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/SemanticGardening/">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-gardening-${version}.zip" basedir="bin/zip" />

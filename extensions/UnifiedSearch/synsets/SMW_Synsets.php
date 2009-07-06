@@ -41,7 +41,16 @@ class Synsets {
 
 		$si->storeSynsets();
 	}
-	
+
+
+	public function drop(){
+		global $IP;
+		require_once($IP."/extensions/UnifiedSearch/synsets/storage/SMW_SynsetStorageSQL.php");
+		$st = new SynsetStorageSQL();
+		$st->drop(true);
+
+	}
+
 	/*
 	 * Creates the database tables and fills it with synsets.
 	 * (The source is the original data from WordNet, openthesaurus....)
@@ -89,12 +98,12 @@ class Synsets {
 
 
 	}
-	
+
 	/**
 	 * This method creates a string for query expansion based on synsets
-	 * 
+	 *
 	 * @param $terms array<string> : the terms
-	 * 
+	 *
 	 * @return string : additions to the query
 	 */
 	public static function expandQuery($terms){
@@ -102,16 +111,16 @@ class Synsets {
 		$results = array();
 		foreach($terms as $t){
 			$syns = $synSets->getSynsets($t);
-			
+				
 			$result = array();
 			foreach($syns as $key => $value){
 				foreach($value as $synonym){
 					$result[$synonym] = true;
 				}
 			}
-			$results[] = QueryExpander::opTerms(array_keys($result), "OR"); 			
+			$results[] = QueryExpander::opTerms(array_keys($result), "OR");
 		}
-		
+
 		return $results;
 	}
 

@@ -40,12 +40,12 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/RichMedia/">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*patch.txt" />
-				<exclude name="**/*RichMediaPatchForMW1_13_2.txt" />
-				<exclude name="**/*deploy*" />
-				<exclude name="**/*patches*" />
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="patch.txt" />
+				<include name="RichMediaPatchForMW1_13_2.txt" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 

@@ -8,6 +8,7 @@
 		<copy todir="bin/zip/extensions/UnifiedSearch/includes">
 			<fileset dir="../includes/">
 				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/*SKOSExpander*" />
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/UnifiedSearch/languages">
@@ -51,10 +52,10 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/UnifiedSearch/">
-			<fileset file="../*">
-				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*SKOSExpander*" />
-				<exclude name="**/*deploy*" />
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-search-${version}.zip" basedir="bin/zip" />
