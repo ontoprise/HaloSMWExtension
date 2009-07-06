@@ -370,7 +370,8 @@ class DALReadCSV implements IDAL {
 
 		$parser = new XMLParser($importSets);
 		$result = $parser->parse();
-    	if ($result !== TRUE) {
+    	
+		if ($result !== TRUE) {
 			return $result;
     	}
     	
@@ -445,6 +446,7 @@ class DALReadCSV implements IDAL {
 		// Check regex policy
 		$regex = &$policy['regex'];
 		foreach ($regex as $re) {
+			$re = trim($re);
 			if (preg_match('/'.$re.'/', $term)) {
 				return true;
 			}
@@ -527,7 +529,7 @@ class DALReadCSV implements IDAL {
 			$term = $this->csvContent[$i][$articleIdx];
 			if ($this->termMatchesRules($impSet, $term, 
 			                            $importSets, $policy)) {
-				// The term matches the policies.
+			    // The term matches the policies.
 				// => add the term to the result
 				if ($createTermList) {
 					$terms .= "<articleName>".trim($term)."</articleName>\n";                          	
