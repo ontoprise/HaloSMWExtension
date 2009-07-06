@@ -82,6 +82,7 @@ class TermImportBot extends GardeningBot {
 		$timeInTitle = $this->getDateString();
 		
 		smwf_om_EditArticle("TermImport:".$termImportName."/".$timeInTitle, 'TermImportBot', $result, '');
+		smwf_om_TouchArticle("TermImport:".$termImportName."/".$timeInTitle);
 		smwf_om_TouchArticle("TermImport:".$termImportName);
 		
 		return array("dontcare", "TermImport:".$termImportName."/".$timeInTitle);
@@ -231,7 +232,7 @@ class TermImportBot extends GardeningBot {
 			++$numTerms;
 			echo("\nParsed term: ".$numTerms);
 		}
-		echo "Number of terms: $numTerms \n";
+		echo "\nNumber of terms: $numTerms \n}n";
 
 		$this->setNumberOfTasks(1);
 		$this->addSubTask($numTerms);
@@ -519,17 +520,22 @@ class TermImportBot extends GardeningBot {
 		$result .= "\n\nImport date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 	
-		$result .= "=== Added terms ===\n";
+		$result .= "\n=== Added terms ===\n";
+		$result .= "{{#ask: [[TermImport:".$termImportName."/"
+			.$this->getDateString()."]] | ?hasAddedTermDuringImport}}";
+		$result .= "\n=== Updated terms ===\n";
+		$result .= "{{#ask: [[TermImport:".$termImportName."/"
+			.$this->getDateString()."]] | ?hasUpdatedTermDuringImport}}";
+		$result .= "\n=== Ignored terms ===\n";
+		$result .= "{{#ask: [[TermImport:".$termImportName."/"
+			.$this->getDateString()."]] | ?hasIgnoredTermDuringImport}}";
+		
+		$result .= $this->createTermImportResultList(
+				$this->updatedArticles, 'hasUpdatedTermDuringImport');	
+		$result .= $this->createTermImportResultList(
+			$this->ignoredArticles, 'hasIgnoredTermDuringImport');
 		$result .= $this->createTermImportResultList(
 			$this->addedArticles, 'hasAddedTermDuringImport');
-		
-		$result .= "\n=== Updated terms ===\n";
-		$result .= $this->createTermImportResultList(
-				$this->updatedArticles, 'hasUpdatedTermDuringImport');
-		
-		$result .= "\n=== Ignored terms ===\n";
-		$result .= $this->createTermImportResultList(
-		$this->ignoredArticles, 'hasIgnoredTermDuringImport');
 		
 		$result .= "\n[[Category:TermImportRun]]";
 		
@@ -540,11 +546,11 @@ class TermImportBot extends GardeningBot {
 		$first = true;
 		foreach($list as $articleName){
 			if(!$first){
-				$result .= ", ";
+				$result .= "";
 			} else {
 				$first = false;
 			}
-			$result .="[[".$propertyName."::".$articleName."]]";
+			$result .="[[".$propertyName."::".$articleName."| ]]";
 		}
 		return $result;
 	}
