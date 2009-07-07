@@ -17,7 +17,7 @@
         </copy>
         <copy todir="bin/zip/extensions/SemanticForms/libs">
             <fileset dir="../libs/">
-                <include name="README" />
+            	<exclude name="**/.svn, **/CVS" />
             </fileset>
         </copy>
        
@@ -39,7 +39,7 @@
                 <include name="INSTALL" />
                 <include name="README" />
                 <include name="patch.txt" />
-                         
+            	<include name="deploy.xml" />         
             </fileset>
         </copy>
         <zip destfile="bin/smwhalo-semforms-${version}.zip" basedir="bin/zip" />

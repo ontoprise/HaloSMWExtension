@@ -8,6 +8,7 @@
         <description>Store richmedia files in our your wiki</description>
         <dependencies>
             <dependency from="1120" to="1150">MW</dependency>
+            <dependency from="171" to="171">semanticforms</dependency>
         </dependencies>
     </global>
     <codefiles>
@@ -35,12 +36,10 @@
            <function name="enableRichMediaExtension">
                 
             </function>
-            <variable name="wgLucenePort">
-                <string name="wgLucenePort" description="Port">8123</string>
-            </variable>
+           
             <variable name="wgAllowExternalImagesFrom">
                 <string name="wgAllowExternalImagesFrom"
-                    description="This need to be set to allow the templates creating image links">wgAllowExternalImagesFrom</string>
+                    description="This need to be set to allow the templates creating image links">$wgServer</string>
            </variable>
            <patch file="extensions/RichMedia/patch.txt" />
            <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
