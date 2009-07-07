@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  * derived from
  * MediaWiki page data importer
@@ -212,7 +212,12 @@ class DeployWikiRevision extends WikiRevision {
 		// check revision here
 		$linkCache = LinkCache::singleton();
 		$linkCache->clear();
-
+		
+		// add annotations FIXME: as template?
+		$this->text .= "\n[[Ontology version::".$this->oversion."]]";
+		$this->text .= "\n[[Part of bundle::".$this->partofbundle."]]";
+		$this->text .= "\n[[Content hash::".$this->md5_hash."]]";
+		
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		if( $pageId == 0 ) {
@@ -222,19 +227,72 @@ class DeployWikiRevision extends WikiRevision {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
-				// FIXME: this could fail slightly for multiple matches :P
+				
+				$ontversion = SMWPropertyValue::makeUserProperty("Ontology version");
+				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
+				if (count($values) > 0) $exp_hash = reset($values)->getXSDValue(); else $exp_hash = '';
 				$hash = md5($prior->getRawText());
-				if ($hash != $this->md5_hash) {
+				if ($hash != $exp_hash) {
 					$result = false;
 					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					if ($result == true) {
-						return parent::importOldRevision();
+						return $this->importAsNewRevision();
 					}
 				}
 			}
 		}
 		return false;
 
+	}
+	
+	function importAsNewRevision() {
+		$dbw = wfGetDB( DB_MASTER );
+
+		# Sneak a single revision into place
+		$user = User::newFromName( $this->getUser() );
+		if( $user ) {
+			$userId = intval( $user->getId() );
+			$userText = $user->getName();
+		} else {
+			$userId = 0;
+			$userText = $this->getUser();
+		}
+
+		// avoid memory leak...?
+		$linkCache = LinkCache::singleton();
+		$linkCache->clear();
+
+		$article = new Article( $this->title );
+		$pageId = $article->getId();
+				
+
+		# Insert the row
+		$revision = new Revision( array(
+			'page'       => $pageId,
+			'text'       => $this->getText(),
+			'comment'    => $this->getComment(),
+			'user'       => $userId,
+			'user_text'  => $userText,
+			'timestamp'  => $dbw->timestamp(),
+			'minor_edit' => $this->minor,
+			) );
+		$revId = $revision->insertOn( $dbw );
+		$changed = $article->updateIfNewerOn( $dbw, $revision );
+
+		
+			wfDebug( __METHOD__ . ": running onArticleEdit\n" );
+			Article::onArticleEdit( $this->title );
+
+			wfDebug( __METHOD__ . ": running edit updates\n" );
+			$article->editUpdates(
+				$this->getText(),
+				$this->getComment(),
+				$this->minor,
+				$this->timestamp,
+				$revId );
+		
+
+		return true;
 	}
 }
 

@@ -151,7 +151,10 @@ class Installer {
 		if ($existDependency) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to the following packages exists:", $dependantPackages);
 		}
-
+		
+		// remove ontology
+		$this->res_installer->deinstallWikidump($ext);
+		
 		// undo all config changes
 		// - from LocalSettings.php
 		// - from database (setup scripts)
