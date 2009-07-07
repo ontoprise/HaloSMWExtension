@@ -33,10 +33,10 @@
 					userValueRequired="true"
 					description="Path of PHP interpreter (executebale)" />
 			</variable>
-			<setup script="maintenance/SGA_setup.php" params="" />
+			<script file="extensions/SemanticGardening/maintenance/SGA_setup.php" params="" />
 		</new>
 		<uninstall>
-			<setup script="maintenance/SGA_setup.php" params="--delete" />
+			<script file="extensions/SemanticGardening/maintenance/SGA_setup.php" params="--delete" />
     	</uninstall>
 	</configs>
 </deploydescriptor>
