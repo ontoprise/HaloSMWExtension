@@ -180,12 +180,14 @@ function wfUSInitialize($onlyTables) {
 }
 
 function wfUSInitializeTables() {
-	require_once "../storage/US_StoreSQL.php";
+	global $IP;
+	require_once "$IP/extensions/UnifiedSearch/storage/US_StoreSQL.php";
 	USStore::getStore()->setup(true);
 }
 
 function wfUSDeInitializeTables() {
-	require_once "../storage/US_StoreSQL.php";
+	global $IP;
+	require_once "$IP/extensions/UnifiedSearch/storage/US_StoreSQL.php";
 	USStore::getStore()->drop(true);
 }
 

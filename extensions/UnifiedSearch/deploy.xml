@@ -1,52 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-	<global>
-		<version>120</version>
-		<id>UnifiedSearch</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<instdir>extensions/UnifiedSearch</instdir>
-		<description>A client for the lucene wiki server</description>
-		<dependencies>
-			<dependency from="1120" to="1150">MW</dependency>
-		</dependencies>
-	</global>
-	<codefiles>
+    <global>
+        <version>120</version>
+        <id>UnifiedSearch</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/UnifiedSearch</instdir>
+        <description>A client for the lucene wiki server</description>
+        <dependencies>
+            <dependency from="1120" to="1150">MW</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
 
-		<file loc="extensions/UnifiedSearch/deploy.xml" />
-		<!-- TODO: add all others -->
-	</codefiles>
-	<wikidumps>
-		<!-- empty -->
-	</wikidumps>
-	<resources>
-		<!-- empty -->
-	</resources>
+        <file loc="extensions/UnifiedSearch/deploy.xml" />
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
 
-	<configs>
+    <configs>
 
-		<new>
+        <new>
 
-			<variable name="wgSearchType">
-				<string name="wgSearchType"
-					description="Search engine type">LuceneSearch</string>
-			</variable>
-			<variable name="wgLuceneHost">
-				<string name="wgLuceneHost" description="Host">localhost</string>
-			</variable>
-			<variable name="wgLucenePort">
-				<string name="wgLucenePort" description="Port">8123</string>
-			</variable>
-			<variable name="wgLuceneSearchVersion">
-				<string name="wgLuceneSearchVersion"
-					description="Version">2.1</string>
-			</variable>
-			<require name="us_init"
-				file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
-			<setup script="maintenance/setup.php" params="" />
-		</new>
-	</configs>
-	<uninstall>
-		<setup script="maintenance/setup.php" params="--delete" />
-	</uninstall>
+            <variable name="wgSearchType">
+                <string name="wgSearchType"
+                    description="Search engine type">LuceneSearch</string>
+            </variable>
+            <variable name="wgLuceneHost">
+                <string name="wgLuceneHost" description="Host">localhost</string>
+            </variable>
+            <variable name="wgLucenePort">
+                <string name="wgLucenePort" description="Port">8123</string>
+            </variable>
+            <variable name="wgLuceneSearchVersion">
+                <string name="wgLuceneSearchVersion"
+                    description="Version">2.1</string>
+            </variable>
+            <require name="us_init"
+                file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
+            <script file="extensions/UnifiedSearch/maintenance/setup.php" params="" />
+        </new>
+    </configs>
+    <uninstall>
+        <script file="extensions/UnifiedSearch/maintenance/setup.php" params="--delete" />
+    </uninstall>
 </deploydescriptor>
 
