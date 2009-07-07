@@ -15,7 +15,7 @@ class DeployDescriptionProcessor {
 
 	private $localSettingsContent;
 
-	
+
 
 	/**
 	 * Creates new DeployDescriptorProcessor.
@@ -43,16 +43,16 @@ class DeployDescriptionProcessor {
 	/**
 	 * Reads the LocalSettings.php file, applies changes and return it as string.
 	 *
-	 * 
+	 *
 	 * @param callback $userCallback Requests for values
 	 * @return string changed LocalSettings.php file
 	 */
 	function applyLocalSettingsChanges($userCallback, $userRequirements, $dryRun) {
-	    $userValues = array();
+		$userValues = array();
 
-        if (!is_null($userCallback)) {
-            call_user_func(array(&$userCallback,"getUserReqParams"), $userRequirements, & $userValues);
-        }
+		if (!is_null($userCallback)) {
+			call_user_func(array(&$userCallback,"getUserReqParams"), $userRequirements, & $userValues);
+		}
 		// calculate changes
 		$insertions = ""; // reset
 			
@@ -68,7 +68,7 @@ class DeployDescriptionProcessor {
 		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
 		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/";
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
-        
+
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
 		return $this->localSettingsContent;
 	}
@@ -96,15 +96,18 @@ class DeployDescriptionProcessor {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
-			
-				print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
-				exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
-				foreach($out as $line) print "\n".$line;
-				if ($ret != 0) {
-					print "\n\nScript ".$rootDir."/".$script." failed!";
-					throw new RollbackInstallation();
-				}
-			
+			if (!file_exists($rootDir."/".$script)) {
+				print "\nWarning: setup script at '$rootDir/$script' does not exist";
+				continue;
+			}
+			print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			foreach($out as $line) print "\n".$line;
+			if ($ret != 0) {
+				print "\n\nScript ".$rootDir."/".$script." failed!";
+				throw new RollbackInstallation();
+			}
+
 		}
 	}
 
@@ -121,15 +124,18 @@ class DeployDescriptionProcessor {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$script = self::makeUnixPath($setup['script']);
-			
-				print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
-				exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
-				foreach($out as $line) print "\n".$line;
-				if ($ret != 0) {
-					print "\n\nScript ".$rootDir."/".$script." failed!";
-					throw new RollbackInstallation();
-				}
-			
+			if (!file_exists($rootDir."/".$script)) {
+				print "\nWarning: setup script at '$rootDir/$script' does not exist";
+				continue;
+			}
+			print "\n\nRun script:\nphp ".$rootDir."/".$script." ".$setup['params'];
+			exec("php ".$rootDir."/".$script." ".$setup['params'], $out, $ret);
+			foreach($out as $line) print "\n".$line;
+			if ($ret != 0) {
+				print "\n\nScript ".$rootDir."/".$script." failed!";
+				throw new RollbackInstallation();
+			}
+
 		}
 	}
 
@@ -138,7 +144,7 @@ class DeployDescriptionProcessor {
 	 *
 	 * Needs php Interpreter and GNU-patch in PATH.
 	 *
-	 * 
+	 *
 	 * @param callback $userCallback
 	 */
 	function applyPatches($userCallback) {
@@ -148,7 +154,10 @@ class DeployDescriptionProcessor {
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
 			$patchFailed = false;
-            
+			if (!file_exists($rootDir."/".$patch)) {
+				print "\nWarning: patch at '$rootDir/$patch' does not exist";
+				continue;
+			}
 			// do dry-run at first to check for rejected patches
 			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
 			foreach($out as $line) {
@@ -156,24 +165,24 @@ class DeployDescriptionProcessor {
 					$patchFailed = true;
 				}
 			}
-			
+
 			// ask user to continue/rollback in case of failed patches
 			$result = 'y';
 			if (!is_null($userValueCallback) && $patchFailed) {
 				call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
 			}
-			
-			 switch($result) {
 
-			 	case 'y': // apply the patches 
+			switch($result) {
+
+				case 'y': // apply the patches
 			 	print "\n\nApply patch:\nphp ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir;
 			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
 			 	break;
-			 	case 'r': throw new RollbackInstallation();
-			 	case 'n': break; // just ignore the patches completely
-			 }
-			 	
-			
+				case 'r': throw new RollbackInstallation();
+				case 'n': break; // just ignore the patches completely
+			}
+
+
 		}
 	}
 
@@ -182,7 +191,7 @@ class DeployDescriptionProcessor {
 	 *
 	 * Needs php Interpreter and GNU-patch in PATH.
 	 *
-	 * 
+	 *
 	 */
 	function unapplyPatches() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
@@ -190,10 +199,13 @@ class DeployDescriptionProcessor {
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
-			
-				print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
-				exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
-			
+			if (!file_exists($rootDir."/".$patch)) {
+				print "\nWarning: patch at '$rootDir/$patch' does not exist";
+				continue;
+			}
+			print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
+			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
+
 		}
 	}
 
@@ -202,6 +214,10 @@ class DeployDescriptionProcessor {
 	 *
 	 */
 	function writeLocalSettingsFile(& $content) {
+		if (empty($content)) {
+			// do never write an empty localsettings file.
+			return;
+		}
 		$handle = fopen($this->ls_loc, "wb");
 		fwrite($handle, $content);
 		fclose($handle);

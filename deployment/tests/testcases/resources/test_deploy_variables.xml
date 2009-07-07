@@ -10,6 +10,9 @@
 			<dependency from="100" to="140">
 				SemanticMediawiki
 			</dependency>
+			<dependency from="100" to="140">
+                SMWHalo
+            </dependency>
 		</dependencies>
 	</global>
 	<codefiles>

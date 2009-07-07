@@ -9,11 +9,12 @@ define('DEPLOY_FRAMEWORK_DEPENDENCY_EXIST',5);
 define('DEPLOY_FRAMEWORK_CODE_CHANGED',6);
 define('DEPLOY_FRAMEWORK_MISSING_FILE', 7);
 define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
-
+define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
 
 require_once 'PackageRepository.php';
 require_once 'Tools.php';
 require_once 'Rollback.php';
+require_once 'ResourceInstaller.php';
 
 /**
  * Provides the basic installation routines for the smwadmin tool.
@@ -44,16 +45,10 @@ class Installer {
 	var $rootDir;
 
 	/*
-	 * Mediawiki version
-	 */
-	var $mw_version;
-
-	/*
 	 * Installation directory
 	 * Normally identical with $rootDir except for testing or dry runs.
 	 */
 	private $instDir;
-
 
 	// force installation even on warnings
 	private $force;
@@ -61,8 +56,9 @@ class Installer {
 	// no questions (for testing)
 	private $noAsk;
 
+	// Helper obejcts
 	private $rollback;
-
+	private $res_installer;
 
 	/**
 	 * Creates new Installer.
@@ -81,10 +77,9 @@ class Installer {
 		$this->rootDir = $rootDir === NULL ? realpath(dirname(__FILE__)."/../../../") : $rootDir;
 		$this->instDir = $rootDir; // normally rootDir == instDir
 
-		// obtain MW version
-		$this->mw_version = Tools::getMediawikiVersion($this->rootDir);
 
 		$this->rollback = Rollback::getInstance($this->instDir);
+		$this->res_installer = ResourceInstaller::getInstance($this->instDir);
 
 		$this->force = $force;
 		$this->noAsk = $noAsk;
@@ -106,7 +101,7 @@ class Installer {
 
 		// Install/update all dependant and super extensions
 		print "\nInstall dependant extensions and update super extensions if necessary";
-		$this->installOrUpdatePackages($extensions_to_update, $localPackages);
+		$this->installOrUpdatePackages($extensions_to_update);
 
 
 		// Install update this extension
@@ -206,7 +201,7 @@ class Installer {
 
 		if ($onlyDependencyCheck) {
 			if (count($extensions_to_update) == 0) {
-                print "\n\nYour installation is up-to-date!\n";
+				print "\n\nYour installation is up-to-date!\n";
 				return false;
 			}
 			print "\n\nThe following extensions would get updated:\n";
@@ -217,7 +212,7 @@ class Installer {
 			print "\n\n";
 			return false;
 		} else {
-			$this->installOrUpdatePackages($extensions_to_update, $localPackages);
+			$this->installOrUpdatePackages($extensions_to_update);
 			$this->rollback->cleanup();
 			return count($extensions_to_update) > 0;
 
@@ -272,7 +267,7 @@ class Installer {
 	 *
 	 *
 	 */
-	public function listAvailablePackages() {
+	public function listAvailablePackages($showDescription) {
 
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
@@ -281,6 +276,7 @@ class Installer {
 		foreach($allPackages as $p_id => $versions) {
 			if (array_key_exists($p_id, $localPackages)) {
 				$instTag = "[installed ".Tools::addVersionSeparators($localPackages[$p_id]->getVersion())."]";
+
 			} else {
 				$instTag = str_repeat(" ", 16);
 			}
@@ -290,6 +286,7 @@ class Installer {
 			$sep_v = array();
 			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
 			print "\n $instTag $id_shown| (".implode(", ", $sep_v).")";
+			if ($showDescription && array_key_exists($p_id, $localPackages)) print "\n ".$localPackages[$p_id]->getDescription()."\n\n";
 		}
 		print "\n";
 	}
@@ -301,7 +298,7 @@ class Installer {
 	 * @param int $version
 	 * @return array($new_package, $old_package, $extensions_to_update)
 	 */
-	private function checkDependencies($packageID, $version = NULL) {
+	public function checkDependencies($packageID, $version = NULL) {
 		// 1. Check if package is installed
 		print "\nCheck if package installed...";
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
@@ -318,13 +315,6 @@ class Installer {
 			print "not found.";
 		}
 
-		if (!is_null($old_package) && is_numeric($version) && $old_package->getVersion() > $version) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
-		}
-
-		if (!is_null($old_package) && is_numeric($version) && $old_package->getVersion() == $version) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
-		}
 
 		// 2. Check code integrity of existing package
 		if (!is_null($old_package)) {
@@ -341,8 +331,7 @@ class Installer {
 			print "done!";
 		}
 
-		// 3. Check dependencies for install/update
-		// get package to install
+		// 3. Get required package descriptor
 		if ($version == NULL) {
 			print "\nRead latest deploy descriptor of $packageID...";
 			$new_package = PackageRepository::getLatestDeployDescriptor($packageID);
@@ -350,12 +339,25 @@ class Installer {
 			print "\nRead deploy descriptor of $packageID-$version...";
 			$new_package = PackageRepository::getDeployDescriptor($packageID, $version);
 		}
+
+		// 5. check if update is neccessary
+		if (!is_null($old_package) && is_numeric($version) && $old_package->getVersion() > $new_package->getVersion()) {
+			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
+		}
+
+		if (!is_null($old_package) && (is_null($version) || $old_package->getVersion() == $new_package->getVersion())) {
+	 	    throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
+		}
+
+	 // 6. Check dependencies for install/update
+	 // get package to install
 		$updatesNeeded = array();
 		print "\nCheck for updates...";
 		$this->checkForDependingExtensions($new_package, $updatesNeeded, $localPackages);
 		$this->checkForSuperExtensions($new_package, $updatesNeeded, $localPackages);
 
-		// 4. calculate version which matches all depdencies of an extension.
+
+		// 7. calculate version which matches all depdencies of an extension.
 		print "\nCalculate matching versions";
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
@@ -368,8 +370,9 @@ class Installer {
 	 * @param array(descriptor, minVersion, maxVersion) $extensions_to_update
 	 * @param int fromVersion Update from this version
 	 */
-	private function installOrUpdatePackages($extensions_to_update, $localPackages) {
+	private function installOrUpdatePackages($extensions_to_update) {
 		$d = new HttpDownload();
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		foreach($extensions_to_update as $id=>$arr) {
 			list($desc, $min, $max) = $arr;
 
@@ -387,7 +390,7 @@ class Installer {
 			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
-			$this->installResources($desc);
+			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			print "\n-------\n";
 		}
 	}
@@ -415,41 +418,11 @@ class Installer {
 		$dd->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
 		// install wiki pages
-		$this->installResources($dd);
+		$this->res_installer->installOrUpdateWikidumps($dd, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 
 	}
 
-	/**
-	 * Installs wiki dumps and other resources.
-	 *
-	 * @param DeployDescriptorParser $dd
-	 */
-	private function installResources($dd) {
 
-		// wiki dumps
-		require_once( '../../maintenance/commandLine.inc' );
-		require_once('../io/import/DeployWikiImporter.php');
-		require_once('../io/import/BackupReader.php');
-		$reader = new BackupReader($this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-		$wikidumps = $dd->getWikidumps();
-		foreach($wikidumps as $file) {
-			$result = $reader->importFromFile( $this->rootDir."/".$file );
-		}
-
-		// resources files
-		$resources = $dd->getResources();
-		foreach($resources as $file) {
-
-			if (is_dir($this->rootDir."/".$file)) {
-				Tools::mkpath(dirname($this->rootDir."/images/".$file));
-				Tools::copy_dir($this->rootDir."/".$file, $this->rootDir."/images/".$file);
-			} else {
-				Tools::mkpath(dirname($this->rootDir."/images/".$file));
-				copy($this->rootDir."/".$file, $this->rootDir."/images/".$file);
-			}
-
-		}
-	}
 
 	/**
 	 * Unzips the package denoted by $id and $version
@@ -515,6 +488,7 @@ class Installer {
 
 		// find packages which need to get updated
 		// or installed.
+
 		foreach($dependencies as $dep) {
 			list($id, $from, $to) = $dep;
 			$packageFound = false;

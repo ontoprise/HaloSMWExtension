@@ -75,6 +75,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 
+	if ($arg == '-desc') {
+		$showDescription = true;
+		continue;
+	}
+
 	if ($arg == '-c') {
 		$checkDep = true;
 		continue;
@@ -109,12 +114,14 @@ if ($help) {
 	echo "\n\tsmwadmin -u: Updates complete installation";
 	echo "\n\tsmwadmin -u -c: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
+	echo "\n\n";
 	die();
 }
 
 $rootDir = realpath(dirname(__FILE__)."/../..");
 $installer = Installer::getInstance($rootDir, $force);
 $rollback = Rollback::getInstance($rootDir);
+$res_installer = ResourceInstaller::getInstance($rootDir);
 
 if ($globalUpdate) {
 	$updated = $installer->updateAll($checkDep);
@@ -133,7 +140,7 @@ if ($listPackages) {
 }
 
 if ($listAvailablePackages) {
-	$installer->listAvailablePackages();
+	$installer->listAvailablePackages($showDescription);
 	die();
 }
 
@@ -141,9 +148,22 @@ if ($listAvailablePackages) {
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
+	$packageID = $parts[0];
+	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
 		if ($checkDep) {
-			$installer->checkDependencies($parts[0], count($parts) > 1 ? $parts[1] : NULL);
+			list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
+				
+			print "\n\nThe following extensions would be installed:\n";
+			foreach($extensions_to_update as $id => $etu) {
+				list($desc, $min, $max) = $etu;
+				print "\n\t*$id-".Tools::addVersionSeparators($min);
+			}
+			print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
+
+			$res_installer->checkWikidump($packageID, $version);
+
+			print "\n\n";
 		} else {
 			$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
 		}
@@ -204,6 +224,17 @@ function fatalError($e) {
 			}
 			break;
 		}
+		case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
+			$package = $e->getArg1();
+			print "\n".$e->getMsg()."\n";
+			print "\n\t*".$package->getID()."-".$package->getVersion();
+			break;
+		case DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION:
+		case DEPLOY_FRAMEWORK_NO_TMP_DIR:
+		case DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE:
+		case DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS:
+		case DEPLOY_FRAMEWORK_CODE_CHANGED:
+		case DEPLOY_FRAMEWORK_MISSING_FILE:
 		default: echo "\nError: ".$e->getMsg(); break;
 	}
 	print "\n\n";

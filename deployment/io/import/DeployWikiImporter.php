@@ -207,6 +207,7 @@ class DeployWikiRevision extends WikiRevision {
 	 * @return unknown
 	 */
 	function importOldRevision() {
+		
 		$dbw = wfGetDB( DB_MASTER );
 		// check revision here
 		$linkCache = LinkCache::singleton();
@@ -216,7 +217,7 @@ class DeployWikiRevision extends WikiRevision {
 		$pageId = $article->getId();
 		if( $pageId == 0 ) {
 			# must create the page...
-			return parent::importOldRevision();
+			return $this->mode == DEPLOYWIKIREVISION_INFO ? false : parent::importOldRevision();
 		} else {
 
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
@@ -225,7 +226,7 @@ class DeployWikiRevision extends WikiRevision {
 				$hash = md5($prior->getRawText());
 				if ($hash != $this->md5_hash) {
 					$result = false;
-					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, $result);
+					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);
 					if ($result == true) {
 						return parent::importOldRevision();
 					}

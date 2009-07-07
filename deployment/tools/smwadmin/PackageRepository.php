@@ -11,9 +11,9 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 }
 
 // this URL is supposed to be fix forever
-//define("SMWPLUS_REPOSITORY", "http://localhost/repository/");
+define("SMWPLUS_REPOSITORY", "http://localhost/repository/");
 //define("SMWPLUS_REPOSITORY", "http://halo-build-serv/repository/");
-define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
+//define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
 
 /**
  * Allows access on the global HALO package repository.
@@ -69,7 +69,7 @@ class PackageRepository {
 		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
-
+        
 		$dd =  new DeployDescriptorParser($res);
 		self::$deploy_descs[] = $dd;
 		return $dd;
@@ -182,8 +182,8 @@ class PackageRepository {
 	 * @param string $ext_dir Extension directory
 	 * @return array of DeployDescriptorParser
 	 */
-	public static function getLocalPackages($ext_dir) {
-		if (!is_null(self::$localPackages)) return self::$localPackages;
+	public static function getLocalPackages($ext_dir, $forceReload = false) {
+		if (!is_null(self::$localPackages) && !$forceReload) return self::$localPackages;
 		self::$localPackages = array();
 		// add trailing slashes
 		if (substr($ext_dir,-1)!='/'){

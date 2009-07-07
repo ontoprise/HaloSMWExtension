@@ -51,7 +51,7 @@ class HttpDownload {
 		$this->header = "";
 		$length = 0;
 		$cb = is_null($callback) ? $this : $callback;
-		call_user_func(array(&$cb,"downloadStart"), basename($path));
+		call_user_func(array(&$cb,"downloadStart"), basename(dirname($path))."/".basename($path));
 		$out = socket_read($socket, 2048);
 
 		do {
@@ -110,7 +110,7 @@ class HttpDownload {
 		$this->header = "";
 		$length = 0;
 		$cb = is_null($callback) ? $this : $callback;
-		call_user_func(array(&$cb,"downloadStart"), basename($path));
+		call_user_func(array(&$cb,"downloadStart"), basename(dirname($path))."/".basename($path));
 		$out = socket_read($socket, 2048);
 
 		do {

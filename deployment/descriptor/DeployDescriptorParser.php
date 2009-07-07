@@ -188,10 +188,12 @@ class DeployDescriptorParser {
 	function getDependencies() {
 		if (!is_null($this->dependencies)) return $this->dependencies;
 		$this->dependencies = array();
-		foreach($this->globalElement[0]->dependencies as $dep) {
-			$depID = strtolower(trim((string) $dep->dependency));
-			$depFrom = intval((string) $dep->dependency->attributes()->from);
-			$depTo = intval((string) $dep->dependency->attributes()->to);
+		$dependencies = $this->dom->xpath('/deploydescriptor/global/dependencies/dependency');
+		
+		foreach($dependencies as $dep) {
+			$depID = strtolower(trim((string) $dep[0]));
+			$depFrom = intval((string) $dep->attributes()->from);
+			$depTo = intval((string) $dep->attributes()->to);
 			$this->dependencies[] = array($depID, $depFrom, $depTo);
 		}
 		return $this->dependencies;
