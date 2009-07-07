@@ -818,11 +818,8 @@ TermImportPage.prototype = {
 			var inputPolicy = result[2]; 
 			var mappingPage = result[3]; 
 			var conflictPol = result[4];
-			//var termImportName = result[5];
-			//var updatePolicy = result[6];
-			//todo error handling
-			var termImportName = $("ti-name-input-field").value;
-			var updatePolicy = $("ti-update-policy-input-field").value;
+			var termImportName = result[5];
+			var updatePolicy = result[6];
 			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
 			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy]
 			                                    , this.importItNowCallback.bind(this, tlID, dalID));
@@ -936,6 +933,22 @@ TermImportPage.prototype = {
 			else {
 				var conflictPol = false;
 			}
+			//term import name
+			var termImportName = document.getElementById('ti-name-input-field').value;
+			if(termImportName == ''){
+				//do not import without a term import name!
+				$('ti-name-input-field').style.backgroundColor = "red";
+				return;
+			}
+			if(termImportName.length > 0){
+   				// min. one other char than a whitespace
+   				if(re.test(termImportName) != true) {
+   					$('ti-name-input-field').style.backgroundColor = "red";
+   					return;	
+   				}
+			}
+			//update policy todo:make integer check
+			var updatePolicy = $("ti-update-policy-input-field").value;
 		}
 		catch(e) {
 			try {
@@ -960,6 +973,8 @@ TermImportPage.prototype = {
 		result[2] = inputPolicy; 
 		result[3] = mappingPage; 
 		result[4] = conflictPol;
+		result[5] = termImportName;
+		result[6] = updatePolicy;
 		return result;
 	},
 	importItNowCallback: function(tlID, dalID, request){
@@ -983,18 +998,23 @@ TermImportPage.prototype = {
 				$('mapping-input-field').style.backgroundColor = "red";
 				alert(message);
 				return;
-			}
+			} else if(value == "falseTIN") {
+				$('ti-name-input-field').style.backgroundColor = "red";
+				alert(message);
+				return;
+			} 
 			
 		} catch (e) {
 			// TODO: handle exception
 		}
-		var path = wgArticlePath.replace(/\$1/, "Special:GardeningLog?bot=smw_termimportbot&class=0");
+		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
 		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details';
 		
 		$('extras-bottom').innerHTML = message;
 	},
 	changeBackground: function(e, node) {
-		$('mapping-input-field').style.backgroundColor = "white";
+		//$('mapping-input-field').style.backgroundColor = "white";
+		node.style.backgroundColor = "white";
 	}
 }
  // ----- Classes -----------

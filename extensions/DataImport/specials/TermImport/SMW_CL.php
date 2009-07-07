@@ -81,7 +81,7 @@ class CL {
 								"</div>" . //conflict
 								"<div id=\"ti-name\">" .
 									"<br><br>".wfMsg('smw_ti_ti_name')."&nbsp;" .
-									"<input id=\"ti-name-input-field\"/>" .
+									"<input id=\"ti-name-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>" .
 								"</div>" . //ti name
 								"<div id=\"ti-update-policy\">" .
 									"<br><br>".wfMsg('smw_ti_update_policy')."&nbsp;" .
@@ -280,8 +280,14 @@ $runBot, $termImportName = null, $updatePolicy = "") {
 			.'</UpdatePolicy>';
 		
 
-		smwf_ti_createTIArticle($moduleConfig, $source_result, $mappingPolicy, $conflictPolicy,
-		$givenInputPol, $importSets, $termImportName, $updatePolicy);
+		$articleCreated = smwf_ti_createTIArticle($moduleConfig, $source_result, $mappingPolicy, $conflictPolicy,
+			$givenInputPol, $importSets, $termImportName, $updatePolicy);
+		
+		if($articleCreated !== true){
+			return $articleCreated;
+		}
+		
+			
 
 		$terms = $wil->importTerms($moduleConfig, $source_result, $importSets, $givenInputPol,
 		$mappingPolicy, $conflictPolicy, $termImportName);
@@ -299,7 +305,17 @@ $runBot, $termImportName = null, $updatePolicy = "") {
 }
 
 function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $conflictConfig,
-$inputConfig, $importSetConfig, $termImportName, $updatePolicy) {
+		$inputConfig, $importSetConfig, $termImportName, $updatePolicy) {
+	
+	$title = Title::newFromText("TermImport:".$termImportName);
+	if($title->exists()) {
+		return '<?xml version="1.0"?>
+	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 		    <value>falseTIN</value>
+	 		    <message>' . wfMsg('smw_ti_def_allready_exists') . '</message>
+	 			</ReturnValue >';
+	}
+	
 	$moduleConfig = str_replace('<?xml version="1.0"?>',"",$moduleConfig);
 	$moduleConfig = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$moduleConfig);
 	$moduleConfig = trim($moduleConfig);
@@ -345,7 +361,19 @@ $inputConfig, $importSetConfig, $termImportName, $updatePolicy) {
 	$articleContent .= "{{#ask: [[belongsToTermImport::TermImport:".$termImportName."]]"
 		."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
 	$articleContent .= "\n[[Category:TermImport]]";
-	smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');
+	$result = smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');
+	$temp = $result;
+	$result = explode(",", $result);
+	$result = trim($result[0]);
+	if($result !== "true"){
+		return '<?xml version="1.0"?>
+	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 		    <value>falseTIN</value>
+	 		    <message>' . wfMsg('smw_ti_def_not_creatable') . '</message>
+	 			</ReturnValue >';
+	}
+	
+	return true;
 
 }
 

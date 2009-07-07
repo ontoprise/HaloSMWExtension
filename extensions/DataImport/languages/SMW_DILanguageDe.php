@@ -244,6 +244,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_gard_termimportbothelp' => 'Startet den Bot zum Importieren der Begriffe eines Vokabulars.',
 	'smw_termimportupdatebot' => 'Update Definierte Term Imports aktualisieren.',
 	'smw_gard_termimportupdatebothelp' => 'Startet den Bot zum aktualisieren von definierten Term Imports',
+	'smw_ti_def_allready_exists' => 'Eine Term Import Definition mit diesem Namen existiert bereits.',
+	'smw_ti_def_not_creatable' => 'Es war nicht möglich eine Term Import Definition mit diesem Namen zu erstellen.',
 	);
 
 	protected $smwDINamespaces = array(
