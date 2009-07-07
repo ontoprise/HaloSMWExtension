@@ -6,7 +6,7 @@
 		<vendor>Ontoprise GmbH / Yaron Kohan</vendor>
 		<instdir>extensions/SemanticForms</instdir>
 		<description>
-			Store richmedia files in our your wiki
+			Annotate your wiki using forms.
 		</description>
 		<dependencies>
 			<dependency from="1120" to="1150">MW</dependency>
@@ -31,9 +31,9 @@
 				file="extensions/SemanticForms/includes/SF_Settings.php" />
 			<patch file="extensions/SemanticForms/patch.txt" />
 		</new>
+		<uninstall>
+			<patch file="extensions/SemanticForms/patch.txt" />
+		</uninstall>
 	</configs>
-	<uninstall>
-		<patch file="extensions/SemanticForms/patch.txt" />
-	</uninstall>
 </deploydescriptor>
 

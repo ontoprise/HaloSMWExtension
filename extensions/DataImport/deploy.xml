@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>110</version>
+		<id>DataImport</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/DataImport</instdir>
+		<description>
+			Connects external datasources to your wiki.
+		</description>
+		<dependencies>
+			<dependency from="1130" to="1150">MW</dependency>
+			<dependency from="142" to="142">smw</dependency>
+			<dependency from="144" to="144">smwhalo</dependency>
+			<dependency from="110" to="110">
+				semanticgardening
+			</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+
+		<file loc="extensions/DataImport/deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+
+		<new>
+			<require name="di_init"
+				file="extensions/DataImport/includes/DI_Initialize.php" />
+			<function name="enableDataImportExtension">
+			</function>
+		</new>
+		<uninstall>
+
+		</uninstall>
+	</configs>
+</deploydescriptor>
+

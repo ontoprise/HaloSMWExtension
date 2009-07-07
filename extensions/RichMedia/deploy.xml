@@ -9,6 +9,7 @@
         <dependencies>
             <dependency from="1120" to="1150">MW</dependency>
             <dependency from="171" to="171">semanticforms</dependency>
+            <dependency from="144" to="144">smwhalo</dependency>
         </dependencies>
     </global>
     <codefiles>
@@ -36,18 +37,15 @@
            <function name="enableRichMediaExtension">
                 
             </function>
-           
-            <variable name="wgAllowExternalImagesFrom">
-                <string name="wgAllowExternalImagesFrom"
-                    description="This need to be set to allow the templates creating image links">$wgServer</string>
-           </variable>
+                      
            <patch file="extensions/RichMedia/patch.txt" />
            <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
         </new>
+        <uninstall>
+        	<patch file="extensions/RichMedia/patch.txt" />
+        	<patch
+        		file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+        </uninstall>
     </configs>
-    <uninstall>
-        <patch file="extensions/RichMedia/patch.txt" />
-        <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
-    </uninstall>
 </deploydescriptor>
 

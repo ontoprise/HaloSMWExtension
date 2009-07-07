@@ -44,9 +44,11 @@
                 file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
             <script file="extensions/UnifiedSearch/maintenance/setup.php" params="" />
         </new>
+        <uninstall>
+        	<script
+        		file="extensions/UnifiedSearch/maintenance/setup.php"
+        		params="--delete" />
+        </uninstall>
     </configs>
-    <uninstall>
-        <script file="extensions/UnifiedSearch/maintenance/setup.php" params="--delete" />
-    </uninstall>
 </deploydescriptor>
 

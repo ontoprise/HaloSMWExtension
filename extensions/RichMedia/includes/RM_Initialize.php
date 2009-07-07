@@ -6,7 +6,10 @@
  */
 
 //this extension does only work if the Halo extension is enabled
-if ( !defined( 'SMW_HALO_VERSION' ) ) die;
+if ( !defined( 'SMW_HALO_VERSION' ) ) {
+	trigger_error("SMWHalo need to be installed!");
+    die;
+}
 
 define('SMW_RM_VERSION', '1.1-for-SMW-1.4.4');
 
