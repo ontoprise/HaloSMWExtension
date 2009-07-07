@@ -462,13 +462,17 @@
 								<tr><td>
 									<div class="smwf_naviitem" id="t-ispermalink"<?php echo $this->skin->tooltip('t-ispermalink') ?>><?php $this->msg('permalink') ?></div>
 								</td></tr>	
-							<?php } ?>
-							<tr><td>
-								<ul> <?php
-							 			wfRunHooks( 'MonoBookTemplateToolboxEnd', array( &$this ) );
-										wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this ) );
-								?> </ul>
-							</td></tr><?php
+							<?php }
+
+                                                        //dirty hack
+                                                        //This code replaces <li>-constructs with the proper ones for this skin
+                                                        //in (old?) monobook content were returned with surrounding <li>-elements,
+                                                        //so it looked fine in this particular skin
+                                                        ob_start(array(&$this, 'removeTags'));
+                                                            wfRunHooks( 'MonoBookTemplateToolboxEnd', array( &$this ) );
+                                                            wfRunHooks( 'SkinTemplateToolboxEnd', array( &$this ) );
+                                                        ob_end_flush();
+
 							$result=array();
 							wfRunHooks( 'OntoSkinTemplateToolboxEnd', array(&$this, &$result));
 							foreach($result as $toolboxlink){
@@ -548,5 +552,13 @@
 		<?php 
 	}
 	
+        //removes <li> elements, which are sometimes inserted by code still expecting
+        //monobook
+        function removeTags( $buffer ){
+            $buffer = preg_replace("/<li.*?>/", "", $buffer);
+            $buffer = preg_replace("/<\/li>/", "", $buffer);
+            return $buffer;
+        }
+        
 } // end of class
 ?>
