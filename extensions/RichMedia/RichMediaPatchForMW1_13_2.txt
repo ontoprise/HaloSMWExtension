@@ -66,7 +66,7 @@ Index: includes/CategoryPage.php
 +			// NS_IMAGE is not the only Namespace now, so check them all
 +			// content was:
 +			// } elseif( $this->showGallery && $title->getNamespace() == NS_IMAGE ) {
-+			} elseif( $this->showGallery && Namespace::isImage( Namespace::isImage( $title->getNamespace() ) ) ) {
++			} elseif( $this->showGallery && Namespace::isImage( $title->getNamespace()  ) ) {
 +			/*op-patch|BL|2009-06-17|end*/
  				$this->addImage( $title, $x->cl_sortkey, $x->page_len, $x->page_is_redirect );
  			} else {
