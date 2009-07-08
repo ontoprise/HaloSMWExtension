@@ -8,12 +8,13 @@
  *
  * Both are absolute paths
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
 
 $reversePatch = "";
 $dryRun = "";
 $onlypatch = false;
+$returnCode = 0;
 
 // get parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -110,8 +111,9 @@ foreach($patches as $p) {
 	unlink($absPath.$path.'/__patch__.txt');
 	
 	if (!$onlypatch) echo "\n------------\n";
-	exit($ret);
+	$returnCode = $returnCode != 0 ? $returnCode : $ret;
 }
+exit($returnCode);
 
 function isWindows() {
 	static $thisBoxRunsWindows;
