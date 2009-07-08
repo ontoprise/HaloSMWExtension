@@ -324,7 +324,7 @@ Index: includes/Linker.php
  				'desc-link' => true,
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 4133)
+--- includes/Namespace.php	(revision 4267)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,12 @@
  	 */
@@ -340,7 +340,7 @@ Index: includes/Namespace.php
  	}
  
  	/**
-@@ -177,5 +182,18 @@
+@@ -177,5 +182,21 @@
  		global $wgNamespacesWithSubpages;
  		return !empty( $wgNamespacesWithSubpages[$index] );
  	}
@@ -355,11 +355,14 @@ Index: includes/Namespace.php
 +	 * @return bool
 +	 */
 +	public static function isImage( $index ) {
++		if ( !defined( 'SMW_RM_VERSION' ) )
++			return ($index == NS_IMAGE);
++		else
 +			return ($index == NS_IMAGE || $index == NS_DOCUMENT ||
 +				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
 +	}
 +	/*op-patch|BL|2009-06-17|end*/
- }
+	}
 Index: includes/Title.php
 ===================================================================
 --- includes/Title.php	(revision 4133)
