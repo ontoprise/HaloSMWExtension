@@ -1,11 +1,11 @@
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 4267)
+--- includes/Namespace.php	(revision 4269)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,12 @@
  	 */
-	public static function isMovable( $index ) {
-		global $wgAllowImageMoving;
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
 -		return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
 +		/*op-patch|BL|2009-06-17|RichMedia|AdditionalNamespaceCheck|start*/
 +		// NS_IMAGE is not the only Namespace now, so check them all
@@ -16,31 +16,29 @@ Index: includes/Namespace.php
  	}
  
  	/**
-@@ -177,5 +182,21 @@
+@@ -177,5 +182,22 @@
  		global $wgNamespacesWithSubpages;
  		return !empty( $wgNamespacesWithSubpages[$index] );
  	}
--
 +	
-+	/*op-patch|BL|2009-06-17|RichMedia|NewFuncForAdditionalNamespaces|start*/
-+	/**
-+	 * Is the namespace one of the (new) image-namespaces?
-+	 * created for AdditionalMIMETypes
-+	 * 
-+	 * @param int $index
-+	 * @return bool
-+	 */
-+	public static function isImage( $index ) {
-+		if ( !defined( 'SMW_RM_VERSION' ) )
-+			return ($index == NS_IMAGE);
-+		else
-+			return ($index == NS_IMAGE || $index == NS_DOCUMENT ||
-+				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
-+	}
-+	/*op-patch|BL|2009-06-17|end*/
- 	}
++ 	/*op-patch|BL|2009-06-17|RichMedia|NewFuncForAdditionalNamespaces|start*/
++ 	/**
++ 	 * Is the namespace one of the (new) image-namespaces?
++ 	 * created for AdditionalMIMETypes
++ 	 * 
++ 	 * @param int $index
++ 	 * @return bool
++ 	 */
++ 	public static function isImage( $index ) {
++ 		if ( !defined( 'SMW_RM_VERSION' ) )
++ 			return ($index == NS_IMAGE);
++ 		else
++ 			return ($index == NS_IMAGE || $index == NS_DOCUMENT ||
++ 				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
++ 	}
++ 	/*op-patch|BL|2009-06-17|end*/
  
- 	/**
+ }
 Index: includes/Sanitizer.php
 ===================================================================
 --- includes/Sanitizer.php	(revision 3939)
