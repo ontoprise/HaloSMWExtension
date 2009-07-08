@@ -54,31 +54,30 @@ class TermImportUpdateBot extends GardeningBot {
 
 		return $params;
 	}
-	
+
 	/**
-	 * This method is called by the bot framework. 
+	 * This method is called by the bot framework.
 	 */
 	public function run($paramArray, $isAsync, $delay) {
 		echo "...started!\n";
-		$result = "";
-		$result = $this->updateTermImports();
 		
-		$date = getdate();
-		$timeInTitle = $date["year"]."_".$date["mon"]."_".$date["mday"]."_".$date["hours"]."_".$date["minutes"]."_".$date["seconds"];
-		return array($result, "TermImport:TermImport updates/".$timeInTitle);
+		$this->updateTermImports();
+		return;
 	}
-	
+
 	/*
 	 * Returns an array of strings that contains the term import
 	 * definitions of all Term Imports that need to be updated
 	 */
 	private function getNecessaryTermImports(){
+		require_once("SMW_TermImportDefinitionValidator.php");
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		SMWQueryProcessor::processFunctionParams(array("[[TermImport:+]] [[Category:TermImport]]")
 			,$querystring,$params,$printouts);
-		$queryResult = explode("|", 
-			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+		$queryResult = explode("|",
+		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 			$printouts, SMW_OUTPUT_WIKI));
-		
+
 		unset($queryResult[0]);
 
 		$necessaryTermImports = array();
@@ -88,15 +87,15 @@ class TermImportUpdateBot extends GardeningBot {
 			$start = strpos($xmlString, "<ImportSettings>");
 			$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
 			$xmlString = substr($xmlString, $start, $end);
-			
+				
 			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
-				,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending", 
+			,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
 				"format=list", "mainlabel=-") 
-				,$querystring,$params,$printouts);
-		$queryResult =   
+			,$querystring,$params,$printouts);
+			$queryResult =
 			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 			$printouts, SMW_OUTPUT_WIKI);
-		
+
 			// timestamp creation depends on property type (page or date)
 			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));
 			if(strpos($queryResult, "[[:") === 0){ //type page
@@ -107,31 +106,49 @@ class TermImportUpdateBot extends GardeningBot {
 			}
 			$timestamp = strtotime($queryResult);
 
+			$tiDV = new SMWTermImportDefinitionValidator($xmlString);
+			if(!$tiDV->validate()){
+				echo("\nThe Term Import definition of ".$tiArticleName." is invalid.\n");
+				$title = Title::newFromText("TermImport:".$tiArticleName);
+				$log->addGardeningIssueAboutArticle
+					($this->id, SMW_GARDISSUE_UPDATE_FAILURE, $title);
+				continue;	
+			}
+			
 			$simpleXMLElement = new SimpleXMLElement($xmlString);
 			$maxAge = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
-		
+
 			if($maxAge != ""){
 				if($timestamp == 0 || (wfTime() - $timestamp - $maxAge[0]->value*60) > 0){
 					echo("\nRun this term import: ".$tiArticleName);
 					$necessaryTermImports[$tiArticleName] = $xmlString;
-				}	
+				}
+			} else {
+				$title = Title::newFromText("TermImport:".$tiArticleName);
+				$log->addGardeningIssueAboutArticle
+					($this->id, SMW_GARDISSUE_UPDATE_NOT_NECESSARY, $title);
 			}
 		}
 		return $necessaryTermImports;
 	}
-	
+
 	/**
-	*	Checks if Term Imports need to be updated and triggers them 
+	 *	Checks if Term Imports need to be updated and triggers them
 	 */
 	private function updateTermImports(){
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		global $smwgDIIP;
 		require_once($smwgDIIP."/specials/TermImport/SMW_WIL.php");
-		
+
 		global $wgUser;
 		//todo
 		$wgUser = User::newFromName('WikiSysop');
+
+		$necessaryTermImports = $this->getNecessaryTermImports();
 		
-		$necessaryTermImports = $this->getNecessaryTermImports();	
+		$this->setNumberOfTasks(1);
+		$this->addSubTask(count($necessaryTermImports));
+		
 		foreach($necessaryTermImports as $termImportName => $xmlString){
 			echo("\nProcessing term import: " .$termImportName. "\n");
 			
@@ -158,16 +175,26 @@ class TermImportUpdateBot extends GardeningBot {
 			$wil = new WIL();
 			$terms = $wil->importTerms($moduleConfig, $dataSource, $importSets, $inputPolicy,
 				$mappingPolicy, $conflictPolicy, $termImportName, false);
-			
+
+			$title = Title::newFromText("TermImport:".$termImportName);	
+			echo("\nRESULT: ".$terms);
+			if($terms != wfMsg('smw_ti_import_successful')){
+				$log->addGardeningIssueAboutArticle
+					($this->id, SMW_GARDISSUE_UPDATE_FAILURE, $title);
+			} else {			
+				$log->addGardeningIssueAboutArticle
+					($this->id, SMW_GARDISSUE_UPDATE_SUCCESS, $title);
+			}
+			$this->worked(1);	
 		}
 	}
-	
+
 	private function startBot(){
 		$bot = $registeredBots[$botID];
 		$taskid = SGAGardeningLog::getGardeningLogAccess()->addGardeningTask($botID);
 		$log = $bot->run($paramArray, $runAsync, 0);
- 		$log .= "\n[[category:GardeningLog]]";
- 		SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
+		$log .= "\n[[category:GardeningLog]]";
+		SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished($taskid, $log);
 	}
 }
 
@@ -175,34 +202,26 @@ class TermImportUpdateBot extends GardeningBot {
 new TermImportUpdateBot();
 
 define('SMW_TERMIMPORTUPDATE_BOT_BASE', 22000);
-//define('SMW_GARDISSUE_ADDED_ARTICLE', SMW_TERMIMPORT_BOT_BASE * 100 + 1);
-//define('SMW_GARDISSUE_UPDATED_ARTICLE', (SMW_TERMIMPORTUPDATE_BOT_BASE+1) * 100 + 1);
-//define('SMW_GARDISSUE_MISSING_ARTICLE_NAME', (SMW_TERMIMPORTUPDATE_BOT_BASE+2) * 100 + 1);
-//define('SMW_GARDISSUE_CREATION_FAILED', (SMW_TERMIMPORTUPDATE_BOT_BASE+2) * 100 + 2);
-//define('SMW_GARDISSUE_UPDATE_SKIPPED', (SMW_TERMIMPORTUPDATE_BOT_BASE+3) * 100 + 1);
+define('SMW_GARDISSUE_UPDATE_NOT_NECESSARY', SMW_TERMIMPORTUPDATE_BOT_BASE * 100 +1);
+define('SMW_GARDISSUE_UPDATE_SUCCESS', (SMW_TERMIMPORTUPDATE_BOT_BASE+1) * 100 + 2);
+define('SMW_GARDISSUE_UPDATE_FAILURE', (SMW_TERMIMPORTUPDATE_BOT_BASE+2) * 100 + 3);
 
 class TermImportUpdateBotIssue extends GardeningIssue {
-	
+
 	public function __construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		parent::__construct($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
 	}
 
 	protected function getTextualRepresenation(& $skin, $text1, $text2, $local = false) {
-		//todo provide messages
 		switch($this->gi_type) {
-			case SMW_GARDISSUE_ADDED_ARTICLE:
-				return wfMsg('smw_ti_added_article', $text1);
-			case SMW_GARDISSUE_UPDATED_ARTICLE:
-				return wfMsg('smw_ti_updated_article', $text1);
-			case SMW_GARDISSUE_MISSING_ARTICLE_NAME:
-				return wfMsg('smw_ti_missing_articlename');
-			case SMW_GARDISSUE_CREATION_FAILED:
-				return wfMsg('smw_ti_creation_failed', $text1);
-			case SMW_GARDISSUE_UPDATE_SKIPPED:
-				return wfMsg('smw_ti_articleNotUpdated', $text1);
-
+			case SMW_GARDISSUE_UPDATE_NOT_NECESSARY:
+				return wfMsg('smw_ti_update_not_necessary', $text1);
+			case SMW_GARDISSUE_UPDATE_SUCCESS:
+				return wfMsg('smw_ti_updated_successfully', $text1);
+			case SMW_GARDISSUE_UPDATE_FAILURE:
+				return wfMsg('smw_ti_update_failure', $text1);
+					
 			default: return NULL;
-
 		}
 	}
 }
@@ -212,10 +231,9 @@ class TermImportUpdateBotFilter extends GardeningIssueFilter {
 	public function __construct() {
 		parent::__construct(SMW_TERMIMPORTUPDATE_BOT_BASE);
 		$this->gi_issue_classes = array(wfMsg('smw_gardissue_class_all'),
-			wfMsg('smw_gardissue_ti_class_added_article'),
-			wfMsg('smw_gardissue_ti_class_updated_article'),
-			wfMsg('smw_gardissue_ti_class_system_error'),
-			wfMsg('smw_gardissue_ti_class_update_skipped'));
+			wfMsg('smw_gardissue_ti_class_ignored'),
+			wfMsg('smw_gardissue_ti_class_success'),
+			wfMsg('smw_gardissue_ti_class_failure'));
 	}
 
 	public function getUserFilterControls($specialAttPage, $request) {
@@ -235,9 +253,8 @@ class TermImportUpdateBotFilter extends GardeningIssueFilter {
 	}
 
 	private function getGardeningIssueContainerForTitle($options, $request, $title) {
-		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base - 1;
-
-
+		$gi_class = $request->getVal('class') == 0 ? NULL : $request->getVal('class') + $this->base*100;
+	
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$gic = array();

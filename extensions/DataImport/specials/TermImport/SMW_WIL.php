@@ -373,7 +373,7 @@ class WIL implements IWIL {
 	 *		</ReturnValue >
 	 */
 	public function importTerms($moduleConfig, $dataSource, $importSet, $inputPolicy,
-	$mappingPolicy, $conflictPolicy, $termImportName, $async = true) {
+			$mappingPolicy, $conflictPolicy, $termImportName, $async = true) {
 		global $smwgDIIP, $wgUploadDirectory;
 		require_once("$smwgDIIP/specials/TermImport/SMW_TermImportBot.php");
 
@@ -413,12 +413,12 @@ class WIL implements IWIL {
 				$taskID = SGAGardeningLog::getGardeningLogAccess()->addGardeningTask('smw_termimportbot');
 				$log = $bot->run($param, false, 0);
 				$logPageTitle = $log[1];
-				$log = $log[0]."\n[[category:GardeningLog]]";
+				$log = $log[0];
 				SGAGardeningLog::getGardeningLogAccess()->markGardeningTaskAsFinished(
 					$taskID, $log, $logPageTitle);
 				
 				//todo:error handling
-				return true;
+				return $log;
 			}
 		} else {
 			$msg = wfMsg('smw_ti_couldnotwritesettings');
