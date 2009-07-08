@@ -6,7 +6,7 @@ require_once('../io/import/BackupReader.php');
 
 /**
  * Resource installer takes care about wikidump/resource (de-)installation.
- * 
+ *
  * @author Kai Kühn / ontoprise / 2009
  *
  */
@@ -52,21 +52,23 @@ class ResourceInstaller {
 		if (!is_null($fromVersion)) {
 			// remove old pages
 			print "\nRemove unused pages...";
-			$res = smwfGetStore()->getQueryResult("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]");
+			$query = SMWQueryProcessor::createQuery("[[Ontology version::$fromVersion]][[Part of bundle::".$dd->getID()."]]", array());
+			$res = smwfGetStore()->getQueryResult($query);
 			$next = $res->getNext();
-			while($next) {
-				$title = Title::newFromText($next->getNextObject());
+			while($next !== false) {
+
+				$title = $next[0]->getNextObject()->getTitle();
 				if (!is_null($title)) {
 					$a = new Article($title);
-					print "\nRemove: ".$title->getPrefixedText();
-					$a->doDeleteArticle("ontology update to ".$dd->ID()."-".$dd->getVersion());
+					print "\nRemove old page from $fromVersion: ".$title->getPrefixedText();
+					$a->doDeleteArticle("ontology removed: ".$dd->ID());
 				}
 				$next = $res->getNext();
 			}
 		}
 
 	}
-	
+
 	/**
 	 * Deinstalls wikidumps contained in the given descriptor.
 	 * @param $dd
@@ -74,10 +76,13 @@ class ResourceInstaller {
 	 */
 	public function deinstallWikidump($dd) {
 		print "\nRemove ontologies...";
-		$res = smwfGetStore()->getQueryResult("[[Part of bundle::".$dd->getID()."]]");
+
+		$query = SMWQueryProcessor::createQuery("[[Part of bundle::".$dd->getID()."]]", array());
+		$res = smwfGetStore()->getQueryResult($query);
 		$next = $res->getNext();
-		while($next) {
-			$title = Title::newFromText($next->getNextObject());
+		while($next !== false) {
+				
+			$title = $next[0]->getNextObject()->getTitle();
 			if (!is_null($title)) {
 				$a = new Article($title);
 				print "\nRemove: ".$title->getPrefixedText();
@@ -86,34 +91,39 @@ class ResourceInstaller {
 			$next = $res->getNext();
 		}
 	}
-	
+
 
 	/**
 	 * Deletes resources contained in the given descriptor.
-	 * 
+	 *
 	 * @param $dd
 	 * @return unknown_type
 	 */
 	public function deleteResources($dd) {
+		
+		if (count($dd->getResources()) ==  0) return;
+		
+		print "\nDeleting resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$title = Title::newFromText(basename($file), NS_IMAGE);
 			$im_file = wfLocalFile($title);
 			$im_file->delete("remove resource");
-			$a = new Article($titleObj);
+			$a = new Article($title);
+			print "\nRemove: ".$title->getPrefixedText();
 			$a->doDelete("remove resource");
 		}
 	}
-	
+
 	/**
-	 * Checks if the page contained in the given package are modified and displays those. 
+	 * Checks if the page contained in the given package are modified and displays those.
 	 * @param $packageID
 	 * @param $version
 	 * @return unknown_type
 	 */
 	public function checkWikidump($packageID, $version) {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed although it is needed to check ontology status.");
-		
+
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions', true);
 		$package = array_key_exists($packageID, $localPackages) ? $localPackages[$packageID] : NULL;
 		$packageFound = !is_null($package) && ($package->getVersion() == $version || $version == NULL);
@@ -137,16 +147,19 @@ class ResourceInstaller {
 	 * @return unknown_type
 	 */
 	public function installOrUpdateResources($dd, $fromVersion) {
+		
+		if (count($dd->getResources()) ==  0) return;
+		
 		// resources files
 		print "\nCopying resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			print "\nCopy $file...";
 			if (is_dir($this->rootDir."/".$file)) {
-				
+
 				$this->importResources($this->rootDir."/".$file);
 			} else {
-				
+
 				$im_file = wfLocalFile(Title::newFromText(basename($this->rootDir."/".$file), NS_IMAGE));
 				$im_file->upload($this->rootDir."/".$file, "auto-inserted image", "noText");
 			}
@@ -200,7 +213,7 @@ class ResourceInstaller {
 
 		}
 	}
-	
+
 
 
 }

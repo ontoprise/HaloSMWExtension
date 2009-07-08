@@ -11,8 +11,8 @@ if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 }
 
 // this URL is supposed to be fix forever
-define("SMWPLUS_REPOSITORY", "http://localhost/repository/");
-//define("SMWPLUS_REPOSITORY", "http://halo-build-serv/repository/");
+//define("SMWPLUS_REPOSITORY", "http://localhost/repository/");
+define("SMWPLUS_REPOSITORY", "http://halo-build-serv/repository/");
 //define("SMWPLUS_REPOSITORY", "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
 
 /**

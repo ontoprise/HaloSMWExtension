@@ -214,10 +214,9 @@ class DeployWikiRevision extends WikiRevision {
 		$linkCache->clear();
 		
 		// add annotations FIXME: as template?
-		$this->text .= "\n[[Ontology version::".$this->oversion."]]";
-		$this->text .= "\n[[Part of bundle::".$this->partofbundle."]]";
 		$this->text .= "\n[[Content hash::".$this->md5_hash."]]";
 		
+				
 		$article = new Article( $this->title );
 		$pageId = $article->getId();
 		if( $pageId == 0 ) {
@@ -228,10 +227,12 @@ class DeployWikiRevision extends WikiRevision {
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
 				
-				$ontversion = SMWPropertyValue::makeUserProperty("Ontology version");
+				$ontversion = SMWPropertyValue::makeUserProperty("Content hash");
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
 				if (count($values) > 0) $exp_hash = reset($values)->getXSDValue(); else $exp_hash = '';
-				$hash = md5($prior->getRawText());
+				$rawtext = preg_replace('/\n\[\[Content hash\s*::\s*\w+\]\]/', "", $prior->getRawText());
+				$hash = md5($rawtext);
+				
 				if ($hash != $exp_hash) {
 					$result = false;
 					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);

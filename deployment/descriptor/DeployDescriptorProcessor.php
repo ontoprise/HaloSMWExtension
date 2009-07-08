@@ -79,6 +79,7 @@ class DeployDescriptionProcessor {
 		if (!is_null($fragment)) {
 			$ls = str_replace($fragment, "", $this->localSettingsContent);
 		}
+		$ls = Tools::removeTrailingWhitespaces($ls);
 		$this->writeLocalSettingsFile($ls);
 		return $ls;
 	}

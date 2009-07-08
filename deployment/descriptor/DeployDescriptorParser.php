@@ -50,6 +50,10 @@ class DeployDescriptorParser {
 	public function getPrecedings() {
 		return $this->precedings;
 	}
+	
+	public function hasPreceding($id) {
+		return in_array($id, $this->precedings);
+	}
 
 	public function getConfigs() {
 		return $this->configs;
@@ -240,6 +244,7 @@ class DeployDescriptorParser {
 	}
 
 	function getResources() {
+		
 		if (!is_null($this->resources)) return $this->resources;
 		$this->resources = array();
 		foreach($this->resources_xml as $file) {

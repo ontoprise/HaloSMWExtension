@@ -69,21 +69,22 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$listPackages = true;
 		continue;
 	}
-
-	if ($arg == '-lall') {
-		$listAvailablePackages = true;
-		continue;
-	}
-
+	
 	if ($arg == '-desc') {
 		$showDescription = true;
 		continue;
 	}
 
-	if ($arg == '-c') {
+	if ($arg == '--dep') {
 		$checkDep = true;
 		continue;
 	}
+	
+    if ($arg == '--dump') {
+        $checkDump = true;
+        continue;
+    }
+    
 	if ($arg == '-f') {
 		$force = true;
 		continue;
@@ -97,19 +98,19 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
 $help = array_key_exists("help", $options);
 
-if ($help) {
-	echo "\nsmwhalo admin utility, Ontoprise 2009";
+if ($help || count($argv) == 0) {
+	echo "\nsmwhalo admin utility v0.1, Ontoprise 2009";
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n";
 	echo "\n\t-i : Install";
 	echo "\n\t-d : De-Install";
 	echo "\n\t-u : Update";
-	echo "\n\t-c : Check only dependencies but do not install.";
 	echo "\n\t-l : List installed packages.";
-	echo "\n\t-lall : List all available packages.";
+	echo "\n\t--dep : Check only dependencies but do not install.";
+	echo "\n\t--dump : Check only dumps for changes but do not install.";
 	echo "\n";
-	echo "\nExamples:\n\tsmwadmin -i smwhalo-1.4.4 -u smw-1.4.2: Installs the given packages";
+	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-1.4.2: Installs the given packages";
 	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
 	echo "\n\tsmwadmin -u: Updates complete installation";
 	echo "\n\tsmwadmin -u -c: Shows what would be updated.";
@@ -135,11 +136,6 @@ if ($globalUpdate) {
 }
 
 if ($listPackages) {
-	$installer->listPackages();
-	die();
-}
-
-if ($listAvailablePackages) {
 	$installer->listAvailablePackages($showDescription);
 	die();
 }
@@ -151,17 +147,20 @@ foreach($packageToInstall as $toInstall) {
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
-		if ($checkDep) {
+		if (isset($checkDump) && $checkDump == true) {
+			$res_installer->checkWikidump($packageID, $version);
+
+            print "\n\n";
+		} else if (isset($checkDep) && $checkDep == true) {
 			list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
 				
 			print "\n\nThe following extensions would be installed:\n";
-			foreach($extensions_to_update as $id => $etu) {
+			foreach($extensions_to_update as $etu) {
 				list($desc, $min, $max) = $etu;
+				$id = $desc->getID();
 				print "\n\t*$id-".Tools::addVersionSeparators($min);
 			}
 			print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
-
-			$res_installer->checkWikidump($packageID, $version);
 
 			print "\n\n";
 		} else {
@@ -215,10 +214,11 @@ print "\n\nOK.\n";
  * @param Exception $e (InstallationError, HttpError, RollbackInstallation)
  */
 function fatalError($e) {
+	print "\n\n";
 	switch($e->getErrorCode()) {
 		case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
 			$packages = $e->getArg1();
-			print "\n".$e->getMsg()."\n";
+			print $e->getMsg()."\n";
 			foreach($packages as $p) {
 				print "\n\t*$p";
 			}
@@ -226,7 +226,7 @@ function fatalError($e) {
 		}
 		case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
 			$package = $e->getArg1();
-			print "\n".$e->getMsg()."\n";
+			print $e->getMsg()."\n";
 			print "\n\t*".$package->getID()."-".$package->getVersion();
 			break;
 		case DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION:
@@ -235,7 +235,7 @@ function fatalError($e) {
 		case DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS:
 		case DEPLOY_FRAMEWORK_CODE_CHANGED:
 		case DEPLOY_FRAMEWORK_MISSING_FILE:
-		default: echo "\nError: ".$e->getMsg(); break;
+		default: echo "Error: ".$e->getMsg(); break;
 	}
 	print "\n\n";
 	// stop installation

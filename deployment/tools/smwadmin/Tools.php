@@ -250,5 +250,20 @@ class Tools {
 			return substr($version, 0, 1).".".substr($version, 1,2).".".substr($version,3);
 		}
 	}
+	
+	/**
+	 * Removes trailing whitespaces at the end (LF, CR, TAB, SPACE)
+	 * and adds a single CR at the end.
+	 * 
+	 * @param string $ls
+	 * @return string
+	 */
+	public static function removeTrailingWhitespaces($ls) {
+		for($i=strlen($ls); $i > 0; $i--) {
+			$c = ord($ls[$i]);
+			if ($c !== 0 && $c !== 9 && $c !== 10 &&  $c !== 13 && $c !== 32) break;
+		}
+		return substr($ls, 0, $i+1)."\n";
+	}
 }
 ?>

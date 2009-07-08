@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-	<global>
-		<version>171</version>
-		<id>SemanticForms</id>
-		<vendor>Ontoprise GmbH / Yaron Kohan</vendor>
-		<instdir>extensions/SemanticForms</instdir>
-		<description>
-			Annotate your wiki using forms.
-		</description>
-		<dependencies>
-			<dependency from="1120" to="1150">MW</dependency>
-			<dependency from="100" to="142">smw</dependency>
-		</dependencies>
-	</global>
-	<codefiles>
+    <global>
+        <version>171</version>
+        <id>SemanticForms</id>
+        <vendor>Ontoprise GmbH / Yaron Kohan</vendor>
+        <instdir>extensions/SemanticForms</instdir>
+        <description>
+            Store richmedia files in our your wiki
+        </description>
+        <dependencies>
+            <dependency from="1120" to="1150">MW</dependency>
+            <dependency from="142" to="142">smw</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
 
-		<file loc="extensions/SemanticForms/deploy.xml" />
-		<!-- TODO: add all others -->
-	</codefiles>
-	<wikidumps>
-		<!-- empty -->
-	</wikidumps>
-	<resources>
-		<!-- empty -->
-	</resources>
+        <file loc="extensions/SemanticForms/deploy.xml" />
+        <!-- TODO: add all others -->
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
 
-	<configs>
-		<new>
-			<require name="sf_init"
-				file="extensions/SemanticForms/includes/SF_Settings.php" />
-			<patch file="extensions/SemanticForms/patch.txt" />
-		</new>
-		<uninstall>
-			<patch file="extensions/SemanticForms/patch.txt" />
-		</uninstall>
-	</configs>
+    <configs>
+    <precedes ext="smw" />
+        <new>
+            <require name="sf_init"
+                file="extensions/SemanticForms/includes/SF_Settings.php" />
+            <patch file="extensions/SemanticForms/patch.txt" />
+        </new>
+            <uninstall>
+        <patch file="extensions/SemanticForms/patch.txt" />
+    </uninstall>
+    </configs>
+
 </deploydescriptor>
 

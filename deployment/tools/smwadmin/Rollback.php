@@ -28,7 +28,7 @@ class Rollback {
 		$this->alreadyInstalledExtensions[] = $dd;
 		if (array_key_exists($dd->getID(), $localPackages)) {
 			// update, so rename existing installation directory
-			rename($inst_dir."/".$localPackages[$dd->getID()]->getInstallationDirectory(), $inst_dir."/".$localPackages[$dd->getID()]->getInstallationDirectory().".bak");
+			rename($this->inst_dir."/".$localPackages[$dd->getID()]->getInstallationDirectory(), $this->inst_dir."/".$localPackages[$dd->getID()]->getInstallationDirectory().".bak");
 		}
 	}
 	
@@ -72,8 +72,8 @@ class Rollback {
 		print "\nCleanup rollback storage...";
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		 foreach($this->alreadyInstalledExtensions as $ext) {
-		 	if (file_exists($inst_dir."/".$ext->getInstallationDirectory().".bak")) {
-		 		Tools::remove_dir($inst_dir."/".$localPackages[$ext->getID()]->getInstallationDirectory().".bak");
+		 	if (file_exists($this->inst_dir."/".$ext->getInstallationDirectory().".bak")) {
+		 		Tools::remove_dir($this->inst_dir."/".$ext->getInstallationDirectory().".bak");
 		 	}
 		 }
 		 print "done.";

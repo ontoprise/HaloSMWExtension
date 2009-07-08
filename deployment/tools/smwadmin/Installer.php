@@ -10,6 +10,7 @@ define('DEPLOY_FRAMEWORK_CODE_CHANGED',6);
 define('DEPLOY_FRAMEWORK_MISSING_FILE', 7);
 define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
 define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
+define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
 
 require_once 'PackageRepository.php';
 require_once 'Tools.php';
@@ -101,12 +102,8 @@ class Installer {
 
 		// Install/update all dependant and super extensions
 		print "\nInstall dependant extensions and update super extensions if necessary";
+		$extensions_to_update[] = array($new_package, $new_package->getVersion(), $new_package->getVersion());
 		$this->installOrUpdatePackages($extensions_to_update);
-
-
-		// Install update this extension
-		print "\nInstall ".$new_package->getID()." or super extensions";
-		$this->installOrUpdatePackage($new_package, $version, !is_null($old_package) ? $old_package->getVersion : NULL);
 
 		$this->rollback->cleanup();
 			
@@ -151,10 +148,11 @@ class Installer {
 		if ($existDependency) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to the following packages exists:", $dependantPackages);
 		}
-		
+
 		// remove ontology
 		$this->res_installer->deinstallWikidump($ext);
-		
+		$this->res_installer->deleteResources($ext);
+
 		// undo all config changes
 		// - from LocalSettings.php
 		// - from database (setup scripts)
@@ -246,25 +244,7 @@ class Installer {
 		print "\n\n";
 	}
 
-	/**
-	 * List locally installed packages
-	 *
-	 */
-	public function listPackages() {
-
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
-		print "\n Installed            | Package";
-		print "\n-------------------------------\n";
-		foreach($localPackages as $p_id => $lp) {
-
-			$instTag = "[installed ".Tools::addVersionSeparators($lp->getVersion())."]";
-			$instTag .= str_repeat(" ", 20-strlen($instTag));
-
-			print "\n $instTag $p_id";
-		}
-		print "\n";
-	}
-
+	
 	/**
 	 * List all available packages and show if it is installed and in wich version.
 	 *
@@ -349,7 +329,7 @@ class Installer {
 		}
 
 		if (!is_null($old_package) && (is_null($version) || $old_package->getVersion() == $new_package->getVersion())) {
-	 	    throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
+			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 
 	 // 6. Check dependencies for install/update
@@ -376,9 +356,9 @@ class Installer {
 	private function installOrUpdatePackages($extensions_to_update) {
 		$d = new HttpDownload();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
-		foreach($extensions_to_update as $id=>$arr) {
+		foreach($extensions_to_update as $arr) {
 			list($desc, $min, $max) = $arr;
-
+			$id = $desc->getID();
 			// log extension for possible rollback
 			// does not hold for updated extensions. The cannot be rolled back.
 			$this->rollback->addExtension($desc);
@@ -394,35 +374,10 @@ class Installer {
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
+			$this->res_installer->installOrUpdateResources($desc, $fromVersion);
+
 			print "\n-------\n";
 		}
-	}
-
-	/**
-	 * Install extension
-	 *
-	 * @param descriptor $dd
-	 * @param int $version
-	 */
-	private function installOrUpdatePackage($dd, $version, $fromVersion) {
-		$d = new HttpDownload();
-		if (is_null($version)) {
-			list($url,$version) = PackageRepository::getLatestVersion($dd->getID());
-
-		} else {
-			$url = PackageRepository::getVersion($dd->getID(), $version);
-		}
-		$d->downloadAsFileByURL($url, $this->tmpFolder."/".$dd->getID()."-$version.zip");
-
-		// unzip
-		$this->unzip($dd->getID(), $version);
-
-		// apply deploy descriptor
-		$dd->applyConfigurations($this->instDir, false, $fromVersion, $this);
-
-		// install wiki pages
-		$this->res_installer->installOrUpdateWikidumps($dd, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-
 	}
 
 
@@ -453,29 +408,70 @@ class Installer {
 	 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
 	 */
 	private function calculateVersionRange($updatesNeeded, & $extensions_to_update) {
+		$extensions = array();
 		$extensions_to_update = array();
 		foreach($updatesNeeded as $un) {
 			list($un, $from, $to) = $un;
-			if (!array_key_exists($un->getID(), $extensions_to_update)) {
+			if (!array_key_exists($un->getID(), $extensions)) {
 
-				$extensions_to_update[$un->getID()] = array($un, $from, $to);
+				$extensions[$un->getID()] = array($un, $from, $to);
 			} else {
-				list($min, $max) = $extensions_to_update[$un->getID()];
+				list($min, $max) = $extensions[$un->getID()];
 				if ($from > $min) $min = $from;
 				if ($to < $max) $max = $to;
-				$extensions_to_update[$un->getID()] = array($un, $min, $max);
+				$extensions[$un->getID()] = array($un, $min, $max);
 			}
 		}
+		$precedenceOrder = $this->sortPrecedence($extensions);
+		foreach($precedenceOrder as $po) {
+			$extensions_to_update[] = $extensions[$po];
+		}
+
+	}
+
+	/**
+	 * Provides a topologic sorting based on the precedence graph.
+	 *
+	 * @param array(ID=>array($dd,$min,$max)) $extensions_to_update
+	 * @return array(ID)
+	 */
+	private function sortPrecedence(& $extensions_to_update) {
+		$sortedPackages = array();
+		$vertexes = array_keys($extensions_to_update);
+		$descriptors = array_values($extensions_to_update);
+		while (!empty($vertexes)) {
+			$cycle = true;
+			foreach($vertexes as $v) {
+				$hasPreceding = false;
+				foreach($descriptors as $e) {
+					list($dd, $from, $to) = $e;
+					if (in_array($dd->getID(), $vertexes)) {
+						if ($dd->hasPreceding($v)) {
+							$hasPreceding = true;
+							break;
+						}
+					}
+				}
+				if (!$hasPreceding) {
+					$cycle = false;
+					break;
+				}
+			}
+			if (!$hasPreceding) {
+				// remove $v from $vertexes
+				$vertexes = array_diff($vertexes, array($v));
+
+			}
+			$sortedPackages[] = $v;
+				
+			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the preceding graph.");
+		}
+		return array_reverse($sortedPackages);
 	}
 
 
 
-	public function downloadProgres($percentage) {
-		// do nothing
-	}
-	public function downloadFinished($filename) {
-		// do nothing
-	}
+
 
 	/**
 	 * Checks for updates on depending extensions if the package described by $dd would be installed.
@@ -604,26 +600,13 @@ class Installer {
 		return strtolower($line);
 	}
 
-	/**
-	 * Checks the integrity of the package.
-	 *
-	 * @param DeployDescriptorParser $ext
-	 */
-	private function checkIntegrity($ext) {
-
-		$dumps = $ext->getWikidumps();
-		foreach($dumps as $loc) {
-			if (!is_dir($this->rootDir."/".$loc) && !file_exists($this->rootDir."/".$loc)) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", $this->rootDir."/".$loc);
-			}
-		}
-		$resources = $ext->getResources();
-		foreach($dumps as $loc) {
-			if (!is_dir($this->rootDir."/".$loc) && !file_exists($this->rootDir."/".$loc)) {
-				throw new InstallationError(DEPLOY_FRAMEWORK_MISSING_FILE, "Missing file or directory.", $this->rootDir."/".$loc);
-			}
-		}
+	public function downloadProgres($percentage) {
+		// do nothing
 	}
+	public function downloadFinished($filename) {
+		// do nothing
+	}
+	
 }
 
 class InstallationError extends Exception {
