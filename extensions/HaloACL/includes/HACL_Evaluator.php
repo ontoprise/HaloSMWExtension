@@ -80,6 +80,16 @@ class HACLEvaluator {
 	public static function userCan($title, $user, $action, &$result) {
 
 		$etc = haclfDisableTitlePatch();
+
+		// Check if property access is requested.
+		global $haclgProtectProperties;
+		if ($haclgProtectProperties) {
+			$r = self::checkPropertyAccess($title, $user, $action);
+			if ($r !== -1) {
+				$result = $r;
+				return $r;
+			}
+		}
 		
 		//Special handling of action "wysiwyg". This is passed as 
 		// "action=edit&mode=wysiwyg"
@@ -258,7 +268,8 @@ class HACLEvaluator {
 
 	/**
 	 * Checks, if the given user has the right to perform the given action on
-	 * the given proptery.
+	 * the given property. (This happens only if protection of semantic properties
+	 * is enabled (see $haclgProtectProperties in HACL_Initialize.php))
 	 *
 	 * @param mixed(Title|int) $propertyTitle
 	 * 		ID or title of the property whose rights are evaluated
@@ -272,6 +283,12 @@ class HACLEvaluator {
 	 * 		<false>, otherwise
 	 */
 	public static function hasPropertyRight($propertyTitle, $userID, $actionID) {
+		global $haclgProtectProperties;
+		if (!$haclgProtectProperties) {
+			// Protection of properties is disabled.
+			return true;
+		}
+		
 		if ($propertyTitle instanceof Title) {
 			$propertyTitle = $propertyTitle->getArticleID();
 		}
@@ -286,7 +303,7 @@ class HACLEvaluator {
 		}
 		return self::hasRight($propertyTitle, 
 							  HACLSecurityDescriptor::PET_PROPERTY,
-		                      $userID, HACLRight::READ);
+		                      $userID, $actionID);
 		
 	}
 		
@@ -520,7 +537,8 @@ class HACLEvaluator {
 	
 	/**
 	 * This method checks if a user wants to edit an article with protected 
-	 * properties. 
+	 * properties. (This happens only if protection of semantic properties
+	 * is enabled (see $haclgProtectProperties in HACL_Initialize.php))
 	 *
 	 * @param Title $t
 	 * 		The title.
@@ -583,5 +601,40 @@ class HACLEvaluator {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Checks if access to a property should be evaluated. This is the case if
+	 * the string $action is one of 'propertyread', 'propertyformedit' or 
+	 * 'propertyedit'. 
+	 *
+	 * @param Title $title
+	 * 		Title object for the property whose rights are checked.
+	 * @param User $user
+	 * 		User who wants to access the property
+	 * @param string $action
+	 * 		If this is one of 'propertyread', 'propertyformedit' or 'propertyedit'
+	 * 		property rights are checked
+	 * @return bool / int
+	 * 		<true>:  Access to the property is granted.
+	 * 		<false>: Access to the property is denied.
+	 *      -1: $action is not concerned with properties.
+	 */
+	private static function checkPropertyAccess(Title $title, User $user, $action) {
+		switch ($action) {
+			case 'propertyread':
+				$actionID = HACLRight::READ;
+				break;
+			case 'propertyformedit':
+				$actionID = HACLRight::FORMEDIT;
+				break;
+		    case 'propertyedit':
+				$actionID = HACLRight::EDIT;
+		    	break;
+		    default:
+		    	// No property access requested
+		    	return -1;
+		}
+		return self::hasPropertyRight($title, $user->getId(), $actionID);
 	}
 }
