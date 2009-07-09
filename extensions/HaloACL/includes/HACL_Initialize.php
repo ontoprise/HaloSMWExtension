@@ -96,6 +96,7 @@ $haclgBaseStore = HACL_STORE_SQL;
 # all authorized users for that namespace will be able to access all articles
 # in that namespace, even if security descriptors for individual articles define
 # another set authorized users.
+# The name of the main namespace is 'Main'.
 $haclgUnprotectableNamespaces = array('Main');
 
 # load global functions
