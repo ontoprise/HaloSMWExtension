@@ -26,46 +26,127 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function tearDown() {
-
+		PackageRepository::clearPackageRepository();
 	}
 
 
 	function testGetVersion() {
-		$this->assertNotNull(PackageRepository::getVersion("SMWHalo",150));
+		$this->assertNotNull(PackageRepository::getVersion("smwhalo",143));
 	}
 
 	function testGetVersion2() {
-		$this->assertNull(PackageRepository::getVersion("SMWHalo",170));
+		$this->assertNull(PackageRepository::getVersion("smwhalo",170));
 	}
 
 	function testGetVersion3() {
-		$versions = PackageRepository::getAllVersions("SMWHalo");
+		$versions = PackageRepository::getAllVersions("smwhalo");
+
+		$this->assertTrue(count($versions) === 2);
+		$this->assertEquals(144, $versions[0]);
+		$this->assertEquals(143, $versions[1]);
+	}
+
+	function testGetVersion4() {
+
+		//introduce second repository
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		$versions = PackageRepository::getAllVersions("smwhalo");
 
 		$this->assertTrue(count($versions) === 3);
 		$this->assertEquals(150, $versions[0]);
 		$this->assertEquals(144, $versions[1]);
-		$this->assertEquals(130, $versions[2]);
+		$this->assertEquals(143, $versions[2]);
 	}
 
 	function testLatestVersion() {
-		$this->assertNotNull(PackageRepository::getLatestVersion("SMWHalo"));
+		$this->assertNotNull(PackageRepository::getLatestVersion("smwhalo"));
 	}
 
 	function testExistsVersion() {
-		$this->assertTrue(PackageRepository::existsPackage("SMWHalo"));
+		$this->assertTrue(PackageRepository::existsPackage("smwhalo"));
 	}
 
 	function testExistsVersion2() {
-		$this->assertTrue(PackageRepository::existsPackage("SMWHalo", 150));
+		$this->assertTrue(PackageRepository::existsPackage("smwhalo", 143));
 	}
 
 	function testExistsVersion3() {
-		$this->assertFalse(PackageRepository::existsPackage("SMWHalo", 170));
+		$this->assertFalse(PackageRepository::existsPackage("smwhalo", 170));
+	}
+
+	function testExistsVersion4() {
+
+		//introduce second repository
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+
+		$this->assertTrue(PackageRepository::existsPackage("smwhalo", 150));
+	}
+
+	function testGetAllPackages() {
+		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'unifiedsearch');
+		$allPackages = PackageRepository::getAllPackages();
+
+		foreach($allPackages as $id => $versions) {
+			$this->assertContains($id, $exp_packages);
+		}
+
+	}
+
+	function testGetAllPackages2() {
+
+		//introduce second repository
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+
+		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'unifiedsearch', 'richmedia');
+		$allPackages = PackageRepository::getAllPackages();
+
+		foreach($allPackages as $id => $versions) {
+			$this->assertContains($id, $exp_packages);
+		}
+
+	}
+
+	function testGetLatestDeployDescriptor() {
+		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
+		$this->assertEquals("smwhalo", $dd->getID());
+		$this->assertEquals(144, $dd->getVersion());
+	}
+
+	function testGetLatestDeployDescriptor2() {
+		//introduce second repository
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+
+		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
+		$this->assertEquals("smwhalo", $dd->getID());
+		$this->assertEquals(150, $dd->getVersion());
+	}
+
+
+	function testGetDeployDescriptor() {
+		$dd = PackageRepository::getDeployDescriptor("smwhalo", 144);
+		$this->assertEquals("smwhalo", $dd->getID());
+		$this->assertEquals(144, $dd->getVersion());
+	}
+
+	function testGetDeployDescriptor2() {
+
+		//introduce second repository
+		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+
+
+		$dd = PackageRepository::getDeployDescriptor("smwhalo", 150);
+		$this->assertEquals("smwhalo", $dd->getID());
+		$this->assertEquals(150, $dd->getVersion());
 	}
 
 	function testLocalPackageRepository() {
 		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'mw');
-        
+
 		$packages = PackageRepository::getLocalPackages(self::$instDir.'/extensions');
 		$this->assertTrue(count($packages) === 4);
 		foreach($packages as $p) {

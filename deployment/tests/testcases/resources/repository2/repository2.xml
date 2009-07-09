@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root url="http://localhost/mediawiki/deployment/tests/testcases/resources/repository2/">
+    <extensions>
+        <extension id="smwhalo">
+            <version
+                url="http://dailywikibuilds.ontoprise.com:8080/job/smwhalo_1_4_4_release/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+                ver="143" />
+            <version
+                url="http://dailywikibuilds.ontoprise.com:8080/job/smwhalo_1_4_4_release/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SMWHalo/deploy/bin/smwhalo-1.4.4.zip"
+                ver="150" />
+            
+        </extension>
+       
+        <extension id="richmedia">
+           
+            <version
+                url="http://dailywikibuilds.ontoprise.com:8080/job/smwhalo_1_4_4_release/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/UnifiedSearch/deploy/bin/smwhalo-search-1.2.zip"
+                ver="110" />
+            <version
+                url="http://dailywikibuilds.ontoprise.com:8080/job/smwhalo_1_4_4_release/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/UnifiedSearch/deploy/bin/smwhalo-search-1.2.zip"
+                ver="120" />
+        </extension>
+    </extensions>
+</root>

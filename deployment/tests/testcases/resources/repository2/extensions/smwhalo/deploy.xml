@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>143</version>
+        <version>150</version>
         <id>SMWHalo</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SMWHalo</instdir>
@@ -12,7 +12,7 @@
     </global>
     <codefiles>
         <file loc="extensions/SMWHalo/deploy.xml" />
-      
+        
         <!-- TODO: add others -->
     </codefiles>
     <wikidumps>

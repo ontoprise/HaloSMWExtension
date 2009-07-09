@@ -1,5 +1,7 @@
 <?php
 
+define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
+
 if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
 	require_once 'deployment/io/HttpDownload.php';
 	require_once 'deployment/tools/smwadmin/Tools.php';
@@ -24,9 +26,9 @@ define("SMWPLUS_REPOSITORY", "http://halo-build-serv/repository/");
 class PackageRepository {
 
 	// repository DOM
-	static $repo_dom = NULL;
+	static $repo_dom = array();
 	static $deploy_descs = array();
-	
+
 	static $localPackages = NULL;
 
 	/**
@@ -35,41 +37,85 @@ class PackageRepository {
 	 * @return PackageRepository
 	 */
 	private static function getPackageRepository() {
-		if (!is_null(self::$repo_dom)) return self::$repo_dom;
-
+		if (!empty(self::$repo_dom)) return self::$repo_dom;
+		$rep_urls = array();
+		if (file_exists("repositories")) {
+			print "\nReadling from repository file...";
+			$content = file_get_contents("repositories");
+			$rep_urls = array_unique(explode("\n", $content));
+			print "done.";
+		} else {
+			print "\nNo repository file. Using default repository.";
+			$rep_urls[] = SMWPLUS_REPOSITORY; // default repo
+		}
 		$d = new HttpDownload();
-		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. 'repository.xml');
+		foreach($rep_urls as $url) {
+			$url = trim($url);
+			if (substr($url, -1) != '/') $url .= '/';
+			$partsOfURL = parse_url($url. 'repository.xml');
 
-		$path = $partsOfURL['path'];
-		$host = $partsOfURL['host'];
-		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
-		$res = $d->downloadAsString($path, $port, $host, NULL);
+			$path = $partsOfURL['path'];
+			$host = $partsOfURL['host'];
+			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
+			try {
+				$res = $d->downloadAsString($path, $port, $host, NULL);
+				self::$repo_dom[] = simplexml_load_string($res);
+			} catch(HttpError $e) {
+				print "Can not access: $url. Reason: ".$e->getMsg();
+			}
 
-		self::$repo_dom = simplexml_load_string($res);
-
+		}
 		return self::$repo_dom;
+	}
+
+	private static function getRepoURL($repo) {
+		
+		if (is_null($repo) || $repo == false || count($repo) == 0) return NULL;
+		return (string) $repo->attributes()->url;
 	}
 
 	/*
 	 * Loads package repository from string (for testing)
 	 */
 	public static function initializePackageRepositoryFromString($repo_xml) {
-		self::$repo_dom = simplexml_load_string($repo_xml);
+		self::$repo_dom[] = simplexml_load_string($repo_xml);
+	}
+    /*
+     * Clears package repository (for testing)
+     */
+	public static function clearPackageRepository() {
+		self::$repo_dom = array();
 	}
 
 	public static function getLatestDeployDescriptor($ext_id) {
 		if (is_null($ext_id)) throw new IllegalArgument("ext must not null");
 		if (array_key_exists($ext_id, self::$deploy_descs)) return self::$deploy_descs[$ext_id];
 
+		// get latest version in the available repositories
+		$results = array();
+		
+		foreach(self::getPackageRepository() as $repo) {
+			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version");
+			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
+			foreach($versions as $v) {
+				$results[self::getRepoURL($repo)] = (string) $v->attributes()->ver;
+			}
+		}
+		asort($results, SORT_NUMERIC);
+		$results = array_reverse($results, true);
+		$url = reset(array_keys($results));
+
+		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id");
+
 		// download descriptor
 		$d = new HttpDownload();
-		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. "extensions/$ext_id/deploy.xml");
+		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy.xml");
 
 		$path = $partsOfURL['path'];
 		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, NULL);
-        
+
 		$dd =  new DeployDescriptorParser($res);
 		self::$deploy_descs[] = $dd;
 		return $dd;
@@ -79,9 +125,20 @@ class PackageRepository {
 		if (is_null($ext_id) || is_null($version)) throw new IllegalArgument("version or ext must not null");
 		if (array_key_exists($ext_id.$version, self::$deploy_descs)) return self::$deploy_descs[$ext_id.$version];
 
+		// get latest version in the available repositories
+		$results = array();
+		foreach(self::getPackageRepository() as $repo) {
+			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version[@ver='$version']");
+			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
+			$v = reset($versions);
+			$url = self::getRepoURL($repo);
+			break;
+		}
+		if (!isset($url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id-$version");
+
 		// download descriptor
 		$d = new HttpDownload();
-		$partsOfURL = parse_url(SMWPLUS_REPOSITORY. "extensions/$ext_id/deploy-$version.xml");
+		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy-$version.xml");
 
 		$path = $partsOfURL['path'];
 		$host = $partsOfURL['host'];
@@ -101,36 +158,48 @@ class PackageRepository {
 	 * @return array of versions (descendant)
 	 */
 	public static function getAllVersions($packageID) {
-		$versions = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version");
-		if (count($versions) == 0) return NULL;
+
 		$results = array();
-		foreach($versions as $v) {
-			$results[] = (string) $v->attributes()->ver;
+		
+		foreach(self::getPackageRepository() as $repo) {
+			$versions = $repo->xpath("/root/extensions/extension[@id='$packageID']/version");
+				
+			foreach($versions as $v) {
+				$results[] = (string) $v->attributes()->ver;
+			}
 		}
+
 		sort($results, SORT_NUMERIC);
-		return array_reverse($results);
+		
+		return array_reverse(array_unique($results));
 	}
 
 	/**
 	 * Returns all available packages and their versions
-	 * 
+	 *
 	 * @return array of package ids pointing to array of versions (ascending)
 	 */
 	public static function getAllPackages() {
-		$packages = self::getPackageRepository()->xpath("/root/extensions/extension");
-		if (count($packages) == 0) return NULL;
 		$results = array();
-		foreach($packages as $p) {
-			$id = (string) $p->attributes()->id;
-			$results[$id] = array();
-			$versions = $p->xpath("version");
-			foreach($versions as $v) {
-				$results[$id][] = (string) $v->attributes()->ver;
-			}
-			sort($results[$id], SORT_NUMERIC);
+		foreach(self::getPackageRepository() as $repo) {
+			$packages = $repo->xpath("/root/extensions/extension");
+			foreach($packages as $p) {
+				$id = (string) $p->attributes()->id;
+				if (!array_key_exists($id, $results)) $results[$id] = array();
+				$versions = $p->xpath("version");
+				foreach($versions as $v) {
+					$results[$id][] = (string) $v->attributes()->ver;
+				}
 
+			}
 		}
-		return $results;
+		$sortedResults = array();
+		foreach($results as $id => $versions) {
+			sort($versions, SORT_NUMERIC);
+			$sortedResults[$id] = array_unique($versions);
+		}
+
+		return $sortedResults;
 	}
 	/**
 	 * Returns URL of latest available version of a package
@@ -139,10 +208,20 @@ class PackageRepository {
 	 * @return array (URL (as string), version)
 	 */
 	public static function getLatestVersion($packageID) {
-		$package = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
-		if (count($package) == 0) return NULL;
-		$download_url = (string) $package[0]->attributes()->url;
-		$version = (string) $package[0]->attributes()->ver;
+		$results = array();
+		foreach(self::getPackageRepository() as $repo) {
+			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
+			if (count($package) == 0) continue;
+			$download_url = (string) $package[0]->attributes()->url;
+			$version = (string) $package[0]->attributes()->ver;
+			$results[$version] = $download_url;
+
+		}
+		if (count($results) == 0) return NULL;
+		ksort($results, SORT_NUMERIC);
+		$results = array_reverse($results, true);
+		$version = reset(array_keys($results));
+		$download_url = reset(array_values($results));
 		return array($download_url, $version);
 	}
 
@@ -154,9 +233,16 @@ class PackageRepository {
 	 * @return URL string
 	 */
 	public static function getVersion($packageID, $version) {
-		$package = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
-		if (count($package) == 0) return NULL;
-		$download_url = (string) $package[0]->attributes()->url;
+		$results = array();
+		foreach(self::getPackageRepository() as $repo) {
+			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
+				
+			if (is_null($package) || $package === false || count($package) == 0) continue;
+			$download_url = (string) $package[0]->attributes()->url;
+			break;
+		}
+		if (!isset($download_url)) return NULL;
+
 		return $download_url;
 	}
 
@@ -168,12 +254,17 @@ class PackageRepository {
 	 * @return boolean
 	 */
 	public static function existsPackage($packageID, $version = 0) {
-		if ($version > 0) {
-			$package = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
-		} else {
-			$package = self::getPackageRepository()->xpath("/root/extensions/extension[@id='$packageID']");
+		$results = array();
+		foreach(self::getPackageRepository() as $repo) {
+			if ($version > 0) {
+				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
+			} else {
+				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']");
+			}
+			
+			if (count($package) > 0) return true;
 		}
-		return count($package) > 0;
+		return false;
 	}
 
 	/**
@@ -235,6 +326,36 @@ class PackageRepository {
 				    </deploydescriptor>';
 
 		return new DeployDescriptorParser($xml);
+	}
+}
+
+class RepositoryError extends Exception {
+
+	var $msg;
+	var $arg1;
+	var $arg2;
+
+	public function __construct($errCode, $msg = '', $arg1 = NULL, $arg2 = NULL) {
+		$this->errCode = $errCode;
+		$this->msg = $msg;
+		$this->arg1 = $arg1;
+		$this->arg2 = $arg2;
+	}
+
+	public function getMsg() {
+		return $this->msg;
+	}
+
+	public function getErrorCode() {
+		return $this->errCode;
+	}
+
+	public function getArg1() {
+		return $this->arg1;
+	}
+
+	public function getArg2() {
+		return $this->arg2;
 	}
 }
 ?>
