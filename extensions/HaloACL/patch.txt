@@ -192,7 +192,7 @@ Index: includes/Title.php
 +		global $wgRequest;
 +		$action = $wgRequest->getVal( 'action', 'read');
 +//		echo $this->getText()."($action): ";
-+		$index = $this->getText().'-'.$action;
++		$index = $this->getFullText().'-'.$action; // A bug was fixed here thanks to Dave MacDonald
 +		$allowed = @$permissionCache[$index];
 +		if (!isset($allowed)) {
 +			switch ($action) {
