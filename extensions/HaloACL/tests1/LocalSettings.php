@@ -8,7 +8,7 @@ enableSemantics('http://mywiki', true);
  
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 //enableSMWHalo('SMWHaloStore2');
-enableSMWHalo('SMWHaloStore2', 'SMWTripleStore');
+enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', "http://mywiki/ob");
 
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 enableHaloACL(); 
