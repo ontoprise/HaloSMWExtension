@@ -30,9 +30,9 @@ class Installer {
 
 	static $instance = NULL; // singleton
 
-	public function getInstance($rootDir = NULL, $force = false, $noAsk = false) {
+	public function getInstance($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
 		if (!is_null(self::$instance)) return self::$instance;
-		self::$instance = new Installer($rootDir, $force, $noAsk);
+		self::$instance = new Installer($rootDir, $force, $noAsk, $noRollback);
 		return self::$instance;
 	}
 	/*
@@ -66,7 +66,7 @@ class Installer {
 	 *
 	 * @param string $rootDir Explicit root dir. Only necessary for testing
 	 */
-	private function __construct($rootDir = NULL, $force = false, $noAsk = false) {
+	private function __construct($rootDir = NULL, $force = false, $noAsk = false, $noRollback = false) {
 		// create temp folder
 		$this->tmpFolder = Tools::isWindows() ? 'c:\temp\mw_deploy_tool' : '/tmp/mw_deploy_tool';
 		if (!file_exists($this->tmpFolder)) Tools::mkpath($this->tmpFolder);
@@ -84,6 +84,7 @@ class Installer {
 
 		$this->force = $force;
 		$this->noAsk = $noAsk;
+		$this->noRollback = $noRollback;
 	}
 
 	public function setInstDir($instDir) {
@@ -105,7 +106,7 @@ class Installer {
 		$extensions_to_update[] = array($new_package, $new_package->getVersion(), $new_package->getVersion());
 		$this->installOrUpdatePackages($extensions_to_update);
 
-		$this->rollback->cleanup();
+		if (!$this->noRollback) $this->rollback->cleanup();
 			
 	}
 
@@ -214,7 +215,7 @@ class Installer {
 			return false;
 		} else {
 			$this->installOrUpdatePackages($extensions_to_update);
-			$this->rollback->cleanup();
+			if (!$this->noRollback) $this->rollback->cleanup();
 			return count($extensions_to_update) > 0;
 
 		}
@@ -324,11 +325,11 @@ class Installer {
 		}
 
 		// 5. check if update is neccessary
-		if (!is_null($old_package) && is_numeric($version) && $old_package->getVersion() > $new_package->getVersion()) {
+		if (!is_null($old_package) && $old_package->getVersion() > $new_package->getVersion()) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
 		}
 
-		if (!is_null($old_package) && (is_null($version) || $old_package->getVersion() == $new_package->getVersion())) {
+		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion())) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 
@@ -361,7 +362,7 @@ class Installer {
 			$id = $desc->getID();
 			// log extension for possible rollback
 			// does not hold for updated extensions. The cannot be rolled back.
-			$this->rollback->addExtension($desc);
+			if (!$this->noRollback) $this->rollback->addExtension($desc);
 
 			$url = PackageRepository::getVersion($id, $min);
 			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-$min.zip");
