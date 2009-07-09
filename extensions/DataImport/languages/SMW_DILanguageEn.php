@@ -247,6 +247,12 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_gard_termimportupdatebothelp' => 'Start the bot for updating defined Term Imports.',
 	'smw_ti_def_allready_exists' => 'A Term Import definition with that name allready exists.',
 	'smw_ti_def_not_creatable' => 'It was not possible to create a Term Import definition with the given name.',
+	'smw_ti_update_not_necessary' => 'It was not necessary to update that Term Import.',
+	'smw_ti_updated_successfully' => 'This Term Import was updated successfully.',
+	'smw_ti_update_failure' => 'An error occured while updating this Term Import.',
+	'smw_gardissue_ti_class_ignored' => 'Ignored Term Imports',
+	'smw_gardissue_ti_class_success' => 'Updated Term Imports',
+	'smw_gardissue_ti_class_failure' => 'Term Imports with failures',
 	);
 
 	protected $smwDINamespaces = array(
