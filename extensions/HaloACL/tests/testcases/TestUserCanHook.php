@@ -51,7 +51,9 @@ class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite
 			'ACL:Category/B',
 			'ACL:Category/D',
 			'ACL:Namespace/User',
-			'ACL:Group/G1'
+			'ACL:Group/G1',
+			'Property:Prop',
+			'ACL:Property/Prop'
 		);
 		
 		$this->mArticles = array(
@@ -171,7 +173,30 @@ ACL
 
 ACL
 ,
-			
+//------------------------------------------------------------------------------		
+
+			'Property:Prop' =>
+<<<ACL
+[[has type::number]]
+ACL
+,
+//------------------------------------------------------------------------------		
+
+			'ACL:Property/Prop' =>
+<<<ACL
+{{#manage rights: assigned to=User:U1}}
+
+{{#property access:
+ assigned to=User:U1
+|actions=*
+|description= Property/Prop: Allow * access for U1
+}}
+
+[[Category:ACL/ACL]]
+
+ACL
+,
+
 		);
 	}
 
@@ -339,6 +364,22 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 		}
     }
     
+    function testPropertyAccess() {
+   		$file = __FILE__;
+    	try {
+			$checkRights = array(
+				array('Property:prop', 'U1', 'propertyread', true),
+				array('Property:prop', 'U1', 'propertyformedit', true),
+				array('Property:prop', 'U1', 'propertyedit', true),
+				array('Property:prop', 'U2', 'propertyread', false),
+				array('Property:prop', 'U2', 'propertyformedit', false),
+				array('Property:prop', 'U2', 'propertyedit', false),
+								);
+			$this->doCheckRights("testPropertyAccess", $checkRights);
+		} catch (Exception $e) {
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testPropertyAccess():".$e->getMessage());
+		}
+    }
     
 	private function doCheckRights($testcase, $expectedResults) {
 		foreach ($expectedResults as $er) {
