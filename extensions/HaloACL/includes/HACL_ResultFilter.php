@@ -17,7 +17,8 @@
 */
 
 /**
- * This file contains a filter for query results.
+ * This file contains a filter for query results. Informations about protected pages
+ * that would appear as result of a query are filtered.
  * 
  * @author Thomas Schweitzer
  * Date: 16.06.2009
