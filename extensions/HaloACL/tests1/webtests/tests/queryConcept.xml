@@ -3,7 +3,6 @@
 <project name="Query" default="testConcept">
 
 	&login;
-	&resaveArticle;
 	
 	<target name="testConcept">
 		<webtest name="Testing Concept as NormalUser">
