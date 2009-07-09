@@ -66,11 +66,20 @@ class SMWFullSemanticData {
         $derivedProperties = new SMWSemanticData($semData->getSubject());
         
         $subject = $semData->getSubject()->getDBkey();
-        
-		$inst = $smwgTripleStoreGraph.SMWTripleStore::$INST_NS_SUFFIX;
-//		$queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
-//		$queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
-		$queryText = "SELECT ?pred ?obj WHERE { <$smwgTripleStoreGraph/a#$subject> ?pred ?obj . }";
+
+        global $wgContLang;
+        $subject = $semData->getSubject();
+        $ns = strtolower($wgContLang->getNSText($subject->getNamespace()));
+        if (empty($ns)) {
+	        $ns = 'a';
+        }
+        $localName = $subject->getDBkey();
+
+        $inst = $smwgTripleStoreGraph.SMWTripleStore::$INST_NS_SUFFIX;
+        // $queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
+        // $queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
+        $queryText = "SELECT ?pred ?obj WHERE { <".$smwgTripleStoreGraph."/$ns#$localName> ?pred ?obj . }";
+        // echo $queryText;
 		
 		// Ask for all properties of the subject (derived and ground facts)
 		$q = SMWSPARQLQueryProcessor::createQuery($queryText, new ParserOptions());
