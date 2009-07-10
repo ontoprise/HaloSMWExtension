@@ -1,14 +1,9 @@
 <?php
 /**
- * Central configuration tool.
+ * Installation tool.
  *
- * @author: Kai Kï¿½hn
+ * @author: Kai Kühn / ontoprise / 2009
  *
- * Usage:
- *
- *  smwadmin -i <package>
- *  smwadmin -d <package>
- *  smwadmin -u [ <package> ]
  *
  */
 
@@ -55,8 +50,8 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 	if ($arg == '-u') { // u => update
 		$package = next($argv);
-		if ($package === false || $package == '-c') {
-			if ($package == '-c') {
+		if ($package === false || $package == '--dep') {
+			if ($package == '--dep') {
 				$checkDep = true;
 			}
 			$globalUpdate = true;
@@ -65,27 +60,27 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$packageToUpdate[] = $package;
 		continue;
 	}
-	if ($arg == '-l') {
+	if ($arg == '-l') { // => list packages
 		$listPackages = true;
 		continue;
 	}
-	
-	if ($arg == '-desc') {
+
+	if ($arg == '-desc') { // => show description for each package
 		$showDescription = true;
 		continue;
 	}
 
-	if ($arg == '--dep') {
+	if ($arg == '--dep') { // => show dependencies
 		$checkDep = true;
 		continue;
 	}
-	
-    if ($arg == '--dump') {
-        $checkDump = true;
-        continue;
-    }
-    
-	if ($arg == '-f') {
+
+	if ($arg == '--dump') { // => analyze installed dump
+		$checkDump = true;
+		continue;
+	}
+
+	if ($arg == '-f') { // => force
 		$force = true;
 		continue;
 	}
@@ -124,57 +119,56 @@ $installer = Installer::getInstance($rootDir, $force);
 $rollback = Rollback::getInstance($rootDir);
 $res_installer = ResourceInstaller::getInstance($rootDir);
 
+// Global update (ie. updates all packages to the latest possible version)
 if ($globalUpdate) {
-	$updated = $installer->updateAll($checkDep);
-	if ($checkDep) die();
-	if ($updated) {
+	list($extensions_to_update, $updated) = $installer->updateAll($checkDep);
+	if ($checkDep) {
+		if (count($extensions_to_update) > 0) {
+
+			print "\n\nThe following extensions would get updated:\n";
+			foreach($extensions_to_update as $id => $etu) {
+				list($desc, $min, $max) = $etu;
+				print "\n\t*$id-".Tools::addVersionSeparators($min);
+			}
+		}
+		print "\n\n";
+
+	}
+
+	if ($updated && count($extensions_to_update) > 0) {
 		echo "\n\nYour installation is now up-to-date!\n";
-	} else {
+	} else if (count($extensions_to_update) == 0) {
 		echo "\n\nYour installation is already up-to-date!\n";
 	}
 	die();
 }
 
+// List all available packages and show which are installed.
 if ($listPackages) {
 	$installer->listAvailablePackages($showDescription);
 	die();
 }
 
-
+// install
 foreach($packageToInstall as $toInstall) {
 	$toInstall = str_replace(".", "", $toInstall);
 	$parts = explode("-", $toInstall);
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
-		if (isset($checkDump) && $checkDump == true) {
-			$res_installer->checkWikidump($packageID, $version);
-
-            print "\n\n";
-		} else if (isset($checkDep) && $checkDep == true) {
-			list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
-				
-			print "\n\nThe following extensions would be installed:\n";
-			foreach($extensions_to_update as $etu) {
-				list($desc, $min, $max) = $etu;
-				$id = $desc->getID();
-				print "\n\t*$id-".Tools::addVersionSeparators($min);
-			}
-			print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
-
-			print "\n\n";
-		} else {
-			$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
-		}
+		handleInstallOrUpdate($packageID, $version);
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
+		fatalError($e);
+	} catch(RepositoryError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
 		$rollback->rollback();
 	}
 }
 
+//de-install
 foreach($packageToDeinstall as $toDeInstall) {
 	$toDeInstall = str_replace(".", "", $toDeInstall);
 	try {
@@ -185,29 +179,59 @@ foreach($packageToDeinstall as $toDeInstall) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
 		// currently not supported
+	}catch(RepositoryError $e) {
+		fatalError($e);
 	}
 }
 
+// update
 foreach($packageToUpdate as $toUpdate) {
 	$toUpdate = str_replace(".", "", $toUpdate);
-	$parts = explode("-", $toUpdate);
+	$parts = explode("-", $toInstall);
+	$packageID = $parts[0];
+	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
-		if ($checkDep) {
-			$installer->checkDependencies($parts[0], count($parts) > 1 ? $parts[1] : NULL);
-		} else {
-			$installer->installOrUpdate($parts[0], count($parts) > 1 ? $parts[1] : NULL);
-		}
+		handleInstallOrUpdate($packageID, $version);
 	} catch(InstallationError $e) {
 		fatalError($e);
 	} catch(HttpError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
 		$rollback->rollback();
+	} catch(RepositoryError $e) {
+	 	fatalError($e);
 	}
 }
 
 print "\n\nOK.\n";
 
+
+function handleInstallOrUpdate($packageID, $version) {
+	global $checkDump, $checkDep, $installer, $res_installer;
+	if (isset($checkDump) && $checkDump == true) {
+		// check status of a currently installed wikidump
+		$res_installer->checkWikidump($packageID, $version);
+		print "\n\n";
+
+	} else if (isset($checkDep) && $checkDep == true) {
+
+		// check dependencies of a package to install or update
+		list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
+		print "\n\nThe following extensions would be installed:\n";
+		foreach($extensions_to_update as $etu) {
+			list($desc, $min, $max) = $etu;
+			$id = $desc->getID();
+			print "\n\t*$id-".Tools::addVersionSeparators($min);
+		}
+		print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
+
+		print "\n\n";
+	} else {
+
+		// install or update
+		$installer->installOrUpdate($packageID, $version);
+	}
+}
 /**
  * Shows a fatal error which aborts installation.
  *
@@ -215,27 +239,37 @@ print "\n\nOK.\n";
  */
 function fatalError($e) {
 	print "\n\n";
-	switch($e->getErrorCode()) {
-		case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
-			$packages = $e->getArg1();
-			print $e->getMsg()."\n";
-			foreach($packages as $p) {
-				print "\n\t*$p";
+
+	if ($e instanceof InstallationError) {
+		switch($e->getErrorCode()) {
+			case DEPLOY_FRAMEWORK_DEPENDENCY_EXIST: {
+				$packages = $e->getArg1();
+				print $e->getMsg()."\n";
+				foreach($packages as $p) {
+					print "\n\t*$p";
+				}
+				break;
 			}
-			break;
+			case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
+				$package = $e->getArg1();
+				print $e->getMsg()."\n";
+				print "\n\t*".$package->getID()."-".$package->getVersion();
+				break;
+			case DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION:
+			case DEPLOY_FRAMEWORK_NO_TMP_DIR:
+			case DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE:
+			case DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS:
+			case DEPLOY_FRAMEWORK_CODE_CHANGED:
+			case DEPLOY_FRAMEWORK_MISSING_FILE:
+			default: echo "Error: ".$e->getMsg(); break;
 		}
-		case DEPLOY_FRAMEWORK_ALREADY_INSTALLED:
-			$package = $e->getArg1();
-			print $e->getMsg()."\n";
-			print "\n\t*".$package->getID()."-".$package->getVersion();
-			break;
-		case DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION:
-		case DEPLOY_FRAMEWORK_NO_TMP_DIR:
-		case DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE:
-		case DEPLOY_FRAMEWORK_PACKAGE_NOT_EXISTS:
-		case DEPLOY_FRAMEWORK_CODE_CHANGED:
-		case DEPLOY_FRAMEWORK_MISSING_FILE:
-		default: echo "Error: ".$e->getMsg(); break;
+	} else if ($e instanceof HttpError) {
+		print $e->getMsg();
+		//print $e->getHeader(); // for debugging
+	} else if ($e instanceof RepositoryError) {
+        print "\n".$e->getMsg();
+    } else if (is_string($e)) {
+		print "\n".$e;
 	}
 	print "\n\n";
 	// stop installation

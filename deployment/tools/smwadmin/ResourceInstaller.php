@@ -40,7 +40,7 @@ class ResourceInstaller {
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions', true);
 		$smwInstalled = array_key_exists('smw', $localPackages);
 
-		if ($smwInstalled && !defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW has been installed but it is not active. Please restart smwadmin to enable it.");
+		if ($smwInstalled && !defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW has been installed but it is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
 
 		// wiki dumps
 		$reader = new BackupReader($mode);
@@ -86,7 +86,7 @@ class ResourceInstaller {
 			if (!is_null($title)) {
 				$a = new Article($title);
 				print "\nRemove: ".$title->getPrefixedText();
-				$a->doDeleteArticle("ontology removed: ".$dd->ID());
+				$a->doDeleteArticle("ontology removed: ".$dd->getID());
 			}
 			$next = $res->getNext();
 		}

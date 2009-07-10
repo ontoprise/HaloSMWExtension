@@ -18,13 +18,13 @@ class HttpDownload {
 	 *                     downloadProgres($percentage).
 	 *                     downloadFinished($filename)
 	 */
-	public function downloadAsFileByURL($url, $filename, $callback = NULL) {
+	public function downloadAsFileByURL($url, $filename, $credentials = "", $callback = NULL) {
 		$partsOfURL = parse_url($url);
 
 		$path = $partsOfURL['path'];
 		$host = $partsOfURL['host'];
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
-		$this->downloadAsFile($path, $port, $host, $filename, $callback);
+		$this->downloadAsFile($path, $port, $host, $filename, $credentials, $callback);
 	}
 
 	/**
@@ -39,13 +39,16 @@ class HttpDownload {
 	 *                     downloadFinished($filename)
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 */
-	public function downloadAsFile($path, $port, $host, $filename, $callback = NULL) {
+	public function downloadAsFile($path, $port, $host, $filename, $credentials = "", $callback = NULL) {
 
 		$address = gethostbyname($host);
 		$handle = fopen($filename, "wb");
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_connect($socket, $address, $port);
-		$in = "GET $path HTTP/1.0\r\n\r\n";
+		$in = "GET $path HTTP/1.0\r\n";
+		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode($credentials)."\r\n";
+		$in .= "\r\n";
+		
 		socket_write($socket, $in, strlen($in));
 		$this->headerFound = false;
 		$this->header = "";
@@ -61,7 +64,7 @@ class HttpDownload {
 				$index = strpos($this->header, "\r\n\r\n");
 
 				if ($index !== false) {
-						
+
 					$out = substr($this->header, $index+4);
 					$length = strlen($out);
 					$this->header = substr($this->header, 0, $index);
@@ -98,13 +101,15 @@ class HttpDownload {
 	 *      If null, an internal rendering method uses the console to show a progres bar and a finish message.
 	 * @return string
 	 */
-	public function downloadAsString($path, $port, $host, $callback = NULL) {
+	public function downloadAsString($path, $port, $host, $credentials = "", $callback = NULL) {
 
 		$address = gethostbyname($host);
 		$res = "";
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_connect($socket, $address, $port);
-		$in = "GET $path HTTP/1.0\r\n\r\n";
+		$in = "GET $path HTTP/1.0\r\n";
+		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode($credentials)."\r\n";
+        $in .= "\r\n";
 		socket_write($socket, $in, strlen($in));
 		$this->headerFound = false;
 		$this->header = "";
@@ -128,7 +133,7 @@ class HttpDownload {
 
 					$this->headerFound = true;
 
-						
+
 				} else {
 
 
@@ -156,8 +161,10 @@ class HttpDownload {
 		if (!isset($matches[1])) throw new HttpError("Invalid HTTP header");
 		switch($matches[1]) {
 			case 200: break;
-			case 404: throw new HttpError("File not found: $path", 404);
-			default: throw new HttpError("Error", $matches[1]);
+			case 401: throw new HttpError("Authorization required: $path", 401, $this->header); 
+			case 403: throw new HttpError("Access denied: $path", 403, $this->header); 
+			case 404: throw new HttpError("File not found: $path", 404, $this->header);
+			default: throw new HttpError("Unknown error", $matches[1], $this->header);
 		}
 			
 
@@ -170,8 +177,8 @@ class HttpDownload {
 	 */
 	private function getContentLength() {
 		preg_match("/Content-Length:\\s*(\\d+)/", $this->header, $matches);
-		if (!isset($matches[1])) throw new HttpError();
-		if (!is_numeric($matches[1])) throw new HttpError();
+		if (!isset($matches[1])) throw new HttpError("Content-Length not set", 0, $this->header);
+		if (!is_numeric($matches[1])) throw new HttpError("Content-Length not numeric", 0, $this->header);
 		return intval($matches[1]);
 	}
 
@@ -209,10 +216,12 @@ class HttpDownload {
 class HttpError extends Exception {
 	var $errcode;
 	var $msg;
-
-	public function __construct($msg, $errcode) {
+    var $httpHeader;
+    
+	public function __construct($msg, $errcode, $httpHeader) {
 		$this->msg = $msg;
 		$this->errcode = $errcode;
+		$this->httpHeader = $httpHeader;
 	}
 
 	public function getMsg() {
@@ -222,13 +231,21 @@ class HttpError extends Exception {
 	public function getErrorCode() {
 		return $this->errcode;
 	}
+	
+	public function getHeader() {
+		return $this->httpHeader;
+	}
 }
 
 // testcode
-/*$path = "/job/smwhalo/lastSuccessfulBuild/artifact/SMWHaloTrunk/extensions/SemanticNotifications/deploy/bin/smwhalo-semnot-1.0.zip";
- $port = 8080;
- $host = "dailywikibuilds.ontoprise.com";
+ /*$url = "http://10.0.0.49/testwiki/UPGRADE";
+ 
  $d = new HttpDownload();
- $d->downloadAsFile($path, $port, $host, "result.zip");
+ try {
+ $d->downloadAsFileByURL($url, "test.dat", "dms:3d25dh5v");
+ } catch(HttpError $e) {
+ 	print $e->getMsg();
+ 	print $e->getHeader();
+ }
  */
 ?>

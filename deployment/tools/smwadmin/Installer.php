@@ -147,7 +147,7 @@ class Installer {
 		}
 
 		if ($existDependency) {
-			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency to the following packages exists:", $dependantPackages);
+			throw new InstallationError(DEPLOY_FRAMEWORK_DEPENDENCY_EXIST, "Can not remove package. Dependency from the following packages exists:", $dependantPackages);
 		}
 
 		// remove ontology
@@ -202,21 +202,11 @@ class Installer {
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
 		if ($onlyDependencyCheck) {
-			if (count($extensions_to_update) == 0) {
-				print "\n\nYour installation is up-to-date!\n";
-				return false;
-			}
-			print "\n\nThe following extensions would get updated:\n";
-			foreach($extensions_to_update as $id => $etu) {
-				list($desc, $min, $max) = $etu;
-				print "\n\t*$id-".Tools::addVersionSeparators($min);
-			}
-			print "\n\n";
-			return false;
+			return array($extensions_to_update, false);
 		} else {
 			$this->installOrUpdatePackages($extensions_to_update);
 			if (!$this->noRollback) $this->rollback->cleanup();
-			return count($extensions_to_update) > 0;
+			return array($extensions_to_update, true);
 
 		}
 	}
@@ -255,6 +245,10 @@ class Installer {
 
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
+		if (count($allPackages) == 0) {
+			print "\n\nNo packages available!\n";
+			return;
+		}
 		print "\n Installed       | Package            | Available versions";
 		print "\n----------------------------------------------------------\n";
 		foreach($allPackages as $p_id => $versions) {
@@ -329,7 +323,7 @@ class Installer {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
 		}
 
-		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion())) {
+		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion()) && !$this->force) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 
@@ -364,8 +358,9 @@ class Installer {
 			// does not hold for updated extensions. The cannot be rolled back.
 			if (!$this->noRollback) $this->rollback->addExtension($desc);
 
-			$url = PackageRepository::getVersion($id, $min);
-			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-$min.zip");
+			list($url,$repo_url) = PackageRepository::getVersion($id, $min);
+			$credentials = PackageRepository::getCredentials($repo_url);
+			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-$min.zip", $credentials);
 
 			// unzip
 			$this->unzip($id, $min);
@@ -598,7 +593,7 @@ class Installer {
 		if ($this->noAsk) return 'y';
 		print "\n\n$message [(y)es/(n)o/(r)ollback]";
 		$line = trim(fgets(STDIN));
-		return strtolower($line);
+		$result = strtolower($line);
 	}
 
 	public function downloadProgres($percentage) {

@@ -169,7 +169,7 @@ class DeployDescriptionProcessor {
 
 			// ask user to continue/rollback in case of failed patches
 			$result = 'y';
-			if (!is_null($userValueCallback) && $patchFailed) {
+			if (!is_null($userCallback) && $patchFailed) {
 				call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
 			}
 
@@ -204,6 +204,14 @@ class DeployDescriptionProcessor {
 				print "\nWarning: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
+		    // do dry-run at first to check for rejected patches
+            exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+            foreach($out as $line) {
+                if (strpos($line, "FAILED") !== false) {
+                    $patchFailed = true;
+                }
+            }
+            if ($patchFailed) print "\nWarning: Some patches can not be removed! Reject files are created.";
 			print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
 			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
 
