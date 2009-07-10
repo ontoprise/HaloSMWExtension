@@ -99,13 +99,49 @@ class TermImportManager {
  * 		
  */
 function termImportParserHook($input, $args, $parser) {
+	require_once("SMW_TermImportDefinitionValidator.php");
+	
 	$attr = "";
 	foreach ($args as $k => $v) {
 		$attr .= " ". $k . '="' . $v . '"';
 	}
 	$completeImportSettings = "<ImportSettings$attr>".$input."</ImportSettings>\n";
 	
-	return  "<pre>\n".htmlspecialchars($completeImportSettings)."</pre>";
+	$messages = "";
+	$tiDV = new SMWTermImportDefinitionValidator($completeImportSettings);
+	if(!$tiDV->isValidXML()){
+		$messages .= "\n* Invalid XML";
+	} else {
+		if(!$tiDV->isValidModuleConfiguration())
+			$messages .= "\n* Invalid ModuleConfiguration.";
+		if(!$tiDV->isValidDataSource())
+			$messages .= "\n* Invalid data source definition.";
+		if(!$tiDV->isValidConflictPolicy())
+			$messages .= "\n* Invalid conflict policy.";
+		if(!$tiDV->isValidMappingPolicy())
+			$messages .= "\n* Invalid mapping policy.";
+		if(!$tiDV->isValidImportSet())
+			$messages .= "\n* Invalid import set.";
+		if(!$tiDV->isValidInputPolicy())
+			$messages .= "\n* Invalid Input Policy.";
+		if(!$tiDV->isValidUpdatePolicy())
+			$messages .= "\n* Invalid update policy.";
+	}
+	
+	if(strlen($messages) > 0){
+		$messages = '<h3><span class="mw-headline">The Term Import Definition is erronious</span></h3>'.$messages;
+	} else {
+		global $wgArticlePath;
+		if(strpos($wgArticlePath, "?") > 0){
+				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$parser->getTitle()->getText();
+			} else {
+				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$parser->getTitle()->getText();
+			}
+			$messages = '<h2><a href="'.$url.'">Edit Term Import in GUI</a></h2>';
+	}
+	$completeImportSettings = '<h3><span class="mw-headline">The Term ImportDefinition</span></h3>'
+		.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
+	return  $completeImportSettings.$messages;
 }
 
 ?>

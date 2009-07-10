@@ -27,7 +27,7 @@ class SMWTermImportDefinitionValidator {
 	
 	public function __construct($tiDefinition){
 		try {
-			$this->tiDefinition = @ new SimpleXMLElement($tiDefinition);
+			$this->tiDefinition = @new SimpleXMLElement($tiDefinition);
 		} catch (Exception $e){
 			$this->tiDefinition = null;
 		}

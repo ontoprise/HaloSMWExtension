@@ -187,45 +187,58 @@ TermImportPage.prototype = {
 		}
 		
 		//create the right input-div
-		var datasources = list.getElementsByTagName("DataSource")[0].childNodes;
-		response = "<i>" + diLanguage.getMessage('smw_ti_sourceinfo') + "</i><br><br><form id=\"source\"><Table>" +
-					diLanguage.getMessage('smw_ti_source') + "&nbsp;";
-		
+		this.createDataSourceWidget (
+				list.getElementsByTagName("DataSource")[0].childNodes, tlID, dalID);
+	},
+	
+	createDataSourceWidget : function(datasources, tlID, dalID) {
+		response = "<i>" + diLanguage.getMessage('smw_ti_sourceinfo')
+				+ "</i><br><br><form id=\"source\"><Table>"
+				+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
+
 		var fieldnumber = 0;
-		for (var i = 0, n = datasources.length; i < n; i++) {
+		for ( var i = 0, n = datasources.length; i < n; i++) {
 			// get one of the datasources
-			var datasource = datasources[i]; 
-			if(datasource.nodeType == 1) {
+			var datasource = datasources[i];
+			if (datasource.nodeType == 1) {
 				//
-				//if ( datasource.hasAttribute ) {
-					
-					//TagName bekommen
-					var tag = datasource.tagName;
-				
-					if ( datasource.getAttribute('display') ){
-						var attrib_display = datasource.getAttribute('display');
+				// if ( datasource.hasAttribute ) {
+
+				// TagName bekommen
+				var tag = datasource.tagName;
+
+				if (datasource.getAttribute('display')) {
+					var attrib_display = datasource.getAttribute('display');
+				}
+				if (datasource.getAttribute('type')) {
+					var attrib_type = datasource.getAttribute('type');
+				}
+				if (attrib_display) {
+					// check type
+					if (attrib_type == "file") {
+						response += "<tr><td>"
+								+ attrib_display
+								+ "</td><td><input name=\"source\" id=\""
+								+ attrib_display
+								+ "\" class=\"inputfield\" type=\"file\" size=\"25\" maxlength=\"100\" value=\""
+								+ datasource.textContent + "\">" + "</td></tr>";
+					} else {
+						response += "<tr><td>"
+								+ attrib_display
+								+ "</td><td><input name=\"source\" id=\""
+								+ attrib_display
+								+ "\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\""
+								+ datasource.textContent + "\"></td></tr>";
 					}
-					if ( datasource.getAttribute('type') ) {
-						var attrib_type = datasource.getAttribute('type');
-					}
-					if ( attrib_display ) {
-						//check type
-						if ( attrib_type == "file" ) {
-							response += "<tr><td>" + attrib_display + "</td><td><input name=\"source\" id=\"" + 
-										attrib_display + "\" class=\"inputfield\" type=\"file\" size=\"25\" maxlength=\"100\" value=\"" + 
-										datasource.textContent + "\">" + "</td></tr>";
-						}
-						else {
-							response += "<tr><td>" + attrib_display + "</td><td><input name=\"source\" id=\"" + 
-							attrib_display+"\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\"" + datasource.textContent + "\"></td></tr>";
-						}
-						response += "<input type=\"hidden\" id=\"tag_"+ attrib_display +"\" value=\""+tag+"\"/>";						
-					}					
-				//}	
-			}		
+					response += "<input type=\"hidden\" id=\"tag_"
+							+ attrib_display + "\" value=\"" + tag + "\"/>";
+				}
+				// }
+			}
 		}
-		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" onclick=\"termImportPage.getSource(event, this,'" +tlID+ "','" + dalID +"')\">Submit</button></form>";
-		//fade in the source specification
+		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" onclick=\"termImportPage.getSource(event, this,'"
+				+ tlID + "','" + dalID + "')\">Submit</button></form>";
+		// fade in the source specification
 		$('source-spec').innerHTML = response;
 	},
 	
@@ -299,7 +312,9 @@ TermImportPage.prototype = {
 				
 		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
 		
-		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
+		//if(!this.editTermImport){
+			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
+		//}
 	},
 	
 	/*
@@ -307,7 +322,9 @@ TermImportPage.prototype = {
 	 */
 	getSourceCallback: function(tlID, dalID, request) {
 		
-		this.pendingIndicatorImportset.hide();
+		if(this.pendingIndicator != null){
+			this.pendingIndicatorImportset.hide();
+		}
 		
 		var result = request.responseText;
 		var list = GeneralXMLTools.createDocumentFromString(result);
@@ -429,6 +446,9 @@ TermImportPage.prototype = {
 		$('policy-input-field').value = '';
 		$('mapping-input-field').value = '';
 		
+		if(this.editTermImport){
+			this.fillTermImportPage();
+		}
 	},
 	
 	/*
@@ -752,7 +772,6 @@ TermImportPage.prototype = {
 	},
 	
 	refreshPreviewCallback: function(tlID, dalID, request){
-		
 		//refresh the article preview!!!
 		this.pendingIndicatorArticles.hide();
 		
@@ -820,8 +839,9 @@ TermImportPage.prototype = {
 			var conflictPol = result[4];
 			var termImportName = result[5];
 			var updatePolicy = result[6];
+			var edit = this.editTermImport;
 			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
-			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy]
+			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit]
 			                                    , this.importItNowCallback.bind(this, tlID, dalID));
 		}
 	},
@@ -1015,8 +1035,128 @@ TermImportPage.prototype = {
 	changeBackground: function(e, node) {
 		//$('mapping-input-field').style.backgroundColor = "white";
 		node.style.backgroundColor = "white";
+	},
+	
+	editTermImportDefinition : function(){
+		var editDataSpan = $('editDataSpan');
+		
+		if(editDataSpan == null){
+			this.editTermImport = false;
+			return;
+		}
+		this.editTermImport = true;
+		
+		var tlId = $('tlId-ed').firstChild.nodeValue;
+		var dalId = $('dalId-ed').firstChild.nodeValue;
+		var dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
+		
+		//transport layer	
+		for (var i=0; i < $('tlid').childNodes.length; i++){
+			if($('tlid').childNodes[i].firstChild.firstChild.nodeValue == tlId){
+				this.currentSelectedTLM = $('tlid').childNodes[i]; 
+			}
+		}	
+		
+		//data import layer
+		var innerHTML = "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
+			+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
+			+ "onClick=\"termImportPage.getDAL(event, this, '" 
+			+ dalId + "', '" + tlId + "')\"><a>" + dalId + "</a></div>";
+		$('dalid').innerHTML = innerHTML;
+		this.currentSelectedDAM = $('dalid').childNodes[0];
+		
+		//data source
+		dataSource = GeneralXMLTools.createDocumentFromString(dataSource);
+		dataSource = dataSource.getElementsByTagName("DataSource")[0].childNodes;
+		this.createDataSourceWidget(dataSource, tlId, dalId);
+		
+		this.getSource(null, null, tlId, dalId);
+	},
+	
+	fillTermImportPage : function(){
+		var tlId = $('tlId-ed').firstChild.nodeValue;
+		var dalId = $('dalId-ed').firstChild.nodeValue;
+		var dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
+		var importSet = $('importSet-ed').firstChild.nodeValue;
+		var regex = "";
+		if($('regex-ed').firstChild != null){
+			var regex = $('regex-ed').firstChild.nodeValue;
+		}
+		var terms = "";
+		if($('terms-ed').firstChild != null){
+			terms = $('terms-ed').firstChild.nodeValue;
+		}
+		var properties = $('properties-ed').firstChild.nodeValue;
+		var mappingPolicy = $('mappingPolicy-ed').firstChild.nodeValue;
+		var conflictPolicy = $('conflictPolicy-ed').firstChild.nodeValue;
+		var termImportName = $('termImportName-ed').firstChild.nodeValue;
+		var updatePolicy = $('updatePolicy-ed').firstChild.nodeValue;
+		
+		//select import set
+		//todo: error handling when there is no such import set
+		$('importset-input-field').value = importSet;
+		
+		//add import policies
+		if (regex.length > 0) {
+			regex = regex.split(",");
+			for ( var i = 0; i < regex.length; i++) {
+				var option = document.createElement("option");
+				option.setAttribute("style",
+					"color: rgb(144, 0, 0); text-decoration: underline;");
+				option.setAttribute("name", "policy-select");
+				option.appendChild(document.createTextNode(regex[i]));
+				$('policy-textarea').appendChild(option);
+
+				var input = document.createElement('input');
+				input.setAttribute("id", "pol-type_" + regex[i]);
+				input.setAttribute("type", 'hidden');
+				input.setAttribute("value", "regex");
+				$('hidden_pol_type').appendChild(input);
+			}
+		}
+		
+		if (terms.length > 0) {
+			terms = terms.split(",");
+			for ( var i = 0; i < terms.length; i++) {
+				var option = document.createElement("option");
+				option.setAttribute("style",
+					"color: rgb(144, 0, 0); text-decoration: underline;");
+				option.setAttribute("name", "policy-select");
+				option.appendChild(document.createTextNode(terms[i]));
+				$('policy-textarea').appendChild(option);
+
+				var input = document.createElement('input');
+				input.setAttribute("id", "pol-type_" + terms[i]);
+				input.setAttribute("type", 'hidden');
+				input.setAttribute("value", "term");
+				$('hidden_pol_type').appendChild(input);
+			}
+		}
+		
+		//properties
+		properties = properties.split(",");
+		for(var i=0; i < $('attrib_table').firstChild.childNodes.length; i++){
+			var value = $('attrib_table').firstChild.childNodes[i].firstChild.firstChild.value;
+			for(var k=0; k < properties.length; k++){
+				if(value == properties[k]){
+					$('attrib_table').firstChild.childNodes[i].firstChild.firstChild.checked = true;
+				}
+			}
+			
+			$('mapping-input-field').value = mappingPolicy;
+			$('conflict-input-field').value = conflictPolicy;
+			$('ti-name-input-field').value = termImportName;
+			$('ti-update-policy-input-field').value = updatePolicy;
+		}
+		
+		
+	
+		this.refreshPreview(null, null, tlId, dalId);
 	}
 }
  // ----- Classes -----------
 
 var termImportPage = new TermImportPage();
+
+Event.observe(window, 'load', termImportPage.editTermImportDefinition
+	.bindAsEventListener(termImportPage));

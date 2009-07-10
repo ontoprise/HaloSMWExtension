@@ -98,8 +98,66 @@ class CL {
 					"<div id=\"extras-bottom\" align=\"center\"></div>";
 
 		$html .= "</div>"; //bottom-container
+		
+		$termImportName = $wgRequest->getVal( 'tiname' );
+		if($termImportName != null){
+			$html .= $this->embedEditTermImportData($termImportName);
+		}
 
 		$wgOut->addHTML($html);
+	}
+
+	/*
+	 * creates the embedded html spans for the edit term import gui
+	 */
+	private function embedEditTermImportData($termImportName){
+		$html = '<span id="editDataSpan" style="display: none">';
+		
+		$xmlString = smwf_om_GetWikiText('TermImport:'.$termImportName);
+		$start = strpos($xmlString, "<ImportSettings>");
+		$end = strpos($xmlString, "</ImportSettings>") + 17 - $start;
+		$xmlString = substr($xmlString, $start, $end);
+		$simpleXMLElement = new SimpleXMLElement($xmlString);
+		
+		$tlId = $simpleXMLElement->xpath("//TLModules/Module/id/text()");
+		$html .= '<span id="tlId-ed">'.$tlId[0].'</span>';
+		
+		$dalId = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
+		$html .= '<span id="dalId-ed">'.$dalId[0].'</span>';
+		
+		$dataSource = $simpleXMLElement->xpath("//DataSource");
+		$html .= '<span id="dataSource-ed">'.rawurlencode($dataSource[0]->asXML()).'</span>';
+		
+		$importSet = $simpleXMLElement->xpath("//ImportSets/ImportSet/text()");
+		$html .= '<span id="importSet-ed">'.$dataSource[0].'</span>';
+		
+		$regex = $simpleXMLElement->xpath("//InputPolicy/terms/regex/text()");
+		$regex = trim(implode(",", $regex));
+		$html .= '<span id="regex-ed">'.$regex.'</span>';
+		
+		$terms = $simpleXMLElement->xpath("//InputPolicy/terms/term/text()");
+		$terms = trim(implode(",", $terms));
+		$html .= '<span id="terms-ed">'.$terms.'</span>';
+		
+		$properties = $simpleXMLElement->xpath("//InputPolicy/properties/property/text()");
+		$properties = implode(",", $properties);
+		$html .= '<span id="properties-ed">'.$properties.'</span>';
+		
+		$mappingPolicy = $simpleXMLElement->xpath("//MappingPolicy/page/text()");
+		$html .= '<span id="mappingPolicy-ed">'.$mappingPolicy[0].'</span>';
+		
+		$conflictPolicy = $simpleXMLElement->xpath("//ConflictPolicy/overwriteExistingTerms/text()");
+		$conflictPolicy = $conflictPolicy[0] == "true" ? "overwrite" : "preserve current versions"; 
+		$html .= '<span id="conflictPolicy-ed">'.$conflictPolicy.'</span>';
+
+				$html .= '<span id="termImportName-ed">'.$termImportName.'</span>';
+		
+		$updatePolicy = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
+		$updatePolicy = $updatePolicy !== false ? $updatePolicy[0] : "0"; 
+		$html .= '<span id="updatePolicy-ed">'.$updatePolicy.'</span>';
+		
+		$html .= "</span>";
+		return $html;	
 	}
 
 	/*
@@ -141,8 +199,8 @@ class CL {
  * @return $result an XML structure
  */
 function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
-$givenInputPol, $mappingPage, $givenConflictPol = true,
-$runBot, $termImportName = null, $updatePolicy = "") {
+		$givenInputPol, $mappingPage, $givenConflictPol = true,
+		$runBot, $termImportName = null, $updatePolicy = "", $edit = false) {
 
 	global $smwgDIIP, $wgOut;
 	require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
@@ -277,16 +335,16 @@ $runBot, $termImportName = null, $updatePolicy = "") {
 		}
 		$updatePolicy = '<?xml version="1.0"?>'."\n".
 			'<UpdatePolicy xmlns="http://www.ontoprise.de/smwplus#">'."\n".$updatePolicy
-			.'</UpdatePolicy>';
-		
+		.'</UpdatePolicy>';
+
 
 		$articleCreated = smwf_ti_createTIArticle($moduleConfig, $source_result, $mappingPolicy, $conflictPolicy,
-			$givenInputPol, $importSets, $termImportName, $updatePolicy);
-		
+			$givenInputPol, $importSets, $termImportName, $updatePolicy, $edit);
+
 		if($articleCreated !== true){
 			return $articleCreated;
 		}
-		
+
 			
 
 		$terms = $wil->importTerms($moduleConfig, $source_result, $importSets, $givenInputPol,
@@ -305,10 +363,10 @@ $runBot, $termImportName = null, $updatePolicy = "") {
 }
 
 function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $conflictConfig,
-		$inputConfig, $importSetConfig, $termImportName, $updatePolicy) {
-	
+$inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
+
 	$title = Title::newFromText("TermImport:".$termImportName);
-	if($title->exists()) {
+	if($title->exists() && $edit == "false") {
 		return '<?xml version="1.0"?>
 	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
 	 		    <value>falseTIN</value>
@@ -339,7 +397,7 @@ function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $
 	$updatePolicy = str_replace('<?xml version="1.0"?>',"",$updatePolicy);
 	$updatePolicy = str_replace(' xmlns="http://www.ontoprise.de/smwplus#"',"",$updatePolicy);
 	$updatePolicy = trim($updatePolicy);
-	
+
 	$importSetConfig = str_replace('<?xml version="1.0"?>',"",$importSetConfig);
 	$importSetConfig = str_replace(' XMLNS="http://www.ontoprise.de/smwplus#"',"",$importSetConfig);
 	$importSetConfig = str_replace('IMPORTSETS>',"ImportSets>",$importSetConfig);
@@ -359,7 +417,7 @@ function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $
 
 	$articleContent .= "\n=== Last runs of this Term Import ===\n";
 	$articleContent .= "{{#ask: [[belongsToTermImport::TermImport:".$termImportName."]]"
-		."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
+	."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
 	$articleContent .= "\n[[Category:TermImport]]";
 	$result = smwf_om_EditArticle('TermImport:'.$termImportName, 'TermImportBot', $articleContent, '');
 	$temp = $result;
@@ -372,7 +430,7 @@ function smwf_ti_createTIArticle($moduleConfig, $sourceConfig, $mappingConfig, $
 	 		    <message>' . wfMsg('smw_ti_def_not_creatable') . '</message>
 	 			</ReturnValue >';
 	}
-	
+
 	return true;
 
 }

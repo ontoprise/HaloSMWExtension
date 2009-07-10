@@ -45,6 +45,10 @@ class TermImportUpdateBot extends GardeningBot {
 	public function getLabel() {
 		return wfMsg($this->id);
 	}
+	
+public function getImageDirectory() {
+		return 'extensions/DataImport/skins/TermImport/images';
+	}
 
 	/**
 	 * Returns an array of parameter objects
