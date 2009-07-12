@@ -26,7 +26,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
         $html = "";
         if ($wgRequest->getVal('init') != NULL) {
         	// after init
-        	smwfGetStore()->setup(false);
+        	smwfGetStore()->initialize(false);
         	$html .= $wgUser->getSkin()->makeKnownLinkObj(Title::newFromText("TSA", NS_SPECIAL), wfMsg('smw_tsa_waitsoemtime'));
             $wgOut->addHTML($html);
             return;
@@ -57,6 +57,8 @@ class SMWTripleStoreAdmin extends SpecialPage {
         $html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";
         if ($status->isInitialized == true) {
         	 $html .= "<div style=\"color:green;font-weight:bold;\">".wfMsg('smw_tsa_wikiconfigured', (is_array($smwgWebserviceEndpoint) ? implode(", ", $smwgWebserviceEndpoint) : $smwgWebserviceEndpoint))."</div>";
+        	 $tsaPage = Title::newFromText("TSA", NS_SPECIAL);
+             $html .= "<br><form><input name=\"init\" type=\"submit\" value=\"".wfMsg('smw_tsa_reinitialize')."\"/><input name=\"title\" type=\"hidden\" value=\"".$tsaPage->getPrefixedDBkey()."\"/></form>";
         } else {
         	 $html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_notinitalized')."</div>".wfMsg('smw_tsa_pressthebutton');
         	 $tsaPage = Title::newFromText("TSA", NS_SPECIAL);

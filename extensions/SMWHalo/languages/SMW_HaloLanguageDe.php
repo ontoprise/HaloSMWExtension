@@ -298,6 +298,7 @@ protected $smwUserMessages = array(
     'smw_tsa_waitsoemtime'=> 'Bitte warten Sie einige Sekunden und klicken dann auf diesen Link.',
     'smw_tsa_wikiconfigured' => 'Das Wiki ist mit dem Triple store an $1 verbunden.',
     'smw_tsa_initialize' => 'Initialisieren',
+    'smw_tsa_reinitialize' => 'Re-Initialisieren',
     'smw_tsa_pressthebutton' => 'Bitte den Knopf unten drücken.',
     'smw_tsa_addtoconfig' => 'Bitte fügen Sie folgende Zeilen in die LocalSettings.php ein und prüfen Sie ob der Triple store connector läuft.',
     'smw_tsa_addtoconfig2' => 'Stellen Sie sicher, dass der Triplestore-Treiber aktiviert ist. Wenn nötig, ändern Sie den Aufruf von enableSMWHalo zu: ',

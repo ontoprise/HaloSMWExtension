@@ -403,7 +403,7 @@ class SMWTripleStore extends SMWStore {
 			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('RewriteSparqlQuery', array(&$query) );
 			/*op-patch|TS|2009-06-19|end*/
-				
+
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
@@ -434,11 +434,11 @@ class SMWTripleStore extends SMWStore {
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
 			}
-				
+
 			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 			/*op-patch|TS|2009-06-19|end*/
-				
+
 			return $queryResult;
 
 		} else {
@@ -468,9 +468,10 @@ class SMWTripleStore extends SMWStore {
 
 	function setup($verbose = true) {
 		$this->smwstore->setup($verbose);
+		
+	}
 
-		$this->createTables($verbose);
-
+	function initialize($verbose = true) {
 		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
@@ -487,19 +488,9 @@ class SMWTripleStore extends SMWStore {
 		}
 	}
 
+	
 	function drop($verbose = true) {
 		$this->smwstore->drop($verbose);
-
-		global $smwgMessageBroker, $smwgTripleStoreGraph;
-		try {
-			$con = new TSConnection();
-
-			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", "DROP <$smwgTripleStoreGraph>");
-			$con->disconnect();
-		} catch(Exception $e) {
-
-		}
 	}
 
 	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
@@ -509,38 +500,7 @@ class SMWTripleStore extends SMWStore {
 
 	// Helper methods
 
-	/**
-	 * Creates tables in Wiki SQL Database
-	 *
-	 * @param boolean $verbose
-	 */
-	private function createTables($verbose) {
-		global $smwgHaloIP;
-		require_once( $smwgHaloIP . "/includes/SMW_DBHelper.php");
-		$db =& wfGetDB( DB_MASTER );
-
-		$ruleTableName = $db->tableName('smw_rules');
-		// create rule table
-		DBHelper::setupTable($ruleTableName,
-		array('subject_id'    => 'INT(8) UNSIGNED NOT NULL',
-                            'rule_id'       => 'VARCHAR(255) binary NOT NULL',
-                            'rule_text'      => 'TEXT NOT NULL'), $db, $verbose);
-	}
-
-	/**
-	 * Drops SQL tables.
-	 *
-	 * @param boolean $verbose
-	 */
-	private function dropTables($verbose) {
-		$db =& wfGetDB( DB_MASTER );
-
-		$ruleTableName = $db->tableName('smw_rules');
-
-		$db->query("DROP TABLE $ruleTableName", 'SMWTripleStore::dropTables');
-		DBHelper::reportProgress(" ... dropped table $ruleTableName.\n", $verbose);
-
-	}
+	
 
 
 
