@@ -154,52 +154,39 @@ class Tools {
 	 */
 	public static function checkEnvironment() {
 
+		$nullDevice = Tools::isWindows() ? "null" : "/dev/null";
+		
 		// check for unzipping tool
 		$found_unzip = false;
 		if (Tools::isWindows()) {
-			$ret = exec('7z', $out);
-			foreach($out as $l) {
-				if (strpos($l, "7-Zip") !== false) {
-					$found_unzip = true;
-					break;
-				}
-			}
+			exec("7z -version > $nullDevice", $out, $ret);
+			$found_unzip = ($ret == 7);
 			if (!$found_unzip) return("7-zip is missing or not in PATH. Please install");
 
 		} else {
-			$ret = exec('unzip', $out);
-			foreach($out as $l) {
-				if (strpos($l, "UnZip") !== false) {
-					$found_unzip = true;
-					break;
-				}
-			}
-			if (!$found_unzip) return("unzip is missing or not in PATH. Please install");
-
+			exec("unzip > $nullDevice", $out, $ret);
+            $found_unzip = ($ret == 0);
+            if (!$found_unzip) return("7-zip is missing or not in PATH. Please install");
 		}
+		
 
 		// check for GNU-patch tool
-		$found_patch = false;
-		$ret = exec('patch -version', $out);
-		foreach($out as $l) {
-			if (strpos($l, "patch") !== false) {
-				$found_patch = true;
-				break;
-			}
-		}
+		
+		exec("patch -version > $nullDevice", $out, $ret);
+		$found_patch = ($ret == 0);
 		if (!$found_patch) return("GNU-Patch is missing or not in PATH. Please install");
 
 		// check if PHP is in path
-		$phpInPath = false;
-		$ret = exec('php -version', $out);
-		foreach($out as $l) {
-			if (strpos($l, "PHP") !== false) {
-				$phpInPath = true;
-				break;
-			}
-		}
+		
+		exec("php -version > $nullDevice", $out, $ret);
+		$phpInPath = ($ret == 0);
 		if (!$phpInPath) return("PHP is not in PATH. Please install");
-
+        
+		// check for mysql, mysqldump
+		exec("mysql --version > $nullDevice", $out, $ret);
+		$mysql_binaries = ($ret == 0);
+		if (!$mysql_binaries) return("MySQL binaries are not on path. Please install.");
+		
 		return true;
 	}
 

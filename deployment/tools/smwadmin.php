@@ -84,6 +84,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$force = true;
 		continue;
 	}
+
+	if ($arg == '-r') { // => restore last installation
+		$restore = true;
+		continue;
+	}
 	$params[] = $arg;
 }
 
@@ -102,6 +107,7 @@ if ($help || count($argv) == 0) {
 	echo "\n\t-d : De-Install";
 	echo "\n\t-u : Update";
 	echo "\n\t-l : List installed packages.";
+	echo "\n\t-r : Rollback last installation.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
 	echo "\n\t--dump : Check only dumps for changes but do not install.";
 	echo "\n";
@@ -118,6 +124,12 @@ $rootDir = realpath(dirname(__FILE__)."/../..");
 $installer = Installer::getInstance($rootDir, $force);
 $rollback = Rollback::getInstance($rootDir);
 $res_installer = ResourceInstaller::getInstance($rootDir);
+
+if ($restore) {
+	print "Rollback...";
+	$rollback->rollback();
+	die();
+}
 
 // Global update (ie. updates all packages to the latest possible version)
 if ($globalUpdate) {
@@ -199,7 +211,7 @@ foreach($packageToUpdate as $toUpdate) {
 	} catch(RollbackInstallation $e) {
 		$rollback->rollback();
 	} catch(RepositoryError $e) {
-	 	fatalError($e);
+		fatalError($e);
 	}
 }
 
@@ -267,8 +279,8 @@ function fatalError($e) {
 		print $e->getMsg();
 		//print $e->getHeader(); // for debugging
 	} else if ($e instanceof RepositoryError) {
-        print "\n".$e->getMsg();
-    } else if (is_string($e)) {
+		print "\n".$e->getMsg();
+	} else if (is_string($e)) {
 		print "\n".$e;
 	}
 	print "\n\n";

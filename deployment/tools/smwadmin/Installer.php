@@ -106,7 +106,7 @@ class Installer {
 		$extensions_to_update[] = array($new_package, $new_package->getVersion(), $new_package->getVersion());
 		$this->installOrUpdatePackages($extensions_to_update);
 
-		if (!$this->noRollback) $this->rollback->cleanup();
+		if (!$this->noRollback) $this->rollback->saveRollbackLog();
 			
 	}
 
@@ -205,7 +205,7 @@ class Installer {
 			return array($extensions_to_update, false);
 		} else {
 			$this->installOrUpdatePackages($extensions_to_update);
-			if (!$this->noRollback) $this->rollback->cleanup();
+			if (!$this->noRollback) $this->rollback->saveRollbackLog();
 			return array($extensions_to_update, true);
 
 		}
@@ -235,7 +235,7 @@ class Installer {
 		print "\n\n";
 	}
 
-	
+
 	/**
 	 * List all available packages and show if it is installed and in wich version.
 	 *
@@ -355,8 +355,17 @@ class Installer {
 			list($desc, $min, $max) = $arr;
 			$id = $desc->getID();
 			// log extension for possible rollback
-			// does not hold for updated extensions. The cannot be rolled back.
-			if (!$this->noRollback) $this->rollback->addExtension($desc);
+
+			// apply deploy descriptor and save local settings
+			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
+			if (!is_null($fromVersion)) {
+				$desc->createConfigElements($fromVersion);
+			}
+			if (!$this->noRollback) {
+				$this->rollback->saveExtension($desc);
+				if (count($desc->getInstallScripts()) > 0) $this->rollback->saveDatabase();
+			}
+
 
 			list($url,$repo_url) = PackageRepository::getVersion($id, $min);
 			$credentials = PackageRepository::getCredentials($repo_url);
@@ -365,8 +374,9 @@ class Installer {
 			// unzip
 			$this->unzip($id, $min);
 
-			// apply deploy descriptor and save local settings
-			$fromVersion = array_key_exists($desc->getID(), $localPackages) ? $localPackages[$desc->getID()]->getVersion() : NULL;
+			if (!$this->noRollback) {
+				if (count($desc->getConfigs()) > 0) $this->rollback->saveLocalSettings();
+			}
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
@@ -459,7 +469,7 @@ class Installer {
 
 			}
 			$sortedPackages[] = $v;
-				
+
 			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the preceding graph.");
 		}
 		return array_reverse($sortedPackages);
@@ -602,7 +612,7 @@ class Installer {
 	public function downloadFinished($filename) {
 		// do nothing
 	}
-	
+
 }
 
 class InstallationError extends Exception {

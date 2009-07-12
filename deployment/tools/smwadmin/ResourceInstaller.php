@@ -36,11 +36,8 @@ class ResourceInstaller {
 
 		if (count($dd->getWikidumps()) ==  0) return;
 
-		// check if smw is installed
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions', true);
-		$smwInstalled = array_key_exists('smw', $localPackages);
-
-		if ($smwInstalled && !defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW has been installed but it is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
+		
+		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed or at least is not active. The ontology could not be properly installed. Please restart smwadmin using -f (force) to install it.");
 
 		// wiki dumps
 		$reader = new BackupReader($mode);
@@ -76,7 +73,10 @@ class ResourceInstaller {
 	 */
 	public function deinstallWikidump($dd) {
 		print "\nRemove ontologies...";
-
+        
+		if (count($dd->getWikidumps()) == 0) return;
+		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
+		
 		$query = SMWQueryProcessor::createQuery("[[Part of bundle::".$dd->getID()."]]", array());
 		$res = smwfGetStore()->getQueryResult($query);
 		$next = $res->getNext();
@@ -124,7 +124,7 @@ class ResourceInstaller {
 	public function checkWikidump($packageID, $version) {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed although it is needed to check ontology status.");
 
-		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions', true);
+		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 		$package = array_key_exists($packageID, $localPackages) ? $localPackages[$packageID] : NULL;
 		$packageFound = !is_null($package) && ($package->getVersion() == $version || $version == NULL);
 		if (!$packageFound) {

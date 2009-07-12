@@ -74,7 +74,7 @@ class PackageRepository {
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
 				$res = $d->downloadAsString($path, $port, $host, self::$repo_credentials[$url], NULL);
-				self::$repo_dom[] = simplexml_load_string($res);
+				self::$repo_dom[$url] = simplexml_load_string($res);
 			} catch(HttpError $e) {
 				print "\n".$e->getMsg();
 				print "\n";
@@ -84,17 +84,7 @@ class PackageRepository {
 		return self::$repo_dom;
 	}
     
-	/**
-	 * Returns the repo url
-	 *
-	 * @param unknown_type $repo
-	 * @return unknown
-	 */
-	private static function getRepoURL($repo) {
-
-		if (is_null($repo) || $repo == false || count($repo) == 0) return NULL;
-		return (string) $repo->attributes()->url;
-	}
+	
 	
     public static function getCredentials($repo_url) {
     	return self::$repo_credentials[$repo_url];
@@ -125,11 +115,11 @@ class PackageRepository {
 		// get latest version in the available repositories
 		$results = array();
 
-		foreach(self::getPackageRepository() as $repo) {
+		foreach(self::getPackageRepository() as $url => $repo) {
 			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version");
 			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
 			foreach($versions as $v) {
-				$results[self::getRepoURL($repo)] = (string) $v->attributes()->ver;
+				$results[$url] = (string) $v->attributes()->ver;
 			}
 		}
 		asort($results, SORT_NUMERIC);
@@ -166,18 +156,18 @@ class PackageRepository {
 
 		// get latest version in the available repositories
 		$results = array();
-		foreach(self::getPackageRepository() as $repo) {
+		foreach(self::getPackageRepository() as $url => $repo) {
 			$versions = $repo->xpath("/root/extensions/extension[@id='$ext_id']/version[@ver='$version']");
 			if (is_null($versions) || $versions == false || count($versions) == 0) continue;
 			$v = reset($versions);
-			$url = self::getRepoURL($repo);
+			$repourl = $url;
 			break;
 		}
-		if (!isset($url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id-$version");
+		if (!isset($repourl)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id-$version");
     
 		// download descriptor
 		$d = new HttpDownload();
-		$credentials = self::$repo_credentials[$url];
+		$credentials = self::$repo_credentials[$repourl];
 		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy-$version.xml");
 
 		$path = $partsOfURL['path'];
@@ -249,13 +239,13 @@ class PackageRepository {
 	 */
 	public static function getLatestVersion($packageID) {
 		$results = array();
-		foreach(self::getPackageRepository() as $repo) {
-			$repo_url = self::getRepoURL($repo);
+		foreach(self::getPackageRepository() as $url => $repo) {
+			
 			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
 			if (count($package) == 0) continue;
 			$download_url = (string) $package[0]->attributes()->url;
 			$version = (string) $package[0]->attributes()->ver;
-			$results[$version] = array($download_url, $repo_url);
+			$results[$version] = array($download_url, $url);
 
 		}
 		if (count($results) == 0) return NULL;
@@ -275,11 +265,11 @@ class PackageRepository {
 	 */
 	public static function getVersion($packageID, $version) {
 		$results = array();
-		foreach(self::getPackageRepository() as $repo) {
+		foreach(self::getPackageRepository() as $url => $repo) {
 			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[@ver='$version']");
 
 			if (is_null($package) || $package === false || count($package) == 0) continue;
-			$repo_url = self::getRepoURL($repo);
+			$repo_url = $url;
 			$download_url = (string) $package[0]->attributes()->url;
 			break;
 		}

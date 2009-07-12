@@ -67,7 +67,7 @@ class DeployDescriptorParser {
 		return $this->uninstall_scripts;
 	}
 
-	private function createConfigElements($from = NULL) {
+	public function createConfigElements($from = NULL) {
 
 		$this->configs = array();
 		$this->precedings = array();
@@ -331,9 +331,7 @@ class DeployDescriptorParser {
 		if ($this->configs === false) {
 			return;
 		}
-		if (!is_null($fromVersion)) {
-			$this->createConfigElements($fromVersion);
-		}
+		
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
