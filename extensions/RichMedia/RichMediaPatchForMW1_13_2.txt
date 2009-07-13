@@ -41,17 +41,6 @@ Index: includes/Article.php
  			$update = new HTMLCacheUpdate( $title, 'imagelinks' );
  			$update->doUpdate();
  		}
-@@ -3380,8 +3394,8 @@
- 		$popts = $wgOut->parserOptions();
- 		$popts->setTidy(true);
- 		$popts->enableLimitReport();
--		$parserOutput = $wgParser->parse( $text, $this->mTitle,
--			$popts, true, true, $this->getRevIdFetched() );
-+       $parserOutput = $wgParser->parse($text, $this->mTitle,
-+                                        $popts, true, true, $this->getRevIdFetched() );
- 		$popts->setTidy(false);
- 		$popts->enableLimitReport( false );
- 		if ( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 @@ -3476,10 +3490,18 @@
  
  		$addFields    = array( 'cat_pages = cat_pages + 1' );
