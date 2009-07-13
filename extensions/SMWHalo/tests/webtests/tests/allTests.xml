@@ -4,6 +4,8 @@
 	<property name="wikipath" value="mediawiki"/>
 	
 	<target name="testAll" description="runs all the tests">
+		<!-- Set triplestore tests at the beginning to make sure triplestore is in sync -->
+		<ant antfile="triplestoretests.xml"/>
 		<ant antfile="basictests.xml"/>
 		<ant antfile="ontologybrowsertests.xml"/>
 	</target>

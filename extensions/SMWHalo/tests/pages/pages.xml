@@ -27,18 +27,8 @@
       <namespace key="103">Property talk</namespace>
       <namespace key="104">Type</namespace>
       <namespace key="105">Type talk</namespace>
-      <namespace key="106">Form</namespace>
-      <namespace key="107">Form talk</namespace>
       <namespace key="108">Concept</namespace>
       <namespace key="109">Concept talk</namespace>
-      <namespace key="120">Document</namespace>
-      <namespace key="121">Document talk</namespace>
-      <namespace key="122">Audio</namespace>
-      <namespace key="123">Audio talk</namespace>
-      <namespace key="124">Video</namespace>
-      <namespace key="125">Video talk</namespace>
-      <namespace key="126">Pdf</namespace>
-      <namespace key="127">Pdf talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
@@ -213,7 +203,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:GardeningLog</title>
     <id>13</id>
     <revision>
-      <id>14</id>
+      <id>13</id>
       <timestamp>2008-08-18T12:27:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -226,7 +216,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Glossary</title>
     <id>14</id>
     <revision>
-      <id>20</id>
+      <id>14</id>
       <timestamp>2008-08-18T12:27:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -241,7 +231,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Car</title>
     <id>15</id>
     <revision>
-      <id>26</id>
+      <id>15</id>
       <timestamp>2008-09-05T09:48:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -254,7 +244,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Sports car</title>
     <id>16</id>
     <revision>
-      <id>27</id>
+      <id>16</id>
       <timestamp>2008-09-05T09:49:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -267,7 +257,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Electric car</title>
     <id>17</id>
     <revision>
-      <id>28</id>
+      <id>17</id>
       <timestamp>2008-09-05T09:49:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -280,7 +270,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Engine</title>
     <id>18</id>
     <revision>
-      <id>29</id>
+      <id>18</id>
       <timestamp>2008-09-05T09:49:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -293,7 +283,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Person</title>
     <id>19</id>
     <revision>
-      <id>30</id>
+      <id>19</id>
       <timestamp>2008-09-05T10:22:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -307,7 +297,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Engine</title>
     <id>20</id>
     <revision>
-      <id>31</id>
+      <id>20</id>
       <timestamp>2008-09-05T09:50:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -320,7 +310,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Gears</title>
     <id>21</id>
     <revision>
-      <id>32</id>
+      <id>21</id>
       <timestamp>2008-09-05T09:51:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -334,7 +324,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Body Form</title>
     <id>22</id>
     <revision>
-      <id>33</id>
+      <id>22</id>
       <timestamp>2008-11-14T14:43:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -347,7 +337,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Electric engine</title>
     <id>23</id>
     <revision>
-      <id>34</id>
+      <id>23</id>
       <timestamp>2008-09-05T10:27:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -360,7 +350,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Child</title>
     <id>24</id>
     <revision>
-      <id>35</id>
+      <id>24</id>
       <timestamp>2008-09-05T09:54:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -374,7 +364,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Son</title>
     <id>25</id>
     <revision>
-      <id>36</id>
+      <id>25</id>
       <timestamp>2008-09-05T09:54:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -388,7 +378,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Daughter</title>
     <id>26</id>
     <revision>
-      <id>37</id>
+      <id>26</id>
       <timestamp>2008-09-05T09:55:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -402,7 +392,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Kai</title>
     <id>27</id>
     <revision>
-      <id>38</id>
+      <id>27</id>
       <timestamp>2008-09-05T15:42:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -416,7 +406,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Audi TT</title>
     <id>28</id>
     <revision>
-      <id>39</id>
+      <id>28</id>
       <timestamp>2008-10-02T13:37:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -432,7 +422,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Peugeot</title>
     <id>29</id>
     <revision>
-      <id>40</id>
+      <id>29</id>
       <timestamp>2008-09-05T09:59:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -446,7 +436,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has name</title>
     <id>30</id>
     <revision>
-      <id>41</id>
+      <id>30</id>
       <timestamp>2008-11-24T09:05:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -459,7 +449,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Man</title>
     <id>31</id>
     <revision>
-      <id>42</id>
+      <id>31</id>
       <timestamp>2008-09-05T10:21:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -473,7 +463,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Young man</title>
     <id>32</id>
     <revision>
-      <id>43</id>
+      <id>32</id>
       <timestamp>2008-09-05T10:21:40Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -487,7 +477,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Type:Force</title>
     <id>33</id>
     <revision>
-      <id>64</id>
+      <id>33</id>
       <timestamp>2009-05-14T15:05:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -501,7 +491,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has torsional moment</title>
     <id>34</id>
     <revision>
-      <id>45</id>
+      <id>34</id>
       <timestamp>2008-09-05T12:47:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -514,7 +504,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>5 cylinder</title>
     <id>35</id>
     <revision>
-      <id>46</id>
+      <id>35</id>
       <timestamp>2008-09-05T12:47:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -528,7 +518,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has adress</title>
     <id>36</id>
     <revision>
-      <id>47</id>
+      <id>36</id>
       <timestamp>2008-09-05T15:41:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -541,7 +531,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Is parent of</title>
     <id>37</id>
     <revision>
-      <id>48</id>
+      <id>37</id>
       <timestamp>2008-09-05T16:31:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -555,7 +545,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Parent of</title>
     <id>38</id>
     <revision>
-      <id>49</id>
+      <id>38</id>
       <timestamp>2008-09-05T16:35:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -569,7 +559,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Ancestor</title>
     <id>39</id>
     <revision>
-      <id>50</id>
+      <id>39</id>
       <timestamp>2008-09-26T12:14:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -582,7 +572,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Father</title>
     <id>40</id>
     <revision>
-      <id>51</id>
+      <id>40</id>
       <timestamp>2008-09-26T12:14:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -596,7 +586,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Smw exportontologybot at 2009 2 26 12 49 45</title>
     <id>41</id>
     <revision>
-      <id>52</id>
+      <id>41</id>
       <timestamp>2009-02-26T11:49:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -615,7 +605,7 @@ Also take a look at [http://localhost/release15/index.php?title=Special:Gardenin
     <title>Category:Hybrid car</title>
     <id>42</id>
     <revision>
-      <id>53</id>
+      <id>42</id>
       <timestamp>2009-04-23T14:14:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -629,7 +619,7 @@ Also take a look at [http://localhost/release15/index.php?title=Special:Gardenin
     <title>Smw exportontologybot at 2009 5 13 16 59 55</title>
     <id>43</id>
     <revision>
-      <id>54</id>
+      <id>43</id>
       <timestamp>2009-05-13T14:59:55Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -648,7 +638,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Smw exportontologybot at 2009 5 13 17 1 50</title>
     <id>44</id>
     <revision>
-      <id>55</id>
+      <id>44</id>
       <timestamp>2009-05-13T15:01:50Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -667,7 +657,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Smw exportontologybot at 2009 5 13 17 2 14</title>
     <id>45</id>
     <revision>
-      <id>56</id>
+      <id>45</id>
       <timestamp>2009-05-13T15:02:14Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -686,7 +676,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Smw exportontologybot at 2009 5 13 17 2 38</title>
     <id>46</id>
     <revision>
-      <id>57</id>
+      <id>46</id>
       <timestamp>2009-05-13T15:02:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -705,7 +695,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Smw exportontologybot at 2009 5 13 17 3 12</title>
     <id>47</id>
     <revision>
-      <id>58</id>
+      <id>47</id>
       <timestamp>2009-05-13T15:03:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -724,7 +714,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Image:Testontology.owl</title>
     <id>48</id>
     <revision>
-      <id>59</id>
+      <id>48</id>
       <timestamp>2009-05-13T15:08:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -737,7 +727,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Category:Animal</title>
     <id>49</id>
     <revision>
-      <id>60</id>
+      <id>49</id>
       <timestamp>2009-05-13T15:09:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -750,7 +740,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Category:Dog</title>
     <id>50</id>
     <revision>
-      <id>61</id>
+      <id>50</id>
       <timestamp>2009-05-13T15:09:59Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -763,7 +753,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Category:Elephant</title>
     <id>51</id>
     <revision>
-      <id>62</id>
+      <id>51</id>
       <timestamp>2009-05-13T15:10:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -776,7 +766,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Smw importontologybot at 2009 5 13 17 10 0</title>
     <id>52</id>
     <revision>
-      <id>63</id>
+      <id>52</id>
       <timestamp>2009-05-13T15:10:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -796,7 +786,7 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
     <title>Property:Gender</title>
     <id>53</id>
     <revision>
-      <id>65</id>
+      <id>53</id>
       <timestamp>2009-05-14T15:09:21Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -804,6 +794,71 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <comment>New page: [[Allows value::Male]] [[Allows value::Female]]</comment>
       <text xml:space="preserve">[[Allows value::Male]]
 [[Allows value::Female]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK</title>
+    <id>54</id>
+    <revision>
+      <id>54</id>
+      <timestamp>2009-07-13T08:29:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#sparql: [[Category:Car]] }}  {{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}  {{#sparql: [[Has Engine::+]] }}  {{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}
+
+{{#sparql: [[Has Engine::+]] }}
+
+{{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestSPARQL</title>
+    <id>55</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2009-07-13T08:47:00Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: {{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}  {{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}  {{#sparql: SELECT ?X ?Has_owner...</comment>
+      <text xml:space="preserve">{{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}
+
+{{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }|?Has Engine=Engine|?X=Car  }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK2</title>
+    <id>56</id>
+    <revision>
+      <id>57</id>
+      <timestamp>2009-07-13T09:55:28Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|link=none }}
+
+{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|mainlabel=- }}
+
+{{#sparql: [[Category:Car]][[Has owner::Stefan]]|?Has owner=Owner|mainlabel=-|default=No results }}
+
+{{#sparql: [[Category:Car]]|format=ul }}
+
+{{#sparql: format=ul|limit=1|[[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|sort=Has Engine|order=desc }}
+
+{{#sparql: [[Category:Car]][[Has Engine::+]]|?Has owner=Owner|mainlabel=Car }}</text>
     </revision>
   </page>
 </mediawiki>
