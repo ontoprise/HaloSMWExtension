@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4182)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4244)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -15,7 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4182)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4244)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -1221,8 +1221,17 @@
      // add form bottom, if no custom "standard inputs" have been defined
@@ -39,7 +39,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4182)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4244)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -435,13 +435,16 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			global $wgCanonicalNamespaceNames;
 +			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
 +			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
-+		}
+ 		}
+-		$wgOut->addHTML( '<div id="uploadtext">' );
+-		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
 +		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
 +		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
 +		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
-+		$wgOut->addHTML( '</div>' );
-+		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;"><tr><td colspan="2">' );
-+		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_uploadtext' ));
+ 		$wgOut->addHTML( '</div>' );
+-
++		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;padding-top:5px"><tr><td colspan="2">' );
++		$wgOut->addWikiText( wfMsgExt( 'smw_rm_uploadtext',array('parseinline') ));
 +		$wgOut->addHTML( "</td></tr>");
 +		$wgOut->addHTML( "<tr><td width=\"42%\" align=\"right\"><img class=\"help-image\" src=\"$smwgRMScriptPath/skins/this_file_pointer.png\" style=\"padding:5px;\" /></td>" );
 +		$wgOut->addHTML( "<td align=\"left\"><b>" . $uploadTemplateArray['RelatedArticles'] . "</b></td></tr>" );
@@ -470,16 +473,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +				break;
 +			default:
 +				$val2 = $val;
- 		}
--		$wgOut->addHTML( '<div id="uploadtext">' );
--		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
++		}
 +		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
 +		#end max file size
 +		
 +		$wgOut->addHTML( '<div id="upload-size">' );
 +		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_size', $wgLang->formatSize( $val2 ) )); 
- 		$wgOut->addHTML( '</div>' );
--
++		$wgOut->addHTML( '</div>' );
 +		$wgOut->addHTML( '<div id="upload-perm-types">' );
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_permtypes' ));
 +		//sort file types!
@@ -663,14 +663,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1350,26 @@
+@@ -1098,7 +1350,24 @@
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
  	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
+-	</form>" );
 +	</fieldset>
- 	</form>" );
-+		
-+//		
++	</form>" );	
 +		
 +		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 +		
@@ -690,7 +689,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1833,54 @@
+@@ -1562,4 +1831,54 @@
  		}
  		return $pageText;
  	}
@@ -724,8 +723,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_message' ) . '</div><br/>';
 +			
 +		$uploadSuccessHTML .= '<div align="center" style="width:auto;padding:0px;text-align:center;">' .
-+				'<fieldset style="border:1px solid lightgrey;line-height:1.5em;margin: 0px 30px;padding:5px;">' .
-+				'<legend style="font-size:95%;padding:0.5em;">&nbsp;' . wfMsgNoTrans( 'smw_rm_uploadsuccess_legend' ) . '</legend>' .
++				'<fieldset style="border:1px solid lightgrey;line-height:1.5em;margin: 0px 30px;padding-bottom:20px;">' .
++				'<legend style="font-size:95%;font-weight:bold;padding:0.5em;">&nbsp;' . wfMsgNoTrans( 'smw_rm_uploadsuccess_legend' ) . '</legend>' .
 +				'<span style="text-align:left;">' . wfMsgNoTrans( 'smw_rm_uploadsuccess_filename', $imageDescLink ) .
 +				wfMsgNoTrans( 'smw_rm_uploadsuccess_articlename', $relatedArticles ) . '</span>' .
 +				'</fieldset></div><br/>';
