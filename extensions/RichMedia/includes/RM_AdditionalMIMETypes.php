@@ -1,5 +1,5 @@
 <?php
-// begin AdditionalMIMETypes:
+
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',
  	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
@@ -84,5 +84,23 @@ $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks +
 	    NS_VIDEO => true,
 		NS_PDF	=> true
 	);
-// end AdditionalMIMETypes
+
+$wgHooks['CheckNamespaceForImage'][] = 'RMNamespace::isImage';
+
+class RMNamespace { 
+	
+	/**
+ 	* Is the namespace one of the (new) image-namespaces?
+ 	* created for AdditionalMIMETypes
+ 	*
+ 	* @param int $index
+ 	* @return bool
+ 	*/
+
+	public static function isImage( &$index, &$rMresult ) {
+		$rMresult |= ($index == NS_IMAGE || $index == NS_DOCUMENT ||
+				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
+		return true;
+	}
+}
 ?>
