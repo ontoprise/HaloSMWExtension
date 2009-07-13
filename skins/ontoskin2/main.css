@@ -140,23 +140,28 @@
 
 
 #smwf_tabblock{
-	clear: both;
-	position: relative;
+	/*clear: both;*/
+	/*position: relative;*/
 	background-color: #0091a6;
-	height: 1.7em;
+	/*height: 1.7em;*/
 }
 #smwf_tabcontainer{
-	position: absolute;
-	left: 200px;
+	margin-left: 200px;
+        border-spacing: 0px;
 }
 
+#smwf_tabcontainer td{
+	padding: 0px;
+}
 
 
 .smwf_tabs{
 	border-right: 1px dotted #FFF;
-	margin-right: 1em;
+	margin-right: 0.5em;
 	margin-top: 0.1em;
 	height:	1.4em;
+        position: relative;
+        float: left;
 	/* overflow: hidden; */
 }
 
@@ -166,18 +171,18 @@
 	font-size: small;
 	text-decoration: none;
 	background-color: #0091a6;
-	margin-top:5px;
+	/*margin-top:5px;*/
 	margin-left:5px;
 	margin-right:5px; 
-	padding-left: 10px;
-	padding-right: 10px;
+	/*padding-left: 10px;
+	padding-right: 10px;*/
 	white-space: nowrap;
 }
 #smwf_tabblock .selected{
 	background-color: #FFF;
 	border-right: none;
 	margin-right: 0.5em;
-	margin-top: 0.1em;
+	/*margin-top: 0.1em;*/
 	height: 1.4em;
 }
 
@@ -188,7 +193,7 @@
 	margin-top:5px;
 	margin-left:5px;
 	margin-right:5px;
-	background-color: #FFF; 
+	background-color: #FFF;
 }
 
 

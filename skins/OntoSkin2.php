@@ -165,19 +165,19 @@
 		</div>
 		<!-- page tab block -->
 		<div id="smwf_tabblock">
-			<div id="smwf_tabcontainer">
-					<table><tr>
-					<?php			foreach($this->data['content_actions'] as $key => $tab) { ?>
-				 	<th>
+			<table id="smwf_tabcontainer" border="0">
+                            <tbody>
+				<tr><td>
+					<?php			foreach($this->data['content_actions'] as $key => $tab) { ?>				 	
 				 		<div id="ca-<?php echo Sanitizer::escapeId($key) ?>" class="smwf_tabs <?php
 					 	if($tab['class']) { echo htmlspecialchars($tab['class']);}?>">
 					 		<a href="<?php echo htmlspecialchars($tab['href']) ?>"<?php echo $skin->tooltipAndAccesskey('ca-'.$key) ?>><?php
 					 	echo htmlspecialchars($tab['text']) ?></a>
-					 	</div>
-					 </th>
+					 	</div>					
 					<?php			 } ?>
-					</tr></table>
-			</div>
+                                </td></tr>
+                            </tbody>
+			</table>
 		</div>
 		
 		<!-- div for inserting slider to resize menu and content -->
@@ -394,7 +394,7 @@
 		?>
 		<div id="smwf_toolbox">
 					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('toolboxlist')"><?php $this->msg('toolbox') ?>
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					<img id="toolboxlist_img" class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif"/>
 					</div>
 					<div id="toolboxlist" class="smwf_navilist">
 							<table class="naviitemtable">
@@ -489,7 +489,7 @@
 		if( $this->data['language_urls'] ) {?>
 		<div id='smwf_language'>
 			<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_languageview')"><?php $this->msg('otherlanguages')?>
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					<img id="smwf_languageview_img" class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif"/>
 			</div>
 			<div id="smwf_languageview">						
 				<table class="naviitemtable">
@@ -510,7 +510,7 @@
 	function treeviewBox() { ?>
 		<div id='smwf_browser'>
 					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('smwf_browserview')">Browser
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					<img id='smwf_browserview_img' class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif"/>
 					</div>
 					<div id="smwf_browserview">						
 						<?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
@@ -524,7 +524,7 @@
 	function customBox( $bar, $cont ) {
 		?>
 					<div class="smwf_navihead" onclick="smwhg_generalGUI.switchVisibilityWithState('<?php echo $bar?>')"><?php $out = wfMsg( $bar ); if (wfEmptyMsg($bar, $out)) echo $bar; else echo $out; ?>
-					<img class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable.gif"/>
+					<img id="<?php echo $bar?>_img"class="icon_navi" onmouseout="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif')" onmouseover="(src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up-act.gif')" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/expandable-up.gif"/>
 					</div>
 					<div id="<?php echo $bar?>" class="smwf_navilist">
 							<table class="naviitemtable">

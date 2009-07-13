@@ -26,8 +26,12 @@ GeneralGUI.prototype = {
     switchVisibilityWithState: function(id) {
     	if ($(id).visible()) {
     		this.closedContainers[id] = true;
+                closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable.gif\"/>";
+                $(id+"_img").replace(closedimg);
     	} else {
     		this.closedContainers[id] = false;
+                openedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable-up.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-up-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable-up.gif\"/>";;
+                $(id+"_img").replace(openedimg)
     	}
     	GeneralBrowserTools.setCookieObject("smwNavigationContainers", this.closedContainers);
     	this.switchVisibility(id);
@@ -36,6 +40,8 @@ GeneralGUI.prototype = {
     update: function() {
     	for (var id in this.closedContainers) {
     		if (this.closedContainers[id] == true) {
+                        closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable.gif\"/>";
+                        $(id+"_img").replace(closedimg);
     			this.switchVisibility(id);
     		}
     	}
