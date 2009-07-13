@@ -40,17 +40,17 @@ var RichMediaPage = Class.create({
 		var result = richMediaPage.mergeFormsToForm([sForm], destForm);
 
 		var el = new Element('input', {
-	   				'type' : 'hidden', 
-	   				'name' : 'query', 
-	   				'value' : 'true'} )
-	   	destForm.appendChild(el);
+					'type' : 'hidden', 
+					'name' : 'query', 
+					'value' : 'true'} )
+		destForm.appendChild(el);
 
-	   	var el = new Element('input', {
-	   				'type' : 'hidden', 
-	   				'name' : 'action', 
-	   				'value' : 'submit'} )
-	   	destForm.appendChild(el);
-	   	
+		var el = new Element('input', {
+					'type' : 'hidden', 
+					'name' : 'action', 
+					'value' : 'submit'} )
+		destForm.appendChild(el);
+		
 		destForm.submit();
 		return true;
 	},
@@ -101,9 +101,12 @@ var RichMediaPage = Class.create({
 				}
 				// just clone and hide everything else here 
 				else {
-					clone.id = '';
-					clone.hide();  
-					destForm.appendChild(clone);
+					// fix: #10678; just clone node which have a value 
+					if (clone.value != '') {
+						clone.id = '';
+						clone.hide();  
+						destForm.appendChild(clone);
+					}
 				}
 	 		}); 
   		});
