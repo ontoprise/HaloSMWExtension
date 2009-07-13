@@ -337,6 +337,9 @@ function smwgHaloSetupExtension() {
 	// make hook for red links
 	$wgHooks['BrokenLink'][] = 'smwfBrokenLinkForPage';
 
+	// make hook for RichMedia
+	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
+	
 	return true;
 }
 
@@ -1458,4 +1461,16 @@ function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix,
 	return true;
 }
 
+/**
+ * Is the namespace one of the (new) image-namespaces?
+ * created for AdditionalMIMETypes
+ *
+ * @param int $index
+ * @return bool
+ */
+
+function smwfRichMediaIsImage( &$index, &$rMresult ) {
+	$rMresult |= ($index == NS_IMAGE);
+	return true;
+}
 ?>
