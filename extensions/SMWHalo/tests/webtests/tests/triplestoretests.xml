@@ -28,13 +28,13 @@
 				xpath="//div[@id='bodyContent']/p[1]/a[@title='Audi TT']"
 				description="Check if first query result appears" />
 			<verifyXPath
-				xpath="//table[@id='querytable2']//a[@title='Audi TT']"
+				xpath="//div[@id='bodyContent']//table[1]//a[@title='Audi TT']"
 				description="Check if second query result appears" />
 			<verifyXPath
 				xpath="//div[@id='bodyContent']/p[2]/a[@title='Audi TT']"
 				description="Check if third query result appears" />
 			<verifyXPath
-				xpath="//table[@id='querytable4']//a[@title='5 cylinder']"
+				xpath="//div[@id='bodyContent']//table[2]//a[@title='5 cylinder']"
 				description="Check if fourth query result appears" />
 		</webtest>
 		
@@ -46,7 +46,7 @@
             <verifyTitle text="QueryTestASK2 - Halo3wiki" />
 
             <verifyXPath
-                xpath="//table[@id='querytable1']/tbody/tr[2]/td" text="Audi TT"
+                xpath="//div[@id='bodyContent']//table[1]/tbody/tr[2]/td" text="Audi TT"
                 description="Check if first query result appears (as non link)" />
                    <verifyXPath
                 xpath="//div[@id='bodyContent']/p[1]//a[@title='Kai']" 
@@ -62,10 +62,10 @@
                 description="Check if fifth query result appears" />
                     
             <verifyXPath
-                xpath="//table[@id='querytable6']//a[@title='Peugeot']"
+                xpath="//div[@id='bodyContent']//table[2]//a[@title='Peugeot']"
                 description="Check if sixth query result appears" />
                   <verifyXPath
-                xpath="//table[@id='querytable7']//th/span" text="Car"
+                xpath="//div[@id='bodyContent']//table[3]//th/span" text="Car"
                 description="Check if seventh query result appears" />
         </webtest>
 		
@@ -80,13 +80,13 @@
                 xpath="//div[@id='bodyContent']/p[1]/a[@title='Audi TT']"
                 description="Check if first query result appears" />
             <verifyXPath
-                xpath="//table[@id='querytable2']//a[@title='Audi TT']"
+                xpath="//div[@id='bodyContent']//table[1]//a[@title='Audi TT']"
                 description="Check if second query result appears" />
            <verifyXPath
-                xpath="//table[@id='querytable3']//a[@title='Audi TT']"
+                xpath="//div[@id='bodyContent']//table[2]//a[@title='Audi TT']"
                 description="Check if second query result appears" />
             <verifyXPath
-                xpath="//table[@id='querytable4']//a[@title='5 cylinder']"
+                xpath="//div[@id='bodyContent']//table[3]//a[@title='5 cylinder']"
                 description="Check if fourth query result appears" />
             
         </webtest>
