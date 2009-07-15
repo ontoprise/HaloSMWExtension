@@ -1,5 +1,8 @@
 <?php
 
+define(DEPLOY_FRAMEWORK_INTERNAL_REPO, "http://localhost/mediawiki/deployment/tests/testcases/resources/repository/");
+define(DEPLOY_FRAMEWORK_INTERNAL_REPO2, "http://localhost/mediawiki/deployment/tests/testcases/resources/repository2/");
+
 // activate for debugging
 //define('DEBUG_MODE', true);
 
@@ -19,7 +22,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 	function setUp() {
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository/repository.xml" : "testcases/resources/repository/repository.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO);
 		self::$rootDir = realpath(dirname($path));
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/installer/" : "testcases/resources/installer/";
 		self::$instDir = realpath($path);
@@ -50,7 +53,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		//introduce second repository
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 		$versions = PackageRepository::getAllVersions("smwhalo");
 
 		$this->assertTrue(count($versions) === 3);
@@ -79,7 +82,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		//introduce second repository
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 
 		$this->assertTrue(PackageRepository::existsPackage("smwhalo", 150));
 	}
@@ -98,7 +101,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		//introduce second repository
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 
 		$exp_packages = array('smwhalo', 'semanticgardening', 'smw', 'unifiedsearch', 'richmedia');
 		$allPackages = PackageRepository::getAllPackages();
@@ -110,7 +113,11 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetLatestDeployDescriptor() {
+		try {
 		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
+		} catch(HttpError $e) {
+			print $e->getHeader();
+		}
 		$this->assertEquals("smwhalo", $dd->getID());
 		$this->assertEquals(144, $dd->getVersion());
 	}
@@ -118,7 +125,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	function testGetLatestDeployDescriptor2() {
 		//introduce second repository
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 
 		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
 		$this->assertEquals("smwhalo", $dd->getID());
@@ -136,7 +143,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 		//introduce second repository
 		$path = defined('DEBUG_MODE') && DEBUG_MODE == true ? "deployment/tests/testcases/resources/repository2/repository2.xml" : "testcases/resources/repository2/repository2.xml";
-		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path));
+		PackageRepository::initializePackageRepositoryFromString(file_get_contents($path), DEPLOY_FRAMEWORK_INTERNAL_REPO2);
 
 
 		$dd = PackageRepository::getDeployDescriptor("smwhalo", 150);
