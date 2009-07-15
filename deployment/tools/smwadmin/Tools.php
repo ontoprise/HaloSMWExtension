@@ -34,8 +34,8 @@ class Tools {
 	 * @return unknown
 	 */
 	public static function mkpath($path) {
-		if(mkdir($path) || file_exists($path)) return true;
-		return (mkpath(dirname($path)) && mkdir($path));
+		if(@mkdir($path) || file_exists($path)) return true;
+		return (self::mkpath(dirname($path)) && @mkdir($path));
 	}
 
 	/**

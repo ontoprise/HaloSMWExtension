@@ -37,7 +37,10 @@ class Rollback {
 			if (file_exists($this->tmpDir)) {
 				print "\nRemove old rollback data (y/n) ?";
 				$line = trim(fgets(STDIN));
-				if (strtolower($line) == 'n') die();
+				if (strtolower($line) == 'n') {
+					print "\n\nAbort installation.";
+				    die();
+				}
 				Tools::remove_dir($this->tmpDir);
 			}
 			Tools::mkpath($this->tmpDir);
@@ -49,8 +52,8 @@ class Rollback {
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		if (array_key_exists($dd->getID(), $localPackages)) {
 			print "\nSaving extension... ".$dd->getID();
-			Tools::mkpath($this->tmpDir."/extensions/".$dd->getInstallationDirectory());
-			Tools::copy_dir($this->inst_dir."/".$dd->getInstallationDirectory(), $this->tmpDir."/extensions/".$dd->getInstallationDirectory());
+			Tools::mkpath($this->tmpDir."/stored/".$dd->getInstallationDirectory());
+			Tools::copy_dir($this->inst_dir."/".$dd->getInstallationDirectory(), $this->tmpDir."/stored/".$dd->getInstallationDirectory());
 			print "done.";
 		}
 		$this->extToRemove[] = $dd->getID();
@@ -63,7 +66,7 @@ class Rollback {
 		if ($savedDataBase) return;
 		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
 		$savedDataBase = true;
-		print "Saving database...";
+		print "\nSaving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
 		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.";
@@ -82,11 +85,12 @@ class Rollback {
 	private function restoreDatabase() {
 
 		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
-		print "Restore database...";
+		if (!file_exists($this->tmpDir."/dump.sql")) return false; // nothing to restore
+		print "\nRestore database...";
 		//print "\nmysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql";
 		exec("mysql -u $wgDBadminuser --password=$wgDBadminpassword --database=$wgDBname < ".$this->tmpDir."/dump.sql", $out, $ret);
 		if ($ret != 0) print "\nWarning: Could not restore database."; else print "done.";
-
+        return ($ret == 0);
 	}
 
 
@@ -115,7 +119,7 @@ class Rollback {
 			}
 		}
 
-		$this->restoreDatabase();
+		$databaseRestored = $this->restoreDatabase();
 		// remove installed or updated extensions
 		foreach($localPackages as $dd) {
 			if (in_array($dd->getID(), $this->extToRemove)) {
@@ -123,10 +127,27 @@ class Rollback {
 			}
 		}
 		// copy old (updated) extensions
-		Tools::copy_dir($this->tmpDir."/extensions", $this->inst_dir);
+		Tools::copy_dir($this->tmpDir."/stored", $this->inst_dir);
+		
+		// reload local packages, because they have changed
+		$restoredLocalPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions', true);
+		
+		// restore wiki pages and other resources 
+		$res_installer = ResourceInstaller::getInstance($this->inst_dir);
+		foreach($localPackages as $dd) {
+	            if (in_array($dd->getID(), $this->extToRemove)) {
+	            	if (array_key_exists($dd->getID(), $restoredLocalPackages)) {
+	                   if (!$databaseRestored) $res_installer->installOrUpdateWikidumps($restoredLocalPackages[$dd->getID()], $dd->getVersion(), DEPLOYWIKIREVISION_FORCE);
+	                   //FIXME: it is not really necessary to upload again, if the database is restored. The file must be copied from the archive.
+	                   $res_installer->installOrUpdateResources($restoredLocalPackages[$dd->getID()], $dd->getVersion());
+	            	}
+	            }
+	        }
 			
 		// restore LocalSettings.php
-		copy($this->tmpDir."/LocalSettings.php", $this->inst_dir."/LocalSettings.php");
+		if (file_exists($this->tmpDir."/LocalSettings.php")) {
+		  copy($this->tmpDir."/LocalSettings.php", $this->inst_dir."/LocalSettings.php");
+		}
 
 		// clear rollback data
 		if (file_exists($this->tmpDir)) Tools::remove_dir($this->tmpDir);

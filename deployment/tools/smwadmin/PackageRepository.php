@@ -51,6 +51,7 @@ class PackageRepository {
 			foreach($rep_file_lines as $u) {
 				if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
 				list($url, $user, $pass) = explode(" ", $u);
+				$url = substr($url, -1) == "/" ? $url : $url."/"; //add trailing / if necessary
 				$repo_urls[] = $url;
 				if ((is_null($user) || empty($user)) && (is_null($pass) || empty($pass))) {
 					self::$repo_credentials[$url] = "";
@@ -62,6 +63,7 @@ class PackageRepository {
 		} else {
 			print "\nNo repository file. Using default repository.";
 			self::$repo_credentials[SMWPLUS_REPOSITORY] = "" ; // default repo
+			$repo_urls[] = SMWPLUS_REPOSITORY;
 		}
 		$d = new HttpDownload();
 		foreach($repo_urls as $url) {
@@ -92,8 +94,8 @@ class PackageRepository {
 	/*
 	 * Loads package repository from string (for testing)
 	 */
-	public static function initializePackageRepositoryFromString($repo_xml) {
-		self::$repo_dom[] = simplexml_load_string($repo_xml);
+	public static function initializePackageRepositoryFromString($repo_xml, $url) {
+		self::$repo_dom[$url] = simplexml_load_string($repo_xml);
 	}
 	/*
 	 * Clears package repository (for testing)
@@ -125,7 +127,8 @@ class PackageRepository {
 		asort($results, SORT_NUMERIC);
 		$results = array_reverse($results, true);
 		$url = reset(array_keys($results));
-
+        
+		
 		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id. Missing repository?");
 
 		// download descriptor
