@@ -1,0 +1,13 @@
+#
+# Repositories
+#
+# format: url [user pass]
+#
+# example: http://foo.bar/myrepository/ johndoe secret
+#          http://openrepos.com/repository
+#
+
+# Public extension repository of Ontoprise
+http://dailywikibuilds.ontoprise.com/repository/
+
+# Other repositories
