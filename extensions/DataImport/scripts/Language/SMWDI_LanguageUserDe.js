@@ -19,10 +19,10 @@ var wgDIUserLanguageStrings = {
 		'smw_ti_sourceinfo'			: 	'Die folgenden Informationen werden benötigt, damit der Import gestartet werden kann',
 		'smw_ti_source'				: 	'Quelle',
 		'smw_ti_edit'				: 	'editiere',
-		'smw_ti_attributes'			: 	'<b>Verfügbare Attribute in dieser Quelle</b><br/>Die follgenden Attribute können aus der definierten Quelle extrahiert werden:',
-		'smw_ti_articles1'			: 	'<b>Artikel, die aus dieser Quelle importiert werden.</b><br/>Die folgenden ',
 		'smw_ti_noa'				: 	'articleName',
-		'smw_ti_articles2'			: 	' Artikel werden im Wiki generiert:',
+		'smw_ti_save'				:	'Term Import speichern',
+		'smw_ti_execute'			:	'Term Import speichern und ausführen',
+		'smw_ti_prev-step'			:	'Zurück zum vorherigen Schritt',
 		
 		
 		'smw_wws_add_parameter'		:	'Parameter hinzufügen',
