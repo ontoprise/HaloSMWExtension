@@ -160,11 +160,12 @@ class HttpDownload {
 		preg_match('/HTTP\/\d.\d\s+(\d+)/', $this->header, $matches);
 		if (!isset($matches[1])) throw new HttpError("Invalid HTTP header");
 		switch($matches[1]) {
-			case 200: break;
+			case 200: break; // OK
+			case 400: throw new HttpError("Bad request: $path", 400, $this->header); 
 			case 401: throw new HttpError("Authorization required: $path", 401, $this->header); 
 			case 403: throw new HttpError("Access denied: $path", 403, $this->header); 
 			case 404: throw new HttpError("File not found: $path", 404, $this->header);
-			default: throw new HttpError("Unknown error", $matches[1], $this->header);
+			default: throw new HttpError("Unknown HTTP error", $matches[1], $this->header);
 		}
 			
 
