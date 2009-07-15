@@ -16,86 +16,148 @@ class CL {
 	}
 
 	public function execute() {
-		global $smwgDIIP, $wgOut, $wgRequest, $wgScriptPath;
+		global $smwgDIIP, $wgOut, $wgRequest, $wgScriptPath, $smwgDIScriptPath;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
 
 		$wil = new WIL();
 		$tlModules = $wil->getTLModules();
 
-		$t = Title::newFromText('super123');
-		if( !$t->exists() ){
-			$msg = wfMsg('smw_ti_mappingPageNotExist');
-		}
-		$html = "<div id=\"summary\"></div>" .
+		$html = "<div id=\"menue\">";
+		$html .= "<div id=\"breadcrumb-menue\" class=\"BreadCrumpContainer\">";
+		$html .= "<span id=\"menue-step1\" class=\"ActualMenueStep\">".wfMsg('smw_ti_menuestep1')."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">".wfMsg('smw_ti_menuestep2')."</span>";
+		$html .= "</div></div>";
+		
+		$html .= "<div id=\"summary\"></div>" .
 				"<div id=\"top-container\">" .
-					"<div style=\"margin-bottom:10px;\">".wfMsg('smw_ti_welcome')."</div>" .
-					"<div><div id=\"tl-content\">TLM:" .
+					"<div><div id=\"tl-content\"><b>". wfMsg('smw_ti_tl-heading') ."</b>" .
 						"<div id=\"tlid\">" . $this->getTLIDs($tlModules) . "</div>" . 
-						"<div id=\"tldesc\">" . "Info: " . "</div></div>" .
+						"<div id=\"tldesc\">" .  "</div></div>" .
 						"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
 					"</div>";
 			
-		$html .= "<div><div id=\"dal-content\">DAM:" .
-				 	"<div id=\"dalid\">" . "<div class=\"myinfo\">" . wfMsg('smw_ti_firstselectTLM') . "</div>" . "</div>" .
+		$html .= "<div><div id=\"dal-content\"><b>".wfMsg('smw_ti_dam-heading')."</b>" .
+				 	"<div id=\"dalid\">" . "<div class=\"myinfo\"><i>" . wfMsg('smw_ti_firstselectTLM') . "</i></div>" . "</div>" .
 				 	"<div id=\"daldesc\">" . "</div></div>" .
 					"<div class=\"arrow\"><img src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/arrow.gif\"/></div>".
 				 "</div>";
 
-		$html .= "<div id=\"source-spec\">" .
-				"<table height=\"200px\"><tr><td valign=\"middle\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
+		$html .= "<div id=\"source-spec\"><b>".wfMsg('smw_ti_module-data-heading')."</b>" .
+				"<table height=\"200px\"><tr><td valign=\"top\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
 				"</div>";
 		$html .= "</div>"; //top-container
 
 		$html .= "<div id=\"bottom-container\">" .
 					"<div id=\"extras\">" .
 							"<div id=\"extras-left\">" .
-								"<div id=\"importset\">" . wfMsg('smw_ti_selectImport') .
-									"<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\"></select>" .
+								"<div id=\"importset\"><div class=\"input-field-heading\">" 
+								. wfMsg('smw_ti_selectImport-heading') .
+								"<img id=\"help-img1\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+								"</div>".
+								"<div id=\"help1\" style=\"display: none\">".
+								"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+								wfMsg('smw_ti_selectImport-help')."</div>".
+								wfMsg('smw_ti_selectImport-label') .								
+								"<select name=\"importset\" id=\"importset-input-field\" size=\"1\" onchange=\"termImportPage.importSetChanged(event, this)\"></select>" .
 									"<br><br>" .
 								"</div>" . //importset
-								"<div id=\"policy\">" .
-									"<div id=\"policy-input\">" .
-										"<table><tr><td>" .wfMsg('smw_ti_define_inputpolicy')."</td>" . 
-										"<td><input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\"></td>" .
-										"<td><img style=\"cursor: pointer;\" onclick=\"termImportPage.getPolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Add.png\" /></td></tr>" . 
-										"<tr><td align=\"left\"><b><i>Info:</i></b></td><td align=\"right\"><input type=\"radio\" name=\"policy_type\" value=\"regex\" checked><span style=\"color:#900000;\"><u>RegEx</u></span><input type=\"radio\" name=\"policy_type\" value=\"term\">Term</span></td><td><img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Delete-silk.png\" /></td></tr></table>" . 
-										"<i>" . wfMsg('smw_ti_inputpolicy') . "</i>" . 
+								"<br/><br/><div id=\"policy\">".
+								 	"<div id=\"policy-input\">" .
+										"<div class=\"input-field-heading\">" 
+										. wfMsg('smw_ti_inputpolicy-heading') .
+										"<img id=\"help-img2\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+										"</div>".
+										"<div id=\"help2\" style=\"display: none\">".
+										"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+										wfMsg('smw_ti_inputpolicy-help')."</div>".
+										"<span>" .wfMsg('smw_ti_inputpolicy-label')."</span>" . 
+										"<input type=\"radio\" name=\"policy_type\" value=\"regex\" checked><span>RegEx</span><input type=\"radio\" name=\"policy_type\" value=\"term\">Term</span>".
+										"&nbsp;&nbsp;<input name=\"policy\" id=\"policy-input-field\" type=\"text\" size=\"20\">" .
+										"&nbsp;&nbsp;<img style=\"cursor: pointer;\" onclick=\"termImportPage.getPolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Add.png\" />".
+										"<br/><br/><div>".wfMsg('smw_ti_inputpolicy-defined').
+										"<img style=\"cursor: pointer;\" onclick=\"termImportPage.deletePolicy(event, this)\" src=\"$wgScriptPath/extensions/DataImport/skins/TermImport/images/Delete-silk.png\" /></div>".
 									"</div>" .	
-									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"7\" multiple>" .  
+									"<select id=\"policy-textarea\" name=\"policy-out\" size=\"3\" multiple>" .  
 									"</select><div id=\"hidden_pol_type\"></div>" .
 								"</div>" . //policy
 								"<div id=\"mapping\">" .
-									"<table>
-										<tr><td><br><br>".wfMsg('smw_ti_mappingPage')."<br></td></tr>" .
-										"<tr><td><input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\">&nbsp&nbsp
+									"<br/><br/><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_mappingPage-heading').
+									"<img id=\"help-img3\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help3\" style=\"display: none\">".
+									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_mappingPage-help')."</div>".
+									wfMsg('smw_ti_mappingPage-label').
+									"<input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>&nbsp&nbsp
 										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">" . wfMsg('smw_ti_viewMappingPage') . "</a>&nbsp&nbsp
-										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') . "</td></tr>
-									</table>" .
+										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') ."</a>".
 								"</div>" . //mapping
 								"<div id=\"conflict\">" .
-									"<br><br>".wfMsg('smw_ti_conflictpolicy')."&nbsp;" .
+									"<br/><br/><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_conflictpolicy-heading').
+									"<img id=\"help-img4\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help4\" style=\"display: none\">".
+									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_conflictpolicy-help')."</div>".
+									wfMsg('smw_ti_conflictpolicy-label').
 									"<select name=\"conflict\" id=\"conflict-input-field\">" .
 										"<option>overwrite</option>" .
 										"<option>preserve current versions</option>" .
 									"</select>" .
 								"</div>" . //conflict
-								"<div id=\"ti-name\">" .
-									"<br><br>".wfMsg('smw_ti_ti_name')."&nbsp;" .
-									"<input id=\"ti-name-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>" .
-								"</div>" . //ti name
 								"<div id=\"ti-update-policy\">" .
-									"<br><br>".wfMsg('smw_ti_update_policy')."&nbsp;" .
-									"<input id=\"ti-update-policy-input-field\"/>" .
+									"<br/><br/><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_update_policy-heading')."&nbsp;" .
+									"<img id=\"help-img5\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(5)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help5\" style=\"display: none\">".
+									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_update_policy-help')."</div>".
+									"<input type=\"radio\" name=\"update_policy_type\" value=\"once\" checked><span>Once:</span>".
+									"<input id=\"update-policy-checkbox\" type=\"radio\" name=\"update_policy_type\" value=\"maxage\">Max age:</span>".
+									"&nbsp;&nbsp;<input id=\"ti-update-policy-input-field\" size=\"10\"/>&nbsp;in minutes" .
+									"</div>" . 
+									"<div id=\"ti-name\">" .
+									"<br><br><div class=\"input-field-heading\">".
+									wfMsg('smw_ti_ti_name-heading')."&nbsp;" .
+									"<img id=\"help-img6\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(6)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+									"</div>".
+									"<div id=\"help6\" style=\"display: none\">".
+									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+									wfMsg('smw_ti_ti_name-help')."</div>".
+									wfMsg('smw_ti_ti_name-label').
+									"<input id=\"ti-name-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>" .
 								"</div>" . //ti name
 							"</div>" . //extras-left
 							"<div id=\"extras-right\">" .
+								"<div class=\"input-field-heading\">".
+								wfMsg('smw_ti_properties-heading').
+								"<img id=\"help-img7\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(7)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+								"</div>".
+								"<div id=\"help7\" style=\"display: none\">".
+								"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+								wfMsg('smw_ti_properties-help')."</div>".
+								wfMsg('smw_ti_properties-label').
 								"<div id=\"attrib-articles\">" .
 									"<div id=\"attrib\"></div>" .
-									"<div id=\"articles\"></div>" .
+									"<div id=\"articles\">".
+										"<div class=\"input-field-heading\">".
+										wfMsg('smw_ti_articles-heading')."&nbsp;" .
+										"<img id=\"help-img8\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(8)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
+										"</div>".
+										"<div id=\"help8\" style=\"display: none\">".
+										"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
+										wfMsg('smw_ti_articles-help')."</div>".
+										wfMsg('smw_ti_articles-label1').
+										"<span id=\"article-count\"></span>".
+										wfMsg('smw_ti_articles-label2').
+										"<div id=\"article_table\" class=\"scrolling\"></div></div>" .
 								"</div>" . //attrib-articles
 							"</div>" . //extras-right
 					"</div>". //extras
-					"<div id=\"extras-bottom\" align=\"center\"></div>";
+					"<div id=\"extras-bottom\" align=\"left\"></div>";
 
 		$html .= "</div>"; //bottom-container
 		
@@ -156,6 +218,20 @@ class CL {
 		$updatePolicy = $updatePolicy !== false ? $updatePolicy[0] : "0"; 
 		$html .= '<span id="updatePolicy-ed">'.$updatePolicy.'</span>';
 		
+		$xmlString = @ smwf_ti_connectTL($tlId[0]);
+		$xmlString = str_replace('xmlns="http://www.ontoprise.de/smwplus#"'
+				, "", $xmlString);
+		$simpleXMLElement = new SimpleXMLElement($xmlString);
+		$tlDesc = $simpleXMLElement->xpath("//TLModules/Module/desc/text()");
+		$html .= '<span id="tl-desc">'.$tlDesc[0].'</span>';
+		
+		$dalDesc = $simpleXMLElement->xpath("//Module[./id/text() = '".$dalId[0]."']/desc/text()");
+		$html .= '<span id="dal-desc">'.$dalDesc[0].'</span>';
+		
+		$dals = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
+		$dals = implode(",", $dals);
+		$html .= '<span id="dalIds">'.$dals.'</span>'; 
+		
 		$html .= "</span>";
 		return $html;	
 	}
@@ -200,7 +276,8 @@ class CL {
  */
 function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		$givenInputPol, $mappingPage, $givenConflictPol = true,
-		$runBot, $termImportName = null, $updatePolicy = "", $edit = false) {
+		$runBot, $termImportName = null, $updatePolicy = "", $edit = false,
+		$createOnly = false) {
 
 	global $smwgDIIP, $wgOut;
 	require_once($smwgDIIP . '/specials/TermImport/SMW_WIL.php');
@@ -343,9 +420,13 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 
 		if($articleCreated !== true){
 			return $articleCreated;
+		} else if ($createOnly != "false"){
+			return '<?xml version="1.0"?>
+	 			<ReturnValue xmlns="http://www.ontoprise.de/smwplus#">
+	 		    <value>articleCreated</value>
+	 		    <message>' . $termImportName . '</message>
+	 			</ReturnValue >';
 		}
-
-			
 
 		$terms = $wil->importTerms($moduleConfig, $source_result, $importSets, $givenInputPol,
 		$mappingPolicy, $conflictPolicy, $termImportName);
@@ -415,7 +496,7 @@ $inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
 
 	$articleContent = $tiConfig;
 
-	$articleContent .= "\n=== Last runs of this Term Import ===\n";
+	$articleContent .= "\n==== Last runs of this Term Import ====\n";
 	$articleContent .= "{{#ask: [[belongsToTermImport::TermImport:".$termImportName."]]"
 	."\n| format=ul | limit=10 | sort=hasImportDate | order=descending}}";
 	$articleContent .= "\n[[Category:TermImport]]";
@@ -430,6 +511,8 @@ $inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
 	 		    <message>' . wfMsg('smw_ti_def_not_creatable') . '</message>
 	 			</ReturnValue >';
 	}
+	
+	smwf_om_TouchArticle("TermImport:".$termImportName);
 
 	return true;
 

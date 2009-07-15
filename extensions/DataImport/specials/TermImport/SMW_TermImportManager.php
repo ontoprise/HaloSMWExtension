@@ -129,7 +129,7 @@ function termImportParserHook($input, $args, $parser) {
 	}
 	
 	if(strlen($messages) > 0){
-		$messages = '<h3><span class="mw-headline">The Term Import Definition is erronious</span></h3>'.$messages;
+		$messages = '<h4><span class="mw-headline">The Term Import Definition is erronious</span></h4>'.$messages;
 	} else {
 		global $wgArticlePath;
 		if(strpos($wgArticlePath, "?") > 0){
@@ -137,9 +137,9 @@ function termImportParserHook($input, $args, $parser) {
 			} else {
 				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$parser->getTitle()->getText();
 			}
-			$messages = '<h2><a href="'.$url.'">Edit Term Import in GUI</a></h2>';
+			$messages = '<h4><a href="'.$url.'">Click here to edit the Term Import definition in the GUI</a></h4>';
 	}
-	$completeImportSettings = '<h3><span class="mw-headline">The Term ImportDefinition</span></h3>'
+	$completeImportSettings = '<h4><span class="mw-headline">Term Import definition</span></h4>'
 		.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
 	return  $completeImportSettings.$messages;
 }

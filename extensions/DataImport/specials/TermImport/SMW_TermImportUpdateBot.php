@@ -181,7 +181,6 @@ public function getImageDirectory() {
 				$mappingPolicy, $conflictPolicy, $termImportName, false);
 
 			$title = Title::newFromText("TermImport:".$termImportName);	
-			echo("\nRESULT: ".$terms);
 			if($terms != wfMsg('smw_ti_import_successful')){
 				$log->addGardeningIssueAboutArticle
 					($this->id, SMW_GARDISSUE_UPDATE_FAILURE, $title);

@@ -2,7 +2,12 @@ a:link {text-decoration:none;}
 a:visited {text-decoration:none; }
 a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 
+.input-field-heading{
+	font-weight: bold;
+}
+
 #top-container{
+	margin-top: 30px;
 	width: 100%;
 	height: 260px;
 	padding-bottom: 10px;
@@ -13,14 +18,14 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	/*border: 1px solid #AAAAAA;*/
 	float: left;
 	/*overflow: hidden;*/
-	width: 230px;
+	width: 190px;
 	height: 230px;	
 }
 #top-container #tl-content #tlid{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	float: left;
-	width: 230px;
+	width: 190px;
 	height: 100px;
 	border: 1px solid #AAAAAA;
 	border-bottom: none;
@@ -39,7 +44,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-size: 12px;
 	/*border: 1px solid #AAAAAA;*/
 	float: left;
-	width: 230px;
+	width: 190px;
 	height: 230px;
 	/*margin-left: 50px;*/
 }
@@ -49,7 +54,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 	border-bottom: none;
 	float: left;
-	width: 230px;
+	width: 190px;
 	height: 100px;	
 }
 #top-container #dal-content #daldesc{
@@ -75,7 +80,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding: 3px 20px 3px 20px;
 }
 #top-container #source-spec{
-	width: 250px;	
+	width: 280px;	
 	float: left;
 	height: 200px;
 }
@@ -170,7 +175,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 }
 
 #bottom-container #extras #extras-left #policy #policy-input{
-	width: 70%;
+	width: 100%;
 	float: left;
 	/*border: 1px solid #AAAAAA;*/	
 }
@@ -178,7 +183,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 }
 #bottom-container #extras #extras-left #policy #policy-textarea{
-	width: 150px;
+	width: 300px;
 	float: left;
 	border: 1px solid #AAAAAA;
 }

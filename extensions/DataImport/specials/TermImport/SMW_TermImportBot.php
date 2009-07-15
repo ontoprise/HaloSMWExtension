@@ -79,6 +79,8 @@ class TermImportBot extends GardeningBot {
 		echo("\n".$result);
 
 		$this->createTermImportResultContent($result, $termImportName);
+		
+		$timeInTitle = $this->getDateString();
 
 		return array($result, "TermImport:".$termImportName."/".$timeInTitle);
 
@@ -506,25 +508,40 @@ class TermImportBot extends GardeningBot {
 	}
 
 	private function createTermImportResultContent($termImportResult, $termImportName){
+		$result = "__NOTOC__\n";
+		$result .= "==== Import summary ====";
+		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
+			.$termImportName."]]";
+		$result .= "\n Import date: [[hasImportDate::";
+		$result .= $this->getDateString()."]]";
+			
 		if($termImportResult != wfMsg('smw_ti_import_successful')){
-			$result = "\n=== Errors occured ===\n";
+			$result .= "\n Was successfull: [[wasImportedSuccessfully::false]]";
+			$result .= "\n==== Errors occured ====\n";
 			$result .= $termImportResult;
 		} else {
-			$result = "=== Summary ===";
-			$result .= "\nRun of: [[belongsToTermImport::TermImport:".$termImportName."|"
-				.$termImportName."]]";
-			$result .= "\n\nImport date: [[hasImportDate::";
-			$result .= $this->getDateString()."]]";
-
-			$result .= "\n=== Added terms ===\n";
-			$result .= "{{#ask: [[TermImport:".$termImportName."/"
-				.$this->getDateString()."]] | ?hasAddedTermDuringImport}}";
-			$result .= "\n=== Updated terms ===\n";
-			$result .= "{{#ask: [[TermImport:".$termImportName."/"
-				.$this->getDateString()."]] | ?hasUpdatedTermDuringImport}}";
-			$result .= "\n=== Ignored terms ===\n";
-			$result .= "{{#ask: [[TermImport:".$termImportName."/"
-				.$this->getDateString()."]] | ?hasIgnoredTermDuringImport}}";
+			$result .= "\n Was successfull: [[wasImportedSuccessfully::true]]";
+			$result .= "\n==== Added terms ====\n";
+			if(count($this->addedArticles) > 0){
+				$result .= "{{#ask: [[TermImport:".$termImportName."/"
+					.$this->getDateString()."]] | ?hasAddedTermDuringImport=}}";
+			} else {
+				$result .= "No new articles have been added during this Term Import.";
+			}
+			$result .= "\n==== Updated terms ====\n";
+			if(count($this->updatedArticles) > 0){
+				$result .= "{{#ask: [[TermImport:".$termImportName."/"
+					.$this->getDateString()."]] | ?hasUpdatedTermDuringImport=}}";
+			} else {
+				$result .= "No articles have been updated during this Term Import.";
+			}
+			$result .= "\n==== Ignored terms ====\n";
+			if(count($this->ignoredArticles) > 0){
+				$result .= "{{#ask: [[TermImport:".$termImportName."/"
+					.$this->getDateString()."]] | ?hasIgnoredTermDuringImport=}}";
+			} else {
+				$result .= "No articles have been ignored during this Term Import.";
+			}
 
 			$result .= $this->createTermImportResultList(
 				$this->updatedArticles, 'hasUpdatedTermDuringImport');
