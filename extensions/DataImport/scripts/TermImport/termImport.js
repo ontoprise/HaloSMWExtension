@@ -1,4 +1,4 @@
-/*  Copyright 2008-2009, ontoprise GmbH
+/**
 *   Author: Benjamin Langguth
 *   This file is part of the Data Import-Extension.
 *
@@ -86,7 +86,7 @@ TermImportPage.prototype = {
 				//check if found ID matches the given one
 				if (found_tl_id && found_tl_id[0].firstChild.nodeValue == tlID){
 					// yes, add the description to the response var.
-					response += "Info: "+tl_desc[0].firstChild.nodeValue;
+					response += "<b>Info: </b>"+tl_desc[0].firstChild.nodeValue;
 				}	
 			}	
 		}
@@ -178,7 +178,7 @@ TermImportPage.prototype = {
 				//check if found ID matches the given one
 				if ( dalid_obj && dalid_obj[0].firstChild.nodeValue == dalID){
 					// yes, add the description to the response var.
-					response += "Info: " + dal_desc[0].firstChild.nodeValue;
+					response += "<b>Info: </b>" + dal_desc[0].firstChild.nodeValue;
 				}	
 			}		
 		}
@@ -192,8 +192,8 @@ TermImportPage.prototype = {
 	},
 	
 	createDataSourceWidget : function(datasources, tlID, dalID) {
-		response = "<i>" + diLanguage.getMessage('smw_ti_sourceinfo')
-				+ "</i><br><br><form id=\"source\"><Table>"
+		response = diLanguage.getMessage('smw_ti_sourceinfo')
+				+ "<br><br><form id=\"source\"><Table>"
 				+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
 
 		var fieldnumber = 0;
@@ -237,7 +237,7 @@ TermImportPage.prototype = {
 			}
 		}
 		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" onclick=\"termImportPage.getSource(event, this,'"
-				+ tlID + "','" + dalID + "')\">Submit</button></form>";
+				+ tlID + "','" + dalID + "')\">Next step</button></form>";
 		// fade in the source specification
 		$('source-spec').innerHTML = response;
 	},
@@ -299,14 +299,24 @@ TermImportPage.prototype = {
 			$('summary').innerHTML = error_message;
 		
 			$('top-container').style.display = "none";
-			$('bottom-container').style.display = "none";				
+			$('bottom-container').style.display = "none";
+			
+			$('summary').style.display = "inline";
+			$('summary').innerHTML = topcontainer;
 			} catch (e) {
 				// TODO: handle exception
 			}
 		}
 		
-		$('summary').style.display = "inline";
-		$('summary').innerHTML = topcontainer;
+		//$('summary').style.display = "inline";
+		//$('summary').innerHTML = topcontainer;
+		
+		$("menue-step1").setAttribute("class", "TodoMenueStep");
+		$("menue-step1").style.cursor = "pointer";
+		$("menue-step1").setAttribute("onclick", 
+				"termImportPage.getTopContainer(event, this)");
+		$("menue-step2").setAttribute("class", "ActualMenueStep");
+		
 		
 		$('top-container').style.display = "none";
 				
@@ -321,7 +331,6 @@ TermImportPage.prototype = {
 	 * Callback function for the source specification
 	 */
 	getSourceCallback: function(tlID, dalID, request) {
-		
 		if(this.pendingIndicator != null){
 			this.pendingIndicatorImportset.hide();
 		}
@@ -348,9 +357,9 @@ TermImportPage.prototype = {
 			}
 			//show properties on the right side
 			var properties = list.getElementsByTagName("Properties")[0].childNodes;
-			var property_response = diLanguage.getMessage('smw_ti_attributes');
-												
-			property_response += '<div class=\"scrolling\"><table id=\"attrib_table\" class=\'mytable\'>';
+			//var property_response = diLanguage.getMessage('smw_ti_attributes-heading');
+			
+			var property_response = '<div class=\"scrolling\"><table id=\"attrib_table\" class=\'mytable\'>';
 			
 			for (var i = 0, n = properties.length; i < n; i++) {
 				// get one of the importsets
@@ -377,7 +386,7 @@ TermImportPage.prototype = {
 			property_response += "</table></div>";
 		
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			var article_response = '<div id=\"article_table\" class=\"scrolling\"><table class=\'mytable\'>';
+			var article_response = '<table class=\'mytable\'>';
 			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
@@ -391,20 +400,18 @@ TermImportPage.prototype = {
 						article_count++;
 					}
 				}
-			}
-			article_response = "<div id=\"article_intro\"><table><tr><td>" + diLanguage.getMessage('smw_ti_articles1') + 
-					article_count + diLanguage.getMessage('smw_ti_articles2') + "</td></tr></table></div>" + 
-					article_response + "</table></div>";
+			} 
+			article_response += "</table>";
 		}
 		catch(e){
 			//doesn't work in IE,so put it in a try-block
 			try {
 				var test = list.getElementsByTagName("message");
-				var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
-					list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
-					"<td class=\"abstand\"><a style=\"cursor: pointer;\" onClick=\"termImportPage.getTopContainer(event, this)\">" + 
-					diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
-				$('summary').style.display = "inline";
+				var error_message = "<br/><br/><span id=\"sumtable\">" + 
+					list.getElementsByTagName("message")[0].firstChild.nodeValue + "</span><br/><br/>"; 
+				error_message += "<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
+					+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>";
+				$('summary').style.display = "block";
 				$('summary').innerHTML = error_message;
 			
 				$('top-container').style.display = "none";
@@ -428,13 +435,23 @@ TermImportPage.prototype = {
 		if (property_response) {
 			$('extras-right').style.display = "inline";
 			$('attrib').innerHTML = property_response;
-			$('articles').innerHTML = article_response;
+			$('article_table').innerHTML = article_response;
+			$('article-count').innerHTML = article_count;
 			$('extras-bottom').style.display = "inline";
-			$('extras-bottom').innerHTML = "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to start import</b>" + 
-				"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";
 			
-			$('extras-bottom').innerHTML += "<a onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"')\"><b><br>Click to save term import</b>"+
-			"<img src=\""+wgScriptPath+"/extensions/DataImport/skins/TermImport/images/Accept.png\"></a>";;
+			$('extras-bottom').innerHTML = 
+				"<input type=\"button\" onClick=\"termImportPage.getTopContainer(event, this)\""
+				+ " value=\""+diLanguage.getMessage('smw_ti_prev-step')+"\"/>&nbsp;&nbsp;";
+			
+			$('extras-bottom').innerHTML += 
+				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"', true)\""
+				+ " value=\""+diLanguage.getMessage('smw_ti_save')+"\"/>&nbsp;&nbsp;";
+			
+			$('extras-bottom').innerHTML += 
+				"<input type=\"button\" onClick=\"termImportPage.importItNow(event, this,'" +tlID+ "','" + dalID +"', false)\""
+				+ " value=\"" +diLanguage.getMessage('smw_ti_execute') + "\"/><br/><br/>";
+			
+			
 		}
 		if (Prototype.Browser.IE) {
 			//innerHTML can't be used because of Bug: http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
@@ -446,7 +463,7 @@ TermImportPage.prototype = {
 		$('policy-input-field').value = '';
 		$('mapping-input-field').value = '';
 		
-		if(this.editTermImport){
+		if($("editDataSpan") != null){
 			this.fillTermImportPage();
 		}
 	},
@@ -457,9 +474,120 @@ TermImportPage.prototype = {
 	 */
 	getTopContainer: function(e, node) {
 		$('summary').style.display = "none";		
-		$('top-container').style.display = "inline";
+		$('top-container').style.display = "";
 		$('extras').style.display = "none";
 		$('extras-bottom').style.display = "none";
+		
+		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
+		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		
+		$("menue-step2").setAttribute("class", "TodoMenueStep");
+		$("menue-step2").style.cursor = "pointer";
+		$("menue-step2").setAttribute("onclick", 
+					"termImportPage.getSource(event, this,\"" + tlId + "\", \"" + dalId + "\")");
+		$("menue-step1").setAttribute("class", "ActualMenueStep");
+		
+		var span = null;
+		if($("editDataSpan") == null){
+			span = document.createElement("span");
+			span.setAttribute("id", "editDataSpan");
+			$("bottom-container").parentNode.appendChild(span);
+		} else {
+			$('editDataSpan').innerHTML = "";
+		}
+		
+		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
+		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		
+		var result = termImportPage.getImportCredentials(e, node, tlId, dalId, false);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "dataSource-ed");
+		var textNode = document.createTextNode(escape(result[0]));
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "importSet-ed");
+		var textNode = document.createTextNode(result[1]);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		var inputPolicy = GeneralXMLTools.createDocumentFromString(result[2]);
+		
+		var regexs = this.implodeElements(inputPolicy.getElementsByTagName("regex"));
+		span = document.createElement("span");
+		span.setAttribute("id", "regex-ed");
+		var textNode = document.createTextNode(regexs);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		var terms = this.implodeElements(inputPolicy.getElementsByTagName("term"));
+		span = document.createElement("span");
+		span.setAttribute("id", "terms-ed");
+		var textNode = document.createTextNode(terms);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		var properties = this.implodeElements(inputPolicy.getElementsByTagName("property"));
+		span = document.createElement("span");
+		span.setAttribute("id", "properties-ed");
+		var textNode = document.createTextNode(properties);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+
+		span = document.createElement("span");
+		span.setAttribute("id", "mappingPolicy-ed");
+		var textNode = document.createTextNode(result[3]);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "conflictPolicy-ed");
+		var textNode = document.createTextNode(result[4]);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "termImportName-ed");
+		var textNode = document.createTextNode(result[5]);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "updatePolicy-ed");
+		var textNode = document.createTextNode(result[6]);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "tlId-ed");
+		var textNode = document.createTextNode(tlId);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+		span = document.createElement("span");
+		span.setAttribute("id", "dalId-ed");
+		var textNode = document.createTextNode(dalId);
+		span.appendChild(textNode);
+		$('editDataSpan').appendChild(span);
+		
+	},
+	
+	implodeElements : function(obj){
+		var rString = "";
+		var first = true;
+		for(var i=0; i < obj.length; i++){
+			if(obj[i].firstChild == null){
+				break;
+			}
+			if(!first){
+				rString += ",";
+			}
+			rString += obj[i].firstChild.nodeValue;
+			first = false;
+		}
+		return rString;
 	},
 	
 	importSetChanged: function(e, node) {
@@ -781,9 +909,7 @@ TermImportPage.prototype = {
 				
 		try {
 			var terms = list.getElementsByTagName("terms")[0].childNodes;
-			//var article_response = '<table id=\"article_table\" class=\'mytable\'>';
 			var article_response = '<table class=\"mytable\">';
-			var article_intro = '';
 			var article_count = 0;
 			for (var i = 0, n = terms.length; i < n; i++) {
 			// get one of the importsets
@@ -801,8 +927,6 @@ TermImportPage.prototype = {
 				}	
 			}
 			article_response += '</table>';
-			article_intro = "<table><tr><td>" + diLanguage.getMessage('smw_ti_articles1') + 
-					article_count + diLanguage.getMessage('smw_ti_articles2') + "</td></tr></table>";			
 		}
 		catch(e){
 			try {
@@ -820,15 +944,15 @@ TermImportPage.prototype = {
 			}
 			return;
 		}		
-		$('article_intro').innerHTML = article_intro;
 		$('article_table').innerHTML = article_response;
+		$('article-count').innerHTML = article_count;
 	},
 	
 	/*
 	 * Do the import!
 	 */
-	importItNow: function(e, node, tlID, dalID){
-		var result = termImportPage.getImportCredentials(e, node, tlID, dalID);
+	importItNow: function(e, node, tlID, dalID, createOnly){
+		var result = termImportPage.getImportCredentials(e, node, tlID, dalID, true);
 		if(result == null){
 			return;
 		} else {
@@ -841,12 +965,12 @@ TermImportPage.prototype = {
 			var updatePolicy = result[6];
 			var edit = this.editTermImport;
 			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
-			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit]
-			                                    , this.importItNowCallback.bind(this, tlID, dalID));
+			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit, createOnly]
+			                                    , this.importItNowCallback.bind(this, tlID, dalID, createOnly));
 		}
 	},
 	
-	getImportCredentials: function(e, node, tlID, dalID){
+	getImportCredentials: function(e, node, tlID, dalID, commit){
 		//DataSource
 		try {
 			var source = document.getElementsByName("source");
@@ -932,7 +1056,7 @@ TermImportPage.prototype = {
 				'</InputPolicy>'+"\n";
 			//mapping policy
 			var mappingPage = document.getElementById('mapping-input-field').value;
-			if(mappingPage == ''){
+			if(mappingPage == '' && commit){
 				//do not import without a mapping page!
 				$('mapping-input-field').style.backgroundColor = "red";
 				return;
@@ -940,9 +1064,9 @@ TermImportPage.prototype = {
 			var re = /\w+/g;
 			if(mappingPage.length > 0){
    				// min. one other char than a whitespace
-   				if(re.test(mappingPage) != true) {
+   				if(re.test(mappingPage) != true && commit) {
    					$('mapping-input-field').style.backgroundColor = "red";
-   					return;	
+   					return ;	
    				}
 			} 
 			//conflict policy
@@ -955,20 +1079,23 @@ TermImportPage.prototype = {
 			}
 			//term import name
 			var termImportName = document.getElementById('ti-name-input-field').value;
-			if(termImportName == ''){
+			if(termImportName == '' && commit){
 				//do not import without a term import name!
 				$('ti-name-input-field').style.backgroundColor = "red";
-				return;
+				return ;
 			}
 			if(termImportName.length > 0){
    				// min. one other char than a whitespace
-   				if(re.test(termImportName) != true) {
+   				if(re.test(termImportName) != true && commit) {
    					$('ti-name-input-field').style.backgroundColor = "red";
-   					return;	
+   					return ;	
    				}
 			}
 			//update policy todo:make integer check
-			var updatePolicy = $("ti-update-policy-input-field").value;
+			var updatePolicy = 0;
+			if($('update-policy-checkbox').checked){
+				updatePolicy = $("ti-update-policy-input-field").value;
+			}
 		}
 		catch(e) {
 			try {
@@ -997,16 +1124,17 @@ TermImportPage.prototype = {
 		result[6] = updatePolicy;
 		return result;
 	},
-	importItNowCallback: function(tlID, dalID, request){
+	
+	importItNowCallback: function(tlID, dalID, createOnly, request){
 		var message= '';
 		try {
 			var result = request.responseText;
+			
 			var list = GeneralXMLTools.createDocumentFromString(result);
 		
 			message = list.getElementsByTagName("message")[0].firstChild.nodeValue;
 		}
 		catch(e){
-			
 		}
 		try {
 			var result = request.responseText;
@@ -1022,18 +1150,24 @@ TermImportPage.prototype = {
 				$('ti-name-input-field').style.backgroundColor = "red";
 				alert(message);
 				return;
-			} 
+			} else if(value == "articleCreated") {
+				var path = wgArticlePath.replace(/\$1/, "TermImport:" + message);
+				message += '<br>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/><br/>';
+				
+				$('extras-bottom').innerHTML = message;
+				return;
+			}
 			
 		} catch (e) {
 			// TODO: handle exception
 		}
 		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
-		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details';
+		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details<br/><br/>';
 		
 		$('extras-bottom').innerHTML = message;
 	},
 	changeBackground: function(e, node) {
-		//$('mapping-input-field').style.backgroundColor = "white";
+		$('mapping-input-field').style.backgroundColor = "white";
 		node.style.backgroundColor = "white";
 	},
 	
@@ -1053,17 +1187,28 @@ TermImportPage.prototype = {
 		//transport layer	
 		for (var i=0; i < $('tlid').childNodes.length; i++){
 			if($('tlid').childNodes[i].firstChild.firstChild.nodeValue == tlId){
-				this.currentSelectedTLM = $('tlid').childNodes[i]; 
+				this.currentSelectedTLM = $('tlid').childNodes[i];
+				Element.addClassName(this.currentSelectedTLM,'entry-active');
+				$('tldesc').innerHTML = "<b>Info: </b>"+$('tl-desc').firstChild.nodeValue;
 			}
 		}	
 		
 		//data import layer
-		var innerHTML = "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
-			+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
-			+ "onClick=\"termImportPage.getDAL(event, this, '" 
-			+ dalId + "', '" + tlId + "')\"><a>" + dalId + "</a></div>";
-		$('dalid').innerHTML = innerHTML;
+		var dals = $('dalIds').firstChild.nodeValue.split(',');
+		$('dalid').innerHTML = "";
+		for(var i=0; i < dals.length; i++){		
+			$('dalid').innerHTML += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
+				+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
+				+ "onClick=\"termImportPage.getDAL(event, this, '" 
+				+ dals[i] + "', '" + tlId + "')\"><a>" + dals[i] + "</a></div>";
+			if(dals[i] == dalId){
+				this.currentSelectedDAM = $('dalid').childNodes[i];
+			}
+		}
+		
 		this.currentSelectedDAM = $('dalid').childNodes[0];
+		Element.addClassName(this.currentSelectedDAM,'entry-active');
+		$('daldesc').innerHTML = "<b>Info: </b>" + $('dal-desc').firstChild.nodeValue;
 		
 		//data source
 		dataSource = GeneralXMLTools.createDocumentFromString(dataSource);
@@ -1146,12 +1291,28 @@ TermImportPage.prototype = {
 			$('mapping-input-field').value = mappingPolicy;
 			$('conflict-input-field').value = conflictPolicy;
 			$('ti-name-input-field').value = termImportName;
-			$('ti-update-policy-input-field').value = updatePolicy;
+			
+			if(updatePolicy != '0' && updatePolicy != ''){
+				$('update-policy-checkbox').checked = true;
+				$("ti-update-policy-input-field").value = updatePolicy;
+			}
 		}
 		
 		
 	
 		this.refreshPreview(null, null, tlId, dalId);
+	},
+	
+	displayHelp : function(id) {
+		$("help" + id).style.display = "";
+		$("help-img" + id).getAttributeNode("onclick").nodeValue = "termImportPage.hideHelp("
+				+ id + ")";
+	},
+
+	hideHelp : function(id) {
+		$("help" + id).style.display = "none";
+		$("help-img" + id).getAttributeNode("onclick").nodeValue = "termImportPage.displayHelp("
+				+ id + ")";
 	}
 }
  // ----- Classes -----------
