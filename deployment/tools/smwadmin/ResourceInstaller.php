@@ -58,7 +58,7 @@ class ResourceInstaller {
 				if (!is_null($title)) {
 					$a = new Article($title);
 					print "\nRemove old page from $fromVersion: ".$title->getPrefixedText();
-					$a->doDeleteArticle("ontology removed: ".$dd->ID());
+					$a->doDeleteArticle("ontology removed: ".$dd->getID());
 				}
 				$next = $res->getNext();
 			}
@@ -72,8 +72,7 @@ class ResourceInstaller {
 	 * @return unknown_type
 	 */
 	public function deinstallWikidump($dd) {
-		print "\nRemove ontologies...";
-        
+		        
 		if (count($dd->getWikidumps()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
 		
@@ -103,7 +102,7 @@ class ResourceInstaller {
 		
 		if (count($dd->getResources()) ==  0) return;
 		
-		print "\nDeleting resources...";
+		
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
 			$title = Title::newFromText(basename($file), NS_IMAGE);

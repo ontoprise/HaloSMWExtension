@@ -229,10 +229,13 @@ class DeployWikiRevision extends WikiRevision {
 				
 				$ontversion = SMWPropertyValue::makeUserProperty("Content hash");
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
-				if (count($values) > 0) $exp_hash = reset($values)->getXSDValue(); else $exp_hash = '';
+				if (count($values) > 0) $exp_hash = strtolower(reset($values)->getXSDValue()); else $exp_hash = NULL;
 				$rawtext = preg_replace('/\n\[\[Content hash\s*::\s*\w+\]\]/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 				
+				if (is_null($exp_hash)) {
+					return $this->mode == DEPLOYWIKIREVISION_INFO ? false : $this->importAsNewRevision();
+				}
 				if ($hash != $exp_hash) {
 					$result = false;
 					if (!is_null($this->callback)) call_user_func(array(&$this->callback,"modifiedPage"), $this, $this->mode, & $result);

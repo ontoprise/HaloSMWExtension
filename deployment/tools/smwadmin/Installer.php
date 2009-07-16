@@ -151,7 +151,10 @@ class Installer {
 		}
 
 		// remove ontology
+		print "\nDe-install ontologies...";
 		$this->res_installer->deinstallWikidump($ext);
+		
+		print "\nDelete resources...";
 		$this->res_installer->deleteResources($ext);
 
 		// undo all config changes
@@ -430,7 +433,7 @@ class Installer {
 		}
 		$precedenceOrder = $this->sortPrecedence($extensions);
 		foreach($precedenceOrder as $po) {
-			$extensions_to_update[] = $extensions[$po];
+			$extensions_to_update[$po] = $extensions[$po];
 		}
 
 	}
