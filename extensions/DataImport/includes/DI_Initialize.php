@@ -89,8 +89,8 @@ function smwfDISetupExtension() {
 		$wgSpecialPageGroups['TermImport'] = 'di_group';
 		
 		$wgAutoloadClasses['SMWWebServiceRepositorySpecial'] = $smwgDIIP . '/specials/WebServices/SMW_WebServiceRepositorySpecial.php';
-		$wgSpecialPages['WebServiceRepository'] = array('SMWWebServiceRepositorySpecial');
-		$wgSpecialPageGroups['WebServiceRepository'] = 'di_group';
+		$wgSpecialPages['DataImportRepository'] = array('SMWWebServiceRepositorySpecial');
+		$wgSpecialPageGroups['DataImportRepository'] = 'di_group';
 
 		$wgAutoloadClasses['SMWDefineWebServiceSpecial'] = $smwgDIIP . '/specials/WebServices/SMW_DefineWebServiceSpecial.php';
 		$wgSpecialPages['DefineWebService'] = array('SMWDefineWebServiceSpecial');

@@ -38,7 +38,7 @@ WebServiceRepositorySpecial.prototype = {
 		sajax_do_call('smwf_ga_LaunchGardeningBot', 
 				[botId, wsId, null, null], this.updateCacheCallBack.bind(this));
 	},
-
+	
 	/**
 	 * callback method for the update of cache entries
 	 * 
@@ -50,6 +50,21 @@ WebServiceRepositorySpecial.prototype = {
 		} else {
 			$('update' + this.wsId).style.display = "none";
 			$('updating' + this.wsId).style.display = "block";
+		}
+	},
+
+	updateTermImport : function(termImportName) {
+		this.termImportName = termImportName;
+		sajax_do_call('smwf_ti_update', 
+			[termImportName], this.updateTermImportCallBack.bind(this));
+	},
+	
+	updateTermImportCallBack : function(request) {
+		if(request.responseText.substr(0,15) == "ERROR:gardening"){
+			alert(request.responseText);
+		} else {
+			$('update-ti-' + this.termImportName).style.display = "none";
+			$('updating-ti-' + this.termImportName).style.display = "block";
 		}
 	},
 	
@@ -72,7 +87,17 @@ WebServiceRepositorySpecial.prototype = {
 		var wsId = request.responseText;
 		document.getElementById("confirmButton"+wsId).style.display = "none";
 		document.getElementById("confirmText"+wsId).childNodes[0].nodeValue = diLanguage.getMessage("smw_wwsr_confirmed");
-	}	
+	},
+	
+	displayWebServiceTab : function(){
+		$('web-service-tab-content').style.display = "";
+		$('term-import-tab-content').style.display = "none";
+	},
+	
+	displayTermImportTab : function(){
+		$('web-service-tab-content').style.display = "none";
+		$('term-import-tab-content').style.display = "";
+	}
 }	
 
 webServiceRepSpecial = new WebServiceRepositorySpecial();

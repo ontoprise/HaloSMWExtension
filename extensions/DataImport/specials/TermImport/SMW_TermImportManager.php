@@ -14,7 +14,7 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  *
+ *
  * @author Ingo Steinbauer
  *
  */
@@ -46,14 +46,14 @@ $smwgNamespacesWithSemanticLinks[SMW_NS_TERM_IMPORT] = true;
 
 class TermImportManager {
 
-	static function showTermImportPage(&$title, &$article) {
-		global $smwgDIIP, $wgNamespaceAliases;
-		if ($title->getNamespace() == SMW_NS_TERM_IMPORT) {
-			require_once("$smwgDIIP/specials/TermImport/SMW_TermImportPage.php");
-			$article = new SMWTermImportPage($title);
-		}
-		return true;
-	}
+	//	static function showTermImportPage(&$title, &$article) {
+	//		global $smwgDIIP, $wgNamespaceAliases;
+	//		if ($title->getNamespace() == SMW_NS_TERM_IMPORT) {
+	//			require_once("$smwgDIIP/specials/TermImport/SMW_TermImportPage.php");
+	//			$article = new SMWTermImportPage($title);
+	//		}
+	//		return true;
+	//	}
 
 	/**
 	 * Initializes the namespaces that are used by the Term Import framework
@@ -88,59 +88,59 @@ class TermImportManager {
 			return;
 		}
 			
-		$wgHooks['ArticleFromTitle'][] = 'TermImportManager::showTermImportPage';
+		//$wgHooks['ArticleFromTitle'][] = 'TermImportManager::showTermImportPage';
 		$wgParser->setHook('ImportSettings', 'termImportParserHook');
 	}
 }
 
 /**
  * This function is called, when a <ImportSettings>-tag for a Term Import
- * has been found in an article. 
- * 		
+ * has been found in an article.
+ *
  */
 function termImportParserHook($input, $args, $parser) {
 	require_once("SMW_TermImportDefinitionValidator.php");
-	
+
 	$attr = "";
 	foreach ($args as $k => $v) {
 		$attr .= " ". $k . '="' . $v . '"';
 	}
 	$completeImportSettings = "<ImportSettings$attr>".$input."</ImportSettings>\n";
-	
+
 	$messages = "";
 	$tiDV = new SMWTermImportDefinitionValidator($completeImportSettings);
 	if(!$tiDV->isValidXML()){
 		$messages .= "\n* Invalid XML";
 	} else {
 		if(!$tiDV->isValidModuleConfiguration())
-			$messages .= "\n* Invalid ModuleConfiguration.";
+		$messages .= "\n* Invalid ModuleConfiguration.";
 		if(!$tiDV->isValidDataSource())
-			$messages .= "\n* Invalid data source definition.";
+		$messages .= "\n* Invalid data source definition.";
 		if(!$tiDV->isValidConflictPolicy())
-			$messages .= "\n* Invalid conflict policy.";
+		$messages .= "\n* Invalid conflict policy.";
 		if(!$tiDV->isValidMappingPolicy())
-			$messages .= "\n* Invalid mapping policy.";
+		$messages .= "\n* Invalid mapping policy.";
 		if(!$tiDV->isValidImportSet())
-			$messages .= "\n* Invalid import set.";
+		$messages .= "\n* Invalid import set.";
 		if(!$tiDV->isValidInputPolicy())
-			$messages .= "\n* Invalid Input Policy.";
+		$messages .= "\n* Invalid Input Policy.";
 		if(!$tiDV->isValidUpdatePolicy())
-			$messages .= "\n* Invalid update policy.";
+		$messages .= "\n* Invalid update policy.";
 	}
-	
+
 	if(strlen($messages) > 0){
 		$messages = '<h4><span class="mw-headline">The Term Import Definition is erronious</span></h4>'.$messages;
 	} else {
 		global $wgArticlePath;
 		if(strpos($wgArticlePath, "?") > 0){
-				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$parser->getTitle()->getText();
-			} else {
-				$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$parser->getTitle()->getText();
-			}
-			$messages = '<h4><a href="'.$url.'">Click here to edit the Term Import definition in the GUI</a></h4>';
+			$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$parser->getTitle()->getText();
+		} else {
+			$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$parser->getTitle()->getText();
+		}
+		$messages = '<h4><a href="'.$url.'">Click here to edit the Term Import definition in the GUI</a></h4>';
 	}
 	$completeImportSettings = '<h4><span class="mw-headline">Term Import definition</span></h4>'
-		.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
+	.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
 	return  $completeImportSettings.$messages;
 }
 

@@ -35,7 +35,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 	public function __construct() {
-		parent::__construct('WebServiceRepository');
+		parent::__construct('DataImportRepository');
 	}
 
 	/**
@@ -45,7 +45,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 	public function execute() {
 		global $wgRequest, $wgOut;
 
-		$wgOut->setPageTitle("Web Service Repository");
+		$wgOut->setPageTitle("Data Import Repository");
 
 		global $wgCookiePrefix;
 			
@@ -63,13 +63,20 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			
 		$html = "";
 
+		$html .= "<div id=\"menue\">";
+		$html .= "<span onclick=\"webServiceRepSpecial.displayWebServiceTab()\">Web Service definitions</span>";
+		$html .= "<span onclick=\"webServiceRepSpecial.displayTermImportTab()\">Term Import definitions</span>";
+		$html .= "</div>";
 
 		global $smwgDIIP;
+		
+		// handle web service repository
 		require_once($smwgDIIP . '/specials/WebServices/SMW_WSStorage.php');
-
+		
 		$webServices = WSStorage::getDatabase()->getWebServices();
 		ksort($webServices);
 
+		$html .= "<span id=\"web-service-tab-content\">";
 		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_wwsr_intro')."</span></h2>";
 
 		$html .= "<p>".wfMsg('smw_wwsr_rep_intro')."</p>";
@@ -130,7 +137,84 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		}
 
 		$html .= "</table>";
+		$html .= "</span>";
+		
+		
+		
+		//Term Import definition tab
+		$html .= "<span id=\"term-import-tab-content\" style=\"display: none\">";
+		
+		$html .= "<h2><span class=\"mw-headline\">".wfMsg('smw_tir_intro')."</span></h2>";
+		$html .= "<p>".wfMsg('smw_tir_rep_intro')."</p>";
+		
+		if($allowed){
+			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
+		} else {
+			$html .= "<table id=\"wetermimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
+		}
+		
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		SMWQueryProcessor::processFunctionParams(array("[[TermImport:+]] [[Category:TermImport]]")
+			,$querystring,$params,$printouts);
+		$queryResult = explode("|",
+		SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+			$printouts, SMW_OUTPUT_WIKI));
 
+		unset($queryResult[0]);
+		
+		foreach($queryResult as $tiArticleName){
+			$tiArticleName = substr($tiArticleName, 0, strpos($tiArticleName, "]]"));
+			
+			
+			$html .= "<tr>";
+			$tiUrl = Title::newFromText("TermImport:".$tiArticleName)->getFullURL();
+			$html .= "<td><a href=\"".$tiUrl."\">".$tiArticleName."</a></td>";
+			
+			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
+			,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
+				"format=list", "mainlabel=-") 
+			,$querystring,$params,$printouts);
+			$queryResult =
+			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+				$printouts, SMW_OUTPUT_WIKI);
+			
+			// timestamp creation depends on property type (page or date)
+			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));
+			if(strpos($queryResult, "[[:") === 0){ //type page
+				$queryResult = trim(substr($queryResult, strpos($queryResult, "|")+1));
+				$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "]")));
+			} else { //type date
+				$queryResult = trim(substr($queryResult, 0, strpos($queryResult, "[")));
+			}
+			$html .= "<td>".$queryResult."</td>";
+			
+			if($allowed){
+				$tiUpdateBot = new TermImportUpdateBot();
+				$html .= "<td style=\"text-align: center\"><button id=\"update-ti-".$tiArticleName."\" 
+				type=\"button\" name=\"update-ti\" 
+				onclick=\"webServiceRepSpecial.updateTermImport('".$tiArticleName."')\">".wfMsg('smw_wwsr_update')."</button>";
+				$html .= "<div id=\"updating-ti-".$tiArticleName."\" style=\"display: none; text-align: center\">".wfMsg('smw_wwsr_updating')."</div></td>";
+			
+				global $wgArticlePath;
+				if(strpos($wgArticlePath, "?") > 0){
+					$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."&tiname=".$ws->getArticleID();
+				} else {
+					$url = Title::makeTitleSafe(NS_SPECIAL, "TermImport")->getFullURL()."?tiname=".$tiArticleName;
+				}
+				$html .= "<td style=\"text-align: center\"><button id=\"edit".$tiArticleName."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\">".wfMsg('smw_wwsr_rep_edit')."</button>";
+			}
+			
+			
+
+
+			
+			
+			$html .= "</tr>";
+		}
+		
+		$html .= "</table>";
+		$html .= "</span>";
+		
 		$wgOut->addHTML($html);
 	}
 }
