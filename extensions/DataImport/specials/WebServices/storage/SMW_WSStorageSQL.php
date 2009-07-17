@@ -126,6 +126,22 @@ class WSStorageSQL {
 
 	}
 
+	public function deleteDatabaseTables() {
+		$db =& wfGetDB( DB_MASTER );
+		$verbose = true;
+		DBHelper::reportProgress("Dropping web service tables ...\n",$verbose);
+
+		$tables = array('smw_ws_wwsd', 'smw_ws_cache', 'smw_ws_parameters', 'smw_ws_articles');
+		foreach ($tables as $table) {
+			$name = $db->tableName($table);
+			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'WSStorageSQL::drop');
+			DBHelper::reportProgress(" ... dropped table $name.\n", $verbose);
+		}
+		
+		DBHelper::reportProgress("   ... done!\n",$verbose);
+	}
+	
+	
 	/**
 	 * Stores a web service in the database.
 	 *

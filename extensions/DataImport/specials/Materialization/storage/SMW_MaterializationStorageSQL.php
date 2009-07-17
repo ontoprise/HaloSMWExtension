@@ -52,6 +52,17 @@ class SMWMaterializationStorageSQL implements IMaterializationStorage{
 		if ($verbose) print("..done\n");
 	}
 
+	public function deleteDatabaseTables() {
+		$db =& wfGetDB( DB_MASTER );
+		$verbose = true;
+		DBHelper::reportProgress("Dropping materialization tables ...\n",$verbose);
+
+		$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $this->smw_ws_materialization_hashes, 'WSStorageSQL::drop');
+		DBHelper::reportProgress(" ... dropped table $this->smw_ws_materialization_hashes.\n", $verbose);
+		
+		DBHelper::reportProgress("   ... done!\n",$verbose);
+	}
+	
 	/**
 	 * Add the data of a new materialization
 	 *
