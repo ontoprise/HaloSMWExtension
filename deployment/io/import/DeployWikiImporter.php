@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author: Kai Kï¿½hn / ontoprise / 2009
+ * @author: Kai Kühn / ontoprise / 2009
  *
  * derived from
  * MediaWiki page data importer
@@ -213,8 +213,9 @@ class DeployWikiRevision extends WikiRevision {
 		$linkCache = LinkCache::singleton();
 		$linkCache->clear();
 		
+		global $dfgLang;
 		// add annotations FIXME: as template?
-		$this->text .= "\n[[Content hash::".$this->md5_hash."]]";
+		$this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
 		
 				
 		$article = new Article( $this->title );
@@ -227,10 +228,10 @@ class DeployWikiRevision extends WikiRevision {
 			$prior = Revision::loadFromTitle( $dbw, $this->title );
 			if( !is_null( $prior ) ) {
 				
-				$ontversion = SMWPropertyValue::makeUserProperty("Content hash");
+				$ontversion = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_contenthash'));
 				$values = smwfGetStore()->getPropertyValues($this->title, $ontversion);
 				if (count($values) > 0) $exp_hash = strtolower(reset($values)->getXSDValue()); else $exp_hash = NULL;
-				$rawtext = preg_replace('/\n\[\[Content hash\s*::\s*\w+\]\]/', "", $prior->getRawText());
+				$rawtext = preg_replace('/\n\[\['.$dfgLang->getLanguageString('df_contenthash').'\s*::\s*\w+(\s*\|)?[^]]*\]\]/', "", $prior->getRawText());
 				$hash = md5($rawtext);
 				
 				if (is_null($exp_hash)) {

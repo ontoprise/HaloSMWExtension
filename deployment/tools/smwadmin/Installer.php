@@ -20,7 +20,7 @@ require_once 'ResourceInstaller.php';
 /**
  * Provides the basic installation routines for the smwadmin tool.
  *
- * @author: Kai Kï¿½hn / ontoprise / 2009
+ * @author: Kai Kühn / ontoprise / 2009
  *
  */
 
@@ -153,7 +153,7 @@ class Installer {
 		// remove ontology
 		print "\nDe-install ontologies...";
 		$this->res_installer->deinstallWikidump($ext);
-		
+
 		print "\nDelete resources...";
 		$this->res_installer->deleteResources($ext);
 
@@ -244,7 +244,7 @@ class Installer {
 	 *
 	 *
 	 */
-	public function listAvailablePackages($showDescription) {
+	public function listAvailablePackages($showDescription, $pattern = NULL) {
 
 		$allPackages = PackageRepository::getAllPackages();
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
@@ -255,6 +255,15 @@ class Installer {
 		print "\n Installed       | Package            | Available versions";
 		print "\n----------------------------------------------------------\n";
 		foreach($allPackages as $p_id => $versions) {
+			if (!is_null($pattern) && !empty($pattern)) { // filter packages
+				if (substr(trim($pattern),0,1) == '*') {
+					$cleanPattern = str_replace("*", "", $pattern);
+					if (strpos($p_id, strtolower($cleanPattern)) === false) continue;
+				} else {
+					$cleanPattern = str_replace("*", "", $pattern);
+					if (strpos($p_id, strtolower($cleanPattern)) !== 0) continue;
+				}
+			}
 			if (array_key_exists($p_id, $localPackages)) {
 				$instTag = "[installed ".Tools::addVersionSeparators($localPackages[$p_id]->getVersion())."]";
 

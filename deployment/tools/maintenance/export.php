@@ -26,9 +26,17 @@ $originalDir = getcwd();
 
 $optionsWithArgs = array( 'pagelist', 'start', 'end' );
 
-require_once( '../../maintenance/commandLine.inc' );
-require_once( '../../maintenance/backup.inc' );
-require_once('../io/export/DeployWikiExporter.php');
+require_once( '../../../maintenance/commandLine.inc' );
+require_once( '../../../maintenance/backup.inc' );
+require_once('../../io/export/DeployWikiExporter.php');
+
+$langClass = "DF_Language_$wgLanguageCode";
+if (!file_exists("../../languages/$langClass.php")) {
+    $langClass = "DF_Language_En";
+}
+require_once("../../languages/$langClass.php");
+$dfgLang = new $langClass();
+print_r($dfgLang->getLanguageString("df_ontologyversion"));
 
 $dumper = new DeployBackupDumper( $argv );
 

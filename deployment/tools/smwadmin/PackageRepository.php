@@ -18,9 +18,9 @@ define("SMWPLUS_REPOSITORY", "http://dailywikibuilds.ontoprise.com/repository/")
 
 
 /**
- * Allows access on the global HALO package repository.
+ * Allows access package repositories.
  *
- * @author: Kai Kï¿½hn
+ * @author: Kai Kühn / ontoprise / 2009
  *
  */
 class PackageRepository {
@@ -87,7 +87,12 @@ class PackageRepository {
 	}
     
 	
-	
+	/**
+	 * Returns credentials for the given repository URL.
+	 *
+	 * @param string $repo_url
+	 * @return string user:pass
+	 */
     public static function getCredentials($repo_url) {
     	return self::$repo_credentials[$repo_url];
     }

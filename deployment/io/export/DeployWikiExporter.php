@@ -208,10 +208,10 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	 * @param StdClass $row
 	 */
 	protected function addHaloProperties(& $out, & $text, $row) {
-		global $dumper;
-		$version_p = SMWPropertyValue::makeUserProperty("Ontology version");
+		global $dumper, $dfgLang;
+		$version_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
 
-		$partOfBundle_p = SMWPropertyValue::makeUserProperty("Part of bundle");
+		$partOfBundle_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle'));
 
 		if (is_null($this->currentTitle)) {
 			$dumper->progress("severe: no title");

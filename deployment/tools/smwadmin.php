@@ -62,6 +62,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 	if ($arg == '-l') { // => list packages
 		$listPackages = true;
+		$pattern = next($argv);
 		continue;
 	}
 
@@ -75,8 +76,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 
-	if ($arg == '--dump') { // => analyze installed dump
+	if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
+		$package = next($argv);
+        if ($package === false) fatalError("No package found");
+        $packageToInstall[] = $package;
 		continue;
 	}
 
@@ -96,6 +100,14 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 $mediaWikiLocation = dirname(__FILE__) . '/../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+// create language object
+$langClass = "DF_Language_$wgLanguageCode";
+if (!file_exists("../languages/$langClass.php")) {
+	$langClass = "DF_Language_En";
+}
+require_once("../languages/$langClass.php");
+$dfgLang = new $langClass();
+
 $help = array_key_exists("help", $options);
 
 if ($help || count($argv) == 0) {
@@ -103,18 +115,18 @@ if ($help || count($argv) == 0) {
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n";
-	echo "\n\t-i : Install";
-	echo "\n\t-d : De-Install";
-	echo "\n\t-u : Update";
-	echo "\n\t-l : List installed packages.";
+	echo "\n\t-i <package>: Install";
+	echo "\n\t-d <package> ]: De-Install";
+	echo "\n\t-u <package>: Update";
+	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
+	echo "\n\t-l [ pattern ] : List installed packages.";
 	echo "\n\t-r : Rollback last installation.";
 	echo "\n\t--dep : Check only dependencies but do not install.";
-	echo "\n\t--dump : Check only dumps for changes but do not install.";
 	echo "\n";
-	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-1.4.2: Installs the given packages";
+	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-142: Installs the given packages";
 	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
 	echo "\n\tsmwadmin -u: Updates complete installation";
-	echo "\n\tsmwadmin -u -c: Shows what would be updated.";
+	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\n";
 	die();
@@ -157,7 +169,7 @@ if ($globalUpdate) {
 
 // List all available packages and show which are installed.
 if ($listPackages) {
-	$installer->listAvailablePackages($showDescription);
+	$installer->listAvailablePackages($showDescription, $pattern);
 	die();
 }
 

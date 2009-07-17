@@ -1,14 +1,20 @@
 <?php
 /**
- * Rollback an installation
+ * Rollback an installation.
+ * 
+ * @author: Kai Kühn / ontoprise / 2009
  *
  */
 class Rollback {
 
-
+    // installation directory of Mediawiki
 	var $inst_dir;
+	
+	// temporary directory where rollback data is stored.
 	var $tmpDir;
-	var $extToRemove;
+	
+	// array of package IDs of extensions to restore
+	var $extToRestore;
 
 
 
@@ -24,7 +30,7 @@ class Rollback {
 	private function __construct($inst_dir) {
 
 		$this->inst_dir = $inst_dir;
-		$this->extToRemove = array();
+		$this->extToRestore = array();
 
 		$this->tmpDir = Tools::isWindows() ? 'c:/temp/rollback_smwadmin' : '/tmp/rollback_smwadmin';
 
@@ -73,7 +79,7 @@ class Rollback {
 			$this->saveResources($localExt);
 			print "done.";
 		}
-		$this->extToRemove[] = $dd->getID();
+		$this->extToRestore[] = $dd->getID();
 	}
 
 	public function saveDatabase() {
@@ -130,13 +136,13 @@ class Rollback {
 			print "\nNothing to restore.";
 			return;
 		}
-		$this->extToRemove = explode(",", file_get_contents($this->tmpDir."/extToRemove"));
+		$this->extToRestore = explode(",", file_get_contents($this->tmpDir."/extToRestore"));
 
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions');
 
 		print "\nRemoving patches...";
 		foreach($localPackages as $dd) {
-			if (in_array($dd->getID(), $this->extToRemove)) {
+			if (in_array($dd->getID(), $this->extToRestore)) {
 
 				$dp = new DeployDescriptionProcessor($this->inst_dir.'/LocalSettings.php', $dd);
 
@@ -148,7 +154,7 @@ class Rollback {
 
 		print "\nDeleting resources...";
 		foreach($localPackages as $dd) {
-			if (in_array($dd->getID(), $this->extToRemove)) {
+			if (in_array($dd->getID(), $this->extToRestore)) {
 
 				$res_installer->deleteResources($dd);
 
@@ -159,7 +165,7 @@ class Rollback {
 		$databaseRestored = $this->restoreDatabase();
 		if (!$databaseRestored) {
 			foreach($localPackages as $dd) {
-				if (in_array($dd->getID(), $this->extToRemove)) {
+				if (in_array($dd->getID(), $this->extToRestore)) {
 
 					$res_installer->deinstallWikidump($dd);
 
@@ -170,7 +176,7 @@ class Rollback {
 
 		// remove installed or updated extensions
 		foreach($localPackages as $dd) {
-			if (in_array($dd->getID(), $this->extToRemove)) {
+			if (in_array($dd->getID(), $this->extToRestore)) {
 				Tools::remove_dir($this->inst_dir."/".$dd->getInstallationDirectory());
 			}
 		}
@@ -183,7 +189,7 @@ class Rollback {
 		// restore wiki pages
 		if (!$databaseRestored) {
 			foreach($localPackages as $dd) {
-				if (in_array($dd->getID(), $this->extToRemove)) {
+				if (in_array($dd->getID(), $this->extToRestore)) {
 					if (array_key_exists($dd->getID(), $restoredLocalPackages)) {
 						$res_installer->installOrUpdateWikidumps($restoredLocalPackages[$dd->getID()], $dd->getVersion(), DEPLOYWIKIREVISION_FORCE);
 					}
@@ -211,8 +217,8 @@ class Rollback {
 	public function saveRollbackLog() {
 		$this->acquireNewRollback();
 		print "\nSave rollback storage...";
-		$handle = fopen($this->tmpDir."/extToRemove", "w");
-		fwrite($handle, implode(",", $this->extToRemove));;
+		$handle = fopen($this->tmpDir."/extToRestore", "w");
+		fwrite($handle, implode(",", $this->extToRestore));;
 		fclose($handle);
 	}
 }

@@ -7,7 +7,7 @@ require_once('../io/import/BackupReader.php');
 /**
  * Resource installer takes care about wikidump/resource (de-)installation.
  *
- * @author Kai KÃ¼hn / ontoprise / 2009
+ * @author Kai Kühn / ontoprise / 2009
  *
  */
 class ResourceInstaller {
@@ -68,8 +68,9 @@ class ResourceInstaller {
 
 	/**
 	 * Deinstalls wikidumps contained in the given descriptor.
-	 * @param $dd
-	 * @return unknown_type
+	 * 
+	 * @param DeployDescriptorParser $dd
+	 
 	 */
 	public function deinstallWikidump($dd) {
 		        
@@ -95,8 +96,8 @@ class ResourceInstaller {
 	/**
 	 * Deletes resources contained in the given descriptor.
 	 *
-	 * @param $dd
-	 * @return unknown_type
+	 * @param DeployDescriptorParser $dd
+	
 	 */
 	public function deleteResources($dd) {
 		
@@ -116,9 +117,10 @@ class ResourceInstaller {
 
 	/**
 	 * Checks if the page contained in the given package are modified and displays those.
+	 * 
 	 * @param $packageID
 	 * @param $version
-	 * @return unknown_type
+	
 	 */
 	public function checkWikidump($packageID, $version) {
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed although it is needed to check ontology status.");
@@ -141,9 +143,9 @@ class ResourceInstaller {
 	/**
 	 * Installs the resources as uploaded files.
 	 *
-	 * @param $dd
-	 * @param $fromVersion
-	 * @return unknown_type
+	 * @param DeployDescriptorParser $dd
+	 * @param int $fromVersion
+	
 	 */
 	public function installOrUpdateResources($dd, $fromVersion) {
 		
@@ -171,7 +173,7 @@ class ResourceInstaller {
 	 * Currently only images resources.
 	 *
 	 * @param $SourceDirectory
-	 * @return unknown_type
+	
 	 */
 	private function importResources($SourceDirectory) {
 			

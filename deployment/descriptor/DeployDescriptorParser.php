@@ -4,28 +4,27 @@
 require_once ('DeployDescriptorProcessor.php');
 
 /**
- * @author: Kai Kühn / ontoprise / 2009
- *
  * This class works as a parser (and serializer) of the general
  * description of a deployable entity (aka deploy descriptor).
  *
+ * @author: Kai Kühn / ontoprise / 2009
  *
  */
 class DeployDescriptorParser {
 
 	// extracted data from deploy descriptor
-	var $globalElement;
-	var $codefiles;
-	var $wikidumps;
-	var $resources;
-	var $configs;
-	var $precedings;
-	var $userReqs;
-	var $dependencies;
-	var $install_scripts;
-	var $uninstall_scripts;
-	var $patches;
-	var $uninstallpatches;
+	var $globalElement; // global metadata, ie. version, id, vendor, description, install dir
+	var $codefiles; // code files (only hashes for detecting changes)
+	var $wikidumps; // wiki XML dump file (Halo format) 
+	var $resources; // resources: images
+	var $configs;   // config elements concerning localsettings changes
+	var $precedings;// extension which precedes this one in localsettings
+	var $userReqs;  // variables which need to be defined by the user
+	var $dependencies; // depending extensions
+	var $install_scripts; // scripts which need to be run during installation
+	var $uninstall_scripts; // scripts which need to be run during de-installation
+	var $patches; // patches which need to be applied during installation
+	var $uninstallpatches; // patches which need to be unapplied during de-installation
 
 	// xml
 	var $dom;
@@ -66,9 +65,16 @@ class DeployDescriptorParser {
 	public function getUninstallScripts() {
 		return $this->uninstall_scripts;
 	}
-
+    
+	/**
+	 * Creates/Updates the config element data depending on the given version.
+	 * Can be called as often as needed.
+	 *
+	 * @param int $from Version to update from (if NULL the new config is assumed)
+	 */
 	public function createConfigElements($from = NULL) {
-
+        
+		// initialize (or reset) config data
 		$this->configs = array();
 		$this->precedings = array();
 		$this->install_scripts = array();
@@ -76,7 +82,8 @@ class DeployDescriptorParser {
 		$this->userReqs = array();
 		$this->patches = array();
 		$this->uninstallpatches = array();
-
+        
+		// create xpath selecting the config depending on version to update from.
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
@@ -91,21 +98,22 @@ class DeployDescriptorParser {
 			}
 		}
 
-
+        // select config elements
 		$precedings = $this->dom->xpath('/deploydescriptor/configs/precedes');
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
 		$patches = $this->dom->xpath($path.'/patch');
-
+        
+		// precedings, ie. all the extensions which must precede this one.
 		if (count($precedings) > 0 && $precedings != '') {
 			foreach($precedings as $p) {
 				$this->precedings[] = (string) $p->attributes()->ext;
 			}
 		}
 
-
+        // the config elements concerning the LocalSettings.php
 		if (count($configElements) > 0 && $configElements != '') {
 
 			foreach($configElements[0] as $p) {
@@ -118,6 +126,8 @@ class DeployDescriptorParser {
 				}
 			}
 		}
+		
+		// the config elements concerning install scripts.
 		if (count($install_scripts) > 0 && $install_scripts != '') {
 
 			foreach($install_scripts as $p) {
@@ -128,7 +138,8 @@ class DeployDescriptorParser {
 				$this->install_scripts[] = array('script'=>$script, 'params'=>$params);
 			}
 		}
-
+        
+		// the config elements concerning uninstall scripts.
 		if (count($uninstall_scripts) > 0 && $uninstall_scripts != '') {
 
 			foreach($uninstall_scripts as $p) {
@@ -139,7 +150,8 @@ class DeployDescriptorParser {
 				$this->uninstall_scripts[] = array('script'=>$script, 'params'=>$params);
 			}
 		}
-
+        
+		// the config elements concerning patches
 		if (count($patches) > 0 && $patches != '') {
 			$this->patches = array();
 
@@ -150,7 +162,8 @@ class DeployDescriptorParser {
 				$this->patches[] = $patchFile;
 			}
 		}
-
+        
+		// the config elements concerning uninstall patches
 		if (count($uninstall_patches) > 0 && $uninstall_patches != '') {
 			$this->uninstallpatches = array();
 
