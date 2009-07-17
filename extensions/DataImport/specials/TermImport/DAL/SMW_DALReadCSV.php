@@ -332,7 +332,7 @@ class DALReadCSV implements IDAL {
 			return false;
 		}
 				
-		$file = fopen($filename, 'r');
+		$file = @ fopen($filename, 'r');
 		if (!$file) {
 			return false;
 		}

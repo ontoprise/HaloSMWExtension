@@ -190,8 +190,8 @@ class CL {
 		$dataSource = $simpleXMLElement->xpath("//DataSource");
 		$html .= '<span id="dataSource-ed">'.rawurlencode($dataSource[0]->asXML()).'</span>';
 		
-		$importSet = $simpleXMLElement->xpath("//ImportSets/ImportSet/text()");
-		$html .= '<span id="importSet-ed">'.$dataSource[0].'</span>';
+		$importSet = $simpleXMLElement->xpath("//ImportSets/ImportSet/Name/text()");
+		$html .= '<span id="importSet-ed">'.$importSet[0].'</span>';
 		
 		$regex = $simpleXMLElement->xpath("//InputPolicy/terms/regex/text()");
 		$regex = trim(implode(",", $regex));
@@ -229,8 +229,10 @@ class CL {
 		$html .= '<span id="dal-desc">'.$dalDesc[0].'</span>';
 		
 		$dals = $simpleXMLElement->xpath("//DALModules/Module/id/text()");
-		$dals = implode(",", $dals);
-		$html .= '<span id="dalIds">'.$dals.'</span>'; 
+		if($dals != null){
+			$dals = implode(",", $dals);
+			$html .= '<span id="dalIds">'.$dals.'</span>';
+		} 
 		
 		$html .= "</span>";
 		return $html;	

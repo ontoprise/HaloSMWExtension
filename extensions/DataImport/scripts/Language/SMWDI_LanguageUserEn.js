@@ -23,7 +23,7 @@ var wgDIUserLanguageStrings = {
 		'smw_ti_save'				:	'Save Term Import',
 		'smw_ti_execute'			:	'Save and execute Term Import',
 		'smw_ti_prev-step'			:	'Back to previous step',
-			
+		
 		'smw_wws_add_parameter'		:	'Add parameter',
 		'smw_wws_add_parameters'	:	'Add parameters',
 		'smw_wws_remove_parameter'	:	'Remove parameter',

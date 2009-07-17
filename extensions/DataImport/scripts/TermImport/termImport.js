@@ -415,7 +415,7 @@ TermImportPage.prototype = {
 				$('summary').innerHTML = error_message;
 			
 				$('top-container').style.display = "none";
-				$('extras').style.display = "none";				
+				$('extras').style.display = "none";
 			} catch (e) {
 				// TODO: handle exception
 			}
@@ -463,7 +463,7 @@ TermImportPage.prototype = {
 		$('policy-input-field').value = '';
 		$('mapping-input-field').value = '';
 		
-		if($("editDataSpan") != null){
+		if(this.tlId != null){
 			this.fillTermImportPage();
 		}
 	},
@@ -473,6 +473,11 @@ TermImportPage.prototype = {
 	 * transport layer module (TLM) and the data access module (DAM) and the source specification fields
 	 */
 	getTopContainer: function(e, node) {
+		// var goon = confirm("goon");
+		// if(!goon){
+		//	return;
+		// }
+		
 		$('summary').style.display = "none";		
 		$('top-container').style.display = "";
 		$('extras').style.display = "none";
@@ -487,91 +492,22 @@ TermImportPage.prototype = {
 					"termImportPage.getSource(event, this,\"" + tlId + "\", \"" + dalId + "\")");
 		$("menue-step1").setAttribute("class", "ActualMenueStep");
 		
-		var span = null;
-		if($("editDataSpan") == null){
-			span = document.createElement("span");
-			span.setAttribute("id", "editDataSpan");
-			$("bottom-container").parentNode.appendChild(span);
-		} else {
-			$('editDataSpan').innerHTML = "";
-		}
+		this.tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
+		this.dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
 		
-		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
-		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		var result = termImportPage.getImportCredentials(e, node, this.tlId, this.dalId, false);
 		
-		var result = termImportPage.getImportCredentials(e, node, tlId, dalId, false);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "dataSource-ed");
-		var textNode = document.createTextNode(escape(result[0]));
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "importSet-ed");
-		var textNode = document.createTextNode(result[1]);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		var inputPolicy = GeneralXMLTools.createDocumentFromString(result[2]);
-		
-		var regexs = this.implodeElements(inputPolicy.getElementsByTagName("regex"));
-		span = document.createElement("span");
-		span.setAttribute("id", "regex-ed");
-		var textNode = document.createTextNode(regexs);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		var terms = this.implodeElements(inputPolicy.getElementsByTagName("term"));
-		span = document.createElement("span");
-		span.setAttribute("id", "terms-ed");
-		var textNode = document.createTextNode(terms);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		var properties = this.implodeElements(inputPolicy.getElementsByTagName("property"));
-		span = document.createElement("span");
-		span.setAttribute("id", "properties-ed");
-		var textNode = document.createTextNode(properties);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
+		this.dataSource = escape(result[0]);
+		this.importSet = result[1];
 
-		span = document.createElement("span");
-		span.setAttribute("id", "mappingPolicy-ed");
-		var textNode = document.createTextNode(result[3]);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "conflictPolicy-ed");
-		var textNode = document.createTextNode(result[4]);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "termImportName-ed");
-		var textNode = document.createTextNode(result[5]);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "updatePolicy-ed");
-		var textNode = document.createTextNode(result[6]);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "tlId-ed");
-		var textNode = document.createTextNode(tlId);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
-		span = document.createElement("span");
-		span.setAttribute("id", "dalId-ed");
-		var textNode = document.createTextNode(dalId);
-		span.appendChild(textNode);
-		$('editDataSpan').appendChild(span);
-		
+		var inputPolicy = GeneralXMLTools.createDocumentFromString(result[2]);
+		this.regex = this.implodeElements(inputPolicy.getElementsByTagName("regex"));
+		this.terms = this.implodeElements(inputPolicy.getElementsByTagName("term"));
+		this.properties = this.implodeElements(inputPolicy.getElementsByTagName("property"));
+		this.mappingPolicy = result[3];
+		this.conflictPolicy = result[4];
+		this.termImportName = result[5];
+		this.updatePolicy = result[6];
 	},
 	
 	implodeElements : function(obj){
@@ -1152,7 +1088,7 @@ TermImportPage.prototype = {
 				return;
 			} else if(value == "articleCreated") {
 				var path = wgArticlePath.replace(/\$1/, "TermImport:" + message);
-				message += '<br>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/><br/>';
+				message = '<br>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/><br/>';
 				
 				$('extras-bottom').innerHTML = message;
 				return;
@@ -1180,30 +1116,58 @@ TermImportPage.prototype = {
 		}
 		this.editTermImport = true;
 		
-		var tlId = $('tlId-ed').firstChild.nodeValue;
-		var dalId = $('dalId-ed').firstChild.nodeValue;
-		var dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
+		this.tlId = $('tlId-ed').firstChild.nodeValue;
+		this.dalId = $('dalId-ed').firstChild.nodeValue;
+		this.dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
+		this.importSet = $('importSet-ed').firstChild.nodeValue;
+		this.regex = "";
+		if($('regex-ed').firstChild != null){
+			this.regex = $('regex-ed').firstChild.nodeValue;
+		}
+		this.terms = "";
+		if($('terms-ed').firstChild != null){
+			this.terms = $('terms-ed').firstChild.nodeValue;
+		}
+		this.properties = $('properties-ed').firstChild.nodeValue;
+		this.mappingPolicy = $('mappingPolicy-ed').firstChild.nodeValue;
+		this.conflictPolicy = $('conflictPolicy-ed').firstChild.nodeValue;
+		this.termImportName = $('termImportName-ed').firstChild.nodeValue;
+		this.updatePolicy = $('updatePolicy-ed').firstChild.nodeValue;
 		
 		//transport layer	
+		var found = false;
 		for (var i=0; i < $('tlid').childNodes.length; i++){
-			if($('tlid').childNodes[i].firstChild.firstChild.nodeValue == tlId){
+			if($('tlid').childNodes[i].firstChild.firstChild.nodeValue == this.tlId){
 				this.currentSelectedTLM = $('tlid').childNodes[i];
 				Element.addClassName(this.currentSelectedTLM,'entry-active');
 				$('tldesc').innerHTML = "<b>Info: </b>"+$('tl-desc').firstChild.nodeValue;
+				found = true;
 			}
-		}	
+		}
+		
+		if(!found){
+			alert("The Transport Layer Module " + this.tlId + " is not available.");
+			return;
+		}
 		
 		//data import layer
 		var dals = $('dalIds').firstChild.nodeValue.split(',');
 		$('dalid').innerHTML = "";
+		found = false;
 		for(var i=0; i < dals.length; i++){		
 			$('dalid').innerHTML += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
 				+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
 				+ "onClick=\"termImportPage.getDAL(event, this, '" 
-				+ dals[i] + "', '" + tlId + "')\"><a>" + dals[i] + "</a></div>";
-			if(dals[i] == dalId){
+				+ dals[i] + "', '" + this.tlId + "')\"><a>" + dals[i] + "</a></div>";
+			if(dals[i] == this.dalId){
 				this.currentSelectedDAM = $('dalid').childNodes[i];
+				found = true;
 			}
+		}
+		
+		if(!found){
+			alert("The Data Access Module " + this.dalId + " is not available.");
+			return;
 		}
 		
 		this.currentSelectedDAM = $('dalid').childNodes[0];
@@ -1211,39 +1175,24 @@ TermImportPage.prototype = {
 		$('daldesc').innerHTML = "<b>Info: </b>" + $('dal-desc').firstChild.nodeValue;
 		
 		//data source
-		dataSource = GeneralXMLTools.createDocumentFromString(dataSource);
+		dataSource = GeneralXMLTools.createDocumentFromString(this.dataSource);
 		dataSource = dataSource.getElementsByTagName("DataSource")[0].childNodes;
-		this.createDataSourceWidget(dataSource, tlId, dalId);
+		this.createDataSourceWidget(dataSource, this.tlId, this.dalId);
 		
-		this.getSource(null, null, tlId, dalId);
+		this.getSource(null, null, this.tlId, this.dalId);
 	},
 	
 	fillTermImportPage : function(){
-		var tlId = $('tlId-ed').firstChild.nodeValue;
-		var dalId = $('dalId-ed').firstChild.nodeValue;
-		var dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
-		var importSet = $('importSet-ed').firstChild.nodeValue;
-		var regex = "";
-		if($('regex-ed').firstChild != null){
-			var regex = $('regex-ed').firstChild.nodeValue;
-		}
-		var terms = "";
-		if($('terms-ed').firstChild != null){
-			terms = $('terms-ed').firstChild.nodeValue;
-		}
-		var properties = $('properties-ed').firstChild.nodeValue;
-		var mappingPolicy = $('mappingPolicy-ed').firstChild.nodeValue;
-		var conflictPolicy = $('conflictPolicy-ed').firstChild.nodeValue;
-		var termImportName = $('termImportName-ed').firstChild.nodeValue;
-		var updatePolicy = $('updatePolicy-ed').firstChild.nodeValue;
-		
 		//select import set
 		//todo: error handling when there is no such import set
-		$('importset-input-field').value = importSet;
+		$('importset-input-field').value = this.importSet;
+		if($('importset-input-field').value != this.importSet){
+			alert(this.importSet);
+		}
 		
 		//add import policies
-		if (regex.length > 0) {
-			regex = regex.split(",");
+		if (this.regex.length > 0) {
+			regex = this.regex.split(",");
 			for ( var i = 0; i < regex.length; i++) {
 				var option = document.createElement("option");
 				option.setAttribute("style",
@@ -1260,8 +1209,8 @@ TermImportPage.prototype = {
 			}
 		}
 		
-		if (terms.length > 0) {
-			terms = terms.split(",");
+		if (this.terms.length > 0) {
+			terms = this.terms.split(",");
 			for ( var i = 0; i < terms.length; i++) {
 				var option = document.createElement("option");
 				option.setAttribute("style",
@@ -1279,27 +1228,40 @@ TermImportPage.prototype = {
 		}
 		
 		//properties
-		properties = properties.split(",");
+		properties = this.properties.split(",");
 		for(var i=0; i < $('attrib_table').firstChild.childNodes.length; i++){
 			var value = $('attrib_table').firstChild.childNodes[i].firstChild.firstChild.value;
 			for(var k=0; k < properties.length; k++){
 				if(value == properties[k]){
+					properties.splice(k, 1);
 					$('attrib_table').firstChild.childNodes[i].firstChild.firstChild.checked = true;
 				}
 			}
-			
-			$('mapping-input-field').value = mappingPolicy;
-			$('conflict-input-field').value = conflictPolicy;
-			$('ti-name-input-field').value = termImportName;
-			
-			if(updatePolicy != '0' && updatePolicy != ''){
-				$('update-policy-checkbox').checked = true;
-				$("ti-update-policy-input-field").value = updatePolicy;
-			}
 		}
 		
+		if(properties.length > 0){
+			var message = "The attributes ";
+			for(var k=0; k < properties.length; k++){
+				if(k > 0){
+					message += ", ";
+				}
+				message += properties[k];
+			}
+			message += " are not available.";
+			alert(message);
+		}
+			
+		$('mapping-input-field').value = this.mappingPolicy;
+		$('conflict-input-field').value = this.conflictPolicy;
+		$('ti-name-input-field').value = this.termImportName;
+			
+		if(this.updatePolicy != '0' && this.updatePolicy != ''){
+			$('update-policy-checkbox').checked = true;
+			$("ti-update-policy-input-field").value = this.updatePolicy;
+		}
 		
-	
+		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
+		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
 		this.refreshPreview(null, null, tlId, dalId);
 	},
 	
