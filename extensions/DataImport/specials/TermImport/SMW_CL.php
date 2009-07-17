@@ -117,7 +117,7 @@ class CL {
 									wfMsg('smw_ti_update_policy-help')."</div>".
 									"<input type=\"radio\" name=\"update_policy_type\" value=\"once\" checked><span>Once:</span>".
 									"<input id=\"update-policy-checkbox\" type=\"radio\" name=\"update_policy_type\" value=\"maxage\">Max age:</span>".
-									"&nbsp;&nbsp;<input id=\"ti-update-policy-input-field\" size=\"10\"/>&nbsp;in minutes" .
+									"&nbsp;&nbsp;<input id=\"ti-update-policy-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\" size=\"10\"/>&nbsp;in minutes" .
 									"</div>" . 
 									"<div id=\"ti-name\">" .
 									"<br><br><div class=\"input-field-heading\">".

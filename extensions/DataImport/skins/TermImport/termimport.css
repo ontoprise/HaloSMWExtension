@@ -34,7 +34,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	float: left;
-	width: 220px;
+	width: 180px;
 	height: 100px;
 	border: 1px solid #AAAAAA;
 	padding: 3px 5px 3px 5px;
@@ -62,7 +62,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-size: 12px;
 	border: 1px solid #AAAAAA;
 	float: left;
-	width: 220px;
+	width: 180px;
 	height: 100px;
 	padding: 3px 5px 3px 5px;
 }

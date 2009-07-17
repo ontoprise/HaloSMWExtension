@@ -144,10 +144,6 @@ public function getImageDirectory() {
 		global $smwgDIIP;
 		require_once($smwgDIIP."/specials/TermImport/SMW_WIL.php");
 
-		global $wgUser;
-		//todo
-		$wgUser = User::newFromName('WikiSysop');
-
 		$necessaryTermImports = $this->getNecessaryTermImports();
 		
 		$this->setNumberOfTasks(1);

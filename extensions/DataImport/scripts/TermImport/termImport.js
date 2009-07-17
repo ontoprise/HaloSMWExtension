@@ -193,7 +193,7 @@ TermImportPage.prototype = {
 	
 	createDataSourceWidget : function(datasources, tlID, dalID) {
 		response = diLanguage.getMessage('smw_ti_sourceinfo')
-				+ "<br><br><form id=\"source\"><Table>"
+				+ "<br><br><Table>"
 				+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
 
 		var fieldnumber = 0;
@@ -236,8 +236,9 @@ TermImportPage.prototype = {
 				// }
 			}
 		}
-		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" onclick=\"termImportPage.getSource(event, this,'"
-				+ tlID + "','" + dalID + "')\">Next step</button></form>";
+		response += "</table><br><button id=\"submitSource\" type=\"button\" name=\"run\" " +
+				"onclick=\"termImportPage.getSource(event, this,'"
+				+ tlID + "','" + dalID + "')\">Next step</button>";
 		// fade in the source specification
 		$('source-spec').innerHTML = response;
 	},
@@ -997,14 +998,17 @@ TermImportPage.prototype = {
 				$('mapping-input-field').style.backgroundColor = "red";
 				return;
 			}
-			var re = /\w+/g;
-			if(mappingPage.length > 0){
-   				// min. one other char than a whitespace
-   				if(re.test(mappingPage) != true && commit) {
-   					$('mapping-input-field').style.backgroundColor = "red";
-   					return ;	
-   				}
-			} 
+			
+			//this code does only work once
+			// var re = /\w+/g;
+			// if(mappingPage.length > 0){
+   			//	// min. one other char than a whitespace
+   			//	if(re.test(mappingPage) != true && commit) {
+   			//		$('mapping-input-field').style.backgroundColor = "red";
+   			//		return ;	
+   			//	}
+			// } 
+			
 			//conflict policy
 			var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
 			if( conflict == 'overwrite') {
@@ -1020,16 +1024,26 @@ TermImportPage.prototype = {
 				$('ti-name-input-field').style.backgroundColor = "red";
 				return ;
 			}
-			if(termImportName.length > 0){
-   				// min. one other char than a whitespace
-   				if(re.test(termImportName) != true && commit) {
-   					$('ti-name-input-field').style.backgroundColor = "red";
-   					return ;	
-   				}
-			}
+			
+			//this code does only work once
+			// if(termImportName.length > 0){
+			// // min. one other char than a whitespace
+			// if(re.test(termImportName) != true && commit) {
+			// $('ti-name-input-field').style.backgroundColor = "red";
+			// return ;
+			//   				}
+			//			}
+			
 			//update policy todo:make integer check
 			var updatePolicy = 0;
 			if($('update-policy-checkbox').checked){
+				if($("ti-update-policy-input-field").value != ""){
+					if(parseInt($("ti-update-policy-input-field").value)
+							!= $("ti-update-policy-input-field").value-0 && commit){
+						$("ti-update-policy-input-field").style.backgroundColor = "red";
+						return;
+					}
+				}
 				updatePolicy = $("ti-update-policy-input-field").value;
 			}
 		}
@@ -1103,7 +1117,7 @@ TermImportPage.prototype = {
 		$('extras-bottom').innerHTML = message;
 	},
 	changeBackground: function(e, node) {
-		$('mapping-input-field').style.backgroundColor = "white";
+		// $('mapping-input-field').style.backgroundColor = "white";
 		node.style.backgroundColor = "white";
 	},
 	

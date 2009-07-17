@@ -108,16 +108,16 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		wfProfileIn( __METHOD__ . ' (SMW)');
 		$r = '';
 
-		global $wgArticlePath;
-		$ws = WebService::newFromID($this->getTitle()->getArticleID());
-		if($ws != null){
-			if(strpos($wgArticlePath, "?") > 0){
-				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();
-			} else {
-				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
-			}
-			$r .= '<h2><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h2>';
-		}
+		// global $wgArticlePath;
+		//		$ws = WebService::newFromID($this->getTitle()->getArticleID());
+		//		if($ws != null){
+		//			if(strpos($wgArticlePath, "?") > 0){
+		//				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$this->getTitle()->getArticleID();
+		//			} else {
+		//				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$this->getTitle()->getArticleID();
+		//			}
+		//			$r .= '<h2><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h2>';
+		//		}
 
 		$ti = htmlspecialchars( $this->mTitle->getText() );
 
@@ -126,7 +126,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 		$this->mFromArticle, $this->mUntilArticle,
 		                                 'fromarticle', 'untilarticle');
 		$r .= '<a name="WWSArticleResults"></a>' . "<div id=\"mw-pages\">\n";
-		$r .= '<h2>' . wfMsg('smw_wws_articles_header',$ti) . "</h2>\n";
+		$r .= '<h4><span class="mw-headline">' . wfMsg('smw_wws_articles_header',$ti) . "</h4>\n";
 		$r .= wfMsg('smw_wws_articlecount', min($this->limit, count($this->mArticles))) . "\n";
 		$r .= $nav;
 		$r .= $this->shortList( $this->mArticles, $this->articles_start_char, $this->mUntilArticle) . "\n</div>";
@@ -211,7 +211,7 @@ class SMWWebServicePage extends SMWOrderedListPage {
 				      "</h3></th><th></th></tr>\n";
 				$prevchar = $startChar[$index];
 			}
-				
+
 			$searchlink = SMWInfolink::newBrowsingLink('+',$articles[$index]->getPrefixedText());
 			$r .= '<tr><td class="smwpropname">' . $this->getSkin()->makeKnownLinkObj( $articles[$index],
 			$wgContLang->convert( $articles[$index]->getPrefixedText() ) ) .

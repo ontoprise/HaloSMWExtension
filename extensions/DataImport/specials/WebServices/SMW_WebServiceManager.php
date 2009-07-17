@@ -436,13 +436,14 @@ function wwsdParserHook($input, $args, $parser) {
 	if ($errors != null || $warnings != null) {
 		// Errors within the WWSD => show them as a bullet list
 		$ew = $errors ? $errors : $warnings;
-		$msg = '<b>'.wfMsg('smw_wws_wwsd_errors').'</b><ul>';
+		$msg = '<h4><span class="mw-headline">'.wfMsg('smw_wws_wwsd_errors').'</h4><ul>';
 		foreach ($ew as $err) {
 			$msg .= '<li>'.$err.'</li>';
 		}
 		$msg .= '</ul>';
 		if ($errors) {
-			return "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
+			return '<h4><span class="mw-headline">Web Service Definition</span></h4>'.
+					"<pre>\n".htmlspecialchars($completeWWSD)."\n</pre><br />". $msg;
 		}
 	}
 	if ($parser->mTitle->getNamespace() == SMW_NS_WEB_SERVICE) {
@@ -452,7 +453,17 @@ function wwsdParserHook($input, $args, $parser) {
 		// add message: namespace webService needed.
 		$notice = "<b>".wfMsg('smw_wws_wwsd_needs_namespace')."</b>";
 	}
-	return  "<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg;
+	
+	global $wgArticlePath;
+	if(strpos($wgArticlePath, "?") > 0){
+		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
+	} else {
+		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
+	}
+	$linkToDefGui .= '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
+	
+	return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
+			."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg.$linkToDefGui;
 }
 
 ?>

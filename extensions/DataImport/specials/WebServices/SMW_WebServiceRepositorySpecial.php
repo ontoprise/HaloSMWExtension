@@ -48,6 +48,9 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$wgOut->setPageTitle("Data Import Repository");
 
 		global $wgCookiePrefix;
+		
+		global $wgArticlePath;
+	$gardeningURL = Title::makeTitleSafe(NS_SPECIAL, "Gardening")->getFullURL();
 			
 		$allowed = false;
 		global $wgUser;
@@ -115,7 +118,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			if($allowed){
 				$wsUpdateBot = new WSUpdateBot();
 				$html .= "<td style=\"text-align: center\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\">".wfMsg('smw_wwsr_update')."</button>";
-				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\">".wfMsg('smw_wwsr_updating')."</div></td>";
+				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\"><a href=\"".$gardeningURL."\">".wfMsg('smw_wwsr_updating')."</a></div></td>";
 			}
 			global $wgArticlePath;
 			if(strpos($wgArticlePath, "?") > 0){
@@ -191,9 +194,9 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			if($allowed){
 				$tiUpdateBot = new TermImportUpdateBot();
 				$html .= "<td style=\"text-align: center\"><button id=\"update-ti-".$tiArticleName."\" 
-				type=\"button\" name=\"update-ti\" 
-				onclick=\"webServiceRepSpecial.updateTermImport('".$tiArticleName."')\">".wfMsg('smw_wwsr_update')."</button>";
-				$html .= "<div id=\"updating-ti-".$tiArticleName."\" style=\"display: none; text-align: center\">".wfMsg('smw_wwsr_updating')."</div></td>";
+					type=\"button\" name=\"update-ti\" 
+					onclick=\"webServiceRepSpecial.updateTermImport('".$tiArticleName."')\">".wfMsg('smw_wwsr_update')."</button>";
+				$html .= "<div id=\"updating-ti-".$tiArticleName."\" style=\"display: none; text-align: center\"><a href=\"".$gardeningURL."\">".wfMsg('smw_wwsr_updating')."</a></div></td>";
 			
 				global $wgArticlePath;
 				if(strpos($wgArticlePath, "?") > 0){
