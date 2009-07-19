@@ -1,18 +1,18 @@
 <?php
 /**
  * Rollback an installation.
- * 
+ *
  * @author: Kai Kühn / ontoprise / 2009
  *
  */
 class Rollback {
 
-    // installation directory of Mediawiki
+	// installation directory of Mediawiki
 	var $inst_dir;
-	
+
 	// temporary directory where rollback data is stored.
 	var $tmpDir;
-	
+
 	// array of package IDs of extensions to restore
 	var $extToRestore;
 
@@ -36,6 +36,11 @@ class Rollback {
 
 	}
 
+	/**
+	 * Acquires a new rollback operation. The user has to confirm to
+	 * overwrite exisiting rollback data.
+	 *
+	 */
 	private function acquireNewRollback() {
 		static $newRollback = true;
 		if ($newRollback) { // initialize new rollback
@@ -56,45 +61,65 @@ class Rollback {
 	/**
 	 * Saves resources of an extension
 	 *
-	 * @param DeployDescriptorParser $dd
+	 * @param string $id of extension
 	 */
-	private function saveResources($dd) {
-		$this->acquireNewRollback();
-		foreach($dd->getResources() as $file) {
-			$im_file = wfLocalFile(Title::newFromText(basename($this->rootDir."/".$file), NS_IMAGE));
-			Tools::mkpath($this->tmpDir."/resources/".$im_file->getHashPath());
-			copy($this->inst_dir."/images/".$im_file->getHashPath().$im_file->getName(), $this->tmpDir."/resources/".$im_file->getHashPath().$im_file->getName());
-		}
-
-	}
-
-	public function saveExtension($dd) {
+	private function saveResources($id) {
 		$this->acquireNewRollback();
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
-		if (array_key_exists($dd->getID(), $localPackages)) {
-			$localExt = $localPackages[$dd->getID()];
+		if (array_key_exists($id, $localPackages)) {
+			$localExt = $localPackages[$id];
+			foreach($localExt->getResources() as $file) {
+				// save all resources of $dd
+				$im_file = wfLocalFile(Title::newFromText(basename($this->rootDir."/".$file), NS_IMAGE));
+				Tools::mkpath($this->tmpDir."/resources/".$im_file->getHashPath());
+				copy($this->inst_dir."/images/".$im_file->getHashPath().$im_file->getName(), $this->tmpDir."/resources/".$im_file->getHashPath().$im_file->getName());
+			}
+		}
+	}
+
+	/**
+	 * Save the extension to the rollback directory
+	 *
+	 * @param string $id of extension
+	 */
+	public function saveExtension($id) {
+		$this->acquireNewRollback();
+		// get installed extension
+		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
+		if (array_key_exists($id, $localPackages)) {
+			$localExt = $localPackages[$id];
 			print "\nSaving extension... ".$localExt->getID();
 			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory());
 			Tools::copy_dir($this->inst_dir."/".$localExt->getInstallationDirectory(), $this->tmpDir."/stored/".$localExt->getInstallationDirectory());
-			$this->saveResources($localExt);
+			$this->saveResources($localExt->getID());
 			print "done.";
 		}
 		$this->extToRestore[] = $dd->getID();
 	}
 
+	/**
+	 * Save the database to the rollback directory
+	 *
+	 * @return unknown
+	 */
 	public function saveDatabase() {
 		$this->acquireNewRollback();
 		// make sure to save only once
 		static $savedDataBase = false;
-		if ($savedDataBase) return;
+		if ($savedDataBase) return true;
 		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
 		$savedDataBase = true;
 		print "\nSaving database...";
 		//print "\nmysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql";
 		exec("mysqldump -u $wgDBadminuser --password=$wgDBadminpassword $wgDBname > ".$this->tmpDir."/dump.sql", $out, $ret);
 		if ($ret != 0) print "\nWarning: Could not save database for rollback"; else print "done.";
+		return $ret == 0;
 	}
 
+	/**
+	 * Save the local settings file to the rollback directory.
+	 *
+	 */
 	public function saveLocalSettings() {
 		$this->acquireNewRollback();
 		static $saveLocalSettings = false;
@@ -105,6 +130,11 @@ class Rollback {
 
 	}
 
+	/**
+	 * Restore the database dump from the rollback directory.
+	 *
+	 * @return boolean
+	 */
 	private function restoreDatabase() {
 
 		global $wgDBadminuser, $wgDBadminpassword, $wgDBname;
@@ -116,7 +146,12 @@ class Rollback {
 		return ($ret == 0);
 	}
 
-	private function restoreResources() {
+	/**
+	 * Restore resource files from the rollback dir
+	 *
+	 * @return unknown
+	 */
+	private function restoreResourceFiles() {
 		if (!file_exists($this->tmpDir."/resources")) return false; // nothing to restore
 		print "\nRestore resources...";
 		Tools::copy_dir($this->tmpDir."/resources", $this->inst_dir."/images");
@@ -131,7 +166,7 @@ class Rollback {
 	public function rollback() {
 		$res_installer = ResourceInstaller::getInstance($this->inst_dir);
 
-		//remove patches
+		// 1. remove patches of the extension to restore
 		if (!file_exists($this->tmpDir)) {
 			print "\nNothing to restore.";
 			return;
@@ -152,6 +187,7 @@ class Rollback {
 		}
 		print "done.";
 
+		// 2. deleting the resources of the extension to restore
 		print "\nDeleting resources...";
 		foreach($localPackages as $dd) {
 			if (in_array($dd->getID(), $this->extToRestore)) {
@@ -162,7 +198,10 @@ class Rollback {
 		}
 		print "done.";
 
+		// 3. Restore the database (if available)
 		$databaseRestored = $this->restoreDatabase();
+
+		// if it was not restored, delete the wiki dumps of all extensions to restore
 		if (!$databaseRestored) {
 			foreach($localPackages as $dd) {
 				if (in_array($dd->getID(), $this->extToRestore)) {
@@ -171,23 +210,23 @@ class Rollback {
 
 				}
 			}
-			
+
 		}
 
-		// remove installed or updated extensions
+		// 4. remove installed or updated extensions
 		foreach($localPackages as $dd) {
 			if (in_array($dd->getID(), $this->extToRestore)) {
 				Tools::remove_dir($this->inst_dir."/".$dd->getInstallationDirectory());
 			}
 		}
-		// copy old (updated) extensions
+		// 5. copy old (updated) extensions
 		Tools::copy_dir($this->tmpDir."/stored", $this->inst_dir);
 
-		// reload local packages, because they have changed
+		// 6. reload local packages, because they have changed
 		$restoredLocalPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions', true);
 
-		// restore wiki pages
 		if (!$databaseRestored) {
+			// 7. restore wiki pages if the database was not restored
 			foreach($localPackages as $dd) {
 				if (in_array($dd->getID(), $this->extToRestore)) {
 					if (array_key_exists($dd->getID(), $restoredLocalPackages)) {
@@ -197,15 +236,27 @@ class Rollback {
 			}
 		}
 
-		// restore resources
-		$this->restoreResources();
+		if (!$databaseRestored) {
+			// 8. restore resources if the database was not restored
+			foreach($localPackages as $dd) {
+				if (in_array($dd->getID(), $this->extToRestore)) {
+					if (array_key_exists($dd->getID(), $restoredLocalPackages)) {
+						$res_installer->installOrUpdateResources($restoredLocalPackages[$dd->getID()], $dd->getVersion());
+					}
+				}
+			}
+		} else {
+			// otherwise just restore resource files
+			$this->restoreResourceFiles();
+
+		}
 			
-		// restore LocalSettings.php
+		// 9. restore LocalSettings.php
 		if (file_exists($this->tmpDir."/LocalSettings.php")) {
 			copy($this->tmpDir."/LocalSettings.php", $this->inst_dir."/LocalSettings.php");
 		}
 
-		// clear rollback data
+		// 10. clear rollback data
 		if (file_exists($this->tmpDir)) Tools::remove_dir($this->tmpDir);
 
 	}

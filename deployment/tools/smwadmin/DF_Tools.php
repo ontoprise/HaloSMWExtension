@@ -92,7 +92,7 @@ class Tools {
         if (is_file($source)) {
             if ($dest[strlen($dest)-1]=='/') {
                 if (!file_exists($dest)) {
-                    cmfcDirectory::makeAll($dest,$options['folderPermission'],true);
+                    Tools::mkpath($dest);
                 }
                 $__dest=$dest."/".basename($source);
             } else {

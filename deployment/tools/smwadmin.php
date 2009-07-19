@@ -10,6 +10,11 @@
 require_once('smwadmin/Tools.php');
 require_once('smwadmin/Installer.php');
 
+if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
+	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
+	return;
+}
+
 // check tools and rights
 $check = Tools::checkEnvironment();
 if ($check !== true) {
@@ -21,17 +26,11 @@ if ($check !== true) {
 }
 
 
-
-if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
-	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
-	return;
-}
-
 $packageToInstall = array();
 $packageToDeinstall = array();
 $packageToUpdate = array();
 
-// get parameters
+// get command line parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-i => Install
@@ -79,8 +78,8 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	if ($arg == '--checkdump') { // => analyze installed dump
 		$checkDump = true;
 		$package = next($argv);
-        if ($package === false) fatalError("No package found");
-        $packageToInstall[] = $package;
+		if ($package === false) fatalError("No package found");
+		$packageToInstall[] = $package;
 		continue;
 	}
 
@@ -89,7 +88,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		continue;
 	}
 
-	if ($arg == '-r') { // => restore last installation
+	if ($arg == '-r') { // => rollback last installation
 		$restore = true;
 		continue;
 	}
@@ -100,6 +99,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 $mediaWikiLocation = dirname(__FILE__) . '/../..';
 require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 
+// check if AdminSettings.php is available
+if (!isset($wgDBadminuser) && !isset($wgDBadminpassword)) {
+	fatalError("Please set create AdminSettings.php file. Otherwise rollback mechanism will not work properly.");
+}
+
 // create language object
 $langClass = "DF_Language_$wgLanguageCode";
 if (!file_exists("../languages/$langClass.php")) {
@@ -109,26 +113,8 @@ require_once("../languages/$langClass.php");
 $dfgLang = new $langClass();
 
 $help = array_key_exists("help", $options);
-
 if ($help || count($argv) == 0) {
-	echo "\nsmwhalo admin utility v0.1, Ontoprise 2009";
-	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
-	echo "\n       smwadmin -u [ <package>[-<version>] ]";
-	echo "\n";
-	echo "\n\t-i <package>: Install";
-	echo "\n\t-d <package> ]: De-Install";
-	echo "\n\t-u <package>: Update";
-	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
-	echo "\n\t-l [ pattern ] : List installed packages.";
-	echo "\n\t-r : Rollback last installation.";
-	echo "\n\t--dep : Check only dependencies but do not install.";
-	echo "\n";
-	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-142: Installs the given packages";
-	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
-	echo "\n\tsmwadmin -u: Updates complete installation";
-	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
-	echo "\n\tsmwadmin -d smw: Removes the package smw.";
-	echo "\n\n";
+	showHelp();
 	die();
 }
 
@@ -138,32 +124,13 @@ $rollback = Rollback::getInstance($rootDir);
 $res_installer = ResourceInstaller::getInstance($rootDir);
 
 if ($restore) {
-	print "Rollback...";
-	$rollback->rollback();
+	handleRollback();
 	die();
 }
 
 // Global update (ie. updates all packages to the latest possible version)
 if ($globalUpdate) {
-	list($extensions_to_update, $updated) = $installer->updateAll($checkDep);
-	if ($checkDep) {
-		if (count($extensions_to_update) > 0) {
-
-			print "\n\nThe following extensions would get updated:\n";
-			foreach($extensions_to_update as $id => $etu) {
-				list($desc, $min, $max) = $etu;
-				print "\n\t*$id-".Tools::addVersionSeparators($min);
-			}
-		}
-		print "\n\n";
-
-	}
-
-	if ($updated && count($extensions_to_update) > 0) {
-		echo "\n\nYour installation is now up-to-date!\n";
-	} else if (count($extensions_to_update) == 0) {
-		echo "\n\nYour installation is already up-to-date!\n";
-	}
+	handleGlobalUpdate($checkDep);
 	die();
 }
 
@@ -221,7 +188,7 @@ foreach($packageToUpdate as $toUpdate) {
 	} catch(HttpError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
-		$rollback->rollback();
+		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	}
@@ -229,6 +196,57 @@ foreach($packageToUpdate as $toUpdate) {
 
 print "\n\nOK.\n";
 
+function showHelp() {
+	echo "\nsmwhalo admin utility v0.1, Ontoprise 2009";
+	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
+	echo "\n       smwadmin -u [ <package>[-<version>] ]";
+	echo "\n";
+	echo "\n\t-i <package>: Install";
+	echo "\n\t-d <package> ]: De-Install";
+	echo "\n\t-u <package>: Update";
+	echo "\n\t--checkdump <package>: Check only dumps for changes but do not install.";
+	echo "\n\t-l [ pattern ] : List installed packages.";
+	echo "\n\t-r : Rollback last installation.";
+	echo "\n\t--dep : Check only dependencies but do not install.";
+	echo "\n";
+	echo "\nExamples:\n\n\tsmwadmin -i smwhalo-1.4.4 -u smw-142: Installs the given packages";
+	echo "\n\tsmwadmin -i smwhalo: Installs latest version of smwhalo";
+	echo "\n\tsmwadmin -u: Updates complete installation";
+	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
+	echo "\n\tsmwadmin -d smw: Removes the package smw.";
+	echo "\n\n";
+	 
+}
+
+function handleRollback() {
+	print "Rollback...";
+	$rollback->rollback();
+	 
+}
+
+
+function handleGlobalUpdate($checkDep) {
+	list($extensions_to_update, $updated) = $installer->updateAll($checkDep);
+	if ($checkDep) {
+		if (count($extensions_to_update) > 0) {
+
+			print "\n\nThe following extensions would get updated:\n";
+			foreach($extensions_to_update as $id => $etu) {
+				list($desc, $min, $max) = $etu;
+				print "\n\t*$id-".Tools::addVersionSeparators($min);
+			}
+		}
+		print "\n\n";
+
+	}
+
+	if ($updated && count($extensions_to_update) > 0) {
+		echo "\n\nYour installation is now up-to-date!\n";
+	} else if (count($extensions_to_update) == 0) {
+		echo "\n\nYour installation is already up-to-date!\n";
+	}
+	 
+}
 
 function handleInstallOrUpdate($packageID, $version) {
 	global $checkDump, $checkDep, $installer, $res_installer;

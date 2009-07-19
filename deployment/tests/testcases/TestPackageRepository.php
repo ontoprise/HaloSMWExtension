@@ -7,9 +7,9 @@ define(DEPLOY_FRAMEWORK_INTERNAL_REPO2, "http://localhost/mediawiki/deployment/t
 //define('DEBUG_MODE', true);
 
 if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
-	require_once 'deployment/tools/smwadmin/PackageRepository.php';
+	require_once 'deployment/tools/smwadmin/DF_PackageRepository.php';
 } else {
-	require_once '../tools/smwadmin/PackageRepository.php';
+	require_once '../tools/smwadmin/DF_PackageRepository.php';
 }
 /**
  * Tests the installer clazz

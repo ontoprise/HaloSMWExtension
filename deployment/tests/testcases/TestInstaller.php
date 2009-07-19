@@ -3,11 +3,11 @@
 //define('DEBUG_MODE', true);
 
 if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
-	require_once 'deployment/tools/smwadmin/Installer.php';
-	require_once 'deployment/tools/smwadmin/Tools.php';
+	require_once 'deployment/tools/smwadmin/DF_Installer.php';
+	require_once 'deployment/tools/smwadmin/DF_Tools.php';
 } else {
-	require_once '../tools/smwadmin/Installer.php';
-	require_once '../tools/smwadmin/Tools.php';
+	require_once '../tools/smwadmin/DF_Installer.php';
+	require_once '../tools/smwadmin/DF_Tools.php';
 
 }
 

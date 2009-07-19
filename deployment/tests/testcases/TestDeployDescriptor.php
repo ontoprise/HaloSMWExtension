@@ -1,19 +1,19 @@
 <?php
 
 
-require_once ('deployment/descriptor/DeployDescriptorParser.php');
+require_once ('deployment/descriptor/DF_DeployDescriptor.php');
 
 /**
  * Tests the deploy descriptor processor
  *
  */
-class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
+class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 
 	var $ddp;
 
 	function setUp() {
 		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
-		$this->ddp = new DeployDescriptorParser($xml);
+		$this->ddp = new DeployDescriptor($xml);
 	}
 
 	function tearDown() {
@@ -29,7 +29,7 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 		$deps = $this->ddp->getDependencies();
 		$this->assertDependency($deps[0], $exp_deps[0]);
 		$this->assertDependency($deps[1], $exp_deps[1]);
-		
+
 	}
 
 	private function assertDependency($exp_dep, $act_dep) {
@@ -42,8 +42,8 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 
 	function testCodeFiles() {
 		$exp_files = array("extensions/SMWHalo/SMW_Initialize.php", "extensions/SMWHalo/SMW_QP_XML.php");
-		foreach($this->ddp->getCodefiles() as $cf) {
-			list($loc, $hash) = $cf;
+		foreach($this->ddp->getCodefiles() as $loc) {
+				
 			$this->assertContains($loc, $exp_files);
 		}
 	}
@@ -59,6 +59,16 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 		$exp_files = array("resources/img1.png");
 		foreach($this->ddp->getResources() as $cf) {
 			$this->assertContains($cf, $exp_files);
+		}
+	}
+
+	function testOnlyCopyResources() {
+		$exp_locs = array("resources/thumb/pic-300px.png");
+		$exp_dests = array("thumb/pic.300px.png");
+		foreach($this->ddp->getOnlyCopyResources() as $loc => $dest) {
+				
+			$this->assertContains($loc, $exp_locs);
+			$this->assertContains($dest, $exp_dests);
 		}
 	}
 
@@ -87,8 +97,8 @@ class TestDeployDescriptorParser extends PHPUnit_Framework_TestCase {
 
 	function testUpdateSection() {
 		$xml = file_get_contents('testcases/resources/test_deploy_variables.xml');
-		$this->ddp = new DeployDescriptorParser($xml, 142);
-		 
+		$this->ddp = new DeployDescriptor($xml, 142);
+			
 		$configs = $this->ddp->getConfigs();
 		$this->assertTrue(count($configs) > 0);
 	}

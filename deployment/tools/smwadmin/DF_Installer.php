@@ -12,10 +12,10 @@ define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
 define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
 define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
 
-require_once 'PackageRepository.php';
-require_once 'Tools.php';
-require_once 'Rollback.php';
-require_once 'ResourceInstaller.php';
+require_once 'DF_PackageRepository.php';
+require_once 'DF_Tools.php';
+require_once 'DF_Rollback.php';
+require_once 'DF_ResourceInstaller.php';
 
 /**
  * Provides the basic installation routines for the smwadmin tool.
@@ -374,7 +374,7 @@ class Installer {
 				$desc->createConfigElements($fromVersion);
 			}
 			if (!$this->noRollback) {
-				$this->rollback->saveExtension($desc);
+				$this->rollback->saveExtension($desc->getID());
 				if (count($desc->getInstallScripts()) > 0) $this->rollback->saveDatabase();
 			}
 
@@ -392,7 +392,7 @@ class Installer {
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-			$this->res_installer->installOrUpdateResources($desc, $fromVersion);
+			$this->res_installer->installOrUpdateResources($desc);
 
 			print "\n-------\n";
 		}
@@ -495,9 +495,9 @@ class Installer {
 	 * Checks for updates on depending extensions if the package described by $dd would be installed.
 	 * Goes recursively down the dependency tree.
 	 *
-	 * @param DeployDescriptorParser $dd
+	 * @param DeployDescriptor $dd
 	 * @param array $packagesToUpdate
-	 * @param array of DeployDescriptorParser $localPackages
+	 * @param array of DeployDescriptor $localPackages
 	 */
 	private function checkForDependingExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$dependencies = $dd->getDependencies();
@@ -546,9 +546,9 @@ class Installer {
 	 * Checks for updates on super extensions if the package described by $dd would be installed.
 	 * Goes recursively up the dependency tree.
 	 *
-	 * @param DeployDescriptorParser $dd
+	 * @param DeployDescriptor $dd
 	 * @param array $packagesToUpdate
-	 * @param array of DeployDescriptorParser $localPackages
+	 * @param array of DeployDescriptor $localPackages
 	 */
 	private function checkForSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$updatesNeeded = array();

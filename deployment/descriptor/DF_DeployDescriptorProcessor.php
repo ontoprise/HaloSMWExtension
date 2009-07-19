@@ -21,7 +21,7 @@ class DeployDescriptionProcessor {
 	 * Creates new DeployDescriptorProcessor.
 	 *
 	 * @param string $ls_loc Location of LocalSettings
-	 * @param DeployDescriptorParser $dd_parser
+	 * @param DeployDescriptor $dd_parser
 	 *
 	 */
 	function __construct($ls_loc, $dd_parser) {

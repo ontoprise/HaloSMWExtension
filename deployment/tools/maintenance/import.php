@@ -25,8 +25,8 @@
 $optionsWithArgs = array( 'report' );
 
 require_once( '../../maintenance/commandLine.inc' );
-require_once('../io/import/DeployWikiImporter.php');
-require_once('../io/import/BackupReader.php');
+require_once('../io/import/DF_DeployWikiImporter.php');
+require_once('../io/import/DF_BackupReader.php');
 
 if( wfReadOnly() ) {
 	wfDie( "Wiki is in read-only mode; you'll need to disable it for import to work.\n" );

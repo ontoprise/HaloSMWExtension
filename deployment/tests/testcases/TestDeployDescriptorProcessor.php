@@ -1,6 +1,6 @@
 <?php
 
-require_once ('deployment/descriptor/DeployDescriptorParser.php');
+require_once ('deployment/descriptor/DF_DeployDescriptor.php');
 
 
 /**
@@ -31,7 +31,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 
 	function testPrecedings() {
 		$exp_precedings = array("SemanticMediawiki", "SemanticGardening");
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$precedings = $ddp->getPrecedings();
 		foreach($precedings as $exp) {
 			$this->assertContains($exp, $exp_precedings);
@@ -40,7 +40,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableInsertion() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 		global $testvar;
 		
@@ -49,7 +49,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableRemoval() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar2;
@@ -58,7 +58,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableReplacement() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar3;
@@ -68,7 +68,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableReplacementWithNumber() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar4;
@@ -79,7 +79,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableReplacementWithBoolean() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar5;
@@ -90,7 +90,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableReplacementWithInternal() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar6;
@@ -101,7 +101,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testVariableComplexInsertion() {
-		$ddp = new DeployDescriptorParser($this->xml_variables);
+		$ddp = new DeployDescriptor($this->xml_variables);
 		$res = $ddp->applyConfigurations("testcases/resources", true);
 			
 		global $testvar7;
@@ -115,7 +115,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testFunctionCallInsertion() {
-		$ddp2 = new DeployDescriptorParser($this->xml_function);
+		$ddp2 = new DeployDescriptor($this->xml_function);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
 		global $ret1;
@@ -126,7 +126,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testFunctionCallInsertion2() {
-		$ddp2 = new DeployDescriptorParser($this->xml_function);
+		$ddp2 = new DeployDescriptor($this->xml_function);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
 		global $server;
@@ -142,7 +142,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testFunctionCallRemoval() {
-		$ddp2 = new DeployDescriptorParser($this->xml_function);
+		$ddp2 = new DeployDescriptor($this->xml_function);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
 		global $ret2;
@@ -153,7 +153,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testFunctionCallReplacement() {
-		$ddp2 = new DeployDescriptorParser($this->xml_function2);
+		$ddp2 = new DeployDescriptor($this->xml_function2);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 
 			
@@ -166,7 +166,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRequireStatementInsert() {
-		$ddp2 = new DeployDescriptorParser($this->xml_require);
+		$ddp2 = new DeployDescriptor($this->xml_require);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 			
 		global $testInclude;
@@ -177,7 +177,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testRequireStatementRemove() {
-		$ddp2 = new DeployDescriptorParser($this->xml_require);
+		$ddp2 = new DeployDescriptor($this->xml_require);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 			
 		global $testInclude2;
@@ -189,7 +189,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testPHPInsert() {
-		$ddp2 = new DeployDescriptorParser($this->xml_php);
+		$ddp2 = new DeployDescriptor($this->xml_php);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 			
 		global $testphp;
@@ -200,7 +200,7 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testPHPRemove() {
-		$ddp2 = new DeployDescriptorParser($this->xml_php);
+		$ddp2 = new DeployDescriptor($this->xml_php);
 		$res = $ddp2->applyConfigurations("testcases/resources", true);
 			
 		global $testphp2;

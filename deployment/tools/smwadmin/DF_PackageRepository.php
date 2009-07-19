@@ -3,13 +3,13 @@
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 
 if (defined('DEBUG_MODE') && DEBUG_MODE == true) {
-	require_once 'deployment/io/HttpDownload.php';
-	require_once 'deployment/tools/smwadmin/Tools.php';
-	require_once 'deployment/descriptor/DeployDescriptorParser.php';
+	require_once 'deployment/io/DF_HttpDownload.php';
+	require_once 'deployment/tools/smwadmin/DF_Tools.php';
+	require_once 'deployment/descriptor/DF_DeployDescriptor.php';
 } else {
-	require_once '../io/HttpDownload.php';
-	require_once '../tools/smwadmin/Tools.php';
-	require_once '../descriptor/DeployDescriptorParser.php';
+	require_once '../io/DF_HttpDownload.php';
+	require_once '../tools/smwadmin/DF_Tools.php';
+	require_once '../descriptor/DF_DeployDescriptor.php';
 }
 
 // default repository
@@ -113,7 +113,7 @@ class PackageRepository {
      * Returns deploy descriptor of package $ext_id in the latest version.
      *
      * @param string $ext_id
-     * @return DeployDescriptorParser
+     * @return DeployDescriptor
      */
 	public static function getLatestDeployDescriptor($ext_id) {
 		if (is_null($ext_id)) throw new IllegalArgument("ext must not null");
@@ -146,7 +146,7 @@ class PackageRepository {
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, $credentials, NULL);
 
-		$dd =  new DeployDescriptorParser($res);
+		$dd =  new DeployDescriptor($res);
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
@@ -156,7 +156,7 @@ class PackageRepository {
 	 *
 	 * @param string $ext_id
 	 * @param int $version
-	 * @return DeployDescriptorParser
+	 * @return DeployDescriptor
 	 */
 	public static function getDeployDescriptor($ext_id, $version) {
 		if (is_null($ext_id) || is_null($version)) throw new IllegalArgument("version or ext must not null");
@@ -183,7 +183,7 @@ class PackageRepository {
 		$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 		$res = $d->downloadAsString($path, $port, $host, $credentials, NULL);
 
-		$dd =  new DeployDescriptorParser($res);
+		$dd =  new DeployDescriptor($res);
 
 		self::$deploy_descs[] = $dd;
 		return $dd;
@@ -311,7 +311,7 @@ class PackageRepository {
 	 * Returns the local package deploy descriptors.
 	 *
 	 * @param string $ext_dir Extension directory
-	 * @return array of (id=>DeployDescriptorParser)
+	 * @return array of (id=>DeployDescriptor)
 	 */
 	public static function getLocalPackages($ext_dir, $forceReload = false) {
 		if (!is_null(self::$localPackages) && !$forceReload) return self::$localPackages;
@@ -334,7 +334,7 @@ class PackageRepository {
 			if (is_dir($ext_dir.$entry)) {
 				// check if there is a deploy.xml
 				if (file_exists($ext_dir.$entry.'/deploy.xml')) {
-					$dd = new DeployDescriptorParser(file_get_contents($ext_dir.$entry.'/deploy.xml'));
+					$dd = new DeployDescriptor(file_get_contents($ext_dir.$entry.'/deploy.xml'));
 					self::$localPackages[$dd->getID()] = $dd;
 
 				}
@@ -365,7 +365,7 @@ class PackageRepository {
 				    <configs/>
 				    </deploydescriptor>';
 
-		return new DeployDescriptorParser($xml);
+		return new DeployDescriptor($xml);
 	}
 }
 

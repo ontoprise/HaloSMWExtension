@@ -24,7 +24,8 @@
 		<file loc="wikidumps/ontology1.xml" />
 	</wikidumps>
 	<resources>
-		<file loc="resources/img1.png" />
+		<file loc="resources/img1.png"/>
+		<file loc="resources/thumb/pic-300px.png" dest="thumb/pic.300px.png"/>
 	</resources>
 	
 	<configs>

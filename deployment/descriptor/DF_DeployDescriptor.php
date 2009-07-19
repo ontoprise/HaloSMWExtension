@@ -1,22 +1,23 @@
 <?php
 
 
-require_once ('DeployDescriptorProcessor.php');
+require_once ('DF_DeployDescriptorProcessor.php');
 
 /**
- * This class works as a parser (and serializer) of the general
+ * This class works as a parser of the general
  * description of a deployable entity (aka deploy descriptor).
  *
  * @author: Kai Kühn / ontoprise / 2009
  *
  */
-class DeployDescriptorParser {
+class DeployDescriptor {
 
 	// extracted data from deploy descriptor
 	var $globalElement; // global metadata, ie. version, id, vendor, description, install dir
 	var $codefiles; // code files (only hashes for detecting changes)
-	var $wikidumps; // wiki XML dump file (Halo format) 
+	var $wikidumps; // wiki XML dump file (Halo format)
 	var $resources; // resources: images
+	var $oc_resources; // resources which get only copied
 	var $configs;   // config elements concerning localsettings changes
 	var $precedings;// extension which precedes this one in localsettings
 	var $userReqs;  // variables which need to be defined by the user
@@ -31,6 +32,7 @@ class DeployDescriptorParser {
 	var $wikidumps_xml;
 	var $codefiles_xml;
 	var $resources_xml;
+	var $resources_onlycopyxml;
 
 	function __construct($xml, $fromVersion = NULL) {
 
@@ -39,9 +41,12 @@ class DeployDescriptorParser {
 
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
 		$this->codefiles_xml = $this->dom->xpath('/deploydescriptor/codefiles/file');
+		$codeElement = $this->dom->xpath('/deploydescriptor/codefiles');
+		$this->codeHash = $codeElement[0]->attributes()->hash;
 
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
-		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file');
+		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');
+		$this->resources_onlycopyxml = $this->dom->xpath('/deploydescriptor/resources/file[@dest]');
 		$this->createConfigElements($fromVersion); // assume new config, not update
 	}
 
@@ -49,7 +54,7 @@ class DeployDescriptorParser {
 	public function getPrecedings() {
 		return $this->precedings;
 	}
-	
+
 	public function hasPreceding($id) {
 		return in_array($id, $this->precedings);
 	}
@@ -65,7 +70,7 @@ class DeployDescriptorParser {
 	public function getUninstallScripts() {
 		return $this->uninstall_scripts;
 	}
-    
+
 	/**
 	 * Creates/Updates the config element data depending on the given version.
 	 * Can be called as often as needed.
@@ -73,7 +78,7 @@ class DeployDescriptorParser {
 	 * @param int $from Version to update from (if NULL the new config is assumed)
 	 */
 	public function createConfigElements($from = NULL) {
-        
+
 		// initialize (or reset) config data
 		$this->configs = array();
 		$this->precedings = array();
@@ -82,7 +87,7 @@ class DeployDescriptorParser {
 		$this->userReqs = array();
 		$this->patches = array();
 		$this->uninstallpatches = array();
-        
+
 		// create xpath selecting the config depending on version to update from.
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
@@ -98,14 +103,14 @@ class DeployDescriptorParser {
 			}
 		}
 
-        // select config elements
+		// select config elements
 		$precedings = $this->dom->xpath('/deploydescriptor/configs/precedes');
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
 		$patches = $this->dom->xpath($path.'/patch');
-        
+
 		// precedings, ie. all the extensions which must precede this one.
 		if (count($precedings) > 0 && $precedings != '') {
 			foreach($precedings as $p) {
@@ -113,7 +118,7 @@ class DeployDescriptorParser {
 			}
 		}
 
-        // the config elements concerning the LocalSettings.php
+		// the config elements concerning the LocalSettings.php
 		if (count($configElements) > 0 && $configElements != '') {
 
 			foreach($configElements[0] as $p) {
@@ -126,7 +131,7 @@ class DeployDescriptorParser {
 				}
 			}
 		}
-		
+
 		// the config elements concerning install scripts.
 		if (count($install_scripts) > 0 && $install_scripts != '') {
 
@@ -138,7 +143,7 @@ class DeployDescriptorParser {
 				$this->install_scripts[] = array('script'=>$script, 'params'=>$params);
 			}
 		}
-        
+
 		// the config elements concerning uninstall scripts.
 		if (count($uninstall_scripts) > 0 && $uninstall_scripts != '') {
 
@@ -150,7 +155,7 @@ class DeployDescriptorParser {
 				$this->uninstall_scripts[] = array('script'=>$script, 'params'=>$params);
 			}
 		}
-        
+
 		// the config elements concerning patches
 		if (count($patches) > 0 && $patches != '') {
 			$this->patches = array();
@@ -162,7 +167,7 @@ class DeployDescriptorParser {
 				$this->patches[] = $patchFile;
 			}
 		}
-        
+
 		// the config elements concerning uninstall patches
 		if (count($uninstall_patches) > 0 && $uninstall_patches != '') {
 			$this->uninstallpatches = array();
@@ -206,7 +211,7 @@ class DeployDescriptorParser {
 		if (!is_null($this->dependencies)) return $this->dependencies;
 		$this->dependencies = array();
 		$dependencies = $this->dom->xpath('/deploydescriptor/global/dependencies/dependency');
-		
+
 		foreach($dependencies as $dep) {
 			$depID = strtolower(trim((string) $dep[0]));
 			$depFrom = intval((string) $dep->attributes()->from);
@@ -242,7 +247,7 @@ class DeployDescriptorParser {
 
 		foreach($this->codefiles_xml as $file) {
 
-			$this->codefiles[] = array((string) $file->attributes()->loc, (string) $file->attributes()->hash);
+			$this->codefiles[] = (string) $file->attributes()->loc;
 		}
 		return $this->codefiles;
 	}
@@ -257,13 +262,25 @@ class DeployDescriptorParser {
 	}
 
 	function getResources() {
-		
+
 		if (!is_null($this->resources)) return $this->resources;
 		$this->resources = array();
 		foreach($this->resources_xml as $file) {
 			$this->resources[] = (string) $file->attributes()->loc;
 		}
 		return $this->resources;
+	}
+
+	function getOnlyCopyResources() {
+
+		if (!is_null($this->oc_resources)) return $this->oc_resources;
+		$this->oc_resources = array();
+		foreach($this->resources_onlycopyxml as $file) {
+			$dest = (string) $file->attributes()->dest;
+			$loc = (string) $file->attributes()->loc;
+			$this->oc_resources[$loc] = $dest;
+		}
+		return $this->oc_resources;
 	}
 
 	private function extractUserRequirements($child) {
@@ -313,22 +330,44 @@ class DeployDescriptorParser {
 	 * @return Mixed. True if all files are valid, otherwise array of invalid files.
 	 */
 	function validatecode($rootDir) {
-		$invalids = array();
-		$codeFiles = $this->getCodefiles();
-		foreach($codeFiles as $file) {
-			list($loc, $exp_hash) = $file;
 
-			if (file_exists($rootDir."/".$loc)) {
-				$contents = file_get_contents($rootDir."/".$loc);
-				$actual_hash = md5($contents);
-				if (!empty($exp_hash) && $actual_hash !== $exp_hash) {
-					$invalids[] = array($loc);
-				}
-			} else {
-				$missing[] = array($loc);
-			}
+		$codeFiles = $this->getCodefiles();
+		if (count($codeFiles) == 0) return true;
+		$actual_hash = "";
+		foreach($codeFiles as $file) {
+			$this->_validateCode($rootDir."/".$file, $actual_hash);
 		}
-		return (count($invalids) == 0 && count($missing) == 0 ? true : array($invalids,$missing));
+		return md5($actual_hash) == $this->codeHash;
+	}
+
+	private function _validateCode($SourceDirectory, & $actual_hash) {
+		// add trailing slashes
+		if (substr($SourceDirectory,-1)!='/'){
+			$SourceDirectory .= '/';
+		}
+
+		$handle = @opendir($SourceDirectory);
+		if (!$handle) {
+			return;
+		}
+		while ( ($entry = readdir($handle)) !== false ){
+
+			if ($entry[0] == '.'){
+				continue;
+			}
+
+
+			if (is_dir($SourceDirectory.$entry)) {
+				// Unterverzeichnis
+				$success = $this->_validateCode($SourceDirectory.$entry, $actual_hash);
+
+			} else{
+
+				$content = file_get_contents($SourceDirectory.$entry);
+				$actual_hash .= md5($contents);
+			}
+
+		}
 	}
 
 	/**
@@ -344,7 +383,7 @@ class DeployDescriptorParser {
 		if ($this->configs === false) {
 			return;
 		}
-		
+
 		$dp = new DeployDescriptionProcessor($rootDir.'/LocalSettings.php', $this);
 
 		$content = $dp->applyLocalSettingsChanges($userCallback, $this->getUserRequirements(), $dryRun);
