@@ -33,7 +33,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 define('HACL_HALOACL_VERSION', '0.1');
 
 define('HACL_STORE_SQL', 'HaclStoreSQL');
-
 // constant for special schema properties
 
 
@@ -110,4 +109,8 @@ require_once('HACL_GlobalFunctions.php');
 # must not be smaller than 100.
 ##
 haclfInitNamespaces();
+
+#include our ajax_connecotr
+require_once('HACL_AjaxConnector.php');
+
 

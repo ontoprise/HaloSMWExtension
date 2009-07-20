@@ -1,298 +1,253 @@
-@CHARSET "ISO-8859-1";
+/*
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.7.0
+*/
+.yui-navset .yui-nav li,.yui-navset .yui-navset-top .yui-nav li,.yui-navset .yui-navset-bottom .yui-nav li{margin:0 .5em 0 0;}.yui-navset-left .yui-nav li,.yui-navset-right .yui-nav li{margin:0 0 .5em;}.yui-navset .yui-content .yui-hidden{position:absolute;left:-999999px;visibility:hidden;}.yui-navset .yui-navset-left .yui-nav,.yui-navset .yui-navset-right .yui-nav,.yui-navset-left .yui-nav,.yui-navset-right .yui-nav{width:6em;}.yui-navset-top .yui-nav,.yui-navset-bottom .yui-nav{width:auto;}.yui-navset .yui-navset-left,.yui-navset-left{padding:0 0 0 6em;}.yui-navset-right{padding:0 6em 0 0;}.yui-navset-top,.yui-navset-bottom{padding:auto;}.yui-nav,.yui-nav li{margin:0;padding:0;list-style:none;}.yui-navset li em{font-style:normal;}.yui-navset{position:relative;zoom:1;}.yui-navset .yui-content,.yui-navset .yui-content div{zoom:1;}.yui-navset .yui-content:after{content:'';display:block;clear:both;}.yui-navset .yui-nav li,.yui-navset .yui-navset-top .yui-nav li,.yui-navset .yui-navset-bottom .yui-nav li{display:inline-block;display:-moz-inline-stack;*display:inline;vertical-align:bottom;cursor:pointer;zoom:1;}.yui-navset-left .yui-nav li,.yui-navset-right .yui-nav li{display:block;}.yui-navset .yui-nav a{position:relative;}.yui-navset .yui-nav li a,.yui-navset-top .yui-nav li a,.yui-navset-bottom .yui-nav li a{display:block;display:inline-block;vertical-align:bottom;zoom:1;}.yui-navset-left .yui-nav li a,.yui-navset-right .yui-nav li a{display:block;}.yui-navset-bottom .yui-nav li a{vertical-align:text-top;}.yui-navset .yui-nav li a em,.yui-navset-top .yui-nav li a em,.yui-navset-bottom .yui-nav li a em{display:block;}.yui-navset .yui-navset-left .yui-nav,.yui-navset .yui-navset-right .yui-nav,.yui-navset-left .yui-nav,.yui-navset-right .yui-nav{position:absolute;z-index:1;}.yui-navset-top .yui-nav,.yui-navset-bottom .yui-nav{position:static;}.yui-navset .yui-navset-left .yui-nav,.yui-navset-left .yui-nav{left:0;right:auto;}.yui-navset .yui-navset-right .yui-nav,.yui-navset-right .yui-nav{right:0;left:auto;}.yui-skin-sam .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav{border:solid #2647a0;border-width:0 0 5px;zoom:1;}.yui-skin-sam .yui-navset .yui-nav li,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav li{margin:0 .16em 0 0;padding:1px 0 0;zoom:1;}.yui-skin-sam .yui-navset .yui-nav .selected,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected{margin:0 .16em -1px 0;}.yui-skin-sam .yui-navset .yui-nav a,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a{background:#d8d8d8 url(../../../../assets/skins/sam/sprite.png) repeat-x;border:solid #a3a3a3;border-width:0 1px;color:#000;position:relative;text-decoration:none;}.yui-skin-sam .yui-navset .yui-nav a em,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em{border:solid #a3a3a3;border-width:1px 0 0;cursor:hand;padding:.25em .75em;left:0;right:0;bottom:0;top:-1px;position:relative;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a:focus,.yui-skin-sam .yui-navset .yui-nav .selected a:hover{background:#2647a0 url(../../../../assets/skins/sam/sprite.png) repeat-x left -1400px;color:#fff;}.yui-skin-sam .yui-navset .yui-nav a:hover,.yui-skin-sam .yui-navset .yui-nav a:focus{background:#bfdaff url(../../../../assets/skins/sam/sprite.png) repeat-x left -1300px;outline:0;}.yui-skin-sam .yui-navset .yui-nav .selected a em{padding:.35em .75em;}.yui-skin-sam .yui-navset .yui-nav .selected a,.yui-skin-sam .yui-navset .yui-nav .selected a em{border-color:#243356;}.yui-skin-sam .yui-navset .yui-content{background:#edf5ff;}.yui-skin-sam .yui-navset .yui-content,.yui-skin-sam .yui-navset .yui-navset-top .yui-content{border:1px solid #808080;border-top-color:#243356;padding:.25em .5em;}.yui-skin-sam .yui-navset-left .yui-nav,.yui-skin-sam .yui-navset .yui-navset-left .yui-nav,.yui-skin-sam .yui-navset .yui-navset-right .yui-nav,.yui-skin-sam .yui-navset-right .yui-nav{border-width:0 5px 0 0;Xposition:absolute;top:0;bottom:0;}.yui-skin-sam .yui-navset .yui-navset-right .yui-nav,.yui-skin-sam .yui-navset-right .yui-nav{border-width:0 0 0 5px;}.yui-skin-sam .yui-navset-left .yui-nav li,.yui-skin-sam .yui-navset .yui-navset-left .yui-nav li,.yui-skin-sam .yui-navset-right .yui-nav li{margin:0 0 .16em;padding:0 0 0 1px;}.yui-skin-sam .yui-navset-right .yui-nav li{padding:0 1px 0 0;}.yui-skin-sam .yui-navset-left .yui-nav .selected,.yui-skin-sam .yui-navset .yui-navset-left .yui-nav .selected{margin:0 -1px .16em 0;}.yui-skin-sam .yui-navset-right .yui-nav .selected{margin:0 0 .16em -1px;}.yui-skin-sam .yui-navset-left .yui-nav a,.yui-skin-sam .yui-navset-right .yui-nav a{border-width:1px 0;}.yui-skin-sam .yui-navset-left .yui-nav a em,.yui-skin-sam .yui-navset .yui-navset-left .yui-nav a em,.yui-skin-sam .yui-navset-right .yui-nav a em{border-width:0 0 0 1px;padding:.2em .75em;top:auto;left:-1px;}.yui-skin-sam .yui-navset-right .yui-nav a em{border-width:0 1px 0 0;left:auto;right:-1px;}.yui-skin-sam .yui-navset-left .yui-nav a,.yui-skin-sam .yui-navset-left .yui-nav .selected a,.yui-skin-sam .yui-navset-left .yui-nav a:hover,.yui-skin-sam .yui-navset-right .yui-nav a,.yui-skin-sam .yui-navset-right .yui-nav .selected a,.yui-skin-sam .yui-navset-right .yui-nav a:hover,.yui-skin-sam .yui-navset-bottom .yui-nav a,.yui-skin-sam .yui-navset-bottom .yui-nav .selected a,.yui-skin-sam .yui-navset-bottom .yui-nav a:hover{background-image:none;}.yui-skin-sam .yui-navset-left .yui-content{border:1px solid #808080;border-left-color:#243356;}.yui-skin-sam .yui-navset-bottom .yui-nav,.yui-skin-sam .yui-navset .yui-navset-bottom .yui-nav{border-width:5px 0 0;}.yui-skin-sam .yui-navset .yui-navset-bottom .yui-nav .selected,.yui-skin-sam .yui-navset-bottom .yui-nav .selected{margin:-1px .16em 0 0;}.yui-skin-sam .yui-navset .yui-navset-bottom .yui-nav li,.yui-skin-sam .yui-navset-bottom .yui-nav li{padding:0 0 1px 0;vertical-align:top;}.yui-skin-sam .yui-navset .yui-navset-bottom .yui-nav a em,.yui-skin-sam .yui-navset-bottom .yui-nav a em{border-width:0 0 1px;top:auto;bottom:-1px;}
+.yui-skin-sam .yui-navset-bottom .yui-content,.yui-skin-sam .yui-navset .yui-navset-bottom .yui-content{border:1px solid #808080;border-bottom-color:#243356;}
 
-.haclContainer {
-	width: 100%;
-	padding-bottom: 10px;
-	position: relative;
+
+/*
+	B2browse CSS RESET
+	patrick.hilsbos@b2browse.com
+*/
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+    margin:0;
+    padding:0;
 }
-
-/* Tab section */
-#haclTabs {
-	margin-left: 4px;
-	padding-left: 5px;
-	width: auto;
-	position: relative;
+table {
+    border-collapse:collapse;
+    border-spacing:0;
 }
-
-#haclTabs ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+fieldset,img {
+    border:0;
 }
-
-#haclTabs li {
-	display: inline;
-	padding: 0;
+address,caption,cite,code,dfn,em,strong,th,var {
+    font-style:normal;
+    font-weight:normal;
 }
-
-#haclTabs a {
-	/*float: left;*/
-	text-decoration: none;
+ol,ul {
+    list-style:none;
 }
-
-#haclTabs a span {
-	margin: 0 2px 0 2px;
-	padding: 4px 9px 4px 6px;
-	border: 1px solid grey;
+caption,th {
+    text-align:left;
 }
-
-#haclTabs a:hover {
-	/*background-color: darkgrey;*/
-	color: white;
+h1,h2,h3,h4,h5,h6 {
+    font-size:100%;
+    font-weight:normal;
 }
-
-#haclTabs a:hover span {
-	background-color: #CCC;
-	/*border-top: 2px solid white;*/
-	background-color: lightgrey;
+q:before,q:after {
+    content:'';
+}
+abbr,acronym { border:0;
 }
 
-#haclTabHeaderActive a span {
-	background-color: grey;
-	border-top: 2px solid orange;
-	color: #fff;
+/* custom stuff */
+
+/* yui style-customization */
+.yui-content{
+    background:#FFF!important;
+}
+.yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav{
+    border:0px solid #000!important;
 }
 
-/* SubTab section */
-#haclSubTabs {
-	margin-left: 4px;
-	padding-left: 5px;
-	width: auto;
-	position: relative;
+
+
+/* tab related styles */
+
+.haloacl_tab_content{
+    padding:5px;
+}
+.haloacl_tab_content_description{
+
+}
+.haloacl_tab_section_container{
+    float:left;
+    clear:both;
 }
 
-#haclSubTabs ul {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+.haloacl_tab_section_header{
+    width:950px;
+    height:26px;
+    background:url(images/tab_section_header_bg.png);
+    border:1px solid #000;
+    margin:10px 0 10px 0;
+
+    font-family:Arial;
+    font-size:13px;
+    font-weight:bold;
+
+}
+.haloacl_tab_section_header_count{
+    display:inline;
+    width:23px;
+    height:24px;
+    border:1px solid #000;
+    border-style:none solid none none;
+    float:left;
+    padding:2px 0 0 10px;
+
+}
+.haloacl_tab_section_header_title{
+    display:inline;
+    height:24px;
+    float:left;
+    padding:2px 0 0 10px;
 }
 
-#haclSubTabs li {
-	display: inline;
-	padding: 0;
+.haloacl_tab_section_content{
+    margin:10px 0 0 0;
+    padding:0 0 0 32px;
+    float:left;
+    clear:both;
 }
 
-#haclSubTabs a {
-	/*float: left;*/
-	text-decoration: none;
+.haloacl_tab_section_content_row{
+    float:left;
+    clear:both;
+    margin:0 0 10px 0;
+}
+.haloacl_tab_section_content_row_descr{
+    font-weight:bold;
+    float:left;
+    display:inline;
+    width:80px;
 }
 
-#haclSubTabs a span {
-	margin: 0 2px 0 2px;
-	padding: 4px 9px 4px 6px;
-	border: 1px solid grey;
+.haloacl_tab_section_content_row_content{
+    float:left;
+    display:inline;
+
 }
 
-#haclSubTabs a:hover {
-	/*background-color: darkgrey;*/
-	color: white;
+.haloacl_tab_section_content_row_content_element{
+    float:left;
+    display:inline;
+    width:120px;
+
 }
 
-#haclSubTabs a:hover span {
-	background-color: #CCC;
-	/*border-top: 2px solid white;*/
-	background-color: lightgrey;
+/* panel's general styles */
+.panel{
+    font-family:Arial;
+    font-size:13px;
+}
+.haloacl_panel{
+    width:918px;
+    border:1px solid #000;
+    background-color:#ddd;
+    float:left;
+}
+/* panel's first row that stays also collapsed visible */
+.haloacl_panel_title{
+    background-color:#FFF;
+    height:17px;
+    padding:0px 0 0 8px;
+}
+.haloacl_panel_name{
+    font-weight:bold;
+}
+.haloacl_panel_expand-collapse{
+}
+.haloacl_panel_expand-collapse a{
+    text-decoration:none;
+    border:0px solid;
+}
+.haloacl_panel_expand-collapse img{
+    border:0px solid;
+}
+.haloacl_panel_status{
+    margin:0 0 0 650px;
+    padding:0 4px;
+    border:1px solid #000;
+    border-style:none solid;
+    width:50px;
+}
+.haloacl_panel_close{
+    float:right;
+    padding:2px 8px 0 0;
+}
+.haloacl_panel_close img{
+    border:0px solid;
 }
 
-#haclSubTabHeaderActive a span {
-	background-color: grey;
-	border-top: 2px solid orange;
-	color: #fff;
+/* panel content */
+.haloacl_panel_content{
+    border:1px solid #000;
+    border-style:solid none none  none;
+    padding:13px 21px 13px 21px;
+    float:left;
+    width:877px;
+
+}
+.halocal_panel_content_row{
+    float:left;
+    clear:both;
+    margin:0 0 10px 0;
+}
+.haloacl_panel_content_row_descr{
+    display:inline;
+    font-weight:bold;
+    width:80px;
+    float:left;
+}
+.haloacl_panel_content_row_content{
+    float:left;
+    display:inline;
+}
+.haloacl_panel_button_collapse{
+    background:url(images/panel_collapse.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:4px 4px 0 0;
+
 }
 
-/* general settings */
+.haloacl_panel_button_expand{
+    background:url(images/panel_expand.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:4px 4px 0 0;
 
-.haclTabContent {
-	width: auto;
-	position: relative;
-	margin-top: 2px;
-	border: 1px solid grey;
-	background-color: #FFF;
 }
+.haloacl_panel_button_close{
+    background:url(images/panel_close.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:2px 4px 0 0;
 
-.haclHeadline {
-	position: relative;
-	width: auto;
-	text-align: left;
-	font-size: 1.2em;
-	text-decoration: underline; 
-}
-
-.haclInfo {
-	text-align: left;	
-}
-.haclHeader {
-	position: relative;
-	width: auto;
-	padding: 3px 0 3px 10px;
-	border: 1px solid grey;
-	background-color: grey;
-	color: white;
-	font-weight: bold;
 }
 
-/*'Create standard ACL ' tab*/
-#haclCreateStACLContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 20px;
+/* general stuff */
+.haloacl_greyline{
+    border:1px solid #AAA;
+    border-style:none  none solid none;
+    height:2px;
+    clear:both;
+    margin:0 0 10px 0;
 }
 
-#haclCreateStACLGeneralContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 0; 
+/* rights panel*/
+.haloacl_rightpanel_selecttab_container{
+    float:left;
+    clear:both;
 }
-
-#haclCreateStACLGeneralContainer td {
-	position: relative;
-	width: auto;
-	padding: 10px 20px 10px 20px;
+.haloacl_rightpanel_selecttab_leftpart{
+    float:left;
+    width:459px;
+    border:1px solid #000;
+    border-style:none solid none none;
 }
-#haclCreateStACLRightsContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 0; 
-}
-
-/*'Create ACL default user template' tab*/
-#haclCreateDutContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 20px;
-}
-
-#haclCreateDutGeneralContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 0; 
-}
-
-#haclCreateDutGeneralContainer td {
-	position: relative;
-	width: auto;
-	padding: 10px 20px 10px 20px;
-}
-#haclCreateDutRightsContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 5px 0; 
-}
-
-.haclCreateRightButton{
-	margin: 10px 20px 10px 0;
-}
-
-.haclCreateDutRight {
-	padding: 0 0 0 10px;
-}
-.haclCreateDutRightLegend {
-	position: relative;
-	width: auto;
-	align:left;
-	padding: 0 5px 0 5px;
-}
-.haclCreateDutLegendControl {
-	position: relative;
-	width: auto;
-	align: right;
-	padding: 0 5px0 5px;
-}
-
-/* 'Mangage whitelists' tab */
-#haclWhitelistContainer {
-	position: relative;
-	width: auto;
-	padding: 5px 20px 10px 20px;
-}
-
-#haclWhitelistHeadline {
-	position: relative;
-	width: auto;
-	text-align: left;
-	font-size: 1.2em;
-	text-decoration: underline; 
-}
-
-#haclWhitelistInfo {
-	text-align: left;	
-}
-
-#haclWhitelistFilter {
-	position: relative;
-	width: 502px;
-	padding: 5px 0 5px 0;
-	align: right;
-	text-align: right;
-}
-
-#haclWhitelistPageSetContainer {
-	position: relative;
-	width: 500px;
-	height: 150px;
-	border: 1px solid grey;
-}
-
-#haclWhitelistPageSetHeader {
-	position: relative;
-	width: auto;
-	background-color: grey;
-	border-bottom: 1px solid lightgrey;
-	font-weight: bold;
-	padding: 3px 0 3px 10px;
-}
-#haclWhitelistPageSet {
-	position: relative;
-	width: auto;
-	overflow-y: auto;
-	overflow-x: hidden;
-}
-
-#haclWhitelistPageSet ul {
-	margin: 0;
-	padding: 0;
-	list-style: disc;
-}
-
-#haclWhitelistPageSet li {
-	margin-left: 20px;
-	padding: 2px 0 2px 0;
-}
-#haclWhitelistPageSet a {
-	margin: 0 2px 0 0;
-	text-decoration: none;
-}
-
-#haclWhitelistPageSet a span {
-}
-
-#haclWhitelistPageSet a:hover {
-	background-color: #7E94B9;
-	color: white;
-}
-
-#haclWhitelistPageSet a:hover span {
-	background-color: #7E94B9;
-}
-
-#haclWhitelistAddPageContainer {
-	padding: 5px 0 5px 0;
-}
-#haclWhitelistPageName{
-	margin-right: 5px;
-	font-weight: bold;
-}
-#haclWhitelistPageInput {
-	margin-right: 5px;
-}
-
-.drawLine {
-	width: 95%;
-	margin: 2px;
-	padding: 0;
-	border-top: 1px solid lightgrey;
-}
-
-.marginToRight {
-	margin-right: 5px;
+.haloacl_rightpanel_selecttab_rightpart{
+    float:left;
+    width:372px;
 }

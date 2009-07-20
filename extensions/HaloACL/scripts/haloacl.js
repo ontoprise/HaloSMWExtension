@@ -1,92 +1,192 @@
-/*  Copyright 2009, ontoprise GmbH
-*   Author: Benjamin Langguth
-*   This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// Globals
+YAHOO.namespace("haloacl");
+YAHOO.namespace ("haloacl.constants");
+YAHOO.namespace ("haloacl.settings");
 
-var HaloACLSpecialPage = Class.create({
-	initialize: function() {
-		// do nothing special.
-	},
+YAHOO.haloacl.panelcouner = 0;
 
-	testMe: function() {
-		alert('script loaded!');
-	},
+// Tabview related stuff
 
-	/**
-	 * Toggles element's display value
-	 * Input: any number of element id's
-	 * Output: none
-	 */ 
-	toggleDisp: function() {
-		for (var i = 0; i < arguments.length; i++) {
-			var d = $(arguments[i]);
-			if ( d.style.display == 'block' )
-				d.style.display = 'block';
-			else
-				d.style.display = 'none';
-		}
-	},
+// building the main tabview
+YAHOO.haloacl.buildMainTabView = function(containerName){
+    YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
 
-	/**
-	 * Toggles tabs - Closes any open tabs, and then opens current tab
-	 * Input:	1.The number of the current tab
-	 *			2.The number of tabs
-	 *			3.(optional)The number of the tab to leave open
-	 *			4.(optional)Pass in true or false whether or not to animate the open/close of the tabs
-	 * Output: none
-	 */ 
-	toggleTab: function( num, numelems, opennum, animate ) {
-		if ( $('haclTabContent'+num).style.display == 'none' ) {
-			for (var i = 1; i <= numelems; i++) {
-				if ( ( opennum == null ) || ( opennum != i ) ) {
-					var temph = 'haclTabHeader'+i;
-					var h = $(temph);
-					if ( !h ) {
-						var h = $('haclTabHeaderActive');
-						h.id = temph;
-					}
-					var tempc = 'haclTabContent'+i;
-					var c = $(tempc);
-					if( c.style.display != 'none' ) {
-						if ( animate || typeof animate == 'undefined' ) {
-							Effect.toggle( tempc, 'blind', {duration:0.5, queue:{scope:'menus', limit: 3}} );
-						}
-						else {
-							this.toggleDisp(tempc);
-						}
-					}
-				}
-			}
-			var h = $('haclTabHeader'+num);
-			if ( h ) {
-				h.id = 'haclTabHeaderActive';
-				h.blur();
-			}
-			var c = $('haclTabContent'+num);
-			c.style.marginTop = '2px';
-			if ( animate || typeof animate == 'undefined' ) {
-				Effect.toggle('haclTabContent'+num,'blind',{duration:1, queue:{scope:'menus', position:'end', limit: 3}});
-			}
-			else {
-				this.toggleDisp('haclTabContent'+num);
-			}
-		}
-	},
-});
+    var tab1 = new YAHOO.widget.Tab({
+        label: 'Create ACL',
+        dataSrc:'createAclContent',
+        cacheData:false,
+        active:true
+    });
+    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclTabs.addTab(tab1);
+    tab1.addListener('click', function(e){});
+    $(tab1.get('contentEl')).setAttribute('id','creataclTab');
 
-//------ Classes -----------
 
-var haloACLSpecialPage = new HaloACLSpecialPage();
+    // ------
+
+    var tab2 = new YAHOO.widget.Tab({
+        label: 'Manage ACLs',
+        dataSrc:'manageAclsContent',
+        cacheData:false,
+        active:false
+    });
+    tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclTabs.addTab(tab2);
+    tab2.addListener('click', function(e){});
+    $(tab2.get('contentEl')).setAttribute('id','manageaclTab');
+
+    // ------
+
+    var tab3 = new YAHOO.widget.Tab({
+        label: 'Manage User',
+        dataSrc:'manageUserContent',
+        cacheData:false,
+        active:false
+    });
+    tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclTabs.addTab(tab3);
+    tab3.addListener('click', function(e){});
+    $(tab1.get('contentEl')).setAttribute('id','manageuserTab');
+
+    // ------
+
+    var tab4 = new YAHOO.widget.Tab({
+        label: 'Whitelists',
+        dataSrc:'whitelistsContent',
+        cacheData:false,
+        active:false
+    });
+    tab4._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclTabs.addTab(tab4);
+    tab4.addListener('click', function(e){});
+    $(tab1.get('contentEl')).setAttribute('id','whitelistsTab');
+
+// ------
+
+};
+
+
+YAHOO.haloacl.tabDataConnect = function() {
+    var tab = this;
+    var queryparameterlist = {
+        rs:tab.get('dataSrc')
+    };
+
+    var postData = tab.get('postData');
+    
+    if(postData != null){
+        var temparray = new Array();
+        for(param in postData){
+            temparray.push(postData[param]);
+        }
+        queryparameterlist.rsargs = temparray;
+
+    }
+    YAHOO.util.Dom.addClass(tab.get('contentEl').parentNode, tab.LOADING_CLASSNAME);
+    tab._loading = true;
+    new Ajax.Updater(tab.get('contentEl'), "?action=ajax", {
+        //method:tab.get('loadMethod'),
+        method:'post',
+        parameters:queryparameterlist,
+        asynchronous:true,
+        evalScripts:true,
+        onSuccess: function(o) {
+            YAHOO.util.Dom.removeClass(tab.get('contentEl').parentNode, tab.LOADING_CLASSNAME);
+            tab.set('dataLoaded', true);
+            tab._loading = false;
+        },
+        onFailure: function(o) {
+            YAHOO.util.Dom.removeClass(tab.get('contentEl').parentNode, tab.LOADING_CLASSNAME);
+            tab._loading = false;
+        }
+    });
+};
+
+// general ajax stuff
+YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
+    var queryparameterlist = {
+        rs:action
+    };
+
+    if(parameterlist != null){
+        var temparray = new Array();
+        for(param in parameterlist){
+            temparray.push(parameterlist[param]);
+        }
+        queryparameterlist.rsargs = temparray;
+    }
+
+    new Ajax.Updater(targetdiv, "?action=ajax", {
+        //method:tab.get('loadMethod'),
+        method:'post',
+        parameters: queryparameterlist,
+        asynchronous:true,
+        evalScripts:true,
+        onSuccess: function(o) {
+            tab._loading = false;
+        },
+        onFailure: function(o) {
+        }
+    });
+};
+
+
+YAHOO.haloacl.togglePanel = function(panelid){
+    var element = $('content_'+panelid);
+    var button = $('exp-collapse-button_'+panelid);
+    if(element.visible()){
+        button.removeClassName('haloacl_panel_button_collapse');
+        button.addClassName('haloacl_panel_button_expand');
+        element.hide();
+    }else{
+        button.addClassName('haloacl_panel_button_collapse');
+        button.removeClassName('haloacl_panel_button_expand');
+        element.show();
+    }
+};
+
+YAHOO.haloacl.closePanel = function(panelid){
+    var element = $(panelid);
+    element.remove();
+};
+
+/* RIGHT PANEL STUFF */
+
+YAHOO.haloacl.buildRightPanelTabView = function(containerName){
+    YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
+    var parameterlist = {panelid:containerName};
+    
+    var tab1 = new YAHOO.widget.Tab({
+        label: 'Select / Deselect',
+        dataSrc:'rightPanelSelectDeselectTab',
+        cacheData:false,
+        active:true,
+        postData:parameterlist
+    });
+    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+    tab1.addListener('click', function(e){});
+    $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+
+
+    // ------
+
+    var tab2 = new YAHOO.widget.Tab({
+        label: 'Assigned',
+        dataSrc:'rightPanelAssignedTab',
+        cacheData:false,
+        active:false,
+        postData:parameterlist
+    });
+
+    tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab2);
+    tab2.addListener('click', function(e){});
+    $(tab2.get('contentEl')).setAttribute('id','rightPanelAssignedTab'+containerName);
+
+    
+
+// ------
+
+};
