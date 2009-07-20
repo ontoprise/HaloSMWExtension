@@ -38,6 +38,48 @@
 	padding-top: 75px;
 }
 
+.TabContainer {
+	line-height: 3em;
+	display: table; 
+	width: 100%; 
+	border-width: 2px; 
+	border-bottom-style: solid; 
+	border-color: #5d5d5d;
+	white-space: nowrap;
+	padding-bottom: 0px;
+	border-spacing: 0px;
+	cell-spacing: 0px;
+}
+
+.ActiveTab {
+	color: white;
+	font-weight: bold;
+	text-decoration: underline;
+	line-height: 3em;
+	background-color: #8d8d8d;
+	padding-left: 10px;
+	padding-right: 10px;
+	margin-right: 30px;
+	cursor: pointer;
+}
+
+.InactiveTab {
+	font-weight: bold;
+	line-height: 3em;
+	padding-left: 10px;
+	padding-right: 10px;
+	border-left-style: solid;
+	border-left-width: 2px;
+	border-right-style: solid;
+	border-right-width: 2px;
+	border-top-style: solid;
+	border-top-width: 2px;
+	border-color: #5d5d5d;
+	color: #5d5d5d;
+	margin-right: 30px;
+	cursor: pointer;
+}
+	
 .ActualMenueStep{
 	color: white;
 	font-weight: bold;

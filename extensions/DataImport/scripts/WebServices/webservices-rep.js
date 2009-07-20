@@ -92,11 +92,15 @@ WebServiceRepositorySpecial.prototype = {
 	displayWebServiceTab : function(){
 		$('web-service-tab-content').style.display = "";
 		$('term-import-tab-content').style.display = "none";
+		$('web-service-tab').setAttribute('class', "ActiveTab");
+		$('term-import-tab').setAttribute('class', "InactiveTab");
 	},
 	
 	displayTermImportTab : function(){
 		$('web-service-tab-content').style.display = "none";
 		$('term-import-tab-content').style.display = "";
+		$('web-service-tab').setAttribute('class', "InactiveTab");
+		$('term-import-tab').setAttribute('class', "ActiveTab");
 	}
 }	
 

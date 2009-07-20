@@ -66,10 +66,11 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			
 		$html = "";
 
-		$html .= "<div id=\"menue\">";
-		$html .= "<span onclick=\"webServiceRepSpecial.displayWebServiceTab()\">Web Service definitions</span>";
-		$html .= "<span onclick=\"webServiceRepSpecial.displayTermImportTab()\">Term Import definitions</span>";
-		$html .= "</div>";
+		$html .= "<table id=\"menue\" class=\"TabContainer\"><tr>";
+		$html .= "<td id=\"web-service-tab\" class=\"ActiveTab\" onclick=\"webServiceRepSpecial.displayWebServiceTab()\">Web Service definitions</td>";
+		$html .= "<td style=\"padding-left:20px\"></td>";
+		$html .= "<td id=\"term-import-tab\" class=\"InactiveTab\" onclick=\"webServiceRepSpecial.displayTermImportTab()\">Term Import definitions</td>";
+		$html .= "<td style=\"width: 100%\"></td></tr></table>";
 
 		global $smwgDIIP;
 		
