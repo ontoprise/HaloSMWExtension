@@ -307,7 +307,7 @@
       <comment>1 revision</comment>
       <text xml:space="preserve">&lt;br/&gt;
 |-
-| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt; {{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot; &gt; {{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
 | bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:Special:FilePath/{{{1}}}}} {{RMNoNamespace|{{{2}}}}}]&lt;/span&gt;
 | bgcolor=&quot;white&quot; | [[{{{3}}}]]
 | bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
