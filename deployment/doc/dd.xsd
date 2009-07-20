@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.ontoprise.com/smwhalo/deploydescriptor"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.ontoprise.com/smwhalo/deploydescriptor">
+
+    <include schemaLocation=""></include>
+    <element name="deploydescriptor" type="tns:DeployDescriptorType"></element>
+
+	<element name="global" type="tns:GlobalDataType"></element>
+
+	<element name="version" type="int"></element>
+
+	<element name="id" type="string"></element>
+
+	<complexType name="GlobalDataType">
+		<sequence>
+			<element ref="tns:id" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:version" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:dependencies" maxOccurs="1" minOccurs="0"></element>
+			<element ref="tns:vendor" maxOccurs="1" minOccurs="0"></element>
+			<element ref="tns:installation_dir" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:description" maxOccurs="1" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DeployDescriptorType">
+		<sequence>
+			<element ref="tns:global"></element>
+			<element ref="tns:codefiles"></element>
+			<element ref="tns:wikidumps"></element>
+			<element ref="tns:resources"></element>
+			<element ref="tns:configs"></element>
+		</sequence>
+	</complexType>
+
+	<element name="vendor" type="string"></element>
+
+	<element name="installation_dir" type="string"></element>
+
+	<element name="dependencies" type="tns:DependencyType"></element>
+
+	<complexType name="DependenciesType">
+		<sequence>
+			<element ref="tns:dependency"></element>
+		</sequence>
+	</complexType>
+
+	<element name="dependency" type="tns:DependencyType"></element>
+
+	<complexType name="DependencyType">
+		<attribute name="from" type="int"></attribute>
+		<attribute name="to" type="int"></attribute>
+	</complexType>
+
+	<element name="description" type="string"></element>
+
+	<element name="codefiles" type="tns:CodefilesType"></element>
+
+
+	<element name="wikidumps" type="string"></element>
+
+	<element name="resources" type="string"></element>
+
+	<element name="configs" type="tns:ConfigType"></element>
+
+	<complexType name="ConfigType">
+		<sequence>
+			<element ref="tns:new" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:uninstall" maxOccurs="1" minOccurs="1"></element>
+			<element ref="tns:update" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="Variable">
+		<choice>
+			<element ref="tns:array"></element>
+			<element ref="tns:string"></element>
+			<element ref="tns:boolean"></element>
+			<element ref="tns:number"></element>
+		</choice>
+		<attribute name="remove" type="string"></attribute>
+	</complexType>
+
+	<complexType name="FunctionCall">
+		<choice>
+			<element ref="tns:array"></element>
+			<element ref="tns:string"></element>
+			<element ref="tns:boolean"></element>
+			<element ref="tns:number"></element>
+		</choice>
+		<attribute name="remove" type="string"></attribute>
+	</complexType>
+
+	<complexType name="String">
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+		<attribute name="key" type="string"></attribute>
+		<attribute name="null" type="boolean"></attribute>
+	</complexType>
+
+	<complexType name="Number">
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+		<attribute name="key" type="string"></attribute>
+		<attribute name="null" type="boolean"></attribute>
+	</complexType>
+
+	<complexType name="Boolean">
+		<attribute name="name" type="string"></attribute>
+		<attribute name="description" type="string"></attribute>
+		<attribute name="key" type="string"></attribute>
+		<attribute name="null" type="boolean"></attribute>
+	</complexType>
+
+	<complexType name="Array">
+		<attribute name="name" type="string"></attribute>
+		<attribute name="key" type="string"></attribute>
+	</complexType>
+
+
+
+	<element name="string" type="tns:String"></element>
+
+	<element name="number" type="tns:Number"></element>
+
+	<element name="boolean" type="tns:Boolean"></element>
+
+	<element name="array" type="tns:Array"></element>
+
+	<element name="new" type="tns:ConfigElementType"></element>
+
+	<complexType name="ConfigElementType">
+		<sequence>
+			<element ref="tns:variable"></element>
+			<element ref="tns:function"></element>
+			<element ref="tns:require"></element>
+			<element ref="tns:php"></element>
+			<element ref="tns:patch"></element>
+			<element ref="tns:script"></element>
+		</sequence>
+
+	</complexType>
+
+	<element name="update" type="tns:ConfigElementType"></element>
+    
+    <element name="uninstall" type="tns:ConfigElementType"></element>
+
+    <element name="variable" type="tns:Variable"></element>
+
+    <element name="function" type="tns:FunctionCall"></element>
+
+    <element name="require" type="tns:Require"></element>
+    
+    <complexType name="Require">
+    	<attribute name="file" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="remove" type="string"></attribute>
+    </complexType>
+
+    <complexType name="Php">
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="remove" type="string"></attribute>
+    </complexType>
+
+    <element name="php" type="tns:Php"></element>
+
+    <element name="patch" type="tns:FileType2"></element>
+    
+    <complexType name="FileType2">
+    	<attribute name="file" type="string"></attribute>
+    </complexType>
+
+    <element name="script" type="tns:FileType2"></element>
+
+
+
+    <element name="file" type="tns:CodefilesType"></element>
+
+    <complexType name="CodefilesType">
+    	<sequence>
+    		<element ref="tns:file"></element>
+    	</sequence>
+    	<attribute name="hash" type="string"></attribute>
+    </complexType>
+</schema>

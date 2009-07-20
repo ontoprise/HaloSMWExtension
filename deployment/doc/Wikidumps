@@ -1,0 +1,40 @@
+* 
+* Wikidumps
+*
+* @author: Kai Kühn / ontoprise / 2009
+*
+
+Contents:
+
+    1. Format
+    2. Create a dump
+    3. Import a dump
+    
+1. Format
+
+   The wikidumps use basically the same XML format than Mediawiki does. But it was extended slightly
+   
+    1. A version attribute for each page
+    2. A part-of-bundle attribute
+    3. A hash attribute
+    
+2. Create dump
+
+    A dump has to contain two special annotations (english, for other language see language files):
+            
+       Ontology version
+       Part of bundle    
+       
+    They should be contained in a template which is embedded in each page conataining to
+    the bundle. The exporter reads these attribute values and adds them in the dump. It also
+    creates a hash value about the text content and stores it in the attribute 'Content hash'.
+    
+    Use maintenance/export to create such a dump.
+    
+3. Import dump
+
+    When a dump is imported, the hash value is read and added as annotation to the page. By default
+    it is not visible in the rendered text but in the factbox.
+    
+    Dumps are imported using either maintenance/import or (better) the smwadmin tool.
+    

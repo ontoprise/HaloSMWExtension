@@ -1,0 +1,159 @@
+* 
+* Deploy Descriptors
+*
+* @author: Kai Kühn / ontoprise / 2009
+*
+
+Contents:
+
+    1. Global metadata
+    2. Codefiles
+    3. Wikidumps
+    4. Resources
+    5. Configs
+    6. Config elements
+
+For a formal description in XML-Schema, see dd.xsd
+
+ 1. Global metadata.
+ 
+    Contains global metadata of a package. 
+ 
+ Example:
+ 
+        <global>
+                <version>fdfd</version>
+                <id>fdf</id>
+                <instdir>fdfd</instdir>
+                <vendor>fdfd</vendor>
+                <description>...</description>
+                <dependencies>
+                    <dependency from="xxx" to="xxx">...</dependency>
+            </dependencies>
+        </global>
+        
+        - version: 3 digits
+        - id: unique name for package (all lowercase)
+        - installation directory (only slashes, no backslashes to be platform-independant)
+        - vendor: Arbitrary name
+        - description: A short text which describes the package
+        - dependencies: Describes all packages which this package needs for proper working.
+                    the dependant package is identified by its ID. from and to attributes 
+                    specify the range of versions of the dependant package which this package can handle.
+                    
+2. Codefiles
+    
+    Used for checking integrity of code. All denoted files are hashed, concatenated to a string and this
+    is finally hashed resulting in the fingerprint of this code.
+    
+    This hash value can be created by using the maintenance tool: createDesc.php
+    
+    <codefiles hash="371f01255099a64cad6d0a92ccc8ed60">
+        <file loc="..."/>
+        <file loc="..."/>
+    </codefiles>
+    
+        - hash attribute: Accumulated hash of all specified files.
+        - file element: may point to a single file or a directory. 
+    
+3. Wikidumps
+
+    Specifies dump files containg arbitrary wiki pages. It's a special dump format containing
+    a hash to determine changes to the wiki pages. This special export can be created by using
+    the maintenance tool: export 
+    
+    <wikidumps>
+        <file loc="..."/>
+        ...
+    </wikidumps>
+    
+4. Resources
+
+    Specifies resources to either import or just to copy. The location attributes can point 
+    to files or directories. If a dest-attribute is specified the files contained in location
+    will only be copied in place.
+    
+    <resources>
+        <file loc="..."/>
+        ...
+    </resources>
+    
+5. Configs
+
+    Specifies the necessary configuration changes. It is divided in three sections:
+    
+        - new: Executed if a package is installed completely new
+        - update: If a package is updated (from the given version)
+        - uninstall: Executed if the package is de-installed.
+    
+    <configs>
+        <new>
+        </new>
+        <update from="...">
+        </update>
+        <uninstall>
+        </uninstall>
+    </configs>    
+     
+
+     In every configuration section the following elements can appear:
+     
+        - variable: A variable 
+        - function: A function call
+        - require: A require statement
+        - php: Arbitrary PHP code
+        
+        - patch: A patch file which needs to be executed
+        - script: A script which needs to be executed 
+        
+6. Configuration elements
+        
+        *All config elements must contain a name attribute. 
+        *They may contain a remove attribute. This indicated that the specified element should be removed.
+        *They may contain a description attribute.
+        
+       - variable: 
+                    <string>, <boolean>, <number>, <array>
+                    where array can contain the others and itsself of course.
+                    Each can contain a key attribute, if they are contained in an array.
+                    In this case it became a hash array.
+                    
+                    Example:
+                    
+                    <variable name="wgUseAjax">
+                        <boolean name="wgUseAjax"
+                            description="enables ajax calls">
+                            true
+                        </boolean>
+                    </variable>
+                    
+       - function:  <string>, <boolean>, <number>, <array>
+                    where array can contain the others and itsself of course.
+                    They serve as function call arguments.
+                    
+                    Special attributes: null (indicates the value NULL)
+                    
+                    Example:
+                    
+                    <function name="enableSMWHalo">
+                        <string name="sql_storage">SMWHaloStore2</string>
+                        <string name="ts_storage" null="true" />
+                        <string name="ts-url" null="true" />
+                    </function>
+                    
+       - require: file attribute points to the script file.
+       
+                    Example:
+                    
+                    <require name="smwhalo"
+                        file="extensions/SMWHalo/includes/SMW_Initialize.php" />
+                        
+       - php: No special attributes
+       
+                    Example:
+                    
+                    <php name="somecode">$arbitraryCode = 2323;</php>
+       
+       - patch: attribute file: A file in the unified patch format (GNU)
+       
+       - setup: attribute file: A PHP script.
