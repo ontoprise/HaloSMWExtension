@@ -94,7 +94,7 @@ class Rollback {
 			$this->saveResources($localExt->getID());
 			print "done.";
 		}
-		$this->extToRestore[] = $dd->getID();
+		$this->extToRestore[] = $id;
 	}
 
 	/**

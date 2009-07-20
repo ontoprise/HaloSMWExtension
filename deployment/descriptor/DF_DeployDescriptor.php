@@ -14,7 +14,8 @@ class DeployDescriptor {
 
 	// extracted data from deploy descriptor
 	var $globalElement; // global metadata, ie. version, id, vendor, description, install dir
-	var $codefiles; // code files (only hashes for detecting changes)
+	var $codefiles; // code files or directories (which are controlled by hash)
+	var $codeHash; // accumalted hash over all codefiles
 	var $wikidumps; // wiki XML dump file (Halo format)
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
@@ -327,12 +328,13 @@ class DeployDescriptor {
 	/**
 	 * Validates the code files.
 	 *
-	 * @return Mixed. True if all files are valid, otherwise array of invalid files.
+	 * @return boolean. True if all files are valid, otherwise false.
 	 */
 	function validatecode($rootDir) {
 
 		$codeFiles = $this->getCodefiles();
 		if (count($codeFiles) == 0) return true;
+		if (is_null($this->codeHash)) return true;
 		$actual_hash = "";
 		foreach($codeFiles as $file) {
 			$this->_validateCode($rootDir."/".$file, $actual_hash);

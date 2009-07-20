@@ -6,9 +6,10 @@
  *
  *
  */
+define('DEPLOY_FRAMEWORK_VERSION', 0.1);
 
-require_once('smwadmin/Tools.php');
-require_once('smwadmin/Installer.php');
+require_once('smwadmin/DF_Tools.php');
+require_once('smwadmin/DF_Installer.php');
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
@@ -197,7 +198,7 @@ foreach($packageToUpdate as $toUpdate) {
 print "\n\nOK.\n";
 
 function showHelp() {
-	echo "\nsmwhalo admin utility v0.1, Ontoprise 2009";
+	echo "\nsmwhalo admin utility v".DEPLOY_FRAMEWORK_VERSION.", Ontoprise 2009";
 	echo "\n\nUsage: smwadmin [ -i | -d ] <package>[-<version>]";
 	echo "\n       smwadmin -u [ <package>[-<version>] ]";
 	echo "\n";
@@ -219,6 +220,7 @@ function showHelp() {
 }
 
 function handleRollback() {
+	global $rollback;
 	print "Rollback...";
 	$rollback->rollback();
 	 
@@ -226,6 +228,7 @@ function handleRollback() {
 
 
 function handleGlobalUpdate($checkDep) {
+	global $installer;
 	list($extensions_to_update, $updated) = $installer->updateAll($checkDep);
 	if ($checkDep) {
 		if (count($extensions_to_update) > 0) {

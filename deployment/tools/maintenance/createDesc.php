@@ -46,7 +46,8 @@ $vendor = trim(fgets(STDIN));
 print "\nCalculating hashes...";
 if (strpos(trim($dir), -1) != '/') $dir = trim($dir)."/";
 $filesAndHashes = array();
-iterate_dir($dir, $filesAndHashes);
+$hashes="";
+iterate_dir($dir, $hashes);
 
 // global header
 $xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
@@ -62,12 +63,13 @@ $xml .= "\t\t\t".'<dependency from="xxx" to="xxx">...</dependency>'."\n";
 $xml .= "\t".'</dependencies>'."\n";
 $xml .= "\t".'</global>'."\n";
 
-$xml .= "\t".'<codefiles>'."\n";
-$xml .= "\t\t".'<patch file="..."/>'."\n";
-foreach($filesAndHashes as $f) {
-    list($file, $hash) = $f;
-    $file = substr($file, strlen($dir)+1);
-    $xml .= "\t\t".'<file loc="'.$file.'" hash="'.$hash.'"/>'."\n";
+$xml .= "\t".'<codefiles hash="'.md5($hashes).'">'."\n";
+
+$files = get_files($dir);
+
+foreach($files as $file) {
+	$file = substr($file, strlen($dir)+1);
+	$xml .= "\t\t".'<file loc="'.$file.'"/>'."\n";
 }
 $xml .= "\t".'</codefiles>'."\n";
 $xml .= "\t".'<wikidumps>'."\n";
@@ -75,13 +77,14 @@ $xml .= "\t\t".'<file loc="..."/>'."\n";
 $xml .= "\t".'</wikidumps>'."\n";
 $xml .= "\t".'<resources>'."\n";
 $xml .= "\t\t".'<file loc="..."/>'."\n";
-$xml .= "\t\t".'<dir loc="..."/>'."\n";
 $xml .= "\t".'</resources>'."\n";
 $xml .= "\t".'<configs>'."\n";
 $xml .= "\t\t".'<new>'."\n";
 $xml .= "\t\t".'</new>'."\n";
 $xml .= "\t\t".'<update from="...">'."\n";
 $xml .= "\t\t".'</update>'."\n";
+$xml .= "\t\t".'<uninstall>'."\n";
+$xml .= "\t\t".'</uninstall>'."\n";
 $xml .= "\t".'</configs>'."\n";
 $xml .= '</depoydescriptor>'."\n";
 
@@ -92,21 +95,38 @@ fclose($handle);
 
 print "\n\nCreation successful!\n";
 
-function iterate_dir($current_dir, & $filesAndHashes) {
+function iterate_dir($current_dir, & $hashes) {
 	if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
 	if($dir = @opendir($current_dir)) {
 		while (($f = readdir($dir)) !== false) {
 			if($f > '0' and filetype($current_dir.$f) == "file") {
 				if (strpos($f, ".svn") !== false) continue;
 				$content = file_get_contents($current_dir.$f);
-				$hash = md5($content);
-                $filesAndHashes[] = array($current_dir.$f, $hash);
+				$hashes .= md5($content);
+
 			} elseif($f > '0' and filetype($current_dir.$f) == "dir") {
 				iterate_dir($current_dir.$f);
 			}
 		}
 		closedir($dir);
-		
+
 	}
+}
+
+function get_files($current_dir) {
+	$files = array();
+	if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
+
+	if($dir = @opendir($current_dir)) {
+		while (($f = readdir($dir)) !== false) {
+			if($f > '0' and filetype($current_dir.$f) == "file") {
+				$files[] = $current_dir.$f;
+
+			} elseif($f > '0' and filetype($current_dir.$f) == "dir") {
+				$files[] = $current_dir.$f;
+			}
+		}
+	}
+	return $files;
 }
 ?>
