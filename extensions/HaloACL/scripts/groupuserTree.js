@@ -90,7 +90,6 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     checkClick: function(oArgs) {
         var node = oArgs.node;
         var target = YAHOO.util.Event.getTarget(oArgs.event);
-        alert(node);
         if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
             if (node.checkState === 0) {
                 node.check();

@@ -238,28 +238,30 @@ abbr,acronym { border:0;
     margin:0 0 10px 0;
 }
 
+/* ------------------
+    ------------------
+*/
 /* rights panel*/
 .haloacl_rightpanel_selecttab_container{
     float:left;
     clear:both;
 }
+/* left side */
 .haloacl_rightpanel_selecttab_leftpart{
     float:left;
-    width:459px;
+    width:438px;
     border:1px solid #000;
-    border-style:none solid none none;
-    padding:3px 0 0 0;
+    /* TODO */
+    border-style:none none none none;
+    padding:0 0 0 0;
 }
-.haloacl_rightpanel_selecttab_rightpart{
-    float:left;
-    width:372px;
-}
+
 
 .haloacl_rightpanel_selecttab_leftpart_filter{
     border:1px solid #000;
     border-style:none none solid none;
     height:24px;
-    padding:0 0 0 3px;
+    padding:3px 0 0 3px;
 }
 
 .haloacl_rightpanel_selecttab_leftpart_filter_title{
@@ -267,6 +269,12 @@ abbr,acronym { border:0;
 
 }
 
+.haloacl_rightpanel_selecttab_leftpart_treeview_userlink{
+    border:1px solid #000;
+    border-style:solid none none none;
+    padding:3px 0 3px 3px;
+    text-decoration:underline;
+}
 /* treeview in rights panel*/
 .haloacl_rightpanel_selecttab_leftpart_treeview{
     padding:0 0 0 3px;
@@ -276,3 +284,30 @@ abbr,acronym { border:0;
 .ygtvcheck0 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check0.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck1 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check1.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check2.gif) 0 0 no-repeat; width:16px; cursor:pointer }
+
+/* right side */
+
+.haloacl_rightpanel_selecttab_rightpart{
+    float:left;
+    width:433px;
+    border:1px solid #000;
+    border-style:none none none solid;
+    padding:0 0 0 0;
+}
+.haloacl_rightpanel_selecttab_rightpart{
+    float:left;
+    height:320px;
+
+}
+
+.haloacl_rightpanel_selecttab_rightpart_filter{
+    border:1px solid #000;
+    border-style:none none solid none;
+    height:24px;
+    padding:3px 0 0 3px;
+}
+
+.haloacl_rightpanel_selecttab_rightpart_filter_title{
+    font-weight:bold;
+
+}

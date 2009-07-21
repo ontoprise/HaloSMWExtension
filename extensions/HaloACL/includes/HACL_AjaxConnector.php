@@ -17,6 +17,7 @@ $wgAjaxExportList[] = "whitelistsContent";
 $wgAjaxExportList[] = "getRightsPanel";
 $wgAjaxExportList[] = "rightPanelSelectDeselectTab";
 $wgAjaxExportList[] = "getGroupsForRightPanel";
+$wgAjaxExportList[] = "getUsersForUserTable";
 
 //put your code here
 
@@ -59,75 +60,6 @@ function createAclContent() {
     $createStACLRightsDelete = wfMsg('hacl_create_acl_dut_new_right_delete');
     $createStACLRightsAnnotate = wfMsg('hacl_create_acl_dut_new_right_annotate');
 
-/* ----- old part
- *
-
-    $html = <<<HTML
-<div id=haclCreateStACLContainer>
-	<p class="haclHeadline">{$createStACLHeadline}</p>
-	<p class="haclInfo">{$createStACLInfo}</p>
-	<div id="haclCreateStACLGeneralContainer">
-		<div id="haclCreateStACLGeneralHeader">{$createStACLGeneralHeader}</div>
-		<table>
-			<tr>
-				<td>{$createStACLGeneralDefine}</td>
-				<td><input type="checkbox" checked="checked">{$createStACLGeneralDefinePrivate}</input></td>
-				<td><input type="checkbox" checked="checked">{$createStACLGeneralDefineAll}</input></td>
-				<td><input type="checkbox" checked="checked">{$createStACLGeneralDefineSpecific}</input></td>
-			</tr>
-		</table>
-	</div><!-- End of haclCreateStACLGeneralContainer -->
-	<div id="haclCreateStACLRightsContainer">
-		<div id="haclCreateDutRightsHeader">{$createStACLRightsHeader}</div>
-		<input class="haclCreateRightButton" type="button" value="{$createStACLRightsButtonCreate}" />
-		<input class="haclCreateRightButton" type="button" value="{$createStACLRightsButtonAddTemplate}" />
-		<div class="haclCreateDutRight">
-			<fieldset>
-				<legend class="haclCreateDutLegend"><span class="haclCreateDutRightLegend">{$createStACLRightsLegend}</span>
-					<span class="haclCreateDutLegendControl">{$createStACLRightsLegendSaved}+ICON</span>
-				</legend>
-				<table>
-				<tr>
-					<td>{$createStACLRightsName}</td><td><input type="text" size="30" value="{$createStACLRightsDefaultName}"></input></td>
-				</tr>
-				<tr>
-					<td>{$createStACLRights}</td>
-					<td>
-						<table>
-							<tr>
-								<td><input type="checkbox" name="full_access" value="full_access">{$createStACLRightsFullAccess}</input></td>
-								<td><input type="checkbox" name="read" value="full_access">{$createStACLRightsRead}</input></td>
-								<td><input type="checkbox" name="edit_with_forms" value="full_access">{$createStACLRightsEWF}</input></td>
-								<td><input type="checkbox" name="edit" value="full_access">{$createStACLRightsEdit}</input></td
-							</tr>
-							<tr>
-								<td><input type="checkbox" name="create" value="full_access">{$createStACLRightsCreate}</input></td>
-								<td><input type="checkbox" name="move" value="full_access">{$createStACLRightsMove}</input></td>
-								<td><input type="checkbox" name="delete" value="full_access">{$createStACLRightsDelete}</input></td>
-								<td><input type="checkbox" name="annotate" value="full_access">{$createStACLRightsAnnotate}</input></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				</table>
-				<div class="drawLine">&nbsp;</div>
-				<div class="haclCreateDutUserContainer">
-					<div class="haclCreateDutUserTabs">
-						<ul>
-							<li>1</li>
-							<li>2</li>
-						</ul>
-					</div><!-- End Of haclCreateDutUserTabs -->
-				</div><!-- End Of haclCreateDutUserContainer -->
-			</fieldset>
-		</div><!-- End Of haclDutRight -->
-	</div><!-- End of haclCreateDutRightsContainer -->
-	<div class="drawLine">&nbsp;</div>
-</div><!-- End of haclCreateDutContainer -->
-HTML;
- *
- *
- */
     $html = <<<HTML
         <div class="haloacl_tab_content">
         <div class="haloacl_tab_content_description">
@@ -338,8 +270,14 @@ HTML;
 
 function rightPanelSelectDeselectTab($panelid) {
     $html = <<<HTML
+        <!-- leftpart -->
         <div class="haloacl_rightpanel_selecttab_container">
             <div class="haloacl_rightpanel_selecttab_leftpart">
+                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
+                        Groups and Users
+                    </span>
+                </div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_filter">
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
                         Filter in groups:
@@ -347,16 +285,41 @@ function rightPanelSelectDeselectTab($panelid) {
                     <input type="text" />
                 </div>
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
+                <div class="haloacl_rightpanel_selecttab_leftpart_treeview_userlink">
+                    Users
+                </div>
             </div>
+            <!-- end of left part -->
+
+            <!-- starting right part -->
+
             <div class="haloacl_rightpanel_selecttab_rightpart">
-                right
+                <div class="haloacl_rightpanel_selecttab_rightpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
+                        Users
+                    </span>
+                </div>
+                <div class="haloacl_rightpanel_selecttab_rightpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
+                        Filter:
+                    </span>
+                    <input type="text" />
+                </div>
+                <div id="datatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
+
+                </div>
             </div>
+            <!-- end of right part -->
+
         </div>
 <script type="text/javascript">
-YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
-YAHOO.haloacl.treeInstance$panelid.labelClickAction = "alert";
+    // treeview part - so the left part of the select/deselct-view
+    YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
+    YAHOO.haloacl.treeInstance$panelid.labelClickAction = "alert";
+    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
 
-YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+    // user list on the right
+    YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
 
 
 </script>
@@ -367,6 +330,29 @@ HTML;
 }
 
 
+function getUsersForUserTable($query) {
+    $a = array();
+    $a['recordsReturned'] = 5;
+    $a['totalrecords'] = 10;
+    $a['startIndex'] = 0;
+    $a['sort'] = null;
+    $a['dir'] = "asc";
+    $a['pagesize'] = 5;
+
+    $u1 = array('id'=>1,'name'=>'Torben');
+    $u2 = array('id'=>2,'name'=>'Ricky');
+    $u3 = array('id'=>3,'name'=>'Anna');
+    $u4 = array('id'=>4,'name'=>'Detlef');
+    $u5 = array('id'=>5,'name'=>'Eugen');
+
+
+    $a['records'] = array($u1,$u2,$u3,$u4,$u5);
+
+    return(json_encode($a));
+
+}
+
+/* FAKE FUNKTION */
 function getGroupsForRightPanel($query) {
     $array = array();
 
@@ -388,9 +374,12 @@ function getGroupsForRightPanel($query) {
     $tempgroup = array('name'=>"Schnuffs",'id'=>'13','childs'=>$tempsubgroup);
     $array[] = $tempgroup;
 
+    // return first level
     if($query == 'all') {
 
         return(json_encode($array));
+
+    // return childs of Schnuffs
     }elseif($query == 'Schnuffs') {
         return(json_encode($tempsubgroup));
 
@@ -398,6 +387,8 @@ function getGroupsForRightPanel($query) {
         return(json_encode(array()));
     }
 }
+
+
 
 function manageAclsContent() {
     $response = new AjaxResponse();

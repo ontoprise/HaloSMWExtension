@@ -182,6 +182,9 @@ function haclAddHTMLHeader(&$out) {
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>');
 
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/tabview/tabview-debug.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/paginator/paginator-min.js"></script>');
     
     // -------------------
     // -------------------
@@ -190,6 +193,7 @@ function haclAddHTMLHeader(&$out) {
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
 
 
 
