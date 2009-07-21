@@ -34,7 +34,7 @@ PropertyChain.prototype = {
 		new Insertion.After(bodyContent, html);
 	
 
-		$("pc-chain-input-0").value = gLanguage.getMessage('PC_enter_prop');
+		$("pc-chain-input-0").value = gsrLanguage.getMessage('PC_enter_prop');
 		var onFocusAtt = document.createAttribute("onfocus");
 		onFocusAtt.value = 'smwhgPropertyChain.cleanFirstInput()';
 		$("pc-chain-input-0").setAttributeNode(onFocusAtt);
@@ -274,18 +274,18 @@ PropertyChain.prototype = {
 	},
 	
 	getHeadHtml : function(){
-		var derive = gLanguage.getMessage('PC_DERIVE_BY');
+		var derive = gsrLanguage.getMessage('PC_DERIVE_BY');
 		derive = derive.replace(/\$1/g, '<span class="rules-category">'+wgTitle+'</span>');
 		
 		var headHtml = '<div style="padding-bottom: 5px">' + derive + '</div>';
 		
 		headHtml += '<div id="pc-head" class="rules-frame" style="border-bottom:0px">'
 			+ '<div id="headTitle" class="rules-title">'
-			+ gLanguage.getMessage('SR_HEAD')
+			+ gsrLanguage.getMessage('SR_HEAD')
 			+ '</div>'
 			+ '<div id="headContent" class="rules-content" >';
 		
-		var headline = gLanguage.getMessage('PC_headline');
+		var headline = gsrLanguage.getMessage('PC_headline');
 		headline = headline.replace(/\$1/g, '<b>' + wgTitle + '</b>');
 		headline = headline.replace(/\$2/g, '<b>Article X<sub>1</sub></b>');
 		headline = headline.replace(/\$3/g, '<b>Article X<sub><span id="pc-propertyValue">2</span></sub></b>');
@@ -301,7 +301,7 @@ PropertyChain.prototype = {
 	getIfHtml : function(){
 		var ifHtml = '<div id="pc-if" class="rules-frame">'
 			+ '<div class="rules-title">'
-			+ gLanguage.getMessage('SR_BODY')
+			+ gsrLanguage.getMessage('SR_BODY')
 			+ '</div>'
 			+ '<div class="rules-content">'
 			+ this.getChainHtml(0)
@@ -318,7 +318,7 @@ PropertyChain.prototype = {
 		var buttonHtml = '<button id="pc-save-button"'
 		+ 'onclick="smwhgPropertyChain.saveChain()"'
 		+ 'style="float:left;">'
-		+ gLanguage.getMessage('SR_SAVE_RULE')
+		+ gsrLanguage.getMessage('SR_SAVE_RULE')
 		+ '</button>';
 	
 		return buttonHtml;

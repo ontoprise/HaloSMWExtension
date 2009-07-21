@@ -16,10 +16,10 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("SMW_Literal.php");
-require_once("SMW_PredicateSymbol.php");
-require_once("SMW_Variable.php");
-require_once("SMW_Constant.php");
+require_once("SR_Literal.php");
+require_once("SR_PredicateSymbol.php");
+require_once("SR_Variable.php");
+require_once("SR_Constant.php");
 
 if (!defined('MEDIAWIKI')) die();
 
@@ -147,7 +147,7 @@ abstract class SMWAbstractRuleObject {
 		$this->_body = $body;
 	}
 
-	// exactly one SMW_Literal object
+	// exactly one SR_Literal object
 	public function setHead($head) {
 		$this->_head = $head;
 	}
@@ -171,12 +171,12 @@ abstract class SMWAbstractRuleObject {
 		return $this->_sessionId;
 	}
 
-	// body consisting of array of SMW_Literal objects (implicitly concatenated by "AND")
+	// body consisting of array of SR_Literal objects (implicitly concatenated by "AND")
 	public function getBody() {
 		return $this->_body;
 	}
 
-	// exactly one SMW_Literal object
+	// exactly one SR_Literal object
 	public function getHead() {
 		return $this->_head;
 	}

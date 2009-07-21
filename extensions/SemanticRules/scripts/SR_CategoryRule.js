@@ -50,7 +50,7 @@ createRule: function() {
 	
 	var headText = this.createHeadHTML(1, wgCanonicalNamespace, wgTitle);
 	
-	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	var catOrProp = gsrLanguage.getMessage('SR_MCATPROP');
 	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
 	catOrProp = catOrProp.replace(/\$2/g, '</a>');
 	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
@@ -89,19 +89,19 @@ createRule: function() {
 createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
 	if (wgNamespaceNumber == 14) {
 		// Head for categories
-		var headText = gLanguage.getMessage('SR_CAT_HEAD_TEXT');
+		var headText = gsrLanguage.getMessage('SR_CAT_HEAD_TEXT');
 		headText = headText.replace(/\$1/g, '<span class="rules-variable">X<sub>'+varIdx+'</sub> </span>');
 		headText = headText.replace(/\$2/g, catOrProp);
 		headText = headText.replace(/\$3/g, '<span class="rules-category">' + title + '</span>');
 		return headText;
 	} else if (wgNamespaceNumber == 102) {
 		// Head for properties
-		var headText = gLanguage.getMessage('SR_PROP_HEAD_TEXT');
+		var headText = gsrLanguage.getMessage('SR_PROP_HEAD_TEXT');
 		headText = headText.replace(/\$1/g, '<span class="rules-variable">X<sub>'+varIdx+'</sub> </span>');
 		headText = headText.replace(/\$2/g, '<span class="rules-category">' + title + '</span>');
 		var propHTML =
 			'&nbsp;' +
-			this.createVariableSelector("sr-head-value-selector", gLanguage.getMessage('SR_SIMPLE_VALUE'),"X2") +
+			this.createVariableSelector("sr-head-value-selector", gsrLanguage.getMessage('SR_SIMPLE_VALUE'),"X2") +
 			'&nbsp;' +
 			'<input type="text" value="" id="sr-prop-head-value" style="display:none" />' +
 			'&nbsp;';		
@@ -122,7 +122,7 @@ createHeadHTML: function(varIdx, catOrProp, title, propValue, propIsVariable) {
  * 		HTML-content of the body part
  */
 getHTMLRuleFramework: function(headText, bodyText) {	
-	var derive = gLanguage.getMessage('SR_DERIVE_BY');
+	var derive = gsrLanguage.getMessage('SR_DERIVE_BY');
 	derive = derive.replace(/\$1/g, wgCanonicalNamespace);
 	derive = derive.replace(/\$2/g, '<span class="rules-category">'+wgTitle+'</span>');
 	html = 
@@ -131,7 +131,7 @@ getHTMLRuleFramework: function(headText, bodyText) {
 '	<div id="headBodyDiv" style="padding-top:5px">' +
 '		<div id="headDiv" class="rules-frame" style="border-bottom:0px">' +
 '			<div id="headTitle" class="rules-title">' +
-				gLanguage.getMessage('SR_HEAD') +
+				gsrLanguage.getMessage('SR_HEAD') +
 '			</div>' +
 '			<div id="headContent" class="rules-content">' +
 				headText +
@@ -139,7 +139,7 @@ getHTMLRuleFramework: function(headText, bodyText) {
 '		</div>' +
 '		<div id="bodyDiv" class="rules-frame">' +
 '			<div id="bodyTitle" class="rules-title">' +
-				gLanguage.getMessage('SR_BODY') +
+				gsrLanguage.getMessage('SR_BODY') +
 '			</div>' +
 '			<div id="ruleBodyContent" class="rules-content">' +
 				bodyText +
@@ -148,7 +148,7 @@ getHTMLRuleFramework: function(headText, bodyText) {
 '		<div style="height:20px"></div>' +
 '		<div id="implicationsDiv" class="rules-frame">' +
 '			<div id="implicationsTitle" class="rules-title" style="width:auto;">' +
-				gLanguage.getMessage('SR_RULE_IMPLIES') +
+				gsrLanguage.getMessage('SR_RULE_IMPLIES') +
 '			</div>' +
 '			<div id="implicationsContent" class="rules-content">' +
 '			</div>' +
@@ -156,7 +156,7 @@ getHTMLRuleFramework: function(headText, bodyText) {
 '	</div>' +
 '	<div style="height:20px"></div>' +
 '   <input type="submit" accesskey="s" value="' +
-		gLanguage.getMessage('SR_SAVE_RULE') +
+		gsrLanguage.getMessage('SR_SAVE_RULE') +
 		'" name="sr-save-rule-btn" id="sr-save-rule-btn"/>' +
 '</div>';
 
@@ -247,13 +247,13 @@ createUIForRule: function(ruleXML) {
 	    	bodyHTML +=
 				'<div id="AND' + this.numParts + '">' +
 					'<b>' +
-					gLanguage.getMessage('SR_AND') +
+					gsrLanguage.getMessage('SR_AND') +
 					'</b>' +
 				'</div>';
 		    this.numParts++;
 		}
 	}
-	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	var catOrProp = gsrLanguage.getMessage('SR_MCATPROP');
 	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
 	catOrProp = catOrProp.replace(/\$2/g, '</a>');
 	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
@@ -305,14 +305,14 @@ getHTMLForLiteral: function(literal, isHead, partID) {
 			} else {
 				html =	
 	'<div id="bodyPart' + partID + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		'<span id="var_' + partID + '" ' +
 			'varname="' + subject + '" ' +
 			'class="rules-variable">' +
 		'X<sub>' + varIdx[1] + '</sub>' + 
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		gsrLanguage.getMessage('SR_BELONG_TO_CAT') +
 		'&nbsp;' +
 		'<span id="cat_' + partID + '" ' +
 			'catname="' + escape(catName) + '" ' +
@@ -369,21 +369,21 @@ getHTMLForLiteral: function(literal, isHead, partID) {
 			
 			var html =	
 '<div id="bodyPart' + partID + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		'<span id="var_' + partID + '" ' +
 			'varname="' + subject + '" ' +
 			'class="rules-variable">' +
 			'X<sub>' + subjIdx[1] + '</sub>' + 
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_HAVE_PROP') +
+		gsrLanguage.getMessage('SR_HAVE_PROP') +
 		'&nbsp;' +
 		'<span id="prop_' + partID + '" ' +
 			'propname="' + propName + '" ' +
 			'class="rules-category">' +
 		propName +
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_WITH_VALUE') +
+		gsrLanguage.getMessage('SR_WITH_VALUE') +
 		'&nbsp;' +
 		valueHTML + 
 		'&nbsp;' +
@@ -416,11 +416,11 @@ memberOfCategory: function() {
 	var html;
 	html = 
 '<div id="bodyPart' + this.numParts + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		this.createVariableSelector('sr-variable-selector',null,"X1") +
 		'&nbsp;' +
-		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		gsrLanguage.getMessage('SR_BELONG_TO_CAT') +
 		'&nbsp;' +
 		'<input type="text" value="" id="sr-cat-name" class="wickEnabled" />' +
 		'&nbsp;' +
@@ -500,7 +500,7 @@ showCategoryCondition: function(partID, update) {
 	var id = 'bodyPart'+partID;
 	var currPart = $('bodyPart'+partID);
 
-	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	var catOrProp = gsrLanguage.getMessage('SR_MCATPROP');
 	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
 	catOrProp = catOrProp.replace(/\$2/g, '</a>');
 	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
@@ -510,14 +510,14 @@ showCategoryCondition: function(partID, update) {
 
 	html =	
 '<div id="bodyPart' + partID + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		'<span id="var_' + partID + '" ' +
 			'varname="' + variable + '" ' +
 			'class="rules-variable">' +
 		'X<sub>' + varIdx + '</sub>' + 
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_BELONG_TO_CAT') +
+		gsrLanguage.getMessage('SR_BELONG_TO_CAT') +
 		'&nbsp;' +
 		'<span id="cat_' + partID + '" ' +
 			'catname="' + escape(category) + '" ' +
@@ -538,7 +538,7 @@ showCategoryCondition: function(partID, update) {
 		html +=
 '<div id="AND' + partID + '">' +
 	'<b>' +
-	gLanguage.getMessage('SR_AND') +
+	gsrLanguage.getMessage('SR_AND') +
 	'</b>' +
 '</div>';
 
@@ -570,17 +570,17 @@ memberOfProperty: function() {
 	var html;
 	html = 
 '<div id="bodyPart' + this.numParts + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		this.createVariableSelector("sr-variable-selector", null, "X1") +
 		'&nbsp;' +
-		gLanguage.getMessage('SR_HAVE_PROP') +
+		gsrLanguage.getMessage('SR_HAVE_PROP') +
 		'&nbsp;' +
 		'<input type="text" value="" id="sr-prop-name" class="wickEnabled" />' +
 		'&nbsp;' +
-		gLanguage.getMessage('SR_WITH_VALUE') +
+		gsrLanguage.getMessage('SR_WITH_VALUE') +
 		'&nbsp;' +
-		this.createVariableSelector("sr-value-selector", gLanguage.getMessage('SR_SIMPLE_VALUE'),"X1") +
+		this.createVariableSelector("sr-value-selector", gsrLanguage.getMessage('SR_SIMPLE_VALUE'),"X1") +
 		'&nbsp;' +
 		'<input type="text" value="" id="sr-prop-value" style="display:none" />' +
 		'&nbsp;' +
@@ -624,9 +624,9 @@ editPropertyCondition: function(partID) {
 	if (elem) {
 		var val = unescape(elem.readAttribute('propvalue'));
 		var type = unescape(elem.readAttribute('proptype'));
-		var select = (type == 'variable') ? val : gLanguage.getMessage('SR_SIMPLE_VALUE');
+		var select = (type == 'variable') ? val : gsrLanguage.getMessage('SR_SIMPLE_VALUE');
 		var html = this.createVariableSelector("sr-value-selector", 
-		                                       gLanguage.getMessage('SR_SIMPLE_VALUE'),select);
+		                                       gsrLanguage.getMessage('SR_SIMPLE_VALUE'),select);
 		html += '<input type="text" value="" id="sr-prop-value" style="display:none"/>';
 		elem.replace(html);
 		if (type == 'value') {
@@ -665,7 +665,7 @@ editPropertyCondition: function(partID) {
  	var input = (event.target.id == 'sr-value-selector') 
 	 				? $('sr-prop-value')
 	 				: $('sr-prop-head-value');
- 	if (val == gLanguage.getMessage('SR_SIMPLE_VALUE')) {
+ 	if (val == gsrLanguage.getMessage('SR_SIMPLE_VALUE')) {
  		input.show();
  	} else {
  		input.hide();
@@ -691,7 +691,7 @@ editPropertyCondition: function(partID) {
 	var vsv = $('sr-value-selector');
 	vsv = vsv.options[vsv.selectedIndex].text;
 	
-	var valueIsVariable = vsv != gLanguage.getMessage('SR_SIMPLE_VALUE');
+	var valueIsVariable = vsv != gsrLanguage.getMessage('SR_SIMPLE_VALUE');
 	var value = (valueIsVariable) ? vsv 
 	                              : $('sr-prop-value').value;
 
@@ -715,7 +715,7 @@ editPropertyCondition: function(partID) {
 	var id = 'bodyPart'+partID;
 	var currPart = $('bodyPart'+partID);
 
-	var catOrProp = gLanguage.getMessage('SR_MCATPROP');
+	var catOrProp = gsrLanguage.getMessage('SR_MCATPROP');
 	catOrProp = catOrProp.replace(/\$1/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfCategory()">');
 	catOrProp = catOrProp.replace(/\$2/g, '</a>');
 	catOrProp = catOrProp.replace(/\$3/g, '<a href="javascript:smwhgCreateDefinitionRule.memberOfProperty()">');
@@ -747,21 +747,21 @@ editPropertyCondition: function(partID) {
 
 	html =	
 '<div id="bodyPart' + partID + '">' +
-	gLanguage.getMessage('SR_ALL_ARTICLES') +
+	gsrLanguage.getMessage('SR_ALL_ARTICLES') +
 		'&nbsp;' +
 		'<span id="var_' + partID + '" ' +
 			'varname="' + variable + '" ' +
 			'class="rules-variable">' +
 			'X<sub>' + varIdx + '</sub>' + 
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_HAVE_PROP') +
+		gsrLanguage.getMessage('SR_HAVE_PROP') +
 		'&nbsp;' +
 		'<span id="prop_' + partID + '" ' +
 			'propname="' + property + '" ' +
 			'class="rules-category">' +
 		property +
 		'</span>&nbsp;' +
-		gLanguage.getMessage('SR_WITH_VALUE') +
+		gsrLanguage.getMessage('SR_WITH_VALUE') +
 		'&nbsp;' +
 		valueHTML + 
 		'&nbsp;' +
@@ -779,7 +779,7 @@ editPropertyCondition: function(partID) {
 		html +=
 '<div id="AND' + partID + '">' +
 	'<b>' +
-	gLanguage.getMessage('SR_AND') +
+	gsrLanguage.getMessage('SR_AND') +
 	'</b>' +
 '</div>';
 
@@ -978,7 +978,7 @@ serializeRule: function() {
 			value = val.readAttribute('propvalue');
 		} else {
 			var val = $('sr-head-value-selector').value;
-			isVariable = (val != gLanguage.getMessage('SR_SIMPLE_VALUE'));
+			isVariable = (val != gsrLanguage.getMessage('SR_SIMPLE_VALUE'));
 			value = isVariable 
 						? val
 						: $('sr-prop-head-value').value;

@@ -16,8 +16,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#require_once( "$smwgHaloIP/includes/rules/SMW_RuleObject.php");
-require_once( "SMW_RuleObject.php");
+#require_once( "$smwgHaloIP/includes/rules/SR_RuleObject.php");
+require_once( "SR_RuleObject.php");
 
 if (!defined('MEDIAWIKI')) die();
 

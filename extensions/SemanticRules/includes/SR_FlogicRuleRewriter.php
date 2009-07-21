@@ -1,6 +1,6 @@
 <?php
 
-include_once('SMW_RuleRewriter.php');
+include_once('SR_RuleRewriter.php');
 
 /**
  * FlogicRuleRewriter

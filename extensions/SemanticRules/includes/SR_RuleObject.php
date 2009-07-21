@@ -16,8 +16,8 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("SMW_AbstractRuleObject.php");
-require_once("SMW_FormulaParser.php");
+require_once("SR_AbstractRuleObject.php");
+require_once("SR_FormulaParser.php");
 
 if (!defined('MEDIAWIKI')) die();
 

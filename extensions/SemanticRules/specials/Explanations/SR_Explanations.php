@@ -8,7 +8,7 @@ require_once( $IP . "/includes/SpecialPage.php" );
 /*
  * Standard class that is resopnsible for the creation of the Special Page
  */
-class SMWExplanations extends SpecialPage {
+class SRExplanations extends SpecialPage {
 	
 	public function __construct() {
 		parent::__construct('Explanations');

@@ -318,27 +318,8 @@ clicking the big arrows between the columns.',
     'smw_tsa_status' => 'Status',
     'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableFlogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
     'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableFlogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
-    
-	// Simple Rules formula parser
-	'smw_srf_expected_factor' => 'Expected a function, variable, constant or braces near $1',
-	'smw_srf_expected_comma' => 'Expected a comma near $1',
-	'smw_srf_expected_(' => 'Expected an opening brace near $1',
-	'smw_srf_expected_)' => 'Expected a closing brace near $1',
-	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
-	'smw_srf_missing_operator' => 'Expected an operator near $1',
-	
-	// Explanations
-	'smw_explanations' => 'Explanations',
-	'explanations' => 'Explanations',
-	'smw_expl_not_all_inputs' => 'Please provide an input for each field above.',
-	'smw_expl_and' => 'AND',
-	'smw_expl_because' => 'BECAUSE',
-	'smw_expl_value' => 'Value',
-	'smw_expl_img' => 'Trigger explanation',
-	'smw_expl_explain_category' => 'Explain category assignment:',
-	'smw_expl_explain_property' => 'Explain property assignment:',
-	'smw_expl_error' => 'Unfortunately, some error occured during the request for the explanation:',
-	
+    'smw_tsa_tscinfo' => 'Triplestore Connector information',
+	'smw_tsa_tscversion' => 'TSC Version',
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Derived facts about $1'
 

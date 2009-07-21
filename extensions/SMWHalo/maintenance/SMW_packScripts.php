@@ -99,10 +99,7 @@ if ($buildAll || $build == 'smw') {  // standard scripts which are loaded always
 	 				  'SMW_Marker.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Category.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Relation.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_Rule.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_CategoryRule.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_CalculationRule.js' => GPL_LICENSE_ONTOPRISE,
-	 				  'SMW_PropertyChain.js' => GPL_LICENSE_ONTOPRISE,
+	 			
 	 				  'SMW_Properties.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_Refresh.js' => GPL_LICENSE_ONTOPRISE,
 	 				  'SMW_DragAndResize.js' => GPL_LICENSE_ONTOPRISE,

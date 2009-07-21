@@ -161,7 +161,7 @@ createUI: function(parsedRule) {
  * 		initial GUI.
  */
 getHTMLRuleFramework: function(parsedRule) {	
-	var derive = gLanguage.getMessage('SR_DERIVE_BY');
+	var derive = gsrLanguage.getMessage('SR_DERIVE_BY');
 	derive = derive.replace(/\$1/g, wgCanonicalNamespace);
 	derive = derive.replace(/\$2/g, '<span class="rules-category">'+wgTitle+'</span>');
 	
@@ -178,7 +178,7 @@ getHTMLRuleFramework: function(parsedRule) {
 		defVariablesHTML +
 		previewHTML +
 '	   <input type="submit" accesskey="s" value="' +
-			gLanguage.getMessage('SR_SAVE_RULE') +
+			gsrLanguage.getMessage('SR_SAVE_RULE') +
 '			" name="sr-save-rule-btn" id="sr-save-rule-btn"/>' +
 '	</div>' +
 '</div>';
@@ -199,7 +199,7 @@ defineFormulaHTML: function(parsedRule) {
 	
 	var formulaResult = wgTitle;
 	var initialFormula = (parsedRule == undefined) ? '' : parsedRule.getFormula();
-	var enterFormula = gLanguage.getMessage('SR_ENTER_FORMULA');
+	var enterFormula = gsrLanguage.getMessage('SR_ENTER_FORMULA');
 	enterFormula = enterFormula.replace(/\$1/g, formulaResult);
 	 
 	var html = 
@@ -223,7 +223,7 @@ defineFormulaHTML: function(parsedRule) {
 '	</div>' +
 '	<div id="formulaSubmit" class="rules-content">' +
 '		<a href="javascript:smwhgCreateCalculationRule.submitFormula()">' +
-			gLanguage.getMessage('SR_SUBMIT') +
+			gsrLanguage.getMessage('SR_SUBMIT') +
 '		</a>' +
 '	</div>' +
 '</div>';
@@ -245,8 +245,8 @@ confirmedFormulaHTML: function(parsedRule) {
 	
 	var formulaResult = wgTitle;
 	var initialFormula = parsedRule.getFormula();
-	var syntaxChecked = gLanguage.getMessage('SR_SYNTAX_CHECKED');
-	var edit = gLanguage.getMessage('SR_EDIT_FORMULA');
+	var syntaxChecked = gsrLanguage.getMessage('SR_SYNTAX_CHECKED');
+	var edit = gsrLanguage.getMessage('SR_EDIT_FORMULA');
 	 
 	var html = 
 '<div id="confirmedFormulaDiv" class="rules-frame" style="border-bottom:0px">' +
@@ -280,7 +280,7 @@ confirmedFormulaHTML: function(parsedRule) {
  * 		initial GUI.
  */
 defineVariablesHTML: function(parsedRule) {
-	var specifyVariables = gLanguage.getMessage('SR_SPECIFY_VARIABLES');
+	var specifyVariables = gsrLanguage.getMessage('SR_SPECIFY_VARIABLES');
 
 	var html =
 '<div id="variablesDiv" class="rules-frame" style="display:none">' +
@@ -348,9 +348,9 @@ allVariableSpecificationsHTML: function(parsedRule) {
  */
  variableSpecificationHTML: function(variable, type, value) {
  	var varDef = '<span class="calc-rule-variable">'+variable+ '</span>' +
- 	             " " + gLanguage.getMessage('SR_IS_A');
- 	var propValue = gLanguage.getMessage('SR_PROPERTY_VALUE');
- 	var absTerm   = gLanguage.getMessage('SR_ABSOLUTE_TERM');
+ 	             " " + gsrLanguage.getMessage('SR_IS_A');
+ 	var propValue = gsrLanguage.getMessage('SR_PROPERTY_VALUE');
+ 	var absTerm   = gsrLanguage.getMessage('SR_ABSOLUTE_TERM');
  	var radioName = 'sr-radio-'+variable;
  	
  	// Initialize variables for type 'prop'
@@ -359,7 +359,7 @@ allVariableSpecificationsHTML: function(parsedRule) {
  	var propInputVisible = '';
  	var termInputVisible = 'style="display:none"';
  	var property = value;
- 	var term = gLanguage.getMessage('SR_ENTER_VALUE');
+ 	var term = gsrLanguage.getMessage('SR_ENTER_VALUE');
  	
  	if (type == 'const') {
  		// Change variables for type 'const'
@@ -367,13 +367,13 @@ allVariableSpecificationsHTML: function(parsedRule) {
 	 	termChecked = 'checked="checked"';
 	 	propInputVisible = 'style="display:none"';
 	 	termInputVisible = '';
-	 	property = gLanguage.getMessage('SR_ENTER_PROPERTY');
+	 	property = gsrLanguage.getMessage('SR_ENTER_PROPERTY');
 	 	term = value;
  	}
  	
  	if (value == undefined || value == '') {
- 		property = gLanguage.getMessage('SR_ENTER_PROPERTY');
- 		term = gLanguage.getMessage('SR_ENTER_VALUE');
+ 		property = gsrLanguage.getMessage('SR_ENTER_PROPERTY');
+ 		term = gsrLanguage.getMessage('SR_ENTER_VALUE');
  	}
  	
  	var html =
@@ -430,29 +430,29 @@ operatorHelpHTML: function() {
 '<table id="sr-calc-op-help-table" border="1" rules="groups">' +
 '  <thead class="sr-calc-op-help-table-head">' +
 '    <tr>' +
-'      <th colspan="4">' + gLanguage.getMessage("SR_OP_HELP_ENTER") + '</th>' +
+'      <th colspan="4">' + gsrLanguage.getMessage("SR_OP_HELP_ENTER") + '</th>' +
 '    </tr>' +
 '  </thead>' +
 '  <tbody>' +
 '    <tr>' +
-'      <td>+</td><td>' + gLanguage.getMessage("SR_OP_ADDITION") + '</td>' +
-'      <td>sqrt()</td><td>' + gLanguage.getMessage("SR_OP_SQUARE_ROOT") + '</td>' +
+'      <td>+</td><td>' + gsrLanguage.getMessage("SR_OP_ADDITION") + '</td>' +
+'      <td>sqrt()</td><td>' + gsrLanguage.getMessage("SR_OP_SQUARE_ROOT") + '</td>' +
 '    </tr>' +
 '    <tr>' +
-'      <td>-</td><td>' + gLanguage.getMessage("SR_OP_SUBTRACTION") + '</td>' +
-'      <td>^</td><td>' + gLanguage.getMessage("SR_OP_EXPONENTIATE") + '</td>' +
+'      <td>-</td><td>' + gsrLanguage.getMessage("SR_OP_SUBTRACTION") + '</td>' +
+'      <td>^</td><td>' + gsrLanguage.getMessage("SR_OP_EXPONENTIATE") + '</td>' +
 '    </tr>' + 
 '    <tr>' +
-'      <td>*</td><td>' + gLanguage.getMessage("SR_OP_MULTIPLY") + '</td>' +
-'      <td>sin()</td><td>' + gLanguage.getMessage("SR_OP_SINE") + '</td>' +
+'      <td>*</td><td>' + gsrLanguage.getMessage("SR_OP_MULTIPLY") + '</td>' +
+'      <td>sin()</td><td>' + gsrLanguage.getMessage("SR_OP_SINE") + '</td>' +
 '    </tr>' +
 '    <tr>' +
-'      <td>/</td><td>' + gLanguage.getMessage("SR_OP_DIVIDE") + '</td>' +
-'      <td>cos()</td><td>' + gLanguage.getMessage("SR_OP_COSINE") + '</td>' +
+'      <td>/</td><td>' + gsrLanguage.getMessage("SR_OP_DIVIDE") + '</td>' +
+'      <td>cos()</td><td>' + gsrLanguage.getMessage("SR_OP_COSINE") + '</td>' +
 '    </tr>' +
 '    <tr>' + 
-'      <td>%</td><td>' + gLanguage.getMessage("SR_OP_MODULO") + '</td>' +
-'      <td>tan()</td><td>' + gLanguage.getMessage("SR_OP_TANGENT") + '</td>' +
+'      <td>%</td><td>' + gsrLanguage.getMessage("SR_OP_MODULO") + '</td>' +
+'      <td>tan()</td><td>' + gsrLanguage.getMessage("SR_OP_TANGENT") + '</td>' +
 '    </tr>' +
 '  </tbody>' +
 '</table>' +
@@ -468,8 +468,8 @@ operatorHelpHTML: function() {
  *   
  */
 inputFocus: function(object) {
-	if (object.value == gLanguage.getMessage('SR_ENTER_VALUE')
-	    || object.value == gLanguage.getMessage('SR_ENTER_PROPERTY')) {
+	if (object.value == gsrLanguage.getMessage('SR_ENTER_VALUE')
+	    || object.value == gsrLanguage.getMessage('SR_ENTER_PROPERTY')) {
 		object.value = '';
 	}
 },
@@ -486,7 +486,7 @@ previewHTML: function() {
 	var html =
 '<div id="implicationsDiv" class="rules-frame" style="display:none">' +
 '	<div id="implicationsTitle" class="rules-title" style="width:auto;">' +
-		gLanguage.getMessage('SR_DERIVED_FACTS') +
+		gsrLanguage.getMessage('SR_DERIVED_FACTS') +
 '	</div>' +
 '	<div id="implicationsContent" class="rules-content">' +
 '	</div>' +
@@ -557,8 +557,8 @@ radioChanged: function(radioID) {
 	if ($(inputID).value == '') {
 		// The input field is empty => show the request to enter something
 		$(inputID).value = (inputID.indexOf('-input-prop-') > 0)
-				? gLanguage.getMessage('SR_ENTER_PROPERTY')
-				: gLanguage.getMessage('SR_ENTER_VALUE');
+				? gsrLanguage.getMessage('SR_ENTER_PROPERTY')
+				: gsrLanguage.getMessage('SR_ENTER_VALUE');
 		$(inputID).select();
 	}
 		
@@ -594,7 +594,7 @@ checkFormula: function(formula) {
 				$('formulaErrorMsgDiv').show();
 			} else if (variables.size() == 2 && variables[1] == '') {
 				// There is no variable in the formula
-				$('formulaErrorMsg').innerHTML = gLanguage.getMessage('SR_NO_VARIABLE');
+				$('formulaErrorMsg').innerHTML = gsrLanguage.getMessage('SR_NO_VARIABLE');
 				$('formulaErrorMsgDiv').show();
 			} else {
 				// the formula is valid
@@ -786,8 +786,8 @@ checkRule: function() {
 			var inputId = r.id.replace(/-radio-/, '-input-');
 			var value = $(inputId).value;
 			if (value == '' 
-			    || value == gLanguage.getMessage('SR_ENTER_VALUE')
-			    || value == gLanguage.getMessage('SR_ENTER_PROPERTY')) {
+			    || value == gsrLanguage.getMessage('SR_ENTER_VALUE')
+			    || value == gsrLanguage.getMessage('SR_ENTER_PROPERTY')) {
 				// invalid 
 				return false;
 			}

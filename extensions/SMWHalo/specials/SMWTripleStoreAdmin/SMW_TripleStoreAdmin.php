@@ -47,7 +47,8 @@ class SMWTripleStoreAdmin extends SpecialPage {
        
         // normal 
         $html .= "<h2>".wfMsg('smw_tsa_driverinfo')."</h2>".$status->driverInfo."";
-        
+        $html .= "<h2>".wfMsg('smw_tsa_tscinfo')."</h2>";
+        $html .= wfMsg('smw_tsa_tscversion').": ".$status->tscversion;
         // show warning when rule support is missing or defined although it is not available.
         if ($status->RULES && (!isset($smwgEnableFlogicRules) || $smwgEnableFlogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
         wfMsg('smw_tsa_rulesupport')."</div>";

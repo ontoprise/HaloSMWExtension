@@ -50,7 +50,7 @@ initialize: function() {
 },
 
 showToolbar: function(){
-	this.rulescontainer.setHeadline(gLanguage.getMessage('RULE_RULES'));
+	this.rulescontainer.setHeadline(gsrLanguage.getMessage('RULE_RULES'));
 	if (wgAction == 'edit') {
 		// Create a wiki text parser for the edit mode. In annotation mode,
 		// the mode's own parser is used.
@@ -134,21 +134,21 @@ createRule: function() {
 	/*ENDLOG*/
 	
 	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
-	tb.append(tb.createText('rule-help_msg', gLanguage.getMessage('RULE_CREATE'), '' , true));
-	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createText('rule-help_msg', gsrLanguage.getMessage('RULE_CREATE'), '' , true));
+	tb.append(tb.createInput('rule-name', gsrLanguage.getMessage('NAME'), '', '',
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
 	tb.setInputValue('rule-name','');
-	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createText('rule-name-msg', gsrLanguage.getMessage('ENTER_NAME'), '' , true));
 	
-	tb.append(tb.createDropDown('rule-type', gLanguage.getMessage('RULE_TYPE'), 
+	tb.append(tb.createDropDown('rule-type', gsrLanguage.getMessage('RULE_TYPE'), 
 	                            this.getRuleTypes(), 
 	                            0,0, 
 	                            SMW_RULE_NO_EMPTY_SELECTION, true));
 		
-	var links = [['ruleToolBar.doCreateRule()',gLanguage.getMessage('CREATE'), 'rule-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rule-invalid'],
-				 ['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+	var links = [['ruleToolBar.doCreateRule()',gsrLanguage.getMessage('CREATE'), 'rule-confirm', gsrLanguage.getMessage('INVALID_VALUES'), 'rule-invalid'],
+				 ['ruleToolBar.cancel()', gsrLanguage.getMessage('CANCEL')]
 				];
 	
 	tb.append(tb.createLink('rule-links', links, '', true));
@@ -182,17 +182,17 @@ doCreateRule: function(rule) {
 	$('rule-confirm').hide();
 	$('rule-type').disable();
 	
-	if (rt == gLanguage.getMessage('RULE_TYPE_DEFINITION')) {
+	if (rt == gsrLanguage.getMessage('RULE_TYPE_DEFINITION')) {
 		// Create/edit a definition rule for categories or properties
 		var cr = new CategoryRule($('rule-name').value, rt);
 		this.currentEditObj = cr;
 		cr.createRule();
-	} else if (rt == gLanguage.getMessage('RULE_TYPE_CALCULATION')) {
+	} else if (rt == gsrLanguage.getMessage('RULE_TYPE_CALCULATION')) {
 		// Create/edit a calculation rule for properties
 		var cr = new CalculationRule($('rule-name').value, rt);
 		this.currentEditObj = cr;
 		cr.editRule();
-	} else if (rt == gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
+	} else if (rt == gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
 		// Create/edit a definition rule for properties
 		var pcr = new PropertyChain($('rule-name').value, rt);
 		this.currentEditObj = pcr;
@@ -226,15 +226,15 @@ editRule: function(selindex) {
 	}
 	
 	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
-	tb.append(tb.createText('rule-help_msg', gLanguage.getMessage('RULE_EDIT'), '' , true));
-	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createText('rule-help_msg', gsrLanguage.getMessage('RULE_EDIT'), '' , true));
+	tb.append(tb.createInput('rule-name', gsrLanguage.getMessage('NAME'), '', '',
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
 	tb.setInputValue('rule-name', ruleName);
-	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createText('rule-name-msg', gsrLanguage.getMessage('ENTER_NAME'), '' , true));
 			
-	var links = [['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+	var links = [['ruleToolBar.cancel()', gsrLanguage.getMessage('CANCEL')]
 				];
 	
 	tb.append(tb.createLink('rule-links', links, '', true));
@@ -251,17 +251,17 @@ editRule: function(selindex) {
 			break;
 		}
 	}
-	if (rule.type == gLanguage.getMessage('RULE_TYPE_DEFINITION')) {
+	if (rule.type == gsrLanguage.getMessage('RULE_TYPE_DEFINITION')) {
 		// Edit a definition rule for categories of properties
 		var cr = new CategoryRule(ruleName, rule.type);
 		this.currentEditObj = cr;
 		cr.editRule(rule);
-	} else if (rule.type == gLanguage.getMessage('RULE_TYPE_CALCULATION')) {
+	} else if (rule.type == gsrLanguage.getMessage('RULE_TYPE_CALCULATION')) {
 		// Edit a calculation rule for properties
 		var cr = new CalculationRule(ruleName, rule.type);
 		this.currentEditObj = cr;
 		cr.editRule(rule);
-	} else if (rule.type == gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
+	} else if (rule.type == gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING')) {
 		// Edit a property chaining rule
 		var pcr = new PropertyChain(ruleName, rule.type);
 		this.currentEditObj = pcr;
@@ -284,27 +284,27 @@ deleteRule: function() {
 getRuleTypes: function() {
 	switch (wgNamespaceNumber) {
 		case 14: // Category
-			this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition"];
-			return [gLanguage.getMessage('RULE_TYPE_DEFINITION')];
+			this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition"];
+			return [gsrLanguage.getMessage('RULE_TYPE_DEFINITION')];
 		case 102: //properties
-			var hasType = gLanguage.getMessage('PC_HAS_TYPE');
-			var page = gLanguage.getMessage('TYPE_PAGE').toLowerCase();
+			var hasType = gsrLanguage.getMessage('PC_HAS_TYPE');
+			var page = gsrLanguage.getMessage('TYPE_PAGE').toLowerCase();
 			var type = this.wtp.getRelation(hasType);
 			if (type) {
 				type = type[0].getValue().toLowerCase();
 			}
 			if (type == null || type == page) {
 				// object property
-				this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
-				                gLanguage.getMessage('RULE_TYPE_PROP_CHAINING'), 'Property chaining'];
-				return [gLanguage.getMessage('RULE_TYPE_DEFINITION'),
-				        gLanguage.getMessage('RULE_TYPE_PROP_CHAINING')];
+				this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
+				                gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING'), 'Property chaining'];
+				return [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'),
+				        gsrLanguage.getMessage('RULE_TYPE_PROP_CHAINING')];
 			} else {
 				// data type property
-				this.typeMap = [gLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
-				                gLanguage.getMessage('RULE_TYPE_CALCULATION'), 'Calculation'];
-				return [gLanguage.getMessage('RULE_TYPE_DEFINITION'),
-				        gLanguage.getMessage('RULE_TYPE_CALCULATION')];
+				this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition",
+				                gsrLanguage.getMessage('RULE_TYPE_CALCULATION'), 'Calculation'];
+				return [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'),
+				        gsrLanguage.getMessage('RULE_TYPE_CALCULATION')];
 			}
 	}
 	return [];

@@ -52,7 +52,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 	}
 	
 	global $smwgHaloIP, $smwgTripleStoreGraph;
-	require_once "$smwgHaloIP/includes/rules/SMW_RuleObject.php";
+	require_once "$smwgHaloIP/includes/rules/SR_RuleObject.php";
 	
 	if ($xml->formula) {
 		// create a calculation rule
@@ -165,7 +165,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
  */
 function smwf_sr_ParseRule($ruleName, $ruleText) {
 	
-	require_once 'SMW_FlogicParser.php';
+	require_once 'SR_FlogicParser.php';
 	
 	$fp = SMWFlogicParser::getInstance();
 	
@@ -204,7 +204,7 @@ function smwf_sr_ParseRule($ruleName, $ruleText) {
  *
  */
 function smwf_sr_ParseFormula($formula) {
-	require_once 'SMW_FormulaParser.php';
+	require_once 'SR_FormulaParser.php';
 	
 	$fp = new SMWFormulaParser($formula);
 	if ($fp->isFormulaValid()) {

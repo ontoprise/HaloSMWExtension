@@ -1,6 +1,7 @@
 <?php
 global $smwgIP, $smwgHaloIP;
 require_once( "$smwgIP/includes/storage/SMW_Store.php" );
+require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
 require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
 
 
@@ -890,81 +891,7 @@ class SMWTripleStore extends SMWStore {
 
 }
 
-/**
- * Provides access to local rule store.
- *
- */
-class SMWRuleStore {
-	private static $INSTANCE = NULL;
 
-	public static function getInstance() {
-		if (self::$INSTANCE == NULL) {
-			self::$INSTANCE = new SMWRuleStore();
-		}
-		return self::$INSTANCE;
-	}
-
-	/**
-	 * Returns rule from local rule store for a given page id.
-	 *
-	 * @param int $page_id
-	 * @return array of rule_id
-	 */
-	public function getRules($page_id) {
-		$db =& wfGetDB( DB_SLAVE );
-
-		$ruleTableName = $db->tableName('smw_rules');
-		$res = $db->select($ruleTableName, array('rule_id'), array('subject_id' => $page_id));
-		$results = array();
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				$results[] = $row->rule_id;
-			}
-		}
-		$db->freeResult($res);
-		return $results;
-	}
-
-	/**
-	 * Adds new rules to the local rule store.
-	 *
-	 * @param int $article_id
-	 * @param array $new_rules (ruleID => ruleText)
-	 */
-	public function addRules($article_id, $new_rules) {
-
-		$db =& wfGetDB( DB_MASTER );
-		$smw_rules = $db->tableName('smw_rules');
-		foreach($new_rules as $rule_id => $ruleText) {
-			$db->insert($smw_rules, array('subject_id' => $article_id, 'rule_id' => $rule_id, 'rule_text' => $ruleText));
-		}
-	}
-
-	/**
-	 * Removes rule from given article
-	 *
-	 * @param int $article_id
-	 */
-	public function clearRules($article_id) {
-
-		$db =& wfGetDB( DB_MASTER );
-		$smw_rules = $db->tableName('smw_rules');
-		$db->delete($smw_rules, array('subject_id' => $article_id));
-	}
-
-	/**
-	 * Updates article IDs. In case of a renaming operation.
-	 *
-	 * @param int $old_article_id
-	 * @param int $new_article_id
-	 */
-	public function updateRules($old_article_id, $new_article_id) {
-		$db =& wfGetDB( DB_MASTER );
-		$smw_rules = $db->tableName('smw_rules');
-		$db->update($smw_rules, array('subject_id' => $new_article_id), array('subject_id' => $old_article_id));
-	}
-}
 
 class WikiTypeToXSD {
 
