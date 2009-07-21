@@ -16,6 +16,7 @@ $wgAjaxExportList[] = "manageUserContent";
 $wgAjaxExportList[] = "whitelistsContent";
 $wgAjaxExportList[] = "getRightsPanel";
 $wgAjaxExportList[] = "rightPanelSelectDeselectTab";
+$wgAjaxExportList[] = "getGroupsForRightPanel";
 
 //put your code here
 
@@ -127,8 +128,8 @@ HTML;
  *
  *
  */
- $html = <<<HTML
-    <div class="haloacl_tab_content">
+    $html = <<<HTML
+        <div class="haloacl_tab_content">
         <div class="haloacl_tab_content_description">
 
         To create a standard ACL you need to complete the following four steps.
@@ -250,7 +251,7 @@ HTML;
 }
 
 
-function getRightsPanel($panelid){
+function getRightsPanel($panelid) {
     $html = <<<HTML
 	<!-- start of panel div-->
 	<div id="$panelid" class="panel haloacl_panel">
@@ -335,19 +336,67 @@ HTML;
     return $html;
 }
 
-function rightPanelSelectDeselectTab($panelid){
+function rightPanelSelectDeselectTab($panelid) {
     $html = <<<HTML
         <div class="haloacl_rightpanel_selecttab_container">
             <div class="haloacl_rightpanel_selecttab_leftpart">
-                left
+                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
+                        Filter in groups:
+                    </span>
+                    <input type="text" />
+                </div>
+                <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
             </div>
             <div class="haloacl_rightpanel_selecttab_rightpart">
                 right
             </div>
         </div>
+<script type="text/javascript">
+YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
+YAHOO.haloacl.treeInstance$panelid.labelClickAction = "alert";
+
+YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+
+
+</script>
+
 HTML;
     return $html;
 
+}
+
+
+function getGroupsForRightPanel($query) {
+    $array = array();
+
+    $tempgroup = array('name'=>"Admins",'id'=>'10');
+    $array[] = $tempgroup;
+
+    $tempgroup = array('name'=>"Deppen",'id'=>'11');
+    $array[] = $tempgroup;
+
+    $tempgroup = array('name'=>"Dudes",'id'=>'12');
+    $array[] = $tempgroup;
+
+    $tempgroup2 = array('name'=>"Sub1",'id'=>'55');
+    $tempgroup3 = array('name'=>"Sub2",'id'=>'66');
+    $tempgroup4 = array('name'=>"Sub3",'id'=>'77');
+
+    $tempsubgroup = array($tempgroup2,$tempgroup3,$tempgroup4);
+
+    $tempgroup = array('name'=>"Schnuffs",'id'=>'13','childs'=>$tempsubgroup);
+    $array[] = $tempgroup;
+
+    if($query == 'all') {
+
+        return(json_encode($array));
+    }elseif($query == 'Schnuffs') {
+        return(json_encode($tempsubgroup));
+
+    }else {
+        return(json_encode(array()));
+    }
 }
 
 function manageAclsContent() {
@@ -452,13 +501,13 @@ HTML;
 }
 function whitelistsContent() {
     $response = new AjaxResponse();
-       $wLHeadline = wfMsg('hacl_whitelist_headline');
-        $wLInfo = wfMsg('hacl_whitelist_info');
-        $wLFilter = wfMsg('hacl_whitelist_filter');
-        $wLPageSetHeader = wfMsg('hacl_whitelist_pageset_header');
-        $wLPageName = wfMsg('hacl_whitelist_pagename');
-        $wlAddButton = wfMsg('hacl_whitelist_addbutton');
-        $html = <<<HTML
+    $wLHeadline = wfMsg('hacl_whitelist_headline');
+    $wLInfo = wfMsg('hacl_whitelist_info');
+    $wLFilter = wfMsg('hacl_whitelist_filter');
+    $wLPageSetHeader = wfMsg('hacl_whitelist_pageset_header');
+    $wLPageName = wfMsg('hacl_whitelist_pagename');
+    $wlAddButton = wfMsg('hacl_whitelist_addbutton');
+    $html = <<<HTML
 <div id="haclWhitelistContainer">
 	<p id="haclWhitelistHeadline">{$wLHeadline}</p>
 	<p id="haclWhitelistInfo">{$wLInfo}</p>

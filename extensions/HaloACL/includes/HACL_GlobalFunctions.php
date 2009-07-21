@@ -167,26 +167,30 @@ function haclAddHTMLHeader(&$out) {
     // -------------------
     // YAHOO Part
 
-    $out->addScript('<script src="http://yui.yahooapis.com/2.7.0/build/yahoo/yahoo-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dom/dom-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo/yahoo-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/event/event-min.js"></script>');
-
-    //<!-- JavaScript Dependencies for Tabview: -->
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dom/dom-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/treeview/treeview-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>');
 
-    //<!-- OPTIONAL: Connection (required for dynamic loading of data) -->
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>');
 
-    //<!-- Source file for TabView -->
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/tabview/tabview-debug.js"></script>');
+    
     // -------------------
     // -------------------
 
 
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+
 
 
     $out->addLink(array(
@@ -200,8 +204,21 @@ function haclAddHTMLHeader(&$out) {
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
+        'href'  => 'http://yui.yahooapis.com/2.7.0/build/treeview/assets/skins/sam/treeview.css'
+    ));
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => 'http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css'
+    ));
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
     ));
+
     //<!-- Sam Skin CSS for TabView -->
 
     return true;

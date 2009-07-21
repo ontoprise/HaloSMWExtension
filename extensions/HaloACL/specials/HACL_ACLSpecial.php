@@ -59,12 +59,15 @@ class HaloACLSpecial extends SpecialPage {
         global $wgOut;
 
         $html = <<<HTML
-<div class="yui-skin-sam"> 
+            <div class="yui-skin-sam">
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
 <script type="text/javascript">
   YAHOO.haloacl.buildMainTabView('haloaclmainView');
 </script>
+
+
+  
 
 HTML;
         $wgOut->addHTML($html);
