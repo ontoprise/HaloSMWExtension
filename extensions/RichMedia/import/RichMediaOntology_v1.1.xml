@@ -1642,7 +1642,7 @@ if a page with that name already exists, you will be sent to a form to edit that
       <comment>1 revision</comment>
       <text xml:space="preserve">This is the Media category.
 
-[[Has default form::Form:uploadForm]]</text>
+[[Has default form::Form:RMUpload]]</text>
     </revision>
   </page>
   <page>
