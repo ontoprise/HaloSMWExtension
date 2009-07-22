@@ -391,9 +391,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @param  string querystring ask query 
 	 */
 	private function getCondition($querystring) {
-		global $smwgDefaultStore;
+		global $smwgDefaultStore, $smwgQMaxInlineLimit;
 		$fixparams = array(
 			"format" => "ul",
+			"limit" => $smwgQMaxInlineLimit,
 		);
 		
 		// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
