@@ -51,8 +51,8 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		return $e->getMessage();
 	}
 	
-	global $smwgHaloIP, $smwgTripleStoreGraph;
-	require_once "$smwgHaloIP/includes/rules/SR_RuleObject.php";
+	global $srgSRIP, $smwgTripleStoreGraph;
+	require_once "$srgSRIP/includes/SR_RuleObject.php";
 	
 	if ($xml->formula) {
 		// create a calculation rule

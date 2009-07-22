@@ -85,3 +85,5 @@ var wgUserSR_LanguageStrings = {
     'PC_DERIVE_BY'      : 'Derive property $1 by a property chaining rule'
    
 };
+
+var wgContSR_LanguageStrings= {};  

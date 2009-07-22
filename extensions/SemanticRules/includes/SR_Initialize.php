@@ -130,7 +130,7 @@ function srfAddHTMLHeader(& $out) {
 	$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
 
 	$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-	                    'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/Rules/rules.css'));
+	                    'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
 
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js"></script>');
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');

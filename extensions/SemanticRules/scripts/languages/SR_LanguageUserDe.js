@@ -74,5 +74,7 @@ var wgUserSR_LanguageStrings = {
     'PC_headline'       : 'Der Wert des Properties $1 von $2 ist $3, falls',
     'PC_DERIVE_BY'      : 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.'
     
-   
+
 };
+
+var wgContSR_LanguageStrings= {};  
