@@ -1399,10 +1399,10 @@ initFromQueryString:function(ask) {
 	
 	// run over all query strings and fetch property names
 	var propertiesInQuery = new Array();
-	for (i = 0; i < sub.length; i++) {
+	for (var i = 0; i < sub.length; i++) {
 		var props = sub[i].match(/\[\[([\w\d _]*)::.*?\]\]/g);
 		for (var j = 0; j < props.length; j++) {
-			var pname = escapeQueryHTML(props[i].substring(2, props[i].indexOf('::')));
+			var pname = escapeQueryHTML(props[j].substring(2, props[j].indexOf('::')));
 			if ( !propertiesInQuery.inArray(pname) )
 				propertiesInQuery.push(pname);
 		}
@@ -1417,21 +1417,17 @@ initFromQueryString:function(ask) {
 				propertiesInQuery.push(pname);
   		}
   	}	
-	
 	// add function to fetch property information
 	propertiesInQuery.unshift('getPropertyTypes');
-	//sajax_do_call('smwf_qi_QIAccess', propertiesInQuery, this.parsePropertyTypes.bind(this));
-	this.parseQueryString(sub);
-	
+	sajax_do_call('smwf_qi_QIAccess', propertiesInQuery, this.parsePropertyTypes.bind(this));
 },
 
-parsePropertyTypes:function(request) {
+parsePropertyTypes:function(request){
 	if (request.status == 200) {
 		var xmlDoc = GeneralXMLTools.createDocumentFromString(request.responseText);
 		var prop = xmlDoc.getElementsByTagName('relationSchema');
 		for (var i = 0; i < prop.length; i++) {
 			var pname = prop.item(i).getAttribute('name');
-			alert(pname);
 			var arity = parseInt(prop.item(i).getAttribute('arity'));
 			var ptype = prop.item(i).getElementsByTagName('param')[0].getAttribute('name');
 			var noval = prop.item(i).getElementsByTagName('allowedValue');
@@ -1440,16 +1436,16 @@ parsePropertyTypes:function(request) {
 			for (var j = 0; j < noval.length; j++) {
 				enumValues.push(noval.item(j).getAttribute('value'));
 			}
-			var pgroup = new PropertyGroup(name, arity, false, must, isEnum, enumValues);
-			this.propertyTypesList.add(name, pgroup, [], ptype);
+			var pgroup = new PropertyGroup(pname, arity, false, false, isEnum, enumValues);
+			this.propertyTypesList.add(pname, pgroup, [], ptype);
 		}
-		this.parseQueryString();
 	}
+	this.parseQueryString();
 },
 
-parseQueryString:function(sub) {
-	//var sub = this.queryPartsFromInitByAsk;
-	
+parseQueryString:function() {
+	var sub = this.queryPartsFromInitByAsk;
+
 	// properties that must be shown in the result
 	var pMustShow = this.applyOptionParams(sub[0]);
 		
@@ -1507,7 +1503,7 @@ handleQueryString:function(args, queryId, pMustShow) {
 		    	pgroup = new PropertyGroup(escapeQueryHTML(pname), arity, pshow, pmust, isEnum, enumValues); //create propertyGroup
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
-			var paramname = this.propertyTypeList && this.propertyTypeList.getType(pname) ? this.propertyTypeList.getType(pname) : 'Page';
+			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname) ? this.propertyTypesList.getType(pname) : gLanguage.getMessage('QI_PAGE');
 			var paramvalue = pval == "" ? "*" : pval; //no value is replaced by "*" which means all values
 			var restriction = '=';
 			
