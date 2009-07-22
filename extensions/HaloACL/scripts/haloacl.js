@@ -69,18 +69,19 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
 
 YAHOO.haloacl.tabDataConnect = function() {
     var tab = this;
+    /*
     var queryparameterlist = {
         rs:tab.get('dataSrc')
     };
-
+    */
+    var querystring = "rs="+tab.get('dataSrc');
     var postData = tab.get('postData');
     
     if(postData != null){
-        var temparray = new Array();
         for(param in postData){
-            temparray.push(postData[param]);
+            //queryparameterlist.rsargs = postData[param];
+            querystring = querystring + "&rsargs[]="+postData[param];
         }
-        queryparameterlist.rsargs = temparray;
 
     }
     YAHOO.util.Dom.addClass(tab.get('contentEl').parentNode, tab.LOADING_CLASSNAME);
@@ -88,7 +89,8 @@ YAHOO.haloacl.tabDataConnect = function() {
     new Ajax.Updater(tab.get('contentEl'), "?action=ajax", {
         //method:tab.get('loadMethod'),
         method:'post',
-        parameters:queryparameterlist,
+        parameters:querystring,
+       // parameters:queryparameterlist,
         asynchronous:true,
         evalScripts:true,
         onSuccess: function(o) {
@@ -105,22 +107,24 @@ YAHOO.haloacl.tabDataConnect = function() {
 
 // general ajax stuff
 YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
-    var queryparameterlist = {
+ /*   var queryparameterlist = {
         rs:action
     };
+   */
+       var querystring = "rs="+action;
 
     if(parameterlist != null){
-        var temparray = new Array();
         for(param in parameterlist){
-            temparray.push(parameterlist[param]);
+           // temparray.push(parameterlist[param]);
+            querystring = querystring + "&rsargs[]="+parameterlist[param];
         }
-        queryparameterlist.rsargs = temparray;
     }
 
     new Ajax.Updater(targetdiv, "?action=ajax", {
         //method:tab.get('loadMethod'),
         method:'post',
-        parameters: queryparameterlist,
+       // parameters: queryparameterlist,
+        parameters: querystring,
         asynchronous:true,
         evalScripts:true,
         onSuccess: function(o) {

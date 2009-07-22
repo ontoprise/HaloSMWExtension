@@ -306,20 +306,22 @@ function rightPanelSelectDeselectTab($panelid) {
                     <input type="text" />
                 </div>
                 <div id="datatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
-
+                <div id="datatablepaging_datatableDiv_$panelid"></div>
                 </div>
             </div>
             <!-- end of right part -->
 
         </div>
 <script type="text/javascript">
+ // user list on the right
+    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
+
     // treeview part - so the left part of the select/deselct-view
     YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
-    YAHOO.haloacl.treeInstance$panelid.labelClickAction = "alert";
-    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+    YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
+    YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
 
-    // user list on the right
-    YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
+   
 
 
 </script>
@@ -330,7 +332,7 @@ HTML;
 }
 
 
-function getUsersForUserTable($query) {
+function getUsersForUserTable($query,$sort,$dir,$startIndex,$results) {
     $a = array();
     $a['recordsReturned'] = 5;
     $a['totalrecords'] = 10;
@@ -343,7 +345,7 @@ function getUsersForUserTable($query) {
     $u2 = array('id'=>2,'name'=>'Ricky');
     $u3 = array('id'=>3,'name'=>'Anna');
     $u4 = array('id'=>4,'name'=>'Detlef');
-    $u5 = array('id'=>5,'name'=>'Eugen');
+    $u5 = array('id'=>5,'name'=>'queryCheck:'.$query);
 
 
     $a['records'] = array($u1,$u2,$u3,$u4,$u5);

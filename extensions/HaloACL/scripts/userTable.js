@@ -1,8 +1,17 @@
 YAHOO.haloacl.userDataTable = function(divid) {
     // Column definitions
     var myColumnDefs = [ // sortable:true enables sorting
-        {key:"id", label:"ID", sortable:true},
-        {key:"name", label:"Name", sortable:true},
+    {
+        key:"id",
+        label:"ID",
+        sortable:true
+    },
+
+    {
+        key:"name",
+        label:"Name",
+        sortable:true
+    },
     ];
 
 
@@ -13,19 +22,57 @@ YAHOO.haloacl.userDataTable = function(divid) {
     myDataSource.responseSchema = {
         resultsList: "records",
         fields: [
-            {key:"id", parser:"number"},
-            {key:"name"},
+        {
+            key:"id",
+            parser:"number"
+        },
+
+        {
+            key:"name"
+        },
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response
         }
     };
+
+
+    var customRequestBuilder = function(oState, oSelf) {
+        // Get states or use defaults
+        oState = oState;
+        var totalRecords = oState.pagination.totalRecords;
+        var sort = (oState.sortedBy) ? oState.sortedBy.key : null;
+        var dir = (oState.sortedBy && oState.sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+        var startIndex = oState.pagination.recordOffset;
+        var results = oState.pagination.rowsPerPage;
+        /* make the initial cache of the form data */
+
+        if(myDataTable.query == null){
+            myDataTable.query = '';
+        }
+
+        return "rs=getUsersForUserTable&rsargs[]="
+        +myDataTable.query+"&rsargs[]="+sort
+        +"&rsargs[]="+dir
+        +"&rsargs[]="+startIndex
+        +"&rsargs[]="+results;
+
+
+    };
+
     // DataTable configuration
     var myConfigs = {
-        initialRequest: "sort=id&dir=asc&startIndex=0&results=25", // Initial request for first page of data
+        initialRequest: "rs=getUsersForUserTable&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
-        sortedBy : {key:"id", dir:YAHOO.widget.DataTable.CLASS_ASC}, // Sets UI initial sort arrow
-        paginator: new YAHOO.widget.Paginator({ rowsPerPage:25 }) // Enables pagination
+        sortedBy : {
+            key:"id",
+            dir:YAHOO.widget.DataTable.CLASS_ASC
+        }, // Sets UI initial sort arrow
+        paginator: new YAHOO.widget.Paginator({ 
+            rowsPerPage:25,
+            containers:'datatablepaging_'+divid
+        }),
+        generateRequest:customRequestBuilder
     };
 
     // DataTable instance
@@ -35,9 +82,19 @@ YAHOO.haloacl.userDataTable = function(divid) {
         oPayload.totalRecords = oResponse.meta.totalRecords;
         return oPayload;
     }
+    myDataTable.query = "";
 
-    return {
-        ds: myDataSource,
-        dt: myDataTable
-    };
+    myDataTable.executeQuery = function(query){
+        myDataTable.query = query;
+        var oCallback = {
+            success : myDataTable.onDataReturnInitializeTable,
+            failure : myDataTable.onDataReturnInitializeTable,
+            scope : myDataTable,
+            argument : myDataTable.getState()
+        };
+        myDataSource.sendRequest(customRequestBuilder(myDataTable.getState(),null), oCallback);
+    }
+
+    return myDataTable;
+
 };

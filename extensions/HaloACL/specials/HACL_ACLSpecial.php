@@ -64,6 +64,7 @@ class HaloACLSpecial extends SpecialPage {
 </div>
 <script type="text/javascript">
   YAHOO.haloacl.buildMainTabView('haloaclmainView');
+
 </script>
 
 

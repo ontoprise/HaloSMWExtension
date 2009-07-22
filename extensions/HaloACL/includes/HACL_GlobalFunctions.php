@@ -196,20 +196,6 @@ function haclAddHTMLHeader(&$out) {
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
 
 
-
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/tabview/assets/skins/sam/tabview.css'
-    ));
-
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/treeview/assets/skins/sam/treeview.css'
-    ));
     $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
