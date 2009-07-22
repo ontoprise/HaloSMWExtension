@@ -272,7 +272,7 @@ class Installer {
 			}
 
 			$id_shown = $p_id;
-			$id_shown .= str_repeat(" ", 20-strlen($p_id));
+			$id_shown .= str_repeat(" ", 20-strlen($p_id) >= 0 ? 20-strlen($p_id) : 0);
 			$sep_v = array();
 			foreach($versions as $v) $sep_v[] = Tools::addVersionSeparators($v);
 			print "\n $instTag $id_shown| (".implode(", ", $sep_v).")";
