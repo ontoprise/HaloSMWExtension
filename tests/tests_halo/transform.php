@@ -4,7 +4,7 @@
  *
  * Usage:
  *
- *  php Transform.php -i <input file> -o <output file>
+ *  php Transform.php -i <input file> -o <output file> [ -p <package name> ]
  *
  *
  * @author Kai Kühn
