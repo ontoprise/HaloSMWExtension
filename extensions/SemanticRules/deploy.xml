@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>semanticrules</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/SemanticRules</instdir>
+		<description>
+			Rule provide more expressiveness and more powerful
+			reasoning.
+		</description>
+		<dependencies>
+			<dependency from="145" to="145">smwhalo</dependency>
+		</dependencies>
+	</global>
+	<codefiles></codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="smwhalo" />
+
+		<new>
+			<require name="smwhalo"
+				file="extensions/SemanticRules/includes/SR_Initialize.php" />
+
+			<script
+				file="extensions/SemanticRules/maintenance/setup.php" />
+		</new>
+		<uninstall>
+			<script
+				file="extensions/SemanticRules/maintenance/setup.php"
+				params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>
