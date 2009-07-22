@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>145</version>
+        <id>semanticresultformats</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/SemanticResultFormats</instdir>
+        <description>
+            Semantic Result Formats provides several new result printer for ASK (and SPARQL)
+        </description>
+        <dependencies>
+            <dependency from="140" to="144">smwhalo</dependency>
+        </dependencies>
+    </global>
+    <codefiles></codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+        <precedes ext="smw" />
+
+        <new>
+            <require name="srf"
+                file="extensions/SemanticResultFormats/SRF_Settings.php" />
+     
+        </new>
+        <uninstall>
+           
+        </uninstall>
+    </configs>
+</deploydescriptor>

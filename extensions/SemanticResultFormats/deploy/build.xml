@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="semanticresultformats" name="Semantic Result formats">
+    <target name="semanticresultformats">
+        <delete dir="bin/zip" />
+        <delete file="bin/smw-srf-${version}.zip" />
+        <mkdir dir="bin/zip" />
+
+        <copy todir="bin/zip/extensions/SemanticResultFormats">
+            <fileset dir="../">
+                <exclude name="**/.svn, **/CVS" />
+                <exclude name="deploy/**" />
+                <exclude name="**/.project" />
+            </fileset>
+        </copy>
+        
+        <zip destfile="bin/smw-srf-${version}.zip" basedir="bin/zip" />
+        <delete dir="bin/zip" />
+    </target>
+
+</project>
