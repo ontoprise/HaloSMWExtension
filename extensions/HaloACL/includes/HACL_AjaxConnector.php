@@ -332,7 +332,7 @@ HTML;
 }
 
 
-function getUsersForUserTable($query,$sort,$dir,$startIndex,$results) {
+function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
     $a = array();
     $a['recordsReturned'] = 5;
     $a['totalrecords'] = 10;
@@ -345,7 +345,7 @@ function getUsersForUserTable($query,$sort,$dir,$startIndex,$results) {
     $u2 = array('id'=>2,'name'=>'Ricky');
     $u3 = array('id'=>3,'name'=>'Anna');
     $u4 = array('id'=>4,'name'=>'Detlef');
-    $u5 = array('id'=>5,'name'=>'queryCheck:'.$query);
+    $u5 = array('id'=>5,'name'=>'queryCheck:'.$selectedGroup);
 
 
     $a['records'] = array($u1,$u2,$u3,$u4,$u5);
@@ -355,7 +355,7 @@ function getUsersForUserTable($query,$sort,$dir,$startIndex,$results) {
 }
 
 /* FAKE FUNKTION */
-function getGroupsForRightPanel($query) {
+function getGroupsForRightPanel($filter) {
     $array = array();
 
     $tempgroup = array('name'=>"Admins",'id'=>'10');
