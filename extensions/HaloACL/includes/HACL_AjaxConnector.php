@@ -387,7 +387,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 }
 
 /* FAKE FUNKTION */
-function getGroupsForRightPanel($filter) {
+function getGroupsForRightPanel($query) {
     $array = array();
 
     // return first level
