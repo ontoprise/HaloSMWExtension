@@ -333,6 +333,7 @@ HTML;
 
 
 function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
+
     $a = array();
     $a['recordsReturned'] = 5;
     $a['totalrecords'] = 10;
@@ -341,6 +342,36 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
     $a['dir'] = "asc";
     $a['pagesize'] = 5;
 
+
+
+    //if ($selectedGroup == 'all') {
+
+        $db =& wfGetDB( DB_SLAVE );
+        $gt = $db->tableName('user');
+        $sql = "SELECT * FROM $gt ";
+
+        $res = $db->query($sql);
+        while ($row = $db->fetchObject($res)) {
+
+            $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id);
+        }
+
+        $db->freeResult($res);
+
+    /*} else {
+
+        $selectedGroup = "TestsubgruppeA";
+        $parent = HACLGroup::newFromName($selectedGroup);
+        //users
+        $users = $parent->getUsers(HACLGroup::OBJECT);
+        foreach( $users as $key => $value ) {
+                $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId());
+                $a['records'][] = $tempgroup;
+        }
+
+    }*/
+
+    /*
     $u1 = array('id'=>1,'name'=>'Torben');
     $u2 = array('id'=>2,'name'=>'Ricky');
     $u3 = array('id'=>3,'name'=>'Anna');
@@ -349,6 +380,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
 
     $a['records'] = array($u1,$u2,$u3,$u4,$u5);
+     */
 
     return(json_encode($a));
 
@@ -358,35 +390,38 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 function getGroupsForRightPanel($filter) {
     $array = array();
 
-    $tempgroup = array('name'=>"Admins",'id'=>'10');
-    $array[] = $tempgroup;
-
-    $tempgroup = array('name'=>"Deppen",'id'=>'11');
-    $array[] = $tempgroup;
-
-    $tempgroup = array('name'=>"Dudes",'id'=>'12');
-    $array[] = $tempgroup;
-
-    $tempgroup2 = array('name'=>"Sub1",'id'=>'55');
-    $tempgroup3 = array('name'=>"Sub2",'id'=>'66');
-    $tempgroup4 = array('name'=>"Sub3",'id'=>'77');
-
-    $tempsubgroup = array($tempgroup2,$tempgroup3,$tempgroup4);
-
-    $tempgroup = array('name'=>"Schnuffs",'id'=>'13','childs'=>$tempsubgroup);
-    $array[] = $tempgroup;
-
     // return first level
     if($query == 'all') {
 
+        //get level 0 groups
+        $groups = HACLStorage::getDatabase()->getGroups();
+        foreach( $groups as $key => $value) {
+            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId());
+            $array[] = $tempgroup;
+        }
+
         return(json_encode($array));
 
-    // return childs of Schnuffs
-    }elseif($query == 'Schnuffs') {
-        return(json_encode($tempsubgroup));
-
     }else {
-        return(json_encode(array()));
+
+        //get group by name
+        $parent = HACLGroup::newFromName($query);
+
+        //groups
+        $groups = $parent->getGroups(HACLGroup::OBJECT);
+        foreach( $groups as $key => $value ) {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId());
+                $array[] = $tempgroup;
+        }
+
+        //users
+        $users = $parent->getUsers(HACLGroup::OBJECT);
+        foreach( $users as $key => $value ) {
+                $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId());
+                $array[] = $tempgroup;
+        }
+
+        return(json_encode($array));
     }
 }
 
