@@ -1,5 +1,16 @@
 YAHOO.haloacl.userDataTable = function(divid) {
     // Column definitions
+
+    this.myCustomFormatter = function(elLiner, oRecord, oColumn, oData) {
+        if(oData == true){
+            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }else{
+            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }
+            
+    };
+    YAHOO.widget.DataTable.Formatter.myCustom = this.myCustomFormatter;
+
     var myColumnDefs = [ // sortable:true enables sorting
     {
         key:"id",
@@ -11,6 +22,11 @@ YAHOO.haloacl.userDataTable = function(divid) {
         key:"name",
         label:"Name",
         sortable:true
+    },
+    {
+        key:"checked",
+        label:"Selected",
+        formatter:"myCustom"
     },
     ];
 
@@ -31,8 +47,7 @@ YAHOO.haloacl.userDataTable = function(divid) {
             key:"name"
         },
         {
-          key:"select",
-          format:YAHOO.widget.DataTable.formatCheckbox
+            key:"checked"
         },
         ],
         metaFields: {

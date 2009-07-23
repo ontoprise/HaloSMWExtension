@@ -206,7 +206,7 @@ function getRightsPanel($panelid) {
                             Name:
                         </div>
                         <div class="haloacl_panel_content_row_content">
-                            <input type="text" name="right_name_$panelid" />
+                            <input type="text" id="right_name_$panelid" />
                         </div>
                     </div>
 
@@ -215,15 +215,15 @@ function getRightsPanel($panelid) {
                             Rights:
                         </div>
                         <div class="haloacl_panel_content_row_content">
-                            <input type="checkbox" name="right_rights_fullaccess_$panelid" />&nbsp;Full access
-                            <input type="checkbox" name="right_rights_read_$panelid" />&nbsp;Read
-                            <input type="checkbox" name="right_rights_edit_$panelid" />&nbsp;Edit
-                            <input type="checkbox" name="right_rights_editfromform_$panelid" />&nbsp;Edit from form
-                            <input type="checkbox" name="right_rights_wysiwyg_$panelid" />&nbsp;WYSIWYG
-                            <input type="checkbox" name="right_rights_create_$panelid" />&nbsp;Create
-                            <input type="checkbox" name="right_rights_move_$panelid" />&nbsp;Move
-                            <input type="checkbox" name="right_rights_delete_$panelid" />&nbsp;Delete
-                            <input type="checkbox" name="right_rights_annotate_$panelid" />&nbsp;Annotate
+                            <input type="checkbox" class="right_rights_$panelid" name="fullaccess" />&nbsp;Full access
+                            <input type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read
+                            <input type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit
+                            <input type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form
+                            <input type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG
+                            <input type="checkbox" class="right_rights_$panelid" name="create"/>&nbsp;Create
+                            <input type="checkbox" class="right_rights_$panelid" name="move"/>&nbsp;Move
+                            <input type="checkbox" class="right_rights_$panelid" name="delete"/>&nbsp;Delete
+                            <input type="checkbox" class="right_rights_$panelid" name="annotate"/>&nbsp;Annotate
                         </div>
                     </div>
 
@@ -234,7 +234,7 @@ function getRightsPanel($panelid) {
                             Right description:
                         </div>
                         <div class="haloacl_panel_content_row_content">
-                            <input type="text" style="width:400px" name="right_description_$panelid" />
+                            <input type="text" style="width:400px" id="right_description_$panelid" />
 
                         </div>
                     </div>
@@ -260,10 +260,52 @@ function getRightsPanel($panelid) {
                     <div cl
                     <input type="button" value="Delete right" />
                     <input type="button" value="Discard right" />
-                    <input type="button" value="Save right" />
+                    <input type="button" value="Save right" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();"/>
 
 		</div>
 	</div> <!-- end of panel div -->
+        <script type="javascript>
+            // rightpanel handling
+
+
+
+            YAHOO.haloacl.buildRightPanelXML_$panelid = function(){
+                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                var panelid = '$panelid';
+
+                // building xml
+                var xml = "<?xml version=\"1.0\"?>";
+                xml+="<panelid>$panelid</panelid>";
+                xml+="<name>"+$('right_name_$panelid').value+"</name>";
+                xml+="<description>"+$('right_description_$panelid').value+"</description>";
+
+                xml+="<rights>";
+                $$('.right_rights_$panelid').each(function(item){
+                    if(item.checked){
+                        xml+="<right>"+item.name+"</right>";
+                    }
+                });
+                xml+="</rights>";
+
+                xml+="<users>";
+                $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
+                    if(item.checked){
+                        xml+="<user>"+item.name+"</user>";
+                    }
+                });
+                xml+="</users>";
+
+                xml+="<groups>";
+                groups.each(function(group){
+                    xml+="<group>"+group+"</group>";
+                });
+                xml+="</groups>";
+
+                alert(xml);
+            };
+
+
+        </script>
 HTML;
     return $html;
 }
@@ -353,7 +395,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
         $res = $db->query($sql);
         while ($row = $db->fetchObject($res)) {
 
-            $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id);
+            $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
         }
 
         $db->freeResult($res);
@@ -396,11 +438,10 @@ function getGroupsForRightPanel($query) {
         //get level 0 groups
         $groups = HACLStorage::getDatabase()->getGroups();
         foreach( $groups as $key => $value) {
-            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId());
+            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
             $array[] = $tempgroup;
         }
 
-        return(json_encode($array));
 
     }else {
 
@@ -410,19 +451,19 @@ function getGroupsForRightPanel($query) {
         //groups
         $groups = $parent->getGroups(HACLGroup::OBJECT);
         foreach( $groups as $key => $value ) {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId());
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
                 $array[] = $tempgroup;
         }
 
         //users
         $users = $parent->getUsers(HACLGroup::OBJECT);
         foreach( $users as $key => $value ) {
-                $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId());
+                $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId(),'checked'=>'false');
                 $array[] = $tempgroup;
         }
 
-        return(json_encode($array));
     }
+    return (json_encode($array));
 }
 
 

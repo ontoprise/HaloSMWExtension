@@ -311,6 +311,25 @@ YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree){
     },callback);
 };
 
+YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
+    if(nodes == null){
+        nodes = tree.getRoot().children;
+    }
+    checkedNodes = [];
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+        //if (n.checkState > 0) { // if we were interested in the nodes that have some but not all children checked
+        if (n.checkState === 2) {
+            checkedNodes.push(n.label); // just using label for simplicity
+        }
+
+        if (n.hasChildren()) {
+            checkedNodes = checkedNodes.concat(YAHOO.haloacl.getCheckedNodesFromTree(null, n.children));
+        }
+    }
+
+    return checkedNodes;
+};
 
 
 
