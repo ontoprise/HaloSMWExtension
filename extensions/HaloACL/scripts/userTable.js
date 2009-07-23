@@ -30,6 +30,10 @@ YAHOO.haloacl.userDataTable = function(divid) {
         {
             key:"name"
         },
+        {
+          key:"select",
+          format:YAHOO.widget.DataTable.formatCheckbox
+        },
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response

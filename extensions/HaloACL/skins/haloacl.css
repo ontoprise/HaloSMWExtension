@@ -355,3 +355,26 @@ abbr,acronym { border:0;
     font-weight:bold;
 
 }
+
+/* datatable */
+
+/*hide tableheader */
+
+.haloacl_rightpanel_selecttab_rightpart_datatable thead .yui-dt-first{
+/*
+    display:none!important;
+*/
+}
+
+
+.haloacl_rightpanel_selecttab_rightpart_datatable table{
+    border:0px solid!important;
+}
+.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-odd{
+    background-color:#FFF!important;
+}
+.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-col-name{
+   /*
+    border:0px solid!important;
+    */
+}
