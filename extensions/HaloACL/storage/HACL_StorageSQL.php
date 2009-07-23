@@ -201,16 +201,48 @@ class HACLStorageSQL {
 	}
 	
 	/**
+	 * Retrieves all groups from
+	 * the database.
+	 *
+	 * 
+	 * @return Array
+	 * 		Array of Group Objects
+	 *  
+	 */
+	public function getGroups() {
+		$db =& wfGetDB( DB_SLAVE );
+		$gt = $db->tableName('halo_acl_groups');
+		$sql = "SELECT * FROM $gt ";
+		$groups = array();
+
+		$res = $db->query($sql);
+
+                while ($row = $db->fetchObject($res)) {
+
+                    $groupID = $row->group_id;
+                    $groupName = $row->group_name;
+                    $mgGroups = self::strToIntArray($row->mg_groups);
+                    $mgUsers  = self::strToIntArray($row->mg_users);
+
+                    $groups[] = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
+		}
+
+		$db->freeResult($res);
+
+		return $groups;
+	}
+
+        /**
 	 * Retrieves the description of the group with the name $groupName from
 	 * the database.
 	 *
 	 * @param string $groupName
 	 * 		Name of the requested group.
-	 * 
+	 *
 	 * @return HACLGroup
-	 * 		A new group object or <null> if there is no such group in the 
+	 * 		A new group object or <null> if there is no such group in the
 	 * 		database.
-	 *  
+	 *
 	 */
 	public function getGroupByName($groupName) {
 		$db =& wfGetDB( DB_SLAVE );
@@ -226,7 +258,7 @@ class HACLStorageSQL {
 			$groupID = $row->group_id;
 			$mgGroups = self::strToIntArray($row->mg_groups);
 			$mgUsers  = self::strToIntArray($row->mg_users);
-			
+
 			$group = new HACLGroup($groupID, $groupName, $mgGroups, $mgUsers);
 		}
 		$db->freeResult($res);
