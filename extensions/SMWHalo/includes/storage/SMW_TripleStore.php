@@ -346,11 +346,13 @@ class SMWTripleStore extends SMWStore {
 					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
 				}
 				// ...and add new
-				foreach($new_rules as $ruleID => $ruleText) {
+				foreach($new_rules as $rule) {
 					// The F-Logic parser does not accept linebreaks
 					// => remove them
+					list($ruleID, $ruleText, $native) = $rule;
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
-					$sparulCommands[] = "INSERT RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"";
+					$nativeText = $native ? "NATIVE" : "";
+					$sparulCommands[] = "INSERT $nativeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"";
 				}
 			}
 			$con->connect();
