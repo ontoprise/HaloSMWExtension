@@ -43,8 +43,9 @@ class SRRuleStore extends SMWRuleStore {
 
 		$db =& wfGetDB( DB_MASTER );
 		$smw_rules = $db->tableName('smw_rules');
-		foreach($new_rules as $rule_id => $ruleText) {
-			$db->insert($smw_rules, array('subject_id' => $article_id, 'rule_id' => $rule_id, 'rule_text' => $ruleText));
+		foreach($new_rules as $rule) {
+			list($rule_id, $ruleText, $native) = $rule;
+			$db->insert($smw_rules, array('subject_id' => $article_id, 'rule_id' => $rule_id, 'rule_text' => $ruleText, 'is_native' => $native ? "true" : "false"));
 		}
 	}
 
@@ -84,7 +85,8 @@ class SRRuleStore extends SMWRuleStore {
 		DBHelper::setupTable($ruleTableName,
 		array('subject_id'    => 'INT(8) UNSIGNED NOT NULL',
                             'rule_id'       => 'VARCHAR(255) binary NOT NULL',
-                            'rule_text'      => 'TEXT NOT NULL'), $db, $verbose);
+                            'rule_text'      => 'TEXT NOT NULL',
+		                    'is_native'      => 'enum(\'false\', \'true\')'), $db, $verbose);
 	}
 
 	public function drop($verbose) {

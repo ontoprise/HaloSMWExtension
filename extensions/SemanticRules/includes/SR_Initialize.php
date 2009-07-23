@@ -29,12 +29,7 @@ function srfSetupExtension() {
 
 	srfSRInitUserMessages();
 
-	global $smwgEnableFlogicRules;
-	// register flogic rule rewriter if flogic rules are enabled
-	if (isset($smwgEnableFlogicRules) && $smwgEnableFlogicRules === true) {
-		require_once($srgSRIP.'/includes/SR_FlogicRuleRewriter.php');
-		$smwgRuleRewriter = new FlogicRuleRewriter();
-	}
+	
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
 	require_once($srgSRIP . '/includes/SR_RulesAjax.php');
 
@@ -152,7 +147,7 @@ function srfAddHTMLHeader(& $out) {
  * @return boolean (SMWHalo hook)
  */
 function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-	global $smwgEnableFlogicRules, $smwgRuleRewriter;
+	global $smwgEnableFlogicRules, $smwgTripleStoreGraph;
 	// rules
 	// meant to be a hash map $ruleID => $ruleText,
 	// where $ruleID has to be a URI (i.e. containing at least one colon)
@@ -173,20 +168,28 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$ruleparamterPattern = "/([^=]+)=\"([^\"]*)\"/ixus";
 			preg_match_all($ruleparamterPattern, $header, $matchesheader);
 
-			$rewrite = true;
+			$native = false;
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
-				if (trim($matchesheader[1][$j]) == 'norewrite') {
-					$rewrite = false;
+				if (trim($matchesheader[1][$j]) == 'native') {
+					$native = true;
 				}
+				
 			}
 			// fetch name of rule (ruleid) and put into rulearray
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
 					$name = $matchesheader[2][$j];
-					$name = $smwgTripleStoreGraph . "/" . $name;
+					$is_url = strpos($name, ":");
+					if ($is_url === false) {
+						// no valid URL given, so build one
+						$url = $smwgTripleStoreGraph . "#" . urlencode($name);
+					} else {
+						$url = $name;
+					}
+					
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
-					$rules[$name] = $smwgRuleRewriter != NULL && $rewrite ? $smwgRuleRewriter->rewrite($ruletext) : $ruletext;
+					$rules[] = array($url, $ruletext, $native);
 				}
 			}
 		}
