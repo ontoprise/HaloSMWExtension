@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface2">
+    
+    <target name="testQueryInterface2">
+
+        <webtest name="Query Layout Manager">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 10 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="11"
+            />  
+
+            <clickLink
+              description="Open Query Layout Manager"
+              htmlId="layouttitle-link"
+            />
+            <setSelectField
+              description="Select format ol"
+              xpath="//select[@id='layout_format']"
+              value="ol"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain ordered list, 4th element is Boston"
+              xpath="//div[@id='previewcontent']/ol/li[4]/a"
+              text="Boston"
+            />  
+
+            <setSelectField
+              description="Select format ul"
+              xpath="//select[@id='layout_format']"
+              value="ul"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain ordered list, 8th element is Linz"
+              xpath="//div[@id='previewcontent']/ul/li[8]/a"
+              text="Linz"
+            />  
+
+            <setSelectField
+              description="Select format embedded"
+              xpath="//select[@id='layout_format']"
+              value="embedded"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain text, 2nd item is Berlin"
+              xpath="//div[@id='previewcontent']/h1[2]/span/a"
+              text="Berlin"
+            />
+            <verifyXPath
+              description="Check that the short text exists as well"
+              xpath="//div[@id='previewcontent']/p[2]/text()"
+              regex="\s*This is the city of Berlin\s*"
+            />  
+
+            <setSelectField
+              description="Select format count"
+              xpath="//select[@id='layout_format']"
+              value="count"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Must be 10 cieties"
+              xpath="//div[@id='previewcontent']/p"
+              regex="\s*10\s*"
+            />
+
+            <setSelectField
+              description="Select format broadtable"
+              xpath="//select[@id='layout_format']"
+              value="broadtable"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 10th row (+1) is Vienna"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
+              text="Vienna"
+            />
+            <verifyXPath
+              description="Check table width"
+              xpath="//div[@id='previewcontent']/table/@width"
+              text="100%"
+            />  
+
+            <setInputField
+              description="set mainlabel Cities"
+              htmlId="layout_label"
+              value="Cities"
+            />
+
+            <checkAjaxResponseXpathText
+              description="Check table header row"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[1]/th"
+              text="Cities"
+            />
+
+            <setInputField
+              description="set intro List of all cities"
+              htmlId="layout_intro"
+              value="List of all cities"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Check table header row"
+              xpath="//div[@id='previewcontent']/text()"
+              regex="\sList of all cities\s"
+            />
+
+            <setSelectField
+              description="change order to descending"
+              xpath="//select[@id='layout_order']"
+              value="descending"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 10th row (+1) is Baltimore"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
+              text="Baltimore"
+            />
+
+            <setSelectField
+              description="change order to descending"
+              xpath="//select[@id='layout_link']"
+              value="none"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain table, 9th row (+1) is Berlin"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[10]/td"
+              text="Berlin"
+            />
+
+            <setInputField
+              description="set a limit of 5"
+              htmlId="layout_limit"
+              value="5"
+            />
+            <setSelectField
+              description="change layout format to list"
+              xpath="//select[@id='layout_format']"
+              value="list"
+            />
+            
+            <checkAjaxResponseXpathRegex
+              description="Check text up to link further results"
+              xpath="//div[@id='previewcontent']/p/text()"
+              regex="\s*Vienna, Stuttgart, Linz, Hamburg, and Graz.*"
+            />
+        </webtest>
+        
+    </target>
+</project>

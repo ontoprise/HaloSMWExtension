@@ -1,0 +1,20 @@
+<!-- 
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <checkAjaxResponseFromQI .../>)
+-->
+<macrodef name="checkAjaxResponseXpathRegex" description="check response of an ajax request in QI">
+    <attribute name="description" />
+    <attribute name="xpath" />
+    <attribute name="regex" />
+    <sequential>
+        <retry maxcount="10">
+            <sleep seconds="1"/>
+            <verifyXPath
+              description="@{description}"
+              xpath="@{xpath}"
+              regex="@{regex}"
+            />  
+        </retry>
+    </sequential>   
+</macrodef>
+

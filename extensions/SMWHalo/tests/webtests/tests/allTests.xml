@@ -9,5 +9,6 @@
 		<ant antfile="basictests.xml"/>
 		<ant antfile="ontologybrowsertests.xml"/>
 		<ant antfile="queryinterface1.xml"/>
+		<ant antfile="queryinterface2.xml"/>
 	</target>
 </project>

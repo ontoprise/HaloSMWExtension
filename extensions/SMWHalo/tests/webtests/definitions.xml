@@ -8,6 +8,7 @@ Do not edit it else you risk to lose your changes.
 <!DOCTYPE project SYSTEM "dtd/Project.dtd"
 [
  <!ENTITY definitions__checkAjaxResponseXpathText__xml SYSTEM "definitions/checkAjaxResponseXpathText.xml">
+ <!ENTITY definitions__checkAjaxResponseXpathRegex__xml SYSTEM "definitions/checkAjaxResponseXpathRegex.xml">
 ]
 >
 
@@ -19,7 +20,8 @@ Do not edit it else you risk to lose your changes.
 		<echo message="Defining project macros and custom steps (if any)"/>
 
  &definitions__checkAjaxResponseXpathText__xml;
-
+ &definitions__checkAjaxResponseXpathRegex__xml;
+		
 	</target>
 	
 	<target name="wt.nothing">
