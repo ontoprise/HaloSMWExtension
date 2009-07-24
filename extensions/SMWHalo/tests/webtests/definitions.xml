@@ -5,7 +5,11 @@ This file is generated automatically from the information contained in the folde
 Do not edit it else you risk to lose your changes.
 -->
 
-
+<!DOCTYPE project SYSTEM "dtd/Project.dtd"
+[
+ <!ENTITY definitions__checkAjaxResponseXpathText__xml SYSTEM "definitions/checkAjaxResponseXpathText.xml">
+]
+>
 
 <project name="WebTest-projectDefinitions" basedir="." default="wt.nothing">
 
@@ -14,7 +18,7 @@ Do not edit it else you risk to lose your changes.
 		<property name="macroDefined" value="true"/>
 		<echo message="Defining project macros and custom steps (if any)"/>
 
-
+ &definitions__checkAjaxResponseXpathText__xml;
 
 	</target>
 	

@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface1">
+    
+    <target name="testQueryInterface1">
+
+        <webtest name="QueryInterface test 1">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category Car"
+              htmlId="input0"
+              value="Car"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 5 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="6"
+            />  
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Has engine"
+              htmlId="input0"
+              value="Has Engine"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input0"
+            />
+            <sleep description="4s pause" seconds="4" />
+            <setInputField
+              description="set value 4 cylinder"
+              htmlId="input3"
+              value="4 cylinder"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 1 result + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="2"
+            />  
+            <clickLink
+              description="Open Query Layout Manager"
+              htmlId="layouttitle-link"
+            />
+            <setSelectField
+              description="Select format list"
+              xpath="//select[@id='layout_format']"
+              value="list"
+            />
+            <sleep description="4s pause" seconds="4" />
+            <verifyXPath
+              description="Preview must contain 1 link in a list"
+              xpath="count(//div[@id='previewcontent']/p/a)"
+              text="1"
+            />  
+            <clickLink
+              description="Click on property in Tree"
+              label="Has Engine"
+            />
+            <setInputField
+              description="set value 3 cylinder"
+              htmlId="input3"
+              value="3 cylinder"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview doesnt have any results"
+              xpath="count(//div[@id='previewcontent']/p/a)"
+              text="0"
+            />
+            <clickLink
+              description="Click on Category Car in Tree"
+              label="Car"
+            />
+            <clickElement
+              description="and click delete to remove the category"
+              xpath="//span[@class='qibutton' and @id='qidelete']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must have 1 result which is Kai"
+              xpath="//div[@id='previewcontent']/p/a"
+              text="Kai"
+            />
+
+        </webtest>
+        
+    </target>
+</project>

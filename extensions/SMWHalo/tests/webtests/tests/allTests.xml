@@ -8,5 +8,6 @@
 		<ant antfile="triplestoretests.xml"/>
 		<ant antfile="basictests.xml"/>
 		<ant antfile="ontologybrowsertests.xml"/>
+		<ant antfile="queryinterface1.xml"/>
 	</target>
 </project>
