@@ -68,8 +68,7 @@
               xpath="//select[@id='layout_format']"
               value="list"
             />
-            <sleep description="4s pause" seconds="4" />
-            <verifyXPath
+            <checkAjaxResponseXpathText
               description="Preview must contain 1 link in a list"
               xpath="count(//div[@id='previewcontent']/p/a)"
               text="1"
