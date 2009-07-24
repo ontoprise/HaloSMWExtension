@@ -68,6 +68,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_articlename'  => 'Artikel Name:',
 	'smw_ti_articleerror' => 'Der Artikel "$1" existiert nicht.',
 	'smw_ti_fileerror' => 'Die Datei "$1" existiert nicht oder ist leer.',
+	'smw_ti_pop3error' => 'Es war nicht möglich, eine Verbindung zum Server aufzubauen.',
 	'smw_ti_no_article_names' => 'In der angegebenen Datenquelle gibt es keine Artikelnamen.',
 	'smw_ti_termimport' => 'Vokabular importieren',
 	'termimport' => 'Vokabular importieren',

@@ -222,12 +222,19 @@ TermImportPage.prototype = {
 								+ attrib_display
 								+ "\" class=\"inputfield\" type=\"file\" size=\"25\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\">" + "</td></tr>";
+					} else if(attrib_type == "checkbox"){
+						response += "<tr><td>"
+							+ attrib_display
+							+ "</td><td><input name=\"source\" id=\""
+							+ attrib_display
+							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" checked=\""
+							+ datasource.textContent + "\"></td></tr>";
 					} else {
 						response += "<tr><td>"
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
 								+ attrib_display
-								+ "\" class=\"inputfield\" type=\"text\" size=\"25\" maxlength=\"100\" value=\""
+								+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\"></td></tr>";
 					}
 					response += "<input type=\"hidden\" id=\"tag_"
@@ -244,6 +251,9 @@ TermImportPage.prototype = {
 	},
 	
 	getSource: function(e, node, tlID, dalID) {
+		tlID = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
+		dalID = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
+		
 		if (this.pendingIndicatorImportset == null) {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}
@@ -273,8 +283,12 @@ TermImportPage.prototype = {
 						
 					}
 				}
+				if(document.getElementById(source[i].id).type == "text"){
+					sourcearray[i] = document.getElementById(source[i].id).value;
+				} else if(document.getElementById(source[i].id).type == "checkbox"){
+					sourcearray[i] = document.getElementById(source[i].id).checked;
+				}
 				
-				sourcearray[i] = document.getElementById(source[i].id).value;
 				if (sourcearray[i] && sourcearray[i] != '') {					
 					//create XML doc
 					tag_array[i] = document.getElementById("tag_" + source[i].id);
@@ -320,12 +334,10 @@ TermImportPage.prototype = {
 		
 		
 		$('top-container').style.display = "none";
-				
+		
 		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
 		
-		//if(!this.editTermImport){
-			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
-		//}
+		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
 	},
 	
 	/*
@@ -716,7 +728,6 @@ TermImportPage.prototype = {
 	 * Refresh Button of properties table or article preview is clicked so, refresh them...
 	 */
 	refreshPreview: function(e, node, tlID, dalID) {
-		
 		if (this.pendingIndicatorArticles == null) {
 			this.pendingIndicatorArticles = new OBPendingIndicator($('article_table'));
 		}
@@ -901,6 +912,7 @@ TermImportPage.prototype = {
 			var termImportName = result[5];
 			var updatePolicy = result[6];
 			var edit = this.editTermImport;
+			
 			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
 			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit, createOnly]
 			                                    , this.importItNowCallback.bind(this, tlID, dalID, createOnly));
@@ -1133,7 +1145,11 @@ TermImportPage.prototype = {
 		this.tlId = $('tlId-ed').firstChild.nodeValue;
 		this.dalId = $('dalId-ed').firstChild.nodeValue;
 		this.dataSource = unescape($('dataSource-ed').firstChild.nodeValue);
-		this.importSet = $('importSet-ed').firstChild.nodeValue;
+		if($('importSet-ed').firstChild != null){
+			this.importSet = $('importSet-ed').firstChild.nodeValue;
+		} else {
+			this.importSet = "ALL";
+		}
 		this.regex = "";
 		if($('regex-ed').firstChild != null){
 			this.regex = $('regex-ed').firstChild.nodeValue;
@@ -1184,7 +1200,6 @@ TermImportPage.prototype = {
 			return;
 		}
 		
-		this.currentSelectedDAM = $('dalid').childNodes[0];
 		Element.addClassName(this.currentSelectedDAM,'entry-active');
 		$('daldesc').innerHTML = "<b>Info: </b>" + $('dal-desc').firstChild.nodeValue;
 		
@@ -1276,7 +1291,7 @@ TermImportPage.prototype = {
 		
 		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
 		var dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
-		this.refreshPreview(null, null, tlId, dalId);
+		this.refreshPreview(null, null, this.tlId, this.dalId);
 	},
 	
 	displayHelp : function(id) {

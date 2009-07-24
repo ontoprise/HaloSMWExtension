@@ -76,7 +76,7 @@ class TermImportBot extends GardeningBot {
 		//unlink($filename);
 
 		$result = $this->importTerms($settings);
-		echo("\n".$result);
+		//echo("\n".$result);
 
 		$this->createTermImportResultContent($result, $termImportName);
 		
@@ -140,6 +140,7 @@ class TermImportBot extends GardeningBot {
 		}
 
 		$source = $parser->serializeElement(array('DataSource'));
+		
 		$importSets = $parser->serializeElement(array('ImportSets'));
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
 
@@ -148,7 +149,7 @@ class TermImportBot extends GardeningBot {
 		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
 
 		echo("\nTerms in place");
-
+		
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
 		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 
@@ -362,7 +363,7 @@ class TermImportBot extends GardeningBot {
 	 * 		next search operation.
 	 */
 	private function createContent(&$term, $mappingPolicy, $offset = 0,
-	$useMapping = true, $level = 0) {
+			$useMapping = true, $level = 0) {
 
 		$result = '';
 

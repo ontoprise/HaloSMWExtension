@@ -338,7 +338,7 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 		$p->removeAllParentElements('NAME', $givenImportSetName);
 	}
 	$importSets = $p->serialize();
-
+	
 	$properties = $wil->getProperties($source_result, $importSets);
 
 	if (!$givenInputPol || $givenInputPol == '') {

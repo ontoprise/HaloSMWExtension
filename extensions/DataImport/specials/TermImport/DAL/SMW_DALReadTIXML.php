@@ -142,7 +142,7 @@ class DALReadTIXML implements IDAL {
 		if (!$this->readContent($articleName)
 		|| count($this->tixmlContent) == 0) {
 			return DAL_TIXML_RET_ERR_START.
-			wfMsg('smw_ti_fileerror', $articleName).
+			wfMsg('smw_ti_articleerror', $articleName).
 			DAL_TIXML_RET_ERR_END;
 		}
 		$firstLine = &$this->tixmlContent[0];

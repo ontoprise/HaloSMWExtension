@@ -97,7 +97,7 @@ class SMWTermImportDefinitionValidator {
 	
 	public function isValidImportSet(){
 		$node = $this->tiDefinition->xpath("
-			/ImportSettings/ImportSets/ImportSet/Name");
+			/ImportSettings/ImportSets");
 		if(count($node) == 0) return false;
 		return true;
 	}
