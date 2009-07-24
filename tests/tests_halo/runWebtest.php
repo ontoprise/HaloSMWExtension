@@ -72,7 +72,9 @@ if (!file_exists($webtestExec) || !file_exists($webtestXML)) {
 
 require_once( dirname(__FILE__) . '/../../maintenance/commandLine.inc' );
 
-$cmd = "$webtestExec -f $buildTarget -Dwebtest.home=\"$webtestBaseDir\" -DwgSitename=\"$wgSitename\" -DwgServer=\"$wgServer\" -DwgScriptPath=\"$wgScriptPath\" -Dwikipath=\"$wgScriptPath\"";
+// wikipath must be without leading / even if this is the absolute URL path
+$wikipath = ($wgScriptPath{0} == "/") ? substr($wgScriptPath, 1) : $wgScriptPath;
+$cmd = "$webtestExec -f $buildTarget -Dwebtest.home=\"$webtestBaseDir\" -DwgSitename=\"$wgSitename\" -DwgServer=\"$wgServer\" -DwgScriptPath=\"$wgScriptPath\" -Dwikipath=\"$wikipath\"";
 echo "\nexecute Webtests:\n$cmd\n";
 runProcess($cmd);
 
