@@ -572,7 +572,6 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
     $res = $db->query($sql);
     while ($row = $db->fetchObject($res)) {
-
         $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
     }
 
