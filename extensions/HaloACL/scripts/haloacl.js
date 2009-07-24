@@ -90,7 +90,7 @@ YAHOO.haloacl.tabDataConnect = function() {
         //method:tab.get('loadMethod'),
         method:'post',
         parameters:querystring,
-       // parameters:queryparameterlist,
+        // parameters:queryparameterlist,
         asynchronous:true,
         evalScripts:true,
         onSuccess: function(o) {
@@ -107,15 +107,15 @@ YAHOO.haloacl.tabDataConnect = function() {
 
 // general ajax stuff
 YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
- /*   var queryparameterlist = {
+    /*   var queryparameterlist = {
         rs:action
     };
    */
-       var querystring = "rs="+action;
+    var querystring = "rs="+action;
 
     if(parameterlist != null){
         for(param in parameterlist){
-           // temparray.push(parameterlist[param]);
+            // temparray.push(parameterlist[param]);
             querystring = querystring + "&rsargs[]="+parameterlist[param];
         }
     }
@@ -123,7 +123,7 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
     new Ajax.Updater(targetdiv, "?action=ajax", {
         //method:tab.get('loadMethod'),
         method:'post',
-       // parameters: queryparameterlist,
+        // parameters: queryparameterlist,
         parameters: querystring,
         asynchronous:true,
         evalScripts:true,
@@ -135,6 +135,24 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
     });
 };
 
+
+YAHOO.haloacl.sendXmlToAction = function(xml, action,callback){
+    if(callback == null){
+        callback = function(result){
+            alert("stdcallback:"+result);
+        }
+    }
+    var querystring = "rs="+action+"&rsargs[]="+escape(xml);
+
+    new Ajax.Request("?action=ajax",{
+        method:'post',
+        onSuccess:callback,
+        onFailure:callback,
+        parameters:querystring
+    });
+
+
+};
 
 YAHOO.haloacl.togglePanel = function(panelid){
     var element = $('content_'+panelid);
@@ -150,16 +168,25 @@ YAHOO.haloacl.togglePanel = function(panelid){
     }
 };
 
-YAHOO.haloacl.closePanel = function(panelid){
+YAHOO.haloacl.removePanel = function(panelid){
     var element = $(panelid);
     element.remove();
+};
+YAHOO.haloacl.closePanel = function(panelid){
+    var element = $('content_'+panelid);
+    var button = $('exp-collapse-button_'+panelid);
+    button.removeClassName('haloacl_panel_button_collapse');
+    button.addClassName('haloacl_panel_button_expand');
+    element.hide();
 };
 
 /* RIGHT PANEL STUFF */
 
 YAHOO.haloacl.buildRightPanelTabView = function(containerName){
     YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
-    var parameterlist = {panelid:containerName};
+    var parameterlist = {
+        panelid:containerName
+    };
     
     var tab1 = new YAHOO.widget.Tab({
         label: 'Select / Deselect',
