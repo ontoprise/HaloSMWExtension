@@ -522,7 +522,7 @@ function saveTempRightToSession($rightxml) {
         $tempright = new HACLRight($actions,$groups,$users,$description, 0);
 
         $panelid = (string)$xml->panelid;
-        //  $_SESSION['temprights'][$panelid] = $tempright;
+        #  $_SESSION['temprights'][$panelid] = $tempright;
         $_SESSION['temprights'][$panelid] = $rightxml;
 
         $ajaxResponse = new AjaxResponse();
@@ -548,6 +548,8 @@ function saveSecurityDescriptor($secDescXml) {
 
 
     $secDesc = new HACLSecurityDescriptor($SDID, $SDName, $peID, $peType, $manageGroups, $manageUsers);
+
+
     $secDesc->addInlineRights($_SESSION['temprights']);
 }
 
