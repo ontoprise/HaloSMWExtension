@@ -1,6 +1,10 @@
+/**
+ *  @param  target-div-id
+ *
+ */
 YAHOO.haloacl.userDataTable = function(divid) {
-    // Column definitions
 
+    // custom defined formatter
     this.myCustomFormatter = function(elLiner, oRecord, oColumn, oData) {
         if(oData == true){
             elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
@@ -9,6 +13,8 @@ YAHOO.haloacl.userDataTable = function(divid) {
         }
             
     };
+
+    // building shortcut for custom formatter
     YAHOO.widget.DataTable.Formatter.myCustom = this.myCustomFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
@@ -17,7 +23,6 @@ YAHOO.haloacl.userDataTable = function(divid) {
         label:"ID",
         sortable:true
     },
-
     {
         key:"name",
         label:"Name",
@@ -30,8 +35,7 @@ YAHOO.haloacl.userDataTable = function(divid) {
     },
     ];
 
-
-    // DataSource instance
+    // datasource for this userdatatable
     var myDataSource = new YAHOO.util.DataSource("?action=ajax");
     myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
     myDataSource.connMethodPost = true;
@@ -42,7 +46,6 @@ YAHOO.haloacl.userDataTable = function(divid) {
             key:"id",
             parser:"number"
         },
-
         {
             key:"name"
         },
@@ -55,7 +58,8 @@ YAHOO.haloacl.userDataTable = function(divid) {
         }
     };
 
-
+    // our customrequestbuilder (attached to the datasource)
+    // this requestbuilder, builds a valid mediawiki-ajax-request
     var customRequestBuilder = function(oState, oSelf) {
         // Get states or use defaults
         oState = oState;
@@ -79,7 +83,7 @@ YAHOO.haloacl.userDataTable = function(divid) {
 
     };
 
-    // DataTable configuration
+    // userdatatable configuration
     var myConfigs = {
         initialRequest: "rs=getUsersForUserTable&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
@@ -94,8 +98,9 @@ YAHOO.haloacl.userDataTable = function(divid) {
         generateRequest:customRequestBuilder
     };
 
-    // DataTable instance
+    // instanciating datatable
     var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
+
     // Update totalRecords on the fly with value from server
     myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
         oPayload.totalRecords = oResponse.meta.totalRecords;
@@ -103,6 +108,7 @@ YAHOO.haloacl.userDataTable = function(divid) {
     }
     myDataTable.query = "";
 
+    // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
         myDataTable.query = query;
         var oCallback = {

@@ -1,10 +1,12 @@
 
+// defining customnode
 YAHOO.widget.CustomNode = function(oData, oParent, expanded, checked) {
     YAHOO.widget.CustomNode.superclass.constructor.call(this,oData,oParent,expanded);
     this.setUpCheck(checked || oData.checked);
 
 };
 
+// impl of customnode; extending textnode
 YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
 
     /**
@@ -34,6 +36,8 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     //this.updateParent();
     },
 
+    // function called from constructor
+    //  -> creates/registers events
     setUpCheck: function(checked) {
         // if this node is checked by default, run the check code to update
         // the parent's display state
@@ -226,9 +230,13 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
 });
 
 
-//--- now custom part starts
 
-
+/*
+ * treeview-dataconnect
+ * @param mediawiki / rs-action
+ * @param list (object) of parameters to be added
+ * @param callback for asyncRequest
+ */
 YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     var url= "?action=ajax";
     var appendedParams = '';
@@ -241,7 +249,11 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
 };
 
-
+/*
+ * function for dynamic node-loading
+ * @param node
+ * @parm callback on complete
+ */
 YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
 
     var nodeLabel = encodeURI(node.label);
@@ -274,7 +286,11 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
 
 
 
-
+/*
+ * function to build nodes from data
+ * @param parent node / root
+ * @param data
+ */
 YAHOO.haloacl.buildNodesFromData = function(parentNode,data){
 
     for(var i= 0, len = data.length; i<len; ++i){
@@ -289,6 +305,12 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data){
     };
 };
 
+/*
+ * function to build user tree and add labelClickAction
+ * @param tree
+ * @param data
+ * @param labelClickAction (name)
+ */
 YAHOO.haloacl.buildUserTree = function(tree,data,labelClickAction) {
 
     YAHOO.haloacl.buildNodesFromData(tree.getRoot(),data,labelClickAction);
@@ -297,6 +319,10 @@ YAHOO.haloacl.buildUserTree = function(tree,data,labelClickAction) {
 
 };
 
+/*
+ * function to be called from outside to init a tree
+ * @param tree-instance
+ */
 YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree){
     var callback = {
         success: function(oResponse) {
@@ -311,6 +337,13 @@ YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree){
     },callback);
 };
 
+/*
+ * returns checked nodes
+ * USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
+ *
+ * @param tree
+ * @param nodes
+ */
 YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
     if(nodes == null){
         nodes = tree.getRoot().children;

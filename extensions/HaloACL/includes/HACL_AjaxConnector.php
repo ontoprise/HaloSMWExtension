@@ -21,6 +21,7 @@ $wgAjaxExportList[] = "getGroupsForRightPanel";
 $wgAjaxExportList[] = "getUsersForUserTable";
 $wgAjaxExportList[] = "saveTempRightToSession";
 $wgAjaxExportList[] = "getModificationRightsPanel";
+$wgAjaxExportList[] = "saveSecurityDescriptor";
 
 
 //put your code here
@@ -34,6 +35,11 @@ function ajaxTestFunction() {
     return $temp;
 }
 
+/**
+ *
+ * @return <html>
+ *  returns content for createacl-tab
+ */
 function createAclContent() {
 
 // clear temp-right-sessions
@@ -91,16 +97,16 @@ function createAclContent() {
                     </div>
                     <div class="haloacl_tab_section_content_row_content">
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_protect" value="page" />&nbsp;Page
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="page" />&nbsp;Page
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_protect" value="property" />&nbsp;Property
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="property" />&nbsp;Property
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_protect" value="namespace" />&nbsp;Namespace
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="namespace" />&nbsp;Namespace
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_protect" value="category" />&nbsp;Category
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="category" />&nbsp;Category
                         </div>
                     </div>
                 </div>
@@ -111,7 +117,7 @@ function createAclContent() {
                     </div>
                     <div class="haloacl_tab_section_content_row_content">
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="text" name="general_name" value="" />
+                            <input type="text" id="create_acl_general_name" value="" />
                         </div>
                     </div>
                 </div>
@@ -122,13 +128,13 @@ function createAclContent() {
                     </div>
                     <div class="haloacl_tab_section_content_row_content">
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_definefor" value="privateuse" />&nbsp;Private use
+                            <input type="radio" class="create_acl_general_definefor" value="privateuse" />&nbsp;Private use
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_definefor" value="allusers" />&nbsp;All users
+                            <input type="radio" class="create_acl_general_definefor" value="allusers" />&nbsp;All users
                         </div>
                         <div style="width:400px!important" class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" name="general_definefor" value="individual" />&nbsp;Individual user and/or groups of user
+                            <input type="radio" class="create_acl_general_definefor" value="individual" />&nbsp;Individual user and/or groups of user
                         </div>
 
                     </div>
@@ -207,7 +213,7 @@ function createAclContent() {
                 </div>
                 <div class="haloacl_tab_section_content_row">
                     <input type="button" value="Save ACL"
-                        onclick="javascript:YAHOO.haloacl.createacl_saveacl();"/>
+                        onclick="javascript:YAHOO.haloacl.buildCreateAcl_SecDesc();"/>
                     
                 </div>
 
@@ -232,22 +238,65 @@ function createAclContent() {
 
 
 
-            YAHOO.haloacl.createacl_saveacl = function(){
+            // rightpanel handling
+
+
+
+            YAHOO.haloacl.buildCreateAcl_SecDesc = function(){
+                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_create_acl_modificationrights);
+
+                // building xml
+                var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+                xml+="<secdesc>";
+                xml+="<panelid>create_acl</panelid>";
+
+ 
+                xml+="<users>";
+                $$('.datatableDiv_right_tabview_create_acl_modificationrights_users').each(function(item){
+                    if(item.checked){
+                        xml+="<user>"+item.name+"</user>";
+                    }
+                });
+                xml+="</users>";
+
+                xml+="<groups>";
+                groups.each(function(group){
+                    xml+="<group>"+group+"</group>";
+                });
+                xml+="</groups>";
+                xml+="<name>"+$('create_acl_general_name').value+"</name>";
+                xml+="<definefor>"+""+"</definefor>";
+
+
+                var callback = function(result){
+                    if(result.status == '200'){
+                        alert(result.responseText);
+                    }else{
+                        alert(result.responseText);
+                    }
+                };
+
+                $$('.create_acl_general_protect').each(function(item){
+                    if(item.checked){
+                        xml+="<protect>"+item.value+"</protect>";
+                    }
+                });
+
+                xml+="</secdesc>";
+
+                YAHOO.haloacl.sendXmlToAction(xml,'saveSecurityDescriptor',callback);
             };
+     
+
+
 
             // retrieving modification rights panel
             var panelid = 'create_acl_modificationrights';
             YAHOO.haloacl.loadContentToDiv('create_acl_rights_row_modificationrights','getModificationRightsPanel',{panelid:panelid});
 
 
-
-
         </script>
-
-
     </div>
-
-
 HTML;
 
 
@@ -255,7 +304,12 @@ HTML;
     return $response;
 }
 
-
+/**
+ *
+ * @param <String>  panelid of parents-div to have an unique identifier for each right-panel
+ * @return <html>   right-panel html
+ *  
+ */
 function getRightsPanel($panelid) {
     $html = <<<HTML
 	<!-- start of panel div-->
@@ -394,7 +448,11 @@ HTML;
     return $html;
 }
 
-
+/**
+ *
+ * @param <String>  panelid of parents-div to have an unique identifier for each modification-right-panel
+ * @return <html>   modification-right-panel html
+ */
 function getModificationRightsPanel($panelid) {
     $html = <<<HTML
 	<!-- start of panel div-->
@@ -423,6 +481,11 @@ HTML;
     return $html;
 }
 
+/**
+ *
+ * @param <string>  unique identifier
+ * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
+ */
 function rightPanelSelectDeselectTab($panelid) {
     $html = <<<HTML
         <!-- leftpart -->
@@ -486,11 +549,19 @@ HTML;
 
 }
 
-// right handling
+/**
+ * function called intern (not ajax) to clear all saved right 
+ */
 function clearTempSessionRights() {
     unset($_SESSION['temprights']);
 }
 
+/**
+ *
+ * @param <string/xml>  right serialized as xml
+ * @return <status>     200: ok / right saved to session
+ *                      400: failure / rihght not saved to session (exception's message will be returned also)
+ */
 function saveTempRightToSession($rightxml) {
     try {
         $xml = new SimpleXMLElement($rightxml);
@@ -539,21 +610,90 @@ function saveTempRightToSession($rightxml) {
 //return (string)sizeof($_SESSION['temprights']);
 }
 
+/**
+ *
+ * @param <string/xml>  serialized form of a securitydescriptor
+ */
 function saveSecurityDescriptor($secDescXml) {
 
-    // create article for each right in session
-    $article = new Article($title);
+
+
+// building rights
+    foreach($_SESSION['temprights'] as $tempright) {
+        $xml = new SimpleXMLElement($rightxml);
+        $description = '';
+        $actions = 0;
+        $groups = '';
+        $users = '';
+        $description = $xml->description ? $xml->description : '';
+
+        foreach($xml->xpath('//group') as $group) {
+            if($groups == '') {
+                $groups = (string)$group;
+            }else {
+                $groups = $groups.",".(string)$group;
+            }
+        }
+        foreach($xml->xpath('//user') as $user) {
+            if($users == '') {
+                $users = (string)$user;
+            }else {
+                $users = $users.",".(string)$user;
+            }
+        }
+        foreach($xml->xpath('//right') as $right) {
+            $actions = $actions + (int)HACLRight::getActionID($right);
+        }
+        $actions = $actions > 255 ? 255 : $actions;
+
+        $rightarticle = new Article($title);
+        $rightarticle->doEdit("text", "summary");
+        $rightarticle = $sdarticle->getID();
+
+        // TODO Checken ob schon durch den Artikel das Recht angelegt wird; falls nicht bitte recht noch anlegen
+
+        $tempright = new HACLRight($actions,$groups,$users,$description, $rightarticleid);
+    }
 
     // create article for security descriptor
 
+    // securitydescriptor-part
+    foreach($secDescXml->xpath('//group') as $group) {
+        if($sdgroups == '') {
+            $sdgroups = (string)$group;
+        }else {
+            $sdgroups = $groups.",".(string)$group;
+        }
+    }
+    foreach($secDescXml->xpath('//user') as $user) {
+        if($sdusers == '') {
+            $sdusers = (string)$user;
+        }else {
+            $sdusers = $users.",".(string)$user;
+        }
+    }
 
-    $secDesc = new HACLSecurityDescriptor($SDID, $SDName, $peID, $peType, $manageGroups, $manageUsers);
+    $peType = $xml->protect;
+    $SDName = $xml->name;
+    $sdarticle = new Article($title);
+    $sdarticle->doEdit("text", "summary");
+    $SDID = $sdarticle->getID();
 
+    // TODO - Bitte checken ob schon durch den Artikel der SD angelegt wird, falls nicht bitte durch folgende Zeile noch anlegen
+    $secDesc = new HACLSecurityDescriptor($SDID, $SDName, $peID, $peType, $sdgroups, $sdusers);
 
-    $secDesc->addInlineRights($_SESSION['temprights']);
+    $secDesc->addInlineRights();
 }
 
-
+/**
+ *
+ * @param <String>  selected group in tree
+ * @param <String>  column to sort by
+ * @param <String>  sort-direction
+ * @param <Int>     first index of resultlist (paging)
+ * @param <Int>     total results (paging)
+ * @return <JSON>   return array of users
+ */
 function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
     $a = array();
@@ -579,29 +719,6 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
     $db->freeResult($res);
 
-    /*} else {
-
-        $selectedGroup = "TestsubgruppeA";
-        $parent = HACLGroup::newFromName($selectedGroup);
-        //users
-        $users = $parent->getUsers(HACLGroup::OBJECT);
-        foreach( $users as $key => $value ) {
-                $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId());
-                $a['records'][] = $tempgroup;
-        }
-
-    }*/
-
-    /*
-    $u1 = array('id'=>1,'name'=>'Torben');
-    $u2 = array('id'=>2,'name'=>'Ricky');
-    $u3 = array('id'=>3,'name'=>'Anna');
-    $u4 = array('id'=>4,'name'=>'Detlef');
-    $u5 = array('id'=>5,'name'=>'queryCheck:'.$selectedGroup);
-
-
-    $a['records'] = array($u1,$u2,$u3,$u4,$u5);
-     */
 
     return(json_encode($a));
 
@@ -609,7 +726,11 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
 
 
-/* FAKE FUNKTION */
+/**
+ *
+ * @param <String>  selected group
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
 function getGroupsForRightPanel($query) {
     $array = array();
 
@@ -648,12 +769,20 @@ function getGroupsForRightPanel($query) {
 }
 
 
-
+/**
+ *
+ * @return <html>   returns tab-content for managel acls-tab
+ */
 function manageAclsContent() {
     $response = new AjaxResponse();
     $response->addText("manageAclsContent");
     return $response;
 }
+
+/**
+ *
+ * @return <html>   returns tab-content for manageUser-tab
+ */
 function manageUserContent() {
     $response = new AjaxResponse();
     $dutHeadline = wfMsg('hacl_create_acl_dut_headline');
@@ -749,6 +878,11 @@ HTML;
     $response->addText($html);
     return $response;
 }
+
+/**
+ *
+ * @return <html>   returns content for whitelist-tab
+ */
 function whitelistsContent() {
     $response = new AjaxResponse();
     $wLHeadline = wfMsg('hacl_whitelist_headline');
