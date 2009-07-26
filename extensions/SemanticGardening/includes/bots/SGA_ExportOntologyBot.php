@@ -276,7 +276,10 @@ class ExportOntologyBot extends GardeningBot {
 								$wikiType = array_key_exists($smwValue->getTypeID(), $this->mapWikiTypeToXSD) ? $smwValue->getTypeID() : "_str";
                                 $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 								$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
-								if ($convertDate) $content = str_replace('/', "-", $content);
+								if ($convertDate) {
+								     $content = str_replace('/', "-", $content); // SMW-format to XSD-format
+                                     if (substr(trim($content), -1, 1) == 'T') $content = trim($content)."00:00:00"; // add timestamp if missing
+								}
 								$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
 							}
 
