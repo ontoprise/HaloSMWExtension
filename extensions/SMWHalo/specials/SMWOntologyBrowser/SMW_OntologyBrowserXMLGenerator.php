@@ -335,7 +335,13 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 				$value = "<![CDATA[".($formulaAsHTML)."]]>";
 			} else { 
 				// escape potential HTML in a CDATA section
+				
+				if ($smwValue->getTypeID() == '__typ') {
+					$value = implode(",",$smwValue->getTypeLabels());
+					$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
+				} else {
 				$value = "<![CDATA[".html_entity_decode($smwValue->getXSDValue())." ".$smwValue->getUnit()."]]>";
+				}
 			}
 			//special attribute mark for all things needed to get re-pasted in FF.
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
