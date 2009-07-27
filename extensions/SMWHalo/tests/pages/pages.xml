@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <base>http://ernie/mediawiki/index.php/Main_Page</base>
     <generator>MediaWiki 1.13.2</generator>
     <case>first-letter</case>
       <namespaces>
@@ -798,9 +798,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Baltimore</title>
-    <id>55</id>
+    <id>54</id>
     <revision>
-      <id>55</id>
+      <id>54</id>
       <timestamp>2009-07-24T12:31:08Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -815,9 +815,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Berlin</title>
-    <id>56</id>
+    <id>55</id>
     <revision>
-      <id>56</id>
+      <id>55</id>
       <timestamp>2009-07-24T12:33:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -832,9 +832,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Bern</title>
-    <id>57</id>
+    <id>56</id>
     <revision>
-      <id>57</id>
+      <id>56</id>
       <timestamp>2009-07-24T12:33:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -849,9 +849,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Boston</title>
-    <id>58</id>
+    <id>57</id>
     <revision>
-      <id>58</id>
+      <id>57</id>
       <timestamp>2009-07-24T12:34:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -866,9 +866,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Bremen</title>
-    <id>59</id>
+    <id>58</id>
     <revision>
-      <id>59</id>
+      <id>58</id>
       <timestamp>2009-07-24T12:35:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -883,9 +883,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Graz</title>
-    <id>60</id>
+    <id>59</id>
     <revision>
-      <id>60</id>
+      <id>59</id>
       <timestamp>2009-07-24T12:36:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -900,9 +900,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Hamburg</title>
-    <id>61</id>
+    <id>60</id>
     <revision>
-      <id>61</id>
+      <id>60</id>
       <timestamp>2009-07-24T12:37:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -917,9 +917,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Linz</title>
-    <id>62</id>
+    <id>61</id>
     <revision>
-      <id>62</id>
+      <id>61</id>
       <timestamp>2009-07-24T12:38:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -934,9 +934,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Stuttgart</title>
-    <id>63</id>
+    <id>62</id>
     <revision>
-      <id>63</id>
+      <id>62</id>
       <timestamp>2009-07-24T12:38:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -951,9 +951,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Vienna</title>
-    <id>64</id>
+    <id>63</id>
     <revision>
-      <id>64</id>
+      <id>63</id>
       <timestamp>2009-07-24T12:39:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -968,9 +968,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Austria</title>
-    <id>65</id>
+    <id>64</id>
     <revision>
-      <id>65</id>
+      <id>64</id>
       <timestamp>2009-07-24T12:40:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -985,9 +985,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Europe</title>
-    <id>66</id>
+    <id>65</id>
     <revision>
-      <id>66</id>
+      <id>65</id>
       <timestamp>2009-07-24T12:41:09Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1000,9 +1000,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Category:Continent</title>
-    <id>67</id>
+    <id>66</id>
     <revision>
-      <id>67</id>
+      <id>66</id>
       <timestamp>2009-07-24T12:41:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1013,9 +1013,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Germany</title>
-    <id>68</id>
+    <id>67</id>
     <revision>
-      <id>68</id>
+      <id>67</id>
       <timestamp>2009-07-24T12:42:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1030,9 +1030,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Property:Located In</title>
-    <id>69</id>
+    <id>68</id>
     <revision>
-      <id>69</id>
+      <id>68</id>
       <timestamp>2009-07-24T12:44:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1044,9 +1044,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>USA</title>
-    <id>70</id>
+    <id>69</id>
     <revision>
-      <id>70</id>
+      <id>69</id>
       <timestamp>2009-07-24T12:44:54Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1061,9 +1061,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>America</title>
-    <id>71</id>
+    <id>70</id>
     <revision>
-      <id>71</id>
+      <id>70</id>
       <timestamp>2009-07-24T12:45:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1076,9 +1076,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Property:Has Capital</title>
-    <id>72</id>
+    <id>71</id>
     <revision>
-      <id>72</id>
+      <id>71</id>
       <timestamp>2009-07-24T12:46:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1089,9 +1089,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Property:Population</title>
-    <id>73</id>
+    <id>72</id>
     <revision>
-      <id>73</id>
+      <id>72</id>
       <timestamp>2009-07-24T12:47:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1102,9 +1102,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Category:City</title>
-    <id>74</id>
+    <id>73</id>
     <revision>
-      <id>74</id>
+      <id>73</id>
       <timestamp>2009-07-24T12:48:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1115,9 +1115,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Category:Country</title>
-    <id>75</id>
+    <id>74</id>
     <revision>
-      <id>75</id>
+      <id>74</id>
       <timestamp>2009-07-24T12:48:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1128,9 +1128,9 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
   </page>
   <page>
     <title>Switzerland</title>
-    <id>76</id>
+    <id>75</id>
     <revision>
-      <id>76</id>
+      <id>75</id>
       <timestamp>2009-07-24T12:52:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -1141,6 +1141,69 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
 [[Category:Country]]
 [[Has Capital::Bern]]
 [[Located In::Europe]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestSPARQL</title>
+    <id>76</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-07-27T06:46:21Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}  {{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}  {{#sparql: SELECT ?X ?Has_owner...</comment>
+      <text xml:space="preserve">{{#sparql: SELECT ?X WHERE { ?X rdf:type cat:Car . }  }}
+
+{{#sparql: SELECT ?X ?Has_owner WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }  }}
+
+{{#sparql: SELECT ?X ?Has_owner ?Has_Engine WHERE { ?X rdf:type cat:Car . ?X prop:Has_owner ?Has_owner. ?X prop:Has_Engine ?Has_Engine. }|?Has Engine=Engine|?X=Car  }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK</title>
+    <id>77</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-07-27T06:47:45Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: [[Category:Car]] }}  {{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}  {{#sparql: [[Has Engine::+]] }}  {{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|?Has owner }}
+
+{{#sparql: [[Has Engine::+]] }}
+
+{{#sparql: [[Has torsional moment::+]]|?Has torsional moment }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>QueryTestASK2</title>
+    <id>78</id>
+    <revision>
+      <id>78</id>
+      <timestamp>2009-07-27T06:48:39Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: {{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|link=none }}  {{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|mainlabel=- }}  {{#sparql: [[Category:Car]][[Has own...</comment>
+      <text xml:space="preserve">{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|link=none }}
+
+{{#sparql: [[Category:Car]][[Has owner::+]]|?Has owner=Owner|mainlabel=- }}
+
+{{#sparql: [[Category:Car]][[Has owner::Stefan]]|?Has owner=Owner|mainlabel=-|default=No results }}
+
+{{#sparql: [[Category:Car]]|format=ul }}
+
+{{#sparql: format=ul|limit=1|[[Category:Car]] }}
+
+{{#sparql: [[Category:Car]]|?Has Engine|sort=Has Engine|order=desc }}
+
+{{#sparql: [[Category:Car]][[Has Engine::+]]|?Has owner=Owner|mainlabel=Car }}</text>
     </revision>
   </page>
 </mediawiki>
