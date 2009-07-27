@@ -119,7 +119,7 @@ class USSpecialPage extends SpecialPage {
 		// -- new page link --
 		if ($newpage !== NULL && !$newpage->exists()) {
 			global $wgParser;
-			$wikilink = '[['.$newpage->getText().'|'.wfMsg('us_clicktocreate').']]';
+			$wikilink = '[['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
 			$newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
 			$newLink = strip_tags($newLink, '<a>');
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
