@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface3">
+    
+    <target name="testQueryInterface3">
+
+        <webtest name="Query Interface with subqueries">
+            <invoke
+              url="${wgServer}${wgScript}/Special:QueryInterface"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <!-- add category City and property Located In -->
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview must contain 10 results + header row"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="11"
+            />  
+
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Located In"
+              htmlId="input0"
+              value="Located In"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input0"
+            />
+            <sleep description="4s pause" seconds="4" />
+            <setCheckbox
+              description="click on add subquery"
+              htmlId="usesub"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Preview contains a warning now (subquery is still empty)"
+              xpath="//div[@id='previewcontent']/p/span/img/@src"
+              regex=".*?waring\.png"
+            />  
+
+            <!-- in the subquery add now category Country and property Located In -->
+            
+            <clickLink
+              description="Click on Category Subquery 1 in Tree"
+              label="Subquery 1"
+            />
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category Country"
+              htmlId="input0"
+              value="Country"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Located In"
+              htmlId="input0"
+              value="Located In"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input0"
+            />
+            <sleep description="4s pause" seconds="4" />
+            <setInputField
+              description="set value America"
+              htmlId="input3"
+              value="America"
+            />
+            <verifyXPath
+              description="Show in results must be disabled"
+              xpath="//input[@id='input1' and @type='checkbox' and @disabled='disabled']"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview contains now Baltimore"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[2]/td"
+              text="Baltimore"
+            />
+            <verifyXPath
+              description="and Boston"
+              xpath="//div[@id='previewcontent']/table/tbody/tr[3]/td"
+              text="Boston"
+            />              
+
+            <!-- change the subquery 1 and add another subquery -->
+            
+            <clickLink
+              description="click property Located In"
+              label="Page = America"
+            />
+            <setInputField
+              description="set property Has Capital"
+              htmlId="input0"
+              value="Has Capital"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input0"
+            />
+            <setCheckbox
+              description="click on add subquery"
+              htmlId="usesub"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Preview contains a warning now (subquery is still empty)"
+              xpath="//div[@id='previewcontent']/p/span/img/@src"
+              regex=".*?waring\.png"
+            />  
+
+            <!-- fill subquery2 now with conditions -->            
+
+            <clickLink
+              description="Click on Category Subquery 2 in Tree"
+              label="Subquery 2"
+            />
+            <clickButton 
+              description="Click on Add Category"
+              xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
+            />
+            <setInputField
+              description="set category City"
+              htmlId="input0"
+              value="City"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <clickButton 
+              description="Click on Add Property"
+              xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
+            />
+            <setInputField
+              description="set property Population"
+              htmlId="input0"
+              value="Population"
+            />
+            <mouseOut
+              description="leave inputfield so that property type is loaded"
+              htmlId="input0"
+            />
+            <checkAjaxResponseXpathText
+              description="field type must change to number"
+              xpath="//tbody[@id='dialoguecontent']//tr/td[@id='mainlabel']"
+              text="Number"
+            />
+            <setInputField
+              description="set value 1 Mio"
+              htmlId="input3"
+              value="1000000"
+            />
+        	<setSelectField
+        	  description="choose option &lt;="
+        	  xpath="//td[@id='restricionSelector']/select/option[2]"
+        	  value="&lt;="
+        	/>
+            <verifyXPath
+              description="Show in results must be disabled"
+              xpath="//input[@id='input1' and @type='checkbox' and @disabled='disabled']"
+            />
+            <clickElement
+              description="and click add"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathText
+              description="Preview contains now 1 row + header"
+              xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
+              text="2"
+            />
+            <verifyXPath
+              description="which is Bern"
+        	  xpath="//div[@id='previewcontent']/table/tbody/tr/td/a"
+        	  text="Bern"
+            />
+
+            <!-- check navtree and clicking on it -->
+            <verifyXPath
+              description="Navtree bredcumbs"
+              xpath="//div[@id='treeviewbreadcrumbs']/span[1]"
+              text="Main Query"
+            />
+            <verifyXPath
+              description="Navtree bredcumbs"
+              xpath="//div[@id='treeviewbreadcrumbs']/span[2]"
+              text="Located In"
+            />
+            <verifyXPath
+              description="Navtree bredcumbs"
+              xpath="//div[@id='treeviewbreadcrumbs']/span[3]"
+              text="Has Capital"
+            />
+            <verifyXPath
+              description="Root node link is Has Capital"
+              xpath="//div[@id='treeanchor']/table/tbody/tr/td/table/tbody/tr/td/a"
+              regex="\s*Has Capital\s*"
+            />
+            <clickElement
+              description="Click to choose Subquery 1"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(1)']"
+            />
+            <verifyXPath
+              description="Root node link is Located In"
+              xpath="//div[@id='treeanchor']/table/tbody/tr/td/table/tbody/tr/td/a"
+              regex="\s*Located In\s*"
+            />
+            <clickElement
+              description="Click to choose Subquery 1"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(1)']"
+            />
+            <verifyXPath
+              description="Root node link is Located In"
+              xpath="//div[@id='treeanchor']/table/tbody/tr/td/table/tbody/tr/td/a"
+              regex="\s*Located In\s*"
+            />
+            <verifyXPath
+              description="Navtree bredcumbs are 2"
+              xpath="count(//div[@id='treeviewbreadcrumbs']/span)"
+              text="2"
+            />
+
+            <clickElement
+              description="Click to choose Main Query"
+              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(0)']"
+            />
+            <verifyXPath
+              description="Root node link is Located In"
+              xpath="//div[@id='treeanchor']/table/tbody/tr/td/table/tbody/tr/td/a"
+              regex="\s*Main Query\s*"
+            />
+            <verifyXPath
+              description="Navtree bredcumbs is 1"
+              xpath="count(//div[@id='treeviewbreadcrumbs']/span)"
+              text="1"
+            />
+            <verifyXPath
+              description="labled"
+              xpath="//div[@id='treeviewbreadcrumbs']/span"
+              text="Main Query"
+            />
+            
+        </webtest>
+        
+    </target>
+</project>
