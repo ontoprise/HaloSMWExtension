@@ -80,7 +80,7 @@
               value="count"
             />
             <checkAjaxResponseXpathRegex
-              description="Must be 10 cieties"
+              description="Must be 10 cities"
               xpath="//div[@id='previewcontent']/p"
               regex="\s*10\s*"
             />
