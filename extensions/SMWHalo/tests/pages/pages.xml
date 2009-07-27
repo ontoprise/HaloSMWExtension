@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://ernie/mediawiki/index.php/Main_Page</base>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
     <generator>MediaWiki 1.13.2</generator>
     <case>first-letter</case>
       <namespaces>
@@ -856,12 +856,11 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the city of Boston.  [[Category:City]] [[Located In::USA]] [[Population::608000]]</comment>
+      <comment>New page: This is the city of Boston.  [[Category:City]] [[Located In::USA]]</comment>
       <text xml:space="preserve">This is the city of Boston.
 
 [[Category:City]]
-[[Located In::USA]]
-[[Population::608000]]</text>
+[[Located In::USA]]</text>
     </revision>
   </page>
   <page>
