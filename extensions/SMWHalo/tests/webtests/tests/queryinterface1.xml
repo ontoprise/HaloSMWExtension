@@ -6,7 +6,7 @@
     
     <target name="testQueryInterface1">
 
-        <webtest name="QueryInterface test 1">
+        <webtest name="Query Interface basic tests">
             <invoke
               url="${wgServer}${wgScript}/Special:QueryInterface"
               description="Call the Special page Query Interface"
