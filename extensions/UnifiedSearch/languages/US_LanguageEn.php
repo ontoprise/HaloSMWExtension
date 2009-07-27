@@ -20,6 +20,7 @@ class US_LanguageEn {
         'us_search' => 'Enhanced Retrieval',
         'us_tolerance'=> 'Tolerance',
         'us_page_does_not_exist' => 'This page does not exist. $1',
+        'us_similar_page_does_exist' => 'There is a page with a similar name: $1',
         'us_clicktocreate' => 'Click here to create the page.',
         'us_refinesearch' => 'Refine search',
         'us_browse_next' => 'next',

@@ -117,12 +117,21 @@ class USSpecialPage extends SpecialPage {
         '</form>';
 
 		// -- new page link --
-		if ($newpage !== NULL && !$newpage->exists()) {
+		$caseInsensitiveTitle = USStore::getStore()->getSingleTitle($search);
+		
+		if ($newpage !== NULL && !$newpage->exists() && is_null($caseInsensitiveTitle)) {
 			global $wgParser;
 			$wikilink = '[['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
 			$newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
 			$newLink = strip_tags($newLink, '<a>');
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
+		}
+		if (!is_null($caseInsensitiveTitle)) {
+			global $wgParser;
+            $wikilink = '[['.$caseInsensitiveTitle->getPrefixedText().']]';
+            $newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
+            $newLink = strip_tags($newLink, '<a>');
+            $html .= '<div id="us_newpage">'.wfMsg('us_similar_page_does_exist', $newLink).'</div>';
 		}
 
 		// -- refine links --

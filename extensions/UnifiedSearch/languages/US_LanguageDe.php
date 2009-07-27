@@ -20,6 +20,7 @@ class US_LanguageDe {
         'us_search' => 'Erweiterte Suche',
 	    'us_tolerance'=> 'Toleranz',
         'us_page_does_not_exist' => 'Diese Seite exisitiert nicht. $1',
+	    'us_similar_page_does_exist' => 'Es gibt eine Seite mit einem ähnlichen Namen: $1',
         'us_clicktocreate' => 'Klicken Sie hier, um die Seite zu erstellen.',
         'us_refinesearch' => 'Suche einschr&auml;nken',
         'us_browse_next' => 'n&auml;chste',
