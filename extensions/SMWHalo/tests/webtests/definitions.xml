@@ -9,6 +9,7 @@ Do not edit it else you risk to lose your changes.
 [
  <!ENTITY definitions__checkAjaxResponseXpathText__xml SYSTEM "definitions/checkAjaxResponseXpathText.xml">
  <!ENTITY definitions__checkAjaxResponseXpathRegex__xml SYSTEM "definitions/checkAjaxResponseXpathRegex.xml">
+ <!ENTITY definitions__showFullAsk__xml SYSTEM "definitions/showFullAsk.xml">
 ]
 >
 
@@ -21,6 +22,7 @@ Do not edit it else you risk to lose your changes.
 
  &definitions__checkAjaxResponseXpathText__xml;
  &definitions__checkAjaxResponseXpathRegex__xml;
+ &definitions__showFullAsk__xml;
 		
 	</target>
 	
