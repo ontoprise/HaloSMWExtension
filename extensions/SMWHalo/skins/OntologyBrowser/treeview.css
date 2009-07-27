@@ -111,6 +111,7 @@ a.navigationLink {
 
 #instanceList td {
 	border-bottom: 1px dashed #AAAAAA;
+	padding-left: 2px;
 }
 
 
@@ -126,6 +127,8 @@ a.selectedSwitch {
 #relattributes td{
 	border-bottom: 1px dashed #AAAAAA;
 	vertical-align: top;
+	padding-left: 2px;
+	padding-right: 5px;
 }
 
 #relattributes td.right{
