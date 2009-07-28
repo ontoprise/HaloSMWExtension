@@ -143,13 +143,7 @@
               regex="#{numberOfCities}"
             />
 
-        	<showFullAsk query="{{#ask: [[Category:City]]
-[[Population::+]]
-| ?Located In
-| ?Population 
-| format=table 
-| link=all
-|}}" />
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Population::\+\]\]\s*\| \?Located In\s*\| \?Population\s*\| format=table\s*\| link=all\s*\|\}\}" />
         	
         </webtest>
         

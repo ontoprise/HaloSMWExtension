@@ -61,6 +61,12 @@
               regex=".*?waring\.png"
             />  
 
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <!-- in the subquery add now category Country and property Located In -->
             
             <clickLink
@@ -119,6 +125,12 @@
               text="Boston"
             />              
 
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Located In::America\]\]\s*&lt;/q&gt;\]\]\s*| format=table\s*| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <!-- change the subquery 1 and add another subquery -->
             
             <clickLink
@@ -147,6 +159,12 @@
               xpath="//div[@id='previewcontent']/p/span/img/@src"
               regex=".*?waring\.png"
             />  
+            
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Has Capital::&lt;q&gt;&lt;/q&gt;\]\]\s*&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+        	<clickElement
+        	  description="Close full ask query popup"
+        	  xpath="//div/span[text()='Close']"
+        	/>
 
             <!-- fill subquery2 now with conditions -->            
 
@@ -212,6 +230,12 @@
               description="which is Bern"
         	  xpath="//div[@id='previewcontent']/table/tbody/tr/td/a"
         	  text="Bern"
+            />
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Has Capital::&lt;q&gt;\s*\[\[Category:City\]\]\s*\[\[Population::&lt;1000000\]\]\s*&lt;/q&gt;\]\]\s*&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
             />
 
             <!-- check navtree and clicking on it -->

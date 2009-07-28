@@ -32,6 +32,12 @@
               text="11"
             />  
 
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+        	<clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <clickLink
               description="Open Query Layout Manager"
               htmlId="layouttitle-link"
@@ -47,6 +53,12 @@
               text="Boston"
             />  
 
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ol\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <setSelectField
               description="Select format ul"
               xpath="//select[@id='layout_format']"
@@ -57,6 +69,12 @@
               xpath="//div[@id='previewcontent']/ul/li[8]/a"
               text="Linz"
             />  
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ul\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
 
             <setSelectField
               description="Select format embedded"
@@ -74,6 +92,12 @@
               regex="\s*This is the city of Berlin\s*"
             />  
 
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=embedded\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <setSelectField
               description="Select format count"
               xpath="//select[@id='layout_format']"
@@ -83,6 +107,12 @@
               description="Must be 10 cities"
               xpath="//div[@id='previewcontent']/p"
               regex="\s*10\s*"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=count\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
             />
 
             <setSelectField
@@ -101,16 +131,27 @@
               text="100%"
             />  
 
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <setInputField
               description="set mainlabel Cities"
               htmlId="layout_label"
               value="Cities"
             />
-
             <checkAjaxResponseXpathText
               description="Check table header row"
               xpath="//div[@id='previewcontent']/table/tbody/tr[1]/th"
               text="Cities"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| mainlabel=Cities\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
             />
 
             <setInputField
@@ -124,6 +165,12 @@
               regex="\sList of all cities\s"
             />
 
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <setSelectField
               description="change order to descending"
               xpath="//select[@id='layout_order']"
@@ -133,6 +180,12 @@
               description="Preview must contain table, 10th row (+1) is Baltimore"
               xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
               text="Baltimore"
+            />
+
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
             />
 
             <setSelectField
@@ -146,6 +199,12 @@
               text="Berlin"
             />
 
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=none\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
             <setInputField
               description="set a limit of 5"
               htmlId="layout_limit"
@@ -156,12 +215,14 @@
               xpath="//select[@id='layout_format']"
               value="list"
             />
-            
+
             <checkAjaxResponseXpathRegex
               description="Check text up to link further results"
               xpath="//div[@id='previewcontent']/p/text()"
               regex="\s*Vienna, Stuttgart, Linz, Hamburg, and Graz.*"
             />
+
+        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=list\s*\| link=none\s*\| intro=List of all cities\s*\| limit=5\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
         </webtest>
         
     </target>
