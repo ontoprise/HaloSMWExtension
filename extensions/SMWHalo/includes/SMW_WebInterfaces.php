@@ -83,12 +83,6 @@ function smwf_ws_getWSDL($wsdlID) {
 		exit;
 	}
 }	
-/**
- * Returns a randomly webservice endpoint.
- */
-function smwfgetWebserviceEndpoint($endpoints) {
-	if (!is_array($endpoints)) return $endpoints;
-	return $endpoints[mt_rand(0, count($endpoints)-1)];
-}
+
 
 ?>

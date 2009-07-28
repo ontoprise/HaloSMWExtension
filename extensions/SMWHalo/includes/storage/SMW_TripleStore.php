@@ -441,7 +441,16 @@ class SMWTripleStore extends SMWStore {
 			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 			/*op-patch|TS|2009-06-19|end*/
-
+			
+			switch ($query->querymode) {
+				
+				case SMWQuery::MODE_COUNT:
+					$queryResult = count($queryResult);
+					break;
+				default:
+					
+					break;
+			}
 			return $queryResult;
 
 		} else {
@@ -471,7 +480,7 @@ class SMWTripleStore extends SMWStore {
 
 	function setup($verbose = true) {
 		$this->smwstore->setup($verbose);
-		
+
 	}
 
 	function initialize($verbose = true) {
@@ -491,7 +500,7 @@ class SMWTripleStore extends SMWStore {
 		}
 	}
 
-	
+
 	function drop($verbose = true) {
 		$this->smwstore->drop($verbose);
 	}
@@ -503,7 +512,7 @@ class SMWTripleStore extends SMWStore {
 
 	// Helper methods
 
-	
+
 
 
 

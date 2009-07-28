@@ -32,10 +32,11 @@ function srfSetupExtension() {
 	
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
 	require_once($srgSRIP . '/includes/SR_RulesAjax.php');
-
+    require_once($srgSRIP . '/includes/SR_WebInterfaces.php');
+    
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
 	$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
-	$wgSpecialPages['Explanations'] = array('SMWExplanations');
+	$wgSpecialPages['Explanations'] = array('SRExplanations');
 	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';
 
 	return true;

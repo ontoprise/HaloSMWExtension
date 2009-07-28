@@ -37,7 +37,7 @@ class SMWFlogicParser {
             self::$instance = new self;
 
             if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_flogic", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=srf_ws_getWSDL&rsargs[]=get_flogic", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
         }
         return self::$instance;
     }

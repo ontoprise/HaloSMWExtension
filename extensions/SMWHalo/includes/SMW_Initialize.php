@@ -1353,7 +1353,13 @@ function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix,
 	$u = $wgScript.'?title=Create_new_page&target='.urlencode($title_text);
 	return true;
 }
-
+/**
+ * Returns a randomly webservice endpoint.
+ */
+function smwfgetWebserviceEndpoint($endpoints) {
+    if (!is_array($endpoints)) return $endpoints;
+    return $endpoints[mt_rand(0, count($endpoints)-1)];
+}
 /**
  * Is the namespace one of the (new) image-namespaces?
  * created for AdditionalMIMETypes
