@@ -147,8 +147,8 @@ function smwgHaloSetupExtension() {
 
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
-	if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false
-	|| stripos($wgRequest->getRequestURL(), $spns_text."%3A") !== false) {
+	 if (stripos($wgRequest->getRequestURL(), urlencode($spns_text).":") !== false
+     || stripos($wgRequest->getRequestURL(), urlencode($spns_text)."%3A") !== false) {
 
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
