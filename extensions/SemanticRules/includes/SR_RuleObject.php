@@ -151,7 +151,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 
 		// fetch rule head
 		$head = $this->argtostring($this->getHead()->getPreditcatesymbol(), $this->getHead()->getArguments());
-		$flogicstring .= " | " . $head . " <- ";
+		$flogicstring .= " " . $head . " <- ";
 
 		// fetch array of rule body and concatenate arguments
 		$body = "";

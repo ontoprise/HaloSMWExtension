@@ -36,7 +36,7 @@ abstract class SMWAbstractRuleObject {
 	// constructor
 	function __construct($axiomId = "") {
 		$this->_axiomId = $axiomId;
-    }
+	}
 
 	// setter functions to fill rule object
 
@@ -72,17 +72,20 @@ abstract class SMWAbstractRuleObject {
 
 		// fetch head of rule
 		if (isset($rule->head)) {
-			$this->_head = $this->setLiteral($rule->head);
+			
+			$this->_head = $this->setLiteral($rule->head->literalws);
 		}
 
 		// fetch body of rule
 		if (isset($rule->body)) {
 			$bodyargs = array();
 			if (!is_array($rule->body)) {
-				$rule->body = array($rule->body);
+				//$rule->body = array($rule->body);
 			}
-			foreach ($rule->body as $belement) {
+			foreach ($rule->body->children() as $belement) {
+
 				array_push($bodyargs, $this->setLiteral($belement));
+
 			}
 			$this->_body = $bodyargs;
 		}
@@ -90,52 +93,56 @@ abstract class SMWAbstractRuleObject {
 		// fetch bound variables
 		if (isset($rule->boundVariables)) {
 			$boundvars = array();
-			if (is_array($rule->boundVariables)) {
-				foreach ($rule->boundVariables as $boundval) {
-					array_push($boundvars, $this->setVariable($boundval));
-				}
-			} else {
-				array_push($boundvars, $this->setVariable($rule->boundVariables));
+			//if (is_array($rule->boundVariables)) {
+			foreach ($rule->boundVariables->children() as $boundval) {
+				array_push($boundvars, $this->setVariable($boundval));
 			}
+			/*} else {
+				array_push($boundvars, $this->setVariable($rule->boundVariables));
+				}*/
 			$this->_boundVars = $boundvars;
 		}
 
 		// fetch free variables
-		if (isset($rule->freevariables)) {
+		/*if (isset($rule->freeVariables)) {
 			$this->_freeVars = $this->setVariable($rule->freevariables);
-		}
+			}*/
 	}
 
 	public function setVariable($var) {
-		return new SMWVariable($var->_variableName);
+		return new SMWVariable((string) $var->_variableName);
 	}
 
 	public function setLiteral($lit) {
-		$templit = new SMWLiteral($this->setPredicatesymbol($lit->_preditcatesymbolws), $this->setArguments($lit->_arguments));
-		$templit->setArity($lit->_arity);
+		
+		$templit = new SMWLiteral($this->setPredicatesymbol($lit->_predicatesymbolws), $this->setArguments($lit->_arguments));
+		$templit->setArity((string) $lit->_arity);
 		return $templit;
 	}
 
 	public function setPredicatesymbol($ps) {
-		return new SMWPredicateSymbol($ps->_name, $ps->arity);
+		return new SMWPredicateSymbol((string) $ps->_name, (string)$ps->arity);
 	}
 
 	public function setArguments($arg) {
 		$termargs = array();
-		foreach ($arg as $termval) {
-			if ($termval->_arity == 0) {
-				if ($termval->_isGround == "true") {
+        
+		foreach ($arg->children() as $termval) {
+			$arity = (string) $termval->_arity;
+			if ($arity == 0) {
+				$isGround = (string) $termval->_isGround;
+				if ($isGround == "true") {
 					// 1st char. '"' denotes property/category... FIXME: provide method to distinguish Variables/Constants/Categories/Properties
-					if (is_numeric($termval->_argument) || $termval->_argument[0] == "\"") {			
-						$tempterm = new SMWConstant($termval->_argument);
+					if (is_numeric((string) $termval->_argument) || substr((string)$termval->_argument,0,1) == "\"") {
+						$tempterm = new SMWConstant((string) $termval->_argument);
 					} else {
-						$tempterm = new SMWTerm($termval->_argument, $termval->_arity, true);						 									
+						$tempterm = new SMWTerm((string) $termval->_argument, (string) $termval->_arity, true);
 					}
 				} else {
-					$tempterm = new SMWVariable($termval->_argument);
+					$tempterm = new SMWVariable((string) $termval->_argument);
 				}
 			} else {
-				$tempterm = new SMWTerm($termval->_argument, $termval->_arity, $termval->_isGround);
+				$tempterm = new SMWTerm((string) $termval->_argument, (string) $termval->_arity, $termval->_isGround);
 			}
 			array_push($termargs, $tempterm);
 		}
@@ -159,7 +166,7 @@ abstract class SMWAbstractRuleObject {
 	public function setAxiomId($id) {
 		$this->_axiomId = $id;
 	}
-	
+
 	public function setBoundVariables($boundvars) {
 		$this->_boundVars = $boundvars;
 	}

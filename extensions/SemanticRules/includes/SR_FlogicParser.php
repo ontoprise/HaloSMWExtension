@@ -71,10 +71,10 @@ class SMWFlogicParser {
 		$parseflogicinput = str_replace("|", "", $parseflogicinput); 
 			
 		$_parsedstring = self::$_client->parseRule($parseflogicinput);
-
-		$_ruleObject = new SMWRuleObject();
+		
+        $_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);
-		return $_ruleObject->parseRuleObject($_parsedstring);
+		return $_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring));
 	}
 }
 
