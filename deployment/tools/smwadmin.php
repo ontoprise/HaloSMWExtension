@@ -16,16 +16,29 @@ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL
 	return;
 }
 
-// check tools and rights
+// check tools
 $check = Tools::checkEnvironment();
 if ($check !== true) {
 	fatalError($check);
 }
+
+// check if the user is allowed to create files, directory. 
 $check = Tools::checkPriviledges();
 if ($check !== true) {
 	fatalError($check);
 }
 
+# Attempt to connect to the database as a privileged user
+# This will vomit up an error if there are permissions problems
+$dbclass = 'Database' . ucfirst( $wgDBtype ) ;
+$wgDatabase = new $dbclass( $wgDBserver, $wgDBadminuser, $wgDBadminpassword, $wgDBname, 1 );
+
+if( !$wgDatabase->isOpen() ) {
+    # Appears to have failed
+    echo( "A connection to the database could not be established. Check the\n" );
+    echo( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
+    exit();
+}
 
 $packageToInstall = array();
 $packageToDeinstall = array();
@@ -156,7 +169,7 @@ foreach($packageToInstall as $toInstall) {
 	} catch(RepositoryError $e) {
 		fatalError($e);
 	} catch(RollbackInstallation $e) {
-		$rollback->rollback();
+		fatalError("Installation failed! You can try to rollback: smwadmin -r");
 	}
 }
 

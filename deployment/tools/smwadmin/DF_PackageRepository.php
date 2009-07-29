@@ -51,7 +51,8 @@ class PackageRepository {
 			foreach($rep_file_lines as $u) {
 				if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
 				list($rawurl, $user, $pass) = explode(" ", $u);
-				$url = (substr(trim($rawurl), -1) == "/" ? $rawurl : $rawurl."/"); //add trailing / if necessary
+				$url = (substr(trim($rawurl), -1) == "/") ? $rawurl : (trim($rawurl)."/"); //add trailing / if necessary
+				
 				$repo_urls[] = $url;
 				if ((is_null($user) || empty($user)) && (is_null($pass) || empty($pass))) {
 					self::$repo_credentials[$url] = "";
