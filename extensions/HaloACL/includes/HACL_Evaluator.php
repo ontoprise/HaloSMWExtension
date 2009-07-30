@@ -338,8 +338,7 @@ class HACLEvaluator {
 	    if (is_string($parents)) {
 	    	// The article whose parent categories shall be evaluated is given
 	    	$t = Title::newFromText($parents);
-	    	return self::hasCategoryRight(array_keys($t->getParentCategories()), 
-	    	                              $userID, $actionID);
+	    	return self::hasCategoryRight(array_keys($t->getParentCategories()),$userID, $actionID);
 	    } else if (is_array($parents)) {
 	    	if (empty($parents)) {
 	    		return array(false, false);
