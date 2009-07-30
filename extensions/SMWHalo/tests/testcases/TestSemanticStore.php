@@ -16,7 +16,8 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetRootCategories() {
-		$exp_categories = array("Transitive properties","Symmetrical properties", "GardeningLog", "Engine", "Car", "Animal", "City");
+		$exp_categories = array("Transitive properties","Symmetrical properties", "GardeningLog", "Engine", "Car", "Animal",
+		                        "City", "Continent", "Country");
 		$rootCategories = smwfGetSemanticStore()->getRootCategories();
 
 		foreach ($rootCategories as $c) {
@@ -42,7 +43,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 								  "Is equal to",
 								   "Is inverse of",
 								   "Is parent of",
-								   "Question", "Gender", "Has Capital");
+								   "Question", "Gender",
+		                             "Has Capital", "Located In", "Population",
+		                             "Torsional moment");
 
 		$rootProperties = smwfGetSemanticStore()->getRootProperties();
 
