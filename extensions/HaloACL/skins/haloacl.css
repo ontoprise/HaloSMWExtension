@@ -378,3 +378,10 @@ abbr,acronym { border:0;
     border:0px solid!important;
     */
 }
+
+
+.yui-skin-sam .yui-navset .yui-nav .selected a, .yui-skin-sam .yui-navset .yui-nav .selected a:visited, .yui-skin-sam .yui-navset .yui-nav .selected a:hover {
+    background:url(images/tab_bg_active.png) repeat-x;
+    #border-top: solid red;
+    color:#000;
+}
