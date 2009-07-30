@@ -38,7 +38,7 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetPages() {
-		$exp_values = array("Electric car","Elephant","Engine");
+		$exp_values = array("Electric car","Elephant","Engine", "Europe");
 
 		$values = smwfGetAutoCompletionStore()->getPages("e");
 
