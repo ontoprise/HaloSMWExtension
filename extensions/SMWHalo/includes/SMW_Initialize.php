@@ -318,6 +318,11 @@ function smwgHaloSetupExtension() {
 
 	// make hook for RichMedia
 	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
+
+	// add the 'halo' form input type, if Semantic Forms is installed
+    global $sfgFormPrinter;
+    if ($sfgFormPrinter)
+        $sfgFormPrinter->setInputTypeHook('halo', 'smwfHaloFormInput', array());
 	
 	return true;
 }
@@ -382,6 +387,32 @@ function smwfHaloInitDatatypes() {
 	return true;
 }
 
+/**
+ * function for parser hook in Semantic Forms
+ *
+ * @param string $cur_value
+ * @param string $input_name
+ * @param string $is_mandatory
+ * @param boolean $is_disabled
+ * @param array $other_args
+ * @return array(string, null)
+ */
+function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args) {
+    // for semantic autocompletion set class="wickEnabled" - this is neccessary
+    if (array_key_exists('class', $other_args))
+        $other_args['class'].= ' wickEnabled';
+    else
+        $other_args['class'] = 'wickEnabled';
+    // we do not use the autocomplete feature of SF, if set ignore it by removing
+    if (array_key_exists('autocompletion source', $other_args))
+        unset($other_args['autocompletion source']);
+    // this will be a normal textfield, possible values that turn the input field
+    // into a drop down list must be ignored.
+    if (array_key_exists('possible_values', $other_args))
+        unset($other_args['possible_values']);
+    // call now the general function of SF that creates the <input> field
+    return SFFormInputs::textEntryHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+}
 
 /**
  * Registers special pages for some namespaces
