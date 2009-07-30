@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="createDescriptor" default="testCreateDescriptor">
+
+	&login;
+
+	<target name="testCreateDescriptor">
+
+		<webtest name="CheckDescriptionCreation">
+			<antcall target="createDescr">
+				<param name="page" value="Special:HaloACL"/>
+				<param name="heading" value="HaloACL"/>
+				<param name="targetPage" value="Foo"/>
+				<param name="content" value="This page is not accessible for.*"/>
+			</antcall>
+			<antcall target="verifyDescriptor">
+			</antcall>
+
+			
+		</webtest>
+	</target>
+		
+	<target name="createDescr">
+
+		<antcall target="login">
+			<param name="user" value="admin"/>
+			<param name="pwd" value="test"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+			
+		<sleep description="AJAX PAUSE" seconds="2" />
+		
+		<setInputField name="create_acl_general_name2" 
+					   value="${targetPage}"/>
+		<clickButton name="safeACL"/>
+
+	</target>
+	
+	<target name="verifyDescriptor">
+
+		<antcall target="login">
+			<param name="user" value="Admin"/>
+			<param name="pwd" value="test"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/ACL:Page/Foo "
+			description="Open resulting Descriptor Article." />
+		<verifyXPath description="ACL:Page/Foo" 
+				     xpath="//h1[@class='firstHeading']" 
+				     text="ACL:Page/Foo" />	
+		
+
+	
+	</target>
+	
+</project>
