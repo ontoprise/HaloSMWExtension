@@ -212,7 +212,17 @@ class HACLStorageSQL {
 	public function getGroups() {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
-		$sql = "SELECT * FROM $gt ";
+                $gmt = $db->tableName('halo_acl_group_members');
+		$sql = "SELECT * FROM $gt 
+                WHERE NOT EXISTS (
+
+SELECT child_id
+FROM $gmt
+WHERE $gmt.child_id = halo_acl_groups.group_id
+)
+                ";
+
+
 		$groups = array();
 
 		$res = $db->query($sql);
@@ -574,7 +584,39 @@ class HACLStorageSQL {
 	 * Functions for security descriptors (SD)
 	 * 
 	 **************************************************************************/
-	
+
+
+
+        /**
+	 * Retrieves all groups from
+	 * the database.
+	 *
+	 *
+	 * @return Array
+	 * 		Array of Group Objects
+	 *
+	 */
+	public function getSDs($types) {
+		$db =& wfGetDB( DB_SLAVE );
+		$sdt = $db->tableName('halo_acl_security_descriptors');
+		$sql = "SELECT * FROM $sdt WHERE type IN (".$types.")";
+
+
+		$sds = array();
+
+		$res = $db->query($sql);
+
+                while ($row = $db->fetchObject($res)) {
+
+                    $sds[] = HACLSecurityDescriptor::newFromID($row->sd_id);
+
+		}
+
+		$db->freeResult($res);
+
+		return $sds;
+	}
+
 	/**
 	 * Saves the given SD in the database.
 	 *
