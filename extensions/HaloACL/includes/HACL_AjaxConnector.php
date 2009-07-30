@@ -117,7 +117,9 @@ function createAclContent() {
                     </div>
                     <div class="haloacl_tab_section_content_row_content">
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="text" id="create_acl_general_name" value="" />
+                            <form>
+                                <input type="text" name="create_acl_general_name2" id="create_acl_general_name" value="" />
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -212,8 +214,10 @@ function createAclContent() {
                     </div>
                 </div>
                 <div class="haloacl_tab_section_content_row">
-                    <input type="button" value="Save ACL"
+                    <form>
+                    <input type="button" name="safeACL" value="Save ACL"
                         onclick="javascript:YAHOO.haloacl.buildCreateAcl_SecDesc();"/>
+                    </form>
                     
                 </div>
 
@@ -387,7 +391,7 @@ function getRightsPanel($panelid) {
                     <div cl
                     <input type="button" value="Delete right" />
                     <input type="button" value="Discard right" />
-                    <input type="button" value="Save right" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();"/>
+                    <input type="button" name="safeRight" value="Save right" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();"/>
 
 		</div>
 	</div> <!-- end of panel div -->
@@ -617,73 +621,215 @@ function saveTempRightToSession($rightxml) {
 function saveSecurityDescriptor($secDescXml) {
 
 
+try {
+    // building rights
+        foreach($_SESSION['temprights'] as $tempright) {
+            $xml = new SimpleXMLElement($tempright);
+            $actions = 0;
+            $groups = '';
+            $users = '';
+            $description = $xml->description ? $xml->description : '';
 
-// building rights
-    foreach($_SESSION['temprights'] as $tempright) {
-        $xml = new SimpleXMLElement($rightxml);
-        $description = '';
-        $actions = 0;
-        $groups = '';
-        $users = '';
-        $description = $xml->description ? $xml->description : '';
+            foreach($xml->xpath('//group') as $group) {
+                if($groups == '') {
+                    $groups = (string)$group;
+                }else {
+                    $groups = $groups.",".(string)$group;
+                }
+            }
+            foreach($xml->xpath('//user') as $user) {
+                if($users == '') {
+                    $users = 'User:'.(string)$user;
+                }else {
+                    $users = $users.",".'User:'.(string)$user;
+                }
+            }
+            foreach($xml->xpath('//right') as $right) {
+                //$actions = $actions + (int)HACLRight::getActionID($right);
+                if($actions == '') {
+                    $actions = (string)$right;
+                }else {
+                    $actions = $actions.",".(string)$right;
+                }
+            }
+            //$actions = $actions > 255 ? 255 : $actions;
 
-        foreach($xml->xpath('//group') as $group) {
+            $inline .= '{{#access:|assigned to='.$groups.','.$users.'|actions='.$actions.'|description='.$description.'}}
+';
+
+            //$title = new Title();
+            //$title->newFromText("Category/Favorite books", "ACL");
+
+            //$rightarticle = new Article($title);
+            //$rightarticle->doEdit("text", "summary");
+            //$rightarticle = $sdarticle->getID();
+
+            //$tempright = new HACLRight($actions,$groups,$users,$description, $rightarticleid);
+        }
+
+
+        //get manage rights
+        $secDescXml = new SimpleXMLElement($secDescXml);
+
+        // securitydescriptor
+        foreach($secDescXml->xpath('//group') as $group) {
+            if($sdgroups == '') {
+                $sdgroups = (string)$group;
+            }else {
+                $sdgroups .= ",".(string)$group;
+            }
+        }
+        foreach($secDescXml->xpath('//user') as $user) {
+            if($sdusers == '') {
+                $sdusers = 'User:'.(string)$user;
+            }else {
+                $sdusers .= ",".'User:'.(string)$user;
+            }
+        }
+
+        $SDName = $secDescXml->name;
+        switch ($secDescXml->protect) {
+            case "page":$peType = "Page";break;
+            case "property":$peType = "Property";break;
+            case "namespace":$peType = "Namespace";break;
+            case "category":$peType = "Category";break;
+        }
+
+        // create article for security descriptor
+        $sdarticle = new Article(Title::newFromText('ACL:'.$peType.'/'.$SDName));
+        $inline .= '{{#manage rights:assigned to='.$sdgroups.','.$sdusers.'}}
+        [[Category:ACL/ACL]]';
+                        
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
+
+        /*
+        $secDesc = new HACLSecurityDescriptor($SDID, "ACL:Page/Test", $SDName, $peType, $sdgroups, $sdusers);
+
+        $secDesc->addInlineRights();
+        $secDesc->save();
+         *
+         */
+
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("descriptor saved".$SDID );
+    
+    } catch (Exception  $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+
+
+function saveGroup($groupXml, $manageRightsXml) {
+
+try {
+        //get group members
+        $groupXml = new SimpleXMLElement($groupXml);
+        // securitydescriptor-part
+        foreach($groupXml->xpath('//group') as $group) {
             if($groups == '') {
                 $groups = (string)$group;
             }else {
-                $groups = $groups.",".(string)$group;
+                $groups .= ",".(string)$group;
             }
         }
-        foreach($xml->xpath('//user') as $user) {
+        foreach($groupXml->xpath('//user') as $user) {
             if($users == '') {
-                $users = (string)$user;
+                $users = 'User:'.(string)$user;
             }else {
-                $users = $users.",".(string)$user;
+                $users .= ",".'User:'.(string)$user;
             }
         }
-        foreach($xml->xpath('//right') as $right) {
-            $actions = $actions + (int)HACLRight::getActionID($right);
+
+        //get manage rights
+        $manageRightsXml = new SimpleXMLElement($manageRightsXml);
+        // securitydescriptor-part
+        foreach($manageRightsXml->xpath('//group') as $group) {
+            if($mrgroups == '') {
+                $mrgroups = (string)$group;
+            }else {
+                $mrgroups .= ",".(string)$group;
+            }
         }
-        $actions = $actions > 255 ? 255 : $actions;
-
-        $rightarticle = new Article($title);
-        $rightarticle->doEdit("text", "summary");
-        $rightarticle = $sdarticle->getID();
-
-        // TODO Checken ob schon durch den Artikel das Recht angelegt wird; falls nicht bitte recht noch anlegen
-
-        $tempright = new HACLRight($actions,$groups,$users,$description, $rightarticleid);
-    }
-
-    // create article for security descriptor
-
-    // securitydescriptor-part
-    foreach($secDescXml->xpath('//group') as $group) {
-        if($sdgroups == '') {
-            $sdgroups = (string)$group;
-        }else {
-            $sdgroups = $groups.",".(string)$group;
+        foreach($manageRightsXml->xpath('//user') as $user) {
+            if($mrusers == '') {
+                $mrusers = 'User:'.(string)$user;
+            }else {
+                $mrusers .= ",".'User:'.(string)$user;
+            }
         }
+
+        $groupName = $groupXml->name;
+
+        // create article for security descriptor
+        $sdarticle = new Article(Title::newFromText('ACL:'.'Group'.'/'.$groupName));
+        $inline = '{#member:members='.$users.','.$groups.'}';
+        $inline .= '{{#manage rights:assigned to='.$mrgroups.','.$mrusers.'}}
+        [[Category:ACL/Group]]';
+
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
+
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("descriptor saved".$SDID );
+
+    } catch (Exception  $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
     }
-    foreach($secDescXml->xpath('//user') as $user) {
-        if($sdusers == '') {
-            $sdusers = (string)$user;
-        }else {
-            $sdusers = $users.",".(string)$user;
-        }
-    }
+    return $ajaxResponse;
 
-    $peType = $xml->protect;
-    $SDName = $xml->name;
-    $sdarticle = new Article($title);
-    $sdarticle->doEdit("text", "summary");
-    $SDID = $sdarticle->getID();
-
-    // TODO - Bitte checken ob schon durch den Artikel der SD angelegt wird, falls nicht bitte durch folgende Zeile noch anlegen
-    $secDesc = new HACLSecurityDescriptor($SDID, $SDName, $peID, $peType, $sdgroups, $sdusers);
-
-    $secDesc->addInlineRights();
 }
+
+
+
+function saveWhitelist($whitelistXml) {
+
+try {
+        //get group members
+        $whitelistXml = new SimpleXMLElement($whitelistXml);
+
+        foreach($whitelistXml->xpath('//page') as $page) {
+            if($pages == '') {
+                $pages = (string)$page;
+            }else {
+                $pages .= ",".(string)$page;
+            }
+        }
+
+
+        // create article 
+        $sdarticle = new Article(Title::newFromText('ACL:'.'Whitelist'));
+        $inline = '{{#whitelist:pages='.$pages.'}}';
+
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
+
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("descriptor saved".$SDID );
+
+    } catch (Exception  $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+
 
 /**
  *
@@ -757,15 +903,133 @@ function getGroupsForRightPanel($query) {
             $array[] = $tempgroup;
         }
 
+        /*
+
         //users
         $users = $parent->getUsers(HACLGroup::OBJECT);
         foreach( $users as $key => $value ) {
             $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId(),'checked'=>'false');
             $array[] = $tempgroup;
         }
+         * 
+         */
 
     }
     return (json_encode($array));
+}
+
+
+/**
+ *
+ * Delivers per-type-filtered ACLs for the Manage ACLs view
+ * for ACL management, user template views
+ *
+ * @param <XML>     selected types
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLs($typeXML) {
+
+    //get types for
+    $typeXML = new SimpleXMLElement($typeXML);
+    foreach($typeXML->xpath('//type') as $type) {
+        if($types == '') {
+            $types = (string)$group;
+        }else {
+            $types .= ",".(string)$group;
+        }
+    }
+
+    $array = array();
+
+    $SDs = HACLStorage::getDatabase()->getSDs($types);
+    foreach( $SDs as $key => $value) {
+
+        $tempRights = array();
+
+        //attach inline right texts
+        foreach (getInlineRightsOfSDs(array($value->getSDID())) as $key2 => $rightId) {
+            $tempright = HACLRight::newFromID($rightId);
+            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+        }
+
+        $tempSD = array('id'=>$value->getSDID(), 'name'=>$value->getSDName(), 'rights'=>$tempRights);
+        $array[] = $tempSD;
+    }
+
+    return (json_encode($array));
+}
+
+
+/**
+ *
+ * Delivers an ACL incl. rights selected by name of descriptor article
+ * for ACL management, user template views
+ *
+ * @param <String>  name of ACL Descriptor article
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLByName($name) {
+
+    $array = array();
+
+    $SD = HACLSecurityDescriptor::newFromName($name);
+
+        $tempRights = array();
+
+        //attach inline right texts
+        foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
+            $tempright = HACLRight::newFromID($rightId);
+            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+        }
+
+        $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+        $array[] = $tempSD;
+
+
+    return (json_encode($array));
+}
+
+
+/**
+ *
+ * Delivers an ACL incl. rights selected by id of descriptor 
+ *
+ * @param <int>  id of ACL Descriptor 
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLById($id) {
+
+    $array = array();
+
+    $SD = HACLSecurityDescriptor::newFromId($id);
+
+        $tempRights = array();
+
+        //attach inline right texts
+        foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
+            $tempright = HACLRight::newFromID($rightId);
+            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+        }
+
+        $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+        $array[] = $tempSD;
+
+
+    return (json_encode($array));
+}
+
+
+
+/**
+ *
+ * Delivers whitelist pages for Manage Whitelist view
+ *
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getWhitelistPages() {
+
+    return (json_encode(HACLWhitelist::getPages()));
+    
 }
 
 
