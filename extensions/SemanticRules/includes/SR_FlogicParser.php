@@ -68,7 +68,7 @@ class SMWFlogicParser {
 				: "RULE #" . $ruleid . ": ")
 			. $_flogicstring;
 		
-		$parseflogicinput = str_replace("|", "", $parseflogicinput); 
+		
 			
 		$_parsedstring = self::$_client->parseRule($parseflogicinput);
 		

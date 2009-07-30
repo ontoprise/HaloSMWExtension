@@ -135,20 +135,20 @@ createRule: function() {
 	
 	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
 	tb.append(tb.createText('rule-help_msg', gsrLanguage.getMessage('RULE_CREATE'), '' , true));
-	tb.append(tb.createInput('rule-name', gsrLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
 	tb.setInputValue('rule-name','');
-	tb.append(tb.createText('rule-name-msg', gsrLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createDropDown('rule-type', gsrLanguage.getMessage('RULE_TYPE'), 
 	                            this.getRuleTypes(), 
 	                            0,0, 
 	                            SMW_RULE_NO_EMPTY_SELECTION, true));
 		
-	var links = [['ruleToolBar.doCreateRule()',gsrLanguage.getMessage('CREATE'), 'rule-confirm', gsrLanguage.getMessage('INVALID_VALUES'), 'rule-invalid'],
-				 ['ruleToolBar.cancel()', gsrLanguage.getMessage('CANCEL')]
+	var links = [['ruleToolBar.doCreateRule()',gLanguage.getMessage('CREATE'), 'rule-confirm', gLanguage.getMessage('INVALID_VALUES'), 'rule-invalid'],
+				 ['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 				];
 	
 	tb.append(tb.createLink('rule-links', links, '', true));
@@ -227,14 +227,14 @@ editRule: function(selindex) {
 	
 	var tb = this.createToolbar(SMW_RULE_ALL_VALID);	
 	tb.append(tb.createText('rule-help_msg', gsrLanguage.getMessage('RULE_EDIT'), '' , true));
-	tb.append(tb.createInput('rule-name', gsrLanguage.getMessage('NAME'), '', '',
+	tb.append(tb.createInput('rule-name', gLanguage.getMessage('NAME'), '', '',
 	                         SMW_RULE_CHECK_EMPTY +
 	                         SMW_RULE_VALID_RULE_NAME,
 	                         true));
 	tb.setInputValue('rule-name', ruleName);
-	tb.append(tb.createText('rule-name-msg', gsrLanguage.getMessage('ENTER_NAME'), '' , true));
+	tb.append(tb.createText('rule-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 			
-	var links = [['ruleToolBar.cancel()', gsrLanguage.getMessage('CANCEL')]
+	var links = [['ruleToolBar.cancel()', gLanguage.getMessage('CANCEL')]
 				];
 	
 	tb.append(tb.createLink('rule-links', links, '', true));
@@ -287,8 +287,8 @@ getRuleTypes: function() {
 			this.typeMap = [gsrLanguage.getMessage('RULE_TYPE_DEFINITION'), "Definition"];
 			return [gsrLanguage.getMessage('RULE_TYPE_DEFINITION')];
 		case 102: //properties
-			var hasType = gsrLanguage.getMessage('PC_HAS_TYPE');
-			var page = gsrLanguage.getMessage('TYPE_PAGE').toLowerCase();
+			var hasType = gLanguage.getMessage('PC_HAS_TYPE');
+			var page = gLanguage.getMessage('TYPE_PAGE').toLowerCase();
 			var type = this.wtp.getRelation(hasType);
 			if (type) {
 				type = type[0].getValue().toLowerCase();

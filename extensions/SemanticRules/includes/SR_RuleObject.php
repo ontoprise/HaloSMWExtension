@@ -107,14 +107,14 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		
 		// add result
 		if ($variableassignments !== "") {
-			$variableassignments .= " AND evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgTripleStoreGraph . "\" AND ";
+			$variableassignments .= " AND evaluable_(_RESULT, " . $resultvar . ") AND ";
 		} else {
-			$variableassignments .= " evaluable_(_RESULT, " . $resultvar . ")@\"" . $smwgTripleStoreGraph . "\" AND ";
+			$variableassignments .= " evaluable_(_RESULT, " . $resultvar . ") AND ";
 		}
 		
 		// fetch rule head
 		$head = $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $resultprop, "_RESULT"));
-		$flogicstring .= " | " . $head . " <- ";
+		$flogicstring .= " ". $head . " <- ";
 		
 		// don't foget the "." :)
     	return $flogicstring . $variableassignments . $evalflogic . ".";
@@ -356,7 +356,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		    	$var2 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);				    	
 		    	  		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";
+		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar);
 			    break;
 			case $this->tokentypes[3]:
 			    if ($count > 0) {
@@ -366,7 +366,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 				$var1 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);		
 				
-		    	$flogic .= $this->evalUnary($var1, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";		
+		    	$flogic .= $this->evalUnary($var1, $valuetoken, $boundvar);		
 			    break;
 			case $this->tokentypes[4]:
 			    if ($count > 0) {
@@ -376,7 +376,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		    	$var1 = array_pop($this->numarray);
 		    	$var2 = array_pop($this->numarray);
 		    	array_push($this->bound,$boundvar = "t".$x);		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar) . "@\"" . $smwgTripleStoreGraph . "\"";	
+		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar);	
 			    break;
 			}
 		}
