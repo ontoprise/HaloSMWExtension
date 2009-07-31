@@ -50,7 +50,7 @@ tstImportWikiPages();
 echo "\ndone!\n";
 
 /**
- * Initializes the database (testdb) with an empty MW database 
+ * Initializes the database (testdb) with an empty MW database
  * and runs the specified setup scripts.
  *
  */
@@ -117,6 +117,25 @@ function tstImportWikiPages() {
 		}
 	}
 	closedir($handle);
+
+	echo "\nRun scripts after import...\n";
+	if (file_exists($testDir."/runScriptAfterImport.cfg") && $handle = fopen($testDir."/runScriptAfterImport.cfg", "r")) {
+		while(!feof($handle)) {
+			$line = fgets($handle);
+			$prgArg = explode("|", $line);
+			$prg = $prgArg[0];
+			$arg = count($prgArg) > 1 ? $prgArg[1] : "";
+			$cmd = $phpExe." \"".$mw_dir."extensions/".$prg."\" $arg";
+			$cmd = str_replace("\n", "", $cmd);
+			$cmd = str_replace("\r", "", $cmd);
+			echo "$cmd";
+			runProcess($cmd);
+
+		}
+		fclose($handle);
+	} else {
+		echo "No configuration file runScriptAfterImport.cfg found in: $testDir\nSkip it.";
+	}
 }
 
 /**
