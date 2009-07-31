@@ -325,7 +325,7 @@ class FCKeditor_MediaWiki
 		//$skin->skinname = 'monobook';
 		$skin->userpage = $wgUser->getUserPage()->getPrefixedText();
 		if (method_exists($skin, "setupUserCss")) {
-			$skin->setupUserCss();
+			$skin->setupUserCss($wgOut);
 		}
 
 		if (!empty($skin->usercss) && preg_match_all('/@import "([^"]+)";/', $skin->usercss, $matches)) {
