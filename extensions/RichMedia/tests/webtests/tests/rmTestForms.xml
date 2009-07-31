@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="rmTestForms">
+
+	<target name="rmTestForms">
+
+
+		<webtest name="rmTestFormUpload">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Form:RMUpload" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestFormImage">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Form:RMImage" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestFormPdf">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Form:RMPdf" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestFormDocument">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Form:RMDocument" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestFormAudio">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Form:RMAudio" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestFormVideo">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Form:RMVideo" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+										xpath="//li[@id='ca-nstab-form'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+	</target>
+</project>

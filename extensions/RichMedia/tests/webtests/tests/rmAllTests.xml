@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="testMyExt" default="testAll">
+
+	<property name="wikipath" value="smw_trunk" />
+
+	<target name="testAll" description="runs all the tests">
+		<ant antfile="rmTestTemplates.xml" />
+		<ant antfile="rmTestForms.xml" />
+		<ant antfile="rmTestProperties.xml" />
+		<ant antfile="rmTestCategories.xml" />
+		<ant antfile="rmTestMediaList.xml" />
+		<!-- <ant antfile="rmTestOneClickUpload.xml" /> -->
+	</target>
+</project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="rmTestMediaList">
+
+	&goToLogin;
+	
+	<target name="rmTestMediaList">
+		
+		<webtest name="rmCreateMediaList">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest?action=edit" />
+			<!--<verifyXPath description="this id has to be the class 'selected new'!"
+				xpath="//li[@id='ca-nstab-main'][contains(@class, 'new')]" />-->
+			<setInputField htmlId="wpTextbox1" value="{{RMList|show=True}}" />
+			<clickButton description="Save page" htmlId="wpSave" />
+			<sleep seconds="10"/>
+		</webtest>
+
+		<webtest name="rmTestMediaList">
+			<invoke url="http://localhost/${wikipath}/index.php/MyNewMediaListTest"/>
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new' now!"
+					xpath="//li[@id='ca-nstab-main'][contains(@class, 'new')]" />
+			</not>
+			<!-- check list now -->
+			<verifyXPath description="Is there a table in the body content?"
+				xpath="//div[@id='bodyContent']/table" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[1][contains(text(),'Category')]" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[2][contains(text(),'Filename')]" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[3][contains(text(),'Uploaded by')]" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[4][contains(text(),'Creation date')]" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[5][contains(text(),'Metainformation')]" />
+			<verifyXPath description="Name of column header"
+				xpath="//div[@id='bodyContent']/table/tbody/tr/td/table/tbody/tr/th[6][contains(text(),'Delete')]" />
+			
+		</webtest>
+
+	</target>
+</project>

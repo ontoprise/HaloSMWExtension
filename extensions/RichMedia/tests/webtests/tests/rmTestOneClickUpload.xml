@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+	
+<project default="rmTestOneClickUpload">
+
+	&goToLogin;
+	
+	<target name="rmTestOneClickUpload">
+
+		<webtest name="rmOneClick">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest" />
+			<clickButton description="Attach file" xpath="//div[@id='bodyContent']/table/tbody/tr[last()]/td/table/tbody/tr/td[2]/form/input" />
+			<sleep seconds="5"/>
+				
+			<verifyXPath description="Related Article correct?"
+				xpath="//iframe[@id=fbContent]/body/table/tbody/tr[2]/td[2]/b[contains(text(),'MyNewMediaList')]" />
+		</webtest>
+
+	</target>
+</project>

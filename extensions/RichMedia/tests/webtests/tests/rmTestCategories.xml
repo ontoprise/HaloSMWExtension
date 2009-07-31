@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="rmTestCategories">
+
+	<target name="rmTestCategories">
+
+		<webtest name="rmTestCategoryMedia">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Category:Media" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestCategoryImage">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Category:Image" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestCategoryPdf">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Category:Pdf" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestCategoryDocument">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Category:Document" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestCategoryAudio">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Category:Audio" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestCategoryVideo">
+			<invoke
+						url="http://localhost/${wikipath}/index.php/Category:Video" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+							xpath="//li[@id='ca-nstab-category'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+	</target>
+</project>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WebTest-projectDefinitions" basedir="."
+	default="wt.nothing">
+
+	<target name="wt.defineMacros"
+		description="Defines macros and project specific Steps"
+		unless="macroDefined">
+		<property name="macroDefined" value="true" />
+		<echo
+			message="Defining project macros and custom steps (if any)" />
+
+	</target>
+
+	<target name="wt.nothing"></target>
+
+</project>

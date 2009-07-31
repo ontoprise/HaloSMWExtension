@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="rmTestTemplates">
+	
+	<target name="rmTestTemplates">
+	
+		<webtest name="rmTestTemplateUpload">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMUpload" />
+			<not description="Does a search text exist?">
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateImage">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMImage" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplatePdf">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMPdf" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateDocument">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMDocument" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateAudio">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMAudio" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateVideo">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMVideo" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateList">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMList" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateListInnerTable">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMListInnerTable" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateCategoryLinkIcon">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMCategoryLinkIcon" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateNoNamespace">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMNoNamespace" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateListOuterTable">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMListOuterTable" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateMedia">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:RMMedia" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplate!">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:!" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateCiteWebInHelp">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Cite_web_in_help" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateCopyrightOfArticle">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Copyright_of_article" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateGNUFreeDocumentationLicense">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:GNU_Free_Documentation_License" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateHeaderForWikiParts">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Header_for_wiki_parts" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateNote">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Note" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateTablelongrow">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Tablelongrow" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateTablerow">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Tablerow" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateTemplate">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Template" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+		<webtest name="rmTestTemplateDisplay_content_navigation_box">
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Template:Display_content_navigation_box" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-template'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+		
+	</target>
+</project>

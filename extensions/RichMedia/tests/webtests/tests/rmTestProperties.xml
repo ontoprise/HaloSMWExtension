@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="rmTestProperties">
+
+	<target name="rmTestProperties">
+
+		<webtest name="rmTestPropertyHasCreationDate">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasCreationDate" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasFilename">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasFilename" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!"
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasRelatedArticles">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasRelatedArticles" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasUploadDate">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasUploadDate" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasUploader">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasUploader" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasCopyrightBy">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasCopyrightBy" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyHasDescription">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:HasDescription" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+		<webtest name="rmTestPropertyIsSubSectionOf">
+			<invoke url="http://localhost/${wikipath}/index.php/Property:IsSubSectionOf" />
+			<not>
+				<verifyXPath description="this id must not be the class 'selected new'!" 
+					xpath="//li[@id='ca-nstab-property'][contains(@class, 'new')]" />
+			</not>
+		</webtest>
+
+	</target>
+</project>
