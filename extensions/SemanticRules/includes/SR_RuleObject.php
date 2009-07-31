@@ -41,6 +41,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
      	$parsedformula = new SMWFormulaParser($function);
  		if ($parsedformula->isFormulaValid()) {
      		$formula = $parsedformula->getUPNStack();
+     		
 	 	} else {
 		    return $parsedformula->getErrorMsg();		    
  		}
@@ -106,10 +107,14 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		}
 		
 		// add result
-		if ($variableassignments !== "") {
-			$variableassignments .= " AND evaluable_(_RESULT, " . $resultvar . ") AND ";
+		if (($variableassignments . $evalflogic) !== '') {
+		      $resultMapping = " AND evaluable_(_RESULT, " . $resultvar . ") ";
 		} else {
-			$variableassignments .= " evaluable_(_RESULT, " . $resultvar . ") AND ";
+			  $resultMapping = " evaluable_(_RESULT, " . $resultvar . ") ";
+		}
+		
+		if ($variableassignments !== '') {
+			$evalflogic  = " AND " . $evalflogic;
 		}
 		
 		// fetch rule head
@@ -117,7 +122,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		$flogicstring .= " ". $head . " <- ";
 		
 		// don't foget the "." :)
-    	return $flogicstring . $variableassignments . $evalflogic . ".";
+    	return $flogicstring . $variableassignments . $evalflogic . $resultMapping . ".";
     }
 
 	/*
@@ -236,7 +241,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		for ($i = 0; $i < sizeof($args); $i++) {
 			$tmp .= $args[$i]->getName();		
 			if ($i == 0) {				
-				$tmp .= "[";
+				$tmp .= "[prop#";
 			} else if ($i == 1) {
 				$tmp .="->";
 			}
