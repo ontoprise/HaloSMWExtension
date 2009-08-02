@@ -20,7 +20,8 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 		                        "City", "Continent", "Country");
 		$rootCategories = smwfGetSemanticStore()->getRootCategories();
 
-		foreach ($rootCategories as $c) {
+		foreach ($rootCategories as $tuple) {
+			list($c, $isLeaf) = $tuple;
 			$this->assertContains($c->getText(), $exp_categories, $c->getText()." missing");
 		}
 			
@@ -49,8 +50,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 
 		$rootProperties = smwfGetSemanticStore()->getRootProperties();
 
-		foreach ($rootProperties as $p) {
-		 $this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
+		foreach ($rootProperties as $tuple) {
+			  list($p,$isLeaf) = $tuple;
+		      $this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
 		}
 			
 	}
@@ -58,7 +60,8 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	public function testDirectSubCategories() {
 		$exp_categories = array("Electric car", "Sports car");
 		$subCategories = smwfGetSemanticStore()->getDirectSubCategories(Title::newFromText("Car", NS_CATEGORY));
-		foreach ($subCategories as $c) {
+		foreach ($subCategories as $tuple) {
+			list($c, $isLeaf) = $tuple;
 			$this->assertContains($c->getText(), $exp_categories, $c->getText()." missing");
 		}
 	}
@@ -189,7 +192,8 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	public function testDirectSubProperties() {
 		$exp_properties = array("Has Son", "Has Daughter");
 		$subProperties = smwfGetSemanticStore()->getDirectSubProperties(Title::newFromText("Has Child", SMW_NS_PROPERTY));
-		foreach ($subProperties as $p) {
+		foreach ($subProperties as $tuple) {
+			list($p, $isLeaf) = $tuple;
 			$this->assertContains($p->getText(), $exp_properties, $p->getText()." missing");
 		}
 	}
@@ -257,7 +261,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	}
 
 	/*
-    TODO: write tests for unit methods of SemanticStore
+	TODO: write tests for unit methods of SemanticStore
 	public abstract function getDistinctUnits(Title $type);
 
 

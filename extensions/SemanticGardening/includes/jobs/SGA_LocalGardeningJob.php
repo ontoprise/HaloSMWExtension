@@ -354,7 +354,8 @@ class PageSelector {
         
         $store = smwfGetSemanticStore();
         $superProperties = $store->getDirectSubProperties($property);
-        foreach($superProperties as $sp) {
+        foreach($superProperties as $tuple) {
+        	list($sp, $isLeaf) = $tuple;
             if (in_array($sp->getDBkey(), $visitedNodes)) continue;
             array_push($visitedNodes, $sp->getDBkey());
             PageSelector::getAllSuperCategories($sp, $results, $visitedNodes);

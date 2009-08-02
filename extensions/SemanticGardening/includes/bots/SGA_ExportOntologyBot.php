@@ -183,7 +183,8 @@ class ExportOntologyBot extends GardeningBot {
 		$owl .= '	<rdfs:label xml:lang="en">DefaultRootConcept</rdfs:label>'.LINE_FEED;
 		$owl .= '</owl:Class>'.LINE_FEED;
 		fwrite($filehandle, $owl);
-		foreach($rootCategories as $rc) {
+		foreach($rootCategories as $tuple) {
+			list($rc, $isLeaf) = $tuple;
 			if ($this->isAborted()) break;
 			if (smwfGetSemanticStore()->transitiveCat->equals($rc)
 			|| smwfGetSemanticStore()->symetricalCat->equals($rc)) {
@@ -391,8 +392,8 @@ class ExportOntologyBot extends GardeningBot {
 	private function exportSubcategories($filehandle, $superCategory, array & $visitedNodes) {
 		$directSubcategories = smwfGetSemanticStore()->getDirectSubCategories($superCategory);
 		array_push($visitedNodes, $superCategory->getArticleID());
-		foreach($directSubcategories as $c) {
-
+		foreach($directSubcategories as $tuple) {
+            list($c, $isLeaf) = $tuple;
 			if (in_array($c->getArticleID(), $visitedNodes)) {
 				array_pop($visitedNodes);
 				return;

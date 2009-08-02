@@ -37,15 +37,17 @@ class SMWOntologyBrowserXMLGenerator {
 	}
 	$count++;
 	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-	foreach($titles as $t) { 
+	foreach($titles as $e) {
+		list($t, $isLeaf) = $e; 
 		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
 		}
+		$leaf = $isLeaf ? 'isLeaf="true"' : '';
 		$title_esc = htmlspecialchars($t->getDBkey()); 
 		$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		$result = $result."<conceptTreeElement title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues</conceptTreeElement>";
+		$result = $result."<conceptTreeElement $leaf title_url=\"$titleURLEscaped\" title=\"".$title_esc."\" img=\"concept.gif\" id=\"ID_$id$count\">$gi_issues</conceptTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) {
@@ -129,15 +131,17 @@ public static function encapsulateAsPropertyPartition(array & $titles, $limit, $
 	}
 	$count++;
 	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
-	foreach($titles as $t) { 
+	foreach($titles as $e) { 
+		list($t, $isLeaf) = $e;
 		if (SMWOntologyBrowserXMLGenerator::isPredefined($t)) {
 			continue;
 		}
+		$leaf = $isLeaf ? 'isLeaf="true"' : '';
 		$title = htmlspecialchars($t->getDBkey());
 		$titleURLEscaped = htmlspecialchars(self::urlescape($t->getDBkey()));
 		$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $t);
 		$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-		$result = $result."<propertyTreeElement title_url=\"$titleURLEscaped\" title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues</propertyTreeElement>";
+		$result = $result."<propertyTreeElement $leaf title_url=\"$titleURLEscaped\" title=\"".$title."\" img=\"attribute.gif\" id=\"ID_$id$count\">$gi_issues</propertyTreeElement>";
 		$count++;
 	}
 	if ($rootLevel) { 

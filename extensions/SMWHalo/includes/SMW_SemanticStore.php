@@ -90,7 +90,7 @@
 	/**
 	 * Returns root categories (categories which have no super-category).
 	 * 
-	 * @return array of Title
+	 * @return array of (Title t, boolean isLeaf)
 	 */
 	public abstract function getRootCategories($requestoptions = NULL);
 	
@@ -98,14 +98,14 @@
 	/**
 	 *  Returns root properties (properties which have no super-property).
 	 * 
-	 * @return array of Title
+	 * @return array of (Title t, boolean isLeaf)
 	 */
 	public abstract function getRootProperties($requestoptions = NULL);
 	
 	/**
 	 * Returns direct subcategories of $categoryTitle.
 	 * 
-	 * @return array of Title
+	 * @returnarray of (Title t, boolean isLeaf)
 	 */
 	public abstract function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL);
 	
@@ -204,7 +204,7 @@
 	/**
 	 * Returns all direct subproperties of $property.
 	 * 
-	 * @return array of Title
+	 * @return array of (Title t, boolean isLeaf)
 	 */
 	public abstract function getDirectSubProperties(Title $property, $requestoptions = NULL);
 	
