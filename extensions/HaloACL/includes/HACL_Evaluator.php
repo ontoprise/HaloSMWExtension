@@ -589,12 +589,18 @@ class HACLEvaluator {
 		$semdata = smwfGetStore()->getSemanticData($t);
 		$props = $semdata->getProperties();
 		foreach ($props as $p) {
-			if (!$p->isShown()) {
-				// Ignore invisible(internal) properties
+//			if (!$p->isShown()) {
+//				// Ignore invisible(internal) properties
+//				continue;
+//			}
+			// Check if a property is protected
+			$wpv = $p->getWikiPageValue();
+			if (!$wpv) {
+				// no page for property
 				continue;
 			}
-			// Check if a property is protected
-			$t = $p->getWikiPageValue()->getTitle();
+			$t = $wpv->getTitle();
+			
 			if (!self::hasPropertyRight($t, $userID, $actionID)) {
 				return false;
 			}
