@@ -1401,6 +1401,7 @@ initFromQueryString:function(ask) {
 	var propertiesInQuery = new Array();
 	for (var i = 0; i < sub.length; i++) {
 		var props = sub[i].match(/\[\[([\w\d _]*)::.*?\]\]/g);
+		if (!props) props = [];
 		for (var j = 0; j < props.length; j++) {
 			var pname = escapeQueryHTML(props[j].substring(2, props[j].indexOf('::')));
 			if ( !propertiesInQuery.inArray(pname) )
