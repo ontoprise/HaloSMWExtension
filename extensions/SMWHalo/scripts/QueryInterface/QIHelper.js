@@ -1418,9 +1418,13 @@ initFromQueryString:function(ask) {
 				propertiesInQuery.push(pname);
   		}
   	}	
-	// add function to fetch property information
-	propertiesInQuery.unshift('getPropertyTypes');
-	sajax_do_call('smwf_qi_QIAccess', propertiesInQuery, this.parsePropertyTypes.bind(this));
+	if (propertiesInQuery.length > 0) {
+        // add function to fetch property information
+        propertiesInQuery.unshift('getPropertyTypes');
+        sajax_do_call('smwf_qi_QIAccess', propertiesInQuery, this.parsePropertyTypes.bind(this));
+    }
+    else // no properties in query
+        this.parseQueryString();        
 },
 
 parsePropertyTypes:function(request){
