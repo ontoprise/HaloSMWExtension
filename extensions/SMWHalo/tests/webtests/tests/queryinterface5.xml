@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testQueryInterface5">
+    
+    <target name="testQueryInterface5">
+
+        <webtest name="Ajax calls for Query Interface page">
+            <invoke
+              url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage"
+              description="Call the Special page Query Interface"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <previewIsVisible />
+            <layoutManagerIsVisible />
+            <buttonCopyToClipboardIsVisible />
+
+            <!-- call QI without preview and layout box -->
+            <invoke
+              url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage&amp;rsargs[]=noPreview%26noLayout"
+              description="Call Query Interface with params noPreview and noLayout"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <previewIsNotVisible />
+            <layoutManagerIsNotVisible />
+            <buttonCopyToClipboardIsVisible />
+
+            <!-- call QI with query -->
+            <invoke
+              url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage&amp;rsargs[]=query%3D%255B%255BCategory%253ACity%255D%255D"
+              description="Call Query Interface with param query"
+            />
+            <verifyXPath
+                description="Check existing link to City in navtree" 
+                xpath="//a[@class='leaf']/text()"
+                regex="\s*City\s*"
+            />
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+
+        </webtest>
+        
+        <!-- call QI as done by the Excel Client -->
+        <webtest name="Pretend being the Excel Bridge">
+            <config>
+                <header name="User-Agent" value="Excel Bridge EB112"/>
+            </config>
+
+            <invoke
+              url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage"
+              description="Call Query Interface without params"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <previewIsNotVisible />
+            <layoutManagerIsNotVisible />
+            <buttonCopyToClipboardIsNotVisible />
+
+            <showFullAsk query="Your query is empty\." />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+            
+            <!-- call QI and preload a query -->            
+            <invoke
+              url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage&amp;rsargs[]=query%3D%255B%255BCategory%253ACity%255D%255D"
+              description="Call Query Interface with param query"
+            />
+            <sleep seconds="4" />
+            
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickElement
+              description="Close full ask query popup"
+              xpath="//div/span[text()='Close']"
+            />
+            <!-- doesn't work in Webtest, but successfully tested with Firefox -->
+            <!--
+            <verifyXPath
+                description="Check existing link to City in navtree" 
+                xpath="//a[@class='leaf']/text()"
+                regex="\s*City\s*"
+            />
+            -->
+             
+        </webtest>
+        
+    </target>
+</project>
