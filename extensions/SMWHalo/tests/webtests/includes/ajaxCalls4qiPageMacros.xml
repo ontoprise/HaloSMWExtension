@@ -1,5 +1,27 @@
 <project name="imports for qi page ajax calls">
 
+    <macrodef name="callQiViaAjax">
+    	<attribute name="rsargs" />
+    	<attribute name="description"/>
+        <sequential>
+            <invoke
+                url="${wgServer}${wgScript}?action=ajax&amp;rs=smwf_qi_getPage&amp;@{rsargs}"
+            	description="@{description}"
+            />
+            <verifyTitle text="Query Interface - ${wgSitename}" />
+            <verifyXPath
+                description="Page content contains the globalWrapper at the begining"
+                xpath="//body/div[2]/@id"
+                text="globalWrapper"
+            />
+       		<verifyXPath
+       		    description="and in the globalWrapper the qicontent follows"
+        	    xpath="//body/div[@id='globalWrapper']/div/@id"
+        	    text="qicontent"
+        	/>
+         </sequential>
+    </macrodef>
+
     <macrodef name="buttonCopyToClipboardIsVisible">
         <sequential>
             <verifyXPath
