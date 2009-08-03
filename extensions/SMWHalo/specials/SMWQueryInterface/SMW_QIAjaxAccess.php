@@ -222,18 +222,42 @@ function smwf_qi_getPage($args= "") {
 
 	// remove the Switch to Semantic Notification button, incase it's there
 	$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+
+	// parse submited params 
+    $params = array();
+    parse_str($args, $params);
 	
-	// check params 
-	$params = array();
-	parse_str($args, $params);
+	// when called from the Excel Bridge, params noPreview and noLayout must be set
+	// also the "Copy to clipboard" button must be hidden. The Excel Bridge is recognized by the
+	// appropriate Useragent, params may not be set but will adjusted automatically
+	if (isset($_SERVER['HTTP_USER_AGENT']) &&
+	    stripos($_SERVER['HTTP_USER_AGENT'], 'Excel Bridge') !== false) {
+	      $params['noPreview'] = true;
+	      $params['noLayout'] = true;
+	      $newPage = str_replace('onclick="qihelper.copyToClipboard()"',
+	                             'onclick="qihelper.copyToClipboard()" style="display: none;"',
+	                             $newPage); 
+    }
+
+    // check params and change HTML of the Query Interface
 	if (isset($params['noPreview']))
 		$newPage = str_replace('<div id="previewlayout">', '<div id="previewlayout" style="display: none;">', $newPage); 
 	if (isset($params['noLayout']))
-		$newPage = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $newPage); 
+		$newPage = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $newPage);
+    if (isset($params['query'])) {
+        $queryString = str_replace('"', '&quot;', $params['query']);
+        $queryString = str_replace("'", "\'", $queryString);      
+        $newPage = str_replace('<body',
+                               '<body onload="initialize_qi_from_querystring(\''.$queryString.'\');" ',
+                               $newPage);
+    } 
 	
 	return $newPage;
 		
 }
+
+// below this line there are functions that are needed by the Ajax functions above
+// but which are not called from outside directly
 
 /**
  * copy data from page to newPage by defing a pattern, up to where
@@ -308,7 +332,31 @@ function doHttpRequestWithCurl($server, $file) {
 	return array($httpErr, $page);
 }
 
-
+/**
+ * Returns information about a property in the form of:
+ * <relationSchema name="${property_name}" arity="${arity}">
+ *   <param name="${Property_type}">
+ *   <!-- if the property has type Enumeration then this follows -->
+ *      <allowedValue value="${some_value}" />
+ *       ...
+ *   </param>
+ * </relationSchema>
+ *
+ * The result xml is parsed by the Javascript of the Query Interface
+ * to show the correct type in the property dialogue after a property
+ * name has been entered above. In case of an enumeration, the select
+ * options with the possible values are filled. If the property has the
+ * type page, then the restiction selector (>,<,=) is disabled.
+ * 
+ * Also the property information are needed when a query is parsed and
+ * displayed in the Query Interface in the navigation tree. Within the
+ * tree the property type is show and the dialogue box must be filled with
+ * the correct values, if an existing property in the query is edited.
+ * This function is then called several times by smwf_qi_QIAccess().
+ * 
+ * @param string $relationName
+ * @return string xml
+ */
 function qiGetPropertyInformation($relationName) {		
 		$relationName = htmlspecialchars_decode($relationName);
 		global $smwgContLang, $smwgHaloContLang;
