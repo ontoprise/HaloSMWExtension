@@ -321,8 +321,10 @@ function smwgHaloSetupExtension() {
 
 	// add the 'halo' form input type, if Semantic Forms is installed
     global $sfgFormPrinter;
-    if ($sfgFormPrinter)
+    if ($sfgFormPrinter) {
         $sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
+        $sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+    }
 	
 	return true;
 }
@@ -395,9 +397,10 @@ function smwfHaloInitDatatypes() {
  * @param string $is_mandatory
  * @param boolean $is_disabled
  * @param array $other_args
+ * @param string $method
  * @return array(string, null)
  */
-function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args) {
+function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args, $method = "textEntryHTML") {
     // for semantic autocompletion set class="wickEnabled" - this is neccessary
     if (array_key_exists('class', $other_args))
         $other_args['class'].= ' wickEnabled';
@@ -420,10 +423,14 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
         $typeHint = 'typeHint="'.str_replace(';', '|', $other_args['typeHint']).'" ';
         
     // call now the general function of SF that creates the <input> field
-    $html = SFFormInputs::textEntryHTML($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+    $html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
     // add the two field constraints and typeHint in the result output html
     $html = str_replace('/>', " $constraints$typeHint/>", $html); 
     return $html;
+}
+
+function smwfHaloFormInputTextarea($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args) {
+    return smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args, "textAreaHTML");
 }
 
 /**
