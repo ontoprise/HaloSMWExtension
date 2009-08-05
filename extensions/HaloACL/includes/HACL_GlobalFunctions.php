@@ -206,14 +206,13 @@ function haclAddHTMLHeader(&$out) {
         'media' => 'screen, projection',
         'href'  => 'http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css'
     ));
-
-    
     $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/container/assets/skins/container.css'
+        'href'  => 'http://yui.yahooapis.com/2.7.0/build/container/assets/container.css'
     ));
+
 
     $out->addLink(array(
         'rel'   => 'stylesheet',
