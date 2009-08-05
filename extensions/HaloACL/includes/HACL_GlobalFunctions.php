@@ -51,7 +51,7 @@ function enableHaloACL() {
     $wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
-    $wgAutoloadClasses['HACLGenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
+
     $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
     $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
