@@ -1388,7 +1388,12 @@ checkFormat:function(){
 },
 
 initFromQueryString:function(ask) {
-	this.doReset();
+    this.doReset();
+
+    // does ask contain any data?
+    if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
+        return;
+
 	// split of query parts to handle subqueries seperately
 	var sub = this.splitQueryParts(ask);
 	// main query must exist, otherwise quit right away
