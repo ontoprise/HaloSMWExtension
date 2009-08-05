@@ -90,19 +90,20 @@ function createRightContent() {
             </div>
             <script type="javascript">
 
-                YAHOO.haloacl.popup_HelpCreateRight = new YAHOO.widget.Panel('popup_HelpCreateRight',{
-                        close:true,
-                        visible:true,
-                        draggable:true,
-                        context:['anchorHelpCreateRight','bl','tr']
-                }); 
-                YAHOO.haloacl.popup_HelpCreateRight.render();
-                var myTooltip = new YAHOO.widget.Tooltip("myTooltip", {
-                    context:"anchorHelpCreateRight",
-                    x:100,
-                    y:0,
-                    text:"TOOLTOP TExt",
-                    showDelay:500 } );
+            YAHOO.haloacl.popup_showHelpCreateRight = function(){
+                if(YAHOO.haloacl.popup_helpcreateright == null){
+                    YAHOO.haloacl.popup_helpcreateright = new YAHOO.widget.Panel('popup_HelpCreateRight',{
+                            close:true,
+                            visible:true,
+                            draggable:true
+                    });
+                    YAHOO.haloacl.popup_helpcreateright.setHeader("testheader&nbsp;&nbsp;x");
+                    YAHOO.haloacl.popup_helpcreateright.setBody("testcontent");
+                    YAHOO.haloacl.popup_helpcreateright.render();
+                    YAHOO.haloacl.popup_helpcreateright.show();
+                }else{
+                    YAHOO.haloacl.popup_helpcreateright.render();
+                    YAHOO.haloacl.popup_helpcreateright.show();
 
                 }
            };
