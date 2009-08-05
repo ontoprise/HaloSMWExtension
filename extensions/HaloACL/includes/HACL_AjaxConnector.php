@@ -90,20 +90,19 @@ function createRightContent() {
             </div>
             <script type="javascript">
 
-            YAHOO.haloacl.popup_showHelpCreateRight = function(){
-                if(YAHOO.haloacl.popup_helpcreateright == null){
-                    YAHOO.haloacl.popup_helpcreateright = new YAHOO.widget.Panel('popup_HelpCreateRight',{
-                            close:true,
-                            visible:true,
-                            draggable:true
-                    });
-                    YAHOO.haloacl.popup_helpcreateright.setHeader("testheader&nbsp;&nbsp;x");
-                    YAHOO.haloacl.popup_helpcreateright.setBody("testcontent");
-                    YAHOO.haloacl.popup_helpcreateright.render();
-                    YAHOO.haloacl.popup_helpcreateright.show();
-                }else{
-                    YAHOO.haloacl.popup_helpcreateright.render();
-                    YAHOO.haloacl.popup_helpcreateright.show();
+                YAHOO.haloacl.popup_HelpCreateRight = new YAHOO.widget.Panel('popup_HelpCreateRight',{
+                        close:true,
+                        visible:true,
+                        draggable:true,
+                        context:['anchorHelpCreateRight','bl','tr']
+                }); 
+                YAHOO.haloacl.popup_HelpCreateRight.render();
+                var myTooltip = new YAHOO.widget.Tooltip("myTooltip", {
+                    context:"anchorHelpCreateRight",
+                    x:100,
+                    y:0,
+                    text:"TOOLTOP TExt",
+                    showDelay:500 } );
 
                 }
            };
@@ -439,8 +438,8 @@ function getRightsPanel($panelid) {
                         </div>
                         <div class="haloacl_panel_rights">
                             <form name="formRights_$panelid">
-                            <div class="right_fullaccess"><input type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="checkAllRights$panelid()"/>&nbsp;Full access</div>
-                            <div class="right_read"><input type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read</div>
+                            <div class="right_fullaccess"><input id = "checkbox_right_fullaccess" type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="checkAllRights$panelid()"/>&nbsp;Full access</div>
+                            <div class="right_read"><input id = "checkbox_right_read" type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read</div>
                             <div class="right_edit"><input type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit</div>
                             <div class="right_editfromform"><input type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form</div>
                             <div class="right_wysiwyg"><input type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG</div>
@@ -476,7 +475,7 @@ function getRightsPanel($panelid) {
                         </div>
                         <div class="haloacl_panel_content_row_content">
                             Autogenerate description text:
-                            <input type="radio" value="on" name="right_descriptiontext_$panelid" />&nbsp;on
+                            <input type="radio" value="on" name="right_descriptiontext_$panelid" checked/>&nbsp;on
                             <input type="radio" value="off" name="right_descriptiontext_$panelid" />&nbsp;off
                         </div>
                     </div>
@@ -564,6 +563,14 @@ HTML;
                 };
                 YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
             };
+
+            YAHOO.util.Event.addListener("checkbox_right_fullaccess", "change", genericPanelSetSaved_$panelid, false);
+
+            checkAll = function () {
+                $('checkbox_right_read').checked = false;
+                genericPanelSetSaved_$panelid(false);
+            }
+
 
 
         </script>
