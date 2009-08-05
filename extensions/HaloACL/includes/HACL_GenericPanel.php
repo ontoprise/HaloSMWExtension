@@ -63,7 +63,7 @@ HTML;
                 $('haloacl_panel_descr_$panelid').textContent = descr;
             }
             
-);
+
 
         </script>
 HTML;
