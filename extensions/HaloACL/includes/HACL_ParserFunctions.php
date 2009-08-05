@@ -585,7 +585,7 @@ class HACLParserFunctions  {
 	 * @return true
 	 */
 	public static function articleSaveComplete(&$article, &$user, $text) {
-		
+            
 		if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
 			// The article is in the ACL namespace.
 			// Check if there is some corresponding definition in the ACL database.
@@ -809,7 +809,7 @@ class HACLParserFunctions  {
 	 * 		false, if not
 	 */
 	private function saveDefinition() {
-		
+            
 		// Check if all definitions for ACL are consistent.
 		if (self::$mInstance->checkConsistency() !== true ||
 		    !$this->mDefinitionValid) {

@@ -107,8 +107,23 @@ abbr,acronym { border:0;
 .haloacl_tab_content{
     padding:5px;
 }
+.haloacl_tab_content_description_header{
+    font-family:Arial;
+    font-size:16px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:10px;
+}
 .haloacl_tab_content_description{
 
+}
+.haloacl_helpbutton{
+    float:left;
+    width:16px;
+    height:16px;
+    margin-top:3px;
+    margin-left:10px;
+    background:url(images/helpbutton.png) no-repeat;
 }
 .haloacl_tab_section_container{
     float:left;
@@ -193,8 +208,22 @@ abbr,acronym { border:0;
     height:17px;
     padding:0px 0 0 8px;
 }
+
+.haloacl_panel_nameDescr{
+    float:left;
+    width:500px;
+    overflow:hidden;
+}
 .haloacl_panel_name{
     font-weight:bold;
+}
+.haloacl_panel_statusContainer{
+    float:left;
+    width:120px;
+    overflow:hidden;
+    border:1px solid #000;
+    border-style:none solid;
+    padding:0 10px 0 10px ;
 }
 .haloacl_panel_expand-collapse{
 }
@@ -205,13 +234,18 @@ abbr,acronym { border:0;
 .haloacl_panel_expand-collapse img{
     border:0px solid;
 }
-.haloacl_panel_status{
-    margin:0 0 0 650px;
-    padding:0 4px;
-    border:1px solid #000;
-    border-style:none solid;
+.haloacl_panel_status_notsaved{
+    padding:0px 24px ;
     width:50px;
+    background:url(images/panel_notsaved.png) no-repeat right;
 }
+
+.haloacl_panel_status_saved{
+    padding:0px 24px ;
+    width:50px;
+    background:url(images/panel_saved.png) no-repeat right;
+}
+
 .haloacl_panel_close{
     float:right;
     padding:2px 8px 0 0;
@@ -244,6 +278,70 @@ abbr,acronym { border:0;
     float:left;
     display:inline;
 }
+
+.haloacl_panel_rights{
+    float:left;
+    display:inline;
+    position:relative;
+    height:50px;
+    overflow:visible;
+}
+
+.haloacl_panel_rights .right_fullaccess {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:150px;
+}
+.haloacl_panel_rights .right_read {
+    position:absolute;
+    left:100px;
+    top:0px;
+    width:150px;
+}
+.haloacl_panel_rights .right_edit {
+    position:absolute;
+    left:180px;
+    top:0px;
+    width:150px;
+}
+.haloacl_panel_rights .right_editfromform {
+    position:absolute;
+    left:240px;
+    top:0px;
+    width:150px;
+}
+.haloacl_panel_rights .right_wysiwyg {
+    position:absolute;
+    left:360px;
+    top:0px;
+    width:150px;
+}
+.haloacl_panel_rights .right_create {
+    position:absolute;
+    left:100px;
+    top:30px;
+    width:150px;
+}
+.haloacl_panel_rights .right_move {
+    position:absolute;
+    left:180px;
+    top:30px;
+    width:150px;
+}
+.haloacl_panel_rights .right_delete {
+    position:absolute;
+    left:240px;
+    top:30px;
+    width:150px;
+}
+.haloacl_panel_rights .right_annotate {
+    position:absolute;
+    left:360px;
+    top:30px;
+    width:150px;
+}
+
 .haloacl_panel_button_collapse{
     background:url(images/panel_collapse.png);
     display:inline;
@@ -382,6 +480,15 @@ abbr,acronym { border:0;
 
 .yui-skin-sam .yui-navset .yui-nav .selected a, .yui-skin-sam .yui-navset .yui-nav .selected a:visited, .yui-skin-sam .yui-navset .yui-nav .selected a:hover {
     background:url(images/tab_bg_active.png) repeat-x;
-    #border-top: solid red;
     color:#000;
+    height:24px;
+}
+
+#haloaclsubView a, #haloaclsubView em {
+    background:none!important;
+    border:none!important;
+}
+
+#haloaclsubView .selected em {
+    font-weight:bold;
 }

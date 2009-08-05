@@ -51,6 +51,7 @@ function enableHaloACL() {
     $wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
+    $wgAutoloadClasses['HACLGenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
     $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
     $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
@@ -168,6 +169,7 @@ function haclAddHTMLHeader(&$out) {
     // YAHOO Part
 
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo/yahoo-min.js"></script>');
+
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/event/event-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dom/dom-min.js"></script>');
@@ -183,9 +185,10 @@ function haclAddHTMLHeader(&$out) {
 
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/tabview/tabview-debug.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-debug.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/paginator/paginator-min.js"></script>');
     
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>');
     // -------------------
     // -------------------
 
@@ -194,6 +197,7 @@ function haclAddHTMLHeader(&$out) {
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
 
 
     $out->addLink(array(
@@ -202,6 +206,15 @@ function haclAddHTMLHeader(&$out) {
         'media' => 'screen, projection',
         'href'  => 'http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css'
     ));
+
+    
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => 'http://yui.yahooapis.com/2.7.0/build/container/assets/skins/container.css'
+    ));
+
     $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',

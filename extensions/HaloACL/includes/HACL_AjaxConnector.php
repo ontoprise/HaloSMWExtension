@@ -11,17 +11,23 @@
  */
 
 $wgAjaxExportList[] = "ajaxTestFunction";
+$wgAjaxExportList[] = "createACLPanels";
 $wgAjaxExportList[] = "createAclContent";
+$wgAjaxExportList[] = "createRightContent";
 $wgAjaxExportList[] = "manageAclsContent";
 $wgAjaxExportList[] = "manageUserContent";
 $wgAjaxExportList[] = "whitelistsContent";
 $wgAjaxExportList[] = "getRightsPanel";
 $wgAjaxExportList[] = "rightPanelSelectDeselectTab";
+$wgAjaxExportList[] = "rightPanelAssignedTab";
 $wgAjaxExportList[] = "getGroupsForRightPanel";
 $wgAjaxExportList[] = "getUsersForUserTable";
 $wgAjaxExportList[] = "saveTempRightToSession";
 $wgAjaxExportList[] = "getModificationRightsPanel";
 $wgAjaxExportList[] = "saveSecurityDescriptor";
+$wgAjaxExportList[] = "getWhitelistPages";
+
+
 
 
 //put your code here
@@ -34,6 +40,88 @@ function ajaxTestFunction() {
 
     return $temp;
 }
+
+function createACLPanels() {
+
+
+
+// clear temp-right-sessions
+    clearTempSessionRights();
+
+    $response = new AjaxResponse();
+
+
+
+    $html = <<<HTML
+        <div class="yui-skin-sam">
+    <div id="haloaclsubView" class="yui-navset"></div>
+</div>
+<script type="text/javascript">
+  YAHOO.haloacl.buildSubTabView('haloaclsubView');
+</script>
+HTML;
+
+
+    $response->addText($html);
+    return $response;
+
+}
+
+/**
+ *
+ * @return <html>
+ *  returns rights section content for createacl-tab
+ */
+function createRightContent() {
+
+    $response = new AjaxResponse();
+
+    $html = <<<HTML
+        <!-- section start -->
+        <!-- rights section -->
+        <div class="haloacl_tab_section_container">
+            <div class="haloacl_tab_section_header">
+                <div class="haloacl_tab_section_header_count">2.</div>
+                <div class="haloacl_tab_section_header_title">
+                    Rights
+                </div>
+                <div id="anchorHelpCreateRight" class="haloacl_helpbutton" onclick="javascript:YAHOO.haloacl.popup_HelpCreateRight.show();return false;"></div>
+            </div>
+            <script type="javascript">
+
+                YAHOO.haloacl.popup_HelpCreateRight = new YAHOO.widget.Panel('popup_HelpCreateRight',{
+                        close:true,
+                        visible:true,
+                        draggable:true,
+                        context:['anchorHelpCreateRight','bl','tr']
+                }); 
+                YAHOO.haloacl.popup_HelpCreateRight.render();
+                var myTooltip = new YAHOO.widget.Tooltip("myTooltip", {
+	    context:"anchorHelpCreateRight",
+	    text:"TOOLTOP TExt",
+	    showDelay:500 } );
+
+            </script>
+
+            <div id="haloacl_tab_createacl_rightsection" class="haloacl_tab_section_content">
+                <div class="haloacl_tab_section_content_row">
+                    <input type="button" value="Create right"
+                        onclick="javascript:YAHOO.haloacl.createacl_addRightPanel();"/>
+                    &nbsp;
+                    <input type="button" value="Create right template" />
+                </div>
+            </div>
+
+
+        </div>
+        <!-- section end -->
+HTML;
+
+
+    $response->addText($html);
+    return $response;
+}
+
 
 /**
  *
@@ -77,7 +165,6 @@ function createAclContent() {
     $html = <<<HTML
         <div class="haloacl_tab_content">
         <div class="haloacl_tab_content_description">
-
         To create a standard ACL you need to complete the following four steps.
         </div>
 
@@ -86,7 +173,7 @@ function createAclContent() {
             <div class="haloacl_tab_section_header">
                 <div class="haloacl_tab_section_header_count">1.</div>
                 <div class="haloacl_tab_section_header_title">
-                    Gerneral
+                    General
                 </div>
             </div>
 
@@ -148,28 +235,13 @@ function createAclContent() {
         <!-- section end -->
 
 
-        <!-- section start -->
-        <!-- rights section -->
-        <div class="haloacl_tab_section_container">
-            <div class="haloacl_tab_section_header">
-                <div class="haloacl_tab_section_header_count">2.</div>
-                <div class="haloacl_tab_section_header_title">
-                    Rights
-                </div>
-            </div>
-
-            <div id="haloacl_tab_createacl_rightsection" class="haloacl_tab_section_content">
-                <div class="haloacl_tab_section_content_row">
-                    <input type="button" value="Create right" 
-                        onclick="javascript:YAHOO.haloacl.createacl_addRightPanel();"/>
-                    &nbsp;
-                    <input type="button" value="Create right template" />
-                </div>
-            </div>
-
-
+        <div id="step2" style="width:600px;">
+            <input type="button" name="gotoStep2" value="Next Step"
+            onclick="javascript:gotoStep2();"/>
         </div>
-        <!-- section end -->
+
+
+
         <!-- section start -->
         <!-- modificationrights section -->
         <div class="haloacl_tab_section_container">
@@ -221,12 +293,29 @@ function createAclContent() {
                     
                 </div>
 
+
             </div>
 
         </div>
         <!-- section end -->
 
         <script type="javascript">
+
+            gotoStep2 = function() {
+YAHOO.haloacl.loadContentToDiv('step2','createRightContent',{panelid:1});
+                $$('.create_acl_general_definefor').each(function(item){
+                    if(item.checked){
+                        if (item.value == "individual") YAHOO.haloacl.loadContentToDiv('step2','createRightContent',{panelid:1});
+                        if (item.value == "privateuse") {
+                            // building xml
+                            
+                        }
+                    }
+                });
+
+
+            }
+
             YAHOO.haloacl.createacl_addRightPanel = function(){
                   var panelid = 'create_acl_right_'+ YAHOO.haloacl.panelcouner;
 
@@ -315,6 +404,165 @@ HTML;
  *  
  */
 function getRightsPanel($panelid) {
+
+    $myGenericPanel = new HACL_GenericPanel($panelid, "Right");
+
+    $content = <<<HTML
+
+		<div id="content_$panelid" class="panel haloacl_panel_content">
+                    <div class="halocal_panel_content_row">
+                        <div class="haloacl_panel_content_row_descr">
+                            Name:
+                        </div>
+                        <div class="haloacl_panel_content_row_content">
+                            <input type="text" id="right_name_$panelid" />
+                        </div>
+                    </div>
+
+                    <div class="halocal_panel_content_row">
+                        <div class="haloacl_panel_content_row_descr">
+                            Rights:
+                        </div>
+                        <div class="haloacl_panel_rights">
+                            <form name="formRights_$panelid">
+                            <div class="right_fullaccess"><input type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="checkAllRights$panelid()"/>&nbsp;Full access</div>
+                            <div class="right_read"><input type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read</div>
+                            <div class="right_edit"><input type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit</div>
+                            <div class="right_editfromform"><input type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form</div>
+                            <div class="right_wysiwyg"><input type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG</div>
+                            <div class="right_create"><input type="checkbox" class="right_rights_$panelid" name="create"/>&nbsp;Create</div>
+                            <div class="right_move"><input type="checkbox" class="right_rights_$panelid" name="move"/>&nbsp;Move</div>
+                            <div class="right_delete"><input type="checkbox" class="right_rights_$panelid" name="delete"/>&nbsp;Delete</div>
+                            <div class="right_annotate"><input type="checkbox" class="right_rights_$panelid" name="annotate"/>&nbsp;Annotate</div>
+                            </form>
+                        </div>
+                    </div>
+                    <script type="javascript>
+                        // tickbox handling
+                        checkAllRights$panelid = function() {
+                            document.myform.formRights_$panelid.read.checked = true;
+                        }
+                    </script>
+
+
+                    <div class="haloacl_greyline">&nbsp;</div>
+
+                    <div class="halocal_panel_content_row">
+                        <div class="haloacl_panel_content_row_descr" style="width:145px">
+                            Right description:
+                        </div>
+                        <div class="haloacl_panel_content_row_content">
+                            <input type="text" style="width:400px" id="right_description_$panelid" />
+
+                        </div>
+                    </div>
+                       <div class="halocal_panel_content_row">
+                        <div class="haloacl_panel_content_row_descr" style="width:145px">
+                            &nbsp;
+                        </div>
+                        <div class="haloacl_panel_content_row_content">
+                            Autogenerate description text:
+                            <input type="radio" value="on" name="right_descriptiontext_$panelid" />&nbsp;on
+                            <input type="radio" value="off" name="right_descriptiontext_$panelid" />&nbsp;off
+                        </div>
+                    </div>
+
+                    <div class="haloacl_greyline">&nbsp;</div>
+
+                    <div id="right_tabview_$panelid" class="yui-navset"></div>
+                    <script type="text/javascript">
+                      YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid');
+                    </script>
+
+                    <div class="haloacl_greyline">&nbsp;</div>
+                    <div cl
+                    <input type="button" value="Delete right" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');" />
+                    <input type="button" value="Discard right" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');" />
+                    <input type="button" name="safeRight" value="Save right" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" />
+
+		</div>
+HTML;
+
+
+
+
+    $myGenericPanel->setContent($content);
+
+    $footerextension = <<<HTML
+    <script type="javascript>
+
+
+            // rightpanel handling
+
+            YAHOO.haloacl.buildRightPanelXML_$panelid = function(){
+                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                var panelid = '$panelid';
+
+                // building xml
+                var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+                xml+="<right>";
+                xml+="<panelid>$panelid</panelid>";
+                xml+="<name>"+$('right_name_$panelid').value+"</name>";
+                xml+="<description>"+$('right_description_$panelid').value+"</description>";
+                $$('.right_descriptiontext_$panelid').each(function(item){
+                    if(item.checked){
+                        xml+="<autoDescription>"+item.value+"</autoDescription>";
+                    }
+                });
+    
+
+                xml+="<rights>";
+                $$('.right_rights_$panelid').each(function(item){
+                    if(item.checked){
+                        xml+="<right>"+item.name+"</right>";
+                    }
+                });
+                xml+="</rights>";
+
+                xml+="<users>";
+                $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
+                    if(item.checked){
+                        xml+="<user>"+item.name+"</user>";
+                    }
+                });
+                xml+="</users>";
+
+                xml+="<groups>";
+                groups.each(function(group){
+                    xml+="<group>"+group+"</group>";
+                });
+                xml+="</groups>";
+                xml+="</right>";
+
+
+                var callback = function(result){
+                    if(result.status == '200'){
+                        //parse result
+                        //YAHOO.lang.JSON.parse(result.responseText);
+                        genericPanelSetSaved_$panelid(true);
+                        genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
+                        genericPanelSetDescr_$panelid(result.responseText);
+
+                        YAHOO.haloacl.closePanel('$panelid');
+                    }else{
+                        alert(result.responseText);
+                    }
+                };
+                YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+            };
+
+
+        </script>
+HTML;
+
+
+    $myGenericPanel->extendFooter($footerextension);
+
+
+
+
+    /*
+
     $html = <<<HTML
 	<!-- start of panel div-->
 	<div id="$panelid" class="panel haloacl_panel">
@@ -323,8 +571,9 @@ function getRightsPanel($panelid) {
 			<span class="haloacl_panel_expand-collapse">
 				<a href="javascript:YAHOO.haloacl.togglePanel('$panelid');"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
 			</span>
-			<span class="panel haloacl_panel_name">Right</span>
-			<span id="haloacl_panel_status_$panelid" class="haloacl_panel_status">Not Saved ---- x</span>
+			<span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">Right</span>
+                        <span id="haloacl_panel_descr_$panelid" class="panel haloacl_panel_descr"></span>
+			<span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_notsaved">Not Saved</span>
 			<span class="button haloacl_panel_close">
 				<a href="javascript:YAHOO.haloacl.removePanel('$panelid');"><div id="close-button_$panelid" class="haloacl_panel_button_close"></div></a>
 			</span>
@@ -345,18 +594,28 @@ function getRightsPanel($panelid) {
                         <div class="haloacl_panel_content_row_descr">
                             Rights:
                         </div>
-                        <div class="haloacl_panel_content_row_content">
-                            <input type="checkbox" class="right_rights_$panelid" name="fullaccess" />&nbsp;Full access
-                            <input type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read
-                            <input type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit
-                            <input type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form
-                            <input type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG
-                            <input type="checkbox" class="right_rights_$panelid" name="create"/>&nbsp;Create
-                            <input type="checkbox" class="right_rights_$panelid" name="move"/>&nbsp;Move
-                            <input type="checkbox" class="right_rights_$panelid" name="delete"/>&nbsp;Delete
-                            <input type="checkbox" class="right_rights_$panelid" name="annotate"/>&nbsp;Annotate
+                        <div class="haloacl_panel_rights">
+                            <form name="formRights_$panelid">
+                            <div class="right_fullaccess"><input type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="checkAllRights$panelid()"/>&nbsp;Full access</div>
+                            <div class="right_read"><input type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read</div>
+                            <div class="right_edit"><input type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit</div>
+                            <div class="right_editfromform"><input type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form</div>
+                            <div class="right_wysiwyg"><input type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG</div>
+                            <div class="right_create"><input type="checkbox" class="right_rights_$panelid" name="create"/>&nbsp;Create</div>
+                            <div class="right_move"><input type="checkbox" class="right_rights_$panelid" name="move"/>&nbsp;Move</div>
+                            <div class="right_delete"><input type="checkbox" class="right_rights_$panelid" name="delete"/>&nbsp;Delete</div>
+                            <div class="right_annotate"><input type="checkbox" class="right_rights_$panelid" name="annotate"/>&nbsp;Annotate</div>
+                            </form>
                         </div>
                     </div>
+                    <script type="javascript>
+                        // tickbox handling
+                        checkAllRights$panelid = function() {
+                            document.myform.formRights_$panelid.read.checked = true;
+                        }
+                    </script>
+
+
 
                     <div class="haloacl_greyline">&nbsp;</div>
 
@@ -437,7 +696,12 @@ function getRightsPanel($panelid) {
 
                 var callback = function(result){
                     if(result.status == '200'){
+                        //parse result
+                        //YAHOO.lang.JSON.parse(result.responseText);
                         $('haloacl_panel_status_$panelid').textContent = 'Saved';
+                        $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
+                        $('haloacl_panel_name_$panelid').textContent = "[ "+$('right_name_$panelid').value+" ] - ";
+                        $('haloacl_panel_descr_$panelid').textContent = result.responseText;
                         YAHOO.haloacl.closePanel('$panelid');
                     }else{
                         alert(result.responseText);
@@ -448,8 +712,8 @@ function getRightsPanel($panelid) {
 
 
         </script>
-HTML;
-    return $html;
+HTML;*/
+    return $myGenericPanel->getPanel();
 }
 
 /**
@@ -553,6 +817,75 @@ HTML;
 
 }
 
+
+/**
+ *
+ * @param <string>  unique identifier
+ * @return <html>   returns the assigned tabview; e.g. contained in right panel
+ */
+function rightPanelAssignedTab($panelid) {
+    $html = <<<HTML
+        <!-- leftpart -->
+        <div class="haloacl_rightpanel_selecttab_container">
+            <div class="haloacl_rightpanel_selecttab_leftpart">
+                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
+                        Groups and Users
+                    </span>
+                </div>
+                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
+                        Filter in groups:
+                    </span>
+                    <input type="text" />
+                </div>
+                <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
+                <div class="haloacl_rightpanel_selecttab_leftpart_treeview_userlink">
+                    Users
+                </div>
+            </div>
+            <!-- end of left part -->
+
+            <!-- starting right part -->
+
+            <div class="haloacl_rightpanel_selecttab_rightpart">
+                <div class="haloacl_rightpanel_selecttab_rightpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
+                        Users
+                    </span>
+                </div>
+                <div class="haloacl_rightpanel_selecttab_rightpart_filter">
+                    <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
+                        Filter:
+                    </span>
+                    <input type="text" />
+                </div>
+                <div id="datatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
+                <div id="datatablepaging_datatableDiv_$panelid"></div>
+                </div>
+            </div>
+            <!-- end of right part -->
+
+        </div>
+<script type="text/javascript">
+ // user list on the right
+    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
+
+    // treeview part - so the left part of the select/deselct-view
+    YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
+    YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
+    YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+
+
+
+
+</script>
+
+HTML;
+    return $html;
+
+}
+
 /**
  * function called intern (not ajax) to clear all saved right 
  */
@@ -574,6 +907,11 @@ function saveTempRightToSession($rightxml) {
         $groups = '';
         $users = '';
         $description = $xml->description ? $xml->description : '';
+        $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
+
+        $autoGeneratedRightName = " for ";
+        $autoGeneratedRightNameRights = "";
+
 
         foreach($xml->xpath('//group') as $group) {
             if($groups == '') {
@@ -581,6 +919,7 @@ function saveTempRightToSession($rightxml) {
             }else {
                 $groups = $groups.",".(string)$group;
             }
+            $autoGeneratedRightName .= "G:".(string)$group.",";
         }
         foreach($xml->xpath('//user') as $user) {
             if($users == '') {
@@ -588,9 +927,14 @@ function saveTempRightToSession($rightxml) {
             }else {
                 $users = $users.",".(string)$user;
             }
+            $autoGeneratedRightName .= "U:".(string)$user.",";
         }
         foreach($xml->xpath('//right') as $right) {
             $actions = $actions + (int)HACLRight::getActionID($right);
+            if ($right <> 255) $autoGeneratedRightNameRights .= (int)HACLRight::getActionID($right).",";
+        }
+        if ($actions > 255) {
+             $autoGeneratedRightNameRights = "Fullaccess";
         }
         $actions = $actions > 255 ? 255 : $actions;
 
@@ -600,10 +944,12 @@ function saveTempRightToSession($rightxml) {
         #  $_SESSION['temprights'][$panelid] = $tempright;
         $_SESSION['temprights'][$panelid] = $rightxml;
 
+        $autoGeneratedRightName = $autoGeneratedRightNameRights.$autoGeneratedRightName;
+
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setContentType("json");
         $ajaxResponse->setResponseCode(200);
-        $ajaxResponse->addText("right saved");
+        $ajaxResponse->addText("right saved".$autoGeneratedRightName);
 
     } catch (Exception  $e) {
         $ajaxResponse = new AjaxResponse();
@@ -629,6 +975,10 @@ try {
             $groups = '';
             $users = '';
             $description = $xml->description ? $xml->description : '';
+            $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
+
+            $autoGeneratedRightName = " for ";
+            $autoGeneratedRightNameRights = "";
 
             foreach($xml->xpath('//group') as $group) {
                 if($groups == '') {
@@ -636,6 +986,7 @@ try {
                 }else {
                     $groups = $groups.",".(string)$group;
                 }
+                $autoGeneratedRightName .= "G:".(string)$group.",";
             }
             foreach($xml->xpath('//user') as $user) {
                 if($users == '') {
@@ -643,18 +994,28 @@ try {
                 }else {
                     $users = $users.",".'User:'.(string)$user;
                 }
+                $autoGeneratedRightName .= "U:".(string)$user.",";
             }
             foreach($xml->xpath('//right') as $right) {
                 //$actions = $actions + (int)HACLRight::getActionID($right);
-                if($actions == '') {
-                    $actions = (string)$right;
+                if($actions2 == '') {
+                    $actions2 = (string)$right;
                 }else {
-                    $actions = $actions.",".(string)$right;
+                    $actions2 = $actions2.",".(string)$right;
                 }
             }
-            //$actions = $actions > 255 ? 255 : $actions;
+            foreach($xml->xpath('//right') as $right) {
+                $actions = $actions + (int)HACLRight::getActionID($right);
+                if ($right <> 255) $autoGeneratedRightNameRights .= (int)HACLRight::getActionID($right).",";
+            }
+            if ($actions > 255) {
+                 $autoGeneratedRightNameRights = "Fullaccess";
+            }
 
-            $inline .= '{{#access:|assigned to='.$groups.','.$users.'|actions='.$actions.'|description='.$description.'}}
+            $autoGeneratedRightName = $autoGeneratedRightNameRights.$autoGeneratedRightName;
+            if ($autoDescription == "on") $description = $autoGeneratedRightName;
+
+            $inline .= '{{#access:|assigned to='.$groups.','.$users.'|actions='.$actions2.'|description='.$description.'}}
 ';
 
             //$title = new Title();
@@ -852,18 +1213,28 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
 
 
-    //if ($selectedGroup == 'all') {
+    if ($selectedGroup == 'test') {
 
-    $db =& wfGetDB( DB_SLAVE );
-    $gt = $db->tableName('user');
-    $sql = "SELECT * FROM $gt ";
+        $db =& wfGetDB( DB_SLAVE );
+        $gt = $db->tableName('user');
+        $sql = "SELECT * FROM $gt ";
 
-    $res = $db->query($sql);
-    while ($row = $db->fetchObject($res)) {
-        $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
+        $res = $db->query($sql);
+        while ($row = $db->fetchObject($res)) {
+            $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
+        }
+
+        $db->freeResult($res);
+
+
+    } else {
+        $group = HACLGroup::newFromName($selectedGroup);
+        $groupUsers = $group->getUsers(HACLGroup::OBJECT);
+        foreach ($groupUsers as $key => $val) {
+            $a['records'][] = array('name'=>$val->getName(),'id'=>$val->getId(),'checked'=>'false');
+
+        }
     }
-
-    $db->freeResult($res);
 
 
     return(json_encode($a));
@@ -1028,7 +1399,28 @@ function getACLById($id) {
  */
 function getWhitelistPages() {
 
-    return (json_encode(HACLWhitelist::getPages()));
+    //return (json_encode(HACLWhitelist::getPages()));
+
+    $a = array();
+    $a['recordsReturned'] = 5;
+    $a['totalrecords'] = 10;
+    $a['startIndex'] = 0;
+    $a['sort'] = null;
+    $a['dir'] = "asc";
+    $a['pagesize'] = 5;
+
+    $a['records'][] = array('name'=>"testpage1",'checked'=>'false');
+
+    return(json_encode($a));
+    
+
+
+    /*
+    while ($row = $db->fetchObject($res)) {
+        $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
+    }
+     *
+     */
     
 }
 
@@ -1156,9 +1548,14 @@ function whitelistsContent() {
     $wLPageName = wfMsg('hacl_whitelist_pagename');
     $wlAddButton = wfMsg('hacl_whitelist_addbutton');
     $html = <<<HTML
-<div id="haclWhitelistContainer">
-	<p id="haclWhitelistHeadline">{$wLHeadline}</p>
-	<p id="haclWhitelistInfo">{$wLInfo}</p>
+<div class="haloacl_tab_content">
+        <div class="haloacl_tab_content_description_header">
+            {$wLHeadline}
+        </div>
+        <div class="haloacl_tab_content_description">
+            {$wLInfo}
+        </div>
+
 	<div id="haclWhitelistFilter">
 		<span class="marginToRight">{$wLFilter}</span><input type="text" length="20">
 	</div>
@@ -1169,13 +1566,55 @@ function whitelistsContent() {
 				<li><a href onclick="haloACLSpecialPage.toggleTab(1,4);return false;" href="#"><span>Mainpage</span></a></li>
 			</ul>
 		</div><!-- End of haclWhitelistPageSet -->
+<div id="whitelistDatatableDiv" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
+                <div id="datatablepaging_whitelistDatatableDiv"></div>
+                </div>
+            </div>
+                <form>
+                    <input type="button" name="removePage" value="Remove selected page from whitelist"
+                        onclick="javascript:YAHOO.haloacl.whitelist_removePage();"/>
+                </form>
 	</div><!-- End of haclWhitelistPageSetContainer -->
 	<!-- <div class="drawLine">&nbsp;</div> -->
 	<div id="haclWhitelistAddPageContainer">
 		<span id="haclWhitelistPageName">{$wLPageName}</span>
 		<input id="haclWhitelistPageInput" type="text" size="30"><input type="button" value="{$wlAddButton}">
 	</div>
-</div><!-- End of haclWhitelistContainer -->
+        <!-- section end -->
+
+        <script type="javascript">
+
+            YAHOO.haloacl.whitelistDatatableInstance = YAHOO.haloacl.pageDataTable("whitelistDatatableDiv");
+
+            YAHOO.haloacl.whitelist_removePage = function(){
+
+                  
+                  YAHOO.haloacl.whitelistDatatableInstance.executeQuery;
+
+                  var panelid = 'create_acl_right_'+ YAHOO.haloacl.panelcouner;
+
+                  var divhtml = '<div id="create_acl_rights_row'+YAHOO.haloacl.panelcouner+'" class="haloacl_tab_section_content_row"></div>';
+
+                  var containerWhereDivsAreInserted = $('haloacl_tab_createacl_rightsection');
+                  $('haloacl_tab_createacl_rightsection').insert(divhtml,containerWhereDivsAreInserted);
+
+
+                  YAHOO.haloacl.loadContentToDiv('create_acl_rights_row'+YAHOO.haloacl.panelcouner,'getRightsPanel',{panelid:panelid});
+                  YAHOO.haloacl.panelcouner++;
+            };
+
+
+
+
+        </script>
+</div><!-- End of haloacl_tab_content -->
+
+
+
+
+
+
+
 HTML;
     $response->addText($html);
     return $response;
