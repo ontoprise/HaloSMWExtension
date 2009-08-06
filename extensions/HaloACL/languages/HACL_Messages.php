@@ -77,6 +77,7 @@ $messages['en'] = array(
 	'hacl_sp_query_modified'		=> "- The query was modified because it contains protected properties.\n",
 	'hacl_sp_empty_query'			=> "- Your query consists only of protected properties. It was not executed.\n",
 	'hacl_sp_results_removed'		=> "- Because of access restrictions some results were removed.\n",
+	'hacl_sp_cant_save_article'		=> "'''The article contains the following protected properties:'''\n$1'''You are not authorized to set their values. Please remove these properties and save again.'''",
 
 	/* Messages for Special:ACL */
 	'hacl_tab_create_acl' => 'Create ACL',
@@ -210,6 +211,7 @@ $messages['de'] = array(
 	'hacl_sp_query_modified'		=> "- Ihre Anfrage wurde modifiziert, das sie geschützte Attribute enthält.\n",
 	'hacl_sp_empty_query'			=> "- Ihre Anfrage besteht nur aus geschützten Attributen und konnte deshalb nicht ausgeführt werden.of protected properties.\n",
 	'hacl_sp_results_removed'		=> "- Wegen Zugriffbeschränkungen wurden einige Resultate entfernt.\n",
+	'hacl_sp_cant_save_article'		=> "'''Der Artikel enthält die folgenden geschützten Attribute:'''\n$1'''Sie haben nicht die Berechtigung, deren Werte zu setzen. Bitte entfernen Sie die Attribute und speichern Sie erneut.'''",
 
 	/* Messages for 'Create ACL' tab */
 	/* Messages for 'Manage ACLs' tab */
