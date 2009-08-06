@@ -40,6 +40,13 @@ initialize:function(){
 },
 
 /**
+* define here that the caller is the excel bridge
+*/
+setExcelBridge:function(){
+    this.isExcelBridge = 1;
+},
+
+/**
 * Called whenever table column preview is minimized or maximized
 */
 switchtcp:function(){
@@ -1207,7 +1214,8 @@ copyToClipboard:function(){
 		var text = this.getFullParserAsk();
 	 	if (window.clipboardData){ //IE
 			window.clipboardData.setData("Text", text);
-			alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
+			if (! this.isExcelBridge)
+			    alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 		}
 	  	else if (window.netscape) {
 			try {
@@ -1234,7 +1242,8 @@ copyToClipboard:function(){
 					return;
 				}
 				clip.setData(trans,null,clipid.kGlobalClipboard);
-				alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
+				if (! this.isExcelBridge)
+				    alert(gLanguage.getMessage('QI_CLIPBOARD_SUCCESS'));
 			}
 			catch (e) {
 				alert(gLanguage.getMessage('QI_CLIPBOARD_FAIL'));
@@ -1251,8 +1260,9 @@ showFullAsk:function(type, toggle){
 		$('shade').toggle();
 		$('showAsk').toggle();
 	}
-	if (this.queries[0].isEmpty()){
-		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
+	if (this.queries[0].isEmpty()) {
+	    if (! this.isExcelBridge)
+		    $('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
 		return;
 	} else if (($('layout_format').value == "template") && ($('template_name').value == "")){
 		$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_TEMPLATE');
@@ -1770,8 +1780,15 @@ function initialize_qi(){
 }
 
 function initialize_qi_from_querystring(ask) {
-	qihelper = new QIHelper();
+	if (!qihelper)
+	    qihelper = new QIHelper();
 	qihelper.initFromQueryString(ask);
+}
+
+function initialize_qi_from_excelbridge() {
+    if (!qihelper)
+        qihelper = new QIHelper();
+    qihelper.setExcelBridge();
 }
 
 function escapeQueryHTML(string){

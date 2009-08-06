@@ -222,11 +222,13 @@ function smwf_qi_getPage($args= "") {
 
 	// remove the Switch to Semantic Notification button, incase it's there
 	$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
+	
+	// have a string where to store JS command for onload event
+	$onloadArgs = ''; 
 
 	// parse submited params 
     $params = array();
     parse_str($args, $params);
-	
 	// when called from the Excel Bridge, params noPreview and noLayout must be set
 	// also the "Copy to clipboard" button must be hidden. The Excel Bridge is recognized by the
 	// appropriate Useragent, params may not be set but will adjusted automatically
@@ -236,8 +238,10 @@ function smwf_qi_getPage($args= "") {
 	      $params['noLayout'] = true;
 	      $newPage = str_replace('onclick="qihelper.copyToClipboard()"',
 	                             'onclick="qihelper.copyToClipboard()" style="display: none;"',
-	                             $newPage); 
+	                             $newPage);
+          $onloadArgs.='initialize_qi_from_excelbridge(); '; 
     }
+    else $excelBridge = '';
 
     // check params and change HTML of the Query Interface
 	if (isset($params['noPreview']))
@@ -246,12 +250,14 @@ function smwf_qi_getPage($args= "") {
 		$newPage = str_replace('<div id="querylayout">', '<div id="querylayout" style="display: none;">', $newPage);
     if (isset($params['query'])) {
         $queryString = str_replace('"', '&quot;', $params['query']);
-        $queryString = str_replace("'", "\'", $queryString);      
-        $newPage = str_replace('<body',
-                               '<body onload="initialize_qi_from_querystring(\''.$queryString.'\');" ',
-                               $newPage);
+        $queryString = str_replace("'", "\'", $queryString);
+        $onloadArgs .= 'initialize_qi_from_querystring(\''.$queryString.'\');';      
     } 
-	
+    if (strlen($onloadArgs) > 0)
+        $newPage = str_replace('<body',
+                               '<body onload="'.$onloadArgs.'"',
+                               $newPage);
+    
 	return $newPage;
 		
 }
