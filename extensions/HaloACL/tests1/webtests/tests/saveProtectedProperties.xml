@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<!---
+
+This test checks if the wikitext of an article that contains protected properties 
+can be saved by NormalUser and RestrictedUser. It is expected that only NormalUser 
+can do this.
+
+-->
+<project name="Query" default="testSaveProtectedProperties">
+
+	&login;
+	
+	<target name="testSaveProtectedProperties">
+		<webtest name="Testing as RestrictedUser">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="JavaScriptEnabled" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=SaveProperty&amp;action=edit"
+				description="Edit the article SaveProperty" />
+			<setInputField 
+				htmlId="wpTextbox1" value="[[Date::Today]]" />
+
+			<clickButton 
+				label="Save page"/>
+			<verifyXPath 
+				description="Check presence of error message (part 1)"
+				xpath="//div[@id='bodyContent']/p[1]/b"		
+				text="The article contains the following protected properties:" />
+			<verifyXPath 
+				description="Check presence of error message (part 2)"
+				xpath="//div[@id='bodyContent']/ul/li"
+				regex="true"
+				text="\s*Date\s*" />
+			
+		</webtest>
+		
+		
+		<webtest name="Testing as NormalUser">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="JavaScriptEnabled" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=SaveProperty&amp;action=edit"
+				description="Edit the article SaveProperty" />
+			<setInputField 
+				htmlId="wpTextbox1" value="[[Date::Today]]" />
+
+			<clickButton 
+				label="Save page"/>
+			<verifyTitle text="SaveProperty - Halo3wiki"/>
+			
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=SaveProperty&amp;action=edit"
+				description="Edit the article SaveProperty (remove the property for later tests.)" />
+			<setInputField 
+				htmlId="wpTextbox1" value="" />
+			<clickButton 
+				label="Save page"/>
+		</webtest>
+		
+	</target>
+		
+	
+</project>

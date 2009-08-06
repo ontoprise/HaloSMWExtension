@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<!---
+
+This test checks if the values of protected propertiesare displayed for NormalUser
+and RestrictedUser. It is expected that only NormalUser can see the values and
+RestrictedUser sees a replacement (***).
+
+-->
+<project name="Query" default="testViewProtectedProperties">
+
+	&login;
+	
+	<target name="testViewProtectedProperties">
+		<webtest name="Testing as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=Event_3"
+				description="View the article Event 3" />
+			<verifyXPath 
+				description="Check replacement for value of property Date"
+				xpath="//div[@id='bodyContent']/p[2]/nowiki"		
+				text="***" />
+			
+		</webtest>
+		
+		
+		<webtest name="Testing as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=Event_3"
+				description="View the article Event 3" />
+			<verifyXPath 
+				description="Check presence of value of property Date"
+				xpath="//div[@id='bodyContent']/p[2]"
+				regex="true"
+				text="\s*Tomorrow\s*" />
+		</webtest>
+		
+	</target>
+		
+	
+</project>

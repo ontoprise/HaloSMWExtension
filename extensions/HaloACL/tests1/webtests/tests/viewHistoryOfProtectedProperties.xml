@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<!---
+
+This test checks if the wikitext of an article that contains protected properties 
+can be inspected in its history by NormalUser and RestrictedUser. It is expected
+that only revisions without protected properties can be viewed.
+
+-->
+<project name="Query" default="testViewHistoryOfProtectedProperties">
+
+	&login;
+	
+	<target name="testViewHistoryOfProtectedProperties">
+		<webtest name="Testing as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=TestPropertyHistory&amp;action=history"
+				description="Open history of article TestPropertyHistory." />
+			
+			<verifyTitle 
+				text="Revision history of &quot;TestPropertyHistory&quot; - Halo3wiki"/>
+			<clickButton 
+				label="Compare selected versions"/>
+			<verifyXPath 
+				description="Check presence of Line 1"
+				xpath="//div[@id='bodyContent']/table/tbody/tr[2]/td[1]"		
+				text="Line 1:" />
+			<verifyXPath 
+				description="Check presence of Line 1"
+				xpath="//div[@id='bodyContent']/table/tbody/tr[2]/td[2]"		
+				text="Line 1:" />
+			
+		</webtest>
+		
+		
+		<webtest name="Testing as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php?title=TestPropertyHistory&amp;action=history"
+				description="Open history of article TestPropertyHistory." />
+			
+			<verifyTitle 
+				text="Revision history of &quot;TestPropertyHistory&quot; - Halo3wiki"/>
+			<clickButton 
+				label="Compare selected versions"/>
+			<verifyText 
+				description="Verify that &quot;Permission error&quot; is contained in the page" 
+				text="Permission error"/>		
+		</webtest>
+		
+	</target>
+		
+	
+</project>
