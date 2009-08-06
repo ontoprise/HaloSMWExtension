@@ -42,8 +42,11 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class HACLEvaluator {
 	
 	//--- Constants ---
-		
+	const NORMAL = 0;
+	const DENY_DIFF = 1;
+	
 	//--- Private fields ---
+	static $mMode = HACLEvaluator::NORMAL;
 	
 	/**
 	 * Constructor for  HACLEvaluator
@@ -306,7 +309,94 @@ class HACLEvaluator {
 		                      $userID, $actionID);
 		
 	}
+	
+	/** This function is called, before an article is saved. 
+	 * If protection of properties is switched on, it checks if the article contains
+	 * properties for which the current user has no access rights. In that case, 
+	 * saving the article is aborted and an error message is displayed.
+	 * 
+	 * @param EditPage $editor
+	 * @param string $text
+	 * @param $section
+	 * @param string $error
+	 * 		If a property is not accessible, this error message is modified and
+	 * 		displayed on the editor page.
+	 * 
+	 * @return bool
+	 * 		true
+	 */ 
+	 public static function onEditFilter($editor, $text, $section, &$error) {
+		global $wgParser;
+		$article = $editor->mArticle;
+		$options = new ParserOptions;
+	//	$options->setTidy( true );
+		$options->enableLimitReport();
+		$output = $wgParser->parse($article->preSaveTransform($text), 
+		                           $article->mTitle, $options);
+		                           
+		$protectedProperties = "";	                           
+		if (isset($output->mSMWData)) {
+			foreach ($output->mSMWData->getProperties() as $name => $prop) {
+				if (!$prop->userCan("propertyedit")) {
+					$protectedProperties .= "* $name\n";
+				}
+			}
+		}
+		if (empty($protectedProperties)) {
+			return true;
+		}
 		
+		$error = wfMsgForContent('hacl_sp_cant_save_article', $protectedProperties);
+		return true;
+	}
+	
+	/**
+	 * This method is call when the difference of to revisions of an article is
+	 * about to be displayed.
+	 * If one of the revisions contains a property that can not be read, the mode
+	 * for the ACL evaluator is set accordingly for following calls to the userCan
+	 * hook.
+	 *
+	 * @param DifferenceEngine $diffEngine
+	 * @param Revision $oldRev
+	 * @param Revision $newRev
+	 * @return boolean true
+	 */
+	public static function onDiffViewHeader(DifferenceEngine &$diffEngine, $oldRev, $newRev) {
+		
+		$newText = $diffEngine->mNewtext;
+		if (!isset($newText)) {
+			$diffEngine->loadText();
+		}
+		$newText = $diffEngine->mNewtext;
+		$oldText = $diffEngine->mOldtext;
+	
+		global $wgParser;
+		$options = new ParserOptions;
+		$output = $wgParser->parse($newText, $diffEngine->mTitle, $options);
+	
+		if (isset($output->mSMWData)) {
+			foreach ($output->mSMWData->getProperties() as $name => $prop) {
+				if (!$prop->userCan("propertyread")) {
+					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+					return true;
+				}
+			}
+		}
+
+		$output = $wgParser->parse($oldText, $diffEngine->mTitle, $options);
+	
+		if (isset($output->mSMWData)) {
+			foreach ($output->mSMWData->getProperties() as $name => $prop) {
+				if (!$prop->userCan("propertyread")) {
+					HACLEvaluator::$mMode = HACLEvaluator::DENY_DIFF;
+					return true;
+				}
+			}
+		}
+		
+		return true;
+	}		
 	//--- Private methods ---
 	
 	/**
@@ -554,6 +644,7 @@ class HACLEvaluator {
 	 */
 	private static function checkProperties(Title $t, $userID, $actionID) {
 		global $haclgProtectProperties;
+		global $wgRequest;
 		if (!$haclgProtectProperties) {
 			// Properties are not protected.
 			return true;
@@ -565,7 +656,6 @@ class HACLEvaluator {
 			$actionID != HACLRight::EDIT &&
 			$actionID != HACLRight::ANNOTATE) {
 
-			global $wgRequest;
 			$a = @$wgRequest->data['action'];
 			if (isset($a)) {
 				// Some web request are translated to other actions before they
@@ -583,8 +673,10 @@ class HACLEvaluator {
 				
 			} else {
 				return true;
-			}	
+			}
+			
 		}
+	
 		// Get all properties of the page
 		$semdata = smwfGetStore()->getSemanticData($t);
 		$props = $semdata->getProperties();
@@ -626,6 +718,10 @@ class HACLEvaluator {
 	 *      -1: $action is not concerned with properties.
 	 */
 	private static function checkPropertyAccess(Title $title, User $user, $action) {
+		if (HACLEvaluator::$mMode == HACLEvaluator::DENY_DIFF) {
+			return false;
+		}
+		
 		switch ($action) {
 			case 'propertyread':
 				$actionID = HACLRight::READ;

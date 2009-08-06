@@ -51,7 +51,6 @@ function enableHaloACL() {
     $wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
 
     ///// Set up autoloading; essentially all classes should be autoloaded!
-
     $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
     $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
     $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
@@ -103,12 +102,15 @@ function haclfSetupExtension() {
     $wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
     $wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
     $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
-
+    
+	
     global $haclgProtectProperties;
     if ($haclgProtectProperties) {
         $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
         $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
         $wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
+		$wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
+		$wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
     }
 
 
@@ -169,7 +171,6 @@ function haclAddHTMLHeader(&$out) {
     // YAHOO Part
 
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo/yahoo-min.js"></script>');
-
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/event/event-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dom/dom-min.js"></script>');
@@ -469,3 +470,5 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
     return $id;
 
 }
+
+
