@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<!--
+This test checks if protected properties are correctly exported for NormalUser
+and omitted for Restricted user.
+-->
+<project name="exportRDFofProtectedProperties" default="exportRDFofProtectedProperties">
+
+	&login;
+
+	<target name="exportRDFofProtectedProperties">
+		<webtest name="Exporting as NormalUser">
+		<steps>
+		<antcall target="login">
+			<param name="user" value="NormalUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+		<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF/Event_2"
+			description="Open Special:ExportRDF for article Event 2." />
+			
+		<verifyXPath 
+			description="Check that property Date is exported with the value Tomorrow."
+			xpath="//property:Date"		
+			text="Tomorrow" />
+		</steps>
+		</webtest>
+		
+		<webtest name="Exporting as RestrictedUser">
+		<steps>
+		<antcall target="login">
+			<param name="user" value="RestrictedUser"/>
+			<param name="pwd" value="acl"/>
+		</antcall>
+
+			<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF/Event_2"
+				description="Open Special:ExportRDF for article Event 2." />
+			
+			<not>
+				<verifyXPath 
+					description="Check that property Date is not exported."
+					xpath="//property:Date" />
+			</not>
+		</steps>
+		</webtest>		
+	</target>
+		
+	
+</project>
