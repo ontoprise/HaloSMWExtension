@@ -594,7 +594,7 @@ Index: includes/parser/Parser.php
  					$found = false;
  					while (isset ($a[$k+1]) ) {
  						#look at the next 'line' to see if we can close it there
-@@ -1699,8 +1705,14 @@
+@@ -1699,8 +1705,15 @@
  					continue;
  				}
  				wfProfileOut( "$fname-interwiki" );
@@ -602,6 +602,7 @@ Index: includes/parser/Parser.php
 +				// NS_IMAGE is not the only Namespace now, so check them all
 +				// content was:
 +				// if ($ns == NS_IMAGE) {
++				$rMresult = 0;
 +				RMNamespace::isImage( $ns, &$rMresult );
 +				if ( $rMresult  ) {
 +				/*op-patch|BL|2009-00-17|end*/
