@@ -1,4 +1,33 @@
 
+var clickedTreeNodes = [];
+
+
+function dump(arr,level) {
+	var dumped_text = "";
+	if(!level) level = 0;
+
+	//The padding given at the beginning of the line.
+	var level_padding = "";
+	for(var j=0;j<level+1;j++) level_padding += "    ";
+
+	if(typeof(arr) == 'object') { //Array/Hashes/Objects
+		for(var item in arr) {
+			var value = arr[item];
+
+			if(typeof(value) == 'object') { //If it is an array,
+				dumped_text += level_padding + "'" + item + "' ...\n";
+				dumped_text += dump(value,level+1);
+			} else {
+				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+			}
+		}
+	} else { //Stings/Chars/Numbers etc.
+		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+	}
+	return dumped_text;
+}
+
+
 // defining customnode
 YAHOO.widget.CustomNode = function(oData, oParent, expanded, checked) {
     YAHOO.widget.CustomNode.superclass.constructor.call(this,oData,oParent,expanded);
@@ -22,6 +51,20 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
      * @type int
      */
     checkState: 0,
+
+    /**
+     * id of contained acl group
+     * @type int
+     */
+    groupId: 0,
+
+
+    /**
+     * tree type
+     * rw=read/write, r=read
+     * @type string
+     */
+    treeType: "rw",
 
     /**
      * The node type
@@ -61,6 +104,20 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     },
 
 
+    /**
+     * set group id
+     * @newGroupId int
+     */
+    setGroupId: function(newGroupId) {
+        this.groupId = newGroupId;
+    },
+
+    /**
+     * get group id
+     */
+    getGroupId: function() {
+        return this.groupId;
+    },
 
     /**
      * The id of the check element
@@ -175,12 +232,22 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) { 
         this.checkState = state;
         this.checked = (state > 0);
+        clickedTreeNodes[this.groupId] = this.checked;
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    getLabelElId: function() {
+        return this.labelElId;
     },
 
     /**
      * Check this node
      */
-    check: function() { 
+    check: function() {
         this.setCheckState(2);
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
@@ -206,25 +273,60 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         this.updateCheckHtml();
         this.updateParent();
     },
+    
+    setTreeType: function(newTreeType) { 
+        this.treeType = newTreeType
+    },
+
+
     // Overrides YAHOO.widget.TextNode
 
     getContentHtml: function() {                                                                                                                                           
-        var sb = [];                                                                                                                                                       
-        sb[sb.length] = '<td';                                                                                                                                             
-        sb[sb.length] = ' id="' + this.getCheckElId() + '"';                                                                                                               
-        sb[sb.length] = ' class="' + this.getCheckStyle() + '"';                                                                                                           
-        sb[sb.length] = '>';
-        sb[sb.length] = '<div class="ygtvspacer"></div></td>';                                                                                                             
+        var sb = [];
 
-        sb[sb.length] = '<td><span';                                                                                                                                       
-        sb[sb.length] = ' id="' + this.labelElId + '"';                                                                                                                    
-        if (this.title) {                                                                                                                                                  
-            sb[sb.length] = ' title="' + this.title + '"';                                                                                                                 
-        }                                                                                                                                                                  
-        sb[sb.length] = ' class="' + this.labelStyle  + '"';                                                                                                               
-        sb[sb.length] = ' >';                                                                                                                                              
-        sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
-        sb[sb.length] = '</span></td>';                                                                                                                                    
+        if (this.treeType=="rw") {
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = '>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="' + this.labelElId + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + this.title + '"';
+            }
+            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' >';
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+            sb[sb.length] = '</span></td>';
+
+        } else {
+            sb[sb.length] = '<td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="' + this.labelElId + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + this.title + '"';
+            }
+            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' >';
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+            sb[sb.length] = '</span></td>';
+            
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = '>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+
+        }
+
+        
         return sb.join("");                                                                                                                                                
     }  
 });
@@ -286,6 +388,8 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
 
 
 
+
+
 /*
  * function to build nodes from data
  * @param parent node / root
@@ -296,6 +400,11 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data){
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
+        tmpNode.setGroupId(element.id);
+        if (clickedTreeNodes[element.id]) tmpNode.check();
+        
+        
+
 
 
         if(element.childs != null){
@@ -303,6 +412,38 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data){
     //	YAHOO.buildNodesFromData(tmpNode,element.childs);
     }
     };
+};
+
+
+/*
+ * filter tree
+ * @param parent node / root
+ * @param filter String
+ */
+YAHOO.haloacl.filterNodes = function(parentNode,filter){
+
+    var nodes;
+    nodes = parentNode.children;
+
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+
+        if (n.label.indexOf(filter) < 0) {
+            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "none";
+        } else {
+            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
+        }
+        
+        /*
+        if (n.checkState > 0) {
+            var tmpNode = new YAHOO.widget.CustomNode(n.label, rwTree.getRoot(),false);
+            tmpNode.setCheckState(n.checkState);
+            tmpNode.setTreeType("r");
+        }
+        */
+
+    }
+
 };
 
 /*
@@ -318,6 +459,33 @@ YAHOO.haloacl.buildUserTree = function(tree,data,labelClickAction) {
     tree.draw();
 
 };
+
+
+/*
+ * builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
+ * @param tree
+ * @param rwTree
+ */
+YAHOO.haloacl.buildUserTreeRO = function(tree,rwTree) {
+
+    var nodes;
+    nodes = tree.getRoot().children;
+
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+
+        if (n.checkState > 0) {
+            var tmpNode = new YAHOO.widget.CustomNode(n.label, rwTree.getRoot(),false);
+            tmpNode.setCheckState(n.checkState);
+            tmpNode.setTreeType("r");
+        }
+
+    }
+
+    rwTree.draw();
+
+};
+
 
 /*
  * function to be called from outside to init a tree

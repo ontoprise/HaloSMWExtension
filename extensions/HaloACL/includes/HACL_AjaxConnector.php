@@ -26,6 +26,7 @@ $wgAjaxExportList[] = "saveTempRightToSession";
 $wgAjaxExportList[] = "getModificationRightsPanel";
 $wgAjaxExportList[] = "saveSecurityDescriptor";
 $wgAjaxExportList[] = "getWhitelistPages";
+$wgAjaxExportList[] = "getUsersWithGroups";
 
 
 
@@ -95,7 +96,8 @@ function createRightContent() {
                     YAHOO.haloacl.popup_helpcreateright = new YAHOO.widget.Panel('popup_HelpCreateRight',{
                             close:true,
                             visible:true,
-                            draggable:true
+                            draggable:true,
+                            xy:[400,500]
                     });
                     YAHOO.haloacl.popup_helpcreateright.setHeader("testheader&nbsp;&nbsp;x");
                     YAHOO.haloacl.popup_helpcreateright.setBody("testcontent");
@@ -859,9 +861,9 @@ function rightPanelAssignedTab($panelid) {
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
                         Filter in groups:
                     </span>
-                    <input type="text" />
+                    <input id="filterAssignedGroup_$panelid" type="text" "/>
                 </div>
-                <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
+                <div id="treeDivRO_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_treeview_userlink">
                     Users
                 </div>
@@ -891,12 +893,18 @@ function rightPanelAssignedTab($panelid) {
         </div>
 <script type="text/javascript">
  // user list on the right
-    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
+    //YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDivRO_$panelid");
 
     // treeview part - so the left part of the select/deselct-view
-    YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
-    YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
-    YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
+    YAHOO.haloacl.ROtreeInstance$panelid = new YAHOO.widget.TreeView("treeDivRO_$panelid");
+    //YAHOO.haloacl.ROtreeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
+    YAHOO.haloacl.buildUserTreeRO(YAHOO.haloacl.treeInstance$panelid, YAHOO.haloacl.ROtreeInstance$panelid);
+
+    refilter = function() {
+        YAHOO.haloacl.filterNodes (YAHOO.haloacl.ROtreeInstance$panelid.getRoot(), document.getElementById("filterAssignedGroup_$panelid").value);
+    }
+    YAHOO.util.Event.addListener("filterAssignedGroup_$panelid", "keyup", refilter);
+
 
 
 
@@ -1243,7 +1251,13 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
         $res = $db->query($sql);
         while ($row = $db->fetchObject($res)) {
-            $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
+            $tmlGroups = HACLGroup::getGroupsOfMember($row->user_id);
+            foreach ($tmlGroups as $key => $val) {
+                $tmpstring .= $val["name"].",";
+            }
+            $tmpstring = '<br /><span style="font-size:8px;">'.$tmpstring."</span>";
+
+            $a['records'][] = array('name'=>$row->user_name.$tmpstring,'id'=>$row->user_id,'checked'=>'false');
         }
 
         $db->freeResult($res);
@@ -1253,7 +1267,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
         $group = HACLGroup::newFromName($selectedGroup);
         $groupUsers = $group->getUsers(HACLGroup::OBJECT);
         foreach ($groupUsers as $key => $val) {
-            $a['records'][] = array('name'=>$val->getName(),'id'=>$val->getId(),'checked'=>'false');
+            $a['records'][] = array('name'=>$val->getName(),'id'=>$val->getId(),'checked'=>'false', 'groups'=>HACLGroup::getGroupsOfMember($row->user_id));
 
         }
     }
@@ -1310,6 +1324,18 @@ function getGroupsForRightPanel($query) {
     }
     return (json_encode($array));
 }
+
+
+/**
+ *
+ * @param <String>  selected group
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getUsersWithGroups() {
+    
+    return (json_encode(HACLStorage::getDatabase()->getUsersWithGroups()));
+}
+
 
 
 /**

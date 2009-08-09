@@ -531,6 +531,15 @@ class  HACLGroup  {
 	}
 
 	/**
+	 * Returns all groups a user is member of.
+	 *
+	 *
+	 */
+	public function getGroupsOfMember($userId) {
+            return HACLStorage::getDatabase()->getGroupsOfMember($userId);
+	}
+
+	/**
 	 * Returns all groups who are member of this group. 
 	 *
 	 * @param int $mode

@@ -242,6 +242,51 @@ WHERE $gmt.child_id = halo_acl_groups.group_id
 		return $groups;
 	}
 
+
+        /**
+	 * Retrieves all users and the groups they are attached to
+	 *
+	 *
+	 * @return Array
+	 * 		Array of Group Objects
+	 *
+	 */
+	public function getUsersWithGroups() {
+		$db =& wfGetDB( DB_SLAVE );
+                $ut = $db->tableName('user');
+		$gt = $db->tableName('halo_acl_groups');
+                $gmt = $db->tableName('halo_acl_group_members');
+		$sql = "SELECT user_id, group_id, group_name
+FROM user
+LEFT JOIN  $gmt ON  $gmt.child_id = user.user_id
+LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
+";
+
+
+		$users = array();
+
+		$res = $db->query($sql);
+
+                $curUser = null;
+
+
+                while ($row = $db->fetchObject($res)) {
+
+                    if ($curUser <> $row->user_id) {
+
+                        $curGroupArray = array();
+                        $curUser = $row->user_id;
+                    }
+                    $curGroupArray[] = array("id"=>$row->group_id, "name"=>$row->group_name);
+                    $users[$row->user_id] = $curGroupArray;
+		}
+
+		$db->freeResult($res);
+
+		return $users;
+	}
+
+
         /**
 	 * Retrieves the description of the group with the name $groupName from
 	 * the database.
@@ -435,6 +480,52 @@ WHERE $gmt.child_id = halo_acl_groups.group_id
 
 		return $members;
 		
+	}
+
+        /**
+	 * Returns all groups the user is member of
+	 *
+	 * @param string $memberType
+	 * 		'user' => ask for all user IDs
+	 *      'group' => ask for all group IDs
+	 * @return array(int)
+	 * 		List of IDs of all direct users or groups in this group.
+	 *
+	 */
+	public function getGroupsOfMember($userID) {
+
+
+
+                $db =& wfGetDB( DB_SLAVE );
+                $ut = $db->tableName('user');
+		$gt = $db->tableName('halo_acl_groups');
+                $gmt = $db->tableName('halo_acl_group_members');
+		$sql = "SELECT user_id, group_id, group_name
+FROM user
+LEFT JOIN  $gmt ON  $gmt.child_id = user.user_id
+LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
+WHERE user.user_id = $userID
+";
+
+
+
+		$res = $db->query($sql);
+
+                $curGroupArray = array();
+
+
+                while ($row = $db->fetchObject($res)) {
+
+
+                    $curGroupArray[] = array("id"=>$row->group_id, "name"=>$row->group_name);
+
+		}
+
+		$db->freeResult($res);
+
+		return $curGroupArray;
+
+
 	}
 
 	/**

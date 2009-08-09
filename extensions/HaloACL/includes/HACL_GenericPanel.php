@@ -46,7 +46,7 @@ HTML;
         <script type="javascript>
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
-                if (saved) {
+                if (saved == true) {
                     $('haloacl_panel_status_$panelid').textContent = 'Saved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
                 } else {

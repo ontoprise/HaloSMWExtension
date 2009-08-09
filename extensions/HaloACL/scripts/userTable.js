@@ -1,3 +1,5 @@
+var usersGroups = [];
+
 /**
  *  @param  target-div-id
  *
@@ -123,3 +125,34 @@ YAHOO.haloacl.userDataTable = function(divid) {
     return myDataTable;
 
 };
+
+
+/*
+ * get users with groups they're attached to
+ * this array is used for displaying each users groups in the user table
+ * @param node
+ * @parm callback on complete
+ */
+YAHOO.haloacl.getUsersWithGroups = function()  {
+
+    //prepare our callback object
+    var callback = {
+
+        success: function(oResponse) {
+            usersGroups = YAHOO.lang.JSON.parse(oResponse.responseText);
+            alert(usersGroups);
+        },
+
+        failure: function(oResponse) {
+        },
+        argument: {
+
+        },
+        timeout: 7000
+    };
+
+    YAHOO.haloacl.treeviewDataConnect('getUsersWithGroups',{},callback);
+
+};
+
+YAHOO.haloacl.getUsersWithGroups();
