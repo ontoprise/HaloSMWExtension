@@ -212,6 +212,7 @@ abbr,acronym { border:0;
 .haloacl_panel_nameDescr{
     float:left;
     width:500px;
+    height:18px;
     overflow:hidden;
 }
 .haloacl_panel_name{
@@ -427,6 +428,7 @@ abbr,acronym { border:0;
 .ygtvcheck0 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check0.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck1 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check1.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2 { background: url(http://developer.yahoo.com/yui/examples/treeview/assets/img/check/check2.gif) 0 0 no-repeat; width:16px; cursor:pointer }
+.ygtvcheck3 { background: url(images/remove.png) 0 0 no-repeat; width:16px; cursor:pointer;float:right; }
 
 /* right side */
 
