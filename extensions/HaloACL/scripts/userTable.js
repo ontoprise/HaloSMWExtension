@@ -131,9 +131,12 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         $$('.datatableDiv_'+panelid+'_users').each(function(item){
             //console.log("found element");
             //console.log(item.name);
-            if(YAHOO.haloacl.clickedArrayUsers[panelid][item.name]){
-                item.checked = true;
+            for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+                if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == item.name){
+                    item.checked = true;
+                }
             }
+
         });
 
     };
@@ -197,21 +200,16 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 };
 
 
-
+// ASSIGNED USERTABLE FROM JSARRAY
 YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "checkboxHTML";
+        elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"');\">remove</a>";
       
 
     };
 
-
-    this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
-
-    };
 
     // building shortcut for custom formatter
     YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
@@ -226,18 +224,18 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
     },
     
     {
-        key:"checked",
-        label:"Selected",
+        key:"",
+        label:"Remove",
         formatter:"mySelect"
     },
 
     ];
 
     // datasource for this userdatatable
-    var myDataSource = new YAHOO.util.DataSource(
-    YAHOO.haloacl.convertUserArrayToDataSource(YAHOO.haloacl.clickedArrayUsers[panelid]));
+    var convertedUserArray = YAHOO.haloacl.convertUserArrayToDataSource(panelid);
+    var myDataSource = new YAHOO.util.DataSource(convertedUserArray
+    );
     myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-   
     // userdatatable configuration
     var myConfigs = {
         sortedBy : {
@@ -248,12 +246,6 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
     // instanciating datatable
     var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
-
-    // Update totalRecords on the fly with value from server
-    myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
-        oPayload.totalRecords = oResponse.meta.totalRecords;
-        return oPayload;
-    }
 
     myDataTable.panelid = panelid;
 
@@ -286,14 +278,30 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
 };
 
 
-YAHOO.haloacl.convertUserArrayToDataSource = function(userarray){
+YAHOO.haloacl.convertUserArrayToDataSource = function(panelid){
     console.log("convertUserArrayToDataSource called");
-    console.log(userarray.length);
-    console.log(userarray);
-    for(i=0;i<userarray.length;i++){
-        console.log("blubb");
-        console.log(userarray[i]);
+    console.log("panelid:"+panelid);
+    var result = new Array();
+    YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
+        console.log(item);
+        var temp = new Array();
+        temp['name'] = item;
+        result.push(temp);
+    });
+    return result;
 
+};
+
+YAHOO.haloacl.removeUserFromUserArray = function(panelid,name){
+    var elementToRemove = 0;
+    for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
+            elementToRemove = i;
+        }
     }
-    console.log("conversion finished");
+    YAHOO.haloacl.clickedArrayUsers[panelid].splice(elementToRemove,1);
+
+    var element = $(panelid+"assigned"+name);
+    element.parentNode.parentNode.parentNode.hide();
+    
 };
