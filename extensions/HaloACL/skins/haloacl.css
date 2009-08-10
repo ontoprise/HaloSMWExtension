@@ -468,6 +468,10 @@ abbr,acronym { border:0;
     background-color:#FFF!important;
 }
 
+.groupselected{
+    font-weight:bold!important;
+}
+
 /* ----- */
 
 /* tab view customization */
