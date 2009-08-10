@@ -994,7 +994,7 @@ function rightPanelSelectDeselectTab($panelid) {
        console.log(panelid);
        $$('.datatableDiv_'+panelid+'_users').each(function(item){
             if(item.checked){
-               YAHOO.haloacl.clickedArrayUsers[panelid][item.name]=true;
+               YAHOO.haloacl.clickedArrayUsers[panelid].push(item.name);
                console.log("adding "+item.name+" to list of checked users");
             }
        });
