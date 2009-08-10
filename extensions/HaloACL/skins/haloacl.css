@@ -473,7 +473,11 @@ abbr,acronym { border:0;
 .groupselected{
     font-weight:bold!important;
 }
-
+.datatable_usergroups{
+    font-size:9px!important;
+}
+.datatable-groups-col-div{
+}
 /* ----- */
 
 /* tab view customization */
