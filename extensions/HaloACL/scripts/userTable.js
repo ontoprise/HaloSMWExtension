@@ -1,5 +1,3 @@
-var usersGroups = [];
-
 /**
  *  @param  target-div-id
  *
@@ -8,15 +6,19 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        if(oData == true){
-            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        var checkedFromTree = false;
+        var groupsstring = ""+oRecord._oData.groups;
+        var groupsarray = groupsstring.split(",");
+
+        if(oData == true || checkedFromTree == true){
+            elLiner.innerHTML = "<input groups=\""+oRecord._oData.groups+"\" type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input groups=\""+oRecord._oData.groups+"\" type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
             
     };
-        this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
-            elLiner.innerHTML = "<span style=\"font-size:8px\">"+oRecord._oData.groups+"</span>";
+    this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
+        elLiner.innerHTML = "<span style=\"font-size:8px\">"+oRecord._oData.groups+"</span>";
 
     };
 
@@ -143,33 +145,36 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
 };
 
+YAHOO.haloacl.checkAlreadySelectedUsersInDatatable = function(panelid){
+    //console.log("autoselectevent fired for panel:"+panelid);
+    //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
+    //console.log("listing known selections for panel:");
 
-/*
- * get users with groups they're attached to
- * this array is used for displaying each users groups in the user table
- * @param node
- * @parm callback on complete
- */
-YAHOO.haloacl.getUsersWithGroups = function()  {
 
-    //prepare our callback object
-    var callback = {
+    $$('.datatableDiv_'+panelid+'_users').each(function(item){
+        item.checked = false;
+    });
 
-        success: function(oResponse) {
-            usersGroups = YAHOO.lang.JSON.parse(oResponse.responseText);
-            alert(usersGroups);
-        },
+    $$('.datatableDiv_'+panelid+'_users').each(function(item){
+        var groupstring = ""+$(item).readAttribute("groups");
+        //console.log("looking for groups:"+groupstring);
+        var grouparray = groupstring.split(",");
 
-        failure: function(oResponse) {
-        },
-        argument: {
+        for(i=0;i<grouparray.length;i++){
+            var grouparraytemp = grouparray[i];
+            if(grouparraytemp != ""){
+                //console.log("temp:"+grouparraytemp);
+                if(YAHOO.haloacl.clickedArray[panelid][grouparraytemp]){
+                    item.checked = true;
+                }
+            }
+        }
 
-        },
-        timeout: 7000
-    };
+    });
 
-    YAHOO.haloacl.treeviewDataConnect('getUsersWithGroups',{},callback);
-
+//console.log("elements in checked array for panel");
+//for(i=0;i<YAHOO.haloacl.clickedArray[panelid].length;i++){
+//    console.log(YAHOO.haloacl.clickedArray[panelid][i]);
+//}
 };
 
-YAHOO.haloacl.getUsersWithGroups();

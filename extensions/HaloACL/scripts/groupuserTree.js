@@ -233,8 +233,12 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         this.checkState = state;
         this.checked = (state > 0);
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
-       // this.tree.clickedHandler.add(this.groupId);
-       YAHOO.haloacl.clickedArray[this.tree.panelid][this.groupId] = this.checked;
+        // this.tree.clickedHandler.add(this.groupId);
+        YAHOO.haloacl.clickedArray[this.tree.panelid][this.groupId] = this.checked;
+
+        // update usertable
+        YAHOO.haloacl.checkAlreadySelectedUsersInDatatable(this.tree.panelid);
+
     },
 
     /**
@@ -364,11 +368,12 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
 
     //prepare our callback object
     var callback = {
+        panelid:"",
 
         //if our XHR call is successful, we want to make use
         //of the returned data and create child nodes.
         success: function(oResponse) {
-            YAHOO.haloacl.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText));
+            YAHOO.haloacl.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
             oResponse.argument.fnLoadComplete();
         },
 
@@ -401,12 +406,20 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
-        tmpNode.setGroupId(element.id);
+        
+        //tmpNode.setGroupId(element.id);
+        // using name instead of id
+        tmpNode.setGroupId(element.name);
 
         // check checkbox if during this js-session it has been checked
-        if (YAHOO.haloacl.clickedArray[panelid][element.id]) tmpNode.check();
-
+        if(panelid){
+            //if (YAHOO.haloacl.clickedArray[panelid][element.id]) tmpNode.check();
+            //also using name instead of id
+            if (YAHOO.haloacl.clickedArray[panelid][element.name]) tmpNode.check();
+        }
     };
+    YAHOO.haloacl.checkAlreadySelectedUsersInDatatable(panelid);
+
 };
 
 
@@ -450,7 +463,35 @@ YAHOO.haloacl.filterNodes = function(parentNode,filter){
 YAHOO.haloacl.buildUserTree = function(tree,data) {
 
     YAHOO.haloacl.buildNodesFromData(tree.getRoot(),data,tree.panelid);
-    tree.setDynamicLoad(YAHOO.haloacl.loadNodeData);
+
+    //using custom loadNodeDataHandler
+    var loadNodeData = function(node, fnLoadComplete)  {
+        var nodeLabel = encodeURI(node.label);
+        //prepare our callback object
+        var callback = {
+            panelid:"",
+            success: function(oResponse) {
+                YAHOO.haloacl.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,tree.panelid));
+                oResponse.argument.fnLoadComplete();
+            },
+            failure: function(oResponse) {
+                oResponse.argument.fnLoadComplete();
+            },
+            argument: {
+                "node": node,
+                "fnLoadComplete": fnLoadComplete
+            },
+            timeout: 7000
+        };
+        YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+            query:nodeLabel
+        },callback);
+
+    };
+
+
+
+    tree.setDynamicLoad(loadNodeData);
     tree.draw();
 
 };
