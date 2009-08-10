@@ -234,10 +234,10 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         this.checked = (state > 0);
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
         // this.tree.clickedHandler.add(this.groupId);
-        YAHOO.haloacl.clickedArray[this.tree.panelid][this.groupId] = this.checked;
+        YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
 
         // update usertable
-        YAHOO.haloacl.checkAlreadySelectedUsersInDatatable(this.tree.panelid);
+        YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
     },
 
@@ -406,19 +406,15 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
-        
-        //tmpNode.setGroupId(element.id);
-        // using name instead of id
+
         tmpNode.setGroupId(element.name);
 
         // check checkbox if during this js-session it has been checked
         if(panelid){
-            //if (YAHOO.haloacl.clickedArray[panelid][element.id]) tmpNode.check();
-            //also using name instead of id
-            if (YAHOO.haloacl.clickedArray[panelid][element.name]) tmpNode.check();
+            if (YAHOO.haloacl.clickedArrayGroups[panelid][element.name]) tmpNode.check();
         }
     };
-    YAHOO.haloacl.checkAlreadySelectedUsersInDatatable(panelid);
+    YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
 
 };
 
@@ -575,8 +571,8 @@ YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
 YAHOO.haloacl.getNewTreeview = function(divname,panelid){
     var instance = new YAHOO.widget.TreeView(divname);
     instance.panelid = panelid;
-    if(!YAHOO.haloacl.clickedArray[panelid]){
-        YAHOO.haloacl.clickedArray[panelid] = new Array();
+    if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
+        YAHOO.haloacl.clickedArrayGroups[panelid] = new Array();
     }
     return instance;
 };
