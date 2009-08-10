@@ -43,6 +43,11 @@
 			<verifyXPath description="Check Uploader."
 				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[2]/tbody/tr[3]/td[2]/a"
 				text="WikiSysop"/>
+			<invoke
+				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest" />
+			<verifyXPath description="Check list entry now"
+				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table/tbody/tr[1]/td/table[@id='sortable_table_id_0']/tbody/tr[2]/td[2]/span/a"
+				text="Pdf:Test.pdf" />
 		</webtest>
 	</target>
 </project>
