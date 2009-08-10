@@ -1,30 +1,30 @@
 
-var clickedTreeNodes = [];
+//var clickedTreeNodes = [];
 
 
 function dump(arr,level) {
-	var dumped_text = "";
-	if(!level) level = 0;
+    var dumped_text = "";
+    if(!level) level = 0;
 
-	//The padding given at the beginning of the line.
-	var level_padding = "";
-	for(var j=0;j<level+1;j++) level_padding += "    ";
+    //The padding given at the beginning of the line.
+    var level_padding = "";
+    for(var j=0;j<level+1;j++) level_padding += "    ";
 
-	if(typeof(arr) == 'object') { //Array/Hashes/Objects
-		for(var item in arr) {
-			var value = arr[item];
+    if(typeof(arr) == 'object') { //Array/Hashes/Objects
+        for(var item in arr) {
+            var value = arr[item];
 
-			if(typeof(value) == 'object') { //If it is an array,
-				dumped_text += level_padding + "'" + item + "' ...\n";
-				dumped_text += dump(value,level+1);
-			} else {
-				dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
-			}
-		}
-	} else { //Stings/Chars/Numbers etc.
-		dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
-	}
-	return dumped_text;
+            if(typeof(value) == 'object') { //If it is an array,
+                dumped_text += level_padding + "'" + item + "' ...\n";
+                dumped_text += dump(value,level+1);
+            } else {
+                dumped_text += level_padding + "'" + item + "' => \"" + value + "\"\n";
+            }
+        }
+    } else { //Stings/Chars/Numbers etc.
+        dumped_text = "===>"+arr+"<===("+typeof(arr)+")";
+    }
+    return dumped_text;
 }
 
 
@@ -232,7 +232,9 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) { 
         this.checkState = state;
         this.checked = (state > 0);
-        clickedTreeNodes[this.groupId] = this.checked;
+        //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+       // this.tree.clickedHandler.add(this.groupId);
+       YAHOO.haloacl.clickedArray[this.tree.panelid][this.groupId] = this.checked;
     },
 
     /**
@@ -280,7 +282,6 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
 
 
     // Overrides YAHOO.widget.TextNode
-
     getContentHtml: function() {                                                                                                                                           
         var sb = [];
 
@@ -395,22 +396,16 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
  * @param parent node / root
  * @param data
  */
-YAHOO.haloacl.buildNodesFromData = function(parentNode,data){
+YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
 
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.id);
-        if (clickedTreeNodes[element.id]) tmpNode.check();
-        
-        
 
+        // check checkbox if during this js-session it has been checked
+        if (YAHOO.haloacl.clickedArray[panelid][element.id]) tmpNode.check();
 
-
-        if(element.childs != null){
-    // no recursion, we are loading dynamicly
-    //	YAHOO.buildNodesFromData(tmpNode,element.childs);
-    }
     };
 };
 
@@ -434,7 +429,7 @@ YAHOO.haloacl.filterNodes = function(parentNode,filter){
             document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
         }
         
-        /*
+    /*
         if (n.checkState > 0) {
             var tmpNode = new YAHOO.widget.CustomNode(n.label, rwTree.getRoot(),false);
             tmpNode.setCheckState(n.checkState);
@@ -452,9 +447,9 @@ YAHOO.haloacl.filterNodes = function(parentNode,filter){
  * @param data
  * @param labelClickAction (name)
  */
-YAHOO.haloacl.buildUserTree = function(tree,data,labelClickAction) {
+YAHOO.haloacl.buildUserTree = function(tree,data) {
 
-    YAHOO.haloacl.buildNodesFromData(tree.getRoot(),data,labelClickAction);
+    YAHOO.haloacl.buildNodesFromData(tree.getRoot(),data,tree.panelid);
     tree.setDynamicLoad(YAHOO.haloacl.loadNodeData);
     tree.draw();
 
@@ -532,5 +527,17 @@ YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
     return checkedNodes;
 };
 
+
+/**
+ * returns a new treeinstance
+ */
+YAHOO.haloacl.getNewTreeview = function(divname,panelid){
+    var instance = new YAHOO.widget.TreeView(divname);
+    instance.panelid = panelid;
+    if(!YAHOO.haloacl.clickedArray[panelid]){
+        YAHOO.haloacl.clickedArray[panelid] = new Array();
+    }
+    return instance;
+};
 
 

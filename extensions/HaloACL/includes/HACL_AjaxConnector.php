@@ -852,10 +852,13 @@ function rightPanelSelectDeselectTab($panelid) {
         </div>
 <script type="text/javascript">
  // user list on the right
-    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid");
+    YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid","$panelid");
 
     // treeview part - so the left part of the select/deselct-view
-    YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
+    //YAHOO.haloacl.treeInstance$panelid = new YAHOO.widget.TreeView("treeDiv_$panelid");
+
+    YAHOO.haloacl.treeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDiv_$panelid",'$panelid');
+
     YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
     YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
 
@@ -927,7 +930,9 @@ function rightPanelAssignedTab($panelid) {
     //YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDivRO_$panelid");
 
     // treeview part - so the left part of the select/deselct-view
-    YAHOO.haloacl.ROtreeInstance$panelid = new YAHOO.widget.TreeView("treeDivRO_$panelid");
+
+    YAHOO.haloacl.ROtreeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDivRO_$panelid",'$panelid');
+
     //YAHOO.haloacl.ROtreeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
     YAHOO.haloacl.buildUserTreeRO(YAHOO.haloacl.treeInstance$panelid, YAHOO.haloacl.ROtreeInstance$panelid);
 
@@ -1296,9 +1301,9 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
             foreach ($tmlGroups as $key => $val) {
                 $tmpstring .= $val["name"].",";
             }
-            $tmpstring = '<br /><span style="font-size:8px;">'.$tmpstring."</span>";
+            //$tmpstring = '<br /><span style="font-size:8px;">'.$tmpstring."</span>";
 
-            $a['records'][] = array('name'=>$row->user_name.$tmpstring,'id'=>$row->user_id,'checked'=>'false');
+            $a['records'][] = array('name'=>$row->user_name,'groups'=>$tmpstring,'id'=>$row->user_id,'checked'=>'false');
         }
 
         $db->freeResult($res);

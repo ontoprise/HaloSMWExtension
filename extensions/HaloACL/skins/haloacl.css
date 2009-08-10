@@ -205,7 +205,7 @@ abbr,acronym { border:0;
 /* panel's first row that stays also collapsed visible */
 .haloacl_panel_title{
     background-color:#FFF;
-    height:17px;
+    height:19px;
     padding:0px 0 0 8px;
 }
 
@@ -432,14 +432,14 @@ abbr,acronym { border:0;
 
 .haloacl_rightpanel_selecttab_rightpart{
     float:left;
-    width:433px;
+    width:436px;
     border:1px solid #000;
     border-style:none none none solid;
     padding:0 0 0 0;
 }
 .haloacl_rightpanel_selecttab_rightpart{
     float:left;
-    height:320px;
+    min-height:320px;
 
 }
 
@@ -457,39 +457,34 @@ abbr,acronym { border:0;
 
 /* datatable */
 
-/*hide tableheader */
-
-.haloacl_rightpanel_selecttab_rightpart_datatable thead .yui-dt-first{
-/*
-    display:none!important;
-*/
-}
-
-
 .haloacl_rightpanel_selecttab_rightpart_datatable table{
     border:0px solid!important;
 }
-.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-odd{
+.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-odd,
+.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-even,
+.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-first
+
+{
     background-color:#FFF!important;
 }
-.haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-col-name{
-   /*
-    border:0px solid!important;
-    */
+
+/* ----- */
+
+/* tab view customization */
+/* setting custom style */
+.yui-skin-sam .yui-navset .yui-nav .selected a,
+.yui-skin-sam .yui-navset .yui-nav .selected a:visited,
+.yui-skin-sam .yui-navset .yui-nav .selected a:hover {
+    background:url(images/tab_bg_active.png) repeat-x!important;
+    color:#000!important;
+    height:24px!important;
 }
 
 
-.yui-skin-sam .yui-navset .yui-nav .selected a, .yui-skin-sam .yui-navset .yui-nav .selected a:visited, .yui-skin-sam .yui-navset .yui-nav .selected a:hover {
-    background:url(images/tab_bg_active.png) repeat-x;
-    color:#000;
-    height:24px;
-}
-
-#haloaclsubView a, #haloaclsubView em {
+/* disable style for subtab-nav */
+#createStdAclTab a, #createTmpAclTab a, #createUserAclTab a,
+#createStdAclTab em, #createTmpAclTab em, #createUserAclTab em{
     background:none!important;
     border:none!important;
-}
-
-#haloaclsubView .selected em {
     font-weight:bold;
 }

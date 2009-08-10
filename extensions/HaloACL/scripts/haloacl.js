@@ -4,6 +4,7 @@ YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
 
 YAHOO.haloacl.panelcouner = 0;
+YAHOO.haloacl.clickedArray = new Array();
 
 // Tabview related stuff
 
@@ -75,12 +76,12 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         label: 'Create standard ACL',
         dataSrc:'createAclContent',
         cacheData:false,
-        active:true
+        active:true,
+        id:"createStdAclTab"
     });
     tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab1);
     tab1.addListener('click', function(e){});
-    $(tab1.get('contentEl')).setAttribute('id','creataclTab');
 
 
     // ------
@@ -89,12 +90,12 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         label: 'Create ACL template',
         dataSrc:'manageAclsContent',
         cacheData:false,
-        active:false
+        active:false,
+        id:"createTmpAclTab"
     });
     tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab2);
     tab2.addListener('click', function(e){});
-    $(tab2.get('contentEl')).setAttribute('id','createacltemplateTab');
 
     // ------
 
@@ -102,12 +103,12 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         label: 'Create ACL default user template',
         dataSrc:'manageUserContent',
         cacheData:false,
-        active:false
+        active:false,
+        id:"createUserAclTab"
     });
     tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab3);
     tab3.addListener('click', function(e){});
-    $(tab1.get('contentEl')).setAttribute('id','createaclusertemplateTab');
 
 
 // ------

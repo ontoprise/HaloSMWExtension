@@ -4,10 +4,10 @@ var usersGroups = [];
  *  @param  target-div-id
  *
  */
-YAHOO.haloacl.userDataTable = function(divid) {
+YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // custom defined formatter
-    this.myCustomFormatter = function(elLiner, oRecord, oColumn, oData) {
+    this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         if(oData == true){
             elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
@@ -15,9 +15,14 @@ YAHOO.haloacl.userDataTable = function(divid) {
         }
             
     };
+        this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
+            elLiner.innerHTML = "<span style=\"font-size:8px\">"+oRecord._oData.groups+"</span>";
+
+    };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.myCustom = this.myCustomFormatter;
+    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
+    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
     {
@@ -31,10 +36,17 @@ YAHOO.haloacl.userDataTable = function(divid) {
         sortable:true
     },
     {
+        key:"groups",
+        label:"Groups",
+        sortable:false,
+        formatter:"myGroup"
+    },
+    {
         key:"checked",
         label:"Selected",
-        formatter:"myCustom"
+        formatter:"mySelect"
     },
+
     ];
 
     // datasource for this userdatatable
@@ -50,6 +62,9 @@ YAHOO.haloacl.userDataTable = function(divid) {
         },
         {
             key:"name"
+        },
+        {
+            key:"groups"
         },
         {
             key:"checked"
@@ -109,6 +124,8 @@ YAHOO.haloacl.userDataTable = function(divid) {
         return oPayload;
     }
     myDataTable.query = "";
+
+    myDataTable.panelid = panelid;
 
     // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
