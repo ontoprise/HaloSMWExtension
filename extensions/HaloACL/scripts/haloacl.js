@@ -4,7 +4,8 @@ YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
 
 YAHOO.haloacl.panelcouner = 0;
-YAHOO.haloacl.clickedArray = new Array();
+YAHOO.haloacl.clickedArrayGroups = new Array();
+YAHOO.haloacl.clickedArrayUsers = new Array();
 
 // Tabview related stuff
 
