@@ -118,7 +118,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
         paginator: new YAHOO.widget.Paginator({ 
-            rowsPerPage:25,
+            rowsPerPage:2,
             containers:'datatablepaging_'+divid
         }),
         generateRequest:customRequestBuilder

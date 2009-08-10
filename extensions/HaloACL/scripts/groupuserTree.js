@@ -324,7 +324,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
-            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = ' class="ygtvcheck3"';
             sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
