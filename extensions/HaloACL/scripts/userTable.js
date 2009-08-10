@@ -22,9 +22,15 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     };
 
+    this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
+        elLiner.innerHTML = "<span class='"+divid+"_usersnames' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+
+    };
+
     // building shortcut for custom formatter
     YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
     YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
+    YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
     {
@@ -35,7 +41,8 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     {
         key:"name",
         label:"Name",
-        sortable:true
+        sortable:true,
+        formatter:"myName"
     },
     {
         key:"groups",
@@ -151,11 +158,11 @@ YAHOO.haloacl.checkAlreadySelectedUsersInDatatable = function(panelid){
     //console.log("listing known selections for panel:");
 
 
-    $$('.datatableDiv_'+panelid+'_users').each(function(item){
-        item.checked = false;
+    $$('.datatableDiv_'+panelid+'_usersnames').each(function(item){
+        $(item).removeClassName("groupselected");
     });
 
-    $$('.datatableDiv_'+panelid+'_users').each(function(item){
+    $$('.datatableDiv_'+panelid+'_usersnames').each(function(item){
         var groupstring = ""+$(item).readAttribute("groups");
         //console.log("looking for groups:"+groupstring);
         var grouparray = groupstring.split(",");
@@ -165,7 +172,7 @@ YAHOO.haloacl.checkAlreadySelectedUsersInDatatable = function(panelid){
             if(grouparraytemp != ""){
                 //console.log("temp:"+grouparraytemp);
                 if(YAHOO.haloacl.clickedArray[panelid][grouparraytemp]){
-                    item.checked = true;
+                    $(item).addClassName("groupselected");
                 }
             }
         }
