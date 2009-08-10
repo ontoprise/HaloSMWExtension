@@ -983,7 +983,24 @@ function rightPanelSelectDeselectTab($panelid) {
     refilter = function() {
         YAHOO.haloacl.filterNodes (YAHOO.haloacl.treeInstance$panelid.getRoot(), document.getElementById("filterSelectGroup_$panelid").value);
     }
+    //filter event
     YAHOO.util.Event.addListener("filterSelectGroup_$panelid", "keyup", refilter);
+
+    
+
+    handleDatatableClick = function(item){
+       var panelid = '$panelid';
+       YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
+       console.log(panelid);
+       $$('.datatableDiv_'+panelid+'_users').each(function(item){
+            if(item.checked){
+               YAHOO.haloacl.clickedArrayUsers[panelid][item.name]=true;
+               console.log("adding "+item.name+" to list of checked users");
+            }
+       });
+
+    };
+    YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
 
 
 </script>
@@ -1059,6 +1076,7 @@ function rightPanelAssignedTab($panelid) {
     }
     YAHOO.util.Event.addListener("filterAssignedGroup_$panelid", "keyup", refilter);
 
+  
 
 
 
