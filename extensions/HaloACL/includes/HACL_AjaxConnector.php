@@ -1282,7 +1282,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
     $a['dir'] = "asc";
     $a['pagesize'] = 2;
 
-
+    $tmpstring = "";
 
     if ($selectedGroup == 'test') {
 
