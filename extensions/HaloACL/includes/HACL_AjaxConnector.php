@@ -1053,8 +1053,8 @@ function rightPanelAssignedTab($panelid) {
                     </span>
                     <input type="text" />
                 </div>
-                <div id="datatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
-                <div id="datatablepaging_datatableDiv_$panelid"></div>
+                <div id="ROdatatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
+                <div id="ROdatatablepaging_datatableDiv_$panelid"></div>
                 </div>
             </div>
             <!-- end of right part -->
@@ -1062,7 +1062,7 @@ function rightPanelAssignedTab($panelid) {
         </div>
 <script type="text/javascript">
  // user list on the right
-    //YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDivRO_$panelid");
+    YAHOO.haloacl.ROdatatableInstance$panelid = YAHOO.haloacl.ROuserDataTable("ROdatatableDiv_$panelid","$panelid");
 
     // treeview part - so the left part of the select/deselct-view
 
