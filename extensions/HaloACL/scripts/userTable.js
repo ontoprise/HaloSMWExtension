@@ -2,6 +2,8 @@
  *  @param  target-div-id
  *
  */
+
+
 YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // custom defined formatter
@@ -11,19 +13,31 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var groupsarray = groupsstring.split(",");
 
         if(oData == true || checkedFromTree == true){
-            elLiner.innerHTML = "<input groups=\""+oRecord._oData.groups+"\" type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input groups=\""+oRecord._oData.groups+"\" type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
             
     };
     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<span style=\"font-size:8px\">"+oRecord._oData.groups+"</span>";
+        var groupsstring = ""+oRecord._oData.groups;
+        var groupsarray = groupsstring.split(",");
+        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
+        
+        for (i=0;i<groupsarray.length;i++){
+            var element = groupsarray[i].trim();
+            if(element != ""){
+                resultstring = resultstring+"<span class='"+divid+"_usersgroups datatable_usergroups' name=\""+groupsarray[i]+"\">"+groupsarray[i]+"</span>, &nbsp; ";
+            }
+        }
+
+        resultstring = resultstring +"</div>";
+        elLiner.innerHTML = resultstring;
 
     };
 
     this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<span class='"+divid+"_usersnames' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
     };
 
@@ -47,7 +61,8 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     {
         key:"groups",
         label:"Groups",
-        sortable:false,
+        sortable:false
+        ,
         formatter:"myGroup"
     },
     {
@@ -109,6 +124,24 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     };
 
+    var checkAllSelectedUsers = function(){
+        console.log("checkAllSelectesUsers fired");
+        $$('.datatableDiv_'+panelid+'_users').each(function(item){
+            console.log("found element");
+            console.log(item.name);
+            item.checked = true;
+        });
+
+    };
+
+    var getPaginator = function(){
+        var temp = new YAHOO.widget.Paginator({
+            rowsPerPage:25,
+            containers:'datatablepaging_'+divid
+        }); 
+        return temp;
+    }
+
     // userdatatable configuration
     var myConfigs = {
         initialRequest: "rs=getUsersForUserTable&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
@@ -117,10 +150,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
             key:"id",
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
-        paginator: new YAHOO.widget.Paginator({ 
-            rowsPerPage:2,
-            containers:'datatablepaging_'+divid
-        }),
+        paginator: getPaginator(),
         generateRequest:customRequestBuilder
     };
 
@@ -136,6 +166,11 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     myDataTable.panelid = panelid;
 
+
+
+
+    //YAHOO.util.Event.addListener(myDataTable,"initEvent",myDataTable.checkAllSelectedUsers());
+
     // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
         myDataTable.query = query;
@@ -148,40 +183,28 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         myDataSource.sendRequest(customRequestBuilder(myDataTable.getState(),null), oCallback);
     }
 
+    // setting up clickevent-handling
     return myDataTable;
 
 };
 
-YAHOO.haloacl.checkAlreadySelectedUsersInDatatable = function(panelid){
+// handles
+YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
     //console.log("autoselectevent fired for panel:"+panelid);
     //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
     //console.log("listing known selections for panel:");
 
 
-    $$('.datatableDiv_'+panelid+'_usersnames').each(function(item){
+    $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
         $(item).removeClassName("groupselected");
     });
 
-    $$('.datatableDiv_'+panelid+'_usersnames').each(function(item){
-        var groupstring = ""+$(item).readAttribute("groups");
-        //console.log("looking for groups:"+groupstring);
-        var grouparray = groupstring.split(",");
-
-        for(i=0;i<grouparray.length;i++){
-            var grouparraytemp = grouparray[i];
-            if(grouparraytemp != ""){
-                //console.log("temp:"+grouparraytemp);
-                if(YAHOO.haloacl.clickedArray[panelid][grouparraytemp]){
-                    $(item).addClassName("groupselected");
-                }
-            }
+    $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
+        var name = $(item).readAttribute("name");
+        //console.log("checking for name:"+name);
+        if(YAHOO.haloacl.clickedArrayGroups[panelid][name]){
+            $(item).addClassName("groupselected");
         }
-
     });
-
-//console.log("elements in checked array for panel");
-//for(i=0;i<YAHOO.haloacl.clickedArray[panelid].length;i++){
-//    console.log(YAHOO.haloacl.clickedArray[panelid][i]);
-//}
 };
 
