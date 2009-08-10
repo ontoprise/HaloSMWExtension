@@ -9,6 +9,6 @@
 		<ant antfile="rmTestProperties.xml" />
 		<ant antfile="rmTestCategories.xml" />
 		<ant antfile="rmTestMediaList.xml" />
-		<!-- <ant antfile="rmTestOneClickUpload.xml" /> -->
+		<ant antfile="rmTestOneClickUpload.xml" />
 	</target>
 </project>

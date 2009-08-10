@@ -8,14 +8,41 @@
 	<target name="rmTestOneClickUpload">
 
 		<webtest name="rmOneClick">
+			<config browser="FF3"/>
+
+			<antcall target="goToLogin" />
+			
 			<invoke
 				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest" />
 			<clickButton description="Attach file" xpath="//div[@id='bodyContent']/table/tbody/tr[last()]/td/table/tbody/tr/td[2]/form/input" />
 			<sleep seconds="5"/>
-				
-			<verifyXPath description="Related Article correct?"
-				xpath="//iframe[@id=fbContent]/body/table/tbody/tr[2]/td[2]/b[contains(text(),'MyNewMediaList')]" />
+			
+			<followframe htmlId="fbContent"/>
+			<verifyInputField description="Related Article correct?"
+				htmlId="input_7" value="MyNewMediaListTest" />
+			<setFileField description="Set the value of the file input field" htmlId="wpUploadFile" 
+				fileName="Test.pdf"/>
+			<setInputField description="Set HasCopyrightBy input field" htmlId="input_3" 
+				value="TestCopyrightFieldValue" />
+			<setInputField description="Set description field" htmlId="input_6" 
+				value="Test description field value..." />
+			<clickButton description="Upload file and save metadata" xpath="/html/body/table[3]/tbody/tr/td/input" />
+			<sleep seconds="2"/>
+			
+			<verifyXPath description="Check if the pre tag is not empty.otherwise the upload converting process failed."
+				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/pre[string-length()>0]" />
+			<verifyXPath description="Check if Namespace is correct"
+				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[1]/tbody/tr[2]/td[2]/strong"
+				text="Pdf:Test.pdf"/>
+			<verifyXPath description="Check HasCopyright field"
+				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[1]/tbody/tr[3]/td[2]/a"
+				text="TestCopyrightFieldValue"/>
+			<verifyXPath description="Check description field"
+				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[2]/tbody/tr[2]/td/div" 
+				text="Test description field value..."/>
+			<verifyXPath description="Check Uploader."
+				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[2]/tbody/tr[3]/td[2]/a"
+				text="WikiSysop"/>
 		</webtest>
-
 	</target>
 </project>
