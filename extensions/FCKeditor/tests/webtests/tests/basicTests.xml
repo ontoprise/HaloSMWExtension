@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="testBasic">
+    
+    <target name="testBasic">
+
+        <webtest name="LoadMainPage">
+            <invoke
+                url="${wgServer}${wgScript}/Main_Page"
+                description="Tests if wiki responds at all by loading the main page" 
+            />
+            <verifyTitle text="Main Page - ${wgSitename}" />
+            <verifyXPath
+                description="Check if tab WYSIWYG exists"
+                xpath="//div[@id='ca-wysiwyg']/a/text()"
+                text="WYSIWYG" />
+        </webtest>
+
+    </target>
+</project>

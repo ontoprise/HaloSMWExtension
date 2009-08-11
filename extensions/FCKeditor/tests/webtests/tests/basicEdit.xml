@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd"> 
+
+<project default="basicEdit">
+    
+    <target name="basicEdit">
+
+        <webtest name="Basic editing at page Berlin">
+            <!-- don't set this, because then the iframes are not created then
+        	<config>
+                <header name="User-Agent" value="Mozilla/5.0 (Windows; U; Windows NT 5.1; de; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.1 (.NET CLR 3.5.30729)"/>
+            </config>
+            -->
+            <invoke
+                url="${wgServer}${wgScript}/Berlin"
+                description="Tests if wiki responds at all by loading the main page" 
+            />
+            <clickLink
+                description="Click tab WYSIWYG"
+                xpath="//div[@id='ca-wysiwyg']/a"
+            />
+            <verifyDocumentURL
+                description="check URL of editing page"
+                text="${wgServer}${wgScript}?title=Berlin&amp;action=edit&amp;mode=wysiwyg"
+            />
+<!-- the following two scriptStep change the editor textarea and changes can be saved
+     however this is not the editing area of the FCK editor, hence these changes are in
+     html and would destroy the page and it's structure.
+-->
+<!-- 
+            <scriptStep description="add some text" language="javascript">
+                var oldt = '.'
+                var newt = ".&lt;br type=\&quot;moz\&quot; /&gt;&lt;/p&gt;&lt;p&gt;Go to Germany to visit this town.&lt;/p&gt;&lt;p&gt;"
+                var text = document.getElementById('wpTextbox1').getText();
+                //step.setWebtestProperty('newTextEdit', text.replace(oldt, newt))
+                document.getElementById('wpTextbox1').setText(text.replace(oldt, newt))              
+            </scriptStep>
+-->
+<!-- 
+            <groovy description="add some text">
+                def document = step.context.currentResponse.documentElement
+                def oldt = '.'
+                def newt = ".\n\nGo to Germany to visit this town.\n"
+                def text = document.getElementById('wpTextbox1').getText()
+                step.setWebtestProperty('newTextEdit', text.replace(oldt, newt))
+            </groovy>
+            <setInputField xpath="//textarea[@id='wpTextbox1']">#{newTextEdit}</setInputField>
+-->
+<!-- this scriptStep is supposed to look for the iframes to get to the editor context window.
+     However this works for the first iframe only. It seems that Javascript within that frame
+     is not executed anymore, and the secound iframe within the xEditingArea is never created.
+     Therefore leave it like this until some day canoo webtest may support this
+-->
+<!--
+        	<scriptStep description="add some text" language="groovy">
+                def oldt = '.'
+                def newt = ".&lt;br type=\&quot;moz\&quot; /&gt;&lt;/p&gt;&lt;p&gt;Go to Germany to visit this town.&lt;/p&gt;&lt;p&gt;"
+            	def frame1 = step.context.currentResponse.getFrames().get(0).getEnclosedPage();
+                step.setWebtestProperty('newTextEdit', frame1.asXml().toString())
+                //iframe2.getHtmlElementsByTagName('body').setText(text.replace(oldt, newt))              
+            </scriptStep>
+            <testInfo type="something" info="newTextEdit = '#{newTextEdit}" description="debug"/>            
+-->
+        	<followFrame description="iframe1" htmlId="wpTextbox1___Frame"/>
+        	<verifyXPath
+        	   description="Toolbar"
+        	   xpath="//td[@id='xToolbarSpace']/table"
+        	/>
+            <verifyXPath
+               description="Edit window"
+               xpath="count(//td[@id='xEditingArea']/*)"
+               text="0"
+            />
+
+        	<previousResponse/>
+        	
+        	<verifyXPath description="Save page button" xpath="//input[@id='wpSave' and @type='submit']" />
+        	<verifyXPath description="Show preview button" xpath="//input[@id='wpPreview' and @type='submit']" />
+        	<verifyXPath description="Shop changes button" xpath="//input[@id='wpDiff' and @type='submit']" />
+
+        	<!-- don't save the page, we didn't do changes anyway
+        	<clickButton
+                description="Click save button"
+                xpath="//input[@id='wpSave']"
+            />
+            -->
+        </webtest>
+
+    </target>
+</project>
