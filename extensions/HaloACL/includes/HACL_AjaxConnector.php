@@ -1040,12 +1040,17 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
     handleDatatableClick = function(item){
        var panelid = '$panelid';
        YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
-       console.log(panelid);
+       YAHOO.haloacl.clickedArrayUsersGroups[panelid] = new Array();
+
+       console.log("restet array for panelid:"+panelid);
+
        $$('.datatableDiv_'+panelid+'_users').each(function(item){
             if(item.checked){
                YAHOO.haloacl.clickedArrayUsers[panelid].push(item.name);
                console.log("adding "+item.name+" to list of checked users");
             }
+
+            YAHOO.haloacl.clickedArrayUsersGroups[panelid][item.name] = $(item).readAttribute("groups");
        });
 
     };
