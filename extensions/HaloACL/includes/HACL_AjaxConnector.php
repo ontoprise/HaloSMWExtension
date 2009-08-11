@@ -623,7 +623,7 @@ function getRightsPanel($panelid, $predefine) {
                     <div class="haloacl_greyline">&nbsp;</div>
                     <div>
                         <div style="width:33%;float:left;"><input type="button" value="Delete right" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');" /></div>
-                        <div style="width:33%;float:left;text-align:center"><input type="button" value="Reset right" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');" /></div>
+                        <div style="width:33%;float:left;text-align:center"><input type="button" value="Reset right" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');YAHOO.haloacl.createacl_addRightPanel();" /></div>
                         <div style="width:33%;float:left;text-align:right"><input type="button" name="safeRight" value="Save right" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
                     </div>
 		</div>
