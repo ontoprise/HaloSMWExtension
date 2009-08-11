@@ -84,8 +84,8 @@
     <title>Template:RMImage</title>
     <id>307</id>
     <revision>
-      <id>1160</id>
-      <timestamp>2009-08-11T09:38:00Z</timestamp>
+      <id>1198</id>
+      <timestamp>2009-08-11T10:16:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -114,6 +114,7 @@
 |UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
 |SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
 |HasKeywords={{#arraymap:{{{HasKeywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
 }}[[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -122,8 +123,8 @@
     <title>Template:RMPdf</title>
     <id>308</id>
     <revision>
-      <id>1157</id>
-      <timestamp>2009-08-11T09:37:17Z</timestamp>
+      <id>1173</id>
+      <timestamp>2009-08-11T10:02:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -152,6 +153,7 @@
 |UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
 |SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
 |HasKeywords={{#arraymap:{{{HasKeywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
 }}[[Category:Pdf]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -159,8 +161,8 @@
     <title>Template:RMDocument</title>
     <id>309</id>
     <revision>
-      <id>1156</id>
-      <timestamp>2009-08-11T09:32:55Z</timestamp>
+      <id>1181</id>
+      <timestamp>2009-08-11T10:07:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -189,6 +191,7 @@
 |UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
 |SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
 |HasKeywords={{#arraymap:{{{HasKeywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
 }}[[Category:Document]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -197,8 +200,8 @@
     <title>Template:RMAudio</title>
     <id>310</id>
     <revision>
-      <id>1159</id>
-      <timestamp>2009-08-11T09:37:45Z</timestamp>
+      <id>1196</id>
+      <timestamp>2009-08-11T10:16:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -227,6 +230,7 @@
 |UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
 |SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
 |HasKeywords={{#arraymap:{{{HasKeywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
 }}[[Category:Audio]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -234,8 +238,8 @@
     <title>Template:RMVideo</title>
     <id>311</id>
     <revision>
-      <id>1158</id>
-      <timestamp>2009-08-11T09:37:31Z</timestamp>
+      <id>1197</id>
+      <timestamp>2009-08-11T10:16:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -264,6 +268,7 @@
 |UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
 |SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
 |HasKeywords={{#arraymap:{{{HasKeywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
 }}[[Category:Video]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -413,10 +418,11 @@
     <title>Template:RMMedia</title>
     <id>317</id>
     <revision>
-      <id>1152</id>
-      <timestamp>2009-08-11T09:18:04Z</timestamp>
+      <id>1192</id>
+      <timestamp>2009-08-11T10:14:03Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMMedia
@@ -436,6 +442,7 @@
 |UploadDate
 |Keywords
 |SubSectionOf
+|Format
 }}
 &lt;/pre&gt;
 |Calls template=Template:Display content navigation box
@@ -458,7 +465,9 @@
 {{Tablerow|Label=Related articles:|Value={{{RelatedArticles|}}} }} }}
 |-
 {{#ifeq:{{{HasKeywords|}}}|||
-{{Tablerow|Label=Keywords:|Value={{{HasKeywords|}}} }} }}
+{{Tablerow|Label=Keywords:|Value={{{Keywords|}}} }} }}
+|-
+{{Tablerow|Label=Format:|Value={{{Format|}}} }}
 |}
 {{Display content navigation box
 |Title={{{Filename|}}}
@@ -1110,8 +1119,8 @@ The template does the following
     <title>Form:RMUpload</title>
     <id>328</id>
     <revision>
-      <id>1166</id>
-      <timestamp>2009-08-11T09:43:06Z</timestamp>
+      <id>1177</id>
+      <timestamp>2009-08-11T10:05:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1146,6 +1155,8 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | style=&quot;display:none&quot;| {{{field|UploadDate|mandatory|default=now}}}
 |-
+| style=&quot;display:none&quot;| {{{field|Format}}}
+|-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
@@ -1174,8 +1185,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>329</id>
     <revision>
-      <id>1165</id>
-      <timestamp>2009-08-11T09:40:35Z</timestamp>
+      <id>1205</id>
+      <timestamp>2009-08-11T10:20:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1225,7 +1236,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
 | {{{field|HasKeywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
@@ -1245,8 +1261,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>330</id>
     <revision>
-      <id>1161</id>
-      <timestamp>2009-08-11T09:39:06Z</timestamp>
+      <id>1209</id>
+      <timestamp>2009-08-11T10:21:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1296,7 +1312,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
 | {{{field|HasKeywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
@@ -1320,10 +1341,11 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>331</id>
     <revision>
-      <id>1153</id>
-      <timestamp>2009-08-11T09:21:05Z</timestamp>
+      <id>1208</id>
+      <timestamp>2009-08-11T10:21:04Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;
 This is the 'RMDocument' form.
@@ -1370,7 +1392,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
 | {{{field|HasKeywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
@@ -1398,8 +1425,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMAudio</title>
     <id>332</id>
     <revision>
-      <id>1162</id>
-      <timestamp>2009-08-11T09:39:23Z</timestamp>
+      <id>1207</id>
+      <timestamp>2009-08-11T10:20:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1449,7 +1476,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
 | {{{field|HasKeywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
@@ -1466,8 +1498,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVideo</title>
     <id>333</id>
     <revision>
-      <id>1163</id>
-      <timestamp>2009-08-11T09:39:44Z</timestamp>
+      <id>1206</id>
+      <timestamp>2009-08-11T10:20:31Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1517,7 +1549,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
 | {{{field|HasKeywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
@@ -1669,6 +1706,20 @@ if a page with that name already exists, you will be sent to a form to edit that
       <timestamp>2009-08-11T09:15:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is a property of type [[Has type::String]].</comment>
+      <text xml:space="preserve">This is a property of type [[Has type::String]].</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasFormat</title>
+    <id>355</id>
+    <revision>
+      <id>1171</id>
+      <timestamp>2009-08-11T09:56:19Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <comment>New page: This is a property of type [[Has type::String]].</comment>
       <text xml:space="preserve">This is a property of type [[Has type::String]].</text>
