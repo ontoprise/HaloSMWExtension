@@ -498,3 +498,16 @@ abbr,acronym { border:0;
     border:none!important;
     font-weight:bold;
 }
+
+
+
+
+.yui-panel .hd {
+    height:16px;
+    background:url(images/tab_section_header_bg.png);
+    border-bottom:1px solid #000;
+    font-family:Arial;
+    font-size:13px;
+    font-weight:bold;
+    color:#000;
+}

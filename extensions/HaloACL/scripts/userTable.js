@@ -1,3 +1,34 @@
+/*  Copyright 2009, ontoprise GmbH
+*  This file is part of the HaloACL-Extension.
+*
+*   The HaloACL-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The HaloACL-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * This file contains the class HACLGroup.
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 03.04.2009
+ *
+ */
+
+/**
+ * Description of HACL_AjaxConnector
+ *
+ * @author hipath
+ */
+
 /**
  *  @param  target-div-id
  *
@@ -25,7 +56,13 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
         
         for (i=0;i<groupsarray.length;i++){
-            var element = groupsarray[i].trim();
+            var element = ""+groupsarray[i];
+            try{
+            element = element.trim();
+            }
+            catch(e){
+                console.log(e);
+            }
             if(element != ""){
                 resultstring = resultstring+"<span class='"+divid+"_usersgroups datatable_usergroups' name=\""+groupsarray[i]+"\">"+groupsarray[i]+"</span>, &nbsp; ";
             }
