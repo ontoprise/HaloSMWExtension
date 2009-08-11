@@ -57,7 +57,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         for (i=0;i<groupsarray.length;i++){
             var element = ""+groupsarray[i];
             try{
-            element = element.trim();
+                element = element.trim();
             }
             catch(e){
                 console.log(e);
@@ -86,12 +86,12 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     {
         key:"id",
         label:"ID",
-        sortable:true
+        sortable:false
     },
     {
         key:"name",
         label:"Name",
-        sortable:true,
+        sortable:false,
         formatter:"myName"
     },
     {
@@ -211,6 +211,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     myDataTable.subscribe("postRenderEvent",function(){
         setupCheckboxHandling();
+        YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
     });
 
 
@@ -249,7 +250,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
     };
 
-     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
+    this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
         var groupsstring = ""+oRecord._oData.groups;
         var groupsarray = groupsstring.split(",");
         var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
@@ -257,7 +258,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
         for (i=0;i<groupsarray.length;i++){
             var element = ""+groupsarray[i];
             try{
-            element = element.trim();
+                element = element.trim();
             }
             catch(e){
                 console.log(e);
@@ -285,7 +286,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
         label:"Name",
         sortable:false
     },
-      {
+    {
         key:"groups",
         label:"Groups",
         sortable:false,
@@ -303,7 +304,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
     // datasource for this userdatatable
     var convertedUserArray = YAHOO.haloacl.convertUserArrayToDataSource(panelid);
     var myDataSource = new YAHOO.util.DataSource(convertedUserArray
-    );
+        );
     myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
     // userdatatable configuration
     var myConfigs = {
@@ -317,6 +318,9 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
     var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
 
     myDataTable.panelid = panelid;
+    myDataTable.subscribe("postRenderEvent",function(){
+        YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable(panelid);
+    });
 
 
     // setting up clickevent-handling
@@ -327,6 +331,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
 
 // handles
+// standard part (select deselect tab)
 YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
     //console.log("autoselectevent fired for panel:"+panelid);
     //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
@@ -338,6 +343,27 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
     });
 
     $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
+        var name = $(item).readAttribute("name");
+        //console.log("checking for name:"+name);
+        if(YAHOO.haloacl.clickedArrayGroups[panelid][name]){
+            $(item).addClassName("groupselected");
+        }
+    });
+};
+
+
+// readnonly-part (assigned tab)
+YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
+    //console.log("autoselectevent fired for panel:"+panelid);
+    //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
+    //console.log("listing known selections for panel:");
+
+
+    $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
+        $(item).removeClassName("groupselected");
+    });
+
+    $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
         var name = $(item).readAttribute("name");
         //console.log("checking for name:"+name);
         if(YAHOO.haloacl.clickedArrayGroups[panelid][name]){
