@@ -242,7 +242,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"');\">remove</a>";
+        elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' class='removebutton' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"');\">&nbsp;</a>";
       
 
     };

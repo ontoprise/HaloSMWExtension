@@ -478,6 +478,20 @@ abbr,acronym { border:0;
 }
 .datatable-groups-col-div{
 }
+
+/* assigned tab remove-link */
+.removebutton{
+    background: url(images/remove.png) 0 0 no-repeat!important;
+    width:16px;
+    cursor:pointer;
+    float:right;
+}
+
+
+thead .yui-dt-first{
+    display:none!important;
+}
+
 /* ----- */
 
 /* tab view customization */
