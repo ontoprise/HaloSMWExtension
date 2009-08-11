@@ -35,8 +35,12 @@ YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
 
 YAHOO.haloacl.panelcouner = 0;
+// has all checked users from grouptree
 YAHOO.haloacl.clickedArrayGroups = new Array();
+// has all checked users form datatable
 YAHOO.haloacl.clickedArrayUsers = new Array();
+// has groups for the checked users [panelid][username] = groupsstring
+YAHOO.haloacl.clickedArrayUsersGroups = new Array();
 
 // Tabview related stuff
 

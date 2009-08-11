@@ -41,12 +41,11 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         var checkedFromTree = false;
         var groupsstring = ""+oRecord._oData.groups;
-        var groupsarray = groupsstring.split(",");
 
         if(oData == true || checkedFromTree == true){
-            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input type='checkbox' groups='"+groupsstring+"' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
             
     };
@@ -236,6 +235,9 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
 };
 
+// --------------------
+// --------------------
+// --------------------
 
 // ASSIGNED USERTABLE FROM JSARRAY
 YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
@@ -247,10 +249,34 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
 
     };
 
+     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
+        var groupsstring = ""+oRecord._oData.groups;
+        var groupsarray = groupsstring.split(",");
+        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
+
+        for (i=0;i<groupsarray.length;i++){
+            var element = ""+groupsarray[i];
+            try{
+            element = element.trim();
+            }
+            catch(e){
+                console.log(e);
+            }
+            if(element != ""){
+                resultstring = resultstring+"<span class='"+divid+"_usersgroups datatable_usergroups' name=\""+groupsarray[i]+"\">"+groupsarray[i]+"</span>, &nbsp; ";
+            }
+        }
+
+        resultstring = resultstring +"</div>";
+        elLiner.innerHTML = resultstring;
+
+    };
+
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
+    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
+    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
    
@@ -258,6 +284,12 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
         key:"name",
         label:"Name",
         sortable:false
+    },
+      {
+        key:"groups",
+        label:"Groups",
+        sortable:false,
+        formatter:"myGroup"
     },
     
     {
@@ -278,7 +310,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
         sortedBy : {
             key:"name",
             dir:YAHOO.widget.DataTable.CLASS_ASC
-        } // Sets UI initial sort arrow
+        } 
     };
 
     // instanciating datatable
@@ -323,6 +355,7 @@ YAHOO.haloacl.convertUserArrayToDataSource = function(panelid){
         console.log(item);
         var temp = new Array();
         temp['name'] = item;
+        temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
         result.push(temp);
     });
     return result;
