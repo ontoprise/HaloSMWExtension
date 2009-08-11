@@ -20,7 +20,7 @@ class SFUploadWindow extends UnlistedSpecialPage {
 	 * Constructor
 	 */
 	function SFUploadWindow() {
-		UnlistedSpecialPage::UnlistedSpecialPage('UploadWindow');
+		SpecialPage::SpecialPage('UploadWindow');
 		wfLoadExtensionMessages('SemanticForms');
 	}
 
@@ -37,7 +37,7 @@ function doSpecialUploadWindow() {
 	global $wgRequest, $wgOut, $wgUser, $wgServer;
 	global $wgScript, $wgJsMimeType, $wgStylePath, $wgStyleVersion;
 	global $wgContLang, $wgLanguageCode, $wgXhtmlDefaultNamespace, $wgXhtmlNamespaces;
-	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview, $wgScriptPath, $sfgYUIBase;
+	global $wgUseAjax, $wgAjaxUploadDestCheck, $wgAjaxLicensePreview;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
@@ -67,28 +67,6 @@ wgScript="{$wgScript}"
 wgAjaxUploadDestCheck = {$adc};
 wgAjaxLicensePreview = {$alp};
 wgUploadAutoFill = {$autofill};
-//RM StyleSheet Hack!
-var headID = document.getElementsByTagName("head")[0];         
-var cssNode = document.createElement('link');
-cssNode.type = 'text/css';
-cssNode.rel = 'stylesheet';
-cssNode.href = "{$wgScriptPath}" + '/extensions/SemanticForms/skins/SF_yui_autocompletion.css';
-cssNode.media = 'screen, projection';
-headID.appendChild(cssNode);
-
-var cssNode = document.createElement('link');
-cssNode.type = 'text/css';
-cssNode.rel = 'stylesheet';
-cssNode.href = "{$sfgYUIBase}" + '/autocomplete/assets/skins/sam/autocomplete.css';
-cssNode.media = 'screen, projection';
-headID.appendChild(cssNode);
-
-var cssNode = document.createElement('link');
-cssNode.type = 'text/css';
-cssNode.rel = 'stylesheet';
-cssNode.href = "{$wgScriptPath}" + '/extensions/SemanticForms/skins/SF_main.css';
-cssNode.media = 'screen, projection';
-headID.appendChild(cssNode);
 </script>
 
 END;
@@ -96,8 +74,6 @@ END;
 	$wikibits_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/wikibits.js?$wgStyleVersion\"></script>";
 	$ajax_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajax.js?$wgStyleVersion\"></script>";
 	$ajaxwatch_include = "<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/ajaxwatch.js?$wgStyleVersion\"></script>";
-	global $smwgHaloScriptPath;
-	$prototype_include = "<script type=\"{$wgJsMimeType}\" src=\"{$smwgHaloScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
 	$text = <<<END
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="{$wgXhtmlDefaultNamespace}"
@@ -112,12 +88,11 @@ END;
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
-$user_js
 $vars_js
 $wikibits_include
+$user_js
 $ajax_include
 $ajaxwatch_include
-$prototype_include
 {$wgOut->getScript()}
 </head>
 <body>
@@ -152,10 +127,6 @@ class UploadWindowForm {
 	# used by Semantic Forms
 	var $mInputID;
 	var $mDelimiter;
-	
-	# used by Rich Media
-	var $mRMFileStatus;
-	var $mRMDnD;
 
 	const SESSION_VERSION = 1;
 	/**#@-*/
@@ -173,10 +144,6 @@ class UploadWindowForm {
 		$this->mInputID           = $request->getText( 'sfInputID' );
 		$this->mDelimiter         = $request->getText( 'sfDelimiter' );
 
-		//RM change: filestatus
-		$this->mRMFileStatus	  = $request->getVal( 'filestatus' );
-		$this->mRMDnD			  = $request->getCheck( 'dragndrop' );
-		
 		if( !$request->wasPosted() ) {
 			# GET requests just give the main form; no data except destination
 			# filename and description
@@ -377,9 +344,6 @@ class UploadWindowForm {
 			$this->mainUploadWindowForm();
 		} else if( 'submit' == $this->mAction || $this->mUploadClicked ) {
 			$this->processUpload();
-		} else if( 'uploaded' == $this->mRMFileStatus) {
-			$this->showSuccessfulMsg();
-		
 		} else {
 			$this->mainUploadWindowForm();
 		}
@@ -454,15 +418,7 @@ class UploadWindowForm {
 		 * out of it. We'll strip some silently that Title would die on.
 		 */
 		$filtered = preg_replace ( "/[^".Title::legalChars()."]|:/", '-', $filtered );
-		// begin AdditionalMIMETypes:
-		$my_ns = NS_IMAGE;
-		global $wgNamespaceByExtension;
-		if ( isset( $finalExt ) )
-			if ( isset( $wgNamespaceByExtension[$finalExt] ) )
-				$my_ns = $wgNamespaceByExtension[$finalExt];
-		$nt = Title::makeTitleSafe( $my_ns, $filtered );
-		// end AdditionalMIMETypes
-//		$nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
+		$nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
 		if( is_null( $nt ) ) {
 			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
 			return;
@@ -493,7 +449,7 @@ class UploadWindowForm {
 			return $this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
 		} elseif ( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
 				($wgStrictFileExtensions && !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
-			return $this->uploadError( wfMsgExt( 'filetype-banned-type', array ( 'parseinline' ), 
+			return $this->uploadError( wfMsgExt( 'filetype-badtype', array ( 'parseinline' ), 
 				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
 		}
 
@@ -584,83 +540,48 @@ class UploadWindowForm {
 				$wgUser->addWatch( $this->mLocalFile->getTitle() );
 				
 			}
-			//Let Hooks (especially the UploadConverter!) do their jobs
-			wfRunHooks( 'UploadComplete', array( &$this ) );
-			
+			// Success, redirect to description page
+			//$wgOut->redirect( $this->mLocalFile->getTitle()->getFullURL() );
+
 			// Semantic Forms change - output Javascript to either
 			// fill in or append to the field in original form, and
 			// close the window
 			$basename = str_replace('_', ' ', $basename);
-			
-			// begin Rich Media Changes
-			$target = $this->mLocalFile->title->getPrefixedText();
-			global $smwgRMFormByNamespace;
-			$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];			
-			global $wgRequest;
-			// set Filename
-			$wgRequest->data["$rMUploadFormName"]['Filename'] = $target;
-			// use default=now again!
-			/*$uploadDateString = $this->mLocalFile->getTimestamp();
-			$uploadYear = substr($uploadDateString, 0, 4);
-			$uploadMonth = substr($uploadDateString, 4, 2);
-			$uploadDay = substr($uploadDateString, 6, 2);
-			$wgRequest->data["$rMUploadFormName"]['UploadDate']['year'] = $uploadYear;
-			$wgRequest->data["$rMUploadFormName"]['UploadDate']['month'] = $uploadMonth;
-			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;*/
-			// set anything else?
-			// save relatedArticles
-			$relatedArticles = $wgRequest->data["$rMUploadFormName"]['RelatedArticles'];
-			//set the desired destination form
-			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
-			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
-			$myQuery = $rMDestFormName . "/" . $target;
-			//set wpSave to true (simluates a submitted SF)
-			$wgRequest->data['wpSave']= 'true';
-			//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
-			$wgRequest->data['query'] = 'false';
-			$form_add= new SFEditData();
-			$form_add_test = $form_add->execute($myQuery);
-			// end Rich Media Changes
-			
 			$output = '	<script type="text/javascript">' . "\n";
-			if ( $this->mInputID ) {
-				if ($this->mDelimiter == null) {
-					$output .=<<<END
-					parent.document.getElementById("{$this->mInputID}").value = '$basename';
+			if ($this->mDelimiter == null) {
+				$output .=<<<END
+		parent.document.getElementById("{$this->mInputID}").value = '$basename';
+
 END;
-				} else {
-					$output .=<<<END
-					// if the current value is blank, set it to this file name;
-					// if it's not blank and ends in a space or delimiter, append
-					// the file name; if it ends with a normal character, append
-					// both a delimiter and a file name; and add on a delimiter
-					// at the end in any case
-					var cur_value = parent.document.getElementById("{$this->mInputID}").value;
-					if (cur_value == '') {
-						parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
-					} else {
-						var last_char = cur_value.charAt(cur_value.length - 1);
-						if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
-							parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
-						} else {
-						parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
-						}
-					}
-END;
-				}
+			} else {
+				$output .=<<<END
+		// if the current value is blank, set it to this file name;
+		// if it's not blank and ends in a space or delimiter, append
+		// the file name; if it ends with a normal character, append
+		// both a delimiter and a file name; and add on a delimiter
+		// at the end in any case
+		var cur_value = parent.document.getElementById("{$this->mInputID}").value;
+		if (cur_value == '') {
+			parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
+		} else {
+			var last_char = cur_value.charAt(cur_value.length - 1);
+			if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
+				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
+			} else {
+				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
 			}
-			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
-			$relatedArticles = urlencode($relatedArticles);
-			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles";
-			$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
+		}
+
+END;
+			}
 			$output .=<<<END
-		document.editform.submit();
-		
-   		//load the upload success message
-   		parent.fb.loadAnchor('{$uploadWindowUrlSuccess}', 'sameBox:true', '' );
+		parent.fb.end();
 	</script>
+
 END;
 			$wgOut->addHTML( $output );
+			$img = null; // @todo: added to avoid passing a ref to null - should this be defined somewhere?
+			wfRunHooks( 'UploadComplete', array( &$img ) );
 		}
 	}
 
@@ -881,55 +802,9 @@ END;
 	 * @access private
 	 */
 	function uploadError( $error ) {
-		global $wgOut, $wgContLang, $smwgRMScriptPath, $wg;
-		
-		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
-		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
-		$wgOut->addHTML( '</div>' );
-		
+		global $wgOut;
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
-		$wgOut->addHTML( "<span class='error'>{$error}</span><br/><br/>\n" );
-		
-		//changed:
-		$reupload = wfMsgHtml( 'reupload' );
-		$reup = wfMsgWikiHtml( 'reuploaddesc' );
-		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
-		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-		
-		$titleObj = SpecialPage::getTitleFor( 'UploadWindow' );
-		
-		$wgOut->addHTML( "
-	<form id='uploadwarning' method='post' enctype='multipart/form-data' action=''>
-		<input type='hidden' name='wpIgnoreWarning' value='1' />
-		<input type='hidden' name='wpSessionKey' value=\"" . htmlspecialchars( $this->mSessionKey ) . "\" />
-		<input type='hidden' name='wpUploadDescription' value=\"" . htmlspecialchars( $this->mComment ) . "\" />
-		<input type='hidden' name='wpLicense' value=\"" . htmlspecialchars( $this->mLicense ) . "\" />
-		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
-		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
-		);
-
-		$wgOut->addHTML("
-	<table border='0'>
-		<tr>
-			<td align='$align1'>
-				<input tabindex='2' type='submit' name='' value=\"{$reupload}\" onClick='richMediaPage.copyToUploadWarning();'/>
-			</td>
-			<td align='$align2'>$reup</td>
-			</tr>
-		</tr>
-	</table>\n" );
-	
-		$wgOut->addHTML("</form>");
-
-		//Beginn RichMedia
-		global $smwgRMFormByNamespace, $wgRequest;
-		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$form_add = new SFAddData();
-		$wgOut->addHTML('<div style="display:none">');
-		$form_add_test = $form_add->execute( $rMUploadFormName );
-		$wgOut->addHTML('</div>');
+		$wgOut->addHTML( "<span class='error'>{$error}</span>\n" );
 	}
 
 	/**
@@ -949,22 +824,15 @@ END;
 			# Couldn't save file; an error has been displayed so let's go.
 			return;
 		}
-		
-		global $smwgRMScriptPath;
-		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
-		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
-		$wgOut->addHTML( '</div>' );
-		
+
 		$wgOut->addHTML( "<h2>" . wfMsgHtml( 'uploadwarning' ) . "</h2>\n" );
-		
 		$wgOut->addHTML( "<ul class='warning'>{$warning}</ul><br />\n" );
 
 		$save = wfMsgHtml( 'savefile' );
 		$reupload = wfMsgHtml( 'reupload' );
 		$iw = wfMsgWikiHtml( 'ignorewarning' );
 		$reup = wfMsgWikiHtml( 'reuploaddesc' );
-		$titleObj = SpecialPage::getTitleFor( 'UploadWindow' );
+		$titleObj = SpecialPage::getTitleFor( 'Upload' );
 		$action = $titleObj->escapeLocalURL( 'action=submit' );
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
@@ -988,37 +856,24 @@ END;
 		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
 		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
 		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
-		);
-
-		$wgOut->addHTML("
+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 	{$copyright}
 	<table border='0'>
 		<tr>
 			<tr>
 				<td align='$align1'>
-					<input tabindex='2' type='submit' name='wpUpload' value=\"$save\" onClick='richMediaPage.copyToUploadWarning();'/>
+					<input tabindex='2' type='submit' name='wpUpload' value=\"$save\" />
 				</td>
 				<td align='$align2'>$iw</td>
 			</tr>
 			<tr>
 				<td align='$align1'>
-					<input tabindex='2' type='submit' name='wpReUpload' value=\"{$reupload}\" onClick='richMediaPage.copyToUploadWarning();'/>
+					<input tabindex='2' type='submit' name='wpReUpload' value=\"{$reupload}\" />
 				</td>
 				<td align='$align2'>$reup</td>
 			</tr>
 		</tr>
-	</table>\n" );
-	
-		$wgOut->addHTML("</form>");
-
-		//Beginn RichMedia
-		global $smwgRMFormByNamespace, $wgRequest;
-		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$form_add = new SFAddData();
-		$wgOut->addHTML('<div style="display:none">');
-		$form_add_test = $form_add->execute( $rMUploadFormName );
-		$wgOut->addHTML('</div>');
+	</table></form>\n" );
 	}
 
 	/**
@@ -1039,10 +894,6 @@ END;
 		
 		$adc = wfBoolToStr( $useAjaxDestCheck );
 		$alp = wfBoolToStr( $useAjaxLicensePreview );
-		
-		//Rich Media: add script
-		global $smwgRMScriptPath;
-		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
 		
 		$wgOut->addScript( "<script type=\"text/javascript\">
 wgAjaxUploadDestCheck = {$adc};
@@ -1078,96 +929,15 @@ wgAjaxLicensePreview = {$alp};
 		if ( $ew ) $ew = " style=\"width:100%\"";
 		else $ew = '';
 
-		global $smwgRMFormByNamespace;
-		$rMUploadName = $smwgRMFormByNamespace['RMUpload'];
-		if( !isset( $wgRequest->data["$rMUploadName"]['RelatedArticles']) ) {
-			// no related article was set, so set it to user page by default
-			// That's ok, because User has to be logged in, so see this page
-			global $wgCanonicalNamespaceNames;
-			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
-			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
+		if ( '' != $msg ) {
+			$sub = wfMsgHtml( 'uploaderror' );
+			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
+			  "<span class='error'>{$msg}</span>\n" );
 		}
-		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
-		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
-		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
+		$wgOut->addHTML( '<div id="uploadtext">' );
+		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
 		$wgOut->addHTML( '</div>' );
-		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;padding-top:5px"><tr><td colspan="2">' );
-		$wgOut->addWikiText( wfMsgExt( 'smw_rm_uploadtext',array('parseinline') ));
-		$wgOut->addHTML( "</td></tr>");
-		$wgOut->addHTML( "<tr><td width=\"42%\" align=\"right\"><img class=\"help-image\" src=\"$smwgRMScriptPath/skins/this_file_pointer.png\" style=\"padding:5px;\" /></td>" );
-		$wgOut->addHTML( "<td align=\"left\"><b>" . $uploadTemplateArray['RelatedArticles'] . "</b></td></tr>" );
-		$wgOut->addHTML( '</table><hr/>' );
-		
-		# Print a list of allowed file extensions, if so configured.  We ignore
-		# MIME type here, it's incomprehensible to most people and too long.
-		global $wgFileExtensions;
-		$delim = wfMsgExt( 'comma-separator', array( 'escapenoentities' ) );
-		#end file extensions
-		
-		# Get the maximum file size from php.ini as $wgMaxUploadSize works for uploads from URL via CURL only
-		# See http://www.php.net/manual/en/ini.core.php#ini.upload-max-filesize for possible values of upload_max_filesize
-		global $wgLang;
-		$val = trim( ini_get( 'upload_max_filesize' ) );
-		$last = strtoupper( ( substr( $val, -1 ) ) );
-		switch( $last ) {
-			case 'G':
-				$val2 = substr( $val, 0, -1 ) * 1024 * 1024 * 1024;
-				break;
-			case 'M':
-				$val2 = substr( $val, 0, -1 ) * 1024 * 1024;
-				break;
-			case 'K':
-				$val2 = substr( $val, 0, -1 ) * 1024;
-				break;
-			default:
-				$val2 = $val;
-		}
-		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
-		#end max file size
-		
-		$wgOut->addHTML( '<div id="upload-size">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'smw_rm_upload_size', $wgLang->formatSize( $val2 ) )); 
-		$wgOut->addHTML( '</div>' );
-		$wgOut->addHTML( '<div id="upload-perm-types">' );
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_permtypes' ));
-		//sort file types!
-		global $wgNamespaceByExtension;
-		$extCat = array(
-			NS_IMAGE => array(),
-			NS_PDF=> array(),
-			NS_DOCUMENT => array(),
-			NS_AUDIO => array(),
-			NS_VIDEO => array()
-		);
-		sort($wgFileExtensions);
-		foreach ($wgFileExtensions as $ext) {
-			if (array_key_exists($ext, $wgNamespaceByExtension)) {
-				if (array_key_exists($wgNamespaceByExtension[$ext],$extCat)) {
-					array_push($extCat[$wgNamespaceByExtension[$ext]],$ext);
-				}
-				else {
-					$wgOut->addWikiText(wfMsgNoTrans( 'smw_rm_upload_error_ext_ns', $ext));
-				}
-			}
-			else {
-				array_push($extCat[NS_IMAGE], $ext);
-			}
-		}
-		$wgOut->addHTML('<ul style="margin-top:0px;">');
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode(array_merge($extCat[NS_DOCUMENT],$extCat[NS_PDF]),$delim ) ));
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_image', implode( $extCat[NS_IMAGE],$delim ) ));
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_audio', implode( $extCat[NS_AUDIO],$delim ) ));
-		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_video', implode( $extCat[NS_VIDEO],$delim ) ));
-		$wgOut->addHTML( '</ul></div>' );
-		
-		if ( $useAjaxDestCheck ) {
-			$wgOut->addHTML("<table><tr><td id='wpDestFile-warning'>&nbsp;</td></tr></table>");
-			$destOnkeyup = 'onkeyup="wgUploadWarningObj.keypress();"';
-		} else {
-			$warningRow = '';
-			$destOnkeyup = '';
-		}
-		
+
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
 		$destfilename = wfMsgHtml( 'destfilename' );
 		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
@@ -1190,7 +960,7 @@ wgAjaxLicensePreview = {$alp};
 				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
 			? 'checked="checked"'
 			: '';
-		$warningChecked = $this->mIgnoreWarning ? 'checked="checked"' : '';
+		$warningChecked = $this->mIgnoreWarning ? 'checked' : '';
 
 		// Prepare form for upload or upload/copy
 		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
@@ -1212,63 +982,41 @@ wgAjaxLicensePreview = {$alp};
 				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
 				wfMsgHtml( 'upload_source_url' ) ;
 		} else {
-			if( $this->mRMDnD )
-			{
-				//TODO:
-				$filename_form =
-				"<input tabindex='1' type='text' name='wpUploadFile' id='wpUploadFile' " .
-				"value='$this->mDesiredDestName'" .
-				"size='40' hidden='hidden' />" .
-				"<input type='hidden' name='wpSourceType' value='file' />" ;
-			}
-			else {
 			$filename_form =
 				"<input tabindex='1' type='file' name='wpUploadFile' id='wpUploadFile' " .
 				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFile\")' ") .
 				"size='40' />" .
 				"<input type='hidden' name='wpSourceType' value='file' />" ;
-			}
 		}
-		
-		$fontColor = "black";
-		$wgOut->addHTML("<div id=\"contentSub\"></div>");
-		if ( '' != $msg ) {
-			$sub = wfMsgHtml( 'uploaderror' );
-			$wgOut->addHTML( "<div border='1' style='margin:2px;padding:5px 10px 10px 10px;border:1px solid red;'><font color='red'><h2 style=\"margin-top:0px;\">{$sub}</h2>\n" .
-			  "<span class='error'>{$msg}</span>\n</font></div>" );
-			$fontColor = "red";
+		if ( $useAjaxDestCheck ) {
+			$warningRow = "<tr><td colspan='2' id='wpDestFile-warning'>&nbsp;</td></tr>";
+			$destOnkeyup = 'onkeyup="wgUploadWarningObj.keypress();"';
+		} else {
+			$warningRow = '';
+			$destOnkeyup = '';
 		}
+
 		$encComment = htmlspecialchars( $this->mComment );
 		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
 		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-		$uploadlegend = wfMsgHTML('smw_rm_uploadlegend');
-		$destFileTooltipTitle = wfMsg('smw_rm_dest_file_help_tooltip');
-		
+
 		$wgOut->addHTML( <<<EOT
-<fieldset style='padding:0px 10px;'>
-<legend style="font-size:100%;font-weight:bold">{$uploadlegend}</legend>
-	<form id='upload' method='post' enctype='multipart/form-data' action="$action" onSubmit='return richMediaPage.doUpload();' style='margin:0px;'>
-		<table border='0' style="width:100%; margin:0px;">
-		<tr>
-			<td style="width:30%"/>
-			<td style="width:70%"/>
-		</tr>
+	<form id='upload' method='post' enctype='multipart/form-data' action="$action">
+		<table border='0'>
 		<tr>
 	  {$this->uploadFormTextTop}
-			<td align='$align1' valign='top'><label for='wpUploadFile' style='font-weight:bold'><font color='{$fontColor}'>{$sourcefilename}</font></label></td>
+			<td align='$align1' valign='top'><label for='wpUploadFile'>{$sourcefilename}</label></td>
 			<td align='$align2'>
 				{$filename_form}
 			</td>
 		</tr>
 		<tr>
-			<td align='$align1'><label for='wpDestFile' style='font-weight:bold'>{$destfilename}</label></td>
+			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
 			<td align='$align2'>
 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
-					value="$encDestName" $destOnkeyup /></label>
-				<img title="{$destFileTooltipTitle}" class="help-image" src="{$smwgRMScriptPath}/skins/help.gif"></img>
+					value="$encDestName" $destOnkeyup />
 			</td>
 		</tr>
-		<!--
 		<tr>
 			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
 			<td align='$align2'>
@@ -1276,7 +1024,7 @@ wgAjaxLicensePreview = {$alp};
 					cols='{$cols}'{$ew}>$encComment</textarea>
 		{$this->uploadFormTextAfterSummary}
 			</td>
-		</tr>-->
+		</tr>
 		<tr>
 EOT
 		);
@@ -1284,7 +1032,7 @@ EOT
 		if ( $licenseshtml != '' ) {
 			global $wgStylePath;
 			$wgOut->addHTML( "
-			<td align='$align1'><label for='wpLicense'>$license:</label></td>
+			<td align='$align1'><label for='wpLicense'>$license</label></td>
 			<td align='$align2'>
 				<select name='wpLicense' id='wpLicense' tabindex='4'
 					onchange='licenseSelectorCheck()'>
@@ -1294,13 +1042,13 @@ EOT
 			</td>
 			</tr>
 			<tr>" );
-			/*if( $useAjaxLicensePreview ) {
+			if( $useAjaxLicensePreview ) {
 				$wgOut->addHTML( "
 					<td></td>
 					<td id=\"mw-license-preview\"></td>
 				</tr>
 				<tr>" );
-			}*/
+			}
 		}
 
 		if ( $wgUseCopyrightUpload ) {
@@ -1319,21 +1067,21 @@ EOT
 					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
 					  value=\"$uploadsource\" size='40' /></td>
 			</tr>
-			<!--<tr>-->
+			<tr>
 		");
 		}
 
 		$wgOut->addHTML( "
 		<td></td>
 		<td>
-			<!--<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
-			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>-->
+			<input tabindex='7' type='checkbox' name='wpWatchthis' id='wpWatchthis' $watchChecked value='true' />
+			<label for='wpWatchthis'>" . wfMsgHtml( 'watchthisupload' ) . "</label>
 			<input tabindex='8' type='checkbox' name='wpIgnoreWarning' id='wpIgnoreWarning' value='true' $warningChecked/>
-			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . 
-			"</label><img title=\"".wfMsg("smw_rm_ignore_warning_help_tooltip")."\" class=\"help-image\" src=\"".$smwgRMScriptPath."/skins/help.gif\"></img>
+			<label for='wpIgnoreWarning'>" . wfMsgHtml( 'ignorewarnings' ) . "</label>
 		</td>
 	</tr>
-	<tr style='display:none'>
+	$warningRow
+	<tr>
 		<td></td>
 		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
 	</tr>
@@ -1350,24 +1098,7 @@ EOT
 	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
 	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
-	</fieldset>
-	</form>" );	
-		
-		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
-		
-		$sflegend = wfMsgHtml('smw_rm_sflegend');
-		$wgOut->addHTML( "
-			<div>
-			<fieldset style='padding:0px 10px;'>
-				<legend style='font-size:100%;font-weight:bold'>{$sflegend}</legend>
-		");
-		$form_add= new SFAddData();
-		$form_add_test = $form_add->execute( $rMUploadName );
-		$wgOut->addHTML("</fieldset></div>");
-		$saveButtonText = wfMsg('smw_rm_savebuttontext');
-		global $smwgRMScriptPath;
-		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
-		$wgOut->addHTML("<table style=\"width:100%;\"></td></tr><tr><td align=\"center\"><input type=\"button\" value=\"$saveButtonText\" onclick=\"richMediaPage.doUpload()\"/ style=\"font-weight:bold\"></td></tr></table>");
+	</form>" );
 	}
 
 	/* -------------------------------------------------------------- */
@@ -1830,55 +1561,5 @@ EOT
 			}
 		}
 		return $pageText;
-	}
-	
-	/**
-	 * The upload was successful and now show the Message for the according file
-	 */
-	static function showSuccessfulMsg() {
-		
-		global $wgRequest, $wgScriptPath;
-		
-		$filename = $wgRequest->getText( 'uploadedFile' );
-		// create the message for the successsful upload
-		global $wgUser, $wgOut;
-		$sk = $wgUser->getSkin();
-		$nt = Title::newFromText($filename);
-		$imageDescLink = $sk->makeKnownLinkObj( $nt, '','','','','target="_top"' );
-		$image = Image::newFromTitle($nt);
-		$imagePath = $image->getURL();
-		unset($image);
-
-		$relatedArticles = $wgRequest->getText('RelatedArticles');
-				
-		$uploadSuccessHTML = '<div style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">';
-		$uploadSuccessHTML .='<font color="white">' . wfMsgNoTrans( 'smw_rm_uploadheadline' ) . '</font></div><br/>';
-			
-		$uploadSuccessHTML .= '<div style="width:auto;padding:0px;text-align:center;">';
-		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_headline' ) . '</div><br/>';
-			
-		$uploadSuccessHTML .= '<div style="width:auto;padding:0px;text-align:center;">';;
-		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_message' ) . '</div><br/>';
-			
-		$uploadSuccessHTML .= '<div align="center" style="width:auto;padding:0px;text-align:center;">' .
-				'<fieldset style="border:1px solid lightgrey;line-height:1.5em;margin: 0px 30px;padding-bottom:20px;">' .
-				'<legend style="font-size:95%;font-weight:bold;padding:0.5em;">&nbsp;' . wfMsgNoTrans( 'smw_rm_uploadsuccess_legend' ) . '</legend>' .
-				'<span style="text-align:left;">' . wfMsgNoTrans( 'smw_rm_uploadsuccess_filename', $imageDescLink ) .
-				wfMsgNoTrans( 'smw_rm_uploadsuccess_articlename', $relatedArticles ) . '</span>' .
-				'</fieldset></div><br/>';
-			
-		$uploadSuccessHTML .= '<div style="width:auto;padding:10px;text-align:center;">';;
-		$uploadSuccessHTML .= wfMsgNoTrans( 'smw_rm_uploadsuccess_closewindow' ) . '</div><br/>';
-		
-		$wgOut->addHTML($uploadSuccessHTML);
-		
-		$script = '	<script type="text/javascript" src="'.$wgScriptPath.'/extensions/RichMedia/scripts/fck_connect.js"></script>' . "\n";
-		$script .=<<<END
-		<script type="text/javascript">
-			saveRichMediaData('$filename', '$imagePath');
-		</script>		
-		
-END;
-		$wgOut->addHTML( $script );
 	}
 }
