@@ -1519,6 +1519,7 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
 
         $res = $db->query($sql);
         while ($row = $db->fetchObject($res)) {
+            $tmpstring = "";
             $tmlGroups = HACLGroup::getGroupsOfMember($row->user_id);
             foreach ($tmlGroups as $key => $val) {
                 if(!strpos($tmpstring, $val["name"])) {
