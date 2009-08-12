@@ -308,3 +308,67 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine){
 
 };
 
+// --- handling global arrays for selection of users and groups
+
+YAHOO.haloacl.removeUserFromUserArray = function(panelid,name){
+    var elementToRemove = 0;
+    for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
+            elementToRemove = i;
+        }
+    }
+    YAHOO.haloacl.clickedArrayUsers[panelid].splice(elementToRemove,1);
+
+    try{
+        var element = $(panelid+"assigned"+name);
+        element.parentNode.parentNode.parentNode.hide();
+    }
+    catch(e){
+        console.log("hiding element failed");
+        console.log(e);
+    }
+};
+
+
+YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
+    if(name.length > 4){
+        console.log("adding "+name+" to "+panelid+"-array");
+        var alreadyContained = false;
+        for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
+            if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
+                alreadyContained = true;
+                console.log("found element - not creating new entry");
+            }
+        }
+        if(!alreadyContained){
+            YAHOO.haloacl.clickedArrayGroups[panelid].push(name);
+        }
+    }else{
+        console.log("to short groupname added - skipping");
+    }
+};
+
+YAHOO.haloacl.getGroupsArray = function (panelid){
+    return YAHOO.haloacl.clickedArrayGroups[panelid];
+};
+
+YAHOO.haloacl.removeGroupFromGroupArray = function(panelid,name){
+    console.log("trying to remove "+name+" from "+panelid+"-array");
+    var elementToRemove = 0;
+    for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
+            elementToRemove = i;
+            console.log("found element");
+        }
+    }
+    YAHOO.haloacl.clickedArrayGroups[panelid].splice(elementToRemove,1);
+};
+YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
+    for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
+            return true;
+        }
+    }
+    return false;
+
+};

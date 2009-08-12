@@ -264,8 +264,12 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         this.checked = (state > 0);
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
         // this.tree.clickedHandler.add(this.groupId);
-        YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-
+        //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+        if(this.checked){
+            YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
+        }else{
+            YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
+        }
         // update usertable
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
@@ -441,7 +445,9 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
 
         // check checkbox if during this js-session it has been checked
         if(panelid){
-            if (YAHOO.haloacl.clickedArrayGroups[panelid][element.name]) tmpNode.check();
+            if (YAHOO.haloacl.isNameInGroupArray(panelid, element.name)){
+                tmpNode.check();
+            }
         }
     };
     YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);

@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains the class HACLGroup.
@@ -241,12 +241,85 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 // --------------------
 
 // ASSIGNED USERTABLE FROM JSARRAY
-YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
+YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
+    console.log("ROuserDataTableV2 called");
+    var groupstring = "";
+    var grouparray = YAHOO.haloacl.getGroupsArray(panelid);
+    grouparray.each(function(item){
+        if(groupstring == ""){
+            groupstring = item;
+        }else{
+            groupstring += ","+item;
+        }
+    });
+    console.log("retrieving user for following groups");
+    console.log(groupstring);
+    console.log("---");
+
+    var callback = function(data){
+        var result = new Array();
+        if(data != null){
+            var usersFromGroupsArray = YAHOO.lang.JSON.parse(data.responseText);
+
+            // also adding users from group-selection - so all members of a selected group will also be shown
+            usersFromGroupsArray.each(function(item){
+                var temp = new Array();
+                temp['name'] = item.name;
+                temp["groups"] = item.groups;
+                temp["deleteable"] = false;
+                result.push(temp);
+            });
+        }
+
+        // handling users form user-datatable on select and deselct tab
+        console.log("panelid"+panelid);
+        if(YAHOO.haloacl.clickedArrayUsers[panelid]){
+            YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
+                // lets see if this users already exists in the datatabel
+                var reallyAddUser = true;
+                result.each(function(el){
+                    if(el.name == item){
+                        reallyAddUser = false;
+                    }
+                });
+
+                if(reallyAddUser){
+                    var temp = new Array();
+                    temp['name'] = item;
+                    temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                    temp['deleteable'] = true;
+                    result.push(temp);
+                }
+                
+            });
+        };
+
+        return YAHOO.haloacl.ROuserDataTable(divid,panelid,result);
+    };
+
+
+    var action = "getUsersForGroups";
+    var querystring = "rs="+action+"&rsargs[]="+groupstring;
+
+    new Ajax.Request("?action=ajax",{
+        method:'post',
+        onSuccess:callback,
+        onFailure:callback,
+        parameters:querystring
+    });
+
+   
+};
+  
+YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' class='removebutton' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"');\">&nbsp;</a>";
-      
+        if(oRecord._oData.deleteable == true){
+            elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' class='removebutton' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"');\">&nbsp;</a>";
+        }else{
+            elLiner.innerHTML = "&nbsp;";
+        }
 
     };
 
@@ -294,7 +367,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
     },
     
     {
-        key:"",
+        key:"deleteable",
         label:"Remove",
         formatter:"mySelect"
     },
@@ -302,8 +375,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
     ];
 
     // datasource for this userdatatable
-    var convertedUserArray = YAHOO.haloacl.convertUserArrayToDataSource(panelid);
-    var myDataSource = new YAHOO.util.DataSource(convertedUserArray
+    var myDataSource = new YAHOO.util.DataSource(dataarray
         );
     myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
     // userdatatable configuration
@@ -311,7 +383,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid) {
         sortedBy : {
             key:"name",
             dir:YAHOO.widget.DataTable.CLASS_ASC
-        } 
+        }
     };
 
     // instanciating datatable
@@ -345,7 +417,7 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
     $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
         var name = $(item).readAttribute("name");
         //console.log("checking for name:"+name);
-        if(YAHOO.haloacl.clickedArrayGroups[panelid][name]){
+        if(YAHOO.haloacl.isNameInGroupArray(panelid,name)){
             $(item).addClassName("groupselected");
         }
     });
@@ -363,41 +435,16 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
         $(item).removeClassName("groupselected");
     });
 
+    
     $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
         var name = $(item).readAttribute("name");
         //console.log("checking for name:"+name);
-        if(YAHOO.haloacl.clickedArrayGroups[panelid][name]){
+        if(YAHOO.haloacl.isNameInGroupArray(panelid,name)){
             $(item).addClassName("groupselected");
         }
     });
+ 
 };
 
 
-YAHOO.haloacl.convertUserArrayToDataSource = function(panelid){
-    console.log("convertUserArrayToDataSource called");
-    console.log("panelid:"+panelid);
-    var result = new Array();
-    YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
-        console.log(item);
-        var temp = new Array();
-        temp['name'] = item;
-        temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
-        result.push(temp);
-    });
-    return result;
 
-};
-
-YAHOO.haloacl.removeUserFromUserArray = function(panelid,name){
-    var elementToRemove = 0;
-    for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
-        if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
-            elementToRemove = i;
-        }
-    }
-    YAHOO.haloacl.clickedArrayUsers[panelid].splice(elementToRemove,1);
-
-    var element = $(panelid+"assigned"+name);
-    element.parentNode.parentNode.parentNode.hide();
-    
-};
