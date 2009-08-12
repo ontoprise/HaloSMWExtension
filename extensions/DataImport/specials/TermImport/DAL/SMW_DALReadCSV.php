@@ -565,5 +565,9 @@ class DALReadCSV implements IDAL {
 		
 	}
 	
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy){
+		return true;
+	}
+	
 }	                            
 ?>

@@ -76,8 +76,7 @@ class TermImportBot extends GardeningBot {
 		//unlink($filename);
 
 		$result = $this->importTerms($settings);
-		//echo("\n".$result);
-
+		
 		$this->createTermImportResultContent($result, $termImportName);
 		
 		$timeInTitle = $this->getDateString();
@@ -147,13 +146,13 @@ class TermImportBot extends GardeningBot {
 		echo("\nGet Terms");
 
 		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
-
+		
 		echo("\nTerms in place");
 		
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
 		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 
-		$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy);
+		$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy, $wil);
 
 		echo "Bot finished!\n";
 		if ($result === true) {
@@ -173,13 +172,14 @@ class TermImportBot extends GardeningBot {
 	 * 		for the articles that will be created.
 	 * @param string $conflictPolicy
 	 * 		This XML string specifies, if existing articles will be overwritten.
+	 * @parameter IWil $wil
+	 * 		The wiki import layer object
 	 * @return mixed (boolean, string)
 	 * 		<true>, if all terms were successfully imported or an
 	 * 		error message, otherwise.
 	 *
 	 */
-	private function createArticles($terms, $mappingPolicy, $conflictPolicy) {
-
+	private function createArticles($terms, $mappingPolicy, $conflictPolicy, $wil) {
 		global $smwgDIIP;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 
@@ -240,6 +240,32 @@ class TermImportBot extends GardeningBot {
 		$nextElem = 0;
 		$noErrors = true;
 		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
+			//check if this is a callback term
+			if(@ array_key_exists('CALLBACK', $term['TERM'][0]['attributes'])){
+				$callBackResult = 
+					$wil->executeCallBack($term['TERM'][0]['attributes']['CALLBACK']
+					,$mp ,$cp);
+				$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+				$cBRParser = new XMLParser($callBackResult);
+				$cBRParser->parse();	
+				$nextId = 0;
+				$nextTitle = 0;
+				while ($logMsg = $cBRParser->getElement(array('logMessage', 'id'), $nextId)) {
+					$titleName = $cBRParser->getElement(
+						array('logMessage', 'title'), $nextTitle);
+					$log->addGardeningIssueAboutArticle(
+						$this->id, $logMsg['ID'][0]['value'], 
+						Title::newFromText($titleName['TITLE'][0]['value']));
+				}
+				$nextSuccess = 0;
+				$callBackSucces = $cBRParser->getElement(array('success'), $nextSuccess);
+				if($callBackSucces['SUCCESS'][0]['value'] == 'false'){
+					$noErrors = false;
+				}	
+				$this->worked(1);
+				continue;
+			}
+			
 			$caResult = $this->createArticle($term['TERM'][0]['value'], $mp, $cp);
 			$this->worked(1);
 
@@ -277,15 +303,15 @@ class TermImportBot extends GardeningBot {
 		}
 		if (!$title) {
 			$log->addGardeningIssueAboutArticle(
-			$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
-			Title::newFromText(wfMsg('smw_ti_import_error')));
+				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
+				Title::newFromText(wfMsg('smw_ti_import_error')));
 			return wfMsg('smw_ti_missing_articlename');
 		}
 		$title = strip_tags($title);
 		if ($title == '') {
 			$log->addGardeningIssueAboutArticle(
-			$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
-			Title::newFromText(wfMsg('smw_ti_import_error')));
+				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
+				Title::newFromText(wfMsg('smw_ti_import_error')));
 			return wfMsg('smw_ti_invalid_articlename', $title);
 		}
 
@@ -362,7 +388,7 @@ class TermImportBot extends GardeningBot {
 	 * 		contains the content of a mapping-element and the offset for the
 	 * 		next search operation.
 	 */
-	private function createContent(&$term, $mappingPolicy, $offset = 0,
+	public function createContent(&$term, $mappingPolicy, $offset = 0,
 			$useMapping = true, $level = 0) {
 
 		$result = '';
@@ -600,6 +626,7 @@ define('SMW_GARDISSUE_UPDATED_ARTICLE', (SMW_TERMIMPORT_BOT_BASE+1) * 100 + 2);
 define('SMW_GARDISSUE_MISSING_ARTICLE_NAME', (SMW_TERMIMPORT_BOT_BASE+2) * 100 + 3);
 define('SMW_GARDISSUE_CREATION_FAILED', (SMW_TERMIMPORT_BOT_BASE+3) * 100 + 4);
 define('SMW_GARDISSUE_UPDATE_SKIPPED', (SMW_TERMIMPORT_BOT_BASE+4) * 100 + 5);
+define('SMW_GARDISSUE_MAPPINGPOLICY_MISSING', (SMW_TERMIMPORT_BOT_BASE+5) * 100 + 6);
 
 class TermImportBotIssue extends GardeningIssue {
 
@@ -619,6 +646,8 @@ class TermImportBotIssue extends GardeningIssue {
 				return wfMsg('smw_ti_creation_failed', $text1);
 			case SMW_GARDISSUE_UPDATE_SKIPPED:
 				return wfMsg('smw_ti_articleNotUpdated', $text1);
+			case SMW_GARDISSUE_MAPPINGPOLICY_MISSING:
+				return wfMsg('smw_ti_mappingpolicy_missing', $text1);
 
 			default: return NULL;
 

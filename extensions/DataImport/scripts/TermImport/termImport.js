@@ -254,6 +254,9 @@ TermImportPage.prototype = {
 		tlID = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
 		dalID = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
 		
+		this.tlId = tlID;
+		this.dalId = dalID;
+		
 		if (this.pendingIndicatorImportset == null) {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}

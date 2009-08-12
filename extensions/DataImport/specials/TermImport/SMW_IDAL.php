@@ -129,6 +129,29 @@ interface IDAL {
 	 */
 	public function getProperties($dataSourceSpec, $importSet);
 	
+	
+	/**
+	 * Executes a callback function. Callback functions are executed by the term import bot
+	 * when it finds a term with the attribute "callback". This feature allows a DAL to 
+	 * actively participate in the term import process.
+	 * 
+	 * This method returns an XML structure that describes the result of
+	 * the method call. It contains a boolean value the describes the 
+	 * callback success together with zero or more log messages:
+	 * 
+	 * 	<CallBackResult xmlns="http://www.ontoprise.de/smwplus#">
+	 *		<success> true/false </success>
+	 *		<logMessage>log messages</logMessage>
+	 *	</CallBackResult>
+	 * 
+	 *  @parameter string the method signature i.e. "createFile('data.csv')"
+	 * @param string mappingPolicy
+	 * @parameter boolean conflictPolicy
+	 * @return string
+	 *
+	 */
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+	
 	/**
 	 * Returns a list of the names of all terms that match the input policy. 
 	 *

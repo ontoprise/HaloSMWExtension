@@ -79,6 +79,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_missing_articlename' => 'An article can not be created as the "articleName" is missing in the term\'s description.',
 	'smw_ti_invalid_articlename' => 'The article name "$1" is invalid.',
 	'smw_ti_articleNotUpdated' => 'The existing article "$1" was not overwritten with a new version.',
+	'smw_ti_mappingpolicy_missing' => 'The mapping policy "$1" does not exist.',
 	'smw_ti_creationComment' => 'This article was created/updated by the vocabulary import framework.',
 	'smw_ti_creationFailed' => 'The article "$1" could not be created or updated.',
 	'smw_ti_missing_mp' => 'The mapping policy is missing.',

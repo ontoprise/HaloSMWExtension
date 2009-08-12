@@ -88,6 +88,19 @@ interface ITL {
 	 * 
 	 */
 	public function getSourceSpecification();
+	
+	/**
+	 * This call is handed down to the corresponding method of the connected 
+	 * module in the DAL. See SMW_IDAL.php for further details.
+	 * 
+	 * @parameter string $signature
+	 * @param string mappingPolicy
+	 * @parameter boolean conflictPolicy
+	 * @return true or string if an error occured
+	 *
+	 */
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+	
      
 	/**
 	 * This call is handed down to the corresponding method of the connected 

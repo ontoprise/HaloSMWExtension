@@ -78,6 +78,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_missing_articlename' => 'Ein Artikel konnte nicht erzeugt werden, da der "articleName" in der Beschreibung des Begriffs fehlt.',
 	'smw_ti_invalid_articlename' => 'Der Artikelname "$1" ist ung&uuml;ltig.',
 	'smw_ti_articleNotUpdated' => 'Der existierende Artikel "$1" wurde nicht durch eine neue Version ersetzt.',
+	'smw_ti_mappingpolicy_missing' => 'Die Mapping Policy "$1" existiert nicht.',
 	'smw_ti_creationComment' => 'Dieser Artikel wurde vom Vokalbelimport-Framework erzeugt bzw. aktualisiert.',
 	'smw_ti_creationFailed'  => 'Der Artikel "$1" konnte nicht erzeugt bzw. aktualisiert werden.',
 	'smw_ti_missing_mp' => 'Die Mapping Policy fehlt.',

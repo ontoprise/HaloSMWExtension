@@ -128,6 +128,22 @@ class TLConnectLocal implements ITL {
 	}
 	
 	/**
+	 * Passes a callback function to the connected DAL
+	 *  
+	 * @param string $signature
+	 * @param string mappingPolicy
+	 * @parameter boolean conflictPolicy
+	 * @return true or string if an error occured
+	 *
+	 */
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy) {
+		if ($this->connectedDAL) {
+			return $this->connectedDAL->executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+		}
+		return false;
+	}
+	
+	/**
 	 * This call is handed down to the corresponding method of the connected 
 	 * module in the DAL. See SMW_IDAL.php for further details.
 	 * 

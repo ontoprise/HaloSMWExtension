@@ -208,6 +208,26 @@ class WIL implements IWIL {
 		return null;
 
 	}
+	
+/**
+	 * This call is handed down to the corresponding method of the connected
+	 * module in the TL. See SMW_ITL.php for further details.
+	 *
+	 * @param string $signature
+	 * @param string mappingPolicy
+	 * @string conflictPolicy
+	 * @return true or string if an error occured
+	 *
+	 */
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy) {
+		if ($this->connectedTL) {
+			return $this->connectedTL->executeCallBack($signature, 
+				$mappingPolicy, $conflictPolicy);
+		}
+		return false;
+
+	}
+	
 	 
 	/**
 	 * This call is handed down to the corresponding method of the connected

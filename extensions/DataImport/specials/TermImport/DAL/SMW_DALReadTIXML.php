@@ -495,7 +495,10 @@ class DALReadTIXML implements IDAL {
 			'</terms>'."\n";
 
 
-
+	}
+	
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy){
+		return true;
 	}
 
 }

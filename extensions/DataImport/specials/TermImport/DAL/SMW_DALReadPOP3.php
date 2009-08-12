@@ -55,6 +55,7 @@ class DALReadPOP3 implements IDAL {
 		' 	<UserName display="'."User name:".'" type="text"></UserName>'."\n".
 		' 	<Password display="'."Password:".'" type="text"></Password>'."\n".
 		'	<SSL display="'."Use SSL encryption:".'" type="checkbox"></SSL>'."\n".
+		'	<vCardMP display="'."vCard Mapping Policy:".'" type="text"></vCardMP>'."\n".
 			'</DataSource>'."\n";
 	}
 
@@ -99,8 +100,7 @@ class DALReadPOP3 implements IDAL {
 		$messages = imap_fetch_overview($connection,"1:{$check->Nmsgs}",0);
 		$result = "";
 		foreach($messages as $msg){
-			$result .= "<articleName>".
-			$msg->subject." ".$msg->date."</articleName>\n";
+			$result .= "<articleName>".$this->replaceAngledBrackets($msg->message_id)."</articleName>\n";
 		}
 		imap_close($connection);
 
@@ -121,13 +121,15 @@ class DALReadPOP3 implements IDAL {
 		}
 		$messages = imap_search($connection, 'ALL');
 
+		$vCardMP = $this->getVCardMPFromDataSource($dataSourceSpec);
+		
 		$result = "";
 		$properties = "";
 		if(is_array($messages)){
 			foreach($messages as $msg){
 				$result .= "<term>\n";
 				$result .= $this->getHeaderData($connection, $msg);
-				$result .= "\n".$this->getBody($connection, $msg);
+				$result .= "\n".$this->getBody($connection, $msg, $vCardMP);
 				$result .= "</term>\n";
 			}
 		}
@@ -141,11 +143,12 @@ class DALReadPOP3 implements IDAL {
 			'</terms>'."\n";
 	}
 	
-	private function getBody($connection, $msg){
+	private function getBody($connection, $msg, $vCardMP){
 		global $$smwgDIIP;
 		
 		$structure = imap_fetchstructure($connection, $msg);
 		$body = '';
+		$vCards = array();
 		$attachments = "";
 		if($structure->type == 0){ //this is a simple text message
 			$body = $this->decodeBodyPart(imap_body($connection, $msg), $structure->encoding);
@@ -156,9 +159,9 @@ class DALReadPOP3 implements IDAL {
 				if($part->type == 0){ //text
 					if($part->ifsubtype){
 						if(strtoupper($part->subtype) == "X-VCARD"){
-							$body .= "\n==== vCard ====\n";
-							$body .= $this->serialiseVCard($this->decodeBodyPart(
-								imap_fetchbody($connection, $msg, $partNr), $encoding));
+							$vCard = "<vcard>".$this->serialiseVCard($this->decodeBodyPart(
+								imap_fetchbody($connection, $msg, $partNr), $encoding))."</vcard>";
+							$vCards[] = $vCard;
 						} else {
 							$body .= "<pre>".$this->decodeBodyPart(
 								imap_fetchbody($connection, $msg, $partNr), $encoding)."</pre>";
@@ -209,7 +212,14 @@ class DALReadPOP3 implements IDAL {
 		if($attachments != ""){
 			$attachments .= "</attachments>";
 		}
-		return $attachments."\n<body>".htmlspecialchars($body)."</body>";
+		
+		$vCardTerms = "";
+		foreach($vCards as $vCard){
+			$vCardTerms .= "</term><term callback='handleVCardCallBack(\"".
+				htmlspecialchars($vCard)."\",\"".$vCardMP."\"'>";
+		}
+		
+		return $attachments."\n<body>".htmlspecialchars($body)."</body>".$vCardTerms;
 	}
 	
 	//todo: add method documentation
@@ -220,6 +230,23 @@ class DALReadPOP3 implements IDAL {
         	$bodyPart = base64_decode($bodyPart);
 		}
 		return $bodyPart;
+	}
+	
+	private function getVCardMPFromDataSource($dataSourceSpec){
+		if(strpos($dataSourceSpec, "XMLNS") > 0){
+			$dataSourceSpec = str_replace('XMLNS="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
+			$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
+			$vCardMP = $dataSourceSpec->xpath("//VCARDMP/text()");
+		} else {
+			$dataSourceSpec = str_replace('xmlns="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
+			$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
+			$vCardMP = $dataSourceSpec->xpath("//vCardMP/text()");
+		}
+		if($vCardMP){
+			return $vCardMP[0];
+		} else {
+			return "";
+		}
 	}
 
 	private function getConnection($dataSourceSpec){
@@ -246,9 +273,13 @@ class DALReadPOP3 implements IDAL {
 			}
 			
 			if($ssl){
-				$serverAddress = $serverAddress.":995/pop3/ssl}INBOX";				
+				if($ssl[0] == "true" || $ssl[0] == "on"){
+					$serverAddress .= ":995/pop3/ssl}INBOX";
+				} else {
+					$serverAddress .= ":110/pop3}INBOX";
+				} 
 			} else {
-				$serverAddress.":110/pop3}INBOX";
+				$serverAddress .= ":110/pop3}INBOX";
 			}
 			if($userName){
 				$userName = $userName[0];
@@ -260,7 +291,7 @@ class DALReadPOP3 implements IDAL {
 			} else {
 				$password = "";
 			}
-
+			
 			$this->connection = @ imap_open ("{".$serverAddress,
 				$userName, $password);
 			
@@ -395,6 +426,74 @@ class DALReadPOP3 implements IDAL {
 			}
 		}
 		return $result;
+	}
+	
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy){
+		return eval("return \$this->".$signature.",\$conflictPolicy);");
+	}
+	
+	private function handleVCardCallBack($vCard, $vCardMP, $conflictPolicy){
+		$success = true;
+		$logMsgs = array();
+		$vCard = new SimpleXMLElement(htmlspecialchars_decode($vCard));
+		
+		$title = "".$vCard->FN;
+		$title = Title::newFromText($title);
+		if($title == null){
+			return $this->createCallBackResult(false, 
+				array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME, 
+				'title' => wfMsg('smw_ti_import_error')));
+		}
+		
+		if($title->exists() && !$conflictPolicy){
+			return $this->createCallBackResult(false, 
+				array('id' => SMW_GARDISSUE_UPDATE_SKIPPED, 
+				'title' => $title));
+		}
+		
+		$article = new Article($title);
+		
+		$mappingPolicy = Title::newFromText($vCardMP);
+		if(!$mappingPolicy->exists()){
+			return $this->createCallBackResult(false, 
+				array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING, 
+				'title' => $mappingPolicy));
+		}
+		$mappingPolicy = new Article($mappingPolicy);
+		$mappingPolicy = $mappingPolicy->getContent();
+		
+		$term = array();
+		foreach($vCard->children() as $name => $value){
+			if(!array_key_exists("".$name, $term)){
+				$term["".$name] = array();
+			}
+			$term["".$name][] = array("value" => "".$value); 
+		}
+		
+		$tiBot = new TermImportBot();
+		$content = $tiBot->createContent($term, $mappingPolicy); 
+		
+		$created = $article->doEdit($content, wfMsg('smw_ti_creationComment'));
+		if(!$created){
+			return $this->createCallBackResult(false, 
+				array('id' => SMW_GARDISSUE_CREATION_FAILED, 
+				'title' => $title));
+		}
+		
+		return $this->createCallBackResult(true, array());
+	}
+	
+	private function createCallBackResult($success, $logMsgs){
+		$result = '<CallBackResult xmlns="http://www.ontoprise.de/smwplus#"><success>';
+		$result .= $success ? 'true' : 'false';
+		$result .= '</success>';
+	 	foreach($logMsgs as $logMsg){
+	 		$result .= '<logMessage><id>'.$logMsg['id']."</id>";
+	 		$result .= '<title>'.$logMsg['title']."</title></logMessage>";
+	 	}
+	 	$result .= '</CallBackResult>';
+	 	
+	 	return $result;
 	}
 }
 
