@@ -113,5 +113,6 @@ haclfInitNamespaces();
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');
 require_once('HACL_AjaxConnector.php');
+require_once('HACL_helpPopup.php');
 
 

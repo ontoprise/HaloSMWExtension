@@ -190,6 +190,7 @@ function haclAddHTMLHeader(&$out) {
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/paginator/paginator-min.js"></script>');
     
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>');
     // -------------------
     // -------------------
 
