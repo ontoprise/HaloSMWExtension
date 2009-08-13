@@ -219,10 +219,10 @@ class WIL implements IWIL {
 	 * @return true or string if an error occured
 	 *
 	 */
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy) {
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName) {
 		if ($this->connectedTL) {
 			return $this->connectedTL->executeCallBack($signature, 
-				$mappingPolicy, $conflictPolicy);
+				$mappingPolicy, $conflictPolicy, $termImportName);
 		}
 		return false;
 

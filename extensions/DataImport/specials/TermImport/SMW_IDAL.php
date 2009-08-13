@@ -150,7 +150,7 @@ interface IDAL {
 	 * @return string
 	 *
 	 */
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName);
 	
 	/**
 	 * Returns a list of the names of all terms that match the input policy. 

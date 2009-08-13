@@ -280,6 +280,6 @@ interface IWIL {
 	 * @return true or string if an error occured
 	 *
 	 */
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName);
 }	                            
 ?>

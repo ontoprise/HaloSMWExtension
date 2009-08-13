@@ -70,7 +70,7 @@ class DALReadPOP3 implements IDAL {
 		$result = "";
 
 		//removed: bc, reply_to, sender, return_path
-		$properties = array('articleName', 'from', 'to', 'cc', 'date', 'subject', 
+		$properties = array('articleName', 'from', 'to', 'cc', 'date', 'subject',
 			'followup_to', 'references', 'message_id', 'body', 'attachments');
 		foreach ($properties as $prop) {
 			$properties .=
@@ -91,8 +91,8 @@ class DALReadPOP3 implements IDAL {
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
 			return DAL_POP3_RET_ERR_START.
-		           wfMsg('smw_ti_pop3error').
-		           DAL_POP3_RET_ERR_END;
+			wfMsg('smw_ti_pop3error').
+			DAL_POP3_RET_ERR_END;
 		}
 
 		$check = imap_check($connection);
@@ -116,20 +116,20 @@ class DALReadPOP3 implements IDAL {
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
 			return DAL_POP3_RET_ERR_START.
-		           wfMsg('smw_ti_pop3error').
-		           DAL_POP3_RET_ERR_END;
+			wfMsg('smw_ti_pop3error').
+			DAL_POP3_RET_ERR_END;
 		}
 		$messages = imap_search($connection, 'ALL');
 
 		$vCardMP = $this->getVCardMPFromDataSource($dataSourceSpec);
-		
+
 		$result = "";
 		$properties = "";
 		if(is_array($messages)){
 			foreach($messages as $msg){
-				$result .= "<term>\n";
-				$result .= $this->getHeaderData($connection, $msg);
-				$result .= "\n".$this->getBody($connection, $msg, $vCardMP);
+				//$result .= "<term>\n";
+				$result = $this->getBody($connection, $msg, $vCardMP);
+				$result .= "\n".$this->getHeaderData($connection, $msg);
 				$result .= "</term>\n";
 			}
 		}
@@ -139,13 +139,13 @@ class DALReadPOP3 implements IDAL {
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$result.
+		$result.
 			'</terms>'."\n";
 	}
-	
+
 	private function getBody($connection, $msg, $vCardMP){
 		global $$smwgDIIP;
-		
+
 		$structure = imap_fetchstructure($connection, $msg);
 		$body = '';
 		$vCards = array();
@@ -159,52 +159,58 @@ class DALReadPOP3 implements IDAL {
 				if($part->type == 0){ //text
 					if($part->ifsubtype){
 						if(strtoupper($part->subtype) == "X-VCARD"){
-							$vCard = "<vcard>".$this->serialiseVCard($this->decodeBodyPart(
-								imap_fetchbody($connection, $msg, $partNr), $encoding))."</vcard>";
-							$vCards[] = $vCard;
+							$vCardString = $this->serialiseVCard($this->decodeBodyPart(
+							imap_fetchbody($connection, $msg, $partNr), $encoding));
+							$vCardString = "<vcard>".$vCardString."</vcard>";
+							$vCardXML = new SimpleXMLElement(trim($vCardString));
+							$fn = $vCardXML->xpath("//FN/text()");
+							$fn = "".$fn[0];
+							if($fn != ""){
+								$vCards[$fn] = $vCardString;
+							}
 						} else {
 							$body .= "<pre>".$this->decodeBodyPart(
-								imap_fetchbody($connection, $msg, $partNr), $encoding)."</pre>";
+							imap_fetchbody($connection, $msg, $partNr), $encoding)."</pre>";
 						}
 					} else { //text message without subtype
 						$body .= "<pre>".$this->decodeBodyPart(
-								imap_fetchbody($connection, $msg, $partNr), $encoding)."</pre>";
+						imap_fetchbody($connection, $msg, $partNr), $encoding)."</pre>";
 					}
 				} else { // not a text
 					$bodyStruct = imap_bodystruct($connection, $msg, $partNr);
 					$params = array();
 					if ($bodyStruct->ifparameters){
-        				foreach ($bodyStruct->parameters as $p){
-            				$params[ strtolower( $p->attribute ) ] = $p->value;
-        				}
-					}
-            		if ($bodyStruct->ifdparameters){
-        				foreach ($bodyStruct->dparameters as $p){
-            				$params[ strtolower( $p->attribute ) ] = $p->value;
+						foreach ($bodyStruct->parameters as $p){
+							$params[ strtolower( $p->attribute ) ] = $p->value;
 						}
-            		}
-            		
-            		//todo:deal with invalid filenames
-            		$fileName = ($params['filename'])? $params['filename'] : $params['name'];
-            		$fileFullPath = $smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName; 
-            		$file = fopen($fileFullPath, 'a');
+					}
+					if ($bodyStruct->ifdparameters){
+						foreach ($bodyStruct->dparameters as $p){
+							$params[ strtolower( $p->attribute ) ] = $p->value;
+						}
+					}
+
+					//todo:deal with invalid filenames
+					$fileName = ($params['filename'])? $params['filename'] : $params['name'];
+					$fileFullPath = $smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
+					$file = fopen($fileFullPath, 'a');
 					fwrite($file, $this->decodeBodyPart(
-						imap_fetchbody($connection, $msg, $partNr), $encoding));
+					imap_fetchbody($connection, $msg, $partNr), $encoding));
 					fclose($file);
-					
+						
 					$fileNameArray = split("\.", $fileName);
-    				$ext = $fileNameArray[count($fileNameArray)-1];
-					
-    				$mFileProps = File::getPropsFromPath($fileFullPath, $ext );
+					$ext = $fileNameArray[count($fileNameArray)-1];
+						
+					$mFileProps = File::getPropsFromPath($fileFullPath, $ext );
 					$local = wfLocalFile($fileName);
-    				$status = $local->upload($fileFullPath, 'Mail Attachment','Mail Attachment', File::DELETE_SOURCE, $mFileProps );
-    				
-    				if($attachments != ""){
-    					$attachments .= ",";
-    				} else {
-    					$attachments .= "\n<attachments>";
-    				}
-    				$attachments .= $fileName;
+					$status = $local->upload($fileFullPath, 'Mail Attachment','Mail Attachment', File::DELETE_SOURCE, $mFileProps );
+
+					if($attachments != ""){
+						$attachments .= ",";
+					} else {
+						$attachments .= "\n<attachments>";
+					}
+					$attachments .= $fileName;
 				}
 				$partNr ++;
 			}
@@ -212,26 +218,38 @@ class DALReadPOP3 implements IDAL {
 		if($attachments != ""){
 			$attachments .= "</attachments>";
 		}
-		
+
 		$vCardTerms = "";
-		foreach($vCards as $vCard){
-			$vCardTerms .= "</term><term callback='handleVCardCallBack(\"".
-				htmlspecialchars($vCard)."\",\"".$vCardMP."\"'>";
+		$firstVCard = true;
+		$vCardFNs = "";
+		foreach($vCards as $fn => $vCard){
+			if($firstVCard){
+				$vCardFNs = "<vcards>".$fn;
+			} else {
+				$vCardFNs = ",".$fn;
+			}
+				
+			$vCardTerms .= "<term callback='handleVCardCallBack(\"".
+			htmlspecialchars($vCard)."\",\"".$vCardMP."\"'></term>";
 		}
-		
-		return $attachments."\n<body>".htmlspecialchars($body)."</body>".$vCardTerms;
+		if($vCardFNs != ""){
+			$vCardFNs .= "</vcards>";
+		}
+
+		return $vCardTerms."<term>".$attachments.$vCardFNs.
+			"\n<body>".htmlspecialchars($body)."</body>";
 	}
-	
+
 	//todo: add method documentation
 	private function decodeBodyPart($bodyPart, $encoding){
 		if ($encoding == 4){
-        	$bodyPart = quoted_printable_decode($bodyPart);
+			$bodyPart = quoted_printable_decode($bodyPart);
 		}else if ($encoding == 3){
-        	$bodyPart = base64_decode($bodyPart);
+			$bodyPart = base64_decode($bodyPart);
 		}
 		return $bodyPart;
 	}
-	
+
 	private function getVCardMPFromDataSource($dataSourceSpec){
 		if(strpos($dataSourceSpec, "XMLNS") > 0){
 			$dataSourceSpec = str_replace('XMLNS="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
@@ -271,13 +289,13 @@ class DALReadPOP3 implements IDAL {
 			} else {
 				$serverAddress = "";
 			}
-			
+				
 			if($ssl){
 				if($ssl[0] == "true" || $ssl[0] == "on"){
 					$serverAddress .= ":995/pop3/ssl}INBOX";
 				} else {
 					$serverAddress .= ":110/pop3}INBOX";
-				} 
+				}
 			} else {
 				$serverAddress .= ":110/pop3}INBOX";
 			}
@@ -291,11 +309,11 @@ class DALReadPOP3 implements IDAL {
 			} else {
 				$password = "";
 			}
-			
+				
 			$this->connection = @ imap_open ("{".$serverAddress,
-				$userName, $password);
-			
-			$check = @imap_check($this->connection); 	
+			$userName, $password);
+				
+			$check = @imap_check($this->connection);
 			if(!$check){
 				return false;
 			}
@@ -307,11 +325,11 @@ class DALReadPOP3 implements IDAL {
 		$result = "";
 
 		$header = imap_header($mbox, $msgNumber);
-		
+
 		//todo: choose better article name
 		$result .= "<articleName>".
-			$this->replaceAngledBrackets($header->message_id)."</articleName>\n";
-		
+		$this->replaceAngledBrackets($header->message_id)."</articleName>\n";
+
 		//removed: bc, reply_to, sender, return_path
 		$addressTypes = array('from', 'to', 'cc');
 		foreach($addressTypes as $type){
@@ -360,20 +378,20 @@ class DALReadPOP3 implements IDAL {
 
 		if(key_exists('references', $header)){
 			$result .= "\n<references>".htmlspecialchars($this->replaceAngledBrackets($header->references))."</references>";
-		} 
-		
+		}
+
 		if(key_exists('message_id', $header)){
 			$result .= "\n<message_id>".htmlspecialchars($this->replaceAngledBrackets($header->message_id))."</message_id>";
 		}
 		return $result;
 	}
-	
+
 	private function replaceAngledBrackets($inputString){
 		$inputString = str_replace("<", "", $inputString);
 		$inputString = str_replace(">", "", $inputString);
 		return $inputString;
 	}
-	
+
 	private function formatDate($dateString){
 		$date = strtotime($dateString);
 		$date = getdate($date);
@@ -386,7 +404,7 @@ class DALReadPOP3 implements IDAL {
 		$dateString = $date["year"]."/".$mon."/".$mday." ".$hours.":".$minutes.":".$seconds;
 		return $dateString;
 	}
-	
+
 	private function serialiseVCard($vCardString){
 		require_once('SMW_VCardParser.php');
 		$result = "";
@@ -397,7 +415,7 @@ class DALReadPOP3 implements IDAL {
 		//todo: add further attributes?
 		$attributes = array(
 			'FN', 'TITLE', 'ORG', 'TEL', 'EMAIL', 'URL', 'ADR', 'BDAY', 'NOTE');
-		
+
 		foreach ($attributes as $attribute) {
 			$values = $vCardParser->getProperties($attribute);
 			if ($values) {
@@ -409,91 +427,109 @@ class DALReadPOP3 implements IDAL {
 					}
 					$first = false;
 					$components = $value->getComponents();
-    				$lines = array();
-    				foreach ($components as $component) {
-    					if ($component) {
-        					$lines[] = $component;
+					$lines = array();
+					foreach ($components as $component) {
+						if ($component) {
+							$lines[] = $component;
 						}
 					}
 					$result .= join(",", $lines);
-	    			$types = $value->params['TYPE'];
-    				if ($types) {
-        				$type = join(", ", $types);
-        				$result .= " (" . ucwords(strtolower($type)) . ")";
-    				}
+					$types = $value->params['TYPE'];
+					if ($types) {
+						$type = join(", ", $types);
+						$result .= " (" . ucwords(strtolower($type)) . ")";
+					}
 				}
 				$result .= "</".$attribute.">";
 			}
 		}
 		return $result;
 	}
-	
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy){
-		return eval("return \$this->".$signature.",\$conflictPolicy);");
+
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
+		return eval("return \$this->".$signature.",\$conflictPolicy, \$termImportName);");
 	}
-	
-	private function handleVCardCallBack($vCard, $vCardMP, $conflictPolicy){
+
+	private function handleVCardCallBack($vCard, $vCardMP, $conflictPolicy, $termImportName){
 		$success = true;
 		$logMsgs = array();
+		$tiBot = new TermImportBot();
 		$vCard = new SimpleXMLElement(htmlspecialchars_decode($vCard));
-		
+
 		$title = "".$vCard->FN;
 		$title = Title::newFromText($title);
 		if($title == null){
-			return $this->createCallBackResult(false, 
-				array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME, 
+			return $this->createCallBackResult(false,
+			array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME,
 				'title' => wfMsg('smw_ti_import_error')));
 		}
 		
+		$termAnnotations = $tiBot->getExistingTermAnnotations($title);
+
 		if($title->exists() && !$conflictPolicy){
-			return $this->createCallBackResult(false, 
-				array('id' => SMW_GARDISSUE_UPDATE_SKIPPED, 
-				'title' => $title));
+			$termAnnotations['ignored'][] = $termImportName;
+			$termAnnotations = "\n\n\n"
+				.$tiBot->createTermAnnotations($termAnnotations);
+			$article = new Article($title);
+			$article->doEdit(
+				$article->getContent().$termAnnotations, wfMsg('smw_ti_creationComment'));
+			
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
+				'title' => $title)));
+		} else if(!$conflictPolicy){
+			$termAnnotations['updated'][] = $termImportName;
+		} else {
+			$termAnnotations['added'][] = $termImportName;
 		}
 		
-		$article = new Article($title);
 		
+
+		$article = new Article($title);
+
 		$mappingPolicy = Title::newFromText($vCardMP);
 		if(!$mappingPolicy->exists()){
-			return $this->createCallBackResult(false, 
-				array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING, 
+			return $this->createCallBackResult(false,
+			array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
 				'title' => $mappingPolicy));
 		}
 		$mappingPolicy = new Article($mappingPolicy);
 		$mappingPolicy = $mappingPolicy->getContent();
-		
+
 		$term = array();
 		foreach($vCard->children() as $name => $value){
 			if(!array_key_exists("".$name, $term)){
 				$term["".$name] = array();
 			}
-			$term["".$name][] = array("value" => "".$value); 
+			$term["".$name][] = array("value" => "".$value);
 		}
-		
-		$tiBot = new TermImportBot();
-		$content = $tiBot->createContent($term, $mappingPolicy); 
-		
-		$created = $article->doEdit($content, wfMsg('smw_ti_creationComment'));
+
+		$content = $tiBot->createContent($term, $mappingPolicy);
+
+		$termAnnotations = "\n\n\n"
+			.$tiBot->createTermAnnotations($termAnnotations);
+		$created = $article->doEdit(
+			$content.$termAnnotations, wfMsg('smw_ti_creationComment'));
 		if(!$created){
-			return $this->createCallBackResult(false, 
-				array('id' => SMW_GARDISSUE_CREATION_FAILED, 
+			return $this->createCallBackResult(false,
+			array('id' => SMW_GARDISSUE_CREATION_FAILED,
 				'title' => $title));
 		}
-		
+
 		return $this->createCallBackResult(true, array());
 	}
-	
+
 	private function createCallBackResult($success, $logMsgs){
 		$result = '<CallBackResult xmlns="http://www.ontoprise.de/smwplus#"><success>';
 		$result .= $success ? 'true' : 'false';
 		$result .= '</success>';
-	 	foreach($logMsgs as $logMsg){
-	 		$result .= '<logMessage><id>'.$logMsg['id']."</id>";
-	 		$result .= '<title>'.$logMsg['title']."</title></logMessage>";
-	 	}
-	 	$result .= '</CallBackResult>';
-	 	
-	 	return $result;
+		foreach($logMsgs as $logMsg){
+			$result .= '<logMessage><id>'.$logMsg['id']."</id>";
+			$result .= '<title>'.$logMsg['title']."</title></logMessage>";
+		}
+		$result .= '</CallBackResult>';
+		 
+		return $result;
 	}
 }
 

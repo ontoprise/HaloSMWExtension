@@ -136,9 +136,9 @@ class TLConnectLocal implements ITL {
 	 * @return true or string if an error occured
 	 *
 	 */
-	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy) {
+	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName) {
 		if ($this->connectedDAL) {
-			return $this->connectedDAL->executeCallBack($signature, $mappingPolicy, $conflictPolicy);
+			return $this->connectedDAL->executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName);
 		}
 		return false;
 	}
