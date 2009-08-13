@@ -151,11 +151,14 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
             myDataTable.query = '';
         }
 
+        var filter = $('datatable_filter_'+myDataTable.panelid).value;
+        
         return "rs=getUsersForUserTable&rsargs[]="
         +myDataTable.query+"&rsargs[]="+sort
         +"&rsargs[]="+dir
         +"&rsargs[]="+startIndex
-        +"&rsargs[]="+results;
+        +"&rsargs[]="+results
+        +"&rsargs[]="+filter;
 
 
     };
@@ -177,23 +180,44 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     };
 
-    var getPaginator = function(){
-        var temp = new YAHOO.widget.Paginator({
-            rowsPerPage:25,
-            containers:'datatablepaging_'+divid
-        }); 
-        return temp;
-    }
+
+    var handlePagination = function(state){
+        console.log(state);
+        // TODO!!!
+        var divid = "right_tabview_create_acl_right_0";
+
+        console.log("changeRequest fired");
+        var displaying = state.totalRecords - state.recordOffset;
+        if(displaying > state.rowsPerPage){
+            displaying = state.rowsPerPage
+        };
+        var to = displaying*1 + state.recordOffset*1;
+        var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
+        
+        var html = from + " to " + to   + " from " +state.totalRecords;
+        $('datatablepaging_count_'+divid).innerHTML = html;
+        console.log($('datatablepaging_count_'+divid));
+    };
+
+
+    var myPaginator = new YAHOO.widget.Paginator({
+        rowsPerPage:5,
+        containers:'datatablepaging_'+divid
+    });
+
+    myPaginator.subscribe("changeRequest",handlePagination);
+
+  
 
     // userdatatable configuration
     var myConfigs = {
-        initialRequest: "rs=getUsersForUserTable&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
+        initialRequest: "rs=getUsersForUserTable&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
             key:"id",
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
-        paginator: getPaginator(),
+        paginator: myPaginator,
         generateRequest:customRequestBuilder
     };
 
@@ -210,9 +234,17 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     myDataTable.panelid = panelid;
 
     myDataTable.subscribe("postRenderEvent",function(){
+        handlePagination(myPaginator.getState());
+    });
+    
+    myDataTable.subscribe("postRenderEvent",function(){
         setupCheckboxHandling();
+    });
+
+    myDataTable.subscribe("postRenderEvent",function(){
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
     });
+
 
 
 
@@ -221,7 +253,9 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
-        myDataTable.query = query;
+        if(!query == ""){
+            myDataTable.query = query;
+        }
         var oCallback = {
             success : myDataTable.onDataReturnInitializeTable,
             failure : myDataTable.onDataReturnInitializeTable,
@@ -230,6 +264,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         };
         myDataSource.sendRequest(customRequestBuilder(myDataTable.getState(),null), oCallback);
     }
+
 
     // setting up clickevent-handling
     return myDataTable;

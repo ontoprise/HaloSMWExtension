@@ -560,30 +560,36 @@ function getRightsPanel($panelid, $predefine) {
                         </div>
                         <div class="haloacl_panel_rights">
                             <form name="formRights_$panelid">
-                            <div class="right_fullaccess"><input id = "checkbox_right_fullaccess" type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="checkAllRights$panelid()"/>&nbsp;Full access</div>
-                            <div class="right_read"><input id = "checkbox_right_read" type="checkbox" class="right_rights_$panelid" name="read"/>&nbsp;Read</div>
-                            <div class="right_edit"><input id = "checkbox_right_edit" type="checkbox" class="right_rights_$panelid" name="edit"/>&nbsp;Edit</div>
-                            <div class="right_editfromform"><input id = "checkbox_right_editfromform" type="checkbox" class="right_rights_$panelid" name="editfromform"/>&nbsp;Edit from form</div>
-                            <div class="right_wysiwyg"><input id = "checkbox_right_wysiwyg" type="checkbox" class="right_rights_$panelid" name="wysiwyg"/>&nbsp;WYSIWYG</div>
-                            <div class="right_create"><input id = "checkbox_right_create" type="checkbox" class="right_rights_$panelid" name="create"/>&nbsp;Create</div>
-                            <div class="right_move"><input id = "checkbox_right_move" type="checkbox" class="right_rights_$panelid" name="move"/>&nbsp;Move</div>
-                            <div class="right_delete"><input id = "checkbox_right_delete" type="checkbox" class="right_rights_$panelid" name="delete"/>&nbsp;Delete</div>
-                            <div class="right_annotate"><input id = "checkbox_right_annotate" type="checkbox" class="right_rights_$panelid" name="annotate"/>&nbsp;Annotate</div>
+                            <div class="right_fullaccess"><input id = "checkbox_right_fullaccess" actioncode="255" type="checkbox" class="right_rights_$panelid" name="fullaccess" onChange="updateRights$panelid(this)"/>&nbsp;Full access</div>
+                            <div class="right_read"><input id = "checkbox_right_read" type="checkbox" actioncode="128" actioncode="128" class="right_rights_$panelid" name="read" onChange="updateRights$panelid(this)"/>&nbsp;Read</div>
+                            <div class="right_edit"><input id = "checkbox_right_edit" type="checkbox" actioncode="8" class="right_rights_$panelid" name="edit" onChange="updateRights$panelid(this)"/>&nbsp;Edit</div>
+                            <div class="right_editfromform"><input id = "checkbox_right_editfromform" actioncode="64" type="checkbox" class="right_rights_$panelid" name="editfromform" onChange="updateRights$panelid(this)"/>&nbsp;Edit from form</div>
+                            <div class="right_wysiwyg"><input id = "checkbox_right_wysiwyg" type="checkbox" actioncode="32" class="right_rights_$panelid" name="wysiwyg" onChange="updateRights$panelid(this)"/>&nbsp;WYSIWYG</div>
+                            <div class="right_create"><input id = "checkbox_right_create" type="checkbox" actioncode="4" class="right_rights_$panelid" name="create" onChange="updateRights$panelid(this)"/>&nbsp;Create</div>
+                            <div class="right_move"><input id = "checkbox_right_move" type="checkbox" actioncode="2" class="right_rights_$panelid" name="move" onChange="updateRights$panelid(this)"/>&nbsp;Move</div>
+                            <div class="right_delete"><input id = "checkbox_right_delete" type="checkbox" actioncode="1" class="right_rights_$panelid" name="delete" onChange="updateRights$panelid(this)"/>&nbsp;Delete</div>
+                            <div class="right_annotate"><input id = "checkbox_right_annotate" type="checkbox" actioncode="16" class="right_rights_$panelid" name="annotate" onChange="updateRights$panelid(this)"/>&nbsp;Annotate</div>
                             </form>
                         </div>
                     </div>
                     <script type="javascript>
                         // tickbox handling
-                        checkAllRights$panelid = function() {
-                            if (document.formRights_$panelid.fullaccess.checked) tempRight = true; else tempRight = false;
-                            document.formRights_$panelid.read.checked = tempRight;
-                            document.formRights_$panelid.edit.checked = tempRight;
-                            document.formRights_$panelid.editfromform.checked = tempRight;
-                            document.formRights_$panelid.wysiwyg.checked = tempRight;
-                            document.formRights_$panelid.create.checked = tempRight;
-                            document.formRights_$panelid.move.checked = tempRight;
-                            document.formRights_$panelid.delete.checked = tempRight;
-                            document.formRights_$panelid.annotate.checked = tempRight;
+                        updateRights$panelid = function(element) {
+                            element = $(element.id);
+                            $$('.right_rights_$panelid').each(function(item){
+                                if(item.name != element.name)
+                                    item.checked = false;
+                            });
+
+                            if(element.checked){
+                                var actioncode = 1*$(element).readAttribute("actioncode");
+                                $$('.right_rights_$panelid').each(function(item){
+                                    var elementactioncode = $(item).readAttribute("actioncode")*1;
+                                    if(elementactioncode <= actioncode){
+                                        item.checked = true;
+                                    }
+                                });
+                            }
                         }
                     </script>
 
@@ -992,7 +998,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
                 </div>
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_treeview_userlink">
-                    Users
+                    <a href="javascript:YAHOO.haloacl.datatableInstance$panelid.executeQuery('all');">Users</a>
                 </div>
             </div>
             <!-- end of left part -->
@@ -1002,14 +1008,14 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
             <div class="haloacl_rightpanel_selecttab_rightpart">
                 <div class="haloacl_rightpanel_selecttab_rightpart_filter">
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
-                        Users
+                        Users <span id="datatablepaging_count_$panelid"></span>
                     </span>
                 </div>
                 <div class="haloacl_rightpanel_selecttab_rightpart_filter">
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
                         Filter:
                     </span>
-                    <input type="text" />
+                    <input id="datatable_filter_$panelid" type="text" />
                 </div>
                 <div id="datatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
                 <div id="datatablepaging_datatableDiv_$panelid"></div>
@@ -1035,7 +1041,11 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
     }
     //filter event
     YAHOO.util.Event.addListener("filterSelectGroup_$panelid", "keyup", refilter);
-
+    YAHOO.util.Event.addListener("datatable_filter_$panelid", "keyup", function(){
+        console.log("filterevent fired");
+        YAHOO.haloacl.datatableInstance$panelid.executeQuery('');
+    });
+    console.log("datatable_filter_$panelid");
     
 
     handleDatatableClick = function(item){
@@ -1497,21 +1507,21 @@ function saveWhitelist($whitelistXml) {
  * @param <Int>     total results (paging)
  * @return <JSON>   return array of users
  */
-function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
+function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
 
     global $wgUser;
     global $wgTitle;
     $a = array();
-    $a['recordsReturned'] = 2;
-    $a['totalrecords'] = 10;
-    $a['startIndex'] = 0;
-    $a['sort'] = null;
-    $a['dir'] = "asc";
-    $a['pagesize'] = 2;
+    $a['recordsReturned'] = 5;
+    #$a['totalrecords'] = 0;
+    $a['startIndex'] = $startIndex;
+    $a['sort'] = $sort;
+    $a['dir'] = $dir;
+    $a['pageSize'] = 5;
 
     $tmpstring = "";
 
-    if ($selectedGroup == 'test') {
+    if ($selectedGroup == 'all' || $selectedGroup == '') {
 
         $db =& wfGetDB( DB_SLAVE );
         $gt = $db->tableName('user');
@@ -1547,6 +1557,23 @@ function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results) {
         }
     }
 
+    // doing filtering php-based
+    if($filter !="" && $filter != null) {
+        $filteredResults = array();
+        $pattern = "/".$filter."/is";
+        foreach($a['records'] as $record) {
+            if(preg_match($pattern, $record["name"])) {
+                $filteredResults[] = $record;
+            }
+        }
+        $a['records'] = $filteredResults;
+    }
+    #print_r($a['records']);
+
+    // generating paging-stuff
+    $a['totalRecords'] = sizeof($a['records']);
+    $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
+    $a['recordsReturned'] = sizeof($a['records']);
 
     return(json_encode($a));
 
