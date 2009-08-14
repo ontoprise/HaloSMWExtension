@@ -31,6 +31,7 @@ class USSpecialPage extends SpecialPage {
 	public function execute() {
 		global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits, $wgUSPathSearch;
 		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
+		$restrict = $wgRequest->getText( 'restrict', '' );
 		$t = Title::newFromText( $search );
 
 		$fulltext = $wgRequest->getVal( 'fulltext', '' );
@@ -72,8 +73,9 @@ class USSpecialPage extends SpecialPage {
 			// initialize when searchstring is empty
 			$searchResults = array();
 			$searchSet = NULL;
-
 		}
+			 
+          
 
 		$numOfResults = count($searchResults);
 
@@ -137,13 +139,13 @@ class USSpecialPage extends SpecialPage {
 		// -- refine links --
 		$tolerance = $wgRequest->getVal('tolerance');
 		$tolerance = $tolerance == NULL ? 0 : $tolerance;
-		$noRefineURL = $searchPage->getFullURL("search=$search&fulltext=true&tolerance=$tolerance&paths=$doPathSearch");
+		$noRefineURL = $searchPage->getFullURL("search=".urlencode($search)."&fulltext=true&tolerance=$tolerance&paths=$doPathSearch");
 
 		// create refine links
 		global $usgAllNamespaces;
 		$namespaceFilterURLs = array();
 		foreach($usgAllNamespaces as $ns => $img) {
-			$namespaceFilterURLs[] = $searchPage->getFullURL("search=$search&fulltext=true&restrict=$ns&tolerance=$tolerance&paths=$doPathSearch");
+			$namespaceFilterURLs[] = $searchPage->getFullURL("search=".urlencode($search)."&fulltext=true&restrict=$ns&tolerance=$tolerance&paths=$doPathSearch");
 		}
 
 		// create refine links table
@@ -188,13 +190,13 @@ class USSpecialPage extends SpecialPage {
 		$totalHits = $searchSet != NULL ?  $searchSet->getTotalHits() : 0;
 
 		// -- browsing --
-		$next = $this->createBrowsingLink($search, $offset + $limit, $limit, wfMsg('us_browse_next'));
-		$previous = $this->createBrowsingLink($search,$offset - $limit, $limit, wfMsg('us_browse_prev'));
-		$limit20 = $this->createLimitLink($search,$offset,  20, $limit );
-		$limit50 = $this->createLimitLink($search,$offset,  50, $limit);
-		$limit100 = $this->createLimitLink($search,$offset,  100, $limit);
-		$limit250 = $this->createLimitLink($search,$offset, 250, $limit);
-		$limit500 = $this->createLimitLink($search,$offset, 500, $limit);
+		$next = $this->createBrowsingLink($search, $restrict, $offset + $limit, $limit, wfMsg('us_browse_next'));
+		$previous = $this->createBrowsingLink($search,$restrict,$offset - $limit, $limit, wfMsg('us_browse_prev'));
+		$limit20 = $this->createLimitLink($search,$restrict,$offset,  20, $limit );
+		$limit50 = $this->createLimitLink($search,$restrict,$offset,  50, $limit);
+		$limit100 = $this->createLimitLink($search,$restrict,$offset,  100, $limit);
+		$limit250 = $this->createLimitLink($search,$restrict,$offset, 250, $limit);
+		$limit500 = $this->createLimitLink($search,$restrict,$offset, 500, $limit);
 
 		$nextButton =  (count($searchResults) < $limit) ? wfMsg('us_browse_next') : $next;
 		$prevButton = ($offset == 0) ? wfMsg('us_browse_prev') : $previous;
@@ -298,19 +300,22 @@ class USSpecialPage extends SpecialPage {
 		return $exp_ns === $act_ns;
 	}
 
-	private function createBrowsingLink($search, $offset, $limit, $text="") {
+	private function createBrowsingLink($search, $restrict, $offset, $limit, $text="") {
 		$searchPage = SpecialPage::getTitleFor("Search");
-		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$text." ".$limit.'</a>';
+		
+		$restrict =  empty($restrict) && $restrict !== '0' ? "" : "&restrict=$restrict";
+		return '<a href="'.$searchPage->getFullURL("search=$search$restrict&fulltext=true&limit=$limit&offset=$offset").'">'.$text." ".$limit.'</a>';
 	}
 
-	private function createLimitLink($search, $offset, $limit, $currentLimit) {
+	private function createLimitLink($search, $restrict, $offset, $limit, $currentLimit) {
 		$searchPage = SpecialPage::getTitleFor("Search");
 		$label = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
-		return '<a href="'.$searchPage->getFullURL("search=$search&fulltext=true&limit=$limit&offset=$offset").'">'.$label.'</a>';
+		$restrict = empty($restrict) && $restrict !== '0' ? "" : "&restrict=$restrict";
+		return '<a href="'.$searchPage->getFullURL("search=$search$restrict&fulltext=true&limit=$limit&offset=$offset").'">'.$label.'</a>';
 	}
 
 	private function doSearch($limit, $offset) {
-		global $wgRequest, $usgAllNamespaces;
+		global $wgRequest, $usgAllNamespaces, $wgExtraNamespaces;
 
 		// initialize vars
 		$search = $wgRequest->getVal('search');
@@ -328,8 +333,10 @@ class USSpecialPage extends SpecialPage {
 
 		// if query contains boolean operators, consider as as user-defined
 		// and do not use title search and pass search string unchanged to Lucene
-
-		$namespacesToSearch = $restrictNS !== NULL ? array($restrictNS) : array_keys($usgAllNamespaces);
+        
+        $allExtraNamespaces = array_diff(array_keys($wgExtraNamespaces), array_keys($usgAllNamespaces));
+		$namespacesToSearch = $restrictNS !== NULL ? array($restrictNS) : array_merge(array_keys($usgAllNamespaces), $allExtraNamespaces);
+		
 		if (!self::userDefinedSearch($terms, $search)) {
 			// non user-defined
 			$contentTitleSearchPattern = 'contents:($1$4$5) OR title:($2$3$6)';

@@ -18,6 +18,7 @@ class UnifiedSearchResult {
 	public function __construct($luceneResult, $terms) {
 		$this->luceneResult = $luceneResult;
 		$this->terms = $terms;
+		array_walk($this->terms, create_function('& $array,$i', '$array[$i] = preg_quote($array[$i]);'));
 	}
 
 	public function getTitle() {

@@ -692,16 +692,11 @@ class SMWTripleStore extends SMWStore {
 			// do not generate new PrintRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
 
-			$data = SMWPropertyValue::makeUserProperty($var_name);
 			// otherwise create one
-			if (stripos($b, self::$UNKNOWN_NS) === 0) {
-				$startNS = strlen(self::$UNKNOWN_NS);
-				$length = strpos($b, "#") - $startNS;
-				$ns = intval(substr($b, $startNS, $length));
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
-			} else {
-				$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
-			}
+			$data = SMWPropertyValue::makeUserProperty($var_name);
+			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
+			
+			
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
