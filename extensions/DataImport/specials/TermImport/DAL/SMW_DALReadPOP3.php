@@ -144,12 +144,12 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	private function getBody($connection, $msg, $vCardMP){
-		global $$smwgDIIP;
+		global $smwgDIIP;
 
 		$structure = imap_fetchstructure($connection, $msg);
 		$body = '';
 		$vCards = array();
-		$attachments = "";
+		$attachments = array();
 		if($structure->type == 0){ //this is a simple text message
 			$body = $this->decodeBodyPart(imap_body($connection, $msg), $structure->encoding);
 		} else if ($structure->type == 1){ //this is a multipart message with attachments
@@ -192,51 +192,53 @@ class DALReadPOP3 implements IDAL {
 
 					//todo:deal with invalid filenames
 					$fileName = ($params['filename'])? $params['filename'] : $params['name'];
-					$fileFullPath = $smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
+					$fileFullPath = 
+						$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
 					$file = fopen($fileFullPath, 'a');
 					fwrite($file, $this->decodeBodyPart(
-					imap_fetchbody($connection, $msg, $partNr), $encoding));
+						imap_fetchbody($connection, $msg, $partNr), $encoding));
 					fclose($file);
-						
-					$fileNameArray = split("\.", $fileName);
-					$ext = $fileNameArray[count($fileNameArray)-1];
-						
-					$mFileProps = File::getPropsFromPath($fileFullPath, $ext );
-					$local = wfLocalFile($fileName);
-					$status = $local->upload($fileFullPath, 'Mail Attachment','Mail Attachment', File::DELETE_SOURCE, $mFileProps );
-
-					if($attachments != ""){
-						$attachments .= ",";
-					} else {
-						$attachments .= "\n<attachments>";
-					}
-					$attachments .= $fileName;
+					$attachments[] = $fileName;
 				}
 				$partNr ++;
 			}
 		}
-		if($attachments != ""){
-			$attachments .= "</attachments>";
-		}
-
+		
 		$vCardTerms = "";
-		$firstVCard = true;
+		$firstOne = true;
 		$vCardFNs = "";
 		foreach($vCards as $fn => $vCard){
-			if($firstVCard){
+			if($firstOne){
 				$vCardFNs = "<vcards>".$fn;
 			} else {
 				$vCardFNs = ",".$fn;
+				$firstOne = false;
 			}
-				
 			$vCardTerms .= "<term callback='handleVCardCallBack(\"".
 			htmlspecialchars($vCard)."\",\"".$vCardMP."\"'></term>";
 		}
 		if($vCardFNs != ""){
 			$vCardFNs .= "</vcards>";
 		}
-
-		return $vCardTerms."<term>".$attachments.$vCardFNs.
+		
+		$attachmentTerms = "";
+		$firstOne = true;
+		$attachmentFNs = "";
+		foreach($attachments as $fn){
+			if($firstOne){
+				$attachmentFNs = "<attachments>".$fn;
+			} else {
+				$attachmentFNs = ",".$fn;
+				$firstOne = false;
+			}
+			$attachmentTerms .= "<term callback='handleAttachmentCallBack(\"".
+				htmlspecialchars($fn)."\"'></term>";
+		}
+		if($attachmentFNs != ""){
+			$attachmentFNs .= "</attachments>";
+		}
+		
+		return $vCardTerms.$attachmentTerms."<term>".$attachmentFNs.$vCardFNs.
 			"\n<body>".htmlspecialchars($body)."</body>";
 	}
 
@@ -460,38 +462,37 @@ class DALReadPOP3 implements IDAL {
 		$title = Title::newFromText($title);
 		if($title == null){
 			return $this->createCallBackResult(false,
-			array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME,
-				'title' => wfMsg('smw_ti_import_error')));
+			array(array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME,
+				'title' => wfMsg('smw_ti_import_error'))));
 		}
 		
 		$termAnnotations = $tiBot->getExistingTermAnnotations($title);
 
 		if($title->exists() && !$conflictPolicy){
-			$termAnnotations['ignored'][] = $termImportName;
-			$termAnnotations = "\n\n\n"
-				.$tiBot->createTermAnnotations($termAnnotations);
+			echo wfMsg('smw_ti_articleNotUpdated', $title->getFullText())."\n";
 			$article = new Article($title);
 			$article->doEdit(
-				$article->getContent().$termAnnotations, wfMsg('smw_ti_creationComment'));
-			
+				$article->getContent()
+				."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]", 
+				wfMsg('smw_ti_creationComment'));
 			return $this->createCallBackResult(true,
 				array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
-				'title' => $title)));
-		} else if(!$conflictPolicy){
+				'title' => $title->getFullText())));
+		} else if($title->exists()){
 			$termAnnotations['updated'][] = $termImportName;
+			$updated = true;
 		} else {
 			$termAnnotations['added'][] = $termImportName;
+			$updated = false;
 		}
 		
-		
-
 		$article = new Article($title);
 
 		$mappingPolicy = Title::newFromText($vCardMP);
 		if(!$mappingPolicy->exists()){
 			return $this->createCallBackResult(false,
-			array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
-				'title' => $mappingPolicy));
+			array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
+				'title' => $vCardMP)));
 		}
 		$mappingPolicy = new Article($mappingPolicy);
 		$mappingPolicy = $mappingPolicy->getContent();
@@ -512,13 +513,103 @@ class DALReadPOP3 implements IDAL {
 			$content.$termAnnotations, wfMsg('smw_ti_creationComment'));
 		if(!$created){
 			return $this->createCallBackResult(false,
-			array('id' => SMW_GARDISSUE_CREATION_FAILED,
-				'title' => $title));
+				array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
+				'title' => $title)));
 		}
-
-		return $this->createCallBackResult(true, array());
+		
+		echo "Article ".$title->getFullText();
+		echo $updated==true ? " updated\n" : " created.\n";
+		
+		if($updated){
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_UPDATED_ARTICLE,
+				'title' => $title->getFullText())));
+		} else {
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_ADDED_ARTICLE,
+				'title' => $title->getFullText())));
+		}
 	}
 
+	
+	private function handleAttachmentCallBack($fileName, $conflictPolicy, $termImportName){
+		global $smwgDIIP;
+		$success = true;
+		$logMsgs = array();
+		$tiBot = new TermImportBot();
+		
+		$fileArticleTitle = Title::makeTitleSafe( NS_IMAGE, $fileName );
+		
+		if($fileArticleTitle == null){
+			return $this->createCallBackResult(false,
+				array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
+				'title' => wfMsg('smw_ti_import_error'))));
+		}
+		
+		$termAnnotations = $tiBot->getExistingTermAnnotations($fileArticleTitle);
+		if($fileArticleTitle->exists() && !conflictPolicy){
+			echo wfMsg('smw_ti_articleNotUpdated', $fileArticleTitle->getFullText())."\n";
+			$article = new Article($fileArticleTitle);
+			$article->doEdit(
+				$article->getContent()
+				."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]", 
+				wfMsg('smw_ti_creationComment'));
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
+				'title' => $fileArticleTitle->getFullText())));
+		} else if($fileArticleTitle->exists()) {
+			$termAnnotations['updated'][] = $termImportName;
+			$updated = true;
+		} else {
+			$termAnnotations['added'][] = $termImportName;
+			$updated = false; 
+		}
+		
+		$fileNameArray = split("\.", $fileName);
+		$ext = $fileNameArray[count($fileNameArray)-1];
+		$fileFullPath = 
+			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;						
+		$mFileProps = File::getPropsFromPath($fileFullPath, $ext );
+		$local = wfLocalFile($fileName);
+		if($local == null){
+			return $this->createCallBackResult(false,
+				array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
+				'title' => $fileArticleTitle->getFullText())));
+		} else {
+			$termAnnotations = "\n\n\n"
+				.$tiBot->createTermAnnotations($termAnnotations);
+			
+			$status = $local->upload(
+				$fileFullPath, wfMsg('smw_ti_creationComment'), $termAnnotations, 
+				File::DELETE_SOURCE, $mFileProps );
+			if($status->failureCount > 0){
+				return $this->createCallBackResult(false,
+					array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
+					'title' => $fileArticleTitle->getFullText())));
+			} else if($updated){
+				$article = new Article($fileArticleTitle);
+				$article->doEdit(
+					$article->getContent()
+					."\n[[WasUpdatedDuringTermImport::".$termImportName."| ]]"
+					, wfMsg('smw_ti_creationComment'));
+			}
+		}
+		
+		echo "Article ".$fileArticleTitle->getFullText();
+		echo $updated==true ? " updated\n" : " created.\n";
+		
+		if($updated){
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_UPDATED_ARTICLE,
+				'title' => $fileArticleTitle->getFullText())));
+		} else {
+			return $this->createCallBackResult(true,
+				array(array('id' => SMW_GARDISSUE_ADDED_ARTICLE,
+				'title' => $fileArticleTitle->getFullText())));
+		}
+	}
+	
+	
 	private function createCallBackResult($success, $logMsgs){
 		$result = '<CallBackResult xmlns="http://www.ontoprise.de/smwplus#"><success>';
 		$result .= $success ? 'true' : 'false';
@@ -528,7 +619,6 @@ class DALReadPOP3 implements IDAL {
 			$result .= '<title>'.$logMsg['title']."</title></logMessage>";
 		}
 		$result .= '</CallBackResult>';
-		 
 		return $result;
 	}
 }

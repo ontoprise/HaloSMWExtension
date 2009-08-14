@@ -368,9 +368,9 @@ class TermImportBot extends GardeningBot {
 		echo "Article $articleName ";
 		echo $updated==true ? "updated\n" : " created.\n";
 		$log->addGardeningIssueAboutArticle(
-		$this->id,
-		$updated == true ? SMW_GARDISSUE_UPDATED_ARTICLE
-		: SMW_GARDISSUE_ADDED_ARTICLE,
+			$this->id,
+			$updated == true ? SMW_GARDISSUE_UPDATED_ARTICLE
+			: SMW_GARDISSUE_ADDED_ARTICLE,
 		$title);
 
 		return true;
@@ -608,6 +608,10 @@ class TermImportBot extends GardeningBot {
 		$existingAnnotations['added'] = array();
 		$existingAnnotations['updated'] = array();
 		$existingAnnotations['ignored'] = array();
+
+		if($title == null){
+			return $existingAnnotations;
+		}
 		
 		if($title->exists()){
 			$semdata = smwfGetStore()->
