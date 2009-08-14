@@ -80,5 +80,38 @@ class UploadConverter {
 		return true;
 	}
 	
+	public static function getFileContent(&$file) {
+		global $smwgRMIP;
+		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
+		
+		$mimeType = $file->getMimeType();
+		if (isset($smwgUploadConverter[$mimeType]))
+			$converterApp = $smwgUploadConverter[$mimeType];
+		else {
+			// no converter specified for the mime type
+			return "";
+		}
+		wfLoadExtensionMessages('UploadConverter');
+		
+		$path = $file->getFullPath();
+		$ext  = $file->getExtension();
+		$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
+		$converterApp = str_replace('{infile}', $path, $converterApp);
+		$converterApp = str_replace('{outfile}', $textFile, $converterApp);
+		$ret = exec($converterApp, $output, $retVar);
+
+		$text = "";
+		if (file_exists($textFile)) {
+			// a temporary file has been written 
+			// => return its content 
+			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+			// delete temp. file
+			unlink($textFile);
+		} else {
+			$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
+		}			
+		return $text;
+	}
+	
 }
 
