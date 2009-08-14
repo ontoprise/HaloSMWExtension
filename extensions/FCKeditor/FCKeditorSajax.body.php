@@ -38,16 +38,62 @@ function wfSajaxGetImageUrl( $term )
 	return $url;
 }
 
-function wfSajaxSearchSpecialTagFCKeditor($empty)
+function wfSajaxSearchSpecialTagFCKeditor($title)
 {
-	global $wgParser;
+	global $wgParser, $wgLang, $IP, $wgUser, $wgContLanguageCode, $wgHooks;
 
-	$ret = "nowiki\nincludeonly\nonlyinclude\nnoinclude\ngallery\n";
-	foreach ($wgParser->getTags() as $h) {
-		if (!in_array($h, array("pre", "math", "ref", "references"))) {
-			$ret .= $h ."\n";
+	$lang = $wgUser->getOption( 'language', $wgContLanguageCode );
+
+	
+	$fckParser = new FCKeditorParser();
+	
+    // special tags
+	$sdata['t'] = $fckParser->getSpecialTags();
+	// constants (without params)
+	$sdata['c'] = $fckParser->getMagicWords();
+	// date time variables (without params)
+	$sdata['v'] = $fckParser->getDateTimeVariables();
+	// wiki data variables (without params)
+	$sdata['w'] = $fckParser->getWikiVariables();
+	// parser functions
+	$sdata['p'] = $fckParser->getFunctionHooks();
+	
+	// if the current page is not a category page, remove these constants
+	$p = strpos($title, ':');
+	if ($p === 1) {
+	   $title = substr($title, 1);
+	   $p = strpos($title, ':');
+	}
+	if (!( ($p!== false) && ($p > 0) && (substr($title, 0, $p) == wfMsg("category")) ) ) {
+	   unset($sdata['c'][array_search("NOGALLERY", $sdata['c'])]);
+	   unset($sdata['c'][array_search("HIDDENCAT", $sdata['c'])]);
+	}
+
+	// remove some tags from the list, as they have their own popups for input.
+	for ($i = 0, $is = count($sdata['t']); $i < $is; $i++) {
+		if (in_array($sdata['t'][$i], array("pre", "math", "ref", "references"))) {
+			unset($sdata['t'][$i]);
 		}
 	}
+    
+	// description messages for tags and constants,
+	// mostly taken from http://www.mediawiki.org/wiki/Help:Magic_words
+    require_once($IP.'/extensions/FCKeditor/FCKeditorMWpopupLang.php');
+	
+	$ret = '<data>';
+	foreach ($sdata as $type => $items) {
+	  $ret .= '<items type="'.$type.'">';
+      foreach ($items as $item) {
+	    $desc = (isset($messages_special[$lang][$item])
+	            ? $messages_special[$lang][$item]
+	            : isset($messages_special['en'][$item])
+	              ? $messages_special['en'][$item]
+	              : wfMsg('popup_special_no_description'));
+	    $ret .= '<item name="'.$item.'">'.htmlspecialchars($desc).'</item>';
+	  }
+	  $ret .= '</items>';
+	}
+    $ret .= '</data>';
 	return $ret;
 }
 

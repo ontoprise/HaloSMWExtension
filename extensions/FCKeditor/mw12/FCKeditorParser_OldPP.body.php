@@ -11,21 +11,72 @@ class FCKeditorParser extends Parser_OldPP
 	protected $fck_mw_propertyAtPage = array();
 	protected $fck_mw_richmediaLinkAtPage = array();
 
-	private $FCKeditorMagicWords = array(
-	'__NOTOC__',
-	'__FORCETOC__',
-	'__NOEDITSECTION__',
-	'__START__',
-	'__NOTITLECONVERT__',
-	'__NOCONTENTCONVERT__',
-	'__END__',
-	'__TOC__',
-	'__NOTC__',
-	'__NOCC__',
-	"__FORCETOC__",
-	"__NEWSECTIONLINK__",
-	"__NOGALLERY__",
+	private $FCKeditorWikiTags = array(
+	   "nowiki",
+	   "includeonly",
+	   "onlyinclude",
+	   "noinclude",
+	   "gallery",
+	   "ask"
 	);
+	private $FCKeditorMagicWords = array(
+	   "NOTOC",
+	   "FORCETOC",
+	   "TOC",
+	   "NOEDITSECTION",
+	   "NEWSECTIONLINK",
+	   "NONEWSECTIONLINK",
+	   "NOCONTENTCONVERT",
+	   "NOCC",
+	   "NOTITLECONVERT",
+	   "NOTC",
+	   "INDEX",
+	   "NOINDEX",
+	   "STATICREDIRECT",
+       "NOGALLERY",
+	   "HIDDENCAT"
+	);
+	private $FCKeditorDateTimeVariables= array(
+	   'CURRENTYEAR', 
+	   'CURRENTMONTH',
+	   'CURRENTMONTHNAME',
+	   'CURRENTMONTHNAMEGEN',
+	   'CURRENTMONTHABBREV',
+	   'CURRENTDAY',
+	   'CURRENTDAY2',
+	   'CURRENTDOW',
+	   'CURRENTDAYNAME',
+	   'CURRENTTIME',
+	   'CURRENTHOUR',
+	   'CURRENTWEEK',
+	   'CURRENTTIMESTAMP'
+	);
+    private $FCKeditorWikiVariables = array(
+       'SITENAME',
+       'SERVER',
+       'SERVERNAME',
+       'DIRMARK',
+       'SCRIPTPATH',
+       'CURRENTVERSION',
+       'CONTENTLANG',
+       'REVISIONID',
+       'REVISIONDAY',
+       'REVISIONDAY2',
+       'REVISIONMONTH',
+       'REVISIONYEAR',
+       'REVISIONTIMESTAMP',
+       'REVISIONUSER',
+       'FULLPAGENAME',
+       'PAGENAME',
+       'BASEPAGENAME',
+       'SUBPAGENAME',
+       'SUBJECTPAGENAME',
+       'TALKPAGENAME',
+       'NAMESPACE',
+       'ARTICLESPACE',
+       'TALKSPACE'
+    );
+    private $FCKeditorFunctionHooks = array('#language', 'padleft');
 
 	function __construct() {
 		global $wgParser;
@@ -36,8 +87,29 @@ class FCKeditorParser extends Parser_OldPP
 				$this->setHook($h, array($this, "fck_genericTagHook"));
 			}
 		}
+		foreach ($wgParser->getFunctionHooks() as $h) {
+            if (!in_array($h, array("ask", "sparql"))) {
+                $this->FCKeditorFunctionHooks[] = $h;
+            }
+        }
+    }
+		
+	public function getSpecialTags() {
+	    return $this->FCKeditorWikiTags;
 	}
-
+    public function getMagicWords() {
+        return $this->FCKeditorMagicWords;
+    }
+	public function getDateTimeVariables() {
+        return $this->FCKeditorDateTimeVariables;
+    }
+    public function getWikiVariables() {
+        return $this->FCKeditorWikiTags;
+    }
+    public function getFunctionHooks() {
+        return $this->FCKeditorFunctionHooks;
+    }
+    
 	/**
 	 * Add special string (that would be changed by Parser) to array and return simple unique string 
 	 * that will remain unchanged during whole parsing operation.
@@ -115,11 +187,17 @@ class FCKeditorParser extends Parser_OldPP
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
-		if (empty($argv)) {
-			$ret = "<span class=\"fck_mw_".$tagName."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\">";
+        if (in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery"))) {
+            $class = $tagName;
+        }
+        else {
+            $class = "special";
+        }
+	  if (empty($argv)) {
+			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\">";
 		}
 		else {
-			$ret = "<span class=\"fck_mw_".$tagName."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\">";
+			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\"";
 			foreach ($argv as $key=>$value) {
 				$ret .= " ".$key."=\"".$value."\"";
 			}
@@ -208,18 +286,14 @@ class FCKeditorParser extends Parser_OldPP
 							break;
 						}
 						// Shouldn't happen otherwise. :)
-					case 'nowiki':
-						$output = $this->fck_wikiTag('nowiki', $content, $params); //required by FCKeditor
-						break;
 					case 'math':
 						$output = $wgContLang->armourMath( MathRenderer::renderMath( $content ) );
 						break;
-					case 'gallery':
-						$output = $this->fck_wikiTag('gallery', $content, $params); //required by FCKeditor
-						//$output = $this->renderImageGallery( $content, $params );
-						break;
 					default:
-						if( isset( $this->mTagHooks[$tagName] ) ) {
+					    if ( in_array($tagName, $this->FCKeditorWikiTags)) {
+					       $output = $this->fck_wikiTag($tagName, $content, $params); //required by FCKeditor
+					    }
+						elseif( isset( $this->mTagHooks[$tagName] ) ) {
 							$this->fck_mw_taghook = $tagName; //required by FCKeditor
 							$output = call_user_func_array( $this->mTagHooks[$tagName],
 							array( $content, $params, $this ) );
@@ -383,11 +457,32 @@ class FCKeditorParser extends Parser_OldPP
 				else if ($sum == 0) {
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
-					$fck_mw_template = (substr($inner, 0, 7) == '{{#ask:') ? 'fck_mw_askquery' : 'fck_mw_template';
-					$this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"'] = 'href="'.$inner.'"';
-					$this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="'.$fck_mw_template.'">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
+					if (substr($inner, 0, 7) == '{{#ask:' )
+					    $fck_mw_template =  'fck_mw_askquery';
+					else {
+					    $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
+					    if (in_array($funcName, $this->FCKeditorDateTimeVariables))
+					       $fck_mw_template = 'v';
+					    else if (in_array($funcName, $this->FCKeditorWikiVariables))
+					       $fck_mw_template = 'w';
+					    else if (in_array($funcName, $this->FCKeditorFunctionHooks))
+					       $fck_mw_template = 'p';
+					    else
+					       $fck_mw_template = 'fck_mw_template';
+					}
+					if (strlen($fck_mw_template) > 1) {
+					   $this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"'] = 'href="'.$inner.'"';
+					   $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="'.$fck_mw_template.'">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
+					} else {
+					   $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="'.$funcName.'" _fck_mw_tagtype="'.$fck_mw_template.'"';
+					   if (strlen($inner) > strlen($funcName) + 5) {
+					      $content = substr($inner, strlen($funcName) + 3, -2);
+					      $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '>'.$content.'</span>';
+					   }
+					   else $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '/>';
+					}
 					$startingPos = $pos + 19;
-					$this->fck_mw_strtr_span_counter++;
+                    $this->fck_mw_strtr_span_counter++;
 				}
 				$lastSum = $sum;
 			}
@@ -478,16 +573,13 @@ class FCKeditorParser extends Parser_OldPP
 	function replaceFreeExternalLinks( $text ) { return $text; }
 	function stripNoGallery( &$text) {}
 	function stripToc( $text ) {
-		//$prefix = '<span class="fck_mw_magic">';
-		//$suffix = '</span>';
-		$prefix = '';
-		$suffix = '';
+		$prefix = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="%s" _fck_mw_tagtype="c">';
+		$suffix = '</span>';
 
 		$strtr = array();
 		foreach ($this->FCKeditorMagicWords as $word) {
-			$strtr[$word] = $prefix . $word . $suffix;
+			$strtr['__'.$word.'__'] = sprintf($prefix, $word) . $suffix;
 		}
-
 		return strtr( $text, $strtr );
 	}
 	/**

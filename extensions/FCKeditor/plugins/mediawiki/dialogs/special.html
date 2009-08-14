@@ -40,11 +40,88 @@ document.write( '<script src="' + FCKConfig.BasePath + 'dialog/common/fck_dialog
 	</script>
 	<script type="text/javascript">
 
+// list with available special tags and variables
+function TagNode(name, type, desc) {
+    this.name = name;
+    this.type = type;
+    this.desc = desc;
+}
+
+TagNode.prototype.getLabel = function() {
+    switch (this.type) {
+        case 't' :
+            return '<' + this.name + '>'
+        case 'c' :
+            return '__' + this.name + '__'
+        case 'v' :
+        case 'w' :
+        case 'p' :
+            return '{{' + this.name + '}}'
+    }
+}
+function TagNodeList() {
+    this.list = [];
+}
+
+TagNodeList.prototype.add = function(name, type, desc) {
+    this.list[this.list.length] = new TagNode(name, type, desc);
+}
+TagNodeList.prototype.makeSelection = function(oSelect, type, name) {
+    var oNewSelect = oSelect.cloneNode(false);
+    for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].type == type) {
+            var oOption = document.createElement('option');
+            oOption.setAttribute('value', this.list[i].name);
+            if (name == this.list[i].name.toLowerCase()) oOption.setAttribute('selected', 'selected');
+            oLabel = document.createTextNode(this.list[i].getLabel());
+            oOption.appendChild(oLabel);
+            oNewSelect.appendChild(oOption);
+        }
+    }
+    oSelect.parentNode.insertBefore(oNewSelect, oSelect);
+    oSelect.parentNode.removeChild(oSelect);
+} 
+TagNodeList.prototype.initFromXml = function(xml) {
+    try { //Internet Explorer
+        xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+        xmlDoc.async="false";
+        xmlDoc.loadXML(xml);
+    }
+    catch(e) {
+        parser=new DOMParser();
+        xmlDoc=parser.parseFromString(xml,"text/xml");
+    }
+    if (xmlDoc) {
+        var items = xmlDoc.getElementsByTagName('items');
+        for (var i = 0; i < items.length; i++) {
+            var type = items.item(i).getAttribute('type');
+            var item = items.item(i).getElementsByTagName('item');
+            for (var j = 0; j < item.length; j++) {
+                desc = item.item(j).childNodes[0].nodeValue;
+                this.add(item.item(j).getAttribute('name'), type, desc);
+            }
+        } 
+    }
+}
+TagNodeList.prototype.getDescByName = function(name) {
+    for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].name == name)
+            return this.list[i].desc
+    }
+}
+TagNodeList.prototype.getTypeByName = function(name) {
+    for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].name == name)
+            return this.list[i].type
+    }
+} 
+
 // Get the selected flash embed (if available).
 var oFakeImage = FCK.Selection.GetSelectedElement() ;
 var oTemplateSpan ;
 var sFakeClass = 'FCK__MWSpecial';
 var sSelectedTag = "";
+var oSpecialTagList;
 
 if ( oFakeImage )
 {
@@ -91,6 +168,9 @@ window.onload = function()
 {
 	// Translate the dialog box texts.
 	oEditor.FCKLanguageManager.TranslatePage(document) ;
+	
+    // Make an Ajax search for the availabe special tags and variables.
+	LoadFunctionList();
 
 	// Load the selected link information (if any).
 	LoadSelection() ;
@@ -100,48 +180,64 @@ window.onload = function()
 	window.parent.SetOkButton( true ) ;
 	window.parent.SetAutoSize( true ) ;
 }
-
-function LoadSearchResults( result )
-{
-	var results = result.responseText.Trim().split( '\n' ) ;
-	var select = GetE( 'xSelectTag' ) ;
-
-	if ( results.length > 0 && !( results.length == 1 && results[0].length == 0 ) )
-	{
-		for ( var i = 0 ; i < results.length ; i++ )
-			FCKTools.AddSelectOption( select, results[i], results[i] ) ;
-	}
-	
-	if ( sSelectedTag ) {
-		select.value = sSelectedTag ;
-	}
+function MakeSelection(type, name) {
+    if (oSpecialTagList) { 
+        oSpecialTagList.makeSelection(GetE('xSelectTag'), type, name);
+        // reload the correct description for the current selected entry
+        GetE('xDefinition').innerHTML = oSpecialTagList.getDescByName(GetE('xSelectTag').value);
+    }
+    // special tags and parser functions can have params
+    if ( (type == 'p' || type == 't') && GetE('xTemplateRaw').getAttribute('readonly') )
+        GetE('xTemplateRaw').removeAttribute('readonly');
+    // all other don't
+    else
+        GetE('xTemplateRaw').setAttribute('readonly', 'readonly');
 }
-
 
 function LoadSelection()
 {
-	// Make an Ajax search for the pages.
-	var empty = '';
-	oEditor.window.parent.sajax_request_type = 'GET' ;
-	oEditor.window.parent.sajax_do_call( 'wfSajaxSearchSpecialTagFCKeditor',[empty], LoadSearchResults ) ;
-
-	if ( !oTemplateSpan ) return ;
+    
+	if ( !oTemplateSpan ) {
+        // set the radiobutton and the tag list to the default values
+        GetE('xSelectType_t').checked = true;
+        MakeSelection('t');
+        return ;
+    }
 
 	GetE('xTemplateRaw').value = FCKTools.HTMLDecode(oTemplateSpan.innerHTML).replace(/fckLR/g,'\r\n' ).replace( /&quot;/g, '"' ) ;
 	var tagName = oTemplateSpan.getAttribute('_fck_mw_tagname').toLowerCase();
-	
+	var tagType = oTemplateSpan.getAttribute('_fck_mw_tagtype');
+
 	sSelectedTag = tagName ;
 	GetE('xSelectTag').value = tagName;
+
+	if (tagType == 't')
+	   GetE('xSelectType_t').checked = true;
+	else if (tagType == 'c')
+	   GetE('xSelectType_c').checked = true;
+	else if (tagType == 'v')
+       GetE('xSelectType_v').checked = true;
+    else if (tagType == 'w')
+       GetE('xSelectType_w').checked = true;
+    else if (tagType == 'p')
+       GetE('xSelectType_p').checked = true;
+
+    MakeSelection(tagType, tagName);
 }
 
-function LoadDocumentation()
-{
+function LoadDocumentation(){
 	var tagName = GetE('xSelectTag').value;
-	if (tagName == 'dpl')
-		GetE('xDefinition').innerHTML = 'DPL stands for Dynamic Page List, and allows to generate a formatted list of pages based on selection criteria. See <a href="#" onclick="javascript:window.open(\'http://semeb.com/dpldemo/index.php?title=Dynamic_Page_List\')">manual</a> for details';
-		
-	if (tagName == 'inputbox')
-		GetE('xDefinition').innerHTML = 'Inputbox allows to create a form for users to create new pages. The new pages edit box can be pre-loaded with any template. See <a href="#" onclick="javascript:window.open(\'http://meta.wikimedia.org/wiki/Help:Inputbox\')">manual</a> for details';
+	GetE('xDefinition').innerHTML = (oSpecialTagList) ? oSpecialTagList.getDescByName(tagName) : 'No documentation available';
+}
+function LoadFunctionList() {
+    var empty = ''
+    oEditor.window.parent.sajax_request_type = 'GET' ;
+    oEditor.window.parent.sajax_do_call( 'wfSajaxSearchSpecialTagFCKeditor',[empty], LoadSearchResults ) ;
+}
+function LoadSearchResults( result ) {
+    oSpecialTagList = new TagNodeList();
+    oSpecialTagList.initFromXml(result.responseText.Trim());
+    LoadSelection();
 }
 
 //#### The OK button was hit.
@@ -157,7 +253,8 @@ function Ok()
 	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR' )).replace( /"/g, '&quot;' ) ;
 	
 	oTemplateSpan.innerHTML = templateData ;
-	SetAttribute( oTemplateSpan, '_fck_mw_tagname', GetE('xSelectTag').value ) ;   
+	SetAttribute( oTemplateSpan, '_fck_mw_tagname', GetE('xSelectTag').value ) ;
+	SetAttribute( oTemplateSpan, '_fck_mw_tagtype', oSpecialTagList.getTypeByName(GetE('xSelectTag').value));
 
 	switch (GetE('xSelectTag').value)
 	{
@@ -198,23 +295,33 @@ function Ok()
 <body style="overflow: hidden">
 	<div id="divInfo">
 		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+            <tr>
+                <td>
+                    <span>Special Tag Type:</span>
+                    <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="MakeSelection('t')"/>Special tags
+                    <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="MakeSelection('c')"/>Constants
+                    <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="MakeSelection('v')"/>Date/Time variables
+                    <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="MakeSelection('w')"/>Wiki variables
+                    <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="MakeSelection('p')"/>Parser function hooks
+                </td>
+            </tr>
 			<tr>
 				<td>
 					<span>Current Special Tag:</span>
 					<select id="xSelectTag" onchange="LoadDocumentation()">
-					</select><br>
+					</select><br/>
 					<i><span id="xDefinition"></span></i>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<hr>
+					<hr/>
 					Special tag parameters:
 			</tr>
 			<tr>
 				<td height="100%">
 					<textarea id="xTemplateRaw" style="width: 100%; height: 100%; font-family: Monospace"
-						cols="50" rows="10" wrap="off"></textarea>
+						cols="50" rows="6" wrap="off"></textarea>
 				</td>
 			</tr>
 		</table>

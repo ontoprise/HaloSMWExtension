@@ -19,4 +19,5 @@ $messages = array(
 'tog-riched_disable_ns_help_talk' => 'Disable rich editor within the "{{ns:Help_talk}}" namespace',
 'tog-riched_disable_ns_category' => 'Disable rich editor within the "{{ns:Category}}" namespace',
 'tog-riched_disable_ns_category_talk' => 'Disable rich editor within the "{{ns:Category_talk}}" namespace',
+'popup_special_no_description' => 'No description available.',
 );

@@ -189,7 +189,7 @@ FCK.DataProcessor =
 				}
 					
 				// Remove the <br> if it is a bogus node.
-				if ( sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz' )
+				if ( sNodeName == 'br' && htmlNode.getAttribute( 'type', 2 ) == '_moz')
 					return ;
 
 				// The already processed nodes must be marked to avoid then to be duplicated (bad formatted HTML).
@@ -518,8 +518,29 @@ FCK.DataProcessor =
 									
 								case 'fck_mw_onlyinclude' :
 									sNodeName = 'onlyinclude' ;
-									
 									break ;
+								case 'fck_mw_special' :
+								    tagName = htmlNode.getAttribute( '_fck_mw_tagname' );
+								    tagType = htmlNode.getAttribute( '_fck_mw_tagtype' );
+								    switch (tagType) {
+								        case 't' :
+								            stringBuilder.push( '<' + tagName + '>' + FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') + '</' + tagName + '>');
+								            break;
+								        case 'c' :
+								            stringBuilder.push( '__' + tagName + '__' );
+								            break;
+								        case 'v' :
+								        case 'w' :
+								            stringBuilder.push( '{{' + tagName + '}}' );
+								            break;
+								        case 'p' :
+								            stringBuilder.push( '{{' + tagName );
+								            if (htmlNode.innerHTML.length > 0)
+								                stringBuilder.push( ':' + FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') );
+								            stringBuilder.push( '}}');
+								            break;
+								    }
+								    return;
 							}
 
 							// Change the node name and fell in the "default" case.
@@ -590,7 +611,7 @@ FCK.DataProcessor =
 						textValue = textValue.replace(/\r/, "\r ") ;
 					}
 					
-					if (!this._inLSpace && !this._inPre) {
+					if (!this._inLSpace && !this._inPre && !FCKBrowserInfo.IsOpera) {
 						textValue = textValue.replace( /[\n\t]/g, ' ' ) ; 
 					}
 	
@@ -618,7 +639,6 @@ FCK.DataProcessor =
 				{
 					textValue = FCKTools.HTMLDecode(textValue).replace(/fckLR/g,'\r\n');
 				}
-				
 				stringBuilder.push( textValue ) ;
 				return ;
 

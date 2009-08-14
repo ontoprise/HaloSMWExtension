@@ -19,4 +19,5 @@ $messages = array(
 'tog-riched_disable_ns_help_talk' => 'Rich editor deaktivieren im Namensraum "{{ns:Help_talk}}" ',
 'tog-riched_disable_ns_category' => 'Rich editor deaktivieren im Namensraum "{{ns:Category}}" ',
 'tog-riched_disable_ns_category_talk' => 'Rich editor deaktivieren im Namensraum "{{ns:Category_talk}}" ',
+'popup_special_no_description' => 'Keine Beschreibung vorhanden.',
 );
