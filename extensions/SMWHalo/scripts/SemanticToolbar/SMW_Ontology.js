@@ -124,6 +124,65 @@ OntologyModifier.prototype = {
 	/**
 	 * @public
 	 * 
+	 * Checks an access right for an object. This is an asynchronous ajax call.
+	 * When the result is returned, the function <callback> will be called.
+	 * The right will not be checked, if the page name is too long.
+	 * 
+	 * @param string pageName 
+	 * 			Full page name of the oject e.g. a property.
+	 * @param string action
+	 * 			The action that will be checked e.g. propertyread
+	 * @param function callback
+	 * 			This function will be called, when the ajax call returns. Its
+	 * 			signature must be:
+	 * 			callback(string title, string action, bool accessGranted)
+	 * @param string title
+	 * 			Title of the Page without Namespace  
+	 * @param string optparam
+	 * 			An optional parameter which will be passed through to the
+	 *  		callbackfunktion 
+	 * @param string domElementID
+	 * 			Id of the DOM element that started the query. Will be passed
+	 * 			through to the callbackfunktion.
+	 * @return boolean
+	 * 		true, if the rights of the object will be checked
+	 * 		false, if the <pageName> is longer than 254 characters.
+	 */
+	checkAccessRight : function(pageName, action, callback, title, optparam, domElementID) {
+		function ajaxResponseAccessRight(request) {
+			var answer = request.responseText;
+			var regex = /(true|false)/;
+			var parts = answer.match(regex);
+			
+			if (parts == null) {
+				// Error while querying access rights fot object, probably due to 
+				// invalid article name => access denied
+				callback(pageName, action, false, title, optparam, domElementID);
+/*				var errMsg = gLanguage.getMessage('ERR_QUERY_EXISTS_ARTICLE');
+				errMsg = errMsg.replace(/\$-page/g, pageName);
+				alert(errMsg);
+*/ 
+				return;
+			}
+			callback(pageName, action, parts[1] == 'true' ? true : false, title, optparam, domElementID);
+			
+		};
+		
+		if (pageName.length < 255) {
+			sajax_do_call('smwf_om_userCan', 
+			              [pageName, action], 
+			              ajaxResponseAccessRight.bind(this));
+			return true;
+		} else {
+			return false;
+		}
+		              
+		              
+	},
+
+	/**
+	 * @public
+	 * 
 	 * Creates a new article in the wiki or appends some text if it already 
 	 * exists.
 	 * 

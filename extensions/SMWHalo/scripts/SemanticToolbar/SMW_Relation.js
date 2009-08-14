@@ -31,6 +31,11 @@ var SMW_REL_CHECK_PROPERTY =
 		'? (color: lightgreen, hideMessage, valid:true) ' +
 	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
 
+var SMW_REL_CHECK_PROPERTY_ACCESS = 
+	'smwAccessControl="property: propertyedit ' +
+		'? (color: lightgreen, hideMessage, valid:true) ' +
+	 	': (color: red, showMessage:PROPERTY_ACCESS_DENIED, valid:false)" ';
+
 var SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA = 
 	'smwCheckType="property: exists ' +
 		'? (color: lightgreen, hideMessage, valid:true, call:relToolBar.updateSchema) ' +
@@ -111,6 +116,7 @@ initialize: function() {
 	this.toolbarContainer = null;
 	this.showList = true;
 	this.currentAction = "";
+	this.relationsForAccessCheck = "";
 },
 
 showToolbar: function(){
@@ -143,9 +149,61 @@ fillList: function(forceShowList) {
 	}
 	if (this.wtp) {
 		this.wtp.initialize();
-		this.relationcontainer.setContent(this.genTB.createList(this.wtp.getRelations(),"relation"));
+		var relations = this.wtp.getRelations();
+		var rels = '';
+		for (var i = 0; i < relations.length; ++i) {
+			rels += gLanguage.getMessage('PROPERTY_NS') + relations[i].getName()+',';
+		}
+		if (rels.length > 0 && rels != this.relationsForAccessCheck) {
+			this.relationsForAccessCheck = rels;
+			rels = rels.substr(0, rels.length-1);
+			sajax_do_call('smwf_om_userCanMultiple',
+			              [rels, "propertyedit"],
+			              checkPropertyEditCallback.bind(this),
+			              relations);
+		}
+		
+		if (this.propertyRights
+			&& this.propertyRights.length == relations.length) {
+			for (var i = 0; i < relations.length; ++i) {
+				relations[i].accessAllowed = this.propertyRights[i][1];
+			}
+		}
+		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
 		this.relationcontainer.contentChanged();
 	}
+	
+	/**
+	 * Closure:
+	 * Callback function that gets the results of the access check for properties.
+	 */
+	function checkPropertyEditCallback(request) {
+		
+	
+		if (request.status != 200) {
+			// call for schema data failed, do nothing.
+			return;
+		}
+	
+		var rights = request.responseText.evalJSON(true);
+		this.propertyRights = rights;
+
+		var containsForbiddenProperties = false;
+		for (var i = 0; i < relations.length; ++i) {
+			relations[i].accessAllowed = rights[i][1];
+			if (rights[i][1] == "false") {
+				containsForbiddenProperties = true;
+			}
+		}
+		
+		refreshSTB.containsForbiddenProperties = containsForbiddenProperties;
+		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
+		this.relationcontainer.contentChanged();
+		refreshSTB.refreshToolBar();
+		
+	};
+
+	
 },
 
 /**
@@ -232,6 +290,7 @@ createContextMenu: function(contextMenuContainer, value, repr) {
 	
 	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
+	                         SMW_REL_CHECK_PROPERTY_ACCESS +
 	                         SMW_REL_CHECK_EMPTY +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
@@ -316,6 +375,7 @@ newItem: function() {
 	tb.append(tb.createText('rel-help_msg', gLanguage.getMessage('ANNOTATE_PROPERTY'), '' , true));
 	tb.append(tb.createInput('rel-name', gLanguage.getMessage('PROPERTY'), '', '',
 	                         SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
+	                         SMW_REL_CHECK_PROPERTY_ACCESS +
 	                         SMW_REL_CHECK_EMPTY +
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
@@ -1061,6 +1121,7 @@ getselectedItem: function(selindex) {
 		tb.append(tb.createInput('rel-name', 
 								 gLanguage.getMessage('PROPERTY'), '', '', 
 								 SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA +
+		                         SMW_REL_CHECK_PROPERTY_ACCESS +
 		 						 SMW_REL_CHECK_EMPTY +
 		                         SMW_REL_VALID_PROPERTY_NAME +
 		 						 SMW_REL_HINT_PROPERTY,

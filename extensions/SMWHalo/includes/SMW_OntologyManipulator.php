@@ -37,6 +37,8 @@ $wgAjaxExportList[] = 'smwf_om_RenameArticle';
 $wgAjaxExportList[] = 'smwf_om_MoveCategory';
 $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
+$wgAjaxExportList[] = 'smwf_om_userCan';
+$wgAjaxExportList[] = 'smwf_om_userCanMultiple';
 
 /**
  * Creates a new article or appends some text if it already
@@ -77,7 +79,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
 	$title = strip_tags($title);
 	if ($title == '') return "false";
 	
-	if (!smwf_om_userCan($title, 'create')) {
+	if (smwf_om_userCan($title, 'create') === "false") {
 		return "false,denied,$title";
 	}	
 	
@@ -192,7 +194,7 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 	$title = strip_tags($title);
 	if ($title == '') return "false";
 
-	if (!smwf_om_userCan($title, 'edit')) {
+	if (smwf_om_userCan($title, 'edit') === "false") {
 		return "false,denied,$title";
 	}	
 	
@@ -224,7 +226,7 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
  *  'false', otherwise
  */
 function smwf_om_TouchArticle($title) {
-	if (!smwf_om_userCan($title, 'edit')) {
+	if (smwf_om_userCan($title, 'edit') === "false") {
 		return "false,denied,$title";
 	}	
 	
@@ -255,7 +257,7 @@ function smwf_om_TouchArticle($title) {
  *
  */
 function smwf_om_ExistsArticle($title) {
-	if (!smwf_om_userCan($title, 'read')) {
+	if (smwf_om_userCan($title, 'read') === "false") {
 		return "false,denied,$title";
 	}	
 	
@@ -319,7 +321,7 @@ function smwf_om_ExistsArticle($title) {
 function smwf_om_ExistsArticleIgnoreRedirect($title) {
 	global $wgContLang;
 
-	if (!smwf_om_userCan($title, 'read')) {
+	if (smwf_om_userCan($title, 'read') === "false") {
 		return "false,denied,$title";
 	}	
 	
@@ -425,9 +427,6 @@ function smwf_om_RelationSchemaData($relationName) {
 	   			// for all other wikipage parameters, use the range hint as label. If no range hint exists, simply print 'Page'.
 	   			// makes normally only sense if at most one wikipage parameter exists. This will be handeled in another way in future.
 	   			if ($typeValues[$i] instanceof SMWWikiPageValue) {
-
-	   				
-	   				
 	   				$rangeHints = smwfGetStore()->getPropertyValues($relationTitle, smwfGetSemanticStore()->domainRangeHintProp);
 	   				if (count($rangeHints) > 0) {
 	   					$dvs = $rangeHints->getDVs();
@@ -466,7 +465,7 @@ function smwf_om_RelationSchemaData($relationName) {
  */
 function smwf_om_GetWikiText($pagename) {
 	
-	if (!smwf_om_userCan($pagename, 'read')) {
+	if (smwf_om_userCan($pagename, 'read') === "false") {
 		return "false,denied,$pagename";
 	}	
 	$titleObj = Title::newFromText($pagename);
@@ -487,7 +486,7 @@ function smwf_om_GetWikiText($pagename) {
  * @param string $user The name of the user who wants to delete the article
  */
 function smwf_om_DeleteArticle($pagename, $user, $reason) {
-	if (!smwf_om_userCan($pagename, 'delete')) {
+	if (smwf_om_userCan($pagename, 'delete') === "false") {
 		return "false,denied,$pagename";
 	}	
 	
@@ -513,7 +512,7 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
 	$newpagename = strip_tags($newpagename);
 	if ($newpagename == '') return "false";
 	
-	if (!smwf_om_userCan($pagename, 'move')) {
+	if (smwf_om_userCan($pagename, 'move') === "false") {
 		return "false,denied,$pagename";
 	}	
 	
@@ -543,7 +542,7 @@ function smwf_om_RenameArticle($pagename, $newpagename, $reason, $user) {
  */
 function smwf_om_MoveCategory($draggedCategory, $oldSuperCategory, $newSuperCategory) {
 	
-	if (!smwf_om_userCan($draggedCategory, 'move')) {
+	if (smwf_om_userCan($draggedCategory, 'move') === "false") {
 		return "false";
 	}	
 	
@@ -601,7 +600,7 @@ function smwf_om_MoveProperty($draggedProperty, $oldSuperProperty, $newSuperProp
 	$newSuperProperty = strip_tags($newSuperProperty);
 	if ($newSuperProperty == '') return "false";
 	
-	if (!smwf_om_userCan($draggedProperty, 'move')) {
+	if (smwf_om_userCan($draggedProperty, 'move') === "false") {
 		return "false";
 	}	
 	
@@ -678,8 +677,47 @@ function smwf_om_userCan($titleName, $action) {
 	$result = true;
 	wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
 	if (isset($result) && $result == false) {
-		return false;
+		return "false";
 	} else {
-		return true;
+		return "true";
 	}
+}
+
+/**
+ * Checks if the current user can perform the given $action on the articles with 
+ * the given $titleNames.
+ *
+ * @param string $titleName
+ * 		Comma separated list of article names
+ * @param string $action
+ * 		Name of the action
+ * 
+ * @return bool
+ * 		<true> if the action is permitted
+ * 		<false> otherwise
+ */
+function smwf_om_userCanMultiple($titleNames, $action) {
+	// Special handling if the extension HaloACL is present
+	global $wgUser;
+	
+	$titleNames = split(',', $titleNames);
+	if (defined('HACL_HALOACL_VERSION')) {
+		$etc = haclfDisableTitlePatch();
+	}
+	$results = array();
+	foreach ($titleNames as $t) {
+		$result = true;
+		$title = Title::newFromText(trim($t));
+		wfRunHooks('userCan', array($title, $wgUser, $action, &$result));
+		if (isset($result) && $result == false) {
+			$results[] = array($t, "false");
+		} else {
+			$results[] = array($t, "true");
+		}
+			
+	}
+	if (defined('HACL_HALOACL_VERSION')) {
+		haclfRestoreTitlePatch($etc);
+	}
+	return json_encode($results);
 }

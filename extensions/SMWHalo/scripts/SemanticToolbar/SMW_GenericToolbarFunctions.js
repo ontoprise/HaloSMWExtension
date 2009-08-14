@@ -149,7 +149,17 @@ createList: function(list,id) {
 		if (id == 'rules') {
 			elemName = list[i].getName().escapeHTML();
 		} else {
-			elemName = '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
+			var accessWarning = '';
+			if (id == 'relation') {
+				var accessAllowed = (list[i].accessAllowed != undefined) 
+									? list[i].accessAllowed : true;
+				if (accessAllowed == "false") {
+					accessWarning = '<img title="'+gLanguage.getMessage('PROPERTY_ACCESS_DENIED_TT')+'" ' +
+							             'src="' + wgScriptPath  + '/extensions/SMWHalo/skins/warning.png"/>';
+				}
+			}
+			elemName = accessWarning + 
+			           '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
 			elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
 		}
 		divlist += 	"<tr>" +
@@ -366,6 +376,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		// As actions for key-up events are delayed, the last event is stored.
 		this.keyUpEvent = null;
 		this.pendingIndicator = null;
+		this.ajaxSyncQueue = [];
 	},
 
 	/*
@@ -436,6 +447,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		if (this.checkIfEmpty(target) == false
 			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
+			this.handleAccessControl(target);
 		}
 		this.doFinalCheck(target);
 		
@@ -469,6 +481,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		if (this.checkIfEmpty(target) == false
 			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
+			this.handleAccessControl(target);
 		}
 		this.handleChange(target);
 		this.doFinalCheck(target);
@@ -498,6 +511,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				if (this.checkIfEmpty(elem) == false
 					&& this.handleValidValue(elem)) {
 					this.handleCheck(elem);
+					this.handleAccessControl(target);
 				}
 				elem.setAttribute("smwOldValue", elem.value);
 				
@@ -524,6 +538,7 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		if (this.checkIfEmpty(target) == false
 			&& this.handleValidValue(target)) {
 			this.handleCheck(target);
+			this.handleAccessControl(target);
 			this.handleChange(target);
 		}
 		this.doFinalCheck(target);
@@ -642,6 +657,40 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 					this.handleSchemaCheck(type, check, target);
 					break;
 			}
+		}
+	},
+
+	/*
+	 * This method handles access control checks (currently only for properties).
+	 *
+	 * Structure:
+	 * 	 smwAccessControl="object: action ? (actions if access granted) : (actions if access denied)"
+	 * 		object: property (Currently the only supported object.)
+	 * 		action: propertyread
+	 * 				propertyformedit
+	 * 				propertyedit
+	 * Examples:
+	 *   smwAccessControl="property: propertyedit ? (color:white) : (color:red)"
+	 * 
+	 * @param Object target
+	 * 			The target element (an input field)
+	 */
+	handleAccessControl: function(target) {
+		var check = target.getAttribute("smwAccessControl");
+		if (!check)	{
+			return;
+		}
+		var type = check;
+		var actions = "";
+		var pos = check.indexOf(":");
+		if (pos != -1) {
+			type = check.substring(0, pos);
+		}
+		type = type.toLowerCase();
+		switch (type) {
+			case 'property':
+				this.handleAccessCheck(type, check, target);
+				break;
 		}
 	},
 
@@ -790,7 +839,47 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 		                      value, [type, check], target.id)) {
 			// there is something wrong with the page name
 			this.ajaxCbSchemaCheck(checkName, false, value, [type, check], target);
-		}							
+		} else {
+			this.ajaxSyncQueue["schemaCheck"] = "pending";
+		}						
+	},
+
+	/*
+	 * This method checks if an object is protected by access control.
+	 * It shows the pending indicator and starts an ajax call that calls back in 
+	 * function <ajaxCbAccessCheck>.
+	 * 
+	 * @param string type
+	 * 			Currently only "property" is supported
+	 * @param string check
+	 * 			The complete specification of the check that is performed i.e.
+	 * 			the content of the attribute "smwAccessControl".
+	 * @param Object target
+	 * 			The target i.e. an input field
+	 */
+	handleAccessCheck: function(type, check, target) {
+		var value = target.value;
+		var checkName;
+		var action;
+		switch (type) {
+			case 'property':
+				checkName = gLanguage.getMessage('PROPERTY_NS')+value;
+				action = check.match(/.*?:\s*(.*?)\s*\?/);
+				if (!action) {
+					return;
+				}
+				action = action[1];
+				break;
+		}
+		this.showPendingIndicator(target);
+		if (!this.om.checkAccessRight(checkName, action,
+		                      this.ajaxCbAccessCheck.bind(this), 
+		                      value, [type, check], target.id)) {
+			// there is something wrong with the page name
+			this.ajaxCbAccessCheck(checkName, action, false, value, [type, check], target);
+		} else {
+			this.ajaxSyncQueue["accessCheck"] = "pending";
+		}					
 	},
 	
 	/*
@@ -814,15 +903,93 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 */
 	ajaxCbSchemaCheck: function(pageName, exists, title, param, elementID) {
 		
+		this.ajaxSyncQueue["schemaCheck"] = {
+			"pageName": pageName,
+			"exists":   exists,
+			"title":    title,
+			"param":    param,
+			"elementID":elementID
+		};
+		
+		this.processAjaxSyncQueue();		
+	},
+
+	/*
+	 * This method is a callback of the ajax-call that checks if access to an 
+	 * object is allowed.
+	 * Depending on the access rights, actions specified in a conditional
+	 * are performed.
+	 * 
+	 * @param string pageName
+	 * 			Complete name of the object whose access rights are checked.
+	 * @param string action
+	 * 			Action that should be performed on the object e.g. "propertyedit"
+	 * @param boolean accessGranted
+	 * 			<true> if access is granted
+	 * 			<false> otherwise
+	 * @param string title
+	 * 			Content of the input field that was checked.
+	 * @param array<string> param
+	 * 			[0]: Type ("property")
+	 * 			[1]: The complete specification of the check that was performed 
+	 * 			     i.e. the content of the attribute "smwAccessControl".
+	 * @param string elementID
+	 * 			DOM-ID of the input element for which the check was performed
+	 */
+	ajaxCbAccessCheck: function(pageName, action, accessGranted, title, param, elementID) {
+		
+		this.ajaxSyncQueue["accessCheck"] = {
+			"pageName": pageName,
+			"action":   action,
+			"accessGranted":   accessGranted,
+			"title":    title,
+			"param":    param,
+			"elementID":elementID
+		};	
+			
+		this.processAjaxSyncQueue();
+	},
+	
+	processAjaxSyncQueue: function() {
+		if (this.ajaxSyncQueue["schemaCheck"] 
+		    && this.ajaxSyncQueue["schemaCheck"] == "pending") {
+			return;
+		}
+		if (this.ajaxSyncQueue["accessCheck"]
+		    && this.ajaxSyncQueue["accessCheck"] == "pending") {
+			return;
+		}
+		
 		this.hidePendingIndicator();
-		var check = param[1];
-		var pos = check.indexOf(":");
-		if (pos != -1) {
-			var conditional = check.substring(pos+1);		
-			var actions = this.parseConditional("exists", conditional);
-			if (actions) {
-				this.performActions(exists ? actions[0] : actions[1], $(elementID))
+
+		var exists = true;
+		if (this.ajaxSyncQueue["schemaCheck"]) {
+			var obj = this.ajaxSyncQueue["schemaCheck"]; 
+			var elementID = obj["elementID"];
+			
+			var check = obj["param"][1];
+			var pos = check.indexOf(":");
+			if (pos != -1) {
+				var conditional = check.substring(pos+1);		
+				var actions = this.parseConditional("exists", conditional);
+				if (actions) {
+					exists = obj["exists"];
+					this.performActions(exists ? actions[0] : actions[1], $(elementID))
+				}
 			}
+		}
+		if (exists && this.ajaxSyncQueue["accessCheck"]) {
+			obj = this.ajaxSyncQueue["accessCheck"]; 
+			var elementID = obj["elementID"];
+			var check = obj["param"][1];
+			var pos = check.indexOf(":");
+			if (pos != -1) {
+				var conditional = check.substring(pos+1);		
+				var actions = this.parseConditional("propertyedit", conditional);
+				if (actions) {
+					this.performActions(obj["accessGranted"] ? actions[0] : actions[1], $(elementID))
+				}
+			}		
 		}
 		this.doFinalCheck($(elementID));
 	},

@@ -27,6 +27,7 @@ RefreshSemanticToolBar.prototype = {
 		this.timeOffset = 0;
 		this.contentChanged = false;
 		this.wtp = null;
+		this.containsForbiddenProperties = false;
 
 	},
 
@@ -99,6 +100,23 @@ RefreshSemanticToolBar.prototype = {
 		// Check for syntax errors in the wiki text
 		var saveButton = $('wpSave');
 		if (saveButton) {
+			// Check if the wikitext contains forbidden properties
+			if (this.containsForbiddenProperties &&
+			    !$('wpForbiddenProperties')) {
+				new Insertion.Before(saveButton,
+					'<div id="wpForbiddenProperties" ' +
+					  'style="background-color:#ee0000;' +
+							 'color:white;' +
+							 'font-weight:bold;' +
+							 'text-align:left;">' +
+							 gLanguage.getMessage('CANT_SAVE_FORBIDDEN_PROPERTIES')+'</div>');
+			} else if (!this.containsForbiddenProperties &&
+			           $('wpForbiddenProperties')){
+				$('wpForbiddenProperties').remove();
+			}
+			
+			
+			// Check if the wikitext contains syntax errors
 			if (!this.wtp) {
 				this.wtp = new WikiTextParser();
 			}
@@ -106,14 +124,11 @@ RefreshSemanticToolBar.prototype = {
 			this.wtp.parseAnnotations();
 			var error = this.wtp.getError();
 			if (error == WTP_NO_ERROR) {
-				saveButton.enable();
 				if ($('wpSaveWarning')) {
 					$('wpSaveWarning').remove();
-					gEditInterface.focus();
 				}
 			} else {
 				if (!$('wpSaveWarning')){
-					saveButton.disable();
 					new Insertion.Before(saveButton,
 						'<div id="wpSaveWarning" ' +
 						  'style="background-color:#ee0000;' +
@@ -121,13 +136,20 @@ RefreshSemanticToolBar.prototype = {
 								 'font-weight:bold;' +
 								 'text-align:left;">' +
 								 gLanguage.getMessage('UNMATCHED_BRACKETS')+'</div>');
-					gEditInterface.focus();
 				}
 			}
+			
+			if (this.containsForbiddenProperties || error != WTP_NO_ERROR) {
+				saveButton.disable();
+			} else {
+				saveButton.enable();
+			}				
+			
+			
 			if (gEditInterface == null) {
 				gEditInterface = new SMWEditInterface();
 			}
-//			gEditInterface.focus();
+			gEditInterface.focus();
 		}
 
 	}
