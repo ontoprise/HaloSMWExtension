@@ -500,7 +500,7 @@ LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
                 $ut = $db->tableName('user');
 		$gt = $db->tableName('halo_acl_groups');
                 $gmt = $db->tableName('halo_acl_group_members');
-		$sql = "SELECT user_id, group_id, group_name
+		$sql = "SELECT DISTINCT user_id, group_id, group_name
 FROM user
 LEFT JOIN  $gmt ON  $gmt.child_id = user.user_id
 LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
