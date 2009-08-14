@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains the class HACLGroup.
@@ -99,7 +99,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
     tab4.addListener('click', function(e){});
     $(tab1.get('contentEl')).setAttribute('id','whitelistsTab');
 
-// ------
+    // ------
 
 };
 
@@ -147,7 +147,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
     tab3.addListener('click', function(e){});
 
 
-// ------
+    // ------
 
 };
 
@@ -158,7 +158,7 @@ YAHOO.haloacl.tabDataConnect = function() {
     var queryparameterlist = {
         rs:tab.get('dataSrc')
     };
-    */
+     */
     var querystring = "rs="+tab.get('dataSrc');
     var postData = tab.get('postData');
     
@@ -195,7 +195,7 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
     /*   var queryparameterlist = {
         rs:action
     };
-   */
+     */
     var querystring = "rs="+action;
 
     if(parameterlist != null){
@@ -304,13 +304,14 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine){
 
     
 
-// ------
+    // ------
 
 };
 
 // --- handling global arrays for selection of users and groups
 
-YAHOO.haloacl.removeUserFromUserArray = function(panelid,name){
+YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
+    console.log("deletable-type:"+deletable);
     var elementToRemove = 0;
     for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
@@ -319,13 +320,23 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name){
     }
     YAHOO.haloacl.clickedArrayUsers[panelid].splice(elementToRemove,1);
 
-    try{
-        var element = $(panelid+"assigned"+name);
-        element.parentNode.parentNode.parentNode.hide();
-    }
-    catch(e){
-        console.log("hiding element failed");
-        console.log(e);
+    var element = $(panelid+"assigned"+name);
+    if(deletable == "user"){
+        try{
+            element.parentNode.parentNode.parentNode.hide();
+        }
+        catch(e){
+            console.log("hiding element failed");
+            console.log(e);
+        }
+    }else{deletable == "groupuser"}{
+        try{
+            element.hide();
+            //element.parentNode.parentNode.parentNode.hide();
+        }
+        catch(e){
+            console.log(e);
+        }
     }
 };
 

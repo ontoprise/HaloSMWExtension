@@ -480,6 +480,9 @@ abbr,acronym { border:0;
 .datatable-groups-col-div{
 }
 
+.yui-pg-container{
+    padding: 0 0 0 5px!important;
+}
 /* assigned tab remove-link */
 .removebutton{
     background: url(images/remove.png) 0 0 no-repeat!important;
