@@ -41,4 +41,3 @@ smwfSynsetsInitializeTables();
 print "\n..done";
 
 
-?>

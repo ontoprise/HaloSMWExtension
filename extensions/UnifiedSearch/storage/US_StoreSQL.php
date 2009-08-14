@@ -288,4 +288,3 @@ class USStoreSQL extends USStore {
 		return true;
 	}
 }
-?>

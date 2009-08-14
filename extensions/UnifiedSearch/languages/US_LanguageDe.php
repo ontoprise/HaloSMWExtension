@@ -78,4 +78,3 @@ class US_LanguageDe {
 		'us_pathsearch_result_popup_header' => 'Alle Ergebnisse für diese Pfad',
 	);        
 }
-?>

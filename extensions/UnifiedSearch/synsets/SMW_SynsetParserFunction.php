@@ -57,4 +57,3 @@ function synsetPF_Render( &$parser) {
 }
 
 
-?>

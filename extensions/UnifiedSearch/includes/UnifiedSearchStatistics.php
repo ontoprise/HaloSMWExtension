@@ -171,4 +171,3 @@ class UnifiedSearchStatistics extends QueryPage {
 
 }
 
-?>

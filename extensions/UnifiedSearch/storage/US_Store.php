@@ -102,4 +102,3 @@ abstract class USStore {
      */
     public abstract function setup($verbose);
 }
-?>

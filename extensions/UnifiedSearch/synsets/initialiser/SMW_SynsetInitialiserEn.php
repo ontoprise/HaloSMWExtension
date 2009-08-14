@@ -72,4 +72,3 @@ class SynsetInitialiserEn implements ISynsetInitialiser {
 		
 }
 
-?>

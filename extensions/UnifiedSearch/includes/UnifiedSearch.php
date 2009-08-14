@@ -301,4 +301,3 @@ function smwfSynsetsDeInitializeTables() {
     return true;
 } 
 
-?>

@@ -284,4 +284,4 @@ class USDBHelper {
 		return $sql_conds;
 	}
 }
-?>
+

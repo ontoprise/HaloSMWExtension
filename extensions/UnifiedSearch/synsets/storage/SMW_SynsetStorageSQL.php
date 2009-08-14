@@ -96,4 +96,3 @@ class SynsetStorageSQL implements ISynsetStorage{
 
 }
 
-?>

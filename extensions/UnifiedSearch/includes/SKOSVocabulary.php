@@ -45,4 +45,3 @@ class SKOSVocabulary {
 }
 
 new SKOSVocabulary(); // create one instance to initialize static fields
-?>
