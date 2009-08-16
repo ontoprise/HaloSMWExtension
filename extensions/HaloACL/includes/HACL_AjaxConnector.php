@@ -50,6 +50,7 @@ $wgAjaxExportList[] = "saveSecurityDescriptor";
 $wgAjaxExportList[] = "getWhitelistPages";
 $wgAjaxExportList[] = "getUsersWithGroups";
 $wgAjaxExportList[] = "getUsersForGroups";
+$wgAjaxExportList[] = "getGroupsForManageUser";
 
 
 
@@ -115,19 +116,6 @@ HTML;
     $html .= $helpItem->getPanel();
     $html .= <<<HTML
         </div>
-            <script type="javascript">
-
-            
-
-
-           /*     var myTooltip = new YAHOO.widget.Tooltip("myTooltip", {
-                    context:"anchorHelpCreateRight",
-                    text:"TOOLTOP TExt",
-                    showDelay:500 }
-                );
-           */
-            </script>
-
             <div id="haloacl_tab_createacl_rightsection" class="haloacl_tab_section_content">
                 <div class="haloacl_tab_section_content_row">
                     <input type="button" value="Create right"
@@ -159,11 +147,12 @@ HTML;
 
                   var divhtml = '<div id="create_acl_rights_row'+YAHOO.haloacl.panelcouner+'" class="haloacl_tab_section_content_row"></div>';
 
+
                   var containerWhereDivsAreInserted = $('haloacl_tab_createacl_rightsection');
                   $('haloacl_tab_createacl_rightsection').insert(divhtml,containerWhereDivsAreInserted);
 
-
                   YAHOO.haloacl.loadContentToDiv('create_acl_rights_row'+YAHOO.haloacl.panelcouner,'getRightsPanel',{panelid:panelid, predefine:predefine});
+                   
                   YAHOO.haloacl.panelcouner++;
             };
 
@@ -1726,6 +1715,56 @@ function getGroupsForRightPanel($query) {
     }
     return (json_encode($array));
 }
+function getGroupsForManageUser($query) {
+    ini_set("display_errors",0);
+    
+    $array = array();
+
+    // return first level
+    if($query == 'all') {
+
+    //get level 0 groups
+        $groups = HACLStorage::getDatabase()->getGroups();
+        foreach( $groups as $key => $value) {
+            $group = HACLGroup::newFromID($value->getGroupId());
+
+            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+            $array[] = $tempgroup;
+
+        }
+
+
+    }else {
+
+    //get group by name
+        try {
+            $parent = HACLGroup::newFromName($query);
+
+            //groups
+            $groups = $parent->getGroups(HACLGroup::OBJECT);
+            foreach( $groups as $key => $value ) {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                $array[] = $tempgroup;
+            }
+
+        /*
+
+        //users
+        $users = $parent->getUsers(HACLGroup::OBJECT);
+        foreach( $users as $key => $value ) {
+            $tempgroup = array('name'=>$value->getName(),'id'=>$value->getId(),'checked'=>'false');
+            $array[] = $tempgroup;
+        }
+         *
+         */
+        }
+        catch(Exception $e ) {
+            $array = array();
+
+        }
+    }
+    return (json_encode($array));
+}
 
 
 /**
@@ -1919,68 +1958,90 @@ function manageUserContent() {
 
 
     $html = <<<HTML
-<div id=haclCreateDutContainer>
-	<p class="haclHeadline">{$dutHeadline}</p>
-	<p class="haclInfo">{$dutInfo}</p>
-	<div id="haclCreateDutGeneralContainer">
-		<div class="haclHeader">{$dutGeneralHeader}</div>
-		<table>
-			<tr>
-				<td>{$dutGeneralDefine}</td>
-				<td><input type="checkbox" checked="checked">{$dutGeneralDefinePrivate}</input></td>
-				<td><input type="checkbox" checked="checked">{$dutGeneralDefineAll}</input></td>
-				<td><input type="checkbox" checked="checked">{$dutGeneralDefineSpecific}</input></td>
-			</tr>
-		</table>
-	</div><!-- End of haclCreateDutGeneralContainer -->
-	<div id="haclCreateDutRightsContainer">
-		<div class="haclHeader">{$dutRightsHeader}</div>
-		<input class="haclCreateRightButton" type="button" value="{$dutRightsButtonCreate}" />
-		<input class="haclCreateRightButton" type="button" value="{$dutRightsButtonAddTemplate}" />
-		<div class="haclCreateDutRight">
-			<fieldset>
-				<legend class="haclCreateDutLegend"><span class="haclCreateDutRightLegend">{$dutRightsLegend}</span>
-					<span class="haclCreateDutLegendControl">{$dutRightsLegendSaved}+ICON</span>
-				</legend>
-				<table>
-				<tr>
-					<td>{$dutRightsName}</td><td><input type="text" size="30" value="{$dutRightsDefaultName}"></input></td>
-				</tr>
-				<tr>
-					<td>{$dutRights}</td>
-					<td>
-						<table>
-							<tr>
-								<td><input type="checkbox" name="full_access" value="full_access">{$dutRightsFullAccess}</input></td>
-								<td><input type="checkbox" name="read" value="full_access">{$dutRightsRead}</input></td>
-								<td><input type="checkbox" name="edit_with_forms" value="full_access">{$dutRightsEWF}</input></td>
-								<td><input type="checkbox" name="edit" value="full_access">{$dutRightsEdit}</input></td
-							</tr>
-							<tr>
-								<td><input type="checkbox" name="create" value="full_access">{$dutRightsCreate}</input></td>
-								<td><input type="checkbox" name="move" value="full_access">{$dutRightsMove}</input></td>
-								<td><input type="checkbox" name="delete" value="full_access">{$dutRightsDelete}</input></td>
-								<td><input type="checkbox" name="annotate" value="full_access">{$dutRightsAnnotate}</input></td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				</table>
-				<div class="drawLine">&nbsp;</div>
-				<div class="haclCreateDutUserContainer">
-					<div class="haclCreateDutUserTabs">
-						<ul>
-							<li>1</li>
-							<li>2</li>
-						</ul>
-					</div><!-- End Of haclCreateDutUserTabs -->
-				</div><!-- End Of haclCreateDutUserContainer -->
-			</fieldset>
-		</div><!-- End Of haclDutRight -->
-	</div><!-- End of haclCreateDutRightsContainer -->
-	<div class="drawLine">&nbsp;</div>
-</div><!-- End of haclCreateDutContainer -->
+        <div class="haloacl_manageusers_container">
+<div class="haloacl_manageusers_title">
+Manage ACL group and user
+</div>
+<div class="haloacl_manageusers_subtitle">
+Description text : e.g. "In this tab you can create, edit and delete ACL group"
+</div>
 HTML;
+
+    $panelContent = <<<HTML
+        <div id="content_manageUsersPanel">
+
+        <div id="haloacl_manageuser_contentmenu">
+            <div id="haloacl_manageuser_contentmenu_title">
+                Add new group
+            </div>
+            <div id="haloacl_manageuser_contentmenu_element">
+                <a href="javascript:YAHOO.haloacl.manageUser.addNewSubgroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">Add subgroup</a>
+            </div>
+            <div id="haloacl_manageuser_contentmenu_element">
+                <a href="javascript:YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">Add subgroup on same level</a>
+            </div>
+            
+
+
+        </div>
+
+        <div id="haloacl_manageuser_contentlist">
+
+
+        <div id="manageuser_grouplisting">
+        <div id="haloacl_manageuser_contentlist_title">
+            Groups  Information ...
+           
+
+        </div>
+            <div id="treeDiv_manageuser_grouplisting">
+            </div>
+            <div id="haloacl_manageuser_contentlist_footer">
+                <input type="button" value="delete selected" />
+           
+
+            </div>
+        </div>
+        <script>
+            // treeview part - so the left part of the select/deselct-view
+            YAHOO.haloacl.manageUser_selectedGroup = "";
+
+            YAHOO.haloacl.treeInstancemanageuser_grouplisting = new YAHOO.widget.TreeView("treeDiv_manageuser_grouplisting");
+            YAHOO.haloacl.treeInstancemanageuser_grouplisting.labelClickAction = 'YAHOO.haloacl.manageUser_handleGroupSelect';
+
+            YAHOO.haloacl.manageUser_handleGroupSelect = function(groupname){
+                $$('.manageUser_highlighted').each(function(item){
+                    item.removeClassName("manageUser_highlighted");
+                });
+                console.log(groupname);
+                var element = $('manageUserRow_'+groupname);
+                console.log(element);
+
+                YAHOO.haloacl.manageUser_selectedGroup = groupname;
+                element.parentNode.parentNode.parentNode.parentNode.addClassName("manageUser_highlighted");
+                
+            };
+
+            YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstancemanageuser_grouplisting);
+        </script>
+        </div>
+
+
+    </div>
+
+
+HTML;
+
+    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "ACL Group Explorer",false,false);
+    $myGenericPanel->setSaved(true);
+    $myGenericPanel->setContent($panelContent);
+
+    $html .= $myGenericPanel->getPanel();
+
+    $html .= <<<HTML
+        </div>
+HTML;
+
     $response->addText($html);
     return $response;
 }
