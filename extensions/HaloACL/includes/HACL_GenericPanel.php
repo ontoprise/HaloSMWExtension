@@ -29,7 +29,7 @@
  *
  * @author hipath
  */
- 
+
 class HACL_GenericPanel {
 
     private $saved = false;
@@ -38,7 +38,7 @@ class HACL_GenericPanel {
     private $content;
 
 
-    function __construct($panelid, $name="") {
+    function __construct($panelid, $name="",$title="Right",$showStatus = true,$showClose = true) {
 
         $this->header = <<<HTML
 	<!-- start of panel div-->
@@ -49,18 +49,26 @@ class HACL_GenericPanel {
 				<a href="javascript:YAHOO.haloacl.togglePanel('$panelid');"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
 			</span>
                         <div class="haloacl_panel_nameDescr">
-                            <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">Right</span>
+                            <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">$title</span>
                             <span id="haloacl_panel_descr_$panelid" class="panel haloacl_panel_descr"></span>
                         </div>
+HTML;
+        if($showStatus) {
+            $this->header .= <<<HTML
                         <div class="haloacl_panel_statusContainer">
                             <span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_notsaved">Not Saved</span>
                         </div>
+
+HTML;
+        }
+        if($showClose) {
+            $this->header .= <<<HTML
 			<span class="button haloacl_panel_close">
 				<a href="javascript:YAHOO.haloacl.removePanel('$panelid');"><div id="close-button_$panelid" class="haloacl_panel_button_close"></div></a>
 			</span>
-		</div>
-		<!-- end of panel's top bar -->
 HTML;
+        }
+        $this->header .="</div>";
 
         $this->footer = <<<HTML
         </div> <!-- end of panel div -->
@@ -87,6 +95,7 @@ HTML;
 
 
         </script>
+
 HTML;
 
 
@@ -124,4 +133,5 @@ HTML;
 
     }
 }
+
 ?>
