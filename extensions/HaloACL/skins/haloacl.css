@@ -499,6 +499,12 @@ abbr,acronym { border:0;
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt tr.yui-dt-first td {
     border-top:0px solid!important;
 }
+
+.haloacl_infobutton {
+    width:20px;
+    height:20px;
+    background:url(images/info.png) no-repeat;
+}
 /* ----- */
 
 /* tab view customization */
