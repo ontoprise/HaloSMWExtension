@@ -2046,8 +2046,6 @@ HTML;
             YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstancemanageuser_grouplisting);
         </script>
         </div>
-
-
     </div>
 
 
@@ -2058,6 +2056,47 @@ HTML;
     $myGenericPanel->setContent($panelContent);
 
     $html .= $myGenericPanel->getPanel();
+
+    $html .= <<<HTML
+        </div>
+HTML;
+
+    // ------ NOW STARTS THE EDITING PART ------
+
+    $html .= <<<HTML
+
+       
+<div id="haloacl_manageUser_editing_container">
+
+        <div id="haloacl_manageUser_editing_title">
+            Editing
+        </div>
+HTML;
+
+    $groupPanelContent = <<<HTML
+    <div id="content_manageUserGroupsettings">
+        <div id="manageUserGroupSettingsRight">
+        </div>
+        <script>
+        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
+        </script>
+
+        <div id="manageUserGroupSettingsModificationRight">
+        </div>
+        <script>
+        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+        </script>
+    </div>
+</div>
+
+
+HTML;
+
+    $groupPanel = new HACL_GenericPanel("manageUserGroupsettings","manageUserGroupsettings", "Group",true,false);
+    $groupPanel->setSaved(false);
+    $groupPanel->setContent($groupPanelContent);
+    $html .= $groupPanel->getPanel();
+
 
     $html .= <<<HTML
         </div>
