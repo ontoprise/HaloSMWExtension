@@ -72,7 +72,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param SMWStore $smwstore All calls are delegated to this implementation.
 	 */
 	function __construct() {
-		global $smwgDefaultStore, $smwgBaseStore;
+		global $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
 		$this->smwstore = new $smwgBaseStore;
 		global $smwgTripleStoreGraph;
 
@@ -84,11 +84,19 @@ class SMWTripleStore extends SMWStore {
 		self::$IMAGE_NS = $smwgTripleStoreGraph.self::$IMAGE_NS_SUFFIX;
 		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
-
+    
+		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW) 
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
 		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> ';
-
+        
+		// declare all other namespaces using ns_$index as prefix
+		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
+		foreach($extraNamespaces as $nsIndex) {
+			$nsText = strtolower($wgContLang->getNsText($nsIndex));
+			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex#> ";
+		}
+		
 	}
 
 
