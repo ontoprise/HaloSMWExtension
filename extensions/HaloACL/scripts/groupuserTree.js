@@ -474,13 +474,16 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
  */
 YAHOO.haloacl.filterNodes = function(parentNode,filter){
 
+    filter = filter.toLowerCase();
+    
     var nodes;
     nodes = parentNode.children;
 
     for(var i=0, l=nodes.length; i<l; i=i+1) {
         var n = nodes[i];
-
-        if (n.label.indexOf(filter) < 0) {
+        var temp = n.label;
+        temp = temp.toLowerCase();
+        if (temp.indexOf(filter) < 0) {
             document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "none";
         } else {
             document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";

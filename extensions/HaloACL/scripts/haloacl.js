@@ -34,6 +34,8 @@ YAHOO.namespace("haloacl");
 YAHOO.namespace("haloaclrights");
 YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
+YAHOO.namespace ("haloacl.manageUser");
+
 
 YAHOO.haloacl.panelcouner = 0;
 // has all checked users from grouptree
@@ -103,7 +105,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
     tab4.addListener('click', function(e){});
     $(tab1.get('contentEl')).setAttribute('id','whitelistsTab');
 
-    // ------
+// ------
 
 };
 
@@ -151,7 +153,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
     tab3.addListener('click', function(e){});
 
 
-    // ------
+// ------
 
 };
 
@@ -313,7 +315,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
     
 
-    // ------
+// ------
 
 };
 
@@ -321,6 +323,8 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
 YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
     console.log("deletable-type:"+deletable);
+    console.log("array before deletion");
+    console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
     var elementToRemove = 0;
     for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
@@ -338,15 +342,19 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
             console.log("hiding element failed");
             console.log(e);
         }
-    }else{deletable == "groupuser"}{
+    }else{
+        deletable == "groupuser"
+        }{
         try{
             element.hide();
-            //element.parentNode.parentNode.parentNode.hide();
+        //element.parentNode.parentNode.parentNode.hide();
         }
         catch(e){
             console.log(e);
         }
     }
+    console.log("array after deletion");
+    console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
 };
 
 

@@ -538,3 +538,126 @@ abbr,acronym { border:0;
     font-weight:bold;
     color:#000;
 }
+
+
+/* --- MANAGE USERS --- */
+
+.haloacl_manageusers_container{
+    float:left;
+    padding:10px;
+
+}
+.haloacl_manageusers_title{
+    text-decoration:underline;
+    font-weight:bold;
+    font-size:16px;
+}
+.haloacl_manageusers_subtitle{
+    margin: 0 0 10px 0;
+}
+#content_manageUsersPanel{
+    min-height:350px;
+    padding:10px;
+    border:1px solid;
+    border-style:solid none none none;
+}
+#haloacl_manageuser_contentmenu{
+    height:200px;
+    width:140px;
+    float:left;
+    background-color:#FFF;
+    border:1px solid;
+
+}
+#haloacl_manageuser_contentmenu_title{
+    font-weight:bold;
+    border:1px solid;
+    border-style: none none solid none;
+    padding:0 0 0 10px;
+    margin: 0 0 5px 0;
+
+
+}
+#haloacl_manageuser_contentmenu_element{
+    margin:0 0 0 5px;
+    padding:0 0 0 12px;
+    background:url(images/add_button.png) no-repeat 0 2px;
+
+
+}
+#haloacl_manageuser_contentlist{
+    margin:0 0 0 20px;
+    height:310px;
+    width:600px;
+    float:left;
+    background-color:#FFF;
+    border:1px solid;
+
+}
+#haloacl_manageuser_contentlist_title{
+    font-weight:bold;
+    border:1px solid;
+    border-style: none none solid none;
+    padding:0 0 0 10px;
+
+}
+#haloacl_manageuser_contentlist_footer{
+    font-weight:bold;
+    padding:3px 10px;
+    text-align:right!important;
+}
+
+.haloacl_manageuser_list_information{
+    float:left;
+    width:200px;
+}
+.haloacl_manageuser_list_edit{
+    float:left;
+    width:100px;
+    background:url(images/edit_button.png) no-repeat 0 0;
+
+}
+.haloacl_manageuser_list_delete{
+    float:left;
+    width:100px;
+}
+.haloacl_manageuser_list_title{
+    float:left;
+    width:150px;
+}
+#treeDiv_manageuser_grouplisting{
+    height:260px;
+    border:1px solid;
+    border-style:none none solid none;
+    overflow:scroll!important;
+    padding:5px 0 0 5px;
+}
+.manageUser_highlighted{
+    background-color:#DDD!important;
+}
+
+.ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover {
+    background:none!important;
+}
+
+#haloacl_manageUser_editing_container{
+    clear:both;
+    float:left;
+    margin:10px 0 0 10px;
+    padding:10px  0 0;
+    border:1px solid;
+    border-style:solid none none none;
+}
+#haloacl_manageUser_editing_title{
+    font-site:16px;
+    font-weight:bold;
+}
+#manageUserGroupsettings{
+    float:left;
+}
+#manageUserGroupSettingsRight{
+    margin:5px;
+}
+#manageUserGroupSettingsModificationRight{
+    margin:5px;
+}
