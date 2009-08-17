@@ -10,7 +10,11 @@ class DF_Language_De extends DF_Language {
 	protected $language_constants = array(
 	'df_ontologyversion' => 'Ontologieversion',
 	'df_partofbundle' => 'Teil des Pakets',
-	'df_contenthash' => 'Inhaltshash'
+	'df_contenthash' => 'Inhaltshash',
+	'df_dependencies'=> 'Abhängigkeit',
+    'df_instdir' => 'Installationsverzeichnis',
+    'df_ontologyvendor' => 'Anbieter',
+    'df_description' => 'Beschreibung'
 	);
 }
 ?>

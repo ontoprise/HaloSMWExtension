@@ -36,7 +36,7 @@ if (!file_exists("../../languages/$langClass.php")) {
 }
 require_once("../../languages/$langClass.php");
 $dfgLang = new $langClass();
-print_r($dfgLang->getLanguageString("df_ontologyversion"));
+
 
 $dumper = new DeployBackupDumper( $argv );
 
@@ -72,6 +72,7 @@ if( isset( $options['full'] ) ) {
     $dumper->dump( DeployWikiExporter::FULL, $textMode );
 } elseif( isset( $options['current'] ) ) {
     $dumper->dump( DeployWikiExporter::CURRENT, $textMode );
+    
 } else {
     $dumper->progress( <<<ENDS
 This script dumps the wiki page database into an XML interchange wrapper
@@ -104,6 +105,11 @@ Fancy stuff:
 
 ENDS
 );
+
+}
+
+function fatalError($text) {
+	print "\n$text\n";die();
 }
 
 

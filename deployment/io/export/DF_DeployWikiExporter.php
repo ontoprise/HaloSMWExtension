@@ -28,8 +28,26 @@
 /**
  * @ingroup Dump Maintenance
  */
+
+require_once 'DF_DeployUploadExporter.php';
+
 class DeployBackupDumper extends BackupDumper {
 
+	private $bundleToExport;
+
+	function __construct($argv) {
+		parent::__construct($argv);
+		for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
+
+			//-b => Bundle to export
+			if ($arg == '-b') {
+				$bundleToExport = next($argv);
+				if ($package === false) fatalError("No bundle given.");
+				$this->bundleToExport = $bundleToExport;
+				continue;
+			}
+		}
+	}
 
 	function dump( $history, $text = MW_EXPORT_TEXT ) {
 		# Notice messages will foul up your XML output even if they're
@@ -49,16 +67,19 @@ class DeployBackupDumper extends BackupDumper {
 		if( !$this->skipHeader )
 		$exporter->openStream();
 
-		if( is_null( $this->pages ) ) {
-			if( $this->startId || $this->endId ) {
-				$exporter->pagesByRange( $this->startId, $this->endId );
-			} else {
-				$exporter->allPages();
-			}
+		if (isset($this->bundleToExport)) {
+			$exporter->exportBundle($this->bundleToExport);
 		} else {
-			$exporter->pagesByName( $this->pages );
+			if( is_null( $this->pages ) ) {
+				if( $this->startId || $this->endId ) {
+					$exporter->pagesByRange( $this->startId, $this->endId );
+				} else {
+					$exporter->allPages();
+				}
+			} else {
+				$exporter->pagesByName( $this->pages );
+			}
 		}
-
 		if( !$this->skipFooter )
 		$exporter->closeStream();
 
@@ -92,10 +113,205 @@ class DeployWikiExporter extends WikiExporter {
 
 		parent::__construct($db, $history, $buffer, $text);
 		$this->writer  = new DeployXmlDumpWriter();
-			
+
+
 	}
 
+	/**
+	 * Export the given bundle and all its pages. A bundle is denoted by a bundle identifier.
+	 * All pages belonging to that bundle have an annotation to it (Part of bundle). Instances of
+	 * categories beloning to the bundle are exported automatically.
+	 *
+	 * @param string $bundleID
+	 */
+	function exportBundle($bundeID) {
+		global $dfgLang;
 
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$partOfBundleID = smwfGetStore()->getSMWPageID($bundeID, NS_MAIN, "");
+		$smwids     = $this->db->tableName( 'smw_ids' );
+		$smwrels     = $this->db->tableName( 'smw_rels2' );
+		$categorylinks     = $this->db->tableName( 'categorylinks' );
+
+		// export all pages of bundle
+		$joint = "$smwids,$smwrels";
+		$cond = "s_id = smw_id AND page_title = smw_title AND page_namespace = smw_namespace ".
+                "AND p_id = ".$partOfBundlePropertyID." AND o_id = ".$partOfBundleID;
+		$this->dumpFrom($joint, $cond);
+
+		// export all instances of categories belonging to this bundle
+		// (except if they are from cat or prop namespace)
+		$joint = "$categorylinks";
+		$cond = "page_id = cl_from AND page_namespace != ".NS_CATEGORY." AND page_namespace != ".SMW_NS_PROPERTY.
+                " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
+                " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
+			
+		$this->dumpFrom($joint, $cond);
+
+		$this->dumpDescriptor($bundeID);
+
+		
+	}
+
+	function dumpDescriptor($bundeID) {
+		global $dfgLang;
+		$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
+
+		$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
+		$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
+		$ontologyvendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
+		$description_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
+
+		$bundlePage = Title::newFromText($bundeID);
+		$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
+		$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
+		$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
+		$vendor = smwfGetStore()->getPropertyValues($bundlePage, $ontologyvendor_p);
+		$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
+
+		if ( count($version) == 0) {
+			fwrite( $this->stderr, "No version annotation on $bundeID" . "\n" );
+		}
+		if ( count($vendor) == 0) {
+			fwrite( $this->stderr, "No vendor annotation on $bundeID" . "\n" );
+		}
+		if ( count($instdir) == 0) {
+			fwrite( $this->stderr, "No instdir annotation on $bundeID" . "\n" );
+		}
+		if ( count($description) == 0) {
+			fwrite( $this->stderr, "No description annotation on $bundeID" . "\n" );
+		}
+
+		$versionText = count($version) > 0 ? reset($version)->getXSDValue() : "no version";
+		$vendorText = count($vendor) > 0 ? reset($vendor)->getXSDValue() : "no vendor";
+		$instdirText = count($instdir) > 0 ? reset($instdir)->getXSDValue() : "no instdir";
+		$descriptionText = count($description) > 0 ? reset($description)->getXSDValue() : "no description";
+
+		$handle = fopen("deploy.xml", "w");
+		$uploadExporter = new DeployUploadExporter( $options, $handle );
+
+		$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
+		$xml .= '<depoydescriptor>'."\n";
+		$xml .= "\t".'<global>'."\n";
+		$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
+		$xml .= "\t\t".'<id>'.$bundeID.'</id>'."\n";
+		$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
+		$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
+		$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
+		$xml .= "\t\t".'<dependencies>'."\n";
+		foreach($dependencies as $dep) {
+			$dvs = $dep->getDVs();
+			$id = reset($dvs)->getXSDValue();
+			$minVersion = next($dvs)->getXSDValue();
+			$maxVersion = next($dvs)->getXSDValue();
+			$xml .= "\t\t\t".'<dependency from="'.$minVersion.'" to="'.$maxVersion.'">'.$id.'</dependency>'."\n";
+		}
+		$xml .= "\t".'</dependencies>'."\n";
+
+		$xml .= "\t".'</global>'."\n";
+		$xml .= "\t".'<wikidumps>'."\n";
+		$xml .= "\t\t".'<file loc="..."/>'."\n";
+		$xml .= "\t".'</wikidumps>'."\n";
+		$xml .= "\t".'<resources>'."\n";
+		fwrite($handle, $xml);
+		$uploadExporter->run();
+		$xml = "\t".'</resources>'."\n";
+		$xml .= '</depoydescriptor>'."\n";
+		fwrite($handle, $xml);
+		fclose($handle);
+	}
+
+	function dumpFrom( $joint = '', $cond = '' ) {
+		$fname = 'WikiExporter::dumpFrom';
+		wfProfileIn( $fname );
+
+		$page     = $this->db->tableName( 'page' );
+		$revision = $this->db->tableName( 'revision' );
+		$text     = $this->db->tableName( 'text' );
+
+
+		$order = 'ORDER BY page_id';
+		$limit = '';
+
+		if( $this->history == WikiExporter::FULL ) {
+			$join = 'page_id=rev_page';
+		} elseif( $this->history == WikiExporter::CURRENT ) {
+			if ( $this->list_authors && $cond != '' )  { // List authors, if so desired
+				$this->do_list_authors ( $page , $revision , $cond );
+			}
+			$join = 'page_id=rev_page AND page_latest=rev_id';
+		} elseif ( is_array( $this->history ) ) {
+			$join = 'page_id=rev_page';
+			if ( $this->history['dir'] == 'asc' ) {
+				$op = '>';
+				$order .= ', rev_timestamp';
+			} else {
+				$op = '<';
+				$order .= ', rev_timestamp DESC';
+			}
+			if ( !empty( $this->history['offset'] ) ) {
+				$join .= " AND rev_timestamp $op " . $this->db->addQuotes(
+				$this->db->timestamp( $this->history['offset'] ) );
+			}
+			if ( !empty( $this->history['limit'] ) ) {
+				$limitNum = intval( $this->history['limit'] );
+				if ( $limitNum > 0 ) {
+					$limit = "LIMIT $limitNum";
+				}
+			}
+		} else {
+			wfProfileOut( $fname );
+			return new WikiError( "$fname given invalid history dump type." );
+		}
+		$where = ( $cond == '' ) ? '' : "$cond AND";
+		$joinTables = ( $joint == '' ) ? '' : ", $joint ";
+
+		if( $this->buffer == WikiExporter::STREAM ) {
+			$prev = $this->db->bufferResults( false );
+		}
+		if( $cond == '' ) {
+			// Optimization hack for full-database dump
+			$revindex = $pageindex = $this->db->useIndexClause("PRIMARY");
+			$straight = ' /*! STRAIGHT_JOIN */ ';
+		} else {
+			$pageindex = '';
+			$revindex = '';
+			$straight = '';
+		}
+		if( $this->text == WikiExporter::STUB ) {
+			$sql = "SELECT $straight * FROM
+			$page $pageindex,
+			$revision $revindex
+			$joinTables
+			WHERE $where $join
+			$order $limit";
+
+		} else {
+
+			$sql = "SELECT $straight * FROM
+			$page $pageindex,
+			$revision $revindex,
+			$text
+			$joinTables
+			WHERE $where $join AND rev_text_id=old_id
+			$order $limit";
+
+		}
+
+		$result = $this->db->query( $sql, $fname );
+		$wrapper = $this->db->resultObject( $result );
+		$this->outputStream( $wrapper );
+
+		if ( $this->list_authors ) {
+			$this->outputStream( $wrapper );
+		}
+
+		if( $this->buffer == WikiExporter::STREAM ) {
+			$this->db->bufferResults( $prev );
+		}
+
+		wfProfileOut( $fname );
+	}
 }
 
 
@@ -114,10 +330,10 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		$this->db = wfGetDB(DB_SLAVE);
 		$this->semstore = smwfGetStore();
 	}
-	
-    function schemaVersion() {
-        return "1.0";
-    }
+
+	function schemaVersion() {
+		return "1.0";
+	}
 
 	function openStream() {
 		global $wgContLanguageCode;
@@ -199,7 +415,7 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 		wfProfileOut( $fname );
 		return $out;
 	}
-    
+
 	/**
 	 * Adds additional XML printputs which are relevant for Halo deployment infrastructure.
 	 *
@@ -208,40 +424,17 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	 * @param StdClass $row
 	 */
 	protected function addHaloProperties(& $out, & $text, $row) {
-		global $dumper, $dfgLang;
-		$version_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-
-		$partOfBundle_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_partofbundle'));
+		global $dumper;
 
 		if (is_null($this->currentTitle)) {
 			$dumper->progress("severe: no title");
 			return;
 		}
 
-		// export version
-	    $value = $this->getPropertyValue($this->currentTitle, $version_p);
-        if (!is_null($value)) {
-            $version = $value->getXSDValue();         
-        } else {
-            $version = "0.0";
-        }
-		$out .= "    <oversion>".$version."</oversion>\n";
-
-
-		// export partOfBundle
-		$value = $this->getPropertyValue($this->currentTitle, $partOfBundle_p);
-		if (!is_null($value)) {
-            $partOfBundle = $value->getTitle()->getPrefixedDBkey();			
-		} else {
-			$partOfBundle = "none";
-		}
-	    $out .= "    <partofbundle>".$partOfBundle."</partofbundle>\n";
-		
-
 		// export hash
 		$out .= "    <hash>".md5($text)."</hash>\n";
 	}
-    
+
 	/**
 	 * Returns exactly one property value or null if $title does not have any
 	 * or more than 1 annotation of the given property.
@@ -250,17 +443,18 @@ class DeployXmlDumpWriter extends XmlDumpWriter {
 	 * @param SMWPropertyValue $property
 	 * @return SMWDataValue
 	 */
-    private function getPropertyValue($title, $property) {
-    	global $dumper;
-        $values = $this->semstore->getPropertyValues($title, $property);
-        if (count($values) === 0) {
-            $dumper->progress($title->getText()." contains no annotation of ".$property->getDBkey());
-        } else if (count($values) > 1) {
-            $dumper->progress($title->getText()." contains more than 1 annotation of ".$property->getDBkey());
-        } else {
-            return reset($values);
-        }
-        return NULL;
-    }
+	private function getPropertyValue($title, $property) {
+		global $dumper;
+		$values = $this->semstore->getPropertyValues($title, $property);
+		if (count($values) === 0) {
+			$dumper->progress($title->getText()." contains no annotation of ".$property->getDBkey());
+		} else if (count($values) > 1) {
+			$dumper->progress($title->getText()." contains more than 1 annotation of ".$property->getDBkey());
+		} else {
+			return reset($values);
+		}
+		return NULL;
+	}
 }
+
 

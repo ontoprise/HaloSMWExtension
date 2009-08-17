@@ -516,7 +516,12 @@ class SMWTripleStore extends SMWStore {
 	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
 		$this->smwstore->refreshData($index, $count, $namespaces, $usejobs);
 	}
-
+	
+    public function getSMWPageID($title, $namespace, $iw, $canonical=true) {
+         return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
+    }
+    
+   
 
 	// Helper methods
 

@@ -52,16 +52,7 @@ iterate_dir($dir, $hashes);
 // global header
 $xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
 $xml .= '<depoydescriptor>'."\n";
-$xml .= "\t".'<global>'."\n";
-$xml .= "\t\t".'<version>'.$version.'</version>'."\n";
-$xml .= "\t\t".'<id>'.$id.'</id>'."\n";
-$xml .= "\t\t".'<instdir>'.$instdir.'</instdir>'."\n";
-$xml .= "\t\t".'<vendor>'.$vendor.'</vendor>'."\n";
-$xml .= "\t\t".'<description>...</description>'."\n";
-$xml .= "\t\t".'<dependencies>'."\n";
-$xml .= "\t\t\t".'<dependency from="xxx" to="xxx">...</dependency>'."\n";
-$xml .= "\t".'</dependencies>'."\n";
-$xml .= "\t".'</global>'."\n";
+$xml .= getDDGlobals($version, $id, $instdir, $vendor);
 
 $xml .= "\t".'<codefiles hash="'.md5($hashes).'">'."\n";
 
@@ -128,5 +119,20 @@ function get_files($current_dir) {
 		}
 	}
 	return $files;
+}
+
+function getDDGlobals($version, $id, $instdir, $vendor) {
+	$xml = '<depoydescriptor>'."\n";
+	$xml .= "\t".'<global>'."\n";
+	$xml .= "\t\t".'<version>'.$version.'</version>'."\n";
+	$xml .= "\t\t".'<id>'.$id.'</id>'."\n";
+	$xml .= "\t\t".'<instdir>'.$instdir.'</instdir>'."\n";
+	$xml .= "\t\t".'<vendor>'.$vendor.'</vendor>'."\n";
+	$xml .= "\t\t".'<description>...</description>'."\n";
+	$xml .= "\t\t".'<dependencies>'."\n";
+	$xml .= "\t\t\t".'<dependency from="xxx" to="xxx">...</dependency>'."\n";
+	$xml .= "\t".'</dependencies>'."\n";
+	$xml .= "\t".'</global>'."\n";
+    return $xml;
 }
 ?>
