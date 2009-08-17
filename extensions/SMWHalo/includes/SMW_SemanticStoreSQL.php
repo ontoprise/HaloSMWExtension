@@ -252,7 +252,8 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	private function _getSubCategories(Title $category, & $visitedNodes) {
 		$subCategories = $this->getDirectSubCategories($category);
 		$result = array();
-		foreach($subCategories as $subCat) {
+		foreach($subCategories as $tuple) {
+			list($subCat,$isLeaf) = $tuple; 
 			if (in_array($subCat, $visitedNodes)) {
 				continue;
 			}
