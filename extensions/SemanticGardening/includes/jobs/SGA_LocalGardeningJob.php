@@ -428,4 +428,4 @@ class TitleHelper {
         return $results;
     }
 }
-?>
+

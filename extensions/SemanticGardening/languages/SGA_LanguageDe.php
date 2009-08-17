@@ -197,4 +197,3 @@ class SGA_LanguageDe {
     
       );
 }
-?>

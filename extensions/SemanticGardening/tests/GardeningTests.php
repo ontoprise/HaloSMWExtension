@@ -22,4 +22,3 @@ class GardeningTests
         return $suite;
     }
 }
-?>

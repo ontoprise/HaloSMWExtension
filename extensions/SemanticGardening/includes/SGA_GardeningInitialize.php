@@ -240,4 +240,3 @@ function sgafGetAjaxMethodPrefix() {
 	if ($func_name == NULL) return NULL;
 	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
 }
-?>

@@ -446,4 +446,3 @@ class SMWSIUnitTypeHandler extends SMWDataValue {
 	}
 	
 } // End class SMWSIUnitTypeHandler
-?>

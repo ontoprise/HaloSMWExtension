@@ -28,4 +28,3 @@ function AddSemanticToolbarTab ($content_actions) {
 	$content_actions = array_merge( $content_actions, $main_action);   //add a new action
 }
 
-?>

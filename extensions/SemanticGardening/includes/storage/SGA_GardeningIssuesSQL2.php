@@ -87,4 +87,3 @@ class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
         return $results;
     }
 }
-?>

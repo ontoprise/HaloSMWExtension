@@ -152,4 +152,3 @@ require_once( $mediaWikiLocation . "/extensions/SemanticGardening/includes/SGA_G
  }
  
  
-?>

@@ -294,4 +294,4 @@ function smwfGetPasswordBlob($userID) {
 	return $pass_blob;
 }
 
-?>
+

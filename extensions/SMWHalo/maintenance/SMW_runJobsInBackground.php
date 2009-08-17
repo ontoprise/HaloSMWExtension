@@ -128,4 +128,4 @@ function smwfGetNumOfRunningThreads(& $db) {
 		$db->freeResult($res);
 		return $threads_running;
 }
-?>
+

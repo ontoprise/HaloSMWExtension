@@ -388,4 +388,4 @@ function array_clone(& $src) {
 	}
 	return $dst;
 }
-?>
+

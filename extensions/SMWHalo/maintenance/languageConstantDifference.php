@@ -51,4 +51,4 @@ foreach($lang1Obj->getUserMsgArray() as $key => $value) {
 }
 if (!$userDiff) print "\tNone.\n"; 
 
-?>
+

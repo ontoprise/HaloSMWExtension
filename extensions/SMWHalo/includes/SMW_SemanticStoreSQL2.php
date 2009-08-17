@@ -397,4 +397,3 @@ function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 		//TODO: implement if it makes sense
 	}
 }
-?>

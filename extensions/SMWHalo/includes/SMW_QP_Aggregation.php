@@ -194,4 +194,3 @@ class SMWAggregationResultPrinter extends SMWResultPrinter {
 	}
 }
 
-?>

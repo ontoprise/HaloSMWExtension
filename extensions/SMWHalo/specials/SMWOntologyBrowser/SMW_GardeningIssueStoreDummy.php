@@ -52,4 +52,3 @@ class SGAGardeningIssuesAccess {
         return self::$gi_interface;
     }
  }
-?>

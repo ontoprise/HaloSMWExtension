@@ -22,4 +22,3 @@ if(isset($request_query) && $request_query == true){
 	unset($request_query);
 	echo "Sorry, an error occured during export!";
 }
-?>

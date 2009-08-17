@@ -407,5 +407,5 @@ class StompConnection {
     }
 }
 
-?>
+
 

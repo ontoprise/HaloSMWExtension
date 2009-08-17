@@ -151,4 +151,3 @@ class SMWChemicalEquationTypeHandler extends SMWDataValue {
 	}
 }
 
-?>

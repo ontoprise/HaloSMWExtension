@@ -258,4 +258,4 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  		// no implementation sice old storage layer is not supported anymore
  	}
  }
-?>
+

@@ -389,4 +389,4 @@ public static function urlescape($url) {
 	return str_replace("%2F", "/", $url_esc);
 }
 }
-?>
+

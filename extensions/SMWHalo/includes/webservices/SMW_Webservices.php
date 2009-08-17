@@ -12,4 +12,3 @@ $server->addFunction("query");
 
 // execute
 $server->handle(); 
-?>

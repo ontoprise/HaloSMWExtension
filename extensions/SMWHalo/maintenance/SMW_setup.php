@@ -32,4 +32,4 @@ if ($delete) {
 print "\nSetup SMWHalo.\n\n";
 smwfGetSemanticStore()->setup(true);
 
-?>
+

@@ -285,4 +285,4 @@ class DBHelper {
 		return $sql_conds;
 	}
 }
-?>
+

@@ -36,4 +36,3 @@ class TestAnomaliesBot extends PHPUnit_Framework_TestCase {
 	}
 
 }
-?>

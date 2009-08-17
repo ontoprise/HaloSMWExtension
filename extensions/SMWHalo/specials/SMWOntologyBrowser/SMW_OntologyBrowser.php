@@ -120,4 +120,4 @@ class SMW_OntologyBrowser extends SpecialPage {
 	}
 
 }
-?>
+

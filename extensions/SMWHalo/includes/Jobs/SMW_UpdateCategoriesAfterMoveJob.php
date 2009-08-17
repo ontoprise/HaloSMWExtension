@@ -102,4 +102,4 @@ class SMW_UpdateCategoriesAfterMoveJob extends Job {
 		return true;
 	}
 }
-?>
+

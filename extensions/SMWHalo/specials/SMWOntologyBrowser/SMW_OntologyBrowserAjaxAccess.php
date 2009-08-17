@@ -224,4 +224,4 @@ function smwfEliminateStopWords($hints) {
  		return $result;
  	}
 
-?>
+

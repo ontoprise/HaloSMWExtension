@@ -135,4 +135,4 @@ class SMW_UpdateLinksAfterMoveJob extends Job {
 		return true;
 	}
 }
-?>
+

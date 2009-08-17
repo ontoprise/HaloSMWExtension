@@ -300,4 +300,4 @@
  	 */
  	public abstract function replaceRedirectAnnotations($verbose = false);
  }
-?>
+

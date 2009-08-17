@@ -206,4 +206,3 @@ class SGA_LanguageEn {
         
     );
 }
-?>

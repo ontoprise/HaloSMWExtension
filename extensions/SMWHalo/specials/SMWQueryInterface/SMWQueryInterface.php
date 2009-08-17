@@ -250,4 +250,3 @@ class SMWQueryInterface extends SpecialPage {
 
 }
 
-?>

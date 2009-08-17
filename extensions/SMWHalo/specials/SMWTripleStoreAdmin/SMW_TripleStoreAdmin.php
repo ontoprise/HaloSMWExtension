@@ -89,4 +89,4 @@ class SMWTripleStoreAdmin extends SpecialPage {
         return $status;
     }
 }
-?>
+

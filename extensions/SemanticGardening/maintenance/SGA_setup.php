@@ -64,4 +64,3 @@ function sgafInitializeTables() {
 
 	return true;
 }
-?>

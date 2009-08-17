@@ -103,4 +103,4 @@ class SGAGardeningLogPage extends SMWQueryPage {
 		return $this->filter->getData($options, $wgRequest);
 	}
 }
-?>
+

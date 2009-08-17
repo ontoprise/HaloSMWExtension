@@ -31,4 +31,4 @@ class GraphEdge {
 		echo 'from: '.$this->from. ' to: '.$this->to."\n";
 	}
 } 
-?>
+

@@ -286,4 +286,4 @@ class SGADBHelper {
         return $sql_conds;
     }
 }
-?>
+

@@ -170,4 +170,3 @@ function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
 
 
 
-?>

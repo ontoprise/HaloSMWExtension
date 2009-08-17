@@ -524,4 +524,3 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 		return $result;
 	}
  }
-?>

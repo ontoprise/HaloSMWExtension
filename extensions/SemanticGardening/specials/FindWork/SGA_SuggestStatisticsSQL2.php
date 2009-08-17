@@ -135,4 +135,3 @@ class SMWSuggestStatisticsSQL2 extends SMWSuggestStatisticsSQL {
 		return $ratingPresent;
 	}
 }
-?>

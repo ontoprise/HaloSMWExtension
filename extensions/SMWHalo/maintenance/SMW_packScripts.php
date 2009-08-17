@@ -240,4 +240,4 @@ function isWindows() {
 		return true;
 	}
 }
-?>
+

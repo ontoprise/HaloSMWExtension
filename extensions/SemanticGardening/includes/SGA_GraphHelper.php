@@ -158,4 +158,4 @@
 		return array($indexUp-1, $indexDown+1);
 	}
  }
-?>
+

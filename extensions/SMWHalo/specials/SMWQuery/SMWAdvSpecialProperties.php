@@ -420,4 +420,4 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
                 GROUP BY i.smw_title, s.value_string";
     }
 }
-?>
+

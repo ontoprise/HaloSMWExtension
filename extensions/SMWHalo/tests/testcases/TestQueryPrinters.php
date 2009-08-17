@@ -48,4 +48,3 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($contents, $act_result);
 	}
 }
-?>

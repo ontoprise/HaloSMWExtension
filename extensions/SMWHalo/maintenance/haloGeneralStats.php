@@ -145,4 +145,3 @@ if(!$exists)
 fwrite($fh, $csvreport);
 fclose($fh);
 
-?>

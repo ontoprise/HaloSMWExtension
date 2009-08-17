@@ -117,4 +117,4 @@ function isWindows() {
 		return true;
 	}
 }
-?>
+

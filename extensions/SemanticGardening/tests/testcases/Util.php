@@ -19,4 +19,3 @@ function isWindows() {
     }
     return $thisBoxRunsWindows;
 }
-?>

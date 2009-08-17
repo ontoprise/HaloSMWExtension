@@ -383,4 +383,4 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 	}
 }
 
-?>
+

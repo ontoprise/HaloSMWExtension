@@ -1422,4 +1422,3 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
 	$rMresult |= ($index == NS_IMAGE);
 	return true;
 }
-?>

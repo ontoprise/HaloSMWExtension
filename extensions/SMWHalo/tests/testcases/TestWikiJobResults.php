@@ -35,4 +35,3 @@ class TestWikiJobResults extends PHPUnit_Framework_TestCase {
         }
     }
 }
-?>

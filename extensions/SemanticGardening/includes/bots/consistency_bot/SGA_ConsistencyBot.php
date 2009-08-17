@@ -1149,4 +1149,4 @@ define('SMW_GARDISSUE_CONSISTENCY_PROPAGATION', 1000 * 100 + 1);
     
      
  }
-?>
+

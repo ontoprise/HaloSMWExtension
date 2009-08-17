@@ -97,4 +97,3 @@ class SMWSPARQLDescription extends SMWDescription {
 		return $this;
 	}
 }
-?>

@@ -50,4 +50,4 @@ function smwLog($logmsg, $type = "" , $function="", $locationForce = "" , $times
 		);
 		return 'true';
 }
-?>
+

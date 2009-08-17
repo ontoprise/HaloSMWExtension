@@ -37,4 +37,3 @@ function smwfAddWYSIWYGTab($obj, $content_actions) {
 
 	return true; // always return true, in order not to stop MW's hook processing!
 }
-?>

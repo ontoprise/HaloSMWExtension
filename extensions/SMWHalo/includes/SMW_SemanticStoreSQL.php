@@ -1244,4 +1244,4 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		}
 	}
 }
-?>
+

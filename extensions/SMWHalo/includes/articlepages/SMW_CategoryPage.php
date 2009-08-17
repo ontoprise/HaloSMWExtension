@@ -396,4 +396,4 @@ class SMWCategoryViewer extends CategoryViewer {
 }
 
 
-?>
+

@@ -437,4 +437,3 @@ public function getHelppagesByRestriction($restriction, $param) {
         return 0;
     }
 }
-?>

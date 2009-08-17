@@ -85,4 +85,3 @@ function smwf_ws_getWSDL($wsdlID) {
 }	
 
 
-?>

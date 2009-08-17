@@ -240,4 +240,4 @@ class TemplateMaterializerStorageSQL extends TemplateMaterializerStorage {
         return $result;
     }
 }
-?>
+

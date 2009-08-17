@@ -423,4 +423,4 @@ class MissingAnnotationStorageSQL2 extends MissingAnnotationStorageSQL {
         return $preprops;
 	}
 }
-?>
+

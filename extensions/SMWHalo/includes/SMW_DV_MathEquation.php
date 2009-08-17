@@ -127,4 +127,3 @@ class SMWMathematicalEquationTypeHandler extends SMWDataValue {
 	
 }
 
-?>

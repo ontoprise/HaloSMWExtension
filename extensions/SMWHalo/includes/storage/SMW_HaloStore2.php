@@ -10,4 +10,3 @@ class SMWHaloStore2 extends SMWSQLStore2 {
     // no changes
    
 }
-?>

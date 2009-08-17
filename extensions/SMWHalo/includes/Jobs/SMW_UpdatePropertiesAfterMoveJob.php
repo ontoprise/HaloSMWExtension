@@ -88,4 +88,4 @@ class SMW_UpdatePropertiesAfterMoveJob extends Job {
 		return true;
 	}
 }
-?>
+

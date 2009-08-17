@@ -74,4 +74,4 @@ abstract class SMWSuggestStatistics {
 		return self::$store;
 	}
 }
-?>
+

@@ -35,4 +35,4 @@ class SMW_DummyJob extends Job {
 		return true;
 	}
 }
-?>
+
