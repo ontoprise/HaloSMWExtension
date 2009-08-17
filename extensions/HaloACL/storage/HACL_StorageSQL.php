@@ -679,12 +679,12 @@ WHERE user.user_id = $userID
 
 
         /**
-	 * Retrieves all groups from
+	 * Retrieves all SDs from
 	 * the database.
 	 *
 	 *
 	 * @return Array
-	 * 		Array of Group Objects
+	 * 		Array of SD Objects
 	 *
 	 */
 	public function getSDs($types) {
