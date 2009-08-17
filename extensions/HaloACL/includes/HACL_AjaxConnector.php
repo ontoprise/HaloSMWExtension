@@ -564,7 +564,7 @@ function createAclTemplateContent() {
  * @return <html>   right-panel html
  *
  */
-function getRightsPanel($panelid, $predefine, $readOnly = false, $preload, $preloadRightId) {
+function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0) {
 
     $myGenericPanel = new HACL_GenericPanel($panelid, "Right");
 
@@ -592,7 +592,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload, $prel
                             <div class="right_fullaccess"><input id = "checkbox_right_fullaccess" actioncode="255" type="checkbox" class="right_rights_$panelid" name="fullaccess" onChange="updateRights$panelid(this)"/>&nbsp;Full access</div>
                             <div class="right_read"><input id = "checkbox_right_read" type="checkbox" actioncode="128" actioncode="128" class="right_rights_$panelid" name="read" onChange="updateRights$panelid(this)"/>&nbsp;Read</div>
                             <div class="right_edit"><input id = "checkbox_right_edit" type="checkbox" actioncode="8" class="right_rights_$panelid" name="edit" onChange="updateRights$panelid(this)"/>&nbsp;Edit</div>
-                            <div class="right_editfromform"><input id = "checkbox_right_editfromform" actioncode="64" type="checkbox" class="right_rights_$panelid" name="editfromform" onChange="updateRights$panelid(this)"/>&nbsp;Edit from form</div>
+                            <div class="right_formedit"><input id = "checkbox_right_formedit" actioncode="64" type="checkbox" class="right_rights_$panelid" name="formedit" onChange="updateRights$panelid(this)"/>&nbsp;Edit from form</div>
                             <div class="right_wysiwyg"><input id = "checkbox_right_wysiwyg" type="checkbox" actioncode="32" class="right_rights_$panelid" name="wysiwyg" onChange="updateRights$panelid(this)"/>&nbsp;WYSIWYG</div>
                             <div class="right_create"><input id = "checkbox_right_create" type="checkbox" actioncode="4" class="right_rights_$panelid" name="create" onChange="updateRights$panelid(this)"/>&nbsp;Create</div>
                             <div class="right_move"><input id = "checkbox_right_move" type="checkbox" actioncode="2" class="right_rights_$panelid" name="move" onChange="updateRights$panelid(this)"/>&nbsp;Move</div>
@@ -622,11 +622,11 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload, $prel
                             if(element.checked){
                                 var includedrights = "";
                                 if(name == "fullaccess"){
-                                    includedrights = "create,read,write,edit,annotate,wysiwyg,editfromform,delete,move";
+                                    includedrights = "create,read,write,edit,annotate,wysiwyg,formedit,delete,move";
                                 }else if(name == "read"){
                                     includedrights = "";
 
-                                }else if(name == "editfromform"){
+                                }else if(name == "formedit"){
                                     includedrights = "read";
 
                                 }else if(name == "annotate"){
@@ -636,16 +636,16 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload, $prel
                                     includedrights = "read";
 
                                 }else if(name == "edit"){
-                                    includedrights = "read,editfromform,annotate,wysiwyg";
+                                    includedrights = "read,formedit,annotate,wysiwyg";
 
                                 }else if(name == "create"){
-                                    includedrights = "read,editfromform,annotate,wysiwyg";
+                                    includedrights = "read,formedit,annotate,wysiwyg";
 
                                 }else if(name == "move"){
-                                    includedrights = "read,editfromform,annotate,wysiwyg";
+                                    includedrights = "read,formedit,annotate,wysiwyg";
 
                                 }else if(name == "delete"){
-                                    includedrights = "read,editfromform,annotate,wysiwyg";
+                                    includedrights = "read,formedit,annotate,wysiwyg";
 
                                 }
                                 $$('.right_rights_$panelid').each(function(item){
@@ -699,7 +699,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload, $prel
 
                     <div id="right_tabview_$panelid" class="yui-navset"></div>
                     <script type="text/javascript">
-                      YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid', '$predefine', true, $preload, '$preloadRightId');
+                      YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid', '$predefine', true, '$preload', '$preloadRightId');
                     </script>
 
                     <div class="haloacl_greyline">&nbsp;</div>
@@ -788,7 +788,7 @@ HTML;
             YAHOO.util.Event.addListener("checkbox_right_fullaccess", "change", genericPanelSetSaved_$panelid, false);
             YAHOO.util.Event.addListener("checkbox_right_read", "change", genericPanelSetSaved_$panelid, false);
             YAHOO.util.Event.addListener("checkbox_right_edit", "change", genericPanelSetSaved_$panelid, false);
-            YAHOO.util.Event.addListener("checkbox_right_editfromform", "change", genericPanelSetSaved_$panelid, false);
+            YAHOO.util.Event.addListener("checkbox_right_formedit", "change", genericPanelSetSaved_$panelid, false);
             YAHOO.util.Event.addListener("checkbox_right_wysiwyg", "change", genericPanelSetSaved_$panelid, false);
             YAHOO.util.Event.addListener("checkbox_right_create", "change", genericPanelSetSaved_$panelid, false);
             YAHOO.util.Event.addListener("checkbox_right_move", "change", genericPanelSetSaved_$panelid, false);
@@ -843,6 +843,8 @@ HTML;
     if ($preload) {
         $footerextension .= <<<HTML
         <script type="javascript>
+            genericPanelSetName_$panelid('This right...');
+
             YAHOO.haloacl.closePanel('$panelid');
         </script>
 HTML;
@@ -1071,6 +1073,7 @@ HTML;
         foreach ($tempGroups as $key => $value) {
             $tempGroup = HACLGroup::newFromID($value);
             $tempGroups2[] = $tempGroup->getGroupName();
+            
         }
 
         $tempGroups2 = json_encode($tempGroups2);
@@ -1312,6 +1315,7 @@ function saveSecurityDescriptor($secDescXml) {
             $description = $xml->description ? $xml->description : '';
             $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
 
+
             if ($description <> "modification rights") {
 
                 $autoGeneratedRightName = " for ";
@@ -1335,16 +1339,18 @@ function saveSecurityDescriptor($secDescXml) {
                 }
                 foreach($xml->xpath('//right') as $right) {
                 //$actions = $actions + (int)HACLRight::getActionID($right);
-
+                    
                     if($actions2 == '') {
                         $actions2 = (string)$right;
                     }else {
-                        $actions2 = $actions2.",".(string)$right;
+                        $actions2 .= ",".(string)$right;
                     }
                 }
                 foreach($xml->xpath('//right') as $right) {
-                    $actions = $actions + (int)HACLRight::getActionID($right);
-                    if ($right <> 255) $autoGeneratedRightNameRights .= $right.",";
+                    if ($right <> '') {
+                        $actions = $actions + (int)HACLRight::getActionID($right);
+                        if ($right <> 255) $autoGeneratedRightNameRights .= $right.",";
+                    }
                 }
 
                 $autoGeneratedRightName = substr($autoGeneratedRightName,0,-1);
@@ -1357,7 +1363,12 @@ function saveSecurityDescriptor($secDescXml) {
                 $autoGeneratedRightName = $autoGeneratedRightNameRights.$autoGeneratedRightName;
                 if ($autoDescription == "on") $description = $autoGeneratedRightName;
 
-                $inline .= '{{#access: assigned to='.$groups.','.$users.' |actions='.$actions2.' |description='.$description.'}}
+
+                $inline .= '{{#access: assigned to=';
+                if ($groups <> '') $inline .= $groups;
+                if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
+                if (($users <> '') && ($groups == '')) $inline .= $users;
+                $inline .= ' |actions='.$actions2.' |description='.$description.'}}
 ';
             }
         //$title = new Title();
@@ -1400,8 +1411,15 @@ function saveSecurityDescriptor($secDescXml) {
 
         // create article for security descriptor
         $sdarticle = new Article(Title::newFromText('ACL:'.$peType.'/'.$SDName));
-        $inline .= '{{#manage rights:assigned to='.$sdgroups.','.$sdusers.'}}
+        $inline .= '{{#manage rights:assigned to=';
+        if ($sdgroups <> '') $inline .= $sdgroups;
+        if (($sdusers <> '') && ($sdgroups <> '')) $inline .= ','.$sdusers;
+        if (($sdusers <> '') && ($sdgroups == '')) $inline .= $sdusers;
+        $inline .='}}
         [[Category:ACL/ACL]]';
+
+
+                      
 
         $sdarticle->doEdit($inline, "");
         $SDID = $sdarticle->getID();
