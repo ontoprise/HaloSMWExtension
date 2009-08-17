@@ -383,11 +383,23 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     var appendedParams = '';
     appendedParams = '&rs='+action;
     var temparray = new Array();
+
+    /*
     for(param in parameterlist){
         temparray.push(parameterlist[param]);
     }
+    */
+    var querystring = "rs="+action;
+
+    if(parameterlist != null){
+        for(param in parameterlist){
+            // temparray.push(parameterlist[param]);
+            querystring = querystring + "&rsargs[]="+parameterlist[param];
+        }
+    }
+
     appendedParams = appendedParams + "&rsargs="+ temparray;
-    YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
+    YAHOO.util.Connect.asyncRequest('POST', url, callback,querystring);
 };
 
 /*
@@ -534,8 +546,41 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
  * @param tree
  * @param rwTree
  */
-YAHOO.haloacl.buildUserTreeRO = function(tree,rwTree) {
+YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
+
+    var callback = {
+        success: function(oResponse) {
+            
+            var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+
+            // das ganze rekursiv in funktion auslagern
+
+            for(var i=0, l=data.length; i<l; i=i+1) {
+                var n = data[i];
+
+                console.log("hulae "+tree.panelid+"___"+n.name+"___"+YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.id));
+                if (YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.id)){
+                    var tmpNode = new YAHOO.widget.CustomNode(n.name, tree.getRoot(),false);
+                    tmpNode.setGroupId(n.name);
+                    //tmpNode.setCheckState(1);
+                    tmpNode.setTreeType("r");
+                }
+
+            }
+
+            tree.draw();
+            
+        },
+        failure: function(oResponse) {
+        }
+    };
+    YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+        query:'all',
+        recursive:true
+    },callback);
+
+/*
     var nodes;
     nodes = tree.getRoot().children;
 
@@ -549,10 +594,32 @@ YAHOO.haloacl.buildUserTreeRO = function(tree,rwTree) {
         }
 
     }
+    */
 
-    rwTree.draw();
+    
 
 };
+
+
+
+/*
+ * pre-"ticks" groups from an array. Used when displaying a right panel of an exisiting right
+ * @param groups : Array of group IDs (json encoded)
+ * @param tree : tree reference
+ */
+YAHOO.haloacl.preloadCheckedGroups = function(groups, tree) {
+
+    var data = YAHOO.lang.JSON.parse(groups);
+
+    for(var i=0, l=data.length; i<l; i=i+1) {
+        var groupId = data[i];
+        YAHOO.haloacl.addGroupToGroupArray(tree.panelid, groupId);
+    }
+
+}
+
+
+
 
 
 /*
