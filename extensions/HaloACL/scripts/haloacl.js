@@ -31,6 +31,7 @@
 
 // Globals
 YAHOO.namespace("haloacl");
+YAHOO.namespace("haloaclrights");
 YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
 
@@ -41,6 +42,9 @@ YAHOO.haloacl.clickedArrayGroups = new Array();
 YAHOO.haloacl.clickedArrayUsers = new Array();
 // has groups for the checked users [panelid][username] = groupsstring
 YAHOO.haloacl.clickedArrayUsersGroups = new Array();
+
+// has all checked users from righttree
+YAHOO.haloaclrights.clickedArrayGroups = new Array();
 
 // Tabview related stuff
 
@@ -124,7 +128,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
     var tab2 = new YAHOO.widget.Tab({
         label: 'Create ACL template',
-        dataSrc:'manageAclsContent',
+        dataSrc:'createAclTemplateContent',
         cacheData:false,
         active:false,
         id:"createTmpAclTab"
@@ -267,24 +271,29 @@ YAHOO.haloacl.closePanel = function(panelid){
 
 /* RIGHT PANEL STUFF */
 
-YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine){
+YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOnly, preload, preloadRightId){
     YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
     var parameterlist = {
         panelid:containerName,
-        predefine:predefine
+        predefine:predefine,
+        preload:preload,
+        preloadRightId:preloadRightId
     };
+
+    //if (!readOnly) {
     
-    var tab1 = new YAHOO.widget.Tab({
-        label: 'Select / Deselect',
-        dataSrc:'rightPanelSelectDeselectTab',
-        cacheData:false,
-        active:true,
-        postData:parameterlist
-    });
-    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
-    tab1.addListener('click', function(e){});
-    $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+        var tab1 = new YAHOO.widget.Tab({
+            label: 'Select / Deselect',
+            dataSrc:'rightPanelSelectDeselectTab',
+            cacheData:false,
+            active:true,
+            postData:parameterlist
+        });
+        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+        tab1.addListener('click', function(e){});
+        $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+    //}
 
 
     // ------
