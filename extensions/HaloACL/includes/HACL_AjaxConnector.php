@@ -734,7 +734,7 @@ HTML;
 
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
-                xml+="<right>";
+                xml+="<inlineright>";
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<name>"+$('right_name_$panelid').value+"</name>";
                 xml+="<description>"+$('right_description_$panelid').value+"</description>";
@@ -766,7 +766,7 @@ HTML;
                     xml+="<group>"+group+"</group>";
                 });
                 xml+="</groups>";
-                xml+="</right>";
+                xml+="</inlineright>";
 
 
                 var callback = function(result){
@@ -1009,7 +1009,7 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the assigned tabview; e.g. contained in right panel
  */
-function rightPanelAssignedTab($panelid, $preload=false, $preloadRightId=8) {
+function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, $preloadRightId=8) {
     $html = <<<HTML
         <!-- leftpart -->
         <div class="haloacl_rightpanel_selecttab_container">
@@ -1067,7 +1067,6 @@ HTML;
     if ($preload) {
         $tempRight = HACLRight::newFromID($preloadRightId);
         $tempGroups = $tempRight->getGroups();
-        $tempGroups[] = 4;
         $tempGroups2 = array();
          
         foreach ($tempGroups as $key => $value) {
@@ -1315,6 +1314,8 @@ function saveSecurityDescriptor($secDescXml) {
             $description = $xml->description ? $xml->description : '';
             $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
 
+            print (":::::".$tempright);
+
 
             if ($description <> "modification rights") {
 
@@ -1339,6 +1340,8 @@ function saveSecurityDescriptor($secDescXml) {
                 }
                 foreach($xml->xpath('//right') as $right) {
                 //$actions = $actions + (int)HACLRight::getActionID($right);
+
+                    print ("+++++".$right);
                     
                     if($actions2 == '') {
                         $actions2 = (string)$right;

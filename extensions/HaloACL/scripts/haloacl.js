@@ -278,6 +278,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
     var parameterlist = {
         panelid:containerName,
         predefine:predefine,
+        readOnly:readOnly,
         preload:preload,
         preloadRightId:preloadRightId
     };
