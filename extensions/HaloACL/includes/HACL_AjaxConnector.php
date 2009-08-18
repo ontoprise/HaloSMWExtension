@@ -2780,81 +2780,40 @@ HTML;
  */
 function whitelistsContent() {
     $response = new AjaxResponse();
-    $wLHeadline = wfMsg('hacl_whitelist_headline');
-    $wLInfo = wfMsg('hacl_whitelist_info');
-    $wLFilter = wfMsg('hacl_whitelist_filter');
-    $wLPageSetHeader = wfMsg('hacl_whitelist_pageset_header');
-    $wLPageName = wfMsg('hacl_whitelist_pagename');
-    $wlAddButton = wfMsg('hacl_whitelist_addbutton');
     $html = <<<HTML
-<div class="haloacl_tab_content">
-        <div class="haloacl_tab_content_description_header">
-        {$wLHeadline}
-        </div>
-        <div class="haloacl_tab_content_description">
-        {$wLInfo}
-        </div>
-
-	<div id="haclWhitelistFilter">
-		<span class="marginToRight">{$wLFilter}</span><input type="text" length="20">
-	</div>
-	<div id="haclWhitelistPageSetContainer">
-		<div id="haclWhitelistPageSetHeader">{$wLPageSetHeader}</div>
-		<div id="haclWhitelistPageSet">
-			<ul>
-				<li><a href onclick="haloACLSpecialPage.toggleTab(1,4);return false;" href="#"><span>Mainpage</span></a></li>
-			</ul>
-		</div><!-- End of haclWhitelistPageSet -->
-<div id="whitelistDatatableDiv" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
-                <div id="datatablepaging_whitelistDatatableDiv"></div>
-                </div>
-            </div>
-                <form>
-                    <input type="button" name="removePage" value="Remove selected page from whitelist"
-                        onclick="javascript:YAHOO.haloacl.whitelist_removePage();"/>
-                </form>
-	</div><!-- End of haclWhitelistPageSetContainer -->
-	<!-- <div class="drawLine">&nbsp;</div> -->
-	<div id="haclWhitelistAddPageContainer">
-		<span id="haclWhitelistPageName">{$wLPageName}</span>
-		<input id="haclWhitelistPageInput" type="text" size="30"><input type="button" value="{$wlAddButton}">
-	</div>
-        <!-- section end -->
-
-        <script type="javascript">
-
-            YAHOO.haloacl.whitelistDatatableInstance = YAHOO.haloacl.pageDataTable("whitelistDatatableDiv");
-
-            YAHOO.haloacl.whitelist_removePage = function(){
-
-                  
-                  YAHOO.haloacl.whitelistDatatableInstance.executeQuery;
-
-                  var panelid = 'create_acl_right_'+ YAHOO.haloacl.panelcouner;
-
-                  var divhtml = '<div id="create_acl_rights_row'+YAHOO.haloacl.panelcouner+'" class="haloacl_tab_section_content_row"></div>';
-
-                  var containerWhereDivsAreInserted = $('haloacl_tab_createacl_rightsection');
-                  $('haloacl_tab_createacl_rightsection').insert(divhtml,containerWhereDivsAreInserted);
-
-
-                  YAHOO.haloacl.loadContentToDiv('create_acl_rights_row'+YAHOO.haloacl.panelcouner,'getRightsPanel',{panelid:panelid});
-                  YAHOO.haloacl.panelcouner++;
-            };
-
-
-
-
-        </script>
-</div><!-- End of haloacl_tab_content -->
-
-
-
-
-
-
-
+<div class="haloacl_manageusers_container">
+    <div class="haloacl_manageusers_title">
+    Manage whiteliste pages
+    </div>
+    <div class="haloacl_manageusers_subtitle">
+    Description text : e.g. "In this tab you can create and delete whitelist entries"
+    </div>
 HTML;
+    $myGenPanel = new HACL_GenericPanel("haloacl_whitelist_panel", "Manage whitelist", "Manage whitelist", "dsc", false, false);
+    $myGenPanelContent = <<<HTML
+    <div id="content_haloacl_whitelist_panel">
+        <div id="haloacl_whitelist_datatable" class="yui-content">
+        </div>
+        <div id="haloacl_whitelist_addPage">
+            Add page to whitelist:&nbsp;
+            <input type="text id="haloacle_whitelist_pagename" />
+            <input type="button" id="haloacl_whitelist_addPageButton" value="add"/>
+        </div>
+    </div>
+HTML;
+    $myGenPanel->setContent($myGenPanelContent);
+
+    
+    $html .= $myGenPanel->getPanel();
+
+    $html .= <<<HTML
+
+    <script>
+        var temp = YAHOO.haloacl.whitelistTable('haloacl_whitelist_datatable','haloacl_whitelist_datatable');
+    </script>
+</div>
+HTML;
+    
     $response->addText($html);
     return $response;
 }
