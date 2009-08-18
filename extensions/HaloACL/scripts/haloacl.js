@@ -269,13 +269,16 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
 };
 
 
-YAHOO.haloacl.sendXmlToAction = function(xml, action,callback){
+YAHOO.haloacl.sendXmlToAction = function(xml, action,callback,parentNode){
     if(callback == null){
         callback = function(result){
             alert("stdcallback:"+result);
         }
     }
     var querystring = "rs="+action+"&rsargs[]="+escape(xml);
+    if(parentNode != ""){
+        querystring += "&rsargs[]="+escape(parentNode);
+    }
 
     new Ajax.Request("?action=ajax",{
         method:'post',
@@ -465,6 +468,55 @@ YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     }
     return false;
 
+
+};
+
+YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOnly, preload, preloadRightId){
+    YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
+    var parameterlist = {
+        panelid:containerName,
+        predefine:predefine,
+        readOnly:readOnly,
+        preload:preload,
+        preloadRightId:preloadRightId
+    };
+
+    //if (!readOnly) {
+
+        var tab1 = new YAHOO.widget.Tab({
+            label: 'Select / Deselect',
+            dataSrc:'rightPanelSelectDeselectTab',
+            cacheData:false,
+            active:true,
+            postData:parameterlist
+        });
+        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+        tab1.addListener('click', function(e){});
+        $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+    //}
+
+
+    // ------
+
+    var tab2 = new YAHOO.widget.Tab({
+        label: 'Assigned',
+        dataSrc:'rightPanelAssignedTab',
+        cacheData:false,
+        active:false,
+        postData:parameterlist
+    });
+
+    tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab2);
+    tab2.addListener('click', function(e){});
+    $(tab2.get('contentEl')).setAttribute('id','rightPanelAssignedTab'+containerName);
+
+
+
+// ------
+
+
 };
 
 
@@ -479,4 +531,5 @@ YAHOO.haloacl.callbackDeleteSD = function(result){
 
 YAHOO.haloacl.deleteSD = function(sdId){
     YAHOO.haloacl.callAction('deleteSecurityDescriptor', {sdId:sdId}, YAHOO.haloacl.callbackDeleteSD);
+
 };

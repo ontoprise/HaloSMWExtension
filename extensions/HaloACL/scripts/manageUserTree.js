@@ -299,7 +299,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
 
         sb[sb.length] = '</span></td>';
         sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">Information</span></td>';
-        sb[sb.length] = '<td><span class=""><a class="haloacl_manageuser_list_edit" href="javascript:alert(\'test\');">&nbsp;</a></span></td>';
+        sb[sb.length] = '<td><span class=""><a class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
         sb[sb.length] = ' id="' + this.getCheckElId() + '"';
@@ -510,11 +510,13 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
         var n = nodes[i];
         var temp = n.label;
         if (temp.indexOf(query) >= 0) {
+            YAHOO.haloacl.manageUser_parentGroup = parentNode.label;
             return parentNode;
         }
         if(n.hasChildren(false) == true){
             var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
             if(recfound != null){
+                YAHOO.haloacl.manageUser_parentGroup = n.label;
                 return n;
             }
         }
@@ -536,11 +538,13 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
         var n = nodes[i];
         var temp = n.label;
         if (temp.indexOf(query) >= 0) {
+            YAHOO.haloacl.manageUser_parentGroup = n.label;
             return n;
         }
         if(n.hasChildren(false) == true){
             var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
             if(recfound != null){
+                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
                 return recfound;
             }
         }

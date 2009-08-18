@@ -661,6 +661,8 @@ abbr,acronym { border:0;
 }
 #manageUserGroupsettings{
     float:left;
+    margin:0 0 10px 0;
+    width:940px;
 }
 #manageUserGroupSettingsRight{
     margin:5px;
