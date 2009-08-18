@@ -114,7 +114,7 @@ HTML;
     }
 
     function setContent($newContent) {
-        $this->content = $newContent;
+        $this->content = '<div style="padding:10px">'.$newContent.'</div>';
     }
 
     function getPanel() {
