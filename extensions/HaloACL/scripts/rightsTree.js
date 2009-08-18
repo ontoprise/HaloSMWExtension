@@ -303,10 +303,10 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
             sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer">ggggggggggggggg</div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
             sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'><div class=\"haloacl_infobutton\"></div></a>";
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -322,7 +322,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
         } else {
             sb[sb.length] = '<td>';
-            sb[sb.length] = '<div class="ygtvspacer">gggggggggggg</div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -331,7 +331,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\'})">'+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
 
@@ -339,7 +339,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="ygtvcheck3"';
             sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"><div class="haloacl_editbutton"></div></div></td>';
 
 
         }
@@ -351,9 +351,9 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
 
 YAHOO.haloaclrights.popup = function(id){
-         var callback = {
-        success: function(oResponse) {
-                if(YAHOO.haloaclrights.popupPanel == null){
+
+
+    if(YAHOO.haloaclrights.popupPanel == null){
                 YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
                         close:true,
                         visible:true,
@@ -362,7 +362,7 @@ YAHOO.haloaclrights.popup = function(id){
                         context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
                 });
                 YAHOO.haloaclrights.popupPanel.setHeader("Right Details"+id);
-                YAHOO.haloaclrights.popupPanel.setBody(oResponse.responseText);
+                YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
                 YAHOO.haloaclrights.popupPanel.render();
                 YAHOO.haloaclrights.popupPanel.show();
                 popupClose = function(type, args) {
@@ -376,15 +376,15 @@ YAHOO.haloaclrights.popup = function(id){
             }
 
 
-        },
-        failure: function(oResponse) {
-        }
-    };
+    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{sdId:id});
 
 
-    YAHOO.haloaclrights.treeviewDataConnect('getSDRightsPanel',{
-        sdId:id
-    },callback);
+
+
+
+
+
+
 
    };
 
@@ -666,7 +666,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
         if (this.treeType=="rw") {
 
-            sb[sb.length] = '<div class="ygtvspacer">yo!right</div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -681,7 +681,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
         } else {
             sb[sb.length] = '<td>';
-            sb[sb.length] = '<div class="ygtvspacer">hhhhhhhhh</div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -812,6 +812,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         var tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
 
         tmpNode.setGroupId(element.id);
+        tmpNode.setTreeType("r");
 
         //build right subnodes
         console.log("rights array:"+element.rights.length+element.rights);
@@ -922,7 +923,7 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
         if (n.checkState > 0) {
             var tmpNode = new YAHOO.widget.ACLNode(n.label, rwTree.getRoot(),false);
             tmpNode.setCheckState(n.checkState);
-            tmpNode.setTreeType("r");
+            tmpNode.setTreeType("rw");
         }
 
     }

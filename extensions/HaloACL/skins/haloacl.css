@@ -306,7 +306,7 @@ abbr,acronym { border:0;
     top:0px;
     width:150px;
 }
-.haloacl_panel_rights .right_editfromform {
+.haloacl_panel_rights .right_formedit {
     position:absolute;
     left:240px;
     top:0px;
@@ -505,6 +505,13 @@ abbr,acronym { border:0;
     height:20px;
     background:url(images/info.png) no-repeat;
 }
+
+.haloacl_editbutton {
+    width:20px;
+    height:20px;
+    background:url(images/edit.png) no-repeat;
+}
+
 /* ----- */
 
 /* tab view customization */

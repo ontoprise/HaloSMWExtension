@@ -70,7 +70,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
 
     var tab2 = new YAHOO.widget.Tab({
         label: 'Manage ACLs',
-        dataSrc:'manageAclsContent',
+        dataSrc:'createManageACLPanels',
         cacheData:false,
         active:false
     });
@@ -110,50 +110,92 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
 };
 
 
-// building the main tabview
+// building the  sub tabview
 YAHOO.haloacl.buildSubTabView = function(containerName){
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
 
-    var tab1 = new YAHOO.widget.Tab({
-        label: 'Create standard ACL',
-        dataSrc:'createAclContent',
-        cacheData:false,
-        active:true,
-        id:"createStdAclTab"
-    });
-    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclTabs.addTab(tab1);
-    tab1.addListener('click', function(e){});
+    if (containerName == "haloaclsubViewManageACL") {
+        var tab1 = new YAHOO.widget.Tab({
+            label: 'Manage existing ACLs',
+            dataSrc:'createManageExistingACLContent',
+            cacheData:false,
+            active:true,
+            id:"createStdAclTab"
+        });
+        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab1);
+        tab1.addListener('click', function(e){});
 
 
-    // ------
+        // ------
 
-    var tab2 = new YAHOO.widget.Tab({
-        label: 'Create ACL template',
-        dataSrc:'createAclTemplateContent',
-        cacheData:false,
-        active:false,
-        id:"createTmpAclTab"
-    });
-    tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclTabs.addTab(tab2);
-    tab2.addListener('click', function(e){});
+        var tab2 = new YAHOO.widget.Tab({
+            label: 'Manage own default user template',
+            dataSrc:'createAclTemplateContent',
+            cacheData:false,
+            active:false,
+            id:"createTmpAclTab"
+        });
+        tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab2);
+        tab2.addListener('click', function(e){});
 
-    // ------
+        // ------
 
-    var tab3 = new YAHOO.widget.Tab({
-        label: 'Create ACL default user template',
-        dataSrc:'manageUserContent',
-        cacheData:false,
-        active:false,
-        id:"createUserAclTab"
-    });
-    tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclTabs.addTab(tab3);
-    tab3.addListener('click', function(e){});
+        var tab3 = new YAHOO.widget.Tab({
+            label: 'Manage quick access ACLs',
+            dataSrc:'manageUserContent',
+            cacheData:false,
+            active:false,
+            id:"createUserAclTab"
+        });
+        tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab3);
+        tab3.addListener('click', function(e){});
 
 
-// ------
+    } else if (containerName == "haloaclsubView") {
+
+        var tab1 = new YAHOO.widget.Tab({
+            label: 'Create standard ACL',
+            dataSrc:'createAclContent',
+            cacheData:false,
+            active:true,
+            id:"createStdAclTab"
+        });
+        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab1);
+        tab1.addListener('click', function(e){});
+
+
+        // ------
+
+        var tab2 = new YAHOO.widget.Tab({
+            label: 'Create ACL template',
+            dataSrc:'createAclTemplateContent',
+            cacheData:false,
+            active:false,
+            id:"createTmpAclTab"
+        });
+        tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab2);
+        tab2.addListener('click', function(e){});
+
+        // ------
+
+        var tab3 = new YAHOO.widget.Tab({
+            label: 'Create ACL default user template',
+            dataSrc:'manageUserContent',
+            cacheData:false,
+            active:false,
+            id:"createUserAclTab"
+        });
+        tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab3);
+        tab3.addListener('click', function(e){});
+
+
+    }
 
 };
 
@@ -245,6 +287,28 @@ YAHOO.haloacl.sendXmlToAction = function(xml, action,callback){
 
 };
 
+YAHOO.haloacl.callAction = function(action, parameterlist, callback){
+    if(callback == null){
+        callback = function(result){
+            alert("stdcallback:"+result);
+        }
+    }
+
+    var querystring = "rs="+action;
+
+    if(parameterlist != null){
+        for(param in parameterlist){
+            querystring = querystring + "&rsargs[]="+parameterlist[param];
+        }
+    }
+    new Ajax.Request("?action=ajax",{
+        method:'post',
+        onSuccess:callback,
+        onFailure:callback,
+        parameters:querystring
+    });
+};
+
 YAHOO.haloacl.togglePanel = function(panelid){
     var element = $('content_'+panelid);
     var button = $('exp-collapse-button_'+panelid);
@@ -295,6 +359,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
         tab1.addListener('click', function(e){});
+        //$(tab1.get('contentEl')).style.display = 'none';
         $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
     //}
 
@@ -400,4 +465,18 @@ YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     }
     return false;
 
+};
+
+
+
+YAHOO.haloacl.callbackDeleteSD = function(result){
+    if(result.status == '200'){
+        alert(result.responseText);
+    }else{
+        alert(result.responseText);
+    }
+};
+
+YAHOO.haloacl.deleteSD = function(sdId){
+    YAHOO.haloacl.callAction('deleteSecurityDescriptor', {sdId:sdId}, YAHOO.haloacl.callbackDeleteSD);
 };
