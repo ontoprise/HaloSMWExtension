@@ -1,8 +1,10 @@
-#Wed Jun 17 15:58:09 CEST 2009
+#Tue Aug 18 16:17:15 CEST 2009
 eclipse.preferences.version=1
 encoding//extensions/FCKeditor/fckeditor/editor/js/fckeditorcode_gecko.js=UTF-8
+encoding//extensions/SMWHalo/includes/SMW_ChemistryParser.php=UTF-8
 encoding//extensions/SMWHalo/languages/SMW_HaloLanguageDe.php=UTF-8
 encoding//extensions/SMWHalo/languages/SMW_HaloLanguageEn.php=UTF-8
+encoding//extensions/SMWHalo/languages/SMW_HaloLanguageFr.php=UTF-8
 encoding//extensions/SMWHalo/patch.txt=UTF-8
 encoding//extensions/SMWHalo/scripts/Language/SMW_LanguageDe.js=UTF-8
 encoding//extensions/SMWHalo/scripts/Language/SMW_LanguageEn.js=UTF-8
