@@ -332,7 +332,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\'})">'+this.label+"</a>";
+            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\'})">'+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
 

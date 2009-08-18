@@ -895,10 +895,9 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
 
 
     $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription);
-    if ($readOnly == true) $disabled = "disabled"; else $disabled = "";
+    if (($readOnly === true) or ($readOnly == "true")) $disabled = "disabled"; else $disabled = "";
     
     $content = <<<HTML
-
 
 		<div id="content_$panelid" class="panel haloacl_panel_content">
                     <div id="rightTypes_$panelid">
@@ -1559,20 +1558,21 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
-function getSDRightsPanelContainer($sdId) {
+function getSDRightsPanelContainer($sdId, $sdName) {
 
+    $sdName = "ACL:".$sdName;
     $panelid = "SDRightsPanel";
     $response = new AjaxResponse();
 
 
-    $myGenericPanel = new HACL_GenericPanel($panelid, "Editing...", "Editing...");
+    $myGenericPanel = new HACL_GenericPanel($panelid, "[ Editing: $sdName ]", "[ Editing: $sdName ]");
 
 
     $html = <<<HTML
         <div id="SDRightsPanelContainer">
         </div>
         <script>
-            YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer','getSDRightsPanel',{sdId:'$sdId', readOnly:false});
+            YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer','getSDRightsPanel',{sdId:'$sdId', readOnly:'false'});
         </script>
         <div class="haloacl_greyline">&nbsp;</div>
         <div>
@@ -1600,9 +1600,8 @@ function getSDRightsPanelContainer($sdId) {
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<secdesc>";
                 xml+="<panelid>create_acl</panelid>";
-
-
-                xml+="<name>"+$('create_acl_general_name').value+"</name>";
+                xml+="<name>$sdName</name>";
+                xml+="<ACLType>all_edited</ACLType>";
                 xml+="<definefor>"+""+"</definefor>";
 
 
@@ -2031,6 +2030,7 @@ HTML;
             case "createACL":$aclName = 'ACL:'.$peType.'/'.$SDName;break;
             case "createAclTemplate":$aclName = 'ACL:Template/'.$SDName;break;
             case "createAclUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName(); break;
+            case "all_edited":$aclName = $SDName; break; //Name already existing - reuse
         }
         
         // create article for security descriptor
