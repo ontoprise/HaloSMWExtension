@@ -18,15 +18,15 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	/*border: 1px solid #AAAAAA;*/
 	float: left;
 	/*overflow: hidden;*/
-	width: 190px;
-	height: 230px;	
+	width: 150px;
+	height: 3800px;	
 }
 #top-container #tl-content #tlid{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	float: left;
-	width: 190px;
-	height: 100px;
+	width: 150px;
+	height: 140px;
 	border: 1px solid #AAAAAA;
 	border-bottom: none;
 }
@@ -34,8 +34,8 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	float: left;
-	width: 180px;
-	height: 100px;
+	width: 140px;
+	height: 180px;
 	border: 1px solid #AAAAAA;
 	padding: 3px 5px 3px 5px;
 }
@@ -44,8 +44,8 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-size: 12px;
 	/*border: 1px solid #AAAAAA;*/
 	float: left;
-	width: 190px;
-	height: 230px;
+	width: 150px;
+	height: 380px;
 	/*margin-left: 50px;*/
 }
 #top-container #dal-content #dalid{
@@ -54,16 +54,16 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border: 1px solid #AAAAAA;
 	border-bottom: none;
 	float: left;
-	width: 190px;
-	height: 100px;	
+	width: 150px;
+	height: 140px;	
 }
 #top-container #dal-content #daldesc{
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	border: 1px solid #AAAAAA;
 	float: left;
-	width: 180px;
-	height: 100px;
+	width: 140px;
+	height: 180px;
 	padding: 3px 5px 3px 5px;
 }
 #summary{
@@ -71,7 +71,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	font-size: 13px;
 	border-bottom: 1px solid #AAAAAA;
 	float: left;
-	width: 100%;
+	width: 140%;
 	display: none;
 	padding-bottom: 10px;	
 }
@@ -80,13 +80,15 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding: 3px 20px 3px 20px;
 }
 #top-container #source-spec{
-	width: 280px;	
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	width: 390px;	
 	float: left;
-	height: 200px;
+	height: 360px;
 }
 #top-container #source-speci #fileinput{
 	border: 1px solid #AAAAAA;
-	width: 250px;
+	width: 200px;
 }
 #tlid .entry{
 	padding: 3px 5px 3px 5px;
@@ -237,7 +239,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	height: 214px;
 	width: 15px;
 	float: left;
-	padding: 18px 20px 3px 20px;
+	padding: 18px 10px 3px 10px;
 }
 .inputfield{
 	border: 1px solid #AAAAAA;

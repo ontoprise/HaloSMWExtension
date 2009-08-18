@@ -193,8 +193,8 @@ TermImportPage.prototype = {
 	
 	createDataSourceWidget : function(datasources, tlID, dalID) {
 		response = diLanguage.getMessage('smw_ti_sourceinfo')
-				+ "<br><br><Table>"
-				+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
+				+ "<br><br><Table>";
+				//+ diLanguage.getMessage('smw_ti_source') + "&nbsp;";
 
 		var fieldnumber = 0;
 		for ( var i = 0, n = datasources.length; i < n; i++) {

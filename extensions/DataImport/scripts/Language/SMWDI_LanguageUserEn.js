@@ -16,7 +16,7 @@
 */
 
 var wgDIUserLanguageStrings = {
-		'smw_ti_sourceinfo'			: 	'<b>Enter module specific data:</b>',
+		'smw_ti_sourceinfo'			: 	'<b>Enter<br/> module specific data:</b>',
 		'smw_ti_source'				: 	'Source',
 		'smw_ti_edit'				: 	'edit',
 		'smw_ti_noa'				: 	'articleName',
