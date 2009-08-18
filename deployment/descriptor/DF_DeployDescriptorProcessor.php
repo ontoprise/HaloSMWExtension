@@ -166,7 +166,10 @@ class DeployDescriptionProcessor {
 	 */
 	function applyPatches($userCallback) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		foreach($this->dd_parser->getPatches() as $patch) {
+		$mwver = Tools::getMediawikiVersion($rootDir);
+		$mwver = intval(str_replace(".","", $mwver));
+		foreach($this->dd_parser->getPatches($mwver) as $tuple) {
+			list($mwver, $patch) = $tuple;
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
@@ -186,6 +189,8 @@ class DeployDescriptionProcessor {
 			// ask user to continue/rollback in case of failed patches
 			$result = 'y';
 			if (!is_null($userCallback) && $patchFailed) {
+				foreach($out as $line) print "\n".$line; // show failures
+				print "\n";
 				call_user_func(array(&$userCallback,"getUserConfirmation"), "Some patches failed. Apply anyway?", & $result);
 			}
 
@@ -212,7 +217,10 @@ class DeployDescriptionProcessor {
 	 */
 	function unapplyPatches() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		foreach($this->dd_parser->getUninstallPatches() as $patch) {
+		$mwver = Tools::getMediawikiVersion($rootDir);
+		$mwver = intval(str_replace(".","", $mwver));
+		foreach($this->dd_parser->getUninstallPatches($mwver) as $tuple) {
+			list($mwver, $patch) = $tuple;
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);

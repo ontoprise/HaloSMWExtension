@@ -177,9 +177,9 @@ class DeployDescriptor {
 
 			foreach($patches as $p) {
 				$patchFile = trim((string) $p->attributes()->file);
-
+                $mwVersion = trim((string) $p->attributes()->mwver);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				$this->patches[] = $patchFile;
+				$this->patches[] = array($mwVersion, $patchFile);
 			}
 		}
 
@@ -189,9 +189,9 @@ class DeployDescriptor {
 
 			foreach($uninstall_patches as $p) {
 				$patchFile = trim((string) $p->attributes()->file);
-
+                $mwVersion = trim((string) $p->attributes()->mwver);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				$this->uninstallpatches[] = $patchFile;
+				$this->uninstallpatches[] = array($mwVersion, $patchFile);
 			}
 		}
 	}
@@ -246,14 +246,13 @@ class DeployDescriptor {
 		return NULL;
 	}
 
-	function getPatches() {
-
-		return $this->patches;
+	function getPatches($mwver = "") {
+    	return array_filter($this->patches, create_function('$e', 'list($ver, $pf) = $e; return $ver=='.$mwver.' || empty($ver);'));
 	}
 
-	function getUninstallPatches() {
+	function getUninstallPatches($mwver = "") {
+        return array_filter($this->uninstallpatches, create_function('$e', 'list($ver, $pf) = $e; return $ver=='.$mwver.' || empty($ver);'));
 
-		return $this->uninstallpatches;
 	}
 
 	function getCodefiles() {

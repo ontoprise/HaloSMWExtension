@@ -142,7 +142,7 @@ class Rollback {
 		static $saveLocalSettings = false;
 		if ($saveLocalSettings) return;
 		$saveLocalSettings = true;
-		print "Saving LocalSettings.php";
+		print "\nSaving LocalSettings.php";
 		copy($this->inst_dir."/LocalSettings.php", $this->tmpDir."/LocalSettings.php");
 
 	}

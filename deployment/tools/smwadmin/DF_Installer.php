@@ -627,7 +627,7 @@ class Installer {
 	 */
 	public function getUserConfirmation($message, & $result) {
 		if ($this->noAsk) return 'y';
-		print "\n\n$message [(y)es/(n)o ]";
+		print "\n\n$message [ (y)es/(n)o ]";
 		$line = trim(fgets(STDIN));
 		$result = strtolower($line);
 	}

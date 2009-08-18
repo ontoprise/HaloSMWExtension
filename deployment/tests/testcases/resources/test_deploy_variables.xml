@@ -33,7 +33,7 @@
 		<precedes ext="SemanticGardening" />
 
 		<new>
-		    <patch file="patch.txt" />
+		    <patch file="patch.txt" mwver="1132" />
 		    <script file="maintenance/setup.php" params="param1 param2" />
 			<variable name="testvar">
 				<string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
