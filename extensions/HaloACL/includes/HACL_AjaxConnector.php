@@ -310,9 +310,8 @@ function createSaveContent() {
 
     $response = new AjaxResponse();
 
-$tmp = "::::".$_SESSION['temprights'];
     $html = <<<HTML
-        <!-- section start -->_____$tmp
+        <!-- section start -->
         <div class="haloacl_tab_section_container">
             <div class="haloacl_tab_section_header">
                 <div class="haloacl_tab_section_header_count">4.</div>
@@ -434,8 +433,8 @@ HTML;
      $html = <<<HTML
         <div class="haloacl_tab_content">
             <div class="haloacl_tab_content_description">
-            MANAGE EXISTING...
-            To create a standard ACL you need to complete the following four steps.
+            <strong>Manage existing ACLs</strong>
+            Description text : e.g. "In this tab you can edit and delete existing ACLs ..."
             </div>
             <div class="haloacl_greyline">&nbsp;</div>
 HTML;
@@ -894,8 +893,8 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
 
 
     $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription);
-    if ($readOnly == true) $disabled = "disabled";
-
+    if ($readOnly == true) $disabled = "disabled"; else $disabled = "";
+    
     $content = <<<HTML
 
 
@@ -1174,7 +1173,6 @@ HTML;
 
             // preload = true ==> already save this right in session.
             //YAHOO.haloacl.buildRightPanelXML_$panelid();
-
 
         </script>
 HTML;
@@ -1683,7 +1681,7 @@ function getRightsContainer($panelid, $type = "readOnly") {
                 xml+="<inlineright>";
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<type>template</type>";
-                xml+="<name>"+YAHOO.haloacl.selectedTemplates[$panelid]+"</name>";
+                xml+="<name>"+YAHOO.haloacl.selectedTemplates['$panelid']+"</name>";
                 xml+="</inlineright>";
 
                 if(onlyReturnXML == true){
@@ -1694,9 +1692,6 @@ function getRightsContainer($panelid, $type = "readOnly") {
                             //parse result
                             //YAHOO.lang.JSON.parse(result.responseText);
                             genericPanelSetSaved_$panelid(true);
-                            genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
-                            genericPanelSetDescr_$panelid(result.responseText);
-
                             YAHOO.haloacl.closePanel('$panelid');
                         }else{
                             alert(result.responseText);
@@ -1790,7 +1785,10 @@ function saveTempRightToSession($rightxml) {
     try {
   
         $xml = new SimpleXMLElement($rightxml);
-         /*
+
+
+
+        // ANFANG WEGNEHMEN
         $description = '';
         $actions = 0;
         $groups = '';
@@ -1836,7 +1834,15 @@ function saveTempRightToSession($rightxml) {
         $actions = $actions > 255 ? 255 : $actions;
 
         $tempright = new HACLRight($actions,$groups,$users,$description, 0);
-*/
+
+
+
+        // ENDE WEGNEHMEN
+
+
+
+
+        
         $panelid = (string)$xml->panelid;
         #  $_SESSION['temprights'][$panelid] = $tempright;
          
@@ -1894,6 +1900,7 @@ function deleteSecurityDescriptor($sdId) {
  */
 function saveSecurityDescriptor($secDescXml) {
 
+    //print("___".$secDescXml."___");
 
     try {
     // building rights
@@ -1933,8 +1940,6 @@ function saveSecurityDescriptor($secDescXml) {
                 foreach($xml->xpath('//right') as $right) {
                 //$actions = $actions + (int)HACLRight::getActionID($right);
 
-                    print ("+++++".$right);
-
                     if($actions2 == '') {
                         $actions2 = (string)$right;
                     }else {
@@ -1966,6 +1971,7 @@ function saveSecurityDescriptor($secDescXml) {
                     if (($users <> '') && ($groups == '')) $inline .= $users;
                     $inline .= ' |actions='.$actions2.' |description='.$description.'}}';
 
+
                 } else {
                     //modification rihts
                     $inline .= '{{#manage rights:assigned to=';
@@ -1974,6 +1980,9 @@ function saveSecurityDescriptor($secDescXml) {
                     if (($users <> '') && ($groups == '')) $inline .= $users;
                     $inline .='}}';
                 }
+                $inline .= <<<HTML
+
+HTML;
 
             }
 
@@ -2016,26 +2025,27 @@ function saveSecurityDescriptor($secDescXml) {
             case "category":$peType = "Category";break;
         }
 
+        global $wgUser;
 
         switch ($secDescXml->ACLType) {
             case "createACL":$aclName = 'ACL:'.$peType.'/'.$SDName;break;
-            case "createACLTemplate":$aclName = 'ACL:Template/'.$SDName;break;
-            case "createACLUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName();break;
+            case "createAclTemplate":$aclName = 'ACL:Template/'.$SDName;break;
+            case "createAclUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName(); break;
         }
-        $aclName = 'ACL:Template/'.$SDName;
+        
         // create article for security descriptor
 
-        //$sdarticle = new Article(Title::newFromText($aclName));
+        $sdarticle = new Article(Title::newFromText($aclName));
 
 
-        //$sdarticle->doEdit($inline, "");
-        //$SDID = $sdarticle->getID();
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
 
 
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setContentType("json");
         $ajaxResponse->setResponseCode(200);
-        $ajaxResponse->addText($aclName );
+        $ajaxResponse->addText($aclName);
 
     } catch (Exception  $e) {
         $ajaxResponse = new AjaxResponse();
@@ -2585,7 +2595,7 @@ function getACLs($typeXML) {
      * */
 
 
-    $types = "'Page'";
+    $types = "'Page', 'Template'";
 
     $array = array();
 
