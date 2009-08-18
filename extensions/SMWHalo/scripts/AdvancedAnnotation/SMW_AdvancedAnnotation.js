@@ -34,7 +34,9 @@ AdvancedAnnotation.prototype = {
 	/**
 	 * Initializes an instance of this class.
 	 */
-	initialize: function() {
+	initialize: function(fckDataProcessor) {
+	    this.fck = fckDataProcessor;
+	
 		this.resetSelection();
 		
 		// The wiki text parser manages the wiki text and adds annotations 
@@ -757,28 +759,47 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	loadWikiText : function() {
-		function ajaxResponseLoadWikiText(request) {
-			if (request.status == 200) {
-				// success => store wikitext
-				this.wikiTextParser = new WikiTextParser(request.responseText);
-				this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
-				this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
-				this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
-				this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
-				catToolBar.setWikiTextParser(this.wikiTextParser);
-				relToolBar.setWikiTextParser(this.wikiTextParser);
-				catToolBar.fillList(true);
-				relToolBar.fillList(true);
-			} else {
-				this.wikiTextParser = null;
-			}
-		};
+        if (! this.fck) {
+            function ajaxResponseLoadWikiText(request) {
+	            if (request.status == 200) {
+				    // success => store wikitext
+  				    this.wikiTextParser = new WikiTextParser(request.responseText);
+				    this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
+				    this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
+				    this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
+      				this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
+		    		catToolBar.setWikiTextParser(this.wikiTextParser);
+			    	relToolBar.setWikiTextParser(this.wikiTextParser);
+				    catToolBar.fillList(true);
+    				relToolBar.fillList(true);
+	    		} else {
+		    		this.wikiTextParser = null;
+			    }
+		   };
 		
-		sajax_do_call('smwf_om_GetWikiText', 
-		              [wgPageName], 
-		              ajaxResponseLoadWikiText.bind(this));
+    		sajax_do_call('smwf_om_GetWikiText', 
+	    	              [wgPageName], 
+		                  ajaxResponseLoadWikiText.bind(this));
 		              
-		              
+	    } else { // FCK mode
+            // Call the Data Processor to generate the output data.
+            var data = $('wpTextbox1').innerHTML;
+            data = '<body>' + data + '</body>';
+            data = data.replace(/&lt;/g, '<');
+            data = data.replace(/&gt;/g, '>');
+            
+            try {
+                xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
+                xmlDoc.async="false";
+                xmlDoc.loadXML(data);
+            } catch(e) {
+                parser=new DOMParser();
+                xmlDoc=parser.parseFromString(data,"text/xml");
+            }
+            var wikitext = this.fck.ConvertToDataFormat(xmlDoc.documentElement, true, false, true);
+            alert(wikitext);
+	    	this.wikiTextParser = new WikiTextParser(wikitext);
+	    }              
 	},
 	
 	/**
@@ -1532,12 +1553,12 @@ AdvancedAnnotation.prototype = {
 		}
 		
 	}
-	
 };// End of Class
 
 AdvancedAnnotation.create = function() {
 	if (wgAction == "annotate") {
-		smwhgAdvancedAnnotation = new AdvancedAnnotation();
+		smwhgAdvancedAnnotation = new AdvancedAnnotation(fckedit);
+		alert ('jetzt gehts los');
 		new PeriodicalExecuter(function(pe) {
 			var content = $('content');
 			Event.observe(content, 'mouseup', 
@@ -1556,7 +1577,8 @@ AdvancedAnnotation.create = function() {
  * changed, the user is asked, if he wants to save the changes.
  */
 AdvancedAnnotation.unload = function() {
-	if (wgAction == "annotate" && smwhgAdvancedAnnotation.annotationsChanged === true) {
+    var fckedit = (wgAction == "edit" && FCKeditor) ?  1 : 0;
+	if ((wgAction == "annotate" || fckedit) && smwhgAdvancedAnnotation.annotationsChanged === true) {
 		var save = confirm(gLanguage.getMessage('AAM_SAVE_ANNOTATIONS'));
 		if (save === true) {
 			smwhgAdvancedAnnotation.saveAnnotations();

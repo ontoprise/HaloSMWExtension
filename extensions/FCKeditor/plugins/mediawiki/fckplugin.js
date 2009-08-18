@@ -910,3 +910,38 @@ FCK.ContextMenu.RegisterListener({
 		}
 	}
 }) ;
+
+var smwhgAdvancedAnnotation;
+var Class = window.parent.Class;
+
+var SMW_AnnotationMode = window.parent.Class.create({
+    initialize: function() {
+        this.IsActive = 0;
+    },
+    
+    Execute: function() {
+        return;
+        if (this.IsActive == this.GetState())
+           this.IsActive = 1 - this.GetState()
+        if (this.IsActive) {
+            smwhgAdvancedAnnotation = new window.parent.AdvancedAnnotation(FCK.DataProcessor);
+            smwhgAdvancedAnnotation.annotateWithToolbar(Event);
+        }
+        else {
+            smwhgAdvancedAnnotation.unload();
+        }
+    },
+
+    GetState: function() {
+        if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
+            return FCK_TRISTATE_DISABLED ;
+        return this.IsActive ? FCK_TRISTATE_ON : FCK_TRISTATE_OFF ;
+    }
+});
+
+
+var tbButton = new FCKToolbarButton( 'SMW_AnnotationMode', 'AnnotationToolbar', 'Annotation Toolbar' ) ;
+tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
+FCKToolbarItems.RegisterItem( 'SMW_AnnotationMode', tbButton );
+
+FCKCommands.RegisterCommand( 'SMW_AnnotationMode', new SMW_AnnotationMode() ) ;
