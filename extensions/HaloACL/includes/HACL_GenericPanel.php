@@ -38,7 +38,7 @@ class HACL_GenericPanel {
     private $content;
 
 
-    function __construct($panelid, $name="",$title="Right",$showStatus = true,$showClose = true) {
+    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true) {
 
         $this->header = <<<HTML
 	<!-- start of panel div-->
@@ -50,7 +50,7 @@ class HACL_GenericPanel {
 			</span>
                         <div class="haloacl_panel_nameDescr">
                             <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">$title</span>
-                            <span id="haloacl_panel_descr_$panelid" class="panel haloacl_panel_descr"></span>
+                            <span id="haloacl_panel_descr_$panelid" class="panel haloacl_panel_descr">$description</span>
                         </div>
 HTML;
         if($showStatus) {
