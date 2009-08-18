@@ -168,6 +168,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab1);
         tab1.addListener('click', function(e){});
+        
 
 
         // ------
@@ -181,7 +182,8 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         });
         tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab2);
-        tab2.addListener('click', function(e){});
+        tab2.addListener('click', function(e){YAHOO.haloacl.haloaclTabs.removeTab(tab1);});
+
 
         // ------
 
