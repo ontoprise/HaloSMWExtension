@@ -62,6 +62,10 @@ $wgAjaxExportList[] = "saveTempGroupToSession";
 $wgAjaxExportList[] = "saveGroup";
 $wgAjaxExportList[] = "getSDRightsPanelContainer";
 $wgAjaxExportList[] = "deleteSecurityDescriptor";
+$wgAjaxExportList[] = "createAclUserTemplateContent";
+$wgAjaxExportList[] = "getRightsContainer";
+
+
 
 
 
@@ -88,9 +92,11 @@ function createACLPanels() {
 
     $html = <<<HTML
         <div class="yui-skin-sam">
+            <input id="processType" type="hidden" value="init" />
             <div id="haloaclsubView" class="yui-navset"></div>
         </div>
         <script type="text/javascript">
+            
             YAHOO.haloacl.buildSubTabView('haloaclsubView');
         </script>
 HTML;
@@ -197,7 +203,7 @@ HTML;
                   var containerWhereDivsAreInserted = $('haloacl_tab_createacl_rightsection');
                   $('haloacl_tab_createacl_rightsection').insert(divhtml,containerWhereDivsAreInserted);
 
-                  YAHOO.haloacl.loadContentToDiv('create_acl_rights_row'+YAHOO.haloacl.panelcouner,'rightList',{panelid:panelid});
+                  YAHOO.haloacl.loadContentToDiv('create_acl_rights_row'+YAHOO.haloacl.panelcouner,'getRightsContainer',{panelid:panelid});
 
                   YAHOO.haloacl.panelcouner++;
 
@@ -301,10 +307,12 @@ HTML;
  */
 function createSaveContent() {
 
+
     $response = new AjaxResponse();
 
+$tmp = "::::".$_SESSION['temprights'];
     $html = <<<HTML
-        <!-- section start -->
+        <!-- section start -->_____$tmp
         <div class="haloacl_tab_section_container">
             <div class="haloacl_tab_section_header">
                 <div class="haloacl_tab_section_header_count">4.</div>
@@ -371,6 +379,7 @@ function createSaveContent() {
                 xml+="</groups>";
                 xml+="<name>"+$('create_acl_general_name').value+"</name>";
                 xml+="<definefor>"+""+"</definefor>";
+                xml+="<ACLType>"+$('processType').value+"</ACLType>";
 
 
                 var callback = function(result){
@@ -412,25 +421,15 @@ function createManageExistingACLContent() {
 
      $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ ACL Explorer ]", "[ ACL Explorer ]");
 
-
-
-
-     
      $tempContent = <<<HTML
         <div id="manageExistingACLRightList">
         </div>
         <script>
-            YAHOO.haloacl.loadContentToDiv('manageExistingACLRightList','rightList',{panelid:'manageExistingACLRightList'});
+            YAHOO.haloacl.loadContentToDiv('manageExistingACLRightList','rightList',{panelid:'manageExistingACLRightList', type:'edit'});
         </script>
 HTML;
 
     $myGenericPanel->setContent($tempContent);
-
-
-
-
-
-
 
      $html = <<<HTML
         <div class="haloacl_tab_content">
@@ -459,7 +458,7 @@ HTML;
  * @return <html>
  *  returns content for createacl-tab
  */
-function createGeneralContent($panelId, $nameBlock, $helpItem) {
+function createGeneralContent($panelId, $nameBlock, $helpItem, $processType) {
 
 
     $createStACLHeadline = wfMsg('hacl_create_acl_dut_headline');
@@ -491,6 +490,7 @@ function createGeneralContent($panelId, $nameBlock, $helpItem) {
 
     $html = <<<HTML
         <div class="haloacl_tab_content">
+
         <div class="haloacl_tab_content_description">
         To create a standard ACL you need to complete the following four steps.
         </div>
@@ -581,6 +581,9 @@ HTML;
 
 
         <script type="javascript">
+
+            $('processType').value = '$processType';
+
             gotoStep2 = function() {
 
                 //implement checks here
@@ -615,7 +618,7 @@ HTML;
  */
 function createAclContent() {
 
-// clear temp-right-sessions
+    // clear rights saved in session
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -623,11 +626,13 @@ function createAclContent() {
     $helpText = '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />';
     $helpItem = new HACL_helpPopup("General", $helpText);
 
-    $html = createGeneralContent("createAcl", true, $helpItem);
+    $html = createGeneralContent("createAcl", true, $helpItem, "createACL");
 
     $response->addText($html);
     return $response;
 }
+
+
 
 
 
@@ -639,12 +644,12 @@ function createAclContent() {
  */
 function manageAclsContent() {
 
-    // clear temp-right-sessions
+    // clear rights saved in session
     clearTempSessionRights();
 
     $response = new AjaxResponse();
 
-    $html = createGeneralContent("createAcl", true, $helpItem);
+    $html = createGeneralContent("createAcl", true, $helpItem, "ManageACLTemplate");
 
     $response->addText($html);
     return $response;
@@ -670,11 +675,38 @@ function createAclTemplateContent() {
     $helpText = '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />';
     $helpItem = new HACL_helpPopup("General", $helpText);
 
-    $html = createGeneralContent("createAclTemplate", false, $helpItem);
+    $html = createGeneralContent("createAclTemplate", true, $helpItem, "createAclTemplate");
 
     $response->addText($html);
     return $response;
 }
+
+
+
+/**
+ *
+ * returns content of "create ACL Template" panel
+ *
+ * @return <html>
+ *  returns content for createacl-tab
+ */
+function createAclUserTemplateContent() {
+
+    // clear temp-right-sessions
+    clearTempSessionRights();
+
+    $response = new AjaxResponse();
+
+    $helpText = '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />';
+    $helpItem = new HACL_helpPopup("General", $helpText);
+
+    $html = createGeneralContent("createAclTemplate", false, $helpItem, "createAclUserTemplate");
+
+    $response->addText($html);
+    return $response;
+}
+
+
 
 /**
  *
@@ -854,7 +886,6 @@ HTML;
 function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0, $panelName = "Right", $rightDescription = "") {
 
 
-
     $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription);
     if ($readOnly == true) $disabled = "disabled";
 
@@ -1025,6 +1056,7 @@ HTML;
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<inlineright>";
                 xml+="<panelid>$panelid</panelid>";
+                xml+="<type>$predefine</type>";
                 xml+="<name>"+$('right_name_$panelid').value+"</name>";
                 xml+="<description>"+$('right_description_$panelid').value+"</description>";
                 $$('.right_descriptiontext_$panelid').each(function(item){
@@ -1106,6 +1138,7 @@ HTML;
 HTML;
 
      if ($preload == true) {
+
         if ($predefine <> "modification") {
             $actions = HACLRight::newFromID($preloadRightId)->getActions();
             $footerextension .= <<<HTML
@@ -1123,12 +1156,19 @@ HTML;
 
             $footerextension .= "</script>";
 
+
+
         }
 
         $footerextension .= <<<HTML
         <script type="javascript>
             YAHOO.haloacl.closePanel('$panelid');
             $('close-button_$panelid').style.display = 'none';
+
+            // preload = true ==> already save this right in session.
+            //YAHOO.haloacl.buildRightPanelXML_$panelid();
+
+
         </script>
 HTML;
 
@@ -1442,12 +1482,12 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
-function rightList($panelid) {
+function rightList($panelid, $type = "readOnly") {
 
     $response = new AjaxResponse();
 
 
-     $myGenericPanel = new HACL_GenericPanel($panelid, "Choose ACL template", "Choose ACL template");
+     $myGenericPanel = new HACL_GenericPanel($panelid, "Choose ACL template", "Choose ACL template", "", false, false);
 
     $html = <<<HTML
 
@@ -1474,7 +1514,7 @@ function rightList($panelid) {
 
     // treeview part - so the left part of the select/deselct-view
 
-    YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid');
+    YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid', '$type');
     YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'YAHOO.haloaclrights.datatableInstance$panelid.executeQuery';
     YAHOO.haloaclrights.buildTreeFirstLevelFromJson(YAHOO.haloaclrights.treeInstance$panelid);
 
@@ -1549,27 +1589,13 @@ function getSDRightsPanelContainer($sdId) {
                 };
 
             YAHOO.haloacl.buildCreateAcl_SecDesc = function(){
-                var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_create_acl_modificationrights);
-
+                
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<secdesc>";
                 xml+="<panelid>create_acl</panelid>";
 
 
-                xml+="<users>";
-                $$('.datatableDiv_right_tabview_create_acl_modificationrights_users').each(function(item){
-                    if(item.checked){
-                        xml+="<user>"+item.name+"</user>";
-                    }
-                });
-                xml+="</users>";
-
-                xml+="<groups>";
-                groups.each(function(group){
-                    xml+="<group>"+group+"</group>";
-                });
-                xml+="</groups>";
                 xml+="<name>"+$('create_acl_general_name').value+"</name>";
                 xml+="<definefor>"+""+"</definefor>";
 
@@ -1603,6 +1629,90 @@ HTML;
     return $response;
 
 }
+
+
+
+
+/**
+ *
+ * returns panel listing all existing rights, embedded in container for selection (Create ACL Panel)
+ *
+ * @param <string>  unique identifier
+ * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
+ */
+function getRightsContainer($panelid, $type = "readOnly") {
+
+    $response = new AjaxResponse();
+
+
+    $myGenericPanel = new HACL_GenericPanel($panelid, "Select...", "Select...");
+
+
+    $html = <<<HTML
+        <div id="SDRightsPanelContainer">
+        </div>
+        <script>
+            YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer','rightList',{panelid:'$panelid', type:'$type'});
+        </script>
+        <div class="haloacl_greyline">&nbsp;</div>
+        <div>
+            <div style="width:33%;float:left;"></div>
+            <div style="width:33%;float:left;text-align:center"></div>
+            <div style="width:33%;float:left;text-align:right"><input type="button" name="useTemplate" value="Use selected template" onclick="YAHOO.haloacl.buildTemplatePanelXML_$panelid();" /></div>
+        </div>
+
+        <script type="javascript">
+
+
+
+
+            YAHOO.haloacl.buildTemplatePanelXML_$panelid = function(onlyReturnXML){
+
+                var panelid = '$panelid';
+
+                // building xml
+                var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+                xml+="<inlineright>";
+                xml+="<panelid>$panelid</panelid>";
+                xml+="<type>template</type>";
+                xml+="<name>"+YAHOO.haloacl.selectedTemplates[$panelid]+"</name>";
+                xml+="</inlineright>";
+
+                if(onlyReturnXML == true){
+                    return xml;
+                }else{
+                    var callback = function(result){
+                        if(result.status == '200'){
+                            //parse result
+                            //YAHOO.lang.JSON.parse(result.responseText);
+                            genericPanelSetSaved_$panelid(true);
+                            genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
+                            genericPanelSetDescr_$panelid(result.responseText);
+
+                            YAHOO.haloacl.closePanel('$panelid');
+                        }else{
+                            alert(result.responseText);
+                        }
+                    };
+                    YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+                }
+            };
+
+
+
+
+        </script>
+HTML;
+
+    $myGenericPanel->setContent($html);
+
+
+
+    $response->addText($myGenericPanel->getPanel());
+    return $response;
+
+}
+
 
 
 
@@ -1669,11 +1779,14 @@ function saveTempGroupToSession($groupxml) {
  */
 function saveTempRightToSession($rightxml) {
     try {
+  
         $xml = new SimpleXMLElement($rightxml);
+         /*
         $description = '';
         $actions = 0;
         $groups = '';
         $users = '';
+        $type = $xml->type;
         $description = $xml->description ? $xml->description : '';
         $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
 
@@ -1714,10 +1827,13 @@ function saveTempRightToSession($rightxml) {
         $actions = $actions > 255 ? 255 : $actions;
 
         $tempright = new HACLRight($actions,$groups,$users,$description, 0);
-
+*/
         $panelid = (string)$xml->panelid;
         #  $_SESSION['temprights'][$panelid] = $tempright;
+         
+         
         $_SESSION['temprights'][$panelid] = $rightxml;
+
 
         $autoGeneratedRightName = $autoGeneratedRightNameRights.$autoGeneratedRightName;
         if (strlen($autoGeneratedRightName) > 50) $autoGeneratedRightName = substr($autoGeneratedRightName,0,50)."...";
@@ -1777,13 +1893,14 @@ function saveSecurityDescriptor($secDescXml) {
             $actions = 0;
             $groups = '';
             $users = '';
-            $description = $xml->description ? $xml->description : '';
-            $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
+            $type = $xml->type;
 
-            print (":::::".$tempright);
+            if ($type == "template") {
+                $inline .= '{{#predefined right:rights='.$xml->name.'}}';
+            } else {
+                $description = $xml->description ? $xml->description : '';
+                $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
 
-
-            if ($description <> "modification rights") {
 
                 $autoGeneratedRightName = " for ";
                 $autoGeneratedRightNameRights = "";
@@ -1832,29 +1949,35 @@ function saveSecurityDescriptor($secDescXml) {
                 $autoGeneratedRightName = $autoGeneratedRightNameRights.$autoGeneratedRightName;
                 if ($autoDescription == "on") $description = $autoGeneratedRightName;
 
+                if ($type <> "modification") {
+                    //normal rights
+                    $inline .= '{{#access: assigned to=';
+                    if ($groups <> '') $inline .= $groups;
+                    if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
+                    if (($users <> '') && ($groups == '')) $inline .= $users;
+                    $inline .= ' |actions='.$actions2.' |description='.$description.'}}';
 
-                $inline .= '{{#access: assigned to=';
-                if ($groups <> '') $inline .= $groups;
-                if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
-                if (($users <> '') && ($groups == '')) $inline .= $users;
-                $inline .= ' |actions='.$actions2.' |description='.$description.'}}
-';
+                } else {
+                    //modification rihts
+                    $inline .= '{{#manage rights:assigned to=';
+                    if ($groups <> '') $inline .= $groups;
+                    if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
+                    if (($users <> '') && ($groups == '')) $inline .= $users;
+                    $inline .='}}';
+                }
+
             }
-        //$title = new Title();
-        //$title->newFromText("Category/Favorite books", "ACL");
 
-        //$rightarticle = new Article($title);
-        //$rightarticle->doEdit("text", "summary");
-        //$rightarticle = $sdarticle->getID();
 
-        //$tempright = new HACLRight($actions,$groups,$users,$description, $rightarticleid);
         }
 
 
         //get manage rights
         $secDescXml = new SimpleXMLElement($secDescXml);
 
-        // securitydescriptor
+
+
+        /*
         foreach($secDescXml->xpath('//group') as $group) {
             if($sdgroups == '') {
                 $sdgroups = (string)$group;
@@ -1869,6 +1992,12 @@ function saveSecurityDescriptor($secDescXml) {
                 $sdusers .= ",".'User:'.(string)$user;
             }
         }
+         *
+         */
+
+        //complete inline code
+        $inline .= '[[Category:ACL/ACL]]';
+
 
         $SDName = $secDescXml->name;
         switch ($secDescXml->protect) {
@@ -1878,33 +2007,26 @@ function saveSecurityDescriptor($secDescXml) {
             case "category":$peType = "Category";break;
         }
 
+
+        switch ($secDescXml->ACLType) {
+            case "createACL":$aclName = 'ACL:'.$peType.'/'.$SDName;break;
+            case "createACLTemplate":$aclName = 'ACL:Template/'.$SDName;break;
+            case "createACLUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName();break;
+        }
+        $aclName = 'ACL:Template/'.$SDName;
         // create article for security descriptor
-        $sdarticle = new Article(Title::newFromText('ACL:'.$peType.'/'.$SDName));
-        $inline .= '{{#manage rights:assigned to=';
-        if ($sdgroups <> '') $inline .= $sdgroups;
-        if (($sdusers <> '') && ($sdgroups <> '')) $inline .= ','.$sdusers;
-        if (($sdusers <> '') && ($sdgroups == '')) $inline .= $sdusers;
-        $inline .='}}
-        [[Category:ACL/ACL]]';
+
+        //$sdarticle = new Article(Title::newFromText($aclName));
 
 
+        //$sdarticle->doEdit($inline, "");
+        //$SDID = $sdarticle->getID();
 
-
-        $sdarticle->doEdit($inline, "");
-        $SDID = $sdarticle->getID();
-
-        /*
-        $secDesc = new HACLSecurityDescriptor($SDID, "ACL:Page/Test", $SDName, $peType, $sdgroups, $sdusers);
-
-        $secDesc->addInlineRights();
-        $secDesc->save();
-         *
-         */
 
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setContentType("json");
         $ajaxResponse->setResponseCode(200);
-        $ajaxResponse->addText('ACL:'.$peType.'/'.$SDName );
+        $ajaxResponse->addText($aclName );
 
     } catch (Exception  $e) {
         $ajaxResponse = new AjaxResponse();
