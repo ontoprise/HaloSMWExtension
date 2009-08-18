@@ -160,7 +160,7 @@ to search for specific entities in the ontology and the filters below each
 column to narrow down the given results.
 Initially the flow of browsing is left to right. You can flip the flow by
 clicking the big arrows between the columns.',
-	'smw_ob_undefined_type' => '*undefined type*',
+	'smw_ob_undefined_type' => '*undefined range*',
 	'smw_ob_hideinstances' => 'Hide Instances',
     'smw_ob_onlyDirect' => 'only direct properties',
 	'smw_ob_hasnumofsubcategories' => 'Number of subcategories',

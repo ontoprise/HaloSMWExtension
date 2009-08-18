@@ -155,7 +155,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_no_annotations' => 'Geen aantekeningen beschikbaar.',
 	'smw_ob_no_properties' => 'Geen eigenschappen beschikbaar.',
 	'smw_ob_help' => 'De ontologie-browser maakt het mogelijk om doorheen de ontologie te navigeren en zo gemakkelijk items in de wiki te vinden en te identificeren. Gebruik het filter mechanisme	links bovenaan om naar specifieke elementen in de ontologie te zoeken. De filters beneden elke kolom laten toe om de zoekresultaten te beperken. Bij het begin gebeurt het browsen van links naar rechts. 	Deze richting kan veranderd worden door op de grote pijlen tussen de kolommen te klikken.',
-	'smw_ob_undefined_type' => '*ongedefinieerd type*',
+	'smw_ob_undefined_type' => '*ongedefinieerd range*',
 	'smw_ob_hideinstances' => 'Entiteiten verbergen',
 	
 	'smw_ob_hasnumofsubcategories' => 'Aantal subcategorieën',

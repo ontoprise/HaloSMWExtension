@@ -157,7 +157,7 @@ protected $smwUserMessages = array(
 			Benutzen Sie den Filter-Mechanismus oben links um bestimmte Elemente der Ontologie zu finden und schränken sie das Ergebnis mit Hilfe der
 			Filter unter jeder Spalte ein. Der Selektionsfluss ist anfangs von rechts nach links. Sie können die Pfeile durch Anklicken aber umdrehen.',
 
-	'smw_ob_undefined_type' => '*undefinierter Typ*',
+	'smw_ob_undefined_type' => '*keine Range definiert*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
     'smw_ob_onlyDirect' => 'nur direkte Properties',	
 	'smw_ob_hasnumofsubcategories' => 'Anzahl Unterkategorien',
