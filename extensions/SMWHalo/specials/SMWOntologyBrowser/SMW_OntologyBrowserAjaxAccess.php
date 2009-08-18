@@ -67,7 +67,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter->sort = true;
  		$propertyAnnotations = array();
  		
- 		$instance = Title::newFromText($p_array[0]);
+ 		$instance = Title::newFromText($params);
  		
  		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
  		foreach($properties as $a) { 
@@ -94,8 +94,8 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param1 : partitionNum
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$reqfilter->limit =  $p_array[0] + 0;
- 		$reqfilter->offset = ($p_array[1] + 0)*$reqfilter->limit;
+ 		$reqfilter->limit =  intval($p_array[0]);
+ 		$reqfilter->offset = intval($p_array[1])*$reqfilter->limit;
  		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
  		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $p_array[0] + 0, $p_array[1] + 0, true);
@@ -105,8 +105,8 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param2 : partitionNum
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$reqfilter->limit =  $p_array[1] + 0;
- 		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
+ 		$reqfilter->limit =  intval($p_array[1]);
+ 		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
  		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
  		 		 		
@@ -118,8 +118,8 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param2 : partitionNum
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$reqfilter->limit =  $p_array[1] + 0;
- 		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
+ 		$reqfilter->limit =  intval($p_array[1]);
+ 		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
  		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
  		$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter);
  		
