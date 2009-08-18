@@ -85,7 +85,7 @@ function ajaxTestFunction() {
 
 function createACLPanels() {
 
-    // clear temp-right-sessions
+// clear temp-right-sessions
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -108,7 +108,7 @@ HTML;
 
 function createManageACLPanels() {
 
-    // clear temp-right-sessions
+// clear temp-right-sessions
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -418,9 +418,9 @@ HTML;
  */
 function createManageExistingACLContent() {
 
-     $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ ACL Explorer ]", "[ ACL Explorer ]", false, false,false);
+    $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ ACL Explorer ]", "[ ACL Explorer ]", false, false,false);
 
-     $tempContent = <<<HTML
+    $tempContent = <<<HTML
         <div id="content_ManageExistingACLPanel">
         <div id="manageExistingACLRightList">
         </div>
@@ -432,7 +432,7 @@ HTML;
 
     $myGenericPanel->setContent($tempContent);
 
-     $html = <<<HTML
+    $html = <<<HTML
         <div class="haloacl_tab_content">
             <div class="haloacl_tab_content_description">
             <strong>Manage existing ACLs</strong>
@@ -440,8 +440,8 @@ HTML;
             </div>
             <div class="haloacl_greyline">&nbsp;</div>
 HTML;
-            $html.= $myGenericPanel->getPanel();
-            $html.= <<<HTML
+    $html.= $myGenericPanel->getPanel();
+    $html.= <<<HTML
 
             <div class="haloacl_greyline">&nbsp;</div>
 
@@ -619,7 +619,7 @@ HTML;
  */
 function createAclContent() {
 
-    // clear rights saved in session
+// clear rights saved in session
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -645,7 +645,7 @@ function createAclContent() {
  */
 function manageAclsContent() {
 
-    // clear rights saved in session
+// clear rights saved in session
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -693,7 +693,7 @@ function createAclTemplateContent() {
  */
 function createAclUserTemplateContent() {
 
-    // clear temp-right-sessions
+// clear temp-right-sessions
     clearTempSessionRights();
 
     $response = new AjaxResponse();
@@ -896,7 +896,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
 
     $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription);
     if (($readOnly === true) or ($readOnly == "true")) $disabled = "disabled"; else $disabled = "";
-    
+
     $content = <<<HTML
 
 		<div id="content_$panelid" class="panel haloacl_panel_content">
@@ -1144,12 +1144,12 @@ HTML;
         </script>
 HTML;
 
-     if ($preload == true) {
+    if ($preload == true) {
 
         if ($predefine <> "modification") {
             $actions = HACLRight::newFromID($preloadRightId)->getActions();
             $footerextension .= <<<HTML
-            <script type="javascript>
+                <script type="javascript>
 HTML;
             if ($actions & HACLRight::EDIT)  $footerextension .= "$('checkbox_right_edit').checked = true;";
             if ($actions & HACLRight::CREATE)  $footerextension .= "$('checkbox_right_create').checked = true;";
@@ -1180,7 +1180,7 @@ HTML;
 
     }
 
-   
+
 
     switch ($predefine) {
 
@@ -1209,7 +1209,7 @@ HTML;
             break;
     }
 
-   
+
 
 
 
@@ -1493,12 +1493,55 @@ function rightList($panelid, $type = "readOnly") {
     $response = new AjaxResponse();
 
 
-     $myGenericPanel = new HACL_GenericPanel($panelid, "Choose ACL template", "Choose ACL template", "", false, false);
+    $myGenericPanel = new HACL_GenericPanel($panelid, "Choose ACL template", "Choose ACL template", "", false, false);
 
     $html = <<<HTML
 
     <div class="haloacl_manageacl_selector_content">
-  
+HTML;
+    if($type != "readOnly") {
+        $html .= <<<HTML
+    <div id="haloacl_manageuser_contentmenu">
+            <div id="haloacl_manageuser_contentmenu_title">
+                Show ACLs
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;All
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Page
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Category
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Property
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Namepsace
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Standard ACLs
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;ACL templates
+            </div>
+            <div class="haloacl_manageacl_contentmenu_element">
+                <input type="checkbox" />&nbsp;Default user templates
+            </div>
+
+
+
+        </div>
+HTML;
+    }
+
+    $html .= <<<HTML
+
+        <div id="haloacl_manageuser_contentlist">
+
+
+        <div id="manageuser_grouplisting">
                 <div class="">
                     <span class="">
                         Filter in ACLs:
@@ -1508,6 +1551,7 @@ function rightList($panelid, $type = "readOnly") {
                 <div id="haloacl_manageacl_acltree">
                     <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 </div>
+        </div>
     </div>
 
     
@@ -1741,12 +1785,12 @@ function getSDRightsPanel($sdId, $readOnly = false) {
 
         $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, true, $rightId, "My Right", HACLRight::newFromID($rightId)->getDescription());
     }
-    
+
     $html .= '<div class="haloacl_greyline">&nbsp;</div>';
 
     $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
 
- 
+
 
     $response->addText($html);
     return $response;
@@ -1782,7 +1826,7 @@ function saveTempGroupToSession($groupxml) {
  */
 function saveTempRightToSession($rightxml) {
     try {
-  
+
         $xml = new SimpleXMLElement($rightxml);
 
 
@@ -1841,11 +1885,11 @@ function saveTempRightToSession($rightxml) {
 
 
 
-        
+
         $panelid = (string)$xml->panelid;
         #  $_SESSION['temprights'][$panelid] = $tempright;
-         
-         
+
+
         $_SESSION['temprights'][$panelid] = $rightxml;
 
 
@@ -1899,7 +1943,7 @@ function deleteSecurityDescriptor($sdId) {
  */
 function saveSecurityDescriptor($secDescXml) {
 
-    //print("___".$secDescXml."___");
+//print("___".$secDescXml."___");
 
     try {
     // building rights
@@ -1963,7 +2007,7 @@ function saveSecurityDescriptor($secDescXml) {
                 if ($autoDescription == "on") $description = $autoGeneratedRightName;
 
                 if ($type <> "modification") {
-                    //normal rights
+                //normal rights
                     $inline .= '{{#access: assigned to=';
                     if ($groups <> '') $inline .= $groups;
                     if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
@@ -1972,7 +2016,7 @@ function saveSecurityDescriptor($secDescXml) {
 
 
                 } else {
-                    //modification rihts
+                //modification rihts
                     $inline .= '{{#manage rights:assigned to=';
                     if ($groups <> '') $inline .= $groups;
                     if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
@@ -2032,7 +2076,7 @@ HTML;
             case "createAclUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName(); break;
             case "all_edited":$aclName = $SDName; break; //Name already existing - reuse
         }
-        
+
         // create article for security descriptor
 
         $sdarticle = new Article(Title::newFromText($aclName));
@@ -2150,7 +2194,7 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
             $parentGroupArray = readGroupDefinition($parentgroup);
             $parentgrouparticle = new Article(Title::newFromText("ACL:".$parentgroup));
             #echo ("opening article with title:ACL:".$parentgroup);
-            
+
             // building new arent inline
             $parent_memuser = "";
             // setting the new group as first member
@@ -2785,9 +2829,7 @@ HTML;
 
         <div id="manageuser_grouplisting">
         <div id="haloacl_manageuser_contentlist_title">
-            Groups  Information ...
-           
-
+            Existing groups
         </div>
             <div id="treeDiv_manageuser_grouplisting">
             </div>
@@ -2824,8 +2866,8 @@ HTML;
 
 
 HTML;
-//$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
-    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "ACL Group Explorer","",false,false);
+    //$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
+    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "[ACL Group Explorer]","",false,false);
     $myGenericPanel->setSaved(true);
     $myGenericPanel->setContent($panelContent);
 
@@ -2925,7 +2967,7 @@ HTML;
 function whitelistsContent() {
     $response = new AjaxResponse();
     $html = <<<HTML
-<div class="haloacl_manageusers_container">
+        <div class="haloacl_manageusers_container">
     <div class="haloacl_manageusers_title">
     Manage whiteliste pages
     </div>
@@ -2935,7 +2977,7 @@ function whitelistsContent() {
 HTML;
     $myGenPanel = new HACL_GenericPanel("haloacl_whitelist_panel", "Manage whitelist", "Manage whitelist", "dsc", false, false);
     $myGenPanelContent = <<<HTML
-    <div id="content_haloacl_whitelist_panel">
+        <div id="content_haloacl_whitelist_panel">
         <div id="haloacl_whitelist_datatable" class="yui-content">
         </div>
         <div id="haloacl_whitelist_addPage">
@@ -2947,7 +2989,7 @@ HTML;
 HTML;
     $myGenPanel->setContent($myGenPanelContent);
 
-    
+
     $html .= $myGenPanel->getPanel();
 
     $html .= <<<HTML
@@ -2957,7 +2999,7 @@ HTML;
     </script>
 </div>
 HTML;
-    
+
     $response->addText($html);
     return $response;
 }

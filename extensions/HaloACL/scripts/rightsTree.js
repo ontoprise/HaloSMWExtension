@@ -300,17 +300,11 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         var sb = [];
 
         if (this.treeType=="readOnly") {
-            sb[sb.length] = '<td';
-            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
-            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
-            sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
-            sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\');return false;"></div>';
-            sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
-
+        
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
+            sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
+
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
@@ -321,12 +315,26 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '</span></td>';
 
-        } else {
-            sb[sb.length] = '<td>';
+            sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\');return false;"></div>';
+            sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
+
+      
+
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+        } else {
+            //  sb[sb.length] = '<td>';
+            //  sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
+            sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
+
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
@@ -355,39 +363,41 @@ YAHOO.haloaclrights.popup = function(id){
 
 
     if(YAHOO.haloaclrights.popupPanel == null){
-                YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
-                        close:true,
-                        visible:true,
-                        draggable:true,
-                        resizable:true,
-                        context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
-                });
-                YAHOO.haloaclrights.popupPanel.setHeader("Right Details"+id);
-                YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
-                YAHOO.haloaclrights.popupPanel.render();
-                YAHOO.haloaclrights.popupPanel.show();
-                popupClose = function(type, args) {
-                    YAHOO.haloaclrights.popupPanel = null;
-                }
-                YAHOO.haloaclrights.popupPanel.subscribe("hide", popupClose);
-            }else{
-                YAHOO.haloaclrights.popupPanel.render();
-                YAHOO.haloaclrights.popupPanel.show();
+        YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
+            close:true,
+            visible:true,
+            draggable:true,
+            resizable:true,
+            context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
+        });
+        YAHOO.haloaclrights.popupPanel.setHeader("Right Details"+id);
+        YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
+        YAHOO.haloaclrights.popupPanel.render();
+        YAHOO.haloaclrights.popupPanel.show();
+        popupClose = function(type, args) {
+            YAHOO.haloaclrights.popupPanel = null;
+        }
+        YAHOO.haloaclrights.popupPanel.subscribe("hide", popupClose);
+    }else{
+        YAHOO.haloaclrights.popupPanel.render();
+        YAHOO.haloaclrights.popupPanel.show();
 
-            }
-
-
-    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{sdId:id});
+    }
 
 
-
-
+    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
+        sdId:id
+    });
 
 
 
 
 
-   };
+
+
+
+
+};
 
 
 

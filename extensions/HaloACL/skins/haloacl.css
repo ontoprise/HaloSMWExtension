@@ -681,13 +681,13 @@ abbr,acronym { border:0;
 #haloacl_manageacl_acltree{
     background-color:#FFF;
     border:1px solid;
+    border-style:solid none none none;
 
 }
 #manageExistingACLRightList{
-    width:600px;
+    width:800px;
 }
 .haloacl_manageacl_selector_content{
-    width:560px;
 }
 #SDRightsPanel{
     width:940px;
@@ -698,4 +698,9 @@ abbr,acronym { border:0;
 }
 #content_manageExistingACLRightList{
     margin:10px 0;
+}
+
+.haloacl_manageacl_contentmenu_element{
+    margin:0 0 0 5px;
+    padding:0 0 0 12px;
 }
