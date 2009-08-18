@@ -562,7 +562,6 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
             for(var i=0, l=data.length; i<l; i=i+1) {
                 var n = data[i];
 
-                console.log("hulae "+tree.panelid+"___"+n.name+"___"+YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.name));
                 if (YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.name)){
                     var tmpNode = new YAHOO.widget.CustomNode(n.name, tree.getRoot(),false);
                     tmpNode.setGroupId(n.name);
@@ -613,6 +612,9 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 YAHOO.haloacl.preloadCheckedGroups = function(groups, tree) {
 
     var data = YAHOO.lang.JSON.parse(groups);
+
+    console.log("data preload"+data);
+
 
     for(var i=0, l=data.length; i<l; i=i+1) {
         var groupId = data[i];
