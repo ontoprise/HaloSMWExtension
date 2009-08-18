@@ -48,6 +48,9 @@ function smwf_qi_QIAccess($method, $params) {
             	default:
             }            
             
+            // fix bug 10812: if query string contains a ,
+            $p_array[0] = str_replace('%2C', ',', $p_array[0]);
+
             // read query with printouts and (possibly) other parameters like sort, order, limit, etc...
             $pos = strpos($p_array[0], "|?");
             if ($pos > 0) {

@@ -211,7 +211,7 @@ previewQuery:function(){
 	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
 		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
 		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
-		var params = ask + ",";
+		var params = ask.replace(',', '%2C') + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
 		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
@@ -250,7 +250,7 @@ previewResultPrinter:function(){
 	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
 		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
 		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
-		var params = ask + ",";
+		var params = ask.replace(',', '%2C') + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
 		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
@@ -268,7 +268,7 @@ previewResultPrinter:function(){
 			} else {
 				params += ",tabular";
 			}
-		}	
+		}
 		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openResultPreview.bind(this));
 	}
 	else { // query is empty
