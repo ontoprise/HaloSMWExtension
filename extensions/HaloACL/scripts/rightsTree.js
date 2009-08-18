@@ -272,6 +272,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
         this.updateCheckHtml();
         this.updateParent();
+        YAHOO.haloacl.selectedTemplates[this.tree.panelid] = this.label;
     },
 
     /**
@@ -298,7 +299,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     getContentHtml: function() {
         var sb = [];
 
-        if (this.treeType=="rw") {
+        if (this.treeType=="readOnly") {
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
@@ -812,7 +813,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         var tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
 
         tmpNode.setGroupId(element.id);
-        tmpNode.setTreeType("r");
+        tmpNode.setTreeType(tmpNode.tree.type);
 
         //build right subnodes
         console.log("rights array:"+element.rights.length+element.rights);
@@ -983,12 +984,16 @@ YAHOO.haloaclrights.getCheckedNodesFromTree = function(tree, nodes){
 */
 
 
+
 /**
  * returns a new treeinstance
  */
-YAHOO.haloaclrights.getNewRightsTreeview = function(divname,panelid){
+YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
+
+
     var instance = new YAHOO.widget.TreeView(divname);
     instance.panelid = panelid;
+    instance.type = type;
     if(!YAHOO.haloaclrights.clickedArrayGroups[panelid]){
         YAHOO.haloaclrights.clickedArrayGroups[panelid] = new Array();
     }
