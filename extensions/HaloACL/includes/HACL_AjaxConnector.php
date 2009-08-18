@@ -798,9 +798,9 @@ HTML;
                     if(result.status == '200'){
                         //parse result
                         //YAHOO.lang.JSON.parse(result.responseText);
-                        genericPanelSetSaved_$panelid(true);
-                        genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
-                        genericPanelSetDescr_$panelid(result.responseText);
+                        //genericPanelSetSaved_$panelid(true);
+                        //genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
+                        //genericPanelSetDescr_$panelid(result.responseText);
 
                         YAHOO.haloacl.closePanel('$panelid');
                         $('manageUserGroupSettingsModificationRight').show();
@@ -1998,6 +1998,9 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         $sdarticle->doEdit($inline, "");
         $SDID = $sdarticle->getID();
 
+        // as a new article starts we have to reset the parser
+        HACLParserFunctions::getInstance()->reset();
+
         // new group saved
         // if new group is a subgroup we have to attach it to that
         if($parentgroup) {
@@ -2078,7 +2081,7 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
 
             }
 
-            echo ("trying to insert following inline:".$newparentinline);
+            //echo ("trying to insert following inline:".$newparentinline);
             $parentgrouparticle->doEdit($newparentinline,"");
 
 
