@@ -418,10 +418,12 @@ HTML;
  */
 function createManageExistingACLContent() {
 
-     $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ ACL Explorer ]", "[ ACL Explorer ]");
+     $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ ACL Explorer ]", "[ ACL Explorer ]", false, false,false);
 
      $tempContent = <<<HTML
+        <div id="content_ManageExistingACLPanel">
         <div id="manageExistingACLRightList">
+        </div>
         </div>
         <script>
             YAHOO.haloacl.loadContentToDiv('manageExistingACLRightList','rightList',{panelid:'manageExistingACLRightList', type:'edit'});
@@ -1496,20 +1498,17 @@ function rightList($panelid, $type = "readOnly") {
 
     $html = <<<HTML
 
-    <div class="haloacl_rightpanel_selecttab_leftpart">
-                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
-                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
-                        Groups and Users
+    <div class="haloacl_manageacl_selector_content">
+  
+                <div class="">
+                    <span class="">
+                        Filter in ACLs:
                     </span>
+                    <input id="" type="text" "/>
                 </div>
-                <div class="haloacl_rightpanel_selecttab_leftpart_filter">
-                    <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
-                        Filter in groups:
-                    </span>
-                    <input id="filterAssignedGroup_$panelid" type="text" "/>
+                <div id="haloacl_manageacl_acltree">
+                    <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 </div>
-                <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
-            
     </div>
 
     
@@ -1538,6 +1537,7 @@ function rightList($panelid, $type = "readOnly") {
 
 HTML;
 
+    $html = "<div id=\"content_".$panelid."\">".$html."</div>";
     $myGenericPanel->setContent($html);
 
     $response->addText($myGenericPanel->getPanel());

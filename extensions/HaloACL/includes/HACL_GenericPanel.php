@@ -114,7 +114,7 @@ HTML;
     }
 
     function setContent($newContent) {
-        $this->content = '<div style="padding:10px">'.$newContent.'</div>';
+        $this->content = '<div class="haloacl_generic_panel_content">'.$newContent.'</div>';
     }
 
     function getPanel() {

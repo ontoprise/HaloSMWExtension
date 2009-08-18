@@ -201,12 +201,15 @@ abbr,acronym { border:0;
     border:1px solid #000;
     background-color:#ddd;
     float:left;
+    margin:10px 0 10px 0;
 }
 /* panel's first row that stays also collapsed visible */
 .haloacl_panel_title{
     background-color:#FFF;
     height:19px;
     padding:0px 0 0 8px;
+    border:1px solid #000;
+    border-style:none none solid  none;
 }
 
 .haloacl_panel_nameDescr{
@@ -257,13 +260,17 @@ abbr,acronym { border:0;
 
 /* panel content */
 .haloacl_panel_content{
-    border:1px solid #000;
-    border-style:solid none none  none;
-    padding:13px 21px 13px 21px;
+    padding:13px 0 0 0;
     float:left;
     width:877px;
 
 }
+.haloacl_generic_panel_content{
+    
+    padding:0 0 0 10px;
+    
+}
+
 .halocal_panel_content_row{
     float:left;
     clear:both;
@@ -565,8 +572,6 @@ abbr,acronym { border:0;
 #content_manageUsersPanel{
     min-height:350px;
     padding:10px;
-    border:1px solid;
-    border-style:solid none none none;
 }
 #haloacl_manageuser_contentmenu{
     height:200px;
@@ -669,4 +674,23 @@ abbr,acronym { border:0;
 }
 #manageUserGroupSettingsModificationRight{
     margin:5px;
+}
+
+#haloacl_manageacl_acltree{
+    background-color:#FFF;
+    border:1px solid;
+
+}
+#manageExistingACLRightList{
+    width:600px;
+}
+.haloacl_manageacl_selector_content{
+    width:580px;
+}
+#SDRightsPanel{
+    width:940px;
+}
+
+.content_manageExistingACLRightList{
+    margin:10px 0;
 }
