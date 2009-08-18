@@ -1,5 +1,21 @@
 <?php
 
+/*  Copyright 2009, ontoprise GmbH
+*  
+*   The deployment tool is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The deployment tool is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 // Error constants
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
 define('DEPLOY_FRAMEWORK_NO_TMP_DIR', 2);
@@ -23,8 +39,6 @@ require_once 'DF_ResourceInstaller.php';
  * @author: Kai Kühn / ontoprise / 2009
  *
  */
-
-
 
 class Installer {
 
@@ -656,4 +670,3 @@ class InstallationError extends Exception {
 		return $this->arg2;
 	}
 }
-?>

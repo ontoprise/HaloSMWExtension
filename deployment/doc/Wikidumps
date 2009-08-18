@@ -14,22 +14,30 @@ Contents:
 
    The wikidumps use basically the same XML format than Mediawiki does. But it was extended slightly
    
-    1. A version attribute for each page
-    2. A part-of-bundle attribute
-    3. A hash attribute
+     A hash attribute for each page to indicate that is has changed or not. The hash is included as 
+     annotation during the import process.
     
 2. Create dump
 
-    A dump has to contain two special annotations (english, for other language see language files):
+    A dump has to contain a special annotation (english, for other languages see language files):
             
-       Ontology version
-       Part of bundle    
+      Part of bundle    
        
     They should be contained in a template which is embedded in each page conataining to
-    the bundle. The exporter reads these attribute values and adds them in the dump. It also
+    the bundle. Except for instances which are members of categories which is part of the bundle.
+    They are included automatically.
+    The exporter reads these attribute values and adds them in the dump. It also
     creates a hash value about the text content and stores it in the attribute 'Content hash'.
     
-    Use maintenance/export to create such a dump.
+    The page containing the bundle should have the following annotations:
+    
+        Ontology version (1..1), integer number, e.g. 120
+        Dependency (1..n), n-ary annotation (id, minVesion, maxVersion)
+        Installation dir (1..1) string
+        Vendor (1..1) string
+        Description (1..1) string
+    
+    Use maintenance/export.bat/sh to create such a dump.
     
 3. Import dump
 

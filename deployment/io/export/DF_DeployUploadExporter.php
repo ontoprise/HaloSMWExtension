@@ -1,17 +1,49 @@
 <?php
 
+# @author: Kai Kühn Ontoprise 2009
+#
+# derived from
+# Copyright (C) 2003, 2005, 2006 Brion Vibber <brion@pobox.com>
+# http://www.mediawiki.org/
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+# http://www.gnu.org/copyleft/gpl.html
+
 /**
  * Exports uploaded files contained in one bundle.
  *
  */
 class DeployUploadExporter {
-    function __construct( $args, $filehandle = NULL ) {
+	
+	/**
+	 * Create DeployUploadExporter
+	 *
+	 * @param array $args
+	 * @param stream $filehandle
+	 * @param directory $src
+	 * @param directory $dest
+	 */
+    function __construct( $args, $filehandle = NULL, $src = NULL, $dest = NULL ) {
         global $IP, $wgUseSharedUploads;
         $this->mAction = 'fetchLocal';
         $this->mBasePath = $IP;
         $this->mShared = false;
         $this->mSharedSupplement = false;
         $this->filehandle = $filehandle;
+        $this->src = $src;
+        $this->dest = $dest;
         
         if( isset( $args['help'] ) ) {
             $this->mAction = 'help';
@@ -122,6 +154,12 @@ function fetchUsed( $shared ) {
             $rel = wfRelativePath( $filename, $this->mBasePath );
             if (!is_null($this->filehandle)) {
             	fwrite($this->filehandle, "\t\t<file loc=\"$rel\"/>\n"); 
+            	if (!is_null($this->src) && !is_null($this->dest) ) {
+            		//print "\n".$dest."/$path";
+            		$path = dirname($rel);
+            		Tools::mkpath($this->dest."/$path");
+            		copy($this->src."/$rel", $this->dest."/$rel");
+            	}
             } else {
                 echo "$rel\n";
             }

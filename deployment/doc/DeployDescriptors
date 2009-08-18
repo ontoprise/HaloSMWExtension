@@ -22,13 +22,13 @@ For a formal description in XML-Schema, see dd.xsd
  Example:
  
         <global>
-                <version>fdfd</version>
-                <id>fdf</id>
-                <instdir>fdfd</instdir>
-                <vendor>fdfd</vendor>
-                <description>...</description>
+                <version>120</version>   // means 1.2
+                <id>smwhalo</id>      
+                <instdir>extensions/SMWHalo</instdir>
+                <vendor>Ontoprise</vendor>
+                <description>... any text ...</description>
                 <dependencies>
-                    <dependency from="xxx" to="xxx">...</dependency>
+                    <dependency from="100" to="120">ID of an extension</dependency>
             </dependencies>
         </global>
         

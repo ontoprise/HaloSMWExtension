@@ -43,6 +43,7 @@ class DeployBackupDumper extends BackupDumper {
 			if ($arg == '-b') {
 				$bundleToExport = next($argv);
 				if ($package === false) fatalError("No bundle given.");
+				$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
 				$this->bundleToExport = $bundleToExport;
 				continue;
 			}
@@ -148,78 +149,12 @@ class DeployWikiExporter extends WikiExporter {
 			
 		$this->dumpFrom($joint, $cond);
 
-		$this->dumpDescriptor($bundeID);
+	
 
 		
 	}
 
-	function dumpDescriptor($bundeID) {
-		global $dfgLang;
-		$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
-
-		$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
-		$ontologyversion_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyversion'));
-		$ontologyvendor_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_ontologyvendor'));
-		$description_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_description'));
-
-		$bundlePage = Title::newFromText($bundeID);
-		$dependencies = smwfGetStore()->getPropertyValues($bundlePage, $dependencies_p);
-		$version = smwfGetStore()->getPropertyValues($bundlePage, $ontologyversion_p);
-		$instdir = smwfGetStore()->getPropertyValues($bundlePage, $instdir_p);
-		$vendor = smwfGetStore()->getPropertyValues($bundlePage, $ontologyvendor_p);
-		$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
-
-		if ( count($version) == 0) {
-			fwrite( $this->stderr, "No version annotation on $bundeID" . "\n" );
-		}
-		if ( count($vendor) == 0) {
-			fwrite( $this->stderr, "No vendor annotation on $bundeID" . "\n" );
-		}
-		if ( count($instdir) == 0) {
-			fwrite( $this->stderr, "No instdir annotation on $bundeID" . "\n" );
-		}
-		if ( count($description) == 0) {
-			fwrite( $this->stderr, "No description annotation on $bundeID" . "\n" );
-		}
-
-		$versionText = count($version) > 0 ? reset($version)->getXSDValue() : "no version";
-		$vendorText = count($vendor) > 0 ? reset($vendor)->getXSDValue() : "no vendor";
-		$instdirText = count($instdir) > 0 ? reset($instdir)->getXSDValue() : "no instdir";
-		$descriptionText = count($description) > 0 ? reset($description)->getXSDValue() : "no description";
-
-		$handle = fopen("deploy.xml", "w");
-		$uploadExporter = new DeployUploadExporter( $options, $handle );
-
-		$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
-		$xml .= '<depoydescriptor>'."\n";
-		$xml .= "\t".'<global>'."\n";
-		$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
-		$xml .= "\t\t".'<id>'.$bundeID.'</id>'."\n";
-		$xml .= "\t\t".'<instdir>'.$instdirText.'</instdir>'."\n";
-		$xml .= "\t\t".'<vendor>'.$vendorText.'</vendor>'."\n";
-		$xml .= "\t\t".'<description>'.$descriptionText.'</description>'."\n";
-		$xml .= "\t\t".'<dependencies>'."\n";
-		foreach($dependencies as $dep) {
-			$dvs = $dep->getDVs();
-			$id = reset($dvs)->getXSDValue();
-			$minVersion = next($dvs)->getXSDValue();
-			$maxVersion = next($dvs)->getXSDValue();
-			$xml .= "\t\t\t".'<dependency from="'.$minVersion.'" to="'.$maxVersion.'">'.$id.'</dependency>'."\n";
-		}
-		$xml .= "\t".'</dependencies>'."\n";
-
-		$xml .= "\t".'</global>'."\n";
-		$xml .= "\t".'<wikidumps>'."\n";
-		$xml .= "\t\t".'<file loc="..."/>'."\n";
-		$xml .= "\t".'</wikidumps>'."\n";
-		$xml .= "\t".'<resources>'."\n";
-		fwrite($handle, $xml);
-		$uploadExporter->run();
-		$xml = "\t".'</resources>'."\n";
-		$xml .= '</depoydescriptor>'."\n";
-		fwrite($handle, $xml);
-		fclose($handle);
-	}
+	
 
 	function dumpFrom( $joint = '', $cond = '' ) {
 		$fname = 'WikiExporter::dumpFrom';
