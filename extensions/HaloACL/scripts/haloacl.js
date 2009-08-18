@@ -42,6 +42,8 @@ YAHOO.haloacl.panelcouner = 0;
 YAHOO.haloacl.clickedArrayGroups = new Array();
 // has all checked users form datatable
 YAHOO.haloacl.clickedArrayUsers = new Array();
+// has all selected ACL templates from template tree
+YAHOO.haloacl.selectedTemplates = new Array();
 // has groups for the checked users [panelid][username] = groupsstring
 YAHOO.haloacl.clickedArrayUsersGroups = new Array();
 
@@ -185,7 +187,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab3 = new YAHOO.widget.Tab({
             label: 'Create ACL default user template',
-            dataSrc:'manageUserContent',
+            dataSrc:'createAclUserTemplateContent',
             cacheData:false,
             active:false,
             id:"createUserAclTab"
