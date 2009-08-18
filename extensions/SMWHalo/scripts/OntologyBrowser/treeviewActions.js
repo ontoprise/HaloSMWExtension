@@ -765,11 +765,11 @@ OBInstanceActionListener.prototype = {
 	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
-		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+","+instanceNamespace], callbackOnInstanceSelectToRight);
+		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceNamespace+":"+instanceName], callbackOnInstanceSelectToRight);
 	  	} 
 	  	if (OB_LEFT_ARROW == 1) {
 	  		OB_tree_pendingIndicator.show();
-	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceName+","+instanceNamespace], callbackOnInstanceSelectToLeft);
+	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceNamespace+":"+instanceName], callbackOnInstanceSelectToLeft);
 	  	}
 	
 		}

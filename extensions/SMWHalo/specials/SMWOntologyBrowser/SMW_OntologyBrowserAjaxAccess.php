@@ -29,9 +29,9 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param0 : limit
  		// param1 : partitionNum
  		$reqfilter = new SMWRequestOptions();
- 		$reqfilter->limit =  $p_array[0] + 0;
+ 		$reqfilter->limit =  intval($p_array[0]);
  		$reqfilter->sort = true;
- 		$reqfilter->offset = ($p_array[1] + 0)*$reqfilter->limit;
+ 		$reqfilter->offset = intval($p_array[1])*$reqfilter->limit;
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter);
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $p_array[0] + 0, $p_array[1] + 0, true);
  		
@@ -40,9 +40,9 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param1 : limit
  		// param2 : partitionNum
  		$reqfilter = new SMWRequestOptions();
- 		$reqfilter->limit =  $p_array[1] + 0;
+ 		$reqfilter->limit =  intval($p_array[1]);
  		$reqfilter->sort = true;
- 		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
+ 		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
  		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
  		 		
@@ -54,19 +54,20 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		// param2 : partitionNum
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$reqfilter->limit =  $p_array[1] + 0;
- 		$reqfilter->offset = ($p_array[2] + 0)*$reqfilter->limit;
+ 		$reqfilter->limit =  intval($p_array[1]);
+ 		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
  		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
  		 		 		 		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $p_array[1] + 0, $p_array[2] + 0);
  		
  	} else if ($method == 'getAnnotations') {
+ 		//param0: prefixed title
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$propertyAnnotations = array();
  		
- 		$instance = Title::newFromText($p_array[1].":".$p_array[0]);
+ 		$instance = Title::newFromText($p_array[0]);
  		
  		$properties = smwfGetStore()->getProperties($instance, $reqfilter);
  		foreach($properties as $a) { 
@@ -79,6 +80,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($propertyAnnotations, $instance);
  		
  	} else if ($method == 'getProperties') {
+ 		//param0: category name
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
  		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
