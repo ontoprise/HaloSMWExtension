@@ -715,7 +715,7 @@ function createAclUserTemplateContent() {
  *
  */
 function getManageUserGroupPanel($panelid, $preload = false, $preloadGroupId = 0) {
-    $myGenericPanel = new HACL_GenericPanel($panelid, "Group","Group settings",true,false);
+    $myGenericPanel = new HACL_GenericPanel($panelid, "Group","Group settings","",true,false);
 
 
     $content = <<<HTML
@@ -764,6 +764,13 @@ function getManageUserGroupPanel($panelid, $preload = false, $preloadGroupId = 0
 
                     <div id="right_tabview_$panelid" class="yui-navset"></div>
                     <script type="text/javascript">
+                       // resetting previously selected items
+                      YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+                      YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
+                      YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'] = new Array();
+
+                      YAHOO.haloaclrights.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+
                       YAHOO.haloacl.buildGroupPanelTabView('right_tabview_$panelid', '','' , '', '0');
                     </script>
 
@@ -1556,6 +1563,7 @@ HTML;
  */
 function getSDRightsPanelContainer($sdId) {
 
+    $panelid = "SDRightsPanel";
     $response = new AjaxResponse();
 
 
@@ -1725,6 +1733,7 @@ HTML;
  */
 function getSDRightsPanel($sdId, $readOnly = false) {
 
+    $html = "";
     $response = new AjaxResponse();
 
     $SD = HACLSecurityDescriptor::newFromId($sdId);
@@ -2805,8 +2814,8 @@ HTML;
 
 
 HTML;
-
-    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "ACL Group Explorer",false,false);
+//$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
+    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "ACL Group Explorer","",false,false);
     $myGenericPanel->setSaved(true);
     $myGenericPanel->setContent($panelContent);
 
@@ -2885,7 +2894,7 @@ HTML;
 
 HTML;
 
-    $groupPanel = new HACL_GenericPanel("manageUserGroupsettings","manageUserGroupsettings", "Group",true,false);
+    $groupPanel = new HACL_GenericPanel("manageUserGroupsettings","manageUserGroupsettings", "Group","",true,false);
     $groupPanel->setSaved(false);
     $groupPanel->setContent($groupPanelContent);
     $html .= $groupPanel->getPanel();
