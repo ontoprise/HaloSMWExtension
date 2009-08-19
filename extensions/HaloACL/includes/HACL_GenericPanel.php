@@ -75,12 +75,16 @@ HTML;
         <script type="javascript>
 
             YAHOO.haloacl.removeoutside = function(panelid) {
+                console.log("removeoutside called for panelid:"+panelid);
 
-
-                $(panelid).parentNode.childNodes.each(function(item){
-
-                    alert(item.id);
-
+                console.log("using parent:");
+                console.log($(panelid).parentNode);
+                var elements = $(panelid).parentNode.childNodes;
+                $$(elements).each(function(item){
+                    if($(item).hasClassName("haloacl_panel")){
+                        console.log("trying to close");
+                        console.log(item);
+                    }
                 });
 
                 
