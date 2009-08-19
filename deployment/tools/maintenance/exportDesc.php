@@ -90,7 +90,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$src = dirname(__FILE__)."/../../../";
 	$dest = dirname($output);
 	$options['used'] = true;
-	$uploadExporter = new DeployUploadExporter( $options, $handle, $src, $dest );
+	$uploadExporter = new DeployUploadExporter( $options, $bundeID, $handle, $src, $dest );
 
 	$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
 	$xml .= '<depoydescriptor>'."\n";
