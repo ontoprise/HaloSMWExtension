@@ -46,7 +46,7 @@ class HACL_GenericPanel {
 		<!-- panel's top bar -->
 		<div id="title_$panelid" class="panel haloacl_panel_title">
 			<span class="haloacl_panel_expand-collapse">
-				<a href="javascript:YAHOO.haloacl.togglePanel('$panelid');"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
+				<a href="javascript:YAHOO.haloacl.togglePanel('$panelid');YAHOO.haloacl.removeoutside('$panelid');"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
 			</span>
                         <div class="haloacl_panel_nameDescr">
                             <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">$title</span>
@@ -73,6 +73,20 @@ HTML;
         $this->footer = <<<HTML
         </div> <!-- end of panel div -->
         <script type="javascript>
+
+            YAHOO.haloacl.removeoutside = function(panelid) {
+
+
+                $(panelid).parentNode.childNodes.each(function(item){
+
+                    alert(item.id);
+
+                });
+
+                
+                
+            }
+
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
                 if (saved == true) {
