@@ -2650,16 +2650,21 @@ function getUsersWithGroups() {
 function getACLs($typeXML) {
 
     $types = "";
-    $typeXML = new SimpleXMLElement($typeXML);
-    foreach($typeXML->xpath('//type') as $type) {
-        if($types == '') {
-            $types = (string)"'".$type."'";
-        }else {
-            $types .= ",".(string)"'".$type."'";
+
+    if($typeXML == "all") {
+        $types = "'Page', 'Template'";
+    }else {
+        $typeXML = new SimpleXMLElement($typeXML);
+        foreach($typeXML->xpath('//type') as $type) {
+            if($types == '') {
+                $types = (string)"'".$type."'";
+            }else {
+                $types .= ",".(string)"'".$type."'";
+            }
         }
+
     }
 
-    //$types = "'Page', 'Template'";
 
     $array = array();
 
