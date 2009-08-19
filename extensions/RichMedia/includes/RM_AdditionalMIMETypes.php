@@ -20,27 +20,27 @@ if (!defined('NS_PDF_TALK')) define('NS_PDF_TALK', 127);
 global $wgExtraNamespaces;
 $wgExtraNamespaces = $wgExtraNamespaces +
 	array(NS_DOCUMENT => 'Document',
-	    NS_DOCUMENT_TALK => 'Document_talk',
-	    NS_AUDIO => 'Audio',
-	    NS_AUDIO_TALK => 'Audio_talk',
-	    NS_VIDEO => 'Video',
-	    NS_VIDEO_TALK => 'Video_talk',
-	    NS_PDF => 'Pdf',
-	    NS_PDF_TALK => 'Pdf_talk',
-	    );
-	    
+		NS_DOCUMENT_TALK => 'Document_talk',
+		NS_AUDIO => 'Audio',
+		NS_AUDIO_TALK => 'Audio_talk',
+		NS_VIDEO => 'Video',
+		NS_VIDEO_TALK => 'Video_talk',
+		NS_PDF => 'Pdf',
+		NS_PDF_TALK => 'Pdf_talk',
+	);
+
 global $wgNamespaceAliases;
 $wgNamespaceAliases = $wgNamespaceAliases + 
 	array('Document' => NS_DOCUMENT,
 		'Document_talk' => NS_DOCUMENT_TALK,
-	  	'Audio' => NS_AUDIO,
+		'Audio' => NS_AUDIO,
 		'Audio_talk' => NS_AUDIO_TALK,
-	    'Video' => NS_VIDEO,
+		'Video' => NS_VIDEO,
 		'Video_talk' => NS_VIDEO_TALK,
-	    'Pdf' => NS_PDF,
+		'Pdf' => NS_PDF,
 		'Pdf_talk' => NS_PDF_TALK
-	    );
-      
+	);
+
 global $wgNamespaceByExtension;
 $wgNamespaceByExtension = array(
 	'png' => NS_IMAGE,
@@ -80,8 +80,8 @@ global $smwgNamespacesWithSemanticLinks;
 $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks + 
 	array( 
 		NS_DOCUMENT => true,
-	 	NS_AUDIO => true,
-	    NS_VIDEO => true,
+		NS_AUDIO => true,
+		NS_VIDEO => true,
 		NS_PDF	=> true
 	);
 
@@ -99,7 +99,7 @@ class RMNamespace {
 
 	public static function isImage( &$index, &$rMresult ) {
 		$rMresult |= ($index == NS_IMAGE || $index == NS_DOCUMENT ||
-				$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
+			$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
 		return true;
 	}
 }
