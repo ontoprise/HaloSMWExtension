@@ -75,21 +75,22 @@ HTML;
         <script type="javascript>
 
             YAHOO.haloacl.removeoutside = function(panelid) {
-                console.log("removeoutside called for panelid:"+panelid);
+                console.log("removeoutside called for panelid:"+panelid);
 
-                console.log("using parent:");
-                console.log($(panelid).parentNode);
-                var elements = $(panelid).parentNode.childNodes;
-                $$(elements).each(function(item){
-                    if($(item).hasClassName("haloacl_panel")){
-                        console.log("trying to close");
-                        console.log(item);
-                    }
-                });
+                console.log("using parent:");
+                console.log($(panelid).parentNode);
+                var elements = $(panelid).parentNode.children;
+                elements.each(function(item){
+                    if($(item).hasClassName("haloacl_panel")){
+                        console.log("trying to close");
+                        console.log(item);
+                    }
+                });
 
-                
-                
-            }
+                
+                
+            }
+
 
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
