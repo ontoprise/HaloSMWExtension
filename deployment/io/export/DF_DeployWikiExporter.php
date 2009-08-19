@@ -37,6 +37,7 @@ class DeployBackupDumper extends BackupDumper {
 
 	function __construct($argv) {
 		parent::__construct($argv);
+		$this->noCat = false;
 		for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 			//-b => Bundle to export
@@ -46,6 +47,10 @@ class DeployBackupDumper extends BackupDumper {
 				$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
 				$this->bundleToExport = $bundleToExport;
 				continue;
+			}
+			// --nocat means: do not consider member of categories beloning to a bundle 
+			else if ($arg == '--nocat') {
+				$this->noCat = true;
 			}
 		}
 	}
@@ -69,7 +74,7 @@ class DeployBackupDumper extends BackupDumper {
 		$exporter->openStream();
 
 		if (isset($this->bundleToExport)) {
-			$exporter->exportBundle($this->bundleToExport);
+			$exporter->exportBundle($this->bundleToExport, $this->noCat);
 		} else {
 			if( is_null( $this->pages ) ) {
 				if( $this->startId || $this->endId ) {
@@ -125,7 +130,7 @@ class DeployWikiExporter extends WikiExporter {
 	 *
 	 * @param string $bundleID
 	 */
-	function exportBundle($bundeID) {
+	function exportBundle($bundeID, $noCat) {
 		global $dfgLang;
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
@@ -140,21 +145,22 @@ class DeployWikiExporter extends WikiExporter {
                 "AND p_id = ".$partOfBundlePropertyID." AND o_id = ".$partOfBundleID;
 		$this->dumpFrom($joint, $cond);
 
-		// export all instances of categories belonging to this bundle
-		// (except if they are from cat or prop namespace)
-		$joint = "$categorylinks";
-		$cond = "page_id = cl_from AND page_namespace != ".NS_CATEGORY." AND page_namespace != ".SMW_NS_PROPERTY.
+		if (!$noCat) {
+			// export all instances of categories belonging to this bundle
+			// (except if they are from cat or prop namespace)
+			$joint = "$categorylinks";
+			$cond = "page_id = cl_from AND page_namespace != ".NS_CATEGORY." AND page_namespace != ".SMW_NS_PROPERTY.
                 " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
-			
-		$this->dumpFrom($joint, $cond);
+				
+			$this->dumpFrom($joint, $cond);
+		}
 
-	
 
-		
+
 	}
 
-	
+
 
 	function dumpFrom( $joint = '', $cond = '' ) {
 		$fname = 'WikiExporter::dumpFrom';

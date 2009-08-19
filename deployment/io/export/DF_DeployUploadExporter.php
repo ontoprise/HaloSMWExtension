@@ -71,6 +71,11 @@ class DeployUploadExporter {
 				$this->mSharedSupplement = true;
 			}
 		}
+        
+		// noCat means: do not consider member of categories beloning to a bundle
+		if( isset( $args['noCat'] ) ) {
+			$this->mNoCat = true;
+		}
 	}
 
 	function run() {
@@ -80,7 +85,7 @@ class DeployUploadExporter {
 		}
 	}
 
-	 
+
 
 	/**
 	 * Fetch a list of all or used images from a particular image source.
@@ -91,6 +96,7 @@ class DeployUploadExporter {
 	function fetchUsed( $shared ) {
 		global $dfgLang;
 		$dbr = wfGetDB( DB_SLAVE );
+		
 		$smwids     = $dbr->tableName( 'smw_ids' );
 		$smwrels     = $dbr->tableName( 'smw_rels2' );
 		$page = $dbr->tableName( 'page' );
@@ -102,15 +108,19 @@ class DeployUploadExporter {
 		$partOfBundleID = smwfGetStore()->getSMWPageID($this->bundleID, NS_MAIN, "");
 
 		// get all image pages beloning to pages of bundle
-		$sql = "(SELECT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
-		// get all images pages belonging to instances of categories of bundle
-		$sql2 = "(SELECT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_from AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
-		$res = $dbr->query( $sql. " UNION DISTINCT ". $sql2 );
+		$sql = "SELECT DISTINCT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 
+		if (!$this->mNoCat) {
+			// get all images pages belonging to instances of categories of bundle
+			$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_from AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
+			$res = $dbr->query( "($sql) UNION DISTINCT ($sql2)" );
+		} else {
+			$res = $dbr->query( $sql );
+		}
 		if($dbr->numRows( $res ) > 0) {
 			while($row = $dbr->fetchObject($res)) {
-        
-				$this->outputItem( $row->il_to, $shared );
+
+				$this->outputItem( $row->image, true );
 			}
 		}
 
@@ -140,7 +150,7 @@ class DeployUploadExporter {
 			if (!is_null($this->filehandle)) {
 				fwrite($this->filehandle, "\t\t<file loc=\"$rel\"/>\n");
 				if (!is_null($this->src) && !is_null($this->dest) ) {
-					//print "\n".$dest."/$path";
+						
 					$path = dirname($rel);
 					Tools::mkpath($this->dest."/$path");
 					copy($this->src."/$rel", $this->dest."/$rel");
@@ -149,6 +159,7 @@ class DeployUploadExporter {
 				echo "$rel\n";
 			}
 		} else {
+			
 			wfDebug( __METHOD__ . ": base file? $name\n" );
 		}
 	}

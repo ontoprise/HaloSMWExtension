@@ -1,22 +1,22 @@
 <?php
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 /**
  * Exports the deploy descriptor for an ontology bundle.
- * 
+ *
  * @author: Kai Kühn
  */
 require_once( '../../../maintenance/commandLine.inc' );
@@ -39,21 +39,32 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
 		continue;
 	} else if ($arg == '-o') {
-        $output = next($argv);
-        if ($output === false) fatalError("No output file given");
-       
-        continue;
-    } else if ($arg == '-d') {
-        $dumpFile = next($argv);
-        if ($dumpFile === false) fatalError("No dump file given");
-       
-        continue;
-    }
+		$output = next($argv);
+		if ($output === false) fatalError("No output file given");
+		 
+		continue;
+	} else if ($arg == '-d') {
+		$dumpFile = next($argv);
+		if ($dumpFile === false) fatalError("No dump file given");
+		 
+		continue;
+	} else if ($arg == '--nocat') {
+		$noCat = true;
+		continue;
+	}
 }
+
+// check bundle page
+$bundlePage = Title::newFromText($bundleToExport, NS_MAIN); 
+if (!$bundlePage->exists()) {
+	print $bundlePage->getText()." does not exist. Please create first.";
+	die();
+}
+// TODO: check if properties exist
 dumpDescriptor($bundleToExport, $output, $dumpFile);
 
 function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml") {
-	global $dfgLang;
+	global $dfgLang, $noCat;
 	$dependencies_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_dependencies'));
 
 	$instdir_p = SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString('df_instdir'));
@@ -90,6 +101,8 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$src = dirname(__FILE__)."/../../../";
 	$dest = dirname($output);
 	$options['used'] = true;
+	$options['shared'] = true;
+	$options['noCat'] = $noCat;
 	$uploadExporter = new DeployUploadExporter( $options, $bundeID, $handle, $src, $dest );
 
 	$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
