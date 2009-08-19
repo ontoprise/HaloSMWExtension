@@ -69,16 +69,16 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$description = smwfGetStore()->getPropertyValues($bundlePage, $description_p);
 
 	if ( count($version) == 0) {
-		fwrite( $this->stderr, "No version annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No version annotation on $bundeID" . "\n" );
 	}
 	if ( count($vendor) == 0) {
-		fwrite( $this->stderr, "No vendor annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No vendor annotation on $bundeID" . "\n" );
 	}
 	if ( count($instdir) == 0) {
-		fwrite( $this->stderr, "No instdir annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No instdir annotation on $bundeID" . "\n" );
 	}
 	if ( count($description) == 0) {
-		fwrite( $this->stderr, "No description annotation on $bundeID" . "\n" );
+		fwrite( STDERR , "No description annotation on $bundeID" . "\n" );
 	}
 
 	$versionText = count($version) > 0 ? reset($version)->getXSDValue() : "no version";
