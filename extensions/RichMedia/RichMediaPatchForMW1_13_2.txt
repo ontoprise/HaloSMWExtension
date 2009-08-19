@@ -311,9 +311,35 @@ Index: includes/ImageQueryPage.php
  	}
 Index: includes/Linker.php
 ===================================================================
---- includes/Linker.php	(revision 4273)
+--- includes/Linker.php	(revision 4536)
 +++ includes/Linker.php	(working copy)
-@@ -581,7 +581,12 @@
+@@ -343,7 +343,24 @@
+ 		if ( $aprops !== '' ) $aprops = ' ' . $aprops;
+ 
+ 		list( $inside, $trail ) = Linker::splitTrail( $trail );
+-		$r = "<a href=\"{$u}\"{$style}{$aprops}>{$prefix}{$text}{$inside}</a>{$trail}";
++		/*op-patch|BL|2009-08-19|RichMedia|ImageOverlay|start*/
++		// Check if it's an image, were's not already in the overlay and preview tag is set
++		// content was:
++		// $r = "<a href=\"{$u}\"{$style}{$aprops}>{$prefix}{$text}{$inside}</a>{$trail}";
++		global $wgRequest, $wgRMImagePreview;
++		$loc = $wgRequest->getText('title');
++		RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
++		if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
++			$queryString = "target=".$nt->getPrefixedText();
++			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
++			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
++			$rev = "height:500 width:700";
++			$r = "<a href=\"$uploadWindowUrl\" {$style}{$aprops} rel=\"iframe\" rev=\"$rev\">{$prefix}{$text}{$inside}</a>{$trail}";
++		}
++		else {
++			$r = "<a href=\"{$u}\"{$style}{$aprops}>{$prefix}{$text}{$inside}</a>{$trail}";
++		}
++		/*op-patch|BL|2009-08-19|end*/
+ 		wfProfileOut( __METHOD__ );
+ 		return $r;
+ 	}
+@@ -581,7 +598,12 @@
  		global $wgContLang, $wgUser, $wgThumbLimits, $wgThumbUpright;
  		if ( $file && !$file->allowInlineDisplay() ) {
  			wfDebug( __METHOD__.': '.$title->getPrefixedDBkey()." does not allow inline display\n" );
@@ -327,7 +353,7 @@ Index: includes/Linker.php
  		}
  
  		// Shortcuts
-@@ -658,7 +663,13 @@
+@@ -658,7 +680,13 @@
  		}
  
  		if ( !$thumb ) {
@@ -577,7 +603,7 @@ Index: includes/filerepo/FileRepo.php
  		return false;
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 4273)
+--- includes/parser/Parser.php	(revision 4536)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1643,7 +1643,13 @@
  
@@ -611,7 +637,7 @@ Index: includes/parser/Parser.php
  					wfProfileIn( "$fname-image" );
  					if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
  						# recursively parse links inside the image caption
-@@ -1757,6 +1769,9 @@
+@@ -1757,6 +1770,9 @@
  			}
  
  			# Special and Media are pseudo-namespaces; no pages actually exist in them
@@ -621,7 +647,7 @@ Index: includes/parser/Parser.php
  			if( $ns == NS_MEDIA ) {
  				# Give extensions a chance to select the file revision for us
  				$skip = $time = false;
-@@ -1777,7 +1792,12 @@
+@@ -1777,7 +1793,12 @@
  					$s .= $this->makeLinkHolder( $nt, $text, '', $trail, $prefix );
  				}
  				continue;
@@ -635,7 +661,7 @@ Index: includes/parser/Parser.php
  				$img = wfFindFile( $nt );
  				if( $img ) {
  					// Force a blue link if the file exists; may be a remote
-@@ -4415,7 +4435,13 @@
+@@ -4415,7 +4436,13 @@
  			$ig->add( $nt, $html );
  
  			# Only add real images (bug #5586)
@@ -650,6 +676,30 @@ Index: includes/parser/Parser.php
  				$this->mOutput->addImage( $nt->getDBkey() );
  			}
  		}
+@@ -4436,6 +4463,8 @@
+ 					'bottom', 'text-bottom' ),
+ 				'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
+ 					'upright', 'border' ),
++				//patch
++				'preview' => array('preview'),
+ 			);
+ 			static $internalParamMap;
+ 			if ( !$internalParamMap ) {
+@@ -4585,7 +4614,13 @@
+ 
+ 		$params['frame']['alt'] = $alt;
+ 		$params['frame']['caption'] = $caption;
+-
++		
++		/*op-patch|BL|2009-08-19|RichMedia|ImageOverlay|start*/
++		// save information about preview in global var
++		global $wgRMImagePreview;
++		$params['preview'] ? $wgRMImagePreview = true : $wgRMImagePreview = false;
++		/*op-patch|BL|2009-08-19|end*/
++		
+ 		wfRunHooks( 'ParserMakeImageParams', array( $title, $file, &$params ) );
+ 
+ 		# Linker does the rest
 Index: includes/parser/Parser_OldPP.php
 ===================================================================
 --- includes/parser/Parser_OldPP.php	(revision 4273)
