@@ -763,7 +763,23 @@ YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback
     for(param in parameterlist){
         temparray.push(parameterlist[param]);
     }
-    appendedParams = appendedParams + "&rsargs="+ temparray;
+    appendedParams = appendedParams + "&rsargs[]="+ temparray;
+
+
+    var filterControl = $('haloacl_manageuser_contentmenu');
+
+    if(filterControl != null){
+        var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+        xml+="<types>";
+        $$('.haloacl_manageacl_filter').each(function(item){
+            if(item.checked){
+                xml += "<type>"+item.name+"</type>";
+            }
+        });
+        xml+="</types>";
+        
+        appendedParams = '&rs='+action+"&rsargs[]="+escape(xml);
+    }
     YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
 };
 

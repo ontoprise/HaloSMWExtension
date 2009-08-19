@@ -1501,33 +1501,33 @@ function rightList($panelid, $type = "readOnly") {
 HTML;
     if($type != "readOnly") {
         $html .= <<<HTML
-    <div id="haloacl_manageuser_contentmenu">
-            <div id="haloacl_manageuser_contentmenu_title">
+            <div id="haloacl_manageuser_contentmenu">
+            <div id="haloacl_manageacl_contentmenu_title">
                 Show ACLs
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;All
+                <input class="haloacl_manageacl_filter" type="checkbox" checked="" name="all"/>&nbsp;All
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Page
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="page"/>&nbsp;Page
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Category
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="category"/>&nbsp;Category
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Property
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="property"/>&nbsp;Property
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Namepsace
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="namespace"/>&nbsp;Namepsace
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Standard ACLs
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="page"/>&nbsp;Standard ACLs
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;ACL templates
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="page"/>&nbsp;ACL templates
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input type="checkbox" />&nbsp;Default user templates
+                <input class="haloacl_manageacl_filter"  type="checkbox" name="page"/>&nbsp;Default user templates
             </div>
 
 
@@ -1563,7 +1563,29 @@ HTML;
 
     YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid', '$type');
     YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'YAHOO.haloaclrights.datatableInstance$panelid.executeQuery';
+
     YAHOO.haloaclrights.buildTreeFirstLevelFromJson(YAHOO.haloaclrights.treeInstance$panelid);
+
+
+HTML;
+    if($type != "readOnly") {
+        $html .=<<<HTML
+
+        var reloadaction = function(){
+            YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid', '$type');
+
+            YAHOO.haloaclrights.buildTreeFirstLevelFromJson(YAHOO.haloaclrights.treeInstance$panelid);
+        }
+        $$('.haloacl_manageacl_filter').each(function(item){
+            YAHOO.util.Event.addListener(item, "change", reloadaction);
+        });
+        
+HTML;
+    }
+
+    $html .= <<<HTML
+
+
 
     refilter = function() {
         YAHOO.haloaclrights.filterNodes (YAHOO.haloaclrights.treeInstance$panelid.getRoot(), document.getElementById("filterSelectGroup_$panelid").value);
@@ -2627,19 +2649,17 @@ function getUsersWithGroups() {
  */
 function getACLs($typeXML) {
 
-    /*
+    $types = "";
     $typeXML = new SimpleXMLElement($typeXML);
     foreach($typeXML->xpath('//type') as $type) {
         if($types == '') {
-            $types = (string)$group;
+            $types = (string)"'".$type."'";
         }else {
-            $types .= ",".(string)$group;
+            $types .= ",".(string)"'".$type."'";
         }
     }
-     * */
 
-
-    $types = "'Page', 'Template'";
+    //$types = "'Page', 'Template'";
 
     $array = array();
 
