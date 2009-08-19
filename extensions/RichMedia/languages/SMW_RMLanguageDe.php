@@ -58,7 +58,10 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_legend' => 'Details',
 		'smw_rm_uploadsuccess_filename' => '<b>Datei:</b> $1 <br/>',
 		'smw_rm_uploadsuccess_articlename' => '<b>Artikel:</b> $1',
-		'smw_rm_uploadsuccess_closewindow' => 'Sie können jetzt dieses Fenster schließen.',	
+		'smw_rm_uploadsuccess_closewindow' => 'Sie können jetzt dieses Fenster schließen.',
+
+		'smw_rm_embed_desc_link' => 'Klicken Sie hier um zur Beschreibungsseite zu gelangen: ',
+		'smw_rm_noembed' => 'Ihr Browser unterst�tzt keine eeingebetteten Obejekte.<br>Klicken Sie <a href="$1">hier</a> um die Datei herunterzuladen.',
 	);
 
 	protected $smwRMNamespaces = array(

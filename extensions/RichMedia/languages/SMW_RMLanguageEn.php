@@ -59,6 +59,9 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_filename' => '<b>File:</b> $1 <br/>',
 		'smw_rm_uploadsuccess_articlename' => '<b>Attached to article:</b> $1',
 		'smw_rm_uploadsuccess_closewindow' => 'You can now close this window.',	
+	
+		'smw_rm_embed_desc_link' => 'Click to visit the description page: ',
+		'smw_rm_noembed' => 'Your Browser does not support embedded objects.<br>Click <a href="$1">here</a> to download the file.',
 	);
 
 	protected $smwRMNamespaces = array(
