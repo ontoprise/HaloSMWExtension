@@ -251,8 +251,8 @@ class SGAGardeningLogSQL extends SGAGardeningLog {
 			while($row = $dbr->fetchObject($res))
 			{
 				// get name of log page and remove the article
-				$log = explode("/", $row->log);
-				$logTitle = Title::newFromDBkey($log[count($log)-1]);
+				$logTitle = Title::newFromDBkey($row->log);
+				if (is_null($logTitle) || !$logTitle->exists()) continue;
 				$logArticle = new Article($logTitle);
 				if ($logArticle->exists()) {
 					$logArticle->doDeleteArticle("automatic deletion");
