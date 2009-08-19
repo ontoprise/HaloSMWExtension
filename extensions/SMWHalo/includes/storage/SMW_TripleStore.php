@@ -431,9 +431,12 @@ class SMWTripleStore extends SMWStore {
 				}
 
 				global $smwgSPARQLResultEncoding;
-				if (!isset($smwgSPARQLResultEncoding) || $smwgSPARQLResultEncoding == 'ISO-8859-1') {
+				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in 
+				// another charset.
+				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
 				}
+				// decode XML entities (is this correct?)
 				$response = urldecode($response);
 
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
