@@ -6,12 +6,11 @@
  */
 
 //this extension does only work if the Halo extension is enabled
-if ( !defined( 'SMW_HALO_VERSION' ) ) {
-	trigger_error("SMWHalo need to be installed!");
-    die;
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
 
-define('SMW_RM_VERSION', '1.1-for-SMW-1.4.4');
+define('SMW_RM_VERSION', '1.1-for-SMW-1.4.x');
 
 global $smwgRMIP, $wgHooks; 
 $smwgRMIP = $IP . '/extensions/RichMedia';
@@ -35,7 +34,7 @@ $smwgRMFormByNamespace = array(
  */
 function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
-	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses;
+	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages;
 				
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
@@ -46,8 +45,14 @@ function enableRichMediaExtension() {
 	$wgHooks['LanguageGetMagic'][] = 'RMFormUsage_Magic';
 	//Add a hook to initialise the magic word for the {{#rml:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMLinkUsage_Magic';
+	//Add a hook to initialise the magic word for the additional image attribute preview
+	$wgHooks['LanguageGetMagic'][] = 'RMImagePreviewUsage_Magic';
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
 	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+	
+	//EmbedWindow
+	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
+	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/includes/RM_EmbedWindow.php';
 	
 	// Conversion of documents (PDF, MS Office)
 	global $smwgEnableUploadConverter;
@@ -130,6 +135,11 @@ function RMFormUsage_Magic(&$magicWords, $langCode){
 
 function RMLinkUsage_Magic(&$magicWords, $langCode){
 	$magicWords['RMLinkUsage'] = array( 0, 'rml' );
+	return true;
+}
+
+function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
+	$magicWords['img_preview'] = array( 0, 'preview' );
 	return true;
 }
 

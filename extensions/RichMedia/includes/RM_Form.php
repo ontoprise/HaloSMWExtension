@@ -24,7 +24,7 @@ END;
 		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
 	}
 	
-static function createRichMediaLink(&$parameter) {
+	static function createRichMediaLink(&$parameter) {
 		global $wgOut, $wgParser, $wgRequest;
 
 		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) )
