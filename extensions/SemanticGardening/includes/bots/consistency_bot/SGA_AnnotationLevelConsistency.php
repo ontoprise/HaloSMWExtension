@@ -47,7 +47,7 @@ class AnnotationLevelConsistency {
 	/**
 	 * Checks if property annotations uses schema consistent values
 	 */
-	public function checkAllPropertyAnnotations() {
+	public function checkAllPropertyAnnotations($restrictToCategories = NULL) {
 
 		$requestoptions = new SMWRequestOptions();
 		$requestoptions->limit = $this->limit;
@@ -83,10 +83,15 @@ class AnnotationLevelConsistency {
 				$subjects = array();
 				$p_DV = SMWPropertyValue::makeUserProperty($p->getDBkey());
 				if (!$p_DV->isUserDefined()) continue;
-				$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV);
-				foreach ($allPropertySubjects as $dv) {
-					$subjects[] = $dv->getTitle();
-				};
+				if (is_null($restrictToCategories)) {
+					$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV);
+					foreach ($allPropertySubjects as $dv) {
+						$subjects[] = $dv->getTitle();
+					};
+				} else {
+					$subjects = $this->cc_store->getInstancesUsingProperty($p_DV, $restrictToCategories);
+						
+				}
 				$this->checkPropertyAnnotations($subjects, $p);
 
 			}
@@ -201,7 +206,7 @@ class AnnotationLevelConsistency {
 	/**
 	 * Checks if number of property appearances in articles are schema-consistent.
 	 */
-	public function checkAllAnnotationCardinalities() {
+	public function checkAllAnnotationCardinalities($restrictToCategories = NULL) {
 
 
 		// get all properties
@@ -228,14 +233,14 @@ class AnnotationLevelConsistency {
 			}
 
 			// check cardinalities for all instantiations of $a and its subproperties
-			$this->checkAnnotationCardinalities($a);
+			$this->checkAnnotationCardinalities($a, $restrictToCategories);
 
 
 		}
 
 	}
 
-	public function checkAnnotationCardinalities($a) {
+	public function checkAnnotationCardinalities($a, $restrictToCategories) {
 		// get minimum cardinality
 
 		$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
@@ -315,6 +320,11 @@ class AnnotationLevelConsistency {
 			$domain = reset($dvs);
 			if ($domain === false) continue; // ignore annotations with missing domain
 			$domainCategory = $domain->getTitle();
+			if (!is_null($restrictToCategories)) {
+				// check if domain categories appear in the categories to restrict.
+				if (count(array_filter($restrictToCategories, 
+				    create_function('$e', '$e->getText()=="'.$domainCategory->getText().'";'))) == 0) continue;
+			}
 			$instances = smwfGetSemanticStore()->getInstances($domainCategory);
 
 
@@ -524,7 +534,7 @@ class AnnotationLevelConsistency {
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);
-						 
+							
 						foreach($units as $u) {
 							$correct_unit |= $v->getUnit() == trim($u);
 						}
@@ -573,7 +583,7 @@ class AnnotationLevelConsistency {
 						// remove linear factory, then split the units separted by comma
 						$unitString = trim(substr($valuetrimmed, stripos($valuetrimmed, " ")));
 						$units = explode(",", $unitString);
-						 
+							
 						foreach($units as $u) {
 							$correct_unit |= $v->getUnit() == trim($u);
 						}
@@ -633,7 +643,7 @@ class AnnotationLevelConsistency {
 
 
 		$result = false;
-    
+
 		if ($domain_cov_results === NULL) {
 			// when domain is not correct
 			for($domRanVal = reset($domainRange); $domRanVal !== false;$domRanVal = next($domainRange) ) {
@@ -663,7 +673,7 @@ class AnnotationLevelConsistency {
 
 			}
 		} else {
-            // if at least one domain is correct and $domain_cov_results is an array of boolean which indicates which domain are correct and which not.
+			// if at least one domain is correct and $domain_cov_results is an array of boolean which indicates which domain are correct and which not.
 			for($domRanVal = reset($domainRange), $dvr = reset($domain_cov_results); $domRanVal !== false && $dvr !== false;$dvr = next($domain_cov_results), $domRanVal = next($domainRange) ) {
 
 				if ($domain_cov_results != NULL && !$dvr) {
