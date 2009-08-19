@@ -88,51 +88,35 @@ class DeployUploadExporter {
      * @param bool $shared true to pass shared-dir settings to hash func
      */
 function fetchUsed( $shared ) {
-        $dbr = wfGetDB( DB_SLAVE );
-
+	global $dfgLang;
+       $dbr = wfGetDB( DB_SLAVE );
+        $smwids     = $dbr->tableName( 'smw_ids' );
+        $smwrels     = $dbr->tableName( 'smw_rels2' );
+        $page = $dbr->tableName( 'page' );
+        $categorylinks = $dbr->tableName( 'categorylinks' );
         $image = $dbr->tableName( 'image' );
         $imagelinks = $dbr->tableName( 'imagelinks' );
 
         $partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
         $partOfBundleID = smwfGetStore()->getSMWPageID($bundeID, NS_MAIN, "");
-
-        $sql = "SELECT DISTINCT il_to, img_name
-        FROM $imagelinks
-        LEFT OUTER JOIN $image
-        ON il_to=img_name";
+        
+        // get all image pages beloning to pages of bundle
+        $sql = "(SELECT il_to FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
+        // get all images pages belonging to instances of categories of bundle
+        $sql2 = "(SELECT il_to FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_from AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
+        $result = $dbr->query( $sql. " UNION DISTINCT ". $sql2 );
+        
         $result = $dbr->query( $sql );
 
         foreach( $result as $row ) {
-            if ($this->isInBundle($row->il_to, $partOfBundlePropertyID, $partOfBundleID)) {
+           
                 $this->outputItem( $row->il_to, $shared );
-            }
+            
         }
         $dbr->freeResult( $result );
     }
 
-    function isInBundle($il_to, $partOfBundlePropertyID, $partOfBundleID) {
-        $smwids     = $this->db->tableName( 'smw_ids' );
-        $smwrels     = $this->db->tableName( 'smw_rels2' );
-        $page = $dbr->tableName( 'page' );
-        $categorylinks = $dbr->tableName( 'categorylinks' );
-        $dbr = wfGetDB( DB_SLAVE );
-        $sql = "SELECT smw_id FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id  WHERE  page_title = $il_to AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
-        $result = $dbr->query( $sql );
-        if (count($result) > 0) {
-            $dbr->freeResult( $result );
-            return true;
-        }
-        $dbr->freeResult( $result );
-        $sql = "SELECT smw_id FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_from AND smw_namespace = NS_CATEGORY JOIN $smwrels ON smw_id = s_id  WHERE  page_title = $il_to AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
-        $result = $dbr->query( $sql );
-        if (count($result) > 0) {
-            $dbr->freeResult( $result );
-            return true;
-        }
-        $dbr->freeResult( $result );
-        return false;
-
-    }
+    
     
     function fetchLocal( $shared ) {
         $dbr = wfGetDB( DB_SLAVE );
