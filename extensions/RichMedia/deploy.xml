@@ -1,51 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
-    <global>
-        <version>110</version>
-        <id>RichMedia</id>
-        <vendor>Ontoprise GmbH</vendor>
-        <instdir>extensions/RichMedia</instdir>
-        <description>Store richmedia files in our your wiki</description>
-        <dependencies>
-            <dependency from="1120" to="1150">MW</dependency>
-            <dependency from="171" to="171">semanticforms</dependency> 
-        </dependencies>
-    </global>
-    <codefiles>
+	<global>
+		<version>120</version>
+		<id>RichMedia</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/RichMedia</instdir>
+		<description>
+			Store richmedia files in our your wiki
+		</description>
+		<dependencies>
+			<dependency from="1132" to="1132">MW</dependency>
+			<dependency from="171" to="171">semanticforms</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
 
-        <file loc="extensions/RichMedia/deploy.xml" />
-        <!-- TODO: add all others -->
-    </codefiles>
-    <wikidumps>
-        <!-- empty -->
-    </wikidumps>
-    <resources>
-        <!-- empty -->
-    </resources>
+		<file loc="extensions/RichMedia/deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<file loc="extensions/RichMedia/deploy/dump.xml" />
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
 
-    <configs>
-
-        <new>
-
-            <variable name="smwgEnableUploadConverter">
-                <boolean name="smwgEnableUploadConverter"
-                    description="enables the upload converter">true</boolean>
-            </variable>
-            <require name="us_init"
-                file="extensions/RichMedia/includes/RM_Initialize.php" />
-           <function name="enableRichMediaExtension">
-                
-            </function>
-           
-           
-           <patch file="extensions/RichMedia/patch.txt" />
-           <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
-        </new>
-        <uninstall>
-        <patch file="extensions/RichMedia/patch.txt" />
-        <patch file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
-    </uninstall>
-    </configs>
-    
+	<configs>
+		<new>
+			<variable name="smwgEnableUploadConverter">
+				<boolean name="smwgEnableUploadConverter"
+					description="enables the upload converter">
+					true
+				</boolean>
+			</variable>
+			<require name="us_init"
+				file="extensions/RichMedia/includes/RM_Initialize.php" />
+			<function name="enableRichMediaExtension">
+			</function>
+			
+			<patch file="extensions/RichMedia/patch.txt" />
+			<patch
+				file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+		</new>
+		<uninstall>
+			<patch file="extensions/RichMedia/patch.txt" />
+			<patch
+				file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+		</uninstall>
+	</configs>
 </deploydescriptor>
 

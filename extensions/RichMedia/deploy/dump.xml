@@ -1,0 +1,1819 @@
+<mediawiki xmlns="http://www.ontoprise.de/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/smw_trunk/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="106">Form</namespace>
+      <namespace key="107">Form talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="120">Document</namespace>
+      <namespace key="121">Document talk</namespace>
+      <namespace key="122">Audio</namespace>
+      <namespace key="123">Audio talk</namespace>
+      <namespace key="124">Video</namespace>
+      <namespace key="125">Video talk</namespace>
+      <namespace key="126">Pdf</namespace>
+      <namespace key="127">Pdf talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Template:RMUpload</title>
+    <id>306</id>
+    <revision>
+      <id>1330</id>
+      <timestamp>2009-08-19T14:23:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMUpload
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=This template displays and annotates the metadata of uploaded media.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Media
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Media]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>f3ef0f08182ff78e49602a0e0251cfb1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMImage</title>
+    <id>307</id>
+    <revision>
+      <id>1280</id>
+      <timestamp>2009-08-19T12:13:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMImage
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Displays and annotates the metadata of an uploaded image.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Image
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>6e6aa96af027c2bfe9f51381ade54944</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMPdf</title>
+    <id>308</id>
+    <revision>
+      <id>1281</id>
+      <timestamp>2009-08-19T12:13:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Bundle}}{{Template
+|PAGENAME=Template:RMPdf
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Displays and annotates the metadata of an uploaded pdf file.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Pdf
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Pdf]]&lt;/includeonly&gt;</text>
+    <hash>f5f87d55dbcdab4e65495e1b56b3f74b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMDocument</title>
+    <id>309</id>
+    <revision>
+      <id>1282</id>
+      <timestamp>2009-08-19T12:14:35Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}{{Template
+|PAGENAME=Template:RMDocument
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Annotates and displays the metadata of a document.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Document
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Document]]&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>3b89b68aee5ddffe38f0e85fbe34dde0</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMAudio</title>
+    <id>310</id>
+    <revision>
+      <id>1283</id>
+      <timestamp>2009-08-19T12:14:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMAudio
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Displays and annotates the metadata of an uploaded audio file.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Audio
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Audio]]&lt;/includeonly&gt;</text>
+    <hash>efcc46e6b40765b5ac4e167b8dce4d0a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMVideo</title>
+    <id>311</id>
+    <revision>
+      <id>1284</id>
+      <timestamp>2009-08-19T12:15:13Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}{{Template
+|PAGENAME=Template:RMVideo
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Displays and annotates the metadata of an uploaded video file.
+|long description=__NOTITLE__
+|Calls template=Template:RMMedia
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
+|Media subcategory=Video
+|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
+|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
+|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticles::x]]|,}}
+|Filename=[[HasFilename::{{{Filename|}}}]]
+|Description=[[HasDescription::{{{Description|}}}]]
+|Uploader=[[HasUploader::{{{Uploader|}}}]]
+|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
+|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
+|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
+|Format=[[HasFormat::{{{Format|}}}]]
+}}[[Category:Video]]&lt;/includeonly&gt;</text>
+    <hash>56ad23c87c09cd1cb9457d997acd5e75</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMList</title>
+    <id>312</id>
+    <revision>
+      <id>1285</id>
+      <timestamp>2009-08-19T12:15:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMList
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=This template lists all media which has been uploaded and attached to a particular article.
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{RMList
+|show=True}}
+&lt;/pre&gt;
+|hints for templates and forms=To attach uploaded media to an article, the property &quot;subsection of&quot; must be annotated.
+|Calls template=Template:RMListOuterTable
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{show|}}}|True|{{RMListOuterTable}}|}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>749208754ffa0cc24dc4bb0cf45b9964</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMListInnerTable</title>
+    <id>313</id>
+    <revision>
+      <id>1286</id>
+      <timestamp>2009-08-19T12:16:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;
+&lt;br/&gt;
+|-
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt; {{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|800|600}}&lt;/span&gt;
+| bgcolor=&quot;white&quot; | [[{{{3}}}]]
+| bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot; title=&quot;info description!&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span class=&quot;plainlinks&quot; title=&quot;edit with forms description&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
+| bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
+    <hash>a480afa6d071779633eaa3fc454e2bb1</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMCategoryLinkIcon</title>
+    <id>314</id>
+    <revision>
+      <id>1287</id>
+      <timestamp>2009-08-19T12:17:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;
+{{#switch: 
+  {{#sub:
+    {{lc: {{{1}}} }} 
+    | 0
+    |{{#pos:{{lc: {{{1}}} }}|:}}  
+  }}
+  | image={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+  | pdf={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_pdf_icon_16x16.png
+  | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
+  | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
+  | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
+  | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
+}}</text>
+    <hash>50fe5a68da5b9089cb52d15525fc6e30</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMNoNamespace</title>
+    <id>315</id>
+    <revision>
+      <id>1288</id>
+      <timestamp>2009-08-19T12:18:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;
+{{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}}</text>
+    <hash>977c29e455bff5ccbb287b00bfc5dae4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMListOuterTable</title>
+    <id>316</id>
+    <revision>
+      <id>1289</id>
+      <timestamp>2009-08-19T12:18:45Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMListOuterTable
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section, 
+|rationale=Builds the outer table
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| border=&quot;1&quot; style=&quot;border: 1px solid black; padding: 0px; border-collapse: collapse;&quot; 
+| align=&quot;center&quot; bgcolor=&quot;#455387&quot; style=&quot;padding-top: 5px;&quot; |&lt;font color=&quot;white&quot;&gt;&lt;b&gt;Attached documents, images and media&lt;/b&gt;&lt;/font&gt;
+{| class=&quot;wikitable sortable&quot; bgcolor=&quot;white&quot; border=&quot;0&quot;
+|- bgcolor=&quot;lightgrey&quot;
+! align=&quot;center&quot; style=&quot;padding:5px;&quot; | Category !! style=&quot;padding:5px;&quot; | Filename !! style=&quot;padding:5px;&quot; | Uploaded by !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Creation date !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Metainformation !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Delete
+|-
+{{#ask: [[Category:Media]][[HasRelatedArticles::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]&lt;/q&gt;
+  | ?HasFilename
+  | ?HasUploader
+  | ?HasCreationDate
+  | format=template
+  | template=RMListInnerTable
+  | link=none
+}}
+|}
+|- 
+| 
+{| style=&quot;width:100%;&quot;
+|-
+| Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; || align=&quot;right&quot; | {{#rmf: {{FULLPAGENAME}} }}
+|}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>449cdb47b3deecb0bbcf62295bd3e0f9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:RMMedia</title>
+    <id>317</id>
+    <revision>
+      <id>1290</id>
+      <timestamp>2009-08-19T12:19:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:RMMedia
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=This template displays information of media (i.e. document, image, etc) in a box.
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{RMMedia
+|Media subcategory
+|CopyrightBy
+|CreationDate
+|RelatedArticles
+|Filename
+|Description
+|Uploader
+|UploadDate
+|Keywords
+|SubSectionOf
+|Format
+}}
+&lt;/pre&gt;
+|Calls template=Template:Display content navigation box
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
+! colspan=&quot;2&quot; style=&quot;background: #996699; color: white&quot; | ''{{{Media subcategory|}}}''
+|-
+{{Tablerow|Label=Filename:|Value={{{Filename|}}} }}
+|-
+{{Tablerow|Label=Copyright by:|Value={{{CopyrightBy|}}} }}
+|-
+{{Tablerow|Label=Creation date:|Value={{{CreationDate|}}} }}
+|-
+{{#ifeq:{{{RelatedArticles|}}}|||
+{{Tablerow|Label=Related articles:|Value={{{RelatedArticles|}}} }} }}
+|-
+{{Tablerow|Label=Keywords:|Value={{{Keywords|}}} }}
+|-
+{{Tablerow|Label=Format:|Value={{{Format|}}} }}
+|}
+{{Display content navigation box
+|Title={{{Filename|}}}
+|Summary={{{Description|}}}
+|Author={{{Uploader|}}}
+|Creation date={{{UploadDate|}}}
+|SubsectionOf={{{SubSectionOf|}}}
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>e1ee96f3af68f4928adbac45e2566c56</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:!</title>
+    <id>318</id>
+    <revision>
+      <id>1291</id>
+      <timestamp>2009-08-19T12:20:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">|&lt;noinclude&gt;{{Bundle}}
+{{documentation}}
+&lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
+helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
+&lt;/noinclude&gt;</text>
+    <hash>ee5bc69282477929abd3535b8d723316</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cite web in help</title>
+    <id>319</id>
+    <revision>
+      <id>1292</id>
+      <timestamp>2009-08-19T12:20:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:Cite web in help
+|Has author=Daniel
+|part of=SMWforum User Manuals Section
+|rationale=Displays a box in articles which fall under GFDL.
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{Cite web in help
+|wiki=
+|url=
+|title=
+|retrieved=
+|publisher=
+}}
+&lt;/pre&gt;
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;References &lt;br/&gt;
+The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br/&gt;
+This article is licensed under the [[GNU Free Documentation License]].
+&lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>cee48118793bd4182dfd16c94aa6ce9d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Copyright of article</title>
+    <id>320</id>
+    <revision>
+      <id>1293</id>
+      <timestamp>2009-08-19T12:21:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:Copyright of article
+|Has author=Daniel
+|part of=SMWforum User Manuals Section
+|rationale=Displays a box for an article containing copy right info.
+|long description=__NOTITLE__
+
+|parameters=&lt;pre&gt;
+{{Copyright of article
+|own work=
+|year=
+|copyright holder=
+|url=
+|title=
+|date retrieved=
+}}
+&lt;/pre&gt;
+|hints for templates and forms=Set &quot;own work&quot; to &quot;True&quot; if you have the copyright of the article, false otherwise.
+|Calls template=Template:GNU Free Documentation License,Template:Cite web in help
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+|date retrieved=2009/03/29
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#ifeq:{{{own work|}}}|True|{{GNU Free Documentation License
+|year={{{year|}}}
+|copyright holder={{{copyright holder|}}} }}
+|{{ Cite web in help
+|url={{{url|}}}
+|title={{{title|}}}
+|retrieved={{{date retrieved|}}}
+|publisher={{{copyright holder|}}} }}
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>cf8d3f1e332f73818a8cfdcda590c462</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GNU Free Documentation License</title>
+    <id>321</id>
+    <revision>
+      <id>1294</id>
+      <timestamp>2009-08-19T12:21:50Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+margin-bottom: 15px; 
+padding-left: 10px;
+font-family: tahoma, sans-serif; 
+font-size:x-small;&quot;&gt;
+;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
+
+Permission is granted to copy, distribute and/or modify this document 
+under the terms of the GNU Free Documentation License, Version 1.2 
+or any later version published by the Free Software Foundation; 
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. 
+A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU 
+Free Documentation License]]&quot;. 
+&lt;/div&gt;
+
+&lt;noinclude&gt;
+{{Bundle}}
+&lt;pre&gt;
+{{
+GNU Free Documentation License
+|year=
+|copyright holder=
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    <hash>cda2a4c310c79a41c203714479cc5c55</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Header for wiki parts</title>
+    <id>322</id>
+    <revision>
+      <id>1295</id>
+      <timestamp>2009-08-19T12:22:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:Header for wiki parts
+|Has author=Daniel
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display a nice header for all wiki parts, i.e. forms, templates etc
+|long description=__NOTITLE__
+|parameters=&lt;pre&gt;
+{{Header for wiki parts
+|Category=Form
+|Icon=Image:Cog-green.png
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||[[has author::{{{Has author|}}}]]}}
+|Wiki section={{#ifeq:{{{part of|}}}|||[[part of::{{{part of|}}}]]}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}}
+&lt;/pre&gt;
+|hints for templates and forms=The following values for category are allowed: Form, Template
+|Calls template=Template:Tablelongrow, Template:Tablerow,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: {{{Category}}}
+|Template=&lt;!--
+
+case: Template
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Template ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{#ifeq:{{{Short description|}}}||
+{{Tablelongrow|Label=Overview:|Value=}}
+|
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}} }}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Template
+
+--&gt;
+|Form=&lt;!--
+
+case: Form
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Semantic form ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Has special namespace|}}}||
+{{Tablerow|Label=Namespace:|Value=''main namespace''}}
+|{{Tablerow|Label=Namespace:|Value={{{Has special namespace|}}} }} }}
+{{!}}-
+{{#ifeq:{{{Example article|}}}||
+{{Tablerow|Label=Example:|Value=''not specified...''}}
+|{{Tablerow|Label=Example:|Value={{{Example article|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Form
+
+--&gt;
+|Category=&lt;!--
+
+case: Category
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Category ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+end case: Category
+
+--&gt;
+|Content section=&lt;!--
+
+case: Content section
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Content section ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Content section END
+
+--&gt;
+|Property=&lt;!--
+
+case: Property
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''Property ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: Property END
+
+--&gt;
+|User defined rule=&lt;!--
+
+case: User defined rule
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''User defined rule ''{{{Pagetitle}}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{#ifeq:{{{Thumbnail image|}}}|||
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=[[{{{Thumbnail image|}}}|150px]]}} }}
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{#ifeq:{{{Wiki section|}}}||
+{{Tablerow|Label=Wiki section:|Value=''not specified...''}}
+|{{Tablerow|Label=Wiki section:|Value={{{Wiki section|}}} }} }}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: User defined rule END
+
+--&gt;
+|All content sections=&lt;!--
+
+case: All content sections
+
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 2px; padding-left: 2px; padding-right: 2px; padding-top: 5px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: #999999; margin-bottom: 5px;&quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; rowspan=&quot;2&quot; {{!}} [[{{{Icon}}}|40px]]
+{{!}} '''All Content Sections of ''{{SITENAME}}'' '''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #999999; background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+{{!}}-
+{{Tablelongrow|Label=Overview:|Value=''{{{Short description}}}''}}
+{{!}}-
+{{Tablerow|Label=Author:|Value={{{author|}}} }}
+{{!}}}&lt;!--
+
+case: All content sections END
+
+--&gt;
+|#default=&lt;!-- unknown category
+--&gt;&lt;div class=&quot;round&quot; style=&quot;padding-bottom: 5px; padding-left: 5px; padding-right: 5px; padding-top: 10px; font-family: tahoma, sans-serif; font-weight: bold; font-size: 120%; color: rgb(255,255,255); background-color: rgb(159,80,0); margin-bottom: 5px;float: right; clear: none; &quot;&gt;&lt;!-- --&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;     
+{{!}}- 
+{{!}} &lt;div style=&quot;padding: 2px; font-family: tahoma,sans-serif; font-weight: bold; font-size: 120%; color: rgb(250, 250, 250); margin-bottom: 2px;&quot; class=&quot;round&quot;&gt;
+{{{!}} width=&quot;100%&quot; cellspacing=&quot;1&quot; cellpadding=&quot;1&quot; border=&quot;0&quot; align=&quot;center&quot;
+{{!}}-
+{{!}} width=&quot;10%&quot; valign=&quot;left&quot; align=&quot;center&quot; {{!}} [[Image:Stockage.png|40px]]
+{{!}} '''{{#show:{{{PAGENAME}}}|?Content title=}}'''
+{{!}}}&lt;/div&gt;
+{{!}}}&lt;/div&gt;
+{{{!}} cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid rgb(159,80,0); background: rgb(255,255,255); float: right; clear: none; width: 20em&quot;
+&lt;!-- end case: Software Product Release --&gt;
+}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>3bc95a138b9765a43681a40bfb294481</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Note</title>
+    <id>323</id>
+    <revision>
+      <id>1296</id>
+      <timestamp>2009-08-19T12:22:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;includeonly&gt;
+&lt;hr&gt;
+'''Note &amp;ndash;''' {{{1}}}
+&lt;hr&gt;
+&lt;/includeonly&gt;
+&lt;noinclude&gt;
+{{Bundle}}
+&lt;pre&gt;
+{{Note|Note Text}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    <hash>fea076ec8ccba9a303902205edadea5c</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablelongrow</title>
+    <id>324</id>
+    <revision>
+      <id>1297</id>
+      <timestamp>2009-08-19T12:23:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:Tablelongrow
+|part of=SMWforum User Manuals Section
+|rationale=This is a helper template to display a table row spanning 2 columns.
+|parameters=&lt;pre&gt;
+{{Tablelongrow
+|Align=center|left|right
+|Color=white|..
+|Font size=100%
+|Value=text to display
+}}
+&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+| colspan=&quot;2&quot; style=&quot;text-align: {{{Align|center}}}; background: {{{Color|white}}}&quot;|&lt;div style=&quot;font-size: {{{Font size|100%}}}&quot;&gt;{{{Value}}}&lt;/div&gt;
+&lt;/includeonly&gt;</text>
+    <hash>cbc00b66e5a24e158410c160b515a903</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Tablerow</title>
+    <id>325</id>
+    <revision>
+      <id>1298</id>
+      <timestamp>2009-08-19T12:23:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+{{Template
+|PAGENAME=Template:Tablerow
+|part of=SMWforum User Manuals Section
+|rationale=This is helper template to display a table row containing two columns.
+|parameters=&lt;pre&gt;
+{{Tablerow
+|Label=name of the label
+|Value=text right to the label
+}}&lt;/pre&gt;
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{!}}style=&quot;vertical-align: top;&quot; {{!}}{{{Label}}}
+{{!}} {{{Value|undefined}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>b62dfa59ca05c1edf661135eb2bb5d86</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Template</title>
+    <id>326</id>
+    <revision>
+      <id>1299</id>
+      <timestamp>2009-08-19T12:23:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Bundle}}{{Template
+|PAGENAME=Template:Template
+|Has author=Daniel
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to annotate any template in the Wiki and to assign it to a content section in the wiki.
+|long description=__NOTITLE__Call this template whenever making a template accessible for other wiki users. It helps bookkeeping of the templates belonging to a particular wiki section.
+|Example article=Template:Form
+|parameters=&lt;pre&gt;{{Template
+|PAGENAME=Template:Header for content
+|part of=SMWforum User Manuals Section
+|rationale=This generates the green bar at the top of each article in the Help-section.
+|parameters=
+|hints for templates and forms=The parameter &quot;depth&quot; must be included unchanged (as given in the example above).
+}}&lt;/pre&gt;
+|Calls template=Template:Header for wiki parts,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
+|Category=Template
+|Icon=Image:smw_plus_template_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}]]}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+}}
+{{{long description|}}}
+== Parameters ==
+{{#ifeq:{{{parameters|}}}||''no parameters given...''|{{{parameters|}}} }}
+{{#ifeq:{{{hints for templates and forms|}}}|||
+{{Note|{{{hints for templates and forms|}}}}}
+}}
+
+== Interaction with other templates and forms ==
+This template calls:
+{{#ifeq:{{{Calls template|}}}||* no template|
+&lt;ul&gt;
+{{#arraymap:{{{Calls template|}}}|,|x|&lt;li&gt;[[Calls template::x]]|}}
+&lt;/ul&gt;
+}}
+
+This template is called by:
+{{#ask:[[Calls template::{{{PAGENAME}}}]]|format=ul|default=* no other template or form}}
+
+This template is populated by 
+{{#ask:[[Category:Form]][[Populates template::{{{PAGENAME}}}]]|format=ul|default=* not populated by any form}}
+
+[[Category:Template]]
+Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>91d489deec7a08c82f74f258092529b4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Display content navigation box</title>
+    <id>327</id>
+    <revision>
+      <id>1300</id>
+      <timestamp>2009-08-19T12:24:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}{{Template
+|PAGENAME=Template:Display content navigation box
+|Has author=WikiSysop
+|part of=Teamwork section
+|rationale=This template is used for providing and annotating meta data fields for arbitrary content.
+|long description=__NOTITLE__
+The template does the following
+*sets &quot;subsection of&quot; relationship and prints it as supersection(s)
+*queries for subsections and prints them
+*sets a title
+*sets author(s) if given
+*sets and prints a summary if given
+|parameters=The template should be called in the following format:
+&lt;pre&gt;
+{{Display content navigation box
+|Title
+|Summary
+|Author
+|Creation date
+|SubsectionOf
+}}
+&lt;/pre&gt;
+|hints for templates and forms=This template does include NO annotations!
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
+! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; | {{{Title|''no title specified''}}}
+|-
+{{Tablelongrow|Label=Overview:|Value={{{Summary|}}} }}
+|-
+{{Tablerow|Label=Author(s):|Value={{{Author|''not specified''}}} }}
+|-
+{{Tablerow|Label=Creation date:|Value={{{Creation date|''not specified''}}} }}
+|-
+{{#ifeq:{{{SubsectionOf|}}}||
+{{Tablerow|Label=Belongs to:|Value=no article}}|
+{{Tablerow|Label=Belongs to:|Value={{{SubsectionOf|}}} }} }}
+|-
+{{Tablerow|Label=Includes:|Value={{#sparql:[[subsection of::{{FULLPAGENAME}}]][[subsection of::+]]|format=ul|link=all|default=&lt;ul&gt;&lt;li&gt;no article&lt;/ul&gt;}} }}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    <hash>70d573855dfa45908ad6d552ac381662</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMUpload</title>
+    <id>328</id>
+    <revision>
+      <id>1277</id>
+      <timestamp>2009-08-19T11:24:34Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+
+&lt;noinclude&gt;
+This is the 'RMUpload' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}}
+{{{for template|RMUpload}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|autocomplete on category=Person|default=current user|size=40|maxlength=40}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| {{{field|CopyrightBy|size=40|maxlength=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| style=&quot;display:none&quot;| {{{field|UploadDate|mandatory|default=now}}}
+|-
+| style=&quot;display:none&quot;| {{{field|Format}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|-
+| {{{field|Filename|hidden}}}
+|- 
+| colspan=&quot;2&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    <hash>3b03b9fd05441c35f346ee0cd7ccc293</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMImage</title>
+    <id>329</id>
+    <revision>
+      <id>1301</id>
+      <timestamp>2009-08-19T12:24:30Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+This is the 'RMImage' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMImage}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMImage}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+{{{end template}}}
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    <hash>9e1d5d18a1a9c14a435e1b7bcebcbbd9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMPdf</title>
+    <id>330</id>
+    <revision>
+      <id>1302</id>
+      <timestamp>2009-08-19T12:24:53Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+This is the 'RMPdf' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMPdf}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMPdf}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+{{{end template}}}
+'''Free text:'''
+
+{{{standard input|free text}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    <hash>4802042a9e2c99320b4cf96afbfe2635</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMDocument</title>
+    <id>331</id>
+    <revision>
+      <id>1303</id>
+      <timestamp>2009-08-19T12:25:08Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+This is the 'RMDocument' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMDocument}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMDocument}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Sub section of:
+| {{{field|SubSectionOf|autocomplete on namespace=Document}}}
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+| &amp;nbsp;
+|}
+{{{end template}}}
+'''Free text:'''
+
+{{{standard input|free text}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    <hash>71f171444cb4da2fdc0232e29977bc2b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMAudio</title>
+    <id>332</id>
+    <revision>
+      <id>1304</id>
+      <timestamp>2009-08-19T12:25:21Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+This is the 'RMAudio' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMAudio}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMAudio}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    <hash>a070d3ded5b9595c4d6a78add5e9582b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMVideo</title>
+    <id>333</id>
+    <revision>
+      <id>1305</id>
+      <timestamp>2009-08-19T12:25:32Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}
+This is the 'RMVideo' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMVideo}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMVideo}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|autocomplete on category=Person|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag this file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MimeType of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|autocomplete on namespace=|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+{{{end template}}}
+&lt;/includeonly&gt;</text>
+    <hash>2df4274a6feb80f7a804b53fdf6d09f6</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCreationDate</title>
+    <id>334</id>
+    <revision>
+      <id>1306</id>
+      <timestamp>2009-08-19T12:25:57Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This is a property of type [[Has type::Date]].</text>
+    <hash>f61f61a732a9436517e45a27a96f314f</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasFilename</title>
+    <id>335</id>
+    <revision>
+      <id>1307</id>
+      <timestamp>2009-08-19T12:26:15Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[has type::Type:Page]]
+[[has domain and range::; ]]</text>
+    <hash>4aad8e10ead90bcafb760957240e6230</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasRelatedArticles</title>
+    <id>336</id>
+    <revision>
+      <id>1308</id>
+      <timestamp>2009-08-19T12:26:34Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This is a property of type [[Has type::Page]].</text>
+    <hash>db78af3bbeadd2a867575ae28a2c31a9</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploadDate</title>
+    <id>337</id>
+    <revision>
+      <id>1309</id>
+      <timestamp>2009-08-19T12:26:52Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This property has been created but not edited. Please enter meaningful content.
+[[Has type::Type:Date]]</text>
+    <hash>6add41ca25005cb573bf16d2203dce76</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasUploader</title>
+    <id>338</id>
+    <revision>
+      <id>1310</id>
+      <timestamp>2009-08-19T12:27:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">
+{{Bundle}}This property has been created but not edited. Please enter meaningful content.
+[[Has domain and range::;]]
+[[Has type::Type:Page]]</text>
+    <hash>28554556a5a9c6afba52cde25f720e03</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasCopyrightBy</title>
+    <id>339</id>
+    <revision>
+      <id>1311</id>
+      <timestamp>2009-08-19T12:27:29Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This property has been created but not edited. Please enter meaningful content.
+[[Has domain and range::;]]
+[[Has type::Type:Page]]</text>
+    <hash>6643b1913737ff4ad9a4095e920ed1d4</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HasDescription</title>
+    <id>340</id>
+    <revision>
+      <id>1312</id>
+      <timestamp>2009-08-19T12:27:46Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This property has been created but not edited. Please enter meaningful content.
+[[Has type::Type:String]]</text>
+    <hash>a1e17f34a4e4392173067b2e8b6dc13b</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Property:IsSubSectionOf</title>
+    <id>341</id>
+    <revision>
+      <id>1313</id>
+      <timestamp>2009-08-19T12:28:10Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This property has been created but not edited. Please enter meaningful content.
+
+[[Has type::Type:Page]]
+
+[[has domain and range::Category:Document; Category:Document]]</text>
+    <hash>d0f1dd43a22add27fc6276aeffa1991a</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Media</title>
+    <id>342</id>
+    <revision>
+      <id>1316</id>
+      <timestamp>2009-08-19T12:29:07Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+This is the Media category.
+
+[[Has default form::Form:RMUpload]]</text>
+    <hash>4dac20d72176ddf75c2fdee3705ed592</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Image</title>
+    <id>343</id>
+    <revision>
+      <id>1315</id>
+      <timestamp>2009-08-19T12:28:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[Category:Media]]
+[[Has default form::Form:RMImage]]</text>
+    <hash>7a94c5577a9ac133290aad1ff725b920</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Pdf</title>
+    <id>344</id>
+    <revision>
+      <id>1317</id>
+      <timestamp>2009-08-19T12:29:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[Category:Media]]
+[[Has default form::Form:RMPdf]]</text>
+    <hash>98d10fafeeabb1e4fe4510b2a0edc46d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Document</title>
+    <id>345</id>
+    <revision>
+      <id>1318</id>
+      <timestamp>2009-08-19T12:29:42Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[Category:Media]]
+[[Has default form::Form:RMDocument]]</text>
+    <hash>aa829ce4bdc2d6caad74aa32d649209d</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Audio</title>
+    <id>346</id>
+    <revision>
+      <id>1319</id>
+      <timestamp>2009-08-19T12:29:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[Category:Media]]
+[[Has default form::Form:RMAudio]]</text>
+    <hash>622487263b5988c5145b204dbb8c9338</hash>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Video</title>
+    <id>347</id>
+    <revision>
+      <id>1320</id>
+      <timestamp>2009-08-19T12:30:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{Bundle}}
+[[Category:Media]]
+[[Has default form::Form:RMVideo]]</text>
+    <hash>0fc14b2e951cc69ef442fc2862949160</hash>
+    </revision>
+  </page>
+</mediawiki>
