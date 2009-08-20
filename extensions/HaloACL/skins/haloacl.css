@@ -706,7 +706,7 @@ abbr,acronym { border:0;
 #manageExistingACLRightList{
     width:800px;
 }
-.haloacl_manageacl_selector_content{
+#haloacl_manageacl_selector_content{
 }
 #SDRightsPanel{
     width:940px;
@@ -724,6 +724,13 @@ abbr,acronym { border:0;
     padding:0 0 0 12px;
 }
 
+#haloacl_manageacl_contentmenu_title{
+    font-weight:bold;
+    border:1px solid;
+    border-style: none none solid none;
+    padding:0 0 0 10px;
+    margin: 0 0 5px 0;
+}
 
 /* paginator customization */
 .yui-pg-first{
@@ -745,3 +752,35 @@ abbr,acronym { border:0;
     width:70px!important;
 }
 
+
+
+
+/* WHITELISTS */
+/* datatable */
+
+.haloacl_whitelist_datatable{
+    float:left;
+}
+
+.haloacl_whitelist_datatable table{
+    border:0px solid!important;
+}
+.haloacl_whitelist_datatable .yui-dt-odd,
+.haloacl_whitelist_datatable .yui-dt-even,
+.haloacl_whitelist_datatable .yui-dt-first
+
+{
+    background-color:#FFF!important;
+}
+
+.haloacl_whitelist_datatable thead .yui-dt-first{
+    display:none!important;
+}
+
+.haloacl_whitelist_datatable .yui-dt tr.yui-dt-first td {
+    border-top:0px solid!important;
+}
+
+#content_haloacl_whitelist_panel{
+    padding:10px 0;
+}

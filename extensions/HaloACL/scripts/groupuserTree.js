@@ -332,7 +332,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="haloacl_grouptree_title ' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\",\""+this.labelElId+"\");'>"+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
             sb[sb.length] = '<td';
@@ -353,7 +353,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\",\""+this.labelElId+"\");'>"+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
             

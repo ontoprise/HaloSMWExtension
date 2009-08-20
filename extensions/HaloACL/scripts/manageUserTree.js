@@ -181,7 +181,10 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     /**
      * Refresh the state of this node's parent, and cascade up.
      */
-    updateParent: function() { 
+    updateParent: function() {
+
+        // NO update parent here
+        /*
         var p = this.parent;
 
         if (!p || !p.updateParent) {
@@ -216,6 +219,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
 
         p.updateCheckHtml();
         p.updateParent();
+        */
     },
 
     /**

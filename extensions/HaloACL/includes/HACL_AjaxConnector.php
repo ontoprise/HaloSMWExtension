@@ -64,6 +64,7 @@ $wgAjaxExportList[] = "getSDRightsPanelContainer";
 $wgAjaxExportList[] = "deleteSecurityDescriptor";
 $wgAjaxExportList[] = "createAclUserTemplateContent";
 $wgAjaxExportList[] = "getRightsContainer";
+$wgAjaxExportList[] = "saveWhitelist";
 
 
 
@@ -1302,7 +1303,15 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
 
     YAHOO.haloacl.treeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDiv_$panelid",'$panelid');
 
-    YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
+
+    YAHOO.haloacl.labelClickAction_$panelid = function(query,element){
+        console.log(element);
+        YAHOO.haloacl.datatableInstance$panelid.executeQuery(query);
+
+
+    };
+
+    YAHOO.haloacl.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.labelClickAction_$panelid';
     YAHOO.haloacl.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstance$panelid);
 
     refilter = function() {
@@ -2347,7 +2356,7 @@ function saveWhitelist($whitelistXml) {
     try {
     //get group members
         $whitelistXml = new SimpleXMLElement($whitelistXml);
-
+        $pages = "";
         foreach($whitelistXml->xpath('//page') as $page) {
             if($pages == '') {
                 $pages = (string)$page;
@@ -2367,9 +2376,9 @@ function saveWhitelist($whitelistXml) {
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setContentType("json");
         $ajaxResponse->setResponseCode(200);
-        $ajaxResponse->addText("descriptor saved".$SDID );
+        $ajaxResponse->addText($inline );
 
-    } catch (Exceptio   $e) {
+    } catch (Exception   $e) {
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setResponseCode(400);
         $ajaxResponse->addText($e->getMessage());
@@ -2756,30 +2765,33 @@ function getACLById($id) {
  *
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
-function getWhitelistPages() {
+function getWhitelistPages($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
 
-//return (json_encode(HACLWhitelist::getPages()));
 
     $a = array();
     $a['recordsReturned'] = 2;
-    $a['totalrecords'] = 10;
+    $a['totalRecords'] = 10;
     $a['startIndex'] = 0;
     $a['sort'] = null;
     $a['dir'] = "asc";
-    $a['pagesize'] = 5;
+    $a['pageSize'] = 5;
 
-    $a['records'][] = array('name'=>"testpage1",'checked'=>'false');
+    $test = HACLWhitelist::newFromDB();
+
+    foreach($test->getPages() as $item){
+           $a['records'][] = array('name'=>$item,'checked'=>'false');
+    }
+
+
+    // generating paging-stuff
+    $a['totalRecords'] = sizeof($a['records']);
+    $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
+    $a['recordsReturned'] = sizeof($a['records']);
+    
+
 
     return(json_encode($a));
 
-
-
-    /*
-    while ($row = $db->fetchObject($res)) {
-        $a['records'][] = array('name'=>$row->user_name,'id'=>$row->user_id,'checked'=>'false');
-    }
-     *
-     */
 
 }
 
@@ -2993,7 +3005,7 @@ HTML;
 function whitelistsContent() {
     $response = new AjaxResponse();
     $html = <<<HTML
-        <div class="haloacl_manageusers_container">
+    <div class="haloacl_manageusers_container">
     <div class="haloacl_manageusers_title">
     Manage whiteliste pages
     </div>
@@ -3004,12 +3016,13 @@ HTML;
     $myGenPanel = new HACL_GenericPanel("haloacl_whitelist_panel", "Manage whitelist", "Manage whitelist", "dsc", false, false);
     $myGenPanelContent = <<<HTML
         <div id="content_haloacl_whitelist_panel">
-        <div id="haloacl_whitelist_datatable" class="yui-content">
+        <div id="haloacl_whitelist_datatable" class="haloacl_whitelist_datatable yui-content">
         </div>
+        <div style="clear:both">&nbsp;</div>
         <div id="haloacl_whitelist_addPage">
             Add page to whitelist:&nbsp;
-            <input type="text id="haloacle_whitelist_pagename" />
-            <input type="button" id="haloacl_whitelist_addPageButton" value="add"/>
+            <input type="text" id="haloacl_whitelist_pagename" />
+            <input type="button" onClick="YAHOO.haloacl.saveWhitelist();" id="haloacl_whitelist_addPageButton" value="add"/>
         </div>
     </div>
 HTML;
@@ -3022,6 +3035,25 @@ HTML;
 
     <script>
         var temp = YAHOO.haloacl.whitelistTable('haloacl_whitelist_datatable','haloacl_whitelist_datatable');
+
+
+        YAHOO.haloacl.saveWhitelist = function(){
+
+            console.log("saveWhitelist called");
+            var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+            xml += "<whitelistContent>";
+            xml += "<page>"+$('haloacl_whitelist_pagename').value+"</page>";
+            xml += "</whitelistContent>";
+
+            var callback = function(result){
+                console.log(result);
+            };
+            
+            YAHOO.haloacl.sendXmlToAction(xml,'saveWhitelist',callback);
+
+
+
+        };
     </script>
 </div>
 HTML;
