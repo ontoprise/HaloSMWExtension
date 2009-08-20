@@ -439,6 +439,8 @@ class HACLParserFunctions  {
 				self::$mInstance->mWhitelist = array_merge(self::$mInstance->mWhitelist, $pages);
 			}
 		}
+		// Remove duplicate pages from the whitelist
+		self::$mInstance->mWhitelist = array_unique(self::$mInstance->mWhitelist);
 		
 		if (count($errMsgs) > 0) {
 			self::$mInstance->mDefinitionValid = false;
@@ -447,7 +449,7 @@ class HACLParserFunctions  {
 		// Format the whitelist in Wikitext
 		$text = wfMsgForContent('hacl_pf_whitelist_title');
 		// Show the whitelist pages in the same format as predefined rights
-		$text .= self::$mInstance->showRights($pages);
+		$text .= self::$mInstance->showRights($pages, false);
 		$text .= self::$mInstance->showErrors($errMsgs);
 		return $text;
 	}
@@ -1472,11 +1474,13 @@ class HACLParserFunctions  {
 	 *
 	 * @param array(string) $rights
 	 * 		An array of rights. May be empty.
+	 * @param bool $addACLNS
+	 * 		If <true>, the ACL namespace is added to the pages if it is missing.
 	 * 
 	 * @return string
 	 * 		A formatted wikitext with all rights.
 	 */
-	private function showRights($rights) {
+	private function showRights($rights, $addACLNS = true) {
 		$text = "";
 		global $wgContLang;
 		$aclNS = $wgContLang->getNsText(HACL_NS_ACL);
@@ -1485,7 +1489,7 @@ class HACLParserFunctions  {
 			// Rights can be given without the namespace "ACL". However, the 
 			// right should be linked correctly. So if the namespace is missing,  
 			// the link is adapted.
-			if (strpos($r, $aclNS) === false) {
+			if (strpos($r, $aclNS) === false && $addACLNS) {
 				$r = "$aclNS:$r|$r";	
 			}
 			$text .= '*[['.$r."]]\n";
