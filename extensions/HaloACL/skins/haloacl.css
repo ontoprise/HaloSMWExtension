@@ -214,7 +214,7 @@ abbr,acronym { border:0;
 
 .haloacl_panel_nameDescr{
     float:left;
-    width:500px;
+    width:700px;
     height:18px;
     overflow:hidden;
 }
@@ -223,7 +223,7 @@ abbr,acronym { border:0;
 }
 .haloacl_panel_statusContainer{
     float:left;
-    width:120px;
+    width:88px;
     overflow:hidden;
     border:1px solid #000;
     border-style:none solid;
@@ -239,13 +239,13 @@ abbr,acronym { border:0;
     border:0px solid;
 }
 .haloacl_panel_status_notsaved{
-    padding:0px 24px ;
+    padding:0px 27px 0px 0px ;
     width:50px;
     background:url(images/panel_notsaved.png) no-repeat right;
 }
 
 .haloacl_panel_status_saved{
-    padding:0px 24px ;
+    padding:0px 27px 0px 0px ;
     width:50px;
     background:url(images/panel_saved.png) no-repeat right;
 }
@@ -421,8 +421,14 @@ abbr,acronym { border:0;
 .haloacl_rightpanel_selecttab_leftpart_treeview_userlink{
     border:1px solid #000;
     border-style:solid none none none;
-    padding:3px 0 3px 3px;
+    padding:3px 0 3px 23px;
     text-decoration:underline;
+    background:url(images/user.png) no-repeat;
+}
+
+.haloacl_datatable_groupscol{
+    height:20px;
+    overflow:hidden;
 }
 /* treeview in rights panel*/
 .haloacl_rightpanel_selecttab_leftpart_treeview{
@@ -482,6 +488,12 @@ abbr,acronym { border:0;
 .datatable_usergroups{
     font-size:9px!important;
 }
+
+.haloacl_grouptree_title{
+    width:340px;
+    float:left;
+}
+
 .datatable-groups-col-div{
 }
 
@@ -535,9 +547,16 @@ abbr,acronym { border:0;
 #createStdAclTab em, #createTmpAclTab em, #createUserAclTab em{
     background:none!important;
     border:none!important;
-    font-weight:bold;
+    font-weight:normal;
 }
 
+/* disable style for subtab-nav */
+#createStdAclTab.selected a, #createTmpAclTab.selected a, #createUserAclTab.selected a,
+#createStdAclTab.selected em, #createTmpAclTab.selected em, #createUserAclTab.selected em{
+    background:none!important;
+    border:none!important;
+    font-weight:bold;
+}
 
 
 
@@ -624,7 +643,7 @@ abbr,acronym { border:0;
 .haloacl_manageuser_list_edit{
     float:left;
     width:100px;
-    background:url(images/edit_button.png) no-repeat 0 0;
+    background:url(images/edit_button.png) transparent no-repeat 0 0;
 
 }
 .haloacl_manageuser_list_delete{
@@ -704,3 +723,25 @@ abbr,acronym { border:0;
     margin:0 0 0 5px;
     padding:0 0 0 12px;
 }
+
+
+/* paginator customization */
+.yui-pg-first{
+    width:70px!important;
+    margin:0 0 0 15px!important;
+}
+.yui-pg-previous{
+    width:70px!important;
+}
+
+.yui-pg-pages{
+    width:100px!important;
+}
+
+.yui-pg-next{
+    width:70px!important;
+}
+.yui-pg-last{
+    width:70px!important;
+}
+
