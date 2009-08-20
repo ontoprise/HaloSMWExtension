@@ -105,7 +105,7 @@ function haclfSetupExtension() {
     
 	
     global $haclgProtectProperties;
-    if ($haclgProtectProperties) {
+    if ($haclgProtectProperties === true) {
         $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
         $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
         $wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
