@@ -13,3 +13,7 @@ enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', "http://mywiki/ob");
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
 enableHaloACL(); 
 
+include_once('extensions/RichMedia/includes/RM_Initialize.php');
+//enableRichMediaExtension();
+    
+$wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.

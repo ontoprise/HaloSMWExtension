@@ -764,5 +764,41 @@ WHERE {
 | Events of today
 }}</text>
     </revision>
-  </page>  
+  </page>
+  <page>
+    <title>TestPropertyHistory</title>
+    <id>39</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2009-08-06T13:46:43Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: [[Date::Today]]</comment>
+      <text xml:space="preserve">[[Date::Today]]</text>
+    </revision>
+    <revision>
+      <id>40</id>
+      <timestamp>2009-08-06T13:46:58Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">[[Date::Tomorrow]]</text>
+    </revision>
+    <revision>
+      <id>41</id>
+      <timestamp>2009-08-06T13:47:23Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">&lt;nowiki&gt;
+[[Date::Tomorrow]]
+&lt;/nowiki&gt;</text>
+    </revision>
+  </page>
+  
+  
 </mediawiki>
