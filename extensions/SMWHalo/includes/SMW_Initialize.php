@@ -93,7 +93,11 @@ function smwgHaloSetupExtension() {
 	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
 	global $smwgResultFormats;
-
+	
+	if (!defined('SGA_GARDENING_EXTENSION_VERSION')) {
+		$smwgResultFormats['table'] = 'SMWHaloTableResultPrinter';
+		$smwgResultFormats['broadtable'] = 'SMWHaloTableResultPrinter';
+	}
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
