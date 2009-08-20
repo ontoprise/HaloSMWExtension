@@ -51,6 +51,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  *    empty if groups are given. 
  * description
  *    The description that was given for the rule. 
+ * name
+ * 	  A short name for the right.
  * origin_id
  *    The page ID of the wiki article where this rule was defined (i.e. a 
  *    security descriptor or a predefined right). 
@@ -92,6 +94,7 @@ class  HACLRight  {
 	private $mDescription;		// string: A decription of this right
 	private $mOriginID;			// int: ID of the security descriptor or
 								//      predefined right that defines this right
+	private $mName;				// string: the name of the right
 	
 	/**
 	 * Constructor for HACLRight. 
@@ -123,7 +126,7 @@ class  HACLRight  {
 	 * 			... if the user is invalid
 	 * 	 
 	 */		
-	function __construct($actions, $groups, $users, $description, $originID=0) {
+	function __construct($actions, $groups, $users, $description, $name, $originID=0) {
 				
 		$this->mActions = $this->completeActions($actions);
 		
@@ -132,6 +135,7 @@ class  HACLRight  {
 		
 		$this->mDescription = $description;
 		$this->mOriginID    = $originID;
+		$this->mName		= $name;
 		
 	}
 	
@@ -142,6 +146,7 @@ class  HACLRight  {
 	public function getGroups()			{return $this->mGroups;}
 	public function getUsers()			{return $this->mUsers;}
 	public function getDescription()	{return $this->mDescription;}
+	public function getName()			{return $this->mName;}
 	public function getOriginID()		{return $this->mOriginID;}
 	
 	/**
@@ -161,6 +166,7 @@ class  HACLRight  {
 	}
 	
 	public function setDescription($description) {$this->mDescription = $description;}
+	public function setName($name) {$this->mName = $name;}
 	
 	/**
 	 * Don't call this method!!

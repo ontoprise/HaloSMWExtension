@@ -68,6 +68,7 @@ class HACLStorageSQL {
 				'groups' 		=> 'Text',
 				'users' 		=> 'Text',
 				'description' 	=> 'Text',
+				'name' 			=> 'Text',
 				'origin_id' 	=> 'INT(8) UNSIGNED NOT NULL'),
 				$db, $verbose);
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
@@ -1092,6 +1093,7 @@ WHERE user.user_id = $userID
 					  'groups'	    => $groups,
 					  'users'	    => $users,
 					  'description' => $right->getDescription(),
+					  'name'        => $right->getName(),
 					  'origin_id'   => $right->getOriginID());
 		if ($rightID == -1) {
 			// right does not exist yet in the DB.
@@ -1134,8 +1136,10 @@ WHERE user.user_id = $userID
 			$groups = self::strToIntArray($row->groups);
 			$users  = self::strToIntArray($row->users);
 			$description = $row->description;
-			$originID = $row->origin_id;
-			$sd = new HACLRight($actions, $groups, $users, $description, $originID);
+			$name        = $row->name;
+			$originID    = $row->origin_id;
+			
+			$sd = new HACLRight($actions, $groups, $users, $description, $name, $originID);
 			$sd->setRightID($rightID);
 		}
 		$db->freeResult($res);

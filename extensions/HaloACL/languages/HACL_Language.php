@@ -40,6 +40,7 @@ abstract class HACLLanguage {
 	const PFP_RIGHTS		= 11; 
 	const PFP_PAGES			= 12; 
 	const PFP_MEMBERS		= 13; 
+	const PFP_NAME			= 14;
 	
 	//--- IDs of categories --- 
 	const CAT_GROUP					= 14;

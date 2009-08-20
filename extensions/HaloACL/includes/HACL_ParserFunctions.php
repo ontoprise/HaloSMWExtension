@@ -181,6 +181,7 @@ class HACLParserFunctions  {
    	 *          The allowed values are read, edit, formedit, create, move, 
    	 *          annotate and delete. The special value comprises all of these actions.
 	 * description:This description in prose explains the meaning of this ACE. 
+	 * name: (optional) A short name for this inline right
 	 *
 	 * @param Parser $parser
 	 * 		The parser object
@@ -214,20 +215,30 @@ class HACLParserFunctions  {
 		$description = array_key_exists($descPN, $params) 
 						? $params[$descPN]
 						: "";
-		
+		// handle the (optional) parameter 'name'
+		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
+		$name = array_key_exists($namePN, $params) 
+						? $params[$namePN]
+						: "";
+						
 		$errMsgs = $em1 + $em2;
 		
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => create and store the new right for later use.
-			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description);
+			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
 			self::$mInstance->mInlineRights[] = $ir;
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
 		
 		// Format the defined right in Wikitext
-		$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
+		if (!empty($name)) {
+			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
+			        .wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
+		} else {
+			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
+		}
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);
@@ -248,8 +259,9 @@ class HACLParserFunctions  {
    	 * actions: This is the comma separated list of actions that are permitted. 
    	 *          The allowed values are read, edit, formedit, create, move, 
    	 *          annotate and delete. The special value comprises all of these actions.
-	 * description:This description in prose explains the meaning of this ACE. 
-	 *
+	 * description:This description in prose explains the meaning of this ACE.
+	 * name: (optional) A short name for this inline right
+	 * 
 	 * @param Parser $parser
 	 * 		The parser object
 	 * 
@@ -283,20 +295,30 @@ class HACLParserFunctions  {
 		$description = array_key_exists($descPN, $params) 
 						? $params[$descPN]
 						: "";
-		
+		// handle the (optional) parameter 'name'
+		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
+		$name = array_key_exists($namePN, $params) 
+						? $params[$namePN]
+						: "";
+						
 		$errMsgs = $em1 + $em2;
 		
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => create and store the new right for later use.
-			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description);
+			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
 			self::$mInstance->mPropertyRights[] = $ir;
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
 		
 		// Format the defined right in Wikitext
-		$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
+		if (!empty($name)) {
+			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
+			        .wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
+		} else {
+			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
+		}
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);

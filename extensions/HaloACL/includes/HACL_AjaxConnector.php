@@ -1898,7 +1898,8 @@ function saveTempRightToSession($rightxml) {
         }
         $actions = $actions > 255 ? 255 : $actions;
 
-        $tempright = new HACLRight($actions,$groups,$users,$description, 0);
+//TODO: $name muss noch gesetzt werden        
+        $tempright = new HACLRight($actions, $groups, $users, $description, $name, 0);
 
 
 

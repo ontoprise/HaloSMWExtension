@@ -58,8 +58,9 @@ class HACLLanguageDe extends HACLLanguage {
 		HACLLanguage::PFP_ACTIONS		=> 'Aktionen', 
 		HACLLanguage::PFP_DESCRIPTION	=> 'Beschreibung', 
 		HACLLanguage::PFP_RIGHTS		=> 'Rechte', 
-		HACLLanguage::PFP_PAGES		=> 'Seiten', 
+		HACLLanguage::PFP_PAGES			=> 'Seiten', 
 		HACLLanguage::PFP_MEMBERS		=> 'Mitglieder', 
+		HACLLanguage::PFP_NAME			=> 'Name', 
 	);
 	
 	protected $mActionNames = array(

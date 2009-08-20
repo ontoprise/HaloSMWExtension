@@ -60,7 +60,8 @@ class HACLLanguageEn extends HACLLanguage {
 		HACLLanguage::PFP_DESCRIPTION	=> 'description', 
 		HACLLanguage::PFP_RIGHTS		=> 'rights', 
 		HACLLanguage::PFP_PAGES			=> 'pages', 
-		HACLLanguage::PFP_MEMBERS		=> 'members', 
+		HACLLanguage::PFP_MEMBERS		=> 'members',
+		HACLLanguage::PFP_NAME			=> 'name'		
 	);
 	
 	protected $mActionNames = array(
