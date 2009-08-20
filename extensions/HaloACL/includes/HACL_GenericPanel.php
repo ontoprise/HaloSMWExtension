@@ -80,12 +80,19 @@ HTML;
                 console.log("using parent:");
                 console.log($(panelid).parentNode);
                 var elements = $(panelid).parentNode.children;
-                elements.each(function(item){
-                    if($(item).hasClassName("haloacl_panel")){
+                    console.log($(panelid).parentNode.children);
+                 //   console.log($(panelid).parentNode.childNodes);
+
+
+                for(i=0;i<elements.length;i++){
+                    var item = elements[i];
+                    if(item.hasClassName("haloacl_panel")){
                         console.log("trying to close");
                         console.log(item);
-                    }
-                });
+                        //if (item.id != $(panelid)) item.hide();
+                    }
+                }
+                
 
                 
                 
