@@ -61,11 +61,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
-    {
-        key:"id",
-        label:"ID",
-        sortable:false
-    },
+
     {
         key:"name",
         label:"Name",
@@ -184,7 +180,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
         initialRequest: "rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
-            key:"id",
+            key:"name",
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
         paginator: myPaginator,

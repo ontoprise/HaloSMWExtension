@@ -52,7 +52,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
         var groupsstring = ""+oRecord._oData.groups;
         var groupsarray = groupsstring.split(",");
-        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
+        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div haloacl_datatable_groupscol'>";
         
         for (i=0;i<groupsarray.length;i++){
             var element = ""+groupsarray[i];
@@ -83,11 +83,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
-    {
-        key:"id",
-        label:"ID",
-        sortable:false
-    },
+ 
     {
         key:"name",
         label:"Name",
@@ -182,9 +178,12 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
 
     var handlePagination = function(state){
-        console.log(state);
-        // TODO!!!
-        var divid = "right_tabview_create_acl_right_0";
+
+        //var divid = myPaginator._containers.parentNode.id;
+        console.log("should be:"+"right_tabview_create_acl_right_0");
+        //console.log("is:"+divid);
+        
+        var divid = myPaginator._containers[0].parentNode.children[0].children[0].children[0].id;
 
         console.log("changeRequest fired");
         var displaying = state.totalRecords - state.recordOffset;
@@ -195,7 +194,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
         
         var html = from + " to " + to   + " from " +state.totalRecords;
-        $('datatablepaging_count_'+divid).innerHTML = html;
+        $(divid).innerHTML = html;
         console.log($('datatablepaging_count_'+divid));
     };
 
@@ -214,7 +213,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         initialRequest: "rs=getUsersForUserTable&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
-            key:"id",
+            key:"name",
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
         paginator: myPaginator,
