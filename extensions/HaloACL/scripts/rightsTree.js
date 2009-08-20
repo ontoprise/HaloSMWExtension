@@ -340,7 +340,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\'})">'+this.label+"</a>";
+            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'})">'+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
 
@@ -386,7 +386,8 @@ YAHOO.haloaclrights.popup = function(id){
 
 
     YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
-        sdId:id
+        sdId:id,
+        readOnly:'true'
     });
 
 
@@ -967,7 +968,6 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
 YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree){
     var callback = {
         success: function(oResponse) {
-            console.log("anfangsdaten:"+oResponse.responseText);
             var data = YAHOO.lang.JSON.parse(oResponse.responseText);
             YAHOO.haloaclrights.buildUserTree(tree,data);
         },
