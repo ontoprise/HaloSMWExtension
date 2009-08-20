@@ -11,7 +11,7 @@ function query($rawQuery, $format = "xml") {
 
 	//TODO: import a triple store config file
 	require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
-	require_once "$mediaWikiLocation/SMWHalo/includes/SMW_QP_XML.php";
+	require_once "$mediaWikiLocation/SMWHalo/includes/queryprinters/SMW_QP_XML.php";
 
 	global $smwgWebserviceEndpoint;
 	$eqi = new ExternalQueryInterface();

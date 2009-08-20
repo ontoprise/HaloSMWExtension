@@ -117,6 +117,18 @@ function smwf_qi_QIAccess($method, $params) {
 			$request_query = true;
 		}
 		return $result;
+	} else if ($method == "getSupportedParameters") {
+		global $smwgResultFormats;
+		
+		$format = $p_array[0];
+        if (array_key_exists($format, $smwgResultFormats))
+            $formatclass = $smwgResultFormats[$format];
+        else
+            $formatclass = "SMWListResultPrinter";
+        $qp = new $formatclass($format, false);
+       
+        $jsonEnc = new Services_JSON();
+        return $jsonEnc->encode($qp->getSupportedParameters());
 	}
 	//TODO: Save Query functionality
 	/*

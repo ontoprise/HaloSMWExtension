@@ -221,6 +221,7 @@ var wgUserLanguageStrings = {
 	'QI_QUERY_EXISTS'		  : "Er bestaat reeds een query met deze naam. Gelieve een andere naam te kiezen.",
 	'QI_QUERY_SAVED'		  : "Je query werd succesvol opgeslaan.",
 	'QI_SAVE_ERROR'		  	  : "Er gebeurde een ongekende fout. Je query kon niet opgeslaan worden.",
+	'QI_SPECIAL_QP_PARAMS'    : 'Special parameters of',
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Dankjewel om aantekeningen te evalueren, ',

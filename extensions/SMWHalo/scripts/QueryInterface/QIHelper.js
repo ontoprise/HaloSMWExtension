@@ -37,6 +37,8 @@ initialize:function(){
 	this.pendingElement = null;
 	this.queryPartsFromInitByAsk = Array();
 	this.propertyTypesList = new PropertyList();
+	
+	this.specialQPParameters = null;
 },
 
 /**
@@ -70,6 +72,7 @@ switchlayout:function(){
 		$("layoutcontent").style.display = "";
 		$("layouttitle-link").removeClassName("plusminus");
 		$("layouttitle-link").addClassName("minusplus");
+		this.getSpecialQPParameters($('layout_format').value);
 	}
 	else {
 		$("layoutcontent").style.display = "none";
@@ -86,6 +89,60 @@ updatePreview:function() {
 	if($("previewcontent").style.display == ""){
 		this.previewResultPrinter();
 	}	
+},
+
+getSpecialQPParameters:function(qp) {
+	var callback = function(request) {
+		var columns = 3;
+		var html = gLanguage.getMessage('QI_SPECIAL_QP_PARAMS')+" <i>"+qp+'</i>:<table style="width: 100%;">';
+		var qpParameters = request.responseText.evalJSON();
+		var i = 0;
+		qpParameters.each(function(e) {
+			if (i % columns == 0) html += "<tr>" 
+			html += '<td onmouseover="Tip(\''+e.mParamDescription+'\');">'+e.mParamName+ "</td>";
+			if (e.mValues instanceof Array) {
+				html += '<td>'+createSelectionBox(e.mParam, e.mValues)+ "</td>"; 
+			} else if (e.mValues == '<string>' || e.mValues == '<number>') {
+				html += '<td>'+createInputBox(e.mParam, e.mValues)+ "</td>";
+			} else if (e.mValues == '<boolean>')  {
+				html += '<td>'+createCheckBox(e.mParam, e.mDefault)+ "</td>"; 
+			}
+			
+ 			if (i % columns == 2) html += "</tr>"
+			i++;
+		});
+		html += '</table>'
+		$('queryprinteroptions').innerHTML = html;
+		this.specialQPParameters = qpParameters;
+	}
+	var createSelectionBox = function(id, values) {
+		var html = '<select id="'+'qp_param_'+id+'">';
+		values.each(function(v) { html += '<option value="'+v+'">'+v+'</option>'; })
+		html += '</select>';
+		return html;
+	}
+	var createInputBox = function(id, values) {
+        var html = '<input id="'+'qp_param_'+id+'" type="text"/>';
+        return html;
+    }
+    var createCheckBox = function(id, defaultValue) {
+    	var defaultValueAtt = defaultValue ? 'checked="checked"' : '';
+        var html = '<input id="'+'qp_param_'+id+'" type="checkbox" '+defaultValueAtt+'/>';
+        return html;
+    }
+	sajax_do_call('smwf_qi_QIAccess', ['getSupportedParameters',qp], callback.bind(this));
+	
+},
+
+serializeSpecialQPParameters: function() {
+	var paramStr = "";
+	this.specialQPParameters.each(function (p) { 
+        var element = $('qp_param_'+p.mParam);
+        if (element.value != "" && element.value != p.mDefault) {
+        	paramStr += "| "+p.mParam+"="+element.value;
+        }
+     }); 
+     return paramStr;
 },
 
 /**
@@ -250,7 +307,7 @@ previewResultPrinter:function(){
 	if (!this.queries[0].isEmpty()){ //only do this if the query is not empty
 		var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
 		this.queries[0].getDisplayStatements().each(function(s) { ask += "|?" + s});
-		var params = ask.replace(',', '%2C') + ",";
+		var params = ask + ",";
 		params += $('layout_format').value + ',';
 		params += $('layout_link').value + ',';
 		params += $('layout_intro').value==""?",":$('layout_intro').value + ',';
@@ -268,7 +325,7 @@ previewResultPrinter:function(){
 			} else {
 				params += ",tabular";
 			}
-		}
+		}	
 		sajax_do_call('smwf_qi_QIAccess', ["getQueryResult", params], this.openResultPreview.bind(this));
 	}
 	else { // query is empty
@@ -408,6 +465,7 @@ getFullParserAsk:function(){
 	fullQuery += $('layout_order').value == "ascending" ? '' : ' | order=descending ';
 	fullQuery += $('layout_headers').checked ? '' : ' | headers=hide ';
 	fullQuery += $('layout_default').value == "" ? '' : ' | default=' + $('layout_default').value;
+	fullQuery += this.serializeSpecialQPParameters();
 	if ($('layout_format').value == "template"){
 		fullQuery += ' | template=' + $('template_name').value;
 	} else if ($('layout_format').value == "rss"){
@@ -1394,7 +1452,9 @@ checkFormat:function(){
 		$('exhibitfield').style.display = "none";
 	}
 	// update result preview
+	this.getSpecialQPParameters($('layout_format').value);
 	this.updatePreview();
+	
 },
 
 initFromQueryString:function(ask) {

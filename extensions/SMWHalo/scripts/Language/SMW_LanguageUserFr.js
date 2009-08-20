@@ -222,6 +222,7 @@ var wgUserLanguageStrings = {
 	'QI_QUERY_SAVED'		  : "Votre requête a été enregistrée avec succès.",
 	'QI_SAVE_ERROR'		  	  : "Une erreur inconnue est survenue. Votre requête ne peut pas être enregistrée.",
 	'QI_EMPTY_TEMPLATE'		  : "Afin d'utiliser le format 'template', vous devez saisir un nom de template.",
+	'QI_SPECIAL_QP_PARAMS'    : 'Special parameters of',
 	
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Merci d\'évaluer les annotations, ',

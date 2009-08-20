@@ -19,25 +19,24 @@ function sgagGardeningSetupExtension() {
 
 	global $wgAutoloadClasses, $wgHooks, $sgagIP;
 
-	
-	
+
+
 	$wgHooks['BeforePageDisplay'][]='sgafGAAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='sgaFWAddHTMLHeader';
 	$wgHooks['ArticleSaveComplete'][] = 'sgafHaloSaveHook'; // gardening update (SMW does the storing)
 	$wgHooks['ArticleDelete'][] = 'sgafHaloPreDeleteHook';
 	$wgHooks['ArticleSave'][] = 'sgafHaloPreSaveHook';
-	
+
 	$wgAutoloadClasses['SMWSuggestStatistics'] = $sgagIP . '/specials/FindWork/SGA_SuggestStatistics.php';
 	$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/specials/Gardening/SGA_Gardening.php';
 	$wgAutoloadClasses['SGAGardeningTableResultPrinter'] = $sgagIP . '/includes/SGA_QP_GardeningTable.php';
-	if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
-		SMWQueryProcessor::$formats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
-			
-	} else { // registration since SMW 1.3.*
-		global $smwgResultFormats;
-		$smwgResultFormats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
 
-	}
+	global $smwgResultFormats;
+	$smwgResultFormats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
+	$smwgResultFormats['broadtable'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
+
+
+
 
 	global $sgagLocalGardening, $wgJobClasses;
 	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
@@ -57,7 +56,7 @@ function sgagGardeningSetupExtension() {
 			case '_ga_' :
 				require_once($sgagIP . '/includes/SGA_GardeningAjaxAccess.php');
 				break;
-			
+					
 		}
 	} else {
 		global $wgSpecialPages, $wgSpecialPageGroups;

@@ -86,20 +86,27 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
 	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 	$wgAutoloadClasses['SMWFullSemanticData']            = $smwgHaloIP . '/includes/SMW_FullSemanticData.php';
-	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Aggregation.php';
-	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/SMW_QP_Excel.php';
+	$wgAutoloadClasses['SMWAggregationResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Aggregation.php';
+	$wgAutoloadClasses['SMWExcelResultPrinter'] = $smwgHaloIP . '/includes/queryprinters/SMW_QP_Excel.php';
 	$wgAutoloadClasses['SMWSPARQLQuery'] = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 
-	if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
+	require_once $smwgHaloIP.'/includes/queryprinters/SMW_QP_Halo.php';
 
-		SMWQueryProcessor::$formats['exceltable'] = 'SMWExcelResultPrinter';
-		SMWQueryProcessor::$formats['aggregation'] = 'SMWAggregationResultPrinter';
-	} else { // registration since SMW 1.3.*
-		global $smwgResultFormats;
+	global $smwgResultFormats;
 
-		$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
-		$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
-	}
+	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
+	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
+	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
+	$smwgResultFormats['embedded'] = 'SMWHaloEmbeddedResultPrinter';
+	$smwgResultFormats['list'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['ol'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['ul'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['template'] = 'SMWHaloTemplateResultPrinter';
+	$smwgResultFormats['count'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['debug'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['rss'] = 'SMWHaloRSSResultPrinter';
+	
+
 
 	#
 	# Handle webservice calls.
@@ -115,7 +122,7 @@ function smwgHaloSetupExtension() {
 
 
 	// register SMW hooks
-	
+
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
@@ -137,7 +144,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
 	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
-	
+
 
 	global $wgRequest, $wgContLang, $wgCommandLineMode;
 
@@ -147,8 +154,8 @@ function smwgHaloSetupExtension() {
 
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
-	 if (stripos($wgRequest->getRequestURL(), urlencode($spns_text).":") !== false
-     || stripos($wgRequest->getRequestURL(), urlencode($spns_text)."%3A") !== false) {
+	if (stripos($wgRequest->getRequestURL(), urlencode($spns_text).":") !== false
+	|| stripos($wgRequest->getRequestURL(), urlencode($spns_text)."%3A") !== false) {
 
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
@@ -189,7 +196,7 @@ function smwgHaloSetupExtension() {
 			
 	}
 
-	
+
 
 	// register file extensions for upload
 	$wgFileExtensions[] = 'owl'; // for ontology import
@@ -232,7 +239,7 @@ function smwgHaloSetupExtension() {
 			case '_om_' : smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_OntologyManipulator.php');
 			break;
-			
+				
 			case '_ws_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
 			break;
@@ -268,7 +275,7 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
 		$wgSpecialPageGroups['QueryInterface'] = 'smwplus_group';
 
-		
+
 
 		$wgSpecialPages['Properties'] = array('SMWSpecialPage','Properties', 'smwfDoSpecialProperties', $smwgHaloIP . '/specials/SMWQuery/SMWAdvSpecialProperties.php');
 		$wgSpecialPageGroups['Properties'] = 'smwplus_group';
@@ -320,12 +327,12 @@ function smwgHaloSetupExtension() {
 	$wgHooks['CheckNamespaceForImage'][] = 'smwfRichMediaIsImage';
 
 	// add the 'halo' form input type, if Semantic Forms is installed
-    global $sfgFormPrinter;
-    if ($sfgFormPrinter) {
-        $sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
-        $sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
-    }
-	
+	global $sfgFormPrinter;
+	if ($sfgFormPrinter) {
+		$sfgFormPrinter->setInputTypeHook('haloACtext', 'smwfHaloFormInput', array());
+		$sfgFormPrinter->setInputTypeHook('haloACtextarea', 'smwfHaloFormInputTextarea', array());
+	}
+
 	return true;
 }
 
@@ -401,36 +408,36 @@ function smwfHaloInitDatatypes() {
  * @return array(string, null)
  */
 function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args, $method = "textEntryHTML") {
-    // for semantic autocompletion set class="wickEnabled" - this is neccessary
-    if (array_key_exists('class', $other_args))
-        $other_args['class'].= ' wickEnabled';
-    else
-        $other_args['class'] = 'wickEnabled';
-    // we do not use the autocomplete feature of SF, if set ignore it by removing
-    if (array_key_exists('autocompletion source', $other_args))
-        unset($other_args['autocompletion source']);
-    // this will be a normal textfield, possible values that turn the input field
-    // into a drop down list must be ignored.
-    if (array_key_exists('possible_values', $other_args))
-        unset($other_args['possible_values']);
-    // create the two field constraint and typeHint, also pipes had to be
-    // as ; in the parser function params constraints and typeHint parameter
-    $constraints = '';
-    $typeHint = '';
-    if (array_key_exists('constraints', $other_args))
-        $constraints = 'constraints="'.str_replace(';', '|', $other_args['constraints']).'" ';
-    if (array_key_exists('typeHint', $other_args))
-        $typeHint = 'typeHint="'.str_replace(';', '|', $other_args['typeHint']).'" ';
-        
-    // call now the general function of SF that creates the <input> field
-    $html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
-    // add the two field constraints and typeHint in the result output html
-    $html = str_replace('/>', " $constraints$typeHint/>", $html); 
-    return $html;
+	// for semantic autocompletion set class="wickEnabled" - this is neccessary
+	if (array_key_exists('class', $other_args))
+	$other_args['class'].= ' wickEnabled';
+	else
+	$other_args['class'] = 'wickEnabled';
+	// we do not use the autocomplete feature of SF, if set ignore it by removing
+	if (array_key_exists('autocompletion source', $other_args))
+	unset($other_args['autocompletion source']);
+	// this will be a normal textfield, possible values that turn the input field
+	// into a drop down list must be ignored.
+	if (array_key_exists('possible_values', $other_args))
+	unset($other_args['possible_values']);
+	// create the two field constraint and typeHint, also pipes had to be
+	// as ; in the parser function params constraints and typeHint parameter
+	$constraints = '';
+	$typeHint = '';
+	if (array_key_exists('constraints', $other_args))
+	$constraints = 'constraints="'.str_replace(';', '|', $other_args['constraints']).'" ';
+	if (array_key_exists('typeHint', $other_args))
+	$typeHint = 'typeHint="'.str_replace(';', '|', $other_args['typeHint']).'" ';
+
+	// call now the general function of SF that creates the <input> field
+	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
+	// add the two field constraints and typeHint in the result output html
+	$html = str_replace('/>', " $constraints$typeHint/>", $html);
+	return $html;
 }
 
 function smwfHaloFormInputTextarea($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args) {
-    return smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args, "textAreaHTML");
+	return smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args, "textAreaHTML");
 }
 
 /**
@@ -553,9 +560,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 	global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
 	global $wgOut;
 
-	
 
-	
+
+
 
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
@@ -570,7 +577,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	//print $wgStylePath.'/'.$skin->getSkinName().'/semantictoolbar.css';
 	//die;
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
-	
+
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
 	// serialize the css
@@ -654,7 +661,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");
-		
+
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
@@ -792,8 +799,8 @@ function smwfAnnotateTab ($content_actions) {
 
 	//Find position of edit button
 	$editpos = isset($content_actions['edit'])
-				? count(range(0,$content_actions['edit']))+1
-				: count($content_actions);
+	? count(range(0,$content_actions['edit']))+1
+	: count($content_actions);
 	//Split array
 	$beforeedit = array_slice($content_actions,0,$editpos-1);
 	$afteredit = array_slice($content_actions,$editpos-1,count($content_actions));
@@ -815,10 +822,10 @@ function smwfAAMBeforeStrip(&$parser, &$text, &$strip_stat) {
 	$popts = $parser->getOptions();
 	if (method_exists($popts, "getParsingContext")) {
 		if ($popts->getParsingContext() != "Main article") {
-			return true; 
+			return true;
 		}
 	}
-		
+
 	global $smwgDisableAAMParser;
 	if ($smwgDisableAAMParser) {
 		return true;
@@ -1059,7 +1066,7 @@ function smwfQIAddHTMLHeader(&$out){
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		
+
 		// add result format javascripts for query interface
 		if ($srfgScriptPath != null || $srfgScriptPath != "") {
 			// timeline
@@ -1288,7 +1295,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 		}
 	}
 
-	
+
 	// parse redirects
 	$redirectLinkPattern = '/\#REDIRECT          # REDIRECT command
                             \[\[                # Beginning of the link
@@ -1305,7 +1312,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	}
 
 	SMWTripleStore::$fullSemanticData->setCategories($categories);
-	
+
 	SMWTripleStore::$fullSemanticData->setRedirects($redirects);
 	return true;
 }
@@ -1392,13 +1399,13 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix, &$text, &$inside, &$trail) {
 	// check if page Create_new_page exists in the wiki, if not quit here
 	if (!Title::newFromDBkey('Create_new_page')->exists())
-		return true;
+	return true;
 	// check if this is an unmodified red link, if not, quit here
 	if (strpos($u, 'action=edit&amp;redlink=1') === false)
-		return true;
+	return true;
 	// get the namespace of the new page, if it's not NS_MAIN, quit
 	if ( NS_MAIN != $title->getNamespace())
-		return true;
+	return true;
 	// build title string for new page and create link to Create_new_page with target param
 	$title_text = ucfirst($title->getText());
 	global $wgScript;
@@ -1409,8 +1416,8 @@ function smwfBrokenLinkForPage(&$linker, $title, $query, &$u, &$style, &$prefix,
  * Returns a randomly webservice endpoint.
  */
 function smwfgetWebserviceEndpoint($endpoints) {
-    if (!is_array($endpoints)) return $endpoints;
-    return $endpoints[mt_rand(0, count($endpoints)-1)];
+	if (!is_array($endpoints)) return $endpoints;
+	return $endpoints[mt_rand(0, count($endpoints)-1)];
 }
 /**
  * Is the namespace one of the (new) image-namespaces?

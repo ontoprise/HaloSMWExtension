@@ -116,53 +116,9 @@ class SMWQueryInterface extends SpecialPage {
 							<select id="layout_sort" onchange="qihelper.updatePreview()">
 							</select>
 						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_order') . '\')">
-							Order:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_order') . '\')">
-							<select id="layout_order" onchange="qihelper.updatePreview()">
-							<option value="ascending">ascending</option>
-							<option value="descending">descending</option>
-							</select>
-						</td>
+						
 					</tr>
-					<tr>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_link') . '\')">
-							Link:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_link') . '\')">
-							<select id="layout_link" onchange="qihelper.updatePreview()">
-							<option value="all">all</option>
-							<option value="subject">subject</option>
-							<option value="none">none</option>
-							</select>
-						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_limit') . '\')">
-							Limit:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_limit') . '\')">
-							<input type="text" id="layout_limit"/>
-						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_headers') . '\')">
-							Headers:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_headers') . '\')">
-							show <input type="checkbox" checked="checked" id="layout_headers" onchange="qihelper.updatePreview()"/>
-						</td>
-					</tr>
-					<tr>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_intro') . '\')">
-							Intro:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_intro') . '\')">
-							<input type="text" id="layout_intro" onchange="qihelper.updatePreview()"/>
-						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_mainlabel') . '\')">
-							Mainlabel:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_mainlabel') . '\')">
-							<input type="text" id="layout_label" onchange="qihelper.updatePreview()"/>
-						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_default') . '\')">
-							Default:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_default') . '\')">
-							<input type="text" id="layout_default" onchange="qihelper.updatePreview()"/>
-						</td>
-					</tr>
+					
 					<tr id="templatenamefield" style="display:none">
 						<td>
 							Template name:
@@ -197,6 +153,7 @@ class SMWQueryInterface extends SpecialPage {
 					
 				</table>
 			</div>
+				<div id="queryprinteroptions" style="display:block">
 		</div>';
 	}
 	

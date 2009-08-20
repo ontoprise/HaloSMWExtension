@@ -347,3 +347,14 @@ border-bottom-color:#00f;
 cursor: pointer;
 }
 
+#queryprinteroptions {
+	border-top:1px solid;
+}
+
+#queryprinteroptions td[onmouseover] {
+    width: 120px;                        
+}
+
+#queryprinteroptions td[onmouseover] + td {
+    width: 400px;                        
+}

@@ -41,7 +41,18 @@ abstract class SMWResultPrinter {
 	protected $mShowErrors = true; // should errors possibly be printed?
 	protected $mInline; // is this query result "inline" in some page (only then a link to unshown results is created, error handling may also be affected)
 	protected $mLinker; // Linker object as needed for making result links. Might come from some skin at some time.
-
+    
+	// supported parameters
+	protected $mParameters;
+	
+	protected function setSupportedParameters() {
+		$this->mParameters = array();
+	}
+	
+    public function getSupportedParameters() {
+        return $this->mParameters;
+    }
+	
 	/**
 	 * If set, treat result as plain HTML. Can be used by printer classes if wiki mark-up is not enough.
 	 * This setting is used only after the result text was generated.
@@ -76,6 +87,7 @@ abstract class SMWResultPrinter {
 		$this->mLinkFirst = ($smwgQDefaultLinking != 'none');
 		$this->mLinkOthers = ($smwgQDefaultLinking == 'all');
 		$this->mLinker = new Linker(); ///TODO: how can we get the default or user skin here (depending on context)?
+		$this->setSupportedParameters();
 	}
 
 	/**
@@ -329,5 +341,64 @@ abstract class SMWResultPrinter {
 	protected function linkFurtherResults($results) {
 		return ($this->mInline && $results->hasFurtherResults() && ($this->mSearchlabel !== ''));
 	}
+	
+	
 
+}
+
+/**
+ * Describes a QP parameter.
+ * 
+ * @author: Kai Kühn / ontoprise / 2009
+ *
+ */
+class SMWQPParameter {
+    
+    // actual parameter used by QP 
+    public $mParam;
+    
+    // parameter name to show
+    public $mParamName;
+    
+    // possible values of the parameter. Can be:
+    
+    // 1. enums (array of string)
+    // 2. string (<string>)
+    // 3. number (<number>)
+    // 4. boolean (<boolean>)
+    public $mValues;
+    
+    // default value (optional)
+    public $mDefault;
+    
+    // more verbose description than $mParamName (optional)
+    public $mParamDescription;
+
+    public function __construct($param, $paramName, $values, $default = NULL, $paramDescription = NULL) {
+        $this->mParam = $param;
+        $this->mParamName = $paramName;
+        $this->mValues = $values;
+        $this->mDefault = $default;
+        $this->mParamDescription = $paramDescription;
+    }
+
+    public function getParameter() {
+        return $this->mParam;
+    }
+
+    public function getParameterName() {
+        return $this->mParamName;
+    }
+
+    public function getDefaultValue() {
+        return $this->mDefault;
+    }
+
+    public function getValues() {
+        return $this->mValues;
+    }
+    
+    public function getParameterDescription() {
+        return $this->mParamDescription;
+    }
 }

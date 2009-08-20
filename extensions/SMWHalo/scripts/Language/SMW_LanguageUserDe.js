@@ -222,6 +222,7 @@ var wgUserLanguageStrings = {
 	'QI_QUERY_SAVED'		  : "Ihr Query wurde erfolgreich gespeichert",
 	'QI_SAVE_ERROR'		  	  : "Ein unbekannter Fehler ist aufgetreten. Ihr Query konnte nicht gespeichert werden.",
 	'QI_EMPTY_TEMPLATE'		  : "Um das Ausgabeformat 'template' benutzen zu können, müssen Sie einen Templatenamen angeben.",
+	'QI_SPECIAL_QP_PARAMS'    : 'Spezielle Parameter für',
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

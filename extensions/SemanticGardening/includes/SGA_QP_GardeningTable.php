@@ -12,7 +12,18 @@
  * @note AUTOLOADED
  */
 class SGAGardeningTableResultPrinter extends SMWResultPrinter {
+	protected function setSupportedParameters() {
+		$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
+		$link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
+		$limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
+		$headers = new SMWQPParameter('headers', 'Headers', '<boolean>', NULL, "Show headers or not.");
+		$intro = new SMWQPParameter('intro', 'Intro', '<string>', NULL, "Intro text");
+		$mainlabel = new SMWQPParameter('label', 'Mainlabel', '<string>', NULL, "Name of main column");
+		$default = new SMWQPParameter('default', 'Order', '<string>', NULL, "Displayed when there are no results at all.");
+		 
+		$this->mParameters = array($order, $link, $limit, $headers, $intro, $mainlabel, $default);
 
+	}
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
@@ -26,7 +37,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 
 		// print header
 		if ('broadtable' == $this->mFormat)
-			$widthpara = ' width="100%"';
+		$widthpara = ' width="100%"';
 		else $widthpara = '';
 		$result = "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
 		if ($this->mShowHeaders) { // building headers
@@ -34,9 +45,9 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 			foreach ($res->getPrintRequests() as $pr) {
 				$title = $pr->getTitle();
 				if($title instanceof Title)
-					array_push($cols, $title);
+				array_push($cols, $title);
 				else
-					array_push($cols, "");
+				array_push($cols, "");
 				$result .= "\t\t<th>" . $pr->getText($outputmode, $this->mLinker) . "</th>\n";
 			}
 			$result .= "\t</tr>\n";
@@ -44,9 +55,9 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 			foreach ($res->getPrintRequests() as $pr) {
 				$title = $pr->getTitle();
 				if($title instanceof Title)
-					array_push($cols, $title);
+				array_push($cols, $title);
 				else
-					array_push($cols, "");
+				array_push($cols, "");
 			}
 		}
 
@@ -64,11 +75,11 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 					for($j = 0; $j<sizeof($gIssues); $j++){ //check if there's a GI for this property / article combination
 						if($act_column > 0 && $cols[$act_column] instanceof Title && ($gIssues[$j]->getTitle2()->getArticleID() == $cols[$act_column]->getArticleID())){
 							if($gIssues[$j]->getType() == SMW_GARDISSUE_TOO_LOW_CARD)
-								$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_missing') . '</a>';
+							$tt = '<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">' . wfMsg('smw_iqgi_missing') . '</a>';
 							else if($gIssues[$j]->getType() == SMW_GARDISSUE_WRONG_UNIT)
-								$tt = '&nbsp;<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue_notify" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">(' . wfMsg('smw_iqgi_wrongunit') . ')</a>';
+							$tt = '&nbsp;<a title="' . wfMsg("qbedit") . ' ' . $gIssues[$j]->getTitle1()->getText() . '" class="gardeningissue_notify" href="' . $gIssues[$j]->getTitle1()->getEditURL() . '" target="_new">(' . wfMsg('smw_iqgi_wrongunit') . ')</a>';
 							else
-								$tt = smwfEncodeMessages(array($gIssues[$j]->getRepresentation()));
+							$tt = smwfEncodeMessages(array($gIssues[$j]->getRepresentation()));
 						}
 					}
 				}
@@ -114,7 +125,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 		return $result;
 	}
-	
+
 	protected function addTooltip($title){
 		$tt = '';
 		if($title instanceof Title){
@@ -123,7 +134,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 			$messages = array();
 			for($j = 0; $j<sizeof($gIssues); $j++){
 				if($gIssues[$j]->getRepresentation() != wfMsg('smw_gard_issue_contains_further_problems'))
-					array_push($messages, '<ul><li>' . $gIssues[$j]->getRepresentation() . '</li></ul>');
+				array_push($messages, '<ul><li>' . $gIssues[$j]->getRepresentation() . '</li></ul>');
 			}
 			if(count($messages)>0){
 				$messages = array_unique($messages);
