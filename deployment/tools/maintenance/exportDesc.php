@@ -106,7 +106,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	$uploadExporter = new DeployUploadExporter( $options, $bundeID, $handle, $src, $dest );
 
 	$xml = '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
-	$xml .= '<depoydescriptor>'."\n";
+	$xml .= '<deploydescriptor>'."\n";
 	$xml .= "\t".'<global>'."\n";
 	$xml .= "\t\t".'<version>'.$versionText.'</version>'."\n";
 	$xml .= "\t\t".'<id>'.$bundeID.'</id>'."\n";
@@ -131,7 +131,7 @@ function dumpDescriptor($bundeID, $output = "deploy.xml", $dumpFile = "dump.xml"
 	fwrite($handle, $xml);
 	$uploadExporter->run();
 	$xml = "\t".'</resources>'."\n";
-	$xml .= '</depoydescriptor>'."\n";
+	$xml .= '</deploydescriptor>'."\n";
 	fwrite($handle, $xml);
 	fclose($handle);
 }
