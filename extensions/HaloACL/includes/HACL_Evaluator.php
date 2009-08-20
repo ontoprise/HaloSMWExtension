@@ -351,7 +351,7 @@ class HACLEvaluator {
 	}
 	
 	/**
-	 * This method is call when the difference of to revisions of an article is
+	 * This method is called when the difference of to revisions of an article is
 	 * about to be displayed.
 	 * If one of the revisions contains a property that can not be read, the mode
 	 * for the ACL evaluator is set accordingly for following calls to the userCan
@@ -650,6 +650,10 @@ class HACLEvaluator {
 			return true;
 		}
 		
+		if ($actionID == HACLRight::READ) {
+			// The article is only read but not edited => action is allowed
+			return true;
+		}
 		// Articles with protected properties are protected if an unauthorized
 		// user wants to edit it
 		if ($actionID != HACLRight::WYSIWYG &&
