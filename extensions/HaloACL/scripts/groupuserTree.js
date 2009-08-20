@@ -324,22 +324,23 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         var sb = [];
 
         if (this.treeType=="rw") {
-            sb[sb.length] = '<td';
-            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
-            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
-            sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
-            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' class="haloacl_grouptree_title ' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = '>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
 
         } else {
             sb[sb.length] = '<td>';
@@ -391,12 +392,12 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     */
     var querystring = "rs="+action;
 
-    if(parameterlist != null){
-        for(param in parameterlist){
-            // temparray.push(parameterlist[param]);
-            querystring = querystring + "&rsargs[]="+parameterlist[param];
-        }
-    }
+       if(parameterlist != null){
+               for(param in parameterlist){
+                       // temparray.push(parameterlist[param]);
+                       querystring = querystring + "&rsargs[]="+parameterlist[param];
+               }
+       }
 
     appendedParams = appendedParams + "&rsargs="+ temparray;
     YAHOO.util.Connect.asyncRequest('POST', url, callback,querystring);
