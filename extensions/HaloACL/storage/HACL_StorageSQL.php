@@ -1410,6 +1410,34 @@ WHERE user.user_id = $userID
 		return (count($intValues) > 0 ? $intValues : null);
 	}
 
+
+/**
+	 * Returns all Articles names and ids
+	 *
+	 * @param string $subName
+	 * @return array(int, string)
+	 * 		List of IDs of all direct users or groups in this group.
+	 *
+	 */
+	public function getArticles($subName) {
+
+                $db =& wfGetDB( DB_SLAVE );
+                $ut = $db->tableName('page');
+		$gt = $db->tableName('halo_acl_groups');
+                $gmt = $db->tableName('halo_acl_group_members');
+		$sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%'";
+
+
+
+		$res = $db->query($sql);
+                $articleArray = array();
+                while ($row = $db->fetchObject($res)) {
+                    $articleArray[] = array("id"=>$row->page_id, "name"=>$row->page_title);
+		}
+		$db->freeResult($res);
+        	return $articleArray;
+	}
+
 	
 }
 ?>
