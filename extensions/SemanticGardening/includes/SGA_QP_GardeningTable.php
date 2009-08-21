@@ -12,18 +12,29 @@
  * @note AUTOLOADED
  */
 class SGAGardeningTableResultPrinter extends SMWResultPrinter {
-	protected function setSupportedParameters() {
-		$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
-		$link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
-		$limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-		$headers = new SMWQPParameter('headers', 'Headers', array('show', 'hide'), NULL, "Show headers or not.");
-		$intro = new SMWQPParameter('intro', 'Intro', '<string>', NULL, "Intro text");
-		$mainlabel = new SMWQPParameter('label', 'Mainlabel', '<string>', NULL, "Name of main column");
-		$default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
-		 
-		$this->mParameters = array($order, $link, $limit, $headers, $intro, $mainlabel, $default);
-
-	}
+	
+// supported parameters
+    protected $mParameters;
+   
+    public function __construct($format, $inline) {
+        parent::__construct($format, $inline);
+      
+        $order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
+        $link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
+        $limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
+        $headers = new SMWQPParameter('headers', 'Headers', array('show', 'hide'), NULL, "Show headers or not.");
+        $intro = new SMWQPParameter('intro', 'Intro', '<string>', NULL, "Intro text");
+        $mainlabel = new SMWQPParameter('label', 'Mainlabel', '<string>', NULL, "Name of main column");
+        $default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
+         
+        $this->mParameters = array($order, $link, $limit, $headers, $intro, $mainlabel, $default);
+    }
+    
+    function getSupportedParameters() {
+        return $this->mParameters;
+    }
+    
+	
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
