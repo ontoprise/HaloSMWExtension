@@ -169,7 +169,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 
 			$ir = new HACLRight(HACLRight::EDIT,
 			                    array("Group/G4"), null, 
-			                    "IR for PR1");
+			                    "IR for PR1", "Right 1");
 			$prPR1->addInlineRights(array($ir));
 						
 			$prPR2 = new HACLSecurityDescriptor(null, "Right/PR2", null,
@@ -179,7 +179,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			                                    
 			$ir = new HACLRight(HACLRight::DELETE,
 			                    null, array("U2"), 
-			                    "IR for PR2");
+			                    "IR for PR2", "Right 2");
 			$prPR2->addInlineRights(array($ir));
 			                                    
 			$prPR3 = new HACLSecurityDescriptor(null, "Right/PR3", null,
@@ -191,7 +191,7 @@ class TestDatabase extends PHPUnit_Framework_TestCase {
 			
 			$ir = new HACLRight(HACLRight::READ,
 			                    array("Group/G1"), array("U1"), 
-			                    "IR for page A");
+			                    "IR for page A", "Right 3");
 			$sdA->addInlineRights(array($ir));
 			
 			$sdCatB->addPredefinedRights(array($prPR3));
