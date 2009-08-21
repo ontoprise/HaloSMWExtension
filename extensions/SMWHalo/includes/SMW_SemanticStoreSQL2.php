@@ -22,7 +22,9 @@ function getRootProperties($requestoptions = NULL) {
         
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), true);
+            	if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
+            		$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), true);
+            	}
             }
         }
         $db->freeResult($res);
@@ -32,7 +34,9 @@ function getRootProperties($requestoptions = NULL) {
         
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), false);
+				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
+            		$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), false);
+				}
             }
         }
         usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
@@ -58,7 +62,9 @@ function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
        
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), true);
+            	if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
+	                $result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), true);
+            	}
 
             }
         }
@@ -70,7 +76,9 @@ function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
        
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), false);
+            	if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
+            		$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), false);
+            	}
 
             }
         }
@@ -94,7 +102,9 @@ function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
+					$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				}
 
 			}
 		}
@@ -318,8 +328,9 @@ function getDirectSubProperties(Title $attribute, $requestoptions = NULL) {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-
-				$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
+				if (smwf_om_userCan($row->subject_title, 'read', $row->subject_namespace) === "true") {
+					$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
+				}
 			}
 		}
 		$db->freeResult($res);

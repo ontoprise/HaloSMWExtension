@@ -20,7 +20,8 @@ if (defined("SGA_GARDENING_EXTENSION_VERSION")) {
 }
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 require_once("SMW_OntologyBrowserFilter.php" );
- 
+require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
+
 function smwf_ob_OntologyBrowserAccess($method, $params) {
 	
  	$p_array = explode(",", $params);
@@ -121,7 +122,12 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$reqfilter->limit =  intval($p_array[1]);
  		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
  		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
- 		$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter);
+ 		
+ 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
+ 			$attinstances = smwfGetStore()->getAllPropertySubjects(SMWPropertyValue::makeUserProperty($prop->getDBkey()),  $reqfilter);
+ 		} else {
+ 			$attinstances = array();
+ 		}
  		
  		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $p_array[1] + 0, $p_array[2] + 0);
  	} else if ($method == 'getCategoryForInstance') {

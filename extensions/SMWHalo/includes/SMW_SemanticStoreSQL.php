@@ -13,6 +13,7 @@ require_once( "$smwgIP/includes/SMW_DV_WikiPage.php" );
 require_once( "$smwgIP/includes/SMW_DataValueFactory.php" );
 require_once  "$smwgHaloIP/includes/SMW_DBHelper.php";
 require_once( "SMW_SemanticStore.php");
+require_once( "SMW_OntologyManipulator.php");
 
 // max depth of category graph
 define('SMW_MAX_CATEGORY_GRAPH_DEPTH', 10);
@@ -115,7 +116,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$sql.'  AND page_is_redirect = 0', 'SMW::getPages', DBHelper::getSQLOptions($requestoptions,'page_namespace') );
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
-					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+					if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) === "true") {
+						$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+					}
 				}
 			}
 		} else {
@@ -127,7 +130,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 			DBHelper::getSQLOptionsAsString($requestoptions,'ns'));
 			if($db->numRows( $res ) > 0) {
 				while($row = $db->fetchObject($res)) {
-					$result[] = Title::newFromText($row->title, $row->ns);
+					if (smwf_om_userCan($row->title, 'read', $row->ns) === "true") {
+						$result[] = Title::newFromText($row->title, $row->ns);
+					}
 				}
 			}
 		}
@@ -154,8 +159,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),true);
-
+				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),true);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -172,8 +178,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),false);
-
+				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),false);
+				}
 			}
 		}
 		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
@@ -197,7 +204,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
+				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
+					$result[] = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -221,7 +230,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), true);
+				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), true);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -236,7 +247,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), false);
+				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), false);
+				}
 			}
 		}
 		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
@@ -279,7 +292,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				if (smwf_om_userCan($row->cl_to, 'read', NS_CATEGORY) === "true") {
+					$result[] = Title::newFromText($row->cl_to, NS_CATEGORY);
+				}
 
 			}
 		}
@@ -303,8 +318,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$title = Title::newFromText($row->cl_to, NS_CATEGORY);
-				if (!$title->isRedirect()) $result[] = $title;
+				if (smwf_om_userCan($row->cl_to, 'read', NS_CATEGORY) === "true") {
+					$title = Title::newFromText($row->cl_to, NS_CATEGORY);
+					if (!$title->isRedirect()) $result[] = $title;
+				}
 
 			}
 		}
@@ -338,16 +355,20 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 			if ($withCategories) {
 				while($row)
 				{
-					$instance = Title::newFromText($row->instance, $row->namespace);
-					$category = Title::newFromText($row->category, NS_CATEGORY);
-					$results[] = array($instance, $category);
+					if (smwf_om_userCan($row->instance, 'read', $row->namespace) === "true") {
+						$instance = Title::newFromText($row->instance, $row->namespace);
+						$category = Title::newFromText($row->category, NS_CATEGORY);
+						$results[] = array($instance, $category);
+					}
 					$row = $db->fetchObject($res);
 				}
 			} else {
 				while($row)
 				{
-					$instance = Title::newFromText($row->instance, $row->namespace);
-					$results[] = $instance;
+					if (smwf_om_userCan($row->instance, 'read', $row->namespace) === "true") {
+						$instance = Title::newFromText($row->instance, $row->namespace);
+						$results[] = $instance;
+					}
 					$row = $db->fetchObject($res);
 				}
 			}
@@ -455,7 +476,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, NS_MAIN);
+				if (smwf_om_userCan($row->page_title, 'read', NS_MAIN) === "true") {
+					$result[] = Title::newFromText($row->page_title, NS_MAIN);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -474,7 +497,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inherited == 'yes' ? true : false);
+				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) === "true") {
+					$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inherited == 'yes' ? true : false);
+				}
 					
 			}
 		}
@@ -494,8 +519,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$properties = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				// do not check for redirect, because it's done it the query
-				$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), false);
+				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) === "true") {
+					// do not check for redirect, because it's done it the query
+					$properties[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), false);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -697,8 +724,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 							' AND r.nary_pos = '.mysql_real_escape_string($pos));
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-
-				$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
+				if (smwf_om_userCan($row->subject_title, 'read', subject_namespace) === "true") {
+					$results[] = Title::newFromText($row->subject_title, $row->subject_namespace);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -739,7 +767,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
+					$result[] = Title::newFromText($row->subject_title, SMW_NS_PROPERTY);
+				}
 
 			}
 		}
@@ -761,7 +791,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
+				if (smwf_om_userCan($row->object_title, 'read', SMW_NS_PROPERTY) === "true") {
+					$result[] = Title::newFromText($row->object_title, SMW_NS_PROPERTY);
+				}
 
 			}
 		}
@@ -777,7 +809,9 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+				if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) === "true") {
+					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+				}
 			}
 		}
 		$db->freeResult($res);

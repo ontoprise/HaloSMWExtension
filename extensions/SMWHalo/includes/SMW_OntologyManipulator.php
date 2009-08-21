@@ -659,17 +659,19 @@ function smwf_om_invalidateAllPages() {
  * 		Name of the article
  * @param string $action
  * 		Name of the action
+ * @param int $namespaceID
+ * 		ID of the namespace of the title
  * 
  * @return bool
  * 		<true> if the action is permitted
  * 		<false> otherwise
  */
-function smwf_om_userCan($titleName, $action) {
+function smwf_om_userCan($titleName, $action, $namespaceID = 0) {
 	// Special handling if the extension HaloACL is present
 	if (defined('HACL_HALOACL_VERSION')) {
 		$etc = haclfDisableTitlePatch();
 	}
-	$title = Title::newFromText($titleName);
+	$title = Title::newFromText($titleName, $namespaceID);
 	if (defined('HACL_HALOACL_VERSION')) {
 		haclfRestoreTitlePatch($etc);
 	}
