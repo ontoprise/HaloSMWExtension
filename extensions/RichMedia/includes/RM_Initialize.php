@@ -40,11 +40,14 @@ function enableRichMediaExtension() {
 	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMLink';
+	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMEmbedWindowLink';
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMFormUsage_Magic';
 	//Add a hook to initialise the magic word for the {{#rml:}} Syntax Parser
 	$wgHooks['LanguageGetMagic'][] = 'RMLinkUsage_Magic';
+	//Add a hook to initialise the magic word for the {{#rmew:}} Syntax Parser
+	$wgHooks['LanguageGetMagic'][] = 'RMEmbedWindowLinkUsage_Magic';
 	//Add a hook to initialise the magic word for the additional image attribute preview
 	$wgHooks['LanguageGetMagic'][] = 'RMImagePreviewUsage_Magic';
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
@@ -99,6 +102,12 @@ function smwfRegisterRMLink( &$parser ) {
 
 	return true; // always return true, in order not to stop MW's hook processing!	
 }
+function smwfRegisterRMEmbedWindowLink( &$parser ) {
+	
+	$parser->setFunctionHook( 'RMEmbedWindowLinkUsage', 'smwfProcessRMEmbedWindowLinkParserFunction' );
+
+	return true; // always return true, in order not to stop MW's hook processing!	
+}
 
 /**
  * The {{#rmf }} parser function processing part.
@@ -106,10 +115,6 @@ function smwfRegisterRMLink( &$parser ) {
 function smwfProcessRMFormParserFunction(&$parser) {
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
-	
-	// now we need the css and scripts. so add them
-	global $wgHooks; 
-	//$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 
 	return RMForm::createRichMediaForm($params);
 }
@@ -120,12 +125,18 @@ function smwfProcessRMFormParserFunction(&$parser) {
 function smwfProcessRMLinkParserFunction(&$parser) {
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
-	
-	// now we need the css and scripts. so add them
-	global $wgHooks; 
-	//$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 
 	return RMForm::createRichMediaLink($params);
+}
+
+/**
+ * The {{#rmew }} parser function processing part.
+ */
+function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
+	$params = func_get_args();
+	array_shift( $params ); // we already know the $parser ...
+
+	return RMForm::createRichMediaEmbedWindowLink($params);
 }
 
 function RMFormUsage_Magic(&$magicWords, $langCode){
@@ -135,6 +146,11 @@ function RMFormUsage_Magic(&$magicWords, $langCode){
 
 function RMLinkUsage_Magic(&$magicWords, $langCode){
 	$magicWords['RMLinkUsage'] = array( 0, 'rml' );
+	return true;
+}
+
+function RMEmbedWindowLinkUsage_Magic(&$magicWords, $langCode){
+	$magicWords['RMEmbedWindowLinkUsage'] = array( 0, 'rmew' );
 	return true;
 }
 

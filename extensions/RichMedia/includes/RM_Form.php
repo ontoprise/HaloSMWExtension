@@ -59,5 +59,39 @@ END;
 
 		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
 	}
+	
+	static function createRichMediaEmbedWindowLink(&$parameter) {
+		global $wgOut, $wgParser, $wgRequest;
+
+		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) )
+			$link_name = $parameter[0];
+		else
+			$link_name = 'Link';
+
+		if ( array_key_exists( 1, $parameter ) && isset( $parameter[1] ) )
+			$link_title = $parameter[1];
+		else
+			$link_title = wfMsgNoTrans('smw_rm_uploadheadline');
+		
+		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) )
+			$rev_width = 'width:' . $parameter[2];
+		else
+			$rev_width = 'width:800';
+
+		if ( array_key_exists( 3, $parameter ) && isset( $parameter[3] ) )
+			$rev_height = 'height:' . $parameter[3];
+		else
+			$rev_height = 'height:600';
+		
+		$rev = $rev_width . ' ' . $rev_height;
+		
+		$queryString = "target=$link_name";
+		$embedWindowPage = SpecialPage::getPage('EmbedWindow');
+		$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
+
+		$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_title</a>";
+		
+		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+	}
 }
 ?>
