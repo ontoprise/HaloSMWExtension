@@ -62,7 +62,8 @@ class ConsistencyBot extends GardeningBot {
 		$categories = explode(";", $categoryRestriction);
 		$categoryTitles = array();
 		foreach($categories as $c) {
-			$categoryTitles[] = Title::newFromText($c, NS_CATEGORY);
+			$t = Title::newFromText($c, NS_CATEGORY);
+			if (!is_null($t)) $categoryTitles[] = $t;
 		}
 
 		// get inheritance graphs
