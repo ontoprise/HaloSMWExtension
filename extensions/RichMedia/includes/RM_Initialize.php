@@ -155,7 +155,7 @@ function RMEmbedWindowLinkUsage_Magic(&$magicWords, $langCode){
 }
 
 function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
-	$magicWords['img_preview'] = array( 0, 'preview' );
+	$magicWords['img_nopreview'] = array( 0, 'nopreview' );
 	return true;
 }
 

@@ -603,7 +603,7 @@ Index: includes/filerepo/FileRepo.php
  		return false;
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 4536)
+--- includes/parser/Parser.php	(revision 4545)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1643,7 +1643,13 @@
  
@@ -681,7 +681,7 @@ Index: includes/parser/Parser.php
  				'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
  					'upright', 'border' ),
 +				//patch
-+				'preview' => array('preview'),
++				'nopreview' => array('nopreview'),
  			);
  			static $internalParamMap;
  			if ( !$internalParamMap ) {
@@ -694,7 +694,7 @@ Index: includes/parser/Parser.php
 +		/*op-patch|BL|2009-08-19|RichMedia|ImageOverlay|start*/
 +		// save information about preview in global var
 +		global $wgRMImagePreview;
-+		$params['preview'] ? $wgRMImagePreview = true : $wgRMImagePreview = false;
++		$params['nopreview'] ? $wgRMImagePreview = false : $wgRMImagePreview = true;
 +		/*op-patch|BL|2009-08-19|end*/
 +		
  		wfRunHooks( 'ParserMakeImageParams', array( $title, $file, &$params ) );
