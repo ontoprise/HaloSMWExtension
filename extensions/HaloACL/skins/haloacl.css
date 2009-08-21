@@ -784,3 +784,19 @@ abbr,acronym { border:0;
 #content_haloacl_whitelist_panel{
     padding:10px 0;
 }
+
+
+/* AUTOCPMPLETER */
+
+#myAutoComplete {
+    width:25em; /* set width here or else widget will expand to fit its container */
+    padding-bottom:2em;
+}
+
+#myAutoComplete li{
+   height:20px;
+}
+
+.match {
+	    font-weight:bold;
+	}
