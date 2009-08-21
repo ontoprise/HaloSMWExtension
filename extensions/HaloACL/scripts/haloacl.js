@@ -430,10 +430,33 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
     console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
 };
 
+YAHOO.haloacl.addUserToUserArray = function(panelid, name){
+    if(name.length > 4){
+
+        if (!YAHOO.haloacl.clickedArrayUsers[panelid]){
+            YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
+        }
+        console.log("adding user "+name+" to "+panelid+"-array");
+        var alreadyContained = false;
+        for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+            if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
+                alreadyContained = true;
+                console.log("found element - not creating new entry");
+            }
+        }
+        if(!alreadyContained){
+            YAHOO.haloacl.clickedArrayUsers[panelid].push(name);
+        }
+    }else{
+        console.log("to short username added - skipping");
+    }
+
+    console.log(":::"+YAHOO.haloacl.clickedArrayUsers[panelid]);
+};
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
     if(name.length > 4){
-        console.log("adding "+name+" to "+panelid+"-array");
+        console.log("adding group "+name+" to "+panelid+"-array");
         var alreadyContained = false;
         for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
             if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
@@ -464,6 +487,7 @@ YAHOO.haloacl.removeGroupFromGroupArray = function(panelid,name){
     }
     YAHOO.haloacl.clickedArrayGroups[panelid].splice(elementToRemove,1);
 };
+
 YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
@@ -472,6 +496,42 @@ YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     }
     return false;
 
+};
+
+YAHOO.haloacl.isNameInUsersGroupsArray = function(panelid, name){
+    for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
+            return true;
+        }
+    }
+    return false;
+
+};
+
+
+
+
+
+
+YAHOO.haloacl.isNameInUserArray = function(panelid, name){
+    for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+        if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
+            return true;
+        }
+    }
+    return false;
+
+};
+
+YAHOO.haloacl.hasGroupsOrUsers = function(panelid){
+    console.log("testing "+panelid);
+    if (((YAHOO.haloacl.clickedArrayGroups[panelid]) && (YAHOO.haloacl.clickedArrayGroups[panelid].length > 0)) || (YAHOO.haloacl.clickedArrayUsers[panelid] && (YAHOO.haloacl.clickedArrayUsers[panelid].length > 0))) {
+        console.log("available");
+        return true;
+    } else {
+        console.log("not available");
+        return false;
+    }
 
 };
 
