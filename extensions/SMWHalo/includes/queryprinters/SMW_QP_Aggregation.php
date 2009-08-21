@@ -31,6 +31,15 @@ class SMWAggregationResultPrinter extends SMWResultPrinter {
 	protected $mTemplate = '';
 	protected $functions = array("sum"=>"", "max"=>"","min"=>"","avg"=>"","median"=>"");
 
+    protected function setSupportedParameters() {
+        $sep = new SMWQPParameter('sep', 'Separator', '<string>', NULL, "Separator used");
+        $template = new SMWQPParameter('template', 'Template', '<string>', NULL, "Template used to display");
+        
+        $this->mParameters[] = $sep;
+        $this->mParameters[] = $template;
+        
+
+    }
 	protected function readParameters($params,$outputmode) {
 		SMWResultPrinter::readParameters($params,$outputmode);
 

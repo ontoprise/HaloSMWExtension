@@ -63,13 +63,20 @@ class SMWHaloiCalendarResultPrinter extends SMWiCalendarResultPrinter {
 
 class SMWHaloListResultPrinter extends SMWListResultPrinter {
 	protected function setSupportedParameters() {
+		$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
+        $link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
+        $limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
+        $default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
 		$sep = new SMWQPParameter('sep', 'Separator', '<string>', NULL, "Separator used");
-		$template = new SMWQPParameter('template', 'Separator', '<string>', NULL, "Template used to display");
+		$template = new SMWQPParameter('template', 'Template', '<string>', NULL, "Template used to display");
 		$userparam = new SMWQPParameter('userparam', 'User param', '<string>', NULL, "User param");
+		$this->mParameters[] = $order;
+		$this->mParameters[] = $link;
+		$this->mParameters[] = $limit;
+		$this->mParameters[] = $default;
 		$this->mParameters[] = $sep;
 		$this->mParameters[] = $template;
 		$this->mParameters[] = $userparam;
-
 	}
 }
 

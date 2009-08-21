@@ -16,10 +16,10 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
 		$link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
 		$limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-		$headers = new SMWQPParameter('headers', 'Headers', '<boolean>', NULL, "Show headers or not.");
+		$headers = new SMWQPParameter('headers', 'Headers', array('show', 'hide'), NULL, "Show headers or not.");
 		$intro = new SMWQPParameter('intro', 'Intro', '<string>', NULL, "Intro text");
 		$mainlabel = new SMWQPParameter('label', 'Mainlabel', '<string>', NULL, "Name of main column");
-		$default = new SMWQPParameter('default', 'Order', '<string>', NULL, "Displayed when there are no results at all.");
+		$default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
 		 
 		$this->mParameters = array($order, $link, $limit, $headers, $intro, $mainlabel, $default);
 
