@@ -131,6 +131,11 @@ class HACLParserFunctions  {
 	
 	// HACLParserFunctions: The only instance of this class
 	private static $mInstance = null; 
+	
+	// array(string): fingerprints of all invokations of parser functions
+	// The parser may be called several times in the same article but the data
+	// generated in the parser functions must only be saved once.
+	private $mFingerprints = array();
 
 	/**
 	 * Constructor for HACLParserFunctions. This object is a singleton.
@@ -195,6 +200,7 @@ class HACLParserFunctions  {
 	 */
 	public static function access(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("access", $params);
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
@@ -203,6 +209,7 @@ class HACLParserFunctions  {
 			                        "The parser functions are called for different articles.");
 		}
 
+		
 		// handle the parameter "assigned to".
 		list($users, $groups, $em1) = self::$mInstance->assignedTo($params);
 		
@@ -226,8 +233,11 @@ class HACLParserFunctions  {
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => create and store the new right for later use.
-			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
-			self::$mInstance->mInlineRights[] = $ir;
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
+				self::$mInstance->mInlineRights[] = $ir;
+				self::$mInstance->mFingerprints[] = $fingerprint;
+			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
@@ -275,6 +285,7 @@ class HACLParserFunctions  {
 	 */
 	public static function propertyAccess(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("propertyaccess", $params);
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
@@ -306,8 +317,11 @@ class HACLParserFunctions  {
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => create and store the new right for later use.
-			$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
-			self::$mInstance->mPropertyRights[] = $ir;
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
+				self::$mInstance->mPropertyRights[] = $ir;
+				self::$mInstance->mFingerprints[] = $fingerprint;
+			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
@@ -355,6 +369,7 @@ class HACLParserFunctions  {
 		}
 		
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("predefinedRight", $params);
 		
 		// handle the parameter 'rights'
 		list($rights, $em) = self::$mInstance->rights($params);
@@ -362,16 +377,19 @@ class HACLParserFunctions  {
 		if (count($em) == 0) {
 			// no errors
 			// => store the rights for later use.
-			foreach ($rights as $r) {
-				try {
-					$rightDescr = HACLSecurityDescriptor::newFromName($r);
-					self::$mInstance->mPredefinedRights[] = $rightDescr;
-				} catch (HACLSDException $e) {
-					// There is an article with the name of the right but it does
-					// not define a right (yet)
-					$em[] = wfMsgForContent('hacl_invalid_predefined_right', $r);
-					self::$mInstance->mDefinitionValid = false;
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				foreach ($rights as $r) {
+					try {
+						$rightDescr = HACLSecurityDescriptor::newFromName($r);
+						self::$mInstance->mPredefinedRights[] = $rightDescr;
+					} catch (HACLSDException $e) {
+						// There is an article with the name of the right but it does
+						// not define a right (yet)
+						$em[] = wfMsgForContent('hacl_invalid_predefined_right', $r);
+						self::$mInstance->mDefinitionValid = false;
+					}
 				}
+				self::$mInstance->mFingerprints[] = $fingerprint;
 			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
@@ -413,6 +431,7 @@ class HACLParserFunctions  {
 		}
 		
 		$params = self::$mInstance->getParameters(func_get_args());
+		
 		global $wgContLang, $haclgContLang;
 		$errMsgs = array();
 		$pages = array();
@@ -474,6 +493,8 @@ class HACLParserFunctions  {
 	public static function manageRights(&$parser) {
 		
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("manageRights", $params);
+		
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
@@ -488,8 +509,11 @@ class HACLParserFunctions  {
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => store the list of assignees for later use.
-			self::$mInstance->mRightManagerUsers  = array_merge(self::$mInstance->mRightManagerUsers, $users);
-			self::$mInstance->mRightManagerGroups = array_merge(self::$mInstance->mRightManagerGroups, $groups);
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				self::$mInstance->mRightManagerUsers  = array_merge(self::$mInstance->mRightManagerUsers, $users);
+				self::$mInstance->mRightManagerGroups = array_merge(self::$mInstance->mRightManagerGroups, $groups);
+				self::$mInstance->mFingerprints[] = $fingerprint;
+			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
@@ -521,6 +545,7 @@ class HACLParserFunctions  {
 	 */
 	public static function addMember(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("addMember", $params);
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
@@ -535,8 +560,11 @@ class HACLParserFunctions  {
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => store the list of members for later use.
-			self::$mInstance->mUserMembers  = array_merge(self::$mInstance->mUserMembers, $users);
-			self::$mInstance->mGroupMembers = array_merge(self::$mInstance->mGroupMembers, $groups);
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				self::$mInstance->mUserMembers  = array_merge(self::$mInstance->mUserMembers, $users);
+				self::$mInstance->mGroupMembers = array_merge(self::$mInstance->mGroupMembers, $groups);
+				self::$mInstance->mFingerprints[] = $fingerprint;
+			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
@@ -570,6 +598,8 @@ class HACLParserFunctions  {
 	 */
 	public static function manageGroup(&$parser) {
 		$params = self::$mInstance->getParameters(func_get_args());
+		$fingerprint = self::$mInstance->makeFingerprint("managerGroup", $params);
+		
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
@@ -584,8 +614,11 @@ class HACLParserFunctions  {
 		if (count($errMsgs) == 0) {
 			// no errors
 			// => store the list of assignees for later use.
-			self::$mInstance->mGroupManagerUsers  = array_merge(self::$mInstance->mGroupManagerUsers, $users);
-			self::$mInstance->mGroupManagerGroups = array_merge(self::$mInstance->mGroupManagerGroups, $groups);
+			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
+				self::$mInstance->mGroupManagerUsers  = array_merge(self::$mInstance->mGroupManagerUsers, $users);
+				self::$mInstance->mGroupManagerGroups = array_merge(self::$mInstance->mGroupManagerGroups, $groups);
+				self::$mInstance->mFingerprints[] = $fingerprint;
+			}
 		} else {
 			self::$mInstance->mDefinitionValid = false;
 		}
@@ -1520,5 +1553,22 @@ class HACLParserFunctions  {
 		
 		$fromArticle->doDelete("");
 	}
-		
+
+	/**
+	 * Creates a fingerprint from a parser function name and its parameters.
+	 *
+	 * @param string $functionName
+	 * 		Name of the parser function
+	 * @param array(string=>string) $params
+	 * 		Parameters of the parser function
+	 * @return string
+	 * 		The fingerprint
+	 */
+	private static function makeFingerprint($functionName, $params) {
+		$fingerprint = "$functionName";
+		foreach ($params as $k => $v) {
+			$fingerprint .= $k.$v;
+		}
+		return $fingerprint;
+	}
 }
