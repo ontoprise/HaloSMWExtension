@@ -1,0 +1,773 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<!---
+
+This test checks if the OntologyBrowser hides all protected pages and property
+values.
+
+-->
+<project name="OntologyBrowserWithACL" default="testOntologyBrowserWithACL">
+
+	&login;
+	
+	<target name="testOntologyBrowserWithACL">
+		
+		<webtest name="Testing Category Tree as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category Tree: Make sure that only public root categories are shown -->
+			<verifyXPath 
+				description="Check first category: Event"
+				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a"		
+				text="Event" />
+			<verifyXPath 
+				description="Check second category: ProtectedCategory"
+				xpath="//div[@id='categoryTree']/table[2]/tbody/tr/td/a"		
+				text="ProtectedCategory" />
+			<not description="Check absence of third category">
+				<verifyXPath 
+					description="Check absence of third category"
+					xpath="//div[@id='categoryTree']/table[3]/tbody/tr/td/a" />
+			</not>
+			
+		</webtest>
+		
+		<webtest name="Testing Property Tree as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+
+			<!-- Property Tree: Make sure that only public root properties are shown -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath 
+				description="Check property 1: Date"
+				xpath="//div[@id='propertyTree']/table[1]/tbody/tr/td/a"		
+				text="Date" />
+			<verifyXPath 
+				description="Check property 2: HiddenProperty"
+				xpath="//div[@id='propertyTree']/table[2]/tbody/tr/td/a"		
+				text="HiddenProperty" />
+			<verifyXPath 
+				description="Check property 3: Related event"
+				xpath="//div[@id='propertyTree']/table[3]/tbody/tr/td/a"		
+				text="Related event" />
+			<not description="Check absence of further properties">
+				<verifyXPath 
+					description="Check absence of further properties"
+					xpath="//div[@id='propertyTree']/table[4]/tbody/tr/td/a" />
+			</not>
+			
+		</webtest>
+
+		<webtest name="Testing sub-categories as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category Tree: Make sure that the subcategory of "ACategory" is not shown -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="ACategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check first category: ACategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="ACategory" />
+			<clickLink 
+				description="Click link: ACategory" 
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a[@title='ACategory']"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<not description="Check absence of second category">
+				<verifyXPath 
+					description="Check absence of second category"
+					xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a" />
+			</not>
+			
+		</webtest>
+		
+		<webtest name="Testing sub-properties as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property Tree: Make sure that the subproperty of "AProperty" is not shown -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AProperty" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check first property: AProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a"		
+				text="AProperty" />
+			<clickLink 
+				description="Click link: AProperty" 
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a[@title='AProperty']"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<not description="Check absence of second property">
+				<verifyXPath 
+					description="Check absence of second property"
+					xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a" />
+			</not>
+			
+		</webtest>
+	
+		<webtest name="Testing instances of a category as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Instance Tree: Make sure that only public instances are shown -->
+			<clickLink 
+				description="Click link: ProtectedCategory" 
+				xpath="//div[@id='categoryTree']/table[2]/tbody/tr/td/a[@title='ProtectedCategory']"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+
+			<verifyXPath 
+				description="Check instance 1: "
+				xpath="//div[@id='instanceList']"		
+				text="No instances available." />
+			
+		</webtest>
+		
+		<webtest name="Testing parent categories as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category Tree: Make sure that protected parent category can not be accessed -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="InstanceOfAHiddenSuperCategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<clickElement
+				description="Click link: LeftArrow" 
+				xpath="//div[@id='ontologybrowser']/div[@id='leftArrow']/img"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<clickLink 
+				description="Click link: InstanceOfAHiddenSuperCategory" 
+				xpath="//div[@id='instanceList']/table/tbody/tr/td[1]/a"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<verifyXPath 
+				description="Check that there is no parent category."
+				xpath="//div[@id='categoryTree']"		
+				text="No categories available." />
+
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="ACategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check that there is no parent category."
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="ACategory" />
+			
+		</webtest>
+		
+		<webtest name="Testing parent property as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property Tree: Make sure that protected parent property can not be accessed -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AProperty" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check that there is no parent property."
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a"		
+				text="AProperty" />
+			
+		</webtest>
+		
+		<webtest name="Testing values of protected properties as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property table: Make sure that values of protected properties can not be accessed -->
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="Event" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+
+			<clickLink 
+				description="Click link: Event 2" 
+				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			
+			<verifyXPath 
+				description="Check the properties of Event 2: Related event"
+				xpath="//div[@id='relattributes']/table/tbody/tr/td[1]/a[1]"		
+				text="Related event" />
+			<verifyXPath 
+				description="Check the value of property of Event 2: Event 3"
+				xpath="//div[@id='relattributes']/table/tbody/tr/td[2]"		
+				text="Event 3" />
+			<not 
+				description="Make sure there are no further properties">
+				<verifyXPath 
+					description="Make sure there are no further properties"
+					xpath="//div[@id='relattributes']/table/tbody/tr[2]/td[1]/a[1]" />
+			</not>
+						
+		</webtest>
+		
+		<webtest name="Test filter browsing as RestrictedUser">
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category tree: Make sure that protected pages are not listed -->
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AHidden" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check that there is no hidden category."
+				xpath="//div[@id='categoryTree']"		
+				text="No categories available." />
+			<verifyXPath 
+				description="Check for instance 1: InstanceOfAHiddenSuperCategory."
+				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"		
+				text="InstanceOfAHiddenSuperCategory" />
+			<not description="Check for absence of instance 2">
+				<verifyXPath 
+					description="Check for absence of instance 2"
+					xpath="//div[@id='instanceList']/table/tbody/tr[2]/td[1]/a"
+					text="Property:AHiddenSubProperty"/>
+			</not>
+			
+			<!-- Property tree: Make sure that protected property pages are not listed -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AHidden" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			
+			<verifyXPath 
+				description="Check for properties."
+				xpath="//div[@id='propertyTree']"		
+				text="No attributes available." />
+
+			<verifyXPath 
+				description="Check for instance 1: InstanceOfAHiddenSuperCategory."
+				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"		
+				text="InstanceOfAHiddenSuperCategory" />
+			
+		</webtest>
+		
+		
+		
+		
+		
+		<webtest name="Testing Category Tree as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+
+			<!-- Category Tree: Make sure that all public root categories are shown -->
+			<verifyXPath 
+				description="Check first category: AHiddenSuperCategory"
+				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a"		
+				text="AHiddenSuperCategory" />
+			<verifyXPath 
+				description="Check second category: Event"
+				xpath="//div[@id='categoryTree']/table[2]/tbody/tr/td/a"		
+				text="Event" />
+			<verifyXPath 
+				description="Check third category: HiddenRootCategory"
+				xpath="//div[@id='categoryTree']/table[3]/tbody/tr/td/a"		
+				text="HiddenRootCategory" />
+			<verifyXPath 
+				description="Check fourth category: ProtectedCategory"
+				xpath="//div[@id='categoryTree']/table[4]/tbody/tr/td/a"		
+				text="ProtectedCategory" />
+		</webtest>
+
+		<webtest name="Testing Property Tree as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+
+			<!-- Property Tree: Make sure that all root properties are shown -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			<verifyXPath 
+				description="Check property 1: AHiddenSuperProperty"
+				xpath="//div[@id='propertyTree']/table[1]/tbody/tr/td/a"		
+				text="AHiddenSuperProperty" />
+			<verifyXPath 
+				description="Check property 2: Date"
+				xpath="//div[@id='propertyTree']/table[2]/tbody/tr/td/a"		
+				text="Date" />
+			<verifyXPath 
+				description="Check property 3: HiddenProperty"
+				xpath="//div[@id='propertyTree']/table[3]/tbody/tr/td/a"		
+				text="HiddenProperty" />
+			<verifyXPath 
+				description="Check property 4: HiddenRootProperty"
+				xpath="//div[@id='propertyTree']/table[4]/tbody/tr/td/a"		
+				text="HiddenRootProperty" />
+			<verifyXPath 
+				description="Check property 5: Related event"
+				xpath="//div[@id='propertyTree']/table[5]/tbody/tr/td/a"		
+				text="Related event" />
+			
+		</webtest>
+
+		<webtest name="Testing sub-categories as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category Tree: Make sure that the sub- and super-category of "ACategory" is shown -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="ACategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check category 1: AHiddenSuperCategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperCategory" />
+			<verifyXPath 
+				description="Check category 2: ACategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a"		
+				text="ACategory" />
+			<clickLink 
+				description="Click link: ACategory" 
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a[@title='ACategory']"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<verifyXPath 
+				description="Check category 3: AHiddenSubCategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/a"		
+				text="AHiddenSubCategory" />
+			
+		</webtest>
+		
+		<webtest name="Testing sub-properties as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property Tree: Make sure that the sub- and super-property of "AProperty" is shown -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AProperty" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check property 1: AHiddenSuperProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperProperty" />
+			<verifyXPath 
+				description="Check property 2: AProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a"		
+				text="AProperty" />
+			<clickLink 
+				description="Click link: AProperty" 
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a[@title='AProperty']"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<verifyXPath 
+				description="Check property 3: AHiddenSubProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/a"		
+				text="AHiddenSubProperty" />
+			
+		</webtest>
+		
+		<webtest name="Testing instances of a category as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Instance Tree: Make sure that all instances are shown -->
+			<clickLink 
+				description="Click link: ProtectedCategory" 
+				xpath="//div[@id='categoryTree']/table[4]/tbody/tr/td/a[@title='ProtectedCategory']"/>
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+
+			<verifyXPath 
+				description="Check instance 1: HiddenInstance"
+				xpath="//div[@id='instanceContainer']/div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"		
+				text="HiddenInstance" />
+			<verifyXPath 
+				description="Check instance 2: HiddenInstanceOfSubcat"
+				xpath="//div[@id='instanceContainer']/div[@id='instanceList']/table/tbody/tr[2]/td[1]/a"		
+				text="HiddenInstanceOfSubcat" />
+		</webtest>
+		
+		<webtest name="Testing parent categories as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category Tree: Make sure that protected parent category can be accessed -->
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="InstanceOfAHiddenSuperCategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<clickElement
+				description="Click link: LeftArrow" 
+				xpath="//div[@id='ontologybrowser']/div[@id='leftArrow']/img"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			<clickLink 
+				description="Click link: InstanceOfAHiddenSuperCategory" 
+				xpath="//div[@id='instanceList']/table/tbody/tr/td[1]/a"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+
+			<verifyXPath 
+				description="Check for the parent category."
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperCategory" />
+
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="ACategory" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check for the correct parent category: AHiddenSuperCategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperCategory" />
+			
+		</webtest>
+		
+		<webtest name="Testing parent properties as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property Tree: Make sure that protected parent property can be accessed -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AProperty" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check for the correct parent property: AHiddenSuperProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperProperty" />
+			
+		</webtest>
+		
+		<webtest name="Testing values of protected properties as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Property table: Make sure that values of protected properties can be accessed -->
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="Event" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+
+			<clickLink 
+				description="Click link: Event 2" 
+				xpath="//div[@id='instanceList']/table/tbody/tr[2]/td[1]/a"/>
+			<sleep 
+				description="2s pause" 
+				seconds="2" />
+			
+			<verifyXPath 
+				description="Check the properties of Event 2: Date"
+				xpath="//div[@id='relattributes']/table/tbody/tr[1]/td[1]/a[1]"		
+				text="Date" />
+			<verifyXPath 
+				description="Check the value of property of Event 2: Tomorrow"
+				xpath="//div[@id='relattributes']/table/tbody/tr[1]/td[2]"
+				regex="true"
+				text="\s*Tomorrow\s*" />
+
+			<verifyXPath 
+				description="Check the properties of Event 2: Related event"
+				xpath="//div[@id='relattributes']/table/tbody/tr[2]/td[1]/a[1]"		
+				text="Related event" />
+			<verifyXPath 
+				description="Check the value of property of Event 2: Event 3"
+				xpath="//div[@id='relattributes']/table/tbody/tr[2]/td[2]"		
+				regex="true"
+				text="\s*Event 3\s*" />
+						
+		</webtest>
+		
+		<webtest name="Test filter browsing as NormalUser">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<invoke 
+				url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
+				description="Open the ontology browser." />
+			<sleep description="4s pause" seconds="4" />
+			
+			<!-- Category tree: Make sure that all category pages are listed -->
+			
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AHidden" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			<verifyXPath 
+				description="Check category 1: AHiddenSuperCategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/a"		
+				text="AHiddenSuperCategory" />
+			<verifyXPath 
+				description="Check category 2: ACategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a"		
+				text="ACategory" />
+			<verifyXPath 
+				description="Check category 3: AHiddenSubCategory"
+				xpath="//div[@id='categoryTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/a"		
+				text="AHiddenSubCategory" />
+			
+						
+			<verifyXPath 
+				description="Check for instance 1: InstanceOfAHiddenSuperCategory."
+				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"		
+				text="InstanceOfAHiddenSuperCategory" />
+			<verifyXPath 
+				description="Check for instance 2: Property:AHiddenSubProperty"
+				xpath="//div[@id='instanceList']/table/tbody/tr[2]/td[1]/a"		
+				text="Property:AHiddenSubProperty" />
+			<verifyXPath 
+				description="Check for instance 3: Property:AHiddenSuperProperty"
+				xpath="//div[@id='instanceList']/table/tbody/tr[3]/td[1]/a"		
+				text="Property:AHiddenSuperProperty" />
+
+			
+			<!-- Property tree: Make sure that property pages are listed -->
+			<clickLink 
+				description="Click link: Property Tree" 
+				htmlId="propertyTreeSwitch"/>
+			<sleep description="4s pause" seconds="4" />
+			<setInputField 
+				htmlId="FilterBrowserInput" 
+				value="AHidden" />
+			<clickButton 
+				htmlId="filterBrowseButton" />
+			<sleep 
+				description="4s pause" 
+				seconds="4" />
+			
+			<verifyXPath 
+				description="Check for property 1: AHiddenSuperProperty"
+				xpath="//div[@id='propertyTree']/table[1]/tbody/tr/td/a"		
+				text="AHiddenSuperProperty" />
+			<verifyXPath 
+				description="Check for property 2: AProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a"		
+				text="AProperty" />
+			<verifyXPath 
+				description="Check for property 3: AHiddenSubProperty"
+				xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/div/table/tbody/tr/td[2]/a"		
+				text="AHiddenSubProperty" />
+
+			<verifyXPath 
+				description="Check for instance 1: InstanceOfAHiddenSuperCategory."
+				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"		
+				text="InstanceOfAHiddenSuperCategory" />
+			
+		</webtest>
+		
+		
+		
+	</target>
+		
+	
+</project>

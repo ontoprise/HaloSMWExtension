@@ -76,7 +76,69 @@
 				<param name="article" value="ACL:Property/Related event"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#property access: assigned to =#,User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
-		</webtest>			
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Category:HiddenRootCategory">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Category:HiddenRootCategory"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Property:HiddenRootProperty">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Property:HiddenRootProperty"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Category:AHiddenSubCategory">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Category:AHiddenSubCategory"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Category:AHiddenSuperCategory">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Category:AHiddenSuperCategory"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Property:AHiddenSubProperty">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Property:AHiddenSubProperty"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		<webtest name="createArticle: ACL:Page/Property:AHiddenSuperProperty">
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Page/Property:AHiddenSuperProperty"/>
+				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access:  assigned to=User:NormalUser| actions=*| description=Allows * for NormalUser| name=* for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+		</webtest>	
+		
+		
 	</target>
 				
 </project>

@@ -34,6 +34,122 @@
     </namespaces>
   </siteinfo>
   <page>
+    <title>Property:AProperty</title>
+    <id>51</id>
+    <revision>
+      <id>88</id>
+      <timestamp>2009-08-19T13:31:38Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">This is a normal property without any protection. It has a hidden sub-property [[Property:AHiddenSubProperty]] and a hidden super property [[Property:AHiddenSuperProperty]].
+
+[[subproperty of::Property:AHiddenSuperProperty]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:AHiddenSubProperty</title>
+    <id>52</id>
+    <revision>
+      <id>85</id>
+      <timestamp>2009-08-19T09:27:17Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is a sub-property of [[:Property:AProperty]]. This page is protected by [[ACL:Page/Property:AHiddenSubProperty]].  Only the user &quot;NormalUser&quot; can access it.  [[subproperty of::Propert...</comment>
+      <text xml:space="preserve">This is a sub-property of [[:Property:AProperty]]. This page is protected by [[ACL:Page/Property:AHiddenSubProperty]].
+
+Only the user &quot;NormalUser&quot; can access it.
+
+[[subproperty of::Property:AProperty]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:AHiddenSuperProperty</title>
+    <id>54</id>
+    <revision>
+      <id>87</id>
+      <timestamp>2009-08-19T13:31:13Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is a super-property of [[:Property:AProperty]]. This page is protected by [[ACL:Page/Property:AHiddenSuperProperty]].  Only the user &quot;NormalUser&quot; can access it.</comment>
+      <text xml:space="preserve">This is a super-property of [[:Property:AProperty]]. This page is protected by [[ACL:Page/Property:AHiddenSuperProperty]].
+
+Only the user &quot;NormalUser&quot; can access it.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HiddenRootProperty</title>
+    <id>44</id>
+    <revision>
+      <id>74</id>
+      <timestamp>2009-08-19T06:04:25Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">This property page is protected by [[ACL:Page/Property:HiddenRootProperty]]. 
+
+Only the user &quot;NormalUser&quot; will be able to access this page.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Date</title>
+    <id>38</id>
+    <revision>
+      <id>38</id>
+      <timestamp>2009-06-18T10:29:16Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; | ]]  [[has type::Type:String| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; | ]]
+
+[[has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Related event</title>
+    <id>39</id>
+    <revision>
+      <id>39</id>
+      <timestamp>2009-06-18T10:29:40Z</timestamp>
+      <contributor>
+        <ip>NormalUser</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Event; Category:Event| ]]  [[has type::Type:Page| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Event; Category:Event| ]]
+
+[[has type::Type:Page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:HiddenProperty</title>
+    <id>33</id>
+    <revision>
+      <id>33</id>
+      <timestamp>2009-05-28T10:18:06Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This page is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  [[Has type::Type:String]]</comment>
+      <text xml:space="preserve">This page is not accessible for 
+*User:RestrictedUser
+*User:RGBUser
+
+Search keyword: HiddenByACL
+
+[[LinkHiddenPages]]
+[[is hidden::true]]
+
+[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
     <title>ACLNamespaceTransclusion</title>
     <id>14</id>
     <revision>
@@ -485,28 +601,6 @@ Section 4</text>
     </revision>
   </page>
   <page>
-    <title>Property:HiddenProperty</title>
-    <id>33</id>
-    <revision>
-      <id>33</id>
-      <timestamp>2009-05-28T10:18:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This page is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  [[Has type::Type:String]]</comment>
-      <text xml:space="preserve">This page is not accessible for 
-*User:RestrictedUser
-*User:RGBUser
-
-Search keyword: HiddenByACL
-
-[[LinkHiddenPages]]
-[[is hidden::true]]
-
-[[Has type::Type:String]]</text>
-    </revision>
-  </page>
-  <page>
     <title>Category:Event</title>
     <id>34</id>
     <revision>
@@ -573,36 +667,6 @@ Search keyword: HiddenByACL
 [[Related event::Event 1]]
 
 [[Category:Event]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Date</title>
-    <id>38</id>
-    <revision>
-      <id>38</id>
-      <timestamp>2009-06-18T10:29:16Z</timestamp>
-      <contributor>
-        <ip>NormalUser</ip>
-      </contributor>
-      <comment>New page: [[has domain and range::Category:Event; | ]]  [[has type::Type:String| ]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:Event; | ]]
-
-[[has type::Type:String| ]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Related event</title>
-    <id>39</id>
-    <revision>
-      <id>39</id>
-      <timestamp>2009-06-18T10:29:40Z</timestamp>
-      <contributor>
-        <ip>NormalUser</ip>
-      </contributor>
-      <comment>New page: [[has domain and range::Category:Event; Category:Event| ]]  [[has type::Type:Page| ]]</comment>
-      <text xml:space="preserve">[[has domain and range::Category:Event; Category:Event| ]]
-
-[[has type::Type:Page| ]]</text>
     </revision>
   </page>
   <page>
@@ -797,6 +861,87 @@ WHERE {
       <text xml:space="preserve">&lt;nowiki&gt;
 [[Date::Tomorrow]]
 &lt;/nowiki&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:HiddenRootCategory</title>
+    <id>42</id>
+    <revision>
+      <id>76</id>
+      <timestamp>2009-08-19T06:09:17Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">This is a top level category. It is protected by [[ACL:Page/Category:HiddenRootCategory]].
+
+Only the user &quot;NormalUser&quot; will be able to access this page.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:ACategory</title>
+    <id>46</id>
+    <revision>
+      <id>78</id>
+      <timestamp>2009-08-19T06:41:33Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <text xml:space="preserve">This is a normal category without any protection.
+It has a hidden sub-category [[:Category:AHiddenSubCategory]] and a hidden super category [[:Category:AHiddenSuperCategory]].
+
+[[Category:AHiddenSuperCategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:AHiddenSuperCategory</title>
+    <id>50</id>
+    <revision>
+      <id>82</id>
+      <timestamp>2009-08-19T07:38:14Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is a super-category of [[:Category:ACategory]]. This page is protected by [[ACL:Page/Category:AHiddenSuperCategory]].  Only the user &quot;NormalUser&quot; can access it.</comment>
+      <text xml:space="preserve">This is a super-category of [[:Category:ACategory]]. This page is protected by [[ACL:Page/Category:AHiddenSuperCategory]].
+
+Only the user &quot;NormalUser&quot; can access it.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:AHiddenSubCategory</title>
+    <id>47</id>
+    <revision>
+      <id>79</id>
+      <timestamp>2009-08-19T06:45:30Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is a sub-category of [[:Category:ACategory]]. This page is protected by [[ACL:Page/Category:AHiddenSubCategory]].  Only the user &quot;NormalUser&quot; can access it.  [[Category:ACategory]]</comment>
+      <text xml:space="preserve">This is a sub-category of [[:Category:ACategory]]. This page is protected by [[ACL:Page/Category:AHiddenSubCategory]].
+
+Only the user &quot;NormalUser&quot; can access it.
+
+[[Category:ACategory]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>InstanceOfAHiddenSuperCategory</title>
+    <id>56</id>
+    <revision>
+      <id>90</id>
+      <timestamp>2009-08-19T14:12:43Z</timestamp>
+      <contributor>
+        <username>NormalUser</username>
+        <id>3</id>
+      </contributor>
+      <comment>New page: This is an instance of [[:Category:AHiddenSuperCategory]].  [[Category:AHiddenSuperCategory]]</comment>
+      <text xml:space="preserve">This is an instance of [[:Category:AHiddenSuperCategory]].
+
+[[Category:AHiddenSuperCategory]]</text>
     </revision>
   </page>
   
