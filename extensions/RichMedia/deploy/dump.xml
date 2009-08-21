@@ -320,22 +320,21 @@
     <title>Template:RMListInnerTable</title>
     <id>313</id>
     <revision>
-      <id>1286</id>
-      <timestamp>2009-08-19T12:16:27Z</timestamp>
+      <id>1361</id>
+      <timestamp>2009-08-21T10:25:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;
-&lt;br/&gt;
 |-
-| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt; {{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
-| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|800|600}}&lt;/span&gt;
+| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}} }}&lt;/span&gt;
+| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
 | bgcolor=&quot;white&quot; | [[{{{3}}}]]
-| bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
+| bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{4}}}&lt;/span&gt;{{{4}}}
 | align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot; title=&quot;info description!&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span class=&quot;plainlinks&quot; title=&quot;edit with forms description&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
 | bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
-    <hash>a480afa6d071779633eaa3fc454e2bb1</hash>
+    <hash>cb951c89e26c23fac248d0fbb59e6462</hash>
     </revision>
   </page>
   <page>
@@ -1133,14 +1132,14 @@ The template does the following
     <title>Form:RMUpload</title>
     <id>328</id>
     <revision>
-      <id>1277</id>
-      <timestamp>2009-08-19T11:24:34Z</timestamp>
+      <id>1365</id>
+      <timestamp>2009-08-21T13:12:19Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <text xml:space="preserve">{{Bundle}}
-
-&lt;noinclude&gt;
+      <text xml:space="preserve">&lt;noinclude&gt;
+{{Bundle}}
 This is the 'RMUpload' form.
 To add a page with this form, enter the page name below;
 if a page with that name already exists, you will be sent to a form to edit that page.
@@ -1194,7 +1193,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 
 {{{end template}}}
 &lt;/includeonly&gt;</text>
-    <hash>3b03b9fd05441c35f346ee0cd7ccc293</hash>
+    <hash>7bef02d1bafc776dfecead0b45e3ed84</hash>
     </revision>
   </page>
   <page>
