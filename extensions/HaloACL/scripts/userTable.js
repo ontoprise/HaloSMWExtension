@@ -37,6 +37,8 @@
 
 YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
+    
+
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         var checkedFromTree = false;
@@ -163,6 +165,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     var setupCheckboxHandling = function(){
         //console.log("checkAllSelectesUsers fired");
+        console.log(YAHOO.haloacl.clickedArrayUsers);
         $$('.datatableDiv_'+panelid+'_users').each(function(item){
             //console.log("found element");
             //console.log(item.name);
