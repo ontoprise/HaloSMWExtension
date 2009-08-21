@@ -68,7 +68,6 @@ class SMWQPParameter {
 
 function smwfhCreateDefaultParameters() {
 	$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
-	$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
 	$link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
 	$limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
 	$headers = new SMWQPParameter('headers', 'Headers', array('show', 'hide'), NULL, "Show headers or not.");
@@ -225,4 +224,3 @@ class SMWHalovCardResultPrinter extends SMWvCardResultPrinter {
 		return $this->mParameters;
 	}
 }
-?>

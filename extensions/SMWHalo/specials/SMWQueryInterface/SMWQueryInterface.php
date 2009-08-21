@@ -119,37 +119,7 @@ class SMWQueryInterface extends SpecialPage {
 						
 					</tr>
 					
-					<tr id="templatenamefield" style="display:none">
-						<td>
-							Template name:
-						</td>
-						<td>
-							<input type="text" id="template_name" class="wickEnabled general-forms" typehint="' . NS_TEMPLATE . '">
-						</td>
-					</tr>
-					<tr id="rssfield" style="display:none">
-						<td>
-							RSS Title:
-						</td>
-						<td>
-							<input type="text" id="rsstitle">
-						</td>
-						<td>
-							RSS Description:
-						</td>
-						<td>
-							<input type="text" id="rssdescription">
-						</td>
-					</tr>
-					<tr id="exhibitfield" style="display:none">
-						<td>
-							View:
-						</td>
-						<td>
-							tiles <input type="checkbox" checked="checked" id="x_tiles_check" onchange="qihelper.updatePreview()"/>
-							tabular <input type="checkbox" id="x_tabular_check" onchange="qihelper.updatePreview()"/>						
-						</td>
-					</tr>
+					
 					
 				</table>
 			</div>

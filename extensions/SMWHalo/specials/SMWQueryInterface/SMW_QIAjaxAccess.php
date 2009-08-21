@@ -38,15 +38,12 @@ function smwf_qi_QIAccess($method, $params) {
 		$result="null";
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
-            $fixparams = array('format' => $p_array[1], 'link' => $p_array[2], 'intro' => $p_array[3], 'sort' => $p_array[4], 'limit' => $p_array[5], 'mainlabel' => $p_array[6], 'order' => $p_array[7], 'default' => $p_array[8], 'headers' => $p_array[9]);
             
-            // read additional parameters for different result printers
-            switch ($p_array[1]) {
-            	case 'exhibit':
-            		$fixparams['views'] = $p_array[10];
-            		break;
-            	default:
-            }            
+            $params = explode("|",$p_array[1]);
+             foreach($params as $p) {
+             	list($key, $value) = explode("=", $p);
+             	$fixparams[$key] = $value;              
+             }
             
             // fix bug 10812: if query string contains a ,
             $p_array[0] = str_replace('%2C', ',', $p_array[0]);
@@ -77,7 +74,7 @@ function smwf_qi_QIAccess($method, $params) {
             // merge fix parameters from GUI, they always overwrite others
             $params = array_merge($params, $fixparams);
             $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
-			switch ($p_array[1]) {
+			switch ($fixparams['format']) {
             	case 'timeline':
             		return $result;
             		break;

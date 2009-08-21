@@ -334,19 +334,11 @@ QIHelper.prototype = {
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
-			var params = ask + ",";
-			params += $('layout_format').value + ',';
-			params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
-			params += this.serializeSpecialQPParameters(",");
-			if ($('layout_format').value == "exhibit") {
-				if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
-					params += ",'tiles,tabular'";
-				} else if ($('x_tiles_check').checked) {
-					params += ",tiles";
-				} else {
-					params += ",tabular";
-				}
-			}
+			var params = ask + ",";  
+			params += "format="+$('layout_format').value + '|';
+			if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
+			params += this.serializeSpecialQPParameters("|");
+			
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
 					this.openResultPreview.bind(this));
 		} else { // query is empty
@@ -504,22 +496,7 @@ QIHelper.prototype = {
 				: (' | sort=' + $('layout_sort').value);
 		
 		fullQuery += "| " + this.serializeSpecialQPParameters("|");
-		if ($('layout_format').value == "template") {
-			fullQuery += ' | template=' + $('template_name').value;
-		} else if ($('layout_format').value == "rss") {
-			fullQuery += $('rsstitle').value == "" ? ''
-					: ' | rsstitle=' + $('rsstitle').value;
-			fullQuery += $('rssdescription').value == "" ? ''
-					: ' | rssdescription=' + $('rssdescription').value;
-		} else if ($('layout_format').value == "exhibit") {
-			if (($('x_tiles_check').checked && $('x_tabular_check').checked)) {
-				fullQuery += "| views=tiles,tabular";
-			} else if ($('x_tiles_check').checked) {
-				fullQuery += "| views=tiles";
-			} else {
-				fullQuery += "| views=tabular";
-			}
-		}
+		
 
 		fullQuery += "|}}";
 
@@ -1682,23 +1659,7 @@ QIHelper.prototype = {
 	},
 
 	checkFormat : function() {
-		if ($('layout_format').value == "template") {
-			$('templatenamefield').style.display = "";
-			$('exhibitfield').style.display = "none";
-			$('rssfield').style.display = "none";
-		} else if ($('layout_format').value == "rss") {
-			$('rssfield').style.display = "";
-			$('exhibitfield').style.display = "none";
-			$('templatenamefield').style.display = "none";
-		} else if ($('layout_format').value == "exhibit") {
-			$('exhibitfield').style.display = "";
-			$('templatenamefield').style.display = "none";
-			$('rssfield').style.display = "none";
-		} else {
-			$('templatenamefield').style.display = "none";
-			$('rssfield').style.display = "none";
-			$('exhibitfield').style.display = "none";
-		}
+		
 		// update result preview
 		this.getSpecialQPParameters($('layout_format').value);
 		this.updatePreview();
