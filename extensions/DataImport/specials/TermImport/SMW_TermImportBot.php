@@ -212,38 +212,21 @@ class TermImportBot extends GardeningBot {
 		$cp = strtolower($cp) == 'true' ? true : false;
 
 		echo("\nCreate xml parser");
-		$parser = new XMLParser($terms);
-		echo("\nParse xml");
-		$result = $parser->parse();
-		echo("\nXML parsed");
-		if ($result !== TRUE) {
-			echo("\n".$result);
-			return $result;
-		}
-
-		// Count number of terms to import for the progress bar
-		$nextElem = 0;
-		$numTerms = 0;
-		echo("\n");
-		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
-			++$numTerms;
-			echo(".");
-		}
+		$parser = new SimpleXMLElement($terms);
+		
+		$numTerms = count($parser->children());
 		echo("\nNumber of terms: ".$numTerms."\n");
-
 		$this->setNumberOfTasks(1);
 		$this->addSubTask($numTerms);
 
-		$nextElem = 0;
 		$noErrors = true;
 		$timeInTitle = $this->getDateString();
 		$termImportName = "TermImport:".$termImportName."/".$timeInTitle;
-		
-		while (($term = $parser->getElement(array('terms', 'term'), $nextElem))) {
+		foreach($parser->children() as $term){
 			//check if this is a callback term
-			if(@ array_key_exists('CALLBACK', $term['TERM'][0]['attributes'])){
+			if($term['callback']){
 				$callBackResult = 
-					$wil->executeCallBack($term['TERM'][0]['attributes']['CALLBACK']
+					$wil->executeCallBack($term['callback']
 					,$mp ,$cp, $termImportName);
 				$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 				$cBRParser = new XMLParser($callBackResult);
@@ -266,14 +249,14 @@ class TermImportBot extends GardeningBot {
 				continue;
 			}
 			
-			$caResult = $this->createArticle($term['TERM'][0]['value'], $mp, $cp, $termImportName);
+			$caResult = $this->createArticle($term, $mp, $cp, $termImportName);
 			$this->worked(1);
 
 			if ($caResult !== true) {
 				$noErrors = false;
 			}
 		}
-		return $noErrors ? true : wfMsg('smw_ti_import_errors');
+		return $noErrors ? true : wfMsg('smw_ti_import_errors');		
 	}
 
 	/**
@@ -294,7 +277,11 @@ class TermImportBot extends GardeningBot {
 	 * 		<true>, if the term was successfully imported or an
 	 * 		error message, otherwise.
 	 */
-	private function createArticle(&$term, $mappingPolicy, $overwriteExistingArticle, $termImportName) {
+	private function createArticle(&$termSXE, $mappingPolicy, $overwriteExistingArticle, $termImportName) {
+		$term = array();
+		foreach($termSXE->children() as $tag => $value){
+			$term[strtoupper($tag)] = array(array("value" => $value));  
+		}
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
 		$title = $term['ARTICLENAME'];
@@ -302,6 +289,7 @@ class TermImportBot extends GardeningBot {
 			$title = $title[0]['value'];
 		}
 		if (!$title) {
+			echo("\n".wfMsg('smw_ti_missing_articlename'));
 			$log->addGardeningIssueAboutArticle(
 				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
 				Title::newFromText(wfMsg('smw_ti_import_error')));
@@ -309,6 +297,7 @@ class TermImportBot extends GardeningBot {
 		}
 		$title = strip_tags($title);
 		if ($title == '') {
+			echo("\n".wfMsg('smw_ti_invalid_articlename', $title));
 			$log->addGardeningIssueAboutArticle(
 				$this->id, SMW_GARDISSUE_MISSING_ARTICLE_NAME,
 				Title::newFromText(wfMsg('smw_ti_import_error')));
