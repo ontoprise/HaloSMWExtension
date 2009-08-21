@@ -191,6 +191,8 @@ function haclAddHTMLHeader(&$out) {
     
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/autocomplete/autocomplete-min.js"></script>');
+
     // -------------------
     // -------------------
 
@@ -203,6 +205,7 @@ function haclAddHTMLHeader(&$out) {
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
 
 
     $out->addLink(array(
@@ -216,6 +219,12 @@ function haclAddHTMLHeader(&$out) {
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => 'http://yui.yahooapis.com/2.7.0/build/container/assets/container.css'
+    ));
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => 'http://yui.yahooapis.com/2.7.0/build/autocomplete/assets/skins/sam/autocomplete.css'
     ));
 
 
