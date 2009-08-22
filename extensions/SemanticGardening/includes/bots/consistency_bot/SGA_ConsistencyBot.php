@@ -1212,8 +1212,8 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance,page_namespace AS namespace FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from JOIN '.$smwids.' ON page_title = smw_title AND page_namespace = smw_namespace JOIN '.$smwatts2.' ON smw_id = s_id ' .
                         'WHERE p_id='.$propertyID.' AND page_is_redirect = 0 AND '.$articleNamespaces.' AND cl_to = '.$db->addQuotes($categoryTitle->getDBkey()).')');
+			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 		}
-		$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($categoryTitle->getDBkey()).')');
 
 		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
 		// maximum iteration length is maximum category tree depth.

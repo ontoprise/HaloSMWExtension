@@ -83,7 +83,7 @@ class AnnotationLevelConsistency {
 				$subjects = array();
 				$p_DV = SMWPropertyValue::makeUserProperty($p->getDBkey());
 				if (!$p_DV->isUserDefined()) continue;
-				if (is_null($restrictToCategories)) {
+				if (is_null($restrictToCategories) || empty($restrictToCategories)) {
 					$allPropertySubjects = smwfGetStore()->getAllPropertySubjects($p_DV);
 					foreach ($allPropertySubjects as $dv) {
 						$subjects[] = $dv->getTitle();
