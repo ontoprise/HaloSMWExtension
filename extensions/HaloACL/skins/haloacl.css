@@ -521,6 +521,7 @@ abbr,acronym { border:0;
     width:20px;
     height:20px;
     background:url(images/info.png) no-repeat;
+    float:right;
 }
 
 .haloacl_editbutton {
@@ -798,5 +799,30 @@ abbr,acronym { border:0;
 }
 
 .match {
-	    font-weight:bold;
-	}
+    font-weight:bold;
+}
+
+
+/* FILTER */
+
+.haloacl_manageacl_contentmenu_element .sub{
+    margin-left:20px;
+}
+
+
+.yui-tt .bd {
+    z-index:100;
+    /* Styles here... */
+}
+
+
+/* Manage ACL Tree */
+
+.haloacl_manageACL_right_title{
+    float:left;
+    width:200px;
+}
+.haloacl_manageACL_right_description{
+    float:right;
+    width:200px;
+}

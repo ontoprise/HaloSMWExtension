@@ -133,7 +133,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab2 = new YAHOO.widget.Tab({
             label: 'Manage own default user template',
-            dataSrc:'createAclTemplateContent',
+            dataSrc:'createManageUserTemplateContent',
             cacheData:false,
             active:false,
             id:"createTmpAclTab"

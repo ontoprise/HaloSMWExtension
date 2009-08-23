@@ -315,7 +315,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '</span></td>';
 
-            sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\');return false;"></div>';
+            sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
 
@@ -359,7 +359,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 });
 
 
-YAHOO.haloaclrights.popup = function(id){
+YAHOO.haloaclrights.popup = function(id, label){
 
 
     if(YAHOO.haloaclrights.popupPanel == null){
@@ -370,7 +370,7 @@ YAHOO.haloaclrights.popup = function(id){
             resizable:true,
             context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
         });
-        YAHOO.haloaclrights.popupPanel.setHeader("Right Details"+id);
+        YAHOO.haloaclrights.popupPanel.setHeader(label);
         YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
         YAHOO.haloaclrights.popupPanel.render();
         YAHOO.haloaclrights.popupPanel.show();
@@ -457,6 +457,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
      * @default "TextNode"
      */
     _type: "CustomNode",
+    tt1:YAHOO.widget.Tooltip,
 
     customNodeParentChange: function() {
     //this.updateParent();
@@ -676,20 +677,33 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     getContentHtml: function() {
         var sb = [];
 
+        var shortLabel = "";
+        if (this.label.length > 25) {
+            shortLabel = "..."+this.label.substring(this.label.length-25,this.label.length);
+        } else {
+            shortLabel = this.label;
+        }
+
         if (this.treeType=="rw") {
 
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+            sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">testtitle</span></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
-            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' class="haloacl_manageACL_right_description"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = shortLabel;
+            sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton" ></div>';
+            this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, { context:this.labelElId, text:this.label, zIndex :10 });
+
             
             sb[sb.length] = '</span></td>';
+
 
         } else {
             sb[sb.length] = '<td>';

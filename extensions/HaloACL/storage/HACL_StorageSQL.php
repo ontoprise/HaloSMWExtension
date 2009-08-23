@@ -691,19 +691,30 @@ WHERE user.user_id = $userID
 	public function getSDs($types) {
 		$db =& wfGetDB( DB_SLAVE );
 		$sdt = $db->tableName('halo_acl_security_descriptors');
-		$sql = "SELECT * FROM $sdt WHERE type IN (".$types.")";
+                $p = $db->tableName('page');
+                $u = $db->tableName('user');
+		$sql = "SELECT * FROM $sdt
+                    LEFT JOIN $p ON $p.page_id = $sdt.sd_id
+                    WHERE 1=0";
 
+                foreach ($types as $type) {
+                    switch($type) {
+                        case "all": $sql .= " OR 1" ; break;
+                        case "page": $sql .= " OR type='page'" ; break;
+                        case "category": $sql .= " OR type='category'" ; break;
+                        case "property": $sql .= " OR type='property'" ; break;
+                        case "namespace": $sql .= " OR type='namespace'" ; break;
+                        case "standardacl": $sql .= " OR (type='namespace' OR type='property' OR type='category' OR type='page')" ; break;
+                        case "acltemplate": $sql .= " OR (pe_id='0' AND NOT (SUBSTRING($p.page_title FROM 10) IN (SELECT user_name FROM $u)))" ; break;
+                        case "defusertemplate": $sql .= " OR (pe_id='0' AND (SUBSTRING($p.page_title FROM 10) IN (SELECT user_name FROM $u)))" ; break;
+                    }
+                }
 
 		$sds = array();
-
 		$res = $db->query($sql);
-
                 while ($row = $db->fetchObject($res)) {
-
                     $sds[] = HACLSecurityDescriptor::newFromID($row->sd_id);
-
 		}
-
 		$db->freeResult($res);
 
 		return $sds;

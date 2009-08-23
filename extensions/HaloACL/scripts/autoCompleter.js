@@ -54,7 +54,7 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
         YAHOO.util.Dom.get(fieldName).value = args[2][1];
 
     }
-    oAC.itemSelectEvent.subscribe(fnCallback);
+    //oAC.itemSelectEvent.subscribe(fnCallback);
 
 
     oAC.generateRequest = function(sQuery) {
