@@ -1797,7 +1797,7 @@ OBSchemaPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
      * @return HTML
      */
     newRangeInputBox: function() {
-        var toReplace = '<input class="wickEnabled" typeHint="14" type="text" id="typeRange'+this.count+'_ontologytools" tabIndex="'+(this.count+104)+'"/>';
+        var toReplace = '<input class="wickEnabled" constraints="namespace: 14" type="text" id="typeRange'+this.count+'_ontologytools" tabIndex="'+(this.count+104)+'"/>';
         toReplace += '<img style="cursor: pointer; cursor: hand;" src="'+wgServer+wgScriptPath+'/extensions/SMWHalo/skins/redcross.gif" onclick="'+this.objectname+'.removeTypeOrRange(\'typeRange'+this.count+'_ontologytools\', true)"/>';
         return toReplace;
     },

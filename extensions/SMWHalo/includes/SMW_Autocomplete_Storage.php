@@ -1,0 +1,573 @@
+<?php
+/*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the halo-Extension.
+ *
+ *   The halo-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The halo-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @author Kai Kühn
+ *
+ */
+abstract class AutoCompletionStorage {
+
+	/**
+	 * Returns units which matches the types of the given property and the substring
+	 *
+	 * @param Title $property
+	 * @param string $substring
+	 *
+	 * @return array of strings
+	 */
+	public abstract function getUnits(Title $property, $substring);
+
+	/**
+	 * Returns possible values for a given property.
+	 *
+	 * @param Title $property
+	 * @return array of strings
+	 */
+	public abstract function getPossibleValues(Title $property);
+
+	/**
+	 * Retrieves pages matching the requestoptions and the given namespaces
+	 *
+	 * @param string match
+	 * @param array of integer or NULL
+	 *
+	 * @return array of Title
+	 */
+	public abstract function getPages($match, $namespaces = NULL);
+
+	/**
+	 * Returns properties containing $match with unit $unit
+	 *
+	 * TODO: should be transferred to storage layer
+	 *
+	 * @param string $match substring
+	 * @param string $typeLabel primitive type or unit
+	 */
+	public abstract function getPropertyWithType($match, $typeLabel);
+
+	/**
+	 * Returns (including inferred) properties which match a given $instance for domain or range
+	 * If $instance is not part of any category, it will return an empty result set.
+	 *
+	 * @param string $userInputToMatch substring must be part of property title
+	 * @param Title $instance
+	 * @param boolean $matchDomainOrRange True, if $instance must match domain, false for range
+	 * 
+	 * @return array (Title property, boolean inferred)
+	 */
+	public abstract function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange);
+    
+	/**
+	 * Returns (including inferred) properties which have a given $category as domain.
+     * 
+	 * @param string $userInputToMatch substring must be part of property title
+	 * @param Title $category
+	 * 
+	 * @return array (Title property, boolean inferred)
+	 */
+	public abstract function getPropertyForCategory($userInputToMatch, $category);
+	
+	/**
+	 * Returns (including inferred) properties which are used on pages of the given $category.
+	 *
+	 * @param string $userInputToMatch
+	 * @param Title $category
+	 * 
+	 * @return array (Title property, boolean inferred)
+	 */
+	public abstract function getPropertyForAnnotation($userInputToMatch, $category);
+	/**
+	 * Returns instances which are member of the given range(s) and which match $userInputToMatch.
+	 *
+	 * @param string $userInputToMatch
+	 * @param Array of SMWNaryValue $domainRangeAnnotations
+	 *
+	 * @return array of (Title instance)
+	 */
+	public abstract function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations);
+}
+
+/**
+ * TODO: Document, including member functions
+ */
+class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
+
+	public function getUnits(Title $property, $substring) {
+		$all_units = array();
+		$substring = str_replace("_", " ",$substring);
+
+		// get all types of a property (normally 1)
+		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+		$conversionFactorDV = SMWPropertyValue::makeProperty("_CONV");
+		$conversionFactorSIDV = SMWPropertyValue::makeProperty("___cfsi");
+		$types = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
+		foreach($types as $t) {
+
+			$subtypes = explode(";", $t->getXSDValue());
+
+			foreach($subtypes as $st) {
+				// get all units registered for a given type
+				$typeTitle = Title::newFromText($st, SMW_NS_TYPE);
+				$units = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorDV);
+				$units_si = smwfGetStore()->getPropertyValues($typeTitle, $conversionFactorSIDV);
+				$all_units = array_merge($all_units, $units, $units_si);
+			}
+		}
+		$result = array();
+
+		// regexp for a measure (=number + unit)
+		$measure = "/(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)/";
+
+		// extract unit substring and ignore the number (if existing)
+		preg_match($measure, $substring, $matches);
+		$substring = strtolower($matches[5]);
+
+		// collect all units which match the substring (if non empty, otherwise all)
+		foreach($all_units as $u) {
+			$s_units = explode(",", $u->getXSDValue());
+			foreach($s_units as $su) {
+				if ($substring != '') {
+					if (strpos(strtolower($su), $substring) > 0) {
+						preg_match($measure, $su, $matches);
+						if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
+					}
+				} else {
+					preg_match($measure, $su, $matches);
+					if (count($matches) >= 5) $result[] = $matches[5];// ^^^ 5th brackets
+				}
+			}
+		}
+
+		return array_unique($result);   // make sure all units appear only once.
+	}
+
+	public function getPossibleValues(Title $property) {
+		$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
+		$poss_values = smwfGetStore()->getPropertyValues($property, $possibleValueDV);
+		$result = array();
+		foreach($poss_values as $v) {
+			$result[] = $v->getXSDValue();
+		}
+		return $result;
+	}
+
+	public function getPages($match, $namespaces = NULL) {
+		$result = "";
+		$db =& wfGetDB( DB_SLAVE );
+		$sql = "";
+		$page = $db->tableName('page');
+		$requestoptions = new SMWRequestOptions();
+		$requestoptions->limit = SMW_AC_MAX_RESULTS;
+		$options = DBHelper::getSQLOptionsAsString($requestoptions);
+		if ($namespaces == NULL || count($namespaces) == 0) {
+
+			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
+
+		} else {
+
+			for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
+				if ($i > 0) $sql .= ' UNION ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) UNION ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) ';
+			}
+
+		}
+
+		$result = array();
+
+		$res = $db->query($sql.$options);
+
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+			}
+		}
+		$db->freeResult($res);
+		return $result;
+	}
+
+
+	public function getPropertyWithType($match, $typeLabel) {
+		$db =& wfGetDB( DB_SLAVE );
+		$smw_spec2 = $db->tableName('smw_spec2');
+		$smw_ids = $db->tableName('smw_ids');
+		$page = $db->tableName('page');
+		$result = array();
+		$typeID = SMWDataValueFactory::findTypeID($typeLabel);
+		$hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+		$res = $db->query('(SELECT i2.smw_title AS title FROM '.$smw_ids.' i2 '.
+                               'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
+                               'JOIN '.$smw_ids.' i ON s1.value_string = i.smw_title AND i.smw_namespace = '.SMW_NS_TYPE.' '.
+                               'JOIN '.$smw_spec2.' s2 ON s2.s_id = i.smw_id AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
+                               'WHERE i2.smw_namespace = '.SMW_NS_PROPERTY.' AND UPPER(i2.smw_title) LIKE UPPER(' . $db->addQuotes("%$match%").'))'.
+                            ' UNION (SELECT smw_title AS title FROM smw_ids i '.
+                               'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
+                               'WHERE UPPER(i.smw_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
+                               'UPPER(s1.value_string) = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
+                            'LIMIT '.SMW_AC_MAX_RESULTS);
+
+		 
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+			}
+		}
+
+		$db->freeResult($res);
+
+		return $result;
+	}
+
+
+	public function getPropertyForInstance($userInputToMatch, $instance, $matchDomainOrRange) {
+		global $smwgDefaultCollation;
+		$db =& wfGetDB( DB_SLAVE );
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$smw_ids = $db->tableName('smw_ids');
+		 
+
+		$nary_pos = $matchDomainOrRange ? 0 : 1;
+
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+		$domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+		if ($domainAndRange == NULL) {
+			$domainAndRangeID = -1; // does never exist
+		} else {
+			$domainAndRangeID = $domainAndRange->smw_id;
+		}
+
+		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+
+
+		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');
+
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum category tree depth.
+		do  {
+			$maxDepth--;
+
+			// get next supercategory level
+			$db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT cl_to AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND page_title IN (SELECT * FROM smw_ob_properties_sub))');
+
+			// insert direct properties of current supercategory level
+			$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+			 
+			// copy supercatgegories to subcategories of next iteration
+			$db->query('DELETE FROM smw_ob_properties_sub');
+			$db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
+
+			// check if there was least one more supercategory. If not, all properties were found.
+			$res = $db->query('SELECT COUNT(category) AS numOfSuperCats FROM smw_ob_properties_sub');
+			$numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
+			$db->freeResult($res);
+
+			$db->query('DELETE FROM smw_ob_properties_super');
+
+		} while ($numOfSuperCats > 0 && $maxDepth > 0);
+
+		$res = $db->query('SELECT DISTINCT property FROM smw_ob_properties');
+		$result = array();
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+				$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+			}
+		}
+
+		$db->freeResult($res);
+
+
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_super');
+		$db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
+		return $result;
+	}
+	
+    public function getPropertyForCategory($userInputToMatch, $category) {
+        global $smwgDefaultCollation;
+        $db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $smw_ids = $db->tableName('smw_ids');
+         
+
+        $nary_pos = 0;
+
+        if (!isset($smwgDefaultCollation)) {
+            $collation = '';
+        } else {
+            $collation = 'COLLATE '.$smwgDefaultCollation;
+        }
+        // create virtual tables
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+        if ($domainAndRange == NULL) {
+            $domainAndRangeID = -1; // does never exist
+        } else {
+            $domainAndRangeID = $domainAndRange->smw_id;
+        }
+   
+        $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+
+
+        $db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
+
+        $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+        // maximum iteration length is maximum category tree depth.
+        do  {
+            $maxDepth--;
+
+            // get next supercategory level
+            $db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT cl_to AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND page_title IN (SELECT * FROM smw_ob_properties_sub))');
+
+            // insert direct properties of current supercategory level
+            $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+             
+            // copy supercatgegories to subcategories of next iteration
+            $db->query('DELETE FROM smw_ob_properties_sub');
+            $db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
+
+            // check if there was least one more supercategory. If not, all properties were found.
+            $res = $db->query('SELECT COUNT(category) AS numOfSuperCats FROM smw_ob_properties_sub');
+            $numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
+            $db->freeResult($res);
+
+            $db->query('DELETE FROM smw_ob_properties_super');
+
+        } while ($numOfSuperCats > 0 && $maxDepth > 0);
+
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+            }
+        }
+
+        $db->freeResult($res);
+
+
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties');
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties_super');
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
+        return $result;
+    }
+    
+    public function getPropertyForAnnotation($userInputToMatch, $category) {
+        global $smwgDefaultCollation;
+        $db =& wfGetDB( DB_SLAVE );
+        $page = $db->tableName('page');
+        $categorylinks = $db->tableName('categorylinks');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $smw_atts2 = $db->tableName('smw_atts2');
+        $smw_ids = $db->tableName('smw_ids');
+         
+
+        $nary_pos = 0;
+
+        if (!isset($smwgDefaultCollation)) {
+            $collation = '';
+        } else {
+            $collation = 'COLLATE '.$smwgDefaultCollation;
+        }
+        // create virtual tables
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255), inferred ENUM(\'true\',\'false\') '.$collation.')
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_sub (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+        $db->query( 'CREATE TEMPORARY TABLE smw_ob_properties_super (category VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithPropertiesByCategory' );
+
+        $domainAndRange = $db->selectRow($db->tableName('smw_ids'), array('smw_id'), array('smw_title' => smwfGetSemanticStore()->domainRangeHintRelation->getDBkey()) );
+        if ($domainAndRange == NULL) {
+            $domainAndRangeID = -1; // does never exist
+        } else {
+            $domainAndRangeID = $domainAndRange->smw_id;
+        }
+   
+        $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+        $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+        
+       
+        $db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
+
+        $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+        // maximum iteration length is maximum category tree depth.
+        do  {
+            $maxDepth--;
+
+            // get next supercategory level
+            $db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT cl_to AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND page_title IN (SELECT * FROM smw_ob_properties_sub))');
+
+            // insert direct properties of current supercategory level
+            $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+             $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                      
+                     
+           
+            // copy supercatgegories to subcategories of next iteration
+            $db->query('DELETE FROM smw_ob_properties_sub');
+            $db->query('INSERT INTO smw_ob_properties_sub (SELECT * FROM smw_ob_properties_super)');
+
+            // check if there was least one more supercategory. If not, all properties were found.
+            $res = $db->query('SELECT COUNT(category) AS numOfSuperCats FROM smw_ob_properties_sub');
+            $numOfSuperCats = $db->fetchObject($res)->numOfSuperCats;
+            $db->freeResult($res);
+
+            $db->query('DELETE FROM smw_ob_properties_super');
+
+        } while ($numOfSuperCats > 0 && $maxDepth > 0);
+
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                $result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+            }
+        }
+
+        $db->freeResult($res);
+
+
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties');
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties_super');
+        $db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
+        return $result;
+    }
+	 
+
+	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
+		global $smwgDefaultCollation;
+		$db =& wfGetDB( DB_SLAVE );
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+
+		if (!isset($smwgDefaultCollation)) {
+			$collation = '';
+		} else {
+			$collation = 'COLLATE '.$smwgDefaultCollation;
+		}
+		// create virtual tables
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.')
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_super (category VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
+
+		// initialize with direct instances
+		foreach($domainRangeAnnotations as $dr) {
+			$dvs = $dr->getDVs();
+			if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+                        'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+
+			 
+			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).')');
+
+		}
+
+		$maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+		// maximum iteration length is maximum category tree depth.
+		do  {
+			$maxDepth--;
+
+			// get next subcategory level
+			$db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
+
+			// insert direct instances of current subcategory level
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+                        'JOIN '.$categorylinks.' ON page_id = cl_from ' .
+                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+
+			// copy subcatgegories to supercategories of next iteration
+			$db->query('DELETE FROM smw_ob_instances_super');
+			$db->query('INSERT INTO smw_ob_instances_super (SELECT * FROM smw_ob_instances_sub)');
+
+			// check if there was least one more subcategory. If not, all instances were found.
+			$res = $db->query('SELECT COUNT(category) AS numOfSubCats FROM smw_ob_instances_super');
+			$numOfSubCats = $db->fetchObject($res)->numOfSubCats;
+			$db->freeResult($res);
+
+			$db->query('DELETE FROM smw_ob_instances_sub');
+
+		} while ($numOfSubCats > 0 && $maxDepth > 0);
+
+
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances_super');
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
+
+		 
+		$res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
+
+		$results = array();
+		if($db->numRows( $res ) > 0)
+		{
+			$row = $db->fetchObject($res);
+			 
+			while($row)
+			{
+				$instance = Title::newFromText($row->instance, NS_MAIN);
+				$results[] = $instance;
+				$row = $db->fetchObject($res);
+			}
+
+		}
+		$db->freeResult($res);
+
+		// drop virtual tables
+		$db->query('DROP TEMPORARY TABLE smw_ob_instances');
+		return $results;
+	}
+}
+
+
+

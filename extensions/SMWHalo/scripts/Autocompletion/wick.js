@@ -47,9 +47,7 @@ AutoCompleter.prototype = {
           // current input box of last AC request
         this.currentInputBox;
 
-         // type hint (for INPUTs)
-        this.typeHint;
-        
+              
         // constraints
         this.constraints;
 
@@ -195,8 +193,7 @@ AutoCompleter.prototype = {
                 if (!this.siw) this.siw = new SmartInputWindow();
                 this.siw.inputBox = upEl;
                 this.currentInputBox = upEl;
-                 // get type hint 
-                this.typeHint = this.siw.inputBox.getAttribute("typeHint");
+               
 
                 // get constraint 
                 this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
@@ -220,7 +217,7 @@ AutoCompleter.prototype = {
                          // runs AC after 900ms have elapsed. That means user can enter several chars 
                          // without causing a AJAX call after each, but only after the last.
                         this.timer = window.setTimeout(
-                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
+                                         "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.constraints)",
                                          SMW_AC_MANUAL_TRIGGERING_TIME);
                     } else {
                          // if userinputToMatch is empty --> hide floater
@@ -233,9 +230,7 @@ AutoCompleter.prototype = {
                     if (!this.siw) this.siw = new SmartInputWindow();
                     this.siw.inputBox = upEl;
                     this.currentInputBox = upEl;
-                     // get type hint 
-                    this.typeHint = this.siw.inputBox.getAttribute("typeHint");
-                
+                                   
                     // get constraints
                     this.constraints = this.siw.inputBox.getAttribute("constraints") == null ? "" : this.siw.inputBox.getAttribute("constraints");
                     
@@ -260,7 +255,7 @@ AutoCompleter.prototype = {
                              // runs AC after 900ms have elapsed. That means user can enter several chars 
                              // without causing a AJAX call after each, but only after the last.
                             this.timer = window.setTimeout(
-                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.typeHint, autoCompleter.constraints)",
+                                             "autoCompleter.timedAC(autoCompleter.userInputToMatch, autoCompleter.userContext, autoCompleter.currentInputBox, autoCompleter.constraints)",
                                              SMW_AC_AUTO_TRIGGERING_TIME);
                         } else {
                              // if userinputToMatch is empty --> hide floater
@@ -288,7 +283,7 @@ AutoCompleter.prototype = {
     },  //handleKeyPress()
 
      // used to run AC after a certain peroid of time has elapsed
-    timedAC: function(userInputToMatch, userContext, inputBox, typeHint, constraints) {
+    timedAC: function(userInputToMatch, userContext, inputBox, constraints) {
         function userInputToMatchResult(request) {
             this.hidePendingAJAXIndicator();
 
@@ -316,7 +311,7 @@ AutoCompleter.prototype = {
 
              // add it it cache if it has at least one result
             if (this.collection.length > 0) {
-                AC_matchCache.addLookup(userContext + userInputToMatch, this.collection, typeHint);
+                AC_matchCache.addLookup(userContext + userInputToMatch, this.collection, constraints);
             }
             
              // process match results
@@ -326,7 +321,7 @@ AutoCompleter.prototype = {
         this.ignorePending = false;
 
          // check if AC result for current user input is in cache
-        var cacheResult = AC_matchCache.getLookup(userContext + userInputToMatch, typeHint);
+        var cacheResult = AC_matchCache.getLookup(userContext + userInputToMatch, constraints);
         if (cacheResult == null) {  // if no request it
             if (userInputToMatch == null) return;
 
@@ -337,7 +332,6 @@ AutoCompleter.prototype = {
                 wgTitle,
                 userInputToMatch,
                 userContext,
-                typeHint,
                 constraints
             ], userInputToMatchResult.bind(this), SMW_AJAX_AC);
         } else {  // if yes, use it from cache.
@@ -813,7 +807,7 @@ AutoCompleter.prototype = {
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
             var displayMatches = (j < this.siw.MAX_MATCHES);
             var entry = pointerToCollectionToUse[i];
-            var mEntry = this.simplify(entry.getText());
+            var mEntry = this.simplify(entry.getText()+entry.getExtraContent());
 
             if ((mEntry.indexOf(userInput) == 0)) {
                 userInput = userInput.replace(/\>/gi, '\\}').replace(/\< ?/gi, '\\{');
@@ -821,25 +815,25 @@ AutoCompleter.prototype = {
 
                 if (displayMatches) {
                     this.siw.matchCollection[j]
-                        = new SmartInputMatch(entry.getText(),
+                        = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                               mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>").replace(/_/g, ' '),
-                              entry.getType());
+                              entry.getType(), entry.isInferred());
                 }
 
                 j++;
             } else if (mEntry.match(re1m) || mEntry.match(re2m)) {
                 if (displayMatches) {
-                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText(),
+                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.isInferred());
                 }
 
                 j++;
             } else if (mEntry.match(reMeasure)) {
                 if (displayMatches) {
-                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText(),
+                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.isInferred());
                 }
 
                 j++;
@@ -868,6 +862,8 @@ AutoCompleter.prototype = {
 
             for (i = 0; i < this.siw.matchCollection.length; i++) {
                 selectedString = this.siw.matchCollection[i].isSelected ? ' selectedSmartInputItem' : '';
+                selectedString += this.siw.matchCollection[i].isInferred ? ' inferredSmartInputItem' : '';
+               
                 var id = ("selected" + i);
                 a += '<p id="' + id + '" class="matchedSmartInputItem' + selectedString + '">'
                     + this.siw.matchCollection[i].getImageTag()
@@ -1340,7 +1336,12 @@ AutoCompleter.prototype = {
         var collection = new Array();
 
         for (var i = 0, n = children.length; i < n; i++) {
-            collection[i] = new MatchItem(children[i].firstChild.nodeValue, parseInt(children[i].getAttribute("type")));
+        	var content = children[i].firstChild.nodeValue;
+        	var type = parseInt(children[i].getAttribute("type"));
+        	var inferred = children[i].getAttribute("inferred") == "true";
+        	var extraContentTextNode = children[i].firstChild.nextSibling.firstChild;
+        	var extraContent = extraContentTextNode != null ? extraContentTextNode.nodeValue : "";
+            collection[i] = new MatchItem(content, type, inferred, extraContent);
         }
 
         return collection;
@@ -1350,12 +1351,16 @@ AutoCompleter.prototype = {
 
  // ----- Classes -----------
 
-function MatchItem(text, type) {
+function MatchItem(text, type, inferred, extraContent) {
     var _text = text;
     var _type = type;
+    var _inferred = inferred;
+    var _extraContent = extraContent;
 
     this.getText = function() { return _text; }
     this.getType = function() { return _type; }
+    this.isInferred = function() { return _inferred; }
+    this.getExtraContent = function() { return _extraContent; }
 }
 
 function SmartInputWindow() {
@@ -1367,12 +1372,13 @@ function SmartInputWindow() {
     this.showCredit = false;
 }  //SmartInputWindow Object
 
-function SmartInputMatch(cleanValue, value, type) {
+function SmartInputMatch(cleanValue, value, type, inferred) {
     this.cleanValue = cleanValue;
     this.value = value;
     this.isSelected = false;
-
     var _type = type;
+    this.isInferred = inferred;
+    
     this.getImageTag = function() {
         if (_type == SMW_INSTANCE_NS) {
             return "<img src=\"" + wgServer + wgScriptPath
@@ -1408,19 +1414,17 @@ function MatchCache() {
      // general cache for edit mode as associative array
     var generalCache = $H({ });
     
-    // special caches for type filtered auto-completion (typeHint)
-    // MUST use numbers instead of constants here
-    var typeFilteredCache = $H({ 14:$H({ }), 102:$H({ }), 100:$H({ }), 0:$H({ }), 10:$H({ }) });
+   
     var nextToReplace = 0;
 
      // maximum number of cache entries
     var MAX_CACHE = 10;
 
      //TODO: would be nice to implement a better cache replace strategy
-    this.addLookup = function(matchText, matches, typeHint) {
+    this.addLookup = function(matchText, matches, constraints) {
         if (matchText == "" || matchText == null) return;
         
-        if (typeHint == null) {
+     
             // use general cache
             if (generalCache.keys().length == MAX_CACHE) {
                 generalCache.remove(generalCache.keys()[nextToReplace]);
@@ -1431,37 +1435,18 @@ function MatchCache() {
                 }
             }
 
-            generalCache[matchText] = matches;
-        } else {
-            // use typeFiltered cache
-            var cache = typeFilteredCache[parseInt(typeHint)];
-            if (!cache) return;
-            if (cache.keys().length == MAX_CACHE) {
-                cache.remove(cache.keys()[nextToReplace]);
-                nextToReplace++;
-
-                if (nextToReplace == MAX_CACHE) {
-                  nextToReplace = 0;
-                }
-            }
-
-            cache[matchText] = matches;
-        }
+            generalCache[matchText+constraints] = matches;
+       
       
     }
 
-    this.getLookup = function(matchText, typeHint) {
-        if (typeHint == null) {
+    this.getLookup = function(matchText, constraints) {
+    
             // use general cache
-            if (generalCache[matchText] && typeof(generalCache[matchText]) == 'object') {
-                return generalCache[matchText];
+            if (generalCache[matchText+constraints] && typeof(generalCache[matchText+constraints]) == 'object') {
+                return generalCache[matchText+constraints];
             }
-        } else {
-            // use typeFiltered cache
-            var cache = typeFilteredCache[parseInt(typeHint)];
-            if (!cache) return null;
-            return typeof(cache[matchText]) == 'object' ? cache[matchText] : null;
-        }
+       
 
         return null;  // lookup failed
     }

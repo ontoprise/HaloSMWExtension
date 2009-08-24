@@ -91,6 +91,7 @@ QIHelper.prototype = {
 
 	getSpecialQPParameters : function(qp) {
 		var callback = function(request) {
+			this.parameterPendingElement.hide();
 			var columns = 3;
 			var html = gLanguage.getMessage('QI_SPECIAL_QP_PARAMS') + " <i>"
 					+ qp + '</i>:<table style="width: 100%;">';
@@ -138,6 +139,11 @@ QIHelper.prototype = {
 					+ defaultValueAtt + '/>';
 			return html;
 		}
+		if (this.parameterPendingElement)
+            this.parameterPendingElement.hide();
+        this.parameterPendingElement = new OBPendingIndicator($('querylayout'));
+        this.parameterPendingElement.show();
+        
 		sajax_do_call('smwf_qi_QIAccess', [ 'getSupportedParameters', qp ],
 				callback.bind(this));
 
@@ -586,7 +592,7 @@ QIHelper.prototype = {
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('CATEGORY');
 		cell = newrow.insertCell(1);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typeHint="14" autocomplete="OFF"/>'; // input
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF"/>'; // input
 																																// field
 																																// with
 																																// autocompletion
@@ -626,7 +632,7 @@ QIHelper.prototype = {
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
 		cell = newrow.insertCell(1);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typeHint="0" autocomplete="OFF"/>';
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF"/>';
 		cell = newrow.insertCell(2);
 		cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addInstanceInput" onclick="qihelper.addDialogueInput()"/>';
 		this.activeInputs = 1;
@@ -653,7 +659,7 @@ QIHelper.prototype = {
 		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
 			$('dialoguecontent').deleteRow(0);
 
-		constraintstring = "";
+		constraintstring = "schema-property-domain: ";
 		// fetch category constraints:
 		var cats = this.activeQuery.categories; // get the category group
 
@@ -666,7 +672,7 @@ QIHelper.prototype = {
 				for ( var j = 0, m = catconstraint.length; j < m; j++) {
 					orconstraint = catconstraint[j];
 					if (j > 0) {
-						constraintstring += "|";
+						constraintstring += ",";
 					}
 					constraintstring += gLanguage.getMessage('CATEGORY_NS',
 							'cont')
@@ -682,7 +688,7 @@ QIHelper.prototype = {
 		cell = newrow.insertCell(1);
 		cell.style.textAlign = "left";
 		cell.setAttribute("colSpan", 2);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" typeHint="102" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + constraintstring + '|namespace: 102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
 		newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox
 														// for display option
@@ -717,7 +723,7 @@ QIHelper.prototype = {
 		cell.id = "restricionSelector";
 		cell.innerHTML = this.createRestrictionSelector("=", true);
 		cell = newrow.insertCell(2);
-		cell.innerHTML = '<input class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" type="text" id="input3"/>';
+		cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input3"/>';
 		cell = newrow.insertCell(3);
 		cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
 		cell = newrow.insertCell(4);
@@ -766,15 +772,15 @@ QIHelper.prototype = {
 
 		if (this.activeDialogue == "category") // add input fields according to
 												// dialogue
-			cell.innerHTML = '<input class="wickEnabled general-forms" typeHint="14" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 		else if (this.activeDialogue == "instance")
-			cell.innerHTML = '<input class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 		else if (param == gLanguage.getMessage('QI_PAGE')) { // property
 																// dialogue &
 																// type = page
 			cell.innerHTML = this.createRestrictionSelector("=", true);
 			cell = newrow.insertCell(2);
-			cell.innerHTML = '<input class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 		} else { // property, no page type
 			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
 													// possible
@@ -894,7 +900,7 @@ QIHelper.prototype = {
 				// Speical treatment: binary properties support conjunction,
 				// therefore we need an "add" button
 				$('mainlabel').innerHTML = parameterNames[0];
-				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" type="text" id="input3"/>';
+				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input3"/>';
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
 					$('restricionSelector').innerHTML = this
 							.createRestrictionSelector("=", false);
@@ -990,7 +996,7 @@ QIHelper.prototype = {
 																				// means
 																				// autocompletion
 																				// enabled
-						cell.innerHTML = '<input class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+						cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 					else
 						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
 					this.activeInputs++;
@@ -1188,7 +1194,7 @@ QIHelper.prototype = {
 				cell = row.insertCell(2); // input field
 				if (vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion
 																	// needed?
-					cell.innerHTML = '<input type="text" class="wickEnabled general-forms" typeHint="0" autocomplete="OFF" id="input'
+					cell.innerHTML = '<input type="text" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" id="input'
 							+ (i + 2)
 							+ '" value="'
 							+ unescapeQueryHTML(vals[i][2]) + '"/>';
