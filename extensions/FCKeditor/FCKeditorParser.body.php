@@ -547,7 +547,7 @@ class FCKeditorParser extends Parser
 			$appendString = "<p>";
 			foreach ($categories as $cat=>$val) {
 				if ($val != $title->mTextform)
-					$appendString .= '<span class="fck_mw_category" category="'.$cat.'">'.str_replace('_', ' ', $val).'</span> ';
+					$appendString .= '<span class="fck_mw_category" sort="'.$val.'">'.str_replace('_', ' ', $cat).'</span> ';
 				else
 					$appendString .= '<span class="fck_mw_category">'.str_replace('_', ' ', $cat).'</span> ';
 			}
