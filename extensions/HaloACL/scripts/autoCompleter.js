@@ -50,11 +50,14 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
 
     var oAC = new YAHOO.widget.AutoComplete(fieldName, containerName, myDataSource);
 
-    function fnCallback(e, args) {
+    var fnCallback = function(e, args) {
         YAHOO.util.Dom.get(fieldName).value = args[2][1];
 
     }
-    //oAC.itemSelectEvent.subscribe(fnCallback);
+    oAC.itemSelectEvent.subscribe(function(e, args) {
+        YAHOO.util.Dom.get(fieldName).value = args[2][1];
+
+    });
 
 
     oAC.generateRequest = function(sQuery) {

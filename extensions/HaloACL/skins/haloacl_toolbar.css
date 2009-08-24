@@ -1,0 +1,29 @@
+#hacl_toolbarcontainer{
+    float:left;
+    width:850px;
+    height:20px;
+    border:1px #ccc solid;
+    background-color:#eee;
+    overflow:visible;
+}
+
+#hacl_toolbarcontainer_section1{
+    float:left;
+    width:400px;
+    height:20px;
+    border:1px #ccc solid;
+    border-style: none solid none none;
+    overflow:visible;
+}
+#hacl_toolbarcontainer_section2{
+    float:left;
+    width:150px;
+    height:20px;
+    border:1px #ccc solid;
+    border-style: none solid none none;
+}
+#hacl_toolbarcontainer_section3{
+    float:left;
+    width:250px;
+    height:20px;
+}

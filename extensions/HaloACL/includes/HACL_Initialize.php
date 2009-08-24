@@ -114,5 +114,6 @@ haclfInitNamespaces();
 require_once('HACL_GenericPanel.php');
 require_once('HACL_AjaxConnector.php');
 require_once('HACL_helpPopup.php');
+require_once('HACL_Toolbar.php');
 
 

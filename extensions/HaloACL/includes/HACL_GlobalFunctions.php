@@ -102,15 +102,15 @@ function haclfSetupExtension() {
     $wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
     $wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
     $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
-    
-	
+
+
     global $haclgProtectProperties;
     if ($haclgProtectProperties === true) {
         $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
         $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
         $wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
-		$wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
-		$wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
+        $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
+        $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
     }
 
 
@@ -133,6 +133,9 @@ function haclfSetupExtension() {
     if (stripos($wgRequest->getRequestURL(), $spns_text.":HaloACL") !== false
         || stripos($wgRequest->getRequestURL(), $spns_text."%3AHaloACL") !== false) {
         $wgHooks['BeforePageDisplay'][]='haclAddHTMLHeader';
+    }else {
+        $wgHooks['BeforePageDisplay'][]='addNonSpecialPageHeader';
+
     }
 
     //--- credits (see "Special:Version") ---
@@ -148,96 +151,129 @@ function haclfSetupExtension() {
 }
 
 /**
+ *  adding headers for non-special-pages
+ *  atm only used for toolbar-realted stuff
+ *
+ * @global <type> $haclgHaloScriptPath
+ * @param <type> $out
+ * @return <type>
+ */
+function addNonSpecialPageHeader(&$out) {
+    global $haclgHaloScriptPath;
+
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => $haclgHaloScriptPath.'/skins/haloacl_toolbar.css'
+    ));
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
+
+    return true;
+}
+
+/**
  * Adds Javascript and CSS files
  *
  * @param OutputPage $out
  * @return true
  */
 function haclAddHTMLHeader(&$out) {
+
     global $wgTitle;
-    if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
 
     global $haclgHaloScriptPath;
 
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
-    //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
-    //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
-    //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
-    //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
-
-    // -------------------
-    // YAHOO Part
-
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo/yahoo-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yuiloader/yuiloader-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/event/event-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dom/dom-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/treeview/treeview-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/element/element-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/button/button-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/json/json-min.js"></script>');
-
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/yahoo-dom-event/yahoo-dom-event.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/animation/animation-min.js"></script>');
-
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/tabview/tabview-debug.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datasource/datasource-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/datatable/datatable-debug.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/paginator/paginator-min.js"></script>');
-    
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/container/container-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/dragdrop/dragdrop-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/autocomplete/autocomplete-min.js"></script>');
-
-    // -------------------
-    // -------------------
+    if ($wgTitle->getNamespace() != NS_SPECIAL) {
+        return true;
+    }else {
 
 
+    // ---- SPECIAL-PAGE realted stuff ---
 
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
+        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
+        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
+        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
+        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
+
+        // -------------------
+        // YAHOO Part
+
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
+
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
+        #    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
+
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
+
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+
+        // -------------------
+        // -------------------
 
 
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/button/assets/skins/sam/button.css'
-    ));
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/container/assets/container.css'
-    ));
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => 'http://yui.yahooapis.com/2.7.0/build/autocomplete/assets/skins/sam/autocomplete.css'
-    ));
+
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
 
 
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-    ));
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath.'/yui/button.css'
+        ));
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath. '/yui/container.css'
+        ));
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath.'/yui/autocomplete.css'
+        ));
 
-    //<!-- Sam Skin CSS for TabView -->
 
-    return true;
+        $out->addLink(array(
+            'rel'   => 'stylesheet',
+            'type'  => 'text/css',
+            'media' => 'screen, projection',
+            'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
+        ));
+
+        //<!-- Sam Skin CSS for TabView -->
+
+        return true;
+    }
 }
 
 /**********************************************/

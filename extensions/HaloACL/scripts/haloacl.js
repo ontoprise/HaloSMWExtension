@@ -167,7 +167,11 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         });
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab1);
-        tab1.addListener('click', function(e){});
+        tab1.addListener('click', function(e){
+            $('createTmpAclTab_content').innerHTML = "";
+            $('createUserAclTab_content').innerHTML = "";
+        });
+        $(tab1.get('contentEl')).setAttribute('id','createStdAclTab_content');
         
 
 
@@ -182,7 +186,12 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         });
         tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab2);
-        tab2.addListener('click', function(e){});
+        tab2.addListener('click', function(e){
+           $('createStdAclTab_content').innerHTML = "";
+           $('createUserAclTab_content').innerHTML = "";
+        });
+        $(tab2.get('contentEl')).setAttribute('id','createTmpAclTab_content');
+
 
 
         // ------
@@ -196,7 +205,12 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         });
         tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab3);
-        tab3.addListener('click', function(e){});
+        tab3.addListener('click', function(e){
+           $('createStdAclTab_content').innerHTML = "";
+           $('createTmpAclTab_content').innerHTML = "";
+        });
+        $(tab3.get('contentEl')).setAttribute('id','createUserAclTab_content');
+
 
 
     }

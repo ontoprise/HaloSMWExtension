@@ -131,51 +131,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
 
 
-    var setupCheckboxHandling = function(){
-        //console.log("checkAllSelectesUsers fired");
-        $$('.datatableDiv_'+panelid+'_users').each(function(item){
-            //console.log("found element");
-            //console.log(item.name);
-            for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
-                if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == item.name){
-                    item.checked = true;
-                }
-            }
-
-        });
-
-    };
-
-
-    var handlePagination = function(state){
-        console.log(state);
-        // TODO!!!
-        var divid = "right_tabview_create_acl_right_0";
-
-        console.log("changeRequest fired");
-        var displaying = state.totalRecords - state.recordOffset;
-        if(displaying > state.rowsPerPage){
-            displaying = state.rowsPerPage
-        };
-        var to = displaying*1 + state.recordOffset*1;
-        var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
-        
-        var html = from + " to " + to   + " from " +state.totalRecords;
-        $('datatablepaging_count_'+divid).innerHTML = html;
-        console.log($('datatablepaging_count_'+divid));
-    };
-
-
-    var myPaginator = new YAHOO.widget.Paginator({
-        rowsPerPage:5,
-        containers:'datatablepaging_'+divid
-    });
-
-    myPaginator.subscribe("changeRequest",handlePagination);
-
-  
-
-    // userdatatable configuration
+    // whitelisttable configuration
     var myConfigs = {
         initialRequest: "rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
@@ -183,7 +139,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
             key:"name",
             dir:YAHOO.widget.DataTable.CLASS_ASC
         }, // Sets UI initial sort arrow
-        paginator: myPaginator,
+    //    paginator: myPaginator,
         generateRequest:customRequestBuilder
     };
 
@@ -197,21 +153,6 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     }
     myDataTable.query = "";
 
-    myDataTable.panelid = panelid;
-
-    myDataTable.subscribe("postRenderEvent",function(){
-        handlePagination(myPaginator.getState());
-    });
-    
-    myDataTable.subscribe("postRenderEvent",function(){
-        setupCheckboxHandling();
-    });
-
-    myDataTable.subscribe("postRenderEvent",function(){
-        YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
-    });
-
-
 
 
 
@@ -219,22 +160,24 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
     // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
-        if(!query == ""){
-            myDataTable.query = query;
-        }
+
         var oCallback = {
             success : myDataTable.onDataReturnInitializeTable,
             failure : myDataTable.onDataReturnInitializeTable,
             scope : myDataTable,
             argument : myDataTable.getState()
         };
-        myDataSource.sendRequest(customRequestBuilder(myDataTable.getState(),null), oCallback);
+        console.log("sending request");
+        myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        console.log("reqeust sent");
+        
     }
 
 
     // setting up clickevent-handling
     return myDataTable;
 
+   
 };
 
 // --------------------
