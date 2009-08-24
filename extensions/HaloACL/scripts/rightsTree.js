@@ -331,6 +331,31 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             //  sb[sb.length] = '<td>';
             //  sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
+
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="manageUserRow_' + this.label + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + this.title + '"';
+            }
+            sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
+            sb[sb.length] = ' >';
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+            sb[sb.length] = '</span></td>';
+            sb[sb.length] = '<td><span class="haloacl_manageuser_list_information"><div id="anchorPopup_'+this.groupId+'" class="haloacl_manageright_list_edit" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div><div id="popup_'+this.groupId+'"></div></span></td>';
+            sb[sb.length] = '<td><span class=""><a class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'});">&nbsp;</a></span></td>';
+            // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+            sb[sb.length] = '>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+
+
+/*
+
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
             sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
@@ -349,8 +374,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' class="ygtvcheck3"';
             sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"><div class="haloacl_editbutton"></div></div></td>';
-
-
+*/
         }
 
 
