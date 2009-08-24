@@ -169,8 +169,13 @@ HTML;
 
             gotoStep3 = function() {
 
-                //implement checks here
-                //...
+                ////////////////////////////checks
+
+                //hier implementieren:
+                // alle elemente des div "haloacl_tab_createacl_rightsection" durchlaufen, die "create_acl_rights_row....." heissen
+                // wenn keine vorhanden: alert("Please specify at least one right or right template");
+                // über deren subelement "...generic container (name ?) ..." checken, ob gespeichert
+                // wenn mindestens eines dabei, das nicht gespeichert: alert("Please save all rights and template inclusions before going further");
 
 
                 YAHOO.haloacl.loadContentToDiv('step3','createModificationRightsContent',{panelid:1});
@@ -695,22 +700,40 @@ HTML;
 
             gotoStep2 = function() {
 
-                //implement checks here
-                //...
-
-
-                $$('.create_acl_general_definefor').each(function(item){
-                    if(item.checked){
-                        //call predefined right panel
-                        switch (item.value) {
-                            case "individual": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'individual'}); break;
-                            case "privateuse": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'private'}); break;
-                            case "allusers": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusers'}); break;
-                            case "allusersregistered": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusersregistered'}); break;
-                            case "allusersanonymous": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusersanonymous'}); break;
-                        }
-                    }
+                ////////////////////////checks
+                var nextOk = false;
+                $$('.create_acl_general_protect').each(function(item){
+                    if(item.checked) nextOk = true;
                 });
+                if (nextOk) {
+                    nextOk = false;
+                    $$('.create_acl_general_definefor').each(function(item){
+                        if(item.checked) nextOk = true;
+                    });
+                    if (nextOk) {
+                        nextOk = false;
+                        if ($('create_acl_general_name').value != "") {
+                            nextOk = true;
+                        } else alert('Please specify the name of the element you want to protect');
+                    } else alert('Please specify, whom you want to protect the element for');
+                } else alert('Please specify the type of element to protect');
+
+                /////////////////////////all checks ok; go ahead.
+                if (nextOk) {
+
+                    $$('.create_acl_general_definefor').each(function(item){
+                        if(item.checked){
+                            //call predefined right panel
+                            switch (item.value) {
+                                case "individual": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'individual'}); break;
+                                case "privateuse": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'private'}); break;
+                                case "allusers": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusers'}); break;
+                                case "allusersregistered": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusersregistered'}); break;
+                                case "allusersanonymous": YAHOO.haloacl.loadContentToDiv('step2_$panelId','createRightContent',{predefine:'allusersanonymous'}); break;
+                            }
+                        }
+                    });
+                }
             }
         </script>
     </div>
