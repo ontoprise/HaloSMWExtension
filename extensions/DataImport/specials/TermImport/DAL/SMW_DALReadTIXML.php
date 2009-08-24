@@ -67,7 +67,7 @@ class DALReadTIXML implements IDAL {
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<DataSource xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			' 	<articleName display="'.wfMsg('smw_ti_articlename').'" ></articleName>'."\n".
+			' 	<articleName display="'.wfMsg('smw_ti_articlename').'" autocomplete="true"></articleName>'."\n".
 			'</DataSource>'."\n";
 	}
 	 

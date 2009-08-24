@@ -230,11 +230,15 @@ TermImportPage.prototype = {
 							+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" checked=\""
 							+ datasource.textContent + "\"></td></tr>";
 					} else {
+						//original class was inputfield
 						response += "<tr><td>"
 								+ attrib_display
 								+ "</td><td><input name=\"source\" id=\""
-								+ attrib_display
-								+ "\" class=\"inputfield\" type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
+								+ attrib_display + "\"";
+						if(datasource.getAttribute('autocomplete')){
+							response += " class=\"wickEnabled\" typeHint=\"0\" ";
+						}
+						response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
 								+ datasource.textContent + "\"></td></tr>";
 					}
 					response += "<input type=\"hidden\" id=\"tag_"
@@ -260,7 +264,6 @@ TermImportPage.prototype = {
 		if (this.pendingIndicatorImportset == null) {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}
-		this.pendingIndicatorImportset.show();
 		
 		try {
 			var source = document.getElementsByName("source");
@@ -339,7 +342,7 @@ TermImportPage.prototype = {
 		$('top-container').style.display = "none";
 		
 		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
-		
+		$("loading-container").style.display ="inline";
 		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
 	},
 	
@@ -347,6 +350,7 @@ TermImportPage.prototype = {
 	 * Callback function for the source specification
 	 */
 	getSourceCallback: function(tlID, dalID, request) {
+		$("loading-container").style.display ="none";
 		if(this.pendingIndicator != null){
 			this.pendingIndicatorImportset.hide();
 		}

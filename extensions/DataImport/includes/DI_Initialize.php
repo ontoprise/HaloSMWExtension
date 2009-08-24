@@ -63,6 +63,7 @@ function smwfDISetupExtension() {
 	
 	//also registers TermImport namespace
 	WebServiceManager::registerWWSNamespaces();
+	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
 	
 	// add some AJAX calls
 	$action = $wgRequest->getVal('action');

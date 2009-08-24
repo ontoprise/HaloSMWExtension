@@ -278,6 +278,12 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_ti_tl-heading' => 'Transport Layer Modul wählen:',
 	'smw_ti_dam-heading' => 'Data Acccess Modul wählen:',
 	'smw_ti_module-data-heading' => 'Modulspezifische Daten angeben:',
+	
+	'smw_wwsr_update_tooltip' => 'Update Bot für diese WWSD starten.',
+	'smw_wwsr_rep_edit_tooltip' => 'Diese WWSD in der GUI editieren.',
+	'smw_wwsr_confirm_tooltip' => 'Die Benutzung dieser WWSD erlauben.',
+	'smw_wwsr_update_tooltip_ti' => 'Update Bot für diesen Term Import starten.',
+	'smw_wwsr_rep_edit_tooltip_ti' => 'Diesen Term Import in der GUI editieren.',
 	);
 
 	protected $smwDINamespaces = array(

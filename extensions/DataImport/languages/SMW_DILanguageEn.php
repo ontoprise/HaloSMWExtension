@@ -235,8 +235,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsr_update' => 'Update',
 	'smw_wwsr_rep_edit' => 'Edit',
 	'smw_wwsr_confirm' => 'Confirm',
-	'smw_wwsr_rep_intro' => 'The Web Service Repository lists all valid Wiki Web Service Definitionions (WWSD) that have been declared in the Wiki. You can confirm a WWSD, edit it in the graphical user interface and manually update its results here. (You must be logged in with administrative user rights in order to update or confirm a WWSD.)',
-	'smw_tir_rep_intro' => 'The Term Import Repository lists all valid Term Import definitionions that have been declared in the Wiki. You can edit a Term Import defionition in the graphical user interface and manually update its results here. (You must be logged in with administrative user rights in order to edit or update a Term Import.)',
+	'smw_wwsr_rep_intro' => 'The Web Service Repository lists all valid Wiki Web Service Definitions (WWSD) that have been declared in the Wiki. You can confirm a WWSD, edit it in the graphical user interface and manually update its results here. (You must be logged in with administrative user rights in order to update or confirm a WWSD.)',
+	'smw_tir_rep_intro' => 'The Term Import Repository lists all valid Term Import definitions that have been declared in the Wiki. You can edit a Term Import definition in the graphical user interface and manually update its results here. (You must be logged in with administrative user rights in order to edit or update a Term Import.)',
 	'smw_wwsr_noconfirm' => 'If you do not see the buttons for updating and confirming WebServices, you might not be logged in or you do not have any rights to use these functions.',
 	'smw_wwsr_confirmed' => 'confirmed',
 	'smw_wwsr_updating' => 'updating',
@@ -280,6 +280,12 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_tl-heading' => 'Choose Transport Layer Module:',
 	'smw_ti_dam-heading' => 'Choose Data Acccess Module:',
 	'smw_ti_module-data-heading' => 'Enter module specific data:',
+	
+	'smw_wwsr_update_tooltip' => 'Start the update bot for this WWSD.',
+	'smw_wwsr_rep_edit_tooltip' => 'Edit this WWSD in the graphical user interface.',
+	'smw_wwsr_confirm_tooltip' => 'Commit this WWSD so that it can be used in the Wiki.',
+	'smw_wwsr_update_tooltip_ti' => 'Start the update bot for this Term Import.',
+	'smw_wwsr_rep_edit_tooltip_ti' => 'Edit this Term Import in the graphical user interface.',
 	);
 
 	protected $smwDINamespaces = array(

@@ -46,6 +46,12 @@ class CL {
 				"<table height=\"200px\"><tr><td valign=\"top\"><i>".wfMsg('smw_ti_selectDAM')."</i></td></tr></table>".
 				"</div>";
 		$html .= "</div>"; //top-container
+		
+		$html .= "<div style=\"display: hidden\" id=\"loading-container\">";
+		$html .= "<br/><br/>";
+		$html .= "<b>Loading... </b>";
+		$html .= "<img src=\"".$smwgDIScriptPath."/skins/TermImport/images/ajax-loader.gif\"/>";
+		$html .= "</div>";
 
 		$html .= "<div id=\"bottom-container\">" .
 					"<div id=\"extras\">" .
@@ -54,7 +60,7 @@ class CL {
 								. wfMsg('smw_ti_selectImport-heading') .
 								"<img id=\"help-img1\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 								"</div>".
-								"<div id=\"help1\" style=\"display: none\">".
+								"<div id=\"help1\" class=\"TIHelpMessage\" style=\"display: none\">".
 								"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 								wfMsg('smw_ti_selectImport-help')."</div>".
 								wfMsg('smw_ti_selectImport-label') .								
@@ -67,7 +73,7 @@ class CL {
 										. wfMsg('smw_ti_inputpolicy-heading') .
 										"<img id=\"help-img2\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(2)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 										"</div>".
-										"<div id=\"help2\" style=\"display: none\">".
+										"<div id=\"help2\" class=\"TIHelpMessage\" style=\"display: none\">".
 										"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 										wfMsg('smw_ti_inputpolicy-help')."</div>".
 										"<span>" .wfMsg('smw_ti_inputpolicy-label')."</span>" . 
@@ -85,11 +91,13 @@ class CL {
 									wfMsg('smw_ti_mappingPage-heading').
 									"<img id=\"help-img3\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(3)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
-									"<div id=\"help3\" style=\"display: none\">".
+									"<div id=\"help3\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 									wfMsg('smw_ti_mappingPage-help')."</div>".
 									wfMsg('smw_ti_mappingPage-label').
-									"<input name=\"mapping\" id=\"mapping-input-field\" type=\"text\" size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>&nbsp&nbsp
+									"<input name=\"mapping\" id=\"mapping-input-field\" type=\"text\"
+									class=\"wickEnabled\" typeHint=\"0\" 
+									size=\"20\" onKeyPress=\"termImportPage.changeBackground(event, this)\"/>&nbsp&nbsp
 										<a onClick=\"termImportPage.viewMappingArticle(event,this)\">" . wfMsg('smw_ti_viewMappingPage') . "</a>&nbsp&nbsp
 										<a onClick=\"termImportPage.editMappingArticle(event,this)\">" . wfMsg('smw_ti_editMappingPage') ."</a>".
 								"</div>" . //mapping
@@ -98,7 +106,7 @@ class CL {
 									wfMsg('smw_ti_conflictpolicy-heading').
 									"<img id=\"help-img4\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(4)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
-									"<div id=\"help4\" style=\"display: none\">".
+									"<div id=\"help4\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 									wfMsg('smw_ti_conflictpolicy-help')."</div>".
 									wfMsg('smw_ti_conflictpolicy-label').
@@ -112,10 +120,10 @@ class CL {
 									wfMsg('smw_ti_update_policy-heading')."&nbsp;" .
 									"<img id=\"help-img5\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(5)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
-									"<div id=\"help5\" style=\"display: none\">".
+									"<div id=\"help5\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 									wfMsg('smw_ti_update_policy-help')."</div>".
-									"<input type=\"radio\" name=\"update_policy_type\" value=\"once\" checked><span>Once:</span>".
+									"<input type=\"radio\" name=\"update_policy_type\" value=\"once\" checked><span>Once</span>".
 									"<input id=\"update-policy-checkbox\" type=\"radio\" name=\"update_policy_type\" value=\"maxage\">Max age:</span>".
 									"&nbsp;&nbsp;<input id=\"ti-update-policy-input-field\" onKeyPress=\"termImportPage.changeBackground(event, this)\" size=\"10\"/>&nbsp;in minutes" .
 									"</div>" . 
@@ -124,7 +132,7 @@ class CL {
 									wfMsg('smw_ti_ti_name-heading')."&nbsp;" .
 									"<img id=\"help-img6\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(6)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 									"</div>".
-									"<div id=\"help6\" style=\"display: none\">".
+									"<div id=\"help6\" class=\"TIHelpMessage\" style=\"display: none\">".
 									"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 									wfMsg('smw_ti_ti_name-help')."</div>".
 									wfMsg('smw_ti_ti_name-label').
@@ -136,7 +144,7 @@ class CL {
 								wfMsg('smw_ti_properties-heading').
 								"<img id=\"help-img7\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(7)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 								"</div>".
-								"<div id=\"help7\" style=\"display: none\">".
+								"<div id=\"help7\" class=\"TIHelpMessage\" style=\"display: none\">".
 								"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 								wfMsg('smw_ti_properties-help')."</div>".
 								wfMsg('smw_ti_properties-label').
@@ -147,7 +155,7 @@ class CL {
 										wfMsg('smw_ti_articles-heading')."&nbsp;" .
 										"<img id=\"help-img8\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"termImportPage.displayHelp(8)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>".
 										"</div>".
-										"<div id=\"help8\" style=\"display: none\">".
+										"<div id=\"help8\" class=\"TIHelpMessage\" style=\"display: none\">".
 										"<span style=\"color: blue; font-weight: bold\">".wfMsg('smw_ti_help')."</span> ".
 										wfMsg('smw_ti_articles-help')."</div>".
 										wfMsg('smw_ti_articles-label1').

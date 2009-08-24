@@ -211,6 +211,7 @@ class TermImportBot extends GardeningBot {
 		$cp = $cp[0];
 		$cp = strtolower($cp) == 'true' ? true : false;
 
+		echo("\n".$terms."\n");
 		echo("\nCreate xml parser");
 		$parser = new SimpleXMLElement($terms);
 		

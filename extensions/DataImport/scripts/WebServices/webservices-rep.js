@@ -94,6 +94,9 @@ WebServiceRepositorySpecial.prototype = {
 		$('term-import-tab-content').style.display = "none";
 		$('web-service-tab').setAttribute('class', "ActiveTab");
 		$('term-import-tab').setAttribute('class', "InactiveTab");
+		$('web-service-tab').setAttribute('onmouseover','');
+		$('web-service-tab').setAttribute('onmouseout','');
+		$('term-import-tab').setAttribute('onmouseover','webServiceRepSpecial.highlightTab(event)');
 	},
 	
 	displayTermImportTab : function(){
@@ -101,6 +104,20 @@ WebServiceRepositorySpecial.prototype = {
 		$('term-import-tab-content').style.display = "";
 		$('web-service-tab').setAttribute('class', "InactiveTab");
 		$('term-import-tab').setAttribute('class', "ActiveTab");
+		$('term-import-tab').setAttribute('onmouseover','');
+		$('term-import-tab').setAttribute('onmouseout','');
+		$('web-service-tab').setAttribute('onmouseover','webServiceRepSpecial.highlightTab(event)');
+	},
+	
+	highlightTab : function(event){
+		var node = Event.element(event);
+		node.setAttribute('class', "InactiveHighlightedTab");
+		node.setAttribute('onmouseout','webServiceRepSpecial.deHighlightTab(event)');
+	},
+	
+	deHighlightTab : function(event){
+		var node = Event.element(event);
+		node.setAttribute('class', "InactiveTab");
 	}
 }	
 

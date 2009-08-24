@@ -130,6 +130,9 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	border-bottom: 1px solid #CCC;
 	background-color: #00BFFF;
 }
+#loading-container{
+	margin-top: 10px;
+}
 #bottom-container{
 	margin-top: 10px;
 }	
@@ -270,4 +273,9 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding: 3px 5px 3px 5px;
 	max-height: 200px;
 	overflow: auto;
+}
+
+.TIHelpMessage {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
