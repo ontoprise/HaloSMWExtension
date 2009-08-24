@@ -759,47 +759,37 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	loadWikiText : function() {
-        if (! this.fck) {
-            function ajaxResponseLoadWikiText(request) {
-	            if (request.status == 200) {
-				    // success => store wikitext
-  				    this.wikiTextParser = new WikiTextParser(request.responseText);
-				    this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
-				    this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
-				    this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
-      				this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
-		    		catToolBar.setWikiTextParser(this.wikiTextParser);
-			    	relToolBar.setWikiTextParser(this.wikiTextParser);
-				    catToolBar.fillList(true);
-    				relToolBar.fillList(true);
-	    		} else {
-		    		this.wikiTextParser = null;
-			    }
-		   };
+            if (! this.fck) {
+                function ajaxResponseLoadWikiText(request) {
+                        if (request.status == 200) {
+                            // success => store wikitext
+                            this.wikiTextParser = new WikiTextParser(request.responseText);
+                            this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
+                            this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
+                            this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
+                            this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
+                            catToolBar.setWikiTextParser(this.wikiTextParser);
+                            relToolBar.setWikiTextParser(this.wikiTextParser);
+                            catToolBar.fillList(true);
+                            relToolBar.fillList(true);
+                        } else {
+                            this.wikiTextParser = null;
+                        }
+                };
 		
-    		sajax_do_call('smwf_om_GetWikiText', 
-	    	              [wgPageName], 
-		                  ajaxResponseLoadWikiText.bind(this));
+                sajax_do_call('smwf_om_GetWikiText',
+                             [wgPageName],
+	                     ajaxResponseLoadWikiText.bind(this));
 		              
-	    } else { // FCK mode
-            // Call the Data Processor to generate the output data.
-            var data = $('wpTextbox1').innerHTML;
-            data = '<body>' + data + '</body>';
-            data = data.replace(/&lt;/g, '<');
-            data = data.replace(/&gt;/g, '>');
+            } else { // FCK mode
+                // Call the Data Processor to generate the output data.
+                var data = $('wpTextbox1').innerHTML;
+                data = '<body>' + data + '</body>';
+                data = data.replace(/&lt;/g, '<');
+                data = data.replace(/&gt;/g, '>');
             
-            try {
-                xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
-                xmlDoc.async="false";
-                xmlDoc.loadXML(data);
-            } catch(e) {
-                parser=new DOMParser();
-                xmlDoc=parser.parseFromString(data,"text/xml");
+                this.wikiTextParser = new FCKTextParser(data);
             }
-            var wikitext = this.fck.ConvertToDataFormat(xmlDoc.documentElement, true, false, true);
-            alert(wikitext);
-	    	this.wikiTextParser = new WikiTextParser(wikitext);
-	    }              
 	},
 	
 	/**
@@ -1425,7 +1415,7 @@ AdvancedAnnotation.prototype = {
 		
 		
 		var htmlContent =  span.innerHTML;
-//		TODO: grüne box bleibt, wenn Relation unbekannt ist
+//		TODO: grï¿½ne box bleibt, wenn Relation unbekannt ist
 		// A link is rendered as proposal
 		if (isLink) {
 			var preHTML = 
@@ -1556,9 +1546,9 @@ AdvancedAnnotation.prototype = {
 };// End of Class
 
 AdvancedAnnotation.create = function() {
-	if (wgAction == "annotate") {
-		smwhgAdvancedAnnotation = new AdvancedAnnotation(fckedit);
-		alert ('jetzt gehts los');
+        var fckedit = (wgAction == "edit" && FCKeditor) ?  1 : 0;
+	if (wgAction == "annotate" || fckedit) {
+		smwhgAdvancedAnnotation = new AdvancedAnnotation();
 		new PeriodicalExecuter(function(pe) {
 			var content = $('content');
 			Event.observe(content, 'mouseup', 
