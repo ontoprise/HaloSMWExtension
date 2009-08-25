@@ -44,6 +44,7 @@ class HACLEvaluator {
 	//--- Constants ---
 	const NORMAL = 0;
 	const DENY_DIFF = 1;
+	const ALLOW_PROPERTY_READ = 2;
 	
 	//--- Private fields ---
 	static $mMode = HACLEvaluator::NORMAL;
@@ -310,10 +311,12 @@ class HACLEvaluator {
 		
 	}
 	
-	/** This function is called, before an article is saved. 
+	/** 
+	 * This function is called, before an article is saved. 
 	 * If protection of properties is switched on, it checks if the article contains
-	 * properties for which the current user has no access rights. In that case, 
-	 * saving the article is aborted and an error message is displayed.
+	 * properties that have been changed and for which the current user has no 
+	 * access rights. In that case, saving the article is aborted and an error
+	 * message is displayed.
 	 * 
 	 * @param EditPage $editor
 	 * @param string $text
@@ -331,14 +334,23 @@ class HACLEvaluator {
 		$options = new ParserOptions;
 	//	$options->setTidy( true );
 		$options->enableLimitReport();
+		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
 		$output = $wgParser->parse($article->preSaveTransform($text), 
 		                           $article->mTitle, $options);
+		self::$mMode = HACLEvaluator::NORMAL;
 		                           
 		$protectedProperties = "";	                           
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
 				if (!$prop->userCan("propertyedit")) {
-					$protectedProperties .= "* $name\n";
+					// Access to property is restricted
+					if (!isset($oldPV)) {
+						// Get all old properties of the page from the semantic store
+						$oldPV = smwfGetStore()->getSemanticData($editor->mTitle);
+					}
+				    if (self::propertyValuesChanged($prop, $oldPV, $output->mSMWData)) {
+						$protectedProperties .= "* $name\n";
+				    }
 				}
 			}
 		}
@@ -722,8 +734,12 @@ class HACLEvaluator {
 	 *      -1: $action is not concerned with properties.
 	 */
 	private static function checkPropertyAccess(Title $title, User $user, $action) {
-		if (HACLEvaluator::$mMode == HACLEvaluator::DENY_DIFF) {
+		if (self::$mMode == HACLEvaluator::DENY_DIFF) {
 			return false;
+		}
+		if (self::$mMode == HACLEvaluator::ALLOW_PROPERTY_READ
+			&& $action == 'propertyread') {
+				return true; 
 		}
 		
 		switch ($action) {
@@ -741,5 +757,59 @@ class HACLEvaluator {
 		    	return -1;
 		}
 		return self::hasPropertyRight($title, $user->getId(), $actionID);
+	}
+	
+	/**
+	 * This function checks if the values of the property $property have changed
+	 * in the comparison of the semantic database ($oldValues) and the wiki text
+	 * that is about to be stored ($newValues). 
+	 *
+	 * @param SMWPropertyValue $property
+	 * 		The property whose old and new values are compared.
+	 * @param SMWSemanticData $oldValues
+	 * 		The semantic data object with the old values
+	 * @param SMWSemanticData $newValues
+	 * 		The semantic data object with the new values
+	 * @return boolean
+	 * 		<true>, if values have been added, removed or changed,
+	 * 		<false>, if values are exactly the same.
+	 */
+	private static function propertyValuesChanged(SMWPropertyValue $property, 
+												  SMWSemanticData $oldValues, 
+												  SMWSemanticData $newValues) {
+		
+		// Get all old values of the property										  	
+		$oldPV = $oldValues->getPropertyValues($property);
+		$oldValues = array();
+		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
+		foreach ($oldPV as $v) {
+			$oldValues[$v->getLongWikiText()] = false;
+		}
+		self::$mMode = HACLEvaluator::NORMAL;
+		
+		// Get all new values of the property
+		$newPV = $newValues->getPropertyValues($property);
+		foreach ($newPV as $v) {
+			self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
+			$nv = $v->getLongWikiText();
+			self::$mMode = HACLEvaluator::NORMAL;
+			if (array_key_exists($nv, $oldValues)) {
+				// Old value was not changed
+				$oldValues[$nv] = true;
+			} else {
+				// A new value was added
+				return true;
+			}
+		}
+		
+		foreach ($oldValues as $stillThere) {
+			if (!$stillThere) {
+				// A property value has been deleted
+				return true;
+			}
+		}
+		
+		// Property values have not changed.
+		return false;
 	}
 }
