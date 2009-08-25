@@ -11,7 +11,7 @@ enableSMWHalo('SMWHaloStore2');
 //enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', "http://mywiki/ob");
 
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
-global haclgProtectProperties;
+global $haclgProtectProperties;
 $haclgProtectProperties = true;
 enableHaloACL(); 
 
