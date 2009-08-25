@@ -63,82 +63,18 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	// remove whitespaces from user input and replace with underscores
 	$userInputToMatch = str_replace(" ","_",$userInputToMatch);
 
-	// check for constraint specific autocompletion (show only properties with certain constraints)
-	// syntax: array consisting of Categories (and) ORed categories concatenated by "|"
-	// e.g. "Category:Person", "Category:Car|Category:Boat"
-
-	if ($options != "" || $options != null) {
-		if (strncmp($options, "[[", 2) == 0) {
-			$result = SMWQueryProcessor::getResultFromQueryString($options, array('format' => 'ul'), array(), SMW_OUTPUT_WIKI);
-
-			$result = strip_tags($result);
-			preg_match_all('/\[\[[^\|]+/', $result, $matches);
-			$pages = $matches[0];
-			$results[] = array();
-
-			foreach ($pages as $page) {
-				$page = substr($page, 2); // remove the "[["
-				if (strlen($userInputToMatch) > 0) {
-					if (stripos($page, $userInputToMatch) !== false) {
-						$results[] = Title::newFromDBkey($page);
-					}
-				}
-				else {
-					$results[] = Title::newFromDBkey($page);
-				}
-			}
-		} else {
-
-			$options_arr = explode(",", $options);
-			$pages_and = array();
-
-			foreach ($options_arr as $constraint) {
-				$pages_or = array();
-					
-				$constraint_or = explode("|", $constraint);
-				// check "or-constraints"
-				foreach ($constraint_or as $or_constraint) {
-					$title = Title::newFromText($or_constraint);
-					$infpages = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($title, false);
-
-					foreach ($infpages as $page) {
-						if (strlen($userInputToMatch) > 0) {
-							if (stripos($page[0]->getText(), $userInputToMatch) !== false) {
-								array_push($pages_or, $page[0]);
-							}
-						} else {
-							array_push($pages_or, $page[0]);
-						}
-					}
-				}
-					
-				if (empty($pages_and)) {
-					$pages_and = $pages_or;
-				} else {
-					$pages_and = $results;
-				}
-				$results = array_intersect($pages_or, $pages_and);
-			}
-		}
-		$result = AutoCompletionRequester::encapsulateAsXML($results);
-		AutoCompletionRequester::logResult($result, $articleName);
-		if ($result != SMW_AC_NORESULT) {
-			return $result;
-		}
-	}
-
+	// Check for context or not
 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
 		// no context: that means only non-semantic AC is possible. Maybe a $constraints string is specified
 		if ($constraints == null || $constraints == 'null') {
-			// if no $constraints defined, search for (nearly) all pages.
+			// if no constraints defined, search for (nearly) all pages.
 			global $wgExtraNamespaces;
 			$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
 			$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
 
 		} else {
-			// otherwise use type hint
+			// otherwise use constraints
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
-
 
 			if (empty($pages)) {
 				// fallback to standard search (namespace)
@@ -369,42 +305,19 @@ class AutoCompletionRequester {
 	 */
 	public static function getTemplateProposals($userContext, $match) {
 		// template context
-		global $smwgSemanticAC, $wgLang;
-		if ($smwgSemanticAC) {
-			// TODO: need template schema data. current implementation is the same as for non-semantic AC.
-
-			// -------------- this is obsolete --------------------
-			// parse template paramters
-			$templateParameters = explode("|", $userContext);
-
-			if (count($templateParameters) > 1) {
-				// if it is a parameter try all semantic namespaces
-				$results = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN, SMW_NS_PROPERTY));
-				return AutoCompletionRequester::encapsulateAsXML($results);
-			} else { // otherwise it is a template name
-				$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
-				$extraData = array();
-				foreach($templates as $t) {
-					$extraData[] = TemplateReader::formatTemplateParameters($t);
-				}
-				return AutoCompletionRequester::encapsulateAsXML($templates, false, $extraData);
+		// parse template paramters
+		$templateParameters = explode("|", $userContext);
+		if (count($templateParameters) > 1) {
+			// if it is a parameter try all semantic namespaces
+			$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
+			return AutoCompletionRequester::encapsulateAsXML($results);
+		} else { // otherwise it is a template name
+			$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
+			$matches = array();
+			foreach($templates as $t) {
+				$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
 			}
-			// ^^^^^^^^^^^^^^ this is obsolete ^^^^^^^^^^^^^^^^^^^^^^^
-		} else {
-			// parse template paramters
-			$templateParameters = explode("|", $userContext);
-			if (count($templateParameters) > 1) {
-				// if it is a parameter try all semantic namespaces
-				$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
-				return AutoCompletionRequester::encapsulateAsXML($results);
-			} else { // otherwise it is a template name
-				$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
-				$matches = array();
-				foreach($templates as $t) {
-					$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
-				}
-				return AutoCompletionRequester::encapsulateAsXML($matches, false);
-			}
+			return AutoCompletionRequester::encapsulateAsXML($matches, false);
 		}
 	}
 	/**
