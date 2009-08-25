@@ -3470,6 +3470,3 @@ function deleteWhitelist($whitelistXml) {
     return $ajaxResponse;
 
 }
-
-
-?>

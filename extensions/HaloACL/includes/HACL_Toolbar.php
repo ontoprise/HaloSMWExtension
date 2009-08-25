@@ -92,5 +92,3 @@ HTML;
     return $html;
 
 }
-
-?>
