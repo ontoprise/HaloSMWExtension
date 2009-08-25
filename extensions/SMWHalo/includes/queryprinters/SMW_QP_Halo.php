@@ -36,6 +36,9 @@ class SMWQPParameter {
 
 	// more verbose description than $mParamName (optional)
 	public $mParamDescription;
+	
+	// AC constraints
+	public $mConstraints = NULL;
 
 	public function __construct($param, $paramName, $values, $default = NULL, $paramDescription = NULL) {
 		$this->mParam = $param;
@@ -63,6 +66,10 @@ class SMWQPParameter {
 
 	public function getParameterDescription() {
 		return $this->mParamDescription;
+	}
+	
+	public function setConstraints($constraints) {
+		$this->mConstraints = $constraints;
 	}
 }
 
@@ -171,6 +178,28 @@ class SMWHaloListResultPrinter extends SMWListResultPrinter {
 	function getSupportedParameters() {
 		return $this->mParameters;
 	}
+
+
+}
+
+class SMWHaloCountResultPrinter extends SMWListResultPrinter {
+    protected $mParameters;
+
+    public function __construct($format, $inline) {
+        parent::__construct($format, $inline);
+        $order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
+        $default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
+        $limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
+       
+        $this->mParameters[] = $order;
+        $this->mParameters[] = $default;
+        $this->mParameters[] = $limit;
+       
+    }
+
+    function getSupportedParameters() {
+        return $this->mParameters;
+    }
 
 
 }

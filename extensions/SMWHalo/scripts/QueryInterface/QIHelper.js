@@ -106,7 +106,7 @@ QIHelper.prototype = {
 					html += '<td>' + createSelectionBox(e.mParam, e.mValues)
 							+ "</td>";
 				} else if (e.mValues == '<string>' || e.mValues == '<number>') {
-					html += '<td>' + createInputBox(e.mParam, e.mValues)
+					html += '<td>' + createInputBox(e.mParam, e.mValues, e.mConstraints)
 							+ "</td>";
 				} else if (e.mValues == '<boolean>') {
 					html += '<td>' + createCheckBox(e.mParam, e.mDefault)
@@ -117,8 +117,10 @@ QIHelper.prototype = {
 					html += "</tr>"
 				i++;
 			});
-			html += '</table>'
+			html += '</table>';
+			autoCompleter.deregisterAllInputs();
 			$('queryprinteroptions').innerHTML = html;
+			autoCompleter.registerAllInputs();
 			this.specialQPParameters = qpParameters;
 		}
 		var createSelectionBox = function(id, values) {
@@ -129,8 +131,12 @@ QIHelper.prototype = {
 			html += '</select>';
 			return html;
 		}
-		var createInputBox = function(id, values) {
-			var html = '<input id="' + 'qp_param_' + id + '" type="text"/>';
+		var createInputBox = function(id, values, constraints) {
+			var aclAttributes = "";
+			if (constraints != null) {
+				aclAttributes = 'class="wickEnabled" constraints="'+constraints+'"';
+			}
+			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+'/>';
 			return html;
 		}
 		var createCheckBox = function(id, defaultValue) {
@@ -386,7 +392,7 @@ QIHelper.prototype = {
 			smw_timeline_init();
 			break;
 		case "exhibit":
-			createExhibit();
+			if (typeof createExhibit == 'function') createExhibit();
 			break;
 		}
 	},

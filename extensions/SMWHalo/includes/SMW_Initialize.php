@@ -106,7 +106,7 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['ol'] = 'SMWHaloListResultPrinter';
 	$smwgResultFormats['ul'] = 'SMWHaloListResultPrinter';
 	$smwgResultFormats['template'] = 'SMWHaloTemplateResultPrinter';
-	$smwgResultFormats['count'] = 'SMWHaloListResultPrinter';
+	$smwgResultFormats['count'] = 'SMWHaloCountResultPrinter';
 	$smwgResultFormats['debug'] = 'SMWHaloListResultPrinter';
 	$smwgResultFormats['rss'] = 'SMWHaloRSSResultPrinter';
 	
