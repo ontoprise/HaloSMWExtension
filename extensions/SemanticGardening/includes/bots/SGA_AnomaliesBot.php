@@ -50,7 +50,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  		$params[] = new GardeningParamBoolean('CATEGORY_LEAF_ANOMALY', wfMsg('smw_gard_anomaly_checkcatleaves'), SMW_GARD_PARAM_OPTIONAL, true);
  		$resParam = new GardeningParamTitle('CATEGORY_RESTRICTION', wfMsg('smw_gard_anomaly_restrictcat'), SMW_GARD_PARAM_OPTIONAL);
  		$resParam->setAutoCompletion(true);
- 		$resParam->setTypeHint(NS_CATEGORY);
+ 		$resParam->setConstraints("namespace: ".NS_CATEGORY);
  		$params[] = $resParam;
  		// for GARDENERS and SYSOPS, deletion of leaf categories is possible.
  		$userGroups = $wgUser->getGroups();

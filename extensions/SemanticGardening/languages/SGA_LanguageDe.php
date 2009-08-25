@@ -127,12 +127,12 @@ class SGA_LanguageDe {
     /* Missing annotations */
     'smw_gard_missingannot_docu' => 'Dieser Bot identifiziert Seiten im Wiki, die noch nicht annotiert wurden.',
     'smw_gard_missingannot_titlecontaining' => '(Optional) Nur Seiten deren Titel folgendes enthält',
-    'smw_gard_missingannot_restricttocategory' => 'Nur unterhalb folgender Kategorien suchen',
+    'smw_gard_restricttocategory' => 'Nur unterhalb folgender Kategorien suchen (separiert durch Komma)',
     'smw_gardissue_notannotated_page' => '$1 hat keine Annotationen',
     /* Anomalies */
     'smw_gard_anomaly_checknumbersubcat' => 'Überprüfe Anzahl der Subkategorien',
     'smw_gard_anomaly_checkcatleaves' => 'Prüfe auf Kategorie-Blätter',
-    'smw_gard_anomaly_restrictcat' => 'Nur unterhalb der Kategorie(n)',
+    'smw_gard_anomaly_restrictcat' => 'Nur unterhalb der Kategorie(n) (separiert durch Komma)',
     'smw_gard_anomaly_deletecatleaves' => 'Lösche Kategorie-Blätter',
     'smw_gard_anomaly_docu' => 'Dieser Bot identifiziert Anomalien im semantischen Modell. Anomalien sind derzeit: Kategorien-Blätter (Kategorien, die weder Subkategorien noch Instanzen enthalten), sowie ungewühnliche Anzahlen von Subkategorien (Kateogorien mit nur einer oder mehr als 8 Subkategorien).',
     'smw_gard_anomalylog' => 'Folgende Anomalien konnten im Wiki gefunden werden.',

@@ -37,9 +37,9 @@ class MissingAnnotationsBot extends GardeningBot {
 	 */
 	public function createParameters() {
 		$param1 = new GardeningParamString('MA_PART_OF_NAME', wfMsg('smw_gard_missingannot_titlecontaining'), SMW_GARD_PARAM_OPTIONAL);
-		$param2 = new GardeningParamTitle('MA_CATEGORY_RESTRICTION', wfMsg('smw_gard_missingannot_restricttocategory'), SMW_GARD_PARAM_OPTIONAL);
+		$param2 = new GardeningParamTitle('MA_CATEGORY_RESTRICTION', wfMsg('smw_gard_restricttocategory'), SMW_GARD_PARAM_OPTIONAL);
 		$param2->setAutoCompletion(true);
-		$param2->setTypeHint(NS_CATEGORY);
+		$param2->setConstraints("namespace: ".NS_CATEGORY);
 		return array($param1, $param2);
 	}
 

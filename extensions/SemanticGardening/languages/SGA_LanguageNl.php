@@ -130,7 +130,7 @@ class SGA_LanguageNl {
     /* Missing annotations */
     'smw_gard_missingannot_docu' => 'Deze bot identificeert wiki-pagina´s die geen aantekeningen hebben.',
     'smw_gard_missingannot_titlecontaining' => '(Optionaal) Alleen pagina´s met een titel met',
-    'smw_gard_missingannot_restricttocategory' => 'Beperken tot categorieën',
+    'smw_gard_restricttocategory' => 'Beperken tot categorieën',
     'smw_gardissue_notannotated_page' => '$1 heeft geen aantekeningen',
 
     /* Anomalies */

@@ -39,9 +39,9 @@ class ConsistencyBot extends GardeningBot {
 	 * Returns an array mapping parameter IDs to parameter objects
 	 */
 	public function createParameters() {
-		$param1 = new GardeningParamTitle('MA_CATEGORY_RESTRICTION', wfMsg('smw_gard_missingannot_restricttocategory'), SMW_GARD_PARAM_OPTIONAL);
+		$param1 = new GardeningParamTitle('MA_CATEGORY_RESTRICTION', wfMsg('smw_gard_restricttocategory'), SMW_GARD_PARAM_OPTIONAL);
 		$param1->setAutoCompletion(true);
-		$param1->setTypeHint(NS_CATEGORY);
+		$param1->setConstraints("namespace: ".NS_CATEGORY);
 		return array($param1);
 	}
 

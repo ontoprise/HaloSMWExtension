@@ -107,12 +107,12 @@
  class GardeningParamTitle extends GardeningParameterObject {
  	protected $title;
  	protected $ACEnabled;
- 	protected $typeHint;
+ 	protected $constraints;
  	
  	public function GardeningParamTitle($ID, $label, $options, $title = null) {
  		parent::GardeningParameterObject($ID, $label, $options);
  		$this->defaultValue = $title;
- 		$this->typeHint = -1;
+ 		$this->constraints = NULL;
  	}
  	
  	/**
@@ -124,11 +124,10 @@
  	}
  	
  	/**
- 	 * Sets typeHint (=NAMESPACE). Only entities of this type
- 	 * are returned.
+ 	 * Sets constraints. 
  	 */
- 	public function setTypeHint($typeHint) {
- 		$this->typeHint = $typeHint;
+ 	public function setConstraints($constraints) {
+ 		$this->constraints = $constraints;
  	}
  	
  	public function hasAutoCompletion() {
@@ -147,7 +146,7 @@
  		$html = "<span id=\"parentOf_".$this->ID."\"><br>".$this->label;
  		$html .= ($this->options & SMW_GARD_PARAM_REQUIRED != 0) ? "*" : "";
  		$attributes = ($this->ACEnabled) ? "class=\"wickEnabled\"" : "";
- 		$attributes .= " ".($this->typeHint != -1) ? "typeHint=\"".$this->typeHint."\"" : "";
+ 		$attributes .= " ".(!is_null($this->constraints)) ? "constraints=\"".$this->constraints."\"" : "";
  		$html .= ": <input type=\"text\" name=\"".$this->ID."\" $attributes size=\"30\"/></span>";
  		$html .= "<span id=\"errorOf_".$this->ID."\" class=\"errorText\"></span>";
  		return $html;

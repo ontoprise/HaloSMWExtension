@@ -134,13 +134,13 @@ of the tools click on this link: $1.',
     /* Missing annotations */
     'smw_gard_missingannot_docu' => 'This bot identifies pages in the Wiki that are not annotated.',
     'smw_gard_missingannot_titlecontaining' => '(Optional) Only Pages with a title containing',
-    'smw_gard_missingannot_restricttocategory' => 'Restrict to categories',
+    'smw_gard_restricttocategory' => 'Restrict to categories (separated by comma)',
     'smw_gardissue_notannotated_page' => '$1 has no annotations',
 
     /* Anomalies */
     'smw_gard_anomaly_checknumbersubcat' => 'Check number of sub categories',
     'smw_gard_anomaly_checkcatleaves' => 'Check for category leafs',
-    'smw_gard_anomaly_restrictcat' => 'Restrict to categories (separated by ;)',
+    'smw_gard_anomaly_restrictcat' => 'Restrict to categories (separated by :)',
     'smw_gard_anomaly_deletecatleaves' => 'Delete category leaves',
     'smw_gard_anomaly_docu' => 'This bot identifies  Category leafs (Categories that contain neither subcategories nor instances) and Subcategory number anomalies (Categories with only one or more than eight subcategories).',
     'smw_gard_anomalylog' => 'The anomaly bot removed the following pages',
