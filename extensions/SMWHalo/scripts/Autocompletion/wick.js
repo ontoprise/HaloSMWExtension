@@ -699,7 +699,7 @@ AutoCompleter.prototype = {
              // do default
 
             a = this.siw.inputBox.value;
-            fields = this.siw.inputBox.value.split(";");
+            fields = this.siw.inputBox.value.split(",");
 
             if (fields.length > 0) a = fields[fields.length - 1];
 
@@ -787,7 +787,7 @@ AutoCompleter.prototype = {
     
     getUserInputBase: function() {
         var s = this.siw.inputBox.value;
-        var lastComma = s.lastIndexOf(";");
+        var lastComma = s.lastIndexOf(",");
         return s.substr(0, lastComma+1);
     },  //this.getUserInputBase()
     highlightMatches: function(userInput) {

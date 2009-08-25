@@ -401,7 +401,8 @@ QIHelper.prototype = {
 	 * timeline div with id="previewcontent" innerHtml is changed directly
 	 */
 	parseWikilinks2Html : function() {
-		if ($('layout_link').value == "none")
+		
+		if ($('layout_link') != null && $('layout_link').value == "none")
 			return;
 		var text = $('previewcontent').innerHTML;
 		var newt = '';
@@ -668,7 +669,7 @@ QIHelper.prototype = {
 		constraintstring = "schema-property-domain: ";
 		// fetch category constraints:
 		var cats = this.activeQuery.categories; // get the category group
-
+        var constraintsCategories = "";
 		if (cats != null) {
 			for ( var i = 0, n = cats.length; i < n; i++) {
 				catconstraint = cats[i];
@@ -680,13 +681,13 @@ QIHelper.prototype = {
 					if (j > 0) {
 						constraintstring += ",";
 					}
-					constraintstring += gLanguage.getMessage('CATEGORY_NS',
+					constraintsCategories += gLanguage.getMessage('CATEGORY_NS',
 							'cont')
 							+ orconstraint;
 				}
 			}
 		}
-
+        constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
 		var newrow = $('dialoguecontent').insertRow(-1); // First row: input
 															// for property name
 		var cell = newrow.insertCell(0);
@@ -694,7 +695,7 @@ QIHelper.prototype = {
 		cell = newrow.insertCell(1);
 		cell.style.textAlign = "left";
 		cell.setAttribute("colSpan", 2);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + constraintstring + '|namespace: 102" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
+		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
 
 		newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox
 														// for display option

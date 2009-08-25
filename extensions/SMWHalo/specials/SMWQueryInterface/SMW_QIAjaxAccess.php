@@ -35,6 +35,7 @@ function smwf_qi_QIAccess($method, $params) {
 	}
 
 	else if($method == "getQueryResult"){
+	
 		$result="null";
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
@@ -68,12 +69,12 @@ function smwf_qi_QIAccess($method, $params) {
 	            } // no single pipe found, no params specified in query
 	            else $rawparams[] = trim($p_array[0]);
             }    
-            
             // parse params and answer query
             SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
             // merge fix parameters from GUI, they always overwrite others
             $params = array_merge($params, $fixparams);
             $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+           
 			switch ($fixparams['format']) {
             	case 'timeline':
             		return $result;
@@ -89,6 +90,7 @@ function smwf_qi_QIAccess($method, $params) {
             		break;            		
             	case 'exhibit':
             		return $result;
+            		
             		break;
             	default:            		
             }
@@ -96,8 +98,8 @@ function smwf_qi_QIAccess($method, $params) {
 			// add target="_new" for all links
 			$pattern = "|<a|i";
 			$result = preg_replace($pattern, '<a target="_new"', $result);
+			return $result;
 		}
-		return $result;
 	}
 	//TODO: Unify this method with "getQueryResult", maybe add another parameter in JS for check
 	else if($method == "getQueryResultForDownload"){

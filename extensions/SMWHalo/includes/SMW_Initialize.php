@@ -427,16 +427,14 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	// create the two field constraint and typeHint, also pipes had to be
 	// as ; in the parser function params constraints and typeHint parameter
 	$constraints = '';
-	$typeHint = '';
+	
 	if (array_key_exists('constraints', $other_args))
 	$constraints = 'constraints="'.str_replace(';', '|', $other_args['constraints']).'" ';
-	if (array_key_exists('typeHint', $other_args))
-	$typeHint = 'typeHint="'.str_replace(';', '|', $other_args['typeHint']).'" ';
-
+	
 	// call now the general function of SF that creates the <input> field
 	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	// add the two field constraints and typeHint in the result output html
-	$html = str_replace('/>', " $constraints$typeHint/>", $html);
+	$html = str_replace('/>', " $constraints/>", $html);
 	return $html;
 }
 

@@ -84,7 +84,7 @@ class SMWXMLResultPrinter extends SMWResultPrinter {
     }
     
     private function printHeader() {
-        return "<?xml version=\"1.0\"?>\n<sparql xmlns=\"http://www.w3.org/2005/sparql-results#\">\n";
+        return "<?xml version=\"1.0\"?>\n<sparql>\n";
     }
     
     private function printFooter() {

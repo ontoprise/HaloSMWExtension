@@ -66,16 +66,16 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	// check for constraint specific autocompletion (show only properties with certain constraints)
 	// syntax: array consisting of Categories (and) ORed categories concatenated by "|"
 	// e.g. "Category:Person", "Category:Car|Category:Boat"
-		
+
 	if ($options != "" || $options != null) {
 		if (strncmp($options, "[[", 2) == 0) {
 			$result = SMWQueryProcessor::getResultFromQueryString($options, array('format' => 'ul'), array(), SMW_OUTPUT_WIKI);
-				
+
 			$result = strip_tags($result);
 			preg_match_all('/\[\[[^\|]+/', $result, $matches);
 			$pages = $matches[0];
 			$results[] = array();
-				
+
 			foreach ($pages as $page) {
 				$page = substr($page, 2); // remove the "[["
 				if (strlen($userInputToMatch) > 0) {
@@ -88,10 +88,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 				}
 			}
 		} else {
-				
+
 			$options_arr = explode(",", $options);
 			$pages_and = array();
-				
+
 			foreach ($options_arr as $constraint) {
 				$pages_or = array();
 					
@@ -132,13 +132,14 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		if ($constraints == null || $constraints == 'null') {
 			// if no $constraints defined, search for (nearly) all pages.
 			global $wgExtraNamespaces;
-            $namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
-            $pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
-           
+			$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
+			$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
+
 		} else {
 			// otherwise use type hint
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
-			
+
+
 			if (empty($pages)) {
 				// fallback to standard search (namespace)
 				global $wgExtraNamespaces;
@@ -151,7 +152,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	} else if (stripos($userContext, "[[") === 0){
 		// semantic context
 		// decide according to context which autocompletion is appropriate
-		 
+			
 		// ------------------------
 		// 1. category case
 		// ------------------------
@@ -160,14 +161,14 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			AutoCompletionRequester::logResult($result, $articleName);
 			return $result;
 		}
-		 
+			
 		// ------------------------------------------------
 		// 2./3. property target case / property value case
 		// ------------------------------------------------
 		else if (stripos($userContext,":=") > 0 || stripos($userContext,"::") > 0) {
-			 
+
 			$propertyTargets = AutoCompletionRequester::getPropertyTargetProposals($userContext, $userInputToMatch);
-			 
+
 			$attributeValues = AutoCompletionRequester::getPropertyValueProposals($userContext, $userInputToMatch);
 
 			// if there is a unit or possible values, show them. Otherwise show instances.
@@ -175,7 +176,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			AutoCompletionRequester::logResult($result, $articleName);
 			return $result;
 
-			 
+
 			// --------------------------------
 			// 4.property name case
 			// --------------------------------
@@ -183,7 +184,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			$result = AutoCompletionRequester::getPropertyProposals($articleName, $userInputToMatch);
 			AutoCompletionRequester::logResult($result, $articleName);
 			return $result;
-			 
+
 		}
 
 	} else if (stripos($userContext, "{{") === 0) {
@@ -229,7 +230,7 @@ function &smwfGetAutoCompletionStore() {
 class AutoCompletionRequester {
 
 
-	
+
 	/**
 	 * Get category proposals matching $match.
 	 */
@@ -280,14 +281,14 @@ class AutoCompletionRequester {
 				} else {
 					$relationText = substr($userContext, 2, stripos($userContext,"::")-2);
 				}
-				 
+					
 				$property = Title::newFromText($relationText, SMW_NS_PROPERTY);
 
-				 
+					
 				$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 					
 				$pages = smwfGetAutoCompletionStore()->getInstanceAsTarget($match, $domainRangeAnnotations);
-				 
+					
 				if (count($pages) == 0) {
 					// fallback to non semantic AC
 					$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
@@ -300,7 +301,7 @@ class AutoCompletionRequester {
 				return AutoCompletionRequester::encapsulateAsXML($pages);
 			}
 		}
-		 
+			
 	}
 
 	/**
@@ -316,7 +317,7 @@ class AutoCompletionRequester {
 		// try units first, then possible values
 		$property = Title::newFromText($propertyText, SMW_NS_PROPERTY);
 		$unitsList = smwfGetAutoCompletionStore()->getUnits($property, $userInput);
-		 
+			
 		if (count($unitsList) > 0) {
 			$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($unitsList);
 		} else {
@@ -353,7 +354,7 @@ class AutoCompletionRequester {
 		if (stripos(strtolower($specialProperties["_SUBP"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_SUBP"], SMW_NS_PROPERTY);
 		}
-		 
+			
 		if (stripos(strtolower($specialProperties["_TYPE"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_TYPE"], SMW_NS_PROPERTY);
 		}
@@ -437,7 +438,7 @@ class AutoCompletionRequester {
 		$extra = "";
 		$inferred = false;
 		$arity = count(reset($matches));
-		
+
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
 			switch($arity) {
 				case 1: $title = $matches[$i]; break;
@@ -451,7 +452,7 @@ class AutoCompletionRequester {
 			$content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
 			$xmlResult .= "<match $typeAtt $inferredAtt>$content<extraContent>$extra</extraContent></match>";
 		}
-	
+
 		return '<result>'.$xmlResult.'</result>';
 	}
 
@@ -462,7 +463,7 @@ class AutoCompletionRequester {
 		if (empty($arrayofEnumsOrUnits)) {
 			return SMW_AC_NORESULT;
 		}
-		
+
 		$xmlResult = '';
 		foreach($arrayofEnumsOrUnits as $eou) {
 			$xmlResult .= "<match type=\"500\">".htmlspecialchars($eou)."</match>";
@@ -545,17 +546,17 @@ class TemplateReader {
  *
  */
 class AutoCompletionHandler {
-	
+
 	/**
 	 * Parses auto-completion command.
-	 * 
+	 *
 	 * Syntax is:
-	 *     
+	 *
 	 *     1. S -> C [ '|' S ]
 	 *     2. C -> CT ':' P
 	 *     3. P -> PM [ ',' P ] | Epsilon;
-	 * 
-	 *     CT is a command token, PM a parameter token. 
+	 *
+	 *     CT is a command token, PM a parameter token.
 	 *     (tokens are alphanumeric with special characters except comma and pipe)
 	 *
 	 * @param string $commandText
@@ -575,90 +576,103 @@ class AutoCompletionHandler {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Executes a series of auto-completion commands and stops when it
-	 * has a found at least one result. 
+	 * has a found at least one result.
 	 *
 	 * @param string $command
 	 * @param substring $userInput
 	 * @return array of Title, array of (Title, inferred) or array of (Title, inferred, extraContent)
 	 */
-    public static function executeCommand($command, $userInput) {
-        $parsedCommands = self::parseCommand($command);
-        $acStore = smwfGetAutoCompletionStore();
-        
-        $result = array();
-        foreach($parsedCommands as $c) {
-        	list($commandText, $params) = $c;
-        	
-        	if ($commandText == 'schema-property-domain') {
-        		
-        		$category = Title::newFromText($params[0]);
-        		if (!is_null($category)) $result = $acStore->getPropertyForCategory($userInput, $category);
-        		
-        		if (!empty($result)) break;
-        	} else if ($commandText == 'schema-property-range-instance') {
-                $instance = Title::newFromText($params[0]);
-                if (!is_null($instance)) $result = $acStore->getPropertyForInstance($userInput, $instance, false);
-                if (!empty($result)) break;
-            } else if ($commandText == 'annotation-property') {
-                $category = Title::newFromText($params[0]);
-                if (!is_null($instance)) $result = $acStore->getPropertyForAnnotation($userInput, $category, false);
-                if (!empty($result)) break;
-            } else if ($commandText == 'namespace') {
-        		$result = smwfGetAutoCompletionStore()->getPages($userInput, $params);
-        	} else if ($commandText == 'lexical') {
-                $result = smwfGetAutoCompletionStore()->getPages($userInput);
-            } else if ($commandText == 'schema-property-type') {
-        		$datatype = $param[0];
-        	    $result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
-                if (empty($pages)) {
-                    global $smwgContLang;
-                    $dtl = $smwgContLang->getDatatypeLabels();
-                    $result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
-                }
-            } else if ($commandText == 'ask') {
-            	$query = $params[0];
-            	$xmlResult = self::runASKQuery($query);
-            	
-                $dom = simplexml_load_string($xmlResult);
-	            $queryResults = $dom->xpath('//binding[@name="var0"]');
-	            
-		        foreach($queryResults as $r) {
-		        	$result[] = Title::newFromText($r);
-		        }
-		       
-            }
-        	
-       
-        }
-        return $result;
-    }
-    
-    private static function runASKQuery($rawquery) {
-       global $smwgResultFormats, $smwgHaloIP;
-       require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
-       $smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
-               
-        // add query as first rawparam
-        $paramPos = strpos($rawquery, "|");
-        $rawparams[] = $paramPos === false ? $rawquery : substr($rawquery, 0, $paramPos);
-        if ($paramPos !== false) {
-            // add other params
-            $ps = explode("|", substr($rawquery, $paramPos + 1));
-            foreach ($ps as $param) {
-                $param = trim($param);
-                $rawparams[] = $param;
-            }
-        }
-    
-        // parse params and answer query
-        SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-        $params['format'] = "xml";
-        return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
-    	
-    }
+	public static function executeCommand($command, $userInput) {
+		$parsedCommands = self::parseCommand($command);
+		$acStore = smwfGetAutoCompletionStore();
+
+		$result = array();
+		foreach($parsedCommands as $c) {
+			list($commandText, $params) = $c;
+
+			if ($commandText == 'schema-property-domain') {
+
+				$category = Title::newFromText($params[0]);
+				if (!is_null($category)) $result = $acStore->getPropertyForCategory($userInput, $category);
+
+				if (!empty($result)) break;
+			} else if ($commandText == 'schema-property-range-instance') {
+				$instance = Title::newFromText($params[0]);
+				if (!is_null($instance)) $result = $acStore->getPropertyForInstance($userInput, $instance, false);
+				if (!empty($result)) break;
+			} else if ($commandText == 'annotation-property') {
+				$category = Title::newFromText($params[0]);
+				if (!is_null($instance)) $result = $acStore->getPropertyForAnnotation($userInput, $category, false);
+				if (!empty($result)) break;
+			} else if ($commandText == 'namespace') {
+				$result = smwfGetAutoCompletionStore()->getPages($userInput, $params);
+			} else if ($commandText == 'lexical') {
+				$result = smwfGetAutoCompletionStore()->getPages($userInput);
+			} else if ($commandText == 'schema-property-type') {
+				$datatype = $param[0];
+				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
+				if (empty($pages)) {
+					global $smwgContLang;
+					$dtl = $smwgContLang->getDatatypeLabels();
+					$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
+				}
+			} else if ($commandText == 'ask') {
+				$query = $params[0];
+
+				if (!isset($params[1]) || $params[1] == 'main') {
+					$column = "_var0";
+				} else {
+					$column = strtoupper(substr($params[1],0,1)).substr($params[1],1);
+					$column = str_replace(" ", "_", $column);
+				}
+
+				$xmlResult = self::runASKQuery($query, $column);
+					
+				$dom = simplexml_load_string($xmlResult);
+				$queryResults = $dom->xpath('//binding[@name="'.$column.'"]');
+
+				// make titles but eliminate duplicates before
+				$textTitles = array();
+				foreach($queryResults as $r) {
+					if (stripos((string) $r[0], $userInput) !== false) {
+						$textTitles[] = (string) $r[0];
+					}
+				}
+				$textTitles = array_unique($textTitles);
+				foreach($textTitles as $r) {
+					$result[] = Title::newFromText($r);
+				}
+
+			}
+
+
+		}
+		return $result;
+	}
+
+	private static function runASKQuery($rawquery, $column) {
+		global $smwgResultFormats, $smwgHaloIP;
+		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
+		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+
+		// add query as first rawparam
+
+		$rawparams[] = $rawquery;
+		if ($column != "_var0") $rawparams[] = "?$column";
+
+		// parse params and answer query
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		$params['format'] = "xml";
+
+		if ($column != "_var0") $params['sort'] = $column;
+		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
+			
+	}
+
+
 }
 
 
