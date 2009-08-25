@@ -18,7 +18,8 @@ class SGA_LanguageEn {
     'smw_gardeninglogs_docu' => 'This page provides access to logs created by the Gardening Bots. You can filter them in various ways.',
     'smw_gardening_log_exp' => 'This is the Gardening log category',
     'smw_gardeninglog_link' => 'Also take a look at $1 special page for further logs.',
-    'smw_gard_welcome' => 'This is the Gardening toolbox.It provides some tools which helps to keep the wiki knowledgebase clean and consistent.',
+    'smw_gard_welcome' => 'This is the Gardening toolbox.It provides some tools which helps to keep the wiki knowledgebase clean and consistent. <br/>To inspect the results of previous runs
+of the tools click on this link: $1.',
     'smw_gard_notools' => 'If you do not see any tools here, you might not be logged in or you do not have any rights to use gardening tools.',
     'smw_no_gard_log' => 'No Gardening log',
     'smw_gard_abortbot' => 'Cancel Bot',

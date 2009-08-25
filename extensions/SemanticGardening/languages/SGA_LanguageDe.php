@@ -18,7 +18,7 @@ class SGA_LanguageDe {
     'smw_gardeninglogs_docu' => 'Diese Seite ermöglicht den Zugriff auf die Gardening Logs.',
     'smw_gardening_log_exp' => 'Das ist die Gardening Log Kategorie.',
     'smw_gardeninglog_link' => 'Suchen Sie auch auf $1 für weitere Logging-Einträge.',
-    'smw_gard_welcome' => 'Das ist der Gardening-Werkzeugkasten. Er enthält einige Werkzeuge, mit deren Hilfe Sie das Wiki sauber und konsistent halten können.',
+    'smw_gard_welcome' => 'Das ist der Gardening-Werkzeugkasten. Er enthält einige Werkzeuge, mit deren Hilfe Sie das Wiki sauber und konsistent halten können.  <br/>Um die Ergebnisse vorangeganger Durchläufe anzusehen, klicken Sie auf diesen Link: $1.',
     'smw_gard_notools' => 'Wenn Sie hier keine Werkzeuge angezeigt bekommen, sind Sie entweder nicht eingeloggt oder haben nicht das Recht Gardening-Werkzeuge zu benutzen.',
     'smw_no_gard_log' => 'Kein Gardening-Log vorhanden',
     'smw_gard_abortbot' => 'Bot beenden',

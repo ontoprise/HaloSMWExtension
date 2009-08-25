@@ -36,9 +36,11 @@ class SGAGardening extends SpecialPage {
 	}
 	
 	public function execute() {
-		global $wgRequest, $wgOut;
+		global $wgRequest, $wgOut, $wgUser;
 		$wgOut->setPageTitle(wfMsg('gardening'));
-		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('smw_gard_welcome')."</div>";
+		$gardeningLogPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
+		$gardeningLogLink = $wgUser->getSkin()->makeKnownLinkObj($gardeningLogPage);
+		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('smw_gard_welcome', $gardeningLogLink)."</div>";
 		$html .= "<div id=\"gardening-container\">" .
 					"<div id=\"gardening-tools\">" . SGAGardening::getRegisteredBots() .
 					"</div>" .
