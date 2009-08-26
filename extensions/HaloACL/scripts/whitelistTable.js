@@ -167,9 +167,9 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
             scope : myDataTable,
             argument : myDataTable.getState()
         };
-        console.log("sending request");
+        if(YAHOO.haloacl.debug) console.log("sending request");
         myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
-        console.log("reqeust sent");
+        if(YAHOO.haloacl.debug) console.log("reqeust sent");
         
     }
 
