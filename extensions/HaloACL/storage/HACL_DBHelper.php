@@ -301,4 +301,3 @@ class HACLDBHelper {
         return $sql_conds;
     }
 }
-?>

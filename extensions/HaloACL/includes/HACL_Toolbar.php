@@ -1,4 +1,3 @@
-
 <?php
 /*
  * B2browse Group
