@@ -216,7 +216,6 @@ function haclAddHTMLHeader(&$out) {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
 
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-        #    $out->addScript('<script type="text/javascript" src="http://yui.yahooapis.com/2.7.0/build/connection/connection-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
 
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
@@ -241,14 +240,10 @@ function haclAddHTMLHeader(&$out) {
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
 
 
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => $haclgHaloScriptPath.'/yui/button.css'
-        ));
+ 
         $out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',

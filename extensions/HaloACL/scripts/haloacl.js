@@ -36,6 +36,15 @@ YAHOO.namespace ("haloacl.constants");
 YAHOO.namespace ("haloacl.settings");
 YAHOO.namespace ("haloacl.manageUser");
 
+// log debug information to js-console
+YAHOO.haloacl.debug = false;
+
+if(YAHOO.haloacl.debug){
+    console.log("======== DEBUG MODE ENABLED =========");
+    console.log("-- visit haloacl.js to switch mode --");
+    console.log("=====================================");
+}
+
 
 YAHOO.haloacl.panelcouner = 0;
 // has all checked users from grouptree
@@ -50,22 +59,42 @@ YAHOO.haloacl.clickedArrayUsersGroups = new Array();
 // has all checked users from righttree
 YAHOO.haloaclrights.clickedArrayGroups = new Array();
 
+
+
+
+
+
+
 // Tabview related stuff
 
 // building the main tabview
-YAHOO.haloacl.buildMainTabView = function(containerName){
+YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
+    if(YAHOO.haloacl.debug) console.log("got requestedtitle:"+requestedTitle);
+    if(requestedTitle != null){
+        YAHOO.haloacl.requestedTitle = requestedTitle;
+    }else{
+        YAHOO.haloacl.requestedTitle = "";
+    }
+    
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
 
     var tab1 = new YAHOO.widget.Tab({
         label: 'Create ACL',
         dataSrc:'createACLPanels',
         cacheData:false,
-        active:true
+        active:true,
+        id:'createACLPanel_button'
     });
     tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab1);
     tab1.addListener('click', function(e){});
     $(tab1.get('contentEl')).setAttribute('id','creataclTab');
+
+    new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
+        context:"createACLPanel_button",
+        text:"Create standard ACL, Create ACL template and Create ACL default user template",
+        zIndex :10
+    });
 
 
     // ------
@@ -74,39 +103,57 @@ YAHOO.haloacl.buildMainTabView = function(containerName){
         label: 'Manage ACLs',
         dataSrc:'createManageACLPanels',
         cacheData:false,
-        active:false
+        active:false,
+        id:"manageACLPanel_button"
     });
     tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab2);
     tab2.addListener('click', function(e){});
     $(tab2.get('contentEl')).setAttribute('id','manageaclmainTab');
 
+    new YAHOO.widget.Tooltip("manageACLPanel_tooltip", {
+        context:"manageACLPanel_button",
+        text:"Manage existing ACLs, Manage own default user template and Manage quick access ACLs",
+        zIndex :10
+    });
     // ------
 
     var tab3 = new YAHOO.widget.Tab({
         label: 'Manage User',
         dataSrc:'manageUserContent',
         cacheData:false,
-        active:false
+        active:false,
+        id:"manageUserContent_button"
     });
     tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab3);
     tab3.addListener('click', function(e){});
-    $(tab1.get('contentEl')).setAttribute('id','manageuserTab');
+    $(tab3.get('contentEl')).setAttribute('id','manageuserTab');
 
+    new YAHOO.widget.Tooltip("manageUserContent_tooltip", {
+        context:"manageUserContent_button",
+        text:"In this tab you can create, edit and delete ACL groups",
+        zIndex :10
+    });
     // ------
 
     var tab4 = new YAHOO.widget.Tab({
         label: 'Whitelists',
         dataSrc:'whitelistsContent',
         cacheData:false,
-        active:false
+        active:false,
+        id:"whitelist_button"
     });
     tab4._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclTabs.addTab(tab4);
     tab4.addListener('click', function(e){});
-    $(tab1.get('contentEl')).setAttribute('id','whitelistsTab');
+    $(tab4.get('contentEl')).setAttribute('id','whitelistsTab');
 
+    new YAHOO.widget.Tooltip("whitelist_tooltip", {
+        context:"whitelist_button",
+        text:"In this tab you can create and delete whitelist entries ",
+        zIndex :10
+    });
 // ------
 
 };
@@ -146,10 +193,10 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab3 = new YAHOO.widget.Tab({
             label: 'Manage quick access ACLs',
-            dataSrc:'manageUserContent',
+            dataSrc:'createQuickAclTab',
             cacheData:false,
             active:false,
-            id:"createUserAclTab"
+            id:"createQuickAclTab"
         });
         tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab3);
@@ -187,8 +234,8 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab2);
         tab2.addListener('click', function(e){
-           $('createStdAclTab_content').innerHTML = "";
-           $('createUserAclTab_content').innerHTML = "";
+            $('createStdAclTab_content').innerHTML = "";
+            $('createUserAclTab_content').innerHTML = "";
         });
         $(tab2.get('contentEl')).setAttribute('id','createTmpAclTab_content');
 
@@ -206,8 +253,8 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclTabs.addTab(tab3);
         tab3.addListener('click', function(e){
-           $('createStdAclTab_content').innerHTML = "";
-           $('createTmpAclTab_content').innerHTML = "";
+            $('createStdAclTab_content').innerHTML = "";
+            $('createTmpAclTab_content').innerHTML = "";
         });
         $(tab3.get('contentEl')).setAttribute('id','createUserAclTab_content');
 
@@ -370,18 +417,18 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
     //if (!readOnly) {
     
-        var tab1 = new YAHOO.widget.Tab({
-            label: 'Select / Deselect',
-            dataSrc:'rightPanelSelectDeselectTab',
-            cacheData:false,
-            active:true,
-            postData:parameterlist
-        });
-        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
-        YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
-        tab1.addListener('click', function(e){});
-        //$(tab1.get('contentEl')).style.display = 'none';
-        $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+    var tab1 = new YAHOO.widget.Tab({
+        label: 'Select / Deselect',
+        dataSrc:'rightPanelSelectDeselectTab',
+        cacheData:false,
+        active:true,
+        postData:parameterlist
+    });
+    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+    tab1.addListener('click', function(e){});
+    //$(tab1.get('contentEl')).style.display = 'none';
+    $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
     //}
 
 
@@ -409,9 +456,9 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 // --- handling global arrays for selection of users and groups
 
 YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
-    console.log("deletable-type:"+deletable);
-    console.log("array before deletion");
-    console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
+    if(YAHOO.haloacl.debug) console.log("deletable-type:"+deletable);
+    if(YAHOO.haloacl.debug) console.log("array before deletion");
+    if(YAHOO.haloacl.debug) console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
     var elementToRemove = 0;
     for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
@@ -426,22 +473,22 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
             element.parentNode.parentNode.parentNode.hide();
         }
         catch(e){
-            console.log("hiding element failed");
-            console.log(e);
+            if(YAHOO.haloacl.debug) console.log("hiding element failed");
+            if(YAHOO.haloacl.debug) console.log(e);
         }
     }else{
         deletable == "groupuser"
-        }{
+    }{
         try{
             element.hide();
         //element.parentNode.parentNode.parentNode.hide();
         }
         catch(e){
-            console.log(e);
+            if(YAHOO.haloacl.debug) console.log(e);
         }
     }
-    console.log("array after deletion");
-    console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
+    if(YAHOO.haloacl.debug) console.log("array after deletion");
+    if(YAHOO.haloacl.debug) console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
 };
 
 YAHOO.haloacl.addUserToUserArray = function(panelid, name){
@@ -450,39 +497,39 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
         if (!YAHOO.haloacl.clickedArrayUsers[panelid]){
             YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
         }
-        console.log("adding user "+name+" to "+panelid+"-array");
+        if(YAHOO.haloacl.debug) console.log("adding user "+name+" to "+panelid+"-array");
         var alreadyContained = false;
         for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
             if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
                 alreadyContained = true;
-                console.log("found element - not creating new entry");
+                if(YAHOO.haloacl.debug) console.log("found element - not creating new entry");
             }
         }
         if(!alreadyContained){
             YAHOO.haloacl.clickedArrayUsers[panelid].push(name);
         }
     }else{
-        console.log("to short username added - skipping");
+        if(YAHOO.haloacl.debug) console.log("to short username added - skipping");
     }
 
-    console.log(":::"+YAHOO.haloacl.clickedArrayUsers[panelid]);
+    if(YAHOO.haloacl.debug) console.log(":::"+YAHOO.haloacl.clickedArrayUsers[panelid]);
 };
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
     if(name.length > 4){
-        console.log("adding group "+name+" to "+panelid+"-array");
+        if(YAHOO.haloacl.debug) console.log("adding group "+name+" to "+panelid+"-array");
         var alreadyContained = false;
         for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
             if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
                 alreadyContained = true;
-                console.log("found element - not creating new entry");
+                if(YAHOO.haloacl.debug) console.log("found element - not creating new entry");
             }
         }
         if(!alreadyContained){
             YAHOO.haloacl.clickedArrayGroups[panelid].push(name);
         }
     }else{
-        console.log("to short groupname added - skipping");
+        if(YAHOO.haloacl.debug) console.log("to short groupname added - skipping");
     }
 };
 
@@ -491,25 +538,30 @@ YAHOO.haloacl.getGroupsArray = function (panelid){
 };
 
 YAHOO.haloacl.removeGroupFromGroupArray = function(panelid,name){
-    console.log("trying to remove "+name+" from "+panelid+"-array");
+    if(YAHOO.haloacl.debug) console.log("trying to remove "+name+" from "+panelid+"-array");
     var elementToRemove = 0;
     for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
             elementToRemove = i;
-            console.log("found element");
+            if(YAHOO.haloacl.debug) console.log("found element");
         }
     }
     YAHOO.haloacl.clickedArrayGroups[panelid].splice(elementToRemove,1);
 };
 
 YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
+    /*
     for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
             return true;
         }
     }
     return false;
-
+    */
+    if(YAHOO.haloacl.clickedArrayGroups[panelid].indexOf(name) == -1){
+        return false;
+    }
+    return true;
 };
 
 YAHOO.haloacl.isNameInUsersGroupsArray = function(panelid, name){
@@ -538,12 +590,12 @@ YAHOO.haloacl.isNameInUserArray = function(panelid, name){
 };
 
 YAHOO.haloacl.hasGroupsOrUsers = function(panelid){
-    console.log("testing "+panelid);
+    if(YAHOO.haloacl.debug) console.log("testing "+panelid);
     if (((YAHOO.haloacl.clickedArrayGroups[panelid]) && (YAHOO.haloacl.clickedArrayGroups[panelid].length > 0)) || (YAHOO.haloacl.clickedArrayUsers[panelid] && (YAHOO.haloacl.clickedArrayUsers[panelid].length > 0))) {
-        console.log("available");
+        if(YAHOO.haloacl.debug) console.log("available");
         return true;
     } else {
-        console.log("not available");
+        if(YAHOO.haloacl.debug) console.log("not available");
         return false;
     }
 
@@ -561,17 +613,17 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
 
     //if (!readOnly) {
 
-        var tab1 = new YAHOO.widget.Tab({
-            label: 'Select / Deselect',
-            dataSrc:'rightPanelSelectDeselectTab',
-            cacheData:false,
-            active:true,
-            postData:parameterlist
-        });
-        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
-        YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
-        tab1.addListener('click', function(e){});
-        $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+    var tab1 = new YAHOO.widget.Tab({
+        label: 'Select / Deselect',
+        dataSrc:'rightPanelSelectDeselectTab',
+        cacheData:false,
+        active:true,
+        postData:parameterlist
+    });
+    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+    tab1.addListener('click', function(e){});
+    $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
     //}
 
 
@@ -608,6 +660,14 @@ YAHOO.haloacl.callbackDeleteSD = function(result){
 };
 
 YAHOO.haloacl.deleteSD = function(sdId){
-    YAHOO.haloacl.callAction('deleteSecurityDescriptor', {sdId:sdId}, YAHOO.haloacl.callbackDeleteSD);
+    YAHOO.haloacl.callAction('deleteSecurityDescriptor', {
+        sdId:sdId
+    }, YAHOO.haloacl.callbackDeleteSD);
 
+};
+
+YAHOO.haloacl.removeHighlighting = function(){
+    $$('.highlighted').each(function(item){
+        $(item).removeClassName("highlighted");
+    });
 };

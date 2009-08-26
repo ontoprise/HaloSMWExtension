@@ -154,6 +154,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      * Invoked when the user clicks the check box
      */
     checkClick: function(oArgs) {
+        if(YAHOO.haloacl.debug) console.log(oArgs);
         var node = oArgs.node;
         var target = YAHOO.util.Event.getTarget(oArgs.event);
         if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
@@ -235,6 +236,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      * @param the new check state
      */
     setCheckState: function(state) {
+
         this.checkState = state;
         this.checked = (state > 0);
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
@@ -245,8 +247,8 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
-        // update usertable
-        YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
+    // update usertable
+    // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
     },
 
@@ -364,16 +366,25 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
-            sb[sb.length] = ' >';
-            sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'})">'+this.label+"</a>";
+            sb[sb.length] = ' >'+this.label;
+            // sb[sb.length] = '<a href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'})">'+this.label+"</a>";
 
             sb[sb.length] = '</span></td>';
 
+            sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">&nbsp;</span></td>';
+            
+            sb[sb.length] = '<td><span class="">';
+            //<a class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
+            sb[sb.length] = '<a class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'})">&nbsp;'+"</a></span>";
+            sb[sb.length] = "</td>";
+
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
-            sb[sb.length] = ' class="ygtvcheck3"';
+            //            sb[sb.length] = ' class="ygtvcheck3"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+
             sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"><div class="haloacl_editbutton"></div></div></td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 */
         }
 
@@ -723,7 +734,11 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' >';
             sb[sb.length] = shortLabel;
             sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton" ></div>';
-            this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, { context:this.labelElId, text:this.label, zIndex :10 });
+            this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, { 
+                context:this.labelElId,
+                text:this.label,
+                zIndex :10
+            });
 
             
             sb[sb.length] = '</span></td>';
@@ -881,7 +896,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         tmpNode.setTreeType(tmpNode.tree.type);
 
         //build right subnodes
-        console.log("rights array:"+element.rights.length+element.rights);
+        if(YAHOO.haloacl.debug) console.log("rights array:"+element.rights.length+element.rights);
         if (element.rights.length > 0) {
             for(var i2= 0, len2 = element.rights.length; i2<len2; ++i2){
 

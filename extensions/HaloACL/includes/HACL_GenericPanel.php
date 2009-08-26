@@ -38,7 +38,7 @@ class HACL_GenericPanel {
     private $content;
 
 
-    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true) {
+    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null) {
 
         $this->header = <<<HTML
 	<!-- start of panel div-->
@@ -53,14 +53,25 @@ class HACL_GenericPanel {
                             <span id="haloacl_panel_descr_$panelid" class="panel haloacl_panel_descr">$description</span>
                         </div>
 HTML;
-        if($showStatus) {
+        if($showStatus && $customState == null) {
             $this->header .= <<<HTML
                         <div class="haloacl_panel_statusContainer">
                             <span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_notsaved">Not Saved</span>
                         </div>
 
 HTML;
+        }else if($showStatus && $customState != null){
+             $this->header .= <<<HTML
+                        <div class="haloacl_panel_statusContainer">
+                            <span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_saved">$customState</span>
+                        </div>
+
+HTML;
         }
+
+
+
+
         if($showClose) {
             $this->header .= <<<HTML
 			<span class="button haloacl_panel_close">

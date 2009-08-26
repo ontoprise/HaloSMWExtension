@@ -5,6 +5,8 @@
     border:1px #ccc solid;
     background-color:#eee;
     overflow:visible;
+    margin:5px 0 5px 0;
+    padding:2px 0;
 }
 
 #hacl_toolbarcontainer_section1{
@@ -14,6 +16,7 @@
     border:1px #ccc solid;
     border-style: none solid none none;
     overflow:visible;
+    padding:0 5px;
 }
 #hacl_toolbarcontainer_section2{
     float:left;
@@ -21,9 +24,11 @@
     height:20px;
     border:1px #ccc solid;
     border-style: none solid none none;
+    padding:0 5px;
 }
 #hacl_toolbarcontainer_section3{
     float:left;
     width:250px;
     height:20px;
+    padding:0 5px;
 }

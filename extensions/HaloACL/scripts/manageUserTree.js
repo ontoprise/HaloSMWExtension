@@ -63,6 +63,9 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     groupId: 0,
 
 
+    information:"",
+
+
     /**
      * tree type
      * rw=read/write, r=read
@@ -183,8 +186,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     updateParent: function() {
 
-        // NO update parent here
-        /*
+    // NO update parent here
+    /*
         var p = this.parent;
 
         if (!p || !p.updateParent) {
@@ -302,7 +305,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
 
         sb[sb.length] = '</span></td>';
-        sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">Information</span></td>';
+        sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">'+this.information+'</span></td>';
         sb[sb.length] = '<td><span class=""><a class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
@@ -438,7 +441,10 @@ YAHOO.haloacl.manageUser.filterNodes = function(parentNode,filter){
  */
 YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
 
-    YAHOO.haloacl.manageUser.buildNodesFromData(tree.getRoot(),data,tree.panelid);
+    var tmpNode = new YAHOO.widget.TextNode("Groups", tree.getRoot(),false);
+    tmpNode.expand();
+
+    YAHOO.haloacl.manageUser.buildNodesFromData(tmpNode,data,tree.panelid);
 
     //using custom loadNodeDataHandler
     var loadNodeData = function(node, fnLoadComplete)  {
@@ -499,10 +505,8 @@ YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson = function(tree){
  * returns a new treeinstance
  */
 YAHOO.haloacl.getNewManageUserTree = function(divname,panelid){
-    console.log("first");
     var instance = new YAHOO.widget.TreeView(divname);
     instance.panelid = panelid;
-    console.log("here");
    
     return instance;
 };
@@ -530,9 +534,15 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
 
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
-    console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode("new subgroup", nodeToAttachTo,false);
-    nodeToAttachTo.refresh();
+    if(nodeToAttachTo._type != "RootNode"){
+        if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
+        var tmpNode = new YAHOO.widget.ManageUserNode("new subgroup", nodeToAttachTo,false);
+        tmpNode.information ="click edit to create";
+        nodeToAttachTo.refresh();
+    }
+
+    
+ 
 
 };
 YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
@@ -558,12 +568,13 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
 
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
-    console.log(nodeToAttachTo);
+    if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
     var tmpNode = new YAHOO.widget.ManageUserNode("new subgroup", nodeToAttachTo,false);
     // turn of dynamic load on that node
+    tmpNode.information ="click edit to create";
+
     tmpNode.setDynamicLoad();
     nodeToAttachTo.expand();
     nodeToAttachTo.refresh();
-
-
+ 
 };

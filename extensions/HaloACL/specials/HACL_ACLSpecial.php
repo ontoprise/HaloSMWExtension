@@ -57,23 +57,30 @@ class HaloACLSpecial extends SpecialPage {
 
     private function createMainTabContainer() {
         global $wgOut;
+        global $wgRequest;
 
         $html = <<<HTML
             <div class="yui-skin-sam">
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
 <script type="text/javascript">
-  YAHOO.haloacl.buildMainTabView('haloaclmainView');
+HTML;
 
-</script>
+        if(array_key_exists("articletitle", $wgRequest->data)) {
+            $html .= "
+    console.log('specialpage got title');
+    YAHOO.haloacl.buildMainTabView('haloaclmainView','{$wgRequest->data['articletitle']}');
+                ";
+        }else {
+            $html .="
+     YAHOO.haloacl.buildMainTabView('haloaclmainView');
+";
+        }
 
-
-  
-
+        $html .= <<<HTML
+            </script>
 HTML;
         $wgOut->addHTML($html);
-
-
     }
 
     private function testPage() {

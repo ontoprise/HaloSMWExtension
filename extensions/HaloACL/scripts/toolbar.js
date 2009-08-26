@@ -10,6 +10,10 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
         rs:action
     };
      */
+
+
+    console.log($(targetdiv));
+    
     var querystring = "rs="+action;
 
     if(parameterlist != null){
@@ -19,16 +23,17 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
         }
     }
 
-    new Ajax.Updater(targetdiv, "?action=ajax", {
+    new Ajax.Request("?action=ajax", {
         //method:tab.get('loadMethod'),
         method:'post',
         // parameters: queryparameterlist,
         parameters: querystring,
         asynchronous:true,
         evalScripts:true,
-        insertion:top,
+      //  insertion:before,
         onSuccess: function(o) {
-            tab._loading = false;
+            console.log(o);
+            $(targetdiv).insert({top:o.responseText})
         },
         onFailure: function(o) {
         }
