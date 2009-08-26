@@ -402,4 +402,3 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 	}
 	
 }
-?>
