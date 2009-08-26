@@ -7,7 +7,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define('SF_VERSION','1.7.1');
+define('SF_VERSION','1.8.2');
 
 $wgExtensionCredits['specialpage'][]= array(
 	'path' => __FILE__,
@@ -22,10 +22,12 @@ $wgExtensionCredits['specialpage'][]= array(
 // constants for special properties
 define('SF_SP_HAS_DEFAULT_FORM', 1);
 define('SF_SP_HAS_ALTERNATE_FORM', 2);
+define('SF_SP_CREATES_PAGES_WITH_FORM', 3);
 
 $wgExtensionFunctions[] = 'sfgSetupExtension';
 $wgExtensionFunctions[] = 'sfgParserFunctions';
 
+// FIXME: Can be removed when new style magic words are used (introduced in r52503)
 $wgHooks['LanguageGetMagic'][] = 'SFParserFunctions::languageGetMagic';
 // the 'BrokenLink' hook exists only in MediaWiki v1.13 - it was replaced
 // by 'LinkBegin' and 'LinkEnd'
@@ -33,6 +35,7 @@ $wgHooks['BrokenLink'][] = 'SFLinkUtils::setBrokenLink_1_13';
 $wgHooks['LinkEnd'][] = 'SFLinkUtils::setBrokenLink';
 $wgHooks['UnknownAction'][] = 'SFFormEditTab::displayForm';
 $wgHooks['SkinTemplateTabs'][] = 'SFFormEditTab::displayTab';
+$wgHooks['SkinTemplateNavigation'][] = 'SFFormEditTab::displayTab2';
 $wgHooks['smwInitProperties'][] = 'SFUtils::initProperties';
 $wgHooks['AdminLinks'][] = 'sffAddToAdminLinks';
 

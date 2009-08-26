@@ -85,6 +85,12 @@ $aliases['fa'] = array(
 	'UploadWindow' => array( 'پنجره_بارگذاری' ),
 );
 
+/** Finnish (Suomi) */
+$aliases['fi'] = array(
+	'CreateTemplate' => array( 'Luo malline' ),
+	'Templates' => array( 'Mallineet' ),
+);
+
 /** French (Français) */
 $aliases['fr'] = array(
 	'AddData' => array( 'AjouterDonnées', 'Ajouter données' ),
@@ -185,8 +191,8 @@ $aliases['ja'] = array(
 	'CreateProperty' => array( 'プロパティ作成' ),
 	'CreateTemplate' => array( 'テンプレート作成' ),
 	'EditData' => array( 'データ編集' ),
-	'Forms' => array( 'フォーム' ),
-	'Templates' => array( 'テンプレート' ),
+	'Forms' => array( 'フォーム一覧' ),
+	'Templates' => array( 'テンプレート一覧' ),
 	'UploadWindow' => array( 'アップロードウィンドウ' ),
 );
 
@@ -221,6 +227,11 @@ $aliases['ksh'] = array(
 	'UploadWindow' => array( 'Finster zum Huhlaade', 'Finster zom Huhlaade' ),
 );
 
+/** Cornish (Kernewek) */
+$aliases['kw'] = array(
+	'Templates' => array( 'Slantlyns' ),
+);
+
 /** Luxembourgish (Lëtzebuergesch) */
 $aliases['lb'] = array(
 	'AddData' => array( 'Daten derbäisetzen' ),
@@ -248,6 +259,13 @@ $aliases['mk'] = array(
 	'Templates' => array( 'Шаблони' ),
 );
 
+/** Malayalam (മലയാളം) */
+$aliases['ml'] = array(
+	'CreateCategory' => array( 'വര്‍ഗ്ഗസൃഷ്ടി' ),
+	'Templates' => array( 'ഫലകങ്ങള്‍' ),
+	'UploadWindow' => array( 'അപ്‌ലോഡ്ജാലകം' ),
+);
+
 /** Maltese (Malti) */
 $aliases['mt'] = array(
 	'AddData' => array( 'ŻidDati' ),
@@ -266,6 +284,7 @@ $aliases['nds-nl'] = array(
 	'CreateTemplate' => array( 'Mal_anmaken' ),
 	'EditData' => array( 'Gegevens_bewarken' ),
 	'Forms' => array( 'Formelieren' ),
+	'Templates' => array( 'Mallen' ),
 	'UploadWindow' => array( 'Bestanstoevoegingsscharm' ),
 );
 
@@ -325,6 +344,20 @@ $aliases['pt-br'] = array(
 /** Romanian (Română) */
 $aliases['ro'] = array(
 	'Templates' => array( 'Formate' ),
+);
+
+/** Slovak (Slovenčina) */
+$aliases['sk'] = array(
+	'AddData' => array( 'PridaťDáta' ),
+	'AddPage' => array( 'PridaťStránku' ),
+	'CreateCategory' => array( 'VytvoriťKategóriu' ),
+	'CreateForm' => array( 'VytvoriťFormulár' ),
+	'CreateProperty' => array( 'VytvoriťVlastnosť' ),
+	'CreateTemplate' => array( 'VytvoriťŠablónu' ),
+	'EditData' => array( 'UpraviťDáta' ),
+	'Forms' => array( 'Formuláre' ),
+	'Templates' => array( 'Šablóny' ),
+	'UploadWindow' => array( 'NahrávacieOkno' ),
 );
 
 /** Albanian (Shqip) */

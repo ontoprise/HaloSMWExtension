@@ -73,9 +73,9 @@ class SFFormInputs {
       if ($other_args['field_type'] == 'integer') {
         $size = 10;
         $validation_type_str = 'integer';
-      } elseif ($other_args['field_type'] == 'float') {
+      } elseif ($other_args['field_type'] == 'number') {
         $size = 10;
-        $validation_type_str = 'float';
+        $validation_type_str = 'number';
       } elseif ($other_args['field_type'] == 'URL') {
         $size = 100;
         $validation_type_str = 'URL';
@@ -95,6 +95,8 @@ class SFFormInputs {
     } else {
       $size = 35;
     }
+    if (! is_null($cur_value))
+      $cur_value = htmlspecialchars($cur_value);
 
     $text =<<<END
 		<input id="$input_id" tabindex="$sfgTabIndex" class="$className" name="$input_name" type="text"
@@ -285,7 +287,7 @@ END;
     $disabled_text = ($is_disabled) ? "disabled" : "";
     if (array_key_exists('autocomplete field type', $other_args)) {
       $autocomplete_field_type = $other_args['autocomplete field type'];
-      $autocompletion_source = $other_args['autocompletion source'];
+      $autocompletion_source = ucfirst($other_args['autocompletion source']);
     }
     $input_id = "input_" . $sfgFieldNum;
     $info_id = "info_" . $sfgFieldNum;
@@ -363,11 +365,14 @@ END;
       $autocomplete_string = "[['" . implode("'], ['", $autocomplete_values) . "']]";
       // replace any newlines in the string, just to avoid breaking the Javascript
       $autocomplete_string = str_replace("\n", ' ', $autocomplete_string);
+      $autocomplete_string = str_replace("\r", ' ', $autocomplete_string);
       $javascript_text .= "autocompletestrings['$options_str_key'] = $autocomplete_string;\n";
     }
     if ($cur_value) {
-      // replace newlines with the literal '\n' to not break the Javascript
+      // replace various values to not break the Javascript
+      $cur_value = str_replace('"', '\"', $cur_value);
       $cur_value = str_replace("\n", '\n', $cur_value);
+      $cur_value = str_replace("\r", '\r', $cur_value);
       $text .= "document.getElementById('$input_id').value = \"$cur_value\"\n";
     }
     $text .= "/* ]]> */</script>\n";
@@ -409,6 +414,7 @@ END;
       $js_call = "";
     }
 
+    $cur_value = htmlspecialchars($cur_value);
     $text =<<<END
 	<textarea tabindex="$sfgTabIndex" id="$input_id" name="$input_name" rows="$rows" cols="$cols" class="$className" $disabled_text $js_call>$cur_value</textarea>
 	<span id="$info_id" class="errorMessage"></span>
@@ -653,6 +659,22 @@ END;
     $input_id = "input_$sfgFieldNum";
     $info_id = "info_$sfgFieldNum";
 
+    $text = '<div style="overflow: auto; padding: 5px; border: 1px #aaaaaa solid; max-height: ' . $height . 'px; width: ' . $width . 'px;">';
+
+    // start with an initial "None" value, unless this is a mandatory field
+    // and there's a current value in place (either through a default value
+    // or because we're editing an existing page)
+    if (! $is_mandatory || $cur_value == '') {
+      $input_id = "input_$sfgFieldNum";
+      $info_id = "info_$sfgFieldNum";
+      $text .= '	<input type="radio" id="' . $input_id . '" tabindex="' . $sfgTabIndex . '" name="' . $input_name . '" value=""';
+      if (! $cur_value) {
+        $text .= ' checked="checked"';
+        $check_set = true;
+      }
+      $text .= " $disabled_text/> <em>" . wfMsg('sf_editdata_none') . "</em>\n";
+    }
+
     global $wgCategoryTreeMaxDepth;
     $wgCategoryTreeMaxDepth = 10;
     $tree = efCategoryTreeParserHook($top_category, array('mode' => 'categories', 'depth' => 10));
@@ -662,9 +684,10 @@ END;
     if ($is_disabled) {
       $tree = str_replace('type="radio"', 'type="radio" disabled', $tree);
     }
-    $text = '<div style="overflow: auto; padding: 5px; border: 1px #aaaaaa solid; max-height: ' . $height . 'px; width: ' . $width . 'px;">' . $tree . '</div>';
+    $text .= $tree . '</div>';
 
     $text .=<<<END
+	<span id="$info_id" class="errorMessage"></span>
 
 END;
 

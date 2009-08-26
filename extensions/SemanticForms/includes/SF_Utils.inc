@@ -12,11 +12,16 @@ class SFUtils {
 	static function initProperties() {
 		global $sfgContLang;
 		$sf_props = $sfgContLang->getPropertyLabels();
-		SMWPropertyValue::registerProperty('_SF_DF', '__spf', $sf_props[SF_SP_HAS_DEFAULT_FORM], true);
-		SMWPropertyValue::registerProperty('_SF_AF', '__spf', $sf_props[SF_SP_HAS_ALTERNATE_FORM], true);
+		if (array_key_exists(SF_SP_HAS_DEFAULT_FORM, $sf_props))
+			SMWPropertyValue::registerProperty('_SF_DF', '__spf', $sf_props[SF_SP_HAS_DEFAULT_FORM], true);
+		if (array_key_exists(SF_SP_HAS_ALTERNATE_FORM, $sf_props))
+			SMWPropertyValue::registerProperty('_SF_AF', '__spf', $sf_props[SF_SP_HAS_ALTERNATE_FORM], true);
+		if (array_key_exists(SF_SP_CREATES_PAGES_WITH_FORM, $sf_props))
+			SMWPropertyValue::registerProperty('_SF_CP', '__spf', $sf_props[SF_SP_CREATES_PAGES_WITH_FORM], true);
 		// also initialize hardcoded English values, if it's a non-English-language wiki
 		SMWPropertyValue::registerProperty('_SF_DF_BACKUP', '__spf', 'Has default form', true);
 		SMWPropertyValue::registerProperty('_SF_AF_BACKUP', '__spf', 'Has alternate form', true);
+		SMWPropertyValue::registerProperty('_SF_CP_BACKUP', '__spf', 'Creates pages with form', true);
 
 		return true;
 	}
@@ -136,6 +141,7 @@ END;
 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
+		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
 		if ($wgFCKEditorDir)
 			$wgOut->addScript('<script type="text/javascript" src="' . "$wgScriptPath/$wgFCKEditorDir" . '/fckeditor.js"></script>' . "\n");
 		$wgOut->addMeta('robots','noindex,nofollow');
@@ -246,7 +252,7 @@ END;
 					$substring = str_replace(' ', '_', strtolower($substring));
 					$substring = str_replace('_', '\_', $substring);
 					$substring = str_replace("'", "\'", $substring);
-					$conditions = 'cl_to = '. $db->addQuotes($category) . " AND (LOWER(page_title) LIKE '" . $substring . "%' OR LOWER(page_title) LIKE '%\_" . $substring . "%' OR page_namespace = " . NS_CATEGORY . ")";
+					$conditions = 'cl_to = '. $db->addQuotes($category) . " AND (LOWER(CONVERT(`page_title` USING utf8)) LIKE '" . $substring . "%' OR LOWER(CONVERT(`page_title` USING utf8)) LIKE '%\_" . $substring . "%' OR page_namespace = " . NS_CATEGORY . ")";
 				} else {
 					$conditions = 'cl_to = '. $db->addQuotes($category);
 				}
@@ -266,10 +272,12 @@ END;
 								}
 							} else {
 								$cur_value = str_replace("_", " ", $row['page_title']);
-								if ($substring == null)
-									$pages[] = $cur_value;
-								else
-									$pages[] = array('title' => $cur_value);
+								if (! in_array($cur_value, $pages)) {
+									if ($substring == null)
+										$pages[] = $cur_value;
+									else
+										$pages[] = array('title' => $cur_value);
+								}
 								// return if we've reached the maximum number of allowed values
 								if (count($pages) > $sfgMaxAutocompleteValues)
 									return $pages;
@@ -336,7 +344,7 @@ END;
 					$substring = str_replace(' ', '_', strtolower($substring));
 					$substring = str_replace('_', '\_', $substring);
 					$substring = str_replace("'", "\'", $substring);
-					$conditions .= " AND (LOWER(page_title) LIKE '$substring%' OR LOWER(page_title) LIKE '%\_$substring%')";
+					$conditions .= " AND (LOWER(CONVERT(`page_title` USING utf8)) LIKE '$substring%' OR LOWER(CONVERT(`page_title` USING utf8)) LIKE '%\_$substring%')";
 				}
 				$sql_options['ORDER BY'] = 'page_title';
 				$res = $db->select( $db->tableNames('page'),

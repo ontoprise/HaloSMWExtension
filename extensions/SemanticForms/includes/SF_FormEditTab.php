@@ -11,7 +11,7 @@ class SFFormEditTab {
 	 * Adds an "action" (i.e., a tab) to edit the current article with
 	 * a form
 	 */
-	static function displayTab($obj, $content_actions) {
+	static function displayTab($obj, &$content_actions) {
 		$fname = 'SFFormEditTab::displayTab';
 		// make sure that this is not a special page, and
 		// that the user is allowed to edit it
@@ -24,7 +24,7 @@ class SFFormEditTab {
 			$form_names = SFLinkUtils::getFormsForArticle($obj);
 			if (count($form_names) > 0) {  
 				global $wgRequest, $wgUser;
-				global $sfgRenameEditTabs;
+				global $sfgRenameEditTabs, $sfgRenameMainEditTab;
 
 				wfLoadExtensionMessages('SemanticForms');
 
@@ -37,10 +37,18 @@ class SFFormEditTab {
 					if (array_key_exists('edit', $content_actions)) {
 						$content_actions['edit']['text'] = $user_can_edit ? wfMsg('sf_editsource') : wfMsg('viewsource');
 					}
-				} elseif ($user_can_edit) {
-					$form_edit_tab_text = $obj->mTitle->exists() ? wfMsg('sf_formedit') : wfMsg('sf_formcreate');
 				} else {
-					$form_edit_tab_text = wfMsg('sf_viewform');
+					if ($user_can_edit)
+						$form_edit_tab_text = $obj->mTitle->exists() ? wfMsg('sf_formedit') : wfMsg('sf_formcreate');
+					else
+						$form_edit_tab_text = wfMsg('sf_viewform');
+					// check for renaming of main edit tab
+					// only if $sfgRenameEditTabs is off
+					if ($sfgRenameMainEditTab) {
+						if (array_key_exists('edit', $content_actions)) {
+							$content_actions['edit']['text'] = $user_can_edit ? wfMsg('sf_editsource') : wfMsg('viewsource');
+						}
+					}
 				}
 
 				$class_name = ($wgRequest->getVal('action') == 'formedit') ? 'selected' : '';
@@ -88,6 +96,19 @@ class SFFormEditTab {
 			}
 		}
 		return true; // always return true, in order not to stop MW's hook processing!
+	}
+
+	/**
+	 * Function currently called only for the 'Vector' skin, added in
+	 * MW 1.16 - will possibly be called for additional skins later
+	 */
+	static function displayTab2($obj, &$links) {
+		// the old '$content_actions' array is thankfully just a
+		// sub-array of this one
+		$views_links = $links['views'];
+		self::displayTab($obj, $views_links);
+		$links['views'] = $views_links;
+		return true;
 	}
 
 	/**

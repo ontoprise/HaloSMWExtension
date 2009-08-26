@@ -57,8 +57,8 @@ class SFLinkUtils {
 	 * Gets the default form specified, if any, for a specific page
 	 * (which should be a category, property, or namespace page)
 	 */
-	static function getDefaultForms($page_title, $page_namespace) {
-		if ($page_title == NULL)
+	static function getDefaultForms($page_name, $page_namespace) {
+		if ($page_name == NULL)
 			return array();
 
 		global $sfgContLang;
@@ -66,7 +66,7 @@ class SFLinkUtils {
 		if (! function_exists('smwfGetStore'))
 			die("ERROR: <a href=\"http://semantic-mediawiki.org\">Semantic MediaWiki</a> must be installed for Semantic Forms to run!");
 		$store = smwfGetStore();
-		$title = Title::makeTitleSafe($page_namespace, $page_title);
+		$title = Title::makeTitleSafe($page_namespace, $page_name);
 		// we can do this easily if we're using SMW 1.4 or higher
 		if (class_exists('SMWPropertyValue')) {
 			$default_form_property = SMWPropertyValue::makeProperty('_SF_DF');
@@ -93,7 +93,7 @@ class SFLinkUtils {
 			// make sure it's in the form namespace
 			if ($res[0]->getNamespace() == SF_NS_FORM) {
 				$form_name = $res[0]->getTitle()->getText();
-				return $form_name;
+				return array($form_name);
 			}
 		}
 		// if that didn't work, try any aliases that may exist
@@ -107,7 +107,7 @@ class SFLinkUtils {
 					// make sure it's in the form namespace
 					if ($res[0]->getNamespace() == SF_NS_FORM) {
 						$form_name = $res[0]->getTitle()->getText();
-						return $form_name;
+						return array($form_name);
 					}
 				}
 			}
@@ -119,13 +119,13 @@ class SFLinkUtils {
 	 * Gets the alternate forms specified, if any, for a specific page
 	 * (which should always be a property page)
 	 */
-	static function getAlternateForms($page_title, $page_namespace) {
-		if ($page_title == NULL)
+	static function getAlternateForms($page_name, $page_namespace) {
+		if ($page_name == NULL)
 			return array();
 
 		global $sfgContLang;
 		$store = smwfGetStore();
-		$title = Title::makeTitleSafe($page_namespace, $page_title);
+		$title = Title::makeTitleSafe($page_namespace, $page_name);
 		// we can do this easily if we're using SMW 1.4 or higher
 		if (class_exists('SMWPropertyValue')) {
 			$alternate_form_property = SMWPropertyValue::makeProperty('_SF_AF');
@@ -176,9 +176,9 @@ class SFLinkUtils {
 	 * 'alternate form' properties for a page, and creates the
 	 * corresponding 'add data' link, if any such properties are defined
 	 */
-	static function getAddDataLinkForPage($target_page_title, $page_title, $page_namespace) {
-		$default_forms = self::getDefaultForms($page_title, $page_namespace);
-		$alt_forms = self::getAlternateForms($page_title, $page_namespace);
+	static function getAddDataLinkForPage($target_page_title, $page_name, $page_namespace) {
+		$default_forms = self::getDefaultForms($page_name, $page_namespace);
+		$alt_forms = self::getAlternateForms($page_name, $page_namespace);
 		if ((count($default_forms) == 0) && (count($alt_forms) == 0))
 			return null;
 		$ad = SpecialPage::getPage('AddData');
@@ -198,6 +198,9 @@ class SFLinkUtils {
 	 * AKA red-linked) page, for MediaWiki 1.13
 	 */
 	static function setBrokenLink_1_13(&$linker, $title, $query, &$u, &$style, &$prefix, &$text, &$inside, &$trail) {
+		if (self::createLinkedPage($title)) {
+			return true;
+		}
 		$link = self::addDataLink($title);
 		if ($link != '')
 			$u = $link;
@@ -210,12 +213,52 @@ class SFLinkUtils {
 	 */
 	static function setBrokenLink($linker, $target, $options, $text, &$attribs, &$ret) {
 		if (in_array('broken', $options)) {
+			if (self::createLinkedPage($target)) {
+				return true;
+			}
 			$link = self::addDataLink($target);
 			if ($link != '') {
 				$attribs['href'] = $link;
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Automatically creates a page that's red-linked from the page being
+	 * viewed, if there's a property pointing from anywhere to that page
+	 * that's defined with the 'Creates pages with form' special property
+	 */
+	static function createLinkedPage($title) {
+		$store = smwfGetStore();
+		$title_text = self::titleString($title);
+		$value = SMWDataValueFactory::newTypeIDValue('_wpg', $title_text);
+		$create_pages_property = SMWPropertyValue::makeProperty('_SF_CP_BACKUP');
+		$incoming_properties = $store->getInProperties($value);
+		foreach ($incoming_properties as $property) {
+			$property_name = SFUtils::getPropertyName($property);
+			$property_title = Title::makeTitleSafe(SMW_NS_PROPERTY, $property_name);
+			$res = $store->getPropertyValues($property_title, $create_pages_property);
+			if (count($res) > 0) {
+				global $sfgFormPrinter;
+				$form_name = $res[0]->getTitle()->getText();
+				$form_title = Title::makeTitleSafe(SF_NS_FORM, $form_name);
+				$form_article = new Article($form_title);
+				$form_definition = $form_article->getContent();
+				list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
+					$sfgFormPrinter->formHTML($form_definition, false, false, null, 'Some very long page name that will hopefully never get created ABCDEF123', null);
+				$params = array();
+				global $wgUser;
+				$params['user_id'] = $wgUser->getId();
+				$params['page_text'] = $data_text;
+				$job = new SFCreatePageJob( $title, $params );
+				Job::batchInsert( array($job) );
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	static function addDataLink($title) {
@@ -280,11 +323,18 @@ class SFLinkUtils {
 	}
 
 	/**
-	 * Get the form used to edit this article: either the default form for
-	 * a category that this article belongs to, if there is one, or the
-	 * default form for the article's namespace, if there is one
+	 * Get the form used to edit this article - either:
+	 * - the default form the page itself, if there is one; or
+	 * - the default form for a category that this article belongs to,
+	 * if there is one; or
+	 * - the default form for the article's namespace, if there is one
 	 */
 	static function getFormsForArticle($obj) {
+		// see if the page itself has a default form (or forms), and
+		// return it/them if so
+		$default_forms = self::getDefaultForms($obj->mTitle->getText(), $obj->mTitle->getNamespace());
+		if (count($default_forms) > 0)
+			return $default_forms;
 		// if this is not a category page, look for a default form
 		// for its parent categories
 		$namespace = $obj->mTitle->getNamespace();
