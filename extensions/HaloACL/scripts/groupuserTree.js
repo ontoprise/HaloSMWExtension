@@ -412,6 +412,8 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
 
     var nodeLabel = encodeURI(node.label);
 
+    var panelid = node.tree.panelid;
+
 
     //prepare our callback object
     var callback = {
@@ -420,7 +422,7 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
         //if our XHR call is successful, we want to make use
         //of the returned data and create child nodes.
         success: function(oResponse) {
-            YAHOO.haloacl.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
+            YAHOO.haloacl.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText));
             oResponse.argument.fnLoadComplete();
         },
 
@@ -449,10 +451,13 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
  * @param data
  */
 YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
-
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
+
+        if(panelid == "undefined" || panelid == null){
+            panelid = parentNode.tree.panelid;
+        }
 
         tmpNode.setGroupId(element.name);
 
@@ -509,8 +514,11 @@ YAHOO.haloacl.filterNodes = function(parentNode,filter){
  * @param labelClickAction (name)
  */
 YAHOO.haloacl.buildUserTree = function(tree,data) {
+    var tmpNode = new YAHOO.widget.TextNode("Groups", tree.getRoot(),false);
+    tmpNode.expand();
 
-    YAHOO.haloacl.buildNodesFromData(tree.getRoot(),data,tree.panelid);
+
+   // YAHOO.haloacl.buildNodesFromData(tmpNode,data,tree.panelid);
 
     //using custom loadNodeDataHandler
     var loadNodeData = function(node, fnLoadComplete)  {
@@ -614,8 +622,7 @@ YAHOO.haloacl.preloadCheckedGroups = function(groups, tree) {
 
     var data = YAHOO.lang.JSON.parse(groups);
 
-    console.log("data preload"+data);
-
+    if(YAHOO.haloacl.debug) console.log("data preload"+data);
 
     for(var i=0, l=data.length; i<l; i=i+1) {
         var groupId = data[i];

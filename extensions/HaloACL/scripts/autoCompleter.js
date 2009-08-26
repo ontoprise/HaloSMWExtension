@@ -38,7 +38,7 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
     myDataSource.connMethodPost = true;
     myDataSource.responseSchema = {
         resultsList: "records",
-        fields : ["id", "name"]
+        fields : ["name", "name"]
     };
  
 
@@ -54,11 +54,11 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
         YAHOO.util.Dom.get(fieldName).value = args[2][1];
 
     }
-    oAC.itemSelectEvent.subscribe(function(e, args) {
+  /*  oAC.itemSelectEvent.subscribe(function(e, args) {
         YAHOO.util.Dom.get(fieldName).value = args[2][1];
 
     });
-
+    */
 
     oAC.generateRequest = function(sQuery) {
         return "rs=getAutocompleteDocuments&rsargs[]=" + sQuery;
