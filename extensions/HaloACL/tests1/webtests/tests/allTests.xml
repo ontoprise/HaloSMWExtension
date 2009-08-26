@@ -7,11 +7,11 @@
 		
 	
 	<target name="testAll" description="runs all the tests">
+<!--
+-->
 		<ant antfile="createUsers.xml"/> 
 		<ant antfile="createArticles.xml"/>
 		<ant antfile="pageTransclusion.xml"/>
-<!--
--->
 		<ant antfile="hiddenInstanceOfSubcat.xml"/>
 		<ant antfile="preloading.xml"/>
 		<ant antfile="exportPages.xml"/>
@@ -33,9 +33,9 @@
 		<ant antfile="saveProtectedProperties.xml"/>
 		<ant antfile="viewProtectedProperties.xml"/>
 		<ant antfile="exportRDFofProtectedProperties.xml"/>
+		<ant antfile="ontologyBrowserWithACL.xml"/>
 <!--		
 -->
-		<ant antfile="ontologyBrowserWithACL.xml"/>
 <!--
 -->		
 <!-- Does not work		<ant antfile="saveProtectedPropertiesWithSTB.xml"/> -->
