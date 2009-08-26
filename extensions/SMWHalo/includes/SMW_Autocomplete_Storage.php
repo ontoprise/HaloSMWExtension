@@ -91,6 +91,15 @@ abstract class AutoCompletionStorage {
 	 * @return array (Title property, boolean inferred)
 	 */
 	public abstract function getPropertyForAnnotation($userInputToMatch, $category);
+	
+	/**
+	 * Gets (including inferred) property values of $property
+	 *
+	 * @param string $userInputToMatch
+	 * @param Title $property
+	 */
+	public abstract function getValueForAnnotation($userInputToMatch, $property);
+	
 	/**
 	 * Returns instances which are member of the given range(s) and which match $userInputToMatch.
 	 *
@@ -480,6 +489,91 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $db->query('DROP TEMPORARY TABLE smw_ob_properties_sub');
         return $result;
     }
+    
+ public function getValueForAnnotation($userInputToMatch, $property) {
+        global $smwgDefaultCollation;
+        $db =& wfGetDB( DB_SLAVE );
+
+        $smw_ids = $db->tableName('smw_ids');
+        $smw_rels2 = $db->tableName('smw_rels2');
+        $smw_atts2 = $db->tableName('smw_atts2');
+        $smw_subs2 = $db->tableName('smw_subs2');
+
+        if (!isset($smwgDefaultCollation)) {
+            $collation = '';
+        } else {
+            $collation = 'COLLATE '.$smwgDefaultCollation;
+        }
+        // create virtual tables
+        $db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARCHAR(255), namespace INT(11))
+                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+      
+
+        $db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_sub (property VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+        $db->query( 'CREATE TEMPORARY TABLE smw_cc_properties_super (property VARCHAR(255) '.$collation.' NOT NULL)
+                    TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
+
+        $db->query('INSERT INTO smw_cc_properties_super VALUES ('.$db->addQuotes($property->getDBkey()).')');
+
+        
+        $db->query('INSERT INTO smw_cc_propertyinst ' .
+                '(SELECT value_xsd AS title, -1 AS namespace FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+        $db->query('INSERT INTO smw_cc_propertyinst ' .
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+        
+        $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
+        // maximum iteration length is maximum property tree depth.
+        do  {
+            $maxDepth--;
+
+            // get next subproperty level
+            $db->query('INSERT INTO smw_cc_properties_sub (SELECT DISTINCT i.smw_title AS property FROM '.$smw_subs2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title IN (SELECT * FROM smw_cc_properties_super))');
+
+            $db->query('INSERT INTO smw_cc_propertyinst ' .
+                '(SELECT value_xsd AS title, -1 AS namespace FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+            $db->query('INSERT INTO smw_cc_propertyinst ' .
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+            
+
+            // copy subcatgegories to supercategories of next iteration
+            $db->query('DELETE FROM smw_cc_properties_super');
+            $db->query('INSERT INTO smw_cc_properties_super (SELECT * FROM smw_cc_properties_sub)');
+
+            // check if there was least one more subproperty. If not, all instances were found.
+            $res = $db->query('SELECT COUNT(property) AS numOfSubProps FROM smw_cc_properties_super');
+            $numOfSubProps = $db->fetchObject($res)->numOfSubProps;
+            $db->freeResult($res);
+
+            $db->query('DELETE FROM smw_cc_properties_sub');
+
+        } while ($numOfSubProps > 0 && $maxDepth > 0);
+
+
+
+        $res = $db->query('SELECT DISTINCT title, namespace FROM smw_cc_propertyinst');
+
+        $result = array();
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+                if ($row->namespace == -1) {
+                    $result[] = $row->title;
+                } else {
+                    $result[] = Title::newFromText($row->title, $row->namespace);
+                }
+            }
+        }
+
+        $db->freeResult($res);
+
+        $db->query('DROP TEMPORARY TABLE smw_cc_properties_super');
+        $db->query('DROP TEMPORARY TABLE smw_cc_properties_sub');
+       
+        $db->query('DROP TEMPORARY TABLE smw_cc_propertyinst');
+
+        return $result;
+ 
+    }
 	 
 
 	public function getInstanceAsTarget($userInputToMatch, $domainRangeAnnotations) {
@@ -567,6 +661,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances');
 		return $results;
 	}
+	
+	
 }
 
 

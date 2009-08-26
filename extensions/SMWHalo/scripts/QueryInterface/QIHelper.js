@@ -666,7 +666,7 @@ QIHelper.prototype = {
 		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
 			$('dialoguecontent').deleteRow(0);
 
-		constraintstring = "schema-property-domain: ";
+		var constraintstring = "schema-property-domain: ";
 		// fetch category constraints:
 		var cats = this.activeQuery.categories; // get the category group
         var constraintsCategories = "";
@@ -696,7 +696,7 @@ QIHelper.prototype = {
 		cell.style.textAlign = "left";
 		cell.setAttribute("colSpan", 2);
 		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
-
+              
 		newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox
 														// for display option
 		cell = newrow.insertCell(0);
@@ -728,7 +728,7 @@ QIHelper.prototype = {
 															// is standard
 		cell = newrow.insertCell(1);
 		cell.id = "restricionSelector";
-		cell.innerHTML = this.createRestrictionSelector("=", true);
+		cell.innerHTML = this.createRestrictionSelector("=", false, false);
 		cell = newrow.insertCell(2);
 		cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input3"/>';
 		cell = newrow.insertCell(3);
@@ -785,15 +785,15 @@ QIHelper.prototype = {
 		else if (param == gLanguage.getMessage('QI_PAGE')) { // property
 																// dialogue &
 																// type = page
-			cell.innerHTML = this.createRestrictionSelector("=", true);
+			cell.innerHTML = this.createRestrictionSelector("=", true, false);
 			cell = newrow.insertCell(2);
 			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 		} else { // property, no page type
 			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
 													// possible
-				cell.innerHTML = this.createRestrictionSelector("=", false);
+				cell.innerHTML = this.createRestrictionSelector("=", false, true);
 			else
-				cell.innerHTML = this.createRestrictionSelector("=", true);
+				cell.innerHTML = this.createRestrictionSelector("=", false, false);
 
 			cell = newrow.insertCell(2);
 			if (this.propIsEnum) { // if enumeration, a select box is used
@@ -861,6 +861,7 @@ QIHelper.prototype = {
 	 */
 	adaptDialogueToProperty : function(request) {
 		this.propIsEnum = false;
+		autoCompleter.deregisterAllInputs();
 		if (this.activeDialogue != null) { // check if user cancelled the
 											// dialogue whilst ajax call
 			var oldval = $('input3').value;
@@ -874,6 +875,7 @@ QIHelper.prototype = {
 			var arity = 2;
 			this.proparity = 2;
 			var parameterNames = [ gLanguage.getMessage('QI_PAGE') ];
+			var parameterTypes = [];
 			var possibleValues = new Array();
 
 			if (request.status == 200) {
@@ -890,6 +892,9 @@ QIHelper.prototype = {
 					parameterNames
 							.push(schemaData.documentElement.childNodes[i]
 									.getAttribute("name"));
+					parameterTypes
+                            .push(schemaData.documentElement.childNodes[i]
+                                    .getAttribute("type"));				
 					for ( var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j < m; j++) {
 						possibleValues
 								.push(schemaData.documentElement.childNodes[i].childNodes[j]
@@ -907,32 +912,30 @@ QIHelper.prototype = {
 				// Speical treatment: binary properties support conjunction,
 				// therefore we need an "add" button
 				$('mainlabel').innerHTML = parameterNames[0];
-				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input3"/>';
+				var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+				var ac_constraint = "";
+				if (parameterTypes[0] == '_wpg') {
+					ac_constraint = 'constraints="annotation-value: '+propertyName+'|namespace: 0"';
+				} else if (parameterTypes[0] == '_dat') {
+					ac_constraint = 'constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"';
+    			} else {
+					ac_constraint = 'constraints="values: annotation-value: '+propertyName+'"';
+				}
+				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3"/>';
+				
+				// set restriction selector
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
 					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false);
-					autoCompleter.deregisterAllInputs();
-					$('dialoguecontent').rows[3].cells[2].firstChild.className = "";
-					autoCompleter.registerAllInputs();
+							.createRestrictionSelector("=", false, true);
 				} else
 					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", true);
-				if (parameterNames[0] == gLanguage.getMessage('QI_PAGE')) {
-					autoCompleter.deregisterAllInputs();
-					$('dialoguecontent').rows[3].cells[2].firstChild.className = "wickEnabled";
-					autoCompleter.registerAllInputs();
-				}
+							.createRestrictionSelector("=", false, false);
+								
+				// add property input button 
 				$('dialoguecontent').rows[3].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
-
-				if (parameterNames[0] == gLanguage.getMessage('QI_PAGE')) { // if
-																			// type
-																			// is
-																			// page,
-																			// we
-																			// need
-																			// a
-																			// subquery
-																			// checkbox
+                
+                // if binary property, make an 'insert subquery' checkbox
+				if (parameterTypes[0] == '_wpg') { 
 					$('dialoguecontent').rows[3].cells[4].innerHTML = '&nbsp;'
 							+ gLanguage.getMessage('QI_USE_SUBQUERY')
 							+ '<input type="checkbox" id="usesub" value="'
@@ -946,10 +949,12 @@ QIHelper.prototype = {
 					$('dialoguecontent').rows[3].cells[4].className = "";
 					this.activeInputs = 4;
 				}
+				
+				// special input field for enums
 				if (possibleValues.length > 0) { // enumeration
 					this.propIsEnum = true;
 					this.enumValues = new Array();
-					autoCompleter.deregisterAllInputs();
+					
 					var option = '<select id="input3">'; // create html for
 															// option box
 					option += '<option value="" style="width:100%">*</option>';
@@ -965,10 +970,10 @@ QIHelper.prototype = {
 					}
 					option += "</select>";
 					$('dialoguecontent').rows[3].cells[2].innerHTML = option;
-					autoCompleter.registerAllInputs();
+					
 				}
 			} else {
-				// properties with arity >2: no conjunction, no subqueries
+				// properties with arity > 2: attributes or n-ary. no conjunction, no subqueries
 				this.activeInputs = 4;
 				$('dialoguecontent').rows[3].cells[3].innerHTML = "";
 				$('dialoguecontent').rows[3].cells[4].innerHTML = "";
@@ -976,13 +981,11 @@ QIHelper.prototype = {
 				$('mainlabel').innerHTML = parameterNames[0];
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
 					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false);
-					autoCompleter.deregisterAllInputs();
-					$('dialoguecontent').rows[3].cells[2].firstChild.className = "";
-					autoCompleter.registerAllInputs();
+							.createRestrictionSelector("=", false, true);
+					
 				} else
 					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", true);
+							.createRestrictionSelector("=", false, false);
 
 				for ( var i = 1; i < parameterNames.length; i++) {
 					var newrow = $('dialoguecontent').insertRow(-1);
@@ -993,23 +996,25 @@ QIHelper.prototype = {
 					cell = newrow.insertCell(1);
 					if (this.numTypes[parameterNames[i].toLowerCase()])
 						cell.innerHTML = this.createRestrictionSelector("=",
-								false);
+								false, true);
 					else
 						cell.innerHTML = this.createRestrictionSelector("=",
-								true);
+								false, false);
 
 					cell = newrow.insertCell(2);
-					if (parameterNames[i] == gLanguage.getMessage('QI_PAGE')) // Page
-																				// means
-																				// autocompletion
-																				// enabled
-						cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-					else
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
+					var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+					if (parameterTypes[i] == '_wpg') {
+                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+					} else if (parameterTypes[i] == '_dat') {
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
+					} else {
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'"/>';
+					}
 					this.activeInputs++;
 				}
 			}
 		}
+		autoCompleter.registerAllInputs();
 		this.pendingElement.hide();
 	},
 
@@ -1097,7 +1102,7 @@ QIHelper.prototype = {
 			disabled = false;
 
 			$('dialoguecontent').rows[3].cells[1].innerHTML = this
-					.createRestrictionSelector(vals[0][1], disabled);
+					.createRestrictionSelector(vals[0][1], disabled, true);
 			autoCompleter.deregisterAllInputs();
 			$('dialoguecontent').rows[3].cells[2].firstChild.className = ""; // deactivate
 																				// autocompletion
@@ -1142,7 +1147,7 @@ QIHelper.prototype = {
 					this.addDialogueInput();
 					$('input' + (i + 3)).value = unescapeQueryHTML(vals[i][2]);
 					$('dialoguecontent').rows[i + 3].cells[1].innerHTML = this
-							.createRestrictionSelector(vals[i][1], disabled);
+							.createRestrictionSelector(vals[i][1], disabled, true);
 				}
 			} else { // enumeration
 				this.propIsEnum = true;
@@ -1164,7 +1169,7 @@ QIHelper.prototype = {
 					tmphtml += '</select>';
 					$('dialoguecontent').rows[i + 3].cells[2].innerHTML = tmphtml;
 					$('dialoguecontent').rows[i + 3].cells[1].innerHTML = this
-							.createRestrictionSelector(vals[i][1], disabled);
+							.createRestrictionSelector(vals[i][1], disabled, false);
 				}
 			}
 		} else { // property with arity > 2
@@ -1193,10 +1198,10 @@ QIHelper.prototype = {
 				cell = row.insertCell(1); // restriction selector
 				if (this.numTypes[vals[i][0].toLowerCase()])
 					cell.innerHTML = this.createRestrictionSelector(vals[i][1],
-							false);
+							false, true);
 				else
 					cell.innerHTML = this.createRestrictionSelector(vals[i][1],
-							true);
+							false, false);
 
 				cell = row.insertCell(2); // input field
 				if (vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion
@@ -1300,24 +1305,29 @@ QIHelper.prototype = {
 	 * @param disabled
 	 *            enabled only for numeric datatypes
 	 */
-	createRestrictionSelector : function(option, disabled) {
+	createRestrictionSelector : function(option, disabled, numericType) {
 		var html = disabled ? '<select disabled="disabled">' : '<select>';
-		switch (option) {
-		case "=":
-			html += '<option value="=" selected="selected">=</option><option value="&lt;=">&lt;=</option><option value="&gt;=">&gt;=</option><option value="!=">!=</option></select>';
-			break;
-		case "<=":
-			html += '<option value="=">=</option><option value="&lt;=" selected="selected">&lt;=</option><option value="&gt;=">&gt;=</option><option value="!=">!=</option></select>';
-			break;
-		case ">=":
-			html += '<option value="=">=</option><option value="&lt;=">&lt;=</option><option value="&gt;=" selected="selected">&gt;=</option><option value="!=">!=</option></select>';
-			break;
-		case "!=":
-			html += '<option value="=">=</option><option value="&lt;=">&lt;=</option><option value="&gt;=">&gt;=</option><option value="!=" selected="selected">!=</option></select>';
-			break;
+		var optionsFunc = function(op) {
+			
+			var escapeXMLEntities =  function(xml) {
+		        var result = xml.replace(/</g, '&lt;');
+		        result = result.replace(/>/g, '&gt;');
+		        return result;
+		    }
+			var selected = (op == option) ? 'selected="selected"' : ''; 
+            var esc_op = escapeXMLEntities(op);
+            html += '<option value="'+esc_op+'" '+selected+'>'+esc_op+'</option>';
 		}
-		return html;
+		if (numericType) {
+			["=", ">=", "<=", "!", "~"].each(optionsFunc);
+		} else {
+			["=", "!", "~"].each(optionsFunc);
+		}
+		
+		return html + "</select>";
 	},
+	
+	
 
 	/**
 	 * Activate or deactivate input if subquery checkbox is checked

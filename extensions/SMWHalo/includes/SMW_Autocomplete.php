@@ -359,10 +359,15 @@ class AutoCompletionRequester {
 				case 3: list($title, $inferred, $extra) = $matches[$i];
 			}
 			if ($title == NULL) continue;
-			$namespace = $title->getNsText();
+			
 			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
-			$typeAtt = "type=\"".$title->getNamespace()."\"";
-			$content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
+			if (is_string($title)) {
+				$typeAtt =  "type=\"-1\"";
+				$content = $title;
+			} else {
+				$typeAtt = "type=\"".$title->getNamespace()."\"";
+                $content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
+			}
 			$xmlResult .= "<match $typeAtt $inferredAtt>$content<extraContent>$extra</extraContent></match>";
 		}
 
@@ -492,7 +497,7 @@ class AutoCompletionHandler {
 
 	/**
 	 * Executes a series of auto-completion commands and stops when it
-	 * has a found at least one result.
+	 * has a found at least one result. Except when it matches local values.
 	 *
 	 * @param string $command
 	 * @param substring $userInput
@@ -505,32 +510,42 @@ class AutoCompletionHandler {
 		$result = array();
 		foreach($parsedCommands as $c) {
 			list($commandText, $params) = $c;
-
-			if ($commandText == 'schema-property-domain') {
+            
+			if ($commandText == 'values') {
+				foreach($params as $p) {
+					if (stripos($p, $userInput) !== false) $result[] = $p;
+				}
+				// continue to fill in results if possible
+			}else if ($commandText == 'schema-property-domain') {
 
 				$category = Title::newFromText($params[0]);
-				if (!is_null($category)) $result = $acStore->getPropertyForCategory($userInput, $category);
+				if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
 
 				if (!empty($result)) break;
 			} else if ($commandText == 'schema-property-range-instance') {
 				$instance = Title::newFromText($params[0]);
-				if (!is_null($instance)) $result = $acStore->getPropertyForInstance($userInput, $instance, false);
+				if (!is_null($instance)) $result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
 				if (!empty($result)) break;
 			} else if ($commandText == 'annotation-property') {
 				$category = Title::newFromText($params[0]);
-				if (!is_null($instance)) $result = $acStore->getPropertyForAnnotation($userInput, $category, false);
+				if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
 				if (!empty($result)) break;
-			} else if ($commandText == 'namespace') {
-				$result = smwfGetAutoCompletionStore()->getPages($userInput, $params);
+			} else if ($commandText == 'annotation-value') {
+                $property = Title::newFromText($params[0]);
+                if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
+               
+                if (!empty($result)) break;
+            } else if ($commandText == 'namespace') {
+				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
 			} else if ($commandText == 'lexical') {
-				$result = smwfGetAutoCompletionStore()->getPages($userInput);
+				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput));
 			} else if ($commandText == 'schema-property-type') {
 				$datatype = $param[0];
 				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
 				if (empty($pages)) {
 					global $smwgContLang;
 					$dtl = $smwgContLang->getDatatypeLabels();
-					$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']);
+					$result = array_merge($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
 				}
 			} else if ($commandText == 'ask') {
 				$query = $params[0];

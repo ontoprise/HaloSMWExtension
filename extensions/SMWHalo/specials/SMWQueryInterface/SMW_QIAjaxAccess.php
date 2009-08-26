@@ -415,7 +415,7 @@ function qiGetPropertyInformation($relationName) {
 			   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
 			   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeLabels[$i].'">';
+			   			$relSchema .= '<param name="'.$typeLabels[$i].'" type="'.$typeValues[$i]->getXSDValue().'">';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
 			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
 			   			}
