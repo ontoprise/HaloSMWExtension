@@ -34,8 +34,8 @@ AdvancedAnnotation.prototype = {
 	/**
 	 * Initializes an instance of this class.
 	 */
-	initialize: function(fckDataProcessor) {
-	    this.fck = fckDataProcessor;
+	initialize: function(fck) {
+                this.fck = (fck) ? 1 : 0;
 	
 		this.resetSelection();
 		
@@ -1545,10 +1545,10 @@ AdvancedAnnotation.prototype = {
 	}
 };// End of Class
 
-AdvancedAnnotation.create = function() {
-        var fckedit = (wgAction == "edit" && FCKeditor) ?  1 : 0;
+AdvancedAnnotation.create = function(e, fck) {
+        var fckedit = (wgAction == "edit" && fck) ?  1 : 0;
 	if (wgAction == "annotate" || fckedit) {
-		smwhgAdvancedAnnotation = new AdvancedAnnotation();
+		smwhgAdvancedAnnotation = new AdvancedAnnotation(fckedit);
 		new PeriodicalExecuter(function(pe) {
 			var content = $('content');
 			Event.observe(content, 'mouseup', 
@@ -1567,7 +1567,7 @@ AdvancedAnnotation.create = function() {
  * changed, the user is asked, if he wants to save the changes.
  */
 AdvancedAnnotation.unload = function() {
-    var fckedit = (wgAction == "edit" && FCKeditor) ?  1 : 0;
+    var fckedit = (wgAction == "edit" && this.fck) ?  1 : 0;
 	if ((wgAction == "annotate" || fckedit) && smwhgAdvancedAnnotation.annotationsChanged === true) {
 		var save = confirm(gLanguage.getMessage('AAM_SAVE_ANNOTATIONS'));
 		if (save === true) {
@@ -1639,4 +1639,3 @@ function setTextContent(elem, text) {
 var smwhgAdvancedAnnotation = null;
 Event.observe(window, 'load', AdvancedAnnotation.create);
 Event.observe(window, 'unload', AdvancedAnnotation.unload);
-
