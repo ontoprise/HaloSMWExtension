@@ -207,8 +207,8 @@ values.
 				description="Click link: InstanceOfAHiddenSuperCategory" 
 				xpath="//div[@id='instanceList']/table/tbody/tr/td[1]/a"/>
 			<sleep 
-				description="2s pause" 
-				seconds="2" />
+				description="4s pause" 
+				seconds="4" />
 			<verifyXPath 
 				description="Check that there is no parent category."
 				xpath="//div[@id='categoryTree']"		
@@ -285,8 +285,8 @@ values.
 				description="Click link: Event 2" 
 				xpath="//div[@id='instanceList']/table/tbody/tr[1]/td[1]/a"/>
 			<sleep 
-				description="2s pause" 
-				seconds="2" />
+				description="4s pause" 
+				seconds="4" />
 			
 			<verifyXPath 
 				description="Check the properties of Event 2: Related event"
