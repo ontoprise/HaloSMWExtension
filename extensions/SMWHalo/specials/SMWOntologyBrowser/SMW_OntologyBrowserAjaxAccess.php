@@ -134,7 +134,7 @@ function smwf_ob_OntologyBrowserAccess($method, $params) {
  		$browserFilter = new SMWOntologyBrowserFilter();
  		$reqfilter = new SMWRequestOptions();
  		$reqfilter->sort = true;
- 		$instanceTitle = Title::newFromText($p_array[1].":".$p_array[0]);
+ 		$instanceTitle = Title::newFromText($p_array[0]);
 		return $browserFilter->filterForCategoriesWithInstance($instanceTitle, $reqfilter);
  	} else if ($method == 'getCategoryForProperty') {
  		$browserFilter = new SMWOntologyBrowserFilter();
