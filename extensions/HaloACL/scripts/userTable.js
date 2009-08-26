@@ -53,29 +53,13 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     };
     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
         var groupsstring = ""+oRecord._oData.groups;
-        var groupsarray = groupsstring.split(",");
-        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div haloacl_datatable_groupscol'>";
-        
-        for (i=0;i<groupsarray.length;i++){
-            var element = ""+groupsarray[i];
-            try{
-                element = element.trim();
-            }
-            catch(e){
-                console.log(e);
-            }
-            if(element != ""){
-                resultstring = resultstring+"<span class='"+divid+"_usersgroups datatable_usergroups' name=\""+groupsarray[i]+"\">"+groupsarray[i]+"</span>, &nbsp; ";
-            }
-        }
-
-        resultstring = resultstring +"</div>";
+        var resultstring = "<div name='"+oRecord._oData.name+"' groups='"+groupsstring+"' class='haloacl_datatable_groupscol  datatable_usergroups haloacl_datatable_groupdiv"+this.panelid+"'></div>";
         elLiner.innerHTML = resultstring;
-
     };
 
     this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
-        elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        //elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        elLiner.innerHTML = "<span  groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
     };
 
@@ -164,11 +148,11 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
 
     var setupCheckboxHandling = function(){
-        //console.log("checkAllSelectesUsers fired");
-        console.log(YAHOO.haloacl.clickedArrayUsers);
+        //if(YAHOO.haloacl.debug) console.log("checkAllSelectesUsers fired");
+        if(YAHOO.haloacl.debug) console.log(YAHOO.haloacl.clickedArrayUsers);
         $$('.datatableDiv_'+panelid+'_users').each(function(item){
-            //console.log("found element");
-            //console.log(item.name);
+            //if(YAHOO.haloacl.debug) console.log("found element");
+            //if(YAHOO.haloacl.debug) console.log(item.name);
             for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
                 if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == item.name){
                     item.checked = true;
@@ -183,12 +167,12 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     var handlePagination = function(state){
 
         //var divid = myPaginator._containers.parentNode.id;
-        console.log("should be:"+"right_tabview_create_acl_right_0");
-        //console.log("is:"+divid);
+        if(YAHOO.haloacl.debug) console.log("should be:"+"right_tabview_create_acl_right_0");
+        //if(YAHOO.haloacl.debug) console.log("is:"+divid);
         
         var divid = myPaginator._containers[0].parentNode.children[0].children[0].children[0].id;
 
-        console.log("changeRequest fired");
+        if(YAHOO.haloacl.debug) console.log("changeRequest fired");
         var displaying = state.totalRecords - state.recordOffset;
         if(displaying > state.rowsPerPage){
             displaying = state.rowsPerPage
@@ -198,12 +182,12 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         
         var html = from + " to " + to   + " from " +state.totalRecords;
         $(divid).innerHTML = html;
-        console.log($('datatablepaging_count_'+divid));
+        if(YAHOO.haloacl.debug) console.log($('datatablepaging_count_'+divid));
     };
 
 
     var myPaginator = new YAHOO.widget.Paginator({
-        rowsPerPage:5,
+        rowsPerPage:9,
         containers:'datatablepaging_'+divid
     });
 
@@ -279,7 +263,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
 // ASSIGNED USERTABLE FROM JSARRAY
 YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
-    console.log("ROuserDataTableV2 called");
+    if(YAHOO.haloacl.debug) console.log("ROuserDataTableV2 called");
     var groupstring = "";
     var grouparray = YAHOO.haloacl.getGroupsArray(panelid);
     grouparray.each(function(item){
@@ -289,9 +273,9 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
             groupstring += ","+item;
         }
     });
-    console.log("retrieving user for following groups");
-    console.log(groupstring);
-    console.log("---");
+    if(YAHOO.haloacl.debug) console.log("retrieving user for following groups");
+    if(YAHOO.haloacl.debug) console.log(groupstring);
+    if(YAHOO.haloacl.debug) console.log("---");
 
     var callback = function(data){
         var result = new Array();
@@ -309,7 +293,7 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
         }
 
         // handling users form user-datatable on select and deselct tab
-        console.log("panelid"+panelid);
+        if(YAHOO.haloacl.debug) console.log("panelid"+panelid);
         if(YAHOO.haloacl.clickedArrayUsers[panelid]){
             YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
                 // lets see if this users already exists in the datatabel
@@ -370,7 +354,9 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
 
    
 };
-  
+
+
+// this userdatatable is called from V2 !!!
 YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 
     // custom defined formatter
@@ -385,25 +371,8 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 
     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
         var groupsstring = ""+oRecord._oData.groups;
-        var groupsarray = groupsstring.split(",");
-        var resultstring = "<div class='yui-dt-liner datatable-groups-col-div'>";
-
-        for (i=0;i<groupsarray.length;i++){
-            var element = ""+groupsarray[i];
-            try{
-                element = element.trim();
-            }
-            catch(e){
-                console.log(e);
-            }
-            if(element != ""){
-                resultstring = resultstring+"<span class='"+divid+"_usersgroups datatable_usergroups' name=\""+groupsarray[i]+"\">"+groupsarray[i]+"</span>, &nbsp; ";
-            }
-        }
-
-        resultstring = resultstring +"</div>";
+        var resultstring = "<div name='"+oRecord._oData.name+"' groups='"+groupsstring+"' class='haloacl_datatable_groupscol  datatable_usergroups haloacl_datatable_groupdiv"+panelid+"'></div>";
         elLiner.innerHTML = resultstring;
-
     };
 
 
@@ -465,32 +434,93 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 // handles
 // standard part (select deselect tab)
 YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
-    //console.log("autoselectevent fired for panel:"+panelid);
-    //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
-    //console.log("listing known selections for panel:");
-
-
+    //if(YAHOO.haloacl.debug) console.log("autoselectevent fired for panel:"+panelid);
+    //if(YAHOO.haloacl.debug) console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
+    //if(YAHOO.haloacl.debug) console.log("listing known selections for panel:");
+    
+    /* non sorted part */
+    /*
+    
     $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
         $(item).removeClassName("groupselected");
     });
 
     $$('.datatableDiv_'+panelid+'_usersgroups').each(function(item){
         var name = $(item).readAttribute("name");
-        //console.log("checking for name:"+name);
+        //if(YAHOO.haloacl.debug) console.log("checking for name:"+name);
         if(YAHOO.haloacl.isNameInGroupArray(panelid,name)){
             $(item).addClassName("groupselected");
         }
     });
+     */
+
+    /* non sorted end */
+    $$('.haloacl_datatable_groupdiv'+panelid).each(function(divitem){
+        if(YAHOO.haloacl.debug) console.log("processing divitem:");
+        if(YAHOO.haloacl.debug) console.log(divitem);
+        
+        var highlighted = new Array();
+        var nonHighlighted = new Array();
+        var groupsarray = $(divitem).readAttribute("groups").split(",");
+        if(YAHOO.haloacl.debug) console.log("got groupsarray:");
+        if(YAHOO.haloacl.debug) console.log(groupsarray);
+
+        for(i=0;i<groupsarray.length;i++){
+            var item = groupsarray[i];
+            if(item != ""){
+                if(YAHOO.haloacl.isNameInGroupArray(panelid,item)){
+                    highlighted.push(item);
+                }else{
+                    nonHighlighted.push(item);
+                }
+            }
+        }
+
+        var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
+        for(i=0;i<highlighted.length;i++){
+            result += "<span class='groupselected'>";
+            result+= ""+highlighted[i];
+            result+="</span>&nbsp;";
+        }
+        for(i=0;i<nonHighlighted.length;i++){
+            result +="<span class='groupunselected'>";
+            result+= ""+nonHighlighted[i];
+            result+="</span>&nbsp;";
+        }
+        result +="</div>";
+
+        var divname = $(divitem).readAttribute("name");
+        
+        //var innerhtml =result+ '<div class="haloacl_infobutton" style="float:left;display:inline"></div><div id="tt1'+panelid+divname+'"></div>';
+        var innerhtml =result+ '<div id="tt1'+panelid+divname+'"></div>';
+
+
+        divitem.innerHTML = innerhtml;
+        
+        var test = new YAHOO.widget.Tooltip('tt1'+panelid+divname, {
+            context:divitem,
+            text:result,
+            zIndex :10,
+            constraintoviewport:false
+        });
+        if(YAHOO.haloacl.debug) console.log(test);
+
+
+
+
+    });
+
+
 };
 
 
 // readnonly-part (assigned tab)
 YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
-    //console.log("autoselectevent fired for panel:"+panelid);
-    //console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
-    //console.log("listing known selections for panel:");
+    //if(YAHOO.haloacl.debug) console.log("autoselectevent fired for panel:"+panelid);
+    //if(YAHOO.haloacl.debug) console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
+    //if(YAHOO.haloacl.debug) console.log("listing known selections for panel:");
 
-
+    /*
     $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
         $(item).removeClassName("groupselected");
     });
@@ -498,10 +528,66 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
     
     $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
         var name = $(item).readAttribute("name");
-        //console.log("checking for name:"+name);
+        //if(YAHOO.haloacl.debug) console.log("checking for name:"+name);
         if(YAHOO.haloacl.isNameInGroupArray(panelid,name)){
             $(item).addClassName("groupselected");
         }
+    });
+  */
+
+    $$('.haloacl_datatable_groupdiv'+panelid).each(function(divitem){
+        if(YAHOO.haloacl.debug) console.log("processing divitem:");
+        if(YAHOO.haloacl.debug) console.log(divitem);
+
+        var highlighted = new Array();
+        var nonHighlighted = new Array();
+        var groupsarray = $(divitem).readAttribute("groups").split(",");
+        if(YAHOO.haloacl.debug) console.log("got groupsarray:");
+        if(YAHOO.haloacl.debug) console.log(groupsarray);
+
+        for(i=0;i<groupsarray.length;i++){
+            var item = groupsarray[i];
+            if(item != ""){
+                if(YAHOO.haloacl.isNameInGroupArray(panelid,item)){
+                    highlighted.push(item);
+                }else{
+                    nonHighlighted.push(item);
+                }
+            }
+        }
+
+        var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
+        for(i=0;i<highlighted.length;i++){
+            result += "<span class='groupselected'>";
+            result+= ""+highlighted[i];
+            result+="</span>&nbsp;";
+        }
+        for(i=0;i<nonHighlighted.length;i++){
+            result +="<span class='groupunselected'>";
+            result+= ""+nonHighlighted[i];
+            result+="</span>&nbsp;";
+        }
+        result +="</div>";
+
+        var divname = $(divitem).readAttribute("name");
+
+        //var innerhtml =result+ '<div class="haloacl_infobutton" style="float:left;display:inline"></div><div id="tt1'+panelid+divname+'"></div>';
+        var innerhtml =result+ '<div id="tt1'+panelid+divname+'"></div>';
+
+
+        divitem.innerHTML = innerhtml;
+
+        var test = new YAHOO.widget.Tooltip('tt1'+panelid+divname, {
+            context:divitem,
+            text:result,
+            zIndex :10,
+            constraintoviewport:false
+        });
+        if(YAHOO.haloacl.debug) console.log(test);
+
+
+
+
     });
  
 };
