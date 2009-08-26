@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>HaloACL</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/HaloACL</instdir>
+		<description>
+			Protects pages, categories, namespaces and semantic properties.
+		</description>
+		<dependencies>
+			<dependency from="1132" to="1132">MW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/HaloACL/deploy.xml" />
+
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="smw" />
+
+		<new>
+			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" />
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" />
+			<require name="smwhalo"
+				file="extensions/HaloACL/includes/HACL_Initialize.php" />
+			<function name="enableHaloACL">
+			</function>
+			<script file="extensions/HaloACL/maintenance/HACL_Setup.php" />
+		</new>
+		<uninstall>
+			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" />
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" />
+			<script file="extensions/SMWHalo/maintenance/HACL_Setup.php"
+				params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>
