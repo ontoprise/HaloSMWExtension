@@ -17,7 +17,7 @@
 */
 
 /**
- * This file contains the class HACLGroup.
+ * This file contains functions for client/server communication with Ajax.
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
  * Date: 03.04.2009
@@ -3603,5 +3603,3 @@ HTML;
 
     return $html;
 }
-
-?>
