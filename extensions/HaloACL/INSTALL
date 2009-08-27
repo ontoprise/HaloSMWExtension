@@ -4,16 +4,43 @@ Installation instructions for HaloACL extension v1.0
 Requirements: 
 =============
 
-    MediaWiki 1.13 or higher
-    SMW 1.4.2
-    SMWHalo 1.4.3
+    MediaWiki 1.13.2
+    SMW 1.4.2 (optional)
 
 Installation:
 =============
 
-TODO
+The easiest way to install HaloACL is using the deployment framework:
+
+ smwadmin -i haloacl
+
+This installs the extension and patches MediaWiki and SMW.
+
+For a manual installation, you have to copy the folder HaloACL into 
+the extensions folder of MediaWiki. HaloACL will then already work, if you 
+activate it in LocalSetting.php (see below). 
+
+However, you can apply two patches:
+* patch_for_MW_1.13.2.txt: 
+	This patch for MediaWiki 1.13.2 removes all links to protected pages from 
+	the rendered articles and listings. If a link can not be removed, it is 
+	replaced by a link to the page 'Permission denied'. This patch is optional.
+* patch_for_SMW_1.4.2.txt: 
+	This patch for SMW 1.4.2 is mandatory, if you want to protect the values of 
+	semantic properties.
+
+
+Activating HaloACL
+------------------
+
+The extension is activated by adding the following lines to LocalSettings.php:
+
+include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+enableHaloACL(); 
+
 
 Options:
 ========
 
+All configuration options are defined and described in HACL_Initialize.php.
 
