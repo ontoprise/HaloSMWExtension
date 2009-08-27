@@ -239,6 +239,7 @@ protected $smwUserMessages = array(
 	'smw_qi_no_preview' => 'Noch keine Vorschau verf&uuml;gbar',
 	'smw_qi_clipboard' => 'In die Zwischenablage kopieren',
 	'smw_qi_reset' => 'Query zur&uuml;cksetzen',
+    'smw_qi_usetriplestore' => 'Benutze Triplestore',
 	'smw_qi_reset_confirm' => 'M&ouml;chten Sie Ihren Query wirklich zur&uuml;ck setzen?',
 	'smw_qi_querytree_heading' => 'Query Baumnavigation',
 	'smw_qi_main_query_name' => 'Hauptquery',

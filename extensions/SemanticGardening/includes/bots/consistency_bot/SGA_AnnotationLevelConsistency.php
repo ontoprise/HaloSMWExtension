@@ -320,7 +320,7 @@ class AnnotationLevelConsistency {
 			$domain = reset($dvs);
 			if ($domain === false) continue; // ignore annotations with missing domain
 			$domainCategory = $domain->getTitle();
-			if (!is_null($restrictToCategories)) {
+			if (count($restrictToCategories) > 0) {
 				// check if domain categories appear in the categories to restrict.
 				if (count(array_filter($restrictToCategories, 
 				    create_function('$e', '$e->getText()=="'.$domainCategory->getText().'";'))) == 0) continue;

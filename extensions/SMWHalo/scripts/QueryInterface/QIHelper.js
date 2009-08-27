@@ -89,7 +89,7 @@ QIHelper.prototype = {
 		}
 	},
 
-	getSpecialQPParameters : function(qp) {
+	getSpecialQPParameters : function(qp, callWhenFinished) {
 		var callback = function(request) {
 			this.parameterPendingElement.hide();
 			var columns = 3;
@@ -122,9 +122,10 @@ QIHelper.prototype = {
 			$('queryprinteroptions').innerHTML = html;
 			autoCompleter.registerAllInputs();
 			this.specialQPParameters = qpParameters;
+			if (callWhenFinished) callWhenFinished();
 		}
 		var createSelectionBox = function(id, values) {
-			var html = '<select id="' + 'qp_param_' + id + '">';
+			var html = '<select id="' + 'qp_param_' + id + '" onchange="qihelper.updatePreview()">';
 			values.each(function(v) {
 				html += '<option value="' + v + '">' + v + '</option>';
 			})
@@ -136,13 +137,13 @@ QIHelper.prototype = {
 			if (constraints != null) {
 				aclAttributes = 'class="wickEnabled" constraints="'+constraints+'"';
 			}
-			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+'/>';
+			var html = '<input id="' + 'qp_param_' + id + '" type="text" '+aclAttributes+' onchange="qihelper.updatePreview()"/>';
 			return html;
 		}
 		var createCheckBox = function(id, defaultValue) {
 			var defaultValueAtt = defaultValue ? 'checked="checked"' : '';
 			var html = '<input id="' + 'qp_param_' + id + '" type="checkbox" '
-					+ defaultValueAtt + '/>';
+					+ defaultValueAtt + ' onchange="qihelper.updatePreview()"/>';
 			return html;
 		}
 		if (this.parameterPendingElement)
@@ -309,10 +310,13 @@ QIHelper.prototype = {
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
+			
+			var reasoner = $('usetriplestore').checked ? "sparql" : "ask";
 			var params = ask.replace(',', '%2C') + ",";
-			params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?",":$('layout_sort').value + ',';
-			params += $('layout_format').value + ',';
-			params += this.serializeSpecialQPParameters(",");
+			params +='reasoner='+reasoner+'|';
+			params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?"|":$('layout_sort').value + '|';
+			params += $('layout_format').value + '|';
+			params += this.serializeSpecialQPParameters("|");
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
 					this.openPreview.bind(this));
 		} else { // query is empty
@@ -346,7 +350,9 @@ QIHelper.prototype = {
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
+			var reasoner = $('usetriplestore').checked ? "sparql" : "ask";
 			var params = ask + ",";  
+			params +='reasoner='+reasoner+'|';
 			params += "format="+$('layout_format').value + '|';
 			if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
 			params += this.serializeSpecialQPParameters("|");
@@ -1570,7 +1576,7 @@ QIHelper.prototype = {
 			$('showAsk').toggle();
 		}
 		if (this.queries[0].isEmpty()) {
-			if (!this.isExcelBridge)
+			//if (!this.isExcelBridge)
 				$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
 			return;
 		} else if (($('layout_format').value == "template")
@@ -1910,48 +1916,56 @@ handleQueryString : function(args, queryId, pMustShow) {
 
 applyOptionParams : function(query) {
 	var options = query.split('|');
+	
+	// get printout format of query
+	var format = "table"; // default format
+	for ( var i = 1; i < options.length; i++) {
+           
+            var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
+            if (kv.length == 1)
+                continue;
+            
+            var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
+            var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
+            if (key=="format") {
+            	format = val;
+            	break;
+            }
+    }
 	// parameters to show
 	var mustShow = [];
-	// assume that the headers will be shown (parameter headers=show or is
-	// missing)
-	$('layout_headers').setAttribute('checked', 'checked');
-	// start by 1, first element is the query itself
-	for ( var i = 1; i < options.length; i++) {
-		// search for something line ?prop_name, then the property must be
-		// displayed
-		var m = options[i].match(/^\s*\?(.*?)\s*$/);
-		if (m) {
-			mustShow.push(m[1]);
-			continue;
-		}
-		var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
-		if (kv.length == 1)
-			continue;
-		// check if layout_kv[0] exists, then a correct parameter was defined
-		// and we set the form element with its value
-		var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
-		var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
-		switch (key) {
-		case 'headers':
-			if (val == 'hide')
-				$('layout_headers').removeAttribute('checked');
-			break;
-		case 'mainlabel':
-			$('layout_label').value = val;
-			break;
-		case 'template':
-			$('template_name').value = val;
-			break;
-		default:
-			$('layout_' + key).value = val;
-			break;
+	
+	// and request according format printer parameters
+    this.getSpecialQPParameters(format, callback);	
+    
+    // The following callback is called after the query printer parameters were displayed.
+	var callback = function() {
+		// start by 1, first element is the query itself
+		for ( var i = 1; i < options.length; i++) {
+			// search for something line ?prop_name, then the property must be
+			// displayed
+			var m = options[i].match(/^\s*\?(.*?)\s*$/);
+			if (m) {
+				mustShow.push(m[1]);
+				continue;
+			}
+			var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
+			if (kv.length == 1)
+				continue;
+			// check if layout_kv[0] exists, then a correct parameter was defined
+			// and we set the form element with its value
+			var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
+			var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
+		    var optionParameter = $('qp_param_' + key);
+		    if ('checked' in optionParameter) {
+		    	optionParameter.checked = (val == "on" || val == "true");
+		    } else {
+		    	optionParameter.value = val;
+		    }
+			
 		}
 	}
-	// check if output format is template, then show the template name field
-	if ($('layout_format').value == 'template')
-		$('templatenamefield').style.display = "";
-	else
-		$('templatenamefield').style.display = "none";
+	
 	// return the properties, that must be shown in the query
 	return mustShow;
 },

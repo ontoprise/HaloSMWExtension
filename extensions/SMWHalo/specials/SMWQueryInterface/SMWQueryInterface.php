@@ -136,11 +136,14 @@ class SMWQueryInterface extends SpecialPage {
 	}	
 	
 	private function addAdditionalStuff() {
-		global $smwgHaloScriptPath;
+		global $smwgHaloScriptPath, $smwgWebserviceEndpoint;
 		wfRunHooks("QI_AddButtons", array (&$buttons));
 		
-		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';		
-		
+		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
+		$useTS = "";		
+		if (isset($smwgWebserviceEndpoint)) {
+			$useTS = '<input class="btn" type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+		} 
 		return '<div id="qimenubar">' .
 						//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 						//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
@@ -149,6 +152,7 @@ class SMWQueryInterface extends SpecialPage {
 						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
 						$buttons.
 						'<button class="btn" onclick="qihelper.showFullAsk(\'parser\', true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
+						$useTS.
 						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>'.
 

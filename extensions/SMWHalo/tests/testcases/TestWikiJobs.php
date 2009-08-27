@@ -19,7 +19,7 @@ class TestWikiJobs extends PHPUnit_Framework_TestCase {
         // must be called explicitly, because hook works only on Special:Move
         smwfGenerateUpdateAfterMoveJob($moveForm, $property, $new_property);
 
-        exec('php ../../../maintenance/runJobs.php');
+       
         $this->assertTrue(true);
 	}
 
@@ -35,8 +35,15 @@ class TestWikiJobs extends PHPUnit_Framework_TestCase {
         // must be called explicitly, because hook works only on Special:Move
         smwfGenerateUpdateAfterMoveJob($moveForm, $category, $new_category);
 
-        exec('php ../../../maintenance/runJobs.php');
+     
         $this->assertTrue(true);
+    }
+    
+    function testRunJobs() {
+    	global $IP;
+    	exec("php $IP/maintenance/runJobs.php", $out, $ret);
+    	print_r($out);
+    	$this->assertTrue(true);
     }
 
     

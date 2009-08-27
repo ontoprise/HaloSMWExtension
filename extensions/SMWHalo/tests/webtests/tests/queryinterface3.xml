@@ -221,15 +221,16 @@
               description="and click add"
               xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
             />
+        	
             <checkAjaxResponseXpathText
-              description="Preview contains now 1 row + header"
+              description="Preview contains now 7 row + header"
               xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
-              text="2"
+              text="8"
             />
             <verifyXPath
-              description="which is Bern"
-        	  xpath="//div[@id='previewcontent']/table/tbody/tr/td/a"
-        	  text="Bern"
+              description="First one should be Berlin"
+        	  xpath="//div[@id='previewcontent']//a[@title='Berlin']"
+        	  text="Berlin"
             />
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Has Capital::&lt;q&gt;\s*\[\[Category:City\]\]\s*\[\[Population::&lt;1000000\]\]\s*&lt;/q&gt;\]\]\s*&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />

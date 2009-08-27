@@ -74,11 +74,11 @@
               xpath="//div/span[text()='Close']"
             />
             <!-- doesn't work in Webtest, but successfully tested with Firefox -->
-            <verifyXPath
+            <!--<verifyXPath
                 description="Check existing link to City in navtree" 
                 xpath="//a[@class='leaf']/text()"
                 regex="\s*City\s*"
-            />
+            />-->
              
         </webtest>
         

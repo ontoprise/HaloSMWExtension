@@ -35,7 +35,7 @@ function smwf_qi_QIAccess($method, $params) {
 	}
 
 	else if($method == "getQueryResult"){
-	
+		
 		$result="null";
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
@@ -69,12 +69,18 @@ function smwf_qi_QIAccess($method, $params) {
 	            } // no single pipe found, no params specified in query
 	            else $rawparams[] = trim($p_array[0]);
             }    
+            
+            $rawparams = array_merge($rawparams, $fixparams);
             // parse params and answer query
-            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-            // merge fix parameters from GUI, they always overwrite others
-            $params = array_merge($params, $fixparams);
-            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
-           
+            if ($fixparams['reasoner'] == 'ask') {
+	            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+	           
+	            $result = SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            } else if ($fixparams['reasoner'] == 'sparql') {
+            	 SMWSPARQLQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+               
+                $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
+            }
 			switch ($fixparams['format']) {
             	case 'timeline':
             		return $result;
@@ -400,7 +406,7 @@ function qiGetPropertyInformation($relationName) {
 			if (count($type) == 0) {
 				// return binary schema (arity = 2)
 				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page"/>'.
+								'<param name="Page" type="_wpg"/>'.
 		           	  		 '</relationSchema>';
 			} else {
 				$typeLabels = $type[0]->getTypeLabels();
@@ -425,7 +431,7 @@ function qiGetPropertyInformation($relationName) {
 	
 				} else { // this should never happen, huh?
 				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page"/>'.
+								'<param name="Page" type="_wpg"/>'.
 		           	  		 '</relationSchema>';
 				}
 			}

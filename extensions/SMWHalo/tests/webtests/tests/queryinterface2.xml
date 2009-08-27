@@ -136,10 +136,10 @@
               description="Close full ask query popup"
               xpath="//div/span[text()='Close']"
             />
-
+        	
             <setInputField
               description="set mainlabel Cities"
-              htmlId="layout_label"
+              htmlId="qp_param_mainlabel"
               value="Cities"
             />
             <checkAjaxResponseXpathText
@@ -156,7 +156,7 @@
 
             <setInputField
               description="set intro List of all cities"
-              htmlId="layout_intro"
+              htmlId="qp_param_intro"
               value="List of all cities"
             />
             <checkAjaxResponseXpathRegex
@@ -173,7 +173,7 @@
 
             <setSelectField
               description="change order to descending"
-              xpath="//select[@id='layout_order']"
+              xpath="//select[@id='qp_param_order']"
               value="descending"
             />
             <checkAjaxResponseXpathText
@@ -190,7 +190,7 @@
 
             <setSelectField
               description="change order to descending"
-              xpath="//select[@id='layout_link']"
+              xpath="//select[@id='qp_param_link']"
               value="none"
             />
             <checkAjaxResponseXpathText
@@ -207,7 +207,7 @@
 
             <setInputField
               description="set a limit of 5"
-              htmlId="layout_limit"
+              htmlId="qp_param_limit"
               value="5"
             />
             <setSelectField
