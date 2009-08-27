@@ -386,5 +386,4 @@ Index: includes/specials/SpecialExport.php
 +/*op-patch|TS|2009-07-09|end*/		
  	}
  	$dbr->freeResult($res);
- 
  				
