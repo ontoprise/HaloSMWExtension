@@ -61,6 +61,13 @@ $packageToInstall = array();
 $packageToDeinstall = array();
 $packageToUpdate = array();
 
+// defaults:
+$force = false;
+$globalUpdate= false;
+$showDescription=false;
+$checkDep=false;
+$restore=false;
+
 // get command line parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 

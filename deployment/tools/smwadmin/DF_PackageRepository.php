@@ -66,7 +66,7 @@ class PackageRepository {
 			$repo_urls = array();
 			foreach($rep_file_lines as $u) {
 				if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
-				list($rawurl, $user, $pass) = explode(" ", $u);
+				@list($rawurl, $user, $pass) = explode(" ", $u); // do not complain about missing credentials
 				$url = (substr(trim($rawurl), -1) == "/") ? $rawurl : (trim($rawurl)."/"); //add trailing / if necessary
 				
 				$repo_urls[] = $url;
@@ -92,7 +92,7 @@ class PackageRepository {
 			$host = $partsOfURL['host'];
 			$port = array_key_exists("port", $partsOfURL) ? $partsOfURL['port'] : 80;
 			try {
-				$res = $d->downloadAsString($path, $port, $host, self::$repo_credentials[$url], NULL);
+				$res = $d->downloadAsString($path, $port, $host, array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "", NULL);
 				self::$repo_dom[$url] = simplexml_load_string($res);
 			} catch(HttpError $e) {
 				print "\n".$e->getMsg();
