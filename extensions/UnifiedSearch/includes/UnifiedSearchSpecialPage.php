@@ -513,9 +513,9 @@ class USSpecialPage extends SpecialPage {
 		foreach ($searchSet->mResults as $res) {
 			list($score, $type, $term) = explode(' ', $res);
 			foreach ($sterms as $s) {
-				if (preg_match('/^'.$s.'$/i', urldecode($term)))
+				if (preg_match('/^'.preg_quote($s).'$/i', urldecode($term)))
 				$scoringTerms[$s] = "$term,$type";
-				else if (preg_match('/'.$s.'/i', urldecode($term)) && (!isset($scoringTerms[$s])))
+				else if (preg_match('/'.preg_quote($s).'/i', urldecode($term)) && (!isset($scoringTerms[$s])))
 				$scoringTerms[$s] = "$term,$type";
 			}
 		}
