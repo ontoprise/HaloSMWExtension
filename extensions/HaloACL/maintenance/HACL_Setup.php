@@ -36,17 +36,25 @@ $haclgIP = "$dir/../../HaloACL";
 require_once("$haclgIP/includes/HACL_Storage.php");
 require_once("$haclgIP/includes/HACL_GlobalFunctions.php");
 
-echo "Setting up database tables for HaloACL...";
-HACLStorage::getDatabase()->initDatabaseTables();
-echo "done.\n";
+$delete = array_key_exists('delete', $options);
 
-// Create page "Permission denied".
-echo "Creating predefined pages...";
-
-global $haclgContLang, $wgLanguageCode;
-haclfInitContentLanguage($wgLanguageCode);
-$pd = $haclgContLang->getPermissionDeniedPage();
-$t = Title::newFromText($pd);
-$a = new Article($t);
-$a->doEdit($haclgContLang->getPermissionDeniedPageContent(),"", EDIT_NEW);
-echo "done.\n";
+if ($delete) {
+	echo "Deleting database tables for HaloACL...";
+	HACLStorage::getDatabase()->dropDatabaseTables();
+	echo "done.\n";
+} else {
+	echo "Setting up database tables for HaloACL...";
+	HACLStorage::getDatabase()->initDatabaseTables();
+	echo "done.\n";
+	
+	// Create page "Permission denied".
+	echo "Creating predefined pages...";
+	
+	global $haclgContLang, $wgLanguageCode;
+	haclfInitContentLanguage($wgLanguageCode);
+	$pd = $haclgContLang->getPermissionDeniedPage();
+	$t = Title::newFromText($pd);
+	$a = new Article($t);
+	$a->doEdit($haclgContLang->getPermissionDeniedPageContent(),"", EDIT_NEW);
+	echo "done.\n";
+}
