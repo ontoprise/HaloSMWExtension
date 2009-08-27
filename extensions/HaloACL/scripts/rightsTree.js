@@ -475,6 +475,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
      * @type int
      */
     groupId: 0,
+    title:'',
 
 
     /**
@@ -723,7 +724,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
 
-            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">testtitle</span></td>';
+            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">'+this.title+'</span></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -904,6 +905,8 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
                 if (!element2.description) element2.description = "(no name)";
                 var tmpNode2 = new YAHOO.widget.RightNode(element2.description, tmpNode, false);
+                tmpNode2.title = element2.name;
+
 
                 tmpNode2.setGroupId(element2.id);
 

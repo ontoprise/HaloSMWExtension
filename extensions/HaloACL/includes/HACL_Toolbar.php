@@ -18,7 +18,7 @@ $wgAjaxExportList[] = "getHACLToolbar";
 
 
 global $wgHooks;
-$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
+//$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
 
 /**
  Adds
@@ -49,19 +49,26 @@ HTML;
 function getHACLToolbar($articleTitle) {
     $isPageProtected = false;
 
+
+    // does that aritcle exist or is it a new article
+    try{
+      //  $article = new Article(Title::newFromText($articleTitle));
+        print_r($article);
+    }
+    catch(Exception $e){
+        echo "no ";
+    }
+
+    // trying to get assigned right
     $array = array();
     try {
         $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
-
-
         $assignedRights = array();
-
         //attach inline right texts
         foreach($SD->getInlineRights() as $rightId) {
         //    foreach ($SD->getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
             $assignedRights[] = HACLRight::newFromID($rightId)->getName();
         }
-
         $isPageProtected = true;
     }
     catch(Exception $e) {
@@ -97,9 +104,7 @@ HTML;
     $html .= <<<HTML
              
         </div>
-        <div id="hacl_toolbarcontainer_section2">
-            &nbsp;
-        </div>
+
         <div id="hacl_toolbarcontainer_section3">
             <a target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
         </div>

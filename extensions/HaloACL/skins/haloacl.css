@@ -117,6 +117,10 @@ abbr,acronym { border:0;
 /* custom stuff */
 
 /* yui style-customization */
+.yui-skin-sam .yui-navset .yui-nav .selected, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected {
+}
+
+
 .yui-content{
     background:#FFF!important;
     margin:0px!important;
@@ -512,6 +516,10 @@ button:hover{
 }
 
 /* datatable */
+.userdatatable_name{
+    width:120px;
+    float:left;
+}
 .yui-skin-sam .yui-dt tr.yui-dt-first td{
     border-top:0px solid!important;
     padding-top:1px!important;
@@ -541,7 +549,7 @@ button:hover{
 .datatable_usergroups{
     font-size:10px!important;
     overflow:hidden;
-    width:285px;
+    width:240px;
 }
 
 .haloacl_grouptree_title{
@@ -654,7 +662,7 @@ button:hover{
 }
 #content_manageUsersPanel{
     min-height:350px;
-    padding:10px;
+    padding:10px 0 0 0;
 }
 #haloacl_manageuser_contentmenu{
     height:200px;
@@ -880,7 +888,7 @@ button:hover{
     border:0px #FFF solid!important;
 }
 #haloacl_whitelist_contentlist{
-    margin:0 0 0 20px;
+    margin:10px 0 0 0px;
     height:316px;
     width:600px;
     float:left;
@@ -935,7 +943,9 @@ button:hover{
 
 #ManageExistingACLPanel{
     min-height:350px;
-    width:1000px;
+    width:800px;
+    margin:10px;
+
 }
 
 /* quickacltab */

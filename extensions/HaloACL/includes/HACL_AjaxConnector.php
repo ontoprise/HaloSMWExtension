@@ -505,20 +505,24 @@ HTML;
 function createManageUserTemplateContent() {
 
     global $wgUser;
-
-    $SDName = "Template/".$wgUser->getName();
-
-    $SD = HACLSecurityDescriptor::newFromName($SDName);
-    $SDId = $SD->getSDID();
-
     $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ Manage own Default User Template ]", "[ Manage own Default User Template ]", false, false,false);
+    try {
+        $SDName = "Template/".$wgUser->getName();
 
-    $tempContent = <<<HTML
+        $SD = HACLSecurityDescriptor::newFromName($SDName);
+        $SDId = $SD->getSDID();
+
+
+        $tempContent = <<<HTML
         <div id="ManageACLDetail2"></div>
         <script>
             YAHOO.haloacl.loadContentToDiv('ManageACLDetail2','getSDRightsPanelContainer',{sdId:'$SDId',sdName:'$SDName',readOnly:'false'});
         </script>
 HTML;
+    }
+    catch(Exception $e ){
+        $tempContent = "<p>no default template for user";
+    }
 
     $myGenericPanel->setContent($tempContent);
 
@@ -865,25 +869,7 @@ HTML;
 
                     <div class="haloacl_greyline">&nbsp;</div>
 
-                    <div class="halocal_panel_content_row">
-                        <div class="haloacl_panel_content_row_descr" style="width:145px">
-                            Group description:
-                        </div>
-                        <div class="haloacl_panel_content_row_content">
-                            <input type="text" disabled="true" style="width:400px" id="right_description_$panelid" value="$description"/>
 
-                        </div>
-                    </div>
-                       <div class="halocal_panel_content_row">
-                        <div class="haloacl_panel_content_row_descr" style="width:145px">
-                            &nbsp;
-                        </div>
-                        <div class="haloacl_panel_content_row_content">
-                            Autogenerate description text:
-                            <input type="radio" value="on" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid"/>&nbsp;on
-                            <input type="radio" value="off" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid" checked/>&nbsp;off
-                        </div>
-                    </div>
                     
 
                     <div class="haloacl_greyline">&nbsp;</div>
@@ -929,12 +915,7 @@ HTML;
                 xml+="<inlineright>";
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<name>"+$('right_name_$panelid').value+"</name>";
-                xml+="<description>"+$('right_description_$panelid').value+"</description>";
-                $$('.right_descriptiontext_$panelid').each(function(item){
-                    if(item.checked){
-                        xml+="<autoDescription>"+item.value+"</autoDescription>";
-                    }
-                });
+             
 
                 xml+="<users>";
                 $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
@@ -2990,7 +2971,7 @@ function getACLs($typeXML) {
         //attach inline right texts
         foreach ($SD->getInlineRights(false) as $rightId) {
             $tempright = HACLRight::newFromID($rightId);
-            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+            $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
         }
         foreach ($SD->getPredefinedRights(false) as $subSdId) {
             $tempright = HACLSecurityDescriptor::newFromID($subSdId);

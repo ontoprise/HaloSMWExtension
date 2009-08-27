@@ -59,7 +59,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
         //elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
-        elLiner.innerHTML = "<span  groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        elLiner.innerHTML = "<span  class='userdatatable_name' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
     };
 
@@ -374,7 +374,11 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
         var resultstring = "<div name='"+oRecord._oData.name+"' groups='"+groupsstring+"' class='haloacl_datatable_groupscol  datatable_usergroups haloacl_datatable_groupdiv"+panelid+"'></div>";
         elLiner.innerHTML = resultstring;
     };
+    this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
+        //elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        elLiner.innerHTML = "<span  class='userdatatable_name' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
+    };
 
     // building shortcut for custom formatter
     YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
@@ -386,7 +390,8 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
     {
         key:"name",
         label:"Name",
-        sortable:false
+        sortable:false,
+        formatter:"myName"
     },
     {
         key:"groups",

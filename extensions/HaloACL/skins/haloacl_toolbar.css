@@ -1,6 +1,5 @@
 #hacl_toolbarcontainer{
-    float:left;
-    width:850px;
+    min-width:750px;
     height:20px;
     border:1px #ccc solid;
     background-color:#eee;
@@ -18,14 +17,7 @@
     overflow:visible;
     padding:0 5px;
 }
-#hacl_toolbarcontainer_section2{
-    float:left;
-    width:150px;
-    height:20px;
-    border:1px #ccc solid;
-    border-style: none solid none none;
-    padding:0 5px;
-}
+
 #hacl_toolbarcontainer_section3{
     float:left;
     width:250px;
