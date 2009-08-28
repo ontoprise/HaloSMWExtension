@@ -368,7 +368,7 @@ Index: includes/specials/SpecialWhatlinkshere.php
  				$wgOut->addHTML( $this->listItem( $row, $nt, true ) );
 Index: includes/specials/SpecialExport.php
 ===================================================================
---- includes/specials/SpecialExport.php	(revision 4126)
+--- includes/specials/SpecialExport.php	(revision 4634)
 +++ includes/specials/SpecialExport.php	(working copy)
 @@ -41,8 +41,14 @@
  			$ns = $wgContLang->getNsText( $row->page_namespace );
@@ -386,4 +386,5 @@ Index: includes/specials/SpecialExport.php
 +/*op-patch|TS|2009-07-09|end*/		
  	}
  	$dbr->freeResult($res);
- 				
+ 
+			
