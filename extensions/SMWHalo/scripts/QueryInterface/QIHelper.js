@@ -350,7 +350,8 @@ QIHelper.prototype = {
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
-			var reasoner = $('usetriplestore').checked ? "sparql" : "ask";
+			var triplestoreSwitch = $('usetriplestore');
+			var reasoner = triplestoreSwitch != null && triplestoreSwitch.checked ? "sparql" : "ask";
 			var params = ask + ",";  
 			params +='reasoner='+reasoner+'|';
 			params += "format="+$('layout_format').value + '|';
@@ -505,7 +506,9 @@ QIHelper.prototype = {
 	getFullParserAsk : function() {
 		var asktext = this.recurseQuery(0, "parser");
 		var displays = this.queries[0].getDisplayStatements();
-		var fullQuery = "{{#ask: " + asktext;
+		var triplestoreSwitch = $('usetriplestore');
+		var reasoner = triplestoreSwitch != null && triplestoreSwitch.checked ? "sparql" : "ask";
+		var fullQuery = "{{#"+reasoner+": " + asktext;
 		for ( var i = 0; i < displays.length; i++) {
 			fullQuery += "| ?" + displays[i];
 		}
@@ -1916,11 +1919,16 @@ handleQueryString : function(args, queryId, pMustShow) {
 
 applyOptionParams : function(query) {
 	var options = query.split('|');
-	
+	// parameters to show
+    var mustShow = [];
 	// get printout format of query
 	var format = "table"; // default format
 	for ( var i = 1; i < options.length; i++) {
-           
+            var m = options[i].match(/^\s*\?(.*?)\s*$/);
+            if (m) {
+                mustShow.push(m[1]);
+                continue;
+            }
             var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
             if (kv.length == 1)
                 continue;
@@ -1929,11 +1937,10 @@ applyOptionParams : function(query) {
             var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
             if (key=="format") {
             	format = val;
-            	break;
+            	
             }
     }
-	// parameters to show
-	var mustShow = [];
+	
 	
 	// and request according format printer parameters
     this.getSpecialQPParameters(format, callback);	
@@ -1942,13 +1949,7 @@ applyOptionParams : function(query) {
 	var callback = function() {
 		// start by 1, first element is the query itself
 		for ( var i = 1; i < options.length; i++) {
-			// search for something line ?prop_name, then the property must be
-			// displayed
-			var m = options[i].match(/^\s*\?(.*?)\s*$/);
-			if (m) {
-				mustShow.push(m[1]);
-				continue;
-			}
+			
 			var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
 			if (kv.length == 1)
 				continue;
@@ -1957,6 +1958,7 @@ applyOptionParams : function(query) {
 			var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
 			var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
 		    var optionParameter = $('qp_param_' + key);
+		    if (optionParameter == null) continue; // ignore unknown options
 		    if ('checked' in optionParameter) {
 		    	optionParameter.checked = (val == "on" || val == "true");
 		    } else {
