@@ -62,11 +62,12 @@ $packageToDeinstall = array();
 $packageToUpdate = array();
 
 // defaults:
-$force = false;
-$globalUpdate= false;
-$showDescription=false;
-$checkDep=false;
-$restore=false;
+$dfgForce = false;
+$dfgGlobalUpdate= false;
+$dfgShowDescription=false;
+$dfgListPackages=false;
+$dfgCheckDep=false;
+$dfgRestore=false;
 
 // get command line parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
@@ -89,27 +90,27 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$package = next($argv);
 		if ($package === false || $package == '--dep') {
 			if ($package == '--dep') {
-				$checkDep = true;
+				$dfgCheckDep = true;
 			}
-			$globalUpdate = true;
+			$dfgGlobalUpdate = true;
 			continue;
 		}
 		$packageToUpdate[] = $package;
 		continue;
 	}
 	if ($arg == '-l') { // => list packages
-		$listPackages = true;
+		$dfgListPackages = true;
 		$pattern = next($argv);
 		continue;
 	}
 
 	if ($arg == '-desc') { // => show description for each package
-		$showDescription = true;
+		$dfgShowDescription = true;
 		continue;
 	}
 
 	if ($arg == '--dep') { // => show dependencies
-		$checkDep = true;
+		$dfgCheckDep = true;
 		continue;
 	}
 
@@ -122,12 +123,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	}
 
 	if ($arg == '-f') { // => force
-		$force = true;
+		$dfgForce = true;
 		continue;
 	}
 
 	if ($arg == '-r') { // => rollback last installation
-		$restore = true;
+		$dfgRestore = true;
 		continue;
 	}
 	$params[] = $arg;
@@ -157,24 +158,24 @@ if ($help || count($argv) == 0) {
 }
 
 $rootDir = realpath(dirname(__FILE__)."/../..");
-$installer = Installer::getInstance($rootDir, $force);
+$installer = Installer::getInstance($rootDir, $dfgForce);
 $rollback = Rollback::getInstance($rootDir);
 $res_installer = ResourceInstaller::getInstance($rootDir);
 
-if ($restore) {
+if ($dfgRestore) {
 	handleRollback();
 	die();
 }
 
 // Global update (ie. updates all packages to the latest possible version)
-if ($globalUpdate) {
-	handleGlobalUpdate($checkDep);
+if ($dfgGlobalUpdate) {
+	handleGlobalUpdate($dfgCheckDep);
 	die();
 }
 
 // List all available packages and show which are installed.
-if ($listPackages) {
-	$installer->listAvailablePackages($showDescription, $pattern);
+if ($dfgListPackages) {
+	$installer->listAvailablePackages($dfgShowDescription, $pattern);
 	die();
 }
 
@@ -264,10 +265,10 @@ function handleRollback() {
 }
 
 
-function handleGlobalUpdate($checkDep) {
+function handleGlobalUpdate($dfgCheckDep) {
 	global $installer;
-	list($extensions_to_update, $updated) = $installer->updateAll($checkDep);
-	if ($checkDep) {
+	list($extensions_to_update, $updated) = $installer->updateAll($dfgCheckDep);
+	if ($dfgCheckDep) {
 		if (count($extensions_to_update) > 0) {
 
 			print "\n\nThe following extensions would get updated:\n";
@@ -289,13 +290,13 @@ function handleGlobalUpdate($checkDep) {
 }
 
 function handleInstallOrUpdate($packageID, $version) {
-	global $checkDump, $checkDep, $installer, $res_installer;
+	global $checkDump, $dfgCheckDep, $installer, $res_installer;
 	if (isset($checkDump) && $checkDump == true) {
 		// check status of a currently installed wikidump
 		$res_installer->checkWikidump($packageID, $version);
 		print "\n\n";
 
-	} else if (isset($checkDep) && $checkDep == true) {
+	} else if (isset($dfgCheckDep) && $dfgCheckDep == true) {
 
 		// check dependencies of a package to install or update
 		list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
