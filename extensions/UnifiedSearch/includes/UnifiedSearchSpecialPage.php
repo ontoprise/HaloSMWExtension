@@ -302,13 +302,14 @@ class USSpecialPage extends SpecialPage {
 
 	private function createBrowsingLink($search, $restrict, $offset, $limit, $text="") {
 		$searchPage = SpecialPage::getTitleFor("Search");
-		
+		$search = urlencode($search);
 		$restrict =  empty($restrict) && $restrict !== '0' ? "" : "&restrict=$restrict";
 		return '<a href="'.$searchPage->getFullURL("search=$search$restrict&fulltext=true&limit=$limit&offset=$offset").'">'.$text." ".$limit.'</a>';
 	}
 
 	private function createLimitLink($search, $restrict, $offset, $limit, $currentLimit) {
 		$searchPage = SpecialPage::getTitleFor("Search");
+		$search = urlencode($search);
 		$label = ($limit == $currentLimit) ? "<b>$limit</b>" : $limit;
 		$restrict = empty($restrict) && $restrict !== '0' ? "" : "&restrict=$restrict";
 		return '<a href="'.$searchPage->getFullURL("search=$search$restrict&fulltext=true&limit=$limit&offset=$offset").'">'.$label.'</a>';
