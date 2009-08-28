@@ -332,7 +332,8 @@ OntologyModifier.prototype = {
 		this.createArticle(gLanguage.getMessage('PROPERTY_NS')+title, 
 						   initialContent, schema,
 						   gLanguage.getMessage('CREATE_PROP_FOR_CAT').replace(/\$cat/g, domain),
-						   true);
+						   false);
+//Bugfix: 10801						   true);
 	},
 	
 	/**
