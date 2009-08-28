@@ -422,14 +422,14 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Peugeot</title>
     <id>29</id>
     <revision>
-      <id>29</id>
-      <timestamp>2008-09-05T09:59:26Z</timestamp>
+      <id>80</id>
+      <timestamp>2009-08-28T09:13:50Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">[[Has Engine::kai]]
-[[Category:Electric car]]</text>
+[[Category:Electric car]]
+[[Has Voltage::200]]</text>
     </revision>
   </page>
   <page>
@@ -1203,6 +1203,32 @@ Also take a look at [http://localhost/mediawiki/index.php?title=Special:Gardenin
 {{#sparql: [[Category:Car]]|?Has Engine|sort=Has Engine|order=desc }}
 
 {{#sparql: [[Category:Car]][[Has Engine::+]]|?Has owner=Owner|mainlabel=Car }}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has Voltage</title>
+    <id>79</id>
+    <revision>
+      <id>79</id>
+      <timestamp>2009-08-28T09:03:04Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</comment>
+      <text xml:space="preserve">[[has domain and range::Category:Electric car; | ]][[has type::Type:Number| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Joe</title>
+    <id>80</id>
+    <revision>
+      <id>81</id>
+      <timestamp>2009-08-28T09:38:44Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: [[Has Son::Jack]]</comment>
+      <text xml:space="preserve">[[Has Son::Jack]]</text>
     </revision>
   </page>
 </mediawiki>

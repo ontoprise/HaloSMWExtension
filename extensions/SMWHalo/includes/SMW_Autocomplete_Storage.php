@@ -61,7 +61,7 @@ abstract class AutoCompletionStorage {
 	public abstract function getPropertyWithType($match, $typeLabel);
 
 	/**
-	 * Returns (including inferred) properties which match a given $instance for domain or range
+	 * Returns (including inferred) properties which match a given $instance for domain or range category
 	 * If $instance is not part of any category, it will return an empty result set.
 	 *
 	 * @param string $userInputToMatch substring must be part of property title
@@ -306,7 +306,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		} while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-		$res = $db->query('SELECT DISTINCT property FROM smw_ob_properties');
+		$res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -453,9 +453,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
             $db->query('INSERT INTO smw_ob_properties_super (SELECT DISTINCT cl_to AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND page_title IN (SELECT * FROM smw_ob_properties_sub))');
 
             // insert direct properties of current supercategory level
-            $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+            $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "true" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
                      ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
-             $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
+             $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "true" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
                      ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
                       
                      
