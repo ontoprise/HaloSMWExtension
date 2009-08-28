@@ -1144,7 +1144,7 @@ Index: includes/specials/SpecialWhatlinkshere.php
 +		// NS_IMAGE is not the only Namespace now, so check them all
 +		// content was:
 +		// $hideimages = $target->getNamespace() != NS_IMAGE || $this->opts->getValue( 'hideimages' );
-+		RMNamespace::isImage( $this->mTitle->getNamespace(), &$rMresult );
++		RMNamespace::isImage( $target->getNamespace(), &$rMresult );
 +		$hideimages = !$rMresult || $this->opts->getValue( 'hideimages' );
 +		/*op-patch|BL|2009-07-13|end*/
  
