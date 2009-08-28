@@ -157,23 +157,31 @@ class DALReadPOP3 implements IDAL {
 		$this->regularExpressions = $inputPolicy["regex"];
 		$this->importSets = $this->parseImportSets($importSet);
 		
-		$messages = imap_fetch_overview($connection,"1:{$check->Nmsgs}",0);
+		//$messages = imap_fetch_overview($connection,"1:{$check->Nmsgs}",0);
+		$messages = imap_search($connection, 'ALL');
+		
 		$result = "";
-		foreach($messages as $msg){
-			if(key_exists("message_id", $msg)){
-				$importSet = $msg->from;
-				$startPos = strpos($importSet, "<") + 1;
-				$endPos = strpos($importSet, ">") - $startPos;
-				$importSet = substr($importSet, $startPos, $endPos);
+		if($messages){
+			$msgNumber = 1;
+			foreach($messages as $msg){
+				$header = imap_header($connection, $msgNumber);
+				$msgNumber += 1;
+				if(key_exists("message_id", $header)){
+					$importSet = $header->fromaddress;
+					$startPos = strpos($importSet, "<") + 1;
+					$endPos = strpos($importSet, ">") - $startPos;
+					$importSet = substr($importSet, $startPos, $endPos);
 				
-				if(!$this->termMatchesRules($importSet, $this->replaceAngledBrackets($msg->message_id))){
+					if(!$this->termMatchesRules(
+							$importSet, $this->replaceAngledBrackets($header->message_id))){
+						continue;
+					}
+				} else {
 					continue;
 				}
-			} else {
-				continue;
-			}
 			
-			$result .= "<articleName>".$this->replaceAngledBrackets($msg->message_id)."</articleName>\n";
+			$result .= "<articleName>".$this->replaceAngledBrackets($header->message_id)."</articleName>\n";
+		}
 		}
 		imap_close($connection);
 
@@ -197,8 +205,8 @@ class DALReadPOP3 implements IDAL {
 			wfMsg('smw_ti_pop3error').
 			DAL_POP3_RET_ERR_END;
 		}
-		$messages = imap_search($connection, 'ALL');
-
+		$messages = imap_search($connection, 'UNSEEN');
+		
 		$this->vCardMP = $this->getMPFromDataSource($dataSourceSpec, "VCardMP");
 		$this->iCalMP = $this->getMPFromDataSource($dataSourceSpec, "ICalMP");
 		$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
@@ -213,6 +221,7 @@ class DALReadPOP3 implements IDAL {
 				$result .= $this->getBody($connection, $msg);
 				$result .= "\n".$headerData;
 				$result .= "</term>\n";
+				imap_delete($connection, $msg);
 			}
 		}
 		
@@ -228,9 +237,10 @@ class DALReadPOP3 implements IDAL {
 					.$header."</term>".$result;
 			}
 		}
-
+		
+		imap_expunge($connection);
 		imap_close($connection);
-		//echo("\n".$result."\n");
+		
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
@@ -253,9 +263,11 @@ class DALReadPOP3 implements IDAL {
 		$this->attachments = array();
 		$this->embeddedMailIds = "";
 
-		if($structure->type == 0 && array_key_exists("body", $this->requiredProperties)){ //this is a simple text message
-			$this->body = $this->decodeBodyPart(
-				imap_body($connection, $msg, $basePartNr."1"), $structure->encoding);
+		if($structure->type == 0){ //this is a simple text message
+			$encoding = $structure->encoding;
+			echo("\nProcess next message part: type: ".$structure->type.
+				" subtype: ".$structure->subtype." partNr: 1"." encoding: ".$encoding);
+			$this->handleBodyTextPart($connection, $msg, $structure, "", 1, $encoding);
 		} else if ($structure->type == 1 || $structure->type == 2){ //this is a multipart message with attachments
 			$this->handleBodyMultiPart($connection, $msg, $structure, $basePartNr);
 		}
@@ -323,41 +335,19 @@ class DALReadPOP3 implements IDAL {
 	}
 	
 	private function handleBodyMultiPart($connection, $msg, $structure, $basePartNr){
+		echo("\nprocess next body multipart");
 		$partNr = 1;
 		foreach($structure->parts as $part){
 			$encoding = $part->encoding;
 			echo("\nProcess next message part: type: ".$part->type.
-				" subtype: ".$part->subtype." partNr: ".$basePartNr.$partNr);
+				" subtype: ".$part->subtype." partNr: ".$basePartNr.$partNr." encoding ".$encoding);
 			if($part->type == 0){ //text
-				if($part->ifsubtype){
-					if(strtoupper($part->subtype) == "X-VCARD"){
-						if(!array_key_exists("vCards", $this->requiredProperties)){
-							continue;
-						}
-						$this->serialiseVCard($this->decodeBodyPart(
-							imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
-							$encoding));
-					} else if(strtoupper($part->subtype) == "CALENDAR"){
-						if(!array_key_exists("iCalendars", $this->requiredProperties)){
-							continue;
-						}
-						$content = $this->decodeBodyPart(
-							imap_fetchbody($connection, $msg, $basePartNr.$partNr), $encoding);
-						$this->serializeICal($content);
-					} else if(array_key_exists("body", $this->requiredProperties)){
-						$this->body .= "<pre>".$this->decodeBodyPart(
-							imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
-							$encoding)."</pre>";
-					}
-				} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
-					$this->body .= "<pre>".$this->decodeBodyPart(
-						imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
-						$encoding)."</pre>";
-				}
+				$this->handleBodyTextPart($connection, $msg, $part, $basePartNr, $partNr, $encoding);
 			} else if($part->type == 1) { //multipart
 				//this strange distinction below is necesary
 				//due to the strange enumeration of php imap
-				if(strtoupper($part->subtype) == "ALTERNATIVE"){
+				if(strtoupper($part->subtype) == "ALTERNATIVE"
+					|| strtoupper($part->subtype) == "RELATED"){
 					$callPartNr = $partNr.".";
 				} else {
 					$callPartNr = "";
@@ -385,15 +375,52 @@ class DALReadPOP3 implements IDAL {
 					"partNr" => $basePartNr.$partNr.".");
 			} else if(array_key_exists("attachments", $this->requiredProperties)){ //an attachment
 				$bodyStruct = imap_bodystruct($connection, $msg, $basePartNr.$partNr);
-				$this->handleAttachments($bodyStruct, $connection, $msg, $basePartNr.$partNr, $encoding);
+				$this->handleAttachments($bodyStruct, $connection, $msg, 
+					$basePartNr.$partNr, $encoding);
 			}
 			$partNr ++;
 		}
 	}
+	
+	private function handleBodyTextPart($connection, $msg, $part, $basePartNr, $partNr, $encoding){
+		if($part->ifsubtype){
+			if(strtoupper($part->subtype) == "X-VCARD"){
+				if(!array_key_exists("vCards", $this->requiredProperties)){
+					return;
+				}
+				$this->serialiseVCard($this->decodeBodyPart(
+					imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
+						$encoding));
+			} else if(strtoupper($part->subtype) == "CALENDAR"){
+				if(!array_key_exists("iCalendars", $this->requiredProperties)){
+					return;
+				}
+				$content = $this->decodeBodyPart(
+					imap_fetchbody($connection, $msg, $basePartNr.$partNr), $encoding);
+				$this->serializeICal($content);
+			} else if(array_key_exists("body", $this->requiredProperties)
+					&& strtoupper($part->subtype) != "HTML"){
+				$this->body .= "<pre>".htmlspecialchars($this->decodeBodyPart(
+					imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
+					$encoding))."</pre>";
+			}
+		} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
+			$this->body .= "<pre>".htmlspecialchars($this->decodeBodyPart(
+				imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
+				$encoding))."</pre>";
+		}
+	}
 
 	private function decodeBodyPart($bodyPart, $encoding){
-		if ($encoding == 4){
+	if ($encoding == 1){
+			if(!mb_check_encoding($bodyPart, "UTF-8")){
+				$bodyPart = utf8_encode($bodyPart);
+			}
+		} else if ($encoding == 4){
 			$bodyPart = quoted_printable_decode($bodyPart);
+			if(!mb_check_encoding($bodyPart, "UTF-8")){
+				$bodyPart = utf8_encode($bodyPart);
+			}
 		}else if ($encoding == 3){
 			$bodyPart = base64_decode($bodyPart);
 		}
@@ -420,6 +447,7 @@ class DALReadPOP3 implements IDAL {
 	private function getConnection($dataSourceSpec){
 		if($this->connection == false){
 			if(strpos($dataSourceSpec, "DATASOURCE") > 0){
+				
 				$dataSourceSpec = str_replace('XMLNS="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
 				$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
 				$serverAddress = $dataSourceSpec->xpath("//SERVERADDRESS/text()");
@@ -872,7 +900,7 @@ class DALReadPOP3 implements IDAL {
 			
 		$status = $local->upload(
 			$fileFullPath, wfMsg('smw_ti_creationComment'), $content.$termAnnotations,
-		File::DELETE_SOURCE, $mFileProps );
+			File::DELETE_SOURCE, $mFileProps );
 		if($status->failureCount > 0){
 			return $this->createCallBackResult(false,
 			array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
@@ -921,12 +949,12 @@ class DALReadPOP3 implements IDAL {
 		$params = array();
 		if ($bodyStruct->ifparameters){
 			foreach ($bodyStruct->parameters as $p){
-				$params[ strtolower( $p->attribute ) ] = $p->value;
+				$params[ strtolower( $p->attribute) ] = mb_decode_mimeheader($p->value);
 			}
 		}
 		if ($bodyStruct->ifdparameters){
 			foreach ($bodyStruct->dparameters as $p){
-				$params[ strtolower( $p->attribute ) ] = $p->value;
+				$params[ strtolower( $p->attribute) ] = mb_decode_mimeheader($p->value);
 			}
 		}
 
@@ -935,10 +963,7 @@ class DALReadPOP3 implements IDAL {
 		//do not deal with .ics files as attachments
 		$fileNameArray = split("\.", $fileName);
 		$ext = $fileNameArray[count($fileNameArray)-1];
-		if($ext == "ics"){
-			return;
-		}
-
+		
 		$fileFullPath =
 		$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
 		$file = @ fopen($fileFullPath, 'a');
@@ -955,9 +980,9 @@ class DALReadPOP3 implements IDAL {
 					$ns = $wgNamespaceByExtension[$ext];
 					$ns = $wgExtraNamespaces[$ns].":";
 				} 
-				if($ns == ":") {
+				if($ns == ":" || $ns == "") {
 					global $wgCanonicalNamespaceNames;
-					$ns = $wgCanonicalNamespaceNames[NS_IMAGE].":";;
+					$ns = $wgCanonicalNamespaceNames[NS_IMAGE].":";
 				}
 			} else {
 				global $wgCanonicalNamespaceNames;

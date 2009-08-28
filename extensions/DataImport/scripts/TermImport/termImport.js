@@ -1220,11 +1220,7 @@ TermImportPage.prototype = {
 	
 	fillTermImportPage : function(){
 		//select import set
-		//todo: error handling when there is no such import set
 		$('importset-input-field').value = this.importSet;
-		if($('importset-input-field').value != this.importSet){
-			alert(this.importSet);
-		}
 		
 		//add import policies
 		if (this.regex.length > 0) {

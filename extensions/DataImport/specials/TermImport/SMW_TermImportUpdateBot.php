@@ -94,7 +94,7 @@ public function getImageDirectory() {
 				
 			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
 			,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
-				"format=list", "mainlabel=-") 
+				"format=list", "mainlabel=-", "searchlabel=") 
 			,$querystring,$params,$printouts);
 			$queryResult =
 			SMWQueryProcessor::getResultFromQueryString($querystring,$params,

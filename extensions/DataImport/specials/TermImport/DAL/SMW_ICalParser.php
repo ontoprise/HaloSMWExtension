@@ -51,9 +51,11 @@ class ICalParser {
 							// Start VTODO Parsing
 							case 'DUE':
 								$iCal['due'] = $data;
+								$iCal['due'] = $this->convertDate($iCal['due']);
 								break;
 							case 'COMPLETED':
 								$iCal['completed'] = $datetime[1];
+								$iCal['completed'] = $this->convertDate($iCal['completed']);
 								break;
 							case 'PRIORITY':
 								$iCal['priority'] = "$data";
@@ -73,12 +75,15 @@ class ICalParser {
 								// End VTODO Parsing
 							case 'DTSTART':
 								$iCal['dtstart'] = $data;
+								$iCal['dtstart'] = $this->convertDate($iCal['dtstart']);
 								break;
 							case 'DTEND':
 								$iCal['dtend'] = $data;
+								$iCal['dtend'] = $this->convertDate($iCal['dtend']);
 								break;
 							case 'EXDATE':
 								$iCal['exdate'] = $data;
+								$iCal['exdate'] = $this->convertDate($iCal['exdate']);
 								break;
 							case 'SUMMARY':
 								if ($valarm_set == FALSE) {
@@ -110,20 +115,38 @@ class ICalParser {
 								if(strpos($field, "CN=") > 0){
 									$iCal['attendee'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
 								}
-								$iCal['attendee'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
-								$iCal['attendee'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
-								$iCal['attendee'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
-								$iCal['attendee'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field); 
+								if(strpos($data, "mailto:") > 0){
+									$iCal['attendee'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
+								}
+								if(strpos($field, "RSVP=") > 0){
+									$iCal['attendee'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
+								}
+								if(strpos($field, "PARTSTAT=") > 0){
+									$iCal['attendee'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
+								}
+								if(strpos($field, "ROLE=") > 0){
+									$iCal['attendee'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
+								} 
 								break;
 							case 'ORGANIZER':
 								if($iCal['organizer'] != ""){
 									$iCal['organizer'] .= "; ";
 								}
-								$iCal['organizer'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
-								$iCal['organizer'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
-								$iCal['organizer'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
-								$iCal['organizer'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
-								$iCal['organizer'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
+							if(strpos($field, "CN=") > 0){
+									$iCal['organizer'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
+								}
+								if(strpos($data, "mailto:") > 0){
+									$iCal['organizer'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
+								}
+								if(strpos($field, "RSVP=") > 0){
+									$iCal['organizer'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
+								}
+								if(strpos($field, "PARTSTAT=") > 0){
+									$iCal['organizer'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
+								}
+								if(strpos($field, "ROLE=") > 0){
+									$iCal['organizer'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
+								}
 								break;
 							case 'URL':
 								$iCal['url'] = $data;
@@ -135,6 +158,18 @@ class ICalParser {
 			}
 		}
 		return $iCal;
+	}
+	
+	function convertDate($date){
+		$year = $date[0].$date[1].$date[2].$date[3];
+		$mon = $date[4].$date[5];
+		$mday = $date[6].$date[7];
+		$hours = $date[9].$date[10];
+		$minutes = $date[11].$date[12];
+		$seconds = $date[13].$date[14];
+
+		return $year."/".$mon."/".$mday." "
+				.$hours.":".$minutes.":".$seconds;
 	}
 }
 ?>
