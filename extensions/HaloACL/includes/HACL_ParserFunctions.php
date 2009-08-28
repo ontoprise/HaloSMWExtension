@@ -38,7 +38,7 @@ $wgHooks['LanguageGetMagic'][] = 'haclfLanguageGetMagic';
 function haclfInitParserfunctions() {
 	global $wgParser;
  
-	new HACLParserFunctions();
+	HACLParserFunctions::getInstance();
 
 	$wgParser->setFunctionHook('haclaccess', 'HACLParserFunctions::access');
 	$wgParser->setFunctionHook('haclpropertyaccess', 'HACLParserFunctions::propertyAccess');
@@ -141,13 +141,17 @@ class HACLParserFunctions  {
 	 * Constructor for HACLParserFunctions. This object is a singleton.
 	 */		
 	public function __construct() {
-		self::$mInstance = $this;
 	}
 	
 	
 	//--- Public methods ---
 	
-	public static function getInstance() { return self::$mInstance; }
+	public static function getInstance() {
+		if (is_null(self::$mInstance)) {
+			self::$mInstance = new self; 
+		}
+		return self::$mInstance; 
+	}
 	
 	/**
 	 * Resets the singleton instance of this class. Normally this instance is
@@ -168,6 +172,7 @@ class HACLParserFunctions  {
 		$this->mGroupManagerGroups = array();
 		$this->mUserMembers = array();  
 		$this->mGroupMembers = array(); 
+		$this->mFingerprints = array();
 		$this->mDefinitionValid = true; 
 		$this->mType = 'invalid';
 	}
