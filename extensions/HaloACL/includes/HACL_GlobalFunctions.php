@@ -443,9 +443,17 @@ function haclfIsFileCacheable($article) {
  */
 function haclfPageRenderingHash($hash) {
 
-    global $wgUser;
+    global $wgUser, $wgTitle;
     if (is_object($wgUser)) {
         $hash .= '!'.$wgUser->getId();
+    }
+    if (is_object($wgTitle)) {
+    	if ($wgTitle->getNamespace() == HACL_NS_ACL) {
+    		// How often do we have to say that articles in the namespace ACL
+    		// can not be cached ?
+    		$hash .= '!'.wfTimestampNow();
+    	}
+    	
     }
     return true;
 }
