@@ -18,27 +18,27 @@
               xpath="//button[@onclick='qihelper.newCategoryDialogue(true)']"
             />
             <setInputField
-              description="set category Car"
+              description="City"
               htmlId="input0"
-              value="Car"
+              value="City"
             />
             <clickElement
               description="and click add"
               xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
-              description="Preview must contain 6 results + header row"
+              description="Preview must contain 10 results + header row"
               xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
-              text="7"
+              text="11"
             />  
             <clickButton 
               description="Click on Add Property"
               xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
             />
             <setInputField
-              description="set property Has engine"
+              description="set property Located In"
               htmlId="input0"
-              value="Has Engine"
+              value="Located In"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
@@ -46,18 +46,18 @@
             />
             <sleep description="4s pause" seconds="4" />
             <setInputField
-              description="set value 4 cylinder"
+              description="set value to USA"
               htmlId="input3"
-              value="4 cylinder"
+              value="USA"
             />
             <clickElement
               description="and click add"
               xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
-              description="Preview must contain 1 result + header row"
+              description="Preview must contain 2 result + header row"
               xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
-              text="2"
+              text="3"
             />  
             <clickLink
               description="Open Query Layout Manager"
@@ -69,40 +69,40 @@
               value="list"
             />
             <checkAjaxResponseXpathText
-              description="Preview must contain 1 link in a list"
-              xpath="count(//div[@id='previewcontent']/p/a)"
-              text="1"
+              description="Preview must contain 2 link in a list"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="2"
             />  
             <clickLink
               description="Click on property in Tree"
-              label="Has Engine"
+              label="Located In"
             />
             <setInputField
-              description="set value 3 cylinder"
+              description="set value Germany"
               htmlId="input3"
-              value="3 cylinder"
+              value="Austria"
             />
             <clickElement
               description="and click add"
               xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
-              description="Preview doesnt have any results"
-              xpath="count(//div[@id='previewcontent']/p/a)"
-              text="0"
+              description="Preview has 3 results"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="3"
             />
             <clickLink
-              description="Click on Category Car in Tree"
-              label="Car"
+              description="Click on Category City in Tree"
+              label="City"
             />
             <clickElement
               description="and click delete to remove the category"
               xpath="//span[@class='qibutton' and @id='qidelete']"
             />
             <checkAjaxResponseXpathText
-              description="Preview must have 1 result which is Kai"
-              xpath="//div[@id='previewcontent']/p/a"
-              text="Kai"
+              description="Preview still has 3 results"
+              xpath="count(//div[@id='previewcontent']//a)"
+              text="3"
             />
 
         </webtest>
