@@ -140,6 +140,15 @@ class HACLStorageSQL {
 		$db, $verbose, "id,name");
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "id,name");
 
+
+                // setup quickacl-table
+                $table = $db->tableName('halo_acl_quickacl');
+
+		HACLDBHelper::setupTable($table, array(
+            'sd_id' 	=> 'INT(8) NOT NULL',
+            'user_id' 	=> 'INT(10) NOT NULL'),
+		$db, $verbose, "sd_id,user_id");
+		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "sd_id,user_id");
 		return true;
 
 	}
@@ -1471,5 +1480,47 @@ class HACLStorageSQL {
 		return $articleArray;
 	}
 
+
+
+
+        /***************************************************************************
+	 *
+	 * Functions for quickacls
+	 *
+	 **************************************************************************/
+
+
+	public function saveQuickAcl($user_id, $sd_ids) {
+		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_quickacl');
+		// delete old quickacl entries
+		$db->delete($t, array('user_id' => $user_id));
+
+		$setValues = array();
+		foreach ($sd_ids as $sd_id) {
+			$setValues[] = array(
+                'sd_id'     => $sd_id,
+                'user_id'  => $user_id);
+		}
+                $db->insert($t, $setValues);
+
+	}
+
+
+	public function getQuickacl($user_id) {
+        	$db =& wfGetDB( DB_SLAVE );
+		$t = $db->tableName('halo_acl_quickacl');
+
+		$res = $db->select($t, 'sd_id', "user_id=".$user_id."");
+
+		$sd_ids = array();
+		while ($row = $db->fetchObject($res)) {
+                    $sd_ids[] = (int)$row->sd_id;
+		}
+		$db->freeResult($res);
+
+                $quickacl = new HACLQuickacl($user_id,$sd_ids);
+		return $quickacl;
+	}
 
 }

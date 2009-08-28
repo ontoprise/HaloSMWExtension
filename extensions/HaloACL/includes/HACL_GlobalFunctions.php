@@ -61,6 +61,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
     $wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
     $wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
+    $wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
 
     //--- Autoloading for exception classes ---
     $wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -241,6 +242,7 @@ function haclAddHTMLHeader(&$out) {
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
 
 
  
