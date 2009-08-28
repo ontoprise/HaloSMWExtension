@@ -300,7 +300,7 @@ button:hover{
 
 }
 .haloacl_generic_panel_content{
-    padding:0 0 0 20px;
+    padding:0 0 0px 20px;
 }
 
 .halocal_panel_content_row{
@@ -471,10 +471,10 @@ button:hover{
 }
 
 
-.ygtvcheck0 { background: url(yuipics/check0.gif) 0 0 no-repeat; width:16px; cursor:pointer }
-.ygtvcheck1 { background: url(yuipics/check1.gif) 0 0 no-repeat; width:16px; cursor:pointer }
+.ygtvcheck0,.ygtvcheck0-ro { background: url(yuipics/check0.gif) 0 0 no-repeat; width:16px; cursor:pointer }
+.ygtvcheck1,.ygtvcheck1-ro { background: url(yuipics/check1.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2 { background: url(yuipics/check2.gif) 0 0 no-repeat; width:16px; cursor:pointer }
-.ygtvcheck3 { background: url(images/remove.png) 0 0 no-repeat; width:16px; cursor:pointer;float:right; }
+.ygtvcheck2-ro { background: url(images/remove.png) 0 0 no-repeat; width:16px; cursor:pointer;float:right; }
 
 
 .haloacl_rightpanel_selecttab_leftpart_treeview{

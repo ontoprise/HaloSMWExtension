@@ -391,9 +391,17 @@ YAHOO.haloacl.togglePanel = function(panelid){
     }
 };
 
-YAHOO.haloacl.removePanel = function(panelid){
-    var element = $(panelid);
-    element.remove();
+YAHOO.haloacl.removePanel = function(panelid,callback){
+    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All data in this panel will get lost",{
+     yes:function(){    
+         var element = $(panelid);
+         element.remove();
+         if(callback != null){
+             callback();
+         }
+     },
+     no:function(){}
+ },"Ok","Cancel");
 };
 YAHOO.haloacl.closePanel = function(panelid){
     var element = $('content_'+panelid);

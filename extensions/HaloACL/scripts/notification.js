@@ -52,8 +52,10 @@ YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,c
 
 };
 
-YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback){
+YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.counter++;
+    if(yestext == null){yestext = "Ok"; };
+    if(notext == null){notext = "Cancel";};
 
     new Insertion.Bottom(renderedTo,"<div id='haloacl_notification"+YAHOO.haloacl.notification.counter+"' class='yui-skin-sam'>&nbsp;</div>");
 
@@ -75,16 +77,16 @@ YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,conten
         draggable: false,
         close: true,
         text: content,
-        icon: YAHOO.widget.SimpleDialog.ICON_HELP,
+        icon: YAHOO.widget.SimpleDialog.ICON_INFO,
         constraintoviewport: true,
         buttons: [ {
-            text:"Yes",
+            text:yestext,
             handler:handleYes,
             isDefault:true
         },
 
         {
-            text:"No",
+            text:notext,
             handler:handleNo
         } ]
     } );
