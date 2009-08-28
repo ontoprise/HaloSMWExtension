@@ -210,6 +210,7 @@ class Tools {
 		$mysql_binaries = ($ret == 0);
 		if (!$mysql_binaries) return("MySQL binaries are not on path. Please install.");
 		
+		if (Tools::isWindows()) unlink($nullDevice);
 		return true;
 	}
 

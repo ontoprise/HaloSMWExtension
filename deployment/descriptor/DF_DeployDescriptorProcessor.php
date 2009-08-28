@@ -180,6 +180,7 @@ class DeployDescriptionProcessor {
 			}
 			// do dry-run at first to check for rejected patches
 			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			$patchFailed = false;
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
 					$patchFailed = true;
@@ -230,6 +231,7 @@ class DeployDescriptionProcessor {
 			}
 		    // do dry-run at first to check for rejected patches
             exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+            $patchFailed = false;
             foreach($out as $line) {
                 if (strpos($line, "FAILED") !== false) {
                     $patchFailed = true;

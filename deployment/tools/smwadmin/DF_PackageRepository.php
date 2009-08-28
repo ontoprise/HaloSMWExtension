@@ -111,7 +111,7 @@ class PackageRepository {
 	 * @return string user:pass
 	 */
     public static function getCredentials($repo_url) {
-    	return self::$repo_credentials[$repo_url];
+    	return array_key_exists($repo_url, self::$repo_credentials) ? self::$repo_credentials[$repo_url] : "";
     }
 	/*
 	 * Loads package repository from string (for testing)
@@ -155,7 +155,7 @@ class PackageRepository {
 
 		// download descriptor
 		$d = new HttpDownload();
-		$credentials = self::$repo_credentials[$url];
+		$credentials = array_key_exists($url, self::$repo_credentials) ? self::$repo_credentials[$url] : "";
 		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy.xml");
 
 		$path = $partsOfURL['path'];
