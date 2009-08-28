@@ -351,17 +351,17 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
-            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' class="haloacl_grouptree_title ' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\",\""+this.labelElId+"\");'>"+this.label+"</a>";
+            sb[sb.length] = this.label;
 
             sb[sb.length] = '</span></td>';
             
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
-            sb[sb.length] = ' class="ygtvcheck3"';
+            sb[sb.length] = ' class="' + this.getCheckStyle() + '-ro"';
             sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+            sb[sb.length] = '<div class="ygtvspacer" onClick="'+this.tree.labelClickAction+'(\''+this.label+'\',this)"></div></td>';
 
 
         }
@@ -574,7 +574,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
                 if (YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.name)){
                     var tmpNode = new YAHOO.widget.CustomNode(n.name, tree.getRoot(),false);
                     tmpNode.setGroupId(n.name);
-                    //tmpNode.setCheckState(1);
+                    tmpNode.setCheckState(2);
                     tmpNode.setTreeType("r");
                 }
 
