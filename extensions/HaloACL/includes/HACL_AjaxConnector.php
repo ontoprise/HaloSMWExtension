@@ -1020,6 +1020,8 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     $hacl_rightsPanel_8 = wfMsg('hacl_rightsPanel_8');
     $hacl_rightsPanel_9 = wfMsg('hacl_rightsPanel_9');
     $hacl_rightsPanel_10 = wfMsg('hacl_rightsPanel_10');
+    $hacl_rightsPanel_11 = wfMsg('hacl_rightsPanel_11');
+    $hacl_rightsPanel_12 = wfMsg('hacl_rightsPanel_12');
 
     $hacl_rightsPanel_allUsersRegistered = wfMsg('hacl_rightsPanel_allUsersRegistered');
     $hacl_rightsPanel_allAnonymousUsers = wfMsg('hacl_rightsPanel_allAnonymousUsers');
