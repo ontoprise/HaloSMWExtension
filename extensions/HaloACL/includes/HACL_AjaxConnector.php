@@ -3226,6 +3226,7 @@ HTML;
                             yes:function(){
                             YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
                                 }
+                            });
 
 
                     }else{
