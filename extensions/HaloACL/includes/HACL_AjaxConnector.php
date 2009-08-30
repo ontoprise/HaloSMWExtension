@@ -1056,15 +1056,21 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
 
 		<div id="content_$panelid" class="panel haloacl_panel_content">
                     <div id="rightTypes_$panelid">
+HTML;
+    
+    if (!$readOnly) {
+        $content .= <<<HTML
                         <div class="halocal_panel_content_row">
                             <div class="haloacl_panel_content_row_descr">
                                 $hacl_rightsPanel_1
                             </div>
                             <div class="haloacl_panel_content_row_content">
-                                <input type="text" id="right_name_$panelid" $disabled />
+                                <input type="text" id="right_name_$panelid" value="$panelName" $disabled />
                             </div>
                         </div>
-
+HTML;
+    }
+    $content .= <<<HTML
                         <div class="halocal_panel_content_row">
                             <div class="haloacl_panel_content_row_descr">
                                 $hacl_rightsPanel_2
@@ -1130,11 +1136,14 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
                             }
                         </script>
 
-                        <div class="haloacl_greyline">&nbsp;</div>
+                        
 
                     </div>
-
-
+HTML;
+    
+    if (!$readOnly) {
+        $content .= <<<HTML
+                    <div class="haloacl_greyline">&nbsp;</div>
                     <div class="halocal_panel_content_row">
                         <div class="haloacl_panel_content_row_descr" style="width:145px">
                             $hacl_rightsPanel_3
@@ -1164,8 +1173,10 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
                             }
                         }
                     </script>
-
 HTML;
+    }
+
+
     if ($predefine == "individual" || $predefine == "private" || $predefine == "modification") {
         $content .= <<<HTML
                     <div class="haloacl_greyline">&nbsp;</div>
