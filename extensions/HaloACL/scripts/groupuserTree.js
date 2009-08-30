@@ -319,6 +319,11 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     },
 
 
+
+/*    getHtml : function(){
+      return "megatest";
+    },
+*/
     // Overrides YAHOO.widget.TextNode
     getContentHtml: function() {                                                                                                                                           
         var sb = [];

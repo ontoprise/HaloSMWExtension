@@ -1279,8 +1279,8 @@ HTML;
                 xml+="<inlineright>";
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<type>$predefine</type>";
-                xml+="<name>"+$('right_name_$panelid').value+"</name>";
-                xml+="<description>"+$('right_description_$panelid').value+"</description>";
+                xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
+                xml+="<description>"+escape($('right_description_$panelid').value)+"</description>";
     
 
                 xml+="<rights>";
@@ -1914,7 +1914,7 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<secdesc>";
                 xml+="<panelid>create_acl</panelid>";
-                xml+="<name>$sdName</name>";
+                xml+="<name>escape($sdName)</name>";
                 xml+="<ACLType>all_edited</ACLType>";
                 xml+="<definefor>"+""+"</definefor>";
 
@@ -3519,7 +3519,7 @@ HTML;
 
         YAHOO.haloacl.saveQuickacl = function(){
 
-            if(YAHOO.haloacl.debug) console.log("saveWhitelist called");
+            if(YAHOO.haloacl.debug) console.log("saveQuickacl called");
             var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
             xml += "<quickaclContent>";
             $$('.haloacl_quickacl_datatable_template').each(function(item){

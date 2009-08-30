@@ -49,31 +49,34 @@ HTML;
 function getHACLToolbar($articleTitle) {
     global $wgUser;
     $isPageProtected = false;
+    $newArticle = true;
 
 
     // does that aritcle exist or is it a new article
     try {
-        echo "title: $articleTitle";
-        $article = new Article(Title::newFromText("Page:"+$articleTitle));
-        print_r($article);
+        $article = new Article(Title::newFromText($articleTitle));
+        if($article->exists()) {
+            $newArticle = false;
+        }
     }
-    catch(Exception $e ) {
-        echo "no ";
-    }
-
-    // trying to get assigned right
+    catch(Exception $e) {    }
+    
     $array = array();
-
     $quickacls = HACLQuickacl::newForUserId($wgUser->getId());
-    print_r($quickacls);
     $tpllist = array();
     $protectedWith = "";
-    try {
-        $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
-        $protectedWith = $SD->getSDName();
-        $isPageProtected = true;
-    }
-    catch(Exception $e) {
+
+    if(!$newArticle) {
+    // trying to get assigned right
+        try {
+            $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
+            $protectedWith = $SD->getSDName();
+            $isPageProtected = true;
+        }
+        catch(Exception $e) {
+
+        }
+    }else{
 
     }
 
@@ -123,7 +126,8 @@ HTML;
 
 
 
-    $html .= <<<HTML
+    if(!$newArticle) {
+        $html .= <<<HTML
              
         </div>
 
@@ -134,6 +138,7 @@ HTML;
     <div style="clear:both;height:1px;font-size:1px">&nbsp;</div>
 
 HTML;
+    }
     return $html;
 
 }
