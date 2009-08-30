@@ -1291,7 +1291,7 @@ HTML;
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<type>$predefine</type>";
                 xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
-                xml+="<description>"+escape($('right_description_$panelid').value)+"</description>";
+                xml+="<description>"+$('right_description_$panelid').value+"</description>";
     
 
                 xml+="<rights>";
