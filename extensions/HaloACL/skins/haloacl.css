@@ -118,8 +118,11 @@ abbr,acronym { border:0;
 
 /* yui style-customization */
 .yui-skin-sam .yui-navset .yui-nav .selected, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected {
+    margin-top:-2px!important;
 }
-
+.yui-skin-sam .yui-navset .yui-nav ul, .yui-skin-sam .yui-navset .yui-navset-top ul {
+    margin-top:2px!important;
+}
 
 .yui-content{
     background:#FFF!important;

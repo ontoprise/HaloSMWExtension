@@ -60,12 +60,12 @@ YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,conten
     new Insertion.Bottom(renderedTo,"<div id='haloacl_notification"+YAHOO.haloacl.notification.counter+"' class='yui-skin-sam'>&nbsp;</div>");
 
     if(YAHOO.haloacl.debug)console.log("create dialog called");
-    var handleYes = function() {
-        callback.yes();
+    var handleYes = function(content) {
+        callback.yes(content);
         this.hide();
     };
-    var handleNo = function() {
-        callback.no();
+    var handleNo = function(content) {
+        callback.no(content);
         this.hide();
     };
 

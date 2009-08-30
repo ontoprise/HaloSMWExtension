@@ -18,7 +18,7 @@ $wgAjaxExportList[] = "getHACLToolbar";
 
 
 global $wgHooks;
-//$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
+$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
 
 /**
  Adds
@@ -47,32 +47,40 @@ HTML;
 
 
 function getHACLToolbar($articleTitle) {
+    global $wgUser;
     $isPageProtected = false;
 
 
     // does that aritcle exist or is it a new article
-    try{
-      //  $article = new Article(Title::newFromText($articleTitle));
+    try {
+        echo "title: $articleTitle";
+        $article = new Article(Title::newFromText("Page:"+$articleTitle));
         print_r($article);
     }
-    catch(Exception $e){
+    catch(Exception $e ) {
         echo "no ";
     }
 
     // trying to get assigned right
     $array = array();
+
+    $quickacls = HACLQuickacl::newForUserId($wgUser->getId());
+    print_r($quickacls);
+    $tpllist = array();
+    $protectedWith = "";
     try {
         $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
-        $assignedRights = array();
-        //attach inline right texts
-        foreach($SD->getInlineRights() as $rightId) {
-        //    foreach ($SD->getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
-            $assignedRights[] = HACLRight::newFromID($rightId)->getName();
-        }
+        $protectedWith = $SD->getSDName();
         $isPageProtected = true;
     }
     catch(Exception $e) {
 
+    }
+
+
+    foreach($quickacls->getSD_IDs() as $sdid) {
+        $sd = HACLSecurityDescriptor::nameForID($sdid);
+        $tpllist[] = $sd;
     }
 
     $html = <<<HTML
@@ -82,25 +90,39 @@ function getHACLToolbar($articleTitle) {
             Page state:&nbsp;
             <select id="haloacl_toolbar_pagestate">
 HTML;
+    // bulding protected state indicator
     if($isPageProtected) {
         $html .= "   <option>unprotected</option>
                      <option selected='true'>protected</option>
                      </select>
-                     &nbsp;with:&nbsp;
-                    <select>
 ";
-        foreach($assignedRights as $assignedRight) {
-            $html .= "<option>".$assignedRight."</option>";
+        foreach($tpllist as $tpl) {
+            $html .= "<option>".$tpl."</option>";
         }
         $html .="</select>";
-
-
     }else {
         $html .= "   <option selected='true'>unprotected</option>
                      <option>protected</option>
                      </select>";
-
     }
+
+    // building quickacl / protected with-indicator
+    if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
+        $tpllist[] = $protectedWith;
+    }
+
+    $html .= "&nbsp;with:&nbsp;<select>";
+    foreach($tpllist as $tpl) {
+        if($tpl == $protectedWith) {
+            $html .= "<option selected='true'>$tpl</option>";
+        }else {
+            $html .= "<option>$tpl</option>";
+        }
+    }
+    $html .= "</select>";
+
+
+
     $html .= <<<HTML
              
         </div>
