@@ -718,7 +718,7 @@ HTML;
                         }
                     });
                 }else{
-                    YAHOO.haloacl.notification.createDialogOk("content","$hacl_createGeneralContent_message4",message,{
+                    YAHOO.haloacl.notification.createDialogOk("content","",message,{
                         yes:function(){}
                     });
                 }
