@@ -531,13 +531,13 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
  * Add appropriate JS language script
  */
 function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-    global $smwgHaloIP, $wgLanguageCode, $haclgHaloScriptPath, $wgUser;
+    global $haclgIP, $haclgHaloScriptPath, $wgUser;
 
     // content language file
     $lng = '/scripts/Language/HaloACL_Language';
-    if (!empty($wgLanguageCode)) {
-            $lng .= ucfirst($wgLanguageCode).'.js';
-            if (file_exists($smwgHaloIP . $lng)) {
+    if (isset($wgUser)) {
+            $lng .= ucfirst($wgUser->getOption('language')).'.js';
+            if (file_exists($haclgIP . $lng)) {
                     $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
             } else {
                     $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
