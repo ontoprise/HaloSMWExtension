@@ -54,8 +54,8 @@ YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,c
 
 YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.counter++;
-    if(yestext == null){yestext = "Ok"; };
-    if(notext == null){notext = "Cancel";};
+    if(yestext == null){yestext = gLanguage.getMessage('ok'); };
+    if(notext == null){notext = gLanguage.getMessage('cancel');};
 
     new Insertion.Bottom(renderedTo,"<div id='haloacl_notification"+YAHOO.haloacl.notification.counter+"' class='yui-skin-sam'>&nbsp;</div>");
 

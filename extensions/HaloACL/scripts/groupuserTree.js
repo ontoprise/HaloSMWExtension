@@ -519,7 +519,7 @@ YAHOO.haloacl.filterNodes = function(parentNode,filter){
  * @param labelClickAction (name)
  */
 YAHOO.haloacl.buildUserTree = function(tree,data) {
-    var tmpNode = new YAHOO.widget.TextNode("Groups", tree.getRoot(),false);
+    var tmpNode = new YAHOO.widget.TextNode(gLanguage.getMessage('groups'), tree.getRoot(),false);
     tmpNode.expand();
 
 
@@ -549,8 +549,6 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
         },callback);
 
     };
-
-
 
     tree.setDynamicLoad(loadNodeData);
     tree.draw();

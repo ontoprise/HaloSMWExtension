@@ -441,7 +441,7 @@ YAHOO.haloacl.manageUser.filterNodes = function(parentNode,filter){
  */
 YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
 
-    var tmpNode = new YAHOO.widget.TextNode("Groups", tree.getRoot(),false);
+    var tmpNode = new YAHOO.widget.TextNode(gLanguage.getMessage('groups'), tree.getRoot(),false);
     tmpNode.expand();
 
     YAHOO.haloacl.manageUser.buildNodesFromData(tmpNode,data,tree.panelid);
@@ -536,8 +536,8 @@ YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
     if(nodeToAttachTo._type != "RootNode"){
         if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-        var tmpNode = new YAHOO.widget.ManageUserNode("new subgroup", nodeToAttachTo,false);
-        tmpNode.information ="click edit to create";
+        var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup'), nodeToAttachTo,false);
+        tmpNode.information = gLanguage.getMessage('clickEditToCreate');
         nodeToAttachTo.refresh();
     }
 
@@ -569,9 +569,9 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode("new subgroup", nodeToAttachTo,false);
+    var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup'), nodeToAttachTo,false);
     // turn of dynamic load on that node
-    tmpNode.information ="click edit to create";
+    tmpNode.information = gLanguage.getMessage('clickEditToCreate');
 
     tmpNode.setDynamicLoad();
     nodeToAttachTo.expand();

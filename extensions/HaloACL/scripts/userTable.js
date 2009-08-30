@@ -72,20 +72,20 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
  
     {
         key:"name",
-        label:"Name",
+        label:gLanguage.getMessage('name'),
         sortable:false,
         formatter:"myName"
     },
     {
         key:"groups",
-        label:"Groups",
+        label:gLanguage.getMessage('groups'),
         sortable:false
         ,
         formatter:"myGroup"
     },
     {
         key:"checked",
-        label:"Selected",
+        label:gLanguage.getMessage('selected'),
         formatter:"mySelect"
     },
 
@@ -180,7 +180,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var to = displaying*1 + state.recordOffset*1;
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
         
-        var html = from + " to " + to   + " from " +state.totalRecords;
+        var html = from + " " +gLanguage.getMessage('to')+ " " + to   + " " +gLanguage.getMessage('from')+ " " +state.totalRecords;
         $(divid).innerHTML = html;
         if(YAHOO.haloacl.debug) console.log($('datatablepaging_count_'+divid));
     };
@@ -389,20 +389,20 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
    
     {
         key:"name",
-        label:"Name",
+        label:gLanguage.getMessage('name'),
         sortable:false,
         formatter:"myName"
     },
     {
         key:"groups",
-        label:"Groups",
+        label:gLanguage.getMessage('groups'),
         sortable:false,
         formatter:"myGroup"
     },
     
     {
         key:"deletable",
-        label:"Remove",
+        label:gLanguage.getMessage('remove'),
         formatter:"mySelect"
     },
 

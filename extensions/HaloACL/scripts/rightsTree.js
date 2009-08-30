@@ -172,8 +172,6 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     },
 
 
-
-
     /**
      * Override to get the check click event
      */
@@ -422,14 +420,6 @@ YAHOO.haloaclrights.popup = function(id, label){
     });
 
 };
-
-
-
-
-
-
-
-
 
 
 
@@ -767,31 +757,6 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
  * treeview-dataconnect
  * @param mediawiki / rs-action
@@ -878,7 +843,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         
         var element = data[i];
 
-        if (!element.name) element.name = "(no name)";
+        if (!element.name) element.name = gLanguage.getMessage('NoName');
         var tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
 
         tmpNode.setGroupId(element.id);
@@ -891,13 +856,10 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
                 var element2 = element.rights[i2];
 
-                if (!element2.description) element2.description = "(no name)";
+                if (!element2.description) element2.description = gLanguage.getMessage('NoName');
                 var tmpNode2 = new YAHOO.widget.RightNode(element2.description, tmpNode, false);
                 tmpNode2.title = element2.name;
-
-
                 tmpNode2.setGroupId(element2.id);
-
             };
         }
 

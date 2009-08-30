@@ -64,14 +64,14 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
     {
         key:"name",
-        label:"Name",
+        label:gLanguage.getMessage('name'),
         sortable:false,
         formatter:"myName"
     },
    
     {
         key:"checked",
-        label:"delete",
+        label:gLanguage.getMessage('delete'),
         formatter:"mySelect"
     },
 

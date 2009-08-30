@@ -62,9 +62,6 @@ YAHOO.haloaclrights.clickedArrayGroups = new Array();
 
 
 
-
-
-
 // Tabview related stuff
 
 // building the main tabview
@@ -79,7 +76,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
 
     var tab1 = new YAHOO.widget.Tab({
-        label: 'Create ACL',
+        label: gLanguage.getMessage('createACL'),
         dataSrc:'createACLPanels',
         cacheData:false,
         active:true,
@@ -100,7 +97,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
     // ------
 
     var tab2 = new YAHOO.widget.Tab({
-        label: 'Manage ACLs',
+        label: gLanguage.getMessage('manageACLs'),
         dataSrc:'createManageACLPanels',
         cacheData:false,
         active:false,
@@ -113,13 +110,13 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
 
     new YAHOO.widget.Tooltip("manageACLPanel_tooltip", {
         context:"manageACLPanel_button",
-        text:"Manage existing ACLs, Manage own default user template and Manage quick access ACLs",
+        text:gLanguage.getMessage('manageACLTooltip'),
         zIndex :10
     });
     // ------
 
     var tab3 = new YAHOO.widget.Tab({
-        label: 'Manage User',
+        label: gLanguage.getMessage('manageUser'),
         dataSrc:'manageUserContent',
         cacheData:false,
         active:false,
@@ -132,13 +129,13 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
 
     new YAHOO.widget.Tooltip("manageUserContent_tooltip", {
         context:"manageUserContent_button",
-        text:"In this tab you can create, edit and delete ACL groups",
+        text:gLanguage.getMessage('manageUserTooltip'),
         zIndex :10
     });
     // ------
 
     var tab4 = new YAHOO.widget.Tab({
-        label: 'Whitelists',
+        label: gLanguage.getMessage('whitelists'),
         dataSrc:'whitelistsContent',
         cacheData:false,
         active:false,
@@ -151,7 +148,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
 
     new YAHOO.widget.Tooltip("whitelist_tooltip", {
         context:"whitelist_button",
-        text:"In this tab you can create and delete whitelist entries ",
+        text:gLanguage.getMessage('manageWhitelistTooltip'),
         zIndex :10
     });
 // ------
@@ -165,7 +162,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
     if (containerName == "haloaclsubViewManageACL") {
         var tab1 = new YAHOO.widget.Tab({
-            label: 'Manage existing ACLs',
+            label: gLanguage.getMessage('manageExistingACLs'),
             dataSrc:'createManageExistingACLContent',
             cacheData:false,
             active:true,
@@ -179,7 +176,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         // ------
 
         var tab2 = new YAHOO.widget.Tab({
-            label: 'Manage own default user template',
+            label: gLanguage.getMessage('manageDefaultUserTemplate'),
             dataSrc:'createManageUserTemplateContent',
             cacheData:false,
             active:false,
@@ -192,7 +189,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         // ------
 
         var tab3 = new YAHOO.widget.Tab({
-            label: 'Manage quick access ACLs',
+            label: gLanguage.getMessage('manageQuickAccess'),
             dataSrc:'createQuickAclTab',
             cacheData:false,
             active:false,
@@ -206,7 +203,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
     } else if (containerName == "haloaclsubView") {
 
         var tab1 = new YAHOO.widget.Tab({
-            label: 'Create standard ACL',
+            label: gLanguage.getMessage('createStandardACL'),
             dataSrc:'createAclContent',
             cacheData:false,
             active:true,
@@ -225,7 +222,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         // ------
 
         var tab2 = new YAHOO.widget.Tab({
-            label: 'Create ACL template',
+            label: gLanguage.getMessage('createACLTemplate'),
             dataSrc:'createAclTemplateContent',
             cacheData:false,
             active:false,
@@ -244,7 +241,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         // ------
 
         var tab3 = new YAHOO.widget.Tab({
-            label: 'Create ACL default user template',
+            label: gLanguage.getMessage('createDefaultUserTemplate'),
             dataSrc:'createAclUserTemplateContent',
             cacheData:false,
             active:false,
@@ -257,8 +254,6 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             $('createTmpAclTab_content').innerHTML = "";
         });
         $(tab3.get('contentEl')).setAttribute('id','createUserAclTab_content');
-
-
 
     }
 
@@ -423,13 +418,24 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         preloadRightId:preloadRightId
     };
 
-    //if (!readOnly) {
+
+
+    if (!readOnly) {
+        myLabel = gLanguage.getMessage('selectDeselect');
+        myActive = true;
+        myDisabled = false;
+    } else {
+        myLabel = gLanguage.getMessage('selectDeselect');
+        myActive = true;
+        myDisabled = false;
+    }
     
     var tab1 = new YAHOO.widget.Tab({
-        label: 'Select / Deselect',
+        label: myLabel,
         dataSrc:'rightPanelSelectDeselectTab',
         cacheData:false,
-        active:true,
+        active:myActive,
+        disabled:myDisabled,
         postData:parameterlist
     });
     tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -442,11 +448,17 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
     // ------
 
+    if (!readOnly) {
+        myActive = false;
+    } else {
+        myActive = false;
+    }
+
     var tab2 = new YAHOO.widget.Tab({
-        label: 'Assigned',
+        label: gLanguage.getMessage('assigned'),
         dataSrc:'rightPanelAssignedTab',
         cacheData:false,
-        active:false,
+        active:myActive,
         postData:parameterlist
     });
 
@@ -622,7 +634,7 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
     //if (!readOnly) {
 
     var tab1 = new YAHOO.widget.Tab({
-        label: 'Select / Deselect',
+        label: gLanguage.getMessage('selectDeselect'),
         dataSrc:'rightPanelSelectDeselectTab',
         cacheData:false,
         active:true,
@@ -638,7 +650,7 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
     // ------
 
     var tab2 = new YAHOO.widget.Tab({
-        label: 'Assigned',
+        label: gLanguage.getMessage('assigned'),
         dataSrc:'rightPanelAssignedTab',
         cacheData:false,
         active:false,
