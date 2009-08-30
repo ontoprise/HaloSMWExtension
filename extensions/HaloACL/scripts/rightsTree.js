@@ -396,8 +396,8 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
 YAHOO.haloaclrights.popup = function(id, label){
 
-
     if(YAHOO.haloaclrights.popupPanel == null){
+        
         YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
             close:true,
             visible:true,
@@ -405,33 +405,21 @@ YAHOO.haloaclrights.popup = function(id, label){
             resizable:true,
             context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
         });
-        YAHOO.haloaclrights.popupPanel.setHeader(label);
-        YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
-        YAHOO.haloaclrights.popupPanel.render();
-        YAHOO.haloaclrights.popupPanel.show();
         popupClose = function(type, args) {
-            YAHOO.haloaclrights.popupPanel = null;
+            //YAHOO.haloaclrights.popupPanel.destroy();
         }
         YAHOO.haloaclrights.popupPanel.subscribe("hide", popupClose);
-    }else{
-        YAHOO.haloaclrights.popupPanel.render();
-        YAHOO.haloaclrights.popupPanel.show();
-
     }
 
+    YAHOO.haloaclrights.popupPanel.setHeader(label);
+    YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
+    YAHOO.haloaclrights.popupPanel.render();
+    YAHOO.haloaclrights.popupPanel.show();
 
     YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
         sdId:id,
         readOnly:'true'
     });
-
-
-
-
-
-
-
-
 
 };
 
