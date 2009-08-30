@@ -60,12 +60,15 @@ function getHACLToolbar($articleTitle) {
         }
     }
     catch(Exception $e) {    }
-    
-    $array = array();
+
+
+    // retrieving quickacl
+    #$array = array();
     $quickacls = HACLQuickacl::newForUserId($wgUser->getId());
     $tpllist = array();
     $protectedWith = "";
 
+    // is it a new article?
     if(!$newArticle) {
     // trying to get assigned right
         try {
@@ -74,16 +77,28 @@ function getHACLToolbar($articleTitle) {
             $isPageProtected = true;
         }
         catch(Exception $e) {
-
         }
-    }else{
-
     }
 
-
+    // adding quickaclpages to selectbox
     foreach($quickacls->getSD_IDs() as $sdid) {
         $sd = HACLSecurityDescriptor::nameForID($sdid);
         $tpllist[] = $sd;
+    }
+
+
+    // does a default template exist?
+    try{
+    $defaultSD = HACLSecurityDescriptor::newFromName("ACL:Template/".$wgUser->getName());
+        $defaultSDExists = true;
+        // if no other right is assigned to that article the default will be used
+        if(!$isPageProtected){
+            $protectedWith = "Template/".$wgUser->getName();
+            $isPageProtected = true;
+        }
+    }
+    catch(Exception $e){
+        $defaultSDExists = false;
     }
 
     $html = <<<HTML
@@ -99,9 +114,6 @@ HTML;
                      <option selected='true'>protected</option>
                      </select>
 ";
-        foreach($tpllist as $tpl) {
-            $html .= "<option>".$tpl."</option>";
-        }
         $html .="</select>";
     }else {
         $html .= "   <option selected='true'>unprotected</option>
@@ -110,6 +122,7 @@ HTML;
     }
 
     // building quickacl / protected with-indicator
+
     if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
         $tpllist[] = $protectedWith;
     }
@@ -135,7 +148,9 @@ HTML;
             <a target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
         </div>
     </div>
-    <div style="clear:both;height:1px;font-size:1px">&nbsp;</div>
+    <script>
+        console.log($('haloacl_toolbar_pagestate'));
+    </script>
 
 HTML;
     }
