@@ -72,7 +72,7 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
     }
 
 }
-$sourcePath = $tempdir != '' ? $tempdir : (isWindows ? 'c:/temp/halo_js_scripts' : '/tmp/halo_js_scripts');
+$sourcePath = $tempdir != '' ? $tempdir : (isWindows() ? 'c:/temp/halo_js_scripts' : '/tmp/halo_js_scripts');
 
 $buildAll = $build == ''; // build all if no parameter is set
 
