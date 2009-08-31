@@ -369,13 +369,18 @@ Section "Lucene search" lucene
         SetOutPath "$INSTDIR\lucene\service"
         File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\service\*"
         
+        SetOutPath "$INSTDIR\lucene\scripts"
+        File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\scripts\*"
+        
+        SetOutPath "$INSTDIR\lucene\template"
+        File /r /x CVS /x .svn "..\..\..\Build Lucene server\workspace\template\*"
+        
         SetOutPath "$INSTDIR\lucene"
         File "..\..\..\Build Lucene server\workspace\LuceneSearch.jar"
         File "..\..\..\Build Lucene server\workspace\*.bat"
         File "..\..\..\Build Lucene server\workspace\linkd.exe"
         File "..\..\..\Build Lucene server\workspace\*.txt"
         File "..\..\..\Build Lucene server\workspace\*.properties"
-        File "..\..\..\Build Lucene server\workspace\*.template"
         File "..\..\..\Build Lucene server\workspace\smwplus_db.xml"
     #!endif
         
@@ -384,15 +389,21 @@ Section "Lucene search" lucene
         StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
         
         ; dump db 
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=dump.bat.template out=dump.bat noslash=true php-path="$PHP" wiki-path="$MEDIAWIKIDIR" lucene-path="$INSTDIR\lucene"'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template\dump.bat.template" out=dump.bat noslash=true php-path="$PHP" wiki-path="$MEDIAWIKIDIR" lucene-path="$INSTDIR\lucene"'
         nsExec::ExecToLog 'dump.bat'
                
         ; adapt global.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=global.conf.template out=global.conf wiki-db=semwiki_en ip=$IP'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/global.conf.template" out=global.conf wiki-db=semwiki_en ip=$IP'
         ; adapt lsearch.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=lsearch.conf.template out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lsearch.conf.template" out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
          ; adapt start.bat.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=start.bat.template out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/start.bat.template" out=start.bat lucene-path-url="$INSTDIR\lucene" lucene-path="$INSTDIR\lucene" ip=$IP'
+        ;adapt startUpdater template file
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
+        
+        ; Build OAI repository
+        nsExec::ExecToLog 'scripts\incremental_update\initUpdates.bat "$INSTDIR\mysql" semwiki_en root m8nix'
+        
         ; Build Lucene index
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
         
@@ -824,7 +835,7 @@ Function installLuceneAsService
         StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
         
         ; create install script for windows service registration
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in=installAsService.bat.template out=installAsService.bat noslash=true ip=$IP java_home="$JAVA_HOME"'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template\installAsService.bat.template" out=installAsService.bat noslash=true ip=$IP java_home="$JAVA_HOME"'
         
         ; stop lucene
         DetailPrint "Stopping lucene (if necessary)"
