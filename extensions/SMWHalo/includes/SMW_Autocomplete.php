@@ -549,7 +549,7 @@ class AutoCompletionHandler {
 				}
 			} else if ($commandText == 'ask') {
 				$query = $params[0];
-
+    
 				if (!isset($params[1]) || $params[1] == 'main') {
 					$column = "_var0";
 				} else {
@@ -565,7 +565,7 @@ class AutoCompletionHandler {
 				// make titles but eliminate duplicates before
 				$textTitles = array();
 				foreach($queryResults as $r) {
-					if (stripos((string) $r[0], $userInput) !== false) {
+					if (empty($userInput) || stripos((string) $r[0], $userInput) !== false) {
 						$textTitles[] = (string) $r[0];
 					}
 				}
