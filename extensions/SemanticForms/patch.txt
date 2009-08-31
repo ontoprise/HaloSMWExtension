@@ -57,6 +57,86 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      
      // if we have existing content and we're not in an active replacement
      // situation, preserve the original content. We do this because we want
+@@ -287,11 +287,16 @@
+           $query_template_name = str_replace('.', '_', $query_template_name);
+           $chooser_name = false;
+           $chooser_caption = false;
++          $collapsable = false;
++          $force_open = false;
+           // cycle through the other components
+           for ($i = 2; $i < count($tag_components); $i++) {
+             $component = $tag_components[$i];
+             if ($component == 'multiple') $allow_multiple = true;
+             if ($component == 'strict') $strict_parsing = true;
++            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsableTag|start*/
++            if ($component == 'collapsable') $collapsable = true;
++            /*op-patch|BL|2009-08-28|end*/
+             $sub_components = explode('=', $component);
+             if (count($sub_components) == 2) {
+               if ($sub_components[0] == 'label') {
+@@ -302,6 +307,10 @@
+               } elseif ($sub_components[0] == 'chooser caption') {
+                 $chooser_caption = $sub_components[1];
+               }
++              /*op-patch|BL|2009-08-28|CollapsableForms|AddForceopenTag|start*/
++              elseif ($sub_components[0] == 'forceopen')
++                $force_open = $sub_components[1];
++              /*op-patch|BL|2009-08-28|end*/
+             }
+           }
+           // if this is the first instance, add the label in the form
+@@ -312,8 +321,50 @@
+               $form_text .= "<fieldset [[placeholder]] haschooser=true>\n";
+             else
+                $form_text .= "<fieldset>\n";
+-            $form_text .= "<legend>$template_label</legend>\n";
++            /*op-patch|BL|2009-08-28|RichMedia|CollapsingForms|start*/
++            // Add Javascript, curser style and sfgTabIndex for each legend
++            // content was:
++            // $form_text .= "<legend>$template_label</legend>\n";
++            // }
++            #need form name, but it's saved nowhere 
++            global $sfgScriptPath;
++            $form_name = $wgRequest->getVal('form');
++            // if query string did not contain these variables, try the URL
++            if (! $form_name && ! $target_name) {
++              $queryparts = explode('/', $wgRequest->getRequestURL());
++              $form_name = isset($queryparts[count($queryparts)-2]) ? $queryparts[count($queryparts)-2] : '';
++            }
++            //TODO: collapsable or not?!?
++            if ($collapsable) {
++              #cookie processing
++              $cookie_json = $_COOKIE['CollapsingForm'];
++              if ($cookie_json)
++                $cookie_obj = json_decode($cookie_json,true);
++              if (isset($cookie_obj) && array_key_exists($form_name.'_sec_'.$section_num, $cookie_obj))
++                $cookie_open = $cookie_obj[$form_name.'_sec_'.$section_num];
++              if ($force_open || $cookie_open) {
++                $section_visibility ='';
++                $img = 'minus';
++              }
++              else {
++                $section_visibility = 'none';
++                $img = 'plus';
++              }
++              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;\" 
++                onKeyDown=\"javascript:if (event.keyCode == 13){ smwCollapsingForm.switchVisibilityWithImg('{$form_name}_sec_{$section_num}');}\" 
++                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$form_name}_sec_{$section_num}');\">
++                <img id=\"{$form_name}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
++                onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
++              $javascript_text .= "";
++              $sfgTabIndex++;
++              #This DIV provides the functionality for collapsing forms
++              $form_text .= "<div id=\"{$form_name}_sec_".$section_num."\" style=\"display:".$section_visibility."\">";
++            }
++            else {
++              $form_text .= "<legend>$template_label</legend>\n";
++            }
+           }
++          /*op-patch|BL|2009-08-28|end*/
+           $template_text .= "{{" . $tif->template_name;
+           $all_fields = $tif->getAllFields();
+           // remove template tag
 @@ -615,10 +634,18 @@
              if ($is_hidden) {
                $new_text = SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
@@ -121,6 +201,19 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                  "\n{{{insertionpoint}}}\n" . $existing_page_content;
            }
          }
+@@ -1078,7 +1129,11 @@
+       } else {
+         $form_text .= $section;
+       }
+-
++	
++      /*op-patch|BL|2009-08-14|RichMedia|AddDivForCollapsingForms|start*/
++      if($collapsable)
++        $form_text .= "</div>"; //closing div for collapsing
++      /*op-patch|BL|2009-08-14|end*/
+     } // end for
+ 
+     // if it wasn't included in the form definition, add the
 @@ -1098,7 +1135,7 @@
           $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
         } else {
@@ -309,7 +402,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4617)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4670)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -323,3 +416,16 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  if ( !defined( 'MEDIAWIKI' ) ) die();
  
  class SFUtils {
+@@ -140,6 +145,12 @@
+ 		$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
++		/*op-patch|BL|2009-06-28|CollapsingForms|AddNecessaryScripts|start*/
++		global $smwgHaloScriptPath;
++		$wgOut->addScript('<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/prototype.js"></script>' . "\n");
++		$wgOut->addScript('<script type="text/javascript" src="'.$smwgHaloScriptPath . '/scripts/OntologyBrowser/generalTools.js"></script>' . "\n");
++		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/collapse.js"></script>' . "\n");
++		/*op-patch|BL|2009-06-28|end*/
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
+ 		if ($wgFCKEditorDir)
