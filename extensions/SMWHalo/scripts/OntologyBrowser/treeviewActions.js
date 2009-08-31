@@ -704,7 +704,7 @@ OBInstanceActionListener.prototype = {
   		dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
 	 }
      globalActionListener.switchTreeComponent(null, 'categoryTree', true);
-	 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category,"+categoryName], filterBrowsingCategoryCallback);
+	 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+categoryName], filterBrowsingCategoryCallback);
    	
 	},
 	
@@ -1421,15 +1421,15 @@ OBGlobalActionListener.prototype = {
 	 }
 	 if (this.activeTreeName == 'categoryTree') {
 	 	 OB_tree_pendingIndicator.show(this.activeTreeName);
-		 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category,"+hint], filterBrowsingCategoryCallback);
+		 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+hint], filterBrowsingCategoryCallback);
 	 }  else if (this.activeTreeName == 'propertyTree') {
 	 	 OB_tree_pendingIndicator.show(this.activeTreeName);
-         sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree,"+hint], filterBrowsingAttributeCallback);
+         sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree##"+hint], filterBrowsingAttributeCallback);
 	 } 
 	  OB_instance_pendingIndicator.show();
 	  OB_relatt_pendingIndicator.show();
-	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance,"+hint], filterBrowsingInstanceCallback);	
-	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"property,"+hint], filterBrowsingPropertyCallback);
+	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance##"+hint], filterBrowsingInstanceCallback);	
+	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"property##"+hint], filterBrowsingPropertyCallback);
 	 
 	},
 	

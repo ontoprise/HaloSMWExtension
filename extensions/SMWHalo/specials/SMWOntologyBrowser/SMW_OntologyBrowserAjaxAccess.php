@@ -24,7 +24,7 @@ require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
 
 function smwf_ob_OntologyBrowserAccess($method, $params) {
 	
- 	$p_array = explode(",", $params);
+ 	$p_array = explode("##", $params);
  	
  	if ($method == 'getRootCategories') {
  		// param0 : limit
