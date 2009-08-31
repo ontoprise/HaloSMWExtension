@@ -60,8 +60,10 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_articlename' => '<b>Artikel:</b> $1',
 		'smw_rm_uploadsuccess_closewindow' => 'Sie kÃ¶nnen jetzt dieses Fenster schlieÃŸen.',
 
-		'smw_rm_embed_desc_link' => 'Klicken Sie hier um zur Beschreibungsseite zu gelangen: ',
+		'smw_rm_embed_desc_link' => 'Klicken Sie um zur Beschreibungsseite von $1 zu gelangen.',
 		'smw_rm_noembed' => 'Ihr Browser unterstützt keine eeingebetteten Obejekte.<br>Klicken Sie <a href="$1">hier</a> um die Datei herunterzuladen.',
+		'smw_rm_embed_notarget' => 'Dies ist der FileViewer. Sie müssen ein Zeilseite in der URL angeben;<br/>z.B. \'Special:EmbedWindow?target=Image:File.ext\'.',
+		'smw_rm_embed_save' => '$1 speichern.',
 	);
 
 	protected $smwRMNamespaces = array(

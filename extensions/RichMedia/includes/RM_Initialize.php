@@ -34,8 +34,10 @@ $smwgRMFormByNamespace = array(
  */
 function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
-	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages;
-				
+	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
+
+	//TODO: clean possibility to disable the extension with any warning/errors
+	$smwgEnableRichMedia = true;
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
@@ -55,7 +57,7 @@ function enableRichMediaExtension() {
 	
 	//EmbedWindow
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
-	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/includes/RM_EmbedWindow.php';
+	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/specials/RM_EmbedWindow.php';
 	
 	// Conversion of documents (PDF, MS Office)
 	global $smwgEnableUploadConverter;
@@ -243,35 +245,35 @@ function smwfRMInitUserMessages() {
  * Add appropriate JS language script
  */
 function smwfRMAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-	global $wgLanguageCode, $smwgDIScriptPath, $wgUser;
+	global $wgLanguageCode, $smwgRMScriptPath, $wgUser;
 	
 	// content language file
-	$lng = '/scripts/Language/SMWDI_Language';
+	$lng = '/scripts/Language/SMWRM_Language';
 	
-	$jsm->addScriptIf($smwgDIScriptPath . $lng.".js", $mode, $namespace, $pages);
+	$jsm->addScriptIf($smwgRMScriptPath . $lng.".js", $mode, $namespace, $pages);
 	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
-		if (file_exists($smwgDIScriptPath . $lng)) {
-			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
+		if (file_exists($smwgRMScriptPath . $lng)) {
+			$jsm->addScriptIf($smwgRMScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
-			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageEn.js', $mode, $namespace, $pages);
+			$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageEn.js', $mode, $namespace, $pages);
 		}
 	} else {
-		$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageEn.js', $mode, $namespace, $pages);
+		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageEn.js', $mode, $namespace, $pages);
 	}
 
 	// user language file
-	$lng = '/scripts/Language/SMWDI_Language';
+	$lng = '/scripts/Language/SMWRM_Language';
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
-		if (file_exists($smwgDIScriptPath . $lng)) {
-			$jsm->addScriptIf($smwgDIScriptPath . $lng, $mode, $namespace, $pages);
+		if (file_exists($smwgRMScriptPath . $lng)) {
+			$jsm->addScriptIf($smwgRMScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
-			$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageUserEn.js', $mode, $namespace, $pages);
+			$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
 		}
 	} else {
-		$jsm->addScriptIf($smwgDIScriptPath . '/scripts/Language/SMWDI_LanguageUserEn.js', $mode, $namespace, $pages);
+		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
 }
 
