@@ -402,7 +402,7 @@ Section "Lucene search" lucene
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
         
         ; Build OAI repository
-        nsExec::ExecToLog 'scripts\incremental_update\initUpdates.bat "$INSTDIR\mysql" semwiki_en root m8nix'
+        nsExec::ExecToLog 'initUpdates.bat $INSTDIR\mysql semwiki_en root m8nix'
         
         ; Build Lucene index
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
@@ -416,6 +416,7 @@ Section "Lucene search" lucene
             SetOutPath "$INSTDIR\lucene"
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
             CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene.lnk" "$INSTDIR\lucene\start.bat"
+            CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${PRODUCT} ${VERSION} Start Lucene Updater.lnk" "$INSTDIR\lucene\startUpdater.bat"
             
         ${EndIf}
        
@@ -934,6 +935,7 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$MUI_TEMP\Start ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\Stop ${PRODUCT}.lnk"
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Lucene.lnk" 
+    Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Start Updater.lnk" 
     Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Main Page.lnk"
     #Delete "$SMPROGRAMS\$MUI_TEMP\${PRODUCT} ${VERSION} Help.lnk"
     
