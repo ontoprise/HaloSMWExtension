@@ -22,7 +22,7 @@ if (!$plainEditmode) {
 function smwfAddWYSIWYGTab($obj, $content_actions) {
 	global $wgUser, $wgTitle;
 	
-	if (!$wgUser->isAllowed('wysiwyg')) return true;
+	if (!$wgUser->isAllowed('wysiwyg') || $wgUser->getSkin()->getSkinName() == "ontoskin3") return true;
 	$wwactive = array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'edit' && array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' ? 'selected' : false;
 	$content_actions['wysiwyg'] = array(
             'class' => $wwactive,

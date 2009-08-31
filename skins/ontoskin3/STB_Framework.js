@@ -103,7 +103,7 @@ ToolbarFramework.prototype = {
 			}
 			if (this.tabarray.length > 1) {
 				this.createTabHeader();
-			} else if(wgAction == "annotate" || wgAction=="edit") {
+			} else if(wgAction == "annotate") {
 				this.frameworkForceHeader;
 				this.createForcedHeader();
 			}
@@ -407,6 +407,7 @@ ToolbarFramework.prototype = {
 }
 
 var stb_control = new ToolbarFramework();
-
-Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
-Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
+if (typeof FCKeditor == 'undefined') {
+    Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
+    Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
+}
