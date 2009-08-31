@@ -1,0 +1,16 @@
+BEGIN:VCARD
+VERSION:2.1
+N;CHARSET=Windows-1252:Angele;Jürgen
+FN;CHARSET=Windows-1252:Jürgen Angele
+ORG:Ontoprise
+TEL;WORK;VOICE:+49 (0) 721 - 6657912
+TEL;HOME;VOICE:+49 (07276) 919442
+TEL;CELL;VOICE:+49 (0163) 6657928
+ADR;WORK;PREF:;;Obere Hauptstr. 19;Herxheim;;76863;Deutschland
+LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE:Obere Hauptstr. 19=0D=0A=
+76863 Herxheim
+X-MS-OL-DEFAULT-POSTAL-ADDRESS:2
+EMAIL;PREF;INTERNET:angele@ontoprise.de
+X-MS-OL-DESIGN;CHARSET=utf-8:<card xmlns="http://schemas.microsoft.com/office/outlook/12/electronicbusinesscards" ver="1.0" layout="left" bgcolor="ffffff"><img xmlns="" align="fit" area="16" use="cardpicture"/><fld xmlns="" prop="name" align="left" dir="ltr" style="b" color="000000" size="10"/><fld xmlns="" prop="org" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="telwork" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">GeschÃ¤ftlich</label></fld><fld xmlns="" prop="telcell" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">Mobiltelefon</label></fld><fld xmlns="" prop="telhome" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">Privat</label></fld><fld xmlns="" prop="email" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="addrwork" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/></card>
+REV:20090827T111339Z
+END:VCARD

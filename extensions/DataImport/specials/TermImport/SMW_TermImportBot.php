@@ -215,7 +215,7 @@ class TermImportBot extends GardeningBot {
 		
 		//echo("\n\n".$terms."\n\n");
 		
-		$parser = new SimpleXMLElement($terms);
+		$parser = new SimpleXMLElement($terms, $termSXE);
 		
 		$numTerms = count($parser->children());
 		echo("\nNumber of terms: ".$numTerms."\n");
