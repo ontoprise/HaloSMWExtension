@@ -69,8 +69,9 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	public function testSubCategories() {
 		$exp_categories = array("Electric car", "Sports car", "Hybrid car");
 		$subCategories = smwfGetSemanticStore()->getSubCategories(Title::newFromText("Car", NS_CATEGORY));
-		foreach ($subCategories as $c) {
-			$this->assertContains($c->getText(), $exp_categories, $c->getText()." missing");
+		foreach ($subCategories as $tuple) {
+			list($sc,$isLeaf) = $tuple;
+			$this->assertContains($sc->getText(), $exp_categories, $sc->getText()." missing");
 		}
 	}
 
