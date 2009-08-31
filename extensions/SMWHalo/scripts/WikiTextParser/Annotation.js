@@ -265,7 +265,27 @@ WtpRelation.prototype = Object.extend(new WtpAnnotation(), {
 		this.representation = newRepresentation;
 		this.replaceAnnotation(newAnnotation);
 	},
-	
+
+	/**
+	 * Replaces name, value and representation of an annotation in the wiki text.
+         *
+  	 * @param string name New name of property. Can be <null> or empty string.
+	 * @param string value New value of property. Can be <null> or empty string.
+	 * @param string representation New representation of property. Can be <null> or empty string.
+	 */
+	update : function(name, value, representation) {
+		var newAnnotation = "[[" + this.prefix + name + "::" + value;
+		if (representation && representation != ""
+		    && representation != value) {
+			newAnnotation += "|" + representation;
+		}
+		newAnnotation += "]]";
+                this.name = name;
+                this.value = value;
+		this.representation = representation;
+		this.replaceAnnotation(newAnnotation);
+	},
+
 	/**
 	 * @private
 	 * 

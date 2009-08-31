@@ -751,10 +751,10 @@ FCK.DataProcessor =
 					return '[[' + name + '::' + text + ']]' ;
 				}
 			case 'fck_mw_category' :
-				var name = htmlNode.getAttribute('category');
-				if (name) {
-					if (emptyVal.exec(name)) return ''; 
-					return '[[Category:' + name + '|' + text + ']]';
+				var sort = htmlNode.getAttribute('sort');
+				if (sort) {
+					if (emptyVal.exec(sort)) return '';
+					return '[[Category:' + text + '|' + sort + ']]';
 				}
 				if (emptyVal.exec(text)) return '';
 				return '[[Category:' + text + ']]'
@@ -911,37 +911,397 @@ FCK.ContextMenu.RegisterListener({
 	}
 }) ;
 
-var smwhgAdvancedAnnotation;
-var Class = window.parent.Class;
 
-var SMW_AnnotationMode = window.parent.Class.create({
+var SMW_Annotate = window.parent.Class.create();
+SMW_Annotate.prototype = {
+
     initialize: function() {
+        this.editorArea = FCK.GetData();
         this.IsActive = 0;
+        this.contextMenu = null;
+        this.eventManager = new window.parent.EventManager();
     },
-    
+
     Execute: function() {
-        return;
+
         if (this.IsActive == this.GetState())
            this.IsActive = 1 - this.GetState()
         if (this.IsActive) {
-            smwhgAdvancedAnnotation = new window.parent.AdvancedAnnotation(FCK.DataProcessor);
-            smwhgAdvancedAnnotation.annotateWithToolbar(Event);
+            window.parent.AdvancedAnnotation.create();
+            window.parent.stb_control.stbconstructor();
+            window.parent.stb_control.createForcedHeader();
+            window.parent.obContributor.registerContributor();
+            window.parent.relToolBar.callme();
+            window.parent.catToolBar.callme();
+            window.parent.smw_help_callme();
+            window.parent.smw_links_callme();
+            SetEventHandler4AnnotationBox();
+        } else {
+            window.parent.AdvancedAnnotation.unload();
+            //FCK.EditorDocument.body.onchange = "";
+            this.eventManager.deregisterAllEvents();
         }
-        else {
-            smwhgAdvancedAnnotation.unload();
-        }
+
     },
 
     GetState: function() {
         if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
             return FCK_TRISTATE_DISABLED ;
         return this.IsActive ? FCK_TRISTATE_ON : FCK_TRISTATE_OFF ;
+    },
+    
+    EditorareaChanges : function() {
+        if (this.editorArea != FCK.GetData()) {
+            window.parent.relToolBar.fillList();
+            window.parent.catToolBar.fillList();
+            this.editorArea = FCK.GetData();
+        }
+    },
+
+    CheckSelectedAndCallPopup : function() {
+        // handle here if the popup box for a selected annotation must be shown
+        var selection = gEditInterface.getSelectionAsArray();
+        if (selection == null)
+            alert('The current selection cannot be used for annotating a category or property');
+        // something is selected, this will be a new annotation,
+        // offer both category and property toolbox
+        else if (selection.length == 1 && selection[0] != "")
+            this.ShowNewToolbar(selection[0]);
+        // an existing annotation will be edited
+        else if (selection.length > 1) {
+            if (selection[1] == 102) { // Property
+                var val = (selection.length == 4) ? selection[3] : selection[0];
+                this.ShowRelToolbar(val, selection[0], selection[2]);
+            }
+            else { // Category
+                this.ShowCatToolbar(selection[0]);
+            }
+        }
+        else {
+            alert('nothing to do')
+        }
+    },
+
+    ShowNewToolbar: function(value) {
+        var wtp = new window.parent.WikiTextParser();
+        this.contextMenu = new window.parent.ContextMenuFramework();
+        this.contextMenu.setPosition(100, 100);
+        var relToolBar = new window.parent.RelationToolBar();
+        var catToolBar = new window.parent.CategoryToolBar();
+        relToolBar.setWikiTextParser(wtp);
+        catToolBar.setWikiTextParser(wtp);
+        relToolBar.createContextMenu(this.contextMenu, value, value);
+        catToolBar.createContextMenu(this.contextMenu, value);
+        this.contextMenu.showMenu();
+
+    },
+    
+    ShowRelToolbar: function(name, value, show) {
+        var wtp = new window.parent.WikiTextParser();
+        this.contextMenu = new window.parent.ContextMenuFramework();
+        this.contextMenu.setPosition(100, 100);
+        var toolBar = new window.parent.RelationToolBar();
+        toolBar.setWikiTextParser(wtp);
+        toolBar.createContextMenu(this.contextMenu, name, value, show);
+        this.contextMenu.showMenu();
+    },
+
+    ShowCatToolbar: function(name) {
+        var wtp = new window.parent.WikiTextParser();
+        this.contextMenu = new window.parent.ContextMenuFramework();
+        this.contextMenu.setPosition(100, 100);
+        var toolBar = new window.parent.CategoryToolBar();
+        toolBar.setWikiTextParser(wtp);
+        toolBar.createContextMenu(this.contextMenu, name);
+        this.contextMenu.showMenu();
     }
-});
+};
 
 
-var tbButton = new FCKToolbarButton( 'SMW_AnnotationMode', 'AnnotationToolbar', 'Annotation Toolbar' ) ;
-tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
-FCKToolbarItems.RegisterItem( 'SMW_AnnotationMode', tbButton );
+// needed to access the Plugin class from the FCKeditInterface
+var gAnnotationPlugin = new SMW_Annotate();
 
-FCKCommands.RegisterCommand( 'SMW_AnnotationMode', new SMW_AnnotationMode() ) ;
+function SetEventHandler4AnnotationBox() {
+    window.parent.Event.observe(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+    window.parent.Event.observe(window.frames[0], 'mouseup', gAnnotationPlugin.CheckSelectedAndCallPopup);
+}
+
+
+
+var FCKeditInterface = window.parent.Class.create();
+FCKeditInterface.prototype = {
+
+    initialize: function() {
+        this.newText = '';
+        this.selection = Array();
+        this.start = -1;
+        this.end = -1;
+        this.selectedElement = null;
+    },
+
+   /**
+    * gets the selected string. This is the  simple string of a selected
+    * text in the editor arrea.
+    * 
+    * @access public
+    * @return string selected text or null
+    * */
+    getSelectedText: function() {
+        if (this.selection.length == 0) this.getSelectionAsArray();
+        return (this.selection.length > 0) ? this.selection[0] : null;
+    },
+
+    /**
+     * returns the text of the edit window. This is wiki text.
+     * If this.newText is set, then something on the text has changed but the
+     * editarea is not yet updated with the new value. Therefore return this
+     * instead of fetching the text (with still the old value) from the editor
+     * area
+     *
+     * @access public
+     * @return string wikitext of the editors textarea
+     */
+    getValue: function() {
+        return (this.newText) ? this.newText : FCK.GetData();
+    },
+
+    setValue: function(text) {
+        if (text) {
+            function ajaxResponseSetHtmlText(request) {
+                if (request.status == 200) {
+                    // success => store wikitext as FCK HTML
+                    FCK.SetData(request.responseText);
+                }
+                gEditInterface.newText = '';
+                // custom event handlers are lost when using FCK.SetData
+                SetEventHandler4AnnotationBox();
+                //gAnnotationPlugin.SetEventHandler();
+            };
+            this.newText = text;
+	    window.parent.sajax_do_call('wfSajaxWikiToHTML', [text],
+	                                ajaxResponseSetHtmlText);
+        }
+    },
+
+    getSelectedElement: function() {
+        return this.selectedElement;
+    },
+
+    /**
+     * gets the selected text of the current selection from the FCK
+     * and fill up the member variable selection. This is an array of
+     * maximum 4 elements which are:
+     * 0 => selected text
+     * 1 => namespace (14 = category, 102 = property) not existend otherwise
+     * 2 => name of property or not set
+     * 3 => actual value of property if sel. text is representation only not
+     *      existend otherwise
+     * If the selection is valid at least this.selection[0] must be set. The
+     * selection is then returned to the caller
+     *
+     * @access public
+     * @return Array(mixed) selection
+     */
+    getSelectionAsArray: function() {
+        // selected element node
+        this.selectedElement = FCKSelection.GetSelectedElement();
+        // selection text only without html mark up
+        var fckSelection = FCKSelection.GetSelection();
+        // parent element of the selected text (mostly a <p>)
+        var parent = FCKSelection.GetParentElement();
+        // selection with html markup of the imediate parent element, if required
+        var html = this.getSelectionHtml();
+        // (partly) selected text within these elements can be annotated.
+        var goodNodes = ['P', 'B', 'I', 'U', 'S'];
+
+        // selection is the same as the innerHTML -> no html was selected
+        if (fckSelection == html) {
+            // if the parent node is <a> or a <span> (property, category) then
+            // we automatically select *all* of the inner html and the annotation
+            // works for the complete node content (this is a must for these nodes)
+            if (parent.nodeName == 'A') {
+                this.selection[0] = parent.innerHTML;
+                this.selectedElement = parent;
+                return this.selection;
+            }
+            // check category and property that might be in the <span> tag,
+            // ignore all other spans that might exist as well
+            if (parent.nodeName == 'SPAN') {
+                var sclass = parent.getAttribute('class');
+                switch (sclass) {
+                    case 'fck_mw_property' :
+                        this.selectedElement = parent;
+                        this.selection[0] = parent.innerHTML;
+                        this.selection[1] = 102;
+                        var val = parent.getAttribute('property');
+                        // differenciation between displayed representation and
+                        // actual value of the property
+                        if (val.indexOf('::') != -1) {
+                            this.selection[2] = val.substring(0, val.indexOf('::'));
+                            this.selection[3] = val.substring(val.indexOf('::') +2);
+                        } else
+                            this.selection[2] = val;
+                        return this.selection;
+                    case 'fck_mw_category' :
+                        this.selectedElement = parent;
+                        this.selection[0] = parent.innerHTML;
+                        this.selection[1] = 14;
+                        return this.selection;
+                }
+                return;
+            }
+            // just any text was selected, use this one for the selection
+            // if it was encloded between the "good nodes"
+            for (var i = 0; i < goodNodes.length; i++) {
+                if (parent.nodeName == goodNodes[i]) {
+                    this.selectedElement = parent;
+                    this.selection[0] = fckSelection;
+                    return this.selection;
+                }
+            }
+            // selection is invalid
+            return;
+        }
+        // the selection is exactly one tag that encloses the selected text
+        var ok = html.match(/^<[^>]*?>[^<>]*<\/[^>]*?>$/g);
+        if (ok && ok.length == 1) {
+            var tag = html.replace(/^<(\w+) .*/, '$1').toUpperCase();
+            var cont = html.replace(/^<[^>]*?>([^<>]*)<\/[^>]*?>$/, '$1');
+            // anchors are the same as formating nodes, we use the selected
+            // node content as the value.
+            goodNodes.push('A');
+            for (var i = 0; i < goodNodes.length; i++) {
+                if (tag == goodNodes[i]) {
+                    this.MatchSelectedNodeInDomtree(parent, tag, cont);
+                    this.selection[0] = cont;
+                    return this.selection;
+                }
+            }
+            // there are several span tags, we need to find categories and properties
+            if (tag == 'SPAN') {
+                if (html.indexOf('class="fck_mw_property"') != -1) {
+                    this.MatchSelectedNodeInDomtree(parent, tag, cont);
+                    this.selection[0] = cont;
+                    this.selection[1] = 102;
+                    var val = html.replace(/.*property="(.*?)".*/, '$1');
+                    if (val.indexOf('::') != -1) {
+                        this.selection[2] = val.substring(0, val.indexOf('::'));
+                        this.selection[3] = val.substring(val.indexOf('::') +2);
+                    } else {
+                        this.selection[2] = val;
+                    }
+                    return this.selection;
+                }
+                if (html.indexOf('class="fck_mw_category"') != -1) {
+                    this.MatchSelectedNodeInDomtree(parent, tag, cont);
+                    this.selection[0] = cont;
+                    this.selection[1] = 14;
+                    return this.selection;
+                } // below here passing all closing brakets means that the selection
+            }     // was invalid
+        }
+    },
+
+   /**
+    * from the parent node go over the child nodes and
+    * select the appropriate child based on the string match that was
+    * done before
+    *
+    * @access private
+    * @param  DOMNode parent
+    * @param  string node name
+    * @param  string node value
+    */
+   MatchSelectedNodeInDomtree: function (parent, nodeName, nodeValue) {
+        for(var i = 0; i < parent.childNodes.length; i++) {
+            if (parent.childNodes[i].nodeType == 1 &&
+                parent.childNodes[i].nodeName.toUpperCase() == nodeName &&
+                parent.childNodes[i].innerHTML.replace(/^\s*/, '').replace(/\s*$/, '') == nodeValue) {
+                this.selectedElement = parent.childNodes[i];
+                return;
+            }
+        }
+   },
+
+   /**
+    * Checks the current selection and returns the html content of the
+    * selection.
+    *
+    * @access private
+    * @param  void
+    * @return string text
+    */
+    getSelectionHtml: function() {
+
+        var selection = (FCK.EditorWindow.getSelection ? FCK.EditorWindow.getSelection() : FCK.EditorDocument.selection);
+        if(selection.createRange) {
+            var range = selection.createRange();
+            var html = range.htmlText;
+        }
+        else {
+            var range = selection.getRangeAt(selection.rangeCount - 1).cloneRange();
+            var clonedSelection = range.cloneContents();
+            var div = document.createElement('div');
+            div.appendChild(clonedSelection);
+            var html = div.innerHTML;
+            // check if selection contains a html tag of span or a
+            // i.e. link, property, category, because in these cases
+            // we must select all of the inner content.
+            if (html.indexOf('<span') == 0 || html.indexOf('<a') == 0) {
+                // even though in the original the tag look like <span property...>This is my property rep</span>
+                // the selected html might contain <span property...>property rep</span> only. To select all make
+                // a text match of the content of the ancestor tag content.
+                var parentContent = selection.getRangeAt(selection.rangeCount -1).commonAncestorContainer.innerHTML;
+                // build a pattern of <span property...>property rep</span>
+                var pattern = html.replace(/([().|?*{}\/])/g, '\\$1');
+                pattern = pattern.replace('>', '>.*?');
+                pattern = pattern.replace('<\\/', '.*?<\\/');
+                pattern = '(.*)(' + pattern + ')(.*)';
+                // the pattern is now: (.*)(<span property\.\.\.>.*?property rep.*?<\/span>)(.*)
+                var rex = new RegExp(pattern)
+                if (rex instanceof RegExp)
+                    html = parentContent.replace(rex, '$2');
+            }
+        }
+        return html.replace(/^\s*/, '').replace(/\s*$/, ''); // trim the selected text
+    },
+
+    setSelectionRange: function(start, end) {
+        var html = FCK.GetData().substring(start, end - start);
+        if (html.indexOf('class="fck_mw_property"') != -1) {
+            this.selection[0] = html.replace(/<[^>]*>([^<]*)<[^>]*>/, '$1');
+            this.selection[1] = 102;
+            var val = html.replace(/.*property="(.*?)".*/, '$1');
+            if (val.indexOf('::') != -1) {
+                this.selection[2] = val.substring(0, val.indexOf('::'));
+                this.selection[3] = val.substring(val.indexOf('::') +2);
+            } else {
+                this.selection[2] = val;
+            }
+        }
+        else if (html.indexOf('class="fck_mw_category"') != -1) {
+            this.selection[0] = html.replace(/<[^>]*>([^<]*)<[^>]*>/, '$1');
+            this.selection[1] = 14;
+        }
+    },
+
+    getTextBeforeCursor: function() {
+        
+    },
+    
+    selectCompleteAnnotation: function() {}
+
+
+
+};
+
+
+var gEditInterface = new FCKeditInterface();
+window.parent.gEditInterface = gEditInterface;
+
+
+var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Annotate', 'Semantic Annotations' ) ;
+tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_add.png' ;
+FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
+
+FCKCommands.RegisterCommand( 'SMW_Annotate', gAnnotationPlugin ) ;

@@ -140,7 +140,9 @@ WikiTextParser.prototype = {
 				wikiText = this.text;
 			}
 		}
-		if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
+                if (!wikiText || this.parserMode == WTP_EDITAREA_MODE) {
+
+                        if (typeof FCKeditor == 'undefined') {
 			// no wiki text => retrieve from text area.
 			var txtarea;
 			if (document.editform) {
@@ -154,9 +156,11 @@ WikiTextParser.prototype = {
 			if (gEditInterface == null) {
 				gEditInterface = new SMWEditInterface();
 			}
+                        }
 			this.editInterface = gEditInterface;
 			this.text = this.editInterface.getValue();
 			this.parserMode = WTP_EDITAREA_MODE;
+
 		} else if (!this.parserMode) {
 			this.editInterface = null;
 			this.text = wikiText;

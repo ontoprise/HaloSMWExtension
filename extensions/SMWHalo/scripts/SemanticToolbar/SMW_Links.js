@@ -14,7 +14,9 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-Event.observe(window, 'load', smw_links_callme);
+
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', smw_links_callme);
 
 
 var createLinkList = function() {

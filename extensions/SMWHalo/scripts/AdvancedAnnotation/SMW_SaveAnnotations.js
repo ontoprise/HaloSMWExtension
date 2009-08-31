@@ -138,6 +138,7 @@ createToolbar: function(attributes) {
 };// End of Class
 
 var smwhgSaveAnnotations = new SaveAnnotations();
-Event.observe(window, 'load', smwhgSaveAnnotations.createContainer.bindAsEventListener(smwhgSaveAnnotations));
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', smwhgSaveAnnotations.createContainer.bindAsEventListener(smwhgSaveAnnotations));
 
 

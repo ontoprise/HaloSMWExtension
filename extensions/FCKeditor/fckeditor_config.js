@@ -20,7 +20,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_AnnotationMode']
+	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_Annotate']
 ] ;
 
 // Load the extension plugins.
@@ -102,14 +102,14 @@ FCKConfig.EditorAreaStyles = '\
 { \
     background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_property.gif); \
     background-repeat: no-repeat; \
-	background-color: #ffcd87; \
-	padding-left: 16px; \
+    background-color: #ffcd87; \
+    padding-left: 16px; \
 } \
 .fck_mw_category \
 { \
     background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_category.gif); \
     background-repeat: no-repeat; \
-	background-color: #94b0f3; \
+    background-color: #94b0f3; \
     padding-left: 16px; \
 } \
 ' ;

@@ -94,17 +94,19 @@ var SMW_REL_SUB_SUPER_ALL_VALID =
 var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
+var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined') ? 1 : 0;
+
 var SMW_REL_HINT_CATEGORY =
 	'typeHint = "' + SMW_CATEGORY_NS + 
-	((wgAction == 'annotate') ? '" position="fixed"' : '');
+	((positionFixed) ? '" position="fixed"' : '');
 
 var SMW_REL_HINT_PROPERTY =
 	'typeHint="'+ SMW_PROPERTY_NS + 
-	((wgAction == 'annotate') ? '" position="fixed"' : '');
+	((positionFixed) ? '" position="fixed"' : '');
 
 var SMW_REL_HINT_INSTANCE =
 	'typeHint="'+ SMW_INSTANCE_NS + 
-	((wgAction == 'annotate') ? '" position="fixed"' : '');
+	((positionFixed) ? '" position="fixed"' : '');
 
 var SMW_REL_TYPE_CHANGED =
 	'smwChanged="(call:relToolBar.relTypeChanged)"';
@@ -122,13 +124,12 @@ initialize: function() {
 showToolbar: function(){
 	this.relationcontainer.setHeadline(gLanguage.getMessage('PROPERTIES'));
 	if (wgAction == 'edit') {
-		// Create a wiki text parser for the edit mode. In annotation mode,
-		// the mode's own parser is used.
-		this.wtp = new WikiTextParser();
+            // Create a wiki text parser for the edit mode. In annotation mode,
+            // the mode's own parser is used.
+            this.wtp = new WikiTextParser();
 	}
 	this.om = new OntologyModifier();
 	this.fillList(true);
-
 },
 
 callme: function(event){
@@ -264,7 +265,7 @@ createToolbar: function(attributes) {
  * 		The default representation for the property. If it is not given, the current 
  * 		selection of the wiki text parser is used.
  */
-createContextMenu: function(contextMenuContainer, value, repr) {
+createContextMenu: function(contextMenuContainer, value, repr, name) {
 	if (this.toolbarContainer) {
 		this.toolbarContainer.release();
 	}
@@ -295,7 +296,7 @@ createContextMenu: function(contextMenuContainer, value, repr) {
 	                         SMW_REL_VALID_PROPERTY_NAME +
 	                         SMW_REL_HINT_PROPERTY,
 	                         true));
-	tb.setInputValue('rel-name','');
+	tb.setInputValue('rel-name', (name) ? name : '');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
 	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', '',
@@ -898,8 +899,8 @@ changeItem: function(selindex) {
 		return;
 	}
 
-   //Get relations
-   var annotatedElements = this.wtp.getRelations();
+        //Get relations
+        var annotatedElements = this.wtp.getRelations();
 
 	if ((selindex!=null) && ( selindex >=0) && (selindex <= annotatedElements.length)  ){
 		var relation = annotatedElements[selindex];
@@ -916,11 +917,8 @@ changeItem: function(selindex) {
 			}
 		}
  		//change relation
-		relation.rename(relName);
-		relation.changeValue(value);
-		relation.changeRepresentation(text);
-		
-   }
+                relation.update(relName, value, text);
+        }
 
 	//show list
 	this.fillList(true);
@@ -1186,5 +1184,6 @@ getselectedItem: function(selindex) {
 };// End of Class
 
 var relToolBar = new RelationToolBar();
-Event.observe(window, 'load', relToolBar.callme.bindAsEventListener(relToolBar));
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', relToolBar.callme.bindAsEventListener(relToolBar));
 

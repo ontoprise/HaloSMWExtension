@@ -34,8 +34,8 @@ AdvancedAnnotation.prototype = {
 	/**
 	 * Initializes an instance of this class.
 	 */
-	initialize: function(fck) {
-                this.fck = (fck) ? 1 : 0;
+	initialize: function() {
+                this.fck = (wgAction == 'edit' && typeof FCKeditor != 'undefined') ? 1 : 0;
 	
 		this.resetSelection();
 		
@@ -759,7 +759,7 @@ AdvancedAnnotation.prototype = {
 	 * 
 	 */
 	loadWikiText : function() {
-            if (! this.fck) {
+            if (typeof FCKeditor == 'undefined') {
                 function ajaxResponseLoadWikiText(request) {
                         if (request.status == 200) {
                             // success => store wikitext
@@ -783,12 +783,17 @@ AdvancedAnnotation.prototype = {
 		              
             } else { // FCK mode
                 // Call the Data Processor to generate the output data.
-                var data = $('wpTextbox1').innerHTML;
-                data = '<body>' + data + '</body>';
-                data = data.replace(/&lt;/g, '<');
-                data = data.replace(/&gt;/g, '>');
+                var data = gEditInterface.getValue();
             
                 this.wikiTextParser = new FCKTextParser(data);
+                this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
+                this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
+                this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
+                this.wikiTextParser.addAnnotationRemovedHook(this.annotationRemoved.bind(this));
+                catToolBar.setWikiTextParser(this.wikiTextParser);
+                relToolBar.setWikiTextParser(this.wikiTextParser);
+                catToolBar.fillList(true);
+                relToolBar.fillList(true);
             }
 	},
 	
@@ -1545,10 +1550,9 @@ AdvancedAnnotation.prototype = {
 	}
 };// End of Class
 
-AdvancedAnnotation.create = function(e, fck) {
-        var fckedit = (wgAction == "edit" && fck) ?  1 : 0;
-	if (wgAction == "annotate" || fckedit) {
-		smwhgAdvancedAnnotation = new AdvancedAnnotation(fckedit);
+AdvancedAnnotation.create = function() {
+	if (wgAction == "annotate" || this.fck) {
+		smwhgAdvancedAnnotation = new AdvancedAnnotation();
 		new PeriodicalExecuter(function(pe) {
 			var content = $('content');
 			Event.observe(content, 'mouseup', 
@@ -1567,13 +1571,17 @@ AdvancedAnnotation.create = function(e, fck) {
  * changed, the user is asked, if he wants to save the changes.
  */
 AdvancedAnnotation.unload = function() {
-    var fckedit = (wgAction == "edit" && this.fck) ?  1 : 0;
-	if ((wgAction == "annotate" || fckedit) && smwhgAdvancedAnnotation.annotationsChanged === true) {
+	if (wgAction == "annotate"  && smwhgAdvancedAnnotation.annotationsChanged === true) {
 		var save = confirm(gLanguage.getMessage('AAM_SAVE_ANNOTATIONS'));
 		if (save === true) {
 			smwhgAdvancedAnnotation.saveAnnotations();
 		}
 	}
+        // Semantic toolbar was called within the FCK editor, disable it
+        if (wgAction == "edit" && typeof FCKeditor != 'undefined') {
+                $('ontomenuanchor').innerHTML = '';
+                //stb_control.collapse();
+        }
 	
 };
 
@@ -1637,5 +1645,7 @@ function setTextContent(elem, text) {
 }
 
 var smwhgAdvancedAnnotation = null;
-Event.observe(window, 'load', AdvancedAnnotation.create);
-Event.observe(window, 'unload', AdvancedAnnotation.unload);
+if (typeof FCKeditor == 'undefined') {
+    Event.observe(window, 'load', AdvancedAnnotation.create);
+    Event.observe(window, 'unload', AdvancedAnnotation.unload);
+}

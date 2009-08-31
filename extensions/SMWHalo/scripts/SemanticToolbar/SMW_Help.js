@@ -14,7 +14,8 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-Event.observe(window, 'load', smw_help_callme);
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', smw_help_callme);
 
 var smw_help_getNamespace = function() {
 	var ns = wgNamespaceNumber==0?"Main":wgCanonicalNamespace ;

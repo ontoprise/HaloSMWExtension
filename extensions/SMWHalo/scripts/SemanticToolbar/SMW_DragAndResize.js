@@ -24,8 +24,10 @@ initialize: function() {
  */
 callme: function(){
 	//Makes the toolbar draggable and resizable 
-	if(wgAction == "annotate"){
-		this.resizeable = new Resizeable('ontomenuanchor',{top: 10, left:10, bottom: 10, right: 10});
+	if((wgAction == "annotate") ||
+           (wgAction == "edit" && typeof FCKeditor != "undefined") ) {
+		if (wgAction == "annotate")
+                    this.resizeable = new Resizeable('ontomenuanchor',{top: 10, left:10, bottom: 10, right: 10});
 		this.enableDragging();
 	}
 },

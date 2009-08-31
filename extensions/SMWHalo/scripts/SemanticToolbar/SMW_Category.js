@@ -80,7 +80,6 @@ initialize: function() {
 	this.toolbarContainer = null;
 	this.showList = true;
 	this.currentAction = "";
-
 },
 
 showToolbar: function(){
@@ -199,7 +198,7 @@ createContextMenu: function(contextMenuContainer) {
 
 	this.currentAction = "annotate";
 	
-    this.wtp.initialize();
+        this.wtp.initialize();
 	var selection = this.wtp.getSelection(true);
 	
 	/*STARTLOG*/
@@ -241,8 +240,8 @@ finalCategoryCheck: function(target) {
 	var cat = this.wtp.getCategory(catName);
 	if (cat) {
 		gSTBEventActions.performSingleAction('showmessage', 
-											 'CATEGORY_ALREADY_ANNOTATED', 
-											 $('cat-name'));
+                                                     'CATEGORY_ALREADY_ANNOTATED',
+					             $('cat-name'));
 		gSTBEventActions.performSingleAction('hide', 'cat-confirm');			
 		gSTBEventActions.performSingleAction('hide', 'cat-addandcreate');			
 	}
@@ -561,6 +560,7 @@ getselectedItem: function(selindex) {
 };// End of Class
 
 var catToolBar = new CategoryToolBar();
-Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar));
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', catToolBar.callme.bindAsEventListener(catToolBar));
 
 
