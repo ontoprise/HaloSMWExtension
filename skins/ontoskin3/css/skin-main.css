@@ -1,0 +1,125 @@
+/* Head */
+
+#smwh_logo{
+    float: left;
+}
+
+#smwh_personal{
+    float: right;
+}
+
+#smwh_search{
+    float: right;
+}
+
+/* Menu */
+
+#smwh_menu{
+    clear: both;
+}
+
+#smwh_menu .editsection{
+    display: none;
+}
+
+ul.smwh_menulist{
+    -moz-padding-start: 0px;
+    margin: 0em;
+}
+
+ul.smwh_menulist li {
+	  display: inline;
+	  position: relative;
+}
+
+ul.smwh_menulist div.smwh_menuhead {
+    display: inline-block;
+}
+
+ul.smwh_menulist div.smwh_menubody {
+    display: none;
+}
+
+ul.smwh_menulist .hovering div.smwh_menubody {
+    display: block;
+}
+
+ul.smwh_menulist div.smwh_menubody {
+    background-color: #FDD;
+    width: 250px;
+    position: absolute;
+    top: 1.6em;
+    padding: 5px;
+    z-index: 10;
+    -moz-border-radius: 5px;
+}
+
+#menuright{
+    float: right;
+}
+
+#menuright div.smwh_menubody{
+    right: 0em;
+}
+
+#menuleft{
+    float: left;
+}
+
+#menuleft div.smwh_menubody{
+    left: 0em;
+}
+
+/* breadcrumbs */
+
+#smwh_breadcrumbs{
+    clear: both;
+}
+
+/* tabs */
+
+#smwh_tabs{
+    height: 1.5em;
+}
+
+.tab{
+    border-left: 1px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+    position: relative;
+    top: 0.0em;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
+}
+
+#tabsleft .tab {
+    float: left;
+}
+
+#tabsright .tab {
+    float: right;
+    margin-right: 0px;
+}
+
+#tabsright .righttabelements {
+    float: right;
+    padding-right: 5px;
+    padding-left: 5px;
+    border-right: 1px solid;
+}
+
+.tab.selected{
+    border-bottom: 1px solid #FFF;
+    z-index: 1;
+}
+
+#column-content{
+    border: 1px solid;
+    padding: 5px;
+}
+
