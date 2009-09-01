@@ -202,7 +202,7 @@ createContextMenu: function(contextMenuContainer) {
 	var selection = this.wtp.getSelection(true);
 	
 	/*STARTLOG*/
-    smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
+        if (smwhgLogger) smwhgLogger.log(selection,"STB-Categories","annotate_clicked");
 	/*ENDLOG*/
 
 	tb.append(tb.createInput('cat-name', 
