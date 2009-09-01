@@ -12,7 +12,7 @@ class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 
 	function testXMLQueryPrinter() {
 		global $smwgResultFormats, $smwgHaloIP;
-		require_once "$smwgHaloIP/includes/SMW_QP_XML.php";
+		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
 		$params = array();
 		$context = SMWQueryProcessor::INLINE_QUERY;
