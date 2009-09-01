@@ -14,9 +14,6 @@
  * @ingroup Skins
  */
 
-
-
-
 if( !defined( 'MEDIAWIKI' ) )
     die( -1 );
 
@@ -26,14 +23,33 @@ if( !defined( 'MEDIAWIKI' ) )
  * @ingroup Skins
  */
 class SkinOntoSkin3 extends SkinTemplate {
-/** Using OntoSkin3. */
-    function initPage( OutputPage $out ) {
-        parent::initPage( $out );
+
+
+    /**
+     *   Using OntoSkin3.
+     **/
+     
+    /** mw 1.13 */
+    function initPage( &$out ) {
+        SkinTemplate::initPage( $out );
         $this->skinname  = 'ontoskin3';
         $this->stylename = 'ontoskin3';
         $this->template  = 'OntoSkin3Template';
-
     }
+
+    /**
+     *   Using OntoSkin3.
+     **/
+
+    /** mw 1.15
+    function initPage( OutputPage $out ) {
+    
+            parent::initPage( $out );
+            $this->skinname  = 'ontoskin3';
+            $this->stylename = 'ontoskin3';
+            $this->template  = 'OntoSkin3Template';
+
+    } */
 
     function getSkinName() {
 	return 'ontoskin3';
@@ -221,20 +237,30 @@ class OntoSkin3Template extends QuickTemplate {
             </div>
 
             <div id="smwh_breadcrumbs">
+                <div id="breadcrump">
+		</div>
             </div>
 
             <table width="100%">
             <tr>
-            <td/>
 
-            <td>
+                <!-- insert treeview if present -->
+                <?php $tree=$this->treeviewBox();
+                if($tree!=false){?>
+                    <td width="30%">
+                        <?php echo $tree; ?>
+                    </td>
+                <?php } ?>
+            
+                <!-- normal page content and tabs -->
+                <td width="*">
 
             <div id="smwh_tabs">
                 <?php echo $this->buildTabs(); ?>
             </div>
             
                 <div id="column-content">
-                    <div id="content"> <!-- required for Semantic toolbar -->
+                    <div id="content">
                         <!-- div from mw 1.13 removed 1.15 -->
                         <div id="bodyContent">
                             <h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
@@ -255,44 +281,9 @@ class OntoSkin3Template extends QuickTemplate {
             </tr>
             </table>
             <div id="ontomenuanchor">
-            
-            </div><!-- end of the left (by default at least) column -->
             <div class="visualClear"></div>
             <div id="footer">
                 <?php echo $this->buildQuickLinks(); ?>
-                <!--
-                <?php
-                        if($this->data['poweredbyico']) { ?>
-                <div id="f-poweredbyico"><?php $this->html('poweredbyico') ?></div>
-                        <?php 	}
-                        if($this->data['copyrightico']) { ?>
-                <div id="f-copyrightico"><?php $this->html('copyrightico') ?></div>
-                        <?php	}
-
-                        // Generate additional footer links
-                        $footerlinks = array(
-                            'lastmod', 'viewcount', 'numberofwatchingusers', 'credits', 'copyright',
-                            'privacy', 'about', 'disclaimer', 'tagline',
-                        );
-                        $validFooterLinks = array();
-                        foreach( $footerlinks as $aLink ) {
-                            if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
-                                $validFooterLinks[] = $aLink;
-                            }
-                        }
-                        if ( count( $validFooterLinks ) > 0 ) {
-                            ?>			<ul id="f-list">
-                                <?php
-                                foreach( $validFooterLinks as $aLink ) {
-                                    if( isset( $this->data[$aLink] ) && $this->data[$aLink] ) {
-                                        ?>					<li id="<?php echo$aLink?>"><?php $this->html($aLink) ?></li>
-                                    <?php 			}
-                                }
-                                ?>
-                </ul>
-                        <?php	}
-                        ?>
-            </div>-->
         </div>
                 
                 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
@@ -303,6 +294,7 @@ class OntoSkin3Template extends QuickTemplate {
 
         -->
                 <?php endif; ?>
+        </div>
     </body></html>
         <?php
         wfRestoreWarnings();
@@ -435,14 +427,26 @@ class OntoSkin3Template extends QuickTemplate {
     }
 
 
-   function treeviewBox() { ?>
-        <div id='smwh_browser'>
-            <div id="smwh_browserview">
-                               <?php wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
-                               $webcode .= $treeview; ?>
-            </div>
-        </div>
-   <?php }
+   function treeviewBox() {
+        //catch echo
+        ob_start();
+            wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
+        //add output to menu
+        $tree.= ob_get_contents();
+        //stop catching echos
+        ob_end_clean();
+
+        if($tree!=null && $tree!=""){
+            $treeview = '<div id="smwh_browser"><div id="smwh_browserview">';
+            $treeview .= $tree;
+            $treeview .= "</div></div>";
+            return $treeview;
+        } else {
+           return false;
+        }
+        
+ 
+    }
 
     /**
      * Gets the menu items from MediaWiki:Halomenu
@@ -591,7 +595,7 @@ class OntoSkin3Template extends QuickTemplate {
     function buildTools() {
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Toolbar</p></div>";
+        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Tools</p></div>";
         $content = wfMsgForContent( 'halotools' );
         if($content!=null){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
@@ -605,8 +609,15 @@ class OntoSkin3Template extends QuickTemplate {
     function buildTabs() {
         $tabs  = "<!-- Tabs -->";
         $tabsleft .= "<div id=\"tabsleft\">";
+        //right tab holding all functions other than page/talk
         $tabright .= "<div id=\"tabsright\"><div class=\"tab\">";
+        //right tab elements
         $tabsright = "";
+        //all functions which are aggregated in the right of the right tab
+        $tabsaggregated.= "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
+        $tabsaggregated.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">Aggregated</div>";
+        $tabsaggregated.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
+
         foreach($this->data['content_actions'] as $key => $tab) {
 
 
@@ -635,7 +646,7 @@ class OntoSkin3Template extends QuickTemplate {
                                         $tabsleft .= $tabs;
                                     } else if ($key == "purge" || $key == "history" || $key == "edit") {
                                             $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\" righttabelements";
+                                            $tabs .= " class=\"righttabelements";
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
@@ -658,7 +669,7 @@ class OntoSkin3Template extends QuickTemplate {
                                         $tabsright .= $tabs;
                                     } else {
                                             $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\" righttabelements";
+                                            $tabs .= " class=\"aggregatedtabelements";
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
@@ -677,14 +688,15 @@ class OntoSkin3Template extends QuickTemplate {
                                                 $tabs.= $this->skin->tooltipAndAccesskey( "ca-$key" );
                                             }
                                             $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
-                                       $tabsright .= $tabs;
+                                       $tabsaggregated .= $tabs;
                                     }
 
          }
 
          $tabsleft .=  "</div>";
-         $tabright .=  $tabsright."</div></div>";
-         //$tabsaggregated .=
+         $tabsaggregated .= "</div></li></ul></div>";
+         $tabright .=  $tabsaggregated.$tabsright."</div></div>";
+         
          return $tabsleft.$tabright;
     }
 
@@ -715,3 +727,4 @@ class OntoSkin3Template extends QuickTemplate {
     }
 
 } // end of class
+
