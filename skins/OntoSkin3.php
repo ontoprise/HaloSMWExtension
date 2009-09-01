@@ -234,28 +234,27 @@ class OntoSkin3Template extends QuickTemplate {
             </div>
             
                 <div id="column-content">
-
-                    <!-- div from mw 1.13 removed 1.15 -->
-                    <div id="bodyContent">
-                        <h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
-                        <div id="contentSub"><?php $this->html('subtitle') ?></div>
-                                <?php if($this->data['undelete']) { ?><div id="contentSub2"><?php     $this->html('undelete') ?></div><?php } ?>
-                                <?php if($this->data['newtalk'] ) { ?><div class="usermessage"><?php $this->html('newtalk')  ?></div><?php } ?>
-                                <?php if($this->data['showjumplinks']) { ?><div id="jump-to-nav"><?php $this->msg('jumpto') ?> <a href="#column-one"><?php $this->msg('jumptonavigation') ?></a>, <a href="#searchInput"><?php $this->msg('jumptosearch') ?></a></div><?php } ?>
-                        <!-- start content -->
-                                <?php $this->html('bodytext') ?>
-                                <?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
-                        <!-- end content -->
-                        <div class="visualClear"></div>
+                    <div id="content"> <!-- required for Semantic toolbar -->
+                        <!-- div from mw 1.13 removed 1.15 -->
+                        <div id="bodyContent">
+                            <h3 id="siteSub"><?php $this->msg('tagline') ?></h3>
+                            <div id="contentSub"><?php $this->html('subtitle') ?></div>
+                                    <?php if($this->data['undelete']) { ?><div id="contentSub2"><?php     $this->html('undelete') ?></div><?php } ?>
+                                    <?php if($this->data['newtalk'] ) { ?><div class="usermessage"><?php $this->html('newtalk')  ?></div><?php } ?>
+                                    <?php if($this->data['showjumplinks']) { ?><div id="jump-to-nav"><?php $this->msg('jumpto') ?> <a href="#column-one"><?php $this->msg('jumptonavigation') ?></a>, <a href="#searchInput"><?php $this->msg('jumptosearch') ?></a></div><?php } ?>
+                            <!-- start content -->
+                                    <?php $this->html('bodytext') ?>
+                                    <?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
+                            <!-- end content -->
+                            <div class="visualClear"></div>
+                        </div>
                     </div>
-
-
 
                 </div>
             </td>
             </tr>
             </table>
-            <div id="ontomenuanchor"/>
+            <div id="ontomenuanchor">
             
             </div><!-- end of the left (by default at least) column -->
             <div class="visualClear"></div>
