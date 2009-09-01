@@ -347,6 +347,16 @@ QIHelper.prototype = {
 		if (!this.queries[0].isEmpty()) { // only do this if the query is not
 											// empty
 			var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
+			
+			// replace variables
+			var xsdDatetime = /(\d{4,4}-\d{1,2}-\d{1,2})T(\d{2,2}:\d{2,2}:\d{2,2})Z/;
+			var currentDate = new Date().toJSON();
+			var matches = xsdDatetime.exec(currentDate);
+			var nowDateTime = matches[1] + "T" + matches[2];
+			var todayDateTime = matches[1] + "T00:00:00";
+			ask = ask.replace(/\{\{NOW\}\}/gi, nowDateTime);
+			ask = ask.replace(/\{\{TODAY\}\}/gi, todayDateTime);
+			
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
@@ -928,7 +938,7 @@ QIHelper.prototype = {
 				} else if (parameterTypes[0] == '_dat') {
 					ac_constraint = 'constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"';
     			} else {
-					ac_constraint = 'constraints="values: annotation-value: '+propertyName+'"';
+					ac_constraint = 'constraints="annotation-value: '+propertyName+'"';
 				}
 				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3"/>';
 				
