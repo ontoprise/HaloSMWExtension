@@ -1,3 +1,10 @@
+
+#smwh_center{
+    position: absolute;
+    left: 50%;
+    width: 1024px;
+    margin-left: -512px;
+}
 /* Head */
 
 #smwh_logo{
@@ -118,6 +125,49 @@ ul.smwh_menulist div.smwh_menubody {
     z-index: 1;
 }
 
+
+/* aggregated functions in tab */
+
+#aggregated {
+    border-right: none !important;
+}
+
+#tabsright ul.smwh_menulist{
+    -moz-padding-start: 0px;
+    margin: 0em;
+}
+
+#tabsright ul.smwh_menulist li {
+	  display: inline;
+	  position: relative;
+}
+
+#tabsright ul.smwh_menulist div.smwh_menuhead {
+    display: inline-block;
+}
+
+#tabsright ul.smwh_menulist div.smwh_menubody {
+    display: none;
+}
+
+#tabsright ul.smwh_menulist .hovering div.smwh_menubody {
+    display: block;
+}
+
+#tabsright ul.smwh_menulist div.smwh_menubody {
+    background-color: #FDD;
+    width: auto;
+    position: absolute;
+    top: 1.2em;
+    padding: 5px;
+    z-index: 10;
+    right: 0em;
+    -moz-border-radius: 5px;
+}
+
+
+
+/* Page content */
 #column-content{
     border: 1px solid;
     padding: 5px;
