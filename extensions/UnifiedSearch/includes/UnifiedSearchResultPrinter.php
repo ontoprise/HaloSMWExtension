@@ -17,8 +17,10 @@ class UnifiedSearchResult {
 
 	public function __construct($luceneResult, $terms) {
 		$this->luceneResult = $luceneResult;
-		$this->terms = $terms;
-		array_walk($this->terms, create_function('& $array,$i', '$array[$i] = preg_quote($array[$i]);'));
+		$this->terms = array();
+		foreach($terms as $t) {
+			array_push($this->terms, preg_quote($t));
+		}
 	}
 
 	public function getTitle() {
