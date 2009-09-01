@@ -202,7 +202,7 @@ class OntoSkin3Template extends QuickTemplate {
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
-
+            <div id="smwh_center">
             <!-- Header -->
             <div id="smwh_head">
                 <!--  Logo -->
@@ -247,7 +247,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <!-- insert treeview if present -->
                 <?php $tree=$this->treeviewBox();
                 if($tree!=false){?>
-                    <td valign="top" width="400px">
+                    <td valign="top" width="25%">
                         <?php echo $tree; ?>
                     </td>
                 <?php } ?>
@@ -280,7 +280,7 @@ class OntoSkin3Template extends QuickTemplate {
             </td>
             </tr>
             </table>
-            <div id="ontomenuanchor">
+            <div id="ontomenuanchor"/>
             <div class="visualClear"></div>
             <div id="footer">
                 <?php echo $this->buildQuickLinks(); ?>
@@ -294,6 +294,7 @@ class OntoSkin3Template extends QuickTemplate {
 
         -->
                 <?php endif; ?>
+            </div>
         </div>
     </body></html>
         <?php
