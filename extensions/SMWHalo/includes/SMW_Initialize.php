@@ -431,10 +431,14 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	if (array_key_exists('constraints', $other_args))
 	$constraints = 'constraints="'.str_replace(';', '|', $other_args['constraints']).'" ';
 	
+	// pasteNS attribute prints out namespaces too
+	$pasteNS = '';
+	if (array_key_exists('pasteNS', $other_args)) $pasteNS = 'pasteNS="true"';
+	
 	// call now the general function of SF that creates the <input> field
 	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	// add the two field constraints and typeHint in the result output html
-	$html = str_replace('/>', " $constraints/>", $html);
+	$html = str_replace('/>', " $constraints $pasteNS/>", $html);
 	return $html;
 }
 

@@ -23,8 +23,6 @@ var SMW_INSTANCE_NS = 0;
 var SMW_TEMPLATE_NS = 10;
 var SMW_TYPE_NS = 104;
 
-// Halo defined namespaces constants
-var SMW_WEBSERVICE_NS = 200;
 
 // special 
 var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
@@ -39,6 +37,42 @@ function autoCompletionsOptions(request) {
     autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
     document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
 }
+
+/**
+ * Namespace registry. Allows other extension to register their own namespaces.
+ * 
+ */
+var ACNamespaceRegistry = Class.create();
+ACNamespaceRegistry.prototype = {
+	initialize: function() {
+		this.imageregistry = new Object();
+		this.namespacePrefixRegistry = new Object();
+		this.registerNamespace(SMW_CATEGORY_NS, "/extensions/SMWHalo/skins/category.gif");
+		this.registerNamespace(SMW_PROPERTY_NS, "/extensions/SMWHalo/skins/property.gif");
+		this.registerNamespace(SMW_INSTANCE_NS, "/extensions/SMWHalo/skins/instance.gif");
+		this.registerNamespace(SMW_TEMPLATE_NS, "/extensions/SMWHalo/skins/template.gif");
+		this.registerNamespace(SMW_TYPE_NS, "/extensions/SMWHalo/skins/template.gif"); //FIXME: separate icon
+		this.registerNamespace(SMW_ENUM_POSSIBLE_VALUE_OR_UNIT, "/extensions/SMWHalo/skins/enum.gif");
+		                     
+	},
+	
+	/**
+	 * Registers a new namespace with its image and namespace prefix.
+	 * 
+	 * @param nsIndex Namespace index
+	 * @param imgPath Image path, relative to MW root
+	 * @param namespacePrefix Content language constant referring to the namespace prefix with colon.
+	 */
+	registerNamespace: function(nsIndex, imgPath) {
+		this.imageregistry[nsIndex] = imgPath;
+	},
+	
+	getImgPath: function(nsIndex) {
+		return this.imageregistry[nsIndex];
+	}
+}
+
+acNamespaceRegistry = new ACNamespaceRegistry();
 
 var AutoCompleter = Class.create();
 AutoCompleter.prototype = {
@@ -817,7 +851,7 @@ AutoCompleter.prototype = {
                     this.siw.matchCollection[j]
                         = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                               mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>").replace(/_/g, ' '),
-                              entry.getType(), entry.isInferred());
+                              entry.getType(), entry.getNsText(), entry.isInferred());
                 }
 
                 j++;
@@ -825,7 +859,7 @@ AutoCompleter.prototype = {
                 if (displayMatches) {
                     this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.isInferred());
                 }
 
                 j++;
@@ -833,7 +867,7 @@ AutoCompleter.prototype = {
                 if (displayMatches) {
                     this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.isInferred());
                 }
 
                 j++;
@@ -989,13 +1023,15 @@ AutoCompleter.prototype = {
 
         if ((selIndex = this.getCurrentlySelectedSmartInputItem()) != null) {
             addedValue = this.siw.matchCollection[selIndex].cleanValue;
-            this.insertTerm(addedValue, baseValue, this.siw.matchCollection[selIndex].getType());
+            this.insertTerm(addedValue, baseValue, this.siw.matchCollection[selIndex]);
             this.ignorePending = true;
         } else {
             smwhgLogger.log("", "AC", "close_without_selection");
         }
     },  //this.activateCurrentSmartInputMatch
-    insertTerm: function(addedValue, baseValue, type) {
+    insertTerm: function(addedValue, baseValue, entry) {
+    	var type = entry.getType();
+    	var nsText = entry.getNsText();
          // replace underscore with blank
         addedValue = addedValue.replace(/_/g, " ");
         
@@ -1075,14 +1111,8 @@ AutoCompleter.prototype = {
             var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
             var theString = (baseValue ? baseValue : "") + addedValue;
             if (pasteNS != null) {
-                switch(type) {
-                    
-                    case SMW_PROPERTY_NS: theString = gLanguage.getMessage('PROPERTY_NS','cont')+theString; break;
-                    case SMW_CATEGORY_NS: theString = gLanguage.getMessage('CATEGORY_NS','cont')+theString; break;
-                    case SMW_TEMPLATE_NS: theString = gLanguage.getMessage('TEMPLATE_NS','cont')+theString; break;
-                    case SMW_TYPE_NS: theString = gLanguage.getMessage('TYPE_NS','cont')+theString; break;
-                    case SMW_WEBSERVICE_NS: theString = gLanguage.getMessage('WEBSERVICE_NS','cont')+theString; break;
-                }
+            	
+                theString = nsText != null && nsText != '' ? nsText + ":" + theString : theString; 
             }
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
@@ -1339,9 +1369,10 @@ AutoCompleter.prototype = {
         	var content = children[i].firstChild.nodeValue;
         	var type = parseInt(children[i].getAttribute("type"));
         	var inferred = children[i].getAttribute("inferred") == "true";
+        	var nsText = children[i].getAttribute("nsText");
         	var extraContentTextNode = children[i].firstChild.nextSibling.firstChild;
         	var extraContent = extraContentTextNode != null ? extraContentTextNode.nodeValue : "";
-            collection[i] = new MatchItem(content, type, inferred, extraContent);
+            collection[i] = new MatchItem(content, type, nsText, inferred, extraContent);
         }
 
         return collection;
@@ -1351,14 +1382,16 @@ AutoCompleter.prototype = {
 
  // ----- Classes -----------
 
-function MatchItem(text, type, inferred, extraContent) {
+function MatchItem(text, type, nsText, inferred, extraContent) {
     var _text = text;
     var _type = type;
+    var _nsText = nsText;
     var _inferred = inferred;
     var _extraContent = extraContent;
 
     this.getText = function() { return _text; }
     this.getType = function() { return _type; }
+    this.getNsText = function() { return _nsText; }
     this.isInferred = function() { return _inferred; }
     this.getExtraContent = function() { return _extraContent; }
 }
@@ -1372,38 +1405,22 @@ function SmartInputWindow() {
     this.showCredit = false;
 }  //SmartInputWindow Object
 
-function SmartInputMatch(cleanValue, value, type, inferred) {
+function SmartInputMatch(cleanValue, value, type, nsText, inferred) {
     this.cleanValue = cleanValue;
     this.value = value;
     this.isSelected = false;
-    var _type = type;
     this.isInferred = inferred;
+    var _type = type;
+    var _nsText = nsText;
     
     this.getImageTag = function() {
-        if (_type == SMW_INSTANCE_NS) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/instance.gif\">";
-        } else if (_type == SMW_CATEGORY_NS) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/concept.gif\">";
-        } else if (_type == SMW_PROPERTY_NS) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/property.gif\">";
-        } else if (_type == SMW_TEMPLATE_NS) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/template.gif\">";
-        } else if (_type == SMW_TYPE_NS) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/template.gif\">"; // FIXME: separate icon for TYPE namespace
-        } else if (_type == SMW_ENUM_POSSIBLE_VALUE_OR_UNIT) {
-            return "<img src=\"" + wgServer + wgScriptPath
-                + "/extensions/SMWHalo/skins/enum.gif\">";
-        }
-
-        return "";  // do not return a tag, if type is unknown.
+    	var imgPath = acNamespaceRegistry.getImgPath(_type);
+    	return imgPath ? "<img src=\"" + wgServer + wgScriptPath
+                +imgPath+"\">" : _nsText+":";
     }
 
     this.getType = function() { return _type; }
+    this.getNsText = function() { return _nsText }
 }  //SmartInputMatch
 
  /**

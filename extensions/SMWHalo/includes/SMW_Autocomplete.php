@@ -350,6 +350,7 @@ class AutoCompletionRequester {
 		$xmlResult = '';
 		$extra = "";
 		$inferred = false;
+		$namespaceText = "";
 		$arity = count(reset($matches));
 
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
@@ -366,9 +367,10 @@ class AutoCompletionRequester {
 				$content = $title;
 			} else {
 				$typeAtt = "type=\"".$title->getNamespace()."\"";
+				$namespaceText = "nsText=\"".$title->getNsText()."\"";
                 $content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
 			}
-			$xmlResult .= "<match $typeAtt $inferredAtt>$content<extraContent>$extra</extraContent></match>";
+			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText>$content<extraContent>$extra</extraContent></match>";
 		}
 
 		return '<result>'.$xmlResult.'</result>';
