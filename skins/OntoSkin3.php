@@ -247,13 +247,13 @@ class OntoSkin3Template extends QuickTemplate {
                 <!-- insert treeview if present -->
                 <?php $tree=$this->treeviewBox();
                 if($tree!=false){?>
-                    <td width="30%">
+                    <td valign="top" width="400px">
                         <?php echo $tree; ?>
                     </td>
                 <?php } ?>
             
                 <!-- normal page content and tabs -->
-                <td width="*">
+                <td valign="top" width="*">
 
             <div id="smwh_tabs">
                 <?php echo $this->buildTabs(); ?>
