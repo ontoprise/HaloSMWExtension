@@ -22,6 +22,9 @@ var SMW_PROPERTY_NS = 102;
 var SMW_INSTANCE_NS = 0;
 var SMW_TEMPLATE_NS = 10;
 var SMW_TYPE_NS = 104;
+var SMW_HELP_NS = 12;
+var SMW_IMAGE_NS = 6;
+var SMW_USER_NS = 2
 
 
 // special 
@@ -46,12 +49,16 @@ var ACNamespaceRegistry = Class.create();
 ACNamespaceRegistry.prototype = {
 	initialize: function() {
 		this.imageregistry = new Object();
-		this.namespacePrefixRegistry = new Object();
-		this.registerNamespace(SMW_CATEGORY_NS, "/extensions/SMWHalo/skins/category.gif");
+		
+		// register default namespaces of MW and SMW
+		this.registerNamespace(SMW_CATEGORY_NS, "/extensions/SMWHalo/skins/concept.gif");
 		this.registerNamespace(SMW_PROPERTY_NS, "/extensions/SMWHalo/skins/property.gif");
 		this.registerNamespace(SMW_INSTANCE_NS, "/extensions/SMWHalo/skins/instance.gif");
 		this.registerNamespace(SMW_TEMPLATE_NS, "/extensions/SMWHalo/skins/template.gif");
-		this.registerNamespace(SMW_TYPE_NS, "/extensions/SMWHalo/skins/template.gif"); //FIXME: separate icon
+		this.registerNamespace(SMW_TYPE_NS, "/extensions/SMWHalo/skins/type.gif");
+		this.registerNamespace(SMW_HELP_NS, "/extensions/SMWHalo/skins/help.gif");
+		this.registerNamespace(SMW_HELP_NS, "/extensions/SMWHalo/skins/image.gif");
+		this.registerNamespace(SMW_USER_NS, "/extensions/SMWHalo/skins/user.gif");
 		this.registerNamespace(SMW_ENUM_POSSIBLE_VALUE_OR_UNIT, "/extensions/SMWHalo/skins/enum.gif");
 		                     
 	},
