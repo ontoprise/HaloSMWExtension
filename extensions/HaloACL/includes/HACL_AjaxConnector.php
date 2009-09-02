@@ -2122,6 +2122,7 @@ function getSDRightsPanel($sdId, $readOnly = false) {
 
     //attach predefined right texts
     foreach ($SD->getPredefinedRights(false) as $subSdId) {
+        $sdName = HACLSecurityDescriptor::nameForID($subSdId);
 
         $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false);
 
