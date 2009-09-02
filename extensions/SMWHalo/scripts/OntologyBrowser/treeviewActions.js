@@ -683,11 +683,7 @@ OBInstanceActionListener.prototype = {
 			alert(gLanguage.getMessage('OB_SELECT_INSTANCE'));
 			return;
 		}
-		if (commandID == SMW_OB_COMMAND_INSTANCE_DELETE) {
-			var doDelete = confirm(gLanguage.getMessage('OB_CONFIRM_INSTANCE_DELETION'));
-			if (doDelete) obInstanceMenuProvider.doCommand(commandID);
-			return;
-		}
+		
 		obInstanceMenuProvider.showContent(commandID,  'instanceList');
 	},
 	/**
