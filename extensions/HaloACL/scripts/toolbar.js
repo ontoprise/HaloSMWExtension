@@ -69,3 +69,24 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
     });
 };
 
+YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
+    if(callback == null){
+        callback = function(result){
+            alert("stdcallback:"+result);
+        }
+    }
+
+    var querystring = "rs="+action;
+
+    if(parameterlist != null){
+        for(param in parameterlist){
+            querystring = querystring + "&rsargs[]="+parameterlist[param];
+        }
+    }
+    new Ajax.Request("?action=ajax",{
+        method:'post',
+        onSuccess:callback,
+        onFailure:callback,
+        parameters:querystring
+    });
+};

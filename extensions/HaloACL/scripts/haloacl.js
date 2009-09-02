@@ -387,7 +387,7 @@ YAHOO.haloacl.togglePanel = function(panelid){
 };
 
 YAHOO.haloacl.removePanel = function(panelid,callback){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All data in this panel will get lost",{
+    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All entered data in this right will get los",{
      yes:function(){    
          var element = $(panelid);
          element.remove();
@@ -691,3 +691,51 @@ YAHOO.haloacl.removeHighlighting = function(){
         $(item).removeClassName("highlighted");
     });
 };
+
+
+YAHOO.haloaclrights.popup = function(id, label){
+
+    /*
+    if(YAHOO.haloaclrights.popupPanel == null){
+
+        YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
+            close:true,
+            visible:true,
+            draggable:true,
+            resizable:true,
+            context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
+        });
+        popupClose = function(type, args) {
+            //YAHOO.haloaclrights.popupPanel.destroy();
+        }
+        YAHOO.haloaclrights.popupPanel.subscribe("hide", popupClose);
+    }
+
+    YAHOO.haloaclrights.popupPanel.setHeader(label);
+    YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
+    YAHOO.haloaclrights.popupPanel.render();
+    YAHOO.haloaclrights.popupPanel.show();
+*/
+    var myPopup = new YAHOO.widget.Panel('popup_'+id,{
+        close:true,
+        visible:true,
+        draggable:true,
+        resizable:true,
+        context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
+    });
+    popupClose = function(type, args) {
+    //YAHOO.haloaclrights.popupPanel.destroy();
+    }
+    myPopup.subscribe("hide", popupClose);
+
+    myPopup.setHeader(label);
+    myPopup.setBody('<div id="popup_content_'+id+'">');
+    myPopup.render();
+    myPopup.show();
+    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
+        sdId:id,
+        readOnly:'true'
+    });
+
+};
+

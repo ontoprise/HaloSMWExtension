@@ -54,8 +54,12 @@ YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,c
 
 YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.counter++;
-    if(yestext == null){yestext = gLanguage.getMessage('ok'); };
-    if(notext == null){notext = gLanguage.getMessage('cancel');};
+    if(yestext == null){
+        yestext = gLanguage.getMessage('ok');
+    };
+    if(notext == null){
+        notext = gLanguage.getMessage('cancel');
+    };
 
     new Insertion.Bottom(renderedTo,"<div id='haloacl_notification"+YAHOO.haloacl.notification.counter+"' class='yui-skin-sam'>&nbsp;</div>");
 
@@ -104,3 +108,12 @@ YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,conten
 YAHOO.haloacl.notification.subscribeToElement = function(elementId, event, callback){
     YAHOO.util.Event.addListener($(elementId), event, callback);
 };
+
+YAHOO.haloacl.notification.showInlineNotification = function(content, targetdiv){
+    if(YAHOO.haloacl.debug)console.log("trying to add notification to targetdiv:"+targetdiv);
+
+    $(targetdiv).innerHTML = content;
+}
+YAHOO.haloacl.notification.hideInlineNotification = function(targetdiv){
+    $(targetdiv).innerHTML = "";
+}

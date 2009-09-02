@@ -13,12 +13,22 @@
 
 
 global $wgAjaxExportList;
-$wgAjaxExportList[] = "getHACLToolbar";
 
+$wgAjaxExportList[] = "getHACLToolbar";
+$wgAjaxExportList[] = "setToolbarChoose";
 
 
 global $wgHooks;
 $wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
+
+
+
+function setToolbarChoose($templateToUse){
+    global $wgUser;
+
+    $_SESSION['haloacl_toolbar'][$wgUser->getName()] = $templateToUse;
+    return "for user ". $wgUser->getName(). " will that template be used: "+$_SESSION['haloacl_toolbar'][$wgUser->getName()];
+}
 
 /**
  Adds
@@ -29,7 +39,6 @@ function AddHaclToolbar ($content_actions) {
     $html = <<<HTML
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
-            //YAHOO.haloacl.toolbar.loadContentToDiv('hacl_toolbarcontainer','getHACLToolbar',{title:'{$content_actions->mTitle}'});
             YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'{$content_actions->mTitle}'});
         </script>
 HTML;
@@ -102,11 +111,47 @@ function getHACLToolbar($articleTitle) {
     }
 
     $html = <<<HTML
+    <script>
+        $('wpSave').writeAttribute("type","button");
+        $('wpSave').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
+
+        YAHOO.haloacl.toolbar_handleSaveClick = function(element){
+            //var textbox = $('wpTextbox1');
+            var state  = $('haloacl_toolbar_pagestate').value;
+
+            if(state == "protected"){
+                var tmpvalue = $('haloacl_template_protectedwith').value;
+                //textbox.value = textbox.value + "{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}";
+                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:tmpvalue});
+
+            }else{
+                //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
+                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
+            }
+            //console.log("{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}");
+
+            element.form.submit();
+        };
+
+
+        YAHOO.haloacl.toolbar_updateToolbar = function(){
+            var state  = $('haloacl_toolbar_pagestate').value;
+            if(state == "protected"){
+                $('haloacl_template_protectedwith').show();
+            }else{
+                $('haloacl_template_protectedwith').hide();
+            }
+        };
+
+
+    </script>
+
+
         <div id="hacl_toolbarcontainer">
 
         <div id="hacl_toolbarcontainer_section1">
             Page state:&nbsp;
-            <select id="haloacl_toolbar_pagestate">
+            <select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">
 HTML;
     // bulding protected state indicator
     if($isPageProtected) {
@@ -127,7 +172,7 @@ HTML;
         $tpllist[] = $protectedWith;
     }
 
-    $html .= "&nbsp;with:&nbsp;<select>";
+    $html .= "&nbsp;with:&nbsp;<select id='haloacl_template_protectedwith'>";
     foreach($tpllist as $tpl) {
         if($tpl == $protectedWith) {
             $html .= "<option selected='true'>$tpl</option>";
@@ -148,8 +193,9 @@ HTML;
             <a target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
         </div>
     </div>
+
     <script>
-        console.log($('haloacl_toolbar_pagestate'));
+YAHOO.haloacl.toolbar_updateToolbar();
     </script>
 
 HTML;

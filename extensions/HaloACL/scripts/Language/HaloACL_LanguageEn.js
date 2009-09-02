@@ -42,7 +42,7 @@ var wgContLanguageStrings = {
         'delete'                : 'Delete',
         'to'                    : 'to',
         'from'                  : 'from',
-        'remove'                : 'Remove',
+        'remove'                : 'Remove'
 
 	
 }

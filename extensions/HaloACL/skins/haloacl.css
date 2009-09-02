@@ -250,7 +250,7 @@ button:hover{
 
 .haloacl_panel_nameDescr{
     float:left;
-    width:700px;
+    width:766px;
     height:18px;
     overflow:hidden;
 }
@@ -289,7 +289,7 @@ button:hover{
 
 .haloacl_panel_close{
     float:right;
-    padding:2px 8px 0 0;
+    padding:2px 3px 0 0;
 }
 .haloacl_panel_close img{
     border:0px solid;
@@ -297,7 +297,7 @@ button:hover{
 
 /* panel content */
 .haloacl_panel_content{
-    padding:13px 0 0 0;
+    padding:13px 0 13px 0;
     float:left;
     width:877px;
 
@@ -552,7 +552,7 @@ button:hover{
 .datatable_usergroups{
     font-size:10px!important;
     overflow:hidden;
-    width:240px;
+    width:237px;
 }
 
 .haloacl_grouptree_title{
@@ -593,7 +593,7 @@ button:hover{
     width:20px;
     height:20px;
     background:url(images/info.png) no-repeat;
-    float:right;
+    float:left;
 }
 
 .haloacl_editbutton {
@@ -884,7 +884,7 @@ button:hover{
 }
 
 .haloacl_whitelist_datatable_usersgroups{
-    width:250px;
+    width:500px;
     float:left;
 }
 .haloacl_whitelist_datatable td{
@@ -936,7 +936,7 @@ button:hover{
 }
 .haloacl_manageACL_right_description{
     float:right;
-    width:200px;
+    width:143px;
 }
 
 .haloacl_manageacl_contenttitle{
@@ -946,7 +946,7 @@ button:hover{
 
 #ManageExistingACLPanel{
     min-height:350px;
-    width:800px;
+    width:1000px;
     margin:10px;
 
 }
@@ -968,4 +968,24 @@ button:hover{
     background:none!important;
     border:none!important;
     font-weight:bold;
+}
+
+.haloacl_filter_input{
+    font-weight:bold;
+    color:#F23C21;
+}
+.haloacl_inline_notification{
+    font-weight:bold;
+    color:#F23C21;
+}
+.haloacl_quickacl_datatable_usersgroups{
+    float:left;
+    width:490px;
+}
+
+.datatable_user_link{
+    padding: 3px 3px 3px 0;
+}
+#create_acl_general_name{
+    width:200px;
 }

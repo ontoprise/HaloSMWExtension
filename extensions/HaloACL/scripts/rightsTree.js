@@ -315,8 +315,15 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '</span></td>';
 
-            sb[sb.length] = '<div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div>';
+            sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">';
+            sb[sb.length] = '</span></td>';
+
+
+            sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
+
+            sb[sb.length] = '</td>';
+
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
 
       
@@ -354,7 +361,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
 
 
-/*
+        /*
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -390,36 +397,6 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         return sb.join("");
     }
 });
-
-
-YAHOO.haloaclrights.popup = function(id, label){
-
-    if(YAHOO.haloaclrights.popupPanel == null){
-        
-        YAHOO.haloaclrights.popupPanel = new YAHOO.widget.Panel('popup_'+id,{
-            close:true,
-            visible:true,
-            draggable:true,
-            resizable:true,
-            context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
-        });
-        popupClose = function(type, args) {
-            //YAHOO.haloaclrights.popupPanel.destroy();
-        }
-        YAHOO.haloaclrights.popupPanel.subscribe("hide", popupClose);
-    }
-
-    YAHOO.haloaclrights.popupPanel.setHeader(label);
-    YAHOO.haloaclrights.popupPanel.setBody('<div id="popup_content_'+id+'">');
-    YAHOO.haloaclrights.popupPanel.render();
-    YAHOO.haloaclrights.popupPanel.show();
-
-    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
-        sdId:id,
-        readOnly:'true'
-    });
-
-};
 
 
 
@@ -711,7 +688,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="haloacl_manageACL_right_description"';
             sb[sb.length] = ' >';
-            sb[sb.length] = shortLabel;
+            //sb[sb.length] = shortLabel;
             sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton" ></div>';
             this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, { 
                 context:this.labelElId,
@@ -980,9 +957,16 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree){
         failure: function(oResponse) {
         }
     };
-    YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
-        query:'all'
-    },callback);
+    if(tree.treeType != null && tree.treeType != "readonly"){
+        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+            query:'all'
+        },callback);
+    }else{
+        var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate</type></types>');
+        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+            query:temp
+        },callback);
+    }
 };
 
 /*

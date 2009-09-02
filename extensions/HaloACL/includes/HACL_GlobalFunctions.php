@@ -168,7 +168,9 @@ function addNonSpecialPageHeader(&$out) {
         'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath.'/skins/haloacl_toolbar.css'
     ));
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+    
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
@@ -195,7 +197,7 @@ function haclAddHTMLHeader(&$out) {
         haclAddJSLanguageScripts($out);
 
 
-    // ---- SPECIAL-PAGE realted stuff ---
+        // ---- SPECIAL-PAGE realted stuff ---
 
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
@@ -247,7 +249,7 @@ function haclAddHTMLHeader(&$out) {
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
 
 
- 
+
         $out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
@@ -452,12 +454,12 @@ function haclfPageRenderingHash($hash) {
         $hash .= '!'.$wgUser->getId();
     }
     if (is_object($wgTitle)) {
-    	if ($wgTitle->getNamespace() == HACL_NS_ACL) {
-    		// How often do we have to say that articles in the namespace ACL
-    		// can not be cached ?
-    		$hash .= '!'.wfTimestampNow();
-    	}
-    	
+        if ($wgTitle->getNamespace() == HACL_NS_ACL) {
+        // How often do we have to say that articles in the namespace ACL
+        // can not be cached ?
+            $hash .= '!'.wfTimestampNow();
+        }
+
     }
     return true;
 }
@@ -536,14 +538,14 @@ function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages
     // content language file
     $lng = '/scripts/Language/HaloACL_Language';
     if (isset($wgUser)) {
-            $lng .= ucfirst($wgUser->getOption('language')).'.js';
-            if (file_exists($haclgIP . $lng)) {
-                    $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
-            } else {
-                    $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
-            }
-    } else {
+        $lng .= ucfirst($wgUser->getOption('language')).'.js';
+        if (file_exists($haclgIP . $lng)) {
+            $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
+        } else {
             $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
+        }
+    } else {
+        $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
     }
 
 }
