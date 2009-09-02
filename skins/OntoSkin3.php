@@ -145,8 +145,7 @@ class OntoSkin3Template extends QuickTemplate {
         <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
         <style type="text/css" media="screen,projection">
             @import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-colors.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-fonts.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-colorfont.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
             @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
         </style>
 
@@ -231,17 +230,27 @@ class OntoSkin3Template extends QuickTemplate {
 
             <div id="smwh_menu">
                         <!-- Halo Menu -->
+                        <div id="home">
+                            <a href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
+                               echo $skin->tooltipAndAccesskey('p-logo'); ?>>
+                                <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/menue_mainpageicon.gif" alt="mainpage"/>
+                            </a>
+                        </div>
                         <?php echo $this->buildMenuHtml(); ?>
 
 
             </div>
 
             <div id="smwh_breadcrumbs">
+                <div id="thispage">
+                    <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/breadcrumb_pfeil.gif"/>
+                    <?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title'); ?>
+                </div>
                 <div id="breadcrump">
 		</div>
             </div>
-
-            <table width="100%">
+            <div id="mainpage">
+            <table id="mainpagetable" width="100%">
             <tr>
 
                 <!-- insert treeview if present -->
@@ -280,11 +289,12 @@ class OntoSkin3Template extends QuickTemplate {
             </td>
             </tr>
             </table>
-            <div id="ontomenuanchor"/>
+            </div>
             <div class="visualClear"></div>
             <div id="footer">
                 <?php echo $this->buildQuickLinks(); ?>
         </div>
+            <div id="ontomenuanchor"></div>
                 
                 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
                 <?php $this->html('reporttime') ?>
@@ -306,19 +316,17 @@ class OntoSkin3Template extends QuickTemplate {
         global $wgUseTwoButtonsSearchForm;
         ?>
 <div id="smwh_search" class="portlet">
-    <h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
     <div id="searchBody" class="pBody">
-        <form action="<?php $this->text('wgScript') ?>" id="searchform"><div>
+        <form action="<?php $this->text('wgScript') ?>" id="searchform">
                 <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                <input id="searchInput" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
-                        if( isset( $this->data['search'] ) ) {
-                                   ?> value="<?php $this->text('search') ?>"<?php } ?> />
-                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> /><?php if ($wgUseTwoButtonsSearchForm) { ?>&nbsp;
-                <input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> /><?php } else { ?>
+                <input id="searchInput" name="search" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
+                     value="<?php $this->msg('smw_search_this_wiki'); ?>"/>
 
-                <div><a href="<?php $this->text('searchaction') ?>" rel="search"><?php $this->msg('powersearch-legend') ?></a></div><?php } ?>
+                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_go.gif' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
+                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_search.gif' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
 
-            </div></form>
+
+        </form>
     </div>
 </div>
     <?php
@@ -505,7 +513,7 @@ class OntoSkin3Template extends QuickTemplate {
     function buildMenuHtml() {
         $rawmenu = $this->getMenuItems();
         $index = 0;
-        $menu.= "<ul id=\"menuleft\" class=\"smwh_menulist\">";
+        $menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
         foreach($rawmenu as $menuName => $menuItems) {
             $menu.= "<li class=\"smwh_menulistitem\">";
             $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">".$this->parseWikiText($menuName)."</div>";

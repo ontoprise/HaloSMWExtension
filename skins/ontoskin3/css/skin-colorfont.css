@@ -1,0 +1,46 @@
+#smwh_head {
+    background: #FFF;
+}
+
+#smwh_head a {
+    color: #116988;
+}
+
+#searchInput{
+    border-color: #edede7;
+}
+
+#smwh_menu {
+    background-image: url(../img/menue.gif);
+}
+
+
+/* main page*/
+.tab{
+    background-color: #FFF;
+    border-color: #cacac4;
+}
+
+#column-content{
+    border-color: #cacac4;
+    background-color: #FFF;
+}
+
+#mainpage{
+    background-color: #edede7;
+}
+
+#mainpagetable{
+    background-color: #edede7;
+}
+
+ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a {
+    color: #FFF;
+    font-weight: 900;
+}
+
+#footer{
+    background-color: #228e9e;
+    background-image: url(../img/backgr_footer.gif);
+    background-repeat: repeat-x;
+}

@@ -1,3 +1,19 @@
+/**
+* Global
+*/
+
+.mediawiki{
+	font-family: sans-serif;
+}
+
+.mediawiki a{
+    text-decoration: none;
+}
+
+.mediawiki a img{
+	border-width: 0px;
+}
+
 
 #smwh_center{
     position: absolute;
@@ -5,7 +21,19 @@
     width: 960px;
     margin-left: -480px;
 }
+
 /* Head */
+
+
+#smwh_head{
+	position: relative;
+	min-height: 70px;
+	max-height: 135px;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	overflow: hidden;
+}
 
 #smwh_logo{
     float: left;
@@ -17,12 +45,26 @@
 
 #smwh_search{
     float: right;
+    position: absolute;
+    bottom: 5px;
+    right: 	15px;
+}
+
+#searchInput{
+    position: relative;
+    top: -10px;
+    border-style: solid;
 }
 
 /* Menu */
 
+#home{
+    float: left;
+}
+
 #smwh_menu{
     clear: both;
+    height: 31px;
 }
 
 #smwh_menu .editsection{
@@ -30,13 +72,22 @@
 }
 
 ul.smwh_menulist{
-    -moz-padding-start: 0px;
+    padding: 0px;
     margin: 0em;
+}
+
+ul.smwh_menulist div.smwh_menuhead > p {
+    margin: 6px;
+}
+
+ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
+    text-decoration: underline;
 }
 
 ul.smwh_menulist li {
 	  display: inline;
 	  position: relative;
+          margin-left: 10px;
 }
 
 ul.smwh_menulist div.smwh_menuhead {
@@ -79,6 +130,11 @@ ul.smwh_menulist div.smwh_menubody {
 
 /* breadcrumbs */
 
+#thispage{
+    float: left;
+    margin-right: 10px;
+}
+
 #smwh_breadcrumbs{
     clear: both;
 }
@@ -90,11 +146,14 @@ ul.smwh_menulist div.smwh_menubody {
 }
 
 .tab{
-    border-left: 1px solid;
-    border-right: 1px solid;
-    border-top: 1px solid;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-top-width: 1px;
+    border-top-style: solid;
     position: relative;
-    top: 0.0em;
+    top: 1px;
     margin-right: 5px;
     padding-left: 5px;
     padding-right: 5px;
@@ -165,11 +224,22 @@ ul.smwh_menulist div.smwh_menubody {
     -moz-border-radius: 5px;
 }
 
+#mainpage{
+    margin-top: 3px;
+}
 
+#mainpagetable{
+  margin-top: 10px;
+}
 
 /* Page content */
 #column-content{
-    border: 1px solid;
+    border-width: 1px;
+    border-style: solid;
     padding: 5px;
+}
+
+#footer{
+    padding: 10px;
 }
 
