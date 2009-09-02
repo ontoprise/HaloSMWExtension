@@ -1116,11 +1116,9 @@ AutoCompleter.prototype = {
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
             var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
-            var theString = (baseValue ? baseValue : "") + addedValue;
-            if (pasteNS != null) {
-            	
-                theString = nsText != null && nsText != '' ? nsText + ":" + theString : theString; 
-            }
+            var nsPrefix = nsText != null && nsText != '' ? nsText + ":"  : ""; 
+            var theString = (baseValue ? baseValue : "") + nsPrefix + addedValue;
+         
             this.siw.inputBox.value = theString;
             smwhgLogger.log(theString, "AC", "close_with_selection");
         }
