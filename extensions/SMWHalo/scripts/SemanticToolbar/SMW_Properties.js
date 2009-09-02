@@ -847,4 +847,5 @@ refreshOtherTabs: function () {
 };// End of Class
 
 var propToolBar = new PropertiesToolBar();
-Event.observe(window, 'load', propToolBar.callme.bindAsEventListener(propToolBar));
+if (typeof FCKeditor == 'undefined')
+    Event.observe(window, 'load', propToolBar.callme.bindAsEventListener(propToolBar));
