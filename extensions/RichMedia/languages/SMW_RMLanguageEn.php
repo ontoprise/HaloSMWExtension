@@ -60,10 +60,14 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_articlename' => '<b>Attached to article:</b> $1',
 		'smw_rm_uploadsuccess_closewindow' => 'You can now close this window.',	
 	
-		'smw_rm_embed_desc_link' => 'Click to visit the description page of $1.',
+		'smw_rm_embed_desc_link' => 'Click to visit the description page of $1 in top window.',
 		'smw_rm_noembed' => 'Your Browser does not support embedded objects.<br>Click <a href="$1">here</a> to download the file.',
 		'smw_rm_embed_notarget' => 'This is the FileViewer. You must specify a target in the URL;<br/>like \'Special:EmbedWindow?target=Image:File.ext\'.',
 		'smw_rm_embed_save' => 'Save $1.',
+		'smw_rm_embed_view' => 'View',
+		'smw_rm_embed_fullres'=> 'Full resolution',
+		'smw_rm_embed_fittowindow' => 'Fit to window',
+		'smw_rm_embed_desctext' => 'Description page',
 	);
 
 	protected $smwRMNamespaces = array(
