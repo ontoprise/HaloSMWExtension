@@ -120,7 +120,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +                $img = 'plus';
 +              }
 +              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;\" 
-+                onKeyDown=\"javascript:if (event.keyCode == 13){ smwCollapsingForm.switchVisibilityWithImg('{$form_name}_sec_{$section_num}');}\" 
++                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$form_name}_sec_{$section_num}');}\" 
 +                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$form_name}_sec_{$section_num}');\">
 +                <img id=\"{$form_name}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
 +                onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
