@@ -78,7 +78,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                } elseif ($sub_components[0] == 'chooser caption') {
                  $chooser_caption = $sub_components[1];
                }
-+              /*op-patch|BL|2009-08-28|CollapsableForms|AddForceopenTag|start*/
++              /*op-patch|BL|2009-08-28|CollapsingForms|AddForceopenTag|start*/
 +              elseif ($sub_components[0] == 'forceopen')
 +                $force_open = $sub_components[1];
 +              /*op-patch|BL|2009-08-28|end*/
@@ -90,7 +90,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              else
                 $form_text .= "<fieldset>\n";
 -            $form_text .= "<legend>$template_label</legend>\n";
-+            /*op-patch|BL|2009-08-28|RichMedia|CollapsingForms|start*/
++            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapseFunctionality|start*/
 +            // Add Javascript, curser style and sfgTabIndex for each legend
 +            // content was:
 +            // $form_text .= "<legend>$template_label</legend>\n";
@@ -207,7 +207,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 -
 +	
-+      /*op-patch|BL|2009-08-14|RichMedia|AddDivForCollapsingForms|start*/
++      /*op-patch|BL|2009-08-14|CollapsingForms|AddDivForCollapsingForms|start*/
 +      if($collapsable)
 +        $form_text .= "</div>"; //closing div for collapsing
 +      /*op-patch|BL|2009-08-14|end*/
