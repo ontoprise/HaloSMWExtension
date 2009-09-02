@@ -322,7 +322,10 @@ clicking the big arrows between the columns.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
 	'smw_tsa_tscversion' => 'TSC Version',
 	// Derived facts
-	'smw_df_derived_facts_about' => 'Derived facts about $1'
+	'smw_df_derived_facts_about' => 'Derived facts about $1',
+
+        //skin
+        'smw_search_this_wiki' => 'Search this wiki'
 
 	);
 

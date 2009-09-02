@@ -313,7 +313,10 @@ protected $smwUserMessages = array(
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
 	// Derived facts
-	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1'
+	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
+
+        //skin
+        'smw_search_this_wiki' => 'Wiki durchsuchen'
 	
 );
 
