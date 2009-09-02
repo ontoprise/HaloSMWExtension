@@ -46,7 +46,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 								   "Is parent of",
 								   "Question", "Gender",
 		                             "Has Capital", "Located In", "Population",
-		                             "Torsional moment");
+		                             "Torsional moment", "Has Voltage");
 
 		$rootProperties = smwfGetSemanticStore()->getRootProperties();
 
