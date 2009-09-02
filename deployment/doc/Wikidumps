@@ -37,7 +37,24 @@ Contents:
         Vendor (1..1) string
         Description (1..1) string
     
-    Use maintenance/export.bat/sh to create such a dump.
+        
+    export.php supports all options the default MW export script does + these 2:
+        
+        -b <bundlename> (bundlename always lowercase!)
+        --nocat (do not consider instances of categories belonging to the bundle)
+    
+    For convenience the shell script (export.bat/sh) is recommended. Its usage is:    
+    
+      export <bundlename> <bundledir>
+      
+      The directory gets created automatically.
+      
+    Example:
+    
+      export mybundle mybundledir
+      
+      Exports all pages belonging to the bundle 'mybundle' (including instances of categories of the bundle) and
+      returns a dump.xml and deploy.xml file in the directory 'mybundledir'    
     
 3. Import dump
 
