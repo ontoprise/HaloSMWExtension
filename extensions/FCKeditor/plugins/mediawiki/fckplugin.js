@@ -797,6 +797,8 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
+                        // disable the annotation toolbar if present
+                        if (gAnnotationPlugin.GetState()) gAnnotationPlugin.DisableAnnotationToolbar();
 	}
 })() ;
 
@@ -917,39 +919,69 @@ SMW_Annotate.prototype = {
 
     initialize: function() {
         this.editorArea = FCK.GetData();
-        this.IsActive = 0;
+        this.IsActive = FCK_TRISTATE_OFF;
         this.contextMenu = null;
         this.eventManager = new window.parent.EventManager();
     },
 
     Execute: function() {
-
-        if (this.IsActive == this.GetState())
-           this.IsActive = 1 - this.GetState()
-        if (this.IsActive) {
-            window.parent.AdvancedAnnotation.create();
-            window.parent.stb_control.stbconstructor();
-            window.parent.stb_control.createForcedHeader();
-            window.parent.obContributor.registerContributor();
-            window.parent.relToolBar.callme();
-            window.parent.catToolBar.callme();
-            window.parent.smw_help_callme();
-            window.parent.smw_links_callme();
-            SetEventHandler4AnnotationBox();
-        } else {
-            window.parent.AdvancedAnnotation.unload();
-            window.parent.Event.stopObserving(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
-            window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-        }
+        if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
+            return FCK_TRISTATE_DISABLED ;
+        if (!this.IsActive)
+            this.EnableAnnotationToolbar();
+        else
+            this.DisableAnnotationToolbar();
 
     },
 
     GetState: function() {
-        if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
-            return FCK_TRISTATE_DISABLED ;
-        return this.IsActive ? FCK_TRISTATE_ON : FCK_TRISTATE_OFF ;
+        return this.IsActive;
     },
-    
+
+    /**
+     * enable the anntoation toolbar (usually when clicking the button in the
+     * FCK toolbar)
+     *
+     * @access private
+     */
+    EnableAnnotationToolbar: function() {
+        this.IsActive = FCK_TRISTATE_ON;
+        window.parent.AdvancedAnnotation.create();
+        window.parent.stb_control.stbconstructor();
+        window.parent.stb_control.createForcedHeader();
+        window.parent.obContributor.registerContributor();
+        window.parent.relToolBar.callme();
+        window.parent.catToolBar.callme();
+        window.parent.smw_help_callme();
+        window.parent.smw_links_callme();
+        SetEventHandler4AnnotationBox();
+    },
+
+    /**
+     * disable the anntotation toolbar (usually when clicking the button in the
+     * FCK toolbar or switching to wiki text). If the context menu is active
+     * remove this as well.
+     *
+     * @access private
+     */
+    DisableAnnotationToolbar: function() {
+        this.IsActive = FCK_TRISTATE_OFF;
+        HideContextPopup();
+        window.parent.AdvancedAnnotation.unload();
+        window.parent.Event.stopObserving(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+        window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+    },
+
+    /**
+     * When the editor content has been changed, then the annotation toolbar
+     * must be updated to reflect changes that may have occured in the edited
+     * text. This function is called by the event keyup. Because of function
+     * keys that do not change the content, so it's always checked if the edited
+     * text has been changed. Only then the toolbar is rebuild.
+     *
+     * @access private
+     */
     EditorareaChanges : function() {
         if (this.editorArea != FCK.GetData()) {
             window.parent.relToolBar.fillList();
@@ -959,6 +991,13 @@ SMW_Annotate.prototype = {
     }
 }
 
+// the following functions are defined in the global scope, because I had problems
+// to access the correct instance of the class, when is must be done in an event
+// handler.
+
+/**
+ * reomove the context menu from the DOM tree
+ */
 HideContextPopup = function() {
     if (fckPopupContextMenu) {
         fckPopupContextMenu.remove();
@@ -966,6 +1005,11 @@ HideContextPopup = function() {
     }
 }
 
+/**
+ * fetches the current selected text from the gEditInterface (i.e. the FCK editor
+ * area) and creates a context menu for annotating the selected text or modifying
+ * the selected annotation.
+ */
 CheckSelectedAndCallPopup = function() {
         // handle here if the popup box for a selected annotation must be shown
         var selection = gEditInterface.getSelectionAsArray();
@@ -986,14 +1030,17 @@ CheckSelectedAndCallPopup = function() {
                 ShowCatToolbar(selection[0]);
             }
         }
-        /*
-       var selection = gEditInterface.getSelectedText();
-       if (selection) ShowNewToolbar(selection); */
-
 }
 
+// global variable for the context menu itself
 var fckPopupContextMenu;
 
+/**
+ * Create a new context menu for annotating a selection that is not yet annotated.
+ * Both property and category container will be shown.
+ *
+ * @param string value selected text
+ */
 ShowNewToolbar = function(value) {
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
@@ -1007,7 +1054,17 @@ ShowNewToolbar = function(value) {
         fckPopupContextMenu.showMenu();
 
 }
-    
+
+/**
+ * Create a new context menu for annotating a property.
+ * Only the property container will be shown.
+ * The selected text is the representation at least. If value and represenation
+ * are equal then the selected text is the value as well.
+ *
+ * @param string name of the property
+ * @param string value of the property
+ * @param string representation of the property
+ */
 ShowRelToolbar = function(name, value, show) {
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
@@ -1018,6 +1075,13 @@ ShowRelToolbar = function(name, value, show) {
         fckPopupContextMenu.showMenu();
 }
 
+/**
+ * Create a new context menu for annotating a category.
+ * Only the category container will be shown.
+ * The selected text is the category name.
+ *
+ * @param string name selected text
+ */
 ShowCatToolbar = function(name) {
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
@@ -1039,15 +1103,29 @@ function SetEventHandler4AnnotationBox() {
 }
 
 
-
+/**
+ * Class which has the same functionality as SMWEditInterface except for the fact
+ * that this must work for the FCK Editor.
+ * This class provides access to the edited text, returns a selection, changes
+ * the content etc.
+ * Basically this will be used in the Annotation toolbar.
+ */
 var FCKeditInterface = window.parent.Class.create();
 FCKeditInterface.prototype = {
 
     initialize: function() {
+        // if set, contains the new text that will be inserted in the editor area
         this.newText = '';
+        // the selection in the editor window may be null if selection is invalid.
+        // When set, at least element 0 is set. All other are optional depending
+        // on the selected element.
+        // 0 => the selected text
+        // 1 => namespace number (14 => Category, 102 => Property)
+        // 2 => name of the property/category
+        // 3 => value of the property
+        // 4 => representation of the property
         this.selection = Array();
-        this.start = -1;
-        this.end = -1;
+        // the HTML element that contains the selected text
         this.selectedElement = null;
     },
 
@@ -1059,55 +1137,14 @@ FCKeditInterface.prototype = {
     * @return string selected text or null
     * */
     getSelectedText: function() {
-        
         this.getSelectionAsArray();
         return (this.selection.length > 0) ? this.selection[0] : null;
-        
-        // selected element node
-        var selectedElement = FCKSelection.GetSelectedElement();
-        // selection text only without html mark up
-        var fckSelection = FCKSelection.GetSelection();
-        // parent element of the selected text (mostly a <p>)
-        var parent = FCKSelection.GetParentElement();
-        // (partly) selected text within these elements can be annotated.
-        var goodNodes = ['P', 'B', 'I', 'U', 'S'];
-        var wikitext;
-        if (!fckSelection || fckSelection.anchorNode.wholeText == "") return "";
-        if (selectedElement) {
-            wikitext = this.selectAllInnerContent(selectedElement);
-            if (wikitext) return wikitext;
-            for (var i = 0; i < goodNodes.length; i++) {
-                if (selectedElement.tagName == goodNodes[i])
-                    return FCK.DataProcessor.ConvertToDataFormat(selectedElement, false, true);
-            }
-        }
-        wikitext = this.selectAllInnerContent(parent);
-        if (wikitext) return wikitext;
-        for (var i = 0; i < goodNodes.length; i++) {
-            if (parent.tagName == goodNodes[i]) {
-                var div = document.createElement('div');
-                div.innerHTML = fckSelection;
-                return FCK.DataProcessor.ConvertToDataFormat(div, true, true);
-            }
-        }
-
-        return null;
-
-
-    },
-
-    selectAllInnerContent: function( node ) {
-        if ((node.tagName == 'SPAN' &&
-            (node.className == 'fck_mw_category' || node.className == 'fck_mw_property')) ||
-            (node.tagName == 'A')) {
-            return FCK.DataProcessor.ConvertToDataFormat(node, false, true);
-        }
-        return;
     },
 
     /**
      * Get the current selection of the FCKeditor and replace it with the
-     * annotated value. This is a category or property annotation.
+     * annotated value. This works on a category or property annotation only.
+     * All other input is ignored and nothing will be replaced.
      *
      * @access public
      * @param  string text wikitext
@@ -1196,6 +1233,12 @@ FCKeditInterface.prototype = {
         }
     },
 
+    /**
+     * returns the element were the selection is in.
+     *
+     * @access private
+     * @return HtmlNode
+     */
     getSelectedElement: function() {
         return this.selectedElement;
     },
@@ -1343,6 +1386,8 @@ FCKeditInterface.prototype = {
    /**
     * Checks the current selection and returns the html content of the
     * selection.
+    * i.e. select: "perty value show" and the returned string would be:
+    * <span class="fck_mw_property property="myName">property value shown</span>
     *
     * @access private
     * @param  void
@@ -1384,33 +1429,13 @@ FCKeditInterface.prototype = {
         return html.replace(/^\s*/, '').replace(/\s*$/, ''); // trim the selected text
     },
 
-    setSelectionRange: function(start, end) {
-        var html = FCK.GetData().substring(start, end - start);
-        alert('setSeletionRange: ' +html)
-        if (html.indexOf('class="fck_mw_property"') != -1) {
-            this.selection[0] = html.replace(/<[^>]*>([^<]*)<[^>]*>/, '$1');
-            this.selection[1] = 102;
-            var val = html.replace(/.*property="(.*?)".*/, '$1');
-            if (val.indexOf('::') != -1) {
-                this.selection[2] = val.substring(0, val.indexOf('::'));
-                this.selection[3] = val.substring(val.indexOf('::') +2);
-            } else {
-                this.selection[2] = val;
-            }
-        }
-        else if (html.indexOf('class="fck_mw_category"') != -1) {
-            this.selection[0] = html.replace(/<[^>]*>([^<]*)<[^>]*>/, '$1');
-            this.selection[1] = 14;
-        }
-    },
-
-    getTextBeforeCursor: function() {
-        
-    },
-    
+    // not needed but exists for compatiblity reasons
+    setSelectionRange: function(start, end) {},
+    // not needed but exists for compatiblity reasons
+    getTextBeforeCursor: function() {},
+    // not needed but exists for compatiblity reasons. The handling of selecting
+    // the complete annotation is done in the getSelectionAsArray()
     selectCompleteAnnotation: function() {}
-
-
 
 };
 
