@@ -18,7 +18,7 @@
     background: url(../img/menue_trennstrich.gif) right no-repeat;
 }
 .smwh_menuhead:hover {
-    background-image: url(../img/menue_hover.gif);
+    background: url(../img/menue_hover.gif) repeat-x;
 }
 
 ul.smwh_menulist div.smwh_menubody {
