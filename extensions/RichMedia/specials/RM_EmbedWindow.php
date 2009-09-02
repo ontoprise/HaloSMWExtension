@@ -125,7 +125,7 @@ class EmbedWindowForm {
 		//TODO: language!
 		$html = <<<END
 		<div style="border:1px solid black;">
-			<table style="padding:0px;margin:0px">
+			<table style="padding:0px;margin:0px" cellspacing="0" cellpadding="0">
 				<tr style="top: 0px; right: 0px; bottom: 0px; left: 0px;background-color:#0091A6;margin:0px">
 					<td style="left:0px;border-right:1px solid black;background-color:white;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;font-size:larger;font-weight:bold">
 						FileViewer
@@ -143,12 +143,12 @@ class EmbedWindowForm {
 					<td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">Save file</td>
 					<td style="border-right:1px dotted black;padding-top:0px;padding-bottom:0px;padding-right:10px;color:white;">
 						<a href="{$imagePath}">
-							<img title="$descLinkAlt" src="{$wgServer}{$smwgRMScriptPath}/skins/this_file_pointer.png" style="vertical-align:middle;border-width:0px"></img></a>
+							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px"></img></a>
 					</td>
 					<td style="padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;">Description page:</td>
 					<td style="border-right:1px solid black;padding-top:0px;padding-bottom:0px;padding-right:10px;color:white;">
-						<a href="{$nt->getFullURL()}" target="_top" alt="{$descLinkAlt}">
-							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/this_file_pointer.png" style="vertical-align:middle;border-width:0px"></img></a>
+						<a href="{$nt->getFullURL()}" target="_top">
+							<img title="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img></a>
 					</td>
 				</tr>
 			</table>
@@ -159,7 +159,7 @@ END;
 		<embed style="margin-top:5px" src="{$imagePath}" width="{$embedWidth}" height="{$embedHeight}" autostart="0" showcontrols="1" showstatusbar="1" align="middle"/>
 		<noembed>{$noEmbedMsg}</noembed>
 END;
-		$javascriptText = "$('')";
+		$javascriptText = "";
 		$wgOut->addHTML($html);
 
 	}
