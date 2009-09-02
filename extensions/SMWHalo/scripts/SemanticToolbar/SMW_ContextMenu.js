@@ -171,7 +171,8 @@ setPosition: function(posX,posY){
  */
 showMenu: function(){
 	$('contextmenu').show();
-	if ($('cmCategoryContent')) {
+        var numberOfSubContainers = $('contextmenu').immediateDescendants().length;
+	if ($('cmCategoryContent') && numberOfSubContainers > 2) {
 		// The category section is initially folded in
 		$('cmCategoryContent').hide();
 	}
