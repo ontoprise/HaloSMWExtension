@@ -368,6 +368,54 @@ Index: includes/Linker.php
  		} else {
  			$s = $thumb->toHtml( array(
  				'desc-link' => true,
+Index: includes/MediaTransformOutput.php
+===================================================================
+--- includes/MediaTransformOutput.php	(revision 4716)
++++ includes/MediaTransformOutput.php	(working copy)
+@@ -87,11 +87,38 @@
+ 		if ( strval( $alt ) === '' ) {
+ 			$alt = $title->getText();
+ 		}
+-		return array(
+-			'href' => $this->file->getTitle()->getLocalURL( $query ),
+-			'class' => 'image',
+-			'title' => $alt
+-		);
++		/*op-patch|BL|2009-08-19|RichMedia|ImageOverlay|start*/
++		// Check if it's an image, were's not already in the overlay and preview tag is set
++		// content was:
++		// return array(
++		//	'href' => $this->file->getTitle()->getLocalURL( $query ),
++		//	'class' => 'image',
++		//	'title' => $alt
++		// );
++		global $wgRequest, $wgRMImagePreview;
++		$loc = $wgRequest->getText('title');
++		RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++		if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
++			$queryString = "target=".$title->getPrefixedText();
++			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
++			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
++			$rev = "height:500 width:700";
++			return array(
++				'href' => $uploadWindowUrl,
++				'class' => 'image',
++				'title' => $alt,
++				'rev' => 'height:500 width:700',
++				'rel' => 'iframe'
++			);
++		}
++		else {
++			return array(
++				'href' => $this->file->getTitle()->getLocalURL( $query ),
++				'class' => 'image',
++				'title' => $alt
++			);
++		}
++		
+ 	}
+ }
+ 
 Index: includes/Namespace.php
 ===================================================================
 --- includes/Namespace.php	(revision 4292)
