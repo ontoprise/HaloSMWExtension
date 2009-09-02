@@ -306,7 +306,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		} while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-		$res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
+		$res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred, property');
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -386,7 +386,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         } while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred, property');
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -473,7 +473,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         } while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties');
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred, property');
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -505,7 +505,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
             $collation = 'COLLATE '.$smwgDefaultCollation;
         }
         // create virtual tables
-        $db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARCHAR(255), namespace INT(11))
+        $db->query( 'CREATE TEMPORARY TABLE smw_cc_propertyinst (title VARCHAR(255), namespace INT(11), inferred ENUM(\'true\',\'false\'))
                     TYPE=MEMORY', 'SMW::getNumberOfPropertyInstantiations' );
       
 
@@ -518,9 +518,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         
         $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT value_xsd AS title, -1 AS namespace FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT value_xsd AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "false" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         
         $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
         // maximum iteration length is maximum property tree depth.
@@ -531,9 +531,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
             $db->query('INSERT INTO smw_cc_properties_sub (SELECT DISTINCT i.smw_title AS property FROM '.$smw_subs2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title IN (SELECT * FROM smw_cc_properties_super))');
 
             $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT value_xsd AS title, -1 AS namespace FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT value_xsd AS title, -1 AS namespace, "true" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
             $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "true" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
             
 
             // copy subcatgegories to supercategories of next iteration
@@ -551,15 +551,15 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 
-        $res = $db->query('SELECT DISTINCT title, namespace FROM smw_cc_propertyinst');
+        $res = $db->query('SELECT DISTINCT title, namespace, inferred FROM smw_cc_propertyinst ORDER BY inferred, title');
 
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
                 if ($row->namespace == -1) {
-                    $result[] = $row->title;
+                    $result[] = array($row->title, $row->inferred == 'true');
                 } else {
-                    $result[] = Title::newFromText($row->title, $row->namespace);
+                    $result[] = array(Title::newFromText($row->title, $row->namespace), $row->inferred == 'true');
                 }
             }
         }
