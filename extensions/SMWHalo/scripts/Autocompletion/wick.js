@@ -1413,10 +1413,15 @@ function SmartInputMatch(cleanValue, value, type, nsText, inferred) {
     var _type = type;
     var _nsText = nsText;
     
+    /**
+     * Shows namespace icon or namespace as text.
+     * In case of primitive values neither of that.
+     */
     this.getImageTag = function() {
     	var imgPath = acNamespaceRegistry.getImgPath(_type);
+    	var namespaceText = _nsText != null ? _nsText+":" : "";
     	return imgPath ? "<img src=\"" + wgServer + wgScriptPath
-                +imgPath+"\">" : _nsText+":";
+                +imgPath+"\">" : namespaceText;
     }
 
     this.getType = function() { return _type; }
