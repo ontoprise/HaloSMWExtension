@@ -365,7 +365,14 @@ class DALReadPOP3 implements IDAL {
 
 	private function decodeBodyPart($bodyPart, $encoding){
 		if ($encoding == 4){
+			if(!mb_check_encoding($bodyPart, "UTF-8")){
+				$bodyPart = utf8_encode($bodyPart);
+			}
+		} else if ($encoding == 4){
 			$bodyPart = quoted_printable_decode($bodyPart);
+			if(!mb_check_encoding($bodyPart, "UTF-8")){
+				$bodyPart = utf8_encode($bodyPart);
+			}
 		}else if ($encoding == 3){
 			$bodyPart = base64_decode($bodyPart);
 		}
