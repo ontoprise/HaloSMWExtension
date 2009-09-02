@@ -215,7 +215,11 @@ class TermImportBot extends GardeningBot {
 		
 		//echo("\n\n".$terms."\n\n");
 		
-		$parser = new SimpleXMLElement($terms, $termSXE);
+		//$file = fopen("d:/result.txt", w);
+		//fwrite($file, $terms);
+		//fclose($file);
+		
+		$parser = new SimpleXMLElement($terms, LIBXML_NOCDATA);
 		
 		$numTerms = count($parser->children());
 		echo("\nNumber of terms: ".$numTerms."\n");
@@ -229,7 +233,7 @@ class TermImportBot extends GardeningBot {
 			//check if this is a callback term
 			if($term['callback']){
 				$callBackResult = 
-					$wil->executeCallBack($term['callback']
+					$wil->executeCallBack("".$term
 					,$mp ,$cp, $termImportName);
 				$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 				$cBRParser = new XMLParser($callBackResult);

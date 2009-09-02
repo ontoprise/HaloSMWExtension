@@ -13,6 +13,7 @@ class ICalParser {
 	public function parse($iCalString){
 		$lines = nl2br($iCalString);
 		$lines = explode("<br />", $lines);
+		$iCals = array();
 
 		for($i=0; $i<count($lines); $i++){
 			$line = $lines[$i];
@@ -37,6 +38,12 @@ class ICalParser {
 					break;
 				case 'END:VALARM':
 					$valarm_set = FALSE;
+					break;
+				case 'BEGIN:VEVENT':
+					$iCal = array();
+					break;
+				case 'END:VEVENT':
+					$iCals[] = $iCal;
 					break;
 				default:
 					unset ($field, $data, $prop_pos, $property);
@@ -157,7 +164,7 @@ class ICalParser {
 					}
 			}
 		}
-		return $iCal;
+		return $iCals;
 	}
 	
 	function convertDate($date){
