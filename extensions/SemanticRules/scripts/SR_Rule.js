@@ -315,6 +315,7 @@ getRuleTypes: function() {
 
 if (smwgEnableFlogicRules) {
 	var ruleToolBar = new RuleToolBar();
-	Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
+        if (typeof FCKeditor == 'undefined')
+            Event.observe(window, 'load', ruleToolBar.callme.bindAsEventListener(ruleToolBar));
 }
 
