@@ -72,7 +72,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
 YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     if(callback == null){
         callback = function(result){
-            alert("stdcallback:"+result);
+            console.log("stdcallback:"+result);
         }
     }
 
