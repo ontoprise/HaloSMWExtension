@@ -76,7 +76,7 @@ $haclgOpenWikiAccess = true;
 # false
 #    If it is <false>, semantic properties are not protected even if they have 
 #	 security descriptors.  
-$haclgProtectProperties = false;
+$haclgProtectProperties = true;
 
 ###
 # By design several databases can be connected to HaloACL. (However, in the first
@@ -98,7 +98,19 @@ $haclgBaseStore = HACL_STORE_SQL;
 # The name of the main namespace is 'Main'.
 $haclgUnprotectableNamespaces = array('Main');
 
-
+###
+# This is the name of the master template that is used as default rights template
+# for new users.
+# Every user can define his own default rights for new pages. He does this in a
+# security descriptor with the naming convention "ACL:Template/<username>". The 
+# content of this article is assigned to security descriptors that are automatically
+# generated for new pages. 
+# However, for new users there is no default template. With this setting you can
+# specify a master template (a name of an article) that is used to create a 
+# default template for new users.
+# The master template is a normal security descriptor that can contain the 
+# variable "{{{user}}}" that will be replaced by the user's name. 
+$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
 
 # load global functions
 require_once('HACL_GlobalFunctions.php');
