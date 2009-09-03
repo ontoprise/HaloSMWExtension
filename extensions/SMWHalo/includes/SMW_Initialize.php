@@ -439,12 +439,14 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	
 	// add the constraints in the result output html. Either in input field or a textarea
-	if (strpos($html, "/>") !== false) {
-	   $html = str_replace('/>', " $constraints $pasteNS/>", $html);
-	} else {
-	   $html = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS ".' $2', $html);
+	for($i = 0; $i < count($html); $i++) {
+		if (strpos($html[$i], "/>") !== false) {
+		   $html[$i] = str_replace('/>', " $constraints $pasteNS/>", $html[$i]);
+		} else {
+		   $html[$i] = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS ".' $2', $html[$i]);
+		}
 	}
-	
+	echo print_r($html, true);die();
 	return $html;
 }
 
