@@ -29,7 +29,7 @@ $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
-$wgCustomVariables = array('CURRENTUSER');
+$wgCustomVariables = array('CURRENTUSER', 'NOW', 'TODAY');
 
 
 
@@ -1267,7 +1267,14 @@ function wfGetCustomVariable(&$parser,&$cache,&$index,&$ret) {
 			$parser->disableCache(); # Mark this content as uncacheable
 			$ret = $GLOBALS['wgUser']->mName;
 			break;
-
+		case MAG_NOW:
+			$parser->disableCache(); # Mark this content as uncacheable
+			$ret = date("Y-m-d\\TH:i:s");
+			break;
+        case MAG_TODAY:
+            $parser->disableCache(); # Mark this content as uncacheable
+            $ret = date("Y-m-d")."T00:00:00";
+            break;
 	}
 	return true;
 }
