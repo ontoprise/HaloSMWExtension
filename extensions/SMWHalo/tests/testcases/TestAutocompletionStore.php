@@ -148,8 +148,10 @@ class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
     function testGetValueForAnnotation() {
         $exp_values = array("3 cylinder", "4 cylinder", "5 cylinder");
         $values = smwfGetAutoCompletionStore()->getValueForAnnotation("cyl", Title::newFromText("Has Engine", SMW_NS_PROPERTY));
-        foreach ($values as $v) {
-               $this->assertContains($v->getText(), $exp_values, $v->getText()." missing");
+        foreach ($values as $tuple) {
+        	   list($v, $inferred) = $tuple;
+        	   $text = is_string($v) ? $v : $v->getText();
+               $this->assertContains($text, $exp_values, $text." missing");
         }
 
     }
