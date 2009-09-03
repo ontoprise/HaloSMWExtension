@@ -45,12 +45,24 @@ class HaloACLSpecial extends SpecialPage {
      */
     public function execute() {
 
-        global $wgOut, $wgRequest, $wgLang;
+        global $wgOut, $wgRequest, $wgLang,$wgUser;
 
-        wfLoadExtensionMessages('HaloACL');
-        $wgOut->setPageTitle(wfMsg('hacl_special_page'));
-        $this->createMainTabContainer();
+        if($wgUser->isLoggedIn()) {
+            wfLoadExtensionMessages('HaloACL');
+            $wgOut->setPageTitle(wfMsg('hacl_special_page'));
 
+            $this->createMainTabContainer();
+        }else {
+            $html = <<<HTML
+            <h3>Only registered users are allowed to create and manage access rights.
+            </h3>
+            
+            <h3>
+            Please login first!</h3>
+            <p>
+HTML;
+            $wgOut->addHTML($html);
+        }
 
 
     }
@@ -61,6 +73,8 @@ class HaloACLSpecial extends SpecialPage {
 
         $html = <<<HTML
             <div class="yui-skin-sam">
+            <div id="haloacl_panel_container"></div>
+
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
 <script type="text/javascript">
@@ -68,7 +82,6 @@ HTML;
 
         if(array_key_exists("articletitle", $wgRequest->data)) {
             $html .= "
-    console.log('specialpage got title');
     YAHOO.haloacl.buildMainTabView('haloaclmainView','{$wgRequest->data['articletitle']}');
                 ";
         }else {

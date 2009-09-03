@@ -612,8 +612,9 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
                 }
 
             }
-
-            tree.draw();
+            if(tree != null){
+                tree.draw();
+            }
             
         },
         failure: function(oResponse) {

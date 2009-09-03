@@ -60,9 +60,15 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
     });
     */
 
+    oAC.forceSelection = false;
+
     oAC.generateRequest = function(sQuery) {
         return "rs=getAutocompleteDocuments&rsargs[]=" + sQuery;
     };
+    var itemFocusHandler = function(sType, args){
+        oAC.sendQuery("");
+    }
+    oAC.textboxFocusEvent.subscribe(itemFocusHandler);
           
   // Custom formatter to highlight the matching letters
     oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
