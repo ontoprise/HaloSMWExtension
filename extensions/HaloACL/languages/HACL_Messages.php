@@ -282,7 +282,7 @@ $messages['en'] = array(
         'hacl_whitelist_3' => 'Whitelisted Pages',
         'hacl_whitelist_4' => 'Add page to whitelist:',
 
-        'hacl_deleteGroup_1' => 'groups deleted',
+        'hacl_deleteGroup_1' => 'Items marked have been successfully deleted',
 
         'hacl_quickACL_1' => 'Manage quick access ACLs',
         'hacl_quickACL_2' => 'In this tab you can add and remove ACLs to the quick access list',
@@ -489,7 +489,7 @@ $messages['de'] = array(
         'hacl_whitelist_3' => 'Whitelisted Einträge',
         'hacl_whitelist_4' => 'Eintrag zu Whitelist hinzufügen:',
 
-        'hacl_deleteGroup_1' => 'Gruppen wurden gelöscht',
+        'hacl_deleteGroup_1' => 'Die markierten Einträge wurden erfolgreich gelöscht',
 
         'hacl_quickACL_1' => 'ACL Favoriten verwalten',
         'hacl_quickACL_2' => 'Hier können ACLs zu Ihren Favoriten hinzugefügt oder von diesen entfernt werden.',
