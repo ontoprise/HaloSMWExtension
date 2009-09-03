@@ -1201,16 +1201,20 @@ FCKeditInterface.prototype = {
             return;
         }
 
-        // her continue using the functions of the FCK editor
-        // get the ancestor node, if we have a selection of some property
-        // or category text, if this is not the case, oSpan will be null
+        // WYSIWYG mode: continue using the functions of the FCK editor
+        // Get the ancestor node. If we have a selection of some property
+        // or category text there is a ancestor SPAN node. If this is not the
+        // case, oSpan will be null. Then we create a new element. This will be
+        // inserted at cursor position.
         var oSpan = FCK.Selection.MoveToAncestorNode( 'SPAN' ) ;
         if (oSpan)
             FCK.Selection.SelectNode( oSpan )
         else
             oSpan = FCK.EditorDocument.createElement( 'SPAN' ) ;
 
-        // check the wiki text for property and category information.
+        // check the param text, if it's valid wiki text for a property or
+        // category information.
+        // check property first
         var regex = new RegExp('^\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]$')
         var match = regex.exec(text);
         if (match) {
@@ -1222,6 +1226,7 @@ FCKeditInterface.prototype = {
                 oSpan.setAttribute( 'property',  match[1] );
                 oSpan.innerHTML = match[2];
             }
+        // no match for property, check category next
         } else {
             regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
             match = regex.exec(text);
@@ -1230,7 +1235,8 @@ FCKeditInterface.prototype = {
                 oSpan.className = 'fck_mw_category' ;
                 oSpan.innerHTML = match[1];
             }
-            // something else (probably garbage) was in the wikitext, then do nothing
+            // no category neighter, something else (probably garbage) was in
+            // the wikitext, then quit and do not modify the edited wiki page
             else return;
         }
         if ( oSpan ) {
@@ -1328,7 +1334,8 @@ FCKeditInterface.prototype = {
 
         // if we are in wikitext mode, return the selection of the textarea
         if (FCK.EditMode != FCK_EDITMODE_WYSIWYG) {
-            return this.getSelectionWikitext();
+            this.getSelectionWikitext();
+            return this.selection;
         }
 
         // selected element node
@@ -1438,9 +1445,9 @@ FCKeditInterface.prototype = {
     * done before
     *
     * @access private
-    * @param  DOMNode parent
-    * @param  string node name
-    * @param  string node value
+    * @param  DOMNode parent html element of the node (defined by name and value)
+    * @param  string nodeName tag name
+    * @param  string nodeValue content text of
     */
    MatchSelectedNodeInDomtree: function (parent, nodeName, nodeValue) {
         for(var i = 0; i < parent.childNodes.length; i++) {
@@ -1460,8 +1467,7 @@ FCKeditInterface.prototype = {
     * <span class="fck_mw_property property="myName">property value shown</span>
     *
     * @access private
-    * @param  void
-    * @return string text
+    * @return string html selection including surounding html tags
     */
     getSelectionHtml: function() {
 
@@ -1503,10 +1509,10 @@ FCKeditInterface.prototype = {
      * If in wikitext mode, this function gets the seleced text and must also
      * select the complete annotation if the selection is inside of [[ ]]. Also
      * selections inside templates etc. must be ignored.
+     * Evaluated parameter will be stored in variable this.selection.
      *
      * @access private
-     * @return this.selection(array)
-     * @see    getSelectionAsArray for details on the return value
+     * @see    getSelectionAsArray() for details on the selection
      */
     getSelectionWikitext: function() {
         // selected text by the user in the textarea
@@ -1642,7 +1648,7 @@ FCKeditInterface.prototype = {
             this.selection[2] = match[1];
             if (match[4])
                 this.selection[0] = match[4];
-            return this.selection;
+            return;
         }
         // check for a category
         regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
@@ -1650,14 +1656,14 @@ FCKeditInterface.prototype = {
         if (match) {
             this.selection[1] = 14;
             this.selection[0] = match[1];
-            return this.selection;
+            return;
         }
         // link
         regex = new RegExp('^\\[\\[:?(.*?)(\\|(.*?))?\\]\\]$');
         var match = regex.exec(selection);
         if (match) {
             this.selection[0] = match[1];
-            return this.selection;
+            return;
         }
         // check if there are no <tags> in the selection
         if (selection.match(/.*?(<\/?[\d\w:_-]+(\s+[\d\w:_-]+="[^<>"]*")*\s*(\/\s*)?>)+.*?/))
@@ -1667,8 +1673,8 @@ FCKeditInterface.prototype = {
         if (selection.indexOf('[[') != -1 || selection.indexOf(']]') != -1 )
             return this.clearSelection();
 
-        // return selection without any further modifying.
-        return this.selection;
+        // finished, assuming the selection is good without any further modifying.
+        return;
     },
 
     /**
