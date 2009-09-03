@@ -446,7 +446,7 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 		   $html[$i] = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS ".' $2', $html[$i]);
 		}
 	}
-	echo print_r($html, true);die();
+	
 	return $html;
 }
 
