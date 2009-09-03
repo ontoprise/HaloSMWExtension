@@ -34,6 +34,7 @@
 		<ant antfile="viewProtectedProperties.xml"/>
 		<ant antfile="exportRDFofProtectedProperties.xml"/>
 		<ant antfile="ontologyBrowserWithACL.xml"/>
+		<ant antfile="initialRights.xml"/>
 <!--		
 -->
 <!--

@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<!--
+This web test checks if initial rights for new articles are set correctly:
+1. Create a master template for users
+2. Log in as NormalUser
+	=> the default template should be created based on the master template
+	=> the master template must not be accessible
+3. Create a new article
+	=> It should be accessible by NormalUser
+4. Log out
+	=> new article should not be accessible
+5. Log in as Wikisysop
+5.1 delete master template
+5.1 delete default template of NormalUser
+	
+-->
+<project name="InitialRights" default="testInitialRights">
+
+	&createArticle;
+	&login;
+
+	<target name="testInitialRights">
+
+		<webtest name="CreateMasterTemplate"
+				 description="Create the master template as WikiSysop">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<antcall target="login">
+				<param name="user" value="WikiSysop"/>
+				<param name="pwd" value="m8nix"/>
+			</antcall>
+
+			<antcall target="createArticle">
+				<param name="article" value="ACL:Template/NewUserTemplate"/>
+				<param name="content" value="{{#manage rights: assigned to={{{user}}}}}&#10;{{#access: assigned to ={{{user}}} |actions=* |description=Allows * for {{{user}}} }}&#10;[[Category:ACL/ACL]]"/>
+			</antcall>
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/NewUserTemplate"
+				description="Check existence of master template" />
+			<verifyXPath description="Check that master template is correctly created."
+						 xpath="//div[@id='content']/div[@id='innercontent']/h1"
+				         text="ACL:Template/NewUserTemplate" />
+			
+		</webtest>
+
+		<webtest name="CheckDefaultTemplate"
+				 description="Check if the master template is applied for NormalUser">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/NormalUser"
+				description="Open the default template for NormalUser" />
+			<verifyXPath description="Check if page is loaded"
+						 xpath="//div[@id='content']/div[@id='innercontent']/h1"
+				         text="ACL:Template/NormalUser" />
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/NewUserTemplate"
+				description="Open the master template for NormalUser" />
+			<verifyXPath description="Check that permission is denied"
+						 xpath="//div[@id='content']/div[@id='innercontent']/h1"
+				         text="Permission error" />
+		</webtest>
+
+		<webtest name="CreateNewPage"
+				 description="Check if the default template is applied for NormalUser">
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+
+			<antcall target="createArticle">
+				<param name="article" value="ProtectedByInitialRights"/>
+				<param name="content" value="Only for NormalUser"/>
+			</antcall>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/ProtectedByInitialRights"
+				description="Open the new page for NormalUser" />
+			<verifyXPath description="Check content of the page ProtectedByInitialRights"
+						 xpath="//div[@id='bodyContent']/p"
+						 regex="true"
+				         text="\s*Only for NormalUser\s*" />
+	
+		</webtest>
+
+		<webtest name="AccessDeniedForAnonymous"
+				 description="Check that ProtectedByInitialRights can not be access by anonymous users.">
+			
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/ProtectedByInitialRights"
+				description="Open the new page as anonymous user" />
+			<verifyXPath description="Check denied access for the page ProtectedByInitialRights"
+						 xpath="//div[@id='content']/div[@id='innercontent']/h1"
+				         text="Login Required" />
+	
+		</webtest>
+		
+		<webtest name="Cleanup"
+				 description="Delete master and default template.">
+
+			<config> 
+				<!-- this option let me ignore Javascript errors--> 
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<antcall target="login">
+				<param name="user" value="WikiSysop"/>
+				<param name="pwd" value="m8nix"/>
+			</antcall>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/NewUserTemplate"
+				description="Open the master template" />
+			<clickLink label="Delete"/>
+			<clickButton label="Delete page"/>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/NormalUser"
+				description="Open the default template of NormalUser" />
+			<clickLink label="Delete"/>
+			<clickButton label="Delete page"/>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/ACL:Template/WikiSysop"
+				description="Open the default template of NormalUser" />
+			<clickLink label="Delete"/>
+			<clickButton label="Delete page"/>
+			
+		</webtest>
+	
+	</target>
+</project>
