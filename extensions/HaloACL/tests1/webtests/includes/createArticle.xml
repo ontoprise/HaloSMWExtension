@@ -4,5 +4,5 @@
     	description="Go to edit page" />
 	<setInputField name="wpTextbox1" 
 	               value="${content}"/>
-	<clickButton label="Save page"/>
+	<clickButton htmlId="wpSave"/>
 </target>	
