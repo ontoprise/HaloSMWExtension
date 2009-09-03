@@ -16,6 +16,10 @@ if (!defined('NS_VIDEO')) define('NS_VIDEO', 124);
 if (!defined('NS_VIDEO_TALK')) define('NS_VIDEO_TALK', 125);
 if (!defined('NS_PDF')) define('NS_PDF', 126);
 if (!defined('NS_PDF_TALK')) define('NS_PDF_TALK', 127);
+if (!defined('NS_ICAL')) define('NS_ICAL', 128);
+if (!defined('NS_ICAL_TALK')) define('NS_ICAL_TALK', 129);
+if (!defined('NS_VCARD')) define('NS_VCARD', 130);
+if (!defined('NS_VCARD_TALK')) define('NS_VCARD_TALK', 131);
 
 global $wgExtraNamespaces;
 $wgExtraNamespaces = $wgExtraNamespaces +
@@ -27,6 +31,10 @@ $wgExtraNamespaces = $wgExtraNamespaces +
 		NS_VIDEO_TALK => 'Video_talk',
 		NS_PDF => 'Pdf',
 		NS_PDF_TALK => 'Pdf_talk',
+		NS_ICAL => 'ICalendar',
+		NS_ICAL_TALK => 'ICalendar_talk',
+		NS_VCARD => 'VCard',
+		NS_VCARD_TALK => 'VCard_talk',
 	);
 
 global $wgNamespaceAliases;
@@ -38,7 +46,11 @@ $wgNamespaceAliases = $wgNamespaceAliases +
 		'Video' => NS_VIDEO,
 		'Video_talk' => NS_VIDEO_TALK,
 		'Pdf' => NS_PDF,
-		'Pdf_talk' => NS_PDF_TALK
+		'Pdf_talk' => NS_PDF_TALK,
+	'ICalendar' => NS_ICAL,
+		'ICalendar_talk' => NS_ICAL_TALK,
+	'VCard' => NS_VCARD,
+		'VCard_talk' => NS_VCARD_TALK
 	);
 
 global $wgNamespaceByExtension;
@@ -72,7 +84,9 @@ $wgNamespaceByExtension = array(
 	'xls' => NS_DOCUMENT,
 	'docx' => NS_DOCUMENT,
 	'xlsx' => NS_DOCUMENT,
-	'pptx' => NS_DOCUMENT
+	'pptx' => NS_DOCUMENT,
+'ics' => NS_ICAL,
+	'vcf' => NS_VCARD
 );
 	
 //We want semantic data in this namespaces!
@@ -82,7 +96,9 @@ $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks +
 		NS_DOCUMENT => true,
 		NS_AUDIO => true,
 		NS_VIDEO => true,
-		NS_PDF	=> true
+		NS_PDF	=> true,
+		NS_ICAL	=> true,
+		NS_VCARD	=> true
 	);
 
 $wgHooks['CheckNamespaceForImage'][] = 'RMNamespace::isImage';
@@ -99,7 +115,8 @@ class RMNamespace {
 
 	public static function isImage( &$index, &$rMresult ) {
 		$rMresult |= ($index == NS_IMAGE || $index == NS_DOCUMENT ||
-			$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO);
+			$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO
+			|| $index == NS_ICAL || $index == NS_VCARD);
 		return true;
 	}
 }
