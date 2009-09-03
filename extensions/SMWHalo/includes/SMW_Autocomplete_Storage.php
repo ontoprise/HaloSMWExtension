@@ -554,10 +554,19 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $res = $db->query('SELECT DISTINCT title, namespace, inferred FROM smw_cc_propertyinst ORDER BY inferred DESC, title');
 
         $result = array();
+        $prop = SMWPropertyValue::makeUserProperty($property);
+        
+        if ($prop->getTypesValue()->getXSDValue() == '_dat') {
+        	global $wgUser;
+        	$dateformat = !is_null($wgUser) ? $wgUser->getOption('date') : "ISO 8601";
+        }
+       
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
                 if ($row->namespace == -1) {
-                    $result[] = array($row->title, $row->inferred == 'true');
+                	$stringValue = $row->title;
+                	$stringValue = isset($dateformat) ? ACStorageHelper::convertDate($stringValue, $dateformat) : $stringValue;
+                    $result[] = array($stringValue, $row->inferred == 'true');
                 } else {
                     $result[] = array(Title::newFromText($row->title, $row->namespace), $row->inferred == 'true');
                 }
@@ -665,5 +674,30 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	
 }
 
+class ACStorageHelper {
+	public static function convertDate($date, $dateformat) {
+		if ($dateformat == 'ISO 8601' || $dateformat == 'default') {
+			return substr(trim($date),-1) == 'T' ? substr($date,0, strpos($date, 'T')) : $date; 
+		}
+		$dateTime = explode("T", $date);
+		$datetime = date_create(str_replace("T", "", $date));
+		if (!isset($dateTime[1]) || empty($dateTime[1]) || $dateTime[1] == '00:00:00') {
+			switch($dateformat) {
+	            case 'dmy': return $datetime->format('d F Y');
+	            case 'mdy': return $datetime->format('F d, Y');
+	            case 'ymd': return $datetime->format('Y F d');
+	                    
+	        }
+		} else {
+		  switch($dateformat) {
+                case 'dmy': return $datetime->format('H:i, d F Y');
+                case 'mdy': return $datetime->format('H:i, F d, Y');
+                case 'ymd': return $datetime->format('H:i, Y F d');
+                        
+            }
+		}
+		return substr(trim($date),-1) == 'T' ? substr($date,0, strpos($date, 'T')) : $date; 
+	}
+}
 
 

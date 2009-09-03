@@ -357,6 +357,9 @@ QIHelper.prototype = {
 			ask = ask.replace(/\{\{NOW\}\}/gi, nowDateTime);
 			ask = ask.replace(/\{\{TODAY\}\}/gi, todayDateTime);
 			
+			// replace comma in ask query
+			ask = ask.replace(',', '%2C');
+			
 			this.queries[0].getDisplayStatements().each(function(s) {
 				ask += "|?" + s
 			});
