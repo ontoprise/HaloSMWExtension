@@ -125,7 +125,8 @@ require_once('HACL_GlobalFunctions.php');
 haclfInitNamespaces();
 
 // mediawiki-groups that may access whitelists
-#$haclWhitelistGroups = array('sysops','')
+global $haclWhitelistGroups;
+$haclWhitelistGroups = array('sysop','bureaucrat');
 
 
 

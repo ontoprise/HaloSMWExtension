@@ -70,6 +70,16 @@ HTML;
     private function createMainTabContainer() {
         global $wgOut;
         global $wgRequest;
+        global $wgUser;
+        
+        global $haclWhitelistGroups;
+        
+        // checking if user can access whitelist
+        if(array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null){
+            $showWhitelist = "true";
+        }else{
+            $showWhitelist = "false";
+        }
 
         $html = <<<HTML
             <div class="yui-skin-sam">
@@ -82,11 +92,11 @@ HTML;
 
         if(array_key_exists("articletitle", $wgRequest->data)) {
             $html .= "
-    YAHOO.haloacl.buildMainTabView('haloaclmainView','{$wgRequest->data['articletitle']}');
+    YAHOO.haloacl.buildMainTabView('haloaclmainView','{$wgRequest->data['articletitle']}','$showWhitelist');
                 ";
         }else {
             $html .="
-     YAHOO.haloacl.buildMainTabView('haloaclmainView');
+     YAHOO.haloacl.buildMainTabView('haloaclmainView',null,'$showWhitelist');
 ";
         }
 

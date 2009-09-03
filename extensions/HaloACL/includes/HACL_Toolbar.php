@@ -27,7 +27,9 @@ function setToolbarChoose($templateToUse) {
     global $wgUser;
 
     $_SESSION['haloacl_toolbar'][$wgUser->getName()] = $templateToUse;
-    return "for user ". $wgUser->getName(). " will that template be used: "+$_SESSION['haloacl_toolbar'][$wgUser->getName()];
+    //return "for user ". $wgUser->getName(). " will that template be used: "+$_SESSION['haloacl_toolbar'][$wgUser->getName()];
+    return "saved";
+
 }
 
 /**
@@ -135,7 +137,7 @@ function getHACLToolbar($articleTitle) {
                 YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
             }
 
-            element.form.submit();
+            //element.form.submit();
         };
 
 
@@ -143,10 +145,13 @@ function getHACLToolbar($articleTitle) {
             var state  = $('haloacl_toolbar_pagestate').value;
             if(state == "protected"){
                 $('haloacl_template_protectedwith').show();
+                $('haloacl_template_protectedwith_desc').show();
             }else{
                 $('haloacl_template_protectedwith').hide();
+                $('haloacl_template_protectedwith_desc').hide();
             }
         };
+        YAHOO.haloacl.toolbar_updateToolbar();
 
 
     </script>
@@ -177,7 +182,7 @@ HTML;
         $tpllist[] = $protectedWith;
     }
 
-    $html .= "&nbsp;with:&nbsp;<select id='haloacl_template_protectedwith'>";
+    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span><select id='haloacl_template_protectedwith'>";
     foreach($tpllist as $tpl) {
         if($tpl == $protectedWith) {
             $html .= "<option selected='true'>$tpl</option>";

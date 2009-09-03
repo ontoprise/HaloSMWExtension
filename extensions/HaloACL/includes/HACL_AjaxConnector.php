@@ -169,14 +169,14 @@ HTML;
 
         <div id="step3" style="width:600px;">
             <input id="haloacl_createacl_nextstep_$predefine" type="button" name="gotoStep3" value="Next Step"
-            onclick="javascript:gotoStep3();" style="margin-left:30px;"/>
+            onclick="javascript:YAHOO.haloacl.createacl_gotoStep3();" style="margin-left:30px;"/>
         </div>
 
         <!-- section end -->
 
         <script type="javascript">
 
-            gotoStep3 = function() {
+            YAHOO.haloacl.createacl_gotoStep3 = function() {
 
                 YAHOO.haloacl.loadContentToDiv('step3','createModificationRightsContent',{panelid:1});
             }
@@ -1400,6 +1400,8 @@ HTML;
         }
     $footerextension .= <<<HTML
 
+                var currentUserIncludedInRight = false;
+
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<inlineright>";
@@ -1431,6 +1433,10 @@ HTML;
                     if(item.checked){
                         somedatawasentered= true;
                         xml+="<user>"+item.name+"</user>";
+
+                        if(item.name == '$currentUser'){
+                            currentUserIncludedInRight = true;
+                        }
                     }
                 });
                 xml+="</users>";
@@ -1456,18 +1462,37 @@ HTML;
                                 }
                         });
                     }else{
+                        if('$predefine' == 'modification' && currentUserIncludedInRight == false){
+                            YAHOO.haloacl.notification.createDialogOk("content","Warning","You are not included in that right.",{
+                                yes:function(){
 
-                        var callback = function(result){
-                            if(result.status == '200'){
-                                //parse result
-                                //YAHOO.lang.JSON.parse(result.responseText);
-                                genericPanelSetSaved_$panelid(true);
-                                YAHOO.haloacl.closePanel('$panelid');
-                            }else{
-                                alert(result.responseText);
-                            }
-                        };
-                        YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+                                    var callback = function(result){
+                                        if(result.status == '200'){
+                                            //parse result
+                                            //YAHOO.lang.JSON.parse(result.responseText);
+                                            genericPanelSetSaved_$panelid(true);
+                                            YAHOO.haloacl.closePanel('$panelid');
+                                        }else{
+                                            alert(result.responseText);
+                                        }
+                                    };
+                                    YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+                                }
+                            });
+                        }else{
+
+                                    var callback = function(result){
+                                        if(result.status == '200'){
+                                            //parse result
+                                            //YAHOO.lang.JSON.parse(result.responseText);
+                                            genericPanelSetSaved_$panelid(true);
+                                            YAHOO.haloacl.closePanel('$panelid');
+                                        }else{
+                                            alert(result.responseText);
+                                        }
+                                    };
+                                    YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+                        }
                    }
                 }
             };
@@ -1660,7 +1685,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
         </div>
     <script type="text/javascript">
         // user list on the right
-        YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser');
+        //YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser');
         YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid","$panelid");
 
 
@@ -2035,7 +2060,7 @@ HTML;
 
     YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid', '$type');
     //YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'YAHOO.haloaclrights.datatableInstance$panelid.executeQuery';
-    YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'console.log';
+    YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = '';
 
     YAHOO.haloaclrights.buildTreeFirstLevelFromJson(YAHOO.haloaclrights.treeInstance$panelid,"template");
 
@@ -2457,10 +2482,10 @@ function saveSecurityDescriptor($secDescXml) {
                         }
                         break;
                     case "allusersregistered":
-                        $users = "*";
+                        $users = "#";
                         break;
                     case "allusersanonymous":
-                        $users = "#";
+                        $users = "*";
                         break;
                     case "allusers":
                         $users = "*,#";

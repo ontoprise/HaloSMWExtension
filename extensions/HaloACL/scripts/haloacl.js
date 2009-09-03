@@ -137,7 +137,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     });
     // ------
 
-    if(showWhitelistTab){
+    if(showWhitelistTab == "true"){
         var tab4 = new YAHOO.widget.Tab({
             label: gLanguage.getMessage('whitelists'),
             dataSrc:'whitelistsContent',
@@ -191,6 +191,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         YAHOO.haloacl.haloaclTabs.addTab(tab2);
         tab2.addListener('click', function(e){});
 
+
         // ------
 
         var tab3 = new YAHOO.widget.Tab({
@@ -221,7 +222,6 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             $('createUserAclTab_content').innerHTML = "";
         });
         $(tab1.get('contentEl')).setAttribute('id','createStdAclTab_content');
-        
 
 
         // ------
