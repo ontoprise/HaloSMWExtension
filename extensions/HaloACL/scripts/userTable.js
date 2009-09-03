@@ -181,7 +181,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
         var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords+" <span style='font-weight:normal'>in</span> Users";
 
-//        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
+        //        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
         $(divid).innerHTML = html;
         if(YAHOO.haloacl.debug) console.log($('datatablepaging_count_'+divid));
     };
@@ -274,13 +274,15 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
     if(YAHOO.haloacl.debug) console.log("ROuserDataTableV2 called");
     var groupstring = "";
     var grouparray = YAHOO.haloacl.getGroupsArray(panelid);
-    grouparray.each(function(item){
-        if(groupstring == ""){
-            groupstring = item;
-        }else{
-            groupstring += ","+item;
-        }
-    });
+    if(grouparray != null){
+        grouparray.each(function(item){
+            if(groupstring == ""){
+                groupstring = item;
+            }else{
+                groupstring += ","+item;
+            }
+        });
+    }
     if(YAHOO.haloacl.debug) console.log("retrieving user for following groups");
     if(YAHOO.haloacl.debug) console.log(groupstring);
     if(YAHOO.haloacl.debug) console.log("---");
