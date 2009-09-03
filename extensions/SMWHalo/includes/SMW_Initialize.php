@@ -437,8 +437,14 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	
 	// call now the general function of SF that creates the <input> field
 	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
-	// add the two field constraints and typeHint in the result output html
-	$html = str_replace('/>', " $constraints $pasteNS/>", $html);
+	
+	// add the constraints in the result output html. Either in input field or a textarea
+	if (strpos($html, "/>") !== false) {
+	   $html = str_replace('/>', " $constraints $pasteNS/>", $html);
+	} else {
+	   $html = preg_replace('/(<textarea\s+[^>]*)(>.*)/','$1 '." $constraints $pasteNS ".' $2', $html);
+	}
+	
 	return $html;
 }
 
