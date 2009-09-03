@@ -41,7 +41,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
      */
 
 
-    console.log($(targetdiv));
+//    console.log($(targetdiv));
     
     var querystring = "rs="+action;
 
@@ -61,7 +61,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
         evalScripts:true,
       //  insertion:before,
         onSuccess: function(o) {
-            console.log(o);
+//            console.log(o);
             $(targetdiv).insert({top:o.responseText})
         },
         onFailure: function(o) {
@@ -72,7 +72,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
 YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     if(callback == null){
         callback = function(result){
-            console.log("stdcallback:"+result);
+//            console.log("stdcallback:"+result);
         }
     }
 
