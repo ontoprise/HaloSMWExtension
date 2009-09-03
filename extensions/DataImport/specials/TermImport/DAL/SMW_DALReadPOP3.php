@@ -42,8 +42,6 @@ define('DAL_POP3_RET_ERR_END',
 class DALReadPOP3 implements IDAL {
 
 	private $connection = false;
-	private $vCardMP = "";
-	private $iCalMP = "";
 	private $attachmentMP = "";
 	private $mailFrom = "";
 	private $mailDate = "";
@@ -77,9 +75,7 @@ class DALReadPOP3 implements IDAL {
 			' 	<UserName display="'."User:".'" type="text"></UserName>'."\n".
 			' 	<Password display="'."Password:".'" type="text"></Password>'."\n".
 			'	<SSL display="'."Use SSL:".'" type="checkbox"></SSL>'."\n".
-			'	<VCardMP autocomplete="true" display="'."VCard Mapping Policy:".'" type="text"></VCardMP>'."\n".
-			'	<ICalMP autocomplete="true" display="'."ICalendar Mapping Policy:".'" type="text"></ICalMP>'."\n".
-			'	<AttachmentMP autocomplete="true" display="'."Attachment Mapping Policy:".'" type="text"></AttachmentMP>'."\n".
+			'	<AttachmentMP autocomplete="true" display="'."Extra Mapping Policy:".'" type="text"></AttachmentMP>'."\n".
 			'</DataSource>'."\n";
 	}
 
@@ -207,8 +203,6 @@ class DALReadPOP3 implements IDAL {
 		}
 		$messages = imap_search($connection, 'UNSEEN');
 		
-		$this->vCardMP = $this->getMPFromDataSource($dataSourceSpec, "VCardMP");
-		$this->iCalMP = $this->getMPFromDataSource($dataSourceSpec, "ICalMP");
 		$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
 
 		$result = "";
@@ -364,7 +358,7 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	private function decodeBodyPart($bodyPart, $encoding){
-		if ($encoding == 4){
+		if ($encoding == 1){
 			if(!mb_check_encoding($bodyPart, "UTF-8")){
 				$bodyPart = utf8_encode($bodyPart);
 			}
@@ -607,7 +601,7 @@ class DALReadPOP3 implements IDAL {
 		foreach ($attributes as $attribute) {
 			$values = $vCardParser->getProperties($attribute);
 			if ($values) {
-				$result .= "<".$attribute."><![CDATA[";
+				$result .= "<VC-".$attribute."><![CDATA[";
 				$first = true;
 				foreach ($values as $value) {
 					if(!$first){
@@ -628,12 +622,12 @@ class DALReadPOP3 implements IDAL {
 						$result .= " (" . ucwords(strtolower($type)) . ")";
 					}
 				}
-				$result .= "]]></".$attribute.">";
+				$result .= "]]></VC-".$attribute.">";
 			}
 		}
 
 		$vCardXML = new SimpleXMLElement(trim("<vcard>".$result."</vcard>"), LIBXML_NOCDATA);
-		$fn = $vCardXML->xpath("//FN/text()");
+		$fn = $vCardXML->xpath("//VC-FN/text()");
 		$fn = "".$fn[0];
 		if($fn != ""){
 			global $wgExtraNamespaces;
@@ -660,7 +654,7 @@ class DALReadPOP3 implements IDAL {
 			}
 		
 			$iCalXML = new SimpleXMLElement("<ic>".trim($result)."</ic>", LIBXML_NOCDATA);
-			$title = $iCalXML->xpath("//uid/text()");
+			$title = $iCalXML->xpath("//ic-uid/text()");
 			$title = "".$title[0];
 
 			if($title != ""){
@@ -686,12 +680,12 @@ class DALReadPOP3 implements IDAL {
 			if(array_key_exists(NS_TI_VCARD, $wgExtraNamespaces)){
 				$ns = $wgExtraNamespaces[NS_TI_VCARD].":";
 			}
-			$title = $ns."".$entity->FN;
+			$title = $ns."".$entity->VC-FN;
 		} else if($entityType == "iCal"){
 			if(array_key_exists(NS_TI_ICALENDAR, $wgExtraNamespaces)){
 				$ns = $wgExtraNamespaces[NS_TI_ICALENDAR].":";
 			}
-			$title = $ns."".$entity->uid;
+			$title = $ns."".$entity->ic-uid;
 		}
 
 		$title = Title::newFromText($title);
@@ -818,7 +812,7 @@ class DALReadPOP3 implements IDAL {
 		if(!$mappingPolicy->exists()){
 			return $this->createCallBackResult(false,
 			array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
-				'title' => $vCardMP)));
+				'title' => $attachmentMP)));
 		}
 		
 		$fileNameArray = split("\.", $fileName);
@@ -961,8 +955,10 @@ class DALReadPOP3 implements IDAL {
 		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
 
 		$parser = new XMLParser($inputPolicy);
+		
 		$result = $parser->parse();
-    	if ($result !== TRUE) {
+		
+		if ($result !== TRUE) {
 			return $result;
     	}
     	

@@ -6,6 +6,7 @@ require_once 'testcases/TestWSCacheBot.php';
 require_once 'testcases/TestWSManagement.php';
 require_once 'testcases/TestWSUsage.php';
 require_once 'testcases/TestJSONProcessor.php';
+require_once 'testcases/TestTIReadPOP3.php';
 
 
 class DataImportTests
@@ -20,6 +21,7 @@ class DataImportTests
         $suite->addTestSuite("TestWSManagement");
         $suite->addTestSuite("TestWSUsage");        
         $suite->addTestSuite("TestJSONProcessor");
+        $suite->addTestSuite("TestTIReadPOP3");
 
         return $suite;
     }

@@ -2,8 +2,8 @@
 
 /**
  * This file is based on code from the PHP iCalendar project (http://phpicalendar.net/)
- * which is licenced under GNU General Public License, version 2. 
- * 
+ * which is licenced under GNU General Public License, version 2.
+ *
  * @author Ingo Steinbauer
  *
  */
@@ -14,6 +14,7 @@ class ICalParser {
 		$lines = nl2br($iCalString);
 		$lines = explode("<br />", $lines);
 		$iCals = array();
+		$tzname = "";
 
 		for($i=0; $i<count($lines); $i++){
 			$line = $lines[$i];
@@ -57,116 +58,137 @@ class ICalParser {
 						switch ($property) {
 							// Start VTODO Parsing
 							case 'DUE':
-								$iCal['due'] = $data;
-								$iCal['due'] = $this->convertDate($iCal['due']);
+								$iCal['-ic-due'] = $data;
+								$iCal['due'] = $this->convertDate($iCal['ic-due']);
 								break;
 							case 'COMPLETED':
-								$iCal['completed'] = $datetime[1];
-								$iCal['completed'] = $this->convertDate($iCal['completed']);
+								$iCal['ic-completed'] = $datetime[1];
+								$iCal['ic-completed'] = $this->convertDate($iCal['ic-completed']);
 								break;
 							case 'PRIORITY':
-								$iCal['priority'] = "$data";
+								$iCal['ic-priority'] = "$data";
 								break;
 							case 'STATUS':
-								$iCal['status'] = "$data";
+								$iCal['ic-status'] = "$data";
 								break;
 							case 'GEO':
-								$iCal['geo'] = "$data";
+								$iCal['ic-geo'] = "$data";
 								break;
 							case 'CLASS':
-								$iCal['class'] = "$data";
+								$iCal['ic-class'] = "$data";
 								break;
 							case 'CATEGORIES':
-								$iCal['categories'] = "$data";
+								$iCal['ic-categories'] = "$data";
 								break;
 								// End VTODO Parsing
 							case 'DTSTART':
-								$iCal['dtstart'] = $data;
-								$iCal['dtstart'] = $this->convertDate($iCal['dtstart']);
+								$iCal['ic-start'] = $data;
+								$iCal['ic-start'] = $this->convertDate($iCal['ic-start']);
 								break;
 							case 'DTEND':
-								$iCal['dtend'] = $data;
-								$iCal['dtend'] = $this->convertDate($iCal['dtend']);
+								$iCal['ic-end'] = $data;
+								$iCal['ic-dtend'] = $this->convertDate($iCal['ic-end']);
 								break;
 							case 'EXDATE':
-								$iCal['exdate'] = $data;
-								$iCal['exdate'] = $this->convertDate($iCal['exdate']);
+								$iCal['ic-exdate'] = $data;
+								$iCal['ic-exdate'] = $this->convertDate($iCal['exdate']);
 								break;
 							case 'SUMMARY':
 								if ($valarm_set == FALSE) {
-									$iCal['summary'] = $data;
+									$iCal['ic-summary'] = $data;
 								} else {
-									$iCal['valarm_summary'] = $data;
+									$iCal['ic-valarm-summary'] = $data;
 								}
 								break;
 							case 'DESCRIPTION':
 								if ($valarm_set == FALSE) {
-									$iCal['description'] = $data;
+									$iCal['ic-description'] = $data;
 								} else {
-									$iCal['valarm_description'] = $data;
+									$iCal['ic-valarm-description'] = $data;
 								}
 								break;
 							case 'UID':
-								$iCal["uid"] = $data;
+								$iCal["ic-uid"] = $data;
 								break;
 							case 'X-WR-CALNAME':
-								$iCal['actual_calname'] = $data;
+								$iCal['ic-actual-calname'] = $data;
 								break;
 							case 'X-WR-TIMEZONE':
-								$iCal['calendar_tz'] = $data;
+								$iCal['ic-x-wr-tz'] = $data;
 								break;
 							case 'ATTENDEE':
-								if($iCal['attendee'] != ""){
-									$iCal['attendee'] .= "; ";
-								}
+								// if($iCal['attendee'] != ""){
+								//	$iCal['attendee'] .= "; ";
+								//}
 								if(strpos($field, "CN=") > 0){
-									$iCal['attendee'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
+									if(array_key_exists('ic-attendee-name', $iCal)){
+										$iCal['ic-attendee-name'] .= ", ";
+									}
+									$iCal['ic-attendee-name'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
 								}
-								if(strpos($data, "mailto:") > 0){
-									$iCal['attendee'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
+
+								if(strpos($data, "mailto:") > 0 || strpos($data, "mailto:") === 0){
+									if(array_key_exists('ic-attendee', $iCal)){
+										$iCal['ic-attendee'] .= ", ";
+									}
+									$iCal['ic-attendee'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
 								}
-								if(strpos($field, "RSVP=") > 0){
-									$iCal['attendee'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
-								}
-								if(strpos($field, "PARTSTAT=") > 0){
-									$iCal['attendee'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
-								}
-								if(strpos($field, "ROLE=") > 0){
-									$iCal['attendee'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
-								} 
+
+								//	if(strpos($field, "RSVP=") > 0){
+								//		$iCal['attendee'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
+								//	}
+								//	if(strpos($field, "PARTSTAT=") > 0){
+								//		$iCal['attendee'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
+								//	}
+								//	if(strpos($field, "ROLE=") > 0){
+								//		$iCal['attendee'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
+								//	}
 								break;
 							case 'ORGANIZER':
-								if($iCal['organizer'] != ""){
-									$iCal['organizer'] .= "; ";
+								if(strpos($field, "CN=") > 0){
+									if(array_key_exists('ic-organizer-name', $iCal)){
+										$iCal['ic-organizer-name'] .= ", ";
+									}
+									$iCal['ic-organizer-name'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
 								}
-							if(strpos($field, "CN=") > 0){
-									$iCal['organizer'] .= ereg_replace (".*CN=([^;]*).*", "\\1", $field);
+								if(strpos($data, "mailto:") > 0 || strpos($data, "mailto:") === 0){
+									if(array_key_exists('ic-organizer', $iCal)){
+										$iCal['ic-organizer'] .= ", ";
+									}
+									$iCal['ic-organizer'] .= ereg_replace (".*mailto:(.*).*", "\\1", $data);
 								}
-								if(strpos($data, "mailto:") > 0){
-									$iCal['organizer'] .= ", ".ereg_replace (".*mailto:(.*).*", "\\1", $data);
-								}
-								if(strpos($field, "RSVP=") > 0){
-									$iCal['organizer'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
-								}
-								if(strpos($field, "PARTSTAT=") > 0){
-									$iCal['organizer'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
-								}
-								if(strpos($field, "ROLE=") > 0){
-									$iCal['organizer'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
-								}
+								
+								// if(strpos($field, "RSVP=") > 0){
+								//	$iCal['organizer'] .= ", ".ereg_replace (".*RSVP=([^;]*).*", "\\1", $field);
+								//}
+								//if(strpos($field, "PARTSTAT=") > 0){
+								//	$iCal['organizer'] .= ", ".ereg_replace (".*PARTSTAT=([^;]*).*", "\\1", $field);
+								//}
+								//if(strpos($field, "ROLE=") > 0){
+								//	$iCal['organizer'] .= ", ".ereg_replace (".*ROLE=([^;]*).*", "\\1", $field);
+								//}
 								break;
 							case 'URL':
-								$iCal['url'] = $data;
+								$iCal['ic-url'] = $data;
+								break;
+							case 'LOCATION':
+								$iCal['ic-location'] = $data;
+								break;
+							case 'TZNAME':
+								if($tzname == ""){
+									$tzname = $data;
+								}
+								$iCal['ic-timezone'] = data;
 								break;
 							default:
-								if(strpos(':',$data) > 1) $iCal['other'] .= $data ."; ";
+								if(strpos(':',$data) > 1) $iCal['ic-other'] .= $data ."; ";
 						}
 					}
 			}
 		}
 		return $iCals;
 	}
-	
+
 	function convertDate($date){
 		$year = $date[0].$date[1].$date[2].$date[3];
 		$mon = $date[4].$date[5];
@@ -176,7 +198,7 @@ class ICalParser {
 		$seconds = $date[13].$date[14];
 
 		return $year."/".$mon."/".$mday." "
-				.$hours.":".$minutes.":".$seconds;
+		.$hours.":".$minutes.":".$seconds;
 	}
 }
 ?>

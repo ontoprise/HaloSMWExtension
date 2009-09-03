@@ -93,12 +93,12 @@ public function getImageDirectory() {
 			$xmlString = substr($xmlString, $start, $end);
 				
 			SMWQueryProcessor::processFunctionParams(array("[[belongsToTermImport::TermImport:".$tiArticleName."]]"
-			,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
+				,"?hasImportDate", "limit=1", "sort=hasImportDate", "order=descending",
 				"format=list", "mainlabel=-", "searchlabel=") 
-			,$querystring,$params,$printouts);
+				,$querystring,$params,$printouts);
 			$queryResult =
-			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
-			$printouts, SMW_OUTPUT_WIKI);
+				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+				$printouts, SMW_OUTPUT_WIKI);
 
 			// timestamp creation depends on property type (page or date)
 			$queryResult = trim(substr($queryResult, strpos($queryResult, "]]")+2));
@@ -122,6 +122,8 @@ public function getImageDirectory() {
 			$simpleXMLElement = new SimpleXMLElement($xmlString);
 			$maxAge = $simpleXMLElement->xpath("//UpdatePolicy/maxAge/@value");
 
+			//echo("\ntimestamp: ".$imestamp);
+			
 			if($maxAge != ""){
 				if($timestamp == 0 || (wfTime() - $timestamp - $maxAge[0]->value*60) > 0){
 					echo("\nRun this term import: ".$tiArticleName);

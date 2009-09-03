@@ -1,0 +1,139 @@
+X-Account-Key: account2
+X-UIDL: 0MKriK-1MgGX62LbC-000Wag
+X-Mozilla-Status: 0001
+X-Mozilla-Status2: 10000000
+X-Mozilla-Keys:                                                                                 
+Return-Path: <steinbauer@ontoprise.de>
+Delivery-Date: Wed, 26 Aug 2009 13:19:16 +0200
+Received: from moutng.kundenserver.de (moutng.kundenserver.de [212.227.126.187])
+	by mx.kundenserver.de (node=mxbap1) with ESMTP (Nemesis)
+	id 0MKriK-1MgGX62LbC-000Wag for steinbauer@ontoprise.de; Wed, 26 Aug 2009 13:19:16 +0200
+Received: from [127.0.0.1] (ad96ede94.dsl.de.colt.net [217.110.222.148])
+	by mrelayeu.kundenserver.de (node=mreu2) with ESMTP (Nemesis)
+	id 0MKv5w-1MgGX60dOR-0003oe; Wed, 26 Aug 2009 13:19:16 +0200
+MIME-version: 1.0
+From: steinbauer@ontoprise.de
+To: steinbauer@ontoprise.de
+Subject: Termineinladung: Event
+Content-type: multipart/mixed; boundary="Boundary_(ID_qyG4ZdjoAsiZ+Jo19dCbWQ)"
+Message-Id: <0MKv5w-1MgGX60dOR-0003oe@mrelayeu.kundenserver.de>
+Date: Wed, 26 Aug 2009 13:19:16 +0200
+X-Provags-ID: V01U2FsdGVkX1/GmWanUH9WPsayUTDLvK3j0RSNDSG5IRALp+U
+ qry+X9mSiY5sAsCxv4cMerWGetBnxi/xFWVUJlqnt6Zyc6rRgl
+ ZU/Ub6uiHy3isvfKEj7u78hX2yGE+tF
+Envelope-To: steinbauer@ontoprise.de
+
+
+--Boundary_(ID_qyG4ZdjoAsiZ+Jo19dCbWQ)
+Content-type: multipart/alternative;
+ boundary="Boundary_(ID_ryU4ZdJoASiZ+Jo21dCbwA)"
+
+
+--Boundary_(ID_ryU4ZdJoASiZ+Jo21dCbwA)
+Content-type: text/plain; charset=UTF-8
+Content-transfer-encoding: 8BIT
+
+Ingo Steinbauer <steinbauer@ontoprise.de> hat Sie zu Event eingeladen
+
+
+--Boundary_(ID_ryU4ZdJoASiZ+Jo21dCbwA)
+Content-type: text/calendar; method=REQUEST; charset=UTF-8
+Content-transfer-encoding: 8BIT
+
+BEGIN:VCALENDAR
+PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
+VERSION:2.0
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+X-LIC-LOCATION:Europe/Berlin
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+CREATED:20090902T113233Z
+LAST-MODIFIED:20090902T113905Z
+DTSTAMP:20090902T113905Z
+UID:5a873669-f5c5-4f88-902e-4bd507e441a4
+SUMMARY:New event
+ORGANIZER;RSVP=TRUE;CN=Ingo Steinbauer;PARTSTAT=ACCEPTED;ROLE=CHAIR:
+ mailto:steinbauer@ontoprise.de
+ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT:mailto:
+ steinbauer@ontoprise.de
+ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT:mailto:
+ elfie1982@gmail.com
+CATEGORIES:Status
+DTSTART;TZID=Europe/Berlin:20090830T093000
+DTEND;TZID=Europe/Berlin:20090830T103000
+LOCATION:Meeting room
+DESCRIPTION:This is the description.
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR
+
+
+--Boundary_(ID_ryU4ZdJoASiZ+Jo21dCbwA)--
+
+--Boundary_(ID_qyG4ZdjoAsiZ+Jo19dCbWQ)
+Content-type: application/ics; name=invite.ics
+Content-transfer-encoding: 8BIT
+Content-disposition: attachment; filename=invite.ics
+
+BEGIN:VCALENDAR
+PRODID:-//Mozilla.org/NONSGML Mozilla Calendar V1.1//EN
+VERSION:2.0
+METHOD:REQUEST
+BEGIN:VTIMEZONE
+TZID:Europe/Berlin
+X-LIC-LOCATION:Europe/Berlin
+BEGIN:DAYLIGHT
+TZOFFSETFROM:+0100
+TZOFFSETTO:+0200
+TZNAME:CEST
+DTSTART:19700329T020000
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=3
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:+0200
+TZOFFSETTO:+0100
+TZNAME:CET
+DTSTART:19701025T030000
+RRULE:FREQ=YEARLY;INTERVAL=1;BYDAY=-1SU;BYMONTH=10
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+CREATED:20090902T113233Z
+LAST-MODIFIED:20090902T113905Z
+DTSTAMP:20090902T113905Z
+UID:5a873669-f5c5-4f88-902e-4bd507e441a4
+SUMMARY:New event
+ORGANIZER;RSVP=TRUE;CN=Ingo Steinbauer;PARTSTAT=ACCEPTED;ROLE=CHAIR:
+ mailto:steinbauer@ontoprise.de
+ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT:mailto:
+ steinbauer@ontoprise.de
+ATTENDEE;RSVP=TRUE;PARTSTAT=NEEDS-ACTION;ROLE=REQ-PARTICIPANT:mailto:
+ elfie1982@gmail.com
+CATEGORIES:Status
+DTSTART;TZID=Europe/Berlin:20090830T093000
+DTEND;TZID=Europe/Berlin:20090830T103000
+LOCATION:Meeting room
+DESCRIPTION:This is the description.
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR
+
+
+--Boundary_(ID_qyG4ZdjoAsiZ+Jo19dCbWQ)--
+

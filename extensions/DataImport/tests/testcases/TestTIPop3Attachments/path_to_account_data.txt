@@ -1,0 +1,7 @@
+/../../../../../../../../pop3test-account-data.txt <br/>
+
+Please enter here the path to the text file that contains the account data for the ReadPOP3 Term Import module test. It must contain the following content:
+
+pop3 server address<br/>
+user name as a valid email address<br/>
+password<br/>

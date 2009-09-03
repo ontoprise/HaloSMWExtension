@@ -767,4 +767,305 @@ Jump to: navigation, search
 &lt;/WebService&gt;</text>
     </revision>
   </page>
+  <page>
+    <title>MailImportMP</title>
+    <id>36</id>
+    <revision>
+      <id>59</id>
+      <timestamp>2009-08-26T12:31:10Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: &lt;mapping properties=&quot;from&quot;&gt; '''From:''' {{{from}}}&lt;br/&gt; &lt;/mapping&gt;&lt;mapping properties=&quot;to&quot;&gt; '''To:''' {{{to}}}&lt;br/&gt; &lt;/mapping&gt;&lt;mapping properties=&quot;cc&quot;&gt; '''CC:''' {{{cc}}}&lt;br/&gt; &lt;/mapping&gt;&lt;m...</comment>
+      <text xml:space="preserve">&lt;mapping properties=&quot;from&quot;&gt;
+'''From:''' {{{from}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;to&quot;&gt;
+'''To:''' {{{to}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;cc&quot;&gt;
+'''CC:''' {{{cc}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;BC&quot;&gt;
+'''BC:''' {{{bc}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;reply_to&quot;&gt;
+'''Reply to:''' {{{reply_to}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;sender&quot;&gt;
+'''Sender:''' {{{sender}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;return_path&quot;&gt;
+'''Return path:''' {{{return_path}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;date&quot;&gt;
+'''Date:''' {{{date}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;subject&quot;&gt;
+'''Subject:''' {{{subject}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;followup_to&quot;&gt;
+'''Followup to:''' {{{followup_to}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;references&quot;&gt;
+'''References:''' {{{references}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;message_id&quot;&gt;
+'''Message id:''' {{{message_id}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;VCARDS&quot;&gt;
+'''VCard(s):''' {{#arraymap:{{{VCARDS}}}|,|xyz|[[xyz]]|,}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;ICALS&quot;&gt;
+'''ICalendar(s):''' {{#arraymap:{{{ICALS}}}|,|xyz|[[xyz]]|,}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;attachments&quot;&gt;
+'''Attachment(s):''' {{#arraymap:{{{attachments}}}|,|xyz|[[xyz]]|,}}&lt;br/&gt;
+&lt;/mapping&gt;
+
+&lt;mapping properties=&quot;body&quot;&gt;
+==== Content ==== 
+{{{body}}}
+&lt;/mapping&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>AttachmentMP</title>
+    <id>37</id>
+    <revision>
+      <id>94</id>
+      <timestamp>2009-09-02T14:14:47Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;mapping properties=&quot;IC-SUMMARY&quot;&gt;
+'''Summary:''' {{{IC-SUMMARY}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-START&quot;&gt;
+'''Start:''' {{{IC-START}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-END&quot;&gt;
+'''End:''' {{{IC-END}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-ORGANIZER&quot;&gt;
+'''Organizer(s):''' {{{IC-ORGANIZER}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-ORGANIZER-NAME&quot;&gt;
+'''Organizer Name(s):''' {{{IC-ORGANIZER-NAME}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-ATTENDEE&quot;&gt;
+'''Attendee(s):''' {{{IC-ATTENDEE}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-ATTENDEE-NAME&quot;&gt;
+'''Attendee Name(s):''' {{{IC-ATTENDEE-NAME}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-LOCATION&quot;&gt;
+'''Location:''' {{{IC-LOCATION}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-TIMEZONE&quot;&gt;
+'''TZ:''' {{{IC-TIMEZONE}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-CATEGORIES&quot;&gt;
+'''Categories:''' {{{IC-CATEGORIES}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-UID&quot;&gt;
+'''UID:''' {{{IC-UID}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;IC-DESCRIPTION&quot;&gt;
+==== Description ==== 
+{{{IC-DESCRIPTION}}}
+&lt;/mapping&gt;
+
+
+&lt;mapping properties=&quot;VC-N&quot;&gt;
+'''N:''' {{{VC-N}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-FN&quot;&gt;
+'''FN:''' {{{VC-FN}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-TITLE&quot;&gt;
+'''Title:''' {{{VC-TITLE}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-ORG&quot;&gt;
+'''ORG:''' {{{VC-ORG}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-NICKNAME&quot;&gt;
+'''Nickname:''' {{{VC-NICKNAME}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-TEL&quot;&gt;
+'''Telephone:''' {{{VC-TEL}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-ADR&quot;&gt;
+'''Address:''' {{{VC-ADR}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-EMAIL&quot;&gt;
+'''Email:''' {{{VC-EMAIL}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-URL&quot;&gt;
+'''URL:''' {{{VC-URL}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-BDAY&quot;&gt;
+'''Birth day:''' {{{VC-BDAY}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-CATEGORIES&quot;&gt;
+'''Category:''' {{{VC-CATEGORIES}}}
+&lt;/mapping&gt;&lt;mapping properties=&quot;VC-NOTE&quot;&gt;
+'''Note:''' {{{VC-NOTE}}}
+&lt;/mapping&gt;
+
+
+&lt;mapping properties=&quot;from&quot;&gt;
+'''Uploaded by:''' {{{from}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;date&quot;&gt;
+'''Creation date:''' {{{date}}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;message_id&quot;&gt;
+'''Related article(s):''' {{#arraymap:{{{message_id}}}|,|xyz|[[xyz]]|,}}&lt;br/&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;content&quot;&gt;
+==== Content ====
+{{{content}}}
+&lt;/mapping&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Image:Semantic web.pdf</title>
+    <id>41</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2009-08-27T11:36:50Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article.</comment>
+      <text xml:space="preserve">Overwrite this article.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Pdf:Semantic web.pdf</title>
+    <id>42</id>
+    <revision>
+      <id>89</id>
+      <timestamp>2009-09-01T14:46:43Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Overwrite this article.
+
+[[WasUpdatedDuringTermImport::TermImport:DONTCare]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>E-mail:4A951CEB.6070300@ontoprise.de</title>
+    <id>44</id>
+    <revision>
+      <id>68</id>
+      <timestamp>2009-08-27T11:39:16Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article.</comment>
+      <text xml:space="preserve">Overwrite this article.</text>
+    </revision>
+  </page>
+  <page>
+    <title>E-mail:0MKv5w-1MgGX60dOR-0003oe@mrelayeu.kundenserver.de</title>
+    <id>45</id>
+    <revision>
+      <id>69</id>
+      <timestamp>2009-08-27T11:40:05Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article.</comment>
+      <text xml:space="preserve">Overwrite this article.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Image:Invite.ics</title>
+    <id>46</id>
+    <revision>
+      <id>70</id>
+      <timestamp>2009-08-28T11:56:16Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article.</comment>
+      <text xml:space="preserve">Overwrite this article.</text>
+    </revision>
+  </page>
+  <page>
+    <title>E-mail:22537444.256641251383895405.JavaMail.servlet@kundenserver</title>
+    <id>47</id>
+    <revision>
+      <id>71</id>
+      <timestamp>2009-08-31T10:26:14Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article</comment>
+      <text xml:space="preserve">Overwrite this article</text>
+    </revision>
+  </page>
+  <page>
+    <title>Image:Image001.jpg</title>
+    <id>48</id>
+    <revision>
+      <id>72</id>
+      <timestamp>2009-08-31T10:27:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article</comment>
+      <text xml:space="preserve">Overwrite this article</text>
+    </revision>
+  </page>
+  <page>
+    <title>Image:Jürgen Angele.vcf</title>
+    <id>49</id>
+    <revision>
+      <id>73</id>
+      <timestamp>2009-08-31T10:27:56Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article</comment>
+      <text xml:space="preserve">Overwrite this article</text>
+    </revision>
+  </page>
+  <page>
+    <title>Http://localhost/mediawiki/index.php/E-mail:4A9BD4AA.4050304@ontoprise.de</title>
+    <id>50</id>
+    <revision>
+      <id>77</id>
+      <timestamp>2009-08-31T13:59:25Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: Overwrite this article.</comment>
+      <text xml:space="preserve">Overwrite this article.</text>
+    </revision>
+  </page>
+  <page>
+    <title>E-mail:4A9BD4AA.4050304@ontoprise.de</title>
+    <id>51</id>
+    <revision>
+      <id>83</id>
+      <timestamp>2009-08-31T15:48:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">Overwrite this article.
+
+[[WasAddedDuringTermImport::TermImport:DONTCare| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>ICalendar:5a873669-f5c5-4f88-902e-4bd507e441a4.ics</title>
+    <id>52</id>
+    <revision>
+      <id>85</id>
+      <timestamp>2009-09-01T14:09:27Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Overwrite this article</comment>
+      <text xml:space="preserve">Overwrite this article</text>
+    </revision>
+  </page>
+  <page>
+    <title>VCard:Willi Tester.vcf</title>
+    <id>53</id>
+    <revision>
+      <id>87</id>
+      <timestamp>2009-09-01T14:12:37Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Overwrite this article.  [[WasIgnoredDuringTermImport::TermImport:DONTCare]]</comment>
+      <text xml:space="preserve">Overwrite this article.
+
+[[WasIgnoredDuringTermImport::TermImport:DONTCare]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>VCard:Jürgen Angele.vcf</title>
+    <id>54</id>
+    <revision>
+      <id>88</id>
+      <timestamp>2009-09-01T14:29:24Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Overwrite this article</comment>
+      <text xml:space="preserve">Overwrite this article</text>
+    </revision>
+  </page>
 </mediawiki>
