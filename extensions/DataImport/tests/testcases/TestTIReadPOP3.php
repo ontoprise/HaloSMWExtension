@@ -23,6 +23,8 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 		$username = $accountData["user"];
 		$password = $accountData["password"];
 		
+		$accountDataString = " ".$host." ".$username;
+		
 		$text = "This is a text message";
 		
 		$smtp = Mail::factory('smtp',
@@ -45,7 +47,7 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 		$mail = $smtp->send($to, $finalHeaders, $body);
 
 		if (PEAR::isError($mail)) {
-			return $mail->getMessage();
+			return $mail->getMessage().$accountDataString;
 		}
 
 		$subject = "Attaches Thunderbird iCal and PDF Mail";
