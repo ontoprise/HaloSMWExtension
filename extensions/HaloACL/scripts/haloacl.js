@@ -59,13 +59,16 @@ YAHOO.haloacl.clickedArrayUsersGroups = new Array();
 // has all checked users from righttree
 YAHOO.haloaclrights.clickedArrayGroups = new Array();
 
+// knows, if the actual modificationrights have been saved
+YAHOO.haloacl.modrightssaved = false;
+
 
 
 
 // Tabview related stuff
 
 // building the main tabview
-YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
+YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhitelistTab){
     if(YAHOO.haloacl.debug) console.log("got requestedtitle:"+requestedTitle);
     if(requestedTitle != null){
         YAHOO.haloacl.requestedTitle = requestedTitle;
@@ -134,23 +137,25 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle){
     });
     // ------
 
-    var tab4 = new YAHOO.widget.Tab({
-        label: gLanguage.getMessage('whitelists'),
-        dataSrc:'whitelistsContent',
-        cacheData:false,
-        active:false,
-        id:"whitelist_button"
-    });
-    tab4._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclTabs.addTab(tab4);
-    tab4.addListener('click', function(e){});
-    $(tab4.get('contentEl')).setAttribute('id','whitelistsTab');
+    if(showWhitelistTab){
+        var tab4 = new YAHOO.widget.Tab({
+            label: gLanguage.getMessage('whitelists'),
+            dataSrc:'whitelistsContent',
+            cacheData:false,
+            active:false,
+            id:"whitelist_button"
+        });
+        tab4._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclTabs.addTab(tab4);
+        tab4.addListener('click', function(e){});
+        $(tab4.get('contentEl')).setAttribute('id','whitelistsTab');
 
-    new YAHOO.widget.Tooltip("whitelist_tooltip", {
-        context:"whitelist_button",
-        text:gLanguage.getMessage('manageWhitelistTooltip'),
-        zIndex :10
-    });
+        new YAHOO.widget.Tooltip("whitelist_tooltip", {
+            context:"whitelist_button",
+            text:gLanguage.getMessage('manageWhitelistTooltip'),
+            zIndex :10
+        });
+    }
 // ------
 
 };
@@ -387,16 +392,16 @@ YAHOO.haloacl.togglePanel = function(panelid){
 };
 
 YAHOO.haloacl.removePanel = function(panelid,callback){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All entered data in this right will get los",{
-     yes:function(){    
-         var element = $(panelid);
-         element.remove();
-         if(callback != null){
-             callback();
-         }
-     },
-     no:function(){}
- },"Ok","Cancel");
+    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All entered data in this right will get lost",{
+        yes:function(){
+            var element = $(panelid);
+            element.remove();
+            if(callback != null){
+                callback();
+            }
+        },
+        no:function(){}
+    },"Ok","Cancel");
 };
 YAHOO.haloacl.closePanel = function(panelid){
     var element = $('content_'+panelid);

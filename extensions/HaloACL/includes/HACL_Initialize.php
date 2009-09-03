@@ -98,6 +98,8 @@ $haclgBaseStore = HACL_STORE_SQL;
 # The name of the main namespace is 'Main'.
 $haclgUnprotectableNamespaces = array('Main');
 
+
+
 # load global functions
 require_once('HACL_GlobalFunctions.php');
 
@@ -109,6 +111,11 @@ require_once('HACL_GlobalFunctions.php');
 # must not be smaller than 100.
 ##
 haclfInitNamespaces();
+
+// mediawiki-groups that may access whitelists
+$haclWhitelistGroups = array('sysops','')
+
+
 
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');

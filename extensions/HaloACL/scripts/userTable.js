@@ -179,15 +179,16 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         };
         var to = displaying*1 + state.recordOffset*1;
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
-        
-        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
+        var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords+" <span style='font-weight:normal'>in</span> Users";
+
+//        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
         $(divid).innerHTML = html;
         if(YAHOO.haloacl.debug) console.log($('datatablepaging_count_'+divid));
     };
 
 
     var myPaginator = new YAHOO.widget.Paginator({
-        rowsPerPage:9,
+        rowsPerPage:10,
         containers:'datatablepaging_'+divid
     });
 

@@ -23,7 +23,7 @@ $wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
 
 
 
-function setToolbarChoose($templateToUse){
+function setToolbarChoose($templateToUse) {
     global $wgUser;
 
     $_SESSION['haloacl_toolbar'][$wgUser->getName()] = $templateToUse;
@@ -36,6 +36,10 @@ function setToolbarChoose($templateToUse){
  */
 function AddHaclToolbar ($content_actions) {
 
+    if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
+        return $content_actions;
+    }
+    
     $html = <<<HTML
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
@@ -50,6 +54,8 @@ HTML;
     #$content_actions->editFormTextAfterTools = 'editFormTextAfterTools';
     #$content_actions->editFormTextBottom = "editFormTextBottom";
     #$content_actions = array_merge($content_actions, $main_action);   //add a new action
+
+
     return $content_actions;
 }
 
@@ -97,21 +103,21 @@ function getHACLToolbar($articleTitle) {
 
 
     // does a default template exist?
-    try{
-    $defaultSD = HACLSecurityDescriptor::newFromName("ACL:Template/".$wgUser->getName());
+    try {
+        $defaultSD = HACLSecurityDescriptor::newFromName("ACL:Template/".$wgUser->getName());
         $defaultSDExists = true;
         // if no other right is assigned to that article the default will be used
-        if(!$isPageProtected){
+        if(!$isPageProtected) {
             $protectedWith = "Template/".$wgUser->getName();
             $isPageProtected = true;
         }
     }
-    catch(Exception $e){
+    catch(Exception $e) {
         $defaultSDExists = false;
     }
 
     $html = <<<HTML
-    <script>
+        <script>
         $('wpSave').writeAttribute("type","button");
         $('wpSave').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
 
@@ -128,7 +134,6 @@ function getHACLToolbar($articleTitle) {
                 //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
                 YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
             }
-            //console.log("{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}");
 
             element.form.submit();
         };

@@ -272,7 +272,6 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
         this.updateCheckHtml();
         this.updateParent();
-        YAHOO.haloacl.selectedTemplates[this.tree.panelid] = this.label;
     },
 
     /**
@@ -298,6 +297,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     // Overrides YAHOO.widget.TextNode
     getContentHtml: function() {
         var sb = [];
+        var localLabel = this.label;
 
         if (this.treeType=="readOnly") {
         
@@ -310,24 +310,19 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'>"+localLabel+"</a>";
             
 
             sb[sb.length] = '</span></td>';
 
-            sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">';
+            sb[sb.length] = '<td><span class="haloacl_readonly_right_firstspacing">';
             sb[sb.length] = '</span></td>';
-
-
             sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
-
             sb[sb.length] = '</td>';
-
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'></a>";
-
-      
-
+            // sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'></a>";
+            sb[sb.length] = '<td><span class="haloacl_readonly_right_secondspacing">';
+            sb[sb.length] = '</span></td>';
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
@@ -341,13 +336,13 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
 
             sb[sb.length] = '<td><span';
-            sb[sb.length] = ' id="manageUserRow_' + this.label + '"';
+            sb[sb.length] = ' id="manageUserRow_' + localLabel + '"';
             if (this.title) {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
             sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
-            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'>"+localLabel+"</a>";
 
             sb[sb.length] = '</span></td>';
             sb[sb.length] = '<td><span class="haloacl_manageuser_list_information"><div id="anchorPopup_'+this.groupId+'" class="haloacl_manageright_list_edit" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div><div id="popup_'+this.groupId+'"></div></span></td>';
@@ -666,6 +661,10 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
     // Overrides YAHOO.widget.TextNode
     getContentHtml: function() {
+        var localTitle = this.title;
+        if(localTitle == null || localTitle == "undefined"){
+            localTitle = "nameless right";
+        }
         var sb = [];
 
         var shortLabel = "";
@@ -679,12 +678,12 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
 
-            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">'+this.title+'</span></td>';
+            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">'+localTitle+'</span></td>';
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
             if (this.title) {
-                sb[sb.length] = ' title="' + this.title + '"';
+                sb[sb.length] = ' title="' + localTitle + '"';
             }
             sb[sb.length] = ' class="haloacl_manageACL_right_description"';
             sb[sb.length] = ' >';
@@ -707,7 +706,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
             if (this.title) {
-                sb[sb.length] = ' title="' + this.title + '"';
+                sb[sb.length] = ' title="' + localTitle + '"';
             }
             sb[sb.length] = ' class="' + this.labelStyle  + '"';
             sb[sb.length] = ' >';
@@ -948,7 +947,11 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
  * function to be called from outside to init a tree
  * @param tree-instance
  */
-YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree){
+YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
+    if(query == null){
+        query = "all";
+    }
+
     var callback = {
         success: function(oResponse) {
             var data = YAHOO.lang.JSON.parse(oResponse.responseText);
@@ -959,7 +962,7 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree){
     };
     if(tree.treeType != null && tree.treeType != "readonly"){
         YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
-            query:'all'
+            query:query
         },callback);
     }else{
         var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate</type></types>');
@@ -977,8 +980,8 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree){
  * @param nodes
  */
 
-/*
-YAHOO.haloaclrights.getCheckedNodesFromTree = function(tree, nodes){
+
+YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
     if(nodes == null){
         nodes = tree.getRoot().children;
     }
@@ -991,13 +994,13 @@ YAHOO.haloaclrights.getCheckedNodesFromTree = function(tree, nodes){
         }
 
         if (n.hasChildren()) {
-            checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
+           // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
         }
     }
 
     return checkedNodes;
 };
-*/
+
 
 
 

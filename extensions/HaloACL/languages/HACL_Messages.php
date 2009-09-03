@@ -84,8 +84,8 @@ $messages['en'] = array(
 	/* Messages for Special:ACL */
 	'hacl_tab_create_acl' => 'Create ACL',
 	'hacl_tab_manage_acls' => 'Manage ACLs',
-	'hacl_tab_manage_user' => 'Manage User',
-	'hacl_tab_manage_whitelist' => 'Manage Whitelists',
+	'hacl_tab_manage_user' => 'Manage Groups',
+	'hacl_tab_manage_whitelist' => 'Manage Whitelist',
 	/* Messages for 'Create ACL' tab */
 	'hacl_create_acl_subtab1' => 'Create standard ACL',
 	'hacl_create_acl_subtab2' => 'Create ACL template',
@@ -150,8 +150,8 @@ $messages['en'] = array(
 	'hacl_manage_acls_subtab2' => 'Manage own default user template',
 	/* Messages for 'Manage User' tab */
 	/* Messages for 'Manage Whitelist' tab */
-	'hacl_whitelist_headline' => 'Manage Whitelists',
-	'hacl_whitelist_info' => 'In this tab you can edit and create whitelists.',
+	'hacl_whitelist_headline' => 'Manage Whitelist',
+	'hacl_whitelist_info' => 'In this tab you can edit and create whitelist.',
 	'hacl_whitelist_filter' => 'Filter:',
 	'hacl_whitelist_pageset_header' => 'Page',
 	'hacl_whitelist_pagename' => 'Page-Name:',
@@ -192,9 +192,9 @@ $messages['en'] = array(
         'hacl_createGeneralContent_12' => 'All Users',
         'hacl_createGeneralContent_13' => 'All Registered Users',
         'hacl_createGeneralContent_14' => 'All Anonymous Users',
-        'hacl_createGeneralContent_message1' => 'please set what you would like to protect; ',
-        'hacl_createGeneralContent_message2' => 'please set a name; ',
-        'hacl_createGeneralContent_message3' => 'please set for whom the acl is defined for',
+        'hacl_createGeneralContent_message1' => 'Please set what you would like to protect. ',
+        'hacl_createGeneralContent_message2' => 'Please set a name. ',
+        'hacl_createGeneralContent_message3' => 'Please set for whom the acl is defined for .',
         'hacl_createGeneralContent_message4' => 'Some data missing',
 
         'hacl_createACLContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
@@ -240,7 +240,7 @@ $messages['en'] = array(
         'hacl_rightPanelSelectDeselectTab_1' => 'Groups and Users',
         'hacl_rightPanelSelectDeselectTab_2' => 'Filter in groups:',
         'hacl_rightPanelSelectDeselectTab_3' => 'Users',
-        'hacl_rightPanelSelectDeselectTab_4' => 'Users',
+        'hacl_rightPanelSelectDeselectTab_4' => 'User',
         'hacl_rightPanelSelectDeselectTab_5' => 'Filter:',
 
         'hacl_rightList_All' => 'All',
@@ -259,7 +259,7 @@ $messages['en'] = array(
         'hacl_SDRightsPanelContainer_3' => 'Discard Changes',
         'hacl_SDRightsPanelContainer_4' => 'Save Right',
 
-        'hacl_RightsContainer_1' => 'Select...',
+        'hacl_RightsContainer_1' => '[Choose ACL template]',
         'hacl_RightsContainer_2' => 'Use selected template',
         
         'hacl_saveTempGroup_1' => 'group saved',
@@ -277,7 +277,7 @@ $messages['en'] = array(
         'hacl_manageUser_9' => 'Editing',
         'hacl_manageUser_10' => 'save Group',
 
-        'hacl_whitelist_1' => 'Manage whiteliste pages',
+        'hacl_whitelist_1' => 'Manage whitelisted pages',
         'hacl_whitelist_2' => 'In this tab you can create and delete whitelist entries',
         'hacl_whitelist_3' => 'Whitelisted Pages',
         'hacl_whitelist_4' => 'Add page to whitelist:',
@@ -399,9 +399,9 @@ $messages['de'] = array(
         'hacl_createGeneralContent_12' => 'Alle Nutzer',
         'hacl_createGeneralContent_13' => 'Alle registrierten Nutzer',
         'hacl_createGeneralContent_14' => 'Alle anonymen Nutzer',
-        'hacl_createGeneralContent_message1' => 'Bitte wählen Sie den Typ des zu schützenden Elements; ',
-        'hacl_createGeneralContent_message2' => 'Bitte legen Sie einen Namen fest; ',
-        'hacl_createGeneralContent_message3' => 'Bitte definieren Sie, für wen das ACL gilt',
+        'hacl_createGeneralContent_message1' => 'Bitte wählen Sie den Typ des zu schützenden Elements. ',
+        'hacl_createGeneralContent_message2' => 'Bitte legen Sie einen Namen fest. ',
+        'hacl_createGeneralContent_message3' => 'Bitte definieren Sie, für wen das ACL gilt. ',
         'hacl_createGeneralContent_message4' => 'Daten reichen nicht aus',
 
         'hacl_createACLContent_1' => '<strong>Zu schützen:</strong><br />Wählen Sie das zu schützende Element (Seite, Kategorie, Eigenschaft, Namensraum)<br /><br /><strong>Zu schützen:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',

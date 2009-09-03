@@ -118,7 +118,7 @@ abbr,acronym { border:0;
 
 /* yui style-customization */
 .yui-skin-sam .yui-navset .yui-nav .selected, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected {
-    margin-top:-2px!important;
+    margin-top:-1px!important;
 }
 .yui-skin-sam .yui-navset .yui-nav ul, .yui-skin-sam .yui-navset .yui-navset-top ul {
     margin-top:2px!important;
@@ -128,6 +128,8 @@ abbr,acronym { border:0;
     background:#FFF!important;
     margin:0px!important;
     padding:0px!important;
+    /*float:left;
+    */
 }
 .yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav{
     border:0px solid #000!important;
@@ -163,7 +165,8 @@ button:hover{
 }
 .haloacl_tab_section_container{
     float:left;
-    clear:both;
+    /*    clear:both;
+    */
 }
 
 .haloacl_tab_section_header{
@@ -515,7 +518,6 @@ button:hover{
 
 .haloacl_rightpanel_selecttab_rightpart_filter_title{
     font-weight:bold;
-
 }
 
 /* datatable */
@@ -984,8 +986,23 @@ button:hover{
 }
 
 .datatable_user_link{
-    padding: 3px 3px 3px 0;
+    padding: 3px 360px 3px 0;
 }
 #create_acl_general_name{
     width:200px;
+}
+.yui-ac-content{
+    width:200px!important;
+    float:left;
+}
+
+.haloacl_right_name{
+    width:200px;
+}
+
+.haloacl_readonly_right_secondspacing{
+    margin-left:102px;
+}
+.haloacl_readonly_right_firstspacing{
+    margin-left:227px;
 }

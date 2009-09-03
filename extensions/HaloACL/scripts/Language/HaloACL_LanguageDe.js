@@ -23,7 +23,7 @@ var wgContLanguageStrings = {
         'manageACLTooltip'      : 'ACLs verwalten, eigenes Standard Template verwalten und ACL Favoriten verwalten',
         'manageUser'            : 'Nutzer verwalten',
         'manageUserTooltip'     : 'Hier können ACL Gruppen angelegt, editiert und gelöscht werden',
-        'whitelists'            : 'Whitelists',
+        'whitelists'            : 'Whitelist',
         'manageWhitelistTooltip': 'Hier können Whitelist Einträge angelegt und gelöscht werden ',
         'manageExistingACLs'    : 'ACLs verwalten',
         'manageDefaultUserTemplate' : 'Standard Nutzer Template verwalten',
