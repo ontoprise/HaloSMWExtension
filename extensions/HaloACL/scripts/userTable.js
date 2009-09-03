@@ -230,8 +230,15 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     myDataTable.subscribe("postRenderEvent",function(){
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
-    });
 
+        /*
+        YAHOO.util.Event.addListener($$('.'+divid+'_users'),"click",function(){
+            var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+            eval(fncname);
+        });
+        */
+        
+    });
 
 
 
@@ -426,7 +433,14 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 
     myDataTable.panelid = panelid;
     myDataTable.subscribe("postRenderEvent",function(){
-        YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable(panelid);
+        var callback = function(){
+            //YAHOO.util.Event.addListener($$('.removebutton'),"click",function(){
+                //var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+                //eval(fncname);
+            //});
+        };
+
+        YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable(panelid,callback);
     });
 
 
@@ -439,7 +453,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
 
 // handles
 // standard part (select deselect tab)
-YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
+YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callback){
     //if(YAHOO.haloacl.debug) console.log("autoselectevent fired for panel:"+panelid);
     //if(YAHOO.haloacl.debug) console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
     //if(YAHOO.haloacl.debug) console.log("listing known selections for panel:");
@@ -511,12 +525,11 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid){
         });
         if(YAHOO.haloacl.debug) console.log(test);
 
-
-
-
     });
 
-
+    if(callback != null){
+        callback();
+    }
 };
 
 

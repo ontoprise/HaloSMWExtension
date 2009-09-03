@@ -1227,20 +1227,31 @@ HTML;
                         </div>
                         <div class="haloacl_panel_content_row_content">
             $hacl_rightsPanel_4
-                            <input type="radio" value="on" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid" checked $disabled/>&nbsp;$hacl_rightsPanel_5
-                            <input type="radio" value="off" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid" $disabled/>&nbsp;$hacl_rightsPanel_6
+                            <input id="right_autodescron_$panelid" type="radio" value="on" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid" checked $disabled />&nbsp;$hacl_rightsPanel_5
+                            <input id="right_autodescroff_$panelid" type="radio" value="off" name="right_descriptiontext_$panelid" class="right_descriptiontext_$panelid" $disabled />&nbsp;$hacl_rightsPanel_6
                         </div>
                     </div>
                     <script>
-                        YAHOO.haloacl.right_autodesc_$panelid = function(element){
-                            if(element.value == 'on'){
-                               $('right_description_$panelid').disable();
-                               $('right_description_$panelid').value = "$hacl_rightsPanel_7";
+                        YAHOO.haloacl.right_descriptiontext_$panelid = function(element){
+
+                            var autoGenerate;
+                            $$('.right_descriptiontext_$panelid').each(function(item){
+                                if(item.checked){
+                                    autoGenerate = item.value;
+                                }
+                            });
+
+                            if (autoGenerate == "on") {
+                               $('right_description_$panelid').disabled = true;
+                               YAHOO.haloacl.refreshPanel_$panelid();
                             }else{
-                               $('right_description_$panelid').enable();
-                               $('right_description_$panelid').value = "";
+                               $('right_description_$panelid').disabled = false;
                             }
                         }
+
+                        YAHOO.util.Event.addListener("right_autodescron_$panelid", "change", YAHOO.haloacl.right_descriptiontext_$panelid);
+                        YAHOO.util.Event.addListener("right_autodescroff_$panelid", "change", YAHOO.haloacl.right_descriptiontext_$panelid);
+
                     </script>
 HTML;
     }
@@ -1254,7 +1265,7 @@ HTML;
 
                     <div id="right_tabview_$panelid" class="yui-navset"></div>
                     <script type="text/javascript">
-                      YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid', '$predefine', '$readOnly', '$preload', '$preloadRightId');
+                        YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid', '$predefine', '$readOnly', '$preload', '$preloadRightId');
                     </script>
 
 HTML;
@@ -1320,19 +1331,32 @@ HTML;
                     var groups = "";
 
                     switch ('$predefine') {
+                        case "modification":
+                            description = "Modification rights";
                         case "individual":
                         case "private":
 
+                            for(i=0;i<YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].length;i++){
+                                users = users+", U:"+YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'][i];
+                            }
+
+                            /*
                             $$('.datatableDiv_right_tabview_$panelid'+'_users').each(function(item){
                                 if(item.checked){
                                     users = users+", U:"+item.name;
                                 }
                             });
+                            */
                             
                             var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                            for(i=0;i<YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].length;i++){
+                                groups = groups+", G:"+YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'][i];
+                            }
+                            /*
                             groupsarray.each(function(group){
                                 groups = groups+", G:"+group;
                             });
+                            */
                             break;
                         case "allusersregistered":
                             users = "  $hacl_rightsPanel_allUsersRegistered";
@@ -1460,6 +1484,8 @@ HTML;
             YAHOO.util.Event.addListener("checkbox_right_annotate", "change", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("right_name_$panelid", "change", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("right_description_$panelid", "change", YAHOO.haloacl.refreshPanel_$panelid);
+
+
 
             checkAll_$panelid = function () {
                 $('checkbox_right_read').checked = false;
@@ -1697,6 +1723,10 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
            $$('.datatableDiv_'+panelid+'_users').each(function(item){
                 if(item.checked){
                    YAHOO.haloacl.clickedArrayUsers[panelid].push(item.name);
+
+                    var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+                    eval(fncname);
+
                    if(YAHOO.haloacl.debug) console.log("adding "+item.name+" to list of checked users");
                 }
 

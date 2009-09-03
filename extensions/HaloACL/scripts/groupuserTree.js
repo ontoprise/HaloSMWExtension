@@ -273,6 +273,8 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         // update usertable
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
+        var fncname = "YAHOO.haloacl.refreshPanel_"+this.tree.panelid.substr(14)+"();";
+        eval(fncname);
     },
 
     /**

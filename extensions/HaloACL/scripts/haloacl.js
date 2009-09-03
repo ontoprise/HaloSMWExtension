@@ -37,7 +37,7 @@ YAHOO.namespace ("haloacl.settings");
 YAHOO.namespace ("haloacl.manageUser");
 
 // log debug information to js-console
-YAHOO.haloacl.debug = false;
+YAHOO.haloacl.debug = true;
 
 if(YAHOO.haloacl.debug){
     console.log("======== DEBUG MODE ENABLED =========");
@@ -514,6 +514,12 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
     }
     if(YAHOO.haloacl.debug) console.log("array after deletion");
     if(YAHOO.haloacl.debug) console.log(YAHOO.haloacl.clickedArrayUsers[panelid]);
+
+
+    var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+    eval(fncname);
+
+
 };
 
 YAHOO.haloacl.addUserToUserArray = function(panelid, name){
@@ -538,6 +544,8 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
     }
 
     if(YAHOO.haloacl.debug) console.log(":::"+YAHOO.haloacl.clickedArrayUsers[panelid]);
+
+
 };
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
