@@ -1894,6 +1894,7 @@ function rightList($panelid, $type = "readOnly") {
     $hacl_rightList_Defaultusertemplates = wfMsg('hacl_rightList_Defaultusertemplates');
 
     $hacl_rightList_1 = wfMsg('hacl_rightList_1');
+    $hacl_manageUser_7 = wfMsg('hacl_manageUser_7');
 
 
     $response = new AjaxResponse();
@@ -1967,11 +1968,37 @@ HTML;
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
             </div>
         </div>
+        <div id="haloacl_manageuser_contentlist_footer">
+            <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
+        </div>
     </div>
 
     
 
 <script type="text/javascript">
+
+    YAHOO.haloacl.manageACLdeleteCheckedGroups = function(){
+        var checkedgroups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloaclrights.treeInstance$panelid, null);
+
+        var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+        xml += "<groupstodelete>";
+        for(i=0;i<checkedgroups.length;i++){
+            xml += "<group>"+checkedgroups[i]+"</group>";
+        }
+        xml += "</groupstodelete>";
+        if(YAHOO.haloacl.debug) console.log(xml);
+
+        var callback5 = function(result){
+            YAHOO.haloacl.notification.createDialogOk("content","Manage Users",result.responseText,{
+                yes:function(){
+                    window.location.reload();
+                    }
+            });
+        };
+
+        YAHOO.haloacl.sendXmlToAction(xml,'deleteGroups',callback5);
+
+    };
 
 
     // treeview part - so the left part of the select/deselct-view
@@ -3584,7 +3611,12 @@ HTML;
 }
 
 
-function deleteGroups($grouspXML) {
+/**
+ *
+ * deletes items (groups or acls)
+ *
+ */
+function deleteGroups($grouspXML, $type) {
 
     $whitelistXml = new SimpleXMLElement($grouspXML);
     foreach($whitelistXml->xpath('//group') as $group) {
@@ -3594,6 +3626,7 @@ function deleteGroups($grouspXML) {
         $sdarticle->doDelete("gui-deletion");
 
     }
+
     $result = wfMsg('hacl_deleteGroup_1');
 
     // create article
