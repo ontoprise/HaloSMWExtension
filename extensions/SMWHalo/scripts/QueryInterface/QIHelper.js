@@ -940,7 +940,12 @@ QIHelper.prototype = {
     			} else {
 					ac_constraint = 'constraints="annotation-value: '+propertyName+'"';
 				}
-				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3"/>';
+				
+				// save old values
+				
+			    var oldPropertyValue = $('input3') ? $('input3').value : "";
+				
+				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3" value="'+oldPropertyValue+'"/>';
 				
 				// set restriction selector
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
@@ -1022,12 +1027,14 @@ QIHelper.prototype = {
 
 					cell = newrow.insertCell(2);
 					var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+					// keep old value if existing
+					var oldPropertyValue = $('input'+this.activeInputs) ? $('input3'+this.activeInputs).value : "";
 					if (parameterTypes[i] == '_wpg') {
-                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '" value="'+oldPropertyValue+'"/>';
 					} else if (parameterTypes[i] == '_dat') {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'" value="'+oldPropertyValue+'"/>';
 					} else {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'"/>';
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'" value="'+oldPropertyValue+'"/>';
 					}
 					this.activeInputs++;
 				}
@@ -1148,6 +1155,7 @@ QIHelper.prototype = {
 																				// value
 																				// first
 				for ( var i = 0; i < this.enumValues.length; i++) {
+					
 					tmphtml += '<option style="width:100%" value="'
 							+ unescapeQueryHTML(this.enumValues[i])
 							+ '" '
@@ -1237,6 +1245,9 @@ QIHelper.prototype = {
 			autoCompleter.registerAllInputs();
 		}
 		$('qidelete').style.display = "";
+		
+		// apply correct AC constraints depending on property
+		if (!prop.isEnumeration()) this.getPropertyInformation();
 	},
 
 	/**
