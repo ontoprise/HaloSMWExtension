@@ -142,7 +142,7 @@ class SMWQueryInterface extends SpecialPage {
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 		$useTS = "";		
 		if (isset($smwgWebserviceEndpoint)) {
-			$useTS = '<input class="btn" type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+			$useTS = '<input class="btn" type="checkbox" id="usetriplestore" onchange="qihelper.updatePreview()">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		} 
 		return '<div id="qimenubar">' .
 						//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
