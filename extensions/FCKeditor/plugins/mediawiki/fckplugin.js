@@ -754,10 +754,10 @@ FCK.DataProcessor =
 				var sort = htmlNode.getAttribute('sort');
 				if (sort) {
 					if (emptyVal.exec(sort)) return '';
-					return '[[Category:' + text + '|' + sort + ']]';
+					return '[[' + window.parent.gLanguage.getMessage('CATEGORY') + text + '|' + sort + ']]';
 				}
 				if (emptyVal.exec(text)) return '';
-				return '[[Category:' + text + ']]'
+				return '[[' + window.parent.gLanguage.getMessage('CATEGORY')+ text + ']]'
 		}
 	}
 	
@@ -777,6 +777,13 @@ FCK.DataProcessor =
 		{
 			FCK.EditingArea.Textarea.value = result.responseText ;
 			original.apply( FCK, args ) ;
+                        // If Semantic Toolbar is present, change the Event handlers
+                        // when switching between wikitext <-> wysiwyg
+                        if (gAnnotationPlugin.GetState()) {
+                            ClearEventHandler4AnnotationBox();
+                            SetEventHandler4AnnotationBox();
+                        }
+
 		}
 
 		if ( FCK.EditMode == FCK_EDITMODE_SOURCE )
@@ -797,8 +804,13 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
-                        // disable the annotation toolbar if present
-                        if (gAnnotationPlugin.GetState()) gAnnotationPlugin.DisableAnnotationToolbar();
+                        // If Semantic Toolbar is present, change the Event handlers when switching between wikitext <-> wysiwyg
+                        if (gAnnotationPlugin.GetState()) {
+                            ClearEventHandler4AnnotationBox();
+                            SetEventHandler4AnnotationBox();
+                        }
+                        // add autocompletion
+                        //FCK.EditingArea.Textarea.className += ' wickEnabled:MWFloater0';
 	}
 })() ;
 
@@ -921,12 +933,11 @@ SMW_Annotate.prototype = {
         this.editorArea = FCK.GetData();
         this.IsActive = FCK_TRISTATE_OFF;
         this.contextMenu = null;
-        this.eventManager = new window.parent.EventManager();
     },
 
     Execute: function() {
-        if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
-            return FCK_TRISTATE_DISABLED ;
+        //if ( FCK.EditMode != FCK_EDITMODE_WYSIWYG )
+          //  return FCK_TRISTATE_DISABLED ;
         if (!this.IsActive)
             this.EnableAnnotationToolbar();
         else
@@ -952,8 +963,18 @@ SMW_Annotate.prototype = {
         window.parent.obContributor.registerContributor();
         window.parent.relToolBar.callme();
         window.parent.catToolBar.callme();
+        window.parent.propToolBar.callme();
         window.parent.smw_help_callme();
-        window.parent.smw_links_callme();
+        // webservice toolbar, only available if DataImport extension is included
+        if (window.parent.wsToolBar)
+            window.parent.wsToolBar.callme();
+        // rule toolbar, only available if SemanticRuls extension is included
+        if (window.parent.ruleToolBar)
+            window.parent.ruleToolBar.callme();
+        // Annotations toolbar, only if SemanticGardening extension is included
+        if (window.parent.smwhgGardeningHints)
+            window.parent.smwhgGardeningHints.createContainer();
+        //window.parent.smw_links_callme();
         SetEventHandler4AnnotationBox();
     },
 
@@ -968,9 +989,7 @@ SMW_Annotate.prototype = {
         this.IsActive = FCK_TRISTATE_OFF;
         HideContextPopup();
         window.parent.AdvancedAnnotation.unload();
-        window.parent.Event.stopObserving(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
-        window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-        window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+        ClearEventHandler4AnnotationBox();
     },
 
     /**
@@ -1097,9 +1116,27 @@ ShowCatToolbar = function(name) {
 var gAnnotationPlugin = new SMW_Annotate();
 
 function SetEventHandler4AnnotationBox() {
-    window.parent.Event.observe(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
-    window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-    window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+    if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
+        window.parent.Event.observe(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+        window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+    } else {
+        window.parent.Event.observe(FCK.EditingArea.Textarea, 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.observe(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
+        window.parent.Event.observe(FCK.EditingArea.Textarea, 'mousedown', HideContextPopup);
+    }
+}
+
+function ClearEventHandler4AnnotationBox() {
+    if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
+        window.parent.Event.stopObserving(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+        window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+    } else {
+        window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
+        window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'mousedown', HideContextPopup);
+    }
 }
 
 
@@ -1127,6 +1164,9 @@ FCKeditInterface.prototype = {
         this.selection = Array();
         // the HTML element that contains the selected text
         this.selectedElement = null;
+        // start and end for selection when in wikitext mode
+        this.start = -1;
+        this.end = -1;
     },
 
    /**
@@ -1150,6 +1190,18 @@ FCKeditInterface.prototype = {
      * @param  string text wikitext
      */
     setSelectedText: function(text) {
+        // check if start and end are set, then simply replace the selection
+        // in the textarea
+        if (this.start != -1 && this.end != -1) {
+            var txtarea = FCK.EditingArea.Textarea.value;
+            var newtext = txtarea.substr(0, this.start) + text + txtarea.substr(this.end);
+            this.clearSelection();
+            HideContextPopup();
+            this.setValue(newtext);
+            return;
+        }
+
+        // her continue using the functions of the FCK editor
         // get the ancestor node, if we have a selection of some property
         // or category text, if this is not the case, oSpan will be null
         var oSpan = FCK.Selection.MoveToAncestorNode( 'SPAN' ) ;
@@ -1159,11 +1211,10 @@ FCKeditInterface.prototype = {
             oSpan = FCK.EditorDocument.createElement( 'SPAN' ) ;
 
         // check the wiki text for property and category information.
-        if (text.indexOf('::') != -1) { // property
+        var regex = new RegExp('^\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]$')
+        var match = regex.exec(text);
+        if (match) {
             oSpan.className = 'fck_mw_property' ;
-
-            var regex = new RegExp('\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]')
-            var match = regex.exec(text);
             if (match[4]) {
                 oSpan.setAttribute( 'property',  match[1] + '::' + match[2] );
                 oSpan.innerHTML = match[4];
@@ -1171,15 +1222,22 @@ FCKeditInterface.prototype = {
                 oSpan.setAttribute( 'property',  match[1] );
                 oSpan.innerHTML = match[2];
             }
+        } else {
+            regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
+            match = regex.exec(text);
+
+            if (match) {
+                oSpan.className = 'fck_mw_category' ;
+                oSpan.innerHTML = match[1];
+            }
+            // something else (probably garbage) was in the wikitext, then do nothing
+            else return;
         }
-        else if (text.indexOf('Category:') != -1) { // Category
-            oSpan.className = 'fck_mw_category' ;
-            oSpan.innerHTML = text.replace(/Category:(.*)\]\]/, '$1').substring(2);
-        }
-        // something else (probably garbage) was in the wikitext, then do nothing
-        else return;
         if ( oSpan ) {
-            FCK.InsertElement(oSpan)
+            if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG )
+                FCK.InsertElement(oSpan);
+            else
+                FCK.InsertElement(text);
         }
         HideContextPopup();
     },
@@ -1217,19 +1275,25 @@ FCKeditInterface.prototype = {
      */
     setValue: function(text) {
         if (text) {
-            function ajaxResponseSetHtmlText(request) {
-                if (request.status == 200) {
-                    // success => store wikitext as FCK HTML
-                    FCK.SetData(request.responseText);
-                }
-                gEditInterface.newText = '';
-                // custom event handlers are lost when using FCK.SetData
+            if (FCK.EditMode == FCK_EDITMODE_WYSIWYG) {
+                function ajaxResponseSetHtmlText(request) {
+                    if (request.status == 200) {
+                        // success => store wikitext as FCK HTML
+                        FCK.SetData(request.responseText);
+                    }
+                    gEditInterface.newText = '';
+                    // custom event handlers are lost when using FCK.SetData
+                    SetEventHandler4AnnotationBox();
+                    //gAnnotationPlugin.SetEventHandler();
+                };
+                this.newText = text;
+                window.parent.sajax_do_call('wfSajaxWikiToHTML', [text],
+                                            ajaxResponseSetHtmlText);
+            }
+            else {
+                FCK.SetData(text);
                 SetEventHandler4AnnotationBox();
-                //gAnnotationPlugin.SetEventHandler();
-            };
-            this.newText = text;
-	    window.parent.sajax_do_call('wfSajaxWikiToHTML', [text],
-	                                ajaxResponseSetHtmlText);
+            }
         }
     },
 
@@ -1260,7 +1324,13 @@ FCKeditInterface.prototype = {
      */
     getSelectionAsArray: function() {
         // flush the selection array
-        this.selection = Array();
+        this.selection = [];
+
+        // if we are in wikitext mode, return the selection of the textarea
+        if (FCK.EditMode != FCK_EDITMODE_WYSIWYG) {
+            return this.getSelectionWikitext();
+        }
+
         // selected element node
         this.selectedElement = FCKSelection.GetSelectedElement();
         // selection text only without html mark up
@@ -1429,6 +1499,226 @@ FCKeditInterface.prototype = {
         return html.replace(/^\s*/, '').replace(/\s*$/, ''); // trim the selected text
     },
 
+    /**
+     * If in wikitext mode, this function gets the seleced text and must also
+     * select the complete annotation if the selection is inside of [[ ]]. Also
+     * selections inside templates etc. must be ignored.
+     *
+     * @access private
+     * @return this.selection(array)
+     * @see    getSelectionAsArray for details on the return value
+     */
+    getSelectionWikitext: function() {
+        // selected text by the user in the textarea
+        var selection = this.getSelectionFromTextarea();
+        if (selection.length == 0) return "";  // nothing selected
+
+        // complete text from the editing area
+        var txt = FCK.EditingArea.Textarea.value;
+
+        var p; // position marker for later
+
+        var currChar; // current character that is observed
+
+        // start look at the left side of the selection for any special character
+        var currPos = this.start;
+        while (currPos > 0) {
+            // go back one position in text area string.
+            currPos--;
+            currChar = txt.substr(currPos, 1);
+            // "[" found, move the selection start there if there are two of them
+            if (currChar == '[') {
+                if (selection[0] == '[') {  // one [ is in the selection and other
+                    this.start = currPos;        // is at position, stop here
+                    break;
+                }
+                if (currPos > 0 && txt[currPos -1] == '[') {// previous pos also
+                    this.start = currPos - 1;                    // also contains a [
+                    break;
+                }
+            }
+            // "]" found, stop looking further if there are two of them
+            if (currChar == ']' && currPos > 0 && txt[currPos -1] == ']')
+                break;
+            // ">" found, check it's the end of a tag, and if so, which type of tag
+            if (currChar == '>') {
+                // look for the corresponding <
+                p = txt.substr(0, currPos).lastIndexOf('<');
+                if (p == -1) continue; // no < is there, just go ahead
+                var tag = txt.substr(p, currPos - p + 1);
+                if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
+                    if (tag[1] == '/')  // we are at the end of a closing tag
+                        break;          // stop looking any further back
+                    else if (tag.match(/\s*>$/)) // it's a <tag />, stop here as well
+                        break;
+                }
+            }
+            // maybe we are inside a tag and found it's begining. Check that
+            if (currChar == '<') {
+                // look for the corresponding >
+                p = selection.indexOf('>');
+                if (p == -1) continue;
+                var tag = txt.substr(currPos, this.start + p + 1 - currPos);
+                if (tag.match(/^<[^<>]*>$/)) // we really found a tag
+                    return this.clearSelection();
+            }
+            // we are inside a template or parser function or whatever
+            if (currChar == '{' && currPos > 0 && txt[currPos - 1] == '{')
+                return;
+            // end of a template or parser function found, stop here
+            if (currChar == '}' && currPos > 0 && txt[currPos - 1] == '}')
+                break;
+        }
+
+        // adjust selection if we moved the start position
+        selection = txt.substr(this.start, this.end - this.start);
+        
+        // look for any special character at the right side of the selection
+        currPos = this.end - 1;
+        while (currPos < txt.length - 2) {
+            // move the possition one step forward in the string
+            currPos++;
+            currChar = txt.substr(currPos, 1);
+            // if we find an open braket, move the selection start there
+            if (currChar == ']') {
+                if (selection.substr(selection.length - 1, 1) == ']') {
+                    this.end = currPos + 1;
+                    break;
+                }
+                if (currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == ']') {
+                    this.end = currPos + 2;
+                    break;
+                }
+            }
+            // "[" found, stop looking further if there are two of them
+            if (currChar == '[' && currPos < txt.length - 1 && txt[currPos + 1] == '[')
+                break;
+            // we are inside a template or parser function or whatever
+            if (currChar == '}' && currPos < txt.length - 1 && txt[currPos + 1] == '}')
+                return;
+            // we are facing the begining of a template or parser function, stop here
+            if (currChar == '{' && currPos < txt.length - 1 && txt[currPos + 1] == '{')
+                break;
+
+            // "<" found, check it's the start of a tag, and if so, which type of tag
+            if (currChar == '<') {
+                // look for the corresponding >
+                p = txt.substr(currPos).indexOf('>');
+                if (p == -1) continue; // no > is there, just go ahead
+                var tag = txt.substr(currPos, p + 1);
+                if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
+                    if (tag[1] == '/')  // we are at the end of a closing tag
+                        return this.clearSelection(); // stop looking any further and quit
+                    else if (tag.match(/\s*>$/)) // it's a <tag />, stop here as well
+                        break;
+                }
+            }
+            // maybe we are inside a tag and found it's end. Check that
+            if (currChar == '>') {
+                // look for the corresponding <
+                p = selection.lastIndexOf('<');
+                if (p == -1) continue;
+                var tag = txt.substr(this.start + p, currPos - this.start - p + 1);
+                if (tag.match(/^<[^<>]*>$/)) // we really found a tag
+                    return this.clearSelection();
+            }
+        }
+        // adjust selection if we moved the end position
+        selection = txt.substr(this.start, this.end - this.start);
+
+        // trim the selection
+        selection = selection.replace(/^\s*/, '').replace(/\s+$/, '');
+        this.selection[0] = selection;
+
+        // now investigate the selected text and fill up the this.selection array
+
+        // check for a property
+        var regex = new RegExp('^\\[\\[(.*?)::(.*?)(\\|(.*?))?\\]\\]$');
+        var match = regex.exec(selection);
+        if (match) {
+            this.selection[0] = match[2];
+            this.selection[3] = match[2];
+            this.selection[1] = 102;
+            this.selection[2] = match[1];
+            if (match[4])
+                this.selection[0] = match[4];
+            return this.selection;
+        }
+        // check for a category
+        regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
+        var match = regex.exec(selection);
+        if (match) {
+            this.selection[1] = 14;
+            this.selection[0] = match[1];
+            return this.selection;
+        }
+        // link
+        regex = new RegExp('^\\[\\[:?(.*?)(\\|(.*?))?\\]\\]$');
+        var match = regex.exec(selection);
+        if (match) {
+            this.selection[0] = match[1];
+            return this.selection;
+        }
+        // check if there are no <tags> in the selection
+        if (selection.match(/.*?(<\/?[\d\w:_-]+(\s+[\d\w:_-]+="[^<>"]*")*\s*(\/\s*)?>)+.*?/))
+            return this.clearSelection();
+        // if there are still [[ ]] inside the selection then more that a 
+        // link was selected making this selection invalid.
+        if (selection.indexOf('[[') != -1 || selection.indexOf(']]') != -1 )
+            return this.clearSelection();
+
+        // return selection without any further modifying.
+        return this.selection;
+    },
+
+    /**
+     * Retrieve the selected text from the textarea when in wikitext mode.
+     * If nothing is selected an empty string will be returned. Return value is
+     * the selected text within the text area. If selection is not empty, then
+     * this.start and this.end are not -1.
+     *
+     * @access private
+     * @return string selection
+     */
+    getSelectionFromTextarea: function() {
+
+        var myArea = FCK.EditingArea.Textarea;
+        var selection = '';
+
+        if ( FCKBrowserInfo.IsIE ) {
+            if (window.getselection)
+                selection = window.getselection(); 
+            else if (document.getselection)
+                selection = document.getselection(); 
+            else if (document.selection)
+                selection = document.selection.createRange().text; 
+            this.start = myArea.value.indexOf(selection);
+            if (this.start != 0)
+                this.end = this.start + selection.length;
+            else this.start = -1;
+        } 
+        else { // all other browsers
+            if (myArea.selectionStart != undefined) {
+                this.start = myArea.selectionStart;
+                this.end = myArea.selectionEnd;
+                selection = myArea.value.substr(this.start, this.end - this.start);
+            }
+        }
+        return selection;
+    },
+
+    /**
+     * Make a previously selected text invalid, remove all markers in the
+     * variables
+     *
+     * @access private
+     */
+    clearSelection: function() {
+        this.start = -1;
+        this.end = -1;
+        this.selection = Array();
+    },
+    
     // not needed but exists for compatiblity reasons
     setSelectionRange: function(start, end) {},
     // not needed but exists for compatiblity reasons
@@ -1441,10 +1731,9 @@ FCKeditInterface.prototype = {
 
 
 var gEditInterface = new FCKeditInterface();
-window.parent.gEditInterface = gEditInterface;
+    window.parent.gEditInterface = gEditInterface;
 
-
-var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Annotate', 'Semantic Annotations' ) ;
+var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semantic Toolbar', null, true) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_add.png' ;
 FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 

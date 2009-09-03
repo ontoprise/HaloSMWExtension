@@ -233,6 +233,30 @@ WikiTextParser.prototype = {
 		return matching.length == 0 ? null : matching;
 	},
 
+	/**
+	 * @public
+	 *
+	 * Returns the index number of the relation, that is looked up by name
+         * and value. If relation is not found, return -1.
+	 *
+         * @param  string name of relation
+         * @param  string value of relation (not representation)
+	 * @return int index of relation.
+	 */
+	getRelationIndex: function(name, value) {
+		if (this.relations == null) {
+			this.parseAnnotations();
+		}
+
+		for (var i = 0, num = this.relations.length; i < num; ++i) {
+			var rel = this.relations[i];
+			if (this.equalWikiName(rel.getName(), name) &&
+                            rel.getValue() == value) {
+				return i;
+			}
+		}
+		return -1;
+	},
 
 	/**
 	 * @public

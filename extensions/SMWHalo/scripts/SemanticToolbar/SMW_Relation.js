@@ -225,10 +225,10 @@ cancel: function(){
     smwhgLogger.log("","STB-Properties",this.currentAction+"_canceled");
 	/*ENDLOG*/
 	this.currentAction = "";
-	
-	this.toolbarContainer.hideSandglass();
-	this.toolbarContainer.release();
-	this.toolbarContainer = null;
+
+        this.toolbarContainer.hideSandglass();
+        this.toolbarContainer.release();
+        this.toolbarContainer = null;
 	this.fillList(true);
 },
 
@@ -309,11 +309,27 @@ createContextMenu: function(contextMenuContainer, value, repr, name) {
 	tb.append(tb.createText('rel-value-0-msg', gLanguage.getMessage('ANNO_PAGE_VALUE'), '' , true));
 	
 	tb.append(tb.createInput('rel-show', gLanguage.getMessage('SHOW'), '', '', '', true));
-	tb.setInputValue('rel-show', repr);	                         
-	
-	var links = [['relToolBar.addItem()',
-	              gLanguage.getMessage('ADD'), 'rel-confirm', 
-	              gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
+	tb.setInputValue('rel-show', repr);
+
+        // cancel and delete links dont work yet, disable it at the moment and change the link message for the addItem()
+
+        // the property is selected and therefore exists already, get index of property in page
+        /* var selindex = (name) ? this.wtp.getRelationIndex(name, value) : -1; */
+        // idx != -1 -> property found, show change and delete links
+        /*
+        if (selindex != -1) {
+		var links = [['relToolBar.changeItem('+selindex+')',gLanguage.getMessage('CHANGE'), 'rel-confirm',
+		                                                    gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid'],
+					 ['relToolBar.deleteItem(' + selindex +')', gLanguage.getMessage('DELETE')],
+					 ['relToolBar.cancel()', gLanguage.getMessage('CANCEL')]
+					];
+        // Property name is not set or index was not found -> new annotation. Show the link add only
+        } else { */
+            var links = [['relToolBar.addItem()',
+                          (name) ? gLanguage.getMessage('CHANGE') : gLanguage.getMessage('ADD'), 'rel-confirm',
+                          gLanguage.getMessage('INVALID_VALUES'), 'rel-invalid']];
+
+        //}
 	
 	tb.append(tb.createLink('rel-links', links, '', true));
 				
