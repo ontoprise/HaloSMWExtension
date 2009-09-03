@@ -55,6 +55,8 @@ HTML;
                                 visible:true,
                                 draggable:true,
                                 resizable:true,
+                                width:"500px",
+                              //  modal:true,
                                 context:  ["anchorHelpCreateRight_$panelid","tl","bl", ["beforeShow"]]
                         });
                         YAHOO.haloacl.popup_helpcreateright_$panelid.setHeader("Help");
