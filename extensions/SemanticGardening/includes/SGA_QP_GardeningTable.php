@@ -42,7 +42,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		global $sgagIP;
 		require_once( $sgagIP . "/includes/SGA_GardeningIssues.php");
 		require_once( $sgagIP . "/includes/bots/consistency_bot/SGA_ConsistencyBot.php");
-
+        wfGAInitUserMessages();
 		$cols = array(); //Names of columns
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 
