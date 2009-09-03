@@ -940,12 +940,7 @@ QIHelper.prototype = {
     			} else {
 					ac_constraint = 'constraints="annotation-value: '+propertyName+'"';
 				}
-				
-				// save old values
-				
-			    var oldPropertyValue = $('input3') ? $('input3').value : "";
-				
-				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3" value="'+oldPropertyValue+'"/>';
+				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3"/>';
 				
 				// set restriction selector
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
@@ -1027,14 +1022,12 @@ QIHelper.prototype = {
 
 					cell = newrow.insertCell(2);
 					var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
-					// keep old value if existing
-					var oldPropertyValue = $('input'+this.activeInputs) ? $('input3'+this.activeInputs).value : "";
 					if (parameterTypes[i] == '_wpg') {
-                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '" value="'+oldPropertyValue+'"/>';
+                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 					} else if (parameterTypes[i] == '_dat') {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'" value="'+oldPropertyValue+'"/>';
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
 					} else {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'" value="'+oldPropertyValue+'"/>';
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'"/>';
 					}
 					this.activeInputs++;
 				}
@@ -1155,7 +1148,6 @@ QIHelper.prototype = {
 																				// value
 																				// first
 				for ( var i = 0; i < this.enumValues.length; i++) {
-					
 					tmphtml += '<option style="width:100%" value="'
 							+ unescapeQueryHTML(this.enumValues[i])
 							+ '" '
@@ -1246,9 +1238,75 @@ QIHelper.prototype = {
 		}
 		$('qidelete').style.display = "";
 		
-		// apply correct AC constraints depending on property
-		if (!prop.isEnumeration()) this.getPropertyInformation();
+		if (!prop.isEnumeration()) this.restoreAutocompletionConstraints();
 	},
+	
+	 restoreAutocompletionConstraints : function() {
+        var propname = $('input0').value;
+        if (propname != "" && propname != this.propname) { // only if not empty
+                                                            // and name changed
+            this.propname = propname;
+            if (this.pendingElement)
+                this.pendingElement.hide();
+            this.pendingElement = new OBPendingIndicator($('input3'));
+            this.pendingElement.show();
+            sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
+                    escapeQueryHTML(propname) ], this.restoreAutocompletionConstraintsCallback
+                    .bind(this));
+        }
+    },
+    
+    restoreAutocompletionConstraintsCallback: function(request) {
+    	autoCompleter.deregisterAllInputs();
+    	   if (request.status == 200) {
+                var schemaData = GeneralXMLTools
+                        .createDocumentFromString(request.responseText);
+
+                // read arity
+                var arity = parseInt(schemaData.documentElement
+                        .getAttribute("arity"));
+                this.proparity = arity;
+                var parameterNames = [];
+                var parameterTypes = [];
+                // parse all parameter names
+                for ( var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
+                    parameterNames
+                            .push(schemaData.documentElement.childNodes[i]
+                                    .getAttribute("name"));
+                    parameterTypes
+                            .push(schemaData.documentElement.childNodes[i]
+                                    .getAttribute("type"));             
+                    for ( var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j < m; j++) {
+                        possibleValues
+                                .push(schemaData.documentElement.childNodes[i].childNodes[j]
+                                        .getAttribute("value")); 
+                    }
+                }
+                
+	                // Speical treatment: binary properties support conjunction,
+	                // therefore we need an "add" button
+	                
+	                var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+	                var ac_constraint = "";
+	                if (parameterTypes[0] == '_wpg') {
+	                    ac_constraint = 'annotation-value: '+propertyName+'|namespace: 0';
+	                } else if (parameterTypes[0] == '_dat') {
+	                    ac_constraint = 'values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName;
+	                } else {
+	                    ac_constraint = 'annotation-value: '+propertyName;
+	                }
+	                var i = 3;
+	                while($('input'+i) != null) {
+	                	$('input'+i).addClassName("wickEnabled");
+	                	$('input'+i).setAttribute("constraints", ac_constraint);
+	                	i++;
+	                }
+                
+            }
+    
+    	autoCompleter.registerAllInputs();
+    	this.pendingElement.hide();
+    },
 
 	/**
 	 * Deletes the currently shown dialogue from the query
