@@ -39,6 +39,8 @@ QIHelper.prototype = {
 		this.propertyTypesList = new PropertyList();
 
 		this.specialQPParameters = new Array();
+		
+		Event.observe($('usetriplestore'),'click', this.updatePreview.bind(this));
 	},
 
 	/**
@@ -2226,6 +2228,7 @@ Event.observe(window, 'load', initialize_qi);
 function initialize_qi() {
 	if (!qihelper)
 		qihelper = new QIHelper();
+		
 }
 
 function initialize_qi_from_querystring(ask) {
