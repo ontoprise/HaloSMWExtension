@@ -616,6 +616,7 @@ class OntoSkin3Template extends QuickTemplate {
     }
 
     function buildTabs() {
+        global $IP, $wgTitle;
         $tabs  = "<!-- Tabs -->";
         $tabsleft .= "<div id=\"tabsleft\">";
         //right tab holding all functions other than page/talk
@@ -660,8 +661,35 @@ class OntoSkin3Template extends QuickTemplate {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
                                             $tabs .= "\"";
-                                            // the edit link. Link all to the FCKEditor
-                                            $tabs .= '<a href="'.htmlspecialchars($tab['href']).'&mode=wysiwyg"';
+
+                                            # build the edit link
+                                            $link = '';
+                                            # if the SF forms are in use, make the edit with semantic forms
+                                            if (defined('SF_VERSION') &&  # SF are included
+                                                isset($wgTitle) && # title obj exists and we are not on a special page
+                                                $wgTitle->getNamespace() != NS_SPECIAL
+                                               ) {
+                                                # check if there are forms available for the current article
+                        			if (count(SFLinkUtils::getFormsForArticle($this->skin)) > 0)
+                                                    $link = htmlspecialchars(
+                                                                str_replace('action=edit',
+                                                                    'action=formedit',
+                                                                    $tab['href']
+                                                                )
+                                                            );
+                                            }
+                                            # if the FCKeditor is available use it. Check this with file_exists,
+                                            # because there are installations where the include is done only if
+                                            # action == edit and mode == wysiwyg. Therefore on page view the FCK
+                                            # might not be included at this moment.
+                                            if (!$link && file_exists($IP.'/extensions/FCKeditor/FCKeditor.php'))
+                                                $link = htmlspecialchars($tab['href']).'&mode=wysiwyg';
+                                            # none of the conditions above came into action, then use the normal
+                                            # wiki editor for editing pages.
+                                            if (!$link) $link = htmlspecialchars($tab['href']);
+                                            # add the href $link now to the tabs
+                                            $tabs .= '<a href="'.$link.'"';
+
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
                                             # accesskey on the watch checkbox.  We also don't want to
