@@ -39,8 +39,10 @@ QIHelper.prototype = {
 		this.propertyTypesList = new PropertyList();
 
 		this.specialQPParameters = new Array();
-		
-		Event.observe($('usetriplestore'),'click', this.updatePreview.bind(this));
+
+                // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
+                if ($('usetriplestore'))
+                    Event.observe($('usetriplestore'),'click', this.updatePreview.bind(this));
 	},
 
 	/**
