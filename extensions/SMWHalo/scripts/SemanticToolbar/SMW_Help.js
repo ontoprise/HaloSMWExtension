@@ -64,10 +64,6 @@ function smw_help_callme(){
 			
 		
 	}
-	else if (wgCanonicalSpecialPageName == "QueryInterface"){
-		
-		 sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
-	}
 }
 
 function displayHelp(request){
@@ -76,13 +72,6 @@ function displayHelp(request){
 		helpcontainer.setHeadline = ' ';
 		helpcontainer.contentChanged();
 		return;
-	}
-	//No SemTB in QI, therefore special treatment
-	if(wgCanonicalSpecialPageName == "QueryInterface"){
-		if ( request.responseText != '' ){
-			// commented out since help container was removed from query interface
-//			$('qi-help-content').innerHTML = request.responseText;
-		}
 	}
 	else { //SemTB available
 		if (request.responseText!=''){
