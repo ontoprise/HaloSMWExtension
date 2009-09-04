@@ -46,11 +46,16 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		global $wgRequest, $wgOut;
 
 		$wgOut->setPageTitle("Data Import Repository");
+		
+		$webTestDebug = $wgRequest->getVal( 'webTestDebug' );
+		if ( !is_null( $webTestDebug ) ) {
+			$webTestDebug = true;
+		}
 
 		global $wgCookiePrefix;
 		
 		global $wgArticlePath;
-	$gardeningURL = Title::makeTitleSafe(NS_SPECIAL, "Gardening")->getFullURL();
+		$gardeningURL = Title::makeTitleSafe(NS_SPECIAL, "Gardening")->getFullURL();
 			
 		$allowed = false;
 		global $wgUser;
@@ -154,7 +159,7 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		if($allowed){
 			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
 		} else {
-			$html .= "<table id=\"wetermimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
+			$html .= "<table id=\"termimporttable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th></tr>";
 		}
 		
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();

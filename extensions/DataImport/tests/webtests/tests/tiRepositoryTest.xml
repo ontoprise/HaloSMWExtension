@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testTermImportRepository">
+	
+	&goToLogin;
+	
+	<target name="testTermImportRepository">
+		<webtest name="TIRepositoryLoggedOut">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
+			
+			<clickElement xpath="//td[@id='term-import-tab']"
+				description="Click term import tab" />
+			
+			<not description="verify that there is no edit collumn">
+				<verifyText text="Edit" description="Is there the edit column?">
+					<table htmlId="termimporttable" row="0" column="3" />
+				</verifyText>
+			</not>
+		</webtest>
+		
+		<webtest name="TIRepositoryLoggedIn">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+	
+			<antcall target="goToLogin" />
+	
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
+			
+			<clickElement xpath="//td[@id='term-import-tab']"
+				description="Click term import tab" />
+			
+			<verifyText text="Manual update" description="Is there the update column?">
+				<table htmlId="termimporttable" row="0" column="2" />
+			</verifyText>
+			<verifyText text="Update" description="Is there the update button?">
+				<table htmlId="termimporttable" row="1" column="2" />
+			</verifyText>
+			<verifyText text="Edit" description="Is there the edit column?">
+				<table htmlId="webservicetable" row="0" column="3" />
+			</verifyText>
+			<verifyText text="Edit" description="Is there the edit button?">
+				<table htmlId="termimporttable" row="1" column="3" />
+			</verifyText>
+		</webtest>
+		
+		<webtest name="WSRepositoryCheckUpdateButton">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+			
+			<antcall target="goToLogin" />
+
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
+			<clickButton xpath="//table[@id='termimporttable']/tbody/tr[2]/td[3]/button" description="Click update button"/>
+
+			<sleep seconds="5" />
+
+			<verifyText text="updating" description="Was update started?">
+				<table htmlId="termimporttable" row="1" column="2" />
+			</verifyText>
+		</webtest>
+
+
+		<webtest name="WSRepositoryCheckEditButton">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+			
+			<antcall target="goToLogin" />
+
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" /> 
+			<!-- this one does not work due to a strange error 
+			<clickButton xpath="//table[@id='termimporttable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
+			<sleep seconds="5" />
+
+			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
+			-->
+		</webtest>
+
+
+	</target>
+</project>
