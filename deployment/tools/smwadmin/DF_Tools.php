@@ -181,26 +181,16 @@ class Tools {
 		
 		// check for unzipping tool
 		$found_unzip = false;
-		if (Tools::isWindows()) {
-			exec("7z -version > $nullDevice", $out, $ret);
-			$found_unzip = ($ret == 7);
-			if (!$found_unzip) return("7-zip is missing or not in PATH. Please install");
-
-		} else {
-			exec("unzip > $nullDevice", $out, $ret);
+		exec("unzip > $nullDevice", $out, $ret);
             $found_unzip = ($ret == 0);
-            if (!$found_unzip) return("7-zip is missing or not in PATH. Please install");
-		}
+            if (!$found_unzip) return("GNU-unzip is missing or not in PATH. Please install");
 		
-
 		// check for GNU-patch tool
-		
 		exec("patch -version > $nullDevice", $out, $ret);
 		$found_patch = ($ret == 0);
 		if (!$found_patch) return("GNU-Patch is missing or not in PATH. Please install");
 
 		// check if PHP is in path
-		
 		exec("php -version > $nullDevice", $out, $ret);
 		$phpInPath = ($ret == 0);
 		if (!$phpInPath) return("PHP is not in PATH. Please install");

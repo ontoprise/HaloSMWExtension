@@ -425,11 +425,11 @@ class Installer {
 	private function unzip($id, $version) {
 
 		if (Tools::isWindows()) {
-			print "\n\nUncompressing:\n7z x -y -o".$this->instDir." ".$this->tmpFolder."\\".$id."-$version.zip";
-			exec('7z x -y -o'.$this->instDir." ".$this->tmpFolder."\\".$id."-$version.zip");
+			print "\n\nUncompressing:\nunzip -o ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
+			exec('unzip -o '.$this->tmpFolder."\\".$id."-$version.zip -d ".$this->instDir);
 		} else {
-			print "\n\nUncompressing:\nunzip ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
-			exec('unzip '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
+			print "\n\nUncompressing:\nunzip -o ".$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir;
+			exec('unzip -o '.$this->tmpFolder."/".$id."-$version.zip -d ".$this->instDir);
 		}
 	}
 
