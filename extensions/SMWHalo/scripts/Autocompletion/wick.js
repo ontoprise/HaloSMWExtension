@@ -1080,13 +1080,16 @@ AutoCompleter.prototype = {
              // range1 = [[category:
              // range2 = ]]      
             
+            var pasteNS = this.siw.inputBox != null ? this.siw.inputBox.getAttribute("pasteNS") : null;
+            var nsPrefix = pasteNS && nsText != null && nsText != '' ? nsText + ":"  : ""; 
             var selection_range = document.selection.createRange();
             selection_range.moveStart("character", -userInput.length);
-            selection_range.text = addedValue;
+            selection_range.text = nsPrefix+addedValue;
             selection_range.collapse(false);
             this.resetCursorinIE();
             
-            if (refreshSTB) refreshSTB.changed();
+            if (typeof(refreshSTB) != "undefined") refreshSTB.changed();
+           
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else if (OB_bd.isGecko && this.siw.inputBox.tagName == 'TEXTAREA') {
@@ -1104,17 +1107,19 @@ AutoCompleter.prototype = {
             var suf = this.siw.inputBox.value.substring(start);
 
              // insert text
-            var theString = pre + addedValue + suf;
+            var pasteNS = this.siw.inputBox != null ? this.siw.inputBox.getAttribute("pasteNS") : null;
+            var nsPrefix = pasteNS && nsText != null && nsText != '' ? nsText + ":"  : ""; 
+            var theString = pre + nsPrefix + addedValue + suf;
             this.siw.inputBox.value = theString;
 
              // set the cursor behind the inserted text
-            this.siw.inputBox.selectionStart = start + addedValue.length - userInput.length;
-            this.siw.inputBox.selectionEnd = start + addedValue.length - userInput.length;
+            this.siw.inputBox.selectionStart = start + (nsPrefix.length+addedValue.length) - userInput.length;
+            this.siw.inputBox.selectionEnd = start + (nsPrefix.length+addedValue.length) - userInput.length;
 
              // set old scroll position
             this.siw.inputBox.scrollTop = scrollTop;
             
-            if (refreshSTB) refreshSTB.changed();
+            if (typeof(refreshSTB) != "undefined") refreshSTB.changed();
             // log
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
