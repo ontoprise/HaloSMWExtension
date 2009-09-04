@@ -554,7 +554,7 @@ Index: includes/Title.php
  			$file = wfLocalFile( $nt );
  			if( $file->exists() ) {
  				wfDebug( __METHOD__ . ": file exists\n" );
-@@ -3148,6 +3192,14 @@
+@@ -3148,6 +3192,18 @@
  				return 'nstab-project';
  			case NS_IMAGE:
  			case NS_IMAGE_TALK:
@@ -566,14 +566,18 @@ Index: includes/Title.php
 +			case NS_DOCUMENT_TALK:
 +			case NS_PDF:
 +			case NS_PDF_TALK:
++			case NS_ICAL:
++			case NS_ICAL_TALK:
++			case NS_VCARD:
++			case NS_VCARD_TALK:
  				return 'nstab-image';
  			case NS_MEDIAWIKI:
  			case NS_MEDIAWIKI_TALK:
 Index: includes/Wiki.php
 ===================================================================
---- includes/Wiki.php	(revision 4273)
+--- includes/Wiki.php	(revision 4716)
 +++ includes/Wiki.php	(working copy)
-@@ -249,9 +249,18 @@
+@@ -249,9 +249,20 @@
  		if( $article ) {
  			return $article;
  		}
@@ -589,6 +593,8 @@ Index: includes/Wiki.php
 +		case NS_VIDEO:
 +		case NS_DOCUMENT:
 +		case NS_PDF:
++		case NS_ICAL:
++		case NS_VCARD:
 +		/*op-patch|BL|2009-07-13|end*/
  			return new ImagePage( $title );
  		case NS_CATEGORY:

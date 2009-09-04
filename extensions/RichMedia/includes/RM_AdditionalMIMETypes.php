@@ -3,7 +3,7 @@
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',
  	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
- 	'rar', 'xls', 'docx', 'xlsx', 'pptx'));
+ 	'rar', 'xls', 'docx', 'xlsx', 'pptx', 'ics', 'vcf'));
 // other possible extensions: ('pwz', 'ppz', 'pot' (draft))(Powerpoint)
 // 'rtf', 'mp2', 'ott' + 'stw' (OpenOffice drafts)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
@@ -47,12 +47,13 @@ $wgNamespaceAliases = $wgNamespaceAliases +
 		'Video_talk' => NS_VIDEO_TALK,
 		'Pdf' => NS_PDF,
 		'Pdf_talk' => NS_PDF_TALK,
-	'ICalendar' => NS_ICAL,
+		'ICalendar' => NS_ICAL,
 		'ICalendar_talk' => NS_ICAL_TALK,
-	'VCard' => NS_VCARD,
+		'VCard' => NS_VCARD,
 		'VCard_talk' => NS_VCARD_TALK
 	);
 
+#used to determine which form to choose
 global $wgNamespaceByExtension;
 $wgNamespaceByExtension = array(
 	'png' => NS_IMAGE,
@@ -85,8 +86,8 @@ $wgNamespaceByExtension = array(
 	'docx' => NS_DOCUMENT,
 	'xlsx' => NS_DOCUMENT,
 	'pptx' => NS_DOCUMENT,
-'ics' => NS_ICAL,
-	'vcf' => NS_VCARD
+	'ics' => NS_DOCUMENT,
+	'vcf' => NS_DOCUMENT
 );
 	
 //We want semantic data in this namespaces!
