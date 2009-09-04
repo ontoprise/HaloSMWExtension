@@ -742,7 +742,7 @@ YAHOO.haloaclrights.popup = function(id, label){
     }
     myPopup.subscribe("hide", popupClose);
 
-    myPopup.setHeader(label);
+    myPopup.setHeader('<div class="haloacl_infobutton"></div>'+'ACL:'+label);
     myPopup.setBody('<div id="popup_content_'+id+'">');
     myPopup.render();
     myPopup.show();

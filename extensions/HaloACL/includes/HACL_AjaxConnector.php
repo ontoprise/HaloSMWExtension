@@ -483,7 +483,8 @@ HTML;
     $html = <<<HTML
         <div class="haloacl_tab_content">
             <div class="haloacl_tab_content_description">
-                <strong>$hacl_createManageACLContent_1</strong>
+                <div class="haloacl_manageusers_title">$hacl_createManageACLContent_1</div>
+
         $hacl_createManageACLContent_2
                 </div>
 HTML;
@@ -1094,7 +1095,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if ($readOnly === "false") $readOnly = false;
 
     if ($readOnly) {
-        $expandMode = "expand";
+        $expandMode = "replace";
     } else {
         $expandMode = "expand";
     }
@@ -2366,7 +2367,7 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     $tempRights = array();
 
     if ($readOnly) {
-        $expandMode = "expand";
+        $expandMode = "replace";
     } else {
         $expandMode = "expand";
     }

@@ -598,6 +598,13 @@ button:hover{
     float:left;
 }
 
+.haloacl_backbutton {
+    width:20px;
+    height:20px;
+    background:url(images/back.png) no-repeat;
+    float:left;
+}
+
 .haloacl_editbutton {
     width:20px;
     height:20px;
