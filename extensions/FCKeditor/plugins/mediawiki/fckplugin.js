@@ -779,7 +779,7 @@ FCK.DataProcessor =
 			original.apply( FCK, args ) ;
                         // If Semantic Toolbar is present, change the Event handlers
                         // when switching between wikitext <-> wysiwyg
-                        if (gAnnotationPlugin.GetState()) {
+                        if (fckSemanticToolbar.GetState()) {
                             ClearEventHandler4AnnotationBox();
                             SetEventHandler4AnnotationBox();
                         }
@@ -804,8 +804,12 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
-                        // If Semantic Toolbar is present, change the Event handlers when switching between wikitext <-> wysiwyg
-                        if (gAnnotationPlugin.GetState()) {
+                    
+                        // if Semantic Toolbar is present, change the Event handlers when switching
+                        // between wikitext <-> wysiwyg, also hide the context popup because the user
+                        // must reselect the text that he wants to annotate
+                        if (fckSemanticToolbar.GetState()) {
+                            HideContextPopup();
                             ClearEventHandler4AnnotationBox();
                             SetEventHandler4AnnotationBox();
                         }
@@ -1028,8 +1032,10 @@ HideContextPopup = function() {
  * fetches the current selected text from the gEditInterface (i.e. the FCK editor
  * area) and creates a context menu for annotating the selected text or modifying
  * the selected annotation.
+ *
+ * @param Event event
  */
-CheckSelectedAndCallPopup = function() {
+CheckSelectedAndCallPopup = function(event) {
         // handle here if the popup box for a selected annotation must be shown
         var selection = gEditInterface.getSelectionAsArray();
         if (selection == null)
@@ -1037,16 +1043,21 @@ CheckSelectedAndCallPopup = function() {
         // something is selected, this will be a new annotation,
         // offer both category and property toolbox
         else if (selection.length == 1 && selection[0] != "") {
-            ShowNewToolbar(selection[0]);
+            ShowNewToolbar(event, selection[0]);
         }
         // an existing annotation will be edited
         else if (selection.length > 1) {
             if (selection[1] == 102) { // Property
-                var val = (selection.length == 4) ? selection[3] : selection[0];
-                ShowRelToolbar(val, selection[0], selection[2]);
+                var show = selection[0];
+                var val = selection[0];
+                if (selection.length == 4)  // an explizit property value is set, then
+                    val = selection[3];     // it's different from the selected (show)
+                else                        // no difference between value and show
+                    show = '';              // because there is not separate prop value
+                ShowRelToolbar(event, selection[2], val, show);
             }
-            else { // Category
-                ShowCatToolbar(selection[0]);
+            else if (selection[1] == 14) { // Category
+                ShowCatToolbar(event, selection[0]);
             }
         }
 }
@@ -1058,17 +1069,19 @@ var fckPopupContextMenu;
  * Create a new context menu for annotating a selection that is not yet annotated.
  * Both property and category container will be shown.
  *
+ * @param Event event
  * @param string value selected text
  */
-ShowNewToolbar = function(value) {
+ShowNewToolbar = function(event, value) {
+        var [x, y] = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(100, 100);
+        fckPopupContextMenu.setPosition(x, y);
         var relToolBar = new window.parent.RelationToolBar();
         var catToolBar = new window.parent.CategoryToolBar();
         relToolBar.setWikiTextParser(wtp);
         catToolBar.setWikiTextParser(wtp);
-        relToolBar.createContextMenu(fckPopupContextMenu, value, value);
+        relToolBar.createContextMenu(fckPopupContextMenu, value, '');
         catToolBar.createContextMenu(fckPopupContextMenu, value);
         fckPopupContextMenu.showMenu();
 
@@ -1080,17 +1093,19 @@ ShowNewToolbar = function(value) {
  * The selected text is the representation at least. If value and represenation
  * are equal then the selected text is the value as well.
  *
+ * @param Event event
  * @param string name of the property
  * @param string value of the property
  * @param string representation of the property
  */
-ShowRelToolbar = function(name, value, show) {
+ShowRelToolbar = function(event, name, value, show) {
+        var [x, y] = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(100, 100);
+        fckPopupContextMenu.setPosition(x, y);
         var toolBar = new window.parent.RelationToolBar();
         toolBar.setWikiTextParser(wtp);
-        toolBar.createContextMenu(fckPopupContextMenu, name, value, show);
+        toolBar.createContextMenu(fckPopupContextMenu, value, show, name);
         fckPopupContextMenu.showMenu();
 }
 
@@ -1099,29 +1114,56 @@ ShowRelToolbar = function(name, value, show) {
  * Only the category container will be shown.
  * The selected text is the category name.
  *
+ * @param Event event
  * @param string name selected text
  */
 ShowCatToolbar = function(name) {
+        var [x, y] = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(100, 100);
+        fckPopupContextMenu.setPosition(x, y);
         var toolBar = new window.parent.CategoryToolBar();
         toolBar.setWikiTextParser(wtp);
         toolBar.createContextMenu(fckPopupContextMenu, name);
         fckPopupContextMenu.showMenu();
 }
 
+/**
+ * Calculate correct x and y coordinates of event in browser window
+ *
+ * @param Event event
+ * @return Array(int, int) coordinates x, y
+ */
+CalculateClickPosition = function(event) {
+    var el = window.parent.document.getElementById('editform');
+
+    var x = 0;
+    var y = 0;
+
+    if (el.offsetParent) {
+        do {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+        } while (el = el.offsetParent);
+    }
+    x += event.clientX;
+    y += event.clientY;
+
+    return [200, 200];  // set this fix for the moment, because the popup might
+                        // be overlapped by the Semantic toolbar itself ans because
+                        // popup is not yet dragable
+}
 
 // needed to access the Plugin class from the FCKeditInterface
-var gAnnotationPlugin = new SMW_Annotate();
+var fckSemanticToolbar = new SMW_Annotate();
 
 function SetEventHandler4AnnotationBox() {
     if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
-        window.parent.Event.observe(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.observe(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
         window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
     } else {
-        window.parent.Event.observe(FCK.EditingArea.Textarea, 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.observe(FCK.EditingArea.Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'mousedown', HideContextPopup);
     }
@@ -1129,11 +1171,11 @@ function SetEventHandler4AnnotationBox() {
 
 function ClearEventHandler4AnnotationBox() {
     if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
-        window.parent.Event.stopObserving(window.frames[0], 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.stopObserving(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
         window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
     } else {
-        window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'keyup', gAnnotationPlugin.EditorareaChanges);
+        window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
         window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'mousedown', HideContextPopup);
     }
@@ -1290,7 +1332,6 @@ FCKeditInterface.prototype = {
                     gEditInterface.newText = '';
                     // custom event handlers are lost when using FCK.SetData
                     SetEventHandler4AnnotationBox();
-                    //gAnnotationPlugin.SetEventHandler();
                 };
                 this.newText = text;
                 window.parent.sajax_do_call('wfSajaxWikiToHTML', [text],
@@ -1344,12 +1385,21 @@ FCKeditInterface.prototype = {
         var fckSel = FCKSelection.GetSelection();
         var srange = fckSel.getRangeAt(fckSel.rangeCount - 1).cloneRange();
         var selTextCont = srange.cloneContents().textContent;
+
         // parent element of the selected text (mostly a <p>)
         var parent = FCKSelection.GetParentElement();
         // selection with html markup of the imediate parent element, if required
         var html = this.getSelectionHtml();
         // (partly) selected text within these elements can be annotated.
         var goodNodes = ['P', 'B', 'I', 'U', 'S'];
+
+        // nothing was really selected, this always happens when a single or
+        // double click is done. The mousup event is fired even though the user
+        // might have positioned the cursor somewhere only.
+        if (selTextCont == '') {
+            this.selection[0] = '';
+            return this.selection;
+        }
 
         // selection is the same as the innerHTML -> no html was selected
         if (selTextCont == html) {
@@ -1743,4 +1793,4 @@ var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semant
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_add.png' ;
 FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 
-FCKCommands.RegisterCommand( 'SMW_Annotate', gAnnotationPlugin ) ;
+FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
