@@ -636,7 +636,7 @@ class OntoSkin3Template extends QuickTemplate {
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\"";
+                                            $tabs .= "\">";
                                             $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
@@ -660,6 +660,7 @@ class OntoSkin3Template extends QuickTemplate {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
                                             $tabs .= "\"";
+                                            // the edit link. Link all to the FCKEditor
                                             $tabs .= '<a href="'.htmlspecialchars($tab['href']).'&mode=wysiwyg"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
