@@ -1050,6 +1050,8 @@ HTML;
 
 /**
  *
+ * flexibly used rights panel for creating new / editing existing / viewing existing inline rights
+ *
  * @param <String>  panelid of parents-div to have an unique identifier for each right-panel
  * @return <html>   right-panel html
  *
@@ -1091,10 +1093,16 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if ($readOnly === "true") $readOnly = true;
     if ($readOnly === "false") $readOnly = false;
 
+    if ($readOnly) {
+        $expandMode = "expand";
+    } else {
+        $expandMode = "expand";
+    }
+
     if($predefine == "modification") {
-        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, "Default");
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, "Default", $expandMode);
     }else {
-        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly);
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, null, $expandMode);
     }
     if (($readOnly === true) or ($readOnly == "true")) $disabled = "disabled"; else $disabled = "";
 
@@ -1261,7 +1269,7 @@ HTML;
         $content .= <<<HTML
                     <div class="haloacl_greyline">&nbsp;</div>
 
-                        <div id="haloacl_inline_notification_$panelid" class="haloacl_inline_notification">&nbsp;</div>
+                    <div id="haloacl_inline_notification_$panelid" class="haloacl_inline_notification">&nbsp;</div>
 
                     <div id="right_tabview_$panelid" class="yui-navset"></div>
                     <script type="text/javascript">
@@ -1270,6 +1278,8 @@ HTML;
 
 HTML;
     }
+
+
     if (!$readOnly) {
         $content .= <<<HTML
             <br/>
@@ -1289,12 +1299,11 @@ HTML;
 HTML;
         }
         $content .= <<<HTML
-            </div>
+                    </div>
 HTML;
     }
-    $content .= <<<HTML
-
-		</div>
+     $content .= <<<HTML
+        </div>
 HTML;
 
     $myGenericPanel->setContent($content);
@@ -1525,9 +1534,16 @@ HTML;
 HTML;
 
     if ($preload == true) {
+        
+        
 
+        
+
+        // preload rights
         if ($predefine <> "modification") {
-            $actions = HACLRight::newFromID($preloadRightId)->getActions();
+            $right = HACLRight::newFromID($preloadRightId);
+            $actions = $right->getActions();
+
             $footerextension .= <<<HTML
                 <script type="javascript>
 HTML;
@@ -1542,7 +1558,11 @@ HTML;
 
             $footerextension .= "</script>";
 
+        } else {
+            
         }
+
+
 
         $footerextension .= <<<HTML
         <script type="javascript>
@@ -1619,7 +1639,7 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
-function rightPanelSelectDeselectTab($panelid, $predefine) {
+function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, $preloadRightId) {
 
     $hacl_rightPanelSelectDeselectTab_1 = wfMsg('hacl_rightPanelSelectDeselectTab_1');
     $hacl_rightPanelSelectDeselectTab_2 = wfMsg('hacl_rightPanelSelectDeselectTab_2');
@@ -1742,7 +1762,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
            var panelid = '$panelid';
            YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
            YAHOO.haloacl.clickedArrayUsersGroups[panelid] = new Array();
-
+          
            if(YAHOO.haloacl.debug) console.log("restet array for panelid:"+panelid);
 
            $$('.datatableDiv_'+panelid+'_users').each(function(item){
@@ -1761,8 +1781,44 @@ function rightPanelSelectDeselectTab($panelid, $predefine) {
         };
         YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
 
-    </script>
+        
 
+HTML;
+
+    if ($preload) {
+    
+        if ($predefine <> "modification") {
+
+            $right = HACLRight::newFromID($preloadRightId);
+            $users = $right->getUsers();
+            $groups = $right->getGroups();
+
+        } else {
+
+            $SD = HACLSecurityDescriptor::newFromID($preloadRightId);
+            $users = $SD->getManageUsers();
+            $groups = $SD->getManageGroups();
+        }
+
+        // preload users
+        foreach ($users as $user) {
+            $hUser = User::newFromId($user)->getName();
+            $html .= <<<HTML
+                    YAHOO.haloacl.addUserToUserArray('$panelid', '$hUser');
+HTML;
+        }
+
+        // preload usgroupsers
+        foreach ($groups as $group) {
+            $hGroup = HACLGroup::newFromId($group)->getGroupName();
+            $html .= <<<HTML
+                    YAHOO.haloacl.addGroupToGroupArray('$panelid', '$hGroup');
+HTML;
+        }
+
+    }
+$html .= <<<HTML
+ </script>
 HTML;
 
 /*
@@ -2023,9 +2079,18 @@ HTML;
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
             </div>
         </div>
+HTML;
+
+    if($type != "readOnly") {
+        $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
             <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
         </div>
+HTML;
+
+    }
+
+    $html .= <<<HTML
     </div>
 
     
@@ -2125,7 +2190,7 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
     if ($readOnly === "false") $readOnly = false;
 
     $sdName = "ACL:".$sdName;
-    $panelid = "SDRightsPanel";
+    $panelid = "SDRightsPanel_$sdId";
     $response = new AjaxResponse();
 
     $myGenericPanel = new HACL_GenericPanel($panelid, "[ $hacl_SDRightsPanelContainer_1 $sdName ]", "[ $hacl_SDRightsPanelContainer_1 $sdName ]");
@@ -2198,6 +2263,8 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
         </script>
 HTML;
 
+    $html = "<div id=\"content_".$panelid."\">".$html."</div>";
+
     $myGenericPanel->setContent($html);
 
     $response->addText($myGenericPanel->getPanel());
@@ -2268,6 +2335,8 @@ function getRightsContainer($panelid, $type = "readOnly") {
         </script>
 HTML;
 
+    $html = "<div id=\"content_".$panelid."\">".$html."</div>";
+
     $myGenericPanel->setContent($html);
 
     $response->addText($myGenericPanel->getPanel());
@@ -2296,6 +2365,12 @@ function getSDRightsPanel($sdId, $readOnly = false) {
 
     $tempRights = array();
 
+    if ($readOnly) {
+        $expandMode = "expand";
+    } else {
+        $expandMode = "expand";
+    }
+
     //attach inline right texts
     foreach ($SD->getInlineRights(false) as $rightId) {
 
@@ -2308,13 +2383,17 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     foreach ($SD->getPredefinedRights(false) as $subSdId) {
         $sdName = HACLSecurityDescriptor::nameForID($subSdId);
 
-        $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false);
+        $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false, null, $expandMode);
 
         $temphtml = <<<HTML
+        <div id="content_subRight_$subSdId">
         <div id="subPredefinedRight_$subSdId"></div>
         <script>
             YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
+            //show closed at first
+            YAHOO.haloacl.togglePanel('subRight_$subSdId');
         </script>
+        </div>
 HTML;
         $myGenericPanel->setContent($temphtml);
         $html .= $myGenericPanel->getPanel();

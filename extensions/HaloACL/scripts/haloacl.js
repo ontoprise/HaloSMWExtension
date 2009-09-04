@@ -46,6 +46,7 @@ if(YAHOO.haloacl.debug){
 }
 
 
+
 YAHOO.haloacl.panelcouner = 0;
 // has all checked users from grouptree
 YAHOO.haloacl.clickedArrayGroups = new Array();

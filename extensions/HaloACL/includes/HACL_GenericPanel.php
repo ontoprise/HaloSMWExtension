@@ -24,11 +24,6 @@
  *
  */
 
-/**
- * Description of HACL_AjaxConnector
- *
- * @author hipath
- */
 
 class HACL_GenericPanel {
 
@@ -36,9 +31,15 @@ class HACL_GenericPanel {
     private $header;
     private $footer;
     private $content;
+    private $panelid;
 
+/**
+ * expand mode: expand to expand panel and show content; replace to replace panel through content with back button
+ *
+ */
+    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
 
-    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null) {
+        $this->panelid = $panelid;
 
         $this->header = <<<HTML
 	<!-- start of panel div-->
@@ -46,7 +47,7 @@ class HACL_GenericPanel {
 		<!-- panel's top bar -->
 		<div id="title_$panelid" class="panel haloacl_panel_title">
 			<span class="haloacl_panel_expand-collapse">
-				<a href="javascript:YAHOO.haloacl.togglePanel('$panelid');YAHOO.haloacl.removeoutside('$panelid');"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
+                            <a href="javascript:YAHOO.haloacl.viewGenericPanelContent_$panelid();"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
 			</span>
                         <div class="haloacl_panel_nameDescr">
                             <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">$title</span>
@@ -85,6 +86,37 @@ HTML;
         </div> <!-- end of panel div -->
         <script type="javascript>
 
+            //array keeping previous contents in case of replace expand mode
+            YAHOO.haloacl.genericPanelParentContents_$panelid = new Array();
+
+            YAHOO.haloacl.viewGenericPanelContent_$panelid = function() {
+                switch ('$expandMode') {
+                    case 'expand':
+                        YAHOO.haloacl.togglePanel('$panelid');
+                        //YAHOO.haloacl.removeoutside('$panelid');
+                        break;
+                    case 'replace':
+                        YAHOO.haloacl.genericPanelParentContents_$panelid.push({element:$('$panelid').parentNode.id, content:$('$panelid').parentNode.innerHTML});
+
+                        var element = $('content_$panelid');
+                        if(element.visible()){
+                           // element.hide();
+                        }else{
+                            element.show();
+                        }
+
+                        $('$panelid').parentNode.innerHTML = $('haloacl_generic_panel_content_$panelid').innerHTML+'<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div class="haloacl_panel_content_row_content"><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div></a>';
+                        //replace parent content of $(panelid) with content and back button, add back link to array
+                        break;
+                }
+            }
+
+            YAHOO.haloacl.resumeGenericPanelContent_$panelid = function() {
+                resomeTo = YAHOO.haloacl.genericPanelParentContents_$panelid.pop();
+                $(resomeTo['element']).innerHTML = resomeTo['content'];
+            }
+
+
             YAHOO.haloacl.removeoutside = function(panelid) {
                 console.log("removeoutside called for panelid:"+panelid);
 
@@ -100,7 +132,7 @@ HTML;
                     if(item.hasClassName("haloacl_panel")){
                         console.log("trying to close");
                         console.log(item);
-                        //if (item.id != $(panelid)) item.hide();
+                        if (item.id != $(panelid)) item.hide();
                     }
                 }
                 
@@ -151,14 +183,15 @@ HTML;
     }
 
     function setContent($newContent) {
-        $this->content = '<div class="haloacl_generic_panel_content">'.$newContent.'</div>';
+        $this->content = '<div id="haloacl_generic_panel_content_'.$this->panelid.'" class="haloacl_generic_panel_content">'.$newContent.'</div>';
     }
 
     function getPanel() {
-
-
         return $this->header . $this->content . $this->footer;
+    }
 
+    function getContentWithFooter() {
+        return $this->content . $this->footer;
     }
 
     function getSaved() {
