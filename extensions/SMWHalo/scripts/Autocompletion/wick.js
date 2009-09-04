@@ -25,7 +25,7 @@ var SMW_TYPE_NS = 104;
 var SMW_HELP_NS = 12;
 var SMW_IMAGE_NS = 6;
 var SMW_USER_NS = 2
-
+var SMW_FORM_NS = 106;
 
 // special 
 var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
@@ -60,6 +60,9 @@ ACNamespaceRegistry.prototype = {
 		this.registerNamespace(SMW_HELP_NS, "/extensions/SMWHalo/skins/image.gif");
 		this.registerNamespace(SMW_USER_NS, "/extensions/SMWHalo/skins/user.gif");
 		this.registerNamespace(SMW_ENUM_POSSIBLE_VALUE_OR_UNIT, "/extensions/SMWHalo/skins/enum.gif");
+		
+		//XXX: this should not be defined here but in the SemanticForms extension
+		this.registerNamespace(SMW_FORM_NS, "/extensions/SMWHalo/skins/form.gif");
 		                     
 	},
 	
