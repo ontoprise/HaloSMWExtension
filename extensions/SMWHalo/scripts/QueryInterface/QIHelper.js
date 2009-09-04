@@ -315,11 +315,11 @@ QIHelper.prototype = {
 				ask += "|?" + s
 			});
 			
-			var reasoner = $('usetriplestore').checked ? "sparql" : "ask";
+			var reasoner = $('usetriplestore') ? $('usetriplestore').checked ? "sparql" : "ask" : "ask";
 			var params = ask.replace(',', '%2C') + ",";
 			params +='reasoner='+reasoner+'|';
-			params += $('layout_sort').value== gLanguage.getMessage('QI_ARTICLE_TITLE')?"|":$('layout_sort').value + '|';
-			params += $('layout_format').value + '|';
+			params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
+			params += 'format=' + $('layout_format').value + '|';
 			params += this.serializeSpecialQPParameters("|");
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
 					this.openPreview.bind(this));
