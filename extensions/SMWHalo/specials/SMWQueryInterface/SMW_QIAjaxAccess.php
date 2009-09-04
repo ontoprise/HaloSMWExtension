@@ -40,10 +40,12 @@ function smwf_qi_QIAccess($method, $params) {
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
             
-            $params = explode("|",$p_array[1]);
+             $params = explode("|",$p_array[1]);
              foreach($params as $p) {
-             	list($key, $value) = explode("=", $p);
-             	$fixparams[$key] = $value;              
+                 if (strlen($p) > 0) {
+                    list($key, $value) = explode("=", $p);
+                     $fixparams[$key] = $value;
+                 }
              }
             
             // fix bug 10812: if query string contains a ,
