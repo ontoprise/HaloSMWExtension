@@ -1379,20 +1379,10 @@ FCKeditInterface.prototype = {
             return this.selection;
         }
 
-        // selected element node
-        this.selectedElement = FCKSelection.GetSelectedElement();
-        // selection text only without html mark up
+        // selection text only without any html mark up etc.
         var fckSel = FCKSelection.GetSelection();
         var srange = fckSel.getRangeAt(fckSel.rangeCount - 1).cloneRange();
         var selTextCont = srange.cloneContents().textContent;
-
-        // parent element of the selected text (mostly a <p>)
-        var parent = FCKSelection.GetParentElement();
-        // selection with html markup of the imediate parent element, if required
-        var html = this.getSelectionHtml();
-        // (partly) selected text within these elements can be annotated.
-        var goodNodes = ['P', 'B', 'I', 'U', 'S'];
-
         // nothing was really selected, this always happens when a single or
         // double click is done. The mousup event is fired even though the user
         // might have positioned the cursor somewhere only.
@@ -1400,6 +1390,15 @@ FCKeditInterface.prototype = {
             this.selection[0] = '';
             return this.selection;
         }
+
+        // selected element node
+        this.selectedElement = FCKSelection.GetSelectedElement();
+        // parent element of the selected text (mostly a <p>)
+        var parent = FCKSelection.GetParentElement();
+        // selection with html markup of the imediate parent element, if required
+        var html = this.getSelectionHtml();
+        // (partly) selected text within these elements can be annotated.
+        var goodNodes = ['P', 'B', 'I', 'U', 'S'];
 
         // selection is the same as the innerHTML -> no html was selected
         if (selTextCont == html) {
