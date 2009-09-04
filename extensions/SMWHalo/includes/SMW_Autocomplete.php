@@ -75,13 +75,14 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		} else {
 			// otherwise use constraints
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
-
-			if (empty($pages)) {
+            
+			// Fallback, if commands yield nothing. Deactivated now
+			/*if (empty($pages)) {
 				// fallback to standard search (namespace)
 				global $wgExtraNamespaces;
 				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
 				$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
-			}
+			}*/
 		}
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		return $result;
