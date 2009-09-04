@@ -2023,9 +2023,6 @@ applyOptionParams : function(query) {
             }
     }
 	
-	
-	// and request according format printer parameters
-    this.getSpecialQPParameters(format, callback);	
     
     // The following callback is called after the query printer parameters were displayed.
 	var callback = function() {
@@ -2039,16 +2036,25 @@ applyOptionParams : function(query) {
 			// and we set the form element with its value
 			var key = kv[0].replace(/^\s*(.*?)\s*$/, '$1');
 			var val = kv[1].replace(/^\s*(.*?)\s*$/, '$1');
-		    var optionParameter = $('qp_param_' + key);
-		    if (optionParameter == null) continue; // ignore unknown options
-		    if ('checked' in optionParameter) {
-		    	optionParameter.checked = (val == "on" || val == "true");
-		    } else {
-		    	optionParameter.value = val;
-		    }
-			
+			if (key == 'format') {
+				// special handling for format
+				var layout_format = $('layout_format');
+				layout_format.value = val;
+				this.updatePreview();
+			} else {
+			    var optionParameter = $('qp_param_' + key);
+			    if (optionParameter == null) continue; // ignore unknown options
+			    if ('checked' in optionParameter) {
+			    	optionParameter.checked = (val == "on" || val == "true");
+			    } else {
+			    	optionParameter.value = val;
+			    }
+			}
 		}
 	}
+	
+	// and request according format printer parameters
+    this.getSpecialQPParameters(format, callback.bind(this));  
 	
 	// return the properties, that must be shown in the query
 	return mustShow;

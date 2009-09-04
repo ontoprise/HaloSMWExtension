@@ -231,6 +231,8 @@ font-weight: bold;
 #previewcontent{
 border-top:1px solid #AAAAAA;
 background: #FFFFFF;
+height: 160px;
+overflow: scroll;
 }
 
 
