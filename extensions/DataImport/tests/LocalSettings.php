@@ -14,7 +14,7 @@ include_once('extensions/DataImport/includes/DI_Initialize.php');
 enableDataImportExtension();
 $wgGroupPermissions['sysop']['gardening']=true;
 
-include_once('extensions/SemanticForms/includes/SF_Settings.php');
+//include_once('extensions/SemanticForms/includes/SF_Settings.php');
 
 require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
 
