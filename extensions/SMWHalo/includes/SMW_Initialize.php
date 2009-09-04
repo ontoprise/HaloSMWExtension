@@ -435,6 +435,11 @@ function smwfHaloFormInput($cur_value, $input_name, $is_mandatory, $is_disabled,
 	$pasteNS = 'pasteNS="true"';
 	if (array_key_exists('pasteNS', $other_args) && $other_args['pasteNS'] == 'false') $pasteNS = '';
 	
+	// replace 'current user' by username
+	if ($cur_value == 'current user') {
+		global $wgUser;
+		$cur_value = !is_null($wgUser) ? $wgUser->getName() : "anonymous";
+	}
 	// call now the general function of SF that creates the <input> field
 	$html = SFFormInputs::$method($cur_value, $input_name, $is_mandatory, $is_disabled, $other_args);
 	
