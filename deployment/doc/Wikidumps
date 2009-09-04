@@ -1,53 +1,70 @@
 * 
-* Wikidumps
+* Wikipage bundles 
 *
 * @author: Kai Kühn / ontoprise / 2009
 *
 
+Wikipage bundles are deployable entities which contain only wikipages.
+
 Contents:
-
-    1. Format
-    2. Create a dump
-    3. Import a dump
     
-1. Format
+    1. Prerequisites
+    2. Create a bundle
+    3. Import a bundle
+    4. Format of XML dump
 
-   The wikidumps use basically the same XML format than Mediawiki does. But it was extended slightly
-   
-     A hash attribute for each page to indicate that is has changed or not. The hash is included as 
-     annotation during the import process.
     
-2. Create dump
-
-    A dump has to contain a special annotation (english, for other languages see language files):
+2. Prerequisites
+    
+    -'Part of bundle'
+            A wikipage bundle consists of a set of wiki pages. These pages have to contain a special annotation 
+            (english name, for other languages see language files):
+                    
+              Part of bundle (binary relation property)   
+               
+            This annotation should be contained in a template which is embedded in each page which is part of the 
+            bundle. The target is the bundle's description page (see below). It is not necessary to put the annotation
+            into a template, but this makes it easier to change the name of the bundle later at some point.
+            Instances of categories belonging to the bundle are automatically included. That means they may not (and should not)
+            have annotations of 'Part of bundle'.
+            The exporter exports those pages and saves them in the dump. It also creates a hash value about the text content
+            of each page and stores it in the dump too.
             
-      Part of bundle    
-       
-    They should be contained in a template which is embedded in each page conataining to
-    the bundle. Except for instances which are members of categories which is part of the bundle.
-    They are included automatically.
-    The exporter reads these attribute values and adds them in the dump. It also
-    creates a hash value about the text content and stores it in the attribute 'Content hash'.
+    - Bundle description page
+            There's is one special page describing the bundle itself. It has the name of the bundle, ie. it is the target 
+            of the 'Part of bundle' annotations.
+            
+            This page should have the following annotations:
+            
+                Ontology version (1..1), integer number, e.g. 120
+                Dependency (1..n), n-ary annotation (package-id, minVesion, maxVersion)
+                Installation dir (1..1) string
+                Vendor (1..1) string
+                Description (1..1) string
+                
+                package-id is the name of the package, e.g. smwhalo or semanticforms.
+                
+                Example:
+                
+                [[Ontology version::120]]
+                [[Dependency::smw;120;140]]
+                [[Installation dir::extensions/MyExtension]]
+                [[Vendor::Ontoprise]]
+                [[Description::Some text]]
     
-    The page containing the bundle should have the following annotations:
+2. Create a wikipage bundle    
     
-        Ontology version (1..1), integer number, e.g. 120
-        Dependency (1..n), n-ary annotation (id, minVesion, maxVersion)
-        Installation dir (1..1) string
-        Vendor (1..1) string
-        Description (1..1) string
-    
-        
+    The PHP script export.php in tools/maintenance is a extended version of the default MW exporter and does the exporting.
     export.php supports all options the default MW export script does + these 2:
         
         -b <bundlename> (bundlename always lowercase!)
-        --nocat (do not consider instances of categories belonging to the bundle)
+        --nocat (do not consider instances of categories belonging to the bundle, ie. export only _explicitly_ annotated pages)
     
     For convenience the shell script (export.bat/sh) is recommended. Its usage is:    
     
       export <bundlename> <bundledir>
       
-      The directory gets created automatically.
+      The output directory gets created automatically.
       
     Example:
     
@@ -62,4 +79,12 @@ Contents:
     it is not visible in the rendered text but in the factbox.
     
     Dumps are imported using either maintenance/import or (better) the smwadmin tool.
+    
+4. Format of XML dump
+
+   The wikipage dumps use basically the same XML format than Mediawiki does. But it was extended slightly:
+   
+     A hash attribute for each page to indicate that is has changed or not. The hash is included as 
+     annotation during the import process. The revision node contain an additional node called <hash>
+     which contains a MD5 hash of the text content.    
     
