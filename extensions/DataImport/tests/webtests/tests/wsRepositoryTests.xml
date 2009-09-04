@@ -9,9 +9,13 @@
 	
 	<target name="testWebServiceRepository">
 		<webtest name="WSRepositoryLoggedOut">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+			
 			<antcall target="createWebTestWS" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<verifyText text="Edit" description="Is there only the edit column?">
 				<table htmlId="webservicetable" row="0" column="2" />
 			</verifyText>
@@ -20,9 +24,13 @@
 			</verifyText>
 		</webtest>
 		<webtest name="WSRepositoryLoggedIn">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+	
 			<antcall target="goToLogin" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<verifyText text="Manual update" description="Is there the update column?">
 				<table htmlId="webservicetable" row="0" column="2" />
 			</verifyText>
@@ -42,17 +50,19 @@
 				<table htmlId="webservicetable" row="1" column="4" />
 			</verifyText>
 		</webtest>
+		
+		<!--
 
 		<webtest name="WSRepositoryCheckConfirmButtonPart1">
 			<antcall target="goToLogin" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[5]/button" description="Confirm wwsd"/>
 		</webtest>
 		<webtest name="WSRepositoryCheckConfirmButtonPart2">
 			<antcall target="goToLogin" />
 			
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<verifyText text="confirmed" description="Was the WWSD confirmed?">
 				<table htmlId="webservicetable" row="1" column="4" />
 			</verifyText>
@@ -61,7 +71,7 @@
 		<webtest name="WSRepositoryCheckUpdateButton">
 			<antcall target="goToLogin" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[3]/button" description="Click update button"/>
 
 			<sleep seconds="5" />
@@ -75,14 +85,14 @@
 		<webtest name="WSRepositoryCheckEditButton">
 			<antcall target="goToLogin" />
 
-			<invoke url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
 			<sleep seconds="5" />
 
 			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
 
 
-		</webtest>
+		</webtest> -->
 
 
 	</target>

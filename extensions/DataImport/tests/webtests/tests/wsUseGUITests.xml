@@ -11,12 +11,20 @@
 	<target name="testWSUseGUI">
 
 		<webtest name="WSUseGUINoWSErrorPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
 			<antcall target="invalidateWebTestWS" />
 			<sleep seconds="5" />
 
 		</webtest>
 
 		<webtest name="WSUseGUINoWSErrorPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Open article for adding ws" />
@@ -30,19 +38,26 @@
 		</webtest> 
 
 		<webtest name="WSUseGUIContentLoadedPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
 			<antcall target="createWebTestWS" />
 			<sleep seconds="5" />
 
 		</webtest>
 
 		<webtest name="WSUseGUIContentLoadedPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Open article for adding ws" />
 
 			<clickLink xpath="//div[@id='stb_cont10-content']/a"
 				description="Click add ws button" />
-			<sleep seconds="3" />
+			<sleep seconds="10" />
 
 			<verifyText text="Choose web service" description="Was define ws gui opened" />
 
@@ -142,6 +157,9 @@
 		</webtest>
 		
 		<webtest name="WSUseGUIClickthrough">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
 				description="Open article for adding ws" />

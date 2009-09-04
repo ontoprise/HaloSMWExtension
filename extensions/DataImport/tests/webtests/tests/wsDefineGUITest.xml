@@ -10,6 +10,10 @@
 	<target name="testWSDefineGUI">
 
 		<webtest name="WSDefineRESTPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
 			<invoke
 				url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
 
@@ -144,6 +148,9 @@
 		</webtest>
 
 		<webtest name="WSDefineRESTPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSREST" />
 				
@@ -153,13 +160,19 @@
 		</webtest>
 		
 		<webtest name="WSDefineRESTPart3">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
-				url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 				
 			<verifyText text='NewWebTestWSREST'/>
 		</webtest>
 
 		<webtest name="WSDefineSOAPPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
 
 			<setInputField htmlId="step1-uri" value="http://localhost/${wikipath}/extensions/DataImport/tests/webTestSoapWS.wsdl" />
@@ -225,6 +238,9 @@
 		</webtest> 
 
 		<webtest name="WSDefineSOAPPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
 						url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSSOAP" />
 
@@ -234,8 +250,11 @@
 		</webtest>
 
 		<webtest name="WSDefineSOAPPart3">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke
-				url="http://localhost/${wikipath}/index.php/Special:WebServiceRepository" />
+				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 
 			<verifyText text='NewWebTestWSSOAP'/>
 		</webtest>

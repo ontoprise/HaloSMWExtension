@@ -6,16 +6,23 @@
 	
 	&goToLogin;
 	&createWebTestWS;
-
+	
 	<target name="testWSEditGUI">
 
-		<!-- <webtest name="WSEditRESTPart1">
+		<webtest name="WSEditRESTPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<antcall target="createWebTestWS" />
 		</webtest>
 
 		<webtest name="WSEditRESTPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
-			<clickLink xpath="//div[@id='bodyContent']/h2/a"
+			<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a"
 				description="Click edit button" />
 			<sleep seconds="10"/>
 			
@@ -127,9 +134,12 @@
 			
 			<verifyText text="Now you can use that web service in an article"
 				description="check if step7 is displayed"/>
-			</webtest> -->
+			</webtest>
 
 		<webtest name="WSEditSOAPPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2?action=edit" description="Open new ws for editing" />
 			<setInputField description="Enter new wwsd." xpath="//textarea[@id='wpTextbox1']">
 				<![CDATA[<WebService>
@@ -164,8 +174,11 @@
 	</webtest>
 
 	<webtest name="WSEditSOAPPart2">
+		<config host="localhost">
+			<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+		</config>
 		<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2" />
-		<clickLink xpath="//div[@id='bodyContent']/h2/a" description="Click edit button" />
+		<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a" description="Click edit button" />
 		<sleep seconds="10" />
 
 		<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened" />

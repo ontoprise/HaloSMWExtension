@@ -11,8 +11,7 @@ require_once 'testcases/TestTIReadPOP3.php';
 
 class DataImportTests
 {
-    public static function suite()
-    {
+    public static function suite(){
         $suite = new PHPUnit_Framework_TestSuite('DataImport');
 
         // add test suites
