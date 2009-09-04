@@ -660,7 +660,7 @@ class OntoSkin3Template extends QuickTemplate {
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\"";
+                                            $tabs .= "\">";
 
                                             # build the edit link
                                             $link = '';
@@ -711,7 +711,7 @@ class OntoSkin3Template extends QuickTemplate {
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\"";
+                                            $tabs .= "\">";
                                             $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
