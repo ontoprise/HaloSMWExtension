@@ -1095,7 +1095,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if ($readOnly === "false") $readOnly = false;
 
     if ($readOnly) {
-        $expandMode = "replace";
+        $expandMode = "expand";
     } else {
         $expandMode = "expand";
     }
