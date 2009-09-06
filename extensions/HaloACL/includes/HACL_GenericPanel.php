@@ -105,7 +105,7 @@ HTML;
                             element.show();
                         }
 
-                        $('$panelid').parentNode.innerHTML = $('haloacl_generic_panel_content_$panelid').innerHTML+'<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div><br /></a>';
+                        $('$panelid').parentNode.innerHTML = '<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div><br /></a>'+$('haloacl_generic_panel_content_$panelid').innerHTML;
                         //replace parent content of $(panelid) with content and back button, add back link to array
                         break;
                 }
