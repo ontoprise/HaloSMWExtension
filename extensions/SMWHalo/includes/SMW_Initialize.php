@@ -323,6 +323,7 @@ function smwgHaloSetupExtension() {
 	if (isset($smwgWebserviceEndpoint)) {
 		$wgHooks['InternalParseBeforeLinks'][] = 'smwfTripleStoreParserHook';
 	}
+	$wgAjaxExportList[] = 'smwf_ts_getWikiNamespaces';
 
 	// make hook for red links
 	$wgHooks['BrokenLink'][] = 'smwfBrokenLinkForPage';
@@ -400,6 +401,26 @@ function smwfHaloInitDatatypes() {
 	return true;
 }
 
+/**
+ * Returns a comma separated list of extra namespace mappings.
+ * Exported as ajax call. Need by TSC to get extra namespaces (besides the default of MW + SMW)
+ * 
+ * nsText => nsIndex
+ *
+ * @return string
+ */
+function smwf_ts_getWikiNamespaces() {
+	global $wgExtraNamespaces;
+	$builtinNS = array(SMW_NS_PROPERTY, SMW_NS_PROPERTY_TALK, SMW_NS_TYPE, SMW_NS_TYPE_TALK, SMW_NS_CONCEPT, SMW_NS_CONCEPT_TALK);
+	$result = "";
+	$first = true;
+	foreach($wgExtraNamespaces as $nsIndex => $nsText) {
+		if (in_array($nsIndex, $builtinNS)) continue;
+		$result .= (!$first ? "," : "").$nsText."=".$nsIndex;
+		$first = false;
+	}
+	return $result;
+}
 /**
  * function for parser hook in Semantic Forms
  *
