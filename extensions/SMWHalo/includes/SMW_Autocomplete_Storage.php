@@ -554,12 +554,15 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $res = $db->query('SELECT DISTINCT title, namespace, inferred FROM smw_cc_propertyinst ORDER BY inferred DESC, title');
 
         $result = array();
-        $prop = SMWPropertyValue::makeUserProperty($property);
+        
+        // deactivated code which considers users preferred date format
+        /*$prop = SMWPropertyValue::makeUserProperty($property);
         
         if ($prop->getTypesValue()->getXSDValue() == '_dat') {
         	global $wgUser;
         	$dateformat = !is_null($wgUser) ? $wgUser->getOption('date') : "ISO 8601";
-        }
+        }*/
+        $dateformat = "dmy"; // set "25 April 1980 00:00:00" as default dateFormat (the time is optional)
        
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -690,9 +693,9 @@ class ACStorageHelper {
 	        }
 		} else {
 		  switch($dateformat) {
-                case 'dmy': return $datetime->format('H:i, d F Y');
-                case 'mdy': return $datetime->format('H:i, F d, Y');
-                case 'ymd': return $datetime->format('H:i, Y F d');
+                case 'dmy': return $datetime->format('d F Y H:i:s');
+                case 'mdy': return $datetime->format('F d, Y H:i:s');
+                case 'ymd': return $datetime->format('Y F d H:i:s');
                         
             }
 		}
