@@ -1,5 +1,3 @@
-Index: extensions/SemanticResultFormats/patch.txt
-===================================================================
 Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
 ===================================================================
 --- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(revision 4566)
@@ -159,7 +157,7 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 ===================================================================
 --- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 4566)
 +++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
-@@ -84,7 +84,20 @@
+@@ -84,7 +84,22 @@
  
  	protected $mOutlineProperties = array();
  	protected $mInnerFormat = '';
@@ -170,7 +168,9 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 +        $this->mParameters[] = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
 +        $this->mParameters[] = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
 +        $this->mParameters[] = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-+        $this->mParameters[] = new SMWQPParameter('outlineproperties', 'Outline properties', '<string>', NULL, "The list of properties to be used as outline headers, separated by commas.");
++        $outlineproperties = new SMWQPParameter('outlineproperties', 'Outline properties', '<string>', NULL, "The list of properties to be used as outline headers, separated by commas.");
++        $outlineproperties->setConstraints("namespace: "+SMW_NS_PROPERTY);
++        $this->mParameters[] = $outlineproperties;
 +    }
 +
 +    function getSupportedParameters() {
@@ -247,6 +247,14 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  	protected function readParameters($params,$outputmode) {
  		SMWResultPrinter::readParameters($params,$outputmode);
  
+@@ -109,6 +125,7 @@
+ 							$objectlabel = $object->getLongText($outputmode,$l);
+ 						} else {
+ 							$objectlabel = $object->getShortText($outputmode,$l);
++							if ($objectlabel == '') continue;
+ 						}
+ 						$urlobject =  ($l !== NULL);
+ 						$header = '';
 Index: extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php
 ===================================================================
 --- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(revision 4566)
