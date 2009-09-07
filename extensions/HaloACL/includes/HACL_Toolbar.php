@@ -137,7 +137,7 @@ function getHACLToolbar($articleTitle) {
                 YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
             }
 
-            //element.form.submit();
+            element.form.submit();
         };
 
 

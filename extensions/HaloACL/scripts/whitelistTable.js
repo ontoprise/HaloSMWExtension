@@ -46,13 +46,11 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
         }else{
             elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
-            
     };
     
 
     this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
         elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
-
     };
 
     // building shortcut for custom formatter
@@ -60,20 +58,17 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
-
     {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
         formatter:"myName"
     },
-   
     {
         key:"checked",
         label:gLanguage.getMessage('delete'),
         formatter:"mySelect"
-    },
-
+    }
     ];
 
     // datasource for this userdatatable
@@ -83,17 +78,16 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     myDataSource.responseSchema = {
         resultsList: "records",
         fields: [
-        {
-            key:"id",
-            parser:"number"
-        },
-        {
-            key:"name"
-        },
-        
-        {
-            key:"checked"
-        },
+            {
+                key:"id",
+                parser:"number"
+            },
+            {
+                key:"name"
+            },
+            {
+                key:"checked"
+            }
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response
@@ -124,8 +118,6 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
         +"&rsargs[]="+startIndex
         +"&rsargs[]="+results
         +"&rsargs[]="+filter;
-
-
     };
 
 
@@ -159,7 +151,6 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
     // function called from grouptree to update userdatatable on GroupTreeClick
     myDataTable.executeQuery = function(query){
-
         var oCallback = {
             success : myDataTable.onDataReturnInitializeTable,
             failure : myDataTable.onDataReturnInitializeTable,
@@ -169,10 +160,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
         if(YAHOO.haloacl.debug) console.log("sending request");
         myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
-        
     }
-
-
     // setting up clickevent-handling
     return myDataTable;
 

@@ -45,9 +45,9 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         var groupsstring = ""+oRecord._oData.groups;
 
         if(oData == true || checkedFromTree == true){
-            elLiner.innerHTML = "<input type='checkbox' groups='"+groupsstring+"' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
             
     };
@@ -87,7 +87,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         key:"checked",
         label:gLanguage.getMessage('selected'),
         formatter:"mySelect"
-    },
+    }
 
     ];
 
@@ -110,7 +110,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         },
         {
             key:"checked"
-        },
+        }
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response
@@ -373,6 +373,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         if(oRecord._oData.deletable !="group"){
             elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' class='removebutton' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"','"+oRecord._oData.deletable+"');\">&nbsp;</a>";
+            YAHOO.haloacl.addTooltip("tooltip"+panelid+"assigned"+oRecord._oData.name,panelid+"assigned"+oRecord._oData.name,"Click to remove User from assigned Users");
         }else{
             elLiner.innerHTML = "&nbsp;";
         }

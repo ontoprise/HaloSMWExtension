@@ -124,6 +124,10 @@ abbr,acronym { border:0;
     margin-top:2px!important;
 }
 
+#content{
+    min-width:960px;
+}
+
 .yui-content{
     background:#FFF!important;
     margin:0px!important;
@@ -203,6 +207,7 @@ button:hover{
     padding:0 0 0 32px;
     float:left;
     clear:both;
+    width:800px;
 }
 
 .haloacl_tab_section_content_row{
@@ -236,7 +241,7 @@ button:hover{
     font-size:13px;
 }
 .haloacl_panel{
-    width:918px;
+    min-width:918px;
     border:1px solid #000;
     background-color:#ddd;
     float:left;
@@ -324,6 +329,11 @@ button:hover{
     float:left;
     display:inline;
 }
+.haloacl_panel_define_element{
+    float:left;
+    display:inline;
+    min-width:100px;
+}
 
 .haloacl_panel_rights{
     float:left;
@@ -353,13 +363,13 @@ button:hover{
 }
 .haloacl_panel_rights .right_formedit {
     position:absolute;
-    left:240px;
+    left:275px;
     top:0px;
     width:150px;
 }
 .haloacl_panel_rights .right_wysiwyg {
     position:absolute;
-    left:360px;
+    left:385px;
     top:0px;
     width:150px;
 }
@@ -377,13 +387,13 @@ button:hover{
 }
 .haloacl_panel_rights .right_delete {
     position:absolute;
-    left:240px;
+    left:275px;
     top:30px;
     width:150px;
 }
 .haloacl_panel_rights .right_annotate {
     position:absolute;
-    left:360px;
+    left:385px;
     top:30px;
     width:150px;
 }
@@ -484,7 +494,7 @@ button:hover{
 
 
 .haloacl_rightpanel_selecttab_leftpart_treeview{
-    max-height:250px;
+    height:260px;
     border:1px #000 solid;
     border-style:none none solid none;
     /*
@@ -492,7 +502,7 @@ button:hover{
     */
     overflow: -moz-scrollbars-vertical!important;
     overflow-y: scroll!important;
-    padding:5px 0 5px 5px;
+    padding:5px 0 0px 5px;
 }
 /* right side */
 
@@ -702,7 +712,7 @@ button:hover{
 }
 #haloacl_manageuser_contentlist{
     margin:0 0 0 20px;
-    height:310px;
+    height:307px;
     width:600px;
     float:left;
     background-color:#FFF;
@@ -729,7 +739,7 @@ button:hover{
 .haloacl_manageuser_list_edit{
     float:left;
     width:100px;
-    background:url(images/edit_button.png) transparent no-repeat 0 -2px;
+    background:url(images/edit_button.png) transparent no-repeat 0 -4px;
 
 }
 .haloacl_manageuser_list_delete{
@@ -793,7 +803,6 @@ button:hover{
     background-color:#FFF;
     border:1px solid;
     border-style:solid none none none;
-
 }
 #manageExistingACLRightList{
     width:800px;
@@ -809,6 +818,7 @@ button:hover{
 }
 #content_manageExistingACLRightList{
     margin:10px 0;
+    min-height:350px;
 }
 
 .haloacl_manageacl_contentmenu_element{
@@ -954,10 +964,7 @@ button:hover{
 }
 
 #ManageExistingACLPanel{
-    min-height:350px;
-    width:1000px;
     margin:10px;
-
 }
 
 /* quickacltab */
@@ -1012,4 +1019,12 @@ button:hover{
 }
 .haloacl_readonly_right_firstspacing{
     margin-left:227px;
+}
+
+#haloacl_whitelist_pagename{
+    width:200px!important;
+}
+
+.haloacl_existing_right_add_buttons{
+    margin:5px 0 0 5px;
 }

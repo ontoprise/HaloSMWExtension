@@ -37,7 +37,7 @@ YAHOO.namespace ("haloacl.settings");
 YAHOO.namespace ("haloacl.manageUser");
 
 // log debug information to js-console
-YAHOO.haloacl.debug = true;
+YAHOO.haloacl.debug = false;
 
 if(YAHOO.haloacl.debug){
     console.log("======== DEBUG MODE ENABLED =========");
@@ -45,6 +45,10 @@ if(YAHOO.haloacl.debug){
     console.log("=====================================");
 }
 
+
+// set standard define-type for createacl panel
+// must be one of: individual, privateuse, allusers, allusersregistered, allusersanonymous
+YAHOO.haloacl.createAclStdDefine = "individual";
 
 
 YAHOO.haloacl.panelcouner = 0;
@@ -90,6 +94,10 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     YAHOO.haloacl.haloaclTabs.addTab(tab1);
     tab1.addListener('click', function(e){});
     $(tab1.get('contentEl')).setAttribute('id','creataclTab');
+    tab1.addListener('click', function(e){
+        $('manageaclmainTab').innerHTML = "";
+        $('manageuserTab').innerHTML = "";
+    });
 
     new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
         context:"createACLPanel_button",
@@ -111,6 +119,10 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     YAHOO.haloacl.haloaclTabs.addTab(tab2);
     tab2.addListener('click', function(e){});
     $(tab2.get('contentEl')).setAttribute('id','manageaclmainTab');
+    tab1.addListener('click', function(e){
+        $('creataclTab').innerHTML = "";
+        $('manageuserTab').innerHTML = "";
+    });
 
     new YAHOO.widget.Tooltip("manageACLPanel_tooltip", {
         context:"manageACLPanel_button",
@@ -130,6 +142,10 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     YAHOO.haloacl.haloaclTabs.addTab(tab3);
     tab3.addListener('click', function(e){});
     $(tab3.get('contentEl')).setAttribute('id','manageuserTab');
+    tab1.addListener('click', function(e){
+        $('creataclTab').innerHTML = "";
+        $('manageaclmainTab').innerHTML = "";
+    });
 
     new YAHOO.widget.Tooltip("manageUserContent_tooltip", {
         context:"manageUserContent_button",
@@ -328,6 +344,8 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
         evalScripts:true,
         onSuccess: function(o) {
             tab._loading = false;
+            $(targetdiv).scrollTo();
+            $(targetdiv).visible();
         },
         onFailure: function(o) {
         }
@@ -753,3 +771,11 @@ YAHOO.haloaclrights.popup = function(id, label){
 
 };
 
+
+YAHOO.haloacl.addTooltip = function(name, context, text){
+        new YAHOO.widget.Tooltip(name, {
+        context:context,
+        text:text,
+        zIndex :10
+    });
+}

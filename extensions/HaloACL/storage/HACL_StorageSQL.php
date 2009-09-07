@@ -251,7 +251,7 @@ class HACLStorageSQL {
 		SELECT child_id
 		FROM $gmt
 		WHERE $gmt.child_id = halo_acl_groups.group_id
-		)
+		) order by $gt.group_name
             ";
 
 

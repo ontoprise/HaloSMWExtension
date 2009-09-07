@@ -47,7 +47,7 @@ class HACL_GenericPanel {
 		<!-- panel's top bar -->
 		<div id="title_$panelid" class="panel haloacl_panel_title">
 			<span class="haloacl_panel_expand-collapse">
-                            <a href="javascript:YAHOO.haloacl.viewGenericPanelContent_$panelid();"><div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
+                            <a id="exp_col_link_$panelid" href="javascript:YAHOO.haloacl.viewGenericPanelContent_$panelid();">&nbsp;<div id="exp-collapse-button_$panelid" class="haloacl_panel_button_collapse"></div></a>
 			</span>
                         <div class="haloacl_panel_nameDescr">
                             <span id="haloacl_panel_name_$panelid" class="panel haloacl_panel_name">$title</span>
@@ -75,7 +75,7 @@ HTML;
 
         if($showClose) {
             $this->header .= <<<HTML
-			<span class="button haloacl_panel_close">
+			<span id="closebutton_$panelid" class="button haloacl_panel_close">
 				<a href="javascript:YAHOO.haloacl.removePanel('$panelid');"><div id="close-button_$panelid" class="haloacl_panel_button_close"></div></a>
 			</span>
 HTML;
@@ -85,6 +85,7 @@ HTML;
         $this->footer = <<<HTML
         </div> <!-- end of panel div -->
         <script type="javascript>
+            YAHOO.haloacl.addTooltip("tooltip_$panelid","closebutton_$panelid","Click here to close the panel");
 
             //array keeping previous contents in case of replace expand mode
             YAHOO.haloacl.genericPanelParentContents_$panelid = new Array();
@@ -145,20 +146,20 @@ HTML;
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
                 if (saved == true) {
-                    $('haloacl_panel_status_$panelid').textContent = 'Saved';
+                    $('haloacl_panel_status_$panelid').innerHTML = 'Saved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
                 } else {
-                    $('haloacl_panel_status_$panelid').textContent = 'Not Saved';
+                    $('haloacl_panel_status_$panelid').innerHTML = 'Not Saved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_notsaved");
                 }
             }
 
             genericPanelSetName_$panelid = function(name) {
-                $('haloacl_panel_name_$panelid').textContent = name;
+                $('haloacl_panel_name_$panelid').innerHTML = name;
             }
 
             genericPanelSetDescr_$panelid = function(descr) {
-                $('haloacl_panel_descr_$panelid').textContent = descr;
+                $('haloacl_panel_descr_$panelid').innerHTML = descr;
             }
             
 

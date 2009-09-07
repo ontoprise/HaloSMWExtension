@@ -27,7 +27,7 @@ YAHOO.haloacl.pageDataTable = function(divid) {
         key:"checked",
         label:gLanguage.getMessage('selected')
       //  formatter:"myCustom"
-    },
+    }
     ];
 
     // datasource for this userdatatable
@@ -43,7 +43,7 @@ YAHOO.haloacl.pageDataTable = function(divid) {
         },
         {
             key:"checked"
-        },
+        }
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response
