@@ -110,9 +110,54 @@ fillList: function(forceShowList) {
 	}
 	if (this.wtp) {
 		this.wtp.initialize();
-		this.categorycontainer.setContent(this.genTB.createList(this.wtp.getCategories(),"category"));
+		var categories = this.wtp.getCategories();		
+		var cats = '';
+		for (var i = 0; i < categories.length; ++i) {
+			cats += gLanguage.getMessage('CATEGORY_NS') + categories[i].getName()+',';
+		}
+		cats = cats.substr(0, cats.length-1);
+
+		if (cats.length > 0 && cats != this.categoriesForExistenceCheck) {
+			// Check if categories are already defined
+			this.categoriesForExistenceCheck = cats;
+			sajax_do_call('smwf_om_ExistsArticleMultiple',
+			              [cats],
+			              checkCategoryExistCallback.bind(this),
+			              categories);
+		}
+		if (this.categoryExists
+			&& this.categoryExists.length == categories.length) {
+			for (var i = 0; i < categories.length; ++i) {
+				categories[i].exists = this.categoryExists[i][1];
+			}
+		}
+		
+		this.categorycontainer.setContent(this.genTB.createList(categories,"category"));
 		this.categorycontainer.contentChanged();
 	}
+	
+
+	/**
+	 * Closure:
+	 * Callback function that gets the results of the check for existence of categories.
+	 */
+	function checkCategoryExistCallback(request) {
+	
+		if (request.status != 200) {
+			// call for schema data failed, do nothing.
+			return;
+		}
+	
+		var existence = request.responseText.evalJSON(true);
+		this.categoryExists = existence;
+
+		for (var i = 0; i < categories.length; ++i) {
+			categories[i].exists = existence[i][1];
+		}
+		this.categorycontainer.setContent(this.genTB.createList(categories,"category"));
+		this.categorycontainer.contentChanged();
+		refreshSTB.refreshToolBar();
+	};
 },
 
 /**

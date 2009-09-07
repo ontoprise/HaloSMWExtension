@@ -116,6 +116,7 @@ initialize: function() {
 	this.showList = true;
 	this.currentAction = "";
 	this.relationsForAccessCheck = "";
+	this.relationsForExistenceCheck = "";
 },
 
 showToolbar: function(){
@@ -152,21 +153,39 @@ fillList: function(forceShowList) {
 		for (var i = 0; i < relations.length; ++i) {
 			rels += gLanguage.getMessage('PROPERTY_NS') + relations[i].getName()+',';
 		}
+		rels = rels.substr(0, rels.length-1);
 		if (rels.length > 0 && rels != this.relationsForAccessCheck) {
+			// Check if properties are protected by access control
 			this.relationsForAccessCheck = rels;
-			rels = rels.substr(0, rels.length-1);
 			sajax_do_call('smwf_om_userCanMultiple',
 			              [rels, "propertyedit"],
 			              checkPropertyEditCallback.bind(this),
 			              relations);
 		}
-		
+
 		if (this.propertyRights
 			&& this.propertyRights.length == relations.length) {
 			for (var i = 0; i < relations.length; ++i) {
 				relations[i].accessAllowed = this.propertyRights[i][1];
 			}
 		}
+
+		if (rels.length > 0 && rels != this.relationsForExistenceCheck) {
+			// Check if properties are already defined
+			this.relationsForExistenceCheck = rels;
+			sajax_do_call('smwf_om_ExistsArticleMultiple',
+			              [rels],
+			              checkPropertyExistCallback.bind(this),
+			              relations);
+		}
+		if (this.propertyExists
+			&& this.propertyExists.length == relations.length) {
+			for (var i = 0; i < relations.length; ++i) {
+				relations[i].exists = this.propertyExists[i][1];
+			}
+		}
+
+		
 		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
 		this.relationcontainer.contentChanged();
 	}
@@ -201,6 +220,27 @@ fillList: function(forceShowList) {
 		
 	};
 
+	/**
+	 * Closure:
+	 * Callback function that gets the results of the check for existence of properties.
+	 */
+	function checkPropertyExistCallback(request) {
+	
+		if (request.status != 200) {
+			// call for schema data failed, do nothing.
+			return;
+		}
+	
+		var existence = request.responseText.evalJSON(true);
+		this.propertyExists = existence;
+
+		for (var i = 0; i < relations.length; ++i) {
+			relations[i].exists = existence[i][1];
+		}
+		this.relationcontainer.setContent(this.genTB.createList(relations,"relation"));
+		this.relationcontainer.contentChanged();
+		refreshSTB.refreshToolBar();
+	};
 	
 },
 

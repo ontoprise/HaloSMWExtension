@@ -150,17 +150,25 @@ createList: function(list,id) {
 			elemName = list[i].getName().escapeHTML();
 		} else {
 			var accessWarning = '';
+			var editArticleURL = "";
+			var redLink = "";
 			if (id == 'relation') {
-				var accessAllowed = (list[i].accessAllowed != undefined) 
+				var accessAllowed = (typeof (list[i].accessAllowed) != "undefined") 
 									? list[i].accessAllowed : true;
 				if (accessAllowed == "false") {
 					accessWarning = '<img title="'+gLanguage.getMessage('PROPERTY_ACCESS_DENIED_TT')+'" ' +
 							             'src="' + wgScriptPath  + '/extensions/SMWHalo/skins/warning.png"/>';
 				}
 			}
+			if (id == 'category' || id == 'relation') {
+				if (typeof (list[i].exists) != "undefined" && list[i].exists == "false") {
+					editArticleURL = '?action=edit';
+					redLink = ' style="color:#CC2200"';
+				}
+			}
 			elemName = accessWarning + 
-			           '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML();
-			elemName += '" target="blank" title="' + shortName +'">' + shortName + '</a>';
+			           '<a href="'+wgServer+path+prefix+list[i].getName().escapeHTML()+editArticleURL;
+			elemName += '" target="blank"'+redLink+' title="' + shortName +'">' + shortName + '</a>';
 		}
 		divlist += 	"<tr>" +
 				"<td "+rowSpan+" class=\"" + id + "-col1\" " + len1 + ">" + 
