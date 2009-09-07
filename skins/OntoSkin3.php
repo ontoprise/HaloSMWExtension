@@ -201,7 +201,12 @@ class OntoSkin3Template extends QuickTemplate {
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
-            <div id="smwh_center">
+            <table id="shadows">
+                <tbody>
+                    <tr>
+                        <td id="shadow_left" width="10px">
+                        </td>
+                        <td id="shadow_center" width="*">
             <!-- Header -->
             <div id="smwh_head">
                 <!--  Logo -->
@@ -212,8 +217,14 @@ class OntoSkin3Template extends QuickTemplate {
 
                 <!-- Personalbar -->
                 <div id="smwh_personal">
-                            <?php foreach($this->data['personal_urls'] as $key => $item) { ?>
-                    <a href="<?php
+                    <a id="personal_expand" href="javascript:fn()">Expand view</a>
+                            <?php foreach($this->data['personal_urls'] as $key => $item) {
+                                //echo $key;
+                                if(!($key=="login" || $key=="anonlogin" || $key=="logout" || $key=="userpage") ) continue;
+                                ?>
+
+                    <a id="personal_<?php echo $key ?>"
+                        href="<?php
                                    echo htmlspecialchars($item['href']) ?>"<?php echo $skin->tooltipAndAccesskey('pt-'.$key) ?>
                        class="<?php
                                    if ($item['active']) { ?>active<?php }
@@ -304,6 +315,12 @@ class OntoSkin3Template extends QuickTemplate {
 
         -->
                 <?php endif; ?>
+            </td>
+            <td id="shadow_right" width="10px">
+            </td>
+            </tr>
+            </tbody>
+            </table>
             </div>
         </div>
     </body></html>
@@ -606,13 +623,21 @@ class OntoSkin3Template extends QuickTemplate {
     }
 
     function buildTools() {
-        global $wgStylePath;
+
+        global $wgStylePath, $wgUser;
+        
+        //Get users groups and check for Sysop-Rights
+        $groups = $wgUser->getEffectiveGroups();
+        $isAllowed = false;
+        if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) $isAllowed = true;       
+        if($isAllowed == false) return "";
+        
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Tools";
+        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration";
         $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_tools.gif\" alt=\"tools\"/>";
         $menu.= "</p></div>";
-        $content = wfMsgForContent( 'halotools' );
+        $content = wfMsgForContent( 'Administration' );
         if($content!=null){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
             $menu.= "<div class=\"smwh_menubody_visible\">";

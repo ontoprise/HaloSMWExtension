@@ -2,6 +2,11 @@
 * Global
 */
 
+body{
+    margin: 0px;
+    background-color: #edf4e6;
+}
+
 .mediawiki{
 	font-family: sans-serif;
 }
@@ -10,12 +15,16 @@
     text-decoration: none;
 }
 
+.mediawiki a:hover{
+   text-decoration: underline;
+}
+
 .mediawiki a img{
 	border-width: 0px;
 }
 
-
-#smwh_center{
+#shadows{
+    border-spacing: 0px;
     position: absolute;
     left: 50%;
     width: 960px;
@@ -34,6 +43,19 @@
 	padding-bottom: 5px;
 	overflow: hidden;
 }
+
+#smwh_personal #personal_expand {
+    border-left-style: none;
+}
+
+#smwh_personal a{
+    margin-left: 5px;
+    padding-left: 5px;
+    border-left-width: 1px;
+    border-left-style: solid;
+}
+
+
 
 #smwh_logo{
     float: left;
@@ -211,6 +233,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 .tab.selected{
     border-bottom: 1px solid #FFF;
     z-index: 1;
+    font-weight: bolder;
 }
 
 #editimage{
@@ -263,6 +286,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
     margin-top: 3px;
 }
 
+#mainpage 
+
 #mainpagetable{
   margin-top: 10px;
 }
@@ -275,7 +300,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding: 5px;
 }
 
-#siteSub{
+#siteSub, #jump-to-nav, .printfooter{
     display: none;
 }
 
