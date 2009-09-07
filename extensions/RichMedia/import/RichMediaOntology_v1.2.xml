@@ -1376,8 +1376,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>417</id>
     <revision>
-      <id>6646</id>
-      <timestamp>2009-09-07T10:15:11Z</timestamp>
+      <id>6708</id>
+      <timestamp>2009-09-07T12:16:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1423,6 +1423,16 @@ if a page with that name already exists, you will be sent to a form to edit that
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
