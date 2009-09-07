@@ -1104,8 +1104,8 @@ AutoCompleter.prototype = {
             selection_range.moveStart("character", -userInput.length);
             selection_range.text = nsPrefix+addedValue;
             selection_range.collapse(false);
-            this.resetCursorinIE();
-            
+            selection_range.select();
+                        
             if (typeof(refreshSTB) != "undefined") refreshSTB.changed();
            
             // log
