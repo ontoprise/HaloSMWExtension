@@ -39,7 +39,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4461)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4808)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -675,7 +675,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1354,24 @@
+@@ -1098,7 +1354,17 @@
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
  	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
@@ -685,15 +685,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		
 +		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 +		
-+		$sflegend = wfMsgHtml('smw_rm_sflegend');
-+		$wgOut->addHTML( "
-+			<div>
-+			<fieldset style='padding:0px 10px;'>
-+				<legend style='font-size:100%;font-weight:bold'>{$sflegend}</legend>
-+		");
 +		$form_add= new SFAddData();
 +		$form_add_test = $form_add->execute( $rMUploadName );
-+		$wgOut->addHTML("</fieldset></div>");
 +		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 +		global $smwgRMScriptPath;
 +		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
@@ -701,7 +694,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1835,54 @@
+@@ -1562,4 +1828,54 @@
  		}
  		return $pageText;
  	}
