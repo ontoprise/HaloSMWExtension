@@ -618,15 +618,10 @@ class OntoSkin3Template extends QuickTemplate {
     function buildTabs() {
         global $IP, $wgTitle;
         $tabs  = "<!-- Tabs -->";
-        $tabsleft .= "<div id=\"tabsleft\">";
-        //right tab holding all functions other than page/talk
-        $tabright .= "<div id=\"tabsright\"><div class=\"tab\">";
+        $tabsleft = "<div id=\"tabsleft\">";
         //right tab elements
-        $tabsright = "";
-        //all functions which are aggregated in the right of the right tab
-        $tabsaggregated.= "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
-        $tabsaggregated.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">Aggregated</div>";
-        $tabsaggregated.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
+        $functionsright = "";
+        $functionsaggregated ="";
 
         foreach($this->data['content_actions'] as $key => $tab) {
 
@@ -704,7 +699,7 @@ class OntoSkin3Template extends QuickTemplate {
                                             }
                                             $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
 
-                                        $tabsright .= $tabs;
+                                        $functionsright .= $tabs;
                                     } else {
                                             $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
                                             $tabs .= " class=\"aggregatedtabelements";
@@ -726,15 +721,36 @@ class OntoSkin3Template extends QuickTemplate {
                                                 $tabs.= $this->skin->tooltipAndAccesskey( "ca-$key" );
                                             }
                                             $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
-                                       $tabsaggregated .= $tabs;
+                                       $functionsaggregated .= $tabs;
                                     }
 
          }
 
          $tabsleft .=  "</div>";
-         $tabsaggregated .= "</div></li></ul></div>";
-         $tabright .=  $tabsaggregated.$tabsright."</div></div>";
+
+         //Check if there were functions added to the more-tab
+         //and don't add the more tab if empty
+         if($functionsaggregated != "") {
+         //all functions which are aggregated in the right of the right tab
+             $tabmore .= "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
+             $tabmore .= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
+             $tabmore .= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
+             $tabmore .= $functionsaggregated."</div></li></ul></div>";
+         } else {
+             $tabmore = "";
+         }
+
+         //Check if there were functions added to the right-tab
+         //and don't add the right tab if it's completly empty
+         if($functionsright != "" || $functionsaggregated != "" ) {
+         //right tab holding all functions other than page/talk
+             $tabright = "<div id=\"tabsright\"><div class=\"tab\">";
+             $tabright .=  $tabmore.$functionsright."</div></div>";
+         } else {
+             $tabright = "";
+         }
          
+         //return html for tabs
          return $tabsleft.$tabright;
     }
 

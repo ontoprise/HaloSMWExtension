@@ -34,6 +34,14 @@ ul.smwh_menulist div.smwh_menubody {
     border-color: #cacac4;
 }
 
+#tabsright .righttabelements {
+    border-color: #cacac4;
+}
+
+#tabsright .smwh_menuhead  {
+    background: none;
+}
+
 #tabsright ul.smwh_menulist div.smwh_menubody {
     background-color: #269fb2;
 }
