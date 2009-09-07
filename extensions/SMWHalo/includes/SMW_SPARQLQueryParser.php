@@ -15,6 +15,7 @@ class SMWSPARQLQuery extends SMWQuery {
 	 * @var boolean
 	 */
 	public $fromASK = false;
+	public $mergeResults = true;
 	
 	/**
 	 * True if mainlabel is missing

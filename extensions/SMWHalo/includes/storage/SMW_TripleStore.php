@@ -883,6 +883,12 @@ class SMWTripleStore extends SMWStore {
 			}
 			$result .= $sort."|".$order;
 		}
+		
+		if ($query->mergeResults === false) {
+			if (!$first) $result .= "|";
+			$result .= 'merge=false';
+			$first = false;
+		}
 		return $result;
 	}
 
