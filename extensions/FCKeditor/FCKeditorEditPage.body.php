@@ -75,4 +75,25 @@ class FCKeditorEditPage extends EditPage
 			$this->textbox1 = $_textbox1;
 		}
 	}
+
+        /**
+         * When the FCKeditor is used and the preview button is hit, we must
+         * change the form and add the hidden field mode with value wysiwyg so
+         * that the FCKeditor is also displayed in the preview mode. Without
+         * this we would get the normal text editor from mediawiki.
+         *
+         * @global OutputPage $wgOut
+         * @param function $formCallback
+         */
+        function showEditForm( $formCallback=null ) {
+                global $wgOut;
+                parent::showEditForm($formCallback);
+                $bodyHtml = $wgOut->getHTML();
+                $bodyHtml = str_replace(
+                    '</form>',
+                    '<input type="hidden" name="mode" value="wysiwyg" /></form>',
+                    $bodyHtml);
+                $wgOut->clearHTML();
+                $wgOut->addHTML($bodyHtml);
+        }
 }
