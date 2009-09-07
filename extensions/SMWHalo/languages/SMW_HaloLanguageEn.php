@@ -326,7 +326,7 @@ clicking the big arrows between the columns.',
 
         //skin
         'smw_search_this_wiki' => 'Search this wiki',
-        'more_functions' => 'more'
+        'more_functions' => 'More'
 
 	);
 

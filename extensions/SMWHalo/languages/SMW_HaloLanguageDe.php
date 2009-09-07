@@ -317,7 +317,7 @@ protected $smwUserMessages = array(
 
         //skin
         'smw_search_this_wiki' => 'Wiki durchsuchen',
-        'more_functions' => 'mehr'
+        'more_functions' => 'Mehr'
 	
 );
 
