@@ -177,7 +177,7 @@ function addNonSpecialPageHeader(&$out) {
     
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-//    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
     return true;
 }
