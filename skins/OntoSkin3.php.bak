@@ -145,7 +145,8 @@ class OntoSkin3Template extends QuickTemplate {
         <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
         <style type="text/css" media="screen,projection">
             @import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-colorfont.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-colors.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-fonts.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
             @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
         </style>
 
@@ -192,7 +193,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php $this->html('headscripts') ?>
 
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- megamenu.js --></script>
         <!-- END HEAD MW 1.13-->
 
 
@@ -201,7 +202,7 @@ class OntoSkin3Template extends QuickTemplate {
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
-            <div id="smwh_center">
+
             <!-- Header -->
             <div id="smwh_head">
                 <!--  Logo -->
@@ -230,39 +231,29 @@ class OntoSkin3Template extends QuickTemplate {
 
             <div id="smwh_menu">
                         <!-- Halo Menu -->
-                        <div id="home">
-                            <a href="<?php echo htmlspecialchars($this->data['nav_urls']['mainpage']['href'])?>"<?php
-                               echo $skin->tooltipAndAccesskey('p-logo'); ?>>
-                                <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/menue_mainpageicon.gif" alt="mainpage"/>
-                            </a>
-                        </div>
                         <?php echo $this->buildMenuHtml(); ?>
 
 
             </div>
 
             <div id="smwh_breadcrumbs">
-                <div id="thispage">
-                    <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/breadcrumb_pfeil.gif"/>
-                    <?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title'); ?>
-                </div>
                 <div id="breadcrump">
 		</div>
             </div>
-            <div id="mainpage">
-            <table id="mainpagetable" width="100%">
+
+            <table width="100%">
             <tr>
 
                 <!-- insert treeview if present -->
                 <?php $tree=$this->treeviewBox();
                 if($tree!=false){?>
-                    <td valign="top" width="25%">
+                    <td width="30%">
                         <?php echo $tree; ?>
                     </td>
                 <?php } ?>
             
                 <!-- normal page content and tabs -->
-                <td valign="top" width="*">
+                <td width="*">
 
             <div id="smwh_tabs">
                 <?php echo $this->buildTabs(); ?>
@@ -285,16 +276,17 @@ class OntoSkin3Template extends QuickTemplate {
                         </div>
                     </div>
 
+
+
                 </div>
             </td>
             </tr>
             </table>
-            </div>
+            <div id="ontomenuanchor"/>
             <div class="visualClear"></div>
             <div id="footer">
                 <?php echo $this->buildQuickLinks(); ?>
         </div>
-            <div id="ontomenuanchor"></div>
                 
                 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
                 <?php $this->html('reporttime') ?>
@@ -304,7 +296,6 @@ class OntoSkin3Template extends QuickTemplate {
 
         -->
                 <?php endif; ?>
-            </div>
         </div>
     </body></html>
         <?php
@@ -316,17 +307,19 @@ class OntoSkin3Template extends QuickTemplate {
         global $wgUseTwoButtonsSearchForm;
         ?>
 <div id="smwh_search" class="portlet">
+    <h5><label for="searchInput"><?php $this->msg('search') ?></label></h5>
     <div id="searchBody" class="pBody">
-        <form action="<?php $this->text('wgScript') ?>" id="searchform">
+        <form action="<?php $this->text('wgScript') ?>" id="searchform"><div>
                 <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                <input id="searchInput" name="search" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
-                     value="<?php $this->msg('smw_search_this_wiki'); ?>"/>
+                <input id="searchInput" name="search" type="text"<?php echo $this->skin->tooltipAndAccesskey('search');
+                        if( isset( $this->data['search'] ) ) {
+                                   ?> value="<?php $this->text('search') ?>"<?php } ?> />
+                <input type='submit' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> /><?php if ($wgUseTwoButtonsSearchForm) { ?>&nbsp;
+                <input type='submit' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> /><?php } else { ?>
 
-                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_go.gif' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
-                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_search.gif' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
+                <div><a href="<?php $this->text('searchaction') ?>" rel="search"><?php $this->msg('powersearch-legend') ?></a></div><?php } ?>
 
-
-        </form>
+            </div></form>
     </div>
 </div>
     <?php
@@ -513,7 +506,7 @@ class OntoSkin3Template extends QuickTemplate {
     function buildMenuHtml() {
         $rawmenu = $this->getMenuItems();
         $index = 0;
-        $menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
+        $menu.= "<ul id=\"menuleft\" class=\"smwh_menulist\">";
         foreach($rawmenu as $menuName => $menuItems) {
             $menu.= "<li class=\"smwh_menulistitem\">";
             $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">".$this->parseWikiText($menuName)."</div>";
@@ -522,11 +515,10 @@ class OntoSkin3Template extends QuickTemplate {
             if ( count($menuItems) > 0) 
             {
                 $menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody\">";
-                $menu.= "<div class=\"smwh_menubody_visible\">";
                 foreach($menuItems as $menuItem) {
                     $menu.= "<div class=\"smwh_menuitem\">".$this->buildMenuItemHtml($menuItem)."</div>";
                 }
-                $menu.= "</div></div>";
+                $menu.= "</div>";
             }
             $menu.= "</li>";
             $index++;
@@ -569,14 +561,11 @@ class OntoSkin3Template extends QuickTemplate {
     }
 
     function buildMenuMediaWiki() {
-        global $wgStylePath;
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">";
-        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_mediawiki.gif\" alt=\"tools\"/>";
-        $menu.= "</div>";
+        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\"><p>Mediawiki</p></div>";
         $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
-        $menu.= "<div class=\"smwh_menubody_visible\">";
+           
         //catch echos from mediawik -skin
         ob_start();
 
@@ -600,36 +589,36 @@ class OntoSkin3Template extends QuickTemplate {
         //stop catching echos
         ob_end_clean();
 
-        $menu.= "</div></div>";
+        $menu.= "</div>";
         $menu.= "</li>";
         return $menu;
     }
 
     function buildTools() {
-        global $wgStylePath;
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Tools";
-        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_tools.gif\" alt=\"tools\"/>";
-        $menu.= "</p></div>";
+        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Tools</p></div>";
         $content = wfMsgForContent( 'halotools' );
         if($content!=null){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
-            $menu.= "<div class=\"smwh_menubody_visible\">";
             $menu.=  $this->parseWikiText($content);
-            $menu.= "</div></div>";
+            $menu.= "</div>";
         }
         $menu.= "</li>";
         return $menu;
     }
 
     function buildTabs() {
-        global $IP, $wgTitle, $wgScriptPath, $wgStylePath;
         $tabs  = "<!-- Tabs -->";
-        $tabsleft = "<div id=\"tabsleft\">";
+        $tabsleft .= "<div id=\"tabsleft\">";
+        //right tab holding all functions other than page/talk
+        $tabright .= "<div id=\"tabsright\"><div class=\"tab\">";
         //right tab elements
-        $functionsright = "";
-        $functionsaggregated ="";
+        $tabsright = "";
+        //all functions which are aggregated in the right of the right tab
+        $tabsaggregated.= "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
+        $tabsaggregated.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">Aggregated</div>";
+        $tabsaggregated.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
 
         foreach($this->data['content_actions'] as $key => $tab) {
 
@@ -640,7 +629,7 @@ class OntoSkin3Template extends QuickTemplate {
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\">";
+                                            $tabs .= "\"";
                                             $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
@@ -663,36 +652,8 @@ class OntoSkin3Template extends QuickTemplate {
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\">";
-
-                                            # build the edit link
-                                            $link = '';
-                                            # if the SF forms are in use, make the edit with semantic forms
-                                            if (defined('SF_VERSION') &&  # SF are included
-                                                isset($wgTitle) && # title obj exists and we are not on a special page
-                                                $wgTitle->getNamespace() != NS_SPECIAL
-                                               ) {
-                                                # check if there are forms available for the current article
-                        			if (count(SFLinkUtils::getFormsForArticle($this->skin)) > 0)
-                                                    $link = htmlspecialchars(
-                                                                str_replace('action=edit',
-                                                                    'action=formedit',
-                                                                    $tab['href']
-                                                                )
-                                                            );
-                                            }
-                                            # if the FCKeditor is available use it. Check this with file_exists,
-                                            # because there are installations where the include is done only if
-                                            # action == edit and mode == wysiwyg. Therefore on page view the FCK
-                                            # might not be included at this moment.
-                                            if (!$link && $key == "edit" && file_exists($IP.'/extensions/FCKeditor/FCKeditor.php'))
-                                                $link = htmlspecialchars($tab['href']).'&mode=wysiwyg';
-                                            # none of the conditions above came into action, then use the normal
-                                            # wiki editor for editing pages.
-                                            if (!$link) $link = htmlspecialchars($tab['href']);
-                                            # add the href $link now to the tabs
-                                            $tabs .= '<a href="'.$link.'"';
-
+                                            $tabs .= "\"";
+                                            $tabs .= '<a href="'.htmlspecialchars($tab['href']).'&mode=wysiwyg"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
                                             # accesskey on the watch checkbox.  We also don't want to
@@ -705,20 +666,16 @@ class OntoSkin3Template extends QuickTemplate {
                                             } else {
                                                 $tabs.= $this->skin->tooltipAndAccesskey( "ca-$key" );
                                             }
-                                            $tabs.= ">";
-                                            if($key == "edit") {
-                                                $tabs.= "<img id=\"editimage\" src=\"".$wgStylePath."/ontoskin3/img/button_edit.gif\" alt=\"edit\"/>";
-                                            }
-                                            $tabs.= htmlspecialchars($tab['text'])."</a></div>";
+                                            $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
 
-                                        $functionsright .= $tabs;
+                                        $tabsright .= $tabs;
                                     } else {
                                             $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
                                             $tabs .= " class=\"aggregatedtabelements";
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
-                                            $tabs .= "\">";
+                                            $tabs .= "\"";
                                             $tabs .= '<a href="'.htmlspecialchars($tab['href']).'"';
                                             # We don't want to give the watch tab an accesskey if the
                                             # page is being edited, because that conflicts with the
@@ -733,36 +690,15 @@ class OntoSkin3Template extends QuickTemplate {
                                                 $tabs.= $this->skin->tooltipAndAccesskey( "ca-$key" );
                                             }
                                             $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
-                                       $functionsaggregated .= $tabs;
+                                       $tabsaggregated .= $tabs;
                                     }
 
          }
 
          $tabsleft .=  "</div>";
-
-         //Check if there were functions added to the more-tab
-         //and don't add the more tab if empty
-         if($functionsaggregated != "") {
-         //all functions which are aggregated in the right of the right tab
-             $tabmore .= "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
-             $tabmore .= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
-             $tabmore .= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
-             $tabmore .= $functionsaggregated."</div></li></ul></div>";
-         } else {
-             $tabmore = "";
-         }
-
-         //Check if there were functions added to the right-tab
-         //and don't add the right tab if it's completly empty
-         if($functionsright != "" || $functionsaggregated != "" ) {
-         //right tab holding all functions other than page/talk
-             $tabright = "<div id=\"tabsright\"><div class=\"tab\">";
-             $tabright .=  $tabmore.$functionsright."</div></div>";
-         } else {
-             $tabright = "";
-         }
+         $tabsaggregated .= "</div></li></ul></div>";
+         $tabright .=  $tabsaggregated.$tabsright."</div></div>";
          
-         //return html for tabs
          return $tabsleft.$tabright;
     }
 

@@ -64,7 +64,7 @@
 
 #smwh_menu{
     clear: both;
-    height: 31px;
+    height: 30px;
 }
 
 #smwh_menu .editsection{
@@ -107,11 +107,17 @@ ul.smwh_menulist .hovering div.smwh_menubody {
 ul.smwh_menulist div.smwh_menubody {
     width: auto;
     position: absolute;
-    top: 1.2em;
-    padding: 5px;
+    top: 24px;
     z-index: 10;
+    
+}
+
+ul.smwh_menulist div.smwh_menubody_visible {
+    margin-top: 2px;
+    padding: 5px;
     -moz-border-radius: 5px;
 }
+
 
 #menuright{
     float: right;
@@ -129,6 +135,10 @@ ul.smwh_menulist div.smwh_menubody {
     left: 0em;
 }
 
+#toolsimage{
+    margin-left: 5px;
+}
+
 /* breadcrumbs */
 
 #thispage{
@@ -140,7 +150,15 @@ ul.smwh_menulist div.smwh_menubody {
     clear: both;
 }
 
-/* tabs */
+/* mainpage */
+
+#smwh_browser{
+    margin-top: 1.5em;
+    border-width: 1px;
+    border-style: solid;
+    -moz-border-radius: 5px;
+}
+
 
 #smwh_tabs{
     height: 1.5em;
@@ -186,6 +204,9 @@ ul.smwh_menulist div.smwh_menubody {
     z-index: 1;
 }
 
+#editimage{
+    margin-right: 5px;
+}
 
 /* aggregated functions in tab */
 
@@ -236,6 +257,7 @@ ul.smwh_menulist div.smwh_menubody {
 }
 
 /* Page content */
+
 #column-content{
     border-width: 1px;
     border-style: solid;

@@ -21,14 +21,20 @@
     background: url(../img/menue_hover.gif) repeat-x;
 }
 
-ul.smwh_menulist div.smwh_menubody {
+ul.smwh_menulist div.smwh_menubody_visible {
     background-color: #269fb2;
 }
 
 
 
 
-/* main page*/
+/* mainpage */
+
+#smwh_browser{
+    border-color: #cacac4;
+    background-color: white;
+}
+
 .tab{
     background-color: #FFF;
     border-color: #cacac4;
