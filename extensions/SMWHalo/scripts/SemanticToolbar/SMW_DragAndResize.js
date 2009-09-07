@@ -23,12 +23,10 @@ initialize: function() {
  * 
  */
 callme: function(){
-	// Makes the toolbar draggable and resizable in Annotation mode and FCKeditor
-	if( wgAction == "annotate" || typeof FCKeditor != "undefined" ) {
-		if (wgAction == "annotate")
-                    this.resizeable = new Resizeable('ontomenuanchor',{top: 10, left:10, bottom: 10, right: 10});
-		this.enableDragging();
-	}
+	// Makes the toolbar draggable in all modes resizable only in annotation mode.
+	if (wgAction == "annotate")
+            this.resizeable = new Resizeable('ontomenuanchor',{top: 10, left:10, bottom: 10, right: 10});
+        this.enableDragging();
 },
 /**
  * @public disables dragging of toolbar  
