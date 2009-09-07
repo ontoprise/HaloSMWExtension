@@ -572,9 +572,9 @@ class OntoSkin3Template extends QuickTemplate {
         global $wgStylePath;
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">";
-        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_mediawiki.gif\" alt=\"tools\"/>";
-        $menu.= "</div>";
+        $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\"><p>MediaWiki";
+        //$menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_mediawiki.gif\" alt=\"tools\"/>";
+        $menu.= "</p></div>";
         $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
         $menu.= "<div class=\"smwh_menubody_visible\">";
         //catch echos from mediawik -skin

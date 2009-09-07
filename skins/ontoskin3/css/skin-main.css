@@ -115,6 +115,8 @@ ul.smwh_menulist div.smwh_menubody {
 ul.smwh_menulist div.smwh_menubody_visible {
     margin-top: 2px;
     padding: 5px;
+    border-width: 1px;
+    border-style: solid;
     -moz-border-radius: 5px;
 }
 
