@@ -18,7 +18,8 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 	}
 	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
 	catch(err) {
-		parent.fb.loadPageOnClose ='self';
+		if (window.parent.wgPageName != 'Special:AddData')
+			parent.fb.loadPageOnClose ='self';
 		return;
 	}
 			
