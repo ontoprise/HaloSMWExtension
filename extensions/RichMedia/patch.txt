@@ -421,7 +421,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -929,15 +1080,96 @@
+@@ -929,15 +1080,98 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
  
@@ -491,7 +491,9 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			NS_PDF=> array(),
 +			NS_DOCUMENT => array(),
 +			NS_AUDIO => array(),
-+			NS_VIDEO => array()
++			NS_VIDEO => array(),
++			NS_ICAL => array(),
++			NS_VCARD => array()
 +		);
 +		sort($wgFileExtensions);
 +		foreach ($wgFileExtensions as $ext) {
@@ -508,7 +510,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			}
 +		}
 +		$wgOut->addHTML('<ul style="margin-top:0px;">');
-+		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode(array_merge($extCat[NS_DOCUMENT],$extCat[NS_PDF]),$delim ) ));
++		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_doc', implode(array_merge($extCat[NS_DOCUMENT],$extCat[NS_PDF],$extCat[NS_VCARD],$extCat[NS_ICAL]),$delim ) ));
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_image', implode( $extCat[NS_IMAGE],$delim ) ));
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_audio', implode( $extCat[NS_AUDIO],$delim ) ));
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_type_video', implode( $extCat[NS_VIDEO],$delim ) ));
@@ -525,7 +527,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
  		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
-@@ -960,7 +1192,7 @@
+@@ -960,7 +1194,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
@@ -534,7 +536,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		// Prepare form for upload or upload/copy
  		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -982,41 +1214,63 @@
+@@ -982,41 +1216,63 @@
  				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -611,7 +613,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1024,7 +1278,7 @@
+@@ -1024,7 +1280,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -620,7 +622,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1032,7 +1286,7 @@
+@@ -1032,7 +1288,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -629,7 +631,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1042,13 +1296,13 @@
+@@ -1042,13 +1298,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -645,7 +647,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1067,21 +1321,21 @@
+@@ -1067,21 +1323,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -673,7 +675,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1352,24 @@
+@@ -1098,7 +1354,24 @@
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
  	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
@@ -699,7 +701,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1833,54 @@
+@@ -1562,4 +1835,54 @@
  		}
  		return $pageText;
  	}

@@ -25,6 +25,8 @@ $smwgRMFormByNamespace = array(
 	NS_DOCUMENT => 'RMDocument',
 	NS_AUDIO => 'RMAudio',
 	NS_VIDEO => 'RMVideo',
+	NS_ICAL => 'RMICalendar',
+	NS_VCard => 'RMVCard',
 	'RMUpload' => 'RMUpload'
 );
 

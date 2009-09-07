@@ -86,8 +86,8 @@ $wgNamespaceByExtension = array(
 	'docx' => NS_DOCUMENT,
 	'xlsx' => NS_DOCUMENT,
 	'pptx' => NS_DOCUMENT,
-	'ics' => NS_DOCUMENT,
-	'vcf' => NS_DOCUMENT
+	'ics' => NS_ICAL,
+	'vcf' => NS_VCARD
 );
 	
 //We want semantic data in this namespaces!
