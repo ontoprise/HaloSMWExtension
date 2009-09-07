@@ -94,19 +94,16 @@ var SMW_REL_SUB_SUPER_ALL_VALID =
 var SMW_REL_CHECK_PART_OF_RADIO =
 	'smwValid="relToolBar.checkPartOfRadio"';
 
-var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined') ? 1 : 0;
+var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined') ? '" position="fixed"' : ''
 
 var SMW_REL_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + 
-	((positionFixed) ? '" position="fixed"' : '');
+	'typeHint = "' + SMW_CATEGORY_NS + positionFixed;
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="'+ SMW_PROPERTY_NS + 
-	((positionFixed) ? '" position="fixed"' : '');
+	'typeHint="'+ SMW_PROPERTY_NS + positionFixed;
 
 var SMW_REL_HINT_INSTANCE =
-	'typeHint="'+ SMW_INSTANCE_NS + 
-	((positionFixed) ? '" position="fixed"' : '');
+	'typeHint="'+ SMW_INSTANCE_NS + positionFixed;
 
 var SMW_REL_TYPE_CHANGED =
 	'smwChanged="(call:relToolBar.relTypeChanged)"';
@@ -123,7 +120,7 @@ initialize: function() {
 
 showToolbar: function(){
 	this.relationcontainer.setHeadline(gLanguage.getMessage('PROPERTIES'));
-	if (wgAction == 'edit') {
+	if (wgAction == 'edit' || wgAction == 'formedit' || wgAction == 'submit') {
             // Create a wiki text parser for the edit mode. In annotation mode,
             // the mode's own parser is used.
             this.wtp = new WikiTextParser();
@@ -133,7 +130,7 @@ showToolbar: function(){
 },
 
 callme: function(event){
-	if((wgAction == "edit" || wgAction == "annotate")
+	if((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit')
 	    && stb_control.isToolbarAvailable()){
 		this.relationcontainer = stb_control.createDivContainer(RELATIONCONTAINER, 0);
 		this.showToolbar();		

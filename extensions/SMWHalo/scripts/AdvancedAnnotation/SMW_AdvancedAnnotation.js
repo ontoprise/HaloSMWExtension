@@ -35,7 +35,7 @@ AdvancedAnnotation.prototype = {
 	 * Initializes an instance of this class.
 	 */
 	initialize: function() {
-                this.fck = (wgAction == 'edit' && typeof FCKeditor != 'undefined') ? 1 : 0;
+                this.fck = (typeof FCKeditor != 'undefined') ? 1 : 0;
 	
 		this.resetSelection();
 		
@@ -1578,7 +1578,7 @@ AdvancedAnnotation.unload = function() {
 		}
 	}
         // Semantic toolbar was called within the FCK editor, disable it
-        if (wgAction == "edit" && typeof FCKeditor != 'undefined') {
+        if (typeof FCKeditor != 'undefined') {
                 $('ontomenuanchor').innerHTML = '';
                 //stb_control.collapse();
         }

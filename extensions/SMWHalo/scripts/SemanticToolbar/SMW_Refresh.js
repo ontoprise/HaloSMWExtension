@@ -33,7 +33,7 @@ RefreshSemanticToolBar.prototype = {
 
 	//Registers event
 	register: function(event){
-		if(wgAction == "edit"
+		if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' )
 		   && stb_control.isToolbarAvailable()){
 			Event.observe('wpTextbox1', 'change' ,this.changed.bind(this));
 			Event.observe('wpTextbox1', 'keyup' ,this.setUserIsTyping.bind(this));
