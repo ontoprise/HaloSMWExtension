@@ -319,7 +319,7 @@ class OntoSkin3Template extends QuickTemplate {
     <div id="searchBody" class="pBody">
         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                 <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
-                <input id="searchInput" name="search" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
+                <input id="searchInput" pasteNS="true" class="wickEnabled" name="search" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
                      value="<?php $this->msg('smw_search_this_wiki'); ?>"/>
 
                 <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_go.gif' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />

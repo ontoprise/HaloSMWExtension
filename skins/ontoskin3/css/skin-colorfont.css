@@ -7,7 +7,8 @@
 }
 
 #searchInput{
-    border-color: #edede7;
+    border-color: #AAA;
+    color: #AAA;
 }
 
 #smwh_menu {
@@ -76,4 +77,9 @@ ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a
     background-color: #228e9e;
     background-image: url(../img/backgr_footer.gif);
     background-repeat: repeat-x;
+}
+
+
+#smwh_quicklinks, #smwh_quicklinks a{
+    color: #FFF;
 }
