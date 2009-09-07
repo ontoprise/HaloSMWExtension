@@ -1097,10 +1097,10 @@ var fckPopupContextMenu;
  * @param string value selected text
  */
 ShowNewToolbar = function(event, value) {
-        var [x, y] = CalculateClickPosition(event);
+        var pos = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(x, y);
+        fckPopupContextMenu.setPosition(pos[0], pos[1]);
         var relToolBar = new window.parent.RelationToolBar();
         var catToolBar = new window.parent.CategoryToolBar();
         relToolBar.setWikiTextParser(wtp);
@@ -1123,10 +1123,10 @@ ShowNewToolbar = function(event, value) {
  * @param string representation of the property
  */
 ShowRelToolbar = function(event, name, value, show) {
-        var [x, y] = CalculateClickPosition(event);
+        var pos = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(x, y);
+        fckPopupContextMenu.setPosition(pos[0], pos[1]);
         var toolBar = new window.parent.RelationToolBar();
         toolBar.setWikiTextParser(wtp);
         toolBar.createContextMenu(fckPopupContextMenu, value, show, name);
@@ -1142,10 +1142,10 @@ ShowRelToolbar = function(event, name, value, show) {
  * @param string name selected text
  */
 ShowCatToolbar = function(event, name) {
-        var [x, y] = CalculateClickPosition(event);
+        var pos = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
-        fckPopupContextMenu.setPosition(x, y);
+        fckPopupContextMenu.setPosition(pos[0], pos[1]);
         var toolBar = new window.parent.CategoryToolBar();
         toolBar.setWikiTextParser(wtp);
         toolBar.createContextMenu(fckPopupContextMenu, name);
@@ -1175,7 +1175,10 @@ CalculateClickPosition = function(event) {
     x += event.clientX;
     y += event.clientY;
 
-    return [x, y];
+    var pos = [];
+    pos[0] = x;
+    pos[1] = y;
+    return pos;
 }
 
 // needed to access the Plugin class from the FCKeditInterface
