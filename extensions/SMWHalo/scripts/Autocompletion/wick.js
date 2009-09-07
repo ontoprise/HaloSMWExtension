@@ -288,7 +288,7 @@ AutoCompleter.prototype = {
 
                      // test if userContext is [[ or {{ and not an attribute value and do a AC request when at least one char is entered
                      // if inputBox is no TEXTAREA, no context must be given
-                    if ((this.userContext.match(/^\[\[/) || this.userContext.match(/^\{\{/) || this.siw.inputBox.tagName != 'TEXTAREA') /*&& !this.userContext.match(/:=/)*/) {
+                    if ((this.userContext.match(/^\[\[/) || this.userContext.match(/^\{\{/) || this.constraints != '') /*&& !this.userContext.match(/:=/)*/) {
                         this.userInputToMatch = this.getUserInputToMatch();
 
                         if (this.userInputToMatch.length >= 1) {
