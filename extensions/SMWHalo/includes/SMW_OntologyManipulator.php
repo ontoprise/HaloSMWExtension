@@ -29,6 +29,7 @@ $wgAjaxExportList[] = 'smwf_om_CreateArticle';
 $wgAjaxExportList[] = 'smwf_om_EditArticle';
 $wgAjaxExportList[] = 'smwf_om_TouchArticle';
 $wgAjaxExportList[] = 'smwf_om_ExistsArticle';
+$wgAjaxExportList[] = 'smwf_om_ExistsArticleMultiple';
 $wgAjaxExportList[] = 'smwf_om_ExistsArticleIgnoreRedirect';
 $wgAjaxExportList[] = 'smwf_om_RelationSchemaData';
 $wgAjaxExportList[] = 'smwf_om_GetWikiText';
@@ -254,6 +255,7 @@ function smwf_om_TouchArticle($title) {
  * 			The name of the article
  * @return string "true" => the article exists
  *                "false" => the article does not exist
+ * 				  "false,denied,$title" => if access to title is denied
  *
  */
 function smwf_om_ExistsArticle($title) {
@@ -307,6 +309,28 @@ function smwf_om_ExistsArticle($title) {
 	}
 
 	return "false";
+}
+
+/**
+ * Checks if the titles given in $titleNames exist.
+ *
+ * @param string $titleNames
+ * 		Comma separated list of article names
+ * 
+ * @return array(array(string, string))
+ * 		This json encoded array contains an array for each title of the list of 
+ * 		the form
+ * 		array(title name, "true"or "false" or "false,denied,$title")
+ */
+
+function smwf_om_ExistsArticleMultiple($titleNames) {
+	$titleNames = split(',', $titleNames);
+	$results = array();
+	foreach ($titleNames as $t) {
+		$title = Title::newFromText(trim($t));
+		$results[] = array($t, smwf_om_ExistsArticle($t));
+	}
+	return json_encode($results);
 }
 
 /**
@@ -695,8 +719,11 @@ function smwf_om_userCan($titleName, $action, $namespaceID = 0) {
  * 		Name of the action
  * 
  * @return bool
- * 		<true> if the action is permitted
- * 		<false> otherwise
+ * 		A JSON encoded array of results:
+ * 		array(
+ * 			array(titlename, allowed or not: true/false),
+ * 			...
+ * 		)
  */
 function smwf_om_userCanMultiple($titleNames, $action) {
 	// Special handling if the extension HaloACL is present
