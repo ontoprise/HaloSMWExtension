@@ -6,7 +6,11 @@ ContextMenuFramework.prototype = {
  */
 initialize: function() {
 		if(!$("contextmenu")){
-			var menu = '<div id="contextmenu"></div>';
+                        // Context menu is supposed to overlap Semantic toolbar
+                        var zindex = ($('ontomenuanchor').getStyle('z-index'))
+                                    ? parseInt($('ontomenuanchor').getStyle('z-index')) + 1
+                                    : 10;
+			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
 //			new Insertion.Top($('innercontent'), menu );
 			new Insertion.After($('content'), menu );
 		}
