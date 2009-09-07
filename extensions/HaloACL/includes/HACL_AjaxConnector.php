@@ -2711,6 +2711,7 @@ function saveSecurityDescriptor($secDescXml) {
                 $rightName = $xml->name ? $xml->name : '';
 
                 switch ($type) {
+                    case "privateuse":
                     case "individual":
                     case "private":
                         foreach($xml->xpath('//group') as $group) {
