@@ -192,7 +192,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php $this->html('headscripts') ?>
 
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
-        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- megamenu.js --></script>
+        <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
         <!-- END HEAD MW 1.13-->
 
 

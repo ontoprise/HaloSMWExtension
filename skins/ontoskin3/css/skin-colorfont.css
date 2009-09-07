@@ -34,6 +34,10 @@ ul.smwh_menulist div.smwh_menubody {
     border-color: #cacac4;
 }
 
+#tabsright ul.smwh_menulist div.smwh_menubody {
+    background-color: #269fb2;
+}
+
 #column-content{
     border-color: #cacac4;
     background-color: #FFF;
