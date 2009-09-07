@@ -943,7 +943,7 @@ QIHelper.prototype = {
 				if (parameterTypes[0] == '_wpg') {
 					ac_constraint = 'constraints="annotation-value: '+propertyName+'|namespace: 0"';
 				} else if (parameterTypes[0] == '_dat') {
-					ac_constraint = 'constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"';
+					ac_constraint = 'constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"';
     			} else {
 					ac_constraint = 'constraints="annotation-value: '+propertyName+'"';
 				}
@@ -1032,7 +1032,7 @@ QIHelper.prototype = {
 					if (parameterTypes[i] == '_wpg') {
                     	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 					} else if (parameterTypes[i] == '_dat') {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
+						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
 					} else {
 						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'"/>';
 					}
@@ -1298,7 +1298,7 @@ QIHelper.prototype = {
 	                if (parameterTypes[0] == '_wpg') {
 	                    ac_constraint = 'annotation-value: '+propertyName+'|namespace: 0';
 	                } else if (parameterTypes[0] == '_dat') {
-	                    ac_constraint = 'values: {{NOW}},{{TODAY}}|annotation-value: '+propertyName;
+	                    ac_constraint = 'fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName;
 	                } else {
 	                    ac_constraint = 'annotation-value: '+propertyName;
 	                }

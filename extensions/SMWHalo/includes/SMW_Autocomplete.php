@@ -343,6 +343,7 @@ class AutoCompletionRequester {
 	 * @return xml string
 	 */
 	public static function encapsulateAsXML(array & $matches, $putNameSpaceInName = false) {
+		
 		if (empty($matches)) {
 			return SMW_AC_NORESULT;
 		}
@@ -352,10 +353,10 @@ class AutoCompletionRequester {
 		$extra = "";
 		$inferred = false;
 		$namespaceText = "";
-		$arity = count(reset($matches));
+		
 
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
-			switch($arity) {
+			switch(count($matches[$i])) {
 				case 1: $title = $matches[$i]; break;
 				case 2: list($title, $inferred) = $matches[$i];break;
 				case 3: list($title, $inferred, $extra) = $matches[$i];
@@ -519,7 +520,12 @@ class AutoCompletionHandler {
 					if (stripos($p, $userInput) !== false) $result[] = $p;
 				}
 				// continue to fill in results if possible
-			}else if ($commandText == 'schema-property-domain') {
+			} else if ($commandText == 'fixvalues') {
+                foreach($params as $p) {
+                    $result[] = $p;
+                }
+                // continue to fill in results if possible
+            } else if ($commandText == 'schema-property-domain') {
 
 				$category = Title::newFromText($params[0]);
 				if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
