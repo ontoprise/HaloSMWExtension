@@ -113,7 +113,11 @@ function haclfSetupExtension() {
         $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
         $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
     }
-
+    
+    global $haclgNewUserTemplate;
+    if (isset($haclgNewUserTemplate)) {
+    	$wgHooks['UserLoginComplete'][] = 'HACLDefaultSD::newUser';
+    }
 
     #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
 
@@ -173,7 +177,7 @@ function addNonSpecialPageHeader(&$out) {
     
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
+//    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
     return true;
 }
