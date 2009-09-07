@@ -247,6 +247,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding: 5px;
     z-index: 10;
     right: 0em;
+    border-width: 1px;
+    border-style: solid;
     -moz-border-radius: 5px;
 }
 
