@@ -186,43 +186,46 @@ function MakeSelection(type, name) {
         // reload the correct description for the current selected entry
         GetE('xDefinition').innerHTML = oSpecialTagList.getDescByName(GetE('xSelectTag').value);
     }
-    // special tags and parser functions can have params
+    // special tags and parser functions can have params. If the readonly attribute
+    // is set, remove it
     if ( (type == 'p' || type == 't') && GetE('xTemplateRaw').getAttribute('readonly') )
         GetE('xTemplateRaw').removeAttribute('readonly');
-    // all other don't
-    else
+    // for constants, datetime and site variables, set the textbox to readonly
+    // as they have no parameters
+    else if (type == 'c' || type == 'v' || type == 'w')
         GetE('xTemplateRaw').setAttribute('readonly', 'readonly');
 }
 
-function LoadSelection()
-{
-    
-	if ( !oTemplateSpan ) {
-        // set the radiobutton and the tag list to the default values
-        GetE('xSelectType_t').checked = true;
-        MakeSelection('t');
-        return ;
-    }
+function LoadSelection() {
 
+        // no element is selected, therefore we start with the default
+        // selection list
+	if ( !oTemplateSpan ) {
+            // set the radiobutton and the tag list to the default values
+            GetE('xSelectType_t').checked = true;
+            MakeSelection('t');
+            return ;
+        }
+        // we edit an existing special tag, read it's content
 	GetE('xTemplateRaw').value = FCKTools.HTMLDecode(oTemplateSpan.innerHTML).replace(/fckLR/g,'\r\n' ).replace( /&quot;/g, '"' ) ;
 	var tagName = oTemplateSpan.getAttribute('_fck_mw_tagname').toLowerCase();
 	var tagType = oTemplateSpan.getAttribute('_fck_mw_tagtype');
 
-	sSelectedTag = tagName ;
+        // set the current tag being the selected one in the selection list
 	GetE('xSelectTag').value = tagName;
-
+        // depending on the tag type, we need to preselect the radio button
 	if (tagType == 't')
 	   GetE('xSelectType_t').checked = true;
 	else if (tagType == 'c')
 	   GetE('xSelectType_c').checked = true;
 	else if (tagType == 'v')
-       GetE('xSelectType_v').checked = true;
-    else if (tagType == 'w')
-       GetE('xSelectType_w').checked = true;
-    else if (tagType == 'p')
-       GetE('xSelectType_p').checked = true;
-
-    MakeSelection(tagType, tagName);
+           GetE('xSelectType_v').checked = true;
+        else if (tagType == 'w')
+           GetE('xSelectType_w').checked = true;
+        else if (tagType == 'p')
+           GetE('xSelectType_p').checked = true;
+        // build selection based on the current type of the selected tag
+        MakeSelection(tagType, tagName);
 }
 
 function LoadDocumentation(){
@@ -253,8 +256,10 @@ function Ok()
 	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR' )).replace( /"/g, '&quot;' ) ;
 	
 	oTemplateSpan.innerHTML = templateData ;
-	SetAttribute( oTemplateSpan, '_fck_mw_tagname', GetE('xSelectTag').value ) ;
-	SetAttribute( oTemplateSpan, '_fck_mw_tagtype', oSpecialTagList.getTypeByName(GetE('xSelectTag').value));
+        var tagName = GetE('xSelectTag').value;
+        var tagType = oSpecialTagList.getTypeByName(GetE('xSelectTag').value );
+	SetAttribute( oTemplateSpan, '_fck_mw_tagname', tagName ) ;
+	SetAttribute( oTemplateSpan, '_fck_mw_tagtype', tagType ) ;
 
 	switch (GetE('xSelectTag').value)
 	{
@@ -282,6 +287,12 @@ function Ok()
 	{
 		oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( sFakeClass, oTemplateSpan ) ;
 		oFakeImage.setAttribute( '_fck_mw_special', 'true', 0 ) ;
+                // for Special Tags we add title and alt attribute to the fake image
+                if (sFakeClass == 'FCK__MWSpecial') {
+                    var tagNode = new TagNode( tagName, tagType, '' );
+                    oFakeImage.setAttribute( 'alt', tagNode.getLabel());
+                    oFakeImage.setAttribute( 'title', tagNode.getLabel());
+                }
 		oFakeImage	= FCK.InsertElement( oFakeImage ) ;
 	}
 	else 

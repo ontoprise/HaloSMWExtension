@@ -520,8 +520,8 @@ FCK.DataProcessor =
 									sNodeName = 'onlyinclude' ;
 									break ;
 								case 'fck_mw_special' :
-								    tagName = htmlNode.getAttribute( '_fck_mw_tagname' );
-								    tagType = htmlNode.getAttribute( '_fck_mw_tagtype' );
+								    var tagName = htmlNode.getAttribute( '_fck_mw_tagname' );
+								    var tagType = htmlNode.getAttribute( '_fck_mw_tagtype' );
 								    switch (tagType) {
 								        case 't' :
 								            stringBuilder.push( '<' + tagName + '>' + FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') + '</' + tagName + '>');
@@ -867,6 +867,26 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 				if (className != null) {
 					var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;
 					oImg.setAttribute( '_' + eSpan.className, 'true', 0 ) ;
+                                        // if this is a Special tag, then add alt and title attribute to fake image
+                                        if ( className == 'FCK__MWSpecial' ) {
+                                            var sTagName = eSpan.getAttribute('_fck_mw_tagname');
+                                            var sTagType = eSpan.getAttribute('_fck_mw_tagtype');
+                                            switch (sTagType) {
+                                                case 't' :
+                                                    sTagName = '<' + sTagName + '>';
+                                                    break;
+                                                case 'c' :
+                                                    sTagName = '__' + sTagName + '__';
+                                                    break;
+                                                case 'v' :
+                                                case 'w' :
+                                                case 'p' :
+                                                    sTagName = '{{' + sTagName + '}}';
+                                                    break;
+                                            }
+                                            oImg.setAttribute('alt', sTagName);
+                                            oImg.setAttribute('title', sTagName);
+                                        }
 
 					eSpan.parentNode.insertBefore( oImg, eSpan ) ;
 					eSpan.parentNode.removeChild( eSpan ) ;

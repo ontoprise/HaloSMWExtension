@@ -77,7 +77,7 @@ class FCKeditorParser extends Parser
        'ARTICLESPACE',
        'TALKSPACE'
     );
-    private $FCKeditorFunctionHooks = array('#language', 'padleft');
+    private $FCKeditorFunctionHooks = array();
 
 	function __construct() {
 		global $wgParser;
@@ -90,7 +90,7 @@ class FCKeditorParser extends Parser
 		}
         foreach ($wgParser->getFunctionHooks() as $h) {
             if (!in_array($h, array("ask", "sparql"))) {
-                $this->FCKeditorFunctionHooks[] = $h;
+                $this->FCKeditorFunctionHooks[] = '#'.$h;
             }
         }
 	}
@@ -188,6 +188,7 @@ class FCKeditorParser extends Parser
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
+            var_dump($tagName, $str);
         if (in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery"))) {
             $class = $tagName;
         }

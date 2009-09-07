@@ -33,7 +33,7 @@ class FCKeditorParser extends Parser_OldPP
 	   "INDEX",
 	   "NOINDEX",
 	   "STATICREDIRECT",
-       "NOGALLERY",
+           "NOGALLERY",
 	   "HIDDENCAT"
 	);
 	private $FCKeditorDateTimeVariables= array(
@@ -76,7 +76,7 @@ class FCKeditorParser extends Parser_OldPP
        'ARTICLESPACE',
        'TALKSPACE'
     );
-    private $FCKeditorFunctionHooks = array('#language', 'padleft');
+    private $FCKeditorFunctionHooks = array();
 
 	function __construct() {
 		global $wgParser;
@@ -89,7 +89,7 @@ class FCKeditorParser extends Parser_OldPP
 		}
 		foreach ($wgParser->getFunctionHooks() as $h) {
             if (!in_array($h, array("ask", "sparql"))) {
-                $this->FCKeditorFunctionHooks[] = $h;
+                $this->FCKeditorFunctionHooks[] = '#'.$h;
             }
         }
     }
@@ -104,7 +104,7 @@ class FCKeditorParser extends Parser_OldPP
         return $this->FCKeditorDateTimeVariables;
     }
     public function getWikiVariables() {
-        return $this->FCKeditorWikiTags;
+        return $this->FCKeditorWikiVariables;
     }
     public function getFunctionHooks() {
         return $this->FCKeditorFunctionHooks;
@@ -264,7 +264,7 @@ class FCKeditorParser extends Parser_OldPP
 		$matches = array();
 		$text = self::extractTagsAndParams( $elements, $text, $matches, $uniq_prefix );
 
-		foreach( $matches as $marker => $data ) {
+                foreach( $matches as $marker => $data ) {
 			list( $element, $content, $params, $tag ) = $data;
 			if( $render ) {
 				$tagName = strtolower( $element );
@@ -520,7 +520,6 @@ class FCKeditorParser extends Parser_OldPP
 		)
 		);
 		$text = $this->replace_callback($text, $callback);
-		
 		// now each property string is prefixed with <!--FCK_SKIP_START--> and
 		// tailed with <!--FCK_SKIP_END-->
 		// use this knowledge to find properties within these comments
