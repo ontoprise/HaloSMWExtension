@@ -430,15 +430,14 @@ class SMWTripleStore extends SMWStore {
 
 				}
 
+                     
 				global $smwgSPARQLResultEncoding;
 				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in 
 				// another charset.
 				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
 				}
-				// decode XML entities (is this correct?)
-				$response = urldecode($response);
-
+				
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
@@ -728,7 +727,7 @@ class SMWTripleStore extends SMWStore {
 
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
-					
+				 
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
 				if (!$hasMainColumn && $var_name == '_X_') {
 
@@ -744,7 +743,6 @@ class SMWTripleStore extends SMWStore {
 				}
 				$columnIndex++;
 				$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
-
 			}
 
 			ksort($row);
