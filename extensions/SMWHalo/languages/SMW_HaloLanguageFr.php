@@ -363,7 +363,11 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_expl_error' => 'Malheureusement, des erreurs sont survenues pendant la demande d\'explications:',
     
     // Derived facts
-    'smw_df_derived_facts_about' => 'Faits dérivés de $1'
+    'smw_df_derived_facts_about' => 'Faits dérivés de $1',
+
+    //skin
+    'smw_search_this_wiki' => 'Search this wiki',
+    'more_functions' => 'more'
 
     );
 

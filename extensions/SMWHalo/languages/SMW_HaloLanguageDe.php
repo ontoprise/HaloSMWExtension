@@ -316,7 +316,8 @@ protected $smwUserMessages = array(
 	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
 
         //skin
-        'smw_search_this_wiki' => 'Wiki durchsuchen'
+        'smw_search_this_wiki' => 'Wiki durchsuchen',
+        'more_functions' => 'mehr'
 	
 );
 

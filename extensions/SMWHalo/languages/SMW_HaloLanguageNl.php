@@ -325,7 +325,10 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 	
 	// Derived facts
-	'smw_df_derived_facts_about' => 'Afgeleide feiten $1'
+	'smw_df_derived_facts_about' => 'Afgeleide feiten $1',
+        //skin
+        'smw_search_this_wiki' => 'Search this wiki',
+        'more_functions' => 'more'
 
 );
 

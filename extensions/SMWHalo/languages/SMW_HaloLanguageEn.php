@@ -325,7 +325,8 @@ clicking the big arrows between the columns.',
 	'smw_df_derived_facts_about' => 'Derived facts about $1',
 
         //skin
-        'smw_search_this_wiki' => 'Search this wiki'
+        'smw_search_this_wiki' => 'Search this wiki',
+        'more_functions' => 'more'
 
 	);
 
