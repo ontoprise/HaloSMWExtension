@@ -177,6 +177,17 @@ AutoCompleter.prototype = {
 
         return te;
     },                      //this.isWithinNode
+    isWithinNodeSimple: function(node, idOfNodeToFind) {
+    	
+    	if (!node || node == null) return false; 
+    	while(node != document) {
+    		var id = node.getAttribute("id");
+    		if (id && id != null && id.indexOf(idOfNodeToFind) >= 0) break;
+    		node = node.parentNode;
+    	}
+    	
+    	return node != document;
+    },
     getEventElement: function(e) { return (e.srcElement ? e.srcElement : (e.target ? e.target : e.currentTarget));
                          },  //this.getEventElement()
     findElementPosX: function(obj) {
@@ -409,11 +420,14 @@ AutoCompleter.prototype = {
                 //if (OB_bd.isGecko) this.siw.inputBox.blur();
 
                 this.selectPreviousSmartInputMatchItem();
-            } else if (((kc == 13) || (kc == 9)) && this.siw.floater.style.visibility == 'visible') {
+            } else if ((kc == 13) && this.siw.floater.style.visibility == 'visible') { // enter
                 this.siw.selectingSomething = true;
                 this.activateCurrentSmartInputMatch();
                 this.hideSmartInputFloater();
                 this.freezeEvent(e);
+            } else if (kc == 9) { // tab
+                 ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
+            	 this.hideSmartInputFloater();
             } else if (kc == 27) {
                 ajaxRequestManager.stopCalls(SMW_AJAX_AC, this.hidePendingAJAXIndicator);
                 smwhgLogger.log("", "AC", "close_without_selection");
@@ -466,6 +480,7 @@ AutoCompleter.prototype = {
         }
     },  //handleMouseOver
     handleMouseDown: function(event) {
+    	
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
          //if (e["ctrlKey"]) {
@@ -480,6 +495,9 @@ AutoCompleter.prototype = {
             var y = this.findElementPosY(this.siw.inputBox);
             this.AC_yDiff = (e.pageY - y) - parseInt(this.siw.floater.style.top);
             this.AC_xDiff = (e.pageX - x) - parseInt(this.siw.floater.style.left);
+        } else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent")
+        && !this.isWithinNodeSimple(elementClicked, "MWFloater0")){
+            this.hideSmartInputFloater();        	
         }
     },
     handleMouseMove: function(event) {
@@ -1197,8 +1215,9 @@ AutoCompleter.prototype = {
         Event.observe(document, "mouseup", this.handleClick.bindAsEventListener(this), false);
         Event.observe(document, "mousemove", this.handleMouseMove.bindAsEventListener(this), false);
 
-        if (OB_bd.isGecko) {
+        if (OB_bd.isGecko || OB_bd.isIE) {
              // needed for draggable floater in FF
+             // needed for hiding floater when clicking outside
             Event.observe(document, "mousedown", this.handleMouseDown.bindAsEventListener(this), false);
         }
 
