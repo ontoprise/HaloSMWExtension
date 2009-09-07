@@ -1026,6 +1026,10 @@ HideContextPopup = function() {
         fckPopupContextMenu.remove();
         fckPopupContextMenu = null;
     }
+    // AC selection if there, remove it as well
+   if (window.parent.autoCompleter) {
+       window.parent.autoCompleter.hideSmartInputFloater();
+   }
 }
 
 /**
@@ -1117,7 +1121,7 @@ ShowRelToolbar = function(event, name, value, show) {
  * @param Event event
  * @param string name selected text
  */
-ShowCatToolbar = function(name) {
+ShowCatToolbar = function(event, name) {
         var [x, y] = CalculateClickPosition(event);
         var wtp = new window.parent.WikiTextParser();
         fckPopupContextMenu = new window.parent.ContextMenuFramework();
@@ -1135,10 +1139,12 @@ ShowCatToolbar = function(name) {
  * @return Array(int, int) coordinates x, y
  */
 CalculateClickPosition = function(event) {
-    var el = window.parent.document.getElementById('editform');
+    var id = (window.parent.wgAction == "formedit") ? 'free_text___Config' : 'editform';
+    var el = window.parent.document.getElementById(id);
 
     var x = 0;
-    var y = 0;
+    var y = document.getElementById('xToolbarRow').offsetHeight; // add hight of toolbar
+    y += 10;
 
     if (el.offsetParent) {
         do {
@@ -1149,9 +1155,7 @@ CalculateClickPosition = function(event) {
     x += event.clientX;
     y += event.clientY;
 
-    return [200, 200];  // set this fix for the moment, because the popup might
-                        // be overlapped by the Semantic toolbar itself ans because
-                        // popup is not yet dragable
+    return [x, y];
 }
 
 // needed to access the Plugin class from the FCKeditInterface
