@@ -818,7 +818,7 @@ class OntoSkin3Template extends QuickTemplate {
         $ql.= "<div id=\"smwh_halopageoptions\">";
         $content = wfMsgForContent( 'halopageoptions' );
         
-        if(strpos($content,"<halopageoptions>")===false){
+        if(strpos($content,"halopageoptions")==false){
             $ql.=  $this->parseWikiText($content);
         } else {
             return "";
