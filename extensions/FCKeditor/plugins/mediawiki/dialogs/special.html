@@ -295,8 +295,15 @@ function Ok()
                 }
 		oFakeImage	= FCK.InsertElement( oFakeImage ) ;
 	}
-	else 
+	else {
 		oFakeImage.className = sFakeClass ;
+                // for Special Tags reset the title and alt attribute according to the new element
+                if (sFakeClass == 'FCK__MWSpecial') {
+                    var tagNode = new TagNode( tagName, tagType, '' );
+                    oFakeImage.setAttribute( 'alt', tagNode.getLabel());
+                    oFakeImage.setAttribute( 'title', tagNode.getLabel());
+                }
+        }
 
 	return true ;
 }
