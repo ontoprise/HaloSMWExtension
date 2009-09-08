@@ -110,7 +110,7 @@ $haclgUnprotectableNamespaces = array('Main');
 # default template for new users.
 # The master template is a normal security descriptor that can contain the 
 # variable "{{{user}}}" that will be replaced by the user's name. 
-$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
+//$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
 
 # load global functions
 require_once('HACL_GlobalFunctions.php');

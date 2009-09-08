@@ -18,7 +18,7 @@
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<!-- empty -->
+		<file loc="extensions/HaloACL/ontologyBundle/dump.xml"/>
 	</wikidumps>
 	<resources>
 		<!-- empty -->
@@ -31,6 +31,12 @@
 			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" />
 			<require name="smwhalo"
 				file="extensions/HaloACL/includes/HACL_Initialize.php" />
+			<php name="MasterTemplate">
+			// Remove the comments from the following line to enable the ACL master template
+			// for private user spaces. Every new article of a user will only be accessible
+			// by himself until the access rights are changed.
+			//$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
+			</php>				
 			<function name="enableHaloACL">
 			</function>
 			<script file="extensions/HaloACL/maintenance/HACL_Setup.php" />
