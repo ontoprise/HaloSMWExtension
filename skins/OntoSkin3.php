@@ -587,6 +587,13 @@ class OntoSkin3Template extends QuickTemplate {
 
     function buildMenuMediaWiki() {
         global $wgStylePath;
+
+        $content = wfMsgForContent( 'halomenuconfig' );
+        
+        if(strpos($content,"showmediawikimenu=true")===false){
+            return "";
+        }
+
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\"><p>MediaWiki";
@@ -811,7 +818,7 @@ class OntoSkin3Template extends QuickTemplate {
         $ql.= "<div id=\"smwh_quicklinks\">";
         $content = wfMsgForContent( 'halopageoptions' );
         
-        if(strpos($content,"halopageoptions")==false){
+        if(strpos($content,"<halopageoptions>")===false){
             $ql.=  $this->parseWikiText($content);
         } else {
             return "";

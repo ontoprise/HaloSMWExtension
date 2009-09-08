@@ -107,6 +107,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
     font-size: smaller;
 }
 
+#column-content a:visited{
+    color: #551A8B;
+}
+
 ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a {
     color: #FFF;
     font-weight: 900;
