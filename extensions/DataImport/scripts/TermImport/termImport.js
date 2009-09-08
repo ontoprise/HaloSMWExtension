@@ -238,8 +238,18 @@ TermImportPage.prototype = {
 						if(datasource.getAttribute('autocomplete')){
 							response += " class=\"wickEnabled\" typeHint=\"0\" ";
 						}
-						response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
-								+ datasource.textContent + "\"></td></tr>";
+						if(datasource.firstChild){
+							if(datasource.firstChild.nodeValue){
+								response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
+									+ datasource.firstChild.nodeValue + "\"></td></tr>";
+							} else {
+								response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
+								+ "\"></td></tr>";
+							}
+						} else {
+							response += " type=\"" + attrib_type + "\" size=\"25\" maxlength=\"100\" value=\""
+							+ "\"></td></tr>";
+						}
 					}
 					response += "<input type=\"hidden\" id=\"tag_"
 							+ attrib_display + "\" value=\"" + tag + "\"/>";
@@ -265,7 +275,7 @@ TermImportPage.prototype = {
 			this.pendingIndicatorImportset = new OBPendingIndicator($('importset'));
 		}
 		
-		try {
+		//try {
 			var source = document.getElementsByName("source");
 			var sourcearray = new Array();
 			var tag_array = new Array();
@@ -289,7 +299,8 @@ TermImportPage.prototype = {
 						
 					}
 				}
-				if(document.getElementById(source[i].id).type == "text"){
+				if($(source[i].id).type == "text" || $(source[i].id).type == "undefined"){
+					dataSource += source[i].id;
 					sourcearray[i] = document.getElementById(source[i].id).value;
 				} else if(document.getElementById(source[i].id).type == "checkbox"){
 					sourcearray[i] = document.getElementById(source[i].id).checked;
@@ -309,8 +320,8 @@ TermImportPage.prototype = {
 			}
 			topcontainer += "</ul></td><td class=\"abstand\"><a style=\"cursor: pointer;\"" +
 					" onClick=\"termImportPage.getTopContainer(event, this)\">" + diLanguage.getMessage('smw_ti_edit') + "</a></td></tr></table>";
-		}
-		catch(e) {
+		//}
+		//catch(e) {
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
@@ -327,7 +338,7 @@ TermImportPage.prototype = {
 			} catch (e) {
 				// TODO: handle exception
 			}
-		}
+		//}
 		
 		//$('summary').style.display = "inline";
 		//$('summary').innerHTML = topcontainer;
@@ -338,11 +349,12 @@ TermImportPage.prototype = {
 				"termImportPage.getTopContainer(event, this)");
 		$("menue-step2").setAttribute("class", "ActualMenueStep");
 		
-		
 		$('top-container').style.display = "none";
 		
-		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" + dataSource + "</DataSource>";
+		dataSource = "<DataSource xmlns=\"http://www.ontoprise.de/smwplus#\">" 
+			+ dataSource + "</DataSource>";
 		$("loading-container").style.display ="inline";
+		
 		sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, '', '', '', '', 0], this.getSourceCallback.bind(this, tlID, dalID));
 	},
 	
@@ -515,7 +527,9 @@ TermImportPage.prototype = {
 		this.tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;
 		this.dalId = this.currentSelectedDAM.firstChild.firstChild.nodeValue;
 		
-		var result = termImportPage.getImportCredentials(e, node, this.tlId, this.dalId, false);
+		var result = this.getImportCredentials(e, node, this.tlId, this.dalId, false);
+
+		alert(result);
 		
 		this.dataSource = escape(result[0]);
 		this.importSet = result[1];
@@ -990,24 +1004,26 @@ TermImportPage.prototype = {
    	 				'<properties>'+"\n";
 			}
 			//and now the properties...
-			var properties = document.getElementById('attrib_table').getElementsByTagName('td');
-			for (var i = 0, n = properties.length; i < n; i++) {
-				// get one of the importsets
-				var property = properties[i]; 
-				if(property.nodeType == 1) {
-					if ( property.firstChild.nodeValue ){
-						var checkboxes = document.getElementsByName('checked_properties');
-						for (var j = 0, m = checkboxes.length; j < m; j++) {
-							if(property.firstChild.nodeValue == checkboxes[j].value){
-								if(checkboxes[j].checked){
-									inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
-									break;
-								}
-							}	
-						}						
+			if(document.getElementById('attrib_table')){
+				var properties = document.getElementById('attrib_table').getElementsByTagName('td');
+				for (var i = 0, n = properties.length; i < n; i++) {
+					// get one of the importsets
+					var property = properties[i]; 
+					if(property.nodeType == 1) {
+						if ( property.firstChild.nodeValue ){
+							var checkboxes = document.getElementsByName('checked_properties');
+							for (var j = 0, m = checkboxes.length; j < m; j++) {
+								if(property.firstChild.nodeValue == checkboxes[j].value){
+									if(checkboxes[j].checked){
+										inputPolicy += '	<property>'+ property.firstChild.nodeValue + '</property>'+"\n";
+										break;
+									}
+								}	
+							}						
+						}	
 					}	
-				}	
-			}    				
+				}
+			}
    	 		inputPolicy += '</properties>'+"\n"+
 				'</InputPolicy>'+"\n";
 			//mapping policy
@@ -1029,7 +1045,12 @@ TermImportPage.prototype = {
 			// } 
 			
 			//conflict policy
-			var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
+			//var conflict = document.getElementById('conflict-input-field').options[document.getElementById('conflict-input-field').selectedIndex].text;
+			var optionIndex = document.getElementById('conflict-input-field').selectedIndex; 
+			if(optionIndex == -1){
+				optionIndex = 0;
+			}
+			var conflict = document.getElementById('conflict-input-field').childNodes[optionIndex].firstChild.nodeValue;
 			if( conflict == 'overwrite') {
 				var conflictPol = true;
 			}
@@ -1065,8 +1086,7 @@ TermImportPage.prototype = {
 				}
 				updatePolicy = $("ti-update-policy-input-field").value;
 			}
-		}
-		catch(e) {
+		} catch(e) {
 			try {
 			var error_message = "<table id=\"sumtable\"><tr><td class=\"abstand\">" + 
 				list.getElementsByTagName("message")[0].firstChild.nodeValue + "</td>" +
@@ -1192,13 +1212,15 @@ TermImportPage.prototype = {
 		$('dalid').innerHTML = "";
 		found = false;
 		for(var i=0; i < dals.length; i++){		
-			$('dalid').innerHTML += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
-				+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
-				+ "onClick=\"termImportPage.getDAL(event, this, '" 
-				+ dals[i] + "', '" + this.tlId + "')\"><a>" + dals[i] + "</a></div>";
-			if(dals[i] == this.dalId){
-				this.currentSelectedDAM = $('dalid').childNodes[i];
-				found = true;
+			if(dals[i] != ""){
+				$('dalid').innerHTML += "<div class=\"entry\" onMouseOver=\"this.className='entry-over';\""
+					+ "onMouseOut=\"termImportPage.showRightDAM(event, this, '$tlid')\" "
+					+ "onClick=\"termImportPage.getDAL(event, this, '" 
+					+ dals[i] + "', '" + this.tlId + "')\"><a>" + dals[i] + "</a></div>";
+				if(dals[i] == this.dalId){
+					this.currentSelectedDAM = $('dalid').childNodes[i].cloneNode(true);
+					found = true;
+				}
 			}
 		}
 		
@@ -1223,44 +1245,52 @@ TermImportPage.prototype = {
 		$('importset-input-field').value = this.importSet;
 		
 		//add import policies
-		if (this.regex.length > 0) {
-			regex = this.regex.split(",");
-			for ( var i = 0; i < regex.length; i++) {
-				var option = document.createElement("option");
-				option.setAttribute("style",
-					"color: rgb(144, 0, 0); text-decoration: underline;");
-				option.setAttribute("name", "policy-select");
-				option.appendChild(document.createTextNode(regex[i]));
-				$('policy-textarea').appendChild(option);
+		if(this.regex){
+			if (this.regex.length > 0) {
+				regex = this.regex.split(",");
+				for ( var i = 0; i < regex.length; i++) {
+					var option = document.createElement("option");
+					option.setAttribute("style",
+						"color: rgb(144, 0, 0); text-decoration: underline;");
+					option.setAttribute("name", "policy-select");
+					option.appendChild(document.createTextNode(regex[i]));
+					$('policy-textarea').appendChild(option);
 
-				var input = document.createElement('input');
-				input.setAttribute("id", "pol-type_" + regex[i]);
-				input.setAttribute("type", 'hidden');
-				input.setAttribute("value", "regex");
-				$('hidden_pol_type').appendChild(input);
+					var input = document.createElement('input');
+					input.setAttribute("id", "pol-type_" + regex[i]);
+					input.setAttribute("type", 'hidden');
+					input.setAttribute("value", "regex");
+					$('hidden_pol_type').appendChild(input);
+				}
 			}
 		}
 		
-		if (this.terms.length > 0) {
-			terms = this.terms.split(",");
-			for ( var i = 0; i < terms.length; i++) {
-				var option = document.createElement("option");
-				option.setAttribute("style",
+		if(this.terms){
+			if (this.terms.length > 0) {
+				terms = this.terms.split(",");
+				for ( var i = 0; i < terms.length; i++) {
+					var option = document.createElement("option");
+					option.setAttribute("style",
 					"color: rgb(144, 0, 0); text-decoration: underline;");
-				option.setAttribute("name", "policy-select");
-				option.appendChild(document.createTextNode(terms[i]));
-				$('policy-textarea').appendChild(option);
+					option.setAttribute("name", "policy-select");
+					option.appendChild(document.createTextNode(terms[i]));
+					$('policy-textarea').appendChild(option);
 
-				var input = document.createElement('input');
-				input.setAttribute("id", "pol-type_" + terms[i]);
-				input.setAttribute("type", 'hidden');
-				input.setAttribute("value", "term");
-				$('hidden_pol_type').appendChild(input);
+					var input = document.createElement('input');
+					input.setAttribute("id", "pol-type_" + terms[i]);
+					input.setAttribute("type", 'hidden');
+					input.setAttribute("value", "term");
+					$('hidden_pol_type').appendChild(input);
+				}
 			}
 		}
 		
 		//properties
-		properties = this.properties.split(",");
+		if(this.properties){
+			properties = this.properties.split(",");
+		} else {
+			properties = "";
+		}
 		for(var i=0; i < $('attrib_table').firstChild.childNodes.length; i++){
 			var value = $('attrib_table').firstChild.childNodes[i].firstChild.firstChild.value;
 			for(var k=0; k < properties.length; k++){
@@ -1282,14 +1312,25 @@ TermImportPage.prototype = {
 			message += " are not available.";
 			alert(message);
 		}
+		
+		if(this.mappingPolicy){
+			$('mapping-input-field').value = this.mappingPolicy;
+		}
+		
+		if(this.conflictPolicy){
+			$('conflict-input-field').value = this.conflictPolicy;
+		} 
+		if(this.termImportName){
+			$('ti-name-input-field').value = this.termImportName;
+		} else {
+			$('ti-name-input-field').value = "";
+		}
 			
-		$('mapping-input-field').value = this.mappingPolicy;
-		$('conflict-input-field').value = this.conflictPolicy;
-		$('ti-name-input-field').value = this.termImportName;
-			
-		if(this.updatePolicy != '0' && this.updatePolicy != ''){
-			$('update-policy-checkbox').checked = true;
-			$("ti-update-policy-input-field").value = this.updatePolicy;
+		if(this.updatePolicy){	
+			if(this.updatePolicy != '0' && this.updatePolicy != ''){
+				$('update-policy-checkbox').checked = true;
+				$("ti-update-policy-input-field").value = this.updatePolicy;
+			}
 		}
 		
 		var tlId = this.currentSelectedTLM.firstChild.firstChild.nodeValue;

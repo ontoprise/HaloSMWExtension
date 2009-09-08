@@ -67,7 +67,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_ti_xml_error' => 'XML error: $1 at line $2',
 	'smw_ti_filename'  => 'Filename:',
 	'smw_ti_articlename'  => 'Articlename:',
-	'smw_ti_articleerror' => 'The article "$1" does not exist or is empty.',
+	'smw_ti_articleerror' => 'The article $1 does not exist or is empty.',
 	'smw_ti_fileerror' => 'The file "$1" does not exist or is empty.',
 	'smw_ti_pop3error' => 'It was not possible to connect to the server.',
 	'smw_ti_no_article_names' => 'There are no article names in the specified data source.',

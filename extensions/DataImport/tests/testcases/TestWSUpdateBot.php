@@ -75,6 +75,7 @@ class TestWSUpdateBot extends PHPUnit_Framework_TestCase {
 		//run ws update bot
 		$cd = isWindows() ? "" : "./";
 		exec($cd.'runBots smw_wsupdatebot -nolog');
+		sleep(10);
 	}
 
 	function tearDown() {

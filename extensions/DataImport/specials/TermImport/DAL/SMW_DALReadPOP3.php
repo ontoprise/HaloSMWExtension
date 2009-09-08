@@ -1083,10 +1083,4 @@ class DALReadPOP3 implements IDAL {
 	}
 }
 
-
-
-
-
-
-
 ?>

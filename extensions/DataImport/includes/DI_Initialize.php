@@ -49,8 +49,8 @@ function smwfDISetupExtension() {
 	// to include javascript and css files (only on special page requests).
 	if (stripos($wgRequest->getRequestURL(), $spns_text.":") !== false
 			|| stripos($wgRequest->getRequestURL(), $spns_text."%3A") !== false) {
-		$wgHooks['BeforePageDisplay'][]='smwDIWSAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwDITIAddHTMLHeader';
+		$wgHooks['BeforePageDisplay'][]='smwDIWSAddHTMLHeader';
 	}
 	
 	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
