@@ -815,7 +815,7 @@ class OntoSkin3Template extends QuickTemplate {
 
     function buildPageOptions(){
         $ql = "<!-- HaloPageOptions -->";
-        $ql.= "<div id=\"smwh_quicklinks\">";
+        $ql.= "<div id=\"smwh_halopageoptions\">";
         $content = wfMsgForContent( 'halopageoptions' );
         
         if(strpos($content,"<halopageoptions>")===false){
