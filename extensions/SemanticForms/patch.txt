@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4617)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4859)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -15,7 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4617)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4859)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -57,13 +57,13 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      
      // if we have existing content and we're not in an active replacement
      // situation, preserve the original content. We do this because we want
-@@ -287,11 +287,16 @@
+@@ -287,11 +306,16 @@
            $query_template_name = str_replace('.', '_', $query_template_name);
            $chooser_name = false;
            $chooser_caption = false;
 +          $collapsable = false;
 +          $force_open = false;
-           // cycle through the other components
+ 	  // cycle through the other components
            for ($i = 2; $i < count($tag_components); $i++) {
              $component = $tag_components[$i];
              if ($component == 'multiple') $allow_multiple = true;
@@ -74,7 +74,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              $sub_components = explode('=', $component);
              if (count($sub_components) == 2) {
                if ($sub_components[0] == 'label') {
-@@ -302,6 +307,10 @@
+@@ -302,6 +326,10 @@
                } elseif ($sub_components[0] == 'chooser caption') {
                  $chooser_caption = $sub_components[1];
                }
@@ -85,7 +85,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              }
            }
            // if this is the first instance, add the label in the form
-@@ -312,8 +321,50 @@
+@@ -312,8 +340,50 @@
                $form_text .= "<fieldset [[placeholder]] haschooser=true>\n";
              else
                 $form_text .= "<fieldset>\n";
@@ -137,7 +137,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            $template_text .= "{{" . $tif->template_name;
            $all_fields = $tif->getAllFields();
            // remove template tag
-@@ -615,10 +634,18 @@
+@@ -615,10 +685,18 @@
              if ($is_hidden) {
                $new_text = SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
              } else {
@@ -160,7 +160,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                $sfgTabIndex++;
                $sfgFieldNum++;
                list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('!free_text!', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
-@@ -988,9 +1015,19 @@
+@@ -988,9 +1066,19 @@
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
              }
@@ -181,7 +181,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            }
            $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
          // =====================================================
-@@ -1021,15 +1058,15 @@
+@@ -1021,15 +1109,15 @@
            // doing a replace
            if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
              $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
@@ -201,7 +201,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                  "\n{{{insertionpoint}}}\n" . $existing_page_content;
            }
          }
-@@ -1078,7 +1129,11 @@
+@@ -1078,7 +1166,11 @@
        } else {
          $form_text .= $section;
        }
@@ -214,7 +214,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      } // end for
  
      // if it wasn't included in the form definition, add the
-@@ -1098,7 +1135,7 @@
+@@ -1098,7 +1190,7 @@
           $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
         } else {
           $free_text = null;
@@ -223,7 +223,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
           $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
           $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
         }
-@@ -1118,16 +1155,34 @@
+@@ -1118,16 +1210,34 @@
      } else {
        $free_text = null;
      }
@@ -260,7 +260,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        $showFCKEditor = SFFormUtils::getShowFCKEditor();
        $free_text = htmlspecialchars( $free_text );
        if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
-@@ -1228,7 +1283,7 @@
+@@ -1228,7 +1338,7 @@
      // add form bottom, if no custom "standard inputs" have been defined
      if ($is_query)
        $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
@@ -269,7 +269,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        $form_text .= SFFormUtils::formBottom($form_is_disabled);
      $starttime = wfTimestampNow();
      $page_article = new Article($this->mPageTitle);
-@@ -1246,7 +1301,10 @@
+@@ -1246,7 +1356,10 @@
      $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
      $javascript_text .= SFFormUtils::autocompletionJavascript();
      if ($free_text_was_included && $showFCKEditor > 0) {
@@ -283,7 +283,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4617)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4859)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -714,9 +714,12 @@
  		return $text;
@@ -352,7 +352,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4617)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4859)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -400,9 +400,123 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		// if we're still here, just return the default form for the
  		// namespace, which may well be null
  		if (NS_MAIN === $namespace) {
+Index: extensions/SemanticForms/includes/SF_TemplateField.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4859)
++++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
+@@ -7,6 +7,8 @@
+  * @author Yaron Koren
+  */
+ 
++/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
++
+ class SFTemplateField {
+ 	var $field_name;
+ 	var $label;
+@@ -98,47 +100,65 @@
+                 $page_type = $datatypeLabels[$type_constant];
+ 		return ($this->field_type == $page_type);
+ 	}
++//op-patch|DH
++	function createTemplateText($template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format, $partof_wikisection, $rationale, $headerlabel) {
++
++global $wgUser;
++global $wgContLang;
++			$namespace_labels = $wgContLang->getNamespaces();
++		
++  $template_header ="{{Template
++|PAGENAME=".$namespace_labels[NS_TEMPLATE].":".$template_name."
++|Has author=".$wgUser->getUserPage()."
++|part of=".$partof_wikisection."
++|rationale=".$rationale."
++|long description=__NOTITLE__
++|parameters=";
++
++$examplecall = '<pre>{{' . $template_name;
++		if (count($template_fields) > 0) {  $examplecall.= "\n"; }
++		foreach ($template_fields as $field) {
++			$examplecall .= "|" . $field->field_name . "=\n";
++		}
++$examplecall .= '}}</pre>';
++ 
++$template_header .= $examplecall." 
++|Calls template=
++}}";
+ 
+-	function createTemplateText($template_name, $template_fields, $category, $aggregating_property, $aggregating_label, $template_format) {
+-		$template_header = wfMsgForContent('sf_template_docu', $template_name);
+ 		$text =<<<END
+ <noinclude>
+ $template_header
+-<pre>
+ 
+-END;
+-		$text .= '{{' . $template_name;
+-		if (count($template_fields) > 0) { $text .= "\n"; }
+-		foreach ($template_fields as $field) {
+-			$text .= "|" . $field->field_name . "=\n";
+-		}
+-		$template_footer = wfMsgForContent('sf_template_docufooter');
+-		$text .=<<<END
+-}}
+-</pre>
+-$template_footer
+ </noinclude><includeonly>
+-
+ END;
++
+   		// topmost part depends on format
+ 		if ($template_format == 'infobox') {
+ 			// CSS style can't be used, unfortunately, since most MediaWiki
+ 			// setups don't have an 'infobox' or comparable CSS class
+ 			$text .=<<<END
+-{| style="width: 30em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;"
+-! style="text-align: center; background-color:#ccccff;" colspan="2" |<big>{{PAGENAME}}</big>
++{| cellspacing="1" cellpadding="1" border="0" align="right" width="35%" style="border: 1px solid rgb(0, 0, 0); margin: 0pt 0pt 0.5em 1em; position: relative; float: right; clear: right; border-collapse: collapse;"
+ |-
+-
++! bgcolor="#33cc00" align="center" colspan="2" scope="col" |
+ END;
++      $text .= $headerlabel."\n|-\n";
++      
+ 		} else {
+-			$text .= '{| class="wikitable"' . "\n";
++			$text .=<<<END
++{| cellspacing="1" cellpadding="1" border="0" align="center" width="50%" style="border: 1px solid rgb(0, 0, 0); margin: 0pt 0pt 0.5em 1em; border-collapse: collapse;"
++|-
++! bgcolor="#33cc00" align="center" colspan="2" scope="col" |
++END;
++      $text .= $headerlabel."\n|-\n";
++      
+ 		}
+ 
+ 		foreach ($template_fields as $i => $field) {
+ 			if ($i > 0) {
+ 				$text .= "|-\n";
+ 			}
+-			$text .= "! " . $field->label . "\n";
++			$text .= "! align=\"right\"|" . $field->label . "\n";
+ 			if ($field->semantic_property == null || $field->semantic_property == '') {
+ 				$text .= "| {{{" . $field->field_name . "|}}}\n";
+ 				// if this field is meant to contain a list,
+@@ -178,8 +198,6 @@
+ 		}
+ 		$text .= "|}\n";
+ 		if ($category != '') {
+-			global $wgContLang;
+-			$namespace_labels = $wgContLang->getNamespaces();
+ 			$category_namespace = $namespace_labels[NS_CATEGORY];
+ 			$text .= "\n[[$category_namespace:$category]]\n";
+ 		}
+@@ -188,3 +206,4 @@
+ 		return $text;
+ 	}
+ }
++/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
+\ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4670)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4859)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -429,3 +543,134 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
  		if ($wgFCKEditorDir)
+Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4859)
++++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
+@@ -10,6 +10,9 @@
+  * Protect against register_globals vulnerabilities.
+  * This line must be present before any global variable is referenced.
+  */
++ 
++ /*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|start*/
++ 
+ if (!defined('MEDIAWIKI')) die();
+ 
+ class SFCreateTemplate extends SpecialPage {
+@@ -59,13 +62,24 @@
+ 		return $dropdown_str;
+ 	}
+ 
+-	function printFieldEntryBox($id, $f, $all_properties) {
++
++
++	function printFieldEntryBox($id, $f, $all_properties, $category) {
+ 		wfLoadExtensionMessages('SemanticForms');
+-		$dropdown_html = SFCreateTemplate::printPropertiesDropdown($all_properties, $id, $f->semantic_property);
++		//$dropdown_html = SFCreateTemplate::printPropertiesDropdown($all_properties, $id, $f->semantic_property);
+ 		$text = '	<div class="fieldBox">' . "\n";
+ 		$text .= '	<p>' . wfMsg('sf_createtemplate_fieldname') . ' <input size="15" name="name_' . $id . '" value="' . $f->field_name . '">' . "\n";
+ 		$text .= '	' . wfMsg('sf_createtemplate_displaylabel') . ' <input size="15" name="label_' . $id . '" value="' . $f->label . '">' . "\n";
+-		$text .= '	' . wfMsg('sf_createtemplate_semanticproperty') . ' ' . $dropdown_html . "</p>\n";
++		
++		if ($category != "")
++		  $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
++               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
++               value="'.$f->semantic_property.'" size="50" constraints="schema-property-domain: Category:'.$category.'"  pasteNS="false"/></p>' . "\n";
++    else
++      $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
++               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
++               value="'.$f->semantic_property.'" size="50" constraints="namespace: 102"  pasteNS="false"/></p>' . "\n";
++    
+ 		$checked_str = ($f->is_list) ? " checked" : "";
+ 		$text .= '	<p><input type="checkbox" name="is_list_' . $id . '"' .  $checked_str . '> ' . wfMsg('sf_createtemplate_fieldislist') . "\n";
+ 	
+@@ -95,6 +109,7 @@
+ 	$fields = array();
+ 	# cycle through the query values, setting the appropriate local variables
+ 	foreach ($wgRequest->getValues() as $var => $val) {
++	
+ 		$var_elements = explode("_", $var);
+ 		// we only care about query variables of the form "a_b"
+ 		if (count($var_elements) != 2)
+@@ -116,6 +131,10 @@
+ 	$aggregating_property = $wgRequest->getVal('semantic_property_aggregation');
+ 	$aggregation_label = $wgRequest->getVal('aggregation_label');
+ 	$template_format = $wgRequest->getVal('template_format');
++	
++	$partof_wikisection = $wgRequest->getVal('partof');
++	$rationale = $wgRequest->getVal('rationale');
++  $headerlabel = $wgRequest->getVal('headerlabel');
+ 
+ 	$text = "";
+ 	$save_button_text = wfMsg('savearticle');
+@@ -130,7 +149,7 @@
+ 			// redirect to wiki interface
+ 			$wgOut->setArticleBodyOnly(true);
+ 			$title = Title::makeTitleSafe(NS_TEMPLATE, $template_name);
+-			$full_text = SFTemplateField::createTemplateText($template_name, $fields, $category, $aggregating_property, $aggregation_label, $template_format);
++			$full_text = SFTemplateField::createTemplateText($template_name, $fields, $category, $aggregating_property, $aggregation_label, $template_format, $partof_wikisection, $rationale, $headerlabel);
+ 			// HTML-encode
+ 			$full_text = str_replace('"', '&quot;', $full_text);
+ 			$text = SFUtils::printRedirectForm($title, $full_text, "", $save_page, $preview_page, false, false, false, null, null);
+@@ -144,26 +163,34 @@
+ 	$mw_namespace_labels = $wgContLang->getNamespaces();
+ 	$special_namespace = $mw_namespace_labels[NS_SPECIAL];
+ 	$text .= '    <input type="hidden" name="title" value="' . $special_namespace . ':CreateTemplate">' . "\n";
+-	$text .= '	<p>' . wfMsg('sf_createtemplate_namelabel') . ' <input size="25" name="template_name" value="' . $template_name . '"> <font color="red">' . $template_name_error_str . '</font></p>' . "\n";
+-	$text .= '	<p>' . wfMsg('sf_createtemplate_categorylabel') . ' <input size="25" name="category" value="' . $category . '"></p>' . "\n";
+-	$text .= "	<fieldset>\n";
++	$text .= '<table border="0">'."\n";
++  $text .= '<tr>'."\n";
++	$text .= '	<td align="right">' . wfMsg('sf_createtemplate_namelabel') . '</td><td> <input id="input_1" tabindex="1" size="50" name="template_name" value="' . $template_name . '"></td><td><font color="red">' . $template_name_error_str . '</font></td>' . "\n";
++	$text .= '</tr>'."\n";
++	$text .= '<tr>'."\n";
++  $text .= '	<td align="right">' . wfMsg('sf_createtemplate_categorylabel') . '</td><td> <input id="input_2" tabindex="2" class="createboxInput wickEnabled" name="category" type="text" value="'.$category.'" size="50" constraints="namespace: 14"  pasteNS="false"/></td><td>(you must reload the page if entered or changed.)</td>' . "\n";
++	$text .= '</tr>'."\n";
++	$text .= '<tr>'."\n";
++  $text .= '	<td align="right">Part of wiki section:</td><td><input id="input_3" tabindex="3" class="createboxInput wickEnabled" name="partof" type="text" value="'.$partof_wikisection.'" size="50" constraints="ask: [[Category:Content section]]"  pasteNS="true"/></td>' . "\n";
++  $text .= '</tr>'."\n";
++  $text .= '</tr>'."\n";
++  $text .= '	<td align="right">Label for the table header:</td><td><input id="input_4" tabindex="4" size="50" name="headerlabel" value="' . $headerlabel . '"></td>' . "\n";
++  $text .= '</tr>'."\n";
++	$text .= '<tr>'."\n";
++  $text .= '	<td align="right">Rationale of this template:</td><td> <textarea id="input_5" tabindex="5" name="rationale" cols="80" rows="3">'.$rationale.'</textarea></td>' . "\n";
++	$text .= '</tr></table>'."\n";
++  $text .= "	<fieldset>\n";
+ 	$text .= '	<legend>' . wfMsg('sf_createtemplate_templatefields') . "</legend>\n";
+ 	$text .= '	<p>' . wfMsg('sf_createtemplate_fieldsdesc') . "</p>\n";
+ 
+ 	foreach ($fields as $i => $field) {
+-		$text .= SFCreateTemplate::printFieldEntryBox($i + 1, $field, $all_properties);
++		$text .= SFCreateTemplate::printFieldEntryBox($i + 1, $field, $all_properties, $category);
+ 	}
+ 	$new_field = new SFTemplateField();
+-	$text .= SFCreateTemplate::printFieldEntryBox("new", $new_field, $all_properties);
++	$text .= SFCreateTemplate::printFieldEntryBox("new", $new_field, $all_properties, $category);
+ 
+ 	$text .= '	<p><input type="submit" value="' . wfMsg('sf_createtemplate_addfield') . '"></p>' . "\n";
+ 	$text .= "	</fieldset>\n";
+-	$text .= "	<fieldset>\n";
+-	$text .= '	<legend>' . wfMsg('sf_createtemplate_aggregation') . "</legend>\n";
+-	$text .= '	<p>' . wfMsg('sf_createtemplate_aggregationdesc') . "</p>\n";
+-	$text .= '	<p>' . wfMsg('sf_createtemplate_semanticproperty') . " " . SFCreateTemplate::printPropertiesDropdown($all_properties, "aggregation", $aggregating_property). "</p>\n";
+-	$text .= '	<p>' . wfMsg('sf_createtemplate_aggregationlabel') . ' <input size="25" name="aggregation_label" value="' . $aggregation_label . '"></p>' . "\n";
+-	$text .= "	</fieldset>\n";
+ 	$text .= '	<p>' . wfMsg('sf_createtemplate_outputformat') . "\n";
+ 	$text .= '	<input type="radio" name="template_format" checked value="standard">' . wfMsg('sf_createtemplate_standardformat') . "\n";
+ 	$text .= '	<input type="radio" name="template_format" value="infobox">' . wfMsg('sf_createtemplate_infoboxformat') . "</p>\n";
+@@ -179,7 +206,7 @@
+ 	$cp = SpecialPage::getPage('CreateProperty');
+ 	$create_property_link = $sk->makeKnownLinkObj($cp->getTitle(), $cp->getDescription());
+ 	$text .= "	<br /><hr /><br />\n";
+-	$text .= "	<p>$create_property_link.</p>\n";
++	
+ 
+ 	$wgOut->addLink( array(
+ 		'rel' => 'stylesheet',
+@@ -189,3 +216,4 @@
+ 		));
+ 	$wgOut->addHTML($text);
+ }
++/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
+\ No newline at end of file
