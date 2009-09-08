@@ -556,13 +556,15 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $result = array();
         
         // deactivated code which considers users preferred date format
-        /*$prop = SMWPropertyValue::makeUserProperty($property);
+        $prop = SMWPropertyValue::makeUserProperty($property);
         
         if ($prop->getTypesValue()->getXSDValue() == '_dat') {
-        	global $wgUser;
-        	$dateformat = !is_null($wgUser) ? $wgUser->getOption('date') : "ISO 8601";
-        }*/
-        $dateformat = "dmy"; // set "25 April 1980 00:00:00" as default dateFormat (the time is optional)
+            $dateformat = "dmy"; // set "25 April 1980 00:00:00" as default dateFormat (the time is optional)
+            // This would consider user prefs for date format.
+        	//global $wgUser;
+        	//$dateformat = !is_null($wgUser) ? $wgUser->getOption('date') : "ISO 8601";
+        }
+        
        
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
