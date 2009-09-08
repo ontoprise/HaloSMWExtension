@@ -1,0 +1,54 @@
+<mediawiki xmlns="http://www.ontoprise.de/halowikiexport/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ontoprise.de/halowikiexport-1.0.xsd" version="1.0" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/develwiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.13.2</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">Image</namespace>
+      <namespace key="7">Image talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="300">ACL</namespace>
+      <namespace key="301">ACL talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>ACL:Template/NewUserTemplate</title>
+    <id>61</id>
+    <revision>
+      <id>81</id>
+      <timestamp>2009-09-07T13:19:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#manage rights: assigned to={{{user}}}}}
+{{#access: assigned to ={{{user}}} |actions=* |description=Allows * for {{{user}}} }}
+[[Category:ACL/ACL]]
+
+[[Part of bundle::haloaclontologybundle]]</text>
+    <hash>fbca6be2c8399ee296c93b1aa2840fae</hash>
+    </revision>
+  </page>
+</mediawiki>
