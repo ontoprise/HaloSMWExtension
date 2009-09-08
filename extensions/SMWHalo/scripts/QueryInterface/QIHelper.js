@@ -309,7 +309,8 @@ QIHelper.prototype = {
 			this.pendingElement.hide();
 		this.pendingElement = new OBPendingIndicator($('shade'));
 		this.pendingElement.show();
-
+                $('fullpreviewbox').toggle();
+                $('fullpreview').innerHTML = '<img src="' + wgServer + wgScriptPath + '/extensions/SMWHalo/skins/OntologyBrowser/images/ajax-loader.gif" />';
 		if (!this.queries[0].isEmpty()) { // only do this if the query is not
 											// empty
 			var ask = this.recurseQuery(0, "parser"); // Get full ask syntax
@@ -394,7 +395,6 @@ QIHelper.prototype = {
 	 */
 	openPreview : function(request) {
 		this.pendingElement.hide();
-		$('fullpreviewbox').toggle();
 		$('fullpreview').innerHTML = request.responseText;
 		smw_tooltipInit();
 	},
