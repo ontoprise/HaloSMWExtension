@@ -234,6 +234,7 @@ var wgUserLanguageStrings = {
 	'WTP_NOT_IN_TEMPLATE'		  : "'$1' est une partie d'un template.\nCeci ne peut donc pas être annoté.",
 	'WTP_NOT_IN_ANNOTATION'		  : "'$1' est une partie d'une annotation.\nCeci ne peut donc pas être annoté.",
 	'WTP_NOT_IN_QUERY'            : "'$1' est une partie d'une requête.\nCeci ne peut donc pas être annoté.",
+        'WTP_NOT_IN_TAG'                  : "'$1' est entre d'un tag $2.\nCeci ne peut donc pas être annoté.",
 	'WTP_NOT_IN_PREFORMATTED'	  : "'$1' est une partie d'un texte préformaté.\nCeci ne peut donc pas être annoté.",
 	'WTP_SELECTION_OVER_FORMATS'  : "´La sélection comprend différents formats:\n$1",
 	

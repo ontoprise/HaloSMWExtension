@@ -1050,6 +1050,7 @@ HideContextPopup = function() {
    if (window.parent.autoCompleter) {
        window.parent.autoCompleter.hideSmartInputFloater();
    }
+   window.parent.smwhgAnnotationHints.hideHints();
 }
 
 /**
@@ -1062,8 +1063,13 @@ HideContextPopup = function() {
 CheckSelectedAndCallPopup = function(event) {
         // handle here if the popup box for a selected annotation must be shown
         var selection = gEditInterface.getSelectionAsArray();
-        if (selection == null)
-            alert('The current selection cannot be used for annotating a category or property');
+        if (selection == null || selection.length == 0) {
+            var pos = CalculateClickPosition(event);
+            var msg = gEditInterface.getErrMsgSelection();
+            msg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            window.parent.smwhgAnnotationHints.showMessageAndWikiText(
+                msg, '', pos[0], pos[1]);
+        }
         // something is selected, this will be a new annotation,
         // offer both category and property toolbox
         else if (selection.length == 1 && selection[0] != "") {
@@ -1236,6 +1242,8 @@ FCKeditInterface.prototype = {
         // start and end for selection when in wikitext mode
         this.start = -1;
         this.end = -1;
+        // store here error message if selection can't be annotated
+        this.errMsgSelection = '';
     },
 
    /**
@@ -1248,6 +1256,16 @@ FCKeditInterface.prototype = {
     getSelectedText: function() {
         this.getSelectionAsArray();
         return (this.selection.length > 0) ? this.selection[0] : null;
+    },
+
+    /**
+     * returns the error message, if a selection cannot be annotated
+     *
+     * @access public
+     * @return string error message
+     */
+    getErrMsgSelection: function() {
+        return this.errMsgSelection;
     },
 
     /**
@@ -1399,6 +1417,8 @@ FCKeditInterface.prototype = {
     getSelectionAsArray: function() {
         // flush the selection array
         this.selection = [];
+        // remove any previously set error messages
+        this.errMsgSelection = '';
 
         // if we are in wikitext mode, return the selection of the textarea
         if (FCK.EditMode != FCK_EDITMODE_WYSIWYG) {
@@ -1461,6 +1481,8 @@ FCKeditInterface.prototype = {
                         this.selection[1] = 14;
                         return this.selection;
                 }
+                this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+                this.errMsgSelection = this.errMsgSelection.replace('$1', '&lt;span&gt;');
                 return;
             }
             // just any text was selected, use this one for the selection
@@ -1473,6 +1495,8 @@ FCKeditInterface.prototype = {
                 }
             }
             // selection is invalid
+            this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+            this.errMsgSelection = this.errMsgSelection.replace('$1', '&lt;' + parent.nodeName + '&gt;');
             return;
         }
         // the selection is exactly one tag that encloses the selected text
@@ -1511,8 +1535,14 @@ FCKeditInterface.prototype = {
                     this.selection[1] = 14;
                     return this.selection;
                 } // below here passing all closing brakets means that the selection
-            }     // was invalid
+                  // was invalid
+            }
+            this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+            this.errMsgSelection = this.errMsgSelection.replace('$1', '&lt;' + tag + '&gt;');
+            return;
         }
+        this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+        this.errMsgSelection = this.errMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
     },
 
    /**
@@ -1593,7 +1623,10 @@ FCKeditInterface.prototype = {
     getSelectionWikitext: function() {
         // selected text by the user in the textarea
         var selection = this.getSelectionFromTextarea();
-        if (selection.length == 0) return "";  // nothing selected
+        if (selection.length == 0) { // nothing selected
+            this.selection[0] = "";
+            return;
+        }
 
         // complete text from the editing area
         var txt = FCK.EditingArea.Textarea.value;
@@ -1641,12 +1674,19 @@ FCKeditInterface.prototype = {
                 p = selection.indexOf('>');
                 if (p == -1) continue;
                 var tag = txt.substr(currPos, this.start + p + 1 - currPos);
-                if (tag.match(/^<[^<>]*>$/)) // we really found a tag
+                if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
+                    this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
+                    this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
+                    this.errMsgSelection = this.errMsgSelection.replace('$2', tag);
                     return this.clearSelection();
+                }
             }
             // we are inside a template or parser function or whatever
-            if (currChar == '{' && currPos > 0 && txt[currPos - 1] == '{')
+            if (currChar == '{' && currPos > 0 && txt[currPos - 1] == '{') {
+                this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
+                this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
                 return;
+            }
             // end of a template or parser function found, stop here
             if (currChar == '}' && currPos > 0 && txt[currPos - 1] == '}')
                 break;
@@ -1676,8 +1716,11 @@ FCKeditInterface.prototype = {
             if (currChar == '[' && currPos < txt.length - 1 && txt[currPos + 1] == '[')
                 break;
             // we are inside a template or parser function or whatever
-            if (currChar == '}' && currPos < txt.length - 1 && txt[currPos + 1] == '}')
+            if (currChar == '}' && currPos < txt.length - 1 && txt[currPos + 1] == '}') {
+                this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
+                this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
                 return;
+            }
             // we are facing the begining of a template or parser function, stop here
             if (currChar == '{' && currPos < txt.length - 1 && txt[currPos + 1] == '{')
                 break;
@@ -1689,8 +1732,12 @@ FCKeditInterface.prototype = {
                 if (p == -1) continue; // no > is there, just go ahead
                 var tag = txt.substr(currPos, p + 1);
                 if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
-                    if (tag[1] == '/')  // we are at the end of a closing tag
+                    if (tag[1] == '/') {  // we are at the end of a closing tag
+                        this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
+                        this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
+                        this.errMsgSelection = this.errMsgSelection.replace('$2', tag);
                         return this.clearSelection(); // stop looking any further and quit
+                    }
                     else if (tag.match(/\s*>$/)) // it's a <tag />, stop here as well
                         break;
                 }
@@ -1701,8 +1748,12 @@ FCKeditInterface.prototype = {
                 p = selection.lastIndexOf('<');
                 if (p == -1) continue;
                 var tag = txt.substr(this.start + p, currPos - this.start - p + 1);
-                if (tag.match(/^<[^<>]*>$/)) // we really found a tag
+                if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
+                    this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
+                    this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
+                    this.errMsgSelection = this.errMsgSelection.replace('$2', tag);
                     return this.clearSelection();
+                }
             }
         }
         // adjust selection if we moved the end position
@@ -1742,12 +1793,26 @@ FCKeditInterface.prototype = {
             return;
         }
         // check if there are no <tags> in the selection
-        if (selection.match(/.*?(<\/?[\d\w:_-]+(\s+[\d\w:_-]+="[^<>"]*")*\s*(\/\s*)?>)+.*?/))
+        if (selection.match(/.*?(<\/?[\d\w:_-]+(\s+[\d\w:_-]+="[^<>"]*")*\s*(\/\s*)?>)+.*?/)) {
+            this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_SELECTION_OVER_FORMATS');
+            this.errMsgSelection = this.errMsgSelection.replace('$1', '').replace(/:\s+$/, '!');
             return this.clearSelection();
+        }
         // if there are still [[ ]] inside the selection then more that a 
         // link was selected making this selection invalid.
-        if (selection.indexOf('[[') != -1 || selection.indexOf(']]') != -1 )
+        if (selection.indexOf('[[') != -1 || selection.indexOf(']]') != -1 ) {
+            this.errMsgSelection = window.parent.gLanguage.getMessage('CAN_NOT_ANNOTATE_SELECTION');
             return this.clearSelection();
+        }
+        // if there are still {{ }} inside the selection then template or parser function
+        // is inside the selection, make it invalid
+        if (selection.indexOf('{{') != -1 || selection.indexOf('}}') != -1 ) {
+            this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
+            this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
+            return this.clearSelection();
+        }
+
+
 
         // finished, assuming the selection is good without any further modifying.
         return;
