@@ -130,5 +130,3 @@ function smwf_wsu_getPreview($articleName, $wsSyn){
 	}
 	return webservice_getPreview($articleName, $parameters);
 }
-
-?>

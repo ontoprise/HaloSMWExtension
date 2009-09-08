@@ -1416,5 +1416,3 @@ class WebService {
 	}
 
 }
-
-?>

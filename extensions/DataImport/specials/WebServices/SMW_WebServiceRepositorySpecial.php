@@ -227,5 +227,3 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 		$wgOut->addHTML($html);
 	}
 }
-
-?>

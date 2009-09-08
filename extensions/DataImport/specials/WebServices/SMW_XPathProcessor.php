@@ -75,7 +75,3 @@ class XPathProcessor {
 	}
 
 }
-
-
-
-?>

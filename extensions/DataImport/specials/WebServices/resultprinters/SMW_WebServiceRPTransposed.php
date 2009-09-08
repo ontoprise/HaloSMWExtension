@@ -112,5 +112,3 @@ class WebServiceTransposedResultPrinter extends WebServiceResultPrinter {
 		return $return;
 	}
 }
-
-?>

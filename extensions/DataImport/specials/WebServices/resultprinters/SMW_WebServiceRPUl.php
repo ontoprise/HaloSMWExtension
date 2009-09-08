@@ -85,5 +85,3 @@ class WebServiceUlResultPrinter extends WebServiceResultPrinter {
 		return $return;
 	}
 }
-
-?>

@@ -776,5 +776,3 @@ class WSStorageSQL {
 		return $result;
 	}
 }
-
-?>

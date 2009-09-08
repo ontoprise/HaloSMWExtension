@@ -143,5 +143,3 @@ function termImportParserHook($input, $args, $parser) {
 	.'<pre>'.trim(htmlspecialchars($completeImportSettings)).'</pre>';
 	return  $completeImportSettings.$messages;
 }
-
-?>

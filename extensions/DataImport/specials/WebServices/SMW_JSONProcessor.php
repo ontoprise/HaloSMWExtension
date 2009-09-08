@@ -72,4 +72,3 @@ class JSONProcessor {
 		return $result;
 	}
 }
-?>

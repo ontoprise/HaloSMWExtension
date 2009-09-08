@@ -125,5 +125,3 @@ class SMWSubParameterProcessor {
 		return $response;
 	}
 }
-
-?>

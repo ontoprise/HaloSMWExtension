@@ -266,5 +266,3 @@ class TermImportUpdateBotFilter extends GardeningIssueFilter {
 		return $gic;
 	}
 }
-
-?>

@@ -281,5 +281,4 @@ interface IWIL {
 	 *
 	 */
 	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName);
-}	                            
-?>
+}

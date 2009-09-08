@@ -72,5 +72,3 @@ interface IMaterializationStorage{
 	 */
 	public function getCallHashes($pageId);
 }
-
-?>

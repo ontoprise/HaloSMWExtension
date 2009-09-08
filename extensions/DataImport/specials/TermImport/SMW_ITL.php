@@ -152,5 +152,4 @@ interface ITL {
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy);
 	
-}	                            
-?>
+}

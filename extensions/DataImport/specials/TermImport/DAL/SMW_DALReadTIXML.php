@@ -502,4 +502,3 @@ class DALReadTIXML implements IDAL {
 	}
 
 }
-?>

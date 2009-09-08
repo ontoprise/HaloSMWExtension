@@ -57,5 +57,3 @@ class SMWTermImportSpecial extends SpecialPage {
 	}
 
 }
-
-?>

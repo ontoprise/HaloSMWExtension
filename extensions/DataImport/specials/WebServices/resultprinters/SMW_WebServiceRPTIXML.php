@@ -81,5 +81,3 @@ class WebServiceTIXMLResultPrinter extends WebServiceResultPrinter {
 		return $return;
 	}
 }
-
-?>

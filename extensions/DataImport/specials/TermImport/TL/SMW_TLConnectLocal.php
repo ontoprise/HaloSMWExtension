@@ -234,5 +234,4 @@ class TLConnectLocal implements ITL {
 		
 	}
 		
-}	                            
-?>
+}

@@ -527,6 +527,3 @@ $inputConfig, $importSetConfig, $termImportName, $updatePolicy, $edit) {
 	return true;
 
 }
-
-
-?>

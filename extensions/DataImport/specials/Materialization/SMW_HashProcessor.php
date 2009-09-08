@@ -13,5 +13,3 @@ class SMWHashProcessor {
 		return true;
 	}
 }
-
-?>

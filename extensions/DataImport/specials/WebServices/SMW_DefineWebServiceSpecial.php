@@ -656,4 +656,3 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		return rawurlencode($subParameterXML);
 	}
 }
-?>

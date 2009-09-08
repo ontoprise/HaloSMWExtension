@@ -281,5 +281,3 @@ function split_quoted_string($d, $s, $n = 0)
     }
     return explode("\x00", $s);
 }
-
-?>

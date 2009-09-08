@@ -513,4 +513,3 @@ class SMWSoapClient implements IWebServiceClient {
 		return false;
 	}
 }
-?>

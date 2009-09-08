@@ -227,5 +227,4 @@ interface IDAL {
 	 */
 	public function getTerms($dataSourceSpec, $importSet, $inputPolicy);
 	
-}	                            
-?>
+}

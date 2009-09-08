@@ -49,4 +49,3 @@ abstract class WebServiceResultPrinter{
 	abstract public function getWikiText($wsTemplate, $wsResult, $subst);
 
 }
-?>

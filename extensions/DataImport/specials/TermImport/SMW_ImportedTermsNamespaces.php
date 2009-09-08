@@ -26,5 +26,3 @@ $smwgNamespacesWithSemanticLinks = $smwgNamespacesWithSemanticLinks +
 	);
 
 $wgContLang->fixUpSettings();
-	
-?>

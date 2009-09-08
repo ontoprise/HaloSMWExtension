@@ -201,4 +201,3 @@ class ICalParser {
 		.$hours.":".$minutes.":".$seconds;
 	}
 }
-?>

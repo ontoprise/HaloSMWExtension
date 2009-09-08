@@ -92,4 +92,3 @@ interface IWebServiceClient {
 	public function call($operationName, $parameters);
 	
 }
-?>

@@ -569,5 +569,4 @@ class DALReadCSV implements IDAL {
 		return true;
 	}
 	
-}	                            
-?>
+}

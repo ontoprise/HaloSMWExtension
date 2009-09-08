@@ -458,4 +458,3 @@ class WIL implements IWIL {
 	//--- Private methods ---
 
 }
-?>

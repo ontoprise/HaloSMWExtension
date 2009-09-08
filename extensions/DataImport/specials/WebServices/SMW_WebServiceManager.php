@@ -465,5 +465,3 @@ function wwsdParserHook($input, $args, $parser) {
 	return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
 			."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg.$linkToDefGui;
 }
-
-?>

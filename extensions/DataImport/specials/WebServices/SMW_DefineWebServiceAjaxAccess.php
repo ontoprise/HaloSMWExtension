@@ -206,5 +206,3 @@ class DefineWebServiceSpecialAjaxAccess{
 		//return $arrayDetector->mergePaths($flatParams, $adParameters);
 	//}
 }
-
-?>

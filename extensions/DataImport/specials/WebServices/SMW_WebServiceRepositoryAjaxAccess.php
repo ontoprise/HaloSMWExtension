@@ -75,5 +75,3 @@ function smwf_ti_update($tiArticleName){
 		return "success";
 	}
 }
-	
-?>

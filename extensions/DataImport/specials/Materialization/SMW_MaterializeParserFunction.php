@@ -189,5 +189,3 @@ function materializePF_getParameters($parameters){
 	
 	return $response;
 }
-
-?>

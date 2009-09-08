@@ -256,5 +256,3 @@ class WSUpdateBotFilter extends GardeningIssueFilter {
 		return $gic;
 	}
 }
-
-?>

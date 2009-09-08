@@ -184,5 +184,3 @@ class WSCacheBotFilter extends GardeningIssueFilter {
 		return $gic;
 	}
 }
-
-?>

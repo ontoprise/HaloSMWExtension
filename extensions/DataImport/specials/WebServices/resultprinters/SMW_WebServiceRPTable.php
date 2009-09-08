@@ -85,5 +85,3 @@ class WebServiceTableResultPrinter extends WebServiceResultPrinter {
 		return $return;
 	}
 }
-
-?>

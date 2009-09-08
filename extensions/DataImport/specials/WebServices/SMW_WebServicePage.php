@@ -224,5 +224,3 @@ class SMWWebServicePage extends SMWOrderedListPage {
 	}
 
 }
-
-?>

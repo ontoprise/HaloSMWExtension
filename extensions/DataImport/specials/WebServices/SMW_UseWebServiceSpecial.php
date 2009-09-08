@@ -192,4 +192,3 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$wgOut->addHTML($html);
 	}
 }
-?>

@@ -138,5 +138,3 @@ class SMWRestClient implements IWebServiceClient {
 		return array($response);
 	}
 }
-
-?>

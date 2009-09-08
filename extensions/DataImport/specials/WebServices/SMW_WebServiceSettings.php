@@ -26,4 +26,3 @@
 // This value limits the number of displayed articles.
 global $smwgWWSArticleLimit;
 $smwgWWSArticleLimit = 25;
-?>

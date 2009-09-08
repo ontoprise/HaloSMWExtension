@@ -109,5 +109,3 @@ class SMWTermImportDefinitionValidator {
 		return true;
 	}
 }
-
-?>

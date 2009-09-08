@@ -576,4 +576,3 @@ class XMLParser {
  
  */	
 }
-?>
