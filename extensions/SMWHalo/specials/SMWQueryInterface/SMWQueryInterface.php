@@ -144,7 +144,7 @@ class SMWQueryInterface extends SpecialPage {
 		if (isset($smwgWebserviceEndpoint)) {
 			$useTS = '<input class="btn" type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		} 
-		return '<div id="qimenubar">' .
+		return '<div id="qimenubar" style="position: relative;">' .
 						//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 						//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 						//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
