@@ -73,11 +73,13 @@ QIHelper.prototype = {
 	switchlayout : function() {
 		if ($("layoutcontent").style.display == "none") {
 			$("layoutcontent").style.display = "";
+			$("queryprinteroptions").style.display = "";
 			$("layouttitle-link").removeClassName("plusminus");
 			$("layouttitle-link").addClassName("minusplus");
 			this.getSpecialQPParameters($('layout_format').value);
 		} else {
 			$("layoutcontent").style.display = "none";
+			$("queryprinteroptions").style.display = "none";
 			$("layouttitle-link").removeClassName("minusplus");
 			$("layouttitle-link").addClassName("plusminus");
 		}
