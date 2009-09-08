@@ -41,8 +41,9 @@ function smwf_qi_QIAccess($method, $params) {
 			// read fix parameters from QI GUI
             
              $params = explode("|",$p_array[1]);
+             $fixparams = array();
              foreach($params as $p) {
-                 if (strlen($p) > 0) {
+                 if (strlen($p) > 0 && strpos($p, "=") !== false) {
                     list($key, $value) = explode("=", $p);
                      $fixparams[$key] = $value;
                  }
@@ -73,6 +74,10 @@ function smwf_qi_QIAccess($method, $params) {
             }    
             
             $rawparams = array_merge($rawparams, $fixparams);
+            // set some default values, if params are not set
+            if (! in_array('reasoner', array_keys($fixparams))) $fixparams['reasoner'] = 'ask';
+            if (! in_array('format', array_keys($fixparams))) $fixparams['format'] = 'table';
+
             // parse params and answer query
             if ($fixparams['reasoner'] == 'ask') {
 	            SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
@@ -83,7 +88,7 @@ function smwf_qi_QIAccess($method, $params) {
                
                 $result = SMWSPARQLQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_WIKI);
             }
-			switch ($fixparams['format']) {
+	    switch ($fixparams['format']) {
             	case 'timeline':
             		return $result;
             		break;
