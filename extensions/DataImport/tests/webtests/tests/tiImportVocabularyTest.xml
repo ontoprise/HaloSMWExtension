@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testImportVocabulary">
+	
+	&goToLogin;
+
+	<target name="testImportVocabulary">
+		<webtest name="TIImportVocabularyGUI">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+
+			<antcall target="goToLogin" />
+
+			<invoke url="http://localhost/${wikipath}/index.php/Special:TermImport" />
+
+			<clickElement xpath="//div[@id='tlid']/div/a"
+				description="Choose TL" />
+
+			<sleep seconds="5" />
+
+			<clickElement xpath="//div[@id='dalid']/div[2]/a"
+				description="Choose DAM" />
+
+			<sleep seconds="5" />
+
+			<setInputField xpath="//input[@id='Articlename:']"
+				value="Wrong" />
+
+			<clickButton xpath="//button[@id='submitSource']"
+				description="Click next" />
+
+			<sleep seconds="5" />
+
+			<verifyXPath description="Check  wrong MP error message."
+				xpath="//span[@id='sumtable' and ./text()='The article Wrong does not exist or is empty.']" />
+
+			<clickButton xpath="//div[@id='summary']/input"
+				description="Click back" />
+
+			<sleep seconds="5" />
+
+			<setInputField xpath="//input[@id='Articlename:']"
+				value="TestTIXML" />
+
+			<clickButton xpath="//button[@id='submitSource']"
+				description="Click next" />
+
+			<sleep seconds="5" />
+
+			<not>
+				<verifyXPath description="Check  wrong MP error message."
+					xpath="//span[@id='sumtable' and ./text()='The article  does not exist or is empty.']" />
+			</not>
+
+			<not>
+				<verifyXPath description="Check  wrong MP error message."
+					xpath="//span[@id='sumtable' and ./text()='The article TestTIXML does not exist or is empty.']" />
+			</not>
+
+			<setCheckbox description="click abstract property"
+				xpath="//table[@id='attrib_table']/tbody/tr[2]/td[1]/input" checked="true" />
+
+			<verifyXPath description="verify article term1"
+				xpath="//div[@id='article_table']/table/tbody/tr[1]/td[./text() = 'Term1']" />
+
+			<verifyXPath description="verify article term2"
+				xpath="//div[@id='article_table']/table/tbody/tr[2]/td[./text() = 'Term2']" />
+
+			<setInputField description="enter regex"
+				xpath="//input[@id='policy-input-field']" value=".*1" />
+
+			<clickElement description="add regex"
+				xpath="//div[@id='policy-input']/img" />
+
+			<sleep seconds="4" />
+
+			<verifyXPath description="check if regex option was added"
+				xpath="//select[@id='policy-textarea']/option[./text() = '.*1']" />
+
+			<verifyXPath description="verify article term1 after regex"
+				xpath="//div[@id='article_table']/table/tbody/tr[1]/td[./text() = 'Term1']" />
+
+			<not>
+				<verifyXPath description="verify article term2 after regex"
+					xpath="//div[@id='article_table']/table/tbody/tr[2]/td[./text() = 'Term2']" />
+			</not>
+
+			<setInputField description="enter term"
+				xpath="//input[@id='policy-input-field']" value="Term1" />
+
+			<clickElement description="choose term ip"
+				xpath="//div[@id='policy-input']/input[2]" />
+
+			<clickElement description="add term"
+				xpath="//div[@id='policy-input']/img" />
+
+			<sleep seconds="4" />
+
+			<verifyXPath description="check if term option was added"
+				xpath="//select[@id='policy-textarea']/option[./text() = 'Term1']" />
+
+			<verifyXPath description="verify article term1 after term"
+				xpath="//div[@id='article_table']/table/tbody/tr[1]/td[./text() = 'Term1']" />
+
+			<not>
+				<verifyXPath description="verify article term2 after term"
+					xpath="//div[@id='article_table']/table/tbody/tr[2]/td[./text() = 'Term2']" />
+			</not>
+
+			<setInputField description="set mapping policy"
+				xpath="//input[@id='mapping-input-field']" value="TestTIXMLMP"/>
+			
+			<clickElement description="choose max age"
+				xpath="//input[@id='update-policy-checkbox']"/>
+			
+			<setInputField description="enter max age value" value="200"
+				xpath="//input[@id='ti-update-policy-input-field']" />
+			
+			<setInputField description="enter ti-name" value="TestTIXML"
+				xpath="//input[@id='ti-name-input-field']" />
+			
+			<clickButton description="save and execute"
+				xpath="//div[@id='extras-bottom']/input[3]" />
+			
+			<sleep seconds="20"/>
+
+		</webtest>
+		
+		<webtest name="TICheckTermImportArticle">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/TermImport:TestTIXML" />
+			
+			<verifyText description="verify term import xml" regex="true"
+				text='ImportSettings.*ModuleConfiguration.*TLModules.*Module.*id.*ConnectLocal.*id.*Module.*TLModules.*DALModules.*Module.*id.*ReadTIXML.*id.*Module.*DALModules.*ModuleConfiguration.*DataSource.*articleName.*display.*Articlename.*autocomplete.*true.*TestTIXML.*articleName.*DataSource.*MappingPolicy.*page.*TestTIXMLMP.*page.*MappingPolicy.*ConflictPolicy.*overwriteExistingTerms.*true.*overwriteExistingTerms.*ConflictPolicy.*InputPolicy.*terms.*regex.*1.*regex.*term.*Term1.*term.*terms.*properties.*property.*articleName.*property.*property.*abstract.*property.*properties.*InputPolicy.*ImportSets.*ImportSets.*UpdatePolicy.*maxAge.*value.*UpdatePolicy.*ImportSettings'/>
+				
+		</webtest>
+		
+		<webtest name="TICheckTermImportArticle">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+			
+			<invoke url="http://localhost/${wikipath}/index.php/Term1" />
+			
+			<verifyText description="verify creation of term1" regex="true"
+				text='Abstract of first term'/>
+		</webtest>
+		
+	</target>
+</project>

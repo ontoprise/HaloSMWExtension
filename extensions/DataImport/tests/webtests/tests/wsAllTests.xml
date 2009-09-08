@@ -10,6 +10,7 @@
 		<ant antfile="wsEditGUITests.xml"/>
 		<ant antfile="wsDefineGUITest.xml"/>
 		<ant antfile="tiRepositoryTest.xml"/>
+		<ant antfile="tiImportVocabularyTest.xml"/>
 		
 	</target>
 </project>
