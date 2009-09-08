@@ -1,5 +1,5 @@
 /**
-*   Author: Benjamin Langguth
+*   Author: Benjamin Langguth, Ingo Steinbauer
 *   This file is part of the Data Import-Extension.
 *
 *   The Data Import-Extension is free software; you can redistribute it and/or modify
@@ -529,8 +529,6 @@ TermImportPage.prototype = {
 		
 		var result = this.getImportCredentials(e, node, this.tlId, this.dalId, false);
 
-		alert(result);
-		
 		this.dataSource = escape(result[0]);
 		this.importSet = result[1];
 
