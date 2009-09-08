@@ -34,6 +34,7 @@ require_once 'DF_DeployUploadExporter.php';
 class DeployBackupDumper extends BackupDumper {
 
 	private $bundleToExport;
+	private $noCat = false;
 
 	function __construct($argv) {
 		parent::__construct($argv);
@@ -43,7 +44,7 @@ class DeployBackupDumper extends BackupDumper {
 			//-b => Bundle to export
 			if ($arg == '-b') {
 				$bundleToExport = next($argv);
-				if ($package === false) fatalError("No bundle given.");
+				if ($bundleToExport === false) fatalError("No bundle given.");
 				$bundleToExport = strtoupper(substr($bundleToExport, 0,1)).substr($bundleToExport,1);
 				$this->bundleToExport = $bundleToExport;
 				continue;
