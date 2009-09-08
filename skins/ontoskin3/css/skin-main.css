@@ -19,7 +19,7 @@ body{
 }
 
 #shadows{
-    width: 960px;   
+    width: 960px;
 }
 
 /* Head */
@@ -37,6 +37,10 @@ body{
 
 #smwh_personal #personal_expand {
     border-left-style: none;
+}
+
+#smwh_personal img{
+    margin-right: 10px;
 }
 
 #smwh_personal a{
