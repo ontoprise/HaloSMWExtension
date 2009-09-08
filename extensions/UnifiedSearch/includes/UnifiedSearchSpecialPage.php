@@ -131,6 +131,7 @@ class USSpecialPage extends SpecialPage {
 		if (!is_null($caseInsensitiveTitle)) {
 			global $wgParser;
             $wikilink = '[['.$caseInsensitiveTitle->getPrefixedText().']]';
+			if (!$newpage->exists()) $wikilink .= ' | [['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
             $newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
             $newLink = strip_tags($newLink, '<a>');
             $html .= '<div id="us_newpage">'.wfMsg('us_similar_page_does_exist', $newLink).'</div>';
