@@ -39,8 +39,8 @@ function smwf_qi_QIAccess($method, $params) {
 		$result="null";
 		if ($smwgQEnabled) {
 			// read fix parameters from QI GUI
-            
-             $params = explode("|",$p_array[1]);
+
+             $params = ( count($p_array) > 1 ) ? explode("|",$p_array[1]) : array();
              $fixparams = array();
              foreach($params as $p) {
                  if (strlen($p) > 0 && strpos($p, "=") !== false) {
@@ -48,7 +48,7 @@ function smwf_qi_QIAccess($method, $params) {
                      $fixparams[$key] = $value;
                  }
              }
-            
+
             // fix bug 10812: if query string contains a ,
             $p_array[0] = str_replace('%2C', ',', $p_array[0]);
 
