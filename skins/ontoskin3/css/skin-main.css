@@ -4,11 +4,6 @@
 
 body{
     margin: 0px;
-    background-color: #edf4e6;
-}
-
-.mediawiki{
-	font-family: sans-serif;
 }
 
 .mediawiki a{
@@ -24,11 +19,7 @@ body{
 }
 
 #shadows{
-    border-spacing: 0px;
-    position: absolute;
-    left: 50%;
-    width: 960px;
-    margin-left: -480px;
+    width: 960px;   
 }
 
 /* Head */
@@ -284,6 +275,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #mainpage{
     margin-top: 3px;
+    min-height: 400px;
 }
 
 #mainpage 

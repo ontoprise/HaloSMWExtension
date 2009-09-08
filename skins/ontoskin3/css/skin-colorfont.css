@@ -2,8 +2,12 @@ body{
     background-color: #edf4e6;
 }
 
+.mediawiki{
+	font-family: sans-serif;
+}
+
 #shadows {
-    background-color: white;
+    background-color: #FFF;
 }
 
 

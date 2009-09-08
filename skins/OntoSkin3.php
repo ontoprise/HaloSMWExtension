@@ -201,7 +201,7 @@ class OntoSkin3Template extends QuickTemplate {
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
-            <table id="shadows">
+            <table id="shadows" border="0" cellspacing="0" cellpadding="1" align="center">
                 <tbody>
                     <tr>
                         <td id="shadow_left" width="10px">
@@ -765,6 +765,8 @@ class OntoSkin3Template extends QuickTemplate {
 
          $tabsleft .=  "</div>";
 
+         $functionsaggregated .= $this->buildPageOptions();
+
          //Check if there were functions added to the more-tab
          //and don't add the more tab if empty
          if($functionsaggregated != "") {
@@ -799,6 +801,20 @@ class OntoSkin3Template extends QuickTemplate {
             
             $ql.=  $this->parseWikiText($content);
             
+        }
+        $ql.="</div>";
+        return $ql;
+    }
+
+    function buildPageOptions(){
+        $ql = "<!-- HaloPageOptions -->";
+        $ql.= "<div id=\"smwh_quicklinks\">";
+        $content = wfMsgForContent( 'halopageoptions' );
+        
+        if(strpos($content,"halopageoptions")==false){
+            $ql.=  $this->parseWikiText($content);
+        } else {
+            return "";
         }
         $ql.="</div>";
         return $ql;
