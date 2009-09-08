@@ -730,12 +730,12 @@ AutoCompleter.prototype = {
             this.modifySmartInputBoxContent(content1);
             this.showSmartInputFloater();
 
-            if (OB_bd.isIE) {
+            /*if (OB_bd.isIE) {
                  //adjust size according to numbe of results in IE
                 this.siw.floater.style.height = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
                 this.siw.floater.firstChild.style.height
                     = 25 * Math.min(this.collection.length, this.siw.MAX_MATCHES) + 20;
-            }
+            }*/
         } else this.hideSmartInputFloater();
     },                                                                                                 //this.processSmartInput()
     simplify: function(s) { 
@@ -946,7 +946,7 @@ AutoCompleter.prototype = {
                                                                                            : '') + '</div>';
         this.siw.matchListDisplay = document.getElementById("smartInputResults");
 
-        if (OB_bd.isGecko) {
+        if (this.userContext != null && this.userContext != '') { // scroll only when in editor mode, ie. user context exists.
             this.scrollToSelectedItem();
         }
     },  //this.modifySmartInputBoxContent()
@@ -954,6 +954,7 @@ AutoCompleter.prototype = {
 
      /*
      * Scrolls to the selected item in matching box.
+     * @deprecated
      */
     scrollToSelectedItem: function() {
         for (i = 0; i < this.siw.matchCollection.length; i++) {
