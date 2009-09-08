@@ -459,7 +459,6 @@ class DALReadPOP3 implements IDAL {
 		
 		if($matchRules){
 			if(key_exists("message_id", $header)){
-				//todo deal with attached mails
 				$importSet = $header->fromaddress;
 				$startPos = strpos($importSet, "<") + 1;
 				$endPos = strpos($importSet, ">") - $startPos;

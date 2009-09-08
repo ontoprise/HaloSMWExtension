@@ -819,8 +819,8 @@ Jump to: navigation, search
     <title>AttachmentMP</title>
     <id>37</id>
     <revision>
-      <id>94</id>
-      <timestamp>2009-09-02T14:14:47Z</timestamp>
+      <id>101</id>
+      <timestamp>2009-09-08T14:34:34Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -885,9 +885,9 @@ Jump to: navigation, search
 '''Creation date:''' {{{date}}}&lt;br/&gt;
 &lt;/mapping&gt;&lt;mapping properties=&quot;message_id&quot;&gt;
 '''Related article(s):''' {{#arraymap:{{{message_id}}}|,|xyz|[[xyz]]|,}}&lt;br/&gt;
-&lt;/mapping&gt;&lt;mapping properties=&quot;content&quot;&gt;
+&lt;/mapping&gt;&lt;mapping properties=&quot;CONTENT&quot;&gt;
 ==== Content ====
-{{{content}}}
+{{{CONTENT}}}
 &lt;/mapping&gt;</text>
     </revision>
   </page>
