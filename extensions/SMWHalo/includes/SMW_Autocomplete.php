@@ -549,7 +549,7 @@ class AutoCompletionHandler {
 			} else if ($commandText == 'lexical') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput));
 			} else if ($commandText == 'schema-property-type') {
-				$datatype = $param[0];
+				$datatype = $params[0];
 				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
 				if (empty($pages)) {
 					global $smwgContLang;
