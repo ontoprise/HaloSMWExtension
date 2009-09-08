@@ -129,7 +129,7 @@ class SMWQueryInterface extends SpecialPage {
 	
 	private function addPreviewResults() {
 		return '<div id="previewlayout">
-					<div id="previewtitle" onclick="qihelper.switchpreview()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_prp') . '\')"><a id="previewtitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_preview_result') . '</div>
+					<div id="previewtitle" onclick="qihelper.switchpreview()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_prp') . '\')"><a id="previewtitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_preview_result') . '</div>
 					<div id="previewcontent">
 				</div>
 			</div>';
