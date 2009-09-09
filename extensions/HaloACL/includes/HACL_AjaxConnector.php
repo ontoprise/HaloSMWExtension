@@ -483,9 +483,9 @@ HTML;
         <div class="haloacl_tab_content">
             <div class="haloacl_tab_content_description">
                 <div class="haloacl_manageusers_title">$hacl_createManageACLContent_1</div>
-
         $hacl_createManageACLContent_2
                 </div>
+
 HTML;
     $html.= $myGenericPanel->getPanel();
     $html.= <<<HTML
@@ -967,7 +967,7 @@ HTML;
                         YAHOO.haloacl.closePanel('$panelid');
                         $('manageUserGroupSettingsModificationRight').show();
                         $('manageUserGroupFinishButtons').show();
-                        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
+                        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
 
                     }else{
                    YAHOO.haloacl.notification.createDialogOk("content","Something went wrong",result.responseText,{
@@ -1786,6 +1786,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
 
         </div>
     <script type="text/javascript">
+        YAHOO.haloacl.notification.clearAllNotification();
         // user list on the right
 
         YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid","$panelid");
@@ -1974,7 +1975,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_2
                     </span>
-                    <input id="filterAssignedGroup_$panelid" type="text" "/>
+                    <input class="haloacl_filter_input" id="filterAssignedGroup_$panelid" type="text" "/>
                 </div>
                 <div id="treeDivRO_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 <!--
@@ -1997,7 +1998,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_5
                     </span>
-                    <input type="text" />
+                    <input class="haloacl_filter_input type="text" onKeyup="YAHOO.haloacl.refilterUsersAssigned_$panelid(this);"/>
                 </div>
                 <div id="ROdatatableDiv_$panelid" class="haloacl_rightpanel_selecttab_rightpart_datatable">&nbsp;</div>
                 <div id="ROdatatablepaging_datatableDiv_$panelid"></div>
@@ -2007,6 +2008,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
 
         </div>
     <script type="text/javascript">
+        YAHOO.haloacl.notification.clearAllNotification();
 
         if(YAHOO.haloacl.hasGroupsOrUsers('$panelid') == true){
             $('haloacl_rightpanel_selectab_info_$panelid').hide();
@@ -2073,11 +2075,15 @@ HTML;
         //YAHOO.haloacl.ROtreeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
         YAHOO.haloacl.buildUserTreeRO(YAHOO.haloacl.treeInstance$panelid, YAHOO.haloacl.ROtreeInstance$panelid);
 
-        refilter = function() {
-            YAHOO.haloacl.filterNodes (YAHOO.haloacl.ROtreeInstance$panelid.getRoot(), document.getElementById("filterAssignedGroup_$panelid").value);
+        refilterGroup = function() {
+            YAHOO.haloacl.filterNodesGroupUser (YAHOO.haloacl.ROtreeInstance$panelid.getRoot(), document.getElementById("filterAssignedGroup_$panelid").value);
+        }
+        YAHOO.util.Event.addListener("filterAssignedGroup_$panelid", "keyup", refilterGroup);
+
+        YAHOO.haloacl.refilterUsersAssigned_$panelid = function(element){
+            YAHOO.haloacl.filterUserDatatableJS("userdatatable_name_$panelid",element.value);
         }
 
-        YAHOO.util.Event.addListener("filterAssignedGroup_$panelid", "keyup", refilter);
 
     </script>
 
@@ -2237,8 +2243,7 @@ HTML;
         <div id="haloacl_manageuser_contentlist">
 
         <div id="manageuser_grouplisting">
-            <div class="">
-                <span class="haloacl_manageacl_contenttitle">
+                <div class="haloacl_manageacl_contenttitle">
         $hacl_rightList_1
 HTML;
 
@@ -2254,8 +2259,18 @@ HTML;
     }
 
     $html .= <<<HTML
-                </span>
-            </div>
+        </div>
+HTML;
+
+    if($type != "readOnly") {
+        $html .= <<<HTML
+            <div class="haloacl_manageacl_contenttitle">
+            Filter:&nbsp;<input class="haloacl_filter_input"/>
+        </div>
+HTML;
+    }
+    $html .= <<<HTML
+
             <div id="haloacl_manageacl_acltree">
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
             </div>
@@ -2329,7 +2344,7 @@ HTML;
     $html .= <<<HTML
 
 
-
+/*
     refilter = function() {
         YAHOO.haloaclrights.filterNodes (YAHOO.haloaclrights.treeInstance$panelid.getRoot(), document.getElementById("filterSelectGroup_$panelid").value);
     }
@@ -2339,7 +2354,7 @@ HTML;
         if(YAHOO.haloacl.debug) console.log("filterevent fired");
         YAHOO.haloaclrights.datatableInstance$panelid.executeQuery('');
     });
-
+*/
 
 </script>
 
@@ -3206,7 +3221,6 @@ function saveWhitelist($whitelistXml) {
 
 }
 
-
 /**
  *
  * @param <String>  Document Name Substring
@@ -3611,7 +3625,7 @@ function getACLById($id) {
  *
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
-function getWhitelistPages($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
+function getWhitelistPages($query,$sort,$dir,$startIndex,$results,$filter) {
 
     $a = array();
     $a['recordsReturned'] = 2;
@@ -3625,9 +3639,10 @@ function getWhitelistPages($selectedGroup,$sort,$dir,$startIndex,$results,$filte
 
     $a['records'] = array();
     foreach($test->getPages() as $item) {
-        $a['records'][] = array('name'=>$item,'checked'=>'false');
+        if($query == "all" || preg_match('/'.$query.'/is',$item)) {
+            $a['records'][] = array('name'=>$item,'checked'=>'false');
+        }
     }
-
     // generating paging-stuff
     $a['totalRecords'] = sizeof($a['records']);
     $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
@@ -3715,6 +3730,9 @@ HTML;
                 <div id="haloacl_manageuser_contentlist_title">
         $hacl_manageUser_6<span style="margin-left:282px">edit</span><span style="margin-left:65px">delete</span>
                 </div>
+                <div id="haloacl_manageuser_contentlist_title">
+                    Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.manageUserRefilter(this);"/>
+                </div>
                 <div id="treeDiv_manageuser_grouplisting">
                 </div>
                 <div id="haloacl_manageuser_contentlist_footer">
@@ -3769,6 +3787,11 @@ HTML;
 
             };
 
+            YAHOO.haloacl.manageUserRefilter = function(element) {
+                YAHOO.haloacl.filterNodes (YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(), element.value);
+            }
+
+
         </script>
 HTML;
     //$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
@@ -3796,13 +3819,13 @@ HTML;
             </div>
             <div id="manageUserGroupSettingsModificationRight" style="display:none">
                 <script>
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual', readOnly:'false'});
+                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
                 </script>
 
                 <div id="manageUserGroupSettingsModificationRight">
                 </div>
                 <script>
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification', readOnly:'false'});
+                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                 </script>
             </div>
             <div id="manageUserGroupFinishButtons">
@@ -3827,7 +3850,7 @@ HTML;
                  });
 
 
-                if(groupname != "new subgroup"){
+                if(groupname.indexOf("new subgroup")> 0){
                     null;
                 }else{
                     YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
@@ -3913,8 +3936,11 @@ HTML;
 
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-        $hacl_whitelist_3<span style="margin-left:">delete</span>
+        $hacl_whitelist_3<span style="margin-right:40px;float:right">delete</span>
             </div>
+                <div id="haloacl_manageuser_contentlist_title">
+                    Filter:&nbsp;<input id="haloacl_whitelist_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.whitelistDatatableInstance.executeQuery(this.value);"/>
+                </div>
             <div id="haloacl_whitelist_datatablecontainer">
                 <div id="haloacl_whitelist_datatable" class="haloacl_whitelist_datatable yui-content">
                 </div>
@@ -3994,6 +4020,7 @@ HTML;
             YAHOO.haloacl.sendXmlToAction(xml,'deleteWhitelist',callback6);
 
         };
+
 
     </script>
 </div>
@@ -4138,6 +4165,9 @@ HTML;
             <div id="haloacl_manageuser_contentlist_title">
         $hacl_quickACL_3<span style="margin-left:415px">active</span>
             </div>
+                <div id="haloacl_manageuser_contentlist_title">
+                    Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.quickaclTableInstance.executeQuery(this.value);"/>
+                </div>
             <div id="haloacl_whitelist_datatablecontainer">
                 <div id="haloacl_quickacl_datatable" class="haloacl_whitelist_datatable yui-content">
                 </div>
@@ -4201,7 +4231,7 @@ HTML;
  *
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
-function getQuickACLData($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
+function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
     global $wgUser;
 
     $a = array();
@@ -4219,11 +4249,13 @@ function getQuickACLData($selectedGroup,$sort,$dir,$startIndex,$results,$filter)
 
     $a['records'] = array();
     foreach($templates as $sd) {
-        $checked = false;
-        if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
-            $checked = true;
+        if($query == "all" || preg_match('/'.$query.'/is',$sd->getSDName())) {
+            $checked = false;
+            if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
+                $checked = true;
+            }
+            $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
         }
-        $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
     }
 
     // generating paging-stuff
