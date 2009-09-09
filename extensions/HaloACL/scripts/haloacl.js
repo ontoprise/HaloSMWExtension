@@ -734,7 +734,7 @@ YAHOO.haloacl.removeHighlighting = function(){
 };
 
 
-YAHOO.haloaclrights.popup = function(id, label){
+YAHOO.haloaclrights.popup = function(id, label, anchorId){
 
     /*
     if(YAHOO.haloaclrights.popupPanel == null){
@@ -757,12 +757,17 @@ YAHOO.haloaclrights.popup = function(id, label){
     YAHOO.haloaclrights.popupPanel.render();
     YAHOO.haloaclrights.popupPanel.show();
 */
-    var myPopup = new YAHOO.widget.Panel('popup_'+id,{
+    if (!anchorId) {
+        anchorId = id;
+    }
+
+    var myPopup = new YAHOO.widget.Panel('popup_'+anchorId,{
         close:true,
         visible:true,
         draggable:true,
         resizable:true,
-        context:  ["anchorPopup_"+id,"tl","bl", ["beforeShow"]]
+        zIndex :10,
+        context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
     //YAHOO.haloaclrights.popupPanel.destroy();

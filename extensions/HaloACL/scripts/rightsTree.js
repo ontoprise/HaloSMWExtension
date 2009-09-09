@@ -318,7 +318,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '<td><span class="haloacl_readonly_right_firstspacing">';
             sb[sb.length] = '</span></td>';
-            sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div>';
+            sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
             sb[sb.length] = '</td>';
             // sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'></a>";

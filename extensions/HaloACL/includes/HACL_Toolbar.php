@@ -155,6 +155,22 @@ function getHACLToolbar($articleTitle) {
         YAHOO.haloacl.toolbar_updateToolbar();
 
 
+        YAHOO.haloacl.callbackSDpopupByName = function(result){
+            if(result.status == '200'){
+                YAHOO.haloaclrights.popup(result.responseText, $('haloacl_template_protectedwith').value, 'toolbar');
+            }else{
+                alert(result.responseText);
+            }
+        };
+
+        YAHOO.haloacl.sDpopupByName = function(sdName){
+            YAHOO.haloacl.callAction('sDpopupByName', {
+                sdName:sdName
+            }, YAHOO.haloacl.callbackSDpopupByName);
+
+        };
+
+
     </script>
 
 
@@ -192,7 +208,8 @@ HTML;
         }
     }
     $html .= "</select>";
-
+    $html .= '<div><div id="anchorPopup_toolbar" class="haloacl_infobutton" onclick="javascript:YAHOO.haloacl.sDpopupByName($(\'haloacl_template_protectedwith\').value)">&nbsp;</div></div>';
+    $html .= '<div id="popup_toolbar"></div>';
 
 
     if(!$newArticle) {

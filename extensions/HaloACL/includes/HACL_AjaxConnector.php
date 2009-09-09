@@ -74,6 +74,8 @@ $wgAjaxExportList[] = "createQuickAclTab";
 $wgAjaxExportList[] = "getQuickACLData";
 $wgAjaxExportList[] = "saveQuickacl";
 $wgAjaxExportList[] = "doesArticleExists";
+$wgAjaxExportList[] = "sDpopupByName";
+
 
 
 function ajaxTestFunction() {
@@ -2705,6 +2707,35 @@ function saveTempRightToSession($rightxml) {
     return $ajaxResponse;
 
 }
+
+
+/**
+ *
+ * @param <string/xml>  SD name
+ * @return <status>     200: ok / SD id
+ *                      400: failure
+ */
+function sDpopupByName($sdName) {
+    $ajaxResponse = new AjaxResponse();
+    try {
+
+
+        $tempSD = HACLSecurityDescriptor::newFromName($sdName);
+        $ajaxResponse->addText($tempSD->getSDID());
+
+        $ajaxResponse->setResponseCode(200);
+    //$ajaxResponse->addText("");
+
+    } catch (Exception  $e) {
+
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+
 
 /**
  *

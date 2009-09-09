@@ -23,3 +23,10 @@
     height:20px;
     padding:0 5px;
 }
+
+.haloacl_infobutton {
+    width:20px;
+    height:20px;
+    background:url(images/info.png) no-repeat;
+    float:left;
+}
