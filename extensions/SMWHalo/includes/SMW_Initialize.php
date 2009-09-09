@@ -178,7 +178,9 @@ function smwgHaloSetupExtension() {
 		$wgHooks['OutputPageBeforeHTML'][] = 'smwfAAMBeforeHTML';
 	}
 	$wgHooks['UnknownAction'][] = 'smwfAnnotateAction';
-
+	// Allow annotating by default for all
+	$wgGroupPermissions['*']['annotate'] = true;
+	
 	// autocompletion option registration
 	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
 	$wgHooks['UserSaveSettings'][] = 'smwfSetUserDefinedCookies';
