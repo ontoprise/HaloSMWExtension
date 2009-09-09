@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="checkMisc" default="runAllMiscTests">
+
+	&login;
+        &goToLogout;
+
+    <target name="runAllMiscTests">
+
+        <webtest name="check access to haloAcl SpecialPage">
+
+            <!-- checking access to HaloACL -->
+            <antcall target="verifyAdmin">
+                <param name="targetPage" value="Special:HaloACL"/>
+                <param name="expectedText" value="HaloACL"/>
+            </antcall>
+            <antcall target="verifyNologin">
+                <param name="targetPage" value="Special:HaloACL"/>
+                <param name="expectedText" value=""/>
+            </antcall>
+            <antcall target="verifyUser11">
+                <param name="targetPage" value="Special:HaloACL"/>
+                <param name="expectedText" value="HaloACL"/>
+
+            </antcall>
+        </webtest>
+
+        <webtest name="check access to whitelist">
+            <antcall target="verifyAdminWhitelist">
+                <param name="targetPage" value="Special:HaloACL"/>
+            </antcall>
+            <antcall target="verifyNologinWhitelist">
+                <param name="targetPage" value="Special:HaloACL"/>
+            </antcall>
+            <antcall target="verifyUser11Whitelist">
+                <param name="targetPage" value="Special:HaloACL"/>
+
+            </antcall>
+        </webtest>
+
+    </target>
+    <!-- Checking Access to HaloACL -->
+
+    
+    <target name="verifyAdmin">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyNologin">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+    <target name="verifyUser11">
+        <antcall target="login">
+            <param name="user" value="user11"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+<!-- Checking Access to Specialpage Whitelist -->
+
+    <target name="verifyAdminWhitelist">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Check Access to Whitelist." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//li[@id='whitelist_button']"/>
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyNologinWhitelist">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Check Access to Whitelist." />
+        <not>
+            <verifyXPath description="${targetPage}"
+				     xpath="//li[@id='whitelist_button']"/>
+        </not>
+
+    </target>
+
+    <target name="verifyUser11Whitelist">
+        <antcall target="login">
+            <param name="user" value="user11"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Check Access to Whitelist." />
+        <not>
+            <verifyXPath description="${targetPage}"
+				     xpath="//li[@id='whitelist_button']"/>
+        </not>
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    
+
+</project>
