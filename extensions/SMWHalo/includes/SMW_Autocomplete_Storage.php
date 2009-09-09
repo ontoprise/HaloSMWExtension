@@ -15,9 +15,10 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+require_once( $smwgHaloIP . "/includes/SMW_OntologyManipulator.php");
 
 /**
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 abstract class AutoCompletionStorage {
@@ -203,7 +204,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+				if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) == 'true') {
+					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+				}
 			}
 		}
 		$db->freeResult($res);
@@ -233,7 +236,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+				if (smwf_om_userCan($row->title, 'read', SMW_NS_PROPERTY) == 'true') {
+					$result[] = Title::newFromText($row->title, SMW_NS_PROPERTY);
+				}
 			}
 		}
 
@@ -310,7 +315,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
-				$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
+					$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				}
 			}
 		}
 
@@ -390,7 +397,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
+            		$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				}
             }
         }
 
@@ -477,7 +486,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
-                $result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
+            		$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+				}
             }
         }
 
@@ -573,7 +584,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                 	$stringValue = isset($dateformat) ? ACStorageHelper::convertDate($stringValue, $dateformat) : $stringValue;
                     $result[] = array($stringValue, $row->inferred == 'true');
                 } else {
-                    $result[] = array(Title::newFromText($row->title, $row->namespace), $row->inferred == 'true');
+					if (smwf_om_userCan($row->title, 'read', $row->namespace) == 'true') {
+	                    $result[] = array(Title::newFromText($row->title, $row->namespace), $row->inferred == 'true');
+					}
                 }
             }
         }
@@ -663,8 +676,10 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			 
 			while($row)
 			{
-				$instance = Title::newFromText($row->instance, NS_MAIN);
-				$results[] = $instance;
+				if (smwf_om_userCan($row->instance, 'read', NS_MAIN) == 'true') {
+					$instance = Title::newFromText($row->instance, NS_MAIN);
+					$results[] = $instance;
+				}
 				$row = $db->fetchObject($res);
 			}
 

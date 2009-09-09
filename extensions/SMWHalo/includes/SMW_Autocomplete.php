@@ -526,23 +526,28 @@ class AutoCompletionHandler {
                 }
                 // continue to fill in results if possible
             } else if ($commandText == 'schema-property-domain') {
-
-				$category = Title::newFromText($params[0]);
-				if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
-
+				if (smwf_om_userCan($params[0], 'read') == 'true') {
+					$category = Title::newFromText($params[0]);
+					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
+				}
 				if (!empty($result)) break;
 			} else if ($commandText == 'schema-property-range-instance') {
-				$instance = Title::newFromText($params[0]);
-				if (!is_null($instance)) $result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+				if (smwf_om_userCan($params[0], 'read') == 'true') {
+					$instance = Title::newFromText($params[0]);
+					if (!is_null($instance)) $result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+				}
 				if (!empty($result)) break;
 			} else if ($commandText == 'annotation-property') {
-				$category = Title::newFromText($params[0]);
-				if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+				if (smwf_om_userCan($params[0], 'read') == 'true') {
+					$category = Title::newFromText($params[0]);
+					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+				}
 				if (!empty($result)) break;
 			} else if ($commandText == 'annotation-value') {
-                $property = Title::newFromText($params[0]);
-                if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
-               
+				if (smwf_om_userCan($params[0], 'read') == 'true') {
+					$property = Title::newFromText($params[0]);
+	                if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
+				}
                 if (!empty($result)) break;
             } else if ($commandText == 'namespace') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
@@ -580,7 +585,9 @@ class AutoCompletionHandler {
 				}
 				$textTitles = array_unique($textTitles);
 				foreach($textTitles as $r) {
-					$result[] = Title::newFromText($r);
+					if (smwf_om_userCan($r, 'read') == 'true') {
+						$result[] = Title::newFromText($r);
+					}
 				}
 
 			}
