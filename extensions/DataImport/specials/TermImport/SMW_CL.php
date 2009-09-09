@@ -47,7 +47,7 @@ class CL {
 				"</div>";
 		$html .= "</div>"; //top-container
 		
-		$html .= "<div style=\"display: hidden\" id=\"loading-container\">";
+		$html .= "<div style=\"display: none\" id=\"loading-container\">";
 		$html .= "<br/><br/>";
 		$html .= "<b>Loading... </b>";
 		$html .= "<img src=\"".$smwgDIScriptPath."/skins/TermImport/images/ajax-loader.gif\"/>";
