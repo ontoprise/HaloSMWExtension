@@ -590,6 +590,21 @@ class FCKeditorParser extends Parser_OldPP
 	 * @return string replaced placeholder or [[match]]
 	 */
 	private function replaceSpecialLinkValue($match) {
+	    // if there are parameters used for properties, such as {{{1}}}
+	    // these have been replaces with the templates already and look like
+	    // Fckmw12fckmw now. Therefore revert these back to their original value.
+	    if (preg_match_all('/Fckmw\d+fckmw/', $match, $matches)) {
+	        for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
+	           if (isset($this->fck_mw_strtr_span[$matches[0][$i]])) {
+	               $match = str_replace($matches[0][$i],
+	                                    substr($this->fck_mw_strtr_span[$matches[0][$i]], 30, -7),
+	                                    $match);
+	               unset($this->fck_mw_strtr_span[$matches[0][$i]]);
+	               if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"']))
+	                   unset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"']);
+	           }
+	        }
+	    }
 		$res = $this->replacePropertyValue($match);
 		if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
 			return $res;
