@@ -1,5 +1,5 @@
 // Register our toolbar buttons.
-var tbButton = new FCKToolbarButton( 'MW_Edit', 'StandardEditor', 'Switch to standard edit' ) ;
+var tbButton = new FCKToolbarButton( 'MW_Edit', 'StandardEditor', 'Switch to Wiki text editor' ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mwedit/images/icon_terminal.png' ;
 FCKToolbarItems.RegisterItem( 'MW_Edit', tbButton );
 
@@ -11,7 +11,7 @@ StartStandardMwEditCommand.prototype = {
     },
 
     GetState: function() {
-        return FCK_TRISTATE_OFF; //we dont want the button to be toggled
+        return FCK_TRISTATE_OFF; //we don't want the button to be toggled
     },
 
     Execute: function() {
@@ -37,7 +37,7 @@ StartStandardMwEditCommand.prototype = {
     return 'The editor content has changed. Do you want to save the changes?<br/>' +
            '<br/><br/>' +
            '<input type="submit" name="wgSave" value="Save changes" onClick="window.frames[0].switchToStandardEdit.save();" />&nbsp;' +
-           '<input type="submit" name="dontSave" value="Dont save" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
+           '<input type="submit" name="dontSave" value="Don\'t save" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
            '<input type="submit" name="cancel" value="Cancel" onClick="window.frames[0].switchToStandardEdit.cancel();" />&nbsp;';
     },
 
