@@ -455,7 +455,7 @@ class SMWTripleStore extends SMWStore {
 			switch ($query->querymode) {
 				
 				case SMWQuery::MODE_COUNT:
-					$queryResult = count($queryResult);
+					$queryResult = $queryResult->getCount();
 					break;
 				default:
 					
