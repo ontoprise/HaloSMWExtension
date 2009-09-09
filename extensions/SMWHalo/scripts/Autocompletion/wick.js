@@ -1143,7 +1143,7 @@ AutoCompleter.prototype = {
             smwhgLogger.log(userInput+addedValue, "AC", "close_with_selection");
         } else {
             var pasteNS = this.currentInputBox != null ? this.currentInputBox.getAttribute("pasteNS") : null;
-            var nsPrefix = pasteNS && nsText != null && nsText != '' ? nsText + ":"  : ""; 
+            var nsPrefix = pasteNS == 'true' && nsText != null && nsText != '' ? nsText + ":"  : ""; 
             var theString = (baseValue ? baseValue : "") + nsPrefix + addedValue;
          
             this.siw.inputBox.value = theString;
