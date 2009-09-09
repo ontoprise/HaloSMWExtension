@@ -949,6 +949,7 @@ FCK.ContextMenu.RegisterListener({
 	}
 }) ;
 
+// implementation for the Semantic toolbar START here
 
 var SMW_Annotate = window.parent.Class.create();
 SMW_Annotate.prototype = {
@@ -1885,3 +1886,5 @@ tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_add.png' ;
 FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 
 FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
+
+// implementation for the Semantic toolbar END here
