@@ -150,6 +150,9 @@ function haclfSetupExtension() {
         'author'=>"Thomas Schweitzer",
         'url'=>'http://smwforum.ontoprise.de',
         'description' => 'Protect the content of your wiki.');
+    
+    // Register autocompletion icon
+    $wgHooks['smwhACNamespaceMappings'][] = 'haclfRegisterACIcon';
 
     wfProfileOut('haclfSetupExtension');
     return true;
@@ -614,4 +617,8 @@ function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages
 
 }
 
-
+function haclfRegisterACIcon(& $namespaceMappings) {
+	global $haclgIP;
+	$namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
+	return true;
+}
