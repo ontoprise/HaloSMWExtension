@@ -20,13 +20,14 @@ FCKConfig.ToolbarSets['Wiki'] = [
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_Annotate']
+	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_Annotate', 'MW_Edit']
 ] ;
 
 // Load the extension plugins.
 FCKConfig.PluginsPath = FCKConfig.EditorPath + '../plugins/' ;
 FCKConfig.Plugins.Add( 'mediawiki' ) ;
 FCKConfig.Plugins.Add( 'mediaupload' ) ;
+FCKConfig.Plugins.Add( 'mwedit' ) ;
 
 FCKConfig.ForcePasteAsPlainText = true ;
 FCKConfig.FontFormats	= 'p;h1;h2;h3;h4;h5;h6;pre' ;
