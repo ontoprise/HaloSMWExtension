@@ -46,10 +46,10 @@ var SMW_PRP_VALID_PROPERTY_NAME =
 
 
 var SMW_PRP_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + '" ';
+	'constraints = "namespace:' + SMW_CATEGORY_NS + '" ';
 
 var SMW_PRP_HINT_PROPERTY =
-	'typeHint="'+ SMW_PROPERTY_NS + '" ';
+	'constraints = "namespace:'+ SMW_PROPERTY_NS + '" ';
 	
 var SMW_PRP_CHECK_EMPTY = 
 	'smwCheckEmpty="empty' +
