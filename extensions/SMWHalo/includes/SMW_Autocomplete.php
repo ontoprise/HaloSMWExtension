@@ -66,7 +66,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	// Check for context or not
 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
 		// no context: that means only non-semantic AC is possible. Maybe a $constraints string is specified
-		if ($constraints == null || $constraints == 'null' || $constraints = 'all') {
+		if ($constraints == null || $constraints == 'null' || $constraints == 'all') {
 			// if no constraints defined, search for (nearly) all pages.
 			global $wgExtraNamespaces;
 			$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
@@ -74,6 +74,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 		} else {
 			// otherwise use constraints
+			
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
             
 			// Fallback, if commands yield nothing. Deactivated now
@@ -138,7 +139,11 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
  */
 function smwf_ac_AutoCompletionOptions() {
 	global $wgUser;
-	$autoTriggering = $wgUser->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+	if (isset($wgUser) && !is_null($wgUser)) {
+	   $autoTriggering = $wgUser->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+	} else {
+		$autoTriggering = "autotriggering=manual";
+	}
 	$namespaceMappings = array();
 	wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
 	$serializedMappings = "";

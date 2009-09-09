@@ -361,7 +361,7 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[500]= "/extensions/SMWHalo/skins/enum.gif";
 
 	//XXX: this should not be defined here but in the SemanticForms extension
-	$namespaceMappings[SF_NS_FORM]= "/extensions/SMWHalo/skins/form.gif";
+	if (defined('SF_NS_FORM')) $namespaceMappings[SF_NS_FORM]= "/extensions/SMWHalo/skins/form.gif";
 	return true;
 }
 
