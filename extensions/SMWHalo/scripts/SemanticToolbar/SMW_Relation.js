@@ -97,13 +97,13 @@ var SMW_REL_CHECK_PART_OF_RADIO =
 var positionFixed = (wgAction == 'annotate' || typeof FCKeditor != 'undefined') ? '" position="fixed"' : ''
 
 var SMW_REL_HINT_CATEGORY =
-	'typeHint = "' + SMW_CATEGORY_NS + positionFixed;
+	'constraints = "namespace:' + SMW_CATEGORY_NS + '"' + positionFixed;
 
 var SMW_REL_HINT_PROPERTY =
-	'typeHint="'+ SMW_PROPERTY_NS + positionFixed;
+	'constraints = "namespace:' + SMW_PROPERTY_NS + '"' + positionFixed;
 
 var SMW_REL_HINT_INSTANCE =
-	'typeHint="'+ SMW_INSTANCE_NS + positionFixed;
+	'constraints = "namespace:' + SMW_INSTANCE_NS + '"' + positionFixed;
 
 var SMW_REL_TYPE_CHANGED =
 	'smwChanged="(call:relToolBar.relTypeChanged)"';
@@ -681,7 +681,7 @@ updateTypeHint: function(elementID) {
 	var value = elem.value;
 	var relation = $('rel-name');
 	
-	var hint = SMW_PROPERTY_NS;
+	var hint = 'namespace:'+SMW_PROPERTY_NS;
 	
 	// Date: yyyy-mm-dd
 	var date = value.match(/\d{1,5}[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])/);
@@ -693,9 +693,10 @@ updateTypeHint: function(elementID) {
 	var numeric = value.match(/([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s*(.*)/);
 	
 	if (date) {
-		hint = '_dat;'+SMW_PROPERTY_NS;
+//		hint = '_dat;'+SMW_PROPERTY_NS;
+		hint = 'schema-property-type:_dat|namespace:'+SMW_PROPERTY_NS;
 	} else if (email) {
-		hint = '_ema;'+SMW_PROPERTY_NS;
+		hint = 'schema-property-type:_ema|namespace:'+SMW_PROPERTY_NS;
 	} else if (numeric) {
 		var number = numeric[1];
 		var unit = numeric[4];
@@ -705,19 +706,19 @@ updateTypeHint: function(elementID) {
 			if (unit === "K" || unit === '°C' || unit === '°F' ||
 				(c == 176 && unit.length == 2 && 
 				 (unit.charAt(1) == 'C' || unit.charAt(1) == 'F'))) {
-				hint = "_tem;"+SMW_PROPERTY_NS;
+				hint = "schema-property-type:_tem|namespace:"+SMW_PROPERTY_NS;
 			} else {
-				hint = unit+';'+SMW_PROPERTY_NS;
+				hint = 'schema-property-type:'+unit+'|namespace:'+SMW_PROPERTY_NS;
 			}
 		} else if (number && mantissa) {
-			hint = '_flt;'+SMW_PROPERTY_NS;
+			hint = 'schema-property-type:_flt|namespace:'+SMW_PROPERTY_NS;
 		} else if (number) {
-			hint = '_num;_int;_flt;'+SMW_PROPERTY_NS;
+			hint = 'schema-property-type:_num,_int,_flt|namespace:'+SMW_PROPERTY_NS;
 		} else if (unit) {
-			hint = ':'+unit+';'+SMW_PROPERTY_NS;
+			hint = 'schema-property-type:'+unit+'|namespace:'+SMW_PROPERTY_NS;
 		}
 	}
-	relation.setAttribute('typeHint', hint);
+	relation.setAttribute('constraints', hint);
 	
 },
 
