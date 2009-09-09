@@ -158,7 +158,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
             argument : myDataTable.getState()
         };
         if(YAHOO.haloacl.debug) console.log("sending request");
-        myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
     }
     // setting up clickevent-handling

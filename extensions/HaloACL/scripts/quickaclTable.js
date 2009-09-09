@@ -172,7 +172,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
             argument : myDataTable.getState()
         };
         if(YAHOO.haloacl.debug) console.log("sending request");
-        myDataSource.sendRequest('rs=getQuickACLData&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        myDataSource.sendRequest('rs=getQuickACLData&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
         
     }

@@ -197,7 +197,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         containers:'datatablepaging_'+divid
     });
 
-    myPaginator.subscribe("changeRequest",handlePagination);
+    //myPaginator.subscribe("changeRequest",handlePagination);
 
   
 
@@ -227,6 +227,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     
     myDataTable.subscribe("postRenderEvent",function(){
+        handlePagination(myPaginator.getState());
         });
 
     myDataTable.subscribe("postRenderEvent",function(){
@@ -312,31 +313,28 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
             YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
                 // lets see if this users already exists in the datatabel
                 var reallyAddUser = "user";
-                if(result != null){
-                    result.each(function(el){
-                        if(el.name == item){
-                            if(el.deletable == "group"){
-                                reallyAddUser = "groupuser";
-                            }else if(el.deletable == "groupuser"){
-                                reallyAddUser = "no";
-                            }else if(el.deletable == "user"){
-                                reallyAddUser = "groupuser";
-                            }
-                        
-                            // remove it from array, as its added later again with other deletable tag
-                            var elementToRemove = null;
-                            for(i=0;i<result.length;i++){
-                                if(result[i] == el.name){
-                                    elementToRemove = i;
-                                }
-                            }
-                            result.splice(elementToRemove,1);
-                       
+                result.each(function(el){
+                    if(el.name == item){
+                        if(el.deletable == "group"){
+                            reallyAddUser = "groupuser";
+                        }else if(el.deletable == "groupuser"){
+                            reallyAddUser = "no";
+                        }else if(el.deletable == "user"){
+                            reallyAddUser = "groupuser";
                         }
-                    });
-                }else{
-                    result = new Array();
-                }
+                        
+                        // remove it from array, as its added later again with other deletable tag
+                        var elementToRemove = null;
+                        for(i=0;i<result.length;i++){
+                            if(result[i] == el.name){
+                                elementToRemove = i;
+                            }
+                        }
+                        result.splice(elementToRemove,1);
+                       
+                    }
+                });
+                
                 
                 if(reallyAddUser == "user"){
                     var temp = new Array();
@@ -398,7 +396,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
     };
     this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
         //elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
-        elLiner.innerHTML = "<span  class='userdatatable_name' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+        elLiner.innerHTML = "<span name=\""+oRecord._oData.name+"\" class='userdatatable_name userdatatable_name_"+panelid+"' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
     };
 
@@ -623,6 +621,21 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
     });
  
 };
+
+
+YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
+    filter = filter.toLowerCase();
+    $$('.'+classname).each(function(item){
+        var temp = $(item).readAttribute("name");
+        temp = temp.toLowerCase();
+        if(temp.indexOf(filter)> 0 || filter == null || filter == ""){
+            $(item).parentNode.parentNode.parentNode.style.display = "inline";
+        }else{
+            $(item).parentNode.parentNode.parentNode.style.display = "none";
+        }
+    });
+};
+
 
 
 

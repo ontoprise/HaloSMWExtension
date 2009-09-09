@@ -519,7 +519,7 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
  * @param parent node / root
  * @param filter String
  */
-YAHOO.haloacl.filterNodes = function(parentNode,filter){
+YAHOO.haloacl.filterNodesGroupUser = function(parentNode,filter){
 
     filter = filter.toLowerCase();
     
@@ -608,7 +608,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
             for(var i=0, l=data.length; i<l; i=i+1) {
                 var n = data[i];
 
-                if (YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.name)){
+                if (tree && YAHOO.haloacl.isNameInGroupArray(tree.panelid, n.name)){
                     var tmpNode = new YAHOO.widget.CustomNode(n.name, tree.getRoot(),false);
                     tmpNode.setGroupId(n.name);
                     tmpNode.setCheckState(2);

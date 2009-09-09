@@ -399,39 +399,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
 };
 
 
-/*
- * filter tree
- * @param parent node / root
- * @param filter String
- */
-YAHOO.haloacl.manageUser.filterNodes = function(parentNode,filter){
 
-    filter = filter.toLowerCase();
-    
-    var nodes;
-    nodes = parentNode.children;
-
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-        var temp = n.label;
-        temp = temp.toLowerCase();
-        if (temp.indexOf(filter) < 0) {
-            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "none";
-        } else {
-            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
-        }
-        
-    /*
-        if (n.checkState > 0) {
-            var tmpNode = new YAHOO.widget.CustomNode(n.label, rwTree.getRoot(),false);
-            tmpNode.setCheckState(n.checkState);
-            tmpNode.setTreeType("r");
-        }
-        */
-
-    }
-
-};
 
 /*
  * function to build user tree and add labelClickAction
@@ -511,6 +479,9 @@ YAHOO.haloacl.getNewManageUserTree = function(divname,panelid){
     return instance;
 };
 
+// GROUP ADDING
+YAHOO.haloacl.addingGroupCounter  = 1;
+
 YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
     var nodes;
     nodes = parentNode.children;
@@ -532,11 +503,14 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
     }
 }
 
+
+
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
     if(nodeToAttachTo._type != "RootNode"){
         if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-        var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup'), nodeToAttachTo,false);
+        var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+        YAHOO.haloacl.addingGroupCounter++;
         tmpNode.information = gLanguage.getMessage('clickEditToCreate');
         nodeToAttachTo.refresh();
     }
@@ -569,7 +543,8 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup'), nodeToAttachTo,false);
+    var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+    YAHOO.haloacl.addingGroupCounter++;
     // turn of dynamic load on that node
     tmpNode.information = gLanguage.getMessage('clickEditToCreate');
 
@@ -578,3 +553,4 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     nodeToAttachTo.refresh();
  
 };
+

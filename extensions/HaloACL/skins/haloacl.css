@@ -494,7 +494,6 @@ button:hover{
 
 
 .haloacl_rightpanel_selecttab_leftpart_treeview{
-    height:260px;
     border:1px #000 solid;
     border-style:none none solid none;
     /*
@@ -712,7 +711,7 @@ button:hover{
 }
 #haloacl_manageuser_contentlist{
     margin:0 0 0 20px;
-    height:307px;
+    height:329px;
     width:600px;
     float:left;
     background-color:#FFF;
@@ -802,7 +801,7 @@ button:hover{
 #haloacl_manageacl_acltree{
     background-color:#FFF;
     border:1px solid;
-    border-style:solid none none none;
+    border-style:none none none none;
 }
 #manageExistingACLRightList{
     width:800px;
@@ -911,7 +910,7 @@ button:hover{
 }
 #haloacl_whitelist_contentlist{
     margin:10px 0 0 0px;
-    height:316px;
+    height:337px;
     width:600px;
     float:left;
     background-color:#FFF;
@@ -961,6 +960,8 @@ button:hover{
 .haloacl_manageacl_contenttitle{
     font-weight:bold;
     padding:0 0 0 5px;
+    border:1px solid #000;
+    border-style:none none solid none;
 }
 
 #ManageExistingACLPanel{

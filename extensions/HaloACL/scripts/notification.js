@@ -126,3 +126,9 @@ YAHOO.haloacl.notification.showInlineNotification = function(content, targetdiv)
 YAHOO.haloacl.notification.hideInlineNotification = function(targetdiv){
     $(targetdiv).innerHTML = "";
 }
+
+YAHOO.haloacl.notification.clearAllNotification = function(){
+    $$('.haloacl_inline_notification').each(function(item){
+       item.innerHTML = "";
+    });
+}
