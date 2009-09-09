@@ -924,7 +924,7 @@ TermImportPage.prototype = {
 			return;
 		} else {
 			var dataSource = result[0];  
-			var importSetName= result[1]; 
+			var importSetName= result[1];
 			var inputPolicy = result[2]; 
 			var mappingPage = result[3]; 
 			var conflictPol = result[4];

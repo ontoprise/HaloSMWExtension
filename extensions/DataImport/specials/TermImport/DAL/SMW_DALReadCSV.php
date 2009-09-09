@@ -430,7 +430,7 @@ class DALReadCSV implements IDAL {
 			                          &$importSets, &$policy) {
 		
 		// Check import set
-		if ($impSet != null) {
+		if ($impSet != null && count($importSets) > 0) {
 			if (!in_array($impSet, $importSets)) {
 				// Term belongs to the wrong import set.
 				return false;	                          	

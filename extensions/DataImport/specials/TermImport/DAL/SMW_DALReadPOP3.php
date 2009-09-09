@@ -971,8 +971,8 @@ class DALReadPOP3 implements IDAL {
 	
 	private function termMatchesRules($importSet, $term) { 
 		// Check import set
-		if ($importSet != null) {
-			if (!in_array($importSet, $this->importSets)) {
+		if ($importSet != null && count($this->importSets) > 0) {
+			if (@!in_array($importSet, $this->importSets)) {
 		//		// Term belongs to the wrong import set.
 				return false;	                          	
 			}

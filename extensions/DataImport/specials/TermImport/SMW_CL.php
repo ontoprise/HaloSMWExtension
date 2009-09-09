@@ -342,10 +342,19 @@ function smwf_ti_connectTL($tlID, $dalID , $source_input, $givenImportSetName,
 	$importSets = $wil->getImportSets($source_result);
 	$p = new XMLParser($importSets);
 	$result = $p->parse();
+	
 	if ($result == TRUE && $givenImportSetName && $givenImportSetName != '' && $givenImportSetName != 'ALL') {
 		$p->removeAllParentElements('NAME', $givenImportSetName);
 	}
-	$importSets = $p->serialize();
+	
+	if ($result == TRUE && $givenImportSetName && $givenImportSetName == 'ALL') {
+		$importSets = 
+			'<?xml version="1.0"?>'
+			.'<IMPORTSETS XMLNS="http://www.ontoprise.de/smwplus#">'
+			.'</IMPORTSETS>';
+	} else {	
+			$importSets = $p->serialize();
+	}
 	
 	$properties = $wil->getProperties($source_result, $importSets);
 
