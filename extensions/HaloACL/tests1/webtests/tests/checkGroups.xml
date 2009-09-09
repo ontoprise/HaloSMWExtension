@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="checkGroups" default="runCheckGroups">
+
+	&login;
+        &goToLogout;
+        &createGroup;
+
+    <target name="runCheckGroups">
+        <webtest name="checkgroups">
+            <antcall target="creategroup" >
+                <param name="page" value="Special:HaloACL" />
+            </antcall>
+        </webtest>
+            <!-- checking access to HaloACL -->
+        <webtest name="VerifyGrouplogin">
+            <antcall target="verifyAdmin">
+                <param name="targetPage" value="ACL:Group/OurGroup"/>
+                <param name="expectedText" value="ACL:Group/OurGroup"/>
+            </antcall>
+            <antcall target="verifyNologin">
+                <param name="targetPage" value="ACL:Group/OurGroup"/>
+                <param name="expectedText" value="ACL:Group/OurGroup"/>
+            </antcall>
+            <antcall target="verifyUser2">
+                <param name="targetPage" value="ACL:Group/OurGroup"/>
+                <param name="expectedText" value="ACL:Group/OurGroup"/>
+            </antcall>
+
+            <antcall target="verifyUser9">
+                <param name="targetPage" value="ACL:Group/OurGroup"/>
+                <param name="expectedText" value="ACL:Group/OurGroup"/>
+            </antcall>
+        </webtest>
+
+    </target>
+
+     
+            <!-- ========================== -->
+
+    <!-- Checking Access to HaloACL -->
+
+    
+    <target name="verifyAdmin">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open Group." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyNologin">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open group." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+    <target name="verifyUser2">
+        <antcall target="login">
+            <param name="user" value="user2"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open group." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyUser9">
+        <antcall target="login">
+            <param name="user" value="user9"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open group." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+
+
+    <target name="creategroup">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlID="manageUserContent_button"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlID="haloacl_managegroups_newsubgroup"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlID="haloacl_group_edit_null"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="right_name_manageUserGroupSettingsRight"
+					   value="OurGroup"/>
+
+        <sleep description="AJAX PAUSE" seconds="6" />
+
+        <setCheckbox htmlId="checkbox_datatableDiv_right_tabview_manageUserGroupSettingsRight_User2"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlID="haloacl_save_manageUserGroupSettingsRight"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlID="haloacl_managegroups_save"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+
+
+    
+
+</project>

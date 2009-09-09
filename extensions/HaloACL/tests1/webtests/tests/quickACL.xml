@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="quickACL" default="runQuickACL">
+
+	&login;
+        &goToLogout;
+
+    <target name="runManageAcl">
+
+        <webtest name="opening existing acl">
+            <antcall target="manageAcl" >
+                <param name="page" value="Special:HaloACL" />
+            </antcall>
+        </webtest>
+
+
+     
+            <!-- ========================== -->
+
+
+    </target>
+    <!-- Verfiy Select Field-->
+
+    
+    <target name="verifySelectField">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="testIt." />
+        <verifySelectField description="${targetPage}"
+				     htmlId="haloacl_template_protectedwith"
+				     option="Template/Hoo" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+
+
+    <target name="manageAcl">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickElement htmlID="manageACLPanel_button"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickElement htmlID="createQuickAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickElement htmlId="anchorPopup_96"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickElement htmlID="createQuickAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+        
+        <invoke url="http://${serverurl}/${wikipath}/index.php/Hoo"
+			description="create Page" />
+                        
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+                        
+        <clickElement htmlID="ca-edit"/>
+        
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+                
+        <setSelectField htmlId="haloacl_toolbar_pagestate" value="protected"/>
+                                            
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setSelectField htmlId="haloacl_template_protectedwith" value="Template/Hoo"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+        
+        <clickButton htmlId="wpSave"/>
+        
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+
+
+    
+
+</project>

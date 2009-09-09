@@ -1,0 +1,268 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="editRight" default="runEditRight">
+
+	&login;
+        &goToLogout;
+        &createArticle;
+
+    <target name="runEditRight">
+
+
+
+        <!-- Change Eef" -->
+        <webtest name="create page (Eef) that will be secured">
+            <antcall target="createArticleThatWillBeSecured" />
+        </webtest>
+
+        <!-- Protect Eef"-->
+        <webtest name="protecting with all anonymous users">
+            <antcall target="createDescrallusersanoymous">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Eef"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+ 
+
+        <!--Verfiy Acces Anony-->
+
+        <webtest name="verfiyAdmin">
+            <antcall target="verifyCheckAccessAdmin">
+                <param name="targetPage" value="Eef"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+
+        </webtest>
+        <webtest name="verfyAn">
+            <antcall target="verifyCheckAccessAn">
+                <param name="targetPage" value="Eef"/>
+                <param name="expectedText" value="Eef"/>
+
+            </antcall>
+
+
+        </webtest>
+
+
+
+       <!-- Change Eef" -->
+        <webtest name="changeRightnow">
+            <antcall target="changeRight" >
+                <param name="page" value="Special:HaloACL" />
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Template/Test"/>
+            </antcall>
+        </webtest>
+            
+
+
+        <webtest name="verfiyAdminNew">
+            <antcall target="verifyCheckAccessAdminNew">
+                <param name="targetPage" value="Eef"/>
+                <param name="expectedText" value="Eef"/>
+            </antcall>
+
+        </webtest>
+        <webtest name="verfyAnNew">
+            <antcall target="verifyCheckAccessAnNew">
+                <param name="targetPage" value="Eef"/>
+                <param name="expectedText" value="Permission error"/>
+
+            </antcall>
+          
+
+        </webtest>
+ 
+    </target>
+
+
+    
+    <target name="verifyCheckAccessAdminNew">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+    <target name="verifyCheckAccessAnNew">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+
+    <target name="verifyCheckAccessAn">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+    <target name="verifyCheckAccessAdmin">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+  <!-- creating article to save -->
+
+    <target name="createArticleThatWillBeSecured" >
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <antcall target="createArticle">
+            <param name="article" value="Eef"/>
+            <param name="content" value="Eef's content"/>
+        </antcall>
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+
+<!-- creating right -->
+
+    <target name="createDescrallusersanoymous">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="5" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersanonymous"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+<!-- change right -->
+    <target name="changeRight">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickElement htmlId="manageACLPanel_button"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickLink htmlId="haloacl_manageacl_edit_${targetPage}"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersregistered"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_SDDetails_125_222"/>
+        
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_right"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+       
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+
+
+    
+
+</project>

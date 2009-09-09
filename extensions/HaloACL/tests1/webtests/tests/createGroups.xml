@@ -1,0 +1,477 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="createGroups" default="runManageGroups">
+
+	&login;
+        &goToLogout;
+
+    <target name="runManageGroups">
+
+        <webtest name="manageGroups">
+            
+            <!-- checking privateuse -->
+            <antcall target="createTemplateprivateuse">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Lou"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+            <!-- checking real acl page -->
+            <antcall target="verifyTemplateAdmin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="ACL:Template/Lou"/>
+            </antcall>
+            <antcall target="verifyTemplateNoLogin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyTemplateUser11">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Permission error"/>
+
+            </antcall>
+
+
+            <!-- checking individual -->
+            <antcall target="createTemplateprivateuse">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Lou"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+                     <!-- checking real acl page -->
+            <antcall target="verifyTemplateAdmin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="ACL:Template/Lou"/>
+            </antcall>
+            <antcall target="verifyTemplateNoLogin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyTemplateUser11">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+         <!-- ========================== -->
+
+            <!-- checking allusers -->
+            <antcall target="createTemplateallusers">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Lou"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+            <!-- checking real acl page -->
+            <antcall target="verifyTemplateAdmin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="ACL:Template/Lou"/>
+            </antcall>
+            <antcall target="verifyTemplateNoLogin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyTemplateUser11">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+
+
+            <!-- checking allusersregistered -->
+            <antcall target="createTemplateallusersregistered">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Lou"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+            <!-- checking real acl page -->
+            <antcall target="verifyTemplateAdmin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="ACL:Template/Lou"/>
+            </antcall>
+            <antcall target="verifyTemplateNoLogin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyTemplateUser11">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+          
+            <!-- checking allusersanonymous -->
+            <antcall target="createTemplateallusersanoymous">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Lou"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+            <!-- checking real acl page -->
+            <antcall target="verifyTemplateAdmin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="ACL:Template/Lou"/>
+            </antcall>
+            <antcall target="verifyTemplateNoLogin">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyTemplateUser11">
+                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+           
+        </webtest>
+
+    </target>
+    <!-- ========================== -->
+
+    <target name="verifyTemplateAdmin">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Template Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyTemplateNoLogin">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Template Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+    <target name="verifyTemplateUser11">
+        <antcall target="login">
+            <param name="user" value="user11"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Template Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+    <!-- create Template -->
+
+    <target name="createTemplateindividual">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlId="createTmpAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <setRadioButton name="create_acl_general_definefor" value="individual"/>
+
+        <clickElement htmlId="step2_createAclTemplate" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_create_right_individual"/>
+
+         <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+    </target>
+
+    <target name="createTemplateprivateuse">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlId="createTmpAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <setRadioButton name="create_acl_general_definefor" value="privateuse"/>
+
+        <clickButton htmlId="step2_button_createAclTemplate" />
+
+        <sleep description="AJAX PAUSE" seconds="7" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_private" />
+
+        <sleep description="AJAX PAUSE" seconds="4" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createTemplateallusers">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlId="createTmpAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <setRadioButton name="create_acl_general_definefor" value="allusers"/>
+
+        <clickButton htmlId="step2_button_createAclTemplate" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_create_right_allusers" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_allusers" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createTemplateallusersregistered">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlId="createTmpAclTab"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersregistered"/>
+
+        <clickButton htmlId="step2_button_createAclTemplate" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_create_right_allusersregistered" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_allusersregistered" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createTemplateallusersanoymous">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickElement htmlId="createTmpAclTab"/>
+        
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersanonymous"/>
+
+        <clickButton htmlId="step2_button_createAclTemplate" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_create_right_allusersanonymous" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_allusersanonymous" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <sleep description="AJAX PAUSE" seconds="3" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+    </target>
+
+</project>
