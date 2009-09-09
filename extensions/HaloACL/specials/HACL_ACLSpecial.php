@@ -54,7 +54,7 @@ class HaloACLSpecial extends SpecialPage {
             $this->createMainTabContainer();
         }else {
             $html = <<<HTML
-            <h3>Only registered users are allowed to create and manage access rights.
+                <h3>Only registered users are allowed to create and manage access rights.
             </h3>
             
             <h3>
@@ -71,13 +71,13 @@ HTML;
         global $wgOut;
         global $wgRequest;
         global $wgUser;
-        
+
         global $haclWhitelistGroups;
-        
+
         // checking if user can access whitelist
-        if(array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null){
+        if(array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null) {
             $showWhitelist = "true";
-        }else{
+        }else {
             $showWhitelist = "false";
         }
 
@@ -89,16 +89,21 @@ HTML;
 </div>
 <script type="text/javascript">
 HTML;
-
+        $articleTitle = null;
+        $activeTab = null;
         if(array_key_exists("articletitle", $wgRequest->data)) {
-            $html .= "
-    YAHOO.haloacl.buildMainTabView('haloaclmainView','{$wgRequest->data['articletitle']}','$showWhitelist');
-                ";
-        }else {
-            $html .="
-     YAHOO.haloacl.buildMainTabView('haloaclmainView',null,'$showWhitelist');
-";
+            $articleTitle = $wgRequest->data['articletitle'];
         }
+
+        if(array_key_exists("activetab", $wgRequest->data)) {
+            $activeTab = $wgRequest->data['activetab'];
+        }else{
+            $activeTab = "createACL";
+        }
+
+        $html .="
+    YAHOO.haloacl.buildMainTabView('haloaclmainView','$articleTitle','$showWhitelist','$activeTab');
+            ";
 
         $html .= <<<HTML
             </script>

@@ -128,6 +128,10 @@ haclfInitNamespaces();
 global $haclWhitelistGroups;
 $haclWhitelistGroups = array('sysop','bureaucrat');
 
+// mediawiki-groups that may access other user template
+// mediawiki-groups that may access whitelists
+global $haclCrossTemplateAccess;
+$haclCrossTemplateAccess = array('sysop','bureaucrat');
 
 
 #include our ajax_connecotr

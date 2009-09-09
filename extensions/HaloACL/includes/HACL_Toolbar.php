@@ -94,6 +94,7 @@ function getHACLToolbar($articleTitle) {
             $isPageProtected = true;
         }
         catch(Exception $e) {
+
         }
     }
 

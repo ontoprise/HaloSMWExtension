@@ -73,7 +73,7 @@ YAHOO.haloacl.modrightssaved = false;
 // Tabview related stuff
 
 // building the main tabview
-YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhitelistTab){
+YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhitelistTab,activeTab){
     if(YAHOO.haloacl.debug) console.log("got requestedtitle:"+requestedTitle);
     if(requestedTitle != null){
         YAHOO.haloacl.requestedTitle = requestedTitle;
@@ -81,13 +81,29 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
         YAHOO.haloacl.requestedTitle = "";
     }
     
+    var createACLActive = false;
+    var manageUserActive = false;
+    var manageACLActive = false;
+    var whitelistActive = false;
+    if(activeTab == "createACL"){
+        createACLActive = true;
+    }else if(activeTab == "manageACLs"){
+        manageACLActive = true;
+    }else if (activeTab == "manageUsers"){
+        manageUserActive = true;
+    }else if(activeTab == "whitelists"){
+        whitelistActive = true;
+    }
+
+
+
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
 
     var tab1 = new YAHOO.widget.Tab({
         label: gLanguage.getMessage('createACL'),
         dataSrc:'createACLPanels',
         cacheData:false,
-        active:true,
+        active:createACLActive,
         id:'createACLPanel_button'
     });
     tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -112,7 +128,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
         label: gLanguage.getMessage('manageACLs'),
         dataSrc:'createManageACLPanels',
         cacheData:false,
-        active:false,
+        active:manageACLActive,
         id:"manageACLPanel_button"
     });
     tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -135,7 +151,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
         label: gLanguage.getMessage('manageUser'),
         dataSrc:'manageUserContent',
         cacheData:false,
-        active:false,
+        active:manageUserActive,
         id:"manageUserContent_button"
     });
     tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -159,7 +175,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
             label: gLanguage.getMessage('whitelists'),
             dataSrc:'whitelistsContent',
             cacheData:false,
-            active:false,
+            active:whitelistActive,
             id:"whitelist_button"
         });
         tab4._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -433,6 +449,8 @@ YAHOO.haloacl.closePanel = function(panelid){
 /* RIGHT PANEL STUFF */
 
 YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOnly, preload, preloadRightId){
+
+    
     YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
     var parameterlist = {
         panelid:containerName,
@@ -444,22 +462,23 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
 
 
+    myLabel = gLanguage.getMessage('selectDeselect');
     if (!readOnly) {
-        myLabel = gLanguage.getMessage('selectDeselect');
-        myActive = true;
-        myDisabled = false;
+        selectActive = true;
+        selectDisabled = false;
+        assActive = false;
     } else {
-        myLabel = gLanguage.getMessage('selectDeselect');
-        myActive = true;
-        myDisabled = false;
+        selectActive = false;
+        selectDisabled = false;
+        assActive = true;
     }
-    
+
     var tab1 = new YAHOO.widget.Tab({
         label: myLabel,
         dataSrc:'rightPanelSelectDeselectTab',
         cacheData:false,
-        active:myActive,
-        disabled:myDisabled,
+        active:selectActive,
+        disabled:selectDisabled,
         postData:parameterlist
     });
     tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -467,22 +486,12 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
     tab1.addListener('click', function(e){});
     //$(tab1.get('contentEl')).style.display = 'none';
     $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
-    //}
-
-
-    // ------
-
-    if (!readOnly) {
-        myActive = false;
-    } else {
-        myActive = false;
-    }
-
+ 
     var tab2 = new YAHOO.widget.Tab({
         label: gLanguage.getMessage('assigned'),
         dataSrc:'rightPanelAssignedTab',
         cacheData:false,
-        active:myActive,
+        active:assActive,
         postData:parameterlist
     });
 
@@ -773,7 +782,7 @@ YAHOO.haloaclrights.popup = function(id, label){
 
 
 YAHOO.haloacl.addTooltip = function(name, context, text){
-        new YAHOO.widget.Tooltip(name, {
+    new YAHOO.widget.Tooltip(name, {
         context:context,
         text:text,
         zIndex :10

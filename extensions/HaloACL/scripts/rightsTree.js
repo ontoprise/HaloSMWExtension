@@ -239,13 +239,13 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
         // this.tree.clickedHandler.add(this.groupId);
         //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-       
+ /*
        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
-        
+ */
     // update usertable
     // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
@@ -347,7 +347,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '</span></td>';
             sb[sb.length] = '<td><span class="haloacl_manageuser_list_information"><div id="anchorPopup_'+this.groupId+'" class="haloacl_manageright_list_edit" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div><div id="popup_'+this.groupId+'"></div></span></td>';
-            sb[sb.length] = '<td><span class=""><a id="haloacl_manageacl_edit_'+this.groupId+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'});">&nbsp;</a></span></td>';
+            sb[sb.length] = '<td><span class=""><a id="haloacl_manageacl_edit_'+localLabel+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'});">&nbsp;</a></span></td>';
             // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
@@ -606,14 +606,14 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
         // this.tree.clickedHandler.add(this.groupId);
         //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-        if(this.checked){
+/*        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
         // update usertable
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
-
+*/
     },
 
     /**

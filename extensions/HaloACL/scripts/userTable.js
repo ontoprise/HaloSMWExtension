@@ -41,13 +41,18 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        var checkedFromTree = false;
+        var checkedFromJS = false;
         var groupsstring = ""+oRecord._oData.groups;
-
-        if(oData == true || checkedFromTree == true){
-            elLiner.innerHTML = "<input id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
+            if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == oRecord._oData.name){
+                checkedFromJS = true;
+            }
+        }
+       
+        if(oData == true || checkedFromJS == true){
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.handleDatatableClick_"+panelid+"(this);' id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.handleDatatableClick_"+panelid+"(this);' id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
             
     };
@@ -220,18 +225,16 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     myDataTable.panelid = panelid;
 
-    myDataTable.subscribe("postRenderEvent",function(){
-        handlePagination(myPaginator.getState());
-    });
     
     myDataTable.subscribe("postRenderEvent",function(){
-        setupCheckboxHandling();
-    });
+        });
 
     myDataTable.subscribe("postRenderEvent",function(){
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
+    //   setupCheckboxHandling();
 
-        /*
+
+    /*
         YAHOO.util.Event.addListener($$('.'+divid+'_users'),"click",function(){
             var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
             eval(fncname);
@@ -274,6 +277,7 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
     if(YAHOO.haloacl.debug) console.log("ROuserDataTableV2 called");
     var groupstring = "";
     var grouparray = YAHOO.haloacl.getGroupsArray(panelid);
+   
     if(grouparray != null){
         grouparray.each(function(item){
             if(groupstring == ""){
@@ -304,37 +308,44 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
 
         // handling users form user-datatable on select and deselct tab
         if(YAHOO.haloacl.debug) console.log("panelid"+panelid);
-        if(YAHOO.haloacl.clickedArrayUsers[panelid]){
+        if(YAHOO.haloacl.clickedArrayUsers[panelid] != null){
             YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
                 // lets see if this users already exists in the datatabel
                 var reallyAddUser = "user";
-              
-                result.each(function(el){
-                    if(el.name == item){
-                        if(el.deletable == "group"){
-                            reallyAddUser = "groupuser";
-                        }else if(el.deletable == "groupuser"){
-                            reallyAddUser = "no";
-                        }else if(el.deletable == "user"){
-                            reallyAddUser = "groupuser";
-                        }
-                        
-                        // remove it from array, as its added later again with other deletable tag
-                        var elementToRemove = null;
-                        for(i=0;i<result.length;i++){
-                            if(result[i] == el.name){
-                                elementToRemove = i;
+                if(result != null){
+                    result.each(function(el){
+                        if(el.name == item){
+                            if(el.deletable == "group"){
+                                reallyAddUser = "groupuser";
+                            }else if(el.deletable == "groupuser"){
+                                reallyAddUser = "no";
+                            }else if(el.deletable == "user"){
+                                reallyAddUser = "groupuser";
                             }
-                        }
-                        result.splice(elementToRemove,1);
+                        
+                            // remove it from array, as its added later again with other deletable tag
+                            var elementToRemove = null;
+                            for(i=0;i<result.length;i++){
+                                if(result[i] == el.name){
+                                    elementToRemove = i;
+                                }
+                            }
+                            result.splice(elementToRemove,1);
                        
-                    }
-                });
-
+                        }
+                    });
+                }else{
+                    result = new Array();
+                }
+                
                 if(reallyAddUser == "user"){
                     var temp = new Array();
                     temp['name'] = item;
-                    temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                    try{
+                        temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                    }catch(e){
+                        temp['groups'] = "";
+                    }
                     temp['deletable'] = "user";
                     result.push(temp);
                 }else if(reallyAddUser == "groupuser"){
@@ -437,10 +448,10 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
     myDataTable.panelid = panelid;
     myDataTable.subscribe("postRenderEvent",function(){
         var callback = function(){
-            //YAHOO.util.Event.addListener($$('.removebutton'),"click",function(){
-                //var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
-                //eval(fncname);
-            //});
+        //YAHOO.util.Event.addListener($$('.removebutton'),"click",function(){
+        //var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+        //eval(fncname);
+        //});
         };
 
         YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable(panelid,callback);
@@ -476,7 +487,6 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
         }
     });
      */
-
     /* non sorted end */
     $$('.haloacl_datatable_groupdiv'+panelid).each(function(divitem){
         if(YAHOO.haloacl.debug) console.log("processing divitem:");

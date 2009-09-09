@@ -367,7 +367,7 @@ function createSaveContent() {
             YAHOO.haloacl.discardChanges = function(){
                 //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
                 YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
-                    yes:function(){window.location.reload();},
+                    yes:function(){window.location.href='?activetab=createACL';},
                     no:function(){}
                    },"Ok","Cancel");
           }
@@ -400,7 +400,7 @@ function createSaveContent() {
             var callback2 = function(result){
                 if(result.status == '200'){
                     YAHOO.haloacl.notification.createDialogYesNo("content","$hacl_createSaveContent_3",result.responseText,{
-                        yes:function(){window.location.reload();},
+                        yes:function(){window.location.href='?activetab=createACL';},
                         no:function(){window.location.href='../index.php?title='+result.responseText;},
                     },"Ok","Jump To Article");
                 }else{
@@ -698,11 +698,24 @@ HTML;
 
            var step2callback = function(){
                 if(processType == "createACL"){
-                    YAHOO.haloacl.callAction("doesArticleExists", {articletitle:$('create_acl_general_name').value}, function(result){
+                    // getting protect
+                    var protect = "";
+                    $$('.create_acl_general_protect').each(function(item){
+                        if(item.checked){
+                            protect = item.value;
+                        }
+                    });
+
+                    YAHOO.haloacl.callAction("doesArticleExists", {articletitle:$('create_acl_general_name').value,type:protect}, function(result){
                         if(result.responseText == "true"){
                             step2callbackSecondCheck();
+                        }else if(result.responseText == "sdexisting"){
+                            YAHOO.haloacl.notification.createDialogOk("content","","This "+protect+" is already protected. Please go to ManageACLs to change the acl.",{
+                                yes:function(){}
+                            });
+
                         }else{
-                            YAHOO.haloacl.notification.createDialogOk("content","","Please enter a name for an existing page.",{
+                            YAHOO.haloacl.notification.createDialogOk("content","","Please enter a name for an existing "+protect+ ".",{
                                 yes:function(){}
                             });
                         }
@@ -1324,6 +1337,7 @@ HTML;
                 });
                 if(element == null){alert("failure");}
                 YAHOO.haloacl.panelDefinePanel_$panelid = element.value;
+                YAHOO.haloacl.refreshPanel_$panelid();
                 loadUserTabIfNeeded();
             };
 
@@ -1394,10 +1408,11 @@ HTML;
                     var users = "";
                     var groups = "";
 
-                    switch ('$predefine') {
+                    switch (YAHOO.haloacl.panelDefinePanel_$panelid) {
                         case "modification":
                             description = "Modification rights";
                         case "individual":
+                        case "privateuse":
                         case "private":
 
                             for(i=0;i<YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].length;i++){
@@ -1446,8 +1461,9 @@ HTML;
                         genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
                     }
 
+                    var descrLong = description;
                     if (description.length > 80) description = description.substr(0,80)+"...";
-                    genericPanelSetDescr_$panelid(description);
+                    genericPanelSetDescr_$panelid(description,descrLong);
 
                 }
 
@@ -1574,7 +1590,7 @@ HTML;
                 }
             };
 
-            YAHOO.util.Event.addListener("right_name_$panelid", "click", YAHOO.haloacl.refreshPanel_$panelid);
+
             YAHOO.util.Event.addListener("checkbox_right_fullaccess", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_read", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_edit", "click", YAHOO.haloacl.refreshPanel_$panelid);
@@ -1771,7 +1787,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
         </div>
     <script type="text/javascript">
         // user list on the right
-        YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser');
+
         YAHOO.haloacl.datatableInstance$panelid = YAHOO.haloacl.userDataTable("datatableDiv_$panelid","$panelid");
 
 
@@ -1824,28 +1840,46 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
         if(YAHOO.haloacl.debug) console.log("datatable_filter_$panelid");
 
 
-        handleDatatableClick = function(item){
+        /* this function is called from onClick-attribute in userTable.js
+         * select formater
+         */
+        YAHOO.haloacl.handleDatatableClick_$panelid = function(item){
            var panelid = '$panelid';
-           YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
-           YAHOO.haloacl.clickedArrayUsersGroups[panelid] = new Array();
-          
-           if(YAHOO.haloacl.debug) console.log("restet array for panelid:"+panelid);
 
+           // recreate desc
+            var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+            eval(fncname);
+
+           if(YAHOO.haloacl.clickedArrayUsers[panelid] == null){
+                YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
+           }
+           if(YAHOO.haloacl.clickedArrayUsersGroups[panelid] == null){
+                YAHOO.haloacl.clickedArrayUsersGroups[panelid] = new Array();
+            }
+            var element = item;
+            if(element.checked){
+                if(YAHOO.haloacl.debug) console.log("adding "+item.name+" to list of checked users - panelid:$panelid");
+                YAHOO.haloacl.addUserToUserArray('$panelid',element.name);
+            }else{
+                if(YAHOO.haloacl.debug) console.log("removing "+item.name+" from list of checked users - panelid:$panelid");
+                YAHOO.haloacl.removeUserFromUserArray('$panelid',element.name);
+            }
+            YAHOO.haloacl.clickedArrayUsersGroups['$panelid'][element.name] = $(element).readAttribute("groups");
+
+            /*
+           if(YAHOO.haloacl.debug) console.log("restet array for panelid:"+panelid);
            $$('.datatableDiv_'+panelid+'_users').each(function(item){
                 if(item.checked){
                    YAHOO.haloacl.clickedArrayUsers[panelid].push(item.name);
 
-                    var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
-                    eval(fncname);
-
-                   if(YAHOO.haloacl.debug) console.log("adding "+item.name+" to list of checked users");
                 }
-
                 YAHOO.haloacl.clickedArrayUsersGroups[panelid][item.name] = $(item).readAttribute("groups");
            });
+           */
 
         };
-        YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
+        
+        //YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
 
         
 
@@ -1881,7 +1915,8 @@ HTML;
                     YAHOO.haloacl.addGroupToGroupArray('$panelid', '$hGroup');
 HTML;
         }
-
+    }else {
+        $html .="YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser')";
     }
     $html .= <<<HTML
         </script>
@@ -2093,7 +2128,7 @@ HTML;
                 }else if(e.name == "standardacl"){
                     if(e.checked){
                         $$('.haloacl_manageacl_filter').each(function(i){
-                            if(i.name == "all" ||i.name == "page" || i.name == "category" || i.name == "property" || i.name == "namespace"){
+                            if(i.name == "page" || i.name == "category" || i.name == "property" || i.name == "namespace"){
                                 i.checked=true;
                             }
                         });
@@ -2255,9 +2290,9 @@ HTML;
         if(YAHOO.haloacl.debug) console.log(xml);
 
         var callback5 = function(result){
-            YAHOO.haloacl.notification.createDialogOk("content","Manage Users",result.responseText,{
+            YAHOO.haloacl.notification.createDialogOk("content","Manage ACLs",result.responseText,{
                 yes:function(){
-                    window.location.reload();
+                    window.location.href='?activetab=manageACLs';
                     }
             });
         };
@@ -2406,7 +2441,7 @@ HTML;
 
                         YAHOO.haloacl.notification.createDialogOk("content","ACL","Right has been saved",{
                             yes:function(){
-                                window.location.reload();
+                                window.location.href='?activetab=manageACLs';
                                 }
                         });
                     }else{
@@ -2566,7 +2601,6 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     foreach ($SD->getInlineRights(false) as $rightId) {
 
         $tempRight = HACLRight::newFromId($rightId);
-
         $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, true, $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription());
     }
 
@@ -2592,7 +2626,7 @@ HTML;
     }
 
     $html .= '<div class="haloacl_greyline">&nbsp;</div>';
-    $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
+    #    $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
 
 
     $response->addText($html);
@@ -3449,6 +3483,9 @@ function getUsersWithGroups() {
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
 function getACLs($typeXML) {
+    global $wgUser;
+    global $haclCrossTemplateAccess;
+    $username = $wgUser->getName();
 
     $types = array();
 
@@ -3465,25 +3502,42 @@ function getACLs($typeXML) {
 
     $SDs = HACLStorage::getDatabase()->getSDs($types);
     foreach( $SDs as $key => $SD) {
+        if(preg_match("/Template/is",$SD->getSDName())) {
+            if(($SD->getSDName() == "Template/$username") || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
+                $tempRights = array();
+                foreach ($SD->getInlineRights(false) as $rightId) {
+                    try {
+                        $tempright = HACLRight::newFromID($rightId);
+                        $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
+                    }catch(Exception $e ) {}
+                }
+                foreach ($SD->getPredefinedRights(false) as $subSdId) {
+                    try {
+                        $tempright = HACLSecurityDescriptor::newFromID($subSdId);
+                        $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
+                    }catch(Exception $e ) {}
+                }
+                $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+                $array[] = $tempSD;
+            }
 
-        $tempRights = array();
-
-        //attach inline right texts
-        foreach ($SD->getInlineRights(false) as $rightId) {
-            try {
-                $tempright = HACLRight::newFromID($rightId);
-                $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
-            }catch(Exception $e ) {}
+        }else {
+            $tempRights = array();
+            foreach ($SD->getInlineRights(false) as $rightId) {
+                try {
+                    $tempright = HACLRight::newFromID($rightId);
+                    $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
+                }catch(Exception $e ) {}
+            }
+            foreach ($SD->getPredefinedRights(false) as $subSdId) {
+                try {
+                    $tempright = HACLSecurityDescriptor::newFromID($subSdId);
+                    $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
+                }catch(Exception $e ) {}
+            }
+            $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+            $array[] = $tempSD;
         }
-        foreach ($SD->getPredefinedRights(false) as $subSdId) {
-            try {
-                $tempright = HACLSecurityDescriptor::newFromID($subSdId);
-                $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
-            }catch(Exception $e ) {}
-        }
-
-        $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
-        $array[] = $tempSD;
     }
 
     return (json_encode($array));
@@ -3704,9 +3758,9 @@ HTML;
                 if(YAHOO.haloacl.debug) console.log(xml);
 
                 var callback5 = function(result){
-                    YAHOO.haloacl.notification.createDialogOk("content","Manage Groups","Groups have been deleted.",{
+                    YAHOO.haloacl.notification.createDialogOk("content","Manage Groups",result.responseText,{
                         yes:function(){
-                            window.location.reload();
+                            window.location.href='?activetab=manageUsers';
                             }
                     });
                 };
@@ -3796,7 +3850,7 @@ HTML;
                                 }catch(e){}
                                 YAHOO.haloacl.notification.createDialogOk("content","Groups","Group has been saved",{
                                     yes:function(){
-                                        window.location.reload();
+                                        window.location.href='?activetab=manageUsers';
                                     //YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
                                     }
                                 });
@@ -3958,11 +4012,14 @@ HTML;
 function deleteGroups($grouspXML, $type) {
     $result = "";
     $whitelistXml = new SimpleXMLElement($grouspXML);
+    $result = wfMsg("hacl_nothing_deleted");
     foreach($whitelistXml->xpath('//group') as $group) {
         if($group != null) {
             try {
                 $sdarticle = new Article(Title::newFromText('ACL:'.$group));
                 $sdarticle->doDelete("gui-deletion");
+                $result = wfMsg('hacl_deleteGroup_1');
+
             }catch(Exception $e ) {
                 $result .= "Error while deleting ACL:".$group.". ";
             }
@@ -3970,7 +4027,6 @@ function deleteGroups($grouspXML, $type) {
 
     }
 
-    $result = wfMsg('hacl_deleteGroup_1');
 
     // create article
     return $result;
@@ -4182,23 +4238,34 @@ function getQuickACLData($selectedGroup,$sort,$dir,$startIndex,$results,$filter)
 
 function saveQuickacl($xml) {
     global $wgUser;
-
     $templates = array();
     $xmlInstance = new SimpleXMLElement($xml);
 
     foreach($xmlInstance->xpath('//template') as $template) {
         $templates[] = (string)$template;
     }
-    $quickacl = new HACLQuickacl($wgUser->getId(), $templates);
-    $quickacl->save();
-    return wfMsg('hacl_quickACL_4');
+    if(sizeof($templates) < 15) {
+        $quickacl = new HACLQuickacl($wgUser->getId(), $templates);
+        $quickacl->save();
+        return wfMsg('hacl_quickACL_4');
+    }else {
+        return wfMsg('hacl_quickacl_limit');
+    }
 }
 
-function doesArticleExists($articlename) {
+function doesArticleExists($articlename,$protect) {
+    $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
-        return "true";
+        $sd = new Article(Title::newFromText("ACL:$protect/$articlename"));
+        if($sd->exists()) {
+            $response->addText("sdexisting");
+
+        }else {
+            $response->addText("true");
+        }
     }else {
-        return "false";
+        $response->addTexta("false");
     }
+    return $response;
 }

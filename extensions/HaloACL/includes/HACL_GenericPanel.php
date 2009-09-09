@@ -158,8 +158,17 @@ HTML;
                 $('haloacl_panel_name_$panelid').innerHTML = name;
             }
 
-            genericPanelSetDescr_$panelid = function(descr) {
+            genericPanelSetDescr_$panelid = function(descr, descrLong) {
+                if(descrLong == null){
+                    descrLong = descr;
+                }
                 $('haloacl_panel_descr_$panelid').innerHTML = descr;
+
+                    YAHOO.haloacl.descr_tooltip_$panelid = new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
+                    context:"haloacl_panel_descr_$panelid",
+                    text:descrLong,
+                    zIndex :10
+                    });
             }
             
 
