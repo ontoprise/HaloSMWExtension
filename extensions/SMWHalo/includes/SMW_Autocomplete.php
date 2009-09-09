@@ -66,7 +66,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	// Check for context or not
 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
 		// no context: that means only non-semantic AC is possible. Maybe a $constraints string is specified
-		if ($constraints == null || $constraints == 'null') {
+		if ($constraints == null || $constraints == 'null' || $constraints = 'all') {
 			// if no constraints defined, search for (nearly) all pages.
 			global $wgExtraNamespaces;
 			$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
@@ -134,11 +134,19 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 }
 
 /**
- * Return options
+ * Return options and namespace icon mappings.
  */
 function smwf_ac_AutoCompletionOptions() {
 	global $wgUser;
-	return $wgUser->getOption( "autotriggering" ) == 1 ? "auto" : "manual";
+	$autoTriggering = $wgUser->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+	$namespaceMappings = array();
+	wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
+	$serializedMappings = "";
+	$first = true;
+	foreach($namespaceMappings as $nsIndex => $imgPath) {
+		$serializedMappings .= ",$nsIndex=$imgPath";
+	}
+	return "$autoTriggering$serializedMappings";
 }
 
 function &smwfGetAutoCompletionStore() {
@@ -468,7 +476,8 @@ class TemplateReader {
  *
  */
 class AutoCompletionHandler {
-
+    
+	
 	/**
 	 * Parses auto-completion command.
 	 *

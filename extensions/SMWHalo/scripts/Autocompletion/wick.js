@@ -16,16 +16,10 @@
  */
 
 
- // namespace constants MW / SMW
 var SMW_CATEGORY_NS = 14;
 var SMW_PROPERTY_NS = 102;
 var SMW_INSTANCE_NS = 0;
-var SMW_TEMPLATE_NS = 10;
-var SMW_TYPE_NS = 104;
-var SMW_HELP_NS = 12;
-var SMW_IMAGE_NS = 6;
-var SMW_USER_NS = 2
-var SMW_FORM_NS = 106;
+
 
 // special 
 var SMW_ENUM_POSSIBLE_VALUE_OR_UNIT = 500;
@@ -36,9 +30,23 @@ var SMW_AC_AUTO_TRIGGERING_TIME = 800;
 
 var SMW_AJAX_AC = 1;
 
-function autoCompletionsOptions(request) { 
-    autoCompleter.autoTriggering = request.responseText.indexOf('auto') != -1; 
-    document.cookie = "AC_mode="+request.responseText+";path="+wgScriptPath+"/;" 
+function autoCompletionsOptions(request) {
+	processAutoCompletionOptions(request.responseText);
+    document.cookie = "AC_options="+request.responseText+";path="+wgScriptPath+"/;"
+}
+
+function processAutoCompletionOptions(optionText) {
+	var options = optionText.split(",");
+    options.each(function(option) {
+        var optionKeyValue = option.split("="); 
+        if (optionKeyValue[0] == 'autotriggering') {
+            autoCompleter.autoTriggering = optionKeyValue[1].indexOf('auto') != -1; 
+        } else {
+            
+            acNamespaceRegistry.registerNamespace(optionKeyValue[0], optionKeyValue[1]);
+            
+        }
+    }); 
 }
 
 /**
@@ -49,21 +57,7 @@ var ACNamespaceRegistry = Class.create();
 ACNamespaceRegistry.prototype = {
 	initialize: function() {
 		this.imageregistry = new Object();
-		
-		// register default namespaces of MW and SMW
-		this.registerNamespace(SMW_CATEGORY_NS, "/extensions/SMWHalo/skins/concept.gif");
-		this.registerNamespace(SMW_PROPERTY_NS, "/extensions/SMWHalo/skins/property.gif");
-		this.registerNamespace(SMW_INSTANCE_NS, "/extensions/SMWHalo/skins/instance.gif");
-		this.registerNamespace(SMW_TEMPLATE_NS, "/extensions/SMWHalo/skins/template.gif");
-		this.registerNamespace(SMW_TYPE_NS, "/extensions/SMWHalo/skins/type.gif");
-		this.registerNamespace(SMW_HELP_NS, "/extensions/SMWHalo/skins/help.gif");
-		this.registerNamespace(SMW_HELP_NS, "/extensions/SMWHalo/skins/image.gif");
-		this.registerNamespace(SMW_USER_NS, "/extensions/SMWHalo/skins/user.gif");
-		this.registerNamespace(SMW_ENUM_POSSIBLE_VALUE_OR_UNIT, "/extensions/SMWHalo/skins/enum.gif");
-		
-		//XXX: this should not be defined here but in the SemanticForms extension
-		this.registerNamespace(SMW_FORM_NS, "/extensions/SMWHalo/skins/form.gif");
-		                     
+	                     
 	},
 	
 	/**
@@ -141,12 +135,7 @@ AutoCompleter.prototype = {
         
         this.currentIESelection = null;
          // Get preference options
-        var AC_mode = GeneralBrowserTools.getCookie("AC_mode");
-        if (AC_mode == null) {
-            sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
-        } else {
-            this.autoTriggering = (AC_mode == 'auto');
-        }
+       
     },
 
      /* Cancels event propagation */
@@ -1511,6 +1500,14 @@ function MatchCache() {
  // main program
  // create global AutoCompleter object:
 autoCompleter = new AutoCompleter();
+
+// reset AC state from cookie
+var AC_options = GeneralBrowserTools.getCookie("AC_options");
+if (AC_options == null) {
+    sajax_do_call('smwf_ac_AutoCompletionOptions', [], autoCompletionsOptions);
+} else {
+    processAutoCompletionOptions(AC_options);
+}
  // Initialize after complete document has been loaded
 Event.observe(window, 'load', autoCompleter.registerSmartInputListeners.bind(autoCompleter));
 
