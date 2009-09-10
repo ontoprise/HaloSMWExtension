@@ -200,33 +200,27 @@ class FCKeditorParser extends Parser_OldPP
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
-        if (in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery"))) {
-            $class = $tagName;
-        }
-        else {
-            $class = "special";
-        }
-	  if (empty($argv)) {
-			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\">";
-		}
-		else {
-			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\"";
-			foreach ($argv as $key=>$value) {
-				$ret .= " ".$key."=\"".$value."\"";
-			}
-			$ret .=">";
-		}
-		if (is_null($str)) {
-			$ret = substr($ret, 0, -1) . " />";
-		}
-		else {
-			$ret .= htmlspecialchars($str);
-			$ret .= "</span>";
-		}
+            if (in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery")))
+                $class = $tagName;
+            else
+                $class = "special";
+            if (empty($argv))
+                $ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\">";
+            else {
+                $ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$tagName."\" _fck_mw_tagtype=\"t\"";
+                foreach ($argv as $key=>$value)
+                    $ret .= " ".$key."=\"".$value."\"";
+                $ret .=">";
+            }
+            if (is_null($str))
+                $ret = substr($ret, 0, -1) . " />";
+            else {
+                $ret .= htmlspecialchars($str);
+                $ret .= "</span>";
+            }
+            $replacement = $this->fck_addToStrtr($ret, '<'.$tagName.'>');
 
-		$replacement = $this->fck_addToStrtr($ret, '<'.$tagName.'>');
-
-		return $replacement;
+            return $replacement;
 	}
 
 	/**
