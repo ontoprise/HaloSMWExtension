@@ -718,6 +718,18 @@ updateTypeHint: function(elementID) {
 			hint = 'schema-property-type:'+unit+'|namespace:'+SMW_PROPERTY_NS;
 		}
 	}
+	
+	// Prefer properties that belong to the categories that are currently annotated
+	var categories = this.wtp.getCategories();
+	var numCats = categories.length;
+	if (numCats > 0) {
+		var cats = "";
+		var catNs = gLanguage.getMessage('CATEGORY_NS');
+		for (var i = 0; i < numCats; ++i) {
+			cats += 'schema-property-domain:'+catNs+categories[i].getName() + '|';
+		}
+		hint = cats + hint;
+	}
 	relation.setAttribute('constraints', hint);
 	
 },
