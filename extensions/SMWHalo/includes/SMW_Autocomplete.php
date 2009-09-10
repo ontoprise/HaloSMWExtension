@@ -544,36 +544,39 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
 				}
-				if (!empty($result)) break;
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-range-instance') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$instance = Title::newFromText($params[0]);
 					if (!is_null($instance)) $result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
 				}
-				if (!empty($result)) break;
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-property') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
 				}
-				if (!empty($result)) break;
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-value') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 	                if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
 				}
-                if (!empty($result)) break;
+                if (count($result) >= SMW_AC_MAX_RESULTS) break;
             } else if ($commandText == 'namespace') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput));
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				$datatype = $params[0];
 				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
-				if (empty($pages)) {
+				if (count($result) < SMW_AC_MAX_RESULTS) {
 					global $smwgContLang;
 					$dtl = $smwgContLang->getDatatypeLabels();
 					$result = array_merge($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
+					if (count($result) >= SMW_AC_MAX_RESULTS) break;
 				}
 			} else if ($commandText == 'ask') {
 				$query = $params[0];
@@ -603,7 +606,7 @@ class AutoCompletionHandler {
 						$result[] = Title::newFromText($r);
 					}
 				}
-
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
 
 
@@ -624,7 +627,7 @@ class AutoCompletionHandler {
 		// parse params and answer query
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-
+		$params['limit'] = SMW_AC_MAX_RESULTS;
 		if ($column != "_var0") $params['sort'] = $column;
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 			

@@ -311,7 +311,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 		} while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-		$res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property');
+		$res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property LIMIT '.SMW_AC_MAX_RESULTS);
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
@@ -393,7 +393,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         } while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property');
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property LIMIT '.SMW_AC_MAX_RESULTS);
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -482,7 +482,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         } while ($numOfSuperCats > 0 && $maxDepth > 0);
 
-        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property');
+        $res = $db->query('SELECT DISTINCT property, inferred FROM smw_ob_properties ORDER BY inferred DESC, property LIMIT '.SMW_AC_MAX_RESULTS);
         $result = array();
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
@@ -562,7 +562,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 
 
-        $res = $db->query('SELECT DISTINCT title, namespace, inferred FROM smw_cc_propertyinst ORDER BY inferred DESC, title');
+        $res = $db->query('SELECT DISTINCT title, namespace, inferred FROM smw_cc_propertyinst ORDER BY inferred DESC, title LIMIT '.SMW_AC_MAX_RESULTS);
 
         $result = array();
         
@@ -694,6 +694,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 	
 }
 
+/*
+ * Helper class
+ */
 class ACStorageHelper {
 	public static function convertDate($date, $dateformat) {
 		if ($dateformat == 'ISO 8601' || $dateformat == 'default') {
