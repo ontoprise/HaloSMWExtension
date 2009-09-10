@@ -148,9 +148,11 @@ END;
 		}
 
 		$noEmbedMsg = wfMsg( 'smw_rm_noembed', $filePath );
+		$descText = wfMsg( 'smw_rm_embed_desctext' );
 		$descLinkAlt = wfMsg( 'smw_rm_embed_desc_link', $nt->getBaseText() );
+		$saveLinkText = wfMsg( 'smw_rm_embed_savetext' );
 		$saveLinkAlt = wfMsg( 'smw_rm_embed_save', $nt->getBaseText() );
-		$descText = wfMsg('smw_rm_embed_desctext');
+
 		$html = <<<END
 		<div style="border:1px solid black;background-color:0091A6">
 			<table style="padding:0px;margin:0px" cellspacing="0" cellpadding="0">
@@ -159,14 +161,15 @@ END;
 						FileViewer
 					</td>
 					{$fullRes_fit_section}
-					<td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">Save file</td>
-					<td style="border-right:1px dotted black;padding-top:0px;padding-bottom:0px;padding-right:10px;color:white;">
-						<a href="{$imagePath}">
-							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px"></img></a>
+					<td style="border-right:1px dotted black;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">
+						<a href="{$imagePath}" title="{$saveLinkAlt}" style="color:white">{$saveLinkText}
+							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px"></img>
+						</a>
 					</td>
 					<td style="border-right:1px solid black;padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;">
-					<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}
-						<!--<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>--></a>
+						<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}
+							<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>
+						</a>
 					</td>
 				</tr>
 			</table>
