@@ -399,37 +399,58 @@
     <title>Template:RMListInnerTable</title>
     <id>413</id>
     <revision>
-      <id>3581</id>
-      <timestamp>2009-06-08T16:44:12Z</timestamp>
+      <id>7162</id>
+      <timestamp>2009-09-10T14:05:28Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;br/&gt;
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:RMListInnerTable
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=Builds the inner table
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
 |-
-| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt; {{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
-| bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:Special:FilePath/{{{1}}}}} {{RMNoNamespace|{{{2}}}}}]&lt;/span&gt;
-| bgcolor=&quot;white&quot; | [[{{{3}}}]]
-| bgcolor=&quot;white&quot; | &lt;span style=&quot;display: none;&quot;&gt;{{#dateformat:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
-| align=&quot;center&quot; bgcolor=&quot;white&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&amp;nbsp;&amp;nbsp;&amp;nbsp;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
-| bgcolor=&quot;white&quot; align=&quot;center&quot; | &lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;</text>
+| align=&quot;center&quot; bgcolor=&quot;white&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+| bgcolor=&quot;white&quot; |&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
+| bgcolor=&quot;white&quot; |[[{{{3}}}]]
+| bgcolor=&quot;white&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{4}}}&lt;/span&gt;{{{4}}}
+| align=&quot;center&quot; bgcolor=&quot;white&quot; |&lt;span class=&quot;plainlinks&quot; style=&quot;padding:0px 10px 0px 0px;&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
+| bgcolor=&quot;white&quot; align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:RMCategoryLinkIcon</title>
     <id>414</id>
     <revision>
-      <id>3353</id>
-      <timestamp>2009-06-08T07:54:34Z</timestamp>
+      <id>7071</id>
+      <timestamp>2009-09-10T11:49:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">{{#switch: 
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:RMCategoryLinkIcon
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=detects the right icon for the file
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;
+&lt;includeonly&gt;{{#switch: 
   {{#sub:
     {{lc: {{{1}}} }} 
     | 0
@@ -440,8 +461,10 @@
   | document={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_document_icon_16x16.png
   | audio={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_music_icon_16x16.png
   | video={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_video_icon_16x16.png
+  | vcard={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_vcard_icon_16x16.gif
+  | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
   | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-}}</text>
+}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -463,8 +486,8 @@
     <title>Template:RMListOuterTable</title>
     <id>510</id>
     <revision>
-      <id>6506</id>
-      <timestamp>2009-09-04T09:18:32Z</timestamp>
+      <id>7161</id>
+      <timestamp>2009-09-10T14:04:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -481,13 +504,21 @@
 |copyright holder=ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;{| border=&quot;1&quot; style=&quot;border: 1px solid black; padding: 0px; border-collapse: collapse;&quot; 
-| align=&quot;center&quot; bgcolor=&quot;#455387&quot; style=&quot;padding-top: 5px;&quot; |&lt;font color=&quot;white&quot;&gt;&lt;b&gt;Attached documents, images and media&lt;/b&gt;&lt;/font&gt;
-{| class=&quot;wikitable sortable&quot; bgcolor=&quot;white&quot; border=&quot;0&quot;
-|- bgcolor=&quot;lightgrey&quot;
-! align=&quot;center&quot; style=&quot;padding:5px;&quot; | Category !! style=&quot;padding:5px;&quot; | Filename !! style=&quot;padding:5px;&quot; | Uploaded by !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Creation date !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Metainformation !! class=&quot;unsortable&quot; style=&quot;padding:5px;&quot; | Delete
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
 |-
-{{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]&lt;/q&gt;
+! style=&quot;padding: 7px 2px; background-color: rgb(17, 105, 136); color: white;&quot; colspan=&quot;6&quot; |Attached documents, images and media
+|}
+{| class=&quot;wikitable sortable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
+|- style=&quot;border-bottom: 1px solid rgb(17, 105, 136);&quot;
+! style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Category 
+! style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Filename 
+! style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Uploaded by 
+! class=&quot;unsortable&quot; style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Creation date 
+! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Metainformation 
+! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Delete
+|-
+{{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]OR[[ICalendar:+]]OR[[VCard:+]]&lt;/q&gt;
   | ?HasFilename
   | ?HasUploader
   | ?HasCreationDate
@@ -496,14 +527,15 @@
   | link=none
 }}
 |}
-|- 
-| 
-{| style=&quot;width:100%;&quot;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
+! style=&quot;border-top: 1px solid rgb(225, 224, 218);&quot; colspan=&quot;6&quot; | 
 |-
-| Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; || align=&quot;right&quot; | {{#rmf: {{FULLPAGENAME}} }}
+| colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
+| style=&quot;vertical-align: top;&quot; | {{#rmf: {{FULLPAGENAME}} }}
+|-
+! style=&quot;border-top: 1px solid rgb(17, 105, 136);&quot; colspan=&quot;6&quot; | 
 |}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -1049,17 +1081,15 @@ case: All content sections END
     <title>Template:Tablerow</title>
     <id>164</id>
     <revision>
-      <id>2888</id>
-      <timestamp>2009-06-02T09:01:18Z</timestamp>
+      <id>6832</id>
+      <timestamp>2009-09-08T11:56:42Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablerow
-|part of=SMWforum User Manuals Section
+|part of=SMWplus Basic Ontology Section
 |rationale=This is helper template to display a table row containing two columns.
 |parameters=&lt;pre&gt;
 {{Tablerow
@@ -1306,6 +1336,65 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
 {{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part]]|[[Category:Category]]}}[[Is category::true| ]]
 &lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Documentation</title>
+    <id>346</id>
+    <revision>
+      <id>2882</id>
+      <timestamp>2009-06-02T09:01:17Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;div class=&quot;template-documentation&quot;&gt;&lt;!--
+
+These are the literal class definitions in common.css:
+ 
+/* For template documentation */
+.template-documentation {
+    clear: both;
+    margin: 1em 0 0 0;
+    border: 1px solid #aaa; 
+    background-color: #ecfcf4; 
+    padding: 5px;
+}
+
+
+ --&gt;{{#ifeq:{{{heading|μ}}}|&lt;!--**DEFINED BUT EMPTY**--&gt;
+  |&lt;!--**NOTHING**--&gt;
+  |&lt;div style=&quot;padding-bottom:3px; border-bottom: 1px solid #aaa; margin-bottom:1ex&quot;&gt;{{#ifeq:{{{content|μ}}}|μ
+   |&lt;span class=&quot;editsection plainlinks&quot; id=&quot;doc_editlinks&quot;&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
+    |&lt;!--**    /doc EXISTS**   --&gt;[[{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit]]
+    |&lt;!--**/doc DOESN'T EXIST**--&gt;[[{{fullurl:{{{1|{{Documentation/docname }}}}}|action=edit&amp;preload=Template:Documentation/preload}} create]]
+   }}&lt;/span&gt;
+  }} &lt;span style=&quot;{{#if:{{{heading-style|}}}|{{{heading-style}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|font-weight: bold; font-size: 125%|font-size: 150%}}}}&quot;&gt;{{#if:{{{heading|}}}|{{{heading}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|[[Image:Template-info.svg|50px]] Template documentation|Documentation}}}}&lt;/span&gt;&lt;/div&gt;
+ }}&lt;!--
+
+ --&gt;&lt;div id=&quot;template_doc_page_transcluded&quot; class=&quot;dablink plainlinks&quot;&gt;&lt;!--
+  --&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
+  |&lt;!--**/doc EXISTS**--&gt;This [[Wikipedia:Template documentation|documentation]] is [[Wikipedia:Transclusion|transcluded]] from [[{{{1|{{Documentation/docname}}}}}]]. &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit] &amp;#124; [{{fullurl:{{{1|{{Documentation/docname}}}}}|action=history}} history])&lt;/small&gt;&lt;br /&gt;
+ }}&lt;!--
+
+ --&gt;{{#switch: {{SUBPAGENAME}}
+   |sandbox|testcases=&lt;!--**DO NOT SHOW THESE LINKS ON THE SANDBOX/TESTCASES PAGES**--&gt;
+   |#default=
+    {{#switch: {{SUBJECTSPACE}}
+     |{{ns:template}}
+     |{{ns:user}}=
+      {{#ifexist: {{FULLPAGENAME}}/sandbox
+       |This template has a [[/sandbox|sandbox]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /sandbox }}|action=edit}} edit])&lt;/small&gt; &lt;!--
+        --&gt;{{#ifexist: {{FULLPAGENAME}}/testcases
+         |and [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt;}} for editors to experiment.
+       |{{#ifexist: {{FULLPAGENAME}}/testcases
+        |This template has [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt; for editors to experiment.}}
+ }}}}}}
+ &lt;/div&gt;
+{{#if:{{{content|}}}|{{{content}}}|{{#ifexist:{{{1|{{Documentation/docname}}}}} | {{ {{{1|{{Documentation/docname}}}}} }} }}}}
+&lt;/div&gt;</text>
     </revision>
   </page>
   <page>
@@ -1779,6 +1868,86 @@ if a page with that name already exists, you will be sent to a form to edit that
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMVCard}}}
+{| width=&quot;100%&quot; align=&quot;center&quot;  
+|-
+| width=&quot;30%&quot; |
+| width=&quot;70%&quot; |
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Filename|mandatory}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CopyrightBy}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|CreationDate|mandatory|default=now}}}
+|- 
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|- 
+| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| {{{field|UploadDate|default=now}}}
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| {{{field|Description|input type=textarea|rows=3|cols=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| {{{field|Keywords|multiple|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| {{{field|Format|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|-
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
+|-
+| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|- 
+| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|}
+{{{end template}}}
+'''Free text:'''
+
+{{{standard input|free text}}}
+
+{{{standard input|minor edit}}} {{{standard input|watch}}}
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:RMICalendar</title>
+    <id>1003</id>
+    <revision>
+      <id>6694</id>
+      <timestamp>2009-09-07T11:08:22Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;
+This is the 'RMICalendar' form.
+To add a page with this form, enter the page name below;
+if a page with that name already exists, you will be sent to a form to edit that page.
+
+{{#forminput:RMICalendar}}
+
+&lt;/noinclude&gt;&lt;includeonly&gt;
+{{{for template|RMICalendar}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -2363,65 +2532,6 @@ This template is populated by form(s):
 [[Category:Template]]
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Documentation</title>
-    <id>346</id>
-    <revision>
-      <id>2882</id>
-      <timestamp>2009-06-02T09:01:17Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">&lt;div class=&quot;template-documentation&quot;&gt;&lt;!--
-
-These are the literal class definitions in common.css:
- 
-/* For template documentation */
-.template-documentation {
-    clear: both;
-    margin: 1em 0 0 0;
-    border: 1px solid #aaa; 
-    background-color: #ecfcf4; 
-    padding: 5px;
-}
-
-
- --&gt;{{#ifeq:{{{heading|μ}}}|&lt;!--**DEFINED BUT EMPTY**--&gt;
-  |&lt;!--**NOTHING**--&gt;
-  |&lt;div style=&quot;padding-bottom:3px; border-bottom: 1px solid #aaa; margin-bottom:1ex&quot;&gt;{{#ifeq:{{{content|μ}}}|μ
-   |&lt;span class=&quot;editsection plainlinks&quot; id=&quot;doc_editlinks&quot;&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
-    |&lt;!--**    /doc EXISTS**   --&gt;[[{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit]]
-    |&lt;!--**/doc DOESN'T EXIST**--&gt;[[{{fullurl:{{{1|{{Documentation/docname }}}}}|action=edit&amp;preload=Template:Documentation/preload}} create]]
-   }}&lt;/span&gt;
-  }} &lt;span style=&quot;{{#if:{{{heading-style|}}}|{{{heading-style}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|font-weight: bold; font-size: 125%|font-size: 150%}}}}&quot;&gt;{{#if:{{{heading|}}}|{{{heading}}}|{{#ifeq:{{NAMESPACE}}|{{ns:template}}|[[Image:Template-info.svg|50px]] Template documentation|Documentation}}}}&lt;/span&gt;&lt;/div&gt;
- }}&lt;!--
-
- --&gt;&lt;div id=&quot;template_doc_page_transcluded&quot; class=&quot;dablink plainlinks&quot;&gt;&lt;!--
-  --&gt;{{#ifexist: {{{1|{{Documentation/docname}}}}}
-  |&lt;!--**/doc EXISTS**--&gt;This [[Wikipedia:Template documentation|documentation]] is [[Wikipedia:Transclusion|transcluded]] from [[{{{1|{{Documentation/docname}}}}}]]. &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{{1|{{Documentation/docname}}}}}|action=edit}} edit] &amp;#124; [{{fullurl:{{{1|{{Documentation/docname}}}}}|action=history}} history])&lt;/small&gt;&lt;br /&gt;
- }}&lt;!--
-
- --&gt;{{#switch: {{SUBPAGENAME}}
-   |sandbox|testcases=&lt;!--**DO NOT SHOW THESE LINKS ON THE SANDBOX/TESTCASES PAGES**--&gt;
-   |#default=
-    {{#switch: {{SUBJECTSPACE}}
-     |{{ns:template}}
-     |{{ns:user}}=
-      {{#ifexist: {{FULLPAGENAME}}/sandbox
-       |This template has a [[/sandbox|sandbox]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /sandbox }}|action=edit}} edit])&lt;/small&gt; &lt;!--
-        --&gt;{{#ifexist: {{FULLPAGENAME}}/testcases
-         |and [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt;}} for editors to experiment.
-       |{{#ifexist: {{FULLPAGENAME}}/testcases
-        |This template has [[/testcases|testcases]] &lt;small style=&quot;font-style: normal&quot;&gt;([{{fullurl:{{ #rel2abs: /testcases }}|action=edit}} edit])&lt;/small&gt; for editors to experiment.}}
- }}}}}}
- &lt;/div&gt;
-{{#if:{{{content|}}}|{{{content}}}|{{#ifexist:{{{1|{{Documentation/docname}}}}} | {{ {{{1|{{Documentation/docname}}}}} }} }}}}
-&lt;/div&gt;</text>
     </revision>
   </page>
   <page>
