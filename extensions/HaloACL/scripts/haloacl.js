@@ -767,6 +767,7 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
         draggable:true,
         resizable:true,
         zIndex :10,
+        width:"1000px",
         context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
