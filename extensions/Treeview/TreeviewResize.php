@@ -56,3 +56,4 @@ function smwhg_TreeviewResizeAddScripts(&$out, &$text){
 		}
         return true;
 }
+?>

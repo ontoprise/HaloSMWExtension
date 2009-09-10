@@ -350,4 +350,4 @@ function wfTreeViewLanguageGetMagic(&$magicWords,$langCode = 0) {
     $magicWords['generateTree']  = array( 0, 'generateTree' );
     return true;
     }
-  
+?>
