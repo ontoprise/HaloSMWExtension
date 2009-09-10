@@ -153,6 +153,7 @@ class SGA_LanguageNl {
     
     /*Message for ImportOntologyBot*/
     'smw_gard_import_docu' => 'Importeer een OWL bestand.',
+    'smw_gard_import_uselabels' => 'Use labels',
     
     /*Message for ExportOntologyBot*/
     'smw_exportontologybot' => 'Ontology exporteren',   

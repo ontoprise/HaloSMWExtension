@@ -23,6 +23,8 @@
  	// set of wiki statements (semantic markup)
  	private $wikiStatements = array(); 
  	
+ 	// use labels or localnames
+ 	private $useLabels = true;
  	
  	function ImportOntologyBot() {
  		parent::GardeningBot("smw_importontologybot");
@@ -46,7 +48,8 @@
  	 */
  	public function createParameters() {
  		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, "owl");
- 		return array($param1);
+ 		$param2 = new GardeningParamBoolean('GARD_IO_USE_LABELS', wfMsg('smw_gard_import_uselabels'), SMW_GARD_PARAM_OPTIONAL, true);
+ 		return array($param1, $param2);
  	}
  	
  	/**
@@ -60,6 +63,7 @@
  			return 'Import ontology bot should not be started synchronously!';
  		}
  		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
+ 		$this->useLabels = array_key_exists('GARD_IO_USE_LABELS', $paramArray);
  		
  		$fileTitle = Title::newFromText($fileName);
  		$fileLocation = wfFindFile($fileTitle)->getPath();
@@ -513,6 +517,7 @@
 		$statements = array();
  		global $smwgContLang, $smwgHaloContLang, $wgContLang, $wgLanguageCode;
  		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+ 		$sp = $smwgContLang->getPropertyLabels();
  		$sc = $smwgHaloContLang->getSpecialCategoryArray();
 		$smwNSArray = $smwgContLang->getNamespaces();
  		
@@ -586,6 +591,18 @@
 			$s['WIKI'][] = "[[".$wgContLang->getNsText(NS_CATEGORY).":".$sc[SMW_SC_TRANSITIVE_RELATIONS]."]]" . "\n";
 		}
 		
+	    // read subproperties
+        $it  = $this->model->findAsIterator($entity, RDFS::SUB_PROPERTY_OF(), NULL);
+        while ($it->hasNext()) {
+            $statement = $it->next();
+            $object = $statement->getObject();
+            $label = $this->getLabelForEntity($object, $wgLanguageCode);
+            echo "SubProperty of::$label\n";
+            $s['WIKI'][] = "[[".$sp['_SUBP']."::" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
+            
+        }
+        
+        
 		$statements[] = $s;
 		return $statements;
 	}
@@ -645,6 +662,7 @@
  	private function getLabelForEntity($entity, $lang = "en") {
 		
 		$label = $entity->getLocalName(); // use local name as default, if no labels exist at all
+		if (!$this->useLabels) return $label;
 		$it = $this->model->findAsIterator($entity, RDFS::LABEL(), NULL);
 		$takeFirst = true;
 		while ($it->hasNext()) {
