@@ -150,44 +150,29 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
 		$page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)'.
-		DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select( $page." t",
-                            'page_title',
-		$sql, 'SMW::getRootCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),true);
-				}
-			}
-		}
-		$db->freeResult($res);
-
-		$categorylinks = $db->tableName('categorylinks');
-		$page = $db->tableName('page');
-		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)'.
-		DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select( $page." t",
-                            'page_title',
-		$sql, 'SMW::getRootCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
+               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND NOT EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+		$sql2 = 'page_namespace=' . NS_CATEGORY .
+               ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT cl_from FROM '.$categorylinks.' WHERE cl_from = page_id) AND EXISTS (SELECT c.cl_from FROM '.$categorylinks.' c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+		
+		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t WHERE '.$sql.') UNION (SELECT page_title, "false" AS has_subcategories FROM '.$page.' t WHERE '.$sql2.') '.DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
+                        
+		
 
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY),false);
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories == 'true');
 				}
 			}
 		}
-		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
+		
 		$db->freeResult($res);
 		return $result;
 	}
 
+	/*
+	 * @deprecated
+	 */
 	function getRootProperties($requestoptions = NULL) {
 
 		$result = array();
@@ -220,39 +205,28 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	function getDirectSubCategories(Title $categoryTitle, $requestoptions = NULL) {
 			
 		$db =& wfGetDB( DB_SLAVE );
+		$categorylinks = $db->tableName('categorylinks');
+        $page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)'.
-		DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select(  array($db->tableName('page').' t', $db->tableName('categorylinks')),
-                            'page_title',
-		$sql, 'SMW::getDirectSubCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+		
+        $sql2 = 'page_namespace=' . NS_CATEGORY .
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+        
+        
+		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql.') UNION '.
+		                   '(SELECT page_title, "false" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql2.')'.
+		                    DBHelper::getSQLOptionsAsString($requestoptions,'page_title'));
+		
 		$result = array();
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), true);
+					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), $row->has_subcategories == 'true');
 				}
 			}
 		}
-		$db->freeResult($res);
-
-		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)'.
-		DBHelper::getSQLConditions($requestoptions,'page_title','page_title');
-
-		$res = $db->select(  array($db->tableName('page').' t', $db->tableName('categorylinks')),
-                            'page_title',
-		$sql, 'SMW::getDirectSubCategories', DBHelper::getSQLOptions($requestoptions,'page_title') );
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->page_title, 'read', NS_CATEGORY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, NS_CATEGORY), false);
-				}
-			}
-		}
-		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
+		
 		$db->freeResult($res);
 		return $result;
 	}

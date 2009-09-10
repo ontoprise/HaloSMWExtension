@@ -15,31 +15,23 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_subs2 = $db->tableName('smw_subs2');
 		$page = $db->tableName('page');
-		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
-		$res = $db->query('SELECT page_title FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id)'.$sqlOptions);
-
-
+		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
+		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
+        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id)) UNION '.
+        '(SELECT page_title, "false" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
+        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id))'.$sqlOptions);
+        
+		
+   
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), true);
+					$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), $row->has_subproperties == 'true');
 				}
 			}
 		}
-		$db->freeResult($res);
-		$res = $db->query('SELECT page_title FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
-        ' AND page_is_redirect = 0 AND NOT EXISTS (SELECT s.s_id FROM '.$smw_subs2.' s WHERE s.s_id = smw_id) AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = t.smw_id)'.$sqlOptions);
-
-
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->page_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = array(Title::newFromText($row->page_title, SMW_NS_PROPERTY), false);
-				}
-			}
-		}
-		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
+		
+		
 		$db->freeResult($res);
 		return $result;
 	}
@@ -56,34 +48,23 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$page = $db->tableName('page');
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
 
-		$res = $db->query('SELECT s.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
-        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id) '.$sqlOptions);
+		$res = $db->query('(SELECT s.smw_title AS subject_title, "true" AS has_subproperties FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
+        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND NOT EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id)) UNION '.
+        '(SELECT s.smw_title AS subject_title, "false" AS has_subproperties FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
+        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id)) '.$sqlOptions);
 
 			
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), true);
+					$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), $row->has_subproperties == 'true');
 				}
 
 			}
 		}
+		
 		$db->freeResult($res);
-
-		$res = $db->query('SELECT s.smw_title AS subject_title FROM '.$smw_ids.' s JOIN '.$smw_subs2.' sub ON s.smw_id = sub.s_id JOIN '.$smw_ids.' o ON o.smw_id = sub.o_id '.
-        ' AND s.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_namespace = '.SMW_NS_PROPERTY. ' AND o.smw_title = ' . $db->addQuotes($attribute->getDBkey()).' AND EXISTS (SELECT s2.s_id FROM '.$smw_subs2.' s2 WHERE s2.o_id = s.smw_id) '.$sqlOptions);
-
-			
-		if($db->numRows( $res ) > 0) {
-			while($row = $db->fetchObject($res)) {
-				if (smwf_om_userCan($row->subject_title, 'read', SMW_NS_PROPERTY) === "true") {
-					$result[] = array(Title::newFromText($row->subject_title, SMW_NS_PROPERTY), false);
-				}
-
-			}
-		}
-		$db->freeResult($res);
-		usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
+		//usort($result, create_function('$e1,$e2', 'list($t1, $s1) = $e1; list($t2,$s2) = $e2; return strcmp($t1->getText(), $t2->getText());'));
 		return $result;
 	}
 
