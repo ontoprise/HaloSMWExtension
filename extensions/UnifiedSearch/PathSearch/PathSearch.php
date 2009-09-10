@@ -67,5 +67,4 @@ function wfUSPathSearchInitMessages() {
 	$wgMessageCache->addMessages($lang->us_pathsearchMessages, $wgLang->getCode());
 
 }
-
-
+?>
