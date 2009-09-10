@@ -159,14 +159,14 @@ END;
 						FileViewer
 					</td>
 					{$fullRes_fit_section}
-					<!--<td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">Save file</td>
+					<td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">Save file</td>
 					<td style="border-right:1px dotted black;padding-top:0px;padding-bottom:0px;padding-right:10px;color:white;">
 						<a href="{$imagePath}">
 							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px"></img></a>
-					</td>-->
+					</td>
 					<td style="border-right:1px solid black;padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;">
-					<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}:
-						<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img></a>
+					<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}
+						<!--<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>--></a>
 					</td>
 				</tr>
 			</table>
