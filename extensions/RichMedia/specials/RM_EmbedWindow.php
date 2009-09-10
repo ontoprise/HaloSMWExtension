@@ -99,10 +99,14 @@ class EmbedWindowForm {
 		
 		$image = Image::newFromTitle($nt);
 		$imagePath = $image->getURL();
+		$embedWidth = $image->getWidth();
+		$embedHeight = $image->getHeight();
+		
+		if ($embedHeight <= 500 || $embedWidth <= 700) {
+			$imageToSmall = true;
+		}
 		
 		if ( $this->mfullResSize) {
-			$embedWidth = $image->getWidth();
-			$embedHeight = $image->getHeight();
 			$fullResNow = "font-weight:bold;";
 			$fitNow = "";
 		}
@@ -114,27 +118,33 @@ class EmbedWindowForm {
 		}
 		list( $major, $minor ) = Image::splitMime( $image->getMimeType() );
 		if ($major == "image") {
-			# fullResSize and FitToWindow links for images 
-			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
-			$targetString = "target=$this->mTarget";
-			$fullResSizeString = "&fullRes=true";
-			$fullResSizeURL = $embedWindowPage->getTitle()->getFullURL($targetString.$fullResSizeString);
-			$fitToWindowURL = $embedWindowPage->getTitle()->getFullURL($targetString);
-			$fullResText = wfMsg('smw_rm_embed_fullres');
-			$fitWinText = wfMsg('smw_rm_embed_fittowindow');
-			$viewText = wfMsg('smw_rm_embed_view');
-			$fullRes_fit_section = <<<END
+			if (!$imageToSmall) {
+				# fullResSize and FitToWindow links for images
+				$embedWindowPage = SpecialPage::getPage('EmbedWindow');
+				$targetString = "target=$this->mTarget";
+				$fullResSizeString = "&fullRes=true";
+				$fullResSizeURL = $embedWindowPage->getTitle()->getFullURL($targetString.$fullResSizeString);
+				$fitToWindowURL = $embedWindowPage->getTitle()->getFullURL($targetString);
+				$fullResText = wfMsg('smw_rm_embed_fullres');
+				$fitWinText = wfMsg('smw_rm_embed_fittowindow');
+				$viewText = wfMsg('smw_rm_embed_view');
+				$fullRes_fit_section = <<<END
 				<td style="padding-left:10px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">
-					{$viewText}:
+				{$viewText}:
 				</td>
 				<td style="padding-left:5px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;">
-					<a href="{$fullResSizeURL}" rel="sameBox:true" style="color:white;{$fullResNow}">{$fullResText}</a>
+				<a href="{$fullResSizeURL}" rel="sameBox:true" style="color:white;{$fullResNow}">{$fullResText}</a>
 				</td>
 				<td style="color:white;">|</td>
 				<td style="border-right:1px dotted black;padding-left:5px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;">
-					<a href="$fitToWindowURL" rel="sameBox:true" style="color:white;{$fitNow}">{$fitWinText}</a>
+				<a href="$fitToWindowURL" rel="sameBox:true" style="color:white;{$fitNow}">{$fitWinText}</a>
 				</td>
 END;
+			}
+			else {
+				$embedWidth = $image->getWidth();
+				$embedHeight = $image->getHeight();
+			}
 			$embedObject = <<<END
 				<img id="embedded_object" src="{$imagePath}" style="margin-top:5px;" width="{$embedWidth}" height="{$embedHeight}" align="middle"/>
 END;
@@ -168,7 +178,7 @@ END;
 					</td>
 					<td style="border-right:1px solid black;padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;">
 						<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}
-							<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>
+							<!--<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>-->
 						</a>
 					</td>
 				</tr>
