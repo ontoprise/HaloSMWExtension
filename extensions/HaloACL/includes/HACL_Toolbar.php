@@ -147,9 +147,11 @@ function getHACLToolbar($articleTitle) {
             if(state == "protected"){
                 $('haloacl_template_protectedwith').show();
                 $('haloacl_template_protectedwith_desc').show();
+                $('haloacl_toolbar_popuplink').show();
             }else{
                 $('haloacl_template_protectedwith').hide();
                 $('haloacl_template_protectedwith_desc').hide();
+                $('haloacl_toolbar_popuplink').hide();
             }
         };
         YAHOO.haloacl.toolbar_updateToolbar();
@@ -208,7 +210,7 @@ HTML;
         }
     }
     $html .= "</select>";
-    $html .= '<div><div id="anchorPopup_toolbar" class="haloacl_infobutton" onclick="javascript:YAHOO.haloacl.sDpopupByName($(\'haloacl_template_protectedwith\').value)">&nbsp;</div></div>';
+    $html .= '<div id="haloacl_toolbar_popuplink" style="display:inline;float:right"><div id="anchorPopup_toolbar" class="haloacl_infobutton" onclick="javascript:YAHOO.haloacl.sDpopupByName($(\'haloacl_template_protectedwith\').value)">&nbsp;</div></div>';
     $html .= '<div id="popup_toolbar"></div>';
 
 

@@ -391,7 +391,7 @@ function createSaveContent() {
 
             switch ($('processType').value) {
                 case "createACL":ACLName = "ACL:"+ACLName+'/'+$('create_acl_general_name').value;break;
-                case "createAclTemplate":ACLName = 'ACL:Template/'+$('create_acl_general_name').value;break;
+                case "createAclTemplate":ACLName = 'ACL:Right/'+$('create_acl_general_name').value;break;
                 case "createAclUserTemplate":ACLName = 'ACL:Template/$userName'; break;
                 case "all_edited":ACLName = $('create_acl_general_name').value; break; //Name already existing - reuse
             }
@@ -956,31 +956,50 @@ HTML;
                 xml+="</groups>";
                 xml+="</inlineright>";
 
+                // ------------------------------------------
+                var masterCallback = function(){
 
-                var callback = function(result){
-                    if(result.status == '200'){
+                    var callback = function(result){
+                        if(result.status == '200'){
 
-                        //parse result
-                        //YAHOO.lang.JSON.parse(result.responseText);
-                        //genericPanelSetSaved_$panelid(true);
-                        //genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
-                        //genericPanelSetDescr_$panelid(result.responseText);
+                            //parse result
+                            //YAHOO.lang.JSON.parse(result.responseText);
+                            //genericPanelSetSaved_$panelid(true);
+                            //genericPanelSetName_$panelid("[ "+$('right_name_$panelid').value+" ] - ");
+                            //genericPanelSetDescr_$panelid(result.responseText);
 
-                        YAHOO.haloacl.closePanel('$panelid');
-                        $('manageUserGroupSettingsModificationRight').show();
-                        $('manageUserGroupFinishButtons').show();
-                        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                            YAHOO.haloacl.closePanel('$panelid');
+                            $('manageUserGroupSettingsModificationRight').show();
+                            $('manageUserGroupFinishButtons').show();
+                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
 
+                        }else{
+                       YAHOO.haloacl.notification.createDialogOk("content","Something went wrong",result.responseText,{
+                            yes:function(){
+                                }
+                        });
+                        }
+                    };
+                    if(YAHOO.haloacl.debug) console.log(xml);
+                    if(YAHOO.haloacl.debug) console.log("sending xml to saveTempGroupToSession");
+                    YAHOO.haloacl.sendXmlToAction(xml,'saveTempGroupToSession',callback);
+                };
+                // ------------------------------------------
+
+                var firstCallback = function(result){
+                    if(result.responseText =! 'false'){
+                        YAHOO.haloacl.notification.createDialogOk("content","Group","This group already exists",{
+                            yes:function(){}
+                        });
                     }else{
-                   YAHOO.haloacl.notification.createDialogOk("content","Something went wrong",result.responseText,{
-                        yes:function(){
-                            }
-                    });
+                        masterCallback();
                     }
                 };
-                if(YAHOO.haloacl.debug) console.log(xml);
-                if(YAHOO.haloacl.debug) console.log("sending xml to saveTempGroupToSession");
-                YAHOO.haloacl.sendXmlToAction(xml,'saveTempGroupToSession',callback);
+
+                YAHOO.haloacl.callAction("doesArticleExist",{name:,type:"Group"},firstCallback);
+
+
+
 
             };
 
@@ -1331,6 +1350,13 @@ HTML;
             init();
 
             YAHOO.haloacl.defineForChange_$panelid = function(){
+
+                // on change reset selected users
+                if(YAHOO.haloacl.debug){console.log("clearing arrays - called from define for change - YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid']");};
+                YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+                YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
+                YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'] = new Array();
+
                 var element = null;
                 $$('.create_acl_general_definefor_$panelid').each(function(item){
                     if(item.checked){
@@ -1849,9 +1875,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
         YAHOO.haloacl.handleDatatableClick_$panelid = function(item){
            var panelid = '$panelid';
 
-           // recreate desc
-            var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
-            eval(fncname);
+
 
            if(YAHOO.haloacl.clickedArrayUsers[panelid] == null){
                 YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
@@ -1879,12 +1903,16 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
                 YAHOO.haloacl.clickedArrayUsersGroups[panelid][item.name] = $(item).readAttribute("groups");
            });
            */
+           // recreate desc
+            var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
+            eval(fncname);
 
         };
         
         //YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
 
         
+    if(!YAHOO.haloacl.rightsForPanelLoaded_panelid_$panelid){
 
 HTML;
 
@@ -1919,9 +1947,12 @@ HTML;
 HTML;
         }
     }else {
-        $html .="YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser')";
+        $html .="
+        YAHOO.haloacl.addUserToUserArray('$panelid', '$currentUser')";
     }
     $html .= <<<HTML
+    }
+    YAHOO.haloacl.rightsForPanelLoaded_panelid_$panelid = true;
         </script>
 HTML;
 
@@ -1954,6 +1985,9 @@ HTML;
  * @return <html>   returns the assigned tabview; e.g. contained in right panel
  */
 function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, $preloadRightId=8) {
+    if($preload == "false"){
+        $preload = false;
+    }
 
     $hacl_rightPanelSelectDeselectTab_1 = wfMsg('hacl_rightPanelSelectDeselectTab_1');
     $hacl_rightPanelSelectDeselectTab_2 = wfMsg('hacl_rightPanelSelectDeselectTab_2');
@@ -2616,7 +2650,7 @@ function getSDRightsPanel($sdId, $readOnly = false) {
 
     //attach inline right texts
     foreach ($SD->getInlineRights(false) as $rightId) {
-
+        //echo "----$rightId---";
         $tempRight = HACLRight::newFromId($rightId);
         $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, true, $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription());
     }
@@ -2642,8 +2676,9 @@ HTML;
 
     }
 
+
     $html .= '<div class="haloacl_greyline">&nbsp;</div>';
-    #    $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
+    $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
 
 
     $response->addText($html);
@@ -2925,7 +2960,7 @@ HTML;
 [[Category:ACL/ACL]]';
         }else if($aclType == "createAclUserTemplate") {
                 $inline .= '
-[[Category:ACL/Template]]';
+[[Category:ACL/ACL]]';
             }else {
                 $inline .= '
 [[Category:ACL/Right]]';
@@ -3477,7 +3512,7 @@ function getGroupsForManageUser($query) {
 
     }else {
 
-    //get group by name
+//get group by name
         try {
             $parent = HACLGroup::newFromName($query);
 
@@ -3500,7 +3535,6 @@ function getGroupsForManageUser($query) {
          */
         }
         catch(Exception $e ) {
-            $array = array();
         }
     }
 
@@ -3547,7 +3581,8 @@ function getACLs($typeXML) {
 
     $SDs = HACLStorage::getDatabase()->getSDs($types);
     foreach( $SDs as $key => $SD) {
-        if(preg_match("/Template/is",$SD->getSDName())) {
+        // processing default user templates
+        if(preg_match("/Template\//is",$SD->getSDName())) {
             if(($SD->getSDName() == "Template/$username") || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
                 $tempRights = array();
                 foreach ($SD->getInlineRights(false) as $rightId) {
@@ -3565,8 +3600,9 @@ function getACLs($typeXML) {
                 $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
                 $array[] = $tempSD;
             }
-
-        }else {
+            
+        // processing other acls
+        }elseif($SD->userCanModify($wgUser->getName()) || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess)) {
             $tempRights = array();
             foreach ($SD->getInlineRights(false) as $rightId) {
                 try {
@@ -4328,7 +4364,7 @@ function doesArticleExists($articlename,$protect) {
             $response->addText("true");
         }
     }else {
-        $response->addTexta("false");
+        $response->addText("false");
     }
     return $response;
 }

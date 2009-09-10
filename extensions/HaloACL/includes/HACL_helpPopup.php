@@ -57,6 +57,7 @@ HTML;
                                 resizable:true,
                                 width:"500px",
                               //  modal:true,
+                                zIndex:15000,
                                 context:  ["anchorHelpCreateRight_$panelid","tl","bl", ["beforeShow"]]
                         });
                         YAHOO.haloacl.popup_helpcreateright_$panelid.setHeader("Help");
