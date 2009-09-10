@@ -47,3 +47,4 @@ class ExtURLArguments {
 		return $wgRequest->getVal($name, $default);
 	}
 }
+?>
