@@ -95,7 +95,7 @@ class FCKeditorParser extends Parser
         }
 	}
 
-	public function getSpecialTags() {
+    public function getSpecialTags() {
         return $this->FCKeditorWikiTags;
     }
     public function getMagicWords() {
@@ -112,14 +112,27 @@ class FCKeditorParser extends Parser
     }
 	
 	/**
-	 * Add special string (that would be changed by Parser) to array and return simple unique string 
-	 * that will remain unchanged during whole parsing operation.
-	 * At the end we'll replace all this unique strings with original content
+	 * Add special string (that would be changed by Parser) to array and return
+         * a simple unique string that will remain unchanged during whole parsing
+         * operation. At the end we'll replace all this unique strings with
+         * the original content.
+         * $text contains the new FCK format to display in WYSIWYG mode
+         * $inner contains the unchanged wiki text, necessary when expressions
+         * are used in annotations.
+         * The member variable fck_mw_strtr_span is filled with:
+         *  'key' = wysiwsg text
+         *  'href="key"' = 'href="wikitext"'
+         * When later the replacement is done, the wysiwyg text is used, except
+         * when the key appears in an annotated content, then we need the orignal
+         * wiki text, because the argument is not a seperate element that can
+         * be edited.
 	 *
-	 * @param string $text
-	 * @return string
+	 * @param string $text for wysiwyg mode
+         * @param string $inner original wiki text
+         * @param bool $replaceLineBreaks optional default is true
+	 * @return string key of the replaced text i.e. Fckmw12fckmw
 	 */
-	private function fck_addToStrtr($text, $replaceLineBreaks = true) {
+	private function fck_addToStrtr($text, $inner, $replaceLineBreaks = true) {
 		$key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 		$this->fck_mw_strtr_span_counter++;
 		if ($replaceLineBreaks) {
@@ -128,6 +141,7 @@ class FCKeditorParser extends Parser
 		else {
 			$this->fck_mw_strtr_span[$key] = $text;
 		}
+                $this->fck_mw_strtr_span['href="'.$key.'"'] = 'href="'.$inner.'"';
 		return $key;
 	}
 
@@ -175,7 +189,7 @@ class FCKeditorParser extends Parser
 			$ret .= "</span>";
 		}
 
-		$replacement = $this->fck_addToStrtr($ret);
+		$replacement = $this->fck_addToStrtr($ret, $this->fck_mw_taghook);
 		return $replacement;
 	}
 
@@ -188,7 +202,6 @@ class FCKeditorParser extends Parser
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
-            var_dump($tagName, $str);
         if (in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery"))) {
             $class = $tagName;
         }
@@ -213,7 +226,7 @@ class FCKeditorParser extends Parser
 			$ret .= "</span>";
 		}
 
-		$replacement = $this->fck_addToStrtr($ret);
+		$replacement = $this->fck_addToStrtr($ret, '<'.$tagName.'>');
 
 		return $replacement;
 	}
@@ -248,12 +261,12 @@ class FCKeditorParser extends Parser
 			if (substr($text, $spaceStart, 1) === "\n" and substr($text, $spaceStart + $spaceLen, 1) === "\n") {
 				# Remove the comment, leading and trailing
 				# spaces, and leave only one newline.
-				$replacement = $this->fck_addToStrtr(substr($text, $spaceStart, $spaceLen+1), false);
+				$replacement = $this->fck_addToStrtr(substr($text, $spaceStart, $spaceLen+1), '', false);
 				$text = substr_replace($text, $replacement."\n", $spaceStart, $spaceLen + 1);
 			}
 			else {
 				# Remove just the comment.
-				$replacement = $this->fck_addToStrtr(substr($text, $start, $end - $start), false);
+				$replacement = $this->fck_addToStrtr(substr($text, $start, $end - $start), '', false);
 				$text = substr_replace($text, $replacement, $start, $end - $start);
 			}
 		}
@@ -337,40 +350,41 @@ class FCKeditorParser extends Parser
 				else if ($sum == 0) {
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
-                    if (substr($inner, 0, 7) == '{{#ask:' )
-                        $fck_mw_template =  'fck_mw_askquery';
-                    else {
-                        $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
-                        if (in_array($funcName, $this->FCKeditorDateTimeVariables))
-                           $fck_mw_template = 'v';
-                        else if (in_array($funcName, $this->FCKeditorWikiVariables))
-                           $fck_mw_template = 'w';
-                        else if (in_array($funcName, $this->FCKeditorFunctionHooks))
-                           $fck_mw_template = 'p';
-                        else
-                           $fck_mw_template = 'fck_mw_template';
-                    }
-                    if (strlen($fck_mw_template) > 1) {
-                       $this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"'] = 'href="'.$inner.'"';
-                       $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="'.$fck_mw_template.'">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
-                    } else {
-                       $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="'.$funcName.'" _fck_mw_tagtype="'.$fck_mw_template.'"';
-                       if (strlen($inner) > strlen($funcName) + 5) {
-                          $content = substr($inner, strlen($funcName) + 3, -2);
-                          $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '>'.$content.'</span>';
-                       }
-                       else $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '/>';
-                    }
-					$startingPos = $pos + 19;
-					$this->fck_mw_strtr_span_counter++;
-				}
-				$lastSum = $sum;
-			}
-			$stringToParse .= substr($text, $startingPos);
-			$text = &$stringToParse;
-		}
+                                        if (substr($inner, 0, 7) == '{{#ask:' )
+                                            $fck_mw_template =  'fck_mw_askquery';
+                                        else {
+                                            $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
+                                            if (in_array($funcName, $this->FCKeditorDateTimeVariables))
+                                                $fck_mw_template = 'v';
+                                            else if (in_array($funcName, $this->FCKeditorWikiVariables))
+                                                $fck_mw_template = 'w';
+                                            else if (in_array($funcName, $this->FCKeditorFunctionHooks))
+                                                $fck_mw_template = 'p';
+                                            else
+                                                $fck_mw_template = 'fck_mw_template';
+                                        }
+                                        if (strlen($fck_mw_template) > 1) {
+                                            $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="'.$fck_mw_template.'">'.str_replace(array("\r\n", "\n", "\r"),"fckLR",$inner).'</span>';
+                                        } else {
+                                            $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'] = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="'.$funcName.'" _fck_mw_tagtype="'.$fck_mw_template.'"';
+                                            if (strlen($inner) > strlen($funcName) + 5) {
+                                                $content = substr($inner, strlen($funcName) + 3, -2);
+                                                $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '>'.$content.'</span>';
+                                            }
+                                            else $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw'].= '/>';
+                                        }
+                                        $this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"'] = 'href="'.$inner.'"';
 
-		return $text;
+                                        $startingPos = $pos + 19;
+                                        $this->fck_mw_strtr_span_counter++;
+                                }
+                		$lastSum = $sum;
+                        }
+                        $stringToParse .= substr($text, $startingPos);
+                        $text = &$stringToParse;
+                }
+
+            return $text;
 	}
 
 	/**
@@ -430,8 +444,8 @@ class FCKeditorParser extends Parser
 		    $text = StringUtils::delimiterReplaceCallback( "<$tag>", "</$tag>", array($this, 'fck_allTags'), $text );
 		}
 		
-        // __TOC__ etc. must be replaced
-        $text = $this->stripToc( $text );
+                // __TOC__ etc. must be replaced
+                $text = $this->stripToc( $text );
 		
 		//html comments shouldn't be stripped
 		$text = $this->fck_replaceHTMLcomments( $text );
@@ -445,8 +459,8 @@ class FCKeditorParser extends Parser
 		return $finalString;
 	}
 	function fck_allTags( $matches ) {
-        return $this->fck_wikiTag($this->fck_allTagsCurrentTagReplaced, $matches[1]);
-    }
+                return $this->fck_wikiTag($this->fck_allTagsCurrentTagReplaced, $matches[1]);
+        }
 	function fck_leaveTemplatesAlone( $matches ) {
 		return "<!--FCK_SKIP_START-->".$matches['text']."<!--FCK_SKIP_END-->";
 	}
@@ -456,15 +470,15 @@ class FCKeditorParser extends Parser
 	function replaceFreeExternalLinks( $text ) { return $text; }
 	function stripNoGallery(&$text) {}
 	function stripToc( $text ) {
-        $prefix = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="%s" _fck_mw_tagtype="c">';
-        $suffix = '</span>';
+                $prefix = '<span class="fck_mw_special" _fck_mw_customtag="true" _fck_mw_tagname="%s" _fck_mw_tagtype="c">';
+                $suffix = '</span>';
 	  
 		$strtr = array();
 		foreach ($this->FCKeditorMagicWords as $word) {
 			$strtr['__'.$word.'__'] = sprintf($prefix, $word) . $suffix;
 		}
 		foreach ($strtr as $key => $val) {
-		    $strtr[$key] = $this->fck_addToStrtr($val);
+		    $strtr[$key] = $this->fck_addToStrtr($val, $key);
 		}
 		return strtr( $text, $strtr );
 	}
@@ -476,30 +490,31 @@ class FCKeditorParser extends Parser
 	 * @param  string match
 	 * @return string replaced placeholder or [[match]]
 	 */
-    private function replaceSpecialLinkValue($match) {
-	    // if there are parameters used for properties, such as {{{1}}}
-        // these have been replaces with the templates already and look like
-        // Fckmw12fckmw now. Therefore revert these back to their original value.
-        if (preg_match_all('/Fckmw\d+fckmw/', $match, $matches)) {
-            for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
-               if (isset($this->fck_mw_strtr_span[$matches[0][$i]])) {
-                   $match = str_replace($matches[0][$i],
-                                        substr($this->fck_mw_strtr_span[$matches[0][$i]], 30, -7),
-                                        $match);
-                   unset($this->fck_mw_strtr_span[$matches[0][$i]]);
-                   if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"']))
-                       unset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"']);
-               }
+        private function replaceSpecialLinkValue($match) {
+
+            // if there are parameters used for properties, such as {{{1}}}
+            // these have been replaces with the templates already and look like
+            // Fckmw12fckmw now. Therefore revert these back to their original value.
+            if (preg_match_all('/Fckmw\d+fckmw/', $match, $matches)) {
+                for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
+                    if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'])) {
+                        $match = str_replace(
+                            $matches[0][$i],
+                            substr($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'], 6, -1),
+                            $match
+                        );
+                    }
+                }
             }
-        }
-		$res = $this->replacePropertyValue($match);
-		if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
-			return $res;
-		$res = $this->replaceRichmediaLinkValue($match);
-		// here we don't check, if something was replaced, even if not we have to return the
-		// original value.
-		return $res;
+            $res = $this->replacePropertyValue($match);
+            if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
+                return $res;
+            $res = $this->replaceRichmediaLinkValue($match);
+            // here we don't check, if something was replaced, even if not we have to return the
+            // original value.
+            return $res;
 	}
+
 	/**
 	 * check the parser match from inside the [[ ]] and see if it's a property.
 	 * If thats the case, safe the property string in the array
