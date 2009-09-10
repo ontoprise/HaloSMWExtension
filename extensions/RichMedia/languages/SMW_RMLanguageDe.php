@@ -67,7 +67,8 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_embed_view' => 'Ansicht',
 		'smw_rm_embed_fullres'=> 'Volle Auflösung',
 		'smw_rm_embed_fittowindow' => 'An Fenster anpassen',
-		'smw_rm_embed_desctext' => 'Beschreibungsseite'
+		'smw_rm_embed_desctext' => 'Beschreibungsseite',
+		'smw_rm_embed_savetext' => 'speichern',
 	);
 
 	protected $smwRMNamespaces = array(
