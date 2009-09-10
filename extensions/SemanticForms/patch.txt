@@ -61,15 +61,15 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            $query_template_name = str_replace('.', '_', $query_template_name);
            $chooser_name = false;
            $chooser_caption = false;
-+          $collapsable = false;
++          $collapsible = false;
 +          $force_open = false;
  	  // cycle through the other components
            for ($i = 2; $i < count($tag_components); $i++) {
              $component = $tag_components[$i];
              if ($component == 'multiple') $allow_multiple = true;
              if ($component == 'strict') $strict_parsing = true;
-+            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsableTag|start*/
-+            if ($component == 'collapsable') $collapsable = true;
++            /*op-patch|BL|2009-08-28|CollapsingForms|AddCollapsibleTag|start*/
++            if ($component == 'collapsible') $collapsible = true;
 +            /*op-patch|BL|2009-08-28|end*/
              $sub_components = explode('=', $component);
              if (count($sub_components) == 2) {
@@ -103,8 +103,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +              $queryparts = explode('/', $wgRequest->getRequestURL());
 +              $form_name = isset($queryparts[count($queryparts)-2]) ? $queryparts[count($queryparts)-2] : '';
 +            }
-+            //TODO: collapsable or not?!?
-+            if ($collapsable) {
++            //only if collapsible
++            if ($collapsible) {
 +              #cookie processing
 +              $cookie_json = $_COOKIE['CollapsingForm'];
 +              if ($cookie_json)
@@ -208,7 +208,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 -
 +	
 +      /*op-patch|BL|2009-08-14|CollapsingForms|AddDivForCollapsingForms|start*/
-+      if($collapsable)
++      if($collapsible)
 +        $form_text .= "</div>"; //closing div for collapsing
 +      /*op-patch|BL|2009-08-14|end*/
      } // end for
