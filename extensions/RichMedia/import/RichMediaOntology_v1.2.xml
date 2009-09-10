@@ -431,8 +431,8 @@
     <title>Template:RMCategoryLinkIcon</title>
     <id>414</id>
     <revision>
-      <id>7071</id>
-      <timestamp>2009-09-10T11:49:33Z</timestamp>
+      <id>7193</id>
+      <timestamp>2009-09-10T14:27:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -449,8 +449,7 @@
 |copyright holder=ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;
-&lt;includeonly&gt;{{#switch: 
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: 
   {{#sub:
     {{lc: {{{1}}} }} 
     | 0
@@ -464,7 +463,7 @@
   | vcard={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_vcard_icon_16x16.gif
   | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
   | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-}}&lt;/includeonly&gt;</text>
+}}</text>
     </revision>
   </page>
   <page>
@@ -486,8 +485,8 @@
     <title>Template:RMListOuterTable</title>
     <id>510</id>
     <revision>
-      <id>7161</id>
-      <timestamp>2009-09-10T14:04:53Z</timestamp>
+      <id>7182</id>
+      <timestamp>2009-09-10T14:23:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -531,7 +530,7 @@
 ! style=&quot;border-top: 1px solid rgb(225, 224, 218);&quot; colspan=&quot;6&quot; | 
 |-
 | colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
-| style=&quot;vertical-align: top;&quot; | {{#rmf: {{FULLPAGENAME}} }}
+| style=&quot;text-align:right;vertical-align: top;&quot; | {{#rmf: {{FULLPAGENAME}} }}
 |-
 ! style=&quot;border-top: 1px solid rgb(17, 105, 136);&quot; colspan=&quot;6&quot; | 
 |}
