@@ -874,6 +874,9 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
                                             switch (sTagType) {
                                                 case 't' :
                                                     sTagName = '<' + sTagName + '>';
+                                                    if (eSpan.innerHTML.length > 0)
+                                                        sTagName += FCKTools.HTMLDecode(eSpan.innerHTML).replace(/fckLR/g, '\r\n')
+                                                            + '</' + sTagName.substr(1);
                                                     break;
                                                 case 'c' :
                                                     sTagName = '__' + sTagName + '__';
@@ -881,11 +884,19 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
                                                 case 'v' :
                                                 case 'w' :
                                                 case 'p' :
-                                                    sTagName = '{{' + sTagName + '}}';
+                                                    sTagName = '{{' + sTagName;
+                                                    if (eSpan.innerHTML.length > 0)
+                                                        sTagName += ':' + FCKTools.HTMLDecode(eSpan.innerHTML).replace(/fckLR/g, '\r\n');
+                                                    sTagName += '}}';
                                                     break;
                                             }
                                             oImg.setAttribute('alt', sTagName);
                                             oImg.setAttribute('title', sTagName);
+                                        }
+                                        // if this is a template, add the alt and title attribute with template content
+                                        if ( className == 'FCK__MWTemplate' ) {
+                                            oImg.setAttribute('alt', eSpan.innerHTML);
+                                            oImg.setAttribute('title', eSpan.innerHTML);
                                         }
 
 					eSpan.parentNode.insertBefore( oImg, eSpan ) ;
