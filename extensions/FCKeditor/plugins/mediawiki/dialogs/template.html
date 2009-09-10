@@ -145,8 +145,14 @@ function Ok()
 	{
 		oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( 'FCK__MWTemplate', oTemplateSpan ) ;
 		oFakeImage.setAttribute( '_fck_mw_template', 'true', 0 ) ;
+                oFakeImage.setAttribute( 'title', templateData);
+                oFakeImage.setAttribute( 'alt', templateData);
 		oFakeImage	= FCK.InsertElement( oFakeImage ) ;
 	}
+        else {
+                oFakeImage.setAttribute( 'title', templateData);
+                oFakeImage.setAttribute( 'alt', templateData);
+        }
 
 	//GetE('xTestSpan').innerHTML = GetE('xTemplateRaw').value.Trim().replace( /"/g, '&quot;' ).replace(/(\r\n|\n)/g, '___') ;
 	return true ;

@@ -60,6 +60,22 @@ TagNode.prototype.getLabel = function() {
             return '{{' + this.name + '}}'
     }
 }
+
+TagNode.prototype.getTooltip = function(content) {
+    if (!content)
+        return this.getLabel();
+    content = FCKTools.HTMLDecode(content).replace(/fckLR/g, '\r\n');
+    switch (this.type) {
+        case 't' :
+            return '<' + this.name + '>'
+                   + content
+                   + '</' + this.name + '>';
+        case 'p' :
+            return '{{' + this.name + ':'
+                   + content + '}}';
+    }
+}
+
 function TagNodeList() {
     this.list = [];
 }
@@ -261,6 +277,7 @@ function Ok()
         var tagType = oSpecialTagList.getTypeByName(GetE('xSelectTag').value );
 	SetAttribute( oTemplateSpan, '_fck_mw_tagname', tagName ) ;
 	SetAttribute( oTemplateSpan, '_fck_mw_tagtype', tagType ) ;
+        var tooltip;
 
 	switch (GetE('xSelectTag').value)
 	{
@@ -281,6 +298,8 @@ function Ok()
 		break;
 		default:
 		sFakeClass = 'FCK__MWSpecial';
+                var tagNode = new TagNode( tagName, tagType, '' );
+                tooltip = tagNode.getTooltip(templateData);
 		break;
 	}
 	
@@ -290,9 +309,8 @@ function Ok()
 		oFakeImage.setAttribute( '_fck_mw_special', 'true', 0 ) ;
                 // for Special Tags we add title and alt attribute to the fake image
                 if (sFakeClass == 'FCK__MWSpecial') {
-                    var tagNode = new TagNode( tagName, tagType, '' );
-                    oFakeImage.setAttribute( 'alt', tagNode.getLabel());
-                    oFakeImage.setAttribute( 'title', tagNode.getLabel());
+                    oFakeImage.setAttribute( 'alt', tooltip);
+                    oFakeImage.setAttribute( 'title', tooltip);
                 }
 		oFakeImage	= FCK.InsertElement( oFakeImage ) ;
 	}
@@ -300,9 +318,14 @@ function Ok()
 		oFakeImage.className = sFakeClass ;
                 // for Special Tags reset the title and alt attribute according to the new element
                 if (sFakeClass == 'FCK__MWSpecial') {
-                    var tagNode = new TagNode( tagName, tagType, '' );
-                    oFakeImage.setAttribute( 'alt', tagNode.getLabel());
-                    oFakeImage.setAttribute( 'title', tagNode.getLabel());
+                    oFakeImage.setAttribute( 'alt', tooltip);
+                    oFakeImage.setAttribute( 'title', tooltip);
+                }
+                else {
+                    if (oFakeImage.getAttribute('alt'))
+                        oFakeImage.removeAttribute('alt');
+                    if (oFakeImage.getAttribute('title'))
+                        oFakeImage.removeAttribute('title');
                 }
         }
 
