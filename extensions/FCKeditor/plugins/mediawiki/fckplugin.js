@@ -614,8 +614,8 @@ FCK.DataProcessor =
 					if (!this._inLSpace && !this._inPre && !FCKBrowserInfo.IsOpera) {
 						textValue = textValue.replace( /[\n\t]/g, ' ' ) ; 
 					}
-	
-					textValue = FCKTools.HTMLEncode( textValue ) ;
+                                        // remove this line, to have xml remaining unchanged.
+					//textValue = FCKTools.HTMLEncode( textValue ) ;
 					textValue = textValue.replace( /\u00A0/g, '&nbsp;' ) ;
 
 					if ( ( !htmlNode.previousSibling ||
