@@ -814,8 +814,10 @@ FCK.DataProcessor =
                             SetEventHandler4AnnotationBox();
                         }
                         // add autocompletion
-                        //FCK.EditingArea.Textarea.className += ' wickEnabled:MWFloater0';
-	}
+                        FCK.EditingArea.Textarea.className += ' wickEnabled';
+                        FCK.EditingArea.Textarea.setAttribute('id', 'source_wikitext');
+                        window.parent.autoCompleter.registerTextArea('source_wikitext', window.parent.frames[0]);
+                }
 })() ;
 
 // MediaWiki document processor.
@@ -1177,23 +1179,10 @@ ShowCatToolbar = function(event, name) {
  * @return Array(int, int) coordinates x, y
  */
 CalculateClickPosition = function(event) {
-    var id = (window.parent.wgAction == "formedit") // Semantic Forms?
-        ? 'free_text___Frame'
-        : 'editform';
-    var el = window.parent.document.getElementById(id);
+    var offset = GetOffsetFromOuterHtml();
 
-    var x = 0;
-    var y = document.getElementById('xToolbarRow').offsetHeight; // add hight of toolbar
-    y += 10;
-
-    if (el.offsetParent) {
-        do {
-            x += el.offsetLeft;
-            y += el.offsetTop;
-        } while (el = el.offsetParent);
-    }
-    x += event.clientX;
-    y += event.clientY;
+    var x = offset[0] + event.clientX;
+    var y = offset[1] + event.clientY;
 
     // ajust position if the page has been scrolled
     var sx;
@@ -1218,6 +1207,34 @@ CalculateClickPosition = function(event) {
     pos[0] = x;
     pos[1] = y;
     return pos;
+}
+
+/**
+ * get offset from elements around the iframe
+ *
+ * @access public
+ * @return array(int, int) offsetX, offsetY
+ */
+GetOffsetFromOuterHtml = function() {
+    var id = (window.parent.wgAction == "formedit") // Semantic Forms?
+        ? 'free_text___Frame'
+        : 'editform';
+    var el = window.parent.document.getElementById(id);
+
+    var x = 0;
+    var y = document.getElementById('xToolbarRow').offsetHeight; // add hight of toolbar
+    y += 10;
+
+    if (el.offsetParent) {
+        do {
+            x += el.offsetLeft;
+            y += el.offsetTop;
+        } while (el = el.offsetParent);
+    }
+    var offset = [];
+    offset[0] = x;
+    offset[1] = y;
+    return offset;
 }
 
 // needed to access the Plugin class from the FCKeditInterface
