@@ -473,20 +473,22 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         assActive = true;
     }
 
-    var tab1 = new YAHOO.widget.Tab({
-        label: myLabel,
-        dataSrc:'rightPanelSelectDeselectTab',
-        cacheData:false,
-        active:selectActive,
-        disabled:selectDisabled,
-        postData:parameterlist
-    });
-    tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
-    YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
-    tab1.addListener('click', function(e){});
-    //$(tab1.get('contentEl')).style.display = 'none';
-    $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
- 
+    if(!readOnly){
+        var tab1 = new YAHOO.widget.Tab({
+            label: myLabel,
+            dataSrc:'rightPanelSelectDeselectTab',
+            cacheData:false,
+            active:selectActive,
+            disabled:selectDisabled,
+            postData:parameterlist
+        });
+        tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
+        YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
+        tab1.addListener('click', function(e){});
+        //$(tab1.get('contentEl')).style.display = 'none';
+        $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+    }
+    
     var tab2 = new YAHOO.widget.Tab({
         label: gLanguage.getMessage('assigned'),
         dataSrc:'rightPanelAssignedTab',
@@ -795,3 +797,12 @@ YAHOO.haloacl.addTooltip = function(name, context, text){
     });
 }
 
+YAHOO.haloacl.discardChanges_createacl = function(){
+    //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
+    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
+        yes:function(){
+            window.location.href='?activetab=createACL';
+        },
+        no:function(){}
+    },"Ok","Cancel");
+}

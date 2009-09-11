@@ -1007,7 +1007,7 @@ button:hover{
     width:200px;
 }
 .yui-ac-content{
-    min-width:200px!important;
+    min-width:500px!important;
     float:left!important;
 }
 
