@@ -1920,3 +1920,10 @@ FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
 
 // implementation for the Semantic toolbar END here
+
+// add button for adding a web service
+var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', 'Add Web Service call', 'Add web service call', null, true) ;
+uwsButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_webservice.gif' ;
+FCKToolbarItems.RegisterItem( 'SMW_UseWebService', uwsButton );
+
+FCKCommands.RegisterCommand( 'SMW_UseWebService', new FCKDialogCommand( 'SMW_UseWebService', 'UseWebService', FCKConfig.PluginsPath + 'mediawiki/dialogs/usewebservice.php', 1000, 600 ) ) ;

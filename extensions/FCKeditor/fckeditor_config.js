@@ -20,7 +20,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_Annotate', 'MW_Edit']
+	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_UseWebService', 'SMW_Annotate', 'MW_Edit']
 ] ;
 
 // Load the extension plugins.
