@@ -12,13 +12,13 @@ class FCKeditorParser extends Parser
 	protected $fck_mw_richmediaLinkAtPage = array();
 	private $fck_allTags_currentTagReplaced = '';
 
+    // list here all standard wiki tags that are supported by Mediawiki
     private $FCKeditorWikiTags = array(
        "nowiki",
        "includeonly",
        "onlyinclude",
        "noinclude",
-       "gallery",
-       "ask"
+       "ask" // old tag that is still supported in smw
     );
 	private $FCKeditorMagicWords = array(
        "NOTOC",
@@ -26,14 +26,14 @@ class FCKeditorParser extends Parser
        "TOC",
        "NOEDITSECTION",
        "NEWSECTIONLINK",
-       "NONEWSECTIONLINK",
+       //"NONEWSECTIONLINK", // MW 1.15+
        "NOCONTENTCONVERT",
        "NOCC",
        "NOTITLECONVERT",
        "NOTC",
-       "INDEX",
-       "NOINDEX",
-       "STATICREDIRECT",
+       //"INDEX", // MW 1.14+
+       //"NOINDEX", // MW 1.14+
+       //"STATICREDIRECT", // MW 1.14+
        "NOGALLERY",
        "HIDDENCAT"
 	);
@@ -66,7 +66,7 @@ class FCKeditorParser extends Parser
        'REVISIONMONTH',
        'REVISIONYEAR',
        'REVISIONTIMESTAMP',
-       'REVISIONUSER',
+       //'REVISIONUSER', // MW 1.15+
        'FULLPAGENAME',
        'PAGENAME',
        'BASEPAGENAME',
@@ -77,23 +77,42 @@ class FCKeditorParser extends Parser
        'ARTICLESPACE',
        'TALKSPACE'
     );
-    private $FCKeditorFunctionHooks = array();
+    private $FCKeditorFunctionHooks = array(
+        'lc',
+        'lcfirst',
+        'uc',
+        'ucfirst',
+        'formatnum',
+        //'#dateformat', // MW 1.15+
+        'padleft',
+        'padright',
+        'plural',
+        'grammar',
+        '#language',
+        'int',
+        '#tag',
+    );
 
-	function __construct() {
-		global $wgParser;
-		parent::__construct();
+    public function __construct() {
+        global $wgParser;
+	parent::__construct();
 
-		foreach ($wgParser->getTags() as $h) {
-			if (!in_array($h, array("pre"))) {
-				$this->setHook($h, array($this, "fck_genericTagHook"));
-			}
-		}
-        foreach ($wgParser->getFunctionHooks() as $h) {
-            if (!in_array($h, array("ask", "sparql"))) {
-                $this->FCKeditorFunctionHooks[] = '#'.$h;
+        // add custom tags from extensions to list
+	foreach ($wgParser->getTags() as $h) {
+            if (!in_array($h, array("pre"))) {
+                $this->setHook($h, array($this, "fck_genericTagHook"));
             }
-        }
+            if (! in_array($h, $this->FCKeditorWikiTags))
+                $this->FCKeditorWikiTags[] = $h;
 	}
+        // add custom parser funtions from extensions to list
+        foreach ($wgParser->getFunctionHooks() as $h) {
+            // ask and sparql are no special tags and have there own <span> elements in FCK
+            if (!in_array($h, array("ask", "sparql")) &&
+                !in_array($h, $this->FCKeditorFunctionHooks))
+                $this->FCKeditorFunctionHooks[] = '#'.$h;
+        }
+    }
 
     public function getSpecialTags() {
         return $this->FCKeditorWikiTags;
