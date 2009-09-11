@@ -1465,8 +1465,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>417</id>
     <revision>
-      <id>6708</id>
-      <timestamp>2009-09-07T12:16:14Z</timestamp>
+      <id>7526</id>
+      <timestamp>2009-09-11T15:17:43Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1479,7 +1479,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMImage}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMImage}}}
+{{{for template|RMImage|label=Meta Information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1541,8 +1541,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>418</id>
     <revision>
-      <id>6690</id>
-      <timestamp>2009-09-07T11:05:55Z</timestamp>
+      <id>7528</id>
+      <timestamp>2009-09-11T15:20:27Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1555,7 +1555,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMPdf}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMPdf}}}
+{{{for template|RMPdf|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1622,8 +1622,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>419</id>
     <revision>
-      <id>6689</id>
-      <timestamp>2009-09-07T11:05:19Z</timestamp>
+      <id>7527</id>
+      <timestamp>2009-09-11T15:19:31Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1636,7 +1636,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMDocument}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMDocument}}}
+{{{for template|RMDocument|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1706,8 +1706,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMAudio</title>
     <id>420</id>
     <revision>
-      <id>6691</id>
-      <timestamp>2009-09-07T11:06:27Z</timestamp>
+      <id>7529</id>
+      <timestamp>2009-09-11T15:20:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1720,7 +1720,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMAudio}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMAudio}}}
+{{{for template|RMAudio|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1780,8 +1780,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVideo</title>
     <id>421</id>
     <revision>
-      <id>6692</id>
-      <timestamp>2009-09-07T11:07:06Z</timestamp>
+      <id>7531</id>
+      <timestamp>2009-09-11T15:21:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1794,7 +1794,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMVideo}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMVideo}}}
+{{{for template|RMVideo|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1853,8 +1853,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVCard</title>
     <id>1002</id>
     <revision>
-      <id>6693</id>
-      <timestamp>2009-09-07T11:07:47Z</timestamp>
+      <id>7533</id>
+      <timestamp>2009-09-11T15:22:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1867,7 +1867,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMVCard}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMVCard}}}
+{{{for template|RMVCard|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1933,8 +1933,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMICalendar</title>
     <id>1003</id>
     <revision>
-      <id>6694</id>
-      <timestamp>2009-09-07T11:08:22Z</timestamp>
+      <id>7532</id>
+      <timestamp>2009-09-11T15:21:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1947,7 +1947,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMICalendar}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{for template|RMICalendar}}}
+{{{for template|RMICalendar|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
