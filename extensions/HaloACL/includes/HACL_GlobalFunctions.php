@@ -180,6 +180,7 @@ function addNonSpecialPageHeader(&$out) {
 
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
 
 $out->addLink(array(
@@ -194,7 +195,9 @@ $out->addLink(array(
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath. '/yui/container.css'
         ));
-    
+
+
+  
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
@@ -238,7 +241,6 @@ $out->addLink(array(
     
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
     return true;
 }

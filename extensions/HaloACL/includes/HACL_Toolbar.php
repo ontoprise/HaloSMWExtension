@@ -41,7 +41,7 @@ function AddHaclToolbar ($content_actions) {
     if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
         return $content_actions;
     }
-    
+
     $html = <<<HTML
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
@@ -66,6 +66,7 @@ HTML;
 function getHACLToolbar($articleTitle) {
     global $wgUser;
     $isPageProtected = false;
+    $toolbarEnabled = true;
     $newArticle = true;
 
 
@@ -92,6 +93,9 @@ function getHACLToolbar($articleTitle) {
             $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
             $protectedWith = $SD->getSDName();
             $isPageProtected = true;
+            if(!$SD->userCanModify($wgUser->getName())) {
+                $toolbarEnabled = false;
+            }
         }
         catch(Exception $e) {
 
@@ -180,8 +184,12 @@ function getHACLToolbar($articleTitle) {
 
         <div id="hacl_toolbarcontainer_section1">
             Page state:&nbsp;
-            <select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">
 HTML;
+    if($toolbarEnabled) {
+        $html .=       '<select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
+    }else {
+        $html .=       '<select disabled id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
+    }
     // bulding protected state indicator
     if($isPageProtected) {
         $html .= "   <option>unprotected</option>
@@ -201,7 +209,12 @@ HTML;
         $tpllist[] = $protectedWith;
     }
 
-    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span><select id='haloacl_template_protectedwith'>";
+    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
+    if($toolbarEnabled) {
+        $html .= "<select id='haloacl_template_protectedwith'>";
+    }else {
+        $html .= "<select disabled id='haloacl_template_protectedwith'>";
+    }
     foreach($tpllist as $tpl) {
         if($tpl == $protectedWith) {
             $html .= "<option selected='true'>$tpl</option>";
