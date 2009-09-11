@@ -1,6 +1,12 @@
 <?php
 class RMForm {
 
+	/**
+	 * Paser function that creates the HTML form for the media list
+	 *
+	 * @param array $parameter
+	 * @return HTML
+	 */
 	static function createRichMediaForm(&$parameter) {
 		global $wgOut, $wgParser;
 
@@ -23,43 +29,65 @@ END;
 		//return array($html, 'noparse' => true, 'isHTML' => true);
 		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
 	}
-	
-	static function createRichMediaLink(&$parameter) {
-		global $wgOut, $wgParser, $wgRequest;
+	/**
+	 * Parser funtion that creates a link to the upload overlay
+	 * 
+	 *
+	 * @param array $parameters
+	 * 		1. The link text
+	 * 		2. The link title
+	 * 		3. the set of values that you want passed in through the query string to the upload form. 
+	 * 			It should look like a typical URL query string
+	 * @return HTML
+	 */
+	static function createRichMediaLink(&$parameters) {
+		global $wgOut, $wgParser, $wgRequest, $smwgRMFormByNamespace;
+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];;
 
-		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) )
-			$link_name = $parameter[0];
+		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) )
+			$linkText = $parameters[0];
 		else
-			$link_name = 'Link';
+			$linkText = 'Link';
 
-		if ( array_key_exists( 1, $parameter ) && isset( $parameter[1] ) )
-			$link_title = $parameter[1];
+		if ( array_key_exists( 1, $parameters ) && isset( $parameters[1] ) )
+			$linkTitle = $parameters[1];
 		else
-			$link_title = wfMsgNoTrans('smw_rm_uploadheadline');
+			$linkTitle = wfMsgNoTrans('smw_rm_uploadheadline');
 		
-		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) )
-			$rev_width = 'width:' . $parameter[2];
-		else
-			$rev_width = 'width:600';
-
-		if ( array_key_exists( 3, $parameter ) && isset( $parameter[3] ) )
-			$rev_height = 'height:' . $parameter[3];
-		else
-			$rev_height = 'height:660';
 		
-		$rev = $rev_width . ' ' . $rev_height;
+		$queryString = "";
 		
-		global $smwgRMFormByNamespace;
-		$smwgRMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
-		$queryString = "wpIgnoreWarning=true";
+		$queryParameters = explode('&', $parameters[2]);
+		#cylce throuh other paramters and check if no preview value is blank!
+		for ($i = 0; $i < count($queryParameters); $i++) {
+			$queryParameter = $queryParameters[$i];
+			
+			if ( $queryString != "" )
+				$combine = "&";
+			$querySubParameter = explode('=', $queryParameter);
+			if ( count ($querySubParameter) == 2) {
+				if ( $querySubParameter[1] != "" ) {
+					$queryString .= $combine.$querySubParameter[0]."=".$querySubParameter[1];
+				}
+			}
+		}
+		
+		$rev = 'width:600 height:660';
+		$queryString .= "&wpIgnoreWarning=true";
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 
-		$html = "<a href=\"$uploadWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_name</a>";
+		$html = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" rel=\"iframe\" rev=\"$rev\">$linkText</a>";
 
 		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
 	}
 	
+	/**
+	 * Parser function that creates a link to the EmbedWindow
+	 *
+	 * @param array $parameter
+	 * @return HTML
+	 */
 	static function createRichMediaEmbedWindowLink(&$parameter) {
 		global $wgOut, $wgParser, $wgRequest;
 
@@ -76,12 +104,12 @@ END;
 		if ( array_key_exists( 2, $parameter ) && isset( $parameter[2] ) )
 			$rev_width = 'width:' . $parameter[2];
 		else
-			$rev_width = 'width:800';
+			$rev_width = 'width:700';
 
 		if ( array_key_exists( 3, $parameter ) && isset( $parameter[3] ) )
 			$rev_height = 'height:' . $parameter[3];
 		else
-			$rev_height = 'height:600';
+			$rev_height = 'height:500';
 		
 		$rev = $rev_width . ' ' . $rev_height;
 		
