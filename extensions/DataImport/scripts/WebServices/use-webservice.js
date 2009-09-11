@@ -230,43 +230,48 @@ UseWebService.prototype = {
 
 		this.hideHelpAll();
 
-		var params = document.URL.split("?");
-		if(params[1] != null){
-			params = params[1].split("&");
-		} else {
-			params = "";
-		}
-		
-		
-		this.url = "";
-		for ( var i = 0; i < params.length; i++) {
-			if (params[i].indexOf("url") == 0) {
-				this.url = unescape(params[i].substr(params[i].indexOf("=") + 1));
-			} else if (params[i].indexOf("wsSynS=") == 0) {
-				wsSynS = params[i];
-			} else if (params[i].indexOf("wsSynE=") == 0) {
-				wsSynE = params[i];
+		if(typeof FCK == 'undefined'){
+			var params = document.URL.split("?");
+			if(params[1] != null){
+				params = params[1].split("&");
+			} else {
+				params = "";
 			}
-		}
 		
-		this.title = "";
-
-		if (this.url.length > 0) {
-			params = this.url.split("&");
-			for(i=0; i < params.length; i++){
-				if(params[i].indexOf("?title=") > 0){
-					var title = params[i].substring(params[i].indexOf("?title=")+7);
-					this.title = title;
+			this.url = "";
+			for ( var i = 0; i < params.length; i++) {
+				if (params[i].indexOf("url") == 0) {
+					this.url = unescape(params[i].substr(params[i].indexOf("=") + 1));
+				} else if (params[i].indexOf("wsSynS=") == 0) {
+					wsSynS = params[i];
+				} else if (params[i].indexOf("wsSynE=") == 0) {
+					wsSynE = params[i];
 				}
 			}
-			this.url += "&" + wsSynS;
-			this.url += "&" + wsSynE;
+		
+			this.title = "";
+
+			if (this.url.length > 0) {
+				params = this.url.split("&");
+				for(i=0; i < params.length; i++){
+					if(params[i].indexOf("?title=") > 0){
+						var title = params[i].substring(params[i].indexOf("?title=")+7);
+						this.title = title;
+					}
+				}
+				this.url += "&" + wsSynS;
+				this.url += "&" + wsSynE;
 			
-			var title = this.url.substr(this.url.indexOf("title=") + 6);
-			title = title.substr(0, title.indexOf("&"));
-			title = title.replace(/_/g, " ");
-			$("step5-add").value = diLanguage.getMessage('smw_wwsu_addcall') + title;
-			$("step5-add").style.display = "";
+				var title = this.url.substr(this.url.indexOf("title=") + 6);
+				title = title.substr(0, title.indexOf("&"));
+				title = title.replace(/_/g, " ");
+				$("step5-add").value = diLanguage.getMessage('smw_wwsu_addcall') + title;
+				$("step5-add").style.display = "";
+			}
+		} else {
+			window.parent.SetOkButton(true);
+			$('copyWSButton').style.display = "none";
+			$('displayWSButton').style.display = "none";
 		}
 	},
 
@@ -275,7 +280,7 @@ UseWebService.prototype = {
 			$("step4-template-container").style.display = "none";
 		} else {
 			$("step4-template-container").style.display = "";
-		}
+		} 
 	},
 
 	showPendingIndicator : function(onElement) {
@@ -303,12 +308,14 @@ UseWebService.prototype = {
 	hideHelp : function(id) {
 		$("step" + id + "-help").style.display = "none";
 		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "useWSSpecial.displayHelp("
-				+ id + ")";
 	},
 
 	hideHelpAll : function() {
 		for ( var i = 1; i < 6; i++) {
 			this.hideHelp(i);
+		}
+		if(typeof FCK != 'undefined'){
+			window.parent.SetOkButton(false);
 		}
 	},
 

@@ -71,9 +71,11 @@ WebServiceToolBar.prototype = {
 	},
 	
 	openSpecialPage : function(){
-		var url = wgArticlePath.replace(/\$1/, "Special:UseWebService");
 		var startPos = $("wpTextbox1").selectionStart;
 		var endPos = $("wpTextbox1").selectionEnd;
+		
+		var url = wgArticlePath.replace(/\$1/, "Special:UseWebService");
+		
 		
 		//handle different url patterns
 		if(url.indexOf("?") > 0){
@@ -93,18 +95,22 @@ WebServiceToolBar.prototype = {
 	},
 	
 	submitEditForm : function(){
+		//alert("called");
 		var iframe = document.createElement("iframe");
 		iframe.setAttribute("name", "response-iframe");
 		$("editform").parentNode.insertBefore(iframe, $("editform"));
+		//alert("iframe inserted");
 		$("editform").setAttribute("target", "response-iframe");
 		iframe.style.visibility = "none";
 		
 		$("wpSave").click();
+		//alert("wpsaved clciked");
 	}
 	
 	
 };
 
-var wsToolBar = new WebServiceToolBar();
-if (typeof FCKeditor == 'undefined')
-    Event.observe(window, 'load', wsToolBar.callme.bindAsEventListener(wsToolBar));
+if (typeof FCKeditor == 'undefined'){
+	var wsToolBar = new WebServiceToolBar();
+	Event.observe(window, 'load', wsToolBar.callme.bindAsEventListener(wsToolBar));
+}

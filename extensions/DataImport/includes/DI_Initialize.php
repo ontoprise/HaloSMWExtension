@@ -240,11 +240,19 @@ function smwDIWSAddHTMLHeader(&$out) {
 
 	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/webservices-rep.js', "all", -1, array(NS_SPECIAL.":WebServiceRepository"));
 	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/def-webservices.js', "all", -1, array(NS_SPECIAL.":DefineWebService"));
-	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js', "all", -1, array(NS_SPECIAL.":UseWebService"));
+	//$jsm->addScriptIf($smwgDIScriptPath .  '/scripts/WebServices/use-webservice.js');
 
+	//$jsm->serializeScripts($out);
+	
 	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/webservices-rep.js\"></script>");
 	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/def-webservices.js\"></script>");
-	$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+	
+	global $wgRequest;
+	
+	$action = $wgRequest->getVal('action');
+	if ($action != 'edit') {
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
+	}
 	
 	//smwfDIAddJSLanguageScripts($jsm, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
 	smwfDIAddJSLanguageScripts($out, "all", -1, array(NS_SPECIAL.":DefineWebService", NS_SPECIAL.":DefineWebService", NS_SPECIAL.":WebServiceRepository", NS_SPECIAL.":UseWebService"));
@@ -303,6 +311,7 @@ function smwDITBAddHTMLHeader(&$out){
 	$action = $wgRequest->getVal('action');
 	if ($action == 'edit') {
 		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
 	}
 	
 	return true;

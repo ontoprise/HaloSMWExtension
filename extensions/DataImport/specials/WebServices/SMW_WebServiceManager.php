@@ -47,6 +47,7 @@ require_once($smwgDIIP . '/specials/WebServices/SMW_UseWebServiceAjaxAccess.php'
 ##
 
 // Register additional namespaces
+global $smwgWWSNamespaceIndex;
 if (!isset($smwgWWSNamespaceIndex)) {
 	WebServiceManager::initWWSNamespaces(200);
 } else {
