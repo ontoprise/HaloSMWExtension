@@ -800,9 +800,12 @@ class SMWTripleStore extends SMWStore {
 				$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
 				if ($value->getTypeID() == '_dat') { // exception for dateTime
 					if ($literal != '') $value->setXSDValue($literal);
-				} else {
+				} if ($value->getTypeID() == '_ema') { // exception for email
+                    $value->setXSDValue($literal);
+                } else {
 					$value->setUserValue($literal);
 				}
+				
 			} else {
 				$property = $prs->getData();
 				if ($property instanceof SMWPropertyValue ) {
