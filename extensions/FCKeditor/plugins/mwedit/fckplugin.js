@@ -35,10 +35,11 @@ StartStandardMwEditCommand.prototype = {
 
     getHtml: function() {
     return 'The editor content has changed. Do you want to save the changes?<br/>' +
-           '<br/><br/>' +
-           '<input type="submit" name="wgSave" value="Save changes" onClick="window.frames[0].switchToStandardEdit.save();" />&nbsp;' +
-           '<input type="submit" name="dontSave" value="Don\'t save" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
-           '<input type="submit" name="cancel" value="Cancel" onClick="window.frames[0].switchToStandardEdit.cancel();" />&nbsp;';
+           '<br/><br/><div style="text-align: center;">' +
+           '<input type="submit" name="wgSave" value="yes" onClick="window.frames[0].switchToStandardEdit.save();" />&nbsp;' +
+           '<input type="submit" name="dontSave" value="no" onClick="window.frames[0].switchToStandardEdit.redirect();" />&nbsp;' +
+           '<input type="submit" name="cancel" value="cancel" onClick="window.frames[0].switchToStandardEdit.cancel();" />&nbsp;' +
+           '</div>';
     },
 
     save: function() {
