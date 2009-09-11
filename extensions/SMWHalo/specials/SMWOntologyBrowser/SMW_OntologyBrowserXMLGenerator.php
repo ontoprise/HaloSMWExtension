@@ -346,7 +346,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 				} else {
 					// small hack for datetime type. It may occur that there is a T at the end.
 					if ($smwValue->getTypeID() == '_dat') {
-	                    $xsdValue = str_replace('T', '', $smwValue->getXSDValue());
+	                    $xsdValue = (substr($smwValue->getXSDValue(), -1) == 'T') ? str_replace('T', '', $smwValue->getXSDValue()) : $smwValue->getXSDValue();
 	                } else {
 	                	$xsdValue = $smwValue->getXSDValue();
 	                }
