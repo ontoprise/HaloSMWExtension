@@ -146,7 +146,11 @@ END;
 				$embedHeight = $image->getHeight();
 			}
 			$embedObject = <<<END
-				<img id="embedded_object" src="{$imagePath}" style="margin-top:5px;" width="{$embedWidth}" height="{$embedHeight}" align="middle"/>
+			<table style="width:100%;height:93%">
+				<tr><td style="text-align:center">
+					<img id="embedded_object" src="{$imagePath}" style="margin-top:5pxvertical-align:middle" width="{$embedWidth}" height="{$embedHeight}"/>
+				</td></tr>
+			</table>
 END;
 		}
 		else{
