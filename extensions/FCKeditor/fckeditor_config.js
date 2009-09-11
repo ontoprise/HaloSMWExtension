@@ -47,15 +47,15 @@ FCKConfig.EditorAreaStyles = '\
 } \
 .FCK__MWTemplate \
 { \
-	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/icon_template.gif); \
-	width: 20px; \
-	height: 15px; \
+	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_template.gif); \
+	width: 16px; \
+	height: 16px; \
 } \
 .FCK__SMWask \
 { \
 	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif); \
-	width: 20px; \
-	height: 15px; \
+	width: 16px; \
+	height: 16px; \
 } \
 .FCK__MWRef \
 { \
