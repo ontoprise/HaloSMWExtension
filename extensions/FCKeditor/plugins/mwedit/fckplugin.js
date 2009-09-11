@@ -1,5 +1,5 @@
 // Register our toolbar buttons.
-var tbButton = new FCKToolbarButton( 'MW_Edit', 'StandardEditor', 'Switch to Wiki text editor' ) ;
+var tbButton = new FCKToolbarButton( 'MW_Edit', 'StandardEditor', 'Switch to Wiki text editor', null, true) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mwedit/images/icon_terminal.png' ;
 FCKToolbarItems.RegisterItem( 'MW_Edit', tbButton );
 
