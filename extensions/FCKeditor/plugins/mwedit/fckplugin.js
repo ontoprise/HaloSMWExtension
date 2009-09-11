@@ -46,8 +46,23 @@ StartStandardMwEditCommand.prototype = {
         wpSave.setAttribute('name', 'wpSave');
         wpSave.setAttribute('type', 'hidden');
         wpSave.setAttribute('value', '1');
-        window.parent.document.getElementById('editform').appendChild(wpSave);
-        window.parent.document.getElementById('editform').submit();
+
+        // normal window
+        if (window.parent.document.getElementById('editform')) {
+            window.parent.document.getElementById('editform').appendChild(wpSave);
+            window.parent.document.getElementById('editform').submit();
+        }
+        // Semantic forms are active
+        else if ((window.parent.wgAction == "formedit") &&
+                 window.parent.document.getElementsByName('createbox').length > 0) {
+            window.parent.document.getElementsByName('createbox')[0].appendChild(wpSave);
+            window.parent.document.getElementsByName('createbox')[0].submit();
+        }
+        // no clue where the textarea might be
+        else {
+            alert('Error: article can\'t be saved');
+            this.redirect();
+        }
         //this.redirect();
     },
 
