@@ -134,7 +134,8 @@ AutoCompleter.prototype = {
         this.notMoved = false;
         
         this.currentIESelection = null;
-         // Get preference options
+         
+        this.acMaxMatches = 15; // as default 
        
     },
 
@@ -856,7 +857,7 @@ AutoCompleter.prototype = {
         var reMeasure = new RegExp("(([+-]?\d*(\.\d+([eE][+-]?\d*)?)?)\s+)?(.*)", "gi");
         
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
-            var displayMatches = (j < this.siw.MAX_MATCHES);
+            var displayMatches = (j < this.acMaxMatches);
             var entry = pointerToCollectionToUse[i];
             var mEntry = this.simplify(entry.getText()+entry.getExtraContent());
 
@@ -921,6 +922,7 @@ AutoCompleter.prototype = {
                     + "\t" + this.siw.matchCollection[i].value.replace(/\{ */gi, "&lt;").replace(/\} */gi, "&gt;")
                     + '</p>';
             }  //
+            if (this.siw.matchCollection.length == this.acMaxMatches) a+='<div id="ac_toomuchresults">[...] '+gLanguage.getMessage('AC_MORE_RESULTS_AVAILABLE')+'</div>';
         }     //this.siw exists
 
         return a;
@@ -1386,7 +1388,8 @@ AutoCompleter.prototype = {
         var list = GeneralXMLTools.createDocumentFromString(xml);
         var children = list.firstChild.childNodes;
         var collection = new Array();
-
+        this.acMaxMatches = list.firstChild.getAttribute("maxMatches");
+        
         for (var i = 0, n = children.length; i < n; i++) {
         	var content = children[i].firstChild.nodeValue;
         	var type = parseInt(children[i].getAttribute("type"));
@@ -1423,7 +1426,6 @@ function SmartInputWindow() {
     this.floater = document.getElementById("smartInputFloater");
     this.floaterContent = document.getElementById("smartInputFloaterContent");
     this.selectedSmartInputItem = null;
-    this.MAX_MATCHES = 15;
     this.showCredit = false;
 }  //SmartInputWindow Object
 

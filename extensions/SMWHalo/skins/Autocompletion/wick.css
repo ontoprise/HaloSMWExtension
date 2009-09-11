@@ -125,3 +125,8 @@ display:none;
  color: #888888;
  background: url(lightbulb.png) center right no-repeat;
 }
+
+#ac_toomuchresults {
+ border-top: 1px solid #000;
+ margin-top: 5px;	
+}

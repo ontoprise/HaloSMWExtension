@@ -388,7 +388,7 @@ class AutoCompletionRequester {
 			$xmlResult .= "<match $typeAtt $inferredAtt $namespaceText>$content<extraContent>$extra</extraContent></match>";
 		}
 
-		return '<result>'.$xmlResult.'</result>';
+		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
 	}
 
 	/**
@@ -403,7 +403,7 @@ class AutoCompletionRequester {
 		foreach($arrayofEnumsOrUnits as $eou) {
 			$xmlResult .= "<match type=\"500\">".htmlspecialchars($eou)."</match>";
 		}
-		return '<result>'.$xmlResult.'</result>';
+		return '<result maxMatches="'.SMW_AC_MAX_RESULTS.'">'.$xmlResult.'</result>';
 	}
 
 
@@ -562,6 +562,15 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 	                if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
 				}
+                if (count($result) >= SMW_AC_MAX_RESULTS) break;
+            } else if ($commandText == 'instance-property-range') {
+                if (smwf_om_userCan($params[0], 'read') == 'true') {
+                    $property = Title::newFromText($params[0]);
+                    if (!is_null($property)) {
+	                    $domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+	                    $result = array_merge($result, $acStore->getInstanceAsTarget($match, $domainRangeAnnotations));
+                    }
+                }
                 if (count($result) >= SMW_AC_MAX_RESULTS) break;
             } else if ($commandText == 'namespace') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));

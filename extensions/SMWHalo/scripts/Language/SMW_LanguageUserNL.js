@@ -158,7 +158,8 @@ var wgUserLanguageStrings = {
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Druk Ctrl+Alt+Space om auto-completion te gebruiken. (Ctrl+Space in IE)',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Klik hier om te slepen',
-
+    'AC_MORE_RESULTS_AVAILABLE' : 'Too much results found...',
+    
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Toegevoegde Combined Search resultaten.',
 	'COMBINED_SEARCH'         : 'Combined Search',
