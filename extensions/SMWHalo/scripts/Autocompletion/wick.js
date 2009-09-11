@@ -169,14 +169,14 @@ AutoCompleter.prototype = {
     },                      //this.isWithinNode
     isWithinNodeSimple: function(node, idOfNodeToFind) {
     	
-    	if (!node || node == null) return false; 
-    	while(node != document) {
+    	if (!node || node == null) return false;
+    	while(node.nodeType != 9) { // node != document
     		var id = node.getAttribute("id");
     		if (id && id != null && id.indexOf(idOfNodeToFind) >= 0) break;
     		node = node.parentNode;
     	}
     	
-    	return node != document;
+    	return node.nodeType != 9; // document
     },
     getEventElement: function(e) { return (e.srcElement ? e.srcElement : (e.target ? e.target : e.currentTarget));
                          },  //this.getEventElement()
