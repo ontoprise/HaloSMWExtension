@@ -1177,7 +1177,9 @@ ShowCatToolbar = function(event, name) {
  * @return Array(int, int) coordinates x, y
  */
 CalculateClickPosition = function(event) {
-    var id = (window.parent.wgAction == "formedit") ? 'free_text___Config' : 'editform';
+    var id = (window.parent.wgAction == "formedit") // Semantic Forms?
+        ? 'free_text___Frame'
+        : 'editform';
     var el = window.parent.document.getElementById(id);
 
     var x = 0;
@@ -1193,6 +1195,25 @@ CalculateClickPosition = function(event) {
     x += event.clientX;
     y += event.clientY;
 
+    // ajust position if the page has been scrolled
+    var sx;
+    var sy;
+    if (FCKBrowserInfo.IsIE) {
+        sx = (window.parent.document.documentElement.scrollLeft)
+            ? window.parent.document.documentElement.scrollLeft
+            : window.parent.document.body.scrollLeft;
+        sy = (window.parent.document.documentElement.scrollTop)
+            ? window.parent.document.documentElement.scrollTop
+            : window.parent.document.body.scrollTop;
+    }
+    else {
+        sx = window.parent.pageXOffset;
+        sy = window.parent.pageYOffset;
+    }
+    if (sx > 0 && sx < x) x -= sx;
+    if (sy > 0 && sy < y) y -= sy;
+
+    // return position as array
     var pos = [];
     pos[0] = x;
     pos[1] = y;
