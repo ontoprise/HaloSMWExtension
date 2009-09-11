@@ -344,8 +344,15 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 					$value = implode(",",$smwValue->getTypeLabels());
 					$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 				} else {
-				$value = "<![CDATA[".html_entity_decode($smwValue->getXSDValue())." ".$smwValue->getUnit()."]]>";
+					// small hack for datetime type. It may occur that there is a T at the end.
+					if ($smwValue->getTypeID() == '_dat') {
+	                    $xsdValue = str_replace('T', '', $smwValue->getXSDValue());
+	                } else {
+	                	$xsdValue = $smwValue->getXSDValue();
+	                }
+				    $value = "<![CDATA[".html_entity_decode($xsdValue)." ".$smwValue->getUnit()."]]>";
 				}
+			    
 			}
 			//special attribute mark for all things needed to get re-pasted in FF.
 			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
