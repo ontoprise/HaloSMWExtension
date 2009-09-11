@@ -364,11 +364,11 @@
     <title>Template:RMList</title>
     <id>412</id>
     <revision>
-      <id>6601</id>
-      <timestamp>2009-09-07T08:22:07Z</timestamp>
+      <id>7437</id>
+      <timestamp>2009-09-11T12:52:23Z</timestamp>
       <contributor>
-        <username>Dominika</username>
-        <id>23</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMList
@@ -389,7 +389,7 @@
 |year=2009
 |hints_for_templates_and_forms=To attach uploaded media to an article, the property 
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;font-color:blue;&quot;&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;div style=&quot;font-color:blue;float:left;width:100%&quot;&gt;
 {{#ifeq:{{{show|}}}|True|{{RMListOuterTable}}|}}
 &lt;/div&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
@@ -431,8 +431,8 @@
     <title>Template:RMCategoryLinkIcon</title>
     <id>414</id>
     <revision>
-      <id>7193</id>
-      <timestamp>2009-09-10T14:27:56Z</timestamp>
+      <id>7198</id>
+      <timestamp>2009-09-10T14:32:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -449,7 +449,7 @@
 |copyright holder=ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch: 
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#switch:
   {{#sub:
     {{lc: {{{1}}} }} 
     | 0
@@ -463,7 +463,7 @@
   | vcard={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_vcard_icon_16x16.gif
   | icalendar={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif
   | default={{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_image_icon_16x16.png
-}}</text>
+}}&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -485,8 +485,8 @@
     <title>Template:RMListOuterTable</title>
     <id>510</id>
     <revision>
-      <id>7182</id>
-      <timestamp>2009-09-10T14:23:19Z</timestamp>
+      <id>7427</id>
+      <timestamp>2009-09-11T12:40:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -504,18 +504,20 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);empty-cells:show&quot;
 |-
 ! style=&quot;padding: 7px 2px; background-color: rgb(17, 105, 136); color: white;&quot; colspan=&quot;6&quot; |Attached documents, images and media
+|-
+! style=&quot;border-top: 1px solid rgb(17, 105, 136);height:1px&quot; colspan=&quot;6&quot; |
 |}
-{| class=&quot;wikitable sortable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
-|- style=&quot;border-bottom: 1px solid rgb(17, 105, 136);&quot;
-! style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Category 
-! style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Filename 
-! style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Uploaded by 
-! class=&quot;unsortable&quot; style=&quot;text-align: left; color: rgb(17, 105, 136);&quot; |Creation date 
-! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Metainformation 
-! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);&quot; |Delete
+{| class=&quot;wikitable sortable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255); border-collapse:collapse;&quot;
+|-
+! style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Category 
+! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Filename 
+! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Uploaded by 
+! class=&quot;unsortable&quot; style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Creation date 
+! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Metainformation 
+! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Delete
 |-
 {{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]OR[[ICalendar:+]]OR[[VCard:+]]&lt;/q&gt;
   | ?HasFilename
@@ -526,8 +528,7 @@
   | link=none
 }}
 |}
-{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;
-! style=&quot;border-top: 1px solid rgb(225, 224, 218);&quot; colspan=&quot;6&quot; | 
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);empty-cells:show&quot;
 |-
 | colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
 | style=&quot;text-align:right;vertical-align: top;&quot; | {{#rmf: {{FULLPAGENAME}} }}
@@ -1400,8 +1401,8 @@ These are the literal class definitions in common.css:
     <title>Form:RMUpload</title>
     <id>416</id>
     <revision>
-      <id>6707</id>
-      <timestamp>2009-09-07T11:58:17Z</timestamp>
+      <id>7441</id>
+      <timestamp>2009-09-11T13:04:16Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1413,7 +1414,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}}
-{{{for template|RMUpload|label=Meta information|collapsable|forceopen=true}}}
+{{{for template|RMUpload|label=Meta information|collapsible|forceopen=true}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;
 |-
 | width=&quot;30%&quot; |
@@ -2056,8 +2057,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Property:HasRelatedArticle</title>
     <id>902</id>
     <revision>
-      <id>6618</id>
-      <timestamp>2009-09-07T09:23:56Z</timestamp>
+      <id>7334</id>
+      <timestamp>2009-09-11T10:02:56Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2071,7 +2072,8 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Category:Transitive properties]]</text>
+[[Is inverse of::Property:Attachment| ]]
+[[Has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
