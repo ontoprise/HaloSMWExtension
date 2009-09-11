@@ -27,7 +27,7 @@ OpenUploadWindowCommand.Execute=function() {
 			article = result[1];
 		}
 	}
-	top.fb.loadAnchor(uri+'&sfInputID=myWpDestFile&RMUpload[RelatedArticles]='+article+'&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
+	top.fb.loadAnchor(uri+'&RMUpload[RelatedArticles]='+article+'&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
 	// do stuff here if you want
 }
 FCKCommands.RegisterCommand( 'MW_MediaUpload', OpenUploadWindowCommand) ;
