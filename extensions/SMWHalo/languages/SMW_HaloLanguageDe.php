@@ -42,6 +42,8 @@ protected $smwContentMessages = array(
 
 	/*Messages for Autocompletion*/
 	'tog-autotriggering' => 'Automatische auto-completion',
+	'smw_ac_typehint'=> 'Typ: $1',
+	'smw_ac_typerangehint'=> 'Typ: $1 | Range: $2',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Einheit nicht in SI-Representation. ',

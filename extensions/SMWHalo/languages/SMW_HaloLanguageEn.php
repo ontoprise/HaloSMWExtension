@@ -39,7 +39,8 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_notype' => 'No type defined for attribute.',
 	/*Messages for Autocompletion*/
 	'tog-autotriggering' => 'Auto-triggered auto-completion',
-
+    'smw_ac_typehint'=> 'Type: $1',
+    'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'No unit given in SI representation. ',

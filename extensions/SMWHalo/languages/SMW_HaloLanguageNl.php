@@ -37,7 +37,8 @@ protected $smwContentMessages = array(
 	'smw_notype' => 'Er is geen type gedefinieerd voor dit attribuut.',
 	/*Messages for Autocompletion*/
 	'tog-autotriggering' => 'Automatische auto-completion',
-
+    'smw_ac_typehint'=> 'Type: $1',
+    'smw_ac_typerangehint'=> 'Type: $1 | Range: $2',
 
 	// Messages for SI unit parsing
 	'smw_no_si_unit' => 'Geen eenheid in de SI voorstelling. ',

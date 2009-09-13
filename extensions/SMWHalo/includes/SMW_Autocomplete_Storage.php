@@ -205,7 +205,12 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->page_title, 'read', $row->page_namespace) == 'true') {
-					$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+					if ($row->page_namespace == SMW_NS_PROPERTY) {
+						$propertyTitle = Title::newFromText($row->page_title, SMW_NS_PROPERTY);
+						$result[] = array($propertyTitle, false, NULL, $this->getPropertyData($propertyTitle));
+					} else {
+                    	$result[] = Title::newFromText($row->page_title, $row->page_namespace);
+					}
 				}
 			}
 		}
@@ -316,7 +321,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		if($db->numRows( $res ) > 0) {
 			while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
-					$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+					$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
+					$result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
 				}
 			}
 		}
@@ -398,7 +404,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
-            		$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+            		$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
+                    $result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
 				}
             }
         }
@@ -487,7 +494,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         if($db->numRows( $res ) > 0) {
             while($row = $db->fetchObject($res)) {
 				if (smwf_om_userCan($row->property, 'read', SMW_NS_PROPERTY) == 'true') {
-            		$result[] = array(Title::newFromText($row->property, SMW_NS_PROPERTY), $row->inferred == "true");
+            		$propertyTitle = Title::newFromText($row->property, SMW_NS_PROPERTY);
+                    $result[] = array($propertyTitle, $row->inferred == "true", NULL, $this->getPropertyData($propertyTitle));
 				}
             }
         }
@@ -691,7 +699,32 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		return $results;
 	}
 	
-	
+    private function getPropertyData(Title $property) {
+        $ranges = array();
+        $pv = SMWPropertyValue::makeUserProperty($property->getText());
+        $typesValue = $pv->getTypesValue();
+        $typeString = implode(',', $typesValue->getTypeLabels());
+        $hasWikiPageType = false;
+        $typeValues = $typesValue->getTypeValues();
+        foreach($typeValues as $tv) {
+            $hasWikiPageType |= $tv->getXSDValue() == '_wpg';
+        }
+        
+        
+        $rangeString = NULL;
+        if ($hasWikiPageType) {
+            $domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
+            foreach($domainRangeAnnotations as $a) {
+                $dvs = $a->getDVs();
+                $domain = reset($dvs);
+                $range = next($dvs);
+                if (!is_null($range) && $range !== false) $ranges[] = $range->getTitle()->getText();
+            }
+             
+            $rangeString = implode(',', array_unique($ranges));
+        }
+        return array($typeString, $rangeString);
+    }
 }
 
 /*

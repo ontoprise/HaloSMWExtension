@@ -859,7 +859,7 @@ AutoCompleter.prototype = {
         for (i = 0, j = 0; (i < pointerToCollectionToUse.length); i++) {
             var displayMatches = (j < this.acMaxMatches);
             var entry = pointerToCollectionToUse[i];
-            var mEntry = this.simplify(entry.getText()+entry.getExtraContent());
+            var mEntry = this.simplify(entry.getText()+entry.getPasteContent());
 
             if ((mEntry.indexOf(userInput) == 0)) {
                 userInput = userInput.replace(/\>/gi, '\\}').replace(/\< ?/gi, '\\{');
@@ -867,25 +867,25 @@ AutoCompleter.prototype = {
 
                 if (displayMatches) {
                     this.siw.matchCollection[j]
-                        = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
+                        = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                               mEntry.replace(/\>/gi, '}').replace(/\< ?/gi, '{').replace(re, "<b>$1</b>").replace(/_/g, ' '),
-                              entry.getType(), entry.getNsText(), entry.isInferred());
+                              entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
                 }
 
                 j++;
             } else if (mEntry.match(re1m) || mEntry.match(re2m)) {
                 if (displayMatches) {
-                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
+                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
                 }
 
                 j++;
             } else if (mEntry.match(reMeasure)) {
                 if (displayMatches) {
-                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getExtraContent(),
+                    this.siw.matchCollection[j] = new SmartInputMatch(entry.getText()+entry.getPasteContent(),
                                                       mEntry.replace(/\>/gi, '}').replace(/\</gi, '{').replace(re1,
-                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.isInferred());
+                                                          "$1<b>$2</b>").replace(re2, "$1<b>$2</b>").replace(/_/g, ' '), entry.getType(), entry.getNsText(), entry.getExtraData(), entry.isInferred());
                 }
 
                 j++;
@@ -920,7 +920,7 @@ AutoCompleter.prototype = {
                 a += '<p id="' + id + '" class="matchedSmartInputItem' + selectedString + '">'
                     + this.siw.matchCollection[i].getImageTag()
                     + "\t" + this.siw.matchCollection[i].value.replace(/\{ */gi, "&lt;").replace(/\} */gi, "&gt;")
-                    + '</p>';
+                    + '<span class="extraDataSmartInputItem">'+this.siw.matchCollection[i].getExtraData()+'</span></p>';
             }  //
             if (this.siw.matchCollection.length == this.acMaxMatches) a+='<div id="ac_toomuchresults">[...] '+gLanguage.getMessage('AC_MORE_RESULTS_AVAILABLE')+'</div>';
         }     //this.siw exists
@@ -1395,9 +1395,11 @@ AutoCompleter.prototype = {
         	var type = parseInt(children[i].getAttribute("type"));
         	var inferred = children[i].getAttribute("inferred") == "true";
         	var nsText = children[i].getAttribute("nsText");
-        	var extraContentTextNode = children[i].firstChild.nextSibling.firstChild;
-        	var extraContent = extraContentTextNode != null ? extraContentTextNode.nodeValue : "";
-            collection[i] = new MatchItem(content, type, nsText, inferred, extraContent);
+        	var pasteContentTextNode = children[i].getElementsByTagName("pasteContent")[0];
+        	var extraDataTextNode = children[i].getElementsByTagName("extraData")[0];
+        	var pasteContent = pasteContentTextNode.firstChild != null ? pasteContentTextNode.firstChild.nodeValue : "";
+        	var extraData = extraDataTextNode.firstChild != null ? extraDataTextNode.firstChild.nodeValue : "";
+            collection[i] = new MatchItem(content, type, nsText, extraData, inferred, pasteContent);
         }
 
         return collection;
@@ -1407,18 +1409,20 @@ AutoCompleter.prototype = {
 
  // ----- Classes -----------
 
-function MatchItem(text, type, nsText, inferred, extraContent) {
+function MatchItem(text, type, nsText, extraData, inferred, pasteContent) {
     var _text = text;
     var _type = type;
     var _nsText = nsText;
+    var _extraData = extraData;
     var _inferred = inferred;
-    var _extraContent = extraContent;
+    var _pasteContent = pasteContent;
 
     this.getText = function() { return _text; }
+    this.getExtraData = function() { return _extraData; }
     this.getType = function() { return _type; }
     this.getNsText = function() { return _nsText; }
     this.isInferred = function() { return _inferred; }
-    this.getExtraContent = function() { return _extraContent; }
+    this.getPasteContent = function() { return _pasteContent; }
 }
 
 function SmartInputWindow() {
@@ -1429,13 +1433,14 @@ function SmartInputWindow() {
     this.showCredit = false;
 }  //SmartInputWindow Object
 
-function SmartInputMatch(cleanValue, value, type, nsText, inferred) {
+function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred) {
     this.cleanValue = cleanValue;
     this.value = value;
     this.isSelected = false;
     this.isInferred = inferred;
     var _type = type;
     var _nsText = nsText;
+    var _extraData = extraData;
     
     /**
      * Shows namespace icon or namespace as text.
@@ -1449,7 +1454,8 @@ function SmartInputMatch(cleanValue, value, type, nsText, inferred) {
     }
 
     this.getType = function() { return _type; }
-    this.getNsText = function() { return _nsText }
+    this.getNsText = function() { return _nsText; }
+    this.getExtraData = function() { return _extraData; }
 }  //SmartInputMatch
 
  /**

@@ -51,6 +51,13 @@ color:white;
 background-color:#3875D7;
 }
 
+.extraDataSmartInputItem {
+	background-color: inherit;
+	display:block;
+	margin-left:10px;
+	font-size:85%;
+}
+
 .inferredSmartInputItem {
 font-style:italic;
 background-color:#D9D998;
