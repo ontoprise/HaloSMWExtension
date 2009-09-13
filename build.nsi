@@ -402,7 +402,7 @@ Section "Lucene search" lucene
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/startUpdater.bat.template" out=startUpdater.bat currentdate="__DATE__"'
         
         ; Build OAI repository
-        nsExec::ExecToLog 'initUpdates.bat $INSTDIR\mysql semwiki_en root m8nix'
+        nsExec::ExecToLog 'initUpdates.bat "$INSTDIR\mysql" semwiki_en root m8nix'
         
         ; Build Lucene index
         nsExec::ExecToLog 'buildall.bat smwplus_db.xml semwiki_en'
