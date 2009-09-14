@@ -63,7 +63,15 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
     oAC.forceSelection = false;
 
     oAC.generateRequest = function(sQuery) {
-        return "rs=getAutocompleteDocuments&rsargs[]=" + sQuery;
+        // trying to add select protect
+        var protect = null;
+        $$('.create_acl_general_protect').each(function(item){
+            if(item.checked){
+                protect = item.value;
+            }
+        });
+
+        return "rs=getAutocompleteDocuments&rsargs[]=" + sQuery+"&rsargs[]="+protect;
     };
     var itemFocusHandler = function(sType, args){
         oAC.sendQuery("");
