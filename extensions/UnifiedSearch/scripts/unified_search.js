@@ -56,7 +56,7 @@ ToleranceSelector.prototype = {
         var us_searchfield = $('us_searchfield');
         var queryParams = location.href.toQueryParams();
        
-        if (us_searchfield) us_searchfield.value = queryParams['search'];
+        if (us_searchfield) us_searchfield.value = decodeURIComponent(queryParams['search']);
     },
     
       
