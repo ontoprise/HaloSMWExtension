@@ -529,7 +529,7 @@ class OntoSkin3Template extends QuickTemplate {
                 continue;
             }
         }
-        //wfRunHooks('SkinBuildSidebar', array($this, &$bar));
+        wfRunHooks('SkinBuildSidebar', array($this, &$bar));
         if ( $wgEnableSidebarCache ) $parserMemc->set( $key, $bar, $wgSidebarCacheExpiry );
         wfProfileOut( __METHOD__ );
         return $bar;
@@ -590,13 +590,16 @@ class OntoSkin3Template extends QuickTemplate {
         */
         
         /** mw 1.13 could work with 1.15 */
+        
         $title = Title::newFromText(trim($menuItem));
         if(!$title) return;
-        $menuPage = new Article($title);
+        //echo $title->getFullURL();
+        $menuPage = new Article($title, 0);
+        //echo $menuPage->getContent();
         if ($menuPage->exists()) {
             return $this->parseWikiText($menuPage->getContent());
         }
-        /**         */
+
     }
 
     function buildMenuMediaWiki() {
