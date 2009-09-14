@@ -150,16 +150,12 @@ function smwgHaloSetupExtension() {
 	$wgHooks['OntoSkinInsertTreeNavigation'][] = 'smwfNavTree';
 
 
-	global $wgRequest, $wgContLang, $wgCommandLineMode;
-
-	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
-	$tyns_text = $wgContLang->getNsText(SMW_NS_TYPE);
-	$sp_aliases = $wgContLang->getSpecialPageAliases();
-
+	global $wgRequest;
+	
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
-	if (stripos($wgRequest->getRequestURL(), urlencode($spns_text).":") !== false
-	|| stripos($wgRequest->getRequestURL(), urlencode($spns_text)."%3A") !== false) {
+	$title = Title::newFromText($wgRequest->getVal('title'));
+	if ($title->getNamespace() == NS_SPECIAL) {
 
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
