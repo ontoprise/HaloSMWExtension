@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4968)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -15,7 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4967)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -181,26 +181,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            }
            $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
          // =====================================================
-@@ -1036,15 +1124,15 @@
-           // doing a replace
-           if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
-             $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
--              preg_replace('/\}\}/m', '}²',
--                preg_replace('/\{\{/m', '²{', $template_text)) .
-+              preg_replace('/\}\}/m', '}ï¿½',
-+                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
-               "\n{{{insertionpoint}}}",
-               $existing_page_content);
-           // otherwise, if it's a partial form, we have to add the new
-           // text somewhere
-           } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
--            $existing_page_content = preg_replace('/\}\}/m', '}²',
--              preg_replace('/\{\{/m', '²{', $template_text)) .
-+            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
-+              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
-                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
-           }
-         }
 @@ -1093,7 +1181,11 @@
        } else {
          $form_text .= $section;
@@ -214,15 +194,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      } // end for
  
      // if it wasn't included in the form definition, add the
-@@ -1113,7 +1205,7 @@
-          $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
-        } else {
-          $free_text = null;
--         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
-+         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
-          $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
-          $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
-        }
 @@ -1133,18 +1225,38 @@
      } else {
        $free_text = null;
@@ -288,7 +259,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4968)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -720,9 +720,12 @@
  		return $text;
@@ -357,7 +328,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4968)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -407,7 +378,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4968)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -521,7 +492,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4968)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4970)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -550,7 +521,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4968)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4970)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
