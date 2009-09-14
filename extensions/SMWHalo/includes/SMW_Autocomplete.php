@@ -74,7 +74,7 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 		} else {
 			// otherwise use constraints
-				
+
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
 
 			// Fallback, if commands yield nothing. Deactivated now
@@ -225,11 +225,11 @@ class AutoCompletionRequester {
 			$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_CATEGORY));
 			return AutoCompletionRequester::encapsulateAsXML($pages, true); // return namespace too!
 		} else {
-			
-				// all others
-				$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
-				return AutoCompletionRequester::encapsulateAsXML($pages);
-			
+
+			// all others
+			$pages = smwfGetAutoCompletionStore()->getPages($match, array(NS_MAIN));
+			return AutoCompletionRequester::encapsulateAsXML($pages);
+
 		}
 			
 	}
@@ -262,9 +262,9 @@ class AutoCompletionRequester {
 	 */
 	public static function getPropertyProposals($articleName, $match) {
 		global $wgLang;
-		
-			$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
-		
+
+		$pages = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
+
 		// special handling for special relations
 		$specialMatches = array(); // keeps matches of special relations
 		global $smwgContLang;
@@ -349,18 +349,18 @@ class AutoCompletionRequester {
 				case 4: list($title, $inferred, $pasteContent, $extraData) = $matches[$i];
 			}
 			if ($title == NULL) continue;
-				
+
 			$inferredAtt = $inferred ? 'inferred="true"' : 'inferred="false"';
 			if (is_string($title)) {
 				$typeAtt =  "type=\"-1\""; // no namespace, just a value
 				$content = $title;
 			} else {
 				// $title is actual Title obejct
-				
+
 				if ($arity == 4 && $title->getNamespace() == SMW_NS_PROPERTY) {
 					list($typeStr, $rangeStr) = $extraData;
 					$extraData = $rangeStr == NULL ? wfMsg('smw_ac_typehint', $typeStr) : wfMsg('smw_ac_typerangehint', $typeStr, $rangeStr);
-				} 
+				}
 				$typeAtt = "type=\"".$title->getNamespace()."\"";
 				$namespaceText = "nsText=\"".$title->getNsText()."\"";
 				$content = ($putNameSpaceInName ? htmlspecialchars($title->getPrefixedDBkey()) : htmlspecialchars($title->getDBkey()));
@@ -389,7 +389,7 @@ class AutoCompletionRequester {
 	}
 
 
-	
+
 
 
 	/**
@@ -602,6 +602,7 @@ class AutoCompletionHandler {
 
 
 		}
+		self::removeDoubles($result);
 		return $result;
 	}
 
@@ -624,7 +625,57 @@ class AutoCompletionHandler {
 			
 	}
 
+	/**
+	 * Remove all double matches. This may occur if several AC commands are
+	 * concatenated.
+	 *
+	 * @param array $results First element is Title or string and siginifcant for double or not.
+	 */
+	private static function removeDoubles(& $results) {
+			
+		if (count($results) == 0) return;
+			
+		// sort results
+		for($i = 0, $n = count($results); $i < $n; $i++) {
+			for($j = 0, $m = count($results)-1; $j < $m; $j++) {
+				$cmp = self::isEqualResults($results[$j], $results[$j+1]);
+				if ($cmp > 0) { // ascending sort order
+					$temp = $results[$j];
+					$results[$j] = $results[$j+1];
+					$results[$j+1] = $temp;
+				}
+			}
+		}
 
+		
+		// eliminate doubles
+		$e = $results[0];
+		for($i = 1, $n = count($results); $i < $n; $i++) {
+			$cmp = self::isEqualResults($e, $results[$i]);
+            if ($cmp == 0) $results[$i] = NULL; else $e = $results[$i];
+		}
+		
+		// return all non-null elements
+		$results = array_filter($results, create_function('$e', 'return !is_null($e);'));
+		
+	}
+    
+	/**
+	 * Checks if two matches are equal or not.
+	 * FIXME: should be moved into a separated ACMatch class
+	 *
+	 * @param Match $r1 array with first element to be a Title or string. 
+	 * @param Match $r2 array with first element to be a Title or string. 
+	 * @return int < 0 if $r1 < $r2, == 0 if $r1 == $r2, > 0 if $r1 > $r2
+	 */
+	private static function isEqualResults(& $r1, & $r2) {
+		$t1 = reset($r1);
+		$t2 = reset($r2);
+		$t1_text = $t1 instanceof Title ? $t1->getText() : $t1;
+		$t2_text = $t2 instanceof Title ? $t2->getText() : $t2;
+		return strcmp($t1_text, $t2_text);
+
+	}
 }
 
 
