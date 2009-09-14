@@ -67,7 +67,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$rClass = " class=\"DoneMenueStep\" ";
 		}
 		$html .= "<div id=\"breadcrumb-menue\" class=\"BreadCrumpContainer\">";
-		$html .= "<span id=\"menue-step1\" ".$fClass.$rClass.">".wfMsg("smw_wws_s1-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step1\" ".$fClass.">".wfMsg("smw_wws_s1-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step2\" ".$rClass.">".wfMsg("smw_wws_s2-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step3\" ".$rClass.">".wfMsg("smw_wws_s3-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step4\"".$rClass.">".wfMsg("smw_wws_s4-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
@@ -161,15 +161,15 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 			
 		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_spec_protocol");
-		$html .= "<td><input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input>";
-		$html .= "<td><input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input></div>";
+		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input>";
+		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input></div>";
 			
 		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_s1-uri");
 		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></div>";
 			
 		$html .= "<div>".wfMsg('smw_wws_spec_auth');
-		$html .= "<td><input id=\"step1-auth-yes\" ".$auth." onfocus=\"webServiceSpecial.showAuthenticationBox('Yes')\" type=\"radio\" name=\"step1-auth\" value=\"yes\">".wfMsg('smw_wws_yes')."</input>";
-		$html .= "<td><input id=\"step1-auth-no\" ".$noauth." onfocus=\"webServiceSpecial.showAuthenticationBox('no')\" type=\"radio\" name=\"step1-auth\" value=\"no\">".wfMsg('smw_wws_no')."</input></div>";
+		$html .= "<input id=\"step1-auth-yes\" ".$auth." onfocus=\"webServiceSpecial.showAuthenticationBox('Yes')\" type=\"radio\" name=\"step1-auth\" value=\"yes\">".wfMsg('smw_wws_yes')."</input>";
+		$html .= "<input id=\"step1-auth-no\" ".$noauth." onfocus=\"webServiceSpecial.showAuthenticationBox('no')\" type=\"radio\" name=\"step1-auth\" value=\"no\">".wfMsg('smw_wws_no')."</input></div>";
 			
 		$html .= "<span id=\"step1-auth-box\" style=\"".$authVisibility."\">";
 		$html .= wfMsg('smw_wws_username');
