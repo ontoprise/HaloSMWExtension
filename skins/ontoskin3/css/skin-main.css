@@ -299,6 +299,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding: 5px;
 }
 
+#body{
+    overflow: auto;
+}
+
 #siteSub, #jump-to-nav, .printfooter{
     display: none;
 }
