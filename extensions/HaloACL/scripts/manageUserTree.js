@@ -388,13 +388,18 @@ YAHOO.haloacl.manageUser.loadNodeData = function(node, fnLoadComplete)  {
  */
 YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
 
+    var groupsInTree = false;
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.name);
-
+        groupsInTree = true;
         
     };
+    if(!groupsInTree){
+        var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
+        tmpNode.setDynamicLoad();
+    }
 
 };
 

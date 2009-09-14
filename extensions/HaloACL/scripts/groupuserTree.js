@@ -581,6 +581,9 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
     var tmpNode = new YAHOO.widget.TextNode(gLanguage.getMessage('groups'), tree.getRoot(),false);
     //tmpNode.setDynamicLoad(loadNodeData);
     YAHOO.haloacl.buildNodesFromData(tmpNode,data,tree.panelid);
+    if(data.length == 0){
+        new YAHOO.widget.TextNode("no groups available", tmpNode,false);
+    }
 
     tmpNode.expand();
 
@@ -605,6 +608,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
             // das ganze rekursiv in funktion auslagern
 
+            var groupsInTree = false;
             for(var i=0, l=data.length; i<l; i=i+1) {
                 var n = data[i];
 
@@ -613,9 +617,14 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
                     tmpNode.setGroupId(n.name);
                     tmpNode.setCheckState(2);
                     tmpNode.setTreeType("r");
+                    groupsInTree = true;
                 }
 
             }
+            if(!groupsInTree){
+                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+            }
+
             if(tree != null){
                 tree.draw();
             }

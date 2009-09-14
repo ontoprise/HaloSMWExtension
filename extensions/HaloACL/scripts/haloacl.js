@@ -494,6 +494,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         dataSrc:'rightPanelAssignedTab',
         cacheData:false,
         active:assActive,
+        id:"rightPanelAssignedTab"+containerName,
         postData:parameterlist
     });
 

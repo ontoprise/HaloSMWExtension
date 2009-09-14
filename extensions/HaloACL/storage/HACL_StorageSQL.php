@@ -1461,13 +1461,25 @@ class HACLStorageSQL {
 	 * 		List of IDs of all direct users or groups in this group.
 	 *
 	 */
-	public function getArticles($subName, $noACLs=false) {
+	public function getArticles($subName, $noACLs=false, $type =null) {
 
+                $extendWhere = null;
+                if($type == "property"){
+                    $extendWhere = SMW_NS_PROPERTY;
+                }elseif($type == "category"){
+                    $extendWhere = NS_CATEGORY;
+                }
+                
 		$db =& wfGetDB( DB_SLAVE );
 		$ut = $db->tableName('page');
 		$gt = $db->tableName('halo_acl_groups');
 		$gmt = $db->tableName('halo_acl_group_members');
-		$sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%'";
+
+                if($extendWhere != null){
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%' AND page_namespace = '$extendWhere'";
+                }else{
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%'";
+                }
                 if($noACLs){
                     $sql .= " and page_namespace != '300'";
                 }
