@@ -44,10 +44,10 @@
 !define MUI_WELCOMEPAGE_TITLE "Welcome to the ${PRODUCT} ${VERSION} Setup Wizard"
 !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of ${PRODUCT} ${VERSION}."
 
-!define MUI_FINISHPAGE_RUN
-!define MUI_FINISHPAGE_RUN_CHECKED
-!define MUI_FINISHPAGE_RUN_TEXT "Start Lucene as Windows service"
-!define MUI_FINISHPAGE_RUN_FUNCTION "startLucene"
+;!define MUI_FINISHPAGE_RUN
+;!define MUI_FINISHPAGE_RUN_CHECKED
+;!define MUI_FINISHPAGE_RUN_TEXT "Start Lucene as Windows service"
+;!define MUI_FINISHPAGE_RUN_FUNCTION "startLucene"
 
 
 !define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You got some new shortcuts in the startmenu. \
@@ -411,7 +411,8 @@ Section "Lucene search" lucene
         SetOutPath "$MEDIAWIKIDIR"
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importUS=1 ls=LocalSettings.php'
         
-        CALL installLuceneAsService
+        ; do not install as service since it does not work at startup
+        ;CALL installLuceneAsService
         ${If} $0 == 1
             SetOutPath "$INSTDIR\lucene"
             CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -785,6 +786,8 @@ FunctionEnd
     ${EndIf}
 FunctionEnd*/
 
+/*
+@deactivated
 Function startLucene
    SectionGetFlags ${lucene} $0
    IntOp $0 $0 & ${SF_SELECTED}
@@ -798,7 +801,7 @@ Function startLucene
        Exec "$INSTDIR\lucene\start.bat"
    ${EndIf}
    Done:
-FunctionEnd
+FunctionEnd*/
 
 
 Function FinishPageShow
@@ -824,7 +827,8 @@ Var JAVA_HOME_SHORT
 Var JAVA_VER
 Var JAVA_INSTALLATION_MSG
 
-
+/*
+@deactivated
 Function installLuceneAsService
    Call LocateJVM
    StrCpy $LUCENE_AS_SERVICE "no"
@@ -858,7 +862,7 @@ Function installLuceneAsService
        MessageBox MB_OK "Lucene is installed but will not work without Java 1.6 Runtime. Furthermore, it is not installed as a service."
         
     Done:
-FunctionEnd
+FunctionEnd*/
 
 Function LocateJVM
     Push $0
@@ -905,13 +909,15 @@ Function LocateJVM
         Pop $1
         Pop $0
 FunctionEnd
+/*
+@deactivated 
 ; Uninstaller
 Function un.uninstallAsWindowsService
     SetOutPath "$INSTDIR\lucene"
     nsExec::ExecToLog '"$INSTDIR\lucene\UninstallAsService.bat"' 
     DetailPrint "Lucene service uninstalled."
     SetOutPath "c:\temp\halo" #dummy to make installation dir removable
-FunctionEnd
+FunctionEnd*/
 
 Section "Uninstall"
 
@@ -928,7 +934,8 @@ Section "Uninstall"
     Deinstall:
 #        MessageBox MB_OK "User said OK!"
     
-    Call un.uninstallAsWindowsService
+    ; do not un-install since it was not installed
+    ;Call un.uninstallAsWindowsService
     
     # Delete all start menu entries
     Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
