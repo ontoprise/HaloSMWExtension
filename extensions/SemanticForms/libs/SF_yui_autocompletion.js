@@ -5,7 +5,7 @@
  * for the specified form input, using the specified values and delimiter
  * (in the case that it's a multiple-values autocompletion)
  */
-function sf_autocomplete(input_name, container_name, values, api_url, data_type, delimiter, data_source /*, toggler_name */) {
+function sf_autocomplete(input_name, container_name, values, api_url, data_type, delimiter, data_source) {
     // Instantiate JS Function DataSource - the type depends on whether
     // it gets autocompletion values locallly or remotely (through Ajax);
     // which in turn is set depending on whether the 'values' or the
@@ -87,43 +87,6 @@ function sf_autocomplete(input_name, container_name, values, api_url, data_type,
 
     // Preload content in the container
     //this.oAutoComp.sendQuery("");
-
-
-/*
-    // combobox
-    if (toggler_name) {
-        var bAC = this.oAutoComp;
-        var bToggler = YAHOO.util.Dom.get(toggler_name);
-        var oPushButtonB = new YAHOO.widget.Button({container:bToggler});
-        var toggleB = function(e) {
-            //YAHOO.util.Event.stopEvent(e);
-            if(!YAHOO.util.Dom.hasClass(bToggler, "open")) {
-                YAHOO.util.Dom.addClass(bToggler, "open")
-            }
-        
-            // Is open
-            if(bAC.isContainerOpen()) {
-                bAC.collapseContainer();
-            }
-            // Is closed
-            else {
-                bAC.getInputEl().focus(); // Needed to keep widget active
-                setTimeout(function() { // For IE
-                    bAC.sendQuery("");
-                },0);
-            }
-        }
-        oPushButtonB.on("click", toggleB);
-        //this.oAutoComp.containerCollapseEvent.subscribe(function(){YAHOO.util.Dom.removeClass(bToggler, "open")});
-        bAC.containerCollapseEvent.subscribe(function(){YAHOO.util.Dom.removeClass(bToggler, "open")});
-    }
-    
-    return {
-        oACDS: oACDS,
-        bAC: bAC,
-    };
-*/
-
 };
 
 /*
