@@ -580,6 +580,16 @@ HTML;
     $html .= <<<HTML
         </div>
             <div class="haloacl_tab_section_content">
+
+            <script>
+                resetName = function(){
+                    try{
+                    if($('create_acl_general_name') != null){
+                        $('create_acl_general_name').value = "";
+                    }
+                    }catch(e){}
+                };
+            </script>
 HTML;
     if ($processType <> "createAclTemplate") {
         $html .= <<<HTML
@@ -589,19 +599,19 @@ HTML;
                     </div>
                     <div class="haloacl_tab_section_content_row_content">
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" checked class="create_acl_general_protect" name="create_acl_general_protect" value="page" />&nbsp;$hacl_createGeneralContent_4
+                            <input type="radio" checked class="create_acl_general_protect" name="create_acl_general_protect" value="page" onClick="resetName();" />&nbsp;$hacl_createGeneralContent_4
                         </div>
 HTML;
         if($processType <> "createAclUserTemplate")
             $html .= <<<HTML
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="property" />&nbsp;$hacl_createGeneralContent_5
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="property" onClick="resetName();"/>&nbsp;$hacl_createGeneralContent_5
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="namespace" />&nbsp;$hacl_createGeneralContent_6
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="namespace" onClick="resetName();" />&nbsp;$hacl_createGeneralContent_6
                         </div>
                         <div class="haloacl_tab_section_content_row_content_element">
-                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="category" />&nbsp;$hacl_createGeneralContent_7
+                            <input type="radio" class="create_acl_general_protect" name="create_acl_general_protect" value="category" onClick="resetName();" />&nbsp;$hacl_createGeneralContent_7
                         </div>
                   
 HTML;
@@ -876,6 +886,10 @@ function createAclUserTemplateContent() {
  *
  */
 function getManageUserGroupPanel($panelid, $name="", $description="", $users=null, $groups=null, $manageUsers=null, $manageGroups=null) {
+    $newGroup = "false";
+    if($users == null && $groups == null && $manageUsers == null && $manageGroups == null){
+        $newGroup = "true";
+    }
 
     $hacl_manageUserGroupPanel_1 = wfMsg('hacl_manageUserGroupPanel_1');
 
@@ -951,6 +965,7 @@ HTML;
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<inlineright>";
+                xml+="<newgroup>$newGroup</newgroup>";
                 xml+="<panelid>$panelid</panelid>";
                 if($('right_name_$panelid') != null){
                     xml+="<name>"+$('right_name_$panelid').value+"</name>";
@@ -1056,9 +1071,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if($preload == "false") {
         $preload = false;
     }
-    if($readOnly == "false") {
-        $readOnly = false;
-    }
+
 
     /*  define for part */
     $hacl_createGeneralContent_9 = wfMsg('hacl_createGeneralContent_9');
@@ -1597,6 +1610,11 @@ HTML;
                 if($('right_description_$panelid') != null){
                     xml+="<description>"+$('right_description_$panelid').value+"</description>";
                 }
+                $$('.create_acl_general_protect').each(function(item){
+                    if(item.checked){
+                        xml+="<protect>"+item.value+"</protect>";
+                    }
+                });
 
                 xml+="<rights>";
                 $$('.right_rights_$panelid').each(function(item){
@@ -2686,8 +2704,25 @@ function clearTempSessionGroup() {
 
 
 function saveTempGroupToSession($groupxml) {
+    // checking if action is valid
+    $xml = new SimpleXMLElement($groupxml);
+    $groupname = (String)$xml->name;
+    $newGroup = (String)$xml->newgroup;
+    if($newGroup == "true"){
+        $article = new Article(Title::newFromText("ACL:Group/$groupname"));
+        if($article->exists()){
+            $response = new AjaxResponse();
+            $response->setResponseCode(400);
+            $response->addText("Group already exists. You can not create two groups with the same name.");
+            return $response;
+        }
+    
+    }
     $_SESSION['tempgroups'] = $groupxml;
-    return wfMsg('hacl_saveTempGroup_1');
+    $response = new AjaxResponse();
+    $response->setResponseCode(200);
+    $response->addText(wfMsg('hacl_saveTempGroup_1'));
+    return $response;
 }
 
 
@@ -2788,6 +2823,7 @@ function deleteSecurityDescriptor($sdId) {
  */
 function saveSecurityDescriptor($secDescXml) {
     global $wgUser;
+    $secDescXmlInstance = new SimpleXMLElement($secDescXml);
 
     try {
         $inline = "";
@@ -2806,6 +2842,12 @@ function saveSecurityDescriptor($secDescXml) {
                 $inline .= '
 {{#predefined right:rights='.$xml->name.'}}';
             } else {
+
+                $protect = null;
+                foreach($secDescXmlInstance->xpath('//protect') as $item) {
+                    $protect = (String)$item;
+                }
+
                 $description = $xml->description ? $xml->description : '';
                 $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
                 $rightName = $xml->name ? $xml->name : '';
@@ -2882,8 +2924,13 @@ function saveSecurityDescriptor($secDescXml) {
 
                 if ($type <> "modification") {
                 //normal rights
-                    $inline .= '
+                    if(!$protect == null && $protect == "property") {
+                        $inline .= '
+{{#property access: assigned to=';
+                    }else {
+                        $inline .= '
 {{#access: assigned to=';
+                    }
                     if ($groups <> '') $inline .= $groups;
                     if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
                     if (($users <> '') && ($groups == '')) $inline .= $users;
@@ -2914,31 +2961,8 @@ HTML;
 {{#manage rights:assigned to=User:'.$wgUser->getName()."}}";
         }
 
-        //get manage rights
-        $secDescXml = new SimpleXMLElement($secDescXml);
 
-        /*
-        foreach($secDescXml->xpath('//group') as $group) {
-            if($sdgroups == '') {
-                $sdgroups = (string)$group;
-            }else {
-                $sdgroups .= ",".(string)$group;
-            }
-        }
-        foreach($secDescXml->xpath('//user') as $user) {
-            if($sdusers == '') {
-                $sdusers = 'User:'.(string)$user;
-            }else {
-                $sdusers .= ",".'User:'.(string)$user;
-            }
-        }
-         *
-         */
-
-        //complete inline code
-        #        echo "======$type======";
-
-        $aclType = (String)$secDescXml->ACLType;
+        $aclType = (String)$secDescXmlInstance->ACLType;
 
         if ($aclType == "createACL") {
             $inline .= '
@@ -2952,25 +2976,8 @@ HTML;
             }
 
 
-        $SDName = $secDescXml->name;
-        /*
-        switch ($secDescXml->protect) {
-            case "page":$peType = "Page";break;
-            case "property":$peType = "Property";break;
-            case "namespace":$peType = "Namespace";break;
-            case "category":$peType = "Category";break;
-        }
+        $SDName = $secDescXmlInstance->name;
 
-        global $wgUser;
-
-        switch ($secDescXml->ACLType) {
-            case "createACL":$aclName = 'ACL:'.$peType.'/'.$SDName;break;
-            case "createAclTemplate":$aclName = 'ACL:Template/'.$SDName;break;
-            case "createAclUserTemplate":$aclName = 'ACL:Template/'.$wgUser->getName(); break;
-            case "all_edited":$aclName = $SDName; break; //Name already existing - reuse
-        }
-
-         */
         $aclName = (string)$SDName;
 
         // create article for security descriptor
@@ -3055,6 +3062,8 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
 
         // create article for security descriptor
         $sdarticle = new Article(Title::newFromText('ACL:'.'Group'.'/'.$groupName));
+
+
         if($users == "") {
             $inline = '
 {{#member:members='.$groups.'}}';
@@ -3277,10 +3286,32 @@ function saveWhitelist($whitelistXml) {
  * @param <String>  Document Name Substring
  * @return <JSON>   return array of documents
  */
-function getAutocompleteDocuments($subName) {
+function getAutocompleteDocuments($subName,$type) {
+    global $wgExtraNamespaces;
 
     $a = array();
-    $a['records'] =  HACLStorage::getDatabase()->getArticles($subName,true);
+    if($type == "namespace") {
+        foreach($wgExtraNamespaces as $ns) {
+            if(preg_match("/$subName/is",$ns)) {
+                $temp = array("name"=>$ns);
+                $a['records'][] = $temp;
+            }
+        }
+    }else {
+        foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
+            $itemname = $item["name"];
+            if(preg_match('/Property\//is',$itemname)) {
+                $item["name"] = substr($itemname,9);
+                $a['records'][] = $item;
+            }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
+                $item["name"] = substr($itemname,9);
+                $a['records'][] = $item;
+            }else {
+                $a['records'][] = $item;
+            }
+        }
+    }
+
     return(json_encode($a));
 
 }
@@ -4329,6 +4360,15 @@ function saveQuickacl($xml) {
 }
 
 function doesArticleExists($articlename,$protect) {
+    if($protect == "property") {
+        $articlename = "Property/".$articlename;
+    }
+    if($protect == "namespace") {
+        $articlename = "Namepsace/".$articlename;
+    }
+    if($protect == "category") {
+        $articlename = "Category/".$articlename;
+    }
     $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
