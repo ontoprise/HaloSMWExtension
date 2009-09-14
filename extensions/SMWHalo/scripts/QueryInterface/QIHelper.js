@@ -324,6 +324,7 @@ QIHelper.prototype = {
 			params += $('layout_sort').value == gLanguage.getMessage('QI_ARTICLE_TITLE')? "" : 'sort=' + $('layout_sort').value + '|';
 			params += 'format=' + $('layout_format').value + '|';
 			params += this.serializeSpecialQPParameters("|");
+			params += '|merge=false';
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
 					this.openPreview.bind(this));
 		} else { // query is empty
@@ -377,7 +378,7 @@ QIHelper.prototype = {
 			params += "format="+$('layout_format').value + '|';
 			if ($('layout_sort').value != gLanguage.getMessage('QI_ARTICLE_TITLE')) params += "sort="+$('layout_sort').value + '|';
 			params += this.serializeSpecialQPParameters("|");
-			
+			params += '|merge=false';
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", params ],
 					this.openResultPreview.bind(this));
 		} else { // query is empty
@@ -539,7 +540,7 @@ QIHelper.prototype = {
 		fullQuery += "| " + this.serializeSpecialQPParameters("|");
 		
 
-		fullQuery += "|}}";
+		fullQuery += "|merge=false|}}";
 
 		return fullQuery;
 	},
