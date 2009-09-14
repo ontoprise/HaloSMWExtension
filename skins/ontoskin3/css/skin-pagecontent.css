@@ -55,11 +55,11 @@
 }
 
 
-#smwf_pageblock .sortable .odd td{
+#content .sortable .odd td{
     background-color: #aed5db;
 }
 
 
-#smwf_pageblock .sortable .even td{
+#content .sortable .even td{
     background-color: #ffffff;
 }
