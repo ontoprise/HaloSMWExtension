@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4967)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4968)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -288,7 +288,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4967)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4968)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -720,9 +720,12 @@
  		return $text;
@@ -357,7 +357,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4967)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4968)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -407,7 +407,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4966)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4968)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -521,7 +521,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4967)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4968)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -550,7 +550,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4967)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4968)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
