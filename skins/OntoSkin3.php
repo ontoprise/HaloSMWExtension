@@ -201,6 +201,7 @@ class OntoSkin3Template extends QuickTemplate {
                                                                <?php if($this->data['body_onload']) { ?> onload="<?php $this->text('body_onload') ?>"<?php } ?>
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
+            <?php if ($wgRequest->getText('page') != "plain") : ?>
             <table id="shadows" border="0" cellspacing="0" cellpadding="1" align="center">
                 <tbody>
                     <tr>
@@ -288,7 +289,7 @@ class OntoSkin3Template extends QuickTemplate {
             <div id="smwh_tabs">
                 <?php echo $this->buildTabs(); ?>
             </div>
-            
+                <?php endif; // action != 'plainpage' ?>
                 <div id="column-content">
                     <div id="content">
                         <!-- div from mw 1.13 removed 1.15 -->
@@ -305,8 +306,8 @@ class OntoSkin3Template extends QuickTemplate {
                             <div class="visualClear"></div>
                         </div>
                     </div>
-
                 </div>
+                <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
             </tr>
             </table>
@@ -314,7 +315,8 @@ class OntoSkin3Template extends QuickTemplate {
             <div class="visualClear"></div>
             <div id="footer">
                 <?php echo $this->buildQuickLinks(); ?>
-        </div>
+            </div>
+            <?php endif; // page != 'plain' ?>
             <div id="ontomenuanchor"></div>
                 
                 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
@@ -325,6 +327,7 @@ class OntoSkin3Template extends QuickTemplate {
 
         -->
                 <?php endif; ?>
+            <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
             <td id="shadow_right" width="10px">
             </td>
@@ -332,6 +335,7 @@ class OntoSkin3Template extends QuickTemplate {
             </tbody>
             </table>
             </div>
+            <?php endif; // page != 'plain' ?>
         </div>
     </body></html>
         <?php
