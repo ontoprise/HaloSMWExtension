@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -15,7 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -283,7 +283,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -714,9 +714,12 @@
  		return $text;
@@ -352,7 +352,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -402,7 +402,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -516,7 +516,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4859)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4959)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -545,7 +545,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4859)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4959)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
@@ -576,11 +576,11 @@ Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 +		if ($category != "")
 +		  $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
 +               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
-+               value="'.$f->semantic_property.'" size="50" constraints="schema-property-domain: Category:'.$category.'"  pasteNS="false"/></p>' . "\n";
++               value="'.$f->semantic_property.'" size="35" constraints="schema-property-domain: Category:'.$category.'"  pasteNS="false"/></p>' . "\n";
 +    else
 +      $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
 +               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
-+               value="'.$f->semantic_property.'" size="50" constraints="namespace: 102"  pasteNS="false"/></p>' . "\n";
++               value="'.$f->semantic_property.'" size="35" constraints="namespace: 102"  pasteNS="false"/></p>' . "\n";
 +    
  		$checked_str = ($f->is_list) ? " checked" : "";
  		$text .= '	<p><input type="checkbox" name="is_list_' . $id . '"' .  $checked_str . '> ' . wfMsg('sf_createtemplate_fieldislist') . "\n";
