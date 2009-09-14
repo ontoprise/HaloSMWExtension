@@ -91,8 +91,8 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 	global $sgagDedicatedGardeningMachine;
 	if (!isset($sgagDedicatedGardeningMachine) || $sgagDedicatedGardeningMachine == 'localhost' || $sgagDedicatedGardeningMachine == '127.0.0.1') {
-
-		$user = NULL;
+        global $wgUser;
+		$user = $wgUser;
 		if ($user_id != NULL) {
 			$passwordBlob = smwfGetPasswordBlob($user_id);
 			if ($passwordBlob === $user_pass) {
@@ -102,7 +102,7 @@ function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 		}
 
 		if (is_null($user) || !$user->isAllowed('gardening')) {
-			return; // only sysops and gardeners may cancel a bot.
+			return SGAGardening::getGardeningLogTable(); // only sysops and gardeners may cancel a bot.
 		}
 		// send term signal to bot
 		if (GardeningBot::abortBot($taskid) !== true) {
