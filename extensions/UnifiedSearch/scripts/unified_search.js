@@ -54,8 +54,9 @@ ToleranceSelector.prototype = {
         
         // set search text in extension's search field
         var us_searchfield = $('us_searchfield');
-        var mw_searchfield = $('searchInput');
-        if (us_searchfield && mw_searchfield) us_searchfield.value = mw_searchfield.value;
+        var queryParams = location.href.toQueryParams();
+       
+        if (us_searchfield) us_searchfield.value = queryParams['search'];
     },
     
       
