@@ -515,34 +515,48 @@ class AutoCompletionHandler {
 				foreach($params as $p) {
 					if (stripos($p, $userInput) !== false) $result[] = $p;
 				}
+				self::removeDoubles($result);
 				// continue to fill in results if possible
 			} else if ($commandText == 'fixvalues') {
 				foreach($params as $p) {
 					$result[] = $p;
 				}
+				self::removeDoubles($result);
 				// continue to fill in results if possible
 			} else if ($commandText == 'schema-property-domain') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
-					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
+					if (!is_null($category)) { 
+						$result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
+						self::removeDoubles($result);
+					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-range-instance') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$instance = Title::newFromText($params[0]);
-					if (!is_null($instance)) $result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+					if (!is_null($instance)) { 
+						$result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+						self::removeDoubles($result);
+					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-property') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
-					if (!is_null($category)) $result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+					if (!is_null($category)) {
+					 	$result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+					 	self::removeDoubles($result);
+					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-value') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
-					if (!is_null($property)) $result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
+					if (!is_null($property)) { 
+						$result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
+						self::removeDoubles($result);
+					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'instance-property-range') {
@@ -551,14 +565,17 @@ class AutoCompletionHandler {
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
 						$result = array_merge($result, $acStore->getInstanceAsTarget($match, $domainRangeAnnotations));
+						self::removeDoubles($result);
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'namespace') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
+				self::removeDoubles($result);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
 				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput));
+				self::removeDoubles($result);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				$datatype = $params[0];
@@ -567,6 +584,7 @@ class AutoCompletionHandler {
 					global $smwgContLang;
 					$dtl = $smwgContLang->getDatatypeLabels();
 					$result = array_merge($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
+					self::removeDoubles($result);
 					if (count($result) >= SMW_AC_MAX_RESULTS) break;
 				}
 			} else if ($commandText == 'ask') {
@@ -597,12 +615,13 @@ class AutoCompletionHandler {
 						$result[] = Title::newFromText($r);
 					}
 				}
+				self::removeDoubles($result);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
 
 
 		}
-		self::removeDoubles($result);
+		
 		return $result;
 	}
 
