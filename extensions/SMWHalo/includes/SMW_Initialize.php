@@ -29,7 +29,7 @@ $smwgHaloScriptPath = $wgScriptPath . '/extensions/SMWHalo';
 $smwgHaloAAMParser = null;
 $smwgDisableAAMParser = false;
 $smwgProcessedAnnotations = null;
-$wgCustomVariables = array('CURRENTUSER', 'NOW', 'TODAY');
+$wgCustomVariables = array('CURRENTUSER', 'CURRENTUSERNS', 'NOW', 'TODAY');
 
 
 
@@ -1377,10 +1377,14 @@ function wfAddCustomVariableLang(&$langMagic, $langCode = 0) {
 function wfGetCustomVariable(&$parser,&$cache,&$index,&$ret) {
 	switch ($index) {
 
-		case MAG_CURRENTUSER:
+		case MAG_CURRENTUSERNS:
 			$parser->disableCache(); # Mark this content as uncacheable
-			$ret = $GLOBALS['wgUser']->mName;
+			$ret = $GLOBALS['wgContLang']->getNsText(NS_USER).":".$GLOBALS['wgUser']->mName;
 			break;
+		case MAG_CURRENTUSER:
+            $parser->disableCache(); # Mark this content as uncacheable
+            $ret = $GLOBALS['wgUser']->mName;
+            break;	
 		case MAG_NOW:
 			$parser->disableCache(); # Mark this content as uncacheable
 			$ret = date("Y-m-d\\TH:i:s");
