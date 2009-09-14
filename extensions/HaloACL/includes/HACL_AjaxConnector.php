@@ -1134,7 +1134,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
 
     $content = <<<HTML
 
-		<div id="content_$panelid" class="panel haloacl_panel_content">
+		<div id="content_$panelid" class="yui-skin-sam panel haloacl_panel_content">
                     <div id="rightTypes_$panelid">
 HTML;
 
@@ -2587,29 +2587,34 @@ function getRightsContainer($panelid, $type = "readOnly") {
 
                 var panelid = '$panelid';
                 var checkedgroups = YAHOO.haloaclrights.getCheckedNodesFromRightsTree(YAHOO.haloaclrights.treeInstance$panelid, null);
-                console.log(checkedgroups);
+              
+                    var counter = 0;
+                    checkedgroups.each(function(actualtemplate){
 
-                var counter = 0;
-                checkedgroups.each(function(actualtemplate){
+                        // building xml
+                        var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+                        xml+="<inlineright>";
+                        xml+="<panelid>$panelid"+"_templatecount_"+counter+"</panelid>";
+                        xml+="<type>template</type>";
 
-                    // building xml
-                    var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
-                    xml+="<inlineright>";
-                    xml+="<panelid>$panelid"+"_templatecount_"+counter+"</panelid>";
-                    xml+="<type>template</type>";
+                        xml+="<name>"+actualtemplate+"</name>";
 
-                    xml+="<name>"+actualtemplate+"</name>";
+                        xml+="</inlineright>";
 
-                    xml+="</inlineright>";
-
-                    var callback3 = function(result){
-                        console.log(result);
-                    };
-                    YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback3);
-                    counter++;
-                });
-                genericPanelSetSaved_$panelid(true);
-                YAHOO.haloacl.closePanel('$panelid');
+                        var callback3 = function(result){
+                            console.log(result);
+                        };
+                        YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback3);
+                        counter++;
+                    });
+                    if(checkedgroups.length > 0){
+                        genericPanelSetSaved_$panelid(true);
+                        YAHOO.haloacl.closePanel('$panelid');
+                    }else{
+                         YAHOO.haloacl.notification.createDialogOk("content","Groups: Something went wrong","No templates have been selected",{
+                            yes:function(callback){
+                            }});
+                    }
             };
 
         </script>
