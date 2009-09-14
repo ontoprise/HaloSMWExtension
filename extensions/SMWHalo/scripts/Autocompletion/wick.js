@@ -967,9 +967,7 @@ AutoCompleter.prototype = {
     },  //this.selectFromMouseOver
     selectFromMouseClick: function() {
         this.activateCurrentSmartInputMatch();
-         //this.siw.inputBox.focus();
-        this.siw.inputBox.focus();
-        this.siw.inputBox.blur();
+        
         this.hideSmartInputFloater();
     },  //this.selectFromMouseClick
     getIndexFromElement: function(o) {
