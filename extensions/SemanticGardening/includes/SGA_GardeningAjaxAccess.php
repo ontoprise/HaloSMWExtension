@@ -101,7 +101,7 @@ function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 
 		}
 
-		if (!GardeningBot::isUserAllowed($user, array(SMW_GARD_SYSOPS, SMW_GARD_GARDENERS))) {
+		if (is_null($user) || !$user->isAllowed('gardening')) {
 			return; // only sysops and gardeners may cancel a bot.
 		}
 		// send term signal to bot
