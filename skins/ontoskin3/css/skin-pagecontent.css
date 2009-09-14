@@ -12,3 +12,54 @@
    TODO customize this sample style
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
+
+/**
+* CSS for inline queries in table format
+* just add a div to your page around content with class="smwtable"
+*/
+
+
+#content .smwtable{
+	background-color: #ffffff;
+	border-collapse:collapse;
+}
+
+#content .smwtable th{
+	background-color: #ffffff;
+	color: #116988;
+	text-align: left;
+	border-bottom-color:#116988;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+}
+
+#content .smwfooter td{
+	background-color: #FFF;
+}
+
+#content .smwforumtable .smwtable{
+	background: none;
+}
+
+#content .smwforumtable .smwtable th{
+	background: none;
+	border-bottom: 1px solid #F0F0F0;
+}
+
+#content .smwforumtable .smwtable th a{
+	color: #116988;
+}
+
+#content .smwforumtable .smwtable td{
+	border-bottom: 1px solid #F0F0F0;
+}
+
+
+#smwf_pageblock .sortable .odd td{
+    background-color: #aed5db;
+}
+
+
+#smwf_pageblock .sortable .even td{
+    background-color: #ffffff;
+}
