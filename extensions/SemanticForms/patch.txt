@@ -1,6 +1,6 @@
 Index: extensions/SemanticForms/includes/SF_FormInputs.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4967)
 +++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
 @@ -43,7 +43,9 @@
        $query_string .= "&wpDestFile=$default_filename";
@@ -15,7 +15,7 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4967)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -32,7 +32,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
  class SFFormPrinter {
  
    var $mSemanticTypeHooks;
-@@ -128,6 +136,9 @@
+@@ -132,6 +140,9 @@
      global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
  
      // initialize some variables
@@ -42,7 +42,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $sfgTabIndex = 1;
      $sfgFieldNum = 1;
      $source_page_matches_this_form = false;
-@@ -142,6 +153,14 @@
+@@ -146,6 +157,14 @@
      $new_text = "";
      // flag for placing "<onlyinclude>" tags in form output
      $onlyinclude_free_text = false;
@@ -57,7 +57,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      
      // if we have existing content and we're not in an active replacement
      // situation, preserve the original content. We do this because we want
-@@ -287,11 +306,16 @@
+@@ -291,11 +310,16 @@
            $query_template_name = str_replace('.', '_', $query_template_name);
            $chooser_name = false;
            $chooser_caption = false;
@@ -74,7 +74,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              $sub_components = explode('=', $component);
              if (count($sub_components) == 2) {
                if ($sub_components[0] == 'label') {
-@@ -302,6 +326,10 @@
+@@ -306,6 +330,10 @@
                } elseif ($sub_components[0] == 'chooser caption') {
                  $chooser_caption = $sub_components[1];
                }
@@ -85,7 +85,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              }
            }
            // if this is the first instance, add the label in the form
-@@ -312,8 +340,50 @@
+@@ -316,8 +344,50 @@
                $form_text .= "<fieldset [[placeholder]] haschooser=true>\n";
              else
                 $form_text .= "<fieldset>\n";
@@ -137,7 +137,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            $template_text .= "{{" . $tif->template_name;
            $all_fields = $tif->getAllFields();
            // remove template tag
-@@ -615,10 +685,18 @@
+@@ -622,10 +692,18 @@
              if ($is_hidden) {
                $new_text = SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
              } else {
@@ -160,7 +160,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                $sfgTabIndex++;
                $sfgFieldNum++;
                list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('!free_text!', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
-@@ -988,9 +1066,19 @@
+@@ -1003,9 +1081,19 @@
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
              }
@@ -181,7 +181,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            }
            $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
          // =====================================================
-@@ -1021,15 +1109,15 @@
+@@ -1036,15 +1124,15 @@
            // doing a replace
            if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
              $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
@@ -201,7 +201,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                  "\n{{{insertionpoint}}}\n" . $existing_page_content;
            }
          }
-@@ -1078,7 +1166,11 @@
+@@ -1093,7 +1181,11 @@
        } else {
          $form_text .= $section;
        }
@@ -214,7 +214,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      } // end for
  
      // if it wasn't included in the form definition, add the
-@@ -1098,7 +1190,7 @@
+@@ -1113,7 +1205,7 @@
           $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
         } else {
           $free_text = null;
@@ -223,7 +223,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
           $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
           $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
         }
-@@ -1118,18 +1210,38 @@
+@@ -1133,18 +1225,38 @@
      } else {
        $free_text = null;
      }
@@ -265,7 +265,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
          $free_text = SFFormUtils::prepareTextForFCK($free_text);
        }
-@@ -1228,7 +1340,7 @@
+@@ -1243,7 +1355,7 @@
      // add form bottom, if no custom "standard inputs" have been defined
      if ($is_query)
        $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
@@ -274,7 +274,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        $form_text .= SFFormUtils::formBottom($form_is_disabled);
      $starttime = wfTimestampNow();
      $page_article = new Article($this->mPageTitle);
-@@ -1246,7 +1358,10 @@
+@@ -1261,7 +1373,10 @@
      $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
      $javascript_text .= SFFormUtils::autocompletionJavascript();
      if ($free_text_was_included && $showFCKEditor > 0) {
@@ -288,9 +288,9 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 4967)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
-@@ -714,9 +714,12 @@
+@@ -720,9 +720,12 @@
  		return $text;
  	}
  
@@ -304,7 +304,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		$newWinMsg = wfMsg('rich_editor_new_window');
  		$javascript_text = '
  var showFCKEditor = '. $showFCKEditor .';
-@@ -751,6 +754,33 @@
+@@ -757,6 +760,33 @@
  	);
  }
  
@@ -338,7 +338,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  function onLoadFCKeditor()
  {
  	if (!(showFCKEditor & RTE_VISIBLE)) 
-@@ -760,7 +790,15 @@
+@@ -766,7 +796,15 @@
  	if ( realTextarea )
  	{
  		// Create the editor instance and replace the textarea.
@@ -357,7 +357,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 4967)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -373,7 +373,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  if ( !defined( 'MEDIAWIKI' ) ) die();
  
  class SFLinkUtils {
-@@ -338,7 +345,19 @@
+@@ -284,7 +291,19 @@
  		// if this is not a category page, look for a default form
  		// for its parent categories
  		$namespace = $obj->mTitle->getNamespace();
@@ -394,7 +394,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  			$default_forms = array();
  			$categories = self::getCategoriesForArticle($obj);
  			foreach ($categories as $category) {
-@@ -346,7 +365,9 @@
+@@ -292,7 +311,9 @@
  			}
  			if (count($default_forms) > 0)
  				return $default_forms;
@@ -407,7 +407,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 4966)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -521,7 +521,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4965)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 4967)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -535,22 +535,22 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  if ( !defined( 'MEDIAWIKI' ) ) die();
  
  class SFUtils {
-@@ -140,6 +145,12 @@
- 		$wgOut->addScript('<script type="text/javascript" src="' .  $sfgYUIBase . 'autocomplete/autocomplete-min.js"></script>' . "\n");
+@@ -144,6 +149,12 @@
  		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
+ 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_ajax_form_preview.js"></script>' . "\n");
  		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
 +		/*op-patch|BL|2009-06-28|CollapsingForms|AddNecessaryScripts|start*/
-+		global $smwgHaloScriptPath;
-+		$wgOut->addScript('<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/prototype.js"></script>' . "\n");
-+		$wgOut->addScript('<script type="text/javascript" src="'.$smwgHaloScriptPath . '/scripts/OntologyBrowser/generalTools.js"></script>' . "\n");
-+		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/collapse.js"></script>' . "\n");
-+		/*op-patch|BL|2009-06-28|end*/
++        global $smwgHaloScriptPath;
++        $wgOut->addScript('<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/prototype.js"></script>' . "\n");
++        $wgOut->addScript('<script type="text/javascript" src="'.$smwgHaloScriptPath . '/scripts/OntologyBrowser/generalTools.js"></script>' . "\n");
++        $wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/collapse.js"></script>' . "\n");
++        /*op-patch|BL|2009-06-28|end*/
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4965)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 4967)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
