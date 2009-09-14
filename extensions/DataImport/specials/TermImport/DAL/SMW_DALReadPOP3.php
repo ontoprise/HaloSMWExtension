@@ -346,9 +346,13 @@ class DALReadPOP3 implements IDAL {
 				$this->serializeICal($content);
 			} else if(array_key_exists("body", $this->requiredProperties)
 					&& strtoupper($part->subtype) != "HTML"){
-				$this->body .= "<pre>".htmlspecialchars($this->decodeBodyPart(
+				$body = htmlspecialchars($this->decodeBodyPart(
 					imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
-					$encoding))."</pre>";
+					$encoding));
+				if(!mb_check_encoding($body, "UTF-8")){
+					$body = utf8_encode($body);
+				}
+				$this->body .= "<pre>".$body."</pre>"; 
 			}
 		} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
 			$this->body .= "<pre>".htmlspecialchars($this->decodeBodyPart(
@@ -1054,9 +1058,9 @@ class DALReadPOP3 implements IDAL {
 		if(trim($this->body) == ""){
 			$body = "";
 		} else {
-			$body = "<body>".htmlspecialchars($this->body)."</body>";
+			$body = "<body><![CDATA[".$this->body."]]></body>";
 		}
-
+		
 		return $attachmentTerms."<term>"
 			.$attachmentFNs.$body;
 	}
