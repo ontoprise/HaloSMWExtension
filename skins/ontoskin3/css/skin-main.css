@@ -285,7 +285,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
     min-height: 400px;
 }
 
-#mainpage 
 
 #mainpagetable{
   margin-top: 10px;
@@ -299,8 +298,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding: 5px;
 }
 
-#body{
-    overflow: auto;
+#bodyContent{
+    overflow: auto
 }
 
 #siteSub, #jump-to-nav, .printfooter{
