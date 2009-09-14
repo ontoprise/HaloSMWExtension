@@ -147,6 +147,7 @@ class OntoSkin3Template extends QuickTemplate {
             @import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
             @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-colorfont.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
             @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+            @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/css/skin-pagecontent.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
         </style>
 
         <!-- Default monobook css disabled
@@ -331,6 +332,9 @@ class OntoSkin3Template extends QuickTemplate {
             </td>
             <td id="shadow_right" width="10px">
             </td>
+            </tr>
+            <tr>
+                <td id="shadow_bottom" colspan="3"></td>
             </tr>
             </tbody>
             </table>
@@ -656,7 +660,7 @@ class OntoSkin3Template extends QuickTemplate {
         if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) $isAllowed = true;       
         if($isAllowed == false) return "";
         
-        $menu = "<!-- Standardmediawiki Menu -->";
+        $menu = "<!-- Tools Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration";
         $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_tools.gif\" alt=\"tools\"/>";

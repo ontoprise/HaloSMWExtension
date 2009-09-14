@@ -139,7 +139,7 @@ ul.smwh_menulist div.smwh_menubody {
 ul.smwh_menulist div.smwh_menubody_visible {
     margin-top: 2px;
     padding: 5px;
-    border-width: 1px;
+    border-width: 2px;
     border-style: solid;
     -moz-border-radius: 5px;
 }
@@ -174,8 +174,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_breadcrumbs{
     clear: both;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     font-size: smaller;
 }
 
@@ -283,6 +283,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #mainpage{
     margin-top: 3px;
     min-height: 400px;
+    padding-bottom: 25px;
 }
 
 
@@ -309,6 +310,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 /*footer*/
 
 #footer{
-    padding: 10px;
+    padding: 10px
 }
 
