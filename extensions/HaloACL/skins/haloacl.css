@@ -128,6 +128,10 @@ abbr,acronym { border:0;
     min-width:960px;
 }
 
+#p-search, #p-logo{
+    z-index:1!important;
+}
+
 .yui-content{
     background:#FFF!important;
     margin:0px!important;
@@ -500,8 +504,9 @@ button:hover{
     overflow:scroll!important;
     */
     overflow: -moz-scrollbars-vertical!important;
-    overflow-y: scroll!important;
+    overflow-y: auto!important;
     padding:5px 0 0px 5px;
+    height:257px;
 }
 /* right side */
 
@@ -540,7 +545,7 @@ button:hover{
 }
 
 .haloacl_rightpanel_selecttab_rightpart_datatable{
-    height:255px;
+    height:262px;
     border:1px #000 solid;
     border-style:none none solid none;
 }
@@ -752,14 +757,14 @@ button:hover{
     width:150px;
 }
 #treeDiv_manageuser_grouplisting{
-    height:260px;
+    height:257px;
     border:1px solid;
     border-style:none none solid none;
     /*
     overflow:scroll!important;
     */
     overflow: -moz-scrollbars-vertical!important;
-    overflow-y: scroll!important;
+    overflow-y: auto!important;
     padding:5px 0 0 5px;
 }
 
@@ -866,13 +871,13 @@ button:hover{
 }
 #haloacl_whitelist_datatablecontainer{
     float:left;
-    min-height:265px;
+    height:265px;
     min-width:595px;
     /*
        overflow:scroll!important;
     */
     overflow: -moz-scrollbars-vertical!important;
-    overflow-y: scroll!important;
+    overflow-y: auto!important;
     padding:5px 0 0 5px;
 }
 
