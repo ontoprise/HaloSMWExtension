@@ -280,6 +280,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
     -moz-border-radius: 5px;
 }
 
+#smwh_halopageoptions p{
+    margin: 0px;
+}
+
+
+
 #mainpage{
     margin-top: 3px;
     min-height: 400px;
