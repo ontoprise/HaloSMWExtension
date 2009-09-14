@@ -31,6 +31,7 @@ function enableDataImportExtension() {
 	
 	//require the materialize parser function
 	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
+	require_once("$smwgDIIP/specials/TermImport/SpecialPurposeParserFunctions/DI_EmailIDExtractor.php");
 			
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 }
@@ -115,6 +116,7 @@ function smwfDISetupExtension() {
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSCacheBot.php");
 	require_once("$smwgDIIP/specials/WebServices/SMW_WSUpdateBot.php");
 	
+	
 	return true;
 }
 
@@ -131,7 +133,6 @@ function smwfDIInitializeTables() {
 	$dbAccess = SMWMaterializationStorageAccess::getInstance();
 	$db = $dbAccess->getDatabase();
 	$db->setup(true);
-	
 	
 	return true;
 }
