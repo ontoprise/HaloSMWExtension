@@ -157,6 +157,7 @@ var wgUserLanguageStrings = {
 	'WW_AUTOCOMPLETION_HINT'  : 'Der WYSIWYG-Editor unterstützt weder Auto-completion noch die Semantic Toolbar.',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Hier zum Verschieben klicken',
     'AC_MORE_RESULTS_AVAILABLE' : 'Zuviele Treffer gefunden...',
+    'AC_MORE_RESULTS_TOOLTIP' : 'Zuviele Treffer. Bitte erweitern Sie die Suchanfrage.',
 
 	// Combined search
 	'ADD_COMB_SEARCH_RES'     : 'Zusätzliche Ergebnisse der Combined-Search.',

@@ -922,7 +922,7 @@ AutoCompleter.prototype = {
                     + "\t" + this.siw.matchCollection[i].value.replace(/\{ */gi, "&lt;").replace(/\} */gi, "&gt;")
                     + '<span class="extraDataSmartInputItem">'+this.siw.matchCollection[i].getExtraData()+'</span></p>';
             }  //
-            if (this.siw.matchCollection.length == this.acMaxMatches) a+='<div id="ac_toomuchresults">[...] '+gLanguage.getMessage('AC_MORE_RESULTS_AVAILABLE')+'</div>';
+            if (this.siw.matchCollection.length == this.acMaxMatches) a+='<div id="ac_toomuchresults" title="'+gLanguage.getMessage('AC_MORE_RESULTS_TOOLTIP')+'">[...] '+gLanguage.getMessage('AC_MORE_RESULTS_AVAILABLE')+'</div>';
         }     //this.siw exists
 
         return a;

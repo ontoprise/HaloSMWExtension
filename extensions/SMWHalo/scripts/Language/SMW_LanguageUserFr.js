@@ -161,6 +161,7 @@ var wgUserLanguageStrings = {
     'WW_AUTOCOMPLETION_HINT'  : 'L\'éditeur WYSIWYG ("What you see is what you get", i.e. "Ce que vous voyez est ce que vous obtenez") ne supporte ni l\'autocomplétion, ni la barre d\'outils sémantique.',
     'AC_CLICK_TO_DRAG'        : 'Autocomplétion - Cliquez ici pour glisser/déposer',
     'AC_MORE_RESULTS_AVAILABLE' : 'Too much results found...',
+    'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',
     
     // Combined search
     'ADD_COMB_SEARCH_RES'     : 'Résultats additionnels de la recherche combinée.',
