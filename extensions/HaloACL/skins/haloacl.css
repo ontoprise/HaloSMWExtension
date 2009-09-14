@@ -653,7 +653,9 @@ button:hover{
 
 
 
-
+.yui-panel-container{
+    position:absolute;
+}
 
 .yui-panel .hd {
     height:16px;
