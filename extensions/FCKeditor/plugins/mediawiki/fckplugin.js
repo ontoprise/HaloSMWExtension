@@ -1478,8 +1478,14 @@ FCKeditInterface.prototype = {
 
         // selection text only without any html mark up etc.
         var fckSel = FCKSelection.GetSelection();
-        var srange = fckSel.getRangeAt(fckSel.rangeCount - 1).cloneRange();
-        var selTextCont = srange.cloneContents().textContent;
+        var selTextCont;
+        if(fckSel.createRange) {
+            var srange = fckSel.createRange();
+            selTextCont = srange.text;
+        } else {
+            var srange = fckSel.getRangeAt(fckSel.rangeCount - 1).cloneRange();
+            selTextCont = srange.cloneContents().textContent;
+        }
         // nothing was really selected, this always happens when a single or
         // double click is done. The mousup event is fired even though the user
         // might have positioned the cursor somewhere only.
@@ -1922,7 +1928,11 @@ FCKeditInterface.prototype = {
     getTextBeforeCursor: function() {},
     // not needed but exists for compatiblity reasons. The handling of selecting
     // the complete annotation is done in the getSelectionAsArray()
-    selectCompleteAnnotation: function() {}
+    selectCompleteAnnotation: function() {},
+    
+    focus: function() {
+        FCK.EditingArea.Focus();
+    }
 
 };
 
