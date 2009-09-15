@@ -1468,6 +1468,8 @@ class HACLStorageSQL {
                     $extendWhere = SMW_NS_PROPERTY;
                 }elseif($type == "category"){
                     $extendWhere = NS_CATEGORY;
+                }elseif($type == "page"){
+                    $extendWhere = "0";
                 }
                 
 		$db =& wfGetDB( DB_SLAVE );
