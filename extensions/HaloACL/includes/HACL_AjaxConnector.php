@@ -1071,6 +1071,10 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if($preload == "false") {
         $preload = false;
     }
+    if($preload == "true"){
+        $repload = true;
+    }
+    
 
 
     /*  define for part */
@@ -2660,7 +2664,7 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     foreach ($SD->getInlineRights(false) as $rightId) {
     //echo "----$rightId---";
         $tempRight = HACLRight::newFromId($rightId);
-        $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, true, $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription());
+        $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, "true", $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription());
     }
 
     //attach predefined right texts
@@ -3305,7 +3309,7 @@ function getAutocompleteDocuments($subName,$type) {
     }else {
         foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
             $itemname = $item["name"];
-            if(preg_match('/Property\//is',$itemname)) {
+            if(preg_match('/Property\//is',$itemname) ) {
                 $item["name"] = substr($itemname,9);
                 $a['records'][] = $item;
             }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
