@@ -133,6 +133,10 @@ $haclWhitelistGroups = array('sysop','bureaucrat');
 global $haclCrossTemplateAccess;
 $haclCrossTemplateAccess = array('sysop','bureaucrat');
 
+$wgGroupPermissions['*']['propertyread'] = true;
+$wgGroupPermissions['*']['propertyformedit'] = true;
+$wgGroupPermissions['*']['propertyedit'] = true;
+$wgGroupPermissions['*']['formedit'] = true;
 
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');

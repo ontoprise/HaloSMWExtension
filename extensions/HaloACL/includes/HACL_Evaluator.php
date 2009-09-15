@@ -48,6 +48,7 @@ class HACLEvaluator {
 	
 	//--- Private fields ---
 	static $mMode = HACLEvaluator::NORMAL;
+	static $mSavePropertiesAllowed = false;
 	
 	/**
 	 * Constructor for  HACLEvaluator
@@ -82,7 +83,8 @@ class HACLEvaluator {
 	 * 		true
 	 */
 	public static function userCan($title, $user, $action, &$result) {
-
+		global $wgRequest;
+		
 		$etc = haclfDisableTitlePatch();
 
 		// Check if property access is requested.
@@ -166,9 +168,23 @@ class HACLEvaluator {
 			return $r;
 		}
 		
+		$submit = $wgRequest->getText('action');
+		$submit = $submit == 'submit'; 
+		$savePage = $wgRequest->getCheck('wpSave');
 		// Check if the article contains protected properties that avert
 		// editing the article
-		$allowed = self::checkProperties($title, $userID, $actionID);
+		// There is no need to check for protected properties if an edited article 
+		// is submitted. An article with protected properties may be saved if their
+		// values are not changed. This is checked in method "onEditFilter" when
+		// the article is about to be saved.
+		if ($submit && !$savePage) {
+			// The article is submitted but not saved. This causes, that
+			// the wikitext will be displayed. 
+			// => prophibit this, if it contains properties without read-access
+			$allowed = self::checkProperties($title, $userID, HACLRight::EDIT);
+		} else {
+			$allowed = $savePage || self::checkProperties($title, $userID, $actionID);
+		}
 		if (!$allowed) {
 			haclfRestoreTitlePatch($etc);
 			$result = false;
@@ -329,7 +345,7 @@ class HACLEvaluator {
 	 * 		true
 	 */ 
 	 public static function onEditFilter($editor, $text, $section, &$error) {
-		global $wgParser;
+		global $wgParser, $wgUser;
 		$article = $editor->mArticle;
 		$options = new ParserOptions;
 	//	$options->setTidy( true );
@@ -342,7 +358,7 @@ class HACLEvaluator {
 		$protectedProperties = "";	                           
 		if (isset($output->mSMWData)) {
 			foreach ($output->mSMWData->getProperties() as $name => $prop) {
-				if (!$prop->userCan("propertyedit")) {
+				if (!$prop->userCan("propertyformedit")) {
 					// Access to property is restricted
 					if (!isset($oldPV)) {
 						// Get all old properties of the page from the semantic store
@@ -355,15 +371,32 @@ class HACLEvaluator {
 			}
 		}
 		if (empty($protectedProperties)) {
+			self::$mSavePropertiesAllowed = true;
 			return true;
 		}
 		
+		self::$mSavePropertiesAllowed = false;
 		$error = wfMsgForContent('hacl_sp_cant_save_article', $protectedProperties);
+		
+		// Special handling for semantic forms
+		if (defined('SF_VERSION')) {
+			include_once('includes/SpecialPage.php');
+			$spt = SpecialPage::getTitleFor('EditData');
+			$url = $spt->getFullURL();
+			$referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+			if (strpos($referer, $url) === 0) {
+				// A semantic form was saved.
+				// => abort with an error message
+				global $wgOut;
+				$wgOut->addWikiText($error);
+				return false;
+			}
+		}
 		return true;
 	}
 	
 	/**
-	 * This method is called when the difference of to revisions of an article is
+	 * This method is called when the difference of two revisions of an article is
 	 * about to be displayed.
 	 * If one of the revisions contains a property that can not be read, the mode
 	 * for the ACL evaluator is set accordingly for following calls to the userCan
@@ -756,6 +789,9 @@ class HACLEvaluator {
 		    	// No property access requested
 		    	return -1;
 		}
+		if (self::$mSavePropertiesAllowed) {
+			return true;
+		}
 		return self::hasPropertyRight($title, $user->getId(), $actionID);
 	}
 	
@@ -777,6 +813,7 @@ class HACLEvaluator {
 	private static function propertyValuesChanged(SMWPropertyValue $property, 
 												  SMWSemanticData $oldValues, 
 												  SMWSemanticData $newValues) {
+												  	
 		
 		// Get all old values of the property										  	
 		$oldPV = $oldValues->getPropertyValues($property);

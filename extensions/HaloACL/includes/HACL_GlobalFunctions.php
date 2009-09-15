@@ -154,6 +154,9 @@ function haclfSetupExtension() {
     // Register autocompletion icon
     $wgHooks['smwhACNamespaceMappings'][] = 'haclfRegisterACIcon';
 
+    
+    // Handle input fields of Semantic Forms
+	$wgHooks['sfCreateFormField'][] = 'haclfHandleFormField';
     wfProfileOut('haclfSetupExtension');
     return true;
 }
@@ -168,8 +171,6 @@ function haclfSetupExtension() {
  */
 function addNonSpecialPageHeader(&$out) {
     global $haclgHaloScriptPath;
-
-
 
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
@@ -630,4 +631,54 @@ function haclfRegisterACIcon(& $namespaceMappings) {
     global $haclgIP;
     $namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
     return true;
+}
+
+$haclgEncryptionKey = "Es war einmal ein Hase.";
+
+// encrypt() and decrypt() functions copied from
+// http://us2.php.net/manual/en/ref.mcrypt.php#52384
+function haclfEncrypt($string) {
+	global $haclgEncryptionKey;
+	$result = '';
+	for($i=0; $i<strlen($string); $i++) {
+		$char = substr($string, $i, 1);
+		$keychar = substr($haclgEncryptionKey, ($i % strlen($haclgEncryptionKey))-1, 1);
+		$char = chr(ord($char)+ord($keychar));
+		$result .= $char;
+	}
+	return base64_encode($result);
+}
+
+function haclfDecrypt($string) {
+	global $haclgEncryptionKey;
+	$result = '';
+	$string = base64_decode($string);
+	for($i=0; $i<strlen($string); $i++) {
+		$char = substr($string, $i, 1);
+		$keychar = substr($haclgEncryptionKey, ($i % strlen($haclgEncryptionKey))-1, 1);
+		$char = chr(ord($char)-ord($keychar));
+		$result .= $char;
+	}
+	return $result;
+}
+
+function haclfHandleFormField($form_field, $cur_value, $form_submitted) {
+	$property_name = $form_field->template_field->semantic_property;
+	if (! empty($property_name)) {
+		$property_title = Title::makeTitleSafe(SMW_NS_PROPERTY, $property_name);
+		if ($property_title->exists()) {
+			$form_field->is_disabled = false;			
+			if (! $property_title->userCan('propertyread')) {
+				if ($form_submitted) {
+					$cur_value = haclfDecrypt($cur_value);
+				} else {
+					$form_field->is_hidden = true;
+					$cur_value = haclfEncrypt($cur_value);
+				}
+			} elseif ((! $property_title->userCan('propertyedit')) && (! $property_title->userCan('propertyformedit'))) {
+				$form_field->is_disabled = true;
+			}
+		}
+	}
+	return true;
 }
