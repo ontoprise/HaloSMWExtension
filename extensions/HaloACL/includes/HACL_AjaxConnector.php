@@ -4401,15 +4401,16 @@ function saveQuickacl($xml) {
 
 function doesArticleExists($articlename,$protect) {
     if($protect == "property") {
-        $articlename = "Property/".$articlename;
+        $articlename = "Property:".$articlename;
     }
     if($protect == "namespace") {
-        $articlename = "Namepsace/".$articlename;
+        $articlename = "Namepsace:".$articlename;
     }
     if($protect == "category") {
-        $articlename = "Category/".$articlename;
+        $articlename = "Category:".$articlename;
     }
     $response = new AjaxResponse();
+    echo $articlename;
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
         $sd = new Article(Title::newFromText("ACL:$protect/$articlename"));
