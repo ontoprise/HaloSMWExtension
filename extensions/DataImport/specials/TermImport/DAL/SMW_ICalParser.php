@@ -87,7 +87,7 @@ class ICalParser {
 								break;
 							case 'DTEND':
 								$iCal['ic-end'] = $data;
-								$iCal['ic-dtend'] = $this->convertDate($iCal['ic-end']);
+								$iCal['ic-end'] = $this->convertDate($iCal['ic-end']);
 								break;
 							case 'EXDATE':
 								$iCal['ic-exdate'] = $data;
