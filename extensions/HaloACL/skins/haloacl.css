@@ -1036,3 +1036,7 @@ button:hover{
 .haloacl_existing_right_add_buttons{
     margin:5px 0 0 5px;
 }
+
+.popup_title{
+    color:#000!important;
+}
