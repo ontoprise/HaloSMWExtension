@@ -65,7 +65,6 @@ class DALReadPOP3 implements IDAL {
 
 	function __construct() {
 		global $wgNamespaceAliases;
-		
 	}
 
 	public function getSourceSpecification() {
