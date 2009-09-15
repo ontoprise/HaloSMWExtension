@@ -887,7 +887,7 @@ function createAclUserTemplateContent() {
  */
 function getManageUserGroupPanel($panelid, $name="", $description="", $users=null, $groups=null, $manageUsers=null, $manageGroups=null) {
     $newGroup = "false";
-    if($users == null && $groups == null && $manageUsers == null && $manageGroups == null){
+    if($users == null && $groups == null && $manageUsers == null && $manageGroups == null) {
         $newGroup = "true";
     }
 
@@ -1071,10 +1071,10 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     if($preload == "false") {
         $preload = false;
     }
-    if($preload == "true"){
+    if($preload == "true") {
         $repload = true;
     }
-    
+
 
 
     /*  define for part */
@@ -2713,19 +2713,19 @@ function clearTempSessionGroup() {
 
 
 function saveTempGroupToSession($groupxml) {
-    // checking if action is valid
+// checking if action is valid
     $xml = new SimpleXMLElement($groupxml);
     $groupname = (String)$xml->name;
     $newGroup = (String)$xml->newgroup;
-    if($newGroup == "true"){
+    if($newGroup == "true") {
         $article = new Article(Title::newFromText("ACL:Group/$groupname"));
-        if($article->exists()){
+        if($article->exists()) {
             $response = new AjaxResponse();
             $response->setResponseCode(400);
             $response->addText("Group already exists. You can not create two groups with the same name.");
             return $response;
         }
-    
+
     }
     $_SESSION['tempgroups'] = $groupxml;
     $response = new AjaxResponse();
@@ -3296,27 +3296,58 @@ function saveWhitelist($whitelistXml) {
  * @return <JSON>   return array of documents
  */
 function getAutocompleteDocuments($subName,$type) {
-    global $wgExtraNamespaces;
+    global $wgExtraNamespaces,$wgUser;
+
+
+    $realnametype = "";
+    if($type == "page") {
+        $realnametype = "Page";
+    }elseif($type == "category") {
+        $realnametype = "Category";
+    }elseif($type == "property") {
+        $realnametype = "Proptery";
+    }
 
     $a = array();
     if($type == "namespace") {
         foreach($wgExtraNamespaces as $ns) {
-            if(preg_match("/$subName/is",$ns)) {
+            $addThatItem = true;
+            $SDName = "ACL:Namespace/$ns";
+            try {
+                $sd = HACLSecurityDescriptor::newFromName($SDName);
+                if(!$sd->userCanModify($wgUser->getName())) {
+                    $addThatItem = false;
+                }
+            }
+            catch(Exception $e ) {}
+
+            if($addThatItem && preg_match("/$subName/is",$ns)) {
                 $temp = array("name"=>$ns);
                 $a['records'][] = $temp;
             }
         }
     }else {
         foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
+            $addThatItem = true;
             $itemname = $item["name"];
-            if(preg_match('/Property\//is',$itemname) ) {
-                $item["name"] = substr($itemname,9);
-                $a['records'][] = $item;
-            }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
-                $item["name"] = substr($itemname,9);
-                $a['records'][] = $item;
-            }else {
-                $a['records'][] = $item;
+            $SDName = "ACL:$realnametype/$itemname";
+            try {
+                $sd = HACLSecurityDescriptor::newFromName($SDName);
+                if(!$sd->userCanModify($wgUser->getName())) {
+                    $addThatItem = false;
+                }
+            }
+            catch(Exception $e ) {}
+            if($addThatItem) {
+                if(preg_match('/Property\//is',$itemname) ) {
+                    $item["name"] = substr($itemname,9);
+                    $a['records'][] = $item;
+                }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
+                    $item["name"] = substr($itemname,9);
+                    $a['records'][] = $item;
+                }else {
+                    $a['records'][] = $item;
+                }
             }
         }
     }
