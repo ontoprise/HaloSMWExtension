@@ -487,7 +487,6 @@ class DALReadPOP3 implements IDAL {
 				continue;
 			}
 			
-			//todo: replace , and ; by something else
 			if(key_exists($type, $header)){
 				$result .= "\n<".$type.">";
 				$first = true;
@@ -497,15 +496,27 @@ class DALReadPOP3 implements IDAL {
 					}
 					$first = false;
 					if(key_exists('personal', $obj)){
-						$result .= htmlspecialchars($obj->personal);
+						$result .= htmlspecialchars(mb_decode_mimeheader($obj->personal));
+						
+						//this is necessary for being able to later pass
+						// the from attribute to the createAttachments callback
+						//todo: find better solution
+						if($type == "from"){
+							$this->mailFrom = htmlspecialchars(mb_decode_mimeheader($obj->personal));
+						}
 					}
 					$result.= ",";
+					
+					if($type == "from"){
+						$this->mailFrom .= ",";
+					}
+					
 					if(key_exists('mailbox', $obj)){
 						//this is necessary for being able to later pass
 						// the from attribute to the createAttachments callback
 						//todo: find better solution
 						if($type == "from"){
-							$this->mailFrom = htmlspecialchars($obj->mailbox);
+							$this->mailFrom .= htmlspecialchars($obj->mailbox);
 						}
 						$result .= htmlspecialchars($obj->mailbox);
 					}
@@ -533,9 +544,9 @@ class DALReadPOP3 implements IDAL {
 
 		if(array_key_exists("subject", $this->requiredProperties)){
 			if(key_exists('subject', $header)){
-				$result .= "\n<subject>".htmlspecialchars($header->subject)."</subject>";
+				$result .= "\n<subject>".htmlspecialchars(mb_decode_mimeheader($header->subject))."</subject>";
 			} else if(key_exists('Subject', $header)){
-				$result .= "\n<subject>".htmlspecialchars($header->Subject)."</subject>";
+				$result .= "\n<subject>".htmlspecialchars(mb_decode_mimeheader($header->Subject))."</subject>";
 			}
 		}
 		
