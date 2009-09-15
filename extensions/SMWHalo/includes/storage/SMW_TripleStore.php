@@ -537,7 +537,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param array of $triples
 	 * @return string
 	 */
-	private function implodeTriples($triples) {
+	protected function implodeTriples($triples) {
 		$result = "";
 		foreach($triples as $t) {
 			$result .= implode(" ", $t);
@@ -552,7 +552,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param int $namespace
 	 * @return string
 	 */
-	private function getNSPrefix($namespace) {
+	protected function getNSPrefix($namespace) {
 		if ($namespace == SMW_NS_PROPERTY) return "prop";
 		elseif ($namespace == NS_CATEGORY) return "cat";
 		elseif ($namespace == NS_MAIN) return "a";
@@ -568,7 +568,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param string $suffix which serves also as prefix.
 	 * @return string
 	 */
-	private function getUnknownNamespacePrefixes($suffix) {
+	protected function getUnknownNamespacePrefixes($suffix) {
 		if (substr($suffix, 0, 3) == "ns_") {
 			global $smwgTripleStoreGraph;
 			return " PREFIX $suffix:<$smwgTripleStoreGraph/$suffix#> ";
@@ -582,7 +582,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param string $literal
 	 * @return string
 	 */
-	private function escapeQuotes($literal) {
+	protected function escapeQuotes($literal) {
 		return str_replace("\"", "\\\"", $literal);
 	}
 
@@ -592,7 +592,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param String $literal
 	 * @return String
 	 */
-	private function unquote($literal) {
+	protected function unquote($literal) {
 		$trimed_lit = trim($literal);
 		if (stripos($trimed_lit, "\"") === 0 && strrpos($trimed_lit, "\"") === strlen($trimed_lit)-1) {
 			$substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
@@ -609,7 +609,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param string $literal
 	 * @return string
 	 */
-	private function removeXSDType($literal) {
+	protected function removeXSDType($literal) {
 		$pos = strpos($literal, "^^");
 		return $pos !== false ? substr($literal, 0, $pos) : $literal;
 	}
@@ -621,7 +621,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param xml string $sparqlXMLResult
 	 * @return SMWQueryResult
 	 */
-	private function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
+	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
 		$dom = simplexml_load_string($sparqlXMLResult);
@@ -758,7 +758,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param PrintRequest prs
 	 * @param array & $allValues
 	 */
-	private function addValueToResult($sv, $prs, & $allValues) {
+	protected function addValueToResult($sv, $prs, & $allValues) {
 		// category result
 		if (stripos($sv, self::$CAT_NS) === 0) {
 			$allValues[] = $this->createSMWDataValue($sv, self::$CAT_NS, NS_CATEGORY);
@@ -829,7 +829,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param int $ns
 	 * @return SMWDataValue
 	 */
-	private function createSMWDataValue($sv, $nsFragment, $ns) {
+	protected function createSMWDataValue($sv, $nsFragment, $ns) {
 
 		$local = substr($sv, strlen($nsFragment));
 		$title = Title::newFromText($local, $ns);
@@ -846,7 +846,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param SMWQuery $query
 	 * @return String
 	 */
-	private function serializeParams($query) {
+	protected function serializeParams($query) {
 		$result = "";
 		$first = true;
 
@@ -902,7 +902,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param array $prqs
 	 * @return boolean
 	 */
-	private function containsPrintRequest($var_name, array & $prqs, & $query) {
+	protected function containsPrintRequest($var_name, array & $prqs, & $query) {
 		$contains = false;
 		foreach($prqs as $po) {
 			if ($query->fromASK && $po->getData() == NULL && $var_name == '_X_') {
