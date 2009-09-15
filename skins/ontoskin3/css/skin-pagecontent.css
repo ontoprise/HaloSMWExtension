@@ -55,11 +55,19 @@
 }
 
 
-#content .sortable .odd td{
+#content .sortable .odd tr{
     background-color: #aed5db;
 }
 
 
-#content .sortable .even td{
+#content .sortable .even tr{
     background-color: #ffffff;
+}
+
+#content .even tr{ 
+background-color:#FFF; 
+}
+
+#content .odd tr{
+background-color:#aed5db;
 }
