@@ -59,6 +59,8 @@ class DALReadPOP3 implements IDAL {
 	private $regularExpressions;
 	private $importSets;
 	
+	private $messagesToDelete;
+	
 	private $noCallPartNr = false; //this flag is used to determine when to skip multipart/related
 
 	function __construct() {
@@ -194,6 +196,7 @@ class DALReadPOP3 implements IDAL {
 		$this->requiredTerms = array_flip($inputPolicy["terms"]);
 		$this->regularExpressions = $inputPolicy["regex"];
 		$this->importSets = $this->parseImportSets($importSet);
+		$this->messagesToDelete = array();
 		
 		$connection = $this->getConnection($dataSourceSpec);
 		if($connection == false){
@@ -201,7 +204,7 @@ class DALReadPOP3 implements IDAL {
 			wfMsg('smw_ti_pop3error').
 			DAL_POP3_RET_ERR_END;
 		}
-		$messages = imap_search($connection, 'UNSEEN');
+		$messages = imap_search($connection, 'ALL');
 		
 		$this->attachmentMP = $this->getMPFromDataSource($dataSourceSpec, "AttachmentMP");
 
@@ -215,7 +218,8 @@ class DALReadPOP3 implements IDAL {
 				$result .= $this->getBody($connection, $msg);
 				$result .= "\n".$headerData;
 				$result .= "</term>\n";
-				imap_delete($connection, $msg);
+				$this->messagesToDelete[$this->getMessageId($connection, $msg)] = true;
+				break;
 			}
 		}
 		
@@ -233,13 +237,14 @@ class DALReadPOP3 implements IDAL {
 			}
 		}
 		
-		imap_expunge($connection);
 		imap_close($connection);
+		
+		$deleteCallback = $this->createDeleteCallback($dataSourceSpec);
 		
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$result.
+			$result.$deleteCallback.
 			'</terms>'."\n";
 	}
 
@@ -397,7 +402,6 @@ class DALReadPOP3 implements IDAL {
 	private function getConnection($dataSourceSpec){
 		if($this->connection == false){
 			if(strpos($dataSourceSpec, "DATASOURCE") > 0){
-				
 				$dataSourceSpec = str_replace('XMLNS="http://www.ontoprise.de/smwplus#"', "", $dataSourceSpec);
 				$dataSourceSpec = new SimpleXMLElement(trim($dataSourceSpec));
 				$serverAddress = $dataSourceSpec->xpath("//SERVERADDRESS/text()");
@@ -443,6 +447,7 @@ class DALReadPOP3 implements IDAL {
 
 			$check = @imap_check($this->connection);
 			if(!$check){
+				echo("checked failed");
 				return false;
 			}
 		}
@@ -679,6 +684,7 @@ class DALReadPOP3 implements IDAL {
 	}
 
 	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
+		echo("\n\n".$signature);
 		return eval("return \$this->".$signature.",\$conflictPolicy, \$termImportName);");
 	}
 
@@ -772,6 +778,32 @@ class DALReadPOP3 implements IDAL {
 			return $this->createCallBackResult(true,
 			array(array('id' => SMW_GARDISSUE_ADDED_ARTICLE,
 				'title' => $title->getFullText())));
+		}
+	}
+	
+	private function handleDeleteCallBack($deletes, $dataSourceSpec, $conflictPolicy, $termImportName){
+		$this->connection = null;
+		$connection = $this->getConnection($dataSourceSpec);
+		$messages = imap_search($connection, 'ALL');
+		if(is_array($messages)){
+			foreach($messages as $msg){
+				$messageId = $this->getMessageId($connection, $msg);
+				if(array_key_exists($this->replaceAngledBrackets($messageId), $deletes)){
+					imap_delete($connection, $msg);
+				}
+			}
+		}
+		imap_expunge($connection);
+		imap_close($connection);
+		return true;
+	}
+	
+	private function getMessageId($mbox, $msgNumber){
+		$header = imap_header($mbox, $msgNumber);
+		if(key_exists("message_id", $header)){
+			return $header->message_id;
+		} else { 
+			return false;
 		}
 	}
 
@@ -1021,6 +1053,29 @@ class DALReadPOP3 implements IDAL {
     	}
     	
     	return $parser->getValuesOfElement(array('importSet','name'));
+	}
+	
+	
+	private function createDeleteCallback($dataSourceSpec){
+		if(count($this->messagesToDelete) == 0){
+			return;
+		}
+		
+		$delete = "";
+		$first = true;
+		foreach($this->messagesToDelete as $key => $dontcare){
+			if(!$first){
+				$delete .= ",";
+			}
+			$first = false;
+			$delete .= "'".$this->replaceAngledBrackets($key)."' => true";
+		}
+		$result = "\n\n<term callback='true'>".
+			"handleDeleteCallBack(".
+				"array(".$delete."), <![CDATA['".$dataSourceSpec."']]>"
+				."</term>";
+		echo($result);
+		return $result;
 	}
 	
 	private function serializeBodyXML(){
