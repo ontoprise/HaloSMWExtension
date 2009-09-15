@@ -159,7 +159,7 @@ $phpInterpreter="{{xamp-install}}/php/php.exe";
 $smwgOWLFullExport = true;
 
 $smwgEnableUploadConverter = true;
-$smwgUseEditDistance = true;
+$smwgUseEditDistance = false;
 
 $wgVerifyMimeType=false;
 array_push($wgFileExtensions, "owl");
@@ -181,18 +181,8 @@ $wgGroupPermissions['ontologist']['gardening']=true;
 $wgGroupPermissions['sysop']['wysiwyg']=true;
 $wgGroupPermissions['sysop']['gardening']=true;
 $wgGroupPermissions['sysop']['userrights']=true;
- 
+$wgGroupPermissions['sysop']['ontologyediting'] = true; 
 
-#Enable semantic annotations for pages in the following namespaces
-$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
-$smwgNamespacesWithSemanticLinks[NS_CATEGORY] = true;
-$smwgNamespacesWithSemanticLinks[SMW_NS_PROPERTY] = true;
-$smwgNamespacesWithSemanticLinks[SMWH_NS_RULE] = true;
-$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
-$smwgNamespacesWithSemanticLinks[NS_HELP] = true;
-$smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
-$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
-$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 
 // auto-templates
 $smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
@@ -210,9 +200,13 @@ require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('localhost:8080');
 
+include_once('extensions/SemanticForms/includes/SF_Settings.php');
+
 #SMWHalo
+$smwgQComparators = '<|>|!|~';
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo();
+
 
 #Semantic Gardening
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
@@ -228,7 +222,7 @@ require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
 require_once( "$IP/extensions/Variables/Variables.php" );
 
 #MIME-Type
-include_once('extensions/RichMedia/includes/RM_AdditionalMIMETypes.php');
+include_once('extensions/RichMedia/includes/RM_Initialize.php');
 
 #Semantic Results formats
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
@@ -236,8 +230,9 @@ $srfgFormats[] = 'googlepie';
 $srfgFormats[] = 'googlebar';
 
 // Obtain a key and uncomment the following two lines to enable exhibit 
-//$srfgFormats[] = 'exhibit';
-//$wgGoogleMapsKey='';
+$srfgFormats[] = 'exhibit';
+//$wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xSs46XrA4oX1zqtsRFEXPxbV5MtMhTPFGQBYP3GQE3l_b1b_FUqyJC2IQ'; // smwdemo.ontoprise.com
+$wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xQX9pd0uONOCGJFC8u7ZDUFaCKkshTv5HkjP0A4d-QbgV8Zvnc0vG8p_A';
 
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
@@ -268,5 +263,41 @@ $wgNamespacesToBeSearchedDefault = array(
 
 
 
+
+
+$wgJobRunRate=0;
+
+
+include_once('extensions/RichMedia/includes/RM_Initialize.php');
+enableRichMediaExtension();
+$wgAllowExternalImages=true;
+
+include('extensions/Treeview/Treeview.php');
+$wgTreeViewImages['plus'] = "Plus.gif";
+
+require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
+if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
+require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
+}
+
+$wgSearchType = 'LuceneSearch';
+$wgLuceneHost = 'localhost';
+$wgLucenePort = 8123;
+$wgLuceneSearchVersion = 2.1;
+$wgUSPathSearch=true;
+require_once('extensions/UnifiedSearch/includes/UnifiedSearch.php');
+
+require_once("$IP/extensions/ImageMap/ImageMap.php");
+
+#Enable semantic annotations for pages in the following namespaces
+$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
+$smwgNamespacesWithSemanticLinks[NS_CATEGORY] = true;
+$smwgNamespacesWithSemanticLinks[SMW_NS_PROPERTY] = true;
+$smwgNamespacesWithSemanticLinks[SMWH_NS_RULE] = true;
+$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
+$smwgNamespacesWithSemanticLinks[NS_HELP] = true;
+$smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
+$smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
+$smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 
 ?>

@@ -323,7 +323,7 @@ Section "Semantic Forms" semforms
   StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importSemForms=1 ls=LocalSettings.php'
+  ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importSemForms=1 ls=LocalSettings.php'
 SectionEnd
 
 Section "Treeview" treeview
@@ -337,11 +337,11 @@ Section "Treeview" treeview
   StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importTreeview=1 ls=LocalSettings.php'
+  ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importTreeview=1 ls=LocalSettings.php'
 SectionEnd
 
 Section "WYSIWYG" wysiwyg
-  SectionIn 1
+  SectionIn 1 RO
   DetailPrint "Configure WYSIWYG extension"
   SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
@@ -351,11 +351,11 @@ Section "WYSIWYG" wysiwyg
   StrCpy $MEDIAWIKIDIR "$INSTDIR\htdocs\mediawiki"
   
   ; change config file
-  nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importWYSIWYG=1 ls=LocalSettings.php'
+  ;nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeLS.php" importWYSIWYG=1 ls=LocalSettings.php'
 SectionEnd
 
 Section "Lucene search" lucene
-    SectionIn 1 2
+    SectionIn 1 2 RO
     SectionGetFlags ${xampp} $0
     IntOp $0 $0 & ${SF_SELECTED}
     
