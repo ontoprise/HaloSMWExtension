@@ -405,7 +405,7 @@ class TermImportBot extends GardeningBot {
 			$openPos = stripos($mappingPolicy, '<mapping', $offset);
 			$closePos = stripos($mappingPolicy, '</mapping>', $offset);
 			$closeFirst = (($openPos !==false && $closePos !== false && $closePos < $openPos)
-			|| ($openPos === false && $closePos !== false));
+				|| ($openPos === false && $closePos !== false));
 
 			if ($openPos === false || $closeFirst) {
 				// no further mapping tags
@@ -466,7 +466,7 @@ class TermImportBot extends GardeningBot {
 				}
 				// process the content of the mapping
 				list($r,$offset) = $this->createContent($term, $mappingPolicy,
-				$openPos, $useMap, $level+1);
+					$openPos+1, $useMap, $level+1);
 				if ($useMap) {
 					// replace the parameters in the result string by their actual
 					// values
