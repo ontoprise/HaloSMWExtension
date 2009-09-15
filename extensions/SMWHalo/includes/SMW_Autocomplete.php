@@ -515,29 +515,29 @@ class AutoCompletionHandler {
 				foreach($params as $p) {
 					if (stripos($p, $userInput) !== false) $result[] = $p;
 				}
-				self::removeDoubles($result);
+
 				// continue to fill in results if possible
 			} else if ($commandText == 'fixvalues') {
 				foreach($params as $p) {
 					$result[] = $p;
 				}
-				self::removeDoubles($result);
+
 				// continue to fill in results if possible
 			} else if ($commandText == 'schema-property-domain') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
-					if (!is_null($category)) { 
-						$result = array_merge($result, $acStore->getPropertyForCategory($userInput, $category));
-						self::removeDoubles($result);
+					if (!is_null($category)) {
+						$result = self::mergeResults($result, $acStore->getPropertyForCategory($userInput, $category));
+
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-range-instance') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$instance = Title::newFromText($params[0]);
-					if (!is_null($instance)) { 
-						$result = array_merge($result, $acStore->getPropertyForInstance($userInput, $instance, false));
-						self::removeDoubles($result);
+					if (!is_null($instance)) {
+						$result = self::mergeResults($result, $acStore->getPropertyForInstance($userInput, $instance, false));
+
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -545,17 +545,17 @@ class AutoCompletionHandler {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
-					 	$result = array_merge($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
-					 	self::removeDoubles($result);
+						$result = self::mergeResults($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
+							
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-value') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
-					if (!is_null($property)) { 
-						$result = array_merge($result, $acStore->getValueForAnnotation($userInput, $property));
-						self::removeDoubles($result);
+					if (!is_null($property)) {
+						$result = self::mergeResults($result, $acStore->getValueForAnnotation($userInput, $property));
+
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -564,18 +564,18 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
-						$result = array_merge($result, $acStore->getInstanceAsTarget($match, $domainRangeAnnotations));
-						self::removeDoubles($result);
+						$result = self::mergeResults($result, $acStore->getInstanceAsTarget($match, $domainRangeAnnotations));
+
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'namespace') {
-				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
-				self::removeDoubles($result);
+				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPages($userInput, $params));
+
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'lexical') {
-				$result = array_merge($result, smwfGetAutoCompletionStore()->getPages($userInput));
-				self::removeDoubles($result);
+				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPages($userInput));
+
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
 				$datatype = $params[0];
@@ -583,8 +583,8 @@ class AutoCompletionHandler {
 				if (count($result) < SMW_AC_MAX_RESULTS) {
 					global $smwgContLang;
 					$dtl = $smwgContLang->getDatatypeLabels();
-					$result = array_merge($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
-					self::removeDoubles($result);
+					$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
+						
 					if (count($result) >= SMW_AC_MAX_RESULTS) break;
 				}
 			} else if ($commandText == 'ask') {
@@ -610,18 +610,19 @@ class AutoCompletionHandler {
 					}
 				}
 				$textTitles = array_unique($textTitles);
+				$titles = array();
 				foreach($textTitles as $r) {
 					if (smwf_om_userCan($r, 'read') == 'true') {
-						$result[] = Title::newFromText($r);
+						$titles[] = Title::newFromText($r);
 					}
 				}
-				self::removeDoubles($result);
+				self::mergeResults($result, $titles);
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			}
 
 
 		}
-		
+
 		return $result;
 	}
 
@@ -650,41 +651,29 @@ class AutoCompletionHandler {
 	 *
 	 * @param array $results First element is Title or string and siginifcant for double or not.
 	 */
-	private static function removeDoubles(& $results) {
+	private static function mergeResults(& $arr1, & $arr2) {
 			
-		if (count($results) == 0) return;
 			
-		// sort results
-		for($i = 0, $n = count($results); $i < $n; $i++) {
-			for($j = 0, $m = count($results)-1; $j < $m; $j++) {
-				$cmp = self::isEqualResults($results[$j], $results[$j+1]);
-				if ($cmp > 0) { // ascending sort order
-					$temp = $results[$j];
-					$results[$j] = $results[$j+1];
-					$results[$j+1] = $temp;
-				}
+		// merge results
+		for($i = 0, $n = count($arr2); $i < $n; $i++) {
+			$contains = false;
+			for($j = 0, $m = count($arr1); $j < $m; $j++) {
+				$cmp = self::isEqualResults($arr1[$j], $arr2[$i]);
+				$contains |= $cmp == 0;
+			}
+			if (!$contains) { // ascending sort order
+				$arr1[] = $arr2[$i];
 			}
 		}
-
-		
-		// eliminate doubles
-		$e = $results[0];
-		for($i = 1, $n = count($results); $i < $n; $i++) {
-			$cmp = self::isEqualResults($e, $results[$i]);
-            if ($cmp == 0) $results[$i] = NULL; else $e = $results[$i];
-		}
-		
-		// return all non-null elements
-		$results = array_filter($results, create_function('$e', 'return !is_null($e);'));
-		
+		return $arr1;
 	}
-    
+
 	/**
 	 * Checks if two matches are equal or not.
 	 * FIXME: should be moved into a separated ACMatch class
 	 *
-	 * @param Match $r1 array with first element to be a Title or string. 
-	 * @param Match $r2 array with first element to be a Title or string. 
+	 * @param Match $r1 array with first element to be a Title or string.
+	 * @param Match $r2 array with first element to be a Title or string.
 	 * @return int < 0 if $r1 < $r2, == 0 if $r1 == $r2, > 0 if $r1 > $r2
 	 */
 	private static function isEqualResults(& $r1, & $r2) {
