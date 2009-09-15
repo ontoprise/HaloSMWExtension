@@ -155,7 +155,7 @@ function smwgHaloSetupExtension() {
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
 	$title = Title::newFromText($wgRequest->getVal('title'));
-	if ($title->getNamespace() == NS_SPECIAL) {
+	if (!is_null($title) && $title->getNamespace() == NS_SPECIAL) {
 
 		$wgHooks['BeforePageDisplay'][]='smwOBAddHTMLHeader';
 		$wgHooks['BeforePageDisplay'][]='smwfQIAddHTMLHeader';
