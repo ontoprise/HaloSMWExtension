@@ -4410,7 +4410,6 @@ function doesArticleExists($articlename,$protect) {
         $articlename = "Category:".$articlename;
     }
     $response = new AjaxResponse();
-    echo $articlename;
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
         $sd = new Article(Title::newFromText("ACL:$protect/$articlename"));
