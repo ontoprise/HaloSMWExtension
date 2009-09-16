@@ -1539,4 +1539,12 @@ class HACLStorageSQL {
 		return $quickacl;
 	}
 
+       public function deleteQuickaclForSD($sdid){
+ 		$db =& wfGetDB( DB_MASTER );
+		$t = $db->tableName('halo_acl_quickacl');
+		// delete old quickacl entries
+		$db->delete($t, array('sd_id' => $sdid));
+		return true;
+       }
+
 }
