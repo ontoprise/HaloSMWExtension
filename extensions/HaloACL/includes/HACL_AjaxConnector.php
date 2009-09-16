@@ -405,8 +405,8 @@ function createSaveContent() {
             var callback2 = function(result){
                 if(result.status == '200'){
                     YAHOO.haloacl.notification.createDialogYesNo("content","$hacl_createSaveContent_3",result.responseText,{
-                        yes:function(){window.location.href='?activetab=createACL';},
-                        no:function(){window.location.href='../index.php?title='+result.responseText;},
+                        yes:function(){window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=createACL';},
+                        no:function(){window.location.href=YAHOO.haloacl.specialPageUrl+'../'+result.responseText;},
                     },"Ok","Jump To Article");
                 }else{
                     YAHOO.haloacl.notification.createDialogOk("content","$hacl_createSaveContent_4",result.responseText,{
@@ -2386,7 +2386,7 @@ HTML;
         var callback5 = function(result){
             YAHOO.haloacl.notification.createDialogOk("content","Manage ACLs",result.responseText,{
                 yes:function(){
-                    window.location.href='?activetab=manageACLs';
+                    window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageACLs';
                     }
             });
         };
@@ -2535,7 +2535,7 @@ HTML;
 
                         YAHOO.haloacl.notification.createDialogOk("content","ACL","Right has been saved",{
                             yes:function(){
-                                window.location.href='?activetab=manageACLs';
+                                window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageACLs';
                                 }
                         });
                     }else{
@@ -3931,7 +3931,7 @@ HTML;
                 var callback5 = function(result){
                     YAHOO.haloacl.notification.createDialogOk("content","Manage Groups",result.responseText,{
                         yes:function(){
-                            window.location.href='?activetab=manageUsers';
+                            window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageUsers';
                             }
                     });
                 };
@@ -4026,7 +4026,7 @@ HTML;
                                 }catch(e){}
                                 YAHOO.haloacl.notification.createDialogOk("content","Groups","Group has been saved",{
                                     yes:function(){
-                                        window.location.href='?activetab=manageUsers';
+                                        window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageUsers';
                                     //YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
                                     }
                                 });
