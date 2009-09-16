@@ -54,11 +54,30 @@ ToleranceSelector.prototype = {
         
         // set search text in extension's search field
         var us_searchfield = $('us_searchfield');
-        var queryParams = location.href.toQueryParams();
+        var queryParams = this.getQueryParams();
        
-        if (us_searchfield) us_searchfield.value = decodeURIComponent(queryParams['search']);
+        if (us_searchfield) us_searchfield.value = queryParams['search'];
     },
     
+    getQueryParams: function(separator) {
+	 var match = location.href.strip().match(/([^?#]*)(#.*)?$/);
+	 if (!match) return { };
+	
+	 return match[1].split(separator || '&').inject({ }, function(hash, pair) {
+	 if ((pair = pair.split('='))[0]) {
+		 var key = decodeURIComponent(pair.shift());
+		 var value = pair.length > 1 ? pair.join('=') : pair[0];
+		 if (value != undefined) value = decodeURIComponent(value.replace(/\+/, ' '));
+		
+		 if (key in hash) {
+		 if (!Object.isArray(hash[key])) hash[key] = [hash[key]];
+		 hash[key].push(value);
+	 }
+	   else hash[key] = value;
+	 }
+	 return hash;
+	 });
+	}, 
       
     onChange: function(v) {
         
