@@ -18,8 +18,7 @@
 }
 
 #hacl_toolbarcontainer_section3{
-    float:left;
-    width:250px;
+    float:right;
     height:20px;
     padding:0 5px;
 }
@@ -29,4 +28,7 @@
     height:20px;
     background:url(images/info.png) no-repeat;
     float:left;
+}
+#haloacl_toolbar_popuplink{
+    padding: 2px 0 0 10px;
 }

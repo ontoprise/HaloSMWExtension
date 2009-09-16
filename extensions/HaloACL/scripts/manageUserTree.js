@@ -388,18 +388,44 @@ YAHOO.haloacl.manageUser.loadNodeData = function(node, fnLoadComplete)  {
  */
 YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
 
+ var loadNodeData = function(node, fnLoadComplete)  {
+        var nodeLabel = encodeURI(node.label);
+        //prepare our callback object
+        var callback = {
+            panelid:"",
+            success: function(oResponse) {
+                YAHOO.haloacl.manageUser.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
+                oResponse.argument.fnLoadComplete();
+            },
+            failure: function(oResponse) {
+                oResponse.argument.fnLoadComplete();
+            },
+            argument: {
+                "node": node,
+                "fnLoadComplete": fnLoadComplete
+            },
+            timeout: 7000
+        };
+        YAHOO.haloacl.manageUser.treeviewDataConnect('getGroupsForManageUser',{
+            query:nodeLabel
+        },callback);
+
+    };
+
     var groupsInTree = false;
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
         var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.name);
+        tmpNode.setDynamicLoad(loadNodeData);
         groupsInTree = true;
         
     };
-    if(!groupsInTree){
+   if(!groupsInTree){
         var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
-        tmpNode.setDynamicLoad();
+        //tmpNode.setDynamicLoad();
     }
+   
 
 };
 
@@ -446,7 +472,7 @@ YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
 
 
 
-    tree.setDynamicLoad(loadNodeData);
+    //tree.setDynamicLoad(loadNodeData);
     tree.draw();
 
 };
