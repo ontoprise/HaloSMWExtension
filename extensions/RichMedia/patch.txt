@@ -1,3 +1,18 @@
+Index: extensions/SemanticForms/includes/SF_FormInputs.inc
+===================================================================
+--- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 4394)
++++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
+@@ -43,7 +43,9 @@
+       $query_string .= "&wpDestFile=$default_filename";
+     $upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
+     $upload_label = wfMsg('upload');
+-    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:550 height:380\">$upload_label</a>";
++	/*op-patch|KK|2009-06-09|increase upload window size|start*/
++    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:660\">$upload_label</a>";
++	/*op-patch|KK|2009-06-09|increase upload window size|end*/
+     return $text;
+   }
+ 
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4394)
@@ -24,7 +39,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 4928)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5012)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -278,7 +293,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			}
 +			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 +			$relatedArticles = urlencode($relatedArticles);
-+			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles";
++			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
 +			$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
  			$output .=<<<END
 -		parent.fb.end();
@@ -705,7 +720,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1849,54 @@
+@@ -1562,4 +1849,60 @@
  		}
  		return $pageText;
  	}
@@ -718,6 +733,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		global $wgRequest, $wgScriptPath;
 +		
 +		$filename = $wgRequest->getText( 'uploadedFile' );
++		$inputID = $wgRequest->getText( 'sfInputID' );
 +		// create the message for the successsful upload
 +		global $wgUser, $wgOut;
 +		$sk = $wgUser->getSkin();
@@ -750,13 +766,18 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		
 +		$wgOut->addHTML($uploadSuccessHTML);
 +		
-+		$script = '	<script type="text/javascript" src="'.$wgScriptPath.'/extensions/RichMedia/scripts/fck_connect.js"></script>' . "\n";
-+		$script .=<<<END
-+		<script type="text/javascript">
-+			saveRichMediaData('$filename', '$imagePath');
-+		</script>		
-+		
++		if ( $inputID ) {
++			// upload is triggered from an SF input field, so do nothing special.
++		}
++		else {
++			// maybe we have to enter a link in FCK
++			$script = '	<script type="text/javascript" src="'.$wgScriptPath.'/extensions/RichMedia/scripts/fck_connect.js"></script>' . "\n";
++			$script .=<<<END
++<script type="text/javascript">
++saveRichMediaData('$filename', '$imagePath');
++</script>
 +END;
++		}
 +		$wgOut->addHTML( $script );
 +	}
  }

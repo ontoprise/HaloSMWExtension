@@ -10,15 +10,20 @@
 
 function saveRichMediaData(mediaTitle, mediaLink) {
 	// get FCK editor instance
+	var inFormEdit = false;
 	try {
-		if (window.top.wgAction == "formedit") // Semantic Forms
-		oEditor = window.parent.FCKeditorAPI.GetInstance('free_text');
+		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData
+		if (window.top.wgAction == "formedit" || window.parent.wgPageName == 'Special:AddData' || window.top.wgPageName == 'Special:EditData') {
+			inFormEdit = true;
+			oEditor = window.parent.FCKeditorAPI.GetInstance('free_text');
+		}
 		else	// normal WYSIWYG edit
 			oEditor = window.parent.FCKeditorAPI.GetInstance('wpTextbox1');
 	}
 	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
 	catch(err) {
-		if (window.parent.wgPageName != 'Special:AddData')
+		// just reload if we're not in using a form
+		if (!inFormEdit)
 			parent.fb.loadPageOnClose ='self';
 		return;
 	}
