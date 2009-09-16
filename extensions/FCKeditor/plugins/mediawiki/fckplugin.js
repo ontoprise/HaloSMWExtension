@@ -865,6 +865,9 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_onlyinclude' :
 				if ( className == null )
 					className = 'FCK__MWOnlyinclude' ;
+                        case 'fck_mw_webservice' :
+                                if ( className == null )
+                                        className = 'FCK__MWWebservice' ;
 				// Property and Category elements remains as span, don't replace the span with an img
 				if (className != null) {
 					var oImg = FCKDocumentProcessor_CreateFakeImage( className, eSpan.cloneNode(true) ) ;

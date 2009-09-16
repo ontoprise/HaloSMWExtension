@@ -113,4 +113,10 @@ FCKConfig.EditorAreaStyles = '\
     background-color: #94b0f3; \
     padding-left: 16px; \
 } \
+.FCK__MWWebservice \
+{ \
+	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_webservice.gif); \
+	width: 16px; \
+	height: 16px; \
+} \
 ' ;

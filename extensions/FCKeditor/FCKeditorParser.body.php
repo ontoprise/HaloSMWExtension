@@ -107,8 +107,8 @@ class FCKeditorParser extends Parser
 	}
         // add custom parser funtions from extensions to list
         foreach ($wgParser->getFunctionHooks() as $h) {
-            // ask and sparql are no special tags and have there own <span> elements in FCK
-            if (!in_array($h, array("ask", "sparql")) &&
+            // ask and sparql + ws are no special tags and have there own <span> elements in FCK
+            if (!in_array($h, array("ask", "sparql", "ws")) &&
                 !in_array($h, $this->FCKeditorFunctionHooks))
                 $this->FCKeditorFunctionHooks[] = '#'.$h;
         }
@@ -371,6 +371,8 @@ class FCKeditorParser extends Parser
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
                                         if (substr($inner, 0, 7) == '{{#ask:' )
                                             $fck_mw_template =  'fck_mw_askquery';
+                                        else if (substr($inner, 0, 6) == '{{#ws:' )
+					    $fck_mw_template =  'fck_mw_webservice';
                                         else {
                                             $funcName = (($fp = strpos($inner, ':', 2)) !== false) ? substr($inner, 2, $fp - 2) : substr($inner, 2, strlen($inner) - 4);
                                             if (in_array($funcName, $this->FCKeditorDateTimeVariables))
