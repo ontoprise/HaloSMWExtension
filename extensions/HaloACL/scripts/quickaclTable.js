@@ -77,7 +77,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
         key:"checked",
         label:gLanguage.getMessage('delete'),
         formatter:"mySelect"
-    },
+    }
 
     ];
 
@@ -98,7 +98,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
         
         {
             key:"checked"
-        },
+        }
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response

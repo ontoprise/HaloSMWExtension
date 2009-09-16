@@ -184,7 +184,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         };
         var to = displaying*1 + state.recordOffset*1;
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
-        var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords+" <span style='font-weight:normal'>in</span> Users";
+        var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords;
 
         //        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
         $(divid).innerHTML = html;
@@ -628,7 +628,9 @@ YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
     $$('.'+classname).each(function(item){
         var temp = $(item).readAttribute("name");
         temp = temp.toLowerCase();
-        if(temp.indexOf(filter)> 0 || filter == null || filter == ""){
+        console.log("temp:"+temp);
+        console.log("filter:"+filter);
+        if(temp.indexOf(filter) >= 0 || filter == null || filter == ""){
             $(item).parentNode.parentNode.parentNode.style.display = "inline";
         }else{
             $(item).parentNode.parentNode.parentNode.style.display = "none";
