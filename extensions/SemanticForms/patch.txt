@@ -1,18 +1,3 @@
-Index: extensions/SemanticForms/includes/SF_FormInputs.inc
-===================================================================
---- extensions/SemanticForms/includes/SF_FormInputs.inc	(revision 5035)
-+++ extensions/SemanticForms/includes/SF_FormInputs.inc	(working copy)
-@@ -43,7 +43,9 @@
-       $query_string .= "&wpDestFile=$default_filename";
-     $upload_window_url = $upload_window_page->getTitle()->getFullURL($query_string);
-     $upload_label = wfMsg('upload');
--    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:550 height:380\">$upload_label</a>";
-+    /*op-patch|KK|2009-06-09|increase upload window size|start*/
-+    $text = " <a href=\"$upload_window_url\" title=\"$upload_label\" rel=\"iframe\" rev=\"width:600 height:660\">$upload_label</a>";
-+    /*op-patch|KK|2009-06-09|increase upload window size|end*/
-     return $text;
-   }
- 
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5035)
