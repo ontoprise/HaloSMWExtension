@@ -55,12 +55,12 @@
 }
 
 
-#content .sortable .odd tr{
-    background-color: #aed5db;
+#content .sortable .odd td{
+    background-color: #cde6ea;
 }
 
 
-#content .sortable .even tr{
+#content .sortable .even td{
     background-color: #ffffff;
 }
 
@@ -69,5 +69,5 @@ background-color:#FFF;
 }
 
 #content .odd tr{
-background-color:#aed5db;
+background-color:#cde6ea;
 }
