@@ -623,7 +623,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$collation = 'COLLATE '.$smwgDefaultCollation;
 		}
 		// create virtual tables
-		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.')
+		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances (instance VARCHAR(255) '.$collation.', namespace INTEGER(11))
                     TYPE=MEMORY', 'SMW::createVirtualTableWithInstances' );
 
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_instances_sub (category VARCHAR(255) '.$collation.' NOT NULL)
@@ -635,9 +635,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		foreach($domainRangeAnnotations as $dr) {
 			$dvs = $dr->getDVs();
 			if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
-			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                        'WHERE page_is_redirect = 0 AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			 
 			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).')');
@@ -653,9 +653,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			$db->query('INSERT INTO smw_ob_instances_sub (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON page_id = cl_from WHERE page_namespace = '.NS_CATEGORY.' AND cl_to IN (SELECT * FROM smw_ob_instances_super))');
 
 			// insert direct instances of current subcategory level
-			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance FROM '.$page.' ' .
+			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace  FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-                        'WHERE page_is_redirect = 0 AND page_namespace = '.NS_MAIN.' AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                        'WHERE page_is_redirect = 0 AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			// copy subcatgegories to supercategories of next iteration
 			$db->query('DELETE FROM smw_ob_instances_super');
@@ -675,7 +675,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$db->query('DROP TEMPORARY TABLE smw_ob_instances_sub');
 
 		 
-		$res = $db->query('SELECT DISTINCT instance FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
+		$res = $db->query('SELECT DISTINCT instance, namespace FROM smw_ob_instances ORDER BY instance LIMIT '.SMW_AC_MAX_RESULTS);
 
 		$results = array();
 		if($db->numRows( $res ) > 0)
@@ -684,8 +684,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			 
 			while($row)
 			{
-				if (smwf_om_userCan($row->instance, 'read', NS_MAIN) == 'true') {
-					$instance = Title::newFromText($row->instance, NS_MAIN);
+				if (smwf_om_userCan($row->instance, 'read', $row->namespace) == 'true') {
+					$instance = Title::newFromText($row->instance, $row->namespace);
 					$results[] = $instance;
 				}
 				$row = $db->fetchObject($res);
