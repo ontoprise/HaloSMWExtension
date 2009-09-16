@@ -180,7 +180,7 @@ function getHACLToolbar($articleTitle) {
     </script>
 
 
-        <div id="hacl_toolbarcontainer">
+        <div id="hacl_toolbarcontainer" class="yui-skin-sam">
 
         <div id="hacl_toolbarcontainer_section1">
             Page state:&nbsp;
@@ -233,7 +233,7 @@ HTML;
         </div>
 
         <div id="hacl_toolbarcontainer_section3">
-            <a target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
+            <a id="haloacl_toolbar_advrightlink" target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
         </div>
     </div>
 

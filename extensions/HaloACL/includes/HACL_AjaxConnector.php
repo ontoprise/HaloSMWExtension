@@ -1353,11 +1353,11 @@ HTML;
 HTML;
     }
 
-    $content .= <<<HTML
-        <div class="haloacl_greyline">&nbsp;</div>
-HTML;
+
     if($predefine != "modification") {
         $content .= <<<HTML
+        <div class="haloacl_greyline">&nbsp;</div>
+
         <!-- define for start -->
            <div style="width:800px!important" class="halocal_panel_content_row">
                 <div class="haloacl_panel_content_row_descr">
@@ -1455,6 +1455,17 @@ HTML;
 HTML;
     //    }
 
+    if($readOnly){
+        $content .= <<<HTML
+        <script>
+            $$(".create_acl_general_definefor_$panelid").each(function(item){
+                item.disabled = true;
+            });
+        </script>
+HTML;
+
+    }
+
 
 
     if (!$readOnly) {
@@ -1478,6 +1489,7 @@ HTML;
 HTML;
         }else {
             $content .= <<<HTML
+                        <div style="width:50%;float:left;text-align:center"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel('$panelid');});" /></div>
                         <div style="width:50%;float:left;text-align:right"><input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
                         <script>
                         YAHOO.haloacl.addTooltip("tooltip_save_$panelid", "haloacl_save_$panelid", "click here to save the modifcation right.");
@@ -1878,7 +1890,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
                 </div>
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_treeview_userlink">
-                    <a class="highlighted datatable_user_link" onClick="YAHOO.haloacl.removeHighlighting();$(this).addClassName('highlighted');$('datatablepaging_groupinfo_$panelid').innerHTML='';" href="javascript:YAHOO.haloacl.datatableInstance$panelid.executeQuery('all');">$hacl_rightPanelSelectDeselectTab_3</a>
+                    <a class="highlighted datatable_user_link" onClick="YAHOO.haloacl.removeHighlighting();$(this).addClassName('highlighted');$('datatablepaging_groupinfo_$panelid').innerHTML='<span style=\'font-weight:normal\'>in</span>&nbsp;Users';" href="javascript:YAHOO.haloacl.datatableInstance$panelid.executeQuery('all');">$hacl_rightPanelSelectDeselectTab_3</a>
                 </div>
             </div>
 
@@ -1891,7 +1903,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
                 <div class="haloacl_rightpanel_selecttab_rightpart_filter">
 
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
-        $hacl_rightPanelSelectDeselectTab_4:&nbsp;<span id="datatablepaging_count_$panelid"></span> <span id="datatablepaging_groupinfo_$panelid"></span>
+        $hacl_rightPanelSelectDeselectTab_4:&nbsp;<span id="datatablepaging_count_$panelid"></span> <span id="datatablepaging_groupinfo_$panelid"><span style="font-weight:normal">in</span>&nbsp;Users</span>
                     </span>
                     <span style="margin-right:5px;float:right;font-weight:bold">select</span>
 
@@ -1932,7 +1944,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
 
             $(element.parentNode.parentNode).addClassName("highlighted");
             if(YAHOO.haloacl.debug) console.log(element);
-            $('datatablepaging_groupinfo_$panelid').innerHTML = "in "+query;
+            $('datatablepaging_groupinfo_$panelid').innerHTML = "<span style='font-weight:normal'>in</span> "+query;
 
             YAHOO.haloacl.datatableInstance$panelid.executeQuery(query);
 
@@ -2047,6 +2059,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_1
                     </span>
+                    <span style="font-weight:bold;float:right;margin-right:26px;">Remove</span>
                 </div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_filter">
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
@@ -2614,6 +2627,9 @@ function getRightsContainer($panelid, $type = "readOnly") {
                     if(checkedgroups.length > 0){
                         genericPanelSetSaved_$panelid(true);
                         YAHOO.haloacl.closePanel('$panelid');
+                        if($('step3') != null){
+                            $('step3').show();
+                        }
                     }else{
                          YAHOO.haloacl.notification.createDialogOk("content","Groups: Something went wrong","No templates have been selected",{
                             yes:function(callback){
@@ -3556,7 +3572,7 @@ function getGroupsForManageUser($query) {
     $array = array();
 
     // return first level
-    if($query == 'all') {
+    if($query == 'all' || $query == "Groups") {
 
     //get level 0 groups
         $groups = HACLStorage::getDatabase()->getGroups();
@@ -4275,7 +4291,7 @@ HTML;
         <div id="haloacl_whitelist_contentlist">
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-        $hacl_quickACL_3<span style="margin-left:415px">active</span>
+        $hacl_quickACL_3<span style="margin-left:415px">select</span>
             </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.quickaclTableInstance.executeQuery(this.value);"/>
@@ -4285,7 +4301,7 @@ HTML;
                 </div>
             </div>
             <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 0">
-                <input id="haloacl_save_quickacl_button" type="button" value="save Quickacl" onClick="YAHOO.haloacl.saveQuickacl()"; />
+                <input id="haloacl_save_quickacl_button" type="button" value="Save Quickacl" onClick="YAHOO.haloacl.saveQuickacl()"; />
             </div>
            </div>
        </div>

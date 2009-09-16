@@ -227,7 +227,7 @@ function addNonSpecialPageHeader(&$out) {
 
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
     $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+    #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
 
     // -------------------
     // -------------------
@@ -237,14 +237,14 @@ function addNonSpecialPageHeader(&$out) {
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
 
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
     $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
 
 
 
