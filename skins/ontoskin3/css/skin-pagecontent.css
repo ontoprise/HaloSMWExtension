@@ -37,30 +37,30 @@
 	background-color: #FFF;
 }
 
-#content .smwforumtable .smwtable{
+#content .smwtable{
 	background: none;
 }
 
-#content .smwforumtable .smwtable th{
+#content .smwtable th{
 	background: none;
 	border-bottom: 1px solid #F0F0F0;
 }
 
-#content .smwforumtable .smwtable th a{
+#content .smwtable th a{
 	color: #116988;
 }
 
-#content .smwforumtable .smwtable td{
+#content .smwtable td{
 	border-bottom: 1px solid #F0F0F0;
 }
 
 
-#content .sortable .odd td{
+#content .smwtable .sortable .odd td{
     background-color: #cde6ea;
 }
 
 
-#content .sortable .even td{
+#content .smwtable .sortable .even td{
     background-color: #ffffff;
 }
 
