@@ -55,8 +55,8 @@
     <title>Template:RMUpload</title>
     <id>406</id>
     <revision>
-      <id>6672</id>
-      <timestamp>2009-09-07T10:43:01Z</timestamp>
+      <id>8311</id>
+      <timestamp>2009-09-16T14:14:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -76,16 +76,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Media
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Media]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -94,8 +94,8 @@
     <title>Template:RMImage</title>
     <id>407</id>
     <revision>
-      <id>6680</id>
-      <timestamp>2009-09-07T10:49:06Z</timestamp>
+      <id>8304</id>
+      <timestamp>2009-09-16T14:06:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -115,16 +115,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Image
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Image]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -133,8 +133,8 @@
     <title>Template:RMPdf</title>
     <id>408</id>
     <revision>
-      <id>6676</id>
-      <timestamp>2009-09-07T10:47:34Z</timestamp>
+      <id>8305</id>
+      <timestamp>2009-09-16T14:07:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -154,16 +154,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Pdf
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Pdf]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -171,8 +171,8 @@
     <title>Template:RMDocument</title>
     <id>409</id>
     <revision>
-      <id>6675</id>
-      <timestamp>2009-09-07T10:47:13Z</timestamp>
+      <id>8299</id>
+      <timestamp>2009-09-16T14:02:19Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -192,16 +192,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Document
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Document]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -210,8 +210,8 @@
     <title>Template:RMAudio</title>
     <id>410</id>
     <revision>
-      <id>6677</id>
-      <timestamp>2009-09-07T10:48:10Z</timestamp>
+      <id>8297</id>
+      <timestamp>2009-09-16T13:59:52Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -231,16 +231,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Audio
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Audio]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -248,8 +248,8 @@
     <title>Template:RMVideo</title>
     <id>411</id>
     <revision>
-      <id>6678</id>
-      <timestamp>2009-09-07T10:48:43Z</timestamp>
+      <id>8310</id>
+      <timestamp>2009-09-16T14:11:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -269,16 +269,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=Video
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:Video]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
@@ -286,8 +286,8 @@
     <title>Template:RMVCard</title>
     <id>1004</id>
     <revision>
-      <id>6682</id>
-      <timestamp>2009-09-07T10:49:32Z</timestamp>
+      <id>8309</id>
+      <timestamp>2009-09-16T14:10:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -307,16 +307,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=VCard
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:VCard]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -325,8 +325,8 @@
     <title>Template:RMICalendar</title>
     <id>1005</id>
     <revision>
-      <id>6684</id>
-      <timestamp>2009-09-07T10:49:58Z</timestamp>
+      <id>8303</id>
+      <timestamp>2009-09-16T14:04:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -346,16 +346,16 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{RMMedia
 |Media subcategory=ICalendar
-|CopyrightBy=[[HasCopyrightBy::{{{CopyrightBy|}}}]]
-|CreationDate=[[HasCreationDate::{{{CreationDate|}}}]]
-|RelatedArticles={{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]|,}}
-|Filename=[[HasFilename::{{{Filename|}}}]]
-|Description=[[HasDescription::{{{Description|}}}]]
-|Uploader=[[HasUploader::{{{Uploader|}}}]]
-|UploadDate=[[HasUploadDate::{{{UploadDate|}}}]]
-|SubSectionOf={{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]|,}}
-|Keywords={{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]|,}}
-|Format=[[HasFormat::{{{Format|}}}]]
+|Filename={{{Filename|}}}
+|CopyrightBy={{{CopyrightBy|}}}
+|CreationDate={{{CreationDate|}}}
+|Uploader={{{Uploader|}}}
+|UploadDate={{{UploadDate|}}}
+|Description={{{Description|}}}
+|Keywords={{{Keywords|}}}
+|Format={{{Format|}}}
+|RelatedArticles={{{RelatedArticles|}}}
+|SubSectionOf={{{SubSectionOf|}}}
 }}[[Category:ICalendar]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -399,8 +399,8 @@
     <title>Template:RMListInnerTable</title>
     <id>413</id>
     <revision>
-      <id>7162</id>
-      <timestamp>2009-09-10T14:05:28Z</timestamp>
+      <id>8315</id>
+      <timestamp>2009-09-16T14:35:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -419,12 +419,12 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 |-
-| align=&quot;center&quot; bgcolor=&quot;white&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
-| bgcolor=&quot;white&quot; |&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
-| bgcolor=&quot;white&quot; |[[{{{3}}}]]
-| bgcolor=&quot;white&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{4}}}&lt;/span&gt;{{{4}}}
-| align=&quot;center&quot; bgcolor=&quot;white&quot; |&lt;span class=&quot;plainlinks&quot; style=&quot;padding:0px 10px 0px 0px;&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
-| bgcolor=&quot;white&quot; align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
+| align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
+|&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
+|[[{{{3}}}]]
+|&lt;span style=&quot;display: none;&quot;&gt;{{{4}}}&lt;/span&gt;{{{4}}}
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; style=&quot;padding:0px 10px 0px 0px;&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
@@ -542,8 +542,8 @@
     <title>Template:RMMedia</title>
     <id>502</id>
     <revision>
-      <id>6696</id>
-      <timestamp>2009-09-07T11:15:25Z</timestamp>
+      <id>8293</id>
+      <timestamp>2009-09-16T13:50:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -569,36 +569,36 @@
 |SubSectionOf
 }}
 &lt;/pre&gt;
-|Calls template=Template:Display content navigation box
+|Calls template=
 }}
 {{Copyright of article
 |own work=True
 |copyright holder=ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 30%&quot;
 ! colspan=&quot;2&quot; style=&quot;background: #996699; color: white&quot; | ''{{{Media subcategory|}}}''
 |-
-{{Tablerow|Label=Filename:|Value={{{Filename|}}} }}
+{{Tablerow|Label=Filename:|Value={{#if:{{{Filename|}}}|[[HasFilename::{{{Filename|}}}]]}} }}
 |-
-{{Tablerow|Label=Copyright by:|Value={{{CopyrightBy|}}} }}
+{{Tablerow|Label=Copyright by:|Value={{#if:{{{CopyrightBy|}}}|[[HasCopyrightBy::{{{CopyrightBy|}}}]]}} }}
 |-
-{{Tablerow|Label=Creation date:|Value={{{CreationDate|}}} }}
+{{Tablerow|Label=Creation date:|Value={{#if:{{{CreationDate|}}}|[[HasCreationDate::{{{CreationDate|}}}]]}} }}
 |-
-{{#ifeq:{{{RelatedArticles|}}}|||
-{{Tablerow|Label=Related articles:|Value={{{RelatedArticles|}}} }} }}
+{{Tablerow|Label=Uploaded by:|Value={{#if:{{{Uploader|}}}|[[HasUploader::{{{Uploader|}}}]]}} }}
 |-
-{{Tablerow|Label=Keywords:|Value={{{Keywords|}}} }}
+{{Tablerow|Label=Upload date:|Value={{#if:{{{UploadDate|}}}|[[HasUploadDate::{{{UploadDate|}}}]]}} }}
 |-
-{{Tablerow|Label=Format:|Value={{{Format|}}} }}
-|}
-{{Display content navigation box
-|Title={{{Filename|}}}
-|Summary={{{Description|}}}
-|Author={{{Uploader|}}}
-|Creation date={{{UploadDate|}}}
-|SubsectionOf={{{SubSectionOf|}}}
-}}&lt;/includeonly&gt;&lt;noinclude&gt;
+{{Tablerow|Label=Description:|Value={{#if:{{{Description|}}}|[[HasDescription::{{{Description|}}}]]}} }}
+|-
+{{Tablerow|Label=Keyword(s):|Value={{#if:{{{Keywords|}}}|{{#arraymap:{{{Keywords|}}}|,|x|[[HasKeywords::x]]}}}} }}
+|-
+{{Tablerow|Label=Format:|Value={{#if:{{{Format|}}}|[[HasFormat::{{{Format|}}}]]}} }}
+|-
+{{Tablerow|Label=Related article(s):|Value={{#if:{{{RelatedArticles|}}}|{{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]}}}} }}
+|-
+{{#ifeq:{{lc:{{NAMESPACE}}}}|document|{{Tablerow|Label=Subsection of:|Value={{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}}} }}}}
+|}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1168,63 +1168,6 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
     </revision>
   </page>
   <page>
-    <title>Template:Display content navigation box</title>
-    <id>499</id>
-    <revision>
-      <id>4372</id>
-      <timestamp>2009-06-10T14:58:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Display content navigation box
-|Has author=WikiSysop
-|part of=Teamwork section
-|rationale=This template is used for providing and annotating meta data fields for arbitrary content.
-|long description=__NOTITLE__
-The template does the following
-*sets &quot;subsection of&quot; relationship and prints it as supersection(s)
-*queries for subsections and prints them
-*sets a title
-*sets author(s) if given
-*sets and prints a summary if given
-|parameters=The template should be called in the following format:
-&lt;pre&gt;
-{{Display content navigation box
-|Title
-|Summary
-|Author
-|Creation date
-|SubsectionOf
-}}
-&lt;/pre&gt;
-|hints for templates and forms=This template does include NO annotations!
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
-! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; | {{{Title|''no title specified''}}}
-|-
-{{Tablelongrow|Label=Overview:|Value={{{Summary|}}} }}
-|-
-{{Tablerow|Label=Author(s):|Value={{{Author|''not specified''}}} }}
-|-
-{{Tablerow|Label=Creation date:|Value={{{Creation date|''not specified''}}} }}
-|-
-{{#ifeq:{{{SubsectionOf|}}}||
-{{Tablerow|Label=Belongs to:|Value=no article}}|
-{{Tablerow|Label=Belongs to:|Value={{{SubsectionOf|}}} }} }}
-|-
-{{Tablerow|Label=Includes:|Value={{#sparql:[[subsection of::{{FULLPAGENAME}}]][[subsection of::+]]|format=ul|link=all|default=&lt;ul&gt;&lt;li&gt;no article&lt;/ul&gt;}} }}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
     <title>Template:Property</title>
     <id>331</id>
     <revision>
@@ -1401,8 +1344,8 @@ These are the literal class definitions in common.css:
     <title>Form:RMUpload</title>
     <id>416</id>
     <revision>
-      <id>7441</id>
-      <timestamp>2009-09-11T13:04:16Z</timestamp>
+      <id>8324</id>
+      <timestamp>2009-09-16T15:03:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1414,7 +1357,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}}
-{{{for template|RMUpload|label=Meta information|collapsible|forceopen=true}}}
+{{{for template|RMUpload|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;
 |-
 | width=&quot;30%&quot; |
@@ -1430,12 +1373,12 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| style=&quot;display:none&quot;| {{{field|UploadDate|mandatory|default=now}}}
+| style=&quot;display:none&quot;| {{{field|UploadDate|input type=date|mandatory|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1465,8 +1408,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>417</id>
     <revision>
-      <id>7526</id>
-      <timestamp>2009-09-11T15:17:43Z</timestamp>
+      <id>8327</id>
+      <timestamp>2009-09-16T15:07:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1490,13 +1433,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1506,7 +1449,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1541,8 +1484,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>418</id>
     <revision>
-      <id>7528</id>
-      <timestamp>2009-09-11T15:20:27Z</timestamp>
+      <id>8332</id>
+      <timestamp>2009-09-16T15:11:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1566,13 +1509,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1582,7 +1525,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1622,8 +1565,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMDocument</title>
     <id>419</id>
     <revision>
-      <id>7527</id>
-      <timestamp>2009-09-11T15:19:31Z</timestamp>
+      <id>8329</id>
+      <timestamp>2009-09-16T15:09:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1647,13 +1590,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1663,7 +1606,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1706,8 +1649,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMAudio</title>
     <id>420</id>
     <revision>
-      <id>7529</id>
-      <timestamp>2009-09-11T15:20:52Z</timestamp>
+      <id>8335</id>
+      <timestamp>2009-09-16T15:16:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1731,13 +1674,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1747,7 +1690,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1780,8 +1723,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVideo</title>
     <id>421</id>
     <revision>
-      <id>7531</id>
-      <timestamp>2009-09-11T15:21:20Z</timestamp>
+      <id>8339</id>
+      <timestamp>2009-09-16T15:18:13Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1805,13 +1748,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1821,7 +1764,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1853,8 +1796,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVCard</title>
     <id>1002</id>
     <revision>
-      <id>7533</id>
-      <timestamp>2009-09-11T15:22:16Z</timestamp>
+      <id>8340</id>
+      <timestamp>2009-09-16T15:19:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1878,13 +1821,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|mandatory|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1894,7 +1837,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -1933,8 +1876,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMICalendar</title>
     <id>1003</id>
     <revision>
-      <id>7532</id>
-      <timestamp>2009-09-11T15:21:53Z</timestamp>
+      <id>8342</id>
+      <timestamp>2009-09-16T15:20:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1958,13 +1901,13 @@ if a page with that name already exists, you will be sent to a form to edit that
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
 | {{{field|CopyrightBy}}}
 |-
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|CreationDate|mandatory|default=now}}}
+| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| {{{field|CreationDate|input type=date|default=now}}}
 |- 
 | &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
@@ -1974,7 +1917,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 | &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|UploadDate|default=now}}}
+| {{{field|UploadDate|input type=date|default=now}}}
 |-
 | align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
@@ -2532,63 +2475,6 @@ This template is populated by form(s):
 
 [[Category:Template]]
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Template:Display content navigation box</title>
-    <id>499</id>
-    <revision>
-      <id>4372</id>
-      <timestamp>2009-06-10T14:58:02Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Display content navigation box
-|Has author=WikiSysop
-|part of=Teamwork section
-|rationale=This template is used for providing and annotating meta data fields for arbitrary content.
-|long description=__NOTITLE__
-The template does the following
-*sets &quot;subsection of&quot; relationship and prints it as supersection(s)
-*queries for subsections and prints them
-*sets a title
-*sets author(s) if given
-*sets and prints a summary if given
-|parameters=The template should be called in the following format:
-&lt;pre&gt;
-{{Display content navigation box
-|Title
-|Summary
-|Author
-|Creation date
-|SubsectionOf
-}}
-&lt;/pre&gt;
-|hints for templates and forms=This template does include NO annotations!
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 20em&quot;
-! colspan=&quot;2&quot; style=&quot;background: #aaa; color: black&quot; | {{{Title|''no title specified''}}}
-|-
-{{Tablelongrow|Label=Overview:|Value={{{Summary|}}} }}
-|-
-{{Tablerow|Label=Author(s):|Value={{{Author|''not specified''}}} }}
-|-
-{{Tablerow|Label=Creation date:|Value={{{Creation date|''not specified''}}} }}
-|-
-{{#ifeq:{{{SubsectionOf|}}}||
-{{Tablerow|Label=Belongs to:|Value=no article}}|
-{{Tablerow|Label=Belongs to:|Value={{{SubsectionOf|}}} }} }}
-|-
-{{Tablerow|Label=Includes:|Value={{#sparql:[[subsection of::{{FULLPAGENAME}}]][[subsection of::+]]|format=ul|link=all|default=&lt;ul&gt;&lt;li&gt;no article&lt;/ul&gt;}} }}
-|}&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
