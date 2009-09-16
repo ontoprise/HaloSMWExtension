@@ -1231,8 +1231,11 @@ HTML;
 
                             // tickbox handling
                             updateRights$panelid = function(element) {
+                                //console.log(element);
+
                                 var name = $(element).readAttribute("name");
-                                element = $(element.id);
+                                //element = $(element.id);
+                                //console.log(element);
 
                                     var includedrights = "";
                                     if(name == "fullaccess"){
@@ -1408,7 +1411,7 @@ HTML;
    
 
             function loadUserTabIfNeeded(){
-                if(YAHOO.haloacl.panelDefinePanel_$panelid == 'privateuse' || YAHOO.haloacl.panelDefinePanel_$panelid == 'modification' ||YAHOO.haloacl.panelDefinePanel_$panelid == 'individual'){
+                if(YAHOO.haloacl.panelDefinePanel_$panelid == 'modification' ||YAHOO.haloacl.panelDefinePanel_$panelid == 'individual'){
                     $('right_tabview_$panelid').innerHTML = "";
                     YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid',YAHOO.haloacl.panelDefinePanel_$panelid , '$readOnly', '$preload', '$preloadRightId');
                 }else{
@@ -1471,7 +1474,6 @@ HTML;
     if (!$readOnly) {
         $content .= <<<HTML
             <br/>
-                    <div class="haloacl_greyline">&nbsp;</div>
                     <div>
 HTML;
         if($predefine != "modification") {
@@ -1505,6 +1507,7 @@ HTML;
 HTML;
 
     $myGenericPanel->setContent($content);
+    $currentUserName = "  ".$wgUser->getName();
 
     $footerextension = <<<HTML
     <script type="javascript>
@@ -1540,9 +1543,24 @@ HTML;
                     switch (YAHOO.haloacl.panelDefinePanel_$panelid) {
                         case "modification":
                             description = "Modification rights";
-                        case "individual":
+
                         case "privateuse":
                         case "private":
+                                users = "$currentUserName";
+
+
+                            var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                            for(i=0;i<YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].length;i++){
+                                groups = groups+", G:"+YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'][i];
+                            }
+                            /*
+                            groupsarray.each(function(group){
+                                groups = groups+", G:"+group;
+                            });
+                            */
+                            break;
+
+                        case "individual":
 
                             for(i=0;i<YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].length;i++){
                                 users = users+", U:"+YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'][i];
@@ -1601,7 +1619,7 @@ HTML;
             YAHOO.haloacl.buildRightPanelXML_$panelid = function(onlyReturnXML){
                 var panelid = '$panelid';
 
-                if(YAHOO.haloacl.panelDefinePanel_$panelid == "individual" || YAHOO.haloacl.panelDefinePanel_$panelid == "privateuse" || YAHOO.haloacl.panelDefinePanel_$panelid == "modification"){
+                if(YAHOO.haloacl.panelDefinePanel_$panelid == "individual" || YAHOO.haloacl.panelDefinePanel_$panelid == "modification"){
                     var somedatawasentered = false;
                 }else{
                     var somedatawasentered = true;
@@ -1720,7 +1738,11 @@ HTML;
                 }
             };
 
+            $$('.right_rights_$panelid').each(function(item){
+                YAHOO.util.Event.addListener(item, "click", YAHOO.haloacl.refreshPanel_$panelid);
 
+            });
+/*
             YAHOO.util.Event.addListener("checkbox_right_fullaccess", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_read", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_edit", "click", YAHOO.haloacl.refreshPanel_$panelid);
@@ -1730,6 +1752,7 @@ HTML;
             YAHOO.util.Event.addListener("checkbox_right_move", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_delete", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("checkbox_right_annotate", "click", YAHOO.haloacl.refreshPanel_$panelid);
+*/
             YAHOO.util.Event.addListener("right_name_$panelid", "click", YAHOO.haloacl.refreshPanel_$panelid);
             YAHOO.util.Event.addListener("right_description_$panelid", "click", YAHOO.haloacl.refreshPanel_$panelid);
 
@@ -2879,6 +2902,8 @@ function saveSecurityDescriptor($secDescXml) {
 
                 switch ($type) {
                     case "privateuse":
+                        $users = "User:".$wgUser->getName();
+                        break;
                     case "individual":
                     case "private":
                         foreach($xml->xpath('//group') as $group) {
