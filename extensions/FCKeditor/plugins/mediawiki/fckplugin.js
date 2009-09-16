@@ -1015,7 +1015,7 @@ SMW_Annotate.prototype = {
         // Annotations toolbar, only if SemanticGardening extension is included
         if (window.parent.smwhgGardeningHints)
             window.parent.smwhgGardeningHints.createContainer();
-        //window.parent.smw_links_callme();
+        window.parent.smw_links_callme();
         SetEventHandler4AnnotationBox();
     },
 
