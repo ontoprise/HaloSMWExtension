@@ -155,102 +155,103 @@ class  HACLDefaultSD  {
 
         #$article->doEdit($articleContent, "processed by defaultsd-generation");
         */
-
-        if($_SESSION['haloacl_toolbar'] != null && $_SESSION['haloacl_toolbar'][$user->getName()] != null){
-            $templateToProtectWith = $_SESSION['haloacl_toolbar'][$user->getName()];
-            $createCustomSD = true;
-            unset($_SESSION['haloacl_toolbar'][$user->getName()]);
+		if (isset($_SESSION)) {
+			if ($_SESSION['haloacl_toolbar'] != null && $_SESSION['haloacl_toolbar'][$user->getName()] != null){
+				$templateToProtectWith = $_SESSION['haloacl_toolbar'][$user->getName()];
+				$createCustomSD = true;
+				unset($_SESSION['haloacl_toolbar'][$user->getName()]);
+			}
 		}
 		
 		// Did the user define a default SD
         // adding default sd to article
 		
-        if(!$sdAlreadyDefinied && !$createCustomSD) {
-		global $haclgContLang;
-		
-		$ns = $haclgContLang->getNamespaces();
-		$ns = $ns[HACL_NS_ACL];
-		$template = $haclgContLang->getSDTemplateName();
-		$defaultSDName = "$ns:$template/{$user->getName()}";
-		$etc = haclfDisableTitlePatch();
-		$defaultSD = Title::newFromText($defaultSDName);
-		haclfRestoreTitlePatch($etc);
-		if (!$defaultSD->exists()) {
-			// No default SD defined
-            //return true;
+		if(!$sdAlreadyDefinied && !$createCustomSD) {
+			global $haclgContLang;
+
+			$ns = $haclgContLang->getNamespaces();
+			$ns = $ns[HACL_NS_ACL];
+			$template = $haclgContLang->getSDTemplateName();
+			$defaultSDName = "$ns:$template/{$user->getName()}";
+			$etc = haclfDisableTitlePatch();
+			$defaultSD = Title::newFromText($defaultSDName);
+			haclfRestoreTitlePatch($etc);
+			if (!$defaultSD->exists()) {
+				// No default SD defined
+				return true;
+			}
+
+			// Create the default SD for the saved article
+			// Get the content of the default SD
+			$defaultSDArticle = new Article($defaultSD);
+			$content = $defaultSDArticle->getContent();
+
+			// Create the new SD
+			$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
+			HACLSecurityDescriptor::PET_PAGE);
+
+			$etc = haclfDisableTitlePatch();
+			$newSD = Title::newFromText($newSDName);
+			haclfRestoreTitlePatch($etc);
+
+			$newSDArticle = new Article($newSD);
+			$newSDArticle->doEdit($content, "Default security descriptor.", EDIT_NEW);
+
+			return true;
 		}
-		
-		// Create the default SD for the saved article
-		// Get the content of the default SD
-		$defaultSDArticle = new Article($defaultSD);
-		$content = $defaultSDArticle->getContent();
-		
-		// Create the new SD
-		$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
-													  HACLSecurityDescriptor::PET_PAGE);
-		
-		$etc = haclfDisableTitlePatch();
-		$newSD = Title::newFromText($newSDName);
-		haclfRestoreTitlePatch($etc);
-		
-		$newSDArticle = new Article($newSD);
-		$newSDArticle->doEdit($content, "Default security descriptor.", EDIT_NEW);
-		
+
+		if($createCustomSD) {
+			// now we create an new securitydescriptor
+			if($templateToProtectWith != "unprotected") {
+				global $haclgContLang;
+
+				$ns = $haclgContLang->getNamespaces();
+				$ns = $ns[HACL_NS_ACL];
+				$defaultSDName = "$ns:$templateToProtectWith";
+				$etc = haclfDisableTitlePatch();
+				$defaultSD = Title::newFromText($defaultSDName);
+				haclfRestoreTitlePatch($etc);
+				if (!$defaultSD->exists()) {
+					// No default SD defined
+					return false;
+				}
+
+				// Create the default SD for the saved article
+				// Get the content of the default SD
+				$defaultSDArticle = new Article($defaultSD);
+				$content = $defaultSDArticle->getContent();
+
+				// Create the new SD
+				$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
+				HACLSecurityDescriptor::PET_PAGE);
+
+				$etc = haclfDisableTitlePatch();
+				$newSD = Title::newFromText($newSDName);
+				haclfRestoreTitlePatch($etc);
+
+				$newSDArticle = new Article($newSD);
+				$newSDArticle->doEdit($content, "Custom security descriptor.");
+
+				return true;
+
+				// we delete the actual assigned sd, if it exists
+			}else {
+				$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
+				HACLSecurityDescriptor::PET_PAGE);
+
+				$etc = haclfDisableTitlePatch();
+				$newSD = Title::newFromText($newSDName);
+				haclfRestoreTitlePatch($etc);
+
+				$newSDArticle = new Article($newSD);
+				if($newSDArticle->exists()) {
+					$newSDArticle->doDelete("securitydescriptor removed");
+				}
+			}
+		}
+
 		return true;
 	}
-	
-        if($createCustomSD) {
-        // now we create an new securitydescriptor
-            if($templateToProtectWith != "unprotected") {
-                global $haclgContLang;
-
-                $ns = $haclgContLang->getNamespaces();
-                $ns = $ns[HACL_NS_ACL];
-                $defaultSDName = "$ns:$templateToProtectWith";
-                $etc = haclfDisableTitlePatch();
-                $defaultSD = Title::newFromText($defaultSDName);
-                haclfRestoreTitlePatch($etc);
-                if (!$defaultSD->exists()) {
-                // No default SD defined
-                    return false;
-                }
-
-                // Create the default SD for the saved article
-                // Get the content of the default SD
-                $defaultSDArticle = new Article($defaultSD);
-                $content = $defaultSDArticle->getContent();
-
-                // Create the new SD
-                $newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
-                    HACLSecurityDescriptor::PET_PAGE);
-
-                $etc = haclfDisableTitlePatch();
-                $newSD = Title::newFromText($newSDName);
-                haclfRestoreTitlePatch($etc);
-
-                $newSDArticle = new Article($newSD);
-                $newSDArticle->doEdit($content, "Custom security descriptor.");
-
-                return true;
-
-            // we delete the actual assigned sd, if it exists
-            }else {
-                $newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
-                    HACLSecurityDescriptor::PET_PAGE);
-
-                $etc = haclfDisableTitlePatch();
-                $newSD = Title::newFromText($newSDName);
-                haclfRestoreTitlePatch($etc);
-
-                $newSDArticle = new Article($newSD);
-                if($newSDArticle->exists()) {
-                    $newSDArticle->doDelete("securitydescriptor removed");
-                }
-            }
-        }
-
-        return true;
-    }
 
 	
 	/**
