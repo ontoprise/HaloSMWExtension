@@ -897,8 +897,8 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
                                         }
                                         // if this is a template, add the alt and title attribute with template content
                                         if ( className == 'FCK__MWTemplate' ) {
-                                            oImg.setAttribute('alt', eSpan.innerHTML);
-                                            oImg.setAttribute('title', eSpan.innerHTML);
+                                            oImg.setAttribute('alt', FCKTools.HTMLDecode(eSpan.innerHTML).replace(/fckLR/g, '\r\n'));
+                                            oImg.setAttribute('title', FCKTools.HTMLDecode(eSpan.innerHTML).replace(/fckLR/g, '\r\n'));
                                         }
 
 					eSpan.parentNode.insertBefore( oImg, eSpan ) ;
