@@ -204,9 +204,14 @@ class OntoSkin3Template extends QuickTemplate {
         <div id="globalWrapper">
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             <table id="shadows" border="0" cellspacing="0" cellpadding="1" align="center">
+                <colgroup>
+                    <col width="10">
+                    <col width="*">
+                    <col width="10">
+                </colgroup>
                 <tbody>
                     <tr>
-                        <td id="shadow_left" width="10px">
+                        <td id="shadow_left" width="10">
                         </td>
                         <td id="shadow_center" width="*">
             <!-- Header -->
@@ -330,11 +335,8 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php endif; ?>
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
-            <td id="shadow_right" width="10px">
+            <td id="shadow_right" width="10">
             </td>
-            </tr>
-            <tr>
-                <td id="shadow_bottom" colspan="3"></td>
             </tr>
             </tbody>
             </table>
