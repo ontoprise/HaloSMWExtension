@@ -61,6 +61,9 @@ function enableRichMediaExtension() {
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
 	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/specials/RM_EmbedWindow.php';
 	
+	// register AC icons
+	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
+	
 	// Conversion of documents (PDF, MS Office)
 	global $smwgEnableUploadConverter;
 	if ($smwgEnableUploadConverter) {
@@ -277,6 +280,17 @@ function smwfRMAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 	} else {
 		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
+}
+function smwfRMRegisterAutocompletionIcons(& $namespaceMappings) {
+
+	$namespaceMappings[NS_PDF]="/extensions/RichMedia/skins/pdf.gif";
+	$namespaceMappings[NS_DOCUMENT]="/extensions/RichMedia/skins/document.gif";
+	$namespaceMappings[NS_AUDIO]= "/extensions/RichMedia/skins/music.gif";
+	$namespaceMappings[NS_VIDEO]="/extensions/RichMedia/skins/video.gif";
+	$namespaceMappings[NS_VCARD]= "/extensions/RichMedia/skins/vcard.gif";
+	$namespaceMappings[NS_ICAL]= "/extensions/RichMedia/skins/icalendar.gif";
+	//$namespaceMappings[NS_IMAGE]= "/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif.gif";
+	return true;
 }
 
 ?>
