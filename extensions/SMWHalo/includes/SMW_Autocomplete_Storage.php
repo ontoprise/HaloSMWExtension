@@ -517,7 +517,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $smw_rels2 = $db->tableName('smw_rels2');
         $smw_atts2 = $db->tableName('smw_atts2');
         $smw_subs2 = $db->tableName('smw_subs2');
-
+        $smw_spec2 = $db->tableName('smw_spec2');
+        
         if (!isset($smwgDefaultCollation)) {
             $collation = '';
         } else {
@@ -540,6 +541,8 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                 '(SELECT value_xsd AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         $db->query('INSERT INTO smw_cc_propertyinst ' .
                 '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "false" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+        $db->query('INSERT INTO smw_cc_propertyinst ' .
+                '(SELECT value_string AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_spec2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_string) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         
         $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
         // maximum iteration length is maximum property tree depth.
@@ -553,7 +556,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                 '(SELECT value_xsd AS title, -1 AS namespace, "true" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
             $db->query('INSERT INTO smw_cc_propertyinst ' .
                 '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "true" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
-            
+            // special properties can not be inferred (?)
 
             // copy subcatgegories to supercategories of next iteration
             $db->query('DELETE FROM smw_cc_properties_super');
