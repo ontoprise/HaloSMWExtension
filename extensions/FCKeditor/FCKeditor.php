@@ -75,6 +75,8 @@ $wgAjaxExportList[] = 'wfSajaxGetImageUrl';
 $wgAjaxExportList[] = 'wfSajaxGetMathUrl';
 $wgAjaxExportList[] = 'wfSajaxSearchTemplateFCKeditor';
 $wgAjaxExportList[] = 'wfSajaxSearchSpecialTagFCKeditor';
+$wgAjaxExportList[] = 'wfSajaxTemplateListFCKeditor';
+$wgAjaxExportList[] = 'wfSajaxFormForTemplateFCKeditor';
 
 $wgExtensionCredits['other'][] = array(
 "name" => "FCKeditor extension",

@@ -43,18 +43,21 @@ document.write( '<script src="' + FCKConfig.BasePath + 'dialog/common/fck_dialog
 //#### Dialog Tabs
 
 // Set the dialog tabs.
-window.parent.AddTab( 'Edit', 'Edit' ) ;
-window.parent.AddTab( 'Manual', 'Manual' ) ;
+window.parent.AddTab( 'Info', 'Info' ) ;
+window.parent.AddTab( 'Form', 'Form' ) ;
+window.parent.AddTab( 'Source', 'Source' ) ;
 
 function OnDialogTabChange( tabCode )
 {
-	ShowE('divEdit'		, ( tabCode == 'Edit' ) ) ;
-	ShowE('divManual'		, ( tabCode == 'Manual' ) ) ;
+	ShowE('divInfo'		, ( tabCode == 'Info' ) ) ;
+	ShowE('divForm' 	, ( tabCode == 'Form' ) ) ;
+        ShowE('divSource' 	, ( tabCode == 'Source' ) ) ;
 }
 
 // Get the selected flash embed (if available).
 var oFakeImage = FCK.Selection.GetSelectedElement() ;
 var oTemplateSpan ;
+var sTemplateName ;
 
 if ( oFakeImage )
 {
@@ -72,54 +75,111 @@ window.onload = function()
 	// Load the selected link information (if any).
 	LoadSelection() ;
 
+        // Load template list
+        LoadTemplateList();
+
 	// Activate the "OK" button.
 	window.parent.SetOkButton( true ) ;
 	window.parent.SetAutoSize( true ) ;
 }
 
-function LoadSearchResults( result )
-{
-	var results = result.responseText.Trim().split( '\n' ) ;
-	var select = GetE( 'xWikiResults' ) ;
-
-	if ( results.length > 0 && !( results.length == 1 && results[0].length == 0 ) )
-	{
-		for ( var i = 0 ; i < results.length ; i++ )
-			FCKTools.AddSelectOption( select, 'Template:' + results[i], results[i] ) ;
-	}
-}
 
 function LoadSelection()
 {
-	// Make an Ajax search for the pages.
-	var empty = '';
-	oEditor.window.parent.sajax_request_type = 'GET' ;
-	oEditor.window.parent.sajax_do_call( 'wfSajaxSearchTemplateFCKeditor',[empty], LoadSearchResults ) ;
-	
 	if ( !oTemplateSpan ) return ;
 
 	var inputText = FCKTools.HTMLDecode(oTemplateSpan.innerHTML);
 	if (inputText.length>0 && inputText.indexOf('{{#')<0 && inputText.indexOf('{{:')<0 ) 
 	{
-		var templateName = inputText.substring(2,inputText.indexOf('fckLR'));
+                // cut template name until the first line break appears
+		sTemplateName = inputText.substring(2,inputText.indexOf('fckLR'));
+                // there was no line break? then templatename is upto the first | where params follow
 		if (inputText.indexOf('fckLR')<1) 
-			templateName = inputText.substring(2,inputText.indexOf('|'));
+			sTemplateName = inputText.substring(2,inputText.indexOf('|'));
+                // no params eigther? then template name is up to the closing }}
 		if (inputText.indexOf('|')<1) 
-			templateName = inputText.substring(2,inputText.indexOf('}}'));
-			
-		SetUrl(templateName.charAt(0).toUpperCase() + templateName.substr(1));
+			stemplateName = inputText.substring(2,inputText.indexOf('}}'));
+                // capitalize the first letter of the name
+		sTemplateName = sTemplateName.charAt(0).toUpperCase() + sTemplateName.substr(1)
+                // set divInfo and divForm with data for current seleced template
+		SetUrl('Template:' + sTemplateName);
 	}
+        // set template source code
 	GetE('xTemplateRaw').value = inputText.replace(/fckLR/g,'\r\n').replace( /&quot;/g, '"' );
+        // remove selection list
+        var parentTd = GetE('divList').parentNode;
+        var parentTr = parentTd.parentNode;
+        parentTr.removeChild(parentTd);
+        // show selected label on top
+        GetE('divHeaderSelected').style.display = 'block';
+        GetE('divHeaderSelected').innerHTML += ' ' + sTemplateName
 }
 
-function SetUrl(link)
-{
-    var urlTemplate = oEditor.window.parent.location.pathname;
-    var p = urlTemplate.indexOf(oEditor.window.parent.wgScript);
-    var l = oEditor.window.parent.wgScript.length;
-    urlTemplate = urlTemplate.substring(0, p + l) + '?title=Template:' + link + '&printable=yes';
-	SetAttribute(GetE('xTemplateManual'),'src',urlTemplate);
-	GetE('xTemplateRaw').value = "{{" + link + "}}";
+function LoadFormForTemplate() {
+	// Make an Ajax search for the pages.
+	oEditor.window.parent.sajax_request_type = 'GET' ;
+	oEditor.window.parent.sajax_do_call( 'wfSajaxFormForTemplateFCKeditor',[sTemplateName], SetFormForTemplate ) ;
+}
+
+function SetFormForTemplate(result) {
+	var results = result.responseText.Trim().split( '\n' ) ;
+
+        if ( results.length > 0 && results[0].length > 0 ) {
+            //http://localhost/wiki/index.php/Special:EditDataEmbedded/Form_name/page_name?page=plain
+            var url = oEditor.window.parent.wgServer
+                    + oEditor.window.parent.wgScript
+                    + '/Special:EditDataEmbedded/'
+                    + results[0].substr(results[0].indexOf(':') + 1).replace(' ', '_')
+                    + '/'
+                    + oEditor.window.parent.wgPageName.replace(' ', '_')
+                    + '?page=plain';
+            SetAttribute(GetE('xTemplateForm'), 'src', url);
+	}
+        else {
+            // set table border thick
+            GetE('xTemplateForm').parentNode.parentNode.parentNode.parentNode.border = '1';
+            GetE('xTemplateForm').parentNode.innerHTML = 'There is no form to '
+                + 'submit parameters for this template call. '
+                + 'Please edit the source code directly.';
+        }
+}
+
+function LoadTemplateList() {
+        // check if the list is required anyway, if not just quit
+        if (! GetE('xTemplateList')) return;
+        
+	// Make an Ajax search for the pages.
+	oEditor.window.parent.sajax_request_type = 'GET' ;
+	oEditor.window.parent.sajax_do_call( 'wfSajaxTemplateListFCKeditor',[oEditor.window.parent.wgPageName], FillTemplateList ) ;
+}
+function FillTemplateList(result) {
+	var results = result.responseText.Trim().split( '\n' ) ;
+	var select = GetE( 'xTemplateList' ) ;
+
+	if ( results.length > 0 && !( results.length == 1 && results[0].length == 0 ) )
+	{
+		for ( var i = 0 ; i < results.length ; i++ ) {
+                        var shownVal = (results[i].indexOf(':') != -1)
+                                    ? results[i].substr(results[i].indexOf(':') + 1)
+                                    : results[i];
+			FCKTools.AddSelectOption( select, shownVal, results[i] ) ;
+                        // select the current entry, when there is a selecion loaded
+                        // actually it's not used anymore but left here
+                        // incase someone needs it in future
+                        if (sTemplateName && sTemplateName == shownVal)
+                            document.getElementById('xTemplateList').childNodes[i + 1].setAttribute('selected', 'selected');
+                }
+	}
+
+}
+function SetUrl(tpage) {
+    sTemplateName = tpage;
+    LoadFormForTemplate();
+    var urlTemplate = oEditor.window.parent.wgServer
+        + oEditor.window.parent.wgScript
+        + '?title=' + tpage + '&page=plain';
+    SetAttribute(GetE('xTemplateManual'),'src',urlTemplate);
+    GetE('xTemplateRaw').value = "{{" + tpage.substr(tpage.indexOf(':') + 1) + "}}";
 }
 
 //#### The OK button was hit.
@@ -132,6 +192,7 @@ function Ok()
 	}
 	
 	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR')).replace( /"/g, '&quot;' ) ;
+        var tooltip = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim());
 	
 	if ( !( /^{{[\s\S]+}}$/.test( templateData ) ) )
 	{
@@ -145,13 +206,13 @@ function Ok()
 	{
 		oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( 'FCK__MWTemplate', oTemplateSpan ) ;
 		oFakeImage.setAttribute( '_fck_mw_template', 'true', 0 ) ;
-                oFakeImage.setAttribute( 'title', templateData);
-                oFakeImage.setAttribute( 'alt', templateData);
+                oFakeImage.setAttribute( 'title', tooltip);
+                oFakeImage.setAttribute( 'alt', tooltip);
 		oFakeImage	= FCK.InsertElement( oFakeImage ) ;
 	}
         else {
-                oFakeImage.setAttribute( 'title', templateData);
-                oFakeImage.setAttribute( 'alt', templateData);
+                oFakeImage.setAttribute( 'title', tooltip);
+                oFakeImage.setAttribute( 'alt', tooltip);
         }
 
 	//GetE('xTestSpan').innerHTML = GetE('xTemplateRaw').value.Trim().replace( /"/g, '&quot;' ).replace(/(\r\n|\n)/g, '___') ;
@@ -159,41 +220,70 @@ function Ok()
 }
 
 	</script>
+        <style type="text/css">
+            .tmplTable {
+                width: 100%;
+                height: 100%;
+                vertical-align: top;
+            }
+            .tmplTable table {
+                border: 0;
+                padding: 0;
+                margin: 0;
+            }
+            .tmplDivOptionBox {
+                height: 100%;
+            }
+        </style>
 </head>
 <body style="overflow: hidden">
-	<div id="divEdit">
-		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+    <div id="divLabelSeleced"></div>
+    <table class="tmplTable">
+        <tr>
+            <td><div id="divHeaderSelected" style="display: none;"><b>Template selected:</b></div></td>
+        </tr>
+        <tr class="tmplTable">
+            <td style="width: 25%; vertical-align: top;">
+                <div id="divList" style="height: 100%;">
+                    <b>Choose a template</b>
+                    <select id="xTemplateList" onchange="SetUrl( this.value );" size="10" style="height: 100%;">
+                    </select>
+                </div>
+            </td>
+            <td valign="top">
+                <div id="divInfo" class="tmplDivOptionBox">
+                    <b>Template description</b>
+                    <table class="tmplTable">
 			<tr>
-				<td>
-					<span>Template raw definition (from {{ to }})</span><br />
+				<td class="tmplTable">
+                                    <iframe id="xTemplateManual" width="100%" scrolling="yes" height="100%" src=""></iframe>
 				</td>
 			</tr>
+                    </table>
+                </div>
+                <div id="divForm" class="tmplDivOptionBox" style="display: none">
+                    <b>Fill the template with data</b>
+                    <table class="tmplTable">
 			<tr>
-				<td height="100%">
+				<td class="tmplTable">
+                                    <iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src=""></iframe>
+				</td>
+			</tr>
+                    </table>
+                </div>
+                <div id="divSource" class="tmplDivOptionBox" style="display: none">
+                    <b>Template raw definition (from {{ to }})</b>
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+			<tr>
+				<td class="tmplTable">
 					<textarea id="xTemplateRaw" style="width: 100%; height: 100%; font-family: Monospace"
 						cols="50" rows="10" wrap="off"></textarea>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<span id="xTestSpan" class="fck_mw_template"></span>
-				</td>
-			</tr>
-		</table>
-	</div>
-	<div id="divManual" style="display: none">
-		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
-			<tr>
-				<select id="xWikiResults" style="width: 100%;" onchange="SetUrl( this.value );">
-				<option value="">&lt;Pick up a template manual here&gt;</option>
-				</select>
-			</tr>
-			<tr>
-				<td>
-					<iframe id="xTemplateManual" width="100%" scrolling="yes" height="100%" src="" style="margin:5px;padding:0px;"></iframe>
-				</td>
-			</tr>
-		</table>
-	</div>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

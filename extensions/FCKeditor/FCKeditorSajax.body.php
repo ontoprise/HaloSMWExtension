@@ -210,3 +210,106 @@ function wfSajaxWikiToHTML( $wiki )
 
 	return $parser->parse($wiki, $wgTitle, $options)->getText();
 }
+
+function wfSajaxTemplateListFCKeditor($page)
+{
+	global $wgContLang, $smwgDefaultStore, $smwgQMaxInlineLimit;
+        // remove leading :
+        if ($page[0] == ":") $page = substr($page, 1);
+        // get categories for page
+	$cats = array();
+        // stack for subcategories, if it has elements
+        // find the categories that are parents of these elements
+        // start with the page itself
+        $subcats = array($page);
+        $db =& wfGetDB( DB_SLAVE );
+        // as long as we have a stak with (sub)categories
+        while (count($subcats) > 0) {
+            $res = $db->select( 'categorylinks', 'cl_to',
+                array(  'cl_sortkey' => array_shift($subcats)),
+                    "wfSajaxSearch"
+            );
+
+            while ( $row = $db->fetchObject( $res ) ) {
+		$cats[] .= $row->cl_to;
+                if (!in_array($row->cl_to, $cats) &&
+                    !in_array($row->cl_to, $subcats))
+                    $subcats[]= $row->cl_to;
+            }
+        }
+        // now build the query for fetching the template names
+        // a valid template for the current article is:
+        // - property template.showInTemplatePicker is set to true
+        // - property template.isApplicableForAnyArticle is set
+        // - property template.isApplicabelForCategory contains a
+        //   category which is also the category of the current article
+        $query = '[['.$wgContLang->getNsText(NS_CATEGORY).':'.$wgContLang->getNsText(NS_TEMPLATE).']]'
+                .'[[template.showInTemplatePicker::true]]'
+                .'[[template.isApplicableForAnyArticle::true]]';
+        if (count($cats) > 0)
+            $query.= 'OR [[template.isApplicabelForCategory::'.implode('||',$cats).']]';
+        // run the query now
+	$fixparams = array(
+            "format" => "ul",
+            "limit" => $smwgQMaxInlineLimit,
+	);
+
+	// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
+	// the tripplestore gets used
+	if ($smwgDefaultStore == "SMWTripleStore") {
+            $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+            if (stripos($result, "Could not connect to host") !== false)
+                $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+	}
+	else
+            $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+
+	// the list contains some html and wiki text, we need to extract the page values
+	$result = strip_tags($result);
+	preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
+	$pages = $matches[1];
+        if (count($pages) > 0) // we have got some valid templates
+            return implode("\n", $pages);
+
+        // the query did not return any templates. Now we return all templates
+        // no matter what properties they have. These are pages in the template ns
+        $res = $db->select( 'page', 'page_title',
+            array(  'page_namespace' => NS_TEMPLATE),
+                    "wfSajaxSearch"
+        );
+        while ( $row = $db->fetchObject( $res ) )
+            $pages[] = $row->page_title;
+        return implode("\n", $pages);
+
+}
+
+function wfSajaxFormForTemplateFCKeditor($page) {
+        global $smwgDefaultStore, $smwgQMaxInlineLimit, $wgContLang;
+
+        if ($page[0] == ":") $page = substr($page, 1);
+        $page = str_replace('_', ' ', $page);
+        // get all forms (actually this should be one only) that has a property
+        // 'Populates template' with value being the current template name.
+        $query = '[['.$wgContLang->getNsText(NS_CATEGORY).':'.$wgContLang->getNsText(SF_NS_FORM).']]'
+                .'[[Populates template::'.$page.']]';
+        // run the query now
+	$fixparams = array(
+            "format" => "ul",
+            "limit" => $smwgQMaxInlineLimit,
+	);
+	// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
+	// the tripplestore gets used
+	if ($smwgDefaultStore == "SMWTripleStore") {
+            $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+            if (stripos($result, "Could not connect to host") !== false)
+                $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+	}
+	else
+            $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+
+	// the list contains some html and wiki text, we need to extract the page values
+	$result = strip_tags($result);
+	preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
+	$pages = $matches[1];
+	return implode("\n", $pages);
+}
