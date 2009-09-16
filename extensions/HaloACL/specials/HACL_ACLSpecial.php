@@ -74,6 +74,10 @@ HTML;
 
         global $haclWhitelistGroups;
 
+      
+        $spt = SpecialPage::getTitleFor("HaloACL");
+        $url = $spt->getFullURL();
+
         // checking if user can access whitelist
         if(array_intersect($wgUser->getGroups(), $haclWhitelistGroups) != null) {
             $showWhitelist = "true";
@@ -88,6 +92,9 @@ HTML;
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
 <script type="text/javascript">
+
+    YAHOO.haloacl.specialPageUrl = "$url";
+
 HTML;
         $articleTitle = null;
         $activeTab = null;
@@ -97,7 +104,7 @@ HTML;
 
         if(array_key_exists("activetab", $wgRequest->data)) {
             $activeTab = $wgRequest->data['activetab'];
-        }else{
+        }else {
             $activeTab = "createACL";
         }
 
