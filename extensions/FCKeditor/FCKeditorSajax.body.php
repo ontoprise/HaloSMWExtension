@@ -278,7 +278,7 @@ function wfSajaxTemplateListFCKeditor($page)
                     "wfSajaxSearch"
         );
         while ( $row = $db->fetchObject( $res ) )
-            $pages[] = $row->page_title;
+            $pages[] = $wgContLang->getNsText(NS_TEMPLATE).':'.$row->page_title;
         return implode("\n", $pages);
 
 }
