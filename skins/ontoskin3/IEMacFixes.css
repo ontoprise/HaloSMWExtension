@@ -1,3 +1,15 @@
+/* This is need to make the halo menu bodies appear add correct hight
+   so the become clickable... */
+
+ul.smwh_menulist div.smwh_menubody {
+    top: 8px;
+}
+
+#tabsright ul.smwh_menulist div.smwh_menubody {
+    top: 0.2em;
+}
+
+
 /* IE/Mac only fix stylesheet, imported from main.css */
 #portal-column-content {
 	margin: 0 0 4.8em 0;

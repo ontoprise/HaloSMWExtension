@@ -2,9 +2,20 @@
 /* content area */ 
 /* workaround for various ie float bugs */
 
+/* This is need to make the halo menu bodies appear add correct hight
+   so the become clickable... */
+
+ul.smwh_menulist div.smwh_menubody {
+    top: 8px;
+}
+
+#tabsright ul.smwh_menulist div.smwh_menubody {
+    top: 0.2em;
+}
+
+
 /* This bit is needed to make links clickable... WTF */
 #column-content #content {
-	margin-left: 12.2em;
 	margin-top: 3em;
 	height: 1%;
 }
