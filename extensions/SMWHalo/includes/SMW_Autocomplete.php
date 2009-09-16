@@ -564,7 +564,7 @@ class AutoCompletionHandler {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
 						$domainRangeAnnotations = smwfGetStore()->getPropertyValues($property, smwfGetSemanticStore()->domainRangeHintProp);
-						$result = self::mergeResults($result, $acStore->getInstanceAsTarget($match, $domainRangeAnnotations));
+						$result = self::mergeResults($result, $acStore->getInstanceAsTarget($userInput, $domainRangeAnnotations));
 
 					}
 				}
