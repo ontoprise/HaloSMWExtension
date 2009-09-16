@@ -54,20 +54,11 @@
 	border-bottom: 1px solid #F0F0F0;
 }
 
-
-#content .smwtable .sortable .odd td{
-    background-color: #cde6ea;
-}
-
-
-#content .smwtable .sortable .even td{
-    background-color: #ffffff;
-}
-
-#content .even tr{ 
+/* even and odd in tables*/
+#content .sortable .even,#content .smwtable .even{ 
 background-color:#FFF; 
 }
 
-#content .odd tr{
+#content .sortable .odd,#content .smwtable .odd{
 background-color:#cde6ea;
 }
