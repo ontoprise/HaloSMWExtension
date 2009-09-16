@@ -803,7 +803,7 @@ YAHOO.haloacl.discardChanges_createacl = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
         yes:function(){
-            window.location.href='?activetab=createACL';
+            window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=createACL';
         },
         no:function(){}
     },"Ok","Cancel");
@@ -813,7 +813,7 @@ YAHOO.haloacl.discardChanges_users = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
         yes:function(){
-            window.location.href='?activetab=manageUsers';
+            window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageUsers';
         },
         no:function(){}
     },"Ok","Cancel");
