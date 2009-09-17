@@ -378,20 +378,31 @@ FCK.DataProcessor =
 								stringBuilder.push( '\n' ) ;
 							}
 
-							for ( var r = 0 ; r < htmlNode.rows.length ; r++ )
-							{
-								attribs = this._GetAttributesStr( htmlNode.rows[r] ) ;
+                                                        // iterate over children, normally <tr>
+                                                        var currentNode = (htmlNode.childNodes.length > 0) ? htmlNode.childNodes[0] : null;
+                                                        var level = 0;
 
-								stringBuilder.push( '|-' ) ;
-								if ( attribs.length > 0 )
-									stringBuilder.push( attribs ) ;
-								stringBuilder.push( '\n' ) ;
+							while (currentNode) {
+                                                            // reset the tagname. Needed later when finding next nodes
+                                                            var currentTagName = null;
 
-								for ( var c = 0 ; c < htmlNode.rows[r].cells.length ; c++ )
-								{
-									attribs = this._GetAttributesStr( htmlNode.rows[r].cells[c] ) ;
+                                                            // we found an element node
+                                                            if (currentNode.nodeType == 1) {
+                                                                // remember the tag name
+                                                                currentTagName = currentNode.tagName.toLowerCase();
+                                                                // we have a table row tag
+                                                                if (currentTagName == "tr") {
+                                                                    attribs = this._GetAttributesStr( currentNode ) ;
 
-									if ( htmlNode.rows[r].cells[c].tagName.toLowerCase() == "th" )
+                                                                    stringBuilder.push( '|-' ) ;
+                                                                    if ( attribs.length > 0 )
+                                                                    	stringBuilder.push( attribs ) ;
+                                                                    stringBuilder.push( '\n' ) ;
+
+                                                                    for ( var c = 0 ; c < currentNode.cells.length ; c++ ) {
+									attribs = this._GetAttributesStr( currentNode.cells[c] ) ;
+
+									if ( currentNode.cells[c].tagName.toLowerCase() == "th" )
 										stringBuilder.push( '!' ) ; 
 									else
 										stringBuilder.push( '|' ) ;
@@ -402,12 +413,48 @@ FCK.DataProcessor =
 									stringBuilder.push( ' ' ) ;
 
 									this._IsInsideCell = true ;
-									this._AppendChildNodes( htmlNode.rows[r].cells[c], stringBuilder, prefix ) ;
+									this._AppendChildNodes( currentNode.cells[c], stringBuilder, prefix ) ;
 									this._IsInsideCell = false ;
 
 									stringBuilder.push( '\n' ) ;
-								}
-							}
+                                                                    }
+                                                                }
+                                                                // not a <tr> found, then we only accept templates and special functions
+                                                                // which then probably build the table row in the wiki text
+                                                                else if (currentTagName == "img") {
+                                                                    //alert('class: ' + currentNode.className);
+                                                                    switch (currentNode.className) {
+                                                                        case "FCK__MWSpecial" :
+                                                                        case "FCK__MWTemplate" :
+                                                                        case "FCK__SMWask" :
+
+                                                                            stringBuilder.push( '|-\n' ) ;
+                                                                            this._IsInsideCell = true ;
+                                                                            this._AppendNode( currentNode, stringBuilder, prefix ) ;
+                                                                            this._IsInsideCell = false ;
+                                                                            stringBuilder.push( '\n' ) ;
+                                                                    }
+                                                                }
+                                                            }
+                                                            // find children if we are not inside table row.
+                                                            // because the content of rows is handled directly above
+                                                            if (currentNode.childNodes.length > 0 &&
+                                                                currentTagName != "tr") {
+                                                                level++;
+                                                                currentNode = currentNode.childNodes[0];
+                                                            } else {
+                                                                var nextNode = currentNode.nextSibling;
+                                                                if (nextNode == null && level > 0) {
+                                                                    while (level > 0) {
+                                                                        currentNode = currentNode.parentNode;
+                                                                        level--;
+                                                                        nextNode = currentNode.nextSibling;
+                                                                        if (nextNode) break;
+                                                                    }
+                                                                }
+                                                                currentNode = nextNode;
+                                                            }
+    							}
 
 							stringBuilder.push( '|}\n' ) ;
 
@@ -760,7 +807,7 @@ FCK.DataProcessor =
 				return '[[' + window.parent.gLanguage.getMessage('CATEGORY')+ text + ']]'
 		}
 	}
-	
+
 } ;
 
 // Here we change the SwitchEditMode function to make the Ajax call when
