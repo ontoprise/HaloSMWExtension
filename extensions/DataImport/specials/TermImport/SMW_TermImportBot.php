@@ -30,6 +30,7 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 class TermImportBot extends GardeningBot {
 
 	private $dateString = null;
+	private $importErrors = array();
 
 	function __construct() {
 		parent::GardeningBot("smw_termimportbot");
@@ -76,11 +77,12 @@ class TermImportBot extends GardeningBot {
 
 		$result = $this->importTerms($settings, $termImportName);
 		
-		$this->createTermImportResultContent($result, $termImportName);
+		if($result != wfMsg('smw_ti_import_successful')){
+			$this->importErrors[] = $result;
+		}
 		
+		$this->createTermImportResultContent($termImportName);
 		return array($result, "TermImport:".$termImportName."/".$timeInTitle);
-
-
 	}
 
 	/**
@@ -109,7 +111,7 @@ class TermImportBot extends GardeningBot {
 			return $result;
 		}
 
-		$tlModule  = $parser->getValuesOfElement(array('TLModules', 'Module', 'id'));
+		$tlModule = $parser->getValuesOfElement(array('TLModules', 'Module', 'id'));
 		if (count($tlModule) == 0) {
 			return "Error: Transport layer module was not defined."; //todo: language
 		}
@@ -141,19 +143,22 @@ class TermImportBot extends GardeningBot {
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
 
 		echo("\nGet Terms");
-
 		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
-		
 		echo("\nTerms in place");
 		
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
 		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 
-		$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy, $wil,$termImportName);
-
-		echo "Bot finished!\n";
-		if ($result === true) {
-			$result = wfMsg('smw_ti_import_successful');
+		try {
+			$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy, $wil,$termImportName);
+			
+			
+			echo "Bot finished!\n";
+			if ($result === true) {
+				$result = wfMsg('smw_ti_import_successful');
+			}
+		} catch (Exception $e){
+			$result = "Something bad happened during the Term Import: ".$e;
 		}
 		return $result;
 
@@ -179,9 +184,10 @@ class TermImportBot extends GardeningBot {
 	private function createArticles($terms, $mappingPolicy, $conflictPolicy, $wil, $termImportName) {
 		global $smwgDIIP;
 		require_once($smwgDIIP . '/specials/TermImport/SMW_XMLParser.php');
-
 		echo("\nStart to create articles");
 
+		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
+		
 		$parser = new XMLParser($mappingPolicy);
 		$result = $parser->parse();
 		if ($result !== TRUE) {
@@ -211,31 +217,43 @@ class TermImportBot extends GardeningBot {
 		$cp = $cp[0];
 		$cp = strtolower($cp) == 'true' ? true : false;
 
-		echo("\nCreate xml parser");
-		
 		//echo("\n\n".$terms."\n\n");
 		
 		//$file = fopen("d:/result.txt", w);
 		//fwrite($file, $terms);
 		//fclose($file);
 		
-		$parser = new SimpleXMLElement($terms, LIBXML_NOCDATA);
+		//echo("\n\n".$terms."\n\n");
 		
-		$numTerms = count($parser->children());
+		echo("\nCreate xml parser");
+		try {
+			$parser = new SimpleXMLElement($terms, LIBXML_NOCDATA);
+		} catch (Exception $e){
+			return "The XML parser could not be created because: " .$e;
+		}
+		
+		if(!key_exists("term", $parser)){
+			foreach($parser->errors as $errors){
+				foreach($errors->error as $error){
+					$this->importErrors[] = $error[0];
+				}
+			}	
+			return wfMsg('smw_ti_import_successful');
+		}
+		$numTerms = count($parser->term);
 		echo("\nNumber of terms: ".$numTerms."\n");
 		$this->setNumberOfTasks(1);
 		$this->addSubTask($numTerms);
 
-		$noErrors = true;
 		$timeInTitle = $this->getDateString();
 		$termImportName = "TermImport:".$termImportName."/".$timeInTitle;
-		foreach($parser->children() as $term){
+		$noErrors = true;
+		foreach($parser->term as $term){
 			//check if this is a callback term
 			if($term['callback']){
 				$callBackResult = 
 					$wil->executeCallBack("".$term
 					,$mp ,$cp, $termImportName);
-				$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 				$cBRParser = new XMLParser($callBackResult);
 				$cBRParser->parse();	
 				$nextId = 0;
@@ -250,6 +268,7 @@ class TermImportBot extends GardeningBot {
 				$nextSuccess = 0;
 				$callBackSucces = $cBRParser->getElement(array('success'), $nextSuccess);
 				if($callBackSucces['SUCCESS'][0]['value'] == 'false'){
+					//todo: allow callbacks to return eror messages
 					$noErrors = false;
 				}	
 				$this->worked(1);
@@ -261,9 +280,20 @@ class TermImportBot extends GardeningBot {
 
 			if ($caResult !== true) {
 				$noErrors = false;
+				$this->importErrors[] = $caResult;
 			}
 		}
-		return $noErrors ? true : wfMsg('smw_ti_import_errors');		
+		
+		foreach($parser->errors as $errors){
+			foreach($errors->error as $error){
+				$this->importErrors[] = $error[0];
+			}
+		}
+		if($noErrors){
+			return wfMsg('smw_ti_import_successful');
+		} else {
+			return wfMsg('smw_ti_import_errors');
+		} 		
 	}
 
 	/**
@@ -542,7 +572,7 @@ class TermImportBot extends GardeningBot {
 		return $result;
 	}
 
-	private function createTermImportResultContent($termImportResult, $termImportName){
+	private function createTermImportResultContent($termImportName){
 		$result = "__NOTOC__\n";
 		$result .= "==== Import summary ====";
 		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
@@ -550,24 +580,30 @@ class TermImportBot extends GardeningBot {
 		$result .= "\n Import date: [[hasImportDate::";
 		$result .= $this->getDateString()."]]";
 			
-		if($termImportResult != wfMsg('smw_ti_import_successful')){
+		
+		if(count($this->importErrors) > 0){
 			$result .= "\n Was successfull: [[wasImportedSuccessfully::false]]";
-			$result .= "\n==== Errors occured ====\n";
-			$result .= $termImportResult;
 		} else {
 			$result .= "\n Was successfull: [[wasImportedSuccessfully::true]]";
-			$result .= "\n==== Added terms ====\n";
-			$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
-				.$this->getDateString()."]]}}";
-			
-			$result .= "\n==== Updated terms ====\n";
-			$result .= "{{#ask: [[WasUpdatedDuringTermImport::TermImport:".$termImportName."/"
-				.$this->getDateString()."]]}}";
-			
-			$result .= "\n==== Ignored terms ====\n";
-			$result .= "{{#ask: [[IgnoredDuringTermImport::TermImport:".$termImportName."/"
-				.$this->getDateString()."]]}}";
-			
+		}
+		$result .= "\n==== Added terms ====\n";
+		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		$result .= "\n==== Updated terms ====\n";
+		$result .= "{{#ask: [[WasUpdatedDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		$result .= "\n==== Ignored terms ====\n";
+		$result .= "{{#ask: [[IgnoredDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		if(count($this->importErrors) > 0){
+			$result .= "\n==== Import errors ====\n";
+			foreach($this->importErrors as $error){
+				$result .= "\n* ".$error;
+			}
+				
 			$result .= "\n[[Category:TermImportRun]]";
 		}
 

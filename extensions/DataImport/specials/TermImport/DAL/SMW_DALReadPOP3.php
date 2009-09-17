@@ -60,6 +60,8 @@ class DALReadPOP3 implements IDAL {
 	private $importSets;
 	
 	private $messagesToDelete;
+	private $errorMessages = array();
+	private $messageContainsErrors = false;
 	
 	private $noCallPartNr = false; //this flag is used to determine when to skip multipart/related
 
@@ -210,41 +212,83 @@ class DALReadPOP3 implements IDAL {
 		$result = "";
 		if(is_array($messages)){
 			foreach($messages as $msg){
+				$this->messageContainsErrors = false;
 				$headerData = $this->getHeaderData($connection, $msg);
 				if($headerData == null){
 					continue;
 				}
-				$result .= $this->getBody($connection, $msg);
-				$result .= "\n".$headerData;
-				$result .= "</term>\n";
-				$this->messagesToDelete[$this->getMessageId($connection, $msg)] = true;
-				break;
-			}
+				$tempResult = $this->getBody($connection, $msg);
+				$tempResult .= "\n".$headerData;
+				$tempResult .= "</term>";
+				
+				if($this->messageContainsErrors != true){
+					try {
+						// check if valid xml was created. Add the messageid and its related xml
+						// to the list of messages that will be imported. This will allow to remove
+						// that xml from the overall result again, if an error in an embedded 
+						// message occurs.
+						$tempXML = @ new SimpleXMLElement("<dummy>".$tempResult."</dummy>");
+						$this->messagesToDelete[$this->getMessageId($connection, $msg)][] = $tempResult;
+						$result .= $tempResult;
+					} catch (Exception $e) {
+						$this->createErrorMessage($connection, $msg, 
+							"an embedded E-mail produced an XML exception.");
+					}
+				} 
+			} 
 		}
 		
 		while(count($this->embeddedMails) > 0){
-			echo("\nProcess next embedded message:");
 			$embeddedMails = $this->embeddedMails;
 			$this->embeddedMails = array();
 			foreach($embeddedMails as $mail){
-				//echo("\nnext embedded message");
+				$this->messageContainsErrors = false;
 				$this->noCallPartNr = true;
 				$header = $this->serializeHeaderData($mail["header"]);
-				$result = $this->handleBodyParts($connection, $mail["message"], 
+				$tempResult = $this->handleBodyParts($connection, $mail["message"], 
 					$mail["structure"], $mail["partNr"])
-					.$header."</term>".$result;
+					.$header."</term>";
+				if($this->messageContainsErrors != true){
+					try {
+						$tempXML = @ new SimpleXMLElement("<dummy>".$tempResult."</dummy>");
+						$result .= $tempResult;
+						$this->messagesToDelete
+							[$this->getMessageId($connection, $mail["message"])][] = $tempResult;
+					} catch (Exception $e){
+						foreach($this->messagesToDelete
+								[$this->getMessageId($connection, $mail["message"])] as $value){
+							$result = str_replace($value, "", $result);	
+						}
+						unset($this->messagesToDelete
+							[$this->getMessageId($connection, $mail["message"])]);
+						$this->createErrorMessage($connection, $mail["message"], 
+							"an embedded E-mail produced an XML exception.");
+					}
+				} else {
+					foreach($this->messagesToDelete
+							[$this->getMessageId($connection, $mail["message"])] as $value){
+						$result = str_replace($value, "", $result);	
+					}
+					unset($this->messagesToDelete
+						[$this->getMessageId($connection, $mail["message"])]);
+				}
+				
 			}
 		}
 		
 		imap_close($connection);
 		
 		$deleteCallback = $this->createDeleteCallback($dataSourceSpec);
+		$errorMessages = "";
+		if(count($this->errorMessages) > 0){
+			$errorMessages = "<errors>".implode("", $this->errorMessages)."</errors>";
+		}
 		
 		return
 			'<?xml version="1.0"?>'."\n".
 			'<terms xmlns="http://www.ontoprise.de/smwplus#">'."\n".
-			$result.$deleteCallback.
-			'</terms>'."\n";
+			$result.$deleteCallback.$errorMessages
+			.'</terms>'."\n";
 	}
 
 	private function getBody($connection, $msg){
@@ -325,8 +369,12 @@ class DALReadPOP3 implements IDAL {
 					"partNr" => $basePartNr.$partNr.".");
 			} else if(array_key_exists("attachments", $this->requiredProperties)){ //an attachment
 				$bodyStruct = imap_bodystruct($connection, $msg, $basePartNr.$partNr);
-				$this->handleAttachments($bodyStruct, $connection, $msg, 
+				$result = $this->handleAttachments($bodyStruct, $connection, $msg, 
 					$basePartNr.$partNr, $encoding);
+				if($result != "true"){
+					$this->messageContainsErrors = true;
+					$this->createErrorMessage($connection, $msg, $result);
+				}
 			}
 			$partNr ++;
 		}
@@ -338,16 +386,24 @@ class DALReadPOP3 implements IDAL {
 				if(!array_key_exists("vCards", $this->requiredProperties)){
 					return;
 				}
-				$this->serialiseVCard($this->decodeBodyPart(
+				$result = $this->serialiseVCard($this->decodeBodyPart(
 					imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
 						$encoding));
+				if($result != "true"){
+					$this->createErrorMessage($connection, $msg, $result);
+					$this->messageContainsErrors = true;
+				}
 			} else if(strtoupper($part->subtype) == "CALENDAR"){
 				if(!array_key_exists("iCalendars", $this->requiredProperties)){
 					return;
 				}
 				$content = $this->decodeBodyPart(
 					imap_fetchbody($connection, $msg, $basePartNr.$partNr), $encoding);
-				$this->serializeICal($content);
+				$result = $this->serializeICal($content);
+				if($result != "true"){
+					$this->createErrorMessage($connection, $msg, $result);
+					$this->messageContainsErrors = true;
+				}
 			} else if(array_key_exists("body", $this->requiredProperties)
 					&& strtoupper($part->subtype) != "HTML"){
 				$body = htmlspecialchars($this->decodeBodyPart(
@@ -359,9 +415,13 @@ class DALReadPOP3 implements IDAL {
 				$this->body .= "<pre>".$body."</pre>"; 
 			}
 		} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
-			$this->body .= "<pre>".htmlspecialchars($this->decodeBodyPart(
+			$body = "<pre>".htmlspecialchars($this->decodeBodyPart(
 				imap_fetchbody($connection, $msg, $basePartNr.$partNr), 
 				$encoding))."</pre>";
+			if(!mb_check_encoding($body, "UTF-8")){
+				$body = utf8_encode($body);
+			}
+			$this->body .= $body;
 		}
 	}
 
@@ -446,7 +506,6 @@ class DALReadPOP3 implements IDAL {
 
 			$check = @imap_check($this->connection);
 			if(!$check){
-				echo("checked failed");
 				return false;
 			}
 		}
@@ -644,18 +703,24 @@ class DALReadPOP3 implements IDAL {
 			}
 		}
 
-		$vCardXML = new SimpleXMLElement(trim("<vcard>".$result."</vcard>"), LIBXML_NOCDATA);
-		$fn = $vCardXML->xpath("//VC-FN/text()");
-		$fn = "".$fn[0];
-		if($fn != ""){
-			global $wgExtraNamespaces;
-			$ns="";
-			if(array_key_exists(NS_TI_VCARD, $wgExtraNamespaces)){
-				$ns = $wgExtraNamespaces[NS_TI_VCARD].":";
-			}	
-
-			$this->createAttachmentTerm($vCardString, $fn.".vcf", $result);
-		}
+		try{
+			$vCardXML = @ new SimpleXMLElement(trim("<vcard>".$result."</vcard>"), LIBXML_NOCDATA);
+			$fn = $vCardXML->xpath("//VC-FN/text()");
+			$fn = "".$fn[0];
+			if($fn != ""){
+				global $wgExtraNamespaces;
+				$ns="";
+				if(array_key_exists(NS_TI_VCARD, $wgExtraNamespaces)){
+					$ns = $wgExtraNamespaces[NS_TI_VCARD].":";
+				}	
+				return $this->createAttachmentTerm($vCardString, $fn.".vcf", $result);
+			} else {
+				return " a VCard attachment could not be created because it does not contain the FN attribute.";
+			}
+		} catch (Exception $e){
+			return " a VCard attachment could not be created because ".$e;
+		} 
+		
 	}
 
 	private function serializeICal($iCalString){
@@ -671,19 +736,23 @@ class DALReadPOP3 implements IDAL {
 				$result .= "<".$attribute."><![CDATA[".htmlspecialchars($value)."]]></".$attribute.">";
 			}
 		
-			$iCalXML = new SimpleXMLElement("<ic>".trim($result)."</ic>", LIBXML_NOCDATA);
-			$title = $iCalXML->xpath("//ic-uid/text()");
-			$title = "".$title[0];
+			try {
+				$iCalXML = @ new SimpleXMLElement("<ic>".trim($result)."</ic>", LIBXML_NOCDATA);
+				$title = $iCalXML->xpath("//ic-uid/text()");
+				$title = "".$title[0];
 
-			if($title != ""){
-				echo("\n\n".$title);
-				$this->createAttachmentTerm($iCalString, $title.".ics", $result);
+				if($title != ""){
+					return $this->createAttachmentTerm($iCalString, $title.".ics", $result);
+				} else {
+					return " an ICalendar could not be created because it does not have a UID";
+				}
+			} catch (Exception $e){
+				return " an ICalendar could not be created because: ".$e;
 			}
 		}
 	}
 
 	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
-		echo("\n\n".$signature);
 		return eval("return \$this->".$signature.",\$conflictPolicy, \$termImportName);");
 	}
 
@@ -805,6 +874,17 @@ class DALReadPOP3 implements IDAL {
 			return false;
 		}
 	}
+	
+	private function getMessageSubject($mbox, $msgNumber){
+		$header = imap_header($mbox, $msgNumber);
+		if(key_exists('subject', $header)){
+			return htmlspecialchars(mb_decode_mimeheader($header->subject));
+		} else if(key_exists('Subject', $header)){
+			return htmlspecialchars(mb_decode_mimeheader($header->Subject));
+		} else { 
+			return false;
+		}
+	}
 
 	private function handleAttachmentCallBack($fileName, $attachmentMP,
 			$mailFrom, $mailId, $mailDate, $extraContent, $conflictPolicy, $termImportName){
@@ -872,7 +952,7 @@ class DALReadPOP3 implements IDAL {
 				'title' => $fileArticleTitle->getFullText())));
 		}
 		$termAnnotations = "\n\n\n"
-		.$tiBot->createTermAnnotations($termAnnotations);
+			.$tiBot->createTermAnnotations($termAnnotations);
 			
 		$status = $local->upload(
 			$fileFullPath, wfMsg('smw_ti_creationComment'), "",
@@ -912,8 +992,10 @@ class DALReadPOP3 implements IDAL {
 		$local->load();
 		global $smwgEnableUploadConverter;
 		if($smwgEnableUploadConverter){
+			echo("\nextract content");
 			$fileContent = UploadConverter::getFileContent($local);
 			if(trim($fileContent) != ""){
+				echo("\nextract content not empty");
 				$term["CONTENT"] = array();
 				$term["CONTENT"][] = array("value" => $fileContent);
 			}
@@ -957,12 +1039,18 @@ class DALReadPOP3 implements IDAL {
 		
 		$fileFullPath =
 			$smwgDIIP.'/specials/TermImport/DAL/attachments/'.$fileName;
-		$file = @ fopen($fileFullPath, 'w');
-		if($file){
-			fwrite($file, $fileContent);
-			fclose($file);
-			
-			$this->attachments[$fileName] = $extraContent;
+		try {
+			$file = @ fopen($fileFullPath, 'w');
+			if($file){
+				fwrite($file, $fileContent);
+				fclose($file);
+				$this->attachments[$fileName] = $extraContent;
+				return "true";
+			} else {
+				return " creating the attachment ".$fileFullPath." failed.";
+			}
+		} catch (Exception $e){
+			return " creating the attachment ".$fileFullPath." failed because ".$e;
 		}
 	}
 
@@ -985,14 +1073,12 @@ class DALReadPOP3 implements IDAL {
 			imap_fetchbody($connection, $msg, $partNr), $encoding);
 		
 		if($this->isVCardAttachment($fileName)){
-			$this->serialiseVCard(utf8_encode($fileContent));
-			return;
+			return $this->serialiseVCard(utf8_encode($fileContent));
 		} else if($this->isICalAttachment($fileName)){
-			$this->serializeICal($fileContent);
-			return;
+			return $this->serializeICal($fileContent);
 		}	
 		
-		$this->createAttachmentTerm($fileContent, $fileName);
+		return $this->createAttachmentTerm($fileContent, $fileName);
 	}
 	
 	private function parseInputPolicy($inputPolicy) {
@@ -1073,7 +1159,6 @@ class DALReadPOP3 implements IDAL {
 			"handleDeleteCallBack(".
 				"array(".$delete."), <![CDATA['".$dataSourceSpec."']]>"
 				."</term>";
-		echo($result);
 		return $result;
 	}
 	
@@ -1148,5 +1233,32 @@ class DALReadPOP3 implements IDAL {
 			return true;
 		}
 		return false;
+	}
+	
+	private function createErrorMessage($connection, $msgNr, $message = ""){
+		$startOfMessage = "<error>The E-mail with the id ";
+		if(strlen($message) > 0){
+			$endOfMessage = " could not be imported because <![CDATA[".$message
+				."]]></error>"; 
+		} else {
+			$endOfMessage = " could not be imported.</error>";
+		}
+		$messageId = $this->replaceAngledBrackets($this->getMessageId($connection, $msgNr));
+		$subject = $this->getMessageSubject($connection, $msgNr);
+		
+		$result = $startOfMessage.$messageId." and with the subject \"<![CDATA[".$subject
+			."\"]]>".$endOfMessage;
+		try {
+			$tempXML = new SimpleXMLElement($result);
+			$this->errorMessages[] = $result;
+		} catch (Exception $e) {
+			$result = $startOfMessage.$messageId.$endOfMessage;
+			try {
+				$tempXML = new SimpleXMLElement($result);
+				$this->errorMessages[] = $result;
+			} catch (Exception $e) {
+				$this->errorMessages[] = "<error>An E-mail".$endOfMessage;
+			}	
+		}
 	}
 }
