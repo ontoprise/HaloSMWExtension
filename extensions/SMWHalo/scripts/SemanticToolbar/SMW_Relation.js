@@ -38,8 +38,8 @@ var SMW_REL_CHECK_PROPERTY_ACCESS =
 
 var SMW_REL_CHECK_PROPERTY_UPDATE_SCHEMA = 
 	'smwCheckType="property: exists ' +
-		'? (color: lightgreen, hideMessage, valid:true, call:relToolBar.updateSchema) ' +
-	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true)" ';
+		'? (color: lightgreen, hideMessage, valid:true, call:relToolBar.updateSchema, call:relToolBar.updateInstanceTypeHint) ' +
+	 	': (color: orange, showMessage:PROPERTY_DOES_NOT_EXIST, valid:true, call:relToolBar.resetInstanceTypeHint)" ';
 
 var SMW_REL_SUB_SUPER_CHECK_PROPERTY = 
 	'smwCheckType="property: exists ' +
@@ -534,11 +534,21 @@ updateNewItem: function(request) {
 			: ((oldValues.length > i)
 				? oldValues[i]
 				: '');
+		var hint = (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
+		if (i == 0 && parameterNames[i] == "Page") {
+			var relation = $('rel-name');
+			hint = 'namespace:' + SMW_INSTANCE_NS;
+			if (relation.value.length > 0) { 
+				hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
+						'| ' + hint;
+			}
+			hint = 'constraints="'+hint+'"';
+		}
 		tb.insert(insertAfter,
 				  tb.createInput('rel-value-'+ i, parameterNames[i], '', '', 
 								 SMW_REL_CHECK_EMPTY_NEV +
 							     SMW_REL_VALID_PROPERTY_VALUE + 
-								 (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : ""),
+								 hint,
 		                         true));
 		tb.setInputValue('rel-value-'+ i, value);    
 		                         
@@ -732,6 +742,25 @@ updateTypeHint: function(elementID) {
 	}
 	relation.setAttribute('constraints', hint);
 	
+},
+
+updateInstanceTypeHint: function(elementID) {
+	var relation = $('rel-name');
+	var instance = $('rel-value-0');
+	
+	var hint = 'namespace:' + SMW_INSTANCE_NS;
+	if (relation.value.length > 0) { 
+		hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
+				'| ' + hint;
+	}
+	instance.setAttribute('constraints', hint);
+	
+},
+
+resetInstanceTypeHint: function(elementID) {
+	var instance = $('rel-value-0');
+	var hint = 'namespace:' + SMW_INSTANCE_NS;
+	instance.setAttribute('constraints', hint);
 },
 
 newRelation: function() {
