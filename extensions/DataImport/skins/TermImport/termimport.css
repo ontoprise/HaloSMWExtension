@@ -149,6 +149,11 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	float: left;
 	margin-top: 10px;
 }
+#bottom-container #loading-bottom-container{
+	width:100%;
+	float: left;
+	margin-top: 10px;
+}
 #bottom-container #extras #extras-left{
 	width: 55%;
 	float: left;
@@ -279,5 +284,8 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+
+
+
 
 

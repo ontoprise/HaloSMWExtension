@@ -165,7 +165,12 @@ class CL {
 								"</div>" . //attrib-articles
 							"</div>" . //extras-right
 					"</div>". //extras
-					"<div id=\"extras-bottom\" align=\"left\"></div>";
+					"<div id=\"extras-bottom\" align=\"left\"></div>".
+					"<div style=\"display: none\" id=\"loading-bottom-container\">".
+					"<b>Loading... </b>".
+					"<img src=\"".$smwgDIScriptPath."/skins/TermImport/images/ajax-loader.gif\"/><br/><br/>".
+					"</div>";
+										
 
 		$html .= "</div>"; //bottom-container
 		

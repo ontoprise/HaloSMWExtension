@@ -932,6 +932,8 @@ TermImportPage.prototype = {
 			var updatePolicy = result[6];
 			var edit = this.editTermImport;
 			
+			$("extras-bottom").style.display = "none";
+			$("loading-bottom-container").style.display = "inline";
 			sajax_do_call('smwf_ti_connectTL', [tlID, dalID , dataSource, importSetName, 
 			                                    inputPolicy, mappingPage, conflictPol, 1, termImportName, updatePolicy, edit, createOnly]
 			                                    , this.importItNowCallback.bind(this, tlID, dalID, createOnly));
@@ -1113,6 +1115,8 @@ TermImportPage.prototype = {
 	},
 	
 	importItNowCallback: function(tlID, dalID, createOnly, request){
+		$("extras-bottom").style.display = "inline";
+		$("loading-bottom-container").style.display = "none";
 		var message= '';
 		try {
 			var result = request.responseText;
@@ -1139,7 +1143,7 @@ TermImportPage.prototype = {
 				return;
 			} else if(value == "articleCreated") {
 				var path = wgArticlePath.replace(/\$1/, "TermImport:" + message);
-				message = '<br>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/><br/>';
+				message = '<br><b>The Term Import definition <a href=\"' +path+ '\">' + message  + '</a> was created successfully.<br/></b><br/>';
 				
 				$('extras-bottom').innerHTML = message;
 				return;
@@ -1151,7 +1155,7 @@ TermImportPage.prototype = {
 		var path = wgArticlePath.replace(/\$1/, "Special:Gardening");
 		message += '<br>See <a href=\"' +path+ '\">Gardening page</a> for details<br/><br/>';
 		
-		$('extras-bottom').innerHTML = message;
+		$('extras-bottom').innerHTML = "<b>"+message+"</b>";
 	},
 	changeBackground: function(e, node) {
 		// $('mapping-input-field').style.backgroundColor = "white";
