@@ -124,8 +124,7 @@ class DALReadPOP3 implements IDAL {
 
 		//removed: bc, reply_to, sender, return_path
 		$properties = array('articleName', 'from', 'to', 'cc', 'date', 'subject',
-			'in_reply_to','followup_to', 'references', 'message_id', 'body', 'attachments',
-			'vCards', 'iCalendars');
+			'in_reply_to','followup_to', 'references', 'message_id', 'body', 'attachments');
 		foreach ($properties as $prop) {
 			$properties .=
 				'<property>'."\n".
@@ -383,7 +382,7 @@ class DALReadPOP3 implements IDAL {
 	private function handleBodyTextPart($connection, $msg, $part, $basePartNr, $partNr, $encoding){
 		if($part->ifsubtype){
 			if(strtoupper($part->subtype) == "X-VCARD"){
-				if(!array_key_exists("vCards", $this->requiredProperties)){
+				if(!array_key_exists("attachments", $this->requiredProperties)){
 					return;
 				}
 				$result = $this->serialiseVCard($this->decodeBodyPart(
@@ -394,7 +393,7 @@ class DALReadPOP3 implements IDAL {
 					$this->messageContainsErrors = true;
 				}
 			} else if(strtoupper($part->subtype) == "CALENDAR"){
-				if(!array_key_exists("iCalendars", $this->requiredProperties)){
+				if(!array_key_exists("attachments", $this->requiredProperties)){
 					return;
 				}
 				$content = $this->decodeBodyPart(
