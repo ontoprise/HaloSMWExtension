@@ -1,7 +1,924 @@
-Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
+Index: includes/SF_EmbeddedFormClasses.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5038)
-+++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
+--- includes/SF_EmbeddedFormClasses.inc	(revision 0)
++++ includes/SF_EmbeddedFormClasses.inc	(revision 0)
+@@ -0,0 +1,259 @@
++<?php
++/**
++ * Two classes - SFEmbeddedForm and SFEmbeddedTemplateInForm - that represent a user-defined
++ * form and a template contained within that form, respectively.
++ *
++ * @author Daniel Hansch
++ */
++/*op-patch|DH|2009-09-17|Embedded Forms|start*/
++class SFEmbeddedForm {
++	var $form_name;
++	var $templates;
++  var $partof_wikisection;
++  var $rationale;
++	
++	static function create($form_name, $templates, $partof_wikisection, $rationale) {
++		$form = new SFEmbeddedForm();
++		$form->form_name = ucfirst(str_replace('_', ' ', $form_name));
++		$form->templates = $templates;
++    $form->partof_wikisection = $partof_wikisection;
++    $form->rationale = $rationale;
++
++		return $form;
++	}
++
++	function creationHTML() {
++		$text = "";
++
++		foreach ($this->templates as $i => $ft) {
++			$text .= $ft->creationHTML($i);
++		}
++		return $text;
++	}
++
++
++
++function createMarkup_for_embedded_Form() {
++	 global $wgUser;
++	 global $wgContLang;
++	 
++		$namespace_labels = $wgContLang->getNamespaces();
++		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
++		$ad = SpecialPage::getPage('AddPage');
++		$add_data_url = SFLinkUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
++		$form_description = wfMsgForContent('sf_form_docu', $this->form_name, $add_data_url);
++		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
++    $form_header ="{{Form
++|PAGENAME=".$namespace_labels[SF_NS_FORM].":".$this->form_name."
++|Has author=".$wgUser->getUserPage()."
++|Form needs context=false
++|part of=".$this->partof_wikisection."
++|rationale=".$this->rationale."
++|long description=__NOTITLE__
++|transcludable=True
++|show in template picker=True
++|Populates template=";
++    
++    foreach ($this->templates as $template) {
++			$form_header .= $template->template_name . ",";
++		}
++    $form_header .= "\n}}";
++
++    $text =<<<END
++<noinclude>$form_header
++</noinclude><includeonly><!--
++
++-->{{#ifeq:{{{1|}}}|transcluded||<!--
++       -->{{{info|includeonly free text|add title=Add|edit title=Edit}}}<!--    
++-->}} 
++END;
++		
++		foreach ($this->templates as $template) {
++			$text .= $template->createMarkup() . "\n";
++		}
++		$text .=<<<END
++{{#ifeq:{{{1|}}}|transcluded||{{{standard input|save}}} {{{standard input|cancel}}} }}
++</includeonly><noinclude></noinclude>
++
++END;
++
++		return $text;
++	}
++	
++}
++
++class SFTemplateInEmbeddedForm {
++	var $template_name;
++	var $label;
++	var $allow_multiple;
++	var $max_allowed;
++	var $fields;
++	var $collapsable_section;
++
++	function getAllFields() {
++		$template_fields = array();
++		$field_names_array = array();
++
++		// Get the fields of the template, both semantic and otherwise, by parsing
++		// the text of the template.
++		// The way this works is that fields are found and then stored in an
++		// array based on their location in the template text, so that they
++		// can be returned in the order in which they appear in the template, even
++		// though they were found in a different order.
++		// Some fields can be found more than once (especially if they're part
++		// of an "#if" statement), so they're only recorded the first time they're
++		// found. Also, every field gets replaced with a string of x's after
++		// being found, so it doesn't interfere with future parsing.
++		$template_title = Title::makeTitleSafe(NS_TEMPLATE, $this->template_name);
++		$template_article = null;
++		if(isset($template_title)) $template_article = new Article($template_title);
++		if(isset($template_article)) {
++			$template_text = $template_article->getContent();
++			// ignore 'noinclude' sections and 'includeonly' tags
++			$template_text = StringUtils::delimiterReplace('<noinclude>', '</noinclude>', '', $template_text);
++			$template_text = strtr($template_text, array('<includeonly>' => '', '</includeonly>' => ''));
++	
++			// first, look for "arraymap" parser function calls that map a
++			// property onto a list
++			if (preg_match_all('/{{#arraymap:{{{([^|}]*:?[^|}]*)[^\[]*\[\[([^:=]*:?[^:=]*)(:[:=])/mis', $template_text, $matches)) {
++				// this is a two-dimensional array; we need the last three of the four
++				// sub-arrays; we also have to remove redundant values
++				foreach ($matches[1] as $i => $field_name) {
++					$semantic_property = $matches[2][$i];
++					$full_field_text = $matches[0][$i];
++					if (! in_array($field_name, $field_names_array)) {
++						$template_field = SFTemplateField::create($field_name, ucfirst($field_name));
++						$template_field->setSemanticProperty($semantic_property);
++						$template_field->is_list = true;
++						$cur_pos = stripos($template_text, $full_field_text);
++						$template_fields[$cur_pos] = $template_field;
++						$field_names_array[] = $field_name;
++						$replacement = str_repeat("x", strlen($full_field_text));
++						$template_text = str_replace($full_field_text, $replacement, $template_text);
++					}
++				}
++			}
++	
++			// second, look for normal property calls
++			if (preg_match_all('/\[\[([^:=]*:*?[^:=]*)(:[:=]){{{([^\]\|}]*).*?\]\]/mis', $template_text, $matches)) {
++				// this is a two-dimensional array; we need the last three of the four
++				// sub-arrays; we also have to remove redundant values
++				foreach ($matches[1] as $i => $semantic_property) {
++					$field_name = $matches[3][$i];
++					$full_field_text = $matches[0][$i];
++					if (! in_array($field_name, $field_names_array)) {
++						$template_field = SFTemplateField::create($field_name, ucfirst($field_name));
++						$template_field->setSemanticProperty($semantic_property);
++						$cur_pos = stripos($template_text, $full_field_text);
++						$template_fields[$cur_pos] = $template_field;
++						$field_names_array[] = $field_name;
++						$replacement = str_repeat("x", strlen($full_field_text));
++						$template_text = str_replace($full_field_text, $replacement, $template_text);
++					}
++				}
++			}
++	
++			// finally, get any non-semantic fields defined
++			if (preg_match_all('/{{{([^|}]*)/mis', $template_text, $matches)) {
++				foreach ($matches[1] as $i => $field_name) {
++					$full_field_text = $matches[0][$i];
++					if (($full_field_text != '') && (! in_array($field_name, $field_names_array))) {
++						$cur_pos = stripos($template_text, $full_field_text);
++						$template_fields[$cur_pos] = SFTemplateField::create($field_name, ucfirst($field_name));
++						$field_names_array[] = $field_name;
++					}
++				}
++			}
++		}
++		ksort($template_fields);
++		return $template_fields;
++	}
++
++	static function create($name, $label, $allow_multiple, $max_allowed = null, $collapsable_section) {
++		$tif = new SFTemplateInEmbeddedForm();
++		$tif->template_name = str_replace('_', ' ', $name);
++		$tif->fields = array();
++		$fields = $tif->getAllFields();
++		$field_num = 0;
++		foreach ($fields as $field) {
++			$tif->fields[] = SFEmbeddedFormField::create($field_num++, $field);
++		}
++		$tif->label = $label;
++		$tif->allow_multiple = $allow_multiple;
++		$tif->collapsable_section = $collapsable_section;
++		$tif->max_allowed = $max_allowed;
++		return $tif;
++	}
++
++	function creationHTML($template_num) {
++		$checked_str = ($this->allow_multiple) ? "checked" : "";
++		$checked_collapsable_section_str = ($this->collapsable_section) ? "checked" : "";
++		$template_str = wfMsg('sf_createform_template');
++		$template_label_input = wfMsg('sf_createform_templatelabelinput');
++		$allow_multiple_text = wfMsg('sf_createform_allowmultiple');
++		$text =<<<END
++	<input type="hidden" name="template_$template_num" value="$this->template_name">
++	<div class="templateForm">
++	<h2>$template_str '$this->template_name'</h2>
++	<p>$template_label_input <input size=25 name="label_$template_num" value="$this->label"></p>
++	<p><input type="checkbox" name="collapsable_section_$template_num" $checked_collapsable_section_str> Allow for users to collapse this template</p>
++	<hr>
++
++END;
++		foreach ($this->fields as $field) {
++			$text .= $field->creationHTML($template_num);
++		}
++		$text .= '	<p><input type="submit" name="del_' . $template_num .
++		  '" value="' . wfMsg('sf_createform_removetemplate') . '"></p>' . "\n";
++		$text .= "	</div>\n";
++		return $text;
++	}
++
++	function createMarkup() {
++		$text = "";
++		$text =<<<END
++
++{{#ifeq:{{{1|}}}|transcluded|<!--
++       -->
++END;
++		$text .= "{{GenerateFormFieldForTemplate|". $this->template_name;
++		if ($this->label != '')
++			$text .= "|" . $this->label;
++		else
++			$text .= "|";
++		if ($this->collapsable_section) 
++			$text .= "|collapsible";
++		else
++			$text .= "|";
++		$text .= "}}<!--\n";
++    
++    $text .=<<<END
++    -->|<!--
++       -->
++END;
++		$text .= "{{GenerateFormFieldForTemplate|". $this->template_name;
++		if ($this->label != '')
++			$text .= "|" . $this->label;
++		else
++			$text .= "|";
++		if ($this->collapsable_section) 
++			$text .= "|collapsible|forceopen=true";
++		else
++			$text .= "|";
++		$text .= "}}\n}}\n";
++
++
++		// for now, HTML for templates differs for multiple-instance templates;
++		// this may change if handling of form definitions gets more sophisticated
++		$text .= "{| \n";
++		foreach ($this->fields as $i => $field) {
++			$is_last_field = ($i == count($this->fields) - 1);
++			$text .= $field->createMarkupHalo($this->allow_multiple, $is_last_field);
++		}
++		if (! $this->allow_multiple) { $text .= "|}\n"; }
++		$text .= "{{GenerateFormFieldEndTemplate}}\n";
++		return $text;
++	}
++	
++}
++/*op-patch|DH|2009-09-17|Embedded Forms|end*/
+\ No newline at end of file
+Index: includes/SF_EmbeddedFormField.inc
+===================================================================
+--- includes/SF_EmbeddedFormField.inc	(revision 0)
++++ includes/SF_EmbeddedFormField.inc	(revision 0)
+@@ -0,0 +1,646 @@
++<?php
++/*
++ * This class is distinct from SFTemplateField in that it represents a
++ * template field defined in a form - it contains a SFTemplateField object
++ * within it (the $template_field variable), along with the other properties
++ * for that field that are set within the form
++ */
++/*op-patch|DH|2009-09-17|Embedded Forms|start*/
++class SFEmbeddedFormField {
++	var $num;
++	var $template_field;
++	var $input_type;
++	var $is_mandatory;
++	var $is_hidden;
++	var $is_restricted;
++	var $possible_values;
++	// the following fields are not set by the form-creation page
++	// (though they could be)
++	var $is_uploadable;
++	var $field_args;
++	var $autocomplete_source;
++	var $autocomplete_field_type;
++	var $no_autocomplete;
++	var $part_of_multiple;
++	// somewhat of a hack - these two fields are for a field in a specific
++	// representation of a form, not the form definition; ideally these
++	// should be contained in a third 'field' class, called something like
++	// SFFormInstanceField, that holds these fields plus an instance of
++	// SFFormField. Too much work?
++	var $input_name;
++	var $is_disabled;
++	var $default_value;
++  var $autocompletion;
++
++	static function create($num, $template_field) {
++		$f = new SFEmbeddedFormField();
++		$f->num = $num;
++		$f->template_field = $template_field;
++		$f->input_type = "";
++		$f->is_mandatory = false;
++		$f->is_hidden = false;
++		$f->is_restricted = false;
++		$f->is_uploadable = false;
++		$f->possible_values = null;
++		$f->default_value = "";
++		$f->autocompletion = "";
++		return $f;
++	}
++
++	static function createFromDefinition($field_name, $input_name, $is_mandatory, $is_hidden, $is_uploadable, $possible_values, $is_disabled, $is_list, $input_type, $field_args, $all_fields, $strict_parsing) {
++		// see if this field matches one of the fields defined for this
++		// template - if it is, use all available information about
++		// that field; if it's not, either include it in the form or
++		// not, depending on whether the template has a 'strict'
++		// setting in the form definition
++		$the_field = null;
++		foreach ($all_fields as $cur_field) {
++			if ($field_name == $cur_field->field_name) {
++				$the_field = $cur_field;
++				break;
++			}
++		}
++		if ($the_field == null) {
++			if ($strict_parsing) {
++				$dummy_ff = new SFEmbeddedFormField();
++				$dummy_ff->template_field = new SFTemplateField();
++				$dummy_ff->is_list = false;
++				$dummy_ff->field_args = array();
++				return $dummy_ff;
++			}
++			$the_field = new SFTemplateField();
++		}
++
++		// create an SFFormField object, containing this field as well
++		// as settings from the form definition file
++		$f = new SFEmbeddedFormField();
++		$f->template_field = $the_field;
++		$f->is_mandatory = $is_mandatory;
++		$f->is_hidden = $is_hidden;
++		$f->is_uploadable = $is_uploadable;
++		$f->possible_values = $possible_values;
++		$f->input_type = $input_type;
++		$f->field_args = $field_args;
++		$f->input_name = $input_name;
++		$f->is_disabled = $is_disabled;
++		$f->is_list = $is_list;
++		//$f->default_value = "";
++		return $f;
++	}
++
++	/**
++	 * Get the set of possible form input types for either a specific
++	 * SMW property type or a list of such types
++	 */
++	function possibleInputTypes($semantic_type, $is_list) {
++		// first, get the list of field types, to determine which one this is
++		global $smwgContLang;
++		$datatypeLabels =  $smwgContLang->getDatatypeLabels();
++		$string_type = $datatypeLabels['_str'];
++		$text_type = $datatypeLabels['_txt'];
++		// type introduced in SMW 1.2
++		$code_type = array_key_exists('_cod', $datatypeLabels) ? $datatypeLabels['_cod'] : 'code';
++		$url_type = $datatypeLabels['_uri'];
++		$email_type = $datatypeLabels['_ema'];
++		$number_type = $datatypeLabels['_num'];
++		$bool_type = $datatypeLabels['_boo'];
++		$date_type = $datatypeLabels['_dat'];
++		$enum_type = 'enumeration'; // not a real type
++		$page_type = $datatypeLabels['_wpg'];
++
++		// then, return the array of possible input types, depending on
++		// the field type and whether this field will contain multiple
++		// values
++		if ($semantic_type == $string_type ||
++			$semantic_type == $number_type ||
++			$semantic_type == $url_type ||
++			$semantic_type == $email_type) {
++			if ($is_list) {
++				return array('haloACtext', 'haloACtextarea', 'categories');
++			} else {
++				return array('haloACtext', 'category');
++			}
++		} elseif ($semantic_type == $text_type || $semantic_type == $code_type) {
++			return array('haloACtextarea');
++		} elseif ($semantic_type == $bool_type) {
++			return array('checkbox');
++		} elseif ($semantic_type == $date_type) {
++			return array('date', 'datetime', 'datetime with timezone', 'year');
++		} elseif ($semantic_type == $enum_type) {
++			if ($is_list) {
++				return array('checkboxes', 'listbox');
++			} else {
++				return array('dropdown', 'radiobutton');
++			}
++		} elseif ($semantic_type == $page_type) {
++			if ($is_list) {
++				return array('haloACtext', 'haloACtextarea');
++			} else {
++				return array('haloACtext');
++			}
++		} else { // blank or an unknown type
++			return array('haloACtext', 'haloACtextarea', 'checkbox', 'date', 'datetime', 'datetime with timezone', 'category', 'categories');
++		}
++	}
++
++	function inputTypeDropdownHTML($dropdown_name, $possible_input_types, $cur_input_type) {
++		// create the dropdown HTML for a list of possible input types
++		$text = "	<select name=\"$dropdown_name\">\n";
++		foreach ($possible_input_types as $i => $input_type) {
++			if ($i == 0) {
++				$text .= "	<option value=\"\">$input_type " .
++				wfMsg('sf_createform_inputtypedefault') . "</option>\n";
++			} else {
++				$selected_str = ($cur_input_type == $input_type) ? "selected" : "";
++				$text .= "	<option value=\"$input_type\" $selected_str>$input_type</option>\n";
++			}
++		}
++		$text .= "	</select>\n";
++		return $text;
++	}
++  function inputTypeDropdownHTMLhalo($dropdown_name, $possible_input_types, $cur_input_type) {
++		// create the dropdown HTML for a list of possible input types
++		$text = "	<select name=\"$dropdown_name\">\n";
++		foreach ($possible_input_types as $i => $input_type) {
++				$selected_str = ($cur_input_type == $input_type) ? "selected" : "";
++				$text .= "	<option value=\"$input_type\" $selected_str>$input_type</option>\n";
++		}
++		$text .= "	</select>\n";
++		return $text;
++	}
++
++  // Input: $property as string (textual form)
++  // Output: readable text explaining the range.
++  function printRangeText($template_field) {
++      
++      $domainRangeProperty = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
++      $domainRangeAnnotations = smwfGetStore()->getPropertyValues(Title::newFromText($template_field->semantic_property, SMW_NS_PROPERTY), $domainRangeProperty);
++      $dr = reset($domainRangeAnnotations);
++      $result = array();
++      $tmptext = "";
++      while ($dr !== false) {
++        $dvs = $dr->getDVs();
++        if (isset($dvs[1])) {
++          $tmptext .= SFUtils::linkText(SMW_NS_CATEGORY, $dvs[1]->getTitle()).", ";
++        }
++        $dr = next($domainRangeAnnotations);
++      }
++      if($tmptext!="") {
++        $text = " with range: ".$tmptext."";
++        return $text; 
++      }
++      return ""; 
++  }
++     
++  
++  
++  
++  // Input: $property as string (textual form)
++  // Output: array of tuple (domain, range) as Title
++  function getDomainAndRanges($property) {
++    
++    $domainRangeProperty = SMWPropertyValue::makeUserProperty(smwfGetSemanticStore()->domainRangeHintRelation->getText());
++    $domainRangeAnnotations = smwfGetStore()->getPropertyValues(Title::newFromText($property, SMW_NS_PROPERTY), $domainRangeProperty);
++    $dr = reset($domainRangeAnnotations);
++    $result = array();
++    
++    while ($dr !== false) {
++      $dvs = $dr->getDVs();
++      $domain = isset($dvs[0]) ? $dvs[0]->getTitle() : NULL;
++      $range =  isset($dvs[1]) ? $dvs[1]->getTitle() : NULL;
++      $result[] = array($domain, $range);
++      $dr = next($domainRangeAnnotations);
++  }
++  return $result;
++}
++
++
++  function countRange($property) {
++    $domrange = $this->getDomainAndRanges($property);
++    $ranges = array();
++    $j=0;
++    foreach ($domrange as $i) {
++      list ($domain,$range)=$i;
++      $ranges[$j++]=$range->getText();            
++    }
++    return count($ranges);
++  }
++
++
++
++	function createDefaultValueInputfield($semantic_property, $semantic_type, $is_list, $field_form_text, $default_value) {
++
++		// first, get the list of field types, to determine which one this is
++		global $smwgContLang;
++		$inputfieldHTML = "";
++		$datatypeLabels =  $smwgContLang->getDatatypeLabels();
++		$string_type = $datatypeLabels['_str'];
++		$text_type = $datatypeLabels['_txt'];
++		// type introduced in SMW 1.2
++		$code_type = array_key_exists('_cod', $datatypeLabels) ? $datatypeLabels['_cod'] : 'code';
++		$url_type = $datatypeLabels['_uri'];
++		$email_type = $datatypeLabels['_ema'];
++		$number_type = $datatypeLabels['_num'];
++		$bool_type = $datatypeLabels['_boo'];
++		$date_type = $datatypeLabels['_dat'];
++		$enum_type = 'enumeration'; // not a real type
++		$page_type = $datatypeLabels['_wpg'];
++
++    $namespace_labels = $smwgContLang->getNamespaces();
++    $property_namespace = $namespace_labels[SMW_NS_PROPERTY];
++		// then, return the array of possible input types, depending on
++		// the field type and whether this field will contain multiple
++		// values
++		
++    switch ($semantic_type) {
++      case $enum_type;
++        $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="ask: [[$property_namespace:$semantic_property]],Allows value"  pasteNS="True"/></td>
++<td>This property allows only particular values; use the autocompletion to select one.
++END;
++			 // dont know what to do with this:
++			 if ($is_list) {
++  				//return array('checkboxes', 'listbox');
++  			} else {
++  				//return array('dropdown', 'radiobutton');
++  			}
++  		  return $inputfieldHTML;
++        break;
++        
++    case $bool_type:
++        $inputfieldHTML  = "<select name=\"default_value_$field_form_text\">\n";
++        $inputfieldHTML .= "<option value=\"\" ";      if($default_value == "") $inputfieldHTML.="selected";       $inputfieldHTML .="></option>\n";
++        $inputfieldHTML .= "<option value=\"True\" ";  if($default_value == "True") $inputfieldHTML.="selected";   $inputfieldHTML .=">True</option>\n";
++        $inputfieldHTML .= "<option value=\"False\" "; if($default_value == "False") $inputfieldHTML.="selected";  $inputfieldHTML .=">False</option>\n";
++        $inputfieldHTML .= "	</select>\n";
++        $inputfieldHTML .= "</td><td>You can select True or False for the default value (or leave it blank to set no default value).\n";
++		    return $inputfieldHTML;
++		    break;
++		    
++    case $date_type:
++   			$inputfieldHTML =<<<END
++<input type="text" name="default_value_$field_form_text" size=20 value="$default_value" /></td>
++<td>You can enter a date (in a format like "20 June 2009" or "20 June 2009 00:00:00") or you can enter "now" to get the current datetime as default value.
++END;
++		  return $inputfieldHTML;
++      break;
++      
++    case $text_type:
++    case $code_type:
++		  $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="annotation-value: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>You can enter a default text here.
++END;
++		  return $inputfieldHTML;
++		  break;
++		  
++    case $string_type:
++    case $email_type:
++      $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="annotation-value: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>You can enter a default string here.
++END;
++		return $inputfieldHTML;
++		break;
++		
++    case $number_type:
++      $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="annotation-value: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>You can enter a default number here.
++END;
++		return $inputfieldHTML;
++		break;
++		
++		case $url_type:
++      $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="annotation-value: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>You can enter a default URL here (starts with "http://")
++END;
++		return $inputfieldHTML;
++		break;
++      
++     case $page_type:
++      if ($this->countRange($semantic_property)==0) {
++        $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="annotation-value: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>Use the autocompletion to select a default value from the current annotations for this property.
++END;
++          return $inputfieldHTML;
++      } else {
++        $inputfieldHTML =<<<END
++<input class="createboxInput wickEnabled" name="default_value_$field_form_text" size=60 type="text" 
++value="$default_value" constraints="instance-property-range: $property_namespace:$semantic_property"  pasteNS="True"/></td>
++<td>Use the autocompletion to select a default value from the current range instances of this property.
++END;
++          return $inputfieldHTML;
++      }
++		break;
++      
++    default:
++      $inputfieldHTML =<<<END
++<input type="text" name="default_value_$field_form_text" size=20 value="$default_value" /></td>
++<td>unknown type
++END;
++      return $inputfieldHTML;
++		} 
++}
++
++function createAutocompletionInputfield($semantic_property, $semantic_type, $is_list, $field_form_text, $autocompletion_value) {
++
++		// first, get the list of field types, to determine which one this is
++		global $smwgContLang;
++		$inputfieldHTML = "";
++		$datatypeLabels =  $smwgContLang->getDatatypeLabels();
++		$string_type = $datatypeLabels['_str'];
++		$text_type = $datatypeLabels['_txt'];
++		// type introduced in SMW 1.2
++		$code_type = array_key_exists('_cod', $datatypeLabels) ? $datatypeLabels['_cod'] : 'code';
++		$url_type = $datatypeLabels['_uri'];
++		$email_type = $datatypeLabels['_ema'];
++		$number_type = $datatypeLabels['_num'];
++		$bool_type = $datatypeLabels['_boo'];
++		$date_type = $datatypeLabels['_dat'];
++		$enum_type = 'enumeration'; // not a real type
++		$page_type = $datatypeLabels['_wpg'];
++
++		// then, return the array of possible input types, depending on
++		// the field type and whether this field will contain multiple
++		// values
++		
++    switch ($semantic_type) {
++      case $enum_type:
++      case $bool_type:
++      case $date_type:
++        $inputfieldHTML =<<<END
++No autocompletion possible.</td><td>
++END;
++			  return $inputfieldHTML;
++        break;
++            
++    case $text_type:
++    case $code_type:
++		case $string_type:
++    case $email_type:
++    case $number_type:
++    case $url_type:
++
++        $inputfieldHTML  = "<select name=\"autocompletion_$field_form_text\">\n";
++        $inputfieldHTML .= "<option value=\"\" ";                   if($autocompletion_value == "") $inputfieldHTML.="selected";                    $inputfieldHTML .="></option>\n";
++        $inputfieldHTML .= "<option value=\"from annotations\" ";   if($autocompletion_value == "from annotations") $inputfieldHTML.="selected";    $inputfieldHTML .=">from annotations</option>\n";
++        $inputfieldHTML .= "	</select>\n";
++        $inputfieldHTML .= "</td><td>Select \"from annotations\" to get values from annotations of this property (or leave it blank to get no autocompletion).\n";
++
++		  return $inputfieldHTML;
++      break;
++      
++     case $page_type:
++        $inputfieldHTML  = "<select name=\"autocompletion_$field_form_text\">\n";
++        $inputfieldHTML .= "<option value=\"\" ";                       if($autocompletion_value == "") $inputfieldHTML.="selected";                        $inputfieldHTML .="></option>\n";
++        $inputfieldHTML .= "<option value=\"from annotations\" ";       if($autocompletion_value == "from annotations") $inputfieldHTML.="selected";        $inputfieldHTML .=">from annotations</option>\n";
++        $inputfieldHTML .= "<option value=\"from range instances\" ";   if($autocompletion_value == "from range instances") $inputfieldHTML.="selected";    $inputfieldHTML .=">from range instances</option>\n";
++        $inputfieldHTML .= "	</select>\n";
++        $inputfieldHTML .= "</td><td>Select \"from annotations\" to get values from annotations of this property, or select \"from range instances\" to get the instances of the range-categories of this property (or leave it blank to get no autocompletion).\n";
++
++      return $inputfieldHTML;
++		  break;
++      
++    default:
++        $inputfieldHTML  = "<select name=\"autocompletion_$field_form_text\">\n";
++        $inputfieldHTML .= "<option value=\"\" ";                   if($autocompletion_value == "") $inputfieldHTML.="selected";                    $inputfieldHTML .="></option>\n";
++        $inputfieldHTML .= "<option value=\"from annotations\" ";   if($autocompletion_value == "from annotations") $inputfieldHTML.="selected";    $inputfieldHTML .=">from annotations</option>\n";
++        $inputfieldHTML .= "	</select>\n";
++        $inputfieldHTML .= "</td><td>Select \"from annotations\" to get values from annotations of this property (or leave it blank to get no autocompletion).\n";
++
++      return $inputfieldHTML;
++		} 
++}
++		
++		
++
++
++	function creationHTML($template_num) {
++		$field_form_text = $template_num . "_" . $this->num;
++		$template_field = $this->template_field;
++		$text = '<h3>' . wfMsg('sf_createform_field') . " '" . $template_field->field_name . "'</h3>\n";
++		$text .=<<<END
++		<table border="0">
++END;
++		$prop_link_text = SFUtils::linkText(SMW_NS_PROPERTY, $template_field->semantic_property);
++		// TODO - remove this probably-unnecessary check?
++		if ($template_field->semantic_property == "") {
++			// print nothing if there's no semantic field
++		} elseif ($template_field->field_type == "") {
++			$text .= '<tr><td colspan=\"3\">' . wfMsg('sf_createform_fieldpropunknowntype', $prop_link_text) . "</td></tr>\n";
++		} elseif ($template_field->is_list) {
++			$text .= '<tr><td colspan=\"3\">' . wfMsg('sf_createform_fieldproplist', $prop_link_text,
++				SFUtils::linkText(SMW_NS_TYPE, $template_field->field_type)) . " ".$this->printRangeText($template_field)."</td></tr>\n";
++		} else {
++			$text .= '<tr><td colspan=\"3\">' . wfMsg('sf_createform_fieldprop', $prop_link_text,
++				SFUtils::linkText(SMW_NS_TYPE, $template_field->field_type)) . " ".$this->printRangeText($template_field)."</td></tr>\n";
++		}
++		// if it's not a semantic field - don't add any text
++		$form_label_text = wfMsg('sf_createform_formlabel');
++		$field_label = $template_field->label;
++		$input_type_text = wfMsg('sf_createform_inputtype');
++		$text .=<<<END
++	<tr><td>$form_label_text</td><td><input type="text" name="label_$field_form_text" size=60 value="$field_label" /></td><td>$input_type_text
++
++END;
++		$possible_input_types = $this->possibleInputTypes($template_field->field_type, $template_field->is_list);
++		if (count($possible_input_types) > 0) {
++			$text .= $this->inputTypeDropdownHTMLhalo("input_type_$field_form_text", $possible_input_types, $template_field->input_type)."</td></tr>";
++		} else {
++			$text .= $possible_input_types[0]."</td></tr>";
++		}
++
++		$text .=<<<END
++		<tr><td>Default value:</td>
++END;
++    $text .= "<td>".$this->createDefaultValueInputfield($template_field->semantic_property, $template_field->field_type, $template_field->is_list, $field_form_text, $this->default_value)."</td></tr>";
++
++		$text .=<<<END
++		<tr><td>Autocompletion:</td>
++END;
++    $text .= "<td>".$this->createAutocompletionInputfield($template_field->semantic_property, $template_field->field_type, $template_field->is_list, $field_form_text, $this->autocompletion)."</td></tr>";
++
++
++		$mandatory_checked_str = ($this->is_mandatory) ? "checked" : "";
++		$mandatory_text = wfMsg('sf_createform_mandatory');
++		$hidden_checked_str = ($this->is_hidden) ? "checked" : "";
++		$hidden_text = wfMsg('sf_createform_hidden');
++		$restricted_checked_str = ($this->is_restricted) ? "checked" : "";
++		$restricted_text = wfMsg('sf_createform_restricted');
++		
++		$text .=<<<END
++	<tr>
++	<td colspan="3">
++	<input type="checkbox" name="mandatory_$field_form_text" value="mandatory" $mandatory_checked_str /> $mandatory_text
++	<input type="checkbox" name="hidden_$field_form_text" value="hidden" $hidden_checked_str /> $hidden_text
++	<input type="checkbox" name="restricted_$field_form_text" value="restricted" $restricted_checked_str /> $restricted_text
++	</td>
++	</tr>
++	</table>
++	<hr>
++
++END;
++		return $text;
++	}
++
++	// for now, HTML of an individual field depends on whether or not it's
++	// part of multiple-instance template; this may change if handling of
++	// such templates in form definitions gets more sophisticated
++	function createMarkup($part_of_multiple, $is_last_field_in_template) {
++		$text = "";
++		if ($this->template_field->label != "") {
++			if ($part_of_multiple) {
++				$text .= "'''" . $this->template_field->label .  ":''' ";
++			} else {
++				$text .= "! " . $this->template_field->label . ":\n";
++			}
++		}
++		if (! $part_of_multiple) { $text .= "| "; }
++		$text .= "{{{field|" . $this->template_field->field_name;
++		if ($this->template_field->input_type != '') {
++			$text .= "|input type=" . $this->template_field->input_type;
++		}
++		if ($this->is_mandatory) {
++			$text .= "|mandatory";
++		} elseif ($this->is_hidden) {
++			$text .= "|hidden";
++		} elseif ($this->is_restricted) {
++			$text .= "|restricted";
++		}
++		$text .= "}}}\n";
++		if ($part_of_multiple) {
++			$text .= "\n";
++		} elseif (! $is_last_field_in_template) {
++			$text .= "|-\n";
++		}
++		return $text;
++	}
++/*
++*1: fieldname
++*2: mandatory
++*3: default
++*4: size
++*5: haloACtext|haloACtextarea
++*6: constraints=instance-property-range:,annotation-value:Property:, ask:  
++*7: list
++*8: hidden
++*9: restricted
++*/
++
++	function createMarkupHalo($part_of_multiple, $is_last_field_in_template) {
++    global $wgContLang;
++    $namespace_labels = $wgContLang->getNamespaces();
++    $property_namespace = $namespace_labels[SMW_NS_PROPERTY];
++			
++	
++		$text = "";
++		if ($this->template_field->label != "") {
++		  $text .= "| " . $this->template_field->label . ":\n";
++		} else {
++      $text .= "| enter field label here:\n";
++    }
++		
++		
++    $text .= "|{{GenerateFormField";
++    //fieldname
++    $text .= "|fieldname=". $this->template_field->field_name;
++		// mandatory
++    if ($this->is_mandatory) {
++			$text .= "|mandatory=mandatory";
++		}
++		// default value
++		if ($this->default_value != '') {
++		  $text .= "|default=".$this->default_value;
++		}
++		// size
++		//$text .= "|";
++		// input type		
++		if ($this->template_field->input_type != '') {
++			$text .= "|input type=" . $this->template_field->input_type;
++		} 
++		// constraints
++		if ($this->autocompletion != '') {
++		  if ($this->template_field->semantic_property == null || $this->template_field->semantic_property == '') {
++        $text .= "|constraints=prob";
++      } else {
++		    if ($this->autocompletion == "from annotations") {
++          $text .= "|constraints=annotation-value:".$property_namespace.":".$this->template_field->semantic_property;
++        } elseif ($this->autocompletion == "from range instances") {
++  		    $text .= "|constraints=instance-property-range:".$property_namespace.":".$this->template_field->semantic_property;
++  		  } else {
++  			 $text .= "";
++  			}
++  		}
++		}
++		// list
++		// ??????????????????????
++		if ($this->template_field->is_list) {
++      $text .= "|list=list";
++    }
++		
++		// hidden
++		if ($this->is_hidden) {
++			$text .= "|hidden=hidden";
++		}
++		// restricted
++		if ($this->is_restricted) {
++			$text .= "|restricted=restricted";
++		}
++		
++		
++		$text .= "}}\n";
++		if (! $is_last_field_in_template) {
++			$text .= "|-\n";
++		}
++		return $text;
++	}
++
++	/*
++	 * Since Semantic Forms uses a hook system for the functions that
++	 * create HTML inputs, most arguments are contained in the "$other_args"
++	 * array - create this array, using the attributes of this form
++	 * field and the template field it corresponds to, if any
++	 */
++	function getArgumentsForInputCall($default_args = null) {
++		// start with the arguments array already defined
++		$other_args = $this->field_args;
++		// a value defined for the form field should always supersede
++		// the coresponding value for the template field
++		if ($this->possible_values != null)
++			$other_args['possible_values'] = $this->possible_values;
++		else
++			$other_args['possible_values'] = $this->template_field->possible_values;
++		$other_args['is_list'] = ($this->is_list || $this->template_field->is_list);
++		if ($this->template_field->semantic_property != '' && ! array_key_exists('semantic_property', $other_args))
++			$other_args['semantic_property'] = $this->template_field->semantic_property;
++		// if autocompletion hasn't already been hardcoded in the form,
++		// and it's a property of type page, or a property of another
++		// type with 'autocomplete' specified, set the necessary
++		// parameters
++		if (! array_key_exists('autocompletion source', $other_args)) {
++			if ($this->template_field->propertyIsOfType('_wpg')) {
++				$other_args['autocompletion source'] = $this->template_field->semantic_property;
++				$other_args['autocomplete field type'] = 'relation';
++			} elseif (array_key_exists('autocomplete', $other_args) || array_key_exists('remote autocompletion', $other_args)) {
++				$other_args['autocompletion source'] = $this->template_field->semantic_property;
++				$other_args['autocomplete field type'] = 'attribute';
++			}
++		}
++		// now merge in the default values set by SFFormPrinter, if
++		// there were any - put the default values first, so that if
++		// there's a conflict they'll be overridden
++		if ($default_args != null)
++			$other_args = array_merge($default_args, $other_args);
++		return $other_args;
++	}
++}
++/*op-patch|DH|2009-09-17|Embedded Forms|end*/
+\ No newline at end of file
+Index: includes/SF_FormPrinter.inc
+===================================================================
+--- includes/SF_FormPrinter.inc	(revision 5059)
++++ includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
   */
@@ -262,10 +1179,10 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        if ($showFCKEditor & (RTE_TOGGLE_LINK | RTE_POPUP)) {
          $javascript_text .= SFFormUTils::FCKToggleJavascript();
        }
-Index: extensions/SemanticForms/includes/SF_FormUtils.inc
+Index: includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5038)
-+++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
+--- includes/SF_FormUtils.inc	(revision 5059)
++++ includes/SF_FormUtils.inc	(working copy)
 @@ -720,9 +720,12 @@
  		return $text;
  	}
@@ -331,10 +1248,32 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		oFCKeditor.ReplaceTextarea() ;
  		
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
-Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
+Index: includes/SF_GlobalFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5038)
-+++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
+--- includes/SF_GlobalFunctions.php	(revision 5059)
++++ includes/SF_GlobalFunctions.php	(working copy)
+@@ -49,6 +49,17 @@
+ $wgSpecialPages['CreateForm'] = 'SFCreateForm';
+ $wgAutoloadClasses['SFCreateForm'] = $sfgIP . '/specials/SF_CreateForm.php';
+ $wgSpecialPageGroups['CreateForm'] = 'sf_group';
++
++/*op-patch|DH|2009-09-17|Embedded Forms|start*/
++$wgSpecialPages['CreateEmbeddedForm'] = 'SFCreateEmbeddedForm';
++$wgAutoloadClasses['SFCreateEmbeddedForm'] = $sfgIP . '/specials/SF_CreateEmbeddedForm.php';
++$wgSpecialPageGroups['CreateEmbeddedForm'] = 'sf_group';
++
++$wgAutoloadClasses['SFEmbeddedForm'] = $sfgIP . '/includes/SF_EmbeddedFormClasses.inc';
++$wgAutoloadClasses['SFTemplateInEmbeddedForm'] = $sfgIP . '/includes/SF_EmbeddedFormClasses.inc';
++$wgAutoloadClasses['SFEmbeddedFormField'] = $sfgIP . '/includes/SF_EmbeddedFormField.inc';
++/*op-patch|DH|2009-09-17|Embedded Forms|end*/
++
+ $wgSpecialPages['Templates'] = 'SFTemplates';
+ $wgAutoloadClasses['SFTemplates'] = $sfgIP . '/specials/SF_Templates.php';
+ $wgSpecialPageGroups['Templates'] = 'pages';
+Index: includes/SF_LinkUtils.inc
+===================================================================
+--- includes/SF_LinkUtils.inc	(revision 5059)
++++ includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
   */
@@ -381,10 +1320,10 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		// if we're still here, just return the default form for the
  		// namespace, which may well be null
  		if (NS_MAIN === $namespace) {
-Index: extensions/SemanticForms/includes/SF_TemplateField.inc
+Index: includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5038)
-+++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
+--- includes/SF_TemplateField.inc	(revision 5059)
++++ includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
   */
@@ -496,10 +1435,10 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
  }
 +/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
 \ No newline at end of file
-Index: extensions/SemanticForms/includes/SF_Utils.inc
+Index: includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5038)
-+++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
+--- includes/SF_Utils.inc	(revision 5059)
++++ includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
   */
@@ -525,10 +1464,10 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
  		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
  		if ($wgFCKEditorDir)
-Index: extensions/SemanticForms/specials/SF_AddData.php
+Index: specials/SF_AddData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_AddData.php	(revision 5038)
-+++ extensions/SemanticForms/specials/SF_AddData.php	(working copy)
+--- specials/SF_AddData.php	(revision 5059)
++++ specials/SF_AddData.php	(working copy)
 @@ -128,6 +128,10 @@
  			$page_is_source = false;
  			$page_contents = null;
@@ -540,10 +1479,226 @@ Index: extensions/SemanticForms/specials/SF_AddData.php
  		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $page_contents, $page_title, $page_name_formula);
  		if ($form_submitted) {
-Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
+Index: specials/SF_CreateEmbeddedForm.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5038)
-+++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
+--- specials/SF_CreateEmbeddedForm.php	(revision 0)
++++ specials/SF_CreateEmbeddedForm.php	(revision 0)
+@@ -0,0 +1,210 @@
++<?php
++/**
++ * A special page for creating a semantic form for a template - the form can be embedded into other forms.
++ *
++ * @author Daniel Hansch
++ */
++/*op-patch|DH|2009-09-17|Embedded Forms|start*/
++if (!defined('MEDIAWIKI')) die();
++
++
++
++class SFCreateEmbeddedForm extends SpecialPage {
++
++	/**
++	 * Constructor
++	 */
++	function SFCreateEmbeddedForm() {
++		SpecialPage::SpecialPage('CreateEmbeddedForm');
++		wfLoadExtensionMessages('SemanticForms');
++	}
++
++	function execute($query) {
++		$this->setHeaders();
++		doSpecialCreateEmbeddedForm();
++	}
++}
++
++function doSpecialCreateEmbeddedForm() {
++	global $wgOut, $wgRequest, $wgUser, $sfgScriptPath, $wgContLang, $wgScript;
++	$db = wfGetDB( DB_SLAVE );
++
++	wfLoadExtensionMessages('SemanticForms');
++
++	$form_templates = array();
++	$i = 1;
++	$deleted_template_loc = null;
++
++	# handle inputs
++	$form_name = $wgRequest->getVal('form_name');
++	$partof_wikisection = $wgRequest->getVal('partof_wikisection');
++	$rationale = $wgRequest->getVal('rationale');
++	foreach ($wgRequest->getValues() as $var => $val) {
++		# ignore variables that are not of the right form
++		if (strpos($var, "_") != false) {
++			# get the template declarations and work from there
++			list ($action, $id) = explode("_", $var, 2);
++			if ($action == "template") {
++				# if the button was pressed to remove this
++				# template, just don't add it to the array
++				if ($wgRequest->getVal("del_$id") != null) {
++					$deleted_template_loc = $id;
++				} else {
++					$form_template = SFTemplateInEmbeddedForm::create($val,
++						$wgRequest->getVal("label_$id"),
++						$wgRequest->getVal("allow_multiple_$id"),
++						null,
++            $wgRequest->getVal("collapsable_section_$id"));
++					$form_templates[] = $form_template;
++				}
++			}
++		}
++	}
++	if ($wgRequest->getVal('for_template') != null) {
++	  $form_templates = array();
++		$form_template = SFTemplateInEmbeddedForm::create($wgRequest->getVal('for_template'), "", false, null,"");
++		$form_templates[0] = $form_template;
++	} 
++	
++	if ($wgRequest->getVal('add_field') != null) {
++		$form_template = SFTemplateInEmbeddedForm::create($wgRequest->getVal('new_template'), "", false, null,"");
++		$new_template_loc = $wgRequest->getVal('before_template');
++		if ($new_template_loc === null) { $new_template_loc = 0; }
++		# hack - array_splice() doesn't work for objects, so we have to
++		# first insert a stub element into the array, then replace that
++		# with the actual object
++		array_splice($form_templates, $new_template_loc, 0, "stub");
++		$form_templates[$new_template_loc] = $form_template;
++	} else {
++		$new_template_loc = null;
++	}
++
++	# now cycle through the templates and fields, modifying each one
++	# per the query variables
++	foreach ($form_templates as $i => $ft) {
++		foreach ($ft->fields as $j => $field) {
++			// handle the change in indexing if a new template was
++			// inserted before the end, or one was deleted
++			$old_i = $i;
++			if ($new_template_loc != null) {
++				if ($i > $new_template_loc) {
++					$old_i = $i - 1;
++				} elseif ($i == $new_template_loc) {
++					// it's the new template; it shouldn't
++					// get any query string data
++					$old_i = -1;
++				}
++			} elseif ($deleted_template_loc != null) {
++				if ($i >= $deleted_template_loc) {
++					$old_i = $i + 1;
++				}
++			}
++			$new_label = $wgRequest->getVal("label_" . $old_i . "_" . $j);
++			if ($new_label)
++				$field->template_field->label = $new_label;
++			$input_type = $wgRequest->getVal("input_type_" . $old_i . "_" . $j);
++			$field->template_field->input_type = $input_type;
++			if ($wgRequest->getVal("hidden_" . $old_i . "_" . $j) == "hidden") {
++				$field->is_hidden = true;
++			}
++			if ($wgRequest->getVal("restricted_" . $old_i . "_" . $j) == "restricted") {
++				$field->is_restricted = true;
++			}
++			if ($wgRequest->getVal("mandatory_" . $old_i . "_" . $j) == "mandatory") {
++				$field->is_mandatory = true;
++			}
++			if ($wgRequest->getVal("mandatory_" . $old_i . "_" . $j) == "mandatory") {
++				$field->is_mandatory = true;
++			}
++			$field->default_value = $wgRequest->getVal("default_value_" . $old_i . "_" . $j);
++			$field->autocompletion = $wgRequest->getVal("autocompletion_" . $old_i . "_" . $j);
++		}
++	}
++	$form = SFEmbeddedForm::create($form_name, $form_templates,	$partof_wikisection,	$rationale);
++
++
++	# if submit button was pressed, create the form definitions file, then redirect
++	$save_page = $wgRequest->getCheck('wpSave');
++	$preview_page = $wgRequest->getCheck('wpPreview');
++	if ($save_page || $preview_page) {
++		# validate form name
++		if ($form->form_name == "") {
++			$form_name_error_str = wfMsg('sf_blank_error');
++		} else {
++			# redirect to wiki interface
++			$wgOut->setArticleBodyOnly(true);
++			$title = Title::makeTitleSafe(SF_NS_FORM, $form->form_name);
++			$full_text = str_replace('"', '&quot;', $form->createMarkup_for_embedded_Form());
++			$text = SFUtils::printRedirectForm($title, $full_text, "", $save_page, $preview_page, false, false, false, null, null);
++			$wgOut->addHTML($text);
++			return;
++		}
++	}
++
++  $text = '<form action="'.$wgScript.'/'.$wgRequest->getVal('title').'" method="post">' . "\n";
++	// set 'title' field, in case there's no URL niceness
++	$mw_namespace_labels = $wgContLang->getNamespaces();
++	$special_namespace = $mw_namespace_labels[NS_SPECIAL];
++	$text .= '    <input type="hidden" name="title" value="' . $special_namespace . ':CreateEmbeddedForm">' . "\n";
++	
++	$text .= '<table border="0">'."\n";
++  $text .= '<tr>'."\n";
++	$text .= '	<td align="right">' . wfMsg('sf_createform_nameinput') . '</td><td> <input size=50 tabindex="1" name="form_name" value="' . $form_name . '"></td><td><font color="red">' . $form_name_error_str . '</font></td>' . "\n";
++	$text .= '</tr>'."\n";
++	$text .= '<tr>'."\n";
++  $text .= '	<td align="right">Part of wiki section:</td><td><input id="input_3" tabindex="3" class="createboxInput wickEnabled" name="partof_wikisection" type="text" value="'.$partof_wikisection.'" size="50" constraints="ask: [[Category:Content section]]"  pasteNS="true"/></td>' . "\n";
++  $text .= '</tr>'."\n";
++  $text .= '<tr>'."\n";
++  $text .= '	<td align="right">Rationale of this form:</td><td> <textarea id="input_5" tabindex="4" name="rationale" cols="80" rows="3">'.$rationale.'</textarea></td>' . "\n";
++	$text .= '</tr></table>'."\n";
++
++	$text .= $form->creationHTML();
++
++  if (count($form_templates) == 0) {
++	 $text .= '	<p>' . wfMsg('sf_createform_addtemplate') . "\n";	
++	 $text .= ' <input class="createboxInput wickEnabled" name="new_template" type="text"  size="35" constraints="namespace: '.NS_TEMPLATE.'"  pasteNS="false"/>' . "\n";
++	}
++
++	// disable 'save' and 'preview' buttons if user has not yet added any
++	// templates
++	$disabled_text = (count($form_templates) == 0) ? "disabled" : "";
++	$save_button_text = wfMsg('savearticle');
++	$preview_button_text = wfMsg('preview');
++	$add_button_text = wfMsg('sf_createform_add');
++	$sk = $wgUser->getSkin();
++	$ct = SpecialPage::getPage('CreateTemplate');
++	$create_template_link = $sk->makeKnownLinkObj($ct->getTitle(), $ct->getDescription());
++	if (count($form_templates) == 0) {
++	 $text .=<<<END
++	<input type="submit" name="add_field" value="$add_button_text"></p>
++END;
++  }
++	$text .=<<<END
++	<br />
++	<div class="editButtons">
++	<p>
++	<input type="submit" id="wpSave" name="wpSave" value="$save_button_text" $disabled_text />
++	<input type="submit" id="wpPreview" name="wpPreview" value="$preview_button_text" $disabled_text />
++	</p>
++	</div>
++
++END;
++	// explanatory message if buttons are disabled because no templates
++	// have been added
++	if (count($form_templates) == 0) {
++		$text .= "	<p>(" . wfMsg('sf_createtemplate_addtemplatebeforesave') . ")</p>";
++	}
++	$text .=<<<END
++	</form>
++	
++END;
++
++	$wgOut->addLink( array(
++		'rel' => 'stylesheet',
++		'type' => 'text/css',
++		'media' => "screen, projection",
++		'href' => $sfgScriptPath . "/skins/SF_main.css"
++	));
++	$wgOut->addHTML($text);
++}
++/*op-patch|DH|2009-09-17|Embedded Forms|end*/
+\ No newline at end of file
+Index: specials/SF_CreateTemplate.php
+===================================================================
+--- specials/SF_CreateTemplate.php	(revision 5059)
++++ specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
   * This line must be present before any global variable is referenced.
@@ -573,11 +1728,11 @@ Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 +		if ($category != "")
 +		  $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
 +               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
-+               value="'.$f->semantic_property.'" size="50" constraints="schema-property-domain: Category:'.$category.'"  pasteNS="false"/></p>' . "\n";
++               value="'.$f->semantic_property.'" size="35" constraints="schema-property-domain: Category:'.$category.'"  pasteNS="false"/></p>' . "\n";
 +    else
 +      $text .= '	' . wfMsg('sf_createtemplate_semanticproperty') .
 +               '<input class="createboxInput wickEnabled" name="semantic_property_'.$id.'" type="text" 
-+               value="'.$f->semantic_property.'" size="50" constraints="namespace: 102"  pasteNS="false"/></p>' . "\n";
++               value="'.$f->semantic_property.'" size="35" constraints="namespace: 102"  pasteNS="false"/></p>' . "\n";
 +    
  		$checked_str = ($f->is_list) ? " checked" : "";
  		$text .= '	<p><input type="checkbox" name="is_list_' . $id . '"' .  $checked_str . '> ' . wfMsg('sf_createtemplate_fieldislist') . "\n";
