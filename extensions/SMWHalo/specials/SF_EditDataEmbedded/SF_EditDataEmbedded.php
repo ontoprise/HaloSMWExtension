@@ -12,15 +12,15 @@
 if (!defined('MEDIAWIKI')) die();
 
 global $wgSpcecialPages;
-$wgSpecialPages['EditDataEmbedded'] = array('SFEditDataEmbedded', '', '');
+$wgSpecialPages['EditDataEmbedded'] = array('SFEditDataEmbedded');
 
-class SFEditDataEmbedded extends SpecialPage {
+class SFEditDataEmbedded extends UnlistedSpecialPage {
 
 	/**
 	 * Constructor
 	 */
 	function __construct() {
-		SpecialPage::SpecialPage('EditDataEmbedded');
+		UnlistedSpecialPage::UnlistedSpecialPage('EditDataEmbedded');
 		wfLoadExtensionMessages('SemanticForms');
 	}
 
