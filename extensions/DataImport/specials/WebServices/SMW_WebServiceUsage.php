@@ -498,9 +498,9 @@ function getReadyToPrintResult($result, $wsStripTags){
 			} else {
 				$keys = array_keys($values);
 				if($wsStripTags === "false"){
-					$niceResult[$i][] = @ trim($values[$keys[$i-1]]);
+					$niceResult[$i][] = @ str_replace("|", "{{!}}",trim($values[$keys[$i-1]]));
 				} else {
-					$niceResult[$i][] = @ trim(strip_tags($values[$keys[$i-1]], $wsStripTags));
+					$niceResult[$i][] = @ str_replace("|", "{{!}}",trim(strip_tags($values[$keys[$i-1]], $wsStripTags)));
 				}
 
 			}
