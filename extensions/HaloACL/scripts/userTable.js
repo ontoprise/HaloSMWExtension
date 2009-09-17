@@ -274,7 +274,10 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 // --------------------
 
 // ASSIGNED USERTABLE FROM JSARRAY
-YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
+YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
+    if(noDelete == "true") noDelete = true;
+    if(noDelete == "false" || !noDelete) noDelete = false;
+    
     if(YAHOO.haloacl.debug) console.log("ROuserDataTableV2 called");
     var groupstring = "";
     var grouparray = YAHOO.haloacl.getGroupsArray(panelid);
@@ -353,11 +356,13 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
                     temp['deletable'] = "groupuser";
                     result.push(temp);
                 }
+
+              
                 
             });
         };
 
-        return YAHOO.haloacl.ROuserDataTable(divid,panelid,result);
+        return YAHOO.haloacl.ROuserDataTable(divid,panelid,result, noDelete);
     };
 
 
@@ -376,11 +381,11 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid){
 
 
 // this userdatatable is called from V2 !!!
-YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray) {
+YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
 
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
-        if(oRecord._oData.deletable !="group"){
+        if(oRecord._oData.deletable !="group" && noDelete == false){
             elLiner.innerHTML = "<a id='"+panelid+"assigned"+oRecord._oData.name+"' class='removebutton' href=\"javascript:YAHOO.haloacl.removeUserFromUserArray('"+panelid+"','"+oRecord._oData.name+"','"+oRecord._oData.deletable+"');\">&nbsp;</a>";
             YAHOO.haloacl.addTooltip("tooltip"+panelid+"assigned"+oRecord._oData.name,panelid+"assigned"+oRecord._oData.name,"Click to remove User from assigned Users");
         }else{

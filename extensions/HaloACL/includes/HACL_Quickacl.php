@@ -48,5 +48,8 @@ class HACLQuickacl {
     public function save(){
         return HACLStorage::getDatabase()->saveQuickacl($this->userid, $this->sd_ids);
     }
+    public static function removeQuickAclsForSD($sdid){
+        return HACLStorage::getDatabase()->deleteQuickaclForSD($sdid);
+    }
 }
 ?>

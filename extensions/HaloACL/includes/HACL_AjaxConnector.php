@@ -908,10 +908,10 @@ function getManageUserGroupPanel($panelid, $name="", $description="", $users=nul
 HTML;
     // when there is already a name set, we set it and disable changing of the name
     if($name == "") {
-        $content .='<input type="text"  id="right_name_'.$panelid.'" value=""/>';
+        $content .='<input class="haloacl_manageuser_name" type="text"  id="right_name_'.$panelid.'" value=""/>';
     }else {
         $name = preg_replace("/Group\//is", "", $name);
-        $content .='<input type="text"  id="right_name_'.$panelid.'" value="'.$name.'" disabled="true"/>';
+        $content .='<input type="text" class="haloacl_manageuser_name" id="right_name_'.$panelid.'" value="'.$name.'" disabled="true"/>';
     }
     $content .= <<<HTML
     </div>
@@ -1458,7 +1458,7 @@ HTML;
 HTML;
     //    }
 
-    if($readOnly){
+    if($readOnly) {
         $content .= <<<HTML
         <script>
             $$(".create_acl_general_definefor_$panelid").each(function(item){
@@ -1541,9 +1541,6 @@ HTML;
                     var groups = "";
 
                     switch (YAHOO.haloacl.panelDefinePanel_$panelid) {
-                        case "modification":
-                            description = "Modification rights";
-
                         case "privateuse":
                         case "private":
                                 users = "$currentUserName";
@@ -1559,20 +1556,13 @@ HTML;
                             });
                             */
                             break;
+                        case "modification":
+                            description = "Modification rights";
 
                         case "individual":
-
                             for(i=0;i<YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].length;i++){
                                 users = users+", U:"+YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'][i];
                             }
-
-                            /*
-                            $$('.datatableDiv_right_tabview_$panelid'+'_users').each(function(item){
-                                if(item.checked){
-                                    users = users+", U:"+item.name;
-                                }
-                            });
-                            */
                             
                             var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
                             for(i=0;i<YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].length;i++){
@@ -1768,9 +1758,17 @@ HTML;
             };
 
 
+
         </script>
 HTML;
 
+    if($predefine == "modification") {
+        $footerextension .= <<<HTML
+        <script>
+        genericPanelSetDescr_$panelid("for U: $currentUser","for U: $currentUser");
+        </script>
+HTML;
+    }
 
 
     if ($preload == true) {
@@ -2129,7 +2127,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
             $('haloacl_rightpanel_selectab_$panelid').show();
 
             // user list on the right
-            YAHOO.haloacl.RODatatableInstace$panelid = YAHOO.haloacl.ROuserDataTableV2("ROdatatableDiv_$panelid","$panelid");
+            YAHOO.haloacl.RODatatableInstace$panelid = YAHOO.haloacl.ROuserDataTableV2("ROdatatableDiv_$panelid","$panelid",'$readOnly');
 
             // treeview part - so the left part of the select/deselct-view
 
@@ -2309,7 +2307,8 @@ HTML;
                 <input class="haloacl_manageacl_filter" onClick="YAHOO.haloacl.filter_handleFilterChangeEvent(this);" type="checkbox" checked="" name="acltemplate"/>&nbsp;$hacl_rightList_ACLtemplates
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
-                <input class="haloacl_manageacl_filter" onClick="YAHOO.haloacl.filter_handleFilterChangeEvent(this);" type="checkbox" checked="" name="defusertemplate"/>&nbsp;$hacl_rightList_Defaultusertemplates
+                <input class="haloacl_manageacl_filter" onClick="YAHOO.haloacl.filter_handleFilterChangeEvent(this);" type="checkbox" checked="" name="defusertemplate"/>&nbsp;Default user
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;templates
             </div>
 
 
@@ -2328,11 +2327,11 @@ HTML;
 
     if($type != "readOnly") {
         $html .= <<<HTML
-            <span style="margin-left:280px">edit</span><span style="margin-left:65px">delete</span>
+            <span style="margin-right:15px;float:right">Delete</span><span style="margin-right:29px;float:right">Edit</span>
 HTML;
     }else {
         $html .= <<<HTML
-            <span style="margin-left:280px">Information</span><span style="margin-left:65px">Select</span>
+            <span style="margin-right:15px;float:right">Select</span><span style="margin-right:29px;float:right">Info</span>
 HTML;
 
     }
@@ -2344,7 +2343,7 @@ HTML;
     if($type != "readOnly") {
         $html .= <<<HTML
             <div class="haloacl_manageacl_contenttitle">
-            Filter:&nbsp;<input class="haloacl_filter_input"/>
+            Filter:&nbsp;<input id="haloacl_rightlist_filterinput_$panelid" class="haloacl_filter_input"/>
         </div>
 HTML;
     }
@@ -2371,6 +2370,9 @@ HTML;
     
 
 <script type="text/javascript">
+
+
+
 
     YAHOO.haloacl.manageACLdeleteCheckedGroups = function(){
         var checkedgroups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloaclrights.treeInstance$panelid, null);
@@ -2399,10 +2401,32 @@ HTML;
     // treeview part - so the left part of the select/deselct-view
 
     YAHOO.haloaclrights.treeInstance$panelid = YAHOO.haloaclrights.getNewRightsTreeview("treeDiv_$panelid",'$panelid', '$type');
-    //YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'YAHOO.haloaclrights.datatableInstance$panelid.executeQuery';
-    YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'null';
-
+    YAHOO.haloaclrights.treeInstance$panelid.labelClickAction = 'YAHOO.haloacl.manageACL_handleClick';
     YAHOO.haloaclrights.buildTreeFirstLevelFromJson(YAHOO.haloaclrights.treeInstance$panelid,"template");
+
+
+    // adding filtering
+    YAHOO.util.Event.addListener("haloacl_rightlist_filterinput_$panelid", "keyup", function(e){
+        var filtervalue = document.getElementById("haloacl_rightlist_filterinput_$panelid").value;
+        YAHOO.haloaclrights.applyFilterOnTree (YAHOO.haloaclrights.treeInstance$panelid.getRoot(), filtervalue);
+    });
+
+
+    YAHOO.haloacl.manageACL_handleClick = function(groupname){
+        if(YAHOO.haloacl.debug) console.log(groupname);
+        $$('.manageUser_highlighted').each(function(item){
+            item.removeClassName("manageUser_highlighted");
+        });
+        try{
+        var element = $('manageUserRow_'+groupname);
+        if(YAHOO.haloacl.debug) console.log(element);
+        var temp = element.parentNode.parentNode.parentNode.parentNode;
+        $(temp).addClassName("manageUser_highlighted");
+        }catch(e){}
+        YAHOO.haloacl.manageUser_selectedGroup = groupname;
+
+    };
+
 
 
 HTML;
@@ -3056,6 +3080,13 @@ HTML;
 
 
 function saveGroup($manageRightsXml,$parentgroup = null) {
+    if(!array_key_exists("tempgroups", $_SESSION)) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText("Please save groupsettings first.");
+        return $ajaxResponse;
+    }
+
     $groupXml = $_SESSION['tempgroups'];
     $groups = "";
     $users = "";
@@ -3568,11 +3599,11 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
     }else {
     // performing search
-        $groups = HACLStorage::getDatabase()->getGroups();
+
         foreach( $groups as $key => $value) {
         //print_r($value);
             $subgroups = array();
-            //$subgroups = getGroupsForRightPanel($value->getGroupName(), $search, true, $level+1);
+            //$subgroups = getGroupsForRightPanel($value->getGroupName(), $search, true, $level+1, );
             if(strpos($value->getGroupName(),$search) || sizeof($subgroups)> 0) {
                 $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
                 $array[] = $tempgroup;
@@ -3589,7 +3620,7 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
 }
 
-function getGroupsForManageUser($query) {
+function getGroupsForManageUser($query,$filter=null) {
     global $wgUser;
 
     ini_set("display_errors",0);
@@ -3624,8 +3655,18 @@ function getGroupsForManageUser($query) {
         catch(Exception $e ) {
         }
     }
-    return (json_encode($array));
-}
+    $result = array();
+    if($filter != null) {
+        foreach($array as $item) {
+            if(preg_match("/$filter/is", $item["name"])) {
+                $result[] = $item;
+            }
+        }
+    }else {
+        $result = $array;
+    }
+
+    return (json_encode($result));}
 
 
 /**
@@ -3647,7 +3688,7 @@ function getUsersWithGroups() {
  * @param <XML>     selected types
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
-function getACLs($typeXML) {
+function getACLs($typeXML, $filter = null) {
     global $wgUser;
     global $haclCrossTemplateAccess;
     $username = $wgUser->getName();
@@ -3707,7 +3748,18 @@ function getACLs($typeXML) {
         }
     }
 
-    return (json_encode($array));
+    $result = array();
+    if($filter != null) {
+        foreach($array as $item) {
+            if(preg_match("/$filter/is", $item["name"])) {
+                $result[] = $item;
+            }
+        }
+    }else {
+        $result = $array;
+    }
+
+    return (json_encode($result));
 
 }
 
@@ -3872,19 +3924,19 @@ HTML;
         $hacl_manageUser_3
             </div>
             <div id="haloacl_manageuser_contentmenu_element">
-                <a disabled="" id="haloacl_managegroups_newsubgroup" href="javascript:YAHOO.haloacl.manageUser.addNewSubgroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">$hacl_manageUser_4</a>
+                <a id="haloacl_managegroups_newsubgroup" href="javascript:YAHOO.haloacl.manageUser.addNewSubgroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">$hacl_manageUser_4</a>
             </div>
             <div id="haloacl_manageuser_contentmenu_element">
-                <a disabled="" href="javascript:YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">$hacl_manageUser_5</a>
+                <a href="javascript:YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">$hacl_manageUser_5</a>
             </div>
         </div>
         <div id="haloacl_manageuser_contentlist">
             <div id="manageuser_grouplisting">
                 <div id="haloacl_manageuser_contentlist_title">
-        $hacl_manageUser_6<span style="margin-left:282px">edit</span><span style="margin-left:65px">delete</span>
+        $hacl_manageUser_6<span style="margin-right:20px;float:right">Delete</span><span style="margin-right:30px;float:right">Edit</span>
                 </div>
                 <div id="haloacl_manageuser_contentlist_title">
-                    Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.manageUserRefilter(this);"/>
+                    Filter:&nbsp;<input id="haloacl_manageuser_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.manageUserRefilter(this);"/>
                 </div>
                 <div id="treeDiv_manageuser_grouplisting">
                 </div>
@@ -3900,6 +3952,7 @@ HTML;
 
             YAHOO.haloacl.treeInstancemanageuser_grouplisting = new YAHOO.widget.TreeView("treeDiv_manageuser_grouplisting");
             YAHOO.haloacl.treeInstancemanageuser_grouplisting.labelClickAction = 'YAHOO.haloacl.manageUser_handleGroupSelect';
+            YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstancemanageuser_grouplisting);
 
             YAHOO.haloacl.manageUser_handleGroupSelect = function(groupname){
                 if(YAHOO.haloacl.debug) console.log(groupname);
@@ -3909,13 +3962,12 @@ HTML;
                 try{
                 var element = $('manageUserRow_'+groupname);
                 if(YAHOO.haloacl.debug) console.log(element);
-                element.parentNode.parentNode.parentNode.parentNode.addClassName("manageUser_highlighted");
+                var temp = element.parentNode.parentNode.parentNode.parentNode;
+                $(temp).addClassName("manageUser_highlighted");
                 }catch(e){}
                 YAHOO.haloacl.manageUser_selectedGroup = groupname;
-              
             };
 
-            YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson(YAHOO.haloacl.treeInstancemanageuser_grouplisting);
 
             YAHOO.haloacl.manageACLdeleteCheckedGroups = function(){
                 var checkedgroups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstancemanageuser_grouplisting, null);
@@ -3941,7 +3993,8 @@ HTML;
             };
 
             YAHOO.haloacl.manageUserRefilter = function(element) {
-                YAHOO.haloacl.filterNodes (YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(), element.value);
+                var filtervalue = document.getElementById("haloacl_manageuser_filterinput").value;
+                YAHOO.haloacl.manageUser.applyFilterOnTree (YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(), filtervalue);
             }
 
 
@@ -3970,7 +4023,7 @@ HTML;
         <div id="content_manageUserGroupsettings">
             <div id="manageUserGroupSettingsRight">
             </div>
-            <div id="manageUserGroupSettingsModificationRight" style="display:none">
+            <div id="manageUserGroupSettingsModificationRight" style="">
                 <script>
                     YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
                 </script>
@@ -4033,8 +4086,10 @@ HTML;
 
 
                     }else{
-                        alert(result.responseText);
-                    }
+                        YAHOO.haloacl.notification.createDialogOk("content","Groups",result.responseText,{
+                            yes:function(){
+                            }
+                        });                    }
                 };
                 var parentgroup = YAHOO.haloacl.manageUser_parentGroup;
 

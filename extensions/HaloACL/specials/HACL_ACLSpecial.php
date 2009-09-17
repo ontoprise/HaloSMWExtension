@@ -86,7 +86,7 @@ HTML;
         }
 
         $html = <<<HTML
-            <div class="yui-skin-sam">
+            <div id="haloaclContent" class="yui-skin-sam">
             <div id="haloacl_panel_container"></div>
 
     <div id="haloaclmainView" class="yui-navset"></div>

@@ -50,6 +50,9 @@ if(YAHOO.haloacl.debug){
 // must be one of: individual, privateuse, allusers, allusersregistered, allusersanonymous
 YAHOO.haloacl.createAclStdDefine = "individual";
 
+// delay between queries in treeview || MILLISECONDS
+YAHOO.haloacl.filterQueryDelay = 500;
+
 
 YAHOO.haloacl.panelcouner = 0;
 // has all checked users from grouptree
@@ -580,7 +583,7 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
 };
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
-    if(name.length > 4){
+    if(YAHOO.haloacl.clickedArrayGroups[panelid] && name.length > 4){
         if(YAHOO.haloacl.debug) console.log("adding group "+name+" to "+panelid+"-array");
         var alreadyContained = false;
         for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
@@ -622,7 +625,7 @@ YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     }
     return false;
     */
-    if(YAHOO.haloacl.clickedArrayGroups[panelid].indexOf(name) == -1){
+    if(YAHOO.haloacl.clickedArrayGroups[panelid] && YAHOO.haloacl.clickedArrayGroups[panelid].indexOf(name) == -1){
         return false;
     }
     return true;
@@ -801,7 +804,7 @@ YAHOO.haloacl.addTooltip = function(name, context, text){
 
 YAHOO.haloacl.discardChanges_createacl = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
+    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will be lost!",{
         yes:function(){
             window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=createACL';
         },
@@ -811,7 +814,7 @@ YAHOO.haloacl.discardChanges_createacl = function(){
 
 YAHOO.haloacl.discardChanges_users = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will get lost!",{
+    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will be lost!",{
         yes:function(){
             window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageUsers';
         },

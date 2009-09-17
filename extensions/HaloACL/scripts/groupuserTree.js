@@ -207,7 +207,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
     /**
      * Refresh the state of this node's parent, and cascade up.
      */
-    updateParent: function() { 
+    updateParent: function() {
         var p = this.parent;
 
         if (!p || !p.updateParent) {
@@ -291,14 +291,19 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
      */
     check: function() {
         this.setCheckState(2);
+
+        /*
+         * don't update childs
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.check) {
                 c.check();
             }
         }
-        this.updateCheckHtml();
         this.updateParent();
+        */
+        this.updateCheckHtml();
+
     },
 
     /**
@@ -727,27 +732,35 @@ YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
 };
 
 YAHOO.haloacl.applyFilterOnTree = function(tree,filtervalue){
-    tree = tree.tree;
-    console.log(tree);
-    tree.removeChildren(tree.getRoot());
+    if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
+        tree.lastFilterStart = 0;
+    }
+    var now = new Date();
+    now = now.getTime();
+    if(filtervalue == "" || tree.lastFilterStart + YAHOO.haloacl.filterQueryDelay <= now){
+        tree.lastFilterStart = now;
+        tree = tree.tree;
 
-    //tree.removeChildren();
-    //tree.removeChildren();
-    var callback = {
-        success: function(oResponse) {
-            var data = YAHOO.lang.JSON.parse(oResponse.responseText);
-            YAHOO.haloacl.buildUserTree(tree,data);
-        },
-        failure: function(oResponse) {
-        }
-    };
-    YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
-        query:'all',
-        filtervalue:filtervalue
-    },callback);
+        //tree.removeChildren();
+        //tree.removeChildren();
+        var callback = {
+            success: function(oResponse) {
+                tree.removeChildren(tree.getRoot());
+            
+                var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+                YAHOO.haloacl.buildUserTree(tree,data);
+            },
+            failure: function(oResponse) {
+            }
+        };
+        YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+            query:'all',
+            filtervalue:filtervalue
+        },callback);
 
-    //tree.setDynamicLoad(loadNodeData);
-    tree.draw();
+        //tree.setDynamicLoad(loadNodeData);
+        tree.draw();
+    }
 }
 
 /**

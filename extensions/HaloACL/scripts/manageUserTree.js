@@ -312,7 +312,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         sb[sb.length] = ' id="' + this.getCheckElId() + '"';
         sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
         sb[sb.length] = '>';
-        sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+        sb[sb.length] = '<div class="ygtvspacer haloacl_manageuser_checkbox"></div></td>';
 
 
 
@@ -422,7 +422,9 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
         
     };
    if(!groupsInTree){
-        var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
+       if(parentNode.label == "Groups"){
+            var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
+       }
         //tmpNode.setDynamicLoad();
     }
    
@@ -585,3 +587,34 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
  
 };
 
+YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
+    if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
+        tree.lastFilterStart = 0;
+    }
+    var now = new Date();
+    now = now.getTime();
+    if(filtervalue == "" || tree.lastFilterStart + YAHOO.haloacl.filterQueryDelay <= now){
+        tree.lastFilterStart = now;
+        tree = tree.tree;
+
+        //tree.removeChildren();
+        //tree.removeChildren();
+        var callback = {
+            success: function(oResponse) {
+                tree.removeChildren(tree.getRoot());
+
+                var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+                YAHOO.haloacl.manageUser.buildUserTree(tree,data);
+            },
+            failure: function(oResponse) {
+            }
+        };
+        YAHOO.haloacl.treeviewDataConnect('getGroupsForManageUser',{
+            query:'all',
+            filtervalue:filtervalue
+        },callback);
+
+        //tree.setDynamicLoad(loadNodeData);
+        tree.draw();
+    }
+}

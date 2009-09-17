@@ -318,7 +318,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '<td><span class="haloacl_readonly_right_firstspacing">';
             sb[sb.length] = '</span></td>';
-            sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');return false;"></div>';
+            sb[sb.length] = '<td><div id="anchorPopup_'+this.groupId+'" class="haloacl_infobutton_rightdesc" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');return false;"></div>';
             sb[sb.length] = '<div id="popup_'+this.groupId+'"></div>';
             sb[sb.length] = '</td>';
             // sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'></a>";
@@ -346,7 +346,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'>"+localLabel+"</a>";
 
             sb[sb.length] = '</span></td>';
-            sb[sb.length] = '<td><span class="haloacl_manageuser_list_information"><div id="anchorPopup_'+this.groupId+'" class="haloacl_manageright_list_edit" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div><div id="popup_'+this.groupId+'"></div></span></td>';
+            sb[sb.length] = '<td><span class="haloacl_manageacl_list_information"><div id="anchorPopup_'+this.groupId+'" class="haloacl_manageright_list_edit" onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;"></div><div id="popup_'+this.groupId+'"></div></span></td>';
             sb[sb.length] = '<td><span class=""><a id="haloacl_manageacl_edit_'+localLabel+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',\'getSDRightsPanelContainer\',{sdId:\''+this.groupId+'\',sdName:\''+this.label+'\',readOnly:\'false\'});">&nbsp;</a></span></td>';
             // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
             sb[sb.length] = '<td';
@@ -689,7 +689,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' class="haloacl_manageACL_right_description"';
             sb[sb.length] = ' >';
             //sb[sb.length] = shortLabel;
-            sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton" ></div>';
+            sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton_rightdesc" style="float:right!important" ></div>';
             this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, { 
                 context:this.labelElId,
                 text:this.label,
@@ -1011,6 +1011,37 @@ YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
 };
 
 
+YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
+    if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
+        tree.lastFilterStart = 0;
+    }
+    var now = new Date();
+    now = now.getTime();
+    if(filtervalue == "" || tree.lastFilterStart + YAHOO.haloacl.filterQueryDelay <= now){
+        tree.lastFilterStart = now;
+        tree = tree.tree;
+
+        //tree.removeChildren();
+        //tree.removeChildren();
+        var callback = {
+            success: function(oResponse) {
+                tree.removeChildren(tree.getRoot());
+
+                var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+                YAHOO.haloaclrights.buildUserTree(tree,data);
+            },
+            failure: function(oResponse) {
+            }
+        };
+        YAHOO.haloacl.treeviewDataConnect('getACLs',{
+            query:'all',
+            filtervalue:filtervalue
+        },callback);
+
+        //tree.setDynamicLoad(loadNodeData);
+        tree.draw();
+    }
+}
 
 
 /**
