@@ -83,12 +83,21 @@ class UploadConverter {
 	public static function getFileContent(&$file) {
 		global $smwgRMIP;
 		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
+		global $smwgUploadConverter;
 		
 		$mimeType = $file->getMimeType();
+		
+		// $fileNameArray = split("\.", $file->getFullPath());
+		// $ext = $fileNameArray[count($fileNameArray)-1];
+		// if($mimeType == "text/plain" && $ext == "doc"){
+		//	$mimeType = "application/msword";
+		//}
+		
 		if (isset($smwgUploadConverter[$mimeType]))
 			$converterApp = $smwgUploadConverter[$mimeType];
 		else {
 			// no converter specified for the mime type
+			//echo("\n mime type:".$mimeType);
 			return "";
 		}
 		wfLoadExtensionMessages('UploadConverter');
@@ -99,7 +108,7 @@ class UploadConverter {
 		$converterApp = str_replace('{infile}', $path, $converterApp);
 		$converterApp = str_replace('{outfile}', $textFile, $converterApp);
 		$ret = exec($converterApp, $output, $retVar);
-
+		
 		$text = "";
 		if (file_exists($textFile)) {
 			// a temporary file has been written 

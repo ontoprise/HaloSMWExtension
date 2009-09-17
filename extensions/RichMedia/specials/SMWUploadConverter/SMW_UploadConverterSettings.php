@@ -26,6 +26,7 @@
 global $smwgRMIP;
 // Definition of converters for various mime types.
 
+global $smwgUploadConverter;
 // check OS is windows?
 if (strpos(strtolower(php_uname('s')), "win") !== false) {
 	$smwgUploadConverter = array(
