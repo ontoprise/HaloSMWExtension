@@ -127,7 +127,7 @@ Index: includes/Title.php
  		} else {
  			return NULL;
  		}
-@@ -3232,4 +3249,100 @@
+@@ -3232,4 +3249,104 @@
  		}
  		return $redirs;
  	}
@@ -191,6 +191,10 @@ Index: includes/Title.php
 +		
 +		global $wgRequest;
 +		$action = $wgRequest->getVal( 'action', 'read');
++		$currentTitle = $wgRequest->getVal('title');
++		if ($this->getFullText() != $currentTitle) {
++			$action = 'read';
++		}
 +//		echo $this->getText()."($action): ";
 +		$index = $this->getFullText().'-'.$action; // A bug was fixed here thanks to Dave MacDonald
 +		$allowed = @$permissionCache[$index];
