@@ -43,7 +43,12 @@ function enableRichMediaExtension() {
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
+	
+	//that#s a tricky workaround.
+	// see: http://www.mediawiki.org/wiki/Manual:Tag_extensions#How_can_I_avoid_modification_of_my_extension.27s_HTML_output.3F for more infos
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMLink';
+	$wgHooks['ParserAfterTidy'][] = 'RMForm::createRichMediaLinkAfterTidy';
+	
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMEmbedWindowLink';
 
 	//Add a hook to initialise the magic word for the {{#rmf:}} Syntax Parser
@@ -116,6 +121,8 @@ function smwfRegisterRMEmbedWindowLink( &$parser ) {
 	return true; // always return true, in order not to stop MW's hook processing!	
 }
 
+
+
 /**
  * The {{#rmf }} parser function processing part.
  */
@@ -123,7 +130,7 @@ function smwfProcessRMFormParserFunction(&$parser) {
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
 
-	return RMForm::createRichMediaForm($params);
+	return RMForm::createRichMediaForm($parser, $params);
 }
 
 /**
@@ -133,17 +140,15 @@ function smwfProcessRMLinkParserFunction(&$parser) {
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
 
-	return RMForm::createRichMediaLink($params);
+	return RMForm::createRichMediaLink($parser, $params);
 }
 
 /**
  * The {{#rmew }} parser function processing part.
  */
-function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
-	$params = func_get_args();
-	array_shift( $params ); // we already know the $parser ...
+function smwfProcessRMEmbedWindowLinkParserFunction(&$parser, $text) {
 
-	return RMForm::createRichMediaEmbedWindowLink($params);
+	return RMForm::createRichMediaEmbedWindowLink($parser, $text);
 }
 
 function RMFormUsage_Magic(&$magicWords, $langCode){

@@ -7,8 +7,8 @@ class RMForm {
 	 * @param array $parameter
 	 * @return HTML
 	 */
-	static function createRichMediaForm(&$parameter) {
-		global $wgOut, $wgParser;
+	static function createRichMediaForm($parser, &$parameter) {
+		global $wgOut;
 
 		$html =<<<END
 <form onsubmit="fb.loadAnchor($('link_id'));return false;">
@@ -27,7 +27,7 @@ END;
 		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a><input style=\"font-weight:bold\" type=\"submit\" value=\"$buttonText\"/></form>";
 
 		//return array($html, 'noparse' => true, 'isHTML' => true);
-		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 	/**
 	 * Parser funtion that creates a link to the upload overlay
@@ -38,11 +38,11 @@ END;
 	 * 		2. The link title
 	 * 		3. the set of values that you want passed in through the query string to the upload form. 
 	 * 			It should look like a typical URL query string
-	 * @return HTML
+	 * @return HTML the text embraced by "richmedialink"-tags that will be removed again later in createRichMediaLinkAfterTidy
 	 */
-	static function createRichMediaLink(&$parameters) {
-		global $wgOut, $wgParser, $wgRequest, $smwgRMFormByNamespace;
-		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];;
+	static function createRichMediaLink($parser, &$parameters) {
+		global $wgOut, $wgRequest, $smwgRMFormByNamespace;
+		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 
 		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) )
 			$linkText = $parameters[0];
@@ -77,10 +77,30 @@ END;
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 
-		$html = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" rel=\"iframe\" rev=\"$rev\">$linkText</a>";
+		$output = "<a href=\"$uploadWindowUrl\" title=\"$linkTitle\" rel=\"iframe\" rev=\"$rev\">$linkText</a>";
 
-		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+		global $smwgRMMarkerList;
+		$markercount = count($smwgRMMarkerList);
+		$marker = "x-richmedialink-x".$markercount."-x-richmedialink-x";
+		$smwgRMMarkerList[$markercount] = $output;
+		return $marker;
 	}
+	
+	function createRichMediaLinkAfterTidy(&$parser, &$text) {
+	// find markers in $text
+	// replace markers with actual output
+	global $smwgRMMarkerList;
+	$keys = array();
+	$marker_count = count($smwgRMMarkerList);
+ 
+	for ($i = 0; $i < $marker_count; $i++) {
+		$keys[] = 'x-richmedialink-x' . $i . '-x-richmedialink-x';
+	}
+ 
+	$text = str_replace($keys, $smwgRMMarkerList, $text);
+	return true;
+}
+	
 	
 	/**
 	 * Parser function that creates a link to the EmbedWindow
@@ -88,8 +108,8 @@ END;
 	 * @param array $parameter
 	 * @return HTML
 	 */
-	static function createRichMediaEmbedWindowLink(&$parameter) {
-		global $wgOut, $wgParser, $wgRequest;
+	static function createRichMediaEmbedWindowLink($parser, &$parameter) {
+		global $wgOut, $wgRequest;
 
 		if ( array_key_exists( 0, $parameter ) && isset( $parameter[0] ) )
 			$link_name = $parameter[0];
@@ -119,7 +139,7 @@ END;
 
 		$html = "<a href=\"$embedWindowUrl\" title=\"$link_title\" rel=\"iframe\" rev=\"$rev\">$link_title</a>";
 		
-		return $wgParser->insertStripItem( $html, $wgParser->mStripState );
+		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 }
 ?>
