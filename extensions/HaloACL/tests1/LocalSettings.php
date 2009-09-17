@@ -6,6 +6,8 @@ $smwgMessageBroker='localhost';
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('http://mywiki', true);
  
+include_once('extensions/SemanticForms/includes/SF_Settings.php');
+
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2');
 //enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', "http://mywiki/ob");
@@ -19,3 +21,6 @@ include_once('extensions/RichMedia/includes/RM_Initialize.php');
 //enableRichMediaExtension();
     
 $wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
+
+$smwgNamespacesWithSemanticLinks[300] = true;
+
