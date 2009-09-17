@@ -87,17 +87,17 @@ class UploadConverter {
 		
 		$mimeType = $file->getMimeType();
 		
-		// $fileNameArray = split("\.", $file->getFullPath());
-		// $ext = $fileNameArray[count($fileNameArray)-1];
-		// if($mimeType == "text/plain" && $ext == "doc"){
-		//	$mimeType = "application/msword";
-		//}
+		$fileNameArray = split("\.", $file->getFullPath());
+		$ext = $fileNameArray[count($fileNameArray)-1];
+		if($mimeType == "text/plain" && $ext == "doc"){
+			$mimeType = "application/msword";
+		}
 		
 		if (isset($smwgUploadConverter[$mimeType]))
 			$converterApp = $smwgUploadConverter[$mimeType];
 		else {
 			// no converter specified for the mime type
-			//echo("\n mime type:".$mimeType);
+			echo("\n mime type:".$mimeType);
 			return "";
 		}
 		wfLoadExtensionMessages('UploadConverter');
