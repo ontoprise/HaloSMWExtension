@@ -12,8 +12,9 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
     <import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
 	
     <property name="wt.testInWork" value="tests/allTests.xml"/>
-
+<!--
     <property name="wikipath" value="halo/HaloSMWExtension" />
+-->
     <property name="serverurl" value="localhost:8080" />
     <property name="ajaxWait" value="1" />
     <property name="ajaxWaitLong" value="3" />
