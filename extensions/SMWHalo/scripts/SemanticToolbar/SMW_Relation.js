@@ -336,7 +336,7 @@ createContextMenu: function(contextMenuContainer, value, repr, name) {
 	tb.setInputValue('rel-name', (name) ? name : '');
 	tb.append(tb.createText('rel-name-msg', gLanguage.getMessage('ENTER_NAME'), '' , true));
 	
-	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '', '',
+	tb.append(tb.createInput('rel-value-0', gLanguage.getMessage('PAGE'), '', '',
 							 SMW_REL_CHECK_EMPTY_NEV + 
 							 SMW_REL_HINT_INSTANCE +
 							 SMW_REL_VALID_PROPERTY_VALUE,
