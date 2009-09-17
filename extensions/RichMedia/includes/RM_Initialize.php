@@ -146,9 +146,10 @@ function smwfProcessRMLinkParserFunction(&$parser) {
 /**
  * The {{#rmew }} parser function processing part.
  */
-function smwfProcessRMEmbedWindowLinkParserFunction(&$parser, $text) {
-
-	return RMForm::createRichMediaEmbedWindowLink($parser, $text);
+function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
+	$params = func_get_args();
+	array_shift( $params ); // we already know the $parser ...
+	return RMForm::createRichMediaEmbedWindowLink($parser, $params);
 }
 
 function RMFormUsage_Magic(&$magicWords, $langCode){
