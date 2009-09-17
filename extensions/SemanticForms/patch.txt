@@ -2,7 +2,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc	(revision 0)
 +++ extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc	(revision 0)
-@@ -0,0 +1,260 @@
+@@ -0,0 +1,261 @@
 +<?php
 +/**
 + * Two classes - SFForm and SFTemplateInForm - that represent a user-defined
@@ -44,6 +44,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc
 +	 global $wgContLang;
 +	 
 +		$namespace_labels = $wgContLang->getNamespaces();
++		$template_namespace = $namespace_labels[NS_TEMPLATE];
 +		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
 +		$ad = SpecialPage::getPage('AddPage');
 +		$add_data_url = SFLinkUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
@@ -52,16 +53,16 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc
 +    $form_header ="{{Form
 +|PAGENAME=".$namespace_labels[SF_NS_FORM].":".$this->form_name."
 +|Has author=".$wgUser->getUserPage()."
-+|Form needs context=false
++|Form needs context=true
 +|part of=".$this->partof_wikisection."
 +|rationale=".$this->rationale."
 +|long description=__NOTITLE__
-+|transcludable=True
-+|show in template picker=True
++|transcludable=true
++|show in template picker=true
 +|Populates template=";
 +    
 +    foreach ($this->templates as $template) {
-+			$form_header .= $template->template_name . ",";
++			$form_header .= $template_namespace.":".$template->template_name . ",";
 +		}
 +    $form_header .= "\n}}";
 +
@@ -918,7 +919,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5066)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -1182,7 +1183,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5066)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -720,9 +720,12 @@
  		return $text;
@@ -1251,7 +1252,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 5066)
+--- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_GlobalFunctions.php	(working copy)
 @@ -49,6 +49,17 @@
  $wgSpecialPages['CreateForm'] = 'SFCreateForm';
@@ -1273,7 +1274,7 @@ Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
  $wgSpecialPageGroups['Templates'] = 'pages';
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5066)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -1323,7 +1324,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5066)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -1438,7 +1439,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5066)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5078)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -1467,7 +1468,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/specials/SF_AddData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_AddData.php	(revision 5066)
+--- extensions/SemanticForms/specials/SF_AddData.php	(revision 5078)
 +++ extensions/SemanticForms/specials/SF_AddData.php	(working copy)
 @@ -128,6 +128,10 @@
  			$page_is_source = false;
@@ -1699,7 +1700,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5066)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5078)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
