@@ -992,10 +992,8 @@ class DALReadPOP3 implements IDAL {
 		$local->load();
 		global $smwgEnableUploadConverter;
 		if($smwgEnableUploadConverter){
-			echo("\nextract content");
 			$fileContent = UploadConverter::getFileContent($local);
 			if(trim($fileContent) != ""){
-				echo("\nextract content not empty");
 				$term["CONTENT"] = array();
 				$term["CONTENT"][] = array("value" => $fileContent);
 			}
