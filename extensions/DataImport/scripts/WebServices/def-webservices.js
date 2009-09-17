@@ -1127,10 +1127,9 @@ DefineWebServiceSpecial.prototype = {
 
 					var defaultValue = this.parameterContainer.firstChild.childNodes[i + 1 + offset].childNodes[4].firstChild.value;
 					if (defaultValue != "") {
-						if (defaultValue != "") {
-							result += " defaultValue=\"" + defaultValue + "\" ";
-						}
+						result += " defaultValue=\"" + defaultValue + "\" ";
 					}
+					
 					var path = "";
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
 						var pathStep = "/";
@@ -1191,7 +1190,6 @@ DefineWebServiceSpecial.prototype = {
 								rPath = this.getRPath(i - 2 - offset);
 							}
 						}
-
 						result += " path=\"" + rPath + "\"";
 
 						if (this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[1].value == "xpath") {
@@ -1199,7 +1197,10 @@ DefineWebServiceSpecial.prototype = {
 						} else {
 							result += " json=\"";
 						}
-						result += this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value;
+						var subPathString = this.resultContainer.firstChild.childNodes[i].childNodes[0].childNodes[2].value; 
+						subPathString = subPathString.replace(/>/g, "&gt;");
+						subPathString = subPathString.replace(/</g, "&lt;");
+						result += subPathString;
 						result += "\"/>\n";
 					}
 					offset += 1;
