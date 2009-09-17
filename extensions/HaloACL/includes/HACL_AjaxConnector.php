@@ -1375,9 +1375,7 @@ HTML;
                         <input type="radio" class="create_acl_general_definefor create_acl_general_definefor_$panelid" name="create_acl_general_definefor" value="individual" />&nbsp;$hacl_createGeneralContent_11
                     </div>
                 </div>
-           <br/>
-           <div class="haloacl_panel_content_row_descr">&nbsp;</div>
-            <div class="haloacl_panel_content_row_content">
+            <div class="haloacl_panel_content_row_content"  style="padding-left:80px;clear:left">
                 <div class="haloacl_panel_define_element">
                     <input type="radio" class="create_acl_general_definefor create_acl_general_definefor_$panelid" name="create_acl_general_definefor" value="allusers" />&nbsp;$hacl_createGeneralContent_12
                 </div>
