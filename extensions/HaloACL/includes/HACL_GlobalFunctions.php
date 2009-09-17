@@ -666,6 +666,9 @@ function haclfHandleFormField($form_field, $cur_value, $form_submitted) {
 	$property_name = $form_field->template_field->semantic_property;
 	if (! empty($property_name)) {
 		$property_title = Title::makeTitleSafe(SMW_NS_PROPERTY, $property_name);
+		if (!isset($property_title)) {
+			return true;
+		}
 		if ($property_title->exists()) {
 			$form_field->is_disabled = false;			
 			if (! $property_title->userCan('propertyread')) {
