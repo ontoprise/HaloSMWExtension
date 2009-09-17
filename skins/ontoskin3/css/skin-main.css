@@ -58,6 +58,7 @@ body{
 
 #smwh_personal{
     float: right;
+    margin-right: 15px;
 }
 
 #smwh_search{
@@ -71,12 +72,14 @@ body{
     display: block;
     float: left;
     margin-right: 10px;
+    margin-bottom: 19px;
     position: relative;
     border-style: solid;
     border-width: 2px;
     padding: 8px;
     height: 15px;
     width: 340px;
+    color: #000000;
 }
 
 
