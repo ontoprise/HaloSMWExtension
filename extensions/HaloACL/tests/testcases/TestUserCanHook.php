@@ -212,7 +212,7 @@ ACL
 				self::createArticle($title, $this->mArticles[$title]);
 	    	}
     	} catch (Exception $e) {
-			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
+			PHPUnit_Framework_Assert::assertTrue(false, "Unexpected exception while testing ".basename($file)."::createArticles():".$e->getMessage());
 		}
     	
     }
