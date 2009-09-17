@@ -80,11 +80,11 @@ body{
     height: 15px;
     width: 340px;
     color: #000000;
-    font-size: 120&;
+    font-size: 120%;
 }
 
 #searchInput:focus{
-	border: 2px solid #9EC1E0;
+	border: 3px solid #42a3b3;
 	color: #000000;
 }
 
