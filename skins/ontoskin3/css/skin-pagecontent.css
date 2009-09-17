@@ -22,6 +22,8 @@
 #content .smwtable{
 	background-color: #ffffff;
 	border-collapse:collapse;
+	cellpadding: 8px;
+	line-height:1.5em;
 }
 
 #content .smwtable th{
@@ -51,7 +53,12 @@
 }
 
 #content .smwtable td{
-	border-bottom: 1px solid #F0F0F0;
+	border-bottom: 1px solid #cccccc;
+	background: #FFFFFF none repeat scroll 0 0;
+}
+
+#content .smwtable tr:hover td{
+	background: #E8EDFF none repeat scroll 0 0;
 }
 
 /* even and odd in tables*/
