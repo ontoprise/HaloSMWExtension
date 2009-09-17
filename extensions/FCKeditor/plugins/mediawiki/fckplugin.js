@@ -1031,6 +1031,7 @@ SMW_Annotate.prototype = {
         HideContextPopup();
         window.parent.AdvancedAnnotation.unload();
         ClearEventHandler4AnnotationBox();
+        window.parent.stb_control.initialize();
     },
 
     /**
