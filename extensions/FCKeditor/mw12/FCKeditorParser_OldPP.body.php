@@ -486,6 +486,7 @@ class FCKeditorParser extends Parser_OldPP
 				else if ($sum == 0) {
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
+                                        $inner = $this->revertEncapsulatedString($inner);
 					if (substr($inner, 0, 7) == '{{#ask:' )
 					    $fck_mw_template =  'fck_mw_askquery';
 					else if (substr($inner, 0, 6) == '{{#ws:' )
@@ -558,6 +559,7 @@ class FCKeditorParser extends Parser_OldPP
 		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
 		// by the current property string
 		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
+                        $matches[1] = $this->revertEncapsulatedString($matches[1]);
 			$replacement = $this->replaceSpecialLinkValue($matches[1]);
 			$pos = strpos($text, $matches[0]);
 			$before = substr($text, 0, $pos);
@@ -613,6 +615,37 @@ class FCKeditorParser extends Parser_OldPP
 		}
 		return strtr( $text, $strtr );
 	}
+
+        /**
+         * Replace a former encoded FckmwXXfckmw with it's actual value. Things
+         * are replaces sequencially and if the same part has a replacement
+         * already and the outer part will replaced by itself, then the inner
+         * content must be the original string, without any replacements.
+         *
+         * This can happen, if a property contains a param/template call like:
+         * [[Property::{{{1}}}]] or if a parser function/template contains a
+         * comment. Things are replaces sequencially and if the same part has
+         * a replacement already but is replaced as well then we are in trouble.
+         *
+         * @access private
+         * @param string text
+         * @return string text
+         */
+         private function revertEncapsulatedString($text) {
+            if (preg_match_all('/Fckmw\d+fckmw/', $text, $matches)) {
+	        for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
+	           if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'])) {
+	               $text = str_replace(
+                           $matches[0][$i],
+                           substr($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'], 6, -1),
+	                   $text
+                       );
+	           }
+	        }
+            }
+            return $text;
+        }
+
 	/**
 	 * Checks for replacments by replacePropertyValue() and replaceRichmediaLinkValue()
 	 * If a property was replaces, don't try to find and replace a richmedia link
@@ -622,20 +655,6 @@ class FCKeditorParser extends Parser_OldPP
 	 * @return string replaced placeholder or [[match]]
 	 */
 	private function replaceSpecialLinkValue($match) {
-	    // if there are parameters used for properties, such as {{{1}}}
-	    // these have been replaces with the templates already and look like
-	    // Fckmw12fckmw now. Therefore revert these back to their original value.
-	    if (preg_match_all('/Fckmw\d+fckmw/', $match, $matches)) {
-	        for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
-	           if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'])) {
-	               $match = str_replace(
-                           $matches[0][$i],
-                           substr($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'], 6, -1),
-	                   $match
-                       );
-	           }
-	        }
-	    }
             $res = $this->replacePropertyValue($match);
             if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
                 return $res;
