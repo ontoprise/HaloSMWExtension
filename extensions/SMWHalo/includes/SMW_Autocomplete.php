@@ -127,7 +127,16 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 	} else if (stripos($userContext, "{{") === 0) {
 		// template context
-		$result = AutoCompletionRequester::getTemplateProposals($userContext, $userInputToMatch);
+		global $wgLang;
+		$namespace = NS_TEMPLATE;
+		if (defined('SF_NS_FORM')) {
+		      $form_ns_text = $wgLang->getNsText(SF_NS_FORM);
+		      if (substr($userInputToMatch, 0, strlen($form_ns_text)) == $form_ns_text) {
+		      	$namespace = SF_NS_FORM;
+		      }
+		}
+		
+		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, substr($userInputToMatch, strlen($form_ns_text)+1), $namespace );
 		AutoCompletionRequester::logResult($result, $articleName);
 		return $result;
 
@@ -288,7 +297,7 @@ class AutoCompletionRequester {
 	/**
 	 * Get template proposals.
 	 */
-	public static function getTemplateProposals($userContext, $match) {
+	public static function getTemplateOrFormProposals($userContext, $match, $namespace) {
 		// template context
 		// parse template paramters
 		$templateParameters = explode("|", $userContext);
@@ -297,7 +306,7 @@ class AutoCompletionRequester {
 			$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
 			return AutoCompletionRequester::encapsulateAsXML($results);
 		} else { // otherwise it is a template name
-			$templates = smwfGetAutoCompletionStore()->getPages($match, array(NS_TEMPLATE));
+			$templates = smwfGetAutoCompletionStore()->getPages($match, array($namespace));
 			$matches = array();
 			foreach($templates as $t) {
 				$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
