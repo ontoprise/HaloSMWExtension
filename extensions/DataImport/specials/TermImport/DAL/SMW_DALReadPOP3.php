@@ -934,6 +934,8 @@ class DALReadPOP3 implements IDAL {
 
 		$mappingPolicy = Title::newFromText($attachmentMP);
 		if(!$mappingPolicy->exists()){
+			throw new Exception("The attachment mapping policy \"".$attachmentMP."\" does not exist.");
+			
 			return $this->createCallBackResult(false,
 			array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
 				'title' => $attachmentMP)));
@@ -957,6 +959,8 @@ class DALReadPOP3 implements IDAL {
 			$fileFullPath, wfMsg('smw_ti_creationComment'), "",
 			File::DELETE_SOURCE, $mFileProps );
 		if($status->failureCount > 0){
+			throw new Exception("The file \"".$fileFullPath."\" could not be uploaded.");
+			
 			return $this->createCallBackResult(false,
 			array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
 				'title' => $fileArticleTitle->getFullText())));
