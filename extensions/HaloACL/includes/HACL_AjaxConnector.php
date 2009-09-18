@@ -1638,7 +1638,11 @@ HTML;
                     if (description.length > 80) description = description.substr(0,80)+"...";
                     genericPanelSetDescr_$panelid(description,descrLong);
 
-                }
+                }else{
+                    var description = $('right_description_$panelid').value;
+                    var descrLong = description;
+                    if (description.length > 80) description = description.substr(0,80)+"...";
+                    genericPanelSetDescr_$panelid(description,descrLong);                }
 
             };
 
@@ -1666,7 +1670,8 @@ HTML;
                 xml+="<panelid>$panelid</panelid>";
                 xml+="<type>"+YAHOO.haloacl.panelDefinePanel_$panelid+"</type>";
                 if($('right_name_$panelid') != null){
-                    xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
+                   // xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
+                    xml+="<name>"+$('right_name_$panelid').value+"</name>";
                 }
                 if($('right_description_$panelid') != null){
                     xml+="<description>"+$('right_description_$panelid').value+"</description>";
@@ -1769,19 +1774,9 @@ HTML;
                 YAHOO.util.Event.addListener(item, "click", YAHOO.haloacl.refreshPanel_$panelid);
 
             });
-/*
-            YAHOO.util.Event.addListener("checkbox_right_fullaccess", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_read", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_edit", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_formedit", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_wysiwyg", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_create", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_move", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_delete", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("checkbox_right_annotate", "click", YAHOO.haloacl.refreshPanel_$panelid);
-*/
+
             YAHOO.util.Event.addListener("right_name_$panelid", "click", YAHOO.haloacl.refreshPanel_$panelid);
-            YAHOO.util.Event.addListener("right_description_$panelid", "click", YAHOO.haloacl.refreshPanel_$panelid);
+            YAHOO.util.Event.addListener("right_description_$panelid", "keyup", YAHOO.haloacl.refreshPanel_$panelid);
 
 
 
