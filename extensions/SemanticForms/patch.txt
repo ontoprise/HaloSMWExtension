@@ -1867,3 +1867,17 @@ Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
  }
 +/*op-patch|DH|2009-09-08|Special:CreateTemplate adapted to SMWplus|end*/
 \ No newline at end of file
+Index: extensions/SemanticForms/languages/SF_Messages.php
+===================================================================
+--- extensions/SemanticForms/languages/SF_Messages.php    (revision 4967)
++++ extensions/SemanticForms/languages/SF_Messages.php    (working copy)
+@@ -15,6 +15,9 @@
+  */
+ $messages['en'] = array(
+ 	// user messages
++        /*op-patch|DH|2009-09-17|Embedded Forms|start*/
++        'createembeddedform'                 => 'Create an embedded form',
++        /*op-patch|DH|2009-09-17|Embedded Forms|end*/
+ 	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
+ 	'specialpages-group-sf_group'        => 'Semantic Forms',
+ 	'createproperty'                     => 'Create a property',
