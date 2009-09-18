@@ -2541,8 +2541,8 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
     $hacl_SDRightsPanelContainer_3 = wfMsg('hacl_SDRightsPanelContainer_3');
     $hacl_SDRightsPanelContainer_4 = wfMsg('hacl_SDRightsPanelContainer_4');
 
-    if ($readOnly === "true") $readOnly = true;
-    if ($readOnly === "false") $readOnly = false;
+    if ($readOnly == "true") $readOnly = true;
+    if ($readOnly == "false") $readOnly = false;
 
     $sdName = "$ns:".$sdName;
     $panelid = "SDRightsPanel_$sdId";
@@ -2785,12 +2785,36 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     foreach ($SD->getPredefinedRights(false) as $subSdId) {
         $sdName = HACLSecurityDescriptor::nameForID($subSdId);
 
-        $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false, null, $expandMode);
+//                                              ($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
+
+        $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", true, true, null, $expandMode);
 
         $temphtml = <<<HTML
         <div id="content_subRight_$subSdId">
         <div id="subPredefinedRight_$subSdId"></div>
+            <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="delete template" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
+            <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="save template" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
         <script>
+
+            YAHOO.haloacl.buildRightPanelXML_$subSdId = function(onlyReturnXML){
+
+                // building xml
+                var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+                xml+="<inlineright>";
+                xml+="<panelid>subRight_$subSdId</panelid>";
+                xml+="<type>template</type>";
+              
+                xml+="<name>$sdName</name>";
+
+                xml+="</inlineright>";
+                var callback = function(result){
+                    return null;
+                }
+
+                YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
+                          
+            };
+
             YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
             //show closed at first
             YAHOO.haloacl.togglePanel('subRight_$subSdId');
