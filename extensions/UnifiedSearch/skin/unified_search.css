@@ -55,8 +55,12 @@
 #us_refineresults .us_refinelinks_highlighted {
     padding: 3px;
     background-color: #BBB;
-    color:white;
+    
     font-weight: bold;
+}
+
+#us_refineresults a:visited {
+    color:white;
 }
 
 #us_searchresults {
