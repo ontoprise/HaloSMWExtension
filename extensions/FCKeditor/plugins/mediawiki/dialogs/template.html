@@ -98,7 +98,7 @@ function LoadSelection()
 			sTemplateName = inputText.substring(2,inputText.indexOf('|'));
                 // no params eigther? then template name is up to the closing }}
 		if (inputText.indexOf('|')<1) 
-			stemplateName = inputText.substring(2,inputText.indexOf('}}'));
+			sTemplateName = inputText.substring(2,inputText.indexOf('}}'));
                 // capitalize the first letter of the name
 		sTemplateName = sTemplateName.charAt(0).toUpperCase() + sTemplateName.substr(1)
                 // set divInfo and divForm with data for current seleced template
@@ -243,10 +243,10 @@ function Ok()
             <td><div id="divHeaderSelected" style="display: none;"><b>Template selected:</b></div></td>
         </tr>
         <tr class="tmplTable">
-            <td style="width: 25%; vertical-align: top;">
-                <div id="divList" style="height: 100%;">
+            <td style="width: 30%; vertical-align: top;">
+                <div id="divList" style="height: 100%; width: 100%;">
                     <b>Choose a template</b>
-                    <select id="xTemplateList" onchange="SetUrl( this.value );" size="10" style="height: 100%;">
+                    <select id="xTemplateList" onchange="SetUrl( this.value );" size="10" style="height: 100%; width: 100%;">
                     </select>
                 </div>
             </td>
