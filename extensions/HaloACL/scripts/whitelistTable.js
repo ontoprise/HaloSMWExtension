@@ -78,16 +78,16 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     myDataSource.responseSchema = {
         resultsList: "records",
         fields: [
-            {
-                key:"id",
-                parser:"number"
-            },
-            {
-                key:"name"
-            },
-            {
-                key:"checked"
-            }
+        {
+            key:"id",
+            parser:"number"
+        },
+        {
+            key:"name"
+        },
+        {
+            key:"checked"
+        }
         ],
         metaFields: {
             totalRecords: "totalRecords" // Access to value in the server response
@@ -144,8 +144,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     }
     myDataTable.query = "";
 
-
-
+    
 
     //YAHOO.util.Event.addListener(myDataTable,"initEvent",myDataTable.checkAllSelectedUsers());
 
@@ -161,8 +160,13 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
         myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
     }
+
+    myDataTable.subscribe("postRenderEvent",function(){
+        handlePagination();
+    });
     // setting up clickevent-handling
     return myDataTable;
+
 
    
 };
