@@ -115,8 +115,8 @@ abbr,acronym { border:0;
 }
 */
 
-#haloaclContent{
-    overflow:hidden;
+#haloaclmainView{
+    min-height:300px;
 }
 /* custom stuff */
 
@@ -171,7 +171,7 @@ button:hover{
     float:left;
     width:16px;
     height:16px;
-    margin-top:3px;
+    margin-top:4px;
     margin-left:10px;
     background:url(images/helpbutton.png) no-repeat;
 }
@@ -196,18 +196,18 @@ button:hover{
 .haloacl_tab_section_header_count{
     display:inline;
     width:23px;
-    height:24px;
+    height:20px;
     border:1px solid #000;
     border-style:none solid none none;
     float:left;
-    padding:2px 0 0 10px;
+    padding:5px 0 0 10px;
 
 }
 .haloacl_tab_section_header_title{
     display:inline;
-    height:24px;
+    height:20px;
     float:left;
-    padding:2px 0 0 10px;
+    padding:5px 0 0 10px;
 }
 
 .haloacl_tab_section_content{
@@ -663,6 +663,7 @@ button:hover{
     background:none!important;
     border:none!important;
     font-weight:normal;
+    height:16px!important;
 }
 
 /* disable style for subtab-nav */
@@ -672,6 +673,8 @@ button:hover{
     background:none!important;
     border:none!important;
     font-weight:bold;
+        height:16px!important;
+
 }
 
 
@@ -983,7 +986,7 @@ button:hover{
 }
 .haloacl_manageACL_right_description{
     float:right;
-    width:263px;
+    width:210px;
 }
 
 .haloacl_manageacl_contenttitle{
@@ -1071,4 +1074,9 @@ button:hover{
 }
 .haloacl_manageuser_name{
     width:200px;
+}
+.haloacl_discard_save_buttons{
+    padding:8px 0;
+    border:1px solid #A0A0A0;
+    background-color:#EEE
 }

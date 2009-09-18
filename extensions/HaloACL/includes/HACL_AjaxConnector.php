@@ -161,9 +161,7 @@ HTML;
             <div id="haloacl_tab_createacl_rightsection" class="haloacl_tab_section_content">
                 <div class="haloacl_tab_section_content_row">
                     <div id="step2_button2">
-                   <input type="button" id="haloacl_discardacl_button" value="Discard changes"
-                        style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_createacl();"/>
-                    <input style="margin-left: 30px;" id="haloacl_create_right_$predefine" type="button" value="Create right"
+                     <input style="margin-left: 30px;" id="haloacl_create_right_$predefine" type="button" value="Create right"
                         onclick="javascript:YAHOO.haloacl.createacl_addRightPanel('$predefine');"/>
                     &nbsp;
                     <input  id="haloacl_add_right_$predefine" type="button" value="Add right template"
@@ -277,8 +275,6 @@ HTML;
 
             <div class="haloacl_tab_section_content_row">
                 <div id="step3_buttons">
-                    <input type="button" id="haloacl_discardacl_button" value="Discard changes"
-                                style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_createacl();"/>
                     <input id="haloacl_save_modificationrights" type="button" name="gotoStep4" value="Next Step"
                     onclick="javascript:YAHOO.haloacl.create_acl_gotoStep4();" style="margin-left:30px;"/>
                 </div>
@@ -360,6 +356,7 @@ function createSaveContent() {
                         </div>
                     </div>
                 </div>
+<!--
                 <div class="haloacl_tab_section_content_row">
                    <div style="width:800px;text-align:center">
                     <form>
@@ -370,11 +367,13 @@ function createSaveContent() {
                     </form>
                     </div>
                 </div>
+-->
 
             </div>
         </div>
         <!-- section end -->
         <script type="javascript">
+            $('haloacl_saveacl_button').enable();
 
 
             ////////ACL Name
@@ -406,7 +405,7 @@ function createSaveContent() {
                 if(result.status == '200'){
                     YAHOO.haloacl.notification.createDialogYesNo("content","$hacl_createSaveContent_3",result.responseText,{
                         yes:function(){window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=createACL';},
-                        no:function(){window.location.href=YAHOO.haloacl.specialPageUrl+'../'+result.responseText;},
+                        no:function(){window.location.href=YAHOO.haloacl.specialPageUrl+'/../'+result.responseText;},
                     },"Ok","Jump To Article");
                 }else{
                     YAHOO.haloacl.notification.createDialogOk("content","$hacl_createSaveContent_4",result.responseText,{
@@ -751,6 +750,20 @@ HTML;
  
         </script>
     </div>
+
+            <div class="haloacl_tab_section_content">
+                <div class="haloacl_tab_section_content_row">
+                   <div class="haloacl_discard_save_buttons" style="width:800px;text-align:center">
+                    <form>
+                     <input type="button" id="haloacl_discardacl_button" value="Discard changes"
+                        style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_createacl();"/>
+                    &nbsp;<input disabled="true" type="button" id="haloacl_saveacl_button" name="safeACL" value="Save ACL"
+                        onclick="javascript:YAHOO.haloacl.buildCreateAcl_SecDesc();"/>
+                    </form>
+                    </div>
+                </div>
+
+            </div>
 HTML;
 
     return $html;
@@ -860,8 +873,19 @@ function createAclUserTemplateContent() {
 
     }
 
+    $spt = SpecialPage::getTitleFor("HaloACL");
+    $url = $spt->getFullURL();
+    $url .= "?activetab=manageACLs&activesubtab=manageDefaultTemplate";
+
     if($alreadyExisting) {
-        $response->addText("You already created a default user template.");
+        $html = <<<HTML
+        <div style="padding:5px;">
+            You already created a default user template.
+            &nbsp;
+            <a href='$url'> &raquo; click here to edit your default user template</a>
+        </div>
+HTML;
+        $response->addText($html);
 
         return $response;
     }
@@ -887,13 +911,18 @@ function createAclUserTemplateContent() {
  */
 function getManageUserGroupPanel($panelid, $name="", $description="", $users=null, $groups=null, $manageUsers=null, $manageGroups=null) {
     $newGroup = "false";
+    $groupname = "Group settings";
     if($users == null && $groups == null && $manageUsers == null && $manageGroups == null) {
         $newGroup = "true";
     }
 
+    if($newGroup == "false") {
+        $groupname = "[ Editing Group:$name ]";
+    }
+
     $hacl_manageUserGroupPanel_1 = wfMsg('hacl_manageUserGroupPanel_1');
 
-    $myGenericPanel = new HACL_GenericPanel($panelid, "Group","Group settings","",true,false);
+    $myGenericPanel = new HACL_GenericPanel($panelid, "Group",$groupname,"",true,false);
 
 
     $content = <<<HTML
@@ -1460,7 +1489,9 @@ HTML;
         $content .= <<<HTML
         <script>
             $$(".create_acl_general_definefor_$panelid").each(function(item){
-                item.disabled = true;
+                if(!item.checked){
+                    item.disabled = true;
+                }
             });
         </script>
 HTML;
@@ -1489,8 +1520,8 @@ HTML;
 HTML;
         }else {
             $content .= <<<HTML
-                        <div style="width:50%;float:left;text-align:center"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel('$panelid');});" /></div>
-                        <div style="width:50%;float:left;text-align:right"><input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
+                        <div style="width:50%;float:left;text-align:right"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel('$panelid');});" /></div>
+                        <div style="width:50%;float:left;text-align:left">&nbsp;<input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
                         <script>
                         YAHOO.haloacl.addTooltip("tooltip_save_$panelid", "haloacl_save_$panelid", "click here to save the modifcation right.");
                         </script>
@@ -2185,6 +2216,7 @@ function rightList($panelid, $type = "readOnly") {
     $hacl_rightList_Namespace = wfMsg('hacl_rightList_Namespace');
     $hacl_rightList_ACLtemplates = wfMsg('hacl_rightList_ACLtemplates');
     $hacl_rightList_Defaultusertemplates = wfMsg('hacl_rightList_Defaultusertemplates');
+    $hacl_RightsContainer_2 = wfMsg('hacl_RightsContainer_2');
 
     $hacl_rightList_1 = wfMsg('hacl_rightList_1');
     $hacl_manageUser_7 = wfMsg('hacl_manageUser_7');
@@ -2306,7 +2338,7 @@ HTML;
             </div>
             <div class="haloacl_manageacl_contentmenu_element">
                 <input class="haloacl_manageacl_filter" onClick="YAHOO.haloacl.filter_handleFilterChangeEvent(this);" type="checkbox" checked="" name="defusertemplate"/>&nbsp;Default user
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;templates
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;templates
             </div>
 
 
@@ -2325,7 +2357,7 @@ HTML;
 
     if($type != "readOnly") {
         $html .= <<<HTML
-            <span style="margin-right:15px;float:right">Delete</span><span style="margin-right:29px;float:right">Edit</span>
+            <span style="margin-right:15px;float:right">Delete</span><span style="margin-right:29px;float:right">Edit</span><span style="margin-right:29px;float:right">Info</span>
 HTML;
     }else {
         $html .= <<<HTML
@@ -2345,18 +2377,35 @@ HTML;
         </div>
 HTML;
     }
-    $html .= <<<HTML
+
+    if($type != "readOnly") {
+        $html .= <<<HTML
 
             <div id="haloacl_manageacl_acltree">
                 <div id="treeDiv_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
             </div>
         </div>
 HTML;
+    }else {
+        $html .= <<<HTML
+            <div id="haloacl_manageacl_acltree">
+                <div id="treeDiv_$panelid" style="height:277px" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
+            </div>
+        </div>
+HTML;
+    }
 
     if($type != "readOnly") {
-        $html .= <<<HTML
+            $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
             <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
+        </div>
+HTML;
+
+    }else {
+        $html .= <<<HTML
+        <div id="haloacl_manageuser_contentlist_footer" style="float:right">
+            <input type="button" name="useTemplate" value="$hacl_RightsContainer_2" onclick="YAHOO.haloacl.buildTemplatePanelXML_$panelid();" />
         </div>
 HTML;
 
@@ -2636,12 +2685,7 @@ function getRightsContainer($panelid, $type = "readOnly") {
         <script>
             YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$panelid','rightList',{panelid:'$panelid', type:'$type'});
         </script>
-        <div class="haloacl_greyline">&nbsp;</div>
-        <div>
-            <div style="width:33%;float:left;"></div>
-            <div style="width:33%;float:left;text-align:center"></div>
-            <div style="width:33%;float:left;text-align:right"><input type="button" name="useTemplate" value="$hacl_RightsContainer_2" onclick="YAHOO.haloacl.buildTemplatePanelXML_$panelid();" /></div>
-        </div>
+        
 
         <script type="javascript">
 
@@ -4032,8 +4076,20 @@ HTML;
                     YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                 </script>
             </div>
+            <div class="haloacl_tab_section_content">
+                <div class="haloacl_tab_section_content_row">
+                   <div class="haloacl_discard_save_buttons" style="width:800px;text-align:center">
+                    <form>
+                     <input type="button" id="haloacl_discardacl_button" value="Discard changes"
+                        style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_users();"/>
+                    &nbsp;<input id="haloacl_managegroups_save" type="button" value="$hacl_manageUser_10" onClick="YAHOO.haloacl.manageUsers_saveGroup();" />
+
+                    </form>
+                    </div>
+                </div>
+
+            </div>
             <div id="manageUserGroupFinishButtons">
-                <input id="haloacl_managegroups_save" type="button" value="$hacl_manageUser_10" onClick="YAHOO.haloacl.manageUsers_saveGroup();" />
             </div>
         </div>
 
@@ -4152,7 +4208,7 @@ HTML;
                 </div>
             </div>
             <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 0">
-                <input type="button" value="delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
+                <span id="haloacl_whitelist_paginginfo"></span><input type="button" value="delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
             </div>
              
         </div>

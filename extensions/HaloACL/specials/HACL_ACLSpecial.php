@@ -74,7 +74,7 @@ HTML;
 
         global $haclWhitelistGroups;
 
-      
+
         $spt = SpecialPage::getTitleFor("HaloACL");
         $url = $spt->getFullURL();
 
@@ -93,6 +93,9 @@ HTML;
 </div>
 <script type="text/javascript">
 
+    // bugfix for ontoskin 3
+    $("bodyContent").setAttribute("style","overflow:visible");
+
     YAHOO.haloacl.specialPageUrl = "$url";
 
 HTML;
@@ -107,9 +110,19 @@ HTML;
         }else {
             $activeTab = "createACL";
         }
+        $activeSubTab = null;
+        if(array_key_exists("activesubtab", $wgRequest->data)) {
+            $activeSubTab = $wgRequest->data['activesubtab'];
+        }
+
+        if($activeSubTab != null) {
+            $html .="
+            YAHOO.haloacl.activeSubTab = '$activeSubTab';
+                ";
+        }
 
         $html .="
-    YAHOO.haloacl.buildMainTabView('haloaclmainView','$articleTitle','$showWhitelist','$activeTab');
+            YAHOO.haloacl.buildMainTabView('haloaclmainView','$articleTitle','$showWhitelist','$activeTab');
             ";
 
         $html .= <<<HTML

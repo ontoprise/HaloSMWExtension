@@ -200,13 +200,21 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 // building the  sub tabview
 YAHOO.haloacl.buildSubTabView = function(containerName){
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
+    var manageAclActive = true;
+    var manageDefaultTemplateActive = false;
+    var createQuickActive = false;
+    if(YAHOO.haloacl.activeSubTab == "manageDefaultTemplate"){
+        manageAclActive = false;
+        manageDefaultTemplateActive = true;
+        createQuickActive = false;
+    }
 
     if (containerName == "haloaclsubViewManageACL") {
         var tab1 = new YAHOO.widget.Tab({
             label: gLanguage.getMessage('manageExistingACLs'),
             dataSrc:'createManageExistingACLContent',
             cacheData:false,
-            active:true,
+            active:manageAclActive,
             id:"createStdAclTab"
         });
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -220,7 +228,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             label: gLanguage.getMessage('manageDefaultUserTemplate'),
             dataSrc:'createManageUserTemplateContent',
             cacheData:false,
-            active:false,
+            active:manageDefaultTemplateActive,
             id:"createTmpAclTab"
         });
         tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -234,7 +242,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             label: gLanguage.getMessage('manageQuickAccess'),
             dataSrc:'createQuickAclTab',
             cacheData:false,
-            active:false,
+            active:createQuickActive,
             id:"createQuickAclTab"
         });
         tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
