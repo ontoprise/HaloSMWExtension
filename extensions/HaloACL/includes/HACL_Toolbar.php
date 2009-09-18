@@ -19,7 +19,8 @@ $wgAjaxExportList[] = "setToolbarChoose";
 
 
 global $wgHooks;
-$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbar';
+$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbarForEditPage';
+$wgHooks['sfEditPageBeforeForm'][] = 'AddHaclToolbarForSemanticForms';
 
 
 
@@ -36,20 +37,18 @@ function setToolbarChoose($templateToUse) {
  Adds
  TODO: document
  */
-function AddHaclToolbar ($content_actions) {
+function AddHaclToolbarForEditPage ($content_actions) {
 
     if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
         return $content_actions;
     }
-
     $html = <<<HTML
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
             YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'{$content_actions->mTitle}'});
         </script>
 HTML;
-
-    #$content_actions->editFormPageTop = 'editFormPageTop';
+	#$content_actions->editFormPageTop = 'editFormPageTop';
     #$content_actions->editFormTextTop = 'editFormTextTop';
     $content_actions->editFormTextBeforeContent = $html;
     #$content_actions->editFormTextAfterWarn = 'editFormTextAfterWarn';
@@ -57,8 +56,22 @@ HTML;
     #$content_actions->editFormTextBottom = "editFormTextBottom";
     #$content_actions = array_merge($content_actions, $main_action);   //add a new action
 
+    return true;
+}
 
-    return $content_actions;
+/**
+ Adds
+ TODO: document
+ */
+function AddHaclToolbarForSemanticForms($pageTitle, $html) {
+    $html = <<<HTML
+        <script>
+            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
+            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
+        </script>
+HTML;
+
+    return true;
 }
 
 
@@ -129,6 +142,7 @@ function getHACLToolbar($articleTitle) {
         $('wpSave').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
 
         YAHOO.haloacl.toolbar_handleSaveClick = function(element){
+        
             //var textbox = $('wpTextbox1');
             var state  = $('haloacl_toolbar_pagestate').value;
 
@@ -141,8 +155,10 @@ function getHACLToolbar($articleTitle) {
                 //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
                 YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
             }
-
+	        $('wpSave').writeAttribute("type","submit");
+	        $('wpSave').click();
             element.form.submit();
+
         };
 
 
