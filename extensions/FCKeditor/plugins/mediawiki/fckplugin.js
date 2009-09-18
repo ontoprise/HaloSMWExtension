@@ -1229,11 +1229,16 @@ ShowCatToolbar = function(event, name) {
  */
 CalculateClickPosition = function(event) {
     var offset = GetOffsetFromOuterHtml();
+    var pos = [];
 
-    var x = offset[0] + event.clientX;
-    var y = offset[1] + event.clientY;
+    pos[0] = offset[0] + event.clientX;
+    pos[1] = offset[1] + event.clientY;
 
-    // ajust position if the page has been scrolled
+    // ajust position if the page has been scrolled, this is only important
+    // if the FCK is not in fulltext mode
+    if (typeof fckFullscreen != "undefined" || fckFullscreen.GetState())
+        return pos;
+
     var sx;
     var sy;
     if (FCKBrowserInfo.IsIE) {
@@ -1248,13 +1253,9 @@ CalculateClickPosition = function(event) {
         sx = window.parent.pageXOffset;
         sy = window.parent.pageYOffset;
     }
-    if (sx > 0 && sx < x) x -= sx;
-    if (sy > 0 && sy < y) y -= sy;
+    if (sx > 0 && sx < pos[0]) pos[0] -= sx;
+    if (sy > 0 && sy < pos[1]) pos[1] -= sy;
 
-    // return position as array
-    var pos = [];
-    pos[0] = x;
-    pos[1] = y;
     return pos;
 }
 
@@ -1269,20 +1270,23 @@ GetOffsetFromOuterHtml = function() {
         ? 'free_text___Frame'
         : 'editform';
     var el = window.parent.document.getElementById(id);
+    var offset = [];
+    offset[0] = 0; // x coordinate
+    // y ccordinate gets hight of FCK toolbar added
+    offset[1] = document.getElementById('xToolbarRow').offsetHeight;
+    offset[1] += 10;
 
-    var x = 0;
-    var y = document.getElementById('xToolbarRow').offsetHeight; // add hight of toolbar
-    y += 10;
+    // are we in fullscreen mode?
+    if (typeof fckFullscreen != "undefined" && fckFullscreen.GetState()) {
+        return offset;
+    }
 
     if (el.offsetParent) {
         do {
-            x += el.offsetLeft;
-            y += el.offsetTop;
+            offset[0] += el.offsetLeft;
+            offset[1] += el.offsetTop;
         } while (el = el.offsetParent);
     }
-    var offset = [];
-    offset[0] = x;
-    offset[1] = y;
     return offset;
 }
 
