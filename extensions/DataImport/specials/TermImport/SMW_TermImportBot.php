@@ -590,15 +590,15 @@ class TermImportBot extends GardeningBot {
 		}
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]] | format=ul}}";
 		
 		$result .= "\n==== Updated terms ====\n";
 		$result .= "{{#ask: [[WasUpdatedDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]]| format=ul}}";
 		
 		$result .= "\n==== Ignored terms ====\n";
 		$result .= "{{#ask: [[IgnoredDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]]| format=ul}}";
 		
 		if(count($this->importErrors) > 0){
 			$result .= "\n==== Import errors ====\n";
@@ -627,15 +627,15 @@ class TermImportBot extends GardeningBot {
 		
 		$result .= "\n==== Added terms ====\n";
 		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]]| format=ul}}";
 		
 		$result .= "\n==== Updated terms ====\n";
 		$result .= "{{#ask: [[WasUpdatedDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]]| format=ul}}";
 		
 		$result .= "\n==== Ignored terms ====\n";
 		$result .= "{{#ask: [[IgnoredDuringTermImport::TermImport:".$termImportName."/"
-			.$this->getDateString()."]]}}";
+			.$this->getDateString()."]]| format=ul}}";
 		
 		$result .= "\n[[Category:TermImportRun]]";
 		

@@ -241,6 +241,7 @@ class DALReadPOP3 implements IDAL {
 			$embeddedMails = $this->embeddedMails;
 			$this->embeddedMails = array();
 			foreach($embeddedMails as $mail){
+				echo("\next embedded message");
 				$this->messageContainsErrors = false;
 				$this->noCallPartNr = true;
 				$header = $this->serializeHeaderData($mail["header"]);
