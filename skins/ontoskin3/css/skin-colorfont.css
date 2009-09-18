@@ -45,6 +45,9 @@ body{
     background: url(../img/menue_hover.gif) repeat-x;
 }
 
+.smwh_menuhead:active {
+    background: url(../img/menue_hover.gif) repeat-x;
+}
 
 
 ul.smwh_menulist div.smwh_menubody_visible {
