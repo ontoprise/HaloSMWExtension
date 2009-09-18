@@ -426,6 +426,10 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
             var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
        }
         //tmpNode.setDynamicLoad();
+    }else{
+        if($('haloacl_manageuser_count') != null){
+            $('haloacl_manageuser_count').innerHTML = parentNode.getNodeCount();
+        }
     }
    
 

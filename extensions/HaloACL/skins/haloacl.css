@@ -1080,3 +1080,7 @@ button:hover{
     border:1px solid #A0A0A0;
     background-color:#EEE
 }
+.haloacl_cont_under_trees{
+    float:left;
+    font-weight:normal!important;
+}

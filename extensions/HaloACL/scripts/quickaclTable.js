@@ -153,6 +153,9 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
     // Update totalRecords on the fly with value from server
     myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
         oPayload.totalRecords = oResponse.meta.totalRecords;
+        if($('haloacl_quickacl_count') != null){
+            $('haloacl_quickacl_count').innerHTML = oPayload.totalRecords;
+        }
         return oPayload;
     }
     myDataTable.query = "";

@@ -2398,6 +2398,9 @@ HTML;
     if($type != "readOnly") {
             $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
+            <span class="haloacl_cont_under_trees">
+                Showing <span id="haloacl_rightstree_count">0</span> element(s)
+            </span>
             <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
         </div>
 HTML;
@@ -3983,6 +3986,9 @@ HTML;
                 <div id="treeDiv_manageuser_grouplisting">
                 </div>
                 <div id="haloacl_manageuser_contentlist_footer">
+                <span class="haloacl_cont_under_trees">
+                    Showing <span id="haloacl_manageuser_count">0</span> element(s)
+                </span>
                     <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
                 </div>
             </div>
@@ -4208,7 +4214,10 @@ HTML;
                 </div>
             </div>
             <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 0">
-                <span id="haloacl_whitelist_paginginfo"></span><input type="button" value="delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
+                <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
+                    Showing <span id="haloacl_whitelist_count">0</span> element(s)
+                </span>
+                <input type="button" value="delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
             </div>
              
         </div>
@@ -4435,6 +4444,9 @@ HTML;
                 </div>
             </div>
             <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 0">
+                <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
+                    Showing <span id="haloacl_quickacl_count">0</span> element(s)
+                </span>
                 <input id="haloacl_save_quickacl_button" type="button" value="Save Quickacl" onClick="YAHOO.haloacl.saveQuickacl()"; />
             </div>
            </div>

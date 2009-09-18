@@ -844,6 +844,10 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
     if(!rightsExisting){
         new YAHOO.widget.TextNode("no ACLs available", parentNode,false);
+    }else{
+        if($('haloacl_rightstree_count') != null){
+            $('haloacl_rightstree_count').innerHTML = parentNode.getNodeCount();
+        }
     }
 
 };
@@ -1059,3 +1063,4 @@ YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
     }
     return instance;
 };
+

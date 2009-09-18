@@ -140,6 +140,9 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     // Update totalRecords on the fly with value from server
     myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
         oPayload.totalRecords = oResponse.meta.totalRecords;
+        if($('haloacl_whitelist_count') != null){
+            $('haloacl_whitelist_count').innerHTML = oPayload.totalRecords;
+        }
         return oPayload;
     }
     myDataTable.query = "";
