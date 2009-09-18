@@ -26,7 +26,8 @@ FullscreenCommand.prototype = {
             this.fckiframe.style.height = '100%'
             this.fckiframe.style.width = '100%'
             this.fckiframe.style.position = 'fixed';
-            this.fckiframe.style.zIndex = 11000;
+            // needed to suppress the message of the ac
+            this.fckiframe.style.zIndex = 2;
         }
         this.fullscreen = 1 - this.fullscreen;
     }
