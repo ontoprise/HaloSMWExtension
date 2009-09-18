@@ -334,13 +334,12 @@ class AutoCompletionRequester {
 
 		// at least 1 match
 		$xmlResult = '';
-		$pasteContent = "";
-		$extraData = "";
-		$inferred = false;
-		$namespaceText = "";
-
-
+		
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
+			$pasteContent = "";
+	        $extraData = "";
+	        $inferred = false;
+	        $namespaceText = "";
 			$arity = count($matches[$i]);
 			switch($arity) {
 				case 1: $title = $matches[$i]; break;
