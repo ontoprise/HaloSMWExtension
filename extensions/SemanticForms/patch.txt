@@ -919,7 +919,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5107)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -1205,7 +1205,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5107)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -720,9 +720,12 @@
  		return $text;
@@ -1274,7 +1274,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 5107)
+--- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_GlobalFunctions.php	(working copy)
 @@ -49,6 +49,17 @@
  $wgSpecialPages['CreateForm'] = 'SFCreateForm';
@@ -1296,7 +1296,7 @@ Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
  $wgSpecialPageGroups['Templates'] = 'pages';
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5107)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -1346,7 +1346,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5107)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -1461,7 +1461,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5107)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5120)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
@@ -1490,7 +1490,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
---- extensions/SemanticForms/languages/SF_Messages.php	(revision 5107)
+--- extensions/SemanticForms/languages/SF_Messages.php	(revision 5120)
 +++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
 @@ -15,6 +15,9 @@
   */
@@ -1504,7 +1504,7 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'createproperty'                     => 'Create a property',
 Index: extensions/SemanticForms/specials/SF_AddData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_AddData.php	(revision 5107)
+--- extensions/SemanticForms/specials/SF_AddData.php	(revision 5120)
 +++ extensions/SemanticForms/specials/SF_AddData.php	(working copy)
 @@ -128,6 +128,10 @@
  			$page_is_source = false;
@@ -1517,6 +1517,20 @@ Index: extensions/SemanticForms/specials/SF_AddData.php
  		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $page_contents, $page_title, $page_name_formula);
  		if ($form_submitted) {
+@@ -191,7 +195,12 @@
+ 				<form name="createbox" onsubmit="return validate_all()" action="" method="post" class="createbox">
+ 
+ END;
+-			$text .= $form_text;
++			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|start*/
++  			//Original code: $text .= $form_text;
++     		$html = '';
++     		wfRunHooks('sfEditPageBeforeForm', array(&$page_title, &$html));
++     		$text .= $html.$form_text;
++  			/*op-patch|TS|2009-09-18|end*/
+ 		}
+ 	}
+ 	SFUtils::addJavascriptAndCSS();
 Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
@@ -1736,7 +1750,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5107)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5120)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
@@ -1883,7 +1897,7 @@ Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_EditData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_EditData.php	(revision 5107)
+--- extensions/SemanticForms/specials/SF_EditData.php	(revision 5120)
 +++ extensions/SemanticForms/specials/SF_EditData.php	(working copy)
 @@ -111,7 +111,12 @@
  	<input type="hidden" name="query" value="true" />
