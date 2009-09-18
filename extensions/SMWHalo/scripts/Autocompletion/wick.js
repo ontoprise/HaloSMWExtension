@@ -180,32 +180,37 @@ AutoCompleter.prototype = {
     },
     getEventElement: function(e) { return (e.srcElement ? e.srcElement : (e.target ? e.target : e.currentTarget));
                          },  //this.getEventElement()
-    findElementPosX: function(obj) {
+    findElementPosXY: function(obj) {
         var curleft = 0;
+        var curtop = 0;
+
+        //if (this.isInIframe(obj)) alert('jippie');
 
         if (obj.offsetParent) {
             while (obj.offsetParent) {
                 curleft += obj.offsetLeft;
-                obj = obj.offsetParent;
-            }
-        }  //if offsetParent exists
-        else if (obj.x) curleft += obj.x
-
-        return curleft;
-    },  //this.findElementPosX
-    findElementPosY: function(obj) {
-        var curtop = 0;
-
-        if (obj.offsetParent) {
-            while (obj.offsetParent) {
                 curtop += obj.offsetTop;
                 obj = obj.offsetParent;
             }
         }  //if offsetParent exists
-        else if (obj.y) curtop += obj.y
-
-        return curtop;
-    },  //this.findElementPosY
+        else {
+            if (obj.x) curleft += obj.x
+            if (obj.y) curtop += obj.y
+        }
+        
+        return [curleft, curtop];
+    },  //this.findElementPosXY
+    isInIframe: function(obj) {
+        var parent = obj;
+        while (parent) {
+            obj = parent;
+            parent = obj.parentNode;
+        }
+        for (i = 0; i < window.parent.frames.length; i++) {
+            if (window.parent.frames[i].document == obj) return true;
+        }
+        return false;
+    },
     handleKeyPress: function(event) {
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
@@ -481,10 +486,9 @@ AutoCompleter.prototype = {
             && (Element.hasClassName(elementClicked, "MWFloaterContentHeader")
                    || (Element.hasClassName(elementClicked.parentNode, "MWFloaterContentHeader")))) {
             this.mousePressed = true;
-            var x = this.findElementPosX(this.siw.inputBox);
-            var y = this.findElementPosY(this.siw.inputBox);
-            this.AC_yDiff = (e.pageY - y) - parseInt(this.siw.floater.style.top);
-            this.AC_xDiff = (e.pageX - x) - parseInt(this.siw.floater.style.left);
+            var xy = this.findElementPosXY(this.siw.inputBox);
+            this.AC_yDiff = (e.pageY - xy[1]) - parseInt(this.siw.floater.style.top);
+            this.AC_xDiff = (e.pageX - xy[0]) - parseInt(this.siw.floater.style.left);
         } else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent")
         && !this.isWithinNodeSimple(elementClicked, "MWFloater0")){
             this.hideSmartInputFloater();        	
@@ -497,13 +501,12 @@ AutoCompleter.prototype = {
         var eL = this.getEventElement(e);
 
         if (this.mousePressed && this.siw) {
-            var x = this.findElementPosX(this.siw.inputBox);
-            var y = this.findElementPosY(this.siw.inputBox);
+            var xy = this.findElementPosXY(this.siw.inputBox);
 
-            this.siw.floater.style.top = (e.pageY - y - this.AC_yDiff) + "px";
-            this.siw.floater.style.left = (e.pageX - x - this.AC_xDiff) + "px";
-            this.AC_userDefinedY = (e.pageY - y - this.AC_yDiff);
-            this.AC_userDefinedX = (e.pageX - x - this.AC_xDiff);
+            this.siw.floater.style.top = (e.pageY - xy[1] - this.AC_yDiff) + "px";
+            this.siw.floater.style.left = (e.pageX - xy[0] - this.AC_xDiff) + "px";
+            this.AC_userDefinedY = (e.pageY - xy[1] - this.AC_yDiff);
+            this.AC_userDefinedX = (e.pageX - xy[0] - this.AC_xDiff);
             document.cookie = "this.AC_userDefinedX=" + this.AC_userDefinedX;
             document.cookie = "this.AC_userDefinedY=" + this.AC_userDefinedY;
         }
@@ -624,8 +627,7 @@ AutoCompleter.prototype = {
          // Browser dependant! only IE ------------------------
         if (OB_bd.isIE && inputBox.tagName == 'TEXTAREA') {
              // put floater at cursor position
-            var posY = this.findElementPosY(inputBox);
-            var posX = this.findElementPosX(inputBox);
+            var posXY = this.findElementPosXY(inputBox);
 
             inputBox.focus();
             var textScrollTop = inputBox.scrollTop;
@@ -634,10 +636,11 @@ AutoCompleter.prototype = {
             selection_range.collapse(true);
             
             if (advancedEditor) {
-                pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                var posAdvEditorXY = this.findElementPosXY(iFrameOfAdvEditor);
+                pending.style.left = (posAdvEditorXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                pending.style.top = (posAdvEditorXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
             } else {
-                pending.style.left = selection_range.boundingLeft - posX
+                pending.style.left = selection_range.boundingLeft - posXY[0]
                 pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
             }
          // only IE -------------------------
@@ -651,18 +654,18 @@ AutoCompleter.prototype = {
 
             if (x != null && y != null) {
                 
-                var posY = this.findElementPosY(advancedEditor ? iFrameOfAdvEditor : inputBox);
-                var posX = this.findElementPosX(advancedEditor ? iFrameOfAdvEditor : inputBox);
+                var posXY = this.findElementPosXY(advancedEditor ? iFrameOfAdvEditor : inputBox);
 
-                pending.style.left = (parseInt(x) + posX) + "px";
-                pending.style.top = (parseInt(y) + posY) + "px";
+                pending.style.left = (parseInt(x) + posXY[0]) + "px";
+                pending.style.top = (parseInt(y) + posXY[1]) + "px";
             } else {
+                var posXY = this.findElementPosXY(advancedEditor ? iFrameOfAdvEditor : inputBox);
                 if (advancedEditor) {
-                    pending.style.left = (this.findElementPosX(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                    pending.style.top = (this.findElementPosY(iFrameOfAdvEditor) + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
+                    pending.style.left = (posXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
+                    pending.style.top = (posXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
                 } else {
-                    pending.style.left = (this.findElementPosX(inputBox) + inputBox.offsetWidth - 360) + "px";
-                    pending.style.top = (this.findElementPosY(inputBox) + inputBox.offsetHeight - 160) + "px";
+                    pending.style.left = (posXY[0] + inputBox.offsetWidth - 360) + "px";
+                    pending.style.top = (posXY[1] + inputBox.offsetHeight - 160) + "px";
                 }
             }
         }
