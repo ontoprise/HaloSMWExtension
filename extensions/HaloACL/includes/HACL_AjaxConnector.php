@@ -669,7 +669,7 @@ HTML;
 
         <div id="step2_$panelId" style="width:600px">
             <input id="step2_button_$panelId" type="button" name="gotoStep2" value="$hacl_general_nextStep"
-            style="margin-left:30px;"/>
+            style="margin-left: 80px;margin-top:9px"/>
         </div>
 
         <script type="javascript">
