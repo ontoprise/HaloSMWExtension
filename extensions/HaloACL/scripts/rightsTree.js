@@ -827,6 +827,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
     var rightsExisting = false;
     //build ACL nodes
+
     for(var i= 0, len = data.length; i<len; ++i){
         rightsExisting = true;
         var element = data[i];
@@ -855,7 +856,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         new YAHOO.widget.TextNode("no ACLs available", parentNode,false);
     }else{
         if($('haloacl_rightstree_count') != null){
-            $('haloacl_rightstree_count').innerHTML = parentNode.getNodeCount();
+            $('haloacl_rightstree_count').innerHTML = data.length;
         }
     }
 

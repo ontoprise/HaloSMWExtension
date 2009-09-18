@@ -78,6 +78,10 @@ HTML;
 
 function getHACLToolbar($articleTitle) {
     global $wgUser;
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+
     $isPageProtected = false;
     $toolbarEnabled = true;
     $newArticle = true;
@@ -103,7 +107,7 @@ function getHACLToolbar($articleTitle) {
     if(!$newArticle) {
     // trying to get assigned right
         try {
-            $SD = HACLSecurityDescriptor::newFromName("ACL:Page/".$articleTitle);
+            $SD = HACLSecurityDescriptor::newFromName("$ns:Page/".$articleTitle);
             $protectedWith = $SD->getSDName();
             $isPageProtected = true;
             if(!$SD->userCanModify($wgUser->getName())) {
@@ -124,7 +128,8 @@ function getHACLToolbar($articleTitle) {
 
     // does a default template exist?
     try {
-        $defaultSD = HACLSecurityDescriptor::newFromName("ACL:Template/".$wgUser->getName());
+
+        $defaultSD = HACLSecurityDescriptor::newFromName("$ns:Template/".$wgUser->getName());
         $defaultSDExists = true;
         // if no other right is assigned to that article the default will be used
         if(!$isPageProtected) {
