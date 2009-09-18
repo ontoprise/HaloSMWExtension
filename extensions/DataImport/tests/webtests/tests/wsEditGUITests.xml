@@ -16,6 +16,17 @@
 			<antcall target="createWebTestWS" />
 		</webtest>
 
+		<webtest name="WSEditRESTPart2a">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+						
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit" />
+			
+			<clickButton xpath="//input[@id='wpSave']"
+				description="Click save button" />
+		</webtest>
+			
 		<webtest name="WSEditRESTPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
@@ -173,15 +184,26 @@
 		<clickButton description="Save new wwsd." htmlId="wpSave" />
 	</webtest>
 
+		<webtest name="WSEditSOAPPart2a">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			</config>
+								
+			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2?action=edit" />
+			<clickButton xpath="//input[@id='wpSave']"
+				description="Click save button" />
+	</webtest>
+	
 	<webtest name="WSEditSOAPPart2">
 		<config host="localhost">
 			<option name="ThrowExceptionOnFailingStatusCode" value="false" />
 		</config>
+		
 		<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2" />
 		<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a" description="Click edit button" />
 		<sleep seconds="10" />
 
-		<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened" />
+		 <verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened" />
 
 		<verifyRadioButton htmlId="step1-protocol-rest" checked="false" description="check if protocol is soap" />
 

@@ -308,7 +308,7 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 			? true : $messages .= "Summary was not added correctly. ";
 		strpos($wikiText, "'''Start:''' 2009/08/30 09:30:00") > 0
 			? true : $messages .= "Start was not added correctly. ";
-		strpos($wikiText, "'''End:''' 20090830T103000") > 0
+		strpos($wikiText, "'''End:''' 2009/08/30 10:30:00") > 0
 			? true : $messages .= "End was not added correctly. ";
 		strpos($wikiText, "'''Organizer(s):''' steinbauer@ontoprise.de") > 0
 			? true : $messages .= "Organizers was not added correctly. ";

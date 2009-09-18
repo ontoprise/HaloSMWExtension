@@ -95,6 +95,10 @@
 
 
 		<webtest name="WSRepositoryCheckEditButton">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+			</config>
+			
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
@@ -104,9 +108,7 @@
 			<sleep seconds="5" />
 
 			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
-			-->
-
-
+					-->
 		</webtest>
 
 

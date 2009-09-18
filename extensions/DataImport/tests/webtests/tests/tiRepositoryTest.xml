@@ -58,6 +58,12 @@
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
+			
+			<clickElement xpath="//td[@id='term-import-tab']"
+							description="Click term import tab" />
+			
+			<sleep seconds="1"/>
+			
 			<clickButton xpath="//table[@id='termimporttable']/tbody/tr[2]/td[3]/button" description="Click update button"/>
 
 			<sleep seconds="5" />
@@ -76,6 +82,12 @@
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" /> 
+			
+			<clickElement xpath="//td[@id='term-import-tab']"
+				description="Click term import tab" />
+						
+			<sleep seconds="1"/>
+			
 			<!-- this one does not work due to a strange error 
 			<clickButton xpath="//table[@id='termimporttable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
 			<sleep seconds="5" />
