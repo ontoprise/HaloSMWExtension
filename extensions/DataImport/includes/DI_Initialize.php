@@ -15,6 +15,7 @@ $smwgDIIP = $IP . '/extensions/DataImport';
 $smwgDIScriptPath = $wgScriptPath . '/extensions/DataImport';
 $wgHooks['smwInitializeTables'][] = 'smwfDIInitializeTables';
 
+
 /**
  * Configures Data Import Extension for initialization.
  * Must be called *AFTER* SMWHalo is intialized.
@@ -57,6 +58,8 @@ function smwfDISetupExtension() {
 	$wgHooks['BeforePageDisplay'][]='smwDITBAddHTMLHeader';
 	
 	$wgHooks['BeforePageDisplay'][]='smwDIMAAddHTMLHeader';
+	
+	$wgHooks['smwhACNamespaceMappings'][] = 'difRegisterAutocompletionIcons';
 	
 	smwfDIInitMessages();
 	
@@ -335,4 +338,10 @@ function smwfDIGetAjaxMethodPrefix() {
 	return substr($func_name, 4, 4); // return _xx_ of smwf_xx_methodname, may return FALSE
 }
 
-?>
+function difRegisterAutocompletionIcons(& $namespaceMappings) { 
+	$namespaceMappings[NS_TI_EMAIL]="/extensions/DataImport/skins/TermImport/images/Image_Email.gif";
+	$namespaceMappings[SMW_NS_WEB_SERVICE]="/extensions/DataImport/skins/webservices/Image Webservice.gif";
+	$namespaceMappings[SMW_NS_TERM_IMPORT]="/extensions/DataImport/skins/TermImport/images/Image Termimport.gif";
+	
+	return true;
+}

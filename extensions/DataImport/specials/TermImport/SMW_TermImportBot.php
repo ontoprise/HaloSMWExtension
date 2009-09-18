@@ -75,6 +75,8 @@ class TermImportBot extends GardeningBot {
 		
 		$timeInTitle = $this->getDateString();
 
+		$this->createTermImportResultContentPreview($termImportName);
+		
 		$result = $this->importTerms($settings, $termImportName);
 		
 		if($result != wfMsg('smw_ti_import_successful')){
@@ -603,10 +605,40 @@ class TermImportBot extends GardeningBot {
 			foreach($this->importErrors as $error){
 				$result .= "\n* ".$error;
 			}
-				
-			$result .= "\n[[Category:TermImportRun]]";
 		}
+		$result .= "\n[[Category:TermImportRun]]";
 
+		$timeInTitle = $this->getDateString();
+		smwf_om_EditArticle("TermImport:".$termImportName
+			."/".$timeInTitle, 'TermImportBot', $result, '');
+		//smwf_om_TouchArticle("TermImport:".$termImportName."/".$timeInTitle);
+		smwf_om_TouchArticle("TermImport:".$termImportName);
+	}
+	
+	private function createTermImportResultContentPreview($termImportName){
+		$result = "__NOTOC__\n";
+		$result .= "==== Import summary ====";
+		$result .= "\n Term Import definition: [[belongsToTermImport::TermImport:".$termImportName."|"
+			.$termImportName."]]";
+		$result .= "\n Import date: [[hasImportDate::";
+		$result .= $this->getDateString()."]]";
+			
+		$result .= "\n Was successfull: [[wasImportedSuccessfully::false]] (Check [[Special:Gardening]] if Term Import is finished.)";
+		
+		$result .= "\n==== Added terms ====\n";
+		$result .= "{{#ask: [[WasAddedDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		$result .= "\n==== Updated terms ====\n";
+		$result .= "{{#ask: [[WasUpdatedDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		$result .= "\n==== Ignored terms ====\n";
+		$result .= "{{#ask: [[IgnoredDuringTermImport::TermImport:".$termImportName."/"
+			.$this->getDateString()."]]}}";
+		
+		$result .= "\n[[Category:TermImportRun]]";
+		
 		$timeInTitle = $this->getDateString();
 		smwf_om_EditArticle("TermImport:".$termImportName
 			."/".$timeInTitle, 'TermImportBot', $result, '');
