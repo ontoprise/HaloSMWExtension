@@ -784,8 +784,7 @@ AdvancedAnnotation.prototype = {
             } else { // FCK mode
                 // Call the Data Processor to generate the output data.
                 var data = gEditInterface.getValue();
-            
-                this.wikiTextParser = new FCKTextParser(data);
+                this.wikiTextParser = new WikiTextParser(data);
                 this.wikiTextParser.addTextChangedHook(this.updateAnchors.bind(this));
                 this.wikiTextParser.addCategoryAddedHook(this.categoryAdded.bind(this));
                 this.wikiTextParser.addRelationAddedHook(this.relationAdded.bind(this));
