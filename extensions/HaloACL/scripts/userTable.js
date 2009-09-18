@@ -633,8 +633,8 @@ YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
     $$('.'+classname).each(function(item){
         var temp = $(item).readAttribute("name");
         temp = temp.toLowerCase();
-        console.log("temp:"+temp);
-        console.log("filter:"+filter);
+        //console.log("temp:"+temp);
+        //console.log("filter:"+filter);
         if(temp.indexOf(filter) >= 0 || filter == null || filter == ""){
             $(item).parentNode.parentNode.parentNode.style.display = "inline";
         }else{

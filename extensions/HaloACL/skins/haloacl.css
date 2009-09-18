@@ -145,7 +145,8 @@ abbr,acronym { border:0;
 .yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav{
     border:0px solid #000!important;
 }
-button:hover{
+.first-child button:hover{
+    
     background:none!important;
     border:0px solid!important;
 
@@ -518,7 +519,7 @@ button:hover{
     overflow: -moz-scrollbars-vertical!important;
     overflow-y: auto!important;
     padding:5px 0 0px 5px;
-    height:257px;
+    height:266px;
 }
 /* right side */
 
@@ -557,7 +558,7 @@ button:hover{
 }
 
 .haloacl_rightpanel_selecttab_rightpart_datatable{
-    height:262px;
+    height:271px;
     border:1px #000 solid;
     border-style:none none solid none;
 }

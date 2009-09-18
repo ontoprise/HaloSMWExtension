@@ -1520,8 +1520,8 @@ HTML;
 HTML;
         }else {
             $content .= <<<HTML
-                        <div style="width:50%;float:left;text-align:right"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel('$panelid');});" /></div>
-                        <div style="width:50%;float:left;text-align:left">&nbsp;<input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
+                        <div style="width:50%;float:left;text-align:left"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel('$panelid');});" /></div>
+                        <div style="width:50%;float:left;text-align:right">&nbsp;<input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
                         <script>
                         YAHOO.haloacl.addTooltip("tooltip_save_$panelid", "haloacl_save_$panelid", "click here to save the modifcation right.");
                         </script>
@@ -1559,12 +1559,23 @@ HTML;
                 if (autoGenerate == "on") {
 
                     var description = "";
+
+                    var rightdesc = "";
+                    var isFullaccess = false;;
                     $$('.right_rights_$panelid').each(function(item){
                         if(item.checked && item.name != "fullaccess"){
-                            if ((description) != "") description = description+", ";
-                            description = description+item.name;
+                            if ((rightdesc) != "") rightdesc = rightdesc+", ";
+                            rightdesc = rightdesc+item.name;
+                        }
+                        if(item.checked && item.name == "fullaccess"){
+                            isFullaccess = true;
                         }
                     });
+                    if(isFullaccess){
+                        description = "fullaccess";
+                    }else{
+                        description = rightdesc;
+                    }
 
                     var users = "";
                     var groups = "";
