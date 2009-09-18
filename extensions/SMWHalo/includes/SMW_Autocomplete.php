@@ -607,6 +607,7 @@ class AutoCompletionHandler {
 				foreach($queryResults as $r) {
 					if (empty($userInput) || stripos((string) $r[0], $userInput) !== false) {
 						$textTitles[] = (string) $r[0];
+						if (count($textTitles) >= SMW_AC_MAX_RESULTS) break;
 					}
 				}
 				$textTitles = array_unique($textTitles);
@@ -639,7 +640,7 @@ class AutoCompletionHandler {
 		// parse params and answer query
 		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
 		$params['format'] = "xml";
-		$params['limit'] = SMW_AC_MAX_RESULTS;
+		//$params['limit'] = SMW_AC_MAX_RESULTS;
 		if ($column != "_var0") $params['sort'] = $column;
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 			
