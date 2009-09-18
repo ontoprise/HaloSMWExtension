@@ -197,7 +197,7 @@ AutoCompleter.prototype = {
             if (obj.x) curleft += obj.x
             if (obj.y) curtop += obj.y
         }
-        
+
         return [curleft, curtop];
     },  //this.findElementPosXY
     isInIframe: function(obj) {
@@ -517,11 +517,15 @@ AutoCompleter.prototype = {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
                 var y = Position.cumulativeOffset(this.siw.inputBox)[1] + this.siw.inputBox.offsetHeight;
 
-                 //hack: browser-specific adjustments.
+                //hack: browser-specific adjustments.
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
 
                 if (!OB_bd.isGecko && !OB_bd.isIE) y += 10;
-                
+
+                // ugly fix when y is too big, happens in fullscreen mode of FCK
+                var iH = (OB_bd.isIE) ? top.document.body.innerHeight : top.window.innerHeight;
+                if (y > iH - 20) y = Position.cumulativeOffset(this.siw.inputBox)[1];
+
                 // read position flag and set it: fixed and absolute is possible
                 var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
                 if (posStyle == null || posStyle == 'absolute') {
@@ -1339,11 +1343,9 @@ AutoCompleter.prototype = {
         
         var acMessage = document.createElement("div");
         Element.addClassName(acMessage, "acMessage");
-        if (GeneralBrowserTools.getURLParameter("mode") != 'wysiwyg') {
-            acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
-        } else {
-            acMessage.innerHTML = gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
-        }
+        acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
+        if (GeneralBrowserTools.getURLParameter("mode") == 'wysiwyg')
+            acMessage.innerHTML += ' ' + gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
         container.appendChild(acMessage);
         this.AC_idCounter++;
     },
