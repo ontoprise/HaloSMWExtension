@@ -171,10 +171,10 @@ protected $smwUserMessages = array(
 	
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
-	'smw_ob_cmd_createsubcategorysamelevel' => 'Subkategorie auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_createsubcategorysamelevel' => 'Subkat. auf gleicher Ebene hinzufügen',
 	'smw_ob_cmd_renamecategory' => 'Umbenennen',
 	'smw_ob_cmd_createsubproperty' => 'Subproperty hinzufügen',
-	'smw_ob_cmd_createsubpropertysamelevel' => 'Subproperty auf gleicher Ebene hinzufügen',
+	'smw_ob_cmd_createsubpropertysamelevel' => 'Subprop. auf gleicher Ebene hinzufügen',
 	'smw_ob_cmd_renameproperty' => 'Umbenennen',
 	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
