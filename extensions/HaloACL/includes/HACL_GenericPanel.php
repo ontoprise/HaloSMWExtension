@@ -85,7 +85,7 @@ HTML;
         $this->footer = <<<HTML
         </div> <!-- end of panel div -->
         <script type="javascript>
-            YAHOO.haloacl.addTooltip("tooltip_$panelid","closebutton_$panelid","Click here to close the panel");
+            YAHOO.haloacl.addTooltip("tooltip_$panelid","closebutton_$panelid","Click here to delete the right");
 
             //array keeping previous contents in case of replace expand mode
             YAHOO.haloacl.genericPanelParentContents_$panelid = new Array();

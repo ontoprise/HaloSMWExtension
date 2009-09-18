@@ -265,14 +265,16 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      */
     check: function() {
         this.setCheckState(2);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.check) {
                 c.check();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
 
     /**
@@ -280,14 +282,16 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      */
     uncheck: function() {
         this.setCheckState(0);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.uncheck) {
                 c.uncheck();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
 
     setTreeType: function(newTreeType) {
@@ -328,7 +332,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
             sb[sb.length] = '>';
-            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+            sb[sb.length] = '<div style="width:18px!important" class="ygtvspacer"></div></td>';
 
 
         } else {
@@ -631,14 +635,16 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
      */
     check: function() {
         this.setCheckState(2);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.check) {
                 c.check();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
 
     /**
@@ -646,14 +652,17 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
      */
     uncheck: function() {
         this.setCheckState(0);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.uncheck) {
                 c.uncheck();
             }
         }
-        this.updateCheckHtml();
         this.updateParent();
+        */
+        this.updateCheckHtml();
+
     },
 
     setTreeType: function(newTreeType) {

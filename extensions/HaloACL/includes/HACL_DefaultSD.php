@@ -116,6 +116,7 @@ class  HACLDefaultSD  {
 	 * @return true
 	 */
 	public static function articleSaveComplete(&$article, &$user, $text) {
+            global $wgUser;
 		
 		if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
 			// No default SD for articles in the namespace ACL
@@ -218,16 +219,22 @@ class  HACLDefaultSD  {
 
 				// Create the default SD for the saved article
 				// Get the content of the default SD
-				$defaultSDArticle = new Article($defaultSD);
-				$content = $defaultSDArticle->getContent();
+
+                                #$defaultSDArticle = new Article($defaultSD);
+				#$content = $defaultSDArticle->getContent();
 
 				// Create the new SD
 				$newSDName = HACLSecurityDescriptor::nameOfSD($article->getTitle()->getFullText(),
 				HACLSecurityDescriptor::PET_PAGE);
 
-				$etc = haclfDisableTitlePatch();
+				#$etc = haclfDisableTitlePatch();
 				$newSD = Title::newFromText($newSDName);
-				haclfRestoreTitlePatch($etc);
+				#haclfRestoreTitlePatch($etc);
+                                $content = "
+{{#predefined right:rights=".$defaultSDName."}}
+{{#manage rights:assigned to=User:".$wgUser->getName()."}}
+[[Category:ACL/ACL]]
+";
 
 				$newSDArticle = new Article($newSD);
 				$newSDArticle->doEdit($content, "Custom security descriptor.");

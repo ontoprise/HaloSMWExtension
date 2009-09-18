@@ -257,7 +257,7 @@ $messages['en'] = array(
     'hacl_SDRightsPanelContainer_1' => 'Editing:',
     'hacl_SDRightsPanelContainer_2' => 'Delete right',
     'hacl_SDRightsPanelContainer_3' => 'Discard Changes',
-    'hacl_SDRightsPanelContainer_4' => 'Save Right',
+    'hacl_SDRightsPanelContainer_4' => 'Save ACL',
 
     'hacl_RightsContainer_1' => '[ACL templates]',
     'hacl_RightsContainer_2' => 'Use selected template',
