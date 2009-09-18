@@ -120,15 +120,12 @@ abbr,acronym { border:0;
 }
 /* custom stuff */
 
-/* yui style-customization */
-.yui-skin-sam .yui-navset .yui-nav .selected, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected {
-    margin-top:-1px!important;
-}
-.yui-skin-sam .yui-navset .yui-nav ul, .yui-skin-sam .yui-navset .yui-navset-top ul {
-    margin-top:2px!important;
-}
 
 #content{
+}
+
+.yui-nav{
+    height:25px;
 }
 
 #p-search, #p-logo{
