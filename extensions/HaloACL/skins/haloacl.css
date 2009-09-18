@@ -124,10 +124,6 @@ abbr,acronym { border:0;
 #content{
 }
 
-.yui-nav{
-    height:25px;
-}
-
 #p-search, #p-logo{
     z-index:1!important;
 }
