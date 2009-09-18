@@ -747,7 +747,7 @@ abbr,acronym { border:0;
 }
 #haloacl_manageuser_contentlist{
     margin:0 0 0 20px;
-    height:329px;
+    min-height:329px;
     width:600px;
     float:left;
     background-color:#FFF;
