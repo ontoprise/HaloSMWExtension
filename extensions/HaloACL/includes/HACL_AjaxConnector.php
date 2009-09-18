@@ -916,9 +916,6 @@ function getManageUserGroupPanel($panelid, $name="", $description="", $users=nul
         $newGroup = "true";
     }
 
-    if($newGroup == "false") {
-        $groupname = "[ Editing Group:$name ]";
-    }
 
     $hacl_manageUserGroupPanel_1 = wfMsg('hacl_manageUserGroupPanel_1');
 
@@ -1190,15 +1187,15 @@ HTML;
                             </div>
                             <div class="haloacl_panel_rights">
 
-                                <div class="right_fullaccess"><input id = "checkbox_right_fullaccess" actioncode="255" type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_fullaccess</div>
-                                <div class="right_read"><input id = "checkbox_right_read" type="checkbox" actioncode="128" actioncode="128" class="right_rights_$panelid" name="read" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_read</div>
-                                <div class="right_edit"><input id = "checkbox_right_edit" type="checkbox" actioncode="8" class="right_rights_$panelid" name="edit" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_edit</div>
-                                <div class="right_formedit"><input id = "checkbox_right_formedit" actioncode="64" type="checkbox" class="right_rights_$panelid" name="formedit" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_editfromform</div>
-                                <div class="right_wysiwyg"><input id = "checkbox_right_wysiwyg" type="checkbox" actioncode="32" class="right_rights_$panelid" name="wysiwyg" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_WYSIWYG</div>
-                                <div class="right_create"><input id = "checkbox_right_create" type="checkbox" actioncode="4" class="right_rights_$panelid" name="create" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_create</div>
-                                <div class="right_move"><input id = "checkbox_right_move" type="checkbox" actioncode="2" class="right_rights_$panelid" name="move" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_move</div>
-                                <div class="right_delete"><input id = "checkbox_right_delete" type="checkbox" actioncode="1" class="right_rights_$panelid" name="delete" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_delete</div>
-                                <div class="right_annotate"><input id = "checkbox_right_annotate" type="checkbox" actioncode="16" class="right_rights_$panelid" name="annotate" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_annotate</div>
+                                <div class="right_fullaccess"><input id = "checkbox_right_fullaccess_$panelid" actioncode="255" type="checkbox" class="right_rights_$panelid" name="fullaccess" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_fullaccess</div>
+                                <div class="right_read"><input id = "checkbox_right_read_$panelid" type="checkbox" actioncode="128" actioncode="128" class="right_rights_$panelid" name="read" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_read</div>
+                                <div class="right_edit"><input id = "checkbox_right_edit_$panelid" type="checkbox" actioncode="8" class="right_rights_$panelid" name="edit" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_edit</div>
+                                <div class="right_formedit"><input id = "checkbox_right_formedit_$panelid" actioncode="64" type="checkbox" class="right_rights_$panelid" name="formedit" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_editfromform</div>
+                                <div class="right_wysiwyg"><input id = "checkbox_right_wysiwyg_$panelid" type="checkbox" actioncode="32" class="right_rights_$panelid" name="wysiwyg" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_WYSIWYG</div>
+                                <div class="right_create"><input id = "checkbox_right_create_$panelid" type="checkbox" actioncode="4" class="right_rights_$panelid" name="create" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_create</div>
+                                <div class="right_move"><input id = "checkbox_right_move_$panelid" type="checkbox" actioncode="2" class="right_rights_$panelid" name="move" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_move</div>
+                                <div class="right_delete"><input id = "checkbox_right_delete_$panelid" type="checkbox" actioncode="1" class="right_rights_$panelid" name="delete" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_delete</div>
+                                <div class="right_annotate"><input id = "checkbox_right_annotate_$panelid" type="checkbox" actioncode="16" class="right_rights_$panelid" name="annotate" onClick="updateRights$panelid(this)" $disabled/>&nbsp;$hacl_rightsPanel_right_annotate</div>
 
                             </div>
                         </div>
@@ -1821,15 +1818,15 @@ HTML;
             $footerextension .= <<<HTML
                 <script type="javascript>
 HTML;
-            if ($actions & HACLRight::EDIT)  $footerextension .= "$('checkbox_right_edit').checked = true;";
-            if ($actions & HACLRight::CREATE)  $footerextension .= "$('checkbox_right_create').checked = true;";
-            if ($actions & HACLRight::MOVE)  $footerextension .= "$('checkbox_right_move').checked = true;";
-            if ($actions & HACLRight::DELETE)  $footerextension .= "$('checkbox_right_delete').checked = true;";
-            if ($actions & HACLRight::READ)  $footerextension .= "$('checkbox_right_read').checked = true;";
-            if ($actions & HACLRight::FORMEDIT)  $footerextension .= "$('checkbox_right_formedit').checked = true;";
-            if ($actions & HACLRight::ANNOTATE)  $footerextension .= "$('checkbox_right_annotate').checked = true;";
-            if ($actions & HACLRight::WYSIWYG)  $footerextension .= "$('checkbox_right_wysiwyg').checked = true;";
-
+            if ($actions & HACLRight::EDIT)  $footerextension .= "$('checkbox_right_edit_$panelid').checked = true;";
+            if ($actions & HACLRight::CREATE)  $footerextension .= "$('checkbox_right_create_$panelid').checked = true;";
+            if ($actions & HACLRight::MOVE)  $footerextension .= "$('checkbox_right_move_$panelid').checked = true;";
+            if ($actions & HACLRight::DELETE)  $footerextension .= "$('checkbox_right_delete_$panelid').checked = true;";
+            if ($actions & HACLRight::READ)  $footerextension .= "$('checkbox_right_read_$panelid').checked = true;";
+            if ($actions & HACLRight::FORMEDIT)  $footerextension .= "$('checkbox_right_formedit_$panelid').checked = true;";
+            if ($actions & HACLRight::ANNOTATE)  $footerextension .= "$('checkbox_right_annotate_$panelid').checked = true;";
+            if ($actions & HACLRight::WYSIWYG)  $footerextension .= "$('checkbox_right_wysiwyg_$panelid').checked = true;";
+            if($actions & HACLRight::EDIT && $actions & HACLRight::CREATE && $actions & HACLRight::MOVE && $actions & HACLRight::DELETE && $actions & HACLRight::READ && $actions & HACLRight::FORMEDIT && $actions & HACLRight::ANNOTATE && $actions & HACLRight::WYSIWYG) $footerextension .= "$('checkbox_right_fullaccess_$panelid').checked = true;";
             $footerextension .= "</script>";
 
         } else {
@@ -2407,7 +2404,7 @@ HTML;
     }
 
     if($type != "readOnly") {
-            $html .= <<<HTML
+        $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
             <span class="haloacl_cont_under_trees">
                 Showing <span id="haloacl_rightstree_count">0</span> element(s)
@@ -2540,6 +2537,9 @@ HTML;
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
 function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
 
     $hacl_SDRightsPanelContainer_1 = wfMsg('hacl_SDRightsPanelContainer_1');
     $hacl_SDRightsPanelContainer_2 = wfMsg('hacl_SDRightsPanelContainer_2');
@@ -2549,7 +2549,7 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
     if ($readOnly === "true") $readOnly = true;
     if ($readOnly === "false") $readOnly = false;
 
-    $sdName = "ACL:".$sdName;
+    $sdName = "$ns:".$sdName;
     $panelid = "SDRightsPanel_$sdId";
     $response = new AjaxResponse();
 
@@ -2832,12 +2832,15 @@ function clearTempSessionGroup() {
 
 
 function saveTempGroupToSession($groupxml) {
-// checking if action is valid
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    // checking if action is valid
     $xml = new SimpleXMLElement($groupxml);
     $groupname = (String)$xml->name;
     $newGroup = (String)$xml->newgroup;
     if($newGroup == "true") {
-        $article = new Article(Title::newFromText("ACL:Group/$groupname"));
+        $article = new Article(Title::newFromText("$ns:Group/$groupname"));
         if($article->exists()) {
             $response = new AjaxResponse();
             $response->setResponseCode(400);
@@ -2951,6 +2954,9 @@ function deleteSecurityDescriptor($sdId) {
  */
 function saveSecurityDescriptor($secDescXml) {
     global $wgUser;
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
     $secDescXmlInstance = new SimpleXMLElement($secDescXml);
 
     try {
@@ -3118,7 +3124,7 @@ HTML;
         $sdarticle->doEdit($inline, "");
         $SDID = $sdarticle->getID();
 
-        $articlename = preg_replace("/ACL:Page\//is", "", $aclName);
+        $articlename = preg_replace("/$ns:Page\//is", "", $aclName);
 
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setContentType("json");
@@ -3136,6 +3142,11 @@ HTML;
 
 
 function saveGroup($manageRightsXml,$parentgroup = null) {
+    global $haclgContLang;
+    global $wgUser;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+
     if(!array_key_exists("tempgroups", $_SESSION)) {
         $ajaxResponse = new AjaxResponse();
         $ajaxResponse->setResponseCode(400);
@@ -3198,7 +3209,7 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         $groupName = $groupXml->name;
 
         // create article for security descriptor
-        $sdarticle = new Article(Title::newFromText('ACL:'.'Group'.'/'.$groupName));
+        $sdarticle = new Article(Title::newFromText("$ns:".'Group'.'/'.$groupName));
 
 
         if($users == "") {
@@ -3220,11 +3231,14 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
             $inline .= '
 {{#manage group:assigned to='.$mrgroups.'}}
         [[Category:ACL/Group]]';
-        }else {
+        }elseif($mrgroups != "" && $mrusers != "") {
             $inline .= '
 {{#manage group:assigned to='.$mrgroups.','.$mrusers.'}}
         [[Category:ACL/Group]]';
-
+        }else{
+            $inline .= '
+{{#manage group:assigned to=User:'.$wgUser->getName().'}}
+        [[Category:ACL/Group]]';
         }
 
 
@@ -3373,7 +3387,9 @@ function readGroupDefinition($groupName) {
 
 
 function saveWhitelist($whitelistXml) {
-
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
     try {
     //get group members
         $oldWhitelists = HACLWhitelist::newFromDB();
@@ -3398,7 +3414,7 @@ function saveWhitelist($whitelistXml) {
 
 
         // create article
-        $sdarticle = new Article(Title::newFromText('ACL:'.'Whitelist'));
+        $sdarticle = new Article(Title::newFromText("$ns:".'Whitelist'));
         $inline = '{{#whitelist:pages='.$pages.'}}';
 
         $sdarticle->doEdit($inline, "");
@@ -3424,6 +3440,9 @@ function saveWhitelist($whitelistXml) {
  * @return <JSON>   return array of documents
  */
 function getAutocompleteDocuments($subName,$type) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
     global $wgExtraNamespaces,$wgUser;
 
 
@@ -3440,7 +3459,7 @@ function getAutocompleteDocuments($subName,$type) {
     if($type == "namespace") {
         foreach($wgExtraNamespaces as $ns) {
             $addThatItem = true;
-            $SDName = "ACL:Namespace/$ns";
+            $SDName = "$ns:Namespace/$ns";
             try {
                 $sd = HACLSecurityDescriptor::newFromName($SDName);
                 if(!$sd->userCanModify($wgUser->getName())) {
@@ -3458,7 +3477,7 @@ function getAutocompleteDocuments($subName,$type) {
         foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
             $addThatItem = true;
             $itemname = $item["name"];
-            $SDName = "ACL:$realnametype/$itemname";
+            $SDName = "$ns:$realnametype/$itemname";
             try {
                 $sd = HACLSecurityDescriptor::newFromName($SDName);
                 if(!$sd->userCanModify($wgUser->getName())) {
@@ -4074,7 +4093,6 @@ HTML;
     $html .= <<<HTML
         <div id="haloacl_manageUser_editing_container" style="display:none">
             <div id="haloacl_manageUser_editing_title">
-        $hacl_manageUser_9
             </div>
 HTML;
 
@@ -4084,13 +4102,13 @@ HTML;
             </div>
             <div id="manageUserGroupSettingsModificationRight" style="">
                 <script>
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
+                   // YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
                 </script>
 
                 <div id="manageUserGroupSettingsModificationRight">
                 </div>
                 <script>
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                    // YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                 </script>
             </div>
             <div class="haloacl_tab_section_content">
@@ -4112,16 +4130,20 @@ HTML;
 
         <script>
             YAHOO.haloacl.manageUsers_handleEdit = function(groupname){
+                $('haloacl_panel_name_manageUserGroupsettings').innerHTML = "[ Editing Group:"+groupname+" ]"
                 if(YAHOO.haloacl.debug) console.log("handle edit called for groupname:"+groupname);
                  new Ajax.Request('index.php?action=ajax&rs=getGroupDetails&rsargs[]='+groupname,
                         {
                         method:'post',
                         onSuccess:function(o){
                             var magic = YAHOO.lang.JSON.parse(o.responseText);
+
                             if(YAHOO.haloacl.debug) console.log(magic);
                             YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',
                             {panelid:'manageUserGroupSettingsRight',name:magic['name'],description:'',users:magic['memberUsers'],groups:magic['memberGroups'],manageUsers:magic['manageUsers'],manageGroups:magic['manageGroups']});
                             $('haloacl_manageUser_editing_container').show();
+
+                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
 
                         }
                  });
@@ -4131,6 +4153,8 @@ HTML;
                     null;
                 }else{
                     YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
+                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+
                     $('haloacl_manageUser_editing_container').show();
                 }
             }
@@ -4319,13 +4343,16 @@ HTML;
  *
  */
 function deleteGroups($grouspXML, $type) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
     $result = "";
     $whitelistXml = new SimpleXMLElement($grouspXML);
     $result = wfMsg("hacl_nothing_deleted");
     foreach($whitelistXml->xpath('//group') as $group) {
         if($group != null) {
             try {
-                $sdarticle = new Article(Title::newFromText('ACL:'.$group));
+                $sdarticle = new Article(Title::newFromText("$ns:".$group));
                 $sdarticle->doDelete("gui-deletion");
                 $result = wfMsg('hacl_deleteGroup_1');
 
@@ -4343,7 +4370,9 @@ function deleteGroups($grouspXML, $type) {
 }
 
 function deleteWhitelist($whitelistXml) {
-
+        global $haclgContLang;
+        $ns = $haclgContLang->getNamespaces();
+        $ns = $ns[HACL_NS_ACL];
     try {
 
         $whitelists = array();
@@ -4372,7 +4401,7 @@ function deleteWhitelist($whitelistXml) {
         }
 
         // create article
-        $sdarticle = new Article(Title::newFromText('ACL:'.'Whitelist'));
+        $sdarticle = new Article(Title::newFromText("$ns:".'Whitelist'));
         if($pages == "") {
             $inline = '';
         }else {
