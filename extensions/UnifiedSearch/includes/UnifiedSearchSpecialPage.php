@@ -9,13 +9,7 @@ if (!defined('MEDIAWIKI')) die();
 global $IP;
 require_once( "$IP/includes/SpecialPage.php" );
 
-function array_clone(& $src) {
-	$dst = array();
-	foreach($src as $e) {
-		$dst[] = $e;
-	}
-	return $dst;
-}
+
 
 /*
  * Replaces the MW Search special page
