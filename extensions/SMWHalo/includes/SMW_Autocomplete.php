@@ -311,7 +311,7 @@ class AutoCompletionRequester {
 			foreach($templates as $t) {
 				$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
 			}
-			return AutoCompletionRequester::encapsulateAsXML($matches, false);
+			return AutoCompletionRequester::encapsulateAsXML($matches, $namespace != NS_TEMPLATE);
 		}
 	}
 	/**
