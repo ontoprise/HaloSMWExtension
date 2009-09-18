@@ -12,15 +12,14 @@ FCKConfig.ToolbarSets['Wiki'] = [
 	['Cut','Copy','Paste',/*'PasteText','PasteWord',*/'-','Print'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['SpecialChar','Table','Image','Rule'],
-	['MW_Template','MW_Special','MW_Ref','MW_Math'],
+	['MW_Special','MW_Ref','MW_Math','MW_Edit', 'Fullscreen', 'About'],
 	'/',
-	['FontFormat'],
-	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
-	['OrderedList','UnorderedList','-','Blockquote'],
+	['FontFormat', 'Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
+	['OrderedList','UnorderedList', 'Blockquote'],
 //	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
 //	['TextColor','BGColor'],
-	[/*'FitWindow',*/'-','About','-','MW_MediaUpload', 'SMW_QueryInterface', 'SMW_UseWebService', 'SMW_Annotate', 'MW_Edit', 'Fullscreen']
+	[/*'FitWindow',*/ 'MW_Template','MW_MediaUpload', 'SMW_UseWebService','SMW_QueryInterface', 'SMW_Annotate']
 ] ;
 
 // Load the extension plugins.
