@@ -1147,8 +1147,6 @@ CheckSelectedAndCallPopup = function(event) {
                 var val = selection[0];
                 if (selection.length == 4)  // an explizit property value is set, then
                     val = selection[3];     // it's different from the selected (show)
-                else                        // no difference between value and show
-                    show = '';              // because there is not separate prop value
                 ShowRelToolbar(event, selection[2], val, show);
             }
             else if (selection[1] == 14) { // Category
@@ -1176,7 +1174,7 @@ ShowNewToolbar = function(event, value) {
         var catToolBar = new window.parent.CategoryToolBar();
         relToolBar.setWikiTextParser(wtp);
         catToolBar.setWikiTextParser(wtp);
-        relToolBar.createContextMenu(fckPopupContextMenu, value, '');
+        relToolBar.createContextMenu(fckPopupContextMenu, value, value);
         catToolBar.createContextMenu(fckPopupContextMenu, value);
         fckPopupContextMenu.showMenu();
 
