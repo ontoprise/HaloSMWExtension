@@ -1499,7 +1499,7 @@ class HACLStorageSQL {
 
 
 
-        /***************************************************************************
+    /***************************************************************************
 	 *
 	 * Functions for quickacls
 	 *
@@ -1518,33 +1518,33 @@ class HACLStorageSQL {
                 'sd_id'     => $sd_id,
                 'user_id'  => $user_id);
 		}
-                $db->insert($t, $setValues);
+		$db->insert($t, $setValues);
 
 	}
 
 
 	public function getQuickacl($user_id) {
-        	$db =& wfGetDB( DB_SLAVE );
+		$db =& wfGetDB( DB_SLAVE );
 		$t = $db->tableName('halo_acl_quickacl');
 
 		$res = $db->select($t, 'sd_id', "user_id=".$user_id."");
 
 		$sd_ids = array();
 		while ($row = $db->fetchObject($res)) {
-                    $sd_ids[] = (int)$row->sd_id;
+			$sd_ids[] = (int)$row->sd_id;
 		}
 		$db->freeResult($res);
 
-                $quickacl = new HACLQuickacl($user_id,$sd_ids);
+		$quickacl = new HACLQuickacl($user_id,$sd_ids);
 		return $quickacl;
 	}
 
-       public function deleteQuickaclForSD($sdid){
- 		$db =& wfGetDB( DB_MASTER );
+	public function deleteQuickaclForSD($sdid){
+		$db =& wfGetDB( DB_MASTER );
 		$t = $db->tableName('halo_acl_quickacl');
 		// delete old quickacl entries
 		$db->delete($t, array('sd_id' => $sdid));
 		return true;
-       }
+	}
 
 }
