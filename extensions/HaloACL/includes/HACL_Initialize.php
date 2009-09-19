@@ -30,7 +30,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
-define('HACL_HALOACL_VERSION', '0.1');
+define('HACL_HALOACL_VERSION', '1.0');
 
 define('HACL_STORE_SQL', 'HaclStoreSQL');
 // constant for special schema properties
@@ -76,7 +76,7 @@ $haclgOpenWikiAccess = true;
 # false
 #    If it is <false>, semantic properties are not protected even if they have 
 #	 security descriptors.  
-$haclgProtectProperties = false;
+$haclgProtectProperties = true;
 
 ###
 # By design several databases can be connected to HaloACL. (However, in the first
@@ -137,6 +137,7 @@ $wgGroupPermissions['*']['propertyread'] = true;
 $wgGroupPermissions['*']['propertyformedit'] = true;
 $wgGroupPermissions['*']['propertyedit'] = true;
 $wgGroupPermissions['*']['formedit'] = true;
+$wgGroupPermissions['*']['annotate'] = true;
 
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');
