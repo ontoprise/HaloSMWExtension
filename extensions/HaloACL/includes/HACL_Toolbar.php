@@ -64,16 +64,12 @@ HTML;
  TODO: document
  */
 function AddHaclToolbarForSemanticForms($pageTitle, $html) {
-	if (empty($pageTitle)) {
-		$html = "";
-	} else {
 	    $html = <<<HTML
 	        <script>
 	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
 	            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
 	        </script>
 HTML;
-	}
 
     return true;
 }
@@ -93,10 +89,12 @@ function getHACLToolbar($articleTitle) {
 
     // does that aritcle exist or is it a new article
     try {
-        $article = new Article(Title::newFromText($articleTitle));
-        if($article->exists()) {
-            $newArticle = false;
-        }
+    	if (!empty($articleTitle)){
+	        $t = Title::newFromText($articleTitle);
+	        if($t->exists()) {
+	            $newArticle = false;
+	        }
+    	}
     }
     catch(Exception $e) {    }
 
