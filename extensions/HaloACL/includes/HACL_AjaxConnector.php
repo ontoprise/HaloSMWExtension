@@ -1681,11 +1681,12 @@ HTML;
                 xml+="</rights>";
 
 
-                 if(YAHOO.haloacl.panelDefinePanel_$panelid == "individual" || YAHOO.haloacl.panelDefinePanel_$panelid == "privateuse" || YAHOO.haloacl.panelDefinePanel_$panelid == "modification"){
+                 if(YAHOO.haloacl.panelDefinePanel_$panelid == "individual"  || YAHOO.haloacl.panelDefinePanel_$panelid == "modification"){
 
                     var groups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
 
                     xml+="<users>";
+/*
                     $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
                         if(item.checked){
                             somedatawasentered= true;
@@ -1696,7 +1697,20 @@ HTML;
                             }
                         }
                     });
+
+*/
+                    var usersarray = YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'];
+                    if(usersarray != null){
+                        usersarray.each(function(element){
+                            somedatawasentered= true;
+                            xml+="<user>"+element+"</user>";
+                            if(element == "$currentUser"){
+                                currentUserIncludedInRight = true;
+                            }
+                        });
+                    }
                     xml+="</users>";
+
 
                     xml+="<groups>";
                     groups.each(function(group){
