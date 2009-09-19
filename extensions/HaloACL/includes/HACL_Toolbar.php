@@ -64,12 +64,16 @@ HTML;
  TODO: document
  */
 function AddHaclToolbarForSemanticForms($pageTitle, $html) {
-    $html = <<<HTML
-        <script>
-            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
-            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
-        </script>
+	if (empty($pageTitle)) {
+		$html = "";
+	} else {
+	    $html = <<<HTML
+	        <script>
+	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
+	            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
+	        </script>
 HTML;
+	}
 
     return true;
 }
