@@ -120,8 +120,8 @@ YAHOO.haloacl.notification.subscribeToElement = function(elementId, event, callb
 
 YAHOO.haloacl.notification.showInlineNotification = function(content, targetdiv){
     if(YAHOO.haloacl.debug)console.log("trying to add notification to targetdiv:"+targetdiv);
-
-    $(targetdiv).innerHTML = content;
+    // DISABLED
+    //$(targetdiv).innerHTML = content;
 }
 YAHOO.haloacl.notification.hideInlineNotification = function(targetdiv){
     $(targetdiv).innerHTML = "";

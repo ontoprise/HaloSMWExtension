@@ -274,7 +274,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     /**
@@ -291,7 +291,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     setTreeType: function(newTreeType) {
@@ -644,7 +644,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         }
         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     /**
@@ -901,6 +901,9 @@ YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
  * @param labelClickAction (name)
  */
 YAHOO.haloaclrights.buildUserTree = function(tree,data) {
+    if($('haloacl_rightstree_count') != null){
+        $('haloacl_rightstree_count').innerHTML = data.length;
+    }
 
     YAHOO.haloaclrights.buildNodesFromData(tree.getRoot(),data,tree.panelid);
 
@@ -972,6 +975,7 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
  * @param tree-instance
  */
 YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
+    
     if(query == null){
         query = "all";
     }
