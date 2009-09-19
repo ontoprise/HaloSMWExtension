@@ -267,22 +267,38 @@ class  HACLDefaultSD  {
 	 * This function is called when a user logs in. 
 	 * 
 	 * If $haclgNewUserTemplate is set, a default access rights template for new
-	 * articles is created, if it does not already exist.  
+	 * articles is created, if it does not already exist. 
+	 * Furthermore, the quick access list of the user is filled with all right 
+	 * templates given in $haclgDefaultQuickAccessRights. 
 	 *
 	 * @param User $newUser
+	 * 		User, whose default rights template is set.
 	 * @return boolean true
 	 */
 	public static function newUser(User &$newUser, &$injectHTML) {
 		
 		// Get the content of the article with the master template in $haclgNewUserTemplate
-		global $haclgNewUserTemplate;
-		if (!isset($haclgNewUserTemplate)) {
-			// no master template specified
-			return true;
+		global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
+		if (isset($haclgNewUserTemplate)) {
+			// master template specified
+			self::createUserDefaultTemplate($newUser);
 		}
-
+		if (isset($haclgDefaultQuickAccessRights)) {
+			self::setQuickAccessRights($newUser);
+		}
+		return true;
+	}
+	
+	/**
+	 * If $haclgNewUserTemplate is set, a default access rights template for new
+	 * articles is created, if it does not already exist. 
+	 *
+	 * @param User $newUser
+	 * 		User, whose default rights template is set.
+	 */
+	private static function createUserDefaultTemplate(User &$newUser) {
 		// Check if the user already has a default template
-		global $haclgContLang;
+		global $haclgContLang, $haclgNewUserTemplate;
 		$ns = $haclgContLang->getNamespaces();
 		$ns = $ns[HACL_NS_ACL];
 		$template = $haclgContLang->getSDTemplateName();
@@ -292,7 +308,7 @@ class  HACLDefaultSD  {
 		haclfRestoreTitlePatch($etc);
 		if ($defaultTemplate->exists()) {
 			// A default template already exists
-			return true;
+			return;
 		}
 
 		// Create the default template for the new user
@@ -303,7 +319,7 @@ class  HACLDefaultSD  {
 		$masterTemplateArticle = new Article($defaultTemplateTitle);
 		if (!$masterTemplateArticle->exists()) {
 			// The master template does not exist
-			return true;
+			return;
 		}
 		$content = $masterTemplateArticle->getContent();
 		
@@ -316,7 +332,31 @@ class  HACLDefaultSD  {
 		$newTemplateArticle = new Article($defaultTemplate);
 		$newTemplateArticle->doEdit($content, "Default access control template.", EDIT_NEW);
 		
-		return true;
+	}
+	
+	/**
+	 * Sets the right templates that are given in the array 
+	 * $haclgDefaultQuickAccessRights for the given user.
+	 *
+	 * @param User $newUser
+	 * 	User, whose quick access rights are set.
+	 */
+	private static function setQuickAccessRights(User &$newUser) {
+		global $haclgDefaultQuickAccessRights;
+		$uid = $newUser->getId();
+		
+		$quickACL = HACLQuickacl::newForUserId($uid);
+		$sdAdded = false;
+		foreach ($haclgDefaultQuickAccessRights as $right) {
+			$sdID = HACLSecurityDescriptor::idForSD($right);
+			if ($sdID) {
+				$quickACL->addSD_ID($sdID);
+				$sdAdded = true;
+			}
+		}
+		if ($sdAdded) {
+			$quickACL->save();
+		}
 	}
 	
 	/**
