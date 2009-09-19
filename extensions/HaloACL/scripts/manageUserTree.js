@@ -83,7 +83,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     _type: "CustomNode",
 
     customNodeParentChange: function() {
-        //this.updateParent();
+    //this.updateParent();
     },
 
     // function called from constructor
@@ -93,8 +93,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-            // otherwise the parent needs to be updated only if its checkstate
-            // needs to change from fully selected to partially selected
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -186,8 +186,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     updateParent: function() {
 
-        // NO update parent here
-        /*
+    // NO update parent here
+    /*
         var p = this.parent;
 
         if (!p || !p.updateParent) {
@@ -429,9 +429,9 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
             },
             parentNode,
             false);
-            //$(tmpNode.contentElId).setAttribute("id", "haloacl_nogroup_info_node");
+        //$(tmpNode.contentElId).setAttribute("id", "haloacl_nogroup_info_node");
         }
-        //tmpNode.setDynamicLoad();
+    //tmpNode.setDynamicLoad();
     }else{
         if($('haloacl_manageuser_count') != null){
             $('haloacl_manageuser_count').innerHTML = parentNode.getNodeCount();
@@ -555,6 +555,8 @@ YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
         var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
         YAHOO.haloacl.addingGroupCounter++;
         tmpNode.information = gLanguage.getMessage('clickEditToCreate');
+        nodeToAttachTo.collapse();
+        nodeToAttachTo.expand();
         nodeToAttachTo.refresh();
     }
 
@@ -605,6 +607,7 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     tmpNode.information = gLanguage.getMessage('clickEditToCreate');
 
     tmpNode.setDynamicLoad();
+    nodeToAttachTo.collapse();
     nodeToAttachTo.expand();
     nodeToAttachTo.refresh();
  

@@ -987,10 +987,15 @@ HTML;
                 }
 
                 xml+="<users>";
+/*
                 $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
                     if(item.checked){
                         xml+="<user>"+item.name+"</user>";
                     }
+                });
+*/
+                YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].each(function(item){
+                    xml+="<user>"+item+"</user>";
                 });
                 xml+="</users>";
 
@@ -3697,6 +3702,7 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
     }else {
     // performing search
+        $groups = HACLStorage::getDatabase()->getGroups();
 
         foreach( $groups as $key => $value) {
         //print_r($value);
@@ -4033,7 +4039,7 @@ HTML;
         <div id="haloacl_manageuser_contentlist">
             <div id="manageuser_grouplisting">
                 <div id="haloacl_manageuser_contentlist_title">
-        $hacl_manageUser_6<span style="margin-right:20px;float:right">Delete</span><span style="margin-right:30px;float:right">Edit</span>
+        $hacl_manageUser_6<span style="margin-right:20px;float:right">Delete</span><span style="margin-right:26px;float:right">Edit</span>
                 </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input id="haloacl_manageuser_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.manageUserRefilter(this);"/>
