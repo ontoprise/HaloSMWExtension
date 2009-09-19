@@ -1126,6 +1126,7 @@ HideContextPopup = function() {
  * @param Event event
  */
 CheckSelectedAndCallPopup = function(event) {
+        if (!event) event = window.frames[0].event;
         // handle here if the popup box for a selected annotation must be shown
         var selection = gEditInterface.getSelectionAsArray();
         if (selection == null || selection.length == 0) {
@@ -1295,9 +1296,17 @@ var fckSemanticToolbar = new SMW_Annotate();
 
 function SetEventHandler4AnnotationBox() {
     if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
-        window.parent.Event.observe(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
-        window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-        window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+        if (FCKBrowserInfo.IsIE) {
+            var iframe = window.frames[0];
+            var iframeDocument = iframe.document || iframe.contentDocument; 
+            iframeDocument.onkeyup = fckSemanticToolbar.EditorareaChanges;
+            iframeDocument.onmouseup = CheckSelectedAndCallPopup;
+            iframeDocument.onmousedown = HideContextPopup;
+        } else {
+            window.parent.Event.observe(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
+            window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+            window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
+       }
     } else {
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
