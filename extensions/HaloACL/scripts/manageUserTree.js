@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains the class HACLGroup.
@@ -83,7 +83,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     _type: "CustomNode",
 
     customNodeParentChange: function() {
-    //this.updateParent();
+        //this.updateParent();
     },
 
     // function called from constructor
@@ -93,8 +93,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-        // otherwise the parent needs to be updated only if its checkstate
-        // needs to change from fully selected to partially selected
+            // otherwise the parent needs to be updated only if its checkstate
+            // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -186,8 +186,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     updateParent: function() {
 
-    // NO update parent here
-    /*
+        // NO update parent here
+        /*
         var p = this.parent;
 
         if (!p || !p.updateParent) {
@@ -222,7 +222,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
 
         p.updateCheckHtml();
         p.updateParent();
-        */
+         */
     },
 
     /**
@@ -388,7 +388,7 @@ YAHOO.haloacl.manageUser.loadNodeData = function(node, fnLoadComplete)  {
  */
 YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
 
- var loadNodeData = function(node, fnLoadComplete)  {
+    var loadNodeData = function(node, fnLoadComplete)  {
         var nodeLabel = encodeURI(node.label);
         //prepare our callback object
         var callback = {
@@ -421,10 +421,16 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
         groupsInTree = true;
         
     };
-   if(!groupsInTree){
-       if(parentNode.label == "Groups"){
-            var tmpNode =  new YAHOO.widget.TextNode("no groups available", parentNode,false);
-       }
+    if(!groupsInTree){
+        if(parentNode.label == "Groups"){
+            var tmpNode =  new YAHOO.widget.TextNode(
+            {
+                label:"no groups available"
+            },
+            parentNode,
+            false);
+            //$(tmpNode.contentElId).setAttribute("id", "haloacl_nogroup_info_node");
+        }
         //tmpNode.setDynamicLoad();
     }else{
         if($('haloacl_manageuser_count') != null){
@@ -578,6 +584,19 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
 }
 
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
+    // removing no-group-available-node if existing
+    try{
+        var nodes = tree.children[0].children;
+        for(var i=0, l=nodes.length; i<l; i=i+1) {
+            var n = nodes[i];
+            var temp = n.label;
+            if (temp.indexOf("no groups available") >= 0) {
+                tree.tree.removeNode(n);
+            }
+        }
+    }catch(e){}
+    // ---------
+
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
     var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);

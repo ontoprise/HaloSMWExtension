@@ -161,7 +161,7 @@ HTML;
             <div id="haloacl_tab_createacl_rightsection" class="haloacl_tab_section_content">
                 <div class="haloacl_tab_section_content_row">
                     <div id="step2_button2">
-                     <input style="margin-left: 30px;" id="haloacl_create_right_$predefine" type="button" value="Create right"
+                     <input style="margin-left: 35px;" id="haloacl_create_right_$predefine" type="button" value="Create right"
                         onclick="javascript:YAHOO.haloacl.createacl_addRightPanel('$predefine');"/>
                     &nbsp;
                     <input  id="haloacl_add_right_$predefine" type="button" value="Add right template"
@@ -266,7 +266,7 @@ HTML;
             </div>
 
             <div id="haloacl_tab_createacl_modificationrightsection" class="haloacl_tab_section_content">
-                <div class="haloacl_tab_section_content_row">
+                <div class="haloacl_tab_section_content_row" style="margin-left:35px">
         $hacl_haloacl_mod_1
                 </div>
                 <div class="haloacl_tab_section_content_row">
@@ -356,18 +356,7 @@ function createSaveContent() {
                         </div>
                     </div>
                 </div>
-<!--
-                <div class="haloacl_tab_section_content_row">
-                   <div style="width:800px;text-align:center">
-                    <form>
-                     <input type="button" id="haloacl_discardacl_button" value="Discard changes"
-                        style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_createacl();"/>
-                    &nbsp;<input type="button" id="haloacl_saveacl_button" name="safeACL" value="Save ACL"
-                        onclick="javascript:YAHOO.haloacl.buildCreateAcl_SecDesc();"/>
-                    </form>
-                    </div>
-                </div>
--->
+
 
             </div>
         </div>
@@ -527,7 +516,7 @@ function createManageUserTemplateContent() {
 HTML;
     }
     catch(Exception $e ) {
-        $tempContent = "<p>no default template for user";
+        $tempContent = "<div style='padding:8px;'>no default template for user</div>";
     }
 
     $myGenericPanel->setContent($tempContent);
@@ -669,7 +658,7 @@ HTML;
 
         <div id="step2_$panelId" style="width:600px">
             <input id="step2_button_$panelId" type="button" name="gotoStep2" value="$hacl_general_nextStep"
-            style="margin-left: 80px;margin-top:9px"/>
+            style="margin-left: 35px;margin-top:9px"/>
         </div>
 
         <script type="javascript">
@@ -753,7 +742,7 @@ HTML;
 
             <div class="haloacl_tab_section_content">
                 <div class="haloacl_tab_section_content_row">
-                   <div class="haloacl_discard_save_buttons" style="width:800px;text-align:center">
+                   <div class="haloacl_discard_save_buttons" style="width:790px;text-align:center">
                     <form>
                      <input type="button" id="haloacl_discardacl_button" value="Discard changes"
                         style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_createacl();"/>
@@ -2555,7 +2544,6 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
     if(!$readOnly) {
         $html = <<<HTML
         <!-- add right part -->
-        <p/>
                 <div class="haloacl_existing_right_add_buttons">
                     <input id="haloacl_create_right_$predefine" type="button" value="Create right"
                         onclick="javascript:YAHOO.haloacl.createacl_addRightPanel('$predefine');"/>
@@ -2585,8 +2573,7 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
             };
             </script>
 
-        <div id="haloacl_tab_createacl_rightsection">&nbsp;</div>
-        <p/>
+        <div id="haloacl_tab_createacl_rightsection" style="">&nbsp;</div>
 
         <!-- end of add right part -->
 HTML;
@@ -2598,12 +2585,12 @@ HTML;
             YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$sdId','getSDRightsPanel',{sdId:'$sdId', readOnly:'$readOnly'});
         </script>
         <div class="haloacl_greyline">&nbsp;</div>
-        <div>
-            <div style="width:33%;float:left;"><input type="button" value="$hacl_SDRightsPanelContainer_2" onclick="javascript:YAHOO.haloacl.deleteSD('$sdId');" /></div>
-            <div style="width:33%;float:left;text-align:center"><input type="button" value="$hacl_SDRightsPanelContainer_3" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');YAHOO.haloacl.createacl_addRightPanel();" /></div>
+        <div class="haloacl_discard_save_buttons" style="width:790px;text-align:center;height: 18px; margin-bottom: 10px;">
+            <div style="width:33%;float:left;text-align:left"><input type="button" style="margin-left:10px" value="$hacl_SDRightsPanelContainer_2" onclick="javascript:YAHOO.haloacl.deleteSD('$sdId');" /></div>
+            <div style="width:33%;float:left;text-align:center"><input type="button" style="color:red" value="$hacl_SDRightsPanelContainer_3" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');YAHOO.haloacl.createacl_addRightPanel();" /></div>
             <div style="width:33%;float:left;text-align:right"><input id="haloacl_save_right" type="button" name="safeRight" value="$hacl_SDRightsPanelContainer_4" onclick="YAHOO.haloacl.buildCreateAcl_SecDesc();" /></div>
         </div>
-
+  
         <script type="javascript">
 
             var callback2 = function(result){
@@ -2782,6 +2769,7 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     }
 
     //attach predefined right texts
+    // only templates down here
     foreach ($SD->getPredefinedRights(false) as $subSdId) {
         $sdName = HACLSecurityDescriptor::nameForID($subSdId);
 
@@ -2792,8 +2780,10 @@ function getSDRightsPanel($sdId, $readOnly = false) {
         $temphtml = <<<HTML
         <div id="content_subRight_$subSdId">
         <div id="subPredefinedRight_$subSdId"></div>
+        <div class="haloacl_buttons_under_panel">
             <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="delete template" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
             <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="save template" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
+        </div>
         <script>
 
             YAHOO.haloacl.buildRightPanelXML_$subSdId = function(onlyReturnXML){
@@ -4003,12 +3993,14 @@ function manageUserContent() {
 
     $html = <<<HTML
         <div class="haloacl_manageusers_container">
+        <div class="haloacl_tab_content_description">
             <div class="haloacl_manageusers_title">
         $hacl_manageUser_1
             </div>
             <div class="haloacl_manageusers_subtitle">
         $hacl_manageUser_2
             </div>
+        </div>
 HTML;
 
     $panelContent = <<<HTML

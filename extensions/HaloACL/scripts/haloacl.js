@@ -498,6 +498,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         tab1.addListener('click', function(e){});
         //$(tab1.get('contentEl')).style.display = 'none';
         $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
+        $(tab1.get('contentEl')).setAttribute('class','haloacl_rightPanelTab');
     }
     
     var tab2 = new YAHOO.widget.Tab({
@@ -513,6 +514,8 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
     YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab2);
     tab2.addListener('click', function(e){});
     $(tab2.get('contentEl')).setAttribute('id','rightPanelAssignedTab'+containerName);
+    $(tab2.get('contentEl')).setAttribute('class','haloacl_rightPanelTab');
+
 
     
 
@@ -726,18 +729,17 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
 
 
 
-YAHOO.haloacl.callbackDeleteSD = function(result){
-    if(result.status == '200'){
-        alert(result.responseText);
-    }else{
-        alert(result.responseText);
-    }
-};
 
 YAHOO.haloacl.deleteSD = function(sdId){
     YAHOO.haloacl.callAction('deleteSecurityDescriptor', {
         sdId:sdId
-    }, YAHOO.haloacl.callbackDeleteSD);
+    }, function(result){
+        YAHOO.haloacl.notification.createDialogOk("content","ManageACL","Right has been deleted",{
+            yes:function(){
+                window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageACLs';
+            }
+        });
+    });
 
 };
 
