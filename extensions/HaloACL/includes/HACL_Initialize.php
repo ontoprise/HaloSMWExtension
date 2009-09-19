@@ -112,6 +112,13 @@ $haclgUnprotectableNamespaces = array('Main');
 # variable "{{{user}}}" that will be replaced by the user's name. 
 //$haclgNewUserTemplate = "ACL:Template/NewUserTemplate";
 
+##
+# This is an array of right templates that are added to the quick access list of 
+# every user who logs in to the system.
+$haclgDefaultQuickAccessRights = array(
+	"ACL:Right/Thomas (Private)"
+);
+
 # load global functions
 require_once('HACL_GlobalFunctions.php');
 

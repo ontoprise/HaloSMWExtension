@@ -114,8 +114,8 @@ function haclfSetupExtension() {
         $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
     }
 
-    global $haclgNewUserTemplate;
-    if (isset($haclgNewUserTemplate)) {
+    global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
+    if (isset($haclgNewUserTemplate) || isset($haclgDefaultQuickAccessRights)) {
         $wgHooks['UserLoginComplete'][] = 'HACLDefaultSD::newUser';
     }
 
