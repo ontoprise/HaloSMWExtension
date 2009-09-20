@@ -990,12 +990,12 @@ HTML;
 /*
                 $$('.datatableDiv_right_tabview_'+panelid+'_users').each(function(item){
                     if(item.checked){
-                        xml+="<user>"+item.name+"</user>";
+                        xml+="<user>"+escape(item.name)+"</user>";
                     }
                 });
 */
                 YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'].each(function(item){
-                    xml+="<user>"+item+"</user>";
+                    xml+="<user>"+escape(item)+"</user>";
                 });
                 xml+="</users>";
 
@@ -2088,9 +2088,10 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
            });
            */
            // recreate desc
+           try{
             var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
             eval(fncname);
-
+            }catch(e){}
         };
         
         //YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
