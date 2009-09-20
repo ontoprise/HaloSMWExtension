@@ -604,7 +604,8 @@ abbr,acronym { border:0;
 .datatable_usergroups{
     font-size:10px!important;
     overflow:hidden;
-    width:233px;
+    width:230px;
+    height:13px!important;
 }
 
 .haloacl_grouptree_title{
@@ -636,7 +637,9 @@ abbr,acronym { border:0;
 .haloacl_rightpanel_selecttab_rightpart_datatable thead .yui-dt-first{
     display:none!important;
 }
-
+.haloacl_rightpanel_selecttab_rightpart_datatable td.yui-dt-last{
+    border:0px #FFF solid!important;
+}
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt tr.yui-dt-first td {
     border-top:0px solid!important;
 }
