@@ -197,7 +197,7 @@ $messages['en'] = array(
     'hacl_createGeneralContent_message3' => 'Please set for whom the acl is defined for .',
     'hacl_createGeneralContent_message4' => 'Some data missing',
 
-    'hacl_createACLContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
+    'hacl_createACLContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createACLContent_2' => 'General',
 
     'hacl_createACLTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
