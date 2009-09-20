@@ -1148,7 +1148,7 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     }
 
     if($predefine == "modification") {
-        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, "Default", $expandMode);
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, false, "Default", $expandMode);
     }else {
         $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, null, $expandMode);
     }
@@ -4139,7 +4139,7 @@ HTML;
                 <div id="manageUserGroupSettingsModificationRight">
                 </div>
                 <script>
-                    // YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                 </script>
             </div>
             <div class="haloacl_tab_section_content">
@@ -4169,12 +4169,13 @@ HTML;
                         onSuccess:function(o){
                             var magic = YAHOO.lang.JSON.parse(o.responseText);
 
+//                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+
                             if(YAHOO.haloacl.debug) console.log(magic);
                             YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',
                             {panelid:'manageUserGroupSettingsRight',name:magic['name'],description:'',users:magic['memberUsers'],groups:magic['memberGroups'],manageUsers:magic['manageUsers'],manageGroups:magic['manageGroups']});
                             $('haloacl_manageUser_editing_container').show();
 
-                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
 
                         }
                  });
@@ -4183,8 +4184,8 @@ HTML;
                 if(groupname.indexOf("new subgroup")> 0){
                     null;
                 }else{
+ //                   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                     YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
 
                     $('haloacl_manageUser_editing_container').show();
                 }
