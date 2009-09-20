@@ -1450,6 +1450,16 @@ HTML;
 
             init();
 
+            YAHOO.haloacl.reset_modification_$panelid = function(){
+               $('right_tabview_$panelid').innerHTML = "";
+               YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+               YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
+               YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'] = new Array();
+
+               YAHOO.haloacl.buildRightPanelTabView('right_tabview_$panelid',YAHOO.haloacl.panelDefinePanel_$panelid , '$readOnly', '$preload', '$preloadRightId');
+
+            };
+
             YAHOO.haloacl.defineForChange_$panelid = function(){
 
                 // on change reset selected users
@@ -1511,7 +1521,7 @@ HTML;
 HTML;
         }else {
             $content .= <<<HTML
-                        <div style="width:50%;float:left;text-align:left"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.resetPanel_Modification('$panelid');});" /></div>
+                        <div style="width:50%;float:left;text-align:left"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.reset_modification_$panelid();" /></div>
                         <div style="width:50%;float:left;text-align:right">&nbsp;<input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
                         <script>
                         YAHOO.haloacl.addTooltip("tooltip_save_$panelid", "haloacl_save_$panelid", "click here to save the modifcation right.");
@@ -2601,7 +2611,7 @@ HTML;
         <div class="haloacl_sd_container_$readOnly" id="SDRightsPanelContainer_$sdId">
         </div>
         <script>
-            YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$sdId','getSDRightsPanel',{sdId:'$sdId', readOnly:'$readOnly'});
+            YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$sdId','getSDRightsPanel',{sdId:'$sdId', readOnly:'$readOnly',autosave:'true'});
         </script>
         <div class="haloacl_greyline">&nbsp;</div>
         <div class="haloacl_discard_save_buttons" style="width:790px;text-align:center;height: 18px; margin-bottom: 10px;">
@@ -2696,7 +2706,7 @@ function getRightsContainer($panelid, $type = "readOnly") {
     $myGenericPanel = new HACL_GenericPanel($panelid, "$hacl_RightsContainer_1", "$hacl_RightsContainer_1");
 
     $html = <<<HTML
-        <div id="SDRightsPanelContainer_$panelid"></div>
+        <div style="margin:10px 0;float:left" id="SDRightsPanelContainer_$panelid"></div>
         <script>
             YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$panelid','rightList',{panelid:'$panelid', type:'$type'});
         </script>
@@ -2761,8 +2771,13 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
-function getSDRightsPanel($sdId, $readOnly = false) {
+function getSDRightsPanel($sdId, $readOnly = false,$autosave = false) {
 
+    if($autosave == "true"){
+        $autosave = true;
+    }
+
+    $autosave = false;
 
     if ($readOnly === "true") $readOnly = true;
     if ($readOnly === "false") $readOnly = false;
@@ -2792,17 +2807,26 @@ function getSDRightsPanel($sdId, $readOnly = false) {
     foreach ($SD->getPredefinedRights(false) as $subSdId) {
         $sdName = HACLSecurityDescriptor::nameForID($subSdId);
 
-//                                              ($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
-
-        $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", true, true, null, $expandMode);
+        //                                              ($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
+        if(!$readOnly) {
+            $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", true, true, null, $expandMode);
+        }else {
+            $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false, null, $expandMode);
+        }
 
         $temphtml = <<<HTML
         <div id="content_subRight_$subSdId">
         <div id="subPredefinedRight_$subSdId"></div>
+HTML;
+        if(!$readOnly) {
+            $temphtml .= <<<HTML
         <div class="haloacl_buttons_under_panel">
-            <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="delete template" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
-            <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="save template" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
+            <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="Delete template" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
+            <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="Save template" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
         </div>
+HTML;
+        }
+        $temphtml .= <<<HTML
         <script>
 
             YAHOO.haloacl.buildRightPanelXML_$subSdId = function(onlyReturnXML){
@@ -2817,6 +2841,9 @@ function getSDRightsPanel($sdId, $readOnly = false) {
 
                 xml+="</inlineright>";
                 var callback = function(result){
+                    genericPanelSetSaved_subRight_$subSdId(true);
+                    YAHOO.haloacl.togglePanel('subRight_$subSdId');
+
                     return null;
                 }
 
@@ -2827,6 +2854,16 @@ function getSDRightsPanel($sdId, $readOnly = false) {
             YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
             //show closed at first
             YAHOO.haloacl.togglePanel('subRight_$subSdId');
+HTML;
+        // initial save those rights
+
+        if($autosave) {
+            $temphtml .= <<<HTML
+            YAHOO.haloacl.buildRightPanelXML_$subSdId();
+HTML;
+        }
+        $temphtml .= <<<HTML
+
         </script>
         </div>
 HTML;
@@ -3263,7 +3300,7 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
             $inline .= '
 {{#manage group:assigned to='.$mrgroups.','.$mrusers.'}}
         [[Category:ACL/Group]]';
-        }else{
+        }else {
             $inline .= '
 {{#manage group:assigned to=User:'.$wgUser->getName().'}}
         [[Category:ACL/Group]]';
@@ -4184,10 +4221,10 @@ HTML;
                 if(groupname.indexOf("new subgroup")> 0){
                     null;
                 }else{
- //                   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
+//                   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
 
-                    $('haloacl_manageUser_editing_container').show();
+                   $('haloacl_manageUser_editing_container').show();
                 }
             }
 
@@ -4402,9 +4439,9 @@ function deleteGroups($grouspXML, $type) {
 }
 
 function deleteWhitelist($whitelistXml) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
     try {
 
         $whitelists = array();
@@ -4506,7 +4543,7 @@ HTML;
         <div id="haloacl_whitelist_contentlist">
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-        $hacl_quickACL_3<span style="margin-left:415px">select</span>
+        $hacl_quickACL_3<span style="margin-right:20px;float:right;">Select</span><span style="margin-right:20px;float:right;">Info</span>
             </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.quickaclTableInstance.executeQuery(this.value);"/>

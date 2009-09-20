@@ -106,7 +106,8 @@ HTML;
                             element.show();
                         }
 
-                        $('$panelid').parentNode.innerHTML = '<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div><br /></a>'+$('haloacl_generic_panel_content_$panelid').innerHTML;
+
+                        $('$panelid').parentNode.innerHTML = "<span style='margin-left:30px'>&raquo;$title</span>"+$('haloacl_generic_panel_content_$panelid').innerHTML+'<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div></a>';
                         //replace parent content of $(panelid) with content and back button, add back link to array
                         break;
                 }
@@ -115,6 +116,7 @@ HTML;
             YAHOO.haloacl.resumeGenericPanelContent_$panelid = function() {
                 resomeTo = YAHOO.haloacl.genericPanelParentContents_$panelid.pop();
                 $(resomeTo['element']).innerHTML = resomeTo['content'];
+
             }
 
 
