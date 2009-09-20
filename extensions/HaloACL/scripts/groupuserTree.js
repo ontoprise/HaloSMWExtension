@@ -259,7 +259,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
      * 
      * @param the new check state
      */
-    setCheckState: function(state) { 
+    setCheckState: function(state) {
         this.checkState = state;
         this.checked = (state > 0);
         //this.tree.clickedTreeNodes[this.groupId] = this.checked;
@@ -273,8 +273,10 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         // update usertable
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
-        var fncname = "YAHOO.haloacl.refreshPanel_"+this.tree.panelid.substr(14)+"();";
-        eval(fncname);
+        try{
+            var fncname = "YAHOO.haloacl.refreshPanel_"+this.tree.panelid.substr(14)+"();";
+            eval(fncname);
+        }catch(e){}
     },
 
     /**
