@@ -1,2 +1,2 @@
-#!/bin/sh
+#!/bin/bash
 php smwadmin.php $*
