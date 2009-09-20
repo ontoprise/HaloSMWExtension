@@ -194,7 +194,8 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     var myPaginator = new YAHOO.widget.Paginator({
         rowsPerPage:10,
-        containers:'datatablepaging_'+divid
+        containers:'datatablepaging_'+divid,
+        pageLinks:3
     });
 
     //myPaginator.subscribe("changeRequest",handlePagination);
