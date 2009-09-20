@@ -32,6 +32,13 @@
 
 
 function unescape($string){
+    $string = preg_replace("/%E4/is", "ä", $string);
+    $string = preg_replace("/%F6/is", "ö", $string);
+    $string = preg_replace("/%FC/is", "ü", $string);
+    $string = preg_replace("/%DF/is", "ß", $string);
+    $string = preg_replace("/%C4/is", "Ä", $string);
+    $string = preg_replace("/%D6/is", "Ö", $string);
+    $string = preg_replace("/%DC/is", "Ü", $string);
     return $string;
 }
 
