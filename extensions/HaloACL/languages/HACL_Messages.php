@@ -200,10 +200,10 @@ $messages['en'] = array(
     'hacl_createACLContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createACLContent_2' => 'General',
 
-    'hacl_createACLTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
+    'hacl_createACLTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createACLTemplateContent_2' => 'General',
 
-    'hacl_createUserTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
+    'hacl_createUserTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createUserTemplateContent_2' => 'General',
 
     'hacl_manageUserGroupPanel_1' => 'Name:',
@@ -409,10 +409,10 @@ $messages['de'] = array(
     'hacl_createACLContent_1' => '<strong>Zu schützen:</strong><br />Wählen Sie das zu schützende Element (Seite, Kategorie, Eigenschaft, Namensraum)<br /><br /><strong>Zu schützen:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createACLContent_2' => 'General',
 
-    'hacl_createACLTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
+    'hacl_createACLTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createACLTemplateContent_2' => 'General',
 
-    'hacl_createUserTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Protect:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
+    'hacl_createUserTemplateContent_1' => '<strong>Protect:</strong><br />Choose the type you wish to protect (Page, Category, Property, Namespace)<br /><br /><strong>Name:</strong><br />Enter the name or use the autocompletion feature to specifiy the item you wish to protect. Note: If you came from a page, the name of the page will be already filled in the text entrybox.<br /><br />',
     'hacl_createUserTemplateContent_2' => 'General',
 
     'hacl_manageUserGroupPanel_1' => 'Name:',
