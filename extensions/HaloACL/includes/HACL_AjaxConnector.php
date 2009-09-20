@@ -30,6 +30,11 @@
  * @author hipath
  */
 
+
+function unescape($string){
+    return $string;
+}
+
 $wgAjaxExportList[] = "ajaxTestFunction";
 $wgAjaxExportList[] = "createACLPanels";
 $wgAjaxExportList[] = "createManageACLPanels";
@@ -3243,9 +3248,9 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         foreach($groupXml->xpath('//user') as $user) {
             if(trim($user)!="") {
                 if($users == '') {
-                    $users = 'User:'.(string)$user;
+                    $users = 'User:'.unescape((string)$user);
                 }else {
-                    $users .= ",".'User:'.(string)$user;
+                    $users .= ",".'User:'.unescape((string)$user);
                 }
             }
         }
@@ -3265,9 +3270,9 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         foreach($manageRightsXml->xpath('//user') as $user) {
             if(trim($user) !="") {
                 if($mrusers == '') {
-                    $mrusers = 'User:'.(string)$user;
+                    $mrusers = 'User:'.unescape((string)$user);
                 }else {
-                    $mrusers .= ",".'User:'.(string)$user;
+                    $mrusers .= ",".'User:'.unescape((string)$user);
                 }
             }
         }
@@ -4199,6 +4204,8 @@ HTML;
 
         <script>
             YAHOO.haloacl.manageUsers_handleEdit = function(groupname){
+                YAHOO.haloacl.manageUser_handleGroupSelect(groupname);
+
                 $('haloacl_panel_name_manageUserGroupsettings').innerHTML = "[ Editing Group:"+groupname+" ]"
                 if(YAHOO.haloacl.debug) console.log("handle edit called for groupname:"+groupname);
                  new Ajax.Request('index.php?action=ajax&rs=getGroupDetails&rsargs[]='+groupname,
@@ -4696,3 +4703,4 @@ function doesArticleExists($articlename,$protect) {
     }
     return $response;
 }
+
