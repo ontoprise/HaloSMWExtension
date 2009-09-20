@@ -57,7 +57,7 @@ class DeployDescriptor {
 		$this->globalElement = $this->dom->xpath('/deploydescriptor/global');
 		$this->codefiles_xml = $this->dom->xpath('/deploydescriptor/codefiles/file');
 		$codeElement = $this->dom->xpath('/deploydescriptor/codefiles');
-		$this->codeHash = $codeElement[0]->attributes()->hash;
+		$this->codeHash = isset($codeElement[0]) ? $codeElement[0]->attributes()->hash : NULL;
 
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');

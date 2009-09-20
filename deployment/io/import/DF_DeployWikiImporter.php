@@ -215,7 +215,13 @@ class DeployWikiRevision extends WikiRevision {
 		
 		global $dfgLang;
 		// add annotations FIXME: as template?
-		$this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
+		if ($this->title->getNamespace() == NS_TEMPLATE) {
+		  // add content hash with <noinclude> tag
+		  // FIXME: must reside in a noinclude section, but only 1 is allowed.	
+		  //$this->text .= "\n<noinclude>[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]</noinclude>";
+		} else {
+		  $this->text .= "\n[[".$dfgLang->getLanguageString('df_contenthash')."::".$this->md5_hash."| ]]";
+		}
 		
 				
 		$article = new Article( $this->title );

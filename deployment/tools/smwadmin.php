@@ -1,20 +1,20 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * Installation tool.
@@ -39,7 +39,7 @@ if ($check !== true) {
 	fatalError($check);
 }
 
-// check if the user is allowed to create files, directory. 
+// check if the user is allowed to create files, directory.
 $check = Tools::checkPriviledges();
 if ($check !== true) {
 	fatalError($check);
@@ -51,10 +51,10 @@ $dbclass = 'Database' . ucfirst( $wgDBtype ) ;
 $wgDatabase = new $dbclass( $wgDBserver, $wgDBadminuser, $wgDBadminpassword, $wgDBname, 1 );
 
 if( !$wgDatabase->isOpen() ) {
-    # Appears to have failed
-    echo( "A connection to the database could not be established. Check the\n" );
-    echo( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
-    exit();
+	# Appears to have failed
+	echo( "A connection to the database could not be established. Check the\n" );
+	echo( "values of \$wgDBadminuser and \$wgDBadminpassword.\n" );
+	exit();
 }
 
 $packageToInstall = array();
@@ -217,7 +217,7 @@ foreach($packageToDeinstall as $toDeInstall) {
 // update
 foreach($packageToUpdate as $toUpdate) {
 	$toUpdate = str_replace(".", "", $toUpdate);
-	$parts = explode("-", $toInstall);
+	$parts = explode("-", $toUpdate);
 	$packageID = $parts[0];
 	$version = count($parts) > 1 ? $parts[1] : NULL;
 	try {
@@ -254,39 +254,49 @@ function showHelp() {
 	echo "\n\tsmwadmin -u --dep: Shows what would be updated.";
 	echo "\n\tsmwadmin -d smw: Removes the package smw.";
 	echo "\n\n";
-	 
+
 }
 
 function handleRollback() {
 	global $rollback;
 	print "Rollback...";
 	$rollback->rollback();
-	 
+
 }
 
 
 function handleGlobalUpdate($dfgCheckDep) {
 	global $installer;
-	list($extensions_to_update, $updated) = $installer->updateAll($dfgCheckDep);
-	if ($dfgCheckDep) {
-		if (count($extensions_to_update) > 0) {
+	try {
+		list($extensions_to_update, $updated) = $installer->updateAll($dfgCheckDep);
+		if ($dfgCheckDep) {
+			if (count($extensions_to_update) > 0) {
 
-			print "\n\nThe following extensions would get updated:\n";
-			foreach($extensions_to_update as $id => $etu) {
-				list($desc, $min, $max) = $etu;
-				print "\n\t*$id-".Tools::addVersionSeparators($min);
+				print "\n\nThe following extensions would get updated:\n";
+				foreach($extensions_to_update as $id => $etu) {
+					list($desc, $min, $max) = $etu;
+					print "\n\t*$id-".Tools::addVersionSeparators($min);
+				}
 			}
+			print "\n\n";
+
 		}
-		print "\n\n";
 
+		if ($updated && count($extensions_to_update) > 0) {
+			echo "\n\nYour installation is now up-to-date!\n";
+		} else if (count($extensions_to_update) == 0) {
+			echo "\n\nYour installation is already up-to-date!\n";
+		}
+	} catch(InstallationError $e) {
+		fatalError($e);
+	} catch(HttpError $e) {
+		fatalError($e);
+	} catch(RollbackInstallation $e) {
+		fatalError("Installation failed! You can try to rollback: smwadmin -r");
+	} catch(RepositoryError $e) {
+		fatalError($e);
 	}
 
-	if ($updated && count($extensions_to_update) > 0) {
-		echo "\n\nYour installation is now up-to-date!\n";
-	} else if (count($extensions_to_update) == 0) {
-		echo "\n\nYour installation is already up-to-date!\n";
-	}
-	 
 }
 
 function handleInstallOrUpdate($packageID, $version) {

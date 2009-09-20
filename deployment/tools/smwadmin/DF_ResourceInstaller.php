@@ -188,14 +188,15 @@ class ResourceInstaller {
 		print "\nUploading resources...";
 		$resources = $dd->getResources();
 		foreach($resources as $file) {
+			$resourcePath = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 			print "\n\tCopy $file...";
-			if (is_dir($this->rootDir."/".$file)) {
+			if (is_dir($resourcePath)) {
 
-				$this->importResources($this->rootDir."/".$file);
+				$this->importResources($resourcePath);
 			} else {
-
-				$im_file = wfLocalFile(Title::newFromText(basename($this->rootDir."/".$file), NS_IMAGE));
-				$im_file->upload($this->rootDir."/".$file, "auto-inserted image", "noText");
+                print $resourcePath."\n";
+				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
+				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
 			print "done.";
 		}
@@ -204,13 +205,14 @@ class ResourceInstaller {
 		print "\nCopying resources...";
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $file => $dest) {
+			$resourcePathSrc = $this->rootDir."/".$dd->getInstallationDirectory()."/".$file;
 			print "\n\tCopy $file...";
-			if (is_dir($this->rootDir."/".$file)) {
+			if (is_dir($resourcePathSrc)) {
 
-				Tools::copy_dir($this->rootDir."/".$file, $this->rootDir."/".$dest);
+				Tools::copy_dir($resourcePathSrc, $this->rootDir."/".$dest);
 			} else {
 				Tools::mkpath(dirname($this->rootDir."/".$dest));
-				copy($this->rootDir."/".$file, $this->rootDir."/".$dest);
+				copy($resourcePathSrc, $this->rootDir."/".$dest);
 
 			}
 			print "done.";

@@ -579,7 +579,7 @@ class Installer {
 				$versions = PackageRepository::getAllVersions($p->getID());
 				// iterate through the available versions
 				$updateFound = false;
-				foreach($version as $v) {
+				foreach($versions as $v) {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($p->getID());
 					if ($from_ptu <= $dd->getVersion() && $to_ptu >= $dd->getVersion()) {

@@ -75,6 +75,8 @@ class DeployUploadExporter {
 		// noCat means: do not consider member of categories beloning to a bundle
 		if( isset( $args['noCat'] ) ) {
 			$this->mNoCat = true;
+		} else {
+			$this->mNoCat = false;
 		}
 	}
 
@@ -106,13 +108,15 @@ class DeployUploadExporter {
 
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty($dfgLang->getLanguageString("df_partofbundle")));
 		$partOfBundleID = smwfGetStore()->getSMWPageID($this->bundleID, NS_MAIN, "");
-
+        
+		
 		// get all image pages beloning to pages of bundle
 		$sql = "SELECT DISTINCT il_to AS image FROM $page JOIN $smwids ON smw_title = page_title AND smw_namespace = page_namespace JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE  p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
 
 		if (!$this->mNoCat) {
 			// get all images pages belonging to instances of categories of bundle
-			$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_from AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
+			$sql2 = "SELECT DISTINCT il_to AS image FROM $page JOIN $categorylinks ON page_id = cl_from JOIN $smwids ON smw_title = cl_to AND smw_namespace = ".NS_CATEGORY." JOIN $smwrels ON smw_id = s_id JOIN $imagelinks ON page_id = il_from WHERE p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID";
+
 			$res = $dbr->query( "($sql) UNION DISTINCT ($sql2)" );
 		} else {
 			$res = $dbr->query( $sql );
@@ -144,6 +148,7 @@ class DeployUploadExporter {
 
 	function outputItem( $name, $shared ) {
 		$file = wfFindFile( $name );
+			
 		if( $file && $this->filterItem( $file, $shared ) ) {
 			$filename = $file->getFullPath();
 			$rel = wfRelativePath( $filename, $this->mBasePath );

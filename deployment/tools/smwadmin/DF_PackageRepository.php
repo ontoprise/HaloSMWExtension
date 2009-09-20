@@ -1,20 +1,20 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 define('DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST', 1);
 
@@ -47,7 +47,7 @@ class PackageRepository {
 	static $deploy_descs = array();
 	// credentials for repositories
 	static $repo_credentials = array();
-    
+
 	// cache for local packages
 	static $localPackages = NULL;
 
@@ -68,7 +68,7 @@ class PackageRepository {
 				if (trim($u) == "" || substr(trim($u),0,1) == "#") continue;
 				@list($rawurl, $user, $pass) = explode(" ", $u); // do not complain about missing credentials
 				$url = (substr(trim($rawurl), -1) == "/") ? $rawurl : (trim($rawurl)."/"); //add trailing / if necessary
-				
+
 				$repo_urls[] = $url;
 				if ((is_null($user) || empty($user)) && (is_null($pass) || empty($pass))) {
 					self::$repo_credentials[$url] = "";
@@ -102,17 +102,17 @@ class PackageRepository {
 		}
 		return self::$repo_dom;
 	}
-    
-	
+
+
 	/**
 	 * Returns credentials for the given repository URL.
 	 *
 	 * @param string $repo_url
 	 * @return string user:pass
 	 */
-    public static function getCredentials($repo_url) {
-    	return array_key_exists($repo_url, self::$repo_credentials) ? self::$repo_credentials[$repo_url] : "";
-    }
+	public static function getCredentials($repo_url) {
+		return array_key_exists($repo_url, self::$repo_credentials) ? self::$repo_credentials[$repo_url] : "";
+	}
 	/*
 	 * Loads package repository from string (for testing)
 	 */
@@ -125,13 +125,13 @@ class PackageRepository {
 	public static function clearPackageRepository() {
 		self::$repo_dom = array();
 	}
-	
-    /**
-     * Returns deploy descriptor of package $ext_id in the latest version.
-     *
-     * @param string $ext_id
-     * @return DeployDescriptor
-     */
+
+	/**
+	 * Returns deploy descriptor of package $ext_id in the latest version.
+	 *
+	 * @param string $ext_id
+	 * @return DeployDescriptor
+	 */
 	public static function getLatestDeployDescriptor($ext_id) {
 		if (is_null($ext_id)) throw new IllegalArgument("ext must not null");
 		if (array_key_exists($ext_id, self::$deploy_descs)) return self::$deploy_descs[$ext_id];
@@ -149,8 +149,8 @@ class PackageRepository {
 		asort($results, SORT_NUMERIC);
 		$results = array_reverse($results, true);
 		$url = reset(array_keys($results));
-        
-		
+
+
 		if ($url === false) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id. Missing repository?");
 
 		// download descriptor
@@ -167,7 +167,7 @@ class PackageRepository {
 		self::$deploy_descs[] = $dd;
 		return $dd;
 	}
-    
+
 	/**
 	 * Returns deploy descriptor of package $ext_id in version $version
 	 *
@@ -189,10 +189,10 @@ class PackageRepository {
 			break;
 		}
 		if (!isset($repourl)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id-$version");
-    
+
 		// download descriptor
 		$d = new HttpDownload();
-		$credentials = self::$repo_credentials[$repourl];
+		  $credentials = array_key_exists($repourl, self::$repo_credentials) ? self::$repo_credentials[$repourl] : '';
 		$partsOfURL = parse_url($url. "extensions/$ext_id/deploy-$version.xml");
 
 		$path = $partsOfURL['path'];
@@ -219,8 +219,10 @@ class PackageRepository {
 		foreach(self::getPackageRepository() as $repo) {
 			$versions = $repo->xpath("/root/extensions/extension[@id='$packageID']/version");
 
-			foreach($versions as $v) {
-				$results[] = (string) $v->attributes()->ver;
+			if ($versions !== false) {
+				foreach($versions as $v) {
+					$results[] = (string) $v->attributes()->ver;
+				}
 			}
 		}
 
@@ -265,7 +267,7 @@ class PackageRepository {
 	public static function getLatestVersion($packageID) {
 		$results = array();
 		foreach(self::getPackageRepository() as $url => $repo) {
-			
+				
 			$package = $repo->xpath("/root/extensions/extension[@id='$packageID']/version[position()=last()]");
 			if (count($package) == 0) continue;
 			$download_url = (string) $package[0]->attributes()->url;
@@ -318,7 +320,7 @@ class PackageRepository {
 			} else {
 				$package = $repo->xpath("/root/extensions/extension[@id='$packageID']");
 			}
-				
+
 			if (count($package) > 0) return true;
 		}
 		return false;
