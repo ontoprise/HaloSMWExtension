@@ -39,6 +39,7 @@ function unescape($string){
     $string = preg_replace("/%C4/is", "Ä", $string);
     $string = preg_replace("/%D6/is", "Ö", $string);
     $string = preg_replace("/%DC/is", "Ü", $string);
+    $string = preg_replace("/%20/is", " ", $string);
     return $string;
 }
 
@@ -992,10 +993,10 @@ HTML;
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<inlineright>";
-                xml+="<newgroup>$newGroup</newgroup>";
+                xml+="<newgroup>"+escape($newGroup)+"</newgroup>";
                 xml+="<panelid>$panelid</panelid>";
                 if($('right_name_$panelid') != null){
-                    xml+="<name>"+$('right_name_$panelid').value+"</name>";
+                    xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
                 }
 
                 xml+="<users>";
@@ -1687,14 +1688,14 @@ HTML;
                 xml+="<type>"+YAHOO.haloacl.panelDefinePanel_$panelid+"</type>";
                 if($('right_name_$panelid') != null){
                    // xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
-                    xml+="<name>"+$('right_name_$panelid').value+"</name>";
+                    xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
                 }
                 if($('right_description_$panelid') != null){
-                    xml+="<description>"+$('right_description_$panelid').value+"</description>";
+                    xml+="<description>"+escape($('right_description_$panelid').value)+"</description>";
                 }
                 $$('.create_acl_general_protect').each(function(item){
                     if(item.checked){
-                        xml+="<protect>"+item.value+"</protect>";
+                        xml+="<protect>"+escape(item.value)+"</protect>";
                     }
                 });
 
@@ -1702,7 +1703,7 @@ HTML;
                 $$('.right_rights_$panelid').each(function(item){
                     if(item.checked){
                         rightswereset = true;
-                        xml+="<right>"+item.name+"</right>";
+                        xml+="<right>"+escape(item.name)+"</right>";
                     }
                 });
                 xml+="</rights>";
@@ -1730,7 +1731,7 @@ HTML;
                     if(usersarray != null){
                         usersarray.each(function(element){
                             somedatawasentered= true;
-                            xml+="<user>"+element+"</user>";
+                            xml+="<user>"+escape(element)+"</user>";
                             if(element == "$currentUser"){
                                 currentUserIncludedInRight = true;
                             }
@@ -1742,7 +1743,7 @@ HTML;
                     xml+="<groups>";
                     groups.each(function(group){
                         somedatawasentered= true;
-                        xml+="<group>"+group+"</group>";
+                        xml+="<group>"+escape(group)+"</group>";
                     });
                     xml+="</groups>";
                 }
@@ -2467,7 +2468,7 @@ HTML;
         var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
         xml += "<groupstodelete>";
         for(i=0;i<checkedgroups.length;i++){
-            xml += "<group>"+checkedgroups[i]+"</group>";
+            xml += "<group>"+escape(checkedgroups[i])+"</group>";
         }
         xml += "</groupstodelete>";
         if(YAHOO.haloacl.debug) console.log(xml);
@@ -2664,7 +2665,7 @@ HTML;
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<secdesc>";
                 xml+="<panelid>create_acl</panelid>";
-                xml+="<name>$sdName</name>";
+                xml+="<name>"+escape($sdName)+"</name>";
                 xml+="<ACLType>all_edited</ACLType>";
 
                 var callback = function(result){
@@ -2744,7 +2745,7 @@ function getRightsContainer($panelid, $type = "readOnly") {
                         xml+="<panelid>$panelid"+"_templatecount_"+counter+"</panelid>";
                         xml+="<type>template</type>";
 
-                        xml+="<name>"+actualtemplate+"</name>";
+                        xml+="<name>"+escape(actualtemplate)+"</name>";
 
                         xml+="</inlineright>";
 
@@ -2853,7 +2854,7 @@ HTML;
                 xml+="<panelid>subRight_$subSdId</panelid>";
                 xml+="<type>template</type>";
               
-                xml+="<name>$sdName</name>";
+                xml+="<name>"+escape($sdName)+"</name>";
 
                 xml+="</inlineright>";
                 var callback = function(result){
@@ -3075,16 +3076,16 @@ function saveSecurityDescriptor($secDescXml) {
                     case "private":
                         foreach($xml->xpath('//group') as $group) {
                             if($groups == '') {
-                                $groups = (string)$group;
+                                $groups = unescape((string)$group);
                             }else {
-                                $groups = $groups.",".(string)$group;
+                                $groups = $groups.",".unescape((string)$group);
                             }
                         }
                         foreach($xml->xpath('//user') as $user) {
                             if($users == '') {
-                                $users = 'User:'.(string)$user;
+                                $users = 'User:'.unescape((string)$user);
                             }else {
-                                $users = $users.",".'User:'.(string)$user;
+                                $users = $users.",".'User:'.unescape((string)$user);
                             }
                         }
                         break;
@@ -3095,15 +3096,15 @@ function saveSecurityDescriptor($secDescXml) {
                             if($groups == '') {
                                 $groups = (string)$group;
                             }else {
-                                $groups = $groups.",".(string)$group;
+                                $groups = $groups.",".unescape((string)$group);
                             }
                         }
                         foreach($xml->xpath('//user') as $user) {
                             $foundModrights = true;
                             if($users == '') {
-                                $users = 'User:'.(string)$user;
+                                $users = 'User:'.unescape((string)$user);
                             }else {
-                                $users = $users.",".'User:'.(string)$user;
+                                $users = $users.",".'User:'.unescape((string)$user);
                             }
 
                         }
@@ -3195,7 +3196,7 @@ HTML;
 
         $SDName = $secDescXmlInstance->name;
 
-        $aclName = (string)$SDName;
+        $aclName = unescape((string)$SDName);
 
         // create article for security descriptor
 
@@ -3249,9 +3250,9 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         foreach($groupXml->xpath('//group') as $group) {
             if(trim($group) != "") {
                 if($groups == '') {
-                    $groups = (string)$group;
+                    $groups = unescape((string)$group);
                 }else {
-                    $groups .= ",".(string)$group;
+                    $groups .= ",".unescape((string)$group);
                 }
             }
         }
@@ -3271,9 +3272,9 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
         foreach($manageRightsXml->xpath('//group') as $group) {
             if(trim($group)) {
                 if($mrgroups == '') {
-                    $mrgroups = (string)$group;
+                    $mrgroups = unescape((string)$group);
                 }else {
-                    $mrgroups .= ",".(string)$group;
+                    $mrgroups .= ",".unescape((string)$group);
                 }
             }
         }
@@ -3287,7 +3288,7 @@ function saveGroup($manageRightsXml,$parentgroup = null) {
             }
         }
 
-        $groupName = $groupXml->name;
+        $groupName = unescape($groupXml->name);
 
         // create article for security descriptor
         $sdarticle = new Article(Title::newFromText("$ns:".'Group'.'/'.$groupName));
@@ -3478,18 +3479,18 @@ function saveWhitelist($whitelistXml) {
 
         foreach($oldWhitelists->getPages() as $item) {
             if($pages == '') {
-                $pages = (string)$item;
+                $pages = unescape((string)$item);
             }else {
-                $pages .= ",".(string)$item;
+                $pages .= ",".unescape((string)$item);
             }
         }
 
         $whitelistXml = new SimpleXMLElement($whitelistXml);
         foreach($whitelistXml->xpath('//page') as $page) {
             if($pages == '') {
-                $pages = (string)$page;
+                $pages = unescape((string)$page);
             }else {
-                $pages .= ",".(string)$page;
+                $pages .= ",".unescape((string)$page);
             }
         }
 
@@ -4145,7 +4146,7 @@ HTML;
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml += "<groupstodelete>";
                 for(i=0;i<checkedgroups.length;i++){
-                    xml += "<group>"+checkedgroups[i]+"</group>";
+                    xml += "<group>"+escape(checkedgroups[i])+"</group>";
                 }
                 xml += "</groupstodelete>";
                 if(YAHOO.haloacl.debug) console.log(xml);
@@ -4381,7 +4382,7 @@ HTML;
             if(YAHOO.haloacl.debug) console.log("saveWhitelist called");
             var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
             xml += "<whitelistContent>";
-            xml += "<page>"+$('haloacl_whitelist_pagename').value+"</page>";
+            xml += "<page>"+escape($('haloacl_whitelist_pagename').value)+"</page>";
             xml += "</whitelistContent>";
 
             var callback4 = function(result){
@@ -4405,7 +4406,7 @@ HTML;
             xml += "<whitelistContent>";
             $$('.haloacl_whitelist_datatable_users').each(function(item){
                 if(item.checked){
-                    xml += "<page>"+item.name+"</page>";
+                    xml += "<page>"+escape(item.name)+"</page>";
                 }
             });
             xml += "</whitelistContent>";
@@ -4606,7 +4607,7 @@ HTML;
             xml += "<quickaclContent>";
             $$('.haloacl_quickacl_datatable_template').each(function(item){
                 if(item.checked){
-                    xml += "<template>"+item.name+"</template>";
+                    xml += "<template>"+escape(item.name)+"</template>";
                 }
             });
             xml += "</quickaclContent>";
@@ -4686,7 +4687,7 @@ function saveQuickacl($xml) {
     $xmlInstance = new SimpleXMLElement($xml);
 
     foreach($xmlInstance->xpath('//template') as $template) {
-        $templates[] = (string)$template;
+        $templates[] = unescape((string)$template);
     }
     if(sizeof($templates) < 15) {
         $quickacl = new HACLQuickacl($wgUser->getId(), $templates);
