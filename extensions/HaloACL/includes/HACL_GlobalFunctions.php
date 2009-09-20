@@ -289,7 +289,10 @@ function haclAddHTMLHeader(&$out) {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
+
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
+
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
