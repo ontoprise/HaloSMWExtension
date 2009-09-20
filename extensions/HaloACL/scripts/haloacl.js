@@ -594,7 +594,10 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
 };
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
-    if(YAHOO.haloacl.clickedArrayGroups[panelid] && name.length > 4){
+    if(name.length > 4){
+        if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
+            YAHOO.haloacl.clickedArrayGroups[panelid] = new Array();
+        }
         if(YAHOO.haloacl.debug) console.log("adding group "+name+" to "+panelid+"-array");
         var alreadyContained = false;
         for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){

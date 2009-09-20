@@ -672,7 +672,6 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
  * @param tree : tree reference
  */
 YAHOO.haloacl.preloadCheckedGroups = function(groups, tree) {
-
     var data = YAHOO.lang.JSON.parse(groups);
 
     if(YAHOO.haloacl.debug) console.log("data preload"+data);
