@@ -2233,7 +2233,10 @@ HTML;
  * @param <string>  unique identifier
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
-function rightList($panelid, $type = "readOnly") {
+function rightList($panelid, $type = "readOnly",$nofilter = false) {
+    if($nofilter == "true"){
+        $nofilter = true;
+    }
 
     $hacl_rightList_All = wfMsg('hacl_rightList_All');
     $hacl_rightList_StandardACLs = wfMsg('hacl_rightList_StandardACLs');
@@ -3851,13 +3854,21 @@ function getACLs($typeXML, $filter = null) {
         }
     }
 
+    $dontCheckForCanMod = false;
+    for($i=0;$i<sizeof($types);$i++){
+        if($types[$i] == "acltemplate_nofilter"){
+            $dontCheckForCanMod = true;
+            $types[$i] = "acltemplate";
+        }
+    }
+
     $array = array();
 
     $SDs = HACLStorage::getDatabase()->getSDs($types);
     foreach( $SDs as $key => $SD) {
     // processing default user templates
         if(preg_match("/Template\//is",$SD->getSDName())) {
-            if(($SD->getSDName() == "Template/$username") || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
+            if(($SD->getSDName() == "Template/$username") ||$dontCheckForCanMod || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
                 $tempRights = array();
                 foreach ($SD->getInlineRights(false) as $rightId) {
                     try {
@@ -3876,7 +3887,7 @@ function getACLs($typeXML, $filter = null) {
             }
 
         // processing other acls
-        }elseif($SD->userCanModify($wgUser->getName()) || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess)) {
+        }elseif($SD->userCanModify($wgUser->getName()) ||$dontCheckForCanMod || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess)) {
             $tempRights = array();
             foreach ($SD->getInlineRights(false) as $rightId) {
                 try {
@@ -4641,7 +4652,8 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
     $a['records'] = array();
     foreach($templates as $sd) {
         if($query == "all" || preg_match('/'.$query.'/is',$sd->getSDName())) {
-            if(!preg_match("/Template\//is",$sd->getSDName()) && ($sd->userCanModify($wgUser->getName()) || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess))) {
+           // if(!preg_match("/Template\//is",$sd->getSDName()) && ($sd->userCanModify($wgUser->getName()) || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess))) {
+            if(true) {
                 $checked = false;
                 if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
                     $checked = true;

@@ -993,7 +993,7 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
             query:query
         },callback);
     }else{
-        var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate</type></types>');
+        var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate_nofilter</type></types>');
         YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
             query:temp
         },callback);
