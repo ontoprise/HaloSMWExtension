@@ -100,7 +100,7 @@
 			         text="REDIRECT HiddenPage.*"/>
 		<clickLink label="HiddenPage"/>
 		<verifyText description="Verify that text is contained in the page" 
-					text="Permission denied"/>		
+					text="Permission error"/>		
 	</target>
 	
 </project>

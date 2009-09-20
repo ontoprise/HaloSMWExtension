@@ -180,7 +180,7 @@
 			value="${content} 
 			       New revision."/>
 		
-		<clickButton label="Save page"/>
+		<clickButton htmlId="wpSave"/>
 		
 	</target>
 	
