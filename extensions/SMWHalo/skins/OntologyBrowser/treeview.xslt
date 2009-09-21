@@ -458,11 +458,11 @@
 					<xsl:when test="child::rangeType[1][@isLink]">
 						<a class="category">
 						    <xsl:attribute name="href"><xsl:value-of select="substring-before($param-wiki-path,'$1')"/><xsl:value-of select="$param-ns-concept"/>:<xsl:value-of select="child::rangeType[1]"/>?action=edit</xsl:attribute> 
-							<xsl:value-of select="child::rangeType[1]"/>
+							<xsl:value-of select="translate(child::rangeType[1], '_', ' ')"/>
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="child::rangeType[1]"/>
+						<xsl:value-of select="translate(child::rangeType[1], '_', ' ')"/>
 					</xsl:otherwise>
 				</xsl:choose>
 				
@@ -478,11 +478,11 @@
 								<xsl:when test="@isLink">
 								<a class="category">
 									<xsl:attribute name="onclick">categoryActionListener.navigateToEntity(event, this,'<xsl:call-template name="replace-string"><xsl:with-param name="text" select="."/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
-									<xsl:value-of select="@name"/><xsl:value-of select="."/>
+									<xsl:value-of select="@name"/><xsl:value-of select="translate(self::node(), '_', ' ')"/>
 								</a>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of select="@name"/><xsl:value-of select="."/>
+									<xsl:value-of select="@name"/><xsl:value-of select="translate(self::node(), '_', ' ')"/>
 								</xsl:otherwise>
 							</xsl:choose>
 							
