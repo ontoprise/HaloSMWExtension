@@ -29,6 +29,7 @@ function enableDataImportExtension() {
 	$smwgEnableDataImportExtension = true;
 	require_once($smwgDIIP. '/specials/WebServices/SMW_WebServiceManager.php');
 	require_once($smwgDIIP. '/specials/TermImport/SMW_TermImportManager.php');
+	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
 	
 	//require the materialize parser function
 	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
@@ -67,7 +68,7 @@ function smwfDISetupExtension() {
 	
 	//also registers TermImport namespace
 	WebServiceManager::registerWWSNamespaces();
-	require_once($smwgDIIP. '/specials/TermImport/SMW_ImportedTermsNamespaces.php');
+	diRegisterTermImportNamespaces();
 	
 	// add some AJAX calls
 	$action = $wgRequest->getVal('action');
