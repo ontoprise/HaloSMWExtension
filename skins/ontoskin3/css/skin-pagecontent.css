@@ -57,7 +57,7 @@
 	background: #FFFFFF none repeat scroll 0 0;
 }
 
-#content .smwtable a:hover td{
+#content .smwtable tr:hover td{
 	background: #E8EDFF none repeat scroll 0 0;
 }
 
