@@ -3111,7 +3111,7 @@ function saveSecurityDescriptor($secDescXml) {
 
             if ($type == "template") {
                 $inline .= '
-{{#predefined right:rights='.$xml->name.'}}';
+{{#predefined right:rights='.unescape($xml->name).'}}';
             } else {
 
                 $protect = null;
