@@ -701,7 +701,7 @@ class FCKeditorParser extends Parser_OldPP
 	 * @return string replacement or "[[$match]]"
 	 */
 	private function replaceRichmediaLinkValue($match) {
-		if ($match{0} == ":") $match = substr($match, 1);
+		if ($match && $match{0} == ":") $match = substr($match, 1);
 		if (strpos($match, ":") === false)
 			return "[[".$match."]]";
 		$ns = substr($match, 0, strpos($match, ':'));
