@@ -152,6 +152,7 @@ END;
     }
     static function sliceHtmlPieces(&$html, $entry, $start, $end) {
         $pStart = strpos($html, $entry);
+        if ($pStart === false) return;
         $pStart = strrpos(substr($html, 0, $pStart), $start);
         $pEnd = strpos($html, $end, $pStart);
         $before = substr($html, 0, $pStart);
