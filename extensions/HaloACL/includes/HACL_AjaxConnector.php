@@ -4594,7 +4594,7 @@ HTML;
         <div id="haloacl_whitelist_contentlist">
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-        $hacl_quickACL_3<span style="margin-right:20px;float:right;">Select</span><span style="margin-right:20px;float:right;">Info</span>
+        $hacl_quickACL_3<span style="margin-right:18px;float:right;">Select</span><span style="margin-right:25px;float:right;">Info</span>
             </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input class="haloacl_filter_input" onKeyup="YAHOO.haloacl.quickaclTableInstance.executeQuery(this.value);"/>
