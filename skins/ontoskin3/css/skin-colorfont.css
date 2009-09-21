@@ -41,6 +41,11 @@ body{
 .smwh_menuhead  {
     background: url(../img/menue_trennstrich.gif) right no-repeat;
 }
+
+.smwh_menuhead:focus {
+    background: url(../img/menue_hover.gif) repeat-x;
+}
+
 .smwh_menuhead:hover {
     background: url(../img/menue_hover.gif) repeat-x;
 }
