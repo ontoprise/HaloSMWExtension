@@ -322,7 +322,14 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 	public function getHelppages($namespace, $action) {
 		$helppages = array();
 		$db =& wfGetDB( DB_SLAVE );
-		$discourseState = mysql_real_escape_string($namespace) . ":" . mysql_real_escape_string($action);
+		$namespace = mysql_real_escape_string($namespace);
+		$action = mysql_real_escape_string($action);
+		
+		$discourseState1 =  $namespace. ":" . $action;
+		$discourseState2 =  "ALL:" . $action;
+		$discourseState3 =  $namespace. ":ALL";
+		$discourseState4 =  "ALL:ALL";
+		
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_atts2 = $db->tableName('smw_atts2');
 		$page = $db->tableName('page');
@@ -335,7 +342,12 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
 		$res = $db->query('SELECT page_id FROM '.$smw_atts2.
         ' JOIN '.$smw_ids.' ON smw_id = s_id '.
         ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
-        ' WHERE p_id = '.$discourseStateID. ' AND value_xsd = ' . $db->addQuotes($discourseState) . ' AND page_namespace = ' . NS_HELP . ' ORDER BY RAND() LIMIT 5');
+        ' WHERE p_id = '.$discourseStateID. ' AND '.
+        '(UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState1) . ') '.
+        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState2) . ') '.
+        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState3) . ') '.
+        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState4) . ')) '.
+        'AND page_namespace = ' . NS_HELP . ' ORDER BY RAND() LIMIT 5');
 
 		while ($row = $db->fetchObject( $res )) {
 			$helppages[] = $row->page_id;
