@@ -163,7 +163,7 @@ Initially the flow of browsing is left to right. You can flip the flow by
 clicking the big arrows between the columns.',
 	'smw_ob_undefined_type' => '*undefined range*',
 	'smw_ob_hideinstances' => 'Hide Instances',
-    'smw_ob_onlyDirect' => 'only direct properties',
+    'smw_ob_onlyDirect' => 'no inferred',
 	'smw_ob_hasnumofsubcategories' => 'Number of subcategories',
 	'smw_ob_hasnumofinstances' => 'Number of instances',
 	'smw_ob_hasnumofproperties' => 'Number of properties',
