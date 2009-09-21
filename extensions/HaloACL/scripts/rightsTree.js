@@ -1052,8 +1052,22 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
             failure: function(oResponse) {
             }
         };
+        
+        var query = "all";
+        var foundType = false;
+        var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
+        $$('.haloacl_manageacl_filter').each(function(item){
+            if(item.checked){
+                xml += "<type>"+item.name+"</type>";
+                foundType = true;
+            }
+        });
+        xml += '</types>';
+        if(foundType){
+            query = escape(xml);
+        }
         YAHOO.haloacl.treeviewDataConnect('getACLs',{
-            query:'all',
+            query:query,
             filtervalue:filtervalue
         },callback);
 
