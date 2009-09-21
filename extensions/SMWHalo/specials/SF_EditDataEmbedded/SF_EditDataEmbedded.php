@@ -200,8 +200,13 @@ END;
                     var inputName = inputs[i].name;
                     // check input name which must look like template_name[field_name]
                     if (inputName && inputName.indexOf(tName) != -1) {
-                        newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -2),
-                                        (inputs[i].value) ? inputs[i].value : '' ]);
+                        // do we have a date? (i.e. template_name[field_name][day])
+                        if (inputName.match(/\]\[(day|month|year)\]$/))
+                            newData = addDateToResult(newData, inputName, inputs[i].value);
+                        else
+                            // normal value
+                            newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -2),
+                                            (inputs[i].value) ? inputs[i].value : '' ]);
                     }
                 }
                 // do the same for textareas, handling is pretty much the same
@@ -212,6 +217,25 @@ END;
                         newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -2),
                                       (inputs[i].innerHTML) ? inputs[i].innerHTML : '' ]);
                     }
+                }
+                // and now for selections
+                inputs = document.getElementsByTagName('select');
+                for (var i = 0; i < inputs.length; i++) {
+                    var inputName = inputs[i].name;
+                    if (inputName && inputName.indexOf(tName) != -1) {
+                        if (inputName.match(/\]\[(day|month|year)\]$/))
+                            newData = addDateToResult(newData, inputName, inputs[i].value);
+                        else
+                            // normal value
+                            newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -2),
+                                            (inputs[i].innerHTML) ? inputs[i].innerHTML : '' ]);
+                    }
+                }
+
+                // flatten the date arrays in case there are any
+                for (i = 0; i < newData.length; i++) {
+                    if (typeof newData[i][1] == "object")
+                        newData[i][1] = newData[i][1].join(' ');
                 }
                 return newData;
             }
@@ -264,6 +288,61 @@ END;
                 // now add the missing }} again.
                 newStr += tail;
                 window.parent.document.getElementById('xTemplateRaw').value = newStr;
+            }
+
+            /**
+             * Add date string to result array
+             *
+             * @param array(string, string) result array
+             * @param string input field name
+             * @param string input field value
+             * @return array(string, string) result array modified
+             */
+             addDateToResult = function(newData, name, value) {
+                var s = name.indexOf('[') + 1;
+                var l = name.indexOf(']') - s;
+                var fieldname = name.substr(s , l);
+                s = name.lastIndexOf('[') + 1;
+                l = name.lastIndexOf(']') - s;
+                var type = name.substr(s, l);
+                // check if we already have that field name in the result
+                for (i = 0; i < newData.length; i++) {
+                    if (newData[i][0] == fieldname) {
+                        switch (type) {
+                            case 'day':
+                                newData[i][1][0] = value;
+                                return newData;
+                            case 'month':
+                                newData[i][1][1] = getNameOfMonth(value);
+                                return newData;
+                            case 'year':
+                                newData[i][1][2] = value;
+                                return newData;
+                        }
+                    }
+                }
+                var date = [];
+                date.push( (type == 'day') ? value : '');
+                date.push( (type == 'month') ? getNameOfMonth(value) : '');
+                date.push( (type == 'year') ? value : '');
+                newData.push([fieldname, date]);
+                return newData;
+            }
+
+            /**
+             * Get name of month (english)
+             *
+             * @param int number of month
+             * @return string month
+             */
+            getNameOfMonth = function(val) {
+                if (! val.match(/^\d+$/)) return val;
+                months = [ 'January', 'February', 'March', 'April',
+                           'May', 'June', 'July', 'August',
+                           'September', 'October', 'November', 'December'
+                         ];
+                var key = parseInt(val) - 1;
+                return (key < 12) ? months[key] : '';
             }
 ENDJS;
     }
