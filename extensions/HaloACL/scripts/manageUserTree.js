@@ -434,7 +434,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
     //tmpNode.setDynamicLoad();
     }else{
         if($('haloacl_manageuser_count') != null){
-            $('haloacl_manageuser_count').innerHTML = parentNode.getNodeCount();
+            $('haloacl_manageuser_count').innerHTML = parentNode.getNodeCount()*1-1;
         }
     }
    

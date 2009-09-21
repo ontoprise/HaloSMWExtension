@@ -254,7 +254,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         var createAclACtive = true;
         var createTplActive = false;
         var createDefUserActive = false;
-        if(YAHOO.haloacl.activeSubTab == "createDefUserActive"){
+        if(YAHOO.haloacl.activeSubTab == "manageDefaultTemplate"){
         createAclACtive = false;
         createDefUserActive = true;
         createTplActive = false;
