@@ -117,7 +117,7 @@ ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
 }
 
 ul.smwh_menulist li:hover {
-	background: #E8EDFF none repeat scroll 0 0;
+    background: url(../img/menue_hover.gif) repeat-x;
 }
 
 ul.smwh_menulist li {
@@ -145,10 +145,9 @@ ul.smwh_menulist div.smwh_menubody {
     position: absolute;
     top: 24px;
     z-index: 20;
-    
 }
 
-ul.smwh_menulist div.smwh_menubody hover td{
+ul.smwh_menulist div.smwh_menubody td:hover  {
 	background: #E8EDFF none repeat scroll 0 0;
 }
 
