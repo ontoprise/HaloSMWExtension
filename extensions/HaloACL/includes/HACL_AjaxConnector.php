@@ -40,6 +40,7 @@ function unescape($string){
     $string = preg_replace("/%D6/is", "Ö", $string);
     $string = preg_replace("/%DC/is", "Ü", $string);
     $string = preg_replace("/%20/is", " ", $string);
+    $string = preg_replace("/%2C/is", ",", $string);
     $string = preg_replace("/%3A/is", ":", $string);
     return $string;
 }
@@ -3089,7 +3090,7 @@ function saveSecurityDescriptor($secDescXml) {
                 }
 
                 $description = $xml->description ? unescape($xml->description) : '';
-                $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
+                $autoDescription = $xml->autoDescription ? unescape($xml->autoDescription) : '';
                 $rightName = $xml->name ? unescape($xml->name) : '';
 
                 switch ($type) {
