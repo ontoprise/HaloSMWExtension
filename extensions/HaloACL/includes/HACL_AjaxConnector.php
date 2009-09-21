@@ -993,7 +993,7 @@ HTML;
                 // building xml
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<inlineright>";
-                xml+="<newgroup>"+escape($newGroup)+"</newgroup>";
+                xml+="<newgroup>"+escape('$newGroup')+"</newgroup>";
                 xml+="<panelid>$panelid</panelid>";
                 if($('right_name_$panelid') != null){
                     xml+="<name>"+escape($('right_name_$panelid').value)+"</name>";
@@ -2665,7 +2665,7 @@ HTML;
                 var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
                 xml+="<secdesc>";
                 xml+="<panelid>create_acl</panelid>";
-                xml+="<name>"+escape($sdName)+"</name>";
+                xml+="<name>"+escape('$sdName')+"</name>";
                 xml+="<ACLType>all_edited</ACLType>";
 
                 var callback = function(result){
@@ -2854,7 +2854,7 @@ HTML;
                 xml+="<panelid>subRight_$subSdId</panelid>";
                 xml+="<type>template</type>";
               
-                xml+="<name>"+escape($sdName)+"</name>";
+                xml+="<name>"+escape('$sdName')+"</name>";
 
                 xml+="</inlineright>";
                 var callback = function(result){
