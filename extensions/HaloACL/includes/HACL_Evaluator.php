@@ -92,6 +92,7 @@ class HACLEvaluator {
 		if ($haclgProtectProperties) {
 			$r = self::checkPropertyAccess($title, $user, $action);
 			if ($r !== -1) {
+				haclfRestoreTitlePatch($etc);
 				$result = $r;
 				return $r;
 			}
