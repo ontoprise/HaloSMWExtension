@@ -513,18 +513,18 @@ AutoCompleter.prototype = {
     },
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
-            if (!this.siw.customFloater) {
+            // we are in the FCK editor, AC will be displayed in the upper left.
+            if ($('wpTextbox1___Frame')) {
+                this.siw.floater.style.left = Position.cumulativeOffset($('wpTextbox1___Frame'))[0] + "px";
+                this.siw.floater.style.top = Position.cumulativeOffset($('wpTextbox1___Frame'))[1] + "px";
+            }
+            else if (!this.siw.customFloater) {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
                 var y = Position.cumulativeOffset(this.siw.inputBox)[1] + this.siw.inputBox.offsetHeight;
 
                 //hack: browser-specific adjustments.
                 if (!OB_bd.isGecko && !OB_bd.isIE) x += 8;
-
                 if (!OB_bd.isGecko && !OB_bd.isIE) y += 10;
-
-                // ugly fix when y is too big, happens in fullscreen mode of FCK
-                var iH = (OB_bd.isIE) ? top.document.body.innerHeight : top.window.innerHeight;
-                if (y > iH - 20) y = Position.cumulativeOffset(this.siw.inputBox)[1];
 
                 // read position flag and set it: fixed and absolute is possible
                 var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
@@ -536,7 +536,7 @@ AutoCompleter.prototype = {
                     Element.setStyle(this.siw.floater, { position: 'fixed'});
                                         
                 }
-                
+
                 // read alignment flag and set position accordingly
                 var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
                 var globalWrapper = $("globalWrapper");
