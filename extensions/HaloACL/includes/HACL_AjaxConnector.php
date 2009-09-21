@@ -31,7 +31,7 @@
  */
 
 
-function unescape($string){
+function unescape($string) {
     $string = preg_replace("/%E4/is", "ä", $string);
     $string = preg_replace("/%F6/is", "ö", $string);
     $string = preg_replace("/%FC/is", "ü", $string);
@@ -532,7 +532,12 @@ function createManageUserTemplateContent() {
 HTML;
     }
     catch(Exception $e ) {
-        $tempContent = "<div style='padding:8px;'>no default template for user</div>";
+        $spt = SpecialPage::getTitleFor("HaloACL");
+        $url = $spt->getFullURL();
+        $url .= "?activetab=createACL&activesubtab=manageDefaultTemplate";
+
+        
+        $tempContent = "<div style='padding:8px;'>no default template for user &raquo; <a href='$url'>click here to create one</a></div>";
     }
 
     $myGenericPanel->setContent($tempContent);
@@ -2258,7 +2263,7 @@ HTML;
  * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
  */
 function rightList($panelid, $type = "readOnly",$nofilter = false) {
-    if($nofilter == "true"){
+    if($nofilter == "true") {
         $nofilter = true;
     }
 
@@ -2809,7 +2814,7 @@ function getSDRightsPanel($sdId, $readOnly = false,$autosave = false) {
     $alreadyLoadedTpls = array();
     $alreadyLoadedTpls[] = $sdId;
 
-    if($autosave == "true"){
+    if($autosave == "true") {
         $autosave = true;
     }
 
@@ -2887,17 +2892,17 @@ HTML;
                           
             };
 HTML;
-            // preventing deathlock
-            if(!in_array($subSdId, $alreadyLoadedTpls)){
+        // preventing deathlock
+        if(!in_array($subSdId, $alreadyLoadedTpls)) {
             $temphtml .= <<<HTML
 
                 YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
 
 HTML;
-            }
-            $alreadyLoadedTpls[] = $subSdId;
-            //show closed at first
-            $temphtml .= <<<HTML
+        }
+        $alreadyLoadedTpls[] = $subSdId;
+        //show closed at first
+        $temphtml .= <<<HTML
             YAHOO.haloacl.togglePanel('subRight_$subSdId');
 HTML;
         // initial save those rights
@@ -3913,8 +3918,8 @@ function getACLs($typeXML, $filter = null) {
     }
 
     $dontCheckForCanMod = false;
-    for($i=0;$i<sizeof($types);$i++){
-        if($types[$i] == "acltemplate_nofilter"){
+    for($i=0;$i<sizeof($types);$i++) {
+        if($types[$i] == "acltemplate_nofilter") {
             $dontCheckForCanMod = true;
             $types[$i] = "acltemplate";
         }
@@ -3923,7 +3928,7 @@ function getACLs($typeXML, $filter = null) {
     $array = array();
 
     $SDs = HACLStorage::getDatabase()->getSDs($types);
-    
+
     foreach( $SDs as $key => $SD) {
     // processing default user templates
         if(preg_match("/Template\//is",$SD->getSDName())) {
@@ -4710,11 +4715,11 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
     foreach($templates as $sd) {
         if($query == "all" || preg_match('/'.$query.'/is',$sd->getSDName())) {
             $checked = false;
-            try{
+            try {
                 if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
                     $checked = true;
                 }
-            }catch(Exception $e){}
+            }catch(Exception $e ){}
             $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
         }
     }

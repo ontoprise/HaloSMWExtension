@@ -251,12 +251,21 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
 
     } else if (containerName == "haloaclsubView") {
+        var createAclACtive = true;
+        var createTplActive = false;
+        var createDefUserActive = false;
+        if(YAHOO.haloacl.activeSubTab == "createDefUserActive"){
+        createAclACtive = false;
+        createDefUserActive = true;
+        createTplActive = false;
+    }
+
 
         var tab1 = new YAHOO.widget.Tab({
             label: gLanguage.getMessage('createStandardACL'),
             dataSrc:'createAclContent',
             cacheData:false,
-            active:true,
+            active:createAclACtive,
             id:"createStdAclTab"
         });
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -274,7 +283,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             label: gLanguage.getMessage('createACLTemplate'),
             dataSrc:'createAclTemplateContent',
             cacheData:false,
-            active:false,
+            active:createTplActive,
             id:"createTmpAclTab"
         });
         tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
@@ -293,7 +302,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             label: gLanguage.getMessage('createDefaultUserTemplate'),
             dataSrc:'createAclUserTemplateContent',
             cacheData:false,
-            active:false,
+            active:createDefUserActive,
             id:"createUserAclTab"
         });
         tab3._dataConnect = YAHOO.haloacl.tabDataConnect;
