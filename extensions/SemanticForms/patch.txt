@@ -1124,7 +1124,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +            }
 +            /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
 +            /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
-+            elseif($tag == 'WYSIWYG') {          
++            elseif (($tag == 'WYSIWYG') && (strpos($existing_page_content, '__NORICHEDITOR__') === false)) {
 +              $show_FCKEditor = true;
 +            }
 +			/*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
