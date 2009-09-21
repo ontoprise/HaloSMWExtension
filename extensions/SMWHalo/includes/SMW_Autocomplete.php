@@ -135,8 +135,8 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		      	$namespace = SF_NS_FORM;
 		      }
 		}
-		
-		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, substr($userInputToMatch, strlen($form_ns_text)+1), $namespace );
+		$userInputToMatch = $namespace == NS_TEMPLATE ? $userInputToMatch : substr($userInputToMatch, strlen($form_ns_text)+1);
+		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
 		AutoCompletionRequester::logResult($result, $articleName);
 		return $result;
 
