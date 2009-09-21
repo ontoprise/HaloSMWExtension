@@ -4696,7 +4696,6 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
 
     // generating paging-stuff
     $a['totalRecords'] = sizeof($a['records']);
-    $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
     $a['recordsReturned'] = sizeof($a['records']);
 
     return(json_encode($a));
