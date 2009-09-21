@@ -1026,26 +1026,26 @@ class TSConnection {
 	 * @param string or array of strings $commands
 	 */
 	public function send($topic, $commands) {
-		global $smwgMessageBroker, $smwgTSEncodeUTF8;
+		global $smwgMessageBroker, $smwgSPARULUpdateEncoding;
 		if (isset($smwgMessageBroker)) {
 			if (!is_array($commands)) {
-				$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commands) : $commands;
+				$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
 				$this->con->send($topic, $enc_commands);
 				return;
 			}
 			$commandStr = implode("|||",$commands);
-			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
 			$this->con->send($topic, $enc_commands);
 
 		} else {
 			// ignore topic
 			if (!is_array($commands)) {
-				$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commands) : $commands;
+				$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
 				$this->con->update($enc_commands);
 				return;
 			}
 			$commandStr = implode("|||",$commands);
-			$enc_commands = isset($smwgTSEncodeUTF8) && $smwgTSEncodeUTF8 === true ? utf8_encode($commandStr) : $commandStr;
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
 			$this->con->update($enc_commands);
 
 		}
