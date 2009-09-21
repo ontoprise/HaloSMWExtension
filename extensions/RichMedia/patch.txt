@@ -39,7 +39,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5012)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5168)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -193,7 +193,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
  		}
  
-@@ -540,48 +604,85 @@
+@@ -540,48 +604,91 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
  				
  			}
@@ -211,7 +211,6 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -			if ($this->mDelimiter == null) {
 -				$output .=<<<END
 -		parent.document.getElementById("{$this->mInputID}").value = '$basename';
--
 +			
 +			// begin Rich Media Changes
 +			$target = $this->mLocalFile->title->getPrefixedText();
@@ -241,7 +240,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			$wgRequest->data['wpSave']= 'true';
 +			//This needs to be set, otherwise the page content (created by UploadConverter e.g.) is ignored
 +			$wgRequest->data['query'] = 'false';
-+			$form_add= new SFEditData();
+ 
++			// Add or Edit?
++			$target_title = Title::newFromText($target);
++			if (! $target_title || ! $target_title->exists() )
++				$form_add= new SFAddData();
++			else
++				$form_add = new SFEditData();
 +			$form_add_test = $form_add->execute($myQuery);
 +			// end Rich Media Changes
 +			
@@ -310,7 +315,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  	}
  
-@@ -802,9 +903,55 @@
+@@ -802,9 +909,55 @@
  	 * @access private
  	 */
  	function uploadError( $error ) {
@@ -368,7 +373,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -824,15 +971,22 @@
+@@ -824,15 +977,22 @@
  			# Couldn't save file; an error has been displayed so let's go.
  			return;
  		}
@@ -393,7 +398,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$action = $titleObj->escapeLocalURL( 'action=submit' );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-@@ -856,24 +1010,37 @@
+@@ -856,24 +1016,37 @@
  		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
  		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
  		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -435,7 +440,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -895,6 +1062,10 @@
+@@ -895,6 +1068,10 @@
  		$adc = wfBoolToStr( $useAjaxDestCheck );
  		$alp = wfBoolToStr( $useAjaxLicensePreview );
  		
@@ -446,7 +451,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -929,15 +1100,98 @@
+@@ -929,15 +1106,98 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
  
@@ -552,7 +557,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
  		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
-@@ -960,7 +1214,7 @@
+@@ -960,7 +1220,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
@@ -561,7 +566,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		// Prepare form for upload or upload/copy
  		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -982,41 +1236,63 @@
+@@ -982,41 +1242,63 @@
  				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -638,7 +643,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1024,7 +1300,7 @@
+@@ -1024,7 +1306,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -647,7 +652,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1032,7 +1308,7 @@
+@@ -1032,7 +1314,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -656,7 +661,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1042,13 +1318,13 @@
+@@ -1042,13 +1324,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -672,7 +677,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1067,21 +1343,21 @@
+@@ -1067,21 +1349,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -700,7 +705,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1374,18 @@
+@@ -1098,7 +1380,18 @@
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
  	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
@@ -720,7 +725,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1849,60 @@
+@@ -1562,4 +1855,60 @@
  		}
  		return $pageText;
  	}
