@@ -584,6 +584,8 @@ abbr,acronym { border:0;
     height:271px;
     border:1px #000 solid;
     border-style:none none solid none;
+    overflow:auto;
+    overflow-x:visible;
 }
 
 .haloacl_rightpanel_selecttab_rightpart_datatable table{
@@ -604,7 +606,7 @@ abbr,acronym { border:0;
 .datatable_usergroups{
     font-size:10px!important;
     overflow:hidden;
-    width:230px;
+    width:222px;
     height:13px!important;
 }
 
