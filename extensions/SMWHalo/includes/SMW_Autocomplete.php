@@ -130,10 +130,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		global $wgLang;
 		$namespace = NS_TEMPLATE;
 		if (defined('SF_NS_FORM')) {
-		      $form_ns_text = $wgLang->getNsText(SF_NS_FORM);
-		      if (substr($userInputToMatch, 0, strlen($form_ns_text)) == $form_ns_text) {
-		      	$namespace = SF_NS_FORM;
-		      }
+			$form_ns_text = $wgLang->getNsText(SF_NS_FORM);
+			if (substr($userInputToMatch, 0, strlen($form_ns_text)) == $form_ns_text) {
+				$namespace = SF_NS_FORM;
+			}
 		}
 		$userInputToMatch = $namespace == NS_TEMPLATE ? $userInputToMatch : substr($userInputToMatch, strlen($form_ns_text)+1);
 		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
@@ -295,22 +295,32 @@ class AutoCompletionRequester {
 	}
 
 	/**
-	 * Get template proposals.
+	 * Get template/form proposals.
 	 */
 	public static function getTemplateOrFormProposals($userContext, $match, $namespace) {
 		// template context
 		// parse template paramters
 		$templateParameters = explode("|", $userContext);
 		if (count($templateParameters) > 1) {
-			// if it is a parameter try all semantic namespaces
-			$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_MAIN));
+			// if it is a template parameter try the semantic namespaces
+			$results = smwfGetAutoCompletionStore()->getPages($match, array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN));
 			return AutoCompletionRequester::encapsulateAsXML($results);
-		} else { // otherwise it is a template name
+		} else { // otherwise it is a template or form name
 			$templates = smwfGetAutoCompletionStore()->getPages($match, array($namespace));
 			$matches = array();
-			foreach($templates as $t) {
-				$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
+			if (defined('SF_NS_FORM')) {
+				foreach($templates as $t) {
+					switch($namespace) {
+						case NS_TEMPLATE: $matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));break;
+						case SF_NS_FORM: $matches[] = array($t, false);break;
+					}
+				}
+			} else {
+				foreach($templates as $t) {
+					$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
+				}
 			}
+				
 			return AutoCompletionRequester::encapsulateAsXML($matches, $namespace != NS_TEMPLATE);
 		}
 	}
@@ -343,12 +353,12 @@ class AutoCompletionRequester {
 
 		// at least 1 match
 		$xmlResult = '';
-		
+
 		for($i = 0, $n = count($matches); $i < $n; $i++) {
 			$pasteContent = "";
-	        $extraData = "";
-	        $inferred = false;
-	        $namespaceText = "";
+			$extraData = "";
+			$inferred = false;
+			$namespaceText = "";
 			$arity = count($matches[$i]);
 			switch($arity) {
 				case 1: $title = $matches[$i]; break;
@@ -592,7 +602,7 @@ class AutoCompletionHandler {
 					global $smwgContLang;
 					$dtl = $smwgContLang->getDatatypeLabels();
 					$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
-						
+
 					if (count($result) >= SMW_AC_MAX_RESULTS) break;
 				}
 			} else if ($commandText == 'ask') {
