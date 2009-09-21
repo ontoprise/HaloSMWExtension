@@ -40,6 +40,7 @@ function unescape($string){
     $string = preg_replace("/%D6/is", "Ö", $string);
     $string = preg_replace("/%DC/is", "Ü", $string);
     $string = preg_replace("/%20/is", " ", $string);
+    $string = preg_replace("/%3A/is", ":", $string);
     return $string;
 }
 
@@ -88,6 +89,7 @@ $wgAjaxExportList[] = "getQuickACLData";
 $wgAjaxExportList[] = "saveQuickacl";
 $wgAjaxExportList[] = "doesArticleExists";
 $wgAjaxExportList[] = "sDpopupByName";
+$wgAjaxExportList[] = "removePanelForTemparray";
 
 
 
@@ -2975,6 +2977,28 @@ function saveTempRightToSession($rightxml) {
     return $ajaxResponse;
 
 }
+/**
+ *
+ * @param <string/xml>  right serialized as xml
+ * @return <status>     200: ok / right saved to session
+ *                      400: failure / rihght not saved to session (exception's message will be returned also)
+ */
+function removePanelForTemparray($panelid) {
+    $ajaxResponse = new AjaxResponse();
+    try {
+        unset($_SESSION['temprights'][$panelid]);
+
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("success");
+
+    } catch (Exception  $e) {
+
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
 
 
 /**
@@ -3064,9 +3088,9 @@ function saveSecurityDescriptor($secDescXml) {
                     $protect = (String)$item;
                 }
 
-                $description = $xml->description ? $xml->description : '';
+                $description = $xml->description ? unescape($xml->description) : '';
                 $autoDescription = $xml->autoDescription ? $xml->autoDescription : '';
-                $rightName = $xml->name ? $xml->name : '';
+                $rightName = $xml->name ? unescape($xml->name) : '';
 
                 switch ($type) {
                     case "privateuse":
