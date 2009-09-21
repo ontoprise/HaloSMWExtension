@@ -92,7 +92,6 @@ HTML;
     <div id="haloaclmainView" class="yui-navset"></div>
 </div>
 <script type="text/javascript">
-
     // bugfix for ontoskin 3
     $("bodyContent").setAttribute("style","overflow:visible");
 

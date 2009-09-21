@@ -40,6 +40,7 @@ class HACL_helpPopup {
 
     function __construct($panelid, $helptext="") {
 
+        $panelid = uniqid($panelid);
         $this->content = <<<HTML
             <div id="anchorHelpCreateRight_$panelid" class="haloacl_helpbutton" onclick="javascript:YAHOO.haloacl.popup_showHelpCreateRight_$panelid();return false;"></div>
             <div id="popup_HelpCreateRight_$panelid"></div>

@@ -741,6 +741,7 @@ class HACLStorageSQL {
 			}
 		}
 
+                $sql .= " ORDER BY page_title";
 		$sds = array();
 		$res = $db->query($sql);
 		while ($row = $db->fetchObject($res)) {
@@ -1485,6 +1486,7 @@ class HACLStorageSQL {
                 if($noACLs){
                     $sql .= " and page_namespace != '300'";
                 }
+                $sql .= " ORDER BY page_title";
 
 
 		$res = $db->query($sql);

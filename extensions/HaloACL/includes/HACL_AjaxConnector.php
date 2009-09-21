@@ -1673,7 +1673,9 @@ HTML;
                     var description = $('right_description_$panelid').value;
                     var descrLong = description;
                     if (description.length > 80) description = description.substr(0,80)+"...";
-                    genericPanelSetDescr_$panelid(description,descrLong);                }
+                    genericPanelSetDescr_$panelid(description,descrLong);    
+
+                }
 
             };
 
@@ -2804,6 +2806,9 @@ HTML;
  */
 function getSDRightsPanel($sdId, $readOnly = false,$autosave = false) {
 
+    $alreadyLoadedTpls = array();
+    $alreadyLoadedTpls[] = $sdId;
+
     if($autosave == "true"){
         $autosave = true;
     }
@@ -2881,9 +2886,18 @@ HTML;
                 YAHOO.haloacl.sendXmlToAction(xml,'saveTempRightToSession',callback);
                           
             };
+HTML;
+            // preventing deathlock
+            if(!in_array($subSdId, $alreadyLoadedTpls)){
+            $temphtml .= <<<HTML
 
-            YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
+                YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
+
+HTML;
+            }
+            $alreadyLoadedTpls[] = $subSdId;
             //show closed at first
+            $temphtml .= <<<HTML
             YAHOO.haloacl.togglePanel('subRight_$subSdId');
 HTML;
         // initial save those rights
@@ -3909,6 +3923,7 @@ function getACLs($typeXML, $filter = null) {
     $array = array();
 
     $SDs = HACLStorage::getDatabase()->getSDs($types);
+    
     foreach( $SDs as $key => $SD) {
     // processing default user templates
         if(preg_match("/Template\//is",$SD->getSDName())) {
@@ -4482,6 +4497,7 @@ function deleteGroups($grouspXML, $type) {
     $whitelistXml = new SimpleXMLElement($grouspXML);
     $result = wfMsg("hacl_nothing_deleted");
     foreach($whitelistXml->xpath('//group') as $group) {
+        $group = unescape($group);
         if($group != null) {
             try {
                 $sdarticle = new Article(Title::newFromText("$ns:".$group));
@@ -4510,7 +4526,7 @@ function deleteWhitelist($whitelistXml) {
         $whitelists = array();
         $whitelistXml = new SimpleXMLElement($whitelistXml);
         foreach($whitelistXml->xpath('//page') as $page) {
-            $whitelists[] = (string)$page;
+            $whitelists[] = unescape((string)$page);
         }
 
         print_r($whitelists);
@@ -4518,9 +4534,6 @@ function deleteWhitelist($whitelistXml) {
         //get group members
         $oldWhitelists = HACLWhitelist::newFromDB();
         $pages = "";
-
-        echo "oldwhite";
-        print_r($oldWhitelists->getPages());
 
         foreach($oldWhitelists->getPages() as $item) {
             if(!in_array($item,$whitelists)) {
