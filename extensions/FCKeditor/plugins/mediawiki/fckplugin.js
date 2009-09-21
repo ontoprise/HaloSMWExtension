@@ -1078,7 +1078,12 @@ SMW_Annotate.prototype = {
         HideContextPopup();
         window.parent.AdvancedAnnotation.unload();
         ClearEventHandler4AnnotationBox();
+        // below here reinitialize some variables and objects, so that the
+        // semantic toolbar is working correctly when opnened again
         window.parent.stb_control.initialize();
+        window.parent.smwhgAnnotationHints = new window.parent.AnnotationHints();
+        window.parent.propToolBar = new window.parent.PropertiesToolBar();
+
     },
 
     /**
