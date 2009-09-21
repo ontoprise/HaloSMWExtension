@@ -4684,14 +4684,13 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
     $a['records'] = array();
     foreach($templates as $sd) {
         if($query == "all" || preg_match('/'.$query.'/is',$sd->getSDName())) {
-           // if(!preg_match("/Template\//is",$sd->getSDName()) && ($sd->userCanModify($wgUser->getName()) || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess))) {
-            if(true) {
-                $checked = false;
+            $checked = false;
+            try{
                 if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
                     $checked = true;
                 }
-                $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
-            }
+            }catch(Exception $e){}
+            $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
         }
     }
 
