@@ -253,23 +253,15 @@ function wfSajaxTemplateListFCKeditor($page)
             "format" => "ul",
             "limit" => $smwgQMaxInlineLimit,
 	);
-
-	// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
-	// the tripplestore gets used
-	if ($smwgDefaultStore == "SMWTripleStore") {
-            $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
-            if (stripos($result, "Could not connect to host") !== false)
-                $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
-	}
-	else
-            $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+	$result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
 
 	// the list contains some html and wiki text, we need to extract the page values
-	$result = strip_tags($result);
-	preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
-	$pages = $matches[1];
-        if (count($pages) > 0) // we have got some valid templates
+        if (strlen($result) > 0) {
+            $result = strip_tags($result);
+            preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
+            $pages = $matches[1];
             return implode("\n", $pages);
+        }
 
         // the query did not return any templates. Now we return all templates
         // no matter what properties they have. These are pages in the template ns
@@ -297,19 +289,14 @@ function wfSajaxFormForTemplateFCKeditor($page) {
             "format" => "ul",
             "limit" => $smwgQMaxInlineLimit,
 	);
-	// if there's a triplestore in use, use the SPARQL QueryProcessor to translate the ask into SPARQL and then
-	// the tripplestore gets used
-	if ($smwgDefaultStore == "SMWTripleStore") {
-            $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
-            if (stripos($result, "Could not connect to host") !== false)
-                $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
-	}
-	else
-            $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
+        $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
 
 	// the list contains some html and wiki text, we need to extract the page values
-	$result = strip_tags($result);
-	preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
-	$pages = $matches[1];
-	return implode("\n", $pages);
+        if (strlen($result) > 0) {
+            $result = strip_tags($result);
+            preg_match_all('/\[\[:?([^\|]+)/', $result, $matches);
+            $pages = $matches[1];
+            return implode("\n", $pages);
+        }
+        return "";
 }
