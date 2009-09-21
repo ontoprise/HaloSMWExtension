@@ -445,9 +445,12 @@ YAHOO.haloacl.removePanel = function(panelid,callback){
             if(callback != null){
                 callback();
             }
+            YAHOO.haloacl.callAction("removePanelForTemparray",{panelid:panelid},function(){});
+
         },
         no:function(){}
     },"Ok","Cancel");
+
 };
 YAHOO.haloacl.closePanel = function(panelid){
     var element = $('content_'+panelid);
