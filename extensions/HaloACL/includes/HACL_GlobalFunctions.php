@@ -27,6 +27,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
     die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
+$haclgDoEnableTitleCheck = haclfDisableTitlePatch();
+
 
 /**
  * Switch on Halo Access Control Lists. This function must be called in
@@ -86,6 +88,9 @@ function haclfSetupExtension() {
     global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits,
     $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
 
+    global $haclgDoEnableTitleCheck;
+    haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
+    
     //--- Register hooks ---
     global $wgHooks;
     $wgHooks['userCan'][] = 'HACLEvaluator::userCan';
