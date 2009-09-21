@@ -77,10 +77,9 @@ body{
     border-style: solid;
     border-width: 2px;
     padding: 8px;
-    height: 15px;
     width: 340px;
     color: #000000;
-    font-size: 100%;
+    font-size: 90%;
 }
 
 #searchInput:focus{
@@ -146,7 +145,7 @@ ul.smwh_menulist div.smwh_menubody {
     
 }
 
-ul.smwh_menulist div.smwh_menubody td:hover  {
+ul.smwh_menulist div.smwh_menubody a:hover  td{
 	background: #E8EDFF none repeat scroll 0 0;
 }
 
