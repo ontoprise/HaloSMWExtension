@@ -91,14 +91,20 @@ function LoadSelection()
 	var inputText = FCKTools.HTMLDecode(oTemplateSpan.innerHTML);
 	if (inputText.length>0 && inputText.indexOf('{{#')<0 && inputText.indexOf('{{:')<0 ) 
 	{
-                // cut template name until the first line break appears
-		sTemplateName = inputText.substring(2,inputText.indexOf('fckLR'));
-                // there was no line break? then templatename is upto the first | where params follow
-		if (inputText.indexOf('fckLR')<1) 
-			sTemplateName = inputText.substring(2,inputText.indexOf('|'));
-                // no params eigther? then template name is up to the closing }}
-		if (inputText.indexOf('|')<1) 
-			sTemplateName = inputText.substring(2,inputText.indexOf('}}'));
+                // check where the first | appears
+                var pipe = inputText.indexOf('|');
+                // check where the first linebreak appears
+                var lr = inputText.indexOf('fckLR');
+                
+                // if both chars appear, what comes earlier terminates the template name
+                if (pipe > -1 && lr > -1)
+                    sTemplateName = inputText.substring(2, (pipe > lr) ? lr : pipe);
+                else if (pipe > -1) // | was found only
+                    sTemplateName = inputText.substring(2, pipe);
+                else if (lr > -1)  // linebreak was found only
+                    sTemplateName = inputText.substring(2, lr);
+                else // no linebreak and | found template name is up to the closing }}
+                    sTemplateName = inputText.substring(2, inputText.indexOf('}}'));
                 // capitalize the first letter of the name
 		sTemplateName = sTemplateName.charAt(0).toUpperCase() + sTemplateName.substr(1)
                 // set divInfo and divForm with data for current seleced template
