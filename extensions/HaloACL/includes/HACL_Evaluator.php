@@ -821,7 +821,7 @@ class HACLEvaluator {
 		$oldValues = array();
 		self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
 		foreach ($oldPV as $v) {
-			$oldValues[$v->getLongWikiText()] = false;
+			$oldValues[$v->getHash()] = false;
 		}
 		self::$mMode = HACLEvaluator::NORMAL;
 		
@@ -829,7 +829,13 @@ class HACLEvaluator {
 		$newPV = $newValues->getPropertyValues($property);
 		foreach ($newPV as $v) {
 			self::$mMode = HACLEvaluator::ALLOW_PROPERTY_READ;
-			$nv = $v->getLongWikiText();
+			$wv = $v->getWikiValue();
+			if (empty($wv)) {
+				// A property has an empty value => can be ignored
+				continue;
+			}
+
+			$nv = $v->getHash();
 			self::$mMode = HACLEvaluator::NORMAL;
 			if (array_key_exists($nv, $oldValues)) {
 				// Old value was not changed
