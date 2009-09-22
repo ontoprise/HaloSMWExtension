@@ -145,6 +145,7 @@ function getHACLToolbar($articleTitle) {
 
     $html = <<<HTML
         <script>
+    //    console.log($('wpSave'));
         $('wpSave').writeAttribute("type","button");
         $('wpSave').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
 
