@@ -21,13 +21,15 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-		<require name="pf"
-			file="extensions/ParserFunctions/ParserFunctions.php" />
-		<require name="sf"
-			file="extensions/StringFunctions/StringFunctions.php" />
-		<require name="urlarg"
-			file="extensions/URLArguments/URLArguments.php" />
-		<require name="variables"
-			file="extensions/Variables/Variables.php" />
+		<new>
+			<require name="pf"
+				file="extensions/ParserFunctions/ParserFunctions.php" />
+			<require name="sf"
+				file="extensions/StringFunctions/StringFunctions.php" />
+			<require name="urlarg"
+				file="extensions/URLArguments/URLArguments.php" />
+			<require name="variables"
+				file="extensions/Variables/Variables.php" />
+		</new>
 	</configs>
 </deploydescriptor>
