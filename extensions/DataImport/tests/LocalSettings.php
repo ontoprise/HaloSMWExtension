@@ -1,5 +1,5 @@
-
-$wgDefaultSkin = 'ontoskin2';
+$wgGroupPermissions['*']['gardening']=true;
+$wgGroupPermissions['user']['gardening']=true;
 
 #Import SMW, SMWHalo and the Webservice extension
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
