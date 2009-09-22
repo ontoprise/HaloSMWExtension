@@ -516,17 +516,24 @@ AutoCompleter.prototype = {
             // we are in the FCK editor, AC will be displayed in the upper left.
             // when in wikitext the id source_wikitext is added by the fckplugin.js
             if (this.siw.inputBox.id && this.siw.inputBox.id == 'source_wikitext') {
-                var width = $('smartInputFloater').offsetWidth;
+                var x;
+                var y;
                 // check if the FCK runs in Semantic forms or in a normal page
                 var iframe = $('wpTextbox1___Frame') ? $('wpTextbox1___Frame') : $('free_text___Frame');
-                // check if we are in fullscreen mode, then take coordinated from there 
-                if (iframe.style.position && iframe.style.position == 'fixed') {
-                    this.siw.floater.style.left = iframe.style.left;
-                    this.siw.floater.style.top = iframe.style.top;
+                // check if we are in fullscreen mode, then take coordinated from there
+                if (iframe.position && iframe.position == 'fixed') {
+                    x = iframe.style.left;
+                    y = iframe.style.top;
                 } else {       
-                    this.siw.floater.style.left = Position.cumulativeOffset(iframe)[0] + "px";
-                    this.siw.floater.style.top = Position.cumulativeOffset(iframe)[1] + "px";
+                    x = Position.cumulativeOffset(iframe)[0]
+                    y = Position.cumulativeOffset(iframe)[1]
                 }
+                // add space of toolbar
+                y += iframe.contentDocument.getElementById('xEditingArea').offsetTop;
+                // move floater 800px to the right.
+                x += 800;
+                this.siw.floater.style.left = x + 'px';
+                this.siw.floater.style.top = y + 'px';
             }
             else if (!this.siw.customFloater) {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
