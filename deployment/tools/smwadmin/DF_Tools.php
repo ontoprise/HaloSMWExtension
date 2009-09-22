@@ -146,11 +146,7 @@ class Tools {
             {
                 if($file!="." && $file!="..")
                 {
-                    if(!is_dir($dirsource."/".$file)) {
-                        $__dest=$dest."/".$file;
-                    } else {
-                        $__dest=$dest."/".$file;
-                    }
+                    $__dest=$dest."/".$file;
                     //echo "$source/$file ||| $__dest<br />";
                     $result=self::copy_dir($source."/".$file, $__dest, $options);
                 }

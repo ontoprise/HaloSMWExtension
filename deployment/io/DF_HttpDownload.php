@@ -63,7 +63,7 @@ class HttpDownload {
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_connect($socket, $address, $port);
 		$in = "GET $path HTTP/1.0\r\n";
-		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode($credentials)."\r\n";
+		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";
 		$in .= "\r\n";
 		
 		socket_write($socket, $in, strlen($in));
@@ -125,7 +125,7 @@ class HttpDownload {
 		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 		socket_connect($socket, $address, $port);
 		$in = "GET $path HTTP/1.0\r\n";
-		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode($credentials)."\r\n";
+		if ($credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($credentials))."\r\n";
         $in .= "\r\n";
 		socket_write($socket, $in, strlen($in));
 		$this->headerFound = false;

@@ -1,20 +1,20 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once( '../../maintenance/commandLine.inc' );
 require_once('../io/import/DF_DeployWikiImporter.php');
@@ -103,7 +103,25 @@ class ResourceInstaller {
 				$a = new Article($title);
 				print "\n\tRemove page: ".$title->getPrefixedText();
 				$a->doDeleteArticle("ontology removed: ".$dd->getID());
+                
+				// delete instances of categories
+				if ($title->getNamespace() == NS_CATEGORY) {
+					$query = SMWQueryProcessor::createQuery("[[Category:".$title->getText()."]]", array());
+					$res2 = smwfGetStore()->getQueryResult($query);
+					$next2 = $res2->getNext();
+					while($next2 !== false) {
+						$title2 = $next2[0]->getNextObject()->getTitle();
+						if (!is_null($title2)) {
+							$a = new Article($title2);
+							print "\n\tRemove page: ".$title2->getPrefixedText();
+							$a->doDeleteArticle("ontology removed: ".$dd->getID());
+
+						}
+						$next2 = $res2->getNext();
+					}
+				}
 			}
+				
 			$next = $res->getNext();
 		}
 	}
@@ -124,7 +142,7 @@ class ResourceInstaller {
 		foreach($resources as $file) {
 			$title = Title::newFromText(basename($file), NS_IMAGE);
 			$im_file = wfLocalFile($title);
-				
+
 			// delete thumbs for this image too
 			$thumbs = $im_file->getThumbnails();
 			foreach($thumbs as $thumb) {
@@ -135,7 +153,7 @@ class ResourceInstaller {
 			print "\n\tRemove resource: ".$title->getPrefixedText();
 			$a->doDelete("remove resource");
 		}
-        
+
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
 		$resources = $dd->getOnlyCopyResources();
 		foreach($resources as $src => $dest) {
@@ -194,13 +212,13 @@ class ResourceInstaller {
 
 				$this->importResources($resourcePath);
 			} else {
-                print $resourcePath."\n";
+				print $resourcePath."\n";
 				$im_file = wfLocalFile(Title::newFromText(basename($resourcePath), NS_IMAGE));
 				$im_file->upload($resourcePath, "auto-inserted image", "noText");
 			}
 			print "done.";
 		}
-        
+
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
 		print "\nCopying resources...";
 		$resources = $dd->getOnlyCopyResources();
@@ -227,7 +245,7 @@ class ResourceInstaller {
 
 	 */
 	private function importResources($SourceDirectory) {
-			
+
 		if (basename($SourceDirectory) == "CVS") { // ignore CVS dirs
 			return;
 		}
@@ -238,7 +256,7 @@ class ResourceInstaller {
 		if (substr($SourceDirectory,-1)!='/'){
 			$SourceDirectory .= '/';
 		}
-			
+
 		$handle = @opendir($SourceDirectory);
 		if (!$handle) {
 			print ("\nDirectory '$SourceDirectory' could not be opened.\n");
@@ -256,11 +274,11 @@ class ResourceInstaller {
 
 			} else{
 
-					
+
 				// simulate an upload
 				$im_file = wfLocalFile(Title::newFromText(basename($SourceDirectory.$entry), NS_IMAGE));
 				$im_file->upload($SourceDirectory.$entry, "auto-inserted image", "noText");
-					
+
 			}
 
 		}
