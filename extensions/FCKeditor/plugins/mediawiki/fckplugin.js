@@ -1316,9 +1316,17 @@ function SetEventHandler4AnnotationBox() {
 
 function ClearEventHandler4AnnotationBox() {
     if ( FCK.EditMode == FCK_EDITMODE_WYSIWYG ) {
-        window.parent.Event.stopObserving(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
-        window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
-        window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+        if (FCKBrowserInfo.IsIE) {
+            var iframe = window.frames[0];
+            var iframeDocument = iframe.document || iframe.contentDocument; 
+            iframeDocument.onkeyup = null;
+            iframeDocument.onmouseup = null;
+            iframeDocument.onmousedown = null;
+        } else {
+            window.parent.Event.stopObserving(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
+            window.parent.Event.stopObserving(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
+            window.parent.Event.stopObserving(window.frames[0], 'mousedown', HideContextPopup);
+        }
     } else {
         window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.stopObserving(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
@@ -1555,7 +1563,7 @@ FCKeditInterface.prototype = {
             this.selection[0] = '';
             return this.selection;
         }
-
+        
         // selected element node
         this.selectedElement = FCKSelection.GetSelectedElement();
         // parent element of the selected text (mostly a <p>)
@@ -1578,8 +1586,7 @@ FCKeditInterface.prototype = {
             // check category and property that might be in the <span> tag,
             // ignore all other spans that might exist as well
             if (parent.nodeName.toUpperCase() == 'SPAN') {
-                var sclass = parent.getAttribute('class');
-                switch (sclass) {
+                switch (parent.className) {
                     case 'fck_mw_property' :
                         this.selectedElement = parent;
                         this.selection[0] = parent.innerHTML;
@@ -1634,7 +1641,9 @@ FCKeditInterface.prototype = {
             }
             // there are several span tags, we need to find categories and properties
             if (tag == 'SPAN') {
-                if (html.indexOf('class="fck_mw_property"') != -1) {
+                if (html.indexOf('class="fck_mw_property"') != -1 ||
+                    html.indexOf('class=fck_mw_property') != -1   // IE has class like this 
+                   ) {  
                     this.MatchSelectedNodeInDomtree(parent, tag, cont);
                     this.selection[0] = cont;
                     this.selection[1] = 102;
@@ -1647,7 +1656,9 @@ FCKeditInterface.prototype = {
                     }
                     return this.selection;
                 }
-                if (html.indexOf('class="fck_mw_category"') != -1) {
+                if (html.indexOf('class="fck_mw_category"') != -1 ||
+                    html.indexOf('class=fck_mw_property') != -1
+                   ) {
                     this.MatchSelectedNodeInDomtree(parent, tag, cont);
                     this.selection[0] = cont;
                     this.selection[1] = 14;
@@ -1755,24 +1766,29 @@ FCKeditInterface.prototype = {
 
         // start look at the left side of the selection for any special character
         var currPos = this.start;
+        var stopper = -1;
         while (currPos > 0) {
             // go back one position in text area string.
             currPos--;
             currChar = txt.substr(currPos, 1);
             // "[" found, move the selection start there if there are two of them
             if (currChar == '[') {
-                if (selection[0] == '[') {  // one [ is in the selection and other
+                // one [ is in the selection and we didn't run over ] yet
+                if (selection.substr(0, 1) == '[' && stopper < currPos) {
                     this.start = currPos;        // is at position, stop here
-                    break;
                 }
-                if (currPos > 0 && txt[currPos -1] == '[') {// previous pos also
-                    this.start = currPos - 1;                    // also contains a [
-                    break;
+                else if (currPos > 0 &&
+                         txt.substr(currPos -1, 1) == '[' &&
+                         stopper < currPos) {         // previous pos
+                    this.start = currPos - 1;         // also contains a [
+                    currPos--;
                 }
             }
             // "]" found, stop looking further if there are two of them
-            if (currChar == ']' && currPos > 0 && txt[currPos -1] == ']')
-                break;
+            if (currChar == ']' && currPos > 0 && txt.substr(currPos -1, 1) == ']') {
+                stopper = currPos;
+                currPos--;
+            }
             // ">" found, check it's the end of a tag, and if so, which type of tag
             if (currChar == '>') {
                 // look for the corresponding <
@@ -1800,13 +1816,13 @@ FCKeditInterface.prototype = {
                 }
             }
             // we are inside a template or parser function or whatever
-            if (currChar == '{' && currPos > 0 && txt[currPos - 1] == '{') {
+            if (currChar == '{' && currPos > 0 && txt.substr(currPos - 1, 1) == '{') {
                 this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
                 this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
                 return;
             }
             // end of a template or parser function found, stop here
-            if (currChar == '}' && currPos > 0 && txt[currPos - 1] == '}')
+            if (currChar == '}' && currPos > 0 && txt.substr(currPos - 1, 1) == '}')
                 break;
         }
 
@@ -1815,32 +1831,34 @@ FCKeditInterface.prototype = {
         
         // look for any special character at the right side of the selection
         currPos = this.end - 1;
+        stopper = txt.length;
         while (currPos < txt.length - 2) {
             // move the possition one step forward in the string
             currPos++;
             currChar = txt.substr(currPos, 1);
             // if we find an open braket, move the selection start there
             if (currChar == ']') {
-                if (selection.substr(selection.length - 1, 1) == ']') {
+                if (selection.substr(selection.length - 1, 1) == ']' && stopper > currPos) {
                     this.end = currPos + 1;
-                    break;
                 }
-                if (currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == ']') {
-                    this.end = currPos + 2;
-                    break;
+                else if (currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == ']' && stopper > currPos) {
+                    currPos++;
+                    this.end = currPos + 1;
                 }
             }
             // "[" found, stop looking further if there are two of them
-            if (currChar == '[' && currPos < txt.length - 1 && txt[currPos + 1] == '[')
-                break;
+            if (currChar == '[' && currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == '[') {
+                currPos++;
+                stopper = currPos;
+            }
             // we are inside a template or parser function or whatever
-            if (currChar == '}' && currPos < txt.length - 1 && txt[currPos + 1] == '}') {
+            if (currChar == '}' && currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == '}') {
                 this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TEMPLATE');
                 this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
                 return;
             }
             // we are facing the begining of a template or parser function, stop here
-            if (currChar == '{' && currPos < txt.length - 1 && txt[currPos + 1] == '{')
+            if (currChar == '{' && currPos < txt.length - 1 && txt.substr(currPos + 1, 1) == '{')
                 break;
 
             // "<" found, check it's the start of a tag, and if so, which type of tag
@@ -1850,7 +1868,7 @@ FCKeditInterface.prototype = {
                 if (p == -1) continue; // no > is there, just go ahead
                 var tag = txt.substr(currPos, p + 1);
                 if (tag.match(/^<[^<>]*>$/)) { // we really found a tag
-                    if (tag[1] == '/') {  // we are at the end of a closing tag
+                    if (tag.substr(1, 1) == '/') {  // we are at the end of a closing tag
                         this.errMsgSelection = window.parent.gLanguage.getMessage('WTP_NOT_IN_TAG');
                         this.errMsgSelection = this.errMsgSelection.replace('$1', txt.substr(this.start, this.end - this.start));
                         this.errMsgSelection = this.errMsgSelection.replace('$2', tag);
@@ -1951,23 +1969,24 @@ FCKeditInterface.prototype = {
         var selection = '';
 
         if ( FCKBrowserInfo.IsIE ) {
-            if (window.getselection)
-                selection = window.getselection(); 
-            else if (document.getselection)
-                selection = document.getselection(); 
-            else if (document.selection)
-                selection = document.selection.createRange().text; 
-            this.start = myArea.value.indexOf(selection);
-            if (this.start != 0)
-                this.end = this.start + selection.length;
-            else this.start = -1;
-        } 
-        else { // all other browsers
-            if (myArea.selectionStart != undefined) {
-                this.start = myArea.selectionStart;
-                this.end = myArea.selectionEnd;
-                selection = myArea.value.substr(this.start, this.end - this.start);
+            if (document.selection) {
+                // The current selection
+                var range = document.selection.createRange();
+                // We'll use this as a 'dummy'
+                var stored_range = range.duplicate();
+                // Select all text
+                stored_range.moveToElementText( myArea );
+                // Now move 'dummy' end point to end point of original range
+                stored_range.setEndPoint( 'EndToEnd', range );
+                // Now we can calculate start and end points
+                myArea.selectionStart = stored_range.text.length - range.text.length;
+                myArea.selectionEnd = myArea.selectionStart + range.text.length;
             }
+        } 
+        if (myArea.selectionStart != undefined) {
+            this.start = myArea.selectionStart;
+            this.end = myArea.selectionEnd;
+            selection = myArea.value.substr(this.start, this.end - this.start);
         }
         return selection;
     },
