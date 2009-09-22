@@ -2069,7 +2069,7 @@ applyOptionParams : function(query) {
 
 splitQueryParts : function(ask) {
 	// ltrim and rtrim
-	ask = ask.replace(/^\s*\{\{#ask:\s*/, '');
+	ask = ask.replace(/^\s*\{\{#(ask|sparql):\s*/, '');
 	ask = ask.replace(/\s*\}\}\s*$/, '');
 
 	// store here all queries (sub[0] is the main query
