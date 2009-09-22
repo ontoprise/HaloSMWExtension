@@ -370,7 +370,7 @@ class FCKeditorParser extends Parser
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
                                         $inner = $this->revertEncapsulatedString($inner);
-                                        if (substr($inner, 0, 7) == '{{#ask:' )
+                                        if (substr($inner, 0, 7) == '{{#ask:' || substr($inner, 0, 10) == '{{#sparql:') 
                                             $fck_mw_template =  'fck_mw_askquery';
                                         else if (substr($inner, 0, 6) == '{{#ws:' )
 					    $fck_mw_template =  'fck_mw_webservice';
