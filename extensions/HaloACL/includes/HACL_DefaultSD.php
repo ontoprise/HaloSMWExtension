@@ -159,7 +159,7 @@ class  HACLDefaultSD  {
 		if (isset($_SESSION)) {
 			if ($_SESSION['haloacl_toolbar'] != null && $_SESSION['haloacl_toolbar'][$user->getName()] != null){
 				$templateToProtectWith = $_SESSION['haloacl_toolbar'][$user->getName()];
-                                if(strpos($templateToProtectWith, 'Template/') != false){
+                                if(strpos($templateToProtectWith, 'Template/') == false){
                                     $createCustomSD = true;
                                 }
 				unset($_SESSION['haloacl_toolbar'][$user->getName()]);
