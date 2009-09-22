@@ -121,7 +121,7 @@ ul.smwh_menulist li:hover {
 }
 
 ul.smwh_menulist li {
-	  display: inline;
+	  display: inline-block;
 	  position: relative;
           
 }
