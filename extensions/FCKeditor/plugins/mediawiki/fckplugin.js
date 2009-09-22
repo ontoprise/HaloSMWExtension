@@ -1240,11 +1240,6 @@ CalculateClickPosition = function(event) {
     pos[0] = offset[0] + event.clientX;
     pos[1] = offset[1] + event.clientY;
 
-    // ajust position if the page has been scrolled, this is only important
-    // if the FCK is not in fulltext mode
-    if (typeof fckFullscreen != "undefined" || fckFullscreen.GetState())
-        return pos;
-
     var sx;
     var sy;
     if (FCKBrowserInfo.IsIE) {
