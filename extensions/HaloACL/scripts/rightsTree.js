@@ -81,7 +81,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     _type: "CustomNode",
 
     customNodeParentChange: function() {
-    //this.updateParent();
+        //this.updateParent();
     },
 
     // function called from constructor
@@ -91,8 +91,8 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-        // otherwise the parent needs to be updated only if its checkstate
-        // needs to change from fully selected to partially selected
+            // otherwise the parent needs to be updated only if its checkstate
+            // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -236,18 +236,18 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) {
         this.checkState = state;
         this.checked = (state > 0);
-    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
-    // this.tree.clickedHandler.add(this.groupId);
-    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-    /*
+        //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+        // this.tree.clickedHandler.add(this.groupId);
+        //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+        /*
        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
          */
-    // update usertable
-    // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
+        // update usertable
+        // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
     },
 
@@ -274,7 +274,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-    //this.updateParent();
+        //this.updateParent();
     },
 
     /**
@@ -291,7 +291,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-    //this.updateParent();
+        //this.updateParent();
     },
 
     setTreeType: function(newTreeType) {
@@ -362,7 +362,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
 
 
-        /*
+            /*
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -452,7 +452,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     tt1:YAHOO.widget.Tooltip,
 
     customNodeParentChange: function() {
-    //this.updateParent();
+        //this.updateParent();
     },
 
     // function called from constructor
@@ -462,8 +462,8 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-        // otherwise the parent needs to be updated only if its checkstate
-        // needs to change from fully selected to partially selected
+            // otherwise the parent needs to be updated only if its checkstate
+            // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -608,10 +608,10 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) {
         this.checkState = state;
         this.checked = (state > 0);
-    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
-    // this.tree.clickedHandler.add(this.groupId);
-    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-    /*        if(this.checked){
+        //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+        // this.tree.clickedHandler.add(this.groupId);
+        //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+        /*        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
@@ -644,7 +644,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-    //this.updateParent();
+        //this.updateParent();
     },
 
     /**
@@ -787,10 +787,10 @@ YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback
 };
 
 /*
-* function for dynamic node-loading
-* @param node
-* @parm callback on complete
-*/
+ * function for dynamic node-loading
+ * @param node
+ * @parm callback on complete
+ */
 YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
 
     var nodeLabel = encodeURI(node.label);
@@ -827,10 +827,10 @@ YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
 
 
 /*
-* function to build nodes from data
-* @param parent node / root
-* @param data
-*/
+ * function to build nodes from data
+ * @param parent node / root
+ * @param data
+ */
 YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
     var rightsExisting = false;
@@ -872,10 +872,10 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
 
 /*
-* filter tree
-* @param parent node / root
-* @param filter String
-*/
+ * filter tree
+ * @param parent node / root
+ * @param filter String
+ */
 YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
 
     var nodes;
@@ -890,24 +890,24 @@ YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
             document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
         }
 
-    /*
+        /*
         if (n.checkState > 0) {
             var tmpNode = new YAHOO.widget.ACLNode(n.label, rwTree.getRoot(),false);
             tmpNode.setCheckState(n.checkState);
             tmpNode.setTreeType("r");
         }
-     */
+         */
 
     }
 
 };
 
 /*
-* function to build user tree and add labelClickAction
-* @param tree
-* @param data
-* @param labelClickAction (name)
-*/
+ * function to build user tree and add labelClickAction
+ * @param tree
+ * @param data
+ * @param labelClickAction (name)
+ */
 YAHOO.haloaclrights.buildUserTree = function(tree,data,dontusefilter) {
     if($('haloacl_rightstree_count') != null){
         $('haloacl_rightstree_count').innerHTML = data.length;
@@ -949,10 +949,10 @@ YAHOO.haloaclrights.buildUserTree = function(tree,data,dontusefilter) {
 
 
 /*
-* builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
-* @param tree
-* @param rwTree
-*/
+ * builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
+ * @param tree
+ * @param rwTree
+ */
 YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
     var rightsExisting = false;
     var nodes;
@@ -979,9 +979,9 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
 
 
 /*
-* function to be called from outside to init a tree
-* @param tree-instance
-*/
+ * function to be called from outside to init a tree
+ * @param tree-instance
+ */
 YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefilter){
     
     if(query == null){
@@ -1014,12 +1014,12 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefil
 };
 
 /*
-* returns checked nodes
-* USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
-*
-* @param tree
-* @param nodes
-*/
+ * returns checked nodes
+ * USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
+ *
+ * @param tree
+ * @param nodes
+ */
 
 
 YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
@@ -1035,15 +1035,23 @@ YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
         }
 
         if (n.hasChildren()) {
-    // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
-    }
+            // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
+        }
     }
 
     return checkedNodes;
 };
 
 
-YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
+YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter){
+    console.log(dontusefilter);
+    if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
+        dontusefilter = true;
+    }else{
+        dontusefilter = false;
+    }
+
+
     if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
         tree.lastFilterStart = 0;
     }
@@ -1068,14 +1076,23 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
         
         var query = "all";
         var foundType = false;
-        var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
-        $$('.haloacl_manageacl_filter').each(function(item){
-            if(item.checked){
-                xml += "<type>"+item.name+"</type>";
-                foundType = true;
-            }
-        });
-        xml += '</types>';
+        if(!dontusefilter){
+            var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
+            $$('.haloacl_manageacl_filter').each(function(item){
+                if(item.checked){
+                    xml += "<type>"+item.name+"</type>";
+                    foundType = true;
+                }
+            });
+            xml += '</types>';
+        }else{
+            var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
+            xml += "<type>acltemplate_nofilter</type>";
+            xml += '</types>';
+            foundType = true;
+        }
+
+
         if(foundType){
             query = escape(xml);
         }
@@ -1091,8 +1108,8 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
 
 
 /**
-* returns a new treeinstance
-*/
+ * returns a new treeinstance
+ */
 YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
 
 

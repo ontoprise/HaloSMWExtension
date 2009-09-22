@@ -24,7 +24,9 @@ YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,c
 
     if(YAHOO.haloacl.debug)console.log("create dialog called");
     var handleYes = function() {
-        callback.yes();
+        try{
+            callback.yes();
+        }catch(e){}
         this.hide();
     };
 

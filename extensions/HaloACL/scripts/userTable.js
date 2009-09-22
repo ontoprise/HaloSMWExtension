@@ -229,7 +229,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     
     myDataTable.subscribe("postRenderEvent",function(){
         handlePagination(myPaginator.getState());
-        });
+    });
 
     myDataTable.subscribe("postRenderEvent",function(){
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
@@ -315,49 +315,50 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
         if(YAHOO.haloacl.debug) console.log("panelid"+panelid);
         if(YAHOO.haloacl.clickedArrayUsers[panelid] != null){
             YAHOO.haloacl.clickedArrayUsers[panelid].each(function(item){
-                // lets see if this users already exists in the datatabel
-                var reallyAddUser = "user";
-                result.each(function(el){
-                    if(el.name == item){
-                        if(el.deletable == "group"){
-                            reallyAddUser = "groupuser";
-                        }else if(el.deletable == "groupuser"){
-                            reallyAddUser = "no";
-                        }else if(el.deletable == "user"){
-                            reallyAddUser = "groupuser";
-                        }
-                        
-                        // remove it from array, as its added later again with other deletable tag
-                        var elementToRemove = null;
-                        for(i=0;i<result.length;i++){
-                            if(result[i] == el.name){
-                                elementToRemove = i;
+                if(item != ""){
+                    // lets see if this users already exists in the datatabel
+                    var reallyAddUser = "user";
+                    result.each(function(el){
+                        if(el.name == item){
+                            if(el.deletable == "group"){
+                                reallyAddUser = "groupuser";
+                            }else if(el.deletable == "groupuser"){
+                                reallyAddUser = "no";
+                            }else if(el.deletable == "user"){
+                                reallyAddUser = "groupuser";
                             }
-                        }
-                        result.splice(elementToRemove,1);
+                        
+                            // remove it from array, as its added later again with other deletable tag
+                            var elementToRemove = null;
+                            for(i=0;i<result.length;i++){
+                                if(result[i] == el.name){
+                                    elementToRemove = i;
+                                }
+                            }
+                            result.splice(elementToRemove,1);
                        
-                    }
-                });
+                        }
+                    });
                 
                 
-                if(reallyAddUser == "user"){
-                    var temp = new Array();
-                    temp['name'] = item;
-                    try{
+                    if(reallyAddUser == "user"){
+                        var temp = new Array();
+                        temp['name'] = item;
+                        try{
+                            temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                        }catch(e){
+                            temp['groups'] = "";
+                        }
+                        temp['deletable'] = "user";
+                        result.push(temp);
+                    }else if(reallyAddUser == "groupuser"){
+                        var temp = new Array();
+                        temp['name'] = item;
                         temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
-                    }catch(e){
-                        temp['groups'] = "";
+                        temp['deletable'] = "groupuser";
+                        result.push(temp);
                     }
-                    temp['deletable'] = "user";
-                    result.push(temp);
-                }else if(reallyAddUser == "groupuser"){
-                    var temp = new Array();
-                    temp['name'] = item;
-                    temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
-                    temp['deletable'] = "groupuser";
-                    result.push(temp);
                 }
-
               
                 
             });
@@ -525,6 +526,15 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
             result+="</span>&nbsp;";
         }
         result +="</div>";
+
+
+        var username = divitem.parentNode.parentNode.previousElementSibling.firstChild.firstChild;
+        
+        if(highlighted.length > 0){
+            $(username).setAttribute("style", "font-weight:bold");
+        }else{
+            $(username).setAttribute("style", "");
+        }
 
         var divname = $(divitem).readAttribute("name");
         

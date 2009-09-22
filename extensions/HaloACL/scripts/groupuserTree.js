@@ -62,7 +62,6 @@ function dump(arr,level) {
 YAHOO.widget.CustomNode = function(oData, oParent, expanded, checked) {
     YAHOO.widget.CustomNode.superclass.constructor.call(this,oData,oParent,expanded);
     this.setUpCheck(checked || oData.checked);
-
 };
 
 // impl of customnode; extending textnode
@@ -127,8 +126,8 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         if (this.tree && !this.tree.hasEvent("checkClick")) {
             this.tree.createEvent("checkClick", this.tree);
         }
+
         this.tree.subscribe('clickEvent',this.checkClick);
-				
         this.subscribe("parentChange", this.customNodeParentChange);
        
     },
@@ -232,7 +231,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
                     somethingNotChecked = true;
                 }
             }
-        }ve
+        }
 
         if (somethingChecked) {
             p.setCheckState( (somethingNotChecked) ? 1 : 2 );
@@ -607,12 +606,11 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
  */
 YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
-
     var callback = {
         success: function(oResponse) {
             
             var data = YAHOO.lang.JSON.parse(oResponse.responseText);
-
+            /*
             // das ganze rekursiv in funktion auslagern
 
             var groupsInTree = false;
@@ -635,6 +633,30 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
             if(tree != null){
                 tree.draw();
             }
+            */
+
+
+            var groupsInTree = false;
+            var groupsarray = YAHOO.haloacl.getGroupsArray(tree.panelid);
+            for(var i=0;i<groupsarray.length;i++){
+                if(tree){
+                    var name=groupsarray[i];
+                    if(name != ""){
+                        var tmpNode = new YAHOO.widget.CustomNode(name, tree.getRoot(),false);
+                        tmpNode.setGroupId(name);
+                        tmpNode.setCheckState(2);
+                        tmpNode.setTreeType("r");
+                        groupsInTree = true;
+                    }
+                }
+            }
+            if(!groupsInTree){
+                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+            }
+
+            if(tree != null){
+                tree.draw();
+            }
             
         },
         failure: function(oResponse) {
@@ -643,24 +665,6 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
     YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
         query:'all'
     },callback);
-
-/*
-    var nodes;
-    nodes = tree.getRoot().children;
-
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-
-        if (n.checkState > 0) {
-            var tmpNode = new YAHOO.widget.CustomNode(n.label, rwTree.getRoot(),false);
-            tmpNode.setCheckState(n.checkState);
-            tmpNode.setTreeType("r");
-        }
-
-    }
-    */
-
-    
 
 };
 

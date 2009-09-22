@@ -536,7 +536,7 @@ HTML;
         $url = $spt->getFullURL();
         $url .= "?activetab=createACL&activesubtab=manageDefaultTemplate";
 
-        
+
         $tempContent = "<div style='padding:8px;'>no default template for user &raquo; <a href='$url'>click here to create one</a></div>";
     }
 
@@ -962,34 +962,34 @@ HTML;
     }
     $content .= <<<HTML
     </div>
-                    </div>
+            </div>
 
-                    <div class="haloacl_greyline">&nbsp;</div>
+            <div class="haloacl_greyline">&nbsp;</div>
 
 
-                    </div>
+            </div>
 
-                    <div id="right_tabview_$panelid" class="yui-navset"></div>
-                    <script type="text/javascript">
-                       // resetting previously selected items
-                      YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
-                      YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
-                      YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'] = new Array();
+            <div id="right_tabview_$panelid" class="yui-navset"></div>
+            <script type="text/javascript">
+               // resetting previously selected items
+              YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+              YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'] = new Array();
+              YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'] = new Array();
 
-                      YAHOO.haloaclrights.clickedArrayGroups['right_tabview_$panelid'] = new Array();
+              YAHOO.haloaclrights.clickedArrayGroups['right_tabview_$panelid'] = new Array();
 
-                      YAHOO.haloacl.buildGroupPanelTabView('right_tabview_$panelid', '','' , '', '');
-                    </script>
+              YAHOO.haloacl.buildGroupPanelTabView('right_tabview_$panelid', '','' , '', '');
+            </script>
 
-                    <div class="haloacl_greyline">&nbsp;</div>
-                    <div>
-                        <div style="width:100%;float:left;text-align:center">
-                            <input type="button" id="haloacl_discardacl_users" value="Discard changes"
-                                style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_users();"/>
-                            <input id="haloacl_save_$panelid" type="button" name="safeRight" value="Save groupsetting" onclick="YAHOO.haloacl.buildGroupPanelXML_$panelid();" />
-                        </div>
-                    </div>
-		</div>
+            <div class="haloacl_greyline">&nbsp;</div>
+            <div>
+                <div style="width:100%;float:left;text-align:center">
+                    <input type="button" id="haloacl_discardacl_users" value="Discard changes"
+                        style="color:red" onclick="javascript:YAHOO.haloacl.discardChanges_users();"/>
+                    <input id="haloacl_save_$panelid" type="button" name="safeRight" value="Save groupsetting" onclick="YAHOO.haloacl.buildGroupPanelXML_$panelid();" />
+                </div>
+            </div>
+        </div>
 HTML;
 
     $myGenericPanel->setContent($content);
@@ -1064,12 +1064,11 @@ HTML;
                 if(YAHOO.haloacl.debug) console.log("sending xml to saveTempGroupToSession");
                 YAHOO.haloacl.sendXmlToAction(xml,'saveTempGroupToSession',callback);
 
-
-
-
-
             };
 
+            YAHOO.util.Event.addListener("right_name_manageUserGroupSettingsRight","keyup",function(){
+                $('haloacl_panel_name_manageUserGroupsettings').innerHTML = "[ Editing Group:"+$('right_name_manageUserGroupSettingsRight').value+" ]";
+            });
 
 
             resetPanel_$panelid = function(){
@@ -2063,28 +2062,26 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
         YAHOO.util.Event.addListener("filterSelectGroup_$panelid", "keyup", function(e){
             var filtervalue = document.getElementById("filterSelectGroup_$panelid").value;
             YAHOO.haloacl.applyFilterOnTree (YAHOO.haloacl.treeInstance$panelid.getRoot(), filtervalue);
-
-            if($('filterSelectGroup_$panelid').value != "" || $('datatable_filter_$panelid').value != ""){
-                YAHOO.haloacl.notification.showInlineNotification('filter active','haloacl_inline_notification_$parentsPanelid');
-            }else{
-                YAHOO.haloacl.notification.hideInlineNotification('haloacl_inline_notification_$parentsPanelid');
-            }
         });
 
 
         YAHOO.util.Event.addListener("datatable_filter_$panelid", "keyup", function(){
             if(YAHOO.haloacl.debug) console.log("filterevent fired");
-            YAHOO.haloacl.datatableInstance$panelid.executeQuery('');
 
-
-            if($('filterSelectGroup_$panelid').value != "" || $('datatable_filter_$panelid').value != ""){
-                YAHOO.haloacl.notification.showInlineNotification('filter active','haloacl_inline_notification_$parentsPanelid');
-            }else{
-                YAHOO.haloacl.notification.hideInlineNotification('haloacl_inline_notification_$parentsPanelid');
+            if(YAHOO.haloacl.lastFilterExecSelect_$panelid == null || YAHOO.haloacl.lastFilterExecSelect_$panelid == "undefined"){
+                YAHOO.haloacl.lastFilterExecSelect_$panelid = 0;
             }
 
+            var filtervalue = $('datatable_filter_$panelid').value;
+            var now = new Date();
+            now = now.getTime();
+            if(filtervalue == "" || YAHOO.haloacl.lastFilterExecSelect_$panelid + YAHOO.haloacl.filterQueryDelay <= now){
+                YAHOO.haloacl.lastFilterExecSelect_$panelid  = now;
+                YAHOO.haloacl.datatableInstance$panelid.executeQuery('');
+            }
+
+            if(YAHOO.haloacl.debug) console.log("datatable_filter_$panelid");
         });
-        if(YAHOO.haloacl.debug) console.log("datatable_filter_$panelid");
 
 
         /* this function is called from onClick-attribute in userTable.js
@@ -2426,7 +2423,7 @@ HTML;
         </div>
 HTML;
 
-    if($type != "readOnly") {
+    if($type != "readOnly" || true) {
         $html .= <<<HTML
             <div class="haloacl_manageacl_contenttitle">
             Filter:&nbsp;<input id="haloacl_rightlist_filterinput_$panelid" class="haloacl_filter_input"/>
@@ -2451,7 +2448,7 @@ HTML;
 HTML;
     }
 
-    if($type != "readOnly") {
+    if($type != "readOnly" || true) {
         $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
             <span class="haloacl_cont_under_trees">
@@ -2514,7 +2511,7 @@ HTML;
     // adding filtering
     YAHOO.util.Event.addListener("haloacl_rightlist_filterinput_$panelid", "keyup", function(e){
         var filtervalue = document.getElementById("haloacl_rightlist_filterinput_$panelid").value;
-        YAHOO.haloaclrights.applyFilterOnTree (YAHOO.haloaclrights.treeInstance$panelid.getRoot(), filtervalue);
+        YAHOO.haloaclrights.applyFilterOnTree (YAHOO.haloaclrights.treeInstance$panelid.getRoot(), filtervalue,"$nofilter");
     });
 
 
@@ -3775,51 +3772,60 @@ function getUsersForGroups($groupsstring) {
  * @param <String>  selected group
  * @return <JSON>   json from first-level-childs of the query-group; not all childs!
  */
-function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0) {
+function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
     $array = array();
+    $recursive = false;
 
-
-    if($search == null || $search == "") {
     // return first level
-        if($clickedGroup == 'all' || $clickedGroup == "Groups") {
-        //get level 0 groups
+    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
+    //get level 0 groups
+        if($level == 0){
             $groups = HACLStorage::getDatabase()->getGroups();
-            foreach( $groups as $key => $value) {
+        }else{
+            $groups = $subgroupsToCall;
+        }
+        foreach( $groups as $key => $value) {
+            if ($recursive) {
 
-                if ($recursive) {
-                    $subgroups = getGroupsForRightPanel($value->getGroupName(), $search, true, $level+1);
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
-                } else {
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                $parent = HACLGroup::newFromName($value->getGroupName());
+                $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
+                if(sizeof($subgroupsToCall)> 0 || $level == 0){
+                    $subgroups = getGroupsForRightPanel("all", $search, true, $level+1,$subgroupsToCall);
                 }
-                $array[] = $tempgroup;
-            }
+                
+                if(!$search || strpos($search,$value->getGroupName()) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                    if(isset($subgroups)){
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
+                    }else{
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }
+                    $array[] = $tempgroup;
+                }
 
-        }else {
-        //get group by name
-            $parent = HACLGroup::newFromName($clickedGroup);
-            //groups
-            $groups = $parent->getGroups(HACLGroup::OBJECT);
-            foreach( $groups as $key => $value ) {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                $array[] = $tempgroup;
+              // non recursive part
+            } else {
+                
+                if(!$search || preg_match("/$search/is",$value->getGroupName())) {
+                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    $array[] = $tempgroup;
+                }
             }
         }
 
     }else {
-    // performing search
-        $groups = HACLStorage::getDatabase()->getGroups();
+        //get group by name
+        // non recursive part
 
-        foreach( $groups as $key => $value) {
-        //print_r($value);
-            $subgroups = array();
-            //$subgroups = getGroupsForRightPanel($value->getGroupName(), $search, true, $level+1, );
-            if(strpos($value->getGroupName(),$search) || sizeof($subgroups)> 0) {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
-                $array[] = $tempgroup;
-            }
+        $parent = HACLGroup::newFromName($clickedGroup);
+        //groups
+        $groups = $parent->getGroups(HACLGroup::OBJECT);
+        foreach( $groups as $key => $value ) {
+            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+            $array[] = $tempgroup;
         }
     }
+
+
 
     //only json encode final result
     if ($level == 0) {
@@ -4292,19 +4298,20 @@ HTML;
                             YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',
                             {panelid:'manageUserGroupSettingsRight',name:magic['name'],description:'',users:magic['memberUsers'],groups:magic['memberGroups'],manageUsers:magic['manageUsers'],manageGroups:magic['manageGroups']});
                             $('haloacl_manageUser_editing_container').show();
-
+                            $('manageUserGroupSettingsModificationRight').scrollTo();
 
                         }
                  });
 
 
                 if(groupname.indexOf("new subgroup")> 0){
-                    null;
+                   null;
                 }else{
-//                   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+//                 YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',{panelid:'manageUserGroupSettingsRight'});
-
                    $('haloacl_manageUser_editing_container').show();
+                   $('manageUserGroupSettingsModificationRight').scrollTo();
+
                 }
             }
 
@@ -4337,7 +4344,7 @@ HTML;
                 };
                 var parentgroup = YAHOO.haloacl.manageUser_parentGroup;
 
-                        YAHOO.haloacl.sendXmlToAction(modxml,'saveGroup',callback, parentgroup);
+                YAHOO.haloacl.sendXmlToAction(modxml,'saveGroup',callback, parentgroup);
 
         }
         </script>
@@ -4634,6 +4641,9 @@ HTML;
                 <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
                     Showing <span id="haloacl_quickacl_count">0</span> element(s)
                 </span>
+                <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
+                    &nbsp; | &nbsp;&nbsp;Selected <span id="haloacl_quickacl_selected">0</span> - 15
+                </span>
                 <input id="haloacl_save_quickacl_button" type="button" value="Save Quickacl" onClick="YAHOO.haloacl.saveQuickacl()"; />
             </div>
            </div>
@@ -4649,6 +4659,24 @@ HTML;
     $html .= <<<HTML
 
   <script>
+        YAHOO.haloacl.updateQuickaclCount = function(item){
+            var counter = 0;
+            $$('.haloacl_quickacl_datatable_template').each(function(item){
+                if(item.checked){
+                    counter++;
+                }
+            });
+            if(counter > 15 && item){
+                item.checked = false;
+                YAHOO.haloacl.notification.createDialogOk("content","Quickacl","Only 15 Templates in quickacl are allowed");
+                counter--;
+            }
+
+
+            $('haloacl_quickacl_selected').innerHTML = counter;
+        };
+
+
         YAHOO.haloacl.quickaclTableInstance = YAHOO.haloacl.quickaclTable('haloacl_quickacl_datatable','haloacl_quickacl_datatable');
 
         YAHOO.haloacl.saveQuickacl = function(){
@@ -4716,7 +4744,7 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
                 if(in_array($sd->getSDId(), $quickacl->getSD_IDs())) {
                     $checked = true;
                 }
-            }catch(Exception $e ){}
+            }catch(Exception $e ) {}
             $a['records'][] = array('id'=>$sd->getSDId(), 'name'=>$sd->getSDName(),'checked'=>$checked);
         }
     }

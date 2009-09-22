@@ -38,32 +38,31 @@
 YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
     // custom defined formatter
-    this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
+    this.myQuickSelectFormatter = function(elLiner, oRecord, oColumn, oData) {
 
         if(oData == true){
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
-            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input onclick='YAHOO.haloacl.updateQuickaclCount(this);' type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
             //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }else{
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
-            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input onclick='YAHOO.haloacl.updateQuickaclCount(this);' type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
             //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }
-        console.log(elLiner);
             
     };
     
 
-    this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
+    this.myQuickNameFormatter = function(elLiner, oRecord, oColumn, oData) {
         elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
 
     };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
-    YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
+    YAHOO.widget.DataTable.Formatter.myQuickSelect = this.myQuickSelectFormatter;
+    YAHOO.widget.DataTable.Formatter.myQuickName = this.myQuickNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
 
@@ -71,13 +70,13 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
-        formatter:"myName"
+        formatter:"myQuickName"
     },
    
     {
         key:"checked",
         label:gLanguage.getMessage('delete'),
-        formatter:"mySelect"
+        formatter:"myQuickSelect"
     }
 
     ];
@@ -162,6 +161,10 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
     myDataTable.query = "";
 
 
+
+    myDataTable.subscribe("postRenderEvent",function(){
+        YAHOO.haloacl.updateQuickaclCount();
+    });
 
 
     //YAHOO.util.Event.addListener(myDataTable,"initEvent",myDataTable.checkAllSelectedUsers());

@@ -37,7 +37,7 @@ YAHOO.namespace ("haloacl.settings");
 YAHOO.namespace ("haloacl.manageUser");
 
 // log debug information to js-console
-YAHOO.haloacl.debug = true;
+YAHOO.haloacl.debug = false;
 
 if(YAHOO.haloacl.debug){
     console.log("======== DEBUG MODE ENABLED =========");
