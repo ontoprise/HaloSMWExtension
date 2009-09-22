@@ -70,9 +70,10 @@ class Tools {
 		if (strpos(trim($current_dir), -1) != '/') $current_dir = trim($current_dir)."/";
 		if($dir = @opendir($current_dir)) {
 			while (($f = readdir($dir)) !== false) {
-				if($f > '0' and filetype($current_dir.$f) == "file") {
+				if ($f == "." || $f == "..") continue;
+				if(filetype($current_dir.$f) == "file") {
 					unlink($current_dir.$f);
-				} elseif($f > '0' and filetype($current_dir.$f) == "dir") {
+				} elseif(filetype($current_dir.$f) == "dir") {
 					self::remove_dir($current_dir.$f);
 				}
 			}
@@ -260,7 +261,7 @@ class Tools {
 	 * @return string
 	 */
 	public static function removeTrailingWhitespaces($ls) {
-		for($i=strlen($ls); $i > 0; $i--) {
+		for($i=strlen($ls)-1; $i > 0; $i--) {
 			$c = ord($ls[$i]);
 			if ($c !== 0 && $c !== 9 && $c !== 10 &&  $c !== 13 && $c !== 32) break;
 		}

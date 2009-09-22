@@ -405,8 +405,8 @@ class Installer {
 			}
 			$desc->applyConfigurations($this->instDir, false, $fromVersion, $this);
 
-			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 			$this->res_installer->installOrUpdateResources($desc);
+			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
 
 			print "\n-------\n";
 		}

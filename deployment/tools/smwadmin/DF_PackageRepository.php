@@ -300,7 +300,7 @@ class PackageRepository {
 			$download_url = (string) $package[0]->attributes()->url;
 			break;
 		}
-		if (!isset($download_url)) return NULL;
+		if (!isset($download_url)) throw new RepositoryError(DEPLOY_FRAMEWORK_REPO_PACKAGE_DOES_NOT_EXIST, "Can not find package: $ext_id. Missing repository?");
 
 		return array($download_url, $repo_url);
 	}

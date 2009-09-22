@@ -139,12 +139,21 @@ class DeployWikiExporter extends WikiExporter {
 		$smwids     = $this->db->tableName( 'smw_ids' );
 		$smwrels     = $this->db->tableName( 'smw_rels2' );
 		$categorylinks     = $this->db->tableName( 'categorylinks' );
+		$templatelinks     = $this->db->tableName( 'templatelinks' );
+		$page     = $this->db->tableName( 'page' );
 
 		// export all pages of bundle
 		$joint = "$smwids,$smwrels";
 		$cond = "s_id = smw_id AND page_title = smw_title AND page_namespace = smw_namespace ".
                 "AND p_id = ".$partOfBundlePropertyID." AND o_id = ".$partOfBundleID;
 		$this->dumpFrom($joint, $cond);
+		
+		// all templates used by pages of bundle
+		$joint = "$templatelinks";
+		$cond = "page_title = tl_title AND page_namespace = tl_namespace ".
+                "AND tl_from IN (SELECT tl_from FROM $page,$templatelinks,$smwids,$smwrels WHERE smw_title = page_title AND smw_namespace = page_namespace AND smw_id = s_id ".
+                " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID AND page_id = tl_from)";
+        $this->dumpFrom($joint, $cond);
 
 		if (!$noCat) {
 			// export all instances of categories belonging to this bundle
@@ -155,6 +164,14 @@ class DeployWikiExporter extends WikiExporter {
                 " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
 				
 			$this->dumpFrom($joint, $cond);
+			
+			// export templates used by instances of category belonging to this bundle
+			$joint = "$categorylinks,$templatelinks";
+            $cond = "page_title = tl_title AND page_namespace = tl_namespace AND cl_from = tl_from ".
+                " AND cl_to IN (SELECT smw_title FROM $smwids,$smwrels WHERE smw_id = s_id ".
+                " AND p_id = $partOfBundlePropertyID AND o_id = $partOfBundleID)";
+                
+            $this->dumpFrom($joint, $cond);
 		}
 
 
