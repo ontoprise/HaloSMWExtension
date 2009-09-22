@@ -43,14 +43,15 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
         if(oData == true){
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
             elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
-            elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+            //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }else{
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
             elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' />";
-            elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+            //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }
+        console.log(elLiner);
             
     };
     

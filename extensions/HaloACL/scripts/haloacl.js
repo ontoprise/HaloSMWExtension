@@ -37,7 +37,7 @@ YAHOO.namespace ("haloacl.settings");
 YAHOO.namespace ("haloacl.manageUser");
 
 // log debug information to js-console
-YAHOO.haloacl.debug = false;
+YAHOO.haloacl.debug = true;
 
 if(YAHOO.haloacl.debug){
     console.log("======== DEBUG MODE ENABLED =========");
@@ -800,10 +800,11 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
         constraintoviewport:true,
         zIndex :10,
         width:"1000px",
-        context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
+       // context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
+        context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
-    //YAHOO.haloaclrights.popupPanel.destroy();
+        this.destroy();
     }
     myPopup.subscribe("hide", popupClose);
 

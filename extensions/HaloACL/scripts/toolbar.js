@@ -41,7 +41,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
      */
 
 
-//    console.log($(targetdiv));
+    //    console.log($(targetdiv));
     
     var querystring = "rs="+action;
 
@@ -59,10 +59,12 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
         parameters: querystring,
         asynchronous:true,
         evalScripts:true,
-      //  insertion:before,
+        //  insertion:before,
         onSuccess: function(o) {
-//            console.log(o);
-            $(targetdiv).insert({top:o.responseText})
+            //            console.log(o);
+            $(targetdiv).insert({
+                top:o.responseText
+            })
         },
         onFailure: function(o) {
         }
@@ -72,7 +74,7 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
 YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     if(callback == null){
         callback = function(result){
-//            console.log("stdcallback:"+result);
+        //            console.log("stdcallback:"+result);
         }
     }
 
@@ -85,8 +87,18 @@ YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     }
     new Ajax.Request("?action=ajax",{
         method:'post',
-        onSuccess:callback,
-        onFailure:callback,
+        onSuccess:function(result){
+            try{
+                $('wpSave').writeAttribute("type","submit");
+            }catch(e){}
+            $('wpSave').form.submit();
+        },
+        onFailure:function(result){
+            try{
+                $('wpSave').writeAttribute("type","submit");
+            }catch(e){}
+            $('wpSave').form.submit();
+        },
         parameters:querystring
     });
 };

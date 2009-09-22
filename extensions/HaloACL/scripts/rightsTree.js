@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains the class HACLGroup.
@@ -245,7 +245,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
- */
+         */
     // update usertable
     // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
@@ -272,7 +272,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
                 c.check();
             }
         }
-        */
+         */
         this.updateCheckHtml();
     //this.updateParent();
     },
@@ -289,7 +289,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
                 c.uncheck();
             }
         }
-        */
+         */
         this.updateCheckHtml();
     //this.updateParent();
     },
@@ -391,7 +391,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
-*/
+             */
         }
 
 
@@ -618,7 +618,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         }
         // update usertable
         YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
-*/
+         */
     },
 
     /**
@@ -642,7 +642,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
                 c.check();
             }
         }
-        */
+         */
         this.updateCheckHtml();
     //this.updateParent();
     },
@@ -660,7 +660,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             }
         }
         this.updateParent();
-        */
+         */
         this.updateCheckHtml();
 
     },
@@ -750,7 +750,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
  * @param list (object) of parameters to be added
  * @param callback for asyncRequest
  */
-YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback){
+YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback,dontusefilter){
     var url= "?action=ajax";
     var appendedParams = '';
     appendedParams = '&rs='+action;
@@ -775,14 +775,22 @@ YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback
         
         appendedParams = '&rs='+action+"&rsargs[]="+escape(xml);
     }
+    if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
+        var xml2 = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+        xml2+="<types>";
+        xml2 += "<type>acltemplate_nofilter</type>";
+        xml2+="</types>";
+        appendedParams = '&rs='+action+"&rsargs[]="+escape(xml2);
+    }
+
     YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
 };
 
 /*
- * function for dynamic node-loading
- * @param node
- * @parm callback on complete
- */
+* function for dynamic node-loading
+* @param node
+* @parm callback on complete
+*/
 YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
 
     var nodeLabel = encodeURI(node.label);
@@ -819,10 +827,10 @@ YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
 
 
 /*
- * function to build nodes from data
- * @param parent node / root
- * @param data
- */
+* function to build nodes from data
+* @param parent node / root
+* @param data
+*/
 YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
     var rightsExisting = false;
@@ -864,10 +872,10 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
 
 
 /*
- * filter tree
- * @param parent node / root
- * @param filter String
- */
+* filter tree
+* @param parent node / root
+* @param filter String
+*/
 YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
 
     var nodes;
@@ -888,19 +896,19 @@ YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
             tmpNode.setCheckState(n.checkState);
             tmpNode.setTreeType("r");
         }
-        */
+     */
 
     }
 
 };
 
 /*
- * function to build user tree and add labelClickAction
- * @param tree
- * @param data
- * @param labelClickAction (name)
- */
-YAHOO.haloaclrights.buildUserTree = function(tree,data) {
+* function to build user tree and add labelClickAction
+* @param tree
+* @param data
+* @param labelClickAction (name)
+*/
+YAHOO.haloaclrights.buildUserTree = function(tree,data,dontusefilter) {
     if($('haloacl_rightstree_count') != null){
         $('haloacl_rightstree_count').innerHTML = data.length;
     }
@@ -928,7 +936,7 @@ YAHOO.haloaclrights.buildUserTree = function(tree,data) {
         };
         YAHOO.haloaclrights.treeviewDataConnect('getGroupsForRightPanel',{
             query:nodeLabel
-        },callback);
+        },callback,dontusefilter);
 
     };
 
@@ -941,10 +949,10 @@ YAHOO.haloaclrights.buildUserTree = function(tree,data) {
 
 
 /*
- * builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
- * @param tree
- * @param rwTree
- */
+* builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
+* @param tree
+* @param rwTree
+*/
 YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
     var rightsExisting = false;
     var nodes;
@@ -971,10 +979,10 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
 
 
 /*
- * function to be called from outside to init a tree
- * @param tree-instance
- */
-YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
+* function to be called from outside to init a tree
+* @param tree-instance
+*/
+YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefilter){
     
     if(query == null){
         query = "all";
@@ -988,7 +996,12 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
         failure: function(oResponse) {
         }
     };
-    if(tree.treeType != null && tree.treeType != "readonly"){
+    if(dontusefilter && (dontusefilter == "true"||dontusefilter ==true )){
+        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+            query:query
+        },callback,dontusefilter);
+
+    }else if(tree.treeType != null && tree.treeType != "readonly"){
         YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
             query:query
         },callback);
@@ -1001,12 +1014,12 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query){
 };
 
 /*
- * returns checked nodes
- * USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
- *
- * @param tree
- * @param nodes
- */
+* returns checked nodes
+* USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
+*
+* @param tree
+* @param nodes
+*/
 
 
 YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
@@ -1078,8 +1091,8 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue){
 
 
 /**
- * returns a new treeinstance
- */
+* returns a new treeinstance
+*/
 YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
 
 

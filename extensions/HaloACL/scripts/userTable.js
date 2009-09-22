@@ -596,12 +596,12 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
         for(i=0;i<highlighted.length;i++){
             result += "<span class='groupselected'>";
             result+= ""+highlighted[i];
-            result+="</span>&nbsp;";
+            result+="</span>&nbsp;,";
         }
         for(i=0;i<nonHighlighted.length;i++){
             result +="<span class='groupunselected'>";
             result+= ""+nonHighlighted[i];
-            result+="</span>&nbsp;";
+            result+="</span>&nbsp;,";
         }
         result +="</div>";
 

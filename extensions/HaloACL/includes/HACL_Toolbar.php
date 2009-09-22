@@ -160,11 +160,11 @@ function getHACLToolbar($articleTitle) {
 
             }else{
                 //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
-                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'});
+                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'},function(result){
+                   
+                });
             }
-	        $('wpSave').writeAttribute("type","submit");
-	        $('wpSave').click();
-            element.form.submit();
+
 
         };
 

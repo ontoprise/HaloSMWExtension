@@ -232,7 +232,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
                     somethingNotChecked = true;
                 }
             }
-        }
+        }ve
 
         if (somethingChecked) {
             p.setCheckState( (somethingNotChecked) ? 1 : 2 );
