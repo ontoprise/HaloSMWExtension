@@ -1044,7 +1044,6 @@ YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
 
 
 YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter){
-    console.log(dontusefilter);
     if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
         dontusefilter = true;
     }else{

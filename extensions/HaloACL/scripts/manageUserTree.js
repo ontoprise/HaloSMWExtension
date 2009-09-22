@@ -415,9 +415,19 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
     var groupsInTree = false;
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
+
+
+
         var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.name);
-        tmpNode.setDynamicLoad(loadNodeData);
+        // recursive part, if children were supplied
+        if(element.children != null){
+            YAHOO.haloacl.buildNodesFromData(tmpNode,element.children,panelid);
+            tmpNode.expand();
+        }else{
+            tmpNode.setDynamicLoad(loadNodeData);
+        }
+
         groupsInTree = true;
         
     };

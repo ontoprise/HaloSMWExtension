@@ -2448,7 +2448,7 @@ HTML;
 HTML;
     }
 
-    if($type != "readOnly" || true) {
+    if($type != "readOnly") {
         $html .= <<<HTML
         <div id="haloacl_manageuser_contentlist_footer">
             <span class="haloacl_cont_under_trees">
@@ -3774,14 +3774,14 @@ function getUsersForGroups($groupsstring) {
  */
 function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
     $array = array();
-    $recursive = false;
+    if($search)$recursive = true;
 
     // return first level
     if($clickedGroup == 'all' || $clickedGroup == "Groups") {
     //get level 0 groups
-        if($level == 0){
+        if($level == 0) {
             $groups = HACLStorage::getDatabase()->getGroups();
-        }else{
+        }else {
             $groups = $subgroupsToCall;
         }
         foreach( $groups as $key => $value) {
@@ -3789,38 +3789,54 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
                 $parent = HACLGroup::newFromName($value->getGroupName());
                 $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
-                if(sizeof($subgroupsToCall)> 0 || $level == 0){
+                if(sizeof($subgroupsToCall)> 0 || $level == 0) {
                     $subgroups = getGroupsForRightPanel("all", $search, true, $level+1,$subgroupsToCall);
                 }
-                
-                if(!$search || strpos($search,$value->getGroupName()) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
-                    if(isset($subgroups)){
+
+                if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                    if(isset($subgroups)) {
                         $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
-                    }else{
+                    }else {
                         $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
                     }
                     $array[] = $tempgroup;
                 }
 
-              // non recursive part
+            // non recursive part
             } else {
-                
+
                 if(!$search || preg_match("/$search/is",$value->getGroupName())) {
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+
+
+                    $subparent = HACLGroup::newFromName($value->getGroupName());
+                    $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                    if(sizeof($subgroups) > 0) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }elseif(!$search) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                    }else {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }
                     $array[] = $tempgroup;
+
+
                 }
             }
         }
 
     }else {
-        //get group by name
-        // non recursive part
-
         $parent = HACLGroup::newFromName($clickedGroup);
         //groups
         $groups = $parent->getGroups(HACLGroup::OBJECT);
         foreach( $groups as $key => $value ) {
-            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+
+            $subparent = HACLGroup::newFromName($value->getGroupName());
+            $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+            if(sizeof($subgroups) > 0) {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+            }else {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+            }
             $array[] = $tempgroup;
         }
     }
@@ -3836,53 +3852,86 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
 }
 
-function getGroupsForManageUser($query,$filter=null) {
-    global $wgUser;
-
-    ini_set("display_errors",0);
-
+function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$level=0,$subgroupsToCall=null) {
     $array = array();
+    if($search)$recursive = true;
 
     // return first level
-    if($query == 'all' || $query == "Groups") {
-
+    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
     //get level 0 groups
-        $groups = HACLStorage::getDatabase()->getGroups();
-        foreach( $groups as $key => $value) {
-            $group = HACLGroup::newFromID($value->getGroupId());
-            if($group->userCanModify($wgUser->getName())) {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                $array[] = $tempgroup;
-            }
+        if($level == 0) {
+            $groups = HACLStorage::getDatabase()->getGroups();
+        }else {
+            $groups = $subgroupsToCall;
         }
-    }else {
-    //get group by name
-        try {
-            $parent = HACLGroup::newFromName($query);
-            //groups
-            $groups = $parent->getGroups(HACLGroup::OBJECT);
-            foreach( $groups as $key => $value ) {
-                if($value->userCanModify($wgUser->getName())) {
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+        foreach( $groups as $key => $value) {
+            if ($recursive) {
+
+                $parent = HACLGroup::newFromName($value->getGroupName());
+                $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
+                if(sizeof($subgroupsToCall)> 0 || $level == 0) {
+                    $subgroups = getGroupsForManageUser("all", $search, true, $level+1,$subgroupsToCall);
+                }
+
+                if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                    if(isset($subgroups)) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
+                    }else {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }
                     $array[] = $tempgroup;
+                }
+
+            // non recursive part
+            } else {
+
+                if(!$search || preg_match("/$search/is",$value->getGroupName())) {
+
+
+                    $subparent = HACLGroup::newFromName($value->getGroupName());
+                    $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                    if(sizeof($subgroups) > 0) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }elseif(!$search) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                    }else {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }
+                    $array[] = $tempgroup;
+
+
                 }
             }
         }
-        catch(Exception $e ) {
-        }
-    }
-    $result = array();
-    if($filter != null) {
-        foreach($array as $item) {
-            if(preg_match("/$filter/is", $item["name"])) {
-                $result[] = $item;
-            }
-        }
+
     }else {
-        $result = $array;
+        $parent = HACLGroup::newFromName($clickedGroup);
+        //groups
+        $groups = $parent->getGroups(HACLGroup::OBJECT);
+        foreach( $groups as $key => $value ) {
+
+            $subparent = HACLGroup::newFromName($value->getGroupName());
+            $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+            if(sizeof($subgroups) > 0) {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+            }else {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+            }
+            $array[] = $tempgroup;
+        }
     }
 
-    return (json_encode($result));}
+
+
+    //only json encode final result
+    if ($level == 0) {
+        $array = (json_encode($array));
+    }
+
+    return $array;
+
+
+}
 
 
 /**
