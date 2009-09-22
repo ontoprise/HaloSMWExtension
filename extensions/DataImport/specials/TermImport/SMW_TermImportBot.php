@@ -455,7 +455,7 @@ class TermImportBot extends GardeningBot {
 					}
 				} else {
 					// append until the next </mapping>
-					$result .= substr($mappingPolicy, $offset, $closePos-$offset);
+					$result .= substr($mappingPolicy, $offset-1, $closePos-$offset+1);
 					return array($result, $closePos+10);
 				}
 			} else {
@@ -475,7 +475,7 @@ class TermImportBot extends GardeningBot {
 						// => just append the invalid mapping to the result
 						//    and continue in the loop
 						$result .= '<mapping';
-						$offset = $openPos + 8;
+						$offset = $openPos + 7;
 						continue;
 					} else {
 						// continue after the opening mapping tag
