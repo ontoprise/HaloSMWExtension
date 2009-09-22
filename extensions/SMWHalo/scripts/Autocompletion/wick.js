@@ -514,9 +514,19 @@ AutoCompleter.prototype = {
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
             // we are in the FCK editor, AC will be displayed in the upper left.
-            if ($('wpTextbox1___Frame')) {
-                this.siw.floater.style.left = Position.cumulativeOffset($('wpTextbox1___Frame'))[0] + "px";
-                this.siw.floater.style.top = Position.cumulativeOffset($('wpTextbox1___Frame'))[1] + "px";
+            // when in wikitext the id source_wikitext is added by the fckplugin.js
+            if (this.siw.inputBox.id && this.siw.inputBox.id == 'source_wikitext') {
+                var width = $('smartInputFloater').offsetWidth;
+                // check if the FCK runs in Semantic forms or in a normal page
+                var iframe = $('wpTextbox1___Frame') ? $('wpTextbox1___Frame') : $('free_text___Frame');
+                // check if we are in fullscreen mode, then take coordinated from there 
+                if (iframe.style.position && iframe.style.position == 'fixed') {
+                    this.siw.floater.style.left = iframe.style.left;
+                    this.siw.floater.style.top = iframe.style.top;
+                } else {       
+                    this.siw.floater.style.left = Position.cumulativeOffset(iframe)[0] + "px";
+                    this.siw.floater.style.top = Position.cumulativeOffset(iframe)[1] + "px";
+                }
             }
             else if (!this.siw.customFloater) {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
