@@ -90,14 +90,17 @@ YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
         onSuccess:function(result){
             try{
                 $('wpSave').writeAttribute("type","submit");
+                $('wpSave').writeAttribute("onClick","");
+
             }catch(e){}
-            $('wpSave').form.submit();
+            $('wpSave').click();
         },
         onFailure:function(result){
             try{
                 $('wpSave').writeAttribute("type","submit");
+                $('wpSave').writeAttribute("onClick","");
             }catch(e){}
-            $('wpSave').form.submit();
+            $('wpSave').click();
         },
         parameters:querystring
     });
