@@ -412,7 +412,7 @@ class FCKeditorParser extends Parser_OldPP
 	}
 
 	function replaceInternalLinks( $text ) {
-		return parent::replaceInternalLinks($text);
+	    return parent::replaceInternalLinks($text);
 	}
 
 	function makeImage( $nt, $options ) {
@@ -486,7 +486,7 @@ class FCKeditorParser extends Parser_OldPP
 				else if ($sum == 0) {
 					$stringToParse .= 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 					$inner = htmlspecialchars(strtr(substr($text, $startingPos, $pos - $startingPos + 19), $strtr));
-                                        $inner = $this->revertEncapsulatedString($inner);
+                    $inner = $this->revertEncapsulatedString($inner);
 					if ( substr($inner, 0, 7) == '{{#ask:' || substr($inner, 0, 10) == '{{#sparql:')
 					    $fck_mw_template =  'fck_mw_askquery';
 					else if (substr($inner, 0, 6) == '{{#ws:' )
@@ -559,8 +559,8 @@ class FCKeditorParser extends Parser_OldPP
 		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
 		// by the current property string
 		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
-                        $matches[1] = $this->revertEncapsulatedString($matches[1]);
-			$replacement = $this->replaceSpecialLinkValue($matches[1]);
+            $replacedVal = $this->revertEncapsulatedString($matches[1]);
+			$replacement = $this->replaceSpecialLinkValue($replacedVal, $matches[1]);
 			$pos = strpos($text, $matches[0]);
 			$before = substr($text, 0, $pos);
 			$after = substr($text, $pos + strlen($matches[0]));
@@ -577,16 +577,15 @@ class FCKeditorParser extends Parser_OldPP
 		$text = StringUtils::delimiterReplaceCallback( '<includeonly>', '</includeonly>', array($this, 'fck_includeonly'), $text );
 		$text = StringUtils::delimiterReplaceCallback( '<noinclude>', '</noinclude>', array($this, 'fck_noinclude'), $text );
 		$text = StringUtils::delimiterReplaceCallback( '<onlyinclude>', '</onlyinclude>', array($this, 'fck_onlyinclude'), $text );
-
-                //html comments shouldn't be stripped
+		
+        //html comments shouldn't be stripped
 		$text = $this->fck_replaceHTMLcomments( $text );
 		//as well as templates
 		$text = $this->fck_replaceTemplates( $text );
 		// as well as Properties
 		$text = $this->fck_replaceSpecialLinks( $text );
 		$finalString = parent::internalParse($text);
-
-                return $finalString;
+        return $finalString;
 	}
 	function fck_includeonly( $matches ) {
 		return $this->fck_wikiTag('includeonly', $matches[1]);
@@ -652,16 +651,24 @@ class FCKeditorParser extends Parser_OldPP
 	 * 
 	 * @access private
 	 * @param  string match
+	 * @param  string orig (maybe FckmwXfckmw)
 	 * @return string replaced placeholder or [[match]]
 	 */
-	private function replaceSpecialLinkValue($match) {
+	private function replaceSpecialLinkValue($match, $orig) {
             $res = $this->replacePropertyValue($match);
             if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
                 return $res;
             $res = $this->replaceRichmediaLinkValue($match);
-            // here we don't check, if something was replaced, even if not we have to return the
-            // original value.
-            return $res;
+            if (preg_match('/FCK_RICHMEDIA_\d+_FOUND/', $res)) // richmedia link was replaced, we can quit here.
+                return $res;
+            // an ordinary link. If this is something like [[{{{1}}}]] then this would be an
+            // empty link, because during parsing, the parameter will not exist. Therefore
+            // do not use the original value but the template replacement
+            if ('[['.$orig.']]' == $res) return $res;
+            $key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
+            $this->fck_mw_strtr_span_counter++;
+            $this->fck_mw_strtr_span[$key] = $res;
+            return $key;
 	}
         
 	/**
