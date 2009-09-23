@@ -165,8 +165,9 @@ class USSpecialPage extends SpecialPage {
 			if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
+			$textcolor = $this->highlight($ns, $restrictNS) ? 'color: white;"' : ""; // overwrite text color, if it is set by the skin
 			$row .= '<td class="filtercolumn" '.$style.'><div style="margin: 6px;"><img alt="'.wfMsg('us_search_tooltip_refine', $nsName).'" title="'.wfMsg('us_search_tooltip_refine', $nsName).
-                     '" style="vertical-align: baseline;margin-top: 1px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="margin-left: 6px;vertical-align: top;" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
+                     '" style="vertical-align: baseline;margin-top: 1px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="margin-left: 6px;vertical-align: top;'.$textcolor.'" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
                      '</a></div></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
