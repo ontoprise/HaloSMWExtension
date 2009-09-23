@@ -202,6 +202,12 @@ class SMWTripleStore2 extends SMWTripleStore {
             } else if (stripos($sv, parent::$HELP_NS) === 0) {
                 $allValues[] = $this->createSMWDataValue($sv, parent::$HELP_NS, NS_HELP);
                 // image result
+            } else if (stripos($sv, parent::$TEMPLATE_NS) === 0) {
+                $allValues[] = $this->createSMWDataValue($sv, parent::$TEMPLATE_NS, NS_TEMPLATE);
+                // image result
+            } else if (stripos($sv, parent::$USER_NS) === 0) {
+                $allValues[] = $this->createSMWDataValue($sv, parent::$USER_NS, NS_USER);
+                // image result
             } else if (stripos($sv, parent::$IMAGE_NS) === 0) {
                 $allValues[] = $this->createSMWDataValue($sv, parent::$IMAGE_NS, NS_IMAGE);
 

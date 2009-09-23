@@ -49,6 +49,7 @@ class SMWTripleStore extends SMWStore {
 	protected static $IMAGE_NS;
 	protected static $HELP_NS;
 	protected static $TEMPLATE_NS;
+	protected static $USER_NS;
 	protected static $UNKNOWN_NS;
 
 	// general namespace suffixes for different namespaces
@@ -59,6 +60,7 @@ class SMWTripleStore extends SMWStore {
 	public static $IMAGE_NS_SUFFIX = "/image#";
 	public static $HELP_NS_SUFFIX = "/help#";
 	public static $TEMPLATE_NS_SUFFIX = "/template#";
+	public static $USER_NS_SUFFIX = "/user#";
 	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. # is missing!
 
 	// SPARQL-PREFIX statement with all pre-defined namespaces
@@ -86,13 +88,14 @@ class SMWTripleStore extends SMWStore {
 		self::$IMAGE_NS = $smwgTripleStoreGraph.self::$IMAGE_NS_SUFFIX;
 		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
 		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
+		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
     
 		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW) 
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
 		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.
-		self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> ';
+		self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
         
 		// declare all other namespaces using ns_$index as prefix
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
@@ -778,6 +781,9 @@ class SMWTripleStore extends SMWStore {
 			// image result
 		} else if (stripos($sv, self::$TEMPLATE_NS) === 0) {
             $allValues[] = $this->createSMWDataValue($sv, self::$TEMPLATE_NS, NS_TEMPLATE);
+            // image result
+        } else if (stripos($sv, self::$USER_NS) === 0) {
+            $allValues[] = $this->createSMWDataValue($sv, self::$USER_NS, NS_USER);
             // image result
         } else if (stripos($sv, self::$IMAGE_NS) === 0) {
 			$allValues[] = $this->createSMWDataValue($sv, self::$IMAGE_NS, NS_IMAGE);
