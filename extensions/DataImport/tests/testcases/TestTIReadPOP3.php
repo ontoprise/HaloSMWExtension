@@ -84,11 +84,11 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 			return $mail->getMessage();
 		}
 		
-		sleep(30);
+		sleep(60);
 		
 		exec($cd.'runBots smw_termimportupdatebot');
 		
-		sleep(30);
+		sleep(60);
 		return "";
 	}
 	
