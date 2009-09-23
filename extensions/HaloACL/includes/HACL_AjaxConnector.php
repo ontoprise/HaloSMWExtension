@@ -1033,7 +1033,7 @@ HTML;
 
                 xml+="<groups>";
                 groups.each(function(group){
-                    xml+="<group>"+group+"</group>";
+                    xml+="<group>"+escape(group)+"</group>";
                 });
                 xml+="</groups>";
                 xml+="</inlineright>";
