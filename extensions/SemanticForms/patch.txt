@@ -1472,8 +1472,8 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5204)
-+++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
+--- extensions/SemanticForms/includes/SF_Utils.inc  (revision 5232)
++++ extensions/SemanticForms/includes/SF_Utils.inc  (working copy)
 @@ -5,6 +5,11 @@
   * @author Yaron Koren
   */
@@ -1486,19 +1486,32 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  if ( !defined( 'MEDIAWIKI' ) ) die();
  
  class SFUtils {
-@@ -144,6 +149,12 @@
- 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
- 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_ajax_form_preview.js"></script>' . "\n");
- 		$wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
-+		/*op-patch|BL|2009-06-28|CollapsingForms|AddNecessaryScripts|start*/
+@@ -66,7 +71,11 @@
+            $action = "wpPreview";
+        else // $is_diff
+            $action = "wpDiff";
+-
++           
++        /*op-patch|SR|2009-09-23|SF|Bug fix: encode " in hidden field value for wikitext|start*/
++        $page_contents = str_replace('"', '&quot;', $page_contents);
++        /*op-patch|SR|2009-09-23|SF|Bug fix: encode " in hidden field value for wikitext|end*/
++           
+        global $sfgScriptPath;
+        $text =<<<END
+    <p style="position: absolute; left: 45%; top: 45%;"><img src="$sfgScriptPath/skins/loading.gif" /></p>
+@@ -144,6 +153,12 @@
+        $wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_yui_autocompletion.js"></script>' . "\n");
+        $wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/SF_ajax_form_preview.js"></script>' . "\n");
+        $wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/floatbox.js"></script>' . "\n");
++       /*op-patch|BL|2009-06-28|CollapsingForms|AddNecessaryScripts|start*/
 +        global $smwgHaloScriptPath;
 +        $wgOut->addScript('<script type="text/javascript" src="' . $smwgHaloScriptPath . '/scripts/prototype.js"></script>' . "\n");
 +        $wgOut->addScript('<script type="text/javascript" src="'.$smwgHaloScriptPath . '/scripts/OntologyBrowser/generalTools.js"></script>' . "\n");
 +        $wgOut->addScript('<script type="text/javascript" src="' . $sfgScriptPath . '/libs/collapse.js"></script>' . "\n");
 +        /*op-patch|BL|2009-06-28|end*/
- 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
- 		$wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
- 		if ($wgFCKEditorDir)
+        $wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_tooltip.js"></script>' . "\n");
+        $wgOut->addScript('<script type="text/javascript" src="' . $smwgScriptPath . '/skins/SMW_sorttable.js"></script>' . "\n");
+        if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
 --- extensions/SemanticForms/languages/SF_Messages.php	(revision 5204)
