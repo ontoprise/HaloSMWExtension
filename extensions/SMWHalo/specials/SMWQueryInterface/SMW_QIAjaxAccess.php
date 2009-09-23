@@ -285,8 +285,34 @@ function smwf_qi_getPage($args= "") {
                                '<body onload="'.$onloadArgs.'"',
                                $newPage);
     
+    // remove unnecessary scripts
+    $newPage = preg_replace_callback('/<script[^>]+>([^<]+|<!)*<\/script>/','smwf_qi_deleteScriptsCallback', $newPage);
+   
 	return $newPage;
 		
+}
+
+function smwf_qi_deleteScriptsCallback($match) {
+	
+	
+	 /* // positive list
+	 $keepScripts = array("wgServer","generalTools","SMW_sortable", "SMW_tooltip", "ajax","language",
+	                     "wick", "prototype", "QIHelper.js", "qi_tooltip", "Query", "queryTree.js", 
+	                     "treeviewQI", "deployQueryInterface");
+	
+	foreach($keepScripts as $script) {
+	   $contains = stripos($match[0], $script);
+	   if ($contains !== false) break;
+	}
+	return ($contains !== false) ? $match[0] : '';*/
+	
+	// negative list
+	$removeScripts = array('acl', 'richmedia');
+	foreach($removeScripts as $script) {
+       $remove = stripos($match[0], $script);
+       if ($remove !== false) break;
+    }
+    return ($remove !== false) ? '' : $match[0];
 }
 
 // below this line there are functions that are needed by the Ajax functions above
