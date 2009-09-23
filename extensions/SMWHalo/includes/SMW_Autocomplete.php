@@ -59,7 +59,9 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 
 	smwLog(($userContext != null ? $userContext : "").$userInputToMatch, "AC", "activated", $articleName);
 	// remove common namespaces from user input
-	$userInputToMatch = AutoCompletionRequester::removeCommonNamespaces($userInputToMatch);
+	$namespaceDelimiter = strpos($userInputToMatch, ":");
+	$namespaceText = $namespaceDelimiter !== false ? substr($userInputToMatch, 0, $namespaceDelimiter) : NULL;
+	$userInputToMatch = $namespaceDelimiter !== false ? substr($userInputToMatch, $namespaceDelimiter+1) : $userInputToMatch;
 	// remove whitespaces from user input and replace with underscores
 	$userInputToMatch = str_replace(" ","_",$userInputToMatch);
 
@@ -67,30 +69,41 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 	if ($userContext == null || $userContext == "" || !AutoCompletionRequester::isContext($userContext)) {
 		// no context: that means only non-semantic AC is possible. Maybe a $constraints string is specified
 		if ($constraints == null || $constraints == 'null' || $constraints == 'all') {
-			// if no constraints defined, search for (nearly) all pages.
-			global $wgExtraNamespaces;
-			$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
-			$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
+			// if no constraints defined, search for (nearly) all pages
+
+			// if $namespaceText is a valid namespace prefix
+			// then $namespaceIndex contains the according index.
+			global $wgExtraNamespaces, $wgLang;
+			$namespaceIndex=false;
+			if (!is_null($namespaceText)) {
+				$namespaceIndex = $wgLang->getNsIndex($namespaceText);
+
+				if ($namespaceIndex === false) {
+					$flippedNamespaces = array_flip($wgExtraNamespaces);
+					if (in_array($namespaceText, $flippedNamespaces)) {
+						$namespaceIndex = $flippedNamespaces[$namespaceText];
+					}
+				}
+			}
+
+			// if no namespace, just search all namespaces
+			if ($namespaceIndex === false) {
+				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
+				$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
+			} else {
+				$pages = AutoCompletionHandler::executeCommand("namespace: ".$namespaceIndex, $userInputToMatch);
+			}
 
 		} else {
 			// otherwise use constraints
 
 			$pages = AutoCompletionHandler::executeCommand($constraints, $userInputToMatch);
-
-			// Fallback, if commands yield nothing. Deactivated now
-			/*if (empty($pages)) {
-				// fallback to standard search (namespace)
-				global $wgExtraNamespaces;
-				$namespaces = array_unique(array_merge(array(SMW_NS_PROPERTY, NS_CATEGORY, NS_MAIN, NS_TEMPLATE, SMW_NS_TYPE), array_keys($wgExtraNamespaces)));
-				$pages = AutoCompletionHandler::executeCommand("namespace: ".implode(",", $namespaces), $userInputToMatch);
-				}*/
 		}
 		$result = AutoCompletionRequester::encapsulateAsXML($pages);
 		return $result;
 	} else if (stripos($userContext, "[[") === 0){
 		// semantic context
 		// decide according to context which autocompletion is appropriate
-			
 		// ------------------------
 		// 1. category case
 		// ------------------------
@@ -99,7 +112,6 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 			AutoCompletionRequester::logResult($result, $articleName);
 			return $result;
 		}
-			
 		// ------------------------------------------------
 		// 2./3. property target case / property value case
 		// ------------------------------------------------
@@ -131,11 +143,10 @@ function smwf_ac_AutoCompletionDispatcher($articleName, $userInputToMatch, $user
 		$namespace = NS_TEMPLATE;
 		if (defined('SF_NS_FORM')) {
 			$form_ns_text = $wgLang->getNsText(SF_NS_FORM);
-			if (substr($userInputToMatch, 0, strlen($form_ns_text)) == $form_ns_text) {
+			if ($namespaceText == $form_ns_text) {
 				$namespace = SF_NS_FORM;
 			}
 		}
-		$userInputToMatch = $namespace == NS_TEMPLATE ? $userInputToMatch : substr($userInputToMatch, strlen($form_ns_text)+1);
 		$result = AutoCompletionRequester::getTemplateOrFormProposals($userContext, $userInputToMatch , $namespace );
 		AutoCompletionRequester::logResult($result, $articleName);
 		return $result;
@@ -240,14 +251,12 @@ class AutoCompletionRequester {
 			return AutoCompletionRequester::encapsulateAsXML($pages);
 
 		}
-			
 	}
 
 	/**
 	 * Get attribute values (units and enums)
 	 */
 	public static function getPropertyValueProposals($userContext, $userInput) {
-			
 		if (stripos($userContext,":=") > 0) {
 			$propertyText = trim(substr($userContext, 2, stripos($userContext,":=")-2));
 		} else {
@@ -256,7 +265,6 @@ class AutoCompletionRequester {
 		// try units first, then possible values
 		$property = Title::newFromText($propertyText, SMW_NS_PROPERTY);
 		$unitsList = smwfGetAutoCompletionStore()->getUnits($property, $userInput);
-			
 		if (count($unitsList) > 0) {
 			$attvalues = AutoCompletionRequester::encapsulateEnumsOrUnitsAsXML($unitsList);
 		} else {
@@ -284,7 +292,6 @@ class AutoCompletionRequester {
 		if (stripos(strtolower($specialProperties["_SUBP"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_SUBP"], SMW_NS_PROPERTY);
 		}
-			
 		if (stripos(strtolower($specialProperties["_TYPE"]), preg_replace("/_/", " ", strtolower($match))) !== false) {
 			$specialMatches[] = Title::newFromText($specialProperties["_TYPE"], SMW_NS_PROPERTY);
 		}
@@ -320,7 +327,7 @@ class AutoCompletionRequester {
 					$matches[] = array($t, false, TemplateReader::formatTemplateParameters($t));
 				}
 			}
-				
+
 			return AutoCompletionRequester::encapsulateAsXML($matches, $namespace != NS_TEMPLATE);
 		}
 	}
@@ -410,23 +417,6 @@ class AutoCompletionRequester {
 
 
 
-	/**
-	 * Removes the common SMW namespace from $titleText.
-	 */
-	public static function removeCommonNamespaces($titleText) {
-		global $smwgContLang;
-		$namespaces = array_values($smwgContLang->getNamespaces());
-		$regex = "";
-		for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
-			if ($i < $n-1) {
-				$regex .= $namespaces[$i].":|";
-			} else {
-				$regex .= $namespaces[$i].":";
-			}
-		}
-		return preg_replace("/".$regex."/", "", $titleText);
-
-	}
 
 
 	public function logResult(& $result, $articleName) {
@@ -507,7 +497,7 @@ class AutoCompletionHandler {
 			$command = substr($c, 0, $sep);
 			$params = substr($c, $sep + 1);
 			if (!is_null($command) && !is_null($params)) {
-			 $result[] = array($command, explode(",", $params));
+				$result[] = array($command, explode(",", $params));
 			}
 		}
 		return $result;
@@ -564,7 +554,6 @@ class AutoCompletionHandler {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
 						$result = self::mergeResults($result, $acStore->getPropertyForAnnotation($userInput, $category, false));
-							
 					}
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
@@ -616,7 +605,6 @@ class AutoCompletionHandler {
 				}
 
 				$xmlResult = self::runASKQuery($query, $column);
-					
 				$dom = simplexml_load_string($xmlResult);
 				$queryResults = $dom->xpath('//binding[@name="'.$column.'"]');
 
@@ -661,7 +649,6 @@ class AutoCompletionHandler {
 		//$params['limit'] = SMW_AC_MAX_RESULTS;
 		if ($column != "_var0") $params['sort'] = $column;
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
-			
 	}
 
 	/**
@@ -671,8 +658,6 @@ class AutoCompletionHandler {
 	 * @param array $results First element is Title or string and siginifcant for double or not.
 	 */
 	private static function mergeResults(& $arr1, & $arr2) {
-			
-			
 		// merge results
 		for($i = 0, $n = count($arr2); $i < $n; $i++) {
 			$contains = false;
