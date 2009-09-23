@@ -820,6 +820,7 @@ WikiTextParser.prototype = {
 		// 4 - find {{#ask:
 		// 5 - find <pre> or </pre>
 		// 6 - find <rule or </rule>
+		// 7 - find {{ or }} as well as {{{ or }}}
 		var state = 0;
 		var bracketCount = 0; // Number of open brackets "[["
 		var askCount = 0;  	  // Number of open <ask>-statements
@@ -830,7 +831,7 @@ WikiTextParser.prototype = {
 			switch (state) {
 				case 0:
 					// Search for "[[", "<nowiki>", <pre>, <rule or <ask
-					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:"]);
+					var findings = this.findFirstOf(currentPos, ["[[", "<nowiki>", "<pre>", "<ask", "<rule", "{{#ask:", "{"]);
 					if (findings[1] == null) {
 						// nothing found
 						parsing = false;
@@ -854,7 +855,9 @@ WikiTextParser.prototype = {
 						state = 3;
 					} else if (findings[1] == "{{#ask:") {
 						state = 4;
-					}
+                    } else if (findings[1] == "{") {
+                        state = 7;
+                    }
 					break;
 				case 1:
 					// we are within an annotation => search for [[ or ]]
@@ -961,6 +964,29 @@ WikiTextParser.prototype = {
 					// opening <rule> is closed
 					state = 0;
 					break;
+                case 7:
+                    // we are within an {{ template or other parser function
+                    state = 0;
+                    currentPos++;
+                    // check if this was a template or parameter (another { must follow)
+                    if (this.text.charAt(currentPos -1) != '{')
+                        break;
+                    currentPos++;
+                    var counter = 2; // count all opened {
+                    while (counter > 0) {
+                        var findOpen = this.text.indexOf('{', currentPos);
+                        var findClose = this.text.indexOf('}', currentPos);
+                        if (findClose == -1)
+                            break;
+                        if (findOpen > -1 && findOpen < findClose) {  
+                            currentPos = findOpen + 1;
+                            counter++;
+                        } else {
+                            currentPos = findClose + 1;
+                            counter--;
+                        }
+                    }
+                    break;			
 			}
 		}
 		if (bracketCount != 0) {
