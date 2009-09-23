@@ -297,7 +297,7 @@ class ImportOntologyBot extends GardeningBot {
 		global $wgLanguageCode;
 		$sLabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $sLabel , NS_MAIN );
-		if ($st == NULL) return; // Could not create a title, next please
+		if ($st == NULL) return $statements; // Could not create a title, next please
 
 		// instantiated relations and attributes
 		$it  = $this->model->findAsIterator($entity, NULL, NULL);
