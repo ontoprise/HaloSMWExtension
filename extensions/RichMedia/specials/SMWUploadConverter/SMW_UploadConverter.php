@@ -44,9 +44,10 @@ class UploadConverter {
 		
 		$file = $uploadedFile->mLocalFile; // can't avoid to access private field :(  
 		$mimeType = $file->getMimeType();
-		if (isset($smwgUploadConverter[$mimeType]))
+		
+		if (isset($smwgUploadConverter[$mimeType])) {
 			$converterApp = $smwgUploadConverter[$mimeType];
-		else {
+		} else {
 			// no converter specified for the mime type
 			return true;
 		}
@@ -58,12 +59,13 @@ class UploadConverter {
 		$converterApp = str_replace('{infile}', $path, $converterApp);
 		$converterApp = str_replace('{outfile}', $textFile, $converterApp);
 		$ret = exec($converterApp, $output, $retVar);
-
+		
 		$text = "";
 		if (file_exists($textFile)) {
 			// a temporary file has been written 
 			// => add its content into the article 
-			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+//			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+			$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
 			// delete temp. file
 			unlink($textFile);
 		} else {
