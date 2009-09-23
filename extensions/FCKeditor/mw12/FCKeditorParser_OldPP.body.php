@@ -721,11 +721,11 @@ class FCKeditorParser extends Parser_OldPP
 		$text = preg_replace("/^#REDIRECT/", "<!--FCK_REDIRECT-->", $text);
 		$parserOutput = parent::parse($text, $title, $options, $linestart , $clearState , $revid );
 
-                $categories = $parserOutput->getCategories();
+        $categories = $parserOutput->getCategories();
 		if ($categories) {
 			$appendString = "<p>";
 			foreach ($categories as $cat=>$val) {
-				if ($val != $title->mTextform)
+				if ($val != $title->mPrefixedText)
 					$appendString .= '<span class="fck_mw_category" sort="'.$val.'">'.str_replace('_', ' ', $cat).'</span> ';
 				else
 					$appendString .= '<span class="fck_mw_category">'.str_replace('_', ' ', $cat).'</span> ';
