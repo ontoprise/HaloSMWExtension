@@ -483,7 +483,8 @@ QIHelper.prototype = {
 			html += this.queries[nav[i]].getName() + '</span>';
 		}
 		html += "<hr/>";
-		$('treeviewbreadcrumbs').innerHTML = html;
+		var breadcrumpDIV = $('treeviewbreadcrumbs');
+ 		if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
 	},
 
 	/**
