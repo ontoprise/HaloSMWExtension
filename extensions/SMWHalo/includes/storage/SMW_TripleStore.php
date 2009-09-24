@@ -65,6 +65,8 @@ class SMWTripleStore extends SMWStore {
 
 	// SPARQL-PREFIX statement with all pre-defined namespaces
 	protected static $ALL_PREFIXES;
+	
+	protected static $ALL_NAMESPACES;
 
 	public static $fullSemanticData;
 
@@ -90,6 +92,10 @@ class SMWTripleStore extends SMWStore {
 		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
 		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
+		
+		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
+		SMW_NS_TYPE => self::$TYPE_NS_SUFFIX, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
+		NS_USER => self::$USER_NS);
     
 		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW) 
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
@@ -766,30 +772,19 @@ class SMWTripleStore extends SMWStore {
 	 * @param array & $allValues
 	 */
 	protected function addValueToResult($sv, $prs, & $allValues) {
-		// category result
-		if (stripos($sv, self::$CAT_NS) === 0) {
-			$allValues[] = $this->createSMWDataValue($sv, self::$CAT_NS, NS_CATEGORY);
-			// property result
-		} else if (stripos($sv, self::$PROP_NS) === 0) {
-			$allValues[] = $this->createSMWDataValue($sv, self::$PROP_NS, SMW_NS_PROPERTY);
-			// instance result
-		} else if (stripos($sv, self::$INST_NS) === 0) {
-			$allValues[] = $this->createSMWDataValue($sv, self::$INST_NS, NS_MAIN);
-			// help result
-		} else if (stripos($sv, self::$HELP_NS) === 0) {
-			$allValues[] = $this->createSMWDataValue($sv, self::$HELP_NS, NS_HELP);
-			// image result
-		} else if (stripos($sv, self::$TEMPLATE_NS) === 0) {
-            $allValues[] = $this->createSMWDataValue($sv, self::$TEMPLATE_NS, NS_TEMPLATE);
-            // image result
-        } else if (stripos($sv, self::$USER_NS) === 0) {
-            $allValues[] = $this->createSMWDataValue($sv, self::$USER_NS, NS_USER);
-            // image result
-        } else if (stripos($sv, self::$IMAGE_NS) === 0) {
-			$allValues[] = $this->createSMWDataValue($sv, self::$IMAGE_NS, NS_IMAGE);
-
+		
+		$nsFound = false;
+		foreach (self::$ALL_NAMESPACES as $nsIndsex => $ns) {
+			if (stripos($sv, $ns) === 0) {
+				$allValues[] = $this->createSMWDataValue($sv, $ns, $nsIndsex);
+				$nsFound = true;
+			}
+		}
+		
+		if ($nsFound) return;
+		
 			// result with unknown namespace
-		} else if (stripos($sv, self::$UNKNOWN_NS) === 0) {
+		if (stripos($sv, self::$UNKNOWN_NS) === 0) {
 
 			if (empty($sv)) {
 				$v = SMWDataValueFactory::newTypeIDValue('_wpg');
