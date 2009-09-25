@@ -362,7 +362,7 @@ class ImportOntologyBot extends GardeningBot {
 		$s['WIKI'] = array();
 		$s['WIKI'][] = "[[" . $pt->getText() . "::" . $ot->getPrefixedText() . "]]";
 		$s['PAGENAME'] = $st->getDBkey();
-		$s['ID'] = $property->getLocalName();
+		$s['ID'] = $st->getDBkey();
 		$statements[] = $s;
 			
 	}
@@ -389,7 +389,7 @@ class ImportOntologyBot extends GardeningBot {
 		$s['WIKI'] = array();
 		$s['WIKI'][] = "[[" . $pt->getText() . "::" . $oLabel . "]]";
 		$s['PAGENAME'] = $st->getDBkey();
-		$s['ID'] = $property->getLocalName();
+		$s['ID'] = $st->getDBkey();
 		$statements[] = $s;
 	}
 
@@ -816,7 +816,7 @@ class ImportOntologyBot extends GardeningBot {
 		// sort for NS
 		for($i = 0, $n = count($statements); $i < $n; $i++) {
 			for($j = 0; $j < $n-1; $j++) {
-				if ($statements[$j]['NS'] > $statements[$j+1]['NS']) {
+				if ($statements[$j]['NS'] < $statements[$j+1]['NS']) {
 					$help = $statements[$j];
 					$statements[$j] = $statements[$j+1];
 					$statements[$j+1] = $help;
