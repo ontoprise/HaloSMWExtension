@@ -41,7 +41,8 @@ OBSemanticToolbarContributor.prototype = {
 	 * Register the contributor and puts a button in the semantic toolbar.
 	 */
 	registerContributor: function() {
-		if (!stb_control.isToolbarAvailable() || (wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit') ) return;
+		if (!stb_control.isToolbarAvailable() || 
+                    (wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit' && wgCanonicalSpecialPageName != 'AddData') ) return;
 		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
 		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
 

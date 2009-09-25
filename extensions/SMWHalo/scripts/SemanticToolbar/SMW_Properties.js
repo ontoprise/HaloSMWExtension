@@ -111,7 +111,7 @@ showToolbar: function(request){
 
 callme: function(event){
 	
-	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' )
+	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' || wgCanonicalSpecialPageName == 'AddData' )
 	   && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102)
 	   && stb_control.isToolbarAvailable()){
 		this.propertiescontainer = stb_control.createDivContainer(PROPERTIESCONTAINER, 0);

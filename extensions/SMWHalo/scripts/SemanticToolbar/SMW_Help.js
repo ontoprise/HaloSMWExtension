@@ -45,7 +45,7 @@ var initHelp = function(){
 function smw_help_callme(){
 	var ns = smw_help_getNamespace();
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit'
-	    || wgCanonicalSpecialPageName == "Search")
+	    || wgCanonicalSpecialPageName == "Search" || wgCanonicalSpecialPageName == 'AddData')
 	   && stb_control.isToolbarAvailable()){
 		helpcontainer = stb_control.createDivContainer(HELPCONTAINER, 0);
 		helpcontainer.setHeadline('<img src="'+wgScriptPath+'/extensions/SMWHalo/skins/help.gif"/> ' + gLanguage.getMessage('Help'));
