@@ -3278,6 +3278,10 @@ HTML;
 
 
 function saveGroup($manageRightsXml,$parentgroup = null) {
+
+    if($parentgroup == "Groups"){
+        $parentgroup = null;
+    }
     global $haclgContLang;
     global $wgUser;
     $ns = $haclgContLang->getNamespaces();
@@ -3812,18 +3816,18 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 
                 if(!$search || preg_match("/$search/is",$value->getGroupName())) {
 
-					try {
-	                    $subparent = HACLGroup::newFromName($value->getGroupName());
-	                    $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-	                    if(sizeof($subgroups) > 0) {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-	                    }elseif(!$search) {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
-	                    }else {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-	                    }
-	                    $array[] = $tempgroup;
-					} catch (HACLGroupException $e) {}
+                    try {
+                        $subparent = HACLGroup::newFromName($value->getGroupName());
+                        $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                        if(sizeof($subgroups) > 0) {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                        }elseif(!$search) {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                        }else {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                        }
+                        $array[] = $tempgroup;
+                    } catch (HACLGroupException $e) {}
 
                 }
             }
@@ -3858,6 +3862,7 @@ function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $
 }
 
 function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$level=0,$subgroupsToCall=null) {
+    global $wgUser,$haclCrossTemplateAccess;
     $array = array();
     if($search)$recursive = true;
 
@@ -3877,34 +3882,37 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
                 if(sizeof($subgroupsToCall)> 0 || $level == 0) {
                     $subgroups = getGroupsForManageUser("all", $search, true, $level+1,$subgroupsToCall);
                 }
-
-                if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
-                    if(isset($subgroups)) {
-                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
-                    }else {
-                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
+                    if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                        if(isset($subgroups)) {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
+                        }else {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                        }
+                        $array[] = $tempgroup;
                     }
-                    $array[] = $tempgroup;
                 }
 
             // non recursive part
             } else {
+                if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
 
-                if(!$search || preg_match("/$search/is",$value->getGroupName())) {
+                    if(!$search || preg_match("/$search/is",$value->getGroupName())) {
 
-					try {
-	                    $subparent = HACLGroup::newFromName($value->getGroupName());
-	                    $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-	                    if(sizeof($subgroups) > 0) {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-	                    }elseif(!$search) {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
-	                    }else {
-	                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-	                    }
-	                    $array[] = $tempgroup;
-					} catch (HACLGroupException $e) { }
+                        try {
+                            $subparent = HACLGroup::newFromName($value->getGroupName());
+                            $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                            if(sizeof($subgroups) > 0) {
+                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                            }elseif(!$search) {
+                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                            }else {
+                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                            }
+                            $array[] = $tempgroup;
+                        } catch (HACLGroupException $e) { }
 
+                    }
                 }
             }
         }
@@ -3914,15 +3922,17 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
         //groups
         $groups = $parent->getGroups(HACLGroup::OBJECT);
         foreach( $groups as $key => $value ) {
+            if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
 
-            $subparent = HACLGroup::newFromName($value->getGroupName());
-            $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-            if(sizeof($subgroups) > 0) {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-            }else {
-                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                $subparent = HACLGroup::newFromName($value->getGroupName());
+                $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                if(sizeof($subgroups) > 0) {
+                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                }else {
+                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                }
+                $array[] = $tempgroup;
             }
-            $array[] = $tempgroup;
         }
     }
 
@@ -4837,13 +4847,13 @@ function doesArticleExists($articlename,$protect) {
     if($protect == "category") {
         $articlename = "Category:".$articlename;
     }
-    if($protect == "template"){
+    if($protect == "template") {
         $articlename = "ACL:Template/".$articlename;
     }
-    if($protect == "Right"){
+    if($protect == "Right") {
         $articlename = "ACL:Right/".$articlename;
     }
-    
+
     $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
