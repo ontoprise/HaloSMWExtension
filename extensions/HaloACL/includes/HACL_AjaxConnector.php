@@ -1984,7 +1984,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_1
                     </span>
-                    <span style="margin-right:29px;float:right;font-weight:bold">select</span>
+                    <span style="margin-right:29px;float:right;font-weight:bold">Select</span>
                 </div>
                 <div class="haloacl_rightpanel_selecttab_leftpart_filter">
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
@@ -2009,7 +2009,7 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_4:&nbsp;<span id="datatablepaging_count_$panelid"></span> <span id="datatablepaging_groupinfo_$panelid"><span style="font-weight:normal">in</span>&nbsp;Users</span>
                     </span>
-                    <span style="margin-right:5px;float:right;font-weight:bold">select</span>
+                    <span style="margin-right:5px;float:right;font-weight:bold">Select</span>
 
                 </div>
                 <div class="haloacl_rightpanel_selecttab_rightpart_filter">
@@ -2123,6 +2123,9 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
             var fncname = "YAHOO.haloacl.refreshPanel_"+panelid.substr(14)+"();";
             eval(fncname);
             }catch(e){}
+            try{
+            YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(panelid);
+            }catch(e){}
         };
         
         //YAHOO.util.Event.addListener("datatableDiv_$panelid", "click", handleDatatableClick);
@@ -2186,6 +2189,8 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_4
                     </span>
+                    <span style="font-weight:bold;float:right;margin-right:12px;">Remove</span>
+
                 </div>
                 <div class="haloacl_rightpanel_selecttab_rightpart_filter">
                     <span class="haloacl_rightpanel_selecttab_rightpart_filter_title">
@@ -4444,7 +4449,7 @@ HTML;
 
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-        $hacl_whitelist_3<span style="margin-right:40px;float:right">delete</span>
+        $hacl_whitelist_3<span style="margin-right:40px;float:right">Delete</span>
             </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input id="haloacl_whitelist_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.whitelistDatatableInstance.executeQuery(this.value);"/>
@@ -4457,7 +4462,7 @@ HTML;
                 <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
                     Showing <span id="haloacl_whitelist_count">0</span> element(s)
                 </span>
-                <input type="button" value="delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
+                <input type="button" value="Delete selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
             </div>
              
         </div>
@@ -4832,6 +4837,13 @@ function doesArticleExists($articlename,$protect) {
     if($protect == "category") {
         $articlename = "Category:".$articlename;
     }
+    if($protect == "template"){
+        $articlename = "ACL:Template/".$articlename;
+    }
+    if($protect == "Right"){
+        $articlename = "ACL:Right/".$articlename;
+    }
+    
     $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {

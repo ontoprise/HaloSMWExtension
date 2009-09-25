@@ -517,11 +517,13 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
         var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
         for(i=0;i<highlighted.length;i++){
             result += "<span class='groupselected'>";
+            if(i != 0)result+=",";
             result+= ""+highlighted[i];
             result+="</span>&nbsp;";
         }
         for(i=0;i<nonHighlighted.length;i++){
             result +="<span class='groupunselected'>";
+            if(i != 0)result+=",";
             result+= ""+nonHighlighted[i];
             result+="</span>&nbsp;";
         }
@@ -529,8 +531,8 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
 
 
         var username = divitem.parentNode.parentNode.previousElementSibling.firstChild.firstChild;
-        
-        if(highlighted.length > 0){
+
+        if(highlighted.length > 0 || YAHOO.haloacl.isNameInUserArray(panelid,username.innerHTML)){
             $(username).setAttribute("style", "font-weight:bold");
         }else{
             $(username).setAttribute("style", "");
