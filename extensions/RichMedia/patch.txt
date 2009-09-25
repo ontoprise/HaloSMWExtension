@@ -298,7 +298,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			}
 +			$uploadWindowPage = SpecialPage::getPage('UploadWindow');
 +			$relatedArticles = urlencode($relatedArticles);
-+			$successString = "filestatus=uploaded&uploadedFile=$target&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
++			$successString = "filestatus=uploaded&uploadedFile=".urlencode($target)."&RelatedArticles=$relatedArticles&sfInputID=$this->mInputID";
 +			$uploadWindowUrlSuccess = $uploadWindowPage->getTitle()->getFullURL($successString);
  			$output .=<<<END
 -		parent.fb.end();
