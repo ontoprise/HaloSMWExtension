@@ -111,8 +111,8 @@ class EmbedWindowForm {
 			$fitNow = "";
 		}
 		else {
-			$embedWidth = "100%";
-			$embedHeight = "93%"; #because of the headline
+			$embedWidth = "670px;";
+			$embedHeight = "450px;";
 			$fullResNow = "";
 			$fitNow = "font-weight:bold;";
 		}
@@ -129,14 +129,14 @@ class EmbedWindowForm {
 				$fitWinText = wfMsg('smw_rm_embed_fittowindow');
 				$viewText = wfMsg('smw_rm_embed_view');
 				$fullRes_fit_section = <<<END
-				<td style="padding-left:10px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">
+				<td style="padding-left:10px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;width:40px">
 				{$viewText}:
 				</td>
-				<td style="padding-left:5px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;">
+				<td style="padding-left:5px;padding-right:5px;padding-top:0px;padding-bottom:0px;color:white;width:95px;;">
 				<a href="{$fullResSizeURL}" rel="sameBox:true" style="color:white;{$fullResNow}">{$fullResText}</a>
 				</td>
-				<td style="color:white;">|</td>
-				<td style="border-right:1px dotted black;padding-left:5px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;">
+				<td style="color:white; width:5px;">|</td>
+				<td style="border-right:1px dotted black;padding-left:5px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;width:90px">
 				<a href="$fitToWindowURL" rel="sameBox:true" style="color:white;{$fitNow}">{$fitWinText}</a>
 				</td>
 END;
@@ -146,7 +146,7 @@ END;
 				$embedHeight = $image->getHeight();
 			}
 			$embedObject = <<<END
-			<table style="width:100%;height:93%">
+			<table style="width:100%;height:90%">
 				<tr><td style="text-align:center">
 					<img id="embedded_object" src="{$imagePath}" style="margin-top:5pxvertical-align:middle" width="{$embedWidth}" height="{$embedHeight}"/>
 				</td></tr>
@@ -169,20 +169,20 @@ END;
 
 		$html = <<<END
 		<div style="border:1px solid black;background-color:0091A6">
-			<table style="padding:0px;margin:0px" cellspacing="0" cellpadding="0">
+			<table style="padding:0px;margin:0px;width:100%" cellspacing="0" cellpadding="0">
 				<tr style="top: 0px; right: 0px; bottom: 0px; left: 0px;background-color:#0091A6;margin:0px">
-					<td style="left:0px;border-right:1px solid black;background-color:white;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;font-size:larger;font-weight:bold">
+					<td style="left:0px;border-right:1px solid black;background-color:white;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;font-size:larger;font-weight:bold;width:80px">
 						FileViewer
 					</td>
 					{$fullRes_fit_section}
-					<td style="border-right:1px dotted black;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;">
+					<td>&nbsp;</td>
+					<td style="border-right:1px dotted black;border-left:1px dotted black;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;width:60px;text-align:right">
 						<a href="{$imagePath}" title="{$saveLinkAlt}" style="color:white">{$saveLinkText}
-							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px"></img>
+							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px;padding-bottom:3px;"></img>
 						</a>
 					</td>
-					<td style="border-right:1px solid black;padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;">
-						<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white"> {$descText}
-							<!--<img alt="{$descLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/desc_icon.png" style="vertical-align:middle;border-width:0px"></img>-->
+					<td style="padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;text-align:right;width:135px;;">
+						<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white">>>&nbsp;{$descText}
 						</a>
 					</td>
 				</tr>
