@@ -713,9 +713,8 @@ class HACLParserFunctions {
      * @param unknown_type $article
      * @param unknown_type $user
      * @param unknown_type $reason
-     * @param unknown_type $error
      */
-    public static function articleDelete(&$article, &$user, &$reason, &$error) {
+    public static function articleDelete(&$article, &$user, &$reason) {
         if ($article->getTitle()->getNamespace() == HACL_NS_ACL) {
         // The article is in the ACL namespace.
         // Check if there is some corresponding definition in the ACL database.
