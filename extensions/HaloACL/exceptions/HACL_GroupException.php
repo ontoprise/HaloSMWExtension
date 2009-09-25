@@ -49,7 +49,7 @@ class HACLGroupException extends HACLException {
 	// An unknown group is given. It has no group ID. 
 	// Parameters:
 	// 1 - name of the group
-	const UNKOWN_GROUP = 3;
+	const UNKNOWN_GROUP = 3;
 
 	// There is no group for the given group ID. 
 	// Parameters:
@@ -80,7 +80,7 @@ class HACLGroupException extends HACLException {
     		case self::USER_CANT_MODIFY_GROUP:
     			$msg = "The user $args[2] is not authorized to add or change the group $args[1].";
     			break;
-    		case self::UNKOWN_GROUP:
+    		case self::UNKNOWN_GROUP:
     			$msg = "The group $args[1] does not exist. There is no article that defines this group.";
     			break;
     	}
