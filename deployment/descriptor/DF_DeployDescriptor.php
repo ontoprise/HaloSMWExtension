@@ -34,7 +34,8 @@ class DeployDescriptor {
 	var $resources; // resources: images
 	var $oc_resources; // resources which get only copied
 	var $configs;   // config elements concerning localsettings changes
-	var $precedings;// extension which precedes this one in localsettings
+
+	var $successors; // extensions which are successors of this one in localsettings
 	var $userReqs;  // variables which need to be defined by the user
 	var $dependencies; // depending extensions
 	var $install_scripts; // scripts which need to be run during installation
@@ -66,13 +67,12 @@ class DeployDescriptor {
 	}
 
 
-	public function getPrecedings() {
-		return $this->precedings;
-	}
+	
+    public function getSuccessors() {
+        return $this->successors;
+    }
 
-	public function hasPreceding($id) {
-		return in_array($id, $this->precedings);
-	}
+	
 
 	public function getConfigs() {
 		return $this->configs;
@@ -96,7 +96,8 @@ class DeployDescriptor {
 
 		// initialize (or reset) config data
 		$this->configs = array();
-		$this->precedings = array();
+		
+		$this->successors = array();
 		$this->install_scripts = array();
 		$this->uninstall_scripts = array();
 		$this->userReqs = array();
@@ -119,19 +120,21 @@ class DeployDescriptor {
 		}
 
 		// select config elements
-		$precedings = $this->dom->xpath('/deploydescriptor/configs/precedes');
+		
+		$successors = $this->dom->xpath('/deploydescriptor/configs/successor');
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
 		$uninstall_scripts = $this->dom->xpath("/deploydescriptor/configs/uninstall/script");
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
 		$patches = $this->dom->xpath($path.'/patch');
 
-		// precedings, ie. all the extensions which must precede this one.
-		if (count($precedings) > 0 && $precedings != '') {
-			foreach($precedings as $p) {
-				$this->precedings[] = (string) $p->attributes()->ext;
-			}
-		}
+		
+	    // successors, ie. all the extensions which must succeed this one.
+        if (count($successors) > 0 && $successors != '') {
+            foreach($successors as $p) {
+                $this->successors[] = (string) $p;
+            }
+        }
 
 		// the config elements concerning the LocalSettings.php
 		if (count($configElements) > 0 && $configElements != '') {
@@ -244,6 +247,10 @@ class DeployDescriptor {
 			if ($ext_id === $id) return $d;
 		}
 		return NULL;
+	}
+	
+	function hasDependency($ext_id) {
+		return !is_null($this->getDependency($ext_id));
 	}
 
 	function getPatches($mwver = "") {

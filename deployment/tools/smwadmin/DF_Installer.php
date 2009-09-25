@@ -454,7 +454,7 @@ class Installer {
 				$extensions[$un->getID()] = array($un, $min, $max);
 			}
 		}
-		$precedenceOrder = $this->sortPrecedence($extensions);
+		$precedenceOrder = $this->sortForDependencies($extensions);
 		foreach($precedenceOrder as $po) {
 			$extensions_to_update[$po] = $extensions[$po];
 		}
@@ -462,12 +462,12 @@ class Installer {
 	}
 
 	/**
-	 * Provides a topologic sorting based on the precedence graph.
+	 * Provides a topologic sorting based on the dependency graph.
 	 *
 	 * @param array(ID=>array($dd,$min,$max)) $extensions_to_update
 	 * @return array(ID)
 	 */
-	private function sortPrecedence(& $extensions_to_update) {
+	private function sortForDependencies(& $extensions_to_update) {
 		$sortedPackages = array();
 		$vertexes = array_keys($extensions_to_update);
 		$descriptors = array_values($extensions_to_update);
@@ -478,7 +478,7 @@ class Installer {
 				foreach($descriptors as $e) {
 					list($dd, $from, $to) = $e;
 					if (in_array($dd->getID(), $vertexes)) {
-						if ($dd->hasPreceding($v)) {
+						if ($dd->hasDependency($v)) {
 							$hasPreceding = true;
 							break;
 						}
@@ -496,7 +496,7 @@ class Installer {
 			}
 			$sortedPackages[] = $v;
 
-			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the preceding graph.");
+			if ($cycle) throw new InstallationError(DEPLOY_FRAMEWORK_PRECEDING_CYCLE, "Cycle in the dependency graph.");
 		}
 		return array_reverse($sortedPackages);
 	}

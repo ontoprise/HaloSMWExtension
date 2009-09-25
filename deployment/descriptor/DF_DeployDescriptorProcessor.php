@@ -1,19 +1,19 @@
 <?php
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * Makes changes to the the LocalSettings.php or other configuration files.
@@ -82,7 +82,7 @@ class DeployDescriptionProcessor {
 		$suffix = substr($this->localSettingsContent, $insertpos);
 
 		$startTag = $ext_found ? "" : "\n/*start-".$this->dd_parser->getID()."*/";
-		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/";
+		$endTag = $ext_found ? "" : "\n/*end-".$this->dd_parser->getID()."*/\n";
 		$this->localSettingsContent = $prefix . $startTag . $insertions . $endTag . $suffix;
 
 		if (!$dryRun) $this->writeLocalSettingsFile($this->localSettingsContent);
@@ -229,15 +229,15 @@ class DeployDescriptionProcessor {
 				print "\nWarning: patch at '$rootDir/$patch' does not exist";
 				continue;
 			}
-		    // do dry-run at first to check for rejected patches
-            exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
-            $patchFailed = false;
-            foreach($out as $line) {
-                if (strpos($line, "FAILED") !== false) {
-                    $patchFailed = true;
-                }
-            }
-            if ($patchFailed) print "\nWarning: Some patches can not be removed! Reject files are created.";
+			// do dry-run at first to check for rejected patches
+			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			$patchFailed = false;
+			foreach($out as $line) {
+				if (strpos($line, "FAILED") !== false) {
+					$patchFailed = true;
+				}
+			}
+			if ($patchFailed) print "\nWarning: Some patches can not be removed! Reject files are created.";
 			print "\n\nRemove patch:\nphp ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir;
 			exec("php ".$rootDir."/deployment/tools/patch.php -r -p ".$rootDir."/".$patch." -d ".$rootDir);
 
@@ -260,20 +260,22 @@ class DeployDescriptionProcessor {
 
 	/*
 	 * Calculates the insert position
+	 * 
+	 * if there is already an extension with the $ext_id, return  
 	 */
 	private function getInsertPosition($ext_id) {
-		$max = 0;
-		// get maximum index of all preceding extensions
-		foreach($this->dd_parser->getPrecedings() as $extensionID) {
-
-			$pos = strpos($this->localSettingsContent, "/*end-$extensionID*/");
-			$max = $pos > $max ? $pos : $max;
-		}
-		$pos = strpos($this->localSettingsContent, "/*end-$ext_id*/", $max);
+		$MAXINT = pow(2,32);
+		$maximumInsert = $MAXINT;
+		 
+		$pos = strpos($this->localSettingsContent, "/*end-$ext_id*/");
 
 		if ($pos === false) {
+			foreach($this->dd_parser->getSuccessors() as $extensionID) {
+				$pos = strpos($this->localSettingsContent, "/*start-$extensionID*/");
+				$maximumInsert = $pos < $maximumInsert ? $pos : $maximumInsert;
+			}
 			$ext_found = false;
-			$pos = strlen($this->localSettingsContent);
+			$pos = $maximumInsert == $MAXINT ? strlen($this->localSettingsContent) : $maximumInsert; 
 			return array($pos, $ext_found);
 		}
 		$ext_found = true;

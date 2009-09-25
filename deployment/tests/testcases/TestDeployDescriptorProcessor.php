@@ -29,12 +29,12 @@ class TestDeployDescriptorProcessor extends PHPUnit_Framework_TestCase {
 
 	}
 
-	function testPrecedings() {
+	function testSuccessors() {
 		$exp_precedings = array("SemanticMediawiki", "SemanticGardening");
 		$ddp = new DeployDescriptor($this->xml_variables);
-		$precedings = $ddp->getPrecedings();
-		foreach($precedings as $exp) {
-			$this->assertContains($exp, $exp_precedings);
+		$successors = $ddp->getSuccessors();
+		foreach($successors as $succ) {
+			$this->assertContains($succ, $exp_precedings);
 		}
 
 	}

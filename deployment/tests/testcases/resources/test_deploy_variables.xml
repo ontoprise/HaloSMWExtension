@@ -29,8 +29,8 @@
 	</resources>
 	
 	<configs>
-		<precedes ext="SemanticMediawiki" />
-		<precedes ext="SemanticGardening" />
+		<successor>SemanticMediawiki</successor>
+		<successor>SemanticGardening</successor>
 
 		<new>
 		    <patch file="patch.txt" mwver="1132" />

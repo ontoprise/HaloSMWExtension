@@ -23,7 +23,7 @@
 		<file loc="resources/img1.png" />
 	</resources>
 	<configs>
-		<precedes ext="SemanticMediawiki" />
+		<successor ext="SemanticMediawiki" />
 
 		<new>
 			<function name="testfunc">

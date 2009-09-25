@@ -38,7 +38,12 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 	}
 
 	function testGetVersion2() {
-		$this->assertNull(PackageRepository::getVersion("smwhalo",170));
+		try {
+			PackageRepository::getVersion("smwhalo",170);
+			$this->assertTrue(false);
+		} catch(RepositoryError $e) {
+			$this->assertTrue(true);
+		}
 	}
 
 	function testGetVersion3() {
@@ -114,7 +119,7 @@ class TestPackageRepository extends PHPUnit_Framework_TestCase {
 
 	function testGetLatestDeployDescriptor() {
 		try {
-		$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
+			$dd = PackageRepository::getLatestDeployDescriptor("smwhalo");
 		} catch(HttpError $e) {
 			print $e->getHeader();
 		}
