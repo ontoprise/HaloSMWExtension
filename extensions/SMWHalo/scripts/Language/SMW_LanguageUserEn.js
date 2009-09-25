@@ -158,7 +158,7 @@ var wgUserLanguageStrings = {
 
 	// Autocompletion
 	'AUTOCOMPLETION_HINT'     : 'Press Ctrl+Alt+Space to use auto-completion. (Ctrl+Space in IE)',
-	'WW_AUTOCOMPLETION_HINT'  : 'The WYSIWYG editor neither supports autocompletion nor the semantic toolbar.',
+	'WW_AUTOCOMPLETION_HINT'  : '- supported in the Wiki text mode only.',
 	'AC_CLICK_TO_DRAG'        : 'Auto-Completion - Click here to drag',
 	'AC_MORE_RESULTS_AVAILABLE' : 'Too many results...',
 	'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',

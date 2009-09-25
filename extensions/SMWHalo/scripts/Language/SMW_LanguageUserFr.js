@@ -158,7 +158,7 @@ var wgUserLanguageStrings = {
 
     // Autocompletion
     'AUTOCOMPLETION_HINT'     : 'Appuyez sur Ctrl+Alt+Espace pour utiliser l\'autocomplétion. (Ctrl+Espace in IE)',
-    'WW_AUTOCOMPLETION_HINT'  : 'L\'éditeur WYSIWYG ("What you see is what you get", i.e. "Ce que vous voyez est ce que vous obtenez") ne supporte ni l\'autocomplétion, ni la barre d\'outils sémantique.',
+    'WW_AUTOCOMPLETION_HINT'  : 'L\'éditeur WYSIWYG ("What you see is what you get", i.e. "Ce que vous voyez est ce que vous obtenez") supporte l\'autocomplétion pour wiki text soulement.',
     'AC_CLICK_TO_DRAG'        : 'Autocomplétion - Cliquez ici pour glisser/déposer',
     'AC_MORE_RESULTS_AVAILABLE' : 'Too much results found...',
     'AC_MORE_RESULTS_TOOLTIP' : 'Too many results. Please expand your search term to get less results.',
