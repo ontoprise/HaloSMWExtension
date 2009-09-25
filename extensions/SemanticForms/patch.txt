@@ -1044,7 +1044,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +                $section_visibility = 'none';
 +                $img = 'plus';
 +              }
-+              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;\" 
++              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\" 
 +                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\" 
 +                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">
 +                <img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
