@@ -689,6 +689,9 @@ class DALReadPOP3 implements IDAL {
 					$lines = array();
 					foreach ($components as $component) {
 						if ($component) {
+							if(!mb_check_encoding($component, "UTF-8")){
+								$component = utf8_encode($component);
+							}
 							$lines[] = $component;
 						}
 					}
@@ -733,6 +736,9 @@ class DALReadPOP3 implements IDAL {
 		foreach($iCals as $iCalArray){
 			$result = "";
 			foreach ($iCalArray as $attribute => $value) {
+				if(!mb_check_encoding($value, "UTF-8")){
+					$value = utf8_encode($value);
+				}
 				$result .= "<".$attribute."><![CDATA[".htmlspecialchars($value)."]]></".$attribute.">";
 			}
 		
@@ -1070,6 +1076,9 @@ class DALReadPOP3 implements IDAL {
 		}
 
 		$fileName = ($params['filename'])? $params['filename'] : $params['name'];
+		if(!mb_check_encoding($fileName, "UTF-8")){
+			$fileName = utf8_encode($fileName);
+		}
 		
 		$fileContent = $this->decodeBodyPart(
 			imap_fetchbody($connection, $msg, $partNr), $encoding);

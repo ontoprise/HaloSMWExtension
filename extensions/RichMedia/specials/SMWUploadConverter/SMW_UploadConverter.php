@@ -99,7 +99,7 @@ class UploadConverter {
 			$converterApp = $smwgUploadConverter[$mimeType];
 		else {
 			// no converter specified for the mime type
-			echo("\n mime type:".$mimeType);
+			// echo("\n mime type:".$mimeType);
 			return "";
 		}
 		wfLoadExtensionMessages('UploadConverter');
