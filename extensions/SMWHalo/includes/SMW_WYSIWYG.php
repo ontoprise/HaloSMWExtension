@@ -15,6 +15,17 @@ if (!$plainEditmode) {
 	require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
 
+// check if the Semantic formas are installed and if the request is one of these
+// Special pages (request was from the template picker in the FCKeditor)
+if (defined('SF_VERSION') &&
+    (strpos($_SERVER['REQUEST_URI'], ':AddDataEmbedded') !== false ||
+     strpos($_SERVER['REQUEST_URI'], ':EditDataEmbedded') !== false
+    )
+   ) {
+    require_once $IP . "/extensions/FCKeditor/specials/SF_AddDataEmbedded.php";
+    require_once $IP . "/extensions/FCKeditor/specials/SF_EditDataEmbedded.php";
+}
+
 /**
  * Adds an action that refreshes the article, i.e. it purges the article from
  * the cache and thus refreshes the inline queries.

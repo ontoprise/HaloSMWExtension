@@ -80,7 +80,7 @@ $wgAjaxExportList[] = 'wfSajaxFormForTemplateFCKeditor';
 
 $wgExtensionCredits['other'][] = array(
 "name" => "FCKeditor extension",
-"author" => "FCKeditor.net (inspired by the code written by Mafs [Meta])",
+"author" => "FCKeditor.net (inspired by the code written by Mafs [http://www.mediawiki.org/wiki/Extension:FCKeditor_%28by_Mafs%29]) extended by [www.ontoprise.de Ontoprise]",
 "version" => 'fckeditor/mw-extension version $Rev$ 2008, FCK 2.6.4 Build 21629',
 "url" => "http://meta.wikimedia.org/wiki/FCKeditor",
 "description" => "FCKeditor extension"
@@ -92,6 +92,19 @@ $wgFCKEditorIsCompatible = $fckeditor->IsCompatible();
 $oFCKeditorExtension = new FCKeditor_MediaWiki();
 $oFCKeditorExtension->registerHooks();
 
+// load Special pages for Template picker (plugin mediawiki)
+// if Semantic Forms have been installed
+// *Note* This only works if the FCKeditor.php is included in the LocalSettings.php
+// directly. The SMWHalo extension has a SMW_WYSIWYG.php that's included, which
+// includes this file only if the editor is really required (i.e. on action =edit
+// or action=formedit). The files below are used in the template picker of the
+// FCKeditor but run in an iframe without the FCKeditor instance itself. Therefore
+// these are not included here.
+global $sfgFormPrinter;
+if ($sfgFormPrinter) {
+    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "specials" . DIRECTORY_SEPARATOR . "SF_AddDataEmbedded.php";
+    require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "specials" . DIRECTORY_SEPARATOR . "SF_EditDataEmbedded.php";
+}
 
 
 
