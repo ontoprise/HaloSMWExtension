@@ -104,41 +104,13 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip_ext/extensions/ParserFunctions">
-			<fileset dir="../../ParserFunctions/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/extensions/PermissionACL">
-			<fileset dir="../../PermissionACL/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/extensions/SemanticForms">
-			<fileset dir="../../SemanticForms/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/extensions/StringFunctions">
-			<fileset dir="../../StringFunctions/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip_ext/extensions/Variables">
-			<fileset dir="../../Variables/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 		<copy todir="bin/zip_ext/extensions/DebugTemplate">
 			<fileset dir="../../DebugTemplate/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip_ext/extensions/URLArguments">
-			<fileset dir="../../URLArguments/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 
 		<copy todir="bin/zip_ext/extensions">
 			<fileset file="../../LdapAuthentication.php/" />
