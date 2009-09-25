@@ -6,6 +6,10 @@ body{
 	font-family: sans-serif;
 }
 
+dt {
+	font-weight: bold;
+}
+
 #shadows {
     background-color: #FFF;
 }
