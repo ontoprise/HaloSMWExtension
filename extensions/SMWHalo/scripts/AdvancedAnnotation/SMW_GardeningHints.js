@@ -48,7 +48,8 @@ showToolbar: function() {
 },
 
 createContainer: function(event){
-	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" || wgCanonicalSpecialPageName == 'AddData')
+	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" || wgAction == "submit" ||
+             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData')
 	     && stb_control.isToolbarAvailable()){
 		this.gardeningHintContainer = stb_control.createDivContainer(ANNOTATIONHINTCONTAINER,0);
 		this.showToolbar();
