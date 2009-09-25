@@ -37,7 +37,7 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_uploadheadline' => 'Hochladen von Dateien',
 		'smw_rm_uploadtext' => 'Benutzen Sie diese Form um Dokumente, Bilder oder Multimediadateien an diesen Artikel anzuhängen.<br/>',
 		'smw_rm_upload_size' => '<b>Maximale</b> Dateigröße:<b> $1 </b>',
-		'smw_rm_upload_permtypes' => 'Erlaubte Dateitypen:',
+		'smw_rm_upload_permtypes' => 'Erlaubte Dateitypen und Uploadrestriktionen',
 		'smw_rm_upload_type_image' => '<li><b>Bilder: </b>$1',
 		//'smw_rm_upload_type_pdf' => '<li><b>Pdf: </b><li>$1',
 		'smw_rm_upload_type_doc' => '<li><b>Dokumente: </b>$1',
