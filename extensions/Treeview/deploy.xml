@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>120</version>
+		<id>Treeview</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/Treeview</instdir>
+		<description>
+			Treeview which gets populated by semantic data.
+		</description>
+		<dependencies>
+			<dependency from="145" to="145">SMWHalo</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+
+		<file loc="extensions/Treeview/deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+		<new>
+			<require name="stv"
+				file="extensions/Treeview/Treeview.php" />
+		</new>
+	</configs>
+</deploydescriptor>
