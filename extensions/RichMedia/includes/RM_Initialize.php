@@ -9,7 +9,10 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
-
+if( !defined( 'SF_VERSION' ) ) {
+	die( "The extension 'Rich Media' requires the extension 'Semantic Forms'.\n".
+	"Please read 'extensions/RichMedia/INSTALL' for further information.\n");
+}
 define('SMW_RM_VERSION', '1.2-for-SMW-1.4.x');
 
 global $smwgRMIP, $wgHooks; 
@@ -38,7 +41,7 @@ function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
 	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
 
-	//TODO: clean possibility to disable the extension with any warning/errors
+	//TODO: clean possibility to disable the extension without any warning/errors
 	$smwgEnableRichMedia = true;
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
