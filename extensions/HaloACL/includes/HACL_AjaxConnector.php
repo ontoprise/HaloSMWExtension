@@ -4587,8 +4587,6 @@ function deleteWhitelist($whitelistXml) {
             $whitelists[] = unescape((string)$page);
         }
 
-        print_r($whitelists);
-
         //get group members
         $oldWhitelists = HACLWhitelist::newFromDB();
         $pages = "";
