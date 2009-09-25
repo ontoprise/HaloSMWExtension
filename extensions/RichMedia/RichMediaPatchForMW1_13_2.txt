@@ -326,7 +326,7 @@ Index: includes/Linker.php
 +		$loc = $wgRequest->getText('title');
 +		RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
 +		if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
-+			$queryString = "target=".$nt->getPrefixedText();
++			$queryString = "target=".urlencode($nt->getPrefixedText());
 +			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
 +			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 +			$rev = "height:500 width:700";
@@ -393,7 +393,7 @@ Index: includes/MediaTransformOutput.php
 +		$loc = $wgRequest->getText('title');
 +		RMNamespace::isImage( $title->getNamespace(), &$rMresult );
 +		if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
-+			$queryString = "target=".$title->getPrefixedText();
++			$queryString = "target=".urlencode($title->getPrefixedText());
 +			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
 +			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
 +			$rev = "height:500 width:700";

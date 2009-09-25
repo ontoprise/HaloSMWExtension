@@ -67,7 +67,7 @@ END;
 			$querySubParameter = explode('=', $queryParameter);
 			if ( count ($querySubParameter) == 2) {
 				if ( $querySubParameter[1] != "" ) {
-					$queryString .= $combine.$querySubParameter[0]."=".$querySubParameter[1];
+					$queryString .= $combine.$querySubParameter[0]."=".urlencode($querySubParameter[1]);
 				}
 			}
 		}
@@ -133,7 +133,7 @@ END;
 		
 		$rev = $rev_width . ' ' . $rev_height;
 		
-		$queryString = "target=$link_name";
+		$queryString = "target=".urlencode($link_name);
 		$embedWindowPage = SpecialPage::getPage('EmbedWindow');
 		$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
 
