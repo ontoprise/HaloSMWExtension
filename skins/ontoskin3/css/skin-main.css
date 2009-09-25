@@ -18,6 +18,10 @@ body{
 	border-width: 0px;
 }
 
+textarea {
+    width:97%;
+}
+
 #shadows{
     width: 960px;
 }
