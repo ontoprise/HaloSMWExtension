@@ -1266,7 +1266,15 @@ HTML;
 
         // preload usgroupsers
         foreach ($groups as $group) {
-            $hGroup = HACLGroup::newFromId($group)->getGroupName();
+        	try {
+            	$hGroup = HACLGroup::newFromId($group);
+            	$hGroup = $hGroup->getGroupName();
+        	} catch (HACLGroupException $e) {
+        		// The group may no longer exist
+        		if ($e->getCode() == HACLGroupException::INVALID_GROUP_ID) {
+        			continue;
+        		}
+        	}
             $content .= <<<HTML
                     YAHOO.haloacl.addGroupToGroupArray('right_tabview_$panelid', '$hGroup');
 HTML;
