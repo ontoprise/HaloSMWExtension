@@ -826,7 +826,7 @@ WikiTextParser.prototype = {
 		var askCount = 0;  	  // Number of open <ask>-statements
 		var currentPos = 0;   // Starting index for next search
 		var bracketStart = -1;
-		var parsing = true;
+		var parsing = (this.text) ? true : false;
 		while (parsing) {
 			switch (state) {
 				case 0:
