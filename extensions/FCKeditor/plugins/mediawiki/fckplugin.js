@@ -299,7 +299,9 @@ FCK.DataProcessor =
 							// Get the actual Link href.
 							var href = htmlNode.getAttribute( '_fcksavedurl' ) ;
 							var hrefType		= htmlNode.getAttribute( '_fck_mw_type' ) || '' ;
-							
+
+                                                        if (! htmlNode.innerHTML) break;
+
 							if ( href == null )
 								href = htmlNode.getAttribute( 'href' , 2 ) || '' ;
 
