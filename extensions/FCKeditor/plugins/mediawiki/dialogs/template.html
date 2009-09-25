@@ -139,14 +139,20 @@ function SetFormForTemplate(result) {
                     + '/'
                     + oEditor.window.parent.wgPageName.replace(' ', '_')
                     + '?page=plain';
-            SetAttribute(GetE('xTemplateForm'), 'src', url);
+            var xTemplateForm = GetE('xTemplateForm');
+            if (xTemplateForm.tagName == "iframe")
+                SetAttribute(GetE('xTemplateForm'), 'src', url);
+            else {
+                xTemplateForm.parentNode.parentNode.parentNode.parentNode.border = '1';
+                xTemplateForm.parentNode.innerHTML = '<iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src="' + url + '"></iframe>';
+            }
 	}
         else {
             // set table border thick
             GetE('xTemplateForm').parentNode.parentNode.parentNode.parentNode.border = '1';
-            GetE('xTemplateForm').parentNode.innerHTML = 'There is no form to '
+            GetE('xTemplateForm').parentNode.innerHTML = '<div id="xTemplateForm">There is no form to '
                 + 'submit parameters for this template call. '
-                + 'Please edit the source code directly.';
+                + 'Please edit the source code directly.</div>';
         }
 }
 
