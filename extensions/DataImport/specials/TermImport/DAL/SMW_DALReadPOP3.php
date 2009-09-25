@@ -381,7 +381,34 @@ class DALReadPOP3 implements IDAL {
 	}
 	
 	private function handleBodyTextPart($connection, $msg, $part, $basePartNr, $partNr, $encoding){
-		if($part->ifsubtype){
+		//first check if this message part is not a part of the body
+		//but an attachment with the encoding text plain
+		$bodyStruct = imap_bodystruct($connection, $msg, $basePartNr.$partNr);
+		if ($bodyStruct->ifparameters){
+			foreach ($bodyStruct->parameters as $p){
+				$params[ strtolower( $p->attribute) ] = mb_decode_mimeheader($p->value);
+			}
+		}
+		if ($bodyStruct->ifdparameters){
+			foreach ($bodyStruct->dparameters as $p){
+				$params[ strtolower( $p->attribute) ] = mb_decode_mimeheader($p->value);
+			}
+		}
+
+		if(array_key_exists("filename", $params) && 
+				array_key_exists("attachments", $this->requiredProperties)){
+			$fileName = $params['filename'];
+			if(!mb_check_encoding($fileName, "UTF-8")){
+				$fileName = utf8_encode($fileName);
+			}
+		
+			$result = $this->handleAttachments($bodyStruct, $connection, $msg, 
+					$basePartNr.$partNr, $encoding);
+			if($result != "true"){
+				$this->messageContainsErrors = true;
+				$this->createErrorMessage($connection, $msg, $result);
+			}
+		} else if ($part->ifsubtype){
 			if(strtoupper($part->subtype) == "X-VCARD"){
 				if(!array_key_exists("attachments", $this->requiredProperties)){
 					return;
@@ -412,7 +439,9 @@ class DALReadPOP3 implements IDAL {
 				if(!mb_check_encoding($body, "UTF-8")){
 					$body = utf8_encode($body);
 				}
-				$this->body .= "<pre>".$body."</pre>"; 
+				$body = nl2br($body);
+				$body = $this->replaceSpecialWikiCharacters($body);
+				$this->body .= $body; 
 			}
 		} else if(array_key_exists("body", $this->requiredProperties)){ //text message without subtype
 			$body = "<pre>".htmlspecialchars($this->decodeBodyPart(
@@ -421,6 +450,8 @@ class DALReadPOP3 implements IDAL {
 			if(!mb_check_encoding($body, "UTF-8")){
 				$body = utf8_encode($body);
 			}
+			$body = nl2br($body);
+			$body = $this->replaceSpecialWikiCharacters($body);
 			$this->body .= $body;
 		}
 	}
@@ -1271,5 +1302,14 @@ class DALReadPOP3 implements IDAL {
 				$this->errorMessages[] = "<error>An E-mail".$endOfMessage;
 			}	
 		}
+	}
+	
+	private function replaceSpecialWikiCharacters($body){
+		$body = str_replace("{","&#123;",$body);
+		$body = str_replace("[","&#91;",$body);
+		$body = str_replace("]","&#93;",$body);
+		$body = str_replace("}","&#125;",$body);
+		$body = str_replace("|","{{!}}",$body);
+		return $body;
 	}
 }
