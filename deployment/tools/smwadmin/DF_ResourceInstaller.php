@@ -93,37 +93,7 @@ class ResourceInstaller {
 		if (count($dd->getWikidumps()) == 0) return;
 		if (!defined('SMW_VERSION')) throw new InstallationError(DEPLOY_FRAMEWORK_NOT_INSTALLED, "SMW is not installed. Can not delete ontology.");
 
-		$query = SMWQueryProcessor::createQuery("[[Part of bundle::".$dd->getID()."]]", array());
-		$res = smwfGetStore()->getQueryResult($query);
-		$next = $res->getNext();
-		while($next !== false) {
-
-			$title = $next[0]->getNextObject()->getTitle();
-			if (!is_null($title)) {
-				$a = new Article($title);
-				print "\n\tRemove page: ".$title->getPrefixedText();
-				$a->doDeleteArticle("ontology removed: ".$dd->getID());
-                
-				// delete instances of categories
-				if ($title->getNamespace() == NS_CATEGORY) {
-					$query = SMWQueryProcessor::createQuery("[[Category:".$title->getText()."]]", array());
-					$res2 = smwfGetStore()->getQueryResult($query);
-					$next2 = $res2->getNext();
-					while($next2 !== false) {
-						$title2 = $next2[0]->getNextObject()->getTitle();
-						if (!is_null($title2)) {
-							$a = new Article($title2);
-							print "\n\tRemove page: ".$title2->getPrefixedText();
-							$a->doDeleteArticle("ontology removed: ".$dd->getID());
-
-						}
-						$next2 = $res2->getNext();
-					}
-				}
-			}
-				
-			$next = $res->getNext();
-		}
+		$this->deletePagesOfBundle($dd->getID());
 	}
 
 
@@ -162,6 +132,27 @@ class ResourceInstaller {
 				Tools::remove_dir($this->rootDir."/".$dest);
 			} else {
 				unlink($this->rootDir."/".$dest);
+			}
+		}
+	}
+
+	/**
+	 * Deletes codefiles which are *not* located in the installation directory.
+	 *
+	 * @param DeployDescriptor $dd
+	 */
+	public function deleteExternalCodefiles($dd) {
+
+		if (count($dd->getCodefiles()) ==  0) return;
+		$codefiles = $dd->getCodefiles();
+		print "\nDeleting external codefiles...";
+		foreach($codefiles as $f) {
+			if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
+			print "\n\tRemove $f";
+			if (is_dir($this->rootDir."/".$f)) {
+				Tools::remove_dir($this->rootDir."/".$f);
+			} else if (file_exists($this->rootDir."/".$f)) {
+				unlink($this->rootDir."/".$f);
 			}
 		}
 	}
@@ -284,6 +275,82 @@ class ResourceInstaller {
 		}
 	}
 
+	/**
+	 * Removes articles belonging to a bundle. It is assumed that everything other than instances of categories of a bundle
+	 * and templates used by such is marked with the 'Part of bundle' annotation. Templates which are used by pages other than
+	 * that are kept.
+	 *
+	 * @param string $ext_id
+	 */
+	private function deletePagesOfBundle($ext_id) {
+		global $dfgLang;
+		$db =& wfGetDB( DB_MASTER );
+		$smw_ids = $db->tableName('smw_ids');
+		$smw_rels2 = $db->tableName('smw_rels2');
+		$page = $db->tableName('page');
+		$categorylinks = $db->tableName('categorylinks');
+		$templatelinks = $db->tableName('templatelinks');
+		$db->query( 'CREATE TEMPORARY TABLE df_page_of_bundle (id INT(8) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableForPagesOfBundle' );
 
+		$db->query( 'CREATE TEMPORARY TABLE df_page_of_templates_used (title  VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+		$db->query( 'CREATE TEMPORARY TABLE df_page_of_templates_must_persist (title  VARCHAR(255) NOT NULL)
+                    TYPE=MEMORY', 'SMW::createVirtualTableForTemplatesUsed' );
+
+		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
+		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
+		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
+        
+		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by 
+		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
+		$db->query('INSERT INTO df_page_of_bundle (SELECT page_id FROM '.$page.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
+		$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
+        
+		// get all templates used on these pages
+		$db->query('INSERT INTO df_page_of_templates_used (SELECT tl_title FROM '.$templatelinks.' WHERE tl_from IN (SELECT * FROM df_page_of_bundle))');
+        
+		// get all templates which are also used on other pages and must therefore persist
+		$db->query('INSERT INTO df_page_of_templates_must_persist (SELECT title FROM df_page_of_templates_used JOIN '.$templatelinks.' ON title = tl_title AND tl_from NOT IN (SELECT * FROM df_page_of_bundle))');
+        
+		// delete those from the table of used templates
+		$db->query('DELETE FROM df_page_of_templates_used WHERE title IN (SELECT * FROM df_page_of_templates_must_persist)');
+        
+		// select all templates which can be deleted
+		$res = $db->query('SELECT DISTINCT title FROM df_page_of_templates_used');
+
+		// DELETE templates
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+
+				$template = Title::newFromText($row->title, NS_TEMPLATE);
+				
+				$a = new Article($template);
+				print "\n\tRemove page: ".$template->getPrefixedText();
+				$a->doDeleteArticle("ontology removed: ".$ext_id);
+
+			}
+		}
+		$db->freeResult($res);
+
+		// DELETE pages of bundle
+		$res = $db->query('SELECT DISTINCT id FROM df_page_of_bundle');
+
+		if($db->numRows( $res ) > 0) {
+			while($row = $db->fetchObject($res)) {
+
+				$page = Title::newFromID($row->id);
+				// DELETE
+				$a = new Article($page);
+                print "\n\tRemove page: ".$page->getPrefixedText();
+                $a->doDeleteArticle("ontology removed: ".$ext_id);
+			}
+		}
+		$db->freeResult($res);
+
+		$db->query('DROP TEMPORARY TABLE df_page_of_bundle');
+		$db->query('DROP TEMPORARY TABLE df_page_of_templates_used');
+		$db->query('DROP TEMPORARY TABLE df_page_of_templates_must_persist');
+	}
 
 }

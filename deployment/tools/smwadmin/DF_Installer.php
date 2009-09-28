@@ -181,7 +181,8 @@ class Installer {
 		// remove extension code
 		print "\nRemove code of $packageID...";
 		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
-
+		// may contain files which are not located in the installation directory
+        $this->res_installer->deleteExternalCodefiles($ext);
 	}
 
 	/**
@@ -407,7 +408,7 @@ class Installer {
 
 			$this->res_installer->installOrUpdateResources($desc);
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-
+            
 			print "\n-------\n";
 		}
 	}

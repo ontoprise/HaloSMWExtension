@@ -26,7 +26,7 @@ Contents:
             bundle. The target is the bundle's description page (see below). It is not necessary to put the annotation
             into a template, but this makes it easier to change the name of the bundle later at some point.
             Instances of categories belonging to the bundle are automatically included. That means they may not (and should not)
-            have annotations of 'Part of bundle'.
+            have annotations of 'Part of bundle'. The same holds for templates belongig to the bundle.
             The exporter exports those pages and saves them in the dump. It also creates a hash value about the text content
             of each page and stores it in the dump too.
             

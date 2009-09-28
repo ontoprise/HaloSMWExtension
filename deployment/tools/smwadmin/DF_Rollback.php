@@ -1,20 +1,20 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * Rollback an installation.
@@ -108,6 +108,24 @@ class Rollback {
 			print "\nSaving extension... ".$localExt->getID();
 			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory());
 			Tools::copy_dir($this->inst_dir."/".$localExt->getInstallationDirectory(), $this->tmpDir."/stored/".$localExt->getInstallationDirectory());
+			print "done.";
+				
+			// save external codefiles
+			$codefiles = $dd->getCodefiles();
+			print "\nSaving external codefiles of ".$localExt->getID()."...";
+			foreach($codefiles as $f) {
+				if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
+				 
+				if (is_dir($this->inst_dir."/".$f)) {
+					Tools::copy_dir($this->inst_dir."/".$f, $this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f);
+				} else if (file_exists($this->inst_dir."/".$f)) {
+					Tools::mkpath(dirname($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f));
+					copy($this->inst_dir."/".$f, $this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f);
+				}
+			}
+			print "done.";
+
+			print "\nSaving resources of ".$localExt->getID()."...";
 			$this->saveResources($localExt->getID());
 			print "done.";
 		}
@@ -234,13 +252,22 @@ class Rollback {
 		foreach($localPackages as $dd) {
 			if (in_array($dd->getID(), $this->extToRestore)) {
 				Tools::remove_dir($this->inst_dir."/".$dd->getInstallationDirectory());
+				$res_installer->deleteExternalCodefiles($dd);
 			}
 		}
 		// 5. copy old (updated) extensions
 		Tools::copy_dir($this->tmpDir."/stored", $this->inst_dir);
 
+
 		// 6. reload local packages, because they have changed
 		$restoredLocalPackages = PackageRepository::getLocalPackages($this->inst_dir.'/extensions', true);
+
+		// restore external code files if necessary
+		foreach($restoredLocalPackages as $localExt) {
+			if (file_exists($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles")) {
+				Tools::copy_dir($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles", $this->inst_dir);
+			}
+		}
 
 		if (!$databaseRestored) {
 			// 7. restore wiki pages if the database was not restored
