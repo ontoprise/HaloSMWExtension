@@ -407,12 +407,12 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     */
     var querystring = "rs="+action;
 
-       if(parameterlist != null){
-               for(param in parameterlist){
-                       // temparray.push(parameterlist[param]);
-                       querystring = querystring + "&rsargs[]="+parameterlist[param];
-               }
-       }
+	if(parameterlist != null){
+		for(param in parameterlist){
+			// temparray.push(parameterlist[param]);
+			querystring = querystring + "&rsargs[]="+parameterlist[param];
+		}
+	}
 
     appendedParams = appendedParams + "&rsargs="+ temparray;
     YAHOO.util.Connect.asyncRequest('POST', url, callback,querystring);
