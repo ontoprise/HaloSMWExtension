@@ -67,7 +67,7 @@ ToleranceSelector.prototype = {
 	 if ((pair = pair.split('='))[0]) {
 		 var key = decodeURIComponent(pair.shift());
 		 var value = pair.length > 1 ? pair.join('=') : pair[0];
-		 if (value != undefined) value = decodeURIComponent(value.replace(/\+/, ' '));
+		 if (value != undefined) value = decodeURIComponent(value.replace(/\+/g, ' '));
 		
 		 if (key in hash) {
 		 if (!Object.isArray(hash[key])) hash[key] = [hash[key]];
