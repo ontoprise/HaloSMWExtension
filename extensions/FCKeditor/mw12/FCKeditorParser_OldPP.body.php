@@ -690,7 +690,7 @@ class FCKeditorParser extends Parser_OldPP
   				$prop[1] = substr($prop[1], $p + 1);
   			}
     		$p = count($this->fck_mw_propertyAtPage);
-    		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span> ';
+    		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span>';
     		return 'FCK_PROPERTY_'.$p.'_FOUND';
   		}
   		return "[[".$match."]]";
@@ -718,7 +718,7 @@ class FCKeditorParser extends Parser_OldPP
     		$p = count($this->fck_mw_richmediaLinkAtPage);
     		$this->fck_mw_richmediaLinkAtPage[$p]= '<a title="'.str_replace('_', ' ', $basename).'" _fck_mw_type="'.$ns.'" '.
     			'_fck_mw_filename="'.$basename.'" _fcksavedurl="'.$link[0].'" href="'.$basename.'">'.
-    			((count($link) > 1) ? $link[1] : str_replace('_', ' ', $link[0])).'</a> ';
+    			((count($link) > 1) ? $link[1] : str_replace('_', ' ', $link[0])).'</a>';
     		return 'FCK_RICHMEDIA_'.$p.'_FOUND';
   		}
   		return "[[".$match."]]";
