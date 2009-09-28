@@ -14,9 +14,19 @@
 		</dependencies>
 	</global>
 	<codefiles>
-		<file loc="extensions/SMWHalo/deploy.xml" />
-
-		<!-- TODO: add others -->
+	   <!-- external codefile -->
+		<file loc="skins/ontoskin" />
+		<file loc="skins/Ontoskin.deps.php" />
+		<file loc="skins/Ontoskin.php" />
+		
+		<file loc="skins/ontoskin2" />
+		<file loc="skins/Ontoskin2.deps.php" />
+        <file loc="skins/Ontoskin2.php" />
+        
+		<file loc="skins/ontoskin3" />
+		<file loc="skins/Ontoskin3.deps.php" />
+        <file loc="skins/Ontoskin3.php" />
+		
 	</codefiles>
 	<wikidumps>
 		<!-- empty -->
@@ -25,7 +35,7 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-		
+
 		<new>
 			<patch file="extensions/SMWHalo/patch.txt" />
 			<require name="smwhalo"
@@ -39,6 +49,12 @@
 				<boolean name="wgUseAjax"
 					description="enables ajax calls">
 					true
+				</boolean>
+			</variable>
+			<variable name="wgDefaultSkin">
+				<boolean name="wgDefaultSkin"
+					description="Default skin used">
+					ontoskin3
 				</boolean>
 			</variable>
 			<script file="extensions/SMWHalo/maintenance/SMW_setup.php" />
