@@ -1498,6 +1498,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMPdf}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|WYSIWYG}}}
 {{{for template|RMPdf|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
@@ -1579,6 +1580,7 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{#forminput:RMDocument}}
 
 &lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|WYSIWYG}}}
 {{{for template|RMDocument|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
