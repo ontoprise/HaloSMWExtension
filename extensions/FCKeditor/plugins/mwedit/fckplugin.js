@@ -25,9 +25,10 @@ StartStandardMwEditCommand.prototype = {
     },
 
     makeContainer: function() {
+            var x = (FCKBrowserInfo.IsIE) ? self.document.body.clientWidth : self.innerWidth;
+            var y = (FCKBrowserInfo.IsIE) ? self.document.body.clientHeight: self.innerHeight;
             this.ContextMenu = new window.parent.ContextMenuFramework();
-            this.ContextMenu.setPosition(parseInt(self.innerWidth / 2),
-                                         parseInt(self.innerHeight / 2));
+            this.ContextMenu.setPosition(parseInt(x / 2), parseInt(y / 2));
             this.ContextMenu.setContent(this.getHtml(), 'ANNOTATIONHINT', 'Save changes?');
             this.ContextMenu.showMenu();
 
