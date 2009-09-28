@@ -7,6 +7,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgHooks;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
+$wgHooks[ 'LanguageGetMagic' ][] = 'smwfAddMagigWordNoricheditor';
+$wgHooks[ 'ParserBeforeInternalParse' ][] = 'smwfRemoveNoricheditor';
 
 // do not load WW if and only if in plain edit mode
 $plainEditmode = (array_key_exists('action', $_REQUEST) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit')) &&
@@ -48,3 +50,19 @@ function smwfAddWYSIWYGTab($obj, $content_actions) {
 
 	return true; // always return true, in order not to stop MW's hook processing!
 }
+
+/**
+ * adds __NORICHEDITOR__ to the list of magic words
+ */
+ function smwfAddMagigWordNoricheditor(&$magicWords, $lang) {
+    $magicWords['NORICHEDITOR'] = array( 0, '__NORICHEDITOR__' );
+    return true;
+ }
+
+ /**
+ * removes __NORICHEDITOR__ in the wiki text for normal parsing
+ */
+ function smwfRemoveNoricheditor(&$parser, &$text, &$strip_state) {
+    MagicWord::get( 'NORICHEDITOR' )->matchAndRemove( $text );
+    return true;
+ }
