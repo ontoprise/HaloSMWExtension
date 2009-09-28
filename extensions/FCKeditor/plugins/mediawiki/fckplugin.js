@@ -2058,7 +2058,7 @@ var gEditInterface = new FCKeditInterface();
     window.parent.gEditInterface = gEditInterface;
 
 var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semantic Toolbar', null, true) ;
-tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_add.png' ;
+tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_semtoolbar.png' ;
 FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 
 FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
