@@ -3287,7 +3287,7 @@ HTML;
 
 function saveGroup($manageRightsXml,$parentgroup = null) {
 
-    if($parentgroup == "Groups"){
+    if($parentgroup == "Groups" || $parentgroup == "undefined"){
         $parentgroup = null;
     }
     global $haclgContLang;
