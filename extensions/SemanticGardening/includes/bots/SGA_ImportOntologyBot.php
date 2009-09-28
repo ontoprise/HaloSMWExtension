@@ -48,8 +48,8 @@ class ImportOntologyBot extends GardeningBot {
 	 */
 	public function createParameters() {
 		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, "owl");
-		$param2 = new GardeningParamBoolean('GARD_IO_USE_LABELS', wfMsg('smw_gard_import_uselabels'), SMW_GARD_PARAM_OPTIONAL, true);
-		return array($param1, $param2);
+		//$param2 = new GardeningParamBoolean('GARD_IO_USE_LABELS', wfMsg('smw_gard_import_uselabels'), SMW_GARD_PARAM_OPTIONAL, true);
+		return array($param1);
 	}
 
 	/**
@@ -63,7 +63,7 @@ class ImportOntologyBot extends GardeningBot {
 			return 'Import ontology bot should not be started synchronously!';
 		}
 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
-		$this->useLabels = array_key_exists('GARD_IO_USE_LABELS', $paramArray);
+		$this->useLabels = false; //array_key_exists('GARD_IO_USE_LABELS', $paramArray);
 			
 		$fileTitle = Title::newFromText($fileName);
 		$fileLocation = wfFindFile($fileTitle)->getPath();
