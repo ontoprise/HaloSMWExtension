@@ -8,34 +8,30 @@
 		<copy todir="bin/zip/extensions/ApplicationProgramming">
 			<fileset file="../deploy.xml" />
 		</copy>
-		<copy
-			todir="bin/zip/extensions/ApplicationProgramming/ParserFunctions">
-			<fileset file="../*.php/" />
-			<fileset file="../COPYING" />
+		<copy todir="bin/zip/extensions/ApplicationProgramming/ParserFunctions">
+			<fileset dir="../ParserFunctions">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
 
 		</copy>
-		<copy
-			todir="bin/zip/extensions/ApplicationProgramming/StringFunctions">
-			<fileset dir="../../StringFunctions">
+		<copy todir="bin/zip/extensions/ApplicationProgramming/StringFunctions">
+			<fileset dir="../StringFunctions">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
 
-		<copy
-			todir="bin/zip/extensions/ApplicationProgramming/Variables">
-			<fileset dir="../../Variables">
+		<copy todir="bin/zip/extensions/ApplicationProgramming/Variables">
+			<fileset dir="../Variables">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy
-			todir="bin/zip/extensions/ApplicationProgramming/URLArguments">
-			<fileset dir="../../URLArguments">
+		<copy todir="bin/zip/extensions/ApplicationProgramming/URLArguments">
+			<fileset dir="../URLArguments">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
 
-		<zip destfile="bin/application-programming-${version}.zip"
-			basedir="bin/zip" />
+		<zip destfile="bin/application-programming-${version}.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 	</target>
 
