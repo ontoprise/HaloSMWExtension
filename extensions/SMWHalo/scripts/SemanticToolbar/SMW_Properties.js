@@ -825,9 +825,7 @@ apply: function() {
 	attrTypeAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
 	if (typeString != "") {
 		// remove final semi-colon
-                alert(typeString);
 		typeString = typeString.substring(0, typeString.length-1);
-                alert(typeString);
 		if (attrTypeAnno != null) {
 			attrTypeAnno[0].changeValue(typeString);
 		} else {			
