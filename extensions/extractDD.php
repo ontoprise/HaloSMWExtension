@@ -39,6 +39,7 @@ function getLocalPackages($ext_dir) {
 	return $localPackages;
 }
 
+$latest = false;
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 
 	//-o => output
@@ -46,6 +47,11 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 		$outputDir = next($argv);
 		continue;
 	}
+	
+    if ($arg == '--latest') {
+        $latest = true;
+        continue;
+    }
 }
 
 if (!isset($outputDir)) {
@@ -54,7 +60,7 @@ if (!isset($outputDir)) {
 }
 
 $noSymlink=false;
-if (Tools::isWindows()) {
+if (Tools::isWindows() && $latest) {
 	$noSymlink=true;
 	echo "Be careful: Cannot create symbolic links on Windows!";
 }
@@ -74,7 +80,7 @@ foreach($localPackages as $dd_file => $dd) {
 	copy($rootDir.$dd_file, $outputDir.$targetFile);
 	print "\nCreated: $outputDir$targetFile";
 
-	if (!$noSymlink) {
+	if (!$noSymlink && $latest) {
 		// remove symbolic link if existing
 		if (file_exists(dirname($outputDir.$targetFile).'/deploy.xml')) {
 			unlink(dirname($outputDir.$targetFile).'/deploy.xml');
