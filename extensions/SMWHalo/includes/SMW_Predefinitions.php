@@ -67,8 +67,10 @@ class SMWPredefinitions {
 	 * @return string
 	 */
 	private static function mappedValue($value) {
+		global $wgContLang;
+		$userNsText = $wgContLang->getNsText(NS_USER);
 		switch($value) {
-			case '$USERNAME': global $wgUser; return $wgUser->getName(); 
+			case '$USERNAME': global $wgUser; return $userNsText.":".$wgUser->getName(); 
 			case '$PAGENAME': return self::$title->getText(); 
 			case '$FULLPAGENAME': return self::$title->getPrefixedText(); 
 			default: return $value;
