@@ -301,13 +301,13 @@ UseWebService.prototype = {
 
 	displayHelp : function(id) {
 		$("step" + id + "-help").style.display = "";
-		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "useWSSpecial.hideHelp("
-				+ id + ")";
+		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue 
+			= "useWSSpecial.hideHelp(" + id + ")";
 	},
 
 	hideHelp : function(id) {
 		$("step" + id + "-help").style.display = "none";
-		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "useWSSpecial.displayHelp("
+		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "useWSSpecial.displayHelp("+i+")";
 	},
 
 	hideHelpAll : function() {
