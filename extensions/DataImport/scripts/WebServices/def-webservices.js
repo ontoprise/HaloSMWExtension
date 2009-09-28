@@ -461,6 +461,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
 				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
+				aliasInput.setAttribute("onfocus", "webServiceSpecial.handleAliasInputFocus(event)");
 				paramTD1.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -926,7 +927,8 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.id = "s4-alias" + i;
 				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
-				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
+				aliasInput.setAttribute("onfocus", "webServiceSpecial" +
+						"(event)");
 				resultTD2.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -1293,7 +1295,8 @@ DefineWebServiceSpecial.prototype = {
 
 			var wsNameText = document.createTextNode(document
 					.getElementById("step6-name").value);
-			$("step7-name").appendChild(wsNameText);
+			$("step7-name").innerHTML = document
+				.getElementById("step6-name").value;
 
 			//var rowDiv = document.createElement("div");
 			//this.wsSyntax = this.wsSyntax.replace(/<pre>/g, "");
@@ -3845,6 +3848,7 @@ DefineWebServiceSpecial.prototype = {
 				var aliasInput = document.createElement("input");
 				aliasInput.id = "s4-alias" + (i + rows);
 				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
+				aliasInput.setAttribute("onfocus", "webServiceSpecial.handleAliasInputFocus(event)");
 				if (useResultPart) {
 					aliasInput.value = rParts[i]["alias"];
 				}
@@ -4202,6 +4206,13 @@ DefineWebServiceSpecial.prototype = {
 			if(node.parentNode.previousSibling.firstChild.checked){
 				node.parentNode.previousSibling.firstChild.click();
 			}
+		}
+	},
+	
+	handleAliasInputFocus : function(event){
+		var node = Event.element(event);
+		if(!node.parentNode.previousSibling.firstChild.checked){
+				node.parentNode.previousSibling.firstChild.click();
 		}
 	}
 		
