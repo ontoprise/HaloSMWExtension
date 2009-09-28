@@ -153,8 +153,7 @@ $smwgKeepGardeningConsole=false;
 $smwgEnableLogging=false;
 $smwgDeployVersion=true;
 $smwgGardeningBotDelay=100;
-$smwgSemanticAC=false;
-$phpInterpreter="{{xamp-install}}/php/php.exe";
+
 
 $smwgOWLFullExport = true;
 
@@ -184,42 +183,60 @@ $wgGroupPermissions['sysop']['userrights']=true;
 $wgGroupPermissions['sysop']['ontologyediting'] = true; 
 
 
-// auto-templates
-$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
-                                       SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'));
-$smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
-
 
 // extensions
 
 #Misc
 require_once( "{$IP}/extensions/Cite.php" );
-require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
+
+/*start-applicationprogramming*/
+require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
+require_once ("$IP/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
+require_once( "$IP/extensions/ApplicationProgramming/Variables/Variables.php" );
+include_once('extensions/ApplicationProgramming/URLArguments/URLArguments.php');
+/*end-applicationprogramming*/
 
 #SMW
+/*start-smw*/
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
-enableSemantics('localhost:8080');
+enableSemantics(/*param-start-enableSemantics*/'localhost:8080'/*param-end-enableSemantics*/);
+/*end-smw*/
 
+// auto-templates
+$smwhgAutoTemplatesParameters = array (NS_CATEGORY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'),
+                                       SMW_NS_PROPERTY => array("PAGENAME"=>'$FULLPAGENAME', "Has author"=>'$USERNAME'));
+$smwhgAutoTemplates = array(NS_CATEGORY => "Category", SMW_NS_PROPERTY => "Property");
+
+/*start-semanticforms*/
 include_once('extensions/SemanticForms/includes/SF_Settings.php');
+/*end-semanticforms*/
 
 #SMWHalo
+
+/*start-smwhalo*/
 $smwgQComparators = '<|>|!|~';
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-enableSMWHalo();
-
+enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
+$wgUseAjax = /*start-variable-wgUseAjax*/true;/*end-variable-wgUseAjax*/
+/*end-smwhalo*/
 
 #Semantic Gardening
+/*start-semanticgardening*/
+$phpInterpreter=/*start-variable-phpInterpreter*/"{{xamp-install}}/php/php.exe";/*end-variable-phpInterpreter*/
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
+/*end-semanticgardening*/
 
 #Data import
+/*start-dataimport*/
 include_once('extensions/DataImport/includes/DI_Initialize.php');
-enableDataImportExtension();
-$wgAllowExternalImages=true;
+enableDataImportExtension(/*param-start-enableDataImportExtension*//*param-end-enableDataImportExtension*/);
+$wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variable-wgAllowExternalImages*/
+/*end-dataimport*/
 
 include("extensions/DynamicPageList/DynamicPageList.php");
-require_once ("$IP/extensions/StringFunctions/StringFunctions.php");
 
-require_once( "$IP/extensions/Variables/Variables.php" );
+
+
 
 #MIME-Type
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
@@ -244,8 +261,6 @@ require_once( "$IP/extensions/PermissionACL/PermissionACL.php" );
 include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
 enableSemanticNotifications(); 
 
-#URL Arguments
-include_once('extensions/URLArguments/URLArguments.php');
 
 # NewUserMessage
 require_once( "extensions/NewUserMessage/NewUserMessage.php" );
@@ -276,7 +291,7 @@ include('extensions/Treeview/Treeview.php');
 $wgTreeViewImages['plus'] = "Plus.gif";
 
 require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
-if ($_REQUEST['mode'] == 'wysiwyg' || ($_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
+if (array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
 require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
 
@@ -293,7 +308,7 @@ require_once("$IP/extensions/ImageMap/ImageMap.php");
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 $smwgNamespacesWithSemanticLinks[NS_CATEGORY] = true;
 $smwgNamespacesWithSemanticLinks[SMW_NS_PROPERTY] = true;
-$smwgNamespacesWithSemanticLinks[SMWH_NS_RULE] = true;
+if (defined('SMWH_NS_RULE')) $smwgNamespacesWithSemanticLinks[SMWH_NS_RULE] = true;
 $smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
