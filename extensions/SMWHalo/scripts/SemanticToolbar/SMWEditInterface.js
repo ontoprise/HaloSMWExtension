@@ -264,7 +264,11 @@ SMWEditInterface.prototype ={
 				return this.siw.inputBox.value.substring(0, start);
 			}
 		} 
-         // cannot return anything
-        return "";
-    }
+                // cannot return anything
+                return "";
+        },
+
+        // only needed in the FCKeditor, therefore these are empty here
+        setOutputBuffer: function() {},
+        flushOutputBuffer: function() {}
 };

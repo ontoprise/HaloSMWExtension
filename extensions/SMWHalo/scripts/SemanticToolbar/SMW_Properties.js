@@ -734,7 +734,10 @@ apply: function() {
 	var transitiveAnno = this.wtp.getCategory(gLanguage.getMessage('TRANSITIVE_RELATION'));
 	var symmetricAnno = this.wtp.getCategory(gLanguage.getMessage('SYMMETRICAL_RELATION'));
 	
-	
+	// set output buffering if we are in the FCKeditor
+        if (gEditInterface && typeof FCKeditor != 'undefined')
+            gEditInterface.setOutputBuffer();
+
 	// change existing annotations
 	if (maxCardAnno != null) {
 		if (maxCard == null) {
@@ -822,7 +825,9 @@ apply: function() {
 	attrTypeAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
 	if (typeString != "") {
 		// remove final semi-colon
+                alert(typeString);
 		typeString = typeString.substring(0, typeString.length-1);
+                alert(typeString);
 		if (attrTypeAnno != null) {
 			attrTypeAnno[0].changeValue(typeString);
 		} else {			
@@ -831,6 +836,11 @@ apply: function() {
 	} else {
 		attrTypeAnno[0].remove("");
 	}
+
+       	// if we are in the FCKeditor, we now flush the outputbuffer
+        if (gEditInterface && typeof FCKeditor != 'undefined')
+            gEditInterface.flushOutputBuffer();
+
 	
 	this.createContent();
 	this.refreshOtherTabs();

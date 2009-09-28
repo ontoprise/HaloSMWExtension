@@ -1366,6 +1366,8 @@ FCKeditInterface.prototype = {
         this.end = -1;
         // store here error message if selection can't be annotated
         this.errMsgSelection = '';
+        // puffer output before changing FCKtext
+        this.outputBuffering = false;
     },
 
    /**
@@ -1478,12 +1480,18 @@ FCKeditInterface.prototype = {
      * wiki text, the parser of the FCK extension is used (the same when the
      * editor is started and when switching between wikitext and html).
      * 
-     * Atfer parsing the text can be set in the editor area. This is done with
+     * After parsing the text can be set in the editor area. This is done with
      * FCK.SetData(). When doing this all Event listeners are lost. Therefore
      * these must be added again. Also the variable this.newText which contains
      * the new text (runtime issues), can be flushed again.
      * In this case the global variable gEditInterface.newText is used to get
      * the correct instance of the class.
+     *
+     * Since the Semantic toolbar changes text quite frequently, we enable some
+     * kind of output buffering. If this is set (makes sence in the WYSIWYG mode
+     * only) then the text is saved in an internal variable. When output
+     * buffering is not selected, then the text is imediately written to the
+     * editor.
      *
      * @access public
      * @param  string text with wikitext
@@ -1491,18 +1499,9 @@ FCKeditInterface.prototype = {
     setValue: function(text) {
         if (text) {
             if (FCK.EditMode == FCK_EDITMODE_WYSIWYG) {
-                function ajaxResponseSetHtmlText(request) {
-                    if (request.status == 200) {
-                        // success => store wikitext as FCK HTML
-                        FCK.SetData(request.responseText);
-                    }
-                    gEditInterface.newText = '';
-                    // custom event handlers are lost when using FCK.SetData
-                    SetEventHandler4AnnotationBox();
-                };
                 this.newText = text;
-                window.parent.sajax_do_call('wfSajaxWikiToHTML', [text],
-                                            ajaxResponseSetHtmlText);
+                if (!this.outputBuffering)
+                    this.flushOutputBuffer();
             }
             else {
                 FCK.SetData(text);
@@ -2015,6 +2014,41 @@ FCKeditInterface.prototype = {
     
     focus: function() {
         FCK.EditingArea.Focus();
+    },
+
+    /**
+     *  enable output buffering. Text is not imediately written to the text
+     *  area of the editor window. Changes are collected in the newText variable
+     *  and then written once only to the editor area.
+     *
+     *  @access public
+     */
+    setOutputBuffer: function() {
+        this.outputBuffering = true;
+    },
+
+
+    /**
+     *  flush the output buffer. Text is now written to the text area of the
+     *  FCK editor. See the documentation of setValue() for a detailed
+     *  documentation of the whole process.
+     *
+     *  @access public
+     */
+    flushOutputBuffer: function() {
+        function ajaxResponseSetHtmlText(request) {
+            if (request.status == 200) {
+                // success => store wikitext as FCK HTML
+                FCK.SetData(request.responseText);
+            }
+            gEditInterface.newText = '';
+            gEditInterface.outputBuffering = false;
+            // custom event handlers are lost when using FCK.SetData
+            SetEventHandler4AnnotationBox();
+                    this.outputBuffering = false;
+        };
+        window.parent.sajax_do_call('wfSajaxWikiToHTML', [this.newText],
+                                    ajaxResponseSetHtmlText);
     }
 
 };
