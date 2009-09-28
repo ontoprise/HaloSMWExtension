@@ -269,7 +269,7 @@ FCK.DataProcessor =
 							}
 							
 							var parent = htmlNode.parentNode ;
-							var listType = "#" ;
+							var listType = "*" ;
 							
 							while ( parent )
 							{
