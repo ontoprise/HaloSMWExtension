@@ -14,9 +14,9 @@
 		</dependencies>
 	</global>
 	<codefiles>
-
-		<file loc="extensions/RichMedia/deploy.xml" />
-		<!-- TODO: add all others -->
+		<!-- external codes files -->
+		<file loc="extensions/SemanticForms/skins/graphics" />
+		<!-- TODO: add others in skins/commons/images/icons-->
 	</codefiles>
 	<wikidumps>
 		<file loc="extensions/RichMedia/deploy/dump.xml" />
