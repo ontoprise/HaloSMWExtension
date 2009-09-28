@@ -153,8 +153,8 @@ class UnifiedSearchResultPrinter {
             case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
             case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
         }
-        // if MIME type extension is installed
-        if (defined("MIME_TYPE_EXTENSION")) {
+        // if RichMedia extension type extension is installed
+        if (defined("SMW_RM_VERSION")) {
             switch($result->getTitle()->getNamespace()) {
                 case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
                 case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
