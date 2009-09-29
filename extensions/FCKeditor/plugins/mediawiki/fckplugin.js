@@ -1142,17 +1142,19 @@ CheckSelectedAndCallPopup = function(event) {
             msg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             window.parent.smwhgAnnotationHints.showMessageAndWikiText(
                 msg, '', pos[0], pos[1]);
+            return;
         }
         // something is selected, this will be a new annotation,
         // offer both category and property toolbox
-        else if (selection.length == 1 && selection[0] != "") {
+        if (selection.length == 1 && selection[0] != "") {
             ShowNewToolbar(event, selection[0]);
+            return
         }
         // an existing annotation will be edited
-        else if (selection.length > 1) {
+        if (selection.length > 1) {
             if (selection[1] == 102) { // Property
                 var show = selection[0];
-                var val = selection[0];
+                var val = show;
                 if (selection.length == 4)  // an explizit property value is set, then
                     val = selection[3];     // it's different from the selected (show)
                 ShowRelToolbar(event, selection[2], val, show);
@@ -1590,7 +1592,7 @@ FCKeditInterface.prototype = {
                 switch (parent.className) {
                     case 'fck_mw_property' :
                         this.selectedElement = parent;
-                        this.selection[0] = parent.innerHTML;
+                        this.selection[0] = parent.innerHTML.replace(/&nbsp;/gi, ' ');
                         this.selection[1] = 102;
                         var val = parent.getAttribute('property');
                         // differenciation between displayed representation and
@@ -1603,7 +1605,7 @@ FCKeditInterface.prototype = {
                         return this.selection;
                     case 'fck_mw_category' :
                         this.selectedElement = parent;
-                        this.selection[0] = parent.innerHTML;
+                        this.selection[0] = parent.innerHTML.replace(/&nbsp;/gi, ' ');
                         this.selection[1] = 14;
                         return this.selection;
                 }
@@ -1616,7 +1618,7 @@ FCKeditInterface.prototype = {
             for (var i = 0; i < goodNodes.length; i++) {
                 if (parent.nodeName.toUpperCase() == goodNodes[i]) {
                     this.selectedElement = parent;
-                    this.selection[0] = selTextCont;
+                    this.selection[0] = selTextCont.replace(/&nbsp;/gi, ' ');
                     return this.selection;
                 }
             }
@@ -1636,7 +1638,7 @@ FCKeditInterface.prototype = {
             for (var i = 0; i < goodNodes.length; i++) {
                 if (tag == goodNodes[i]) {
                     this.MatchSelectedNodeInDomtree(parent, tag, cont);
-                    this.selection[0] = cont;
+                    this.selection[0] = cont.replace(/&nbsp;/gi, ' ');
                     return this.selection;
                 }
             }
@@ -1646,7 +1648,7 @@ FCKeditInterface.prototype = {
                     html.indexOf('class=fck_mw_property') != -1   // IE has class like this 
                    ) {  
                     this.MatchSelectedNodeInDomtree(parent, tag, cont);
-                    this.selection[0] = cont;
+                    this.selection[0] = cont.replace(/&nbsp;/gi, ' ');
                     this.selection[1] = 102;
                     var val = html.replace(/.*property="(.*?)".*/, '$1');
                     if (val.indexOf('::') != -1) {
@@ -1661,7 +1663,7 @@ FCKeditInterface.prototype = {
                     html.indexOf('class=fck_mw_property') != -1
                    ) {
                     this.MatchSelectedNodeInDomtree(parent, tag, cont);
-                    this.selection[0] = cont;
+                    this.selection[0] = cont.replace(/&nbsp;/gi, ' ');
                     this.selection[1] = 14;
                     return this.selection;
                 } // below here passing all closing brakets means that the selection
