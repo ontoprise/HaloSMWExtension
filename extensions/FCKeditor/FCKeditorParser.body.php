@@ -579,6 +579,8 @@ class FCKeditorParser extends Parser
   				$prop[0] .= '::'.substr($prop[1], 0, $p);
   				$prop[1] = substr($prop[1], $p + 1);
   			}
+  			// replace an empty value with &nbsp; for IE8
+  			if (preg_match('/\s+/', $prop[1])) $prop[1] = '&nbsp;';
     		$p = count($this->fck_mw_propertyAtPage);
     		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span>';
     		return 'FCK_PROPERTY_'.$p.'_FOUND';
