@@ -170,13 +170,13 @@ AutoCompleter.prototype = {
     isWithinNodeSimple: function(node, idOfNodeToFind) {
     	
     	if (!node || node == null) return false;
-    	while(node.nodeType != 9) { // node != document
-    		var id = node.getAttribute("id");
+    	while(node && node.nodeType != 9) { // node != document
+    		var id = (OB_bd.isIE) ? node.id : node.getAttribute("id");
     		if (id && id != null && id.indexOf(idOfNodeToFind) >= 0) break;
     		node = node.parentNode;
     	}
     	
-    	return node.nodeType != 9; // document
+    	return (node && node.nodeType != 9) ? true : false;
     },
     getEventElement: function(e) { return (e.srcElement ? e.srcElement : (e.target ? e.target : e.currentTarget));
                          },  //this.getEventElement()
