@@ -16,8 +16,8 @@ ul.smwh_menulist div.smwh_menubody {
 
 /* This bit is needed to make links clickable... WTF */
 #column-content #content {
-	margin-top: 3em;
-	height: 1%;
+	/*margin-top: 3em;
+	height: 1%;*/
 }
 
 .rtl #column-one {
