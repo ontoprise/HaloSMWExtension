@@ -1790,10 +1790,16 @@ QIHelper.prototype = {
 
 	initFromQueryString : function(ask) {
 		this.doReset();
-
+   
 		// does ask contain any data?
 		if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
 			return;
+        
+        // check triplestore switch if it comes from sparql parser function			
+		if (ask.indexOf('#sparql:') != -1) {
+			var triplestoreSwitch = $('usetriplestore');
+			if (triplestoreSwitch) triplestoreSwitch.checked = true;
+		}	
 
 		// split of query parts to handle subqueries seperately
 		var sub = this.splitQueryParts(ask);
