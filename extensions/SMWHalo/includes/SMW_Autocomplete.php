@@ -565,6 +565,7 @@ class AutoCompletionHandler {
 
 					}
 				}
+				
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'instance-property-range') {
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
@@ -681,8 +682,8 @@ class AutoCompletionHandler {
 	 * @return int < 0 if $r1 < $r2, == 0 if $r1 == $r2, > 0 if $r1 > $r2
 	 */
 	private static function isEqualResults(& $r1, & $r2) {
-		$t1 = reset($r1);
-		$t2 = reset($r2);
+		$t1 = is_array($r1) ? reset($r1) : $r1;
+		$t2 = is_array($r2) ? reset($r2) : $r2;
 		$t1_text = $t1 instanceof Title ? $t1->getText() : $t1;
 		$t2_text = $t2 instanceof Title ? $t2->getText() : $t2;
 		return strcmp($t1_text, $t2_text);
