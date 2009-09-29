@@ -542,8 +542,8 @@
     <title>Template:RMMedia</title>
     <id>502</id>
     <revision>
-      <id>8293</id>
-      <timestamp>2009-09-16T13:50:06Z</timestamp>
+      <id>9228</id>
+      <timestamp>2009-09-22T16:21:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -577,17 +577,17 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 30%&quot;
-! colspan=&quot;2&quot; style=&quot;background: #996699; color: white&quot; | ''{{{Media subcategory|}}}''
+! colspan=&quot;2&quot; style=&quot;background: #996699; color: white&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
 |-
 {{Tablerow|Label=Filename:|Value={{#if:{{{Filename|}}}|[[HasFilename::{{{Filename|}}}]]}} }}
 |-
-{{Tablerow|Label=Copyright by:|Value={{#if:{{{CopyrightBy|}}}|[[HasCopyrightBy::{{{CopyrightBy|}}}]]}} }}
+{{Tablerow|Label=Copyright&amp;nbsp;by:|Value={{#if:{{{CopyrightBy|}}}|[[HasCopyrightBy::{{{CopyrightBy|}}}]]}} }}
 |-
-{{Tablerow|Label=Creation date:|Value={{#if:{{{CreationDate|}}}|[[HasCreationDate::{{{CreationDate|}}}]]}} }}
+{{Tablerow|Label=Creation&amp;nbsp;date:|Value={{#if:{{{CreationDate|}}}|[[HasCreationDate::{{{CreationDate|}}}]]}} }}
 |-
-{{Tablerow|Label=Uploaded by:|Value={{#if:{{{Uploader|}}}|[[HasUploader::{{{Uploader|}}}]]}} }}
+{{Tablerow|Label=Uploaded&amp;nbsp;by:|Value={{#if:{{{Uploader|}}}|[[HasUploader::{{{Uploader|}}}]]}} }}
 |-
-{{Tablerow|Label=Upload date:|Value={{#if:{{{UploadDate|}}}|[[HasUploadDate::{{{UploadDate|}}}]]}} }}
+{{Tablerow|Label=Upload&amp;nbsp;date:|Value={{#if:{{{UploadDate|}}}|[[HasUploadDate::{{{UploadDate|}}}]]}} }}
 |-
 {{Tablerow|Label=Description:|Value={{#if:{{{Description|}}}|[[HasDescription::{{{Description|}}}]]}} }}
 |-
@@ -595,7 +595,7 @@
 |-
 {{Tablerow|Label=Format:|Value={{#if:{{{Format|}}}|[[HasFormat::{{{Format|}}}]]}} }}
 |-
-{{Tablerow|Label=Related article(s):|Value={{#if:{{{RelatedArticles|}}}|{{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]]}}}} }}
+{{Tablerow|Label=Related&amp;nbsp;article(s):|Value={{#if:{{{RelatedArticles|}}}|{{#arraymap:{{{RelatedArticles|}}}|,|x|[[HasRelatedArticle::x]] [[Related to::x| ]]}}}} }}
 |-
 {{#ifeq:{{lc:{{NAMESPACE}}}}|document|{{Tablerow|Label=Subsection of:|Value={{#if:{{{SubSectionOf|}}}|{{#arraymap:{{{SubSectionOf|}}}|,|x|[[subsection of::x]]}}}} }}}}
 |}&lt;/includeonly&gt;&lt;noinclude&gt;
@@ -717,11 +717,10 @@ The content of this page uses material from the article [{{{url}}} {{{title}}}] 
     <title>Template:GNU Free Documentation License</title>
     <id>324</id>
     <revision>
-      <id>2836</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <id>9985</id>
+      <timestamp>2009-07-20T11:29:15Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>Benjamin</ip>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
@@ -1107,11 +1106,11 @@ case: All content sections END
     <title>Template:Template</title>
     <id>332</id>
     <revision>
-      <id>6244</id>
-      <timestamp>2009-09-01T14:10:23Z</timestamp>
+      <id>8819</id>
+      <timestamp>2009-09-20T12:13:02Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
@@ -1136,7 +1135,7 @@ case: All content sections END
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
 |Category=Template
-|Icon=Image:smw_plus_template_icon_100x100.gif
+|Icon=Image:Smw_plus_template_icon_100x100.gif
 |Pagetitle={{PAGENAME}}
 |Thumbnail image={{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}]]}}
 |Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
@@ -1147,6 +1146,14 @@ case: All content sections END
 {{{long description|}}}
 === Sample template call ===
 {{#ifeq:{{{parameters|}}}||''not specified...''|{{{parameters|}}} }}
+
+=== Defines categories ===
+This template uses these categories in category annotations:
+{{#ifeq:{{{defines category|}}}||* none|
+&lt;ul&gt;
+{{#arraymap:{{{defines category|}}}|,|x|&lt;li&gt;[[Defines category::x]]|}}
+&lt;/ul&gt;
+}}
 
 === Interaction with other templates and forms ===
 This template calls other templates:
@@ -1160,7 +1167,14 @@ This template is called by:
 {{#ask:[[Calls template::{{{PAGENAME}}}]]|format=ul|default=* none}}
 
 This template is populated by form(s): 
-{{#ask:[[Category:Form]][[Populates template::{{{PAGENAME}}}]]|format=ul|default=* none}}
+{{#ifeq:{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]|default=}}||&lt;!--
+   --&gt;* none ''(you can create a new form populating this template by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateEmbeddedForm?for+template={{urlencode:{{PAGENAME}}}} create form]&lt;/span&gt;)''&lt;!--
+   --&gt;|&lt;!--
+   --&gt;&lt;ul&gt;&lt;!--
+     --&gt;{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]&lt;!--
+     --&gt;|format=template|template=Show defining form|link=none}}&lt;!--
+   --&gt;&lt;/ul&gt;
+}}
 
 [[Category:Template]]
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
@@ -1171,11 +1185,11 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
     <title>Template:Property</title>
     <id>331</id>
     <revision>
-      <id>6353</id>
-      <timestamp>2009-09-02T16:11:09Z</timestamp>
+      <id>8508</id>
+      <timestamp>2009-09-18T08:29:26Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Property
@@ -1219,6 +1233,7 @@ This property is modified by the following rules:&lt;br&gt;
 
 &lt;!-- type and category annotations --&gt;
 [[Category:Property]]
+&lt;br&gt;
 &lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1227,11 +1242,11 @@ This property is modified by the following rules:&lt;br&gt;
     <title>Template:Category</title>
     <id>318</id>
     <revision>
-      <id>6334</id>
-      <timestamp>2009-09-02T15:15:29Z</timestamp>
+      <id>9859</id>
+      <timestamp>2009-09-28T16:04:43Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Category
@@ -1247,23 +1262,28 @@ You should use this template to provide your wiki-community with a proper docume
 |copyright holder=Ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__
-{{Header for wiki parts
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__ {{Header for wiki parts
 |Category=Category
-|Icon=Image:smw_plus_category_icon_100x100.gif
+|Icon=Image:Smw_plus_category_icon_100x100.gif
 |Pagetitle={{PAGENAME}}
 |Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
 |author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
 |Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
-}} {{{long description|}}}
+}} {{{long description|}}} 
 
-=== Default form ===
+=== Default form  ===
 
 This category is populated by the form: 
 
 *{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
 
-&lt;!-- not needed currently, too fine-grained
+=== Defined in templates  ===
+
+This category is used for category annotations in the templates: 
+
+{{#ifeq:{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|default=}}||* none ''(you can create a new template using this category by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}} create template]&lt;/span&gt;)''|&lt;ul&gt;{{#ask:[[Category:Template]][[Defines category::{{FULLPAGENAME}}]]|format=template|template=Show defining template|link=none}}&lt;/ul&gt;
+}} &lt;!-- not needed currently, too fine-grained
+&lt;nowiki&gt;
 === Rules  ===
 
 ==== Read by rules  ====
@@ -1273,11 +1293,9 @@ This category is read by the following rules: {{#sparql:[[Category:Rule]][[Is re
 ==== Modified by rules  ====
 
 This category is modified by the following rules: {{#sparql:[[Category:Rule]][[Is written by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule modifying this''&lt;/ul&gt;}}
---&gt; 
-
-&lt;!-- category annotations --&gt;
-{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part]]|[[Category:Category]]}}[[Is category::true| ]]
-&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/nowiki&gt;
+--&gt; &lt;!-- category annotations --&gt; 
+{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part]]|[[Category:Category]]}}[[Is category::true| ]]&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -1344,17 +1362,22 @@ These are the literal class definitions in common.css:
     <title>Form:RMUpload</title>
     <id>416</id>
     <revision>
-      <id>8324</id>
-      <timestamp>2009-09-16T15:03:22Z</timestamp>
+      <id>10015</id>
+      <timestamp>2009-09-29T12:23:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMUpload' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMUpload
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|page name=RMUploadPage&lt;unique number;start=1&gt;}}}
 {{{for template|RMUpload|label=Meta information|collapsible}}}
@@ -1408,21 +1431,25 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMImage</title>
     <id>417</id>
     <revision>
-      <id>8327</id>
-      <timestamp>2009-09-16T15:07:07Z</timestamp>
+      <id>10014</id>
+      <timestamp>2009-09-29T12:23:12Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMImage' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMImage}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMPdf
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMImage|label=Meta Information|collapsible}}}
+
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
 | width=&quot;30%&quot; |
@@ -1484,186 +1511,210 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMPdf</title>
     <id>418</id>
     <revision>
-      <id>8332</id>
-      <timestamp>2009-09-16T15:11:26Z</timestamp>
+      <id>10028</id>
+      <timestamp>2009-09-29T12:54:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMPdf' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMPdf}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMPdf
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|WYSIWYG}}}
-{{{for template|RMPdf|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{{{for template|RMPdf|label=Meta information|collapsible}}} 
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Filename&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Uploaded by&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Upload date&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Here you can enter a short description of this file)
 |-
-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; style=&quot;color: red;&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
-{{{end template}}}
-'''Free text:'''
 
-{{{standard input|free text}}}
+{{{end template}}} '''Free text:''' 
 
-{{{standard input|minor edit}}} {{{standard input|watch}}}
+{{{standard input|free text}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
-&lt;/includeonly&gt;</text>
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
     <title>Form:RMDocument</title>
     <id>419</id>
     <revision>
-      <id>8329</id>
-      <timestamp>2009-09-16T15:09:05Z</timestamp>
+      <id>10003</id>
+      <timestamp>2009-09-29T12:11:24Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMDocument' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMDocument}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMDocument
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{{{info|WYSIWYG}}}
-{{{for template|RMDocument|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{{{info|WYSIWYG}}} {{{for template|RMDocument|label=Meta information|collapsible}}} 
+
+{| class=&quot;FCK__ShowTableBorders&quot; width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Filename&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The date when this file has been created or recently changed)
+|-
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Uploaded by&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The name of the uploader.)
+|-
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Upload date&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+|   
+| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Articles which are attached to this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Sub section of:
+| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Sub section of: 
 | {{{field|SubSectionOf|input type=haloACtext|constraints=namespace:120}}}
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
-| &amp;nbsp;
+|-
+| style=&quot;color: red&quot; colspan=&quot;2&quot; align=&quot;center&quot; | Fields marked with a &quot;*&quot; are mandatory 
+|  
 |}
-{{{end template}}}
-'''Free text:'''
 
-{{{standard input|free text}}}
+{{{end template}}} '''Free text:''' 
 
-{{{standard input|minor edit}}} {{{standard input|watch}}}
+{{{standard input|free text}}} 
 
-{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}
-&lt;/includeonly&gt;</text>
+{{{standard input|minor edit}}} {{{standard input|watch}}} 
+
+{{{standard input|save}}} {{{standard input|preview}}} {{{standard input|changes}}} {{{standard input|cancel}}}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
     <title>Form:RMAudio</title>
     <id>420</id>
     <revision>
-      <id>8335</id>
-      <timestamp>2009-09-16T15:16:03Z</timestamp>
+      <id>10017</id>
+      <timestamp>2009-09-29T12:26:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMAudio' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMAudio}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMAudio
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMAudio|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
@@ -1725,19 +1776,22 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVideo</title>
     <id>421</id>
     <revision>
-      <id>8339</id>
-      <timestamp>2009-09-16T15:18:13Z</timestamp>
+      <id>10019</id>
+      <timestamp>2009-09-29T12:27:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMVideo' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMVideo}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMVideo
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMVideo|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
@@ -1798,20 +1852,24 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMVCard</title>
     <id>1002</id>
     <revision>
-      <id>8340</id>
-      <timestamp>2009-09-16T15:19:38Z</timestamp>
+      <id>10030</id>
+      <timestamp>2009-09-29T12:55:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMVCard' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMVCard}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMVCard
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|WYSIWYG}}}
 {{{for template|RMVCard|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
@@ -1878,20 +1936,24 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Form:RMICalendar</title>
     <id>1003</id>
     <revision>
-      <id>8342</id>
-      <timestamp>2009-09-16T15:20:37Z</timestamp>
+      <id>10033</id>
+      <timestamp>2009-09-29T12:55:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;
-This is the 'RMICalendar' form.
-To add a page with this form, enter the page name below;
-if a page with that name already exists, you will be sent to a form to edit that page.
-
-{{#forminput:RMICalendar}}
-
+      <text xml:space="preserve">&lt;noinclude&gt;{{Form
+|PAGENAME=Form:RMICalendar
+|Has author=User:WikiSysop
+|Form needs context=true
+|show in template picker=false
+|transcludable=false
+}}
+{{Copyright of article
+|own work=True
+}}
 &lt;/noinclude&gt;&lt;includeonly&gt;
+{{{info|WYSIWYG}}}
 {{{for template|RMICalendar|label=Meta information|collapsible}}}
 {| width=&quot;100%&quot; align=&quot;center&quot;  
 |-
@@ -1958,8 +2020,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Property:HasCreationDate</title>
     <id>422</id>
     <revision>
-      <id>6064</id>
-      <timestamp>2009-08-28T14:55:44Z</timestamp>
+      <id>9431</id>
+      <timestamp>2009-09-23T11:37:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1973,15 +2035,16 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Date| ]]</text>
+[[Has type::Date| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasFilename</title>
     <id>423</id>
     <revision>
-      <id>5993</id>
-      <timestamp>2009-08-28T10:16:28Z</timestamp>
+      <id>9381</id>
+      <timestamp>2009-09-23T09:22:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1995,7 +2058,8 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[has type::Type:Page| ]]</text>
+[[has type::Type:String| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
@@ -2025,8 +2089,8 @@ if a page with that name already exists, you will be sent to a form to edit that
     <title>Property:HasUploadDate</title>
     <id>425</id>
     <revision>
-      <id>6068</id>
-      <timestamp>2009-08-28T15:12:23Z</timestamp>
+      <id>9435</id>
+      <timestamp>2009-09-23T11:39:28Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2040,15 +2104,16 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Type:Date| ]]</text>
+[[Has type::Type:Date| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasUploader</title>
     <id>426</id>
     <revision>
-      <id>6000</id>
-      <timestamp>2009-08-28T10:28:27Z</timestamp>
+      <id>9433</id>
+      <timestamp>2009-09-23T11:38:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2062,15 +2127,16 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Type:Page| ]]</text>
+[[Has type::Type:Page| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasCopyrightBy</title>
     <id>427</id>
     <revision>
-      <id>5991</id>
-      <timestamp>2009-08-28T10:08:24Z</timestamp>
+      <id>9429</id>
+      <timestamp>2009-09-23T11:36:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2084,15 +2150,16 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Type:Page| ]]</text>
+[[Has type::Type:Page| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasDescription</title>
     <id>428</id>
     <revision>
-      <id>6059</id>
-      <timestamp>2009-08-28T14:40:42Z</timestamp>
+      <id>9437</id>
+      <timestamp>2009-09-23T11:41:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2106,7 +2173,8 @@ if a page with that name already exists, you will be sent to a form to edit that
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Type:Text| ]] [[Subproperty of::Property:Description| ]]</text>
+[[Has type::Type:Text| ]] [[Subproperty of::Property:Description| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
@@ -2141,13 +2209,12 @@ Denotes a content item as subsection of another content item.
     <title>Property:HasKeywords</title>
     <id>1009</id>
     <revision>
-      <id>6674</id>
-      <timestamp>2009-09-07T10:46:27Z</timestamp>
+      <id>9438</id>
+      <timestamp>2009-09-23T11:41:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: {{Property |PAGENAME=Property:HasKeywords |Has author=WikiSysop |rationale=Keywords associated with this file. |long description=__NOTITLE__ }} {{Copyright of article |own work=True }} [[h...</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:HasKeywords
 |Has author=WikiSysop
@@ -2157,20 +2224,20 @@ Denotes a content item as subsection of another content item.
 {{Copyright of article
 |own work=True
 }}
-[[has type::Type:String| ]]</text>
+[[has type::Type:String| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasFormat</title>
     <id>1008</id>
     <revision>
-      <id>6673</id>
-      <timestamp>2009-09-07T10:45:21Z</timestamp>
+      <id>9439</id>
+      <timestamp>2009-09-23T11:42:36Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>New page: {{Property |PAGENAME=Property:HasFormat |Has author=WikiSysop |rationale=Displays the format of this file as it's MIME type. |long description=__NOTITLE__ }} {{Copyright of article |own wo...</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:HasFormat
 |Has author=WikiSysop
@@ -2180,7 +2247,8 @@ Denotes a content item as subsection of another content item.
 {{Copyright of article
 |own work=True
 }}
-[[has type::Type:String| ]]</text>
+[[has type::Type:String| ]]
+[[has domain and range::Category:Media; | ]]</text>
     </revision>
   </page>
   <page>
@@ -2264,11 +2332,11 @@ Denotes a content item as subsection of another content item.
     <title>Property:Calls template</title>
     <id>285</id>
     <revision>
-      <id>5981</id>
-      <timestamp>2009-08-28T09:31:51Z</timestamp>
+      <id>8658</id>
+      <timestamp>2009-09-18T14:59:00Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Calls template
@@ -2279,7 +2347,10 @@ Denotes a content item as subsection of another content item.
 {{Copyright of article
 |own work=True
 }}
-[[Has type::Type:Page| ]] [[Is inverse of::Property:Is called by template or form| ]] [[has domain and range::Category:Wiki part; Category:Template| ]]</text>
+[[Has type::Type:Page| ]]
+[[Is inverse of::Property:Is called by template or form| ]]
+[[has domain and range::Category:Template; Category:Template| ]]
+[[has domain and range::Category:Form; Category:Template| ]]</text>
     </revision>
   </page>
   <page>
@@ -2420,11 +2491,11 @@ Denotes a content item as subsection of another content item.
     <title>Template:Template</title>
     <id>332</id>
     <revision>
-      <id>6244</id>
-      <timestamp>2009-09-01T14:10:23Z</timestamp>
+      <id>8819</id>
+      <timestamp>2009-09-20T12:13:02Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
@@ -2449,7 +2520,7 @@ Denotes a content item as subsection of another content item.
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;{{Header for wiki parts
 |Category=Template
-|Icon=Image:smw_plus_template_icon_100x100.gif
+|Icon=Image:Smw_plus_template_icon_100x100.gif
 |Pagetitle={{PAGENAME}}
 |Thumbnail image={{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}]]}}
 |Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
@@ -2460,6 +2531,14 @@ Denotes a content item as subsection of another content item.
 {{{long description|}}}
 === Sample template call ===
 {{#ifeq:{{{parameters|}}}||''not specified...''|{{{parameters|}}} }}
+
+=== Defines categories ===
+This template uses these categories in category annotations:
+{{#ifeq:{{{defines category|}}}||* none|
+&lt;ul&gt;
+{{#arraymap:{{{defines category|}}}|,|x|&lt;li&gt;[[Defines category::x]]|}}
+&lt;/ul&gt;
+}}
 
 === Interaction with other templates and forms ===
 This template calls other templates:
@@ -2473,10 +2552,194 @@ This template is called by:
 {{#ask:[[Calls template::{{{PAGENAME}}}]]|format=ul|default=* none}}
 
 This template is populated by form(s): 
-{{#ask:[[Category:Form]][[Populates template::{{{PAGENAME}}}]]|format=ul|default=* none}}
+{{#ifeq:{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]|default=}}||&lt;!--
+   --&gt;* none ''(you can create a new form populating this template by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateEmbeddedForm?for+template={{urlencode:{{PAGENAME}}}} create form]&lt;/span&gt;)''&lt;!--
+   --&gt;|&lt;!--
+   --&gt;&lt;ul&gt;&lt;!--
+     --&gt;{{#ask:[[Category:Form]][[Populates template::{{FULLPAGENAME}}]]&lt;!--
+     --&gt;|format=template|template=Show defining form|link=none}}&lt;!--
+   --&gt;&lt;/ul&gt;
+}}
 
 [[Category:Template]]
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Get value from list</title>
+    <id>1523</id>
+    <revision>
+      <id>8814</id>
+      <timestamp>2009-09-20T11:47:55Z</timestamp>
+      <contributor>
+        <username>WikiSysop2</username>
+        <id>24</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Get value from list
+|Has author=WikiSysop2
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
+|long description=__NOTITLE__
+This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
+|parameters=&lt;pre&gt;
+{{Get value from list
+|list=a,b,c,d
+|deliminiter=,
+|pos=3
+}}
+&lt;/pre&gt;
+}}
+Test:
+{{Get value from list|list=Template:A template|delimiter=:|pos=2}}
+Test2:
+{{Get value from list|list=Template:A template|delimiter=:|pos=1}}
+test3:
+{{#titleparts:{{#arraymap:Template:A template|:|x|x|/}}|1|1 }}
+
+{{Copyright of article
+|own work=True
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;{{#titleparts:{{#arraymap:{{{list}}}|{{{delimiter}}}|x|x|/}}|1|{{{pos}}} }}&lt;/includeonly&gt;&lt;noinclude&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Show defining form</title>
+    <id>1524</id>
+    <revision>
+      <id>8822</id>
+      <timestamp>2009-09-20T12:23:06Z</timestamp>
+      <contributor>
+        <username>WikiSysop2</username>
+        <id>24</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Show defining form
+|Has author=WikiSysop2
+|part of=SMWplus Basic Ontology Section
+}}
+{{Copyright of article
+|own work=True
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
+
+--&gt;&lt;li&gt;[[{{{1|}}}]] ''(you can replace this form by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateEmbeddedForm?form+name={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}}&amp;for+template={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}} create new form]&lt;/span&gt;)''&lt;!--
+
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Form</title>
+    <id>322</id>
+    <revision>
+      <id>9105</id>
+      <timestamp>2009-09-21T16:56:26Z</timestamp>
+      <contributor>
+        <username>WikiSysop2</username>
+        <id>24</id>
+      </contributor>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:Form
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|rationale=This template is used to display and annotate a Form.
+|long description=__NOTITLE__
+You should use this form to provide your wiki-community with a proper documentation of the forms used in the wiki.
+|parameters=&lt;pre&gt;
+{{Form
+|PAGENAME=
+|Has author=
+|part of=
+|rationale=
+|long description=
+|Example article=
+|Form thumbnail=
+|Form needs context=
+|Has special namespace=
+|Calls template=
+|Populates template=
+|Embeds form=
+}}
+&lt;/pre&gt;
+|Calls template=Template:Header for wiki parts,
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;__NOTOC__
+{{Header for wiki parts
+|Category=Form
+|Icon=Image:smw_plus_form_icon_100x100.gif
+|Pagetitle={{PAGENAME}}
+|Thumbnail image={{{Form thumbnail|}}}
+|Short description={{#ifeq:{{{rationale|}}}|||[[rationale::{{{rationale|}}}]]}}
+|author={{#ifeq:{{{Has author|}}}|||{{#arraymap:{{{Has author|}}}|,|x|[[has author::x]]|,}}}}
+|Wiki section={{#ifeq:{{{part of|}}}|||{{#arraymap:{{{part of|}}}|,|x|[[part of::x]]|,}}}}
+|Example article={{#ifeq:{{{Example article|}}}|||[[Example article::{{{Example article|}}}]]}}
+|Has special namespace={{#ifeq:{{{Has special namespace|}}}|||[[Has special namespace::{{{Has special namespace|}}}]]}}
+}}
+{{{long description|}}}
+
+{{#ifeq:{{{Form needs context|}}}|false|
+== Create or edit wiki page with this form ==
+Create or edit a wiki page using this form by typing the name of the page and click on &quot;Create or edit page&quot;.{{#forminput:{{PAGENAME}}|60|{{{Has special namespace|}}}|Create or edit page|}}
+{{#ifeq:{{{Has special namespace|}}}|||
+'''Please note:''' the name of the article must start with &quot;{{{Has special namespace|}}}&quot;.}}
+|}}[[Form needs context::{{{Form needs context|}}}| ]]
+
+=== Template picker ===
+{{#switch:{{{show in template picker|}}}
+|true=This form is visible in the template picker.[[Show in template picker::true| ]]
+|True=This form is visible in the template picker.[[Show in template picker::true| ]]
+|false=This form is not visible in the template picker.[[Show in template picker::false| ]]
+|False=This form is not visible in the template picker.[[Show in template picker::false| ]]
+|Please specify if this form shall be visible in the template picker (or not).
+}}
+
+=== Interaction with other templates and forms ===
+This form calls other templates:
+{{#ifeq:{{{Calls template|}}}||* none
+|
+&lt;ul&gt;
+{{#arraymap:{{{Calls template|}}}|,|x|&lt;li&gt;[[Calls template::x]]|}}
+&lt;/ul&gt;
+}}
+
+This form populates templates:
+{{#ifeq:{{{Populates template|}}}||* none
+|
+&lt;ul&gt;
+{{#arraymap:{{{Populates template|}}}|,|x|&lt;li&gt;[[Populates template::x]]|}}
+&lt;/ul&gt;
+}}
+
+This form embeds other forms:
+{{#ifeq:{{{Embeds form|}}}||* none
+|
+&lt;ul&gt;
+{{#arraymap:{{{Embeds form|}}}|,|x|&lt;li&gt;[[Embeds form::x]]|}}
+&lt;/ul&gt;
+}}
+
+This form is embedded in other forms:
+{{#ask:[[Embeds form::{{{PAGENAME}}}]]|format=ul|default=* none}}
+
+{{#switch:{{{transcludable|}}}
+|true=This form can be embedded into other forms using:&lt;!--
+       --&gt;&lt;br/&gt;
+&amp;nbsp;{{{{FULLPAGENAME}}&lt;br/&gt;
+&amp;nbsp;|transcluded&lt;br/&gt;
+&amp;nbsp;}}&lt;!--
+       --&gt;[[Transcludable::true| ]]
+|false=[[Transcludable::false| ]]
+}}
+[[Category:Form]]
+{{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}| ]]}}
+Edit the page to see the form text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
