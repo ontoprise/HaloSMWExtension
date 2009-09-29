@@ -12,7 +12,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 	['Cut','Copy','Paste',/*'PasteText','PasteWord',*/'-','Print'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['SpecialChar','Table','Image','Rule'],
-	['MW_Special','MW_Ref','MW_Math','MW_Edit', 'Fullscreen', 'About'],
+	['MW_Special',/* 'MW_Ref',*/ 'MW_Math','MW_Edit', 'Fullscreen', 'About'],
 	'/',
 	['FontFormat', 'Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList', 'Blockquote'],
