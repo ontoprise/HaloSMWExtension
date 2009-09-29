@@ -9,7 +9,14 @@ FullscreenCommand.prototype = {
     initialize: function() {
         this.fullscreen = 0;
         this.fckiframe = window.parent.document.getElementsByTagName('iframe')[0];
-        this.origStyle = this.fckiframe.getAttribute('style');
+        if (FCKBrowserInfo.IsIE) {
+            var styles = this.fckiframe.getAttribute('style');
+            this.origStyle = new Object();
+            for (var key in styles)
+                if (styles[key]) this.origStyle[key] = styles[key];
+        }
+        else
+            this.origStyle = this.fckiframe.getAttribute('style');
     },
 
     GetState: function() {
@@ -17,8 +24,17 @@ FullscreenCommand.prototype = {
     },
 
     Execute: function() {
-	if (this.fullscreen) {
-           this.fckiframe.setAttribute('style', this.origStyle);
+	    if (this.fullscreen == 1) {
+	        if (FCKBrowserInfo.IsIE) {
+	            var element = this.fckiframe;
+	            for (var key in this.origStyle) {
+	                if (this.origStyle[key] != '') {
+	                    this.fckiframe.style[key] = this.origStyle[key];
+	                }
+	            }
+	        }
+	        else
+                this.fckiframe.setAttribute('style', this.origStyle);
         }
         else {
             this.fckiframe.style.left = '0px';
