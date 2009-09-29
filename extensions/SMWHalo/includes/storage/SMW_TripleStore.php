@@ -230,6 +230,7 @@ class SMWTripleStore extends SMWStore {
 						// add all aliases for this conversion factor using the same factor
 						$nextMeasure = next($measures);
 						while($nextMeasure !== false) {
+							$nextMeasure = str_replace('"', '\"', $nextMeasure);
 							$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor ".trim($nextMeasure)."\"");
 							$nextMeasure = next($measures);
 						}
