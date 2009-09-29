@@ -69,9 +69,9 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
     };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
-    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
-    YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
+    //YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
+    //YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
+    //YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
  
@@ -79,19 +79,19 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
-        formatter:"myName"
+        formatter:this.myNameFormatter
     },
     {
         key:"groups",
         label:gLanguage.getMessage('groups'),
         sortable:false
         ,
-        formatter:"myGroup"
+        formatter:this.myGroupFormatter
     },
     {
         key:"checked",
         label:gLanguage.getMessage('selected'),
-        formatter:"mySelect"
+        formatter:this.mySelectFormatter
     }
 
     ];

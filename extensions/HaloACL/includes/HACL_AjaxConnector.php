@@ -1097,9 +1097,6 @@ HTML;
         $footerextension .= "YAHOO.haloacl.clickedArrayGroups['right_tabview_manageUserGroupSettingsModificationRight'].push('$item');";
     }
 
-    foreach(array_intersect(explode(",",$users), explode(",",$groups)) as $item) {
-    //   $footerextension .= "YAHOO.haloacl.clickedArrayUsersGroups['right_tabview_$panelid'].push('$item');";
-    }
     $footerextension .= "</script>";
 
     // end of processing of old data
@@ -1626,7 +1623,7 @@ HTML;
                                 users = "$currentUserName";
 
 
-                            var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                            //var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
                             for(i=0;i<YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].length;i++){
                                 groups = groups+", G:"+YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'][i];
                             }
@@ -1644,7 +1641,7 @@ HTML;
                                 users = users+", U:"+YAHOO.haloacl.clickedArrayUsers['right_tabview_$panelid'][i];
                             }
                             
-                            var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
+                            //var groupsarray = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloacl.treeInstanceright_tabview_$panelid);
                             for(i=0;i<YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'].length;i++){
                                 groups = groups+", G:"+YAHOO.haloacl.clickedArrayGroups['right_tabview_$panelid'][i];
                             }
@@ -1849,17 +1846,25 @@ HTML;
             };
 
 
-
         </script>
 HTML;
 
     if($predefine == "modification") {
         $footerextension .= <<<HTML
         <script>
-        genericPanelSetDescr_$panelid("for U: $currentUser","for U: $currentUser");
+
+//        genericPanelSetDescr_$panelid("for U: $currentUser","for U: $currentUser");
         </script>
 HTML;
     }
+
+    $footerextension .= <<<HTML
+    <script>
+        try{
+            YAHOO.haloacl.refreshPanel_$panelid();
+        }catch(e){}
+    </script>
+HTML;
 
 
     if ($preload == true) {
@@ -2108,9 +2113,11 @@ function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, 
             }
             var element = item;
             if(element.checked){
+                //console.log("adding item" + element.name);
                 if(YAHOO.haloacl.debug) console.log("adding "+item.name+" to list of checked users - panelid:$panelid");
                 YAHOO.haloacl.addUserToUserArray('$panelid',element.name);
             }else{
+                //console.log("remov item" + element.name);
                 if(YAHOO.haloacl.debug) console.log("removing "+item.name+" from list of checked users - panelid:$panelid");
                 YAHOO.haloacl.removeUserFromUserArray('$panelid',element.name);
             }
@@ -4326,13 +4333,15 @@ HTML;
             </div>
             <div id="manageUserGroupSettingsModificationRight" style="">
                 <script>
+                    // now loaded via handleedit
                    // YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getRightsPanel',{panelid:'manageUserGroupSettingsRight',predefine:'individual'});
                 </script>
 
                 <div id="manageUserGroupSettingsModificationRight">
                 </div>
                 <script>
-                    YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                    // now loaded via handleedit
+                 //   YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
                 </script>
             </div>
             <div class="haloacl_tab_section_content">
@@ -4364,7 +4373,11 @@ HTML;
                         onSuccess:function(o){
                             var magic = YAHOO.lang.JSON.parse(o.responseText);
 
-//                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                            // getting modificationrights
+                            YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                            // reloading modificationrights
+                            //$('right_tabview_manageUserGroupSettingsModificationRight').firstChild.fristChild.firstChild.click();
+
 
                             if(YAHOO.haloacl.debug) console.log(magic);
                             YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight','getManageUserGroupPanel',
@@ -4492,7 +4505,7 @@ HTML;
     <div style="clear:both">
         <input type="text" id="haloacl_whitelist_pagename" />
         <div id="whitelist_name_container"></div>
-        <input style="margin-left:211px" type="button" value="add Page" onClick="YAHOO.haloacl.saveWhitelist();" />
+        <input style="margin-left:211px" type="button" value="Add Page" onClick="YAHOO.haloacl.saveWhitelist();" />
     </div>
         
     <script type="javascript">

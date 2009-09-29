@@ -61,8 +61,8 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
     };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.myQuickSelect = this.myQuickSelectFormatter;
-    YAHOO.widget.DataTable.Formatter.myQuickName = this.myQuickNameFormatter;
+    //YAHOO.widget.DataTable.Formatter.myQuickSelect = this.myQuickSelectFormatter;
+    //YAHOO.widget.DataTable.Formatter.myQuickName = this.myQuickNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
 
@@ -70,13 +70,13 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
-        formatter:"myQuickName"
+        formatter:this.myQuickNameFormatter
     },
    
     {
         key:"checked",
         label:gLanguage.getMessage('delete'),
-        formatter:"myQuickSelect"
+        formatter:this.myQuickSelectFormatter
     }
 
     ];

@@ -542,7 +542,7 @@ abbr,acronym { border:0;
     overflow: -moz-scrollbars-vertical!important;
     overflow-y: auto!important;
     padding:5px 0 0px 5px;
-    height:266px;
+    height:267px;
 }
 /* right side */
 
@@ -581,7 +581,7 @@ abbr,acronym { border:0;
 }
 
 .haloacl_rightpanel_selecttab_rightpart_datatable{
-    height:271px;
+    height:272px;
     border:1px #000 solid;
     border-style:none none solid none;
     overflow:auto;
@@ -606,7 +606,7 @@ abbr,acronym { border:0;
 .datatable_usergroups{
     font-size:10px!important;
     overflow:hidden;
-    width:222px;
+    width:218px;
     height:13px!important;
 }
 

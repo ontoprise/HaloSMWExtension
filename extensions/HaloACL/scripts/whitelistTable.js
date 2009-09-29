@@ -54,20 +54,20 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
-    YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
+    //YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
+    //YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
 
     var myColumnDefs = [ // sortable:true enables sorting
     {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
-        formatter:"myName"
+        formatter:this.myNameFormatter
     },
     {
         key:"checked",
         label:gLanguage.getMessage('delete'),
-        formatter:"mySelect"
+        formatter:this.mySelectFormatter
     }
     ];
 
