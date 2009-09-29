@@ -521,9 +521,10 @@ AutoCompleter.prototype = {
                 // check if the FCK runs in Semantic forms or in a normal page
                 var iframe = $('wpTextbox1___Frame') ? $('wpTextbox1___Frame') : $('free_text___Frame');
                 // check if we are in fullscreen mode, then take coordinated from there
-                if (iframe.position && iframe.position == 'fixed') {
-                    x = iframe.style.left;
-                    y = iframe.style.top;
+                if (iframe.style.position && iframe.style.position == 'fixed') {
+                    x = parseInt(iframe.style.left);
+                    y = parseInt(iframe.style.top);
+                    this.siw.floater.style.position = 'fixed';
                 } else {       
                     x = Position.cumulativeOffset(iframe)[0]
                     y = Position.cumulativeOffset(iframe)[1]
