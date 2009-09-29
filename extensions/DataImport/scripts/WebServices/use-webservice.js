@@ -307,7 +307,8 @@ UseWebService.prototype = {
 
 	hideHelp : function(id) {
 		$("step" + id + "-help").style.display = "none";
-		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = "useWSSpecial.displayHelp("+i+")";
+		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = 
+			"useWSSpecial.displayHelp("+id+")";
 	},
 
 	hideHelpAll : function() {
