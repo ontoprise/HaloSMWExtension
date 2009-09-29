@@ -6,11 +6,11 @@
    so the become clickable... */
 
 ul.smwh_menulist div.smwh_menubody {
-    top: 8px;
+    /*top: 0.2em;*/
 }
 
 #tabsright ul.smwh_menulist div.smwh_menubody {
-    top: 0.2em;
+    top: 1.0em;
 }
 
 
