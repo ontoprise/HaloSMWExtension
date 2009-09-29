@@ -44,12 +44,12 @@ var SMW_PRP_VALID_PROPERTY_NAME =
 		'? (color: white, hideMessage, valid:true) ' +
 	 	': (color: red, showMessage:PROPERTY_NAME_TOO_LONG, valid:false)" ';
 
-
+var positionFixed = (typeof FCKeditor != 'undefined') ? 'position="fixed"' : ''
 var SMW_PRP_HINT_CATEGORY =
-	'constraints = "namespace:' + SMW_CATEGORY_NS + '" ';
+	'constraints = "namespace:' + SMW_CATEGORY_NS + '" ' + positionFixed;
 
 var SMW_PRP_HINT_PROPERTY =
-	'constraints = "namespace:'+ SMW_PROPERTY_NS + '" ';
+	'constraints = "namespace:'+ SMW_PROPERTY_NS + '" ' + positionFixed;
 	
 var SMW_PRP_CHECK_EMPTY = 
 	'smwCheckEmpty="empty' +
