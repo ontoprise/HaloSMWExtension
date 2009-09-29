@@ -120,6 +120,8 @@ if ($GLOBALS['wgDefaultSkin'] == 'ontoskin') {
     $wgLogo = "$wgStylePath/ontoskin/images/wiki.jpg";
 } else if ($GLOBALS['wgDefaultSkin'] == 'ontoskin2') {
      $wgLogo = "$wgStylePath/ontoskin2/images/wiki.jpg";
+} else if ($GLOBALS['wgDefaultSkin'] == 'ontoskin3') {
+     $wgLogo = "$wgStylePath/ontoskin3/img/wiki.jpg";
 }
 
 ## For attaching licensing metadata to pages, and displaying an
