@@ -16,7 +16,7 @@ $wgGroupPermissions['sysop']['gardening']=true;
 
 //include_once('extensions/SemanticForms/includes/SF_Settings.php');
 
-require_once( "$IP/extensions/ParserFunctions/ParserFunctions.php" );
+require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
 
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
 $smwgEnableUploadConverter = true;
