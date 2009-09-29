@@ -59,7 +59,7 @@ FCKCommands.RegisterCommand( 'MW_Math', new FCKDialogCommand( 'MW_Math', 'Formul
 FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', 'Special Tag Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/special.html', 400, 330 ) ) ; //YC
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
-FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'QueryInterface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, 600 ) ) ;
+FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'Query Interface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, 600 ) ) ;
 
 // MediaWiki Wikitext Data Processor implementation.
 FCK.DataProcessor =
@@ -988,7 +988,7 @@ FCK.ContextMenu.RegisterListener({
 			if ( tag.getAttribute( '_fck_mw_askquery' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'SMW_QueryInterface', 'Query Source' ) ;
+				contextMenu.AddItem( 'SMW_QueryInterface', 'Open in QueryInterface' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_magic' ) )
 			{
