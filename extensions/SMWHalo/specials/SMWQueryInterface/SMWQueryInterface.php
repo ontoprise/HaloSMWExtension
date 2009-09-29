@@ -46,7 +46,7 @@ class SMWQueryInterface extends SpecialPage {
 		$html .= $this->addAdditionalStuff();
 
 		$html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';
-
+		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}
 	

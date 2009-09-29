@@ -65,7 +65,7 @@ else {
 	$newPage= str_replace('<body', jsData()."\n<body", $page);
 
 	// suround QI code by div with id = divQiGui for managing the tabs
-	$newPage= str_replace('<body', '<div id="divQiGui">'."\n<body", $newPage);
+	$newPage= preg_replace('/<body[^>]*>/', '$0<div id="divQiGui">', $newPage);
 	$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
 
 	// add div container for raw query source code at the end
