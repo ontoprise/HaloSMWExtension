@@ -1164,7 +1164,7 @@ Index: includes/specials/SpecialUpload.php
 +		if ( isset( $rawExtension ) )
 +			if ( isset( $wgNamespaceByExtension[$rawExtension] ) ) {
 +				$my_ns = $wgNamespaceByExtension[$rawExtension];
-+				$file->title->mNamespace = $my_ns;
++				$file->title = Title::makeTitle($my_ns, $file->getName() );
 +			}
 +		/*op-patch|BL|2009-06-17|end*/
 +		
