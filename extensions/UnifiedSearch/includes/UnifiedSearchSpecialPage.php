@@ -113,18 +113,20 @@ class USSpecialPage extends SpecialPage {
         '</form>';
 
 		// -- new page link --
+		$colonIndex = strpos($search, ":");
+		$search = $colonIndex !== false ? substr($search, $colonIndex + 1) : $search;
 		$caseInsensitiveTitle = USStore::getStore()->getSingleTitle($search);
 		
 		if ($newpage !== NULL && !$newpage->exists() && is_null($caseInsensitiveTitle)) {
 			global $wgParser;
-			$wikilink = '[['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
+			$wikilink = '[[:'.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
 			$newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
 			$newLink = strip_tags($newLink, '<a>');
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
 		if (!is_null($caseInsensitiveTitle)) {
 			global $wgParser;
-            $wikilink = '[['.$caseInsensitiveTitle->getPrefixedText().']]';
+            $wikilink = '[[:'.$caseInsensitiveTitle->getPrefixedText().']]';
 			if (!is_null($newpage) && !$newpage->exists()) $wikilink .= ' | [['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
             $newLink = $wgParser->parse($wikilink, Title::newFromText("_"), new ParserOptions(), true, true)->getText();
             $newLink = strip_tags($newLink, '<a>');
