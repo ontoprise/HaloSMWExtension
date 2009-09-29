@@ -661,9 +661,13 @@ Function configCustomizationsForNew
             StrCpy $WIKISKIN "ontoskin2"
             StrCpy $DEFAULTLOGO "skins/ontoskin2/images/wiki.jpg"
             ${Break}
-         ${Default}
-            StrCpy $WIKISKIN "ontoskin2"
-            StrCpy $DEFAULTLOGO "skins/ontoskin2/images/wiki.jpg"
+        ${Case} 'ontoskin3'
+            StrCpy $WIKISKIN "ontoskin3"
+            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.jpg"
+            ${Break}   
+        ${Default}
+            StrCpy $WIKISKIN "ontoskin3"
+            StrCpy $DEFAULTLOGO "skins/ontoskin3/img/wiki.jpg"
         ${Break}
     ${EndSwitch}
     ${Switch} $WIKILANG
