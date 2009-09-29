@@ -236,7 +236,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                                'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
                                'WHERE UPPER(i.smw_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
                                'UPPER(s1.value_string) = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
-                            'LIMIT '.SMW_AC_MAX_RESULTS);
+                            'ORDER BY title LIMIT '.SMW_AC_MAX_RESULTS);
 
 		 
 		if($db->numRows( $res ) > 0) {
