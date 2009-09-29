@@ -295,21 +295,7 @@ if (array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' || (ar
 require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
 
-/*start-unifiedsearch*/
-$wgSearchType = /*start-variable-wgSearchType*/'LuceneSearch'/*end-variable-wgSearchType*/;
-$wgLuceneHost = /*start-variable-wgLuceneHost*/'localhost'/*end-variable-wgLuceneHost*/;
-$wgLucenePort = /*start-variable-wgLucenePort*/8123/*end-variable-wgLucenePort*/;
-$wgLuceneSearchVersion = /*start-variable-wgLuceneSearchVersion*/2.1/*end-variable-wgLuceneSearchVersion*/;
-$wgUSPathSearch=/*start-variable-wgUSPathSearch*/true/*end-variable-wgUSPathSearch*/;
-require_once('extensions/UnifiedSearch/includes/UnifiedSearch.php');
-/*end-unifiedsearch*/
 
-#Incremental updates to lucene server
-@include( $IP.'/extensions/UnifiedSearch/OAI/OAIRepo.php' );
-$oaiAgentRegex = '/experimental/';
-$oaiAuth = true; # broken... squid? php config? wtf
-$oaiAudit = true;
-$oaiAuditDatabase = 'semwiki_en';
 
 require_once("$IP/extensions/ImageMap/ImageMap.php");
 
