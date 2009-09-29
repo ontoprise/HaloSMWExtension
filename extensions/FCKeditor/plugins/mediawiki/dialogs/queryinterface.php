@@ -238,4 +238,3 @@ function getErrorPage($msg) {
       <body>'.$msg.'</body>
     </html>';
 }
-?>
