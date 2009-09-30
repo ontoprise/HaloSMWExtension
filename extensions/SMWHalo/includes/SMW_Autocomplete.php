@@ -497,7 +497,7 @@ class AutoCompletionHandler {
 			$command = substr($c, 0, $sep);
 			$params = substr($c, $sep + 1);
 			if (!is_null($command) && !is_null($params)) {
-				$result[] = array($command, explode(",", $params));
+				$result[] = array($command, explode(",", trim($params)));
 			}
 		}
 		return $result;
@@ -532,6 +532,7 @@ class AutoCompletionHandler {
 
 				// continue to fill in results if possible
 			} else if ($commandText == 'schema-property-domain') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
@@ -541,6 +542,7 @@ class AutoCompletionHandler {
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-range-instance') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$instance = Title::newFromText($params[0]);
 					if (!is_null($instance)) {
@@ -550,6 +552,7 @@ class AutoCompletionHandler {
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-property') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$category = Title::newFromText($params[0]);
 					if (!is_null($category)) {
@@ -558,6 +561,7 @@ class AutoCompletionHandler {
 				}
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'annotation-value') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
@@ -568,6 +572,7 @@ class AutoCompletionHandler {
 				
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'instance-property-range') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				if (smwf_om_userCan($params[0], 'read') == 'true') {
 					$property = Title::newFromText($params[0]);
 					if (!is_null($property)) {
@@ -586,6 +591,7 @@ class AutoCompletionHandler {
 
 				if (count($result) >= SMW_AC_MAX_RESULTS) break;
 			} else if ($commandText == 'schema-property-type') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				$datatype = $params[0];
 				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
 				if (count($result) < SMW_AC_MAX_RESULTS) {
@@ -596,6 +602,7 @@ class AutoCompletionHandler {
 					if (count($result) >= SMW_AC_MAX_RESULTS) break;
 				}
 			} else if ($commandText == 'ask') {
+				if (empty($params[0]) || is_null($params[0])) continue;
 				$query = $params[0];
 
 				if (!isset($params[1]) || $params[1] == 'main') {
