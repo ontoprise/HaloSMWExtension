@@ -232,7 +232,7 @@ AutoCompleter.prototype = {
         } else if (upEl && (kc != 38) && (kc != 40) && (kc != 37) && (kc != 39) && (kc != 13) && (kc != 27)) {
             if (!this.siw || (this.siw && !this.siw.selectingSomething)) {
               if ((e["ctrlKey"] && (kc == 32)) || isFloaterVisible) {
-                if (OB_bd.isIE && !isFloaterVisible && !e["altKey"]) {
+                if (OB_bd.isIE && !isFloaterVisible && !e["altKey"] && typeof FCKeditor == "undefined") {
                     // only relevant to IE. removes the whitespace which is pasted when pressing Ctrl+Space
                     var userInput = this.getUserInputToMatch();
                     var selection_range = document.selection.createRange();
