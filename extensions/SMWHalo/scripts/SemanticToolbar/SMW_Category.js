@@ -455,7 +455,7 @@ createSubItem: function() {
 
 createSuperItem: function(openTargetArticle) {
 	if (openTargetArticle == undefined) {
-		openTargetArticle = true;
+		openTargetArticle = false;
 	}
 	var name = $("cat-subsuper").value;
 	/*STARTLOG*/
