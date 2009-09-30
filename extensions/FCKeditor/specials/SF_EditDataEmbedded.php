@@ -148,7 +148,26 @@ END;
         self::sliceHtmlPieces($html, 'id="wpDiff"', '<input ', '/>');
         // remove cancel link
         self::sliceHtmlPieces($html, "class='editHelp'", '<span ', '</span>');
+        // remove warning message on top (usually: this page exists but does
+        // not use this form). Errors from inputs will work as these are
+        // added by javascript after the form has been submited once.
+        self::sliceHtmlPieces($html, 'class="warningMessage"', '<div', '</div>');
     }
+
+    /**
+     * Cuts pieces of the html, which are identified by a specific token. Then
+     * from that position go back to the start token and go forward to the end
+     * token and remove all in between.
+     * Be careful with what you select, there is no validating of the html. If
+     * the tokens match at several places, only the first occurence is deleted.
+     * Call this function several times, until the html length doesn't change
+     * anymore.
+     *
+     * @param string &$html the page itself
+     * @param string $entry the token from where to look at start and end token
+     * @param <type> $start the start token
+     * @param <type> $end the end token.
+     */
     static function sliceHtmlPieces(&$html, $entry, $start, $end) {
         $pStart = strpos($html, $entry);
         if ($pStart === false) return;
