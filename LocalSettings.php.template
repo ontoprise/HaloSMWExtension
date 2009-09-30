@@ -145,7 +145,7 @@ $wgCacheEpoch = max( $wgCacheEpoch, $configdate );
 array_push($wgFileExtensions, "svg");
 
 $wgShowExceptionDetails = true;
-
+$wgEnableEmail=false;
 
 //SMWHALO Variable insertion marker. DO NOT REMOVE!!
 $smwgDefaultCollation="latin1_bin";
