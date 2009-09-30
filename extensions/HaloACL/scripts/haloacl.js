@@ -580,7 +580,7 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
 };
 
 YAHOO.haloacl.addUserToUserArray = function(panelid, name){
-    if(name.length > 4){
+    if(name.length > 2){
 
         if (!YAHOO.haloacl.clickedArrayUsers[panelid]){
             YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
