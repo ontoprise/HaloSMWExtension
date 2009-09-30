@@ -42,7 +42,9 @@ function AddHaclToolbarForEditPage ($content_actions) {
     if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
         return $content_actions;
     }
+    global $haclgIP;
     $html = <<<HTML
+    	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
             YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'{$content_actions->mTitle}'});
@@ -65,7 +67,8 @@ HTML;
  */
 function AddHaclToolbarForSemanticForms($pageTitle, $html) {
     $html = <<<HTML
-	        <script>
+    		<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
+    		<script>
 	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
 	            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
 	        </script>
@@ -143,71 +146,12 @@ function getHACLToolbar($articleTitle) {
         $defaultSDExists = false;
     }
 
+    global $haclgIP;
     $html = <<<HTML
-        <script>
-    //    console.log($('wpSave'));
-        $('wpSave').writeAttribute("type","button");
-        $('wpSave').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
-
-        YAHOO.haloacl.toolbar_handleSaveClick = function(element){
-        
-            //var textbox = $('wpTextbox1');
-            var state  = $('haloacl_toolbar_pagestate').value;
-
-            if(state == "protected"){
-                var tmpvalue = $('haloacl_template_protectedwith').value;
-                //textbox.value = textbox.value + "{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}";
-                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:tmpvalue});
-
-            }else{
-                //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
-                YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'},function(result){
-                   
-                });
-            }
-
-
-        };
-
-
-        YAHOO.haloacl.toolbar_updateToolbar = function(){
-            var state  = $('haloacl_toolbar_pagestate').value;
-            if(state == "protected"){
-                try{
-                $('haloacl_template_protectedwith').show();
-                }catch(e){}
-                try{
-                $('haloacl_template_protectedwith_desc').show();
-                }catch(e){}
-                try{
-                $('haloacl_toolbar_popuplink').show();
-                }catch(e){}
-            }else{
-                $('haloacl_template_protectedwith').hide();
-                $('haloacl_template_protectedwith_desc').hide();
-                $('haloacl_toolbar_popuplink').hide();
-            }
-        };
-        YAHOO.haloacl.toolbar_updateToolbar();
-
-
-        YAHOO.haloacl.callbackSDpopupByName = function(result){
-            if(result.status == '200'){
-                YAHOO.haloaclrights.popup(result.responseText, $('haloacl_template_protectedwith').value, 'toolbar');
-            }else{
-                alert(result.responseText);
-            }
-        };
-
-        YAHOO.haloacl.sDpopupByName = function(sdName){
-            YAHOO.haloacl.callAction('sDpopupByName', {
-                sdName:sdName
-            }, YAHOO.haloacl.callbackSDpopupByName);
-
-        };
-
-
-    </script>
+    	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
+    	<script type="text/javascript">
+			YAHOO.haloacl.toolbar_initToolbar();     
+	    </script>
 
 
         <div id="hacl_toolbarcontainer" class="yui-skin-sam">
@@ -215,6 +159,7 @@ function getHACLToolbar($articleTitle) {
         <div id="hacl_toolbarcontainer_section1">
             Page state:&nbsp;
 HTML;
+
     if($toolbarEnabled) {
         $html .=       '<select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
     }else {
@@ -223,12 +168,12 @@ HTML;
     // bulding protected state indicator
     if($isPageProtected) {
         $html .= "   <option>unprotected</option>
-                     <option selected='true'>protected</option>
+                     <option selected='selected'>protected</option>
                      </select>
 ";
         $html .="</select>";
     }else {
-        $html .= "   <option selected='true'>unprotected</option>
+        $html .= "   <option selected='selected'>unprotected</option>
                      <option>protected</option>
                      </select>";
     }
@@ -239,7 +184,7 @@ HTML;
         $tpllist[] = $protectedWith;
     }
 
-    if(sizeof($tpllist) > 0) {
+//    if(sizeof($tpllist) > 0) {
         $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
         if($toolbarEnabled) {
             $html .= "<select id='haloacl_template_protectedwith'>";
@@ -248,15 +193,25 @@ HTML;
         }
         foreach($tpllist as $tpl) {
             if($tpl == $protectedWith) {
-                $html .= "<option selected='true'>$tpl</option>";
+                $html .= "<option selected='selected'>$tpl</option>";
             }else {
                 $html .= "<option>$tpl</option>";
             }
         }
         $html .= "</select>";
-    $html .= '<div id="haloacl_toolbar_popuplink" style="display:inline;float:right"><div id="anchorPopup_toolbar" class="haloacl_infobutton" onclick="javascript:YAHOO.haloacl.sDpopupByName($(\'haloacl_template_protectedwith\').value)">&nbsp;</div></div>';
+    $html .= <<<HTML
+<div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
+	<div id="anchorPopup_toolbar" 
+	     class="haloacl_infobutton" 
+	     onclick="javascript:
+	     	var tpw = $('haloacl_template_protectedwith');
+	     	var protectedWith = tpw[tpw.selectedIndex].text; 
+	     	YAHOO.haloacl.sDpopupByName(protectedWith)">&nbsp;
+	</div>
+</div>
+HTML;
     $html .= '<div id="popup_toolbar"></div>';
-    }
+//    }
 
 
     if(!$newArticle) {
