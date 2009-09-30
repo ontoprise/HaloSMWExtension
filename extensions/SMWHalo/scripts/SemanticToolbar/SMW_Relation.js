@@ -536,13 +536,17 @@ updateNewItem: function(request) {
 			: ((oldValues.length > i)
 				? oldValues[i]
 				: '');
-		var hint = (parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
+		var hint = SMW_REL_HINT_INSTANCE; //(parameterNames[i] == "Page" ? SMW_REL_HINT_INSTANCE : "");
 		if (i == 0 && parameterNames[i] == "Page") {
 			var relation = $('rel-name');
 			hint = 'namespace:' + SMW_INSTANCE_NS;
 			if (relation.value.length > 0) { 
-				hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
-						'| ' + hint;
+				if (relation.value == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
+					hint = 'namespace:' + SMW_PROPERTY_NS;
+				} else {
+					hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
+							'| ' + hint;
+				}
 			}
 			hint = 'constraints="'+hint+'"';
 		}
@@ -552,6 +556,8 @@ updateNewItem: function(request) {
 							     SMW_REL_VALID_PROPERTY_VALUE + 
 								 hint,
 		                         true));
+//		console.log("updateNewItem: "+hint);
+		                         
 		tb.setInputValue('rel-value-'+ i, value);    
 		                         
 		tb.insert('rel-value-'+ i,
@@ -643,7 +649,7 @@ createSubSuperLinks: function(elementID) {
 createSubItem: function(openTargetArticle) {
 	
 	if (openTargetArticle == undefined) {
-		openTargetArticle = true;
+		openTargetArticle = false;
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
@@ -660,7 +666,7 @@ createSubItem: function(openTargetArticle) {
 
 createSuperItem: function(openTargetArticle) {
 	if (openTargetArticle == undefined) {
-		openTargetArticle = true;
+		openTargetArticle = false;
 	}
 	var name = $("rel-subsuper").value;
 	/*STARTLOG*/
@@ -743,6 +749,7 @@ updateTypeHint: function(elementID) {
 		hint = cats + hint;
 	}
 	relation.setAttribute('constraints', hint);
+//	console.log("updateTypeHint: "+hint);
 	
 },
 
@@ -751,11 +758,16 @@ updateInstanceTypeHint: function(elementID) {
 	var instance = $('rel-value-0');
 	
 	var hint = 'namespace:' + SMW_INSTANCE_NS;
-	if (relation.value.length > 0) { 
-		hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
-				'| ' + hint;
+	if (relation.value.length > 0) {
+		if (relation.value == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
+			hint = 'namespace:' + SMW_PROPERTY_NS;
+		} else {
+			hint = 'instance-property-range:'+gLanguage.getMessage('PROPERTY_NS')+relation.value +
+					'| ' + hint;
+		}
 	}
 	instance.setAttribute('constraints', hint);
+//	console.log("updateInstanceTypeHint: "+hint);
 	
 },
 
@@ -763,6 +775,7 @@ resetInstanceTypeHint: function(elementID) {
 	var instance = $('rel-value-0');
 	var hint = 'namespace:' + SMW_INSTANCE_NS;
 	instance.setAttribute('constraints', hint);
+//	console.log("resetInstanceTypeHint: "+hint);
 },
 
 newRelation: function() {
@@ -1014,8 +1027,16 @@ changeItem: function(selindex) {
 			}
 		}
  		//change relation
-                relation.update(relName, value, text);
-        }
+ 		if (relName == gLanguage.getMessage('SUBPROPERTY_OF', 'cont')) {
+ 			// Property is "Subproperty of" 
+ 			// => check if the value has the property namespace
+ 			var propNs = gLanguage.getMessage('PROPERTY_NS', 'cont');
+ 			if (value.indexOf(propNs) != 0) {
+ 				value = propNs + value;
+ 			}
+ 		}
+		relation.update(relName, value, text);
+	}
 
 	//show list
 	this.fillList(true);
