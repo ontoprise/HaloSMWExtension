@@ -123,27 +123,17 @@ class UnifiedSearchResultPrinter {
 		return $imagePath;
 	}
 
-	// adds preview to result depending on namespace
-	private static function addPreview($e, $args, $args_prev) {	
-	    global $wgServer, $wgScript;  
-        switch($e->getTitle()->getNamespace()) {
-            case NS_MAIN:
-            case NS_CATEGORY:
-            case NS_TEMPLATE:
-            case SMW_NS_PROPERTY:
-            case SMW_NS_TYPE:
-            case NS_HELP:
-            case NS_IMAGE:
-              return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
+    // adds preview to result depending on namespace
+    private static function addPreview($e, $args, $args_prev) { 
+        global $wgServer, $wgScript;  
+        
+        return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
                              ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle()->getPrefixedText() .
                                $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';           
-            default:
-              return '<li><span class="nosearchprev">&nbsp;</span>';        
-        }			
-	}
+    }
 
-	private static function getImageFromNamespace($result) {
-		$image = "";  
+    private static function getImageFromNamespace($result) {
+        $image = "";  
         switch($result->getTitle()->getNamespace()) {
             case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
             case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
@@ -153,7 +143,7 @@ class UnifiedSearchResultPrinter {
             case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
             case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
         }
-        // if RichMedia extension type extension is installed
+        // if MIME type extension is installed
         if (defined("SMW_RM_VERSION")) {
             switch($result->getTitle()->getNamespace()) {
                 case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
@@ -162,8 +152,14 @@ class UnifiedSearchResultPrinter {
                 case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
             }
         }
+        // if SemanticForms is installed
+        if (defined("SF_NS_FORM")) {
+            if ($result->getTitle()->getNamespace() == SF_NS_FORM) {
+                $image = "smw_plus_form_icon_16x16.png";
+            }
+        }
         return $image;
-	}
+    }
 
 	private static function formatdate($timestamp) {
 		$year = substr($timestamp,0,4);
