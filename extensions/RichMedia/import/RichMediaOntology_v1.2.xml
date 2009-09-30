@@ -1106,11 +1106,11 @@ case: All content sections END
     <title>Template:Template</title>
     <id>332</id>
     <revision>
-      <id>8819</id>
-      <timestamp>2009-09-20T12:13:02Z</timestamp>
+      <id>10254</id>
+      <timestamp>2009-09-29T22:19:45Z</timestamp>
       <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
@@ -1176,7 +1176,8 @@ This template is populated by form(s):
    --&gt;&lt;/ul&gt;
 }}
 
-[[Category:Template]]
+[[Category:Template]]  
+[[Page has default form::Form:Add and edit Template| ]] &lt;!-- default form for the template page itself --&gt;
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -1185,11 +1186,11 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
     <title>Template:Property</title>
     <id>331</id>
     <revision>
-      <id>8508</id>
-      <timestamp>2009-09-18T08:29:26Z</timestamp>
+      <id>10252</id>
+      <timestamp>2009-09-29T22:10:12Z</timestamp>
       <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Property
@@ -1217,8 +1218,9 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
 === Default form ===
 
 New pages (i.e. &quot;redlinks&quot;) which are related via this property shall use the form: 
-
 *{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+
+[[Page has default form::Form:Add and edit Property| ]] &lt;!-- default form for the property page itself --&gt;
 
 &lt;!-- not needed currently, too fine-grained
 === Rules ===
@@ -1242,8 +1244,8 @@ This property is modified by the following rules:&lt;br&gt;
     <title>Template:Category</title>
     <id>318</id>
     <revision>
-      <id>9859</id>
-      <timestamp>2009-09-28T16:04:43Z</timestamp>
+      <id>10262</id>
+      <timestamp>2009-09-30T07:44:52Z</timestamp>
       <contributor>
         <username>WikiSysop2</username>
         <id>24</id>
@@ -1274,8 +1276,10 @@ You should use this template to provide your wiki-community with a proper docume
 === Default form  ===
 
 This category is populated by the form: 
-
-*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+{{#ifeq:{{FULLPAGENAME}}|Category:Category&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Page has default form::{{{Has default form|}}}]]}}&lt;!--
+--&gt;|*{{#ifeq:{{{Has default form|}}}||''not specified''|[[Has default form::{{{Has default form|}}}]]}}
+}}[[Page has default form::Form:Add and edit Category| ]]
 
 === Defined in templates  ===
 
@@ -1294,8 +1298,9 @@ This category is read by the following rules: {{#sparql:[[Category:Rule]][[Is re
 
 This category is modified by the following rules: {{#sparql:[[Category:Rule]][[Is written by rule::{{FULLPAGENAME}}]]|?=|format=ul|default=&lt;ul&gt;&lt;li&gt;''no rule modifying this''&lt;/ul&gt;}}
 &lt;/nowiki&gt;
---&gt; &lt;!-- category annotations --&gt; 
-{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part]]|[[Category:Category]]}}[[Is category::true| ]]&lt;/includeonly&gt;&lt;noinclude&gt;
+--&gt;&lt;!-- category annotations --&gt;&lt;!--
+--&gt;{{#ifeq:{{FULLPAGENAME}}|Category:Category|[[Category:Wiki part| ]]|}}[[Is category::true| ]]&lt;!--
+--&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
   </page>
@@ -2112,11 +2117,11 @@ These are the literal class definitions in common.css:
     <title>Property:HasUploader</title>
     <id>426</id>
     <revision>
-      <id>9433</id>
-      <timestamp>2009-09-23T11:38:38Z</timestamp>
+      <id>10331</id>
+      <timestamp>2009-09-30T10:20:01Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:HasUploader
@@ -2128,18 +2133,18 @@ These are the literal class definitions in common.css:
 |own work=True
 }}
 [[Has type::Type:Page| ]]
-[[has domain and range::Category:Media; | ]]</text>
+[[has domain and range::Category:Media;Category:Person| ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:HasCopyrightBy</title>
     <id>427</id>
     <revision>
-      <id>9429</id>
-      <timestamp>2009-09-23T11:36:23Z</timestamp>
+      <id>10330</id>
+      <timestamp>2009-09-30T10:19:46Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:HasCopyrightBy
@@ -2151,7 +2156,7 @@ These are the literal class definitions in common.css:
 |own work=True
 }}
 [[Has type::Type:Page| ]]
-[[has domain and range::Category:Media; | ]]</text>
+[[has domain and range::Category:Media;Category:Person| ]]</text>
     </revision>
   </page>
   <page>
@@ -2255,11 +2260,11 @@ Denotes a content item as subsection of another content item.
     <title>Property:Has author</title>
     <id>283</id>
     <revision>
-      <id>6253</id>
-      <timestamp>2009-09-01T14:30:16Z</timestamp>
+      <id>10342</id>
+      <timestamp>2009-09-30T10:44:06Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has author
@@ -2274,7 +2279,7 @@ Denotes a content item as subsection of another content item.
 |year=2009
 }}
 [[Has type::Type:Page| ]]
-[[Has domain and range::Category:Entity; Category:Person| ]]</text>
+[[Has domain and range::; Category:Person| ]]</text>
     </revision>
   </page>
   <page>
@@ -2357,11 +2362,11 @@ Denotes a content item as subsection of another content item.
     <title>Category:Media</title>
     <id>430</id>
     <revision>
-      <id>6496</id>
-      <timestamp>2009-09-04T08:09:12Z</timestamp>
+      <id>10280</id>
+      <timestamp>2009-09-30T08:34:26Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
       <text xml:space="preserve">{{Category
 |PAGENAME=Category:Media
@@ -2374,128 +2379,172 @@ Denotes a content item as subsection of another content item.
 {{Copyright of article
 |own work=True
 }}
-[[Category:Content]]</text>
+[[Category:Content|Content]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Image</title>
     <id>431</id>
     <revision>
-      <id>3387</id>
-      <timestamp>2009-06-08T07:54:36Z</timestamp>
+      <id>10276</id>
+      <timestamp>2009-09-30T08:29:13Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMImage]]</text>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Image
+|Has author=User:WikiSysop2
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:RMImage
+|rationale=Denotes all images.
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Category:Media|Image]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Pdf</title>
     <id>432</id>
     <revision>
-      <id>3389</id>
-      <timestamp>2009-06-08T07:54:36Z</timestamp>
+      <id>10283</id>
+      <timestamp>2009-09-30T08:38:03Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMPdf]]</text>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Pdf
+|Has author=User:WikiSysop2
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:RMPdf
+|rationale=Contains all PDF documents.
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Category:Media|Media]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Document</title>
     <id>433</id>
     <revision>
-      <id>3391</id>
-      <timestamp>2009-06-08T07:54:36Z</timestamp>
+      <id>10263</id>
+      <timestamp>2009-09-30T07:47:08Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMDocument]]</text>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Document
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:RMDocument
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Category:Media|Document]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Audio</title>
     <id>434</id>
     <revision>
-      <id>3393</id>
-      <timestamp>2009-06-08T07:54:36Z</timestamp>
+      <id>10312</id>
+      <timestamp>2009-09-30T09:46:07Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMAudio]]</text>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:Audio
+|Has author=User:WikiSysop2
+|Has default form=Form:RMAudio
+|part of=SMWplus Basic Ontology Section]]
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Category:Media|Media]]</text>
     </revision>
   </page>
   <page>
     <title>Category:Video</title>
     <id>435</id>
     <revision>
-      <id>3395</id>
-      <timestamp>2009-06-08T07:54:36Z</timestamp>
+      <id>10315</id>
+      <timestamp>2009-09-30T09:49:58Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <minor/>
-      <comment>1 revision</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMVideo]]</text>
+      <text xml:space="preserve">{{Category
+|rationale=Denotes videos
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|long description=__NOTITLE__
+|Has default form=Form:RMVideo
+}}
+[[Category:Media]]</text>
     </revision>
   </page>
   <page>
     <title>Category:VCard</title>
     <id>1007</id>
     <revision>
-      <id>6669</id>
-      <timestamp>2009-09-07T10:32:25Z</timestamp>
+      <id>10314</id>
+      <timestamp>2009-09-30T09:48:58Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <comment>New page: [[Category:Media]] [[Has default form::Form:RMVCard]]</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMVCard]]</text>
+      <text xml:space="preserve">{{Category
+|rationale=Denotes vcards
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|long description=__NOTITLE__
+|Has default form=Form:RMVCard
+}}
+[[Category:Media]]</text>
     </revision>
   </page>
   <page>
     <title>Category:ICalendar</title>
     <id>1006</id>
     <revision>
-      <id>6668</id>
-      <timestamp>2009-09-07T10:31:27Z</timestamp>
+      <id>10274</id>
+      <timestamp>2009-09-30T08:26:29Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <username>WikiSysop2</username>
+        <id>24</id>
       </contributor>
-      <comment>New page: [[Category:Media]] [[Has default form::Form:RMICalendar]]</comment>
-      <text xml:space="preserve">[[Category:Media]]
-[[Has default form::Form:RMICalendar]]</text>
+      <text xml:space="preserve">{{Category
+|PAGENAME=Category:ICalendar
+|Has author=User:WikiSysop2
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:RMICalendar
+}}
+{{Copyright of article
+|own work=True
+}}
+[[Category:Media|ICalendar]]</text>
     </revision>
   </page>
   <page>
     <title>Template:Template</title>
     <id>332</id>
     <revision>
-      <id>8819</id>
-      <timestamp>2009-09-20T12:13:02Z</timestamp>
+      <id>10254</id>
+      <timestamp>2009-09-29T22:19:45Z</timestamp>
       <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
@@ -2561,7 +2610,8 @@ This template is populated by form(s):
    --&gt;&lt;/ul&gt;
 }}
 
-[[Category:Template]]
+[[Category:Template]]  
+[[Page has default form::Form:Add and edit Template| ]] &lt;!-- default form for the template page itself --&gt;
 Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -2634,11 +2684,11 @@ test3:
     <title>Template:Form</title>
     <id>322</id>
     <revision>
-      <id>9105</id>
-      <timestamp>2009-09-21T16:56:26Z</timestamp>
+      <id>10253</id>
+      <timestamp>2009-09-29T22:16:12Z</timestamp>
       <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Form
@@ -2738,6 +2788,8 @@ This form is embedded in other forms:
 |false=[[Transcludable::false| ]]
 }}
 [[Category:Form]]
+
+[[Page has default form::Form:Add and edit Form| ]] &lt;!-- default form for the form page itself --&gt;
 {{#ifeq:{{{Form thumbnail|}}}|||[[Form thumbnail::{{{Form thumbnail|}}}| ]]}}
 Edit the page to see the form text.&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
