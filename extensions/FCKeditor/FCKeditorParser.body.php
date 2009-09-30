@@ -121,7 +121,7 @@ class FCKeditorParser extends Parser
         return $this->FCKeditorDateTimeVariables;
     }
     public function getWikiVariables() {
-        return $this->FCKeditorWikiTags;
+        return $this->FCKeditorWikiVariables;
     }
     public function getFunctionHooks() {
         return $this->FCKeditorFunctionHooks;
