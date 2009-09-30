@@ -721,7 +721,7 @@ class AnnotationLevelConsistency {
 
 			$dvs = $domRanVal->getDVs();
 			$domain = reset($dvs);
-			$domainCat = $domain !== false ? $domain->getTitle() : NULL;
+			$domainCat = $domain !== false && !is_null($domain) ? $domain->getTitle() : NULL;
 
 			if ($domainCat == NULL) {
 				$domainCorrect = true;
