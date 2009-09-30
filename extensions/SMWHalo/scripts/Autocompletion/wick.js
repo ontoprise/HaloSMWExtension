@@ -992,7 +992,13 @@ AutoCompleter.prototype = {
     },  //this.selectFromMouseOver
     selectFromMouseClick: function() {
         this.activateCurrentSmartInputMatch();
-        
+        var id = this.siw.inputBox ? this.siw.inputBox.getAttribute("id") : null;
+        // ignore search field, because it deletes
+        // its content when it gains the focus.
+        if (id != 'searchInput') { 
+            this.siw.inputBox.focus();
+            this.siw.inputBox.blur();
+        }
         this.hideSmartInputFloater();
     },  //this.selectFromMouseClick
     getIndexFromElement: function(o) {
