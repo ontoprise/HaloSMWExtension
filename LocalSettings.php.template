@@ -153,7 +153,7 @@ $smwgIQEnabled=true;
 $smwgAllowNewHelpQuestions=true;
 $smwgKeepGardeningConsole=false;
 $smwgEnableLogging=false;
-$smwgDeployVersion=true;
+$smwgDeployVersion=false;
 $smwgGardeningBotDelay=100;
 
 
@@ -237,9 +237,6 @@ $wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variab
 
 include("extensions/DynamicPageList/DynamicPageList.php");
 
-
-
-
 #MIME-Type
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
 
@@ -250,8 +247,7 @@ $srfgFormats[] = 'googlebar';
 
 // Obtain a key and uncomment the following two lines to enable exhibit 
 $srfgFormats[] = 'exhibit';
-//$wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xSs46XrA4oX1zqtsRFEXPxbV5MtMhTPFGQBYP3GQE3l_b1b_FUqyJC2IQ'; // smwdemo.ontoprise.com
-$wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xQX9pd0uONOCGJFC8u7ZDUFaCKkshTv5HkjP0A4d-QbgV8Zvnc0vG8p_A';
+$wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSF9PCXcXEIe6Uenfr3x-G8L-rVKw';
 
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
@@ -279,14 +275,9 @@ $wgNamespacesToBeSearchedDefault = array(
         NS_PDF => true
 );
 
-
-
-
-
-
 $wgJobRunRate=0;
 
-
+#RichMedia
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
 enableRichMediaExtension();
 $wgAllowExternalImages=true;
@@ -298,7 +289,6 @@ require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
 if (array_key_exists('mode', $_REQUEST) && $_REQUEST['mode'] == 'wysiwyg' || (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0)) {
 require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 }
-
 
 
 require_once("$IP/extensions/ImageMap/ImageMap.php");
@@ -313,5 +303,3 @@ $smwgNamespacesWithSemanticLinks[NS_HELP] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 $smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
-
-?>
