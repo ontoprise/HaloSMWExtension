@@ -2913,8 +2913,8 @@ HTML;
         if(!$readOnly) {
             $temphtml .= <<<HTML
         <div class="haloacl_buttons_under_panel">
-            <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="Delete template" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
-            <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="Save template" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
+            <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="Delete template from ACL" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
+            <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="Add template to ACL" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
         </div>
 HTML;
         }
