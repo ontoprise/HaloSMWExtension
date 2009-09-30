@@ -1521,26 +1521,27 @@ Index: extensions/SemanticForms/specials/SF_AddData.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_AddData.php	(revision 5352)
 +++ extensions/SemanticForms/specials/SF_AddData.php	(working copy)
-@@ -28,6 +28,18 @@
+@@ -28,6 +28,19 @@
  			$queryparts = explode('/', $query, 2);
  			$form_name = isset($queryparts[0]) ? $queryparts[0] : '';
  			$target_name = isset($queryparts[1]) ? $queryparts[1] : '';
 +/*op-patch|TS|2009-09-29|SMWHalo|Store the name of the new page in a javascript variable|start*/
 +			global $wgOut, $wgJsMimeType;
-+		
-+			$t = Title::newFromText($target_name);
-+			$namespace = $t->getNamespace();
-+			$script = "<script type= \"$wgJsMimeType\">/*<![CDATA[*/\n";
-+			$script .= "sfgTargetNamespaceNumber = $namespace;";
-+			$script .= "\n/*]]>*/</script>\n";
++			if (!empty($target_name)) {
++				$t = Title::newFromText($target_name);
++				$namespace = $t->getNamespace();
++				$script = "<script type= \"$wgJsMimeType\">/*<![CDATA[*/\n";
++				$script .= "sfgTargetNamespaceNumber = $namespace;";
++				$script .= "\n/*]]>*/</script>\n";
 +			
-+			$wgOut->addScript($script);
++				$wgOut->addScript($script);
++			}
 +/*op-patch|TS|2009-09-29|end*/
 +	
  		}
  
  		$alt_forms = $wgRequest->getArray('alt_form');
-@@ -128,6 +140,10 @@
+@@ -128,6 +141,10 @@
  			$page_is_source = false;
  			$page_contents = null;
  		}
@@ -1551,7 +1552,7 @@ Index: extensions/SemanticForms/specials/SF_AddData.php
  		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $page_contents, $page_title, $page_name_formula);
  		if ($form_submitted) {
-@@ -191,7 +207,12 @@
+@@ -191,7 +208,12 @@
  				<form name="createbox" onsubmit="return validate_all()" action="" method="post" class="createbox">
  
  END;
