@@ -444,7 +444,7 @@ class FCKeditorParser extends Parser
 		// and replace them with FCK_PROPERTY_X_FOUND that will be used later to be replaced
 		// by the current property string
 		while (preg_match('/\<\!--FCK_SKIP_START--\>\[\[(.*?)\]\]\<\!--FCK_SKIP_END--\>/', $text, $matches)) {
-            $replacedVal = $this->revertEncapsulatedString($matches[1]);
+                        $replacedVal = $this->revertEncapsulatedString($matches[1]);
 			$replacement = $this->replaceSpecialLinkValue($replacedVal, $matches[1]);
 			$pos = strpos($text, $matches[0]);
 			$before = substr($text, 0, $pos);
@@ -580,7 +580,7 @@ class FCKeditorParser extends Parser
   				$prop[1] = substr($prop[1], $p + 1);
   			}
   			// replace an empty value with &nbsp; for IE8
-  			if (preg_match('/\s+/', $prop[1])) $prop[1] = '&nbsp;';
+  			if (preg_match('/^\s+$/', $prop[1])) $prop[1] = '&nbsp;';
     		$p = count($this->fck_mw_propertyAtPage);
     		$this->fck_mw_propertyAtPage[$p]= '<span class="fck_mw_property" property="'.$prop[0].'">'.$prop[1].'</span>';
     		return 'FCK_PROPERTY_'.$p.'_FOUND';
