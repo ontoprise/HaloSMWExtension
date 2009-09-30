@@ -1053,7 +1053,7 @@ HTML;
                         YAHOO.haloacl.closePanel('$panelid');
                         $('manageUserGroupSettingsModificationRight').show();
                         $('manageUserGroupFinishButtons').show();
-                        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+                        YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','getRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modificationGroup'});
 
                     }else{
                    YAHOO.haloacl.notification.createDialogOk("content","Something went wrong",result.responseText,{
@@ -1103,12 +1103,18 @@ HTML;
         $currentUser = $wgUser->getName();
         $footerextension .= "YAHOO.haloacl.clickedArrayUsers['right_tabview_manageUserGroupSettingsModificationRight'].push('$currentUser');";
     }
+
+
     if(sizeof($manageUsers) == 0){
-        $footerextension .= "genericPanelSetSaved_manageUserGroupSettingsModificationRight('default');";
-        $footerextension .= "genericPanelSetDescr_manageUserGroupSettingsModificationRight('Modification rights for U:$currentUser');";
-        $footerextension .= "console.log($('right_tabview_manageUserGroupSettingsModificationRight').firstChild.firstChild.firstChild);$('right_tabview_manageUserGroupSettingsModificationRight').firstChild.firstChild.firstChild.click();";
+        $footerextension .= "try{genericPanelSetSaved_manageUserGroupSettingsModificationRight('default');}catch(e){}";
+        $footerextension .= "try{genericPanelSetDescr_manageUserGroupSettingsModificationRight('Modification rights for U:$currentUser');}catch(e){}";
     }else{
-        $footerextension .= "YAHOO.haloacl.refreshPanel_manageUserGroupSettingsModificationRight();";
+        $footerextension .= "try{YAHOO.haloacl.refreshPanel_manageUserGroupSettingsModificationRight();}catch(e){}";
+    }
+
+    if($newGroup == "false"){
+        //$footerextension .= "$('haloacl_save_manageUserGroupSettingsRight').click();";
+        //$footerextension .= "$('haloacl_save_manageUserGroupSettingsModificationRight').click();";
     }
 
     $footerextension .= "</script>";
@@ -1130,6 +1136,12 @@ HTML;
  *
  */
 function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0, $panelName = "Right", $rightDescription = "") {
+    $updatedFromOutside=false;
+    if($predefine == "modificationGroup"){
+        $updatedFromOutside=true;
+        $predefine = "modification";
+    }
+
     if($preload == "false") {
         $preload = false;
     }
@@ -1873,7 +1885,7 @@ HTML;
     /*
      * manageUsers loads this panel once and then modifies its content via js !!!
      */
-    if($predefine == "modification") {
+    if($predefine == "modification" && !$updatedFromOutside) {
         $footerextension .= <<<HTML
         <script>
             genericPanelSetDescr_$panelid("for U: $currentUser","for U: $currentUser");
