@@ -257,7 +257,9 @@ $wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xQX9pd0uONOCGJFC8u7ZDUFaCKkshTv5H
 require_once( "$IP/extensions/Glossary/Glossary.php" );
 
 #ACL
-require_once( "$IP/extensions/PermissionACL/PermissionACL.php" );
+include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+$haclgProtectProperties = true;
+enableHaloACL(); 
 
 #Semantic Notifications
 include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
