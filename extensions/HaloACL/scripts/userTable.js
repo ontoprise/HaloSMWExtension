@@ -533,15 +533,15 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
         }
         result +="</div>";
 
+        try{
+            var username = divitem.parentNode.parentNode.previousElementSibling.firstChild.firstChild;
 
-        var username = divitem.parentNode.parentNode.previousElementSibling.firstChild.firstChild;
-
-        if(highlighted.length > 0 || YAHOO.haloacl.isNameInUserArray(panelid,username.innerHTML)){
-            $(username).setAttribute("style", "font-weight:bold");
-        }else{
-            $(username).setAttribute("style", "");
-        }
-
+            if(highlighted.length > 0 || YAHOO.haloacl.isNameInUserArray(panelid,username.innerHTML)){
+                $(username).setAttribute("style", "font-weight:bold");
+            }else{
+                $(username).setAttribute("style", "");
+            }
+        }catch(e){}
         var divname = $(divitem).readAttribute("name");
         
         //var innerhtml =result+ '<div class="haloacl_infobutton" style="float:left;display:inline"></div><div id="tt1'+panelid+divname+'"></div>';
