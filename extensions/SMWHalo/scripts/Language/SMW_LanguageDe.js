@@ -34,6 +34,7 @@ var wgContLanguageStrings = {
 	'MIN_CARDINALITY'		  : "Hat min Kardinalität",
 	'IS_INVERSE_OF'			  : "Ist invers zu",
 	'TRANSITIVE_RELATION'	  : "Transitive Attribute",
-	'SYMMETRICAL_RELATION'	  : "Symmetrische Attribute"
+	'SYMMETRICAL_RELATION'	  : "Symmetrische Attribute",
+	'SUBPROPERTY_OF'		  : "Subproperty of"
 	
 }
