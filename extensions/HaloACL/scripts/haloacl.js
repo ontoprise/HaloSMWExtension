@@ -606,7 +606,7 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
 };
 
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
-    if(name.length > 4){
+    if(name.length > 2){
         if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
             YAHOO.haloacl.clickedArrayGroups[panelid] = new Array();
         }
@@ -791,6 +791,8 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     if (!anchorId) {
         anchorId = id;
     }
+    var now = new Date();
+    now = now.getTime();
 
     var myPopup = new YAHOO.widget.Panel('popup_'+anchorId,{
         close:true,
@@ -804,7 +806,8 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
        // context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
-        this.destroy();
+        this.hide();
+        //this.destroy();
     }
     myPopup.subscribe("hide", popupClose);
 

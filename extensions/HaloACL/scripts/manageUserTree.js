@@ -260,14 +260,16 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     check: function() {
         this.setCheckState(2);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.check) {
                 c.check();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
 
     /**
@@ -275,14 +277,16 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     uncheck: function() { 
         this.setCheckState(0);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.uncheck) {
                 c.uncheck();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
     
     setTreeType: function(newTreeType) { 
