@@ -114,8 +114,8 @@ class USSpecialPage extends SpecialPage {
 
 		// -- new page link --
 		$colonIndex = strpos($search, ":");
-		$search = $colonIndex !== false ? substr($search, $colonIndex + 1) : $search;
-		$caseInsensitiveTitle = USStore::getStore()->getSingleTitle($search);
+		$localname = $colonIndex !== false ? substr($search, $colonIndex + 1) : $search;
+		$caseInsensitiveTitle = USStore::getStore()->getSingleTitle($localname);
 		
 		if ($newpage !== NULL && !$newpage->exists() && is_null($caseInsensitiveTitle)) {
 			global $wgParser;
