@@ -165,8 +165,8 @@ END;
      *
      * @param string &$html the page itself
      * @param string $entry the token from where to look at start and end token
-     * @param <type> $start the start token
-     * @param <type> $end the end token.
+     * @param string $start the start token
+     * @param string $end the end token.
      */
     static function sliceHtmlPieces(&$html, $entry, $start, $end) {
         $pStart = strpos($html, $entry);
