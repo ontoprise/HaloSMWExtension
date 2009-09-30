@@ -283,7 +283,8 @@ function wfSajaxFormForTemplateFCKeditor($page) {
         // get all forms (actually this should be one only) that has a property
         // 'Populates template' with value being the current template name.
         $query = '[['.$wgContLang->getNsText(NS_CATEGORY).':'.$wgContLang->getNsText(SF_NS_FORM).']]'
-                .'[[Populates template::'.$page.']]';
+                .'[[Populates template::'.$page.']]'
+                .'[[Show in template picker::true]]';
         // run the query now
 	$fixparams = array(
             "format" => "ul",
