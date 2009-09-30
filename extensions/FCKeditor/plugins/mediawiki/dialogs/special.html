@@ -85,16 +85,32 @@ TagNodeList.prototype.add = function(name, type, desc) {
 }
 TagNodeList.prototype.makeSelection = function(oSelect, type, name) {
     var oNewSelect = oSelect.cloneNode(false);
+    var tagSelected = false;
     for (var i = 0; i < this.list.length; i++) {
         if (this.list[i].type == type) {
             var oOption = document.createElement('option');
-            oOption.setAttribute('value', this.list[i].name);
-            if (name == this.list[i].name.toLowerCase()) oOption.setAttribute('selected', 'selected');
+            oOption.value = this.list[i].name;
+            if (name == this.list[i].name) {
+                oOption.selected = 'selected';
+                tagSelected = true;
+            }
             oLabel = document.createTextNode(this.list[i].getLabel());
             oOption.appendChild(oLabel);
             oNewSelect.appendChild(oOption);
         }
     }
+    // tag was not selected, then it's a custom tag which can't
+    // be received at the moment, therefore add it manually to the list
+    if (! tagSelected && name) {
+        var oOption = document.createElement('option');
+        oOption.value = name;
+        oOption.selected = 'selected';
+        this.add(name, type, '');
+        var oLabel = document.createTextNode(this.list[this.list.length -1].getLabel());
+        oOption.appendChild(oLabel);
+        oNewSelect.appendChild(oOption);
+    }
+    
     oSelect.parentNode.insertBefore(oNewSelect, oSelect);
     oSelect.parentNode.removeChild(oSelect);
 } 
@@ -205,12 +221,12 @@ function MakeSelection(type, name) {
     }
     // special tags and parser functions can have params. If the readonly attribute
     // is set, remove it
-    if ( (type == 'p' || type == 't') && GetE('xTemplateRaw').getAttribute('readonly') )
-        GetE('xTemplateRaw').removeAttribute('readonly');
+    if ( (type == 'p' || type == 't') && GetAttribute(GetE('xTemplateRaw'), 'readonly') )
+        SetAttribute(GetE('xTemplateRaw'), 'readonly', null);
     // for constants, datetime and site variables, set the textbox to readonly
     // as they have no parameters
     else if (type == 'c' || type == 'v' || type == 'w')
-        GetE('xTemplateRaw').setAttribute('readonly', 'readonly');
+        SetAttribute(GetE('xTemplateRaw'), 'readonly', 'readonly');
 }
 
 function LoadSelection() {
@@ -225,7 +241,7 @@ function LoadSelection() {
         }
         // we edit an existing special tag, read it's content
 	GetE('xTemplateRaw').value = FCKTools.HTMLDecode(oTemplateSpan.innerHTML).replace(/fckLR/g,'\r\n' ).replace( /&quot;/g, '"' ) ;
-	var tagName = oTemplateSpan.getAttribute('_fck_mw_tagname').toLowerCase();
+	var tagName = oTemplateSpan.getAttribute('_fck_mw_tagname');
 	var tagType = oTemplateSpan.getAttribute('_fck_mw_tagtype');
 
         // set the current tag being the selected one in the selection list
