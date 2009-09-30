@@ -99,9 +99,6 @@ class FCKeditorParser extends Parser
 
         // add custom tags from extensions to list
 	foreach ($wgParser->getTags() as $h) {
-            if (!in_array($h, array("pre"))) {
-                $this->setHook($h, array($this, "fck_genericTagHook"));
-            }
             if (! in_array($h, $this->FCKeditorWikiTags))
                 $this->FCKeditorWikiTags[] = $h;
 	}
@@ -175,43 +172,6 @@ class FCKeditorParser extends Parser
 		return $target;
 	}
 	
-	/**
-	* Callback function for custom tags: feed, ref, references etc.
-	*
-	* @param string $str Input
-	* @param array $argv Arguments
-	* @return string
-	*/
-	function fck_genericTagHook( $str, $argv, $parser ) {
-		if (in_array($this->fck_mw_taghook, array("ref", "math", "references"))) {
-			$class = $this->fck_mw_taghook;
-		}
-		else {
-			$class = "special";
-		}
-		
-		if (empty($argv)) {
-			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$this->fck_mw_taghook."\">";
-		}
-		else {
-			$ret = "<span class=\"fck_mw_".$class."\" _fck_mw_customtag=\"true\" _fck_mw_tagname=\"".$this->fck_mw_taghook."\"";
-			foreach ($argv as $key=>$value) {
-				$ret .= " ".$key."=\"".$value."\"";
-			}
-			$ret .=">";
-		}
-		if (is_null($str)) {
-			$ret = substr($ret, 0, -1) . " />";
-		}
-		else {
-			$ret .= htmlspecialchars($str);
-			$ret .= "</span>";
-		}
-
-		$replacement = $this->fck_addToStrtr($ret, $this->fck_mw_taghook);
-		return $replacement;
-	}
-
 	/**
 	* Callback function for wiki tags: nowiki, includeonly, noinclude
 	*
@@ -458,11 +418,9 @@ class FCKeditorParser extends Parser
 
 		$this->fck_internal_parse_text =& $text;
 
-		//these three tags should remain unchanged
-		$tagsRemainUnchanged = array('includeonly', 'noinclude', 'onlyinclude');
-		
 		// also replace all custom tags
-		foreach (array_merge($this->getTags(), $tagsRemainUnchanged) as $tag) {
+		foreach ($this->FCKeditorWikiTags as $tag) {
+		    $tag = $this->guessCaseSensitiveTag($tag, $text);
 		    $this->fck_allTagsCurrentTagReplaced = $tag;
 		    $text = StringUtils::delimiterReplaceCallback( "<$tag>", "</$tag>", array($this, 'fck_allTags'), $text );
 		}
@@ -643,7 +601,7 @@ class FCKeditorParser extends Parser
 			}
 			$parserOutput->setText(strtr($parserOutput->getText(), $this->fck_mw_strtr_span));
 		}
-
+		
 		// there were properties, look for the placeholder FCK_PROPERTY_X_FOUND and replace
 		// it with <span class="fck_mw_property">property string without brakets</span>
 		if (count($this->fck_mw_propertyAtPage) > 0) {
@@ -1044,5 +1002,24 @@ class FCKeditorParser extends Parser
 		global $wgScript;
 		$text = str_replace('<a href="'.$wgScript.'/', '<a href="', $text);
 		return $text;
+	}
+	
+	/**
+	 * When getting the available tags from the wiki, these are returned in
+	 * lower case although some might be in camel case. Also tags are case
+	 * sensitive. Therefore guess here the correct tag.
+	 *
+	 * @param string $tag small case
+	 * @param string $text wiki text
+	 * @return string $tag case sensitive tag
+	 */
+	private function guessCaseSensitiveTag($tag, $text) {
+	    preg_match('/<('.$tag.')>/i', $text, $matchOpen);
+	    preg_match('/<\/('.$tag.')>/i', $text, $matchClose);
+	    if (count($matchOpen) > 0 &&
+	        count($matchClose) > 0 &&
+	        $matchOpen[1] == $matchClose[1])
+	        return $matchOpen[1];
+	    return $tag;
 	}
 }
