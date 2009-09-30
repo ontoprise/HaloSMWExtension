@@ -81,8 +81,16 @@ window.onload = function()
 	// Activate the "OK" button.
 	window.parent.SetOkButton( true ) ;
 	window.parent.SetAutoSize( true ) ;
+
+        // Set image paths
+        SetPendingLoaderImagePath();
 }
 
+function SetPendingLoaderImagePath() {
+    var src = FCKConfig.PluginsPath + 'mediawiki/images/ajax-loader.gif';
+    GetE('xTemplateManualPending').getElementsByTagName('img')[0].src = src;
+    GetE('xTemplateFormPending').getElementsByTagName('img')[0].src = src;
+}
 
 function LoadSelection()
 {
@@ -140,15 +148,17 @@ function SetFormForTemplate(result) {
                     + oEditor.window.parent.wgPageName.replace(' ', '_')
                     + '?page=plain';
             var xTemplateForm = GetE('xTemplateForm');
-            if (xTemplateForm.tagName == "iframe")
+            if (xTemplateForm.tagName.toLowerCase == "iframe") {
                 SetAttribute(GetE('xTemplateForm'), 'src', url);
+            }
             else {
                 xTemplateForm.parentNode.parentNode.parentNode.parentNode.border = '1';
-                xTemplateForm.parentNode.innerHTML = '<iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src="' + url + '"></iframe>';
+                xTemplateForm.parentNode.innerHTML = '<iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src="' + url + '" onload="javascript:ShowTemplateForm();"></iframe>';
             }
 	}
         else {
             // set table border thick
+            ShowTemplateForm();
             GetE('xTemplateForm').parentNode.parentNode.parentNode.parentNode.border = '1';
             GetE('xTemplateForm').parentNode.innerHTML = '<div id="xTemplateForm">There is no form to '
                 + 'submit parameters for this template call. '
@@ -185,13 +195,36 @@ function FillTemplateList(result) {
 
 }
 function SetUrl(tpage) {
+    // trigger the pending indicators visible in the Info and Form tab
+    ShowPendingIndicators();
+    
     sTemplateName = tpage;
     LoadFormForTemplate();
     var urlTemplate = oEditor.window.parent.wgServer
         + oEditor.window.parent.wgScript
         + '?title=' + tpage + '&page=plain';
+
     SetAttribute(GetE('xTemplateManual'),'src',urlTemplate);
     GetE('xTemplateRaw').value = "{{" + tpage.substr(tpage.indexOf(':') + 1) + "}}";
+}
+
+function ShowTemplateManual() {
+    GetE('xTemplateManualPending').style.display = "none";
+    GetE('xTemplateManualFrame').style.display = "block";
+}
+
+function ShowTemplateForm() {
+    GetE('xTemplateFormPending').style.display = "none";
+    GetE('xTemplateFormFrame').style.display = "block";
+}
+
+function ShowPendingIndicators() {
+    // Template Info
+    GetE('xTemplateManualPending').style.display = "block";
+    GetE('xTemplateManualFrame').style.display = "none";
+    // Form
+    GetE('xTemplateFormPending').style.display = "block";
+    GetE('xTemplateFormFrame').style.display = "none";
 }
 
 //#### The OK button was hit.
@@ -227,7 +260,6 @@ function Ok()
                 oFakeImage.setAttribute( 'alt', tooltip);
         }
 
-	//GetE('xTestSpan').innerHTML = GetE('xTemplateRaw').value.Trim().replace( /"/g, '&quot;' ).replace(/(\r\n|\n)/g, '___') ;
 	return true ;
 }
 
@@ -268,7 +300,12 @@ function Ok()
                     <table class="tmplTable">
 			<tr>
 				<td class="tmplTable">
-                                    <iframe id="xTemplateManual" width="100%" scrolling="yes" height="100%" src=""></iframe>
+                                    <div id="xTemplateManualPending" style="display:none; width: 100%; height: 100%; border: 1px solid;">
+                                        <img src="" alt="loading..." />
+                                    </div>
+                                    <div id="xTemplateManualFrame" style="display:block; width: 100%; height: 100%;">
+                                        <iframe id="xTemplateManual" width="100%" scrolling="yes" height="100%" src="" onload="javascript:ShowTemplateManual();"></iframe>
+                                    </div>
 				</td>
 			</tr>
                     </table>
@@ -278,7 +315,12 @@ function Ok()
                     <table class="tmplTable">
 			<tr>
 				<td class="tmplTable">
-                                    <iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src=""></iframe>
+                                    <div id="xTemplateFormPending" style="display:none; width: 100%; height: 100%; border: 1px solid;">
+                                        <img src="" alt="loading" />
+                                    </div>
+                                    <div id="xTemplateFormFrame" style="display:block; width: 100%; height: 100%;">
+                                        <iframe id="xTemplateForm" scrolling="yes" width="100%" height="100%" src="" onload="javascript:ShowTemplateForm();"></iframe>
+                                    </div>
 				</td>
 			</tr>
                     </table>
