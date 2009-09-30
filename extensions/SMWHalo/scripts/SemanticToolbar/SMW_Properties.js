@@ -113,7 +113,8 @@ callme: function(event){
 	
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
              wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' )
-	   && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102)
+	   && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102
+	       || (typeof sfgTargetNamespaceNumber != 'undefined' && sfgTargetNamespaceNumber == 102))
 	   && stb_control.isToolbarAvailable()){
 		this.propertiescontainer = stb_control.createDivContainer(PROPERTIESCONTAINER, 0);
 
