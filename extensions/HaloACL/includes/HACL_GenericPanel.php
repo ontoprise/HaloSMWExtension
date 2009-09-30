@@ -147,7 +147,11 @@ HTML;
 
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
-                if (saved == true) {
+                if(saved == "default"){
+                    $('haloacl_panel_status_$panelid').innerHTML = 'Default';
+                    $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
+
+                }else if (saved == true) {
                     $('haloacl_panel_status_$panelid').innerHTML = 'Saved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
                 } else {

@@ -275,7 +275,7 @@ $messages['en'] = array(
     'hacl_manageUser_7' => 'Delete selected',
     'hacl_manageUser_8' => 'ACL Group Explorer',
     'hacl_manageUser_9' => 'Editing',
-    'hacl_manageUser_10' => 'save Group',
+    'hacl_manageUser_10' => 'Save Group',
 
     'hacl_whitelist_1' => 'Manage whitelisted pages',
     'hacl_whitelist_2' => 'In this tab you can create and delete whitelist entries',

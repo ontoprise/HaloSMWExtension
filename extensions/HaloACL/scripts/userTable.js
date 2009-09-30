@@ -499,7 +499,11 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
         
         var highlighted = new Array();
         var nonHighlighted = new Array();
-        var groupsarray = $(divitem).readAttribute("groups").split(",");
+        var groups = $(divitem).readAttribute("groups");
+        if(groups == null || groups == "undefined"){
+            groups = "";
+        }
+        var groupsarray = groups.split(",");
         if(YAHOO.haloacl.debug) console.log("got groupsarray:");
         if(YAHOO.haloacl.debug) console.log(groupsarray);
 
@@ -563,33 +567,21 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
 
 
 // readnonly-part (assigned tab)
+/*
 YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
-    //if(YAHOO.haloacl.debug) console.log("autoselectevent fired for panel:"+panelid);
-    //if(YAHOO.haloacl.debug) console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
-    //if(YAHOO.haloacl.debug) console.log("listing known selections for panel:");
-
-    /*
-    $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
-        $(item).removeClassName("groupselected");
-    });
-
-    
-    $$('.ROdatatableDiv_'+panelid+'_usersgroups').each(function(item){
-        var name = $(item).readAttribute("name");
-        //if(YAHOO.haloacl.debug) console.log("checking for name:"+name);
-        if(YAHOO.haloacl.isNameInGroupArray(panelid,name)){
-            $(item).addClassName("groupselected");
-        }
-    });
-  */
-
+ 
+    //YAHOO.haloacl.debug = true;
     $$('.haloacl_datatable_groupdiv'+panelid).each(function(divitem){
         if(YAHOO.haloacl.debug) console.log("processing divitem:");
         if(YAHOO.haloacl.debug) console.log(divitem);
 
         var highlighted = new Array();
-        var nonHighlighted = new Array();
-        var groupsarray = $(divitem).readAttribute("groups").split(",");
+        var groups = $(divitem).readAttribute("groups");
+        if(groups == null || groups == "undefined"){
+            groups = "";
+        }
+
+        var groupsarray = groups.split(",");
         if(YAHOO.haloacl.debug) console.log("got groupsarray:");
         if(YAHOO.haloacl.debug) console.log(groupsarray);
 
@@ -606,14 +598,18 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
 
         var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
         for(i=0;i<highlighted.length;i++){
-            result += "<span class='groupselected'>";
-            result+= ""+highlighted[i];
-            result+="</span>&nbsp;,";
+            if(highlighted[i] != "undefined"){
+                result += "<span class='groupselected'>";
+                result+= ""+highlighted[i];
+                result+="</span>&nbsp;,";
+            }
         }
         for(i=0;i<nonHighlighted.length;i++){
-            result +="<span class='groupunselected'>";
-            result+= ""+nonHighlighted[i];
-            result+="</span>&nbsp;,";
+            if(nonHighlighted[i] != "undefined"){
+                result +="<span class='groupunselected'>";
+                result+= ""+nonHighlighted[i];
+                result+="</span>&nbsp;,";
+            }
         }
         result +="</div>";
 
@@ -637,9 +633,10 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
 
 
     });
+    //YAHOO.haloacl.debug = false;
  
 };
-
+*/
 
 YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
     filter = filter.toLowerCase();

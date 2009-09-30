@@ -48,7 +48,7 @@ function AddHaclToolbarForEditPage ($content_actions) {
             YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'{$content_actions->mTitle}'});
         </script>
 HTML;
-	#$content_actions->editFormPageTop = 'editFormPageTop';
+    #$content_actions->editFormPageTop = 'editFormPageTop';
     #$content_actions->editFormTextTop = 'editFormTextTop';
     $content_actions->editFormTextBeforeContent = $html;
     #$content_actions->editFormTextAfterWarn = 'editFormTextAfterWarn';
@@ -64,7 +64,7 @@ HTML;
  TODO: document
  */
 function AddHaclToolbarForSemanticForms($pageTitle, $html) {
-	    $html = <<<HTML
+    $html = <<<HTML
 	        <script>
 	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
 	            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
@@ -89,14 +89,14 @@ function getHACLToolbar($articleTitle) {
 
     // does that aritcle exist or is it a new article
     try {
-    	if (!empty($articleTitle)){
-	        $t = Title::newFromText($articleTitle);
-	        if($t->exists()) {
-	            $newArticle = false;
-	        }
-    	}
+        if (!empty($articleTitle)) {
+            $t = Title::newFromText($articleTitle);
+            if($t->exists()) {
+                $newArticle = false;
+            }
+        }
     }
-    catch(Exception $e) {    }
+    catch(Exception $e)  {    }
 
 
     // retrieving quickacl
@@ -173,9 +173,15 @@ function getHACLToolbar($articleTitle) {
         YAHOO.haloacl.toolbar_updateToolbar = function(){
             var state  = $('haloacl_toolbar_pagestate').value;
             if(state == "protected"){
+                try{
                 $('haloacl_template_protectedwith').show();
+                }catch(e){}
+                try{
                 $('haloacl_template_protectedwith_desc').show();
+                }catch(e){}
+                try{
                 $('haloacl_toolbar_popuplink').show();
+                }catch(e){}
             }else{
                 $('haloacl_template_protectedwith').hide();
                 $('haloacl_template_protectedwith_desc').hide();
@@ -233,22 +239,24 @@ HTML;
         $tpllist[] = $protectedWith;
     }
 
-    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
-    if($toolbarEnabled) {
-        $html .= "<select id='haloacl_template_protectedwith'>";
-    }else {
-        $html .= "<select disabled id='haloacl_template_protectedwith'>";
-    }
-    foreach($tpllist as $tpl) {
-        if($tpl == $protectedWith) {
-            $html .= "<option selected='true'>$tpl</option>";
+    if(sizeof($tpllist) > 0) {
+        $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
+        if($toolbarEnabled) {
+            $html .= "<select id='haloacl_template_protectedwith'>";
         }else {
-            $html .= "<option>$tpl</option>";
+            $html .= "<select disabled id='haloacl_template_protectedwith'>";
         }
-    }
-    $html .= "</select>";
+        foreach($tpllist as $tpl) {
+            if($tpl == $protectedWith) {
+                $html .= "<option selected='true'>$tpl</option>";
+            }else {
+                $html .= "<option>$tpl</option>";
+            }
+        }
+        $html .= "</select>";
     $html .= '<div id="haloacl_toolbar_popuplink" style="display:inline;float:right"><div id="anchorPopup_toolbar" class="haloacl_infobutton" onclick="javascript:YAHOO.haloacl.sDpopupByName($(\'haloacl_template_protectedwith\').value)">&nbsp;</div></div>';
     $html .= '<div id="popup_toolbar"></div>';
+    }
 
 
     if(!$newArticle) {

@@ -245,14 +245,25 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 		$gt = $db->tableName('halo_acl_groups');
 		$gmt = $db->tableName('halo_acl_group_members');
-		$sql = "SELECT * FROM $gt
+	/*
+        	$sql = "SELECT * FROM $gt
 		WHERE NOT EXISTS (
 
 		SELECT child_id
 		FROM $gmt
-		WHERE $gmt.child_id = halo_acl_groups.group_id
+		WHERE $gmt.child_id = halo_acl_groups.group_id 
+                AND $gmt.parent_group_id != $gmt.child_id
 		) order by $gt.group_name
+
             ";
+         *
+         */
+        	$sql = "SELECT * FROM $gt
+		LEFT JOIN $gmt on $gt.group_id = $gmt.child_id
+                WHERE $gmt.parent_group_id is null OR $gmt.parent_group_id = $gmt.child_id
+
+            ";
+
 
 
 		$groups = array();
@@ -1479,9 +1490,9 @@ class HACLStorageSQL {
 		$gmt = $db->tableName('halo_acl_group_members');
 
                 if($extendWhere != null){
-                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%' AND page_namespace = '$extendWhere'";
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(page_title) LIKE lower('%$subName%') AND page_namespace = '$extendWhere'";
                 }else{
-                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE page_title LIKE '%$subName%'";
+                    $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(page_title) LIKE lower('%$subName%')";
                 }
                 if($noACLs){
                     $sql .= " and page_namespace != '300'";

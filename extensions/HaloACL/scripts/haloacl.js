@@ -800,8 +800,8 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
         constraintoviewport:true,
         zIndex :10,
         width:"1000px",
-       // context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
-        context:  ["content","tl","bl", ["beforeShow"]]
+        context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
+       // context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
         this.destroy();
