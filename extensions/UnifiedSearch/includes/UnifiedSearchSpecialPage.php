@@ -28,8 +28,9 @@ class USSpecialPage extends SpecialPage {
 		$restrict = $wgRequest->getText( 'restrict', '' );
 		$t = Title::newFromText( $search );
 
-		$fulltext = $wgRequest->getVal( 'fulltext_x', '' );
-		if ($fulltext == NULL) {
+		$fulltext = $wgRequest->getVal( 'fulltext', '' );
+        $fulltext_x = $wgRequest->getVal( 'fulltext_x', '' );
+        if ($fulltext == NULL && $fulltext_x == NULL) {
 			
 			# If the string cannot be used to create a title
 			if(!is_null( $t ) ){
