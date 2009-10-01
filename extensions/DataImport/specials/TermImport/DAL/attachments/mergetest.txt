@@ -1,4 +1,4 @@
-== Top vehicle manufacturing groups (by volume) ==
+=== Top vehicle manufacturing groups (by volume) ===
 The table below shows the world's largest motor vehicle manufacturing groups, along with the [[marque]]s produced by each one.  The table is ranked by the latest production figures from [[OICA]] 2008<ref>{{cite web
 |title=World Motor Vehicle Production: World Ranking of Manufacturers 2008 |publisher=[[International Organization of Motor Vehicle Manufacturers|OICA]]
 |url=http://oica.net/wp-content/uploads/world-ranking-2008.pdf |format=PDF|accessdate=2009-06-27}}</ref> for the parent group, and then alphabetically by marque.
