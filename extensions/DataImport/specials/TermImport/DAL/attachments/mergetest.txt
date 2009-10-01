@@ -10,7 +10,7 @@ The table below shows the world's largest motor vehicle manufacturing groups, al
 |[[Daihatsu]]||align="center"|{{flagicon|JPN}}
 ||Subsidiary||Global, except North America and Australia
 |-
-|[[Hino Motors|Hino]]||align="center"|{{flagicon|JPN}}
+|[[Hino Motors II|Hino]]||align="center"|{{flagicon|JPN}}
 ||Subsidiary||Asia Pacific, North America and South America
 |-
 |[[Lexus]]||align="center"|{{flagicon|JPN}}
