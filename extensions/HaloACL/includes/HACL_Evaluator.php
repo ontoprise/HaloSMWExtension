@@ -85,6 +85,10 @@ class HACLEvaluator {
 	public static function userCan($title, $user, $action, &$result) {
 		global $wgRequest;
 		
+		if ($title == null) {
+			$result = true;
+			return true;
+		}
 		$etc = haclfDisableTitlePatch();
 
 		// Check if property access is requested.
