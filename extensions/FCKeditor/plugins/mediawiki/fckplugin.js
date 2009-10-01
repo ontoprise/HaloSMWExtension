@@ -1052,7 +1052,7 @@ SMW_Annotate.prototype = {
         window.parent.AdvancedAnnotation.create();
         window.parent.stb_control.stbconstructor();
         window.parent.stb_control.createForcedHeader();
-        window.parent.obContributor.registerContributor();
+        //window.parent.obContributor.registerContributor();
         window.parent.relToolBar.callme();
         window.parent.catToolBar.callme();
         window.parent.propToolBar.callme();
