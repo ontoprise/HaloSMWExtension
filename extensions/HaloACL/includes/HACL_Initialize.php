@@ -76,7 +76,7 @@ $haclgOpenWikiAccess = true;
 # false
 #    If it is <false>, semantic properties are not protected even if they have 
 #	 security descriptors.  
-$haclgProtectProperties = false;
+$haclgProtectProperties = true;
 
 ###
 # By design several databases can be connected to HaloACL. (However, in the first
@@ -116,7 +116,7 @@ $haclgUnprotectableNamespaces = array('Main');
 # This is an array of right templates that are added to the quick access list of 
 # every user who logs in to the system.
 $haclgDefaultQuickAccessRights = array(
-	"ACL:Right/Thomas (Private)"
+//	"ACL:Right/Thomas (Private)"
 );
 
 # load global functions
