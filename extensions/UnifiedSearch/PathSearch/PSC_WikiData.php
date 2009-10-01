@@ -237,6 +237,7 @@
  	public function getTopCategory($id) {
  		self::initData();
  		while (isset(self::$category[$id][PSC_PARENT_CATEGORY])) {
+ 		    if ($id == self::$category[$id][PSC_PARENT_CATEGORY]) break;
  			$id = self::$category[$id][PSC_PARENT_CATEGORY];
  		}
  		return $id;
