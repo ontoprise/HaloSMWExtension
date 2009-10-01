@@ -593,14 +593,14 @@ class AutoCompletionHandler {
 			} else if ($commandText == 'schema-property-type') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$datatype = $params[0];
-				$result = smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype);
-				if (count($result) < SMW_AC_MAX_RESULTS) {
-					global $smwgContLang;
-					$dtl = $smwgContLang->getDatatypeLabels();
-					$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
-
-					if (count($result) >= SMW_AC_MAX_RESULTS) break;
-				}
+				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $datatype));
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+				
+				global $smwgContLang;
+				$dtl = $smwgContLang->getDatatypeLabels();
+				$result = self::mergeResults($result, smwfGetAutoCompletionStore()->getPropertyWithType($userInput, $dtl['_str']));
+				if (count($result) >= SMW_AC_MAX_RESULTS) break;
+				
 			} else if ($commandText == 'ask') {
 				if (empty($params[0]) || is_null($params[0])) continue;
 				$query = $params[0];
