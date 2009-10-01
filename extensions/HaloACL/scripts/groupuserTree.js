@@ -657,7 +657,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
             if(tree != null){
                 tree.draw();
             }
-            
+
         },
         failure: function(oResponse) {
         }

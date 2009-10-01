@@ -255,10 +255,10 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         var createTplActive = false;
         var createDefUserActive = false;
         if(YAHOO.haloacl.activeSubTab == "manageDefaultTemplate"){
-        createAclACtive = false;
-        createDefUserActive = true;
-        createTplActive = false;
-    }
+            createAclACtive = false;
+            createDefUserActive = true;
+            createTplActive = false;
+        }
 
 
         var tab1 = new YAHOO.widget.Tab({
@@ -454,7 +454,9 @@ YAHOO.haloacl.removePanel = function(panelid,callback){
             if(callback != null){
                 callback();
             }
-            YAHOO.haloacl.callAction("removePanelForTemparray",{panelid:panelid},function(){});
+            YAHOO.haloacl.callAction("removePanelForTemparray",{
+                panelid:panelid
+            },function(){});
 
         },
         no:function(){}
@@ -507,7 +509,9 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         });
         tab1._dataConnect = YAHOO.haloacl.tabDataConnect;
         YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab1);
-        tab1.addListener('click', function(e){});
+        tab1.addListener('click', function(e){
+            $('rightPanelAssignedTab'+containerName).innerHTML = "";
+        });
         //$(tab1.get('contentEl')).style.display = 'none';
         $(tab1.get('contentEl')).setAttribute('id','rightPanelSelectDeselectTab'+containerName);
         $(tab1.get('contentEl')).setAttribute('class','haloacl_rightPanelTab');
@@ -518,13 +522,15 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
         dataSrc:'rightPanelAssignedTab',
         cacheData:false,
         active:assActive,
-        id:"rightPanelAssignedTab"+containerName,
+        //id:"rightPanelAssignedTab"+containerName,
         postData:parameterlist
     });
 
     tab2._dataConnect = YAHOO.haloacl.tabDataConnect;
     YAHOO.haloacl.haloaclRightPanelTabs.addTab(tab2);
-    tab2.addListener('click', function(e){});
+    tab2.addListener('click', function(e){
+        $('rightPanelSelectDeselectTab'+containerName).innerHTML = "";
+    });
     $(tab2.get('contentEl')).setAttribute('id','rightPanelAssignedTab'+containerName);
     $(tab2.get('contentEl')).setAttribute('class','haloacl_rightPanelTab');
 
@@ -803,11 +809,11 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
         zIndex :10,
         width:"1000px",
         context:  ["anchorPopup_"+anchorId,"tl","bl", ["beforeShow"]]
-       // context:  ["content","tl","bl", ["beforeShow"]]
+    // context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
         this.hide();
-        //this.destroy();
+    //this.destroy();
     }
     myPopup.subscribe("hide", popupClose);
 

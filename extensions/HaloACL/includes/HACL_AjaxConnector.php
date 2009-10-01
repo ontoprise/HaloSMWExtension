@@ -2223,7 +2223,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
                     <span class="haloacl_rightpanel_selecttab_leftpart_filter_title">
         $hacl_rightPanelSelectDeselectTab_2
                     </span>
-                    <input class="haloacl_filter_input" id="filterAssignedGroup_$panelid" type="text" "/>
+                    <input class="haloacl_filter_input" id="filterAssignedGroup_$panelid" type="text" />
                 </div>
                 <div id="treeDivRO_$panelid" class="haloacl_rightpanel_selecttab_leftpart_treeview">&nbsp;</div>
                 <!--
@@ -2270,7 +2270,7 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
 
             // treeview part - so the left part of the select/deselct-view
 
-            YAHOO.haloacl.ROtreeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDivRO_$panelid",'$panelid');
+           YAHOO.haloacl.ROtreeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDivRO_$panelid",'$panelid');
 
             YAHOO.haloacl.labelClickASSIGNED$panelid = function(name,element){
                 element.parentNode.parentNode.remove();
@@ -2288,7 +2288,6 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
 
         }
 
-        //YAHOO.haloacl.ROtreeInstance$panelid.labelClickAction = 'YAHOO.haloacl.datatableInstance$panelid.executeQuery';
         YAHOO.haloacl.buildUserTreeRO(YAHOO.haloacl.treeInstance$panelid, YAHOO.haloacl.ROtreeInstance$panelid);
 
         refilterGroup = function() {

@@ -125,6 +125,9 @@ HTML;
             ";
 
         $html .= <<<HTML
+            try{
+                //var myLogReader = new YAHOO.widget.LogReader();
+            }catch(e){}
             </script>
 HTML;
         $wgOut->addHTML($html);

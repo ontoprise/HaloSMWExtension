@@ -408,37 +408,35 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
     };
 
     // building shortcut for custom formatter
-    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
+/*    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
     YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
-
+*/
     var myColumnDefs = [ // sortable:true enables sorting
    
     {
         key:"name",
         label:gLanguage.getMessage('name'),
         sortable:false,
-        formatter:"myName"
+        formatter:this.myNameFormatter
     },
     {
         key:"groups",
         label:gLanguage.getMessage('groups'),
         sortable:false,
-        formatter:"myGroup"
+        formatter:this.myGroupFormatter
     },
     
     {
         key:"deletable",
         label:gLanguage.getMessage('remove'),
-        formatter:"mySelect"
-    },
-
+        formatter:this.mySelectFormatter
+    }
     ];
 
     // datasource for this userdatatable
-    var myDataSource = new YAHOO.util.DataSource(dataarray
-        );
-    myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+    var myDataSource2 = new YAHOO.util.DataSource(dataarray);
+    myDataSource2.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
     // userdatatable configuration
     var myConfigs = {
         sortedBy : {
@@ -448,8 +446,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
     };
 
     // instanciating datatable
-    var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
-
+    var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource2, myConfigs);
     myDataTable.panelid = panelid;
     myDataTable.subscribe("postRenderEvent",function(){
         var callback = function(){
@@ -458,10 +455,8 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
         //eval(fncname);
         //});
         };
-
         YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable(panelid,callback);
     });
-
 
     // setting up clickevent-handling
     return myDataTable;
