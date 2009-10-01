@@ -1,0 +1,528 @@
+== Top vehicle manufacturing groups (by volume) ==
+The table below shows the world's largest motor vehicle manufacturing groups, along with the [[marque]]s produced by each one.  The table is ranked by the latest production figures from [[OICA]] 2008<ref>{{cite web
+|title=World Motor Vehicle Production: World Ranking of Manufacturers 2008 |publisher=[[International Organization of Motor Vehicle Manufacturers|OICA]]
+|url=http://oica.net/wp-content/uploads/world-ranking-2008.pdf |format=PDF|accessdate=2009-06-27}}</ref> for the parent group, and then alphabetically by marque.
+{| class="wikitable" style="font-size:95%;"
+![[Marque]]!![[Country of origin]]!!Ownership!!Markets
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''1. [[Toyota|Toyota Motor Corporation]]'''</big> ({{flag|Japan}})
+|-
+|[[Daihatsu]]||align="center"|{{flagicon|JPN}}
+||Subsidiary||Global, except North America and Australia
+|-
+|[[Hino Motors|Hino]]||align="center"|{{flagicon|JPN}}
+||Subsidiary||Asia Pacific, North America and South America
+|-
+|[[Lexus]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-
+|[[Scion (car)|Scion]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|-
+|[[Toyota]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''2. [[General Motors|General Motors Company]]*'''</big> ({{flag|United States}})
+|-
+|[[Buick]]||align="center"|{{flagicon|USA}}
+||Division||North America, China, Israel, Taiwan
+|-
+|[[Cadillac]]||align="center"|{{flagicon|USA}}
+||Division||Global, except South America, India, SE Asia, Australia
+|-
+|[[Chevrolet]]||align="center"|{{flagicon|USA}}
+||Division||Global, except Australia
+|-
+|[[GM Daewoo|Daewoo]]||align="center"|{{flagicon|KOR}}
+||Subsidiary||South Korea
+|-
+|[[GMC (automobile)|GMC]]||align="center"|{{flagicon|USA}}
+||Division||North America, Middle East
+|-
+|[[Holden]]||align="center"| {{flagicon|AUS}}
+||Subsidiary||Australia, New Zealand
+|-
+|[[Hummer]]||align="center"| {{flagicon|USA}}
+||Division||Global, except South America, China, India
+|-
+|[[Opel]]||align="center"| {{flagicon|GER}}
+||Division||Europe (except UK), Russia, South Africa, Mid East, China, India
+|-
+|[[Pontiac]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|-
+|[[Saab Automobile|Saab]]||align="center"| {{flagicon|SWE}}
+||Subsidiary||Global, except India, South America
+|-
+|[[Saturn Corporation|Saturn]]||align="center"| {{flagicon|USA}}
+||Subsidiary||North America
+|-
+|[[Vauxhall Motors|Vauxhall]]||align="center"| {{flagicon|UK}}
+||Subsidiary||United Kingdom
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''3. [[Porsche|Porsche Automobil Holding SE]]**'''</big> ({{flag|Germany}})
+|-
+|[[Audi]]||align="center"|{{flagicon|GER}}
+||Subsidiary||Global
+|-
+|[[Bentley]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Global
+|-
+|[[Bugatti Automobiles SAS|Bugatti]]||align="center"|{{flagicon|FRA}}
+||Subsidiary||Global
+|-
+|[[Lamborghini]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global
+|-
+|[[Porsche]]||align="center"|{{flagicon|GER}}
+||Subsidiary||Global
+|-
+|[[Scania (company)|Scania]]||align="center"|{{flagicon|SWE}}
+||Subsidiary||Global
+|-
+|[[SEAT]]||align="center"|{{flagicon|ESP}}
+||Subsidiary||Europe, South America, North Africa, Lebanon
+|-
+|[[Škoda Auto|Škoda]]||align="center"|{{flagicon|CZE}}
+||Subsidiary||Global, except North America and South Africa
+|-
+|[[Volkswagen]]||align="center"|{{flagicon|GER}}
+||Subsidiary||Global
+|-
+|[[Volkswagen Commercial Vehicles|Volkswagen CV]]||align="center"|{{flagicon|GER}}
+||Subsidiary||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''4. [[Ford Motor Company]]***'''</big> ({{flag|United States}})
+|-
+|[[Ford Motor Company|Ford]]||align="center"|{{flagicon|USA}}
+||Division||Global
+|-
+|[[Lincoln (automobile)|Lincoln]]||align="center"|{{flagicon|USA}}
+||Division||North America, Middle East, South Korea
+|-
+|[[Mercury (automobile)|Mercury]]||align="center"|{{flagicon|USA}}
+||Division||North America, Middle East
+|-
+|[[Troller]]||align="center"|{{flagicon|BRA}}
+||Subsidiary||South America and Africa
+|-
+|[[Volvo Cars|Volvo]]||align="center"|{{flagicon|SWE}}
+||Subsidiary||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''5. [[Honda Motor Company]]'''</big> ({{flag|Japan}})
+|-
+|[[Acura]]||align="center"|{{flagicon|JPN}}
+||Division||North America, China, Russia
+|-
+|[[Honda]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''6. [[Nissan Motors|Nissan Motor Company]]'''</big> ({{flag|Japan}})
+|-
+|[[Infiniti]]||align="center"|{{flagicon|JPN}}
+||Division||Global, except South America and Africa
+|-
+|[[Nissan Motors|Nissan]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''7. [[PSA Peugeot Citroën|PSA Peugeot Citroën S.A.]]'''</big> ({{flag|France}})
+|-
+|[[Citroën]]||align="center"|{{flagicon|FRA}}
+||Subsidiary||Global, except North America, India
+|-
+|[[Peugeot]]||align="center"|{{flagicon|FRA}}
+||Subsidiary||Global, except North America, India
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''8. [[Hyundai Motor Company]]****'''</big> ({{flag|South Korea}})
+|-
+|[[Hyundai Motor Company|Hyundai]]||align="center"|{{flagicon|KOR}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''9. [[Suzuki|Suzuki Motor Corporation]]'''</big> ({{flag|Japan}})
+|-
+|[[Maruti Suzuki]]||align="center"|{{flagicon|IND}}
+||Subsidiary||India, Middle East, South America
+|-
+|[[Suzuki]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''10. [[Fiat|Fiat S.p.A.]]'''</big> ({{flag|Italy}})
+|-
+|[[Abarth]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global, except North America
+|-
+|[[Alfa Romeo]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global
+|-
+|[[Ferrari]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global
+|-
+|[[Fiat Automobiles|Fiat]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global, except North America
+|-
+|[[Fiat Professional]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global, except North America
+|-
+|[[Irisbus]]||align="center"|{{flagicon|FRA}}
+||Subsidiary||Global, except North America
+|-
+|[[Iveco]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global, except North America
+|-
+|[[Lancia]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Europe
+|-
+|[[Maserati]]||align="center"|{{flagicon|ITA}}
+||Subsidiary||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''11. [[Renault|Renault S.A.]]'''</big> ({{flag|France}})
+|-
+|[[Dacia (car)|Dacia]]||align="center"|{{flagicon|ROM}}
+||Subsidiary||Europe, Latin America, Asia, Africa
+|-
+|[[Renault|Renault (cars)]]||align="center"|{{flagicon|FRA}}
+||Division||Global, except North America, India
+|-
+|[[Renault Samsung Motors|Renault Samsung]]||align="center"|{{flagicon|KOR}}
+||Subsidiary||Asia, South America
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''12. [[Daimler AG]]'''</big> ({{flag|Germany}})
+|-
+|[[Freightliner Trucks|Freightliner]]||align="center"|{{flagicon|USA}}
+||Subsidiary||North America, South Africa
+|-
+|[[Maybach]]||align="center"|{{flagicon|GER}}
+||Division||Global
+|-
+|[[Mercedes-AMG]]||align="center"|{{flagicon|GER}}
+||Division||Global
+|-
+|[[Mercedes-Benz]]||align="center"|{{flagicon|GER}}
+||Division||Global
+|-
+|[[Mitsubishi Fuso Truck and Bus Corporation|Mitsubishi Fuso]]||align="center"|{{flagicon|JPN}}
+||Subsidiary||Global
+|-
+|[[Orion International|Orion]]||align="center"|{{flagicon|CAN}}
+||Subsidiary||North America
+|-
+|[[Setra]]||align="center"|{{flagicon|GER}}
+||Subsidiary||Europe
+|-
+|[[smart (automobile)|Smart]]||align="center"|{{flagicon|GER}}
+||Division||North America, Europe, Southeast Asia, South Africa
+|-
+|[[Thomas Built Buses|Thomas Built]]||align="center"|{{flagicon|USA}}
+||Subsidiary||North America
+|-
+|[[Western Star Trucks|Western Star]]||align="center"|{{flagicon|USA}}
+||Subsidiary||North America
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''13. [[Chrysler|Chrysler Group LLC]]'''</big> ({{flag|United States}})
+|-
+|[[Chrysler (division)|Chrysler]]||align="center"|{{flagicon|USA}}
+||Division||Global
+|-
+|[[Dodge]]||align="center"|{{flagicon|USA}}
+||Division||Global
+|-
+|[[Global Electric Motorcars|GEM]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|-
+|[[Jeep]]||align="center"|{{flagicon|USA}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''14. [[BMW|BMW AG]]'''</big> ({{flag|Germany}})
+|-
+|[[BMW]]||align="center"|{{flagicon|GER}}
+||Division||Global
+|-
+|[[MINI (BMW)|MINI]]||align="center"|{{flagicon|UK}}
+||Division||Global
+|-
+|[[Rolls-Royce Motor Cars|Rolls-Royce]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''15. [[Kia Motors|Kia Motors Corporation]]****'''</big> ({{flag|South Korea}})
+|-
+|[[Kia]]||align="center"|{{flagicon|KOR}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''16. [[Mazda|Mazda Motor Corporation]]'''</big> ({{flag|Japan}})
+|-
+|[[Mazda]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''17. [[Mitsubishi Motors|Mitsubishi Motors Corporation]]'''</big> ({{flag|Japan}})
+|-
+|[[Mitsubishi Motors|Mitsubishi]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''18. [[AvtoVAZ|OAO AvtoVAZ]]'''</big> ({{flag|Russia}})
+|-
+|[[Lada]]||align="center"|{{flagicon|RUS}}
+||Division||Russia, Europe, North Africa
+|-
+|[[VAZ]]||align="center"|{{flagicon|RUS}}
+||Division||Russia, Europe
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''19. [[Tata Motors|Tata Motors Ltd]]'''</big> ({{flag|India}})
+|-
+|[[Daimler Motor Company|Daimler]]||align="center"|{{flagicon|UK}}
+||Subsidiary||United Kingdom
+|-
+|[[Hispano Carrocera|Hispano]]||align="center"|{{flagicon|ESP}}
+||Subsidiary||Europe
+|-
+|[[Jaguar Cars|Jaguar]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Global
+|-
+|[[Land Rover]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Global
+|-
+|[[Tata Motors|Tata]]||align="center"|{{flagicon|IND}}
+||Division||India, South Africa
+|-
+|[[Tata Daewoo Commercial Vehicle|Tata Daewoo]]||align="center"|{{flagicon|KOR}}
+||Subsidiary||South Korea
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''20. [[FAW Group|First Automotive Group Corporation]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[FAW Besturn|Besturn]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|-
+|[[FAW Freewind|Freewind]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|-
+|[[FAW Haima|Haima]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|-
+|[[FAW Hongqi|Hongqi]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|-
+|[[FAW Jiaxing|Jiaxing]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|-
+|[[FAW Vita|Vita]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|-
+|[[Tianjin Xiali|Xiali]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|-bgcolor="gainsboro"
+|colspan="5"|<big>'''21. [[Fuji Heavy Industries|Fuji Heavy Industries Ltd]]'''</big> ({{flag|Japan}})
+|-
+|[[Subaru]]||align="center"|{{flagicon|JPN}}
+||Division||Global
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''22. [[Isuzu|Isuzu Motors Ltd]]'''</big> ({{flag|Japan}})
+|-
+|[[Isuzu]]||align="center"|{{flagicon|JPN}}
+||Division||Global, except North America
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''23. [[Chang'an Motors|Chana Automobile Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Chang'an Motors|Chana]]||align="center"|{{flagicon|CHN}}
+||Division||China, South Africa
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''24. [[Dongfeng Motor Corporation]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Dongfeng Motor Corporation|Dongfeng]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''25. [[Beijing Automobile Works|Beijing Automotive Industry Holding Corporation, Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Beijing Automobile Works|BAW]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|-
+|[[Foton (company)|Foton]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''26. [[Chery Automobile|Chery Automobile Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Chery Automobile|Chery]]||align="center"|{{flagicon|CHN}}
+||Division||China, Africa, Southeast Asia, Russia
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''27. [[Shanghai Automotive Industry Corporation]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[MG Motor UK|MG]]||align="center"|{{flagicon|UK}}
+||Subsidiary||United Kingdom, Chile, Argentina
+|-
+|[[Roewe]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|-
+|[[Nanjing Automobile (Group) Corporation|Soyat]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|-
+|[[SsangYong Motor Company|SsangYong]]||align="center"|{{flagicon|KOR}}
+||Subsidiary||South Korea, South Africa, Europe, Australia
+|-
+|[[Nanjing Automobile (Group) Corporation|Yuejin]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''28. [[Volvo|AB Volvo]]'''</big> ({{flag|Sweden}})
+|-
+|[[Mack Trucks|Mack]]||align="center"|{{flagicon|USA}}
+||Subsidiary||Global
+|-
+|[[Nissan Diesel]]||align="center"|{{flagicon|JPN}}
+||Subsidiary||Global
+|-
+|[[Nova Bus|NovaBus]]||align="center"|{{flagicon|CAN}}
+||Subsidiary||North America
+|-
+|[[Prevost Car|Prevost]]||align="center"|{{flagicon|CAN}}
+||Subsidiary||North America
+|-
+|[[Renault Trucks|Renault (trucks)]]||align="center"|{{flagicon|FRA}}
+||Subsidiary||Global
+|-
+|[[Volvo Trucks|Volvo (trucks)]]||align="center"|{{flagicon|SWE}}
+||Division||Global
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''29. [[Brilliance China Auto|Brilliance China Automotive Holding Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Brilliance China Auto|Brilliance]]||align="center"|{{flagicon|CHN}}
+||Division||China, North Africa
+|-
+|[[Jinbei (car)|Jinbei]]||align="center"|{{flagicon|CHN}}
+||Subsidiary||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''30. [[Hafei|Harbin Hafei Automobile Industry Group Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Hafei Motor|Hafei]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''31. [[Geely Automobile]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Geely]]||align="center"|{{flagicon|CHN}}
+||Division||China, Russia, North Africa
+|-
+|[[Shanghai Maple Guorun Automobile|Maple]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''32. [[Anhui Jianghuai Automobile|Anhui Jianghuai Automobile Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Anhui Jianghuai Automobile|JAC]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''33. [[BYD Auto]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[BYD Auto|BYD]]||align="center"|{{flagicon|CHN}}
+||Division||China, Russia
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''34. [[GAZ|GAZ Group]]'''</big> ({{flag|Russia}})
+|-
+|[[GAZ]]||align="center"|{{flagicon|RUS}}
+||Division||Russia
+|-
+|[[KAvZ]]||align="center"|{{flagicon|RUS}}
+||Subsidiary||Russia
+|-
+|[[LDV Limited|LDV]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Europe
+|-
+|[[LiAZ (Russia)|LiAZ]]||align="center"|{{flagicon|RUS}}
+||Subsidiary||Russia
+|-
+|[[Ural Automotive Plant|Ural]]||align="center"|{{flagicon|RUS}}
+||Subsidiary||Russia
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''35. [[Mahindra & Mahindra|Mahindra & Mahindra Ltd]]'''</big> ({{flag|India}})
+|-
+|[[Mahindra & Mahindra|Mahindra]]||align="center"|{{flagicon|IND}}
+||Division||India, South East Asia, Europe, North Africa
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''36. [[Proton (carmaker)|Proton Holdings Bhd]]'''</big> ({{flag|Malaysia}})
+|-
+|[[Proton (carmaker)|Proton]]||align="center"|{{flagicon|Malaysia}}
+||Division||Asia, Australia, South Africa, UK
+|-
+|[[Lotus Cars|Lotus]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Global
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''37. [[Great Wall Motor|Great Wall Motor Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Great Wall Motor|Great Wall]]||align="center"|{{flagicon|CHN}}
+||Division||China, South Africa, Russia, North Africa
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''38. [[Paccar|Paccar Inc]]'''</big> ({{flag|United States}})
+|-
+|[[DAF Trucks|DAF]]||align="center"|{{flagicon|NED}}
+||Subsidiary||Global, except North America
+|-
+|[[Kenworth]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|-
+|[[Leyland Trucks|Leyland]]||align="center"|{{flagicon|UK}}
+||Subsidiary||Europe
+|-
+|[[Peterbilt]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''39. [[Lifan|Chongqing Lifan Automobile Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Lifan]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''40. [[MAN SE]]'''</big> ({{flag|Germany}})
+|-
+|[[MAN SE|MAN]]||align="center"|{{flagicon|GER}}
+||Division||Europe
+|-
+|[[Neoplan]]||align="center"|{{flagicon|GER}}
+||Division||Europe and Middle East
+|-
+|[[Volkswagen Trucks and Buses|VW Trucks]]||align="center"|{{flagicon|BRA}}
+||Division||South America
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''41. [[Changhe|Jiangxi Changhe Automobile Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Changhe]]||align="center"|{{flagicon|CHN}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''42. [[China National Heavy Duty Truck Group|China National Heavy Duty Truck Group Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Sinotruk]]||align="center"|{{flagicon|HKG}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''43. [[LuAZ]]'''</big> ({{flag|Ukraine}})
+|-
+|[[LuAZ]]||align="center"|{{flagicon|Ukraine}}
+||Subsidiary||Ukraine
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''44. [[Navistar International|Navistar International Corporation]]'''</big> ({{flag|United States}})
+|-
+|[[IC Corporation|IC]]||align="center"|{{flagicon|USA}}
+||Subsidiary||North America
+|-
+|[[Navistar International|International]]||align="center"|{{flagicon|USA}}
+||Division||North America
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''45. [[Shaanxi Automobile Group|Shaanxi Automobile Group Company Ltd]]'''</big> ({{flag|People's Republic of China}})
+|-
+|[[Shaanxi Automobile Group|Shaanxi]]||align="center"|{{flagicon|People's Republic of China}}
+||Division||China
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''46. [[Sollers JSC|UAZ OJSC]]'''</big> ({{flag|Russia}})
+|-
+|[[UAZ]]||align="center"|{{flagicon|Russia}}
+||Subsidiary||Russia
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''47. [[Ashok Leyland]]'''</big> ({{flag|India}})
+|-
+|[[Ashok Leyland]]||align="center"|{{flagicon|India}}
+||Division||India
+|- style="background:gainsboro;"
+|colspan="5"|<big>'''48. [[Kuozui Motors|Kuozui Motors Ltd]]'''</big> ({{flag|Taiwan}})
+|-
+|[[Kuozui Motors]]||align="center"|{{flagicon|Taiwan}}
+||Subsidiary||Taiwan
+|}
+;Notes
+<nowiki>*</nowiki> [[General Motors]] is in the process of selling [[Hummer]] to [[Sichuan Tengzhong Heavy Industrial Machinery Company|Sichuan Tengzhong]]; [[Opel]] and [[Vauxhall]] to [[Magna International]], [[GAZ]] and [[Sberbank]]; [[Saab Automobile|Saab]] to [[Koenigsegg]]; eliminating [[Saturn Corporation|Saturn]]<ref>http://news.bbc.co.uk/1/hi/business/8284189.stm</ref> and [[Pontiac]].
+
+<nowiki>**</nowiki> [[Porsche Automobil Holding SE]] has a majority share in the [[Volkswagen Group]]. However, Volkswagen will acquire Porsche AG, the automotive manufacturer. <ref>[http://in.news.yahoo.com/43/20090723/838/tbs-volkswagen-to-takeover-porsche.html Volkswagen to takeover Porsche]</ref><ref>[http://www.independent.co.uk/life-style/motoring/motoring-news/volkswagen-to-swallow-porsche-1759827.html Volkswagen to swallow Porsche]</ref>  The acquisition is expected to be fully completed in mid-2011.<ref>[http://online.wsj.com/article/BT-CO-20090723-715971.html VW, Porsche Move Toward Deal After Wiedeking Resigns]</ref>
+
+<nowiki>***</nowiki> [[Ford Motor Company|Ford]] is looking to sell [[Volvo Cars|Volvo]].
+
+<nowiki>****</nowiki> [[Hyundai Kia Automotive Group]] owns only a minority stake in [[Kia Motors]].
