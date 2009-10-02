@@ -216,7 +216,17 @@
 				}
 				
 				// because of the paths filled up as spo and merging (sub) categories there might be doubles now
-				$key = implode(',', $this->result[$i]);
+                $key = '';
+                for ($k = 0, $ks = count($this->result[$i]); $k < $ks; $k++) {
+                    if ($k % 2 == 1) // property with direction, take it as it is
+                        $key .= $this->result[$i][$k]; 
+                    else { // category or page, merge elements sorted as subcatgories might be in different order
+                        $pa = explode('|', $this->result[$i][$k]);
+                        sort($pa);
+                        $key.= implode('|', $pa);
+                    }
+                    $key.= ',';
+                }
 				if (in_array($key, $pathExists))
 					unset($this->result[$i]);
 				else
