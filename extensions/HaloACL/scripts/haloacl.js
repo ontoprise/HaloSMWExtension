@@ -207,6 +207,10 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
         manageAclActive = false;
         manageDefaultTemplateActive = true;
         createQuickActive = false;
+    }else if(YAHOO.haloacl.activeSubTab == "quickacl"){
+        manageAclActive = false;
+        manageDefaultTemplateActive = false;
+        createQuickActive = true;
     }
 
     if (containerName == "haloaclsubViewManageACL") {
@@ -258,6 +262,10 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
             createAclACtive = false;
             createDefUserActive = true;
             createTplActive = false;
+        }else if(YAHOO.haloacl.activeSubTab == "createTemplate"){
+            createAclACtive = false;
+            createDefUserActive = false;
+            createTplActive = true;
         }
 
 

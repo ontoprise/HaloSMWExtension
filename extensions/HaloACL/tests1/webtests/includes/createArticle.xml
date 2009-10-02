@@ -1,8 +1,11 @@
 <target name="createArticle">
 	<invoke
-    	url="http://localhost/${wikipath}/index.php/${article}?action=edit"
+    	url="http://${serverurl}/${wikipath}/index.php/${article}?action=edit"
     	description="Go to edit page" />
 	<setInputField name="wpTextbox1" 
 	               value="${content}"/>
-	<clickButton htmlId="wpSave"/>
+<!--	<clickButton htmlId="wpSave"/>
+-->
+        <clickButton htmlId="wpSaveReplacement"/>
+
 </target>	

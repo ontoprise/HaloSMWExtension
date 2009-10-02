@@ -1570,10 +1570,11 @@ HTML;
 HTML;
         if($predefine != "modification") {
             $content .= <<<HTML
-
+                        <form>
                         <div style="width:33%;float:left;"><input type="button" id="haloacl_delete_$panelid" value="$hacl_rightsPanel_8" onclick="javascript:YAHOO.haloacl.removePanel('$panelid');" /></div>
                         <div style="width:33%;float:left;text-align:center"><input id="haloacl_reset_$panelid" type="button" value="$hacl_rightsPanel_9" onclick="javascript:YAHOO.haloacl.removePanel('$panelid',function(){YAHOO.haloacl.createacl_addRightPanel('$predefine');});" /></div>
-                        <div style="width:33%;float:left;text-align:right"><input id="haloacl_save_$panelid" type="button" name="safeRight" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
+                        <div class="haloacl_std_save_button_container" style="width:33%;float:left;text-align:right"><input id="haloacl_save_$panelid" type="button" name="saveRightStd" value="$hacl_rightsPanel_10" onclick="YAHOO.haloacl.buildRightPanelXML_$panelid();" /></div>
+                        </form>
                         <script>
 
                             YAHOO.haloacl.addTooltip("tooltip_delete_$panelid", "haloacl_delete_$panelid", "click here to delete the right.");

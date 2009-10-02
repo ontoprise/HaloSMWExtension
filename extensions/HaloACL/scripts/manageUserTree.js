@@ -310,7 +310,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
 
         sb[sb.length] = '</span></td>';
         sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">'+this.information+'</span></td>';
-        sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+this.title+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
+        sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
         sb[sb.length] = ' id="' + this.getCheckElId() + '"';

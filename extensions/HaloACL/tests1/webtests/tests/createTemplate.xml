@@ -10,14 +10,14 @@
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Template/Lou" />
+                <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
         <webtest name="create template for individual">
             
             <antcall target="createTemplateindividual">
-                <param name="page" value="Special:HaloACL"/>
+                <param name="page" value="Special:HaloACL?activetab=createACL&amp;activesubtab=createTemplate"/>
                 <param name="heading" value="HaloACL"/>
                 <param name="targetPage" value="Lou"/>
                 <param name="content" value="This page is not accessible for.*"/>
@@ -26,19 +26,24 @@
 
         <webtest name="checking acl page">
             <antcall target="verifyTemplateAdmin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
             <antcall target="verifyTemplateNoLogin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
         </webtest>
 
+        <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Right/Lou" />
+            </antcall>
+        </webtest>
 
         <webtest name="create template for private use">
             <antcall target="createTemplateprivateuse">
@@ -50,16 +55,22 @@
         </webtest>
         <webtest name="checking acl page">
             <antcall target="verifyTemplateAdmin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
             <antcall target="verifyTemplateNoLogin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
@@ -73,19 +84,24 @@
         </webtest>
         <webtest name="checking acl page">
             <antcall target="verifyTemplateAdmin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
             <antcall target="verifyTemplateNoLogin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
         </webtest>
 
+        <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Right/Lou" />
+            </antcall>
+        </webtest>
 
         <webtest name="create template for all registered users">
             <antcall target="createTemplateallusersregistered">
@@ -97,16 +113,22 @@
         </webtest>
         <webtest name="checking acl page">
             <antcall target="verifyTemplateAdmin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
             <antcall target="verifyTemplateNoLogin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
           
@@ -120,16 +142,16 @@
         </webtest>
         <webtest name="checking acl page">
             <antcall target="verifyTemplateAdmin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
             <antcall target="verifyTemplateNoLogin">
-                <param name="targetPage" value="ACL:Template/Lou"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
-                <param name="targetPage" value="ACL:Template/Lou"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="targetPage" value="ACL:Right/Lou"/>
+                <param name="expectedText" value="ACL:Right/Lou"/>
             </antcall>
           
         </webtest>
@@ -217,28 +239,31 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <clickElement htmlId="createTmpAclTab"/>
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
-
         <setInputField htmlId="create_acl_general_name"
 					   value="${targetPage}"/>
 
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
         <clickButton htmlId="step2_button_createAclTemplate"/>
 
-        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
 
         <clickElement htmlId="haloacl_create_right_individual"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
         <setRadioButton name="create_acl_general_definefor" value="individual"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <setCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_right_0_Admin"/>
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
 
         <clickButton htmlId="haloacl_save_create_acl_right_0" />
 
@@ -293,7 +318,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
@@ -356,7 +381,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
@@ -420,7 +445,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
@@ -480,7 +505,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 

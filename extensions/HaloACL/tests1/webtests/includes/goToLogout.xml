@@ -1,3 +1,5 @@
-<invoke
-    url="http://localhost/${wikipath}/index.php?title=Special:UserLogout"
+<target name="goToLogout">
+    <invoke
+    url="http://${serverurl}/${wikipath}/index.php?title=Special:UserLogout"
     description="Log out" />
+</target>

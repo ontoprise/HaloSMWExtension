@@ -8,14 +8,17 @@
 
     <target name="runEditRight">
 
-
-
-        <!-- Change Eef" -->
+<!-- toolbar issue
         <webtest name="create page (Eef) that will be secured">
             <antcall target="createArticleThatWillBeSecured" />
         </webtest>
-
-        <!-- Protect Eef"-->
+-->
+        <webtest name="deleting acl for eef page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Page/Eef" />
+            </antcall>
+        </webtest>
+        
         <webtest name="protecting with all anonymous users">
             <antcall target="createDescrallusersanoymous">
                 <param name="page" value="Special:HaloACL"/>
@@ -26,8 +29,7 @@
         </webtest>
  
 
-        <!--Verfiy Acces Anony-->
-
+     
         <webtest name="verfiyAdmin">
             <antcall target="verifyCheckAccessAdmin">
                 <param name="targetPage" value="Eef"/>
@@ -42,21 +44,15 @@
 
             </antcall>
 
-
         </webtest>
 
-
-
-       <!-- Change Eef" -->
         <webtest name="changeRightnow">
             <antcall target="changeRight" >
                 <param name="page" value="Special:HaloACL" />
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Template/Test"/>
+                <param name="targetPage" value="Page/Eef"/>
             </antcall>
         </webtest>
-            
-
 
         <webtest name="verfiyAdminNew">
             <antcall target="verifyCheckAccessAdminNew">
@@ -68,15 +64,15 @@
         <webtest name="verfyAnNew">
             <antcall target="verifyCheckAccessAnNew">
                 <param name="targetPage" value="Eef"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="expectedText" value="Login Required"/>
 
             </antcall>
-          
-
-        </webtest>
  
-    </target>
+        </webtest>
 
+    </target>
+    
+<!-- ===== implementation starts here ===== -->
 
     
     <target name="verifyCheckAccessAdminNew">
@@ -157,66 +153,7 @@
 
 <!-- creating right -->
 
-    <target name="createDescrallusersanoymous">
 
-        <antcall target="login">
-            <param name="user" value="admin"/>
-            <param name="pwd" value="test"/>
-        </antcall>
-
-        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
-			description="Open page ${page} as Admin." />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
-
-        <setInputField htmlId="create_acl_general_name"
-					   value="${targetPage}"/>
-
-
-
-        <clickButton htmlId="step2_button_createAcl" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
-
-        <clickButton htmlId="haloacl_create_right_individual" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
-
-        <setCheckbox htmlId="checkbox_right_fullaccess"/>
-
-        <sleep description="AJAX PAUSE" seconds="5" />
-
-        <setRadioButton name="create_acl_general_definefor" value="allusersanonymous"/>
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <clickButton htmlId="haloacl_save_create_acl_right_0" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <clickButton htmlId="haloacl_save_modificationrights" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <clickButton htmlId="haloacl_saveacl_button" />
-
-        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
-
-        <antcall target="goToLogout">
-            <param name="serverurl" value="${serverurl}" />
-            <param name="wikipath" value="${wikipath}" />
-        </antcall>
-
-
-    </target>
 
 <!-- change right -->
     <target name="changeRight">
@@ -243,7 +180,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
 
-        <clickButton htmlId="haloacl_save_SDDetails_125_222"/>
+        <clickButton name="saveRightStd" />
         
         <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
 
@@ -259,9 +196,84 @@
 
 
     </target>
+    <target name="createDescrallusersanoymous">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
 
 
 
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersanonymous"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+    <target name="deletePage" >
+            <!-- creating article to save -->
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}?action=delete"
+				description="Open resulting Descriptor Article." />
+        <clickButton htmlId="wpConfirmB" />
+		<!--
+		<verifyXPath description="verify delete"
+					     xpath="//h1[@class='firstHeading']"
+					     text="Action complete" />
+        -->
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
 
     
 
