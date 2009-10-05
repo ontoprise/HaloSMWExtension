@@ -62,6 +62,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+        <copy todir="bin/zip/skins/ontoskin3">
+            <fileset dir="../../../skins/ontoskin3">
+                <exclude name="**/.svn, **/CVS" />
+            </fileset>
+        </copy>
 
 		<copy todir="bin/zip/extensions/SMWHalo">
 			<fileset dir="../">
