@@ -927,8 +927,8 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.id = "s4-alias" + i;
 				aliasInput.size = "25";
 				aliasInput.maxLength = "40";
-				aliasInput.setAttribute("onfocus", "webServiceSpecial" +
-						"(event)");
+				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
+				aliasInput.setAttribute("onfocus", "webServiceSpecial.handleAliasInputFocus(event)");
 				resultTD2.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -1232,8 +1232,7 @@ DefineWebServiceSpecial.prototype = {
 				// }
 			}
 			result += "</result>\n";
-			alert(result);
-
+			
 			result += this.createWWSDPolicyPart();
 
 			result += "</WebService>";
