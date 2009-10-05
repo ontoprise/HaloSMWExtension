@@ -121,12 +121,11 @@ END;
                 $javascript_text.= self::getFckTemplatePopupJavascript();
                 // move /*]]>*/ to the end
                 $javascript_text = str_replace('/*]]>*/', '', $javascript_text)."\n/*]]>*/";
-
         }
         // add javascript and css to the page header
-	SFUtils::addJavascriptAndCSS();
-	$wgOut->addScript('		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
-	$wgOut->addHTML($text);
+	    SFUtils::addJavascriptAndCSS();
+	    $wgOut->addScript('		<script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
+	    $wgOut->addHTML($text);
         // set the $wgFCKEditorDir again to the original (maybe not needed)
         $wgFCKEditorDir = $original_wgFCKEditorDir;
     }
@@ -177,7 +176,7 @@ END;
         $behind = substr($html, $pEnd + strlen($end));
         $html = $before . $behind;
     }
-
+    
     /**
      * If the page is new, the normal edit way doesn't work, because the page
      * doesn't exist yet. Then we have to redirect to the AddData page.
@@ -192,7 +191,7 @@ END;
              .'"></meta></head></html>';
     }
     /**
-     * additional javascript so that some parameter value are extraced from the
+     * additional javascript so that some parameter value are extracted from the
      * form and added to the template call string in the parent frame.
      *
      * @return string javascript
@@ -216,10 +215,8 @@ END;
              */
             getValuesFromPage = function() {
                 var newData = [];
-                // get the current template name from the globa variable in the popup
-                // and remove the Template: namespace
-                var tName = window.parent.sTemplateName.substr(window.parent.sTemplateName.indexOf(':') + 1);
-                tName = tName.replace(/ /g, '_');
+                // get the current template name
+                var tName = getTemplateName();
                 // iterate over all input elements to get template parameters
                 var inputs = document.getElementsByTagName('input');
                 for (var i = 0; i < inputs.length; i++) {
@@ -322,6 +319,44 @@ END;
             }
 
             /**
+             * Returns the template name of the current template being edited with the
+             * Popup. The value is taken from the global variable in the popup. The
+             * Template: namespace is removed and spaces are converted to _ as it is
+             * used in the wikitext.
+             * 
+             * @return string templateName
+             */
+            getTemplateName = function() {
+                var tName = window.parent.sTemplateName.substr(window.parent.sTemplateName.indexOf(':') + 1);
+                return tName.replace(/ /g, '_');
+            }
+            
+            /**
+             * Reads the content of the template call from the source tab (this is the same
+             * what you find in the wikitext) and transforms the template patameter into
+             * an associative array (key = param name, value = param val). 
+             *
+             * @return Array(string) params
+             */
+            templateData2array = function() {
+                var tName = getTemplateName();
+                var orig = window.parent.document.getElementById('xTemplateRaw').value;
+                orig = orig.substr(0, orig.lastIndexOf('}}'));
+                var oldData = orig.split('|');
+                // remove template name
+                oldData.shift();
+                var templateData = new Array();
+                // iterate over all old data (parameters are seperated by |) and
+                // store key value pairs in assoc array
+                while (param = oldData.shift() ) {
+                    var keyVal = param.split('=');
+                    var key = tName + '[' + keyVal[0].replace(/^\s*/, '').replace(/\s*$/, '') + ']';
+                    templateData[ key ] = keyVal.length > 1 ? keyVal[1].replace(/\\n$/, '') : "";
+                }
+                return templateData;  
+            }
+
+            /**
              * Add date string to result array
              *
              * @param array(string, string) result array
@@ -374,6 +409,135 @@ END;
                          ];
                 var key = parseInt(val.replace(/^0/, '')) - 1;
                 return (key < 12) ? months[key] : '';
+            }
+            
+            /**
+             * get id of month from name (english)
+             *
+             * @param string name of month
+             * @return int id
+             */
+             getIdOfMonth = function(val) {
+                if (! val.match(/^\w+$/)) return val;
+                months = [ 'January', 'February', 'March', 'April',
+                           'May', 'June', 'July', 'August',
+                           'September', 'October', 'November', 'December'
+                         ];
+                for (i = 0; i < 12; i++) {
+                    if (months[i].toLowerCase() == val.toLowerCase())
+                        return i + 1;
+                }
+                return val;
+             }
+             
+            /**
+             * get date part
+             *
+             * @param string date value
+             * @param int part of date 0 = day, 1 = month, 2 = year
+             * @return string value
+             */
+            getDatePart = function(date, part) {
+                var parts = date.split(' ');
+                return parts[part];
+            }
+            
+            /**
+             * Init data from a template call within the page. Based on the template
+             * name, all input (textarea, select) fields are checked and the name attribute
+             * must look like TemplateName[ParamName]. From the source code box the current
+             * template data are read and transformed in an assoc array with kay value pairs.
+             * Then if the current inut field has a corresponding parameter in the template
+             * call, the value of the HTML element is set to what's already in the current
+             * source code. This way, the SF for an exising template call will be prefilled
+             * with the values.
+             */
+            initDataFromTemplateCall = function() {
+                // template data from template call being edited
+                var templateData = templateData2array();
+                // name of the template
+                var tName = getTemplateName();
+                var inputs = [];
+                // iterate over all input elements to get template parameters
+                moreinputs = document.getElementsByTagName('textarea');
+                for (i = 0; i < moreinputs.length; i++)
+                    inputs.push(moreinputs[i]);
+                moreinputs = document.getElementsByTagName('select');
+                for (i = 0; i < moreinputs.length; i++)
+                    inputs.push(moreinputs[i]);
+                var moreinputs = document.getElementsByTagName('input');
+                for (i = 0; i < moreinputs.length; i++)
+                    inputs.push(moreinputs[i]);
+                    
+                // loop over all input elements
+                for (var i = 0; i < inputs.length; i++) {
+                    // check if we have a field, that we need to consider
+                    if (!inputs[i].name || inputs[i].name.indexOf(tName) == -1) continue;
+                    
+                    // check if there's a date suffix at the input name field 
+                    var nameAdd = inputs[i].name.match(/\]\[(day|month|year)\]$/)
+                                  ? inputs[i].name.substr(inputs[i].name.lastIndexOf('[')) : '';
+
+                    // real name, which is used in the template data array
+                    var realName = inputs[i].name.substr(0, inputs[i].name.length - nameAdd.length);
+
+                    // if the current field is not already defined in the template call
+                    // then leave the field untouched and trust the SF to fill in something reasonable
+                    if (typeof templateData[realName] == 'undefined') continue;
+
+                    // get the real value that we must prefill.
+                    var realVal = templateData[realName];
+                    if (nameAdd) { // a date value
+                        var dateParts = realVal.split(' ');
+                        switch (nameAdd.substr(1, nameAdd.length - 2)) {
+                            case 'day' :
+                                realVal = dateParts[0];
+                                break;
+                            case 'month' :
+                                realVal = getIdOfMonth(dateParts[1]);
+                                break;
+                            case 'year' :
+                                realVal = dateParts[2];
+                                break;
+                         }
+                    }
+                    // if input field is a radiobutton or checkbox set checked
+                    if (inputs[i].type &&
+                        (inputs[i].type == "radio" || inputs[i].type == "checkbox") &&
+                         inputs[i].value == realVal) {
+                        inputs[i].checked = 'checked';
+                        continue;
+                    }
+                    // text area
+                    if (inputs[i].tagName == "TEXTAREA") {
+                        inputs[i].innerHTML = realVal;
+                        continue;
+                    }
+                    // normal input field
+                    if (inputs[i].tagName == "INPUT") {
+                        inputs[i].value = realVal;
+                        continue;
+                    }
+                    // selection
+                    var options = inputs[i].getElementsByTagName('option');
+                    for (j = 0, js = options.length; j < js; j++) {
+                        if (options[j].value == realVal)
+                            options[j].selected = 'selected';
+                        else
+                            options[j].selected = null;
+                    }
+                }
+            }
+
+            // addin the function initpDataFromTemplateCall() to the onload event 
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function') {
+                window.onload = initDataFromTemplateCall;
+            } else {
+                window.onload = function() {
+                  if (oldonload) oldonload();
+                  initDataFromTemplateCall();
+                }
             }
 ENDJS;
     }
