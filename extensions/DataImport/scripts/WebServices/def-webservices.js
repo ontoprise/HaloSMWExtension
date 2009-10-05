@@ -1232,6 +1232,7 @@ DefineWebServiceSpecial.prototype = {
 				// }
 			}
 			result += "</result>\n";
+			alert(result);
 
 			result += this.createWWSDPolicyPart();
 
@@ -3478,9 +3479,10 @@ DefineWebServiceSpecial.prototype = {
 
 				result += resultTable.childNodes[i].childNodes[1].firstChild.value
 						+ "=\"";
-				result += resultTable.childNodes[i].childNodes[2].firstChild.value
-						+ "\"/>\n";
-
+				var subPathString = resultTable.childNodes[i].childNodes[2].firstChild.value;
+				subPathString = subPathString.replace(/>/g, "&gt;");
+				subPathString = subPathString.replace(/</g, "&lt;");
+				result += subPathString + "\"/>\n";
 			}
 			result += "</result>\n";
 
