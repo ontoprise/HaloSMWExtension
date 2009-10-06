@@ -14,40 +14,61 @@
 			
 			<invoke
 				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest" />
-			<clickButton description="Attach file" xpath="//div[@id='bodyContent']/table/tbody/tr[last()]/td/table/tbody/tr/td[2]/form/input" />
+			<clickButton description="Attach file" xpath="/html/body/div[@id='globalWrapper']/table[@id='shadows']/tbody/tr/td[@id='shadow_center']/div[@id='mainpage']/table[@id='mainpagetable']/tbody/tr/td/div[@id='column-content']/div[@id='content']/div[@id='bodyContent']/div[3]/table[3]/tbody/tr[1]/td[2]/form/input	" />
 			<sleep seconds="5"/>
+			
+			<!-- Click: //div[@id='innerContent']//img[@id='RMUpload_sec_1_img'] -->
 			
 			<followframe htmlId="fbContent"/>
 			<verifyInputField description="Related Article correct?"
-				htmlId="input_7" value="MyNewMediaListTest" />
+				htmlId="input_8" value="MyNewMediaListTest" />
 			<setFileField description="Set the value of the file input field" htmlId="wpUploadFile" 
 				fileName="Test.pdf"/>
 			<setInputField description="Set HasCopyrightBy input field" htmlId="input_3" 
 				value="TestCopyrightFieldValue" />
 			<setInputField description="Set description field" htmlId="input_6" 
 				value="Test description field value..." />
-			<clickButton description="Upload file and save metadata" xpath="/html/body/table[3]/tbody/tr/td/input" />
+			<setInputField description="Set Keywords field" htmlId="input_7" 
+				value="keyword 1, keyword 2" />
+			<clickButton description="Upload file and save metadata" xpath="//div[@id='globalWrapper']/table[1]/tbody/tr/td/input" />
 			<sleep seconds="2"/>
 			
-			<verifyXPath description="Check if the pre tag is not empty.otherwise the upload converting process failed."
-				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/pre[string-length()>0]" />
+			<!-- Template:Tablerow adds a whitespace around the entries -->
 			<verifyXPath description="Check if Namespace is correct"
-				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[1]/tbody/tr[2]/td[2]/strong"
-				text="Pdf:Test.pdf"/>
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[2]/td[2]"
+				regex="true"
+				text="\p{Blank}*Pdf:Test.pdf\p{Blank}*"/>
 			<verifyXPath description="Check HasCopyright field"
-				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[1]/tbody/tr[3]/td[2]/a"
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[3]/td[2]/a"
 				text="TestCopyrightFieldValue"/>
+			<verifyXPath description="Check Uploader field"
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[5]/td[2]/a" 
+				text="User:WikiSysop"/>
 			<verifyXPath description="Check description field"
-				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[2]/tbody/tr[2]/td/div" 
-				text="Test description field value..."/>
-			<verifyXPath description="Check Uploader."
-				xpath="/html/body[1]/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table[2]/tbody/tr[3]/td[2]/a"
-				text="WikiSysop"/>
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[7]/td[2]"
+				regex="true"
+				text="\p{Blank}*Test description field value...\p{Blank}*"/>
+			<verifyXPath description="Check keywords field"
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[8]/td[2]"
+				regex="true"
+				text="\p{Blank}*keyword 1, keyword 2\p{Blank}*"/>
+			<verifyXPath description="Check format field"
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[9]/td[2]"
+				regex="true"
+				text="\p{Blank}*application/pdf\p{Blank}*"/>
+			<verifyXPath description="Check related article field"
+				xpath="//div[@id='bodyContent']/table[1]/tbody/tr[10]/td[2]/a"
+				text="MyNewMediaListTest"/>
+			<verifyXPath description="Check the upload converting process."
+				xpath="//div[@id='bodyContent']/p[1]" 
+				regex="true"
+				text=".*Kurzanleitung.*" />
+			
 			<invoke
 				url="http://localhost/${wikipath}/index.php/MyNewMediaListTest?action=purge" />
 			<verifyXPath description="Check list entry now"
-				xpath="/html/body/div[@id='globalWrapper']/div[@id='smwf_mainblock']/div[@id='smwf_pageblock']/div[@id='content']/div[@id='innercontent']/div[@id='bodyContent']/table/tbody/tr[1]/td/table[@id='sortable_table_id_0']/tbody/tr[2]/td[2]/span/a"
-				text="Pdf:Test.pdf" />
+				xpath="//table[@id='sortable_table_id_0']/tbody/tr[2]/td[2]/span/a"
+				text="Test.pdf" />
 		</webtest>
 	</target>
 </project>
