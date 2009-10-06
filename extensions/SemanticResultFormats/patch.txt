@@ -1,11 +1,11 @@
 Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
 ===================================================================
---- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(revision 4566)
-+++ extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(working copy)
+--- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php  (revision 5295)
++++ extensions/SemanticResultFormats/Calendar/SRF_Calendar.php  (working copy)
 @@ -13,7 +13,21 @@
  
- 	protected $mTemplate = '';
- 	protected $mUserParam = '';
+    protected $mTemplate = '';
+    protected $mUserParam = '';
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
@@ -20,18 +20,18 @@ Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
 +    function getSupportedParameters() {
 +        return $this->mParameters;
 +    }
-+	
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
++   
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
  
 Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 3986)
-+++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php    (revision 5295)
++++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php    (working copy)
 @@ -14,7 +14,23 @@
  class SRFExhibit extends SMWResultPrinter {
- 	///mapping between SMW's and Exhibit's the data types
- 	protected $m_types = array("_wpg" => "text", "_num" => "number", "_dat" => "date", "_geo" => "text", "_uri" => "url");
+    ///mapping between SMW's and Exhibit's the data types
+    protected $m_types = array("_wpg" => "text", "_num" => "number", "_dat" => "date", "_geo" => "text", "_uri" => "url");
 +    protected $mParameters;
 +
 +    public function __construct($format, $inline) {
@@ -49,20 +49,20 @@ Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
 +        return $this->mParameters;
 +    }
 +    
- 	protected static $exhibitRunningNumber = 0; //not sufficient since there might be multiple pages rendered within one PHP run; but good enough now
+    protected static $exhibitRunningNumber = 0; //not sufficient since there might be multiple pages rendered within one PHP run; but good enough now
  
- 	///overwrite function to allow execution of result printer even if no results are available (in case remote query yields no results in local wiki)
+    ///overwrite function to allow execution of result printer even if no results are available (in case remote query yields no results in local wiki)
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 4566)
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(working copy)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php (revision 5295)
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php (working copy)
 @@ -9,9 +9,22 @@
- 	die( 'Not an entry point.' );
+    die( 'Not an entry point.' );
  }
  
 +
  class SRFGoogleBar extends SMWResultPrinter {
- 	protected $m_width = '250';
+    protected $m_width = '250';
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
@@ -76,17 +76,17 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 +        return $this->mParameters;
 +    }
 +   
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 		if (array_key_exists('width', $this->m_params)) {
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
+        if (array_key_exists('width', $this->m_params)) {
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 4566)
-+++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(working copy)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php (revision 5295)
++++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php (working copy)
 @@ -12,6 +12,19 @@
  class SRFGooglePie extends SMWResultPrinter {
- 	protected $m_width = 250;
- 	protected $m_heighth = 250;
+    protected $m_width = 250;
+    protected $m_heighth = 250;
 +    protected $mParameters;
 +
 +    public function __construct($format, $inline) {
@@ -99,18 +99,18 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
 +    function getSupportedParameters() {
 +        return $this->mParameters;
 +    }
-+	
++   
  
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
 Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
 ===================================================================
---- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 4566)
-+++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(working copy)
+--- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php (revision 5295)
++++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php (working copy)
 @@ -25,7 +25,23 @@
- 	protected $m_graphSize="";
- 	protected $m_labelArray = array();
- 	protected $m_graphColors = array("black","red","green","blue","darkviolet","gold","deeppink","brown","bisque","darkgreen","yellow","darkblue","magenta","steelblue2");
+    protected $m_graphSize="";
+    protected $m_labelArray = array();
+    protected $m_graphColors = array("black","red","green","blue","darkviolet","gold","deeppink","brown","bisque","darkgreen","yellow","darkblue","magenta","steelblue2");
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
@@ -128,13 +128,13 @@ Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
 +        return $this->mParameters;
 +    }
 +       
- 	protected function readParameters($params,$outputmode) {
+    protected function readParameters($params,$outputmode) {
  
- 		SMWResultPrinter::readParameters($params,$outputmode);
+        SMWResultPrinter::readParameters($params,$outputmode);
 Index: extensions/SemanticResultFormats/Math/SRF_Math.php
 ===================================================================
---- extensions/SemanticResultFormats/Math/SRF_Math.php	(revision 3986)
-+++ extensions/SemanticResultFormats/Math/SRF_Math.php	(working copy)
+--- extensions/SemanticResultFormats/Math/SRF_Math.php  (revision 5295)
++++ extensions/SemanticResultFormats/Math/SRF_Math.php  (working copy)
 @@ -12,7 +12,17 @@
  if (!defined('MEDIAWIKI')) die();
  
@@ -150,17 +150,17 @@ Index: extensions/SemanticResultFormats/Math/SRF_Math.php
 +        return $this->mParameters;
 +    }
 +    
- 	public function getName() {
- 		wfLoadExtensionMessages('SemanticResultFormats');
- 		return wfMsg('srf_printername_' . $this->mFormat);
+    public function getName() {
+        wfLoadExtensionMessages('SemanticResultFormats');
+        return wfMsg('srf_printername_' . $this->mFormat);
 Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 ===================================================================
---- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 4566)
-+++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
+--- extensions/SemanticResultFormats/Outline/SRF_Outline.php    (revision 5295)
++++ extensions/SemanticResultFormats/Outline/SRF_Outline.php    (working copy)
 @@ -84,7 +84,22 @@
  
- 	protected $mOutlineProperties = array();
- 	protected $mInnerFormat = '';
+    protected $mOutlineProperties = array();
+    protected $mInnerFormat = '';
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
@@ -176,18 +176,18 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 +    function getSupportedParameters() {
 +        return $this->mParameters;
 +    }
-+		
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
++       
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
  
 Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 ===================================================================
---- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 4566)
-+++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(working copy)
+--- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php  (revision 5295)
++++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php  (working copy)
 @@ -36,7 +36,34 @@
- 	protected $m_tblheight = '';
- 	protected $m_width = '';
- 	protected $m_height = '';
+    protected $m_tblheight = '';
+    protected $m_width = '';
+    protected $m_height = '';
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
@@ -216,17 +216,17 @@ Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 +        return $this->mParameters;
 +    }
 +    
- 	protected function readParameters($params, $outputmode) {
- 		SMWResultPrinter::readParameters($params, $outputmode);
- 		if (array_key_exists('ploticusparams', $this->m_params)) {
+    protected function readParameters($params, $outputmode) {
+        SMWResultPrinter::readParameters($params, $outputmode);
+        if (array_key_exists('ploticusparams', $this->m_params)) {
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 4566)
-+++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php  (revision 5295)
++++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php  (working copy)
 @@ -17,7 +17,23 @@
- 	protected $m_tlsize = ''; // CSS-compatible size (such as 400px)
- 	protected $m_tlbands = ''; // array of band IDs (MONTH, YEAR, ...)
- 	protected $m_tlpos = ''; // position identifier (start, end, today, middle)
+    protected $m_tlsize = ''; // CSS-compatible size (such as 400px)
+    protected $m_tlbands = ''; // array of band IDs (MONTH, YEAR, ...)
+    protected $m_tlpos = ''; // position identifier (start, end, today, middle)
 +    protected $mParameters;
 +
 +    public function __construct($format, $inline) {
@@ -243,32 +243,34 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 +        return $this->mParameters;
 +    }
 +
-+	
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
++   
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
  
 @@ -109,6 +125,7 @@
- 							$objectlabel = $object->getLongText($outputmode,$l);
- 						} else {
- 							$objectlabel = $object->getShortText($outputmode,$l);
-+							if ($objectlabel == '') continue;
- 						}
- 						$urlobject =  ($l !== NULL);
- 						$header = '';
+                            $objectlabel = $object->getLongText($outputmode,$l);
+                        } else {
+                            $objectlabel = $object->getShortText($outputmode,$l);
++                           if ($objectlabel == '') continue;
+                        }
+                        $urlobject =  ($l !== NULL);
+                        $header = '';
 Index: extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php
 ===================================================================
---- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(revision 4566)
-+++ extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(working copy)
-@@ -14,7 +14,19 @@
+--- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php    (revision 5295)
++++ extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php    (working copy)
+@@ -14,7 +14,21 @@
  class SRFiCalendar extends SMWResultPrinter {
- 	protected $m_title = '';
- 	protected $m_description = '';
+    protected $m_title = '';
+    protected $m_description = '';
 +    protected $mParameters;
  
 +    public function __construct($format, $inline) {
 +        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('title', 'Title', '<string>', NULL, "Title");
-+        $this->mParameters[] = new SMWQPParameter('description', 'Description', '<string>', NULL, "Description");
++        $iCalendarTitle = new SMWQPParameter('icalendartitle', 'iCalendar title', '<string>', NULL, "iCalendar title");
++        $iCalendarDescription = new SMWQPParameter('icalendardescription', 'iCalendar description', '<string>', NULL, "iCalendar description");
++        $this->mParameters[] = $iCalendarTitle;
++        $this->mParameters[] = $iCalendarDescription;
 +    }
 +
 +    function getSupportedParameters() {
@@ -276,6 +278,6 @@ Index: extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php
 +    }
 +   
 +    
- 	protected function readParameters($params,$outputmode) {
- 		SMWResultPrinter::readParameters($params,$outputmode);
- 		if (array_key_exists('title', $this->m_params)) {
+    protected function readParameters($params,$outputmode) {
+        SMWResultPrinter::readParameters($params,$outputmode);
+        if (array_key_exists('title', $this->m_params)) {
