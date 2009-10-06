@@ -1,10 +1,14 @@
 <?php
 /** Ladino (Ladino)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
  * @author ILVI
+ * @author Remember the dot
  * @author Runningfridgesrule
  * @author Taichi
  * @author Universal Life
@@ -15,6 +19,7 @@ $fallback = 'es';
 
 $messages = array(
 # User preference toggles
+'tog-underline'            => 'Subrayar linkes',
 'tog-justify'              => 'Atacanar paragrafos',
 'tog-hideminor'            => 'Esconder ediciones chiquiticas de los «trocamientos frescos»',
 'tog-showtoolbar'          => 'Amostrár la barra de edision',
@@ -104,7 +109,7 @@ $messages = array(
 'mypage'         => 'Mi pajina',
 'mytalk'         => 'Mi diścuśión',
 'anontalk'       => 'Diskusion para esta IP',
-'and'            => 'e',
+'and'            => '&#32;e',
 
 'errorpagetitle'   => 'Yerro',
 'tagline'          => 'De {{SITENAME}}',
@@ -187,10 +192,10 @@ $messages = array(
 'site-atom-feed'  => 'Fuente de Atom de $1',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
-'nstab-main'      => 'Artikolo',
+'nstab-main'      => 'Página',
 'nstab-user'      => 'Página de usuario',
 'nstab-special'   => 'Espesial',
-'nstab-image'     => 'Imagen',
+'nstab-image'     => 'Archivo',
 'nstab-mediawiki' => 'Mesaje',
 'nstab-help'      => 'Ayudo',
 'nstab-category'  => 'Kategoría',
@@ -213,14 +218,14 @@ $messages = array(
 
 # Edit page toolbar
 'italic_tip'     => 'Texhto en cursiva',
-'extlink_sample' => 'http://www.enxemplo.com Título del link',
+'extlink_sample' => 'http://www.example.com Título del link',
 'headline_tip'   => 'Titular de nivel 2',
 'image_tip'      => 'Imagen incorporada',
 'media_tip'      => 'Link al arxivo multimedia',
 
 # Edit pages
-'summary'          => 'Resumen',
-'subject'          => 'Tema/título',
+'summary'          => 'Resumen:',
+'subject'          => 'Tema/título:',
 'minoredit'        => 'Esta es una edición chiquitica',
 'watchthis'        => 'Vigilar este artículo',
 'savearticle'      => 'Registrar la página',
@@ -228,7 +233,7 @@ $messages = array(
 'showdiff'         => 'Amostrar trocamientos',
 'accmailtitle'     => 'La kontrasenya ha sido embiada.',
 'accmailtext'      => 'La kontrasenya para "$1" se ha embiado a $2.',
-'copyrightwarning' => 'Si puede ser, que observe que todas las contribuciones a {{SITENAME}} se consideran hechas públicas abaxo la $2 (ver detayes en $1). Si no quere que la gente endereche tus texhtos escritos sin piedad y los distribuya libbremente, alora no los meta aquí. También él/ella nos está asegurando ansí que escribió este texhto su mismo y es dueño de los derechos de autor, o lo copió desde el dominio público u otra fuente libbero.<strong>¡QUE N0 USE TEXHTOS ESCRITOS CON COPYRIGHT SIN PERMIŚIÓN!</strong><br />',
+'copyrightwarning' => "Si puede ser, que observe que todas las contribuciones a {{SITENAME}} se consideran hechas públicas abaxo la $2 (ver detayes en $1). Si no quere que la gente endereche tus texhtos escritos sin piedad y los distribuya libbremente, alora no los meta aquí. También él/ella nos está asegurando ansí que escribió este texhto su mismo y es dueño de los derechos de autor, o lo copió desde el dominio público u otra fuente libbero.'''¡QUE N0 USE TEXHTOS ESCRITOS CON COPYRIGHT SIN PERMIŚIÓN!'''<br />",
 
 # History pages
 'revisionasof'     => 'Rêvizión de $1',
@@ -241,7 +246,8 @@ $messages = array(
 'editundo' => 'deshazer',
 
 # Search results
-'powersearch' => 'Búsqueda adelantado',
+'searchhelp-url' => 'Help:Ayudo',
+'powersearch'    => 'Búsqueda adelantado',
 
 # Preferences page
 'preferences'   => 'Preferensias',
@@ -269,7 +275,7 @@ $messages = array(
 # Upload
 'upload' => 'Cargar un dosyé',
 
-# Image description page
+# File description page
 'filehist'          => 'Istoria del dosyé',
 'filehist-datetime' => 'Data/Hora',
 'imagelinks'        => 'Linkes',
@@ -296,18 +302,20 @@ $messages = array(
 'special-categories-sort-abc'   => 'ordenar alefbeticamente',
 
 # Watchlist
-'watchlist'            => 'Mi lista de vigilancia',
-'mywatchlist'          => 'Mi lista de vigilancia',
-'watch'                => 'Vigilar',
-'unwatch'              => 'Dexar de vigilar',
-'watchlist-hide-minor' => 'Esconder ediciones chiquiticas',
+'watchlist'   => 'Mi lista de vigilancia',
+'mywatchlist' => 'Mi lista de vigilancia',
+'watch'       => 'Vigilar',
+'unwatch'     => 'Dexar de vigilar',
 
 # Displayed when you click the "watch" button and it is in the process of watching
 'watching'   => 'Vigilando...',
 'unwatching' => 'Dexando de vigilar...',
 
-# Delete/protect/revert
+# Delete
 'actioncomplete' => 'Aksion kompleta',
+
+# Protect
+'prot_1movedto2' => '[[$1]] trasladado a [[$2]]',
 
 # Namespace form on various pages
 'blanknamespace' => '(Principal)',
@@ -362,7 +370,7 @@ Si puede ser, que use el botón de previsualización antes de registrarla.',
 'tooltip-diff'            => 'Mostra los trocamientos que él/ella hizo en el texhto.',
 
 # Attribution
-'anonymous' => 'Uzuario(s) anonimo(s) de {{SITENAME}}',
+'anonymous' => '{{PLURAL:$1|Uzuario anonimo|Uzuarios anonimos}} de {{SITENAME}}',
 
 # Bad image list
 'bad_image_list' => 'El formato es ansina:
@@ -401,19 +409,13 @@ El resto de los linkes del mismo satir se juzgan como eccepciones (por enxemplo,
 'confirmemail_success' => 'Su direksion de pósta a sido konfirmada. Agóra puedes registrarse e kolaborar en el wiki.',
 
 # Trackbacks
-'trackbackremove' => ' ([$1 Efasár])',
+'trackbackremove' => '([$1 Efasár])',
 
 # Delete conflict
 'recreate' => 'Krear de muevo',
 
-# HTML dump
-'redirectingto' => 'Redirijiendo a [[:$1]]...',
-
 # action=purge
 'confirm_purge_button' => 'Akseptár',
-
-# AJAX search
-'hideresults' => 'Eskonder resultados',
 
 # Multipage image navigation
 'imgmultipageprev' => '← pajina anterior',

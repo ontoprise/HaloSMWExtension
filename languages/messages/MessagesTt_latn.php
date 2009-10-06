@@ -1,10 +1,14 @@
 <?php
 /** Tatar (Latin) (Tatarça/Татарча (Latin))
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
  * @author Albert Fazlî
+ * @author Urhixidur
  * @author לערי ריינהארט
  */
 
@@ -17,8 +21,8 @@ $namespaceNames = array(
         NS_USER_TALK        => "Äğzä_bäxäse",
         # NS_PROJECT set by $wgMetaNamespace
         NS_PROJECT_TALK     => '$1_bäxäse',
-        NS_IMAGE            => "Räsem",
-        NS_IMAGE_TALK       => "Räsem_bäxäse",
+        NS_FILE             => "Räsem",
+        NS_FILE_TALK        => "Räsem_bäxäse",
         NS_MEDIAWIKI        => "MediaWiki",
         NS_MEDIAWIKI_TALK   => "MediaWiki_bäxäse",
         NS_TEMPLATE         => "Ürnäk",
@@ -81,8 +85,6 @@ $fallback8bitEncoding = "windows-1254";
 $linkTrail = '/^([a-zäçğıñöşü“»]+)(.*)$/sDu';
 
 $messages = array(
-'skinpreview' => '(Küzläw)',
-
 # Dates
 'sunday'    => 'Yäkşämbe',
 'monday'    => 'Düşämbe',
@@ -140,7 +142,7 @@ $messages = array(
 'mytalk'         => 'Bäxäsem',
 'anontalk'       => 'Bu IP turında bäxäs',
 'navigation'     => 'Küçü',
-'and'            => 'wä',
+'and'            => '&#32;wä',
 
 'errorpagetitle'    => 'Xata',
 'returnto'          => '«$1» bitenä qaytu.',
@@ -185,8 +187,6 @@ $messages = array(
 # All link text and link target definitions of links into project namespace that get used by other message strings, with the exception of user group pages (see grouppage) and the disambiguation template definition (see disambiguations).
 'aboutsite'            => '{{SITENAME}} Turında',
 'aboutpage'            => 'Project:Turında',
-'bugreports'           => 'Xatanamä',
-'bugreportspage'       => 'Project:Xata_yomğağı',
 'copyright'            => 'Eçtälek $1 buyınça ireşüle.',
 'copyrightpagename'    => '{{SITENAME}} qälämxaqı',
 'copyrightpage'        => '{{ns:project}}:Qälämxaq',
@@ -239,7 +239,6 @@ $messages = array(
 'filenotfound'    => 'Bu «$1» biremen tabalmím.',
 'formerror'       => 'Xata: formını künderä almím',
 'badtitle'        => 'Yaraqsız başlıq',
-'perfdisabled'    => 'Kiçer! Biremlekneñ äkren buluına säbäple, bu mömkinlek waqıtlıça sünderelgän ide.',
 'perfcached'      => 'Astağı belem alxäterdän alındı wä anıñ xäzerge xäl belän turı kilmäwe bar:',
 'perfcachedts'    => '$1 çağında bolğan torış asılında yasalğan tizme bo.',
 'viewsource'      => 'Mäqälä çığanağı',
@@ -254,7 +253,6 @@ Sineñ xísabıñ yasaldı. {{SITENAME}}'dağı köyläwläreñne dä üzgärter
 'yourpassword'          => 'Sersüzeñ',
 'yourpasswordagain'     => 'Sersüz qabat',
 'remembermypassword'    => 'Tanı mine kergändä.',
-'loginproblem'          => '<b>Kerüeñ waqıtında nindider qíınlıq bulıp çıqtı.</b><br />Qabat kerep qara!',
 'login'                 => 'İreşü',
 'userlogin'             => 'Xísap yasaw yä ki kerü',
 'logout'                => 'Çığış',
@@ -277,6 +275,11 @@ Sineñ xísabıñ yasaldı. {{SITENAME}}'dağı köyläwläreñne dä üzgärter
 Anı alğaç monda tağın kerep qara.',
 'mailerror'             => 'Xat künderü xatası: $1',
 
+# Password reset dialog
+'oldpassword' => 'İske sersüz',
+'newpassword' => 'Yaña sersüz',
+'retypenew'   => 'Yaña sersüz (qabat)',
+
 # Edit page toolbar
 'bold_sample'     => 'Qalın mäten',
 'bold_tip'        => 'Qalın mäten',
@@ -294,13 +297,13 @@ Anı alğaç monda tağın kerep qara.',
 'nowiki_tip'      => 'Wiki-qalıp eşkärtmäskä',
 'image_sample'    => 'Mísal.jpg',
 'image_tip'       => 'Quşılğan räsem',
-'media_sample'    => 'Mísal.mp3',
+'media_sample'    => 'Mísal.ogg',
 'sig_tip'         => 'Ímzañ belän zaman/waqıt tamğası',
 'hr_tip'          => 'Yatma sızıq (siräk qullan)',
 
 # Edit pages
-'summary'            => 'Yomğaq',
-'subject'            => 'Ni turında/başlıq',
+'summary'            => 'Yomğaq:',
+'subject'            => 'Ni turında/başlıq:',
 'minoredit'          => 'Bu waq-töyäk üzgärmä genä',
 'watchthis'          => 'Bitne küzätep torası',
 'savearticle'        => 'Saqla biremne',
@@ -315,15 +318,15 @@ Anı alğaç monda tağın kerep qara.',
 'newarticle'         => '(Yaña)',
 'clearyourcache'     => "'''İskärmä:''' Saqlawdan soñ, üzgärmälärne kürü öçen browserıñnıñ alxäteren buşatası bar: '''Mozilla:''' click ''reload''(yä ki ''ctrl-r''), '''IE / Opera:''' ''ctrl-f5'', '''Safari:''' ''cmd-r'', '''Konqueror''' ''ctrl-r''.",
 'updated'            => '(Yañartıldı)',
-'note'               => '<strong>İskärmä:</strong>',
+'note'               => "'''İskärmä:'''",
 'editing'            => 'Üzgärtü: $1',
 'editconflict'       => 'Üzgärtü qíınlığı: $1',
 'yourtext'           => 'Mäteneñ',
 'storedversion'      => 'Saqlanğan yurama',
-'editingold'         => '<strong>KİSÄTMÄ: Sin bu bitneñ iskergän yuramasın üzgärtäsen.
-Ägär sin monı saqlísıñ ikän, şul yuramadan soñ yasalğan üzgärmälär yuğalır.</strong>',
+'editingold'         => "'''KİSÄTMÄ: Sin bu bitneñ iskergän yuramasın üzgärtäsen.
+Ägär sin monı saqlísıñ ikän, şul yuramadan soñ yasalğan üzgärmälär yuğalır.'''",
 'yourdiff'           => 'Ayırmalar',
-'longpagewarning'    => "KİSÄTMÄ: Bu bit zurlığı $1 KB; qayber browserlarda 32 KB'tan da zurraq bulğan bitlärne kürsätkändä qíınlıqlar bula.
+'longpagewarning'    => "KİSÄTMÄ: Bu bit zurlığı $1 kB; qayber browserlarda 32 kB'tan da zurraq bulğan bitlärne kürsätkändä qíınlıqlar bula.
 Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'template-protected' => '(yaqlanmış)',
 
@@ -346,6 +349,7 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'prevn'          => 'uzğan $1',
 'nextn'          => 'kiläse $1',
 'viewprevnext'   => 'Körsetesi: ($1) ($2) ($3)',
+'searchhelp-url' => 'Help:Eçtälek',
 'powersearch'    => 'Ezläw',
 
 # Preferences page
@@ -355,6 +359,7 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'qbsettings'            => 'Tiztirä caylawı',
 'changepassword'        => 'Sersüz üzgärtü',
 'skin'                  => 'Tışlaw',
+'skin-preview'          => 'Küzläw',
 'dateformat'            => 'Waqıt qalıbı',
 'math_failure'          => 'Uqí almadım',
 'math_unknown_error'    => 'tanılmağan xata',
@@ -364,9 +369,6 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'prefs-misc'            => 'Başqa köyläwlär',
 'saveprefs'             => 'Saqla köyläwlärne',
 'resetprefs'            => 'Awdar köyläwne',
-'oldpassword'           => 'İske sersüz',
-'newpassword'           => 'Yaña sersüz',
-'retypenew'             => 'Yaña sersüz (qabat)',
 'textboxsize'           => 'Mätenqır ülçäme',
 'rows'                  => 'Yul:',
 'columns'               => 'Buy:',
@@ -431,11 +433,11 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'uploaddisabled'    => 'Ğafu it, yökläw sünderelgän kileş tora.',
 'uploadcorrupt'     => 'Bu birem yä üze watıq, yä quşımtası yaraqsız. Birem tikşerüdän soñ qabat yöklä zínhar.',
 
-# Special:ImageList
+# Special:ListFiles
 'imgfile'   => 'fayl',
-'imagelist' => 'Räsem tezmäse',
+'listfiles' => 'Räsem tezmäse',
 
-# Image description page
+# File description page
 'filehist-dimensions' => 'Ölçemi',
 'filehist-comment'    => 'Açıqlama',
 'imagelinks'          => 'Räsem läñkerläre',
@@ -457,9 +459,8 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'randompage' => 'Berär bit kürü',
 
 # Statistics
-'statistics' => 'Nöfüs',
-'sitestats'  => '{{SITENAME}} nöfüse',
-'userstats'  => 'Qullanuçı nöfüse',
+'statistics'              => 'Nöfüs',
+'statistics-header-users' => 'Qullanuçı nöfüse',
 
 'disambiguations' => 'Saylaqbit tezmäse',
 
@@ -536,7 +537,7 @@ Zínhar, bu bitneñ wağraq kisäklärgä bülü turında uylap qara.",
 'watchthispage'    => 'Bitne küzätep torası',
 'notanarticle'     => 'Eçtälek belän bit tügel',
 
-# Delete/protect/revert
+# Delete
 'deletepage'            => 'Beter bitne',
 'confirm'               => 'Raslaw',
 'excontentauthor'       => "soñğı içteligi: '$1' ('[[Special:Contributions/$2|$2]]' ğına qatnaşqan)",
@@ -558,14 +559,19 @@ Soñğı beterülär $2 bitendä terkälenä.',
 ** Yazğanı soradı
 ** Qelemxaqq bozılışı
 ** Bozıp yöriwçi işi',
-'editcomment'           => 'Bu üzgärtü taswírı: "<i>$1</i>".', # only shown if there is an edit comment
-'protectlogpage'        => 'Yaqlaw_köndälege',
-'protectedarticle'      => '[[$1]] yaqlandı',
-'unprotectedarticle'    => '[[$1]] ireklände',
-'protect-title'         => '«$1» yaqlaw',
-'protect-legend'        => 'Yaqlawnı raslaw',
-'protectcomment'        => 'Yaqlaw säbäbe',
-'protectexpiry'         => 'Eski bolaçaq:',
+
+# Rollback
+'editcomment' => "Bu üzgärtü taswírı: \"''\$1''\".", # only shown if there is an edit comment
+
+# Protect
+'protectlogpage'     => 'Yaqlaw_köndälege',
+'protectedarticle'   => '[[$1]] yaqlandı',
+'unprotectedarticle' => '[[$1]] ireklände',
+'protect-title'      => '«$1» yaqlaw',
+'prot_1movedto2'     => '$1 moña küçte: $2',
+'protect-legend'     => 'Yaqlawnı raslaw',
+'protectcomment'     => 'Yaqlaw säbäbe',
+'protectexpiry'      => 'Eski bolaçaq:',
 
 # Undelete
 'undelete'         => 'Beterelgän bit torğızu',
@@ -585,7 +591,6 @@ Soñğı beterülär $2 bitendä terkälenä.',
 
 # What links here
 'whatlinkshere' => 'Kem bäyle moña',
-'linklistsub'   => '(Läñker tezmäse)',
 'isredirect'    => 'küçerelü bite',
 
 # Block/unblock
@@ -620,6 +625,7 @@ Soñğı beterülär $2 bitendä terkälenä.',
 # Move page
 'move-page-legend' => 'Bit küçerü',
 'movearticle'      => 'Küçeräse bit',
+'movenologin'      => 'Kermädeñ',
 'newtitle'         => 'Yaña başlıq',
 'movepagebtn'      => 'Küçer bitne',
 'pagemovedsub'     => 'Küçerü uñışlı uzdı',
@@ -642,10 +648,11 @@ yä isä saylanğan isem yaraqsız buldı. Başqa isem sayla zínhar.',
 'thumbnail-more' => 'Zuraytası',
 
 # Special:Import
-'import'        => 'Bitlärne yökläw',
-'importfailed'  => 'Yökläw xatası: $1',
-'importnotext'  => 'Buş yä ki mäten tügel',
-'importsuccess' => 'Yökläw uñışlı buldı!',
+'import'         => 'Bitlärne yökläw',
+'import-comment' => 'Açıqlama:',
+'importfailed'   => 'Yökläw xatası: $1',
+'importnotext'   => 'Buş yä ki mäten tügel',
+'importsuccess'  => 'Yökläw uñışlı buldı!',
 
 # Tooltip help for the actions
 'tooltip-pt-userpage'        => 'Şäxsi bitem',
@@ -697,7 +704,7 @@ yä isä saylanğan isem yaraqsız buldı. Başqa isem sayla zínhar.',
 # Media information
 'show-big-image' => 'Towlı ölçemi',
 
-# Special:NewImages
+# Special:NewFiles
 'ilsubmit' => 'Ezläw',
 'bydate'   => 'waqıt buyınça',
 

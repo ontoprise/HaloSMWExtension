@@ -94,7 +94,7 @@ div.tleft, div.floatleft, table.floatleft {
 }
 
 /* Fix link icons */
-.external {
+.external, a.feedlink {
 	padding: 0 !important;
 	background: none !important;
 }
@@ -151,8 +151,9 @@ input#wpSave, input#wpDiff {
 	float: right;
 	margin: 0 0 1em 3em;
 }
-/* Convenience links to edit block and delete reasons */
-p.mw-ipb-conveniencelinks, p.mw-filedelete-editreasons, p.mw-delete-editreasons {
+/* Convenience links to edit block, delete and protect reasons */
+p.mw-ipb-conveniencelinks, p.mw-protect-editreasons,
+p.mw-filedelete-editreasons, p.mw-delete-editreasons {
 	float: left;
 }
 
@@ -173,3 +174,8 @@ table.filehistory th {
 html > body div#bodyContent ul {
 	display: table;
 }
+/* Special:Prefixindex styling */
+td#mw-prefixindex-nav-form  {
+	text-align: left;
+}
+

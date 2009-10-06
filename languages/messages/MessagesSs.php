@@ -1,6 +1,9 @@
 <?php
 /** Swati (SiSwati)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -85,12 +88,12 @@ $messages = array(
 # Preferences page
 'searchresultshead' => 'Kucálata',
 
-# Special:ImageList
-'imagelist_date' => 'Lusuku',
-'imagelist_name' => 'Ligama',
-'imagelist_user' => 'Umuntfu',
+# Special:ListFiles
+'listfiles_date' => 'Lusuku',
+'listfiles_name' => 'Ligama',
+'listfiles_user' => 'Umuntfu',
 
-# Image description page
+# File description page
 'filehist-datetime' => 'Lusuku/Síkhatsí',
 'filehist-user'     => 'Umuntfu',
 
@@ -106,10 +109,12 @@ $messages = array(
 
 # Special:Log
 'specialloguserlabel' => 'Umuntfu:',
-'log-search-submit'   => 'Kúhámba',
 
 # Special:AllPages
 'allpagessubmit' => 'Kúhámba',
+
+# Special:LinkSearch
+'linksearch-ok' => 'Kucálata',
 
 # Special:ListUsers
 'listusers-submit' => 'Kúfúna',
@@ -142,7 +147,7 @@ $messages = array(
 'tooltip-search' => 'Kucálata {{SITENAME}}',
 'tooltip-p-logo' => 'Likhasi Lelikhulu',
 
-# Special:NewImages
+# Special:NewFiles
 'ilsubmit' => 'Kucálata',
 
 # Multipage image navigation

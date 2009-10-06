@@ -1,15 +1,14 @@
 <?php
 /** Navajo (Diné bizaad)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
  * @author לערי ריינהארט
  */
-
-$skinNames = array(
-	'monobook' => 'NaaltsoosŁáa\'ígíí'
-);
 
 $namespaceNames = array(
 	NS_MEDIA            => 'Media',
@@ -20,8 +19,8 @@ $namespaceNames = array(
 	NS_USER_TALK        => 'Choinish\'įįhí_baa_yinísht\'į́',
 	# NS_PROJECT set by $wgMetaNamespace
 	NS_PROJECT_TALK     => '$1_baa_yinísht\'į́',
-	NS_IMAGE            => 'E\'elyaaígíí',
-	NS_IMAGE_TALK       => 'E\'elyaaígíí_baa_yinísht\'į́',
+	NS_FILE             => 'E\'elyaaígíí',
+	NS_FILE_TALK        => 'E\'elyaaígíí_baa_yinísht\'į́',
 	NS_MEDIAWIKI        => 'MediaWiki',
 	NS_MEDIAWIKI_TALK   => 'MediaWiki_baa_yinísht\'į́',
 	NS_TEMPLATE         => 'Template',
@@ -69,5 +68,8 @@ $messages = array(
 'dec'       => 'Ntsx',
 
 'edit' => 'Łahgo áshłééh',
+
+# Skin names
+'skinname-monobook' => "NaaltsoosŁáa'ígíí",
 
 );

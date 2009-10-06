@@ -1,6 +1,9 @@
 <?php
 /** Hiligaynon (Ilonggo)
  *
+ * See MessagesQqq.php for message documentation incl. usage of parameters
+ * To improve a translation please visit http://translatewiki.net
+ *
  * @ingroup Language
  * @file
  *
@@ -14,8 +17,6 @@ $messages = array(
 'tog-highlightbroken'  => 'Dagwayi ang utod nga tabid <a href="" class="new">nga nagaka anggid sini </a> (alternatibo: anggid sini<a href="" class="internal">?</a>).',
 'tog-justify'          => 'Tadlongon ang mga parapo',
 'tog-rememberpassword' => 'Dumdumon ang akon pagsulod sa sini nga kompyuter',
-
-'skinpreview' => '(Ipakita subong)',
 
 # Dates
 'sunday'        => 'Domingo',
@@ -77,7 +78,7 @@ $messages = array(
 'qbspecialpages' => 'Pinasahi nga mga panid',
 'mytalk'         => 'Akon paghisayranay',
 'navigation'     => 'Nabigayson',
-'and'            => 'kag',
+'and'            => '&#32;kag',
 
 'tagline'          => 'Halin sa {{SITENAME}}',
 'help'             => 'Bulig',
@@ -151,7 +152,7 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 'email'                   => 'E-mail',
 
 # Edit pages
-'summary'            => 'Kabilogan',
+'summary'            => 'Kabilogan:',
 'minoredit'          => 'Ini menor nga pag-ilis',
 'watchthis'          => 'Bantayan ining panid',
 'savearticle'        => 'Tiponon ining panid',
@@ -178,6 +179,7 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 # Preferences page
 'mypreferences'     => 'Akon pagpalabi',
 'prefsnologin'      => 'Wala naka-sulod',
+'skin-preview'      => 'Ipakita subong',
 'prefs-rc'          => 'Mga Bag-o nga Inislan',
 'searchresultshead' => 'Pangita-a',
 
@@ -213,12 +215,12 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 # Book sources
 'booksources-go' => 'Lakat',
 
-# Special:Log
-'log-search-submit' => 'Lakat',
-
 # Special:AllPages
 'alphaindexline' => '$1 sa $2',
 'allpagessubmit' => 'Sige',
+
+# Special:LinkSearch
+'linksearch-ok' => 'Pangita-a',
 
 # Watchlist
 'watchlist'     => 'Akon Ginabantayan',
@@ -227,8 +229,11 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 'watch'         => 'Bantayan',
 'watchthispage' => 'Bantayan ining panid',
 
-# Delete/protect/revert
+# Delete
 'delete-legend' => 'Panason',
+
+# Protect
+'prot_1movedto2' => '[[$1]] gin saylo na sa [[$2]]',
 
 # Restrictions (nouns)
 'restriction-edit' => 'Ilisan',
@@ -254,6 +259,7 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 # Move page
 'move-page-legend' => 'Saylohon ining panid',
 'movearticle'      => 'Saylohon ining panid:',
+'movenologin'      => 'Wala naka-sulod',
 'move-watch'       => 'Bantayan ining panid',
 'movepagebtn'      => 'Saylohon ining panid',
 'movedto'          => 'gin saylo sa',
@@ -286,7 +292,7 @@ Indi pagkalimti ang pag ilis sang imo mga pagpasulabi sa {{SITENAME}}.',
 # Media information
 'show-big-image' => 'Kabilogan nga resolusyon',
 
-# Special:NewImages
+# Special:NewFiles
 'ilsubmit' => 'Pangita-a',
 
 # 'all' in various places, this might be different for inflected languages

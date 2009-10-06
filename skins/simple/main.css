@@ -175,6 +175,12 @@ input.searchButton {
     padding: 0.5em 0.4em 0.4em 0.4em;
 }
 
+/* feed links */
+a.feedlink {
+	background: url("../common/images/feed-icon.png") center left no-repeat;
+	padding-left: 16px;
+}
+
 textarea {
   width: 100%;
 }
@@ -345,10 +351,6 @@ div.printfooter {
   display: none;
 }
 
-span.searchmatch {
-  font-weight: bold;
-}
-
 #preftoc {
     float: left;
     margin: 1em;
@@ -393,12 +395,3 @@ table.collapsed tr.collapsable {
 
 .templatesUsed { margin-top: 1.5em; }
 
-/* Recreating-deleted-page/reupload file warning and log entries */
-div#mw-upload-deleted-warn ul li,
-div#mw-recreate-deleted-warn ul li {
-	font-size: 95%;
-}
-div.mw-recreate-deleted-control {
-	float: right;
-	font-size: 90%;
-}

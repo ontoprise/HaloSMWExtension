@@ -42,11 +42,16 @@ class ApiLogout extends ApiBase {
 
 	public function execute() {
 		global $wgUser;
+		$oldName = $wgUser->getName();
 		$wgUser->logout();
 		
 		// Give extensions to do something after user logout
 		$injected_html = '';
-		wfRunHooks( 'UserLogoutComplete', array(&$wgUser, &$injected_html) );
+		wfRunHooks( 'UserLogoutComplete', array(&$wgUser, &$injected_html, $oldName) );
+	}
+
+	public function isReadMode() {
+		return false;
 	}
 
 	public function getAllowedParams() {
