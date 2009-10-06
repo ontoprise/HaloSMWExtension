@@ -859,7 +859,7 @@ class OntoSkin3Template extends QuickTemplate {
      */
     function parseWikiText($text){
         global $wgParser;
-        $output = $wgParser->parse($text,$this->mTitle, new ParserOptions());
+        $output = $wgParser->parse($text,$this->skin->mTitle, new ParserOptions());
         return $output->getText();
 
     }
