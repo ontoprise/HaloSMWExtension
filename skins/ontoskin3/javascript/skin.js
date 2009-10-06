@@ -33,7 +33,7 @@ function Smwh_Menu() {
         }
     };
     
-    if(GeneralBrowserTools!=undefined){
+    if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
         if (state == true){
             this.expanded = true;
