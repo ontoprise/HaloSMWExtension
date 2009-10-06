@@ -44,6 +44,14 @@ var wgContLanguageStrings = {
         'delete'                : 'Löschen',
         'to'                    : 'bis',
         'from'                  : 'von',
-        'remove'                : 'Löschen'
+        'remove'                : 'Löschen',
+
+         'confirmDeleteReset' : "Reset/L&ouml;schen ebst&auml;tigen",
+        'confirmDeleteMessage': "Die eingegebenen Daten werden verworfen",
+
+        'rightHasBeenDeleted': 'Das Recht wurde gel&ouml;scht',
+
+        'discardChanges' : "&Auml;nderungen verwerfen",
+        'discardChangesMessage': "Die eingegebenen Daten werden verworfen"
 	
 }

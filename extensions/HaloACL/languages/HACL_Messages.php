@@ -323,12 +323,23 @@ $messages['en'] = array(
 
     'hacl_deletetplfromacl' => "Delete template from ACL",
     'hacl_addtpltoacl' => "Add template to ACL",
+   
+    'hacl_tpl_already_exists' => "The template already exists",
+    'hacl_setexisting_name' => "Please enter a name of an existing element",
+    'hacl_already_protected' => "The element is already protected. Please go to ManageACLs to change the ACL."
+
 );
 
 /** 
  * German
  */
 $messages['de'] = array(
+
+    'hacl_tpl_already_exists' => "Ein Template mit diesem Name existiert bereits",
+    'hacl_setexisting_name' => "Bitte einen Namen eines existierenden Elements eingeben",
+    'hacl_already_protected' => "Das Element ist bereits gesch&uuml;tzt. Zum &Auml;ndern bitte in die Rechteverwaltung wechseln. ",
+
+
 
     'hacl_deletetplfromacl' => "Template von ACL entfernen",
     'hacl_addtpltoacl' => "Template zu ACL hinzuf&uuml;gen",

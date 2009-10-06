@@ -703,6 +703,9 @@ HTML;
 
     $discard = wfMsg('hacl_discard_changes');
     $saveacl = wfMsg('hacl_save_acl');
+    $tplexists = wfMsg('hacl_tpl_already_exists');
+    $setexistingname = wfMsg('hacl_setexisting_name');
+    $alreadyprotected = wfMsg('hacl_already_protected');
 
     $html .= <<<HTML
         </div>
@@ -765,7 +768,7 @@ HTML;
                         if(result.responseText != "true"){
                             step2callbackSecondCheck();
                         }else{
-                            YAHOO.haloacl.notification.createDialogOk("content","","The template already exists.",{
+                            YAHOO.haloacl.notification.createDialogOk("content","","$tplexists",{
                                 yes:function(){}
                             });
                         }
@@ -783,12 +786,12 @@ HTML;
                         if(result.responseText == "true"){
                             step2callbackSecondCheck();
                         }else if(result.responseText == "sdexisting"){
-                            YAHOO.haloacl.notification.createDialogOk("content","","This "+protect+" is already protected. Please go to ManageACLs to change the acl.",{
+                            YAHOO.haloacl.notification.createDialogOk("content","","$alreadyprotected",{
                                 yes:function(){}
                             });
 
                         }else{
-                            YAHOO.haloacl.notification.createDialogOk("content","","Please enter a name for an existing "+protect+ ".",{
+                            YAHOO.haloacl.notification.createDialogOk("content","","$setexistingname",{
                                 yes:function(){}
                             });
                         }
@@ -4688,7 +4691,7 @@ HTML;
                 <div id="haloacl_whitelist_datatable" class="haloacl_whitelist_datatable yui-content">
                 </div>
             </div>
-            <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 0">
+            <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 10px">
                 <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
             $showing1 <span id="haloacl_whitelist_count">0</span> $showing2
                 </span>

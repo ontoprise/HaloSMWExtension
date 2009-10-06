@@ -455,7 +455,7 @@ YAHOO.haloacl.togglePanel = function(panelid){
 };
 
 YAHOO.haloacl.removePanel = function(panelid,callback){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Confirm delete/reset","All entered data in this right will get lost",{
+    YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('confirmDeleteReset'),gLanguage.getMessage('confirmDeleteMessage'),{
         yes:function(){
             var element = $(panelid);
             element.remove();
@@ -763,7 +763,7 @@ YAHOO.haloacl.deleteSD = function(sdId){
     YAHOO.haloacl.callAction('deleteSecurityDescriptor', {
         sdId:sdId
     }, function(result){
-        YAHOO.haloacl.notification.createDialogOk("content","ManageACL","Right has been deleted",{
+        YAHOO.haloacl.notification.createDialogOk("content","ManageACL",gLanguage.getMessage('rightHasBeenDeleted'),{
             yes:function(){
                 window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageACLs';
             }
@@ -847,7 +847,7 @@ YAHOO.haloacl.addTooltip = function(name, context, text){
 
 YAHOO.haloacl.discardChanges_createacl = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will be lost!",{
+    YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('discardChanges'),gLanguage.getMessage('discardChangesMessage'),{
         yes:function(){
             window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=createACL';
         },
@@ -857,7 +857,7 @@ YAHOO.haloacl.discardChanges_createacl = function(){
 
 YAHOO.haloacl.discardChanges_users = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
-    YAHOO.haloacl.notification.createDialogYesNo("content","Discard changes","All changes will be lost!",{
+    YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('discardChanges'),gLanguage.getMessage('discardChangesMessage'),{
         yes:function(){
             window.location.href=YAHOO.haloacl.specialPageUrl+'?activetab=manageUsers';
         },

@@ -44,7 +44,14 @@ var wgContLanguageStrings = {
         'delete'                : 'Delete',
         'to'                    : 'to',
         'from'                  : 'from',
-        'remove'                : 'Remove'
+        'remove'                : 'Remove',
 
+        'confirmDeleteReset' : "Confirm delete/reset",
+        'confirmDeleteMessage': "All entered data in this right will get lost",
+
+        'rightHasBeenDeleted': 'Right has been deleted',
+
+        'discardChanges' : "Discard changes",
+        'discardChangesMessage': "All changes will be lost"
 	
 }

@@ -650,7 +650,7 @@ abbr,acronym { border:0;
 .haloacl_infobutton {
     width:20px;
     height:20px;
-    background:url(images/info.png) no-repeat;
+    background:url(images/info.png) no-repeat 0 2px;
     float:left;
 }
 .haloacl_infobutton_groupdesc {
@@ -821,6 +821,10 @@ abbr,acronym { border:0;
 .haloacl_manageuser_list_title_modified{
     float:left;
     width:418px;
+}
+.haloacl_manageuser_list_title_modified_group{
+    float:left;
+    width:450px;
 }
 .haloacl_manageacl_list_information_modified{
     float:left;

@@ -335,8 +335,9 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                                     elementToRemove = i;
                                 }
                             }
-                            result.splice(elementToRemove,1);
-                       
+                            if(elementToRemove != null){
+                                result.splice(elementToRemove,1);
+                            }
                         }
                     });
                 
@@ -354,7 +355,11 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                     }else if(reallyAddUser == "groupuser"){
                         var temp = new Array();
                         temp['name'] = item;
-                        temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                        try{
+                            temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                        }catch(e){
+                            temp['groups'] = "";
+                        }
                         temp['deletable'] = "groupuser";
                         result.push(temp);
                     }
@@ -363,7 +368,6 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                 
             });
         };
-
         return YAHOO.haloacl.ROuserDataTable(divid,panelid,result, noDelete);
     };
 

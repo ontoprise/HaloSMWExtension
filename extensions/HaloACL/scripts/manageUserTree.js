@@ -304,12 +304,12 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         if (this.title) {
             sb[sb.length] = ' title="' + this.title + '"';
         }
-        sb[sb.length] = ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"';
+        sb[sb.length] = ' class="haloacl_manageuser_list_title_modified_group ' + this.labelStyle  + '"';
         sb[sb.length] = ' >';
         sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
 
         sb[sb.length] = '</span></td>';
-        sb[sb.length] = '<td><span class="haloacl_manageuser_list_information">'+this.information+'</span></td>';
+        sb[sb.length] = '<td><span class="haloacl_manageuser_list_information_modified">'+this.information+'</span></td>';
         sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
