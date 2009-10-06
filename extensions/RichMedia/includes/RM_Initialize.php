@@ -9,10 +9,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
-if( !defined( 'SF_VERSION' ) ) {
-	die( "The extension 'Rich Media' requires the extension 'Semantic Forms'.\n".
-	"Please read 'extensions/RichMedia/INSTALL' for further information.\n");
-}
+
 define('SMW_RM_VERSION', '1.2-for-SMW-1.4.x');
 
 global $smwgRMIP, $wgHooks; 
@@ -33,11 +30,27 @@ $smwgRMFormByNamespace = array(
 	'RMUpload' => 'RMUpload'
 );
 
+// Conversion of documents (PDF, MS Office)
+global $smwgEnableUploadConverter;
+if ($smwgEnableUploadConverter) {
+	global $wgExtensionMessagesFiles;
+	$wgAutoloadClasses['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
+	$wgExtensionMessagesFiles['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
+
+	$wgHooks['UploadComplete'][] = 'UploadConverter::convertUpload';
+}
+
 /**
  * Configures Rich Media Extension for initialization.
  * (Must be called *AFTER* SMWHalo is intialized.)
  */
 function enableRichMediaExtension() {
+	
+	if( !defined( 'SF_VERSION' ) ) {
+		die( "The extension 'Rich Media' requires the extension 'Semantic Forms'.\n".
+			"Please read 'extensions/RichMedia/INSTALL' for further information.\n");
+	}
+
 	//tell SMW to call this function during initialization
 	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
 
@@ -71,16 +84,6 @@ function enableRichMediaExtension() {
 	
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
-	
-	// Conversion of documents (PDF, MS Office)
-	global $smwgEnableUploadConverter;
-	if ($smwgEnableUploadConverter) {
-		global $wgExtensionMessagesFiles;
-		$wgAutoloadClasses['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
-		$wgExtensionMessagesFiles['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
-
-		$wgHooks['UploadComplete'][] = 'UploadConverter::convertUpload';
-	}
 }
 
 /**
