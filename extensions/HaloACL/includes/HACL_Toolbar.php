@@ -99,7 +99,7 @@ function getHACLToolbar($articleTitle) {
             }
         }
     }
-    catch(Exception $e)  {    }
+    catch(Exception $e) {    }
 
 
     // retrieving quickacl
@@ -146,6 +146,14 @@ function getHACLToolbar($articleTitle) {
         $defaultSDExists = false;
     }
 
+
+
+    // building quickacl / protected with-indicator
+
+    if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
+        $tpllist[] = $protectedWith;
+    }
+
     global $haclgIP;
     $html = <<<HTML
     	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
@@ -172,35 +180,33 @@ HTML;
                      </select>
 ";
         $html .="</select>";
-    }else {
+    }elseif(sizeof($tpllist) > 0) {
         $html .= "   <option selected='selected'>unprotected</option>
                      <option>protected</option>
                      </select>";
+    }else {
+        $html .= "   <option selected='selected'>unprotected</option>
+                     </select>";
     }
 
-    // building quickacl / protected with-indicator
 
-    if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
-        $tpllist[] = $protectedWith;
+    //    if(sizeof($tpllist) > 0) {
+    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
+    if($toolbarEnabled) {
+        $html .= "<select id='haloacl_template_protectedwith'>";
+    }else {
+        $html .= "<select disabled id='haloacl_template_protectedwith'>";
     }
-
-//    if(sizeof($tpllist) > 0) {
-        $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
-        if($toolbarEnabled) {
-            $html .= "<select id='haloacl_template_protectedwith'>";
+    foreach($tpllist as $tpl) {
+        if($tpl == $protectedWith) {
+            $html .= "<option selected='selected'>$tpl</option>";
         }else {
-            $html .= "<select disabled id='haloacl_template_protectedwith'>";
+            $html .= "<option>$tpl</option>";
         }
-        foreach($tpllist as $tpl) {
-            if($tpl == $protectedWith) {
-                $html .= "<option selected='selected'>$tpl</option>";
-            }else {
-                $html .= "<option>$tpl</option>";
-            }
-        }
-        $html .= "</select>";
+    }
+    $html .= "</select>";
     $html .= <<<HTML
-<div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
+        <div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
 	<div id="anchorPopup_toolbar" 
 	     class="haloacl_infobutton" 
 	     onclick="javascript:
@@ -211,7 +217,7 @@ HTML;
 </div>
 HTML;
     $html .= '<div id="popup_toolbar"></div>';
-//    }
+    //    }
 
 
     if(!$newArticle) {

@@ -292,13 +292,86 @@ $messages['en'] = array(
     'hacl_general_nextStep' => 'Next Step',
     'hacl_nothing_deleted' => 'No elements have been deleted',
     'hacl_quickacl_limit' => 'Only 15 templates are allowed in quickacl..',
+    'hacl_nodefusertpl'=>"no default template for user",
+    'hacl_nodefusertpl_link'=>"click here to create",
+    'hacl_showing_text'=>"Showing",
+    'hacl_showing_elements_text'=>"element(s)",
+    'hacl_selected'=>"Selected",
 
+    'hacl_discard_changes'=>"Discard changes",
+    'hacl_save_acl'=>"Save ACL",
+    'hacl_create_right' => "Create right",
+    'hacl_add_template' => "Add template",
+    'hacl_groupsettings' => "Groupsettings",
+
+    'hacl_saved' => "Saved",
+    'hacl_notsaved' => "Not saved",
+    'hacl_default' => "Default",
+
+    'hacl_tooltip_enternameforexisting' => "Enter a name of an existing item you want to protect",
+    'hacl_tooltip_eneternamefortemplate' => "Enter a name for the template",
+
+    'hacl_tooltip_clickto_delete_right'=> "Click here to delete the right",
+    'hacl_tooltip_clickto_reset_right'=> "Click here to reset the right",
+    'hacl_tooltip_clickto_save_right'=> "Click here to save the right",
+    'hacl_tooltip_clickto_save_modright'=> "Click here to save the modificationright",
+
+    'hacl_editing_group' => "Editing Group",
+
+    'hacl_delete_selected' => "Delete selected",
+    'hacl_select' => "Select",
+
+    'hacl_deletetplfromacl' => "Delete template from ACL",
+    'hacl_addtpltoacl' => "Add template to ACL",
 );
 
 /** 
  * German
  */
 $messages['de'] = array(
+
+    'hacl_deletetplfromacl' => "Template von ACL entfernen",
+    'hacl_addtpltoacl' => "Template zu ACL hinzuf&uuml;gen",
+
+    'hacl_select' => "Select",
+    'hacl_delete_selected' => "Ausgew&auml;hlte l&ouml;schen",
+
+    'hacl_editing_group' => "Editiere Gruppe",
+
+
+    'hacl_tooltip_clickto_delete_right'=> "Hier klicken um das Recht zu l&ouml;schen",
+    'hacl_tooltip_clickto_reset_right'=> "Hier klicken um das Recht zu zur&uuml;ckzusetzen",
+    'hacl_tooltip_clickto_save_right'=> "Hier klicken um das Recht zu speichern",
+    'hacl_tooltip_clickto_save_modright'=> "Hier klicken um das Modifikationsrecht zu speichern",
+
+    'hacl_tooltip_enternameforexisting' => "Bitte den Name eines existierenden Elements angeben",
+    'hacl_tooltip_eneternamefortemplate' => "Bitte einen Name f&uuml;r das Template angeben",
+
+
+    'hacl_saved' => "Gespeichert",
+    'hacl_notsaved' => "Nicht gespeichert",
+    'hacl_default' => "Standard",
+
+
+    'hacl_groupsettings' => "Gruppeneinstellungen",
+
+
+    'hacl_create_right' => "Recht erstellen",
+    'hacl_add_template' => "Template hinzuf&uuml;gen",
+
+    'hacl_discard_changes'=>"&Auml;nderungen verwerfen",
+    'hacl_save_acl'=>"ACL speichern",
+
+
+    'hacl_showing_text'=>"Zeige",
+    'hacl_showing_elements_text'=>"Element(e)",
+    'hacl_selected'=>"Ausgew&auml;hlt",
+
+
+    'hacl_nodefusertpl'=>"Es existiert kein Standard Nutzer Template",
+    'hacl_nodefusertpl_link'=>"Es existiert kein Standard Nutzer Template",
+
+
 	/* general/maintenance messages */
     'haloacl' 			=> 'HaloACL',
     'hacl_special_page' => 'HaloACL',   // Name of the special page for administration

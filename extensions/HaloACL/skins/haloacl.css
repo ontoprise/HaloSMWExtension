@@ -166,7 +166,7 @@ abbr,acronym { border:0;
     border:0px solid #000!important;
 }
 .first-child button:hover{
-    
+
     background:none!important;
     border:0px solid!important;
 
@@ -285,14 +285,14 @@ abbr,acronym { border:0;
     background-color:#FFF;
     height:19px;
     padding:0px 0 0 8px;
-    
+
     border:1px solid #000;
     border-style:none none solid  none;
 }
 
 .haloacl_panel_nameDescr{
     float:left;
-    width:733px;
+    width:693px;
     height:17px;
     overflow:hidden;
     padding:2px 0 0 0;
@@ -302,7 +302,8 @@ abbr,acronym { border:0;
 }
 .haloacl_panel_statusContainer{
     float:left;
-    width:88px;
+    width:128px;
+
     overflow:hidden;
     border:1px solid #000;
     border-style:none solid;
@@ -343,9 +344,9 @@ abbr,acronym { border:0;
 .haloacl_panel_content{
     padding:13px 4px;
     float:left;
-/*
-    width:887px;
-*/
+    /*
+        width:887px;
+    */
 }
 .haloacl_generic_panel_content{
     /*
@@ -817,6 +818,14 @@ abbr,acronym { border:0;
     float:left;
     width:150px;
 }
+.haloacl_manageuser_list_title_modified{
+    float:left;
+    width:418px;
+}
+.haloacl_manageacl_list_information_modified{
+    float:left;
+    width:50px;
+}
 #treeDiv_manageuser_grouplisting{
     height:257px;
     border:1px solid;
@@ -1019,6 +1028,10 @@ abbr,acronym { border:0;
 .haloacl_manageACL_right_title{
     float:left;
     width:200px;
+}
+.haloacl_manageACL_right_title_readonly{
+    float:left;
+    width:253px;
 }
 .haloacl_manageACL_right_description{
     float:right;

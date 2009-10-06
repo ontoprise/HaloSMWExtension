@@ -38,6 +38,9 @@ class HACL_GenericPanel {
  *
  */
     function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
+        $saved = wfMsg('hacl_saved');
+        $notsaved = wfMsg('hacl_notsaved');
+        $default_text = wfMsg('hacl_default');
 
         $this->panelid = $panelid;
 
@@ -57,7 +60,7 @@ HTML;
         if($showStatus && $customState == null) {
             $this->header .= <<<HTML
                         <div class="haloacl_panel_statusContainer">
-                            <span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_notsaved">Not Saved</span>
+                            <span id="haloacl_panel_status_$panelid" class="haloacl_panel_status_notsaved">$notsaved</span>
                         </div>
 
 HTML;
@@ -148,14 +151,14 @@ HTML;
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
                 if(saved == "default"){
-                    $('haloacl_panel_status_$panelid').innerHTML = 'Default';
+                    $('haloacl_panel_status_$panelid').innerHTML = '$default_text';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
 
                 }else if (saved == true) {
-                    $('haloacl_panel_status_$panelid').innerHTML = 'Saved';
+                    $('haloacl_panel_status_$panelid').innerHTML = '$saved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
                 } else {
-                    $('haloacl_panel_status_$panelid').innerHTML = 'Not Saved';
+                    $('haloacl_panel_status_$panelid').innerHTML = '$notsaved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_notsaved");
                 }
             }

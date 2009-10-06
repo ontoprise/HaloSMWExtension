@@ -16,6 +16,8 @@
 */
 
 var wgContLanguageStrings = {
+
+    
 	'NoName'                : '(namenlos)',
         'groups'                : 'Gruppen',
         'createACL'             : 'ACL anlegen',
@@ -42,6 +44,6 @@ var wgContLanguageStrings = {
         'delete'                : 'Löschen',
         'to'                    : 'bis',
         'from'                  : 'von',
-        'remove'                : 'Löschen',
+        'remove'                : 'Löschen'
 	
 }

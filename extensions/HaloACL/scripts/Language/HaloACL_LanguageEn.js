@@ -16,6 +16,8 @@
 */
 
 var wgContLanguageStrings = {
+
+    
 	'NoName'                : '(no name)',
         'groups'                : 'Groups',
         'createACL'             : 'Create ACL',
