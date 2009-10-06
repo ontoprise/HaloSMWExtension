@@ -65,7 +65,6 @@ OBSemanticToolbarContributor.prototype = {
 			Event.stopObserving(this.textArea, 'mouseup', this.l2);
 			Event.stopObserving(this.textArea, 'keyup', this.l3);
 		}
-		alert(id);
 		this.textArea = (typeof FCKeditor == 'undefined') ? $(id) : id;
 		if (this.textArea) {
 			Event.observe(this.textArea, 'select', this.l1);
