@@ -29,12 +29,13 @@
  * @author hipath
  */
 
+
 /**
+ *  creates usedatatable
  *  @param  target-div-id
+ *  @param  panelid / idenfifier
  *
  */
-
-
 YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     
@@ -275,6 +276,13 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 // --------------------
 
 // ASSIGNED USERTABLE FROM JSARRAY
+/**
+ *  called from html to build assigned-user-table
+ *  @param targetdiv
+ *  @param panelid/identifier
+ *  @param dont't show delete-icons
+ */
+
 YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
     if(noDelete == "true") noDelete = true;
     if(noDelete == "false" || !noDelete) noDelete = false;
@@ -386,7 +394,13 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
 };
 
 
-// this userdatatable is called from V2 !!!
+/**
+ *  this function is called from V2 (upper function) !!!
+ *  @param targetdiv
+ *  @param panelid
+ *  @param data to display
+ *  @param dontÄt show delete icon
+ */
 YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
 
     // custom defined formatter
@@ -469,8 +483,12 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
 
 
 
-// handles
-// standard part (select deselect tab)
+/**
+ *  handels highlighting and group-sorting for userdatatable
+ *  @param panelid
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callback){
     //if(YAHOO.haloacl.debug) console.log("autoselectevent fired for panel:"+panelid);
     //if(YAHOO.haloacl.debug) console.log("searching for users in following class:"+'.datatableDiv_'+panelid+'_users');
@@ -637,6 +655,12 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
 };
 */
 
+/**
+ *  applies filter on assigned-userdatatable
+ *  @param classname of usernames
+ *  @param query
+ *
+ */
 YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
     filter = filter.toLowerCase();
     $$('.'+classname).each(function(item){

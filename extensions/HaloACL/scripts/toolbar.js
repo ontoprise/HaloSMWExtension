@@ -24,7 +24,7 @@
  */
 
 /**
- * Description of HACL_AjaxConnector
+ * delivers js-functionality to toolbar
  *
  * @author hipath
  */
@@ -33,7 +33,13 @@
 YAHOO.namespace("haloacl");
 YAHOO.namespace("haloacl.toolbar");
 
-
+/**
+ *  renders result of an ajax-call to a div
+ *  @param target-container
+ *  @param actionname
+ *  @param parameterlist (json)
+ *
+ */
 YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterlist){
     /*   var queryparameterlist = {
         rs:action
@@ -70,7 +76,13 @@ YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterli
         }
     });
 };
-
+/**
+ *  calls remoteaction with parameters and executes callback if given
+ *  @param actionname
+ *  @param paramterlist (json)
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     if(callback == null){
         callback = function(result){
@@ -106,6 +118,10 @@ YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
     });
 };
 
+/**
+ *  provides hook for save-article
+ *  @param not used anymore, due to toolbar-changes
+ */
 YAHOO.haloacl.toolbar_handleSaveClick = function(element){
 
     //var textbox = $('wpTextbox1');
@@ -127,6 +143,10 @@ YAHOO.haloacl.toolbar_handleSaveClick = function(element){
 
 
 };
+/**
+ * initializes toolbar
+ *  so changes save button
+ */
 
 YAHOO.haloacl.toolbar_initToolbar = function(){
 	var value = $('wpSave').readAttribute('value');
@@ -142,6 +162,10 @@ YAHOO.haloacl.toolbar_initToolbar = function(){
 
 }
 
+/**
+ * updates toolbar
+ * triggered via change from unportected to protected and pro -> unprotected
+ */
 YAHOO.haloacl.toolbar_updateToolbar = function(){
 	var selection = $('haloacl_toolbar_pagestate');
 	var state = selection[selection.selectedIndex].text;
@@ -162,7 +186,11 @@ YAHOO.haloacl.toolbar_updateToolbar = function(){
     }
 };
 
-
+/**
+ * callback for sDpopupByName
+ * -> creates popup
+ * @param result of request
+ */
 YAHOO.haloacl.callbackSDpopupByName = function(result){
 	var tpw = $('haloacl_template_protectedwith');
 	var protectedWith = tpw[tpw.selectedIndex].text;
@@ -173,6 +201,10 @@ YAHOO.haloacl.callbackSDpopupByName = function(result){
     }
 };
 
+/**
+ *  loads sd-id for sd-name
+ *  @param sdname
+ */
 YAHOO.haloacl.sDpopupByName = function(sdName){
     YAHOO.haloacl.callAction('sDpopupByName', {
         sdName:sdName

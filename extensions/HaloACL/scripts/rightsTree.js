@@ -1011,6 +1011,8 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
 /*
  * function to be called from outside to init a tree
  * @param tree-instance
+ * @param query on that tree
+ * @param dont use canModify-Filter
  */
 YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefilter){
     
@@ -1050,8 +1052,6 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefil
  * @param tree
  * @param nodes
  */
-
-
 YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
     if(nodes == null){
         nodes = tree.getRoot().children;
@@ -1072,7 +1072,13 @@ YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
     return checkedNodes;
 };
 
-
+/**
+ *  applies filter on tree
+ *  @param tree-instance
+ *  @param query
+ *  @param dont use canModify-filter
+ *
+ */
 YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter){
     if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
         dontusefilter = true;
@@ -1138,6 +1144,9 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter)
 
 /**
  * returns a new treeinstance
+ * @param rendered to
+ * @param panelid / identifier
+ * @param type (rw|readonly)
  */
 YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
 

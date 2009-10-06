@@ -30,10 +30,11 @@
  */
 
 /**
+ *  creates whitelist datatable
  *  @param  target-div-id
+ *  @param  panelid / identifier
  *
  */
-
 
 YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 

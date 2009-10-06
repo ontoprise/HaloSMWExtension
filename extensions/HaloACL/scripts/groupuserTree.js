@@ -31,7 +31,9 @@
 
 //var clickedTreeNodes = [];
 
-
+/**
+ *  debuggin purpose, not used productive
+ */
 function dump(arr,level) {
     var dumped_text = "";
     if(!level) level = 0;
@@ -735,7 +737,12 @@ YAHOO.haloacl.getCheckedNodesFromTree = function(tree, nodes){
 
     return checkedNodes;
 };
-
+/**
+ *  applies filter on tree
+ *  @param tree-instance
+ *  @param query
+ *
+ */
 YAHOO.haloacl.applyFilterOnTree = function(tree,filtervalue){
     if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
         tree.lastFilterStart = 0;
@@ -770,6 +777,8 @@ YAHOO.haloacl.applyFilterOnTree = function(tree,filtervalue){
 
 /**
  * returns a new treeinstance
+ * @param targetdiv
+ * @param panelid
  */
 YAHOO.haloacl.getNewTreeview = function(divname,panelid){
     var instance = new YAHOO.widget.TreeView(divname);

@@ -12,7 +12,14 @@ YAHOO.namespace("haloacl.notification");
 YAHOO.haloacl.notification.counter = 0;
 
 
-
+/**
+ *  creates popup with one button
+ *  @param target-div
+ *  @param title
+ *  @param message / content
+ *  @param callback (on yes:)
+ *
+ */
 YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,callback){
     if(title == null){
         title = "Info";
@@ -57,7 +64,16 @@ YAHOO.haloacl.notification.createDialogOk = function (renderedTo,title,content,c
     if(YAHOO.haloacl.debug)console.log("create dialog finished");
 
 };
-
+/**
+ *  creates popup with 2 buttons
+ *  @param target-div
+ *  @param title
+ *  @param message / content
+ *  @param callback (on yes:, no:)
+ *  @param label for yes-button
+ *  @param label for no-button
+ *
+ */
 YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     if(title == null){
         title = "Info";
@@ -116,19 +132,42 @@ YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,conten
 
 };
 
+/**
+ *  add listener to element
+ *  @param element to append to
+ *  @param event (e.g. click)
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.notification.subscribeToElement = function(elementId, event, callback){
     YAHOO.util.Event.addListener($(elementId), event, callback);
 };
 
+/**
+ *  displays inline notification
+ *  @param element to append to
+ *  @param event (e.g. click)
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.notification.showInlineNotification = function(content, targetdiv){
     if(YAHOO.haloacl.debug)console.log("trying to add notification to targetdiv:"+targetdiv);
     // DISABLED
     //$(targetdiv).innerHTML = content;
 }
+/**
+ *  hides inline notification
+ *  @param notification-div
+ *
+ */
 YAHOO.haloacl.notification.hideInlineNotification = function(targetdiv){
     $(targetdiv).innerHTML = "";
 }
 
+/**
+ *  hides all inline notification
+ *
+ */
 YAHOO.haloacl.notification.clearAllNotification = function(){
     $$('.haloacl_inline_notification').each(function(item){
        item.innerHTML = "";

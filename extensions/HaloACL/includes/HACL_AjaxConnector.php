@@ -164,8 +164,8 @@ HTML;
 
 /**
  *
- * @param <type> predfine-type | DEPRECATED as predfine has been moved into rightspanel
- * @return <type> content for rights-section in create-acl-tab
+ * @param <string> predfine-type | DEPRECATED as predfine has been moved into rightspanel
+ * @return <ajaxRepsonse> content for rights-section in create-acl-tab
  */
 function createRightContent($predefine) {
 
@@ -268,8 +268,8 @@ HTML;
 
 /**
  *
- * @global <type> $wgUser
- * @return <type> content for modification-rights-step in create-acl-tab
+ * @global <User> $wgUser
+ * @return <ajaxRepsonse> content for modification-rights-step in create-acl-tab
  */
 function createModificationRightsContent() {
 
@@ -359,8 +359,8 @@ HTML;
 
 /**
  *
- * @global <type> $wgUser
- * @return <type> content for last step in createacl-tab / save-area
+ * @global <User> $wgUser
+ * @return <AjaxRepsonse> content for last step in createacl-tab / save-area
  */
 function createSaveContent() {
 
@@ -491,7 +491,7 @@ HTML;
 
 /**
  *
- * @return <type> content for manage-acl-tab
+ * @return <string> content for manage-acl-tab
  */
 function createManageExistingACLContent() {
 
@@ -533,8 +533,8 @@ HTML;
 
 /**
  *
- * @global <type> $wgUser
- * @return <type> content for default user template creation | create-acl-tab
+ * @global <User> $wgUser
+ * @return <string> content for default user template creation | create-acl-tab
  */
 function createManageUserTemplateContent() {
 
@@ -571,11 +571,11 @@ HTML;
 
 /**
  *
- * @param <type> $panelId
+ * @param <string> $panelId
  * @param <bool> show name-input?
  * @param <GenericPanel> $helpItem
  * @param <string> createAclUserTemplate | createAclTemplate | createStdAcl (type based on subtab
- * @return <type> content for step 1 of acl-creation
+ * @return <string> content for step 1 of acl-creation
  */
 function createGeneralContent($panelId, $nameBlock, $helpItem, $processType) {
 
@@ -831,7 +831,7 @@ HTML;
  *
  * returns content of "create ACL" panel
  *
- * @return <html>
+ * @return <AjaxRepsonse>
  *  returns content for createacl-tab
  */
 function createAclContent() {
@@ -858,7 +858,7 @@ function createAclContent() {
  *
  * returns content of "manage ACL" panel
  *
- * @return <html>   returns tab-content for managel acls-tab
+ * @return <AjaxRepsonse>   returns tab-content for managel acls-tab
  */
 function manageAclsContent() {
 
@@ -878,7 +878,7 @@ function manageAclsContent() {
  *
  * returns content of "create ACL Template" panel
  *
- * @return <html>
+ * @return <AjaxRepsonse>
  *  returns content for createacl-tab
  */
 function createAclTemplateContent() {
@@ -905,7 +905,7 @@ function createAclTemplateContent() {
  *
  * returns content of "create ACL Template" panel
  *
- * @return <html>
+ * @return <AjaxRepsonse>
  *  returns content for createacl-tab
  */
 function createAclUserTemplateContent() {
@@ -962,15 +962,15 @@ HTML;
 /**
  *  builds content for group panel in manageGroup-tab
  *
- * @global <type> $wgUser
- * @param <type> $panelid
- * @param <type> $name
- * @param <type> $description
- * @param <type> Users included in Group
- * @param <type> Groups included in Group
- * @param <type> Modification-Users
- * @param <type> Modification-Groups
- * @return <type> content of grouppanel
+ * @global <User> $wgUser
+ * @param <string> $panelid
+ * @param <string> $name
+ * @param <string> $description
+ * @param <string> Users included in Group
+ * @param <string> Groups included in Group
+ * @param <string> Modification-Users
+ * @param <string> Modification-Groups
+ * @return <string> content of grouppanel
  */
 function getManageUserGroupPanel($panelid, $name="", $description="", $users=null, $groups=null, $manageUsers=null, $manageGroups=null) {
     global $wgUser;
@@ -1176,15 +1176,15 @@ HTML;
 /**
  *  flexibly used rights panel for creating new / editing existing / viewing existing inline rights
  *
- * @global <type> $wgUser
- * @param <type> $panelid
- * @param <type> predefine type, e.g. privateuse, individual, ...
- * @param <type> is panel readonly?
- * @param <type> do preloading of existing data
- * @param <type> right-id to preload
- * @param <type> panel's name
- * @param <type> panel's description
- * @return <type>
+ * @global <User> $wgUser
+ * @param <string> $panelid
+ * @param <string> predefine type, e.g. privateuse, individual, ...
+ * @param <boolean> is panel readonly?
+ * @param <boolean> do preloading of existing data
+ * @param <string> right-id to preload
+ * @param <string> panel's name
+ * @param <string> panel's description
+ * @return <string>
  */
 function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0, $panelName = "Right", $rightDescription = "") {
     $updatedFromOutside=false;
@@ -2046,7 +2046,7 @@ HTML;
 /**
  *
  * @param <String>  panelid of parents-div to have an unique identifier for each modification-right-panel
- * @return <html>   modification-right-panel html
+ * @return <string>   modification-right-panel html
  */
 function getModificationRightsPanel($panelid) {
 
@@ -2066,13 +2066,13 @@ HTML;
 /**
  * select-deselect user/group editor
  *
- * @global <type> $wgUser
- * @param <type> $panelid
- * @param <type> predfine-type
- * @param <type> is readonly?
- * @param <type> preload right?
- * @param <type> right-id to preload
- * @return <type> select-deselect tab-content
+ * @global <User> $wgUser
+ * @param <string> $panelid
+ * @param <string> predfine-type
+ * @param <boolean> is readonly?
+ * @param <boolean> preload right?
+ * @param <string> right-id to preload
+ * @return <string> select-deselect tab-content
  */
 function rightPanelSelectDeselectTab($panelid, $predefine, $readOnly, $preload, $preloadRightId) {
     if($preload == "false") {
@@ -2258,12 +2258,12 @@ HTML;
 /**
  *  assigned tab
  *
- * @param <type> $panelid
- * @param <type> predfine-type
- * @param <type> is readonly? (hide delete-icons)
- * @param <type> do preload?
- * @param <type> preload-right-id
- * @return <type> content of assigned-tab
+ * @param <string> $panelid
+ * @param <string> predfine-type
+ * @param <boolean> is readonly? (hide delete-icons)
+ * @param <boolean> do preload?
+ * @param <string> preload-right-id
+ * @return <string> content of assigned-tab
  */
 function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, $preloadRightId=8) {
     if($preload == "false") {
@@ -2381,10 +2381,10 @@ HTML;
 /**
  *  element to show existing rights
  *  also used in template-chooser
- * @param <type> $panelid
- * @param <type> "readonly" or null
- * @param <type> don't filter (true for template-choosing-purpose)
- * @return <type> right-listing
+ * @param <string> $panelid
+ * @param <string> "readonly" or null
+ * @param <string> don't filter (true for template-choosing-purpose)
+ * @return <string> right-listing
  */
 function rightList($panelid, $type = "readOnly",$nofilter = "") {
 
@@ -2718,7 +2718,7 @@ HTML;
  * @param <string>  rightid
  * @param <string>  right's name
     * @param <bool>    is readonly?
-    * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
+    * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
     */
     function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
         global $haclgContLang;
@@ -2868,7 +2868,7 @@ HTML;
      * returns panel listing all existing rights, embedded in container for selection (Create ACL Panel)
      *
      * @param <string>  unique identifier
-     * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
+     * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
      */
     function getRightsContainer($panelid, $type = "readOnly") {
 
@@ -2945,7 +2945,7 @@ HTML;
      * @param <string> right's id
      * @param <bool>   is readonly?
      * @param <bool>   autosave right after loading?
-     * @return <html>   returns the user/group-select tabview; e.g. contained in right panel
+     * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
      */
     function getSDRightsPanel($sdId, $readOnly = false,$autosave = false) {
 
@@ -3093,8 +3093,8 @@ HTML;
      *  saves groupsettings to session
      *  finaly (if group will be saved) all temp-saved group will be added to the group
      * @global <type> $haclgContLang
-     * @param <type> xml containing groupsettings
-     * @return <type> save-indicator / error message
+     * @param <string> xml containing groupsettings
+     * @return <AjaxResponse> save-indicator / error message
      */
     function saveTempGroupToSession($groupxml) {
         global $haclgContLang;
@@ -3130,8 +3130,8 @@ HTML;
 
     /**
      *
-     * @param <string/xml>  right serialized as xml
-     * @return <status>     200: ok / right saved to session
+     * @param <string>  right serialized as xml
+     * @return <AjaxResponse>     200: ok / right saved to session
      *                      400: failure / rihght not saved to session (exception's message will be returned also)
      */
     function saveTempRightToSession($rightxml) {
@@ -3169,7 +3169,7 @@ HTML;
      *  this happens when a right is delted from an acl
      *
      * @param <string>  panelid of right
-     * @return <status>     200: ok / right saved to session
+     * @return <AjaxResponse>     200: ok / right saved to session
      *                      400: failure / rihght not saved to session (exception's message will be returned also)
      */
     function removePanelForTemparray($panelid) {
@@ -3191,9 +3191,9 @@ HTML;
 
 
     /**
-     *
-     * @param <type> SD-Name
-     * @return <type> SD-Id
+     *  converts sd-name to sd-id
+     * @param <string> SD-Name
+     * @return <AjaxResponse> SD-Id
      */
     function sDpopupByName($sdName) {
         $ajaxResponse = new AjaxResponse();
@@ -3221,8 +3221,8 @@ HTML;
      *  deletes a security descriptor
      *      -> aricle and so from db (via article-deletion)
      *
-     * @param <type> $sdId
-     * @return <type>200: ok | 400: failure with error-message
+     * @param <string> $sdId
+     * @return <AjaxResponse>200: ok | 400: failure with error-message
      */
     function deleteSecurityDescriptor($sdId) {
 
@@ -3248,10 +3248,10 @@ HTML;
     /**
      *  saves a securitydescriptor while including all temp-saved-rights
      *
-     * @global <type> $wgUser
+     * @global <User> $wgUser
      * @global <type> $haclgContLang
-     * @param <type> xml containing sd-related information
-     * @return <type> success message | error-message
+     * @param <string> xml containing sd-related information
+     * @return <AjaxResponse> success message | error-message
      */
     function saveSecurityDescriptor($secDescXml) {
         global $wgUser;
@@ -3445,10 +3445,10 @@ HTML;
      *  saves a group while including groupsettings from temp-saved groupsetting in session
      *
      * @global <type> $haclgContLang
-     * @global <type> $wgUser
-     * @param <type> xml formated group info (also includes modification-rights)
-     * @param <type> parentgroup of that group (for root-level groups: null)
-     * @return <type> success message | error-message
+     * @global <User> $wgUser
+     * @param <string> xml formated group info (also includes modification-rights)
+     * @param <string> parentgroup of that group (for root-level groups: null)
+     * @return <AjaxResponse> success message | error-message
      */
     function saveGroup($manageRightsXml,$parentgroup = null) {
 
@@ -3702,8 +3702,8 @@ HTML;
      * saves complete whitelist for wiki
      *
      * @global <type> $haclgContLang
-     * @param <type> xml-formed whitelist
-     * @return <type> success message | error-message
+     * @param <string> xml-formed whitelist
+     * @return <AjaxResponse> success message | error-message
      */
     function saveWhitelist($whitelistXml) {
         global $haclgContLang;
@@ -3758,10 +3758,10 @@ HTML;
      *
      * @global <type> $haclgContLang
      * @global <type> $wgExtraNamespaces
-     * @global <type> $wgUser
-     * @param <type> search-string
-     * @param <type> type of object (e.g. page, category, ...)
-     * @return <type> json-formed source for datatable
+     * @global <User> $wgUser
+     * @param <string> search-string
+     * @param <string> type of object (e.g. page, category, ...)
+     * @return <string> json-formed source for datatable
      */
     function getAutocompleteDocuments($subName,$type) {
         global $haclgContLang;
@@ -3912,10 +3912,10 @@ HTML;
     /**
      * return users, that are member of a specified group
      *
-     * @global <type> $wgUser
-     * @global <type> $wgTitle
-     * @param <type> groupname
-     * @return <type> json-formed list of users
+     * @global <User> $wgUser
+     * @global <string> $wgTitle
+     * @param <string> groupname
+     * @return <string> json-formed list of users
      */
     function getUsersForGroups($groupsstring) {
         if($groupsstring == "") {
@@ -3965,12 +3965,12 @@ HTML;
     /**
      * delivers data to treeview in rightspanel
      *
-     * @param <type> group, which will be expanded
-     * @param <type> search-string from filter
-     * @param <type> load all groups recursivly (no dynamic loading)
-     * @param <type> internaly used indicator for recursion-level
-     * @param <type> internally used array for recursion
-     * @return <type> json-formed list of groups
+     * @param <string> group, which will be expanded
+     * @param <string> search-string from filter
+     * @param <boolean> load all groups recursivly (no dynamic loading)
+     * @param <integer> internaly used indicator for recursion-level
+     * @param <array> internally used array for recursion
+     * @return <string> json-formed list of groups
      */
     function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
         $array = array();
@@ -4054,12 +4054,12 @@ HTML;
     /**
      * delivers data to treeview in managegroups
      *
-     * @param <type> group, which will be expanded
-     * @param <type> search-string from filter
-     * @param <type> load all groups recursivly (no dynamic loading)
-     * @param <type> internaly used indicator for recursion-level
-     * @param <type> internally used array for recursion
-     * @return <type> json-formed list of groups
+     * @param <string> group, which will be expanded
+     * @param <string> search-string from filter
+     * @param <boolean> load all groups recursivly (no dynamic loading)
+     * @param <integer> internaly used indicator for recursion-level
+     * @param <array> internally used array for recursion
+     * @return <string> json-formed list of groups
      */
     function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$level=0,$subgroupsToCall=null) {
         global $wgUser,$haclCrossTemplateAccess;
@@ -4352,7 +4352,7 @@ HTML;
 
     /**
      *
-     * @return <html>   returns tab-content for manageUser-tab
+     * @return <string>   returns tab-content for manageUser-tab
      */
     function manageUserContent() {
         clearTempSessionGroup();
@@ -4650,7 +4650,7 @@ HTML;
 
     /**
      *
-     * @return <html>   returns content for whitelist-tab
+     * @return <string>   returns content for whitelist-tab
      */
     function whitelistsContent() {
 
@@ -4780,11 +4780,14 @@ HTML;
     }
 
 
-    /**
-     *
-     * deletes items (groups or acls)
-     *
-     */
+/**
+ * delete groups
+ *
+ * @global <type> $haclgContLang
+ * @param <string> xml containing groups to be delted
+ * @param <type> not used
+ * @return <type> string
+ */
     function deleteGroups($grouspXML, $type) {
         global $haclgContLang;
         $ns = $haclgContLang->getNamespaces();
@@ -4816,8 +4819,8 @@ HTML;
 /**
  *  deletes page from whiltelist
  * @global <type> $haclgContLang
- * @param <type> xml-list of pages that should be removed from whitelist
- * @return <type>
+ * @param <string> xml-list of pages that should be removed from whitelist
+ * @return <string>
  */
 function deleteWhitelist($whitelistXml) {
     global $haclgContLang;
@@ -4871,8 +4874,8 @@ function deleteWhitelist($whitelistXml) {
 
 /**
  * returns group-details for a given groupname
- * @param <type> name of group
- * @return <type>
+ * @param <string> name of group
+ * @return <string> json.-formed groupdetails
  */
 function getGroupDetails($groupname) {
     $g = HACLGroup::newFromName($groupname);
@@ -4901,7 +4904,7 @@ function getGroupDetails($groupname) {
 }
 
 /**
- * @return <type> content for the quickacl-tab
+ * @return <string> content for the quickacl-tab
  */
 function createQuickAclTab() {
 
@@ -5020,15 +5023,15 @@ HTML;
 /**
  * returns quickacl-data for logged in user
  *
- * @global <type> $wgUser
- * @global <type> $haclCrossTemplateAccess
- * @param <type> search-term
- * @param <type> sort column
- * @param <type> sort-direction
- * @param <type> index to start
- * @param <type> numbers of results
+ * @global <User> $wgUser
+ * @global <array> $haclCrossTemplateAccess
+ * @param <string> search-term
+ * @param <string> sort column
+ * @param <string> sort-direction
+ * @param <string> index to start
+ * @param <string> numbers of results
  * @param <type> not used
- * @return <type>
+ * @return <string> json-formed results
  */
 function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
     global $wgUser,$haclCrossTemplateAccess;
@@ -5070,9 +5073,9 @@ function getQuickACLData($query,$sort,$dir,$startIndex,$results,$filter) {
 /**
  * saves quickacl-list for logged in user
  *
- * @global <type> $wgUser
- * @param <type> $xml
- * @return <type>
+ * @global <User> $wgUser
+ * @param <string> xml containing quickacl-entries
+ * @return <AjaxResponse> indicates status
  */
 function saveQuickacl($xml) {
     global $wgUser;
@@ -5091,6 +5094,12 @@ function saveQuickacl($xml) {
     }
 }
 
+/**
+ *
+ * @param <string> articlename
+ * @param <string> type of article
+ * @return <AjaxResponse> indicating if article exists, and if article is secured
+ */
 function doesArticleExists($articlename,$protect) {
     if($protect == "property") {
         $articlename = "Property:".$articlename;

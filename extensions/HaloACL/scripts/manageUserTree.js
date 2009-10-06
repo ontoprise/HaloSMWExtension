@@ -561,7 +561,12 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
 }
 
 
-
+/**
+ *  adds subgroup on same level
+ *  @param tree-instance
+ *  @param groupname
+ *
+ */
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
     if(nodeToAttachTo._type != "RootNode"){
@@ -574,10 +579,15 @@ YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
         nodeToAttachTo.refresh();
     }
 
-    
- 
-
 };
+
+/**
+ *  finds group to append to
+ *  @param parentNode (of tree)
+ *  @param groupname
+ *
+ */
+
 YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
     var nodes;
     nodes = parentNode.children;
@@ -599,6 +609,12 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
     }
 }
 
+/**
+ *  adds subgroup (real subgroup; not same level)
+ *  @param tree-instance
+ *  @param groupname
+ *
+ */
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     // removing no-group-available-node if existing
     try{
@@ -627,6 +643,12 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
  
 };
 
+/**
+ *  applies filter on tree
+ *  @param tree-instance
+ *  @param query
+ *
+ */
 YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
     if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
         tree.lastFilterStart = 0;

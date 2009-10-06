@@ -73,9 +73,14 @@ YAHOO.haloacl.modrightssaved = false;
 
 
 
-// Tabview related stuff
-
-// building the main tabview
+/**
+ *  builds main tab view
+ *  @param target-container
+ *  @param page-title (used for quickaccess-toolbar-access
+ *  @param show whitelist-tab?
+ *  @param active-tab e.g. createACL, manageACLs, manageUsers, whitelists (passed-thorugh get-parameter)
+ *
+ */
 YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhitelistTab,activeTab){
     if(YAHOO.haloacl.debug) console.log("got requestedtitle:"+requestedTitle);
     if(requestedTitle != null){
@@ -197,7 +202,11 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 };
 
 
-// building the  sub tabview
+/**
+ *  builds subtab view
+ *  @param target-container
+ *
+ */
 YAHOO.haloacl.buildSubTabView = function(containerName){
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
     var manageAclActive = true;
@@ -325,7 +334,11 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
 };
 
-
+/**
+ *  datasource for tabview
+ *  so tab-data is loaded via this tabDataConnect
+ *
+ */
 YAHOO.haloacl.tabDataConnect = function() {
     var tab = this;
     /*
@@ -364,7 +377,13 @@ YAHOO.haloacl.tabDataConnect = function() {
     });
 };
 
-// general ajax stuff
+/**
+ *  renders result of an ajax-call to a div
+ *  @param target-container
+ *  @param actionname
+ *  @param parameterlist (json)
+ *
+ */
 YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
     /*   var queryparameterlist = {
         rs:action
@@ -396,7 +415,14 @@ YAHOO.haloacl.loadContentToDiv = function(targetdiv, action, parameterlist){
     });
 };
 
-
+/**
+ *  takes xml, and sends that to an action
+ *  @param xml (string)
+ *  @param actionname
+ *  @param callback
+ *  @param parentNode
+ *
+ */
 YAHOO.haloacl.sendXmlToAction = function(xml, action,callback,parentNode){
     if(callback == null){
         callback = function(result){
@@ -418,6 +444,13 @@ YAHOO.haloacl.sendXmlToAction = function(xml, action,callback,parentNode){
 
 };
 
+/**
+ *  calls remoteaction with parameters and executes callback if given
+ *  @param actionname
+ *  @param paramterlist (json)
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.callAction = function(action, parameterlist, callback){
     if(callback == null){
         callback = function(result){
@@ -440,6 +473,11 @@ YAHOO.haloacl.callAction = function(action, parameterlist, callback){
     });
 };
 
+/**
+ *  toggles panel
+ *  @param panelid
+ *
+ */
 YAHOO.haloacl.togglePanel = function(panelid){
     var element = $('content_'+panelid);
     var button = $('exp-collapse-button_'+panelid);
@@ -454,6 +492,12 @@ YAHOO.haloacl.togglePanel = function(panelid){
     }
 };
 
+/**
+ *  removes panel
+ *  @param panelid
+ *  @param callback
+ *
+ */
 YAHOO.haloacl.removePanel = function(panelid,callback){
     YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('confirmDeleteReset'),gLanguage.getMessage('confirmDeleteMessage'),{
         yes:function(){
@@ -471,6 +515,11 @@ YAHOO.haloacl.removePanel = function(panelid,callback){
     },"Ok","Cancel");
 
 };
+/**
+ *  closes panel
+ *  @param panelid
+ *
+ */
 YAHOO.haloacl.closePanel = function(panelid){
     var element = $('content_'+panelid);
     var button = $('exp-collapse-button_'+panelid);
@@ -479,8 +528,15 @@ YAHOO.haloacl.closePanel = function(panelid){
     element.hide();
 };
 
-/* RIGHT PANEL STUFF */
-
+/**
+ *  builds rightpanel tabs
+ *  @param targetdiv
+ *  @param predfine-type
+ *  @param is readonly? (only renders assigned tab with deleteicon disabled)
+ *  @param do preload?
+ *  @param rightId to preload
+ *
+ */
 YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOnly, preload, preloadRightId){
 
     
@@ -551,6 +607,13 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
 
 // --- handling global arrays for selection of users and groups
 
+/**
+ *  removes user from checked-users array
+ *  @param panelid
+ *  @param name
+ *  @param deletetable-type (user, group, usergroup - dependencies=
+ *
+ */
 YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
     if(YAHOO.haloacl.debug) console.log("deletable-type:"+deletable);
     if(YAHOO.haloacl.debug) console.log("array before deletion");
@@ -592,7 +655,12 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
 
 
 };
-
+/**
+ *  adds user to checked-users array
+ *  @param panelid
+ *  @param name
+ *
+ */
 YAHOO.haloacl.addUserToUserArray = function(panelid, name){
     if(name.length > 2){
 
@@ -619,6 +687,12 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
 
 };
 
+/**
+ *  adds group to checked-groups array
+ *  @param panelid
+ *  @param name
+ *
+ */
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
     if(name.length > 2){
         if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
@@ -644,6 +718,12 @@ YAHOO.haloacl.getGroupsArray = function (panelid){
     return YAHOO.haloacl.clickedArrayGroups[panelid];
 };
 
+/**
+ *  removes group from checked-groups array
+ *  @param panelid
+ *  @param name
+ *
+ */
 YAHOO.haloacl.removeGroupFromGroupArray = function(panelid,name){
     if(YAHOO.haloacl.debug) console.log("trying to remove "+name+" from "+panelid+"-array");
     var elementToRemove = 0;
@@ -656,6 +736,13 @@ YAHOO.haloacl.removeGroupFromGroupArray = function(panelid,name){
     YAHOO.haloacl.clickedArrayGroups[panelid].splice(elementToRemove,1);
 };
 
+/**
+ *  checks if name is in group-array
+ *  @param panelid
+ *  @param name
+ *  @return true/false
+ *
+ */
 YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     /*
     for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
@@ -671,6 +758,13 @@ YAHOO.haloacl.isNameInGroupArray = function(panelid, name){
     return true;
 };
 
+/**
+ *  checks if name is in group-array
+ *  @param panelid
+ *  @param name
+ *  @return true/false
+ *
+ */
 YAHOO.haloacl.isNameInUsersGroupsArray = function(panelid, name){
     for(i=0;i<YAHOO.haloacl.clickedArrayGroups[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayGroups[panelid][i] == name){
@@ -683,9 +777,13 @@ YAHOO.haloacl.isNameInUsersGroupsArray = function(panelid, name){
 
 
 
-
-
-
+/**
+ *  checks if name is in group-array
+ *  @param panelid
+ *  @param name
+ *  @return true/false
+ *
+ */
 YAHOO.haloacl.isNameInUserArray = function(panelid, name){
     for(i=0;i<YAHOO.haloacl.clickedArrayUsers[panelid].length;i++){
         if(YAHOO.haloacl.clickedArrayUsers[panelid][i] == name){
@@ -696,6 +794,11 @@ YAHOO.haloacl.isNameInUserArray = function(panelid, name){
 
 };
 
+/**
+ *  checks if panel has groups or users
+ *  @param panelid
+ *
+ */
 YAHOO.haloacl.hasGroupsOrUsers = function(panelid){
     if(YAHOO.haloacl.debug) console.log("testing "+panelid);
     if (((YAHOO.haloacl.clickedArrayGroups[panelid]) && (YAHOO.haloacl.clickedArrayGroups[panelid].length > 0)) || (YAHOO.haloacl.clickedArrayUsers[panelid] && (YAHOO.haloacl.clickedArrayUsers[panelid].length > 0))) {
@@ -708,6 +811,15 @@ YAHOO.haloacl.hasGroupsOrUsers = function(panelid){
 
 };
 
+/**
+ *  builds grouppanel-tabview
+ *  @param targetdiv/container
+ *  @param predfine type (e.g. privateuse,...)
+ *  @param is readonly?
+ *  @param do preload?
+ *  @param right id to preload
+ *
+ */
 YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOnly, preload, preloadRightId){
     YAHOO.haloacl.haloaclRightPanelTabs = new YAHOO.widget.TabView(containerName);
     var parameterlist = {
@@ -758,7 +870,11 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
 
 
 
-
+/**
+ *  deletes sd and creates a notification
+ *  @param sdID
+ *
+ */
 YAHOO.haloacl.deleteSD = function(sdId){
     YAHOO.haloacl.callAction('deleteSecurityDescriptor', {
         sdId:sdId
@@ -772,13 +888,23 @@ YAHOO.haloacl.deleteSD = function(sdId){
 
 };
 
+/**
+ *  resets all hightlighted elements
+ *
+ */
 YAHOO.haloacl.removeHighlighting = function(){
     $$('.highlighted').each(function(item){
         $(item).removeClassName("highlighted");
     });
 };
 
-
+/**
+ *  creates popup
+ *  @param popup-id
+ *  @param popups-label
+ *  @param anchor/container for popup
+ *
+ */
 YAHOO.haloaclrights.popup = function(id, label, anchorId){
 
     /*
@@ -836,7 +962,13 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
 
 };
 
-
+/**
+ *  add tooltip to element
+ *  @param tooltip-instance-name
+ *  @param element to append to
+ *  @param tooltip-text
+ *
+ */
 YAHOO.haloacl.addTooltip = function(name, context, text){
     new YAHOO.widget.Tooltip(name, {
         context:context,
@@ -845,6 +977,10 @@ YAHOO.haloacl.addTooltip = function(name, context, text){
     });
 }
 
+/**
+ *  discard changes in createacl
+ *
+ */
 YAHOO.haloacl.discardChanges_createacl = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('discardChanges'),gLanguage.getMessage('discardChangesMessage'),{
@@ -854,7 +990,10 @@ YAHOO.haloacl.discardChanges_createacl = function(){
         no:function(){}
     },"Ok","Cancel");
 }
-
+/**
+ *  discard changes in managegroups
+ *
+ */
 YAHOO.haloacl.discardChanges_users = function(){
     //YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,content,callback,yestext,notext){
     YAHOO.haloacl.notification.createDialogYesNo("content",gLanguage.getMessage('discardChanges'),gLanguage.getMessage('discardChangesMessage'),{

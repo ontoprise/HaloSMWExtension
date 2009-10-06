@@ -25,11 +25,11 @@
 
 
 /**
- *  @param  target-div-id
+ *  creates autocompleter
+ *  @param name of ac
+ *  @param target-div-id
  *
  */
-
-
 YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
 
     // datasource for this userdatatable

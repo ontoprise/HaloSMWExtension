@@ -29,11 +29,14 @@
  * @author hipath
  */
 
+
+
 /**
+ *  creates qucikacltable
  *  @param  target-div-id
+ *  @param  panelid
  *
  */
-
 
 YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
