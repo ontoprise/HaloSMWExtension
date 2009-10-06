@@ -51,7 +51,10 @@ OBSemanticToolbarContributor.prototype = {
 		this.comsrchontainer.contentChanged();
 
 		// register standard wiki edit textarea (advanced editor registers by itself)
-		this.activateTextArea("wpTextbox1");
+		if (typeof FCKeditor == 'undefined')
+		    this.activateTextArea("wpTextbox1");
+		else
+		    this.activateTextArea(window.frames[0].frames[0]);
 
 	},
 
@@ -62,7 +65,8 @@ OBSemanticToolbarContributor.prototype = {
 			Event.stopObserving(this.textArea, 'mouseup', this.l2);
 			Event.stopObserving(this.textArea, 'keyup', this.l3);
 		}
-		this.textArea = $(id);
+		alert(id);
+		this.textArea = (typeof FCKeditor == 'undefined') ? $(id) : id;
 		if (this.textArea) {
 			Event.observe(this.textArea, 'select', this.l1);
 			Event.observe(this.textArea, 'mouseup', this.l2);
