@@ -274,12 +274,11 @@ function haclAddHTMLHeader(&$out) {
         return true;
     }else {
 
-        haclAddJSLanguageScripts($out);
-
-
-        // ---- SPECIAL-PAGE realted stuff ---
-
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+    	haclAddJSLanguageScripts($out);
+
+        // ---- SPECIAL-PAGE related stuff ---
+
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
         //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
@@ -625,6 +624,7 @@ function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages
     global $haclgIP, $haclgHaloScriptPath, $wgUser;
 
     // content language file
+    $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_Language.js'.  '"></script>', $mode, $namespace, $pages);
     $lng = '/scripts/Language/HaloACL_Language';
     if (isset($wgUser)) {
         $lng .= ucfirst($wgUser->getOption('language')).'.js';
