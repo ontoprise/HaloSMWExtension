@@ -65,15 +65,15 @@ $messages_special['en'] = array(
 'lcfirst' => 'The input with the <u>very first</u> character lowercase.',
 'uc' => 'The uppercase input',
 'ucfirst' => 'The input with the <u>very first</u> character uppercase.',
-'formatnum' => 'The input with decimal and decimal group separators, and localized digit script, according to the wiki\'s default locale. the <pre>|R</pre> parameter can be used to unformat a number, for use in mathematical situations.',
-'#dateformat' => 'Formats an unlinked date based on user "Date format" preference. For logged-out users and those who have not set a date format in their preferences, dates can be given a default: <pre>mdy, dmy, ymd, ISO 8601</pre> (all case sensitive). If a format is not specified or is invalid, the input format is used as a default. If the supplied date is not recognized as a valid date, it is rendered unchanged.',
+'formatnum' => 'The input with decimal and decimal group separators, and localized digit script, according to the wiki\'s default locale. the "|R" parameter can be used to unformat a number, for use in mathematical situations.',
+'#dateformat' => 'Formats an unlinked date based on user "Date format" preference. For logged-out users and those who have not set a date format in their preferences, dates can be given a default: "mdy, dmy, ymd, ISO 8601" (all case sensitive). If a format is not specified or is invalid, the input format is used as a default. If the supplied date is not recognized as a valid date, it is rendered unchanged.',
 'padleft' => 'Inserts a string of padding characters (character chosen in third parameter; default \'0\') of a specified length (second parameter) next to a chosen base character or variable (first parameter). The final digits or characters in the base replace the final characters in the padding; i.e. {{padleft:44|3|0}} produces 044',
 'padright' => 'Identical to padleft, but adds padding characters to the right side.',
 'plural' => 'Outputs the correct given pluralization form (parameters except first) depending on the count (first parameter). Plural transformations are used for languages like Russian based on "count mod 10".',
 'grammar' => 'Outputs the correct inflected form of the given word described by the inflection code after the colon (language-dependent). Grammar transformations are used for inflected languages like Polish. See also <a href="#" onclick="javascript:window.open(\'http://www.mediawiki.org/wiki/Manual:$wgGrammarForms\');">Manual:$wgGrammarForms.</a>',
 '#language' => 'The native name for the given language code, in accordance with <a href="#" onclick="javascript:window.open(\'http://en.wikipedia.org/wiki/ISO_639\');">ISO 639</a>.',
 'int' => 'Internationalizes (translates) the given interface (MediaWiki namespace) message into the user language. Note that this can damage/confuse cache consistency',
-'#tag' => 'Alias for XML-style parser or extension tags, but parsing wiki code. Attribute values can be passed as parameter values (\'<pre>&lt;tagname attribute="value"&gt;\' -&gt; \'{{#tag:tagname|attribute=value}}</pre>\'), and inner content as an unnamed parameter (\'<pre>&lt;tagname&gt;content&lt;/tagname&gt;\' -&gt; \'{{#tag:tagname|content}}</pre>\')',
+'#tag' => 'Alias for XML-style parser or extension tags, but parsing wiki code. Attribute values can be passed as parameter values:<br/>&lt;tagname attribute="value"&gt; -&gt; {{#tag:tagname|attribute=value}}<br/>and inner content as an unnamed parameter<br/>&lt;tagname&gt;content&lt;/tagname&gt; -&gt; {{#tag:tagname|content}}',
 
 );
 
