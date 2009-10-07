@@ -78,6 +78,9 @@ function enableRichMediaExtension() {
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
 	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
 	
+	//Change the image links
+	$wgHooks['LinkBegin'][] = 'RMLinkBegin';
+	
 	//EmbedWindow
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
 	$wgAutoloadClasses['RMEmbedWindow'] = $smwgRMIP . '/specials/RM_EmbedWindow.php';
@@ -156,6 +159,31 @@ function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
 	$params = func_get_args();
 	array_shift( $params ); // we already know the $parser ...
 	return RMForm::createRichMediaEmbedWindowLink($parser, $params);
+}
+
+function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
+
+	global $wgNamespaceByExtension,$wgCanonicalNamespaceNames;
+	list( $partname, $ext ) = UploadForm::splitExtensions( $target->mTextform );
+	if( count( $ext ) ) {
+		$finalExt = $ext[count( $ext ) - 1];
+	} else {
+		$finalExt = '';
+	}
+	$ns = NS_FILE;
+	if ( isset( $finalExt ) ) {
+		if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
+			$ns = $wgNamespaceByExtension[$finalExt];
+			//Just change it for NS_FILE... not for specialpages etc
+			if ($target->mNamespace == NS_FILE)
+				$target->mNamespace = $ns;
+		}
+	}
+	$target->mPrefixedText = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$target->mPrefixedText);
+	$text = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$text);
+	//$result = str_replace('File:',$wgCanonicalNamespaceNames[$ns],$customAttribs['title']);
+	
+	return true;
 }
 
 function RMFormUsage_Magic(&$magicWords, $langCode){
