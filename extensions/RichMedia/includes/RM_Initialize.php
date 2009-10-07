@@ -164,7 +164,8 @@ function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
 function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
 
 	global $wgNamespaceByExtension,$wgCanonicalNamespaceNames;
-	list( $partname, $ext ) = UploadForm::splitExtensions( $target->mTextform );
+	$ext = explode( '.', $target->mTextform );
+	array_shift( $ext );
 	if( count( $ext ) ) {
 		$finalExt = $ext[count( $ext ) - 1];
 	} else {
