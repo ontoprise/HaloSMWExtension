@@ -1312,11 +1312,13 @@ function SetEventHandler4AnnotationBox() {
             window.parent.Event.observe(window.frames[0], 'keyup', fckSemanticToolbar.EditorareaChanges);
             window.parent.Event.observe(window.frames[0], 'mouseup', CheckSelectedAndCallPopup);
             window.parent.Event.observe(window.frames[0], 'mousedown', HideContextPopup);
-       }
+        }
+        window.parent.obContributor.activateTextArea(window.frames[0]);
     } else {
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'keyup', fckSemanticToolbar.EditorareaChanges);
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'mouseup', CheckSelectedAndCallPopup);
         window.parent.Event.observe(FCK.EditingArea.Textarea, 'mousedown', HideContextPopup);
+        window.parent.obContributor.activateTextArea(FCK.EditingArea.Textarea);
     }
 }
 

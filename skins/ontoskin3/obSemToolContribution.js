@@ -53,8 +53,6 @@ OBSemanticToolbarContributor.prototype = {
 		// register standard wiki edit textarea (advanced editor registers by itself)
 		if (typeof FCKeditor == 'undefined')
 		    this.activateTextArea("wpTextbox1");
-		else
-		    this.activateTextArea(window.frames[0].frames[0]);
 
 	},
 
