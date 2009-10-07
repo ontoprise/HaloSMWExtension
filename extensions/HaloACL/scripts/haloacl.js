@@ -941,8 +941,8 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     // context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
-        this.hide();
-    //this.destroy();
+        //this.hide();
+        this.destroy();
     }
     myPopup.subscribe("hide", popupClose);
 

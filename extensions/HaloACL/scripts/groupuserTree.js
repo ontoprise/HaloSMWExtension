@@ -307,14 +307,16 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
      */
     uncheck: function() { 
         this.setCheckState(0);
+        /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
             if (c.uncheck) {
                 c.uncheck();
             }
         }
+        */
         this.updateCheckHtml();
-        this.updateParent();
+        //this.updateParent();
     },
     
     setTreeType: function(newTreeType) { 

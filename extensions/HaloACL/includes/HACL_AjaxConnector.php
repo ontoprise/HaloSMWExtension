@@ -3031,6 +3031,7 @@ function getSDRightsPanel($sdId, $readOnly = false,$autosave = true) {
 
     if ($readOnly) {
         $expandMode = "replace";
+        #$expandMode = "expand";
     } else {
         $expandMode = "expand";
     }
@@ -5245,7 +5246,10 @@ function saveQuickacl($xml) {
  * @return <AjaxResponse> indicating if article exists, and if article is secured
  */
 function doesArticleExists($articlename,$protect) {
-    global $haclgContLang;
+    global $haclgContLang,
+    $wgExtraNamespaces;
+
+    
     $template = $haclgContLang->getSDTemplateName();
     $predefinedRightName = $haclgContLang->getPredefinedRightName();
     $ns = $haclgContLang->getNamespaces();
@@ -5255,7 +5259,7 @@ function doesArticleExists($articlename,$protect) {
         $articlename = "Property:".$articlename;
     }
     if($protect == "namespace") {
-        $articlename = "Namepsace:".$articlename;
+
         $response = new AjaxResponse();
         $response->addText("true");
         return $response;
