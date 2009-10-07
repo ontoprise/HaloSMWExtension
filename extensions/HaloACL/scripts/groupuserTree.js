@@ -16,20 +16,13 @@
 */
 
 /**
- * This file contains the class HACLGroup.
+ * This file contains javascript for the grouptree
+ * (used in rightpanel and grouppanel)
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
- * Date: 03.04.2009
+ * Date: 07.10.2009
  *
  */
-
-/**
- * Description of HACL_AjaxConnector
- *
- * @author hipath
- */
-
-//var clickedTreeNodes = [];
 
 /**
  *  debuggin purpose, not used productive

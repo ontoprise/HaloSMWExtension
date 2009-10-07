@@ -60,10 +60,19 @@ abstract class HACLLanguage {
 	protected $mWhitelist = "";
 	protected $mPetPrefixes = array();
 	protected $mSDTemplateName;			// Part of the name of default SDs for users
+	protected $mPredefinedRightName;			// Part of the name of default SDs for users
+
+
+
+        public function getPredefinedRightName() {
+            return $this->mPredefinedRightName;
+        }
+
 
 	/**
 	 * Function that returns an array of namespace identifiers.
 	 */
+
 	public function getNamespaces() {
 		return $this->mNamespaces;
 	}

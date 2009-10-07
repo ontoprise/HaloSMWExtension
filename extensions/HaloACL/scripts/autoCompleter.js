@@ -16,7 +16,7 @@
  */
 
 /**
- * This file contains the AutoCompleter.
+ * This file contains the AutoCompleter which is used in whitelist and createacl
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
  * Date: 03.04.2009

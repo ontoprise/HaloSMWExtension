@@ -20,14 +20,8 @@
  * This file contains functions for client/server communication with Ajax.
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
- * Date: 03.04.2009
+ * Date: 07.10.2009
  *
- */
-
-/**
- * Description of HACL_AjaxConnector
- *
- * @author hipath
  */
 
 /**
@@ -363,6 +357,11 @@ HTML;
  * @return <AjaxRepsonse> content for last step in createacl-tab / save-area
  */
 function createSaveContent() {
+    global $haclgContLang;
+    $template = $haclgContLang->getSDTemplateName();
+    $predefinedRightName = $haclgContLang->getPredefinedRightName();
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
 
     $hacl_createSaveContent_1 = wfMsg('hacl_createSaveContent_1');
     $hacl_createSaveContent_2 = wfMsg('hacl_createSaveContent_2');
@@ -421,9 +420,9 @@ function createSaveContent() {
             }
 
             switch ($('processType').value) {
-                case "createACL":ACLName = "ACL:"+ACLName+'/'+$('create_acl_general_name').value;break;
-                case "createAclTemplate":ACLName = 'ACL:Right/'+$('create_acl_general_name').value;break;
-                case "createAclUserTemplate":ACLName = 'ACL:Template/$userName'; break;
+                case "createACL":ACLName = "$ns:"+ACLName+'/'+$('create_acl_general_name').value;break;
+                case "createAclTemplate":ACLName = '$ns:$predefinedRightName/'+$('create_acl_general_name').value;break;
+                case "createAclUserTemplate":ACLName = '$ns:$template/$userName'; break;
                 case "all_edited":ACLName = $('create_acl_general_name').value; break; //Name already existing - reuse
             }
 
@@ -537,13 +536,16 @@ HTML;
  * @return <string> content for default user template creation | create-acl-tab
  */
 function createManageUserTemplateContent() {
+    global $haclgContLang;
+    $template = $haclgContLang->getSDTemplateName();
+
 
     $hacl_createManageUserTemplateContent_1 = wfMsg('hacl_createManageUserTemplateContent_1');
 
     global $wgUser;
     $myGenericPanel = new HACL_GenericPanel("ManageExistingACLPanel", "[ $hacl_createManageUserTemplateContent_1 ]", "[ $hacl_createManageUserTemplateContent_1 ]", false, false,false);
     try {
-        $SDName = "Template/".$wgUser->getName();
+        $SDName = "$template/".$wgUser->getName();
         $SD = HACLSecurityDescriptor::newFromName($SDName);
         $SDId = $SD->getSDID();
 
@@ -909,10 +911,10 @@ function createAclTemplateContent() {
  *  returns content for createacl-tab
  */
 function createAclUserTemplateContent() {
-    global $wgUser;
+    global $wgUser,$haclgContLang;
     $hacl_createUserTemplateContent_1 = wfMsg('hacl_createUserTemplateContent_1');
     $hacl_createUserTemplateContent_2 = wfMsg('hacl_createUserTemplateContent_2');
-
+    $template = $haclgContLang->getSDTemplateName();
 
     // clear temp-right-sessions
     clearTempSessionRights();
@@ -921,7 +923,7 @@ function createAclUserTemplateContent() {
 
     $alreadyExisting = false;
     try {
-        $SDName = "Template/".$wgUser->getName();
+        $SDName = "$template/".$wgUser->getName();
         $SD = HACLSecurityDescriptor::newFromName($SDName);
         $alreadyExisting = true;
     }
@@ -974,6 +976,10 @@ HTML;
  */
 function getManageUserGroupPanel($panelid, $name="", $description="", $users=null, $groups=null, $manageUsers=null, $manageGroups=null) {
     global $wgUser;
+
+    clearTempSessionGroup();
+    clearTempSessionRights();
+
     $newGroup = "false";
     #$groupname = "Group settings";
     $groupname = wfMsg('hacl_groupsettings');
@@ -984,9 +990,11 @@ function getManageUserGroupPanel($panelid, $name="", $description="", $users=nul
 
     $hacl_manageUserGroupPanel_1 = wfMsg('hacl_manageUserGroupPanel_1');
 
-    $myGenericPanel = new HACL_GenericPanel($panelid, "Group",$groupname,"",true,false);
-
-
+    if($newGroup == "true") {
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Group",$groupname,"",true,false);
+    }else {
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Group",$groupname,"",true,false,null,"expand",true);
+    }
     $content = <<<HTML
 
 		<div id="content_$panelid" class="panel haloacl_panel_content">
@@ -1158,15 +1166,65 @@ HTML;
         $footerextension .= "try{YAHOO.haloacl.refreshPanel_manageUserGroupSettingsModificationRight();}catch(e){}";
     }
 
-    if($newGroup == "false") {
-    //$footerextension .= "$('haloacl_save_manageUserGroupSettingsRight').click();";
-    //$footerextension .= "$('haloacl_save_manageUserGroupSettingsModificationRight').click();";
+    if($newGroup == "false"){
+        $footerextension .="try{genericPanelSetSaved_manageUserGroupSettingsModificationRight(true);}catch(e){}";
+    }else{
+        $footerextension .="try{genericPanelSetSaved_manageUserGroupSettingsModificationRight('defaut');}catch(e){}";
     }
 
     $footerextension .= "</script>";
 
     // end of processing of old data
     $myGenericPanel->extendFooter($footerextension);
+
+    /* autosaving exisiting groups */
+    if($newGroup == "false") {
+    // saving modrights
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xml .= "<inlineright>";
+        $xml .= "<panelid>manageUserGroupSettingsModificationRight</panelid>";
+        $xml .= "<name>$name</name>";
+        $xml .= "<description>modification rights</description>";
+        $xml .= "<users>";
+
+        foreach(explode(",",$manageUsers) as $u) {
+            $xml .= "<user>$u</user>";
+        }
+        $xml .= "</users>";
+        $xml .= "<groups>";
+        foreach(explode(",",$manageGroups) as $g) {
+            $xml .= "<group>$g</group>";
+        }
+        $xml .= "</groups>";
+        $xml .= "</inlineright>";
+        saveTempRightToSession($xml);
+        // -----
+
+        // saving group
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xml .= "<inlineright>";
+        $xml .= "<newgroup>false</newgroup>";
+        $xml .= "<panelid>manageUserGroupSettingsRight</panelid>";
+        $xml .= "<name>$name</name>";
+        $xml .= "<description>$description</description>";
+        $xml .= "<users>";
+
+        foreach(explode(",",$users) as $u) {
+            $xml .= "<user>$u</user>";
+        }
+        $xml .= "</users>";
+        $xml .= "<groups>";
+        foreach(explode(",",$groups) as $g) {
+            $xml .= "<group>$g</group>";
+        }
+        $xml .= "</groups>";
+        $xml .= "</inlineright>";
+        saveTempGroupToSession($xml);
+    // -----
+
+    }
+
+    /* ------ */
 
 
     return $myGenericPanel->getPanel();
@@ -1186,18 +1244,18 @@ HTML;
  * @param <string> panel's description
  * @return <string>
  */
-function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0, $panelName = "Right", $rightDescription = "") {
+function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = false, $preloadRightId = 0, $panelName = "Right", $rightDescription = "",$showSaved=false) {
     $updatedFromOutside=false;
     if($predefine == "modificationGroup") {
         $updatedFromOutside=true;
         $predefine = "modification";
     }
 
-    if($preload == "false") {
+    if($preload == "false" && $preload !== true) {
         $preload = false;
     }
     if($preload == "true") {
-        $repload = true;
+        $preload = true;
     }
 
 
@@ -1253,9 +1311,9 @@ function getRightsPanel($panelid, $predefine, $readOnly = false, $preload = fals
     }
 
     if($predefine == "modification") {
-        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, false, "Default", $expandMode);
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, false, "Default", $expandMode,$showSaved);
     }else {
-        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, null, $expandMode);
+        $myGenericPanel = new HACL_GenericPanel($panelid, "Right", $panelName, $rightDescription, !$readOnly, !$readOnly, null, $expandMode,$showSaved);
     }
     if (($readOnly === true) or ($readOnly == "true")) $disabled = "disabled"; else $disabled = "";
 
@@ -2717,35 +2775,35 @@ HTML;
  *
  * @param <string>  rightid
  * @param <string>  right's name
-    * @param <bool>    is readonly?
-    * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
-    */
-    function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
+ * @param <bool>    is readonly?
+ * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
+ */
+function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
 
-        $hacl_SDRightsPanelContainer_1 = wfMsg('hacl_SDRightsPanelContainer_1');
-        $hacl_SDRightsPanelContainer_2 = wfMsg('hacl_SDRightsPanelContainer_2');
-        $hacl_SDRightsPanelContainer_3 = wfMsg('hacl_SDRightsPanelContainer_3');
-        $hacl_SDRightsPanelContainer_4 = wfMsg('hacl_SDRightsPanelContainer_4');
+    $hacl_SDRightsPanelContainer_1 = wfMsg('hacl_SDRightsPanelContainer_1');
+    $hacl_SDRightsPanelContainer_2 = wfMsg('hacl_SDRightsPanelContainer_2');
+    $hacl_SDRightsPanelContainer_3 = wfMsg('hacl_SDRightsPanelContainer_3');
+    $hacl_SDRightsPanelContainer_4 = wfMsg('hacl_SDRightsPanelContainer_4');
 
-        $create_right = wfMsg('hacl_create_right');
-        $add_template = wfMsg('hacl_add_template');
+    $create_right = wfMsg('hacl_create_right');
+    $add_template = wfMsg('hacl_add_template');
 
-        if ($readOnly == "true") $readOnly = true;
-        if ($readOnly == "false") $readOnly = false;
+    if ($readOnly == "true") $readOnly = true;
+    if ($readOnly == "false") $readOnly = false;
 
-        $sdName = "$ns:".$sdName;
-        $panelid = "SDRightsPanel_$sdId";
-        $response = new AjaxResponse();
+    $sdName = "$ns:".$sdName;
+    $panelid = "SDRightsPanel_$sdId";
+    $response = new AjaxResponse();
 
-        $myGenericPanel = new HACL_GenericPanel($panelid, "[ $hacl_SDRightsPanelContainer_1 $sdName ]", "[ $hacl_SDRightsPanelContainer_1 $sdName ]");
+    $myGenericPanel = new HACL_GenericPanel($panelid, "[ $hacl_SDRightsPanelContainer_1 $sdName ]", "[ $hacl_SDRightsPanelContainer_1 $sdName ]");
 
-        $predefine = "individual";
-        $html = "";
-        if(!$readOnly) {
-            $html = <<<HTML
+    $predefine = "individual";
+    $html = "";
+    if(!$readOnly) {
+        $html = <<<HTML
         <!-- add right part -->
                 <div class="haloacl_existing_right_add_buttons">
                     <input id="haloacl_create_right_$predefine" type="button" value="$create_right"
@@ -2780,8 +2838,8 @@ HTML;
 
         <!-- end of add right part -->
 HTML;
-        }
-        $html .= <<<HTML
+    }
+    $html .= <<<HTML
         <div class="haloacl_sd_container_$readOnly" id="SDRightsPanelContainer_$sdId">
         </div>
         <script>
@@ -2853,33 +2911,33 @@ HTML;
         </script>
 HTML;
 
-        $html = "<div id=\"content_".$panelid."\">".$html."</div>";
+    $html = "<div id=\"content_".$panelid."\">".$html."</div>";
 
-        $myGenericPanel->setContent($html);
+    $myGenericPanel->setContent($html);
 
-        $response->addText($myGenericPanel->getPanel());
-        return $response;
+    $response->addText($myGenericPanel->getPanel());
+    return $response;
 
-    }
+}
 
 
-    /**
-     *
-     * returns panel listing all existing rights, embedded in container for selection (Create ACL Panel)
-     *
-     * @param <string>  unique identifier
-     * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
-     */
-    function getRightsContainer($panelid, $type = "readOnly") {
+/**
+ *
+ * returns panel listing all existing rights, embedded in container for selection (Create ACL Panel)
+ *
+ * @param <string>  unique identifier
+ * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
+ */
+function getRightsContainer($panelid, $type = "readOnly") {
 
-        $hacl_RightsContainer_1 = wfMsg('hacl_RightsContainer_1');
-        $hacl_RightsContainer_2 = wfMsg('hacl_RightsContainer_2');
+    $hacl_RightsContainer_1 = wfMsg('hacl_RightsContainer_1');
+    $hacl_RightsContainer_2 = wfMsg('hacl_RightsContainer_2');
 
-        $response = new AjaxResponse();
+    $response = new AjaxResponse();
 
-        $myGenericPanel = new HACL_GenericPanel($panelid, "$hacl_RightsContainer_1", "$hacl_RightsContainer_1");
+    $myGenericPanel = new HACL_GenericPanel($panelid, "$hacl_RightsContainer_1", "$hacl_RightsContainer_1");
 
-        $html = <<<HTML
+    $html = <<<HTML
         <div style="margin:10px 0;float:left" id="SDRightsPanelContainer_$panelid"></div>
         <script>
             YAHOO.haloacl.loadContentToDiv('SDRightsPanelContainer_$panelid','rightList',{panelid:'$panelid', type:'$type',nofilter:'true'});
@@ -2928,88 +2986,146 @@ HTML;
         </script>
 HTML;
 
-        $html = "<div id=\"content_".$panelid."\">".$html."</div>";
+    $html = "<div id=\"content_".$panelid."\">".$html."</div>";
 
-        $myGenericPanel->setContent($html);
+    $myGenericPanel->setContent($html);
 
-        $response->addText($myGenericPanel->getPanel());
-        return $response;
+    $response->addText($myGenericPanel->getPanel());
+    return $response;
+
+}
+
+
+/**
+ *
+ * returns panel listing all existing rights
+ *
+ * @param <string> right's id
+ * @param <bool>   is readonly?
+ * @param <bool>   autosave right after loading?
+ * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
+ */
+function getSDRightsPanel($sdId, $readOnly = false,$autosave = true) {
+
+
+    $alreadyLoadedTpls = array();
+    $alreadyLoadedTpls[] = $sdId;
+
+    if($autosave == "true" || $autosave == "") {
+        $autosave = true;
+    }elseif($autosave == "false") {
+        $autosave = false;
+    }
+
+    if($autosave)clearTempSessionRights();
+
+    if ($readOnly === "true") $readOnly = true;
+    if ($readOnly === "false") $readOnly = false;
+
+    $html = "";
+    $response = new AjaxResponse();
+
+    $SD = HACLSecurityDescriptor::newFromId($sdId);
+
+    $tempRights = array();
+
+    if ($readOnly) {
+        $expandMode = "replace";
+    } else {
+        $expandMode = "expand";
+    }
+
+    //attach inline right texts
+    foreach ($SD->getInlineRights(false) as $rightId) {
+    //echo "----$rightId---";
+        $tempRight = HACLRight::newFromId($rightId);
+        $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, "true", $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription(),true, true, null, "expand",true);
+
+        /* if autosave is active, save that inline right to session */
+        if($autosave) {
+            $rightToSave = HACLRight::newFromID($rightId);
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+            $xml .= "<inlineright>";
+            $xml .= "<panelid>SDDetails_{$sdId}_{$rightId}</panelid>";
+            $xml .= "<name>{$rightToSave->getName()}</name>";
+            $xml .= "<description>{$rightToSave->getDescription()}</description>";
+            $xml .= "<users>";
+            $defineFor = "individual";
+            if(array_intersect($rightToSave->getUsers(), array("0","-1"))) {
+                $defineFor ="allusers";
+            }elseif(array_intersect($rightToSave->getUsers(), array("0"))) {
+                $defineFor ="allusersanonymous";
+            }elseif(array_intersect($rightToSave->getUsers(), array("-1"))) {
+                $defineFor ="allusersregistered";
+            }else {
+                foreach($rightToSave->getUsersEx(HACLRight::NAME) as $u) {
+                    $xml .= "<user>$u</user>";
+                }
+            }
+            $xml .= "</users>";
+            $xml .= "<type>$defineFor</type>";
+            $xml .= "<groups>";
+            foreach($rightToSave->getGroupsEx(HACLRight::NAME) as $g) {
+                $xml .= "<group>$g</group>";
+            }
+            $xml .= "</groups>";
+            $xml .= "<rights>";
+            $actions = $rightToSave->getActions();
+            if ($actions & HACLRight::EDIT)  $xml .= "<right>edit</right>";
+            if ($actions & HACLRight::CREATE)  $xml .= "<right>create</right>";
+            if ($actions & HACLRight::MOVE)  $xml .= "<right>move</right>";
+            if ($actions & HACLRight::DELETE)  $xml .= "<right>delete</right>";
+            if ($actions & HACLRight::READ)  $xml .= "<right>read</right>";
+            if ($actions & HACLRight::FORMEDIT)  $xml .= "<right>formedit</right>";
+            if ($actions & HACLRight::ANNOTATE)  $xml .= "<right>annotate</right>";
+            if ($actions & HACLRight::WYSIWYG)  $xml .= "<right>wysiwyg</right>";
+            $xml .= "</rights>";
+            $xml .= "</inlineright>";
+            saveTempRightToSession($xml);
+
+        }
 
     }
 
-
-    /**
-     *
-     * returns panel listing all existing rights
-     *
-     * @param <string> right's id
-     * @param <bool>   is readonly?
-     * @param <bool>   autosave right after loading?
-     * @return <string>   returns the user/group-select tabview; e.g. contained in right panel
-     */
-    function getSDRightsPanel($sdId, $readOnly = false,$autosave = false) {
-
-        $alreadyLoadedTpls = array();
-        $alreadyLoadedTpls[] = $sdId;
-
-        if($autosave == "true") {
-            $autosave = true;
+    //attach predefined right texts
+    // only templates down here
+    foreach ($SD->getPredefinedRights(false) as $subSdId) {
+        $sdName = HACLSecurityDescriptor::nameForID($subSdId);
+        if($autosave) {
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+            $xml .= "<inlineright>";
+            $xml .= "<panelid>subRight_$subSdId</panelid>";
+            $xml .= "<name>$sdName</name>";
+            $xml .= "<type>template</type>";
+            $xml .= "</inlineright>";
+            saveTempRightToSession($xml);
         }
 
-        $autosave = false;
 
-        if ($readOnly === "true") $readOnly = true;
-        if ($readOnly === "false") $readOnly = false;
-
-        $html = "";
-        $response = new AjaxResponse();
-
-        $SD = HACLSecurityDescriptor::newFromId($sdId);
-
-        $tempRights = array();
-
-        if ($readOnly) {
-            $expandMode = "replace";
-        } else {
-            $expandMode = "expand";
+        //                                              ($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
+        if(!$readOnly) {
+            $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", true, true, null, $expandMode,true);
+        }else {
+            $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false, null, $expandMode);
         }
 
-        //attach inline right texts
-        foreach ($SD->getInlineRights(false) as $rightId) {
-        //echo "----$rightId---";
-            $tempRight = HACLRight::newFromId($rightId);
-            $html .= getRightsPanel("SDDetails_".$sdId."_".$rightId, 'individual', $readOnly, "true", $rightId, $tempRight->getName(), HACLRight::newFromID($rightId)->getDescription());
-        }
-
-        //attach predefined right texts
-        // only templates down here
-        foreach ($SD->getPredefinedRights(false) as $subSdId) {
-            $sdName = HACLSecurityDescriptor::nameForID($subSdId);
-
-            //                                              ($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
-            if(!$readOnly) {
-                $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", true, true, null, $expandMode);
-            }else {
-                $myGenericPanel = new HACL_GenericPanel("subRight_$subSdId", "[ Template: $sdName ]", "[ Template: $sdName ]", "", false, false, null, $expandMode);
-            }
-
-            $temphtml = <<<HTML
+        $temphtml = <<<HTML
         <div id="content_subRight_$subSdId">
         <div id="subPredefinedRight_$subSdId"></div>
 HTML;
-            if(!$readOnly) {
+        if(!$readOnly) {
 
-                $deletetpltext = wfMsg('hacl_deletetplfromacl');
-                $addtpltext = wfMsg('hacl_addtpltoacl');
+            $deletetpltext = wfMsg('hacl_deletetplfromacl');
+            $addtpltext = wfMsg('hacl_addtpltoacl');
 
-                $temphtml .= <<<HTML
+            $temphtml .= <<<HTML
         <div class="haloacl_buttons_under_panel">
             <div style="width:50%;float:left;"><input type="button" id="haloacl_delete_$sdName" value="$deletetpltext" onclick="javascript:YAHOO.haloacl.removePanel('subRight_$subSdId');" /></div>
             <div style="width:50%;float:right;text-align:right"><input id="haloacl_save_$sdName" type="button" name="safeRight" value="$addtpltext" onclick="YAHOO.haloacl.buildRightPanelXML_$subSdId();" /></div>
         </div>
 HTML;
-            }
-            $temphtml .= <<<HTML
+        }
+        $temphtml .= <<<HTML
         <script>
 
             YAHOO.haloacl.buildRightPanelXML_$subSdId = function(onlyReturnXML){
@@ -3034,116 +3150,136 @@ HTML;
                           
             };
 HTML;
-            // preventing deathlock
-            if(!in_array($subSdId, $alreadyLoadedTpls)) {
-                $temphtml .= <<<HTML
+        // preventing deathlock
+        if(!in_array($subSdId, $alreadyLoadedTpls)) {
+            $temphtml .= <<<HTML
 
-                YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true'});
+                YAHOO.haloacl.loadContentToDiv('subPredefinedRight_$subSdId','getSDRightsPanel',{sdId:'$subSdId', readOnly:'true', autosave:'false'});
 
 HTML;
-            }
-            $alreadyLoadedTpls[] = $subSdId;
-            //show closed at first
-            $temphtml .= <<<HTML
+        }
+        $alreadyLoadedTpls[] = $subSdId;
+
+        $temphtml .= <<<HTML
             YAHOO.haloacl.togglePanel('subRight_$subSdId');
-HTML;
-            // initial save those rights
-
-            if($autosave) {
-                $temphtml .= <<<HTML
-            YAHOO.haloacl.buildRightPanelXML_$subSdId();
-HTML;
-            }
-            $temphtml .= <<<HTML
 
         </script>
         </div>
 HTML;
-            $myGenericPanel->setContent($temphtml);
-            $html .= $myGenericPanel->getPanel();
+        $myGenericPanel->setContent($temphtml);
+        $html .= $myGenericPanel->getPanel();
 
+    }
+
+
+    $html .= '<div class="haloacl_greyline">&nbsp;</div>';
+
+    // saving modificationrights
+    if($autosave) {
+
+        $users = $SD->getManageUsers();
+        $groups = $SD->getManageGroups();
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+        $xml .= "<inlineright>";
+        $xml .= "<panelid>SDDetails_".$sdId."_modification</panelid>";
+        $xml .= "<name>Modification Right</name>";
+        $xml .= "<description>{$rightToSave->getDescription()}</description>";
+        $xml .= "<users>";
+
+        foreach($users as $u) {
+            $xml .= "<user>".User::newFromId($u)->getName()."</user>";
         }
+        $xml .= "</users>";
+        $xml .= "<type>modification</type>";
+        $xml .= "<groups>";
+        foreach($groups as $g) {
+            $xml .= "<group>".HACLGroup::nameForID($g)."</group>";
+        }
+        $xml .= "</groups>";
+        $xml .= "</inlineright>";
+        saveTempRightToSession($xml);
 
+        $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right","",true);
 
-        $html .= '<div class="haloacl_greyline">&nbsp;</div>';
+    }else {
         $html .= getRightsPanel("SDDetails_".$sdId."_modification", 'modification', $readOnly, true, $sdId, "Modification Right");
+    }
+
+    $response->addText($html);
+    return $response;
+
+}
 
 
-        $response->addText($html);
+/**
+ * function called intern (not ajax) to clear right that have been saved to session
+ */
+function clearTempSessionRights() {
+    unset($_SESSION['temprights']);
+}
+
+/**
+ * function called intern to clear groups that have been saved to session
+ */
+function clearTempSessionGroup() {
+    unset($_SESSION['tempgroups']);
+}
+
+/**
+ *  saves groupsettings to session
+ *  finaly (if group will be saved) all temp-saved group will be added to the group
+ * @global <type> $haclgContLang
+ * @param <string> xml containing groupsettings
+ * @return <AjaxResponse> save-indicator / error message
+ */
+function saveTempGroupToSession($groupxml) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    // checking if action is valid
+    $xml = new SimpleXMLElement($groupxml);
+    $groupname = (String)$xml->name;
+    if($groupname == "") {
+        $response = new AjaxResponse();
+        $response->setResponseCode(400);
+        $response->addText("You entered no groupname. A name is required to create a new group.");
         return $response;
-
     }
-
-
-    /**
-     * function called intern (not ajax) to clear right that have been saved to session
-     */
-    function clearTempSessionRights() {
-        unset($_SESSION['temprights']);
-    }
-
-    /**
-     * function called intern to clear groups that have been saved to session
-     */
-    function clearTempSessionGroup() {
-        unset($_SESSION['tempgroups']);
-    }
-
-    /**
-     *  saves groupsettings to session
-     *  finaly (if group will be saved) all temp-saved group will be added to the group
-     * @global <type> $haclgContLang
-     * @param <string> xml containing groupsettings
-     * @return <AjaxResponse> save-indicator / error message
-     */
-    function saveTempGroupToSession($groupxml) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
-        // checking if action is valid
-        $xml = new SimpleXMLElement($groupxml);
-        $groupname = (String)$xml->name;
-        if($groupname == "") {
+    $newGroup = (String)$xml->newgroup;
+    if($newGroup == "true") {
+        $article = new Article(Title::newFromText("$ns:Group/$groupname"));
+        if($article->exists()) {
             $response = new AjaxResponse();
             $response->setResponseCode(400);
-            $response->addText("You entered no groupname. A name is required to create a new group.");
+            $response->addText("Group already exists. You can not create two groups with the same name.");
             return $response;
         }
-        $newGroup = (String)$xml->newgroup;
-        if($newGroup == "true") {
-            $article = new Article(Title::newFromText("$ns:Group/$groupname"));
-            if($article->exists()) {
-                $response = new AjaxResponse();
-                $response->setResponseCode(400);
-                $response->addText("Group already exists. You can not create two groups with the same name.");
-                return $response;
-            }
 
-        }
-        $_SESSION['tempgroups'] = $groupxml;
-        $response = new AjaxResponse();
-        $response->setResponseCode(200);
-        $response->addText(wfMsg('hacl_saveTempGroup_1'));
-        return $response;
     }
+    $_SESSION['tempgroups'] = $groupxml;
+    $response = new AjaxResponse();
+    $response->setResponseCode(200);
+    $response->addText(wfMsg('hacl_saveTempGroup_1'));
+    return $response;
+}
 
 
-    /**
-     *
-     * @param <string>  right serialized as xml
-     * @return <AjaxResponse>     200: ok / right saved to session
-     *                      400: failure / rihght not saved to session (exception's message will be returned also)
-     */
-    function saveTempRightToSession($rightxml) {
-        $ajaxResponse = new AjaxResponse();
-        try {
+/**
+ *
+ * @param <string>  right serialized as xml
+ * @return <AjaxResponse>     200: ok / right saved to session
+ *                      400: failure / rihght not saved to session (exception's message will be returned also)
+ */
+function saveTempRightToSession($rightxml) {
+    $ajaxResponse = new AjaxResponse();
+    try {
 
-            $xml = new SimpleXMLElement($rightxml);
+        $xml = new SimpleXMLElement($rightxml);
 
-            $panelid = (string)$xml->panelid;
-            #  $_SESSION['temprights'][$panelid] = $tempright;
+        $panelid = (string)$xml->panelid;
+        #  $_SESSION['temprights'][$panelid] = $tempright;
 
-            $_SESSION['temprights'][$panelid] = $rightxml;
+        $_SESSION['temprights'][$panelid] = $rightxml;
 
 /*
  *      actually done on clientside / javascript
@@ -3152,847 +3288,941 @@ HTML;
 
         if ($autoDescription == "on") $description = $autoGeneratedRightName;
 */
-            $ajaxResponse->setContentType("json");
-            $ajaxResponse->setResponseCode(200);
-        //$ajaxResponse->addText("");
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+    //$ajaxResponse->addText("");
 
-        } catch (Exception  $e) {
+    } catch (Exception  $e) {
 
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
-        }
-        return $ajaxResponse;
-
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
     }
-    /**
-     *  removes a tempsaved-right from session
-     *  this happens when a right is delted from an acl
-     *
-     * @param <string>  panelid of right
-     * @return <AjaxResponse>     200: ok / right saved to session
-     *                      400: failure / rihght not saved to session (exception's message will be returned also)
-     */
-    function removePanelForTemparray($panelid) {
+    return $ajaxResponse;
+
+}
+/**
+ *  removes a tempsaved-right from session
+ *  this happens when a right is delted from an acl
+ *
+ * @param <string>  panelid of right
+ * @return <AjaxResponse>     200: ok / right saved to session
+ *                      400: failure / rihght not saved to session (exception's message will be returned also)
+ */
+function removePanelForTemparray($panelid) {
+    $ajaxResponse = new AjaxResponse();
+    try {
+        unset($_SESSION['temprights'][$panelid]);
+
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("success");
+
+    } catch (Exception  $e) {
+
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+
+/**
+ *  converts sd-name to sd-id
+ * @param <string> SD-Name
+ * @return <AjaxResponse> SD-Id
+ */
+function sDpopupByName($sdName) {
+    $ajaxResponse = new AjaxResponse();
+    try {
+
+
+        $tempSD = HACLSecurityDescriptor::newFromName($sdName);
+        $ajaxResponse->addText($tempSD->getSDID());
+
+        $ajaxResponse->setResponseCode(200);
+    //$ajaxResponse->addText("");
+
+    } catch (Exception  $e) {
+
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+
+
+/**
+ *  deletes a security descriptor
+ *      -> aricle and so from db (via article-deletion)
+ *
+ * @param <string> $sdId
+ * @return <AjaxResponse>200: ok | 400: failure with error-message
+ */
+function deleteSecurityDescriptor($sdId) {
+
+    $ajaxResponse = new AjaxResponse();
+    try {
+
+        HACLSecurityDescriptor::newFromID($sdId)->delete();
+
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText(wfMsg('hacl_deleteSecurityDescriptor_1'));
+
+    } catch (Exception  $e) {
         $ajaxResponse = new AjaxResponse();
-        try {
-            unset($_SESSION['temprights'][$panelid]);
-
-            $ajaxResponse->setResponseCode(200);
-            $ajaxResponse->addText("success");
-
-        } catch (Exception  $e) {
-
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
-        }
-        return $ajaxResponse;
-
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
     }
+    return $ajaxResponse;
+
+}
 
 
-    /**
-     *  converts sd-name to sd-id
-     * @param <string> SD-Name
-     * @return <AjaxResponse> SD-Id
-     */
-    function sDpopupByName($sdName) {
-        $ajaxResponse = new AjaxResponse();
-        try {
+/**
+ *  saves a securitydescriptor while including all temp-saved-rights
+ *
+ * @global <User> $wgUser
+ * @global <type> $haclgContLang
+ * @param <string> xml containing sd-related information
+ * @return <AjaxResponse> success message | error-message
+ */
+function saveSecurityDescriptor($secDescXml) {
+    global $wgUser;
+    global $haclgContLang;
+    $template = $haclgContLang->getSDTemplateName();
+    $predefinedRightName = $haclgContLang->getPredefinedRightName();
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    $secDescXmlInstance = new SimpleXMLElement($secDescXml);
 
+    try {
+        $inline = "";
+        $modificationSaved = false;
+        // building rights
+        foreach($_SESSION['temprights'] as $tempright) {
 
-            $tempSD = HACLSecurityDescriptor::newFromName($sdName);
-            $ajaxResponse->addText($tempSD->getSDID());
+            $xml = new SimpleXMLElement($tempright);
+            $actions = 0;
+            $groups = '';
+            $users = '';
+            $type = $xml->type;
 
-            $ajaxResponse->setResponseCode(200);
-        //$ajaxResponse->addText("");
-
-        } catch (Exception  $e) {
-
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
-        }
-        return $ajaxResponse;
-
-    }
-
-
-
-    /**
-     *  deletes a security descriptor
-     *      -> aricle and so from db (via article-deletion)
-     *
-     * @param <string> $sdId
-     * @return <AjaxResponse>200: ok | 400: failure with error-message
-     */
-    function deleteSecurityDescriptor($sdId) {
-
-        $ajaxResponse = new AjaxResponse();
-        try {
-
-            HACLSecurityDescriptor::newFromID($sdId)->delete();
-
-            $ajaxResponse->setContentType("json");
-            $ajaxResponse->setResponseCode(200);
-            $ajaxResponse->addText(wfMsg('hacl_deleteSecurityDescriptor_1'));
-
-        } catch (Exception  $e) {
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
-        }
-        return $ajaxResponse;
-
-    }
-
-
-    /**
-     *  saves a securitydescriptor while including all temp-saved-rights
-     *
-     * @global <User> $wgUser
-     * @global <type> $haclgContLang
-     * @param <string> xml containing sd-related information
-     * @return <AjaxResponse> success message | error-message
-     */
-    function saveSecurityDescriptor($secDescXml) {
-        global $wgUser;
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
-        $secDescXmlInstance = new SimpleXMLElement($secDescXml);
-
-        try {
-            $inline = "";
-
-            $modificationSaved = false;
-            // building rights
-            foreach($_SESSION['temprights'] as $tempright) {
-
-                $xml = new SimpleXMLElement($tempright);
-                $actions = 0;
-                $groups = '';
-                $users = '';
-                $type = $xml->type;
-
-                if ($type == "template") {
-                    $inline .= '
+            if ($type == "template") {
+                $inline .= '
 {{#predefined right:rights='.unescape($xml->name).'}}';
-                } else {
+            } else {
 
-                    $protect = null;
-                    foreach($secDescXmlInstance->xpath('//protect') as $item) {
-                        $protect = (String)$item;
-                    }
+                $protect = null;
+                foreach($secDescXmlInstance->xpath('//protect') as $item) {
+                    $protect = (String)$item;
+                }
 
-                    $description = $xml->description ? unescape($xml->description) : '';
-                    $autoDescription = $xml->autoDescription ? unescape($xml->autoDescription) : '';
-                    $rightName = $xml->name ? unescape($xml->name) : '';
+                $description = $xml->description ? unescape($xml->description) : '';
+                $autoDescription = $xml->autoDescription ? unescape($xml->autoDescription) : '';
+                $rightName = $xml->name ? unescape($xml->name) : '';
 
-                    switch ($type) {
-                        case "privateuse":
-                            $users = "User:".$wgUser->getName();
-                            break;
-                        case "individual":
-                        case "private":
-                            foreach($xml->xpath('//group') as $group) {
-                                if($groups == '') {
-                                    $groups = unescape((string)$group);
-                                }else {
-                                    $groups = $groups.",".unescape((string)$group);
-                                }
-                            }
-                            foreach($xml->xpath('//user') as $user) {
-                                if($users == '') {
-                                    $users = 'User:'.unescape((string)$user);
-                                }else {
-                                    $users = $users.",".'User:'.unescape((string)$user);
-                                }
-                            }
-                            break;
-                        case "modification":
-                            $foundModrights = false;
-                            foreach($xml->xpath('//group') as $group) {
-                                $foundModrights = true;
-                                if($groups == '') {
-                                    $groups = (string)$group;
-                                }else {
-                                    $groups = $groups.",".unescape((string)$group);
-                                }
-                            }
-                            foreach($xml->xpath('//user') as $user) {
-                                $foundModrights = true;
-                                if($users == '') {
-                                    $users = 'User:'.unescape((string)$user);
-                                }else {
-                                    $users = $users.",".'User:'.unescape((string)$user);
-                                }
-
-                            }
-                            if(!$foundModrights) {
-                                $users = "Users:".$wgUser->getName();
-                            }
-                            break;
-                        case "allusersregistered":
-                            $users = "#";
-                            break;
-                        case "allusersanonymous":
-                            $users = "*";
-                            break;
-                        case "allusers":
-                            $users = "*,#";
-                            break;
-                    }
-
-                    $actions2 = "";
-                    foreach($xml->xpath('//right') as $right) {
-                    //$actions = $actions + (int)HACLRight::getActionID($right);
-                        if((string)$right != "fullaccess") {
-                            if($actions2 == '') {
-                                $actions2 = (string)$right;
+                switch ($type) {
+                    case "privateuse":
+                        $users = "User:".$wgUser->getName();
+                        break;
+                    case "individual":
+                    case "private":
+                        foreach($xml->xpath('//group') as $group) {
+                            if($groups == '') {
+                                $groups = unescape((string)$group);
                             }else {
-                                $actions2 .= ",".(string)$right;
+                                $groups = $groups.",".unescape((string)$group);
                             }
                         }
-                    }
-                    foreach($xml->xpath('//right') as $right) {
-                        if ($right <> '') {
-                            $actions = $actions + (int)HACLRight::getActionID($right);
+                        foreach($xml->xpath('//user') as $user) {
+                            if($users == '') {
+                                $users = 'User:'.unescape((string)$user);
+                            }else {
+                                $users = $users.",".'User:'.unescape((string)$user);
+                            }
                         }
-                    }
+                        break;
+                    case "modification":
+                        $foundModrights = false;
+                        foreach($xml->xpath('//group') as $group) {
+                            $foundModrights = true;
+                            if($groups == '') {
+                                $groups = (string)$group;
+                            }else {
+                                $groups = $groups.",".unescape((string)$group);
+                            }
+                        }
+                        foreach($xml->xpath('//user') as $user) {
+                            $foundModrights = true;
+                            if($users == '') {
+                                $users = 'User:'.unescape((string)$user);
+                            }else {
+                                $users = $users.",".'User:'.unescape((string)$user);
+                            }
 
-                    if ($type <> "modification") {
-                    //normal rights
-                        if(!$protect == null && $protect == "property") {
-                            $inline .= '
-{{#property access: assigned to=';
+                        }
+                        if(!$foundModrights) {
+                            $users = "Users:".$wgUser->getName();
+                        }
+                        break;
+                    case "allusersregistered":
+                        $users = "#";
+                        break;
+                    case "allusersanonymous":
+                        $users = "*";
+                        break;
+                    case "allusers":
+                        $users = "*,#";
+                        break;
+                }
+
+                $actions2 = "";
+                foreach($xml->xpath('//right') as $right) {
+                //$actions = $actions + (int)HACLRight::getActionID($right);
+                    if((string)$right != "fullaccess") {
+                        if($actions2 == '') {
+                            $actions2 = (string)$right;
                         }else {
-                            $inline .= '
-{{#access: assigned to=';
+                            $actions2 .= ",".(string)$right;
                         }
-                        if ($groups <> '') $inline .= $groups;
-                        if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
-                        if (($users <> '') && ($groups == '')) $inline .= $users;
-                        $inline .= ' |actions='.$actions2.' |description='.$description.' |name='.$rightName.'}}';
-
-                    } else {
-                    //modification rights
-                        $inline .= '
-{{#manage rights:assigned to=';
-                        if ($groups <> '') $inline .= $groups;
-                        if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
-                        if (($users <> '') && ($groups == '')) $inline .= $users;
-
-                        $inline .='}}';
-                        $modificationSaved = true;
                     }
+                }
+                foreach($xml->xpath('//right') as $right) {
+                    if ($right <> '') {
+                        $actions = $actions + (int)HACLRight::getActionID($right);
+                    }
+                }
 
-                    //line break
-                    $inline .= <<<HTML
+                if ($type <> "modification") {
+                //normal rights
+                    if(!$protect == null && $protect == "property") {
+                        $inline .= '
+{{#property access: assigned to=';
+                    }else {
+                        $inline .= '
+{{#access: assigned to=';
+                    }
+                    if ($groups <> '') $inline .= $groups;
+                    if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
+                    if (($users <> '') && ($groups == '')) $inline .= $users;
+                    $inline .= ' |actions='.$actions2.' |description='.$description.' |name='.$rightName.'}}';
+
+                } else {
+                //modification rights
+                    $inline .= '
+{{#manage rights:assigned to=';
+                    if ($groups <> '') $inline .= $groups;
+                    if (($users <> '') && ($groups <> '')) $inline .= ','.$users;
+                    if (($users <> '') && ($groups == '')) $inline .= $users;
+
+                    $inline .='}}';
+                    $modificationSaved = true;
+                }
+
+                //line break
+                $inline .= <<<HTML
 
 HTML;
 
-                }
+            }
 
-            } // end of foreach
-            if($modificationSaved == false) {
-                $inline .= '
+        } // end of foreach
+        if($modificationSaved == false) {
+            $inline .= '
 {{#manage rights:assigned to=User:'.$wgUser->getName()."}}";
+        }
+
+
+        $aclType = (String)$secDescXmlInstance->ACLType;
+
+        if ($aclType == "createACL") {
+            $inline .= '
+[[Category:'.$ns.'/'.$ns.']]';
+        }else if($aclType == "createAclUserTemplate") {
+                $inline .= '
+[[Category:'.$ns.'/'.$ns.']]';
+            }else {
+                $inline .= '
+[[Category:'.$ns.'/'.$predefinedRightName.']]';
             }
 
 
-            $aclType = (String)$secDescXmlInstance->ACLType;
+        $SDName = $secDescXmlInstance->name;
 
-            if ($aclType == "createACL") {
-                $inline .= '
-[[Category:ACL/ACL]]';
-            }else if($aclType == "createAclUserTemplate") {
-                    $inline .= '
-[[Category:ACL/ACL]]';
-                }else {
-                    $inline .= '
-[[Category:ACL/Right]]';
-                }
+        $aclName = unescape((string)$SDName);
+
+        // create article for security descriptor
+
+        $sdarticle = new Article(Title::newFromText($aclName));
 
 
-            $SDName = $secDescXmlInstance->name;
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
 
-            $aclName = unescape((string)$SDName);
+        $articlename = preg_replace("/$ns:Page\//is", "", $aclName);
 
-            // create article for security descriptor
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText($articlename);
 
-            $sdarticle = new Article(Title::newFromText($aclName));
+    } catch (Exception  $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+/**
+ *  saves a group while including groupsettings from temp-saved groupsetting in session
+ *
+ * @global <type> $haclgContLang
+ * @global <User> $wgUser
+ * @param <string> xml formated group info (also includes modification-rights)
+ * @param <string> parentgroup of that group (for root-level groups: null)
+ * @return <AjaxResponse> success message | error-message
+ */
+function saveGroup($manageRightsXml,$parentgroup = null) {
+    global $haclgContLang;
+    global $wgUser;
+    $template = $haclgContLang->getSDTemplateName();
+    $predefinedRightName = $haclgContLang->getPredefinedRightName();
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
 
 
-            $sdarticle->doEdit($inline, "");
-            $SDID = $sdarticle->getID();
-
-            $articlename = preg_replace("/$ns:Page\//is", "", $aclName);
-
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setContentType("json");
-            $ajaxResponse->setResponseCode(200);
-            $ajaxResponse->addText($articlename);
-
-        } catch (Exception  $e) {
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
-        }
-        return $ajaxResponse;
-
+    if($parentgroup == "Groups" || $parentgroup == "undefined") {
+        $parentgroup = null;
     }
 
-    /**
-     *  saves a group while including groupsettings from temp-saved groupsetting in session
-     *
-     * @global <type> $haclgContLang
-     * @global <User> $wgUser
-     * @param <string> xml formated group info (also includes modification-rights)
-     * @param <string> parentgroup of that group (for root-level groups: null)
-     * @return <AjaxResponse> success message | error-message
-     */
-    function saveGroup($manageRightsXml,$parentgroup = null) {
+    if(!array_key_exists("tempgroups", $_SESSION)) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText("Please save groupsettings first.");
+        return $ajaxResponse;
+    }
 
-        if($parentgroup == "Groups" || $parentgroup == "undefined") {
-            $parentgroup = null;
-        }
-        global $haclgContLang;
-        global $wgUser;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
+    $groupXml = $_SESSION['tempgroups'];
+    $groups = "";
+    $users = "";
+    $mrgroups = "";
+    $mrusers = "";
 
-        if(!array_key_exists("tempgroups", $_SESSION)) {
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText("Please save groupsettings first.");
-            return $ajaxResponse;
-        }
-
-        $groupXml = $_SESSION['tempgroups'];
-        $groups = "";
-        $users = "";
-        $mrgroups = "";
-        $mrusers = "";
-
-        try {
+    try {
         /* create group inline from 2 xmls */
-        //get group members
-            $groupXml = new SimpleXMLElement($groupXml);
-            // securitydescriptor-part
-            foreach($groupXml->xpath('//group') as $group) {
-                if(trim($group) != "") {
-                    if($groups == '') {
-                        $groups = unescape((string)$group);
-                    }else {
-                        $groups .= ",".unescape((string)$group);
-                    }
+    //get group members
+        $groupXml = new SimpleXMLElement($groupXml);
+        // securitydescriptor-part
+        foreach($groupXml->xpath('//group') as $group) {
+            if(trim($group) != "") {
+                if($groups == '') {
+                    $groups = unescape((string)$group);
+                }else {
+                    $groups .= ",".unescape((string)$group);
                 }
             }
-            foreach($groupXml->xpath('//user') as $user) {
-                if(trim($user)!="") {
-                    if($users == '') {
-                        $users = 'User:'.unescape((string)$user);
-                    }else {
-                        $users .= ",".'User:'.unescape((string)$user);
-                    }
+        }
+        foreach($groupXml->xpath('//user') as $user) {
+            if(trim($user)!="") {
+                if($users == '') {
+                    $users = 'User:'.unescape((string)$user);
+                }else {
+                    $users .= ",".'User:'.unescape((string)$user);
                 }
             }
+        }
 
-            //get manage rights
-            $manageRightsXml = new SimpleXMLElement($manageRightsXml);
-            // securitydescriptor-part
-            foreach($manageRightsXml->xpath('//group') as $group) {
-                if(trim($group)) {
-                    if($mrgroups == '') {
-                        $mrgroups = unescape((string)$group);
-                    }else {
-                        $mrgroups .= ",".unescape((string)$group);
-                    }
+        //get manage rights
+        $manageRightsXml = new SimpleXMLElement($manageRightsXml);
+        // securitydescriptor-part
+        foreach($manageRightsXml->xpath('//group') as $group) {
+            if(trim($group)) {
+                if($mrgroups == '') {
+                    $mrgroups = unescape((string)$group);
+                }else {
+                    $mrgroups .= ",".unescape((string)$group);
                 }
             }
-            foreach($manageRightsXml->xpath('//user') as $user) {
-                if(trim($user) !="") {
-                    if($mrusers == '') {
-                        $mrusers = 'User:'.unescape((string)$user);
-                    }else {
-                        $mrusers .= ",".'User:'.unescape((string)$user);
-                    }
+        }
+        foreach($manageRightsXml->xpath('//user') as $user) {
+            if(trim($user) !="") {
+                if($mrusers == '') {
+                    $mrusers = 'User:'.unescape((string)$user);
+                }else {
+                    $mrusers .= ",".'User:'.unescape((string)$user);
                 }
             }
+        }
 
-            $groupName = unescape($groupXml->name);
+        $groupName = unescape($groupXml->name);
 
-            // create article for security descriptor
-            $sdarticle = new Article(Title::newFromText("$ns:".'Group'.'/'.$groupName));
+        // create article for security descriptor
+        $sdarticle = new Article(Title::newFromText("$ns:".'Group'.'/'.$groupName));
 
 
-            if($users == "") {
-                $inline = '
+        if($users == "") {
+            $inline = '
 {{#member:members='.$groups.'}}';
-            }elseif($groups == "") {
-                $inline = '
+        }elseif($groups == "") {
+            $inline = '
 {{#member:members='.$users.'}}';
-            }else {
-                $inline = '
+        }else {
+            $inline = '
 {{#member:members='.$users.','.$groups.'}}';
-            }
+        }
 
-            if($mrgroups == "") {
-                $inline .= '
+        if($mrgroups == "") {
+            $inline .= '
 {{#manage group:assigned to='.$mrusers.'}}
         [[Category:ACL/Group]]';
-            }elseif($mrusers == "") {
-                $inline .= '
+        }elseif($mrusers == "") {
+            $inline .= '
 {{#manage group:assigned to='.$mrgroups.'}}
         [[Category:ACL/Group]]';
-            }elseif($mrgroups != "" && $mrusers != "") {
-                $inline .= '
+        }elseif($mrgroups != "" && $mrusers != "") {
+            $inline .= '
 {{#manage group:assigned to='.$mrgroups.','.$mrusers.'}}
         [[Category:ACL/Group]]';
-            }else {
-                $inline .= '
+        }else {
+            $inline .= '
 {{#manage group:assigned to=User:'.$wgUser->getName().'}}
         [[Category:ACL/Group]]';
+        }
+
+
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
+
+        // as a new article starts we have to reset the parser
+        HACLParserFunctions::getInstance()->reset();
+
+        // new group saved
+        // if new group is a subgroup we have to attach it to that
+        if($parentgroup) {
+        // now we have to edit the parentgroup's definition
+
+            $parentGroupArray = readGroupDefinition($parentgroup);
+            $parentgrouparticle = new Article(Title::newFromText("$ns:".$parentgroup));
+            #echo ("opening article with title:ACL:".$parentgroup);
+
+            // building new arent inline
+            $parent_memuser = "";
+            // setting the new group as first member
+            $parent_memgroup = 'Group'.'/'.$groupName;
+            $parent_user = "";
+            $parent_group = "";
+            if(isset($parentGroupArray['members']['group'])) {
+                foreach($parentGroupArray['members']['group'] as $group) {
+                    if(trim($group)) {
+                        if($parent_memgroup == '') {
+                            $parent_memgroup = (string)$group;
+                        }else {
+                            $parent_memgroup .= ",".(string)$group;
+                        }
+                    }
+                }
+            }
+            if(isset($parentGroupArray['members']['user'])) {
+                foreach($parentGroupArray['members']['user'] as $user) {
+                    if(trim($user) !="") {
+                        if($parent_memuser == '') {
+                            $parent_memuser = 'User:'.(string)$user;
+                        }else {
+                            $parent_memuser .= ",".'User:'.(string)$user;
+                        }
+                    }
+                }
+            }
+            if(isset($parentGroupArray['members']['user'])) {
+
+                foreach($parentGroupArray['members']['user'] as $user) {
+                    if(trim($user)) {
+                        if($parent_user == '') {
+                            $parent_user = 'User:'.(string)$user;
+                        }else {
+                            $parent_user .= ",".'User:'.(string)$user;
+                        }
+                    }
+                }
+            }
+            if(isset($parentGroupArray['manage']['group'])) {
+                foreach($parentGroupArray['manage']['group'] as $group) {
+                    if(trim($group) !="") {
+                        if($parent_group == '') {
+                            $parent_group = (string)$group;
+                        }else {
+                            $parent_group .= (string)$group;
+                        }
+                    }
+                }
+            }
+            if($parent_memuser == "") {
+                $newparentinline = '
+{{#member:members='.$parent_memgroup.'}}';
+            }elseif($parent_memgroup == "") {
+                $newparentinline = '
+{{#member:members='.$parent_memuser.'}}';
+            }else {
+                $newparentinline = '
+{{#member:members='.$parent_memuser.','.$parent_memgroup.'}}';
             }
 
-
-            $sdarticle->doEdit($inline, "");
-            $SDID = $sdarticle->getID();
-
-            // as a new article starts we have to reset the parser
-            HACLParserFunctions::getInstance()->reset();
-
-            // new group saved
-            // if new group is a subgroup we have to attach it to that
-            if($parentgroup) {
-            // now we have to edit the parentgroup's definition
-
-                $parentGroupArray = readGroupDefinition($parentgroup);
-                $parentgrouparticle = new Article(Title::newFromText("ACL:".$parentgroup));
-                #echo ("opening article with title:ACL:".$parentgroup);
-
-                // building new arent inline
-                $parent_memuser = "";
-                // setting the new group as first member
-                $parent_memgroup = 'Group'.'/'.$groupName;
-                $parent_user = "";
-                $parent_group = "";
-                if(isset($parentGroupArray['members']['group'])) {
-                    foreach($parentGroupArray['members']['group'] as $group) {
-                        if(trim($group)) {
-                            if($parent_memgroup == '') {
-                                $parent_memgroup = (string)$group;
-                            }else {
-                                $parent_memgroup .= ",".(string)$group;
-                            }
-                        }
-                    }
-                }
-                if(isset($parentGroupArray['members']['user'])) {
-                    foreach($parentGroupArray['members']['user'] as $user) {
-                        if(trim($user) !="") {
-                            if($parent_memuser == '') {
-                                $parent_memuser = 'User:'.(string)$user;
-                            }else {
-                                $parent_memuser .= ",".'User:'.(string)$user;
-                            }
-                        }
-                    }
-                }
-                if(isset($parentGroupArray['members']['user'])) {
-
-                    foreach($parentGroupArray['members']['user'] as $user) {
-                        if(trim($user)) {
-                            if($parent_user == '') {
-                                $parent_user = 'User:'.(string)$user;
-                            }else {
-                                $parent_user .= ",".'User:'.(string)$user;
-                            }
-                        }
-                    }
-                }
-                if(isset($parentGroupArray['manage']['group'])) {
-                    foreach($parentGroupArray['manage']['group'] as $group) {
-                        if(trim($group) !="") {
-                            if($parent_group == '') {
-                                $parent_group = (string)$group;
-                            }else {
-                                $parent_group .= (string)$group;
-                            }
-                        }
-                    }
-                }
-                if($parent_memuser == "") {
-                    $newparentinline = '
-{{#member:members='.$parent_memgroup.'}}';
-                }elseif($parent_memgroup == "") {
-                    $newparentinline = '
-{{#member:members='.$parent_memuser.'}}';
-                }else {
-                    $newparentinline = '
-{{#member:members='.$parent_memuser.','.$parent_memgroup.'}}';
-                }
-
-                if($parent_group == "") {
-                    $newparentinline .= '
+            if($parent_group == "") {
+                $newparentinline .= '
 {{#manage group:assigned to='.$parent_user.'}}
         [[Category:ACL/Group]]';
-                }elseif($parent_user == "") {
-                    $newparentinline .= '
+            }elseif($parent_user == "") {
+                $newparentinline .= '
 {{#manage group:assigned to='.$parent_group.'}}
         [[Category:ACL/Group]]';
-                }else {
-                    $newparentinline .= '
+            }else {
+                $newparentinline .= '
 {{#manage group:assigned to='.$parent_group.','.$parent_user.'}}
         [[Category:ACL/Group]]';
 
-                }
-
-                //echo ("trying to insert following inline:".$newparentinline);
-                $parentgrouparticle->doEdit($newparentinline,"");
-
-
             }
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setContentType("json");
-            $ajaxResponse->setResponseCode(200);
-            $ajaxResponse->addText("descriptor saved".$SDID );
 
-        } catch (Exception  $e) {
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
+            //echo ("trying to insert following inline:".$newparentinline);
+            $parentgrouparticle->doEdit($newparentinline,"");
+
+
         }
-        return $ajaxResponse;
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText("descriptor saved".$SDID );
 
+    } catch (Exception  $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+function readGroupDefinition($groupName) {
+    $result = array();
+    $group = HACLGroup::newFromName($groupName);
+    $temp = $group->getGroups(HACLGroup::OBJECT);
+    foreach($temp as $item) {
+        $result['members']['group'][] = $item->getGroupName();
+    }
+    $temp = null;
+    $temp = $group->getUsers(HACLGroup::OBJECT);
+    foreach($temp as $item) {
+        $result['members']['user'][] = $item->getName();
+    }
+    $temp = null;
+    $temp = $group->getManageGroups(HACLGroup::OBJECT);
+
+    foreach($temp as $item) {
+        $result['manage']['group'][] = $item->getGroupName();
+    }
+    $temp = null;
+    $temp = $group->getManageUsers(HACLGroup::OBJECT);
+    foreach($temp as $item) {
+        $db =& wfGetDB( DB_SLAVE );
+        $gt = $db->tableName('user');
+        $sql = "SELECT * FROM user where user_id = ".$item;
+        $res = $db->query($sql);
+        $row = $db->fetchObject($res);
+        $result['manage']['user'][] = $row->user_name;
     }
 
-    function readGroupDefinition($groupName) {
-        $result = array();
-        $group = HACLGroup::newFromName($groupName);
-        $temp = $group->getGroups(HACLGroup::OBJECT);
-        foreach($temp as $item) {
-            $result['members']['group'][] = $item->getGroupName();
-        }
-        $temp = null;
-        $temp = $group->getUsers(HACLGroup::OBJECT);
-        foreach($temp as $item) {
-            $result['members']['user'][] = $item->getName();
-        }
-        $temp = null;
-        $temp = $group->getManageGroups(HACLGroup::OBJECT);
+    return $result;
+}
 
-        foreach($temp as $item) {
-            $result['manage']['group'][] = $item->getGroupName();
-        }
-        $temp = null;
-        $temp = $group->getManageUsers(HACLGroup::OBJECT);
-        foreach($temp as $item) {
-            $db =& wfGetDB( DB_SLAVE );
-            $gt = $db->tableName('user');
-            $sql = "SELECT * FROM user where user_id = ".$item;
-            $res = $db->query($sql);
-            $row = $db->fetchObject($res);
-            $result['manage']['user'][] = $row->user_name;
+/**
+ * saves complete whitelist for wiki
+ *
+ * @global <type> $haclgContLang
+ * @param <string> xml-formed whitelist
+ * @return <AjaxResponse> success message | error-message
+ */
+function saveWhitelist($whitelistXml) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    try {
+    //get group members
+        $oldWhitelists = HACLWhitelist::newFromDB();
+        $pages = "";
+
+        foreach($oldWhitelists->getPages() as $item) {
+            if($pages == '') {
+                $pages = unescape((string)$item);
+            }else {
+                $pages .= ",".unescape((string)$item);
+            }
         }
 
-        return $result;
+        $whitelistXml = new SimpleXMLElement($whitelistXml);
+        foreach($whitelistXml->xpath('//page') as $page) {
+            if($pages == '') {
+                $pages = unescape((string)$page);
+            }else {
+                $pages .= ",".unescape((string)$page);
+            }
+        }
+
+
+        // create article
+        $sdarticle = new Article(Title::newFromText("$ns:".'Whitelist'));
+        $inline = '{{#whitelist:pages='.$pages.'}}';
+
+        $sdarticle->doEdit($inline, "");
+        $SDID = $sdarticle->getID();
+
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setContentType("json");
+        $ajaxResponse->setResponseCode(200);
+        $ajaxResponse->addText($inline );
+
+    } catch (Exception   $e) {
+        $ajaxResponse = new AjaxResponse();
+        $ajaxResponse->setResponseCode(400);
+        $ajaxResponse->addText($e->getMessage());
+    }
+    return $ajaxResponse;
+
+}
+
+/**
+ * delivers data for autocompleter
+ *
+ * @global <type> $haclgContLang
+ * @global <type> $wgExtraNamespaces
+ * @global <User> $wgUser
+ * @param <string> search-string
+ * @param <string> type of object (e.g. page, category, ...)
+ * @return <string> json-formed source for datatable
+ */
+function getAutocompleteDocuments($subName,$type) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    global $wgExtraNamespaces,$wgUser;
+
+
+    $realnametype = "";
+    if($type == "page") {
+        $realnametype = "Page";
+    }elseif($type == "category") {
+        $realnametype = "Category";
+    }elseif($type == "property") {
+        $realnametype = "Proptery";
     }
 
-    /**
-     * saves complete whitelist for wiki
-     *
-     * @global <type> $haclgContLang
-     * @param <string> xml-formed whitelist
-     * @return <AjaxResponse> success message | error-message
-     */
-    function saveWhitelist($whitelistXml) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
-        try {
-        //get group members
-            $oldWhitelists = HACLWhitelist::newFromDB();
-            $pages = "";
+    $a = array();
+    if($type == "namespace") {
+        foreach($wgExtraNamespaces as $ns) {
+            $addThatItem = true;
+            $SDName = "$ns:Namespace/$ns";
+            try {
+                $sd = HACLSecurityDescriptor::newFromName($SDName);
+                if(!$sd->userCanModify($wgUser->getName())) {
+                    $addThatItem = false;
+                }
+            }
+            catch(Exception $e ) {}
 
-            foreach($oldWhitelists->getPages() as $item) {
-                if($pages == '') {
-                    $pages = unescape((string)$item);
+            if($addThatItem && preg_match("/$subName/is",$ns)) {
+                $temp = array("name"=>$ns);
+                $a['records'][] = $temp;
+            }
+        }
+    }else {
+        foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
+            $addThatItem = true;
+            $itemname = $item["name"];
+            $SDName = "$ns:$realnametype/$itemname";
+            try {
+                $sd = HACLSecurityDescriptor::newFromName($SDName);
+                if(!$sd->userCanModify($wgUser->getName())) {
+                    $addThatItem = false;
+                }
+            }
+            catch(Exception $e ) {}
+            if($addThatItem) {
+                if(preg_match('/Property\//is',$itemname) ) {
+                    $item["name"] = substr($itemname,9);
+                    $a['records'][] = $item;
+                }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
+                    $item["name"] = substr($itemname,9);
+                    $a['records'][] = $item;
                 }else {
-                    $pages .= ",".unescape((string)$item);
+                    $a['records'][] = $item;
                 }
             }
-
-            $whitelistXml = new SimpleXMLElement($whitelistXml);
-            foreach($whitelistXml->xpath('//page') as $page) {
-                if($pages == '') {
-                    $pages = unescape((string)$page);
-                }else {
-                    $pages .= ",".unescape((string)$page);
-                }
-            }
-
-
-            // create article
-            $sdarticle = new Article(Title::newFromText("$ns:".'Whitelist'));
-            $inline = '{{#whitelist:pages='.$pages.'}}';
-
-            $sdarticle->doEdit($inline, "");
-            $SDID = $sdarticle->getID();
-
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setContentType("json");
-            $ajaxResponse->setResponseCode(200);
-            $ajaxResponse->addText($inline );
-
-        } catch (Exception   $e) {
-            $ajaxResponse = new AjaxResponse();
-            $ajaxResponse->setResponseCode(400);
-            $ajaxResponse->addText($e->getMessage());
         }
-        return $ajaxResponse;
-
     }
 
-    /**
-     * delivers data for autocompleter
-     *
-     * @global <type> $haclgContLang
-     * @global <type> $wgExtraNamespaces
-     * @global <User> $wgUser
-     * @param <string> search-string
-     * @param <string> type of object (e.g. page, category, ...)
-     * @return <string> json-formed source for datatable
-     */
-    function getAutocompleteDocuments($subName,$type) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
-        global $wgExtraNamespaces,$wgUser;
+    return(json_encode($a));
+
+}
 
 
-        $realnametype = "";
-        if($type == "page") {
-            $realnametype = "Page";
-        }elseif($type == "category") {
-            $realnametype = "Category";
-        }elseif($type == "property") {
-            $realnametype = "Proptery";
-        }
+/**
+ *
+ * @param <String>  selected group in tree
+ * @param <String>  column to sort by
+ * @param <String>  sort-direction
+ * @param <Int>     first index of resultlist (paging)
+ * @param <Int>     total results (paging)
+ * @return <JSON>   return array of users
+ */
+function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
 
-        $a = array();
-        if($type == "namespace") {
-            foreach($wgExtraNamespaces as $ns) {
-                $addThatItem = true;
-                $SDName = "$ns:Namespace/$ns";
-                try {
-                    $sd = HACLSecurityDescriptor::newFromName($SDName);
-                    if(!$sd->userCanModify($wgUser->getName())) {
-                        $addThatItem = false;
-                    }
-                }
-                catch(Exception $e ) {}
+    global $wgUser;
+    global $wgTitle;
+    $a = array();
+    $a['recordsReturned'] = 10;
+    #$a['totalrecords'] = 0;
+    $a['startIndex'] = $startIndex;
+    $a['sort'] = $sort;
+    $a['dir'] = $dir;
+    $a['pageSize'] = 10;
 
-                if($addThatItem && preg_match("/$subName/is",$ns)) {
-                    $temp = array("name"=>$ns);
-                    $a['records'][] = $temp;
-                }
-            }
-        }else {
-            foreach(HACLStorage::getDatabase()->getArticles($subName,true,$type) as $item) {
-                $addThatItem = true;
-                $itemname = $item["name"];
-                $SDName = "$ns:$realnametype/$itemname";
-                try {
-                    $sd = HACLSecurityDescriptor::newFromName($SDName);
-                    if(!$sd->userCanModify($wgUser->getName())) {
-                        $addThatItem = false;
-                    }
-                }
-                catch(Exception $e ) {}
-                if($addThatItem) {
-                    if(preg_match('/Property\//is',$itemname) ) {
-                        $item["name"] = substr($itemname,9);
-                        $a['records'][] = $item;
-                    }elseif($type == "category" && preg_match('/Category\//is',$itemname)) {
-                        $item["name"] = substr($itemname,9);
-                        $a['records'][] = $item;
-                    }else {
-                        $a['records'][] = $item;
-                    }
-                }
-            }
-        }
+    $tmpstring = "";
 
-        return(json_encode($a));
+    if ($selectedGroup == 'all' || $selectedGroup == '') {
 
-    }
+        $db =& wfGetDB( DB_SLAVE );
+        $gt = $db->tableName('user');
+        $sql = "SELECT * FROM $gt order by user_name";
 
-
-    /**
-     *
-     * @param <String>  selected group in tree
-     * @param <String>  column to sort by
-     * @param <String>  sort-direction
-     * @param <Int>     first index of resultlist (paging)
-     * @param <Int>     total results (paging)
-     * @return <JSON>   return array of users
-     */
-    function getUsersForUserTable($selectedGroup,$sort,$dir,$startIndex,$results,$filter) {
-
-        global $wgUser;
-        global $wgTitle;
-        $a = array();
-        $a['recordsReturned'] = 10;
-        #$a['totalrecords'] = 0;
-        $a['startIndex'] = $startIndex;
-        $a['sort'] = $sort;
-        $a['dir'] = $dir;
-        $a['pageSize'] = 10;
-
-        $tmpstring = "";
-
-        if ($selectedGroup == 'all' || $selectedGroup == '') {
-
-            $db =& wfGetDB( DB_SLAVE );
-            $gt = $db->tableName('user');
-            $sql = "SELECT * FROM $gt order by user_name";
-
-            $res = $db->query($sql);
-            while ($row = $db->fetchObject($res)) {
-                $tmpstring = "";
-                $tmlGroups = HACLGroup::getGroupsOfMember($row->user_id);
-                foreach ($tmlGroups as $key => $val) {
-                    if(!strpos($tmpstring, $val["name"])) {
-                        $tmpstring .= $val["name"].",";
-                    }
-                }
-                //$tmpstring = '<br /><span style="font-size:8px;">'.$tmpstring."</span>";
-
-                $a['records'][] = array('name'=>$row->user_name,'groups'=>$tmpstring,'id'=>$row->user_id,'checked'=>'false');
-            }
-
-            $db->freeResult($res);
-
-        } else {
-            $group = HACLGroup::newFromName($selectedGroup);
-            $groupUsers = $group->getUsers(HACLGroup::OBJECT);
-            foreach ($groupUsers as $key => $val) {
-                $tempgroup = array();
-                foreach(HACLGroup::getGroupsOfMember($val->getId()) as $blubb) {
-                    $tempgroup[] = $blubb['name'];
-                }
-                $a['records'][] = array('name'=>$val->getName(),'id'=>$val->getId(),'checked'=>'false', 'groups'=>$tempgroup);
-
-            }
-        }
-
-        // doing filtering php-based
-        if($filter !="" && $filter != null) {
-            $filteredResults = array();
-            $pattern = "/".$filter."/is";
-            foreach($a['records'] as $record) {
-                if(preg_match($pattern, $record["name"])) {
-                    $filteredResults[] = $record;
-                }
-            }
-            $a['records'] = $filteredResults;
-        }
-        #print_r($a['records']);
-
-        // generating paging-stuff
-        $a['totalRecords'] = sizeof($a['records']);
-        $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
-        $a['recordsReturned'] = sizeof($a['records']);
-
-        return(json_encode($a));
-
-    }
-
-
-    /**
-     * return users, that are member of a specified group
-     *
-     * @global <User> $wgUser
-     * @global <string> $wgTitle
-     * @param <string> groupname
-     * @return <string> json-formed list of users
-     */
-    function getUsersForGroups($groupsstring) {
-        if($groupsstring == "") {
-            return json_encode(array());
-        }
-        global $wgUser;
-        global $wgTitle;
-        $a = array();
-
-        $groupsarray = explode(",",$groupsstring);
-        $result = array();
-
-        foreach($groupsarray as $group) {
-            $group = HACLGroup::newFromName($group);
-            $groupUsers = $group->getUsers(HACLGroup::OBJECT);
-            $finalGroupusers = array();
-            foreach($groupUsers as $user) {
-                $temp["id"] = $user->getId();
-                $temp["name"] = $user->getName();
-                $finalGroupuser[] = $temp;
-            }
-
-        }
-        foreach($finalGroupuser as $user) {
-            $reallyAddToArray = true;
-            foreach($result as $test) {
-                if($test["name"] == $user["name"]) {
-                    $reallyAddToArray = false;
-                }
-            }
-            if($reallyAddToArray) {
-                $tmpstring = "";
-                $tmlGroups = HACLGroup::getGroupsOfMember($user["id"]);
-                foreach ($tmlGroups as $key => $val) {
+        $res = $db->query($sql);
+        while ($row = $db->fetchObject($res)) {
+            $tmpstring = "";
+            $tmlGroups = HACLGroup::getGroupsOfMember($row->user_id);
+            foreach ($tmlGroups as $key => $val) {
+                if(!strpos($tmpstring, $val["name"])) {
                     $tmpstring .= $val["name"].",";
                 }
-                $temp = array('name'=>$user['name'],'groups'=>$tmpstring);
-                $result[] = $temp;
+            }
+            //$tmpstring = '<br /><span style="font-size:8px;">'.$tmpstring."</span>";
+
+            $a['records'][] = array('name'=>$row->user_name,'groups'=>$tmpstring,'id'=>$row->user_id,'checked'=>'false');
+        }
+
+        $db->freeResult($res);
+
+    } else {
+        $group = HACLGroup::newFromName($selectedGroup);
+        $groupUsers = $group->getUsers(HACLGroup::OBJECT);
+        foreach ($groupUsers as $key => $val) {
+            $tempgroup = array();
+            foreach(HACLGroup::getGroupsOfMember($val->getId()) as $blubb) {
+                $tempgroup[] = $blubb['name'];
+            }
+            $a['records'][] = array('name'=>$val->getName(),'id'=>$val->getId(),'checked'=>'false', 'groups'=>$tempgroup);
+
+        }
+    }
+
+    // doing filtering php-based
+    if($filter !="" && $filter != null) {
+        $filteredResults = array();
+        $pattern = "/".$filter."/is";
+        foreach($a['records'] as $record) {
+            if(preg_match($pattern, $record["name"])) {
+                $filteredResults[] = $record;
+            }
+        }
+        $a['records'] = $filteredResults;
+    }
+    #print_r($a['records']);
+
+    // generating paging-stuff
+    $a['totalRecords'] = sizeof($a['records']);
+    $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
+    $a['recordsReturned'] = sizeof($a['records']);
+
+    return(json_encode($a));
+
+}
+
+
+/**
+ * return users, that are member of a specified group
+ *
+ * @global <User> $wgUser
+ * @global <string> $wgTitle
+ * @param <string> groupname
+ * @return <string> json-formed list of users
+ */
+function getUsersForGroups($groupsstring) {
+    if($groupsstring == "") {
+        return json_encode(array());
+    }
+    global $wgUser;
+    global $wgTitle;
+    $a = array();
+
+    $groupsarray = explode(",",$groupsstring);
+    $result = array();
+
+    foreach($groupsarray as $group) {
+        $group = HACLGroup::newFromName($group);
+        $groupUsers = $group->getUsers(HACLGroup::OBJECT);
+        $finalGroupusers = array();
+        foreach($groupUsers as $user) {
+            $temp["id"] = $user->getId();
+            $temp["name"] = $user->getName();
+            $finalGroupuser[] = $temp;
+        }
+
+    }
+    foreach($finalGroupuser as $user) {
+        $reallyAddToArray = true;
+        foreach($result as $test) {
+            if($test["name"] == $user["name"]) {
+                $reallyAddToArray = false;
+            }
+        }
+        if($reallyAddToArray) {
+            $tmpstring = "";
+            $tmlGroups = HACLGroup::getGroupsOfMember($user["id"]);
+            foreach ($tmlGroups as $key => $val) {
+                $tmpstring .= $val["name"].",";
+            }
+            $temp = array('name'=>$user['name'],'groups'=>$tmpstring);
+            $result[] = $temp;
+        }
+    }
+
+    return(json_encode($result));
+
+}
+
+
+/**
+ * delivers data to treeview in rightspanel
+ *
+ * @param <string> group, which will be expanded
+ * @param <string> search-string from filter
+ * @param <boolean> load all groups recursivly (no dynamic loading)
+ * @param <integer> internaly used indicator for recursion-level
+ * @param <array> internally used array for recursion
+ * @return <string> json-formed list of groups
+ */
+function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
+    $array = array();
+    if($search)$recursive = true;
+
+    // return first level
+    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
+    //get level 0 groups
+        if($level == 0) {
+            $groups = HACLStorage::getDatabase()->getGroups();
+        }else {
+            $groups = $subgroupsToCall;
+        }
+        foreach( $groups as $key => $value) {
+            if ($recursive) {
+
+                $parent = HACLGroup::newFromName($value->getGroupName());
+                $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
+                if(sizeof($subgroupsToCall)> 0 || $level == 0) {
+                    $subgroups = getGroupsForRightPanel("all", $search, true, $level+1,$subgroupsToCall);
+                }
+
+                if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
+                    if(isset($subgroups)) {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
+                    }else {
+                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                    }
+                    $array[] = $tempgroup;
+                }
+
+            // non recursive part
+            } else {
+
+                if(!$search || preg_match("/$search/is",$value->getGroupName())) {
+
+                    try {
+                        $subparent = HACLGroup::newFromName($value->getGroupName());
+                        $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+                        if(sizeof($subgroups) > 0) {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                        }elseif(!$search) {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+                        }else {
+                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+                        }
+                        $array[] = $tempgroup;
+                    } catch (HACLGroupException $e) {}
+
+                }
             }
         }
 
-        return(json_encode($result));
+    }else {
+        $parent = HACLGroup::newFromName($clickedGroup);
+        //groups
+        $groups = $parent->getGroups(HACLGroup::OBJECT);
+        foreach( $groups as $key => $value ) {
 
+            $subparent = HACLGroup::newFromName($value->getGroupName());
+            $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
+            if(sizeof($subgroups) > 0) {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
+            }else {
+                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
+            }
+            $array[] = $tempgroup;
+        }
     }
 
 
-    /**
-     * delivers data to treeview in rightspanel
-     *
-     * @param <string> group, which will be expanded
-     * @param <string> search-string from filter
-     * @param <boolean> load all groups recursivly (no dynamic loading)
-     * @param <integer> internaly used indicator for recursion-level
-     * @param <array> internally used array for recursion
-     * @return <string> json-formed list of groups
-     */
-    function getGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
-        $array = array();
-        if($search)$recursive = true;
 
-        // return first level
-        if($clickedGroup == 'all' || $clickedGroup == "Groups") {
-        //get level 0 groups
-            if($level == 0) {
-                $groups = HACLStorage::getDatabase()->getGroups();
-            }else {
-                $groups = $subgroupsToCall;
-            }
-            foreach( $groups as $key => $value) {
-                if ($recursive) {
+    //only json encode final result
+    if ($level == 0) {
+        $array = (json_encode($array));
+    }
 
-                    $parent = HACLGroup::newFromName($value->getGroupName());
-                    $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
-                    if(sizeof($subgroupsToCall)> 0 || $level == 0) {
-                        $subgroups = getGroupsForRightPanel("all", $search, true, $level+1,$subgroupsToCall);
-                    }
+    return $array;
 
+}
+/**
+ * delivers data to treeview in managegroups
+ *
+ * @param <string> group, which will be expanded
+ * @param <string> search-string from filter
+ * @param <boolean> load all groups recursivly (no dynamic loading)
+ * @param <integer> internaly used indicator for recursion-level
+ * @param <array> internally used array for recursion
+ * @return <string> json-formed list of groups
+ */
+function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$level=0,$subgroupsToCall=null) {
+    global $wgUser,$haclCrossTemplateAccess;
+    $array = array();
+    if($search)$recursive = true;
+
+    // return first level
+    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
+    //get level 0 groups
+        if($level == 0) {
+            $groups = HACLStorage::getDatabase()->getGroups();
+        }else {
+            $groups = $subgroupsToCall;
+        }
+        foreach( $groups as $key => $value) {
+            if ($recursive) {
+
+                $parent = HACLGroup::newFromName($value->getGroupName());
+                $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
+                if(sizeof($subgroupsToCall)> 0 || $level == 0) {
+                    $subgroups = getGroupsForManageUser("all", $search, true, $level+1,$subgroupsToCall);
+                }
+                if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
                     if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
                         if(isset($subgroups)) {
                             $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
@@ -4001,9 +4231,11 @@ HTML;
                         }
                         $array[] = $tempgroup;
                     }
+                }
 
-                // non recursive part
-                } else {
+            // non recursive part
+            } else {
+                if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
 
                     if(!$search || preg_match("/$search/is",$value->getGroupName())) {
 
@@ -4018,17 +4250,19 @@ HTML;
                                 $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
                             }
                             $array[] = $tempgroup;
-                        } catch (HACLGroupException $e) {}
+                        } catch (HACLGroupException $e) { }
 
                     }
                 }
             }
+        }
 
-        }else {
-            $parent = HACLGroup::newFromName($clickedGroup);
-            //groups
-            $groups = $parent->getGroups(HACLGroup::OBJECT);
-            foreach( $groups as $key => $value ) {
+    }else {
+        $parent = HACLGroup::newFromName($clickedGroup);
+        //groups
+        $groups = $parent->getGroups(HACLGroup::OBJECT);
+        foreach( $groups as $key => $value ) {
+            if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
 
                 $subparent = HACLGroup::newFromName($value->getGroupName());
                 $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
@@ -4040,186 +4274,77 @@ HTML;
                 $array[] = $tempgroup;
             }
         }
-
-
-
-        //only json encode final result
-        if ($level == 0) {
-            $array = (json_encode($array));
-        }
-
-        return $array;
-
-    }
-    /**
-     * delivers data to treeview in managegroups
-     *
-     * @param <string> group, which will be expanded
-     * @param <string> search-string from filter
-     * @param <boolean> load all groups recursivly (no dynamic loading)
-     * @param <integer> internaly used indicator for recursion-level
-     * @param <array> internally used array for recursion
-     * @return <string> json-formed list of groups
-     */
-    function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$level=0,$subgroupsToCall=null) {
-        global $wgUser,$haclCrossTemplateAccess;
-        $array = array();
-        if($search)$recursive = true;
-
-        // return first level
-        if($clickedGroup == 'all' || $clickedGroup == "Groups") {
-        //get level 0 groups
-            if($level == 0) {
-                $groups = HACLStorage::getDatabase()->getGroups();
-            }else {
-                $groups = $subgroupsToCall;
-            }
-            foreach( $groups as $key => $value) {
-                if ($recursive) {
-
-                    $parent = HACLGroup::newFromName($value->getGroupName());
-                    $subgroupsToCall = $parent->getGroups(HACLGroup::OBJECT);
-                    if(sizeof($subgroupsToCall)> 0 || $level == 0) {
-                        $subgroups = getGroupsForManageUser("all", $search, true, $level+1,$subgroupsToCall);
-                    }
-                    if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
-                        if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
-                            if(isset($subgroups)) {
-                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups);
-                            }else {
-                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                            }
-                            $array[] = $tempgroup;
-                        }
-                    }
-
-                // non recursive part
-                } else {
-                    if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
-
-                        if(!$search || preg_match("/$search/is",$value->getGroupName())) {
-
-                            try {
-                                $subparent = HACLGroup::newFromName($value->getGroupName());
-                                $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-                                if(sizeof($subgroups) > 0) {
-                                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                                }elseif(!$search) {
-                                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
-                                }else {
-                                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                                }
-                                $array[] = $tempgroup;
-                            } catch (HACLGroupException $e) { }
-
-                        }
-                    }
-                }
-            }
-
-        }else {
-            $parent = HACLGroup::newFromName($clickedGroup);
-            //groups
-            $groups = $parent->getGroups(HACLGroup::OBJECT);
-            foreach( $groups as $key => $value ) {
-                if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
-
-                    $subparent = HACLGroup::newFromName($value->getGroupName());
-                    $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
-                    if(sizeof($subgroups) > 0) {
-                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false');
-                    }else {
-                        $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'');
-                    }
-                    $array[] = $tempgroup;
-                }
-            }
-        }
-
-
-
-        //only json encode final result
-        if ($level == 0) {
-            $array = (json_encode($array));
-        }
-
-        return $array;
-
-
-    }
-
-
-    /**
-     *
-     * @param <String>  selected group
-     * @return <JSON>   json from first-level-childs of the query-group; not all childs!
-     */
-    function getUsersWithGroups() {
-        return (json_encode(HACLStorage::getDatabase()->getUsersWithGroups()));
     }
 
 
 
-    /**
-     *
-     * Delivers per-type-filtered ACLs for the Manage ACLs view
-     * for ACL management, user template views
-     *
-     * @param <XML>     selected types
-     * @param <string>  search-string
-     * @return <JSON>   json from first-level-childs of the query-group; not all childs!
-     */
-    function getACLs($typeXML, $filter = null) {
-        global $wgUser;
-        global $haclCrossTemplateAccess;
-        $username = $wgUser->getName();
+    //only json encode final result
+    if ($level == 0) {
+        $array = (json_encode($array));
+    }
 
-        $types = array();
+    return $array;
 
-        if($typeXML == "all") {
-            $types[] = "all";
-        }else {
-            $typeXML = new SimpleXMLElement($typeXML);
-            foreach($typeXML->xpath('//type') as $type) {
-                $types[] = $type;
-            }
+
+}
+
+
+/**
+ *
+ * @param <String>  selected group
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getUsersWithGroups() {
+    return (json_encode(HACLStorage::getDatabase()->getUsersWithGroups()));
+}
+
+
+
+/**
+ *
+ * Delivers per-type-filtered ACLs for the Manage ACLs view
+ * for ACL management, user template views
+ *
+ * @param <XML>     selected types
+ * @param <string>  search-string
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLs($typeXML, $filter = null) {
+    global $wgUser;
+    global $haclCrossTemplateAccess;
+    global $haclgContLang;
+    $username = $wgUser->getName();
+
+    $template = $haclgContLang->getSDTemplateName();
+
+
+    $types = array();
+
+    if($typeXML == "all") {
+        $types[] = "all";
+    }else {
+        $typeXML = new SimpleXMLElement($typeXML);
+        foreach($typeXML->xpath('//type') as $type) {
+            $types[] = $type;
         }
+    }
 
-        $dontCheckForCanMod = false;
-        for($i=0;$i<sizeof($types);$i++) {
-            if($types[$i] == "acltemplate_nofilter") {
-                $dontCheckForCanMod = true;
-                $types[$i] = "acltemplate";
-            }
+    $dontCheckForCanMod = false;
+    for($i=0;$i<sizeof($types);$i++) {
+        if($types[$i] == "acltemplate_nofilter") {
+            $dontCheckForCanMod = true;
+            $types[$i] = "acltemplate";
         }
+    }
 
-        $array = array();
+    $array = array();
 
-        $SDs = HACLStorage::getDatabase()->getSDs($types);
+    $SDs = HACLStorage::getDatabase()->getSDs($types);
 
-        foreach( $SDs as $key => $SD) {
-        // processing default user templates
-            if(preg_match("/Template\//is",$SD->getSDName())) {
-                if(($SD->getSDName() == "Template/$username") ||$dontCheckForCanMod || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
-                    $tempRights = array();
-                    foreach ($SD->getInlineRights(false) as $rightId) {
-                        try {
-                            $tempright = HACLRight::newFromID($rightId);
-                            $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
-                        }catch(Exception $e ) {}
-                    }
-                    foreach ($SD->getPredefinedRights(false) as $subSdId) {
-                        try {
-                            $tempright = HACLSecurityDescriptor::newFromID($subSdId);
-                            $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
-                        }catch(Exception $e ) {}
-                    }
-                    $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
-                    $array[] = $tempSD;
-                }
-
-            // processing other acls
-            }elseif($SD->userCanModify($wgUser->getName()) ||$dontCheckForCanMod || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess)) {
+    foreach( $SDs as $key => $SD) {
+    // processing default user templates
+        if(preg_match("/$template\//is",$SD->getSDName())) {
+            if(($SD->getSDName() == "$template/$username") ||$dontCheckForCanMod || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
                 $tempRights = array();
                 foreach ($SD->getInlineRights(false) as $rightId) {
                     try {
@@ -4236,192 +4361,211 @@ HTML;
                 $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
                 $array[] = $tempSD;
             }
-        }
 
-        $result = array();
-        if($filter != null) {
-            foreach($array as $item) {
-                if(preg_match("/$filter/is", $item["name"])) {
-                    $result[] = $item;
-                }
+        // processing other acls
+        }elseif($SD->userCanModify($wgUser->getName()) ||$dontCheckForCanMod || array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess)) {
+            $tempRights = array();
+            foreach ($SD->getInlineRights(false) as $rightId) {
+                try {
+                    $tempright = HACLRight::newFromID($rightId);
+                    $tempRights[] = array('id'=>$rightId, 'name'=>$tempright->getName(),'description'=>$tempright->getDescription());
+                }catch(Exception $e ) {}
             }
-        }else {
-            $result = $array;
+            foreach ($SD->getPredefinedRights(false) as $subSdId) {
+                try {
+                    $tempright = HACLSecurityDescriptor::newFromID($subSdId);
+                    $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
+                }catch(Exception $e ) {}
+            }
+            $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+            $array[] = $tempSD;
         }
-
-        return (json_encode($result));
-
     }
 
-
-    /**
-     *
-     * Delivers an ACL incl. rights selected by name of descriptor article
-     * for ACL management, user template views
-     *
-     * @param <String>  name of ACL Descriptor article
-     * @return <JSON>   json from first-level-childs of the query-group; not all childs!
-     */
-    function getACLByName($name) {
-
-        $array = array();
-
-        $SD = HACLSecurityDescriptor::newFromName($name);
-
-        $tempRights = array();
-
-        //attach inline right texts
-        foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
-            $tempright = HACLRight::newFromID($rightId);
-            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
-        }
-
-        $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
-        $array[] = $tempSD;
-
-
-        return (json_encode($array));
-    }
-
-
-    /**
-     *
-     * Delivers an ACL incl. rights selected by id of descriptor
-     *
-     * @param <int>  id of ACL Descriptor
-     * @return <JSON>   json from first-level-childs of the query-group; not all childs!
-     */
-    function getACLById($id) {
-
-        $array = array();
-
-        $SD = HACLSecurityDescriptor::newFromId($id);
-
-        $tempRights = array();
-
-        //attach inline right texts
-        foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
-            $tempright = HACLRight::newFromID($rightId);
-            $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
-        }
-
-        $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
-        $array[] = $tempSD;
-
-
-        return (json_encode($array));
-    }
-
-
-
-    /**
-     *
-     * Delivers whitelist pages for Manage Whitelist view
-     *
-     * @return <JSON>   json from first-level-childs of the query-group; not all childs!
-     */
-    function getWhitelistPages($query,$sort,$dir,$startIndex,$results,$filter) {
-
-        $a = array();
-        $a['recordsReturned'] = 2;
-        $a['totalRecords'] = 10;
-        $a['startIndex'] = 0;
-        $a['sort'] = null;
-        $a['dir'] = "asc";
-        $a['pageSize'] = 5;
-
-        $test = HACLWhitelist::newFromDB();
-
-        $a['records'] = array();
-        foreach($test->getPages() as $item) {
-            if($query == "all" || preg_match('/'.$query.'/is',$item)) {
-                $a['records'][] = array('name'=>$item,'checked'=>'false');
+    $result = array();
+    if($filter != null) {
+        foreach($array as $item) {
+            if(preg_match("/$filter/is", $item["name"])) {
+                $result[] = $item;
             }
         }
-        // generating paging-stuff
-        $a['totalRecords'] = sizeof($a['records']);
-        $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
-        $a['recordsReturned'] = sizeof($a['records']);
-
-        return(json_encode($a));
-
+    }else {
+        $result = $array;
     }
 
+    return (json_encode($result));
+
+}
+
+
+/**
+ *
+ * Delivers an ACL incl. rights selected by name of descriptor article
+ * for ACL management, user template views
+ *
+ * @param <String>  name of ACL Descriptor article
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLByName($name) {
+
+    $array = array();
+
+    $SD = HACLSecurityDescriptor::newFromName($name);
+
+    $tempRights = array();
+
+    //attach inline right texts
+    foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
+        $tempright = HACLRight::newFromID($rightId);
+        $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+    }
+
+    $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+    $array[] = $tempSD;
+
+
+    return (json_encode($array));
+}
+
+
+/**
+ *
+ * Delivers an ACL incl. rights selected by id of descriptor
+ *
+ * @param <int>  id of ACL Descriptor
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getACLById($id) {
+
+    $array = array();
+
+    $SD = HACLSecurityDescriptor::newFromId($id);
+
+    $tempRights = array();
+
+    //attach inline right texts
+    foreach (getInlineRightsOfSDs(array($SD->getSDID())) as $key2 => $rightId) {
+        $tempright = HACLRight::newFromID($rightId);
+        $tempRights[] = array('id'=>$rightId, 'description'=>$tempright->getDescription());
+    }
+
+    $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+    $array[] = $tempSD;
+
+
+    return (json_encode($array));
+}
 
 
 
-    /**
-     *
-     * @return <string>   returns tab-content for manageUser-tab
-     */
-    function manageUserContent() {
-        clearTempSessionGroup();
+/**
+ *
+ * Delivers whitelist pages for Manage Whitelist view
+ *
+ * @return <JSON>   json from first-level-childs of the query-group; not all childs!
+ */
+function getWhitelistPages($query,$sort,$dir,$startIndex,$results,$filter) {
 
-        $response = new AjaxResponse();
+    $a = array();
+    $a['recordsReturned'] = 2;
+    $a['totalRecords'] = 10;
+    $a['startIndex'] = 0;
+    $a['sort'] = null;
+    $a['dir'] = "asc";
+    $a['pageSize'] = 5;
 
-        $hacl_manageUser_1 = wfMsg('hacl_manageUser_1');
-        $hacl_manageUser_2 = wfMsg('hacl_manageUser_2');
-        $hacl_manageUser_3 = wfMsg('hacl_manageUser_3');
-        $hacl_manageUser_4 = wfMsg('hacl_manageUser_4');
-        $hacl_manageUser_5 = wfMsg('hacl_manageUser_5');
-        $hacl_manageUser_6 = wfMsg('hacl_manageUser_6');
-        $hacl_manageUser_7 = wfMsg('hacl_manageUser_7');
-        $hacl_manageUser_8 = wfMsg('hacl_manageUser_8');
-        $hacl_manageUser_9 = wfMsg('hacl_manageUser_9');
-        $hacl_manageUser_10 = wfMsg('hacl_manageUser_10');
+    $test = HACLWhitelist::newFromDB();
+
+    $a['records'] = array();
+    foreach($test->getPages() as $item) {
+        if($query == "all" || preg_match('/'.$query.'/is',$item)) {
+            $a['records'][] = array('name'=>$item,'checked'=>'false');
+        }
+    }
+    // generating paging-stuff
+    $a['totalRecords'] = sizeof($a['records']);
+    $a['records'] = array_slice($a['records'],$startIndex,$a['pageSize']);
+    $a['recordsReturned'] = sizeof($a['records']);
+
+    return(json_encode($a));
+
+}
 
 
-        $dutHeadline = wfMsg('hacl_create_acl_dut_headline');
-        $dutInfo = wfMsg('hacl_create_acl_dut_info');
-        $dutGeneralHeader = wfMsg('hacl_create_acl_dut_general');
-        $dutGeneralDefine = wfMsg('hacl_create_acl_dut_general_definefor');
-        $dutGeneralDefinePrivate = wfMsg('hacl_create_acl_dut_general_private_use');
-        $dutGeneralDefineAll = wfMsg('hacl_create_acl_dut_general_all');
-        $dutGeneralDefineSpecific = wfMsg('hacl_create_acl_dut_general_specific');
-        $dutRightsHeader = wfMsg('hacl_create_acl_dut_rights');
 
-        $dutRightsButtonCreate = wfMsg('hacl_create_acl_dut_button_create_right');
-        $dutRightsButtonAddTemplate = wfMsg('hacl_create_acl_dut_button_add_template');
-        $dutRightsLegend = wfMsg('hacl_create_acl_dut_new_right_legend');
-        $dutRightsLegendSaved = wfMsg('hacl_create_acl_dut_new_right_legend_status_saved');
-        //$dutRightsLegendNotSaved = wfMsg('hacl_create_acl_dut_new_right_legend_status_notsaved');
-        $dutRightsName = wfMsg('hacl_create_acl_dut_new_right_name');
-        $dutRightsDefaultName = wfMsg('hacl_create_acl_dut_new_right_defaultname');
-        $dutRights = wfMsg('hacl_create_acl_dut_new_right_rights');
-        $dutRightsFullAccess = wfMsg('hacl_create_acl_dut_new_right_fullaccess');
-        $dutRightsRead = wfMsg('hacl_create_acl_dut_new_right_read');
-        $dutRightsEWF = wfMsg('hacl_create_acl_dut_new_right_ewf');
-        $dutRightsEdit = wfMsg('hacl_create_acl_dut_new_right_edit');
-        $dutRightsCreate = wfMsg('hacl_create_acl_dut_new_right_create');
-        $dutRightsMove = wfMsg('hacl_create_acl_dut_new_right_move');
-        $dutRightsDelete = wfMsg('hacl_create_acl_dut_new_right_delete');
-        $dutRightsAnnotate = wfMsg('hacl_create_acl_dut_new_right_annotate');
 
-        $html = <<<HTML
+/**
+ *
+ * @return <string>   returns tab-content for manageUser-tab
+ */
+function manageUserContent() {
+    clearTempSessionGroup();
+
+    $response = new AjaxResponse();
+
+    $hacl_manageUser_1 = wfMsg('hacl_manageUser_1');
+    $hacl_manageUser_2 = wfMsg('hacl_manageUser_2');
+    $hacl_manageUser_3 = wfMsg('hacl_manageUser_3');
+    $hacl_manageUser_4 = wfMsg('hacl_manageUser_4');
+    $hacl_manageUser_5 = wfMsg('hacl_manageUser_5');
+    $hacl_manageUser_6 = wfMsg('hacl_manageUser_6');
+    $hacl_manageUser_7 = wfMsg('hacl_manageUser_7');
+    $hacl_manageUser_8 = wfMsg('hacl_manageUser_8');
+    $hacl_manageUser_9 = wfMsg('hacl_manageUser_9');
+    $hacl_manageUser_10 = wfMsg('hacl_manageUser_10');
+
+
+    $dutHeadline = wfMsg('hacl_create_acl_dut_headline');
+    $dutInfo = wfMsg('hacl_create_acl_dut_info');
+    $dutGeneralHeader = wfMsg('hacl_create_acl_dut_general');
+    $dutGeneralDefine = wfMsg('hacl_create_acl_dut_general_definefor');
+    $dutGeneralDefinePrivate = wfMsg('hacl_create_acl_dut_general_private_use');
+    $dutGeneralDefineAll = wfMsg('hacl_create_acl_dut_general_all');
+    $dutGeneralDefineSpecific = wfMsg('hacl_create_acl_dut_general_specific');
+    $dutRightsHeader = wfMsg('hacl_create_acl_dut_rights');
+
+    $dutRightsButtonCreate = wfMsg('hacl_create_acl_dut_button_create_right');
+    $dutRightsButtonAddTemplate = wfMsg('hacl_create_acl_dut_button_add_template');
+    $dutRightsLegend = wfMsg('hacl_create_acl_dut_new_right_legend');
+    $dutRightsLegendSaved = wfMsg('hacl_create_acl_dut_new_right_legend_status_saved');
+    //$dutRightsLegendNotSaved = wfMsg('hacl_create_acl_dut_new_right_legend_status_notsaved');
+    $dutRightsName = wfMsg('hacl_create_acl_dut_new_right_name');
+    $dutRightsDefaultName = wfMsg('hacl_create_acl_dut_new_right_defaultname');
+    $dutRights = wfMsg('hacl_create_acl_dut_new_right_rights');
+    $dutRightsFullAccess = wfMsg('hacl_create_acl_dut_new_right_fullaccess');
+    $dutRightsRead = wfMsg('hacl_create_acl_dut_new_right_read');
+    $dutRightsEWF = wfMsg('hacl_create_acl_dut_new_right_ewf');
+    $dutRightsEdit = wfMsg('hacl_create_acl_dut_new_right_edit');
+    $dutRightsCreate = wfMsg('hacl_create_acl_dut_new_right_create');
+    $dutRightsMove = wfMsg('hacl_create_acl_dut_new_right_move');
+    $dutRightsDelete = wfMsg('hacl_create_acl_dut_new_right_delete');
+    $dutRightsAnnotate = wfMsg('hacl_create_acl_dut_new_right_annotate');
+
+    $html = <<<HTML
         <div class="haloacl_manageusers_container">
         <div class="haloacl_tab_content_description">
             <div class="haloacl_manageusers_title">
-            $hacl_manageUser_1
+        $hacl_manageUser_1
             </div>
             <div class="haloacl_manageusers_subtitle">
-            $hacl_manageUser_2
+        $hacl_manageUser_2
             </div>
         </div>
 HTML;
-        $showing1 = wfMsg('hacl_showing_text');
-        $showing2 = wfMsg('hacl_showing_elements_text');
+    $showing1 = wfMsg('hacl_showing_text');
+    $showing2 = wfMsg('hacl_showing_elements_text');
 
-        $delete_text = wfMsg('hacl_rightsPanel_right_delete');
-        $edit_text = wfMsg('hacl_rightsPanel_right_edit');
-        $delete_selected = wfMsg('hacl_delete_selected');
-        $selected_text = wfMsg('hacl_selected');
-        $select_text = wfMsg('hacl_select');
+    $delete_text = wfMsg('hacl_rightsPanel_right_delete');
+    $edit_text = wfMsg('hacl_rightsPanel_right_edit');
+    $delete_selected = wfMsg('hacl_delete_selected');
+    $selected_text = wfMsg('hacl_selected');
+    $select_text = wfMsg('hacl_select');
 
-        $panelContent = <<<HTML
+    $panelContent = <<<HTML
         <div id="content_manageUsersPanel">
         <div id="haloacl_manageuser_contentmenu">
             <div id="haloacl_manageuser_contentmenu_title">
-            $hacl_manageUser_3
+        $hacl_manageUser_3
             </div>
             <div id="haloacl_manageuser_contentmenu_element">
                 <a id="haloacl_managegroups_newsubgroup" href="javascript:YAHOO.haloacl.manageUser.addNewSubgroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(),YAHOO.haloacl.manageUser_selectedGroup);">$hacl_manageUser_4</a>
@@ -4433,7 +4577,7 @@ HTML;
         <div id="haloacl_manageuser_contentlist">
             <div id="manageuser_grouplisting">
                 <div id="haloacl_manageuser_contentlist_title">
-            $hacl_manageUser_6<span style="margin-right:20px;float:right">$delete_text</span><span style="margin-right:26px;float:right">Edit</span>
+        $hacl_manageUser_6<span style="margin-right:20px;float:right">$delete_text</span><span style="margin-right:26px;float:right">Edit</span>
                 </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input id="haloacl_manageuser_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.manageUserRefilter(this);"/>
@@ -4442,7 +4586,7 @@ HTML;
                 </div>
                 <div id="haloacl_manageuser_contentlist_footer">
                 <span class="haloacl_cont_under_trees">
-            $showing1 <span id="haloacl_manageuser_count">0</span> $showing2
+        $showing1 <span id="haloacl_manageuser_count">0</span> $showing2
                 </span>
                     <input type="button" onClick="YAHOO.haloacl.manageACLdeleteCheckedGroups();" value="$hacl_manageUser_7" />
                 </div>
@@ -4503,27 +4647,27 @@ HTML;
 
         </script>
 HTML;
-        //$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
-        $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "[ $hacl_manageUser_8 ]","",false,false);
-        $myGenericPanel->setSaved(true);
-        $myGenericPanel->setContent($panelContent);
+    //$panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true
+    $myGenericPanel = new HACL_GenericPanel("manageUsersPanel","manageUsersPanel", "[ $hacl_manageUser_8 ]","",false,false);
+    $myGenericPanel->setSaved(true);
+    $myGenericPanel->setContent($panelContent);
 
-        $html .= $myGenericPanel->getPanel();
+    $html .= $myGenericPanel->getPanel();
 
-        $html .= <<<HTML
-            </div>
+    $html .= <<<HTML
+        </div>
 HTML;
 
-        // ------ NOW STARTS THE EDITING PART ------
-        $html .= <<<HTML
-            <div id="haloacl_manageUser_editing_container" style="display:none">
+    // ------ NOW STARTS THE EDITING PART ------
+    $html .= <<<HTML
+        <div id="haloacl_manageUser_editing_container" style="display:none">
             <div id="haloacl_manageUser_editing_title">
             </div>
 HTML;
-        $discard = wfMsg('hacl_discard_changes');
-        $editing_group = wfMsg('hacl_editing_group');
+    $discard = wfMsg('hacl_discard_changes');
+    $editing_group = wfMsg('hacl_editing_group');
 
-        $groupPanelContent = <<<HTML
+    $groupPanelContent = <<<HTML
         <div id="content_manageUserGroupsettings">
             <div id="manageUserGroupSettingsRight">
             </div>
@@ -4633,56 +4777,56 @@ HTML;
 
 HTML;
 
-        $groupPanel = new HACL_GenericPanel("manageUserGroupsettings","manageUserGroupsettings", "Group","",true,false);
-        $groupPanel->setSaved(false);
-        $groupPanel->setContent($groupPanelContent);
-        $html .= $groupPanel->getPanel();
+    $groupPanel = new HACL_GenericPanel("manageUserGroupsettings","manageUserGroupsettings", "Group","",true,false);
+    $groupPanel->setSaved(false);
+    $groupPanel->setContent($groupPanelContent);
+    $html .= $groupPanel->getPanel();
 
 
-        $html .= <<<HTML
-            </div>
+    $html .= <<<HTML
+        </div>
 HTML;
 
-        $response->addText($html);
-        return $response;
-    }
+    $response->addText($html);
+    return $response;
+}
 
 
-    /**
-     *
-     * @return <string>   returns content for whitelist-tab
-     */
-    function whitelistsContent() {
+/**
+ *
+ * @return <string>   returns content for whitelist-tab
+ */
+function whitelistsContent() {
 
-        $hacl_whitelist_1 = wfMsg('hacl_whitelist_1');
-        $hacl_whitelist_2 = wfMsg('hacl_whitelist_2');
-        $hacl_whitelist_3 = wfMsg('hacl_whitelist_3');
-        $hacl_whitelist_4 = wfMsg('hacl_whitelist_4');
+    $hacl_whitelist_1 = wfMsg('hacl_whitelist_1');
+    $hacl_whitelist_2 = wfMsg('hacl_whitelist_2');
+    $hacl_whitelist_3 = wfMsg('hacl_whitelist_3');
+    $hacl_whitelist_4 = wfMsg('hacl_whitelist_4');
 
-        $response = new AjaxResponse();
-        $html = <<<HTML
+    $response = new AjaxResponse();
+    $html = <<<HTML
         <div class="haloacl_manageusers_container">
             <div class="haloacl_manageusers_title">
-            $hacl_whitelist_1
+        $hacl_whitelist_1
             </div>
             <div class="haloacl_manageusers_subtitle">
-            $hacl_whitelist_2
+        $hacl_whitelist_2
             </div>
 HTML;
 
-        $showing1 = wfMsg('hacl_showing_text');
-        $showing2 = wfMsg('hacl_showing_elements_text');
-        $delete_text = wfMsg('hacl_rightsPanel_right_delete');
-        $edit_text = wfMsg('hacl_rightsPanel_right_edit');
-        $delete_selected = wfMsg('hacl_delete_selected');
-        //$myGenPanel = new HACL_GenericPanel("haloacl_whitelist_panel", "$hacl_whitelist_1", "$hacl_whitelist_1", "", false, false);
-        $myGenPanelContent = <<<HTML
+    $showing1 = wfMsg('hacl_showing_text');
+    $showing2 = wfMsg('hacl_showing_elements_text');
+    $delete_text = wfMsg('hacl_rightsPanel_right_delete');
+    $edit_text = wfMsg('hacl_rightsPanel_right_edit');
+    $delete_selected = wfMsg('hacl_delete_selected');
+    //$myGenPanel = new HACL_GenericPanel("haloacl_whitelist_panel", "$hacl_whitelist_1", "$hacl_whitelist_1", "", false, false);
+    $myGenPanelContent = <<<HTML
    <div id="content_manageUsersPanel">
         <div id="haloacl_whitelist_contentlist">
 
             <div id="manageuser_grouplisting">
             <div id="haloacl_manageuser_contentlist_title">
-            $hacl_whitelist_3<span style="margin-right:27px;float:right">$delete_text</span>
+        $hacl_whitelist_3<span style="margin-right:27px;float:right">$delete_text</span>
             </div>
                 <div id="haloacl_manageuser_contentlist_title">
                     Filter:&nbsp;<input id="haloacl_whitelist_filterinput" class="haloacl_filter_input" onKeyup="YAHOO.haloacl.whitelistDatatableInstance.executeQuery(this.value);"/>
@@ -4693,7 +4837,7 @@ HTML;
             </div>
             <div style="clear:both;border:1px solid;border-style:solid none none none;text-align:right;padding:3px 10px">
                 <span style="padding:4px 0 0 6px" class="haloacl_cont_under_trees">
-            $showing1 <span id="haloacl_whitelist_count">0</span> $showing2
+        $showing1 <span id="haloacl_whitelist_count">0</span> $showing2
                 </span>
                 <input type="button" value="$delete_selected" onClick="YAHOO.haloacl.deleteWhitelist()"; />
             </div>
@@ -4703,7 +4847,7 @@ HTML;
     </div>
     <div style="clear:both">&nbsp;</div>
 
-            $hacl_whitelist_4 &nbsp;
+        $hacl_whitelist_4 &nbsp;
     <div style="clear:both">
         <input type="text" id="haloacl_whitelist_pagename" />
         <div id="whitelist_name_container"></div>
@@ -4715,11 +4859,11 @@ HTML;
     </script>
  </div>
 HTML;
-        // $myGenPanel->setContent($myGenPanelContent);
+    // $myGenPanel->setContent($myGenPanelContent);
 
-        // $html .= $myGenPanel->getPanel();
-        $html .= $myGenPanelContent;
-        $html .= <<<HTML
+    // $html .= $myGenPanel->getPanel();
+    $html .= $myGenPanelContent;
+    $html .= <<<HTML
 
     <script>
         YAHOO.haloacl.whitelistDatatableInstance = YAHOO.haloacl.whitelistTable('haloacl_whitelist_datatable','haloacl_whitelist_datatable');
@@ -4775,9 +4919,9 @@ HTML;
 </div>
 HTML;
 
-        $response->addText($html);
-        return $response;
-    }
+    $response->addText($html);
+    return $response;
+}
 
 
 /**
@@ -4788,14 +4932,14 @@ HTML;
  * @param <type> not used
  * @return <type> string
  */
-    function deleteGroups($grouspXML, $type) {
-        global $haclgContLang;
-        $ns = $haclgContLang->getNamespaces();
-        $ns = $ns[HACL_NS_ACL];
-        $result = "";
-        $whitelistXml = new SimpleXMLElement($grouspXML);
-        $result = wfMsg("hacl_nothing_deleted");
-        foreach($whitelistXml->xpath('//group') as $group) {
+function deleteGroups($grouspXML, $type) {
+    global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+    $result = "";
+    $whitelistXml = new SimpleXMLElement($grouspXML);
+    $result = wfMsg("hacl_nothing_deleted");
+    foreach($whitelistXml->xpath('//group') as $group) {
         $group = unescape($group);
         if($group != null) {
             try {
@@ -4804,7 +4948,7 @@ HTML;
                 $result = wfMsg('hacl_deleteGroup_1');
 
             }catch(Exception $e ) {
-                $result .= "Error while deleting ACL:".$group.". ";
+                $result .= "Error while deleting $ns:".$group.". ";
             }
         }
 
@@ -5101,6 +5245,12 @@ function saveQuickacl($xml) {
  * @return <AjaxResponse> indicating if article exists, and if article is secured
  */
 function doesArticleExists($articlename,$protect) {
+    global $haclgContLang;
+    $template = $haclgContLang->getSDTemplateName();
+    $predefinedRightName = $haclgContLang->getPredefinedRightName();
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
+
     if($protect == "property") {
         $articlename = "Property:".$articlename;
     }
@@ -5114,16 +5264,16 @@ function doesArticleExists($articlename,$protect) {
         $articlename = "Category:".$articlename;
     }
     if($protect == "template") {
-        $articlename = "ACL:Template/".$articlename;
+        $articlename = "$ns:$template/".$articlename;
     }
     if($protect == "Right") {
-        $articlename = "ACL:Right/".$articlename;
+        $articlename = "$ns:$predefinedRightName/".$articlename;
     }
 
     $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
-        $sd = new Article(Title::newFromText("ACL:$protect/$articlename"));
+        $sd = new Article(Title::newFromText("$ns:$protect/$articlename"));
         if($sd->exists()) {
             $response->addText("sdexisting");
 

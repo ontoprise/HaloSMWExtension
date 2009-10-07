@@ -92,6 +92,7 @@ class HACLLanguageDe extends HACLLanguage {
 	);
 	
 	protected $mSDTemplateName = "Vorlage";
+	protected $mPredefinedRightName = "Recht";
 	
 }
 

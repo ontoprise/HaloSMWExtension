@@ -17,10 +17,11 @@
 */
 
 /**
- * This file contains the class HACLGroup.
+ * This class provides the help-popup which is primary used
+ * in createacl
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
- * Date: 03.04.2009
+ * Date: 07.10.2009
  *
  */
 

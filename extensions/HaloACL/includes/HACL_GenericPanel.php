@@ -17,10 +17,11 @@
 */
 
 /**
- * This file contains the class HACLGroup.
+ * This file contains the generic panel, which is used as container
+ * in the whole gui
  *
  * @author B2browse/Patrick Hilsbos, Steffen Schachtler
- * Date: 03.04.2009
+ * Date: 07.10.2009
  *
  */
 
@@ -37,7 +38,7 @@ class HACL_GenericPanel {
  * expand mode: expand to expand panel and show content; replace to replace panel through content with back button
  *
  */
-    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand") {
+    function __construct($panelid, $name="", $title, $description = "", $showStatus = true,$showClose = true,$customState=null,$expandMode="expand",$showSaved=false) {
         $saved = wfMsg('hacl_saved');
         $notsaved = wfMsg('hacl_notsaved');
         $default_text = wfMsg('hacl_default');
@@ -185,6 +186,15 @@ HTML;
         </script>
 
 HTML;
+        if($showSaved){
+            $this->footer .= <<<HTML
+            <script>
+try{
+                genericPanelSetSaved_$panelid(true);
+}catch(e){}
+            </script>
+HTML;
+        }
 
 
     }

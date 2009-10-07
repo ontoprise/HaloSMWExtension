@@ -76,7 +76,7 @@ $haclgOpenWikiAccess = true;
 # false
 #    If it is <false>, semantic properties are not protected even if they have 
 #	 security descriptors.  
-$haclgProtectProperties = true;
+$haclgProtectProperties = false;
 
 ###
 # By design several databases can be connected to HaloACL. (However, in the first

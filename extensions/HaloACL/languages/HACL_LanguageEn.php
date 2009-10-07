@@ -93,6 +93,7 @@ class HACLLanguageEn extends HACLLanguage {
 	);
 	
 	protected $mSDTemplateName = "Template";
+        protected $mPredefinedRightName = "Right";
 	
 }
 
