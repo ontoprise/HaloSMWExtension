@@ -7,7 +7,7 @@
         <instdir>extensions/SemanticMediaWiki</instdir>
         <description>Enhances the wiki with semantic annotations</description>
         <dependencies>
-            <dependency from="1120" to="1150">MW</dependency>
+            <dependency from="1120" to="1169">MW</dependency>
         </dependencies>
     </global>
     <codefiles>
