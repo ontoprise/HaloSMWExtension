@@ -480,9 +480,9 @@ class  HACLRight  {
 		$groups = array();
 		foreach ($this->mGroups as $g) {
 			if ($mode === self::NAME) {
-				$groups[$i] = HACLGroup::nameForID($g);
+				$groups[] = HACLGroup::nameForID($g);
 			} else if ($mode === self::OBJECT) {
-				$groups[$i] = HACLGroup::newFromID($g);
+				$groups[] = HACLGroup::newFromID($g);
 			}  
 		}
 		return $groups;
