@@ -1,6 +1,6 @@
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 5504)
+--- includes/Article.php	(revision 5505)
 +++ includes/Article.php	(working copy)
 @@ -1346,9 +1346,20 @@
  				$where = array( 'rd_from' => $this->getId() );
@@ -92,7 +92,7 @@ Index: includes/Article.php
  				'category',
 Index: includes/CategoryPage.php
 ===================================================================
---- includes/CategoryPage.php	(revision 5504)
+--- includes/CategoryPage.php	(revision 5505)
 +++ includes/CategoryPage.php	(working copy)
 @@ -242,14 +242,31 @@
  
@@ -134,7 +134,7 @@ Index: includes/CategoryPage.php
  	}
 Index: includes/EditPage.php
 ===================================================================
---- includes/EditPage.php	(revision 5504)
+--- includes/EditPage.php	(revision 5505)
 +++ includes/EditPage.php	(working copy)
 @@ -753,7 +753,23 @@
  		}
@@ -173,7 +173,7 @@ Index: includes/EditPage.php
  		if ( $this->mMetaData != '' ) $this->textbox1 .= "\n" . $this->mMetaData ;
 Index: includes/Export.php
 ===================================================================
---- includes/Export.php	(revision 5504)
+--- includes/Export.php	(revision 5505)
 +++ includes/Export.php	(working copy)
 @@ -578,17 +578,38 @@
  	 * Warning! This data is potentially inconsistent. :(
@@ -224,7 +224,7 @@ Index: includes/Export.php
  
 Index: includes/ImageGallery.php
 ===================================================================
---- includes/ImageGallery.php	(revision 5504)
+--- includes/ImageGallery.php	(revision 5505)
 +++ includes/ImageGallery.php	(working copy)
 @@ -244,22 +244,57 @@
  
@@ -315,7 +315,7 @@ Index: includes/ImageGallery.php
  			//$ul = $sk->makeLink( $wgContLang->getNsText( MWNamespace::getUser() ) . ":{$ut}", $ut );
 Index: includes/ImagePage.php
 ===================================================================
---- includes/ImagePage.php	(revision 5504)
+--- includes/ImagePage.php	(revision 5505)
 +++ includes/ImagePage.php	(working copy)
 @@ -63,27 +63,62 @@
  		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
@@ -396,7 +396,7 @@ Index: includes/ImagePage.php
  			// FIXME: bad interface, see note on MediaHandler::formatMetadata().
 Index: includes/ImageQueryPage.php
 ===================================================================
---- includes/ImageQueryPage.php	(revision 5504)
+--- includes/ImageQueryPage.php	(revision 5505)
 +++ includes/ImageQueryPage.php	(working copy)
 @@ -47,9 +47,21 @@
  	private function prepareImage( $row ) {
@@ -423,7 +423,7 @@ Index: includes/ImageQueryPage.php
  	/**
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 5504)
+--- includes/Namespace.php	(revision 5505)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,17 @@
  	 */
@@ -446,7 +446,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/Title.php
 ===================================================================
---- includes/Title.php	(revision 5504)
+--- includes/Title.php	(revision 5505)
 +++ includes/Title.php	(working copy)
 @@ -251,6 +251,25 @@
  		$t = new Title();
@@ -862,7 +862,7 @@ Index: includes/Title.php
  			case NS_TALK:
 Index: includes/Wiki.php
 ===================================================================
---- includes/Wiki.php	(revision 5504)
+--- includes/Wiki.php	(revision 5505)
 +++ includes/Wiki.php	(working copy)
 @@ -246,7 +246,25 @@
  	static function articleFromTitle( &$title ) {
@@ -934,7 +934,7 @@ Index: includes/Wiki.php
  			$request->getVal( 'redirect' ) != 'no' &&	// ... unless explicitly told not to
 Index: includes/filerepo/ArchivedFile.php
 ===================================================================
---- includes/filerepo/ArchivedFile.php	(revision 5504)
+--- includes/filerepo/ArchivedFile.php	(revision 5505)
 +++ includes/filerepo/ArchivedFile.php	(working copy)
 @@ -86,7 +86,17 @@
  		if( !count($conds))
@@ -987,9 +987,9 @@ Index: includes/filerepo/ArchivedFile.php
  		$file->name = $row->fa_name;
 Index: includes/filerepo/FileRepo.php
 ===================================================================
---- includes/filerepo/FileRepo.php	(revision 5504)
+--- includes/filerepo/FileRepo.php	(revision 5505)
 +++ includes/filerepo/FileRepo.php	(working copy)
-@@ -114,17 +114,36 @@
+@@ -114,17 +114,38 @@
  		if ( $flags & FileRepo::FIND_IGNORE_REDIRECT ) {
  			return false;
  		}
@@ -1004,15 +1004,17 @@ Index: includes/filerepo/FileRepo.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $redir->getNamespace(), &$rMresult );
-+			if( $redir && $rMresult ) {
-+				$img = $this->newFile( $redir );
-+				if( !$img ) {
-+					return false;
-+				}
-+				if( $img->exists() ) {
-+					$img->redirectedFrom( $title->getDBkey() );
-+					return $img;
++			if ( $redir ) {
++				RMNamespace::isImage( $redir->getNamespace(), &$rMresult );
++				if( $rMresult ) {
++					$img = $this->newFile( $redir );
++					if( !$img ) {
++						return false;
++					}
++					if( $img->exists() ) {
++						$img->redirectedFrom( $title->getDBkey() );
++						return $img;
++					}
 +				}
  			}
 -			if( $img->exists() ) {
@@ -1036,7 +1038,7 @@ Index: includes/filerepo/FileRepo.php
  	
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 5504)
+--- includes/parser/Parser.php	(revision 5505)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1613,9 +1613,23 @@
  			$iw = $nt->getInterWiki();
@@ -1098,7 +1100,7 @@ Index: includes/parser/Parser.php
  	}
 Index: includes/specials/SpecialFilepath.php
 ===================================================================
---- includes/specials/SpecialFilepath.php	(revision 5494)
+--- includes/specials/SpecialFilepath.php	(revision 5505)
 +++ includes/specials/SpecialFilepath.php	(working copy)
 @@ -11,7 +11,17 @@
  
@@ -1119,3 +1121,26 @@ Index: includes/specials/SpecialFilepath.php
  		$cform = new FilepathForm( $title );
  		$cform->execute();
  	} else {
+Index: includes/specials/SpecialSearch.php
+===================================================================
+--- includes/specials/SpecialSearch.php	(revision 5494)
++++ includes/specials/SpecialSearch.php	(working copy)
+@@ -471,7 +471,17 @@
+ 		}
+ 
+ 		// Include a thumbnail for media files...
+-		if( $t->getNamespace() == NS_FILE ) {
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( title-ding, &$rMresult );
++		} else {
++			$rMresult = false;
++		}
++		/*op-patch|BL|2009-10-07|end*/
++		if( $t->getNamespace() == NS_FILE  || $rMresult) {
+ 			$img = wfFindFile( $t );
+ 			if( $img ) {
+ 				$thumb = $img->transform( array( 'width' => 120, 'height' => 120 ) );
