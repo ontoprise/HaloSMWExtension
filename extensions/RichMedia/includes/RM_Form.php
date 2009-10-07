@@ -62,8 +62,12 @@ END;
 		for ($i = 0; $i < count($queryParameters); $i++) {
 			$queryParameter = $queryParameters[$i];
 			
-			if ( $queryString != "" )
+			if ( $queryString != "" ) {
 				$combine = "&";
+			}
+			else {
+				$combine ="";
+			}
 			$querySubParameter = explode('=', $queryParameter);
 			if ( count ($querySubParameter) == 2) {
 				if ( $querySubParameter[1] != "" ) {
