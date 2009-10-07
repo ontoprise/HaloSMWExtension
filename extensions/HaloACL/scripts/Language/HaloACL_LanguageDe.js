@@ -56,6 +56,6 @@ var gHACLUserLanguageStrings = {
 	
 }
 
-var gHACLUserLanguageStrings = {
+var gHACLContLanguageStrings = {
 	
 }
