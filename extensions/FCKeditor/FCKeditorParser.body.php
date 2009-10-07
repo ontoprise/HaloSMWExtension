@@ -26,14 +26,14 @@ class FCKeditorParser extends Parser
        "TOC",
        "NOEDITSECTION",
        "NEWSECTIONLINK",
-       //"NONEWSECTIONLINK", // MW 1.15+
+       "NONEWSECTIONLINK", // MW 1.15+
        "NOCONTENTCONVERT",
        "NOCC",
        "NOTITLECONVERT",
        "NOTC",
-       //"INDEX", // MW 1.14+
-       //"NOINDEX", // MW 1.14+
-       //"STATICREDIRECT", // MW 1.14+
+       "INDEX", // MW 1.14+
+       "NOINDEX", // MW 1.14+
+       "STATICREDIRECT", // MW 1.14+
        "NOGALLERY",
        "HIDDENCAT"
 	);
@@ -66,7 +66,7 @@ class FCKeditorParser extends Parser
        'REVISIONMONTH',
        'REVISIONYEAR',
        'REVISIONTIMESTAMP',
-       //'REVISIONUSER', // MW 1.15+
+       'REVISIONUSER', // MW 1.15+
        'FULLPAGENAME',
        'PAGENAME',
        'BASEPAGENAME',
@@ -83,7 +83,7 @@ class FCKeditorParser extends Parser
         'uc',
         'ucfirst',
         'formatnum',
-        //'#dateformat', // MW 1.15+
+        '#dateformat', // MW 1.15+
         'padleft',
         'padright',
         'plural',
