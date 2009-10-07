@@ -15,7 +15,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var wgContLanguageStrings = {
+var gHACLUserLanguageStrings = {
 
     
 	'NoName'                : '(namenlos)',
@@ -40,7 +40,7 @@ var wgContLanguageStrings = {
         'ok'                    : 'OK',
         'cancel'                : 'Abbrechen',
         'name'                  : 'Name',
-        'selected'              : 'Ausgewähl',
+        'selected'              : 'Ausgewählt',
         'delete'                : 'Löschen',
         'to'                    : 'bis',
         'from'                  : 'von',
@@ -53,5 +53,9 @@ var wgContLanguageStrings = {
 
         'discardChanges' : "&Auml;nderungen verwerfen",
         'discardChangesMessage': "Die eingegebenen Daten werden verworfen"
+	
+}
+
+var gHACLUserLanguageStrings = {
 	
 }

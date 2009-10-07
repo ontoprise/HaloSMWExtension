@@ -1,4 +1,4 @@
-/*  Copyright 2007, ontoprise GmbH
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -15,21 +15,21 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
-* SMW_Language.js
+* HaloACL_Language.js
 * 
-* A class that reads language strings from the server by an ajax call.
+* A class that stores all language strings for the user interface.
 * 
 * @author Thomas Schweitzer
 *
 */
 
-var Language = Class.create();
+var HACLLanguage = Class.create();
 
 /**
  * This class provides language dependent strings for an identifier.
  * 
  */
-Language.prototype = {
+HACLLanguage.prototype = {
 
 	/**
 	 * @public
@@ -53,22 +53,22 @@ Language.prototype = {
 	getMessage: function(id, type) {
 		switch (type) {
 			case "user":
-				var msg = wgUserLanguageStrings[id];
+				var msg = gHACLUserLanguageStrings[id];
 				if (!msg) {
 					msg = id;
 				} 
 				break;
 				
 			case "cont":
-				var msg = wgContLanguageStrings[id];
+				var msg = gHACLContLanguageStrings[id];
 				if (!msg) {
 					msg = id;
 				} 
 				break;
 			default: 
-				var msg = wgUserLanguageStrings[id];
+				var msg = gHACLUserLanguageStrings[id];
 				if (!msg) {
-					var msg = wgContLanguageStrings[id];
+					var msg = gHACLContLanguageStrings[id];
 					if (!msg) {
 						msg = id;
 					}
@@ -88,4 +88,4 @@ Language.prototype = {
 
 // Singleton of this class
 
-var gLanguage = new Language();
+var gHACLLanguage = new HACLLanguage();

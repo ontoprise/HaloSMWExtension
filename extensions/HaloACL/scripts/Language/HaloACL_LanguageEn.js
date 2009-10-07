@@ -15,7 +15,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-var wgContLanguageStrings = {
+var gHACLUserLanguageStrings = {
 
     
 	'NoName'                : '(no name)',
@@ -54,4 +54,7 @@ var wgContLanguageStrings = {
         'discardChanges' : "Discard changes",
         'discardChangesMessage': "All changes will be lost"
 	
+}
+
+var gHACLContLanguageStrings = {
 }
