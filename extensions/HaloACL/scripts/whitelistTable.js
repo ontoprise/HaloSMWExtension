@@ -61,13 +61,13 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     var myColumnDefs = [ // sortable:true enables sorting
     {
         key:"name",
-        label:gLanguage.getMessage('name'),
+        label:gHACLLanguage.getMessage('name'),
         sortable:false,
         formatter:this.myNameFormatter
     },
     {
         key:"checked",
-        label:gLanguage.getMessage('delete'),
+        label:gHACLLanguage.getMessage('delete'),
         formatter:this.mySelectFormatter
     }
     ];

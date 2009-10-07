@@ -71,14 +71,14 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
     {
         key:"name",
-        label:gLanguage.getMessage('name'),
+        label:gHACLLanguage.getMessage('name'),
         sortable:false,
         formatter:this.myQuickNameFormatter
     },
    
     {
         key:"checked",
-        label:gLanguage.getMessage('delete'),
+        label:gHACLLanguage.getMessage('delete'),
         formatter:this.myQuickSelectFormatter
     }
 

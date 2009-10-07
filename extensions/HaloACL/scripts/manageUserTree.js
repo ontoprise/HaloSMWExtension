@@ -466,7 +466,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
  */
 YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
 
-    var tmpNode = new YAHOO.widget.TextNode(gLanguage.getMessage('groups'), tree.getRoot(),false);
+    var tmpNode = new YAHOO.widget.TextNode(gHACLLanguage.getMessage('groups'), tree.getRoot(),false);
     tmpNode.expand();
 
     YAHOO.haloacl.manageUser.buildNodesFromData(tmpNode,data,tree.panelid);
@@ -571,9 +571,9 @@ YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
     if(nodeToAttachTo._type != "RootNode"){
         if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-        var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+        var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
         YAHOO.haloacl.addingGroupCounter++;
-        tmpNode.information = gLanguage.getMessage('clickEditToCreate');
+        tmpNode.information = gHACLLanguage.getMessage('clickEditToCreate');
         nodeToAttachTo.collapse();
         nodeToAttachTo.expand();
         nodeToAttachTo.refresh();
@@ -631,10 +631,10 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
 
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode(gLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+    var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
     YAHOO.haloacl.addingGroupCounter++;
     // turn of dynamic load on that node
-    tmpNode.information = gLanguage.getMessage('clickEditToCreate');
+    tmpNode.information = gHACLLanguage.getMessage('clickEditToCreate');
 
     tmpNode.setDynamicLoad();
     nodeToAttachTo.collapse();

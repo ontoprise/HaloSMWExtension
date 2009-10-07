@@ -82,10 +82,10 @@ YAHOO.haloacl.notification.createDialogYesNo = function (renderedTo,title,conten
 
     YAHOO.haloacl.notification.counter++;
     if(yestext == null){
-        yestext = gLanguage.getMessage('ok');
+        yestext = gHACLLanguage.getMessage('ok');
     };
     if(notext == null){
-        notext = gLanguage.getMessage('cancel');
+        notext = gHACLLanguage.getMessage('cancel');
     };
 
     new Insertion.Bottom(renderedTo,"<div id='haloacl_notification"+YAHOO.haloacl.notification.counter+"' class='yui-skin-sam'>&nbsp;</div>");

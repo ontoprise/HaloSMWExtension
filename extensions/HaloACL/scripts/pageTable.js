@@ -20,12 +20,12 @@ YAHOO.haloacl.pageDataTable = function(divid) {
     var myColumnDefs = [ // sortable:true enables sorting
     {
         key:"name",
-        label:gLanguage.getMessage('name'),
+        label:gHACLLanguage.getMessage('name'),
         sortable:true
     },
     {
         key:"checked",
-        label:gLanguage.getMessage('selected')
+        label:gHACLLanguage.getMessage('selected')
       //  formatter:"myCustom"
     }
     ];

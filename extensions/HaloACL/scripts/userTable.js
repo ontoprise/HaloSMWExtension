@@ -78,20 +78,20 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
  
     {
         key:"name",
-        label:gLanguage.getMessage('name'),
+        label:gHACLLanguage.getMessage('name'),
         sortable:false,
         formatter:this.myNameFormatter
     },
     {
         key:"groups",
-        label:gLanguage.getMessage('groups'),
+        label:gHACLLanguage.getMessage('groups'),
         sortable:false
         ,
         formatter:this.myGroupFormatter
     },
     {
         key:"checked",
-        label:gLanguage.getMessage('selected'),
+        label:gHACLLanguage.getMessage('selected'),
         formatter:this.mySelectFormatter
     }
 
@@ -185,9 +185,9 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         };
         var to = displaying*1 + state.recordOffset*1;
         var from = state.totalRecords > 0 ? (state.recordOffset*1+1) : 0;
-        var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords;
+        var html = from + "<span style='font-weight:normal'>"+" - "+ "</span> "+ to+ "<span style='font-weight:normal'> "    +gHACLLanguage.getMessage('from') + "&nbsp;</span>" +state.totalRecords;
 
-        //        var html = from + " " +gLanguage.getMessage('from')+ " " + to   + " " +gLanguage.getMessage('to')+ " " +state.totalRecords;
+        //        var html = from + " " +gHACLLanguage.getMessage('from')+ " " + to   + " " +gHACLLanguage.getMessage('to')+ " " +state.totalRecords;
         $(divid).innerHTML = html;
         if(YAHOO.haloacl.debug) console.log($('datatablepaging_count_'+divid));
     };
@@ -434,20 +434,20 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
    
     {
         key:"name",
-        label:gLanguage.getMessage('name'),
+        label:gHACLLanguage.getMessage('name'),
         sortable:false,
         formatter:this.myNameFormatter
     },
     {
         key:"groups",
-        label:gLanguage.getMessage('groups'),
+        label:gHACLLanguage.getMessage('groups'),
         sortable:false,
         formatter:this.myGroupFormatter
     },
     
     {
         key:"deletable",
-        label:gLanguage.getMessage('remove'),
+        label:gHACLLanguage.getMessage('remove'),
         formatter:this.mySelectFormatter
     }
     ];

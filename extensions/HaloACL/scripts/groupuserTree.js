@@ -586,7 +586,7 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
         },callback);
 
     };
-    var tmpNode = new YAHOO.widget.TextNode(gLanguage.getMessage('groups'), tree.getRoot(),false);
+    var tmpNode = new YAHOO.widget.TextNode(gHACLLanguage.getMessage('groups'), tree.getRoot(),false);
     //tmpNode.setDynamicLoad(loadNodeData);
     YAHOO.haloacl.buildNodesFromData(tmpNode,data,tree.panelid);
     if(data.length == 0){

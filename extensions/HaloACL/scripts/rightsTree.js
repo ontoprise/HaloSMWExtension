@@ -867,7 +867,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         rightsExisting = true;
         var element = data[i];
 
-        if (!element.name) element.name = gLanguage.getMessage('NoName');
+        if (!element.name) element.name = gHACLLanguage.getMessage('NoName');
         var tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
 
         tmpNode.setGroupId(element.id);
@@ -880,7 +880,7 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         if (element.rights.length > 0) {
             for(var i2= 0, len2 = element.rights.length; i2<len2; ++i2){
                 var element2 = element.rights[i2];
-                if (!element2.description) element2.description = gLanguage.getMessage('NoName');
+                if (!element2.description) element2.description = gHACLLanguage.getMessage('NoName');
                 var tmpNode2 = new YAHOO.widget.RightNode(element2.description, tmpNode, false);
                 tmpNode2.title = element2.name;
                 tmpNode2.setTreeType(treetype);
