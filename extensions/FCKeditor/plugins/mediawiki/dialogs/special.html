@@ -163,6 +163,7 @@ var oTemplateSpan ;
 var sFakeClass = 'FCK__MWSpecial';
 var sSelectedTag = "";
 var oSpecialTagList;
+var sOldParams = "";
 
 if ( oFakeImage )
 {
@@ -225,16 +226,37 @@ function MakeSelection(type, name) {
     if (oSpecialTagList) { 
         oSpecialTagList.makeSelection(GetE('xSelectTag'), type, name);
         // reload the correct description for the current selected entry
-        GetE('xDefinition').innerHTML = oSpecialTagList.getDescByName(GetE('xSelectTag').value);
+        GetE('xDefinition').value = oSpecialTagList.getDescByName(GetE('xSelectTag').value);
     }
     // special tags and parser functions can have params. If the readonly attribute
     // is set, remove it
-    if ( (type == 'p' || type == 't') && GetAttribute(GetE('xTemplateRaw'), 'readonly') )
+    if ( (type == 'p' || type == 't') && GetAttribute(GetE('xTemplateRaw'), 'readonly') ) {
         SetAttribute(GetE('xTemplateRaw'), 'readonly', null);
+        GetE('xTemplateRaw').value = sOldParams;
+        GetE('xTemplateRaw').style.fontStyle = 'normal';
+    }
     // for constants, datetime and site variables, set the textbox to readonly
-    // as they have no parameters
-    else if (type == 'c' || type == 'v' || type == 'w')
+    // because they have no parameters
+    else if (type == 'c' || type == 'v' || type == 'w') {
         SetAttribute(GetE('xTemplateRaw'), 'readonly', 'readonly');
+        sOldParams = GetE('xTemplateRaw').value;
+        GetE('xTemplateRaw').value = "This tag doesn't need parameters";
+        GetE('xTemplateRaw').style.fontStyle = 'italic';
+    }
+}
+
+function SelectRadioButton(type, name) {
+    var types = [ 't', 'c', 'v', 'w', 'p' ];
+    for (var t in types) {
+        if (types[t] == type) {
+            GetE('xSelectType_' + types[t]).checked = true;
+            GetE('xSelectType_' + types[t]).parentNode.style.fontWeight = 'bold';
+        }
+        else
+            GetE('xSelectType_' + types[t]).parentNode.style.fontWeight = 'normal';
+    }
+    // now build the selection
+    MakeSelection(type, name);
 }
 
 function LoadSelection() {
@@ -243,30 +265,19 @@ function LoadSelection() {
         // selection list
 	if ( !oTemplateSpan ) {
             // set the radiobutton and the tag list to the default values
-            GetE('xSelectType_t').checked = true;
-            MakeSelection('t');
+            SelectRadioButton('t');
             return ;
-        }
-        // we edit an existing special tag, read it's content
+    }
+    // we edit an existing special tag, read it's content
 	GetE('xTemplateRaw').value = FCKTools.HTMLDecode(oTemplateSpan.innerHTML).replace(/fckLR/g,'\r\n' ).replace( /&quot;/g, '"' ) ;
 	var tagName = oTemplateSpan.getAttribute('_fck_mw_tagname');
 	var tagType = oTemplateSpan.getAttribute('_fck_mw_tagtype');
 
-        // set the current tag being the selected one in the selection list
+    // set the current tag being the selected one in the selection list
 	GetE('xSelectTag').value = tagName;
-        // depending on the tag type, we need to preselect the radio button
-	if (tagType == 't')
-	   GetE('xSelectType_t').checked = true;
-	else if (tagType == 'c')
-	   GetE('xSelectType_c').checked = true;
-	else if (tagType == 'v')
-       GetE('xSelectType_v').checked = true;
-    else if (tagType == 'w')
-       GetE('xSelectType_w').checked = true;
-    else if (tagType == 'p')
-       GetE('xSelectType_p').checked = true;
+    // depending on the tag type, we need to preselect the radio button
     // build selection based on the current type of the selected tag
-    MakeSelection(tagType, tagName);
+    SelectRadioButton(tagType, tagName);
 }
 
 function LoadDocumentation(){
@@ -374,26 +385,26 @@ function Ok()
             <tr>
               <td><span class="label">Tag Type:</span></td>
               <td class="radio">
-                <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="MakeSelection('t')"/>
+                <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="SelectRadioButton('t')"/>
                 Special tags
               </td>
               <td class="radio">
-                <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="MakeSelection('c')"/>
+                <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="SelectRadioButton('c')"/>
                 Constants
               </td>
               <td class="radio">
-                <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="MakeSelection('v')"/>
+                <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="SelectRadioButton('v')"/>
                 Date/Time variables
               </td>
             </tr>
             <tr>
               <td></td>
               <td class="radio">
-                <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="MakeSelection('w')"/>
+                <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="SelectRadioButton('w')"/>
                 Wiki variables
               </td>
               <td class="radio">
-                <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="MakeSelection('p')"/>
+                <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="SelectRadioButton('p')"/>
                 Parser function hooks
               </td>
               <td></td>
