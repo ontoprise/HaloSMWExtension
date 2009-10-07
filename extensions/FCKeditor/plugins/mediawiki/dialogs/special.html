@@ -99,16 +99,24 @@ TagNodeList.prototype.makeSelection = function(oSelect, type, name) {
             oNewSelect.appendChild(oOption);
         }
     }
-    // tag was not selected, then it's a custom tag which can't
-    // be received at the moment, therefore add it manually to the list
-    if (! tagSelected && name) {
-        var oOption = document.createElement('option');
-        oOption.value = name;
-        oOption.selected = 'selected';
-        this.add(name, type, '');
-        var oLabel = document.createTextNode(this.list[this.list.length -1].getLabel());
-        oOption.appendChild(oLabel);
-        oNewSelect.appendChild(oOption);
+    // no tag was selected yet
+    if (! tagSelected ) {
+        // name is set then the selected tag is a custom tag which
+        // can't be received by the Ajax call at the moment, therefore
+        // add it manually to the list
+        if (name) {
+            var oOption = document.createElement('option');
+            oOption.value = name;
+            oOption.selected = 'selected';
+            this.add(name, type, '');
+            var oLabel = document.createTextNode(this.list[this.list.length -1].getLabel());
+            oOption.appendChild(oLabel);
+            oNewSelect.appendChild(oOption);
+        }
+        // select the first tag
+        else {
+            oNewSelect.getElementsByTagName('option')[0].selected = 'selected';
+        }
     }
     
     oSelect.parentNode.insertBefore(oNewSelect, oSelect);
@@ -252,13 +260,13 @@ function LoadSelection() {
 	else if (tagType == 'c')
 	   GetE('xSelectType_c').checked = true;
 	else if (tagType == 'v')
-           GetE('xSelectType_v').checked = true;
-        else if (tagType == 'w')
-           GetE('xSelectType_w').checked = true;
-        else if (tagType == 'p')
-           GetE('xSelectType_p').checked = true;
-        // build selection based on the current type of the selected tag
-        MakeSelection(tagType, tagName);
+       GetE('xSelectType_v').checked = true;
+    else if (tagType == 'w')
+       GetE('xSelectType_w').checked = true;
+    else if (tagType == 'p')
+       GetE('xSelectType_p').checked = true;
+    // build selection based on the current type of the selected tag
+    MakeSelection(tagType, tagName);
 }
 
 function LoadDocumentation(){
@@ -289,11 +297,11 @@ function Ok()
 	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR' )).replace( /"/g, '&quot;' ) ;
 	
 	oTemplateSpan.innerHTML = templateData ;
-        var tagName = GetE('xSelectTag').value;
-        var tagType = oSpecialTagList.getTypeByName(GetE('xSelectTag').value );
+    var tagName = GetE('xSelectTag').value;
+    var tagType = oSpecialTagList.getTypeByName(GetE('xSelectTag').value );
 	SetAttribute( oTemplateSpan, '_fck_mw_tagname', tagName ) ;
 	SetAttribute( oTemplateSpan, '_fck_mw_tagtype', tagType ) ;
-        var tooltip;
+    var tooltip;
 
 	switch (GetE('xSelectTag').value)
 	{
@@ -349,40 +357,74 @@ function Ok()
 }
 
 	</script>
+    <style type="text/css">
+        .label {
+            font-weight: bold;
+            vertical-align: top;
+        }
+        .radio {
+            white-space: nowrap;
+            vertical-align: top;
+        }
+
+    </style>
 </head>
 <body style="overflow: hidden">
-	<div id="divInfo">
-		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+		<table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-                <td>
-                    <span>Special Tag Type:</span>
-                    <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="MakeSelection('t')"/>Special tags
-                    <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="MakeSelection('c')"/>Constants
-                    <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="MakeSelection('v')"/>Date/Time variables
-                    <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="MakeSelection('w')"/>Wiki variables
-                    <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="MakeSelection('p')"/>Parser function hooks
-                </td>
+              <td><span class="label">Tag Type:</span></td>
+              <td class="radio">
+                <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="MakeSelection('t')"/>
+                Special tags
+              </td>
+              <td class="radio">
+                <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="MakeSelection('c')"/>
+                Constants
+              </td>
+              <td class="radio">
+                <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="MakeSelection('v')"/>
+                Date/Time variables
+              </td>
             </tr>
+            <tr>
+              <td></td>
+              <td class="radio">
+                <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="MakeSelection('w')"/>
+                Wiki variables
+              </td>
+              <td class="radio">
+                <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="MakeSelection('p')"/>
+                Parser function hooks
+              </td>
+              <td></td>
+            </tr>
+          </table>
+          <hr style="border-top: dotted 1px; width: 100%;"/>
+          <table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr>
-				<td>
-					<span>Current Special Tag:</span>
-					<select id="xSelectTag" onchange="LoadDocumentation()">
-					</select><br/>
-					<i><span id="xDefinition"></span></i>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<hr/>
-					Special tag parameters:
-			</tr>
-			<tr>
-				<td height="100%">
-					<textarea id="xTemplateRaw" style="width: 100%; height: 100%; font-family: Monospace"
-						cols="50" rows="6" wrap="off"></textarea>
-				</td>
+				<td style="vertical-align: top; padding-right: 5px; border-right: dotted 1px;">
+					<span class="label">Tag:</span><br/>
+					<select id="xSelectTag" onchange="LoadDocumentation()" size="14">
+					</select>
+			    </td>
+                <td style="width: 100%; height: 100%; padding-left: 5px;">
+			     <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
+                   <tr> 
+			         <td style="vertical-align: top;">
+			          <span class="label">Description:</span><br/>
+					  <span id="xDefinition"></span>
+				    </td>
+				   </tr>
+				   <tr>
+				     <td style="vertical-align: bottom;">
+				       <span class="label">Parameters:</span><br/>
+					   <textarea id="xTemplateRaw" style="width: 100%; font-family: Monospace"
+						 cols="20" rows="3" wrap="off"></textarea>
+				     </td>
+				   </tr>
+				 </table>
+			  </td>
 			</tr>
 		</table>
-	</div>
 </body>
 </html>
