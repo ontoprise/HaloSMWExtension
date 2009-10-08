@@ -12,4 +12,4 @@ include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
 enableSMWHalo('SMWHaloStore2');
 
 # the FCK Editor itself
-require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
+require_once('extensions/FCKeditor/FCKeditor.php');
