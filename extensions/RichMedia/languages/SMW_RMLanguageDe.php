@@ -69,6 +69,8 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_embed_fittowindow' => 'An Fenster anpassen',
 		'smw_rm_embed_desctext' => 'Beschreibungsseite',
 		'smw_rm_embed_savetext' => 'Speichern',
+	
+		'smw_rm_wrong_namespace' => 'Sie haben den falschen Namensraum für diese Datei gewählt. Meinten Sie $1 ?',
 	);
 
 	protected $smwRMNamespaces = array(

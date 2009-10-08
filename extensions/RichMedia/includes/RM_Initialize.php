@@ -80,6 +80,7 @@ function enableRichMediaExtension() {
 	
 	//Change the image links
 	$wgHooks['LinkBegin'][] = 'RMLinkBegin';
+	$wgHooks['LinkEnd'][] = 'RMLinkEnd';
 	
 	//EmbedWindow
 	$wgSpecialPages['EmbedWindow'] = 'RMEmbedWindow';
@@ -180,10 +181,27 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 				$target->mNamespace = $ns;
 		}
 	}
-	$target->mPrefixedText = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$target->mPrefixedText);
-	$text = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$text);
+	if ($target->mPrefixedText)
+		$target->mPrefixedText = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$target->mPrefixedText);
+	if($text)
+		$text = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$text);
 	//$result = str_replace('File:',$wgCanonicalNamespaceNames[$ns],$customAttribs['title']);
 	
+	return true;
+}
+
+function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
+	
+	global $wgRMImagePreview;
+	if ( $wgRMImagePreview ) {
+		$queryString = "target=".urlencode($target->getPrefixedText());
+		$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
+		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
+		$rev = "height:500 width:700";
+		$attribs['rev'] = 'height:500 width:700';
+		$attribs['rel'] = 'iframe';
+		$attribs['href'] = $uploadWindowUrl;
+	}
 	return true;
 }
 

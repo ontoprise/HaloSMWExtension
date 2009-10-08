@@ -68,7 +68,9 @@ class SMW_RMLanguageEn extends SMW_RMLanguage {
 		'smw_rm_embed_fullres'=> 'Full resolution',
 		'smw_rm_embed_fittowindow' => 'Fit to window',
 		'smw_rm_embed_desctext' => 'Description page',
-		'smw_rm_embed_savetext' => 'Save'
+		'smw_rm_embed_savetext' => 'Save',
+		
+		'smw_rm_wrong_namespace' => 'You have chosen the wrong Namespace for this file. Did you mean $1 ?',
 	);
 
 	protected $smwRMNamespaces = array(
