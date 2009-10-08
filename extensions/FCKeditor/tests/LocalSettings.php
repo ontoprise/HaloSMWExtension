@@ -13,7 +13,3 @@ enableSMWHalo('SMWHaloStore2');
 
 # the FCK Editor itself
 require_once('extensions/SMWHalo/includes/SMW_WYSIWYG.php');
-if ($_REQUEST['mode'] == 'wysiwyg' ||
-    $_REQUEST['action'] == 'ajax' && stripos($_REQUEST['rs'], 'wfSajax') === 0) {
-  require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
-}
