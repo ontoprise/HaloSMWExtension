@@ -464,6 +464,27 @@ Index: includes/ImageQueryPage.php
  	}
  
  	/**
+Index: includes/Linker.php
+===================================================================
+--- includes/Linker.php	(revision 5494)
++++ includes/Linker.php	(working copy)
+@@ -708,7 +708,15 @@
+ 		global $wgContLang, $wgUser, $wgThumbLimits, $wgThumbUpright;
+ 		if ( $file && !$file->allowInlineDisplay() ) {
+ 			wfDebug( __METHOD__.': '.$title->getPrefixedDBkey()." does not allow inline display\n" );
+-			return $this->link( $title );
++			/*op-patch|BL|2009-10-07|RichMedia|TitleGotLost|start*/
++			// pass title to link function
++			// original content is located in else statement.
++			if ($frameParams['title']) { 
++				return $this->link( $title ,$frameParams['title']);
++			} else {
++				return $this->link( $title );
++			}
++			/*op-patch|BL|2009-10-07|end*/
+ 		}
+ 
+ 		// Shortcuts
 Index: includes/Namespace.php
 ===================================================================
 --- includes/Namespace.php	(revision 5522)
@@ -1083,7 +1104,70 @@ Index: includes/parser/Parser.php
 ===================================================================
 --- includes/parser/Parser.php	(revision 5522)
 +++ includes/parser/Parser.php	(working copy)
-@@ -4165,9 +4165,21 @@
+@@ -1675,23 +1675,49 @@
+ 				}
+ 				wfProfileOut( __METHOD__."-interwiki" );
+ 
+-				if ( $ns == NS_FILE ) {
+-					wfProfileIn( __METHOD__."-image" );
+-					if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
+-						# recursively parse links inside the image caption
+-						# actually, this will parse them in any other parameters, too,
+-						# but it might be hard to fix that, and it doesn't matter ATM
+-						$text = $this->replaceExternalLinks($text);
+-						$holders->merge( $this->replaceInternalLinks2( $text ) );
++				/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++				// NS_FILE is not the only Namespace now, so check them all
++				// original content is located in else statement.
++				global $smwgEnableRichMedia;
++				if( $smwgEnableRichMedia ) {
++					RMNamespace::isImage( $ns, &$rMresult );
++					if ( $rMresult ) {
++						wfProfileIn( __METHOD__."-image" );
++						if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
++							# recursively parse links inside the image caption
++							# actually, this will parse them in any other parameters, too,
++							# but it might be hard to fix that, and it doesn't matter ATM
++							$text = $this->replaceExternalLinks($text);
++							$holders->merge( $this->replaceInternalLinks2( $text ) );
++
++							# cloak any absolute URLs inside the image markup, so replaceExternalLinks() won't touch them
++							$s .= $prefix . $this->armorLinks( $this->makeImage( $nt, $text, $holders ) ) . $trail;
++						}
++						$this->mOutput->addImage( $nt->getDBkey() );
++						wfProfileOut( __METHOD__."-image" );
++						continue;
+ 
+-						# cloak any absolute URLs inside the image markup, so replaceExternalLinks() won't touch them
+-						$s .= $prefix . $this->armorLinks( $this->makeImage( $nt, $text, $holders ) ) . $trail;
+ 					}
+-					$this->mOutput->addImage( $nt->getDBkey() );
+-					wfProfileOut( __METHOD__."-image" );
+-					continue;
++				} else {
++					if ( $ns == NS_FILE ) {
++						wfProfileIn( __METHOD__."-image" );
++						if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
++							# recursively parse links inside the image caption
++							# actually, this will parse them in any other parameters, too,
++							# but it might be hard to fix that, and it doesn't matter ATM
++							$text = $this->replaceExternalLinks($text);
++							$holders->merge( $this->replaceInternalLinks2( $text ) );
++
++							# cloak any absolute URLs inside the image markup, so replaceExternalLinks() won't touch them
++							$s .= $prefix . $this->armorLinks( $this->makeImage( $nt, $text, $holders ) ) . $trail;
++						}
++						$this->mOutput->addImage( $nt->getDBkey() );
++						wfProfileOut( __METHOD__."-image" );
++						continue;
+ 
++					}
+ 				}
++				/*op-patch|BL|2009-10-07|end*/
+ 
+ 				if ( $ns == NS_CATEGORY ) {
+ 					wfProfileIn( __METHOD__."-category" );
+@@ -4165,9 +4191,21 @@
  			$ig->add( $nt, $html );
  
  			# Only add real images (bug #5586)
@@ -1107,6 +1191,36 @@ Index: includes/parser/Parser.php
  		}
  		return $ig->toHTML();
  	}
+@@ -4186,6 +4224,9 @@
+ 					'bottom', 'text-bottom' ),
+ 				'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
+ 					'upright', 'border', 'link', 'alt' ),
++				/*op-patch|BL|2009-10-08|RichMedia|ImageOverlay|start*/
++				'nopreview' => array('nopreview'),
++				/*op-patch|BL|2009-10-08|end*/
+ 			);
+ 			static $internalParamMap;
+ 			if ( !$internalParamMap ) {
+@@ -4392,6 +4433,19 @@
+ 			$params['frame']['alt'] = $params['frame']['title'];
+ 		}
+ 
++		/*op-patch|BL|2009-10-08|RichMedia|ImageOverlay|start*/
++		// save information about preview in global var
++		global $smwgEnableRichMedia;
++		if ( $smwgEnableRichMedia ) {
++			global $wgRMImagePreview;
++			if (array_key_exists('nopreview',$params)) {
++				$params['nopreview'] ? $wgRMImagePreview = false : $wgRMImagePreview = true;
++			} else {
++				$wgRMImagePreview = true;
++			}
++		}
++		/*op-patch|BL|2009-10-08|end*/
++
+ 		wfRunHooks( 'ParserMakeImageParams', array( $title, $file, &$params ) );
+ 
+ 		# Linker does the rest
 Index: includes/specials/SpecialFilepath.php
 ===================================================================
 --- includes/specials/SpecialFilepath.php	(revision 5522)
