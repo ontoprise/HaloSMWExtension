@@ -1,5 +1,3 @@
-### Eclipse Workspace Patch 1.0
-#P HaloSMWExtension
 Index: extensions/SemanticMediaWiki/includes/SMW_DV_Number.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/SMW_DV_Number.php	(revision 4401)
