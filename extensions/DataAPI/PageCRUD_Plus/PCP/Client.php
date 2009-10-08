@@ -46,7 +46,7 @@ class PCPClient extends PCPAny{
 
 	public function login(PCPUserCredentials $userCredentials=NULL){
 		// check if new user credentials are set
-		if($userCredentials!== NULL && $this->usedUC->un!=$userCredentials->un){
+		if($userCredentials!= NULL && $this->usedUC->un!=$userCredentials->un){
 			$this->usedUC = $userCredentials;
 		}
 		if($userCredentials==NULL){
@@ -54,7 +54,7 @@ class PCPClient extends PCPAny{
 		}
 
 		foreach (PCPUtil::replaceInHash($this->lgQuery,
-		array($userCredentials->un,$userCredentials->pwd)) as $__parameter=>$__parameterValue){
+		array(urlencode($userCredentials->un),urlencode($userCredentials->pwd))) as $__parameter=>$__parameterValue){
 			$__parameters.=$__parameter.'='.$__parameterValue.'&';
 		}
 

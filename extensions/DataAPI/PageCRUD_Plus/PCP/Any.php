@@ -1,7 +1,4 @@
 <?php
-require_once ('Server.php');
-require_once ('Client.php');
-
 /**
  * Describes the functions which the SMW Edit API should support.
  *

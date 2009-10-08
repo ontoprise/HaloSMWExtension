@@ -54,12 +54,14 @@ class POMExtendedParser extends POMParser{
 	array(
 	array('*','{','*',1),
 	array('*','}','*',4),
+	array('*','|','t',4),
 	array('*','*','*','wc'),
 	),
 
 	// state 1
 	array(
 	array('*','{','*',2),
+	array('*','|','t',2),
 	array('*','*','*',8),
 	),
 
@@ -150,7 +152,7 @@ class POMExtendedParser extends POMParser{
 
 
 	/**
-	 * Enter description here...
+	 * No direct initialization of the parser available.
 	 *
 	 * @return POMExtendedParser
 	 */
@@ -168,10 +170,6 @@ class POMExtendedParser extends POMParser{
 		return new POMExtendedParser();
 	}
 
-	//	public function Parse(POMPage &$page){
-	//		$this->_page = $page;
-	//		return $this->addWikiTextOffsets($page->text, $page);
-	//	}
 
 	/**
 	 * Parses the text of a given page and creates an element structure.
@@ -211,13 +209,15 @@ class POMExtendedParser extends POMParser{
 							'(\|)|'. // one |
 							'(<nowiki>)|'. // the nowiki start tag
 							'(<\/nowiki>)|'. // the nowiki end tag
+							'(<noinclude>)|'. // the noinclude start tag
+							'(<\/noinclude>)|'. // the noinclude end tag
 							'(<ask)|'. // the ask start tag
 							'(<\/ask>)|'. // the ask end tag
 							'(<pre>)|'. // the pre start tag
 							'(<\/pre>)|'. // the pre end tag
 							'^$/sm', $text, -1, 
-		PREG_SPLIT_DELIM_CAPTURE |
-		PREG_SPLIT_NO_EMPTY);
+							PREG_SPLIT_DELIM_CAPTURE |
+							PREG_SPLIT_NO_EMPTY);
 		$markedText = "";
 
 		$id = 1;
@@ -290,14 +290,16 @@ class POMExtendedParser extends POMParser{
 						$page->addElement(new POMAskFunction($tmplDescr[4]));
 					}else if($tmplDescr[1] == '#language:'
 					||$tmplDescr[1] == '#special:'
-					||$tmplDescr[1] == '#tag:'){// we have a built parser function as
+					||$tmplDescr[1] == '#tag:'){
+						// we have a built parser function as
 						// described in http://www.mediawiki.org/wiki/Extension:Parser_function_extensions
 						$page->addElement(new POMBuiltInParserFunction($tmplDescr[4]));
 					}
 					else{// we have an extension parser function other than "ask"
 						$page->addElement(new POMExtensionParserFunction($tmplDescr[4]));
 					}
-				}else if (preg_match('#\w\:.*#',$tmplDescr[1]) !== 0){// we have a built-in parser function
+				}else if (preg_match('#\w\:.*#',$tmplDescr[1]) !== 0){
+					// we have a built-in parser function
 					$page->addElement(new POMBuiltInParserFunction($tmplDescr[4]));
 				}else{
 					$page->addElement(new POMTemplate($tmplDescr[4]));
@@ -310,7 +312,7 @@ class POMExtendedParser extends POMParser{
 			} else {
 				// parser is not collecting tokens for a template
 				if ($part0 == '[[') {
-					if ($braceCount == 0) {						
+					if ($braceCount == 0) {
 						$aStartPos = $pos;
 						if( $stStartPos != -1){
 							// add the text node
@@ -333,8 +335,10 @@ class POMExtendedParser extends POMParser{
 					$aText = '[['.$aText.']]';
 					if (strpos($aText, '::')){
 						$page->addElement(new POMProperty($aText));
+						$aText = '';
 					}else if (strpos($aText, ':')){
 						$page->addElement(new POMCategory($aText));
+						$aText = '';
 					}else{
 						// empty
 					}
@@ -349,7 +353,7 @@ class POMExtendedParser extends POMParser{
 						if($stStartPos == -1){
 							$stStartPos = $pos;
 						}
-						$stText .= $part0;						
+						$stText .= $part0;
 					}
 				}
 				$pos += $len;
@@ -397,6 +401,7 @@ class POMExtendedParser extends POMParser{
 	 * The following sections are handled:
 	 * - HTML-comments (<!--  -->)
 	 * - <nowiki>-sections
+	 * - <noinclude>-sections
 	 * - <ask>-sections
 	 * - <pre>-sections
 	 *
@@ -411,6 +416,7 @@ class POMExtendedParser extends POMParser{
 		array('<ask.*?>','<ask','<\/ask>','</ask>', false),
 		array('<!--','<!--','-->','-->', true),
 		array('<nowiki>','<nowiki>','<\/nowiki>','</nowiki>', false),
+		array('<noinclude>','<noinclude>','<\/noinclude>','</noinclude>', false),
 		array('<pre>','<pre>','<\/pre>','</pre>', false),
 		array('<sup id="_ref.*?>','<sup id="_ref','<\/sup>','</sup>', true),
 		array('<ref .*?>','<ref','<\/ref>','</ref>', true)
@@ -672,17 +678,14 @@ class POMExtendedParser extends POMParser{
 	 * @return The matching state or <null>.
 	 */
 	private function findNextState(&$token, &$nextStates, $currentlyParsing) {
-		// global $wgTitle;
 
-		//		$pageType = $wgTitle->getNamespace() == NS_TEMPLATE
-		//						? 't' : 'n';
-		$pageType = $this->_page->getNamespace() === 'Template'
+		$__pageType = $this->_page->getNamespace() == 'Template'
 		? 't' : 'n';
 
 		foreach ($nextStates as $state) {
-			if (($state[0] === '*' || $state[0] == $currentlyParsing) &&
-			($state[1] === '*' || $state[1] == $token) &&
-			($state[2] === '*' || $state[2] == $pageType)) {
+			if (($state[0] == '*' || $state[0] == $currentlyParsing) &&
+			($state[1] == '*' || $state[1] == $token) &&
+			($state[2] == '*' || $state[2] == $__pageType)) {
 				return $state;
 			}
 		}

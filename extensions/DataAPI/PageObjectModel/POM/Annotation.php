@@ -41,7 +41,7 @@ class POMCategory extends POMAnnotation {
 	 */
 	public function POMCategory($text)
 	{
-		$this->nodeText = $text;
+//		$this->nodeText = $text;
 		$this->name = 'Category';
 		$this->value = $this->parseValue($text);
 		$this->representation = '';
@@ -110,7 +110,7 @@ class POMCategory extends POMAnnotation {
 /**
  * The property class.<br/>
  * PLEASE NOTE: n-ary properties are generally not supported since the value
- * in a name::value pair is represented as a string and DOESN'T underly further processing, e.g. 
+ * in a name::value pair is represented as a string and DOESN'T underly further processing, e.g.
  * splitting by ';' or checking the property type on the property definition page.
  *
  */
@@ -123,7 +123,7 @@ class POMProperty extends POMAnnotation {
 	 */
 	public function POMProperty($text)
 	{
-		$this->nodeText = $text;
+//		$this->nodeText = $text;
 		$this->name = $this->parseName($text);
 		$this->value = $this->parseValue($text);
 		$this->representation = $this->parseRepresentation($text);
@@ -149,7 +149,7 @@ class POMProperty extends POMAnnotation {
 		}else{
 			$__nodeText = '[['.$name.'::'.$value.']]';
 		}
-		
+
 		return new POMProperty($__nodeText);
 	}
 
@@ -159,7 +159,7 @@ class POMProperty extends POMAnnotation {
 	 * @return string The markup for the property.
 	 */
 	public function toString()
-	{
+	{	
 		$__stringValue = '';
 		if ( strcmp($this->representation, '') === 0){
 			$__stringValue = '[['.$this->name.'::'.$this->value.']]';
@@ -169,9 +169,12 @@ class POMProperty extends POMAnnotation {
 		return $__stringValue;
 	}
 
-	private function parseName ($text){
-		$__start = strpos($text, '[[')+2;
-		return substr($text, $__start, strpos($text, '::')-$__start);
+	private function parseName ($text){		
+		while(preg_match('/^\[\[/',$text) !== 0){
+			$__start = strpos($text, '[[')+2;
+			$text = substr($text, $__start);			
+		}
+		return substr($text, 0, strpos($text, '::'));
 	}
 
 	private function parseValue ($text){

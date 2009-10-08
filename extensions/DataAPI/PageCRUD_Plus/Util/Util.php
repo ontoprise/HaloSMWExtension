@@ -15,15 +15,15 @@ class PCPUtil{
 	 */
 	public static function replaceInHash($placeholders=NULL, $values=NULL){
 		$__idx=0;
-		foreach ($values as $__value){
-			foreach ($placeholders as $__phKey=>$__phValue){
-
-				if (strpos($__phValue, ":".$__idx)!== false){
-					$placeholders[$__phKey]=str_replace($__phValue, $__value,$__phValue);
+		$__phKeys = array_keys($placeholders);
+		foreach ($values as $__value){			
+			foreach ($__phKeys as $__phKey){				
+				if ($placeholders[$__phKey] == ":".$__idx){
+					$placeholders[$__phKey]= $__value;					
 				}
 			}
 			$__idx++;
-		}
+		}		
 		return $placeholders;
 	}
 

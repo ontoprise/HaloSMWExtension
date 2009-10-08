@@ -6,15 +6,17 @@
  * @version 0.1
  */
 global $pcpPREFIX, $pcpWSServer;
-require_once($pcpPREFIX.'Config/UserCredentials.php');
-require_once($pcpPREFIX.'Config/WikiSystem.php');
-require_once($pcpPREFIX.'PCP/Page.php');
-require_once($pcpPREFIX.'PCP/Any.php');
-require_once($pcpPREFIX.'Util/Util.php');
+include_once($pcpPREFIX.'Config/UserCredentials.php');
+include_once($pcpPREFIX.'Config/WikiSystem.php');
+include_once($pcpPREFIX.'PCP/Page.php');
+include_once($pcpPREFIX.'PCP/Any.php');
+include_once($pcpPREFIX.'PCP/Server.php');
+include_once($pcpPREFIX.'PCP/Client.php');
+include_once($pcpPREFIX.'Util/Util.php');
 
 if($pcpWSServer){
-	#require_once('WS/Server.php');
-	require_once($pcpPREFIX.'WS/ServerAPI.php');
+	#include_once('WS/Server.php');
+	include_once($pcpPREFIX.'WS/ServerAPI.php');
 }
 
 

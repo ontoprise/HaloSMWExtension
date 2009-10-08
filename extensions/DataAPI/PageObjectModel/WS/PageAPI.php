@@ -180,26 +180,26 @@ class POMPageWS_API extends ApiBase {
 	public function getVersion() {
 		return __CLASS__ . ': $Id$';
 	}
-	protected function createPage($username=NULL, $password=NULL, $id=NULL, $loginToken = NULL, $editToken = NULL, $title=NULL, $text=NULL, $summary=NULL){
-		$__pcpServer = new PCPServer();
-		$__userCredentials = new PCPUserCredentials($username, $password, $id, $loginToken, $editToken);
-		$__pcpServer->login($__userCredentials);
-		return $__pcpServer->createPage($__userCredentials,$title, $text, $summary);
-	}
 
 	protected function getElements($username=NULL, $password=NULL, $id=NULL, $loginToken = NULL, $editToken = NULL, $title= NULL, $revisionID = NULL){
 		$__pcpServer = new PCPServer();
 		$__userCredentials = new PCPUserCredentials($username, $password, $id, $loginToken, $editToken);
 		$__pcpServer->login($__userCredentials);
-		$__pom = new POMPage($title, $__pcpServer->readPage($__userCredentials,$title, $revisionID)->text);
+		$__pcpPage = $__pcpServer->readPage($__userCredentials,$title, $revisionID);
+		$__pom = new POMPage($__pcpPage->titel, $__pcpPage->text);
 		$__result = array();
 		$__elementsIterator = $__pom->getElements()->listIterator();
+		$__result["page"] = $this->toArray ($__pcpPage);
+		$__cnt = 0;
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result["page"][get_class($__element)][$__cnt] = $__array;
+			$__cnt++;
 		}
-		return $__result;
+		$result = $this->getResult();
+		$result->setIndexedTagName_recursive($__result, 'el');
+		$result->addValue(null, $this->getModuleName(), $__result);
 	}
 	protected function getTemplates($username=NULL, $password=NULL, $id=NULL, $loginToken = NULL, $editToken = NULL, $title= NULL, $revisionID = NULL){
 		$__pcpServer = new PCPServer();
@@ -211,7 +211,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -225,7 +225,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -239,7 +239,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -250,11 +250,14 @@ class POMPageWS_API extends ApiBase {
 		$__pom = new POMPage($title, $__pcpServer->readPage($__userCredentials,$title, $revisionID)->text);
 		$__result = array();
 		$__elementsIterator = $__pom->getPropertyByName($propertyName)->listIterator();
+
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			var_dump($__elementsIterator);
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
+
 		return $__result;
 	}
 	protected function getCategories($username=NULL, $password=NULL, $id=NULL, $loginToken = NULL, $editToken = NULL, $title= NULL, $revisionID = NULL){
@@ -268,7 +271,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -282,7 +285,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -297,7 +300,7 @@ class POMPageWS_API extends ApiBase {
 		while($__elementsIterator->hasNext()){
 			$__element = &$__elementsIterator->getNextNodeValueByReference();
 			$__array = $this->toArray($__element);
-			$__result[get_class($__element)] = $__array;
+			$__result[get_class($__element)][$__element->id] = $__array;
 		}
 		return $__result;
 	}
@@ -306,15 +309,29 @@ class POMPageWS_API extends ApiBase {
 	{
 		if(is_array($data) || is_object($data))
 		{
+			if(get_class($data) =='POMPage'){
+				$__pom = new POMPage($data->titel, $data->text);
+				$__result = array();
+				$__elementsIterator = $__pom->getElements()->listIterator();
+				$__result["page"] = $this->toArray ($__pcpPage);
+				$__cnt = 0;
+				while($__elementsIterator->hasNext()){
+					$__element = &$__elementsIterator->getNextNodeValueByReference();
+					$__array = $this->toArray($__element);
+					$__result["page"][get_class($__element)][$__cnt] = $__array;
+					$__cnt++;
+				}
+				return $__result;
+			}
 			$__result = array();
 
 			foreach ($data as $__key => $__value)
 			{
-				$__classname = get_class($__value);
-				$__result[preg_replace('/^(\d)/',$__classname.'${1}',$__key)] = $this->toArray($__value);
+				$__result[$__key] = $this->toArray($__value);
 			}
 			return $__result;
 		}
 		return $data;
 	}
 }
+

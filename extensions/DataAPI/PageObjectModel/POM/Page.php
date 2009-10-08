@@ -114,14 +114,52 @@ class POMPage extends PCPPage
 		}
 	}
 
+	/* Constructs the POM using a PCPPage object.
+	 * In the constructor the supported element types are set. If an element is added and
+	 * it is not in the list of the supported elemens, a "Object of class DLList could not be converted to string " exception is thrown.
+	 *
+	 * @param PCPPage $pcpPageObj
+	 * @param string[] $parsers
+	 * @return POMPage
+	 */
+	public static function fromPCPPage(PCPPage $pcpPageObj = NULL, $parsers = array('POMExtendedParser'))
+	{
+		$__pomPage = new POMPage("", "", array());
+		$__pomPage->title = $pcpPageObj->title;
+		$__pomPage->text = $pcpPageObj->text;
+		$__pomPage->pageid = $pcpPageObj->pageid;
+		$__pomPage->namespace = $pcpPageObj->namespace;
+		$__pomPage->summary = $pcpPageObj->summary;
+		$__pomPage->basetimestamp = $pcpPageObj->basetimestamp;
+		$__pomPage->lastrevid = $pcpPageObj->lastrevid;
+		$__pomPage->usedrevid = $pcpPageObj->usedrevid;
+		
+		
+		$__pomPage->children =  new DLList();
+		$__pomPage->children->setShortcutTypes(array(
+			'POMTemplate',
+			'POMAskFunction',
+			'POMBuiltInParserFunction',
+			'POMExtensionParserFunction',
+			'POMCategory', 
+			'POMProperty', 
+			'POMSimpleText'));
+
+		foreach ($parsers as $parser)
+		{
+			$__parserObj = call_user_func(array($parser, 'getParser'));
+			$__parserObj->Parse($__pomPage);
+		}
+		return $__pomPage;
+	}
 	/**
 	 * Get the namespace of the page.
 	 *
 	 * @return string
 	 */
 	public function getNamespace(){
-		$__start = strpos($this->title, ':')+1;
-		return substr($this->title, $__start);
+		$__start = strpos($this->title, ':');
+		return substr($this->title, 0, $__start);
 	}
 
 	/**
@@ -390,7 +428,6 @@ class POMPage extends PCPPage
 			}
 			return $__resultingArray;
 		}else{
-			$__resultingArray->add($__iterator->getNextNodeValueByReference());
 			return $__resultingArray;
 		}
 	}

@@ -67,7 +67,10 @@ class POMTemplateNamedParameter extends POMTemplateParameter
 	{
 		$this->name_triple = new POMUtilTrimTriple($name);
 		$this->value_triple = new POMUtilTrimParameterValueTriple($value);
-		$this->nodeText = $this->toString();
+//		$this->nodeText = $this->toString();
+		
+		$this->id = "namedParameter".POMElement::$elementCounter;
+		POMElement::$elementCounter++;
 	}
 
 	/**
@@ -177,7 +180,10 @@ class POMTemplateNumberedParameter extends POMTemplateParameter
 	public function __construct($value)
 	{
 		$this->value_triple = new POMUtilTrimParameterValueTriple($value);
-		$this->nodeText = $this->toString();
+//		$this->nodeText = $this->toString();
+		
+		$this->id = "numberedParameter".POMElement::$elementCounter;
+		POMElement::$elementCounter++;
 	}
 	/**
 	 * Updates the parameter.

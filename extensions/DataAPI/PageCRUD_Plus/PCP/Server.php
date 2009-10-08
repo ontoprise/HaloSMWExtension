@@ -216,10 +216,7 @@ class PCPServer extends PCPAny{
 								}
 							}
 						}
-					}else{
-						return NULL;
 					}
-
 				}
 			}			
 			return $this->page;
@@ -247,9 +244,7 @@ class PCPServer extends PCPAny{
 			// trigger an error?
 			return false;
 		}
-		$this->getEditToken($userCredentials, $title);
-
-
+		$this->getEditToken($userCredentials, $title);		
 		// if md5 is not set, do not use it
 		if( $md5_hash !== NULL){
 			if ($basetimestamp == NULL)
@@ -269,13 +264,13 @@ class PCPServer extends PCPAny{
 		}else{
 			unset($this->queryUpdatePage['md5']);
 			if ($basetimestamp == NULL)
-			{
+			{				
 				// $basetimestamp = $this->page->basetimestamp;
 				unset($this->queryUpdatePage['basetimestamp']);
 				$__request = new FauxRequest(
 				PCPUtil::replaceInHash($this->queryUpdatePage,
 				array($title,$this->usedUC->editToken, $text, $summary))
-				);
+				);								
 			}else{
 				$__request = new FauxRequest(
 				PCPUtil::replaceInHash($this->queryUpdatePage,
@@ -283,13 +278,10 @@ class PCPServer extends PCPAny{
 				);
 			}
 
-		}
-
+		}	
+			
 		$__api = new ApiMain($__request, true);
 		$__api->execute();
-		//		$__result =& $__api->GetResultData();
-
-		//		return true;
 		return $__api->GetResultData();
 	}
 

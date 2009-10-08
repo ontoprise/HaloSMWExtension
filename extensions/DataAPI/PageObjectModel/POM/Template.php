@@ -39,15 +39,14 @@ class POMTemplate extends POMDcbElement
 		$parts = split('\|', $text);
 
 		$this->title = new POMUtilTrimTriple(array_shift($parts));
+		$this->id = "template".POMElement::$elementCounter;
+		POMElement::$elementCounter++;
+//		$this->nodeText = $text;
 
 		foreach ($parts as $part)
 		{
 			$this->parameters[] = POMTemplateParameter::parse($part);
-		}
-
-		$this->id = "template".POMElement::$elementCounter;
-		POMElement::$elementCounter++;
-		$this->nodeText = $text;
+		}		
 	}
 
 	/**
