@@ -17,8 +17,8 @@
                 description="Tests if wiki responds at all by loading the main page" 
             />
             <clickLink
-                description="Click tab WYSIWYG"
-                xpath="//div[@id='ca-wysiwyg']/a"
+                description="Click edit link"
+                xpath="//div[@id='ca-edit']/a"
             />
             <verifyDocumentURL
                 description="check URL of editing page"

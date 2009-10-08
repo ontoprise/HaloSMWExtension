@@ -11,11 +11,11 @@
                 url="${wgServer}${wgScript}/Main_Page"
                 description="Tests if wiki responds at all by loading the main page" 
             />
-            <verifyTitle text="Main Page - ${wgSitename}" />
+            <verifyTitle text="${wgSitename}" />
             <verifyXPath
-                description="Check if tab WYSIWYG exists"
-                xpath="//div[@id='ca-wysiwyg']/a/text()"
-                text="WYSIWYG" />
+                description="Check if edit link contains mode WYSIWYG"
+                xpath="//div[@id='ca-edit']/a/@href"
+                text="${wgScript}?title=Main_Page&amp;action=edit&amp;mode=wysiwyg" />
         </webtest>
 
     </target>
