@@ -612,7 +612,7 @@ class AutoCompletionHandler {
 					$column = str_replace(" ", "_", $column);
 				}
 
-				$xmlResult = self::runASKQuery($query, $column);
+				$xmlResult = self::runASKQuery($query, $column, $userInput);
 				$dom = simplexml_load_string($xmlResult);
 				$queryResults = $dom->xpath('//binding[@name="'.$column.'"]');
 
@@ -641,7 +641,7 @@ class AutoCompletionHandler {
 		return $result;
 	}
 
-	private static function runASKQuery($rawquery, $column) {
+	private static function runASKQuery($rawquery, $column, $userInput) {
 		global $smwgResultFormats, $smwgHaloIP;
 		require_once "$smwgHaloIP/includes/queryprinters/SMW_QP_XML.php";
 		$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
@@ -656,6 +656,7 @@ class AutoCompletionHandler {
 		$params['format'] = "xml";
 		//$params['limit'] = SMW_AC_MAX_RESULTS;
 		if ($column != "_var0") $params['sort'] = $column;
+		$querystring = str_replace("{{USERINPUT}}", $userInput, $querystring);
 		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 	}
 
