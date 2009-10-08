@@ -1267,3 +1267,166 @@ Index: includes/specials/SpecialSearch.php
  			$img = wfFindFile( $t );
  			if( $img ) {
  				$thumb = $img->transform( array( 'width' => 120, 'height' => 120 ) );
+Index: includes/specials/SpecialUndelete.php
+===================================================================
+--- includes/specials/SpecialUndelete.php	(revision 5494)
++++ includes/specials/SpecialUndelete.php	(working copy)
+@@ -119,9 +119,44 @@
+ 	 * @todo Does this belong in Image for fuller encapsulation?
+ 	 */
+ 	function listFiles() {
+-		if( $this->title->getNamespace() == NS_FILE ) {
+-			$dbr = wfGetDB( DB_SLAVE );
+-			$res = $dbr->select( 'filearchive',
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			if ( $rMresult ) {
++				$dbr = wfGetDB( DB_SLAVE );
++				$res = $dbr->select( 'filearchive',
++				array(
++					'fa_id',
++					'fa_name',
++					'fa_archive_name',
++					'fa_storage_key',
++					'fa_storage_group',
++					'fa_size',
++					'fa_width',
++					'fa_height',
++					'fa_bits',
++					'fa_metadata',
++					'fa_media_type',
++					'fa_major_mime',
++					'fa_minor_mime',
++					'fa_description',
++					'fa_user',
++					'fa_user_text',
++					'fa_timestamp',
++					'fa_deleted' ),
++				array( 'fa_name' => $this->title->getDBkey() ),
++				__METHOD__,
++				array( 'ORDER BY' => 'fa_timestamp DESC' ) );
++				$ret = $dbr->resultObject( $res );
++				return $ret;
++			}
++		} else {
++			if( $this->title->getNamespace() == NS_FILE ) {
++				$dbr = wfGetDB( DB_SLAVE );
++				$res = $dbr->select( 'filearchive',
+ 				array(
+ 					'fa_id',
+ 					'fa_name',
+@@ -144,9 +179,11 @@
+ 				array( 'fa_name' => $this->title->getDBkey() ),
+ 				__METHOD__,
+ 				array( 'ORDER BY' => 'fa_timestamp DESC' ) );
+-			$ret = $dbr->resultObject( $res );
+-			return $ret;
++				$ret = $dbr->resultObject( $res );
++				return $ret;
++			}
+ 		}
++		/*op-patch|BL|2009-10-07|end*/
+ 		return null;
+ 	}
+ 
+@@ -336,13 +373,29 @@
+ 		$restoreText = $restoreAll || !empty( $timestamps );
+ 		$restoreFiles = $restoreAll || !empty( $fileVersions );
+ 
+-		if( $restoreFiles && $this->title->getNamespace() == NS_FILE ) {
+-			$img = wfLocalFile( $this->title );
+-			$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
+-			$filesRestored = $this->fileStatus->successCount;
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			if( $restoreFiles &&  $rMresult ) {
++				$img = wfLocalFile( $this->title );
++				$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
++				$filesRestored = $this->fileStatus->successCount;
++			} else {
++				$filesRestored = 0;
++			}
+ 		} else {
+-			$filesRestored = 0;
++			if( $restoreFiles && $this->title->getNamespace() == NS_FILE ) {
++				$img = wfLocalFile( $this->title );
++				$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
++				$filesRestored = $this->fileStatus->successCount;
++			} else {
++				$filesRestored = 0;
++			}
+ 		}
++		/*op-patch|BL|2009-10-07|end*/
+ 
+ 		if( $restoreText ) {
+ 			$textRestored = $this->undeleteRevisions( $timestamps, $unsuppress );
+@@ -547,10 +600,24 @@
+ 				Article::onArticleEdit( $this->title );
+ 			}
+ 
+-			if( $this->title->getNamespace() == NS_FILE ) {
+-				$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
+-				$update->doUpdate();
++			/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++			// NS_FILE is not the only Namespace now, so check them all
++			// original content is located in else statement.
++			global $smwgEnableRichMedia;
++			if( $smwgEnableRichMedia ) {
++				RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++				if ( $rMresult ) {
++					$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
++					$update->doUpdate();
++				}
++			} else {
++
++				if( $this->title->getNamespace() == NS_FILE ) {
++					$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
++					$update->doUpdate();
++				}
+ 			}
++			/*op-patch|BL|2009-10-07|end*/
+ 		} else {
+ 			// Revision couldn't be created. This is very weird
+ 			return self::UNDELETE_UNKNOWNERR;
+Index: includes/specials/SpecialUpload.php
+===================================================================
+--- includes/specials/SpecialUpload.php	(revision 5494)
++++ includes/specials/SpecialUpload.php	(working copy)
+@@ -410,7 +410,28 @@
+ 		$filtered = wfStripIllegalFilenameChars( $basename );
+ 		
+ 		/* Normalize to title form before we do any further processing */
+-		$nt = Title::makeTitleSafe( NS_FILE, $filtered );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE may not be the correct Namespace for this MIME type
++		// original content is located in else statement.
++		global $smwgEnableRichMedia, $wgNamespaceByExtension;
++		if( $smwgEnableRichMedia ) {
++			$ext = explode( '.', $filtered );
++			array_shift( $ext );
++			if( count( $ext ) ) {
++				$finalExt = $ext[count( $ext ) - 1];
++			} else {
++				$finalExt = '';
++			}
++			$ns = NS_FILE;
++			if ( isset( $finalExt ) )
++				if ( isset( $wgNamespaceByExtension[$finalExt] ) )
++					$ns = $wgNamespaceByExtension[$finalExt];
++			$nt = Title::makeTitleSafe( $ns, $filtered );
++		} else {
++			$nt = Title::makeTitleSafe( NS_FILE, $filtered );
++		}
++		/*op-patch|BL|2009-10-07|end*/
++		
+ 		if( is_null( $nt ) ) {
+ 			$resultDetails = array( 'filtered' => $filtered );
+ 			return self::ILLEGAL_FILENAME;
