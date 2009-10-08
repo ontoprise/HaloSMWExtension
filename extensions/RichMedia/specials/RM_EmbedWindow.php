@@ -27,7 +27,7 @@ class RMEmbedWindow extends UnlistedSpecialPage {
  * Entry point
  */
 function doSpecialEmbedWindow() {
-	global $wgRequest, $wgOut, $wgUser, $wgServer;
+	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgStyleVersion;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
@@ -37,7 +37,7 @@ function doSpecialEmbedWindow() {
 	$form->execute();
 	global $smwgHaloScriptPath, $smwgRMScriptPath;
 	$prototype_include = "<script type=\"text/javascript\" src=\"{$smwgHaloScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
-	$text .= <<<END
+	$text = <<<END
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <head>
@@ -102,6 +102,7 @@ class EmbedWindowForm {
 		$embedWidth = $image->getWidth();
 		$embedHeight = $image->getHeight();
 		
+		$imageToSmall = false;
 		if ($embedHeight <= 500 || $embedWidth <= 700) {
 			$imageToSmall = true;
 		}
@@ -161,7 +162,7 @@ END;
 END;
 		}
 
-		$noEmbedMsg = wfMsg( 'smw_rm_noembed', $filePath );
+		$noEmbedMsg = wfMsg( 'smw_rm_noembed', $imagePath );
 		$descText = wfMsg( 'smw_rm_embed_desctext' );
 		$descLinkAlt = wfMsg( 'smw_rm_embed_desc_link', $nt->getBaseText() );
 		$saveLinkText = wfMsg( 'smw_rm_embed_savetext' );
