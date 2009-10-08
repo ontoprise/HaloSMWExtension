@@ -9,11 +9,16 @@ HEREDOC;
 	exit( 1 );
 }
 
+$commandLine = false;
 # quit when comming from the command line, i.e. no User Agent send
 if (isset($_SERVER) && !in_array('HTTP_USER_AGENT', array_keys($_SERVER)))
-	return;
+	$comandLine = true;
 if (isset($HTTP_SERVER_VARS) && !in_array('HTTP_USER_AGENT', array_keys($HTTP_SERVER_VARS)))
-    return;
+    $commandLine = true;
+# special case, to make Halo webtests run (here we don't have a browser)
+if ($_SERVER['PHP_SELF'] == 'run-test.php')
+    $commandLine = false;
+if ($commandLine) return;
 
 /*
 This library is free software; you can redistribute it and/or
