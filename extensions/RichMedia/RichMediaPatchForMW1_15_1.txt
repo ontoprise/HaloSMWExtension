@@ -358,7 +358,7 @@ Index: includes/ImagePage.php
 +					//well the img exists but the wrong namespace was chosen
 +					$sk = $wgUser->getSkin();
 +					$correctLink = $sk->link( $this->mTitle );
-+					$wgOut->addHtml( wfMsg( 'smw_rm_wrong_namespace', $correctLink ) );
++					$wgOut->addHtml( wfMsgWikiHtml( 'smw_rm_wrong_namespace', $correctLink ) );
 +					return;
 +				} //otherwise the no file warning with upload link is displayed
 +			}
