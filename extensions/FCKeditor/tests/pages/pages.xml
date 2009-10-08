@@ -2,9 +2,9 @@
   <siteinfo>
     <sitename>Halo3wiki</sitename>
     <base>http://localhost/mediawiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.13.2</generator>
+    <generator>MediaWiki 1.15.1</generator>
     <case>first-letter</case>
-      <namespaces>
+    <namespaces>
       <namespace key="-2">Media</namespace>
       <namespace key="-1">Special</namespace>
       <namespace key="0" />
@@ -13,8 +13,8 @@
       <namespace key="3">User talk</namespace>
       <namespace key="4">Halo3wiki</namespace>
       <namespace key="5">Halo3wiki talk</namespace>
-      <namespace key="6">Image</namespace>
-      <namespace key="7">Image talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
       <namespace key="8">MediaWiki</namespace>
       <namespace key="9">MediaWiki talk</namespace>
       <namespace key="10">Template</namespace>
@@ -149,9 +149,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Glossary</title>
-    <id>14</id>
+    <id>9</id>
     <revision>
-      <id>14</id>
+      <id>9</id>
       <timestamp>2008-08-18T12:27:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -164,26 +164,44 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Berlin</title>
-    <id>55</id>
+    <id>10</id>
     <revision>
-      <id>55</id>
-      <timestamp>2009-07-24T12:33:09Z</timestamp>
+      <id>40</id>
+      <timestamp>2009-08-17T09:55:29Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the city of Berlin.  [[Category:City]] [[Located In::Germany]] [[Population::3450000]]</comment>
-      <text xml:space="preserve">This is the city of Berlin.
+      <text xml:space="preserve">__TOC__
 
+
+&lt;br&gt;
+This is the city of Berlin. [[Located In::Germany]] [[Population::3450000]] Hans Wurst &lt;includeonly&gt;huhu&lt;/includeonly&gt; lives there.
+
+
+{{padleft:xyz|10|_}}
+
+
+An ask query but in the old fasion way with ask tags::
+&lt;ask&gt;
 [[Category:City]]
-[[Located In::Germany]]
-[[Population::3450000]]</text>
+&lt;/ask&gt;
+
+__TOC__
+
+Arabic: {{#language:ar}}
+
+
+Today is: {{CURRENTDAY}}.{{CURRENTMONTH}}.{{CURRENTYEAR}}
+
+
+[[Category:Blau]] [[Category:City]] [[Category:Stadt]]</text>
     </revision>
   </page>
   <page>
     <title>Bern</title>
-    <id>56</id>
+    <id>11</id>
     <revision>
-      <id>56</id>
+      <id>11</id>
       <timestamp>2009-07-24T12:33:58Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -198,9 +216,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Bremen</title>
-    <id>58</id>
+    <id>12</id>
     <revision>
-      <id>58</id>
+      <id>12</id>
       <timestamp>2009-07-24T12:35:40Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -215,9 +233,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Graz</title>
-    <id>59</id>
+    <id>13</id>
     <revision>
-      <id>59</id>
+      <id>13</id>
       <timestamp>2009-07-24T12:36:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -232,9 +250,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Hamburg</title>
-    <id>60</id>
+    <id>14</id>
     <revision>
-      <id>60</id>
+      <id>14</id>
       <timestamp>2009-07-24T12:37:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -249,9 +267,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Linz</title>
-    <id>61</id>
+    <id>15</id>
     <revision>
-      <id>61</id>
+      <id>15</id>
       <timestamp>2009-07-24T12:38:12Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -266,9 +284,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Stuttgart</title>
-    <id>62</id>
+    <id>16</id>
     <revision>
-      <id>62</id>
+      <id>16</id>
       <timestamp>2009-07-24T12:38:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -283,9 +301,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Vienna</title>
-    <id>63</id>
+    <id>17</id>
     <revision>
-      <id>63</id>
+      <id>17</id>
       <timestamp>2009-07-24T12:39:44Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -300,9 +318,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Austria</title>
-    <id>64</id>
+    <id>18</id>
     <revision>
-      <id>64</id>
+      <id>18</id>
       <timestamp>2009-07-24T12:40:43Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -316,9 +334,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Germany</title>
-    <id>67</id>
+    <id>19</id>
     <revision>
-      <id>67</id>
+      <id>19</id>
       <timestamp>2009-07-24T12:42:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -332,9 +350,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Located In</title>
-    <id>68</id>
+    <id>20</id>
     <revision>
-      <id>68</id>
+      <id>20</id>
       <timestamp>2009-07-24T12:44:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -346,9 +364,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Has Capital</title>
-    <id>71</id>
+    <id>21</id>
     <revision>
-      <id>71</id>
+      <id>21</id>
       <timestamp>2009-07-24T12:46:25Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -359,9 +377,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Population</title>
-    <id>72</id>
+    <id>22</id>
     <revision>
-      <id>72</id>
+      <id>22</id>
       <timestamp>2009-07-24T12:47:04Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -372,9 +390,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:City</title>
-    <id>73</id>
+    <id>23</id>
     <revision>
-      <id>73</id>
+      <id>23</id>
       <timestamp>2009-07-24T12:48:27Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -385,9 +403,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:Country</title>
-    <id>74</id>
+    <id>24</id>
     <revision>
-      <id>74</id>
+      <id>24</id>
       <timestamp>2009-07-24T12:48:52Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -398,9 +416,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Switzerland</title>
-    <id>75</id>
+    <id>25</id>
     <revision>
-      <id>75</id>
+      <id>25</id>
       <timestamp>2009-07-24T12:52:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -410,6 +428,20 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
 
 [[Category:Country]]
 [[Has Capital::Bern]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Stadt</title>
+    <id>26</id>
+    <revision>
+      <id>26</id>
+      <timestamp>2009-08-11T11:05:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>This category has been created but not edited. Please enter meaningful content.</comment>
+      <text xml:space="preserve" />
     </revision>
   </page>
 </mediawiki>
