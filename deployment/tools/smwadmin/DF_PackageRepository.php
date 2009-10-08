@@ -245,7 +245,10 @@ class PackageRepository {
 				if (!array_key_exists($id, $results)) $results[$id] = array();
 				$versions = $p->xpath("version");
 				foreach($versions as $v) {
-					$results[$id][] = (string) $v->attributes()->ver;
+					$version = (string) $v->attributes()->ver;
+					$patchlevel = (string) $v->attributes()->patchlevel;
+					$patchlevel = empty($patchlevel) ? 0 : $patchlevel;
+					$results[$id][] = array($version, $patchlevel);
 				}
 
 			}

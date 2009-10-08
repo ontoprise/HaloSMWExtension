@@ -280,7 +280,8 @@ class Installer {
 				}
 			}
 			if (array_key_exists($p_id, $localPackages)) {
-				$instTag = "[installed ".Tools::addVersionSeparators($localPackages[$p_id]->getVersion())."]";
+				$patchlevel = $localPackages[$p_id]->getPatchlevel();
+				$instTag = "[installed ".Tools::addVersionSeparators(array($localPackages[$p_id]->getVersion(), $patchlevel))."]";
 
 			} else {
 				$instTag = str_repeat(" ", 16);
@@ -350,7 +351,7 @@ class Installer {
 			throw new InstallationError(DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION, "Really install lower version? Use -f (force)", $old_package);
 		}
 
-		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion()) && !$this->force) {
+		if (!is_null($old_package) && ($old_package->getVersion() == $new_package->getVersion() && $old_package->getPatchlevel() == $new_package->getPatchlevel()) && !$this->force) {
 			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 

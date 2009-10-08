@@ -126,17 +126,17 @@ class Tools {
                 } else {
                     //Change parent itself and its contents
                     $dest=$dest.basename($source);
-                    @mkdir($dest);
+                    Tools::mkpath($dest);
                     chmod($dest,$options['filePermission']);
                 }
             } else {
                 if ($source[strlen($source)-1]=='/') {
                     //Copy parent directory with new name and all its content
-                    @mkdir($dest,$options['folderPermission']);
+                     Tools::mkpath($dest);
                     chmod($dest,$options['filePermission']);
                 } else {
                     //Copy parent directory with new name and all its content
-                    @mkdir($dest,$options['folderPermission']);
+                     Tools::mkpath($dest);
                     chmod($dest,$options['filePermission']);
                 }
             }
@@ -241,11 +241,13 @@ class Tools {
 	 * @return string
 	 */
 	public static function addVersionSeparators($version) {
-		$version = trim($version);
-		if (strlen($version) == 3) {
-			return substr($version, 0, 1).".".substr($version, 1);
+		list($v, $patchlevel) = $version;
+		$patchlevel = $patchlevel === 0 ? "" : "_".$patchlevel;
+		$v = trim($v);
+		if (strlen($v) == 3) {
+			return substr($v, 0, 1).".".substr($v, 1).$patchlevel;
 		} else {
-			return substr($version, 0, 1).".".substr($version, 1,2).".".substr($version,3);
+			return substr($v, 0, 1).".".substr($v, 1,2).".".substr($v,3).$patchlevel;
 		}
 	}
 	

@@ -1,19 +1,19 @@
 <?php
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 require_once ('DF_DeployDescriptorProcessor.php');
 
@@ -42,6 +42,7 @@ class DeployDescriptor {
 	var $uninstall_scripts; // scripts which need to be run during de-installation
 	var $patches; // patches which need to be applied during installation
 	var $uninstallpatches; // patches which need to be unapplied during de-installation
+	var $patchlevel; // patchlevel of an version
 
 	// xml
 	var $dom;
@@ -67,12 +68,12 @@ class DeployDescriptor {
 	}
 
 
-	
-    public function getSuccessors() {
-        return $this->successors;
-    }
 
-	
+	public function getSuccessors() {
+		return $this->successors;
+	}
+
+
 
 	public function getConfigs() {
 		return $this->configs;
@@ -96,7 +97,7 @@ class DeployDescriptor {
 
 		// initialize (or reset) config data
 		$this->configs = array();
-		
+
 		$this->successors = array();
 		$this->install_scripts = array();
 		$this->uninstall_scripts = array();
@@ -120,7 +121,7 @@ class DeployDescriptor {
 		}
 
 		// select config elements
-		
+
 		$successors = $this->dom->xpath('/deploydescriptor/configs/successor');
 		$configElements = $this->dom->xpath($path.'/child::node()');
 		$install_scripts = $this->dom->xpath($path.'/script');
@@ -128,13 +129,13 @@ class DeployDescriptor {
 		$uninstall_patches = $this->dom->xpath("/deploydescriptor/configs/uninstall/patch");
 		$patches = $this->dom->xpath($path.'/patch');
 
-		
-	    // successors, ie. all the extensions which must succeed this one.
-        if (count($successors) > 0 && $successors != '') {
-            foreach($successors as $p) {
-                $this->successors[] = (string) $p;
-            }
-        }
+
+		// successors, ie. all the extensions which must succeed this one.
+		if (count($successors) > 0 && $successors != '') {
+			foreach($successors as $p) {
+				$this->successors[] = (string) $p;
+			}
+		}
 
 		// the config elements concerning the LocalSettings.php
 		if (count($configElements) > 0 && $configElements != '') {
@@ -180,9 +181,11 @@ class DeployDescriptor {
 
 			foreach($patches as $p) {
 				$patchFile = trim((string) $p->attributes()->file);
-                $mwVersion = trim((string) $p->attributes()->mwver);
+				$ext = trim((string) $p->attributes()->ext);
+				$from = trim((string) $p->attributes()->from);
+				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				$this->patches[] = array($mwVersion, $patchFile);
+				$this->patches[] = array(array($ext, $from, $to), $patchFile);
 			}
 		}
 
@@ -192,9 +195,11 @@ class DeployDescriptor {
 
 			foreach($uninstall_patches as $p) {
 				$patchFile = trim((string) $p->attributes()->file);
-                $mwVersion = trim((string) $p->attributes()->mwver);
+				$ext = trim((string) $p->attributes()->ext);
+				$from = trim((string) $p->attributes()->from);
+				$to = trim((string) $p->attributes()->to);
 				if (is_null($patchFile) || $patchFile == '') throw new IllegalArgument("Patch 'file'-atrribute missing");
-				$this->uninstallpatches[] = array($mwVersion, $patchFile);
+				$this->uninstallpatches[] = array(array($ext, $from, $to), $patchFile);
 			}
 		}
 	}
@@ -207,6 +212,11 @@ class DeployDescriptor {
 	// global properties
 	function getVersion() {
 		return trim((string) $this->globalElement[0]->version);
+	}
+	
+	function getPatchlevel() {
+		$patchlevel = trim((string) $this->globalElement[0]->patchlevel);
+		return empty($patchlevel) ? 0 : intval($patchlevel);
 	}
 
 	function getID() {
@@ -248,18 +258,59 @@ class DeployDescriptor {
 		}
 		return NULL;
 	}
-	
+
 	function hasDependency($ext_id) {
 		return !is_null($this->getDependency($ext_id));
 	}
 
-	function getPatches($mwver = "") {
-    	return array_filter($this->patches, create_function('$e', 'list($ver, $pf) = $e; return $ver=='.$mwver.' || empty($ver);'));
+	/**
+	 * Returns patches which are suitable for the given local packages.
+	 *
+	 * @param array of DeployDescriptor $localPackages
+	 * @return array of string (patch file paths)
+	 */
+	function getPatches($localPackages) {
+			
+		$patches = array();
+		foreach($this->patches as $patch) {
+			foreach($localPackages as $id => $lp) {
+				list($dep, $pf) = $patch;
+				list($ext_id, $from, $to) = $dep;
+				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
+					$patches[] = $pf;
+					continue;
+				}
+			    if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
+                    $patches[] = $pf;
+                }
+			}
+		}
+		return $patches;
 	}
+    
+	/**
+	 * Returns patches which are suitable for the given local packages.
+     *
+     * @param array of DeployDescriptor $localPackages
+     * @return array of string (patch file paths)
+	 */
+	function getUninstallPatches($localPackages) {
 
-	function getUninstallPatches($mwver = "") {
-        return array_filter($this->uninstallpatches, create_function('$e', 'list($ver, $pf) = $e; return $ver=='.$mwver.' || empty($ver);'));
-
+		$patches = array();
+		foreach($this->uninstallpatches as $patch) {
+			foreach($localPackages as $id => $lp) {
+				list($dep, $pf) = $patch;
+				list($ext_id, $from, $to) = $dep;
+				if (empty($ext_id) && !in_array($pf, $patches)) { // add patches without extension constraint
+					$patches[] = $pf;
+					continue;
+				}
+				if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
+					$patches[] = $pf;
+				}
+			}
+		}
+		return $patches;
 	}
 
 	function getCodefiles() {

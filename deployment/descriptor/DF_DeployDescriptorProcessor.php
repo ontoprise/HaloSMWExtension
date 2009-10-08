@@ -166,10 +166,10 @@ class DeployDescriptionProcessor {
 	 */
 	function applyPatches($userCallback) {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		$mwver = Tools::getMediawikiVersion($rootDir);
-		$mwver = intval(str_replace(".","", $mwver));
-		foreach($this->dd_parser->getPatches($mwver) as $tuple) {
-			list($mwver, $patch) = $tuple;
+		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
+		
+		foreach($this->dd_parser->getPatches($localPackages) as $patch) {
+			
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);
@@ -218,10 +218,9 @@ class DeployDescriptionProcessor {
 	 */
 	function unapplyPatches() {
 		$rootDir = self::makeUnixPath(dirname($this->ls_loc));
-		$mwver = Tools::getMediawikiVersion($rootDir);
-		$mwver = intval(str_replace(".","", $mwver));
-		foreach($this->dd_parser->getUninstallPatches($mwver) as $tuple) {
-			list($mwver, $patch) = $tuple;
+		$localPackages = PackageRepository::getLocalPackages($rootDir.'/extensions');
+		foreach($this->dd_parser->getUninstallPatches($localPackages) as $patch) {
+			
 			$instDir = self::makeUnixPath($this->dd_parser->getInstallationDirectory());
 			if (substr($instDir, -1) != '/') $instDir .= "/";
 			$patch = self::makeUnixPath($patch);

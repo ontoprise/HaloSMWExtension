@@ -111,10 +111,12 @@ class Rollback {
 			print "done.";
 				
 			// save external codefiles
-			$codefiles = $dd->getCodefiles();
+			$codefiles = $localExt->getCodefiles();
 			print "\nSaving external codefiles of ".$localExt->getID()."...";
+			
+			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles");
 			foreach($codefiles as $f) {
-				if (strpos($f, $dd->getInstallationDirectory()) === 0) continue; // ignore these
+				if (strpos($f, $localExt->getInstallationDirectory()) === 0) continue; // ignore these
 				 
 				if (is_dir($this->inst_dir."/".$f)) {
 					Tools::copy_dir($this->inst_dir."/".$f, $this->tmpDir."/stored/".$localExt->getInstallationDirectory()."_externalCodefiles/".$f);
