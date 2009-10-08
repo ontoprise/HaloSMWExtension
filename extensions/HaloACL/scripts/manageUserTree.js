@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This class provides javascript for the manageGroups tree
@@ -109,6 +109,10 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     setGroupId: function(newGroupId) {
         this.groupId = newGroupId;
+    },
+
+    setInformation: function(info){
+        this.information = info;
     },
 
     /**
@@ -259,9 +263,9 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
                 c.check();
             }
         }
-        */
+         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     /**
@@ -276,9 +280,9 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
                 c.uncheck();
             }
         }
-        */
+         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
     
     setTreeType: function(newTreeType) { 
@@ -301,7 +305,17 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
 
         sb[sb.length] = '</span></td>';
-        sb[sb.length] = '<td><span class="haloacl_manageuser_list_information_modified_group">'+this.information+'</span></td>';
+        sb[sb.length] = '<td><span';
+        sb[sb.length] = ' id="' + this.labelElId + '"';
+        sb[sb.length] = ' class="haloacl_manageuser_list_information_modified_group">';
+        sb[sb.length] = '<div id="tt1_group'+this.labelElId+this.label+'" class="haloacl_infobutton_groupdesc"  ></div>';
+        this.tt1 = new YAHOO.widget.Tooltip("tt1_group"+this.labelElId, {
+            context:this.labelElId,
+            text:this.information,
+            zIndex :10
+        });
+        sb[sb.length] = '</span></td>';
+
         sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
@@ -416,6 +430,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
 
         var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.name);
+        tmpNode.setInformation(element.description);
         // recursive part, if children were supplied
         if(element.children != null){
             YAHOO.haloacl.buildNodesFromData(tmpNode,element.children,panelid);

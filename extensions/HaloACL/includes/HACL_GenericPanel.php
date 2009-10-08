@@ -101,17 +101,19 @@ HTML;
                         //YAHOO.haloacl.removeoutside('$panelid');
                         break;
                     case 'replace':
-                        YAHOO.haloacl.genericPanelParentContents_$panelid.push({element:$('$panelid').parentNode.id, content:$('$panelid').parentNode.innerHTML});
+                        YAHOO.haloacl.togglePanel('$panelid');
 
-                        var element = $('content_$panelid');
-                        if(element.visible()){
-                           // element.hide();
-                        }else{
-                            element.show();
-                        }
+                        //YAHOO.haloacl.genericPanelParentContents_$panelid.push({element:$('$panelid').parentNode.id, content:$('$panelid').parentNode.innerHTML});
 
+//                        var element = $('content_$panelid');
+//                        if(element.visible()){
+//                           // element.hide();
+//                        }else{
+//                            element.show();
+//                        }
 
-                        $('$panelid').parentNode.innerHTML = "<span style='margin-left:30px'>&raquo;$title</span>"+$('haloacl_generic_panel_content_$panelid').innerHTML+'<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div></a>';
+                        
+                        //$('$panelid').parentNode.innerHTML = "<span style='margin-left:30px'>&raquo;$title</span>"+$('haloacl_generic_panel_content_$panelid').innerHTML+'<br /><a href="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid()"><div style="clear:left"><div class="haloacl_backbutton"></div><input type="button" onclick="javascript:YAHOO.haloacl.resumeGenericPanelContent_$panelid();" value="go back to previous window and close $title" name="useTemplate"/></div></a>';
                         //replace parent content of $(panelid) with content and back button, add back link to array
                         break;
                 }

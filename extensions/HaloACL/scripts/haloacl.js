@@ -120,7 +120,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 
     new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
         context:"createACLPanel_button",
-        text:"Create standard ACL, Create ACL template and Create ACL default user template",
+        text:gHACLLanguage.getMessage('createStdACLTooltip'),
         zIndex :10
     });
 
@@ -943,6 +943,7 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     popupClose = function(type, args) {
         //this.hide();
         this.destroy();
+
     }
     myPopup.subscribe("hide", popupClose);
 

@@ -681,7 +681,7 @@ abbr,acronym { border:0;
 .haloacl_infobutton_groupdesc {
     width:20px;
     height:20px;
-    background:url(images/gd_icon.png) no-repeat;
+    background:url(images/gd_icon.png) no-repeat 0 2px;
     float:left;
 }
 .haloacl_infobutton_rightdesc {
@@ -849,7 +849,7 @@ abbr,acronym { border:0;
 }
 .haloacl_manageuser_list_title_modified_group{
     float:left;
-    width:319px;
+    width:399px;
 }
 .haloacl_manageacl_list_information_modified{
     float:left;
@@ -857,7 +857,7 @@ abbr,acronym { border:0;
 }
 .haloacl_manageuser_list_information_modified_group{
     float:left;
-    width:130px;
+    width:51px;
 }
 
 #treeDiv_manageuser_grouplisting{

@@ -326,7 +326,9 @@ $messages['en'] = array(
    
     'hacl_tpl_already_exists' => "The template already exists",
     'hacl_setexisting_name' => "Please enter a name of an existing element",
-    'hacl_already_protected' => "The element is already protected. Please go to ManageACLs to change the ACL."
+    'hacl_already_protected' => "The element is already protected. Please go to ManageACLs to change the ACL.",
+    'hacl_showacl' => "Show ACLs",
+    'hacl_groupdescription'=> 'Group description'
 
 );
 
@@ -334,6 +336,11 @@ $messages['en'] = array(
  * German
  */
 $messages['de'] = array(
+
+
+    'hacl_groupdescription'=> 'Gruppenbeschreibung',
+
+    'hacl_showacl' => "Zeige ACLs",
 
     'hacl_tpl_already_exists' => "Ein Template mit diesem Name existiert bereits",
     'hacl_setexisting_name' => "Bitte einen Namen eines existierenden Elements eingeben",
@@ -518,7 +525,7 @@ $messages['de'] = array(
     'hacl_rightsPanel_right_fullaccess' => 'Voller Zugriff',
     'hacl_rightsPanel_right_read' => 'Lesen',
     'hacl_rightsPanel_right_edit' => 'Editieren',
-    'hacl_rightsPanel_right_editfromform' => 'Edit with form',
+    'hacl_rightsPanel_right_editfromform' => 'Edit mit Formular',
     'hacl_rightsPanel_right_WYSIWYG' => 'WYSIWYG',
     'hacl_rightsPanel_right_create' => 'Erzeugen',
     'hacl_rightsPanel_right_move' => 'Verschieben',

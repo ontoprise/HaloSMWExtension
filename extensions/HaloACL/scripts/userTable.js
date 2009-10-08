@@ -313,6 +313,7 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
             });
         }
 
+
         // handling users form user-datatable on select and deselct tab
         if(YAHOO.haloacl.debug) console.log("panelid"+panelid);
         if(YAHOO.haloacl.clickedArrayUsers[panelid] != null){
@@ -329,7 +330,8 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                             }else if(el.deletable == "user"){
                                 reallyAddUser = "groupuser";
                             }
-                        
+
+                        /*
                             // remove it from array, as its added later again with other deletable tag
                             var elementToRemove = null;
                             for(i=0;i<result.length;i++){
@@ -340,30 +342,54 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                             if(elementToRemove != null){
                                 result.splice(elementToRemove,1);
                             }
+                            */
+
                         }
                     });
                 
-                
                     if(reallyAddUser == "user"){
+                        result.each(function(tempEl){
+                            if(tempEl.name == item){
+                                result = result.without(temp);
+                            }
+                        });
+
                         var temp = new Array();
                         temp['name'] = item;
                         try{
-                            temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            if(tempEl && trim(tempEl) != ""){
+                                temp['groups'] = tempEl.groups;
+                            }else{
+                                temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            }
                         }catch(e){
                             temp['groups'] = "";
                         }
                         temp['deletable'] = "user";
                         result.push(temp);
+                        
+
                     }else if(reallyAddUser == "groupuser"){
+                        result.each(function(temp){
+                            if(temp.name == item){
+                                result = result.without(temp);
+                            }
+                        });
+
                         var temp = new Array();
                         temp['name'] = item;
                         try{
-                            temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            if(tempEl && trim(tempEl) != ""){
+                                temp['groups'] = tempEl.groups;
+                            }else{
+                                temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            }
                         }catch(e){
                             temp['groups'] = "";
                         }
                         temp['deletable'] = "groupuser";
                         result.push(temp);
+
                     }
                 }
               

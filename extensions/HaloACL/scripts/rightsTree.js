@@ -673,7 +673,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     getContentHtml: function() {
         var localTitle = this.title;
         if(localTitle == null || localTitle == "undefined"){
-            localTitle = "nameless right";
+            localTitle = gHACLLanguage.getMessage('namelessright');
         }
         var sb = [];
 
