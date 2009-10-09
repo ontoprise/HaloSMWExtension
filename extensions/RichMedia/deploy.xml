@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>121</version>
 		<id>RichMedia</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/RichMedia</instdir>
@@ -9,7 +9,7 @@
 			Store richmedia files in our your wiki
 		</description>
 		<dependencies>
-			<dependency from="1132" to="1132">MW</dependency>
+			<dependency from="1151" to="1151">MW</dependency>
 			<dependency from="183" to="183">semanticforms</dependency>
 		</dependencies>
 	</global>
@@ -40,12 +40,12 @@
 			
 			<patch file="extensions/RichMedia/patch.txt" />
 			<patch
-				file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+				file="extensions/RichMedia/RichMediaPatchForMW1_15_1.txt" />
 		</new>
 		<uninstall>
 			<patch file="extensions/RichMedia/patch.txt" />
 			<patch
-				file="extensions/RichMedia/RichMediaPatchForMW1_13_2.txt" />
+				file="extensions/RichMedia/RichMediaPatchForMW1_15_1.txt" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

@@ -44,7 +44,7 @@
 				<include name="COPYING" />
 				<include name="INSTALL" />
 				<include name="patch.txt" />
-				<include name="RichMediaPatchForMW1_13_2.txt" />
+				<include name="RichMediaPatchForMW1_15_1.txt" />
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
