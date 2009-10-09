@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="WYSIWYG">
+	<target name="build">
+		<delete dir="bin/zip" />
+		<delete file="bin/smwhalo-WYSIWYG-${version}.zip" />
+		<mkdir dir="bin/zip" />
+
+		<copy todir="bin/zip/extensions/FCKeditor/">
+			<fileset file="../*">
+				<exclude name="**/.svn, **/CVS" />
+				<exclude name="**/*deploy*" />
+                                <exclude name="**/tests" />
+			</fileset>
+		</copy>
+		<zip destfile="bin/smwhalo-WYSIWYG-${version}.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+	</target>
+</project>
