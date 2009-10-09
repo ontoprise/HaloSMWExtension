@@ -6,13 +6,15 @@
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/FCKeditor/">
-			<fileset file="../*">
+			<fileset file="../**">
 				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
-                                <exclude name="**/tests" />
+				<exclude name="**/deploy**" />
+                                <exclude name="**/tests/**" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-WYSIWYG-${version}.zip" basedir="bin/zip" />
-		<delete dir="bin/zip" />
+		<zip destfile="bin/smwhalo-WYSIWYG-${version}.zip"
+                     basedir="bin/zip"
+                />
+		<!--<delete dir="bin/zip" />-->
 	</target>
 </project>
