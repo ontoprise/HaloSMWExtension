@@ -99,11 +99,6 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip_ext/extensions/FCKeditor">
-			<fileset dir="../../FCKeditor/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
 		<copy todir="bin/zip_ext/extensions/Lockdown">
 			<fileset dir="../../Lockdown/">
 				<exclude name="**/.svn, **/CVS" />
