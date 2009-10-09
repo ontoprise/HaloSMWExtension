@@ -1,20 +1,20 @@
 <?php
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains global functions that are called from the Halo-Access-Control-List
@@ -24,7 +24,7 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
-    die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
+	die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
 $haclgDoEnableTitleCheck = haclfDisableTitlePatch();
@@ -41,39 +41,39 @@ $haclgDoEnableTitleCheck = haclfDisableTitlePatch();
  * etc.
  */
 function enableHaloACL() {
-    global $haclgIP, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
+	global $haclgIP, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
 
-    require_once("$haclgIP/includes/HACL_ParserFunctions.php");
+	require_once("$haclgIP/includes/HACL_ParserFunctions.php");
 
-    $wgExtensionFunctions[] = 'haclfSetupExtension';
-    $wgHooks['LanguageGetMagic'][] = 'haclfAddMagicWords'; // setup names for parser functions (needed here)
-    $wgExtensionMessagesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Messages.php'; // register messages (requires MW=>1.11)
+	$wgExtensionFunctions[] = 'haclfSetupExtension';
+	$wgHooks['LanguageGetMagic'][] = 'haclfAddMagicWords'; // setup names for parser functions (needed here)
+	$wgExtensionMessagesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Messages.php'; // register messages (requires MW=>1.11)
 
-    // Register special pages aliases file
-    $wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
+	// Register special pages aliases file
+	$wgExtensionAliasesFiles['HaloACL'] = $haclgIP . '/languages/HACL_Aliases.php';
 
-    ///// Set up autoloading; essentially all classes should be autoloaded!
-    $wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
-    $wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
-    $wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
-    $wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
-    $wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
-    $wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
-    $wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
-    $wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
-    $wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
-    $wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
-    $wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
+	///// Set up autoloading; essentially all classes should be autoloaded!
+	$wgAutoloadClasses['HACLEvaluator'] = $haclgIP . '/includes/HACL_Evaluator.php';
+	$wgAutoloadClasses['HaloACLSpecial'] = $haclgIP . '/specials/HACL_ACLSpecial.php';
+	$wgAutoloadClasses['HACLStorage'] = $haclgIP . '/includes/HACL_Storage.php';
+	$wgAutoloadClasses['HACLGroup'] = $haclgIP . '/includes/HACL_Group.php';
+	$wgAutoloadClasses['HACLSecurityDescriptor'] = $haclgIP . '/includes/HACL_SecurityDescriptor.php';
+	$wgAutoloadClasses['HACLRight'] = $haclgIP . '/includes/HACL_Right.php';
+	$wgAutoloadClasses['HACLWhitelist'] = $haclgIP . '/includes/HACL_Whitelist.php';
+	$wgAutoloadClasses['HACLDefaultSD'] = $haclgIP . '/includes/HACL_DefaultSD.php';
+	$wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
+	$wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
+	$wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
 
-    //--- Autoloading for exception classes ---
-    $wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
-    $wgAutoloadClasses['HACLStorageException'] = $haclgIP . '/exceptions/HACL_StorageException.php';
-    $wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
-    $wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
-    $wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
-    $wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';
+	//--- Autoloading for exception classes ---
+	$wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
+	$wgAutoloadClasses['HACLStorageException'] = $haclgIP . '/exceptions/HACL_StorageException.php';
+	$wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
+	$wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
+	$wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
+	$wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';
 
-    return true;
+	return true;
 }
 
 /**
@@ -84,86 +84,86 @@ function enableHaloACL() {
  * credits, and init some globals that are not for configuration settings.
  */
 function haclfSetupExtension() {
-    wfProfileIn('haclfSetupExtension');
-    global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits,
-    $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
+	wfProfileIn('haclfSetupExtension');
+	global $haclgIP, $wgHooks, $wgParser, $wgExtensionCredits,
+	$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
 
-    global $haclgDoEnableTitleCheck;
-    haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
-    
-    //--- Register hooks ---
-    global $wgHooks;
-    $wgHooks['userCan'][] = 'HACLEvaluator::userCan';
+	global $haclgDoEnableTitleCheck;
+	haclfRestoreTitlePatch($haclgDoEnableTitleCheck);
 
-    wfLoadExtensionMessages('HaloACL');
-    ///// Register specials pages
-    global $wgSpecialPages, $wgSpecialPageGroups;
-    $wgSpecialPages['HaloACL']      = array('HaloACLSpecial');
-    $wgSpecialPageGroups['HaloACL'] = 'hacl_group';
+	//--- Register hooks ---
+	global $wgHooks;
+	$wgHooks['userCan'][] = 'HACLEvaluator::userCan';
 
-    $wgHooks['ArticleSaveComplete'][]  = 'HACLParserFunctions::articleSaveComplete';
-    $wgHooks['ArticleSaveComplete'][]  = 'HACLDefaultSD::articleSaveComplete';
-    $wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
-    $wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
-    $wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
-    $wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
-    $wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
+	wfLoadExtensionMessages('HaloACL');
+	///// Register specials pages
+	global $wgSpecialPages, $wgSpecialPageGroups;
+	$wgSpecialPages['HaloACL']      = array('HaloACLSpecial');
+	$wgSpecialPageGroups['HaloACL'] = 'hacl_group';
+
+	$wgHooks['ArticleSaveComplete'][]  = 'HACLParserFunctions::articleSaveComplete';
+	$wgHooks['ArticleSaveComplete'][]  = 'HACLDefaultSD::articleSaveComplete';
+	$wgHooks['ArticleDelete'][]        = 'HACLParserFunctions::articleDelete';
+	$wgHooks['OutputPageBeforeHTML'][] = 'HACLParserFunctions::outputPageBeforeHTML';
+	$wgHooks['IsFileCacheable'][]      = 'haclfIsFileCacheable';
+	$wgHooks['PageRenderingHash'][]    = 'haclfPageRenderingHash';
+	$wgHooks['SpecialMovepageAfterMove'][] = 'HACLParserFunctions::articleMove';
 
 
-    global $haclgProtectProperties;
-    if ($haclgProtectProperties === true) {
-        $wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
-        $wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
-        $wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
-        $wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
-        $wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
-    }
+	global $haclgProtectProperties;
+	if ($haclgProtectProperties === true) {
+		$wgHooks['FilterQueryResults'][] = 'HACLResultFilter::filterResult';
+		$wgHooks['RewriteQuery'][]       = 'HACLQueryRewriter::rewriteAskQuery';
+		$wgHooks['RewriteSparqlQuery'][] = 'HACLQueryRewriter::rewriteSparqlQuery';
+		$wgHooks['DiffViewHeader'][]     = 'HACLEvaluator::onDiffViewHeader';
+		$wgHooks['EditFilter'][]         = 'HACLEvaluator::onEditFilter';
+	}
 
-    global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
-    if (isset($haclgNewUserTemplate) || isset($haclgDefaultQuickAccessRights)) {
-        $wgHooks['UserLoginComplete'][] = 'HACLDefaultSD::newUser';
-    }
+	global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
+	if (isset($haclgNewUserTemplate) || isset($haclgDefaultQuickAccessRights)) {
+		$wgHooks['UserLoginComplete'][] = 'HACLDefaultSD::newUser';
+	}
 
-    #	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
+	#	$wgHooks['InternalParseBeforeLinks'][] = 'SMWParserExtensions::onInternalParseBeforeLinks'; // parse annotations in [[link syntax]]
 
-/*
-	if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
+	/*
+	 if( defined( 'MW_SUPPORTS_PARSERFIRSTCALLINIT' ) ) {
 		$wgHooks['ParserFirstCallInit'][] = 'SMWParserExtensions::registerParserFunctions';
-	} else {
+		} else {
 		if ( class_exists( 'StubObject' ) && !StubObject::isRealObject( $wgParser ) ) {
-			$wgParser->_unstub();
+		$wgParser->_unstub();
 		}
 		SMWParserExtensions::registerParserFunctions( $wgParser );
+		}
+		*/
+
+	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files (only on special page requests).
+	if (stripos($wgRequest->getRequestURL(), $spns_text.":HaloACL") !== false
+	|| stripos($wgRequest->getRequestURL(), $spns_text."%3AHaloACL") !== false) {
+		$wgHooks['BeforePageDisplay'][]='haclAddHTMLHeader';
+	}else {
+		$wgHooks['BeforePageDisplay'][]='addNonSpecialPageHeader';
+
 	}
-*/
 
-    $spns_text = $wgContLang->getNsText(NS_SPECIAL);
-    // register AddHTMLHeader functions for special pages
-    // to include javascript and css files (only on special page requests).
-    if (stripos($wgRequest->getRequestURL(), $spns_text.":HaloACL") !== false
-        || stripos($wgRequest->getRequestURL(), $spns_text."%3AHaloACL") !== false) {
-        $wgHooks['BeforePageDisplay'][]='haclAddHTMLHeader';
-    }else {
-        $wgHooks['BeforePageDisplay'][]='addNonSpecialPageHeader';
-
-    }
-
-    //--- credits (see "Special:Version") ---
-    $wgExtensionCredits['other'][]= array(
+	//--- credits (see "Special:Version") ---
+	$wgExtensionCredits['other'][]= array(
         'name'=>'HaloACL',
         'version'=>HACL_HALOACL_VERSION,
         'author'=>"Thomas Schweitzer",
         'url'=>'http://smwforum.ontoprise.de',
         'description' => 'Protect the content of your wiki.');
 
-    // Register autocompletion icon
-    $wgHooks['smwhACNamespaceMappings'][] = 'haclfRegisterACIcon';
+	// Register autocompletion icon
+	$wgHooks['smwhACNamespaceMappings'][] = 'haclfRegisterACIcon';
 
-    
-    // Handle input fields of Semantic Forms
+
+	// Handle input fields of Semantic Forms
 	$wgHooks['sfCreateFormField'][] = 'haclfHandleFormField';
-    wfProfileOut('haclfSetupExtension');
-    return true;
+	wfProfileOut('haclfSetupExtension');
+	return true;
 }
 
 /**
@@ -175,87 +175,87 @@ function haclfSetupExtension() {
  * @return <type>
  */
 function addNonSpecialPageHeader(&$out) {
-    global $haclgHaloScriptPath;
+	global $haclgHaloScriptPath;
 
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
+	$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+	$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
 
-    $out->addLink(array(
+	$out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath. '/yui/container.css'
-    ));
+        ));
 
 
-    $out->addLink(array(
+        $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-    ));
+        ));
 
-    $out->addLink(array(
+        $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath.'/skins/haloacl_toolbar.css'
-    ));
-    
-    $out->addLink(array(
+        ));
+
+        $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath. '/yui/container.css'
-    ));
+        ));
 
 
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
-    #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
+        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
 
-    #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
+        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
 
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
 
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-    #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
+        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
+        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
 
-    // -------------------
-    // -------------------
-
-
-
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+        // -------------------
+        // -------------------
 
 
 
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
 
-    return true;
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+
+
+
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+
+        return true;
 }
 
 /**
@@ -266,103 +266,103 @@ function addNonSpecialPageHeader(&$out) {
  */
 function haclAddHTMLHeader(&$out) {
 
-    global $wgTitle;
+	global $wgTitle;
 
-    global $haclgHaloScriptPath;
+	global $haclgHaloScriptPath;
 
-    if ($wgTitle->getNamespace() != NS_SPECIAL) {
-        return true;
-    }else {
+	if ($wgTitle->getNamespace() != NS_SPECIAL) {
+		return true;
+	}else {
 
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-    	haclAddJSLanguageScripts($out);
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+		haclAddJSLanguageScripts($out);
 
-        // ---- SPECIAL-PAGE related stuff ---
+		// ---- SPECIAL-PAGE related stuff ---
 
-       # $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
-       # $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
+		# $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
+		# $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
+		//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
+		//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
+		//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
+		//$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
 
-        // -------------------
-        // YAHOO Part
+		// -------------------
+		// YAHOO Part
 
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
 
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
-
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
+		#$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
 
 
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
-
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
-
-        // -------------------
-        // -------------------
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
 
 
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
+		#$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
 
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+		#$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
+
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
+
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
+		$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+
+		// -------------------
+		// -------------------
 
 
 
-        $out->addLink(array(
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
+		$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+
+
+
+		$out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
-        $out->addLink(array(
+            ));
+            $out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath.'/yui/autocomplete.css'
-        ));
+            ));
 
 
-        $out->addLink(array(
+            $out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
-        ));
+            ));
 
-        //<!-- Sam Skin CSS for TabView -->
+            //<!-- Sam Skin CSS for TabView -->
 
-        return true;
-    }
+            return true;
+	}
 }
 
 /**********************************************/
@@ -375,32 +375,32 @@ function haclAddHTMLHeader(&$out) {
  * greater or equal to 100.
  */
 function haclfInitNamespaces() {
-    global $haclgNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
-    $wgNamespacesWithSubpages, $wgLanguageCode, $haclgContLang;
+	global $haclgNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
+	$wgNamespacesWithSubpages, $wgLanguageCode, $haclgContLang;
 
-    if (!isset($haclgNamespaceIndex)) {
-        $haclgNamespaceIndex = 300;
-    }
+	if (!isset($haclgNamespaceIndex)) {
+		$haclgNamespaceIndex = 300;
+	}
 
-    define('HACL_NS_ACL',       $haclgNamespaceIndex);
-    define('HACL_NS_ACL_TALK',  $haclgNamespaceIndex+1);
+	define('HACL_NS_ACL',       $haclgNamespaceIndex);
+	define('HACL_NS_ACL_TALK',  $haclgNamespaceIndex+1);
 
-    haclfInitContentLanguage($wgLanguageCode);
+	haclfInitContentLanguage($wgLanguageCode);
 
-    // Register namespace identifiers
-    if (!is_array($wgExtraNamespaces)) {
-        $wgExtraNamespaces=array();
-    }
-    $namespaces = $haclgContLang->getNamespaces();
-    $namespacealiases = $haclgContLang->getNamespaceAliases();
-    $wgExtraNamespaces = $wgExtraNamespaces + $namespaces;
-    $wgNamespaceAliases = $wgNamespaceAliases + $namespacealiases;
+	// Register namespace identifiers
+	if (!is_array($wgExtraNamespaces)) {
+		$wgExtraNamespaces=array();
+	}
+	$namespaces = $haclgContLang->getNamespaces();
+	$namespacealiases = $haclgContLang->getNamespaceAliases();
+	$wgExtraNamespaces = $wgExtraNamespaces + $namespaces;
+	$wgNamespaceAliases = $wgNamespaceAliases + $namespacealiases;
 
-    // Support subpages for the namespace ACL
-    $wgNamespacesWithSubpages = $wgNamespacesWithSubpages + array(
-        HACL_NS_ACL => true,
-        HACL_NS_ACL_TALK => true
-    );
+	// Support subpages for the namespace ACL
+	$wgNamespacesWithSubpages = $wgNamespacesWithSubpages + array(
+	HACL_NS_ACL => true,
+	HACL_NS_ACL_TALK => true
+	);
 }
 
 
@@ -412,8 +412,8 @@ function haclfInitNamespaces() {
  * Set up (possibly localised) names for HaloACL
  */
 function haclfAddMagicWords(&$magicWords, $langCode) {
-//	$magicWords['ask']     = array( 0, 'ask' );
-    return true;
+	//	$magicWords['ask']     = array( 0, 'ask' );
+	return true;
 }
 
 /**
@@ -423,26 +423,26 @@ function haclfAddMagicWords(&$magicWords, $langCode) {
  * can be initialised much later when they are actually needed.
  */
 function haclfInitContentLanguage($langcode) {
-    global $haclgIP, $haclgContLang;
-    if (!empty($haclgContLang)) {
-        return;
-    }
-    wfProfileIn('haclfInitContentLanguage');
+	global $haclgIP, $haclgContLang;
+	if (!empty($haclgContLang)) {
+		return;
+	}
+	wfProfileIn('haclfInitContentLanguage');
 
-    $haclContLangFile = 'HACL_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
-    $haclContLangClass = 'HACLLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-    if (file_exists($haclgIP . '/languages/'. $haclContLangFile . '.php')) {
-        include_once( $haclgIP . '/languages/'. $haclContLangFile . '.php' );
-    }
+	$haclContLangFile = 'HACL_Language' . str_replace( '-', '_', ucfirst( $langcode ) );
+	$haclContLangClass = 'HACLLanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+	if (file_exists($haclgIP . '/languages/'. $haclContLangFile . '.php')) {
+		include_once( $haclgIP . '/languages/'. $haclContLangFile . '.php' );
+	}
 
-    // fallback if language not supported
-    if ( !class_exists($haclContLangClass)) {
-        include_once($haclgIP . '/languages/HACL_LanguageEn.php');
-        $haclContLangClass = 'HACLLanguageEn';
-    }
-    $haclgContLang = new $haclContLangClass();
+	// fallback if language not supported
+	if ( !class_exists($haclContLangClass)) {
+		include_once($haclgIP . '/languages/HACL_LanguageEn.php');
+		$haclContLangClass = 'HACLLanguageEn';
+	}
+	$haclgContLang = new $haclContLangClass();
 
-    wfProfileOut('haclfInitContentLanguage');
+	wfProfileOut('haclfInitContentLanguage');
 }
 
 /**
@@ -463,52 +463,54 @@ function haclfInitContentLanguage($langcode) {
  * 			...if the user does not exist.
  */
 function haclfGetUserID($user = null) {
-    $userID = false;
-    $userName = '';
-    if ($user === null) {
-    // no user given
-    // => the current user's ID is requested
-        global $wgUser;
-        $userID = $wgUser->getId();
-        $userName = $wgUser->getName();
-    } else if (is_int($user) || is_numeric($user)) {
-        // user-id given
-            $userID = (int) $user;
-        } else if (is_string($user)) {
-                if ($user == '#') {
-                // Special name for all registered users
-                    $userID = -1;
-                } else if ($user == '*') {
-                    // Anonymous user
-                        $userID = 0;
-                    } else {
-                    // name of user given
-                        $userID = User::idFromName($user);
-                        if (!$userID) {
-                            $userID = false;
-                        }
-                        $userName = $user;
-                    }
-            } else if (is_a($user, 'User')) {
-                // User-object given
-                    $userID = $user->getId();
-                    $userName = $user->getName();
-                }
+	$userID = false;
+	$userName = '';
+	if ($user === null) {
+		// no user given
+		// => the current user's ID is requested
+		global $wgUser;
+		$userID = $wgUser->getId();
+		$userName = $wgUser->getName();
+	} else if (is_int($user) || is_numeric($user)) {
+		// user-id given
+		$userID = (int) $user;
+	} else if (is_string($user)) {
+		if ($user == '#') {
+			// Special name for all registered users
+			$userID = -1;
+		} else if ($user == '*') {
+			// Anonymous user
+			$userID = 0;
+		} else {
+			// name of user given
+			$etc = haclfDisableTitlePatch();
+			$userID = User::idFromName($user);
+			haclfRestoreTitlePatch($etc);
+			if (!$userID) {
+				$userID = false;
+			}
+			$userName = $user;
+		}
+	} else if (is_a($user, 'User')) {
+		// User-object given
+		$userID = $user->getId();
+		$userName = $user->getName();
+	}
 
-    if ($userID === 0) {
-    //Anonymous user
-        $userName = '*';
-    } else if ($userID === -1) {
-        // all registered users
-            $userName = '#';
-        }
+	if ($userID === 0) {
+		//Anonymous user
+		$userName = '*';
+	} else if ($userID === -1) {
+		// all registered users
+		$userName = '#';
+	}
 
-    if ($userID === false) {
-    // invalid user
-        throw new HACLException(HACLException::UNKOWN_USER,'"'.$user.'"');
-    }
+	if ($userID === false) {
+		// invalid user
+		throw new HACLException(HACLException::UNKOWN_USER,'"'.$user.'"');
+	}
 
-    return array($userID, $userName);
+	return array($userID, $userName);
 
 }
 
@@ -523,7 +525,7 @@ function haclfGetUserID($user = null) {
  * 		<false>, otherwise
  */
 function haclfIsFileCacheable($article) {
-    return $article->getTitle()->getNamespace() != HACL_NS_ACL;
+	return $article->getTitle()->getNamespace() != HACL_NS_ACL;
 }
 
 /**
@@ -537,19 +539,19 @@ function haclfIsFileCacheable($article) {
  */
 function haclfPageRenderingHash($hash) {
 
-    global $wgUser, $wgTitle;
-    if (is_object($wgUser)) {
-        $hash .= '!'.$wgUser->getId();
-    }
-    if (is_object($wgTitle)) {
-        if ($wgTitle->getNamespace() == HACL_NS_ACL) {
-        // How often do we have to say that articles in the namespace ACL
-        // can not be cached ?
-            $hash .= '!'.wfTimestampNow();
-        }
+	global $wgUser, $wgTitle;
+	if (is_object($wgUser)) {
+		$hash .= '!'.$wgUser->getId();
+	}
+	if (is_object($wgTitle)) {
+		if ($wgTitle->getNamespace() == HACL_NS_ACL) {
+			// How often do we have to say that articles in the namespace ACL
+			// can not be cached ?
+			$hash .= '!'.wfTimestampNow();
+		}
 
-    }
-    return true;
+	}
+	return true;
 }
 
 /**
@@ -564,10 +566,10 @@ function haclfPageRenderingHash($hash) {
  * 		haclfRestoreTitlePatch().
  */
 function haclfDisableTitlePatch() {
-    global $haclgEnableTitleCheck;
-    $etc = $haclgEnableTitleCheck;
-    $haclgEnableTitleCheck = false;
-    return $etc;
+	global $haclgEnableTitleCheck;
+	$etc = $haclgEnableTitleCheck;
+	$haclgEnableTitleCheck = false;
+	return $etc;
 }
 
 /**
@@ -577,8 +579,8 @@ function haclfDisableTitlePatch() {
  * 		The former state of the title patch.
  */
 function haclfRestoreTitlePatch($etc) {
-    global $haclgEnableTitleCheck;
-    $haclgEnableTitleCheck = $etc;
+	global $haclgEnableTitleCheck;
+	$haclgEnableTitleCheck = $etc;
 }
 
 /**
@@ -600,20 +602,20 @@ function haclfRestoreTitlePatch($etc) {
  *
  */
 function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
-    $etc = haclfDisableTitlePatch();
-    $t = Title::newFromText($articleName, $defaultNS);
-    haclfRestoreTitlePatch($etc);
-    if (is_null($t)) {
-        return 0;
-    }
-    $id = $t->getArticleID();
-    if ($id === 0) {
-        $id = $t->getArticleID(GAID_FOR_UPDATE);
-    }
-    if ($id == 0 && $t->getNamespace() == NS_SPECIAL) {
-        $id = HACLStorage::getDatabase()->idForSpecial($articleName);
-    }
-    return $id;
+	$etc = haclfDisableTitlePatch();
+	$t = Title::newFromText($articleName, $defaultNS);
+	haclfRestoreTitlePatch($etc);
+	if (is_null($t)) {
+		return 0;
+	}
+	$id = $t->getArticleID();
+	if ($id === 0) {
+		$id = $t->getArticleID(GAID_FOR_UPDATE);
+	}
+	if ($id == 0 && $t->getNamespace() == NS_SPECIAL) {
+		$id = HACLStorage::getDatabase()->idForSpecial($articleName);
+	}
+	return $id;
 
 }
 
@@ -621,28 +623,28 @@ function haclfArticleID($articleName, $defaultNS = NS_MAIN) {
  * Add appropriate JS language script
  */
 function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
-    global $haclgIP, $haclgHaloScriptPath, $wgUser;
+	global $haclgIP, $haclgHaloScriptPath, $wgUser;
 
-    // content language file
-    $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_Language.js'.  '"></script>', $mode, $namespace, $pages);
-    $lng = '/scripts/Language/HaloACL_Language';
-    if (isset($wgUser)) {
-        $lng .= ucfirst($wgUser->getOption('language')).'.js';
-        if (file_exists($haclgIP . $lng)) {
-            $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
-        } else {
-            $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
-        }
-    } else {
-        $jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
-    }
+	// content language file
+	$jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_Language.js'.  '"></script>', $mode, $namespace, $pages);
+	$lng = '/scripts/Language/HaloACL_Language';
+	if (isset($wgUser)) {
+		$lng .= ucfirst($wgUser->getOption('language')).'.js';
+		if (file_exists($haclgIP . $lng)) {
+			$jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . $lng .  '"></script>', $mode, $namespace, $pages);
+		} else {
+			$jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
+		}
+	} else {
+		$jsm->addScript('<script type="text/javascript" src="'.$haclgHaloScriptPath . '/scripts/Language/HaloACL_LanguageEn.js'.  '"></script>', $mode, $namespace, $pages);
+	}
 
 }
 
 function haclfRegisterACIcon(& $namespaceMappings) {
-    global $haclgIP;
-    $namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
-    return true;
+	global $haclgIP;
+	$namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
+	return true;
 }
 
 $haclgEncryptionKey = "Es war einmal ein Hase.";
@@ -682,7 +684,7 @@ function haclfHandleFormField($form_field, $cur_value, $form_submitted) {
 			return true;
 		}
 		if ($property_title->exists()) {
-			$form_field->is_disabled = false;			
+			$form_field->is_disabled = false;
 			if (! $property_title->userCan('propertyread')) {
 				if ($form_submitted) {
 					$cur_value = haclfDecrypt($cur_value);
