@@ -76,11 +76,11 @@ $wgAjaxExportList[] = 'wfSajaxTemplateListFCKeditor';
 $wgAjaxExportList[] = 'wfSajaxFormForTemplateFCKeditor';
 
 $wgExtensionCredits['other'][] = array(
-"name" => "FCKeditor extension",
+"name" => "WYSIWYG extension",
 "author" => "[http://ckeditor.com FCKeditor] (inspired by the code written by Mafs [http://www.mediawiki.org/wiki/Extension:FCKeditor_%28by_Mafs%29]) extended by [http://www.ontoprise.de Ontoprise]",
-"version" => 'fckeditor/mw-extension version $Rev$ 2008, FCK 2.6.4 Build 21629',
-"url" => "http://meta.wikimedia.org/wiki/FCKeditor",
-"description" => "FCKeditor extension"
+"version" => '1.2, FCK 2.6.4 Build 21629',
+"url" => "http://smwforum.ontoprise.com/smwforum/index.php/Help%3AWYSIWYG_Extension_1.2",
+"description" => "FCKeditor for SemanticMediawiki"
 );
 
 $fckeditor = new FCKeditor("fake");
