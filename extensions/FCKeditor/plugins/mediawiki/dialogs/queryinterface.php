@@ -155,6 +155,29 @@ function LoadSelection() {
 	//window.parent.SetSelectedTab(\'SRC\');
 }
 
+function InsertDataInTextarea(ask) {
+        var myArea = FCK.EditingArea.Textarea;
+
+        if ( oEditor.FCKBrowserInfo.IsIE ) {
+            if (document.selection) {
+                // The current selection
+                var range = document.selection.createRange();
+                // Well use this as a "dummy"
+                var stored_range = range.duplicate();
+                // Select all text
+                stored_range.moveToElementText( myArea );
+                // Now move "dummy" end point to end point of original range
+                stored_range.setEndPoint( \'EndToEnd\', range );
+                // Now we can calculate start and end points
+                myArea.selectionStart = stored_range.text.length - range.text.length;
+            }
+        }
+        if (myArea.selectionStart != undefined) {
+            var before = myArea.value.substr(0, myArea.selectionStart);
+            var after = myArea.value.substr(myArea.selectionStart);
+            myArea.value = before + ask + after;
+        }
+}
 
 // the OK button was hit
 function Ok(enterHit) {
@@ -183,6 +206,12 @@ function Ok(enterHit) {
 	}
 
 	if ( !oAskSpan ) {
+                // if we are in source code mode, insert the query at the
+                // current cursor position
+                if (FCK.EditMode == oEditor.FCK_EDITMODE_SOURCE) {
+                     InsertDataInTextarea(ask);
+                     return true;
+                }
 		oAskSpan = FCK.EditorDocument.createElement( \'SPAN\' ) ;
 		oAskSpan.className = \'fck_mw_askquery\' ;
 	}

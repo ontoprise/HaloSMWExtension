@@ -48,7 +48,7 @@ tbButton = new FCKToolbarButton( 'MW_Special', 'Special Tag', 'Insert/Edit Speci
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_special.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Special', tbButton ) ;
 
-var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface' ) ;
+var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface', null, true ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
 FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
 
