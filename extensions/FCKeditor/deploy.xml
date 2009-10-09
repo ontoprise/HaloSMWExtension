@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>120</version>
+		<id>WYSIWYG</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/FCKeditor</instdir>
+		<description>
+			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.
+		</description>
+		<dependencies>
+			<dependency from="145" to="145">SMWHalo</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+
+		<file loc="extensions/FCKeditor/deploy.xml" />
+		<!-- TODO: add all others -->
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+
+	<configs>
+		<new>
+			<require name="wysiwyg"
+				file="extensions/FCKeditor/FCKeditor.php" />
+		</new>
+	</configs>
+</deploydescriptor>
