@@ -1,12 +1,34 @@
+Index: includes/Article.php
+===================================================================
+--- includes/Article.php	(revision 5486)
++++ includes/Article.php	(working copy)
+@@ -3552,9 +3552,15 @@
+ 
+ 		$popts = $wgOut->parserOptions();
+ 		$popts->setTidy(true);
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++        $popts->setParsingContext("Main article");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$popts->enableLimitReport();
+-		$parserOutput = $wgParser->parse( $text, $this->mTitle,
+-			$popts, true, true, $this->getRevIdFetched() );
++		$parserOutput = $wgParser->parse($text, $this->mTitle,
++                                        $popts, true, true, $this->getRevIdFetched() );
++		/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++       $popts->setParsingContext("");
++		/*op-patch|TS|2009-06-19|end*/
+ 		$popts->setTidy(false);
+ 		$popts->enableLimitReport( false );
+ 		if( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 4292)
+--- includes/Namespace.php	(revision 5486)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,13 @@
  	 */
  	public static function isMovable( $index ) {
  		global $wgAllowImageMoving;
--		return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
+-		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
 +		/*op-patch|BL|2009-07-13|RichMedia|AdditionalNamespaceCheck|start*/
 +		// NS_IMAGE is not the only Namespace now, so check them all
 +		// content was:
@@ -17,100 +39,43 @@ Index: includes/Namespace.php
  	}
  
  	/**
-Index: includes/Sanitizer.php
-===================================================================
---- includes/Sanitizer.php	(revision 3939)
-+++ includes/Sanitizer.php	(working copy)
-@@ -717,7 +717,11 @@
- 
- 			$attribs[] = "$encAttribute=\"$encValue\"";
- 		}
-+		if ( !wfRunHooks( 'SanitizerAfterFixTagAttributes', array( $text, $element, &$attribs ) ) ) {
-+		    return '';
-+		}
- 		return count( $attribs ) ? ' ' . implode( ' ', $attribs ) : '';
-+				
- 	}
- 
- 	/**
-Index: includes/Article.php
-===================================================================
---- includes/Article.php    (revision 4126)
-+++ includes/Article.php    (working copy)
-@@ -3379,9 +3379,15 @@
- 
-        $popts = $wgOut->parserOptions();
-        $popts->setTidy(true);
-+/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+       $popts->setParsingContext("Main article");
-+/*op-patch|TS|2009-06-19|end*/
-        $popts->enableLimitReport();
--       $parserOutput = $wgParser->parse( $text, $this->mTitle,
--           $popts, true, true, $this->getRevIdFetched() );
-+       $parserOutput = $wgParser->parse($text, $this->mTitle,
-+                                        $popts, true, true, $this->getRevIdFetched() );
-+/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+       $popts->setParsingContext("");
-+/*op-patch|TS|2009-06-19|end*/
-        $popts->setTidy(false);
-        $popts->enableLimitReport( false );
-        if ( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php   (revision 4126)
-+++ includes/parser/ParserOptions.php   (working copy)
-@@ -29,6 +29,9 @@
-    var $mTemplateCallback;          # Callback for template fetching
-    var $mEnableLimitReport;         # Enable limit report in an HTML comment on output
-    var $mTimestamp;                 # Timestamp used for {{CURRENTDAY}} etc.
-+/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+   var $mParsingContext;           # Reason/context why the parser has been invoked
-+/*op-patch|TS|2009-06-19|end*/
+--- includes/parser/ParserOptions.php	(revision 5486)
++++ includes/parser/ParserOptions.php	(working copy)
+@@ -30,6 +30,9 @@
+ 	var $mTemplateCallback;          # Callback for template fetching
+ 	var $mEnableLimitReport;         # Enable limit report in an HTML comment on output
+ 	var $mTimestamp;                 # Timestamp used for {{CURRENTDAY}} etc.
++	/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++    var $mParsingContext;           # Reason/context why the parser has been invoked
++	/*op-patch|TS|2009-06-19|end*/
+ 	var $mExternalLinkTarget;        # Target attribute for external links
  
-    var $mUser;                      # Stored user object, just used to initialise the skin
- 
-@@ -49,7 +52,10 @@
-    function getRemoveComments()                { return $this->mRemoveComments; }
-    function getTemplateCallback()              { return $this->mTemplateCallback; }
-    function getEnableLimitReport()             { return $this->mEnableLimitReport; }
--
-+/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
+ 	var $mUser;                      # Stored user object, just used to initialise the skin
+@@ -60,7 +63,11 @@
+ 	function getIsPreview()                     { return $this->mIsPreview; }
+ 	function getIsSectionPreview()              { return $this->mIsSectionPreview; }
+   function getIsPrintable()            { return $this->mIsPrintable; }
+-  
++  	
++  /*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
 +   function getParsingContext()                { return $this->mParsingContext; }
-+/*op-patch|TS|2009-06-19|end*/
++  /*op-patch|TS|2009-06-19|end*/
 +   
-    function getSkin() {
-        if ( !isset( $this->mSkin ) ) {
-            $this->mSkin = $this->mUser->getSkin();
-@@ -91,7 +97,10 @@
-    function setTemplateCallback( $x )          { return wfSetVar( $this->mTemplateCallback, $x ); }
-    function enableLimitReport( $x = true )     { return wfSetVar( $this->mEnableLimitReport, $x ); }
-    function setTimestamp( $x )                 { return wfSetVar( $this->mTimestamp, $x ); }
--
-+/*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
-+   function setParsingContext($pc)             { return wfSetVar( $this->mParsingContext, $pc); }
-+/*op-patch|TS|2009-06-19|end*/
+ 	function getSkin() {
+ 		if ( !isset( $this->mSkin ) ) {
+ 			$this->mSkin = $this->mUser->getSkin();
+@@ -108,7 +115,11 @@
+ 	function setIsPreview( $x )                 { return wfSetVar( $this->mIsPreview, $x ); }
+ 	function setIsSectionPreview( $x )          { return wfSetVar( $this->mIsSectionPreview, $x ); }
+   function setIsPrintable( $x )        { return wfSetVar( $this->mIsPrintable, $x ); }
+-  
++  	
++    /*op-patch|TS|2009-06-19|SMWHalo|Parsing context|start*/
++    function setParsingContext($pc)             { return wfSetVar( $this->mParsingContext, $pc); }
++	/*op-patch|TS|2009-06-19|end*/
 +   
-    function __construct( $user = null ) {
-        $this->initialiseFromUser( $user );
-    }
-Index: extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php
-===================================================================
---- extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php	(revision 4126)
-+++ extensions/SemanticMediaWiki/specials/Export/SMW_SpecialOWLExport.php	(working copy)
-@@ -740,6 +740,15 @@
- 		if ( '' == $this->post_ns_buffer ) return; // nothing to flush (every non-empty pre_ns_buffer also requires a non-empty post_ns_buffer)
- 		if ( (0 != $this->delay_flush) && !$force ) return; // wait a little longer
- 
-+/*op-patch|TS|2009-06-30|SMWHalo|Remove newline at beginning of XML export|start*/
-+		// Sometimes the first line of the XML-export contains a newline
-+		// => remove it
-+		$obcontent = ob_get_contents();
-+		if ($obcontent == "\r\n") {
-+			ob_clean();
-+		}
-+/*op-patch|TS|2009-06-30|end*/
-+		
- 		print $this->pre_ns_buffer;
- 		$this->pre_ns_buffer = '';
- 		foreach ($this->extra_namespaces as $nsshort => $nsuri) {
-
+ 	function __construct( $user = null ) {
+ 		$this->initialiseFromUser( $user );
+ 	}
