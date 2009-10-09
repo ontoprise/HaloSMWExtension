@@ -29,7 +29,7 @@
  */
 
 // Rename the "Source" buttom to "Wikitext".
-FCKToolbarItems.RegisterItem( 'Source', new FCKToolbarButton( 'Source', 'Wikitext', null, FCK_TOOLBARITEM_ICONTEXT, true, true, 1 ) ) ;
+FCKToolbarItems.RegisterItem( 'Source', new FCKToolbarButton( 'Source', 'Wikitext', null, null, true, true, 1 ) ) ;
 
 // Register our toolbar buttons.
 var tbButton = new FCKToolbarButton( 'MW_Template', 'Template', 'Insert/Edit Template' ) ;
@@ -834,7 +834,8 @@ FCK.DataProcessor =
                             ClearEventHandler4AnnotationBox();
                             SetEventHandler4AnnotationBox();
                         }
-
+                        // change the toolbar back to WYSIWYG options
+                        fckToolbarSwitch.Restore();
 		}
 
 		if ( FCK.EditMode == FCK_EDITMODE_SOURCE )
@@ -855,6 +856,9 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
+
+                        // Simple toolbar for Wiki source mode
+                        FCK.ToolbarSet.Load('WikiSource');
                     
                         // if Semantic Toolbar is present, change the Event handlers when switching
                         // between wikitext <-> wysiwyg, also hide the context popup because the user

@@ -7,20 +7,48 @@
 FCKConfig.mwScriptPath = '' ;     
 
 // Setup the editor toolbar.
-FCKConfig.ToolbarSets['Wiki'] = [
-	['Source'],
-	['Cut','Copy','Paste',/*'PasteText','PasteWord',*/'-','Print'],
-	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	['SpecialChar','Table','Image','Rule'],
-	['MW_Special',/* 'MW_Ref',*/ 'MW_Math','MW_Edit', 'Fullscreen', 'About'],
+FCKConfig.ToolbarSets['WikiEnhanced'] = [
+	['Cut','Copy','Paste', /*'PasteText','PasteWord',*/ '-', 'Undo','Redo', '-', 'SelectAll','RemoveFormat'],
+        [/*'Print',*/ 'Rule', '-','TextColor', 'BGColor'],
+        ['Find','Replace'],
+	['MW_Special',/* 'MW_Ref',*/ 'MW_Math'],
+        ['MW_Edit', 'Fullscreen'],
 	'/',
-	['FontFormat', 'Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
-	['OrderedList','UnorderedList', 'Blockquote'],
-//	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
+        ['Bold','Italic','Underline'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
+        ['OrderedList','UnorderedList', 'Blockquote'],
+        ['SpecialChar','Table','Image'],
+        ['MW_MediaUpload', 'SMW_UseWebService'],
+        ['SMW_Annotate', 'ToolbarSwitch'],
+        '/',
+	['FontFormat', '-', 'Source'],
+        ['StrikeThrough','Subscript','Superscript'],
 	['Link','Unlink','Anchor'],
-//	['TextColor','BGColor'],
-	[/*'FitWindow',*/ 'MW_Template','MW_MediaUpload', 'SMW_UseWebService','SMW_QueryInterface', 'SMW_Annotate']
+	['MW_Template','SMW_QueryInterface'],
+        ['About']
+
 ] ;
+
+FCKConfig.ToolbarSets['Wiki'] = [
+	['Bold','Italic','Underline'],
+        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
+        ['UnorderedList', 'SpecialChar', 'Subscript','Superscript', '-','Blockquote', 'Anchor', 'Rule'],
+	['Cut','Copy','Paste'],
+	['Fullscreen', 'About'],
+	'/',
+	['FontFormat', '-','Source'],
+        ['OrderedList', 'TextColor','BGColor'],
+        ['Link','Unlink', '-', 'Table', 'Image'],
+        ['Undo','Redo'],
+	['ToolbarSwitch']
+] ;
+
+FCKConfig.ToolbarSets['WikiSource'] = [
+	['Source', '-', 'SelectAll'],
+        ['SMW_QueryInterface', 'SMW_UseWebService'],
+        ['SMW_Annotate', 'Fullscreen', 'About']
+] ;
+
 
 // Load the extension plugins.
 FCKConfig.PluginsPath = FCKConfig.EditorPath + '../plugins/' ;
@@ -28,6 +56,7 @@ FCKConfig.Plugins.Add( 'mediawiki' ) ;
 FCKConfig.Plugins.Add( 'mediaupload' ) ;
 FCKConfig.Plugins.Add( 'mwedit' ) ;
 FCKConfig.Plugins.Add( 'fullscreen' ) ;
+FCKConfig.Plugins.Add( 'toolbarswitch' ) ;
 
 FCKConfig.ForcePasteAsPlainText = true ;
 FCKConfig.FontFormats	= 'p;h1;h2;h3;h4;h5;h6;pre' ;
