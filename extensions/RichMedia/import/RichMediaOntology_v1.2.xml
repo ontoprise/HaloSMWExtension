@@ -422,7 +422,7 @@
 | align=&quot;center&quot; |&lt;span style=&quot;display: none;&quot;&gt;{{{1}}}&lt;/span&gt;&lt;span class=&quot;plainlinks&quot; title=&quot;This indicates the category of the file.&quot;&gt;{{RMCategoryLinkIcon|{{{1}}}}}&lt;/span&gt;
 |&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
 |[[{{{3}}}]]
-|&lt;span style=&quot;display: none;&quot;&gt;{{{4}}}&lt;/span&gt;{{{4}}}
+|&lt;span style=&quot;display: none;&quot;&gt;{{#formatdate:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; style=&quot;padding:0px 10px 0px 0px;&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
     </revision>
@@ -515,7 +515,7 @@
 ! style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Category 
 ! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Filename 
 ! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Uploaded by 
-! class=&quot;unsortable&quot; style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Creation date 
+! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Creation date 
 ! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Metainformation 
 ! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Delete
 |-
@@ -526,6 +526,7 @@
   | format=template
   | template=RMListInnerTable
   | link=none
+  | limit=250
 }}
 |}
 {| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);empty-cells:show&quot;
