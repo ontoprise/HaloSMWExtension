@@ -919,7 +919,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5352)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5506)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -987,12 +987,23 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        $form_is_disabled = false;
        $form_text = "";
        // show "Your IP address will be recorded" warning if user is
-@@ -291,11 +323,16 @@
+@@ -269,6 +301,9 @@
+       $tif = new SFTemplateInForm();
+       $start_position = 0;
+       $template_text = "";
++      /*op-patch|BL|2009-10-09|CollapsingForms|AddCollapsibleTag|start*/
++      $collapsible = false;
++      /*op-patch|BL|2009-10-09|end*/
+       // the append is there to ensure that the original array doesn't get
+       // modified; is it necessary?
+       $section = " " . $form_def_sections[$section_num];
+@@ -291,11 +326,17 @@
            $query_template_name = str_replace('.', '_', $query_template_name);
            $chooser_name = false;
            $chooser_caption = false;
-+          $collapsible = false;
++          /*op-patch|BL|2009-08-28|CollapsingForms|AddForceOpen|start*/
 +          $force_open = false;
++          /*op-patch|BL|2009-10-09|end*/
  	  // cycle through the other components
            for ($i = 2; $i < count($tag_components); $i++) {
              $component = $tag_components[$i];
@@ -1004,7 +1015,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              $sub_components = explode('=', $component);
              if (count($sub_components) == 2) {
                if ($sub_components[0] == 'label') {
-@@ -306,6 +343,11 @@
+@@ -306,6 +347,11 @@
                } elseif ($sub_components[0] == 'chooser caption') {
                  $chooser_caption = $sub_components[1];
                }
@@ -1016,7 +1027,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              }
            }
            // if this is the first instance, add the label in the form
-@@ -316,8 +358,43 @@
+@@ -316,8 +362,47 @@
                $form_text .= "<fieldset [[placeholder]] haschooser=true>\n";
              else
                 $form_text .= "<fieldset>\n";
@@ -1034,8 +1045,12 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +              $cookie_json = $_COOKIE['CollapsingForm'];
 +              if ($cookie_json)
 +                $cookie_obj = json_decode($cookie_json,true);
-+              if (isset($cookie_obj) && array_key_exists($smwgRMActFormName.'_sec_'.$section_num, $cookie_obj))
++              if (isset($cookie_obj) && array_key_exists($smwgRMActFormName.'_sec_'.$section_num, $cookie_obj)) {
 +                $cookie_open = $cookie_obj[$smwgRMActFormName.'_sec_'.$section_num];
++              }
++              else {
++              	$cookie_open = false;
++              }
 +              if ($force_open || $cookie_open) {
 +                $section_visibility ='';
 +                $img = 'minus';
@@ -1062,7 +1077,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            $template_text .= "{{" . $tif->template_name;
            $all_fields = $tif->getAllFields();
            // remove template tag
-@@ -622,10 +699,18 @@
+@@ -622,10 +707,18 @@
              if ($is_hidden) {
                $new_text = SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
              } else {
@@ -1085,7 +1100,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                $sfgTabIndex++;
                $sfgFieldNum++;
                list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('!free_text!', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
-@@ -857,10 +942,12 @@
+@@ -857,10 +950,12 @@
                  // if the date is hidden, cur_value will already be set
                  // to the default value
                  ($cur_value == '' || $cur_value == 'current user')) {
@@ -1100,7 +1115,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              }
              list($new_text, $new_javascript_text) = $this->formFieldHTML($form_field, $cur_value);
  
-@@ -869,7 +956,8 @@
+@@ -869,7 +964,8 @@
              // if this was field was disabled due to being 'restricted',
              // add a hidden field holding the value of this field, because
              // disabled inputs for some reason don't submit their value
@@ -1110,7 +1125,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                if ($field_name == 'free text' || $field_name == '<freetext>') {
                  $new_text .= SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
                } else {
-@@ -1003,9 +1091,19 @@
+@@ -1003,9 +1099,19 @@
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
              }
@@ -1131,7 +1146,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            }
            $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
          // =====================================================
-@@ -1093,7 +1191,11 @@
+@@ -1093,7 +1199,11 @@
        } else {
          $form_text .= $section;
        }
@@ -1144,7 +1159,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      } // end for
  
      // if it wasn't included in the form definition, add the
-@@ -1133,24 +1235,54 @@
+@@ -1133,24 +1243,54 @@
      } else {
        $free_text = null;
      }
@@ -1202,7 +1217,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      }
      // now that we have it, substitute free text into the form and page
      $form_text = str_replace('!free_text!', $free_text, $form_text);
-@@ -1261,7 +1393,10 @@
+@@ -1261,7 +1410,10 @@
      $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
      $javascript_text .= SFFormUtils::autocompletionJavascript();
      if ($free_text_was_included && $showFCKEditor > 0) {
