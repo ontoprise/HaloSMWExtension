@@ -1,6 +1,6 @@
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 5532)
+--- includes/Article.php	(revision 5543)
 +++ includes/Article.php	(working copy)
 @@ -1346,9 +1346,20 @@
  				$where = array( 'rd_from' => $this->getId() );
@@ -92,7 +92,7 @@ Index: includes/Article.php
  				'category',
 Index: includes/CategoryPage.php
 ===================================================================
---- includes/CategoryPage.php	(revision 5532)
+--- includes/CategoryPage.php	(revision 5543)
 +++ includes/CategoryPage.php	(working copy)
 @@ -242,14 +242,31 @@
  
@@ -134,7 +134,7 @@ Index: includes/CategoryPage.php
  	}
 Index: includes/EditPage.php
 ===================================================================
---- includes/EditPage.php	(revision 5522)
+--- includes/EditPage.php	(revision 5543)
 +++ includes/EditPage.php	(working copy)
 @@ -753,7 +753,23 @@
  		}
@@ -173,7 +173,7 @@ Index: includes/EditPage.php
  		if ( $this->mMetaData != '' ) $this->textbox1 .= "\n" . $this->mMetaData ;
 Index: includes/Export.php
 ===================================================================
---- includes/Export.php	(revision 5532)
+--- includes/Export.php	(revision 5543)
 +++ includes/Export.php	(working copy)
 @@ -578,17 +578,38 @@
  	 * Warning! This data is potentially inconsistent. :(
@@ -224,7 +224,7 @@ Index: includes/Export.php
  
 Index: includes/ImageGallery.php
 ===================================================================
---- includes/ImageGallery.php	(revision 5532)
+--- includes/ImageGallery.php	(revision 5543)
 +++ includes/ImageGallery.php	(working copy)
 @@ -244,22 +244,57 @@
  
@@ -315,7 +315,7 @@ Index: includes/ImageGallery.php
  			//$ul = $sk->makeLink( $wgContLang->getNsText( MWNamespace::getUser() ) . ":{$ut}", $ut );
 Index: includes/ImagePage.php
 ===================================================================
---- includes/ImagePage.php	(revision 5532)
+--- includes/ImagePage.php	(revision 5543)
 +++ includes/ImagePage.php	(working copy)
 @@ -63,27 +63,90 @@
  		global $wgOut, $wgShowEXIF, $wgRequest, $wgUser;
@@ -481,7 +481,7 @@ Index: includes/ImagePage.php
  
 Index: includes/ImageQueryPage.php
 ===================================================================
---- includes/ImageQueryPage.php	(revision 5532)
+--- includes/ImageQueryPage.php	(revision 5543)
 +++ includes/ImageQueryPage.php	(working copy)
 @@ -47,9 +47,21 @@
  	private function prepareImage( $row ) {
@@ -508,7 +508,7 @@ Index: includes/ImageQueryPage.php
  	/**
 Index: includes/Linker.php
 ===================================================================
---- includes/Linker.php	(revision 5532)
+--- includes/Linker.php	(revision 5543)
 +++ includes/Linker.php	(working copy)
 @@ -708,7 +708,15 @@
  		global $wgContLang, $wgUser, $wgThumbLimits, $wgThumbUpright;
@@ -529,7 +529,7 @@ Index: includes/Linker.php
  		// Shortcuts
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 5532)
+--- includes/Namespace.php	(revision 5543)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,17 @@
  	 */
@@ -552,7 +552,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/Title.php
 ===================================================================
---- includes/Title.php	(revision 5532)
+--- includes/Title.php	(revision 5543)
 +++ includes/Title.php	(working copy)
 @@ -251,6 +251,25 @@
  		$t = new Title();
@@ -561,7 +561,7 @@ Index: includes/Title.php
 +		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
 +		// NS_FILE may not be the correct Namespace for this MIME type
 +		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
++		global $smwgEnableRichMedia, $wgNamespaceByExtension;
 +		if( $smwgEnableRichMedia ) {
 +			$ext = explode( '.', $title );
 +			array_shift( $ext );
@@ -966,38 +966,18 @@ Index: includes/Title.php
  		switch ($this->getNamespace()) {
  			case NS_MAIN:
  			case NS_TALK:
+@@ -3675,4 +3886,4 @@
+ 		}
+ 		return $this->mBacklinkCache;
+ 	}
+-}
++}
+\ No newline at end of file
 Index: includes/Wiki.php
 ===================================================================
---- includes/Wiki.php	(revision 5532)
+--- includes/Wiki.php	(revision 5543)
 +++ includes/Wiki.php	(working copy)
-@@ -246,7 +246,25 @@
- 	static function articleFromTitle( &$title ) {
- 		if( NS_MEDIA == $title->getNamespace() ) {
- 			// FIXME: where should this go?
--			$title = Title::makeTitle( NS_FILE, $title->getDBkey() );
-+			/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+			// NS_FILE may not be the correct Namespace for this MIME type
-+			// original content is located in else statement.
-+			global $smwgEnableRichMedia;
-+			if( $smwgEnableRichMedia ) {
-+				$ext = explode( '.', $title->getFullText() );
-+				array_shift( $ext );
-+				if( count( $ext ) ) {
-+					$finalExt = $ext[count( $ext ) - 1];
-+				} else {
-+					$finalExt = '';
-+				}
-+				if ( isset( $finalExt ) )
-+					if ( isset( $wgNamespaceByExtension[$finalExt] ) )
-+						$title = Title::makeTitle( $wgNamespaceByExtension[$finalExt], $title->getDBkey() );
-+			} else {
-+				$title = Title::makeTitle( NS_FILE, $title->getDBkey() );
-+			}
-+			/*op-patch|BL|2009-10-07|end*/
- 		}
- 
- 		$article = null;
-@@ -255,6 +273,21 @@
+@@ -255,6 +255,21 @@
  			return $article;
  		}
  
@@ -1019,7 +999,7 @@ Index: includes/Wiki.php
  		switch( $title->getNamespace() ) {
  			case NS_FILE:
  				return new ImagePage( $title );
-@@ -286,7 +319,17 @@
+@@ -286,7 +301,17 @@
  		}
  		// Namespace might change when using redirects
  		// Check for redirects ...
@@ -1040,7 +1020,7 @@ Index: includes/Wiki.php
  			$request->getVal( 'redirect' ) != 'no' &&	// ... unless explicitly told not to
 Index: includes/filerepo/ArchivedFile.php
 ===================================================================
---- includes/filerepo/ArchivedFile.php	(revision 5532)
+--- includes/filerepo/ArchivedFile.php	(revision 5543)
 +++ includes/filerepo/ArchivedFile.php	(working copy)
 @@ -86,7 +86,17 @@
  		if( !count($conds))
@@ -1061,39 +1041,9 @@ Index: includes/filerepo/ArchivedFile.php
  			$dbr = wfGetDB( DB_SLAVE );
  			$res = $dbr->select( 'filearchive',
  				array(
-@@ -151,7 +161,28 @@
- 	 * @return ResultWrapper
- 	 */
- 	public static function newFromRow( $row ) {
--		$file = new ArchivedFile( Title::makeTitle( NS_FILE, $row->fa_name ) );
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE may not be the correct Namespace for this MIME type
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			$ext = explode( '.', $row->fa_name );
-+			array_shift( $ext );
-+			if( count( $ext ) ) {
-+				$finalExt = $ext[count( $ext ) - 1];
-+			} else {
-+				$finalExt = '';
-+			}
-+			if ( isset( $finalExt ) )
-+				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
-+					$file = new ArchivedFile( Title::makeTitle( $wgNamespaceByExtension[$finalExt], $row->fa_name ) );
-+				} else {
-+					$file = new ArchivedFile( Title::makeTitle( NS_FILE, $row->fa_name ) );
-+				}
-+		} else {
-+			$file = new ArchivedFile( Title::makeTitle( NS_FILE, $row->fa_name ) );
-+		}
-+		/*op-patch|BL|2009-10-07|end*/
- 
- 		$file->id = intval($row->fa_id);
- 		$file->name = $row->fa_name;
 Index: includes/filerepo/FileRepo.php
 ===================================================================
---- includes/filerepo/FileRepo.php	(revision 5532)
+--- includes/filerepo/FileRepo.php	(revision 5543)
 +++ includes/filerepo/FileRepo.php	(working copy)
 @@ -114,17 +114,38 @@
  		if ( $flags & FileRepo::FIND_IGNORE_REDIRECT ) {
@@ -1144,7 +1094,7 @@ Index: includes/filerepo/FileRepo.php
  	
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 5532)
+--- includes/parser/Parser.php	(revision 5543)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1675,23 +1675,49 @@
  				}
@@ -1265,7 +1215,7 @@ Index: includes/parser/Parser.php
  		# Linker does the rest
 Index: includes/specials/SpecialFilepath.php
 ===================================================================
---- includes/specials/SpecialFilepath.php	(revision 5532)
+--- includes/specials/SpecialFilepath.php	(revision 5543)
 +++ includes/specials/SpecialFilepath.php	(working copy)
 @@ -11,7 +11,17 @@
  
@@ -1288,7 +1238,7 @@ Index: includes/specials/SpecialFilepath.php
  	} else {
 Index: includes/specials/SpecialSearch.php
 ===================================================================
---- includes/specials/SpecialSearch.php	(revision 5532)
+--- includes/specials/SpecialSearch.php	(revision 5543)
 +++ includes/specials/SpecialSearch.php	(working copy)
 @@ -471,7 +471,17 @@
  		}
@@ -1311,7 +1261,7 @@ Index: includes/specials/SpecialSearch.php
  				$thumb = $img->transform( array( 'width' => 120, 'height' => 120 ) );
 Index: includes/specials/SpecialUndelete.php
 ===================================================================
---- includes/specials/SpecialUndelete.php	(revision 5532)
+--- includes/specials/SpecialUndelete.php	(revision 5543)
 +++ includes/specials/SpecialUndelete.php	(working copy)
 @@ -119,9 +119,44 @@
  	 * @todo Does this belong in Image for fuller encapsulation?
@@ -1438,37 +1388,3 @@ Index: includes/specials/SpecialUndelete.php
  		} else {
  			// Revision couldn't be created. This is very weird
  			return self::UNDELETE_UNKNOWNERR;
-Index: includes/specials/SpecialUpload.php
-===================================================================
---- includes/specials/SpecialUpload.php	(revision 5532)
-+++ includes/specials/SpecialUpload.php	(working copy)
-@@ -410,7 +410,28 @@
- 		$filtered = wfStripIllegalFilenameChars( $basename );
- 		
- 		/* Normalize to title form before we do any further processing */
--		$nt = Title::makeTitleSafe( NS_FILE, $filtered );
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE may not be the correct Namespace for this MIME type
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia, $wgNamespaceByExtension;
-+		if( $smwgEnableRichMedia ) {
-+			$ext = explode( '.', $filtered );
-+			array_shift( $ext );
-+			if( count( $ext ) ) {
-+				$finalExt = $ext[count( $ext ) - 1];
-+			} else {
-+				$finalExt = '';
-+			}
-+			$ns = NS_FILE;
-+			if ( isset( $finalExt ) )
-+				if ( isset( $wgNamespaceByExtension[$finalExt] ) )
-+					$ns = $wgNamespaceByExtension[$finalExt];
-+			$nt = Title::makeTitleSafe( $ns, $filtered );
-+		} else {
-+			$nt = Title::makeTitleSafe( NS_FILE, $filtered );
-+		}
-+		/*op-patch|BL|2009-10-07|end*/
-+		
- 		if( is_null( $nt ) ) {
- 			$resultDetails = array( 'filtered' => $filtered );
- 			return self::ILLEGAL_FILENAME;
