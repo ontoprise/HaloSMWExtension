@@ -452,7 +452,7 @@ class WSStorageSQL {
 
 		if ($db->numRows($res) > 0) {
 			while ($row = $db->fetchObject($res)) {
-				array_push(&$webServices, array($row->param_set_id));
+				array_push($webServices, array($row->param_set_id));
 			}
 		}
 		$db->freeResult($res);
@@ -480,7 +480,7 @@ class WSStorageSQL {
 
 		if ($db->numRows($res) > 0) {
 			while ($row = $db->fetchObject($res)) {
-				array_push(&$webServices, array($row->web_service_id, $row->param_set_id));
+				array_push($webServices, array($row->web_service_id, $row->param_set_id));
 			}
 		}
 		$db->freeResult($res);
