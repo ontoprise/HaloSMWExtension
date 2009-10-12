@@ -33,7 +33,7 @@ $smwgRMFormByNamespace = array(
 // Conversion of documents (PDF, MS Office)
 global $smwgEnableUploadConverter;
 if ($smwgEnableUploadConverter) {
-	global $wgExtensionMessagesFiles;
+	global $wgExtensionMessagesFiles, $wgAutoloadClasses;
 	$wgAutoloadClasses['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
 	$wgExtensionMessagesFiles['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
 
