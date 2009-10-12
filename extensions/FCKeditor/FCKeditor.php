@@ -16,7 +16,7 @@ if (isset($_SERVER) && !in_array('HTTP_USER_AGENT', array_keys($_SERVER)))
 if (isset($HTTP_SERVER_VARS) && !in_array('HTTP_USER_AGENT', array_keys($HTTP_SERVER_VARS)))
     $commandLine = true;
 # special case, to make Halo webtests run (here we don't have a browser)
-if ($_SERVER['PHP_SELF'] == 'run-test.php')
+if (strpos($_SERVER['PHP_SELF'], 'run-test.php') !== false)
     $commandLine = false;
 if ($commandLine) return;
 
