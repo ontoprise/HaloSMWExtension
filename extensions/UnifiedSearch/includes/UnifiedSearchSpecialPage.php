@@ -124,15 +124,21 @@ class USSpecialPage extends SpecialPage {
 			$wikilink = '[[:'.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
 			$newLink = $wgParser->parse($wikilink, Title::newFromText("__dummy__"), new ParserOptions(), true, true)->getText();
 			$newLink = strip_tags($newLink, '<a>');
+                        $this->createNewPageLink($newpage, $newLink);
 			$html .= '<div id="us_newpage">'.wfMsg('us_page_does_not_exist', $newLink).'</div>';
 		}
 		if (!is_null($caseInsensitiveTitle)) {
 			global $wgParser;
-            $wikilink = '[[:'.$caseInsensitiveTitle->getPrefixedText().']]';
-			if (!is_null($newpage) && !$newpage->exists()) $wikilink .= ' | [['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
-            $newLink = $wgParser->parse($wikilink, Title::newFromText("__dummy__"), new ParserOptions(), true, true)->getText();
-            $newLink = strip_tags($newLink, '<a>');
-            $html .= '<div id="us_newpage">'.wfMsg('us_similar_page_does_exist', $newLink).'</div>';
+                        $wikilink = '[[:'.$caseInsensitiveTitle->getPrefixedText().']]';
+                        $newTitleObj = &$caseInsensitiveTitle;
+			if (!is_null($newpage) && !$newpage->exists()) {
+                            $wikilink .= ' | [['.$newpage->getPrefixedText().'|'.wfMsg('us_clicktocreate').']]';
+                            $newTitleObj = &$newpage;
+                        }
+                        $newLink = $wgParser->parse($wikilink, Title::newFromText("__dummy__"), new ParserOptions(), true, true)->getText();
+                        $newLink = strip_tags($newLink, '<a>');
+                        $this->createNewPageLink($newTitleObj, $newLink);
+                        $html .= '<div id="us_newpage">'.wfMsg('us_similar_page_does_exist', $newLink).'</div>';
 		}
 
 		// -- refine links --
@@ -314,6 +320,25 @@ class USSpecialPage extends SpecialPage {
 		$restrict = empty($restrict) && $restrict !== '0' ? "" : "&restrict=$restrict";
 		return '<a href="'.$searchPage->getFullURL("search=$search$restrict&fulltext=true&limit=$limit&offset=$offset").'">'.$label.'</a>';
 	}
+
+        /**
+         *  check if the page "Create_new_page" exists. If this is the case.
+         *  modify the existing link in $newLink that looks like
+         *  mywiki/index.php?title=bla&action=edit&redlink=1
+         *  into something like
+         *  mywiki/index.php/Create_new_page?target=bla&redlink=1
+         *
+         * @param Title $newpage
+         * @param &string $newLink
+         */
+        private function createNewPageLink( $newpage, &$newLink) {
+                $createNewPage = Title::newFromText('Create_new_page');
+                if ($createNewPage->exists()) {
+                    $newLink = str_replace('index.php?title='.$newpage->getPrefixedText()."&amp;action=edit",
+                                           'index.php/Create_new_page?target='.$newpage->getPrefixedText(),
+                                           $newLink);
+                }
+        }
 
 	private function doSearch($limit, $offset) {
 		global $wgRequest, $usgAllNamespaces, $wgExtraNamespaces;
