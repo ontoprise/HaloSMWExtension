@@ -1444,7 +1444,7 @@ These are the literal class definitions in common.css:
         <id>1</id>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Form
-|PAGENAME=Form:RMPdf
+|PAGENAME=Form:RMImage
 |Has author=User:WikiSysop
 |Form needs context=true
 |show in template picker=false
@@ -1595,7 +1595,7 @@ These are the literal class definitions in common.css:
 | align=&quot;center&quot; style=&quot;color: red;&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 
-{{{end template}}} '''Free text:''' 
+{{{end template}}}
 
 {{{standard input|free text}}} 
 
@@ -1691,7 +1691,7 @@ These are the literal class definitions in common.css:
 |  
 |}
 
-{{{end template}}} '''Free text:''' 
+{{{end template}}}
 
 {{{standard input|free text}}} 
 
@@ -1928,7 +1928,6 @@ These are the literal class definitions in common.css:
 | colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
-'''Free text:'''
 
 {{{standard input|free text}}}
 
@@ -2012,7 +2011,6 @@ These are the literal class definitions in common.css:
 | colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
-'''Free text:'''
 
 {{{standard input|free text}}}
 
