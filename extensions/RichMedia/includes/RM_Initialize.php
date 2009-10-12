@@ -193,7 +193,7 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	
 	global $wgRMImagePreview;
-	RMNamespace::isImage( $target->getNamespace(), &$rMresult );
+	RMNamespace::isImage( $target->getNamespace(), $rMresult );
 	if ( $rMresult ) {
 		if ( $wgRMImagePreview ) {
 			$queryString = "target=".urlencode($target->getPrefixedText());
