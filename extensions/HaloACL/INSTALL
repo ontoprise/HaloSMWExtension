@@ -30,6 +30,17 @@ However, you can apply two patches:
 	semantic properties.
 
 
+Updating the database
+---------------------
+
+The HaloACL extension requires some additional tables in the database that must
+be added to the existing database schema. Existing data will not be modified.
+Therefore change into the maintenance folder of the HaloACL extension and run the
+setup script:
+ cd /folder_to_mediawiki/extension/HaloACL/maintenance
+ php HACL_Setup.php
+
+
 Activating HaloACL
 ------------------
 
