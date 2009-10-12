@@ -193,14 +193,17 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	
 	global $wgRMImagePreview;
-	if ( $wgRMImagePreview ) {
-		$queryString = "target=".urlencode($target->getPrefixedText());
-		$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
-		$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
-		$rev = "height:500 width:700";
-		$attribs['rev'] = 'height:500 width:700';
-		$attribs['rel'] = 'iframe';
-		$attribs['href'] = $uploadWindowUrl;
+	RMNamespace::isImage( $target->getNamespace(), &$rMresult );
+	if ( $rMresult ) {
+		if ( $wgRMImagePreview ) {
+			$queryString = "target=".urlencode($target->getPrefixedText());
+			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
+			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
+			$rev = "height:500 width:700";
+			$attribs['rev'] = 'height:500 width:700';
+			$attribs['rel'] = 'iframe';
+			$attribs['href'] = $uploadWindowUrl;
+		}
 	}
 	return true;
 }
