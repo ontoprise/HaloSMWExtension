@@ -15,21 +15,56 @@ Index: extensions/SemanticForms/includes/SF_FormInputs.inc
  
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 4394)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5564)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
-@@ -1355,8 +1355,17 @@
+@@ -629,6 +629,18 @@
+               $sfgTabIndex++;
+               $sfgFieldNum++;
+               list($new_text, $new_javascript_text) = SFFormInputs::textAreaHTML('!free_text!', 'free_text', false, ($form_is_disabled || $is_restricted), $field_args);
++              /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++			global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
++				if( $smwgEnableRichMedia && $smwgRMHideStandardInputs) {
++					$sfgFieldNum++;
++					$new_text= '';
++					$free_text_was_included = true;
++					$section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
++					continue;
++				} else {
++					// go on.
++				}
++				/*op-patch|BL|2009-10-12|end*/
+               if (in_array('edittools', $free_text_components)) {
+                 // borrowed from EditPage::showEditTools()
+                 $options[] = 'parse';
+@@ -940,6 +952,15 @@
+           // handle all the possible values
+           $input_name = $tag_components[1];
+           $input_label = null;
++          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
++          global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
++          if( $smwgEnableRichMedia && $smwgRMHideStandardInputs) {
++          	$section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
++            continue;
++          } else {
++          	// go on.
++          }
++          /*op-patch|BL|2009-10-12|end*/
+           // cycle through the other components
+           for ($i = 2; $i < count($tag_components); $i++) {
+             $component = $tag_components[$i];
+@@ -1243,8 +1264,17 @@
      // add form bottom, if no custom "standard inputs" have been defined
      if ($is_query)
        $form_text .= SFFormUtils::queryFormBottom($form_is_disabled);
 -    elseif (! $this->standardInputsIncluded)
 -      $form_text .= SFFormUtils::formBottom($form_is_disabled);
 +    elseif (! $this->standardInputsIncluded) {
-+        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
++    /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
 +        // get the upload form name and do not display standard inputs for that
 +        // code was:
 +        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
-+        global $smwgRMFormByNamespace;
-+        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] ) {
++        global $smwgRMFormByNamespace, $smwgRMDisplayStandardInputs;
++        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] && $smwgRMHideStandardInputs) {
 +                $form_text .= SFFormUtils::formBottom($form_is_disabled);
 +        }
 +        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
@@ -39,7 +74,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5321)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5564)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -195,7 +230,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
  		}
  
-@@ -540,48 +606,94 @@
+@@ -540,48 +606,99 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
  				
  			}
@@ -214,6 +249,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -				$output .=<<<END
 -		parent.document.getElementById("{$this->mInputID}").value = '$basename';
 -
+-END;
 +			
 +			// begin Rich Media Changes
 +			$target = $this->mLocalFile->title->getPrefixedText();
@@ -237,7 +273,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			$relatedArticles = $wgRequest->data["$rMUploadFormName"]['RelatedArticles'];
 +			//set the desired destination form
 +			$rMDestFormName = $smwgRMFormByNamespace[$this->mLocalFile->title->getNamespace()];
-+			$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
++			
 +			$myQuery = $rMDestFormName . "/" . $target;
 +			//set wpSave to true (simluates a submitted SF)
 +			$wgRequest->data['wpSave']= 'true';
@@ -249,20 +285,10 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			// and this ID is not correct now (always 0). So do an ID update once.
 +			$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
 +			// Add or Edit?
-+			if (! $target_title || ! $target_title->exists() )
++			if (! $target_title || ! $target_title->exists() ) {
++				$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
 +				$form_add= new SFAddData();
-+			else
-+				$form_add = new SFEditData();
-+			$form_add_test = $form_add->execute($myQuery);
-+			// end Rich Media Changes
-+			
-+			$output = '<script type="text/javascript">' . "\n";
-+			if ( $this->mInputID ) {
-+				if ($this->mDelimiter == null) {
-+					$output .=<<<END
-+					parent.document.getElementById("{$this->mInputID}").value = '$basename';
- END;
--			} else {
+ 			} else {
 -				$output .=<<<END
 -		// if the current value is blank, set it to this file name;
 -		// if it's not blank and ends in a space or delimiter, append
@@ -278,9 +304,22 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
 -			} else {
 -				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
--			}
++				//do not overwrite the WebRequest data
++				$wgRequest->data["$rMDestFormName"]['Filename'] = $target;
++				$wgRequest->data["$rMDestFormName"]['Format'] = $this->mLocalFile->getMimeType();
++				$form_add = new SFEditData();
+ 			}
 -		}
 -
++			$form_add_test = $form_add->execute($myQuery);
++			// end Rich Media Changes
++			
++			$output = '<script type="text/javascript">' . "\n";
++			if ( $this->mInputID ) {
++				if ($this->mDelimiter == null) {
++					$output .=<<<END
++					parent.document.getElementById("{$this->mInputID}").value = '$basename';
++END;
 +				} else {
 +					$output .=<<<END
 +					// if the current value is blank, set it to this file name;
@@ -321,7 +360,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  	}
  
-@@ -802,9 +914,55 @@
+@@ -802,9 +919,55 @@
  	 * @access private
  	 */
  	function uploadError( $error ) {
@@ -379,7 +418,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -824,15 +982,22 @@
+@@ -824,15 +987,22 @@
  			# Couldn't save file; an error has been displayed so let's go.
  			return;
  		}
@@ -404,7 +443,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$action = $titleObj->escapeLocalURL( 'action=submit' );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-@@ -856,24 +1021,37 @@
+@@ -856,24 +1026,37 @@
  		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
  		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
  		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -446,7 +485,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -895,6 +1073,10 @@
+@@ -895,6 +1078,10 @@
  		$adc = wfBoolToStr( $useAjaxDestCheck );
  		$alp = wfBoolToStr( $useAjaxLicensePreview );
  		
@@ -457,7 +496,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -929,15 +1111,105 @@
+@@ -929,15 +1116,105 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
  
@@ -473,11 +512,14 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			global $wgCanonicalNamespaceNames;
 +			$userNS = $wgCanonicalNamespaceNames[NS_USER] . ":";
 +			$wgRequest->data["$rMUploadName"]['RelatedArticles'] = $userNS.$wgUser->getName();
-+		}
+ 		}
+-		$wgOut->addHTML( '<div id="uploadtext">' );
+-		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
 +		$uploadTemplateArray = $wgRequest->getArray($rMUploadName);
 +		$wgOut->addHTML( '<div id="smw_rm_uploadheadline" style="background-color:#455387;width:100%;padding:0px;margin:0px;text-align:center;font-size:1.2em;">' );
 +		$wgOut->addHTML( '<font color="white">' . wfMsgExt( 'smw_rm_uploadheadline', array( 'parseinline' ) ) . '</font>');
-+		$wgOut->addHTML( '</div>' );
+ 		$wgOut->addHTML( '</div>' );
+-
 +		$wgOut->addHTML( '<table id="smw_rm_uploadtext" style="width:100%; text-align:center;padding-top:5px"><tr><td colspan="2">' );
 +		$wgOut->addHTML( wfMsgExt( 'smw_rm_uploadtext',array('parseinline') ));
 +		$wgOut->addHTML( "</td></tr>");
@@ -508,9 +550,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +				break;
 +			default:
 +				$val2 = $val;
- 		}
--		$wgOut->addHTML( '<div id="uploadtext">' );
--		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
++		}
 +		$val2 = $wgAllowCopyUploads ? min( $wgMaxUploadSize, $val2 ) : $val2;
 +		#end max file size
 +		
@@ -524,8 +564,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		$wgOut->addHTML( $collapseLegend.'<div id="upload-perm-types" style="display:none">' );
 +		$wgOut->addHTML( '<div id="upload-size" style="margin:5px 0px;">' );
 +		$wgOut->addHTML( wfMsgNoTrans( 'smw_rm_upload_size', $wgLang->formatSize( $val2 ) )); 
- 		$wgOut->addHTML( '</div>' );
--
++		$wgOut->addHTML( '</div>' );
 +		
 +		//sort file types!
 +		global $wgNamespaceByExtension;
@@ -570,7 +609,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
  		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
-@@ -960,7 +1232,7 @@
+@@ -960,7 +1237,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
@@ -579,7 +618,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		// Prepare form for upload or upload/copy
  		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -982,41 +1254,65 @@
+@@ -982,41 +1259,65 @@
  				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -658,7 +697,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1024,7 +1320,7 @@
+@@ -1024,7 +1325,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -667,7 +706,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1032,7 +1328,7 @@
+@@ -1032,7 +1333,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -676,7 +715,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1042,13 +1338,13 @@
+@@ -1042,13 +1343,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -692,7 +731,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1067,21 +1363,21 @@
+@@ -1067,21 +1368,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -720,7 +759,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1394,18 @@
+@@ -1098,7 +1399,57 @@
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
  	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
@@ -728,10 +767,49 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +	</fieldset>
 +	</form>" );	
 +		
-+		//$wgRequest->data["$rMUploadName"]['Uploader'] = $wgUser->getName();
 +		
-+		$form_add= new SFAddData();
-+		$form_add_test = $form_add->execute( $rMUploadName );
++			
++		if ( isset($title) ) {
++			//Use the Edit Form if the article already exists.
++			$ext = explode( '.', $title->getFullText() );
++			array_shift( $ext );
++			if( count( $ext ) ) {
++				$finalExt = $ext[count( $ext ) - 1];
++			} else {
++				$finalExt = '';
++			}
++			global $wgNamespaceByExtension;
++			if ( isset( $finalExt ) ){
++				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
++					$title->mNamespace = $ns = $wgNamespaceByExtension[$finalExt];
++					if ($title->mPrefixedText)
++						$title->mPrefixedText = str_replace('File:',$wgCanonicalNamespaceNames[$ns].":",$title->mPrefixedText);
++				}
++			}
++		}
++		if ( isset($title) && $title->exists() ) {
++			$article = new Article($title);
++
++			$content = $article->getContent();
++			//we've got an RM Template in here. Use EditData then
++			if (strrchr($content, '{{RM')){
++				// get form name
++				global $smwgRMHideStandardInputs;
++				$smwgRMHideStandardInputs = true;
++				global $smwgRMFormByNamespace;
++				$rMDestFormName = $smwgRMFormByNamespace[$title->getNamespace()];
++
++				$form_edit = new SFEditData();
++				$form_edit_test = $form_edit->execute($rMDestFormName."/".$title->getFullText());
++			} else {
++				$form_add = new SFAddData();
++				$form_add_test = $form_add->execute( $rMUploadName );
++			}
++		} else {
++			$form_add = new SFAddData();
++			$form_add_test = $form_add->execute( $rMUploadName );	
++		}
++		
 +		$saveButtonText = wfMsg('smw_rm_savebuttontext');
 +		global $smwgRMScriptPath;
 +		$wgOut->addScript('<script type="text/javascript" src="' . $smwgRMScriptPath . '/scripts/richmedia.js"></script>' . "\n");
@@ -740,7 +818,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1869,60 @@
+@@ -1562,4 +1913,60 @@
  		}
  		return $pageText;
  	}
