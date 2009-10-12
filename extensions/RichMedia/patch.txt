@@ -59,7 +59,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 -    elseif (! $this->standardInputsIncluded)
 -      $form_text .= SFFormUtils::formBottom($form_is_disabled);
 +    elseif (! $this->standardInputsIncluded) {
-+    /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
++        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|start*/
 +        // get the upload form name and do not display standard inputs for that
 +        // code was:
 +        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
@@ -183,9 +183,11 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  	const SESSION_VERSION = 1;
  	/**#@-*/
-@@ -144,6 +195,10 @@
+@@ -143,7 +194,12 @@
+ 		$this->mComment           = $request->getText( 'wpUploadDescription' );
  		$this->mInputID           = $request->getText( 'sfInputID' );
  		$this->mDelimiter         = $request->getText( 'sfDelimiter' );
++		$this->mForReUpload       = $request->getBool( 'wpForReUpload' );
  
 +		//RM change: filestatus
 +		$this->mRMFileStatus	  = $request->getVal( 'filestatus' );
@@ -194,7 +196,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		if( !$request->wasPosted() ) {
  			# GET requests just give the main form; no data except destination
  			# filename and description
-@@ -344,6 +399,9 @@
+@@ -344,6 +400,9 @@
  			$this->mainUploadWindowForm();
  		} else if( 'submit' == $this->mAction || $this->mUploadClicked ) {
  			$this->processUpload();
@@ -204,7 +206,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		} else {
  			$this->mainUploadWindowForm();
  		}
-@@ -418,7 +476,15 @@
+@@ -418,7 +477,15 @@
  		 * out of it. We'll strip some silently that Title would die on.
  		 */
  		$filtered = preg_replace ( "/[^".Title::legalChars()."]|:/", '-', $filtered );
@@ -221,7 +223,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		if( is_null( $nt ) ) {
  			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
  			return;
-@@ -449,7 +515,7 @@
+@@ -449,7 +516,7 @@
  			return $this->uploadError( wfMsgExt( 'filetype-missing', array ( 'parseinline' ) ) );
  		} elseif ( $this->checkFileExtensionList( $ext, $wgFileBlacklist ) ||
  				($wgStrictFileExtensions && !$this->checkFileExtension( $finalExt, $wgFileExtensions ) ) ) {
@@ -230,7 +232,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
  		}
  
-@@ -540,48 +606,99 @@
+@@ -540,48 +607,99 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
  				
  			}
@@ -360,7 +362,16 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  	}
  
-@@ -802,9 +919,55 @@
+@@ -630,7 +748,7 @@
+ 				$dlink2 = '';
+ 			}
+ 
+-			$warning .= '<li>' . wfMsgExt( 'fileexists', 'parseline', $dlink ) . '</li>' . $dlink2;
++			$warning .= '<li>' . wfMsgExt( 'fileexists', array('parseinline','replaceafter'), $dlink ) . '</li>' . $dlink2;
+ 
+ 		} elseif ( $file_lc && $file_lc->exists() ) {
+ 			# Check if image with lowercase extension exists.
+@@ -802,9 +920,56 @@
  	 * @access private
  	 */
  	function uploadError( $error ) {
@@ -392,7 +403,8 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +		<input type='hidden' name='wpLicense' value=\"" . htmlspecialchars( $this->mLicense ) . "\" />
 +		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
 +		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
++		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />".
++		Xml::hidden( 'wpForReUpload', $this->mForReUpload, array( 'id' => 'wpForReUpload' ) )
 +		);
 +
 +		$wgOut->addHTML("
@@ -418,7 +430,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -824,15 +987,22 @@
+@@ -824,15 +989,22 @@
  			# Couldn't save file; an error has been displayed so let's go.
  			return;
  		}
@@ -443,12 +455,13 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$action = $titleObj->escapeLocalURL( 'action=submit' );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-@@ -856,24 +1026,37 @@
+@@ -856,24 +1028,38 @@
  		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
  		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
  		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
 -		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
-+		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />"
++		<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />" .
++		Xml::hidden( 'wpForReUpload', $this->mForReUpload, array( 'id' => 'wpForReUpload' ) )
 +		);
 +
 +		$wgOut->addHTML("
@@ -485,7 +498,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -895,6 +1078,10 @@
+@@ -895,6 +1081,10 @@
  		$adc = wfBoolToStr( $useAjaxDestCheck );
  		$alp = wfBoolToStr( $useAjaxLicensePreview );
  		
@@ -496,7 +509,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -929,15 +1116,105 @@
+@@ -929,15 +1119,105 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
  
@@ -609,7 +622,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
  		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
-@@ -960,7 +1237,7 @@
+@@ -960,7 +1240,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
@@ -618,7 +631,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		// Prepare form for upload or upload/copy
  		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -982,41 +1259,65 @@
+@@ -982,41 +1262,82 @@
  				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -687,17 +700,35 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -			<td align='$align1'><label for='wpDestFile'>{$destfilename}</label></td>
 +			<td align='$align1'><label for='wpDestFile' style='font-weight:bold'>{$destfilename}</label></td>
  			<td align='$align2'>
- 				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
+-				<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40' 
 -					value="$encDestName" $destOnkeyup />
-+					value="$encDestName" $destOnkeyup /></label>
-+				<img title="{$destFileTooltipTitle}" class="help-image" src="{$smwgRMScriptPath}/skins/help.gif"></img>
++EOT
++		);
++		
++		if( $this->mForReUpload ) {
++			$wgOut->addHTML(
++				Xml::hidden( 'wpDestFile', $this->mDesiredDestName, array('id'=>'wpDestFile','tabindex'=>2) ) .
++				"<tt>" .
++				$encDestName .
++				"</tt>"
++			);
++		}
++		else {
++			$wgOut->addHTML(
++				"<input tabindex='2' type='text' name='wpDestFile' id='wpDestFile' size='40'
++						value=\"{$encDestName}\" onchange='toggleFilenameFiller()' $destOnkeyup />
++						<img title=\"{$destFileTooltipTitle}\" class=\"help-image\" src=\"{$smwgRMScriptPath}/skins/help.gif\"></img>"
++			);
++		}
++		
++		$wgOut->addHTML( <<<EOT
  			</td>
  		</tr>
 +		<!--
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1024,7 +1325,7 @@
+@@ -1024,7 +1345,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -706,7 +737,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1032,7 +1333,7 @@
+@@ -1032,7 +1353,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -715,7 +746,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1042,13 +1343,13 @@
+@@ -1042,13 +1363,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -731,7 +762,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1067,21 +1368,21 @@
+@@ -1067,21 +1388,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -759,12 +790,15 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1098,7 +1399,57 @@
+@@ -1097,8 +1418,59 @@
+ 	</table>
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
- 	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
+-	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" />
 -	</form>" );
-+	</fieldset>
++	<input type='hidden' name='sfDelimiter' value=\"" . htmlspecialchars( $this->mDelimiter ) . "\" /> " .
++	Xml::hidden( 'wpForReUpload', $this->mForReUpload, array( 'id' => 'wpForReUpload' ) ) .
++	"</fieldset>
 +	</form>" );	
 +		
 +		
@@ -818,7 +852,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1913,60 @@
+@@ -1562,4 +1934,60 @@
  		}
  		return $pageText;
  	}
