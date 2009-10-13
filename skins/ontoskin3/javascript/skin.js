@@ -3,6 +3,7 @@ function Smwh_Menu() {
     //this.addMenuFunctions = function
     
         this.expanded = false;
+        this.treeviewhidden = false;
   
     this.showMenu = function(){
         $jq(this).addClass("hovering");
@@ -32,6 +33,19 @@ function Smwh_Menu() {
 
         }
     };
+
+    this.toogleTreeView = function(){
+        if( this.treeviewhidden == false ){
+            this.treeviewhidden = true;
+             $jq("#smwh_browser").css("display", "none");
+             $jq(".treeviewtd").css('width', "0%");
+        } else {
+            this.treeviewhidden = false;
+            $jq(".treeviewtd").css('width', "25%");
+            $jq("#smwh_browser").css("display", "block");
+        }
+    };
+
     
     if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
@@ -43,7 +57,7 @@ function Smwh_Menu() {
     }
         
     $jq(".smwh_menulistitem").hover(this.showMenu, this.hideMenu);
-
+    $jq("#treeviewtoggle").click(this.toogleTreeView.bind(this));
 }
 
 var smwh_Skin;

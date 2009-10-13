@@ -144,3 +144,7 @@ ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a
     color: #FFF;
     font-weight: bolder;
 }
+
+#treeviewtoggle{
+    background: url(../img/treeviewtoggle.png) scroll repeat-y right;
+}

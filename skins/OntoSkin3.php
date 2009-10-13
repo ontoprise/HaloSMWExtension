@@ -62,10 +62,18 @@ class SkinOntoSkin3 extends SkinTemplate {
     function setupSkinUserCss( OutputPage $out ) {
         global $wgHandheldStyle;
 
+
         parent::setupSkinUserCss( $out );
 
         // Append to the default screen common & print styles...
-        $out->addStyle( 'ontoskin3/main.css', 'screen' );
+        // $out->addStyle( 'ontoskin3/main.css', 'screen' );
+        
+        // Append Ontoskin3 css
+        $out->addStyle( 'ontoskin3/css/skin-colorfont.css','screen');
+        $out->addStyle( 'ontoskin3/css/skin-main.css','screen');
+        $out->addStyle( 'ontoskin3/css/skin-pagecontent.css','screen');
+
+
         if( $wgHandheldStyle ) {
         // Currently in testing... try 'chick/main.css'
             $out->addStyle( $wgHandheldStyle, 'handheld' );
@@ -77,6 +85,8 @@ class SkinOntoSkin3 extends SkinTemplate {
         $out->addStyle( 'ontoskin3/IE70Fixes.css', 'screen', 'IE 7' );
 
         $out->addStyle( 'ontoskin3/rtl.css', 'screen', '', 'rtl' );
+
+        
     }
 }
 
@@ -108,7 +118,7 @@ class OntoSkin3Template extends QuickTemplate {
                   ?>xmlns:<?php echo "{$tag}=\"{$ns}\" ";
               } ?>xml:lang="<?php $this->text('lang') ?>" lang="<?php $this->text('lang') ?>" dir="<?php $this->text('dir') ?>">
     <head>
-                <?php /** BEGIN HEAD MW 1.15
+                <!--  BEGIN HEAD MW 1.15 -->
                  <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
                  <?php $this->html('headlinks') ?>
                  <title><?php $this->text('pagetitle') ?></title>
@@ -138,9 +148,14 @@ class OntoSkin3Template extends QuickTemplate {
                  <script type="<?php $this->text('jsmimetype') ?>"><?php $this->htmgl('userjsprev') ?></script>
                  <?php	}
                  if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
-                 END HEAD MW 1.15 */?>
 
-        <!-- BEGIN HEAD MW 1.13-->
+                 <!-- Ontoskin3 javascripts -->
+                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
+                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
+
+                 <!--END HEAD MW 1.15 -->
+
+        <?php /**<!-- BEGIN HEAD MW 1.13-->
         <!-- This header has to be removed when switching to mw 1.15 -->
         <meta http-equiv="Content-Type" content="<?php $this->text('mimetype') ?>; charset=<?php $this->text('charset') ?>" />
         <style type="text/css" media="screen,projection">
@@ -155,7 +170,7 @@ class OntoSkin3Template extends QuickTemplate {
                 @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
 			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
 		</style>
-        -->
+        
         <style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftyCorners.css"; </style>
                 <?php $this->html('headlinks') ?>
         <title><?php $this->text('pagetitle') ?></title>
@@ -195,7 +210,7 @@ class OntoSkin3Template extends QuickTemplate {
 
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
         <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
-        <!-- END HEAD MW 1.13-->
+        <!-- END HEAD MW 1.13--> */ ?>
 
 
     </head>
@@ -275,7 +290,8 @@ class OntoSkin3Template extends QuickTemplate {
                 <!-- insert treeview if present -->
                 <?php $tree=$this->treeviewBox();
                 if($tree!=false){?>
-                    <col width="25%">
+                    <col class="treeviewtd" width="25%">
+                    <col width="10">
                 <?php } ?>
                     
                 <col width="*">
@@ -285,8 +301,11 @@ class OntoSkin3Template extends QuickTemplate {
                 <!-- insert treeview if present -->
                 <?php //$tree=$this->treeviewBox();
                 if($tree!=false){?>
-                    <td valign="top" width="25%">
+                    <td class="treeviewtd" valign="top" width="25%">
                         <?php echo $tree; ?>
+                    </td>
+                    <td id="treeviewtoggle" valign="top" width="10">
+                        <img id="treeviewtoggletext" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/treeviewtoggletext.png"/>
                     </td>
                 <?php } ?>
             
@@ -486,7 +505,7 @@ class OntoSkin3Template extends QuickTemplate {
         if($tree!=null && $tree!=""){
             $treeview = '<div id="smwh_browser"><div id="smwh_browserview">';
             $treeview .= $tree;
-            $treeview .= "</div></div>";
+            $treeview .= "</div>";
             return $treeview;
         } else {
            return false;
@@ -668,7 +687,7 @@ class OntoSkin3Template extends QuickTemplate {
         $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration";
         $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath."/ontoskin3/img/button_tools.gif\" alt=\"tools\"/>";
         $menu.= "</p></div>";
-        $content = wfMsgForContent( 'Administration' );
+        $content = wfMsgForContent( 'haloadministration' );
         if($content!=null){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
             $menu.= "<div class=\"smwh_menubody_visible\">";
