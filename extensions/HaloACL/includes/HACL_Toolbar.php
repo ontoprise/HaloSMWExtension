@@ -66,6 +66,7 @@ HTML;
  TODO: document
  */
 function AddHaclToolbarForSemanticForms($pageTitle, $html) {
+    global $haclgIP;
     $html = <<<HTML
     		<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
     		<script>
