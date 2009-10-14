@@ -29,19 +29,19 @@ class SkinOntoSkin3 extends SkinTemplate {
      *   Using OntoSkin3.
      **/
      
-    /** mw 1.13 */
+    /** mw 1.13
     function initPage( &$out ) {
         SkinTemplate::initPage( $out );
         $this->skinname  = 'ontoskin3';
         $this->stylename = 'ontoskin3';
         $this->template  = 'OntoSkin3Template';
-    }
+    } */
 
     /**
      *   Using OntoSkin3.
      **/
 
-    /** mw 1.15
+    /** mw 1.15*/
     function initPage( OutputPage $out ) {
     
             parent::initPage( $out );
@@ -49,7 +49,7 @@ class SkinOntoSkin3 extends SkinTemplate {
             $this->stylename = 'ontoskin3';
             $this->template  = 'OntoSkin3Template';
 
-    } */
+    } /**/
 
     function getSkinName() {
 	return 'ontoskin3';
@@ -606,17 +606,17 @@ class OntoSkin3Template extends QuickTemplate {
      * @return <type>
      */
     function buildMenuItemHtml( $menuItem ){
-        /** mw 1.15 only
+        /** mw 1.15 only */
         $title = Title::newFromText(trim($menuItem))->getArticleId();
         if(!$title) return;
-        echo $title;
+        //echo $title;
         $menuPage = Article::newFromId($title);
 	if(!isset($menuPage)) return;
-	return $this->parseWikiText($menuPage->getRawText());
-        */
+	return $this->parseWikiText($menuPage->getContent());
+        /**/
         
         /** mw 1.13 could work with 1.15 */
-        
+        /*
         $title = Title::newFromText(trim($menuItem));
         if(!$title) return;
         //echo $title->getFullURL();
@@ -624,7 +624,7 @@ class OntoSkin3Template extends QuickTemplate {
         //echo $menuPage->getContent();
         if ($menuPage->exists()) {
             return $this->parseWikiText($menuPage->getContent());
-        }
+        }/**/
 
     }
 
