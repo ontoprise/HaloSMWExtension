@@ -10,13 +10,32 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
 
-define('SMW_CE_VERSION', '1.0');
+define('CE_VERSION', '1.0');
 
-global $smwgCEIP;
+###
+# This is the path to your installation of Collaboration as seen on your
+# local filesystem. Used against some PHP file path issues.
+##
 $smwgCEIP = $IP . '/extensions/Collaboration';;
+
+###
+# This is the path to your installation of CollaborationExtension as seen from the
+# web. Change it if required ($wgScriptPath is the path to the base directory
+# of your wiki). No final slash.
+##
 $smwgCEScriptPath = $wgScriptPath . '/extensions/Collaboration';
 
 $wgHooks['BeforePageDisplay'][] = 'smwfCEAddHTMLHeader';
+
+//--- credits (see "Special:Version") ---
+global $wgExtensionCredits;
+
+$wgExtensionCredits['other'][]= array(
+        'name'=>'Collaboration',
+        'version'=>CE_VERSION,
+        'author'=>"Benjamin Langguth and others",
+        'url'=>'http://smwforum.ontoprise.de',
+        'description' => 'Some fancy collaboration tools.');
 
 # A: ArticleComments
 $wgArticleCommentDefaults['hideForm']=false;
