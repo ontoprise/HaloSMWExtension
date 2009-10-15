@@ -1,0 +1,36 @@
+@CHARSET "ISO-8859-1";
+
+table.infobox {
+	background-color: transparent;
+}
+table.infobox tr {
+	background-color: #f9f9f9;
+}
+
+/**
+* For ArticleComments
+* http://www.leerwiki.nl/How_to_add_comment_guestbook_forum_to_mediawiki_%28extension%29
+*/
+div.comment {
+border: 1px solid silver;
+padding: 1px;
+margin-bottom: 16px;
+}
+div.commenttop {
+padding: 4px;
+background: #EEEEEE;
+}
+div.username {
+font: 11px verdana, arial, sans-serif;
+font-weight: bold;
+width: auto;
+float: left;
+}
+div.date {
+width: auto;
+text-align: right;
+}
+div.commentpost {
+padding: 4px;
+background: #F9F9F9;
+}

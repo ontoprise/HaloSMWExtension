@@ -1,0 +1,38 @@
+/**********************************************************************
+** This file is part of the Rating Bar extension for MediaWiki
+** Copyright (C)2009
+**                - PatheticCockroach <www.patheticcockroach.com>
+**                - Franck Dernoncourt <www.francky.me>
+**
+** Home Page : http://www.wiki4games.com
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU General Public License
+** as published by the Free Software Foundation; either
+** version 3 of the License, or (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+** <http://www.gnu.org/licenses/>
+*********************************************************************/
+
+#rating_box {width:242px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;} /* the box with bar and rating */
+#rating_target {width:202px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;position:absolute;float:left;} /* the bar only */
+#rating_text {width:40px;height:15px;border:1px solid #333333;
+	margin:0px;margin-left:202px;margin-bottom:2px;padding:0px;font-family:arial;font-size:10px;
+	background-color:#999999;position:absolute;float:left;} /* the rating only */
+
+.w4g_rb_global {width:2px;height:15px;margin:0px;padding:0px;position:absolute;float:left;} /* a tiny block */
+.w4g_rb_nojs {font-size:x-small;color:#ff9999;} /* for the "must enable JS" message */
+
+.w4g_ratinglist  { margin-bottom: 0px; padding-left: .4em; }
+.w4g_ratinglist-headercell   { background-color:#153E7E; font-weight: bold; text-align: center; margin-bottom: 0px; padding-left: .4em; color:#FFFFFF; }
+.w4g_ratinglist-contentcell   { padding-left: .2em; padding-right: .2em; }
+
+.w4g_ratinglist-error  { font-weight: bold; color:#FF0000; }
+
+.w4g_rb_starbox {width:150px;height:30px;margin:0px;padding:0px;background: url('stars.png') top left repeat-x;}
+.w4g_rb_star_unit {width:30px;height:30px;margin:0px;padding:0px;position:absolute;float:left;}
+.w4g_rb_star_hover {width:30px;height:30px;margin:0px;padding:0px;position:absolute;float:left;background: url('stars.png') left center;}

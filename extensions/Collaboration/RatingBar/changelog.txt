@@ -1,0 +1,18 @@
+Latest changelog can be found @:
+http://www.wiki4games.com/index.php?title=Wiki4Games:RatingBar/changelog
+
+1.1-rc1
+    * Proper plural handling
+    * Introduced $w4g_rb_rating_max, $w4g_rb_rating_decimals, $w4g_rb_bar_styles and $w4g_rb_min_vote_count parameters
+    * Added a star-based rating system 
+
+1.1-dev2
+    * Fixed missing style output in render_w4g_ratinglist
+    * Fixed $unique_check='both' bug reported on MW by Jonem
+    * Fixed doqueries line 130 and 132 warnings (in the "// Display the new vote" block, $query2 and $query3 weren't always defined)
+    * Fixed doqueries line 76's warning (mysql_fetch_array($query3) in a place where $query3 isn't always defined)
+    * Fixed bad behavior when $table_prefix=='' (discovered thanks to Redekopmark)
+    * Removed hardcoded path (thanks Mathsinger for the bug report) => introduced the $path_to_w4g_rb parameter 
+
+1.0-rc1
+    * First release
