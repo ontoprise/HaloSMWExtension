@@ -24,7 +24,7 @@ Index: includes/Namespace.php
 ===================================================================
 --- includes/Namespace.php	(revision 5486)
 +++ includes/Namespace.php	(working copy)
-@@ -53,7 +53,13 @@
+@@ -53,7 +53,12 @@
  	 */
  	public static function isMovable( $index ) {
  		global $wgAllowImageMoving;
@@ -33,7 +33,6 @@ Index: includes/Namespace.php
 +		// NS_IMAGE is not the only Namespace now, so check them all
 +		// content was:
 +		// return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
-+		wfRunHooks('CheckNamespaceForImage', array( $index, &$result ));
 +		return !( $index < NS_MAIN || ($result && !$wgAllowImageMoving) /*|| $index == NS_CATEGORY*/ );
 +		/*op-patch|BL|2009-07-13|end*/
  	}
