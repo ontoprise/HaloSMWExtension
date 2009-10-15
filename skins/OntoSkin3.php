@@ -76,7 +76,7 @@ class SkinOntoSkin3 extends SkinTemplate {
 
         if( $wgHandheldStyle ) {
         // Currently in testing... try 'chick/main.css'
-            $out->addStyle( $wgHandheldStyle, 'handheld' );
+        // $out->addStyle( $wgHandheldStyle, 'handheld' );
         }
 
         $out->addStyle( 'ontoskin3/IE50Fixes.css', 'screen', 'lt IE 5.5000' );
@@ -168,7 +168,7 @@ class OntoSkin3Template extends QuickTemplate {
         <!-- Default monobook css disabled
         <style type="text/css" media="screen,projection">
                 @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/main.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
-			@import "<?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
+			@import " <?php $this->text('stylepath') ?>/common/shared.css?<?php echo $GLOBALS['wgStyleVersion'] ?>";
 		</style>
         
         <style type="text/css" media="screen,projection"> @import "<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/niftyCorners.css"; </style>
