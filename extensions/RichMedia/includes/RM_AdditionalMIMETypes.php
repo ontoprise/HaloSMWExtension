@@ -115,6 +115,7 @@ class RMNamespace {
  	*/
 
 	public static function isImage( &$index, &$rMresult ) {
+		$rMresult = false;
 		$rMresult |= ( $index == NS_FILE || $index == NS_IMAGE || $index == NS_DOCUMENT ||
 			$index == NS_PDF || $index == NS_AUDIO || $index == NS_VIDEO
 			|| $index == NS_ICAL || $index == NS_VCARD );

@@ -1237,17 +1237,44 @@ Index: includes/parser/Parser.php
  		}
  		return $ig->toHTML();
  	}
-@@ -4186,6 +4224,9 @@
- 					'bottom', 'text-bottom' ),
- 				'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
- 					'upright', 'border', 'link', 'alt' ),
-+				/*op-patch|BL|2009-10-08|RichMedia|ImageOverlay|start*/
-+				'nopreview' => array('nopreview'),
-+				/*op-patch|BL|2009-10-08|end*/
- 			);
+@@ -4180,13 +4218,29 @@
+ 		}
+ 		if ( !isset( $this->mImageParams[$handlerClass]  ) ) {
+ 			// Initialise static lists
+-			static $internalParamNames = array(
+-				'horizAlign' => array( 'left', 'right', 'center', 'none' ),
+-				'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
+-					'bottom', 'text-bottom' ),
+-				'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
+-					'upright', 'border', 'link', 'alt' ),
+-			);
++			/*op-patch|BL|2009-10-07|RichMedia|ImgPreviewMagicWord|start*/
++			// original content is located in else statement.
++			global $smwgEnableRichMedia;
++			if( $smwgEnableRichMedia ) {
++				static $internalParamNames = array(
++					'horizAlign' => array( 'left', 'right', 'center', 'none' ),
++					'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
++						'bottom', 'text-bottom' ),
++					'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
++						'upright', 'border', 'link', 'alt' ),
++					'nopreview' => array('nopreview'),
++				);
++			} else {
++				static $internalParamNames = array(
++					'horizAlign' => array( 'left', 'right', 'center', 'none' ),
++					'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
++						'bottom', 'text-bottom' ),
++					'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
++						'upright', 'border', 'link', 'alt' ),
++				);
++			}
++			/*op-patch|BL|2009-10-07|end*/
++			
  			static $internalParamMap;
  			if ( !$internalParamMap ) {
-@@ -4392,6 +4433,19 @@
+ 				$internalParamMap = array();
+@@ -4392,6 +4446,19 @@
  			$params['frame']['alt'] = $params['frame']['title'];
  		}
  
