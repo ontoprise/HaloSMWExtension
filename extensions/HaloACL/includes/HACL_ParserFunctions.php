@@ -954,9 +954,9 @@ class HACLParserFunctions {
 		}
 		list($pe, $peType) = HACLSecurityDescriptor::nameOfPE($t->getText());
 		$sd = new HACLSecurityDescriptor($t->getArticleID(), $t->getText(), $pe,
-		$peType,
-		$this->mRightManagerGroups,
-		$this->mRightManagerUsers);
+										$peType,
+										$this->mRightManagerGroups,
+										$this->mRightManagerUsers);
 		$sd->save();
 
 		// add all inline rights
