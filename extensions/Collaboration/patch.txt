@@ -376,3 +376,21 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +
 +//</source>
 \ No newline at end of file
+Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
+===================================================================
+--- extensions/Collaboration/CurrentUsers/CurrentUsers.php	(revision 5598)
++++ extensions/Collaboration/CurrentUsers/CurrentUsers.php	(working copy)
+@@ -72,7 +72,12 @@
+         }
+         if ( $guests ) $users .= "{" . "{" . "$egCurrentUsersTemplate|Guests||$guests}" . "}\n";
+         if ( $bots )   $users .= "{" . "{" . "$egCurrentUsersTemplate|Robots||$bots}" . "}\n";
+-        $users =  $parser->preprocess( $users, $wgTitle, $parser->mOptions );
++        /*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++        // use a new ParserObject for parsing to prevent "UNIQ" strings!
++        // content was: $users = $parser->preprocess( $users, $wgTitle, $parser->mOptions );
++        $localParser = new Parser();
++        $users = $localParser->preprocess( $users, $wgTitle, $parser->mOptions );
++        /*op-patch|BL|2009-10-15|end*/
+         return array(
+                 $users,
+                 'found'   => true,
