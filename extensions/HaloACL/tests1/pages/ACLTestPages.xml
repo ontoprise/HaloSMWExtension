@@ -162,7 +162,7 @@ Search keyword: HiddenByACL
       <minor/>
       <comment>1 revision</comment>
       <text xml:space="preserve">==Hidden namespace==
-{{:User:HiddenUser}}</text>
+{{:User_talk:HiddenUser}}</text>
     </revision>
   </page>
   <page>
@@ -379,7 +379,7 @@ Section 4
 *[[HiddenPage]]
 *[[HiddenInstance]]
 *[[HiddenInstanceOfSubcat]]
-*[[User:HiddenUser]]
+*[[User_talk:HiddenUser]]
 *[[Property:HiddenProperty]]</text>
     </revision>
   </page>
@@ -434,11 +434,11 @@ Section 4
 :**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|printable=yes}} HiddenInstanceOfSubcat(printable)]
 :**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=render}} HiddenInstanceOfSubcat(render)]
 :**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=raw}} HiddenInstanceOfSubcat(raw)]
-:**[{{SERVER}}{{localurl:User:HiddenUser|printable=yes}} User:HiddenUser(printable)]
-:**[{{SERVER}}{{localurl:User:HiddenUser|action=render}} User:HiddenUser(render)]
-:**[{{SERVER}}{{localurl:User:HiddenUser|action=raw}} User:HiddenUser(raw)]
+:**[{{SERVER}}{{localurl:User_talk:HiddenUser|printable=yes}} User_talk:HiddenUser(printable)]
+:**[{{SERVER}}{{localurl:User_talk:HiddenUser|action=render}} User_talk:HiddenUser(render)]
+:**[{{SERVER}}{{localurl:User_talk:HiddenUser|action=raw}} User_talk:HiddenUser(raw)]
 :The links to these pages are stored in the article ''TestActionLinks'' (in the database dump)
-:*Repeat this for ''HiddenInstance'', ''HiddenInstanceOfSubcat'' and ''User:HiddenUser''
+:*Repeat this for ''HiddenInstance'', ''HiddenInstanceOfSubcat'' and ''User_talk:HiddenUser''
 ;Expected result:The content of the protected pages must not be revealed.</text>
     </revision>
   </page>
@@ -474,7 +474,7 @@ Section 4
 :**[{{SERVER}}{{localurl:HiddenPage|action=delete}} HiddenPage]
 :**[{{SERVER}}{{localurl:HiddenInstance|action=delete}} HiddenInstance]
 :**[{{SERVER}}{{localurl:HiddenInstanceOfSubcat|action=delete}} HiddenInstanceOfSubcat]
-:**[{{SERVER}}{{localurl:User:HiddenUser|action=delete}} User:HiddenUser]
+:**[{{SERVER}}{{localurl:User_talk:HiddenUser|action=delete}} User_talk:HiddenUser]
 ;Expected result:It must not be possible to delete the protected page.</text>
     </revision>
   </page>
@@ -496,7 +496,7 @@ Section 4
 :**[[Special:MovePage/HiddenPage]]
 :**[[Special:MovePage/HiddenInstance]]
 :**[[Special:MovePage/HiddenInstanceOfSubcat]]
-:**[[Special:MovePage/User:HiddenUser]]
+:**[[Special:MovePage/User_talk:HiddenUser]]
 ;Expected result:It must not be possible to move the protected page.</text>
     </revision>
   </page>
@@ -512,7 +512,7 @@ Section 4
       <comment>New page: ==ACL test for Listings== ;Goal:The titles of restricted pages (or at least their content) must not appear in listings like recent changes, all pages etc. ;Running the test: Run the test a...</comment>
       <text xml:space="preserve">==ACL test for Listings==
 ;Goal:The titles of restricted pages (or at least their content) must not appear in listings like recent changes, all pages etc.
-;Running the test: Run the test as ''RestrictedUser'' and ''RGBUser''. Check if the following pages list the hidden articles ''HiddenPage'', ''HiddenInstance'', ''HiddenInstanceOfSubcat'', ''Property:HiddenProperty'' and ''User:HiddenUser'':
+;Running the test: Run the test as ''RestrictedUser'' and ''RGBUser''. Check if the following pages list the hidden articles ''HiddenPage'', ''HiddenInstance'', ''HiddenInstanceOfSubcat'', ''Property:HiddenProperty'' and ''User_talk:HiddenUser'':
 :*[[Special:DeadendPages]]
 :*[[Special:LongPages]]
 :*[[Special:AncientPages]]
@@ -539,7 +539,7 @@ Section 4
     </revision>
   </page>
   <page>
-    <title>User:HiddenUser</title>
+    <title>User_talk:HiddenUser</title>
     <id>30</id>
     <revision>
       <id>30</id>
@@ -547,8 +547,8 @@ Section 4
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: The '''namespace User''' is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  ==Section 1==  Section 1  ==Sectio...</comment>
-      <text xml:space="preserve">The '''namespace User''' is not accessible for 
+      <comment>New page: The '''namespace User_talk''' is not accessible for  *User:RestrictedUser *User:RGBUser  Search keyword: HiddenByACL  [[LinkHiddenPages]] [[is hidden::true]]  ==Section 1==  Section 1  ==Sectio...</comment>
+      <text xml:space="preserve">The '''namespace User_talk''' is not accessible for 
 *User:RestrictedUser
 *User:RGBUser
 
@@ -944,6 +944,32 @@ Only the user &quot;NormalUser&quot; can access it.
 [[Category:AHiddenSuperCategory]]</text>
     </revision>
   </page>
-  
-  
+  <page>
+    <title>Foo</title>
+    <id>44</id>
+    <revision>
+      <id>46</id>
+      <timestamp>2009-10-07T08:14:18Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: Foo</comment>
+      <text xml:space="preserve">Foo</text>
+    </revision>
+  </page>
+  <page>
+    <title>Eef</title>
+    <id>76</id>
+    <revision>
+      <id>85</id>
+      <timestamp>2009-10-08T10:06:55Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>New page: This page is used in HaloACL-Webtests.</comment>
+      <text xml:space="preserve">This page is used in HaloACL-Webtests.</text>
+    </revision>
+  </page>
 </mediawiki>
