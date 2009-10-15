@@ -1074,9 +1074,9 @@ Index: includes/Wiki.php
  			$request->getVal( 'redirect' ) != 'no' &&	// ... unless explicitly told not to
 Index: includes/filerepo/ArchivedFile.php
 ===================================================================
---- includes/filerepo/ArchivedFile.php	(revision 5543)
+--- includes/filerepo/ArchivedFile.php	(revision 5582)
 +++ includes/filerepo/ArchivedFile.php	(working copy)
-@@ -86,7 +86,17 @@
+@@ -86,7 +86,20 @@
  		if( !count($conds))
  			throw new MWException( "No specific information for retrieving archived file" );
  		
@@ -1086,7 +1086,10 @@ Index: includes/filerepo/ArchivedFile.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			if ( $this->title )
++				RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			else
++				$rMresult = false;
 +		} else {
 +			$rMresult = false;
 +		}
