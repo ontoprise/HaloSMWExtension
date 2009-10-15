@@ -48,6 +48,19 @@
     </namespaces>
   </siteinfo>
   <page>
+    <title>Main Page</title>
+    <id>25</id>
+    <revision>
+      <id>25</id>
+      <timestamp>2009-10-09T07:01:48Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'Main Page'</comment>
+      <text xml:space="preserve">Main Page</text>
+    </revision>
+  </page>
+  <page>
     <title>ACL:Category/B</title>
     <id>42</id>
     <revision>
