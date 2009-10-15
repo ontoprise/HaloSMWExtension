@@ -600,6 +600,29 @@ Index: includes/Namespace.php
  	}
  
  	/**
+@@ -53,11 +53,17 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		/*op-patch|BL|2009-07-13|RichMedia|DoNotAllowCategoryMoving|start*/
+-		// content was:
+-		// return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
+-		return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving) /*|| $index == NS_CATEGORY*/ );
+-		/*op-patch|BL|2009-07-13|end*/
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $index, &$rMresult );
++			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) /*|| $index == NS_CATEGORY*/ );
++		} else {
++			return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving) /*|| $index == NS_CATEGORY*/ );
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 	}
+ 
+ 	/**
 Index: includes/Title.php
 ===================================================================
 --- includes/Title.php	(revision 5543)
@@ -1020,13 +1043,6 @@ Index: includes/Title.php
  		switch ($this->getNamespace()) {
  			case NS_MAIN:
  			case NS_TALK:
-@@ -3675,4 +3890,4 @@
- 		}
- 		return $this->mBacklinkCache;
- 	}
--}
-+}
-\ No newline at end of file
 Index: includes/Wiki.php
 ===================================================================
 --- includes/Wiki.php	(revision 5543)
