@@ -60,6 +60,8 @@ class TestParserFunctions extends PHPUnit_Framework_TestCase {
     	$file = __FILE__;
     	try {
     		$t = Title::newFromText("ACL:Right/PR3");
+    		global $wgTitle;
+    		$wgTitle = $t;
     		$article = new Article($t);
 			$article->doDelete("Testing");
     		
