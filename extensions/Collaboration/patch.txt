@@ -394,3 +394,163 @@ Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
          return array(
                  $users,
                  'found'   => true,
+Index: extensions/Collaboration/RatingBar/config.php
+===================================================================
+--- extensions/Collaboration/RatingBar/config.php	(revision 5598)
++++ extensions/Collaboration/RatingBar/config.php	(working copy)
+@@ -26,13 +26,17 @@
+ 
+ // Database settings
+ $ratingbar_dbhost					= 'localhost';	// Usually 'localhost'
+-$ratingbar_dbuser					= '';	// Database user
+-$ratingbar_dbpass					= '';	// Database password
+-$ratingbar_dbname					= '';	// Copy value from $wgDBname
++$ratingbar_dbuser					= $wgDBuser;	// Database user, copy value from $wgDBuser
++$ratingbar_dbpass					= $wgDBpassword;	// Database password, copy value from $wgDBpassword
++$ratingbar_dbname					= $wgDBname;	// Copy value from $wgDBname
+ $table_prefix						= '';	// Copy value from $wgDBprefix
+ 
+ // Other important settings
+-$path_to_w4g_rb						= 'extensions/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// use CEIP and CEScriptPath
++global $smwgCEIP, $smwgCEScriptPath;
++$path_to_w4g_rb						= $smwgCEScriptPath . '/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
++/*op-patch|BL|2009-10-15|end*/
+ $ratingbar_tablename				= 'ratingbar';		// Table where the extension will store its data. Leaving to default value is fine.
+ 
+ // For advanced users with a very customized MW installation
+@@ -53,7 +57,10 @@
+ $unique_check						= 'user'; // Identification method. 3 possibles values: 'user', 'ip', 'both'. Only 'user' is currently rock-solid.
+ $min_time_between_votes				= 24; // Minimum time in hours between 2 votes for the same page id from the same IP. If set to 0, one IP can only vote once for a page id. Useless if $unique_check='user'.
+ $max_votes_per_ip					= 10; // How many times the same IP can vote for the same page. If set to 0, no limit.
+-$items_name							= 'Video game'; // Default items' name visitors will be rating.
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// Changed default items' name
++$items_name							= 'page'; // Default items' name visitors will be rating.
++/*op-patch|BL|2009-10-15|end*/
+ $add_special_page					= true; // Add a special page
+ $link_vote_not_logged_in			= 'index.php?title=Special:UserLogin'; // Link when voting if the user isn't logged in
+ $link_vote_not_registered			= 'index.php?title=Special:UserLogin&type=signup'; // Link when voting if the user isn't logged in
+Index: extensions/Collaboration/RatingBar/doqueries.php
+===================================================================
+--- extensions/Collaboration/RatingBar/doqueries.php	(revision 5598)
++++ extensions/Collaboration/RatingBar/doqueries.php	(working copy)
+@@ -1,6 +1,10 @@
+ <?php
+ // Load config
+-require_once ('config.php');
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// use full path
++global $smwgCEIP;
++require_once ($smwgCEIP.'/RatingBar/config.php');
++/*op-patch|BL|2009-10-15|end*/
+ 
+ if($table_prefix!='') $table_prefix='_'.$table_prefix;
+ ini_set("session.name", $ratingbar_dbname.$table_prefix."_session");
+Index: extensions/Collaboration/RatingBar/ratingbar.php
+===================================================================
+--- extensions/Collaboration/RatingBar/ratingbar.php	(revision 5598)
++++ extensions/Collaboration/RatingBar/ratingbar.php	(working copy)
+@@ -26,7 +26,11 @@
+ if (!defined('MEDIAWIKI')) die('This file is part of MediaWiki. It is not a valid entry point.');
+ 
+ // Get some variables
+-// require ('config.php');
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// use full path
++global $smwgCEIP;
++require($smwgCEIP.'/RatingBar/config.php');
++/*op-patch|BL|2009-10-15|end*/
+ 	
+ // Credits stuff
+ $wgExtensionCredits['parserhook'][] = array(
+@@ -103,7 +107,11 @@
+ function render_w4g_ratingraw( $input, $argv, $parser ) {
+ 		
+ 	// Get some variables
+-	require ('config.php');
++	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++	// use full path
++	global $smwgCEIP;
++	require($smwgCEIP.'/RatingBar/config.php');
++	/*op-patch|BL|2009-10-15|end*/
+ 	
+ 	// Disable cache
+ 	header("Cache-Control: no-cache");
+@@ -145,7 +153,11 @@
+ function render_w4g_ratinglist( $input, $argv, $parser ) {
+ 
+ 	// Get some variables
+-	require ('config.php');
++	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++	// use full path
++	global $smwgCEIP;
++	require($smwgCEIP.'/RatingBar/config.php');
++	/*op-patch|BL|2009-10-15|end*/
+ 
+ 	// Disable cache
+ 	header("Cache-Control: no-cache");
+@@ -510,9 +522,13 @@
+ 	// Global object variables
+ 	global $wgUser;		// For $wgUser->getID();
+ 	global $wgOut;		// For $wgOut->getPageTitle();
+-	
++
+ 	// Get some variables
+-	require ('config.php');
++	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++	// use full path
++	global $smwgCEIP;
++	require($smwgCEIP.'/RatingBar/config.php');
++	/*op-patch|BL|2009-10-15|end*/
+ 	
+ 	// Add CSS and Javscript
+ 	$parser->mOutput->addHeadItem('<link rel="stylesheet" type="text/css" href="'.$path_to_w4g_rb.'styles.css"/>');
+Index: extensions/Collaboration/RatingBar/specialpage.php
+===================================================================
+--- extensions/Collaboration/RatingBar/specialpage.php	(revision 5598)
++++ extensions/Collaboration/RatingBar/specialpage.php	(working copy)
+@@ -34,8 +34,11 @@
+ 		$this->setHeaders();
+ 		
+ 		// Get some variables
+-		require ('config.php');
+-
++		/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++		// use full path
++		global $smwgCEIP;
++		require($smwgCEIP.'/RatingBar/config.php');
++		/*op-patch|BL|2009-10-15|end*/
+ 
+ 		$wikitext = '<w4g_ratinglist numberofitems ="10" numberofdays="7"/>';
+ 		$wikitext .= '<w4g_ratinglist numberofitems ="10" numberofdays="50"/>';
+Index: extensions/Collaboration/RatingBar/styles.css
+===================================================================
+--- extensions/Collaboration/RatingBar/styles.css	(revision 5598)
++++ extensions/Collaboration/RatingBar/styles.css	(working copy)
+@@ -20,15 +20,23 @@
+ 
+ #rating_box {width:242px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;} /* the box with bar and rating */
+ #rating_target {width:202px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;position:absolute;float:left;} /* the bar only */
+-#rating_text {width:40px;height:15px;border:1px solid #333333;
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// a bit to large...
++#rating_text {width:38px;height:15px;border:1px solid #333333;
+ 	margin:0px;margin-left:202px;margin-bottom:2px;padding:0px;font-family:arial;font-size:10px;
+ 	background-color:#999999;position:absolute;float:left;} /* the rating only */
++/*op-patch|BL|2009-10-15|end*/
+ 
+ .w4g_rb_global {width:2px;height:15px;margin:0px;padding:0px;position:absolute;float:left;} /* a tiny block */
+ .w4g_rb_nojs {font-size:x-small;color:#ff9999;} /* for the "must enable JS" message */
+ 
+ .w4g_ratinglist  { margin-bottom: 0px; padding-left: .4em; }
+ .w4g_ratinglist-headercell   { background-color:#153E7E; font-weight: bold; text-align: center; margin-bottom: 0px; padding-left: .4em; color:#FFFFFF; }
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
++// centered sortarrow (vertically) and td text (horizontal)
++.w4g_ratinglist-headercell td { text-align: center; padding: 5px;}
++.w4g_ratinglist-headercell span.sortarrow { vertical-align: middle;}
++/*op-patch|BL|2009-10-15|end*/
+ .w4g_ratinglist-contentcell   { padding-left: .2em; padding-right: .2em; }
+ 
+ .w4g_ratinglist-error  { font-weight: bold; color:#FF0000; }
