@@ -9,6 +9,9 @@
     <target name="runQuickACL">
 
         <webtest name="addRightToQuickacl" description="assuming that createTpl has been successfull executed before">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="addRightToQuickacl">
                 <param name="page" value="Special:HaloACL?activetab=manageACLs&amp;activesubtab=quickacl" />
             </antcall>

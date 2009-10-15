@@ -7,6 +7,9 @@
 	<target name="testSections">
 
 		<webtest name="Test opening sections as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -25,13 +28,16 @@
 				<param name="content" value="HiddenInstanceOfSubcat"/>
 			</antcall>
 			<antcall target="openSection">
-				<param name="page" value="User:HiddenUser"/>
-				<param name="content" value="User:HiddenUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
+				<param name="content" value="User_talk:HiddenUser"/>
 			</antcall>
 		</webtest>
 		
 		
 		<webtest name="Test opening sections as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -50,7 +56,7 @@
 				<param name="content" value="Permission error"/>
 			</antcall>
 			<antcall target="openSection">
-				<param name="page" value="User:HiddenUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
 				<param name="content" value="Permission error"/>
 			</antcall>
 		</webtest>

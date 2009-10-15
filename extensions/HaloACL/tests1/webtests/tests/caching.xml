@@ -7,6 +7,9 @@
 	<target name="testCaching">
 
 		<webtest name="Test caching">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="checkCache">
 				<param name="page" value="HiddenPage"/>
 			</antcall>
@@ -17,7 +20,7 @@
 				<param name="page" value="HiddenInstanceOfSubcat"/>
 			</antcall>
 			<antcall target="checkCache">
-				<param name="page" value="User:HiddenUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
 			</antcall>
 		</webtest>
 	</target>

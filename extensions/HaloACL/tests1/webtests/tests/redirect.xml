@@ -7,12 +7,18 @@
 	<target name="testRedirect">
 
 		<webtest name="Test redirect as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="checkRedirect">
 				<param name="user" value="NormalUser"/>
 				<param name="content" value="HiddenPage"/>
 			</antcall>
 		</webtest>
 		<webtest name="Test redirect as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="checkRedirect">
 				<param name="user" value="RestrictedUser"/>
 				<param name="content" value="Permission error"/>

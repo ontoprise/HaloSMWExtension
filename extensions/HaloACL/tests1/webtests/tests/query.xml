@@ -7,6 +7,9 @@
 	<target name="testQueryHiddenPages">
 
 		<webtest name="Testing queries as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -65,6 +68,9 @@
 		
 		
 		<webtest name="Testing queries as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>

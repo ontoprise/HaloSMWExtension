@@ -3,14 +3,15 @@
 <project name="testHaloACL" default="testAll">
 
 
-    <property name="wikipath" value="mediawiki"/>
+	<property name="wikipath" value="mediawiki"/>
 		
 	
-    <target name="testAll" description="runs all the tests">
+	<target name="testAll" description="runs all the tests">
 <!--
 		<ant antfile="createUsers.xml"/> 
 		<ant antfile="createArticles.xml"/>
 		<ant antfile="pageTransclusion.xml"/>
+-->
 		<ant antfile="hiddenInstanceOfSubcat.xml"/>
 		<ant antfile="preloading.xml"/>
 		<ant antfile="exportPages.xml"/>
@@ -34,20 +35,27 @@
 		<ant antfile="exportRDFofProtectedProperties.xml"/>
 		<ant antfile="ontologyBrowserWithACL.xml"/>
 		<ant antfile="initialRights.xml"/>
+<!--		
 -->
+<!--
+-->		
 <!--
 -->		
 <!-- Does not work		<ant antfile="saveProtectedPropertiesWithSTB.xml"/> -->
 
-
+<!--
+	Test GUI of HaloACL
+-->			
 <!--
                <ant antfile="createDescriptor.xml" />
                <ant antfile="createTemplate.xml" />
                <ant antfile="editRight.xml" />
                <ant antfile="createGroups.xml" />
                <ant antfile="checkMisc.xml" />
--->
                <ant antfile="quickACL.xml" />
-
-    </target>
+-->
+<!--
+-->
+		
+	</target>
 </project>

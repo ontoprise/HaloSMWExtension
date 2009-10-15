@@ -7,6 +7,10 @@
 	<target name="testHiddenInstanceOfSubcat">
 
 		<webtest name="HiddenInstanceOfSubcat">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			
 			<antcall target="loadPage">
 				<param name="page" value="HiddenInstanceOfSubcat"/>
 				<param name="heading" value="HiddenInstanceOfSubcat.*"/>

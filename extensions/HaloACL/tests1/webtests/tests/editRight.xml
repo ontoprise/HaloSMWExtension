@@ -14,12 +14,18 @@
         </webtest>
 -->
         <webtest name="deleting acl for eef page - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Page/Eef" />
             </antcall>
         </webtest>
         
         <webtest name="protecting with all anonymous users">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createDescrallusersanoymous">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
@@ -31,6 +37,9 @@
 
      
         <webtest name="verfiyAdmin">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyCheckAccessAdmin">
                 <param name="targetPage" value="Eef"/>
                 <param name="expectedText" value="Permission error"/>
@@ -38,6 +47,9 @@
 
         </webtest>
         <webtest name="verfyAn">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyCheckAccessAn">
                 <param name="targetPage" value="Eef"/>
                 <param name="expectedText" value="Eef"/>
@@ -47,6 +59,9 @@
         </webtest>
 
         <webtest name="changeRightnow">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="changeRight" >
                 <param name="page" value="Special:HaloACL" />
                 <param name="heading" value="HaloACL"/>
@@ -55,6 +70,9 @@
         </webtest>
 
         <webtest name="verfiyAdminNew">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyCheckAccessAdminNew">
                 <param name="targetPage" value="Eef"/>
                 <param name="expectedText" value="Eef"/>
@@ -62,6 +80,9 @@
 
         </webtest>
         <webtest name="verfyAnNew">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyCheckAccessAnNew">
                 <param name="targetPage" value="Eef"/>
                 <param name="expectedText" value="Login Required"/>

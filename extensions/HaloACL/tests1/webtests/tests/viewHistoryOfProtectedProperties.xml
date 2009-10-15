@@ -14,6 +14,9 @@ that only revisions without protected properties can be viewed.
 	
 	<target name="testViewHistoryOfProtectedProperties">
 		<webtest name="Testing as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -39,6 +42,9 @@ that only revisions without protected properties can be viewed.
 		
 		
 		<webtest name="Testing as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>

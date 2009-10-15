@@ -13,6 +13,9 @@ by NormalUser and RestrictedUser.
 	
 	<target name="testEditProtectedProperties">
 		<webtest name="Testing as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>

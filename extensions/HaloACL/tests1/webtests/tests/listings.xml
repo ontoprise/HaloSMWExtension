@@ -7,6 +7,9 @@
 	<target name="testListings">
 		
 		<webtest name="Test listings as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -16,6 +19,9 @@
 		</webtest>
 		
 		<webtest name="Test listings as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -132,7 +138,7 @@
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
-		<verifyXPath xpath='//a[contains(text(),"User:HiddenUser")]'/>
+		<verifyXPath xpath='//a[contains(text(),"User_talk:HiddenUser")]'/>
 			
 		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
 		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=HiddenPage"
@@ -149,12 +155,12 @@
 		<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF"
 				description="Open Special:ExportRDF." />	
 
-		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User:HiddenUser"/>
+		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User_talk:HiddenUser"/>
 		<clickElement xpath="//input[not(@id) and @type='submit']"/>
 		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//*[contains(text(),"HiddenPage")]'/>
-		<verifyXPath xpath='//*[contains(text(),"User:HiddenUser")]'/>
+		<verifyXPath xpath='//*[contains(text(),"User_talk:HiddenUser")]'/>
 			
 		<!-- Enter is hidden and true. The protected pages should not be revealed. -->
 <!--
@@ -322,7 +328,7 @@
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
-		<verifyXPath xpath='//a[contains(text(),"User:HiddenUser")]'/>
+		<verifyXPath xpath='//a[contains(text(),"User_talk:HiddenUser")]'/>
 		</not>
 			
 		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
@@ -346,13 +352,13 @@
 		<invoke url="http://localhost/${wikipath}/index.php/Special:ExportRDF"
 				description="Open Special:ExportRDF." />	
 
-		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User:HiddenUser"/>
+		<setInputField name="pages" value="HiddenInstanceOfSubcat&#10;‎HiddenInstance&#10;‎HiddenPage&#10;User_talk:HiddenUser"/>
 		<clickElement xpath="//input[not(@id) and @type='submit']"/>
 		<not>
 		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//*[contains(text(),"HiddenPage")]'/>
-		<verifyXPath xpath='//*[contains(text(),"User:HiddenUser")]'/>
+		<verifyXPath xpath='//*[contains(text(),"User_talk:HiddenUser")]'/>
 		</not>
 			
 		<!-- Enter is hidden and true. The protected pages should not be revealed. -->

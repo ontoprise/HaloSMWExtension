@@ -6,6 +6,9 @@
 
 	<target name="testRevisions">
 		<webtest name="Create revision of HiddenPage">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -16,6 +19,9 @@
 		</webtest>			
 
 		<webtest name="Create revision of HiddenInstance">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -26,6 +32,9 @@
 		</webtest>			
 
 		<webtest name="Create revision of HiddenInstanceOfSubcat">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -35,18 +44,24 @@
 			</antcall>
 		</webtest>			
 
-		<webtest name="Create revision of User:HiddenUser">
+		<webtest name="Create revision of User_talk:HiddenUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
 			</antcall>
 			<antcall target="createRevision">
-				<param name="page" value="User:HiddenUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
 			</antcall>
 		</webtest>			
 
 				
 		<webtest name="Test revisions as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -72,45 +87,51 @@
 
 		<antcall target="loadPage">
 			<param name="user" value="NormalUser"/>
-			<param name="page" value="User:HiddenUser"/>
-			<param name="content" value="User:HiddenUser"/>
+			<param name="page" value="User_talk:HiddenUser"/>
+			<param name="content" value="User_talk:HiddenUser"/>
 		</antcall>
 
 		</webtest>
 
 		<webtest name="Test revisions as RestrictedUser">
-		<antcall target="login">
-			<param name="user" value="RestrictedUser"/>
-			<param name="pwd" value="acl"/>
-		</antcall>
-			
-		<antcall target="loadPage">
-			<param name="user" value="NormalUser"/>
-			<param name="page" value="HiddenPage"/>
-			<param name="content" value="Permission error"/>
-		</antcall>
-
-		<antcall target="loadPage">
-			<param name="user" value="NormalUser"/>
-			<param name="page" value="HiddenInstance"/>
-			<param name="content" value="Permission error"/>
-		</antcall>
-
-		<antcall target="loadPage">
-			<param name="user" value="NormalUser"/>
-			<param name="page" value="HiddenInstanceOfSubcat"/>
-			<param name="content" value="Permission error"/>
-		</antcall>
-
-		<antcall target="loadPage">
-			<param name="user" value="NormalUser"/>
-			<param name="page" value="User:HiddenUser"/>
-			<param name="content" value="Permission error"/>
-		</antcall>
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+				
+			<antcall target="loadPage">
+				<param name="user" value="NormalUser"/>
+				<param name="page" value="HiddenPage"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+	
+			<antcall target="loadPage">
+				<param name="user" value="NormalUser"/>
+				<param name="page" value="HiddenInstance"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+	
+			<antcall target="loadPage">
+				<param name="user" value="NormalUser"/>
+				<param name="page" value="HiddenInstanceOfSubcat"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
+	
+			<antcall target="loadPage">
+				<param name="user" value="NormalUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
+				<param name="content" value="Permission error"/>
+			</antcall>
 
 		</webtest>
 		
 		<webtest name="Test direct access to revisions as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="openRevision">
 					<param name="user" value="NormalUser"/>
 					<param name="page" value="HiddenPage"/>
@@ -128,12 +149,15 @@
 			</antcall>
 			<antcall target="openRevision">
 					<param name="user" value="NormalUser"/>
-					<param name="page" value="User:HiddenUser"/>
+					<param name="page" value="User_talk:HiddenUser"/>
 					<param name="content" value="Permission error"/>
 			</antcall>
 		</webtest>
 
 		<webtest name="Test direct access to differences as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="openDiff">
 					<param name="user" value="NormalUser"/>
 					<param name="page" value="HiddenPage"/>
@@ -151,7 +175,7 @@
 			</antcall>
 			<antcall target="openDiff">
 					<param name="user" value="NormalUser"/>
-					<param name="page" value="User:HiddenUser"/>
+					<param name="page" value="User_talk:HiddenUser"/>
 					<param name="content" value="Permission error"/>
 			</antcall>
 		</webtest>

@@ -8,6 +8,9 @@
     <target name="runAllMiscTests">
 
         <webtest name="check access to haloAcl SpecialPage">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 
             <!-- checking access to HaloACL -->
             <antcall target="verifyAdmin">
@@ -26,6 +29,9 @@
         </webtest>
 
         <webtest name="check access to whitelist">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyAdminWhitelist">
                 <param name="targetPage" value="Special:HaloACL"/>
             </antcall>

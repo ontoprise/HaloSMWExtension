@@ -8,12 +8,18 @@
     <target name="runManageGroups">
 
         <webtest name="deleting grouppage - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Group/newGroupFromWebtest" />
             </antcall>
         </webtest>
         
         <webtest name="create group">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createGroup">
                 <param name="targetPage" value="Special:HaloACL?activetab=manageUsers" />
                 <param name="groupToCreate" value="newGroupFromWebtest" />
@@ -21,6 +27,9 @@
         </webtest>
 
         <webtest name="verifying groupcreation">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyGroup">
                 <param name="targetPage" value="ACL:Group/newGroupFromWebtest" />
                 <param name="expectedText" value="Admin" />

@@ -9,12 +9,18 @@
     <target name="runAllCreateTemplateTests">
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
         <webtest name="create template for individual">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             
             <antcall target="createTemplateindividual">
                 <param name="page" value="Special:HaloACL?activetab=createACL&amp;activesubtab=createTemplate"/>
@@ -25,6 +31,9 @@
         </webtest>
 
         <webtest name="checking acl page">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyTemplateAdmin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="ACL:Right/Lou"/>
@@ -40,12 +49,18 @@
         </webtest>
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
         <webtest name="create template for private use">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createTemplateprivateuse">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
@@ -54,6 +69,9 @@
             </antcall>
         </webtest>
         <webtest name="checking acl page">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyTemplateAdmin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="ACL:Right/Lou"/>
@@ -69,12 +87,18 @@
         </webtest>
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
         <webtest name="create template for allusers">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createTemplateallusers">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
@@ -83,6 +107,9 @@
             </antcall>
         </webtest>
         <webtest name="checking acl page">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyTemplateAdmin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="ACL:Right/Lou"/>
@@ -98,12 +125,18 @@
         </webtest>
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
 
         <webtest name="create template for all registered users">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createTemplateallusersregistered">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
@@ -112,6 +145,9 @@
             </antcall>
         </webtest>
         <webtest name="checking acl page">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyTemplateAdmin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="ACL:Right/Lou"/>
@@ -127,12 +163,18 @@
         </webtest>
 
         <webtest name="deleting lou-template - MAY FAIL IF NOT EXISTING">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="deletePage" >
                 <param name="targetPage" value="ACL:Right/Lou" />
             </antcall>
         </webtest>
           
         <webtest name="create template for all anonymous users">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="createTemplateallusersanoymous">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
@@ -141,6 +183,9 @@
             </antcall>
         </webtest>
         <webtest name="checking acl page">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyTemplateAdmin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
                 <param name="expectedText" value="ACL:Right/Lou"/>

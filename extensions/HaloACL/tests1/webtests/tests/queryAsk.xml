@@ -11,6 +11,9 @@
 	import of pages does not create the semantic data for SMW.
 -->		
 		<webtest name="Save Event 1 again">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -21,6 +24,9 @@
 		</webtest>			
 
 		<webtest name="Save Event 2 again">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -31,6 +37,9 @@
 		</webtest>			
 
 		<webtest name="Save Event 3 again">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -41,6 +50,9 @@
 		</webtest>			
 
 		<webtest name="Testing ASK-queries as NormalUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -133,6 +145,9 @@
 		
 		
 		<webtest name="Testing ASK-queries as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>

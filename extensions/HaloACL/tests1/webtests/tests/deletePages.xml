@@ -7,6 +7,9 @@
 	<target name="testDeletePages">
 
 		<webtest name="Test action links as RestrictedUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -24,7 +27,7 @@
 				<param name="content" value="Permission denied"/>
 			</antcall>
 			<antcall target="deletePage">
-				<param name="page" value="User:HiddenUser"/>
+				<param name="page" value="User_talk:HiddenUser"/>
 				<param name="content" value="Permission denied"/>
 			</antcall>
 		</webtest>

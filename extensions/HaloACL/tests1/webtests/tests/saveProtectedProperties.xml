@@ -15,7 +15,6 @@ can do this.
 	<target name="testSaveProtectedProperties">
 		<webtest name="Testing as RestrictedUser">
 			<config> 
-				<!-- this option let me ignore Javascript errors--> 
 				<option name="JavaScriptEnabled" value="false"/>
 				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config> 
@@ -46,7 +45,6 @@ can do this.
 		
 		<webtest name="Testing as NormalUser">
 			<config> 
-				<!-- this option let me ignore Javascript errors--> 
 				<option name="JavaScriptEnabled" value="false"/>
 				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config> 

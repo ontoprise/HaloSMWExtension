@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE project SYSTEM "../dtd/Project.dtd">
 <project name="PageTransclusion" default="testCreateUsers">
-
 	<target name="testCreateUsers">
 		<antcall target="createUser">
 			<param name="user" value="RestrictedUser"/>
@@ -12,7 +11,12 @@
 	</target>
 
 	<target name="createUser">
+
 		<webtest name="CreateUser">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
+			
 			<invoke url="http://localhost/${wikipath}/index.php/Special:UserLogin"
 				description="Create new user ${user}" />
 			<clickLink label="Create an account"/>

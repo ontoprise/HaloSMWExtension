@@ -7,6 +7,10 @@
 	<target name="testPageTransclusion">
 
 		<webtest name="CheckTransclusion">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
 			<antcall target="transcludePage">
 				<param name="page" value="ACLPageTransclusion"/>
 				<param name="heading" value="Hidden page"/>
@@ -25,7 +29,7 @@
 			<antcall target="transcludePage">
 				<param name="page" value="ACLNamespaceTransclusion "/>
 				<param name="heading" value="Hidden namespace"/>
-				<param name="content" value="The namespace User is not accessible for.*"/>
+				<param name="content" value="The namespace User_talk is not accessible for.*"/>
 			</antcall>
 			<antcall target="transcludeRedirect">
 			</antcall>

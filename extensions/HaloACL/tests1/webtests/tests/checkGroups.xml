@@ -8,12 +8,18 @@
 
     <target name="runCheckGroups">
         <webtest name="checkgroups">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="creategroup" >
                 <param name="page" value="Special:HaloACL" />
             </antcall>
         </webtest>
             <!-- checking access to HaloACL -->
         <webtest name="VerifyGrouplogin">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
             <antcall target="verifyAdmin">
                 <param name="targetPage" value="ACL:Group/OurGroup"/>
                 <param name="expectedText" value="ACL:Group/OurGroup"/>

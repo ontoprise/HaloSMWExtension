@@ -18,40 +18,46 @@
 				<param name="content" value="Instances of the.*"/>
 			</antcall>
 			<antcall target="loadPage">
-				<param name="page" value="User:HiddenUser"/>
-				<param name="content" value="The '''namespace User'''.*"/>
+				<param name="page" value="User_talk:HiddenUser"/>
+				<param name="content" value="The '''namespace User_talk'''.*"/>
 			</antcall>
 	</target>
 		
 	<target name="loadPage">
 		<webtest name="Preloading as NormalUser: ${page}">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 
-		<antcall target="login">
-			<param name="user" value="NormalUser"/>
-			<param name="pwd" value="acl"/>
-		</antcall>
-
-		<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
-			description="Preload page ${page} as NormalUser." />
-		
-		<verifyTextarea name="wpTextbox1"
-						regex="true"
-					    text="${content}"/>
+			<antcall target="login">
+				<param name="user" value="NormalUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+	
+			<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
+				description="Preload page ${page} as NormalUser." />
+			
+			<verifyTextarea name="wpTextbox1"
+							regex="true"
+						    text="${content}"/>
 		</webtest>
 			
 		<webtest name="Preloading as RestrictedUser: ${page}">
+			<config>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config> 
 		
-		<antcall target="login">
-			<param name="user" value="RestrictedUser"/>
-			<param name="pwd" value="acl"/>
-		</antcall>
-
-		<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
-			description="Preload page ${page} as RestrictedUser" />
-		
-		<verifyTextarea name="wpTextbox1"
-						regex="true"
-					    text="^$"/>
+			<antcall target="login">
+				<param name="user" value="RestrictedUser"/>
+				<param name="pwd" value="acl"/>
+			</antcall>
+	
+			<invoke url="http://localhost/${wikipath}/index.php?title=abc&amp;action=edit&amp;preload=${page}"
+				description="Preload page ${page} as RestrictedUser" />
+			
+			<verifyTextarea name="wpTextbox1"
+							regex="true"
+						    text="^$"/>
 		</webtest>
 	</target>
 	

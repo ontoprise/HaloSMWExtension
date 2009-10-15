@@ -12,14 +12,13 @@
                 <param name="targetPage" value="ACL:Page/Foo" />
             </antcall>
         </webtest>
-<!--
-        issue with toolbar
+<!--        issue with toolbar
         <webtest name="create page (foo) that will be secured">
             <antcall target="createArticleThatWillBeSecured">
                 <param name="content" value="I'm Foo's content" />
             </antcall>
         </webtest>
- -->
+-->
         <webtest name="protecting with individual right">
             <antcall target="createDescrindividual">
                 <param name="page" value="Special:HaloACL"/>
