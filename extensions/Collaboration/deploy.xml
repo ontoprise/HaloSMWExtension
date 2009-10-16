@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>Collaboration</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/Collaboration</instdir>
+		<description>
+			Add fancy collaboration stuff to your wiki.
+		</description>
+		<dependencies>
+			<dependency from="1151">MW</dependency>
+		</dependencies>
+	</global>
+	<codefiles>
+		<file loc="extensions/Collaboration/deploy.xml" />
+
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+		<!-- <file loc="extensions/Collaboration/dump.xml"/> -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<!-- <precedes ext="smw" /> -->
+
+		<new>
+			<patch file="extensions/Collaboration/patch.txt" />
+			<require name="ce"
+				file="extensions/Collaboration/includes/CE_Initialize.php" />
+			<script file="extensions/Collaboration/maintenance/CE_Setup.php" />
+		</new>
+		<uninstall>
+			<patch file="extensions/Collaboration/patch.txt" />
+			<script file="extensions/SMWHalo/maintenance/CE_Setup.php"
+				params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>
