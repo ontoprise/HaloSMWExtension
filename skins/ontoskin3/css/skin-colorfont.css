@@ -35,7 +35,12 @@ dt {
 
 #searchInput{
     border-color: #AAA;
-    color: #AAA;
+    color: #000000;
+    font-size: 90%;
+}
+
+#searchInput:focus{
+    border-color: #42a3b3;
 }
 
 #smwh_menu {
@@ -68,11 +73,22 @@ ul.smwh_menulist div.smwh_menubody_visible a{
     color: #116988;
 }
 
+ul.smwh_menulist li:hover {
+    background: url(../img/menue_hover.gif) repeat-x;
+}
+
+ul.smwh_menulist div.smwh_menubody td:hover  {
+	background-color: #E8EDFF;
+}
 
 /* breadcrump */
 
 #breadcrump a{
     color: #4187a0;
+}
+
+#smwh_breadcrumbs{
+    font-size: smaller;
 }
 
 /* mainpage */
@@ -85,6 +101,10 @@ ul.smwh_menulist div.smwh_menubody_visible a{
 .tab{
     background-color: #FFF;
     border-color: #cacac4;
+}
+
+.tab.selected{
+    font-weight: bolder;
 }
 
 #tabsright .righttabelements {

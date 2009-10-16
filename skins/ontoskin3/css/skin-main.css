@@ -1,5 +1,8 @@
 /**
 * Global
+*
+* DO NOT ADD ANY CSS CONCERNING COLORS, FONTS OR IMAGES HERE!
+*
 */
 
 body{
@@ -83,13 +86,11 @@ textarea {
     border-width: 2px;
     padding: 8px;
     width: 340px;
-    color: #000000;
-    font-size: 90%;
 }
 
 #searchInput:focus{
-	border: 2px solid #42a3b3;
-	color: #000000;
+	border-width: 2px;
+        border-style: solid;
 }
 
 
@@ -121,10 +122,6 @@ ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
     text-decoration: underline;
 }
 
-ul.smwh_menulist li:hover {
-    background: url(../img/menue_hover.gif) repeat-x;
-}
-
 ul.smwh_menulist li {
 	  display: inline-block;
 	  position: relative;
@@ -153,7 +150,10 @@ ul.smwh_menulist div.smwh_menubody {
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover  {
-	background: #E8EDFF none repeat scroll 0 0;
+	background-image: none;
+        background-repeat: repeat;
+        background-attachment: scroll;
+        background-position: 0 0;
 }
 
 
@@ -198,7 +198,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
     clear: both;
     margin-top: 10px;
     margin-bottom: 10px;
-    font-size: smaller;
 }
 
 /* mainpage */
@@ -257,7 +256,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 .tab.selected{
     border-bottom: 1px solid #FFF;
     z-index: 1;
-    font-weight: bolder;
 }
 
 #editimage{
