@@ -380,7 +380,20 @@ Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
 ===================================================================
 --- extensions/Collaboration/CurrentUsers/CurrentUsers.php	(revision 5601)
 +++ extensions/Collaboration/CurrentUsers/CurrentUsers.php	(working copy)
-@@ -72,7 +72,12 @@
+@@ -29,7 +29,11 @@
+ function efSetupCurrentUsers() {
+         global $wgUser, $wgParser, $egCurrentUsers, $egCurrentUsersTimeout, $egCurrentUsersMagic;
+         $wgParser->setFunctionHook( $egCurrentUsersMagic, 'efCurrentUsersMagic' );
+-        if ( strtolower( $_REQUEST['title'] ) == 'robots.txt' ) $bot = 'bot';
++        /*op-patch|BL|2009-10-16|Collaboration|generalImprovements|start*/
++        // check array key
++        if( isset( $_REQUEST['title'] ) )
++        /*op-patch|BL|2009-10-16|end*/
++        	if ( strtolower( $_REQUEST['title'] ) == 'robots.txt' ) $bot = 'bot';
+         else $bot = '';
+         $file = dirname( __FILE__ ) . '/CurrentUsers.txt';
+         $data = file( $file );
+@@ -72,7 +76,12 @@
          }
          if ( $guests ) $users .= "{" . "{" . "$egCurrentUsersTemplate|Guests||$guests}" . "}\n";
          if ( $bots )   $users .= "{" . "{" . "$egCurrentUsersTemplate|Robots||$bots}" . "}\n";
