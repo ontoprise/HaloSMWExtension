@@ -1,6 +1,6 @@
 Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 ===================================================================
---- extensions/Collaboration/ArticleComments/ArticleComments.php	(revision 5598)
+--- extensions/Collaboration/ArticleComments/ArticleComments.php	(revision 5601)
 +++ extensions/Collaboration/ArticleComments/ArticleComments.php	(working copy)
 @@ -2,8 +2,11 @@
  /**
@@ -378,7 +378,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 \ No newline at end of file
 Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
 ===================================================================
---- extensions/Collaboration/CurrentUsers/CurrentUsers.php	(revision 5598)
+--- extensions/Collaboration/CurrentUsers/CurrentUsers.php	(revision 5601)
 +++ extensions/Collaboration/CurrentUsers/CurrentUsers.php	(working copy)
 @@ -72,7 +72,12 @@
          }
@@ -396,10 +396,13 @@ Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
                  'found'   => true,
 Index: extensions/Collaboration/RatingBar/config.php
 ===================================================================
---- extensions/Collaboration/RatingBar/config.php	(revision 5598)
+--- extensions/Collaboration/RatingBar/config.php	(revision 5601)
 +++ extensions/Collaboration/RatingBar/config.php	(working copy)
-@@ -26,13 +26,17 @@
+@@ -24,15 +24,20 @@
+ // Config page where all main variables are set
+ // Important: some of the settings are likely to be **CASE-SENSITIVE** (passwords, filenames on Linux, etc)
  
++global $wgDBuser, $wgDBpassword, $wgDBname;
  // Database settings
  $ratingbar_dbhost					= 'localhost';	// Usually 'localhost'
 -$ratingbar_dbuser					= '';	// Database user
@@ -414,13 +417,13 @@ Index: extensions/Collaboration/RatingBar/config.php
 -$path_to_w4g_rb						= 'extensions/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +// use CEIP and CEScriptPath
-+global $smwgCEIP, $smwgCEScriptPath;
-+$path_to_w4g_rb						= $smwgCEScriptPath . '/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
++global $cegIP, $cegScriptPath;
++$path_to_w4g_rb						= $cegScriptPath . '/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
 +/*op-patch|BL|2009-10-15|end*/
  $ratingbar_tablename				= 'ratingbar';		// Table where the extension will store its data. Leaving to default value is fine.
  
  // For advanced users with a very customized MW installation
-@@ -53,7 +57,10 @@
+@@ -53,7 +58,10 @@
  $unique_check						= 'user'; // Identification method. 3 possibles values: 'user', 'ip', 'both'. Only 'user' is currently rock-solid.
  $min_time_between_votes				= 24; // Minimum time in hours between 2 votes for the same page id from the same IP. If set to 0, one IP can only vote once for a page id. Useless if $unique_check='user'.
  $max_votes_per_ip					= 10; // How many times the same IP can vote for the same page. If set to 0, no limit.
@@ -434,7 +437,7 @@ Index: extensions/Collaboration/RatingBar/config.php
  $link_vote_not_registered			= 'index.php?title=Special:UserLogin&type=signup'; // Link when voting if the user isn't logged in
 Index: extensions/Collaboration/RatingBar/doqueries.php
 ===================================================================
---- extensions/Collaboration/RatingBar/doqueries.php	(revision 5598)
+--- extensions/Collaboration/RatingBar/doqueries.php	(revision 5601)
 +++ extensions/Collaboration/RatingBar/doqueries.php	(working copy)
 @@ -1,6 +1,10 @@
  <?php
@@ -442,15 +445,15 @@ Index: extensions/Collaboration/RatingBar/doqueries.php
 -require_once ('config.php');
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +// use full path
-+global $smwgCEIP;
-+require_once ($smwgCEIP.'/RatingBar/config.php');
++global $cegIP;
++require_once ($cegIP.'/RatingBar/config.php');
 +/*op-patch|BL|2009-10-15|end*/
  
  if($table_prefix!='') $table_prefix='_'.$table_prefix;
  ini_set("session.name", $ratingbar_dbname.$table_prefix."_session");
 Index: extensions/Collaboration/RatingBar/ratingbar.php
 ===================================================================
---- extensions/Collaboration/RatingBar/ratingbar.php	(revision 5598)
+--- extensions/Collaboration/RatingBar/ratingbar.php	(revision 5601)
 +++ extensions/Collaboration/RatingBar/ratingbar.php	(working copy)
 @@ -26,7 +26,11 @@
  if (!defined('MEDIAWIKI')) die('This file is part of MediaWiki. It is not a valid entry point.');
@@ -459,8 +462,8 @@ Index: extensions/Collaboration/RatingBar/ratingbar.php
 -// require ('config.php');
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +// use full path
-+global $smwgCEIP;
-+require($smwgCEIP.'/RatingBar/config.php');
++global $cegIP;
++require($cegIP.'/RatingBar/config.php');
 +/*op-patch|BL|2009-10-15|end*/
  	
  // Credits stuff
@@ -472,8 +475,8 @@ Index: extensions/Collaboration/RatingBar/ratingbar.php
 -	require ('config.php');
 +	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +	// use full path
-+	global $smwgCEIP;
-+	require($smwgCEIP.'/RatingBar/config.php');
++	global $cegIP;
++	require($cegIP.'/RatingBar/config.php');
 +	/*op-patch|BL|2009-10-15|end*/
  	
  	// Disable cache
@@ -485,8 +488,8 @@ Index: extensions/Collaboration/RatingBar/ratingbar.php
 -	require ('config.php');
 +	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +	// use full path
-+	global $smwgCEIP;
-+	require($smwgCEIP.'/RatingBar/config.php');
++	global $cegIP;
++	require($cegIP.'/RatingBar/config.php');
 +	/*op-patch|BL|2009-10-15|end*/
  
  	// Disable cache
@@ -501,15 +504,15 @@ Index: extensions/Collaboration/RatingBar/ratingbar.php
 -	require ('config.php');
 +	/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +	// use full path
-+	global $smwgCEIP;
-+	require($smwgCEIP.'/RatingBar/config.php');
++	global $cegIP;
++	require($cegIP.'/RatingBar/config.php');
 +	/*op-patch|BL|2009-10-15|end*/
  	
  	// Add CSS and Javscript
  	$parser->mOutput->addHeadItem('<link rel="stylesheet" type="text/css" href="'.$path_to_w4g_rb.'styles.css"/>');
 Index: extensions/Collaboration/RatingBar/specialpage.php
 ===================================================================
---- extensions/Collaboration/RatingBar/specialpage.php	(revision 5598)
+--- extensions/Collaboration/RatingBar/specialpage.php	(revision 5601)
 +++ extensions/Collaboration/RatingBar/specialpage.php	(working copy)
 @@ -34,8 +34,11 @@
  		$this->setHeaders();
@@ -519,15 +522,15 @@ Index: extensions/Collaboration/RatingBar/specialpage.php
 -
 +		/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +		// use full path
-+		global $smwgCEIP;
-+		require($smwgCEIP.'/RatingBar/config.php');
++		global $cegIP;
++		require($cegIP.'/RatingBar/config.php');
 +		/*op-patch|BL|2009-10-15|end*/
  
  		$wikitext = '<w4g_ratinglist numberofitems ="10" numberofdays="7"/>';
  		$wikitext .= '<w4g_ratinglist numberofitems ="10" numberofdays="50"/>';
 Index: extensions/Collaboration/RatingBar/styles.css
 ===================================================================
---- extensions/Collaboration/RatingBar/styles.css	(revision 5598)
+--- extensions/Collaboration/RatingBar/styles.css	(revision 5601)
 +++ extensions/Collaboration/RatingBar/styles.css	(working copy)
 @@ -20,15 +20,23 @@
  
