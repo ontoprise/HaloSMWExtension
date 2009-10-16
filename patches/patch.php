@@ -45,6 +45,12 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         $onlypatch = true;
         continue;
     }
+    
+    //--no error
+    if ($arg == '--noerror') {
+        $noerror = true;
+        continue;
+    }
 }
 
 // usage message if wrong or missing params
@@ -117,7 +123,7 @@ foreach($patches as $p) {
 	if (!$onlypatch) echo "\n------------\n";
 	$returnCode = $returnCode != 0 ? $returnCode : $ret;
 }
-exit($returnCode);
+exit(isset($noerror) && $noerror === true ? 0 : $returnCode);
 
 function isWindows() {
 	static $thisBoxRunsWindows;
