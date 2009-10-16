@@ -86,17 +86,18 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 	}
 
 	function testPatches() {
-		$patches = $this->ddp->getPatches("1132");
+		$patches = $this->ddp->getPatches(array('smwhalo' => $this->ddp));
 		
-		list($mwver, $pf) = $patches[0];
-		$this->assertEquals("patch.txt", $pf);
-		$this->assertEquals(1132, $mwver);
+		
+		$this->assertEquals("patch.txt", $patches[0]);
+		
 	}
 
 	function testUninstallPatches() {
-		$patches = $this->ddp->getUninstallPatches("1132");
-		list($mwver, $pf) = $patches[0];
-        $this->assertEquals("patch.txt", $pf);
+		
+		$patches = $this->ddp->getUninstallPatches(array('smwhalo' => $this->ddp));
+                
+        $this->assertEquals("patch.txt", $patches[0]);
         
 	}
 

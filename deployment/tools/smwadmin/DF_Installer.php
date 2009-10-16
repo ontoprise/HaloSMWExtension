@@ -211,7 +211,8 @@ class Installer {
 		$updatesNeeded = array();
 		foreach($topLevelExtensions as $tl_ext) {
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
-			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()) {
+			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion() 
+			     || $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
 				$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 			}

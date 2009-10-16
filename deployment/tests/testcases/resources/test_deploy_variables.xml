@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>1.0</version>
-		<id>SMWHalo</id>
+		<version>100</version>
+		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>Enhances your Semantic Mediawiki</description>
@@ -33,7 +33,7 @@
 		<successor>SemanticGardening</successor>
 
 		<new>
-		    <patch file="patch.txt" mwver="1132" />
+		    <patch file="patch.txt" ext="smwhalo" from="100" to="999" />
 		    <script file="maintenance/setup.php" params="param1 param2" />
 			<variable name="testvar">
 				<string name="avalue" userValueRequired="true" description="Required value">testvalue</string>
@@ -67,7 +67,7 @@
             </variable>
 		</update>
 		<uninstall>
-		  <patch file="patch.txt" />
+		 <patch file="patch.txt" ext="smwhalo" from="100" to="999" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

@@ -49,7 +49,7 @@ class ResourceInstaller {
 	 * @param DeployDescriptor $dd
 	 */
 	public function installOrUpdateWikidumps($dd, $fromVersion, $mode) {
-
+		global $wgUser;
 		if (count($dd->getWikidumps()) ==  0) return;
 
 
@@ -73,8 +73,15 @@ class ResourceInstaller {
 				$title = $next[0]->getNextObject()->getTitle();
 				if (!is_null($title)) {
 					$a = new Article($title);
-					print "\n\tRemove old page from $fromVersion: ".$title->getPrefixedText();
-					$a->doDeleteArticle("ontology removed: ".$dd->getID());
+					$reason = "ontology removed: ".$dd->getID();
+					$id = $title->getArticleID( GAID_FOR_UPDATE );
+					if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+						if( $a->doDeleteArticle( $reason ) ) {
+							print "\n\tRemove old page from $fromVersion: ".$title->getPrefixedText();
+							wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+						}
+					}
+						
 				}
 				$next = $res->getNext();
 			}
@@ -104,7 +111,7 @@ class ResourceInstaller {
 
 	 */
 	public function deleteResources($dd) {
-
+        global $wgUser;
 		if (count($dd->getResources()) ==  0) return;
 
 
@@ -121,7 +128,15 @@ class ResourceInstaller {
 			$im_file->delete("remove resource");
 			$a = new Article($title);
 			print "\n\tRemove resource: ".$title->getPrefixedText();
-			$a->doDelete("remove resource");
+			$reason = "remove resource";
+			$id = $title->getArticleID( GAID_FOR_UPDATE );
+			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+				if( $a->doDeleteArticle( $reason ) ) {
+					print "\n\tRemove old page: ".$title->getPrefixedText();
+					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+				}
+			}
+			
 		}
 
 		if (count($dd->getOnlyCopyResources()) ==  0) return;
@@ -301,21 +316,21 @@ class ResourceInstaller {
 		$partOfBundlePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeUserProperty($dfgLang->getLanguageString("df_partofbundle")));
 		$ext_id = strtoupper(substr($ext_id, 0, 1)).substr($ext_id, 1);
 		$partOfBundleID = smwfGetStore()->getSMWPageID($ext_id, NS_MAIN, "");
-        
-		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by 
+
+		// put all pages belonging to a bundle (all except templates, ie. categories, properties, instances of categories and all other pages denoted by
 		// the 'part of bundle' annotation like Forms, Help pages, etc..) in df_page_of_bundle
 		$db->query('INSERT INTO df_page_of_bundle (SELECT page_id FROM '.$page.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
 		$db->query('INSERT INTO df_page_of_bundle (SELECT cl_from FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' JOIN '.$smw_ids.' ON smw_namespace = page_namespace AND smw_title = page_title JOIN '.$smw_rels2.' ON smw_id = s_id WHERE p_id = '.$partOfBundlePropertyID.' AND o_id = '.$partOfBundleID.')');
-        
+
 		// get all templates used on these pages
 		$db->query('INSERT INTO df_page_of_templates_used (SELECT tl_title FROM '.$templatelinks.' WHERE tl_from IN (SELECT * FROM df_page_of_bundle))');
-        
+
 		// get all templates which are also used on other pages and must therefore persist
 		$db->query('INSERT INTO df_page_of_templates_must_persist (SELECT title FROM df_page_of_templates_used JOIN '.$templatelinks.' ON title = tl_title AND tl_from NOT IN (SELECT * FROM df_page_of_bundle))');
-        
+
 		// delete those from the table of used templates
 		$db->query('DELETE FROM df_page_of_templates_used WHERE title IN (SELECT * FROM df_page_of_templates_must_persist)');
-        
+
 		// select all templates which can be deleted
 		$res = $db->query('SELECT DISTINCT title FROM df_page_of_templates_used');
 
@@ -324,7 +339,7 @@ class ResourceInstaller {
 			while($row = $db->fetchObject($res)) {
 
 				$template = Title::newFromText($row->title, NS_TEMPLATE);
-				
+
 				$a = new Article($template);
 				print "\n\tRemove page: ".$template->getPrefixedText();
 				$a->doDeleteArticle("ontology removed: ".$ext_id);
@@ -342,8 +357,8 @@ class ResourceInstaller {
 				$page = Title::newFromID($row->id);
 				// DELETE
 				$a = new Article($page);
-                print "\n\tRemove page: ".$page->getPrefixedText();
-                $a->doDeleteArticle("ontology removed: ".$ext_id);
+				print "\n\tRemove page: ".$page->getPrefixedText();
+				$a->doDeleteArticle("ontology removed: ".$ext_id);
 			}
 		}
 		$db->freeResult($res);

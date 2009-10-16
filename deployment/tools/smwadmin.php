@@ -275,7 +275,7 @@ function handleGlobalUpdate($dfgCheckDep) {
 				print "\n\nThe following extensions would get updated:\n";
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
-					print "\n\t*$id-".Tools::addVersionSeparators($min);
+					print "\n\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel()));
 				}
 			}
 			print "\n\n";
@@ -314,9 +314,9 @@ function handleInstallOrUpdate($packageID, $version) {
 		foreach($extensions_to_update as $etu) {
 			list($desc, $min, $max) = $etu;
 			$id = $desc->getID();
-			print "\n\t*$id-".Tools::addVersionSeparators($min);
+			print "\n\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel()));
 		}
-		print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
+		print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators(array($new_package->getVersion(), $new_package->getPatchlevel()));
 
 		print "\n\n";
 	} else {
