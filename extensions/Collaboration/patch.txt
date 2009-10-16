@@ -398,7 +398,7 @@ Index: extensions/Collaboration/RatingBar/config.php
 ===================================================================
 --- extensions/Collaboration/RatingBar/config.php	(revision 5601)
 +++ extensions/Collaboration/RatingBar/config.php	(working copy)
-@@ -24,15 +24,20 @@
+@@ -24,16 +24,21 @@
  // Config page where all main variables are set
  // Important: some of the settings are likely to be **CASE-SENSITIVE** (passwords, filenames on Linux, etc)
  
@@ -415,14 +415,16 @@ Index: extensions/Collaboration/RatingBar/config.php
  
  // Other important settings
 -$path_to_w4g_rb						= 'extensions/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
+-$ratingbar_tablename				= 'ratingbar';		// Table where the extension will store its data. Leaving to default value is fine.
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
-+// use CEIP and CEScriptPath
++// use CEIP and CEScriptPath and a customized table name
 +global $cegIP, $cegScriptPath;
 +$path_to_w4g_rb						= $cegScriptPath . '/RatingBar/';	// extension path, relative to the path ofyour wiki's index.php
++$ratingbar_tablename				= 'ce_ratingbar';		// Table where the extension will store its data. Leaving to default value is fine.
 +/*op-patch|BL|2009-10-15|end*/
- $ratingbar_tablename				= 'ratingbar';		// Table where the extension will store its data. Leaving to default value is fine.
  
  // For advanced users with a very customized MW installation
+ $user_tablename						= 'user';			// Table where we check if the user exists. Default value in MediaWiki: user
 @@ -53,7 +58,10 @@
  $unique_check						= 'user'; // Identification method. 3 possibles values: 'user', 'ip', 'both'. Only 'user' is currently rock-solid.
  $min_time_between_votes				= 24; // Minimum time in hours between 2 votes for the same page id from the same IP. If set to 0, one IP can only vote once for a page id. Useless if $unique_check='user'.
