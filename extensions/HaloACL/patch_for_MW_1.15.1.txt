@@ -283,7 +283,7 @@ Index: includes/Title.php
  		} else {
  			return NULL;
  		}
-@@ -3675,4 +3692,104 @@
+@@ -3675,4 +3692,105 @@
  		}
  		return $this->mBacklinkCache;
  	}
@@ -348,6 +348,7 @@ Index: includes/Title.php
 +		global $wgRequest;
 +		$action = $wgRequest->getVal( 'action', 'read');
 +		$currentTitle = $wgRequest->getVal('title');
++		$currentTitle = str_replace( '_', ' ', $currentTitle);
 +		if ($this->getFullText() != $currentTitle) {
 +			$action = 'read';
 +		}

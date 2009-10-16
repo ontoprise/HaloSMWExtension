@@ -127,7 +127,7 @@ Index: includes/Title.php
  		} else {
  			return NULL;
  		}
-@@ -3232,4 +3249,104 @@
+@@ -3232,4 +3249,105 @@
  		}
  		return $redirs;
  	}
@@ -192,6 +192,7 @@ Index: includes/Title.php
 +		global $wgRequest;
 +		$action = $wgRequest->getVal( 'action', 'read');
 +		$currentTitle = $wgRequest->getVal('title');
++		$currentTitle = str_replace( '_', ' ', $currentTitle);
 +		if ($this->getFullText() != $currentTitle) {
 +			$action = 'read';
 +		}
