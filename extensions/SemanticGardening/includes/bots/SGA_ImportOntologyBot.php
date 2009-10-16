@@ -26,6 +26,9 @@ class ImportOntologyBot extends GardeningBot {
 	// use labels or localnames
 	private $useLabels = true;
 
+	// use ontology ID as a marker for the imported ontology
+	private $ontologyID;
+
 	function ImportOntologyBot() {
 		parent::GardeningBot("smw_importontologybot");
 		$this->globalLog = "== The following wiki pages were created during import: ==\n\n";
@@ -48,8 +51,8 @@ class ImportOntologyBot extends GardeningBot {
 	 */
 	public function createParameters() {
 		$param1 = new GardeningParamFileList('GARD_IO_FILENAME', "", SMW_GARD_PARAM_REQUIRED, "owl");
-		//$param2 = new GardeningParamBoolean('GARD_IO_USE_LABELS', wfMsg('smw_gard_import_uselabels'), SMW_GARD_PARAM_OPTIONAL, true);
-		return array($param1);
+		$param2 = new GardeningParamString('GARD_IO_ONTOLOGY_ID', wfMsg('smw_gard_ontology_id'), SMW_GARD_PARAM_OPTIONAL, "http://myontology");
+		return array($param1, $param2);
 	}
 
 	/**
@@ -57,6 +60,7 @@ class ImportOntologyBot extends GardeningBot {
 	 * Do not use echo when it is not running asynchronously.
 	 */
 	public function run($paramArray, $isAsync, $delay) {
+
 		$this->globalLog = "";
 		// do not allow to start synchronously.
 		if (!$isAsync) {
@@ -64,7 +68,8 @@ class ImportOntologyBot extends GardeningBot {
 		}
 		$fileName = urldecode($paramArray['GARD_IO_FILENAME']);
 		$this->useLabels = false; //array_key_exists('GARD_IO_USE_LABELS', $paramArray);
-			
+		$this->ontologyID = urldecode($paramArray['GARD_IO_ONTOLOGY_ID']);
+
 		$fileTitle = Title::newFromText($fileName);
 		$fileLocation = wfFindFile($fileTitle)->getPath();
 		//$fileLocation = wfImageDir($fileName)."/".$fileName; old MW 1.10
@@ -182,7 +187,7 @@ class ImportOntologyBot extends GardeningBot {
 			$statement = $it->next();
 			$subject = $statement->getSubject();
 			$s = $this->createAttributeStatements($subject);
-			
+
 			$this->wikiStatements = array_merge($this->wikiStatements, $s);
 			$triplesNum--;
 		}
@@ -218,10 +223,40 @@ class ImportOntologyBot extends GardeningBot {
 	 * Creates Wiki pages from the transformed model.
 	 */
 	private function importModel() {
+		global $wgContLang, $wgUser;
+
 		// merge statements
 		ImportOntologyBot::mergeStatementArray($this->wikiStatements);
+		
 		$this->addSubTask(count($this->wikiStatements));
-		// import them
+
+		// get all new pages as prefixed titles
+		$newPages = array();
+		foreach($this->wikiStatements as $s) {
+			$newPages[] = $s['NS'] != 0 ? $wgContLang->getNsText($s['NS']).":".$s['PAGENAME'] : $s['PAGENAME'];
+		}
+
+		// delete removed pages (ie. those which are belonging to ontologyID
+		// but which are not in the new imported file)
+		$pagesToDelete = WikiImportTools::getPagesToDelete($newPages, $this->ontologyID);
+		print "\nPages to delete...";
+
+		foreach($pagesToDelete as $p) {
+			$t = Title::newFromText( $p );
+			$a = new Article($t);
+			$reason = "ontology removed: ".$this->ontologyID;
+			$id = $t->getArticleID( GAID_FOR_UPDATE );
+			if( wfRunHooks('ArticleDelete', array(&$a, &$wgUser, &$reason, &$error)) ) {
+				if( $a->doDeleteArticle( $reason ) ) {
+					print "\n\tDeleted page: ".$p;
+					wfRunHooks('ArticleDeleteComplete', array(&$a, &$wgUser, $reason, $id));
+				}
+			}
+
+		}
+
+		// import new them
+
 		foreach($this->wikiStatements as $s) {
 			$this->worked(1);
 			if ($s == NULL) continue;
@@ -229,65 +264,12 @@ class ImportOntologyBot extends GardeningBot {
 			$this->globalLog .= "\n*Importing: ".ImportOntologyBot::getNamespaceText($s['NS']).":".$s['PAGENAME'];
 			$title = Title::makeTitle( $s['NS'] , $s['PAGENAME'] );
 			$wikiMarkup = array_unique($s['WIKI']);
-			$this->insertOrUpdateArticle($title, $wikiMarkup);
+			$this->globalLog .= WikiImportTools::insertOrUpdateArticle($title, $wikiMarkup, $this->ontologyID);
 
 		}
 	}
 
 
-
-	/**
-	 * Inserts an article or updates it if it already exists
-	 *
-	 * @param $title Title of article
-	 * @param $text Text to add
-	 */
-	private function insertOrUpdateArticle($title, $wikiMarkup) {
-		if (NULL == $title) return;
-		if ($title->exists()) {
-			print " (merging)";
-			$this->globalLog .= " (merging)";
-			$article = new Article($title);
-			$oldtext = $article->getContent();
-			// article exists, so paste only diff of semantic markup
-			$text = implode("\n", $this->diffSemanticMarkup($oldtext, $wikiMarkup));
-			$article->updateArticle( $oldtext . "\n" . "\n" . $text, wfMsg( 'smw_oi_importedfromontology' ), FALSE, FALSE );
-		} else {
-			// articles does not exist, so simply paste all semantic markup
-			$text = implode("\n", $wikiMarkup);
-			$newArticle = new Article($title);
-			$newArticle->insertNewArticle( $text, wfMsg( 'smw_oi_importedfromontology' ), FALSE, FALSE, FALSE, FALSE );
-
-		}
-	}
-
-	/**
-	 * Calculates diff of semantic markup and an existing wiki text.
-	 */
-	private function diffSemanticMarkup($oldWikiText, $newSemanticMarkup) {
-		$annotations = array();
-		// Parse links to extract relations
-		$semanticLinkPattern = '(\[\[(([^:][^]]*)::)+([^\|\]]*)(\|([^]]*))?\]\])';
-		$num = preg_match_all($semanticLinkPattern, $oldWikiText, $relMatches);
-		$oldSemanticMarkup = array();
-		if ($num > 0) {
-			for($i = 0, $n = count($relMatches[0]); $i < $n; $i++) {
-
-				$oldSemanticMarkup[] = $relMatches[0][$i];
-			}
-		}
-		// Parse links to extract attributes
-		$semanticLinkPattern = '(\[\[(([^:][^]]*):=)+((?:[^|\[\]]|\[\[[^]]*\]\])*)(\|([^]]*))?\]\])';
-		$text = preg_match_all($semanticLinkPattern, $oldWikiText, $attMatches);
-		if ($num > 0) {
-			for($i = 0, $n = count($attMatches[0]); $i < $n; $i++) {
-
-				$oldSemanticMarkup[] = $attMatches[0][$i];
-			}
-		}
-		//TODO: categories
-		return array_diff($newSemanticMarkup, $oldSemanticMarkup);
-	}
 
 	/**
 	 * Turns the triples of an individual into wiki source
@@ -329,7 +311,7 @@ class ImportOntologyBot extends GardeningBot {
 
 			$s = array();
 			$s['NS'] = NS_MAIN;
-			$s['ID'] = $entity->getLocalName();
+			$s['ID'] = $st->getDBkey();
 			$s['PAGENAME'] = $st->getDBkey();
 			$s['WIKI'] = array();
 			$s['WIKI'][] = "[[" . $t->getPrefixedText() . "]]" . "\n";
@@ -481,7 +463,8 @@ class ImportOntologyBot extends GardeningBot {
 
 
 			if ((ImportOntologyBot::isXMLSchemaType($range->getURI()))) {
-				$s2['WIKI'][] = "[[".$sp["_TYPE"]."::".$rangeCategoryTitle->getPrefixedText()."]]\n";
+				$label = ImportOntologyBot::mapXSDTypesToWikiTypes($range->getLocalName());
+				$s2['WIKI'][] = "[[".$sp["_TYPE"]."::". $wgContLang->getNsText(SMW_NS_TYPE) .":".$label."]]\n";
 				$s2['WIKI'][] = "[[".$ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]."::".$st->getPrefixedText()."]]\n";
 			} else {
 				$s2['WIKI'][] = "[[".$sp["_TYPE"]."::Type:Page]]\n";
@@ -613,7 +596,7 @@ class ImportOntologyBot extends GardeningBot {
 			$statement = $it->next();
 			$object = $statement->getObject();
 			$label = $this->getLabelForEntity($object, $wgLanguageCode);
-		
+
 			$s['WIKI'][] = "[[".$sp['_SUBP']."::" . $smwNSArray[SMW_NS_PROPERTY] . ":" . $label . "]]" . "\n";
 
 		}
@@ -673,6 +656,7 @@ class ImportOntologyBot extends GardeningBot {
 
 			$label = $this->getLabelForEntity($object, $wgLanguageCode);
 			$label = ImportOntologyBot::mapXSDTypesToWikiTypes($label);
+				
 			$s['WIKI'][] = "[[".$sp["_TYPE"]."::" . $wgContLang->getNsText(SMW_NS_TYPE) . ":" . $label . "]]" . "\n";
 		}
 
@@ -753,45 +737,7 @@ class ImportOntologyBot extends GardeningBot {
 		|| $type == XML_SCHEMA.'date' || $type == XML_SCHEMA.'time' || $type == XML_SCHEMA.'datetime';
 	}
 
-	/**
-	 * @deprecated
-	 *
-	 * Merges an array of wiki statement objects (= hash arrays of PAGENAME, NS, WIKI). Makes sure that
-	 * all entries have namespaces afterwards.
-	 * $statements array should be small.
-	 *
-	 * @param & $statements Array of hash arrays containing the following keys: PAGENAME, NS, WIKI
-	 *
-	 * @return statement array with namespaces for all entries.
-	 */
-	private static function mergeStatementsForNS( & $statements) {
-		$result = array();
 
-		foreach($statements as $s) {
-			if (!array_key_exists($s['ID'], $result)) {
-				$entry = array();
-				if (array_key_exists('NS', $s)) {
-					$entry['NS'] = $s['NS'];
-				}
-				$entry['ID'] = $s['ID'];
-				$entry['PAGENAME'] = $s['PAGENAME'];
-				$entry['WIKI'] = array();
-				$entry['WIKI'] = array_merge($entry['WIKI'], $s['WIKI']);
-				$result[$s['ID']] = $entry;
-			} else {
-				$entry = $result[$s['ID']];
-				if (array_key_exists('NS', $s)) {
-					$entry['NS'] = $s['NS'];
-				}
-				$entry['ID'] = $s['ID'];
-				$entry['PAGENAME'] = $s['PAGENAME'];
-				$entry['WIKI'] = array_merge($entry['WIKI'], $s['WIKI']);
-				$result[$s['ID']] = $entry;
-			}
-		}
-
-		return array_values($result);
-	}
 
 	/**
 	 * Merges statements concerning the same wiki page.
@@ -843,8 +789,13 @@ class ImportOntologyBot extends GardeningBot {
 	private static function mapXSDTypesToWikiTypes($xsdType) {
 		switch($xsdType) {
 			case 'string': return 'String';
+			case 'number': return 'Number';
 			case 'int': return 'Number';
 			case 'float': return 'Number';
+			case 'double': return 'Number';
+			case 'datetime': return 'Date';
+			case 'date': return 'Date';
+			case 'boolean': return 'Boolean';
 			default: return 'String';
 		}
 	}
@@ -908,6 +859,103 @@ class ImportOntologyBot extends GardeningBot {
 	}
 }
 
+class WikiImportTools {
+	/**
+	 * Get all pages which can be deleted, ie. which are not in the set of
+	 * new pages.
+	 *
+	 * @param array of string $newPages Prefixed titles
+	 * @return array of string
+	 */
+	public static function getPagesToDelete($newPages, $ontologyID) {
+		$oldPages = array();
+		$query = SMWQueryProcessor::createQuery("[[OntologyID::$ontologyID]]", array());
+		$res = smwfGetStore()->getQueryResult($query);
+		$next = $res->getNext();
+		while($next !== false) {
+
+			$title = $next[0]->getNextObject()->getTitle();
+			if (!is_null($title)) {
+				$oldPages[] = $title->getPrefixedText();
+			}
+			$next = $res->getNext();
+		}
+		return array_diff($oldPages, $newPages);
+
+	}
+
+
+
+	/**
+	 * Inserts an article or updates it if it already exists
+	 *
+	 * @param $title Title of article
+	 * @param $text Text to add
+	 */
+	public static function insertOrUpdateArticle($title, $wikiMarkup, $ontologyID) {
+		if (NULL == $title) return "";
+		$globalLog = "";
+		if ($title->exists()) {
+			print " (merging)";
+			$globalLog = " (merging)";
+			$article = new Article($title);
+			$oldtext = $article->getContent();
+			// article exists, so paste only diff of semantic markup
+			$text = WikiTextTools::removeAnnotations($oldtext);
+			$text .= "\n".implode("\n", $wikiMarkup);
+			$text .= "\n[[OntologyID::".$ontologyID."]]";
+			$article->updateArticle( $text, wfMsg( 'smw_oi_importedfromontology' ), FALSE, FALSE );
+		} else {
+			// articles does not exist, so simply paste all semantic markup
+			$text = implode("\n", $wikiMarkup);
+			$text .= "\n[[OntologyID::".$ontologyID."]]";
+			$newArticle = new Article($title);
+			$newArticle->insertNewArticle( $text, wfMsg( 'smw_oi_importedfromontology' ), FALSE, FALSE, FALSE, FALSE );
+
+		}
+		return $globalLog;
+	}
+
+
+}
+
+class WikiTextTools {
+	/**
+	 * Removes all annotations from $text
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	public static function removeAnnotations($text) {
+
+		// Parse links to extract properties and categories
+		$semanticLinkPattern = '/(\n*\[\[(([^:][^]]*)::)+([^\|\]]*)(\|([^]]*))?\]\])/i';
+		$categoryPattern = '/(\n*\[\[\s*category\s*:\s*([^\|\]]*)(\|([^]]*))?\]\])/i';
+		$textWithoutAnnotations = preg_replace($semanticLinkPattern, "", $text);
+		$textWithoutAnnotations = preg_replace($categoryPattern, "", $textWithoutAnnotations);
+		return $textWithoutAnnotations;
+	}
+
+	/**
+	 * Calculates diff of semantic markup and an existing wiki text.
+	 */
+	public static function diffSemanticMarkup($oldWikiText, $newSemanticMarkup) {
+		$annotations = array();
+		// Parse links to extract relations
+		$semanticLinkPattern = '(\[\[(([^:][^]]*)::)+([^\|\]]*)(\|([^]]*))?\]\])';
+		$num = preg_match_all($semanticLinkPattern, $oldWikiText, $relMatches);
+		$oldSemanticMarkup = array();
+		if ($num > 0) {
+			for($i = 0, $n = count($relMatches[0]); $i < $n; $i++) {
+
+				$oldSemanticMarkup[] = $relMatches[0][$i];
+			}
+		}
+
+
+		return array_diff($newSemanticMarkup, $oldSemanticMarkup);
+	}
+}
 /*
  * Note: This bot filter has no real functionality. It is just a dummy to
  * prevent error messages in the GardeningLog. There are no gardening issues
