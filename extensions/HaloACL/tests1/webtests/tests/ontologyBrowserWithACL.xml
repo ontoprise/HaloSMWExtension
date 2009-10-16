@@ -14,9 +14,7 @@ values.
 	<target name="testOntologyBrowserWithACL">
 		
 		<webtest name="Testing Category Tree as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -29,7 +27,7 @@ values.
 			<!-- Category Tree: Make sure that only public root categories are shown -->
 			<verifyXPath 
 				description="Check first category: Event"
-				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a"		
+				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a[1]"		
 				text="Event" />
 			<verifyXPath 
 				description="Check second category: ProtectedCategory"
@@ -44,9 +42,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing Property Tree as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -82,9 +78,7 @@ values.
 		</webtest>
 
 		<webtest name="Testing sub-categories as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -122,9 +116,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing sub-properties as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -166,9 +158,7 @@ values.
 		</webtest>
 	
 		<webtest name="Testing instances of a category as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -194,9 +184,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent categories as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -248,9 +236,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent property as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -282,9 +268,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing values of protected properties as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -330,9 +314,7 @@ values.
 		</webtest>
 		
 		<webtest name="Test filter browsing as RestrictedUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -394,14 +376,8 @@ values.
 			
 		</webtest>
 		
-		
-		
-		
-		
 		<webtest name="Testing Category Tree as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -431,9 +407,7 @@ values.
 		</webtest>
 
 		<webtest name="Testing Property Tree as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -472,9 +446,7 @@ values.
 		</webtest>
 
 		<webtest name="Testing sub-categories as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -515,9 +487,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing sub-properties as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -562,9 +532,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing instances of a category as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -593,9 +561,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent categories as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -648,9 +614,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent properties as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -682,9 +646,7 @@ values.
 		</webtest>
 		
 		<webtest name="Testing values of protected properties as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -735,9 +697,7 @@ values.
 		</webtest>
 		
 		<webtest name="Test filter browsing as NormalUser">
-			<config>
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config> 
+			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>

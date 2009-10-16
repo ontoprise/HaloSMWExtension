@@ -27,8 +27,8 @@ that only revisions without protected properties can be viewed.
 			
 			<verifyTitle 
 				text="Revision history of &quot;TestPropertyHistory&quot; - Halo3wiki"/>
-			<clickButton 
-				label="Compare selected versions"/>
+			<clickElement 
+				xpath="//form[@id='mw-history-compare']/input[2]"/>
 			<verifyXPath 
 				description="Check presence of Line 1"
 				xpath="//div[@id='bodyContent']/table/tbody/tr[2]/td[1]"		
@@ -55,8 +55,8 @@ that only revisions without protected properties can be viewed.
 			
 			<verifyTitle 
 				text="Revision history of &quot;TestPropertyHistory&quot; - Halo3wiki"/>
-			<clickButton 
-				label="Compare selected versions"/>
+			<clickElement 
+				xpath="//form[@id='mw-history-compare']/input[2]"/>
 			<verifyText 
 				description="Verify that &quot;Permission error&quot; is contained in the page" 
 				text="Permission error"/>		

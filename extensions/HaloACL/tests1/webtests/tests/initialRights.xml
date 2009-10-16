@@ -108,7 +108,7 @@ This web test checks if initial rights for new articles are set correctly:
 				description="Open the new page as anonymous user" />
 			<verifyXPath description="Check denied access for the page ProtectedByInitialRights"
 						 xpath="//div[@id='content']/div[@id='innercontent']/h1"
-				         text="Login Required" />
+				         text="Login required" />
 	
 		</webtest>
 		

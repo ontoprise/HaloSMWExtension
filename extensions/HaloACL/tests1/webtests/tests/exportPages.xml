@@ -27,7 +27,7 @@
 			<verifyText text="HiddenPage"/>
 			<verifyText text="HiddenInstance"/>
 			<verifyText text="HiddenInstanceOfSubcat"/>
-			<verifyText text="User_talk:HiddenUser"/>
+			<verifyText text="User talk:HiddenUser"/>
 			</steps>
 		</webtest>
 		

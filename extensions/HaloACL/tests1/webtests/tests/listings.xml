@@ -57,7 +57,7 @@
 				description="Open Special:AncientPages." />	
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
-		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
 
 		<invoke url="http://localhost/${wikipath}/index.php/Special:LonelyPages"
 				description="Open Special:LonelyPages." />	
@@ -138,7 +138,7 @@
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
-		<verifyXPath xpath='//a[contains(text(),"User_talk:HiddenUser")]'/>
+		<verifyXPath xpath='//a[contains(text(),"User talk:HiddenUser")]'/>
 			
 		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->
 		<invoke url="http://localhost/${wikipath}/index.php/Special:Browse?title=Special%3ABrowse&amp;article=HiddenPage"
@@ -173,10 +173,10 @@
 		<invoke url="http://localhost/${wikipath}/index.php/Special:OntologyBrowser"
 				description="Open Special:OntologyBrowser." />	
 		<sleep seconds="3"/>	
-		<clickLink xpath="//a[@title='ProtectedCategory']" />			
+		<clickLink xpath='//a[@title="ProtectedCategory"]' />			
 		<sleep seconds="3"/>	
-		<verifyXPath xpath='//*[contains(text(),"HiddenInstanceOfSubcat")]'/>
-		<verifyXPath xpath='//*[contains(text(),"HiddenInstance")]'/>
+		<verifyXPath xpath='//*[text()="HiddenInstanceOfSubcat"]'/>
+		<verifyXPath xpath='//*[text()="HiddenInstance"]'/>
 
 <!--  
 		(Create a query for the property is hidden and show the preview. Make sure the protected articles are not shown.
@@ -287,7 +287,7 @@
 		<not>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
-		<verifyXPath xpath='//a[contains(text(),"HiddenPage")]'/>
+		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
 		</not>
 			
 <!--			
@@ -328,7 +328,7 @@
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstanceOfSubcat")]'/>
 		<verifyXPath xpath='//a[contains(text(),"HiddenInstance")]'/>
 		<verifyXPath xpath='//a[text()="HiddenPage"]'/>
-		<verifyXPath xpath='//a[contains(text(),"User_talk:HiddenUser")]'/>
+		<verifyXPath xpath='//a[contains(text(),"Usertalk:HiddenUser")]'/>
 		</not>
 			
 		<!-- Enter the names of the protected pages and make sure nothing is revealed. -->

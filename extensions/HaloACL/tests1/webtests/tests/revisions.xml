@@ -248,7 +248,7 @@
 			description="Open history of ${page} as ${user}." />
 		<storeXPath
 			description="Extract href of first revision on page"
-		    xpath='//ul[@id="pagehistory"]/li[1]/a[text()="last"]/@href'
+		    xpath='//ul[@id="pagehistory"]/li[1]/a[text()="prev"]/@href'
 			propertyType="ant"
 		    property="uri" />
 		
