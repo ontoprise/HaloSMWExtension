@@ -1,15 +1,32 @@
 <?php
-/*
- * Created on 24.03.2009
- *
- * Author: Benjamin
+/*  Copyright 2009, ontoprise GmbH
+*  This file is part of the Collaboration-Extension.
+*
+*   The Collaboration-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The Collaboration-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * This is the main entry file for the Collaboration extension.
+ * It contains mainly constants for the configuration of the extension.
+ * This file has to be included in LocalSettings.php to enable the extension.
+ * 
+ * @author Benjamin Langguth
+ * 
  */
-
-//this extension does only work if the Halo extension is enabled
 if ( !defined( 'MEDIAWIKI' ) ) {
-	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
+	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
 }
-
 define('CE_VERSION', '1.0');
 
 ###
@@ -25,6 +42,25 @@ $cegIP = $IP . '/extensions/Collaboration';;
 ##
 $cegScriptPath = $wgScriptPath . '/extensions/Collaboration';
 
+
+###
+# Enable ArticleComments
+# For more information visit: http://www.mediawiki.org/wiki/Extension:ArticleComments
+###
+$cegEnableArticleComments = true;
+
+###
+# Enable rating
+# For more information visit: http://www.mediawiki.org/wiki/Extension:Rating_Bar
+###
+$cegEnableRating = true;
+
+###
+# Enable CurrentUsers
+# For more information visit: http://www.mediawiki.org/wiki/Extension:CurrentUsers
+###
+$cegEnableCurrentUsers = true;
+
 $wgHooks['BeforePageDisplay'][] = 'smwfCEAddHTMLHeader';
 
 //--- credits (see "Special:Version") ---
@@ -38,17 +74,44 @@ $wgExtensionCredits['other'][]= array(
         'description' => 'Some fancy collaboration tools.');
 
 # A: ArticleComments
-$wgArticleCommentDefaults['hideForm']=false;
-$wgArticleCommentDefaults['displaycomments'] = true;
-$wgArticleCommentDefaults['hidecomments'] = false;
-$wgArticleCommentDefaults['showurlfield'] = false;
-include_once($cegIP.'/ArticleComments/ArticleComments.php');
-
+if ( $cegEnableArticleComments ) {
+	###
+	# Hides the commentForm until the "Make a comment" link is clicked
+	# This i no longer needed because The commentForm is wrapped in a CollapsibleTable
+	# see http://www.mediawiki.org/wiki/Manual:Collapsible_tables
+	###
+	$wgArticleCommentDefaults['hideForm'] = false;
+	
+	###
+	# Show the comments inside the page, under the "Make a comment" link.
+	# Also wrapped in a CollapsibleTable
+	###
+	$wgArticleCommentDefaults['displaycomments'] = true;
+	
+	###
+	# Hides the comment text until the "Show comments" link is clicked
+	# Also wrapped in a CollapsibleTable
+	###
+	$wgArticleCommentDefaults['hidecomments'] = false;
+	
+	###
+	# Show a HTML input field for the poster's url in the commentForm 
+	###
+	$wgArticleCommentDefaults['showurlfield'] = false;
+	
+	include_once($cegIP.'/ArticleComments/ArticleComments.php');
+}
 # B:RatingBar
-include_once($cegIP.'/RatingBar/ratingbar.php');
-
+if ( $cegEnableRating ) {
+	###
+	# see /RatingBar/config.php for more configuration options
+	###
+	include_once($cegIP.'/RatingBar/ratingbar.php');
+}
 # C: CurrentUser
-include_once($cegIP.'/CurrentUsers/CurrentUsers.php');
+if ( $cegEnableCurrentUsers ) {
+	include_once($cegIP.'/CurrentUsers/CurrentUsers.php');
+}
 
 function smwfCEAddHTMLHeader(&$out) {
 	global $cegScriptPath;
@@ -64,5 +127,3 @@ function smwfCEAddHTMLHeader(&$out) {
 
 	return true;
 }
-
-?>
