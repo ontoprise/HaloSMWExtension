@@ -13,6 +13,11 @@
  */
 class SMWTableResultPrinter extends SMWResultPrinter {
 
+	public function getName() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		return wfMsg('smw_printername_' . $this->mFormat);
+	}
+
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
@@ -22,10 +27,10 @@ class SMWTableResultPrinter extends SMWResultPrinter {
 			$widthpara = ' width="100%"';
 		else $widthpara = '';
 		$result = "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
-		if ($this->mShowHeaders) { // building headers
+		if ($this->mShowHeaders != SMW_HEADERS_HIDE) { // building headers
 			$result .= "\t<tr>\n";
 			foreach ($res->getPrintRequests() as $pr) {
-				$result .= "\t\t<th>" . $pr->getText($outputmode, $this->mLinker) . "</th>\n";
+				$result .= "\t\t<th>" . $pr->getText($outputmode, ($this->mShowHeaders == SMW_HEADERS_PLAIN?NULL:$this->mLinker) ) . "</th>\n";
 			}
 			$result .= "\t</tr>\n";
 		}

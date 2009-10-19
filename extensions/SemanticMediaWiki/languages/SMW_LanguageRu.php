@@ -66,7 +66,9 @@ protected $m_SpecialProperties = array(
 	'_IMPO' => 'Импортировано из',
 	'_CONV' => 'Относится к',
 	'_SERV' => 'Предоставляет сервис',
-	'_PVAL' => 'Допустимое значение'
+	'_PVAL' => 'Допустимое значение',
+	'_MDAT' => 'Modification date',  // TODO: translate
+	'_ERRP' => 'Has improper value for' // TODO: translate
 );
 
 protected $m_SpecialPropertyAliases = array(
@@ -80,7 +82,9 @@ protected $m_SpecialPropertyAliases = array(
 	'Imported from'     => '_IMPO',
 	'Corresponds to'    => '_CONV',
 	'Provides service'  => '_SERV',
-	'Allows value'      => '_PVAL'
+	'Allows value'      => '_PVAL',
+	'Modification date' => '_MDAT',
+	'Has improper value for' => '_ERRP'
 );
 
 
@@ -109,8 +113,8 @@ protected $m_NamespaceAliases = array(
 
 protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_DMY,SMW_MDY,SMW_YMD,SMW_YDM));
 
-protected $m_months = array("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря");
+protected $m_months = array("января","февраля","марта","апреля", "мая","июня","июля","августа","сентрября", "октября","ноября","декабря");
 
-protected $m_monthsshort = array("январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь");
+protected $m_monthsshort = array("янв","фев","мар","апр", "мая","июн","июл","авг","сен", "окт","ноя","дек");
 
 }

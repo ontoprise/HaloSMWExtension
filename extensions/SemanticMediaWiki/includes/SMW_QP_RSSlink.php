@@ -36,6 +36,15 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 		return 'application/rss+xml'; // or is rdf+xml better? Might be confused in either case (with RSS2.0 or RDF)
 	}
 
+	public function getQueryMode($context) {
+		return ($context==SMWQueryProcessor::SPECIAL_PAGE)?SMWQuery::MODE_INSTANCES:SMWQuery::MODE_NONE;
+	}
+
+	public function getName() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		return wfMsg('smw_printername_rss');
+	}
+
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $smwgRSSEnabled, $wgRequest;
 		$result = '';
@@ -71,7 +80,10 @@ class SMWRSSResultPrinter extends SMWResultPrinter {
 						}
 					}
 				}
-				$items[] = new SMWRSSItem($wikipage->getTitle(), $creators, $dates);
+				if ($wikipage instanceof SMWWikiPageValue) { // this should rarely fail, but better be carful
+					///TODO: It would be more elegant to have type chekcs initially
+					$items[] = new SMWRSSItem($wikipage->getTitle(), $creators, $dates);
+				}
 				$row = $res->getNext();
 			}
 

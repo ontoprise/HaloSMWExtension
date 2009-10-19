@@ -70,9 +70,9 @@ smwfInitNamespaces();
 # __HIDEFACTBOX__ can be used to control Factbox display for individual pages.
 # Other options for this setting include:
 ##
-$smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
+//$smwgShowFactbox = SMW_FACTBOX_NONEMPTY; # show only those factboxes that have some content
 //$smwgShowFactbox = SMW_FACTBOX_SPECIAL # show only if special properties were set
-#$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
+$smwgShowFactbox = SMW_FACTBOX_HIDDEN; # hide always
 //$smwgShowFactbox = SMW_FACTBOX_SHOWN;  # show always, buggy and not recommended
 ##
 
@@ -111,6 +111,15 @@ $smwgLinksInValues = false;
 ##
 
 ###
+# Settings for recurring events, created with the #set_recurring_event parser
+# function: the default number of instances defined, if no end date is set;
+# and the maximum number that can be defined, regardless of end date.
+##
+$smwgDefaultNumRecurringEvents = 100;
+$smwgMaxNumRecurringEvents = 500;
+##
+
+###
 # Should the browse view for incoming links show the incoming links via its
 # inverses, or shall they be displayed on the other side?
 ##
@@ -123,8 +132,8 @@ $smwgBrowseShowInverse = false;
 $smwgBrowseShowAll = true;
 
 ###
-# Should the search by property special page dipslay nearby results when there
-# are only few results with the exact value? Switch this off if this page has
+# Should the search by property special page display nearby results when there
+# are only a few results with the exact value? Switch this off if this page has
 # performance problems.
 ##
 $smwgSearchByPropertyFuzzy = true;
@@ -136,6 +145,12 @@ $smwgSearchByPropertyFuzzy = true;
 $smwgTypePagingLimit = 200;    // same number as for categories
 $smwgConceptPagingLimit = 200; // same number as for categories
 $smwgPropertyPagingLimit = 25; // use smaller value since property lists need more space
+##
+
+###
+# How many values should at most be displayed for a page on the Property page?
+##
+$smwgMaxPropertyValues = 3; // if large values are desired, consider reducing $smwgPropertyPagingLimit for unchanged performance
 ##
 
 ###
@@ -233,6 +248,7 @@ $smwgResultFormats = array(
 	'ol'         => 'SMWListResultPrinter',
 	'ul'         => 'SMWListResultPrinter',
 	'broadtable' => 'SMWTableResultPrinter',
+	'category'   => 'SMWCategoryResultPrinter',
 	'embedded'   => 'SMWEmbeddedResultPrinter',
 	'template'   => 'SMWTemplateResultPrinter',
 	'count'      => 'SMWListResultPrinter',
@@ -240,6 +256,19 @@ $smwgResultFormats = array(
 	'rss'        => 'SMWRSSResultPrinter',
 	'csv'        => 'SMWCsvResultPrinter',
 	'json'       => 'SMWJSONResultPrinter'
+);
+##
+
+### Predefined sources for queries
+# Array of available sources for answering queries. Can be redefined in
+# the settings to register new sources (usually an extension will do so
+# on installation). Unknown source will be rerouted to the local wiki.
+# Note that the basic installation comes with no additional source besides
+# the local source (which in turn cannot be disabled or set explicitly).
+# Set a new store like this: $smwgQuerySources['freebase'] = "SMWFreebaseStore";
+##
+$smwgQuerySources = array(
+//	'local'      => '',
 );
 ##
 
@@ -273,6 +302,14 @@ $smwgOWLFullExport = false; // decides, if the RDF export will export, by defaul
 // to something nice and adapt your Apache configuration appropriately. This is
 // done, e.g., on semanticweb.org, where URIs are of the form
 // http://semanticweb.org/id/FOAF
+##
+
+###
+# The maximal number that SMW will normally display without using scientific exp
+# notation. The deafult is rather large since some users have problems understanding
+# exponents. Scineitfic applications may prefer a smaller value for concise display.
+##
+$smwgMaxNonExpNumber = 1000000000000000;
 ##
 
 ###

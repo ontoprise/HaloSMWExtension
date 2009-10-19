@@ -14,7 +14,7 @@
  * @defgroup SMW Semantic MediaWiki
  */
 
-define('SMW_VERSION','1.4.2');
+define('SMW_VERSION','1.4.3');
 
 // constants for displaying the factbox
 define('SMW_FACTBOX_HIDDEN', 1);
@@ -85,11 +85,16 @@ define('SMW_DAY_YEAR',3); //an entered digit can be either a month or a year
  * This function also sets up all autoloading, such that all SMW classes are available
  * as early as possible. Moreover, jobs and special pages are registered.
  */
-function enableSemantics($namespace = '', $complete = false) {
+function enableSemantics($namespace = null, $complete = false) {
 	global $smwgIP, $smwgNamespace, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, $wgJobClasses, $wgExtensionAliasesFiles;
 	// The dot tells that the domain is not complete. It will be completed
 	// in the Export since we do not want to create a title object here when
 	// it is not needed in many cases.
+	if ($namespace === null)
+	{
+		$namespace = $wgServerName;
+	}
+
 	if ( !$complete && ($smwgNamespace !== '') ) {
 		$smwgNamespace = '.' . $namespace;
 	} else {
@@ -100,6 +105,7 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgExtensionMessagesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Messages.php'; // register messages (requires MW=>1.11)
 
 	$wgHooks['ParserTestTables'][] = 'smwfOnParserTestTables';
+	$wgHooks['AdminLinks'][] = 'smwfAddToAdminLinks';
 
 	// Register special pages aliases file
 	$wgExtensionAliasesFiles['SemanticMediaWiki'] = $smwgIP . '/languages/SMW_Aliases.php';
@@ -117,8 +123,10 @@ function enableSemantics($namespace = '', $complete = false) {
 	$wgAutoloadClasses['SMWConceptPage']            = $smwgIP . '/includes/articlepages/SMW_ConceptPage.php';
 	//// printers
 	$wgAutoloadClasses['SMWResultPrinter']          = $smwgIP . '/includes/SMW_QueryPrinter.php';
+	$wgAutoloadClasses['SMWAutoResultPrinter']      = $smwgIP . '/includes/SMW_QP_Auto.php';
 	$wgAutoloadClasses['SMWTableResultPrinter']     = $smwgIP . '/includes/SMW_QP_Table.php';
 	$wgAutoloadClasses['SMWListResultPrinter']      = $smwgIP . '/includes/SMW_QP_List.php';
+	$wgAutoloadClasses['SMWCategoryResultPrinter']  = $smwgIP . '/includes/SMW_QP_Category.php';
 	$wgAutoloadClasses['SMWEmbeddedResultPrinter']  = $smwgIP . '/includes/SMW_QP_Embedded.php';
 	$wgAutoloadClasses['SMWTemplateResultPrinter']  = $smwgIP . '/includes/SMW_QP_Template.php';
 	$wgAutoloadClasses['SMWRSSResultPrinter']       = $smwgIP . '/includes/SMW_QP_RSSlink.php';
@@ -268,7 +276,15 @@ function smwfSetupExtension() {
 	}
 
 	///// credits (see "Special:Version") /////
-	$wgExtensionCredits['parserhook'][]= array('name'=>'Semantic&nbsp;MediaWiki', 'version'=>SMW_VERSION, 'author'=>"Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].", 'url'=>'http://semantic-mediawiki.org', 'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation.]');
+	$wgExtensionCredits['parserhook'][]= array(
+		'path' => __FILE__,
+		'name' => 'Semantic&nbsp;MediaWiki',
+		'version' => SMW_VERSION,
+		'author'=> "Klaus&nbsp;Lassleben, [http://korrekt.org Markus&nbsp;Kr&ouml;tzsch], [http://simia.net Denny&nbsp;Vrandecic], S&nbsp;Page, and others. Maintained by [http://www.aifb.uni-karlsruhe.de/Forschungsgruppen/WBS/english AIFB Karlsruhe].",
+		'url' => 'http://semantic-mediawiki.org',
+		'description' => 'Making your wiki more accessible&nbsp;&ndash; for machines \'\'and\'\' humans. [http://semantic-mediawiki.org/wiki/Help:User_manual View online documentation]',
+		'descriptionmsg' => 'smw-desc'
+	);
 
 	wfProfileOut('smwfSetupExtension (SMW)');
 	return true;
@@ -310,7 +326,7 @@ function smwfShowBrowseLink($skintemplate) {
 		wfLoadExtensionMessages('SemanticMediaWiki');
 		$browselink = SMWInfolink::newBrowsingLink(wfMsg('smw_browselink'),
 		               $skintemplate->data['titleprefixeddbkey'],false);
-    	//echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
+    	echo "<li id=\"t-smwbrowselink\">" . $browselink->getHTML() . "</li>";
     }
     return true;
 }
@@ -391,6 +407,7 @@ function smwfShowBrowseLink($skintemplate) {
 		$magicWords['info']    = array( 0, 'info' );
 		$magicWords['concept'] = array( 0, 'concept' );
 		$magicWords['set']     = array( 0, 'set' );
+		$magicWords['set_recurring_event']     = array( 0, 'set_recurring_event' );
 		$magicWords['declare'] = array( 0, 'declare' );
 		$magicWords['SMW_NOFACTBOX'] = array( 0, '__NOFACTBOX__' );
 		$magicWords['SMW_SHOWFACTBOX'] = array( 0, '__SHOWFACTBOX__' );
@@ -505,6 +522,7 @@ function smwfShowBrowseLink($skintemplate) {
 	*                   scientific notation)
 	*/
 	function smwfNumberFormat($value, $decplaces=3) {
+		global $smwgMaxNonExpNumber;
 		wfLoadExtensionMessages('SemanticMediaWiki');
 		$decseparator = wfMsgForContent('smw_decseparator');
 
@@ -519,7 +537,7 @@ function smwfShowBrowseLink($skintemplate) {
 		//The "$value!=0" is relevant: we want to scientify numbers that are close to 0, but never 0!
 		if ( ($decplaces > 0) && ($value != 0) ) {
 			$absValue = abs($value);
-			if ($absValue >= 1000000000) {
+			if ($absValue >= $smwgMaxNonExpNumber) {
 				$doScientific = true;
 			} elseif ($absValue <= pow(10,-$decplaces)) {
 				$doScientific = true;
@@ -597,3 +615,38 @@ function smwfShowBrowseLink($skintemplate) {
 		return $smwgMasterStore;
 	}
 
+	/**
+	 * Adds links to Admin Links page
+	 */
+	function smwfAddToAdminLinks(&$admin_links_tree) {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		$data_structure_section = new ALSection(wfMsg('smw_adminlinks_datastructure'));
+		$smw_row = new ALRow('smw');
+		$smw_row->addItem(ALItem::newFromSpecialPage('Categories'));
+		$smw_row->addItem(ALItem::newFromSpecialPage('Properties'));
+		$smw_row->addItem(ALItem::newFromSpecialPage('UnusedProperties'));
+		$smw_row->addItem(ALItem::newFromSpecialPage('SemanticStatistics'));
+		$data_structure_section->addRow($smw_row);
+		$smw_admin_row = new ALRow('smw_admin');
+		$smw_admin_row->addItem(ALItem::newFromSpecialPage('SMWAdmin'));
+		$data_structure_section->addRow($smw_admin_row);
+		$smw_docu_row = new ALRow('smw_docu');
+		$smw_name = wfMsg('specialpages-group-smw_group');
+		$smw_docu_label = wfMsg('adminlinks_documentation', $smw_name);
+		$smw_docu_row->addItem(AlItem::newFromExternalLink("http://semantic-mediawiki.org/wiki/Help:User_manual", $smw_docu_label));
+		$data_structure_section->addRow($smw_docu_row);
+		$admin_links_tree->addSection($data_structure_section, wfMsg('adminlinks_browsesearch'));
+		$smw_row = new ALRow('smw');
+		$displaying_data_section = new ALSection(wfMsg('smw_adminlinks_displayingdata'));
+		$smw_row->addItem(AlItem::newFromExternalLink("http://semantic-mediawiki.org/wiki/Help:Inline_queries", wfMsg('smw_adminlinks_inlinequerieshelp')));
+		$displaying_data_section->addRow($smw_row);
+		$admin_links_tree->addSection($displaying_data_section, wfMsg('adminlinks_browsesearch'));
+		$browse_search_section = $admin_links_tree->getSection(wfMsg('adminlinks_browsesearch'));
+		$smw_row = new ALRow('smw');
+		$smw_row->addItem(ALItem::newFromSpecialPage('Browse'));
+		$smw_row->addItem(ALItem::newFromSpecialPage('Ask'));
+		$smw_row->addItem(ALItem::newFromSpecialPage('SearchByProperty'));
+		$browse_search_section->addRow($smw_row);
+
+		return true;
+	}

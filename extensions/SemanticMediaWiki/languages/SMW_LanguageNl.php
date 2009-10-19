@@ -1,7 +1,9 @@
 <?php
 /**
  * @file
+ * @ingroup Language
  * @ingroup SMWLanguage
+ * @author Siebrand Mazeland
  */
 
 /*
@@ -11,7 +13,7 @@
 if (!defined('MEDIAWIKI')) die();
 
 global $smwgIP;
-include_once($smwgIP . '/languages/SMW_Language.php');
+include_once( $smwgIP . '/languages/SMW_Language.php' );
 
 /**
  * Dutch language labels for important SMW labels (namespaces, datatypes,...).
@@ -26,10 +28,10 @@ protected $m_DatatypeLabels = array(
 	'_wpg' => 'Pagina', // name of page datatype
 	'_str' => 'String',  // name of the string type
 	'_txt' => 'Tekst',  // name of the text type
-	'_cod' => 'Code',  // name of the (source) code type //TODO: translate
+	'_cod' => 'Code',  // name of the (source) code type
 	'_boo' => 'Booleans',  // name of the boolean type
-	'_num' => 'Number', // name for the datatype of numbers // TODO: translate
-	'_geo' => 'Geographische coordinaat', // name of the geocoord type
+	'_num' => 'Getal', // name for the datatype of numbers
+	'_geo' => 'Geographische coördinaat', // name of the geocoord type
 	'_tem' => 'Temperatuur',  // name of the temperature type
 	'_dat' => 'Datum',  // name of the datetime (calendar) type
 	'_ema' => 'E-mail',  // name of the email type
@@ -58,13 +60,15 @@ protected $m_DatatypeAliases = array(
 protected $m_SpecialProperties = array(
 	//always start upper-case
 	'_TYPE' => 'Heeft type',
-	'_URI'  => 'Equivalent URI', // TODO: translate
+	'_URI'  => 'Equivalent URI',
 	'_SUBP' => 'Subeigenschap van',
-	'_UNIT' => 'Display units', // TODO: translate
-	'_IMPO' => 'Geïmporteerd van',
+	'_UNIT' => 'Weergaveeenheden',
+	'_IMPO' => 'Geïmporteerd uit',
 	'_CONV' => 'Komt overeen met',
 	'_SERV' => 'Verleent dienst',
-	'_PVAL' => 'Geldige waarde'
+	'_PVAL' => 'Geldige waarde',
+	'_MDAT' => 'Wijzigingsdatum',
+	'_ERRP' => 'Has improper value for' // TODO: translate
 );
 
 protected $m_SpecialPropertyAliases = array(
@@ -76,7 +80,9 @@ protected $m_SpecialPropertyAliases = array(
 	'Imported from'     => '_IMPO',
 	'Corresponds to'    => '_CONV',
 	'Provides service'  => '_SERV',
-	'Allows value'      => '_PVAL'
+	'Allows value'      => '_PVAL',
+	'Modification date' => '_MDAT',
+	'Has improper value for' => '_ERRP'
 );
 
 protected $m_Namespaces = array(
@@ -86,8 +92,8 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY_TALK  => 'Overleg_eigenschap',
 	SMW_NS_TYPE           => 'Type',
 	SMW_NS_TYPE_TALK      => 'Overleg_type',
-	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
-	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
+	SMW_NS_CONCEPT        => 'Concept',
+	SMW_NS_CONCEPT_TALK   => 'Overleg_concept'
 );
 
 protected $m_NamespaceAliases = array(
@@ -101,5 +107,9 @@ protected $m_NamespaceAliases = array(
 	'Concept'       => SMW_NS_CONCEPT,
 	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
+
+protected $m_months = array('januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december');
+
+protected $m_monthsshort = array("jan", "feb", "mar", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec");
 
 }

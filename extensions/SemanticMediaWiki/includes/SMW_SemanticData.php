@@ -85,6 +85,7 @@ class SMWSemanticData {
 			foreach ( $this->stubpropvals[$property->getDBkey()] as $dbkeys ) {
 				$dv = SMWDataValueFactory::newPropertyObjectValue($property);
 				$dv->setDBkeys($dbkeys);
+
 				if ($this->m_noduplicates) {
 					$this->propvals[$property->getDBkey()][$dv->getHash()] = $dv;
 				} else {

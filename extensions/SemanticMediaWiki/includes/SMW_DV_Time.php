@@ -32,7 +32,7 @@
  * numeric date model supports the year 0, and considers it to be the same as "1 BC".
  * The year "0 BC" is accepted to refer to the same year, but its use is discouraged.
  * According to this convention, e.g., the year "-100" is the same as "101 BC". This
- * convention agrees with ISO 6801 and the remarks in XML Schema Datatypes 2nd Edition
+ * convention agrees with ISO 8601 and the remarks in XML Schema Datatypes 2nd Edition
  * (the latter uses a different convention that disallows year 0, but it explicitly
  * endorses the ISO convention and announces the future use of this in XML).
  * Note that the implementation currently does not support the specification of negative
@@ -95,6 +95,19 @@ class SMWTimeValue extends SMWDataValue {
 		$this->m_timeannotation = false;
 
 		$value = trim($value); // ignore whitespace
+
+		if ($this->m_caption === false) {
+			$this->m_caption = $value;
+		}
+
+		// if it's a number, and it's sufficiently high, so we know
+		// it's not a year, treat it as a Julian day
+		if (is_numeric($value) && $value > 100000) {
+			$this->m_jd = $value;
+			$this->JD2Date();
+			return true;
+		}
+
 		$this->m_wikivalue = $value;
 		$filteredvalue = $value; //value without time definition and further abbreviations like PM or BC
 
@@ -111,8 +124,8 @@ class SMWTimeValue extends SMWDataValue {
 			if ( strtoupper($match[0]) == 'BC' ) {
 				$is_yearbc = true;
 			}
-			$regexp = "/(\040|T){0,1}".str_replace("+", "\+", $match[0])."(\040){0,1}/u"; //delete ad/bc value and preceding and following chars
-			$filteredvalue = preg_replace($regexp,'', $filteredvalue); //value without ad/bc
+			$regexp = "/(\040|T){0,1}".str_replace("+", "\+", $match[0])."(\040){0,1}/u"; //delete ad/bc value and preceding and following chars, but keep some space there
+			$filteredvalue = trim(preg_replace($regexp,' ', $filteredvalue)); //value without ad/bc
 		}
 
 		//browse string for time value
@@ -149,7 +162,7 @@ class SMWTimeValue extends SMWDataValue {
 		//split array in order to separate the date digits
 		$array = preg_split("/[\040|.|,|\-|\/]+/u", $filteredvalue, 3); //TODO: support &nbsp and - again;
 
-		// The following code segment creates a band by finding out wich role each digit of the entered date can take
+		// The following code segment creates a band by finding out which role each digit of the entered date can take
 		// (date, year, month). The band starts with 1 and for each digit of the entered date a binary code with three
 		// bits is attached. Examples:
 		//		111 states that the digit can be interpreted as a month, a day or a year
@@ -175,6 +188,7 @@ class SMWTimeValue extends SMWDataValue {
 		$digitcount = count($array)-1; //number of digits - 1 is used as an array index for $dateformats
 		$found = false;
 		foreach ($dateformats[$digitcount] as $format) { //check whether created band matches dateformats
+			// Note: sprintf can be used for debugging, e.g. print " checkformat: " . sprintf("%b",$format) . "\n";
 			if (!(~$band & $format)) { //check if $format => $band ("the detected band supports the current format")
 				$i = 0;
 				foreach ($this->m_formats[$format] as $globalvar) { // map format digits to internal variables
@@ -193,10 +207,12 @@ class SMWTimeValue extends SMWDataValue {
 			$this->addError(wfMsgForContent('smw_nodatetime',$value));
 			return true;
 		} elseif ( ($this->m_day > 0) && ($this->m_day > $this->m_daysofmonths[$this->m_month]) ) { //date does not exist in Gregorian calendar
+			///TODO: Return a more suitable error
 			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_nodatetime',$value));
 			return true;
 		} elseif ( ($this->m_year < -4713) && ($this->m_timeoffset != 0) ) { //no support for time offsets if year < -4713
+			///TODO: Return a more suitable error
 			wfLoadExtensionMessages('SemanticMediaWiki');
 			$this->addError(wfMsgForContent('smw_nodatetime',$value));
 			return true;
@@ -215,9 +231,6 @@ class SMWTimeValue extends SMWDataValue {
 			$this->JD2Date();
 		}
 
-		if ($this->m_caption === false) {
-			$this->m_caption = $value;
-		}
 		return true;
 	}
 
@@ -256,19 +269,34 @@ class SMWTimeValue extends SMWDataValue {
 	}
 
 	protected function parseDBkeys($args) {
+		$this->m_printvalue = false;
+		$this->m_caption = false;
 		list($date,$this->m_time) = explode('T',$args[0],2);
 		$d = explode('/',$date,3);
 		if (count($d)==3) list($this->m_year,$this->m_month,$this->m_day) = $d;
 		elseif (count($d)==2) list($this->m_year,$this->m_month) = $d;
 		elseif (count($d)==1) list($this->m_year) = $d;
 		$this->makePrintoutValue();
-		$this->m_caption = $this->m_printvalue;
 		$this->m_wikivalue = $this->m_printvalue;
+	}
+
+	/// make sure that existing values are updated
+	public function setOutputFormat($formatstring) {
+		if ($formatstring != $this->m_outformat) {
+			$this->m_outformat = $formatstring;
+			$this->m_printvalue = false;
+
+		}
 	}
 
 	public function getShortWikiText($linked = NULL) {
 		$this->unstub();
-		return $this->m_caption;
+		if ($this->m_caption !== false) {
+			return $this->m_caption;
+		} else {
+			$this->makePrintoutValue();
+			return $this->m_printvalue;
+		}
 	}
 
 	public function getShortHTMLText($linker = NULL) {
@@ -406,20 +434,32 @@ class SMWTimeValue extends SMWDataValue {
 	protected function makePrintoutValue() {
 		global $smwgContLang;
 		if ($this->m_printvalue === false) {
-			//MediaWiki date function is not applicable any more (no support for BC Dates)
-			if ($this->m_year > 0) {
-				$this->m_printvalue = number_format($this->m_year, 0, '.', ''); // note: there should be no digits after the comma anyway
-			} else {
-				$this->m_printvalue = number_format(-($this->m_year-1), 0, '.', '') . ' BC'; // note: there should be no digits after the comma anyway
-			}
-			if ($this->m_month) {
-				$this->m_printvalue =  $smwgContLang->getMonthLabel($this->m_month) . " " . $this->m_printvalue;
-			}
-			if ($this->m_day) {
-				$this->m_printvalue =  $this->m_day . " " . $this->m_printvalue;
-			}
-			if ($this->m_time) {
-				$this->m_printvalue .= " " . $this->m_time;
+			//MediaWiki date function is not applicable any more (no support for BC dates)
+			if ( (strtoupper($this->m_outformat) == 'ISO') || ($this->m_outformat == '-')) { // ISO8601 date formatting
+				if ($this->m_year > 0) {
+					$this->m_printvalue = str_pad($this->m_year, 4, "0", STR_PAD_LEFT);
+				} else {
+					$this->m_printvalue = '-' . str_pad((-($this->m_year)), 4, "0", STR_PAD_LEFT);
+				}
+				$this->m_printvalue .= '-'
+				   . ($this->m_month?str_pad($this->m_month, 2, "0", STR_PAD_LEFT):'01') . '-'
+				   . ($this->m_day?str_pad($this->m_day, 2, "0", STR_PAD_LEFT):'01')
+				   . ($this->m_time?'T' . $this->m_time:'');
+			} else { // default
+				if ($this->m_year > 0) {
+					$this->m_printvalue = number_format($this->m_year, 0, '.', ''); // note: there should be no digits after the comma anyway
+				} else {
+					$this->m_printvalue = number_format(-($this->m_year-1), 0, '.', '') . ' BC'; // note: there should be no digits after the comma anyway
+				}
+				if ($this->m_month) {
+					$this->m_printvalue =  $smwgContLang->getMonthLabel($this->m_month) . " " . $this->m_printvalue;
+				}
+				if ($this->m_day) {
+					$this->m_printvalue =  $this->m_day . " " . $this->m_printvalue;
+				}
+				if ($this->m_time) {
+					$this->m_printvalue .= " " . $this->m_time;
+				}
 			}
 		}
 	}
@@ -442,19 +482,24 @@ class SMWTimeValue extends SMWDataValue {
 	}
 
 	/**
-	 * This function computes a numerical value based on the currently set date. If the year is
-	 * grater or equal to -4712 (4713 BC), then (something that is closely inspired by) the Julian Day
-	 * (JD) is computed. The JD has the form XXXX.YYYY where XXXX is the number of days having elapsed since
-	 * 4713 BC and YYYY is the elapsed time of the day as fraction of 1. See http://en.wikipedia.org/wiki/Julian_day
-	 * If the year is before -4713, then the computed number XXXX.YYYY has the following form: XXXX is
-	 * the number of years BC and YYYY represents the elapsed days of the year as fraction of 1. This
+	 * This function computes a numerical value based on the currently set
+	 * date. If the year is greater than or equal to -4712 (4713 BC), then
+	 * (something that is closely inspired by) the Julian Day (JD) is
+	 * computed. The JD has the form XXXX.YYYY where XXXX is the number of
+	 * days having elapsed since 4713 BC and YYYY is the elapsed time of
+	 * the day as fraction of 1. See http://en.wikipedia.org/wiki/Julian_day
+	 * If the year is before -4713, then the computed number XXXX.YYYY has
+	 * the following form: XXXX is the number of years BC and YYYY
+	 * represents the elapsed days of the year as fraction of 1. This
 	 * enables even large negative dates using 32bit floats.
 	 *
-	 * @note The result of this function is used only internally and should not be assumed to be the
-	 * exact JD, even for dates after 4713 BC. The reason is that the time information used in this number is
-	 * based on the local timezone of the wiki (see class documentation), and not necessarily normalized
-	 * to Greenwhich noon. The JD computation, however, is based on proleptic Gregorian calendar, and hence
-	 * is precise for the current input conventions.
+	 * @note The result of this function is used only internally and should
+	 * not be assumed to be the exact JD, even for dates after 4713 BC. The
+	 * reason is that the time information used in this number is based on
+	 * the local timezone of the wiki (see class documentation), and not
+	 * necessarily normalized to Greenwich noon. The JD computation,
+	 * however, is based on proleptic Gregorian calendar, and hence is
+	 * precise for the current input conventions.
 	 */
 	protected function createJD(){
 		$this->m_jd = 0;

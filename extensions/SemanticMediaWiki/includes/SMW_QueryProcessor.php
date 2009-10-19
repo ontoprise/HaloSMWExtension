@@ -22,6 +22,27 @@ class SMWQueryProcessor {
 	const CONCEPT_DESC = 2; // query for concept definition
 
 	/**
+	 * Handle the 'distance' parameter, used for location-based queries
+	 */
+	static function setQueryDistance($distance, &$query) {
+		$dist_components = explode(' ', $distance);
+		if (count($dist_components) != 2) return;
+		$dist_num = $dist_components[0]; //str_replace(",", "", $dist2[0]);
+		if (! is_numeric($dist_num) || $dist_num < 0) return;
+		$dist_unit = $dist_components[1];
+		$metric_units = array("km", "kms", "kilometer", "kilometers", "kilometre", "kilometres", "KM", "KMS", "Kilometer", "Kilometers", "Kilometre", "Kilometres");
+		$english_units = array("mile", "mi", "miles", "mis", "Mile", "Miles", "MI", "MIS");
+		if (! in_array($dist_unit, $metric_units) && ! in_array($dist_unit, $english_units))
+			return;
+		// if we're still here, set the distance - it's computed as
+		// a number of miles
+		if (in_array($dist_unit, $metric_units)) {
+			$dist_num *= .621371192;
+		}
+		$query->setDistance($dist_num);
+	}
+
+	/**
 	 * Parse a query string given in SMW's query language to create
 	 * an SMWQuery. Parameters are given as key-value-pairs in the
 	 * given array. The parameter $context defines in what context the
@@ -31,10 +52,6 @@ class SMWQueryProcessor {
 	 * The format string is used to specify the output format if already
 	 * known. Otherwise it will be determined from the parameters when
 	 * needed. This parameter is just for optimisation in a common case.
-	 *
-	 * @todo This method contains too many special cases for certain
-	 * printouts. Especially the case of rss, icalendar, etc. (no query)
-	 * should be specified differently.
 	 */
 	static public function createQuery($querystring, $params, $context = SMWQueryProcessor::INLINE_QUERY, $format = '', $extraprintouts = array()) {
 		global $smwgQDefaultNamespaces, $smwgQFeatures, $smwgQConceptFeatures;
@@ -56,10 +73,9 @@ class SMWQueryProcessor {
 			$querymode = SMWQuery::MODE_COUNT;
 		} elseif ($format == 'debug') {
 			$querymode = SMWQuery::MODE_DEBUG;
-		} elseif (in_array($format, array('rss','icalendar','vcard','csv','json'))) {
-			$querymode = SMWQuery::MODE_NONE;
 		} else {
-			$querymode = SMWQuery::MODE_INSTANCES;
+			$printer = SMWQueryProcessor::getResultPrinter($format, $context);
+			$querymode = $printer->getQueryMode($context);
 		}
 
 		if (array_key_exists('mainlabel', $params)) {
@@ -118,6 +134,12 @@ class SMWQueryProcessor {
 			$orders = Array();
 		}
 		reset($orders);
+		// get distance to search for location-based queries
+		if ( array_key_exists('distance', $params) ) {
+			$distance = trim($params['distance']);
+			self::setQueryDistance( $distance, $query );
+		}
+
 		if ( array_key_exists('sort', $params) ) {
 			$query->sort = true;
 			$query->sortkeys = Array();
@@ -186,7 +208,7 @@ class SMWQueryProcessor {
 					}
 					if ($title->getNamespace() == SMW_NS_PROPERTY) {
 						$printmode = SMWPrintRequest::PRINT_PROP;
-						$property = SMWPropertyValue::makeProperty($title->getDBKey());
+						$property = SMWPropertyValue::makeProperty($title->getDBkey());
 						$data = $property;
 						$label = $showmode?'':$property->getWikiValue();  // default
 					} elseif ($title->getNamespace() == NS_CATEGORY) {
@@ -196,7 +218,9 @@ class SMWQueryProcessor {
 					} //else?
 				}
 				if (count($propparts) == 1) { // no outputformat found, leave empty
-					$propparts[] = '';
+					$propparts[] = false;
+				} elseif (trim($propparts[1]) == '') { // "plain printout", avoid empty string to avoid confusions with "false"
+					$propparts[1] = '-';
 				}
 				if (count($parts) > 1) { // label found, use this instead of default
 					$label = trim($parts[1]);
@@ -282,12 +306,23 @@ class SMWQueryProcessor {
 
 	static public function getResultFromQuery($query, $params, $extraprintouts, $outputmode, $context = SMWQueryProcessor::INLINE_QUERY, $format = '') {
 		wfProfileIn('SMWQueryProcessor::getResultFromQuery (SMW)');
-		if ($format == '') {
-			$format = SMWQueryProcessor::getResultFormat($params);
+		// Query routing allows extensions to provide alternative stores as data sources
+		// The while feature is experimental and is not properly integrated with most of SMW's architecture. For instance, some query printers just fetch their own store.
+		///TODO: case-insensitive
+		global $smwgQuerySources;
+		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) ) {
+			$store = new $smwgQuerySources[$params["source"]]();
+			$query->params = $params; // this is a hack
+		} else {
+			$store = smwfGetStore(); // default store
 		}
-		$res = smwfGetStore()->getQueryResult($query);
+		$res = $store->getQueryResult($query);
+
 		if ( ($query->querymode == SMWQuery::MODE_INSTANCES) || ($query->querymode == SMWQuery::MODE_NONE) ) {
 			wfProfileIn('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
+			if ($format == '') {
+				$format = SMWQueryProcessor::getResultFormat($params);
+			}
 			$printer = SMWQueryProcessor::getResultPrinter($format, $context, $res);
 			$result = $printer->getResult($res, $params, $outputmode);
 			wfProfileOut('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
@@ -315,19 +350,13 @@ class SMWQueryProcessor {
 	}
 
 	/**
-	 * Find suitable SMWResultPrinter for the given format.
+	 * Find suitable SMWResultPrinter for the given format. The context in which the query is to be
+	 * used determines some basic settings of the returned printer object. Possible contexts are
+	 * SMWQueryProcessor::SPECIAL_PAGE, SMWQueryProcessor::INLINE_QUERY, SMWQueryProcessor::CONCEPT_DESC.
 	 */
-	static public function getResultPrinter($format,$context,$res) {
-		if ( 'auto' == $format ) {
-			if ( ($res->getColumnCount()>1) && ($res->getColumnCount()>0) )
-				$format = 'table';
-			else $format = 'list';
-		}
+	static public function getResultPrinter($format, $context = SMWQueryProcessor::SPECIAL_PAGE) {
 		global $smwgResultFormats;
-		if (array_key_exists($format, $smwgResultFormats))
-			$formatclass = $smwgResultFormats[$format];
-		else
-			$formatclass = "SMWListResultPrinter";
+		$formatclass = (array_key_exists($format, $smwgResultFormats))?$smwgResultFormats[$format]:'SMWAutoResultPrinter';
 		return new $formatclass($format, ($context != SMWQueryProcessor::SPECIAL_PAGE));
 	}
 

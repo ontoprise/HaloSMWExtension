@@ -36,6 +36,11 @@ class SMWEmbeddedResultPrinter extends SMWResultPrinter {
 		}
 	}
 
+	public function getName() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		return wfMsg('smw_printername_embedded');
+	}
+
 	protected function getResultText($res,$outputmode) {
 		global $wgParser;
 		// No page should embed itself, find out who we are:

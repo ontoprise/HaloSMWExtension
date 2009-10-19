@@ -84,6 +84,20 @@ $aliases['de'] = array(
 	'WantedProperties' => array( 'Gewünschte Attribute' ),
 );
 
+/** Lower Sorbian (Dolnoserbski) */
+$aliases['dsb'] = array(
+	'Ask' => array( 'Semantiske pytanhje' ),
+	'Browse' => array( 'Pśepytaś' ),
+	'ExportRDF' => array( 'RDF eksportěrowaś' ),
+	'PageProperty' => array( 'Bokowa kakosć' ),
+	'Properties' => array( 'Kakosći' ),
+	'SearchByProperty' => array( 'Z kakosću pytaś' ),
+	'SemanticStatistics' => array( 'Semantiska statistika' ),
+	'Types' => array( 'Datowe typy' ),
+	'UnusedProperties' => array( 'Njewužywane kakosći' ),
+	'WantedProperties' => array( 'Póžedane kakosći' ),
+);
+
 /** Divehi (ދިވެހިބަސް) */
 $aliases['dv'] = array(
 	'Ask' => array( 'އައްސަވާ' ),
@@ -133,7 +147,7 @@ $aliases['hsb'] = array(
 	'Properties' => array( 'Kajkosće' ),
 	'SearchByProperty' => array( 'Pytanje po kajkosći' ),
 	'SemanticStatistics' => array( 'Semantiska statistika' ),
-	'Types' => array( 'Typy' ),
+	'Types' => array( 'Datowe typy' ),
 	'UnusedProperties' => array( 'Njewužiwane kajkosće' ),
 	'WantedProperties' => array( 'Falowace kajkosće' ),
 );
@@ -150,18 +164,48 @@ $aliases['hu'] = array(
 	'WantedProperties' => array( 'Keresett tulajdonságok' ),
 );
 
+/** Interlingua (Interlingua) */
+$aliases['ia'] = array(
+	'Ask' => array( 'Consultar' ),
+	'Browse' => array( 'Percurrer' ),
+	'ExportRDF' => array( 'Exportar RDF' ),
+	'PageProperty' => array( 'Proprietate de pagina' ),
+	'Properties' => array( 'Proprietates' ),
+	'SMWAdmin' => array( 'Admin SMW' ),
+	'SearchByProperty' => array( 'Cercar per proprietate' ),
+	'SemanticStatistics' => array( 'Statisticas semantic' ),
+	'Types' => array( 'Typos' ),
+	'URIResolver' => array( 'Resolvitor de URIs' ),
+	'UnusedProperties' => array( 'Proprietates non usate' ),
+	'WantedProperties' => array( 'Proprietates dsesirate' ),
+);
+
+/** Italian (Italiano) */
+$aliases['it'] = array(
+	'Ask' => array( 'Chiedi' ),
+	'Browse' => array( 'Esplora' ),
+	'ExportRDF' => array( 'EsportaRDF' ),
+	'PageProperty' => array( 'ProprietàPagina' ),
+	'Properties' => array( 'Proprietà' ),
+	'SearchByProperty' => array( 'CercaPerProprietà' ),
+	'SemanticStatistics' => array( 'StatisticheSemantiche' ),
+	'Types' => array( 'Tipi' ),
+	'UnusedProperties' => array( 'ProprietàNonUtilizzate' ),
+	'WantedProperties' => array( 'ProprietàRichieste' ),
+);
+
 /** Japanese (日本語) */
 $aliases['ja'] = array(
 	'Ask' => array( '問い合わせ', '意味的検索' ),
 	'Browse' => array( '閲覧' ),
-	'ExportRDF' => array( 'RDFエクスポート' ),
+	'ExportRDF' => array( 'RDFエクスポート', 'ＲＤＦエクスポート' ),
 	'PageProperty' => array( 'ページプロパティ' ),
-	'Properties' => array( 'プロパティ' ),
+	'Properties' => array( 'プロパティ一覧' ),
 	'SMWAdmin' => array( 'SMW管理' ),
 	'SearchByProperty' => array( 'プロパティによる検索' ),
 	'SemanticStatistics' => array( '意味的統計' ),
-	'Types' => array( '型' ),
-	'URIResolver' => array( 'URIリゾルバー' ),
+	'Types' => array( '型一覧' ),
+	'URIResolver' => array( 'URIリゾルバー', 'ＵＲＩリゾルバー' ),
 	'UnusedProperties' => array( '使われていないプロパティ' ),
 	'WantedProperties' => array( '望まれているプロパティ' ),
 );
@@ -173,16 +217,43 @@ $aliases['km'] = array(
 	'Types' => array( 'ប្រភេទ' ),
 );
 
+/** Ripoarisch (Ripoarisch) */
+$aliases['ksh'] = array(
+	'Ask' => array( 'Froore' ),
+	'Browse' => array( 'Bläddere' ),
+	'ExportRDF' => array( 'RDF', 'RDF Äxpotteere' ),
+	'PageProperty' => array( 'Eijeschaffte vun Sigge' ),
+	'Properties' => array( 'Eijeschaffte' ),
+	'SMWAdmin' => array( 'Semantesch MediaWiki Ennreschte' ),
+	'SearchByProperty' => array( 'Noh Eijeschaffte söke' ),
+	'SemanticStatistics' => array( 'Semantesch Shtatistike' ),
+	'Types' => array( 'Zoote vun Daate' ),
+	'UnusedProperties' => array( 'Eijeschaffte di nit jebruch wääde' ),
+	'WantedProperties' => array( 'Eijeschaffte di noch jebruch wääde' ),
+);
+
+/** Cornish (Kernewek) */
+$aliases['kw'] = array(
+	'Ask' => array( 'Govyn' ),
+	'Browse' => array( 'Peuri' ),
+);
+
 /** Luxembourgish (Lëtzebuergesch) */
 $aliases['lb'] = array(
 	'Ask' => array( 'Froen' ),
 	'ExportRDF' => array( 'RDF exportéieren' ),
 	'PageProperty' => array( 'Säiten-Eegeschaften' ),
 	'Properties' => array( 'Eegeschaften' ),
+	'SearchByProperty' => array( 'No Eegeschaft sichen' ),
 	'SemanticStatistics' => array( 'Semantesch Statistiken' ),
 	'Types' => array( 'Datentypen' ),
 	'UnusedProperties' => array( 'Netbenotzen Eegeschaften' ),
 	'WantedProperties' => array( 'Gewënschten Eegeschaften' ),
+);
+
+/** Lumbaart (Lumbaart) */
+$aliases['lmo'] = array(
+	'Ask' => array( 'Ciama' ),
 );
 
 /** Macedonian (Македонски) */
@@ -195,6 +266,12 @@ $aliases['mk'] = array(
 	'Types' => array( 'Типови' ),
 	'UnusedProperties' => array( 'НекористениСвојства' ),
 	'WantedProperties' => array( 'БараниСвојства' ),
+);
+
+/** Maltese (Malti) */
+$aliases['mt'] = array(
+	'Ask' => array( 'Staqsi' ),
+	'Browse' => array( 'Esplora' ),
 );
 
 /** Nedersaksisch (Nedersaksisch) */
@@ -246,6 +323,22 @@ $aliases['oc'] = array(
 	'WantedProperties' => array( 'Proprietats demandadas', 'ProprietatsDemandadas' ),
 );
 
+/** Polish (Polski) */
+$aliases['pl'] = array(
+	'Ask' => array( 'Pytanie' ),
+	'Browse' => array( 'Przegląd' ),
+	'ExportRDF' => array( 'EksportRDF' ),
+	'PageProperty' => array( 'WłasnośćStrony' ),
+	'Properties' => array( 'Własności' ),
+	'SMWAdmin' => array( 'AdminSMW' ),
+	'SearchByProperty' => array( 'SzukanieWgWłasności' ),
+	'SemanticStatistics' => array( 'StatystykiSemantyczne' ),
+	'Types' => array( 'Typy' ),
+	'URIResolver' => array( 'ResolverURI' ),
+	'UnusedProperties' => array( 'NieużywaneWłasności' ),
+	'WantedProperties' => array( 'PotrzebneWłasności' ),
+);
+
 /** Pashto (پښتو) */
 $aliases['ps'] = array(
 	'Ask' => array( 'پوښتل' ),
@@ -260,6 +353,21 @@ $aliases['ro'] = array(
 	'Browse' => array( 'Răsfoieşte' ),
 );
 
+/** Slovak (Slovenčina) */
+$aliases['sk'] = array(
+	'Ask' => array( 'SpýtaťSa' ),
+	'Browse' => array( 'Prehliadať' ),
+	'PageProperty' => array( 'VlastnostiStránky' ),
+	'Properties' => array( 'Vlastnosti' ),
+	'SMWAdmin' => array( 'SprávcaSMW' ),
+	'SearchByProperty' => array( 'HľadaniePodľaVlastností' ),
+	'SemanticStatistics' => array( 'SémantickéŠtatistiky' ),
+	'Types' => array( 'Typy' ),
+	'URIResolver' => array( 'PrekladURI' ),
+	'UnusedProperties' => array( 'NepoužívanéVlastnosti' ),
+	'WantedProperties' => array( 'ŽiadanéVlastnosti' ),
+);
+
 /** Albanian (Shqip) */
 $aliases['sq'] = array(
 	'Ask' => array( 'Pyet' ),
@@ -271,5 +379,28 @@ $aliases['sw'] = array(
 	'Ask' => array( 'Uliza' ),
 	'Browse' => array( 'Fungua' ),
 	'Types' => array( 'Aina' ),
+);
+
+/** Tagalog (Tagalog) */
+$aliases['tl'] = array(
+	'Ask' => array( 'Magtanong' ),
+	'Browse' => array( 'Tumingin-tingin' ),
+	'ExportRDF' => array( 'Iluwas ang RDF' ),
+	'PageProperty' => array( 'Pag-aari ng pahina' ),
+	'Properties' => array( 'Mga pag-aari' ),
+	'SMWAdmin' => array( 'Tagapangasiwa ng SMW' ),
+	'SearchByProperty' => array( 'Maghanap ayon sa pag-aari' ),
+	'SemanticStatistics' => array( 'Mga estadistika ng semantiko' ),
+	'Types' => array( 'Mga uri' ),
+	'URIResolver' => array( 'Tagapaglutas ng URI' ),
+	'UnusedProperties' => array( 'Mga pag-aaring hindi ginagamit' ),
+	'WantedProperties' => array( 'Mga pag-aaring ninanais' ),
+);
+
+/** Vèneto (Vèneto) */
+$aliases['vec'] = array(
+	'Browse' => array( 'Sfója' ),
+	'Properties' => array( 'Proprietà' ),
+	'Types' => array( 'Tipi' ),
 );
 

@@ -6,6 +6,11 @@
  * @ingroup SMWQuery
  */
 
+// constants that define how/if headers should be displayed
+define('SMW_HEADERS_SHOW', 2);
+define('SMW_HEADERS_PLAIN', 1);
+define('SMW_HEADERS_HIDE', 0); // used to be "false" hence use "0" to support extensions that still assume this
+
 /**
  * Abstract base class for SMW's novel query printing mechanism. It implements
  * part of the former functionality of SMWInlineQuery (everything related to
@@ -37,7 +42,7 @@ abstract class SMWResultPrinter {
 	protected $mFormat;  // a string identifier describing a valid format
 	protected $mLinkFirst; // should article names of the first column be linked?
 	protected $mLinkOthers; // should article names of other columns (besides the first) be linked?
-	protected $mShowHeaders = true; // should the headers (property names) be printed?
+	protected $mShowHeaders = SMW_HEADERS_SHOW; // should the headers (property names) be printed?
 	protected $mShowErrors = true; // should errors possibly be printed?
 	protected $mInline; // is this query result "inline" in some page (only then a link to unshown results is created, error handling may also be affected)
 	protected $mLinker; // Linker object as needed for making result links. Might come from some skin at some time.
@@ -178,7 +183,7 @@ abstract class SMWResultPrinter {
 		if ( ($this->mIntro) && ($results->getCount() > 0) ) {
 			if ($outputmode == SMW_OUTPUT_HTML) {
 				global $wgParser;
-				$result = $wgParser->recursiveTagParse($this->mIntro) . $result; 
+				$result = $wgParser->recursiveTagParse($this->mIntro) . $result;
 			} else {
 				$result = $this->mIntro . $result;
 			}
@@ -213,7 +218,7 @@ abstract class SMWResultPrinter {
 			$this->mSearchlabel = $params['searchlabel'];
 		}
 		if (array_key_exists('link', $params)) {
-			switch (strtolower($params['link'])) {
+			switch (strtolower(trim($params['link']))) {
 			case 'head': case 'subject':
 				$this->mLinkFirst = true;
 				$this->mLinkOthers  = false;
@@ -233,9 +238,11 @@ abstract class SMWResultPrinter {
 		}
 		if (array_key_exists('headers', $params)) {
 			if ( 'hide' == strtolower(trim($params['headers']))) {
-				$this->mShowHeaders = false;
+				$this->mShowHeaders = SMW_HEADERS_HIDE;
+			} elseif ( 'plain' == strtolower(trim($params['headers']))) {
+				$this->mShowHeaders = SMW_HEADERS_PLAIN;
 			} else {
-				$this->mShowHeaders = true;
+				$this->mShowHeaders = SMW_HEADERS_SHOW;
 			}
 		}
 	}
@@ -267,13 +274,28 @@ abstract class SMWResultPrinter {
 	 * standalone files are produced.
 	 *
 	 * If this function returns something other than FALSE, then the printer will
-	 * not be regarded as a printer that displays in-line results. In in-line mode,
-	 * queries to that printer will not be executed, but behave as if the user
-	 * would have set limit=-1. This saves effort for printers that do not show
-	 * results in-line anyway, even if they would be part of the result.
+	 * not be regarded as a printer that displays in-line results. This is used to
+	 * determine if a file output should be generated in Special:Ask.
 	 */
 	public function getMimeType($res) {
 		return false;
+	}
+
+	/**
+	 * This function determines the query mode that is to be used for this printer in
+	 * various contexts. The query mode influences how queries to that printer should
+	 * be processed to obtain a result. Possible values are SMWQuery::MODE_INSTANCES
+	 * (retrieve instances), SMWQuery::MODE_NONE (do nothing), SMWQuery::MODE_COUNT
+	 * (get number of results), SMWQuery::MODE_DEBUG (return debugging text).
+	 * Possible values for context are SMWQueryProcessor::SPECIAL_PAGE,
+	 * SMWQueryProcessor::INLINE_QUERY, SMWQueryProcessor::CONCEPT_DESC.
+	 *
+	 * The default implementation always returns SMWQuery::MODE_INSTANCES. File exports
+	 * like RSS will use MODE_INSTANCES on special pages (so that instances are
+	 * retrieved for the export) and MODE_NONE otherwise (displaying just a download link).
+	 */
+	public function getQueryMode($context) {
+		return SMWQuery::MODE_INSTANCES;
 	}
 
 	/**
@@ -287,6 +309,17 @@ abstract class SMWResultPrinter {
 	 */
 	public function getFileName($res) {
 		return false;
+	}
+
+	/**
+	 * Get a human readable label for this printer. The default is to
+	 * return just the format identifier. Concrete implementations may
+	 * refer to messages here. The format name is normally not used in
+	 * wiki text but only in forms etc. hence the user language should be
+	 * used when retrieving messages.
+	 */
+	public function getName() {
+		return $this->mFormat;
 	}
 
 	/**

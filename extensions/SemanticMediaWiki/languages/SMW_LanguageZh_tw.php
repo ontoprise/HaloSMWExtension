@@ -68,7 +68,9 @@ protected $m_SpecialProperties = array(
 	'_IMPO' => '輸入來源',     //Imported from
 	'_CONV' => '符合於',  //Corresponds to
 	'_SERV' => '提供服務',      //Provides service
-	'_PVAL' => '允許值'      //Allows value
+	'_PVAL' => '允許值',      //Allows value
+	'_MDAT' => 'Modification date',  // TODO: translate
+	'_ERRP' => 'Has improper value for' // TODO: translate
 );
 
 
@@ -82,7 +84,9 @@ protected $m_SpecialPropertyAliases = array(
 	'Imported from'     => '_IMPO',
 	'Corresponds to'    => '_CONV',
 	'Provides service'  => '_SERV',
-	'Allows value'      => '_PVAL'
+	'Allows value'      => '_PVAL',
+	'Modification date' => '_MDAT',
+	'Has improper value for' => '_ERRP'
 );
 
 protected $m_Namespaces = array(
@@ -92,8 +96,8 @@ protected $m_Namespaces = array(
 	SMW_NS_PROPERTY_TALK  => '性質討論',	//'Property_talk',
 	SMW_NS_TYPE           => '型態',	//'Type',
 	SMW_NS_TYPE_TALK      => '型態討論',	//'Type_talk'
-	SMW_NS_CONCEPT        => 'Concept', // TODO: translate
-	SMW_NS_CONCEPT_TALK   => 'Concept_talk' // TODO: translate
+	SMW_NS_CONCEPT        => '概念',	 //'Concept'
+	SMW_NS_CONCEPT_TALK   => '概念討論',	//'Concept_talk'
 );
 
 protected $m_NamespaceAliases = array(
@@ -108,6 +112,9 @@ protected $m_NamespaceAliases = array(
 	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
 
+protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_MDY,SMW_DMY,SMW_YMD,SMW_YDM));
+
+protected $m_months = array("1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月");
 
 }
 

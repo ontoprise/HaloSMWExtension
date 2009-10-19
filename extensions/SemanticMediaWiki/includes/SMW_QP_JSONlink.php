@@ -26,6 +26,15 @@ class SMWJSONResultPrinter extends SMWResultPrinter {
 		}
 	}
 
+	public function getQueryMode($context) {
+		return ($context==SMWQueryProcessor::SPECIAL_PAGE)?SMWQuery::MODE_INSTANCES:SMWQuery::MODE_NONE;
+	}
+
+	public function getName() {
+		wfLoadExtensionMessages('SemanticMediaWiki');
+		return wfMsg('smw_printername_json');
+	}
+
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber, $wgSitename, $wgServer, $wgScriptPath;
 		$result = '';
@@ -59,6 +68,7 @@ class SMWJSONResultPrinter extends SMWResultPrinter {
 							$prefixedtext = $value->getPrefixedText();
 						}
 						$valuestack[] = 'label: "'.$values.'"';
+						$label = $values;
 					} else {
 						$values = array();
 						$finalvalues = '';
@@ -89,6 +99,21 @@ class SMWJSONResultPrinter extends SMWResultPrinter {
 					$count++;
 				}
 				$valuestack[] = '"uri" : "'.$wgServer.$wgScriptPath.'/index.php?title='.$prefixedtext.'"';
+				
+				//try to determine type/category
+				$catlist = array();
+				$dbr  = &wfGetDB(DB_SLAVE);
+				$cl   = $dbr->tableName('categorylinks');
+				$arttitle   = Title::newFromText($label);
+				if($arttitle instanceof Title){
+					$catid = $arttitle->getArticleID();
+					$catres  = $dbr->select($cl, 'cl_to', "cl_from = $catid", __METHOD__, array('ORDER BY' => 'cl_sortkey'));
+					while ($catrow = $dbr->fetchRow($catres)) $catlist[] = $catrow[0];
+					$dbr->freeResult($catres);
+					if(sizeof($catlist) > 0) $valuestack[] = '"type" : "'.$catlist[0].'"';
+				}
+
+				//create property list of item
 				$itemstack[] = "\t{\n\t\t\t".implode(",\n\t\t\t",$valuestack)."\n\t\t}";
 				$row = $res->getNext();
 			}

@@ -53,10 +53,14 @@ protected $m_SpecialProperties = array(
 	'_IMPO' => 'المستوردة من',
 	'_CONV' => 'يقابل',
 	'_SERV' => 'يوفر الخدمة',
-	'_PVAL' => 'يسمح بالقيمة'
+	'_PVAL' => 'يسمح بالقيمة',
+	'_MDAT' => 'Modification date',  // TODO: translate
+	'_ERRP' => 'Has improper value for' // TODO: translate
 );
 
 protected $m_SpecialPropertyAliases = array(
+	'Modification date' => '_MDAT',
+	'Has improper value for' => '_ERRP',
 	'عرض الوحدة' => '_UNIT'
 );
 
