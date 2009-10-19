@@ -35,7 +35,8 @@ class SFLinkUtils {
 			$namespace .= ':';
 		}
 		if ($wgCapitalLinks) {
-			return $namespace . ucfirst($title->getPartialURL());
+			global $wgContLang;
+			return $namespace . $wgContLang->ucfirst($title->getPartialURL());
 		} else {
 			return $namespace . $title->getPartialURL();
 		}
@@ -46,11 +47,18 @@ class SFLinkUtils {
 	 * non-URL-encoded title string
 	 */
 	static function titleString($title) {
+		global $wgCapitalLinks;
+
 		$namespace = $title->getNsText();
 		if ( '' != $namespace ) {
 			$namespace .= ':';
 		}
-		return ($namespace . ucfirst($title->getText()));
+		if ($wgCapitalLinks) {
+			global $wgContLang;
+			return $namespace . $wgContLang->ucfirst($title->getText());
+		} else {
+			return $namespace . $title->getText();
+		}
 	}
 
 	/**

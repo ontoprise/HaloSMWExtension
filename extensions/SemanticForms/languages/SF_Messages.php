@@ -80,6 +80,7 @@ $messages['en'] = array(
 	'sf_createclass_success'             => 'Properties, template, form and category will be created.',
 	'addpage'                            => 'Add page with form',
 	'sf_addpage_badform'                 => 'Error: no form page was found at $1',
+	'sf_addpage_badtitle'                => 'Error: \'$1\' is an invalid title for a page.',
 	'sf_addpage_docu'                    => 'Enter the name of the page here, to be edited with the form \'$1\'.
 If this page already exists, you will be sent to the form for editing that page.
 Otherwise, you will be sent to the form for adding the page.',
@@ -119,7 +120,8 @@ the URL should look like \'Special:RunQuery/&lt;form name&gt;\'.',
 	'sf_bad_number_error'                => 'must be a valid number',
 	'sf_bad_integer_error'               => 'must be a valid integer',
 	'sf_bad_date_error'                  => 'must be a valid date',
-	'uploadwindow'                       => 'Upload window',
+	'uploadwindow'                       => 'Upload window', // Description for Special:UploadWindow
+	'sf_deletionlog'                     => 'Deletion log',
 
 	// content messages
 	'sf_property_isproperty'             => 'This is a property of type $1.',
@@ -1272,6 +1274,7 @@ jolic bok z tym mjenim južo eksistěrujo, buźoš se k formularoju dalej pósr�
  * @author ZaDiak
  */
 $messages['el'] = array(
+	'semanticforms-desc' => 'Φόρμες για την προσθήκη και επεξεργασία σημασιολογικών δεδομένων',
 	'specialpages-group-sf_group' => 'Σημασιολογικές Φόρμες',
 	'createproperty' => 'Δημιουργήστε μια ιδιότητα',
 	'sf_createproperty_propname' => 'Όνομα ιδιότητας:',
@@ -1344,6 +1347,7 @@ $messages['el'] = array(
 	'sf_category_hasdefaultform' => 'Αυτή η κατηγορία χρησιμοποιεί την φόρμα $1.',
 	'sf_category_desc' => 'Αυτή είναι η κατηγορία $1.',
 	'sf_blank_namespace' => 'Κύριος',
+	'right-editrestrictedfields' => 'Επεξεργασία περιορισμένων πεδίων φορμών',
 );
 
 /** Esperanto (Esperanto)
@@ -3328,11 +3332,12 @@ Dat süüht dann esu us, wi <code>{{#special:RunQuery}}/''&lt;Fomullaa_Name &gt;
 	'right-editrestrictedfields' => 'Beschrängk zohjänglijje Felder en Fommulaare ändere',
 );
 
-/** Cornish (Kernewek)
+/** Cornish (Kernowek)
+ * @author Kernoweger
  * @author Kw-Moon
  */
 $messages['kw'] = array(
-	'createtemplate' => 'Gwruthyl skantlyn',
+	'createtemplate' => 'Gruthyl skantlyn',
 	'sf_createform_template' => 'Skantlyn:',
 );
 
@@ -4223,7 +4228,9 @@ l'URL deuriá èsser coma « Special:RunQuery/&lt;nom del formulari&gt; ».",
  */
 $messages['os'] = array(
 	'sf_createproperty_proptype' => 'Тип:',
+	'templates' => 'Шаблонтæ',
 	'sf_createtemplate_deletefield' => 'Аппар',
+	'sf_createform_template' => 'Шаблон:',
 	'sf_editdata_none' => 'Нæй',
 );
 
@@ -5541,7 +5548,7 @@ $messages['uk'] = array(
  * @author Игорь Бродский
  */
 $messages['vep'] = array(
-	'sf_createproperty_propname' => 'Nimi:',
+	'sf_createproperty_propname' => 'Ičendan nimi:',
 	'sf_createproperty_proptype' => 'Tip:',
 	'templates' => 'Šablonad',
 	'sf_templates_docu' => 'Wikiš om ningoižid šablonoid:',
@@ -5550,12 +5557,27 @@ $messages['vep'] = array(
 	'sf_createtemplate_namelabel' => 'Šablonan nimi:',
 	'sf_createtemplate_categorylabel' => 'Kategorii, kudamban märhapaneb šablon (opcionaližikš):',
 	'sf_createtemplate_templatefields' => 'Šablonan pöudod:',
+	'sf_createtemplate_outputformat' => 'Lähtmižformat:',
+	'sf_createtemplate_standardformat' => 'Standartine',
 	'sf_createtemplate_addfield' => 'Läžata pöud',
 	'sf_createtemplate_deletefield' => 'Čuta poiš',
+	'forms' => 'Formad',
+	'createform' => 'Säta form',
+	'sf_createform_nameinput' => 'Forman nimi',
+	'sf_createform_template' => 'Šablon:',
+	'sf_createform_field' => 'Pöud:',
 	'sf_createform_hidden' => 'Peittud',
 	'sf_createform_add' => 'Ližata',
+	'createcategory' => 'Säta kategorii',
+	'sf_createcategory_name' => 'Kategorijan nimi:',
+	'sf_createcategory_defaultform' => 'Form augotižjärgendusen mödhe:',
+	'addoreditdata' => 'Ližada vai redaktirui',
+	'adddata' => 'Ližata andmusid',
 	'editdata' => 'Redaktiruida andmused',
+	'sf_editsource' => 'Redaktiruida purde',
 	'sf_editdata_remove' => 'Čuta poiš',
+	'sf_editdata_addanother' => 'Ližata völ',
+	'sf_form_freetextlabel' => 'Joudai tekst',
 );
 
 /** Vietnamese (Tiếng Việt)

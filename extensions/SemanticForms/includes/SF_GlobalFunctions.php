@@ -7,7 +7,7 @@
 
 if ( !defined( 'MEDIAWIKI' ) ) die();
 
-define('SF_VERSION','1.8.3');
+define('SF_VERSION','1.8.4');
 
 $wgExtensionCredits['specialpage'][]= array(
 	'path' => __FILE__,
