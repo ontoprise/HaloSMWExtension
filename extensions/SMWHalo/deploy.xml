@@ -15,17 +15,14 @@
 	</global>
 	<codefiles>
 	   <!-- external codefile -->
-		<file loc="skins/ontoskin" />
-		<file loc="skins/Ontoskin.deps.php" />
-		<file loc="skins/Ontoskin.php" />
 		
 		<file loc="skins/ontoskin2" />
 		<file loc="skins/Ontoskin2.deps.php" />
-        <file loc="skins/Ontoskin2.php" />
+                <file loc="skins/Ontoskin2.php" />
         
 		<file loc="skins/ontoskin3" />
 		<file loc="skins/Ontoskin3.deps.php" />
-        <file loc="skins/Ontoskin3.php" />
+                <file loc="skins/Ontoskin3.php" />
 		
 	</codefiles>
 	<wikidumps>

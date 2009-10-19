@@ -52,11 +52,6 @@
 		<copy todir="bin/zip/skins">
 			<fileset file="../../../skins/OntoSkin*" />
 		</copy>
-		<copy todir="bin/zip/skins/ontoskin">
-			<fileset dir="../../../skins/ontoskin">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
 		<copy todir="bin/zip/skins/ontoskin2">
 			<fileset dir="../../../skins/ontoskin2">
 				<exclude name="**/.svn, **/CVS" />
