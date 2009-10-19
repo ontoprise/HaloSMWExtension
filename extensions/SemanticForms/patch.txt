@@ -1115,16 +1115,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
              }
              list($new_text, $new_javascript_text) = $this->formFieldHTML($form_field, $cur_value);
  
-@@ -869,7 +964,8 @@
-             // if this was field was disabled due to being 'restricted',
-             // add a hidden field holding the value of this field, because
-             // disabled inputs for some reason don't submit their value
--            if ($is_restricted && ! $wgUser->isAllowed('editrestrictedfields')) {
-+            if ($form_field->is_disabled) {  // Patch by Yaron. Will be fixed in next release
-+//            if ($is_restricted && ! $wgUser->isAllowed('editrestrictedfields')) {
-               if ($field_name == 'free text' || $field_name == '<freetext>') {
-                 $new_text .= SFFormUtils::hiddenFieldHTML('free_text', '!free_text!');
-               } else {
 @@ -1003,9 +1099,19 @@
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
