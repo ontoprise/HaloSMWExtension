@@ -475,13 +475,12 @@ AutoCompleter.prototype = {
         }
     },  //handleMouseOver
     handleMouseDown: function(event) {
-    	
+
         var e = GeneralTools.getEvent(event);
         var eL = this.getEventElement(e);
          //if (e["ctrlKey"]) {
          //}
-        var elementClicked = Event.element(event);
-
+        var elementClicked = Event.element(e);
         if (this.siw && elementClicked
             && (Element.hasClassName(elementClicked, "MWFloaterContentHeader")
                    || (Element.hasClassName(elementClicked.parentNode, "MWFloaterContentHeader")))) {
@@ -490,7 +489,7 @@ AutoCompleter.prototype = {
             this.AC_yDiff = (e.pageY - xy[1]) - parseInt(this.siw.floater.style.top);
             this.AC_xDiff = (e.pageX - xy[0]) - parseInt(this.siw.floater.style.left);
         } else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent")
-        && !this.isWithinNodeSimple(elementClicked, "MWFloater0")){
+        && !this.isWithinNodeSimple(elementClicked, this.siw.getMWFloaterId())){
             this.hideSmartInputFloater();        	
         }
     },
@@ -513,30 +512,7 @@ AutoCompleter.prototype = {
     },
     showSmartInputFloater: function() {
         if (!this.siw.floater.style.display || (this.siw.floater.style.display == "none")) {
-            // we are in the FCK editor, AC will be displayed in the upper left.
-            // when in wikitext the id source_wikitext is added by the fckplugin.js
-            if (this.siw.inputBox.id && this.siw.inputBox.id == 'source_wikitext') {
-                var x;
-                var y;
-                // check if the FCK runs in Semantic forms or in a normal page
-                var iframe = $('wpTextbox1___Frame') ? $('wpTextbox1___Frame') : $('free_text___Frame');
-                // check if we are in fullscreen mode, then take coordinated from there
-                if (iframe.style.position && iframe.style.position == 'fixed') {
-                    x = parseInt(iframe.style.left);
-                    y = parseInt(iframe.style.top);
-                    this.siw.floater.style.position = 'fixed';
-                } else {       
-                    x = Position.cumulativeOffset(iframe)[0]
-                    y = Position.cumulativeOffset(iframe)[1]
-                }
-                // add space of toolbar
-                y += iframe.contentDocument.getElementById('xEditingArea').offsetTop;
-                // move floater 800px to the right.
-                x += 800;
-                this.siw.floater.style.left = x + 'px';
-                this.siw.floater.style.top = y + 'px';
-            }
-            else if (!this.siw.customFloater) {
+            if (!this.siw.customFloater) {
                 var x = Position.cumulativeOffset(this.siw.inputBox)[0];
                 var y = Position.cumulativeOffset(this.siw.inputBox)[1] + this.siw.inputBox.offsetHeight;
 
@@ -570,7 +546,6 @@ AutoCompleter.prototype = {
                  //you may
                  //do additional things for your custom floater
                  //beyond setting display and visibility
-                var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
                  // Browser dependant! only IE ------------------------
                  
                  // the following does not work with different skins - deactivated
@@ -643,9 +618,8 @@ AutoCompleter.prototype = {
         var pending = $("pendingAjaxIndicator");
 
         if (!this.siw) this.siw = new SmartInputWindow();
-        var advancedEditor = $('edit_area_toggle_checkbox_wpTextbox1') ? $('edit_area_toggle_checkbox_wpTextbox1').checked : false;
-        var iFrameOfAdvEditor = document.getElementById('frame_wpTextbox1');
-        
+        var iFrameOfAdvEditor = document.getElementById('wpTextbox1___Frame');
+
          // Browser dependant! only IE ------------------------
         if (OB_bd.isIE && inputBox.tagName == 'TEXTAREA') {
              // put floater at cursor position
@@ -657,7 +631,7 @@ AutoCompleter.prototype = {
             var selection_range = document.selection.createRange().duplicate();
             selection_range.collapse(true);
             
-            if (advancedEditor) {
+            if (iFrameOfAdvEditor) {
                 var posAdvEditorXY = this.findElementPosXY(iFrameOfAdvEditor);
                 pending.style.left = (posAdvEditorXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
                 pending.style.top = (posAdvEditorXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
@@ -676,13 +650,13 @@ AutoCompleter.prototype = {
 
             if (x != null && y != null) {
                 
-                var posXY = this.findElementPosXY(advancedEditor ? iFrameOfAdvEditor : inputBox);
+                var posXY = this.findElementPosXY(iFrameOfAdvEditor ? iFrameOfAdvEditor : inputBox);
 
                 pending.style.left = (parseInt(x) + posXY[0]) + "px";
                 pending.style.top = (parseInt(y) + posXY[1]) + "px";
             } else {
-                var posXY = this.findElementPosXY(advancedEditor ? iFrameOfAdvEditor : inputBox);
-                if (advancedEditor) {
+                var posXY = this.findElementPosXY(iFrameOfAdvEditor ? iFrameOfAdvEditor : inputBox);
+                if (iFrameOfAdvEditor) {
                     pending.style.left = (posXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
                     pending.style.top = (posXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
                 } else {
@@ -732,6 +706,7 @@ AutoCompleter.prototype = {
             this.siw.customFloater = true;
             var newFloaterId = siwDirectives.split(":")[1];
             this.siw.floater = document.getElementById(newFloaterId);
+            if (!this.siw.floater) this.siw.floater = window.frames[0].document.getElementById(newFloaterId);
             this.siw.floaterContent = this.siw.floater.getElementsByTagName("div")[OB_bd.isGecko ? 1 : 0];
         }
 
@@ -975,7 +950,9 @@ AutoCompleter.prototype = {
     scrollToSelectedItem: function() {
         for (i = 0; i < this.siw.matchCollection.length; i++) {
             if (this.siw.matchCollection[i].isSelected) {
-                var selElement = document.getElementById("selected" + i);
+                var selElement = document.getElementById('wpTextbox1___Frame')
+                    ? window.frames[0].document.getElementById("selected" + i)
+                    : document.getElementById("selected" + i);
                 selElement.scrollIntoView(false);
                 return;
             }
@@ -1301,6 +1278,7 @@ AutoCompleter.prototype = {
                     return; // do not register twice
                 }
                 this.textAreas.push(textArea);
+                this.createEmbeddingContainer(textArea, iFrame);
                 
                 var iFrameDocument = iFrame.document;
                 // register events
@@ -1324,8 +1302,8 @@ AutoCompleter.prototype = {
      /*
      * creates the embedding container for textareas
      */
-    createEmbeddingContainer: function(textarea) {
-        var container = document.createElement("div");
+    createEmbeddingContainer: function(textarea, iframe) {
+        var container = (!iframe) ? document.createElement("div") : iframe.document.getElementById('acWrapperForWikitext');
         container.setAttribute("style", "position:relative;text-align:left");
 
         var mwFloater = document.createElement("div");
@@ -1360,10 +1338,15 @@ AutoCompleter.prototype = {
         mwFloater.appendChild(mwContent);
 
         var parent = textarea.parentNode;
-        var f = parent.replaceChild(container, textarea);
+        if (! iframe) {
+            var f = parent.replaceChild(container, textarea);
 
-        Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
-        container.appendChild(f);
+            Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
+            container.appendChild(f);
+        }
+        else {
+            Element.addClassName(textarea, 'wickEnabled:MWFloater' + this.AC_idCounter);
+        }
         
         var acMessage = document.createElement("div");
         Element.addClassName(acMessage, "acMessage");
@@ -1458,6 +1441,19 @@ function SmartInputWindow() {
     this.floaterContent = document.getElementById("smartInputFloaterContent");
     this.selectedSmartInputItem = null;
     this.showCredit = false;
+
+    this.getMWFloaterId = function() {
+        var node = this.floater;
+
+    	if (!node || node == null) return "undefined";
+    	while(node && node.nodeType != 9) { // node != document
+            if (Element.hasClassName(node, "MWFloater"))
+                return (node.id) ? node.id : "undefined";
+    	    node = node.parentNode;
+    	}
+    	return 'undefined';
+
+    }
 }  //SmartInputWindow Object
 
 function SmartInputMatch(cleanValue, value, type, nsText, extraData, inferred) {
