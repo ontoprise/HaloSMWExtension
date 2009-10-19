@@ -868,8 +868,19 @@ FCK.DataProcessor =
                             ClearEventHandler4AnnotationBox();
                             SetEventHandler4AnnotationBox();
                         }
-                        // add autocompletion
-                        FCK.EditingArea.Textarea.className += ' wickEnabled';
+                        // add autocompletion, first add a div around the textarea
+                        var div = document.createElement('div');
+                        div.setAttribute('id', 'acWrapperForWikitext');
+                        // make a link element to load the css, because the parent cannot be accessed
+                        var link = document.createElement('link');
+                        link.setAttribute('rel', 'stylesheet');
+                        link.setAttribute('type', "text/css");
+                        link.setAttribute('media', "screen, projection");
+                        link.setAttribute('href', window.parent.wgScriptPath + '/extensions/SMWHalo/skins/Autocompletion/wick.css');
+                        div.appendChild(link);
+                        var parent = FCK.EditingArea.Textarea.parentNode;
+                        var f = parent.replaceChild(div, FCK.EditingArea.Textarea);
+                        div.appendChild(f);
                         FCK.EditingArea.Textarea.setAttribute('id', 'source_wikitext');
                         window.parent.autoCompleter.registerTextArea('source_wikitext', window.parent.frames[0]);
                 }
