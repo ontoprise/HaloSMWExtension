@@ -14,7 +14,9 @@ values.
 	<target name="testOntologyBrowserWithACL">
 		
 		<webtest name="Testing Category Tree as RestrictedUser">
+<!--
 			<config browser="FF3" />
+-->			
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -27,22 +29,22 @@ values.
 			<!-- Category Tree: Make sure that only public root categories are shown -->
 			<verifyXPath 
 				description="Check first category: Event"
-				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a[1]"		
-				text="Event" />
+				xpath="//div[@id='categoryTree']/table[1]/tbody/tr/td/a[1]/@title"
+				regex="true"
+				text=".*Event.*" />
 			<verifyXPath 
 				description="Check second category: ProtectedCategory"
-				xpath="//div[@id='categoryTree']/table[2]/tbody/tr/td/a"		
+				xpath="//div[@id='categoryTree']/table[2]/tbody/tr/td/a[1]/@title"		
 				text="ProtectedCategory" />
 			<not description="Check absence of third category">
 				<verifyXPath 
 					description="Check absence of third category"
-					xpath="//div[@id='categoryTree']/table[3]/tbody/tr/td/a" />
+					xpath="//div[@id='categoryTree']/table[3]/tbody/tr/td/a[1]/@title" />
 			</not>
 			
 		</webtest>
 		
 		<webtest name="Testing Property Tree as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -78,7 +80,6 @@ values.
 		</webtest>
 
 		<webtest name="Testing sub-categories as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -116,7 +117,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing sub-properties as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -141,24 +141,23 @@ values.
 				seconds="4" />
 			<verifyXPath 
 				description="Check first property: AProperty"
-				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a"		
+				xpath="//div[@id='relattributes']/table/tbody/tr/td/a"		
 				text="AProperty" />
 			<clickLink 
 				description="Click link: AProperty" 
-				xpath="//div[@id='propertyTree']/table/tbody/tr/td/a[@title='AProperty']"/>
+				xpath="//div[@id='relattributes']/table/tbody/tr/td/a[@title='AProperty']"/>
 			<sleep 
 				description="2s pause" 
 				seconds="2" />
 			<not description="Check absence of second property">
 				<verifyXPath 
 					description="Check absence of second property"
-					xpath="//div[@id='propertyTree']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a" />
+					xpath="//div[@id='relattributes']/table/tbody/tr/td/div/table/tbody/tr/td[2]/a" />
 			</not>
 			
 		</webtest>
 	
 		<webtest name="Testing instances of a category as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -184,7 +183,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent categories as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -236,7 +234,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent property as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -268,7 +265,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing values of protected properties as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -314,7 +310,6 @@ values.
 		</webtest>
 		
 		<webtest name="Test filter browsing as RestrictedUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="RestrictedUser"/>
 				<param name="pwd" value="acl"/>
@@ -377,7 +372,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing Category Tree as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -407,7 +401,6 @@ values.
 		</webtest>
 
 		<webtest name="Testing Property Tree as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -446,7 +439,6 @@ values.
 		</webtest>
 
 		<webtest name="Testing sub-categories as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -487,7 +479,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing sub-properties as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -532,7 +523,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing instances of a category as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -561,7 +551,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent categories as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -614,7 +603,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing parent properties as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -646,7 +634,6 @@ values.
 		</webtest>
 		
 		<webtest name="Testing values of protected properties as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
@@ -697,7 +684,6 @@ values.
 		</webtest>
 		
 		<webtest name="Test filter browsing as NormalUser">
-			<config browser="FF3" />
 			<antcall target="login">
 				<param name="user" value="NormalUser"/>
 				<param name="pwd" value="acl"/>
