@@ -163,6 +163,12 @@ HTML;
                 } else {
                     $('haloacl_panel_status_$panelid').innerHTML = '$notsaved';
                     $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_notsaved");
+
+                    try{
+                       //genericPanelSetSaved_hacl_panel_container(false);
+                        $('haloacl_panel_status_hacl_panel_container').innerHTML = '$notsaved';
+                        $('haloacl_panel_status_hacl_panel_container').setAttribute("class", "haloacl_panel_status_notsaved");
+                    }catch(e){}
                 }
             }
 
@@ -176,11 +182,16 @@ HTML;
                 }
                 $('haloacl_panel_descr_$panelid').innerHTML = descr;
 
-                    YAHOO.haloacl.descr_tooltip_$panelid = new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
-                    context:"haloacl_panel_descr_$panelid",
-                    text:descrLong,
-                    zIndex :10
-                    });
+                if(YAHOO.haloacl.descr_tooltip_$panelid){
+                    YAHOO.haloacl.descr_tooltip_$panelid.destroy();
+                }
+
+                var now = new Date();
+                YAHOO.haloacl.descr_tooltip_$panelid = new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
+                context:"haloacl_panel_descr_$panelid",
+                text:descrLong,
+                zIndex :10
+                });
             }
             
 

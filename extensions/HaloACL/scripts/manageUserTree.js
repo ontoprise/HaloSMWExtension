@@ -57,6 +57,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
 
     information:"",
 
+    description:"",
+
 
     /**
      * tree type
@@ -73,6 +75,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      * @default "TextNode"
      */
     _type: "CustomNode",
+
+    textWidth: 0,
 
     customNodeParentChange: function() {
     //this.updateParent();
@@ -110,9 +114,19 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     setGroupId: function(newGroupId) {
         this.groupId = newGroupId;
     },
+    setTextWidth: function(tw) {
+        this.textWidth = tw;
+    },
+    getTextWidth:function() {
+        return this.textWidth;
+    },
 
     setInformation: function(info){
         this.information = info;
+    },
+
+    setDescription:function(desc){
+        this.description = desc
     },
 
     /**
@@ -301,8 +315,14 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' title="' + this.title + '"';
         }
         sb[sb.length] = ' class="haloacl_manageuser_list_title_modified_group ' + this.labelStyle  + '"';
+        sb[sb.length] = ' style="width:'+this.textWidth+'px" ';
+        //console.log("textWidth: "+this.getTextWidth());
         sb[sb.length] = ' >';
         sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+        if(this.description != ""){
+            sb[sb.length] = "&nbsp;&nbsp;"+this.description;
+        }
 
         sb[sb.length] = '</span></td>';
         sb[sb.length] = '<td><span';
@@ -426,11 +446,20 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
 
-
+        var elementWidth = 399;
+        //console.log(parentNode);
+        try{
+            if(parentNode.getTextWidth() != 0){
+                elementWidth = parentNode.getTextWidth() - 18;
+            }
+        }catch(e){}
 
         var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
         tmpNode.setGroupId(element.name);
         tmpNode.setInformation(element.description);
+
+        tmpNode.setTextWidth(elementWidth);
+        
         // recursive part, if children were supplied
         if(element.children != null){
             YAHOO.haloacl.buildNodesFromData(tmpNode,element.children,panelid);
@@ -576,11 +605,20 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
  */
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+
+    var elementWidth = 399;
+    if(nodeToAttachTo.getTextWidth() != 0){
+        elementWidth = nodeToAttachTo.getTextWidth();
+    }
+
     if(nodeToAttachTo._type != "RootNode"){
         if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
         var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
         YAHOO.haloacl.addingGroupCounter++;
-        tmpNode.information = gHACLLanguage.getMessage('clickEditToCreate');
+        tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
+
+        tmpNode.setTextWidth(elementWidth);
+        
         nodeToAttachTo.collapse();
         nodeToAttachTo.expand();
         nodeToAttachTo.refresh();
@@ -636,17 +674,26 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     }catch(e){}
     // ---------
 
+
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
+
+    var elementWidth = 399;
+    if(nodeToAttachTo.getTextWidth() != 0){
+        elementWidth = nodeToAttachTo.getTextWidth() - 18;
+    }
+
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
     var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
     YAHOO.haloacl.addingGroupCounter++;
     // turn of dynamic load on that node
-    tmpNode.information = gHACLLanguage.getMessage('clickEditToCreate');
+    tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
 
+    tmpNode.setTextWidth(elementWidth);
+    
     tmpNode.setDynamicLoad();
     nodeToAttachTo.collapse();
     nodeToAttachTo.expand();
-    nodeToAttachTo.refresh();
+// nodeToAttachTo.refresh();
  
 };
 

@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains javasript used in manageQuickacl
@@ -35,16 +35,25 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
     // custom defined formatter
     this.myQuickSelectFormatter = function(elLiner, oRecord, oColumn, oData) {
+        var checkedFromJS = false;
 
-        if(oData == true){
+        console.log("searching "+oRecord._oData.id);
+        console.log(YAHOO.haloacl.quickAclClicks);
+
+        if(YAHOO.haloacl.quickAclClicks.indexOf(""+oRecord._oData.id) != -1){
+            console.log("havent found");
+            checkedFromJS = true;
+        }
+
+        if(oData == true || checkedFromJS == true){
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
-            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input  onclick='YAHOO.haloacl.updateQuickaclCount(this);' type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
-            //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input  onclick='YAHOO.haloacl.updateQuickaclCount(this);YAHOO.haloacl.quickACLCheck(this);' type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
+        //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }else{
             elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
-            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input onclick='YAHOO.haloacl.updateQuickaclCount(this);' type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
-            //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input onclick='YAHOO.haloacl.updateQuickaclCount(this);YAHOO.haloacl.quickACLCheck(this);' type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
+        //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
 
         }
             
@@ -187,9 +196,9 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
    
 };
 
-// --------------------
-// --------------------
-// --------------------
+    // --------------------
+    // --------------------
+    // --------------------
 
 
 

@@ -6,10 +6,11 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
 
 <project name="example" default="wt.full">
 
-	<property name="webtest.home" value="c:\Programme\webtest"/>
 <!--
-	<property name="webtest.home" value="/Users/hipath/Development/libs/canoo"/>
+	<property name="webtest.home" value="c:\Programme\webtest"/>
 -->
+    <property name="webtest.home" value="/Users/hipath/Development/libs/canoo"/>
+
     <import file="definitions.xml" description="Import custom definitions (if any)"/>
     <import file="${webtest.home}/webtest.xml" description="Import all functionalities for a full build"/>
 	
@@ -18,8 +19,8 @@ This is a (nearly) empty WebTest project containing just a few examples for a qu
     <property name="wikipath" value="halo/HaloSMWExtension" />
 -->
     <property name="serverurl" value="localhost:8080" />
-    <property name="ajaxWait" value="1" />
-    <property name="ajaxWaitLong" value="3" />
+    <property name="ajaxWait" value="3" />
+    <property name="ajaxWaitLong" value="7" />
 
 <!--
 	Activate this if you are behind a proxy and want to test a server outside your local network

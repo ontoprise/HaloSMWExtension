@@ -324,6 +324,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 
             sb[sb.length] = '<td';
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            //sb[sb.length] = ' id="hacl_select_tpl_' + localLabel + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
             sb[sb.length] = '>';
             sb[sb.length] = '<div style="width:18px!important" class="ygtvspacer"></div></td>';

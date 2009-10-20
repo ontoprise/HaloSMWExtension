@@ -47,6 +47,7 @@ class HACL_helpPopup {
             <div id="popup_HelpCreateRight_$panelid"></div>
 HTML;
 
+    $help_text = wfMsg('hacl_help_popup');
         $this->footer = <<<HTML
             <script type="javascript">
 
@@ -62,7 +63,7 @@ HTML;
                                 zIndex:15000,
                                 context:  ["anchorHelpCreateRight_$panelid","tl","bl", ["beforeShow"]]
                         });
-                        YAHOO.haloacl.popup_helpcreateright_$panelid.setHeader("Help");
+                        YAHOO.haloacl.popup_helpcreateright_$panelid.setHeader("$help_text");
                         YAHOO.haloacl.popup_helpcreateright_$panelid.setBody("$helptext");
                         YAHOO.haloacl.popup_helpcreateright_$panelid.render();
                         YAHOO.haloacl.popup_helpcreateright_$panelid.show();

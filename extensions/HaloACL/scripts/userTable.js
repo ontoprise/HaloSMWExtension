@@ -49,6 +49,11 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
         }else{
             elLiner.innerHTML = "<input onClick='YAHOO.haloacl.handleDatatableClick_"+panelid+"(this);' id='checkbox_"+divid+"_"+oRecord._oData.name+"' type='checkbox' groups='"+groupsstring+"' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
+        var a = new YAHOO.widget.Tooltip("hacl_toolbarcontainer_section3_tooltip", {
+            context:"checkbox_"+divid+"_"+oRecord._oData.name,
+            text:gHACLLanguage.getMessage('selectDeselectUser'),
+            zIndex :10
+        });
             
     };
     this.myGroupFormatter = function(elLiner, oRecord, oColumn, oData) {
@@ -313,7 +318,9 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
             });
         }
 
-
+        //console.log("users from groups array:");
+        //console.log(result);
+        
         // handling users form user-datatable on select and deselct tab
         if(YAHOO.haloacl.debug) console.log("panelid"+panelid);
         if(YAHOO.haloacl.clickedArrayUsers[panelid] != null){
@@ -353,15 +360,20 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
                                 result = result.without(temp);
                             }
                         });
+                        //console.log("clicked array user groups");
+                        //console.log(YAHOO.haloacl.clickedArrayUsersGroups[panelid][item]);
 
                         var temp = new Array();
                         temp['name'] = item;
                         try{
-                            if(tempEl && trim(tempEl) != ""){
-                                temp['groups'] = tempEl.groups;
-                            }else{
-                                temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            //    if(tempEl && trim(tempEl) != ""){
+                            //        temp['groups'] = tempEl.groups;
+                            //    }else{
+                            temp['groups'] = YAHOO.haloacl.clickedArrayUsersGroups[panelid][item];
+                            if(temp['groups'] == "undefined"){
+                                temp['groups'] = "";
                             }
+                        //    }
                         }catch(e){
                             temp['groups'] = "";
                         }
@@ -446,7 +458,7 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
     };
 
     // building shortcut for custom formatter
-/*    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
+    /*    YAHOO.widget.DataTable.Formatter.myGroup = this.myGroupFormatter;
     YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
     YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
 */
@@ -475,11 +487,21 @@ YAHOO.haloacl.ROuserDataTable = function(divid,panelid,dataarray, noDelete) {
     // datasource for this userdatatable
     var myDataSource2 = new YAHOO.util.DataSource(dataarray);
     myDataSource2.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+
+
+
+    var myPaginator = new YAHOO.widget.Paginator({
+        rowsPerPage:10,
+        containers:'datatablepaging_'+divid,
+        pageLinks:3
+    });
+
     // userdatatable configuration
     var myConfigs = {
         sortedBy : {
             key:"name",
-            dir:YAHOO.widget.DataTable.CLASS_ASC
+            dir:YAHOO.widget.DataTable.CLASS_ASC,
+            paginator:myPaginator
         }
     };
 
@@ -564,7 +586,7 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
         }
         for(i=0;i<nonHighlighted.length;i++){
             result +="<span class='groupunselected'>";
-            if(i != 0)result+=",";
+            if(i != 0 || highlighted.length > 0)result+=",";
             result+= ""+nonHighlighted[i];
             result+="</span>&nbsp;";
         }
@@ -604,76 +626,94 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable = function(panelid,callba
 
 
 // readnonly-part (assigned tab)
-/*
+
 YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
- 
     //YAHOO.haloacl.debug = true;
+
     $$('.haloacl_datatable_groupdiv'+panelid).each(function(divitem){
-        if(YAHOO.haloacl.debug) console.log("processing divitem:");
-        if(YAHOO.haloacl.debug) console.log(divitem);
+        try{
+            if(YAHOO.haloacl.debug) console.log("processing divitem:");
+            if(YAHOO.haloacl.debug) console.log(divitem);
 
-        var highlighted = new Array();
-        var groups = $(divitem).readAttribute("groups");
-        if(groups == null || groups == "undefined"){
-            groups = "";
-        }
+            var highlighted = new Array();
+            var nonHighlighted = new Array();
 
-        var groupsarray = groups.split(",");
-        if(YAHOO.haloacl.debug) console.log("got groupsarray:");
-        if(YAHOO.haloacl.debug) console.log(groupsarray);
+            var groups = $(divitem).readAttribute("groups");
+            if(groups == null || groups == "undefined"){
+                groups = "";
+            }
 
-        for(i=0;i<groupsarray.length;i++){
-            var item = groupsarray[i];
-            if(item != ""){
-                if(YAHOO.haloacl.isNameInGroupArray(panelid,item)){
-                    highlighted.push(item);
-                }else{
-                    nonHighlighted.push(item);
+            var groupsarray = groups.split(",");
+            if(YAHOO.haloacl.debug) console.log("got groupsarray:");
+            if(YAHOO.haloacl.debug) console.log(groupsarray);
+
+            for(i=0;i<groupsarray.length;i++){
+                var item = groupsarray[i];
+                if(item != ""){
+                    if(YAHOO.haloacl.isNameInGroupArray(panelid,item)){
+                        highlighted.push(item);
+                    }else{
+                        nonHighlighted.push(item);
+                    }
                 }
             }
-        }
 
-        var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
-        for(i=0;i<highlighted.length;i++){
-            if(highlighted[i] != "undefined"){
-                result += "<span class='groupselected'>";
-                result+= ""+highlighted[i];
-                result+="</span>&nbsp;,";
+            var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
+            for(i=0;i<highlighted.length;i++){
+                if(highlighted[i] != "undefined"){
+                    result += "<span class='groupselected'>";
+                    result+= ""+highlighted[i];
+                    result+="</span>&nbsp;,";
+                }
             }
-        }
-        for(i=0;i<nonHighlighted.length;i++){
-            if(nonHighlighted[i] != "undefined"){
-                result +="<span class='groupunselected'>";
-                result+= ""+nonHighlighted[i];
-                result+="</span>&nbsp;,";
+            for(i=0;i<nonHighlighted.length;i++){
+                if(nonHighlighted[i] != "undefined"){
+                    result +="<span class='groupunselected'>";
+                    result+= ""+nonHighlighted[i];
+                    result+="</span>&nbsp;,";
+                }
             }
+            result +="</div>";
+
+            try{
+                var username = divitem.parentNode.parentNode.previousElementSibling.firstChild.firstChild;
+
+                if(highlighted.length > 0 || YAHOO.haloacl.isNameInUserArray(panelid,username.innerHTML)){
+                    $(username).setAttribute("style", "font-weight:bold");
+                }else{
+                    $(username).setAttribute("style", "");
+                }
+            }catch(e){}
+
+            var divname = $(divitem).readAttribute("name");
+            if(YAHOO.haloacl.debug) console.log("got divname:"+divname);
+            if(YAHOO.haloacl.debug) console.log($(divitem));
+
+            //var innerhtml =result+ '<div class="haloacl_infobutton" style="float:left;display:inline"></div><div id="tt1'+panelid+divname+'"></div>';
+            var innerhtml =result+ '<div id="tt1'+panelid+divname+'"></div>';
+
+
+            divitem.innerHTML = innerhtml;
+
+            var test = new YAHOO.widget.Tooltip('tt1'+panelid+divname, {
+                context:divitem,
+                text:result,
+                zIndex :10,
+                constraintoviewport:false
+            });
+            if(YAHOO.haloacl.debug) console.log(test);
+
+
+        }catch(e){
+            if(YAHOO.haloacl.debug) console.log(e);
         }
-        result +="</div>";
-
-        var divname = $(divitem).readAttribute("name");
-
-        //var innerhtml =result+ '<div class="haloacl_infobutton" style="float:left;display:inline"></div><div id="tt1'+panelid+divname+'"></div>';
-        var innerhtml =result+ '<div id="tt1'+panelid+divname+'"></div>';
-
-
-        divitem.innerHTML = innerhtml;
-
-        var test = new YAHOO.widget.Tooltip('tt1'+panelid+divname, {
-            context:divitem,
-            text:result,
-            zIndex :10,
-            constraintoviewport:false
-        });
-        if(YAHOO.haloacl.debug) console.log(test);
-
-
 
 
     });
     //YAHOO.haloacl.debug = false;
  
 };
-*/
+
 
 /**
  *  applies filter on assigned-userdatatable

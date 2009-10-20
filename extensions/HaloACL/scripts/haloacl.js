@@ -46,7 +46,7 @@ if(YAHOO.haloacl.debug){
 YAHOO.haloacl.createAclStdDefine = "individual";
 
 // delay between queries in treeview || MILLISECONDS
-YAHOO.haloacl.filterQueryDelay = 500;
+YAHOO.haloacl.filterQueryDelay = 200;
 
 
 YAHOO.haloacl.panelcouner = 0;
@@ -101,7 +101,6 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 
 
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
-
     var tab1 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('createACL'),
         dataSrc:'createACLPanels',
@@ -114,8 +113,10 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     tab1.addListener('click', function(e){});
     $(tab1.get('contentEl')).setAttribute('id','creataclTab');
     tab1.addListener('click', function(e){
-        $('manageaclmainTab').innerHTML = "";
-        $('manageuserTab').innerHTML = "";
+        try{
+            $('manageaclmainTab').innerHTML = "";
+            $('manageuserTab').innerHTML = "";
+        }catch(e){}
     });
 
     new YAHOO.widget.Tooltip("createACLPanel_tooltip", {
@@ -139,8 +140,11 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     tab2.addListener('click', function(e){});
     $(tab2.get('contentEl')).setAttribute('id','manageaclmainTab');
     tab1.addListener('click', function(e){
-        $('creataclTab').innerHTML = "";
-        $('manageuserTab').innerHTML = "";
+        try{
+            $('creataclTab').innerHTML = "";
+            $('manageuserTab').innerHTML = "";
+        }catch(e){}
+
     });
 
     new YAHOO.widget.Tooltip("manageACLPanel_tooltip", {
@@ -162,8 +166,10 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     tab3.addListener('click', function(e){});
     $(tab3.get('contentEl')).setAttribute('id','manageuserTab');
     tab1.addListener('click', function(e){
-        $('creataclTab').innerHTML = "";
-        $('manageaclmainTab').innerHTML = "";
+        try{
+            $('creataclTab').innerHTML = "";
+            $('manageaclmainTab').innerHTML = "";
+        }catch(e){}
     });
 
     new YAHOO.widget.Tooltip("manageUserContent_tooltip", {
@@ -202,7 +208,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
  *  @param target-container
  *
  */
-YAHOO.haloacl.buildSubTabView = function(containerName){
+YAHOO.haloacl.buildSubTabView = function(containerName){    
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
     var manageAclActive = true;
     var manageDefaultTemplateActive = false;
@@ -336,20 +342,14 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
  */
 YAHOO.haloacl.tabDataConnect = function() {
     var tab = this;
-    /*
-    var queryparameterlist = {
-        rs:tab.get('dataSrc')
-    };
-     */
+
     var querystring = "rs="+tab.get('dataSrc');
     var postData = tab.get('postData');
     
     if(postData != null){
         for(param in postData){
-            //queryparameterlist.rsargs = postData[param];
             querystring = querystring + "&rsargs[]="+postData[param];
         }
-
     }
     YAHOO.util.Dom.addClass(tab.get('contentEl').parentNode, tab.LOADING_CLASSNAME);
     tab._loading = true;
@@ -357,7 +357,6 @@ YAHOO.haloacl.tabDataConnect = function() {
         //method:tab.get('loadMethod'),
         method:'post',
         parameters:querystring,
-        // parameters:queryparameterlist,
         asynchronous:true,
         evalScripts:true,
         onSuccess: function(o) {
@@ -895,7 +894,7 @@ YAHOO.haloacl.removeHighlighting = function(){
 
 /**
  *  creates popup
- *  @param popup-id
+ *  @param right-id to be loaded
  *  @param popups-label
  *  @param anchor/container for popup
  *
@@ -923,6 +922,7 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     YAHOO.haloaclrights.popupPanel.render();
     YAHOO.haloaclrights.popupPanel.show();
 */
+
     if (!anchorId) {
         anchorId = id;
     }
@@ -941,8 +941,8 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     // context:  ["content","tl","bl", ["beforeShow"]]
     });
     popupClose = function(type, args) {
-        //this.hide();
-        this.destroy();
+    //this.hide();
+    //this.destroy();
 
     }
     myPopup.subscribe("hide", popupClose);

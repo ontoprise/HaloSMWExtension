@@ -188,18 +188,22 @@ HTML;
         $html .=       '<select disabled id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
     }
     // bulding protected state indicator
+
+    $hacl_protected_label = wfMsg('hacl_protected_label');
+    $hacl_unprotected_label = wfMsg('hacl_unprotected_label');
+
     if($isPageProtected) {
-        $html .= "   <option>unprotected</option>
-                     <option selected='selected'>protected</option>
+        $html .= "   <option value='unprotected'>$hacl_unprotected_label</option>
+                     <option selected='selected' value='protected'>$hacl_protected_label</option>
                      </select>
 ";
         $html .="</select>";
     }elseif(sizeof($tpllist) > 0) {
-        $html .= "   <option selected='selected'>unprotected</option>
-                     <option>protected</option>
+        $html .= "   <option selected='selected' value='unprotected'>$hacl_unprotected_label</option>
+                     <option value='protected'>$hacl_protected_label</option>
                      </select>";
     }else {
-        $html .= "   <option selected='selected'>unprotected</option>
+        $html .= "   <option value='unprotected'>$hacl_unprotected_label</option>
                      </select>";
     }
 
@@ -235,6 +239,8 @@ HTML;
 
 
     if(!$newArticle) {
+        $tooltiptext = wfMsg('hacl_advancedToolbarTooltip');
+
         $html .= <<<HTML
              
         </div>
@@ -246,6 +252,11 @@ HTML;
 
     <script>
 YAHOO.haloacl.toolbar_updateToolbar();
+    var a = new YAHOO.widget.Tooltip("hacl_toolbarcontainer_section3_tooltip", {
+        context:"haloacl_toolbar_advrightlink",
+        text:"$tooltiptext",
+        zIndex :10
+    });
     </script>
 
 HTML;

@@ -99,6 +99,8 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
      */
     _type: "CustomNode",
 
+    textWidth:399,
+
     customNodeParentChange: function() {
     //this.updateParent();
     },
@@ -316,7 +318,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
         }
         */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
     
     setTreeType: function(newTreeType) { 
@@ -341,6 +343,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
                 sb[sb.length] = ' title="' + this.title + '"';
             }
             sb[sb.length] = ' class="haloacl_grouptree_title ' + this.labelStyle  + '"';
+            sb[sb.length] = ' style="width:'+this.textWidth+'px" ';
             sb[sb.length] = ' >';
             sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\",\""+this.labelElId+"\");'>"+this.label+"</a>";
 
@@ -404,12 +407,12 @@ YAHOO.haloacl.treeviewDataConnect = function(action,parameterlist,callback){
     */
     var querystring = "rs="+action;
 
-	if(parameterlist != null){
-		for(param in parameterlist){
-			// temparray.push(parameterlist[param]);
-			querystring = querystring + "&rsargs[]="+parameterlist[param];
-		}
-	}
+    if(parameterlist != null){
+        for(param in parameterlist){
+            // temparray.push(parameterlist[param]);
+            querystring = querystring + "&rsargs[]="+parameterlist[param];
+        }
+    }
 
     appendedParams = appendedParams + "&rsargs="+ temparray;
     YAHOO.util.Connect.asyncRequest('POST', url, callback,querystring);
@@ -489,7 +492,15 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
 
     for(var i= 0, len = data.length; i<len; ++i){
         var element = data[i];
+
+        var elementWidth = 340;
+        if(parentNode.textWidth != null){
+            elementWidth = parentNode.textWidth - 18;
+        }
+
         var tmpNode = new YAHOO.widget.CustomNode(element.name, parentNode,false);
+        
+        tmpNode.textWidth = elementWidth;
 
         if(panelid == "undefined" || panelid == null){
             panelid = parentNode.tree.panelid;

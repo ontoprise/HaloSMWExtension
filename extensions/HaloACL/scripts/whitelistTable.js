@@ -40,11 +40,14 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
     // custom defined formatter
     this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         var checkedFromTree = false;
+        if(YAHOO.haloacl.whitelistClicks.indexOf(oRecord._oData.name) != -1){
+            checkedFromTree = true;
+        }
 
         if(oData == true || checkedFromTree == true){
-            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.whitelistCheck(this);' type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }else{
-            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.whitelistCheck(this);' type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
         }
     };
     
@@ -166,6 +169,8 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
     myDataTable.subscribe("postRenderEvent",function(){
         handlePagination();
+        
+        
     });
     // setting up clickevent-handling
     return myDataTable;

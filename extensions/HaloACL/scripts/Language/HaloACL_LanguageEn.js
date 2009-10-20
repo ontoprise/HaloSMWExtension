@@ -54,9 +54,9 @@ var gHACLUserLanguageStrings = {
     'discardChanges' : "Discard changes",
     'discardChangesMessage': "All changes will be lost",
     'createStdACLTooltip' : "Create standard ACL, Create ACL template and Create ACL default user template",
-    'namelessright': 'nameless right'
+    'namelessright': 'nameless right',
+    'selectDeselectUser':'Explicit select user'
 
-	
 }
 
 var gHACLContLanguageStrings = {

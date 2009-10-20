@@ -152,7 +152,7 @@ abbr,acronym { border:0;
     height:24px;
 }
 #manageaclmainTab .yui-nav li a em,#haloaclsubView .yui-nav li a em{
-    padding-top:5px!important;
+    padding-top:4px!important;
 }
 #manageaclmainTab .yui-nav li.selected a em,#haloaclsubView .yui-nav li.selected a em{
     padding-top:5px!important;
@@ -1021,7 +1021,6 @@ abbr,acronym { border:0;
 }
 #haloacl_whitelist_contentlist{
     margin:10px 0 0 0px;
-    height:337px;
     width:600px;
     float:left;
     background-color:#FFF;
