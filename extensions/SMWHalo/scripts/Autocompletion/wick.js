@@ -488,8 +488,9 @@ AutoCompleter.prototype = {
             var xy = this.findElementPosXY(this.siw.inputBox);
             this.AC_yDiff = (e.pageY - xy[1]) - parseInt(this.siw.floater.style.top);
             this.AC_xDiff = (e.pageX - xy[0]) - parseInt(this.siw.floater.style.left);
-        } else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent")
-        && !this.isWithinNodeSimple(elementClicked, this.siw.getMWFloaterId())){
+        }
+        else if (!this.isWithinNodeSimple(elementClicked, "smartInputFloaterContent") &&
+                 !this.isWithinNodeSimple(elementClicked, (this.siw ? this.siw.getMWFloaterId() : 'undefined'))){
             this.hideSmartInputFloater();        	
         }
     },
