@@ -54,7 +54,7 @@
 				<param name="pwd" value="acl"/>
 			</antcall>
 			<antcall target="createArticle">
-				<param name="article" value="ACL:Page/Event 1"/>
+				<param name="article" value="ACL:Page/Event_1"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
 		</webtest>			
@@ -84,7 +84,7 @@
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#property access: assigned to =User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
 		</webtest>			
-		<webtest name="createArticle: ACL:Property/Related event">
+		<webtest name="createArticle: ACL:Property/Related_event">
 			<config>
 				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config> 
@@ -93,7 +93,7 @@
 				<param name="pwd" value="acl"/>
 			</antcall>
 			<antcall target="createArticle">
-				<param name="article" value="ACL:Property/Related event"/>
+				<param name="article" value="ACL:Property/Related_event"/>
 				<param name="content" value="{{#manage rights: assigned to=User:NormalUser}}&#10;{{#property access: assigned to =#,User:NormalUser|actions=*|description=Allows * for NormalUser}}&#10;[[Category:ACL/ACL]]"/>
 			</antcall>
 		</webtest>	
