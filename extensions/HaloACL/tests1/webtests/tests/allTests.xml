@@ -46,14 +46,14 @@
 		<!--
 	Test GUI of HaloACL
 -->
-		<!--
--->
 		<ant antfile="createDescriptor.xml" />
 		<ant antfile="createTemplate.xml" />
 		<ant antfile="editRight.xml" />
 		<ant antfile="createGroups.xml" />
 		<ant antfile="checkMisc.xml" />
 		<ant antfile="quickACL.xml" />
+		<!--
+-->
 <!--
 -->
 
