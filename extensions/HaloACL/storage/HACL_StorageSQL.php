@@ -166,7 +166,8 @@ class HACLStorageSQL {
 			'halo_acl_security_descriptors',
 			'halo_acl_groups',
 			'halo_acl_group_members',
-			'halo_acl_special_pages');
+			'halo_acl_special_pages',
+			'halo_acl_quickacl');
 		foreach ($tables as $table) {
 			$name = $db->tableName($table);
 			$db->query('DROP TABLE' . ($wgDBtype=='postgres'?'':' IF EXISTS'). $name, 'SMWSemanticStoreSQL2::drop');
