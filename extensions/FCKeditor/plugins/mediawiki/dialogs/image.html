@@ -36,17 +36,18 @@ var FCKRegexLib	= oEditor.FCKRegexLib ;
 var FCKTools	= oEditor.FCKTools ;
 
 document.write( '<script src="' + FCKConfig.BasePath + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
+// redeclare global vars for current iframe, so that AC will work
 var wgServer = window.top.wgServer;
 var wgScriptPath = window.top.wgScriptPath;
 var wgTitle = window.top.wgTitle;
-// check if AC class exists in top window, then assume Halo is installed
+// check if AC class exists in top window, then assume Halo is installed, and include the necessary scripts
 if (typeof window.top.AutoCompleter != 'undefined') {
-    document.write( '<script src="' + window.top.wgScriptPath + '/extensions/SMWHalo/scripts/ajaxhalo.js" type="text/javascript"><\/script>' ) ;
-    document.write( '<script src="' + window.top.wgScriptPath + '/extensions/SMWHalo/scripts/prototype.js" type="text/javascript"><\/script>' ) ;
-    document.write( '<script src="' + window.top.wgScriptPath + '/extensions/SMWHalo/scripts/OntologyBrowser/generalTools.js" type="text/javascript"><\/script>' ) ;
-    document.write( '<script src="' + window.top.wgScriptPath + '/extensions/SMWHalo/scripts/Logger/smw_logger.js" type="text/javascript"><\/script>' ) ;
-    document.write( '<script src="' + window.top.wgScriptPath + '/extensions/SMWHalo/scripts/Autocompletion/wick.js" type="text/javascript"><\/script>' ) ;
-    document.write( '<link rel="stylesheet" href="' + window.top.wgScriptPath + '/extensions/SMWHalo/skins/Autocompletion/wick.css" type="text/css" \/>' ) ;
+    document.write( '<script src="' + wgScriptPath + '/extensions/SMWHalo/scripts/ajaxhalo.js" type="text/javascript"><\/script>' ) ;
+    document.write( '<script src="' + wgScriptPath + '/extensions/SMWHalo/scripts/prototype.js" type="text/javascript"><\/script>' ) ;
+    document.write( '<script src="' + wgScriptPath + '/extensions/SMWHalo/scripts/OntologyBrowser/generalTools.js" type="text/javascript"><\/script>' ) ;
+    document.write( '<script src="' + wgScriptPath + '/extensions/SMWHalo/scripts/Logger/smw_logger.js" type="text/javascript"><\/script>' ) ;
+    document.write( '<script src="' + wgScriptPath + '/extensions/SMWHalo/scripts/Autocompletion/wick.js" type="text/javascript"><\/script>' ) ;
+    document.write( '<link rel="stylesheet" href="' + wgScriptPath + '/extensions/SMWHalo/skins/Autocompletion/wick.css" type="text/css" \/>' ) ;
 }
 
 	</script>
