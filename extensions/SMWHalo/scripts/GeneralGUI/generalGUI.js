@@ -26,11 +26,11 @@ GeneralGUI.prototype = {
     switchVisibilityWithState: function(id) {
     	if ($(id).visible()) {
     		this.closedContainers[id] = true;
-                closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable.gif\"/>";
+                closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" src=\""+ wgScriptPath+ "/extensions/SMWHalo/skins/expandable.gif\"/>";
                 $(id+"_img").replace(closedimg);
     	} else {
     		this.closedContainers[id] = false;
-                openedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable-up.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-up-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable-up.gif\"/>";;
+                openedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable-up.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable-up-act.gif')\" src=\""+ wgScriptPath + "/extensions/SMWHalo/skins/expandable-up.gif\"/>";;
                 $(id+"_img").replace(openedimg)
     	}
     	GeneralBrowserTools.setCookieObject("smwNavigationContainers", this.closedContainers);
@@ -40,7 +40,7 @@ GeneralGUI.prototype = {
     update: function() {
     	for (var id in this.closedContainers) {
     		if (this.closedContainers[id] == true) {
-                        closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ stylepath + "/" + skin + "/expandable.gif')\" onmouseover=\"(src='"+ stylepath + "/" + skin + "/expandable-act.gif')\" src=\""+ stylepath + "/" + skin + "/expandable.gif\"/>";
+                        closedimg = "<img id=\"" + id + "_img\" class=\"icon_navi\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" src=\""+ wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif\"/>";
                         $(id+"_img").replace(closedimg);
     			this.switchVisibility(id);
     		}
