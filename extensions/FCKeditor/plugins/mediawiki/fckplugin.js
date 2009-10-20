@@ -1066,6 +1066,7 @@ SMW_Annotate.prototype = {
         this.IsActive = FCK_TRISTATE_ON;
         window.parent.AdvancedAnnotation.create();
         window.parent.stb_control.stbconstructor();
+        window.parent.stb_control.setCloseFunction('window.frames[0].fckSemanticToolbar.DisableAnnotationToolbar()');
         window.parent.stb_control.createForcedHeader();
         window.parent.obContributor.registerContributor();
         window.parent.relToolBar.callme();
