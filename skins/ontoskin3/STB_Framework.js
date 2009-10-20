@@ -90,6 +90,7 @@ ToolbarFramework.prototype = {
 		// tab array - how many tabs are there and which one is active?
 		this.tabarray = new Array();
 		this.tabnames = new Array("Tools", "Links to Other Pages", "Facts about this Article");
+                this.closeFunction;
 	},
 
 	// create a new div container
@@ -184,9 +185,14 @@ ToolbarFramework.prototype = {
 			for (var i = 0; i < (this.tabarray.length); i++)
 			{
 				if (this.curtabShown != i) {
-					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
+					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin3/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
 				} else {
-					$("activetabcontainer").update("<div id=\"expandable\"><img src=\"" + wgScriptPath + "/skins/ontoskin/expanded.gif\"></div><div id=\"tab_"+i+"\">"+this.tabnames[i]+"</div>");
+                                        var updateStr = '<div id="expandable" ';
+                                        updateStr += (this.closeFunction)
+                                            ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/skins/ontoskin3/expanded-close.gif">'
+                                            : 'style="cursor:move;"><img src="' + wgScriptPath + '/skins/ontoskin3/expanded.gif">';
+                                        updateStr += "</div><div id=\"tab_"+i+"\" style=\"cursor:move;\">"+this.tabnames[i]+"</div>";
+					$("activetabcontainer").update(updateStr);
 				}
 			}
 		}
@@ -195,7 +201,7 @@ ToolbarFramework.prototype = {
 
 	createForcedHeader : function() {
 		// force to show a header - for use in annotation mode
-		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
+		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin3/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
 		$("tabcontainer").update(tabHeader);
 	},
 
@@ -217,6 +223,10 @@ ToolbarFramework.prototype = {
 		// send tab change event
 		this.contarray.each(function (c) { if (c) c.showTabEvent(tabnr); });
 	},
+
+        setCloseFunction: function(func) {
+            if (func) this.closeFunction = func;
+        },
 
 	hideSemanticToolbarContainerTab : function(tabnr) {
 		if (tabnr != null) {
