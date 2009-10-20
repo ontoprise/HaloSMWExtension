@@ -687,19 +687,19 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		smwfHaloAddJSLanguageScripts($jsm);
 
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "edit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "annotate");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "formedit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "submit");
-                $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "formedit");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "submit");
+                $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
 
 
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "edit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "annotate");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "formedit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "submit");
-                $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "annotate");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "formedit");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "submit");
+                $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
 
 
@@ -798,10 +798,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "submit");
                 $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "edit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "formedit");
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "submit");
-                $jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "edit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "formedit");
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "submit");
+                $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
@@ -814,10 +814,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 
 		smwfHaloAddJSLanguageScripts($jsm);
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Framework.js');
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/STB_Divcontainer.js');
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/GeneralGUI/STB_Framework.js');
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/GeneralGUI/STB_Divcontainer.js');
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js');
-		$jsm->addScriptIf($wgStylePath . '/'.$skinName.'/obSemToolContribution.js');
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js');
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralScripts.js');
 
 
