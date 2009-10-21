@@ -1,6 +1,6 @@
 Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 ===================================================================
---- extensions/Collaboration/ArticleComments/ArticleComments.php	(revision 5601)
+--- extensions/Collaboration/ArticleComments/ArticleComments.php	(revision 5614)
 +++ extensions/Collaboration/ArticleComments/ArticleComments.php	(working copy)
 @@ -2,8 +2,11 @@
  /**
@@ -138,7 +138,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Hides the commentForm until the "Make a comment" link is clicked
      # Note: To disable, set $wgArticleCommentDefaults['hideForm']=false in LocalSettings.php
      if (!isset($params['hideform']) || 
-@@ -241,15 +256,56 @@
+@@ -241,15 +256,59 @@
              '\'>'.wfMsgForContent($ac.'leave-comment-link').'</a>";'."\n".
              'cf.parentNode.insertBefore(p,cf);'."\n";
      }
@@ -163,10 +163,13 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +                $talkpage_html = $psr->parse($talkPage->fetchContent(),$talkTitle,$opt,true,true)->getText();
 +                /*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +                // remove the comments tag
-+                $content .= str_replace( '&lt;comments /&gt;', '', $talkpage_html );
++                $talkpage_html = str_replace( '&lt;comments /&gt;', '', $talkpage_html );
++                //remove everything outside <div>...</div>
++                $content .= preg_replace('/.*?(<div[^<]+>.*<.*?div>).*/s', '$1', $talkpage_html);
 +                /*op-patch|BL|2009-10-15|end*/
 +                $content .='</div></td></tr></table>';
 +            }
++            
 +        # Hides the comment text until the "Show comments" link is clicked
 +        # Note: To disable, set $wgArticleCommentDefaults['hidecomments']=false in LocalSettings.php
 +        if (!isset($params['hidecomments']) || 
@@ -198,7 +201,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
  /**
   * Processes HTML comments with encoded content.
   * Usage: $wgHooks['OutputPageBeforeHTML'][] = 'wfProcessEncodedContent';
-@@ -265,14 +321,17 @@
+@@ -265,14 +324,17 @@
      );
      return true;
  }
@@ -219,7 +222,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Messages used in this extension
      $wgMessageCache->addMessage('article-comments-title-field', 'Title');
      $wgMessageCache->addMessage('article-comments-name-string', 'Name');
-@@ -282,12 +341,13 @@
+@@ -282,12 +344,13 @@
      $wgMessageCache->addMessage('article-comments-comment-field', 'Comment: ');
      $wgMessageCache->addMessage('article-comments-submit-button', 'Submit');
      $wgMessageCache->addMessage('article-comments-leave-comment-link', 'Leave a comment ...');
@@ -234,7 +237,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      $wgMessageCache->addMessage('article-comments-commenter-said', '$1 said ...');
      $wgMessageCache->addMessage('article-comments-summary', 'Comment provided by $1 - via ArticleComments extension');
      $wgMessageCache->addMessage('article-comments-submission-succeeded', 'Comment submission succeeded');
-@@ -299,22 +359,25 @@
+@@ -299,22 +362,25 @@
      $wgMessageCache->addMessage('article-comments-no-spam', "At least one of the submitted fields was flagged as spam.");
      $wgMessageCache->addMessage('processcomment', 'Process Article Comment');
  }
@@ -268,7 +271,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Perform validation checks on supplied fields
      $ac = 'article-comments-';
      $messages = array();
-@@ -335,16 +398,16 @@
+@@ -335,16 +401,16 @@
          $wgOut->addWikiText($wikiText . "</div>");
          return;
      }
@@ -288,7 +291,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Check whether user is blocked from editing the talk page
      if ($wgUser->isBlockedFrom($talkTitle)) {
          $wgOut->setPageTitle(wfMsgForContent($ac.'submission-failed'));
-@@ -354,13 +417,13 @@
+@@ -354,13 +420,13 @@
          $wgOut->addWikiText($wikiText . "</div>");
          return;
      }
@@ -304,7 +307,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Retrieve existing talk content
      $talkContent = '';
      if ( $talkTitle->exists() ) {
-@@ -376,7 +439,7 @@
+@@ -376,7 +442,7 @@
          in_array($talkTitle->getNamespace(),$wgArticleCommentsNSDisplayList):
          false
      );
@@ -313,7 +316,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Check whether the article or its talk page contains a <comments /> flag
      if (!$skipCheck &&
          preg_match('/<comments( +[^>]*)?\\/>/', $articleContent)===0 &&
-@@ -390,11 +453,11 @@
+@@ -390,11 +456,11 @@
          );
          return;
      }
@@ -327,7 +330,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # If it's spam - it's gone!
      if ($isspam) {
          $wgOut->setPageTitle(wfMsgForContent($ac.'submission-failed'));
-@@ -447,12 +510,18 @@
+@@ -447,12 +513,18 @@
          $talkArticle->$method($talkContent, $summary, false, false);
          return;
      }
@@ -348,7 +351,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
  /**
   * Checks ArticleComment fields for SPAM.
   * Usage: $wgHooks['ArticleCommentsSpamCheck'][] = 'defaultArticleCommentSpamCheck';
-@@ -463,7 +532,7 @@
+@@ -463,7 +535,7 @@
   * @return Boolean Always true to indicate other hooking methods may continue to check for spam.
   */
  function defaultArticleCommentSpamCheck($comment, $commenterName, $commenterURL, $isspam) {
@@ -357,7 +360,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Short-circuit if spam has already been determined
      if ($isspam) return true;
      $fields = array($comment, $commenterName, $commenterURL);
-@@ -475,7 +544,7 @@
+@@ -475,7 +547,7 @@
              if ( preg_match( $wgSpamRegex, $field ) ) return $isspam = true;
          }
      }
@@ -366,7 +369,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Rudimentary spam protection
      $spampatterns = array(
          '%\\[url=(https?|ftp)://%smi',
-@@ -501,5 +570,5 @@
+@@ -501,5 +573,5 @@
      # We made it this far, leave $isspam alone and give other implementors a chance.
      return true;
  }
@@ -385,10 +388,10 @@ Index: extensions/Collaboration/CurrentUsers/CurrentUsers.php
          global $wgUser, $wgParser, $egCurrentUsers, $egCurrentUsersTimeout, $egCurrentUsersMagic;
          $wgParser->setFunctionHook( $egCurrentUsersMagic, 'efCurrentUsersMagic' );
 -        if ( strtolower( $_REQUEST['title'] ) == 'robots.txt' ) $bot = 'bot';
-+        /*op-patch|BL|2009-10-16|Collaboration|generalImprovements|start*/
++        /*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +        // check array key
 +        if( isset( $_REQUEST['title'] ) )
-+        /*op-patch|BL|2009-10-16|end*/
++        /*op-patch|BL|2009-10-15|end*/
 +        	if ( strtolower( $_REQUEST['title'] ) == 'robots.txt' ) $bot = 'bot';
          else $bot = '';
          $file = dirname( __FILE__ ) . '/CurrentUsers.txt';
@@ -421,9 +424,9 @@ Index: extensions/Collaboration/RatingBar/config.php
 -$ratingbar_dbuser					= '';	// Database user
 -$ratingbar_dbpass					= '';	// Database password
 -$ratingbar_dbname					= '';	// Copy value from $wgDBname
-+$ratingbar_dbuser					= $wgDBuser;	// Database user, copy value from $wgDBuser
-+$ratingbar_dbpass					= $wgDBpassword;	// Database password, copy value from $wgDBpassword
-+$ratingbar_dbname					= $wgDBname;	// Copy value from $wgDBname
++$ratingbar_dbuser					= '';	// Database user, copy value from $wgDBuser
++$ratingbar_dbpass					= '';	// Database password, copy value from $wgDBpassword
++$ratingbar_dbname					= '';	// Copy value from $wgDBname
  $table_prefix						= '';	// Copy value from $wgDBprefix
  
  // Other important settings
@@ -450,22 +453,6 @@ Index: extensions/Collaboration/RatingBar/config.php
  $add_special_page					= true; // Add a special page
  $link_vote_not_logged_in			= 'index.php?title=Special:UserLogin'; // Link when voting if the user isn't logged in
  $link_vote_not_registered			= 'index.php?title=Special:UserLogin&type=signup'; // Link when voting if the user isn't logged in
-Index: extensions/Collaboration/RatingBar/doqueries.php
-===================================================================
---- extensions/Collaboration/RatingBar/doqueries.php	(revision 5601)
-+++ extensions/Collaboration/RatingBar/doqueries.php	(working copy)
-@@ -1,6 +1,10 @@
- <?php
- // Load config
--require_once ('config.php');
-+/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
-+// use full path
-+global $cegIP;
-+require_once ($cegIP.'/RatingBar/config.php');
-+/*op-patch|BL|2009-10-15|end*/
- 
- if($table_prefix!='') $table_prefix='_'.$table_prefix;
- ini_set("session.name", $ratingbar_dbname.$table_prefix."_session");
 Index: extensions/Collaboration/RatingBar/ratingbar.php
 ===================================================================
 --- extensions/Collaboration/RatingBar/ratingbar.php	(revision 5601)
@@ -545,23 +532,23 @@ Index: extensions/Collaboration/RatingBar/specialpage.php
  		$wikitext .= '<w4g_ratinglist numberofitems ="10" numberofdays="50"/>';
 Index: extensions/Collaboration/RatingBar/styles.css
 ===================================================================
---- extensions/Collaboration/RatingBar/styles.css	(revision 5601)
+--- extensions/Collaboration/RatingBar/styles.css	(revision 5614)
 +++ extensions/Collaboration/RatingBar/styles.css	(working copy)
-@@ -20,15 +20,23 @@
+@@ -20,9 +20,12 @@
  
  #rating_box {width:242px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;} /* the box with bar and rating */
  #rating_target {width:202px;height:15px;border:1px solid #333333;margin:0px;padding:0px;background-color:#555555;position:absolute;float:left;} /* the bar only */
 -#rating_text {width:40px;height:15px;border:1px solid #333333;
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
-+// a bit to large...
++/* a bit to large... */
 +#rating_text {width:38px;height:15px;border:1px solid #333333;
  	margin:0px;margin-left:202px;margin-bottom:2px;padding:0px;font-family:arial;font-size:10px;
  	background-color:#999999;position:absolute;float:left;} /* the rating only */
-+/*op-patch|BL|2009-10-15|end*/
++/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
  
  .w4g_rb_global {width:2px;height:15px;margin:0px;padding:0px;position:absolute;float:left;} /* a tiny block */
  .w4g_rb_nojs {font-size:x-small;color:#ff9999;} /* for the "must enable JS" message */
- 
+  
  .w4g_ratinglist  { margin-bottom: 0px; padding-left: .4em; }
  .w4g_ratinglist-headercell   { background-color:#153E7E; font-weight: bold; text-align: center; margin-bottom: 0px; padding-left: .4em; color:#FFFFFF; }
 +/*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
