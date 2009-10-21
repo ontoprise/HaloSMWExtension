@@ -26,31 +26,33 @@
 // This is implemented in a file at the SMW Query Interface as a ajax function. The best
 // solution would be just to do an Ajax call and receive the HTML of the Query Interface.
 // However this would be one call to the ajax function and another call to the QI URL.
-// In order to save the first call to the ajax function we include it here. Therefore
-// some "workarounds" must be done before the include.
-global $wgServer, $wgScript;
-if( !defined( 'MEDIAWIKI' ) ) define('MEDIAWIKI', "fake");
-if (is_null($wgServer)) {
-	$wgServer = "http";
-	// check for SSL
-	if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
-    	isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
-		$wgServer.= "s";
-	// add hostname and build correct path, assuming that the QI can be accessed as a special page
-	$wgServer.= "://".$_SERVER['HTTP_HOST'];
-}
-if (is_null($wgScript)) {
-    $wgScript = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/')).
-       "index.php";
-}
-// now actually include the file with the ajax function
+// Before we just included the ajax function and fetched the page with one HTTP request
+// only but this doesn't work well, when the language is different than en. Therefore we
+// must also do an ajax call to the function for loading the QI.
+// FIXME: make one http request only.
+
+$wgServer = "http";
+// check for SSL
+if (isset($_SERVER['SCRIPT_URI']) && strtolower(substr($_SERVER['SCRIPT_URI'], 4, 1)) == "s" || 
+    isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+    $wgServer.= "s";
+// add hostname and build correct path, assuming that the QI can be accessed as a special page
+$wgServer.= "://".$_SERVER['HTTP_HOST'];
+
+$wgScript = substr($_SERVER['REQUEST_URI'], 0, strpos($_SERVER['REQUEST_URI'], 'extensions/FCKeditor/plugins/'))."index.php";
+
+// check if the file with the ajax function exisis
 $QIAjaxFuncFile = '../../../../SMWHalo/specials/SMWQueryInterface/SMW_QIAjaxAccess.php';
 if (!file_exists($QIAjaxFuncFile))
-	dieNice("SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.");
-include_once($QIAjaxFuncFile);
+	$page = "Error: SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.";
+else {
+    include_once('../../../FCKeditorHttpRequest.php');
+    $params = 'action=ajax&rs=smwf_qi_getPage';
+    list ($httpErr, $page) = fckHttpRequest($wgServer, $wgScript, $params);
 
-// save the source code of the above URL in $page 
-$page = smwf_qi_getPage();
+    if ($page === false || ($httpErr != 200 && $httpErr > 0))
+        $page = "Error: SMWHalo seems not to be installed. Please install the SMWHalo extension to be able to use the Query Interface.<br/>HTTP Error code $httpErr";
+}
 
 // check if an error occured, the the returned string starts with "Error: " 
 if (substr($page, 0, 7) == "Error: ") {
