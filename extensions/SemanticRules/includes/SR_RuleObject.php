@@ -264,7 +264,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		$tmp = '';
 		for ($i = 0; $i < sizeof($args); $i++) {
 			if ($i > 0) {
-				$tmp .= ":";
+				$tmp .= ":cat#";
 			}
 			$tmp .= $args[$i]->getName();
 		}
