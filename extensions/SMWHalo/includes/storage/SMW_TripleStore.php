@@ -3,7 +3,7 @@ global $smwgIP, $smwgHaloIP;
 require_once( "$smwgIP/includes/storage/SMW_Store.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
 require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
-
+require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
 
 /**
  * Triple store connector class.
@@ -65,7 +65,7 @@ class SMWTripleStore extends SMWStore {
 
 	// SPARQL-PREFIX statement with all pre-defined namespaces
 	protected static $ALL_PREFIXES;
-	
+
 	protected static $ALL_NAMESPACES;
 
 	public static $fullSemanticData;
@@ -92,24 +92,24 @@ class SMWTripleStore extends SMWStore {
 		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
 		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
 		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
-		
+
 		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
 		SMW_NS_TYPE => self::$TYPE_NS_SUFFIX, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
 		NS_USER => self::$USER_NS);
-    
-		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW) 
+
+		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW)
 		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
 		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
 		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.
 		self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
-        
+
 		// declare all other namespaces using ns_$index as prefix
 		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
 		foreach($extraNamespaces as $nsIndex) {
 			$nsText = strtolower($wgContLang->getNsText($nsIndex));
 			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex#> ";
 		}
-		
+
 	}
 
 
@@ -163,11 +163,11 @@ class SMWTripleStore extends SMWStore {
 		}
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
-			$con = new TSConnection();
+			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-			 $sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -185,7 +185,7 @@ class SMWTripleStore extends SMWStore {
 
 	function updateData(SMWSemanticData $data) {
 		$this->smwstore->updateData($data);
-			
+
 		$triples = array();
 
 		$subject = $data->getSubject();
@@ -193,7 +193,7 @@ class SMWTripleStore extends SMWStore {
 		$subj_ns = $this->getNSPrefix($subject->getNamespace());
 		$unknownNSPrefixes = "";
 		$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($subj_ns);
-			
+
 
 		//properties
 		foreach($data->getProperties() as $key => $property) {
@@ -218,7 +218,7 @@ class SMWTripleStore extends SMWStore {
 					foreach($propertyValueArray as $value) {
 						// parse conversion annotation format
 						$measures = explode(",", $value->getXSDValue());
-							
+
 						// parse linear factor followed by (first) unit
 						$firstMeasure = reset($measures);
 						$indexOfWhitespace = strpos($firstMeasure, " ");
@@ -226,7 +226,7 @@ class SMWTripleStore extends SMWStore {
 						$factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
 						$unit = trim(substr($firstMeasure, $indexOfWhitespace));
 						$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor $unit\"");
-							
+
 						// add all aliases for this conversion factor using the same factor
 						$nextMeasure = next($measures);
 						while($nextMeasure !== false) {
@@ -234,7 +234,7 @@ class SMWTripleStore extends SMWStore {
 							$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor ".trim($nextMeasure)."\"");
 							$nextMeasure = next($measures);
 						}
-							
+
 					}
 				}
 				continue;
@@ -274,7 +274,7 @@ class SMWTripleStore extends SMWStore {
 					} elseif ($value->getTypeID() == '__nry') {
 						continue; // do not add nary properties
 					} else {
-							
+
 						if ($value->getUnit() != '') {
 							// attribute with unit value
 							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
@@ -290,7 +290,7 @@ class SMWTripleStore extends SMWStore {
 								}
 							}
 						}
-							
+
 					}
 				}
 			}
@@ -337,7 +337,7 @@ class SMWTripleStore extends SMWStore {
 
 		// redirects
 		$redirects = self::$fullSemanticData->getRedirects();
-			
+
 		foreach($redirects as $r) {
 			switch($subj_ns) {
 				case SMW_NS_PROPERTY: $prop = "owl:equivalentProperty";
@@ -349,11 +349,11 @@ class SMWTripleStore extends SMWStore {
 			$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($r_ns);
 			$triples[] = array($subj_ns.":".$subject->getDBkey(), $prop, $r_ns.":".$r->getDBkey());
 		}
-			
+
 		// connect to MessageBroker and send commands
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
-			$con = new TSConnection();
+			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
@@ -404,7 +404,7 @@ class SMWTripleStore extends SMWStore {
 		// update triple store
 		global $smwgMessageBroker, $smwgTripleStoreGraph;
 		try {
-			$con = new TSConnection();
+			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
 			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
@@ -444,19 +444,19 @@ class SMWTripleStore extends SMWStore {
 
 				}
 
-                     
+					
 				global $smwgSPARQLResultEncoding;
-				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in 
+				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
 				// another charset.
 				if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 					$response = utf8_decode($response);
 				}
-				
+
 				$queryResult = $this->parseSPARQLXMLResult($query, $response);
 
 
 			} catch(Exception $e) {
-				//				var_dump($e);
+				//              var_dump($e);
 				$sqr = new SMWQueryResult(array(), $query, false);
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
@@ -465,14 +465,14 @@ class SMWTripleStore extends SMWStore {
 			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('FilterQueryResults', array(&$queryResult) );
 			/*op-patch|TS|2009-06-19|end*/
-			
+
 			switch ($query->querymode) {
-				
+
 				case SMWQuery::MODE_COUNT:
 					$queryResult = $queryResult->getCount();
 					break;
 				default:
-					
+
 					break;
 			}
 			return $queryResult;
@@ -511,7 +511,7 @@ class SMWTripleStore extends SMWStore {
 		global $smwgMessageBroker, $smwgTripleStoreGraph, $wgDBtype, $wgDBport, $wgDBserver, $wgDBname, $wgDBuser, $wgDBpassword, $wgDBprefix, $wgLanguageCode, $smwgBaseStore, $smwgIgnoreSchema, $smwgNamespaceIndex;
 		$ignoreSchema = isset($smwgIgnoreSchema) && $smwgIgnoreSchema === true ? "true" : "false";
 		try {
-			$con = new TSConnection();
+			$con = TSConnection::getConnector();
 			$sparulCommands = array();
 			$sparulCommands[] = "DROP <$smwgTripleStoreGraph>"; // drop may fail. don't worry
 			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
@@ -532,12 +532,12 @@ class SMWTripleStore extends SMWStore {
 	function refreshData(&$index, $count, $namespaces = false, $usejobs = true) {
 		$this->smwstore->refreshData($index, $count, $namespaces, $usejobs);
 	}
-	
-    public function getSMWPageID($title, $namespace, $iw, $canonical=true) {
-         return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
-    }
-    
-   
+
+	public function getSMWPageID($title, $namespace, $iw, $canonical=true) {
+		return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
+	}
+
+
 
 	// Helper methods
 
@@ -724,15 +724,15 @@ class SMWTripleStore extends SMWStore {
 			// otherwise create one
 			$data = SMWPropertyValue::makeUserProperty($var_name);
 			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
-			
-			
+
+
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
 
 		// Query result object
 		$queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
-			
+
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 		foreach ($results as $r) {
@@ -741,7 +741,7 @@ class SMWTripleStore extends SMWStore {
 
 			$children = $r->children(); // $chilren->binding denote all binding nodes
 			foreach ($children->binding as $b) {
-				 
+
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
 				if (!$hasMainColumn && $var_name == '_X_') {
 
@@ -773,7 +773,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param array & $allValues
 	 */
 	protected function addValueToResult($sv, $prs, & $allValues) {
-		
+
 		$nsFound = false;
 		foreach (self::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
@@ -781,10 +781,10 @@ class SMWTripleStore extends SMWStore {
 				$nsFound = true;
 			}
 		}
-		
+
 		if ($nsFound) return;
-		
-			// result with unknown namespace
+
+		// result with unknown namespace
 		if (stripos($sv, self::$UNKNOWN_NS) === 0) {
 
 			if (empty($sv)) {
@@ -808,13 +808,19 @@ class SMWTripleStore extends SMWStore {
 				$literal = $this->unquote($this->removeXSDType($sv));
 				$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literal);
 				if ($value->getTypeID() == '_dat') { // exception for dateTime
-					if ($literal != '') $value->setXSDValue($literal);
-				} if ($value->getTypeID() == '_ema') { // exception for email
-                    $value->setXSDValue($literal);
-                } else {
+					if ($literal != '') {
+						// do not display time if it is 00:00:00
+						if (substr($literal, -9) == 'T00:00:00') {
+							$literal = substr($literal, 0, strpos($literal, "T"));
+						}
+						$value->setXSDValue($literal);
+					}
+				} else if ($value->getTypeID() == '_ema') { // exception for email
+					$value->setXSDValue($literal);
+				} else {
 					$value->setUserValue($literal);
 				}
-				
+
 			} else {
 				$property = $prs->getData();
 				if ($property instanceof SMWPropertyValue ) {
@@ -895,7 +901,7 @@ class SMWTripleStore extends SMWStore {
 			}
 			$result .= $sort."|".$order;
 		}
-		
+
 		if ($query->mergeResults === false) {
 			if (!$first) $result .= "|";
 			$result .= 'merge=false';
@@ -980,81 +986,149 @@ class WikiTypeToXSD {
 
 /**
  * Provides an abstraction for the connection to the triple store.
- * Currently, two connector types are supported:
+ * Currently, 3 connector types are supported:
  *
  *  1. MessageBroker
- *  2. Webservice
+ *  2. REST webservice
+ *  3. SOAP webservice
  *
  */
-class TSConnection {
+abstract class TSConnection {
+	protected $con;
 
-	private $con;
-
+	protected static $_instance;
 	/**
 	 * Connects to the triplestore
 	 *
 	 */
+	public abstract function connect();
+
+	/**
+	 * Disconnects from triplestore
+	 *
+	 */
+	public abstract function disconnect();
+
+	/**
+     * Sends SPARUL commands
+     *
+     * @param string $topic only relevant for a messagebroker.
+     * @param string or array of strings $commands
+     */
+	public abstract function send($topic, $commands);
+
+	public static function getConnector() {
+		if (is_null(self::$_instance)) {
+			global $smwgMessageBroker, $smwgWebserviceProtocol;
+
+			if (isset($smwgMessageBroker)) {
+				self::$_instance = new TSConnectorMessageBroker();
+			} else if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+				self::$_instance = new TSConnectorRESTWebservice();
+		
+			} else {
+				
+				self::$_instance = new TSConnectorSOAPWebservice();
+			}
+		}
+		return self::$_instance;
+	}
+}
+
+/**
+ * MessageBroker connector implementation.
+ *
+ */
+class TSConnectorMessageBroker extends TSConnection {
+
+
 	public function connect() {
-		global $smwgMessageBroker, $smwgDeployVersion;
-
-		if (isset($smwgMessageBroker)) {
-			$this->con = new StompConnection("tcp://$smwgMessageBroker:61613");
-			$this->con->connect();
-		} else {
-			global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript;
-			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
-		}
-	}
-
-	/**
-	 * Disconnects
-	 *
-	 */
-	public function disconnect() {
 		global $smwgMessageBroker;
-		if (isset($smwgMessageBroker)) {
-			$this->con->disconnect();
-		} else {
-			// do nothing
-		}
+		$this->con = new StompConnection("tcp://$smwgMessageBroker:61613");
+		$this->con->connect();
 	}
 
-	/**
-	 * Sends SPARUL commands
-	 *
-	 * @param string $topic (only) relevant for a messagebroker.
-	 * @param string or array of strings $commands
-	 */
+	
+	public function disconnect() {
+		$this->con->disconnect();
+	}
+
+	
 	public function send($topic, $commands) {
-		global $smwgMessageBroker, $smwgSPARULUpdateEncoding;
-		if (isset($smwgMessageBroker)) {
-			if (!is_array($commands)) {
-				$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-				$this->con->send($topic, $enc_commands);
-				return;
-			}
-			$commandStr = implode("|||",$commands);
-			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
+		global $smwgSPARULUpdateEncoding;
+		if (!is_array($commands)) {
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
 			$this->con->send($topic, $enc_commands);
-
-		} else {
-			// ignore topic
-			if (!is_array($commands)) {
-				$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-				$this->con->update($enc_commands);
-				return;
-			}
-			$commandStr = implode("|||",$commands);
-			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
-			$this->con->update($enc_commands);
-
+			return;
 		}
+		$commandStr = implode("|||",$commands);
+		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
+		$this->con->send($topic, $enc_commands);
 	}
 
+	
 
 }
 
+/**
+ * REST webservice connector implementation.
+ *
+ */
+class TSConnectorRESTWebservice extends TSConnection {
+	
+	public function connect() {
+		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
+		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+		$this->con = new RESTWebserviceConnector($host, $port, "/sparul", $credentials);
+	}
 
+	public function disconnect() {
+		// do nothing. webservice calls use stateless HTTP protocol.
+	}
 
+	public function send($topic, $commands) {
+		if (!is_array($commands)) {
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
+			$enc_commands = '<sparul><command><![CDATA['.$enc_commands.']]></command></sparul>';
+			$this->con->update($enc_commands);
+			return;
+		}
+		$enc_commands = "<sparul>";
+		foreach($commands as $c) {
+			$enc_command = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($c) : $c;
+			$enc_commands .= "<command><![CDATA[$enc_command]]></command>";
+		}
+		$enc_commands .= "</sparul>";
+		
+		$this->con->update($enc_commands);
+	}
+}
+
+/**
+ * SOAP webservice connector implementation.
+ *
+ */
+class TSConnectorSOAPWebservice extends TSConnection {
+	
+	public function connect() {
+		global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+	}
+
+	public function disconnect() {
+		// do nothing. webservice calls use stateless HTTP protocol.
+	}
+
+	public function send($topic, $commands) {
+		if (!is_array($commands)) {
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
+			$this->con->update($enc_commands);
+			return;
+		}
+		$commandStr = implode("|||",$commands);
+		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
+		$this->con->update($enc_commands);
+	}
+}
