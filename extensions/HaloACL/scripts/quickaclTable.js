@@ -37,11 +37,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
     this.myQuickSelectFormatter = function(elLiner, oRecord, oColumn, oData) {
         var checkedFromJS = false;
 
-        console.log("searching "+oRecord._oData.id);
-        console.log(YAHOO.haloacl.quickAclClicks);
-
         if(YAHOO.haloacl.quickAclClicks.indexOf(""+oRecord._oData.id) != -1){
-            console.log("havent found");
             checkedFromJS = true;
         }
 

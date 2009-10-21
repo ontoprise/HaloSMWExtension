@@ -1,19 +1,19 @@
 /*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * This file contains javascript for the manageacl-tree
@@ -329,6 +329,11 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = '>';
             sb[sb.length] = '<div style="width:18px!important" class="ygtvspacer"></div></td>';
 
+            new YAHOO.widget.Tooltip('anchorPopup_'+this.groupId+'tooltip', {
+                context:'anchorPopup_'+this.groupId,
+                text:gHACLLanguage.getMessage('aclinfotooltip'),
+                zIndex :10
+            });
 
         } else {
             //  sb[sb.length] = '<td>';
@@ -360,6 +365,11 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
+            new YAHOO.widget.Tooltip('anchorPopup_'+this.groupId+'tooltip', {
+                context:'anchorPopup_'+this.groupId,
+                text:gHACLLanguage.getMessage('aclinfotooltip'),
+                zIndex :10
+            });
 
 
             /*
@@ -711,7 +721,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
 
 
         } else {
- /*           sb[sb.length] = '<td>';
+            /*           sb[sb.length] = '<td>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span';
@@ -730,7 +740,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' class="ygtvcheck3"';
             sb[sb.length] = '>';
             sb[sb.length] = '<div class="ygtvspacer"></div></td>';
-*/
+             */
             sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
 
             sb[sb.length] = '<td><span class="haloacl_manageACL_right_title_readonly">'+localTitle+'</span></td>';

@@ -607,8 +607,12 @@ YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
 
     var elementWidth = 399;
-    if(nodeToAttachTo.getTextWidth() != 0){
-        elementWidth = nodeToAttachTo.getTextWidth();
+    try{
+        if(nodeToAttachTo.getTextWidth() != 0){
+            elementWidth = nodeToAttachTo.getTextWidth();
+        }
+    }catch(e){
+        
     }
 
     if(nodeToAttachTo._type != "RootNode"){
@@ -678,9 +682,11 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
 
     var elementWidth = 399;
-    if(nodeToAttachTo.getTextWidth() != 0){
-        elementWidth = nodeToAttachTo.getTextWidth() - 18;
-    }
+    try{
+        if(nodeToAttachTo.getTextWidth() != 0){
+            elementWidth = nodeToAttachTo.getTextWidth() - 18;
+        }
+    }catch(e){}
 
     if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
     var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);

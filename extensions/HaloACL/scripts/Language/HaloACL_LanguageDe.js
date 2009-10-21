@@ -53,7 +53,8 @@ var gHACLUserLanguageStrings = {
 
     'discardChanges' : "&Auml;nderungen verwerfen",
     'discardChangesMessage': "Die eingegebenen Daten werden verworfen",
-    'selectDeselectUser':'Benutzer explizit hinzuf&uuml;gen'
+    'selectDeselectUser':'Benutzer explizit hinzuf&uuml;gen',
+    'aclinfotooltip':'Hier klicken um erweiterte Informationen des ACLs zu zeigen'
 
 	
 }

@@ -153,24 +153,25 @@ HTML;
 
             //status handling
             genericPanelSetSaved_$panelid = function(saved) {
-                if(saved == "default"){
-                    $('haloacl_panel_status_$panelid').innerHTML = '$default_text';
-                    $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
+                try{
+                    if(saved == "default"){
+                        $('haloacl_panel_status_$panelid').innerHTML = '$default_text';
+                        $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
 
-                }else if (saved == true) {
-                    $('haloacl_panel_status_$panelid').innerHTML = '$saved';
-                    $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
-                } else {
-                    $('haloacl_panel_status_$panelid').innerHTML = '$notsaved';
-                    $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_notsaved");
+                    }else if (saved == true) {
+                        $('haloacl_panel_status_$panelid').innerHTML = '$saved';
+                        $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_saved");
+                    } else {
+                        $('haloacl_panel_status_$panelid').innerHTML = '$notsaved';
+                        $('haloacl_panel_status_$panelid').setAttribute("class", "haloacl_panel_status_notsaved");
 
-                    try{
                        //genericPanelSetSaved_hacl_panel_container(false);
                         $('haloacl_panel_status_hacl_panel_container').innerHTML = '$notsaved';
                         $('haloacl_panel_status_hacl_panel_container').setAttribute("class", "haloacl_panel_status_notsaved");
-                    }catch(e){}
-                }
+                    }
+                }catch(e){}
             }
+
 
             genericPanelSetName_$panelid = function(name) {
                 $('haloacl_panel_name_$panelid').innerHTML = name;
@@ -183,7 +184,8 @@ HTML;
                 $('haloacl_panel_descr_$panelid').innerHTML = descr;
 
                 if(YAHOO.haloacl.descr_tooltip_$panelid){
-                    YAHOO.haloacl.descr_tooltip_$panelid.destroy();
+// TODO check whats going on here - this bug is ie-reated
+//                    YAHOO.haloacl.descr_tooltip_$panelid.destroy();
                 }
 
                 var now = new Date();
