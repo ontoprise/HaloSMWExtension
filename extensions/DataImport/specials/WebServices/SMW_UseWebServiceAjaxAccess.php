@@ -133,18 +133,19 @@ function smwf_wsu_getPreview($articleName, $wsSyn){
 }
 
 function smwf_uws_getPage($args= "") {
-	global $wgServer, $wgScript;
+	global $wgServer, $wgScript, $wgLang;
 
+        $uwsScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':UseWebService';
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = uws_doHttpRequestWithCurl($wgServer, $wgScript."/Special:UseWebService");
+		list($httpErr, $page) = uws_doHttpRequestWithCurl($wgServer, $uwsScript);
 	}
 	else {
 		if (strtolower(substr($wgServer, 0, 5)) == "https"){
 			return "Error: for HTTPS connections please activate the Curl module in your PHP configuration";
 		}
 		list ($httpErr, $page) =
-			uws_doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $wgScript."/Special:UseWebService");
+			uws_doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $uwsScript);
 	}
 	// this happens at any error (also if the URL can be called but a 404 is returned)
 	if ($page === false || $httpErr != 200){
