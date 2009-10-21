@@ -185,12 +185,12 @@ ToolbarFramework.prototype = {
 			for (var i = 0; i < (this.tabarray.length); i++)
 			{
 				if (this.curtabShown != i) {
-					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/skins/ontoskin3/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
+					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
 				} else {
                                         var updateStr = '<div id="expandable" ';
                                         updateStr += (this.closeFunction)
-                                            ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/skins/ontoskin3/expanded-close.gif">'
-                                            : 'style="cursor:move;"><img src="' + wgScriptPath + '/skins/ontoskin3/expanded.gif">';
+                                            ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded-close.gif">'
+                                            : 'style="cursor:move;"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded.gif">';
                                         updateStr += "</div><div id=\"tab_"+i+"\" style=\"cursor:move;\">"+this.tabnames[i]+"</div>";
 					$("activetabcontainer").update(updateStr);
 				}
@@ -201,7 +201,7 @@ ToolbarFramework.prototype = {
 
 	createForcedHeader : function() {
 		// force to show a header - for use in annotation mode
-		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/skins/ontoskin3/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/skins/ontoskin3/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
+		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/extension/SMWHalo/skins/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
 		$("tabcontainer").update(tabHeader);
 	},
 
