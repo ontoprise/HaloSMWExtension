@@ -219,19 +219,20 @@ function parseWikiText($text) {
  * @return string $html
  */
 function smwf_qi_getPage($args= "") {
-	global $wgServer, $wgScript;
+	global $wgServer, $wgScript, $wgLang;
+        $qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
 
-	// fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
+        // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $wgScript."/Special:QueryInterface");
+		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $qiScript);
 	}
 	else {
 	  if (strtolower(substr($wgServer, 0, 5)) == "https")
 	       return "Error: for HTTPS connections please activate the Curl module in your PHP configuration";
 	  list ($httpErr, $page) =
-	  	doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $wgScript."/Special:QueryInterface");
+	  	doHttpRequest($wgServer, $_SERVER['SERVER_PORT'], $qiScript);
 	}
 	// this happens at any error (also if the URL can be called but a 404 is returned)
 	if ($page === false || $httpErr != 200)
@@ -254,8 +255,8 @@ function smwf_qi_getPage($args= "") {
 	$onloadArgs = ''; 
 
 	// parse submited params 
-    $params = array();
-    parse_str($args, $params);
+        $params = array();
+        parse_str($args, $params);
 	// when called from the Excel Bridge, params noPreview and noLayout must be set
 	// also the "Copy to clipboard" button must be hidden. The Excel Bridge is recognized by the
 	// appropriate Useragent, params may not be set but will adjusted automatically
