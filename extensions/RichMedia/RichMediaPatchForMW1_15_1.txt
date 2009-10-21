@@ -1167,7 +1167,7 @@ Index: includes/filerepo/FileRepo.php
  	
 Index: includes/parser/Parser.php
 ===================================================================
---- includes/parser/Parser.php	(revision 5543)
+--- includes/parser/Parser.php	(revision 5613)
 +++ includes/parser/Parser.php	(working copy)
 @@ -1675,23 +1675,49 @@
  				}
@@ -1256,7 +1256,7 @@ Index: includes/parser/Parser.php
  		}
  		return $ig->toHTML();
  	}
-@@ -4180,13 +4218,29 @@
+@@ -4180,13 +4218,30 @@
  		}
  		if ( !isset( $this->mImageParams[$handlerClass]  ) ) {
  			// Initialise static lists
@@ -1270,17 +1270,18 @@ Index: includes/parser/Parser.php
 +			/*op-patch|BL|2009-10-07|RichMedia|ImgPreviewMagicWord|start*/
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
++			static $internalParamNames;
 +			if( $smwgEnableRichMedia ) {
-+				static $internalParamNames = array(
++				$internalParamNames = array(
++					'nopreview' => array('nopreview'),
 +					'horizAlign' => array( 'left', 'right', 'center', 'none' ),
 +					'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
 +						'bottom', 'text-bottom' ),
 +					'frame' => array( 'thumbnail', 'manualthumb', 'framed', 'frameless',
 +						'upright', 'border', 'link', 'alt' ),
-+					'nopreview' => array('nopreview'),
 +				);
 +			} else {
-+				static $internalParamNames = array(
++				$internalParamNames = array(
 +					'horizAlign' => array( 'left', 'right', 'center', 'none' ),
 +					'vertAlign' => array( 'baseline', 'sub', 'super', 'top', 'text-top', 'middle',
 +						'bottom', 'text-bottom' ),
@@ -1293,7 +1294,7 @@ Index: includes/parser/Parser.php
  			static $internalParamMap;
  			if ( !$internalParamMap ) {
  				$internalParamMap = array();
-@@ -4392,6 +4446,19 @@
+@@ -4392,6 +4447,19 @@
  			$params['frame']['alt'] = $params['frame']['title'];
  		}
  
