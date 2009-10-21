@@ -33,7 +33,7 @@
  */
 function FCKeditor_IsCompatibleBrowser()
 {
-	if ( isset( $_SERVER ) ) {
+	if ( isset( $_SERVER ) && in_array('HTTP_USER_AGENT', array_keys($_SERVER)) )  {
 		$sAgent = $_SERVER['HTTP_USER_AGENT'] ;
 	}
 	else {
