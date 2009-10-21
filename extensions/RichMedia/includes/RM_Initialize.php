@@ -197,14 +197,26 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	if ( $rMresult ) {
 		if ( $wgRMImagePreview ) {
 			$queryString = "target=".urlencode($target->getPrefixedText());
-			$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
-			$uploadWindowUrl = $uploadWindowPage->getTitle()->getFullURL($queryString);
-			$rev = "height:500 width:700";
+			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
+			$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
 			$attribs['rev'] = 'height:500 width:700';
 			$attribs['rel'] = 'iframe';
-			$attribs['href'] = $uploadWindowUrl;
+			$attribs['href'] = $embedWindowUrl;
 		}
 	}
+	//Change Special:Upload to Special:UploadWindow
+	if ( $target->getPrefixedText() == 'Special:Upload' && $target->getNamespace() == NS_SPECIAL ) {
+		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
+		$queryString = "wpIgnoreWarning=true";
+		$uploadWindowUrl = $uploadWindowPage->getTitle()->getLocalURL($queryString);
+		$attribs['rev'] = 'height:660 width:600';
+		$attribs['rel'] = 'iframe';
+		$attribs['href'] = $uploadWindowUrl;
+		$attribs['title'] = $uploadWindowPage->getTitle()->getPrefixedText();
+		$attribs['id'] = 'upload_window';
+		$attribs['onclick'] = "fb.loadAnchor($('upload_window'));return false;";
+	}
+	
 	return true;
 }
 
