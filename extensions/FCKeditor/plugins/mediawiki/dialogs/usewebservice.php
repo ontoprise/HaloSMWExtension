@@ -41,11 +41,15 @@ if (is_null($wgScript)) {
 // now actually include the file with the ajax function
 $UWSAjaxFuncFile = '../../../../DataImport/specials/WebServices/SMW_UseWebServiceAjaxAccess.php';
 if (!file_exists($UWSAjaxFuncFile))
-	dieNice("The Data Import extension seems not to be installed. Please install this extension to be able to add Web Service calls.");
-include_once($UWSAjaxFuncFile);
+    $page = "Error: The Data Import extension seems not to be installed. Please install this extension to be able to add Web Service calls.";
+else {
+    include_once('../../../FCKeditorHttpRequest.php');
+    $params = 'action=ajax&rs=smwf_uws_getPage';
+    list ($httpErr, $page) = fckHttpRequest($wgServer, $wgScript, $params);
 
-// save the source code of the above URL in $page 
-$page = smwf_uws_getPage();
+    if ($page === false || ($httpErr != 200 && $httpErr > 0))
+        $page = "Error: The Data Import extension seems not to be installed. Please install this extension to be able to add Web Service calls.<br/>HTTP Error code $httpErr";
+}
 
 // check if an error occured, the the returned string starts with "Error: " 
 if (substr($page, 0, 7) == "Error: ") {
