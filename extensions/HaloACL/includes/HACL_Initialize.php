@@ -119,6 +119,15 @@ $haclgDefaultQuickAccessRights = array(
 //	"ACL:Right/Thomas (Private)"
 );
 
+##
+# This key is used for protected properties in Semantic Forms. SF has to embed
+# all values of input fields into the HTML of the form, even if fields are protected
+# and not visible to the user (i.e. user has no right to read.) The values of
+# all protected fields are encrypted with the given key.
+# YOU SHOULD CHANGE THIS KEY AND KEEP IT SECRET. 
+$haclgEncryptionKey = "Es war einmal ein Hase.";
+
+
 # load global functions
 require_once('HACL_GlobalFunctions.php');
 

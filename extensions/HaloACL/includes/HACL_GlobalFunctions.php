@@ -658,8 +658,6 @@ function haclfRegisterACIcon(& $namespaceMappings) {
     return true;
 }
 
-$haclgEncryptionKey = "Es war einmal ein Hase.";
-
 // encrypt() and decrypt() functions copied from
 // http://us2.php.net/manual/en/ref.mcrypt.php#52384
 function haclfEncrypt($string) {
