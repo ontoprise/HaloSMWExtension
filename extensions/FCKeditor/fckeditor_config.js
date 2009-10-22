@@ -52,7 +52,7 @@ FCKConfig.ToolbarSets['WikiSource'] = [
 
 // Load the extension plugins.
 FCKConfig.PluginsPath = FCKConfig.EditorPath + '../plugins/' ;
-FCKConfig.Plugins.Add( 'mediawiki' ) ;
+FCKConfig.Plugins.Add( 'mediawiki', 'en,de' ) ;
 FCKConfig.Plugins.Add( 'mediaupload' ) ;
 FCKConfig.Plugins.Add( 'mwedit' ) ;
 FCKConfig.Plugins.Add( 'fullscreen' ) ;
@@ -62,7 +62,7 @@ FCKConfig.ForcePasteAsPlainText = true ;
 FCKConfig.FontFormats	= 'p;h1;h2;h3;h4;h5;h6;pre' ;
 
 FCKConfig.AutoDetectLanguage	= false ;
-FCKConfig.DefaultLanguage		= 'en' ;
+FCKConfig.DefaultLanguage	= window.parent.wgUserLanguage || 'en' ;
 
 // FCKConfig.DisableObjectResizing = true ;
 

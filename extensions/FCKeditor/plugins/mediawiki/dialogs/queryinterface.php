@@ -104,8 +104,8 @@ document.write( \'<script src="\' + FCKConfig.BasePath + \'dialog/common/fck_dia
 ? ''  // dont set any tabs on error
 : '
 // Set the dialog tabs.
-window.parent.AddTab( \'GUI\', \'Query Interface\' ) ;
-window.parent.AddTab( \'SRC\', \'Query sourcecode\' ) ;
+window.parent.AddTab( \'GUI\', FCKLang.wikiDlgQueryInterface || \'Query Interface\' ) ;
+window.parent.AddTab( \'SRC\', FCKLang.wikiDlgQIsource ||  \'Query sourcecode\' ) ;
 
 function OnDialogTabChange( tabCode ) {
 	ShowE(\'divQiGui\' , ( tabCode == \'GUI\' ) ) ;
@@ -194,7 +194,7 @@ function Ok(enterHit) {
 		ask = FCKTools.HTMLEncode(GetE(\'xAskQueryRaw\').value.Trim().replace(/(\r\n|\n)/g, \'fckLR\')).replace( /"/g, \'&quot;\' ) ;
 
 		if ( !( /^{{#ask:[\s\S]+}}$/.test( ask ) ) ) {
-			alert( \'Ask query must start with {{#ask: and end with }}. Please check it.\' ) ;
+			alert( FCKLang.wikiDlgQIsyntaxErr || \'Ask query must start with {{#ask: and end with }}. Please check it.\' ) ;
 			return false ;
 		}
 	}
@@ -240,7 +240,7 @@ function getDivQiSrc() {
 		<table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 			<tr>
 				<td>
-					<span>Ask Query raw definition (from {{#ask: to }})</span><br />
+					<span fcklang="wikiDlgQIrawdef">Ask Query raw definition (from {{#ask: to }})</span><br />
 				</td>
 			</tr>
 			<tr>

@@ -23,7 +23,7 @@
 -->
 <html>
 <head>
-	<title>Template Properties</title>
+        <title>Template Properties</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="robots" content="noindex, nofollow" />
 	<script type="text/javascript">
@@ -43,9 +43,9 @@ document.write( '<script src="' + FCKConfig.BasePath + 'dialog/common/fck_dialog
 //#### Dialog Tabs
 
 // Set the dialog tabs.
-window.parent.AddTab( 'Info', 'Info' ) ;
-window.parent.AddTab( 'Form', 'Form' ) ;
-window.parent.AddTab( 'Source', 'Source' ) ;
+window.parent.AddTab( 'Info', FCKLang.wikiDlgTemplateTabInfo || 'Info' ) ;
+window.parent.AddTab( 'Form', FCKLang.wikiDlgTemplateTabForm || 'Form' ) ;
+window.parent.AddTab( 'Source', FCKLang.wikiDlgTemplateTabSource || 'Source' ) ;
 
 function OnDialogTabChange( tabCode )
 {
@@ -160,9 +160,10 @@ function SetFormForTemplate(result) {
             // set table border thick
             ShowTemplateForm();
             GetE('xTemplateForm').parentNode.parentNode.parentNode.parentNode.border = '1';
-            GetE('xTemplateForm').parentNode.innerHTML = '<div id="xTemplateForm">There is no form to '
-                + 'submit parameters for this template call. '
-                + 'Please edit the source code directly.</div>';
+            GetE('xTemplateForm').parentNode.innerHTML = '<div id="xTemplateForm">'
+                + FCKLang.wikiDlgTemplateNoForm ||
+                  'There is no form to submit parameters for this template call. Please edit the source code directly.'
+                + '</div>';
         }
 }
 
@@ -241,7 +242,7 @@ function Ok()
 	
 	if ( !( /^{{[\s\S]+}}$/.test( templateData ) ) )
 	{
-		alert( 'Templates must start with {{ and end with }}. Please check it.' ) ;
+		alert( FCKLang.wikiDlgTemplateSyntaxErr || 'Templates must start with {{ and end with }}. Please check it.' ) ;
 		return false ;
 	}
 	
@@ -284,19 +285,19 @@ function Ok()
     <div id="divLabelSeleced"></div>
     <table class="tmplTable">
         <tr>
-            <td><div id="divHeaderSelected" style="display: none;"><b>Template selected:</b></div></td>
+            <td><div id="divHeaderSelected" style="display: none;"><b><span fcklang="wikiDlgTemplateSelected">Template selected</span>:</b></div></td>
         </tr>
         <tr class="tmplTable">
             <td style="width: 30%; vertical-align: top;">
                 <div id="divList" style="height: 100%; width: 100%;">
-                    <b>Choose a template</b>
+                    <b><span fcklang="wikiDlgTemplateChoose">Choose a template</span></b>
                     <select id="xTemplateList" onchange="SetUrl( this.value );" size="10" style="height: 100%; width: 100%;">
                     </select>
                 </div>
             </td>
             <td valign="top">
                 <div id="divInfo" class="tmplDivOptionBox">
-                    <b>Template description</b>
+                    <b><span fcklang="wikiDlgTemplateDescr">Template description</span></b>
                     <table class="tmplTable">
 			<tr>
 				<td class="tmplTable">
@@ -311,7 +312,7 @@ function Ok()
                     </table>
                 </div>
                 <div id="divForm" class="tmplDivOptionBox" style="display: none">
-                    <b>Fill the template with data</b>
+                    <b><span fcklang="wikiDlgTemplateFillData">Fill the template with data</span></b>
                     <table class="tmplTable">
 			<tr>
 				<td class="tmplTable">
@@ -326,7 +327,7 @@ function Ok()
                     </table>
                 </div>
                 <div id="divSource" class="tmplDivOptionBox" style="display: none">
-                    <b>Template raw definition (from {{ to }})</b>
+                    <b><span fcklang="wikiDlgTemplateSource">Template raw definition (from {{ to }})</span></b>
                     <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
 			<tr>
 				<td class="tmplTable">

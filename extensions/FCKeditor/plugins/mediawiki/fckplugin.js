@@ -40,25 +40,25 @@ var emptyToolbarOption = new EmptyTbButton();
 FCKToolbarItems.RegisterItem( 'Source', new FCKToolbarButton( 'Source', 'Wikitext', null, null, true, true, 1 ) ) ;
 
 // Register our toolbar buttons.
-var tbButton = new FCKToolbarButton( 'MW_Template', 'Template', 'Insert/Edit Template' ) ;
+var tbButton = new FCKToolbarButton( 'MW_Template', 'Template', FCKLang.wikiBtnTemplate || 'Insert/Edit Template' ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_template.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Template', tbButton ) ;
 
-tbButton = new FCKToolbarButton( 'MW_Ref', 'Reference', 'Insert/Edit Reference' ) ;
+tbButton = new FCKToolbarButton( 'MW_Ref', 'Reference', FCKLang.wikiBtnReference || 'Insert/Edit Reference' ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ref.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Ref', tbButton ) ;
 
-tbButton = new FCKToolbarButton( 'MW_Math', 'Formula', 'Insert/Edit Formula' ) ;
+tbButton = new FCKToolbarButton( 'MW_Math', 'Formula', FCKLang.wikiBtnFormula || 'Insert/Edit Formula' ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_math.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Math', tbButton ) ;
 
-tbButton = new FCKToolbarButton( 'MW_Special', 'Special Tag', 'Insert/Edit Special Tag' ) ;
+tbButton = new FCKToolbarButton( 'MW_Special', 'Special Tag', FCKLang.wikiBtnSpecial || 'Insert/Edit Special Tag' ) ;
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_special.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Special', tbButton ) ;
 
 // if Advanced Annotation is missing, SMWHalo seems not to be installed.
 if (typeof window.parent.AdvancedAnnotation != "undefined") {
-    var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface', null, true ) ;
+    var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', FCKLang.wikiBtnQueryInterface || 'Query Interface', null, true ) ;
     tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
     FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
     var outerHeight = window.outerHeight == undefined ? 850 : window.outerHeight;
@@ -72,10 +72,10 @@ else {
 }
 
 // Override some dialogs.
-FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 970, 600 ) ) ;
-FCKCommands.RegisterCommand( 'MW_Ref', new FCKDialogCommand( 'MW_Ref', 'Reference Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/ref.html', 400, 250 ) ) ;
-FCKCommands.RegisterCommand( 'MW_Math', new FCKDialogCommand( 'MW_Math', 'Formula', FCKConfig.PluginsPath + 'mediawiki/dialogs/math.html', 400, 300 ) ) ;
-FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', 'Special Tag Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/special.html', 480, 350 ) ) ; //YC
+FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', FCKLang.wikiCmdTemplate || 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 970, 600 ) ) ;
+FCKCommands.RegisterCommand( 'MW_Ref', new FCKDialogCommand( 'MW_Ref', FCKLang.wikiCmdReference || 'Reference Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/ref.html', 400, 250 ) ) ;
+FCKCommands.RegisterCommand( 'MW_Math', new FCKDialogCommand( 'MW_Math', FCKLang.wikiCmdFormula || 'Formula', FCKConfig.PluginsPath + 'mediawiki/dialogs/math.html', 400, 300 ) ) ;
+FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', FCKLang.wikiCmdSpecial || 'Special Tag Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/special.html', 480, 350 ) ) ; //YC
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
 
@@ -861,7 +861,7 @@ FCK.DataProcessor =
 			FCK.EditingArea.Textarea.style.visibility = 'hidden' ;
 
 			var loading = document.createElement( 'span' ) ;
-			loading.innerHTML = '&nbsp;Loading Wikitext. Please wait...&nbsp;' ;
+			loading.innerHTML = '&nbsp;' + FCKLang.wikiLoadingWikitext || 'Loading Wikitext. Please wait...' + '&nbsp;' ;
 			loading.style.position = 'absolute' ;
 			loading.style.left = '5px' ;
 //			loading.style.backgroundColor = '#ff0000' ;
@@ -1017,32 +1017,32 @@ FCK.ContextMenu.RegisterListener({
 			if ( tag.getAttribute( '_fck_mw_template' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'MW_Template', 'Template Properties' ) ;
+				contextMenu.AddItem( 'MW_Template', FCKLang.wikiCmdTemplate || 'Template Properties' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_askquery' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'SMW_QueryInterface', 'Open in QueryInterface' ) ;
+				contextMenu.AddItem( 'SMW_QueryInterface', FCKLang.wikiCmdQueryInterface || 'Open in QueryInterface' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_magic' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'MW_MagicWord', 'Modify Magic Word' ) ;
+				contextMenu.AddItem( 'MW_MagicWord', FCKLang.wikiCmdMagicWord || 'Modify Magic Word' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_ref' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'MW_Ref', 'Reference Properties' ) ;
+				contextMenu.AddItem( 'MW_Ref', FCKLang.wikiCmdReference || 'Reference Properties' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_math' ) )
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'MW_Math', 'Edit Formula' ) ;
+				contextMenu.AddItem( 'MW_Math', FCKLang.wikiCmdFormula || 'Edit Formula' ) ;
 			}
 			if ( tag.getAttribute( '_fck_mw_special' ) || tag.getAttribute( '_fck_mw_nowiki' ) || tag.getAttribute( '_fck_mw_includeonly' ) || tag.getAttribute( '_fck_mw_noinclude' ) || tag.getAttribute( '_fck_mw_onlyinclude' ) || tag.getAttribute( '_fck_mw_gallery' )) //YC
 			{
 				contextMenu.AddSeparator() ;
-				contextMenu.AddItem( 'MW_Special', 'Special Tag Properties' ) ;
+				contextMenu.AddItem( 'MW_Special', FCKLang.wikiCmdSpecial || 'Special Tag Properties' ) ;
 			}
 		}
 	}
@@ -2098,7 +2098,7 @@ if (typeof window.parent.AdvancedAnnotation != "undefined") {
     gEditInterface = new FCKeditInterface();
     window.parent.gEditInterface = gEditInterface;
 
-    var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semantic Toolbar', null, true) ;
+    var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', FCKLang.wikiBtnSemToolbar || 'Semantic Toolbar', null, true) ;
     tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_semtoolbar.png' ;
     FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 
@@ -2116,7 +2116,7 @@ else {
 
 if (typeof window.parent.useWSSpecial != "undefined") {
     // add button for adding a web service
-    var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', 'Add Web Service call', 'Add web service call', null, true) ;
+    var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', 'Add Web Service call', FCKLang.wikiBtnWebservice || 'Add web service call', null, true) ;
     uwsButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_webservice.gif' ;
     FCKToolbarItems.RegisterItem( 'SMW_UseWebService', uwsButton );
 

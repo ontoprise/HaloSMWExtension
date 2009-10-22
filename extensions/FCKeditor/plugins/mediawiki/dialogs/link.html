@@ -87,19 +87,19 @@ function OnUrlChange()
 		
 	if ( link.StartsWith( '#' ) )
 	{
-		SetSearchMessage( 'anchor link... no search for it' ) ;
+		SetSearchMessage( FCKLang.wikiDlgLinkNosearchAn || 'anchor link... no search for it' ) ;
 		return ;
 	} 
 	
 	if ( link.StartsWith( 'mailto:' ) )
 	{
-		SetSearchMessage( 'e-mail link... no search for it' ) ;
+		SetSearchMessage( FCKLang.wikiDlgLinkNosearchMail || 'e-mail link... no search for it' ) ;
 		return ;
 	} 
 	
 	if( /^\w+:\/\//.test( link ) )
 	{
-		SetSearchMessage( 'external link... no search for it' ) ;
+		SetSearchMessage( FCKLang.wikiDlgLinkNosearchExt || 'external link... no search for it' ) ;
 		return ;
 	}
 
@@ -108,13 +108,13 @@ function OnUrlChange()
 		ClearSearch() ;
 
 		if ( link.length == 0 )
-			SetSearchMessage( 'start typing in the above field' ) ;
+			SetSearchMessage( FCKLang.wikiDlgLinkStartTyping || 'start typing in the above field' ) ;
 		else
-			SetSearchMessage( 'too short... type more' ) ;
+			SetSearchMessage( FCKLang.wikiDlgLinkTooShort || 'too short... type more' ) ;
 		return ;
 	}
 	
-	SetSearchMessage( 'stop typing to search' ) ;
+	SetSearchMessage( FCKLang.wikiDlgLinkStopTyping || 'stop typing to search' ) ;
 	searchTimer = window.setTimeout( StartSearch, 500 ) ;
 }
 
@@ -125,7 +125,7 @@ function StartSearch()
 	if ( link.length < 3  )
 		return ;
 
-	SetSearchMessage( 'searching...' ) ;
+	SetSearchMessage( FCKLang.wikiDlgLinkSearching ||  'searching...' ) ;
 
 	// Make an Ajax search for the pages.
 	oEditor.window.parent.sajax_request_type = 'GET' ;
@@ -141,14 +141,14 @@ function LoadSearchResults( result )
 
 	if ( results.length == 0 || ( results.length == 1 && results[0].length == 0 ) )
 	{
-		SetSearchMessage( 'no articles found' ) ;
+		SetSearchMessage( FCKLang.wikiDlgLinkNoArticle || 'no articles found' ) ;
 	}
 	else
 	{
 		if ( results.length == 1 )
-			SetSearchMessage( 'one article found' ) ;
+			SetSearchMessage( FCKLang.wikiDlgLinkOneArticle || 'one article found' ) ;
 		else
-			SetSearchMessage( results.length + ' articles found' ) ;
+			SetSearchMessage( results.length + FCKLang.wikiDlgLinkManyArticle || ' articles found' ) ;
 
 		for ( var i = 0 ; i < results.length ; i++ )
 			FCKTools.AddSelectOption( select, results[i], results[i] ) ;
@@ -230,7 +230,7 @@ function Ok()
 			<span>Link</span><br />
 			<input id="txtUrl" style="width: 100%" type="text" onkeyup="OnUrlChange();" />
 			<br />
-			Automatic search results (<span id="xWikiSearchStatus">start typing in the above field</span>)<br />
+                        <span fcklang="wikiDlgLinkAutoRes">Automatic search results</span> (<span fcklang="wikiDlgLinkStartTyping" id="xWikiSearchStatus">start typing in the above field</span>)<br />
 			<select id="xWikiResults" size="10" style="width: 100%; height:150px" onclick="SetUrl( this.value );">
 			</select>
 		</div>

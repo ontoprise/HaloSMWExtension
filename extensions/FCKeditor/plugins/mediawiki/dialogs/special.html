@@ -240,7 +240,7 @@ function MakeSelection(type, name) {
     else if (type == 'c' || type == 'v' || type == 'w') {
         SetAttribute(GetE('xTemplateRaw'), 'readonly', 'readonly');
         sOldParams = GetE('xTemplateRaw').value;
-        GetE('xTemplateRaw').value = "This tag doesn't need parameters";
+        GetE('xTemplateRaw').value = FCKLang.wikiDlgSpecialNoParamsNeeded || "This tag doesn't need parameters";
         GetE('xTemplateRaw').style.fontStyle = 'italic';
     }
 }
@@ -282,7 +282,9 @@ function LoadSelection() {
 
 function LoadDocumentation(){
 	var tagName = GetE('xSelectTag').value;
-	GetE('xDefinition').innerHTML = (oSpecialTagList) ? oSpecialTagList.getDescByName(tagName) : 'No documentation available';
+	GetE('xDefinition').innerHTML = (oSpecialTagList)
+            ? oSpecialTagList.getDescByName(tagName)
+            : FCKLang.wikiDlgSpecialNoDocuHere || 'No documentation available';
 }
 function LoadFunctionList() {
     var empty = ''
@@ -383,29 +385,29 @@ function Ok()
 <body style="overflow: hidden">
 		<table cellpadding="0" cellspacing="0" border="0" width="100%">
             <tr>
-              <td><span class="label">Tag Type:</span></td>
+              <td><span class="label" fcklang="wikiDlgSpecialType">Tag Type:</span></td>
               <td class="radio">
                 <input type="radio" name="xSelectType" id="xSelectType_t" value="t" onchange="SelectRadioButton('t')"/>
-                Special tags
+                <span fcklang="wikiDlgSpecialTags">Special tags</span>
               </td>
               <td class="radio">
                 <input type="radio" name="xSelectType" id="xSelectType_c" value="c" onchange="SelectRadioButton('c')"/>
-                Constants
+                <span fcklang="wikiDlgSpecialConst">Constants</span>
               </td>
               <td class="radio">
                 <input type="radio" name="xSelectType" id="xSelectType_v" value="v" onchange="SelectRadioButton('v')"/>
-                Date/Time variables
+                <span fcklang="wikiDlgSpecialDatevar">Date/Time variables</span>
               </td>
             </tr>
             <tr>
               <td></td>
               <td class="radio">
                 <input type="radio" name="xSelectType" id="xSelectType_w" value="w" onchange="SelectRadioButton('w')"/>
-                Wiki variables
+                <span fcklang="wikiDlgSpecialWikivar">Wiki variables</span>
               </td>
               <td class="radio">
                 <input type="radio" name="xSelectType" id="xSelectType_p" value="p" onchange="SelectRadioButton('p')"/>
-                Parser function hooks
+                <span fcklang="wikiDlgSpecialFunc">Parser function hooks</span>
               </td>
               <td></td>
             </tr>
@@ -414,7 +416,7 @@ function Ok()
           <table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr>
 				<td style="vertical-align: top; padding-right: 5px; border-right: dotted 1px;">
-					<span class="label">Tag:</span><br/>
+					<span class="label" fcklang="wikiDlgSpecialElement">Tag:</span><br/>
 					<select id="xSelectTag" onchange="LoadDocumentation()" size="14">
 					</select>
 			    </td>
@@ -422,13 +424,13 @@ function Ok()
 			     <table cellpadding="0" cellspacing="0" border="0" width="100%" height="100%">
                    <tr> 
 			         <td style="vertical-align: top;">
-			          <span class="label">Description:</span><br/>
+			          <span class="label" fcklang="wikiDlgSpecialDescr">Description:</span><br/>
 					  <span id="xDefinition"></span>
 				    </td>
 				   </tr>
 				   <tr>
 				     <td style="vertical-align: bottom;">
-				       <span class="label">Parameters:</span><br/>
+				       <span class="label" fcklang="wikiDlgSpecialParams">Parameters:</span><br/>
 					   <textarea id="xTemplateRaw" style="width: 100%; font-family: Monospace"
 						 cols="20" rows="3" wrap="off"></textarea>
 				     </td>
