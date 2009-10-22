@@ -100,6 +100,13 @@ if ( $cegEnableArticleComments ) {
 	$wgArticleCommentDefaults['showurlfield'] = false;
 	
 	include_once($cegIP.'/ArticleComments/ArticleComments.php');
+	
+	###
+	# Add the comment tag to all pages of a specific namespace
+	###
+	$cegArticleCommentsOnNamespace = array(NS_MAIN);
+	$wgHooks['ParserBeforeStrip'][] = 'ArticleComments::addCommentTag';
+	
 }
 # B:RatingBar
 if ( $cegEnableRating ) {
