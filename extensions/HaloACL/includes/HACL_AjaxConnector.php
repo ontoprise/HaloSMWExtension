@@ -2923,6 +2923,9 @@ function getSDRightsPanelContainer($sdId, $sdName, $readOnly=false) {
         <!-- end of add right part -->
 HTML;
     }
+
+    $aclsavedmsg = wfMsg('hacl_createSaveContent_3');
+    
     $html .= <<<HTML
         <div class="haloacl_sd_container_$readOnly" id="SDRightsPanelContainer_$sdId">
         </div>
@@ -2970,7 +2973,7 @@ HTML;
                 var callback2 = function(result){
                     if(result.status == '200'){
 
-                        YAHOO.haloacl.notification.createDialogOk("content","Right","Okay",{
+                        YAHOO.haloacl.notification.createDialogOk("content","Right","$aclsavedmsg",{
                             yes:function(){
                                 }
                         });
