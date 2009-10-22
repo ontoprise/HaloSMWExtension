@@ -369,13 +369,37 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Rudimentary spam protection
      $spampatterns = array(
          '%\\[url=(https?|ftp)://%smi',
-@@ -501,5 +573,5 @@
+@@ -501,5 +573,29 @@
      # We made it this far, leave $isspam alone and give other implementors a chance.
      return true;
  }
 - 
 -//
 \ No newline at end of file
++
++class ArticleComments {
++
++	function addCommentTag( &$parser, &$text, &$strip_state ) {
++		$title = $parser->getTitle();
++		$article = new Article($title);
++
++		if ($article->getContent() != $text) {
++			return true;
++		}
++		else {
++			// check for allowed namespaces
++			global $cegArticleCommentsOnNamespace;
++			if ($article->exists() && array_search( $title->getNamespace(), $cegArticleCommentsOnNamespace ) )
++				//TODO:Don't add tag if it's already in the text!
++				if ( preg_match("%\<comments(.*)\>%iUs", $article->getContent())) {
++					// comments found. do noting.
++				} else {
++					$text .= '<comments />';
++				}
++			return true;
++		}
++	}
++}
 +
 +//</source>
 \ No newline at end of file
