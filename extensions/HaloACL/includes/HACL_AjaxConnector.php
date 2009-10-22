@@ -2483,7 +2483,11 @@ function rightPanelAssignedTab($panelid, $predefine, $readOnly, $preload=false, 
            YAHOO.haloacl.ROtreeInstance$panelid = YAHOO.haloacl.getNewTreeview("treeDivRO_$panelid",'$panelid');
 
             YAHOO.haloacl.labelClickASSIGNED$panelid = function(name,element){
-                element.parentNode.parentNode.remove();
+//                console.log(element);
+//                console.log(element.parentNode.parentNode);
+//                element.parentNode.parentNode.remove();
+                element.parentNode.parentNode.setAttribute("style","display:none");
+
                 YAHOO.haloacl.removeGroupFromGroupArray('$panelid', name);
                 $('ROdatatableDiv_$panelid').innerHTML = "";
                 YAHOO.haloacl.RODatatableInstace$panelid = YAHOO.haloacl.ROuserDataTableV2("ROdatatableDiv_$panelid","$panelid");
