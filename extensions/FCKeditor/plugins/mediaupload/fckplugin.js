@@ -11,11 +11,12 @@ else {
 }
 
 var OpenUploadWindowCommand=function(){};
-OpenUploadWindowCommand.prototype.Execute=function(){ }
+OpenUploadWindowCommand.Execute=function(){ }
 OpenUploadWindowCommand.GetState=function() {
         return FCK_TRISTATE_OFF; //we dont want the button to be toggled
 }
-OpenUploadWindowCommand.Execute=function() {
+if (typeof window.parent.RichMediaPage != 'undefined') {
+    OpenUploadWindowCommand.Execute=function() {
 	var uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=Special:UploadWindow";
 	var article = window.parent.wgTitle;
 	if (window.parent.wgPageName == 'Special:AddData') {
@@ -34,5 +35,6 @@ OpenUploadWindowCommand.Execute=function() {
 	}
 	top.fb.loadAnchor(uri+'&RMUpload[RelatedArticles]='+article+'&wpIgnoreWarning=true', 'width:600 height:660', 'Uploading files');
 	// do stuff here if you want
+    }
 }
 FCKCommands.RegisterCommand( 'MW_MediaUpload', OpenUploadWindowCommand) ;
