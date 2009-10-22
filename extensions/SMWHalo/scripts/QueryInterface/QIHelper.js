@@ -1902,8 +1902,9 @@ handleQueryString : function(args, queryId, pMustShow) {
 
 	for ( var i = 0; i < args.length; i++) {
 		// Category
-		if (args[i].indexOf('Category:') == 0) {
-			var vals = args[i].substring(9).split(/\s*\|\|\s*/);
+		if ( args[i].indexOf( gLanguage.getMessage('CATEGORY')) == 0 ||
+                     args[i].indexOf( 'Category:') == 0 ) {
+			var vals = args[i].substring(args[i].indexOf(':') + 1).split(/\s*\|\|\s*/);
 			this.activeQuery.addCategoryGroup(vals); // add to query
 		}
 		// Instance
@@ -1933,16 +1934,15 @@ handleQueryString : function(args, queryId, pMustShow) {
 				var enumValues = propdef ? propdef.getEnumValues() : [];
 				pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
 						pshow, pmust, isEnum, enumValues); // create
-															// propertyGroup
+										   // propertyGroup
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
 			var paramname = this.propertyTypesList
 					&& this.propertyTypesList.getType(pname) ? this.propertyTypesList
 					.getType(pname)
 					: gLanguage.getMessage('QI_PAGE');
-			var paramvalue = pval == "" ? "*" : pval; // no value is replaced
-														// by "*" which means
-														// all values
+                        // no value is replaced, by "*" which means all values
+			var paramvalue = pval == "" ? "*" : pval;
 			var restriction = '=';
 
 			// Subquery
@@ -1951,15 +1951,9 @@ handleQueryString : function(args, queryId, pMustShow) {
 				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
 				this.insertQuery(paramvalue, queryId, pname);
 				subqueryIds.push(paramvalue);
-				pgroup.addValue(paramname, restriction, paramvalue); // add a
-																		// value
-																		// group
-																		// to
-																		// the
-																		// property
-																		// group
-			} else { // check for restricion (makes sence for numeric
-						// properties)
+                                // add a value group to the property group
+				pgroup.addValue(paramname, restriction, paramvalue);
+			} else { // check for restricion (makes sence for numeric properties)
 				var vals = pval.split(/\s*\|\|\s*/);
 				for ( var j = 0; j < vals.length; j++) {
 					var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
@@ -1968,34 +1962,26 @@ handleQueryString : function(args, queryId, pMustShow) {
 								: op[1];
 						paramvalue = op[2];
 					}
+                                        // add a value group to the property group
 					pgroup.addValue(paramname, restriction,
-							escapeQueryHTML(paramvalue)); // add a value group
-															// to the property
-															// group
+							escapeQueryHTML(paramvalue)); 
 				}
 			}
-			propList.add(pname, pgroup, subqueryIds); // add current property
-														// to property list
-			// sajax_do_call('smwf_qi_QIAccess', ["getPropertyInformation",
-			// escapeQueryHTML(propname)],
-			// this.adaptDialogueToProperty.bind(this));
+			propList.add(pname, pgroup, subqueryIds); // add current property to property list
 		}
 	}
 
 	// if a property must be shown in results only, it may not appear in the
-	// [[...]] part
-	// therfore check now that in the main query we also have all "must show"
+	// [[...]] part but only as |?myprop in the printout
+	// therefore check now that in the main query we also have all "must show"
 	// properties included
-	if (queryId == 0) { // do this only for the main query
-		for ( var i = 0; i < pMustShow.length; i++) { // loop over all
-														// properties to show
-			if (propList.getPgroup(pMustShow[i]) == null) { // property does not
-															// exist yet
+	if (queryId == 0) { // do this only for the main query, subqueries have no printouts
+		for ( var i = 0; i < pMustShow.length; i++) { // loop over all properties to show
+			if (propList.getPgroup(pMustShow[i]) == null) { // property does not exist yet
 				var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i]),
 						2, true, false); // create propertyGroup
 				pgroup.addValue('Page', '=', '*'); // add default values
-				propList.add(pMustShow[i], pgroup, []); // add current property
-														// to property list
+				propList.add(pMustShow[i], pgroup, []); // add current property to property list
 			}
 		}
 	}
@@ -2016,7 +2002,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 applyOptionParams : function(query) {
 	var options = query.split('|');
 	// parameters to show
-    var mustShow = [];
+        var mustShow = [];
 	// get printout format of query
 	var format = "table"; // default format
 	for ( var i = 1; i < options.length; i++) {
@@ -2068,7 +2054,7 @@ applyOptionParams : function(query) {
 	}
 	
 	// and request according format printer parameters
-    this.getSpecialQPParameters(format, callback.bind(this));  
+        this.getSpecialQPParameters(format, callback.bind(this));
 	
 	// return the properties, that must be shown in the query
 	return mustShow;
@@ -2079,7 +2065,7 @@ splitQueryParts : function(ask) {
 	ask = ask.replace(/^\s*\{\{#(ask|sparql):\s*/, '');
 	ask = ask.replace(/\s*\}\}\s*$/, '');
 
-	// store here all queries (sub[0] is the main query
+	// store here all queries (sub[0] is the main query)
 	var sub = [];
 	sub.push(ask);
 	var todo;
