@@ -369,7 +369,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
      # Rudimentary spam protection
      $spampatterns = array(
          '%\\[url=(https?|ftp)://%smi',
-@@ -501,5 +573,29 @@
+@@ -501,5 +573,32 @@
      # We made it this far, leave $isspam alone and give other implementors a chance.
      return true;
  }
@@ -389,13 +389,16 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +		else {
 +			// check for allowed namespaces
 +			global $cegArticleCommentsOnNamespace;
-+			if ($article->exists() && array_search( $title->getNamespace(), $cegArticleCommentsOnNamespace ) )
-+				//TODO:Don't add tag if it's already in the text!
++			if ($article->exists() && $title->canTalk()
++				&& array_search( $title->getNamespace(), $cegArticleCommentsOnNamespace ) !== FALSE 
++				&& $title->getPrefixedText() != 'Main Page') {
++				// Don't add tag if it's already in the text!
 +				if ( preg_match('/<comments( +[^>]*)?\\/>/', $article->getContent())) {
 +					// comments found. do noting.
 +				} else {
 +					$text .= '<comments />';
 +				}
++			}
 +			return true;
 +		}
 +	}
