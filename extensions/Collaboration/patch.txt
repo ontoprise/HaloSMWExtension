@@ -81,7 +81,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +    /*op-patch|BL|2009-10-15|Collaboration|generalImprovements|start*/
 +    // use the functionality of collapsing tables and check existence of array key
      $content = 
-+        '<table style="text-align:left" class="wikitable collapsible collapsed">' .
++        '<table style="text-align:left" class="wikitable collapsible collapsed cetable">' .
 +        '<th>&nbsp;' . wfMsgForContent($ac.'leave-comment-link') . '</th>' .
 +        '<tr><td>' .
          '<div id="commentForm">'.
@@ -153,7 +153,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +            $talkTitle = $wgTitle->getTalkPage();
 +            if ($talkTitle->exists()) {
 +                $talkPage = new Article($talkTitle);
-+                $content .= '<table style="text-align:left" class="wikitable collapsible collapsed">';
++                $content .= '<table style="text-align:left" class="wikitable collapsible collapsed cetable">';
 +                $content .= '<th>&nbsp;'.wfMsgForContent($ac.'show-comments-link').'</th><tr><td><div id="comments_text">';
 +                $talkPage = new Article($talkTitle);
 +
@@ -391,7 +391,7 @@ Index: extensions/Collaboration/ArticleComments/ArticleComments.php
 +			global $cegArticleCommentsOnNamespace;
 +			if ($article->exists() && array_search( $title->getNamespace(), $cegArticleCommentsOnNamespace ) )
 +				//TODO:Don't add tag if it's already in the text!
-+				if ( preg_match("%\<comments(.*)\>%iUs", $article->getContent())) {
++				if ( preg_match('/<comments( +[^>]*)?\\/>/', $article->getContent())) {
 +					// comments found. do noting.
 +				} else {
 +					$text .= '<comments />';
