@@ -660,18 +660,16 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
 
             var result = "<div class='haloacl_usertable_groupsrow_before_tooltip' style='float:left'>";
             for(i=0;i<highlighted.length;i++){
-                if(highlighted[i] != "undefined"){
-                    result += "<span class='groupselected'>";
-                    result+= ""+highlighted[i];
-                    result+="</span>&nbsp;,";
-                }
+                result += "<span class='groupselected'>";
+                if(i != 0)result+=",";
+                result+= ""+highlighted[i];
+                result+="</span>&nbsp;";
             }
             for(i=0;i<nonHighlighted.length;i++){
-                if(nonHighlighted[i] != "undefined"){
-                    result +="<span class='groupunselected'>";
-                    result+= ""+nonHighlighted[i];
-                    result+="</span>&nbsp;,";
-                }
+                result +="<span class='groupunselected'>";
+                if(i != 0 || highlighted.length > 0)result+=",";
+                result+= ""+nonHighlighted[i];
+                result+="</span>&nbsp;";
             }
             result +="</div>";
 
@@ -710,7 +708,7 @@ YAHOO.haloacl.highlightAlreadySelectedUsersInRODatatable = function(panelid){
 
 
     });
-    //YAHOO.haloacl.debug = false;
+//YAHOO.haloacl.debug = false;
  
 };
 

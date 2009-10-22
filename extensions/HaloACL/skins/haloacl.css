@@ -289,7 +289,8 @@ abbr,acronym { border:0;
 .haloacl_tab_section_content_row_content_element{
     float:left;
     display:inline;
-    width:120px;
+    /* width was 120px */
+    width:150px;
 
 }
 
