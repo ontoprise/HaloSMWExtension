@@ -27,8 +27,10 @@
 		<precedes ext="smw" />
 
 		<new>
-			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" />
-			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" />
+			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" ext="MW" from="1130" to="1139"/>
+			<patch file="extensions/HaloACL/patch_for_MW_1.15.1.txt" ext="MW" from="1150" to="1159"/>
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" ext="SMW" from="142" to="142" />
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.3.txt" ext="SMW" from="143" to="143" />
 			<require name="smwhalo"
 				file="extensions/HaloACL/includes/HACL_Initialize.php" />
 			<php name="MasterTemplate">
@@ -42,8 +44,10 @@
 			<script file="extensions/HaloACL/maintenance/HACL_Setup.php" />
 		</new>
 		<uninstall>
-			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" />
-			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" />
+			<patch file="extensions/HaloACL/patch_for_MW_1.13.2.txt" ext="MW" from="1130" to="1139"/>
+			<patch file="extensions/HaloACL/patch_for_MW_1.15.1.txt" ext="MW" from="1150" to="1159"/>
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.2.txt" ext="SMW" from="142" to="142" />
+			<patch file="extensions/HaloACL/patch_for_SMW_1.4.3.txt" ext="SMW" from="143" to="143" />
 			<script file="extensions/SMWHalo/maintenance/HACL_Setup.php"
 				params="--delete" />
 		</uninstall>
