@@ -28,6 +28,14 @@
  *	http://meta.wikimedia.org/wiki/Meta:Sandbox
  */
 
+// if an option is not enabled then we show a transparente "toolbar" button
+// that does nothing.
+function EmptyTbButton() {
+    this.GetState = function() { return FCK_TRISTATE_OFF; }
+    this.Execute = function() {}
+}
+var emptyToolbarOption = new EmptyTbButton();
+
 // Rename the "Source" buttom to "Wikitext".
 FCKToolbarItems.RegisterItem( 'Source', new FCKToolbarButton( 'Source', 'Wikitext', null, null, true, true, 1 ) ) ;
 
@@ -48,9 +56,20 @@ tbButton = new FCKToolbarButton( 'MW_Special', 'Special Tag', 'Insert/Edit Speci
 tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_special.gif' ;
 FCKToolbarItems.RegisterItem( 'MW_Special', tbButton ) ;
 
-var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface', null, true ) ;
-tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
-FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
+// if Advanced Annotation is missing, SMWHalo seems not to be installed.
+if (typeof window.parent.AdvancedAnnotation != "undefined") {
+    var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', 'QueryInterface', 'Query Interface', null, true ) ;
+    tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
+    FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
+    var outerHeight = window.outerHeight == undefined ? 850 : window.outerHeight;
+    FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'Query Interface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, outerHeight * 0.7 ) ) ;
+}
+else {
+    var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', ' ', ' ');
+    tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_blank.gif' ;
+    FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
+    FCKCommands.RegisterCommand( 'SMW_QueryInterface', emptyToolbarOption );
+}
 
 // Override some dialogs.
 FCKCommands.RegisterCommand( 'MW_Template', new FCKDialogCommand( 'MW_Template', 'Template Properties', FCKConfig.PluginsPath + 'mediawiki/dialogs/template.html', 970, 600 ) ) ;
@@ -60,8 +79,6 @@ FCKCommands.RegisterCommand( 'MW_Special', new FCKDialogCommand( 'MW_Special', '
 FCKCommands.RegisterCommand( 'Link', new FCKDialogCommand( 'Link', FCKLang.DlgLnkWindowTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/link.html', 400, 250 ) ) ;
 FCKCommands.RegisterCommand( 'Image', new FCKDialogCommand( 'Image', FCKLang.DlgImgTitle, FCKConfig.PluginsPath + 'mediawiki/dialogs/image.html', 450, 300 ) ) ;
 
-var outerHeight = window.outerHeight == undefined ? 850 : window.outerHeight;
-FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'Query Interface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, outerHeight * 0.7 ) ) ;
 
 // MediaWiki Wikitext Data Processor implementation.
 FCK.DataProcessor =
@@ -2075,21 +2092,41 @@ FCKeditInterface.prototype = {
 
 };
 
+var gEditInterface;
+if (typeof window.parent.AdvancedAnnotation != "undefined") {
 
-var gEditInterface = new FCKeditInterface();
+    gEditInterface = new FCKeditInterface();
     window.parent.gEditInterface = gEditInterface;
 
-var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semantic Toolbar', null, true) ;
-tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_semtoolbar.png' ;
-FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
+    var tbButton = new FCKToolbarButton( 'SMW_Annotate', 'Semantic Toolbar', 'Semantic Toolbar', null, true) ;
+    tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_semtoolbar.png' ;
+    FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
 
-FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
+    FCKCommands.RegisterCommand( 'SMW_Annotate', fckSemanticToolbar ) ;
+}
+else {
+    var tbButton = new FCKToolbarButton( 'SMW_Annotate', ' ', ' ');
+    tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_blank.gif' ;
+    FCKToolbarItems.RegisterItem( 'SMW_Annotate', tbButton );
+
+    FCKCommands.RegisterCommand( 'SMW_Annotate', emptyToolbarOption ) ;
+}
 
 // implementation for the Semantic toolbar END here
 
-// add button for adding a web service
-var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', 'Add Web Service call', 'Add web service call', null, true) ;
-uwsButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_webservice.gif' ;
-FCKToolbarItems.RegisterItem( 'SMW_UseWebService', uwsButton );
+if (typeof window.parent.useWSSpecial != "undefined") {
+    // add button for adding a web service
+    var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', 'Add Web Service call', 'Add web service call', null, true) ;
+    uwsButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_webservice.gif' ;
+    FCKToolbarItems.RegisterItem( 'SMW_UseWebService', uwsButton );
 
-FCKCommands.RegisterCommand( 'SMW_UseWebService', new FCKDialogCommand( 'SMW_UseWebService', 'UseWebService', FCKConfig.PluginsPath + 'mediawiki/dialogs/usewebservice.php', 1000, 600 ) ) ;
+    FCKCommands.RegisterCommand( 'SMW_UseWebService', new FCKDialogCommand( 'SMW_UseWebService', 'UseWebService', FCKConfig.PluginsPath + 'mediawiki/dialogs/usewebservice.php', 1000, 600 ) ) ;
+}
+else {
+    var uwsButton = new FCKToolbarButton( 'SMW_UseWebService', ' ', ' ');
+    uwsButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_blank.gif' ;
+    FCKToolbarItems.RegisterItem( 'SMW_UseWebService', uwsButton );
+
+    FCKCommands.RegisterCommand( 'SMW_UseWebService', emptyToolbarOption );
+
+}
