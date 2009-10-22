@@ -1,6 +1,6 @@
-[[Semantic MediaWiki+ 1.4]]
+[[SMWHalo 1.4.6]]
 
-Install instructions for the latest version of Semantic MediaWiki+ (SMW+) are also online:
+Install instructions for the latest version of SMWHalo are also online:
 
  http://smwforum.ontoprise.com/smwforum/index.php/Manual_SMW%2B_Installation
 
@@ -35,8 +35,8 @@ the authors.
 
 == Requirements ==
 
-* MediaWiki 1.13 
-* Semantic MediaWiki 1.4.x
+* MediaWiki 1.15.x
+* Semantic MediaWiki 1.4.3
 * PHP 5.x or greater installed and working
 * MySQL >= 4.0.14 (version required by MediaWiki)
 
@@ -45,7 +45,7 @@ the authors.
 If you upgrade an existing installation of SMW+, also read the
 remarks in the section "Notes on Upgrading" below.
 
-(1) Extract the archive smwplus-1.4.zip to obtain the directory "extensions" 
+(1) Extract the archive smwhalo-1.4.5.zip to obtain the directory "extensions" 
     which contains all relevant files. Copy this directory to the root directory of your MediaWiki
     installation or extract/download it to this location.
 
@@ -61,33 +61,21 @@ remarks in the section "Notes on Upgrading" below.
       
       please change:
        
-      $wgDefaultSkin='ontoskin';
+      $wgDefaultSkin='ontoskin3';
       
 (3) Open a command-line interface and navigate to the directory $IP/extensions/SemanticMediaWiki/maintenance/.
     Run the script SMW_setup.php to initialize the database tables.
     
-(4) OPTIONAL: If you want to use the 'ExportOntologyBot' you have to create a directory
+(4) Install the patch file. It's an Eclipse patch file which can be installed 
+    using the tool patch.php from the deploy framework (smwhalo-deploy-1.0) which
+    itself uses GNU patch.
+    
+       php patch.php -p <patch-file> -d <mw-dir> --onlypatch
+    
+(5) OPTIONAL: If you want to use the 'ExportOntologyBot' you have to create a directory
     'wikiexport' in the directory $IP/extensions/SMWHalo/. The directory must have write access for
     the user which runs Apache (or simply for all if possible).
     
-(5) OPTIONAL: If you want to be able to rename categories, you have to remove (or comment out)
-    the following code fragment in $IP/includes/Namespaces.php (located in function isMovable):
-
-    || $index == NS_CATEGORY
-
-    The line should then look something like:
-
-    return !( $index < NS_MAIN || ($index == NS_IMAGE && !$wgAllowImageMoving) /*|| $index == NS_CATEGORY */);
-
-(6) OPTIONAL: If you are also installing the extension package for SMW+, please refer to
-    the install file delivered with the extension package zip file.
-
-=== Installing Help ===
-
-To install the online help, you must run the PHP script SMW_setup.php, which is located in the directory 
-$IP/extensions/SMWHalo/maintenance/. Simply execute the script with the --helppages option.
-
-	php SMW_setup.php --helppages
 
 This will install all help pages into the Help namespace.
 
@@ -130,7 +118,7 @@ http://smwforum.ontoprise.com/smwforum/index.php/Customizing_SMW%2B
 
 == Notes on Upgrading ==
 
-=== Upgrading from SMW+ 1.0, SMW+ 1.1, SMW+ 1.2 and SMW+ 1.3 ===
+=== Upgrading from earlier versions ===
 
 In order to create new tables and update old ones, open a command-line interface and navigate to 
 the directory $IP/extensions/SemanticMediaWiki/maintenance/. Then run the script SMW_setup.php 
