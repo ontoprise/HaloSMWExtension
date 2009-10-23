@@ -11,12 +11,12 @@
             </fileset>
         </copy>
          <copy todir="bin/zip/extensions/SemanticRules/languages">
-            <fileset dir="../includes/">
+            <fileset dir="../languages/">
                 <exclude name="**/.svn, **/CVS" />
             </fileset>
         </copy>
          <copy todir="bin/zip/extensions/SemanticRules/maintenance">
-            <fileset dir="../includes/">
+            <fileset dir="../maintenance/">
                 <exclude name="**/.svn, **/CVS" />
             </fileset>
         </copy>
@@ -37,7 +37,7 @@
         </copy>
         
         <copy todir="bin/zip/extensions/SemanticRules/">
-            <fileset file="../">
+            <fileset dir="../">
                 <include name="COPYING" />
                 <include name="INSTALL" />
            </fileset>
