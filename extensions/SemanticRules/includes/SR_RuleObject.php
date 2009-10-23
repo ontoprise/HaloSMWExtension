@@ -239,7 +239,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		// attribute/relation
 		$tmp = "";		 	
 		for ($i = 0; $i < sizeof($args); $i++) {
-			$tmp .= $args[$i]->getName();		
+			$tmp .= ucfirst($args[$i]->getName());		
 			if ($i == 0) {				
 				$tmp .= "[prop#";
 			} else if ($i == 1) {
@@ -266,7 +266,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 			if ($i > 0) {
 				$tmp .= ":cat#";
 			}
-			$tmp .= $args[$i]->getName();
+			$tmp .= ucfirst($args[$i]->getName());
 		}
 		return $tmp;
 	}
