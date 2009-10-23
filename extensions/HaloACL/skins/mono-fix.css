@@ -1,5 +1,16 @@
 
+
+#createStdAclTab a, #createTmpAclTab a, #createQuickAclTab a{
+    height:16px!important;
+}
+#createStdAclTab a em, #createTmpAclTab a em, #createQuickAclTab a em{
+    height:16px!important;
+}
+
 .yui-skin-sam .yui-navset .yui-nav a em, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em{
+    height:14px!important;
+}
+.yui-skin-sam .yui-navset .yui-nav a em, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected a em{
     height:14px!important;
 }
 .haloacl_tab_section_header_count{
@@ -10,4 +21,8 @@
 }
 .haloacl_panel_nameDescr{
     padding-top:0px;
+}
+#haloacl_manageuser_contentmenu{
+    height:auto!important;
+    float:left!important;
 }
