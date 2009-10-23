@@ -112,5 +112,42 @@
          </sequential>
     </macrodef>
 
+    <macrodef name="execQuery">
+      	<attribute name="query" />
+        <attribute name="printout" />
+    	<attribute name="description"/>
+        <sequential>
+            <invoke
+                url="${wgServer}${wgScript}?title=Special:Ask&amp;po=@{printout}&amp;q=@{query}&amp;p=format%3Dtable"
+            	description="@{description}"
+            />
+         </sequential>
+    </macrodef>
+
+    <macrodef name="createPage">
+      	<attribute name="title" />
+        <attribute name="text" />
+        <sequential>
+            <invoke url="${wgServer}${wgScript}?title=@{title}&amp;action=edit"/>
+            <setInputField htmlId="wpTextbox1" value="@{text}" />
+            <clickButton htmlId="wpSave" />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="editPage">
+      	<attribute name="title" />
+        <attribute name="text" />
+        <sequential>
+            <invoke url="${wgServer}${wgScript}?title=@{title}&amp;action=edit"/>
+            <storeXPath
+                description="Get existing content"
+                xpath="//textarea[@id='wpTextbox1']/."
+                property="oldContent"
+            />
+            <setInputField htmlId="wpTextbox1" value="#{oldContent} @{text}" />
+            <clickButton htmlId="wpSave" />
+        </sequential>
+    </macrodef>
+
 
 </project>
