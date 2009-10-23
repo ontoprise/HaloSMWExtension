@@ -46,6 +46,7 @@ of the tools click on this link: $1.',
     'smw_gard_import_choosefile' => 'The following $1 files are available.',
     'smw_gard_import_addfiles' => 'Add $2 files by using $1.',
     'smw_gard_import_nofiles' => 'No files of type $1 are available',
+    'smw_gard_ontology_id' => 'Ontology ID',
 
     /* Messages for Gardening Bot: ConsistencyBot */
     'smw_gard_consistency_docu'  => 'The consistency bot checks for cycles in the taxonomy and properties without domain and range. It also checks the correct usage of properties according to domain and range information as well as cardinality errors.',
