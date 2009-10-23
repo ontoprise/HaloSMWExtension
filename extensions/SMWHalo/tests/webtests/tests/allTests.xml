@@ -19,5 +19,6 @@
 		<ant antfile="queryinterface3.xml"/>
 		<ant antfile="queryinterface4.xml"/>
 		<ant antfile="queryinterface5.xml"/>
+                <ant antfile="askqueries.xml"/>
 	</target>
 </project>
