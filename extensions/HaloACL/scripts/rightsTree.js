@@ -42,6 +42,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      * @type boolean
      */
     checked: false,
+    b2bChecked :false,
 
     /**
      * checkState
@@ -71,10 +72,10 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
      * @type string
      * @default "TextNode"
      */
-    _type: "CustomNode",
+    _type: "ACLNode",
 
     customNodeParentChange: function() {
-        //this.updateParent();
+    //this.updateParent();
     },
 
     // function called from constructor
@@ -84,8 +85,9 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-            // otherwise the parent needs to be updated only if its checkstate
-            // needs to change from fully selected to partially selected
+            this.b2bChecked = true;
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -153,6 +155,11 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
             if (node.checkState === 0) {
                 node.check();
+                if(YAHOO.haloacl.checkedInRightstree == null){
+                    YAHOO.haloacl.checkedInRightstree = new Array();
+                }
+                YAHOO.haloacl.checkedInRightstree.push(node.label);
+
             } else {
                 node.uncheck();
             }
@@ -229,18 +236,18 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) {
         this.checkState = state;
         this.checked = (state > 0);
-        //this.tree.clickedTreeNodes[this.groupId] = this.checked;
-        // this.tree.clickedHandler.add(this.groupId);
-        //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-        /*
+    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+    // this.tree.clickedHandler.add(this.groupId);
+    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+    /*
        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
         }
          */
-        // update usertable
-        // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
+    // update usertable
+    // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
 
     },
 
@@ -267,7 +274,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     /**
@@ -284,7 +291,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     setTreeType: function(newTreeType) {
@@ -296,6 +303,9 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
     getContentHtml: function() {
         var sb = [];
         var localLabel = this.label;
+        if(this.b2bChecked){
+            this.check();
+        }
 
         if (this.treeType=="readOnly") {
         
@@ -372,7 +382,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
             });
 
 
-            /*
+        /*
 
             sb[sb.length] = '<td><span';
             sb[sb.length] = ' id="' + this.labelElId + '"';
@@ -462,7 +472,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     tt1:YAHOO.widget.Tooltip,
 
     customNodeParentChange: function() {
-        //this.updateParent();
+    //this.updateParent();
     },
 
     // function called from constructor
@@ -472,8 +482,8 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
-            // otherwise the parent needs to be updated only if its checkstate
-            // needs to change from fully selected to partially selected
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
             this.updateParent();
         }
@@ -618,10 +628,10 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
     setCheckState: function(state) {
         this.checkState = state;
         this.checked = (state > 0);
-        //this.tree.clickedTreeNodes[this.groupId] = this.checked;
-        // this.tree.clickedHandler.add(this.groupId);
-        //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
-        /*        if(this.checked){
+    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+    // this.tree.clickedHandler.add(this.groupId);
+    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+    /*        if(this.checked){
             YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
         }else{
             YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
@@ -654,7 +664,7 @@ YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
         }
          */
         this.updateCheckHtml();
-        //this.updateParent();
+    //this.updateParent();
     },
 
     /**
@@ -872,8 +882,13 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
         var element = data[i];
 
         if (!element.name) element.name = gHACLLanguage.getMessage('NoName');
-        var tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
 
+        var tmpNode;
+        if(YAHOO.haloacl.checkedInRightstree && YAHOO.haloacl.checkedInRightstree.indexOf(element.name) != -1){
+            tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false,true);
+        }else{
+            tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false);
+        }
         tmpNode.setGroupId(element.id);
         
         var treetype = tmpNode.tree.type;
@@ -889,10 +904,10 @@ YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
                 tmpNode2.title = element2.name;
                 tmpNode2.setTreeType(treetype);
                 tmpNode2.setGroupId(element2.id);
-            };
+            }
         }
 
-    };
+    }
 
     if(!rightsExisting){
         new YAHOO.widget.TextNode("no ACLs available", parentNode,false);
@@ -924,7 +939,7 @@ YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
             document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
         }
 
-        /*
+    /*
         if (n.checkState > 0) {
             var tmpNode = new YAHOO.widget.ACLNode(n.label, rwTree.getRoot(),false);
             tmpNode.setCheckState(n.checkState);
@@ -1069,8 +1084,8 @@ YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
         }
 
         if (n.hasChildren()) {
-            // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
-        }
+    // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
+    }
     }
 
     return checkedNodes;

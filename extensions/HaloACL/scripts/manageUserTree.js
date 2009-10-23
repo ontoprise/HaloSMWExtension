@@ -48,6 +48,8 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     checkState: 0,
 
+    b2bChecked:false,
+
     /**
      * id of contained acl group
      * @type int
@@ -89,6 +91,7 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
         // the parent's display state
         if (checked && checked === true) {
             this.check();
+            this.b2bChecked = true;
         // otherwise the parent needs to be updated only if its checkstate
         // needs to change from fully selected to partially selected
         } else if (this.parent && 2 === this.parent.checkState) {
@@ -270,6 +273,10 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
      */
     check: function() {
         this.setCheckState(2);
+        if(YAHOO.haloacl.checkedInGroupstree == null){
+            YAHOO.haloacl.checkedInGroupstree = new Array();
+        }
+        YAHOO.haloacl.checkedInGroupstree.push(this.label);
         /*
         for (var i=0, l=this.children.length; i<l; i=i+1) {
             var c = this.children[i];
@@ -307,6 +314,9 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
     // Overrides YAHOO.widget.TextNode
     getContentHtml: function() {                                                                                                                                           
         var sb = [];
+        if(this.b2bChecked){
+            this.check();
+        }
 
 
         sb[sb.length] = '<td><span';
@@ -454,7 +464,12 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
             }
         }catch(e){}
 
-        var tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
+        var tmpNode;
+        if(YAHOO.haloacl.checkedInGroupstree && YAHOO.haloacl.checkedInGroupstree.indexOf(element.name) != -1){
+            tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false,true);
+        }else{
+            tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
+        }
         tmpNode.setGroupId(element.name);
         tmpNode.setInformation(element.description);
 

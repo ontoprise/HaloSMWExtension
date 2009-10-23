@@ -341,6 +341,11 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
  *
  */
 YAHOO.haloacl.tabDataConnect = function() {
+
+    // resetting checked nodes
+    YAHOO.haloacl.checkedInRightstree = null;
+    YAHOO.haloacl.checkedInGroupstree = null;
+
     var tab = this;
 
     var querystring = "rs="+tab.get('dataSrc');
@@ -945,7 +950,7 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     //this.destroy();
 
     }
-    myPopup.subscribe("hide", popupClose);
+    //myPopup.subscribe("hide", popupClose);
 
     myPopup.setHeader('<div class="haloacl_infobutton"></div><span class="popup_title">'+'ACL:'+label+"</span>");
     myPopup.setBody('<div id="popup_content_'+id+'">');

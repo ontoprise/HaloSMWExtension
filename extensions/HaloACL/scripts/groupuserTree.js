@@ -374,7 +374,7 @@ YAHOO.extend(YAHOO.widget.CustomNode, YAHOO.widget.TextNode, {
             sb[sb.length] = ' id="' + this.getCheckElId() + '"';
             sb[sb.length] = ' class="' + this.getCheckStyle() + '-ro"';
             sb[sb.length] = '>';
-            sb[sb.length] = '<div id="deletebutton_'+this.panelid+'_'+this.label+'" class="ygtvspacer" onClick="'+this.tree.labelClickAction+'(\''+this.label+'\',this)"></div></td>';
+            sb[sb.length] = '<div id="deletebutton_'+this.panelid+'_'+this.label+'" class="ygtvspacer" onClick="'+this.tree.labelClickAction+'(\''+this.label+'\',this);">&nbsp;</div></td>';
             YAHOO.haloacl.addTooltip('tooltip_deletebutton_'+this.panelid+'_'+this.label+'','deletebutton_'+this.panelid+'_'+this.label,"Click to remove Group from assigned Groups");
 
 
