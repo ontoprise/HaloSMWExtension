@@ -151,13 +151,18 @@ abbr,acronym { border:0;
     float:left;
     height:24px;
 }
-#manageaclmainTab .yui-nav li a em,#haloaclsubView .yui-nav li a em{
+#createStdAclTab a em, #createTmpAclTab a em, #createQuickAclTab a em,#createUserAclTab a em{
     padding-top:4px!important;
 }
-#manageaclmainTab .yui-nav li.selected a em,#haloaclsubView .yui-nav li.selected a em{
-    padding-top:5px!important;
+/*
+#manageaclmainTab .yui-nav li a em,#haloaclsubView .yui-nav li a em{
+    padding-top:3px;
 }
 
+#manageaclmainTab .yui-nav li.selected a em,#haloaclsubView .yui-nav li.selected a em{
+    padding-top:5px;
+}
+*/
 .haloacl_rightPanelTab a em{
     padding-top:3px!important;
 }
