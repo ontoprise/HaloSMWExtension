@@ -27,13 +27,16 @@ class PCPServer extends PCPAny{
 
 	protected function setCookies(PCPUserCredentials $userCredentials = NULL){
 		global $wgUser;
-		if ( !isset($wgUser->mName) || !$wgUser->mName){
+		if ( !isset($wgUser->mId) || !$wgUser->mId){
 			if ($this->usedUC->lgToken == NULL){
 				$this->usedUC = $userCredentials;
 			}
-
+			
 			if(!$this->cookiesSet){
 				// workaround: setting cookies internally
+				global $wgCookiePrefix;
+				$_COOKIE["{$wgCookiePrefix}UserID"] = $this->usedUC->id; 
+				
 				$_SESSION['wsUserID'] = $this->usedUC->id;
 				$_SESSION['wsUserName'] = $this->usedUC->un;
 				$_SESSION['wsToken'] = $this->usedUC->lgToken;
@@ -64,16 +67,17 @@ class PCPServer extends PCPAny{
 		$__api = new ApiMain($__request);
 		$__api->execute();
 		$__result =& $__api->GetResultData();
-
+		
 		if ($__result['login']['result']!=="Success"){
 			return $__result;
 		}else{
 			$userCredentials->id = $__result['login']['lguserid'];
 			$userCredentials->pwd = ''; // remove the password
 			$userCredentials->lgToken = $__result['login']['lgtoken'];
-
+			
 			$this->setCookies($userCredentials);
 		}
+		$this->usedUC = $userCredentials;
 		return $this->usedUC;
 	}
 
@@ -89,8 +93,9 @@ class PCPServer extends PCPAny{
 
 	public function getEditToken(PCPUserCredentials $userCredentials=NULL, $title=NULL){
 		$this->setCookies($userCredentials);
-
-		if($this->usedUC->editToken !== NULL){
+		
+		if($this->usedUC->editToken !== NULL && 
+				$this->usedUC->editToken != "+\\"){
 			return $this->usedUC->editToken;
 		}else{
 			if(!isset($title)){
@@ -108,7 +113,7 @@ class PCPServer extends PCPAny{
 			$__api = new ApiMain($__request);
 			$__api->execute();
 			$__result =& $__api->GetResultData();
-
+			
 			if (!isset($__result['query']['pages'])){
 				// error handling
 				return NULL;
@@ -176,8 +181,7 @@ class PCPServer extends PCPAny{
 
 		$__request = new FauxRequest(
 		PCPUtil::replaceInHash($this->queryReadPage,
-		array($title))
-		);
+				array($title)));
 
 		$__api = new ApiMain($__request, true);
 		$__api->execute();
@@ -244,7 +248,8 @@ class PCPServer extends PCPAny{
 			// trigger an error?
 			return false;
 		}
-		$this->getEditToken($userCredentials, $title);		
+		$this->getEditToken($userCredentials, $title);
+				
 		// if md5 is not set, do not use it
 		if( $md5_hash !== NULL){
 			if ($basetimestamp == NULL)
