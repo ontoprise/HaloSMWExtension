@@ -69,7 +69,14 @@ GeneralBrowserTools.getCookie = function (name) {
  
  GeneralBrowserTools.getCookieObject = function(key) {
  	var json = GeneralBrowserTools.getCookie(key);
- 	return json != null ? json.evalJSON(false) : null;
+        var res;
+        try {
+            res = json.evalJSON(false);
+        }
+        catch (e) {
+            return null;
+        }
+ 	return res;
  }
   
 GeneralBrowserTools.selectAllCheckBoxes = function(formid) {
