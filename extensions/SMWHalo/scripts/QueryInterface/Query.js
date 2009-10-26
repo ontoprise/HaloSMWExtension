@@ -159,7 +159,10 @@ Query.prototype = {
 			if(this.properties[i].isShown()){ // "Show in results" checked?
 				asktext += "[[" + this.properties[i].getName() + "::*]]"; // Display statement
 			}
-			if(this.properties[i].mustBeSet()){
+                        // add this only if there is no special value asked for
+			if(this.properties[i].mustBeSet() &&
+                           this.properties[i].getValues().length == 1 &&
+                           this.properties[i].getValues()[0][2] == '*') {
 				asktext += "[[" + this.properties[i].getName() + "::+]]";
 			}
 			
@@ -230,7 +233,10 @@ Query.prototype = {
 			if(this.properties[i].isShown()){ // "Show in results" checked?
 				displayStatements.push(this.properties[i].getName().unescapeHTML());
 			}
-			if(this.properties[i].mustBeSet()){
+                        // add this only if there is no special value asked for
+			if(this.properties[i].mustBeSet() && 
+                           this.properties[i].getValues().length == 1 &&
+                           this.properties[i].getValues()[0][2] == '*') {
 				asktext += "[[" + this.properties[i].getName().unescapeHTML() + "::+]]";
 			}
 			if(this.properties[i].getArity() > 2){ // always special treatment for arity > 2
