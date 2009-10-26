@@ -1795,7 +1795,7 @@ QIHelper.prototype = {
 		if (ask.replace(/^\s+/, '').replace(/\s+$/, '').length == 0)
 			return;
         
-        // check triplestore switch if it comes from sparql parser function			
+                // check triplestore switch if it comes from sparql parser function
 		if (ask.indexOf('#sparql:') != -1) {
 			var triplestoreSwitch = $('usetriplestore');
 			if (triplestoreSwitch) triplestoreSwitch.checked = true;
@@ -1928,7 +1928,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 				// and we check the params
 				var pshow = (queryId == 0) ? pMustShow.inArray(pname) : false;
 				// must be set?
-				var pmust = args.inArray('[[' + pname + '::+]]');
+				var pmust = args.inArray(pname + '::+');
 				var arity = propdef ? propdef.getArity() : 2;
 				var isEnum = propdef ? propdef.isEnumeration() : false;
 				var enumValues = propdef ? propdef.getEnumValues() : [];
@@ -1937,15 +1937,13 @@ handleQueryString : function(args, queryId, pMustShow) {
 										   // propertyGroup
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
-			var paramname = this.propertyTypesList
-					&& this.propertyTypesList.getType(pname) ? this.propertyTypesList
-					.getType(pname)
-					: gLanguage.getMessage('QI_PAGE');
-                        // no value is replaced, by "*" which means all values
-			var paramvalue = pval == "" ? "*" : pval;
+			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname)
+                            ? this.propertyTypesList.getType(pname)
+                            : gLanguage.getMessage('QI_PAGE');
+			var paramvalue; // initialize param value, the actual value is assigned below
 			var restriction = '=';
 
-			// Subquery
+			// Check if the value contains a Subquery
 			if (pval.match(/___q\d+q___/)) {
 				paramname = "subquery";
 				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
@@ -1953,15 +1951,38 @@ handleQueryString : function(args, queryId, pMustShow) {
 				subqueryIds.push(paramvalue);
                                 // add a value group to the property group
 				pgroup.addValue(paramname, restriction, paramvalue);
-			} else { // check for restricion (makes sence for numeric properties)
+			} else { // no subquery contained, proceed normaly
+
+                                // if the value is + then the property is a "must have a value"
+                                // if this is the only "value" for this property, then set it with
+                                // page/type = *. Otherwise the value is explicitly set in another
+                                // run of the loop, so skip this + value
+                                var skipMustShow = false;
+                                if (pval == "+") {
+                                    for (var k = 0; k < args.length; k++) {
+                                        // check if poperty exists again in query but with other value
+                                        if (args[k].indexOf(pname) != -1 && args[k] != pname + '::+')
+                                            skipMustShow = true;
+                                    }
+                                }
+                                if (skipMustShow) continue;
+                                
+                                // split values by || "or" conjunction
 				var vals = pval.split(/\s*\|\|\s*/);
 				for ( var j = 0; j < vals.length; j++) {
+                                        // check for restricion (makes sence for numeric properties)
 					var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
 					if (op[1].length > 0) {
 						restriction = op[1].indexOf('=') == -1 ? op[1] + '='
 								: op[1];
 						paramvalue = op[2];
 					}
+                                        else
+                                            paramvalue = vals[j];
+                                        // no value or '+' (must set) is replaced, by "*" which means all values
+                                        if (paramvalue == "" || paramvalue == '+') paramvalue = "*";
+                                        // if j > 0 conjunction: page/type = val1 'or' valX
+                                        if (j > 0) paramname = gLanguage.getMessage('QI_OR');
                                         // add a value group to the property group
 					pgroup.addValue(paramname, restriction,
 							escapeQueryHTML(paramvalue)); 
