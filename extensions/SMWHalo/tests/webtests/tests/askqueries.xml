@@ -9,6 +9,7 @@
         <webtest name="some ask queries">
             <enableJavaScript description="Disable javascript to avoid bugs" enable="false"/>
 
+            <!-- ask with additional printout -->
             <execQuery query="[[Category:City]]" printout="" description="ask for all cities"/>
             <verifyXPath
                 description=""
@@ -23,18 +24,11 @@
                 text="USA"
             />
 
+            <!-- ask after page has been moved -->
             <createPage title="Property:Has_phone_number" text="[[has type::Type:string]]" />
-            <createPage title="Property:Has_phone_number1" text="[[has type::Type:string]]" />
-            <createPage title="Property:Has_phone_number2" text="[[has type::Type:string]]" />
-            <createPage title="Property:Has_mobile_number" text="[[has type::Type:string]]" />
-            <createPage title="Property:Has_mobile_number1" text="[[has type::Type:string]]" />
             <createPage title="Property:Has_private_number" text="[[has type::Type:string]]" />
             <createPage title="Property:Has_secret_number" text="[[has type::Type:string]]" />
             <createPage title="Britney_Spears" text="Phone number: [[has phone number::1111111]].
-               Phone number1: [[has phone number1::222222]].
-               Phone number2: [[has phone number2::3333333]].
-               Mobile Number: [[has mobile number::4444444]].
-               Mobile Number 1: [[has mobile number1::5555555]].
                Secret Number: [[has secret number::1234567]].
                Private Number: [[has private number::99999999]]."/>
 
@@ -73,6 +67,7 @@
                 text="Christina Aguilera"
             />
 
+            <!-- ask with categories and subcategories -->
             <editPage title="Christina_Aguilera" text="[[Category:Man]]" />
 
             <execQuery
@@ -84,6 +79,37 @@
                 description=""
                 xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
                 text="Christina Aguilera"
+            />
+
+            <!-- ask with subproperty -->
+            <createPage title="Property:Is_parent_of" text="[[has type::Type:Page]]" />
+            <createPage
+                title="Property:Is_father_of"
+                text="[[subproperty of::Property:is parent of]] [[has type::Type:Page]]"
+            />
+            <createPage
+                title="Son"
+                text="This is Jonny, the sunny boy. [[Category:Person]]"
+            />
+            <createPage
+                title="Daughter"
+                text="This is Emy, the little girl. [[Category:Person]]"
+            />
+
+            <createPage
+                title="Father"
+                text="The father is father of [[is father of::daughter]]
+                      and is father of [[is father of::son]]. [[Category:Person]]"
+            />
+            <execQuery
+                query="[[is parent of::Son]]"
+                printout=""
+                description="check if sub property instance is found"
+            />
+            <verifyXPath
+                description=""
+                xpath="//table[@id='querytable0']/tbody/tr[2]/td/a"
+                text="Father"
             />
 
         </webtest>
