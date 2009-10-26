@@ -2001,7 +2001,7 @@ handleQueryString : function(args, queryId, pMustShow) {
 			if (propList.getPgroup(pMustShow[i]) == null) { // property does not exist yet
 				var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i]),
 						2, true, false); // create propertyGroup
-				pgroup.addValue('Page', '=', '*'); // add default values
+				pgroup.addValue(gLanguage.getMessage('QI_PAGE'), '=', '*'); // add default values
 				propList.add(pMustShow[i], pgroup, []); // add current property to property list
 			}
 		}
