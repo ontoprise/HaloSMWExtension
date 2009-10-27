@@ -168,7 +168,7 @@ YAHOO.haloacl.toolbar_initToolbar = function(){
  */
 YAHOO.haloacl.toolbar_updateToolbar = function(){
 	var selection = $('haloacl_toolbar_pagestate');
-	var state = selection[selection.selectedIndex].text;
+	var state = selection[selection.selectedIndex].value;
     if(state == "protected"){
         try{
      	   $('haloacl_template_protectedwith').show();
