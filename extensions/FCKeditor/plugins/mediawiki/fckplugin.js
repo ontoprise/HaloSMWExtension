@@ -552,13 +552,11 @@ FCK.DataProcessor =
 									return ;
 
 								case 'fck_mw_template' :
+                                                                case 'fck_mw_askquery' :
+                                                                case 'fck_mw_webservice' :
 									stringBuilder.push( FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') ) ;
 									return;
 									
-								case 'fck_mw_askquery' :
-									stringBuilder.push( FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') ) ;
-									return ;
-								
 								case 'fck_mw_magic' :
 									stringBuilder.push( htmlNode.innerHTML ) ;
 									return ;
