@@ -552,8 +552,8 @@ FCK.DataProcessor =
 									return ;
 
 								case 'fck_mw_template' :
-                                                                case 'fck_mw_askquery' :
-                                                                case 'fck_mw_webservice' :
+                                case 'fck_mw_askquery' :
+                                case 'fck_mw_webservice' :
 									stringBuilder.push( FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') ) ;
 									return;
 									
