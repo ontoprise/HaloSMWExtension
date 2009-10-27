@@ -95,13 +95,13 @@ class FCKeditorParser extends Parser
 
     public function __construct() {
         global $wgParser;
-	parent::__construct();
+        parent::__construct();
 
         // add custom tags from extensions to list
-	foreach ($wgParser->getTags() as $h) {
+        foreach ($wgParser->getTags() as $h) {
             if (! in_array($h, $this->FCKeditorWikiTags))
                 $this->FCKeditorWikiTags[] = $h;
-	}
+    	}
         // add custom parser funtions from extensions to list
         foreach ($wgParser->getFunctionHooks() as $h) {
             // ask and sparql + ws are no special tags and have there own <span> elements in FCK
@@ -127,8 +127,8 @@ class FCKeditorParser extends Parser
         return $this->FCKeditorFunctionHooks;
     }
 	
-	/**
-	 * Add special string (that would be changed by Parser) to array and return
+    /**
+     * Add special string (that would be changed by Parser) to array and return
      * a simple unique string that will remain unchanged during whole parsing
      * operation. At the end we'll replace all this unique strings with
      * the original content.
@@ -142,13 +142,13 @@ class FCKeditorParser extends Parser
      * when the key appears in an annotated content, then we need the orignal
      * wiki text, because the argument is not a seperate element that can
      * be edited.
-	 *
-	 * @param string $text for wysiwyg mode
+     *
+     * @param string $text for wysiwyg mode
      * @param string $inner original wiki text
      * @param bool $replaceLineBreaks optional default is true
-	 * @return string key of the replaced text i.e. Fckmw12fckmw
-	 */
-	private function fck_addToStrtr($text, $inner, $replaceLineBreaks = true) {
+     * @return string key of the replaced text i.e. Fckmw12fckmw
+     */
+        private function fck_addToStrtr($text, $inner, $replaceLineBreaks = true) {
 		$key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 		$this->fck_mw_strtr_span_counter++;
 		if ($replaceLineBreaks) {
@@ -417,7 +417,6 @@ class FCKeditorParser extends Parser
 		
         // __TOC__ etc. must be replaced
         $text = $this->stripToc( $text );
-		
 		//html comments shouldn't be stripped
 		$text = $this->fck_replaceHTMLcomments( $text );
 		//as well as templates
@@ -480,15 +479,15 @@ class FCKeditorParser extends Parser
         return $text;
     }
 
-	/**
-	 * Checks for replacments by replacePropertyValue() and replaceRichmediaLinkValue()
-	 * If a property was replaces, don't try to find and replace a richmedia link
-	 * 
-	 * @access private
-	 * @param  string match
-	 * @param  string orig (maybe FckmwXfckmw)
-	 * @return string replaced placeholder or [[match]]
-	 */
+    /**
+     * Checks for replacments by replacePropertyValue() and replaceRichmediaLinkValue()
+     * If a property was replaces, don't try to find and replace a richmedia link
+     *
+     * @access private
+     * @param  string match
+     * @param  string orig (maybe FckmwXfckmw)
+     * @return string replaced placeholder or [[match]]
+     */
     private function replaceSpecialLinkValue($match, $orig) {
         $res = $this->replacePropertyValue($match);
         if (preg_match('/FCK_PROPERTY_\d+_FOUND/', $res)) // property was replaced, we can quit here.
@@ -504,7 +503,7 @@ class FCKeditorParser extends Parser
         $this->fck_mw_strtr_span_counter++;
         $this->fck_mw_strtr_span[$key] = $res;
         return $key;
-	}
+    }
 
 	/**
 	 * check the parser match from inside the [[ ]] and see if it's a property.
@@ -588,8 +587,8 @@ class FCKeditorParser extends Parser
 			}
 			$parserOutput->setText(strtr($parserOutput->getText(), $this->fck_mw_strtr_span));
 		}
-		
-		// there were properties, look for the placeholder FCK_PROPERTY_X_FOUND and replace
+
+                // there were properties, look for the placeholder FCK_PROPERTY_X_FOUND and replace
 		// it with <span class="fck_mw_property">property string without brakets</span>
 		if (count($this->fck_mw_propertyAtPage) > 0) {
 			$tmpText = $parserOutput->getText();
