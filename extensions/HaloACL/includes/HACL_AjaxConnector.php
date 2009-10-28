@@ -29,19 +29,37 @@
  * @param <string> javascript-escaped string
  * @return <string> unescaped string
  */
-function unescape($string) {
-    $string = preg_replace("/%E4/is", "ä", $string);
-    $string = preg_replace("/%F6/is", "ö", $string);
-    $string = preg_replace("/%FC/is", "ü", $string);
-    $string = preg_replace("/%DF/is", "ß", $string);
-    $string = preg_replace("/%C4/is", "Ä", $string);
-    $string = preg_replace("/%D6/is", "Ö", $string);
-    $string = preg_replace("/%DC/is", "Ü", $string);
-    $string = preg_replace("/%20/is", " ", $string);
-    $string = preg_replace("/%2C/is", ",", $string);
-    $string = preg_replace("/%3A/is", ":", $string);
-    return $string;
+function unescape($source) {
+	$decodedStr = '';
+	$pos = 0;
+	$len = strlen ($source);
+
+	while ($pos < $len) {
+		$charAt = substr ($source, $pos, 1);
+		if ($charAt == '%') {
+			$pos++;
+			$charAt = substr ($source, $pos, 1);
+			if ($charAt == 'u') {
+				// we got a unicode character
+				$pos++;
+				$unicodeHexVal = substr ($source, $pos, 4);
+				$unicode = hexdec ($unicodeHexVal);
+				$decodedStr .= code2utf($unicode);
+				$pos += 4;
+			} else {
+				// we have an escaped ascii character
+				$hexVal = substr ($source, $pos, 2);
+				$decodedStr .= code2utf (hexdec ($hexVal));
+				$pos += 2;
+			}
+		} else {
+			$decodedStr .= $charAt;
+			$pos++;
+		}
+	}
+	return $decodedStr;
 }
+
 
 /*
  * defining ajax-callable functions
