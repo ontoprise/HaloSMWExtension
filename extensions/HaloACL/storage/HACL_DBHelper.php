@@ -61,7 +61,7 @@ class HACLDBHelper {
             if (!empty($primaryKeys)) {
                 $sql .= ", PRIMARY KEY(".$primaryKeys.")";
             }
-            $sql .= ') TYPE=myisam';
+            $sql .= ') TYPE=myisam DEFAULT CHARSET=utf8 COLLATE=utf8_bin';
             $db->query( $sql, 'HACLDBHelper::setupTable' );
             HACLDBHelper::reportProgress("   ... new table created\n",$verbose);
             return array();

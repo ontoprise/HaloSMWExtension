@@ -65,10 +65,10 @@ class HACLStorageSQL {
 		HACLDBHelper::setupTable($table, array(
             'right_id' 		=> 'INT(8) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY',
             'actions' 		=> 'INT(8) NOT NULL',
-            'groups' 		=> 'Text',
-            'users' 		=> 'Text',
-            'description' 	=> 'Text',
-            'name' 			=> 'Text',
+            'groups' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'users' 		=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'description' 	=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
+            'name' 			=> 'Text CHARACTER SET utf8 COLLATE utf8_bin',
             'origin_id' 	=> 'INT(8) UNSIGNED NOT NULL'),
 		$db, $verbose);
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
@@ -102,8 +102,8 @@ class HACLStorageSQL {
             'sd_id' 	=> 'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
             'pe_id' 	=> 'INT(8)',
             'type' 		=> 'ENUM(\'category\', \'page\', \'namespace\', \'property\', \'right\') DEFAULT \'page\' NOT NULL',
-            'mr_groups' => 'TEXT',
-            'mr_users' 	=> 'TEXT'),
+            'mr_groups' => 'TEXT CHARACTER SET utf8 COLLATE utf8_bin',
+            'mr_users' 	=> 'TEXT CHARACTER SET utf8 COLLATE utf8_bin'),
 		$db, $verbose);
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -113,9 +113,9 @@ class HACLStorageSQL {
 
 		HACLDBHelper::setupTable($table, array(
             'group_id'   => 'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
-            'group_name' => 'VARCHAR(255) NOT NULL',
-            'mg_groups'  => 'TEXT',
-            'mg_users'   => 'TEXT'),
+            'group_name' => 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL',
+            'mg_groups'  => 'TEXT CHARACTER SET utf8 COLLATE utf8_bin',
+            'mg_users'   => 'TEXT CHARACTER SET utf8 COLLATE utf8_bin'),
 		$db, $verbose);
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose);
 
@@ -136,7 +136,7 @@ class HACLStorageSQL {
 
 		HACLDBHelper::setupTable($table, array(
             'id' 	=> 'INT(8) NOT NULL AUTO_INCREMENT',
-            'name' 	=> 'VARCHAR(255) NOT NULL'),
+            'name' 	=> 'VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL'),
 		$db, $verbose, "id,name");
 		HACLDBHelper::reportProgress("   ... done!\n",$verbose, "id,name");
 
