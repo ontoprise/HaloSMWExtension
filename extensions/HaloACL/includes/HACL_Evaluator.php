@@ -84,7 +84,8 @@ class HACLEvaluator {
 	 */
 	public static function userCan($title, $user, $action, &$result) {
 		global $wgRequest;
-		
+
+//		echo $title->getFullText().":".$action."\n";
 		if ($title == null) {
 			$result = true;
 			return true;
@@ -446,7 +447,83 @@ class HACLEvaluator {
 		}
 		
 		return true;
-	}		
+	}	
+
+	/**
+	 * This method is important if the mode of the access control is 
+	 * "closed wiki access" or if an SD for an instance of a protected category 
+	 * of namespace is about to be created. 
+	 * If the wiki access is open, articles without security
+	 * descriptor have full access. If it is closed, nobody can access the article
+	 * until a security descriptor is defined. Only the latest author of the article
+	 * can do this. This method checks, if a security descriptor can be created.
+	 * 
+	 * If an article is an instance of a protected category or namespace, creating
+	 * an SD for it is restricted. The modification rights of the category's or
+	 * namespace's SD are applied.
+	 *
+	 * @param Title $title
+	 * 		Title of the article that will be created
+	 * @param User $user
+	 * 		User who wants to create the article
+	 * @return bool|string
+	 * 		<true>, if the user can create the security descriptor
+	 * 		<false>, if not
+	 * 		"n/a", if this method is not applicable for the given article creation 
+	 */
+	public static function checkSDCreation($title, $user) {
+		if ($title->getNamespace() != HACL_NS_ACL) {
+			// The title is not in the ACL namespace => not applicable
+			return "n/a";
+		}
+		
+		list($peName, $peType) = HACLSecurityDescriptor::nameOfPE($title->getText());
+		
+		// Check if article belongs to a protected category
+		// Only the users who can modify the SD of the protecting category can 
+		// create a new SD for the protected page.
+
+		if ($peType == HACLSecurityDescriptor::PET_PAGE ||
+		    $peType == HACLSecurityDescriptor::PET_CATEGORY) {
+			list ($r, $hasSD) = self::hasCategorySDCreationRight($peName, $user->getId());
+			if ($r === false && $hasSD === true) {
+				return false;
+			}
+		}
+		$t = Title::newFromText($peName);
+		
+		// Check if article belongs to a protected namespace
+		if ($peType == HACLSecurityDescriptor::PET_PAGE) {
+			list ($r, $hasSD) = self::checkNamespaceSDCreationRight($t, $user->getId());		
+			if ($r === false && $hasSD === true) {
+				return false;
+			}
+		}
+		
+		global $haclgOpenWikiAccess;
+		if ($haclgOpenWikiAccess) {
+			// the wiki is open => not applicable
+			return "n/a";
+		}
+		if ($peType != HACLSecurityDescriptor::PET_PAGE &&
+		    $peType != HACLSecurityDescriptor::PET_PROPERTY) {
+		    // only applicable to pages and properties
+		    return "n/a";
+		}
+		
+		// get the latest author of the protected article
+		$article = new Article($t);
+		if (!$article->exists()) {
+			// article does not exist => no applicable
+			return "n/a";
+		}
+		$authors = $article->getLastNAuthors(1);
+		
+		return $authors[0] == $user->getName();
+		
+	}
+	
+	
 	//--- Private methods ---
 	
 	/**
@@ -522,53 +599,94 @@ class HACLEvaluator {
 		
 	}
 	
-	
 	/**
-	 * This method is important if the mode of the access control is 
-	 * "closed wiki access". If the wiki access is open, articles without security
-	 * descriptor have full access. If it is closed, nobody can access the article
-	 * until a security descriptor is defined. Only the latest author of the article
-	 * can do this. This method checks, if a security descriptor can be created.
+	 * Checks, if the given user has the right to create an SD for the given 
+	 * category (as category right) or page.
+	 * Assume that a category or page is protected by the SD of its super 
+	 * category. If every user could create a new SD for this page, the protection
+	 * by categories could not be granted. Consequently the set of users who can
+	 * create such an SD is restricted:
+	 * Pages which are protected by a category inherit the SD of the category, thus
+	 * the modification rights of the category's SD are inherited as well. So only 
+	 * users who can modify the SD of the category can create a new SD for the page.
+	 * 
+	 * Only the SDs of the first parent categories that are found are evaluated 
+	 * as these inherit the modification rights of their parents. So there is no
+	 * need to crawl all parents recursively. 
 	 *
-	 * @param Title $title
-	 * 		Title of the article that will be created
-	 * @param User $user
-	 * 		User who wants to create the article
-	 * @return bool|string
-	 * 		<true>, if the user can create the security descriptor
-	 * 		<false>, if not
-	 * 		"n/a", if this method is not applicable for the given article creation 
-	 */
-	private static function checkSDCreation($title, $user) {
-		global $haclgOpenWikiAccess;
-		if ($haclgOpenWikiAccess) {
-			// the wiki is open => not applicable
-			return "n/a";
+	 * @param mixed string|array<string> $parents
+	 * 		If a string is given, this is the name of an article whose parent
+	 * 		categories are evaluated. Otherwise it is an array of parent category 
+	 * 		names
+	 * @param int $userID
+	 * 		ID of the user who wants to perform an action
+	 * @param array<string> $visitedParents
+	 * 		This array contains the names of all parent categories that were already
+	 * 		visited.
+	 * @return array(bool rightGranted, bool hasSD)
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to create the SD
+	 * 			<false>, otherwise
+	 * 		hasSD:
+	 * 			<true>, if there is an SD for the article
+	 * 			<false>, if not
+	 * 	 */
+	private static function hasCategorySDCreationRight($parents, $userID, 
+	                                        $visitedParents = array()) {
+	    if (is_string($parents)) {
+	    	// The article whose parent categories shall be evaluated is given
+	    	$t = Title::newFromText($parents);
+	    	return self::hasCategorySDCreationRight(array_keys($t->getParentCategories()),$userID);
+	    } else if (is_array($parents)) {
+	    	if (empty($parents)) {
+	    		// no parents => page/category is not protected
+	    		return array(false, false);
+	    	}
+	    } else {
+	    	// Invalid parameter $parent
+	    	return array(false, false);
+	    }
+	    
+		// Check for each parent if the right is granted
+		$parentTitles = array();
+		$sdFound = false;
+	    foreach ($parents as $p) {
+	    	$parentTitles[] = $t = Title::newFromText($p);
+	    	
+			$sd = HACLSecurityDescriptor::getSDForPE($t->getArticleID(), 
+			                                         HACLSecurityDescriptor::PET_CATEGORY);
+			if ($sd !== false) {
+				$sd = HACLSecurityDescriptor::newFromID($sd);
+				if ($sd->userCanModify($userID)) {
+					// User has modification rights for the category's SD.
+					return array(true, true);                                 
+				}
+				$sdFound = true;
+			}
 		}
-		if ($title->getNamespace() != HACL_NS_ACL) {
-			// The title is not in the ACL namespace => not applicable
-			return "n/a";
+		if ($sdFound) {
+			// The parent categories owned an SD, but the user is not allowed to
+			// modify them.
+			return array(false, true);
 		}
 		
-		list($peName, $peType) = HACLSecurityDescriptor::nameOfPE($title->getText());
-		if ($peType != HACLSecurityDescriptor::PET_PAGE &&
-		    $peType != HACLSecurityDescriptor::PET_PROPERTY) {
-		    // only applicable to pages and properties
-		    return "n/a";
+		// No parent category has an SD
+		// => check the next level of parents
+		$parents = array();
+		foreach ($parentTitles as $pt) {
+			$ptParents = array_keys($pt->getParentCategories());
+			foreach ($ptParents as $p) {
+				if (!in_array($p, $visitedParents)) {
+			    	$parents[] = $p;
+			    	$visitedParents[] = $p;
+			    }
+			}
 		}
 		
-		// get the latest author of the protected article
-		$t = Title::newFromText($peName);
-		$article = new Article($t);
-		if (!$article->exists()) {
-			// article does not exist => no applicable
-			return "n/a";
-		}
-		$authors = $article->getLastNAuthors(1);
-		
-		return $authors[0] == $user->getName();
-		
+		// Go up one level of parents
+		return self::hasCategorySDCreationRight($parents, $userID, $visitedParents);
 	}
+	
 	
 	/**
 	 * Checks if access is granted to the namespace of the given title.
@@ -604,9 +722,42 @@ class HACLEvaluator {
 		                            $userID, $actionID), $hasSD);
 		
 	}
+
+	/**
+	 * Checks if the user can create an SD for an article in the given namespace.
+	 * If a namespace is protected by an SD, only the managers of this SD have the
+	 * right to create new SDs for articles in this namespace. Otherwise every 
+	 * user could overwrite the security settings of the namespace for single
+	 * articles.
+	 *
+	 * @param Title $t
+	 * 		Title whose namespace is checked
+	 * @param int $userID
+	 * 		ID of the user who want to access the namespace
+	 * 
+	 * @return array(bool rightGranted, bool hasSD)
+	 * 		rightGranted:
+	 *	 		<true>, if the user has the right to create a new SD for the article
+	 * 			<false>, otherwise
+	 * 		hasSD:
+	 * 			<true>, if there is an SD for the article
+	 * 			<false>, if not
+	 *  
+	 */
+	private static function checkNamespaceSDCreationRight(Title $t, $userID) {
+		$nsID = $t->getNamespace();
+		$sd = HACLSecurityDescriptor::getSDForPE($nsID, HACLSecurityDescriptor::PET_NAMESPACE);
+		if ($sd !== false) {
+			$sd = HACLSecurityDescriptor::newFromID($sd);
+			return array($sd->userCanModify($userID), true);
+		}
+		
+		return array(false, false);
+		
+	}
 	
 	/**
-	 * This method checks if a user wants to modify an articles in the namespace
+	 * This method checks if a user wants to modify an article in the namespace
 	 * ACL.
 	 *
 	 * @param Title $t
@@ -629,6 +780,7 @@ class HACLEvaluator {
 		if ($t->getNamespace() != HACL_NS_ACL) {
 			return array(true, false);
 		}
+		return array(true, true);
 		
 		$userID = $user->getId();
 		if ($userID == 0) {

@@ -327,7 +327,8 @@ $messages['en'] = array(
     'hacl_tpl_already_exists' => "The template already exists",
     'hacl_setexisting_name' => "Please enter a name of an existing element",
     'hacl_already_protected' => "The element is already protected. Please go to ManageACLs to change the ACL.",
-    'hacl_showacls' => "Show ACLs",
+    'hacl_already_protected_by_ns_or_cat' => "The element is already protected by a category or a namespace. You are not entitled to add a new right.",
+	'hacl_showacls' => "Show ACLs",
     'hacl_groupdescription'=> 'Group description',
     'hacl_advancedToolbarTooltip'=>'Click here to open advanced access rights definition in a new tab',
     'hacl_reset_groupsettings'=>'Reset groupsettings',
@@ -367,7 +368,7 @@ $messages['de'] = array(
     'hacl_tpl_already_exists' => "Ein Template mit diesem Name existiert bereits",
     'hacl_setexisting_name' => "Bitte einen Namen eines existierenden Elements eingeben",
     'hacl_already_protected' => "Das Element ist bereits gesch&uuml;tzt. Zum &Auml;ndern bitte in die Rechteverwaltung wechseln. ",
-
+    'hacl_already_protected_by_ns_or_cat' => "Das Element ist bereits durch eine Kategorie oder einen Namensraum geschützt. Sie sind nicht berechtigt, neue Rechte hinzuzufügen.",
 
 
     'hacl_deletetplfromacl' => "Template von ACL entfernen",

@@ -738,7 +738,8 @@ HTML;
     $tplexists = wfMsg('hacl_tpl_already_exists');
     $setexistingname = wfMsg('hacl_setexisting_name');
     $alreadyprotected = wfMsg('hacl_already_protected');
-
+    $alreadyprotectedNSCat = wfMsg('hacl_already_protected_by_ns_or_cat');
+    
     $html .= <<<HTML
         </div>
 
@@ -817,11 +818,12 @@ HTML;
                     YAHOO.haloacl.callAction("doesArticleExists", {articletitle:$('create_acl_general_name').value,type:protect}, function(result){
                         if(result.responseText == "true"){
                             step2callbackSecondCheck();
-                        }else if(result.responseText == "sdexisting"){
-                            YAHOO.haloacl.notification.createDialogOk("content","","$alreadyprotected",{
-                                yes:function(){}
-                            });
-
+                        } else if(result.responseText == "sdexisting") {
+                            YAHOO.haloacl.notification.createDialogOk("content","","$alreadyprotected",
+                                                                      {yes:function(){} } );
+                        } else if(result.responseText == "articleIsProtected") {
+                            YAHOO.haloacl.notification.createDialogOk("content","","$alreadyprotectedNSCat",
+                                                                      {yes:function(){} } );
                         }else{
                             YAHOO.haloacl.notification.createDialogOk("content","","$setexistingname",{
                                 yes:function(){}
@@ -5425,17 +5427,22 @@ function doesArticleExists($articlename,$protect) {
         $articlename = "$ns:$predefinedRightName/".$articlename;
     }
 
-
-
     $response = new AjaxResponse();
     $article = new Article(Title::newFromText($articlename));
     if($article->exists()) {
-        $sd = new Article(Title::newFromText("$ns:$protect/$articlename"));
+    	$sdtitle = Title::newFromText("$ns:$protect/$articlename");
+        $sd = new Article($sdtitle);
         if($sd->exists()) {
             $response->addText("sdexisting");
-
         }else {
-            $response->addText("true");
+        	// The article might not be protectable as it is already protected
+        	// by a category or a namespace
+        	global $wgUser;
+        	if (HACLEvaluator::checkSDCreation($sdtitle, $wgUser) === false) {
+        		$response->addText("articleIsProtected");
+        	} else {
+            	$response->addText("true");
+        	}
         }
     }else {
         $response->addText("false");

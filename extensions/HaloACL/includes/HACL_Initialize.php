@@ -58,7 +58,7 @@ $haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 # denied" is returned. This is the best and securest way of protecting an article,
 # however, it slows down things a bit.
 ##
-$haclgEnableTitleCheck = true;
+$haclgEnableTitleCheck = false;
 
 ###
 # true
