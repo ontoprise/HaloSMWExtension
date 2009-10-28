@@ -939,7 +939,7 @@ QIHelper.prototype = {
 				}
 			}
 			if (arity == 2) {
-				// Speical treatment: binary properties support conjunction,
+				// Special treatment: binary properties support conjunction,
 				// therefore we need an "add" button
 				$('mainlabel').innerHTML = parameterNames[0];
 				var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
@@ -1237,11 +1237,11 @@ QIHelper.prototype = {
 				if (vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion
 																	// needed?
 					cell.innerHTML = '<input type="text" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" id="input'
-							+ (i + 2)
+							+ (i + 3)
 							+ '" value="'
 							+ unescapeQueryHTML(vals[i][2]) + '"/>';
 				else
-					cell.innerHTML = '<input type="text" id="input' + (i + 2)
+					cell.innerHTML = '<input type="text" id="input' + (i + 3)
 							+ '" value="' + unescapeQueryHTML(vals[i][2])
 							+ '"/>';
 			}
@@ -1294,7 +1294,7 @@ QIHelper.prototype = {
                     }
                 }
                 
-	                // Speical treatment: binary properties support conjunction,
+	                // Special treatment: binary properties support conjunction,
 	                // therefore we need an "add" button
 	                
 	                var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
@@ -1864,6 +1864,17 @@ QIHelper.prototype = {
 				}
 				var pgroup = new PropertyGroup(pname, arity, false, false,
 						isEnum, enumValues);
+                // Nary property
+                if (arity > 2) {
+                    var naryParams = prop.item(i).getElementsByTagName('param');
+                    for (k = 0; k < naryParams.length; k++) {
+                        var enumValNodes = naryParams.item(k).getElementsByTagName('allowedValue');
+                        var enumVals = [];
+                        for (m = 0; m < enumValNodes.length; m++ )
+                            enumVals[m] = enumValNodes.item(m).getAttribute('value');
+                        pgroup.addValue(naryParams.item(k).getAttribute('name'), null, enumVals);
+                    }
+                }
 				this.propertyTypesList.add(pname, pgroup, [], ptype);
 			}
 		}
@@ -1935,6 +1946,11 @@ handleQueryString : function(args, queryId, pMustShow) {
 				pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
 						pshow, pmust, isEnum, enumValues); // create
 										   // propertyGroup
+                if (arity > 2) {
+                    var naryVals = propdef.getValues();
+                    for (e = 0; e < naryVals.length; e++)
+                        pgroup.addValue(naryVals[e][0], naryVals[e][1], naryVals[e][2]);
+                }
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
 			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname)
@@ -1949,44 +1965,72 @@ handleQueryString : function(args, queryId, pMustShow) {
 				paramvalue = parseInt(pval.replace(/___q(\d+)q___/, '$1'));
 				this.insertQuery(paramvalue, queryId, pname);
 				subqueryIds.push(paramvalue);
-                                // add a value group to the property group
+                // add a value group to the property group
 				pgroup.addValue(paramname, restriction, paramvalue);
 			} else { // no subquery contained, proceed normaly
 
-                                // if the value is + then the property is a "must have a value"
-                                // if this is the only "value" for this property, then set it with
-                                // page/type = *. Otherwise the value is explicitly set in another
-                                // run of the loop, so skip this + value
-                                var skipMustShow = false;
-                                if (pval == "+") {
-                                    for (var k = 0; k < args.length; k++) {
-                                        // check if poperty exists again in query but with other value
-                                        if (args[k].indexOf(pname) != -1 && args[k] != pname + '::+')
-                                            skipMustShow = true;
-                                    }
-                                }
-                                if (skipMustShow) continue;
-                                
-                                // split values by || "or" conjunction
-				var vals = pval.split(/\s*\|\|\s*/);
-				for ( var j = 0; j < vals.length; j++) {
-                                        // check for restricion (makes sence for numeric properties)
-					var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
-					if (op[1].length > 0) {
-						restriction = op[1].indexOf('=') == -1 ? op[1] + '='
-								: op[1];
-						paramvalue = op[2];
-					}
-                                        else
-                                            paramvalue = vals[j];
-                                        // no value or '+' (must set) is replaced, by "*" which means all values
-                                        if (paramvalue == "" || paramvalue == '+') paramvalue = "*";
-                                        // if j > 0 conjunction: page/type = val1 'or' valX
-                                        if (j > 0) paramname = gLanguage.getMessage('QI_OR');
-                                        // add a value group to the property group
-					pgroup.addValue(paramname, restriction,
-							escapeQueryHTML(paramvalue)); 
-				}
+                // if the value is + then the property is a "must have a value"
+                // if this is the only "value" for this property, then set it with
+                // page/type = *. Otherwise the value is explicitly set in another
+                // run of the loop, so skip this + value
+                var skipMustShow = false;
+                if (pval == "+") {
+                    for (var k = 0; k < args.length; k++) {
+                        // check if poperty exists again in query but with other value
+                        if (args[k].indexOf(pname) != -1 && args[k] != pname + '::+')
+                            skipMustShow = true;
+                    }
+                }
+                if (skipMustShow) continue;
+                // special handling for nary properties
+                if (pgroup.getArity() > 2) {
+                    var vals = pval.split(/;/);
+                    var valsDef = pgroup.getValues();
+                    pgroup.setValues();
+                    for (j = 0; j < vals.length; j++) {
+                        // check for restricion (makes sence for numeric properties)
+        				var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
+            			if (op[1].length > 0) {
+                			restriction = op[1].indexOf('=') == -1
+                                ? op[1] + '='
+                        		: op[1];
+                            paramvalue = op[2];
+                        }
+                        else {
+                            paramvalue = vals[j];
+                            restriction = '=';
+                        }
+                        pgroup.addValue(
+                            valsDef.length > j ? valsDef[j][0] : gLanguage.getMessage('QI_PAGE'),
+                            restriction,
+                            escapeQueryHTML(paramvalue)
+                        );
+                    }
+                }
+                else {
+                    // normal property
+                    // split values by || "or" conjunction
+        			var vals = pval.split(/\s*\|\|\s*/);
+            		for ( var j = 0; j < vals.length; j++) {
+                        // check for restricion (makes sence for numeric properties)
+                    	var op = vals[j].match(/^([\!|<|>]?=?)(.*)/);
+                        if (op[1].length > 0) {
+                            restriction = op[1].indexOf('=') == -1
+                                ? op[1] + '='
+                                : op[1];
+                            paramvalue = op[2];
+                        }
+                        else
+                            paramvalue = vals[j];
+                        // no value or '+' (must set) is replaced, by "*" which means all values
+                        if (paramvalue == "" || paramvalue == '+') paramvalue = "*";
+                        // if j > 0 conjunction: page/type = val1 'or' valX
+                        if (j > 0) paramname = gLanguage.getMessage('QI_OR');
+                        // add a value group to the property group
+                        pgroup.addValue(paramname, restriction,
+                            	escapeQueryHTML(paramvalue));
+                    }
+                }
 			}
 			propList.add(pname, pgroup, subqueryIds); // add current property to property list
 		}
@@ -2171,6 +2215,10 @@ mustBeSet : function() {
 
 getValues : function() {
 	return this.values;
+},
+
+setValues : function(vals) {
+    this.values = (!vals) ? new Array() : vals;
 },
 
 isEnumeration : function() {
