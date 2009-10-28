@@ -2071,11 +2071,13 @@ applyOptionParams : function(query) {
 	// get printout format of query
 	var format = "table"; // default format
 	for ( var i = 1; i < options.length; i++) {
+            // check for additionl printouts like |?myProp
             var m = options[i].match(/^\s*\?(.*?)\s*$/);
             if (m) {
                 mustShow.push(m[1]);
                 continue;
             }
+            // check for key value pairs like format=table
             var kv = options[i].replace(/^\s*(.*?)\s*$/, '$1').split(/=/);
             if (kv.length == 1)
                 continue;
@@ -2088,7 +2090,7 @@ applyOptionParams : function(query) {
             }
     }
 	
-    
+
     // The following callback is called after the query printer parameters were displayed.
 	var callback = function() {
 		// start by 1, first element is the query itself
@@ -2109,7 +2111,8 @@ applyOptionParams : function(query) {
 			} else {
 			    var optionParameter = $('qp_param_' + key);
 			    if (optionParameter == null) continue; // ignore unknown options
-			    if ('checked' in optionParameter) {
+			    if (typeof optionParameter.type != 'undefined' &&
+                    optionParameter.type.toLowerCase() == 'checkbox') {
 			    	optionParameter.checked = (val == "on" || val == "true");
 			    } else {
 			    	optionParameter.value = val;
@@ -2119,7 +2122,7 @@ applyOptionParams : function(query) {
 	}
 	
 	// and request according format printer parameters
-        this.getSpecialQPParameters(format, callback.bind(this));
+    this.getSpecialQPParameters(format, callback.bind(this));
 	
 	// return the properties, that must be shown in the query
 	return mustShow;
