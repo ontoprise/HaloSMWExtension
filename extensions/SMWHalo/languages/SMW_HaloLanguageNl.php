@@ -324,7 +324,26 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_srf_expected_parameter' => 'Expected a parameter near $1',
 	'smw_srf_missing_operator' => 'Expected an operator near $1',
 
-	
+	 // Triple Store Admin
+    'tsa' => 'Triple store administration',
+    'smw_tsa_welcome' => 'This special page helps you to administrate the wiki/triplestore connection.',
+    'smw_tsa_couldnotconnect' => 'Could not connect to a triple store.',
+    'smw_tsa_notinitalized' => 'Your wiki is not initialized at the triplestore.',
+    'smw_tsa_waitsoemtime'=> 'Please wait a few seconds and then follow this link.',
+    'smw_tsa_wikiconfigured' => 'Your wiki is properly connected with the triplestore at $1',
+    'smw_tsa_initialize' => 'Initialize',
+    'smw_tsa_reinitialize' => 'Re-Initialize',
+    'smw_tsa_pressthebutton' => 'Please press the button below.',
+    'smw_tsa_addtoconfig' => 'Please add the following lines in your LocalSettings.php and check if the triplestore connector is running.',
+    'smw_tsa_addtoconfig2' => 'Make sure that the triplestore driver is activated. If necessary change enableSMWHalo to',
+    'smw_tsa_addtoconfig3' => 'Also make sure that the graph URL (last parameter of enableSMWHalo) is a valid one and it does not contain a hash (#).',
+    'smw_tsa_driverinfo' => 'Driver information',
+    'smw_tsa_status' => 'Status',
+    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableFlogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
+    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableFlogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
+    'smw_tsa_tscinfo' => 'Triplestore Connector information',
+    'smw_tsa_tscversion' => 'TSC Version',
+
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Afgeleide feiten $1',
         //skin

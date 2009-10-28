@@ -290,6 +290,10 @@ function smwgHaloSetupExtension() {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
+			
+			$wgAutoloadClasses['SMWAskTSCPage'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_AskTSC.php';
+            $wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
+            $wgSpecialPageGroups['AskTSC'] = 'smwplus_group';
 		}
 
 

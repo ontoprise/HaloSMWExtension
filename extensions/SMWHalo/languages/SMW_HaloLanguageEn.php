@@ -322,6 +322,8 @@ clicking the big arrows between the columns.',
     'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableFlogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
 	'smw_tsa_tscversion' => 'TSC Version',
+	'asktsc' => 'Ask triplestore',
+	
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Derived facts about $1',
 

@@ -314,6 +314,8 @@ protected $smwUserMessages = array(
 
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
+    'asktsc' => 'Ask triplestore',
+
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
 

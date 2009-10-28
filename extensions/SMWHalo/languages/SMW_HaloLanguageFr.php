@@ -342,6 +342,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_tsa_status' => 'Statut',
     'smw_tsa_rulesupport'=> 'Le driver triplestore supporte les rà¨gles ; il vous est conseillé d\'ajouter <pre>$smwgEnableFlogicRules=true;</pre> à  votre LocalSettings.php. Sinon, les rà¨gles ne fonctionneront pas.',
     'smw_tsa_norulesupport'=> 'Le driver triplestore ne supporte pas les rà¨gles, bien qu\'elles soient activées dans le wiki. Veuillez supprimer <pre>$smwgEnableFlogicRules=true;</pre> de votre LocalSettings.php, afin de ne pas obtenir d\'erreurs.',
+    'asktsc' => 'Ask triplestore',
     
     // Simple Rules formula parser
     'smw_srf_expected_factor' => 'Une fonction, variable, constante ou accolade est attendue prà¨s de $1',
