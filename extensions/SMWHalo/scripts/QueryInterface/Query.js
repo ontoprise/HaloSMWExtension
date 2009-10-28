@@ -172,8 +172,12 @@ Query.prototype = {
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
 						asktext += ";"; // connect values with semicolon
-					if(vals[j][1]!="=")
-						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
+					if(vals[j][1]!="=") //add operator <, >, ! if existing
+                        // normal ask makes no difference between > and >= the TSC does
+                        asktext += ($('usetriplestore') && $('usetriplestore').checked &&
+                                    (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                            ? vals[j][1]
+                            : vals[j][1].substring(0,1);
 					asktext += vals[j][2].unescapeHTML();
 				}
 			} else { //binary property
@@ -185,7 +189,11 @@ Query.prototype = {
 						if(j!=0) //add disjunction operator
 							asktext += "||";
 						if(vals[j][1]!= "=")
-							asktext += vals[j][1].substring(0,1);
+                            // normal ask makes no difference between > and >= the TSC does
+                            asktext += ($('usetriplestore') && $('usetriplestore').checked &&
+                                        (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                                ? vals[j][1]
+                                : vals[j][1].substring(0,1);
 						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
@@ -245,8 +253,12 @@ Query.prototype = {
 				for(var j=0; j<vals.length; j++){
 					if(j!=0)
 						asktext += ";"; // connect values with semicolon
-					if(vals[j][1]!="=")
-						asktext += vals[j][1].substring(0,1); //add operator <, >, ! if existing
+					if (vals[j][1] != "=") //add operator <, >, ! if existing
+                        // normal ask makes no difference between > and >= the TSC does
+                        asktext += ($('usetriplestore') && $('usetriplestore').checked &&
+                                    (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                            ? vals[j][1]
+                            : vals[j][1].substring(0,1);
 					asktext += vals[j][2].unescapeHTML();
 				}
 				asktext += "]]";
@@ -258,8 +270,12 @@ Query.prototype = {
 					for(var j=0; j<vals.length; j++){
 						if(j!=0) //add disjunction operator
 							asktext += "||";
-						if(vals[j][1]!= "=")
-							asktext += vals[j][1].substring(0,1);
+						if(vals[j][1] != "=")
+                          // normal ask makes no difference between > and >= the TSC does
+                            asktext += ($('usetriplestore') && $('usetriplestore').checked &&
+                                        (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
+                                ? vals[j][1]
+                                : vals[j][1].substring(0,1);
 						if(vals[j][0] == "subquery") // Mark ID of subqueries so they can easily be parsed
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
