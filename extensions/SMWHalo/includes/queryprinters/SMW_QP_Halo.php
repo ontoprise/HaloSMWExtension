@@ -11,7 +11,7 @@ require_once "$smwgIP/includes/SMW_QP_Template.php";
 /**
  * Describes a QP parameter.
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  *
  */
 class SMWQPParameter {
@@ -223,26 +223,22 @@ class SMWHaloCsvResultPrinter extends SMWCsvResultPrinter {
 	function getSupportedParameters() {
 		return $this->mParameters;
 	}
-	protected function getResultText($res, $outputmode) {
-		$result = '';
-		if ($outputmode == SMW_OUTPUT_FILE) { // make CSV file
-			
-			$result .= parent::getResultText($res, $outputmode);
-			
-		} else { // just make link to feed
-			if ($this->getSearchLabel($outputmode)) {
-				$label = $this->getSearchLabel($outputmode);
-			} else {
-				wfLoadExtensionMessages('SemanticMediaWiki');
-				$label = wfMsgForContent('smw_csv_link');
-			}
-            global $wgContLang;
-            $params = array($res->getQueryString(), "format"=>"csv");
-            $result .= SMWInfolink::newInternalLink($label, $wgContLang->getNsText(NS_SPECIAL) . ':AskTSC', false, $params)->getHTML();
-			$this->isHTML = true;
-			 
-		}
-		return $result;
+
+    protected function getResultText($res, $outputmode) {
+		$result = parent::getResultText($res, $outputmode);
+		if ($outputmode == SMW_OUTPUT_FILE) // make CSV file
+			return $result;
+		// just make link to feed
+        global $wgContLang, $smwgWebserviceEndpoint;
+        // no TSC installed, return normal link
+        if (! isset($smwgWebserviceEndpoint)) return $result;
+        // replace Special:ASK with Special:AskTSC
+        $result = preg_replace(
+            '/'.$wgContLang->getNsText(NS_SPECIAL).':[\d\w]+\//', // pattern
+            $wgContLang->getNsText(NS_SPECIAL).':AskTSC/', // new special page
+            $result // (wiki/html) text
+        );
+        return $result;
 	}
 
 }
