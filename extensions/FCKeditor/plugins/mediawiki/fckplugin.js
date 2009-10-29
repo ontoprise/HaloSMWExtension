@@ -1087,7 +1087,6 @@ SMW_Annotate.prototype = {
         window.parent.relToolBar.callme();
         window.parent.catToolBar.callme();
         window.parent.propToolBar.callme();
-        window.parent.smw_help_callme();
         // webservice toolbar, only available if DataImport extension is included
         if (window.parent.wsToolBar)
             window.parent.wsToolBar.callme();
