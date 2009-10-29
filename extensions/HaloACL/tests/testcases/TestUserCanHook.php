@@ -381,7 +381,30 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 		}
     }
     
-	private function doCheckRights($testcase, $expectedResults) {
+    /**
+     * Check that elements protected by a category or namespace can not be made 
+     * public by creating a new SD for them.
+     *
+     */
+    function testIndirectProtection() {
+    	try {
+			$checkRights = array(
+				array('ACL:Page/B', 'U1', 'edit', true),
+				array('ACL:Page/B', 'U2', 'edit', false),
+				array('ACL:Page/C', 'U1', 'edit', true),
+				array('ACL:Page/C', 'U2', 'edit', false),
+				array('ACL:Category/C', 'U1', 'edit', true),
+				array('ACL:Category/C', 'U2', 'edit', false),
+				array('ACL:Page/User:U1', 'U1', 'edit', true),
+				array('ACL:Page/User:U1', 'U2', 'edit', false),
+				);
+			$this->doCheckRights("testIndirectProtection", $checkRights);
+		} catch (Exception $e) {
+			$this->assertTrue(false, "Unexpected exception while testing ".basename($file)."::testPropertyAccess():".$e->getMessage());
+		}
+    }
+
+    private function doCheckRights($testcase, $expectedResults) {
 		foreach ($expectedResults as $er) {
 			$articleName = $er[0];
 			$user = $username = $er[1];
