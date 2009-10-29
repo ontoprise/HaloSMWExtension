@@ -66,7 +66,10 @@ callme: function(event){
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" ||
         wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData')
 	    && stb_control.isToolbarAvailable() 
-	    && (wgNamespaceNumber == 14 || wgNamespaceNumber == 102)){
+	    && (wgNamespaceNumber == 14 || wgNamespaceNumber == 102 ||
+            (typeof sfgTargetNamespaceNumber != 'undefined' && 
+             (sfgTargetNamespaceNumber == 100 || sfgTargetNamespaceNumber == 102))
+           )) {
 		this.rulescontainer = stb_control.createDivContainer(RULESCONTAINER, 0);
 		this.showToolbar();		
 	}
