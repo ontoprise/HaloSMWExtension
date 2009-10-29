@@ -780,7 +780,6 @@ class HACLEvaluator {
 		if ($t->getNamespace() != HACL_NS_ACL) {
 			return array(true, false);
 		}
-		return array(true, true);
 		
 		$userID = $user->getId();
 		if ($userID == 0) {
