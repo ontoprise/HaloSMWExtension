@@ -75,7 +75,7 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(revision 5624)
 +++ extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(working copy)
-@@ -174,6 +174,54 @@
+@@ -174,6 +174,55 @@
  		return $result;
  	}
  
@@ -101,11 +101,11 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 +	}
 +
 +	/**
-+	 * Creates a new query result based on the given $queryResult. Everything
-+	 * but the content of the $queryResult is copied into the new one.
++	 * Creates a new query result based on $this query result. Everything
++	 * but the content of $this query result is copied into the new one.
 +	 * This is useful for query result filters which copy the content only partly.
 +	 *
-+	 * @param SMWQueryResult $queryResult
++	 * @param SMWQueryResult $this
 +	 * 		The following parts of this query result are copied into the new q.r.:
 +	 * 		- print requests
 +	 * 		- query, querystring
@@ -115,13 +115,14 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 +	 * @return SMWQueryResult
 +	 * 		A partly copied $queryResult
 +	 */
-+	public static function newFromQueryResult($queryResult) {
-+		$qr = new SMWQueryResult($queryResult->m_printrequests, 
-+		                         $queryResult->m_query, 
-+		                         $queryResult->m_furtherres);
-+		$qr->m_querystring = $queryResult->m_querystring;
-+		$qr->m_extraprintouts = $queryResult->m_extraprintouts;
-+		
++	public function newFromQueryResult($queryResult) {
++		$classname = get_class($this);
++		$qr = new $classname($this->m_printrequests, 
++	                           $this->m_query, 
++	                           $this->m_furtherres);
++		$qr->m_querystring = $this->m_querystring;
++		$qr->m_extraprintouts = $this->m_extraprintouts;
++  
 +		return $qr;
 +	}
 +	
