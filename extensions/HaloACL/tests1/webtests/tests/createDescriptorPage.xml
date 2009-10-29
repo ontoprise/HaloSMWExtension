@@ -1,0 +1,720 @@
+<?xml version="1.0"?>
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+<project name="createDescriptorPage" default="runAllCreateDescriptorTests">
+
+	&login;
+        &goToLogout;
+        &createArticle;
+
+    <target name="runAllCreateDescriptorTests">
+        <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Category/Foo" />
+            </antcall>
+        </webtest>
+<!--        issue with toolbar
+        <webtest name="create page (foo) that will be secured">
+            <antcall target="createArticleThatWillBeSecured">
+                <param name="content" value="I'm Foo's content" />
+            </antcall>
+        </webtest>
+-->
+        <webtest name="protecting with individual right">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="createDescrindividual">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="checking access to ACL-Page">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to protected page">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Category/Foo" />
+            </antcall>
+        </webtest>
+
+        <webtest name="protecting with privateuse">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="createDescrprivateuse">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to ACL-Page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to protected page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Category/Foo" />
+            </antcall>
+        </webtest>
+
+        <webtest name="protecting with allusers">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="createDescrallusers">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to ACL-Page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Category/Foo" />
+            </antcall>
+        </webtest>
+
+        <webtest name="protecting with all registered users">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="createDescrallusersregistered">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to ACL-Page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to page">
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Login Required"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+        </webtest>
+
+        <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
+            <antcall target="deletePage" >
+                <param name="targetPage" value="ACL:Category/Foo" />
+            </antcall>
+        </webtest>
+        
+        <webtest name="protecting with all anonymous users">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="createDescrallusersanoymous">
+                <param name="page" value="Special:HaloACL"/>
+                <param name="heading" value="HaloACL"/>
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="content" value="This page is not accessible for.*"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to ACL-Page">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="ACL:Category/Foo"/>
+                <param name="expectedText" value="ACL:Category/Foo"/>
+            </antcall>
+        </webtest>
+        <webtest name="checking access to page">
+            <config >
+                <option name="ThrowExceptionOnScriptError" value="false" />
+            </config>
+            <antcall target="verifyDescriptorAdmin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+            <antcall target="verifyDescriptorNoLogin">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Category/Foo"/>
+            </antcall>
+            <antcall target="verifyDescriptorUser11">
+                <param name="targetPage" value="Category/Foo"/>
+                <param name="expectedText" value="Permission error"/>
+            </antcall>
+        </webtest>
+        
+    </target>
+    <!-- ========================== -->
+
+
+    <target name="createArticleThatWillBeSecured" >
+            <!-- creating article to save -->
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <antcall target="createArticle">
+            <param name="article" value="Category/Foo"/>
+            <param name="content" value="Foo's content"/>
+        </antcall>
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="deletePage" >
+            <!-- creating article to save -->
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}?action=delete"
+				description="Open resulting Descriptor Article." />
+        <clickButton htmlId="wpConfirmB" />
+		<!--
+		<verifyXPath description="verify delete"
+					     xpath="//h1[@class='firstHeading']"
+					     text="Action complete" /> 
+        -->
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+    
+     
+
+    <target name="verifyDescriptorAdmin">
+        <antcall target="login">
+            <param name="user" value="Admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+    <target name="verifyDescriptorNoLogin">
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+
+    </target>
+
+    <target name="verifyDescriptorUser11">
+        <antcall target="login">
+            <param name="user" value="user11"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${targetPage}"
+			description="Open resulting Descriptor Article." />
+        <verifyXPath description="${targetPage}"
+				     xpath="//h1[@class='firstHeading']"
+				     text="${expectedText}" />
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+    </target>
+
+
+
+    <!-- create Descr -->
+
+    <target name="createDescrindividual">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+        
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="individual"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <setCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_right_0_Admin" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <!-- checking assigned tab -->
+        <clickElement xpath="//div[@class='yui-navset yui-navset-top' and @id='right_tabview_create_acl_right_0']/ul[@class='yui-nav']/li[@class='' and position()=2]/a" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+        <verifyXPath xpath="//span[@class='userdatatable_name userdatatable_name_right_tabview_create_acl_right_0']" text="Admin" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <!-- adding template -->
+        <clickButton htmlId="haloacl_add_right_individual" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickElement htmlId="hacl_select_tpl_Right/Lou" />
+
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+    </target>
+
+    <target name="createDescrprivateuse">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="privateuse"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+                <!-- adding template -->
+        <clickButton htmlId="haloacl_add_right_individual" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickElement htmlId="hacl_select_tpl_Right/Lou" />
+
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createDescrallusers">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+      
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusers"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+                <!-- adding template -->
+        <clickButton htmlId="haloacl_add_right_individual" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickElement htmlId="hacl_select_tpl_Right/Lou" />
+
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createDescrallusersregistered">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+       
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersregistered"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+                <!-- adding template -->
+        <clickButton htmlId="haloacl_add_right_individual" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickElement htmlId="hacl_select_tpl_Right/Lou" />
+
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+        
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+
+    <target name="createDescrallusersanoymous">
+
+        <antcall target="login">
+            <param name="user" value="admin"/>
+            <param name="pwd" value="test"/>
+        </antcall>
+
+        <invoke url="http://${serverurl}/${wikipath}/index.php/${page}"
+			description="Open page ${page} as Admin." />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setInputField htmlId="create_acl_general_name"
+					   value="${targetPage}"/>
+
+
+
+        <clickButton htmlId="step2_button_createAcl" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_create_right_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <setRadioButton name="create_acl_general_definefor" value="allusersanonymous"/>
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+                <!-- adding template -->
+        <clickButton htmlId="haloacl_add_right_individual" />
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickElement htmlId="hacl_select_tpl_Right/Lou" />
+
+        <!-- end -->
+
+        <clickButton htmlId="haloacl_createacl_nextstep_individual" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+
+        <!-- checking modificationrights -->
+        <verifyCheckbox htmlId="checkbox_datatableDiv_right_tabview_create_acl_modificationrights_Admin" checked="true" />
+        <!-- end -->
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
+
+        <clickButton htmlId="haloacl_save_create_acl_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_save_modificationrights" />
+
+        <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
+
+        <clickButton htmlId="haloacl_saveacl_button" />
+
+        <antcall target="goToLogout">
+            <param name="serverurl" value="${serverurl}" />
+            <param name="wikipath" value="${wikipath}" />
+        </antcall>
+
+
+    </target>
+
+</project>
