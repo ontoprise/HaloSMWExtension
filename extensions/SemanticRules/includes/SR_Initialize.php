@@ -2,7 +2,7 @@
 /**
  * Semantic rules extension entry point
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -113,12 +113,14 @@ function srfAddJSLanguageScripts(& $out) {
  * @return boolean (MW hook)
  */
 function srfAddHTMLHeader(& $out) {
-	global $srgSRIP, $wgScriptPath, $smwgEnableFlogicRules, $wgRequest;
+	global $srgSRIP, $wgScriptPath, $smwgEnableFlogicRules, $wgRequest, $wgTitle;
 
+    $SF = ($wgTitle->getNamespace() == -1 &&
+           in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
 	$action = $wgRequest->getVal('action');
-	if ($action != "edit" && $action != "annotate") return true;
+	if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
-	srfAddJSLanguageScripts($out);
+    srfAddJSLanguageScripts($out);
 
 	$rulesEnabled = isset($smwgEnableFlogicRules)
 	? (($smwgEnableFlogicRules) ? 'true' : 'false')
