@@ -1,6 +1,35 @@
+Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 5714)
++++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
+@@ -55,7 +55,7 @@
+ 
+ 	private $m_hasssearchlink;        /// used to control the addition of the standard search link
+ 	private $m_hasservicelinks;       /// used to control service link creation
+-
++    private $m_provenance = NULL;
+ 
+ 	public function __construct($typeid) {
+ 		$this->m_typeid = $typeid;
+@@ -564,7 +564,14 @@
+ 	public function getUnit() {
+ 		return ''; // empty unit
+ 	}
+-
++    
++    public function setProvenance($provURI) {
++       $this->m_provenance = $prov;
++    }
++   
++    public function getProvenance() {
++       return $this->m_provenance;
++    }
+ }
+ 
+ 
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 5486)
+--- includes/Article.php	(revision 5714)
 +++ includes/Article.php	(working copy)
 @@ -3552,9 +3552,15 @@
  
@@ -22,7 +51,7 @@ Index: includes/Article.php
  		if( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 5486)
+--- includes/Namespace.php	(revision 5714)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,11 @@
  	 */
@@ -39,7 +68,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php	(revision 5486)
+--- includes/parser/ParserOptions.php	(revision 5714)
 +++ includes/parser/ParserOptions.php	(working copy)
 @@ -30,6 +30,9 @@
  	var $mTemplateCallback;          # Callback for template fetching
