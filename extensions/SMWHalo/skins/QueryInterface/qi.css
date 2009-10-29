@@ -10,7 +10,7 @@ height:550px;
 }
 
 #shade{
-position: absolute;
+position: fixed;
 top: 0px;
 left: 0px;
 background:#444444;
@@ -285,7 +285,7 @@ a.plusminus:hover{
 }
 
 #fullpreviewbox{
-position:absolute;
+position:fixed;
 z-index:51;
 top:10%;
 left:10%;
@@ -306,7 +306,7 @@ border-color: #AAAAAA;
 }
 
 .topDialogue{
-position:absolute;
+position:fixed;
 z-index:51;
 top:25%;
 left:30%;
