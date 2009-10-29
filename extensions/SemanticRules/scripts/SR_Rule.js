@@ -51,7 +51,8 @@ initialize: function() {
 
 showToolbar: function(){
 	this.rulescontainer.setHeadline(gsrLanguage.getMessage('RULE_RULES'));
-	if (wgAction == 'edit') {
+	if (wgAction == 'edit' || wgAction == 'formedit' ||
+        wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData') {
 		// Create a wiki text parser for the edit mode. In annotation mode,
 		// the mode's own parser is used.
 		this.wtp = new WikiTextParser();
@@ -62,7 +63,8 @@ showToolbar: function(){
 },
 
 callme: function(event){
-	if((wgAction == "edit" || wgAction == "annotate")
+	if((wgAction == "edit" || wgAction == "annotate" || wgAction == "formedit" ||
+        wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData')
 	    && stb_control.isToolbarAvailable() 
 	    && (wgNamespaceNumber == 14 || wgNamespaceNumber == 102)){
 		this.rulescontainer = stb_control.createDivContainer(RULESCONTAINER, 0);
