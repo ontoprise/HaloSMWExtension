@@ -1840,7 +1840,7 @@ Element.Methods = {
 
   addClassName: function(element, className) {
     if (!(element = $(element))) return;
-    if (!element.hasClassName(className))
+    if (!Element.hasClassName(className))
       element.className += (element.className ? ' ' : '') + className;
     return element;
   },
