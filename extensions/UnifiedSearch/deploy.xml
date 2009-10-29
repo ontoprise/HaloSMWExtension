@@ -40,6 +40,11 @@
                 <string name="wgLuceneSearchVersion"
                     description="Version">2.1</string>
             </variable>
+            <variable name="wgLuceneSearchTimeout">
+                <string name="wgLuceneSearchTimeout"
+                    description="HTTP-Timeout in s">5</string>
+            </variable>
+            
             <require name="us_init"
                 file="extensions/UnifiedSearch/includes/UnifiedSearch.php" />
             <script file="extensions/UnifiedSearch/maintenance/setup.php" params="" />
