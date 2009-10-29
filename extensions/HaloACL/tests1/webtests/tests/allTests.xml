@@ -3,12 +3,13 @@
 <project name="testHaloACL" default="testAll">
 
 
-	<property name="wikipath" value="mediawiki"/>
+    <property name="wikipath" value="mediawiki"/>
 
 
-	<target name="testAll" description="runs all the tests">
+    <target name="testAll" description="runs all the tests">
+
 <!--
--->
+
 		<ant antfile="createUsers.xml"/> 
 		<ant antfile="createArticles.xml"/>
 		<ant antfile="pageTransclusion.xml"/>
@@ -35,7 +36,7 @@
 		<ant antfile="exportRDFofProtectedProperties.xml"/>
 		<ant antfile="ontologyBrowserWithACL.xml"/>
 		<ant antfile="initialRights.xml"/>
-		<!--		
+				
 -->
 		<!--
 -->
@@ -46,16 +47,24 @@
 		<!--
 	Test GUI of HaloACL
 -->
-		<ant antfile="createDescriptor.xml" />
+
+                <ant antfile="createDescriptorCategory.xml" />
+                <!--
+        <ant antfile="editRight.xml" />
+		<ant antfile="createTemplateDefUser.xml" />
+        <ant antfile="createDescriptorProperty.xml" />
+        <ant antfile="createDescriptorNamespace.xml" />
+
+		<ant antfile="createDescriptorPage.xml" />
 		<ant antfile="createTemplate.xml" />
-		<ant antfile="editRight.xml" />
-		<ant antfile="createGroups.xml" />
-		<ant antfile="checkMisc.xml" />
-		<ant antfile="quickACL.xml" />
-		<!--
+        
 -->
 <!--
+        <ant antfile="checkMisc.xml" />
+        <ant antfile="createGroups.xml" />
+        <ant antfile="quickACL.xml" />
+        <ant antfile="createDescriptor.xml" />
 -->
 
-	</target>
+    </target>
 </project>
