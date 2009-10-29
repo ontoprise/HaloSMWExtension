@@ -4,6 +4,7 @@ require_once( "$smwgIP/includes/storage/SMW_Store.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
 require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
+require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
 
 /**
  * Triple store connector class.
@@ -457,7 +458,7 @@ class SMWTripleStore extends SMWStore {
 
 			} catch(Exception $e) {
 				//              var_dump($e);
-				$sqr = new SMWQueryResult(array(), $query, false);
+				$sqr = new SMWHaloQueryResult(array(), $query, false);
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
 			}
@@ -629,11 +630,11 @@ class SMWTripleStore extends SMWStore {
 	}
 
     /**
-     * Parses a SPARQL XML-Result and returns an SMWQueryResult.
+     * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
      *
      * @param SMWQuery $query
      * @param xml string $sparqlXMLResult
-     * @return SMWQueryResult
+     * @return SMWHaloQueryResult
      */
     protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
@@ -644,7 +645,7 @@ class SMWTripleStore extends SMWStore {
         $results = $dom->xpath('//result');
 
         // if no results return empty result object
-        if (count($results) == 0) return new SMWQueryResult(array(), $query);
+        if (count($results) == 0) return new SMWHaloQueryResult(array(), $query);
 
         $variableSet = array();
         foreach($variables as $var) {
@@ -731,7 +732,7 @@ class SMWTripleStore extends SMWStore {
         }
 
         // Query result object
-        $queryResult = new SMWQueryResult($prs, $query, (count($results) > $query->getLimit()));
+        $queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
 
         // create and add result rows
         // iterate result rows and add an SMWResultArray object for each field
