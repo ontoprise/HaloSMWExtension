@@ -74,7 +74,7 @@ class  HACLResultFilter  {
 	 */
 	public static function filterResult(SMWQueryResult &$qr) {
 		$msgAdded = false;
-		$newqr = SMWQueryResult::newFromQueryResult($qr);
+		$newqr = $qr->newFromQueryResult();
         while ( $row = $qr->getNext() ) {
 			$newRow = array();
 			$firstField = true;
