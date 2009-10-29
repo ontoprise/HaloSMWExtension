@@ -1327,7 +1327,10 @@ AutoCompleter.prototype = {
             Element.addClassName(cross, "closeFloater");
             cross.setAttribute("src",
                 wgServer + wgScriptPath + "/extensions/SMWHalo/skins/Autocompletion/close.gif");
-            cross.setAttribute("onclick", "javascript:autoCompleter.hideSmartInputFloater()");
+            if (typeof FCKeditor != 'undefined')
+                cross.setAttribute("onclick", "javascript:window.top.autoCompleter.hideSmartInputFloater()");
+            else
+                cross.setAttribute("onclick", "javascript:autoCompleter.hideSmartInputFloater()");
             cross.setAttribute("style", "margin-left:4px;margin-bottom:3px;");
 
             mwContentHeader.appendChild(cross);
