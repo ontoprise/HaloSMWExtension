@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>142</version>
+        <version>143</version>
         <id>SMW</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SemanticMediaWiki</instdir>
