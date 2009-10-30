@@ -589,7 +589,7 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 +	 * @return SMWQueryResult
 +	 * 		A partly copied $queryResult
 +	 */
-+	public function newFromQueryResult($queryResult) {
++	public function newFromQueryResult() {
 +		$classname = get_class($this);
 +		$qr = new $classname($this->m_printrequests, 
 +	                           $this->m_query, 
