@@ -19,7 +19,7 @@
             </antcall>
         </webtest>
 -->
-        <webtest name="protecting with individual right">
+        <webtest name="protecting property with individual right">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -47,7 +47,7 @@
                 <param name="expectedText" value="ACL:Property/Foo"/>
             </antcall>
         </webtest>
-        <webtest name="checking access to protected page">
+        <webtest name="checking access to protected property">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -71,7 +71,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with privateuse">
+        <webtest name="protecting property with privateuse">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -96,7 +96,7 @@
                 <param name="expectedText" value="ACL:Property/Foo"/>
             </antcall>
         </webtest>
-        <webtest name="checking access to protected page">
+        <webtest name="checking access to protected property">
             <antcall target="verifyDescriptorAdmin">
                 <param name="targetPage" value="Property/Foo"/>
                 <param name="expectedText" value="Property/Foo"/>
@@ -117,7 +117,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with allusers">
+        <webtest name="protecting property with allusers">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -163,7 +163,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with all registered users">
+        <webtest name="protecting property with all registered users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -209,7 +209,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with all anonymous users">
+        <webtest name="protecting property with all anonymous users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>

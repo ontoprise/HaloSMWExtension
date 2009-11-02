@@ -19,7 +19,7 @@
             </antcall>
         </webtest>
 -->
-        <webtest name="protecting with individual right">
+        <webtest name="protecting page in namespace with individual right">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -47,7 +47,7 @@
                 <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
-        <webtest name="checking access to protected page">
+        <webtest name="checking access to protected page in namespace">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -71,7 +71,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with privateuse">
+        <webtest name="protecting page in namespace with privateuse">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -96,7 +96,7 @@
                 <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
-        <webtest name="checking access to protected page">
+        <webtest name="checking access to protected page in namespace">
             <antcall target="verifyDescriptorAdmin">
                 <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Form:Foo"/>
@@ -117,7 +117,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with allusers">
+        <webtest name="protecting page in namespace with allusers">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -163,7 +163,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with all registered users">
+        <webtest name="protecting page in namespace with all registered users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -209,7 +209,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with all anonymous users">
+        <webtest name="protecting page in namespace with all anonymous users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>

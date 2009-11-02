@@ -19,7 +19,7 @@
             </antcall>
         </webtest>
 -->
-        <webtest name="protecting with individual right">
+        <webtest name="protecting page with individual right">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -72,7 +72,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with privateuse">
+        <webtest name="protecting page with privateuse">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -118,7 +118,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with allusers">
+        <webtest name="protecting page with allusers">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -164,7 +164,7 @@
             </antcall>
         </webtest>
 
-        <webtest name="protecting with all registered users">
+        <webtest name="protecting page with all registered users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
@@ -210,7 +210,7 @@
             </antcall>
         </webtest>
         
-        <webtest name="protecting with all anonymous users">
+        <webtest name="protecting page with all anonymous users">
             <config >
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
