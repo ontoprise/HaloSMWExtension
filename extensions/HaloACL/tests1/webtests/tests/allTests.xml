@@ -48,15 +48,15 @@
 	Test GUI of HaloACL
 -->
 
-                <ant antfile="createDescriptorCategory.xml" />
-                <!--
-        <ant antfile="editRight.xml" />
-		<ant antfile="createTemplateDefUser.xml" />
-        <ant antfile="createDescriptorProperty.xml" />
+        <ant antfile="createTemplate.xml" />
+        <ant antfile="createDescriptorCategory.xml" />
         <ant antfile="createDescriptorNamespace.xml" />
+        <ant antfile="createDescriptorPage.xml" />
+        <ant antfile="createDescriptorProperty.xml" />
+        <ant antfile="createTemplateDefUser.xml" />
+        <ant antfile="editRight.xml" />
+                <!--
 
-		<ant antfile="createDescriptorPage.xml" />
-		<ant antfile="createTemplate.xml" />
         
 -->
 <!--

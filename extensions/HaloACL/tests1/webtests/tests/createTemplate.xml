@@ -446,7 +446,7 @@
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
-        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_0"/>
+        <setCheckbox htmlId="checkbox_right_fullaccess_create_acl_right_1"/>
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 
@@ -455,7 +455,7 @@
         <sleep description="AJAX PAUSE" seconds="${ajaxWaitLong}" />
 
 
-        <clickButton htmlId="haloacl_save_create_acl_right_0" />
+        <clickButton htmlId="haloacl_save_create_acl_right_1" />
 
         <sleep description="AJAX PAUSE" seconds="${ajaxWait}" />
 

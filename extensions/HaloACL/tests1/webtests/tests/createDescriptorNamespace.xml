@@ -9,13 +9,13 @@
     <target name="runAllCreateDescriptorTests">
         <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Namespace/Foo" />
+                <param name="targetPage" value="ACL:Namespace/Form" />
             </antcall>
         </webtest>
 <!--        issue with toolbar
         <webtest name="create page (foo) that will be secured">
             <antcall target="createArticleThatWillBeSecured">
-                <param name="content" value="I'm Foo's content" />
+                <param name="content" value="I'm Form's content" />
             </antcall>
         </webtest>
 -->
@@ -26,7 +26,7 @@
             <antcall target="createDescrindividual">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Foo"/>
+                <param name="targetPage" value="Form"/>
                 <param name="content" value="This page is not accessible for.*"/>
             </antcall>
         </webtest>
@@ -35,16 +35,16 @@
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
         <webtest name="checking access to protected page">
@@ -52,22 +52,22 @@
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Permission error"/>
             </antcall>
         </webtest>
 
         <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Namespace/Foo" />
+                <param name="targetPage" value="ACL:Namespace/Form" />
             </antcall>
         </webtest>
 
@@ -78,42 +78,42 @@
             <antcall target="createDescrprivateuse">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Foo"/>
+                <param name="targetPage" value="Form"/>
                 <param name="content" value="This page is not accessible for.*"/>
             </antcall>
         </webtest>
         <webtest name="checking access to ACL-Page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
         <webtest name="checking access to protected page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Permission error"/>
             </antcall>
         </webtest>
 
         <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Namespace/Foo" />
+                <param name="targetPage" value="ACL:Namespace/Form" />
             </antcall>
         </webtest>
 
@@ -124,42 +124,42 @@
             <antcall target="createDescrallusers">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Foo"/>
+                <param name="targetPage" value="Form"/>
                 <param name="content" value="This page is not accessible for.*"/>
             </antcall>
         </webtest>
         <webtest name="checking access to ACL-Page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
         <webtest name="checking access to page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
         </webtest>
 
         <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Namespace/Foo" />
+                <param name="targetPage" value="ACL:Namespace/Form" />
             </antcall>
         </webtest>
 
@@ -170,42 +170,42 @@
             <antcall target="createDescrallusersregistered">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Foo"/>
+                <param name="targetPage" value="Form"/>
                 <param name="content" value="This page is not accessible for.*"/>
             </antcall>
         </webtest>
         <webtest name="checking access to ACL-Page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
         <webtest name="checking access to page">
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
         </webtest>
 
         <webtest name="deleting acl for foo page - MAY FAIL IF NOT EXISTING">
             <antcall target="deletePage" >
-                <param name="targetPage" value="ACL:Namespace/Foo" />
+                <param name="targetPage" value="ACL:Namespace/Form" />
             </antcall>
         </webtest>
 
@@ -216,7 +216,7 @@
             <antcall target="createDescrallusersanoymous">
                 <param name="page" value="Special:HaloACL"/>
                 <param name="heading" value="HaloACL"/>
-                <param name="targetPage" value="Foo"/>
+                <param name="targetPage" value="Form"/>
                 <param name="content" value="This page is not accessible for.*"/>
             </antcall>
         </webtest>
@@ -225,16 +225,16 @@
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="ACL:Namespace/Foo"/>
-                <param name="expectedText" value="ACL:Namespace/Foo"/>
+                <param name="targetPage" value="ACL:Namespace/Form"/>
+                <param name="expectedText" value="ACL:Namespace/Form"/>
             </antcall>
         </webtest>
         <webtest name="checking access to page">
@@ -242,15 +242,15 @@
                 <option name="ThrowExceptionOnScriptError" value="false" />
             </config>
             <antcall target="verifyDescriptorAdmin">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Permission error"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
-                <param name="targetPage" value="Namespace/Foo"/>
-                <param name="expectedText" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
+                <param name="expectedText" value="Form:Foo"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
-                <param name="targetPage" value="Namespace/Foo"/>
+                <param name="targetPage" value="Form:Foo"/>
                 <param name="expectedText" value="Permission error"/>
             </antcall>
         </webtest>
@@ -266,8 +266,8 @@
             <param name="pwd" value="test"/>
         </antcall>
         <antcall target="createArticle">
-            <param name="article" value="Namespace/Foo"/>
-            <param name="content" value="Foo's content"/>
+            <param name="article" value="Form:Foo"/>
+            <param name="content" value="Form's content"/>
         </antcall>
         <antcall target="goToLogout">
             <param name="serverurl" value="${serverurl}" />

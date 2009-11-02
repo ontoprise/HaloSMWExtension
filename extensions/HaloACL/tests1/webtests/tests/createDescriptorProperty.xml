@@ -40,7 +40,7 @@
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="ACL:Property/Foo"/>
-                <param name="expectedText" value="ACL:Property/Foo"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="ACL:Property/Foo"/>
@@ -57,11 +57,11 @@
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Login Required"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
         </webtest>
 
@@ -103,11 +103,11 @@
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Login Required"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
         </webtest>
 
@@ -195,7 +195,7 @@
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Login Required"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="Property/Foo"/>
@@ -230,7 +230,7 @@
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="ACL:Property/Foo"/>
-                <param name="expectedText" value="ACL:Property/Foo"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="ACL:Property/Foo"/>
@@ -243,7 +243,7 @@
             </config>
             <antcall target="verifyDescriptorAdmin">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
             <antcall target="verifyDescriptorNoLogin">
                 <param name="targetPage" value="Property/Foo"/>
@@ -251,7 +251,7 @@
             </antcall>
             <antcall target="verifyDescriptorUser11">
                 <param name="targetPage" value="Property/Foo"/>
-                <param name="expectedText" value="Permission error"/>
+                <param name="expectedText" value="Property/Foo"/>
             </antcall>
         </webtest>
 

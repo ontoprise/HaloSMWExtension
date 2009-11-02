@@ -40,7 +40,7 @@
             </antcall>
             <antcall target="verifyTemplateNoLogin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
-                <param name="expectedText" value="Login required"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
                 <param name="targetPage" value="ACL:Right/Lou"/>
@@ -78,7 +78,7 @@
             </antcall>
             <antcall target="verifyTemplateNoLogin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
-                <param name="expectedText" value="Login required"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
                 <param name="targetPage" value="ACL:Right/Lou"/>
@@ -116,7 +116,7 @@
             </antcall>
             <antcall target="verifyTemplateNoLogin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
-                <param name="expectedText" value="Login required"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
                 <param name="targetPage" value="ACL:Right/Lou"/>
@@ -154,7 +154,7 @@
             </antcall>
             <antcall target="verifyTemplateNoLogin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
-                <param name="expectedText" value="Login required"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
                 <param name="targetPage" value="ACL:Right/Lou"/>
@@ -192,7 +192,7 @@
             </antcall>
             <antcall target="verifyTemplateNoLogin">
                 <param name="targetPage" value="ACL:Right/Lou"/>
-                <param name="expectedText" value="Login required"/>
+                <param name="expectedText" value="Login Required"/>
             </antcall>
             <antcall target="verifyTemplateUser11">
                 <param name="targetPage" value="ACL:Right/Lou"/>
