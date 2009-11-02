@@ -149,7 +149,7 @@ ul.smwh_menulist div.smwh_menubody {
     z-index: 20;
 }
 
-ul.smwh_menulist div.smwh_menubody td:hover  {
+ul.smwh_menulist div.smwh_menubody .hovering  {
 	background-image: none;
         background-repeat: repeat;
         background-attachment: scroll;
@@ -303,7 +303,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #tabsright ul.smwh_menulist div.smwh_menubody {
     width: auto;
     position: absolute;
-    top: 1.2em;
+    top: 1.1em;
     padding: 5px;
     z-index: 20;
     right: 0em;
@@ -364,3 +364,35 @@ ul.smwh_menulist div.smwh_menubody_visible {
     padding: 10px
 }
 
+/* Treeview */
+
+#smwh_treeview{
+    z-index: 100;
+    border-width: 1px;
+    border-style: solid;
+    position: fixed;
+    display: none;
+    overflow: auto;
+    -moz-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+
+#smwh_treeviewtoggleright{
+    position: fixed;
+    /*margin-top: ;
+    margin-bottom: *;*/
+}
+
+#smwh_treeviewtoggleleft{
+    position: fixed;
+    margin-top: 10px
+}
+
+.smwh_treeviewright{
+    margin-left: 10px;
+}
+
+.smwh_treeviewleft{
+    left: 0px;
+}

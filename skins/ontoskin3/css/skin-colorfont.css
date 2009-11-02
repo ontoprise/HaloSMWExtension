@@ -51,18 +51,9 @@ dt {
     background: url(../img/menue_trennstrich.gif) right no-repeat;
 }
 
-.smwh_menuhead:focus {
+#smwh_menu .hovering .smwh_menuhead {
     background: url(../img/menue_hover.gif) repeat-x;
 }
-
-.smwh_menuhead:hover {
-    background: url(../img/menue_hover.gif) repeat-x;
-}
-
-.smwh_menuhead:active {
-    background: url(../img/menue_hover.gif) repeat-x;
-}
-
 
 ul.smwh_menulist div.smwh_menubody_visible {
     background-color: #fbfbfb;
@@ -71,10 +62,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 ul.smwh_menulist div.smwh_menubody_visible a{
     color: #116988;
-}
-
-ul.smwh_menulist li:hover {
-    background: url(../img/menue_hover.gif) repeat-x;
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover  {
@@ -165,6 +152,9 @@ ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a
     font-weight: bolder;
 }
 
-#treeviewtoggle{
-    background: url(../img/treeviewtoggle.png) scroll repeat-y right;
+/* Treeview */
+
+#smwh_treeview{
+    border-color: #CACAC4;
+    background-color: #FFF;
 }
