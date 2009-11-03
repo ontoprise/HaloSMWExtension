@@ -36,10 +36,8 @@ $wgExtraNamespaces = $wgExtraNamespaces +
 		NS_VCARD => 'VCard',
 		NS_VCARD_TALK => 'VCard_talk',
 	);
-
-global $wgNamespaceAliases;
-$wgNamespaceAliases = $wgNamespaceAliases + 
-	array('Document' => NS_DOCUMENT,
+global $wgRichMediaNamespaceAliases; 
+$wgRichMediaNamespaceAliases = array('Document' => NS_DOCUMENT,
 		'Document_talk' => NS_DOCUMENT_TALK,
 		'Audio' => NS_AUDIO,
 		'Audio_talk' => NS_AUDIO_TALK,
@@ -51,7 +49,11 @@ $wgNamespaceAliases = $wgNamespaceAliases +
 		'ICalendar_talk' => NS_ICAL_TALK,
 		'VCard' => NS_VCARD,
 		'VCard_talk' => NS_VCARD_TALK
-	);
+	); 
+	
+global $wgNamespaceAliases;
+$wgNamespaceAliases = array_merge($wgNamespaceAliases, $wgRichMediaNamespaceAliases); 
+	
 
 #used to determine which form to choose
 global $wgNamespaceByExtension;
