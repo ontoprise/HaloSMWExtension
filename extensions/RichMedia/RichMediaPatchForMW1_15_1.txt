@@ -625,7 +625,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/Title.php
 ===================================================================
---- includes/Title.php	(revision 5543)
+--- includes/Title.php	(revision 5613)
 +++ includes/Title.php	(working copy)
 @@ -251,6 +251,29 @@
  		$t = new Title();
@@ -657,7 +657,36 @@ Index: includes/Title.php
  		$t->mNamespace = $ns = intval( $ns );
  		$t->mDbkeyform = str_replace( ' ', '_', $title );
  		$t->mArticleID = ( $ns >= 0 ) ? -1 : 0;
-@@ -448,9 +471,21 @@
+@@ -271,6 +294,28 @@
+ 	 */
+ 	public static function makeTitleSafe( $ns, $title, $fragment = '' ) {
+ 		$t = new Title();
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE may not be the correct Namespace for this MIME type
++		// original content is located in else statement.
++		global $smwgEnableRichMedia, $wgNamespaceByExtension;
++		if( $smwgEnableRichMedia ) {
++			list( $partname, $ext ) = UploadForm::splitExtensions( $title );
++			if( count( $ext ) ) {
++				$finalExt = $ext[count( $ext ) - 1];
++			} else {
++				$finalExt = '';
++			}
++			if ( isset( $finalExt ) ) {
++				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
++					// Just change it for FILE namespace... not for specialpages etc
++					RMNamespace::isImage( $ns, &$rMresult );
++					if ( $rMresult ) {
++						$ns = $wgNamespaceByExtension[$finalExt];
++					}
++				}
++			}
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 		$t->mDbkeyform = Title::makeName( $ns, $title, $fragment );
+ 		if( $t->secureAndSplit() ) {
+ 			return $t;
+@@ -448,9 +493,21 @@
  
  		$t = preg_replace( "/\\s+/", ' ', $t );
  
@@ -681,7 +710,7 @@ Index: includes/Title.php
  		return trim( $t );
  	}
  
-@@ -1179,9 +1214,21 @@
+@@ -1179,9 +1236,21 @@
  			}
  			
  			// Check if user is allowed to move files if it's a file
@@ -705,7 +734,7 @@ Index: includes/Title.php
  			
  			if( !$user->isAllowed( 'move' ) ) {
  				// User can't move anything
-@@ -1749,20 +1796,43 @@
+@@ -1749,20 +1818,43 @@
  
  		$dbr = wfGetDB( DB_SLAVE );
  
@@ -754,7 +783,7 @@ Index: includes/Title.php
  
  		if ( $get_pages ) {
  			$cols = array('pr_page', 'page_namespace', 'page_title', 'pr_expiry', 'pr_type', 'pr_level' );
-@@ -1987,12 +2057,27 @@
+@@ -1987,12 +2079,27 @@
  				array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  				__METHOD__
  			);
@@ -768,16 +797,16 @@ Index: includes/Title.php
 +				RMNamespace::isImage( $this->getNamespace(), &$rMresult );
 +				if ( $rMresult ) {
 +					$n += $dbr->selectField( 'filearchive', 'COUNT(*)',
- 					array( 'fa_name' => $this->getDBkey() ),
- 					__METHOD__
--				);
++					array( 'fa_name' => $this->getDBkey() ),
++					__METHOD__
 +					);
 +				}
 +			} else {
 +				if( $this->getNamespace() == NS_FILE ) {
 +					$n += $dbr->selectField( 'filearchive', 'COUNT(*)',
-+					array( 'fa_name' => $this->getDBkey() ),
-+					__METHOD__
+ 					array( 'fa_name' => $this->getDBkey() ),
+ 					__METHOD__
+-				);
 +					);
 +				}
  			}
@@ -785,7 +814,7 @@ Index: includes/Title.php
  		}
  		return (int)$n;
  	}
-@@ -2010,12 +2095,27 @@
+@@ -2010,12 +2117,27 @@
  			array( 'ar_namespace' => $this->getNamespace(), 'ar_title' => $this->getDBkey() ),
  			__METHOD__
  		);
@@ -816,7 +845,7 @@ Index: includes/Title.php
  		return $deleted;
  	}
  
-@@ -2592,20 +2692,44 @@
+@@ -2592,20 +2714,44 @@
  		}
  
  		// Image-specific checks
@@ -871,7 +900,7 @@ Index: includes/Title.php
  
  		if ( $auth ) {
  			$errors = wfMergeErrorArrays( $errors,
-@@ -2872,16 +2996,35 @@
+@@ -2872,16 +3018,35 @@
  		}
  
  		# Move an image if this is a file
@@ -914,7 +943,7 @@ Index: includes/Title.php
  
  		# Log the move
  		$log = new LogPage( 'move' );
-@@ -2969,16 +3112,35 @@
+@@ -2969,16 +3134,35 @@
  		}
  
  		# Move an image if this is a file
@@ -957,7 +986,7 @@ Index: includes/Title.php
  
  		# Log the move
  		$log = new LogPage( 'move' );
-@@ -3101,13 +3263,29 @@
+@@ -3101,13 +3285,29 @@
  	public function isValidMoveTarget( $nt ) {
  		$dbw = wfGetDB( DB_MASTER );
  		# Is it an existsing file?
@@ -992,7 +1021,7 @@ Index: includes/Title.php
  		# Is it a redirect with no history?
  		if( !$nt->isSingleRevRedirect() ) {
  			wfDebug( __METHOD__ . ": not a one-rev redirect\n" );
-@@ -3391,6 +3569,21 @@
+@@ -3391,6 +3591,21 @@
  		if( $this->mInterwiki != '' ) {
  			return true;  // any interwiki link might be viewable, for all we know
  		}
@@ -1014,7 +1043,7 @@ Index: includes/Title.php
  		switch( $this->mNamespace ) {
  		case NS_MEDIA:
  		case NS_FILE:
-@@ -3536,6 +3729,28 @@
+@@ -3536,6 +3751,28 @@
  	 */
  	public function getNamespaceKey() {
  		global $wgContLang;
