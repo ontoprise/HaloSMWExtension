@@ -418,6 +418,9 @@ class TestUserCanHook extends PHPUnit_Framework_TestCase {
 			$user = $user == '*' ? new User() : User::newFromName($user);
 			unset($result);
 			HACLEvaluator::userCan($article, $user, $action, $result);
+			if (is_null($result)) {
+				$result = true;
+			}
 			
 			$this->assertEquals($res, $result, "Test of rights failed for: $article, $username, $action (Testcase: $testcase)\n");
 			
