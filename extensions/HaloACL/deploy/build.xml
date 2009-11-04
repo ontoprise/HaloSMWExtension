@@ -30,6 +30,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/HaloACL/ontologyBundle">
+			<fileset dir="../ontologyBundle/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/HaloACL/scripts">
 			<fileset dir="../scripts/">
 				<exclude name="**/.svn, **/CVS" />
