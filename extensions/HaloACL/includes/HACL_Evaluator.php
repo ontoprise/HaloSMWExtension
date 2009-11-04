@@ -243,8 +243,11 @@ class HACLEvaluator {
 			// Articles with no SD are not protected if $haclgOpenWikiAccess is
 			// true. Otherwise access is denied
 			haclfRestoreTitlePatch($etc);
-			$result = $haclgOpenWikiAccess;
-			return $haclgOpenWikiAccess;
+			if ($haclgOpenWikiAccess) {
+				// Wiki is open for HaloACL but other extensions can still 
+				// prohibit access.
+				return true;
+			}
 		}
 		
 		// permission denied

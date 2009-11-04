@@ -61,10 +61,14 @@ $haclgHaloScriptPath = $wgScriptPath . '/extensions/HaloACL';
 $haclgEnableTitleCheck = false;
 
 ###
+# This flag applies to articles that have or inherit no security descriptor.
+#
 # true
 #    If this value is <true>, all articles that have no security descriptor are 
-#    fully accessible. Remember that security descriptor are also inherited via 
-#    categories or namespaces. 
+#    fully accessible for HaloACL. Other extensions or $wgGroupPermissions can
+#	 still prohibit access. 
+#    Remember that security descriptor are also inherited via categories or 
+#    namespaces. 
 # false
 #    If it is <false>, no access is granted at all. Only the latest author of an 
 #    article can create a security descriptor. 
@@ -154,6 +158,7 @@ $wgGroupPermissions['*']['propertyformedit'] = true;
 $wgGroupPermissions['*']['propertyedit'] = true;
 $wgGroupPermissions['*']['formedit'] = true;
 $wgGroupPermissions['*']['annotate'] = true;
+$wgGroupPermissions['*']['wysiwyg'] = true;
 
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');
