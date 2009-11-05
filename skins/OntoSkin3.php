@@ -104,7 +104,7 @@ class OntoSkin3Template extends QuickTemplate {
         $this->smwh_Skin = new SMWH_Skin($this,$action);
         
         // Suppress warnings to prevent notices about missing indexes in $this->data
-        //wfSuppressWarnings();
+        wfSuppressWarnings();
 
         ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="<?php $this->text('xhtmldefaultnamespace') ?>" <?php

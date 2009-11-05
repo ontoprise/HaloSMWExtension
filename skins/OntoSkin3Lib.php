@@ -37,9 +37,10 @@ class SMWH_Skin {
      */
     function SMWH_Skin($skintemplate,$action) {
        global $wgRequest, $wgUser;
-       $this->skin = $skin = $this->data['skin'];
+       $this->skin = $skin = $skintemplate->data['skin'];
        $this->skintemplate = $skintemplate;
        $this->imagepath = "/ontoskin3/img";
+       $this->action =$action;
     }
 
 
