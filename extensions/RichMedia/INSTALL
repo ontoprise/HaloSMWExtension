@@ -51,3 +51,17 @@ make sure that you merge them with the new ones delivered in this version.
 
 If you are running on Unix and want to use the UploadConverter make sure that you have installed the right packages
 of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/).
+
+#
+# Installation of the WebDAV server
+#
+
+* Add the following line of code to your LocalSettings.php:
+$wgWebDAVServerEnabled = true;
+
+* Connect to the WebDAV server via your WebDAV client using the following URL:
+{{WikiURL}}/extensions/RichMedia/includes/WebDAV/WD_WebDAV.php/
+
+* The file {WikiPath}/extensions/RichMedia/includes/WebDAV/WD_Settings.php contains
+a configurable namespace blacklist. Namespaces in that blacklist will not be displayed
+in the WebDAV folder. The settings file also allows to configure wheter talk namespaces should be displayed.
