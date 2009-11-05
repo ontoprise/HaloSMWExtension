@@ -1,4 +1,28 @@
 <?php
+
+/*
+ * This modified version was implemented by Ingo Steinbauer @ontoprise GmbH
+ */
+
+/*
+ *   This file is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This file is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * @author Ingo Steinbauer
+ */
+
 class FileData {
 
 	private $folderName = "";
@@ -57,9 +81,9 @@ class FileData {
 
 	public function getFileName(){
 		if($this->isWikiArticle()){
-			return substr($this->fileName, 0, strlen($this->fileName)-6);
+			return $this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6));
 		} else {
-			return $this->fileName;
+			return $this->decodeFileName($this->fileName);
 		}
 	}
 
@@ -86,8 +110,12 @@ class FileData {
 
 		global $smwgEnableRichMedia;
 		if($smwgEnableRichMedia){
+			if($folderName == "All"){
+				return true;
+			}
+			
 			$isFileNS = false;
-			RMNamespace::isImage($this->getNamespaceId($folderName), $isFileNS);
+			RMNamespace::isImage($this->getNamespaceId(true, $folderName), $isFileNS);
 			return $isFileNS;
 		} else {
 			//todo: implement this method
@@ -124,7 +152,7 @@ class FileData {
 		return false;
 	}
 
-	public function getNamespaceId($folderName = null){
+	public function getNamespaceId($isFolder = true, $folderName = null, $fileName = null){
 		if(is_null($folderName)){
 			$folderName = $this->folderName;
 		}
@@ -139,10 +167,46 @@ class FileData {
 			$nsId = 0;
 		} else if ($folderName == "Main_talk"){
 			$nsId = 1;
+		} else if($folderName == "All" && !$isFolder){
+			if(is_null($fileName)){
+				$fileName = $this->getFileName();
+			}
+			
+			$nsId = $this->getNamespaceIdBasedOnFileExtension($fileName);
 		} else {
 			$nsId = $folderName;
+		}
+		return $nsId;
+	}
+	
+	public function getNamespaceIdBasedOnFileExtension($fileName){
+		$nsId = NS_FILE;
+		$ext = explode(".", $fileName);
+		$ext = $ext[count($ext) -1 ];
+		
+		global $wgNamespaceByExtension;
+		if(array_key_exists(strtolower($ext), $wgNamespaceByExtension)){
+			$nsId = $wgNamespaceByExtension[$ext];
 		}
 		
 		return $nsId;
 	}
+	
+	public function decodeFileName($fileName){
+		$fileName = str_replace("-colon-",':', $fileName);
+		$fileName = str_replace("-asterisk-",'*', $fileName);
+		$fileName = str_replace("-slash-", '/', $fileName);
+		$fileName = str_replace("-quote-", '"', $fileName);
+		return $fileName;
+	}
+	
+	public function encodeFileName($fileName){
+		$fileName = str_replace(':', "-colon-", $fileName);
+		$fileName = str_replace('*', "-asterisk-", $fileName);
+		$fileName = str_replace('/', "-slash-", $fileName);
+		$fileName = str_replace('"', "-quote-", $fileName);
+		return $fileName;
+	}
+	
+	
 }
