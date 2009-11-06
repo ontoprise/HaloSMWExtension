@@ -256,4 +256,16 @@ Create a subfolder 'webtests' in the 'tests' folder
     
     For further information about Canoo webtests, take a look at:
         http://webtest.canoo.com/webtest/manual/WebTestHome.html
+
+
+3. Changes necessary when making a new release branch:
+
+*Change deploy script directory (SMW_copyScripts/SMW_packScripts)
+*Change versions of packages / add new packages if necessary
+*Add option -D<wikipath> at webtest call in buildsystem config to make sure which wiki is used.
+*Change $wgScriptPath in tests/tests_halo/LocalSettingsForTest.php template.
+
+4. Changes necessary when updateing to new MW version.
+*Replace tests/tests_halo/mwXX_db.sql file by a updated empty wiki MySQL dump. (UTF-8)
+
         
