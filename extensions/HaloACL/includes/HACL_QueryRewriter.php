@@ -257,7 +257,7 @@ class  HACLQueryRewriter  {
 			foreach ($prefixes as $pre => $iri) {
 				$qs = str_replace($iri, "$pre", $qs);
 			}
-			
+
 			$query->setQueryString($qs);
 			
 //			print_r($q);
@@ -644,7 +644,12 @@ class  HACLQueryRewriter  {
 			if ($t['o_type'] == 'var') {
 				$obj = '?' . $obj;
 			} else if ($t['o_type'] == 'literal') {
-				$obj = '"'.$obj.'"^^'.$t['o_datatype'];
+				if ($obj{0} == '"') {
+					// Object-literal begins with " => Use single quotes.
+					$obj = "'$obj'^^".$t['o_datatype'];
+				} else {
+					$obj = '"'.$obj.'"^^'.$t['o_datatype'];
+				}
 			}
 			
 			$qs .= "\n$subj $pred $obj .\n";
