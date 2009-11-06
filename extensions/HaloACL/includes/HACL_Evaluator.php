@@ -106,7 +106,6 @@ class HACLEvaluator {
 		//Special handling of action "wysiwyg". This is passed as 
 		// "action=edit&mode=wysiwyg"
 		if ($action == 'edit') {
-			global $wgRequest;
 			$action = $wgRequest->getVal('mode', 'edit');
 		}
 		
@@ -177,15 +176,23 @@ class HACLEvaluator {
 		$submit = $wgRequest->getText('action');
 		$submit = $submit == 'submit'; 
 		$savePage = $wgRequest->getCheck('wpSave');
+		$edit = $wgRequest->getText('action');
+		$edit = $edit == 'edit'; 
+		$sameTitle = $wgRequest->getText('title');
+		$sameTitle = str_replace(' ', '_', $sameTitle) == str_replace(' ', '_', $title->getFullText());
 		// Check if the article contains protected properties that avert
 		// editing the article
 		// There is no need to check for protected properties if an edited article 
 		// is submitted. An article with protected properties may be saved if their
 		// values are not changed. This is checked in method "onEditFilter" when
 		// the article is about to be saved.
-		if ($submit && !$savePage) {
-			// The article is submitted but not saved. This causes, that
+		if (($submit && !$savePage) || ($edit && $sameTitle)) {
+			// First condition:
+			// The article is submitted but not saved (preview). This causes, that
 			// the wikitext will be displayed. 
+			// Second condition:
+			// The requested article is edited. Nevertheless, the passed $action
+			// might be "read" as MW tries to show the articles source
 			// => prophibit this, if it contains properties without read-access
 			$allowed = self::checkProperties($title, $userID, HACLRight::EDIT);
 		} else {
