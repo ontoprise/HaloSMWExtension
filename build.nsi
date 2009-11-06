@@ -307,7 +307,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
       ${If} $INSTALLTYPE == 1
         CALL changeConfigForFullXAMPP
       ${EndIf}
-     
+  
+  
 SectionEnd
 
 
@@ -393,7 +394,7 @@ Section "Lucene search" lucene
         nsExec::ExecToLog 'dump.bat'
                
         ; adapt global.conf.template file
-        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/global.conf.template" out=global.conf wiki-db=semwiki_en ip=$IP'
+        nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/global.conf.template" out=global.conf wiki-db=semwiki_en ip=$IP lang=$WIKILANG'
         ; adapt lsearch.conf.template file
         nsExec::ExecToLog '"$PHP" "$MEDIAWIKIDIR\installer\changeVariable.php" in="template/lsearch.conf.template" out=lsearch.conf project-path="$INSTDIR\lucene" wiki-path="$MEDIAWIKIDIR" project-path-url="$INSTDIR\lucene" wiki-path-url="$MEDIAWIKIDIR"'
          ; adapt start.bat.template file
@@ -818,6 +819,11 @@ Function FinishPageShow
     ShowWindow $R0 ${SW_HIDE}
   ${EndIf}
   
+  ;write log
+   StrCpy $0 "$INSTDIR\install.log"
+   Push $0
+   Call DumpLog
+   
   /*SectionGetFlags ${xampp} $0
   IntOp $0 $0 & ${SF_SELECTED}
   ${If} $0 == 0
@@ -1093,4 +1099,46 @@ Function un.MakeFileList
     DetailPrint "The following files could not be deleted: [$FILE_LIST]"
 FunctionEnd
 
-
+; dumps the install log
+!define LVM_GETITEMCOUNT 0x1004
+!define LVM_GETITEMTEXT 0x102D
+Function DumpLog
+  Exch $5
+  Push $0
+  Push $1
+  Push $2
+  Push $3
+  Push $4
+  Push $6
+ 
+  FindWindow $0 "#32770" "" $HWNDPARENT
+  GetDlgItem $0 $0 1016
+  StrCmp $0 0 exit
+  FileOpen $5 $5 "w"
+  StrCmp $5 "" exit
+    SendMessage $0 ${LVM_GETITEMCOUNT} 0 0 $6
+    System::Alloc ${NSIS_MAX_STRLEN}
+    Pop $3
+    StrCpy $2 0
+    System::Call "*(i, i, i, i, i, i, i, i, i) i \
+      (0, 0, 0, 0, 0, r3, ${NSIS_MAX_STRLEN}) .r1"
+    loop: StrCmp $2 $6 done
+      System::Call "User32::SendMessageA(i, i, i, i) i \
+        ($0, ${LVM_GETITEMTEXT}, $2, r1)"
+      System::Call "*$3(&t${NSIS_MAX_STRLEN} .r4)"
+      FileWrite $5 "$4$\r$\n"
+      IntOp $2 $2 + 1
+      Goto loop
+    done:
+      FileClose $5
+      System::Free $1
+      System::Free $3
+  exit:
+    Pop $6
+    Pop $4
+    Pop $3
+    Pop $2
+    Pop $1
+    Pop $0
+    Exch $5
+FunctionEnd
