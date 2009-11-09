@@ -32,7 +32,7 @@ function wfUmeAjaxGetArticleList(){
     }
     // if there are no parameters, return right away
     if (count($discourseStates) == 0)
-        return wfMsg('smw_ume_no_csh_articles');
+        return json_encode(array('selection' => wfMsg('smw_ume_no_csh_articles')));
 
     // get all Csh articles for a certain discourse state
     $query = '[['.$wgContLang->getNsText(SMW_NS_USER_MANUAL).':+]]'
@@ -45,7 +45,7 @@ function wfUmeAjaxGetArticleList(){
     // set query output to html, so we can use it for the output directly
     $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
     if (strlen($result) == 0)
-        return wfMsg('smw_ume_no_csh_articles');
+        return json_encode(array('selection' => wfMsg('smw_ume_no_csh_articles')));
     $pages = explode(', '.$wgContLang->getNsText(SMW_NS_USER_MANUAL).':', $result);
     $result= wfMsg('smw_ume_select_topic').'<br/>'.
         '<select onchange="smwCsh.getPageContent(this.value)" size="7" style="overflow:hidden">';
