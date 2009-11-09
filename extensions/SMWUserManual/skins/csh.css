@@ -1,0 +1,114 @@
+/* 
+    Document   : csh
+    Created on : 05.11.2009, 16:50:01
+    Author     : stephan
+    Description: styles for the context sensitive help popup
+*/
+
+.cshTabActive {
+    cursor:pointer;cursor:hand;
+    font-weight: bold;
+    padding: 3px;
+    background-color:#FFFFFF;
+    border-left-width: thin;
+    border-left-color: #000000;
+    border-left-style: solid;
+    border-right-width: thin;
+    border-right-color: #000000;
+    border-right-style: solid;
+    border-top-width: thin;
+    border-top-color: #000000;
+    border-top-style: solid;
+}
+
+.cshTabInactive {
+    cursor:pointer;cursor:hand;
+    padding: 3px;
+    border-width: thin;
+    border-color: #000000;
+    border-style: solid;
+}
+
+.cshTabSpacer {
+    padding: 3px;
+    border-bottom-width: thin;
+    border-bottom-color: #000000;
+    border-bottom-style: solid;
+}
+
+.cshTabCont {
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
+    background-color:#FFFFFF;
+    border-left-width: thin;
+    border-left-color: #000000;
+    border-left-style: solid;
+    border-right-width: thin;
+    border-right-color: #000000;
+    border-right-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: #000000;
+    border-bottom-style: solid;
+}
+
+.cshHeadline {
+    display: block;
+    width: 100%;
+    background-color: #EFEFEF;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    border-top-width: thin;
+    border-top-color: #000000;
+    border-top-style: solid;
+    border-bottom-width: thin;
+    border-bottom-color: #000000;
+    border-bottom-style: solid;
+}
+
+#smw_csh_content_head {
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#smw_csh_content {
+    border: solid thin;
+    margin-left: 5px;
+    margin-right: 5px;
+    overflow:auto;
+}
+
+#smw_csh_rating {
+    border: none;
+    margin-left: 5px;
+    margin-right: 5px;
+    overflow:auto;
+}
+
+#smw_csh_link_to_smw {
+    text-align: right;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+#smw_csh_selection {
+    margin-left: 6px;
+    cursor: pointer; cursor: hand;
+}
+
+.cshFeedbackFrame {
+    width:98%;
+    border-collapse:collapse;
+    margin:5px;
+    padding: 5px;
+}
+.cshFeedbackFrame td {
+    padding: 5px;
+    vertical-align: middle;
+    border: solid thin;
+    border-collapse:collapse;
+    width:100%;
+    cursor: pointer; cursor: hand;
+}
