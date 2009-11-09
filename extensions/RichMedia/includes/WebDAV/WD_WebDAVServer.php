@@ -295,7 +295,6 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	# RawPage::view handles Content-Type, Cache-Control, etc. and we don't want get_response_helper to overwrite, but MediaWiki doesn't let us get response headers.  It could work if we kept setResponseHeader updated with headers_list on PHP 5.
 	function get_wrapper() {
 		$this->doGet($this->pathComponents, true);
-		
 	}
 
 	function head_wrapper() {
@@ -399,14 +398,23 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		
 		//upload file
 		$local = wfLocalFile($title);
+		
 		$status = $local->upload(
 			"tempfile", "created via webdav", "",
 			File::DELETE_SOURCE);
 		
+		global $smwgEnableUploadConverter, $smwgRMIP;
+		if($smwgEnableUploadConverter){
+			$local->load();
+			$text = UploadConverter::getFileContent($local);
+			
+			$article = new Article($local->title);
+			$article->doEdit(
+				$text, "uploaded via webdav");
+		}
 		
-		//todo namespace handling
-		//todo metadata
-		// todo upload converter
+		
+		// todo metadata
 		// todo:error handling
 		return true;
 	}
