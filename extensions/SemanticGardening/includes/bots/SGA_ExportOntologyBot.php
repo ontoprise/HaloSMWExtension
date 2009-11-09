@@ -54,7 +54,7 @@ class ExportOntologyBot extends GardeningBot {
 		return wfMsg($this->id);
 	}
 
-	
+
 
 	/**
 	 * Returns an array of GardeningParamObjects
@@ -79,7 +79,7 @@ class ExportOntologyBot extends GardeningBot {
 			
 		// create output directory and generate output filename
 		$smwhalodir = dirname(__FILE__)."/../..";
-        $wikiexportDir = $smwhalodir."/wikiexport";
+		$wikiexportDir = $smwhalodir."/wikiexport";
 		if (!file_exists($wikiexportDir)) mkdir($wikiexportDir);
 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
 			
@@ -256,9 +256,9 @@ class ExportOntologyBot extends GardeningBot {
 	 			// create valid xml export ID for property. If no exists, skip it.
 	 			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getXSDValue());
 	 			if ($propertyLocal == NULL) continue;
-	 			
+	 				
 	 			$values = smwfGetStore()->getPropertyValues($inst, $p);
-	  			foreach($values as $smwValue) {
+	 			foreach($values as $smwValue) {
 		 			$convertDate = ($smwValue->getTypeID() == '_dat');
 	 				// export WikiPage value as ObjectProperty
 	 				if ($smwValue instanceof SMWWikiPageValue) {
@@ -275,11 +275,12 @@ class ExportOntologyBot extends GardeningBot {
 								$owl .= $this->exportSI($p, $smwValue);
 							} else {
 								$wikiType = array_key_exists($smwValue->getTypeID(), $this->mapWikiTypeToXSD) ? $smwValue->getTypeID() : "_str";
-                                $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
+								$xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 								$content = preg_replace("/\x07/","", smwfXMLContentEncode($smwValue->getXSDValue()));
 								if ($convertDate) {
-								     $content = str_replace('/', "-", $content); // SMW-format to XSD-format
-                                     if (substr(trim($content), -1, 1) == 'T') $content = trim($content)."00:00:00"; // add timestamp if missing
+									$content = str_replace('/', "-", $content); // SMW uses / XSD - for separation
+									$datetime = date_create(str_replace("T", "", $content));
+									$content = $datetime->format('Y-m-d\TH:i:s'); // format in XSD format yyyy-mm-ddThh:mm:ss
 								}
 								$owl .= '	<prop:'.$propertyLocal.' rdf:datatype="&xsd;'.$xsdType.'">'.$content.'</prop:'.$propertyLocal.'>'.LINE_FEED;
 							}
@@ -342,7 +343,7 @@ class ExportOntologyBot extends GardeningBot {
 				}
 
 				// obtain cardinalities
-				
+
 				$maxCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->maxCardProp);
 				if ($maxCards != NULL || count($maxCards) > 0) {
 					$maxCard = intval($maxCards[0]->getXSDValue());
@@ -350,7 +351,7 @@ class ExportOntologyBot extends GardeningBot {
 				} else {
 					$maxCard = NULL;
 				}
-                
+
 				$minCards = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->minCardProp);
 				if ($minCards != NULL || count($minCards) > 0) {
 					$minCard = intval($minCards[0]->getXSDValue());
@@ -393,7 +394,7 @@ class ExportOntologyBot extends GardeningBot {
 		$directSubcategories = smwfGetSemanticStore()->getDirectSubCategories($superCategory);
 		array_push($visitedNodes, $superCategory->getArticleID());
 		foreach($directSubcategories as $tuple) {
-            list($c, $isLeaf) = $tuple;
+			list($c, $isLeaf) = $tuple;
 			if (in_array($c->getArticleID(), $visitedNodes)) {
 				array_pop($visitedNodes);
 				return;
@@ -433,7 +434,7 @@ class ExportOntologyBot extends GardeningBot {
 
 	private function exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard) {
 		$wikiType = array_key_exists($firstType, $this->mapWikiTypeToXSD) ? $firstType : "_str";
-        $xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
+		$xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
 			
 		// export as subproperty
 		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'">'.LINE_FEED;
@@ -449,7 +450,7 @@ class ExportOntologyBot extends GardeningBot {
 		$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
 			
 		// read all domains/ranges
-		
+
 		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintProp);
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
@@ -496,7 +497,7 @@ class ExportOntologyBot extends GardeningBot {
 	}
 
 	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
-		
+
 		$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOfProp);
 			
 		// export as symmetrical property
@@ -527,7 +528,7 @@ class ExportOntologyBot extends GardeningBot {
 			$owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL()).'"/>'.LINE_FEED;
 		}
 		$owl .= '</owl:ObjectProperty>'.LINE_FEED;
-		
+
 		$domainRange = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->domainRangeHintProp);
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
