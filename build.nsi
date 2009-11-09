@@ -294,6 +294,8 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
             File /oname=extensions\RichMedia\bin\antiword\antiword.exe extensions\RichMedia\bin\antiword\antiword.exe
             File /oname=AdminSettings.php AdminSettingsTemplate.php            
+            CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
+            
       !endif  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
