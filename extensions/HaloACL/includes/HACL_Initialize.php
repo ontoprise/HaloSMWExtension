@@ -160,6 +160,11 @@ $wgGroupPermissions['*']['formedit'] = true;
 $wgGroupPermissions['*']['annotate'] = true;
 $wgGroupPermissions['*']['wysiwyg'] = true;
 
+// add rights that are newly available with the haloACL
+$wgAvailableRights[] = 'propertyread';
+$wgAvailableRights[] = 'propertyformedit';
+$wgAvailableRights[] = 'propertyedit';
+
 #include our ajax_connecotr
 require_once('HACL_GenericPanel.php');
 require_once('HACL_AjaxConnector.php');
