@@ -319,6 +319,9 @@ function smwgHaloSetupExtension() {
 
 	// Register Annotate-Tab
 	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
+    // new right for annotation mode
+    global $wgAvailableRights;
+    $wgAvailableRights[] = 'annotate';
 
 
 	// Register Credits
