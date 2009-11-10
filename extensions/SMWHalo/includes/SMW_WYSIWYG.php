@@ -5,10 +5,11 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-global $wgHooks;
+global $wgHooks, $wgAvailableRights;
 $wgHooks[ 'SkinTemplateTabs' ][] = 'smwfAddWYSIWYGTab';
 $wgHooks[ 'LanguageGetMagic' ][] = 'smwfAddMagigWordNoricheditor';
 $wgHooks[ 'ParserBeforeInternalParse' ][] = 'smwfRemoveNoricheditor';
+$wgAvailableRights[] = 'wysiwyg';
 
 // do not load WW if and only if in plain edit mode
 $plainEditmode = (array_key_exists('action', $_REQUEST) && ($_REQUEST['action'] == 'edit' || $_REQUEST['action'] == 'submit')) &&
