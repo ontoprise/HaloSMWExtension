@@ -406,6 +406,7 @@
 	 									$part1 = $this->path[$startId][$i]->getPath();
 	 									$part2 = $this->path[$targetId][$j]->getPartialPath($nId);
 	 									foreach ($part2 as $ni) $part1[] = $ni;
+                                        if (count($this->result) > 500) return;
 	 									$this->addPathToResult($part1);
 		 							}
  								}
