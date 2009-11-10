@@ -9,7 +9,16 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 // Version number of the extension
-define('SMW_USER_MANUAL', '1.0');
+define('SMW_USER_MANUAL_VERSION', '1.0');
+
+$wgExtensionCredits['other'][] = array(
+    'name' => 'SMW User Manual v'.SMW_USER_MANUAL_VERSION,
+    'author' => 'Ontoprise',
+    'url' => 'http://sourceforge.net/projects/halo-extension/',
+    'description' => 'A context sensitive help for SemanticMediaWiki, '.
+        'and other semantic extensions. View online documentation in the '.
+        '[http://smwforum.ontoprise.com/smwforum SMW+ User Forum].'
+);
 
 /**
  * Here you can define a custom namespace name for the context sensitive
