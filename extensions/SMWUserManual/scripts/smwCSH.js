@@ -1,8 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Context seisitive help for SMW+
  *
@@ -10,28 +5,26 @@
  * available the DIV will be created as the first child of the 'innercontent'
  * div, which means, it appears between the tab section and the main head line.
  */
-
 var SMW_UserManual_CSH = Class.create();
 SMW_UserManual_CSH.prototype = {
     initialize: function(label) {
         // get the container <div id="smw_csh"></div>
         var div = document.getElementById('smw_csh');
         if (! div) { // it's not in the skin. Create it
-            div = document.createElement('div');
-            div.id = 'smw_csh';
-            div.style.textAlign = 'right';
+            div = document.createElement('div')
+            div.id = 'smw_csh'
+            div.style.textAlign = 'right'
             // and insert it below the <div id="content">
-            var child = document.getElementById('content').firstChild;
+            var child = document.getElementById('content').firstChild
             if (child.nodeType == 1)
                 document.getElementById('content').insertBefore(div, child)
             // we can't insert it before a text node, therefore look for the
             // first child which is an element node.
             else if (child.nodeType == 3) {
                 while (child) {
-                    child = child.nextSibling;
-                    if (child && child.nodeType == 1) {
+                    child = child.nextSibling
+                    if (child && child.nodeType == 1)
                         document.getElementById('content').insertBefore(div, child)
-                    }
                 }
             }
         }
@@ -102,6 +95,18 @@ SMW_UserManual_CSH.prototype = {
     },
 
     /**
+     * hides the help popup and releases the drag and drop events.
+     */
+    closeBox: function(){
+        var obj = document.getElementById('smw_csh_popup')
+        obj.style.visibility="hidden"
+        obj.style.zIndex = null
+        Event.stopObserving(obj, 'mousedown', this.initializeDrag.bindAsEventListener(this) )
+        Event.stopObserving(obj, 'mousemove', this.dragDrop.bindAsEventListener(this) )
+        Event.stopObserving(obj, "mouseup", this.finishDragging.bindAsEventListener(this) )
+    },
+
+    /**
      * Ajax call for getting the rendered HTML page of a help article
      * @param string page name
      */
@@ -132,10 +137,14 @@ SMW_UserManual_CSH.prototype = {
      * if a radio input type is clicked for rating, a textbox automatically
      * appears below the radio inputs. This is done here
      */
-    expandRatingBox: function(){
+    openRatingBox: function(){
         var obj=document.getElementById('smw_csh_rating_box')
-        if (obj && obj.style.display=='none')
+        if (obj && obj.style.display=='none') {
             obj.style.display=null
+            var arrow=document.getElementById('smw_csh_rating').getElementsByTagName('img')[0]
+            arrow.src=arrow.src.replace(/right\.png/,'down.png')
+        }
+        else this.hideRatingBox()
     },
 
     /**
@@ -150,7 +159,7 @@ SMW_UserManual_CSH.prototype = {
      * textarea
      */
     resetRating: function(){
-        document.getElementById('smw_csh_rating_box').getElementsByTagName('textarea')[0].innerHTML='';
+        document.getElementById('smw_csh_rating_box').getElementsByTagName('textarea')[0].value='';
         document.getElementsByName('smw_csh_did_it_help')[0].checked=null;
         document.getElementsByName('smw_csh_did_it_help')[1].checked=null;
         this.hideRatingBox()
@@ -161,8 +170,11 @@ SMW_UserManual_CSH.prototype = {
      */
     hideRatingBox: function(){
         var obj=document.getElementById('smw_csh_rating_box')
-        if (obj && obj.style.display!='none')
+        if (obj && obj.style.display!='none') {
             obj.style.display='none'
+            var arrow=document.getElementById('smw_csh_rating').getElementsByTagName('img')[0]
+            arrow.src=arrow.src.replace(/down\.png/,'right.png')
+        }
     },
 
     /* the following function work on the feedback tab */
@@ -267,18 +279,6 @@ SMW_UserManual_CSH.prototype = {
         n.style.backgroundColor=null
     },
     /* function for the feedback tab end here */
-
-    /**
-     * hides the help popup and releases the drag and drop events.
-     */
-    closeBox: function(){
-        var obj = document.getElementById('smw_csh_popup')
-        obj.style.visibility="hidden"
-        obj.style.zIndex = null
-        Event.stopObserving(obj, 'mousedown', this.initializeDrag.bindAsEventListener(this) )
-        Event.stopObserving(obj, 'mousemove', this.dragDrop.bindAsEventListener(this) )
-        Event.stopObserving(obj, "mouseup", this.finishDragging.bindAsEventListener(this) )
-    },
 
     /* drag and drop functions start here */
 

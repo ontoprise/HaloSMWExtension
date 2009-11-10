@@ -83,7 +83,7 @@ function wfUmeAjaxGetArticleHtml($page){
 	// fetch main HTML content of page
 	$result['content'] = $out->getText();
     // set title of help page
-    $result['title'] = $title->getText();
+    $result['title'] = '<img src="'.SMW_UME_PATH.'skins/help.png" style="vertical-align:middle"/> '.$title->getText();
     // fetch the link to further information from property
    	$pname = Title::newFromText(SMW_UME_PROPERTY_LINK, SMW_NS_PROPERTY);
     $prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());

@@ -88,6 +88,9 @@ define('SMW_FORUM_QUERY_CSH', '[[Category:Context sensitive help article]]');
 define('SMW_UME_PROPERTY_DISCOURSE_STATE', 'UME discourse state');
 // Property for link to real help article
 define('SMW_UME_PROPERTY_LINK', 'UME link');
+// webserver path to extension
+global $wgScriptPath;
+define('SMW_UME_PATH', $wgScriptPath.'/extensions/SMWUserManual/');
 
 // require additional files beloning to this extension
 require_once(dirname(__FILE__).'/SMW_AjaxAccess.php');
@@ -168,11 +171,10 @@ function setupSMWUserManual() {
  * with help message appears.
  */
 function umefAddHtml2Page(&$out) {
-    global $wgScriptPath, $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
+    global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
            $umegPopupWidth, $umegPopupHeight;
-    $umePath = $wgScriptPath.'/extensions/SMWUserManual/';
     $out->addScript('
-            <script type="text/javascript" src="'. $umePath .  'scripts/smwCSH.js"></script>');
+            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/smwCSH.js"></script>');
     if ($umegSendFeedbackToSMWplus) {
         $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
@@ -186,7 +188,7 @@ function umefAddHtml2Page(&$out) {
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
             'media' => 'screen, projection',
-            'href'  => $umePath . 'skins/csh.css'
+            'href'  => SMW_UME_PATH . 'skins/csh.css'
         ));
 
     }
@@ -236,7 +238,7 @@ function umefGetHelpArticlePageCount() {
     wfProfileIn('umefGetHelpArticlePageCount');
     // check if there are CSH article, these must be in our
     // namsespace and the property UME disource state must be set
-    $query = '[['.$umegNamespace.':+]][[UME discourse state::+]]';
+    $query = '[['.$umegNamespace.':+]][['.SMW_UME_PROPERTY_DISCOURSE_STATE.'::+]]';
 	$fixparams = array( "format" => "count" );
     $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
     wfProfileOut('umefGetHelpArticlePageCount');
@@ -244,9 +246,9 @@ function umefGetHelpArticlePageCount() {
 }
 
 function umefDivBox() {
-    global $wgScriptPath, $umegPopupWidth, $umegPopupHeight;
-    $closeImage = $wgScriptPath.'/extensions/SMWUserManual/skins/close.gif';
-    $loadImage= $wgScriptPath.'/extensions/SMWUserManual/skins/load.gif';
+    global $umegPopupWidth, $umegPopupHeight;
+    $closeImage = SMW_UME_PATH.'skins/close.gif';
+    $loadImage= SMW_UME_PATH.'skins/load.gif';
     return '<div id="smw_csh_popup" style="position:fixed;width:'.$umegPopupWidth.'px;height:'.$umegPopupHeight.'px;left:250px;top:150px;visibility:hidden">
             <table border="0" style="width:100%; height:100%" bgcolor="#000080" cellspacing="0" cellpadding="2">
             <tr><td width="100%">
@@ -289,9 +291,11 @@ function umefDivBox() {
 function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
     if (!$umegSendFeedbackToSMWplus) return '';
-    return '<div id="smw_csh_rating">'.wfMsg('smw_ume_did_it_help').'
-            <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.expandRatingBox()"/>'.wfMsg('smw_ume_yes').'
-            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.expandRatingBox()"/>'.wfMsg('smw_ume_no').'
+    $imgPath = SMW_UME_PATH.'skins/';
+    return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox()" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
+            '.wfMsg('smw_ume_did_it_help').'</span>
+            <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_yes').'
+            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_no').'
             <div id="smw_csh_rating_box" style="display:none">
             <textarea width="100%" rows="3"></textarea>
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">
@@ -302,8 +306,8 @@ function umefDivBoxRating() {
 }
 
 function umefDivBoxFeedback() {
-    global $umegSendCommentsToSMWplus, $wgScriptPath;
-    $imgPath = $wgScriptPath.'/extensions/SMWUserManual/skins/';
+    global $umegSendCommentsToSMWplus;
+    $imgPath = SMW_UME_PATH.'skins/';
     if (!$umegSendCommentsToSMWplus) return '';
     return '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
