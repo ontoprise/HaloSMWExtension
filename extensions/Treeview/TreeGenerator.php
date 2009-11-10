@@ -56,20 +56,20 @@ class TreeGenerator {
 		
 		// check property, this is the only mandatory parameter, without it we stop right away
 		if (!array_key_exists('property', $genTreeParameters)) return "";
-		$relationName = Title::newFromText($genTreeParameters['property'], SMW_NS_PROPERTY);
+		$relationName = $this->getValidTitle($genTreeParameters['property'], SMW_NS_PROPERTY);
 		// parameter category, if pages from a certain category (and it's subcategories) are wanted
 		if (array_key_exists('category', $genTreeParameters)) {
 			$genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
-			$categoryName = Title::newFromText($genTreeParameters['category'], NS_CATEGORY);
+			$categoryName = $this->getValidTitle($genTreeParameters['category'], NS_CATEGORY);
 		} else {
 			$categoryName = NULL;
 		}
 		// parameter start, shall we start from some page?
-		$start = array_key_exists('start', $genTreeParameters) ? Title::newFromText($genTreeParameters['start']) : NULL;
+		$start = array_key_exists('start', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['start']) : NULL;
 		// parameter display, that must be the name of a property, which value is displayed instead of the default pagename
 		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
 		// parameter opento, must contain a pagename down to where the tree is opened
-		$openTo = array_key_exists('opento', $genTreeParameters) ? Title::newFromText($genTreeParameters['opento']) : NULL;
+		$openTo = array_key_exists('opento', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['opento']) : NULL;
 		// parameter urlparams
 		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
 		// parameter check
@@ -80,7 +80,7 @@ class TreeGenerator {
 		// setup some settings
 		$maxDepth = array_key_exists('maxDepth', $genTreeParameters) ? $genTreeParameters['maxDepth'] : NULL;
 		$redirectPage = (($maxDepth > 0) &&  isset($genTreeParameters['redirectPage']))
-		                ? Title::newFromText($genTreeParameters['redirectPage']) : NULL;
+		                ? $this->getValidTitle($genTreeParameters['redirectPage']) : NULL;
 		$condition = array_key_exists('condition', $genTreeParameters) ? $genTreeParameters['condition'] : NULL;
 		// check for dynamic expansion via Ajax
 		// 0 = static, no ajax in use, 1 = ajax in use but (complete or partial) tree is fetched, 2 = only the next level is fetched
@@ -137,7 +137,10 @@ class TreeGenerator {
     public function setLoadNextLevel() {
         $this->loadNextLevel = true;
     }
-
+    private function getValidTitle($text, $ns = 0) {
+        $t = Title::newFromText($text, $ns);
+        return $t->userCanRead() ? $t : null;
+    }
 }
 
 abstract class TreeviewStorage {
@@ -477,8 +480,10 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $fids = array_flip(explode(",", $query_add));
 	            $res = $this->db->query(sprintf($query, $query_add));
 	            while ($row = $this->db->fetchObject($res)) {
-               		$this->elementProperties[$row->smw_id]= new ElementProperty($row->title, $row->ns);
-               		$this->postProcessingForElement($row);
+                    $t = Title::newFromText($row->title, $row->ns);
+                    if (! $t->userCanRead()) continue;
+                    $this->elementProperties[$row->smw_id]= new ElementProperty($row->title, $row->ns);
+                    $this->postProcessingForElement($row);
                		unset($fids[$row->smw_id]);
                 }
 	            $this->db->freeResult($res);
@@ -597,6 +602,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 */
 	private function fetchPropertyValue($name, $ns, $property) {
         $title = Title::newFromText($name, $ns);
+        if (! $title->userCanRead()) return;
        	$pname = Title::newFromText($property, SMW_NS_PROPERTY);
        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
 		$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
@@ -615,6 +621,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return integer $smw_id or NULL on failure
 	 */
 	private function getSmwIdByTitle(Title &$title) {
+        global $wgUser;
+        if (! $title->userCanRead()) return;
 		$ns = $title->getNamespace();
 		$smw_ids = $this->db->tableName('smw_ids');
 		$query = "SELECT smw_id FROM $smw_ids WHERE ".
@@ -625,7 +633,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		$s = $this->db->fetchObject($res);
 		$this->db->freeResult($res);
 		if (!$s)
-			return NULL;
+			return;
 		return $s->smw_id;
 	}
 	
