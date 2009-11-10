@@ -57,6 +57,7 @@ class TreeGenerator {
 		// check property, this is the only mandatory parameter, without it we stop right away
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = $this->getValidTitle($genTreeParameters['property'], SMW_NS_PROPERTY);
+        if (!$relationName) return "";
 		// parameter category, if pages from a certain category (and it's subcategories) are wanted
 		if (array_key_exists('category', $genTreeParameters)) {
 			$genTreeParameters['category'] = str_replace("{{{USER-NAME}}}", $wgUser != NULL ? $wgUser->getName() : "", $genTreeParameters['category']);
@@ -67,7 +68,8 @@ class TreeGenerator {
 		// parameter start, shall we start from some page?
 		$start = array_key_exists('start', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['start']) : NULL;
 		// parameter display, that must be the name of a property, which value is displayed instead of the default pagename
-		$displayProperty = array_key_exists('display', $genTreeParameters) ? $genTreeParameters['display'] : NULL;
+		$displayProperty = array_key_exists('display', $genTreeParameters) && $this->getValidTitle($genTreeParameters['display'], SMW_NS_PROPERTY)
+            ? $genTreeParameters['display'] : NULL;
 		// parameter opento, must contain a pagename down to where the tree is opened
 		$openTo = array_key_exists('opento', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['opento']) : NULL;
 		// parameter urlparams
@@ -98,7 +100,8 @@ class TreeGenerator {
 		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo, $checkNode);
 		
 		// order by property
-		if (array_key_exists('orderbyProperty', $genTreeParameters))
+		if (array_key_exists('orderbyProperty', $genTreeParameters) &&
+            $this->getValidTitle($genTreeParameters['orderbyProperty'], SMW_NS_PROPERTY))
 			$tv_store->setOrderByProperty($genTreeParameters['orderbyProperty']);
 		
 		$tree = $tv_store->getHierarchyByRelation($relationName, $categoryName, $start);
@@ -138,7 +141,12 @@ class TreeGenerator {
         $this->loadNextLevel = true;
     }
     private function getValidTitle($text, $ns = 0) {
+        global $wgUser;
         $t = Title::newFromText($text, $ns);
+        if ($ns == SMW_NS_PROPERTY &&
+            in_array('propertyread', User::getAllRights()) &&
+            !$t->userCan('propertyread'))
+            return;
         return $t->userCanRead() ? $t : null;
     }
 }
