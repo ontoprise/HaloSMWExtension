@@ -1,5 +1,8 @@
 <?php
 
+if ( !defined( 'SMW_HALO_VERSION' ) )
+    die("The Semantic Gardening extension requires the Halo extension to be installed.");
+
 define('SGA_GARDENING_EXTENSION_VERSION', "1.0");
 
 // register initialize function
