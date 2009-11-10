@@ -19,7 +19,7 @@ if (!$plainEditmode) {
 
 // check if the Semantic formas are installed and if the request is one of these
 // Special pages (request was from the template picker in the FCKeditor)
-if (defined('SF_VERSION') &&
+if (defined('SF_VERSION') && in_array('REQUEST_URI', $_SERVER) &&
     (strpos($_SERVER['REQUEST_URI'], ':AddDataEmbedded') !== false ||
      strpos($_SERVER['REQUEST_URI'], ':EditDataEmbedded') !== false
     )
