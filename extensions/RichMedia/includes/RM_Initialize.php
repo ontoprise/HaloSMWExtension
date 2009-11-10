@@ -9,6 +9,8 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
+if ( !defined( 'SMW_HALO_VERSION' ) )
+    die("The RichMedia extension requires the Halo extension, which seems not to be installed.");
 
 define('SMW_RM_VERSION', '1.3-for-SMW-1.4.x');
 
