@@ -2,7 +2,7 @@
 /**
  * Semantic rules extension entry point
  *
- * @author: Kai Kï¿½hn / ontoprise / 2009
+ * @author: Kai Kühn / ontoprise / 2009
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -185,7 +185,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$is_url = strpos($name, ":");
 					if ($is_url === false) {
 						// no valid URL given, so build one
-						$url = $smwgTripleStoreGraph . "#" . urlencode($name);
+						$url = $smwgTripleStoreGraph . "#" . urlencode(str_replace(' ', '_', $name));
 					} else {
 						$url = $name;
 					}
