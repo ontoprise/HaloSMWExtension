@@ -174,7 +174,14 @@ class SMWAskTSCPage extends SpecialPage {
             }
         }
         $this->m_params['limit'] = min($this->m_params['limit'], $smwgQMaxInlineLimit);
-
+        
+        if ( !array_key_exists('merge',$this->m_params) ) {
+            $this->m_params['merge'] = $wgRequest->getVal( 'merge' );
+            if ($this->m_params['merge'] == '') {
+                $this->m_params['merge'] = true; // merge per default
+            }
+         }
+        
         $this->m_editquery = ( $wgRequest->getVal( 'eq' ) != '' ) || ('' == $this->m_querystring );
 	}
 

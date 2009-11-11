@@ -159,11 +159,11 @@ class SMWHaloCountResultPrinter extends SMWListResultPrinter {
 		$order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
 		$default = new SMWQPParameter('default', 'Default text', '<string>', NULL, "Displayed when there are no results at all.");
 		$limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-		 
+			
 		$this->mParameters[] = $order;
 		$this->mParameters[] = $default;
 		$this->mParameters[] = $limit;
-		 
+			
 	}
 
 	function getSupportedParameters() {
@@ -211,19 +211,44 @@ class SMWHaloTemplateResultPrinter extends SMWTemplateResultPrinter {
 }
 
 class SMWHaloCsvResultPrinter extends SMWCsvResultPrinter {
-    protected $mParameters;
+	protected $mParameters;
 
-    public function __construct($format, $inline) {
-        parent::__construct($format, $inline);
-        $this->mParameters = smwfhCreateDefaultParameters();
-        $sep = new SMWQPParameter('sep', 'Separator', '<string>', ',', "Separator used");
-        $this->mParameters[] = $sep;
-    }
+	public function __construct($format, $inline) {
+		parent::__construct($format, $inline);
+		$this->mParameters = smwfhCreateDefaultParameters();
+		$sep = new SMWQPParameter('sep', 'Separator', '<string>', ',', "Separator used");
+		$this->mParameters[] = $sep;
+	}
 
-    function getSupportedParameters() {
-        return $this->mParameters;
-    }
+	function getSupportedParameters() {
+		return $this->mParameters;
+	}
 
+	protected function getResultText($res, $outputmode) {
+		$result = '';
+		if ($outputmode == SMW_OUTPUT_FILE) { // make CSV file
+			$result .= parent::getResultText($res, $outputmode);
+		} else { // just make link to feed
+			if ($this->getSearchLabel($outputmode)) {
+				$label = $this->getSearchLabel($outputmode);
+			} else {
+				wfLoadExtensionMessages('SemanticMediaWiki');
+				$label = wfMsgForContent('smw_csv_link');
+			}
 
+			$link = $res->getQueryLink($label);
+			$link->setParameter('csv','format');
+			$link->setParameter($this->m_sep,'sep');
+			if (array_key_exists('limit', $this->m_params)) {
+				$link->setParameter($this->m_params['limit'],'limit');
+			} else { // use a reasonable default limit
+				$link->setParameter(100,'limit');
+			}
+			if (array_key_exists('merge', $this->m_params)) $link->setParameter($this->m_params['merge'], 'merge');
+			$result .= $link->getText($outputmode,$this->mLinker);
+			$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
+		}
+		return $result;
+	}
 }
 
