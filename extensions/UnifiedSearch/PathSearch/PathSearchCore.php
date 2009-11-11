@@ -1143,7 +1143,7 @@
 		// we got until here, no page stoped us, then get possible sub categories and add these
 		// for the subjct list to be checked.
 		$lower = PSC_WikiData::getLowestCategories($id);
-		if ($lower[0] != $id) {
+		if (count($lower) > 0) {
 			foreach ($lower as $l) {
 				$this->details[$l][PSC_SMWDATA_NAME] = PSC_WikiData::getNameById($l);
 				$this->details[$l][PSC_SMWDATA_TYPE] = NS_CATEGORY;
