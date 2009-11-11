@@ -246,7 +246,7 @@
 	/**
 	 * for a category check all sub categories and further donw until the category doesn't
 	 * have any children. All these categories of the last level (those that don't have any
-	 * children, are returned)
+	 * children, are returned). If there are no subcategories, return an empty array
 	 * 
 	 * @access public
 	 * @param  int id of category
