@@ -141,7 +141,6 @@ class TreeGenerator {
         $this->loadNextLevel = true;
     }
     private function getValidTitle($text, $ns = 0) {
-        global $wgUser;
         $t = Title::newFromText($text, $ns);
         if ($ns == SMW_NS_PROPERTY &&
             in_array('propertyread', User::getAllRights()) &&
