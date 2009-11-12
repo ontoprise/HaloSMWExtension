@@ -5,6 +5,7 @@ require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
 require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
+require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 /**
  * Triple store connector class.
@@ -36,42 +37,11 @@ require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
 
 class SMWTripleStore extends SMWStore {
 
-	// W3C namespaces
-	protected static $RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	protected static $OWL_NS = "http://www.w3.org/2002/07/owl#";
-	protected static $RDFS_NS = "http://www.w3.org/2000/01/rdf-schema#";
-	protected static $XSD_NS = "http://www.w3.org/2001/XMLSchema#";
-
-	// (pre-defined) namespaces for different page types
-	protected static $CAT_NS;
-	protected static $PROP_NS;
-	protected static $INST_NS;
-	protected static $TYPE_NS;
-	protected static $IMAGE_NS;
-	protected static $HELP_NS;
-	protected static $TEMPLATE_NS;
-	protected static $USER_NS;
-	protected static $UNKNOWN_NS;
-
-	// general namespace suffixes for different namespaces
-	public static $CAT_NS_SUFFIX = "/category#";
-	public static $PROP_NS_SUFFIX = "/property#";
-	public static $INST_NS_SUFFIX = "/a#";
-	public static $TYPE_NS_SUFFIX = "/type#";
-	public static $IMAGE_NS_SUFFIX = "/image#";
-	public static $HELP_NS_SUFFIX = "/help#";
-	public static $TEMPLATE_NS_SUFFIX = "/template#";
-	public static $USER_NS_SUFFIX = "/user#";
-	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. # is missing!
-
-	// SPARQL-PREFIX statement with all pre-defined namespaces
-	protected static $ALL_PREFIXES;
-
-	protected static $ALL_NAMESPACES;
+	
 
 	public static $fullSemanticData;
-
-	public static function getAllPrefixes() { return self::$ALL_PREFIXES; }
+    private $tsNamespace;
+	
 
 	/**
 	 * Creates and initializes Triple store connector.
@@ -79,38 +49,9 @@ class SMWTripleStore extends SMWStore {
 	 * @param SMWStore $smwstore All calls are delegated to this implementation.
 	 */
 	function __construct() {
-		global $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
+		global $smwgBaseStore;
 		$this->smwstore = new $smwgBaseStore;
-		global $smwgTripleStoreGraph;
-
-		// create default namespace prefixes
-		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
-		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
-		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
-		self::$TYPE_NS = $smwgTripleStoreGraph.self::$TYPE_NS_SUFFIX;
-		self::$IMAGE_NS = $smwgTripleStoreGraph.self::$IMAGE_NS_SUFFIX;
-		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
-		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
-		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
-		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
-
-		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
-		SMW_NS_TYPE => self::$TYPE_NS_SUFFIX, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
-		NS_USER => self::$USER_NS);
-
-		// declare all common namespaces as SPARQL PREFIX statement (W3C + standard wiki + SMW)
-		self::$ALL_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
-		self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
-		self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.
-		self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
-
-		// declare all other namespaces using ns_$index as prefix
-		$extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
-		foreach($extraNamespaces as $nsIndex) {
-			$nsText = strtolower($wgContLang->getNsText($nsIndex));
-			self::$ALL_PREFIXES .= " PREFIX $nsText:<".$smwgTripleStoreGraph."/ns_$nsIndex#> ";
-		}
-
+		$this->tsNamespace = new TSNamespaces();
 	}
 
 
@@ -151,9 +92,9 @@ class SMWTripleStore extends SMWStore {
 
 	function deleteSubject(Title $subject) {
 		$this->smwstore->deleteSubject($subject);
-		$subj_ns = $this->getNSPrefix($subject->getNamespace());
+		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 
-		$unknownNSPrefixes = $this->getUnknownNamespacePrefixes($subj_ns);
+		$unknownNSPrefixes = $this->tsNamespace->getUnknownNamespacePrefixes($subj_ns);
 
 
 		// clear rules
@@ -166,9 +107,9 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-				$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -191,9 +132,9 @@ class SMWTripleStore extends SMWStore {
 
 		$subject = $data->getSubject();
 
-		$subj_ns = $this->getNSPrefix($subject->getNamespace());
+		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 		$unknownNSPrefixes = "";
-		$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($subj_ns);
+		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($subj_ns);
 
 
 		//properties
@@ -268,8 +209,8 @@ class SMWTripleStore extends SMWStore {
 						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg') {
-						$obj_ns = $this->getNSPrefix($value->getNamespace());
-						$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($obj_ns);
+						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
+						$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($obj_ns);
 						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), $obj_ns.":".$value->getDBkey());
 
 					} elseif ($value->getTypeID() == '__nry') {
@@ -346,8 +287,8 @@ class SMWTripleStore extends SMWStore {
 				case NS_MAIN: $prop = "owl:sameAs";
 				default: continue;
 			}
-			$r_ns = $this->getNSPrefix($r->getNamespace());
-			$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($r_ns);
+			$r_ns = $this->tsNamespace->getNSPrefix($r->getNamespace());
+			$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($r_ns);
 			$triples[] = array($subj_ns.":".$subject->getDBkey(), $prop, $r_ns.":".$r->getDBkey());
 		}
 
@@ -356,12 +297,12 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
-				$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
-			$sparulCommands[] =  self::$ALL_PREFIXES.$unknownNSPrefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
+			$sparulCommands[] =  TSNamespaces::getAllPrefixes().$unknownNSPrefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -390,11 +331,11 @@ class SMWTripleStore extends SMWStore {
 	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
 		$this->smwstore->changeTitle($oldtitle, $newtitle, $pageid, $redirid);
 		$unknownNSPrefixes = "";
-		$old_ns = $this->getNSPrefix($oldtitle->getNamespace());
-		$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($old_ns);
+		$old_ns = $this->tsNamespace->getNSPrefix($oldtitle->getNamespace());
+		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($old_ns);
 
-		$new_ns = $this->getNSPrefix($newtitle->getNamespace());
-		$unknownNSPrefixes .= $this->getUnknownNamespacePrefixes($new_ns);
+		$new_ns = $this->tsNamespace->getNSPrefix($newtitle->getNamespace());
+		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($new_ns);
 
 		// update local rule store
 		global $smwgEnableFlogicRules;
@@ -408,9 +349,9 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
-			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
-			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
-			$sparulCommands[] = self::$ALL_PREFIXES.$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
@@ -437,7 +378,7 @@ class SMWTripleStore extends SMWStore {
 				global $smwgTripleStoreGraph;
 				if (stripos(trim($query->getQueryString()), 'SELECT') === 0 || stripos(trim($query->getQueryString()), 'PREFIX') === 0) {
 					// SPARQL, attach common prefixes
-					$response = $client->query(self::$ALL_PREFIXES.$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
+					$response = $client->query(TSNamespaces::getAllPrefixes().$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 				} else {
 
 					// do not attach anything
@@ -561,35 +502,9 @@ class SMWTripleStore extends SMWStore {
 		return $result;
 	}
 
-	/**
-	 * Returns namespace prefix for SPARUL commands.
-	 *
-	 * @param int $namespace
-	 * @return string
-	 */
-	protected function getNSPrefix($namespace) {
-		if ($namespace == SMW_NS_PROPERTY) return "prop";
-		elseif ($namespace == NS_CATEGORY) return "cat";
-		elseif ($namespace == NS_MAIN) return "a";
-		elseif ($namespace == SMW_NS_TYPE) return "type";
-		elseif ($namespace == NS_IMAGE) return "image";
-		elseif ($namespace == NS_HELP) return "help";
-		else return "ns_$namespace";
-	}
+	
 
-	/**
-	 * Create a SPARQL PREFIX statement for unknown namespaces.
-	 *
-	 * @param string $suffix which serves also as prefix.
-	 * @return string
-	 */
-	protected function getUnknownNamespacePrefixes($suffix) {
-		if (substr($suffix, 0, 3) == "ns_") {
-			global $smwgTripleStoreGraph;
-			return " PREFIX $suffix:<$smwgTripleStoreGraph/$suffix#> ";
-		}
-		return "";
-	}
+	
 
 	/**
 	 * Escapes double quotes
@@ -793,7 +708,7 @@ class SMWTripleStore extends SMWStore {
             
         foreach($uris as $sv) {
             $nsFound = false;
-            foreach (self::$ALL_NAMESPACES as $nsIndsex => $ns) {
+            foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
                 if (stripos($sv, $ns) === 0) {
                     $allValues[] = $this->createSMWDataValue($sv, $ns, $nsIndsex);
                     $nsFound = true;
@@ -803,13 +718,13 @@ class SMWTripleStore extends SMWStore {
             if ($nsFound) continue;
 
             // result with unknown namespace
-            if (stripos($sv, self::$UNKNOWN_NS) === 0) {
+            if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
 
                 if (empty($sv)) {
                     $v = SMWDataValueFactory::newTypeIDValue('_wpg');
                     $allValues[] = $v;
                 } else {
-                    $startNS = strlen(self::$UNKNOWN_NS);
+                    $startNS = strlen(TSNamespaces::$UNKNOWN_NS);
                     $length = strpos($sv, "#") - $startNS;
                     $ns = intval(substr($sv, $startNS, $length));
 
@@ -970,73 +885,7 @@ class SMWTripleStore extends SMWStore {
 
 
 
-class WikiTypeToXSD {
 
-	/**
-	 * Map primitve types or units to XSD values
-	 *
-	 * @param unknown_type $wikiTypeID
-	 * @return unknown
-	 */
-	public static function getXSDType($wikiTypeID) {
-		switch($wikiTypeID) {
-
-			// direct supported types
-			case '_str' : return 'xsd:string';
-			case '_txt' : return 'xsd:string';
-			case '_num' : return 'xsd:double';
-			case '_boo' : return 'xsd:boolean';
-			case '_dat' : return 'xsd:dateTime';
-
-			// not supported by TS. Take xsd:string
-			case '_geo' :
-			case '_cod' :
-			case '_ema' :
-			case '_uri' :
-			case '_anu' : return 'xsd:string';
-
-			// single unit type in SMW
-			case '_tem' : return 'xsd:unit';
-
-			//only relevant for schema import
-			case '_wpc' :
-			case '_wpf' :
-			case '_wpp' :
-			case '_wpg' : return 'cat:DefaultRootCategory';
-
-			// unknown or composite type
-			default:
-				// if builtin (starts with _) then regard it as string
-				if (substr($wikiTypeID, 0, 1) == '_') return "xsd:string";
-				// if n-ary, regard it as string
-				if (preg_match('/\w+(;\w+)+/', $wikiTypeID) !== false) return "xsd:string";
-				// otherwise assume a unit
-				return 'xsd:unit';
-		}
-
-	}
-	
-    /**
-     * Translates XSD-URIs to wiki datatype IDs.
-     * @param $xsdURI
-     * @return unknown_type
-     */
-    public static function getWikiType($xsdURI) {
-        $hashIndex = strpos($xsdURI, '#');
-        if ($hashIndex !== false) {
-            $xsdURI = substr($xsdURI, $hashIndex+1);
-        }
-        switch($xsdURI) {
-            case 'string': return "_str";
-            case 'float': return "_num";
-            case 'double': return "_num";
-            case 'boolean': return "_boo";
-            case 'dateTime': return "_dat";
-            default: return "_str";
-
-        }
-    }
-}
 
 /**
  * Provides an abstraction for the connection to the triple store.

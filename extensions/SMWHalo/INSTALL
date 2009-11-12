@@ -101,6 +101,22 @@ properties view.
 If you don't get these results, check the steps in the installation section, consult
 the FAQ section, then contact the user support list (see the Contact section).
 
+=== Options ===
+
+1. OntologyBrower uses Triplestore to display instances/annotations.
+    Needs configured triplestore of course. 
+    
+    $smwgOBInstanceDataFromTriplestore
+
+2. Deploy version uses packed version of scripts
+$smwgDeployVersion=false;
+
+3. Default collation for SMWHalo database tables
+$smwgDefaultCollation="latin1_bin";
+
+4. Uses EDITDISTANCE function for near matching
+$smwgUseEditDistance = false;
+
 === Customizing Semantic MediaWiki+ ===
 
 Semantic MediaWiki can be customized by a number of settings. To do so, you

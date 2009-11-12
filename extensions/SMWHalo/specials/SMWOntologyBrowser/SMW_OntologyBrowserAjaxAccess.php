@@ -21,7 +21,7 @@ if (defined("SGA_GARDENING_EXTENSION_VERSION")) {
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 require_once("SMW_OntologyBrowserFilter.php" );
 require_once("$smwgHaloIP/includes/SMW_OntologyManipulator.php");
-
+require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 
 class OB_Storage {
@@ -330,7 +330,7 @@ class OB_StorageTS extends OB_Storage {
 			$instanceName = $p_array[0];
 			$instance = Title::newFromText($instanceName);
 			$instanceName = $instance->getDBkey();
-			
+				
 			$limit =  intval($p_array[1]);
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
@@ -345,7 +345,7 @@ class OB_StorageTS extends OB_Storage {
 			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 				$response = utf8_decode($response);
 			}
-            //echo print_r($response, true);die();
+			//echo print_r($response, true);die();
 			$dom = simplexml_load_string($response);
 
 			$annotations = array();
@@ -367,7 +367,7 @@ class OB_StorageTS extends OB_Storage {
 					$object = $this->getTitleFromURI((string) $sv);
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
 					$values[] = $value;
-						
+
 				}
 				foreach($b->children()->literal as $sv) {
 					$literal = array((string) $sv, $sv->attributes()->datatype);
@@ -376,7 +376,7 @@ class OB_StorageTS extends OB_Storage {
 				}
 
 
-				$annotations[] = array($predicate, $values);	
+				$annotations[] = array($predicate, $values);
 			}
 
 
@@ -390,7 +390,9 @@ class OB_StorageTS extends OB_Storage {
 }
 
 function smwf_ob_OntologyBrowserAccess($method, $params) {
-	$storage = new OB_Storage();
+	global $smwgOBInstanceDataFromTriplestore;
+	$storage = isset($smwgOBInstanceDataFromTriplestore) && $smwgOBInstanceDataFromTriplestore === true ?
+	    new OB_StorageTS() : new OB_Storage();
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array);
@@ -439,60 +441,10 @@ function smwf_ob_PreviewRefactoring($titleText, $ns) {
 	return $tableContent;
 }
 
-class TSNamespaces {
 
-	public static $CAT_NS;
-	public static $PROP_NS;
-	public static $INST_NS;
-	public static $TYPE_NS;
-	public static $IMAGE_NS;
-	public static $HELP_NS;
-	public static $TEMPLATE_NS;
-	public static $USER_NS;
-	public static $UNKNOWN_NS;
 
-	public static $ALL_NAMESPACES;
 
-	// general namespace suffixes for different namespaces
-	public static $CAT_NS_SUFFIX = "/category#";
-	public static $PROP_NS_SUFFIX = "/property#";
-	public static $INST_NS_SUFFIX = "/a#";
-	public static $TYPE_NS_SUFFIX = "/type#";
-	public static $IMAGE_NS_SUFFIX = "/image#";
-	public static $HELP_NS_SUFFIX = "/help#";
-	public static $TEMPLATE_NS_SUFFIX = "/template#";
-	public static $USER_NS_SUFFIX = "/user#";
-	public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. # is missing!
 
-	function __construct() {
-		global $smwgTripleStoreGraph;
-		self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
-		self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
-		self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
-		self::$TYPE_NS = $smwgTripleStoreGraph.self::$TYPE_NS_SUFFIX;
-		self::$IMAGE_NS = $smwgTripleStoreGraph.self::$IMAGE_NS_SUFFIX;
-		self::$HELP_NS = $smwgTripleStoreGraph.self::$HELP_NS_SUFFIX;
-		self::$TEMPLATE_NS = $smwgTripleStoreGraph.self::$TEMPLATE_NS_SUFFIX;
-		self::$USER_NS = $smwgTripleStoreGraph.self::$USER_NS_SUFFIX;
-		self::$UNKNOWN_NS = $smwgTripleStoreGraph.self::$UNKNOWN_NS_SUFFIX;
-
-		self::$ALL_NAMESPACES = array(NS_MAIN=>self::$INST_NS, NS_CATEGORY => self::$CAT_NS, SMW_NS_PROPERTY => self::$PROP_NS,
-		SMW_NS_TYPE => self::$TYPE_NS_SUFFIX, NS_IMAGE => self::$IMAGE_NS, NS_HELP => self::$HELP_NS, NS_TEMPLATE => self::$TEMPLATE_NS,
-		NS_USER => self::$USER_NS);
-	}
-
-	public function getNSPrefix($namespace) {
-		if ($namespace == SMW_NS_PROPERTY) return "prop";
-		elseif ($namespace == NS_CATEGORY) return "cat";
-		elseif ($namespace == NS_MAIN) return "a";
-		elseif ($namespace == SMW_NS_TYPE) return "type";
-		elseif ($namespace == NS_IMAGE) return "image";
-		elseif ($namespace == NS_TEMPLATE) return "template";
-		elseif ($namespace == NS_USER) return "user";
-		elseif ($namespace == NS_HELP) return "help";
-		else return "ns_$namespace";
-	}
-}
 
 /**
  * Eliminates common prefixes/suffixes from $hints array
