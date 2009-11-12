@@ -18,11 +18,10 @@
  * Created on 19.10.2009
  *
  * @author: kai
- *  modiefied by Benjamin Langguth
+ *  modified by Benjamin Langguth
  */
 
 class CEDBHelper {
-	
 	
 	/**
 	 * Make sure the table of the given name has the given fields, provided

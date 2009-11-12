@@ -40,7 +40,7 @@ function enableCollaboration() {
 	global $wgExtensionFunctions, $cegEnableCollaboration, $cegIP;
 	
 	$wgExtensionFunctions[] = 'cefSetupExtension';
-	$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
+	#$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
 	
 	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . '/languages/CE_Messages.php'; // register messages (requires MW=>1.11)
 	
@@ -98,10 +98,13 @@ function cefSetupExtension() {
 	
 	# A: Comment
 	if ( $cegEnableComment ) {
-		
-		$cegCommentNamespace = array(CE_NS_COMMENT);
 
-		$wgHooks['BeforePageDisplay'][] = 'CEComment::cefAddHTMLHeader';
+		#put some more here? NO, we need the classes otherwise, too.
+
+		$cegCommentNamespace = array(CE_NS_COMMENT);
+		//TODO: THat's buggy!:'
+		// Class not found error!
+		#$wgHooks['BeforePageDisplay'][] = 'CEComment::cefAddHTMLHeader';
 	}
 	
 	# B: CurrentUser
