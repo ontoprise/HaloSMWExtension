@@ -7,7 +7,7 @@ doPathSearch = function (input) {
     
     // show loading image
     document.getElementById('us_pathsearch_results').innerHTML = 
-      '<img src="' + wgServer + wgScriptPath + '/extensions/UnifiedSearch/scripts/GreyBox/indicator.gif" alt="Loading pathsearch"/>'; 
+      '<img src="' + us_Path + '/../scripts/GreyBox/indicator.gif" alt="Loading pathsearch"/>';
 	
 	// call backend
 	// Mozilla, Safari and other browsers
