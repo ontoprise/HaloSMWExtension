@@ -378,12 +378,15 @@
 		$smw_ids = $db->tableName('smw_ids');
 		$categorylinks = $db->tableName('categorylinks');
 		
-		$query = "SELECT smw_id AS id FROM $smw_ids WHERE smw_title IN 
+		$query = "SELECT smw_id AS id, smw_title AS title, smw_namespace AS ns FROM $smw_ids WHERE smw_title IN
 				     (SELECT c.cl_to FROM $smw_ids s, $categorylinks c WHERE s.smw_id = $id AND c.cl_sortkey = s.smw_sortkey)
 				  AND smw_namespace = ".NS_CATEGORY;
 		$res = $db->query($query);
 		if ($res) {
-			while ($row = $db->fetchObject($res)) $result[] = $row->id;
+			while ($row = $db->fetchObject($res)) {
+                if (self::grantAccess($row->title, $row->ns))
+                    $result[] = $row->id;
+            }
 		}	
 		return $result;
 	} 	
@@ -401,12 +404,14 @@
 
 		$smw_ids = $db->tableName('smw_ids');
 		$categorylinks = $db->tableName('categorylinks');
-		$query = "SELECT smw_id AS id, smw_namespace AS ns FROM $smw_ids WHERE smw_sortkey IN
+		$query = "SELECT smw_id AS id, smw_namespace AS ns, smw_title AS title FROM $smw_ids WHERE smw_sortkey IN
 				     (SELECT c.cl_sortkey FROM $smw_ids s, $categorylinks c WHERE s.smw_id = $id AND c.cl_to = s.smw_sortkey)";
 		$res = $db->query($query);
 		if ($res) {
 			while ($row = $db->fetchObject($res)) {
-			    if (self::ignoreNs($row->ns)) continue;
+			    if (self::ignoreNs($row->ns) ||
+                    !self::grantAccess($row->title, $row->ns))
+                    continue;
 			    $result[] = $row->id;
 			}
 		}	
@@ -429,9 +434,29 @@
             if (defined(SMW_NS_CONCEPT)) $nsIgnore[] = SMW_NS_CONCEPT;
             if (defined(SMW_NS_TYPE)) $nsIgnore[] = SMW_NS_TYPE;
         }
-        return ((substr(MWNamespace::getCanonicalName($id), -5) == '_talk') ||
+        return (MWNamespace::isTalk($id) ||
                 (in_array($id, $nsIgnore))) 
                 ? true : false; 
+    }
+
+    /**
+     * create a title object from the given text and namespace and check
+     * if the user is allowed to view this title. If this is the case, return
+     * true, otherwise return false to deny access.
+     *
+     * @param string $text
+     * @param int $ns
+     * @return boolean $access
+     *
+     */
+    public static function grantAccess($text, $ns = 0) {
+        $t = Title::newFromText(str_replace('_', ' ', $text), $ns);
+        //if ($text == "joe Mystery")
+        if ($ns == SMW_NS_PROPERTY &&
+            in_array('propertyread', User::getAllRights()) &&
+            !$t->userCan('propertyread'))
+            return false;
+        return $t->userCanRead() ? true : false;
     }
 
  	// private functions to retrieve data from the database
@@ -453,10 +478,14 @@
 		
 		$smw_ids = $db->tableName('smw_ids');
 		$t2 = $db->tableName($table);
-		$query = "SELECT s.smw_id AS id FROM $smw_ids s, $table t WHERE t.p_id = $id AND t.$col = s.smw_id";
+		$query = "SELECT s.smw_id AS id, s.smw_title AS title, s.smw_namespace AS ns ".
+                 "FROM $smw_ids s, $table t WHERE t.p_id = $id AND t.$col = s.smw_id";
 		$res = $db->query($query);
 		if ($res && $db->numRows($res) > 0) {
-			while ($row = $db->fetchObject($res)) $result[] = $row->id;	
+			while ($row = $db->fetchObject($res)) {
+                if (self::grantAccess($row->title, $row->ns))
+                    $result[] = $row->id;
+            }
 		}
 		return $result;
 	} 
@@ -477,7 +506,8 @@
  		$res = self::$db->query($query);
  		if ($res) {
  			while ($row = self::$db->fetchObject($res)) {
- 				self::$category[$row->id][PSC_CATEGORY_NAME] = $row->name;
+                if (self::grantAccess($row->name, NS_CATEGORY))
+                    self::$category[$row->id][PSC_CATEGORY_NAME] = $row->name;
  			}
  		}
  		self::$db->freeResult($res);
@@ -493,6 +523,7 @@
  		$parents= array(); // this is for faster lookup only
  		if ($res) {
  			while ($row = self::$db->fetchObject($res)) {
+                if (!self::grantAccess($row->subcat, NS_CATEGORY)) continue;
  				if (! isset($parents[$row->cat])) {
  					foreach (array_keys(self::$category) as $id) {
  						if (self::$category[$id][PSC_CATEGORY_NAME] == $row->cat) {
@@ -530,7 +561,8 @@
  		$res = self::$db->query($query);
  		if ($res) {
  			while ($row = self::$db->fetchObject($res)) {
- 				self::$property[$row->id][PSC_PROPERTY_NAME] = $row->name;
+                if (self::grantAccess($row->name, SMW_NS_PROPERTY))
+                    self::$property[$row->id][PSC_PROPERTY_NAME] = $row->name;
  			}
  		}
  		self::$db->freeResult($res);
@@ -541,35 +573,77 @@
 			"SELECT r.p_id AS p_id, REPLACE(c.cl_to, '_', ' ') AS cl_to FROM $smw_rels2 r, $smw_ids s, $categorylinks c WHERE r.p_id in ".
  				 " (SELECT s.smw_id FROM $smw_ids s, $smw_rels2 r WHERE r.p_id = s.smw_id AND s.smw_iw != ':smw' ) ".
  			"AND s.smw_id = r.s_id and c.cl_sortkey = s.smw_sortkey group by r.p_id, c.cl_to";
- 		$res = self::$db->query($query);
- 		if ($res) {
- 			while ($row = self::$db->fetchObject($res)) {
- 				if (isset(self::$property[$row->p_id][PSC_DOMAIN]))
- 					self::$property[$row->p_id][PSC_DOMAIN][] = $cats[$row->cl_to];
- 				else
- 					self::$property[$row->p_id][PSC_DOMAIN] = array($cats[$row->cl_to]);
- 			}
- 		}
- 		self::$db->freeResult($res);
+        self::checkPropertyAccessAndSave($query, PSC_DOMAIN, $cats);
 
         // Range -> Category
  		$query = 
 			"SELECT r.p_id AS p_id, REPLACE(c.cl_to, '_', ' ') AS cl_to FROM $smw_rels2 r, $smw_ids s, $categorylinks c WHERE r.p_id in ".
  				 " (SELECT s.smw_id FROM $smw_ids s, $smw_rels2 r WHERE r.p_id = s.smw_id AND s.smw_iw != ':smw' ) ".
  			"AND s.smw_id = r.o_id and c.cl_sortkey = s.smw_sortkey group by r.p_id, c.cl_to";
- 		$res = self::$db->query($query);
+        self::checkPropertyAccessAndSave($query, PSC_RANGE, $cats);
+ 	}
+
+    /**
+     * add property results to properties array, but make sure that the user is allowed
+     * to read the property value and has also access to the object
+     *
+     * @access private
+     * @param  string query
+     * @param  int type PSC_RANGE or PSC_DOMAIN
+     * @param  Array(int) cats
+     */
+    private function checkPropertyAccessAndSave($query, $Ptype, $cats) {
+        $tuples = array(); // save here property_id -> cl_to
+        $prop_ids = array(); // unique property ids
+        $cl_tos = array(); // unique cl_to strings
+
+        $res = self::$db->query($query);
  		if ($res) {
  			while ($row = self::$db->fetchObject($res)) {
- 				if (isset(self::$property[$row->p_id][PSC_RANGE]))
- 					self::$property[$row->p_id][PSC_RANGE][] = $cats[$row->cl_to];
+                if (!in_array($row->p_id, $prop_ids)) $prop_ids[]= $row->p_id;
+                if (!in_array($row->cl_to, $cl_tos)) $cl_tos[]= $row->cl_to;
+                $tuples[]= array($row->p_id, $row->cl_to);
+            }
+        }
+        self::$db->freeResult($res);
+        if (count($tuples) == 0) return;
+
+        // select now property names and check access
+        $smw_ids = self::$db->tableName('smw_ids');
+        $query = "select smw_id AS id, smw_title AS title FROM $smw_ids WHERE smw_id in (".implode(',', $prop_ids).")";
+        $res = self::$db->query($query);
+
+        // flush property ids and safe only these where access is allowed
+
+        $prop_ids = array();
+        if ($res) {
+            while ($row = self::$db->fetchObject($res)) {
+                if (self::grantAccess($row->title, SMW_NS_PROPERTY))
+                    $prop_ids[] = $row->id;
+            }
+        }
+        self::$db->freeResult($res);
+
+        // check now the cl_to categories for access
+        for ($i = 0, $is = count($cl_tos); $i < $is; $i++) {
+            if (!self::grantAccess($cl_tos[$i], NS_CATEGORY))
+                unset($cl_tos[$i]);
+        }
+
+        // check tuples and add all these to the property variable that are not
+        // blocked by any access control
+        foreach ($tuples as $t) {
+                $p_id = $t[0];
+                $cl_to = $t[1];
+                if (!in_array($p_id, $prop_ids) || !in_array($cl_to, $cl_tos))
+                    continue;
+ 				if (isset(self::$property[$p_id][$Ptype]))
+ 					self::$property[$p_id][$Ptype][] = $cats[$cl_to];
  				else
- 					self::$property[$row->p_id][PSC_RANGE] = array($cats[$row->cl_to]);
- 			}
+ 					self::$property[$p_id][$Ptype] = array($cats[$cl_to]);
  		}
- 		self::$db->freeResult($res);
+    }
  		
- 	}
- 
  	/**
  	 * fetch all property data  that have an XSD Valuetype for it's ranges, fill the
  	 * static variable $property
@@ -595,8 +669,10 @@
  		$res = self::$db->query($query);
  		if ($res && self::$db->numRows($res) > 0) {
  			while ($row = self::$db->fetchObject($res)) {
- 				self::$property[$row->p_id][PSC_PROPERTY_NAME] = $row->name;
-				self::$property[$row->p_id][PSC_VALUE_STRING] = $row->value;
+                if (self::grantAccess($row->name, SMW_NS_PROPERTY)) {
+                    self::$property[$row->p_id][PSC_PROPERTY_NAME] = $row->name;
+                    self::$property[$row->p_id][PSC_VALUE_STRING] = $row->value;
+                }
  			}
  		}
  		else return;
@@ -607,17 +683,7 @@
  		$query = "SELECT a.p_id AS p_id, REPLACE(c.cl_to, '_', ' ') AS cl_to FROM $categorylinks c, $smw_ids i, $smw_atts2 a, $smw_spec2 s 
  		          WHERE s.s_id = a.p_id AND s.p_id = ".$hasTypePropertyID." AND a.s_id = i.smw_id AND c.cl_sortkey = i.smw_sortkey
  		          GROUP BY a.p_id, c.cl_to";
- 		$res = self::$db->query($query);
-
- 		if ($res) {
- 			while ($row = self::$db->fetchObject($res)) {
- 				if (isset(self::$property[$row->p_id][PSC_XSDTYPE]))
- 					self::$property[$row->p_id][PSC_XSDTYPE][] = $cats[$row->cl_to];
- 				else
-					self::$property[$row->p_id][PSC_XSDTYPE] = array($cats[$row->cl_to]);
- 			}
- 		}
- 		        
+        self::checkPropertyAccessAndSave($query, PSC_XSDTYPE, $cats);
     }
  	
  }
