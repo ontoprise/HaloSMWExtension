@@ -1,3 +1,0 @@
-Apart from some minor tweaks (no plural if only one vote and
-a few new parameters), this version introduces the star-style
-rating bar (stars drawn by Flyerwiki).
