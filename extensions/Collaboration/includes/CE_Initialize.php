@@ -27,7 +27,21 @@
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
 }
-define('CE_VERSION', '1.0');
+
+define('CE_VERSION', '0.9');
+
+//--- credits (see "Special:Version") ---
+global $wgExtensionCredits;
+
+$wgExtensionCredits['other'][]= array(
+        'name'=>'Collaboration',
+        'version'=>CE_VERSION,
+        'author'=>"Benjamin Langguth and others",
+        'url'=>'http://smwforum.ontoprise.de',
+        'description' => 'Some fancy collaboration tools.'
+);
+
+global $cegIP, $cegScriptPath, $cegEnableComments, $cegEnableCurrentUsers;
 
 ###
 # This is the path to your installation of Collaboration as seen on your
@@ -44,93 +58,54 @@ $cegScriptPath = $wgScriptPath . '/extensions/Collaboration';
 
 
 ###
-# Enable ArticleComments
-# For more information visit: http://www.mediawiki.org/wiki/Extension:ArticleComments
+# Enable Comments
 ###
-$cegEnableArticleComments = true;
-
-###
-# Enable rating
-# For more information visit: http://www.mediawiki.org/wiki/Extension:Rating_Bar
-###
-$cegEnableRating = true;
+$cegEnableComments = true;
 
 ###
 # Enable CurrentUsers
-# For more information visit: http://www.mediawiki.org/wiki/Extension:CurrentUsers
 ###
-$cegEnableCurrentUsers = true;
+$cegEnableCurrentUsers = false;
 
-$wgHooks['BeforePageDisplay'][] = 'smwfCEAddHTMLHeader';
 
-//--- credits (see "Special:Version") ---
-global $wgExtensionCredits;
-
-$wgExtensionCredits['other'][]= array(
-        'name'=>'Collaboration',
-        'version'=>CE_VERSION,
-        'author'=>"Benjamin Langguth and others",
-        'url'=>'http://smwforum.ontoprise.de',
-        'description' => 'Some fancy collaboration tools.');
-
-# A: ArticleComments
-if ( $cegEnableArticleComments ) {
-	###
-	# Hides the commentForm until the "Make a comment" link is clicked
-	# This i no longer needed because The commentForm is wrapped in a CollapsibleTable
-	# see http://www.mediawiki.org/wiki/Manual:Collapsible_tables
-	###
-	$wgArticleCommentDefaults['hideForm'] = false;
+function enableCollaborationExtension() {
+	global $wgExtensionFunctions, $cegEnableCollaborationExtension, $cegIP,
+			$cegEnableComments, $cegEnableCurrentUsers;
 	
-	###
-	# Show the comments inside the page, under the "Make a comment" link.
-	# Also wrapped in a CollapsibleTable
-	###
-	$wgArticleCommentDefaults['displaycomments'] = true;
+	//so that other extensions like the gardening framework know about
+	//the Collaboration-Extension
+	$cegEnableCollaborationExtension = true;
 	
-	###
-	# Hides the comment text until the "Show comments" link is clicked
-	# Also wrapped in a CollapsibleTable
-	###
-	$wgArticleCommentDefaults['hidecomments'] = false;
+	$wgAutoloadClasses['Collaboration'] = $cegIP . 'MyExtension_body.php';
+	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . 'MyExtension.i18n.php';
+	$wgExtensionAliasesFiles['Collaboration'] = $cegIP . 'MyExtension.alias.php';
+		
+	#$wgExtensionFunctions[] = 'smwfSetupCEExtension';
 	
-	###
-	# Show a HTML input field for the poster's url in the commentForm 
-	###
-	$wgArticleCommentDefaults['showurlfield'] = false;
+	# A: Comments
+	if ( $cegEnableComments ) {
+		
+		$cegCommentsNamespace = array(NS_MAIN);
+		require_once($cegIP.'/specials/Comments/CE_Comments.php');
 	
-	include_once($cegIP.'/ArticleComments/ArticleComments.php');
+		require_once($cegIP. '/specials/Comments/CE_CommentsAjaxAccess.php');	
 	
-	###
-	# Add the comment tag to all pages of a specific namespace
-	###
-	$cegArticleCommentsOnNamespace = array(NS_MAIN);
-	$wgHooks['ParserBeforeStrip'][] = 'ArticleComments::addCommentTag';
+		//require the displayComments parser function
+		#require_once("$cegIP/specials/Comments/CE_CommentsDisplayParserFunction.php");
+		
+		$wgAutoloadClasses['Collaboration'] = $cegIP . 'MyExtension_body.php';
+		$wgHooks['BeforePageDisplay'][] = 'CEComments::smwfCEAddHTMLHeader';
+		
+		#$wgSpecialPages['MyExtension'] = 'MyExtension'; # Let MediaWiki know about your new special page.
+	}
+	
+	# B: CurrentUser
+	if ( $cegEnableCurrentUsers ) {
+		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
+	}
+			
 	
 }
-# B:RatingBar
-if ( $cegEnableRating ) {
-	###
-	# see /RatingBar/config.php for more configuration options
-	###
-	include_once($cegIP.'/RatingBar/ratingbar.php');
-}
-# C: CurrentUser
-if ( $cegEnableCurrentUsers ) {
-	include_once($cegIP.'/CurrentUsers/CurrentUsers.php');
-}
 
-function smwfCEAddHTMLHeader(&$out) {
-	global $cegScriptPath;
-	// All scripts that have been added later on... 
-	$out->addScript("<script type=\"text/javascript\" src=\"".$cegScriptPath .  "/scripts/CollapsibleTables.js\"></script>");
-	// style definitions
-	$out->addLink(array(
-		'rel'   => 'stylesheet',
-		'type'  => 'text/css',
-		'media' => 'screen, projection',
-		'href'  => $cegScriptPath . '/skins/common.css'
-	));
-
-	return true;
-}
+#$wgHooks['ParserBeforeStrip'][] = 'ArticleComments::addCommentTag';
+#-> into DislpayParserFunction

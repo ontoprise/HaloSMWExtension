@@ -1,10 +1,11 @@
-Installation instructions for Collaboration extension v1.0
+Installation instructions for Collaboration extension v0.9
 ---------------------------------------------------------------
 
 Requirements: 
 =============
 
-    MediaWiki 1.15.1
+	MediaWiki 1.15.1
+	DataAPI (SMWHalo) on "target" wiki
 
 Installation:
 =============
@@ -19,18 +20,11 @@ For a manual installation, you have to copy the folder Collaboration into
 the extensions folder of MediaWiki. Collaboration will then already work, if you 
 activate it in LocalSetting.php (see below). 
 
-However, you can apply a patch to the used extensions:
-* patch.txt: 
-	This patch contains changes to ArticleComment, RatingBar and CurrentUsers
 
-
-Updating the database
+Converting existing comments
 ---------------------
 
-The Collaboration extension requires some additional tables in the database that must
-be added to the existing database schema. Existing data will not be modified.
-Therefore change into the maintenance folder of the Collaboration extension and run the
-setup script:
+Convert script:
  cd /folder_to_mediawiki/extension/Collaboration/maintenance
  php CE_Setup.php
 
@@ -41,10 +35,9 @@ Activating Collaboration
 The extension is activated by adding the following lines to LocalSettings.php:
 
 include_once('extensions/Collaboration/includes/CE_Initialize.php');
-
+enableCollaborationExtension();
 
 Options:
 ========
 
-All configuration options are defined and described in CE_Initialize.php.
-
+All configuration options are defined and described in /includes/CE_Initialize.php.

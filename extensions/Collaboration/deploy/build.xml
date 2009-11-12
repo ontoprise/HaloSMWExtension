@@ -30,7 +30,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		
+		<copy todir="bin/zip/extensions/Collaboration/specials">
+			<fileset dir="../storage/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/Collaboration">
 			<fileset dir="../">
 				<include name="COPYING" />
@@ -42,5 +46,4 @@
 		<zip destfile="bin/Collaboration-${version}.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 	</target>
-
 </project>

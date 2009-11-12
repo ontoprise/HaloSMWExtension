@@ -23,6 +23,9 @@
  * Date: 2009-10-16
  * 
  */
+ 
+ //TODO: add script to convert local comments created by old Comments extension to new ones.
+ 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
     echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
     return;
@@ -33,7 +36,7 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $dir = dirname(__FILE__);
 $cegIP = "$dir/../../Collaboration";
 
-require_once("$cegIP/storage/CE_DBHelper.php");
+require_once("$cegIP/storage/CE_CommentsDBHelper.php");
 
 $delete = array_key_exists('delete', $options);
 
