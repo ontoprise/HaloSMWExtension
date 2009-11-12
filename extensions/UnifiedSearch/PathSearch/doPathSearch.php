@@ -51,7 +51,6 @@ function us_doPathSearch($input, $nojason = false) {
 }
 
 function us_getPathDetails($input) {
-	global $wgStylePath, $wgDefaultSkin, $wgScriptPath, $wgUser, $wgParser, $wgTitle;
 	
 	$path = explode(',', $input);
 	$psc = new PathSearchCore();
@@ -59,18 +58,7 @@ function us_getPathDetails($input) {
 	$psc->setOutputMethod(PSC_OUTPUT_BOX);
 	$html = ($psc->getResultCode() != 0) ? wfMsg('us_pathsearch_no_instances') : $psc->getResultAsHtml();
 	
-	// add css and other stuff to complete the html page
-	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
-	$head = '<head>';
-	$head .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>';
-	$head .= '<style type="text/css" media="screen, projection">
-			     @import "'. $wgStylePath .'/'. $skinName .'/main.css?164";
-			     @import "'.$wgScriptPath.'/extensions/UnifiedSearch/skin/unified_search.css";
-			     @import "'.$wgScriptPath.'/extensions/UnifiedSearch/skin/pathsearch.css";
-			 </style>';
-	$head .= '</head>';
-	
-	return '<html>'.$head.'<body>'.$html.'</body></html>';
+    return $html;
 }
 
 function USPathSearchJasonOutput($html) {
