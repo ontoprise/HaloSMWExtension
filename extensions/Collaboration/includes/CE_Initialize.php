@@ -30,18 +30,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 define('CE_VERSION', '0.9');
 
-//--- credits (see "Special:Version") ---
-global $wgExtensionCredits;
 
-$wgExtensionCredits['other'][]= array(
-        'name'=>'Collaboration',
-        'version'=>CE_VERSION,
-        'author'=>"Benjamin Langguth and others",
-        'url'=>'http://smwforum.ontoprise.de',
-        'description' => 'Some fancy collaboration tools.'
-);
-
-global $cegIP, $cegScriptPath, $cegEnableComments, $cegEnableCurrentUsers;
+global $cegIP, $cegScriptPath, $cegEnableComment, $cegEnableCurrentUsers;
 
 ###
 # This is the path to your installation of Collaboration as seen on your
@@ -58,54 +48,23 @@ $cegScriptPath = $wgScriptPath . '/extensions/Collaboration';
 
 
 ###
-# Enable Comments
+# Enable Comment
 ###
-$cegEnableComments = true;
+$cegEnableComment = true;
 
 ###
 # Enable CurrentUsers
 ###
 $cegEnableCurrentUsers = false;
 
+# load global functions
+require_once('CE_GlobalFunctions.php');
 
-function enableCollaborationExtension() {
-	global $wgExtensionFunctions, $cegEnableCollaborationExtension, $cegIP,
-			$cegEnableComments, $cegEnableCurrentUsers;
-	
-	//so that other extensions like the gardening framework know about
-	//the Collaboration-Extension
-	$cegEnableCollaborationExtension = true;
-	
-	$wgAutoloadClasses['Collaboration'] = $cegIP . 'MyExtension_body.php';
-	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . 'MyExtension.i18n.php';
-	$wgExtensionAliasesFiles['Collaboration'] = $cegIP . 'MyExtension.alias.php';
-		
-	#$wgExtensionFunctions[] = 'smwfSetupCEExtension';
-	
-	# A: Comments
-	if ( $cegEnableComments ) {
-		
-		$cegCommentsNamespace = array(NS_MAIN);
-		require_once($cegIP.'/specials/Comments/CE_Comments.php');
-	
-		require_once($cegIP. '/specials/Comments/CE_CommentsAjaxAccess.php');	
-	
-		//require the displayComments parser function
-		#require_once("$cegIP/specials/Comments/CE_CommentsDisplayParserFunction.php");
-		
-		$wgAutoloadClasses['Collaboration'] = $cegIP . 'MyExtension_body.php';
-		$wgHooks['BeforePageDisplay'][] = 'CEComments::smwfCEAddHTMLHeader';
-		
-		#$wgSpecialPages['MyExtension'] = 'MyExtension'; # Let MediaWiki know about your new special page.
-	}
-	
-	# B: CurrentUser
-	if ( $cegEnableCurrentUsers ) {
-		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
-	}
-			
-	
-}
-
-#$wgHooks['ParserBeforeStrip'][] = 'ArticleComments::addCommentTag';
-#-> into DislpayParserFunction
+###
+# If you already have custom namespaces on your site, insert
+#    $cegCommentNamespaceIndex = ???;
+# into your LocalSettings.php *before* including this file. The number ??? must
+# be the smallest even namespace number that is not in use yet. However, it
+# must not be smaller than 100.
+##
+cefInitNamespaces();
