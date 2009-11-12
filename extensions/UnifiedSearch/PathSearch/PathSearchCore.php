@@ -82,7 +82,7 @@
 			if ($this->outputMethod == PSC_OUTPUT_PAGE) {
 				$html .= '<span class="searchprev"><a ' .
 						 'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
-						 'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
+						 'onClick="SimplePopup.loadUrl(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href); return false;"'.
 						 'title="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'"></a></span>';
 			}
 			$html .= '</td><td width="100%">';
@@ -159,7 +159,7 @@
 					$html.= '<td colspan="'.(count($row) * 2 - 1).'" class="instanceValues">' .
 							'<a ' .
 						    'href="'.$wgServer.$wgScript.'?action=ajax&rs=us_getPathDetails&rsargs[]='.urlencode($key).'" '.
-						    'onClick="return GB_showPage(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href)" '.
+						    'onClick="SimplePopup.loadUrl(\''.wfMsg('us_pathsearch_result_popup_header').'\', this.href); return false;" '.
 						    'title="'.wfMsg('us_pathsearch_show_all_results', count($this->instance[$key])).'">'.
                             wfMsg('us_pathsearch_show_all_results', $numRowsTotal).'</td></tr>';
 					break;
