@@ -29,6 +29,7 @@
  define('PSC_ERROR_NOINSTANCE', 2);
  define('PSC_ERROR_PATHINVALID', 3);
  define('PSC_ERROR_INVALID_TERMS', 4);
+ define('PSC_ERROR_TERM_PROTECTED', 5);
 
 
  class PathSearchCore {
@@ -197,7 +198,7 @@
 		if ($nop > 1) {
 			$this->evalPath(); // find any paths
 			// if paths found complete label names for SMW ids, these are needed for checking path consistency
-			$this->fetchNodeDetails($this->result); 
+			$this->fetchNodeDetails($this->result);
 			// post processing for results
 			$pathExists = array();
 			for ($i = 0, $is = count($this->result); $i < $is; $i++ ) {
@@ -241,13 +242,20 @@
 		// get concrete results for each path (i.e. pages and values) and also fetch names for these nodes
 		$this->getPathInstances();
 		$this->getNodeInstances();
-
-		// here we limit the results. A result is a path that has at least one instance as well
-		$this->checkResultLimits($limit, $offset);
 		
 		// get node names and values for $instance
-		foreach (array_keys($this->instance) as $key)
+		foreach (array_keys($this->instance) as $key) {
 			$this->fetchNodeDetails($this->instance[$key], $key);
+            if (count($this->instance[$key]) == 0) {
+                foreach (array_keys($this->result) as $i) {
+                    if ($key == implode(',', $this->result[$i]))
+                        unset($this->result[$i]);
+                }
+            }
+        }
+
+   		// here we limit the results. A result is a path that has at least one instance as well
+		$this->checkResultLimits($limit, $offset);
 
 		// result may have been modified and adjusted, set correct error code if we have no results or no instances
 		if (count($this->result) == 0)
@@ -1193,18 +1201,45 @@
 				}
 			}
 		}
+        // all ids have been known already so don't do anything
 		if (count($ids2fetch) == 0) return;
-		
+        // fetch complete title from DB for a certain smw_id
+        // also check if the user is allowed to access it.
+        $protected_ids=array();
 		$db =& wfGetDB(DB_SLAVE);
 		$smw_ids = $db->tableName('smw_ids');
 		$res = $db->query("select smw_id, smw_sortkey, smw_namespace from $smw_ids where smw_id in (".implode(", ", $ids2fetch).")");
 		if ($res) {
 			while ($row = $db->fetchObject($res)) {
-				$this->details[$row->smw_id][PSC_SMWDATA_NAME] = $row->smw_sortkey;
-				$this->details[$row->smw_id][PSC_SMWDATA_TYPE] = $row->smw_namespace;
+                if (PSC_WikiData::grantAccess($row->smw_sortkey,$row->smw_namespace)) {
+                    $this->details[$row->smw_id][PSC_SMWDATA_NAME] = $row->smw_sortkey;
+                    $this->details[$row->smw_id][PSC_SMWDATA_TYPE] = $row->smw_namespace;
+                }
+                else
+                    $protected_ids[] = $row->smw_id;
 			}
 		}
 		$db->freeResult($res);
+        // no ids did have a restricted access
+        if (count($protected_ids) == 0) return;
+        // there were some id's with restricted access. Eliminate the complete
+        // line of the data set where any of these id's occurs.
+        for ($i = 0, $is = count($data); $i < $is; $i++) {
+            $cntNode = -1;
+            foreach ($data[$i] as $node) {
+                $cntNode++;
+                if ($key != NULL && $this->getColumnTypeForInstance($cntNode, $key) == PSC_COLTYPE_ISVALUE)
+					continue;
+        		$ids = explode("|", $node);
+            	foreach ($ids as $id) {
+                    if (in_array($id, $protected_ids)) {
+                        unset($data[$i]);
+                        continue 3;
+                    }
+                }
+            }
+        }
+
 	}
 	
 	/**
@@ -1322,6 +1357,14 @@
 			$this->resultCode = PSC_ERROR_INVALID_TERMS;
 			return;
 		}
+        if ($type == SMW_NS_PROPERTY &&
+            in_array('propertyread', User::getAllRights()) &&
+            !$title->userCan('propertyread') ||
+            !$title->userCanRead() ) {
+            $this->resultCode = PSC_ERROR_TERM_PROTECTED;
+            return;
+        }
+
 		$titleQuery = strtoupper($title->getDbkey());
 		$db =& wfGetDB(DB_SLAVE);
 		$smw_ids = $db->tableName('smw_ids');
