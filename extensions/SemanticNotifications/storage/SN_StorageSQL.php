@@ -46,13 +46,13 @@ class SNStorageSQL {
 		$db =& wfGetDB( DB_MASTER );
 
 		$verbose = true;
-		DBHelper::reportProgress("Setting up semantic notification ...\n",$verbose);
+		SGADBHelper::reportProgress("Setting up semantic notification ...\n",$verbose);
 
 		// create SN table
 		$snTable = $db->tableName('smw_sem_notification');
 
-		DBHelper::reportProgress("   ... Creating semantic notification database \n",$verbose);
-		DBHelper::setupTable($snTable, array(
+		SGADBHelper::reportProgress("   ... Creating semantic notification database \n",$verbose);
+		SGADBHelper::setupTable($snTable, array(
 				  'user_id'  	     =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'query_name'       =>  'VARCHAR(255) NOT NULL' ,
 				  'query_text'       =>  'TEXT NOT NULL' ,
@@ -60,7 +60,7 @@ class SNStorageSQL {
 				  'update_interval'  =>  'INT(8) UNSIGNED NOT NULL' ,
 				  'timestamp'        =>  'VARCHAR(14) NOT NULL'),
 				$db, $verbose, 'user_id, query_name');
-		DBHelper::reportProgress("   ... done!\n",$verbose);
+		SGADBHelper::reportProgress("   ... done!\n",$verbose);
 
 	}
 
