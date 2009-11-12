@@ -18,10 +18,10 @@ function wfUSPathSearchSetup() {
 	       $usgAllNamespaces;
     $wgHooks['BeforePageDisplay'][]='wfUSPathSearchAddHeader';
    	wfUSPathSearchInitMessages();
-	$dir = 'extensions/UnifiedSearch/';
-	$wgAutoloadClasses['PathSearchCore'] = $dir . 'PathSearch/PathSearchCore.php';
-	$wgAutoloadClasses['PSC_Path'] = $dir . 'PathSearch/PSC_Path.php';
-    $wgAutoloadClasses['PSC_WikiData'] = $dir . 'PathSearch/PSC_WikiData.php';
+	$dir = dirname(__FILE__);
+	$wgAutoloadClasses['PathSearchCore'] = $dir . '/PathSearchCore.php';
+	$wgAutoloadClasses['PSC_Path'] = $dir . '/PSC_Path.php';
+    $wgAutoloadClasses['PSC_WikiData'] = $dir . '/PSC_WikiData.php';
 	return true;
 }
  
@@ -33,7 +33,7 @@ function wfUSPathSearchSetup() {
  */
 function wfUSPathSearchAddHeader(& $out) {
 	global $wgScriptPath;
-
+    $usPath = substr(dirname(__FILE__), strpos(dirname(__FILE__), $wgScriptPath));
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
@@ -41,7 +41,14 @@ function wfUSPathSearchAddHeader(& $out) {
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/pathsearch.css'
                  )
     );
-    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/pathsearch.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/pathsearch.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/SimplePopup.js"></script>');
+            $out->addScript('
+            <script type="text/javascript">/*<![CDATA[*/
+                var us_Path = "'.$usPath.'";
+            /*]]>*/</script>
+        ');
+
     return true;
 }
 
@@ -51,15 +58,16 @@ function wfUSPathSearchAddHeader(& $out) {
  */
 function wfUSPathSearchInitMessages() {
 	global $wgMessageCache, $wgLang, $IP;
+    $usPath = dirname(__FILE__);
 
 	$usLangClass = 'US_Language' . str_replace( '-', '_', ucfirst( $wgLang->getCode() ) );
 
-	if (file_exists($IP.'/extensions/UnifiedSearch/languages/'. $usLangClass . '.php')) {
-		include_once('extensions/UnifiedSearch/languages/'. $usLangClass . '.php' );
+	if (file_exists($usPath.'/../languages/'. $usLangClass . '.php')) {
+		include_once($usPath.'/../languages/'. $usLangClass . '.php' );
 	}
 	// fallback if language not supported
 	if ( !class_exists($usLangClass)) {
-		include_once('extensions/UnifiedSearch/languages/US_LanguageEn.php' );
+		include_once($usPath.'/../languages/US_LanguageEn.php' );
 		$lang = new US_LanguageEn();
 	} else {
 		$lang = new $usLangClass();
