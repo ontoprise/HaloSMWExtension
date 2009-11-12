@@ -21,10 +21,17 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 		$printouts = array();
 		$params = array();
 		foreach ($rawparams as $name => $param) {
+			if ($doublePipe) {
+				$querystring .= " || ". $param;
+				$doublePipe = false;
+				continue;
+			}
 			if ( is_string($name) && ($name != '') ) { // accept 'name' => 'value' just as '' => 'name=value'
 				$param = $name . '=' . $param;
 			}
 			if ($param == '') {
+				$doublePipe = true;
+				continue;
 			} elseif ($param{0} == '?') { // print statement
 				$param = substr($param,1);
 				$parts = explode('=',$param,2);
