@@ -51,7 +51,6 @@ SimplePopup = {
     },
     
     close: function(){
-        alert('dsfsf')
         var div=document.getElementById('SimplePopup')
         if (div) div.parentNode.removeChild(div)
     },
@@ -72,23 +71,19 @@ SimplePopup = {
         div.style.left=parseInt((window.innerWidth-(window.innerWidth / 100 * parseInt(SimplePopup.width)))/2) + 'px'
         div.style.backgroundColor='#FFFFFF'
         div.style.zIndex=100
-        div.innerHTML = '<span style="font-weight: bold" onclick="SimplePopup.close();">'+headline+'</span>'
-            +'<img src="'+us_Path+'/../scripts/GreyBox/smw_plus_closewindow_icon_16x16.png" onclick="SimplePopup.close();" '
-            +'alt="Close" align="right" style="cursor:pointer; cursor:hand"/>'
+        div.innerHTML = '<span style="font-weight: bold">'+headline+'</span>'
+            +'<img src="'+us_Path+'/../scripts/GreyBox/smw_plus_closewindow_icon_16x16.png" '
+            +'alt="Close" align="right" style="cursor:pointer; cursor:hand;" '
+            +'onclick="SimplePopup.close();" />'
             +'<hr style="border: solid thin;"/>'
-            +'<div id="SimplePopup_content" style="padding-top: 50px; '
-            +'position: absolute; '
-            +'width: 100%; '
-            +'top: 0; '
-            +'text-align: center; '
-            +'vertical-align: middle;'
-            +'">'
+            +'<div id="SimplePopup_content" '
+            +'style="width: 100%; text-align: center; vertical-align: middle;">'
             +'</div>'
     },
 
     showPendingIndicator: function(){
         var div=document.getElementById('SimplePopup_content')
-        div.innerHTML='<img src="'+us_Path+'/../scripts/GreyBox/indicator.gif"/>'
+        div.innerHTML='<img src="'+us_Path+'/../scripts/GreyBox/indicator.gif" align="center" alt="loading..."/>'
     }
 
 }
