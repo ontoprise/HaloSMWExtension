@@ -46,28 +46,40 @@ if (isset($wgUSPathSearch) && $wgUSPathSearch) {
 function wfUSAddHeader(& $out) {
 	global $wgScriptPath, $wgServer;
 
+    $dir= substr(dirname(__FILE__), strpos(dirname(__FILE__), $wgScriptPath));
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
+                    'href'  => $dir . '/../skin/unified_search.css'
                     ));
                     if (!defined("SMW_HALO_VERSION")) {
-                    	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
+                    	$out->addScript('<script type="text/javascript" src="'.$dir . '/../scripts/prototype.js"></script>');
                     }
-                    $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
+                    $out->addScript('<script type="text/javascript" src="'.$dir . '/../scripts/unified_search.js"></script>');
+                    // add SimplePopup
+                    $out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $dir. '/../scripts/SimplePopup/SimplePopup.css'
+                    ));
+                    $out->addScript('<script type="text/javascript" src="'.$dir . '/../scripts/SimplePopup/SimplePopup.js"></script>');
+                    $out->addScript('<script type="text/javascript">/*<![CDATA[*/
+                        var SIMPLE_POPUP_DIR = "'.$dir.'/../scripts/SimplePopup/";
+                    /*]]>*/</script>');
                     // add GreyBox
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
-                    'href'  => $wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_styles.css'
+                    'href'  => $dir. '/../scripts/GreyBox/gb_styles.css'
                     ));
                     $out->addScript('<script type="text/javascript">var GB_ROOT_DIR = "'.$wgServer.$wgScriptPath.'/extensions/UnifiedSearch/scripts/GreyBox/";</script>'."\n");
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
-                    // add GreyBox
+                    // add GreyBox 
                     return true;
 }
 
