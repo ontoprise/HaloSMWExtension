@@ -42,13 +42,6 @@ function wfUSPathSearchAddHeader(& $out) {
                  )
     );
     $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/pathsearch.js"></script>');
-    $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/SimplePopup.js"></script>');
-            $out->addScript('
-            <script type="text/javascript">/*<![CDATA[*/
-                var us_Path = "'.$usPath.'";
-            /*]]>*/</script>
-        ');
-
     return true;
 }
 
