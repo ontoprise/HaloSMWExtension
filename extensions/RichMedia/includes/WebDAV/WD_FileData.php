@@ -81,9 +81,9 @@ class FileData {
 
 	public function getFileName(){
 		if($this->isWikiArticle()){
-			return $this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6));
+			return urldecode($this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6)));
 		} else {
-			return $this->decodeFileName($this->fileName);
+			return urldecode($this->decodeFileName($this->fileName));
 		}
 	}
 
@@ -211,7 +211,26 @@ class FileData {
 		$fileName = str_replace('&', "-ampersize-", $fileName);
 		$fileName = str_replace('%', "-percent-", $fileName);
 		$fileName = str_replace("'", "-apostroph-", $fileName);
-		return $fileName;
+		return urlencode($fileName);
+	}
+	
+	public function isTempFile($fileName = null){
+		if(is_null($fileName))
+			$fileName = $this->getFileName();
+		
+		
+		if(strpos($fileName, "~") == 0 && strpos($fileName, "~") !== false){
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function isDirectory(){
+		if(strlen($this->getFileName()) == 0){
+			return true;
+		}
+		return false;
 	}
 	
 	

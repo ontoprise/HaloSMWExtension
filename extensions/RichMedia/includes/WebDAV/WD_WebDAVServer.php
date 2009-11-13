@@ -35,6 +35,8 @@ require_once( 'WD_Server.php' );
 
 class WebDAVServer extends HTTP_WebDAV_Server {
 
+	private $time;
+
 	function init() {
 		parent::init();
 
@@ -45,7 +47,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	function getAllowedMethods() {
 		//todo: add copy and move method
 		// i removed the REPORT method
-		return array( 'OPTIONS', 'PROPFIND', 'GET', 'HEAD', 'DELETE', 'PUT', 'SEARCH', 'COPY', 'MOVE');
+		return array( 'OPTIONS', 'PROPFIND', 'GET', 'HEAD', 'DELETE', 'PUT', 'COPY', 'MOVE');
 	}
 
 	function options( &$serverOptions ) {
@@ -62,14 +64,14 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 		return true;
 	}
-	
+
 	private function createFolderResponse($path, $displayName){
 		return $this->createFileResponse($path, $displayName, 0, 'httpd/unix-directory',
 			"collection", time());
 	}
-	
-	private function createFileResponse($path, $displayName, $contentLength, 
-			$contentType, $resourceType, $lastEdit){
+
+	private function createFileResponse($path, $displayName, $contentLength,
+	$contentType, $resourceType, $lastEdit){
 		$response = array();
 		$response['path'] = 'WD_WebDAV.php/'.$path;
 		$response['props'][] = WebDavServer::mkprop( 'displayname', $displayName );
@@ -81,124 +83,173 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function propfind( &$serverOptions ) {
+		$temp = implode("/", $this->pathComponents);
+		$this->writeLog("propfind ".$temp);
+
 		$serverOptions['namespaces']['http://subversion.tigris.org/xmlns/dav/'] = 'V';
 		$status = array();
-		
+
 		//todo: login stuff
-		
+
 		$fileData = new FileData($this->pathComponents);
-		
-		if(!$fileData->isValidFolder())
-			return;
-		
+
+		if(!$fileData->isValidFolder()){
+			return "400 Bad request";
+		}
+
 		# TODO: Use $wgMemc
 		# todo: deal with table prefixes
 		# deal with that in the complete class
 		$dbr =& wfGetDB( DB_SLAVE );
-		
-		if ($fileData->isRootDirectory()) {
-			global $wgSitename;
-			$status[] = $this->createFolderResponse("", $wgSitename);
-			
-			# Don't descend if depth is zero
-			//todo: what does this one do?
-			if ( empty( $serverOptions['depth'] ) ) {
+
+		if($fileData->isDirectory()){
+			if ($fileData->isRootDirectory()) {
+				global $wgSitename;
+				$status[] = $this->createFolderResponse("", $wgSitename);
+
+				# Don't descend if depth is zero
+				if ( empty( $serverOptions['depth'] ) ) {
+					return $status;
+				}
+
+				$status = array_merge($status, $this->getNamespaceFolders());
+
 				return $status;
-			}
-			
-			$status = array_merge($status, $this->getNamespaceFolders());
-			
-			return $status;
-		} else if($fileData->isRootFileNamespaceFolder()){
-			$status[] = $this->createFolderResponse(
+			} else if($fileData->isRootFileNamespaceFolder()){
+				$status[] = $this->createFolderResponse(
 				$fileData->getPrefixedFolderName().'/', $fileData->getFolderName());
-			
-			$status = array_merge($status, $this->getFileNamespaceFolders());
-			
-			$status[] = $this->createFolderResponse(
+					
+				if ( empty( $serverOptions['depth'] ) ) {
+					return $status;
+				}
+
+				$status = array_merge($status, $this->getFileNamespaceFolders());
+
+				$status[] = $this->createFolderResponse(
 				$fileData->getPrefixedFolderName().'/'."File", "File");
-			
-			$status[] = $this->createFolderResponse(
-				$fileData->getPrefixedFolderName().'/'."All", "All");	
-			
-			return $status;
-		} else if ($fileData->isAllFilesNamespaceFolder()){
-			$status[] = $this->createFolderResponse(
+
+				$status[] = $this->createFolderResponse(
+				$fileData->getPrefixedFolderName().'/'."All", "All");
+
+				return $status;
+			} else if ($fileData->isAllFilesNamespaceFolder()){
+				$status[] = $this->createFolderResponse(
 				$fileData->getPrefixedFolderName().'/', $fileData->getFolderName());
-			
-			global $wgRichMediaNamespaceAliases, $wgWebDAVDisplayTalkNamespaces;
-			if(isset($wgRichMediaNamespaceAliases)){
-				$namespaces = $wgRichMediaNamespaceAliases;
-				$namespaces["File"] = null;
-				foreach($namespaces as $ns => $dontCare){
-					if(!strpos($ns, "_talk") || $wgWebDAVDisplayTalkNamespaces){
-						$nsId = $fileData->getNamespaceId(true, $ns);
-						
-						$results = $dbr->query( 
+
+				if ( empty( $serverOptions['depth'] ) ) {
+					return $status;
+				}
+
+				$status = array_merge($status, $this->getTempFiles($fileData));
+					
+				global $wgRichMediaNamespaceAliases, $wgWebDAVDisplayTalkNamespaces;
+				if(isset($wgRichMediaNamespaceAliases)){
+					$namespaces = $wgRichMediaNamespaceAliases;
+					$namespaces["File"] = null;
+					foreach($namespaces as $ns => $dontCare){
+						if(!strpos($ns, "_talk") || $wgWebDAVDisplayTalkNamespaces){
+							$nsId = $fileData->getNamespaceId(true, $ns);
+
+							$results = $dbr->query(
 							'SELECT page_title, page_latest, page_len, page_touched
 							FROM page WHERE page_namespace = '.$nsId.'');
-				
-						$titles = array();
-						while ( ( $result = $dbr->fetchRow( $results ) ) !== false ) {
-							# TODO: Should maybe not be using page_title as URL component, but it's currently what we do elsewhere
-							$title = Title::newFromUrl( $result[0] );
-							$titles[] = $title;
-	
-							$title = $fileData->encodeFileName($title->getText()); 
-							$status[] = $this->createFileResponse(
-								$fileData->getPrefixedFolderName().'/'.$title.".mwiki", 
+
+							$titles = array();
+							while ( ( $result = $dbr->fetchRow( $results ) ) !== false ) {
+								# TODO: Should maybe not be using page_title as URL component, but it's currently what we do elsewhere
+								$title = Title::newFromUrl( $result[0] );
+								$titles[] = $title;
+
+								$title = $fileData->encodeFileName($title->getText());
+								$status[] = $this->createFileResponse(
+								$fileData->getPrefixedFolderName().'/'.$title.".mwiki",
 								$title.".mwiki", $result[2], "text/x-wiki", null, $result[3]);
-						}
-						
-						$files = RepoGroup::singleton()->findFiles($titles);
-						foreach($files as $name => $file){
-							$status[] = $this->createFileResponse(
+							}
+
+							$files = RepoGroup::singleton()->findFiles($titles);
+							foreach($files as $name => $file){
+								$status[] = $this->createFileResponse(
 								$fileData->getPrefixedFolderName().'/'.$name, $name,
 								$file->size, $file->mime, null, $file->timestamp);
+							}
 						}
 					}
 				}
-			}
-			return $status;
-		} else {
-			$status[] = $this->createFolderResponse(
+
+				return $status;
+			} else {
+				$status[] = $this->createFolderResponse(
 				$fileData->getPrefixedFolderName().'/', $fileData->getFolderName());
-			
-			//todo: auch hier diese depth abfrage einbauen?
-			
-			$nsId = $fileData->getNamespaceId();
-			
-			$results = $dbr->query( 
+					
+				if ( empty( $serverOptions['depth'] ) ) {
+					return $status;
+				}
+
+				$nsId = $fileData->getNamespaceId();
+
+				$results = $dbr->query(
 				'SELECT page_title, page_latest, page_len, page_touched
 				FROM page WHERE page_namespace = '.$nsId.'');
-			
-			$titles = array();
-			while ( ( $result = $dbr->fetchRow( $results ) ) !== false ) {
-				# TODO: Should maybe not be using page_title as URL component, but it's currently what we do elsewhere
-				$title = Title::newFromUrl( $result[0] );
-				$titles[] = $title;
 
-				$title = $fileData->encodeFileName($result[0]);
-				$status[] = $this->createFileResponse(
-					$fileData->getPrefixedFolderName().'/'.$title.".mwiki", 
+				$titles = array();
+				while ( ( $result = $dbr->fetchRow( $results ) ) !== false ) {
+					# TODO: Should maybe not be using page_title as URL component, but it's currently what we do elsewhere
+					$title = Title::newFromUrl( $result[0] );
+					$titles[] = $title;
+
+					$title = $fileData->encodeFileName($result[0]);
+					$status[] = $this->createFileResponse(
+					$fileData->getPrefixedFolderName().'/'.$title.".mwiki",
 					$title.".mwiki",
 					$result[2], "text/x-wiki", null, $result[3]);
-			}
-			
-			if($fileData->isFileNamespaceFolder()){
-				$files = RepoGroup::singleton()->findFiles($titles);
-				
-				foreach($files as $name => $file){
-					$status[] = $this->createFileResponse(
+				}
+
+				if($fileData->isFileNamespaceFolder()){
+					$files = RepoGroup::singleton()->findFiles($titles);
+
+					foreach($files as $name => $file){
+						$status[] = $this->createFileResponse(
 						$fileData->getPrefixedFolderName().'/'.$name, $name,
 						$file->size, $file->mime, null, $file->timestamp);
+					}
 				}
+
+				return $status;
 			}
-			
+		} else {
+			if($fileData->isTempFile()){
+				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+				.$fileData->getFileName())){
+					$fileSize = filesize("./extensions/RichMedia/includes/WebDAV/tmp/"
+					.$fileData->getFileName());
+					$file = urlencode($fileData->getFileName());
+					$status[] = $this->createFileResponse(
+					$fileData->getPrefixedFolderName()."/".$file, $file,
+					$fileSize,
+						"unknown/unknown", null, time());
+				} else {
+					return;
+				}
+			} else if(!$fileData->isWikiArticle()){
+				$file = RepoGroup::singleton()
+				->findFile($fileData->getFileName());
+				if($file){
+					$status[] = $this->createFileResponse(
+					$fileData->getPrefixedFolderName().'/'.$fileData->getFileName(),
+					$fileData->getFileName(),
+					$file->size, $file->mime, null, $file->timestamp);
+				} else {
+					return;
+				}
+			} else {
+				return;
+			}
+			$temp = print_r($status, true);
+			$this->writeLog("\r\n##\r\n ".$temp."\r\n##\r\n");
 			return $status;
 		}
 	}
-	
+
 	private function getFileNamespaceFolders(){
 		$status = array();
 		global $wgRichMediaNamespaceAliases, $wgWebDAVDisplayTalkNamespaces;
@@ -211,11 +262,11 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		}
 		return $status;
 	}
-	
+
 	private function getNamespaceFolders(){
 		//todo: add namespace blacklist
 		global $wgCanonicalNamespaceNames, $wgExtraNamespaces, $wgWebDAVNamespaceBlackList,
-			$wgWebDAVDisplayTalkNamespaces;
+		$wgWebDAVDisplayTalkNamespaces;
 		$status = array();
 		//$flag = "all";
 		$namespaces = $wgCanonicalNamespaceNames + $wgExtraNamespaces + array("Main", "Main_talk");
@@ -234,79 +285,114 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			}
 		}
 		return $status;
-	}	
-	
-	
+	}
+
+
 	function getRawPage() {
 		global $wgScript;
-		
+
 		$_SERVER['SCRIPT_URL'] = $wgScript;
-		
+
 		$fileData = new FileData($this->pathComponents);
-		
+
 		if (!$fileData->isValidFile()){
 			return;
 		}
-		
+
 		$nsId = $fileData->getNamespaceId(false);
-		
+
 		$title = Title::newFromText( $fileData->getFileName(), $nsId);
 		if (!isset( $title )) {
 			//todo: handle this
 			return;
 		}
-		
+
 		$mediaWiki = new MediaWiki();
 		$article = $mediaWiki->articleFromTitle( $title );
 
 		$rawPage = new RawPage( $article );
-		
+
 		return $rawPage;
 	}
-	
+
 	function doGet($pathComponents, $echo = true){
+		$temp = implode("/",$pathComponents);
+		$this->writeLog("get ".$temp);
+
 		$text = "";
 		$fileData = new FileData($pathComponents);
 		if($fileData->isWikiArticle()){
 			$rawPage = $this->getRawPage();
 			if ( !isset( $rawPage ) ) {
-				$this->setResponseStatus( false, false );
-				return;
+				$this->setResponseStatus("404 Not found", false );
+				return false;
 			}
-			
+
 			if($echo){
 				//$rawPage->view();
-				$rawPage->view();
+				echo($text = $rawPage->getRawText());
 			} else {
 				$text = $rawPage->getRawText();
 			}
-		} else {
-			$fileURL = RepoGroup::singleton()
-				->findFile($fileData->getFileName())->getFullURL();
-			if($echo){
-				echo(file_get_contents($fileURL));
+		} else if($fileData->isTempFile()) {
+			if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+					.$fileData->getFileName())){
+				$text = file_get_contents("./extensions/RichMedia/includes/WebDAV/tmp/"
+					.$fileData->getFileName());
 			} else {
-				$text = file_get_contents($fileURL);
+				$this->setResponseStatus("404 Not Found");
+				return false;
+			}
+
+			if($echo){
+				echo($text);
+			}
+		} else {
+			$file = RepoGroup::singleton()
+				->findFile($fileData->getFileName());
+			if($file){
+				$fileURL = $file->getFullURL();
+				if($echo){
+					echo(file_get_contents($fileURL));
+				} else {
+					$text = file_get_contents($fileURL);
+				}
+			} else {
+				$this->setResponseStatus("404 Not Found");
+				return false;
 			}
 		}
-		return $text;
+		
+		if(!$echo){
+			return $text;
+		} else {
+			return true;
+		}
 	}
 
 	# RawPage::view handles Content-Type, Cache-Control, etc. and we don't want get_response_helper to overwrite, but MediaWiki doesn't let us get response headers.  It could work if we kept setResponseHeader updated with headers_list on PHP 5.
 	function get_wrapper() {
-		$this->doGet($this->pathComponents, true);
+		$result = $this->doGet($this->pathComponents, true);
+		if($result === true){
+			//$this->setResponseStatus("200 OK", false);
+		}
 	}
 
 	function head_wrapper() {
-		$rawPage = $this->getRawPage();
-		if ( !isset( $rawPage ) ) {
-			$this->setResponseStatus( false, false );
+		if ( !$this->userIsAllowed()){
+			$this->setResponseStatus("401 Unauthorized", false );
 			return;
 		}
 		
+		$rawPage = $this->getRawPage();
+		if ( !isset( $rawPage ) ) {
+			$this->setResponseStatus("404 Not found", false );
+			return false;
+		}
+
 		if ( !isset( $rawText ) ) {
 			$this->setResponseStatus( false, false );
-			return;
+			return false;
 		}
 
 		# TODO: Does MediaWiki handle HEAD requests specially?
@@ -316,23 +402,39 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function delete($serverOptions){
-		return $this->doDelete($serverOptions, $this->pathComponents);
+		$result =  $this->doDelete($serverOptions, $this->pathComponents);
+		return $result;
 	}
-	
+
 	function doDelete($serverOptions, $pathComponents) {
-		if ( !$this->userIsAllowed())
-			return;
-		
+		$temp = implode("/",$pathComponents);
+		$this->writeLog("delete ".$temp);
+
+
+		if ( !$this->userIsAllowed()){
+			return "401 Unauthorized";
+		}
+
 		$fileData = new FileData($pathComponents);
 		if (!$fileData->isValidFile()) {
-			return;
+			return "400 Bad Request";
 		}
-		
+
 		if($fileData->isFileNamespaceFolder()){
 			if(!$fileData->isWikiArticle()){
-				$title = Title::newFromText( $fileData->getFileName());
-				$file = RepoGroup::singleton()->findFile($title);
-				$file->delete("via webdav");
+				if($fileData->isTempFile()){
+					if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+							.$fileData->getFileName())){
+						unlink("./extensions/RichMedia/includes/WebDAV/tmp/"
+							.$fileData->getFileName());
+					}
+				} else {
+					$title = Title::newFromText( $fileData->getFileName());
+					$file = RepoGroup::singleton()->findFile($title);
+					if($file){
+						$file->delete("via webdav");
+					}
+				}
 				return true;
 			}
 		}
@@ -340,152 +442,178 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$nsId = $fileData->getNamespaceId(false);
 			
 		$title = Title::newFromText( $fileData->getFileName(), $nsId);
+
 		
 		if (!isset( $title )) {
-			//todo:error handling
-			return;
+			//does not matter that the article does not exist
+			return tru;
 		}
 		
+		if (!$title->exists()) {
+			//does not matter that the article does not exist
+			return tru;
+		}
+
 		$mediaWiki = new MediaWiki();
 		$article = $mediaWiki->articleFromTitle( $title );
 
-		# Must check if article exists to avoid 500 Internal Server Error
-
 		$articleId = $title->getArticleID( GAID_FOR_UPDATE );
 		$article->doDeleteArticle("Deleted via WebDAV", true, $articleId);
-		
+
 		return true;
 	}
-	
+
 	//todo: implement this method
 	private function userIsAllowed(){
 		//todo: implement a login mechanism and remove this code
 		global $wgUser;
 		$wgUser = User::newFromName("WikiSysop");
-		
+
 		if ( !$wgUser->isAllowed( 'edit' ) ) {
 			$this->setResponseStatus( '401 Unauthorized' );
 			return false;
 		}
-		
-	if ( !$wgUser->isAllowed( 'delete' ) ) {
+
+		if ( !$wgUser->isAllowed( 'delete' ) ) {
 			$this->setResponseStatus( '401 Unauthorized' );
 			return false;
 		}
-		
+
 		if ( wfReadOnly() ) {
-			$this->setResponseStatus( '403 Forbidden' );
+			$this->setResponseStatus( "401 Unauthorized" );
 			return false;
 		}
 		return true;
 	}
-	
+
 	private function getPostedFileContent(){
 		if ( ( $handle = $this->openRequestBody() ) === false ) {
 			return null;
 		}
-		
+
 		$text = "";
 		while($buffer = fread($handle, 1024)){
 			$text .= $buffer;
 		}
 		return $text;
 	}
-	
+
+	private function uploadTempFile($title, $text){
+		//create temporary file
+		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/".$title, $text);
+		return true;
+	}
+
 	private function uploadFile($title, $text){
 		//create temporary file
-		file_put_contents("tempfile", $text);
-		
+		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/tempfile", $text);
+
 		//upload file
 		$local = wfLocalFile($title);
-		
 		$status = $local->upload(
-			"tempfile", "created via webdav", "",
+			"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
+			, "created via webdav", "",
 			File::DELETE_SOURCE);
-		
+			
+
 		global $smwgEnableUploadConverter, $smwgRMIP;
 		if($smwgEnableUploadConverter){
 			$local->load();
 			$text = UploadConverter::getFileContent($local);
-			
+
 			$article = new Article($local->title);
 			$article->doEdit(
 				$text, "uploaded via webdav");
 		}
-		
-		
+
+
 		// todo metadata
 		// todo:error handling
 		return true;
 	}
-	
+
 	function move($serverOptions){
+		$temp = implode("/",$this->pathComponents);
+		$this->writeLog("move ".$temp);
+
 		$status = $this->doCopy($serverOptions);
 		$status = $this->doDelete($serverOptions, $this->pathComponents);
+
+		$this->writeLog("move finished");
 		return $status;
 	}
-	
+
 	function copy($serverOptions) {
 		return $this->doCopy($serverOptions);
 	}
-	
+
 	function doCopy($serverOptions) {
 		//todo deal with copy response i.e. no timestamp and no content length
 		//todo; check source AND destination
-		if(!$this->userIsAllowed()) 
-			return;
-		
+		if(!$this->userIsAllowed())
+		return;
+
 		$text = $this->doGet($this->pathComponents, false);
-		
+
 		$destination = $serverOptions["destinationUrlComponents"]["pathComponents"];
 		array_shift($destination);
-		
+		array_shift($destination);
+		array_shift($destination);
+		array_shift($destination);
+		array_shift($destination);
+
 		return $this->doPut($serverOptions, $destination, $text);
 	}
-	
+
 	function put( $serverOptions){
-		return $this->doPut($serverOptions, $this->pathComponents);
+		$result = $this->doPut($serverOptions, $this->pathComponents);
+		return $result;
 	}
-	
+
 	function doPut($serverOptions, $pathComponents, $text = null) {
-		if(!$this->userIsAllowed()) 
-			return; 
-		
-		
+		$temp = implode("/",$pathComponents);
+		$this->writeLog("put ".$temp);
+
+		if(!$this->userIsAllowed())
+			return "401 Unauthorized";
+
+
 		$fileData = new FileData($pathComponents);
 		if (!$fileData->isValidFile()) {
-			return;
+			return "400 Bad Request";
 		}
-		
+
 		$nsId = $fileData->getNamespaceId(false);
-		
+
 		if(is_null($text)){
 			$text = $this->getPostedFileContent();
 			if(!$text){
-				//todo: failure
-				return;
+				return "400 Bad Request";
 			}
 		}
-		
+
 		if($fileData->isFileNamespaceFolder()){
 			if(!$fileData->isWikiArticle()){
-				$this->uploadFile($fileData->getFileName(), $text);
+				if($fileData->isTempFile()){
+					$this->uploadTempFile($fileData->getFileName(), $text);
+				} else {
+					$this->uploadFile($fileData->getFileName(), $text);
+				}
 				return true;
 			}
 		}
-		
+
 		$title = Title::newFromText(
-				$fileData->getFileName(), $nsId);
+		$fileData->getFileName(), $nsId);
 		if (!isset( $title )) {
-			// todo: what does this do I added the return statement instead
-			return;
+			return "400 Bad Request";
 		}
 
 		if ( !$title->exists() && !$title->userCan( 'create' ) ) {
 			$this->setResponseStatus( '401 Unauthorized' );
 			return;
 		}
-		
+
 		$mediaWiki = new MediaWiki();
 		$article = $mediaWiki->articleFromTitle( $title );
 
@@ -532,5 +660,33 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		#$status[] = $response;
 
 		return $status;
+	}
+
+	private function getTempFiles($fileData){
+		$files = scandir("./extensions/RichMedia/includes/WebDAV/tmp/");
+		//
+		$status = array();
+		foreach($files as $file){
+			if($file != "." && $file != ".."){
+				$fileSize = filesize("./extensions/RichMedia/includes/WebDAV/tmp/".$file);
+				$file = urlencode($file);
+				$status[] = $this->createFileResponse(
+				$fileData->getPrefixedFolderName()."/".$file, $file,
+				$fileSize,
+						"unknown/unknown", null, time());
+			}
+		}
+		return $status;
+	}
+
+	public function writeLog($text){
+		if(is_null($this->time)){
+			$this->time = time();
+		}
+
+		$temp = @file_get_contents("d:\\webdav-log.txt");
+		file_put_contents("d:\\webdav-log.txt", $temp."\r\n"
+		.$this->time."  ".$text);
+
 	}
 }
