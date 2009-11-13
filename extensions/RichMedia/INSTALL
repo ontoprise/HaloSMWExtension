@@ -56,6 +56,9 @@ of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpd
 # Installation of the WebDAV server
 #
 
+* It may be necessary that you will have to install the Microsoft Windows WebFolders patch,
+which is available at: http://www.microsoft.com/downloads/details.aspx?familyid=17C36612-632E-4C04-9382-987622ED1D64&displaylang=de
+
 * Add the following line of code to your LocalSettings.php:
 $wgWebDAVServerEnabled = true;
 
