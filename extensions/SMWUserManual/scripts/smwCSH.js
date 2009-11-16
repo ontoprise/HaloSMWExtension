@@ -89,7 +89,7 @@ SMW_UserManual_CSH.prototype = {
             setContent=1
         }
         this.popup.preserveContent=1
-        this.popup.closeImage=DND_POPUP_DIR+'skin/close.gif'
+        this.popup.closeImage=DND_POPUP_DIR+'/skins/close.gif'
         this.popup.actionOnClose="smwCsh.closeBox();"
         this.popup.attachTo=document.getElementById('content')
 
