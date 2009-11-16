@@ -239,7 +239,7 @@ function umefInitLanguage() {
     if (file_exists($langFile))
         require_once($langFile);
     else {
-        require_once(dirname(__FILE__).'/../languages/UserManualLanguageEn.php');
+        require_once(dirname(__FILE__).'/../languages/SMW_UMLanguageEn.php');
         $className = 'SMW_UMLanguageEn';
     }
 
