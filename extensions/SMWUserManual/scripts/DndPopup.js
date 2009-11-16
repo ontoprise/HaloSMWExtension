@@ -24,7 +24,7 @@ DndPopup.prototype = {
     // function to call when hitting the close button
     actionOnClose:  'DndPopup.close();',
     // image of the close button which is displayed in the upper right corner
-    closeImage:     DND_POPUP_DIR+'close.gif',
+    closeImage:     DND_POPUP_DIR+'/close.gif',
 
     initialize: function(divid, headline, width, height){
         if (divid) this.id=divid
