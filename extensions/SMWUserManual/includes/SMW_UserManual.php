@@ -99,7 +99,12 @@ define('SMW_UME_PROPERTY_DISCOURSE_STATE', 'UME discourse state');
 define('SMW_UME_PROPERTY_LINK', 'UME link');
 // webserver path to extension
 global $wgScriptPath;
-define('SMW_UME_PATH', $wgScriptPath.'/extensions/SMWUserManual/');
+$dir = dirname(__FILE__);
+if (strrpos($dir, '/') !== false)
+    $dir = substr($dir, 0, strrpos($dir, '/'));
+elseif (strrpos($dir, '\\') !== false)
+    $dir = substr($dir, 0, strrpos($dir, '\\'));
+define('SMW_UME_PATH', substr($dir, strpos($dir, $wgScriptPath)));
 
 // require additional files beloning to this extension
 require_once(dirname(__FILE__).'/SMW_AjaxAccess.php');
@@ -138,6 +143,8 @@ function setupSMWUserManual() {
         $nsKeys = array_keys($wgExtraNamespaces);
         rsort($nsKeys);
         $umegNamespaceIndex = array_shift($nsKeys) + 1;
+        if ($umegNamespaceIndex % 2)
+            $umegNamespaceIndex++;
     }
     // define the ns constants
     define('SMW_NS_USER_MANUAL', $umegNamespaceIndex);
@@ -186,8 +193,8 @@ function umefAddHtml2Page(&$out) {
             <script type="text/javascript">/*<![CDATA[*/
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
             /*]]>*/</script>
-            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/smwCSH.js"></script>
-            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/DndPopup.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
     ');
 
     if ($umegSendFeedbackToSMWplus) {
@@ -203,7 +210,7 @@ function umefAddHtml2Page(&$out) {
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
             'media' => 'screen, projection',
-            'href'  => SMW_UME_PATH . 'skins/csh.css'
+            'href'  => SMW_UME_PATH . '/skins/csh.css'
         ));
 
     }
@@ -263,8 +270,8 @@ function umefGetHelpArticlePageCount() {
 
 function umefDivBox() {
     global $umegPopupWidth, $umegPopupHeight;
-    $closeImage = SMW_UME_PATH.'skins/close.gif';
-    $loadImage= SMW_UME_PATH.'skins/load.gif';
+    $closeImage = SMW_UME_PATH.'/skins/close.gif';
+    $loadImage= SMW_UME_PATH.'/skins/load.gif';
     return '<div id="smw_csh_rendered_boxcontent" style="display:none;">
             <table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">
             <tr>
@@ -292,7 +299,7 @@ function umefDivBox() {
 function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
     if (!$umegSendFeedbackToSMWplus) return '';
-    $imgPath = SMW_UME_PATH.'skins/';
+    $imgPath = SMW_UME_PATH.'/skins/';
     return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox()" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_did_it_help').'</span>
             <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_yes').'
@@ -308,7 +315,7 @@ function umefDivBoxRating() {
 
 function umefDivBoxFeedback() {
     global $umegSendCommentsToSMWplus;
-    $imgPath = SMW_UME_PATH.'skins/';
+    $imgPath = SMW_UME_PATH.'/skins/';
     if (!$umegSendCommentsToSMWplus) return '';
     return '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
