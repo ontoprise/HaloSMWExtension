@@ -35,9 +35,9 @@ function srfSetupExtension() {
     require_once($srgSRIP . '/includes/SR_WebInterfaces.php');
     
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
-	$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
+	/*$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
 	$wgSpecialPages['Explanations'] = array('SRExplanations');
-	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';
+	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
 
 	return true;
 }
