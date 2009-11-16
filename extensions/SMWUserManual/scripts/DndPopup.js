@@ -6,24 +6,28 @@
 var DndPopup = Class.create();
 DndPopup.prototype = {
 
-    id: 'DndPopup',
-    dnd: 1,
-    headline: '',
-    preserveContent: 0,
-    height: '300px',
-    width: '400px',
-    left: '250px',
-    top: '150px',
-    headerColor: '#FFFFFF',
-    headerBgColor: '#000080',
-    boxColor: '#000000',
-    boxBgColor: '#CBCBCB',
-    actionOnClose: 'DndPopup.close();',
-    closeImage: DND_POPUP_DIR+'close.gif',
-    attachTo: null,
+    id:             'DndPopup',     // name of id attribute of div element
+    dnd:            1,              // drag and drop enabled (0 = disable)
+    headline:       '',             // headline which is displayed
+    preserveContent:0,              // keep content in page when popup is closed
+    height:         '300px',        // height of popup
+    width:          '400px',        // width of popup
+    left:           '250px',        // left offset where popup starts
+    top:            '150px',        // top offset where popup starts
+    headerColor:    '#FFFFFF',      // font color for headline
+    headerBgColor:  '#000080',      // background color for headline
+    boxColor:       '#000000',      // font color for content
+    boxBgColor:     '#CBCBCB',      // bckground color for content
+    zIndex:         100,            // zIndex for popup being in foreground
+    // element where the popup is embedded in, if not set, it's attached to the <body>
+    attachTo:       null,
+    // function to call when hitting the close button
+    actionOnClose:  'DndPopup.close();',
+    // image of the close button which is displayed in the upper right corner
+    closeImage:     DND_POPUP_DIR+'close.gif',
 
     initialize: function(divid, headline, width, height){
-        this.id=divid
+        if (divid) this.id=divid
         if (headline) this.headline=headline
         if (width) this.width=width
         if (height) this.height=height
@@ -34,9 +38,11 @@ DndPopup.prototype = {
         if (!obj) this.createDivBox()
         obj=document.getElementById(this.id)
         obj.style.visibility = 'visible'
-        obj.style.zIndex = 100
-        Event.observe(obj, "mousedown", this.initializeDrag.bindAsEventListener(this), false)
-        Event.observe(obj, "mouseup", this.finishDragging.bindAsEventListener(this), false)
+        obj.style.zIndex = this.zIndex
+        if (this.dnd) {
+            Event.observe(obj, "mousedown", this.initializeDrag.bindAsEventListener(this), false)
+            Event.observe(obj, "mouseup", this.finishDragging.bindAsEventListener(this), false)
+        }
     },
 
     isVisible: function() {
@@ -62,7 +68,7 @@ DndPopup.prototype = {
             +'<tr><td width="100%">'
             +'<table style="border:0px; width:100%; height:100%;" cellspacing="0" cellpadding="0">'
             +'<tr>'
-            +'<td id="'+this.id+'_dragbar" style="cursor:move" width="100%">'
+            +'<td id="'+this.id+'_dragbar"'+(this.dnd?' style="cursor:move"':'')+' width="100%">'
             +'<ilayer width="100%" onSelectStart="return false">'
             +'<layer width="100%">'
             +'<font color="'+this.headerColor+'">'+this.headline+'</font>'
