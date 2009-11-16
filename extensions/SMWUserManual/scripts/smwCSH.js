@@ -1,5 +1,5 @@
 /**
- * Context seisitive help for SMW+
+ * Context sensitive help for SMW+
  *
  * It uses a DIV element with id 'smw_csh' to add a help label. If this is not
  * available the DIV will be created as the first child of the 'innercontent'
@@ -44,15 +44,15 @@ SMW_UserManual_CSH.prototype = {
         if (resObj.selection)
             document.getElementById('smw_csh_selection').innerHTML=resObj.selection
         if (resObj.content)
-            document.getElementById('smw_csh_content').innerHTML=resObj.content
+            document.getElementById('smw_csh_answer').innerHTML=resObj.content
         document.getElementById('smw_csh_link_to_smw').innerHTML=resObj.link?resObj.link:''
         if (resObj.title)
-            document.getElementById('smw_csh_content_head').innerHTML=resObj.title
+            document.getElementById('smw_csh_answer_head').innerHTML=resObj.title
         // resize the smw_csh_content div if visible
-        if (document.getElementById('smw_csh_content').style.display != 'none') {
+        if (document.getElementById('smw_csh_answer').style.display != 'none') {
             var dim = this.getContentSize()
-            document.getElementById('smw_csh_content').style.width = dim[0]+'px'
-            document.getElementById('smw_csh_content').style.height = dim[1]+'px'
+            document.getElementById('smw_csh_answer').style.width = dim[0]+'px'
+            document.getElementById('smw_csh_answer').style.height = dim[1]+'px'
             document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=dim[0]+'px'
         }
     },
@@ -61,15 +61,19 @@ SMW_UserManual_CSH.prototype = {
         if (td && td.className == "cshTabInactive") {
             if (td.parentNode.childNodes[5] == td) {
                 td.parentNode.childNodes[2].className = "cshTabInactive"
-                document.getElementById('smw_csh_content').parentNode.style.display='none'
+                document.getElementById('smw_csh_answer').parentNode.style.display='none'
                 document.getElementById('smw_csh_feedback').parentNode.style.display='block'
             } else {
                 td.parentNode.childNodes[5].className = "cshTabInactive"
-                document.getElementById('smw_csh_content').parentNode.style.display='block'
+                document.getElementById('smw_csh_answer').parentNode.style.display='block'
                 document.getElementById('smw_csh_feedback').parentNode.style.display='none'
             }
             td.className="cshTabActive"
         }
+    },
+
+    setHeadline: function(label) {
+        this.headline = label
     },
 
     /**
@@ -79,17 +83,28 @@ SMW_UserManual_CSH.prototype = {
      * pressed and the window can be dragged.
      */
     loadPopup: function() {
-        var obj = document.getElementById('smw_csh_popup')
+        var setContent=0
+        if (!this.popup) {
+            this.popup = new DndPopup('smw_csh_popup', this.headline, umegPopupWidth+'px', umegPopupHeight+'px')
+            setContent=1
+        }
+        this.popup.preserveContent=1
+        this.popup.closeImage=DND_POPUP_DIR+'skin/close.gif'
+        this.popup.actionOnClose="smwCsh.closeBox();"
+        this.popup.attachTo=document.getElementById('content')
+
         // clicking on the help link again will hide the popup
-        if (obj.style.visibility == 'visible'){
-            obj.style.visibility = 'hidden'
+        if (this.popup.isVisible()){
+            this.popup.close()
             return
         }
-        obj.style.visibility = 'visible'
-        obj.style.zIndex = 100
-        Event.observe(obj, "mousedown", this.initializeDrag.bindAsEventListener(this), false)
-        Event.observe(obj, "mouseup", this.finishDragging.bindAsEventListener(this), false)
-
+        this.popup.open()
+        if (setContent) {
+            var cont = document.getElementById('smw_csh_rendered_boxcontent')
+            this.popup.setHtmlContent(cont.innerHTML)
+            cont.parentNode.removeChild(cont)
+        }
+            
         var ds = this.getDiscourseState()
         sajax_do_call('wfUmeAjaxGetArticleList', ds, this.setContent.bind(this))
     },
@@ -98,12 +113,7 @@ SMW_UserManual_CSH.prototype = {
      * hides the help popup and releases the drag and drop events.
      */
     closeBox: function(){
-        var obj = document.getElementById('smw_csh_popup')
-        obj.style.visibility="hidden"
-        obj.style.zIndex = null
-        Event.stopObserving(obj, 'mousedown', this.initializeDrag.bindAsEventListener(this) )
-        Event.stopObserving(obj, 'mousemove', this.dragDrop.bindAsEventListener(this) )
-        Event.stopObserving(obj, "mouseup", this.finishDragging.bindAsEventListener(this) )
+        this.popup.close()
     },
 
     /**
@@ -121,7 +131,7 @@ SMW_UserManual_CSH.prototype = {
      * @return array(int) width, height
      */
     getContentSize: function() {
-        var node = document.getElementById('smw_csh_content')
+        var node = document.getElementById('smw_csh_answer')
         var dim=[0,0]
         while (node) {
             if (node.id == 'smw_csh_popup') break
@@ -279,57 +289,6 @@ SMW_UserManual_CSH.prototype = {
         n.style.backgroundColor=null
     },
     /* function for the feedback tab end here */
-
-    /* drag and drop functions start here */
-
-    /**
-     * sets dragging to false. This happens when the mouse is released
-     * (mouseup event is called)
-     */
-    finishDragging: function() {
-        this.dragging=false
-    },
-
-    /**
-     * new position for help popup, called on mouse move. The window is positioned
-     * only if the mouse is pressed (mousedown) but has not yet been released
-     * (mouseup)
-     *
-     * @param Event e
-     */
-    dragDrop: function(e){
-        if (!e) e=window.event
-        if (this.dragging) {
-            var obj = document.getElementById('smw_csh_popup')
-            obj.style.left=this.tempx+e.clientX-this.offsetx + 'px'
-            obj.style.top=this.tempy+e.clientY-this.offsety + 'px'
-        }
-    },
-
-    /**
-     * start with drag and drop, called on a mousedown event. It's checked if the
-     * event happend inside the table column id=smw_csh_dragbar. If this is the
-     * case, a mousemove event is registered and the dagging is set to true.
-     *
-     * @param Event e
-     */
-    initializeDrag: function(e) {
-        if (!e) e=window.event
-        var eL = e.srcElement ? e.srcElement : e.target ? e.target : e.currentTarget
-        var obj= document.getElementById("smw_csh_popup");
-        while (eL.tagName != 'HTML' && eL.tagName != 'BODY' && eL.id!="smw_csh_dragbar"){
-            eL = eL.parentNode
-        }
-        if (eL.id=="smw_csh_dragbar"){
-            this.offsetx=e.clientX
-            this.offsety=e.clientY
-            this.tempx=parseInt(obj.style.left)
-            this.tempy=parseInt(obj.style.top)
-            this.dragging=true
-            Event.observe(obj, 'mousemove', this.dragDrop.bindAsEventListener(this), false)
-        }
-    },
-    /* drag and drop functions end here */
 
     /**
      * check pages, elements and variables in the current page to guess

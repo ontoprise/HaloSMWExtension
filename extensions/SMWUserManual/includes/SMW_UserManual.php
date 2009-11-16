@@ -183,7 +183,13 @@ function umefAddHtml2Page(&$out) {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
            $umegPopupWidth, $umegPopupHeight;
     $out->addScript('
-            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/smwCSH.js"></script>');
+            <script type="text/javascript">/*<![CDATA[*/
+                var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
+            /*]]>*/</script>
+            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/smwCSH.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH .  'scripts/DndPopup.js"></script>
+    ');
+
     if ($umegSendFeedbackToSMWplus) {
         $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
@@ -204,6 +210,7 @@ function umefAddHtml2Page(&$out) {
     $out->addHTML(umefDivBox().'
         <script type="text/javascript">/*<![CDATA[*/
         var smwCsh = new SMW_UserManual_CSH("'.wfMsg('smw_ume_help_link').'");
+        smwCsh.setHeadline("'.wfMsg('smw_ume_box_headline').'");
         /*]]>*/</script>
     ');
     return true;
@@ -258,20 +265,7 @@ function umefDivBox() {
     global $umegPopupWidth, $umegPopupHeight;
     $closeImage = SMW_UME_PATH.'skins/close.gif';
     $loadImage= SMW_UME_PATH.'skins/load.gif';
-    return '<div id="smw_csh_popup" style="position:fixed;width:'.$umegPopupWidth.'px;height:'.$umegPopupHeight.'px;left:250px;top:150px;visibility:hidden">
-            <table border="0" style="width:100%; height:100%" bgcolor="#000080" cellspacing="0" cellpadding="2">
-            <tr><td width="100%">
-            <table style="border:0px; width:100%; height:100%;" cellspacing="0" cellpadding="0">
-            <tr>
-            <td id="smw_csh_dragbar" style="cursor:move" width="100%">
-            <ilayer width="100%" onSelectStart="return false">
-            <layer width="100%">
-            <font color="#FFFFFF">'.wfMsg('smw_ume_box_headline').'</font>
-            </layer></ilayer></td>
-            <td style="cursor:hand; cursor:pointer; vertical-align:middle"><a onclick="smwCsh.closeBox();return false" href="#"><img src="'.$closeImage.'" border="0"></a></td>
-            </tr>
-            <tr style="width:100%; height:100%;">
-            <td bgcolor="#CBCBCB" style="width:100%; height:100%; padding:4px; vertical-align:top" colspan="2">
+    return '<div id="smw_csh_rendered_boxcontent" style="display:none;">
             <table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">
             <tr>
             <td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabActive" onclick="smwCsh.switchTab(this);">'.wfMsg('smw_ume_tab_help').'</td>
@@ -285,17 +279,15 @@ function umefDivBox() {
             <span style="display:block; text-align:center;"><img src="'.$loadImage.'" alt="load"/></span>
             </div>
             <hr style="height: 2px; dashed;" />
-            <div id="smw_csh_content_head"></div>
-            <div id="smw_csh_content"></div>
+            <div id="smw_csh_answer_head"></div>
+            <div id="smw_csh_answer"></div>
             <div id="smw_csh_link_to_smw"></div>
             '.umefDivBoxRating().'
             </span>
             <span style="display:none">
             '.umefDivBoxFeedback().'
             </span>
-            </td></tr></table>
-            </td></tr>
-            </table></td></tr></table></div>';
+            </td></tr></table></div>';
 }
 function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
