@@ -182,7 +182,7 @@ function sgafHaloPreDeleteHook(&$article, &$user, &$reason) {
  *  updates dependent properties or individuals when a type
  *  or property gets changed.
  */
-function sgafHaloSaveHook(&$article, &$user, &$text) {
+function sgafHaloSaveHook(&$article, &$user, $text) {
 	global $sgagIP;
 	include_once($sgagIP . '/includes/SGA_GardeningIssues.php');
 
