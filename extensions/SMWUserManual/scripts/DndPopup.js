@@ -74,7 +74,7 @@ DndPopup.prototype = {
             +'<font color="'+this.headerColor+'">'+this.headline+'</font>'
             +'</layer></ilayer></td>'
             +'<td style="cursor:hand; cursor:pointer; vertical-align:middle">'
-            +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+DND_POPUP_DIR+'skins/close.gif" border="0"></a></td>'
+            +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+this.closeImage+'" border="0"></a></td>'
             +'</tr>'
             +'<tr style="width:100%; height:100%;">'
             +'<td bgcolor="'+this.boxBgColor+'" style="width:100%; height:100%; padding:4px; vertical-align:top; color:'+this.boxColor+';" colspan="2">'
