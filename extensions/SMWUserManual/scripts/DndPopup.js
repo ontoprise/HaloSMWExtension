@@ -19,7 +19,7 @@ DndPopup.prototype = {
     boxColor:       '#000000',      // font color for content
     boxBgColor:     '#CBCBCB',      // bckground color for content
     zIndex:         100,            // zIndex for popup being in foreground
-    // element where the popup is embedded in, if not set, it's attached to the <body>
+    // DOM node where the popup is embedded in, if not set, it's embedded in <body>
     attachTo:       null,
     // function to call when hitting the close button
     actionOnClose:  'DndPopup.close();',
@@ -33,6 +33,12 @@ DndPopup.prototype = {
         if (height) this.height=height
     },
 
+    /**
+     * calls the popup, makes it visible to the user. Also two event handlers
+     * mousedown and mouseup are registered, which toggle the dragging (i.e. after
+     * a mousedown event and before receiving the mouseup event the mouse key is
+     * pressed and the window can be dragged.
+     */
     open: function() {
         var obj=document.getElementById(this.id)
         if (!obj) this.createDivBox()
@@ -45,6 +51,10 @@ DndPopup.prototype = {
         }
     },
 
+    /**
+     * check if the popup is visible and return true if this is the case
+     * or false if the popup is not vivible to the user
+     */
     isVisible: function() {
         var obj=document.getElementById(this.id)
         if (!obj) return false
@@ -55,6 +65,13 @@ DndPopup.prototype = {
         return false
     },
 
+    /**
+     * create the div box with the popup nd it's elements
+     * later the content of the popup can be defined by calling the method
+     * setHtmlContent() whih inserts html inside a div container.
+     * The created html is added to the document below the <body> tag or another
+     * specified DOM node (in the member variable attachTo)
+     */
     createDivBox: function() {
         var div=document.createElement('div')
         div.id=this.id
@@ -88,6 +105,9 @@ DndPopup.prototype = {
         }
     },
 
+    /**
+     * add html content to the popup. Needs to be called after createDivBox()
+     */
     setHtmlContent: function(html) {
         document.getElementById(this.id+'_content').innerHTML=html
     },
@@ -143,6 +163,13 @@ DndPopup.prototype = {
     },
     /* drag and drop functions end here */
 
+    /**
+     * close the popup. This is done by removing all related html from the
+     * document. If the member variable preserveContent is set, then the html
+     * is not removed from the document but made invisible to the user. Calling
+     * the same popup again would then reveal the content in it's state when the
+     * popup close() function was called.
+     */
     close: function() {
         var obj = document.getElementById(this.id)
         if (this.preserveContent) {
