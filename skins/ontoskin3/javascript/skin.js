@@ -61,6 +61,11 @@ function Smwh_Skin() {
         }
     };
 
+    this.resizeMainTable = function(){
+        var windowheight = $jq(window).height()
+
+        $jq("#smwh_HeightShell").css("min-height", windowheight+"px");
+    }
     
     if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
@@ -74,13 +79,14 @@ function Smwh_Skin() {
     $jq(".smwh_menulistitem").hover(this.showMenu, this.hideMenu);
     $jq("#smwh_treeviewtoggleright").click(this.showTreeViewRightSide.bind(this));
     $jq("#smwh_treeviewtoggleleft").click(this.showTreeViewLeftSide.bind(this));
+    $jq(window).resize(this.resizeMainTable.bind(this));
 }
 
 var smwh_Skin;
 
 $jq(document).ready(function(){
     smwh_Skin = new Smwh_Skin();
+    smwh_Skin.resizeMainTable();
 }
 );
-
 

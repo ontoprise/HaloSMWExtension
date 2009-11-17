@@ -153,16 +153,16 @@ class OntoSkin3Template extends QuickTemplate {
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             <table id="shadows" border="0" cellspacing="0" cellpadding="1" align="center">
                 <colgroup>
-                    <col width="10">
-                    <col width="*">
-                    <col width="10">
+                    <col width="10"/>
+                    <col width="*"  valign="top"/>
+                    <col width="10"/>
                 </colgroup>
                 <tbody>
                     <tr>
-                        <td id="shadow_left" valign="top" width="10">
+                        <td rowspan="2" id="shadow_left" valign="top" width="10">
                             <?php echo $this->smwh_Skin->treeview(); ?>
                         </td>
-                        <td id="shadow_center" width="*">
+                        <td id="shadow_center" width="*" valign="top">
             <!-- Header -->
             <div id="smwh_head">
                 <!--  Logo -->
@@ -217,13 +217,6 @@ class OntoSkin3Template extends QuickTemplate {
 		</div>
             </div>
             <div id="mainpage">
-            <table id="mainpagetable" width="100%">
-            <colgroup>                    
-                <col width="*"/>
-            </colgroup>
-            <tr>
-                <!-- normal page content and tabs -->
-                <td valign="top" width="*">
             <div id="smwh_tabs">
                 <?php echo $this->smwh_Skin->buildTabs(); ?>
             </div>
@@ -246,16 +239,11 @@ class OntoSkin3Template extends QuickTemplate {
                     </div>
                 </div>
                 <?php if ($wgRequest->getText('page') != "plain") : ?>
-            </td>
-            </tr>
-            </table>
             </div>
             <div class="visualClear"></div>
-            <div id="footer">
-                <?php echo $this->smwh_Skin->buildQuickLinks(); ?>
-            </div>
+            
             <?php endif; // page != 'plain' ?>
-            <div id="ontomenuanchor"></div>
+            
                 
                 <?php $this->html('bottomscripts'); /* JS call to runBodyOnloadHook */ ?>
                 <?php $this->html('reporttime') ?>
@@ -267,14 +255,23 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php endif; ?>
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
-            <td id="shadow_right" width="10">
+            <td rowspan="2" id="shadow_right" width="10">
+                <div id="smwh_HeightShell"/>
             </td>
             </tr>
+                <tr id="smwh_tr_footer">
+                    <td id="smwh_td_footer" valign="bottom">
+                        <div id="footer">
+                                        <?php echo $this->smwh_Skin->buildQuickLinks(); ?>
+                        </div>
+                    </td>
+                </tr>
             </tbody>
             </table>
             </div>
             <?php endif; // page != 'plain' ?>
         </div>
+        <div id="ontomenuanchor"></div>
     </body></html>
         <?php
         wfRestoreWarnings();

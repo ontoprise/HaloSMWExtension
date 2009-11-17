@@ -29,6 +29,11 @@ textarea {
     width: 960px;
 }
 
+/* overwrites useragent css to prevent scrolling triggered by padding */
+#shadows > tbody > tr > td{
+    padding: 0px;
+}
+
 /* Head */
 
 
@@ -360,8 +365,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 /*footer*/
 
+/*#smwh_tr_footer, #smwh_td_footer{
+    height: 123px;
+}*/
+
 #footer{
-    padding: 10px
+    padding: 10px;
 }
 
 /* Treeview */
@@ -371,6 +380,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-width: 1px;
     border-style: solid;
     position: fixed;
+    top: 1%;
+    height: 98%;
     display: none;
     overflow: auto;
     -moz-border-radius: 5px;
@@ -378,14 +389,17 @@ ul.smwh_menulist div.smwh_menubody_visible {
     -webkit-border-radius: 5px;
 }
 
+
 #smwh_treeviewtoggleright{
     position: fixed;
+    top: 50%;
     /*margin-top: ;
     margin-bottom: *;*/
 }
 
 #smwh_treeviewtoggleleft{
     position: fixed;
+    top: 50%;
     margin-top: 10px
 }
 

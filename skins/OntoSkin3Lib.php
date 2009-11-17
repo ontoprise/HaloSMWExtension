@@ -423,6 +423,7 @@ class SMWH_Skin {
 
 
     public function treeview() {
+        return;
         global $wgStylePath;
         //catch echo
         ob_start();
@@ -439,9 +440,11 @@ class SMWH_Skin {
             $treeview .=  '<div id="smwh_treeviewtoggleleft">';
             $treeview .= '<img id="smwh_treeviewtoggleleftimg" src="'.$wgStylePath.$this->imagepath.'/arrow_left.gif" alt="tools"/>';
             $treeview .= '</div>';
-            $treeview .= '<div id="smwh_treeview">';
-            $treeview .= $tree;
-            $treeview .= "</div>";
+            //$treeview .= '<div id="smwh_treeview_shell">';
+            $treeview .=    '<div id="smwh_treeview">';
+            $treeview .=        $tree;
+            $treeview .=    "</div>";
+            //$treeview .= "</div>";
             return $treeview;
         } else {
            return "";
