@@ -29,8 +29,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 }
 
  //--- Includes ---
- global $iaigIP, $IP;
-require_once("$iaigIP/exceptions/IAI_Exception.php");
+global $iaigIP, $IP;
 require_once("$IP/includes/HttpFunctions.php");
 
 /**

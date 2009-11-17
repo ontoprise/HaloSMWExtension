@@ -54,8 +54,11 @@ function enableIAI() {
     $wgAutoloadClasses['IAIArticleImporter'] = $iaigIP . '/includes/IAI_ArticleImporter.php';
 
     //--- Autoloading for exception classes ---
-//    $wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
+    $wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
 
+    //--- Install all hooks ---
+	$wgHooks['APIEditBeforeSave'][] = 'iaifAPIEditBeforeSave';
+    
     return true;
 }
 
@@ -158,4 +161,21 @@ function iaifInitContentLanguage($langcode) {
     $iaigContLang = new $iaiContLangClass();
 
     wfProfileOut('iaifInitContentLanguage');
+}
+
+/**
+ * This function is called when an article is modified via the Mediawiki API.
+ *
+ * @param EditPage $editPage
+ * @param string $text
+ * @param array $resultArr
+ * @return bool
+ */
+function iaifAPIEditBeforeSave(&$editPage, $text, &$resultArr) {
+
+	//---TEST---
+	// Modify the text that will be saved.
+	$editPage->textbox1 = "Hallo.";
+	
+	return true;
 }

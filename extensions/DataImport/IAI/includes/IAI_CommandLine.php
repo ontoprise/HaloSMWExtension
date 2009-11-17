@@ -17,7 +17,7 @@
 */
 
 /**
- * Insert description here
+ * This file contains the command line interface of the Interwiki Article Importer.
  * 
  * @author Thomas Schweitzer
  * Date: 30.10.2009
@@ -122,7 +122,6 @@ if (@$options["aregex"]) {
 		echo "You are using --aregex. Please specify --api and --af as well.\n";
 		die();
 	}
-	$wikiApi = $options["api"];
 	$articleRegex = $options["aregex"];
 }
 
@@ -131,8 +130,11 @@ if (@$options["iregex"]) {
 		echo "You are using --iregex. Please specify --api and --if as well.\n";
 		die();
 	}
-	$wikiApi = $options["api"];
 	$imageRegex = $options["iregex"];
+}
+
+if (@$options["api"]) {
+	$wikiApi = $options["api"];
 }
 
 if (!@$options["ew"] && !@$options["aregex"] && !@$options["iregex"] && !@$options["api"]) {

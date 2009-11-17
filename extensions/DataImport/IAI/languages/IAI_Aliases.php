@@ -20,7 +20,7 @@
 
 /**
  * 
- * Aliases for special pages
+ * This file contains the aliases for special pages.
  *
  */
 

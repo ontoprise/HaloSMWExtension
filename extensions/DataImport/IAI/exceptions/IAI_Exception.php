@@ -17,7 +17,7 @@
 */
 
 /**
- * This file contains the base class for IAI exceptions
+ * This file contains the base class for IAI exceptions.
  * 
  * @author Thomas Schweitzer
  * Date: 02.04.2009
