@@ -60,3 +60,8 @@ require_once('IAI_GlobalFunctions.php');
 # IAI stores reports in this namespace.
 ##
 iaifInitNamespaces();
+
+function enableWUM(){
+	global $iaigIP;
+	require_once($iaigIP."/WUM/WU_Merger.php");
+}
