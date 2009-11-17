@@ -19,16 +19,30 @@ function wum_doTabPF( &$parser, $frame, $args) {
 	$args = wum_preprocessArgs($frame, $args);
 	
 	global $wumTabParserFunctions;
-	$text = "{{#tab: \n| \n###replace###";
-	$tableCode = $args[0];
-	unset($args[0]);
+	$text = "{{#tab:";
+	$tableCode = null;
+	$tabCount = 0;
 	foreach($args as $key => $arg){
-		$text .= "\n|".$arg;
+		if(strpos(trim($arg), "_content") === 0){
+			$tabCount += 1;
+			
+			if($tabCount == 2){
+				$tableCode = ltrim(substr($arg, strpos($arg, "=")+1));
+				$text .= "\n| _content=\n###replace###";
+			} else {
+				$text .= "\n|".trim($arg);
+			}
+		} else {
+			$text .= "\n|".trim($arg);
+		}
 	}
 	$text .= "\n}}";
-	$wumTabParserFunctions[] = array($text, $tableCode);
 	
-	return "tabpf";
+	if(!is_null($tableCode)){
+		$wumTabParserFunctions[] = array($text, $tableCode);
+	}
+	
+	return true;
 }
 
 function wum_preprocessArgs($frame, $args){
@@ -37,12 +51,14 @@ function wum_preprocessArgs($frame, $args){
 	foreach($args as $arg){
 		$arg = $frame->expand($arg);
 		
-		if(strpos(trim($arg), "_content") === 0){
+		if(strpos(trim($arg), "_content") === 0
+			|| strpos(trim($arg), "_label") === 0
+			|| strpos(trim($arg), "_option") === 0){
 			if(!is_null($lastPreprocessedArg)){
 				$preprocessedArgs[] = $lastPreprocessedArg;
 			}
 			
-			$lastPreprocessedArg = ltrim(substr($arg, strpos($arg, "=")+1));
+			$lastPreprocessedArg = ltrim($arg);
 		} else if(!is_null($lastPreprocessedArg)){
 			$lastPreprocessedArg .= "|".$arg;
 		}
@@ -56,8 +72,11 @@ function wum_preprocessArgs($frame, $args){
 }
 
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
-	$wum = new WUMerger($text, $editPage->mArticle->getContent());
-	$editPage->textbox1 = $wum->getMergedText();
+	$title = $editPage->mArticle->getTitle()->getFullText();
+	$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
+	$editPage->textbox1 = $wum->getMergedText()
+		."\n\n".print_r($wum->getUnresolvedTableReplacements(), true);
+	$wum->createMergeResultArticle();
 	return true;
 }
 
@@ -67,13 +86,52 @@ class WUMerger {
 	private $wikipediaText = "";
 	private $ultrapediaText = "";
 	private $mergedText = "";
+	private $title = "";
 	
-	function __construct($wikipediaText, $ultrapediaText){
+	function __construct($title, $wikipediaText, $ultrapediaText){
+		$this->title = $title;
 		$this->wikipediaText = $wikipediaText;
 		$this->ultrapediaText = $ultrapediaText;
 		$this->getTableReplacements();
 		$this->replaceStaticTables();
 		return $this;
+	}
+	
+	public function createMergeResultArticle(){
+		$dateString = $this->getDateString();
+		$title = $this->title."/WUM ".$dateString;
+		
+		$result = "\n==Merge Result==";
+		$result .= "\n* Merged article was: [[merged article was::".$this->title."]]";
+		$result .= "\n* Has merge date: [[has merge dat::".$dateString."]]";
+		$result .= "\n* Was merged successfully: [[was merged successfully::";
+		if(count($this->unresolvedTableReplacements) == 0){
+			$result .= "true]]";
+		} else {
+			$result .= "false]]";
+			$result .= "\n===Occured merge faults===";
+			foreach($this->unresolvedTableReplacements as $utr){
+				$result .= "\n====Table: " 
+					.str_replace("##", "; ",$utr->getFingerprint())."====";
+				$result .= "\n<pre>".$utr->getOriginalText()."</pre>";
+			}
+		}
+
+		smwf_om_EditArticle($title, 'WUM', $result, '');
+	}
+	
+	private function getDateString(){
+		$date = getdate();
+		$mon = $date["mon"]<10 ? "0".$date["mon"] : $date["mon"];
+		$mday = $date["mday"]<10 ? "0".$date["mday"] : $date["mday"];
+		$hours = $date["hours"]<10 ? "0".$date["hours"] : $date["hours"];
+		$minutes = $date["minutes"]<10 ? "0".$date["minutes"] : $date["minutes"];
+		$seconds = $date["seconds"]<10 ? "0".$date["seconds"] : $date["seconds"];
+
+		$dateString = $date["year"]."/".$mon."/".$mday." "
+			.$hours.":".$minutes.":".$seconds;
+	
+		return $dateString;
 	}
 	
 	private function getTableReplacements(){
@@ -91,13 +149,14 @@ class WUMerger {
 		
 		foreach($wumTabParserFunctions as $tabParserFunction){
 			$this->processText($tabParserFunction[1], "doCreateTableReplacement"
-				,array($tabParserFunction[0]));
+				,array($tabParserFunction));
 		}
 	}
 	
 	private function doCreateTableReplacement($tableText, $fingerprintArray, $tabParserFunction){
 		$this->unresolvedTableReplacements[] = 
-			new WUTableReplacement($fingerprintArray, $tabParserFunction[0]);
+			new WUTableReplacement($fingerprintArray, $tabParserFunction[0][0]
+				, $tabParserFunction[0][1]);
 		return $tableText;
 	}
 	
@@ -220,10 +279,12 @@ class WUTableReplacement {
 	
 	private $fingerprint = "";
 	private $replacement = "";
+	private $originalTableCode = "";
 	
-	function __construct($fingerprintArray, $replacement){
+	function __construct($fingerprintArray, $replacement, $originalTableCode){
 		$this->fingerprint = $this->computeFingerprint($fingerprintArray);
 		$this->replacement = $replacement;
+		$this->originalTableCode = $originalTableCode;
 		return $this;
 	}
 	
@@ -242,8 +303,16 @@ class WUTableReplacement {
 		return false;
 	}
 	
+	public function getFingerprint(){
+		return $this->fingerprint;
+	}
+	
 	public function getNewText($text){
 		return str_replace("###replace###", $text, $this->replacement);
+	}
+	
+	public function getOriginalText(){
+		return str_replace("###replace###", $this->originalTableCode, $this->replacement);
 	}
 	
 	
