@@ -461,10 +461,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 	}
 
 
-	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $requestoptions = NULL) {
+	function getPropertiesWithSchemaByCategory(Title $categoryTitle, $onlyDirect = false, $dIndex = 0, $requestoptions = NULL) {
 		$db =& wfGetDB( DB_SLAVE );
 		$page = $db->tableName('page');
-		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect);
+		$this->createVirtualTableWithPropertiesByCategory($categoryTitle, $db, $onlyDirect, $dIndex);
 
 		$res = $db->query( 'SELECT DISTINCT property, inherited FROM smw_ob_properties '.DBHelper::getSQLOptionsAsString($requestoptions,array('inherited','property')));
 

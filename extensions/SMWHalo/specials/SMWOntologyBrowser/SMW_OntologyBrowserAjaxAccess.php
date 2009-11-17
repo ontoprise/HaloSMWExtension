@@ -92,7 +92,8 @@ class OB_Storage {
 		$reqfilter->sort = true;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$onlyDirect = $p_array[1] == "true";
-		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $reqfilter);
+		$dIndex = $p_array[2];
+		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByCategory($cat, $onlyDirect, $dIndex, $reqfilter);
 
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyList($properties);
 

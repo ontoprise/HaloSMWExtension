@@ -162,6 +162,7 @@ protected $smwUserMessages = array(
 	'smw_ob_undefined_type' => '*keine Range definiert*',
 	'smw_ob_hideinstances' => 'Verstecke Instanzen',
     'smw_ob_onlyDirect' => 'keine inferierten',	
+    'smw_ob_showRange' => 'Properties mit Range',
 	'smw_ob_hasnumofsubcategories' => 'Anzahl Unterkategorien',
 	'smw_ob_hasnumofinstances' => 'Anzahl Instanzen',
 	'smw_ob_hasnumofproperties' => 'Anzahl Attribute',

@@ -222,8 +222,8 @@ getInstances: function(categoryName, partition, callback) {
 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition], callback);
 },
 
-getProperties: function(categoryName, onlyDirect, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect], callback);
+getProperties: function(categoryName, onlyDirect, dIndex, callback) {
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getProperties',categoryName+"##"+onlyDirect+"##"+dIndex], callback);
 },
 
 getAnnotations: function(instanceName, callback) {

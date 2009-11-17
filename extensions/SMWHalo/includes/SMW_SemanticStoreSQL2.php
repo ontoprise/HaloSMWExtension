@@ -93,9 +93,9 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		return $result;
 	}
 
-	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false) {
+	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $dIndex = 0) {
 		global $smwgDefaultCollation;
-
+        
 		$page = $db->tableName('page');
 		$categorylinks = $db->tableName('categorylinks');
 		$smw_ids = $db->tableName('smw_ids');
@@ -128,7 +128,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$categoryID = $category->smw_id;
 		}
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, \'no\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 0 AND r.smw_id = '.$categoryID.')');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$dIndex.' AND r.smw_id = '.$categoryID.')');
 
 
 		$db->query('INSERT INTO smw_ob_properties_sub VALUES ('.$db->addQuotes($categoryID).')');
@@ -149,7 +149,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 
 				// insert direct properties of current supercategory level
 				$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property,  \'yes\' AS inherited FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 0 AND r.smw_id IN (SELECT * FROM smw_ob_properties_super))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$dIndex.' AND r.smw_id IN (SELECT * FROM smw_ob_properties_super))');
 
 
 				// copy supercatgegories to subcategories of next iteration
