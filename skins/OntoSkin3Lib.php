@@ -423,7 +423,6 @@ class SMWH_Skin {
 
 
     public function treeview() {
-        return;
         global $wgStylePath;
         //catch echo
         ob_start();

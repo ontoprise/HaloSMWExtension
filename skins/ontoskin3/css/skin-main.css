@@ -365,9 +365,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 /*footer*/
 
-/*#smwh_tr_footer, #smwh_td_footer{
-    height: 123px;
-}*/
 
 #footer{
     padding: 10px;
@@ -393,14 +390,18 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_treeviewtoggleright{
     position: fixed;
     top: 50%;
-    /*margin-top: ;
-    margin-bottom: *;*/
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 #smwh_treeviewtoggleleft{
     position: fixed;
     top: 50%;
-    margin-top: 10px
+    margin-top: 10px;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
 }
 
 .smwh_treeviewright{
