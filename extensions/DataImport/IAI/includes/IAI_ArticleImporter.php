@@ -153,8 +153,9 @@ class IAIArticleImporter  {
 	/**
 	 * Imports the given articles from the wiki that was specified in the 
 	 * constructor. The articles can be imported with depending templates and
-	 * images. A page that reports the results and failures can be created. 
-	 * Either the name of this page or the report is returned.
+	 * images. 
+	 * A page that reports the results and failures can be created if 
+	 * you call startReport() before and createReport() after this method. 
 	 *
 	 * @param array(string) $articles
 	 * 		An array of article names that are to be imported
@@ -165,13 +166,6 @@ class IAIArticleImporter  {
 	 * @param bool $importImages
 	 * 		Images that are referenced in the imported articles are downloaded
 	 * 		and installed.
-	 * @param bool $createResultPage
-	 * 		If <true>, a page that reports the successes and failures of the 
-	 * 		import is created.
-	 * @return string report
-	 * 		If a report page was created, its name is returned in the form:
-	 * 		Page: <pagename>
-	 * 		Otherwise the complete report is returned.
 	 * 
 	 * @throws
 	 * 		IAIException
@@ -180,7 +174,6 @@ class IAIArticleImporter  {
 	public function importArticles($articles, $importTemplates = true, 
 								   $importImages = true, $createResultPage = true) {
 								   	
-		$this->mImportStarted = date("Y-m-d H:i:s");
 		// Import all specified articles
 		$this->transferArticles($articles);
 			
@@ -202,18 +195,14 @@ class IAIArticleImporter  {
 			// Import the images of all imported pages
 			$this->importImagesForArticle($this->mImportedArticles);
 		}
-			
-		// generate report
-		$report = $this->createReport($createResultPage);
-
-		echo "Importing articles finished.\n";
-		return $createResultPage ? "Page: $report" : $report;
 	}
 	
 	/**
 	 * This method imports all templates required for the articles given in
 	 * $forArticles.
-	 *
+	 * A page that reports the results and failures can be created if 
+	 * you call startReport() before and createReport() after this method. 
+	 * 
 	 * @param array(string) $forArticles
 	 * 		The templates of these articles are imported.
 	 * @param bool $reevaluate
@@ -280,6 +269,9 @@ class IAIArticleImporter  {
 	/**
 	 * This method imports all images required for the articles given in
 	 * $forArticles.
+	 * A page that reports the results and failures can be created if 
+	 * you call startReport() before and createReport() after this method. 
+	 * 
 	 *
 	 * @param array(string) $forArticles
 	 * 		The images of these articles are imported.
@@ -297,27 +289,21 @@ class IAIArticleImporter  {
 	
 	/**
 	 * This method imports all images given in $images.
-	 *
+	 * A page that reports the results and failures can be created if 
+	 * you call startReport() before and createReport() after this method. 
+	 * 
 	 * @param array(string) $images
 	 * 		Names of the images that will be imported from the source wiki. 
 	 * 		If no namespace is given it will be appended automatically.
 	 * @param bool $createReport (default: false)
 	 * 		If <true>, a report for this operation is created.
-	 * @param bool $createResultPage (default: false)
-	 * 		If <true> and $createReport is <true>, a page that reports the 
-	 * 		successes and failures of the import is created.
-	 * @return string report
-	 * 		If a report page was created, its name is returned in the form:
-	 * 		Page: <pagename>
-	 * 		Otherwise the complete report is returned. If no report was requested,
-	 * 		an empty string is returned.
 	 * 
 	 * @throws
 	 * 		IAIException(IAIException::HTTP_ERROR) 
 	 * 			if the HTTP request fails
 	 *   
 	 */
-	public function importImages($images, $createReport = false, $createResultPage = true) {
+	public function importImages($images) {
 		// Add namespace if necessary
 		global $wgContLang;
 		$imgNs = $wgContLang->getNsText(NS_IMAGE).":";
@@ -377,12 +363,6 @@ class IAIArticleImporter  {
 			unlink($base);
 		}
 	
-		$report = "";
-		if ($createReport) {
-			// generate report
-			$report = $this->createReport($createResultPage);
-		}
-		return $report;
 	}
 
 	/**
@@ -395,6 +375,170 @@ class IAIArticleImporter  {
 	public function reportPage( $page ) {
 		echo "Page: $page \n";
 	}
+	
+	/**
+	 * This function can be called before articles, templates or images are 
+	 * imported. It prepares the creation of a report.
+	 *
+	 */
+	public function startReport() {
+		$this->mImportStarted = date("Y-m-d H:i:s");
+	}
+	
+	/**
+	 * This method creates a report for the pages, templates and images imported 
+	 * by this importer. Call this method after the import-methods of this class.
+	 * 
+	 * @param bool $createResultPage
+	 * 		If <true> a new page is created in the wiki that contains the report.
+	 * 		Otherwise the complete report is returned a string.
+	 * 
+	 * @return string
+	 * 		If $createResultPage is <true> the name of the page containing the
+	 * 		report is returned otherwise the complete report.
+	 */
+	public function createReport($createResultPage) {
+		
+		global $wgContLang;
+		$report = "";
+		
+		/**
+		 * Show statistics
+		 */
+		
+		$now = date("Y-m-d H:i:s");
+		
+		$report .= "==Statistics==\n\n";
+		$report .= "*Import started: {$this->mImportStarted}\n";
+		$report .= "*Import ended: $now\n";
+		$report .= ";Imported articles:\n";
+		$num = count($this->mImportedPages);
+		$report .= "*Number of namespaces of articles: $num\n";
+
+		// Count number of imported articles.
+		$numArticles = 0;
+		foreach ($this->mImportedPages as $pages) {
+			$numArticles += count($pages);
+		}
+		$report .= "*Number of imported articles: $numArticles\n";
+
+		$report .= ";Skipped articles:\n";
+		$num = count($this->mSkippedPages);
+		$report .= "*Number of namespaces of skipped articles: $num\n";
+
+		
+		// Count number of skipped articles.
+		$numArticles = 0;
+		foreach ($this->mSkippedPages as $pages) {
+			$numArticles += count($pages);
+		}
+		$report .= "*Number of skipped articles: $numArticles\n";
+		
+		$report .= ";Missing articles:\n";
+		$numArticles = count($this->mMissingArticles);
+		$report .= "* Number of missing articles: $numArticles\n";
+		
+		$report .= ";Imported images:\n";
+		$num = count($this->mImportedImages);
+		$report .= "*Number imported images: $num\n";
+		$num = count($this->mSkippedImages);
+		$report .= "*Number skipped images: $num\n";
+		
+		
+		/**
+		 * Show information about imported articles
+		 */
+		$report .= "==Imported articles==\n\n";
+		
+		// Iterate over all namespaces of imported pages
+		foreach ($this->mImportedPages as $ns => $pages) {
+
+			$namespace = ($ns == 0) ? "Main" : $wgContLang->getNsText($ns);
+			
+			$report .= "\n===$namespace===\n\n";
+			$numArticles = count($pages);
+			$report .= "Number of imported articles in namespace $namespace: $numArticles\n\n";
+			foreach ($pages as $p) {
+				$report .= "* [[{$p[0]}]] (Revision: {$p[1]})\n";
+			}
+		}
+		
+		/**
+		 * Show information about skipped articles
+		 */
+		
+		$report .= "==Skipped articles==\n\n";
+		
+		
+		// Iterate over all namespaces of skipped pages
+		foreach ($this->mSkippedPages as $ns => $pages) {
+
+			$namespace = ($ns == 0) ? "Main" : $wgContLang->getNsText($ns);
+			
+			$report .= "\n===$namespace===\n\n";
+			$numArticles = count($pages);
+			$report .= "Number of skipped articles in namespace $namespace: $numArticles\n\n";
+			foreach ($pages as $p) {
+				$report .= "* [[{$p[0]}]] (Revision: {$p[1]})\n";
+			}
+		}
+		
+		/**
+		 * Show information about missing articles
+		 */
+		
+		$report .= "==Missing articles==\n\n";
+		$report .= "The following articles were specified for import but could ".
+		           "not be found in the source wiki or could not be downloaded ".
+		           "because of some error.\n\n";		
+		// Iterate over all missing pages
+		$numArticles = count($this->mMissingArticles);
+		$report .= "Number of missing articles: $numArticles\n\n";
+		foreach ($this->mMissingArticles as $article) {
+			$report .= "* $article\n";
+		}
+		
+		/**
+		 * Show information about imported images
+		 */
+		$report .= "==Images==\n\n";
+		$report .= "===Imported images===\n\n";
+		$namespace = $wgContLang->getNsText(NS_IMAGE);
+		
+		$pos = array("left", "center", "right");
+		$i = 0;
+		foreach ($this->mImportedImages as $img) {
+			$report .= "[[$namespace:$img|thumb|200px|".
+			           $pos[$i++%3].
+			           "|$img]]\n";
+		}
+		
+		$report .= "===Skipped images===\n\n";
+		$i = 0;
+		foreach ($this->mSkippedImages as $img) {
+			$report .= "[[$namespace:$img|thumb|200px|".
+			           $pos[$i++%3].
+			           "|$img]]\n";
+		}
+		
+		
+		$pageName = $report;
+		if ($createResultPage) {
+			global $iaigContLang;
+			$iaiNs = $iaigContLang->getNamespaces();
+			$iaiNs = $iaiNs[IAI_NS_IAI];
+			
+			$pageName = "$iaiNs:Import $now";
+			$title = Title::newFromText($pageName);
+			$article = new Article($title);
+			$article->doEdit($report, "Created report for import.");
+			
+		}
+		
+		return $pageName;
+	}
+		
+	
 
 	/**
 	 * This function is called from the wiki importer when a <revision>-tag is reached
@@ -710,173 +854,5 @@ SQL;
 		}
 		return $xml;
 	}
-	
-	/**
-	 * This method creates a report for the pages imported by this importer.
-	 * 
-	 * @param bool $createResultPage
-	 * 		If <true> a new page is created in the wiki that contains the report.
-	 * 		Otherwise the complete report is returned a string.
-	 * 
-	 * @return string
-	 * 		If $createResultPage is <true> the name of the page containing the
-	 * 		report is returned otherwise the complete report.
-	 */
-	private function createReport($createResultPage) {
-		
-		global $wgContLang;
-		$report = "";
-		
-		/**
-		 * Show statistics
-		 */
-		
-		$now = date("Y-m-d H:i:s");
-		
-		$report .= "==Statistics==\n\n";
-		$report .= "*Import started: {$this->mImportStarted}\n";
-		$report .= "*Import ended: $now\n";
-		$report .= ";Imported articles:\n";
-		$num = count($this->mImportedPages);
-		$report .= "*Number of namespaces of articles: $num\n";
-
-		// Count number of imported articles.
-		$numArticles = 0;
-		foreach ($this->mImportedPages as $pages) {
-			$numArticles += count($pages);
-		}
-		$report .= "*Number of imported articles: $numArticles\n";
-
-		$report .= ";Skipped articles:\n";
-		$num = count($this->mSkippedPages);
-		$report .= "*Number of namespaces of skipped articles: $num\n";
-
-		
-		// Count number of skipped articles.
-		$numArticles = 0;
-		foreach ($this->mSkippedPages as $pages) {
-			$numArticles += count($pages);
-		}
-		$report .= "*Number of skipped articles: $numArticles\n";
-		
-		$report .= ";Missing articles:\n";
-		$numArticles = count($this->mMissingArticles);
-		$report .= "* Number of missing articles: $numArticles\n";
-		
-		$report .= ";Imported images:\n";
-		$num = count($this->mImportedImages);
-		$report .= "*Number imported images: $num\n";
-		$num = count($this->mSkippedImages);
-		$report .= "*Number skipped images: $num\n";
-		
-		
-		/**
-		 * Show information about imported articles
-		 */
-		$report .= "==Imported articles==\n\n";
-		
-		// Iterate over all namespaces of imported pages
-		foreach ($this->mImportedPages as $ns => $pages) {
-
-			$namespace = ($ns == 0) ? "Main" : $wgContLang->getNsText($ns);
-			
-			$report .= "\n===$namespace===\n\n";
-			$numArticles = count($pages);
-			$report .= "Number of imported articles in namespace $namespace: $numArticles\n\n";
-			foreach ($pages as $p) {
-				$report .= "* [[{$p[0]}]] (Revision: {$p[1]})\n";
-			}
-		}
-		
-		/**
-		 * Show information about skipped articles
-		 */
-		
-		$report .= "==Skipped articles==\n\n";
-		
-		
-		// Iterate over all namespaces of skipped pages
-		foreach ($this->mSkippedPages as $ns => $pages) {
-
-			$namespace = ($ns == 0) ? "Main" : $wgContLang->getNsText($ns);
-			
-			$report .= "\n===$namespace===\n\n";
-			$numArticles = count($pages);
-			$report .= "Number of skipped articles in namespace $namespace: $numArticles\n\n";
-			foreach ($pages as $p) {
-				$report .= "* [[{$p[0]}]] (Revision: {$p[1]})\n";
-			}
-		}
-		
-		/**
-		 * Show information about missing articles
-		 */
-		
-		$report .= "==Missing articles==\n\n";
-		$report .= "The following articles were specified for import but could ".
-		           "not be found in the source wiki or could not be downloaded ".
-		           "because of some error.\n\n";		
-		// Iterate over all missing pages
-		$numArticles = count($this->mMissingArticles);
-		$report .= "Number of missing articles: $numArticles\n\n";
-		foreach ($this->mMissingArticles as $article) {
-			$report .= "* $article\n";
-		}
-		
-		/**
-		 * Show information about imported images
-		 */
-		$report .= "==Images==\n\n";
-		$report .= "===Imported images===\n\n";
-		$namespace = $wgContLang->getNsText(NS_IMAGE);
-		
-		$pos = array("left", "center", "right");
-		$i = 0;
-		foreach ($this->mImportedImages as $img) {
-			$report .= "[[$namespace:$img|thumb|200px|".
-			           $pos[$i++%3].
-			           "|$img]]\n";
-		}
-		
-		$report .= "===Skipped images===\n\n";
-		$i = 0;
-		foreach ($this->mSkippedImages as $img) {
-			$report .= "[[$namespace:$img|thumb|200px|".
-			           $pos[$i++%3].
-			           "|$img]]\n";
-		}
-		
-		
-		$pageName = $report;
-		if ($createResultPage) {
-			global $iaigContLang;
-			$iaiNs = $iaigContLang->getNamespaces();
-			$iaiNs = $iaiNs[IAI_NS_IAI];
-			
-			$pageName = "$iaiNs:Import $now";
-			$title = Title::newFromText($pageName);
-			$article = new Article($title);
-			$article->doEdit($report, "Created report for import.");
-			
-		}
-		
-		return $pageName;
-	}
-	
-	/**
-	 * Returns the DBkey for the given title name. Encoded characters are decoded
-	 * and spaces are replaced by underscores. Possible namespaces are not 
-	 * removed.
-	 *
-	 * @param string $titleName
-	 * 		Name of an article
-	 * @return string
-	 * 		Name of the article as stored in the database.
-	 */
-	private function makeDBKey($titleName) {
-		$filteredText = Sanitizer::decodeCharReferences($titleName);
-		return str_replace( ' ', '_', $filteredText );
-	}
-	
 	
 }
