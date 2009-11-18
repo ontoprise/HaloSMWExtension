@@ -231,28 +231,21 @@ if ($dryRun) {
 /**
  * Do the import
  */
-include_once("$iaigIP/IAI_Initialize.php");
-enableIAI();
 
 $ai = new IAIArticleImporter($wikiApi);
 
 $articleImp = "";
 $imageImp = "";
 try {
+	$ai->startReport();
 	if (!empty($articles)) {
-		$articleImp = $ai->importArticles($articles, $importTemplates, $importImages);
+		$ai->importArticles($articles, $importTemplates, $importImages);
 	}
 	if (!empty($images)) {
-		$imageImp = $ai->importImages($images, true);
+		$ai->importImages($images, true);
 	}
 } catch (Exception $e) {
 	echo "Caught an exception: \n".$e->getMessage();
-	die();
 }
-if (!empty($articleImp)) {
-	echo "Saved report for articles in: $articleImp\n";
-}
-
-if (!empty($imageImp)) {
-	echo "Saved report for images in: $imageImp\n";
-}
+$report = $ai->createReport(true);
+echo "Saved report for articles in: $report\n";
