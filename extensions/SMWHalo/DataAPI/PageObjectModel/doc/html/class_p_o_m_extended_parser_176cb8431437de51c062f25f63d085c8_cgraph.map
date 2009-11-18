@@ -1,8 +1,0 @@
-<area shape="rect" href="$class_p_o_m_page.html#ea44b37cf18eb6f8c80c2ceabeb2a1c8" title="POMPage::addElement" alt="" coords="331,5,520,35">
-<area shape="rect" href="$class_p_o_m_extended_parser.html#43e7ebee5c2876384978e6b0626a96ef" title="POMExtendedParser::doAddWTO" alt="" coords="292,59,559,88">
-<area shape="rect" href="$class_p_o_m_extended_parser.html#83193c937109fcdeecba44b93df78009" title="POMExtendedParser::maskHTML" alt="" coords="293,112,557,141">
-<area shape="rect" href="$class_p_o_m_extended_parser.html#ee811a4be13b0ac56e40c98cb77a0b27" title="POMExtendedParser::parseTemplate" alt="" coords="281,165,569,195">
-<area shape="rect" href="$class_p_o_m_page.html#405776906bedd1555e45b2ca4532565c" title="POMPage::addElementAtPosition" alt="" coords="663,5,927,35">
-<area shape="rect" href="$class_p_o_m_page.html#8accc23e478f0e28ed8f37b3cd51109f" title="POMPage::searchInTextAtPosition" alt="" coords="1023,5,1295,35">
-<area shape="rect" href="$class_p_o_m_extended_parser.html#55dd493989cb782d39abf6354b07a036" title="POMExtendedParser::processTemplateToken" alt="" coords="620,165,969,195">
-<area shape="rect" href="$class_p_o_m_extended_parser.html#42a5ebbb5104ee4087571902eef54388" title="POMExtendedParser::findNextState" alt="" coords="1020,165,1297,195">
