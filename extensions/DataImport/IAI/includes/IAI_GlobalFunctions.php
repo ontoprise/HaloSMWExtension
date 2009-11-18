@@ -27,7 +27,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
     die( "This file is part of the IAI module. It is not a valid entry point.\n" );
 }
 
+require_once('IAI_ImportBot.php');
 
+$iaigUpdateWithBot = array();
 
 /**
  * Switch on Interwiki-Article-Import. This function must be called in
@@ -56,9 +58,6 @@ function enableIAI() {
     //--- Autoloading for exception classes ---
     $wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
 
-    //--- Install all hooks ---
-	$wgHooks['APIEditBeforeSave'][] = 'iaifAPIEditBeforeSave';
-    
     return true;
 }
 
@@ -75,9 +74,16 @@ function iaifSetupExtension() {
     $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
 
     //--- Register hooks ---
-    global $wgHooks;
-
+    global $wgHooks, $iaigUpdateDependenciesAfterAPIedit;
+    
+    if ($iaigUpdateDependenciesAfterAPIedit === true) {
+		$wgHooks['APIEditBeforeSave'][] = 'iaifAPIEditBeforeSave';
+	    $wgHooks['ArticleSaveComplete'][]  = 'iaifArticleSaveComplete';
+    }
+    	
+	//--- Load extension messages ---
     wfLoadExtensionMessages('IAI');
+    
     //--- Register specials pages ---
     global $wgSpecialPages, $wgSpecialPageGroups;
 //    $wgSpecialPages['IAI']      = array('IAISpecial');
@@ -94,6 +100,13 @@ function iaifSetupExtension() {
     wfProfileOut('iaifSetupExtension');
     return true;
 }
+
+
+function enableWUM(){
+	global $iaigIP;
+	require_once($iaigIP."/WUM/WU_Merger.php");
+}
+
 /**********************************************/
 /***** namespace settings                 *****/
 /**********************************************/
@@ -173,9 +186,32 @@ function iaifInitContentLanguage($langcode) {
  */
 function iaifAPIEditBeforeSave(&$editPage, $text, &$resultArr) {
 
-	//---TEST---
-	// Modify the text that will be saved.
-	$editPage->textbox1 = "Hallo.";
+	global $iaigUpdateWithBot;
+
+	$t = $editPage->getArticle()->getTitle()->getFullText();
+	$iaigUpdateWithBot[] = $t;
 	
+	return true;
+}
+
+/**
+ * This method is called, after an article has been saved and if import after
+ * modification via Mediawiki API is enabled ($iaigUpdateDependenciesAfterAPIedit). 
+ *
+ * @param Article $article
+ * @param User $user
+ * @param strinf $text
+ * @return true
+ */
+function iaifArticleSaveComplete(&$article, &$user, $text) {
+	global $iaigUpdateWithBot;
+	
+	$t = $article->getTitle()->getFullText();
+	$k = array_search($t, $iaigUpdateWithBot);
+	if ($k !== false) {
+		GardeningBot::runBot('iai_importbot', "article=$t");
+		unset($iaigUpdateWithBot[$k]);
+	}
+
 	return true;
 }
