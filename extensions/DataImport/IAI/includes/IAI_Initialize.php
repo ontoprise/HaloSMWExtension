@@ -76,7 +76,3 @@ $iaigWikiApi = "http://en.wikipedia.org/w/";
 ##
 $iaigUpdateDependenciesAfterAPIedit = true;
 
-function enableWUM(){
-	global $iaigIP;
-	require_once($iaigIP."/WUM/WU_Merger.php");
-}
