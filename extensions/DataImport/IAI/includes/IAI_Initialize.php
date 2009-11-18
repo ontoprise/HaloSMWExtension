@@ -61,6 +61,21 @@ require_once('IAI_GlobalFunctions.php');
 ##
 iaifInitNamespaces();
 
+###
+# URL of the Mediawiki-API of the source wiki e.g. "http://en.wikipedia.org/w/"
+# for the english wikipedia.
+#
+##
+$iaigWikiApi = "http://en.wikipedia.org/w/";
+
+###
+# If an article is changed with a Mediawiki API call, IAI can update the dependencies
+# of that article with the IAI_ImportBot. Set this variable to <true> to enable
+# this feature. The gardening extension must be enabled in this case.
+#
+##
+$iaigUpdateDependenciesAfterAPIedit = true;
+
 function enableWUM(){
 	global $iaigIP;
 	require_once($iaigIP."/WUM/WU_Merger.php");
