@@ -98,7 +98,13 @@ foreach ($nodes AS $node) {
 $et = urlencode($et);
 echo "Edit token: ".$et."\n";
 
-$param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=Hello%20everyone!&token=$et";
+$text = <<<TEXT
+Some text
+TEXT;
+
+$text = urlencode($text);
+$param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$text&token=$et";
+//$param = "action=edit&title=Talk:Main_Page&section=new&summary=Hello%20World&text=$text& watch&token=$et";
 $editArticle = $cc->post("http://localhost/develwiki/api.php", $param);
 echo $editArticle;
 
