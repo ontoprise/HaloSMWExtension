@@ -153,4 +153,7 @@ http://smwforum.ontoprise.com/smwforum/index.php
   documentation as well as use cases, best practices and other helpful
   stuff. Feel free to join and collaborate!
 
+=== Using the DataAPI ===
+Please have a look at ./DataAPI/INSTALL if you want to use the DataAPI
+
 If you have any inquiries concerning SMW+, please contact info@ontoprise.de
