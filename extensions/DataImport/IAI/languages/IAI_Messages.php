@@ -31,6 +31,11 @@ $messages['en'] = array(
     'iai' 			=> 'IAI',
     'iai_special_page' => 'IAI',  // Name of the special page for administration
     'specialpages-group-iai_group'	=> 'Data Import',
+	'iai_gard_importhelp' => 'Imports articles from other mediawikis.',
+	'iai_processed_task' => 'Processed import task for article "$1" ($2)',
+	'iai_importbot' => 'Interwiki Article Import',
+	'iai_importbot_report' => 'Report stored in $1',
+
 );
 
 /** 
@@ -41,5 +46,9 @@ $messages['de'] = array(
     'iai' 			=> 'IAI',
     'iai_special_page' => 'IAI',  // Name of the special page for administration
     'specialpages-group-iai_group'	=> 'Data Import',
+	'iai_gard_importhelp' => 'Importiert Artikel aus anderen Mediawikis.',
+	'iai_processed_task' => 'Import-Aufgabe abgeschlossen für Artikel "$1" ($2)',
+	'iai_importbot' => 'Interwiki Artikel Import',
+	'iai_importbot_report' => 'Bericht in $1 gespeichert.',
 );
 
