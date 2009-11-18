@@ -1,9 +1,0 @@
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#3220d7ff79fd28ff985fe28c78f62959" title="POMPageWS_API::getCategories" alt="" coords="305,5,575,35">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#77ad154a8f2a82b61061e90688e833f4" title="POMPageWS_API::getCategoryByName" alt="" coords="280,59,600,88">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#a10e3e3f943d5256aa9e37f0d6e24666" title="POMPageWS_API::getElements" alt="" coords="312,112,568,141">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#8af8f510431b59581793566a730a236e" title="POMPageWS_API::getProperties" alt="" coords="307,165,573,195">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#2bfcc551248615f4a9ba0cc4e9d13ebc" title="POMPageWS_API::getPropertyByName" alt="" coords="283,219,597,248">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#1224094cf5f5fc35a2e652f08724c04f" title="POMPageWS_API::getSimpleTexts" alt="" coords="301,272,579,301">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#e4a0cbed7e4d773ef7557c149a908bd7" title="POMPageWS_API::getTemplateByTitle" alt="" coords="288,325,592,355">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#9ff258d605d4213681e4b95108bd74c2" title="POMPageWS_API::getTemplates" alt="" coords="308,379,572,408">
-<area shape="rect" href="$class_p_o_m_page_w_s___a_p_i.html#b09418ac2de3d8f78bcf4cdb3cc9a7bf" title="POMPageWS_API::toArray" alt="" coords="648,192,872,221">
