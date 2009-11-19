@@ -22,7 +22,7 @@ var CECommentForm = Class.create();
  * 
  */
 CECommentForm.prototype = {
-
+		
 	/**
 	 * @public
 	 * 
@@ -39,14 +39,50 @@ CECommentForm.prototype = {
 	 * It gets the values from all fields and parses them into a xml doc
 	 * specified in design document.
 	 * 
-	 * @param htmlid
-	 * 	The ID of the appropriate HTML form
 	 * @return XML
 	 * 	A wiki article represented in xml
 	 */
-	processForm: function( htmlid ) {
+	processForm: function() {
 
+		//1. disable form
+		
+		//2. and add pending indicator
+		$('ce_cf_submitbuttonID').hide();
+		
+		/*if (this.pendingIndicatorCF == null) {
+			this.pendingIndicatorCF = new OBPendingIndicator($('ce_cf_textarea'));
+		}
+		this.pendingIndicatorCF.show();*/
+		
+		var pageName = wgPageName + "_" + new Date().getTime();
+		var pageContent = "{{Comment|Commenter=" + $('ce_cf_user_field').value + 
+			"|CommentRelatedArticle=" + wgPageName +
+			"|CommentRating=" + "true"/*$('ce_cf_user_rating').value*/ +
+			"|CommentContent=" + $('ce_cf_textarea').value +
+			"|}}";
+
+		pageName = escape(pageName);
+		pageContent = escape(pageContent);
+		
+		
+		
+		sajax_do_call('cef_comment_createNewPage', 
+				['', '', pageName, pageContent,'','',''], this.processFormCallback.bind(this));
+		
+				
+		return false;
 	},
+	
+	processFormCallback: function(request){
+		alert (request.responseText);
+		
+		//... wait ...
+		
+		//6. if exists-failure, try once again with new timestamp and goto 4.
+
+		//7. show msg (success or failure) instead of form and return true
+
+	}
 
 }
 

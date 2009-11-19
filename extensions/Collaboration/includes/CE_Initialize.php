@@ -30,6 +30,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 define('CE_VERSION', '0.9');
 
+define('CE_COMMENT_ALL', 0);
+define('CE_COMMENT_AUTH_ONLY', 1);
+define('CE_COMMENT_NOBODY', 2);
 
 global $cegIP, $cegScriptPath, $cegEnableComment, $cegEnableCurrentUsers;
 
@@ -53,6 +56,12 @@ $cegScriptPath = $wgScriptPath . '/extensions/Collaboration';
 $cegEnableComment = true;
 
 ###
+# Who's allowed to comment?
+# Allowed values are: all, auth only, nobody, see constants at top.
+###
+$cegEnableCommentFor = CE_COMMENT_AUTH_ONLY;
+
+###
 # Enable CurrentUsers
 ###
 $cegEnableCurrentUsers = false;
@@ -62,9 +71,13 @@ require_once('CE_GlobalFunctions.php');
 
 ###
 # If you already have custom namespaces on your site, insert
-#    $cegCommentNamespaceIndex = ???;
-# into your LocalSettings.php *before* including this file. The number ??? must
+# 	$cegCommentNamespaceIndex = XYZ;
+# into your LocalSettings.php *before* including this file. The number XYZ must
 # be the smallest even namespace number that is not in use yet. However, it
 # must not be smaller than 100.
+# Collaboration Extension uses 700 as standard value for this.
 ##
 cefInitNamespaces();
+
+#include the ajax access
+#require_once('/specials/Comment/CE_CommentAjaxAccess.php');

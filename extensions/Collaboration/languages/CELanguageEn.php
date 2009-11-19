@@ -16,27 +16,40 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @author Markus Krötzsch
- * 
- * modified by Benjamin Langguth
+ * @author Benjamin Langguth
  */
+
+
+/*
+ * Protect against register_globals vulnerabilities.
+ * This line must be present before any global variable is referenced.
+ */
+if (!defined('MEDIAWIKI')) die();
 
 global $cegIP;
 include_once($cegIP . '/languages/CELanguage.php');
 
 class CELanguageEn extends CELanguage {
 	
-	protected $ceUserMessages = array(
-		'ce_key' => 'ce_value',
+	protected $mUserMessages = array(
 	);
 
-	protected $ceNamespaces = array(
-		NS_CE_COMMENT			=> 'Comment',
-		NS_CE_COMMENT_TALK	=> 'Comment_talk', #???
+	protected $mNamespaces = array(
+		CE_COMMENT_NS		=> 'Comment',
+		CE_COMMENT_NS_TALK	=> 'Comment_talk',
 	);
 
-	protected $ceNamespaceAliases = array(
-		'Comment'			=> NS_CE_COMMENT,
-		'Comment_talk'	=> NS_CE_COMMENT_TALK, #???	
+	protected $mNamespaceAliases = array(
+		'Comment'		=> CE_COMMENT_NS,
+		'Comment_talk'	=> CE_COMMENT_NS_TALK,	
+	);
+	
+	protected $mParserFunctions = array(
+		CELanguage::CE_PF_SHOWCOMMENTS		=> 'showcomments', 
+		CELanguage::CE_PF_SHOWFORM			=> 'showcommentform',
+	);
+	
+	protected $mParserFunctionsParameters = array(
+		CELanguage::CE_PFP_RATINGSTYLE	=> 'rating style',
 	);
 }

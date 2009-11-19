@@ -16,9 +16,7 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @author Markus Krötzsch
- *
- * modified by Benjamin Langguth
+ * @author Benjamin Langguth
  */
 
 /**
@@ -26,10 +24,23 @@
  */
 abstract class CELanguage {
 
+	
+	### Constants ###
+	
+	### IDs of parser functions ###
+	const CE_PF_SHOWCOMMENTS = 1;
+	const CE_PF_SHOWFORM = 2;
+	
+	### IDs of parser function parameters ###
+	const CE_PFP_RATINGSTYLE = 11;
+	
 	// the message arrays ...
-	protected $ceUserMessages;
-	protected $ceNamespaces;
-	protected $ceNamespaceAliases;
+	protected $mUserMessages;
+	protected $mNamespaces;
+	protected $mNamespaceAliases;
+	protected $mParserFunctions = array();
+	protected $mParserFunctionsParameters = array();
+	
 	
 	 
 	/**
@@ -37,7 +48,7 @@ abstract class CELanguage {
 	 * the current user, and can thus be given in the individual user language).
 	 */
 	function getUserMsgArray() {
-		return $this->ceUserMessages;
+		return $this->mUserMessages;
 	}
 	
 	/**
@@ -50,7 +61,7 @@ abstract class CELanguage {
 	 * 
 	 */
 	public function getNamespace($namespaceID) {
-		return $this->ceNamespaces[$namespaceID];
+		return $this->mNamespaces[$namespaceID];
 	}
 	
 	/**
@@ -61,7 +72,7 @@ abstract class CELanguage {
 	 * 
 	 */
 	public function getNamespaces() {
-		return $this->ceNamespaces;
+		return $this->mNamespaces;
 	}
 	
 	/**
@@ -72,6 +83,33 @@ abstract class CELanguage {
 	 * 
 	 */
 	public function getNamespaceAliases() {
-		return $this->ceNamespaceAliases;
+		return $this->mNamespaceAliases;
+	}
+	
+	/**
+	 * This method returns the language dependent name of a parser function.
+	 * 
+	 * @param int $parserFunctionID
+	 * 		ID of the parser function i.e. one of CE_PF_SHOWCOMMENTS or CE_PF_SHOWFORM
+	 * 
+	 * @return string 
+	 * 		The language dependent name of the parser function.
+	 */
+	public function getParserFunction($parserFunctionID) {
+		return $this->mParserFunctions[$parserFunctionID];
+	}
+	
+	/**
+	 * This method returns the language dependent name of a parser function 
+	 * parameter.
+	 * 
+	 * @param int $parserFunctionParameterID
+	 * 		ID of the parser function parameter i.e. one of CE_PFP_RATINGSTYLE
+	 * 
+	 * @return string 
+	 * 		The language dependent name of the parser function.
+	 */
+	public function getParserFunctionParameter($parserFunctionParameterID) {
+		return $this->mParserFunctionsParameters[$parserFunctionParameterID];
 	}
 }

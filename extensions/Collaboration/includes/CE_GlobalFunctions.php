@@ -37,24 +37,36 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * etc.
  */
 function enableCollaboration() {
-	global $wgExtensionFunctions, $cegEnableCollaboration, $cegIP;
+	global $cegIP, $cegEnableCollaboration,  $cegEnableComment,
+		$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions, $wgAutoloadClasses, $wgHooks;
+	
+	#global $wgSpecialPages, $wgSpecialPageGroups;
+	
+	require_once($cegIP . '/specials/Comment/CE_CommentParserFunctions.php');
 	
 	$wgExtensionFunctions[] = 'cefSetupExtension';
-	#$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
-	
+	$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . '/languages/CE_Messages.php'; // register messages (requires MW=>1.11)
-	
+
+
 	///// Set up autoloading; essentially all classes should be autoloaded!
+	#$wgAutoloadClasses['CECommentDBHelper'] = $cegIP . '/storage/CE_CommentDBHelper.php';
+	
+	//--- Comment classes ---
+	//$wgAutoloadClasses['CECommentStorage'] = $cegIP . '/specials/Comment/CE_CommentStorage.php';
+	$wgAutoloadClasses['CECommentQuery'] = $cegIP . '/specials/Comment/CE_CommentQuery.php';
 	$wgAutoloadClasses['CEComment'] = $cegIP . '/specials/Comment/CE_Comment.php';
-	$wgAutoloadClasses['CECommentAjax'] = $cegIP . '/specials/Comment/CE_CommentAjaxAccess.php';
-	#$wgAutoloadClasses['CEamarsch'] = $cegIP. '/specials/Comment/CE_CommentDisplayParserFunction.php';
-	
+	$wgAutoloadClasses['CECommentUtils'] = $cegIP . '/specials/Comment/CE_CommentUtils.php';
+
 	//--- Autoloading for exception classes ---
-	#$wgAutoloadClasses['CEException']        = $cegIP . '/exceptions/CE_Exception.php';
-	
+	$wgAutoloadClasses['CEException'] = $cegIP . '/exeptions/CE_Exception.php';
+	//$wgAutoloadClasses['CEQueryException'] = $cegIP . '/exeptions/CE_QueryException.php';
+	//$wgAutoloadClasses['CEStorageException'] = $cegIP . '/exeptions/CE_StorageException.php';
+
+	require_once($cegIP . '/specials/Comment/CE_CommentAjaxAccess.php');
 	//so that other extensions know about the Collaboration-Extension
 	$cegEnableCollaboration = true;
-	
+
 	return true;
 }
 
@@ -68,52 +80,76 @@ function enableCollaboration() {
 function cefSetupExtension() {
 	wfProfileIn('cefSetupExtension');
 	global $cegIP, $wgHooks, $wgParser, $wgExtensionCredits,
-		$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
+		$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
+		$cegEnableComment, $cegEnableCurrentUsers;
 	
 	//--- Register hooks ---
 	#global $wgHooks;
-	#$wgHooks['userCan'][] = 'HACLEvaluator::userCan';
-	
-	#wfLoadExtensionMessages('Collaboration');
+
+
+	wfLoadExtensionMessages('Collaboration');
 	
 	//TODO: Language files
-	
 		
-	#$wgExtensionFunctions[] = 'smwfSetupCEExtension';
+	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
+    // register AddHTMLHeader functions for special pages
+    // to include javascript and css files (only on special page requests).
+    
+    if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") !== false
+        || stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
+        $wgHooks['BeforePageDisplay'][]='cefAddHTMLHeader';
+    }else {
+        $wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
+    }
 	
-	global $wgExtensionCredits;
+	/*# B: CurrentUser
+	if ( $cegEnableCurrentUsers ) {
+		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
+	}*/
 	
+	### credits (see Special:Version) ###
 	$wgExtensionCredits['other'][]= array(
-		'name'=>'Collaboration',
-		'version'=>CE_VERSION,
-		'author'=>"Benjamin Langguth and others",
-		'url'=>'http://smwforum.ontoprise.de',
+		'name' => 'Collaboration',
+		'version' => CE_VERSION,
+		'author' => "Benjamin Langguth and others",
+		'url' => 'http://smwforum.ontoprise.de',
 		'description' => 'Some fancy collaboration tools.'
 	);
 
-	// Register autocompletion icon
-	$wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';	
 	
-	global $cegEnableComment, $cegEnableCurrentUsers;
-	
-	# A: Comment
-	if ( $cegEnableComment ) {
+	### Register autocompletion icon ###
+   # $wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
+	wfProfileOut('cefSetupExtension');
 
-		#put some more here? NO, we need the classes otherwise, too.
-
-		$cegCommentNamespace = array(CE_NS_COMMENT);
-		//TODO: THat's buggy!:'
-		// Class not found error!
-		#$wgHooks['BeforePageDisplay'][] = 'CEComment::cefAddHTMLHeader';
-	}
-	
-	# B: CurrentUser
-	if ( $cegEnableCurrentUsers ) {
-		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
-	}
-
-	 wfProfileOut('cefSetupExtension');
 	return true;
+}
+
+/**
+ * Adding headers for non-special-pages
+ * Currently only used by comments
+ *
+ * @param OutputPage $out
+ * @return bool: true
+ */
+function cefAddNonSpecialPageHeader(&$out) {
+    global $cegScriptPath;
+
+    #cefAddJSLanguageScripts($out);
+
+	$out->addScript("<script type=\"text/javascript\" src=\"". "extensions/SMWHalo/scripts/prototype.js\"></script>");
+    
+    $out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
+
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => $cegScriptPath. '/skins/CE_Comment.css'
+    ));
+
+
+
+    return true;
 }
 
 /*********************************/
@@ -126,15 +162,15 @@ function cefSetupExtension() {
  * greater or equal to 100.
  */
 function cefInitNamespaces() {
-	global $cegNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
+	global $cegCommentNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
 	$wgNamespacesWithSubpages, $wgLanguageCode, $cegContLang;
 	
-	if (!isset($cegNamespaceIndex)) {
-		$cegNamespaceIndex = 400;
+	if (!isset($cegCommentNamespaceIndex)) {
+		$cegCommentNamespaceIndex = 700;
 	}
-	
-	define('CE_NS_COMMENT', $cegNamespaceIndex);
-	define('CE_NS_COMMENT_TALK', $cegNamespaceIndex+1);
+
+	define('CE_COMMENT_NS', $cegCommentNamespaceIndex);
+	define('CE_COMMENT_NS_TALK', $cegCommentNamespaceIndex + 1);
 	
 	cefInitContentLanguage($wgLanguageCode);
 	
@@ -142,17 +178,63 @@ function cefInitNamespaces() {
 	if (!is_array($wgExtraNamespaces)) {
 		$wgExtraNamespaces = array();
 	}
+
 	$ceNamespaces = $cegContLang->getNamespaces();
 	$ceNamespacealiases = $cegContLang->getNamespaceAliases();
 	$wgExtraNamespaces = $wgExtraNamespaces + $ceNamespaces;
 	$wgNamespaceAliases = $wgNamespaceAliases + $ceNamespacealiases;
 	
-	// no support for subpages for these namespaces
+	// make the NS semantic
+	global $smwgNamespacesWithSemanticLinks;
+	$smwgNamespacesWithSemanticLinks[CE_COMMENT_NS] = true;
+	
+	return true;
 }
 
 /**
  * Internationalized messages
  */
+
+/**
+ * Set up (possibly localised) names for HaloACL
+ */
+function cefAddMagicWords(&$magicWords, $langCode) {
+	#$magicWords['showcomments']     = array( 0, 'showcomments' );
+	#$magicWords['showcommentform']     = array( 0, 'showcommentform' );
+    return true;
+}
+
+/**
+ * Initialise a global language object for content language. This
+ * must happen early on, even before user language is known, to
+ * determine labels for additional namespaces. In contrast, messages
+ * can be initialised much later when they are actually needed.
+ */
+function cefInitContentLanguage($langcode) {
+    global $cegIP, $cegContLang;
+    if (!empty($cegContLang)) {
+        return;
+    }
+    wfProfileIn('cefInitContentLanguage');
+
+    $ceContLangFile = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+    $ceContLangClass = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+    if (file_exists($cegIP . '/languages/'. $ceContLangFile . '.php')) {
+        include_once( $cegIP . '/languages/'. $ceContLangFile . '.php' );
+    }
+
+    // fallback if language not supported
+    if ( !class_exists($ceContLangClass) ) {
+        include_once($cegIP . '/languages/CELanguageEn.php');
+        $ceContLangClass = 'CELanguageEn';
+    }
+    $cegContLang = new $ceContLangClass();
+
+    wfProfileOut('cefInitContentLanguage');
+    
+    return true;
+}
+
 function cefInitMessages() {
 	global $cegMessagesInitialized;
 	if (isset($cegMessagesInitialized)) return; // prevent double init
@@ -160,27 +242,8 @@ function cefInitMessages() {
 	cefInitUserMessages(); // lazy init for ajax calls
 
 	$cegMessagesInitialized = true;
-}
-
-/**
- * Registers Collaboration Content messages.
- */
-function cefInitContentLanguage($langcode) {
-	global $cegIP, $cegContLang;
-	if (!empty($cegContLang)) { return; }
-
-	$cegContLangClass = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-
-	if (file_exists($cegIP . '/languages/'. $cegContLangClass . '.php')) {
-		include_once( $cegIP . '/languages/'. $cegContLangClass . '.php' );
-	}
-
-	// fallback if language not supported
-	if ( !class_exists($cegContLangClass)) {
-		include_once($cegIP . '/languages/CELanguageEn.php');
-		$cegContLangClass = 'SMW_CELanguageEn';
-	}
-	$cegContLang = new $cegContLangClass();
+	
+	return true;
 }
 
 /**
@@ -207,6 +270,8 @@ function cefInitUserMessages() {
 	}
 
 	$wgMessageCache->addMessages($cegLang->getUserMsgArray(), $wgLang->getCode());
+	
+	return true;
 }
 
 /**
@@ -216,31 +281,34 @@ function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages 
 	global $cegIP, $cegScriptPath, $wgUser;
 	
 	 // content language file
-	$jsm->addScript('<script type="text/javascript" src="'.$cegScriptPath . '/scripts/Language/CE_Language.js'.  '"></script>', $mode, $namespace, $pages);
+	$jsm->addScript('<script type="text/javascript" src="' . $cegScriptPath .
+		'/scripts/Language/CE_Language.js' . '"></script>', $mode, $namespace, $pages);
 	$lng = '/scripts/Language/CE_Language';
 	
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($cegScriptPath . $lng)) {
-			$jsm->addScriptIf($cegScriptPath . $lng, $mode, $namespace, $pages);
+			$jsm->addScript($cegScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
-			$jsm->addScriptIf($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
+			$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
 		}
 	} else {
-		$jsm->addScriptIf($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
+		$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageEn.js', $mode, $namespace, $pages);
 	}
 
 	// user language file
 	if (isset($wgUser)) {
 		$lng .= "User".ucfirst($wgUser->getOption('language')).'.js';
 		if (file_exists($cegScriptPath . $lng)) {
-			$jsm->addScriptIf($cegScriptPath . $lng, $mode, $namespace, $pages);
+			$jsm->addScript($cegScriptPath . $lng, $mode, $namespace, $pages);
 		} else {
-			$jsm->addScriptIf($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
+			$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
 		}
 	} else {
-		$jsm->addScriptIf($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
+		$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
+	
+	return true;
 }
 
 function cefRegisterACIcon(& $namespaceMappings) {
@@ -248,6 +316,7 @@ function cefRegisterACIcon(& $namespaceMappings) {
 	$namespaceMappings[CE_COMMENT_NS] = $cegIP . '/skins/images/CE_Comment_AutoCompletion.gif';
 	return true;
 }
+
 
 #$wgHooks['ParserBeforeStrip'][] = 'ArticleComment::addCommentTag';
 #-> into DislpayParserFunction
