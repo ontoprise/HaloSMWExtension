@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>130</version>
-		<id>DataImport</id>
+		<id>dataimport</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/DataImport</instdir>
 		<description>
