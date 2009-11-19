@@ -1,21 +1,13 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 5714)
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 5893)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
-@@ -55,7 +55,7 @@
+@@ -55,7 +55,15 @@
  
  	private $m_hasssearchlink;        /// used to control the addition of the standard search link
  	private $m_hasservicelinks;       /// used to control service link creation
 -
 +    private $m_provenance = NULL;
- 
- 	public function __construct($typeid) {
- 		$this->m_typeid = $typeid;
-@@ -564,7 +564,14 @@
- 	public function getUnit() {
- 		return ''; // empty unit
- 	}
--
 +    
 +    public function setProvenance($provURI) {
 +       $this->m_provenance = $prov;
@@ -24,9 +16,9 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 +    public function getProvenance() {
 +       return $this->m_provenance;
 +    }
- }
  
- 
+ 	public function __construct($typeid) {
+ 		$this->m_typeid = $typeid;
 Index: includes/Article.php
 ===================================================================
 --- includes/Article.php	(revision 5714)
