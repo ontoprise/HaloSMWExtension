@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>100</version>
+		<version>110</version>
 		<id>HaloACL</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/HaloACL</instdir>
@@ -9,7 +9,7 @@
 			Protects pages, categories, namespaces and semantic properties.
 		</description>
 		<dependencies>
-			<dependency from="1132" to="1132">MW</dependency>
+			<dependency from="1132" to="1159">MW</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

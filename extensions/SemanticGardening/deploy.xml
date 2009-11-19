@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>130</version>
 		<id>SemanticGardening</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SemanticGardening</instdir>
 		<description>Helps to keep the wiki clean and consistent. Allows to run asynchronous bots.</description>
 		<dependencies>
-			<dependency from="144" to="144">SMWHalo</dependency>
+			<dependency from="146" to="146">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

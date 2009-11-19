@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>110</version>
+		<version>130</version>
 		<id>DataImport</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/DataImport</instdir>
@@ -9,10 +9,10 @@
 			Connects external datasources to your wiki.
 		</description>
 		<dependencies>
-			<dependency from="1130" to="1150">MW</dependency>
-			<dependency from="142" to="142">smw</dependency>
-			<dependency from="144" to="144">smwhalo</dependency>
-			<dependency from="110" to="110">
+			<dependency from="1150" to="1159">MW</dependency>
+			<dependency from="143" to="143">smw</dependency>
+			<dependency from="146" to="146">smwhalo</dependency>
+			<dependency from="130" to="130">
 				semanticgardening
 			</dependency>
 		</dependencies>

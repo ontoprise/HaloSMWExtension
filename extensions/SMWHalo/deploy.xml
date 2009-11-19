@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>145</version>
+		<version>146</version>
 		<id>SMWHalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
@@ -10,7 +10,7 @@
 			Mediawiki
 		</description>
 		<dependencies>
-			<dependency from="142" to="142">SMW</dependency>
+			<dependency from="143" to="143">SMW</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

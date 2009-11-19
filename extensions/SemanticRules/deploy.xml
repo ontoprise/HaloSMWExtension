@@ -10,7 +10,7 @@
 			reasoning.
 		</description>
 		<dependencies>
-			<dependency from="145" to="145">smwhalo</dependency>
+			<dependency from="146" to="146">smwhalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles></codefiles>

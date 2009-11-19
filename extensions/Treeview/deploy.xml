@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>121</version>
 		<id>Treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/Treeview</instdir>
@@ -9,7 +9,7 @@
 			Treeview which gets populated by semantic data.
 		</description>
 		<dependencies>
-			<dependency from="145" to="145">SMWHalo</dependency>
+			<dependency from="146" to="146">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

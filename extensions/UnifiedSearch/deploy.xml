@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>130</version>
+        <version>131</version>
         <id>UnifiedSearch</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/UnifiedSearch</instdir>
         <description>A client for the lucene wiki server</description>
         <dependencies>
-            <dependency from="1120" to="1150">MW</dependency>
+            <dependency from="1150" to="1159">MW</dependency>
         </dependencies>
     </global>
     <codefiles>
