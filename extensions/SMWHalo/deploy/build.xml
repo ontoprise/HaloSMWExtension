@@ -84,11 +84,7 @@
 		<delete dir="bin/zip_ext" />
 		<delete file="bin/smwhalo-ext-${version}.zip" />
 		<mkdir dir="bin/zip_ext" />
-		<copy todir="bin/zip_ext/extensions/DataAPI">
-			<fileset dir="../../DataAPI/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
+		
 		<copy todir="bin/zip_ext/extensions/DynamicPageList">
 			<fileset dir="../../DynamicPageList/">
 				<exclude name="**/.svn, **/CVS" />
