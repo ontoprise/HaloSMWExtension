@@ -1,9 +1,0 @@
-SMWHalo Help extension 1.0
-
-Type
-
-php setup.php [--install] | [--deinstall]
-
-to install or de-install the help pages.
-
-
