@@ -75,7 +75,7 @@ class SMWFullSemanticData {
         }
         $localName = $subject->getDBkey();
 
-        $inst = $smwgTripleStoreGraph.SMWTripleStore::$INST_NS_SUFFIX;
+        $inst = $smwgTripleStoreGraph.TSNamespaces::$INST_NS_SUFFIX;
         // $queryText = "PREFIX a:<$inst> SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
         // $queryText = "SELECT ?pred ?obj WHERE { a:$subject ?pred ?obj . }";
         $queryText = "SELECT ?pred ?obj WHERE { <".$smwgTripleStoreGraph."/$ns#$localName> ?pred ?obj . }";
