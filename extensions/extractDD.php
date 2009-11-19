@@ -45,6 +45,9 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-o => output
 	if ($arg == '-o') {
 		$outputDir = next($argv);
+		if (substr($outputDir,-1)!='/'){
+	        $outputDir .= '/';
+	    }
 		continue;
 	}
 	
@@ -76,17 +79,17 @@ $localPackages = getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
 	$version = $dd->getVersion();
 	$targetFile = str_replace("deploy.xml", "deploy-".$version.".xml", $dd_file);
-	Tools::mkpath(dirname($outputDir.$targetFile));
-	copy($rootDir.$dd_file, $outputDir.$targetFile);
+	Tools::mkpath($outputDir.$dd->getID());
+	copy($rootDir.$dd_file, $outputDir.$dd->getID()."/deploy-".$version.".xml");
 	print "\nCreated: $outputDir$targetFile";
 
 	if (!$noSymlink && $latest) {
 		// remove symbolic link if existing
-		if (file_exists(dirname($outputDir.$targetFile).'/deploy.xml')) {
-			unlink(dirname($outputDir.$targetFile).'/deploy.xml');
+		if (file_exists($outputDir.$dd->getID().'/deploy.xml')) {
+			unlink($outputDir.$dd->getID().'/deploy.xml');
 		}
 		// create symbolic link
-		exec('ln -s '.dirname($outputDir.$targetFile).'/deploy-'.$version.'.xml '.dirname($outputDir.$targetFile).'/deploy.xml');
-		print "\nCreated link: ".dirname($outputDir.$targetFile).'/deploy.xml';
+		exec('ln -s '.$outputDir.$dd->getID().'/deploy-'.$version.'.xml '.$outputDir.$dd->getID().'/deploy.xml');
+		print "\nCreated link: ".$outputDir.$dd->getID().'/deploy.xml';
 	}
 }
