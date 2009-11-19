@@ -49,10 +49,10 @@
 				</boolean>
 			</variable>
 			<variable name="wgDefaultSkin">
-				<boolean name="wgDefaultSkin"
+				<string name="wgDefaultSkin"
 					description="Default skin used">
 					ontoskin3
-				</boolean>
+				</string>
 			</variable>
 			<script file="extensions/SMWHalo/maintenance/SMW_setup.php" />
 		</new>
