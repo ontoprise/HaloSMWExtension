@@ -228,7 +228,7 @@ class  HACLQueryRewriter  {
 			return;
 		}
 		
-		$prefixes = str_replace(':<', ': <', $store->getAllPrefixes());
+		$prefixes = str_replace(':<', ': <', TSNamespaces::getAllPrefixes());
 		$queryString = $prefixes . $query->getQueryString();
 			
 		/* ARC2 static class inclusion */
