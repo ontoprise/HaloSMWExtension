@@ -9,7 +9,7 @@
             Semantic Result Formats provides several new result printer for ASK (and SPARQL)
         </description>
         <dependencies>
-            <dependency from="140" to="145">smwhalo</dependency>
+            <dependency from="140" to="149">smw</dependency>
         </dependencies>
     </global>
     <codefiles></codefiles>
