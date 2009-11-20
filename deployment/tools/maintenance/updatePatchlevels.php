@@ -81,7 +81,7 @@ $repository_xml = file_get_contents($outputDir."repository.xml");
 $repository_dom = simplexml_load_string($repository_xml);
 $extensions = $repository_dom->xpath("//extension");
 
-$new_ser = '<?xml version="1.0" encoding="UTF-8"?><root><extensions>';
+$new_ser = '<?xml version="1.0" encoding="UTF-8"?>'."<root>\n<extensions>\n";
 foreach($extensions as $e) {
     $id = (string) $e->attributes()->id;
 	
@@ -97,9 +97,9 @@ foreach($extensions as $e) {
         }
         $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\"/>";
     }
-    $new_ser .= "</extension>";
+    $new_ser .= "</extension>\n";
 }
-$new_ser .= "</extensions></root>";
+$new_ser .= "\n</extensions>\n</root>";
 
 echo "\nWrite new repository to ".$outputDir."repository.xml";
 $handle = fopen($outputDir."repository.xml", "w");

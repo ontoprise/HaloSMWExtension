@@ -6,7 +6,7 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-define('SMW_HALO_VERSION', '1.4.5-for-SMW-1.4.x');
+define('SMW_HALO_VERSION', '1.4.6-for-SMW-1.4.3');
 
 // constant for special schema properties
 define('SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT', 1);

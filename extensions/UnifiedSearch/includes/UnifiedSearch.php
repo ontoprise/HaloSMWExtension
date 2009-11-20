@@ -8,7 +8,7 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	echo("This file is an extension to the MediaWiki software and cannot be used standalone.\n");
 	die(1);
 }
-define('US_SEARCH_EXTENSION_VERSION', '1.1');
+define('US_SEARCH_EXTENSION_VERSION', '1.31');
 
 define('US_HIGH_TOLERANCE', 0);
 define('US_LOWTOLERANCE', 1);

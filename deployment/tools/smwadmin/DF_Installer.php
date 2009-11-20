@@ -1,20 +1,20 @@
 <?php
 
 /*  Copyright 2009, ontoprise GmbH
-*  
-*   The deployment tool is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The deployment tool is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *
+ *   The deployment tool is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The deployment tool is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 // Error constants
 define('DEPLOY_FRAMEWORK_INSTALL_LOWER_VERSION', 1);
@@ -182,7 +182,7 @@ class Installer {
 		print "\nRemove code of $packageID...";
 		Tools::remove_dir($this->instDir."/".$ext->getInstallationDirectory());
 		// may contain files which are not located in the installation directory
-        $this->res_installer->deleteExternalCodefiles($ext);
+		$this->res_installer->deleteExternalCodefiles($ext);
 	}
 
 	/**
@@ -195,28 +195,19 @@ class Installer {
 
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 
-		// get top level extensions, ie. those which have no super extensions.
-		$topLevelExtensions = array();
-		foreach($localPackages as $l1) {
-			$hasDependency = false;
-			foreach($localPackages as $l2) {
-				$hasDependency |= ($l2->getDependency($l1->getID()));
-				if ($hasDependency) break;
-			}
-			if (!$hasDependency) {
-				$topLevelExtensions[] = $l1;
-			}
-		}
 
 		$updatesNeeded = array();
-		foreach($topLevelExtensions as $tl_ext) {
+		foreach($localPackages as $tl_ext) {
+			if ($tl_ext->getID() == 'mw') continue;
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
-			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion() 
-			     || $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
+			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
+			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
 				$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
 				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 			}
+
 		}
+
 
 		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
 
@@ -410,7 +401,7 @@ class Installer {
 
 			$this->res_installer->installOrUpdateResources($desc);
 			$this->res_installer->installOrUpdateWikidumps($desc, $fromVersion, $this->force ? DEPLOYWIKIREVISION_FORCE : DEPLOYWIKIREVISION_WARN);
-            
+
 			print "\n-------\n";
 		}
 	}
@@ -444,19 +435,51 @@ class Installer {
 	 */
 	private function calculateVersionRange($updatesNeeded, & $extensions_to_update) {
 		$extensions = array();
+		
+		$removed_extensions = array();
 		$extensions_to_update = array();
-		foreach($updatesNeeded as $un) {
-			list($un, $from, $to) = $un;
-			if (!array_key_exists($un->getID(), $extensions)) {
 
-				$extensions[$un->getID()] = array($un, $from, $to);
+		// calculate the intersection of min/max version number of each package
+		foreach($updatesNeeded as $un) {
+			list($dd, $from, $to) = $un;
+			if (!array_key_exists($dd->getID(), $extensions)) {
+
+				$extensions[$dd->getID()] = array($dd, $from, $to);
 			} else {
-				list($min, $max) = $extensions[$un->getID()];
+				list($dd2, $min, $max) = $extensions[$dd->getID()];
 				if ($from > $min) $min = $from;
 				if ($to < $max) $max = $to;
-				$extensions[$un->getID()] = array($un, $min, $max);
+				$extensions[$dd->getID()] = array($dd2, $min, $max);
 			}
 		}
+
+		// remove all packages with min < max, ie. they can not be installed
+		// because no suitable version exists.
+		// remove also all super-packages of such.
+		do {
+			$lastSize = count($removed_extensions);
+			foreach($extensions as $id => $e) {
+				list($un, $min, $max) = $e;
+				if ($min <= $max) {
+					$deps = $un->getDependencies();
+					foreach($deps as $dep) {
+						list($depID, $from, $to) = $dep;
+						if (array_key_exists($depID, $removed_extensions)) {
+							$removed_extensions[$id] = $un;
+						}
+
+					}
+				} else {
+					$removed_extensions[$id] = $un;
+				}
+			}
+		} while(count($removed_extensions) > $lastSize);
+		
+		foreach($removed_extensions as $id => $re) {
+			unset($extensions[$id]);
+		}
+        
+		// sort the packages list topologically according to their dependency graph.
 		$precedenceOrder = $this->sortForDependencies($extensions);
 		foreach($precedenceOrder as $po) {
 			$extensions_to_update[$po] = $extensions[$po];

@@ -105,7 +105,7 @@ class Rollback {
 		$localPackages = PackageRepository::getLocalPackages($this->inst_dir."/extensions");
 		if (array_key_exists($id, $localPackages)) {
 			$localExt = $localPackages[$id];
-			print "\nSaving extension... ".$localExt->getID();
+			print "\nSaving extension ".$localExt->getID()."...";
 			Tools::mkpath($this->tmpDir."/stored/".$localExt->getInstallationDirectory());
 			Tools::copy_dir($this->inst_dir."/".$localExt->getInstallationDirectory(), $this->tmpDir."/stored/".$localExt->getInstallationDirectory());
 			print "done.";
