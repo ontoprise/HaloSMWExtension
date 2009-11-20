@@ -119,6 +119,7 @@ require_once(dirname(__FILE__).'/SMW_AjaxAccess.php');
 function enableSMWUserManual() {
     global $wgExtensionFunctions;
     $wgExtensionFunctions[] = 'setupSMWUserManual';
+    initSMWUserManualNamespaces();
 }
 
 /**
@@ -133,12 +134,44 @@ function enableSMWUserManual() {
  * @global Array $wgHooks
  */
 function setupSMWUserManual() {
-    global $wgExtraNamespaces, $smwgNamespacesWithSemanticLinks,
-        $umegNamespaceIndex, $umeLang, $umegNamespace,
-        $umegCheckArticlesOnStartup, $wgHooks;
+    global $umegCheckArticlesOnStartup, $wgHooks,
+           $wgMessageCache, $wgLanguageCode, $umeLang;
 
     wfProfileIn('setupSMWUserManual');
 
+    // add language messages to global message object
+    $wgMessageCache->addMessages($umeLang->getTexts(), $wgLanguageCode);
+
+    // check articles on startup? and add parser hook and javascript for help link
+    if ($umegCheckArticlesOnStartup) {
+        $res = umefGetHelpArticlePageCount();
+        if ($res > 0)
+            $wgHooks['BeforePageDisplay'][]='umefAddHtml2Page';
+    }
+    else
+        $wgHooks['BeforePageDisplay'][]='umefAddHtml2Page';
+        
+    wfProfileOut('setupSMWUserManual');
+}
+
+
+/**
+ * initializing of the SMW User Manual namespaces. This must be done before
+ * the real setup that is called by the hook. Otherwise the Mediawiki API
+ * doesn't know about the namespaces.
+ *
+ * @global Array $wgExtraNamespaces
+ * @global Array $smwgNamespacesWithSemanticLinks
+ * @global int $umegNamespaceIndex
+ * @global Object $umeLang
+ * @global string $umegNamespace
+ */
+function initSMWUserManualNamespaces() {
+    global $wgExtraNamespaces, $smwgNamespacesWithSemanticLinks,
+        $umegNamespaceIndex, $umeLang, $umegNamespace;
+
+    wfProfileIn(__METHOD__);
+    
     if ($umegNamespaceIndex == null) {
         $nsKeys = array_keys($wgExtraNamespaces);
         rsort($nsKeys);
@@ -168,18 +201,8 @@ function setupSMWUserManual() {
     $smwgNamespacesWithSemanticLinks[SMW_NS_USER_MANUAL] = true;
     $smwgNamespacesWithSemanticLinks[SMW_NS_USER_MANUAL_TALK] = false;
 
-    // check articles on startup? and add parser hook and javascript for help link
-    if ($umegCheckArticlesOnStartup) {
-        $res = umefGetHelpArticlePageCount();
-        if ($res > 0)
-            $wgHooks['BeforePageDisplay'][]='umefAddHtml2Page';
-    }
-    else
-        $wgHooks['BeforePageDisplay'][]='umefAddHtml2Page';
-        
-    wfProfileOut('setupSMWUserManual');
+    wfProfileOut(__METHOD__);
 }
-
 
 /**
  * add the javasript links to the html header of the page and add the help
@@ -231,7 +254,7 @@ function umefAddHtml2Page(&$out) {
  * @global Object $wgMessageCache
  */
 function umefInitLanguage() {
-    global $wgLanguageCode, $umeLang, $wgMessageCache;
+    global $wgLanguageCode, $umeLang;
     wfProfileIn('umefInitLanguage');
 
     $className = 'SMW_UMLanguage'.str_replace('-', '_', ucfirst($wgLanguageCode));
@@ -245,7 +268,6 @@ function umefInitLanguage() {
 
     $umeLang = new $className;
 
-    $wgMessageCache->addMessages($umeLang->getTexts(), $wgLanguageCode);
     wfProfileOut('umefInitLanguage');
 }
 
