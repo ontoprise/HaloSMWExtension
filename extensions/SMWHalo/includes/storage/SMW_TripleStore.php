@@ -755,6 +755,7 @@ class SMWTripleStore extends SMWStore {
         foreach($literals as $literal) {
 
             list($literalValue, $literalType) = $literal;
+            $property = $prs->getData();
             if (!empty($literalValue)) {
 
                 // create SMWDataValue either by property or if that is not possible by the given XSD type
@@ -764,14 +765,14 @@ class SMWTripleStore extends SMWStore {
                     $value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
                 }
                 if ($value->getTypeID() == '_dat') { // exception for dateTime
-                    if ($literalValue != '') $value->setXSDValue($$literalValue);
+                    if ($literalValue != '') $value->setXSDValue($literalValue);
                 } if ($value->getTypeID() == '_ema') { // exception for email
                     $value->setXSDValue($literalValue);
                 } else {
                     $value->setUserValue($literalValue);
                 }
             } else {
-                $property = $prs->getData();
+                
                 if ($property instanceof SMWPropertyValue ) {
                     $value = SMWDataValueFactory::newPropertyObjectValue($property);
                 } else {
