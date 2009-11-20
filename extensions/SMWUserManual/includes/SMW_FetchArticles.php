@@ -145,7 +145,7 @@ class UME_FetchArticles {
            "Accept: */*\r\n".
            "Content-Type: application/x-www-form-urlencoded\r\n".
            "Content-Length: ".strlen($params)."\r\n".
-           "User-Agent: UserManualExtension ".SMW_USER_MANUAL.", php ".phpversion()." on ".php_uname('s')." ".php_uname('r')."\r\n".
+           "User-Agent: UserManualExtension ".SMW_USER_MANUAL_VERSION.", php ".phpversion()." on ".php_uname('s')." ".php_uname('r')."\r\n".
            "Host: $host:$port\r\n".
            "\r\n".
            "$params\r\n";
