@@ -267,5 +267,9 @@ var wgUserLanguageStrings = {
 	
 	'smw_wwsu_addwscall'			:	'Web Service Aufruf hinzufügen',
 	'smw_wwsu_headline'			:	'Web Service',
-	'Help'			:	'Hilfe'
+	'Help'			:	'Hilfe',
+	
+	// Derived facts
+	'DF_REQUEST_FAILED' : 'Fehler! Die abgeleiteten Fakten konnten nicht ermittelt werden.'
+	
 };

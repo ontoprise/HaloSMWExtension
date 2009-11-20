@@ -40,6 +40,7 @@ $wgAjaxExportList[] = 'smwf_om_MoveProperty';
 $wgAjaxExportList[] = 'smwf_om_invalidateAllPages';
 $wgAjaxExportList[] = 'smwf_om_userCan';
 $wgAjaxExportList[] = 'smwf_om_userCanMultiple';
+$wgAjaxExportList[] = 'smwf_om_GetDerivedFacts';
 
 /**
  * Creates a new article or appends some text if it already
@@ -750,3 +751,107 @@ function smwf_om_userCanMultiple($titleNames, $action) {
 	}
 	return json_encode($results);
 }
+
+
+/**
+ * This function retrieves the derived facts of the article with the name
+ * $titleName.
+ *
+ * @param string $titleName
+ * 
+ * @return string
+ * 		The derived facts as HTML
+ */
+function smwf_om_GetDerivedFacts($titleName) {
+	$linker = new Linker();
+	
+	$t = Title::newFromText($titleName);
+	if ($t == null) {
+		// invalid title
+		return wfMsg('smw_df_invalid_title');
+	}
+
+	$semdata = smwfGetStore()->getSemanticData($t);
+	wfLoadExtensionMessages('SemanticMediaWiki');
+	global $wgContLang;
+	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
+	$derivedFactsFound = false;
+
+	$text = '<div class="smwfact">' .
+				'<span class="smwfactboxhead">' . 
+	wfMsg('smw_df_derived_facts_about',
+	$derivedFacts->getSubject()->getText()) .
+				'</span>' .
+				'<table class="smwfacttable">' . "\n";
+
+	foreach($derivedFacts->getProperties() as $property) {
+		if (!$property->isShown()) { // showing this is not desired, hide
+			continue;
+		}
+		if (stripos($property->getShortWikiText(), 'http://www.w3.org/') === 0) {
+			// Special property with W3C namespace
+			continue;
+		}
+		if ($property->isUserDefined()) { // user defined property
+			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
+			$text .= '<tr><td class="smwpropname">' . 
+					 $linker->makeLink($property->getLongWikiText(),$property->getShortWikiText()) . 
+					 '</td><td class="smwprops">';
+		} elseif ($property->isVisible()) { // predefined property
+			$text .= '<tr><td class="smwspecname">' . 
+					 $linker->makeLink($property->getLongWikiText(),$property->getShortWikiText()) . 
+					 '</td><td class="smwspecs">';
+		} else { // predefined, internal property
+			continue;
+		}
+
+		$propvalues = $derivedFacts->getPropertyValues($property);
+		$l = count($propvalues);
+		$i=0;
+		foreach ($propvalues as $propvalue) {
+			$derivedFactsFound = true;
+
+			if ($i!=0) {
+				if ($i>$l-2) {
+					$text .= wfMsgForContent('smw_finallistconjunct') . ' ';
+				} else {
+					$text .= ', ';
+				}
+			}
+			$i+=1;
+
+			// encode the parameters in the links as
+			//Special:Explanations/i:<subject>/p:<property>/v:<value>/mode:property
+			//The form ?i=...&p=... is no longer possible, as the fact box is now created
+			// as wikitext and special chars in links are encoded.
+			$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
+			$link .= '/i:'.$derivedFacts->getSubject()->getTitle()->getPrefixedDBkey();
+			$link .= '/p:'.$property->getWikiPageValue()->getTitle()->getPrefixedDBkey();
+			$link .= '/v:'.urlencode($propvalue->getWikiValue());
+			$link .= '/mode:property';
+			$link = $linker->makeLink($link, '+');
+
+			$propRep = "";
+			if ($property->getPropertyTypeID() == "_wpg") {
+				// Value is a page name
+				$propRep = $linker->makeLink($propvalue->getWikiValue());
+			} else {
+				$propRep = $propvalue->getLongWikiText();
+			}
+			$propRep .= '&nbsp;'.
+				  '<span class="smwexplanation">'.$link.'</span>';
+
+			$text .= $propRep;
+
+		}
+		$text .= '</td></tr>';
+	}
+	$text .= '</table></div>';
+
+	if (!$derivedFactsFound) {
+		$text = wfMsg('smw_df_no_df_found');
+	}
+	return $text;
+}
+

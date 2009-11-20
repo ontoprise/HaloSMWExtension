@@ -270,5 +270,8 @@ var wgUserLanguageStrings = {
 	
 	'smw_wwsu_addwscall'			:	'Add web service call',
 	'smw_wwsu_headline'			:	'Web Service',
-	'Help'			:	'Help'
+	'Help'			:	'Help',
+	
+	// Derived facts
+	'DF_REQUEST_FAILED' : 'Error! Could not retrieve derived facts.'
 };

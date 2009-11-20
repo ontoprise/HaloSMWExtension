@@ -327,10 +327,17 @@ clicking the big arrows between the columns.',
 	
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Derived facts about $1',
-
-        //skin
-        'smw_search_this_wiki' => 'Search this wiki',
-        'more_functions' => 'More'
+	'smw_df_static_tab'			 => 'Static facts',
+	'smw_df_derived_tab'		 => 'Derived facts',
+	'smw_df_static_facts_about'  => 'Static facts about this article',
+	'smw_df_derived_facts_about' => 'Derived facts about this article',
+	'smw_df_loading_df'			 => 'Loading derived facts...',
+	'smw_df_invalid_title'		 => 'Invalid article. No derived facts available.',
+	'smw_df_no_df_found'		 => 'No derived facts found for this article.',
+	
+    //skin
+    'smw_search_this_wiki' => 'Search this wiki',
+    'more_functions' => 'More'
 
 	);
 

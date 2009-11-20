@@ -319,6 +319,14 @@ protected $smwUserMessages = array(
 
 	// Derived facts
 	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über $1',
+	'smw_df_static_tab'			 => 'Statische Fakten',
+	'smw_df_derived_tab'		 => 'Abgeleitete Fakten',
+	'smw_df_static_facts_about'  => 'Statische Fakten über diesen Artikel',
+	'smw_df_derived_facts_about' => 'Abgeleitete Fakten über diesen Artikel',
+	'smw_df_loading_df'			 => 'Abgeleitete Fakten werden geladen ...',
+	'smw_df_invalid_title'		 => 'Ungültiger Artikel. Es sind keine abgeleiteten Fakten verfügbar.',
+	'smw_df_no_df_found'		 => 'Es wurden keine abgeleiteten Fakten für diesen Artikel gefunden.',
+
 
         //skin
         'smw_search_this_wiki' => 'Wiki durchsuchen',

@@ -135,18 +135,13 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
-	if (isset($smwgWebserviceEndpoint)) {
-		if ($smwgShowDerivedFacts === true
-		|| strtolower($wgRequest->getVal("showDerived", "false")) === 'true') {
-			$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
-		}
+	if (isset($smwgWebserviceEndpoint) && $smwgShowDerivedFacts === true) {
+		$wgHooks['smwShowFactbox'][] = 'smwfAddDerivedFacts';
 	}
 
 	// Remove the existing smwfSaveHook and replace it with the
 	// new and functionally enhanced smwfHaloSaveHook
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterSPARQLInlineQueries';
-
-
 
 	$wgHooks['OntoSkinTemplateToolboxEnd'][] = 'smwfOntoSkinTemplateToolboxEnd';
 	$wgHooks['OntoSkinTemplateNavigationEnd'][] = 'smwfOntoSkinTemplateNavigationEnd';
@@ -630,15 +625,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 	global $smwgHaloScriptPath,$smwgHaloIP, $smwgDeployVersion, $wgLanguageCode;
 	global $wgOut;
 
-
-
-
-
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
 	$jsm = SMWResourceManager::SINGLETON();
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
-
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "edit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "annotate");
@@ -654,6 +644,8 @@ function smwfHaloAddHTMLHeader(&$out) {
         $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "submit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
+	
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
 	// serialize the css
@@ -809,6 +801,9 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "submit");
                 $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
+                
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
+                
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -1472,78 +1467,90 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	return true;
 }
 
+/**
+ * Callback function for the hook 'smwShowFactbox'. It is called when SMW creates
+ * the factbox for an article.
+ * This method replaces the whole factbox with a tabbed version that contains 
+ * the original factbox in one tab and the derived facts in another.
+ *
+ * @param string $text
+ * 		The HTML for the tabbed factbox is returned in this parameter
+ * @param SMWSemanticData $semdata
+ * 		All static facts for the article
+ * @return bool
+ * 		<false> : This means that SMW's factbox is completely replaced.
+ */
 function smwfAddDerivedFacts(& $text, $semdata) {
+	global $smwgHaloScriptPath, $wgContLang;
+	
+    wfLoadExtensionMessages('SemanticMediaWiki');
+    SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
+    $rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getWikiValue(), 'rdflink');
 
-	wfLoadExtensionMessages('SemanticMediaWiki');
-	global $wgContLang;
-	$derivedFacts = SMWFullSemanticData::getDerivedProperties($semdata);
-	$derivedFactsFound = false;
+    $browselink = SMWInfolink::newBrowsingLink($semdata->getSubject()->getText(), $semdata->getSubject()->getWikiValue(), 'swmfactboxheadbrowse');
+    $fbText = '<div class="smwfact">' .
+						'<span class="smwfactboxhead">' . wfMsgForContent('smw_factbox_head', $browselink->getWikiText() ) . '</span>' .
+					'<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' .
+					'<table class="smwfacttable">' . "\n";
+    foreach($semdata->getProperties() as $property) {
+    	if (!$property->isShown()) { // showing this is not desired, hide
+    		continue;
+    	} elseif ($property->isUserDefined()) { // user defined property
+    		$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+    		/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
+    		$fbText .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
+    	} elseif ($property->isVisible()) { // predefined property
+    		$fbText .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
+    	} else { // predefined, internal property
+    		continue;
+    	}
 
-	$text .= '<div class="smwfact">' .
-				'<span class="smwfactboxhead">' . 
-	wfMsg('smw_df_derived_facts_about',
-	$derivedFacts->getSubject()->getText()) .
-				'</span>' .
-				'<table class="smwfacttable">' . "\n";
+    	$propvalues = $semdata->getPropertyValues($property);
+    	$l = count($propvalues);
+    	$i=0;
+    	foreach ($propvalues as $propvalue) {
+    		if ($i!=0) {
+    			if ($i>$l-2) {
+    				$fbText .= wfMsgForContent('smw_finallistconjunct') . ' ';
+    			} else {
+    				$fbText .= ', ';
+    			}
+    		}
+    		$i+=1;
+    		$fbText .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
+    	}
+    	$fbText .= '</td></tr>';
+    }
+    $fbText .= '</table></div>';
 
-	foreach($derivedFacts->getProperties() as $property) {
-		if (!$property->isShown()) { // showing this is not desired, hide
-			continue;
-		}
-		if (stripos($property->getShortWikiText(), 'http://www.w3.org/') === 0) {
-			// Special property with W3C namespace
-			continue;
-		}
-		if ($property->isUserDefined()) { // user defined property
-			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
-			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
-			$text .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
-		} elseif ($property->isVisible()) { // predefined property
-			$text .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
-		} else { // predefined, internal property
-			continue;
-		}
 
-		$propvalues = $derivedFacts->getPropertyValues($property);
-		$l = count($propvalues);
-		$i=0;
-		foreach ($propvalues as $propvalue) {
-			$derivedFactsFound = true;
-
-			if ($i!=0) {
-				if ($i>$l-2) {
-					$text .= wfMsgForContent('smw_finallistconjunct') . ' ';
-				} else {
-					$text .= ', ';
-				}
-			}
-			$i+=1;
-
-			// encode the parameters in the links as
-			//Special:Explanations/i:<subject>/p:<property>/v:<value>/mode:property
-			//The form ?i=...&p=... is no longer possible, as the fact box is now created
-			// as wikitext and special chars in links are encoded.
-			$link = $special = SpecialPage::getTitleFor('Explanations')->getPrefixedText();
-			$link .= '/i:'.$derivedFacts->getSubject()->getTitle()->getPrefixedDBkey();
-			$link .= '/p:'.$property->getWikiPageValue()->getTitle()->getPrefixedDBkey();
-			$link .= '/v:'.urlencode($propvalue->getWikiValue());
-			$link .= '/mode:property';
-
-			$propRep = $propvalue->getLongWikiText($property->getPropertyTypeID() == "_wpg") .
-			      '&nbsp;'.
-				  '<span class="smwexplanation">[['.$link.'|+]]</span>';
-
-			$text .= $propRep;
-
-		}
-		$text .= '</td></tr>';
-	}
-	$text .= '</table></div>';
-
-	if (!$derivedFactsFound) {
-		$text = '';
-	}
-	return true;
+	$text = 
+'<div id="smw_dft_rendered_boxcontent"> <br />'.
+	'<table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">'.
+		'<tr>'.
+			'<td id="dftTab1" class="dftTabActive">'.
+				str_replace(' ', '&nbsp;', wfMsg('smw_df_static_tab')).
+			'</td>'.
+			'<td class="dftTabSpacer">&nbsp;</td>'.
+			'<td id="dftTab2" class="dftTabInactive">'.
+				str_replace(' ', '&nbsp;', wfMsg('smw_df_derived_tab')).
+			'</td>'.
+			'<td class="dftTabSpacer" width="100%"></td>'.
+		'</tr>'.
+		'<tr>'.
+			'<td colspan="4" style="width:100%; height:100%" class="dftTabCont">'.
+				'<div id="dftTab1Content" >'.
+					$fbText.
+				'</div>'.
+				'<div id="dftTab2Content" style="display:none">'.
+					'<div id="dftTab2ContentInnerDiv">'.wfMsg('smw_df_loading_df').'</div>'.
+				'</div>'.
+			'</td>'.
+		'</tr>'.
+	'</table>'.
+'</div>';
+	
+	return false;
 }
 
 /**

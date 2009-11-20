@@ -169,7 +169,8 @@ if ($build == 'General' || $buildAll) { // scripts which are loaded always
  	                 'generalGUI.js' => GPL_LICENSE_ONTOPRISE,
  	                 'contentSlider.js' => GPL_LICENSE_ONTOPRISE,
  					 'smw_logger.js' => GPL_LICENSE_ONTOPRISE,
- 					 'SMW_Language.js' => GPL_LICENSE_ONTOPRISE);
+ 					 'SMW_Language.js' => GPL_LICENSE_ONTOPRISE,
+					 'SMW_DerivedFactsTab.js' => GPL_LICENSE_ONTOPRISE);
 
 	buildScripts($outputFile, $scripts);
 }
