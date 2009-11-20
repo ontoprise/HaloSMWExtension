@@ -1,7 +1,7 @@
 <?php
 /**
  * Print query results in tables.
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * @file
  * @ingroup SMWQuery
  */
@@ -25,7 +25,10 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
         if ('broadtable' == $this->mFormat)
             $widthpara = ' width="100%"';
         else $widthpara = '';
-        $result = "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
+        $result="";
+        if (defined('SMW_UP_RATING_VERSION'))
+            $result .= "UpRatingTable__".$smwgIQRunningNumber."__elbaTgnitaRpU";
+        $result .= "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
         if ($this->mShowHeaders != SMW_HEADERS_HIDE) { // building headers
             $result .= "\t<tr>\n";
             foreach ($res->getPrintRequests() as $pr) {
@@ -44,12 +47,16 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
                 while ( ($object = $field->getNextObject()) !== false ) {
                     if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
                         $text = $object->getLongText($outputmode,$this->getLinker($firstcol));
-                        $provURL = $object->getProvenance();
-                        $text .= $this->createProvenanceLink($provURL);
+                        if (!$firstcol) {
+                            $provURL = $object->getProvenance();
+                            $text .= $this->createProvenanceLink($provURL);
+                        }
                     } else {
                         $text = $object->getShortText($outputmode,$this->getLinker($firstcol));
-                        $provURL = $object->getProvenance();
-                        $text .= $this->createProvenanceLink($provURL);
+                        if (!$firstcol) {
+                            $provURL = $object->getProvenance();
+                            $text .= $this->createProvenanceLink($provURL);
+                        }
                     }
                     if ($first) {
                         if ($object->isNumeric()) { // use numeric sortkey
@@ -81,6 +88,8 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
     }
     
     private function createProvenanceLink($url) {
-    	return SMWInfolink::newExternalLink("Label", $url); //TODO: replace by image link
+        if (defined('SMW_UP_RATING_VERSION')) {
+            return "UpRatingCell____lleCgnitaRpU";
+        }
     }
 }
