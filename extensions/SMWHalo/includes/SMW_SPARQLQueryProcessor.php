@@ -20,6 +20,7 @@ class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 		$querystring = '';
 		$printouts = array();
 		$params = array();
+		$doublePipe=false;
 		foreach ($rawparams as $name => $param) {
 			if ($doublePipe) {
 				$querystring .= " || ". $param;
