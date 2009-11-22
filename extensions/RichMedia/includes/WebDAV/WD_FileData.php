@@ -1,25 +1,6 @@
 <?php
 
 /*
- * This modified version was implemented by Ingo Steinbauer @ontoprise GmbH
- */
-
-/*
- *   This file is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   This file is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * @author Ingo Steinbauer
  */
 
@@ -29,6 +10,7 @@ class FileData {
 	private $fileName = "";
 	private $isEmpty = false;
 	private $folderNamePrefix = "";
+	private $namespaceName = "";
 
 	function __construct($pathComponents){
 		if(empty($pathComponents)){
@@ -38,7 +20,7 @@ class FileData {
 		}
 
 		$pathComponent = array_shift($pathComponents);
-		if($pathComponent != 'WD_WebDAV.php'){
+		if(strtolower($pathComponent) != 'wd_webdav.php'){
 			//todo: this is an error
 			$this->isEmpty = true;
 			return $this;
@@ -50,9 +32,17 @@ class FileData {
 		
 		while(!empty($pathComponents)){
 			$pathComponent = array_shift($pathComponents);
-			//todo: implement a is special folder method
+			
+			
 			if($this->isFileNamespaceFolder($pathComponent)
-					|| $this->isAllFilesNamespaceFolder($pathComponent)){
+					|| $this->isAllFilesNamespaceFolder($pathComponent)
+					|| $this->isNamespaceFolder($pathComponent)
+					|| $this->folderName == "Files"){
+				$this->folderNamePrefix .= $this->folderName."/";
+				$this->folderName = $pathComponent;
+			} else if ($this->isNamespaceFolder($this->folderName) 
+					&& !$this->isWikiArticle($pathComponent)){
+				$this->namespaceName = $this->folderName;
 				$this->folderNamePrefix .= $this->folderName."/";
 				$this->folderName = $pathComponent;
 			} else {
@@ -87,20 +77,16 @@ class FileData {
 		}
 	}
 
-	public function isWikiArticle(){
-		$ext = explode(".", $this->fileName);
+	public function isWikiArticle($fileName = null){
+		if(is_null($fileName)){
+			$fileName = $this->fileName;
+		}
+		
+		$ext = explode(".", $fileName);
 		if($ext[count($ext)-1] == "mwiki"){
 			return true;
 		}
 		return false;
-	}
-
-	public function isValidFile(){
-		return $this->folderName != "" && $this->fileName != "" && !$this->isEmpty;
-	}
-
-	public function isValidFolder(){
-		return !$this->isEmpty;
 	}
 
 	public function isFileNamespaceFolder($folderName = null){
@@ -154,7 +140,11 @@ class FileData {
 
 	public function getNamespaceId($isFolder = true, $folderName = null, $fileName = null){
 		if(is_null($folderName)){
-			$folderName = $this->folderName;
+			if(strlen($this->namespaceName) > 0){
+				$folderName = $this->namespaceName;
+			} else {
+				$folderName = $this->folderName;
+			}
 		}
 		
 		global $wgNamespaceAliases, $wgContLang;
@@ -233,5 +223,109 @@ class FileData {
 		return false;
 	}
 	
+	public function isNamespaceFolder($folderName = null, $ignoreFolderNamePrefix = false){
+		if(is_null($folderName)){
+			$folderName = $this->folderName;
+		}
+		if($folderName != "Files"){
+			if(!$this->isFileNamespaceFolder($folderName)){
+				if(strlen($this->folderNamePrefix) == 0
+						|| $ignoreFolderNamePrefix){
+					global $wgWebDAVDisplayTalkNamespaces;
+					if(!strpos($folderName, "_talk") 
+							|| $wgWebDAVDisplayTalkNamespaces){
+						global $wgWebDAVNamespaceBlackList;
+						if(!array_key_exists($folderName, 
+								$wgWebDAVNamespaceBlackList)){
+							global $wgCanonicalNamespaceNames, $wgExtraNamespaces, 
+								$wgWebDAVNamespaceBlackList;
+							$namespaces = 
+								$wgCanonicalNamespaceNames + $wgExtraNamespaces 
+								+ array("Main", "Main_talk");
+							$namespaces = array_flip($namespaces);
+							if(array_key_exists($folderName, $namespaces)){
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 	
+	public function isArticleFolder(){
+		$folderName = explode("/", $this->folderNamePrefix);
+		if(array_key_exists(count($folderName)-2, $folderName)){
+			return $this->isNamespaceFolder($folderName[count($folderName)-2], true);
+		}
+		return false;	
+	}
+	
+	private function getFolderPathType(){
+		//todo: define constants
+		if(!$this->isEmpty){
+			if($this->isRootDirectory()){
+				return "root";
+			} else {
+				$path = explode("/",$this->folderNamePrefix.$this->folderName);
+				if($this->isNamespaceFolder($path[0], true)){
+					if(count($path) == 1){
+						return "namespace";
+					} else if(count($path) == 2 && !$this->isDirectory()){
+						$nsId = $this->getNamespaceId(true, $path[0]);
+						$title = Title::newFromText($path[1], $nsId);
+						if($title->exists()){
+							return "article";
+						}
+					} else if(count($path) == 2 && $this->isDirectory()){
+						return "article";
+					}
+				} else if ($path[0] == "Files"){
+					if(count($path) == 1){
+						return "files";
+					} else if(count($path) == 2){
+						if($this->isFileNamespaceFolder($path[1])){
+							return "filenamespace";
+						}
+					}
+				}
+			}
+		}
+		return "invalid";
+	}
+	
+	public function isValidPropfindPath(){
+		$folderPathType = $this->getFolderPathType();
+		if($folderPathType === "invalid"){
+			return false;
+		}
+		return true;
+	}
+	
+	public function isValidPutPath(){
+		$folderPathType = $this->getFolderPathType();
+		if($folderPathType == "invalid"){
+			return false;
+		} else if($folderPathType == "root"
+				|| $folderPathType == "files"){
+					return false;
+		} else if($folderPathType == "article" && $this->isWikiArticle()){
+			return $this->folderName.".mwiki" == $this->fileName;
+		} else if($folderPathType == "article" && $this->isDirectory()){
+			return true;
+		}
+		return true;
+	}
+	
+	public function isValidDeletePath(){
+		$folderPathType = $this->getFolderPathType();
+		if($folderPathType == "invalid"){
+			return false;
+		} else if($folderPathType == "root"
+				|| $folderPathType == "files"){
+					return false;
+		} 
+		return true;
+	}
 }

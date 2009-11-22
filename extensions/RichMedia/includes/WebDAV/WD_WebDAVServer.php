@@ -47,7 +47,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	function getAllowedMethods() {
 		//todo: add copy and move method
 		// i removed the REPORT method
-		return array( 'OPTIONS', 'PROPFIND', 'GET', 'HEAD', 'DELETE', 'PUT', 'COPY', 'MOVE');
+		return array( 'OPTIONS', 'PROPFIND', 'GET', 'HEAD', 'DELETE', 'PUT', 'COPY', 'MOVE', 'MKCOL');
 	}
 
 	function options( &$serverOptions ) {
@@ -83,17 +83,17 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function propfind( &$serverOptions ) {
+		//todo: deal with propfind on files; think also about the isValidPropfindPath method
 		$temp = implode("/", $this->pathComponents);
 		$this->writeLog("propfind ".$temp);
-
+		
 		$serverOptions['namespaces']['http://subversion.tigris.org/xmlns/dav/'] = 'V';
 		$status = array();
 
 		//todo: login stuff
 
 		$fileData = new FileData($this->pathComponents);
-
-		if(!$fileData->isValidFolder()){
+		if(!$fileData->isValidPropfindPath()){
 			return "400 Bad request";
 		}
 
@@ -109,7 +109,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 				# Don't descend if depth is zero
 				if ( empty( $serverOptions['depth'] ) ) {
-					return $status;
+					//todo remove comment
+					//return $status;
 				}
 
 				$status = array_merge($status, $this->getNamespaceFolders());
@@ -177,7 +178,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				}
 
 				return $status;
-			} else {
+			} else if ($fileData->isNamespaceFolder()){
 				$status[] = $this->createFolderResponse(
 				$fileData->getPrefixedFolderName().'/', $fileData->getFolderName());
 					
@@ -198,10 +199,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 					$titles[] = $title;
 
 					$title = $fileData->encodeFileName($result[0]);
-					$status[] = $this->createFileResponse(
-					$fileData->getPrefixedFolderName().'/'.$title.".mwiki",
-					$title.".mwiki",
-					$result[2], "text/x-wiki", null, $result[3]);
+					$status[] = $this->createFolderResponse(
+						$fileData->getPrefixedFolderName().'/'.$title, $title);
 				}
 
 				if($fileData->isFileNamespaceFolder()){
@@ -215,8 +214,42 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				}
 
 				return $status;
+			} else {
+				$status[] = $this->createFolderResponse(
+				$fileData->getPrefixedFolderName().'/', $fileData->getFolderName());
+					
+				if ( empty( $serverOptions['depth'] ) ) {
+					return $status;
+				}
+				
+				//the namespace is given by the upper folder name
+				$folderName = explode("/", $fileData->getPrefixedFolderName());
+				$folderName = $folderName[count($folderName)-2];
+				$nsId = $fileData->getNamespaceId(true, $folderName);
+				
+				$results = $dbr->query(
+					'SELECT page_title, page_latest, page_len, page_touched
+					FROM page WHERE page_namespace = '.$nsId.'
+					AND page_title = "'.$fileData->getFolderName().'"');
+
+				$titles = array();
+				while ( ( $result = $dbr->fetchRow( $results ) ) !== false ) {
+					# TODO: Should maybe not be using page_title as URL component, but it's currently what we do elsewhere
+					$title = Title::newFromUrl( $result[0] );
+					$titles[] = $title;
+
+					$title = $fileData->encodeFileName($result[0]);
+					$status[] = $this->createFileResponse(
+						$fileData->getPrefixedFolderName().'/'.$title.".mwiki",
+						$title.".mwiki",
+						$result[2], "text/x-wiki", null, $result[3]);
+				}
+				
+				$status = array_merge($status, $this->getAttachmentFiles($fileData));
+
+				return $status;
 			}
-		} else {
+		} else { //end of if is directory
 			if($fileData->isTempFile()){
 				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
 				.$fileData->getFileName())){
@@ -248,6 +281,31 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			$this->writeLog("\r\n##\r\n ".$temp."\r\n##\r\n");
 			return $status;
 		}
+	}
+	
+	private function getAttachmentFiles($fileData){
+		$status = array();
+		
+		//todo: make this query configurable in the settings
+		SMWQueryProcessor::processFunctionParams(array("[[Category:Media]] [[HasRelatedArticle::"
+			.$fileData->getFolderName()."]]")
+			,$querystring,$params,$printouts);
+		$queryResult = explode("|",
+			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+			$printouts, SMW_OUTPUT_WIKI));
+		unset($queryResult[0]);
+		
+		foreach($queryResult as $fileName){
+			$fileName = substr($fileName, 0, strpos($fileName, "]]"));
+			
+			$file = RepoGroup::singleton()->findFile($fileName);
+			if($file){
+				$status[] = $this->createFileResponse(
+					$fileData->getPrefixedFolderName().'/'.$fileName, $fileName,
+						$file->size, $file->mime, null, $file->timestamp);
+			}
+		}
+		return $status;
 	}
 
 	private function getFileNamespaceFolders(){
@@ -295,9 +353,9 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 		$fileData = new FileData($this->pathComponents);
 
-		if (!$fileData->isValidFile()){
-			return;
-		}
+		//if (!$fileData->isValidGetPath()){
+		//	return;
+		//}
 
 		$nsId = $fileData->getNamespaceId(false);
 
@@ -316,6 +374,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function doGet($pathComponents, $echo = true){
+		$temp = implode("/",$pathComponents);
+		$this->writeLog("put ".$temp);
 		$temp = implode("/",$pathComponents);
 		$this->writeLog("get ".$temp);
 
@@ -374,11 +434,17 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	function get_wrapper() {
 		$result = $this->doGet($this->pathComponents, true);
 		if($result === true){
-			//$this->setResponseStatus("200 OK", false);
+			$this->setResponseStatus("200 OK", false);
 		}
 	}
 
+	
+	
 	function head_wrapper() {
+		//todo: implement that method
+		$temp = implode("/",$this->pathComponents);
+		$this->writeLog("head ".$temp);
+		
 		if ( !$this->userIsAllowed()){
 			$this->setResponseStatus("401 Unauthorized", false );
 			return;
@@ -398,6 +464,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		# TODO: Does MediaWiki handle HEAD requests specially?
 		ob_start();
 		$rawPage->view();
+		
 		ob_end_clean();
 	}
 
@@ -410,48 +477,56 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$temp = implode("/",$pathComponents);
 		$this->writeLog("delete ".$temp);
 
-
 		if ( !$this->userIsAllowed()){
 			return "401 Unauthorized";
 		}
 
 		$fileData = new FileData($pathComponents);
-		if (!$fileData->isValidFile()) {
+		if (!$fileData->isValidDeletePath()) {
 			return "400 Bad Request";
 		}
 
-		if($fileData->isFileNamespaceFolder()){
-			if(!$fileData->isWikiArticle()){
-				if($fileData->isTempFile()){
-					if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
-							.$fileData->getFileName())){
-						unlink("./extensions/RichMedia/includes/WebDAV/tmp/"
-							.$fileData->getFileName());
-					}
-				} else {
-					$title = Title::newFromText( $fileData->getFileName());
-					$file = RepoGroup::singleton()->findFile($title);
-					if($file){
-						$file->delete("via webdav");
-					}
+		$isArticleFolder = $fileData->isArticleFolder();
+		if(!$fileData->isDirectory() && 
+				($fileData->isFileNamespaceFolder()
+				|| $isArticleFolder)){
+			if($fileData->isTempFile()){
+				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
+						.$fileData->getFileName())){
+					unlink("./extensions/RichMedia/includes/WebDAV/tmp/"
+						.$fileData->getFileName());
 				}
 				return true;
+			} else {
+				$title = Title::newFromText( $fileData->getFileName());
+				$file = RepoGroup::singleton()->findFile($title);
+				if($file){
+					$file->delete("Deleted via the WebDAV extension");
+				}
+				if(!$fileData->isFileNamespaceFolder()){
+					return true;
+				}
 			}
 		}
 
 		$nsId = $fileData->getNamespaceId(false);
-			
-		$title = Title::newFromText( $fileData->getFileName(), $nsId);
-
+		$title = "";
+		if($fileData->isDirectory()){
+			$title = $fileData->getFolderName();
+		} else {
+			$title = $fileData->getFileName();
+		}
+		$title = Title::newFromText($title, $nsId);
 		
+
 		if (!isset( $title )) {
 			//does not matter that the article does not exist
-			return tru;
+			return true;
 		}
 		
 		if (!$title->exists()) {
 			//does not matter that the article does not exist
-			return tru;
+			return true;
 		}
 
 		$mediaWiki = new MediaWiki();
@@ -504,7 +579,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		return true;
 	}
 
-	private function uploadFile($title, $text){
+	private function uploadFile($title, $text, $relatedArticleTitle){
 		//create temporary file
 		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/tempfile", $text);
 
@@ -512,18 +587,29 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$local = wfLocalFile($title);
 		$status = $local->upload(
 			"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
-			, "created via webdav", "",
+			, "Created via the WebDAV extension", "",
 			File::DELETE_SOURCE);
 			
 
 		global $smwgEnableUploadConverter, $smwgRMIP;
+		$text = "";
 		if($smwgEnableUploadConverter){
 			$local->load();
 			$text = UploadConverter::getFileContent($local);
+		}
+		
+		global $wgWebDAVRichMediaTemplateMapping;
+		$wgWebDAVRichMediaTemplateMapping = 
+			str_replace("##filename##", "test.pdf", $wgWebDAVRichMediaTemplateMapping);
+		$wgWebDAVRichMediaTemplateMapping = 
+			str_replace("##relatedArticles##", $relatedArticleTitle, $wgWebDAVRichMediaTemplateMapping);
+		
+		$text = $wgWebDAVRichMediaTemplateMapping."\n".$text;
 
+		if(strlen(trim($text)) > 0){
 			$article = new Article($local->title);
 			$article->doEdit(
-				$text, "uploaded via webdav");
+				$text, "Uploaded via WebDAV extension.");
 		}
 
 
@@ -577,38 +663,52 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		if(!$this->userIsAllowed())
 			return "401 Unauthorized";
 
-
 		$fileData = new FileData($pathComponents);
-		if (!$fileData->isValidFile()) {
+		if (!$fileData->isValidPutPath()) {
 			return "400 Bad Request";
 		}
 
 		$nsId = $fileData->getNamespaceId(false);
-
+		
 		if(is_null($text)){
-			$text = $this->getPostedFileContent();
-			if(!$text){
-				return "400 Bad Request";
+			if(!$fileData->isDirectory()){
+				$text = $this->getPostedFileContent();
+				if(!$text){
+					return "400 Bad Request";
+				}
+			} else {
+				$text = "";
 			}
 		}
 
-		if($fileData->isFileNamespaceFolder()){
+		$isArticleFolder = $fileData->isArticleFolder();
+		if(!$fileData->isDirectory() && 
+			($fileData->isFileNamespaceFolder()
+				|| $isArticleFolder)){
 			if(!$fileData->isWikiArticle()){
 				if($fileData->isTempFile()){
 					$this->uploadTempFile($fileData->getFileName(), $text);
 				} else {
-					$this->uploadFile($fileData->getFileName(), $text);
+					$relatedArticleTitle = 
+						$isArticleFolder ? $fileData->getFolderName() : "";
+					$this->uploadFile($fileData->getFileName(), $text, $relatedArticleTitle);
 				}
 				return true;
 			}
 		}
-
-		$title = Title::newFromText(
-		$fileData->getFileName(), $nsId);
+		
+		$title = "";
+		if($fileData->isDirectory()){
+			$title = $fileData->getFolderName();
+		} else {
+			$title = $fileData->getFileName();
+		}
+		
+		$title = Title::newFromText($title, $nsId);
 		if (!isset( $title )) {
 			return "400 Bad Request";
 		}
-
+		
 		if ( !$title->exists() && !$title->userCan( 'create' ) ) {
 			$this->setResponseStatus( '401 Unauthorized' );
 			return;
@@ -688,5 +788,9 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		file_put_contents("d:\\webdav-log.txt", $temp."\r\n"
 		.$this->time."  ".$text);
 
+	}
+	
+	public function mkcol($options){
+		return $this->put($options);
 	}
 }

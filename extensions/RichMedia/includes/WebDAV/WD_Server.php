@@ -205,7 +205,6 @@ class HTTP_WebDAV_Server
 
 		// detect requested method names
 		$method = strtolower($_SERVER['REQUEST_METHOD']);
-
 		$wrapper = $method . '_wrapper';
 
 		// get allowed methods
