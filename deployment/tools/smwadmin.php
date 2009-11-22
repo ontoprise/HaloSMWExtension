@@ -309,7 +309,7 @@ function handleInstallOrUpdate($packageID, $version) {
 	} else if (isset($dfgCheckDep) && $dfgCheckDep == true) {
 
 		// check dependencies of a package to install or update
-		list($new_package, $old_package, $extensions_to_update) = $installer->checkDependencies($packageID, $version);
+		list($new_package, $old_package, $extensions_to_update) = $installer->collectPackagesToInstall($packageID, $version);
 		print "\n\nThe following extensions would be installed:\n";
 		foreach($extensions_to_update as $etu) {
 			list($desc, $min, $max) = $etu;

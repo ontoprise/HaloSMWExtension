@@ -27,6 +27,7 @@ define('DEPLOY_FRAMEWORK_MISSING_FILE', 7);
 define('DEPLOY_FRAMEWORK_ALREADY_INSTALLED', 8);
 define('DEPLOY_FRAMEWORK_NOT_INSTALLED', 9);
 define('DEPLOY_FRAMEWORK_PRECEDING_CYCLE', 10);
+define('DEPLOY_FRAMEWORK_WRONG_MW_VERSION', 11);
 
 require_once 'DF_PackageRepository.php';
 require_once 'DF_Tools.php';
@@ -113,11 +114,16 @@ class Installer {
 	 */
 	public function installOrUpdate($packageID, $version = NULL) {
 
-		list($new_package, $old_package, $extensions_to_update) = $this->checkDependencies($packageID, $version);
-
+		list($new_package, $old_package, $extensions_to_update) = $this->collectPackagesToInstall($packageID, $version);
+        
+		if (count($extensions_to_update) == 0) 
+		  throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Set of packages to install is empty.", $packageID); 
 		// Install/update all dependant and super extensions
-		print "\nInstall dependant extensions and update super extensions if necessary";
-		$extensions_to_update[] = array($new_package, $new_package->getVersion(), $new_package->getVersion());
+		print "\nThe following packages need to be installed";
+		foreach($extensions_to_update as $etu) {
+			list($dd, $min, $max) = $etu;
+			print "\n- ".$dd->getID()."-".$min;
+		}
 		$this->installOrUpdatePackages($extensions_to_update);
 
 		if (!$this->noRollback) $this->rollback->saveRollbackLog();
@@ -195,21 +201,22 @@ class Installer {
 
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
 
-
+        // iterate through all installed packages, check if new or patched versions
+        // are available and collect all depending extension to be updated.
 		$updatesNeeded = array();
 		foreach($localPackages as $tl_ext) {
 			if ($tl_ext->getID() == 'mw') continue;
 			$dd = PackageRepository::getLatestDeployDescriptor($tl_ext->getID());
 			if ($dd->getVersion() > $localPackages[$dd->getID()]->getVersion()
 			|| $dd->getPatchlevel() > $localPackages[$dd->getID()]->getPatchlevel()) {
-				$this->checkForDependingExtensions($dd, $updatesNeeded, $localPackages);
+				$this->collectDependingExtensions($dd, $updatesNeeded, $localPackages);
 				$updatesNeeded[] = array($dd, $dd->getVersion(), $dd->getVersion());
 			}
 
 		}
 
-
-		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
+        // remove all packages which can not be updated due to conflicts
+		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
 
 		if ($onlyDependencyCheck) {
 			return array($extensions_to_update, false);
@@ -219,30 +226,6 @@ class Installer {
 			return array($extensions_to_update, true);
 
 		}
-	}
-
-
-
-	public function listDependencies($packageID, $version = NULL) {
-		list($new_package, $old_package, $extensions_to_update) = $this->checkDependencies($packageID, $version);
-
-		print "\n\nThe following extensions need to get updated: ";
-		foreach($extensions_to_update as $id => $etu) {
-			list($desc, $min, $max) = $etu;
-			if (!array_key_exists($id, $localPackages)) continue;
-			print "\n\t$id-".Tools::addVersionSeparators($min);
-		}
-		if (!array_key_exists($new_package->getID(), $localPackages)) print "\n".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
-		print "\n\n";
-
-		print "\n\nThe following extensions would get installed new: ";
-		foreach($extensions_to_update as $id => $etu) {
-			list($desc, $min, $max) = $etu;
-			if (array_key_exists($id, $localPackages)) continue;
-			print "\n\t$id-".Tools::addVersionSeparators($min);
-		}
-		if (array_key_exists($new_package->getID(), $localPackages)) print "\n".$new_package->getID()."-".Tools::addVersionSeparators($new_package->getVersion());
-		print "\n\n";
 	}
 
 
@@ -296,7 +279,7 @@ class Installer {
 	 * @param int $version
 	 * @return array($new_package, $old_package, $extensions_to_update)
 	 */
-	public function checkDependencies($packageID, $version = NULL) {
+	public function collectPackagesToInstall($packageID, $version = NULL) {
 		// 1. Check if package is installed
 		print "\nCheck if package installed...";
 		$localPackages = PackageRepository::getLocalPackages($this->rootDir.'/extensions');
@@ -347,17 +330,17 @@ class Installer {
 			throw new InstallationError(DEPLOY_FRAMEWORK_ALREADY_INSTALLED, "Already installed. Nothing to do.", $old_package);
 		}
 
-	 // 6. Check dependencies for install/update
-	 // get package to install
-		$updatesNeeded = array();
-		print "\nCheck for updates...";
-		$this->checkForDependingExtensions($new_package, $updatesNeeded, $localPackages);
-		$this->checkForSuperExtensions($new_package, $updatesNeeded, $localPackages);
+		 // 6. Check dependencies for install/update
+		 // get package to install
+		$updatesNeeded = array(array($new_package->getID(), $new_package->getVersion(), $new_package->getVersion()));
+		print "\nCheck for necessary updates...";
+		$this->collectDependingExtensions($new_package, $updatesNeeded, $localPackages);
+		$this->collectSuperExtensions($new_package, $updatesNeeded, $localPackages);
 
 
 		// 7. calculate version which matches all depdencies of an extension.
-		print "\nCalculate matching versions";
-		$this->calculateVersionRange($updatesNeeded, $extensions_to_update);
+		print "\nFilter incompatible packages";
+		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
 
 		return array($new_package, $old_package, $extensions_to_update);
 	}
@@ -428,12 +411,15 @@ class Installer {
 	}
 
 	/**
-	 * Calculates for any extension individually the interval of min/max version, so that it is a subset of all.
+	 * Calculates for any extension individually the possible interval of version, 
+	 * which can be installed. Removes all packages which can not be
+	 * installed because there are contradicting requirements in terms of version numbers,
+	 * ie. min version > max version.
 	 *
 	 * @param array($dd, $min, $max) $updatesNeeded
 	 * @param array(id=>array($dd, $min, $max)) $extensions_to_update
 	 */
-	private function calculateVersionRange($updatesNeeded, & $extensions_to_update) {
+	private function filterIncompatiblePackages($updatesNeeded, & $extensions_to_update, & $contradictions) {
 		$extensions = array();
 		
 		$removed_extensions = array();
@@ -453,7 +439,7 @@ class Installer {
 			}
 		}
 
-		// remove all packages with min < max, ie. they can not be installed
+		// remove all packages with min > max, ie. they can not be installed
 		// because no suitable version exists.
 		// remove also all super-packages of such.
 		do {
@@ -471,6 +457,7 @@ class Installer {
 					}
 				} else {
 					$removed_extensions[$id] = $un;
+					$contradictions[] = array($id, $min, $max);
 				}
 			}
 		} while(count($removed_extensions) > $lastSize);
@@ -539,7 +526,7 @@ class Installer {
 	 * @param array $packagesToUpdate
 	 * @param array of DeployDescriptor $localPackages
 	 */
-	private function checkForDependingExtensions($dd, & $packagesToUpdate, $localPackages) {
+	private function collectDependingExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$dependencies = $dd->getDependencies();
 		$updatesNeeded = array();
 
@@ -553,18 +540,18 @@ class Installer {
 				if ($id === $p->getID()) {
 					$packageFound = true;
 					if ($p->getVersion() < $from) {
-						print "\nNeed update: ".$p->getID()." ($from-$to)";
+						
 						$updatesNeeded[] = array($p->getID(), $from, $to);
 					}
 					if ($p->getVersion() > $to) {
-						print "\nNeed downgrade: ".$p->getID()." ($from-$to)";
+						
 						$updatesNeeded[] = array($p->getID(), $from, $to);
 					}
 				}
 			}
 			if (!$packageFound) {
 				// package was not installed at all.
-				print "\nNeed installation: ".$id." ($from-$to)";
+				
 				$updatesNeeded[] = array($id, $from, $to);
 			}
 		}
@@ -574,10 +561,18 @@ class Installer {
 		// need to get updated too.
 		foreach($updatesNeeded as $up) {
 			list($id, $minVersion, $maxVersion) = $up;
+			if ($id == 'mw') {
+				// special handling for Mediawiki (mw) 
+				// stop installation if version does not match
+				$mwVersion = $localPackages['mw']->getVersion();
+				if ($mwVersion < $minVersion || $mwVersion > $maxVersion) {
+					throw new InstallationError(DEPLOY_FRAMEWORK_WRONG_MW_VERSION, "Wrong mediawiki version $mwVersion. ".$dd->getID()." requires $minVersion - $maxVersion");
+				}
+			}
 			$dd = PackageRepository::getDeployDescriptor($id, $minVersion);
 
 			$packagesToUpdate[] = array($dd, $minVersion, $maxVersion);
-			$this->checkForDependingExtensions($dd, $packagesToUpdate, $localPackages);
+			$this->collectDependingExtensions($dd, $packagesToUpdate, $localPackages);
 		}
 
 	}
@@ -590,7 +585,7 @@ class Installer {
 	 * @param array $packagesToUpdate
 	 * @param array of DeployDescriptor $localPackages
 	 */
-	private function checkForSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
+	private function collectSuperExtensions($dd, & $packagesToUpdate, $localPackages) {
 		$updatesNeeded = array();
 		foreach($localPackages as $p) {
 
@@ -609,7 +604,7 @@ class Installer {
 					$ptoUpdate = PackageRepository::getDeployDescriptor($p->getID(), $v);
 					list($id_ptu, $from_ptu, $to_ptu) = $ptoUpdate->getDependency($p->getID());
 					if ($from_ptu <= $dd->getVersion() && $to_ptu >= $dd->getVersion()) {
-						print "\nNeed update ".$p->getID()." ($from_ptu-$to_ptu)";
+					
 						$updatesNeeded[] = array($p, $from_ptu, $to_ptu);
 						$updateFound = true;
 						break;
@@ -617,7 +612,7 @@ class Installer {
 				}
 				if (!$updateFound) throw new InstallationError(DEPLOY_FRAMEWORK_COULD_NOT_FIND_UPDATE, "Could not find update for: ".$p->getID());
 				$packagesToUpdate = array_merge($packagesToUpdate, $updatesNeeded);
-				$this->checkForSuperExtensions($p, $packagesToUpdate, $localPackages);
+				$this->collectSuperExtensions($p, $packagesToUpdate, $localPackages);
 			}
 		}
 
