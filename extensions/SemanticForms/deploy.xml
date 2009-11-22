@@ -9,7 +9,7 @@
             Store richmedia files in our your wiki
         </description>
         <dependencies>
-            <dependency from="1120" to="1150">MW</dependency>
+            <dependency from="1120" to="1159">MW</dependency>
             <dependency from="142" to="142">smw</dependency>
         </dependencies>
     </global>
