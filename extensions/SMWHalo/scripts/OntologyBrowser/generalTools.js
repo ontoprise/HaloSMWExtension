@@ -618,5 +618,9 @@ OBPendingIndicator.prototype = {
 	
 	hide: function() {
 		Element.hide(this.pendingIndicator);
+	},
+
+        remove: function() {
+		Element.remove(this.pendingIndicator);
 	}
 }

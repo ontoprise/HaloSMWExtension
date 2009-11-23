@@ -153,9 +153,9 @@ QIHelper.prototype = {
 			return html;
 		}
 		if (this.parameterPendingElement)
-            this.parameterPendingElement.hide();
-        this.parameterPendingElement = new OBPendingIndicator($('querylayout'));
-        this.parameterPendingElement.show();
+                    this.parameterPendingElement.remove();
+                this.parameterPendingElement = new OBPendingIndicator($('querylayout'));
+                this.parameterPendingElement.show();
         
 		sajax_do_call('smwf_qi_QIAccess', [ 'getSupportedParameters', qp ],
 				callback.bind(this));
@@ -306,7 +306,7 @@ QIHelper.prototype = {
 		/* ENDLOG */
 		$('shade').toggle();
 		if (this.pendingElement)
-			this.pendingElement.hide();
+                    this.pendingElement.remove();
 		this.pendingElement = new OBPendingIndicator($('shade'));
 		this.pendingElement.show();
                 $('fullpreviewbox').toggle();
@@ -348,7 +348,7 @@ QIHelper.prototype = {
 		/* ENDLOG */
 
 		if (this.pendingElement)
-			this.pendingElement.hide();
+			this.pendingElement.remove();
 		this.pendingElement = new OBPendingIndicator($('previewcontent'));
 		this.pendingElement.show();
 
@@ -872,7 +872,7 @@ QIHelper.prototype = {
 															// and name changed
 			this.propname = propname;
 			if (this.pendingElement)
-				this.pendingElement.hide();
+				this.pendingElement.remove();
 			this.pendingElement = new OBPendingIndicator($('input3'));
 			this.pendingElement.show();
 			sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
@@ -1258,7 +1258,7 @@ QIHelper.prototype = {
                                                             // and name changed
             this.propname = propname;
             if (this.pendingElement)
-                this.pendingElement.hide();
+                this.pendingElement.remove();
             this.pendingElement = new OBPendingIndicator($('input3'));
             this.pendingElement.show();
             sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
@@ -1713,7 +1713,7 @@ QIHelper.prototype = {
 	doSave : function() {
 		if (!this.queries[0].isEmpty()) {
 			if (this.pendingElement)
-				this.pendingElement.hide();
+				this.pendingElement.remove();
 			this.pendingElement = new OBPendingIndicator($('savedialogue'));
 			this.pendingElement.show();
 			var params = $('saveName').value + ",";

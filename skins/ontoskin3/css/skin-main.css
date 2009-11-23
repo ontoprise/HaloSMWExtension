@@ -363,6 +363,11 @@ ul.smwh_menulist div.smwh_menubody_visible {
     display: none;
 }
 
+/* page statistic */
+#smwh_pstats{
+ text-align:center;
+}
+
 /*footer*/
 
 

@@ -241,7 +241,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php if ($wgRequest->getText('page') != "plain") : ?>
             </div>
             <div class="visualClear"></div>
-            
+            <div id="smwh_pstats"> <?php echo $this->smwh_Skin->showPageStats(); ?> </div>
             <?php endif; // page != 'plain' ?>
             
                 

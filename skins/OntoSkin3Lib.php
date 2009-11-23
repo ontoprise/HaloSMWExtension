@@ -219,7 +219,7 @@ class SMWH_Skin {
         $menu = "<!-- Tools Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration";
-        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath.$this->imagepath."/img/button_tools.gif\" alt=\"tools\"/>";
+        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath.$this->imagepath."/button_tools.gif\" alt=\"tools\"/>";
         $menu.= "</p></div>";
         $content = wfMsgForContent( 'haloadministration' );
         if($content!=null){
@@ -448,8 +448,22 @@ class SMWH_Skin {
         } else {
            return "";
         }
+    }
 
+    public function showPageStats(){
+    		// Generate additional footer links
+		$footerlinks = array(
+			'lastmod', 'viewcount', 'numberofwatchingusers'
+		);
 
+                $pstats ="";
+		foreach( $footerlinks as $aLink ) {
+			if( isset( $this->skintemplate->data[$aLink] ) && $this->skintemplate->data[$aLink] ) {
+				$pstats .= $this->skintemplate->html($aLink);
+
+			}
+		}
+                return $pstats;
     }
 
 }
