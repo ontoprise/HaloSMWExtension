@@ -20,23 +20,15 @@ $wgWebDAVNamespaceBlackList["Type"] = false;
 $wgWebDAVNamespaceBlackList["IAI"] = false;
 
 
-//Define the mapping between the template parameters
-//used by the RichMedia extension and the WebDAV properties
-///extracted from files. The WebDAV extension will use the 
-//template call below for each uploaded file. Leave the mapping
-//empty if you don't want to use the RichMedia template.
-//Every WebDAV parameter (embedded in two "#" symbols
-//will be replaced by the WebDAV extension with a certain 
-//value. The WebDAV extension knows the following
-//attributes: ##filename## todo:add the others
-global $wgWebDAVRichMediaTemplateMapping;
-$wgWebDAVRichMediaTemplateMapping = "{{RMMedia
-|Filename = ##filename##
-|RelatedArticles = ##relatedArticles##
-}}
-
-[[Category:Media]]"; 
-
+// Define the mapping between the template used by the 
+// RichMedia extension and the WebDAV properties extracted  
+// from files and other contexts.
+global $wgWebDAVRichMediaMapping;
+$wgWebDAVRichMediaMapping = array(); 
+$wgWebDAVRichMediaMapping["TemplateName"] = "RMMedia";
+$wgWebDAVRichMediaMapping["Filename"] = "Filename";
+$wgWebDAVRichMediaMapping["RelatedArticles"] = "RelatedArticles";
+$wgWebDAVRichMediaMapping["Delimiter"] = ",";
 
 
 

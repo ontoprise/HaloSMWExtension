@@ -29,8 +29,6 @@
 # Initialise common code
 chdir('./../../../../');
 require_once("./includes/WebStart.php");
-require_once( 'WD_WebDAVServer.php' );
-require_once( 'WD_Settings.php' );
 
 global $wgWebDAVServerEnabled;
 if(!$wgWebDAVServerEnabled){

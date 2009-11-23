@@ -375,8 +375,6 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 	function doGet($pathComponents, $echo = true){
 		$temp = implode("/",$pathComponents);
-		$this->writeLog("put ".$temp);
-		$temp = implode("/",$pathComponents);
 		$this->writeLog("get ".$temp);
 
 		$text = "";
@@ -450,22 +448,13 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			return;
 		}
 		
-		$rawPage = $this->getRawPage();
-		if ( !isset( $rawPage ) ) {
-			$this->setResponseStatus("404 Not found", false );
+		$getResult = $this->doGet($this->pathComponents, false);
+		if($getResult === false){
 			return false;
+		} else {
+			$this->setResponseStatus("200 OK", false);
+			return true;
 		}
-
-		if ( !isset( $rawText ) ) {
-			$this->setResponseStatus( false, false );
-			return false;
-		}
-
-		# TODO: Does MediaWiki handle HEAD requests specially?
-		ob_start();
-		$rawPage->view();
-		
-		ob_end_clean();
 	}
 
 	function delete($serverOptions){
@@ -505,6 +494,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				}
 				if(!$fileData->isFileNamespaceFolder()){
 					return true;
+				} else {
+					
 				}
 			}
 		}
@@ -579,12 +570,19 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		return true;
 	}
 
-	private function uploadFile($title, $text, $relatedArticleTitle){
-		//create temporary file
-		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/tempfile", $text);
+	private function uploadFile($fileData, $text, $relatedArticleTitle){
+		$title = $fileData->getFileName();
 
-		//upload file
 		$local = wfLocalFile($title);
+		
+		//get articles that are also related to that file
+		$relatedArticleTitles = "";
+		if($local->title->exists()){
+			$wdTP = new WDTemplateParser($local->title);
+			$relatedArticleTitles = $wdTP->getRelatedArticles();
+		}
+		
+		//upload file
 		$status = $local->upload(
 			"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
 			, "Created via the WebDAV extension", "",
@@ -598,13 +596,27 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			$text = UploadConverter::getFileContent($local);
 		}
 		
-		global $wgWebDAVRichMediaTemplateMapping;
-		$wgWebDAVRichMediaTemplateMapping = 
-			str_replace("##filename##", "test.pdf", $wgWebDAVRichMediaTemplateMapping);
-		$wgWebDAVRichMediaTemplateMapping = 
-			str_replace("##relatedArticles##", $relatedArticleTitle, $wgWebDAVRichMediaTemplateMapping);
+		//concat relatedArticlesString
+		if(strlen($relatedArticleTitles) > 0){
+			global $wgWebDAVRichMediaMapping;
+			$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
+			$found = false;
+			
+			$relatedArticleTitles = explode($delimiter, $relatedArticleTitles);
+			foreach($relatedArticleTitles as $article){
+				if(trim($article) == $relatedArticleTitle){
+					$found = true;
+				}
+			}
+			if(!$found){
+				$relatedArticleTitles[] = $relatedArticleTitle;
+			}
+			$relatedArticleTitles = implode($delimiter, $relatedArticleTitles);
+		} else {
+			$relatedArticleTitles = $relatedArticleTitle;
+		}
 		
-		$text = $wgWebDAVRichMediaTemplateMapping."\n".$text;
+		$text = $this->createRichMediaTemplate("Test.pdf", $relatedArticleTitles)."\n".$text;
 
 		if(strlen(trim($text)) > 0){
 			$article = new Article($local->title);
@@ -616,6 +628,18 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		// todo metadata
 		// todo:error handling
 		return true;
+	}
+	
+	private function createRichMediaTemplate($fileName, $relatedArticleTitles){
+		global $wgWebDAVRichMediaMapping;
+		$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
+		
+		$result = "{{".$wgWebDAVRichMediaMapping["TemplateName"]."\n";
+		$result .= "|".$wgWebDAVRichMediaMapping["Filename"]."=".$fileName."\n";
+		$result .= "|".$wgWebDAVRichMediaMapping["RelatedArticles"]."="
+			.$relatedArticleTitles."\n";
+		$result .= "}}";
+		return $result;
 	}
 
 	function move($serverOptions){
@@ -691,7 +715,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				} else {
 					$relatedArticleTitle = 
 						$isArticleFolder ? $fileData->getFolderName() : "";
-					$this->uploadFile($fileData->getFileName(), $text, $relatedArticleTitle);
+					$this->uploadFile($fileData, $text, $relatedArticleTitle);
 				}
 				return true;
 			}
