@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>10</version>
+        <id>SMWUserManual</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/SMWUserManual</instdir>
+        <description>
+            Context sensitive help and feedback for Semantic MediaWiki extentions.
+        </description>
+        <dependencies>
+            <dependency from="146" to="146">SMWHalo</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+
+        <new>
+            <require name="smwusermanual"
+                file="extensions/SMWUserManual/includes/SMW_UserManual.php" />
+            <function name="enableSMWUserManual">
+            </function>
+            <script file="extensions/SMWUserManual/maintenance/SMW_setup.php" />
+            <!-- the following section is for Ultrapedia rating -->
+            <require name="upratingdata"
+                file="extensions/SMWUserManual/includes/SMW_UpRating.php" />
+            <function name="enableUpRating">
+            </function>
+        </new>
+        <uninstall>
+        </uninstall>
+    </configs>
+</deploydescriptor>
