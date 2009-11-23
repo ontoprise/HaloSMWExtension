@@ -34,6 +34,8 @@ MW_API_Access.prototype = {
         }
     },
 
+    // create a new page with a given content. Return function receives params
+    // int error (0=err or 1=ok) and string (error message in case of an error)
     createPage: function(page, text, func){
         this.page=page.replace(/ /g, '_')
         this.text=this.URLEncode(text)
@@ -42,24 +44,37 @@ MW_API_Access.prototype = {
         this.callApi('action=edit&title='+this.page+'&createonly=1&text='+this.text+'&format=json', this.pageCreated, 'createPage')
     },
 
+    // get the page content (wikitext) of a given page. Return function receives
+    // params int error (0=err or 1=ok) and string (error message or wikitext)
     getPageContent: function(page, func) {
         this.returnFunction=func
         this._getPageContent(page, this.returnContent)
     },
 
-    _getPageContent: function(page, func) {
+    _getPageContent: function(page, func) { // use this function inside this object only.
         this.page=page.replace(/ /g, '_')
         this.callApi('action=query&titles='+this.page+'&prop=revisions|info&rvlimit=1&rvprop=content|timestamp&intoken=edit&format=xml', func)
     },
 
+    /* add a comment to an (Talk) page.
+     * @param string page name
+     * @param string section (2 level)
+     * @param string subsection (3 level inside of the given section)
+     * @param string text to insert
+     * @param function return function
+     * the return function is called with the following params:
+     * int error (0=err, 1=ok) and string (error message or empty)
+     */
     addCommentOnTalkpage: function(page, section, cell, text, func) {
         this.section=section
         this.cell=cell
         this.text=(text.charAt(text.length-1)=='\n')?text:text+'\n'
+        if (this.text.charAt(0)!='\n') this.text='\n'+this.text
         this.returnFunction=func
         this._getPageContent(page, this.mergeSections)
     },
 
+    /* parse response from getPageContent() and call return function */
     returnContent: function(response){
         var node=this.getDomFromResponse(response)
         var text = node.getElementsByTagName('rev')[0].firstChild.nodeValue
@@ -69,6 +84,8 @@ MW_API_Access.prototype = {
         }
     },
 
+    /* merge comment into the wikitext (called by addCommentOnTalkpage()) and
+     * call return function */
     mergeSections: function(response){
         var node=this.getDomFromResponse(response)
         var text = node.getElementsByTagName('rev')[0].firstChild.nodeValue
@@ -80,55 +97,65 @@ MW_API_Access.prototype = {
                 if (lines[i].match(/^\s*(={2,})[^=]*\1\s*$/)) {
                     var n= lines[i].replace(/=/g,'')
                     var l = (lines[i].length - n.length)/2
+                    // [trimed text, position of section/cell, original line]
                     sections.push([this.trim(n), l, lines[i]])
                 }
             }
-            var insertLevel = this.cell?3:2
-            var pSection
-            var pCell
-            var insertBefore
+            // init variables
+            var pSection // number of matching section
+            var pCell    // number of matching subsection (cell)
+            var insertBefore // line where to insert text before it
             for (var i=0; i<sections.length; i++) {
-                if (sections[i][0] == this.section && sections[i][1] ==2)
+                if (sections[i][0]==this.section && sections[i][1]==2)
                     pSection= i
-                if (sections[i][0] == this.cell && sections[i][1] ==3)
+                if (sections[i][0]==this.cell && sections[i][1]==3)
                     pCell= i
             }
-            if (this.cell) {
-                if (pCell != null && pSection != null) {
+            if (this.cell) { // comment on data, must be a section (level 3)
+                if (pCell != null && pSection != null) { // section for cell already exists
                     if (sections.length > pCell+1)
                         insertBefore=sections[pCell+1][2]
-                } else {
-                    this.text = '=== '+this.cell+' ===\n'+this.text
+                } else { // subsection doesn't exist, add new subsection headline
+                    this.text = '\n=== '+this.cell+' ===\n'+this.text
                 }
             }
-            if (pSection != null) {
+            if (pSection != null) { // section for current table already exisits
                 if (sections.length > pSection+1)
                     if (!insertBefore && !this.cell) insertBefore=sections[pSection+1][2]
-            } else {
-                this.text='== '+this.section+' ==\n'+this.text
+            } else { // section for table doesn't exist, add new section for table
+                this.text='\n== '+this.section+' ==\n'+this.text
             }
-            if (insertBefore)
+            if (insertBefore) // there are elements after the comment that will be inserted
                 this.text=text.replace(insertBefore, this.text+insertBefore)
-            else
-                this.text=text+this.text
+            else // add new comment at the end of the page
+                this.text=text+'\n'+this.text
             alert(this.text)
         }
     },
 
+    /* parse response from createPage() and call return function */
     pageCreated: function(res) {
         var response= this.getJsonResponse(res)
         if (typeof(this.returnFunction) == 'function') {
-            this.returnFunction(response.error?0:1, response.error.info)
+            var err=1
+            var txt=''
+            if (response.error) {
+                err=0
+                txt=response.error.info
+            }
+            this.returnFunction(err, txt)
             this.returnFunction=null
         }
     },
 
+    /* get an edit token, function is called inside this object only */
     getEditToken: function(){
         if (!this.editToken) {
             this.callApi('action=query&prop=info|revisions&intoken=edit&titles='+this.page+'&format=json', this.setEditToken)
         }
     },
 
+    /* parse response from getEditToken() */
     setEditToken: function(res){
         var response= this.getJsonResponse(res)
         if (response.query) {
@@ -136,6 +163,7 @@ MW_API_Access.prototype = {
         }
     },
 
+    /* helper functions for processing text (of ajax responses) and others */
     getJsonResponse: function(res){
         return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(res.replace(/"(\\.|[^"\\])*"/g, '')))
                && eval('(' + res + ')')
@@ -162,7 +190,9 @@ MW_API_Access.prototype = {
         return txt.replace(/^\s*/,'').replace(/\s*$/,'')
     },
 
-    /* Methods for placing the Ajax calls */
+    /* functions for placing the Ajax calls, these must be lined up in a queue
+     * because several calls must be done at once (i.e. get an edit token before
+     * commiting the new content). The queue will be processed sequencially */
     doCall: function(params, target, action){
         this.inCall=true
 
@@ -172,7 +202,7 @@ MW_API_Access.prototype = {
 
         // check if we are accessing the local wiki. If this is not the case
         // we must send the request to localhost, which then forwards it to the
-        // original server via curl
+        // original server via php curl
         var url=this.url
         if (this.url.indexOf(wgServer+wgScriptPath) != 0) {
             var newparams='action=ajax&rs=wfUprForwardApiCall&rsargs[]='+this.URLEncode(url)+'&rsargs[]='+this.URLEncode(params)
@@ -231,7 +261,7 @@ MW_API_Access.prototype = {
         }
     },
 
-    // URL encoding and decoding functions
+    /* helper methods for correct urlencoding */
     URLEncode: function(str) {
         // version: 904.1412
         // discuss at: http://phpjs.org/functions/urlencode
