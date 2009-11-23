@@ -12,7 +12,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_UP_RATING_VERSION', '1.0');
 
 $wgExtensionCredits['other'][] = array(
-    'name' => 'SMW Ultrapedia Rating v'.SMW_USER_MANUAL_VERSION,
+    'name' => 'SMW Ultrapedia Rating v'.SMW_UP_RATING_VERSION,
     'author' => 'Ontoprise',
     'url' => 'http://sourceforge.net/projects/halo-extension/',
     'description' => 'Rate data and send feedback to UP'.
@@ -46,18 +46,17 @@ if (!defined("SMW_VERSION")) {
 
 // webserver path to extension
 global $wgScriptPath;
-$dir = dirname(__FILE__);
+$dir = str_replace('\\', '/', dirname(__FILE__));
 if (strrpos($dir, '/') !== false)
     $dir = substr($dir, 0, strrpos($dir, '/'));
-elseif (strrpos($dir, '\\') !== false)
-    $dir = substr($dir, 0, strrpos($dir, '\\'));
 define('SMW_UP_RATING_PATH', substr($dir, strpos($dir, $wgScriptPath)));
 
 // namespace name for user rating articles
 define('SMW_UP_RATING_NSNAME', 'Rating');
 define('SMW_UP_RATING_NSNAME_TALK', 'Rating_talk');
 // properties used on Rating: pages
-define('SMW_UP_RATING_PROP_REFPAGE', 'Refering page');
+define('SMW_UP_RATING_PROP_REFPAGE', 'Referring page');
+define('SMW_UP_RATING_PROP_REFSEC', 'Referring section');
 define('SMW_UP_RATING_PROP_TABLE', 'Table');
 define('SMW_UP_RATING_PROP_CELL', 'Cell');
 define('SMW_UP_RATING_PROP_RATING', 'Rating');
@@ -97,7 +96,7 @@ function setupUpRating() {
     // language
     require_once(dirname(__FILE__).'/../languages/SMW_UpRating.php');
     // MW api forwarder
-    require_once(dirname(__FILE__).'/SMW_MwApi.php');
+    //require_once(dirname(__FILE__).'/SMW_MwApi.php');
 
     wfProfileOut(__FUNCTION__);
 }
@@ -154,6 +153,11 @@ function uprfAddHtml2Page(&$out) {
             var uprgPopupWidth = '.$uprgPopupWidth.'
             var uprgPopupHeight = '.$uprgPopupHeight.'
             var uprgRatingNamespace = "'.SMW_UP_RATING_NSNAME.'"
+            var uprgPropertyReferingPage = "'.SMW_UP_RATING_PROP_REFPAGE.'"
+            var uprgPropertyReferingSection = "'.SMW_UP_RATING_PROP_REFSEC.'"
+            var uprgPropertyTable= "'.SMW_UP_RATING_PROP_TABLE.'"
+            var uprgPropertyCell= "'.SMW_UP_RATING_PROP_CELL.'"
+            var uprgPropertyRating= "'.SMW_UP_RATING_PROP_RATING.'"
         /*]]>*/</script>
     ');
     

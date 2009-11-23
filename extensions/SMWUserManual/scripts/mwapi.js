@@ -41,19 +41,31 @@ MW_API_Access.prototype = {
         this.text=this.URLEncode(text)
         this.returnFunction=func
         this.getEditToken()
-        this.callApi('action=edit&title='+this.page+'&createonly=1&text='+this.text+'&format=json', this.pageCreated, 'createPage')
+        this.callApi('action=edit&title='+this.page+'&createonly=1&text='+this.text+'&format=json', this.pageProcessed, 'createPage')
+    },
+    
+    // edit an existing page and set the given content. You should get the old content
+    // and modify it before sending it for saving. Return function receives params
+    // int error (0=err or 1=ok) and string (error message in case of an error)
+    editPage: function(page, text, func){
+        this.page=page.replace(/ /g, '_')
+        this.text=this.URLEncode(text)
+        this.returnFunction=func
+        this.getEditToken()
+        this.callApi('action=edit&section=0&title='+this.page+'&text='+this.text+'&format=json', this.pageProcessed, 'editPage')
     },
 
     // get the page content (wikitext) of a given page. Return function receives
     // params int error (0=err or 1=ok) and string (error message or wikitext)
     getPageContent: function(page, func) {
+        this.page=page.replace(/ /g, '_')
         this.returnFunction=func
-        this._getPageContent(page, this.returnContent)
+        this._getPageContent(this.page, this.returnContent)
     },
 
-    _getPageContent: function(page, func) { // use this function inside this object only.
-        this.page=page.replace(/ /g, '_')
-        this.callApi('action=query&titles='+this.page+'&prop=revisions|info&rvlimit=1&rvprop=content|timestamp&intoken=edit&format=xml', func)
+    // use this function inside this object only.
+    _getPageContent: function(page, func) {
+        this.callApi('action=query&titles='+page+'&prop=revisions|info&rvlimit=1&rvprop=content|timestamp&intoken=edit&format=xml', func)
     },
 
     /* add a comment to an (Talk) page.
@@ -66,12 +78,13 @@ MW_API_Access.prototype = {
      * int error (0=err, 1=ok) and string (error message or empty)
      */
     addCommentOnTalkpage: function(page, section, cell, text, func) {
+        this.page=page.replace(/ /g, '_')
         this.section=section
         this.cell=cell
         this.text=(text.charAt(text.length-1)=='\n')?text:text+'\n'
         if (this.text.charAt(0)!='\n') this.text='\n'+this.text
         this.returnFunction=func
-        this._getPageContent(page, this.mergeSections)
+        this._getPageContent(this.page, this.mergeSections)
     },
 
     /* parse response from getPageContent() and call return function */
@@ -129,12 +142,12 @@ MW_API_Access.prototype = {
                 this.text=text.replace(insertBefore, this.text+insertBefore)
             else // add new comment at the end of the page
                 this.text=text+'\n'+this.text
-            alert(this.text)
+            this.editPage(this.page, this.text, this.returnFunction)
         }
     },
 
-    /* parse response from createPage() and call return function */
-    pageCreated: function(res) {
+    /* parse response from createPage(), editPage() and call return function */
+    pageProcessed: function(res) {
         var response= this.getJsonResponse(res)
         if (typeof(this.returnFunction) == 'function') {
             var err=1
@@ -197,7 +210,7 @@ MW_API_Access.prototype = {
         this.inCall=true
 
         // add token to call if it's neccessary
-        if (action == "createPage")
+        if (action == "createPage" || action == "editPage")
             params+='&token='+this.URLEncode(this.editToken)
 
         // check if we are accessing the local wiki. If this is not the case

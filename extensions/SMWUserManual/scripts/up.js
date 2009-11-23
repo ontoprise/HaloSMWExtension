@@ -3,16 +3,6 @@
  * and open the template in the editor.
  */
 
-function bluber(res, err){
-    alert('we are in bluber now')
-        if (res != null && res == 0) {
-            alert(UP_RatingPopupLang.err_comment_up.replace(/%s/, err))
-            return
-        }
-        else if (res)
-            alert('page content is:\n' + err)
-}
-
 var UP_RatingPopup = Class.create();
 UP_RatingPopup.prototype = {
 
@@ -22,7 +12,7 @@ UP_RatingPopup.prototype = {
         this.width=uprgPopupWidth+'px'
         this.Ultrapedia=wgServer+wgScriptPath+'/api.php'
         //this.Wikipedia='http://wikipedia.org/w/api.php'
-        this.Wikipedia='http://smwdemo.ontoprise.com/api.php'
+        this.Wikipedia='http://10.0.0.152/mediawiki/api.php'
         //this.Wikipedia='http://localhost/test_smwlist/api.php'
     },
 
@@ -184,32 +174,36 @@ UP_RatingPopup.prototype = {
 
     send: function(){
         var comment=this.trim(document.getElementsByName('up_data_correct_c')[0].value)
+        var commentOnTalkP=comment
         var rating;
         if (document.getElementsByName('up_data_correct')[0].checked)
             rating=1
         else if (document.getElementsByName('up_data_correct')[1].checked)
             rating=2
-        if (!comment || !rating) {
+        if (!rating) {
             alert(UP_RatingPopupLang.fieldsempty)
             return
         }
-        comment+= '[[Refering page::'+wgPageName+'| ]]'+
-                  '[[Refering section::| ]]'+
-                  '[[Table::'+this.tableIdentifier+'| ]]'+
-                  '[[Rating::'+((rating-1) == 1 ? 'false' : 'true')+'| ]]'
+        comment+= '[['+uprgPropertyReferingPage+'::'+wgPageName+'| ]]'+
+                  '[['+uprgPropertyReferingSection+'::| ]]'+
+                  '[['+uprgPropertyTable+'::'+this.tableIdentifier+'| ]]'+
+                  '[['+uprgPropertyRating+'::'+(rating == 2 ? 'false' : 'true')+'| ]]'
         if (this.cellIdentifier)
-            comment+='[[Cell::'+this.cellIdentifier.replace(/ \| /,',')+'| ]]'
+            comment+='[['+uprgPropertyCell+'::'+this.cellIdentifier.replace(/ \| /,',')+'| ]]'
 
-        
+        // create a new rating page in Ultrapedia and reload the popup afterwards   
         var upapi = new MW_API_Access(this.Ultrapedia)
         var pagename=uprgRatingNamespace+':'+new Date().getTime()
         upapi.createPage(pagename, comment, this.reset.bind(this))
-        
+        // add the comment to the talk page in wikipedia
         var wpapi = new MW_API_Access(this.Wikipedia)
         var pagename='Talk:'+wgTitle
-        wpapi.getPageContent(pagename, bluber)
-        //wpapi.getPageContent(pagename)
-        
+        //wpapi.getPageContent(pagename, bluber)
+        commentOnTalkP= UP_RatingPopupLang.rating_on_talkp+': '+
+                        (rating==2 ? UP_RatingPopupLang.data_invalid : UP_RatingPopupLang.data_correct)+
+                        '\n\n'+commentOnTalkP
+        var section='Second generation' + '; table '+this.tableIdentifier
+        wpapi.addCommentOnTalkpage(pagename, section, this.cellIdentifier, commentOnTalkP)
     },
 
     tableRatingHtml: function(){
