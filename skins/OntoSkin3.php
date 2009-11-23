@@ -53,9 +53,6 @@ class SkinOntoSkin3 extends SkinTemplate {
 
         parent::setupSkinUserCss( $out );
 
-        // Append to the default screen common & print styles...
-        // $out->addStyle( 'ontoskin3/main.css', 'screen' );
-        
         // Append Ontoskin3 css
         $out->addStyle( 'ontoskin3/css/skin-colorfont.css','screen');
         $out->addStyle( 'ontoskin3/css/skin-main.css','screen');
@@ -74,6 +71,9 @@ class SkinOntoSkin3 extends SkinTemplate {
 
         $out->addStyle( 'ontoskin3/rtl.css', 'screen', '', 'rtl' );
 
+        // Append to the print styles...
+        $out->addStyle( 'ontoskin3/css/skin-printable.css', 'print' );
+        $out->addStyle( 'ontoskin3/css/skin-pagecontent.css','print');
         
     }
 }

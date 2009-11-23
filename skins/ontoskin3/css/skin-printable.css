@@ -1,0 +1,29 @@
+/* 
+    Document   : skin-printable
+    Created on : Nov 23, 2009, 2:11:58 PM
+    Author     : Robert Ulrich
+    Description: Adjusts skin for printing
+        
+*/
+
+#smwh_treeview, #smwh_tabs, #smwh_head, #smwh_menu, #smwh_breadcrumbs,
+#smwh_tr_footer {
+    display: none;
+}
+
+#shadow_center {
+    width: 100%;
+}
+
+.printfooter{
+    border-top: 1px solid #000;
+}
+
+#shadow_left, #shadow_right {
+    display: none;
+    width: 0;
+}
+
+
+
+

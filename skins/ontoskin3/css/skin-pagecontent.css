@@ -35,6 +35,13 @@
 	border-bottom-width:2px;
 }
 
+
+#content h1, #content h2,
+#content h3, #content h4,
+#content h5, #content h6 {
+    border-bottom: 1px solid #000
+}
+
 #content .smwfooter td{
 	background-color: #FFF;
 }
@@ -126,3 +133,11 @@ img.thumbborder {
 #content .smwtable th {
         vertical-align: bottom;
 }
+
+/* TOC */
+
+#toc {
+        background-color: #F0F0F0;
+        border: 1px solid #4B595C;
+}
+
