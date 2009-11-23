@@ -99,11 +99,9 @@ define('SMW_UME_PROPERTY_DISCOURSE_STATE', 'UME discourse state');
 define('SMW_UME_PROPERTY_LINK', 'UME link');
 // webserver path to extension
 global $wgScriptPath;
-$dir = dirname(__FILE__);
+$dir = str_replace('\\', '/', dirname(__FILE__));
 if (strrpos($dir, '/') !== false)
     $dir = substr($dir, 0, strrpos($dir, '/'));
-elseif (strrpos($dir, '\\') !== false)
-    $dir = substr($dir, 0, strrpos($dir, '\\'));
 define('SMW_UME_PATH', substr($dir, strpos($dir, $wgScriptPath)));
 
 // require additional files beloning to this extension
