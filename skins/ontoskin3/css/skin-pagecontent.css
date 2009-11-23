@@ -122,3 +122,7 @@ img.thumbborder {
 .hiddenStructure {
 	display: none;
 }
+
+#content .smwtable th {
+        vertical-align: bottom;
+}
