@@ -3,18 +3,16 @@
  * and open the template in the editor.
  */
 
-var bluber = function(res, err){
-    alert('we are in reset now')
+function bluber(res, err){
+    alert('we are in bluber now')
         if (res != null && res == 0) {
             alert(UP_RatingPopupLang.err_comment_up.replace(/%s/, err))
             return
         }
         else if (res)
-            alert('page was created successfully')
-        document.getElementsByName('up_data_correct_c')[0].value='';
-        document.getElementsByName('up_data_correct')[0].checked=null;
-        document.getElementsByName('up_data_correct')[1].checked=null;
+            alert('page content is:\n' + err)
 }
+
 var UP_RatingPopup = Class.create();
 UP_RatingPopup.prototype = {
 
@@ -168,13 +166,16 @@ UP_RatingPopup.prototype = {
     },
 
     reset: function(res, err){
-        alert('we are in reset now')
         if (res != null && res == 0) {
             alert(UP_RatingPopupLang.err_comment_up.replace(/%s/, err))
             return
         }
-        else if (res)
-            alert('page was created successfully')
+        else if (res) {
+            if (this.cellIdentifier)
+                this.cellRating(this.cell)
+            else
+                this.tableRating(this.tableIdentifier)
+        }
         document.getElementsByName('up_data_correct_c')[0].value='';
         document.getElementsByName('up_data_correct')[0].checked=null;
         document.getElementsByName('up_data_correct')[1].checked=null;
@@ -202,12 +203,12 @@ UP_RatingPopup.prototype = {
         
         var upapi = new MW_API_Access(this.Ultrapedia)
         var pagename=uprgRatingNamespace+':'+new Date().getTime()
-        upapi.createPage(pagename, comment, bluber)
+        upapi.createPage(pagename, comment, this.reset.bind(this))
         
         var wpapi = new MW_API_Access(this.Wikipedia)
         var pagename='Talk:'+wgTitle
+        wpapi.getPageContent(pagename, bluber)
         //wpapi.getPageContent(pagename)
-        wpapi.getPageContent(pagename)
         
     },
 
