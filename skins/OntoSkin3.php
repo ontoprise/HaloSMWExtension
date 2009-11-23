@@ -234,6 +234,7 @@ class OntoSkin3Template extends QuickTemplate {
                                     <?php $this->html('bodytext') ?>
                                     <?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
                             <!-- end content -->
+                            <?php if($this->data['dataAfterContent']) { $this->html ('dataAfterContent'); } ?>
                             <div class="visualClear"></div>
                         </div>
                     </div>
