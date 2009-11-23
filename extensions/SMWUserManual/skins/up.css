@@ -20,6 +20,10 @@
     vertical-align: top;
 }
 
+#uprComments {
+	overflow: auto;
+}
+
 .uprComment {
     background-color: #747474;
     color: #FFFFFF;

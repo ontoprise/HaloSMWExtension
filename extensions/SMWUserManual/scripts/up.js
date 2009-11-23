@@ -213,7 +213,7 @@ UP_RatingPopup.prototype = {
             '<tr>'+this.tdFeedbackHtml()+'</tr>'+
             '<tr><td><hr class="uprSpacer"/></td></tr>'+
             '<tr><td><strong>'+UP_RatingPopupLang.comments+':</strong>'+
-            '<div id="uprComments" style="overflow:auto"></div>'+
+            '<div id="uprComments"></div>'+
             '</td></tr>'+
             '</table>'
     },
