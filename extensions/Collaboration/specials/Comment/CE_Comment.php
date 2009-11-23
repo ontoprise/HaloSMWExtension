@@ -30,10 +30,11 @@ class CEComment {
 			return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
 		else {
 			$summary = wfMsg('ce_com_edit_sum');
+			//$pageContent = str_replace('|}}','|CommentDateTime='+ '' +'}}', $pageContent);
 			$article->doEdit($pageContent, $summary );
 				
 			if($article->exists())
-				return CECommentUtils::createXMLResponse(wfMsg('ce_com_created', $pageName), self::SUCCESS);
+				return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS);
 			else
 				return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
 		}

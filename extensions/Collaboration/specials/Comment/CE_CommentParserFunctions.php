@@ -208,6 +208,8 @@ class CECommentParserFunctions {
 		$params = self::$mInstance->getParameters(func_get_args());
 		// handle the (optional) parameter "ratingstyle".
 		#list($style) = self::$mInstance->mStyle($params);
+		//TODO:add Reset button! Add predefined username as defaultvalue
+		//TODO:Add the icon from the userpage.
 		
 		// => create the form now if user is allowed to comment
 		$rows = 4;
@@ -224,8 +226,8 @@ class CECommentParserFunctions {
 			id='ce_cf_textarea' '$comment_disabled' defaultValue='$encPreComment' onClick=''></textarea>";
 		
 		$form = XML::openElement('form', array( 'method' => 'post', 'id' => 'ce_cf',
-						'action' => '', 'onSubmit' => 'return ceCommentForm.processForm()' )) . 
-			XML::openElement( 'fieldset' ).
+						'onSubmit' => 'return ceCommentForm.processForm()' )) . 
+			XML::openElement( 'fieldset', array( 'id' => 'ce_cf_fieldset' ) ).
 			XML::element('legend', null, wfMsg( 'ce_cf_legend' )) .
 			XML::openElement('table', array('border' =>'0', 'id' => 'ce_cf_table')).
 			'<tr>' .
@@ -246,27 +248,23 @@ class CECommentParserFunctions {
 				'<td class="ce_comment_form_input">' .
 					XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
 						array ( 'id' => $submitButtonID,
-							'value' => wfMsg( 'ce_cf_submit_button_name' ),
-							'onSubmit' => 'return ceCommentForm.processForm();' ) ) .
+							'value' => wfMsg( 'ce_cf_submit_button_name' )) ) .
 				'</td>' .
 			'</tr>' .
 			'<tr>';
 		$form .=
 			XML::closeElement('table') .
-			XML::closeElement('fieldset');
+			XML::openElement('div', array('id' => 'ce_cf_pending' )) .
+			XML::closeElement('div') .
+			XML::openElement('div', array('id' => 'ce_cf_message')) .
+			XML::closeElement('div') .
+			XML::closeElement('fieldset') .
 			XML::closeElement('form');
-		//$html = XML::buildForm();
 
 		// foobar
 
-		#if (!empty($name)) {
-			// User is allowed to comment
-		#$text .= wfMsgForContent('ce_collaboration_not_allowed');
-			
-		#} else {
-			// not!
-			//TODO: grey out form or dont even display?.
-			$text = wfMsgForContent('ce_allowed');
+		//TODO: grey out form or dont even display?.
+		$text = wfMsgForContent('ce_allowed');
 		#}
 
 		self::$mInstance->mCommentFormDisplayed = true;

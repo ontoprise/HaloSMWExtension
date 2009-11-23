@@ -46,7 +46,7 @@ $messages['en'] = array(
 	'ce_com_cannot_create'			=> 'Can not create comment.',
 	'ce_com_edit_sum'				=> 'This comment article was created by Collaboration Extension.',
 	'ce_comment_exists'				=> 'Comment article "$1" already exists.',
-	'ce_com_created'				=> 'Comment article "$1" successfully created.',
+	'ce_com_created'				=> 'Comment article successfully created.',
 );
 
 /** 
