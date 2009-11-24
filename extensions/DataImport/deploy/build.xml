@@ -26,6 +26,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/DataImport/maintenance">
+			<fileset dir="../maintenance/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/DataImport/scripts">
 			<fileset dir="../scripts/">
 				<exclude name="**/.svn, **/CVS" />
