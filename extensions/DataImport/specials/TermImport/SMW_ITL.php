@@ -146,10 +146,11 @@ interface ITL {
 	 * @param string $dataSourceSpec
      * @param string $importSet
      * @param string $inputPolicy
+     * @param string $conflictPolicy
      * 
      * @return string or <null> if no DAL module is connected
 	 *
 	 */
-	public function getTerms($dataSourceSpec, $importSet, $inputPolicy);
+	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy);
 	
 }

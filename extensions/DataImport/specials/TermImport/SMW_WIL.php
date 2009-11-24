@@ -277,14 +277,15 @@ class WIL implements IWIL {
 	 * @param string $dataSourceSpec
 	 * @param string $importSet
 	 * @param string $inputPolicy
-	 *
+	 * @param string $conflictPolicy
+	 * 	 *
 	 * @return string or <null> if no TL module is connected
 	 *
 	 */
-	public function getTerms($dataSourceSpec, $importSet, $inputPolicy) {
+	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		if ($this->connectedTL) {
 			return $this->connectedTL
-			->getTerms($dataSourceSpec, $importSet, $inputPolicy);
+			->getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy);
 		}
 		return null;
 	}

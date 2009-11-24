@@ -143,13 +143,13 @@ class TermImportBot extends GardeningBot {
 		
 		$importSets = $parser->serializeElement(array('ImportSets'));
 		$inputPolicy = $parser->serializeElement(array('InputPolicy'));
+		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 
 		echo("\nGet Terms");
-		$terms = $wil->getTerms($source, $importSets, $inputPolicy);
+		$terms = $wil->getTerms($source, $importSets, $inputPolicy, $conflictPolicy);
 		echo("\nTerms in place");
 		
 		$mappingPolicy = $parser->serializeElement(array('MappingPolicy'));
-		$conflictPolicy = $parser->serializeElement(array('ConflictPolicy'));
 
 		try {
 			$result = $this->createArticles($terms, $mappingPolicy, $conflictPolicy, $wil,$termImportName);

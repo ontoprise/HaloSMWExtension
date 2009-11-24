@@ -196,7 +196,10 @@ interface IDAL {
      * @param string $inputPolicy
      * 		The XML structure of the input policy. It contains the specification
      * 		of the terms to import and their properties.
-     * 
+     * @param string $conflictPolicy
+     * 		The XML structure of the conflict policy. It defines if existing articles
+     * 		are overwritten or not.
+     *
      * @return string
 	 *		An XML structure that contains all requested terms together with 
 	 * 		their properties. The XML of requested terms that could not be 
@@ -225,6 +228,6 @@ interface IDAL {
 	 * 		</ReturnValue>
 	 * 
 	 */
-	public function getTerms($dataSourceSpec, $importSet, $inputPolicy);
+	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy);
 	
 }

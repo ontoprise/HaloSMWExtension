@@ -190,7 +190,7 @@ class DALReadPOP3 implements IDAL {
 			'</terms>'."\n";
 	}
 
-	public function getTerms($dataSourceSpec, $importSet, $inputPolicy) {
+	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		$inputPolicy = $this->parseInputPolicy($inputPolicy);
 		$this->requiredProperties = array_flip($inputPolicy["properties"]);
 		$this->requiredTerms = array_flip($inputPolicy["terms"]);
