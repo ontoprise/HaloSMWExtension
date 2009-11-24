@@ -55,7 +55,9 @@ $wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMVideo";
 $wgWebDAVRichMediaMapping[NS_VIDEO] = $wgWebDAVRichMediaMappingParameters;
 
 
-
+//define if anonymous access is granted
+global $wdGrantAnonymousAccess;
+$wdGrantAnonymousAccess = true;
 
 
 

@@ -597,8 +597,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	private function userIsAllowed(){
 		//todo: implement a login mechanism and remove this code
 		global $wgUser;
-		$wgUser = User::newFromName("WikiSysop");
-
+		
 		if ( !$wgUser->isAllowed( 'edit' ) ) {
 			$this->setResponseStatus( '401 Unauthorized' );
 			return false;
@@ -668,8 +667,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			File::DELETE_SOURCE);
 		
 		$local->load();
-		file_put_contents("d:\xx-put-abc.txt", print_r($local->getMetadata(), true));
-			
+		
 		global $smwgEnableUploadConverter, $smwgRMIP;
 		$text = "";
 		if($smwgEnableUploadConverter){
@@ -897,17 +895,40 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	public function writeLog($text){
-		if(is_null($this->time)){
-			$this->time = time();
+		if(false){
+			if(is_null($this->time)){
+				$this->time = time();
+			}
+
+			$temp = @file_get_contents("d:\\webdav-log.txt");
+			file_put_contents("d:\\webdav-log.txt", $temp."\r\n"
+			.$this->time."  ".$text);
 		}
-
-		$temp = @file_get_contents("d:\\webdav-log.txt");
-		file_put_contents("d:\\webdav-log.txt", $temp."\r\n"
-		.$this->time."  ".$text);
-
 	}
 	
 	public function mkcol($options){
 		return $this->put($options);
+	}
+	
+	public function checkAuth($authType, $user, $password){
+		if(strlen($user) == 0){
+			return false;
+		}
+		
+		$tmpUser = User::newFromName($user);
+		if(!is_null($tmpUser)){
+			if($tmpUser->getId() != 0){
+				if($tmpUser->checkPassword($password)){
+					global $wgUser;
+					$wgUser = $tmpUser;
+					return true;
+				}
+			}
+		}
+		global $wdGrantAnonymousAccess;
+		if(strtolower($user) == "anonymous" && $wdGrantAnonymousAccess){
+			return true;
+		}
+		return false;
 	}
 }
