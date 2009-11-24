@@ -647,64 +647,84 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		file_put_contents("./extensions/RichMedia/includes/WebDAV/tmp/tempfile", $text);
 		$local = wfLocalFile($title);
 		
+		$hash = File::sha1Base36("./extensions/RichMedia/includes/WebDAV/tmp/tempfile");
+		$dupes = RepoGroup::singleton()->findBySha1( $hash );
+		$exists = false;
+		foreach($dupes as $dupe){
+			if(strtolower($dupe->getName()) == strtolower($fileData->getFileName())){
+				$exists = true;
+			}
+		}
+		
 		$this->setRichMediaMapping($title);
 		
-		//get articles that are also related to that file
-		$relatedArticleTitles = "";
-		if($local->title->exists()){
-			$wdTP = new WDTemplateParser($local->title, "put");
-			$relatedArticleTitles = $wdTP->getRelatedArticles();
-		}
-		
-		//upload file
-		$status = $local->upload(
-			"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
-			, "Created via the WebDAV extension", "",
-			File::DELETE_SOURCE);
-		
-		$local->load();
-		
-		global $smwgEnableUploadConverter, $smwgRMIP;
-		$text = "";
-		if($smwgEnableUploadConverter){
-			$text = UploadConverter::getFileContent($local);
-		}
-		
-		//concat relatedArticlesString
-		if(strlen($relatedArticleTitles) > 0){
-			global $wgWebDAVRichMediaMapping;
-			$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
-			$found = false;
+		if($exists){
 			
-			$relatedArticleTitles = explode($delimiter, $relatedArticleTitles);
-			foreach($relatedArticleTitles as $article){
-				if(trim($article) == $relatedArticleTitle){
-					$found = true;
-				}
-			}
-			if(!$found){
-				$relatedArticleTitles[] = $relatedArticleTitle;
-			}
-			$relatedArticleTitles = implode($delimiter, $relatedArticleTitles);
-		} else {
-			$relatedArticleTitles = $relatedArticleTitle;
-		}
-		
-		$text = $this->createRichMediaTemplate(
-			$local->title->getText()
-			, $relatedArticleTitles, $local->getUser(), 
-			wfTimestamp(TS_MW, $local->getTimestamp()))
-			."\n".$text;
-
-		if(strlen(trim($text)) > 0){
+			$wdTP = new WDTemplateParser($local->title, "putupdate", $relatedArticleTitle);
+			$text = $wdTP->getNewArticleTextForPutUpdate();
+			
 			$article = new Article($local->title);
 			$article->doEdit(
 				$text, "Uploaded via WebDAV extension.");
+			return true;
+		} else {
+			//get articles that are also related to that file
+			$relatedArticleTitles = "";
+			if($local->title->exists()){
+				$wdTP = new WDTemplateParser($local->title, "put");
+				$relatedArticleTitles = $wdTP->getRelatedArticles();
+			}
+			
+			//upload file
+			$status = $local->upload(
+				"./extensions/RichMedia/includes/WebDAV/tmp/tempfile"
+				, "Created via the WebDAV extension", "",
+				File::DELETE_SOURCE);
+			
+			$local->load();
+			
+			global $smwgEnableUploadConverter, $smwgRMIP;
+			$text = "";
+			if($smwgEnableUploadConverter){
+				$text = UploadConverter::getFileContent($local);
+			}
+			
+			//concat relatedArticlesString
+			if(strlen($relatedArticleTitles) > 0){
+				global $wgWebDAVRichMediaMapping;
+				$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
+				$found = false;
+				
+				$relatedArticleTitles = explode($delimiter, $relatedArticleTitles);
+				foreach($relatedArticleTitles as $article){
+					if(trim($article) == $relatedArticleTitle){
+						$found = true;
+					}
+				}
+				if(!$found){
+					$relatedArticleTitles[] = $relatedArticleTitle;
+				}
+				$relatedArticleTitles = implode($delimiter, $relatedArticleTitles);
+			} else {
+				$relatedArticleTitles = $relatedArticleTitle;
+			}
+			
+			$text = $this->createRichMediaTemplate(
+				$local->title->getText()
+				, $relatedArticleTitles, $local->getUser(), 
+				wfTimestamp(TS_MW, $local->getTimestamp()))
+				."\n".$text;
+	
+			if(strlen(trim($text)) > 0){
+				$article = new Article($local->title);
+				$article->doEdit(
+					$text, "Uploaded via WebDAV extension.");
+			}
+	
+	
+			// todo:error handling
+			return true;
 		}
-
-
-		// todo:error handling
-		return true;
 	}
 	
 	private function createRichMediaTemplate($fileName, $relatedArticleTitles,
