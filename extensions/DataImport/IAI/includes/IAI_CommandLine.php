@@ -43,7 +43,7 @@ $iaigIP = $dir;
 
 //Are there any options at all?
 if (empty($options)) {
-	echo 'Usage: IAI_Commandline.php --af="<article file>" --a="<article name>" --if="<image file>" --i="<image name>" --ew --aregex="<regular expression for articles>" --iregex="<regular expression for images>" --api="<wiki api>" --dr --tmpl --img'."\n";
+	echo 'Usage: IAI_Commandline.php --af="<article file>" --a="<article name>" --if="<image file>" --i="<image name>" --ew --aregex="<regular expression for articles>" --iregex="<regular expression for images>" --api="<wiki api>" --dr --tmpl --img --se'."\n";
 
 	echo "\n--af=\"<article file>\"\n";
 	echo "\t<article file> is the name of a text file that contains in each line a name of an article that will be imported.";
@@ -90,6 +90,10 @@ if (empty($options)) {
 
 	echo "\n--img";
 	echo "\tImport all images needed for the specified articles.";
+
+	echo "\n--se";
+	echo "\tSkip existing articles. Articles that already exist in the destination wiki\n";
+	echo "\tare not imported. Their templates and images are not updated.\n";
 	
 	die();
 }
@@ -101,6 +105,7 @@ $articleRegex = "";
 $imageRegex = "";
 $importTemplates = isset($options["tmpl"]);
 $importImages = isset($options["img"]);
+$skipExisting = isset($options["se"]);
 
 if (!@$options["af"] && !@$options["a"] && !@$options["if"] && !@$options["i"]) {
 	echo "No articles or images for import given. Please specify --af, --a, --i or --i !\n";
@@ -239,7 +244,7 @@ $imageImp = "";
 try {
 	$ai->startReport();
 	if (!empty($articles)) {
-		$ai->importArticles($articles, $importTemplates, $importImages);
+		$ai->importArticles($articles, $importTemplates, $importImages, $skipExisting);
 	}
 	if (!empty($images)) {
 		$ai->importImages($images, true);
