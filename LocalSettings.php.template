@@ -148,19 +148,22 @@ $wgShowExceptionDetails = true;
 $wgEnableEmail=false;
 
 //SMWHALO Variable insertion marker. DO NOT REMOVE!!
-$smwgDefaultCollation="latin1_bin";
+
+// SMW options
 $smwgIQEnabled=true;
-$smwgAllowNewHelpQuestions=true;
-$smwgKeepGardeningConsole=false;
-$smwgEnableLogging=false;
-$smwgDeployVersion=false;
-$smwgGardeningBotDelay=100;
-
-
 $smwgOWLFullExport = true;
 
+// SMWHalo options
+$smwgDefaultCollation="latin1_bin";
+$smwgAllowNewHelpQuestions=true;
+$smwgDeployVersion=false;
 $smwgEnableUploadConverter = true;
 $smwgUseEditDistance = false;
+
+// SemanticGardening options
+$sgagKeepGardeningConsole=false;
+$sgagGardeningBotDelay=100;
+
 
 $wgVerifyMimeType=false;
 array_push($wgFileExtensions, "owl");
