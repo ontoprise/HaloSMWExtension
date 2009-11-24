@@ -469,10 +469,6 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 	# RawPage::view handles Content-Type, Cache-Control, etc. and we don't want get_response_helper to overwrite, but MediaWiki doesn't let us get response headers.  It could work if we kept setResponseHeader updated with headers_list on PHP 5.
 	function get_wrapper() {
-		$tmp = "";
-		$res = $this->propfind($tmp);
-		echo($res);
-		error();
 		$result = $this->doGet($this->pathComponents, true);
 		if($result === true){
 			$this->setResponseStatus("200 OK", false);
