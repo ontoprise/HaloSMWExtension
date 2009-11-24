@@ -11,6 +11,7 @@
 		<dependencies>
 			<dependency from="1132" to="1159">MW</dependency>
 		</dependencies>
+		<patchlevel>1</patchlevel>
 	</global>
 	<codefiles>
 		<file loc="extensions/HaloACL/deploy.xml" />
