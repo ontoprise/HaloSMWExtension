@@ -225,13 +225,14 @@ function smwf_tb_GetUserDatatypes(){
 }
 
 function smwf_tb_getTripleStoreStatus() {
-	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 	global $smwgWebserviceEndpoint;
 	if (!isset($smwgWebserviceEndpoint)) {
 		return 'false';
 	}
 	if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-	$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+	if (!isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+	$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	try {
 		global $smwgTripleStoreGraph;
 		$statusJSON = $client->getTripleStoreStatus($smwgTripleStoreGraph);
@@ -343,10 +344,10 @@ class SMWToolbarStorageSQL2 extends SMWToolbarStorageSQL {
         ' JOIN '.$smw_ids.' ON smw_id = s_id '.
         ' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace '.
         ' WHERE p_id = '.$discourseStateID. ' AND '.
-        '(UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState1) . ') '.
-        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState2) . ') '.
-        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState3) . ') '.
-        'OR UPPER(value_xsd) = UPPER(' . $db->addQuotes($discourseState4) . ')) '.
+        '(UPPER('.DBHelper::convertColumn('value_xsd').') = UPPER(' . $db->addQuotes($discourseState1) . ') '.
+        'OR UPPER('.DBHelper::convertColumn('value_xsd').') = UPPER(' . $db->addQuotes($discourseState2) . ') '.
+        'OR UPPER('.DBHelper::convertColumn('value_xsd').') = UPPER(' . $db->addQuotes($discourseState3) . ') '.
+        'OR UPPER('.DBHelper::convertColumn('value_xsd').') = UPPER(' . $db->addQuotes($discourseState4) . ')) '.
         'AND page_namespace = ' . NS_HELP . ' ORDER BY RAND() LIMIT 5');
 
 		while ($row = $db->fetchObject( $res )) {

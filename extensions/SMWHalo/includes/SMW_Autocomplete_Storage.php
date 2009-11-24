@@ -186,14 +186,14 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$options = DBHelper::getSQLOptionsAsString($requestoptions);
 		if ($namespaces == NULL || count($namespaces) == 0) {
 
-			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
+			$sql .= 'SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') ORDER BY page_title ';
 
 		} else {
 
 			for ($i = 0, $n = count($namespaces); $i < $n; $i++) {
 				if ($i > 0) $sql .= ' UNION ';
-				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes($match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) UNION ';
-				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes($match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) UNION ';
+				$sql .= '(SELECT page_title, page_namespace FROM '.$page.' WHERE UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND page_namespace='.$db->addQuotes($namespaces[$i]).' ORDER BY page_title) ';
 			}
 
 		}
@@ -231,11 +231,11 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
                                'JOIN '.$smw_spec2.' s1 ON i2.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
                                'JOIN '.$smw_ids.' i ON s1.value_string = i.smw_title AND i.smw_namespace = '.SMW_NS_TYPE.' '.
                                'JOIN '.$smw_spec2.' s2 ON s2.s_id = i.smw_id AND s2.value_string REGEXP ' . $db->addQuotes("([0-9].?[0-9]*|,) $typeLabel(,|$)") .
-                               'WHERE i2.smw_namespace = '.SMW_NS_PROPERTY.' AND UPPER(i2.smw_title) LIKE UPPER(' . $db->addQuotes("%$match%").'))'.
+                               'WHERE i2.smw_namespace = '.SMW_NS_PROPERTY.' AND UPPER('.DBHelper::convertColumn('i2.smw_title').') LIKE UPPER(' . $db->addQuotes("%$match%").'))'.
                             ' UNION (SELECT smw_title AS title FROM smw_ids i '.
                                'JOIN '.$smw_spec2.' s1 ON i.smw_id = s1.s_id AND s1.p_id = '.$hasTypePropertyID.' '.
-                               'WHERE UPPER(i.smw_title) LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
-                               'UPPER(s1.value_string) = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
+                               'WHERE UPPER('.DBHelper::convertColumn('i.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$match.'%').') AND '.
+                               'UPPER('.DBHelper::convertColumn('s1.value_string').') = UPPER('.$db->addQuotes($typeID).') AND smw_namespace = '.SMW_NS_PROPERTY.') '.
                             'ORDER BY title LIMIT '.SMW_AC_MAX_RESULTS);
 
 		 
@@ -286,7 +286,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		}
 
 		$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT cl_to FROM '.$categorylinks.' WHERE cl_from = ' .$db->addQuotes($instance->getArticleID()).') AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 
 		$db->query('INSERT INTO smw_ob_properties_sub  (SELECT DISTINCT page_title AS category FROM '.$categorylinks.' JOIN '.$page.' ON cl_to = page_title AND page_namespace = '.NS_CATEGORY.' WHERE cl_from = ' .$instance->getArticleID().')');
@@ -301,7 +301,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
 			// insert direct properties of current supercategory level
 			$db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 			 
 			// copy supercatgegories to subcategories of next iteration
 			$db->query('DELETE FROM smw_ob_properties_sub');
@@ -369,7 +369,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         }
    
         $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "false" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title = '.$db->addQuotes($category->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 
         $db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
@@ -384,7 +384,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
             // insert direct properties of current supercategory level
             $db->query('INSERT INTO smw_ob_properties (SELECT q.smw_id AS id, q.smw_title AS property, "true" AS inferred FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER(q.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.$nary_pos.' AND r.smw_title IN (SELECT * FROM smw_ob_properties_super) AND r.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('q.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
              
             // copy supercatgegories to subcategories of next iteration
             $db->query('DELETE FROM smw_ob_properties_sub');
@@ -453,9 +453,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         }
    
         $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
-                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "false" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
-                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE cats.smw_title  = '.$db->addQuotes($category->getDBkey()).' AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         
        
         $db->query('INSERT INTO smw_ob_properties_sub VALUES (\''.$category->getDBkey().'\')');
@@ -470,9 +470,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
             // insert direct properties of current supercategory level
             $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "true" AS inferred FROM '.$smw_rels2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
-                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
              $db->query('INSERT INTO smw_ob_properties (SELECT p.smw_id AS id, p.smw_title AS property, "true" AS inferred FROM '.$smw_atts2.' rels JOIN '.$smw_ids.' s  ON rels.s_id = s.smw_id JOIN '.$smw_ids.' p ON rels.p_id = p.smw_id JOIN smw_inst2 inst ON rels.s_id = inst.s_id JOIN smw_ids cats ON cats.smw_id = inst.o_id'.
-                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER(p.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                     ' WHERE cats.smw_title IN (SELECT * FROM smw_ob_properties_super) AND cats.smw_namespace = '.NS_CATEGORY.' AND UPPER('.DBHelper::convertColumn('p.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
                       
                      
            
@@ -538,11 +538,11 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 
         
         $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT value_xsd AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT value_xsd AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER('.DBHelper::convertColumn('value_xsd').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "false" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "false" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER('.DBHelper::convertColumn('o.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT value_string AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_spec2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_string) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT value_string AS title, -1 AS namespace, "false" AS inferred FROM '.$smw_spec2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title = '.$db->addQuotes($property->getDBkey()).' AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER('.DBHelper::convertColumn('value_string').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
         
         $maxDepth = SMW_MAX_CATEGORY_GRAPH_DEPTH;
         // maximum iteration length is maximum property tree depth.
@@ -553,9 +553,9 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
             $db->query('INSERT INTO smw_cc_properties_sub (SELECT DISTINCT i.smw_title AS property FROM '.$smw_subs2.' JOIN '.$smw_ids.' i ON s_id = i.smw_id JOIN '.$smw_ids.' i2 ON o_id = i2.smw_id WHERE i2.smw_title IN (SELECT * FROM smw_cc_properties_super))');
 
             $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT value_xsd AS title, -1 AS namespace, "true" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(value_xsd) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT value_xsd AS title, -1 AS namespace, "true" AS inferred FROM '.$smw_atts2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER('.DBHelper::convertColumn('value_xsd').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
             $db->query('INSERT INTO smw_cc_propertyinst ' .
-                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "true" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER(o.smw_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                '(SELECT o.smw_title AS title, o.smw_namespace AS namespace, "true" AS inferred FROM '.$smw_rels2.' JOIN '.$smw_ids.' p ON p_id = p.smw_id JOIN '.$smw_ids.' o ON o_id = o.smw_id WHERE p.smw_title IN (SELECT * FROM smw_cc_properties_sub) AND p.smw_namespace = '.SMW_NS_PROPERTY. ' AND UPPER('.DBHelper::convertColumn('o.smw_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
             // special properties can not be inferred (?)
 
             // copy subcatgegories to supercategories of next iteration
@@ -640,7 +640,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			if ($dvs[1] == NULL || !$dvs[1]->isValid()) continue;
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-                        'WHERE page_is_redirect = 0 AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                        'WHERE page_is_redirect = 0 AND cl_to = '.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).' AND UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			 
 			$db->query('INSERT INTO smw_ob_instances_super VALUES ('.$db->addQuotes($dvs[1]->getTitle()->getDBkey()).')');
@@ -658,7 +658,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 			// insert direct instances of current subcategory level
 			$db->query('INSERT INTO smw_ob_instances (SELECT page_title AS instance, page_namespace AS namespace  FROM '.$page.' ' .
                         'JOIN '.$categorylinks.' ON page_id = cl_from ' .
-                        'WHERE page_is_redirect = 0 AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER(page_title) LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
+                        'WHERE page_is_redirect = 0 AND cl_to IN (SELECT * FROM smw_ob_instances_sub) AND UPPER('.DBHelper::convertColumn('page_title').') LIKE UPPER('.$db->addQuotes('%'.$userInputToMatch.'%').'))');
 
 			// copy subcatgegories to supercategories of next iteration
 			$db->query('DELETE FROM smw_ob_instances_super');

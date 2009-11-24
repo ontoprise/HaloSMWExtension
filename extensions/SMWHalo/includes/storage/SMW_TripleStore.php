@@ -37,11 +37,11 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 class SMWTripleStore extends SMWStore {
 
-	
+
 
 	public static $fullSemanticData;
-    private $tsNamespace;
-	
+	private $tsNamespace;
+
 
 	/**
 	 * Creates and initializes Triple store connector.
@@ -363,7 +363,7 @@ class SMWTripleStore extends SMWStore {
 	///// Query answering /////
 
 	function getQueryResult(SMWQuery $query) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
@@ -372,7 +372,8 @@ class SMWTripleStore extends SMWStore {
 			/*op-patch|TS|2009-06-19|end*/
 
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			$client = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+			if (!isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+			$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
 			try {
 				global $smwgTripleStoreGraph;
@@ -502,9 +503,9 @@ class SMWTripleStore extends SMWStore {
 		return $result;
 	}
 
-	
 
-	
+
+
 
 	/**
 	 * Escapes double quotes
@@ -544,247 +545,253 @@ class SMWTripleStore extends SMWStore {
 		return $pos !== false ? substr($literal, 0, $pos) : $literal;
 	}
 
-    /**
-     * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
-     *
-     * @param SMWQuery $query
-     * @param xml string $sparqlXMLResult
-     * @return SMWHaloQueryResult
-     */
-    protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
+	/**
+	 * Parses a SPARQL XML-Result and returns an SMWHaloQueryResult.
+	 *
+	 * @param SMWQuery $query
+	 * @param xml string $sparqlXMLResult
+	 * @return SMWHaloQueryResult
+	 */
+	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
-        // parse xml results
-        $dom = simplexml_load_string($sparqlXMLResult);
+		// parse xml results
+		$dom = simplexml_load_string($sparqlXMLResult);
 
-        $variables = $dom->xpath('//variable');
-        $results = $dom->xpath('//result');
+		$variables = $dom->xpath('//variable');
+		$results = $dom->xpath('//result');
 
-        // if no results return empty result object
-        if (count($results) == 0) return new SMWHaloQueryResult(array(), $query);
+		// if no results return empty result object
+		if (count($results) == 0) return new SMWHaloQueryResult(array(), $query);
 
-        $variableSet = array();
-        foreach($variables as $var) {
-            $variableSet[] = (string) $var->attributes()->name;
-        }
+		$variableSet = array();
+		foreach($variables as $var) {
+			$variableSet[] = (string) $var->attributes()->name;
+		}
 
-        // PrinterRequests to use
-        $prs = array();
+		// PrinterRequests to use
+		$prs = array();
 
-        // Use PrintRequests to determine which variable denotes what type of entity. If no PrintRequest is given use first result row
-        // (which exist!) to determine which variable denotes what type of entity.
-
-
-        // maps print requests (variable name) to result columns ( var_name => index )
-        $mapPRTOColumns = array();
-
-        // use user-given PrintRequests if possible
-        $print_requests = $query->getDescription()->getPrintRequests();
-        $hasMainColumn = false;
-        $index = 0;
-        if ($query->fromASK) {
-
-            // SPARQL query which was transformed from ASK
-            // x variable is handeled specially as main variable
-            foreach($print_requests as $pr) {
-
-                $data = $pr->getData();
-                if ($data == NULL) { // main column
-                    $hasMainColumn = true;
-                    if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
-                        $mapPRTOColumns['_X_'] = $index;
-                        $prs[] = $pr;
-                        $index++;
-                    }
-
-                } else  {
-                    // make sure that variables get truncated for SPARQL compatibility when used with ASK.
-                    $label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
-                    preg_match("/[A-Z][\\w_]*/", $label, $matches);
-                    $mapPRTOColumns[$matches[0]] = $index;
-                    $prs[] = $pr;
-                    $index++;
-                }
-
-            }
-        } else {
-
-            // native SPARQL query
-            foreach($print_requests as $pr) {
-
-                $data = $pr->getData();
-                if ($data != NULL) {
-                    $label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
-                    $mapPRTOColumns[$label] = $index;
-                    $prs[] = $pr;
-                    $index++;
-                }
-
-            }
-        }
+		// Use PrintRequests to determine which variable denotes what type of entity. If no PrintRequest is given use first result row
+		// (which exist!) to determine which variable denotes what type of entity.
 
 
-        // generate PrintRequests for all bindings (if they do not exist already)
-        $var_index = 0;
-        $bindings = $results[0]->children()->binding;
-        foreach ($bindings as $b) {
-            $var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
-            $var_index++;
+		// maps print requests (variable name) to result columns ( var_name => index )
+		$mapPRTOColumns = array();
 
-            // if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
-            if ($query->mainLabelMissing && $var_name == "_X_") {
-                continue;
-            }
-            // do not generate new PrintRequest if already given
-            if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
+		// use user-given PrintRequests if possible
+		$print_requests = $query->getDescription()->getPrintRequests();
+		$hasMainColumn = false;
+		$index = 0;
+		if ($query->fromASK) {
 
-            // otherwise create one
-            $data = SMWPropertyValue::makeUserProperty($var_name);
-            $prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
+			// SPARQL query which was transformed from ASK
+			// x variable is handeled specially as main variable
+			foreach($print_requests as $pr) {
+
+				$data = $pr->getData();
+				if ($data == NULL) { // main column
+					$hasMainColumn = true;
+					if (in_array('_X_', $variableSet)) { // x is missing for INSTANCE queries
+						$mapPRTOColumns['_X_'] = $index;
+						$prs[] = $pr;
+						$index++;
+					}
+
+				} else  {
+					// make sure that variables get truncated for SPARQL compatibility when used with ASK.
+					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					preg_match("/[A-Z][\\w_]*/", $label, $matches);
+					$mapPRTOColumns[$matches[0]] = $index;
+					$prs[] = $pr;
+					$index++;
+				}
+
+			}
+		} else {
+
+			// native SPARQL query
+			foreach($print_requests as $pr) {
+
+				$data = $pr->getData();
+				if ($data != NULL) {
+					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
+					$mapPRTOColumns[$label] = $index;
+					$prs[] = $pr;
+					$index++;
+				}
+
+			}
+		}
 
 
-            $mapPRTOColumns[$var_name] = $index;
-            $index++;
-        }
+		// generate PrintRequests for all bindings (if they do not exist already)
+		$var_index = 0;
+		$bindings = $results[0]->children()->binding;
+		foreach ($bindings as $b) {
+			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
+			$var_index++;
 
-        // Query result object
-        $queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
+			// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
+			if ($query->mainLabelMissing && $var_name == "_X_") {
+				continue;
+			}
+			// do not generate new PrintRequest if already given
+			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
 
-        // create and add result rows
-        // iterate result rows and add an SMWResultArray object for each field
+			// otherwise create one
+			$data = SMWPropertyValue::makeUserProperty($var_name);
+			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
 
-        foreach ($results as $r) {
-            $row = array();
-            $columnIndex = 0; // column = n-th XML binding node
 
-            $children = $r->children(); // $chilren->binding denote all binding nodes
-            foreach ($children->binding as $b) {
+			$mapPRTOColumns[$var_name] = $index;
+			$index++;
+		}
 
-                $var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-                if (!$hasMainColumn && $var_name == '_X_') {
+		// Query result object
+		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
 
-                    $columnIndex++;
-                    continue;
-                }
-                $resultColumn = $mapPRTOColumns[$var_name];
+		// create and add result rows
+		// iterate result rows and add an SMWResultArray object for each field
 
-                $allValues = array();
+		foreach ($results as $r) {
+			$row = array();
+			$columnIndex = 0; // column = n-th XML binding node
 
-                $bindingsChildren = $b->children();
-                $uris = array();
-                    
-                foreach($bindingsChildren->uri as $sv) {
-                    $uris[] = (string) $sv;
-                }
-                if (!empty($uris)) {
-                    $this->addURIToResult($uris, $prs[$resultColumn], $allValues);
-                } else {
-                    $literals = array();
-                    foreach($bindingsChildren->literal as $sv) {
-                        $literals[] = array((string) $sv, $sv->attributes()->datatype);
-                    }
-                    if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
-                }
-                // note: ignore bnodes
+			$children = $r->children(); // $chilren->binding denote all binding nodes
+			foreach ($children->binding as $b) {
 
-                $columnIndex++;
-                $row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
-            }
+				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
+				if (!$hasMainColumn && $var_name == '_X_') {
 
-            ksort($row);
-            $queryResult->addRow($row);
-        }
+					$columnIndex++;
+					continue;
+				}
+				$resultColumn = $mapPRTOColumns[$var_name];
 
-        return $queryResult;
-    }
+				$allValues = array();
 
-    /**
-     * Add an URI to an array of results
-     *
-     * @param string $sv A single value
-     * @param PrintRequest prs
-     * @param array & $allValues
-     */
-    protected function addURIToResult($uris, $prs, & $allValues) {
-            
-        foreach($uris as $sv) {
-            $nsFound = false;
-            foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
-                if (stripos($sv, $ns) === 0) {
-                    $allValues[] = $this->createSMWDataValue($sv, $ns, $nsIndsex);
-                    $nsFound = true;
-                }
-            }
+				$bindingsChildren = $b->children();
+				$uris = array();
 
-            if ($nsFound) continue;
+				foreach($bindingsChildren->uri as $sv) {
+					$uris[] = (string) $sv;
+				}
+				if (!empty($uris)) {
+					$this->addURIToResult($uris, $prs[$resultColumn], $allValues);
+				} else {
+					$literals = array();
+					foreach($bindingsChildren->literal as $sv) {
+						$literals[] = array((string) $sv, $sv->attributes()->datatype);
+					}
+					if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
+				}
+				// note: ignore bnodes
 
-            // result with unknown namespace
-            if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
+				$columnIndex++;
+				$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
+			}
 
-                if (empty($sv)) {
-                    $v = SMWDataValueFactory::newTypeIDValue('_wpg');
-                    $allValues[] = $v;
-                } else {
-                    $startNS = strlen(TSNamespaces::$UNKNOWN_NS);
-                    $length = strpos($sv, "#") - $startNS;
-                    $ns = intval(substr($sv, $startNS, $length));
+			ksort($row);
+			$queryResult->addRow($row);
+		}
 
-                    $local = substr($sv, strpos($sv, "#")+1);
+		return $queryResult;
+	}
 
-                    $title = Title::newFromText($local, $ns);
-                    $v = SMWDataValueFactory::newTypeIDValue('_wpg');
-                    $v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-                    $allValues[] = $v;
-                }
-            } else {
-                // external URI
-                $v = SMWDataValueFactory::newTypeIDValue('_uri');
-                $v->setXSDValue($sv);
-                $allValues[] = $v;
-            }
-        }
-    }
+	/**
+	 * Add an URI to an array of results
+	 *
+	 * @param string $sv A single value
+	 * @param PrintRequest prs
+	 * @param array & $allValues
+	 */
+	protected function addURIToResult($uris, $prs, & $allValues) {
 
-    /**
-     * Add a literal to an array of results
-     *
-     * @param string $sv A single value
-     * @param PrintRequest prs
-     * @param array & $allValues
-     */
-    protected function addLiteralToResult($literals, $prs, & $allValues) {
-        foreach($literals as $literal) {
+		foreach($uris as $sv) {
+			$nsFound = false;
+			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
+				if (stripos($sv, $ns) === 0) {
+					$allValues[] = $this->createSMWDataValue($sv, $ns, $nsIndsex);
+					$nsFound = true;
+				}
+			}
 
-            list($literalValue, $literalType) = $literal;
-            $property = $prs->getData();
-            if (!empty($literalValue)) {
+			if ($nsFound) continue;
 
-                // create SMWDataValue either by property or if that is not possible by the given XSD type
-                if ($property instanceof SMWPropertyValue ) {
-                    $value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literalValue);
-                } else {
-                    $value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
-                }
-                if ($value->getTypeID() == '_dat') { // exception for dateTime
-                    if ($literalValue != '') $value->setXSDValue($literalValue);
-                } if ($value->getTypeID() == '_ema') { // exception for email
-                    $value->setXSDValue($literalValue);
-                } else {
-                    $value->setUserValue($literalValue);
-                }
-            } else {
-                
-                if ($property instanceof SMWPropertyValue ) {
-                    $value = SMWDataValueFactory::newPropertyObjectValue($property);
-                } else {
-                    $value = SMWDataValueFactory::newTypeIDValue('_wpg');
+			// result with unknown namespace
+			if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
 
-                }
+				if (empty($sv)) {
+					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+					$allValues[] = $v;
+				} else {
+					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
+					$length = strpos($sv, "#") - $startNS;
+					$ns = intval(substr($sv, $startNS, $length));
 
-            }
-            $allValues[] = $value;
-        }
-    }
-    
+					$local = substr($sv, strpos($sv, "#")+1);
+
+					$title = Title::newFromText($local, $ns);
+					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+					$allValues[] = $v;
+				}
+			} else {
+				// external URI
+				$v = SMWDataValueFactory::newTypeIDValue('_uri');
+				$v->setXSDValue($sv);
+				$allValues[] = $v;
+			}
+		}
+	}
+
+	/**
+	 * Add a literal to an array of results
+	 *
+	 * @param string $sv A single value
+	 * @param PrintRequest prs
+	 * @param array & $allValues
+	 */
+	protected function addLiteralToResult($literals, $prs, & $allValues) {
+		foreach($literals as $literal) {
+
+			list($literalValue, $literalType) = $literal;
+			$property = $prs->getData();
+			if (!empty($literalValue)) {
+
+				// create SMWDataValue either by property or if that is not possible by the given XSD type
+				if ($property instanceof SMWPropertyValue ) {
+					$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literalValue);
+				} else {
+					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
+				}
+				if ($value->getTypeID() == '_dat') { // exception for dateTime
+					if ($literalValue != '') {
+						// do not display time if it is 00:00:00
+						if (substr($literalValue, -9) == 'T00:00:00') {
+							$literalValue = substr($literalValue, 0, strpos($literalValue, "T"));
+						}
+						$value->setXSDValue(str_replace("-","/",$literalValue));
+					}
+				} if ($value->getTypeID() == '_ema') { // exception for email
+					$value->setXSDValue($literalValue);
+				} else {
+					$value->setUserValue($literalValue);
+				}
+			} else {
+
+				if ($property instanceof SMWPropertyValue ) {
+					$value = SMWDataValueFactory::newPropertyObjectValue($property);
+				} else {
+					$value = SMWDataValueFactory::newTypeIDValue('_wpg');
+
+				}
+
+			}
+			$allValues[] = $value;
+		}
+	}
+
 	/**
 	 * Creates  SWMDataValue object from a (possibly) merged result.
 	 *
@@ -914,11 +921,11 @@ abstract class TSConnection {
 	public abstract function disconnect();
 
 	/**
-     * Sends SPARUL commands
-     *
-     * @param string $topic only relevant for a messagebroker.
-     * @param string or array of strings $commands
-     */
+	 * Sends SPARUL commands
+	 *
+	 * @param string $topic only relevant for a messagebroker.
+	 * @param string or array of strings $commands
+	 */
 	public abstract function send($topic, $commands);
 
 	public static function getConnector() {
@@ -929,9 +936,9 @@ abstract class TSConnection {
 				self::$_instance = new TSConnectorMessageBroker();
 			} else if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 				self::$_instance = new TSConnectorRESTWebservice();
-		
+
 			} else {
-				
+
 				self::$_instance = new TSConnectorSOAPWebservice();
 			}
 		}
@@ -952,12 +959,12 @@ class TSConnectorMessageBroker extends TSConnection {
 		$this->con->connect();
 	}
 
-	
+
 	public function disconnect() {
 		$this->con->disconnect();
 	}
 
-	
+
 	public function send($topic, $commands) {
 		global $smwgSPARULUpdateEncoding;
 		if (!is_array($commands)) {
@@ -970,7 +977,7 @@ class TSConnectorMessageBroker extends TSConnection {
 		$this->con->send($topic, $enc_commands);
 	}
 
-	
+
 
 }
 
@@ -979,7 +986,7 @@ class TSConnectorMessageBroker extends TSConnection {
  *
  */
 class TSConnectorRESTWebservice extends TSConnection {
-	
+
 	public function connect() {
 		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
 		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
@@ -1004,7 +1011,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 			$enc_commands .= "<command><![CDATA[$enc_command]]></command>";
 		}
 		$enc_commands .= "</sparul>";
-		
+
 		$this->con->update($enc_commands);
 	}
 }
@@ -1014,11 +1021,12 @@ class TSConnectorRESTWebservice extends TSConnection {
  *
  */
 class TSConnectorSOAPWebservice extends TSConnection {
-	
+
 	public function connect() {
-		global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript;
+		global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript, $smwgUseLocalhostForWSDL;
 		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		$this->con = new SoapClient("$wgServer$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+		if (!isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$this->con = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	}
 
 	public function disconnect() {

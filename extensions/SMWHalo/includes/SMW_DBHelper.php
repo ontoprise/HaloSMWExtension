@@ -226,7 +226,7 @@ class DBHelper {
 					if ($requestoptions->isCaseSensitive) {
 						$sql_conds .=  mysql_real_escape_string($labelcol) . ' LIKE ' . $db->addQuotes($string). $operator;
 					} else {
-						$sql_conds .= ' UPPER(' . mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).') '.$operator;
+						$sql_conds .= ' UPPER(' .self::convertColumn( mysql_real_escape_string($labelcol) ). ' USING utf8) LIKE UPPER(' . $db->addQuotes($string).') '.$operator;
 					}
 				}
 				$sql_conds .= ' '.$neutral.' ) ';
@@ -278,11 +278,16 @@ class DBHelper {
 							$string = '%' . $string . '%';
 							break;
 					}
-					$sql_conds[] = 'UPPER('.mysql_real_escape_string($labelcol) . ') LIKE UPPER(' . $db->addQuotes($string).')';
+					$sql_conds[] = 'UPPER('.self::convertColumn(mysql_real_escape_string($labelcol)) . ') LIKE UPPER(' . $db->addQuotes($string).')';
 				}
 			}
 		}
 		return $sql_conds;
+	}
+	
+	public static function convertColumn($columnName) {
+		global $smwghConvertColoumns;
+		return isset($smwghConvertColoumns) ? "CONVERT($columnName USING $smwghConvertColoumns)" : $columnName;
 	}
 }
 
