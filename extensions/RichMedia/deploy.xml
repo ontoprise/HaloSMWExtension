@@ -37,6 +37,8 @@
 				file="extensions/RichMedia/includes/RM_Initialize.php" />
 			<function name="enableRichMediaExtension">
 			</function>
+			<require name="us_init"
+				file="extensions/RichMedia/includes/WebDAV/WD_Initialize.php" />
 			
 			<patch file="extensions/RichMedia/patch.txt" />
 			<patch
