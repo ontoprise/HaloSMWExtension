@@ -48,6 +48,11 @@ class IAIArticleImporter  {
 	 *
 	 */
 	const TITLE_LIMIT = 50;	
+	
+	/**
+	 * Timeout for HTTP requests in seconds
+	 */
+	const HTTP_TIMEOUT = 60;
 		
 	//--- Private fields ---
 	
@@ -149,6 +154,48 @@ class IAIArticleImporter  {
 	
 	//--- Public methods ---
 	
+	/**
+	 * This method asks the source wiki for a list of article names, starting
+	 * at $from. The articles are only searched in the namespace $namespace.
+	 * $num article names are returned.
+	 *
+	 * @param string $from
+	 * 		Articles that begin with this string or the next ones in the alphabetic
+	 * 		index.
+	 * @param int $namespace
+	 * 		Number of the namespace from which the article names are retrieved
+	 * @param int $num
+	 * 		Number of articles to return
+	 * 
+	 * @return array(string)
+	 * 		Array of article names
+	 * @throws
+	 * 		IAIException
+	 * 
+	 */
+	public function getArticles($from, $namespace, $num) {
+		$apiURL = $this->mWikiBase.
+		          'api.php?action=query&list=allpages&apfrom='.
+				  urlencode($from).
+				  "&aplimit=$num&format=xml&apnamespace=$namespace";
+		$xml = Http::get($apiURL, self::HTTP_TIMEOUT);
+		if ($xml === false) {
+			throw new IAIException(IAIException::HTTP_ERROR, $apiURL);
+		}
+		
+		$articles = array();
+		// Get all article names from the xml
+		$domDocument = new DOMDocument();
+		$success = $domDocument->loadXML($xml);
+		$domXPath = new DOMXPath($domDocument);
+		$nodes = $domXPath->query('//query/allpages/p/@title');
+		foreach ($nodes as $node) {
+			$articles[] = $node->nodeValue;
+		}
+		
+		return $articles;
+		
+	}
 		
 	/**
 	 * Imports the given articles from the wiki that was specified in the 
@@ -166,24 +213,34 @@ class IAIArticleImporter  {
 	 * @param bool $importImages
 	 * 		Images that are referenced in the imported articles are downloaded
 	 * 		and installed.
-	 * 
+	 * @param bool $skipExistingArticles
+	 *		If <true>, articles that already exist in the destination wiki are
+	 * 		skipped. They are not overwritten with the latest version of the
+	 * 		source wiki.
 	 * @throws
 	 * 		IAIException
 	 * 
 	 */
 	public function importArticles($articles, $importTemplates = true, 
-								   $importImages = true, $createResultPage = true) {
+								   $importImages = true, $skipExistingArticles = true) {
 								   	
 		// Import all specified articles
-		$this->transferArticles($articles);
+		$this->transferArticles($articles, $skipExistingArticles);
 			
 		// Find all missing articles for report
 		$articlesToImport = $articles;
 		foreach ($articlesToImport as $k => $a) {
 			$articlesToImport[$k] = str_replace('_', ' ', $a);
 		}
-		$this->mMissingArticles = array_diff($articlesToImport, $this->mImportedArticles);
-			
+		$skipped = array();											 
+		foreach ($this->mSkippedPages as $ns => $sp) {
+			foreach ($sp as $k => $pr) {
+				$skipped[] = str_replace('_', ' ', $pr[0]);
+			}
+		}
+		$this->mMissingArticles = array_diff($articlesToImport, 
+											 $this->mImportedArticles, $skipped);
+		
 		// resolve template dependencies of all articles that were previously
 		// imported
 		if ($importTemplates) {
@@ -340,7 +397,7 @@ class IAIArticleImporter  {
 			}
 
 			// Read image from source wiki
-			$contents = Http::get($img, 100);
+			$contents = Http::get($img, self::HTTP_TIMEOUT);
 			if ($contents === false) {
 				throw new IAIException(IAIException::HTTP_ERROR, $img);
 			}
@@ -587,12 +644,33 @@ class IAIArticleImporter  {
 	 *
 	 * @param array<string> $articles
 	 * 		An array of article names that are to be imported
+	 * @param bool $skipExistingArticles
+	 *		If <true>, articles that already exist in the destination wiki are
+	 * 		skipped. They are not overwritten with the latest version of the
+	 * 		source wiki.
 	 * 
 	 * @throws
 	 * 
 	 */
-	private function transferArticles($articles) {
+	private function transferArticles($articles, $skipExistingArticles = true) {
 
+		if ($skipExistingArticles) {
+			// Remove all existing articles from $articles.
+			foreach ($articles as $k => $a) {
+				$t = Title::newFromText($a);
+				if ($t && $t->exists()) {
+					// article exists => remove it from $articles
+					unset($articles[$k]);
+					$rev = Revision::newFromTitle($t);
+					$this->mSkippedPages[$t->getNamespace()][] = array($a, $rev->getId());
+				}
+			}
+		}
+		
+		if (empty($articles)) {
+			return;
+		}
+		
 		$titleParams = $this->makeTitlesForURL($articles);
 		
 		// Import all titles 
@@ -650,12 +728,11 @@ class IAIArticleImporter  {
 	 * 			if the HTTP request fails
 	 */
 	private function downloadArticles($titles) {
-		$timeout = 100;
 		$apiURL = $this->mWikiBase.
 		          'api.php?action=query&titles='.$titles.
 				  '&export&exportnowrap';
 		echo "Downloading articles. URL:\n".$apiURL."\n\n";
-		$xml = Http::get($apiURL, $timeout);
+		$xml = Http::get($apiURL, self::HTTP_TIMEOUT);
 		if ($xml === false) {
 			throw new IAIException(IAIException::HTTP_ERROR, $apiURL);
 		}
@@ -676,12 +753,11 @@ class IAIArticleImporter  {
 	 * 			if the HTTP request fails
 	 */
 	private function downloadTemplates($titles) {
-		$timeout = 10;
 		$apiURL = $this->mWikiBase.
 		          'api.php?action=query&titles='.$titles.
 				  '&generator=templates&export&exportnowrap';
 		echo "Downloading templates. URL:\n".$apiURL."\n\n";
-		$xml = Http::get($apiURL, $timeout);
+		$xml = Http::get($apiURL, self::HTTP_TIMEOUT);
 		if ($xml === false) {
 			throw new IAIException(IAIException::HTTP_ERROR, $apiURL);
 		}
@@ -843,12 +919,11 @@ SQL;
 	 * 			if the HTTP request fails
 	 */
 	private function getImageProperties($titles) {
-		$timeout = 100;
 		$apiURL = $this->mWikiBase.
 		          'api.php?action=query&titles='.$titles.
 				  '&prop=imageinfo&format=xml&iiprop=url';
 		echo "Downloading image properties. URL:\n".$apiURL."\n\n";
-		$xml = Http::get($apiURL, $timeout);
+		$xml = Http::get($apiURL, self::HTTP_TIMEOUT);
 		if ($xml === false) {
 			throw new IAIException(IAIException::HTTP_ERROR, $apiURL);
 		}
