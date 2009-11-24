@@ -221,14 +221,15 @@ class TLConnectLocal implements ITL {
 	 * @param string $dataSourceSpec
      * @param string $importSet
      * @param string $inputPolicy
+     * @param string $conflictPolicy
      * 
      * @return string or <null> if no DAL module is connected
 	 *
 	 */
-	public function getTerms($dataSourceSpec, $importSet, $inputPolicy) {
+	public function getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy) {
 		if ($this->connectedDAL) {
 			return $this->connectedDAL
-			            ->getTerms($dataSourceSpec, $importSet, $inputPolicy);
+			            ->getTerms($dataSourceSpec, $importSet, $inputPolicy, $conflictPolicy);
 		}
 		return null;
 		
