@@ -10,6 +10,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
+		<copy todir="bin/zip/extensions/DataImport/IAI">
+			<fileset dir="../IAI/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 		<copy todir="bin/zip/extensions/DataImport/includes">
 			<fileset dir="../includes/">
 				<exclude name="**/.svn, **/CVS" />
