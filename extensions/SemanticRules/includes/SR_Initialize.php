@@ -22,7 +22,7 @@ $srgSRIP = $IP . '/extensions/SemanticRules';
  * @return boolean (MW Hook)
  */
 function srfSetupExtension() {
-	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups;
+	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
 
 	$smwgDefaultRuleStore = "SRRuleStore";
@@ -38,6 +38,12 @@ function srfSetupExtension() {
 	/*$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
 	$wgSpecialPages['Explanations'] = array('SRExplanations');
 	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
+	
+	$wgExtensionCredits['parserhook'][]= array('name'=>'SemanticRules&nbsp;Extension', 'version'=>SEMANTIC_RULES_VERSION,
+            'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].", 
+            'url'=>'https://sourceforge.net/projects/halo-extension', 
+            'description' => 'Enables the power of rules to SMWHalo');
+	
 
 	return true;
 }
