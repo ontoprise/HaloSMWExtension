@@ -24,11 +24,35 @@ $wgWebDAVNamespaceBlackList["IAI"] = false;
 // RichMedia extension and the WebDAV properties extracted  
 // from files and other contexts.
 global $wgWebDAVRichMediaMapping;
-$wgWebDAVRichMediaMapping = array(); 
-$wgWebDAVRichMediaMapping["TemplateName"] = "RMMedia";
-$wgWebDAVRichMediaMapping["Filename"] = "Filename";
-$wgWebDAVRichMediaMapping["RelatedArticles"] = "RelatedArticles";
-$wgWebDAVRichMediaMapping["Delimiter"] = ",";
+$wgWebDAVRichMediaMapping = array();
+$wgWebDAVRichMediaMappingParameters = array(); 
+$wgWebDAVRichMediaMappingParameters["Filename"] = "Filename";
+$wgWebDAVRichMediaMappingParameters["RelatedArticles"] = "RelatedArticles";
+$wgWebDAVRichMediaMappingParameters["UploadDate"] = "UploadDate";
+$wgWebDAVRichMediaMappingParameters["Media subcategory"] = "Media subcategory";
+$wgWebDAVRichMediaMappingParameters["Uploader"] = "Uploader";
+$wgWebDAVRichMediaMappingParameters["Delimiter"] = ",";
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMAudio";
+$wgWebDAVRichMediaMapping[NS_AUDIO] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMDocument";
+$wgWebDAVRichMediaMapping[NS_DOCUMENT] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMICalendar";
+$wgWebDAVRichMediaMapping[NS_ICAL] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMImage";
+$wgWebDAVRichMediaMapping[NS_IMAGE] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMPdf";
+$wgWebDAVRichMediaMapping[NS_PDF] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMVCard";
+$wgWebDAVRichMediaMapping[NS_VCARD] = $wgWebDAVRichMediaMappingParameters;
+
+$wgWebDAVRichMediaMappingParameters["TemplateName"] = "RMVideo";
+$wgWebDAVRichMediaMapping[NS_VIDEO] = $wgWebDAVRichMediaMappingParameters;
 
 
 
