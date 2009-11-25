@@ -162,6 +162,11 @@ ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a
 	font-size: 10pt;
     font-weight: 600;
 }
+	
+#smwh_pstats{
+    font-size: xx-small;
+    color: #AAA;
+}
 
 #footer{
     background-color: #228c9e;
