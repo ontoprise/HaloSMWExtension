@@ -12,7 +12,7 @@ $pomWSServer=true;
 include_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
 
 For SF-API (Semantic Forms API)
-include_once('extensions/SMWHalo/SemanticForms/includes/SF_Settings.php');
+include_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
 
 Dependencies of the API layers:
 MW API < PCP 
