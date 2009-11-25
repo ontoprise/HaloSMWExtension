@@ -39,53 +39,85 @@ class UploadConverter {
 	 * 		true
 	 */
 	public static function convertUpload(&$uploadedFile) {
-		global $smwgRMIP;
+		global $smwgRMIP, $smwgUploadConverterExternal;
 		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
 		
 		$file = $uploadedFile->mLocalFile; // can't avoid to access private field :(  
 		$mimeType = $file->getMimeType();
+		$fileNameArray = split("\.", $file->getFullPath());
+		$ext = $fileNameArray[count($fileNameArray)-1];	
+		if($ext == "vcf"){
+			$mimeType = "application/vcard";
+		} else if ($ext == "ics"){
+			$mimeType = "application/icalendar";
+		}
 		
-		if (isset($smwgUploadConverter[$mimeType])) {
-			$converterApp = $smwgUploadConverter[$mimeType];
+		if (isset($smwgUploadConverterExternal[$mimeType])) {
+			$converterApp = $smwgUploadConverterExternal[$mimeType];
+			
+			wfLoadExtensionMessages('UploadConverter');
+		
+			$path = $file->getFullPath();
+			$ext  = $file->getExtension();
+			$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
+			$converterApp = str_replace('{infile}', $path, $converterApp);
+			$converterApp = str_replace('{outfile}', $textFile, $converterApp);
+			$ret = exec($converterApp, $output, $retVar);
+			
+			$text = "";
+			if (file_exists($textFile)) {
+				// a temporary file has been written 
+				// => add its content into the article 
+	//			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+				$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
+				// delete temp. file
+				unlink($textFile);
+			} else {
+				$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
+			}			
+			$title = $file->getTitle();
+			$article = new Article($title);
+	
+			if ($article->exists()) {
+				// Set the article's content
+				$success = $article->doEdit($text, wfMsg('uc_edit_comment'));
+			}
+	
+			return true;
+		} else if(array_key_exists($mimeType, $smwgUploadConverterInternal)){
+			global $wgUploadConverterTemplateMapping;
+			$wgUploadConverterTemplateMapping = $wgUploadConverterTemplateMapping[$mimeType];
+			foreach($wgUploadConverterTemplateMapping as $key => $value){
+				if(is_null($value)){
+					unset($wgUploadConverterTemplateMapping[$key]);
+				}
+			}
+			$path = $file->getFullPath();
+			$text = file_get_contents($path);
+			$class = $smwgUploadConverterInternal[$mimeType];
+			$converter = new $class($text);
+			$text = $converter->getConvertedText();
+			  	
+			$title = $file->getTitle();
+			$article = new Article($title);
+	
+			if ($article->exists()) {
+				// Set the article's content
+				$success = $article->doEdit($text, wfMsg('uc_edit_comment'));
+			}
+			
+			return true;
 		} else {
 			// no converter specified for the mime type
 			return true;
 		}
-		wfLoadExtensionMessages('UploadConverter');
 		
-		$path = $file->getFullPath();
-		$ext  = $file->getExtension();
-		$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
-		$converterApp = str_replace('{infile}', $path, $converterApp);
-		$converterApp = str_replace('{outfile}', $textFile, $converterApp);
-		$ret = exec($converterApp, $output, $retVar);
-		
-		$text = "";
-		if (file_exists($textFile)) {
-			// a temporary file has been written 
-			// => add its content into the article 
-//			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
-			$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
-			// delete temp. file
-			unlink($textFile);
-		} else {
-			$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
-		}			
-		$title = $file->getTitle();
-		$article = new Article($title);
-
-		if ($article->exists()) {
-			// Set the article's content
-			$success = $article->doEdit($text, wfMsg('uc_edit_comment'));
-		}
-
-		return true;
 	}
 	
 	public static function getFileContent(&$file) {
 		global $smwgRMIP;
 		require_once("$smwgRMIP/specials/SMWUploadConverter/SMW_UploadConverterSettings.php");
-		global $smwgUploadConverter;
+		global $smwgUploadConverterExternal, $smwgUploadConverterInternal;
 		
 		$mimeType = $file->getMimeType();
 		
@@ -93,36 +125,55 @@ class UploadConverter {
 		$ext = $fileNameArray[count($fileNameArray)-1];
 		if($mimeType == "text/plain" && $ext == "doc"){
 			$mimeType = "application/msword";
+		} else if($ext == "vcf"){
+			//todo:deal with mime types
+			$mimeType = "application/vcard";
+		} else if ($ext == "ics"){
+			$mimeType = "application/icalendar";
 		}
 		
-		if (isset($smwgUploadConverter[$mimeType]))
-			$converterApp = $smwgUploadConverter[$mimeType];
-		else {
+		if (isset($smwgUploadConverterExternal[$mimeType])){
+			$converterApp = $smwgUploadConverterExternal[$mimeType];
+			
+			wfLoadExtensionMessages('UploadConverter');
+		
+			$path = $file->getFullPath();
+			$ext  = $file->getExtension();
+			$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
+			$converterApp = str_replace('{infile}', $path, $converterApp);
+			$converterApp = str_replace('{outfile}', $textFile, $converterApp);
+			$ret = exec($converterApp, $output, $retVar);
+			
+			$text = "";
+			if (file_exists($textFile)) {
+				// a temporary file has been written 
+				// => return its content 
+				$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+				// delete temp. file
+				unlink($textFile);
+			} else {
+				$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
+			}			
+			return $text;
+		} else if(array_key_exists($mimeType, $smwgUploadConverterInternal)){
+			global $wgUploadConverterTemplateMapping;
+			$wgUploadConverterTemplateMapping = $wgUploadConverterTemplateMapping[$mimeType];
+			foreach($wgUploadConverterTemplateMapping as $key => $value){
+				if(is_null($value)){
+					unset($wgUploadConverterTemplateMapping[$key]);
+				}
+			}
+			$path = $file->getFullPath();
+			$text = file_get_contents($path);
+			$class = $smwgUploadConverterInternal[$mimeType];
+			$converter = new $class($text);
+			return $converter->getConvertedText();
+			  
+		} else {
+			return $mimeType;
 			// no converter specified for the mime type
-			// echo("\n mime type:".$mimeType);
 			return "";
 		}
-		wfLoadExtensionMessages('UploadConverter');
-		
-		$path = $file->getFullPath();
-		$ext  = $file->getExtension();
-		$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
-		$converterApp = str_replace('{infile}', $path, $converterApp);
-		$converterApp = str_replace('{outfile}', $textFile, $converterApp);
-		$ret = exec($converterApp, $output, $retVar);
-		
-		$text = "";
-		if (file_exists($textFile)) {
-			// a temporary file has been written 
-			// => return its content 
-			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
-			// delete temp. file
-			unlink($textFile);
-		} else {
-			$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
-		}			
-		return $text;
 	}
-	
 }
 
