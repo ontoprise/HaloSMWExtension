@@ -36,8 +36,8 @@ function cef_comment_createNewPage( $wikiurl, $wikiPath, $pageName, $pageContent
 	$userName, $userPassword, $domain ) {
 
 	
-	$pageName = urldecode( $pageName );
-	$pageContent = urldecode( $pageContent );	
+	$pageName = CECommentUtils::unescape( $pageName );
+	$pageContent = CECommentUtils::unescape( $pageContent );	
 		
 	if ( !$wikiurl || $wikiurl == '' )
 		// no wikipath given -> must be local!
