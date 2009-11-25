@@ -43,7 +43,7 @@ $iaigIP = $dir;
 
 //Are there any options at all?
 if (empty($options)) {
-	echo 'Usage: IAI_Commandline.php --af="<article file>" --a="<article name>" --if="<image file>" --i="<image name>" --ew --aregex="<regular expression for articles>" --iregex="<regular expression for images>" --api="<wiki api>" --dr --tmpl --img --se'."\n";
+	echo 'Usage: IAI_Commandline.php --af="<article file>" --a="<article name>" --if="<image file>" --i="<image name>" --ew --aregex="<regular expression for articles>" --iregex="<regular expression for images>" --api="<wiki api>" --dr --tmpl --img --se --mt --mi'."\n";
 
 	echo "\n--af=\"<article file>\"\n";
 	echo "\t<article file> is the name of a text file that contains in each line a name of an article that will be imported.";
