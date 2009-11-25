@@ -1,9 +1,9 @@
 body{
-    background-color: #edf4e6;
+    background-color: #aad1de;
 }
 
 .mediawiki{
-	font-family: sans-serif;
+	font-family: Helvetica,Arial,Helvetica,sans-serif;
 }
 
 dt {
@@ -44,15 +44,19 @@ dt {
 }
 
 #smwh_menu {
-    background-image: url(../img/menue.gif);
+    background-image: url(../img/menue2.gif);
 }
 
 .smwh_menuhead  {
-    background: url(../img/menue_trennstrich.gif) right no-repeat;
+    background: url(../img/menu_arrow.gif) right no-repeat;
+	margin-left: 3px;
+	margin-right: 3px;
 }
 
 #smwh_menu .hovering .smwh_menuhead {
     background: url(../img/menue_hover.gif) repeat-x;
+	margin-left: 3px;
+	margin-right: 3px;
 }
 
 ul.smwh_menulist div.smwh_menubody_visible {
@@ -61,11 +65,27 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 ul.smwh_menulist div.smwh_menubody_visible a{
+	display:list-item;
+	list-style-type:square;
+	list-style-position:inside;
     color: #116988;
+	vertical-align: middle;
+	font-size: smaller;
+	font-weight: bold;
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover  {
 	background-color: #E8EDFF;
+}
+
+ul.smwh_menulist div.smwh_menubody td:hover  a{
+	background-color: #E8EDFF;
+	text-decoration: none;
+}
+
+ul.smwh_menulist div.smwh_menubody td:hover {
+	background-color: #E8EDFF;
+	text-decoration: none;
 }
 
 /* breadcrump */
@@ -113,7 +133,7 @@ ul.smwh_menulist div.smwh_menubody td:hover  {
 }
 
 #mainpage{
-    background-color: #edede7;
+    background-color: #FFFFFF;
 }
 
 #mainpage a{
@@ -138,16 +158,13 @@ ul.smwh_menulist div.smwh_menubody td:hover  {
 
 ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a {
     color: #FFF;
-    font-weight: 900;
-}
-
-#smwh_pstats{
-    font-size: xx-small;
-    color: #AAA;
+	font-family:arial, sans-serif;	
+	font-size: 10pt;
+    font-weight: 600;
 }
 
 #footer{
-    background-color: #228e9e;
+    background-color: #228c9e;
     background-image: url(../img/backgr_footer.gif);
     background-repeat: repeat-x;
 }

@@ -39,8 +39,8 @@ textarea {
 
 #smwh_head{
 	position: relative;
-	min-height: 70px;
-	max-height: 135px;
+	min-height: 90px;
+	max-height: 115px;
 	padding-left: 10px;
 	padding-top: 10px;
 	padding-bottom: 5px;
@@ -66,36 +66,40 @@ textarea {
 
 #smwh_logo{
     float: left;
+	margin-bottom: 5px;
 }
 
 #smwh_personal{
     float: right;
     margin-right: 15px;
+	margin-top: 5px;
+	font-size: smaller;
 }
 
 #smwh_search{
     height: 40px;
     float: right;
     position: absolute;
-    bottom: 5px;
-    right: 	15px;
+    bottom: 20px;
+    right: 	10px;
 }
 
 #searchInput{
     display: block;
     float: left;
-    margin-right: 10px;
+    margin-right: 6px;
     margin-bottom: 19px;
+	margin-top: 2px;
     position: relative;
     border-style: solid;
     border-width: 2px;
-    padding: 8px;
+    padding: 5px;
     width: 340px;
 }
 
 #searchInput:focus{
 	border-width: 2px;
-        border-style: solid;
+    border-style: solid;
 }
 
 
@@ -107,7 +111,7 @@ textarea {
 
 #smwh_menu{
     clear: both;
-    height: 30px;
+    height: 28px;
 }
 
 #smwh_menu .editsection{
@@ -120,7 +124,7 @@ ul.smwh_menulist{
 }
 
 ul.smwh_menulist div.smwh_menuhead > p {
-    margin: 6px;
+    margin: 4px;
 }
 
 ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
@@ -156,9 +160,9 @@ ul.smwh_menulist div.smwh_menubody {
 
 ul.smwh_menulist div.smwh_menubody .hovering  {
 	background-image: none;
-        background-repeat: repeat;
-        background-attachment: scroll;
-        background-position: 0 0;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-position: 0 0;
 }
 
 
@@ -203,8 +207,9 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_breadcrumbs{
     clear: both;
-    margin-top: 10px;
+    margin-top: 12px;
     margin-bottom: 10px;
+	margin-left: 12px;
 }
 
 /* mainpage */
@@ -326,9 +331,11 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 
 #mainpage{
-    clear: both;
-    margin-top: 3px;
     /*padding-bottom: 25px;*/
+	clear: both;
+    margin-top: 3px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
 
@@ -351,7 +358,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #column-content{
     border-width: 1px;
     border-style: solid;
-    padding: 5px;
+    padding: 15px;
     margin-bottom: 25px;
 }
 
@@ -361,11 +368,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #siteSub, #jump-to-nav, .printfooter{
     display: none;
-}
-
-/* page statistic */
-#smwh_pstats{
- text-align:center;
 }
 
 /*footer*/
