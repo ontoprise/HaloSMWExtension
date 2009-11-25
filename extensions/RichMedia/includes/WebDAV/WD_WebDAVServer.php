@@ -729,8 +729,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	
 	private function createRichMediaTemplate($fileName, $relatedArticleTitles,
 			$uploader, $uploadDate){
-		$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
 		global $wgWebDAVRichMediaMapping;
+		$delimiter = $wgWebDAVRichMediaMapping["Delimiter"];
 		$result = "{{".$wgWebDAVRichMediaMapping["TemplateName"]."\n";
 		$result .= "|".$wgWebDAVRichMediaMapping["Filename"]."=".$fileName."\n";
 		$result .= "|".$wgWebDAVRichMediaMapping["RelatedArticles"]."="
