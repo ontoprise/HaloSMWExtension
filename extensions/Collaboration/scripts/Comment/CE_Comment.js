@@ -30,6 +30,8 @@ CECommentForm.prototype = {
 	 */
 	initialize: function() {
 		// save the current comment for beaing able to repost on failure
+		this.textareaIsDefault = true;
+		this.usernameIsDefault = true;
 		this.internalCall = null;
 		this.runCount = 0;
 		this.XMLResult = null;
@@ -63,17 +65,45 @@ CECommentForm.prototype = {
 		this.pendingIndicatorCF.show();
 
 		//form params
-		//TODO: the rating!
 		var now = new Date();
 		Element.extend(now);
 		var nowJSON = now.toJSON();
 		
 		var pageName = wgPageName + "_" + now.getTime();
+		
+		//rating things
+		var ratingValue = '';
+		var ratingGrp = document['forms']['ce_cf']['rating'];
+		for( i = 0; i < ratingGrp.length; i++){
+			if (ratingGrp[i].checked == true) {
+				ratingValue = ratingGrp[i].value;
+			}
+		}
+		
+		//textarea
+
+		var textArea = ($('ce_cf_textarea').value)? $('ce_cf_textarea').value: '';
+		//remove leading and trailing whitespaces
+		textArea = textArea.strip();
+		if(textArea.blank() || this.textareaIsDefault) {
+			this.pendingIndicatorCF.hide();
+			$('ce_cf_message').setAttribute("class", "ce_cf_success_message");
+			$('ce_cf_message').innerHTML = 'You didn\'t enter a valid comment.';
+			//reset and enable form again
+			//$('ce_cf').reset();
+			$('ce_cf').enable();
+			return false;
+		}
+		//remove script tags
+		textArea = textArea.stripScripts();
+		//escape html chars
+		textArea = textArea.escapeHTML();
+
 		var pageContent = "{{Comment|CommentPerson=" + $('ce_cf_user_field').value.strip() + 
 			"|CommentRelatedArticle=" + wgPageName +
-			"|CommentRating=" + "true"/*$('ce_cf_user_rating').value*/ +
+			"|CommentRating=" + ratingValue +
 			"|CommentDatetime=" + nowJSON.substring(1, nowJSON.length-2) +
-			"|CommentContent=" + $('ce_cf_textarea').value.strip() + "|}}";
+			"|CommentContent=" + textArea + "|}}";
 
 		this.currentPageName = escape(pageName);
 		this.currentPageContent = escape(pageContent);
@@ -137,7 +167,7 @@ CECommentForm.prototype = {
 			if(valueCode == 0){
 				//fine.
 				this.pendingIndicatorCF.hide();
-				$('ce_cf_message').setAttribute("class", "ce_cf_failure_message");
+				$('ce_cf_message').setAttribute("class", "ce_cf_success_message");
 				$('ce_cf_message').innerHTML = htmlmsg;
 				//reset and enable form again
 				$('ce_cf').reset();
@@ -156,7 +186,7 @@ CECommentForm.prototype = {
 				}else{
 					//second run and failure again. so show message
 					this.pendingIndicatorCF.hide();
-					$('ce_cf_message').setAttribute("class", "ce_cf_success_message");
+					$('ce_cf_message').setAttribute("class", "ce_cf_failure_message");
 					$('ce_cf_message').innerHTML = htmlmsg;
 					//reset and enable form again
 					$('ce_cf').reset();
@@ -167,7 +197,47 @@ CECommentForm.prototype = {
 
 		return false;
 	},
-
+	
+	/*helper functions*/
+	
+	formReset:function() {
+		this.textareaIsDefault = true;
+		this.usernameIsDefault = true;
+	},
+	
+	/**
+	 * onClick event function for textarea
+	 */
+	selectTextarea: function() {
+		//check if we still have the form default in here
+		if (this.textareaIsDefault) {
+			$('ce_cf_textarea').activate();
+		}
+	},
+	
+	/**
+	 * Disable the onClick function for textarea
+	 */
+	textareaKeyPressed:function() {
+		this.textareaIsDefault = false;
+	},
+	
+	/**
+	 * onClick event function for username input
+	 */
+	selectUsernameInput: function() {
+		//check if we still have the form default in here
+		if (this.usernameIsDefault) {
+			$('ce_cf_user_field').activate();
+		}
+	},
+	
+	/**
+	 * Disable the onClick function for username input
+	 */
+	usernameInputKeyPressed:function() {
+		this.usernameIsDefault = false;
+	},
 }
 
 // Singleton of this class

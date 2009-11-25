@@ -1,1 +1,55 @@
-@CHARSET "ISO-8859-1";
+@CHARSET "UTF-8";
+
+/* Comment form */
+
+/* the ID of the Collaboration Extension Comment Form (CE_CF)*/
+#ce_cf {
+
+}
+#ce_cf_fieldset {
+
+}
+
+/*The table*/
+#ce_cf_table {
+}
+#ce_cf_table tr {
+}
+#ce_cf_table td {
+}
+
+/* the user (-name input) field*/
+#ce_cf_user_field {
+
+}
+/* the rating radio buttons */
+.ce_cf_rating_radio {
+}
+
+/* the textarea (comment content) */
+#ce_cf_textarea {
+}
+
+/*the two buttons in the form*/
+#ce_cf_submitbuttonID {
+}
+#ce_cf_resetbuttonID {
+}
+
+/* the div for the pending indicator*/
+#ce_cf_pending{
+}
+
+/* normal status messages from AJAX response */
+#ce_cf_message {
+	
+}
+
+/* failure messages from AJAX response */
+#ce_cf_failure_message {
+
+}
+
+/* warnings created by parser function*/
+.ce_warning{
+}

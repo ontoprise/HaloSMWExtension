@@ -34,7 +34,7 @@ define('CE_COMMENT_ALL', 0);
 define('CE_COMMENT_AUTH_ONLY', 1);
 define('CE_COMMENT_NOBODY', 2);
 
-global $cegIP, $cegScriptPath, $cegEnableComment, $cegEnableCurrentUsers;
+global $cegIP, $cegScriptPath, $cegEnableComment, $cegEnableCommentFor, $cegEnableCurrentUsers;
 
 ###
 # This is the path to your installation of Collaboration as seen on your
@@ -59,7 +59,7 @@ $cegEnableComment = true;
 # Who's allowed to comment?
 # Allowed values are: all, auth only, nobody, see constants at top.
 ###
-$cegEnableCommentFor = CE_COMMENT_AUTH_ONLY;
+$cegEnableCommentFor = CE_COMMENT_ALL;
 
 ###
 # Enable CurrentUsers

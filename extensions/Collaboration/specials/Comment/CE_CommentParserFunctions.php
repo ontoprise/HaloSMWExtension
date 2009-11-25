@@ -73,10 +73,11 @@ class CECommentParserFunctions {
 	const SUCCESS = 0;
 	const FORM_ALREADY_SHOWN = 1;
 	const COMMENTS_ALREADY_SHOWN = 2;
-	const USER_NOT_ALLOWED_TO_COMMENT = 3;
-	const USER_NOT_ALLOWED_TO_QUERY = 4;
-	const NO_COMMENTS_AVAILABLE = 5;
-	const COMMENTS_DISABLED = 6;
+	const NOBODY_ALLOWED_TO_COMMENT = 3;
+	const USER_NOT_ALLOWED_TO_COMMENT = 4;
+	const USER_NOT_ALLOWED_TO_QUERY = 5;
+	const NO_COMMENTS_AVAILABLE = 6;
+	const COMMENTS_DISABLED = 7;
 	
 	//--- Private fields ---
 	// Title: The title to which the functions are applied
@@ -135,22 +136,6 @@ class CECommentParserFunctions {
 
 		$status = self::$mInstance->doInitialChecks(CELanguage::CE_PF_SHOWCOMMENTS, $parser);
 
-		
-		/*
-		 * 		case self::COMMENTS_ALREADY_SHOWN:
-				//display notice and do nothing
-				break;
-							case self::USER_NOT_ALLOWED_TO_QUERY:
-				//display notice and do nothing
-				break;
-							case self::NO_COMMENTS_AVAILABLE:
-				break;
-					case self::SUCCESS:
-				//continue
-				break;
-
-	
-		 */
 		if (count($errMsgs) == 0) {
 			// create query
 			self::$mInstance->mRelCommentTitles = array();
@@ -181,24 +166,24 @@ class CECommentParserFunctions {
 	 * 			... if there's sthg wrong
 	 */
 	public static function showcommentform(&$parser) {
-		global $cegContLang;
+		global $cegContLang, $wgUser;
 
-		//TODO: into seperate function doChecks?
-		
 		$status = self::$mInstance->doInitialChecks(CELanguage::CE_PF_SHOWFORM, $parser);
-		
+
 		switch ($status) {
+			case self::SUCCESS:
+				//continue
+				break;
 			case self::COMMENTS_DISABLED:
 				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_disabled'));
 				break;
 			case self::FORM_ALREADY_SHOWN:
 				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_already_shown'));
 				break;
+			case self::NOBODY_ALLOWED_TO_COMMENT:
+				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_all_not_allowed'));
 			case self::USER_NOT_ALLOWED_TO_COMMENT:
-				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_not_allowed')); 
-				break;
-			case self::SUCCESS:
-				//continue
+				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_you_not_allowed')); 
 				break;
 			default:
 				throw new CEException(CEException::INTERNAL_ERROR, __METHOD__ . ": Unknown value `{$status}`" );
@@ -208,22 +193,27 @@ class CECommentParserFunctions {
 		$params = self::$mInstance->getParameters(func_get_args());
 		// handle the (optional) parameter "ratingstyle".
 		#list($style) = self::$mInstance->mStyle($params);
-		//TODO:add Reset button! Add predefined username as defaultvalue
+		
 		//TODO:Add the icon from the userpage.
 		
 		// => create the form now if user is allowed to comment
-		$rows = 4;
-		$cols = 4;
 		
 		$encPreComment = htmlspecialchars(wfMsgForContentNoTrans('ce_cf_predef'));
-		
-		$user_disabled = '';
 		$comment_disabled = '';
 		
-		$userField = "<input type='text' size='30' id='ce_cf_user_field' '$user_disabled' />";
+		#rating#
+		$ratingValues = array( 0 => wfMsgForContent('ce_ce_rating_0'),
+			1 => wfMsgForContent('ce_ce_rating_1'),
+			2 => wfMsgForContent('ce_ce_rating_2'));
 		
-		$commentTextArea = "<textarea rows='$rows' cols='$cols'
-			id='ce_cf_textarea' '$comment_disabled' defaultValue='$encPreComment' onClick=''></textarea>";
+		#userfield#
+		$user_disabled = '';
+		$currentUser = $wgUser->getName();
+		$userFieldSize = 30;
+		
+		#textarea#
+		$rows = 4;
+		$cols = 4;
 		
 		$form = XML::openElement('form', array( 'method' => 'post', 'id' => 'ce_cf',
 						'onSubmit' => 'return ceCommentForm.processForm()' )) . 
@@ -231,27 +221,52 @@ class CECommentParserFunctions {
 			XML::element('legend', null, wfMsg( 'ce_cf_legend' )) .
 			XML::openElement('table', array('border' =>'0', 'id' => 'ce_cf_table')).
 			'<tr>' .
-				'<td class="ce_cf_input">' .
-					$userField .
+				'<td>' .
+					XML::input('', $userFieldSize, $currentUser, 
+						array('id' => 'ce_cf_user_field',
+						'onClick' => 'ceCommentForm.selectUsernameInput();',
+						'onKeyDown' => 'ceCommentForm.usernameInputKeyPressed();')) .
+				'</td>' .
+				'<td rowspan="2">' .
+					wfMsgForContent('ce_cf_article_rating') . '<br/>' .
+					XML::element('input', array( 'type' => 'radio',
+						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
+						'value' => '0', 'checked' => 'checked')) .
+					$ratingValues[0] . '<br/>' .
+					XML::element('input', array( 'type' => 'radio',
+						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
+						'value' => '1')) .
+					$ratingValues[1] . '<br/>' .
+					XML::element('input', array( 'type' => 'radio',
+						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
+						'value' => '2')) .
+					$ratingValues[2] . '<br/>' .
 				'</td>' .
 			'</tr>' .
-			'<tr>' .
-				'<td class="ce_cf_textarea">' .
-					$commentTextArea .
+			'<tr colspan="2">' .
+				'<td>' .
+					XML::openElement('textarea', array('rows' => $rows,
+						'cols' => $cols, 'id' => 'ce_cf_textarea',
+						'defaultValue' => $encPreComment,
+						'onClick' => 'ceCommentForm.selectTextarea();',
+						'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
+					$encPreComment .
+					XML::closeElement('textarea') .
 				'</td>' .
 			'</tr>';
 					
-		$submitButtonName = 'ce_cf_submitbuttonName';
-		$submitButtonID = 'ce_cf_submitbuttonID'; 
+		$submitButtonID = 'ce_cf_submitbuttonID';
+		$resetButtonID = 'ce_cf_resetbuttonID';  
 		
-		$form .= '<tr>' .
-				'<td class="ce_comment_form_input">' .
+		$form .= '<tr colspan="2">' .
+				'<td>' .
 					XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
-						array ( 'id' => $submitButtonID,
-							'value' => wfMsg( 'ce_cf_submit_button_name' )) ) .
+						array ( 'id' => $submitButtonID) ) .
+					XML::element( 'input', array( 'type' => 'reset', 
+						'value' => wfMsg( 'ce_cf_reset_button_name' ),
+						'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
 				'</td>' .
-			'</tr>' .
-			'<tr>';
+			'</tr>';
 		$form .=
 			XML::closeElement('table') .
 			XML::openElement('div', array('id' => 'ce_cf_pending' )) .
@@ -263,40 +278,10 @@ class CECommentParserFunctions {
 
 		// foobar
 
-		//TODO: grey out form or dont even display?.
-		$text = wfMsgForContent('ce_allowed');
-		#}
-
 		self::$mInstance->mCommentFormDisplayed = true;
 		return $parser->insertStripItem( $form, $parser->mStripState );
 	}
 
-	
-	
-	/**
-	 * This method is called, when an article is moved. If the article "has" comment article(s)
-	 * they should be changed to, otherwise the relation is lost!
-	 *
-	 * @param unknown_type $specialPage
-	 * @param Title $oldTitle
-	 * @param Title $newTitle
-	 */
-	public static function articleMove(&$specialPage, &$oldTitle, &$newTitle) {
-		$oldName = $oldTitle->getFullText();
-		$newName = $newTitle->getFullText();
-		// Check if the old title has comment article(s)
-		if (empty($this->mRelCommentTitles))
-			$this->mRelCommentTitles = CECommentQuery::getRelatedCommentArticles($oldTitle, '');
-		if ($this->mRelCommentTitles !== false && is_array($this->mRelCommentTitles) &&
-			!empty($this->mRelCommentTitles)) {
-			// ok, we have to change all articles in the list!
-			CECommentStorage::updateCommentArticles($this->mRelCommentTitles, $oldTitle, $newName); 
-		}
-		//do nothing otherwise. there are no related comments!
-
-		return true;
-	}
-	
 	/**
 	 * This method is called, when an article is deleted. If the article "has" comment article(s)
 	 * they should be also deleted to prevent article corps.
@@ -368,37 +353,11 @@ class CECommentParserFunctions {
 	 * @return status code (see defines at top)
 	 */
 	private function doInitialChecks($pfCode, &$parser) {
-		global $cegContLang, $cegEnableComment, $cegEnableCommentFor, $wgUser;
+		global $cegContLang, $wgUser;
 		
 		$pfContLangName = $cegContLang->getParserFunction(CELanguage::CE_PF_SHOWCOMMENTS);
 
-		# check parser functions #
-		switch ($pfCode) {
-			case CELanguage::CE_PF_SHOWFORM:
-				# check if comments enabled #
-				if (!isset($cegEnableComment) || !$cegEnableComment)
-					return self::COMMENTS_DISABLED;
-
-				# check authorization #
-				if (!isset($cegEnableCommentFor) || !$cegEnableCommentFor || ($cegEnableCommentFor == CE_COMMENT_NOBODY)) {
-					return self::USER_NOT_ALLOWED_TO_COMMENT;
-				} elseif ((!$cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && !$wgUser->isLoggedIn()) {
-					return self::USER_NOT_ALLOWED_TO_COMMENT;
-				} else {
-					//user is allowed
-					if( self::$mInstance->mCommentFormDisplayed ) {
-						return self::FORM_ALREADY_SHOWN;
-					}
-				}
-				continue;
-			case CELanguage::CE_PF_SHOWCOMMENTS:
-				if ( self::$mInstance->mCommentsDisplayed ) {
-					return self::COMMENTS_ALREADY_SHOWN;
-				}
-			default:
-				//go on.
-		}
-
+		
 		# Check if titles fit #
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
@@ -408,7 +367,40 @@ class CECommentParserFunctions {
                 "The parser functions " . $pfContLangName .
                 "are called for different articles.");
 		}
+		
+	
+		//TODO: something is wrong here!
+		
+		/*
+		global $cegEnableComment, $cegEnableCommentFor;
+		# check parser functions #
+		switch ($pfCode) {
+			case CELanguage::CE_PF_SHOWFORM:
+				# check if comments enabled #
+				if (!isset($cegEnableComment) || !$cegEnableComment)
+					return self::COMMENTS_DISABLED;
 
+				# check authorization #
+				if (!$cegEnableCommentFor || ($cegEnableCommentFor == CE_COMMENT_NOBODY)) {
+					return self::NOBODY_ALLOWED_TO_COMMENT;
+				} elseif (($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && 
+					!$wgUser->isLoggedIn()) {
+					return self::USER_NOT_ALLOWED_TO_COMMENT;
+				} else {
+					//user is allowed
+					if( self::$mInstance->mCommentFormDisplayed ) {
+						return self::FORM_ALREADY_SHOWN;
+					} else {
+						return self::SUCCESS;
+					}
+				}
+			case CELanguage::CE_PF_SHOWCOMMENTS:
+				if ( self::$mInstance->mCommentsDisplayed ) {
+					return self::COMMENTS_ALREADY_SHOWN;
+				}
+			default:
+				//go on.
+		}*/
 		return self::SUCCESS;
 	}
 	

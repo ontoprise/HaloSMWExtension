@@ -35,12 +35,18 @@ $messages['en'] = array(
 	/* warnings */
 	'ce_cf_disabled'				=> 'Comments has been disabled.',
 	'ce_cf_already_shown'			=> 'The comment form is already shown in this page.',
-	'ce_cf_not_allowed_comment'		=> 'You are actually not allowed to enter comments.',
+	'ce_cf_all_not_allowed'			=> 'Nobody is actually allowed to enter comments.',
+	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments.',
 
 	/* form inputs, buttons, etc.*/
 	'ce_cf_legend' 					=> 'Comment',
 	'ce_cf_predef'					=> 'Enter your comment here...',
+	'ce_cf_article_rating'			=> 'Article is:',
+	'ce_ce_rating_0'				=> 'good',
+	'ce_ce_rating_1'				=> 'ok',
+	'ce_ce_rating_2'				=> 'bad',
 	'ce_cf_submit_button_name'		=> 'Submit',
+	'ce_cf_reset_button_name'		=> 'Reset',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Can not create comment.',
@@ -62,12 +68,18 @@ $messages['de'] = array(
 	/* warnings */
 	'ce_cf_disabled'				=> 'Kommentare sind deaktiviert.',
 	'ce_cf_already_shown'			=> 'Das Kommentar-Formular wird auf dieser Seite bereits angezeigt.',
-	'ce_cf_not_allowed_comment'		=> 'Sie dürfen aktuell keine Kommentare eingeben.',
+	'ce_cf_all_not_allowed'			=> 'Niemand darf aktuell Kommentare eingeben.',
+	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben.',
  
 	/* form inputs, buttons, etc.*/
 	'ce_cf_legend' 					=> 'Kommentar',
 	'ce_cf_predef'					=> 'Gib hier deinen Kommentar ein...',
+	'ce_cf_article_rating'			=> 'Artikel ist:',
+	'ce_ce_rating_0'				=> 'gut',
+	'ce_ce_rating_1'				=> 'ok',
+	'ce_ce_rating_2'				=> 'schlecht',
 	'ce_cf_submit_button_name'		=> 'Absenden',
+	'ce_cf_reset_button_name'		=> 'Zur&uuml;cksetzen',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',

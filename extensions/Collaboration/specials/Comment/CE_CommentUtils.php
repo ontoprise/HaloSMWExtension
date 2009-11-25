@@ -15,8 +15,6 @@ define('CE_COM_RESP_END',
 
 
 class CECommentUtils {
-	
-
 
 	/**
 	 * Create a response for the AJAX functions of Collaboration Comment.
@@ -37,6 +35,42 @@ class CECommentUtils {
 		$xmlString .= CE_COM_RESP_END;
 		return $xmlString;
 
+	}
+
+	/**
+	 *
+	 * @param <string> javascript-escaped string
+	 * @return <string> unescaped string
+	 */
+	public function unescape($source) {
+		$decodedStr = '';
+		$pos = 0;
+		$len = strlen ($source);
+
+		while ($pos < $len) {
+			$charAt = substr ($source, $pos, 1);
+			if ($charAt == '%') {
+				$pos++;
+				$charAt = substr ($source, $pos, 1);
+				if ($charAt == 'u') {
+					// we got a unicode character
+					$pos++;
+					$unicodeHexVal = substr ($source, $pos, 4);
+					$unicode = hexdec ($unicodeHexVal);
+					$decodedStr .= code2utf($unicode);
+					$pos += 4;
+				} else {
+					// we have an escaped ascii character
+					$hexVal = substr ($source, $pos, 2);
+					$decodedStr .= code2utf (hexdec ($hexVal));
+					$pos += 2;
+				}
+			} else {
+				$decodedStr .= $charAt;
+				$pos++;
+			}
+		}
+		return $decodedStr;
 	}
 	
 }
