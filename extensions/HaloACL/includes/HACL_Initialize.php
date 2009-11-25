@@ -124,6 +124,12 @@ $haclgDefaultQuickAccessRights = array(
 );
 
 ##
+# If $haclgEvaluatorLog is <true>, you can specify the URL-parameter "hacllog=true".
+# In this case HaloACL echos the reason why actions are permitted or prohibited.
+#
+$haclgEvaluatorLog = false;
+
+##
 # This key is used for protected properties in Semantic Forms. SF has to embed
 # all values of input fields into the HTML of the form, even if fields are protected
 # and not visible to the user (i.e. user has no right to read.) The values of

@@ -42,13 +42,25 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class HACLEvaluator {
 	
 	//--- Constants ---
+	
+	//---- Constants for the modes of the evaluator ----
 	const NORMAL = 0;
 	const DENY_DIFF = 1;
 	const ALLOW_PROPERTY_READ = 2;
 	
 	//--- Private fields ---
+	
+	// The current mode of the evaluator
 	static $mMode = HACLEvaluator::NORMAL;
+	
+	// Saving protected properties is allowed if the value did not change
 	static $mSavePropertiesAllowed = false;
+	
+	// String with logging information
+	static $mLog = "";
+	
+	// Is logging HaloACL's activities enabled?
+	static $mLogEnabled = false;
 	
 	/**
 	 * Constructor for  HACLEvaluator
@@ -85,9 +97,12 @@ class HACLEvaluator {
 	public static function userCan($title, $user, $action, &$result) {
 		global $wgRequest;
 
+		self::startLog($title, $user, $action);
+		
 //		echo $title->getFullText().":".$action."\n";
 		if ($title == null) {
 			$result = true;
+			self::finishLog("Title is <null>.", $result, true);
 			return true;
 		}
 		$etc = haclfDisableTitlePatch();
@@ -95,10 +110,12 @@ class HACLEvaluator {
 		// Check if property access is requested.
 		global $haclgProtectProperties;
 		if ($haclgProtectProperties) {
+			self::log("Properties are protected.");
 			$r = self::checkPropertyAccess($title, $user, $action);
 			if ($r !== -1) {
 				haclfRestoreTitlePatch($etc);
 				$result = $r;
+				self::finishLog("Right for property evaluated.", $result, true);
 				return $r;
 			}
 		}
@@ -107,12 +124,16 @@ class HACLEvaluator {
 		// "action=edit&mode=wysiwyg"
 		if ($action == 'edit') {
 			$action = $wgRequest->getVal('mode', 'edit');
+			if ($action != 'edit') {
+				self::log("Action updated to: $action");
+			}
 		}
 		
 		$actionID = HACLRight::getActionID($action);
 		if ($actionID == 0) {
 			// unknown action => nothing can be said about this
 			haclfRestoreTitlePatch($etc);
+			self::finishLog("Unknown action.", true, true);
 			return true;
 		}
 		
@@ -124,6 +145,7 @@ class HACLEvaluator {
 //			$r = $actionID == HACLRight::READ;
 			$r = false;
 			haclfRestoreTitlePatch($etc);
+			self::finishLog('Special handling of "Permission denied" page.', $r, $r);
 			$result = $r;
 			return $r;
 	    }
@@ -137,6 +159,7 @@ class HACLEvaluator {
 		if ($articleID == 0) {
 			// The article does not exist yet
 			if ($actionID == HACLRight::CREATE || $actionID == HACLRight::EDIT) {
+				self::log('Article does not exist yet. Checking right to create.');
 				
 				// Check right for creation of default SD template. Users
 				// can only create their own template. Sysops and bureaucrats
@@ -145,6 +168,7 @@ class HACLEvaluator {
 				if ($sd) {
 					haclfRestoreTitlePatch($etc);
 					$result = $r;
+					self::finishLog("Checked right for creating the default user template.", $r, $r);
 					return $r;
 				}
 										
@@ -153,6 +177,7 @@ class HACLEvaluator {
 				if ($allowed == false) {
 					haclfRestoreTitlePatch($etc);
 					$result = false;
+					self::finishLog("Checked right for creating a security descriptor.", $result, false);
 					return false;
 				}
 			}
@@ -161,7 +186,8 @@ class HACLEvaluator {
 		    list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
 			haclfRestoreTitlePatch($etc);
 		    $result = $r;
-			return $r;
+		    self::finishLog("Checked if the user is allowed to create an article with in the given namespace.", $r, $r);
+		    return $r;
 		}
 		
 		// Check rights for managing ACLs
@@ -170,6 +196,7 @@ class HACLEvaluator {
 			// User tries to access an ACL article
 			haclfRestoreTitlePatch($etc);
 			$result = $r;
+			self::finishLog("Checked if user can modify an access control entity (SD, right or group).", $r, $r);
 			return $r;
 		}
 		
@@ -201,6 +228,7 @@ class HACLEvaluator {
 		if (!$allowed) {
 			haclfRestoreTitlePatch($etc);
 			$result = false;
+			self::finishLog("The article contains protected properties.", $result, false);
 			return false;
 		}
 		
@@ -209,11 +237,14 @@ class HACLEvaluator {
 		
 		// first check page rights
 		if ($hasSD) {
+			self::log("The article is protected with a security descriptor.");
+			
 			$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
 			                    $userID, $actionID);
 			if ($r) {
 				haclfRestoreTitlePatch($etc);
 				$result = true;
+				self::finishLog("Found an appropriate access right.", $result, true);
 				return true;
 			}
 		}
@@ -224,6 +255,7 @@ class HACLEvaluator {
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
 			$result = true;
+			self::finishLog("Action allowed by a namespace right.", $result, true);
 			return true;
 		}
 	
@@ -233,6 +265,7 @@ class HACLEvaluator {
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
 			$result = true;
+			self::finishLog("Action allowed by a category right.", $result, true);
 			return true;
 		}
 		
@@ -242,6 +275,7 @@ class HACLEvaluator {
 			// articles in the whitelist can be read
 			haclfRestoreTitlePatch($etc);
 			$result = $r;
+			self::finishLog("Read access was determined by the Whitelist.", $result, true);
 			return $r;
 		}
 		
@@ -253,12 +287,15 @@ class HACLEvaluator {
 			if ($haclgOpenWikiAccess) {
 				// Wiki is open for HaloACL but other extensions can still 
 				// prohibit access.
+				self::finishLog("No security descriptor for article found. HaloACL is configured to Open Wiki Access.", true, true);
 				return true;
 			}
 		}
 		
 		// permission denied
 		haclfRestoreTitlePatch($etc);
+		self::finishLog("No matching right for article found.", false, false);
+		
 		$result = false;
 		return false;
 	}
@@ -1021,4 +1058,80 @@ class HACLEvaluator {
 		// Property values have not changed.
 		return false;
 	}
+	
+	/**
+	 * Starts the log for an evaluation. The log string is assembled in self::mLog.
+	 *
+	 * @param Title $title
+	 * @param User $user
+	 * @param string $action
+	 */
+	private static function startLog($title, $user, $action) {
+		global $wgRequest, $haclgEvaluatorLog;
+		
+		self::$mLogEnabled = $haclgEvaluatorLog 
+		                     && $wgRequest->getVal('hacllog', 'false') == 'true';
+		
+		if (!self::$mLogEnabled) {
+			// Logging is disabled
+			return;
+		}
+		self::$mLog = "";
+		
+		self::$mLog .= "HaloACL Evaluation Log\n";
+		self::$mLog .= "======================\n\n";
+		self::$mLog .= "Article: ". (is_null($title) ? "null" : $title->getFullText()). "\n"; 
+		self::$mLog .= "User: ". $user->getName(). "\n";
+		self::$mLog .= "Action: $action\n"; 
+
+	}
+	
+	/**
+	 * Adds a message to the evaluation log.
+	 *
+	 * @param string $msg
+	 * 		The message to add.
+	 */
+	private static function log($msg) {
+		if (!self::$mLogEnabled) {
+			// Logging is disabled
+			return;
+		}
+		self::$mLog .= "$msg\n";
+	}
+	
+	/**
+	 * Finishes the log for an evaluation.
+	 *
+	 * @param string $msg
+	 * 		This message is added to the log.
+	 * @param bool $result
+	 * 		The result of the evaluation: 
+	 * 			true - action is allowed
+	 *  		false - action is forbidden
+	 * @param bool $returnVal
+	 * 		Return value of the userCan-hook:
+	 * 			true - HaloACL may have no opinion about the requested right. Other
+	 *                 extensions must decide.
+	 * 			false - HaloACL found a right and stops the chain of userCan-hooks
+	 */
+	private static function finishLog($msg, $result, $returnVal) {
+		if (!self::$mLogEnabled) {
+			// Logging is disabled
+			return;
+		}
+		
+		self::$mLog .= "$msg\n";
+		self::$mLog .= "The action is ". ($result ? "allowed.\n" : "forbidden.\n");
+		if ($returnVal) {
+			// HaloACL has no opinion about the requested right.
+			self::$mLog .= "The system and other extensions can still decide if this action is allowed.\n";
+		} else {
+			self::$mLog .= "The right is determined by HaloACL. No other extensions can influence this.\n";
+		}
+		self::$mLog .= "\n\n";
+		
+		echo self::$mLog;
+	}
+	
 }
