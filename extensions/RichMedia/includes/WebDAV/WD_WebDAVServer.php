@@ -448,7 +448,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 			$file = RepoGroup::singleton()
 				->findFile($fileData->getFileName());
 			if($file){
-				$fileURL = $file->getFullURL();
+				$fileURL = $file->getFullPath();
 				if($echo){
 					echo(file_get_contents($fileURL));
 				} else {
