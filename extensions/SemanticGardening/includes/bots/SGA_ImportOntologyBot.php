@@ -506,7 +506,9 @@ class ImportOntologyBot extends GardeningBot {
 			
 		$slabel = $this->getLabelForEntity($entity, $wgLanguageCode);
 		$st = Title::newFromText( $slabel , SMW_NS_PROPERTY );
-		if ($st == NULL) return; // Could not create a title, next please
+		if ($st == NULL) {
+			return $statements; // Could not create a title, next please
+		}
 
 		$s = array();
 		$s['NS'] = SMW_NS_PROPERTY;
@@ -692,7 +694,7 @@ class ImportOntologyBot extends GardeningBot {
 	private function getLabelForEntity($entity, $lang = "en") {
 
 		$label = $entity->getLocalName(); // use local name as default, if no labels exist at all
-		if (!$this->useLabels) return $label;
+		if (!$this->useLabels) return urldecode($label);
 		$it = $this->model->findAsIterator($entity, RDFS::LABEL(), NULL);
 		$takeFirst = true;
 		while ($it->hasNext()) {
