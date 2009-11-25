@@ -95,6 +95,12 @@ if (empty($options)) {
 	echo "\tSkip existing articles. Articles that already exist in the destination wiki\n";
 	echo "\tare not imported. Their templates and images are not updated.\n";
 	
+	echo "\n--mt";
+	echo "\tImport missing templates as listed on Special:WantedTemplates.\n";
+	
+	echo "\n--mi";
+	echo "\tImport missing images (and other files) as listed on Special:WantedFiles.\n";
+	
 	die();
 }
 
@@ -106,9 +112,12 @@ $imageRegex = "";
 $importTemplates = isset($options["tmpl"]);
 $importImages = isset($options["img"]);
 $skipExisting = isset($options["se"]);
+$importMissingTemplates = isset($options["mt"]);
+$importMissingImages = isset($options["mi"]);
 
-if (!@$options["af"] && !@$options["a"] && !@$options["if"] && !@$options["i"]) {
-	echo "No articles or images for import given. Please specify --af, --a, --i or --i !\n";
+if (!@$options["af"] && !@$options["a"] && !@$options["if"] && !@$options["i"] 
+    && !@$options["mt"] && !@$options["mi"]) {
+	echo "No articles or images for import given. Please specify --af, --a, --i, --i, --mt or --mi !\n";
 	die();
 }
 
@@ -184,6 +193,10 @@ if (!empty($articleFile)) {
 	fclose ($f); 
 }
 
+if ($importMissingTemplates) {
+	$articles = array_merge($articles, getMissingTemplates());
+}
+
 /**
  * Extract image names from the image file.
  */
@@ -218,6 +231,11 @@ if (!empty($imageFile)) {
 	}
 	fclose ($f); 
 }
+
+if ($importMissingImages) {
+	$images = array_merge($images, getMissingFiles());
+}
+
 
 if ($dryRun) {
 	echo "The following articles were specified:\n";
@@ -254,3 +272,70 @@ try {
 }
 $report = $ai->createReport(true);
 echo "Saved report for articles in: $report\n";
+
+die();
+
+/**
+ * Returns an array of template names that are missing as listed by Special:WantedTemplates
+ *
+ * @return array(string)
+ * 		Array of template names
+ */
+function getMissingTemplates() {
+	global $wgContLang;
+	$tmpl = $wgContLang->getNsText(NS_TEMPLATE);
+	
+	$dbr = wfGetDB( DB_SLAVE );
+	list( $templatelinks, $page ) = $dbr->tableNamesN( 'templatelinks', 'page' );
+	$sql = "
+		SELECT tl_namespace as namespace,
+				tl_title as title,
+				COUNT(*) as value
+		FROM $templatelinks LEFT JOIN
+				$page ON tl_title = page_title AND tl_namespace = page_namespace
+		WHERE page_title IS NULL AND tl_namespace = ". NS_TEMPLATE ."
+			GROUP BY tl_namespace, tl_title
+			";
+	
+	$res = $dbr->query($sql, __METHOD__ );
+	$templates = array();
+	if( $res !== false ) {
+		foreach( $res as $row ) {
+			$templates[] = $tmpl.":".$row->title;
+		}
+	}
+	$dbr->freeResult( $res );
+
+	return $templates;
+
+}
+
+function getMissingFiles() {
+	global $wgContLang;
+	$img = $wgContLang->getNsText(NS_IMAGE);
+	
+	$dbr = wfGetDB( DB_SLAVE );
+	list( $imagelinks, $page ) = $dbr->tableNamesN( 'imagelinks', 'page' );
+	$sql = "
+	SELECT " . 
+		NS_FILE . " as namespace,
+		il_to as title,
+		COUNT(*) as value
+	FROM $imagelinks
+	LEFT JOIN $page ON il_to = page_title AND page_namespace = ". NS_FILE ."
+			WHERE page_title IS NULL
+			GROUP BY il_to
+			";
+	
+	$res = $dbr->query($sql, __METHOD__ );
+	$images = array();
+	if( $res !== false ) {
+		foreach( $res as $row ) {
+			$images[] = $img.":".$row->title;
+		}
+	}
+	$dbr->freeResult( $res );
+
+	return $images;
+	
+}
