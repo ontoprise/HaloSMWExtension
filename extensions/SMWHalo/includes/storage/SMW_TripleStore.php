@@ -555,8 +555,8 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
+      
 		$dom = simplexml_load_string($sparqlXMLResult);
-
 		$variables = $dom->xpath('//variable');
 		$results = $dom->xpath('//result');
 
@@ -600,8 +600,8 @@ class SMWTripleStore extends SMWStore {
 				} else  {
 					// make sure that variables get truncated for SPARQL compatibility when used with ASK.
 					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
-					preg_match("/[A-Z][\\w_]*/", $label, $matches);
-					$mapPRTOColumns[$matches[0]] = $index;
+					//preg_match("/[A-Z][\\w_]*/", $label, $matches);
+					$mapPRTOColumns[$label] = $index;
 					$prs[] = $pr;
 					$index++;
 				}
@@ -649,7 +649,8 @@ class SMWTripleStore extends SMWStore {
 
 		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
-
+        
+		
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 
@@ -677,9 +678,11 @@ class SMWTripleStore extends SMWStore {
 					$uris[] = (string) $sv;
 				}
 				if (!empty($uris)) {
+					
 					$this->addURIToResult($uris, $prs[$resultColumn], $allValues);
 				} else {
 					$literals = array();
+					
 					foreach($bindingsChildren->literal as $sv) {
 						$literals[] = array((string) $sv, $sv->attributes()->datatype);
 					}
@@ -693,8 +696,9 @@ class SMWTripleStore extends SMWStore {
 
 			ksort($row);
 			$queryResult->addRow($row);
+			 
 		}
-
+        
 		return $queryResult;
 	}
 
@@ -708,6 +712,7 @@ class SMWTripleStore extends SMWStore {
 	protected function addURIToResult($uris, $prs, & $allValues) {
 
 		foreach($uris as $sv) {
+			
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
@@ -741,6 +746,7 @@ class SMWTripleStore extends SMWStore {
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
 				$allValues[] = $v;
+				
 			}
 		}
 	}

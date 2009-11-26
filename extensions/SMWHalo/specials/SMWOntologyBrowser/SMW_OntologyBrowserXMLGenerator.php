@@ -323,8 +323,10 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
-			$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-			$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getTitle()->getPrefixedDBkey()."</param>$gi_issues</annotation>";
+			if (!is_null($smwValue->getTitle())) {
+			 $targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
+			 $singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getTitle()->getPrefixedDBkey()."</param>$gi_issues</annotation>";
+			}
 			
 		} else if ($smwValue != NULL){ // normal attribute
 			if ($smwValue->getTypeID() == '_che') {
