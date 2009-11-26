@@ -34,7 +34,6 @@ function enableDataImportExtension() {
 	
 	//require the materialize parser function
 	require_once("$smwgDIIP/specials/Materialization/SMW_MaterializeParserFunction.php");
-	require_once("$smwgDIIP/specials/TermImport/SpecialPurposeParserFunctions/DI_EmailIDExtractor.php");
 			
 	$wgExtensionFunctions[] = 'smwfDISetupExtension';
 }
