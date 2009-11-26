@@ -404,6 +404,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 #smwh_treeviewtoggleright{
     position: fixed;
+    margin-top: 10px;
     top: 50%;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -413,16 +414,18 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_treeviewtoggleleft{
     position: fixed;
     top: 50%;
-    margin-top: 10px;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
 }
 
-.smwh_treeviewright{
-    margin-left: 10px;
+.smwh_treeviewleft{
+    display: block !important;
+    min-width: 300px;
+    max-width: 650px;
 }
 
-.smwh_treeviewleft{
-    left: 0px;
+.smwh_treeviewright{
+    display: block !important;
+    right: 3px;
 }

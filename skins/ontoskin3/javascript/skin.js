@@ -20,8 +20,7 @@ function Smwh_Skin() {
             this.expanded = true;
 
             //Hide treeview (necessary if shown on the left side)
-            this.treeviewhidden = true;
-             $jq("#smwh_treeview").css("display", "none");
+            this.hideTree();
              
             //store state in a cookie
             if(GeneralBrowserTools!=undefined){
@@ -42,24 +41,37 @@ function Smwh_Skin() {
         this.resizeControl();
     };
 
-    this.showTreeViewRightSide = function(){
+    this.hideTree = function(){
+        this.treeviewhidden = true;
+        $jq("#smwh_treeview").removeClass("smwh_treeviewright");
+        $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
+        $jq("#smwh_treeview").removeAttr("style");
+    };
+    
+    this.showTreeViewLeftSide = function(){
         if( this.treeviewhidden == false ){
-            this.treeviewhidden = true;
-             $jq("#smwh_treeview").css("display", "none");
+            this.hideTree();
         } else {
+            //Hide tree
+            this.hideTree();
+
+            //Calculate css style right
+            var toggleoffset = $jq("#shadow_right").offset().left;
+            var windowwidth  = $jq(window).width()
+            var rightspace = windowwidth - toggleoffset;
+            $jq('#smwh_treeview').css('right', rightspace + 'px');
+            $jq("#smwh_treeview").css("width", "auto");
+            $jq("#smwh_treeview").addClass("smwh_treeviewleft");
+            
+            
+            //Set tree as shown
             this.treeviewhidden = false;
-            $jq("#smwh_treeview").css("display", "block");
-            $jq("#smwh_treeview").css("width", "350px");
-            $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
-            $jq("#smwh_treeview").addClass("smwh_treeviewright");
         }
     };
 
-    this.showTreeViewLeftSide = function(){
+    this.showTreeViewRightSide = function(){
         if( this.treeviewhidden == false ){
-            //Hide tree
-            this.treeviewhidden = true;
-             $jq("#smwh_treeview").css("display", "none");
+            this.hideTree();
         } else {
             //Show tree
             //if page uses full screen width don't show tree on the left
@@ -73,10 +85,9 @@ function Smwh_Skin() {
             if( contentoffset < 200) return;
             
             this.treeviewhidden = false;
-            $jq("#smwh_treeview").css("display", "block");
             $jq("#smwh_treeview").css("width", contentoffset+"px");
-            $jq("#smwh_treeview").removeClass("smwh_treeviewright");
-            $jq("#smwh_treeview").addClass("smwh_treeviewleft");
+            $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
+            $jq("#smwh_treeview").addClass("smwh_treeviewright");
         }
     };
 
@@ -85,12 +96,24 @@ function Smwh_Skin() {
         var windowheight = $jq(window).height()
         $jq("#smwh_HeightShell").css("min-height", windowheight+"px");
 
+        //Calculate css style right and apply to treeview if shown on the leftside
+        var toggleoffset = $jq("#shadow_right").offset().left;
+        var windowwidth  = $jq(window).width()
+        var rightspace = windowwidth - toggleoffset;
+        $jq('.smwh_treeviewleft').css('right', rightspace + 'px');
+
+        //Calculate css style right and apply to treeview if shown on the leftside
+        var contentoffset = $jq("#shadows").offset().left - 5;
+        //if the calculated width is too small don't show tree
+        if( contentoffset < 200) this.hideTree();
+        $jq(".smwh_treeviewright").css("width", contentoffset+"px");
+
         //Check if there is enough space on the left side to show the treeview otherwise remove button
         var contentoffset = $jq("#shadows").offset().left - 5;
         if( this.expanded == true || contentoffset < 200 ){
-            $jq("#smwh_treeviewtoggleleft").css("display","none");
+            $jq("#smwh_treeviewtoggleright").css("display","none");
         } else {
-            $jq("#smwh_treeviewtoggleleft").css("display","block");
+            $jq("#smwh_treeviewtoggleright").css("display","block");
         }
 
     }

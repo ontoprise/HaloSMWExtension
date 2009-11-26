@@ -433,12 +433,15 @@ class SMWH_Skin {
         ob_end_clean();
 
         if($tree!=null && $tree!=""){
-            $treeview =  '<div id="smwh_treeviewtoggleright">';
-            $treeview .= '<img id="smwh_treeviewtogglerightimg" src="'.$wgStylePath.$this->imagepath.'/arrow_right.gif" alt="tools"/>';
-            $treeview .= '</div>';
-            $treeview .=  '<div id="smwh_treeviewtoggleleft">';
+
+            $treeview =  '<div id="smwh_treeviewtoggleleft">';
             $treeview .= '<img id="smwh_treeviewtoggleleftimg" src="'.$wgStylePath.$this->imagepath.'/arrow_left.gif" alt="tools"/>';
             $treeview .= '</div>';
+
+            $treeview .=  '<div id="smwh_treeviewtoggleright">';
+            $treeview .= '<img id="smwh_treeviewtogglerightimg" src="'.$wgStylePath.$this->imagepath.'/arrow_right.gif" alt="tools"/>';
+            $treeview .= '</div>';
+            
             //$treeview .= '<div id="smwh_treeview_shell">';
             $treeview .=    '<div id="smwh_treeview">';
             $treeview .=        $tree;

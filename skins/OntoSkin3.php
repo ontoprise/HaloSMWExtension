@@ -77,6 +77,8 @@ class SkinOntoSkin3 extends SkinTemplate {
 
         // Append to the print styles...
         $out->addStyle( 'ontoskin3/css/skin-printable.css', 'print' );
+        $out->addStyle( 'ontoskin3/css/skin-pagecontent.css','print');
+        
         
     }
 }
@@ -163,7 +165,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <tbody>
                     <tr>
                         <td rowspan="2" id="shadow_left" valign="top" width="10">
-                            <?php echo $this->smwh_Skin->treeview(); ?>
+                            <div id="smwh_HeightShell"/>
                         </td>
                         <td id="shadow_center" width="*" valign="top">
             <!-- Header -->
@@ -237,6 +239,7 @@ class OntoSkin3Template extends QuickTemplate {
                                     <?php $this->html('bodytext') ?>
                                     <?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
                             <!-- end content -->
+                            <?php if($this->data['dataAfterContent']) { $this->html ('dataAfterContent'); } ?>
                             <div class="visualClear"></div>
                         </div>
                     </div>
@@ -259,7 +262,7 @@ class OntoSkin3Template extends QuickTemplate {
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
             <td rowspan="2" id="shadow_right" width="10">
-                <div id="smwh_HeightShell"/>
+                <?php echo $this->smwh_Skin->treeview(); ?>
             </td>
             </tr>
                 <tr id="smwh_tr_footer">
