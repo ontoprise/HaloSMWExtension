@@ -155,15 +155,15 @@ class OntoSkin3Template extends QuickTemplate {
                                                        class="mediawiki <?php $this->text('dir') ?> <?php $this->text('pageclass') ?> <?php $this->text('skinnameclass') ?>">
         <div id="globalWrapper">
             <?php if ($wgRequest->getText('page') != "plain") : ?>
-            <table id="shadows" border="0" cellspacing="0" cellpadding="1" align="center">
+            <table id="shadows" border="0" cellspacing="0" cellpadding="0" align="center">
                 <colgroup>
-                    <col width="10"/>
+                    <col width="7"/>
                     <col width="*"  valign="top"/>
-                    <col width="10"/>
+                    <col width="7"/>
                 </colgroup>
                 <tbody>
                     <tr>
-                        <td rowspan="2" id="shadow_left" valign="top" width="10">
+                        <td rowspan="2" id="shadow_left" valign="top" width="7">
                             <div id="smwh_HeightShell"/>
                         </td>
                         <td id="shadow_center" width="*" valign="top">
@@ -260,7 +260,7 @@ class OntoSkin3Template extends QuickTemplate {
                 <?php endif; ?>
             <?php if ($wgRequest->getText('page') != "plain") : ?>
             </td>
-            <td rowspan="2" id="shadow_right" width="10">
+            <td rowspan="2" id="shadow_right" width="7">
                 <?php echo $this->smwh_Skin->treeview(); ?>
             </td>
             </tr>
