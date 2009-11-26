@@ -107,9 +107,9 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -297,10 +297,10 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
-				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			$sparulCommands[] =  TSNamespaces::getAllPrefixes().$unknownNSPrefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
@@ -349,9 +349,9 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
+			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
