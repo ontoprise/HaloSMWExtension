@@ -72,8 +72,7 @@ textarea {
 #smwh_personal{
     float: right;
     margin-right: 15px;
-	margin-top: 5px;
-	font-size: smaller;
+    margin-top: 5px;
 }
 
 #smwh_search{
@@ -372,6 +371,12 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #siteSub, #jump-to-nav, .printfooter{
     display: none;
 }
+
+/* page statistic */
+#smwh_pstats{
+ text-align:center;
+}
+
 
 /* page statistic */
 #smwh_pstats{
