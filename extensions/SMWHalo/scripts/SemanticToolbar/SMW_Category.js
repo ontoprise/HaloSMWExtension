@@ -247,6 +247,10 @@ createContextMenu: function(contextMenuContainer) {
 	
         this.wtp.initialize();
 	var selection = this.wtp.getSelection(true);
+	selection = selection.replace(/'''''/g,''); // replace bold&italic
+	selection = selection.replace(/'''/g,'');   // replace bold
+	selection = selection.replace(/''/g,'');    // replace italic
+	
 	
 	/*STARTLOG*/
         if (smwhgLogger) smwhgLogger.log(selection,"STB-Categories","annotate_clicked");

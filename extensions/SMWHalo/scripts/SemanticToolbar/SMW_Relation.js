@@ -318,9 +318,13 @@ createContextMenu: function(contextMenuContainer, value, repr, name) {
 	var valueEditable = false;
 	if (!value) {
 		value = this.wtp.getSelection(true);
-		//replace newlines by spaces
-		value = value.replace(/\n/,' ');
 		repr = value;
+		//replace newlines by spaces
+		value = value.replace(/\n/g,' ');
+		value = value.replace(/'''''/g,''); // replace bold&italic
+		value = value.replace(/'''/g,'');   // replace bold
+		value = value.replace(/''/g,'');    // replace italic
+		
 		valueEditable = true;
 	}
 	
