@@ -48,8 +48,6 @@ class DALReadPOP3 implements IDAL {
 	private $mailId = "";
 
 	private $body;
-	private $vCards;
-	private $iCals;
 	private $attachments;
 	private $embeddedMails;
 	private $embeddedMailIds;
@@ -302,8 +300,6 @@ class DALReadPOP3 implements IDAL {
 		global $smwgDIIP;
 		
 		$this->body = '';
-		$this->vCards = array();
-		$this->iCals = array();
 		$this->attachments = array();
 		$this->embeddedMailIds = "";
 
@@ -698,194 +694,30 @@ class DALReadPOP3 implements IDAL {
 
 	private function serialiseVCard($vCardString){
 		require_once('SMW_VCardParser.php');
-		
-		$result = "";
 		$vCardParser = new VCard();
 		$vCardParser->parse(explode("\n", $vCardString));
 
-		$attributes = array(
-			'N','FN', 'TITLE', 'ORG', 'NICKNAME','TEL', 'EMAIL', 'URL', 'ADR', 'BDAY', 'NOTE', 'CATEGORIES');
-
-		foreach ($attributes as $attribute) {
-			$values = $vCardParser->getProperties($attribute);
-			if ($values) {
-				$result .= "<VC-".$attribute."><![CDATA[";
-				$first = true;
-				foreach ($values as $value) {
-					if(!$first){
-						$result .= "; ";
-					}
-					$first = false;
-					$components = $value->getComponents();
-					$lines = array();
-					foreach ($components as $component) {
-						if ($component) {
-							if(!mb_check_encoding($component, "UTF-8")){
-								$component = utf8_encode($component);
-							}
-							$lines[] = $component;
-						}
-					}
-					$result .= join(",", $lines);
-					$types = $value->params['TYPE'];
-					if ($types) {
-						$type = join(", ", $types);
-						$result .= " (" . ucwords(strtolower($type)) . ")";
-					}
-				}
-				$result .= "]]></VC-".$attribute.">";
-			}
+		$values = $vCardParser->getProperties("N");
+		if($values){
+			return $this->createAttachmentTerm($vCardString, $values[0].".vcf");
 		}
-
-		try{
-			$vCardXML = @ new SimpleXMLElement(trim("<vcard>".$result."</vcard>"), LIBXML_NOCDATA);
-			$fn = $vCardXML->xpath("//VC-FN/text()");
-			$fn = "".$fn[0];
-			if($fn != ""){
-				global $wgExtraNamespaces;
-				$ns="";
-				if(array_key_exists(NS_TI_VCARD, $wgExtraNamespaces)){
-					$ns = $wgExtraNamespaces[NS_TI_VCARD].":";
-				}	
-				return $this->createAttachmentTerm($vCardString, $fn.".vcf", $result);
-			} else {
-				return " a VCard attachment could not be created because it does not contain the FN attribute.";
-			}
-		} catch (Exception $e){
-			return " a VCard attachment could not be created because ".$e;
-		} 
-		
+		return false;
 	}
 
 	private function serializeICal($iCalString){
 		require_once('SMW_ICalParser.php');
-		
-		$result = "";
 		$iCalParser = new ICalParser();
-		$iCals = $iCalParser->parse($iCalString);
-
-		foreach($iCals as $iCalArray){
-			$result = "";
-			foreach ($iCalArray as $attribute => $value) {
-				if(!mb_check_encoding($value, "UTF-8")){
-					$value = utf8_encode($value);
-				}
-				$result .= "<".$attribute."><![CDATA[".htmlspecialchars($value)."]]></".$attribute.">";
-			}
-		
-			try {
-				$iCalXML = @ new SimpleXMLElement("<ic>".trim($result)."</ic>", LIBXML_NOCDATA);
-				$title = $iCalXML->xpath("//ic-uid/text()");
-				$title = "".$title[0];
-
-				if($title != ""){
-					return $this->createAttachmentTerm($iCalString, $title.".ics", $result);
-				} else {
-					return " an ICalendar could not be created because it does not have a UID";
-				}
-			} catch (Exception $e){
-				return " an ICalendar could not be created because: ".$e;
-			}
+		$uid = $iCalParser->getUID($iCalString);
+		if(!is_null($uid)){
+			return $this->createAttachmentTerm($iCalString, $uid.".ics");
 		}
+		return false;
 	}
 
 	public function executeCallBack($signature, $mappingPolicy, $conflictPolicy, $termImportName){
 		return eval("return \$this->".$signature.",\$conflictPolicy, \$termImportName);");
 	}
 
-	private function handleVCardAndICalCallBacks($entityType, $entity, $mp, $conflictPolicy, $termImportName){
-		$success = true;
-		$logMsgs = array();
-		$tiBot = new TermImportBot();
-		$entity = new SimpleXMLElement(htmlspecialchars_decode($entity), $termSXE);
-
-		global $wgExtraNamespaces;
-		$ns="";
-		if($entityType == "vCard"){
-			if(array_key_exists(NS_TI_VCARD, $wgExtraNamespaces)){
-				$ns = $wgExtraNamespaces[NS_TI_VCARD].":";
-			}
-			$title = $ns."".$entity->VC-FN;
-		} else if($entityType == "iCal"){
-			if(array_key_exists(NS_TI_ICALENDAR, $wgExtraNamespaces)){
-				$ns = $wgExtraNamespaces[NS_TI_ICALENDAR].":";
-			}
-			$title = $ns."".$entity->ic-uid;
-		}
-
-		$title = Title::newFromText($title);
-		if($title == null){
-			return $this->createCallBackResult(false,
-			array(array('id' => SMW_GARDISSUE_MISSING_ARTICLE_NAME,
-				'title' => wfMsg('smw_ti_import_error'))));
-		}
-
-		$termAnnotations = $tiBot->getExistingTermAnnotations($title);
-
-		if($title->exists() && !$conflictPolicy){
-			echo wfMsg('smw_ti_articleNotUpdated', $title->getFullText())."\n";
-			$article = new Article($title);
-			$article->doEdit(
-			$article->getContent()
-			."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]",
-			wfMsg('smw_ti_creationComment'));
-			return $this->createCallBackResult(true,
-			array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
-				'title' => $title->getFullText())));
-		} else if($title->exists()){
-			$termAnnotations['updated'][] = $termImportName;
-			$updated = true;
-		} else {
-			$termAnnotations['added'][] = $termImportName;
-			$updated = false;
-		}
-
-		$article = new Article($title);
-
-		$mappingPolicy = Title::newFromText($mp);
-		if(!$mappingPolicy->exists()){
-			return $this->createCallBackResult(false,
-			array(array('id' => SMW_GARDISSUE_MAPPINGPOLICY_MISSING,
-				'title' => $mp)));
-		}
-		$mappingPolicy = new Article($mappingPolicy);
-		$mappingPolicy = $mappingPolicy->getContent();
-
-		$term = array();
-		foreach($entity->children() as $name => $value){
-			$name = strtoupper($name);
-			if(!array_key_exists("".$name, $term)){
-				$term["".$name] = array();
-			}
-			$term["".$name][] = array("value" => "".$value);
-		}
-
-		$content = $tiBot->createContent($term, $mappingPolicy);
-
-		$termAnnotations = "\n\n\n"
-		.$tiBot->createTermAnnotations($termAnnotations);
-		$created = $article->doEdit(
-		$content.$termAnnotations, wfMsg('smw_ti_creationComment'));
-		if(!$created){
-			return $this->createCallBackResult(false,
-			array(array('id' => SMW_GARDISSUE_CREATION_FAILED,
-				'title' => $title)));
-		}
-
-		echo "Article ".$title->getFullText();
-		echo $updated==true ? " updated\n" : " created.\n";
-
-		if($updated){
-			return $this->createCallBackResult(true,
-			array(array('id' => SMW_GARDISSUE_UPDATED_ARTICLE,
-				'title' => $title->getFullText())));
-		} else {
-			return $this->createCallBackResult(true,
-			array(array('id' => SMW_GARDISSUE_ADDED_ARTICLE,
-				'title' => $title->getFullText())));
-		}
-	}
-	
 	private function handleDeleteCallBack($deletes, $dataSourceSpec, $conflictPolicy, $termImportName){
 		$this->connection = null;
 		$connection = $this->getConnection($dataSourceSpec);
@@ -1114,12 +946,6 @@ class DALReadPOP3 implements IDAL {
 		$fileContent = $this->decodeBodyPart(
 			imap_fetchbody($connection, $msg, $partNr), $encoding);
 		
-		if($this->isVCardAttachment($fileName)){
-			return $this->serialiseVCard(utf8_encode($fileContent));
-		} else if($this->isICalAttachment($fileName)){
-			return $this->serializeICal($fileContent);
-		}	
-		
 		return $this->createAttachmentTerm($fileContent, $fileName);
 	}
 	
@@ -1255,26 +1081,6 @@ class DALReadPOP3 implements IDAL {
 		
 		return $attachmentTerms."<term>"
 			.$attachmentFNs.$body;
-	}
-	
-	private function isVCardAttachment($fileName){
-		$fileNameArray = split("\.", $fileName);
-		$ext = $fileNameArray[count($fileNameArray)-1];
-		
-		if($ext == "vcf"){
-			return true;
-		}
-		return false;
-	}
-	
-	private function isICalAttachment($fileName){
-		$fileNameArray = split("\.", $fileName);
-		$ext = $fileNameArray[count($fileNameArray)-1];
-		
-		if($ext == "ics"){
-			return true;
-		}
-		return false;
 	}
 	
 	private function createErrorMessage($connection, $msgNr, $message = ""){
