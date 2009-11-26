@@ -48,7 +48,7 @@ enableDragging: function(){
 	if(this.draggable == null) {
 		this.draggable = new Draggable('ontomenuanchor', {
 			//TODO: replace handle with proper tab if present	
-			handle: 'tab_0', 
+			handle: 'tabcontainer', 
 			starteffect: function( ){stb_control.setDragging(true);}, 
 			endeffect: function(){setTimeout(stb_control.setDragging.bind(stb_control,false),200);}});
 		

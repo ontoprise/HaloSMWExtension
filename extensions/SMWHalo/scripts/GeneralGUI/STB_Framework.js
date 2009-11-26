@@ -59,7 +59,7 @@ ToolbarFramework.prototype = {
 			}
 			this.isCollapsed = false;
 
-			this.var_onto.innerHTML += "<div id=\"tabcontainer\"></div>";
+			this.var_onto.innerHTML += '<div id="tabcontainer" style="cursor:pointer; cursor:move;"></div>';
 			this.var_onto.innerHTML += "<div id=\"activetabcontainer\"></div>";
 			this.var_onto.innerHTML += "<div id=\"semtoolbar\"></div>";
 
@@ -185,6 +185,7 @@ ToolbarFramework.prototype = {
 			for (var i = 0; i < (this.tabarray.length); i++)
 			{
 				if (this.curtabShown != i) {
+					// inactive tab
 					tabHeader += 
 '<div id="expandable" ' +
       'style="cursor:pointer;cursor:hand;" ' +
@@ -194,17 +195,18 @@ ToolbarFramework.prototype = {
            'onmouseout="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif\')">' +
  '</div>' +
  '<div id="tab_'+i+'" ' +
-      'style="cursor:pointer;cursor:move;" ' +
+//      'style="cursor:pointer;cursor:move;" ' +
 //	  'onclick=stb_control.switchTab('+i+')' +
       '>'
       +this.tabnames[i]+
  '</div>';
 				} else {
-                                        var updateStr = '<div id="expandable" ';
-                                        updateStr += (this.closeFunction)
-                                            ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded-close.gif">'
-                                            : 'style="cursor:move;"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded.gif">';
-                                        updateStr += "</div><div id=\"tab_"+i+"\" style=\"cursor:move;\">"+this.tabnames[i]+"</div>";
+					// active tab
+             	    var updateStr = '<div id="expandable" ';
+                    updateStr += (this.closeFunction)
+                        ? 'style="cursor:pointer;cursor:hand;" onclick="' + this.closeFunction + '"><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded-close.gif">'
+                        : '><img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expanded.gif">';
+                    updateStr += "</div><div id=\"tab_"+i+"\" >"+this.tabnames[i]+"</div>";
 					$("activetabcontainer").update(updateStr);
 				}
 			}
@@ -235,6 +237,11 @@ ToolbarFramework.prototype = {
 		
 		// send tab change event
 		this.contarray.each(function (c) { if (c) c.showTabEvent(tabnr); });
+		
+		if (smwhg_dragresizetoolbar != null) {
+			smwhg_dragresizetoolbar.disableDragging();
+			smwhg_dragresizetoolbar.enableDragging();
+		}
 	},
 
         setCloseFunction: function(func) {
