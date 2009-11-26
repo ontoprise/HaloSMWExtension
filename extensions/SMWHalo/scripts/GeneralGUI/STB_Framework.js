@@ -185,7 +185,20 @@ ToolbarFramework.prototype = {
 			for (var i = 0; i < (this.tabarray.length); i++)
 			{
 				if (this.curtabShown != i) {
-					tabHeader += "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")><img src=\"" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif')\"></div><div id=\"tab_"+i+"\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.switchTab("+i+")>"+this.tabnames[i]+"</div>";
+					tabHeader += 
+'<div id="expandable" ' +
+      'style="cursor:pointer;cursor:hand;" ' +
+      'onclick=stb_control.switchTab('+i+')>' +
+      '<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif" ' +
+           'onmouseover="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable-act.gif\')" ' +
+           'onmouseout="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif\')">' +
+ '</div>' +
+ '<div id="tab_'+i+'" ' +
+      'style="cursor:pointer;cursor:move;" ' +
+//	  'onclick=stb_control.switchTab('+i+')' +
+      '>'
+      +this.tabnames[i]+
+ '</div>';
 				} else {
                                         var updateStr = '<div id="expandable" ';
                                         updateStr += (this.closeFunction)
