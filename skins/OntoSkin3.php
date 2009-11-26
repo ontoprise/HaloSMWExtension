@@ -59,7 +59,8 @@ class SkinOntoSkin3 extends SkinTemplate {
         // Append Ontoskin3 css
         $out->addStyle( 'ontoskin3/css/skin-colorfont.css','screen');
         $out->addStyle( 'ontoskin3/css/skin-main.css','screen');
-        $out->addStyle( 'ontoskin3/css/skin-pagecontent.css','screen');
+
+        $out->addStyle( 'ontoskin3/css/skin-pagecontent.css');
 
 
         if( $wgHandheldStyle ) {
@@ -74,6 +75,8 @@ class SkinOntoSkin3 extends SkinTemplate {
 
         $out->addStyle( 'ontoskin3/rtl.css', 'screen', '', 'rtl' );
 
+        // Append to the print styles...
+        $out->addStyle( 'ontoskin3/css/skin-printable.css', 'print' );
         
     }
 }
