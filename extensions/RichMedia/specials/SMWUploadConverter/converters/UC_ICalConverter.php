@@ -1,6 +1,6 @@
 <?php
 
-require_once('SMW_ICalParser.php');
+require_once('UC_ICalParser.php');
 
 class UCICalConverter {
 	

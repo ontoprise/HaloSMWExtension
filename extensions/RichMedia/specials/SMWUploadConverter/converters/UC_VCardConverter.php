@@ -1,6 +1,6 @@
 <?php
 
-require_once('SMW_VCardParser.php');
+require_once('UC_VCardParser.php');
 
 class UCVCardConverter {
 	

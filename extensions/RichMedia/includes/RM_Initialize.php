@@ -36,6 +36,7 @@ $smwgRMFormByNamespace = array(
 global $smwgEnableUploadConverter;
 if ($smwgEnableUploadConverter) {
 	global $wgExtensionMessagesFiles, $wgAutoloadClasses;
+	require_once("$smwgRMIP/specials/SMWUploadConverter/SpecialPurposeParserFunctions/UC_EmailIDExtractor.php");
 	$wgAutoloadClasses['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverter.php';
 	$wgExtensionMessagesFiles['UploadConverter'] = $smwgRMIP . '/specials/SMWUploadConverter/SMW_UploadConverterMessages.php';
 
