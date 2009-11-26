@@ -678,7 +678,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		//}
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js');
 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/breadcrump.js');
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/breadcrumb.js');
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/contentSlider.js');
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/generalGUI.js');
 

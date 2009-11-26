@@ -112,20 +112,20 @@
 * breadcrumps
 */
 
-#smwf_breadcrump{
+#smwf_breadcrumb{
 	background-color: #bed0d5;
 }
 
-#smwf_breadcrump_table{
+#smwf_breadcrumb_table{
 	width: 100%;
 	background-color: #bed0d5;
 }
 
-#breadcrump{
+#breadcrumb{
 	background-color: #bed0d5;
 }
 
-#breadcrump a{
+#breadcrumb a{
 	background-color: #bed0d5;
 	float: left;
 	margin-left: 10px;

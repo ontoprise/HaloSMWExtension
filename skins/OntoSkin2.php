@@ -157,9 +157,9 @@
  		<div id="smwf_catlinkblock">
 		</div>
 		
-		<div id="smwf_breadcrump">
-			<table id="smwf_breadcrump_table"><tr><td>
-				<div id="breadcrump">
+		<div id="smwf_breadcrumb">
+			<table id="smwf_breadcrumb_table"><tr><td>
+				<div id="breadcrumb">
 				</div>
 			</td></tr></table>
 		</div>

@@ -217,7 +217,7 @@ class OntoSkin3Template extends QuickTemplate {
                     <img src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/Pfeil_Breadcrumb.png"/>
                     <?php $this->data['displaytitle']!=""?$this->html('title'):$this->text('title'); ?>
                 </div>
-                <div id="breadcrump">
+                <div id="breadcrumb">
 		</div>
             </div>
             <div id="mainpage">
