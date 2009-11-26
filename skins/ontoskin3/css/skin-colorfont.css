@@ -65,13 +65,9 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 ul.smwh_menulist div.smwh_menubody_visible a{
-	display:list-item;
-	list-style-type:square;
-	list-style-position:inside;
     color: #116988;
 	vertical-align: middle;
 	font-size: smaller;
-	font-weight: bold;
 }
 
 ul.smwh_menulist div.smwh_menubody td:hover  {
