@@ -134,6 +134,7 @@ ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
 ul.smwh_menulist li {
 	  display: inline-block;
 	  position: relative;
+          z-index: 20;
           
 }
 
@@ -289,11 +290,13 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #tabsright ul.smwh_menulist{
     -moz-padding-start: 0px;
     margin: 0em;
+    z-index: 20;
 }
 
 #tabsright ul.smwh_menulist li {
 	  display: inline;
 	  position: relative;
+          z-index: 20;
 }
 
 #tabsright ul.smwh_menulist div.smwh_menuhead {

@@ -144,6 +144,10 @@ ul.smwh_menulist div.smwh_menubody td:hover {
    color: #CC2200;
 }
 
+#mainpage a.new:visited {
+   color: #A55858;
+}
+
 #mainpagetable{
     background-color: #edede7;
 }
