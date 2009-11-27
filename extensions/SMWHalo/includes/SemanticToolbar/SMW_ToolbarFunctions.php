@@ -147,12 +147,12 @@ function smwf_tb_getLinks($articleId){
 			$linktitle = str_replace("_", " ", $row->pl_title);
 			$linktitle = implode("-<br/>", str_split($linktitle, 17));
 			if ($title->exists()){
-				$html .= '<tr class="linktable-row"><td><a href="' . $url . '/' . $row->pl_title . '" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
+				$html .= '<tr class="linktable-row"><td><a href="' . $url . '/' . $row->pl_title . '" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
 			}
 			else {
-				$html .= '<tr class="linktable-row"><td><a class="new" href="' . $url . '/' . $row->pl_title . '" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
+				$html .= '<tr class="linktable-row"><td><a class="new" href="' . $url . '/' . $row->pl_title . '" onClick="return linklog(\'' . $row->pl_title . '\', \'view\')">' . $linktitle . '</a></td>';
 			}
-			$html .= '<td align="right" valign="bottom">(<a href="' . $url . '?title=' . $row->pl_title . '&action=edit" target="_new" onClick="return linklog(\'' . $row->pl_title . '\', \'edit\')">edit</a>)</td></tr>';
+			$html .= '<td align="right" valign="bottom">(<a href="' . $url . '?title=' . $row->pl_title . '&action=edit" onClick="return linklog(\'' . $row->pl_title . '\', \'edit\')">edit</a>)</td></tr>';
 		}
 		$dbr->freeResult( $res );
 	}
