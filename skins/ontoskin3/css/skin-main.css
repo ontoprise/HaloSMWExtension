@@ -317,6 +317,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     position: absolute;
     top: 1.1em;
     padding: 5px;
+    line-height:1.5em;
     z-index: 20;
     right: 0em;
     border-width: 1px;
