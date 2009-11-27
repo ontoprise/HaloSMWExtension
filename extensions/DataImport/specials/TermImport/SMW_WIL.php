@@ -419,7 +419,8 @@ class WIL implements IWIL {
 		if (file_put_contents($filename, $settings)) {
 				
 			if($async){
-				$param = "settings=$filename,termImportName=".$termImportName;
+			  	$f = rawurlencode($filename);
+				$param = "settings=$f,termImportName=".$termImportName;
 				$taskID = GardeningBot::runBot('smw_termimportbot', $param);
 				if (is_int($taskID)) {
 					$msg = wfMsg('smw_ti_botstarted');

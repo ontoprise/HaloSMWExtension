@@ -68,10 +68,11 @@ class TermImportBot extends GardeningBot {
 		echo "Started!\n";
 		$result = "";
 
-		$filename = $paramArray["settings"];
+		$filename = rawurldecode($paramArray["settings"]);
+				
 		$termImportName = $paramArray["termImportName"];
 		$settings = file_get_contents($filename);
-		//unlink($filename);
+		unlink($filename);
 		
 		$timeInTitle = $this->getDateString();
 
