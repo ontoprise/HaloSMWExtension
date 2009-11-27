@@ -178,16 +178,17 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		}
 
 		$smw_ids = $db->tableName('smw_ids');
+		$page = $db->tableName('page');
 		$redirect = $db->tableName('redirect');
 		$redirects = $db->tableName('redirect');
 		$db->query( 'CREATE TEMPORARY TABLE smw_ob_properties (id INT(8) NOT NULL, property VARCHAR(255) '.$collation.')
                     TYPE=MEMORY', 'SMW::createVirtualTableForInstances' );
 		$sql = DBHelper::getSQLConditions($requestoptions,'smw_title','smw_title');
 		// add properties which match and which are no redirects
-		$db->query('INSERT INTO smw_ob_properties (SELECT smw_id, smw_title FROM '.$smw_ids.' JOIN page ON smw_title = page_title AND page_namespace='.SMW_NS_PROPERTY.' WHERE smw_iw != ":smw-redi" AND smw_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');
+		$db->query('INSERT INTO smw_ob_properties (SELECT smw_id, smw_title FROM '.$smw_ids.' JOIN '.$page.' ON smw_title = page_title AND page_namespace='.SMW_NS_PROPERTY.' WHERE smw_iw != ":smw-redi" AND smw_namespace = '.SMW_NS_PROPERTY.' '. $sql.')');
 		$sql = DBHelper::getSQLConditions($requestoptions,'s.smw_title','s.smw_title');
 		// add targets of matching redirects
-		$db->query('INSERT INTO smw_ob_properties (SELECT s2.smw_id, s2.smw_title FROM '.$smw_ids.' s JOIN page ON smw_title = page_title AND page_namespace='.SMW_NS_PROPERTY.' JOIN '.$smw_ids.' s2 ON s.smw_sortkey = s2.smw_title WHERE s.smw_namespace = '.SMW_NS_PROPERTY.' AND s.smw_iw=":smw-redi"'. $sql.')');
+		$db->query('INSERT INTO smw_ob_properties (SELECT s2.smw_id, s2.smw_title FROM '.$smw_ids.' s JOIN '.$page.' ON smw_title = page_title AND page_namespace='.SMW_NS_PROPERTY.' JOIN '.$smw_ids.' s2 ON s.smw_sortkey = s2.smw_title WHERE s.smw_namespace = '.SMW_NS_PROPERTY.' AND s.smw_iw=":smw-redi"'. $sql.')');
 	}
 
 	protected function getSchemaPropertyTuple(array & $properties, & $db) {

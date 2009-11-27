@@ -209,7 +209,7 @@ class SMWOntologyBrowserFilter {
 	/**
 	 * Returns the category tree for the given array of categories.
 	 */
-	private function getCategoryTree($categories) {
+	public function getCategoryTree($categories) {
 		// create root object
 		$root = new TreeObject(null);
 

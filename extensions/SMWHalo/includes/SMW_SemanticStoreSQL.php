@@ -208,10 +208,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 		$categorylinks = $db->tableName('categorylinks');
         $page = $db->tableName('page');
 		$sql = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND NOT EXISTS (SELECT c.cl_from FROM categorylinks c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
 		
         $sql2 = 'page_namespace=' . NS_CATEGORY .
-               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM categorylinks c JOIN page p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
+               ' AND page_is_redirect = 0 AND cl_to =' . $db->addQuotes($categoryTitle->getDBkey()) . ' AND cl_from = page_id AND EXISTS (SELECT c.cl_from FROM categorylinks c JOIN '.$page.' p ON p.page_id = c.cl_from WHERE c.cl_to = t.page_title AND p.page_namespace=14)';
         
         
 		$res = $db->query('(SELECT page_title, "true" AS has_subcategories FROM '.$page.' t, '.$categorylinks.' WHERE '.$sql.') UNION '.
