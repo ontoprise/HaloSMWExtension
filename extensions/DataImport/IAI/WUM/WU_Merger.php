@@ -23,12 +23,14 @@ function wum_doTabPF( &$parser, $frame, $args) {
 	$tableCode = null;
 	$tabCount = 0;
 	foreach($args as $key => $arg){
-		if(strpos(trim($arg), "_content") === 0){
+		if(strpos(trim($arg), "tab") === 0){
 			$tabCount += 1;
 			
 			if($tabCount == 2){
-				$tableCode = ltrim(substr($arg, strpos($arg, "=")+1));
-				$text .= "\n| _content=\n###replace###";
+				$tableCode = ltrim(substr($arg, strpos($arg, "\n")+1));
+				$text .= "\n|".ltrim(substr($arg, 0, strpos($arg, "\n")))
+					."\n###replace###";
+				//$text .= "\n| _content=\n###replace###";
 			} else {
 				$text .= "\n|".trim($arg);
 			}
@@ -51,9 +53,9 @@ function wum_preprocessArgs($frame, $args){
 	foreach($args as $arg){
 		$arg = $frame->expand($arg);
 		
-		if(strpos(trim($arg), "_content") === 0
-			|| strpos(trim($arg), "_label") === 0
-			|| strpos(trim($arg), "_option") === 0){
+		if(strpos(trim($arg), "name") === 0
+			|| strpos(trim($arg), "tab") === 0
+			|| strpos(trim($arg), "options") === 0){
 			if(!is_null($lastPreprocessedArg)){
 				$preprocessedArgs[] = $lastPreprocessedArg;
 			}
