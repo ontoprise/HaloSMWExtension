@@ -38,15 +38,22 @@ $messages['en'] = array(
 	'ce_cf_all_not_allowed'			=> 'Nobody is actually allowed to enter comments.',
 	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments.',
 
-	/* form inputs, buttons, etc.*/
-	'ce_cf_legend' 					=> 'Comment',
-	'ce_cf_predef'					=> 'Enter your comment here...',
-	'ce_cf_article_rating'			=> 'Article is:',
+	/*header*/
+	'ce_cf_header_text'				=> 'Add Comment',
+	/* author */
+	'ce_cf_author'					=> 'Author:',
+	/* rating */
+	'ce_cf_article_rating'			=> 'Rate the quality of this article',
+	'ce_cf_article_rating2'			=> '(optional)',
 	'ce_ce_rating_0'				=> 'good',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'bad',
-	'ce_cf_submit_button_name'		=> 'Submit',
-	'ce_cf_reset_button_name'		=> 'Reset',
+	
+	/*comments*/
+	'ce_cf_comment'					=> 'Comment',
+	'ce_cf_predef'					=> 'Enter your comment here...',
+	'ce_cf_submit_button_name'		=> 'Add Comment',
+	'ce_cf_reset_button_name'		=> 'Cancel',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Can not create comment.',
@@ -71,15 +78,23 @@ $messages['de'] = array(
 	'ce_cf_all_not_allowed'			=> 'Niemand darf aktuell Kommentare eingeben.',
 	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben.',
  
-	/* form inputs, buttons, etc.*/
-	'ce_cf_legend' 					=> 'Kommentar',
-	'ce_cf_predef'					=> 'Gib hier deinen Kommentar ein...',
-	'ce_cf_article_rating'			=> 'Artikel ist:',
+	/*header*/
+	'ce_cf_header_text'				=> 'Add Comment',
+	/* author */
+	'ce_cf_author'					=> 'Autor:',
+
+	/* rating */
+	'ce_cf_article_rating'			=> 'Bewerte die Qulit&umla;t dieses Artikels',
+	'ce_cf_article_rating2'			=> '(optional)',
 	'ce_ce_rating_0'				=> 'gut',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'schlecht',
-	'ce_cf_submit_button_name'		=> 'Absenden',
-	'ce_cf_reset_button_name'		=> 'Zur&uuml;cksetzen',
+
+	/*comments*/
+	'ce_cf_comment'					=> 'Kommentar',
+	'ce_cf_predef'					=> 'Gib hier deinen Kommentar ein...',
+	'ce_cf_submit_button_name'		=> 'Kommentar hinzuf&uuml;gen',
+	'ce_cf_reset_button_name'		=> 'Abbrechen',
 
 	/* comment processing */
 	'ce_com_cannot_create'			=> 'Kann Kommentar nicht erstellen.',
