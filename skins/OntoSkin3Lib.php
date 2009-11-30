@@ -218,9 +218,7 @@ class SMWH_Skin {
 
         $menu = "<!-- Tools Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
-        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration";
-        $menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath.$this->imagepath."/button_tools.gif\" alt=\"tools\"/>";
-        $menu.= "</p></div>";
+        $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration</p></div>";
         $content = wfMsgForContent( 'haloadministration' );
         if($content!=null){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";

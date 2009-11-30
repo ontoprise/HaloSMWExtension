@@ -47,6 +47,17 @@ dt {
     border-color: #42a3b3;
 }
 
+#searchGoButton, #mw-searchButton{
+    background: #4187A0 url(../img/transparent.png);
+    color: #fff;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+#searchGoButton:hover, #mw-searchButton:hover{
+    background: #307690 url(../img/transparent.png);
+}
+
 #smwh_menu {
     background-image: url(../img/menue2.gif);
 }

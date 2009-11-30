@@ -282,16 +282,16 @@ class OntoSkin3Template extends QuickTemplate {
     function searchBox() {
         global $wgUseTwoButtonsSearchForm;
         ?>
-<div id="smwh_search" class="portlet">
+ <div id="smwh_search" class="portlet">
     <div id="searchBody" class="pBody" >
         <form action="<?php $this->text('wgScript') ?>" id="searchform">
                 <input type='hidden' name="title" value="<?php $this->text('searchtitle') ?>"/>
                 <input id="searchInput" pasteNS="true" class="wickEnabled" name="search" constraints="all" onfocus="this.value='';" type="text"<?php echo $this->skin->tooltipAndAccesskey('search'); ?>
                      value="<?php $this->msg('smw_search_this_wiki'); ?>"/>
 
-                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_go.png' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
-                <input type='image' value='Submit' src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_search.png' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
-
+                <input type='submit'  src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_go.png' name="go" class="searchButton" id="searchGoButton"	value="<?php $this->msg('searcharticle') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-go' ); ?> />
+                <input type='submit'  src='<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_search.png' name="fulltext" class="searchButton" id="mw-searchButton" value="<?php $this->msg('searchbutton') ?>"<?php echo $this->skin->tooltipAndAccesskey( 'search-fulltext' ); ?> />
+                
 
         </form>
     </div>
