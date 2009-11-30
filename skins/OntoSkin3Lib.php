@@ -116,13 +116,15 @@ class SMWH_Skin {
         $lines = explode( "\n", wfMsgForContent( 'halomenu' ) );
         $heading = '';
         foreach ($lines as $line) {
-            if (strpos($line, '* ') === 0) {
-                $heading = trim($line, '* ');
+            if (strpos($line, '*') === 0 && strpos($line, '**') === false) {
+                $heading = trim($line, '*');
+                $heading = trim($heading);
                 if( !array_key_exists($heading, $bar) ) $bar[$heading] = array();
                 continue;
             }
-            if (strpos($line, '** ') === 0) {
-                $link = trim($line, '** ');
+            if (strpos($line, '**') === 0) {
+                $link = trim($line, '**');
+                $link = trim($link);
                 $title = Title::newFromText( $link );
                 if ( $title ) $bar[$heading][] = $title;
                 continue;
