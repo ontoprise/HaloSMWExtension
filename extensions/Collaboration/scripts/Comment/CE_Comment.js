@@ -54,13 +54,13 @@ CECommentForm.prototype = {
 	processForm: function() {
 
 		//1. disable form
-		var cf = $('ce_cf');
+		var cf = $('ce-cf');
 		cf.disable();
 		
 		//2. and add pending indicator
 		
 		if (this.pendingIndicatorCF == null) {
-			this.pendingIndicatorCF = new OBPendingIndicator($('ce_cf_textarea'));
+			this.pendingIndicatorCF = new OBPendingIndicator($('ce-cf-textarea'));
 		}
 		this.pendingIndicatorCF.show();
 
@@ -73,7 +73,7 @@ CECommentForm.prototype = {
 		
 		//rating things
 		var ratingValue = '';
-		var ratingGrp = document['forms']['ce_cf']['rating'];
+		var ratingGrp = document['forms']['ce-cf']['rating'];
 		for( i = 0; i < ratingGrp.length; i++){
 			if (ratingGrp[i].checked == true) {
 				ratingValue = ratingGrp[i].value;
@@ -82,16 +82,16 @@ CECommentForm.prototype = {
 		
 		//textarea
 
-		var textArea = ($('ce_cf_textarea').value)? $('ce_cf_textarea').value: '';
+		var textArea = ($('ce-cf-textarea').value)? $('ce-cf-textarea').value: '';
 		//remove leading and trailing whitespaces
 		textArea = textArea.strip();
 		if(textArea.blank() || this.textareaIsDefault) {
 			this.pendingIndicatorCF.hide();
-			$('ce_cf_message').setAttribute("class", "ce_cf_success_message");
-			$('ce_cf_message').innerHTML = 'You didn\'t enter a valid comment.';
+			$('ce-cf-message').setAttribute("class", "ce-cf-success-message");
+			$('ce-cf-message').innerHTML = 'You didn\'t enter a valid comment.';
 			//reset and enable form again
-			//$('ce_cf').reset();
-			$('ce_cf').enable();
+			//$('ce-cf').reset();
+			$('ce-cf').enable();
 			return false;
 		}
 		//remove script tags
@@ -99,7 +99,9 @@ CECommentForm.prototype = {
 		//escape html chars
 		textArea = textArea.escapeHTML();
 
-		var pageContent = "{{Comment|CommentPerson=" + $('ce_cf_user_field').value.strip() + 
+		//TODO: wgUserName is null, when not logged in!
+		
+		var pageContent = "{{Comment|CommentPerson=" + wgUserName+ 
 			"|CommentRelatedArticle=" + wgPageName +
 			"|CommentRating=" + ratingValue +
 			"|CommentDatetime=" + nowJSON.substring(1, nowJSON.length-2) +
@@ -167,13 +169,14 @@ CECommentForm.prototype = {
 			if(valueCode == 0){
 				//fine.
 				this.pendingIndicatorCF.hide();
-				$('ce_cf_message').setAttribute("class", "ce_cf_success_message");
-				$('ce_cf_message').innerHTML = htmlmsg;
+				$('ce-cf-message').setAttribute("class", "ce-cf-success-message");
+				$('ce-cf-message').innerHTML = htmlmsg;
 				//reset and enable form again
-				$('ce_cf').reset();
-				$('ce_cf').enable();
+				$('ce-cf').reset();
+				$('ce-cf').enable();
 			}else if(valueCode == 1) {
 				//error!
+				//following doesn't work. He's running and running and running...:
 				if(this.runCount <=1) {
 					//run once again with new time
 					var now = new Date();
@@ -186,11 +189,11 @@ CECommentForm.prototype = {
 				}else{
 					//second run and failure again. so show message
 					this.pendingIndicatorCF.hide();
-					$('ce_cf_message').setAttribute("class", "ce_cf_failure_message");
-					$('ce_cf_message').innerHTML = htmlmsg;
+					$('ce-cf-message').setAttribute("class", "ce-cf-failure-message");
+					$('ce-cf-message').innerHTML = htmlmsg;
 					//reset and enable form again
-					$('ce_cf').reset();
-					$('ce_cf').enable();
+					$('ce-cf').reset();
+					$('ce-cf').enable();
 				}
 			}
 		}
@@ -211,7 +214,7 @@ CECommentForm.prototype = {
 	selectTextarea: function() {
 		//check if we still have the form default in here
 		if (this.textareaIsDefault) {
-			$('ce_cf_textarea').activate();
+			$('ce-cf-textarea').activate();
 		}
 	},
 	
@@ -228,7 +231,7 @@ CECommentForm.prototype = {
 	selectUsernameInput: function() {
 		//check if we still have the form default in here
 		if (this.usernameIsDefault) {
-			$('ce_cf_user_field').activate();
+			$('ce-cf-user-field').activate();
 		}
 	},
 	
