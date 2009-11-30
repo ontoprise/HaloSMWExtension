@@ -125,7 +125,7 @@ createUI: function(parsedRule) {
 	
 	var opHelp = this.operatorHelpHTML();
 	if (!$('sr-calc-op-help')) {
-		new Insertion.After('contenttabposdiv', opHelp);
+		new Insertion.After('createRuleContent', opHelp);
 	}	
 	
 	if (parsedRule == undefined) {
