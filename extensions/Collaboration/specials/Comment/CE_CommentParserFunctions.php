@@ -40,16 +40,12 @@ function cefInitCommentParserfunctions() {
 
 	CECommentParserFunctions::getInstance();
 
-	$wgParser->setFunctionHook('showcomments', 'CECommentParserFunctions::showcomments');
 	$wgParser->setFunctionHook('showcommentform', 'CECommentParserFunctions::showcommentform');
 	return true;
 }
 
 function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 	global $cegContLang;
-	$magicWords['showcomments']	= array( 
-		0, $cegContLang->getParserFunction(CELanguage::CE_PF_SHOWCOMMENTS)
-	);
 	$magicWords['showcommentform'] = array(
 		0, $cegContLang->getParserFunction(CELanguage::CE_PF_SHOWFORM)
 	);
@@ -61,23 +57,21 @@ function cefCommentLanguageGetMagic( &$magicWords, $langCode ) {
 /**
  * The class CECommentParserFunctions contains all parser functions of the Comment component of
  * Collaboration extension. The following functions are parsed:
- * - show comments
  * - show comment form
- *
- * @author Benjamin Langguth
  *
  */
 class CECommentParserFunctions {
 
 	//--- Constants ---
 	const SUCCESS = 0;
+	
 	const FORM_ALREADY_SHOWN = 1;
-	const COMMENTS_ALREADY_SHOWN = 2;
-	const NOBODY_ALLOWED_TO_COMMENT = 3;
-	const USER_NOT_ALLOWED_TO_COMMENT = 4;
-	const USER_NOT_ALLOWED_TO_QUERY = 5;
-	const NO_COMMENTS_AVAILABLE = 6;
-	const COMMENTS_DISABLED = 7;
+	const NOBODY_ALLOWED_TO_COMMENT = 2;
+	const USER_NOT_ALLOWED_TO_COMMENT = 3;
+	
+	const COMMENTS_DISABLED = 4;
+	const COMMENTS_FOR_NOT_DEF = 5;
+	
 	
 	//--- Private fields ---
 	// Title: The title to which the functions are applied
@@ -88,9 +82,6 @@ class CECommentParserFunctions {
 
 	// bool: Are the related comments already displayed?
 	private $mCommentsDisplayed = false;
-
-	// array(HACLRight): All inline rights of the title
-	private $mStyle = array();
 
 	// bool: list of related comment titles
 	private $mRelCommentTitles = array();
@@ -117,39 +108,6 @@ class CECommentParserFunctions {
 	}
 	
 	/**
-	 * Callback for parser function "#showcomments:".
-	 * This parser function takes care of the related comments of an article.
-	 * It can appear only once in an article.
-	 * 
-	 * @param Parser $parser
-	 * 		The parser object
-	 *
-	 * @return string
-	 * 		Wikitext
-	 *
-	 * @throws
-	 * 		CEException(CEException::INTERNAL_ERROR)
-	 * 			... if the parser function is called more than once for a single article
-	 */
-	public static function showcomments(&$parser) {
-		global $cegContLang;
-
-		$status = self::$mInstance->doInitialChecks(CELanguage::CE_PF_SHOWCOMMENTS, $parser);
-
-		if (count($errMsgs) == 0) {
-			// create query
-			self::$mInstance->mRelCommentTitles = array();
-		} else {
-			self::$mInstance->mDefinitionValid = false;
-		}
-
-		// foobar..
-		
-		self::$mInstance->mCommentsDisplayed = true;
-		return $text;
-	}
-	
-	/**
 	 * Callback for parser function "#showcommentform:".
 	 * This parser function displays the commentform.
 	 * It can appear only once in an article and has the following parameters:
@@ -166,11 +124,11 @@ class CECommentParserFunctions {
 	 * 			... if there's sthg wrong
 	 */
 	public static function showcommentform(&$parser) {
-		global $cegContLang, $wgUser;
+		global $cegContLang, $wgUser, $cegScriptPath;
 
-		$status = self::$mInstance->doInitialChecks(CELanguage::CE_PF_SHOWFORM, $parser);
+		$status = self::$mInstance->doInitialChecks($parser);
 
-		switch ($status) {
+		/*switch ($status) {
 			case self::SUCCESS:
 				//continue
 				break;
@@ -193,11 +151,8 @@ class CECommentParserFunctions {
 		$params = self::$mInstance->getParameters(func_get_args());
 		// handle the (optional) parameter "ratingstyle".
 		#list($style) = self::$mInstance->mStyle($params);
-		
-		//TODO:Add the icon from the userpage.
-		
-		// => create the form now if user is allowed to comment
-		
+		*/
+
 		$encPreComment = htmlspecialchars(wfMsgForContentNoTrans('ce_cf_predef'));
 		$comment_disabled = '';
 		
@@ -206,80 +161,86 @@ class CECommentParserFunctions {
 			1 => wfMsgForContent('ce_ce_rating_1'),
 			2 => wfMsgForContent('ce_ce_rating_2'));
 		
-		#userfield#
-		$user_disabled = '';
+		#user#
 		$currentUser = $wgUser->getName();
-		$userFieldSize = 30;
+		//TODO:Add the correct user img for logged in users with the annotation.
+		$userImgSrc = ($wgUser->isAnon()? $cegScriptPath. '/skins/Comment/defaultuser.gif'
+			: '' );
+
+		//TODO: use script.aclo.us(?) for fading in.
 		
-		#textarea#
-		$rows = 4;
-		$cols = 4;
+		$html = XML::openElement( 'div', array( 'id' => 'ce-c-header' )) .
+			XML::Element( 'img', array( 'id' => 'ce-c-header-img',
+				'src' => $cegScriptPath . '/skins/Comment/Comment_icon_crystal.png' )) .
+			XML::openElement('span', array( 'id' => 'ce-c-header-text',
+				'onClick' => '$(\'ce-cf\').toggle();')) .
+			wfMsgForContent('ce_cf_header_text') .
+			XML::closeElement('div');
+
+		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'ce-cf',
+			'style' => 'display:none',		
+			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
+			XML::openElement('div', array('id' => 'ce-cf-user-icon')) .
+			XML::Element( 'img', array( 'id' => 'ce-cf-user-img',
+				'src' => $userImgSrc )) .
+			XML::closeElement('div') .
+			XML::openElement('div', array('id' => 'ce-cf-rightside')) .
+				XML::openElement( 'div', array( 'id' => 'ce-cf-user') ) .
+					'<span class="userkey">' .wfMsgForContent('ce_cf_author') . '</span>' . 
+					'<span class="uservalue">' . $currentUser . '</span>' .
+				XML::closeElement('div') .
+				XML::openElement('div', array( 'id' => 'ce-cf-rating')) .
+					wfMsgForContent('ce_cf_article_rating') .
+					'<span class="ce-cf-grey">' . '&nbsp;' . 
+						wfMsgForContent('ce_cf_article_rating2') . 
+					'</span>' . ":" .
+					XML::openElement('div', array('id' => 'ce-cf-radiobuttons')) .
+						XML::element('input', array( 'type' => 'radio',
+							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
+							'value' => '0')) .
+						$ratingValues[0] .
+						XML::element('input', array( 'type' => 'radio',
+							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
+							'value' => '1')) .
+						$ratingValues[1] .
+						XML::element('input', array( 'type' => 'radio',
+							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
+							'value' => '2')) .
+						$ratingValues[2] .
+					XML::closeElement('div') .
+				XML::closeElement('div') .
+					'<div class="mw-editTools\">' .
+				XML::openElement('div', array( 'id' => 'ce-cf-commenthelp')) .
+					wfMsgForContent('ce_cf_comment') .
+					XML::openElement('span', array('class' => 'red')) .
+						'*' .
+					XML::closeElement('span') . 
+					XML::openElement('span') . ':' . XML::closeElement('span') .
+				XML::closeElement('div') .
+				XML::openElement('textarea', array( 'id' => 'ce-cf-textarea',
+					'rows' => '5', 'defaultValue' => $encPreComment,
+					'onClick' => 'ceCommentForm.selectTextarea();',
+					'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
+				$encPreComment .
+				XML::closeElement('textarea') .
+				XML::closeElement('div');
+
+		$submitButtonID = 'ce-cf-submitbuttonID';
+		$resetButtonID = 'ce-cf-resetbuttonID';  
 		
-		$form = XML::openElement('form', array( 'method' => 'post', 'id' => 'ce_cf',
-						'onSubmit' => 'return ceCommentForm.processForm()' )) . 
-			XML::openElement( 'fieldset', array( 'id' => 'ce_cf_fieldset' ) ).
-			XML::element('legend', null, wfMsg( 'ce_cf_legend' )) .
-			XML::openElement('table', array('border' =>'0', 'id' => 'ce_cf_table')).
-			'<tr>' .
-				'<td>' .
-					XML::input('', $userFieldSize, $currentUser, 
-						array('id' => 'ce_cf_user_field',
-						'onClick' => 'ceCommentForm.selectUsernameInput();',
-						'onKeyDown' => 'ceCommentForm.usernameInputKeyPressed();')) .
-				'</td>' .
-				'<td rowspan="2">' .
-					wfMsgForContent('ce_cf_article_rating') . '<br/>' .
-					XML::element('input', array( 'type' => 'radio',
-						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
-						'value' => '0', 'checked' => 'checked')) .
-					$ratingValues[0] . '<br/>' .
-					XML::element('input', array( 'type' => 'radio',
-						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
-						'value' => '1')) .
-					$ratingValues[1] . '<br/>' .
-					XML::element('input', array( 'type' => 'radio',
-						'class' => 'ce_cf_rating_radio', 'name' => 'rating',
-						'value' => '2')) .
-					$ratingValues[2] . '<br/>' .
-				'</td>' .
-			'</tr>' .
-			'<tr colspan="2">' .
-				'<td>' .
-					XML::openElement('textarea', array('rows' => $rows,
-						'cols' => $cols, 'id' => 'ce_cf_textarea',
-						'defaultValue' => $encPreComment,
-						'onClick' => 'ceCommentForm.selectTextarea();',
-						'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
-					$encPreComment .
-					XML::closeElement('textarea') .
-				'</td>' .
-			'</tr>';
-					
-		$submitButtonID = 'ce_cf_submitbuttonID';
-		$resetButtonID = 'ce_cf_resetbuttonID';  
-		
-		$form .= '<tr colspan="2">' .
-				'<td>' .
-					XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
+		$html .= XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
 						array ( 'id' => $submitButtonID) ) .
-					XML::element( 'input', array( 'type' => 'reset', 
-						'value' => wfMsg( 'ce_cf_reset_button_name' ),
-						'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
-				'</td>' .
-			'</tr>';
-		$form .=
-			XML::closeElement('table') .
-			XML::openElement('div', array('id' => 'ce_cf_pending' )) .
+			XML::element( 'input', array( 'type' => 'reset', 
+				'value' => wfMsg( 'ce_cf_reset_button_name' ),
+				'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
+			XML::openElement('div', array('id' => 'ce-cf-pending' )) .
 			XML::closeElement('div') .
-			XML::openElement('div', array('id' => 'ce_cf_message')) .
+			XML::openElement('div', array('id' => 'ce-cf-message')) .
 			XML::closeElement('div') .
-			XML::closeElement('fieldset') .
 			XML::closeElement('form');
 
-		// foobar
-
 		self::$mInstance->mCommentFormDisplayed = true;
-		return $parser->insertStripItem( $form, $parser->mStripState );
+		return $parser->insertStripItem( $html, $parser->mStripState );
 	}
 
 	/**
@@ -347,12 +308,11 @@ class CECommentParserFunctions {
 	
 	/**
 	 * does all the checks.
-	 * 
-	 * @param $pfCode Code of parser function taken from CELanguage
+	 *
 	 * @param $parser Parser object
 	 * @return status code (see defines at top)
 	 */
-	private function doInitialChecks($pfCode, &$parser) {
+	private function doInitialChecks(&$parser) {
 		global $cegContLang, $wgUser;
 		
 		$pfContLangName = $cegContLang->getParserFunction(CELanguage::CE_PF_SHOWCOMMENTS);
@@ -371,39 +331,34 @@ class CECommentParserFunctions {
 	
 		//TODO: something is wrong here!
 		
-		/*
+		
 		global $cegEnableComment, $cegEnableCommentFor;
-		# check parser functions #
-		switch ($pfCode) {
-			case CELanguage::CE_PF_SHOWFORM:
-				# check if comments enabled #
-				if (!isset($cegEnableComment) || !$cegEnableComment)
-					return self::COMMENTS_DISABLED;
 
-				# check authorization #
-				if (!$cegEnableCommentFor || ($cegEnableCommentFor == CE_COMMENT_NOBODY)) {
-					return self::NOBODY_ALLOWED_TO_COMMENT;
-				} elseif (($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && 
-					!$wgUser->isLoggedIn()) {
-					return self::USER_NOT_ALLOWED_TO_COMMENT;
-				} else {
-					//user is allowed
-					if( self::$mInstance->mCommentFormDisplayed ) {
-						return self::FORM_ALREADY_SHOWN;
-					} else {
-						return self::SUCCESS;
-					}
-				}
-			case CELanguage::CE_PF_SHOWCOMMENTS:
-				if ( self::$mInstance->mCommentsDisplayed ) {
-					return self::COMMENTS_ALREADY_SHOWN;
-				}
-			default:
-				//go on.
-		}*/
+		# check if comments enabled #
+		if (!isset($cegEnableComment) || !$cegEnableComment)
+			return self::COMMENTS_DISABLED;
+
+		if (!isset($cegEnableCommentFor) || !$cegEnableCommentFor)
+			return self::COMMENTS_FOR_NOT_DEF;
+
+		# check authorization #
+		if ($cegEnableCommentFor == CE_COMMENT_NOBODY) {
+			return self::NOBODY_ALLOWED_TO_COMMENT;
+		} elseif ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) &&
+		!($wgUser->isLoggedIn()) ) {
+			return self::USER_NOT_ALLOWED_TO_COMMENT;
+		} else {
+			//user is allowed
+			if( self::$mInstance->mCommentFormDisplayed ) {
+				return self::FORM_ALREADY_SHOWN;
+			} else {
+				return self::SUCCESS;
+			}
+		}
+
 		return self::SUCCESS;
 	}
-	
+
 	
 	/**
 	 * There's something wrong with the comment function.
