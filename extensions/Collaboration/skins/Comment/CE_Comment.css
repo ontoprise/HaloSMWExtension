@@ -3,53 +3,108 @@
 /* Comment form */
 
 /* the ID of the Collaboration Extension Comment Form (CE_CF)*/
-#ce_cf {
 
+div#ce-c-header {
+	width: 100%;
+	margin-top: 5px;
+	padding-top: 5px;
+	border-top: 2px solid lightgrey;
 }
-#ce_cf_fieldset {
-
+img#ce-c-header-img {
+	width: 25px;
+	heigth: 25px;
+	vertical-align: bottom;
 }
-
-/*The table*/
-#ce_cf_table {
+span#ce-c-header-text {
+	margin-left:10px;
+	font-size: larger;
+	font-weight: bold;
+	color: blue;
+	cursor: pointer;
 }
-#ce_cf_table tr {
+form#ce-cf {
+	border: 1px solid lightgrey;
+	width: 100%-2px;
+	overflow: hidden;
 }
-#ce_cf_table td {
+div#ce-cf-user-icon {
+	float: left;
+	width: 7%;
+	margin-top: 5px;
+	padding: 5px;
 }
-
-/* the user (-name input) field*/
-#ce_cf_user_field {
-
+div#ce-cf-rightside {
+	float: left;
+	width: 90%;
+	overflow: hidden;
+	margin-top: 5px;
 }
-/* the rating radio buttons */
-.ce_cf_rating_radio {
+div#ce-cf-user {
+	padding: 5px 0;
+	color: ;
+	margin-top: 5px;
+}
+div#ce-cf-user span.userkey{
+	color: grey;
+}
+div#ce-cf-user span.uservalue {
+	color: blue;
+	margin-left: 5px;
+}
+div#ce-cf-rating {
+	padding: 5px;
+	border: 1px solid lightgrey;
+}
+div#ce-cf-radiobuttons{
+	float:right;
+	display: inline;
+}
+.ce-cf-rating-radio {
+	padding: 2px;
 }
 
 /* the textarea (comment content) */
-#ce_cf_textarea {
+div#ce-cf-commenthelp{
+	margin: 5px 0;
+	color: grey;	
+}
+div#ce-cf-commenthelp span.red{
+	color: red;
+}
+div#ce-cf-commenthelp span{
+	color: black;
+}
+#ce-cf-textarea {
+	margin: 5px 0;
+	width: 100%;
+	overflow: hidden;
 }
 
 /*the two buttons in the form*/
-#ce_cf_submitbuttonID {
+#ce-cf-submitbuttonID {
+	font-weight: bold;
 }
-#ce_cf_resetbuttonID {
+#ce-cf-resetbuttonID {
+	margin-left: 5px;
 }
 
 /* the div for the pending indicator*/
-#ce_cf_pending{
+#ce-cf-pending{
 }
 
 /* normal status messages from AJAX response */
-#ce_cf_message {
+#ce-cf-message {
 	
 }
 
 /* failure messages from AJAX response */
-#ce_cf_failure_message {
+#ce-cf-failure-message {
 
 }
 
 /* warnings created by parser function*/
-.ce_warning{
+.ce-warning{
+}
+.ce-cf-grey{
+	color: grey;
 }
