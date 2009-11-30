@@ -115,8 +115,12 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     border-color: #cacac4;
 }
 
-.tab.selected{
+.tab.selected{    
     font-weight: bolder;
+}
+
+#mainpage .tab.selected a{
+    color: #000;
 }
 
 #tabsright .righttabelements {

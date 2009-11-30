@@ -154,7 +154,7 @@ ul.smwh_menulist .hovering div.smwh_menubody {
 ul.smwh_menulist div.smwh_menubody {
     width: auto;
     position: absolute;
-    top: 24px;
+    top: 1.1em;
     z-index: 20;
 }
 
@@ -228,7 +228,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 
 #smwh_tabs{
-    height: 1.5em;
+    height: 1.6em;
     margin-top: 1em;
 }
 
