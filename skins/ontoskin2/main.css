@@ -116,6 +116,10 @@
 	background-color: #bed0d5;
 }
 
+#smwh_breadcrumb_currentpage{
+    display: inline;
+}
+
 #smwf_breadcrumb_table{
 	width: 100%;
 	background-color: #bed0d5;

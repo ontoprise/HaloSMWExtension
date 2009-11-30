@@ -98,6 +98,11 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     font-size: smaller;
 }
 
+#smwh_breadcrumb_currentpage{
+    color: #4187A0;
+    font-weight: bold;
+}
+
 /* mainpage */
 
 #smwh_browser{

@@ -41,8 +41,9 @@ Breadcrumb.prototype = {
     
     pasteInHTML: function(breadcrumbArray) {
         var html = "";
-        breadcrumbArray.each(function(b) {
-            
+
+        for (var index = 0, len = breadcrumbArray.length; index < len; ++index) {
+            var b = breadcrumbArray[index];
             // remove namespace and replace underscore by whitespace
             var title = b.split(":");
             var show = title.length == 2 ? title[1] : title[0];
@@ -58,8 +59,18 @@ Breadcrumb.prototype = {
            	    encURI = encURI.replace(/%3A/g, ":"); // do not encode colon
             	var articlePath = wgArticlePath.replace("$1", encURI);
             }
-            html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>'; 
-        });
+            //add all previous visited pages as link
+            if (index < len -1){
+                html += '<a href="'+wgServer+articlePath+'">'+show+' &gt; </a>';
+            }
+            //add current page as normal text
+            else {
+               html += '<p id="smwh_breadcrumb_currentpage">'+show+'<p>';
+            }
+            
+        };
+        //add the last item (current page) not as link
+
         var bc_div = $('breadcrumb');
         if (bc_div != null) bc_div.innerHTML = html;
     }
