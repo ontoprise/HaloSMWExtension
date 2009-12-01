@@ -235,6 +235,7 @@ class OntoSkin3Template extends QuickTemplate {
                                     <?php if($this->data['showjumplinks']) { ?><div id="jump-to-nav"><?php $this->msg('jumpto') ?> <a href="#column-one"><?php $this->msg('jumptonavigation') ?></a>, <a href="#searchInput"><?php $this->msg('jumptosearch') ?></a></div><?php } ?>
                             <!-- start content -->
                                     <?php $this->html('bodytext') ?>
+                                    <div class="visualClear"></div>
                                     <?php if($this->data['catlinks']) { ?><div id="catlinks"><?php       $this->html('catlinks') ?></div><?php } ?>
                             <!-- end content -->
                             <?php if($this->data['dataAfterContent']) { $this->html ('dataAfterContent'); } ?>
