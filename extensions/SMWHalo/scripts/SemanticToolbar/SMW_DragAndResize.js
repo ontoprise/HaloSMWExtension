@@ -49,7 +49,11 @@ enableDragging: function(){
 		this.draggable = new Draggable('ontomenuanchor', {
 			//TODO: replace handle with proper tab if present	
 			handle: 'tabcontainer', 
-			starteffect: function( ){stb_control.setDragging(true);}, 
+			starteffect: function( ) {
+				stb_control.setDragging(true);
+				smwhg_dragresizetoolbar.storePosition();
+				smwhg_dragresizetoolbar.restorePosition();
+				}, 
 			endeffect: function(){setTimeout(stb_control.setDragging.bind(stb_control,false),200);}});
 		
 		//Adds an Observer which stores the position of the stb after each drag
