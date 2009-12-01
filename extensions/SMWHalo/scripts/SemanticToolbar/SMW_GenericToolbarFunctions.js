@@ -1148,8 +1148,10 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	 */
 	showPendingIndicator: function(onElement) {
 		this.hidePendingIndicator();
-		this.pendingIndicator = new OBPendingIndicator($(onElement));
-		this.pendingIndicator.show();
+		if (this.pendingIndicator == null) {
+			this.pendingIndicator = new OBPendingIndicator($(onElement));
+		}
+		this.pendingIndicator.showOn(onElement);
 	},
 
 	/*
@@ -1158,7 +1160,6 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 	hidePendingIndicator: function() {
 		if (this.pendingIndicator != null) {
 			this.pendingIndicator.hide();
-			this.pendingIndicator = null;
 		}
 }
 	
