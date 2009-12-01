@@ -117,25 +117,23 @@ PropertyChain.prototype = {
 		
 		var xml;
 		
-		xml = '<?xml version="1.0" encoding="UTF-8"?>'
-			  + '<SimpleRule>';
+		xml = '<?xml version="1.0" encoding="UTF-8"?>';
 			  
-		xml += '<head>';
-		xml += '<property>'
+		var head = '<head>';
+		head += '<property>'
 			+ '<subject>X1</subject>'
 			+ '<name>'
 			+ wgTitle.replace(/ /g, '_')
 			+ '</name>'
-			+ '<variable>'
-			+ "X" + (this.chainCount+1)
-			+ '</variable>'
-			+ '</property>'
-			+ '</head>';
+		
 			  
-		xml += '<body>';
+		var body = '<body>';
+		var valid_chainParts = 0;
 		for (var i = 0; i < this.chainCount; i++) {
 			var prop = $("pc-chain-input-"+i).value.replace(/ /g, '_');
-			xml += '<property>'
+			if (prop == '') continue;
+			valid_chainParts++;
+			body += '<property>'
 				+ '<subject>'
 				+ 'X'+(i+1)
 				+ '</subject>'
@@ -147,8 +145,15 @@ PropertyChain.prototype = {
 				+ '</variable>'
 				+ '</property>';
 		}
+		body += "'</body>";
 		
-		xml += '</body></SimpleRule>';
+		head += '<variable>'
+            + "X" + (valid_chainParts+1)
+            + '</variable>'
+            + '</property>'
+            + '</head>';
+            
+		xml += '<SimpleRule>'+head+body+'</SimpleRule>';
 		
 		return xml;
 		

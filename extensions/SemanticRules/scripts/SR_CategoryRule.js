@@ -322,10 +322,10 @@ getHTMLForLiteral: function(literal, isHead, partID) {
 		'<span id="buttons_' + partID + '">' +
 			'<a href="javascript:smwhgCreateDefinitionRule.editCategoryCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
-			'</a>' +
+			'</a>' + ( !isHead ? 
 			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
-			'</a>' +
+			'</a>' : '' )+
 		'</span>' + 		
 	'</div>';
 			}
@@ -390,10 +390,10 @@ getHTMLForLiteral: function(literal, isHead, partID) {
 		'<span id="buttons_' + partID + '">' +
 			'<a href="javascript:smwhgCreateDefinitionRule.editPropertyCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
-			'</a>' +
+			'</a>' + (!isHead ? 
 			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
-			'</a>' +
+			'</a>' : '') +
 		'</span>' +
 '</div>';
 			
@@ -768,10 +768,10 @@ editPropertyCondition: function(partID) {
 		'<span id="buttons_' + partID + '">' +
 			'<a href="javascript:smwhgCreateDefinitionRule.editPropertyCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/edit.gif"/>' +
-			'</a>' +
+			'</a>' + (partID != '888888' ? // ie. not is head
 			'<a href="javascript:smwhgCreateDefinitionRule.removeCondition(' + partID + ')">' +
 				'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/delete.png"/>' +
-			'</a>' +
+			'</a>' : '' ) +
 		'</span>' +
 '</div>';
 

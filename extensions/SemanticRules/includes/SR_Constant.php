@@ -31,7 +31,7 @@ if (!defined('MEDIAWIKI')) die();
 		// check if it is numeric value - if not, add quotes
 		if (!is_numeric($value)) {
 			// check if value is already quoted - if so, don't add quotes
-			if ($value{0} != "\"") {
+			if (substr(trim($value),0,1) != "\"") {
 				$value = "\"" . $value . "\"";
 			}
 		}

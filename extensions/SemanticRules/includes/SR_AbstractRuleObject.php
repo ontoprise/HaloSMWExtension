@@ -72,7 +72,7 @@ abstract class SMWAbstractRuleObject {
 
 		// fetch head of rule
 		if (isset($rule->head)) {
-			
+				
 			$this->_head = $this->setLiteral($rule->head->literalws);
 		}
 
@@ -114,7 +114,7 @@ abstract class SMWAbstractRuleObject {
 	}
 
 	public function setLiteral($lit) {
-		
+
 		$templit = new SMWLiteral($this->setPredicatesymbol($lit->_predicatesymbolws), $this->setArguments($lit->_arguments));
 		$templit->setArity((string) $lit->_arity);
 		return $templit;
@@ -126,28 +126,42 @@ abstract class SMWAbstractRuleObject {
 
 	public function setArguments($arg) {
 		$termargs = array();
-        
+
 		foreach ($arg->children() as $termval) {
 			$arity = (string) $termval->_arity;
 			if ($arity == 0) {
 				$isGround = (string) $termval->_isGround;
 				if ($isGround == "true") {
 					// 1st char. '"' denotes property/category... FIXME: provide method to distinguish Variables/Constants/Categories/Properties
+						
 					if (is_numeric((string) $termval->_argument) || substr((string)$termval->_argument,0,1) == "\"") {
-						$tempterm = new SMWConstant((string) $termval->_argument);
+						$tempterm = new SMWConstant( $termval->_argument);
+					
 					} else {
-						$tempterm = new SMWTerm((string) $termval->_argument, (string) $termval->_arity, true);
+						
+						$tempterm = new SMWTerm(self::convertToArray($termval->_argument), (string) $termval->_arity, true);
 					}
 				} else {
+						
 					$tempterm = new SMWVariable((string) $termval->_argument);
 				}
 			} else {
-				$tempterm = new SMWTerm((string) $termval->_argument, (string) $termval->_arity, $termval->_isGround);
+
+				
+				$tempterm = new SMWTerm( self::convertToArray($termval->_argument), (string) $termval->_arity, $termval->_isGround);
 			}
 			array_push($termargs, $tempterm);
 		}
 
 		return $termargs;
+	}
+
+	private static function convertToArray($simple_xml_set) {
+		$result = array();
+		foreach( $simple_xml_set as $a) {
+			$result[] = (string) $a;
+		}
+		return $result;
 	}
 
 	public function setBody($body) {
