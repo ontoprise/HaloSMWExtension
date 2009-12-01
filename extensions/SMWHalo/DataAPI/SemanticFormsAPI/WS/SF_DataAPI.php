@@ -75,7 +75,7 @@ class SFDataAPI extends ApiBase {
 		$result = $this->getResult();
 		$result->setIndexedTagName($__data, 'p');
 		$result->addValue(null, $this->getModuleName(), $__data);
-	}
+	}	
 
 	protected function getAllowedParams() {
 		return array (
@@ -157,9 +157,9 @@ class SFDataAPI extends ApiBase {
 			global $wgContLang;
 			if ($__formName !== NULL && $__formName != ""){
 				$__result['page'][str_ireplace(' ','_',$__formName)] = $this->formSerialize(
-				$__pageReader->readPage(NULL,$wgContLang->getNsText(SF_NS_FORM) . ':' . $__formName)->text,
-				true,
-				$__page->text, $title);
+					$__pageReader->readPage(NULL,$wgContLang->getNsText(SF_NS_FORM) . ':' . $__formName)->text,
+					true,
+					$__page->text, $title);
 			}
 		}elseif($__page->namespace === SF_NS_FORM){
 			global $wgContLang;
@@ -184,19 +184,18 @@ class SFDataAPI extends ApiBase {
 		$__xmlData = $this->XML2Array($sfdata, false);
 		$__serverUtility = new PCPServer();
 		$__userCredentials = new PCPUserCredentials(
-		$username,
-		NULL,
-		$userId,
-		$loginToken);
+			$username,
+			NULL,
+			$userId,
+			$loginToken);
 
 		$__pageNs = utf8_decode($__xmlData['sfdata']['page']['@attributes']['ns']);
 		$__pageTitle = $__xmlData['sfdata']['page']['@attributes']['title'];
-		$__pageRId = $__xmlData['sfdata']['page']['@attributes']['rid'];
+		$__pageRId = @ $__xmlData['sfdata']['page']['@attributes']['rid'];
 		$__page = $__serverUtility->readPage(
 			$__userCredentials,
 			$__pageTitle,
 			$__pageRId);
-		
 		
 		if(stristr($methodType,"c")){ // the requested method is create
 			if($__page->pageid == NULL || $__page->pageid == ""){
@@ -293,35 +292,39 @@ class SFDataAPI extends ApiBase {
 			if($__page->pageid != NULL && $__page->pageid != ""){ // the page exists
 				// create the POM object for the requested page
 				$__pom = new POMPage(
-				$__pageTitle,
-				$__page->text,
-				array('POMExtendedParser'));
+					$__pageTitle,
+					$__page->text,
+					array('POMExtendedParser'));
 				
 				// since @array will be read together with the SF elements unset it
 				unset($__xmlData['sfdata']['page']['@attributes']);
 				$__sfNames = array_keys($__xmlData['sfdata']['page']);
-
+				
 				foreach ($__sfNames  as $__sfName){
 					$__sf = $__xmlData['sfdata']['page'][$__sfName];
-					$__iterator = $__pom->getTemplateByTitle(utf8_decode($__sf['@attributes']['tmpl_name']))->listIterator();
-
+					foreach($__sf as $template){
+					$__iterator = $__pom->getTemplateByTitle(
+						utf8_decode($template['@attributes']['tmpl_name']))->listIterator();
+					
 					if (isset($__sf['@attributes']) && isset($__sf['@attributes']['mfi'])){
+						// todo: does this work any longer?
 						// multiple SF instances detected
 						// TODO: implement
-
 					}else{
 						$__template = &$__iterator->getNextNodeValueByReference(); # get reference for direct changes
 						
 						// since @array will be read together with the SF field elements unset it
-						unset($__sf['@attributes']);
+						//unset($__sf['@attributes']);
+						unset($template['@attributes']);
 
-						foreach ($__sf as $__field){ // in the SF element are listed all SF fields
-							if($__template->getParameter(utf8_decode($__field['@attributes']['field_name']))!== NULL){
-								$__paramValue = &$__template->getParameterValue(utf8_decode($__field['@attributes']['field_name']));
+						foreach ($template as $__field){ // in the SF element are listed all SF fields
+							if($__template->getParameter(utf8_decode($__field['template_field']['@attributes']['field_name']))!== NULL){
+								$__paramValue = &$__template->getParameterValue(utf8_decode($__field["template_field"]['@attributes']['field_name']));
 								$__paramValue = new POMSimpleText(utf8_decode($__field['@attributes']['cur_value']));
 							}
 						}
 					}
+				}
 				}
 				$__pom->sync();
 
@@ -1300,7 +1303,7 @@ class SFDataAPI extends ApiBase {
 			$start_position = $brackets_loc + 1;
 		} // end while
 		$form_def_sections[] = trim(substr($form_def, $section_start));
-	
+		
 		// cycle through form definition file (and possibly an existing article
 		// as well), finding template and field declarations and replacing them
 		// with form elements, either blank or pre-populated, as appropriate
@@ -1492,7 +1495,8 @@ class SFDataAPI extends ApiBase {
 						}
 					}
 					//  save the template name
-					$__fields['tmpl_name'] = $tif->template_name;
+					$field = array();
+					$field['tmpl_name'] = $tif->template_name;
 					// =====================================================
 					// end template processing
 					// =====================================================
@@ -1511,6 +1515,9 @@ class SFDataAPI extends ApiBase {
 					// be hidden because it is empty and choosers are being used. So,
 					// hide it.
 					$form_text = str_replace("[[placeholder]]", "style='display:none'", $form_text);
+					
+					$__fields["template".count($__fields)] = $field;
+					
 					// =====================================================
 					// field processing
 					// =====================================================
@@ -1754,6 +1761,7 @@ class SFDataAPI extends ApiBase {
 						// the template definition (contained in the $all_fields parameter)
 	
 						# creation of a form field from the definition page
+						$possible_values['_element'] = "value";
 						$form_field = $this->createFromDefinitionForSerialization($field_name, $input_name,
 						$is_mandatory, $is_hidden, $is_uploadable, $possible_values, $is_disabled,
 						$is_list, $input_type, $field_args, $all_fields, $strict_parsing);
@@ -1831,7 +1839,7 @@ class SFDataAPI extends ApiBase {
 							}
 						}						
 	
-						$__fields["field".count($__fields)] = $this->toArrayForSerialize($form_field);
+						$field["field".count($field)] = $this->toArrayForSerialize($form_field);
 						
 						$new_text = "dummy"; // set only in order to break						
 	
@@ -1846,9 +1854,8 @@ class SFDataAPI extends ApiBase {
 					$start_position = $brackets_end_loc;
 				} // end if
 			} // end while
-	
 		} // end for
-	
+		
 		// get free text, and add to page data, as well as retroactively
 		// inserting it into the form
 	
@@ -1972,7 +1979,9 @@ class SFDataAPI extends ApiBase {
 		$f->is_disabled = $is_disabled;
 		$f->is_list = $is_list;
 		// add field args directly
-		$f->autocomplete_category = $field_args['autocomplete on category'];
+		if(array_key_exists('autocomplete on category', $field_args)){
+			$f->autocomplete_category = $field_args['autocomplete on category'];
+		}
 		$f->part_of_multiple = $field_args['part_of_multiple'];
 		
 		return $f;
