@@ -51,6 +51,10 @@ textarea {
     border-left-style: none;
 }
 
+#smwh_viewmode{
+    margin-left: 10px;
+}
+
 #smwh_personal img{
     margin-right: 10px;
 }
@@ -151,7 +155,7 @@ ul.smwh_menulist div.smwh_menuhead > p > a:hover  {
 ul.smwh_menulist li {
 	  display: inline-block;
 	  position: relative;
-          z-index: 20;
+          z-index: 25;
           
 }
 
@@ -221,6 +225,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #thispage{
     float: left;
     margin-right: 10px;
+    margin-top: 0.25em;
 }
 
 #smwh_breadcrumbs{
@@ -228,6 +233,10 @@ ul.smwh_menulist div.smwh_menubody_visible {
     margin-top: 12px;
     margin-bottom: 10px;
 	margin-left: 12px;
+}
+
+#smwh_breadcrumb_currentpage{
+    display: inline;
 }
 
 /* mainpage */
@@ -279,6 +288,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #tabsright .tab {
     float: right;
     margin-right: 0px;
+    margin-left: 5px;
 }
 
 #tabsright .righttabelements {
@@ -319,7 +329,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #tabsright ul.smwh_menulist div.smwh_menuhead {
     display: inline-block;
     padding-left: 5px;
-    padding-right: 5px;
+    padding-right: 15px;
     cursor: pointer;
 }
 
@@ -446,8 +456,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 
 .smwh_treeviewleft{
     display: block !important;
-    min-width: 300px;
-    max-width: 650px;
+    width: 500px;
 }
 
 .smwh_treeviewright{

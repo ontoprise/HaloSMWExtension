@@ -268,7 +268,7 @@ class SMWH_Skin {
                                         $tabsleft .= $tabs;
                                     } else if ($key == "purge" || $key == "history" || $key == "edit") {
                                             $tabs ="<div id=\"" . Sanitizer::escapeId( "ca-$key" ) . "\"";
-                                            $tabs .= " class=\"righttabelements";
+                                            $tabs .= " class=\"tab";
                                             if( $tab['class'] ) {
                                                 $tabs .= " ".htmlspecialchars($tab['class']);
                                             }
@@ -356,8 +356,8 @@ class SMWH_Skin {
          if($functionsaggregated != "") {
          //all functions which are aggregated in the right of the right tab
              $tabmore = "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
-             $tabmore .= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
-             $tabmore .= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
+             $tabmore .= "<div id=\"smwh_menuhead_more\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
+             $tabmore .= "<div id=\"smwh_menubody_more\" class=\"smwh_menubody\">";
              $tabmore .= $functionsaggregated."</div></li></ul></div>";
          } else {
              $tabmore = "";
@@ -367,8 +367,8 @@ class SMWH_Skin {
          //and don't add the right tab if it's completly empty
          if($functionsright != "" || $functionsaggregated != "" ) {
          //right tab holding all functions other than page/talk
-             $tabright = "<div id=\"tabsright\"><div class=\"tab\">";
-             $tabright .=  $tabmore.$functionsright."</div></div>";
+             $tabright = "<div id=\"tabsright\"><div id=\"more\" class=\"tab\">";
+             $tabright .=  $tabmore."</div>".$functionsright."</div>";
          } else {
              $tabright = "";
          }

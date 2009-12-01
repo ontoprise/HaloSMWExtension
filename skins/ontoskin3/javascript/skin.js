@@ -55,12 +55,12 @@ function Smwh_Skin() {
             //Hide tree
             this.hideTree();
 
-            //Calculate css style right
+            //Calculate css style left
             var toggleoffset = $jq("#shadow_right").offset().left;
             var windowwidth  = $jq(window).width()
             var rightspace = windowwidth - toggleoffset;
             $jq('#smwh_treeview').css('right', rightspace + 'px');
-            $jq("#smwh_treeview").css("width", "auto");
+            $jq("#smwh_treeview").css("width", "500px");
             $jq("#smwh_treeview").addClass("smwh_treeviewleft");
             
             
@@ -74,7 +74,7 @@ function Smwh_Skin() {
             this.hideTree();
         } else {
             //Show tree
-            //if page uses full screen width don't show tree on the left
+            //if page uses full screen width don't show tree on the right
             if(this.expanded == true) return;
             
             //get width from the left side to the page

@@ -110,8 +110,7 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 }
 
 #smwh_breadcrumb_currentpage{
-    color: #4187A0;
-    font-weight: bold;
+    color: #000;
 }
 
 /* mainpage */
@@ -126,8 +125,13 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     border-color: #cacac4;
 }
 
-.tab.selected{    
-    font-weight: bolder;
+.tab.selected{   
+    
+}
+
+#more {
+    background-color: #CCC;
+    color: #FFF;
 }
 
 #mainpage .tab.selected a{
@@ -139,12 +143,16 @@ ul.smwh_menulist div.smwh_menubody td:hover {
 }
 
 #tabsright .smwh_menuhead  {
-    background: none;
+    background: url(../img/menu_arrow.gif) right no-repeat;
 }
 
 #tabsright ul.smwh_menulist div.smwh_menubody {
     background-color: #fbfbfb;
     border-color: #dfdfdc;
+}
+
+#smwh_menuhead_more  {
+    
 }
 
 #column-content{
