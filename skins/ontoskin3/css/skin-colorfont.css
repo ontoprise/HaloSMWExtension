@@ -35,7 +35,13 @@ dt {
     font-size: smaller;
 }
 
+#personal_expand.limited {
+    background: url(../img/expandview.png) right no-repeat;
+}
 
+#personal_expand.expanded {
+    background: url(../img/limitview.png) right no-repeat;
+}
 
 #searchInput{
     border-color: #AAA;

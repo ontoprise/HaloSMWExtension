@@ -177,7 +177,7 @@ class OntoSkin3Template extends QuickTemplate {
 
                 <!-- Personalbar -->
                 <div id="smwh_personal">
-                    <a id="personal_expand" href="javascript:smwh_Skin.expandPage()">View mode<img id="smwh_viewmode" src="<?php $this->text('stylepath') ?>/<?php $this->text('stylename') ?>/img/button_expandview.gif"/></a>
+                    <a id="personal_expand" class="limited" href="javascript:smwh_Skin.expandPage()">View mode</a>
                             <?php foreach($this->data['personal_urls'] as $key => $item) {
                                 //echo $key;
                                 if(!($key=="login" || $key=="anonlogin" || $key=="logout" || $key=="userpage") ) continue;

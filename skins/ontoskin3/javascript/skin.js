@@ -17,6 +17,8 @@ function Smwh_Skin() {
         if( this.expanded == false){
             //use full browser window size
             $jq("#shadows").css("width", "100%");
+            $jq("#personal_expand").removeClass("limited");
+            $jq("#personal_expand").addClass("expanded");
             this.expanded = true;
 
             //Hide treeview (necessary if shown on the left side)
@@ -29,6 +31,8 @@ function Smwh_Skin() {
         } else {
             //show layout, which is optimized for 1024x768
             $jq("#shadows").css("width", "960px");
+            $jq("#personal_expand").removeClass("expanded");
+            $jq("#personal_expand").addClass("limited");
             this.expanded = false;
 
             //store state in a cookie
@@ -120,9 +124,9 @@ function Smwh_Skin() {
     
     if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
-        if (state == true){
-            this.expanded = true;
-            $jq("#shadows").css("width", "100%");
+        if (state == true && this.expanded == false){
+            this.expandPage();
+            
         }
 
     }

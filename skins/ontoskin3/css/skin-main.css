@@ -49,11 +49,9 @@ textarea {
 
 #smwh_personal #personal_expand {
     border-left-style: none;
+    padding-right: 25px;
 }
 
-#smwh_viewmode{
-    margin-left: 10px;
-}
 
 #smwh_personal img{
     margin-right: 10px;
