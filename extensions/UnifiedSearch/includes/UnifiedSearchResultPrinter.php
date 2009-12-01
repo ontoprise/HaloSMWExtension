@@ -128,7 +128,7 @@ class UnifiedSearchResultPrinter {
         global $wgServer, $wgScript;  
         
         return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
-                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.$e->getTitle()->getPrefixedText() .
+                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.urlencode($e->getTitle()->getPrefixedText()) .
                                $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';           
     }
 
