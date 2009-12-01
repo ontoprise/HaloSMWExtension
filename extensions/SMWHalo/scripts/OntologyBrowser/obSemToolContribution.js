@@ -101,7 +101,7 @@ OBSemanticToolbarContributor.prototype = {
 	/**
 	 * Navigates to the OntologyBrowser with ns and title
 	 */
-	navigateToOB: function(path) {
+	navigateToOB: function(path, newWindow) {
 		//var selectedText = GeneralBrowserTools.getSelectedText(this.textArea);
 		var selectedText = gEditInterface.getSelectedText();
 		if (selectedText == '') {
@@ -117,15 +117,31 @@ OBSemanticToolbarContributor.prototype = {
 
 		smwhgLogger.log(selectedText, "STB-OB", "clicked");
 		var ontoBrowserSpecialPage = wgArticlePath.replace(/\$1/, path+'?'+queryString);
-		window.open(wgServer + ontoBrowserSpecialPage, "");
+		if (newWindow == true)
+			window.open(wgServer + ontoBrowserSpecialPage, "");
+		else
+			window.location.href = wgServer + ontoBrowserSpecialPage;
 	},
 
 	getOBLink: function(active) {
 		if (active) {
 			return '<a ' +
 				'id="openEntityInOB" class="menulink"' +
-				'href="javascript:obContributor.navigateToOB(\''+gLanguage.getMessage('NS_SPECIAL')+":"+gLanguage.getMessage('OB_ID')+'\')">' +
+				'href="javascript:obContributor.navigateToOB(\''
+				     + gLanguage.getMessage('NS_SPECIAL') 
+				     + ":"
+				     + gLanguage.getMessage('OB_ID')
+				     +'\', false)">' +
 				gLanguage.getMessage('OPEN_IN_OB') +
+				'</a>' +
+				'<a ' +
+				'id="openEntityInOB" class="menulink"' +
+				'href="javascript:obContributor.navigateToOB(\''
+				     + gLanguage.getMessage('NS_SPECIAL') 
+				     + ":"
+				     + gLanguage.getMessage('OB_ID')
+				     +'\', true)">' +
+				gLanguage.getMessage('OPEN_IN_OB_NEW_TAB') +
 				'</a>';
 		} else {
 			return '<span ' +

@@ -182,6 +182,7 @@ var wgUserLanguageStrings = {
 	'ENTER_MORE_LETTERS'      : "Please enter at least two letters. Otherwise you will receive simply too much results.",
 	'MARK_A_WORD'             : 'Mark a word...',
 	'OPEN_IN_OB'              : 'Open in Ontology Browser',
+	'OPEN_IN_OB_NEW_TAB'      : '... new tab',
 	'OB_CREATE'	  			  : 'Create',
 	'OB_RENAME'	  			  : 'Rename',
 	'OB_DELETE'	  			  : 'Delete',

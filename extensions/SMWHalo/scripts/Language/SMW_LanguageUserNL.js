@@ -183,6 +183,7 @@ var wgUserLanguageStrings = {
 	'ENTER_MORE_LETTERS'      : "Gelieve minstens 2 letters in te geven. Anders verkrijg je zonder meer te veel resultaten.",
 	'MARK_A_WORD'             : 'Markeer een woord...',
 	'OPEN_IN_OB'              : 'Openen in Ontologie-browser',
+	'OPEN_IN_OB_NEW_TAB'      : '... nieuw tabblad',
 	'OB_CREATE'	  			  : 'Creëren',
 	'OB_RENAME'	  			  : 'Hernoemen',
 	'OB_DELETE'	  			  : 'Verwijderen',

@@ -182,6 +182,7 @@ var wgUserLanguageStrings = {
     'ENTER_MORE_LETTERS'      : "Veuillez saisir au moins deux lettres. Sinon vous allez obtenir trop de résultats.",
     'MARK_A_WORD'             : 'Marquer un mot...',
     'OPEN_IN_OB'              : 'Ouvrir dans le navigateur d\'ontologies',
+	'OPEN_IN_OB_NEW_TAB'      : '... nouvel tabulation',
     'OB_CREATE'               : 'Créer',
     'OB_RENAME'               : 'Renommer',
     'OB_DELETE'               : 'Supprimer',
