@@ -577,6 +577,7 @@ OBPendingIndicator.prototype = {
 	 * if container is not specified.
 	 */
 	show: function(container, alignment) {
+		
 		//check if the content element is there
 		if($("content") == null){
 			return;
@@ -616,11 +617,27 @@ OBPendingIndicator.prototype = {
 
 	},
 	
+	/**
+	 * Shows the pending indicator on the specified <element>. This works also
+	 * in popup panels with a defined z-index.
+	 */
+	showOn: function(element) {
+		container = element.offsetParent;
+		$(container).insert({top: this.pendingIndicator});
+		var pOff = $(element).positionedOffset();
+		this.pendingIndicator.style.left = pOff[0]+"px";
+		this.pendingIndicator.style.top  = pOff[1]+"px";
+		this.pendingIndicator.style.display="block";
+		this.pendingIndicator.style.visibility="visible";
+		this.pendingIndicator.style.position = "absolute";
+		
+	},
+	
 	hide: function() {
 		Element.hide(this.pendingIndicator);
 	},
 
-        remove: function() {
+	remove: function() {
 		Element.remove(this.pendingIndicator);
 	}
 }
