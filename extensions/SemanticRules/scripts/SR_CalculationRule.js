@@ -394,7 +394,7 @@ allVariableSpecificationsHTML: function(parsedRule) {
 					   propInputVisible +
 '					   class="wickEnabled" ' +
 '					   onfocus="smwhgCreateCalculationRule.inputFocus(this)"' +
-'					   typeHint="'+SMW_PROPERTY_NS+'">' +
+'					   constraints="namespace:'+SMW_PROPERTY_NS+'">' +
            '</td>' +
 '		</tr>' +
 '		<tr>' +

@@ -60,7 +60,7 @@ PropertyChain.prototype = {
 			+ '</sub></span>' 
 			+ '<input style="margin-right: 5px" type="text" id="pc-chain-input-'
 			+ cCount
-			+ '" class="wickEnabled" typeHints="'
+			+ '" class="wickEnabled" constraints="namespace:'
 			+ SMW_CATEGORY_NS
 			+ '" onkeypress ="smwhgPropertyChain.checkEnterKey(event, ' 
 			+ cCount + ')"></input>' 

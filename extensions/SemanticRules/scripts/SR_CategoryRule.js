@@ -422,7 +422,7 @@ memberOfCategory: function() {
 		'&nbsp;' +
 		gsrLanguage.getMessage('SR_BELONG_TO_CAT') +
 		'&nbsp;' +
-		'<input type="text" value="" id="sr-cat-name" class="wickEnabled" />' +
+		'<input type="text" value="" id="sr-cat-name" class="wickEnabled" constraints="namespace: '+SMW_CATEGORY_NS+'"/>' +
 		'&nbsp;' +
 		'<a href="javascript:smwhgCreateDefinitionRule.showCategoryCondition(' + this.numParts + ',false)">' +
 			'<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/add.png"/>' +
@@ -453,7 +453,7 @@ editCategoryCondition: function(partID) {
 	elem = $('cat_'+partID);
 	if (elem) {
 		var val = unescape(elem.readAttribute('catname'));
-		elem.replace('<input type="text" value="" id="sr-cat-name" class="wickEnabled" />');
+		elem.replace('<input type="text" value="" id="sr-cat-name" class="wickEnabled" constraints="namespace: '+SMW_CATEGORY+'"/>');
 		$("sr-cat-name").value = val;
 	}
 	elem = $('buttons_'+partID);
@@ -576,7 +576,7 @@ memberOfProperty: function() {
 		'&nbsp;' +
 		gsrLanguage.getMessage('SR_HAVE_PROP') +
 		'&nbsp;' +
-		'<input type="text" value="" id="sr-prop-name" class="wickEnabled" />' +
+		'<input type="text" value="" id="sr-prop-name" class="wickEnabled" constraints="namespace:'+SMW_PROPERTY_NS+'"/>' +
 		'&nbsp;' +
 		gsrLanguage.getMessage('SR_WITH_VALUE') +
 		'&nbsp;' +
@@ -617,7 +617,7 @@ editPropertyCondition: function(partID) {
 	elem = $('prop_'+partID);
 	if (elem) {
 		var val = unescape(elem.readAttribute('propname'));
-		elem.replace('<input type="text" value="" id="sr-prop-name" class="wickEnabled" />');
+		elem.replace('<input type="text" value="" id="sr-prop-name" class="wickEnabled" constraints="namespace:'+SMW_PROPERTY_NS+'"/>');
 		$("sr-prop-name").value = val;
 	}
 	elem = $('value_'+partID);
