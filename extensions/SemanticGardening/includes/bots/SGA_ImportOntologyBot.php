@@ -364,6 +364,14 @@ class ImportOntologyBot extends GardeningBot {
 		if ($pt == NULL) return; // Could not create a title, next please
 			
 		$oLabel = $object->getLabel();
+		
+		// special case for dateTime/date property value
+		if (preg_match('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', $oLabel, $matches) > 0) {
+			$oLabel = $matches[0];
+		} else if (preg_match('\d{4}-\d{2}-\d{2}', $oLabel, $matches) > 0) {
+            $oLabel = $matches[0];
+        }
+		
 		// TODO check if already within wiki
 		// TODO use datatype handler
 		$s = array();
