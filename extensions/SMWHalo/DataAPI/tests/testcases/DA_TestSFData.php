@@ -4,28 +4,33 @@ $userName = "WikiSysop";
 $pw = "root";
 
 $lt = pcpLogin($url, $userName, $pw);
-echo "\n".$lt."\n";
+$uid = $lt[1];
+$lt = $lt[0];
+echo "\n".$lt."\n".$uid."\n";
 
-pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt);
-//pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, getProjectTemplateText());
-//
-//pcpDeleteArticle($url, "Form:Project", $userName, $pw, $lt);
-//pcpCreateArticle($url, "Form:Project", $userName, $pw, $lt, getProjectFormText());
-//
-//pcpDeleteArticle($url, "Template:ShowAttachedContent", $userName, $pw, $lt);
-//pcpCreateArticle($url, "Template:ShowAttachedContent", $userName, $pw, $lt, getShowAttachedContentTemplateText());
-//
-//pcpDeleteArticle($url, "Template:RMList", $userName, $pw, $lt);
-//pcpCreateArticle($url, "Template:RMList", $userName, $pw, $lt, getRMListTemplateText());
-//
-//pcpDeleteArticle($url, urlencode("A complex project"), $userName, $pw, $lt);
-//
-//pcpCreateArticle($url, urlencode("A_complex_project"), $userName, $pw, $lt, getAComplexProjectText());
-//pcpUpdateArticle($url, urlencode("A_complex_project"), $userName, $pw, $lt, getAComplexProjectText());
-//
-//sfGetForm($url, urlencode("A_complex_project"));
-//$xmldata = getAComplexProjectSFData();
-//sfUpdateForm($url, $userName, $lt, $xmldata);
+pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+
+pcpDeleteArticle($url, "Form:Project", $userName, $pw, $lt, $uid);
+pcpCreateArticle($url, "Form:Project", $userName, $pw, $lt, $uid, getProjectFormText());
+
+pcpDeleteArticle($url, "Template:ShowAttachedContent", $userName, $pw, $lt, $uid);
+pcpCreateArticle($url, "Template:ShowAttachedContent", $userName, $pw, $lt, $uid, getShowAttachedContentTemplateText());
+
+pcpDeleteArticle($url, "Template:RMList", $userName, $pw, $lt, $uid);
+pcpCreateArticle($url, "Template:RMList", $userName, $pw, $lt, $uid, getRMListTemplateText());
+
+pcpDeleteArticle($url, urlencode("A_complex_project"), $userName, $pw, $lt, $uid);
+pcpCreateArticle($url, "A_complex_project", $userName, $pw, $lt, $uid, 
+	getAComplexProjectText());
+
+sfGetForm($url, urlencode("A_complex_project"));
+$xmldata = getAComplexProjectSFData("sf-updated", "True");
+sfUpdateForm($url, $userName, $lt, $xmldata);
+
+pcpDeleteArticle($url, urlencode("A_complex_project"), $userName, $pw, $lt, $uid);
+$xmldata = getAComplexProjectSFData("sf-created", "False");
+sfCreateForm($url, $userName, $lt, $xmldata);
 
 function pcpLogin($url, $userName, $pw){
 	$params = array('http' => array('method' => 'GET'));
@@ -33,35 +38,41 @@ function pcpLogin($url, $userName, $pw){
 	$response = stream_get_contents(
 		fopen($url."?action=wspcp&method=login&un=".$userName."&pwd=".$pw."&format=xml",
 		'rb', true, $ctx));
+	
 	$response = new SimpleXMLElement($response);
-	$response = $response->xpath("//login/@logintoken");
-	$lt = $response[0];
-	return $lt;
+	$lt = $response->xpath("//login/@logintoken");
+	$lt = $lt[0];
+	$uid = $response->xpath("//login/@userid");
+	$uid = $uid[0];
+	return array($lt, $uid);
 }
 
-function pcpDeleteArticle($url, $title, $userName, $pw, $lt){
+function pcpDeleteArticle($url, $title, $userName, $pw, $lt, $uid){
 	$dataArray = array("action" => "wspcp");
 	$dataArray["method"] = "deletePage";
 	$dataArray["title"] = $title;
 	$dataArray["un"] = $userName;
 	$dataArray["pwd"] = $pw;
 	$dataArray["lt"] = $lt;
+	$dataArray["uid"] = $uid;
 	$dataArray["format"] = "xml";
+	$dataArray["summary"] = "Deleted via the DataAPI";
 
 	$ctx = getPostContext($dataArray);
 	
 	$response = stream_get_contents(
 		fopen($url,'rb', true, $ctx));
-	echo("\n".$response);
+	echo("\n\n".$response);
 }
 
-function pcpCreateArticle($url, $title, $userName, $pw, $lt, $text){
+function pcpCreateArticle($url, $title, $userName, $pw, $lt, $uid, $text){
 	$dataArray = array("action" => "wspcp");
 	$dataArray["method"] = "createPage";
 	$dataArray["title"] = $title;
 	$dataArray["un"] = $userName;
 	$dataArray["pwd"] = $pw;
 	$dataArray["lt"] = $lt;
+	$dataArray["uid"] = $uid;
 	$dataArray["text"] = $text;
 	$dataArray["summary"] = "Created via the DataAPI";
 	$dataArray["format"] = "xml";
@@ -70,7 +81,7 @@ function pcpCreateArticle($url, $title, $userName, $pw, $lt, $text){
 	
 	$response = stream_get_contents(
 		fopen($url,'rb', true, $ctx));
-	echo("\n".$response);
+	echo("\n\n".$response);
 }
 
 function pcpUpdateArticle($url, $title, $userName, $pw, $lt, $text){
@@ -88,7 +99,7 @@ function pcpUpdateArticle($url, $title, $userName, $pw, $lt, $text){
 	
 	$response = stream_get_contents(
 		fopen($url,'rb', true, $ctx));
-	echo("\n".$response);
+	echo("\n\n".$response);
 }
 
 function sfGetForm($url, $title){
@@ -97,7 +108,7 @@ function sfGetForm($url, $title){
 	
 	$response = stream_get_contents(
 		fopen($url."?action=sfdata&format=xml&title=".$title,'rb', true, $ctx));
-	echo("\n".$response);
+	echo("\n\n".$response);
 	//file_put_contents("d:\zz-zz.txt", $response);
 }
 
@@ -113,7 +124,22 @@ function sfUpdateForm($url, $userName, $lt, $xmldata){
 	
 	$response = stream_get_contents(
 		fopen($url,'rb', true, $ctx));
-	echo("\n".$response);
+	echo("\n\n".$response);
+}
+
+function sfCreateForm($url, $userName, $lt, $xmldata){
+	$dataArray = array("action" => "sfdata");
+	$dataArray["mt"] = "create";
+	$dataArray["un"] = $userName;
+	$dataArray["lt"] = $lt;
+	$dataArray["xmldata"] = $xmldata;
+	$dataArray["format"] = "xml";
+
+	$ctx = getPostContext($dataArray);
+	
+	$response = stream_get_contents(
+		fopen($url,'rb', true, $ctx));
+	echo("\n\n".$response);
 }
 
 function getPostData($dataArray){
@@ -126,7 +152,7 @@ function getPostData($dataArray){
 		$first = false;
 	}
 	return $data;
-}	
+}
 
 function getPostContext($dataArray){
 	$data = getPostData($dataArray);
@@ -371,8 +397,7 @@ function getRMListTemplateText(){
 }
 
 function getAComplexProjectText(){
-	return '
-{{Project
+	return '{{Project
 |Title=A complex project
 |Description=This project is complex project, involving a bunch of people and a lot of milestones and tasks.
 |Start date=2008/06/10
@@ -387,11 +412,10 @@ function getAComplexProjectText(){
 }}
 {{RMList
 |show=False
-}}
-	';	
+}}';
 }
 
-function getAComplexProjectSFData(){
+function getAComplexProjectSFData($title, $show){
 	return '<?xml version="1.0"?>
 <api>
 	<sfdata>
@@ -402,7 +426,7 @@ function getAComplexProjectSFData(){
 						is_restricted="" is_uploadable="" field_args=""
 						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
 						part_of_multiple="" input_name="" is_disabled="" is_list=""
-						cur_value="HOHAHI2">
+						cur_value="'.$title.'">
 						<template_field field_name="Title" label="Title"
 							semantic_property="Title" field_type="String" is_list=""
 							input_type="">
@@ -517,7 +541,7 @@ function getAComplexProjectSFData(){
 						is_hidden="" is_restricted="" is_uploadable="" field_args=""
 						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
 						part_of_multiple="" input_name="" is_disabled="" is_list=""
-						cur_value="False">
+						cur_value="'.$show.'">
 						<template_field field_name="show" label="Show"
 							semantic_property="" field_type="" is_list="" input_type="">
 							<possible_values />

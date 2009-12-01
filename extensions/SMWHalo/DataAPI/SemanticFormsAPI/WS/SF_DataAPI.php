@@ -210,39 +210,45 @@ class SFDataAPI extends ApiBase {
 
 				foreach ($__sfNames  as $__sfName){
 					$__sf = $__xmlData['sfdata']['page'][$__sfName];
-
 					if (isset($__sf['@attributes']) && isset($__sf['@attributes']['mfi'])){
 						// multiple SF instancies detected - multiple SFs to be saved in one request
 						// TODO: implement
 
 					}else{
-						// build the template string for each SF element
-						$__tmplString .= "\n{{".utf8_decode($__sf['@attributes']['tmpl_name'])."\n"; // the tempalte name
-						$__tmplNames .= utf8_decode($__sf['@attributes']['tmpl_name'])."\t";
-						// since @array will be read together with the SF field elements unset it
 						unset($__sf['@attributes']);
+						
+						// build the template string for each SF element
+						foreach($__sf as $template){
+							$__tmplString .= "\n{{".
+								utf8_decode($template['@attributes']['tmpl_name'])."\n"; // the tempalte name
+							$__tmplNames .= utf8_decode($template['@attributes']['tmpl_name'])."\t";
+							// since @array will be read together with the SF field elements unset it
+							unset($template['@attributes']);
 
-						foreach ($__sf as $__field){ // in the SF element are listed all SF fields
-							// add the field name and value to the template
-							$__tmplString .= "|".utf8_decode($__field['@attributes']['field_name'])."=".utf8_decode($__field['@attributes']['cur_value'])."\n";
+							foreach ($template as $__field){ // in the SF element are listed all SF fields
+								// add the field name and value to the template
+								$__tmplString .= "|"
+									.utf8_decode($__field['template_field']['@attributes']['field_name'])
+									."=".utf8_decode($__field['@attributes']['cur_value'])."\n";
+							}
+							$__tmplString .= "}}\n"; // add closing brackets to the template
 						}
-						$__tmplString .= "}}\n"; // add closing brackets to the template
 					}
 				}
-
+				
 				return $__serverUtility->createPage(
-				$__userCredentials,
-				$__pageTitle,
-				$__tmplString,
-				"SF data added to the page via the SF API. Templates:\t".$__tmplNames
+					$__userCredentials,
+					$__pageTitle,
+					$__tmplString,
+					"SF data added to the page via the SF API. Templates:\t".$__tmplNames
 				);
 
 			}else{
 				// create the POM object for the requested page
 				$__pom = new POMPage(
-				$__pageTitle,
-				$__page->text,
-				array('POMExtendedParser'));
+					$__pageTitle,
+					$__page->text,
+					array('POMExtendedParser'));
 
 				// since @array will be read together with the SF elements unset it
 				unset($__xmlData['sfdata']['page']['@attributes']);
@@ -252,28 +258,37 @@ class SFDataAPI extends ApiBase {
 
 				foreach ($__sfNames  as $__sfName){
 					$__sf = $__xmlData['sfdata']['page'][$__sfName];
-					$__iterator = $__pom->getTemplateByTitle($__sf['@attributes']['tmpl_name'])->listIterator();
-
+					
 					if (isset($__sf['@attributes']) && isset($__sf['@attributes']['mfi'])){
 						// multiple SF instances detected
 						// TODO: implement
 
 					}else{
-						if($__iterator->hasNext()){
-							// there is already a template defined and no multiple templates per page are supported
-							$this->dieUsage("Request cancelled. Page $__pageTitle already uses the semantic form $__sfName.", 'param_xmldata');
-						}else{
-							// build the template string for each SF element
-							$__tmplString .= "\n{{".utf8_decode($__sf['@attributes']['tmpl_name'])."\n"; // the tempalte name
-							$__tmplNames .= utf8_decode($__sf['@attributes']['tmpl_name'])."\t";
-							// since @array will be read together with the SF field elements unset it
-							unset($__sf['@attributes']);
+						unset($__sf['@attributes']);
+						foreach($__sf as $template){
+							$__iterator = $__pom->getTemplateByTitle(
+								$template['@attributes']['tmpl_name'])->listIterator();
 
-							foreach ($__sf as $__field){ // in the SF element are listed all SF fields
+							if($__iterator->hasNext()){
+								// there is already a template defined and no multiple templates per page are supported
+								$this->dieUsage("Request cancelled. Page $__pageTitle already uses the semantic form $__sfName.", 'param_xmldata');
+							}else{
+								// build the template string for each SF element
+								$__tmplString .= "\n{{".utf8_decode(
+									$template['@attributes']['tmpl_name'])
+									."\n"; // the tempalte name
+									$__tmplNames .= utf8_decode($template['@attributes']['tmpl_name'])."\t";
+							// since @array will be read together with the SF field elements unset it
+							unset($template['@attributes']);
+
+							foreach ($template as $__field){ // in the SF element are listed all SF fields
 								// add the field name and value to the template
-								$__tmplString .= "|".utf8_decode($__field['@attributes']['field_name'])."=".utf8_decode($__field['@attributes']['cur_value'])."\n";
+								$__tmplString .= "|".utf8_decode(
+									$template['template_field']['@attributes']['field_name'])
+									."=".utf8_decode($template['@attributes']['cur_value'])."\n";
+								}
+								$__tmplString .= "}}\n"; // add closing brackets to the template
 							}
-							$__tmplString .= "}}\n"; // add closing brackets to the template
 						}
 					}
 				}
@@ -302,6 +317,7 @@ class SFDataAPI extends ApiBase {
 				
 				foreach ($__sfNames  as $__sfName){
 					$__sf = $__xmlData['sfdata']['page'][$__sfName];
+					unset($__sf['@attributes']);
 					foreach($__sf as $template){
 					$__iterator = $__pom->getTemplateByTitle(
 						utf8_decode($template['@attributes']['tmpl_name']))->listIterator();
