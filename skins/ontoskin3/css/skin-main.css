@@ -373,6 +373,20 @@ ul.smwh_menulist div.smwh_menubody_visible {
   border-spacing: 0px;
 }
 
+/* Treeview */
+
+#smwh_treeview_head{
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 5px;
+}
+
+#smwh_treeview_close{
+    position: absolute;
+    right: 5px;
+    top: 7px;
+}
+
 .treeviewtd{
   padding: 0px;
 }

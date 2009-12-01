@@ -444,6 +444,7 @@ class SMWH_Skin {
             
             //$treeview .= '<div id="smwh_treeview_shell">';
             $treeview .=    '<div id="smwh_treeview">';
+            $treeview .=    '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" alt="close tree"/></a></div>';
             $treeview .=        $tree;
             $treeview .=    "</div>";
             //$treeview .= "</div>";

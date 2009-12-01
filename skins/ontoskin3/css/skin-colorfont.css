@@ -222,3 +222,8 @@ ul.smwh_menulist div.smwh_menuhead > p, ul.smwh_menulist div.smwh_menuhead > p a
     border-color: #CACAC4;
     background-color: #FFF;
 }
+
+
+#smwh_treeview_head{
+    border-bottom-color: #CACAC4;
+}
