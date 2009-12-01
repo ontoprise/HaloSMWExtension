@@ -81,7 +81,7 @@ class HACLLanguageDe extends HACLLanguage {
 		HACLLanguage::CAT_SECURITY_DESCRIPTOR => 'Kategorie:Rechte/Sicherheitsbeschreibung'
 	);
 	
-	protected $mWhitelist = "Weiße Liste";
+	protected $mWhitelist = "Positivliste";
 	
 	protected $mPetPrefixes = array(
 		HACLSecurityDescriptor::PET_PAGE	  => 'Seite',
