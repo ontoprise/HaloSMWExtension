@@ -18,7 +18,7 @@
 
 if (!defined('MEDIAWIKI')) die();
 
- class SMWConstant extends SMWTerm {
+class SMWConstant extends SMWTerm {
 
 	private $_value;
 
@@ -29,15 +29,18 @@ if (!defined('MEDIAWIKI')) die();
 	// constants must have arity = 0 and ground set to true
 	function __construct($value) {
 		// check if it is numeric value - if not, add quotes
-		if (!is_numeric($value)) {
-			// check if value is already quoted - if so, don't add quotes
-			if (substr(trim($value),0,1) != "\"") {
-				$value = "\"" . $value . "\"";
-			}
+		$value_unquoted = self::unquote($value);
+		if (!is_numeric($value_unquoted)) {
+			// if not numeric then quote
+			$value = "\"" . $value_unquoted . "\"";
+			
+		} else {
+			$value = $value_unquoted;
 		}
+		
 		parent::__construct($value, 0, false);
 		$this->_value = $value;
-    }
+	}
 
 	public function getValue() {
 		return $this->_value;
@@ -47,6 +50,14 @@ if (!defined('MEDIAWIKI')) die();
 		$this_value = $value;
 	}
 
+	private static function unquote($literal) {
+		$trimed_lit = trim($literal);
+		if (stripos($trimed_lit, "\"") === 0 && strrpos($trimed_lit, "\"") === strlen($trimed_lit)-1) {
+			$substr = substr($trimed_lit, 1, strlen($trimed_lit)-2);
+			return str_replace("\\\"", "\"", $substr);
+		}
+		return $trimed_lit;
+	}
 }
 
 ?>
