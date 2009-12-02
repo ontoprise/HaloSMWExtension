@@ -158,7 +158,7 @@ function cefAddNonSpecialPageHeader(&$out) {
  * @param OutputPage $out
  * @return bool: true
  */
-function cefAddNonSpecialPageHeader(&$out) {
+function cefAddSpecialPageHeader(&$out) {
 	return true;
 }
 
