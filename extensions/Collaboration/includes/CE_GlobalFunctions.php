@@ -23,7 +23,7 @@
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
-    die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
+	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
 }
 
 /**
@@ -38,12 +38,12 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  */
 function enableCollaboration() {
 	global $cegIP, $cegEnableCollaboration,  $cegEnableComment,
-		$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions, $wgAutoloadClasses, $wgHooks;
-	
+	$wgExtensionMessagesFiles, $wgExtensionAliasesFiles, $wgExtensionFunctions, $wgAutoloadClasses, $wgHooks;
+
 	#global $wgSpecialPages, $wgSpecialPageGroups;
-	
+
 	require_once($cegIP . '/specials/Comment/CE_CommentParserFunctions.php');
-	
+
 	$wgExtensionFunctions[] = 'cefSetupExtension';
 	$wgHooks['LanguageGetMagic'][] = 'cefAddMagicWords'; // setup names for parser functions (needed here)
 	$wgExtensionMessagesFiles['Collaboration'] = $cegIP . '/languages/CE_Messages.php'; // register messages (requires MW=>1.11)
@@ -51,7 +51,7 @@ function enableCollaboration() {
 
 	///// Set up autoloading; essentially all classes should be autoloaded!
 	#$wgAutoloadClasses['CECommentDBHelper'] = $cegIP . '/storage/CE_CommentDBHelper.php';
-	
+
 	//--- Comment classes ---
 	//$wgAutoloadClasses['CECommentStorage'] = $cegIP . '/specials/Comment/CE_CommentStorage.php';
 	$wgAutoloadClasses['CECommentQuery'] = $cegIP . '/specials/Comment/CE_CommentQuery.php';
@@ -80,33 +80,32 @@ function enableCollaboration() {
 function cefSetupExtension() {
 	wfProfileIn('cefSetupExtension');
 	global $cegIP, $wgHooks, $wgParser, $wgExtensionCredits,
-		$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
-		$cegEnableComment, $cegEnableCurrentUsers;
-	
+	$wgLanguageCode, $wgVersion, $wgRequest, $wgContLang,
+	$cegEnableComment, $cegEnableCurrentUsers;
+
 	//--- Register hooks ---
 	#global $wgHooks;
 
-
 	wfLoadExtensionMessages('Collaboration');
-	
+
 	//TODO: Language files
-		
+
 	$spns_text = $wgContLang->getNsText(NS_SPECIAL);
-    // register AddHTMLHeader functions for special pages
-    // to include javascript and css files (only on special page requests).
-    
-    if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") !== false
-        || stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
-        $wgHooks['BeforePageDisplay'][]='cefAddHTMLHeader';
-    }else {
-        $wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
-    }
-	
+	// register AddHTMLHeader functions for special pages
+	// to include javascript and css files (only on special page requests).
+
+	if (stripos($wgRequest->getRequestURL(), $spns_text.":Collaboration") !== false
+	|| stripos($wgRequest->getRequestURL(), $spns_text."%3ACollaboration") !== false) {
+		$wgHooks['BeforePageDisplay'][]='cefAddSpecialPageHeader';
+	}else {
+		$wgHooks['BeforePageDisplay'][]='cefAddNonSpecialPageHeader';
+	}
+
 	/*# B: CurrentUser
-	if ( $cegEnableCurrentUsers ) {
+	 if ( $cegEnableCurrentUsers ) {
 		include_once($cegIP.'/specials/CurrentUsers/CE_CurrentUsers.php');
-	}*/
-	
+		}*/
+
 	### credits (see Special:Version) ###
 	$wgExtensionCredits['other'][]= array(
 		'name' => 'Collaboration',
@@ -114,11 +113,11 @@ function cefSetupExtension() {
 		'author' => "Benjamin Langguth and others",
 		'url' => 'http://smwforum.ontoprise.de',
 		'description' => 'Some fancy collaboration tools.'
-	);
+		);
 
-	
+
 	### Register autocompletion icon ###
-   # $wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
+	# $wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
 	wfProfileOut('cefSetupExtension');
 
 	return true;
@@ -132,24 +131,35 @@ function cefSetupExtension() {
  * @return bool: true
  */
 function cefAddNonSpecialPageHeader(&$out) {
-    global $cegScriptPath;
+	global $cegScriptPath;
 
-    #cefAddJSLanguageScripts($out);
+	#cefAddJSLanguageScripts($out);
 
 	$out->addScript("<script type=\"text/javascript\" src=\"". "extensions/SMWHalo/scripts/prototype.js\"></script>");
-    
-    $out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
 
-    $out->addLink(array(
+	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
+
+	//TODO:script.acoul.us
+
+	$out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
         'href'  => $cegScriptPath. '/skins/Comment/CE_Comment.css'
-    ));
+        ));
 
+       return true;
+}
 
-
-    return true;
+/**
+ * Adding headers for special-pages
+ * Currently not used by comments
+ *
+ * @param OutputPage $out
+ * @return bool: true
+ */
+function cefAddNonSpecialPageHeader(&$out) {
+	return true;
 }
 
 /*********************************/
@@ -164,16 +174,16 @@ function cefAddNonSpecialPageHeader(&$out) {
 function cefInitNamespaces() {
 	global $cegCommentNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
 	$wgNamespacesWithSubpages, $wgLanguageCode, $cegContLang;
-	
+
 	if (!isset($cegCommentNamespaceIndex)) {
 		$cegCommentNamespaceIndex = 700;
 	}
 
 	define('CE_COMMENT_NS', $cegCommentNamespaceIndex);
 	define('CE_COMMENT_NS_TALK', $cegCommentNamespaceIndex + 1);
-	
+
 	cefInitContentLanguage($wgLanguageCode);
-	
+
 	// Register namespace identifiers
 	if (!is_array($wgExtraNamespaces)) {
 		$wgExtraNamespaces = array();
@@ -183,11 +193,11 @@ function cefInitNamespaces() {
 	$ceNamespacealiases = $cegContLang->getNamespaceAliases();
 	$wgExtraNamespaces = $wgExtraNamespaces + $ceNamespaces;
 	$wgNamespaceAliases = $wgNamespaceAliases + $ceNamespacealiases;
-	
+
 	// make the NS semantic
 	global $smwgNamespacesWithSemanticLinks;
 	$smwgNamespacesWithSemanticLinks[CE_COMMENT_NS] = true;
-	
+
 	return true;
 }
 
@@ -201,7 +211,7 @@ function cefInitNamespaces() {
 function cefAddMagicWords(&$magicWords, $langCode) {
 	#$magicWords['showcomments']     = array( 0, 'showcomments' );
 	#$magicWords['showcommentform']     = array( 0, 'showcommentform' );
-    return true;
+	return true;
 }
 
 /**
@@ -211,28 +221,28 @@ function cefAddMagicWords(&$magicWords, $langCode) {
  * can be initialised much later when they are actually needed.
  */
 function cefInitContentLanguage($langcode) {
-    global $cegIP, $cegContLang;
-    if (!empty($cegContLang)) {
-        return;
-    }
-    wfProfileIn('cefInitContentLanguage');
+	global $cegIP, $cegContLang;
+	if (!empty($cegContLang)) {
+		return;
+	}
+	wfProfileIn('cefInitContentLanguage');
 
-    $ceContLangFile = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-    $ceContLangClass = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
-    if (file_exists($cegIP . '/languages/'. $ceContLangFile . '.php')) {
-        include_once( $cegIP . '/languages/'. $ceContLangFile . '.php' );
-    }
+	$ceContLangFile = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+	$ceContLangClass = 'CELanguage' . str_replace( '-', '_', ucfirst( $langcode ) );
+	if (file_exists($cegIP . '/languages/'. $ceContLangFile . '.php')) {
+		include_once( $cegIP . '/languages/'. $ceContLangFile . '.php' );
+	}
 
-    // fallback if language not supported
-    if ( !class_exists($ceContLangClass) ) {
-        include_once($cegIP . '/languages/CELanguageEn.php');
-        $ceContLangClass = 'CELanguageEn';
-    }
-    $cegContLang = new $ceContLangClass();
+	// fallback if language not supported
+	if ( !class_exists($ceContLangClass) ) {
+		include_once($cegIP . '/languages/CELanguageEn.php');
+		$ceContLangClass = 'CELanguageEn';
+	}
+	$cegContLang = new $ceContLangClass();
 
-    wfProfileOut('cefInitContentLanguage');
-    
-    return true;
+	wfProfileOut('cefInitContentLanguage');
+
+	return true;
 }
 
 function cefInitMessages() {
@@ -242,7 +252,7 @@ function cefInitMessages() {
 	cefInitUserMessages(); // lazy init for ajax calls
 
 	$cegMessagesInitialized = true;
-	
+
 	return true;
 }
 
@@ -270,7 +280,7 @@ function cefInitUserMessages() {
 	}
 
 	$wgMessageCache->addMessages($cegLang->getUserMsgArray(), $wgLang->getCode());
-	
+
 	return true;
 }
 
@@ -279,12 +289,12 @@ function cefInitUserMessages() {
  */
 function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages = array()) {
 	global $cegIP, $cegScriptPath, $wgUser;
-	
-	 // content language file
+
+	// content language file
 	$jsm->addScript('<script type="text/javascript" src="' . $cegScriptPath .
 		'/scripts/Language/CE_Language.js' . '"></script>', $mode, $namespace, $pages);
 	$lng = '/scripts/Language/CE_Language';
-	
+
 	if (!empty($wgLanguageCode)) {
 		$lng .= ucfirst($wgLanguageCode).'.js';
 		if (file_exists($cegScriptPath . $lng)) {
@@ -307,7 +317,7 @@ function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages 
 	} else {
 		$jsm->addScript($cegScriptPath . '/scripts/Language/CE_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
-	
+
 	return true;
 }
 
