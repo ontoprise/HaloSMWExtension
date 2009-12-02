@@ -30,6 +30,7 @@ $messages['en'] = array(
     'ce_collaboration'				=> 'Collaboration',
 	'ce_allowed'					=> 'Gratulation! CE works as intended!',
 	'ce_warning'					=> 'Collaboration extension warning',
+	'ce_var_undef'					=> 'The following variable has not been correctly initialized: "$1". <br/> Please check your settings.',
 
 	/* comment form */
 	/* warnings */
@@ -70,6 +71,7 @@ $messages['de'] = array(
     'ce_collaboration'				=> 'Collaboration',
 	'ce_allowed'					=> 'Gratulation! CE funktioniert wie erwartet.',
 	'ce_warning'					=> 'Collaboration Extension Warnung',
+	'ce_var_undef'					=> 'Folgende Variable wurde nicht richtig gesetzt: "$1". <br/> Bitte prüfen Sie ihre Einstellungen',
 
 	/* comment form */
 	/* warnings */
