@@ -63,7 +63,8 @@ iaifInitNamespaces();
 
 ###
 # URL of the Mediawiki-API of the source wiki e.g. "http://en.wikipedia.org/w/"
-# for the english wikipedia.
+# for the english wikipedia. This API will be used by the IAI_ImportBot when
+# articles are updated.
 #
 ##
 $iaigWikiApi = "http://en.wikipedia.org/w/";

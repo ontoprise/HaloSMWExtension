@@ -178,11 +178,13 @@ function iaifInitContentLanguage($langcode) {
 
 /**
  * This function is called when an article is modified via the Mediawiki API.
+ * The article's name is stored for later update with the IAI bot 
+ * (see iaifArticleSaveComplete).
  *
  * @param EditPage $editPage
  * @param string $text
  * @param array $resultArr
- * @return bool
+ * @return bool true
  */
 function iaifAPIEditBeforeSave(&$editPage, $text, &$resultArr) {
 
