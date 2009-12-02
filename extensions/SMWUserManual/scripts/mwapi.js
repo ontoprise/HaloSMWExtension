@@ -47,12 +47,12 @@ MW_API_Access.prototype = {
     // edit an existing page and set the given content. You should get the old content
     // and modify it before sending it for saving. Return function receives params
     // int error (0=err or 1=ok) and string (error message in case of an error)
-    editPage: function(page, text, func){
+    editPage: function(page, section, text, func){
         this.page=page.replace(/ /g, '_')
         this.text=this.URLEncode(text)
         this.returnFunction=func
         this.getEditToken()
-        this.callApi('action=edit&section=0&title='+this.page+'&text='+this.text+'&format=json', this.pageProcessed, 'editPage')
+        this.callApi('action=edit&section='+section+'&title='+this.page+'&text='+this.text+'&format=json', this.pageProcessed, 'editPage')
     },
 
     // get the page content (wikitext) of a given page. Return function receives
@@ -102,47 +102,51 @@ MW_API_Access.prototype = {
     mergeSections: function(response){
         var node=this.getDomFromResponse(response)
         var text = node.getElementsByTagName('rev')[0].firstChild.nodeValue
+        this.editToken = node.getElementsByTagName('page')[0].getAttribute('edittoken')
         
         if (text) {
             var sections=new Array()
+            var sectionText=new Array()
+            sectionText.push('')
             var lines=text.split('\n')
             for (var i=0; i<lines.length; i++) {
-                if (lines[i].match(/^\s*(={2,})[^=]*\1\s*$/)) {
+                var currentSection=sectionText.length-1
+                if (lines[i].match(/^\s*(={1,})[^=]*\1\s*$/)) {
                     var n= lines[i].replace(/=/g,'')
-                    var l = (lines[i].length - n.length)/2
-                    // [trimed text, position of section/cell, original line]
-                    sections.push([this.trim(n), l, lines[i]])
+                    var l= (lines[i].length - n.length)/2
+                    // [trimed text, position of section/cell]
+                    sections.push([this.trim(n), l])
+                    sectionText.push(lines[i])
                 }
+                else
+                    sectionText[currentSection]+=lines[i]+'\n'
             }
             // init variables
             var pSection // number of matching section
             var pCell    // number of matching subsection (cell)
-            var insertBefore // line where to insert text before it
+            var insertIn // line where to insert text before it
             for (var i=0; i<sections.length; i++) {
                 if (sections[i][0]==this.section && sections[i][1]==2)
-                    pSection= i
+                    pSection= i+1
                 if (sections[i][0]==this.cell && sections[i][1]==3)
-                    pCell= i
+                    pCell= i+1
             }
             if (this.cell) { // comment on data, must be a section (level 3)
                 if (pCell != null && pSection != null) { // section for cell already exists
-                    if (sections.length > pCell+1)
-                        insertBefore=sections[pCell+1][2]
+                    insertIn=pCell
                 } else { // subsection doesn't exist, add new subsection headline
                     this.text = '\n=== '+this.cell+' ===\n'+this.text
                 }
             }
-            if (pSection != null) { // section for current table already exisits
-                if (sections.length > pSection+1)
-                    if (!insertBefore && !this.cell) insertBefore=sections[pSection+1][2]
+            if (pSection != null) { // section for current table already exists
+                if (!insertIn && !this.cell) insertIn=pSection
             } else { // section for table doesn't exist, add new section for table
                 this.text='\n== '+this.section+' ==\n'+this.text
             }
-            if (insertBefore) // there are elements after the comment that will be inserted
-                this.text=text.replace(insertBefore, this.text+insertBefore)
+            if (insertIn != null) // there are elements after the comment that will be inserted
+                this.editPage(this.page, insertIn, sectionText[insertIn]+this.text, this.returnFunction)
             else // add new comment at the end of the page
-                this.text=text+'\n'+this.text
-            this.editPage(this.page, this.text, this.returnFunction)
+                this.editPage(this.page, 'new', this.text, this.returnFunction)
         }
     },
 
