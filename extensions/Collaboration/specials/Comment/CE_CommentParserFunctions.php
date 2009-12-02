@@ -126,36 +126,37 @@ class CECommentParserFunctions {
 	public static function showcommentform(&$parser) {
 		global $cegContLang, $wgUser, $cegScriptPath;
 
+		# do checks #
 		$status = self::$mInstance->doInitialChecks($parser);
 
-		/*switch ($status) {
+		switch ($status) {
 			case self::SUCCESS:
 				//continue
 				break;
 			case self::COMMENTS_DISABLED:
 				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_disabled'));
 				break;
-			case self::FORM_ALREADY_SHOWN:
-				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_already_shown'));
-				break;
+			case self::COMMENTS_FOR_NOT_DEF:
+				return self::$mInstance->commentFormWarning(wfMsg('ce_var_undef', 'cegEnableCommentFor'));
 			case self::NOBODY_ALLOWED_TO_COMMENT:
 				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_all_not_allowed'));
 			case self::USER_NOT_ALLOWED_TO_COMMENT:
 				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_you_not_allowed')); 
 				break;
+			case self::FORM_ALREADY_SHOWN:
+				return self::$mInstance->commentFormWarning(wfMsg('ce_cf_already_shown'));
+				break;
 			default:
-				throw new CEException(CEException::INTERNAL_ERROR, __METHOD__ . ": Unknown value `{$status}`" );
+				throw new CEException(CEException::INTERNAL_ERROR, __METHOD__ . ": Unknown value `{$status}` <br/>" );
 		}
-		
 
 		$params = self::$mInstance->getParameters(func_get_args());
 		// handle the (optional) parameter "ratingstyle".
 		#list($style) = self::$mInstance->mStyle($params);
-		*/
-
+		
 		$encPreComment = htmlspecialchars(wfMsgForContentNoTrans('ce_cf_predef'));
 		$comment_disabled = '';
-		
+
 		#rating#
 		$ratingValues = array( 0 => wfMsgForContent('ce_ce_rating_0'),
 			1 => wfMsgForContent('ce_ce_rating_1'),
@@ -163,9 +164,34 @@ class CECommentParserFunctions {
 		
 		#user#
 		$currentUser = $wgUser->getName();
-		//TODO:Add the correct user img for logged in users with the annotation.
-		$userImgSrc = ($wgUser->isAnon()? $cegScriptPath. '/skins/Comment/defaultuser.gif'
-			: '' );
+
+		if($wgUser->isAnon()) {
+				$userImageTitle = Title::newFromText('defaultuser.gif', NS_IMAGE);
+				if($userImageTitle->exists()){
+					$image = Image::newFromTitle($userImageTitle);
+					$userImgSrc = $image->getURL();
+				}
+		}
+		else {
+			SMWQueryProcessor::processFunctionParams(array("[[User:".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
+				,$querystring,$params,$printouts);
+			$queryResult = explode("|",
+				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+				$printouts, SMW_OUTPUT_WIKI));
+				
+			unset($queryResult[0]);
+			
+			//just get the first property value and use this
+			if(isset($queryResult[1])) {
+				$userImageTitle = Title::newFromText($queryResult[1], NS_IMAGE);
+				if($userImageTitle->exists()){
+					$image = Image::newFromTitle($userImageTitle);
+					$userImgSrc = $image->getURL();
+				}
+			}
+			if(!isset($userImgSrc) || !$userImgSrc)
+				$userImgSrc = $cegScriptPath. '/skins/Comment/defaultuser.gif';
+		}
 
 		//TODO: use script.aclo.us(?) for fading in.
 		
@@ -182,7 +208,7 @@ class CECommentParserFunctions {
 			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
 			XML::openElement('div', array('id' => 'ce-cf-user-icon')) .
 			XML::Element( 'img', array( 'id' => 'ce-cf-user-img',
-				'src' => $userImgSrc )) .
+				'src' => $userImgSrc? $userImgSrc : '' )) .
 			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'ce-cf-rightside')) .
 				XML::openElement( 'div', array( 'id' => 'ce-cf-user') ) .
@@ -197,15 +223,15 @@ class CECommentParserFunctions {
 					XML::openElement('div', array('id' => 'ce-cf-radiobuttons')) .
 						XML::element('input', array( 'type' => 'radio',
 							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '0')) .
+							'value' => '1')) .
 						$ratingValues[0] .
 						XML::element('input', array( 'type' => 'radio',
 							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '1')) .
+							'value' => '0')) .
 						$ratingValues[1] .
 						XML::element('input', array( 'type' => 'radio',
 							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '2')) .
+							'value' => '-1')) .
 						$ratingValues[2] .
 					XML::closeElement('div') .
 				XML::closeElement('div') .
@@ -327,25 +353,19 @@ class CECommentParserFunctions {
                 "The parser functions " . $pfContLangName .
                 "are called for different articles.");
 		}
-		
-	
-		//TODO: something is wrong here!
-		
-		
+
 		global $cegEnableComment, $cegEnableCommentFor;
-
 		# check if comments enabled #
-		if (!isset($cegEnableComment) || !$cegEnableComment)
+		if ( !isset($cegEnableComment) || !$cegEnableComment )
 			return self::COMMENTS_DISABLED;
-
-		if (!isset($cegEnableCommentFor) || !$cegEnableCommentFor)
+		if ( !isset($cegEnableCommentFor) )
 			return self::COMMENTS_FOR_NOT_DEF;
 
 		# check authorization #
 		if ($cegEnableCommentFor == CE_COMMENT_NOBODY) {
 			return self::NOBODY_ALLOWED_TO_COMMENT;
 		} elseif ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) &&
-		!($wgUser->isLoggedIn()) ) {
+			!($wgUser->isAnon()) ) {
 			return self::USER_NOT_ALLOWED_TO_COMMENT;
 		} else {
 			//user is allowed
@@ -367,6 +387,8 @@ class CECommentParserFunctions {
 	 * @access private
 	 */
 	private function commentFormWarning( $warning ) {
+		
+		//TODO: reformat!
 		
 		$html = '<h2>' . wfMsgHtml( 'ce_warning' ) . "</h2>\n";
 		$html .= '<ul class="ce_warning">' . $warning . "</ul>\n";

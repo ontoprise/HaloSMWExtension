@@ -1,5 +1,13 @@
 @CHARSET "UTF-8";
 
+/* Comment Results */
+
+/* THis is to downsale the user image for better formating*/
+div.ce_result_user img{
+	width: 48px;
+	height: 48px;
+	float: left;
+}
 /* Comment form */
 
 /* the ID of the Collaboration Extension Comment Form (CE_CF)*/
@@ -33,11 +41,15 @@ div#ce-cf-user-icon {
 	margin-top: 5px;
 	padding: 5px;
 }
+img#ce-cf-user-img {
+	width: 48px;
+	height: 48px;
+}
 div#ce-cf-rightside {
 	float: left;
 	width: 90%;
 	overflow: hidden;
-	margin-top: 5px;
+	margin: 5px 0;
 }
 div#ce-cf-user {
 	padding: 5px 0;
@@ -60,7 +72,7 @@ div#ce-cf-radiobuttons{
 	display: inline;
 }
 .ce-cf-rating-radio {
-	padding: 2px;
+	padding: 7px;
 }
 
 /* the textarea (comment content) */
