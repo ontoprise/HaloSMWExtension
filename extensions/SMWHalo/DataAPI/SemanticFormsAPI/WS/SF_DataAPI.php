@@ -35,6 +35,7 @@ class SFDataAPI extends ApiBase {
 		// only with GET
 		if($wgRequest->wasPosted() === false){
 			$__title = str_replace(' ', '_', $__params['title']);
+			$sfName = str_replace(' ', '_', $__params['sfname']);
 			$__revisionId = $__params['rid'];
 			$__catTree = str_replace(' ', '_', $__params['cattree']);
 			$__catLevel = $__params['catlevel'];
@@ -44,7 +45,10 @@ class SFDataAPI extends ApiBase {
 
 			if ($__title != ''){
 				$__data = $this->getSerializedForm($__title, $__revisionId, $__username, $__userId, $__loginToken);
-			}elseif ($__catTree != '') {
+			} else if($sfName != ""){
+				$__data = $this->getSerializedForm(
+					$sfName, $__revisionId, $__username, $__userId, $__loginToken, true);
+			} elseif ($__catTree != '') {
 				if ($__catTree == "root") $__catTree = "";
 				$__data = $this->getCategoryTree($__catTree, $__catLevel, $__substr);
 			}elseif ($__sfList != '') {
@@ -93,6 +97,7 @@ class SFDataAPI extends ApiBase {
 			'sflist' => null,
 			'pagelist' => null,
 			'substr' => null,
+			'sfname' => null
 		);
 	}
 
@@ -111,6 +116,7 @@ class SFDataAPI extends ApiBase {
 			'sflist' => 'List of available SFs for a page. If "root" given returns all available SFs in the wiki. Allowed only with a GET operation',
 			'pagelist' => 'List of pages for a SF. If "root" given returns all available SFs in the wiki and teh pages using them. Allowed only with a GET operation',
 			'substr' => 'Search substring',
+			'sfname' => 'Get serialization of the form with the given name. Use a GET request.'
 		);
 	}
 
@@ -138,9 +144,19 @@ class SFDataAPI extends ApiBase {
 	 * @param string $loginToken The login token provided.
 	 * @return array An associative array of the resulting SF(s).
 	 */
-	public function getSerializedForm($title, $revisionId, $username = NULL, $userId = NULL, $loginToken = NULL){
+	public function getSerializedForm(
+			$title, $revisionId, $username = NULL, $userId = NULL, $loginToken = NULL, $direct = false){
+		
+		if($direct){
+			//a serialized form is rerquzested directly
+			if (strpos($title,':') == false){
+				//todo: use language file
+				$title = "Form:".$title;
+			}
+		}
 		$__pageReader = new PCPServer();
 		$__page = $__pageReader->readPage(new PCPUserCredentials($username, NULL, $userId, $loginToken),$title, $revisionId);
+		
 		if (strpos($title,':') !=false){
 			list($__ns, $__title) = split(':', $__page->title);
 		}else{
@@ -150,9 +166,13 @@ class SFDataAPI extends ApiBase {
 		$__result['page']['title'] = $__title;
 		$__result['page']['ns'] = $__page->namespace;
 		$__result['page']['rid'] = $__page->usedrevid;
-		$__formNames = SFLinkUtils::getFormsForArticle(new Article(Title::newFromText($__title, $__page->namespace)));
+		if(!$direct){
+			$__formNames = SFLinkUtils::getFormsForArticle(new Article(Title::newFromText($__title, $__page->namespace)));
+		} else {
+			$__formNames = array($title);
+		}
 		
-		if( count($__formNames) > 0 ){
+		if( count($__formNames) > 0 && !$direct){
 			$__formName = $__formNames[0];
 			global $wgContLang;
 			if ($__formName !== NULL && $__formName != ""){
@@ -730,14 +750,21 @@ class SFDataAPI extends ApiBase {
 				foreach ($__catHashmap[str_ireplace(' ','_',$catName)] as $__subCategory=>$__emptySpace){
 					if($__subCategory != 'catOptions'){
 						// check if there is a SF defined for the subcategories only if no further levels requested
-						$__sfName = SFLinkUtils::getDefaultForms($__subCategory, NS_CATEGORY);
+						$__sfName = SFLinkUtils::getFormsThatPagePointsTo(
+							$__subCategory, NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
+						if(count($__sfName) > 0){
+							$__sfName = $__sfName[0];
+						} else {
+							$__sfName = null;
+						}
+						
 						if ( $__sfName != NULL){
 							$__catHashmap[str_ireplace(' ','_',$catName)][str_ireplace(' ','_',$__subCategory)]['catOptions'] = "Form:$__sfName";
+						} else {
+							$__catHashmap[str_ireplace(' ','_',$catName)][str_ireplace(' ','_',$__subCategory)] = array();
 						}
-						$__catHashmap[str_ireplace(' ','_',$catName)][str_ireplace(' ','_',$__subCategory)] = array();
 					}
 				}
-
 			}elseif($sublevels == 0){
 				foreach ($__catHashmap[str_ireplace(' ','_',$catName)] as $__subCategory=>$__emptySpace){
 					if($__subCategory != 'catOptions'){
@@ -766,6 +793,7 @@ class SFDataAPI extends ApiBase {
 			list($__pageNamespace,$__pageTitle) = split(':', $page);
 		}else{
 			$__pageTitle = $page;
+			$__pageNamespace = 0;
 		}
 
 		if($__pageTitle == ''){
@@ -785,6 +813,27 @@ class SFDataAPI extends ApiBase {
 				}
 			}
 		}else{
+			$result = array();
+			if($__pageNamespace !== 0){
+				global $wgContLang;
+				$__pageNamespace =  
+					$wgContLang->getLocalNsIndex($__pageNamespace);
+			}
+			
+			$sfList = SFLinkUtils::getFormsForArticle(
+				new Article(Title::newFromText($__pageTitle, $__pageNamespace)));
+			
+		
+			foreach($sfList as $key => $sf){
+				if($substring != '' ) {
+					if (stristr($sf, $substring) !== false){
+						$result[str_ireplace(' ','_',$sf)] = array();
+					}
+				} else {
+					$result[str_ireplace(' ','_',$sf)] = array();
+				}
+			}
+			return array($__pageTitle => array('def' => $result));
 			// get all SFs for the particular page
 			// TODO: does alternate include the default form?
 			global $wgContLang;
@@ -793,12 +842,14 @@ class SFDataAPI extends ApiBase {
 
 			// first determine which categories the page is assigned to
 			$__pageCats = $__store->getCategoriesForInstance(
-			Title::newFromText($__pageTitle, $wgContLang->getLocalNsIndex($__pageNamespace)));
+				Title::newFromText($__pageTitle, $wgContLang->getLocalNsIndex($__pageNamespace)));
 
 			// for each category only a default form should exist
 			foreach ($__pageCats as $__pageCat){
-				$__tmpDefaultSFs = SFLinkUtils::getDefaultForms($__pageCat[0]->getText(), NS_CATEGORY);
-				if(count($__tmpDefaultSFs)> 0){
+				$__tmpDefaultSFs = SFLinkUtils::
+					getFormsThatPagePointsTo(
+					$__pageCat->getText(), NS_CATEGORY, '_SF_DF', '_SF_DF_BACKUP', SF_SP_HAS_DEFAULT_FORM);
+				if(count($__tmpDefaultSFs) > 0){
 					$__tmpDefaultSF = $__tmpDefaultSFs[0];
 					if($substring != '' ) {
 						// check if the substring matches
@@ -869,7 +920,6 @@ class SFDataAPI extends ApiBase {
 	 * @return array A list of page names.
 	 */
 	public function getPageList($sfName, $substring){
-
 		$__pageList = array();
 		$__serverUtility = new PCPServer();
 		$__store = smwfGetStore();
@@ -892,9 +942,11 @@ class SFDataAPI extends ApiBase {
 			// first: get all categories / properties that have the SF as default form
 			foreach ($__tmpList as $__tmpSF){
 				// workaround: trigger an ASK query
-				$__queryobj = SMWQueryProcessor::createQuery("[[Has default form::$__tmpSF]]", array());
+				$__queryobj = 
+					SMWQueryProcessor::createQuery("[[Has default form::$__tmpSF]]", array());
 				$__queryobj->querymode = SMWQuery::MODE_INSTANCES;
 				$__res = smwfGetStore()->getQueryResult($__queryobj);
+				file_put_contents("d:\zz-sf2.txt", print_r($__res, true));
 				$__resCount = $__res->getCount();
 
 				for($__i=0; $__i<$__resCount;$__i++){
@@ -908,7 +960,8 @@ class SFDataAPI extends ApiBase {
 
 				}
 			}
-
+			
+			
 			// second: get all categories / properties that have the SF as an alternate form
 			$__queryobj = array();
 			$__res = array();
@@ -938,22 +991,25 @@ class SFDataAPI extends ApiBase {
 
 			// now determine the pages using the found categories / properties
 
+			file_put_contents("d:\zz-sf.txt", print_r($__referencingAnnotations, true));
+			
 			foreach(array_keys($__referencingAnnotations) as $__sformName){
 				$__sfCategories = $__referencingAnnotations[$__sformName][NS_CATEGORY];
 				$__sfProperties = $__referencingAnnotations[$__sformName][SMW_NS_PROPERTY];
-
+				
 				// build a complex ASK query for all categories and properties
 				$__complexQuery = '';
 				if(isset($__sfCategories))
 				if ($__sfCategories !==NULL){
 					foreach (array_keys($__sfCategories) as $__sfCategory){
 						if($__complexQuery !== ''){
-							$__complexQuery.= "OR [[Category:$__sfCategory]]";
+							$__complexQuery.= " OR [[Category:$__sfCategory]]";
 						}else{
 							$__complexQuery.= "[[Category:$__sfCategory]]";
 						}
 					}
 				}
+				
 				if(isset($__sfProperties))
 				if($__sfProperties !== NULL){
 					foreach (array_keys($__sfProperties) as $__sfProperty){
@@ -964,7 +1020,7 @@ class SFDataAPI extends ApiBase {
 						}
 					}
 				}
-
+				
 				$__queryobj = SMWQueryProcessor::createQuery($__complexQuery, array());
 				$__queryobj->querymode = SMWQuery::MODE_INSTANCES;
 				$__res = smwfGetStore()->getQueryResult($__queryobj);
@@ -982,39 +1038,43 @@ class SFDataAPI extends ApiBase {
 							if(stristr($__resPage->getText(), $substring)){
 								// now read the POM of each page and search for the template used by the SF
 								$__pcpPage= $__serverUtility->readPage(
-								NULL,
-								$__resPage->getText());
+									NULL,
+									$__resPage->getText());
 								$__pom = new POMPage(
-								$__resPage->getText(),
-								$__pcpPage->text,
-								array('POMExtendedParser'));
+									$__resPage->getText(),
+									$__pcpPage->text,
+									array('POMExtendedParser'));
 
 								// search for the template
-								$__iterator = $__pom->getTemplateByTitle($__referencingAnnotations[$__sformName]['sfobj']['tmpl_name'])->listIterator();
-								if($__iterator->hasNext())
-								{
-									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())] = array();
-									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
-									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+								foreach($__referencingAnnotations[$__sformName]['sfobj'] as $template){
+									$__iterator = $__pom->getTemplateByTitle($template['tmpl_name'])->listIterator();
+									if($__iterator->hasNext())
+									{
+										$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())] = array();
+										$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
+										$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+									}
 								}
 							}
 						}else{
 							// now read the POM of each page and search for the template used by the SF
 							$__pcpPage= $__serverUtility->readPage(
-							NULL,
-							$__resPage->getText());
+								NULL,
+								$__resPage->getText());
 							$__pom = new POMPage(
-							$__resPage->getText(),
-							$__pcpPage->text,
-							array('POMExtendedParser'));
-
+								$__resPage->getText(),
+								$__pcpPage->text,
+								array('POMExtendedParser'));
 							// search for the template
-							$__iterator = $__pom->getTemplateByTitle($__referencingAnnotations[$__sformName]['sfobj']['tmpl_name'])->listIterator();
-							if($__iterator->hasNext())
-							{
-								$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())] = array();
-								$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
-								$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+							foreach($__referencingAnnotations[$__sformName]['sfobj'] as $template){
+								$__iterator = $__pom->getTemplateByTitle($template['tmpl_name'])->listIterator();
+								
+								
+								if($__iterator->hasNext()){
+									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())] = array();
+									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
+									$__pageList['root'][str_replace(" ", "_",$__sformName)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+								}
 							}
 						}
 					}
@@ -1084,7 +1144,7 @@ class SFDataAPI extends ApiBase {
 			if(isset($__sfCategories))
 			foreach (array_keys($__sfCategories) as $__sfCategory){
 				if($__complexQuery !== ''){
-					$__complexQuery.= "OR [[Category:$__sfCategory]]";
+					$__complexQuery.= " OR [[Category:$__sfCategory]]";
 				}else{
 					$__complexQuery.= "[[Category:$__sfCategory]]";
 				}
@@ -1116,20 +1176,22 @@ class SFDataAPI extends ApiBase {
 						if(stristr($__resPage->getText(), $substring)){
 							// now read the POM of each page and search for the template used by the SF
 							$__pcpPage= $__serverUtility->readPage(
-							NULL,
-							$__resPage->getText());
+								NULL,
+								$__resPage->getText());
 							$__pom = new POMPage(
-							$__resPage->getText(),
-							$__pcpPage->text,
-							array('POMExtendedParser'));
+								$__resPage->getText(),
+								$__pcpPage->text,
+								array('POMExtendedParser'));
 
 							// search for the template
-							$__iterator = $__pom->getTemplateByTitle($__referencingAnnotations[$__sfTitle]['sfobj']['tmpl_name'])->listIterator();
-							if($__iterator->hasNext())
-							{
-								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())] = array();
-								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
-								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+							foreach($__referencingAnnotations[$__sfTitle]['sfobj'] as $template){
+								$__iterator = $__pom->getTemplateByTitle($template['tmpl_name'])->listIterator();
+								if($__iterator->hasNext())
+								{
+									$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())] = array();
+									$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
+									$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+								}
 							}
 						}
 					}else{
@@ -1143,12 +1205,14 @@ class SFDataAPI extends ApiBase {
 						array('POMExtendedParser'));
 
 						// search for the template
-						$__iterator = $__pom->getTemplateByTitle($__referencingAnnotations[$__sfTitle]['sfobj']['tmpl_name'])->listIterator();
-						if($__iterator->hasNext())
-						{
-							$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())] = array();
-							$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
-							$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+						foreach($__referencingAnnotations[$__sfTitle]['sfobj'] as $template){
+								$__iterator = $__pom->getTemplateByTitle($template['tmpl_name'])->listIterator();
+							if($__iterator->hasNext())
+							{
+								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())] = array();
+								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['ns'] = $__pcpPage->ns;
+								$__pageList[str_replace(" ", "_", $__sfTitle)][str_replace(" ", "_", $__resPage->getText())]['rid'] = $__pcpPage->lastrevid;
+							}
 						}
 					}
 				}
