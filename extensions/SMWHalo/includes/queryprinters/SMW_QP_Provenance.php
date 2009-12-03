@@ -27,7 +27,7 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
         else $widthpara = '';
         $result="";
         if (defined('SMW_UP_RATING_VERSION'))
-            $result .= "UpRatingTable__".$smwgIQRunningNumber."__elbaTgnitaRpU";
+            $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
         $result .= "<table class=\"smwtable\"$widthpara id=\"querytable" . $smwgIQRunningNumber . "\">\n";
         if ($this->mShowHeaders != SMW_HEADERS_HIDE) { // building headers
             $result .= "\t<tr>\n";
@@ -47,13 +47,13 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
                 while ( ($object = $field->getNextObject()) !== false ) {
                     if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
                         $text = $object->getLongText($outputmode,$this->getLinker($firstcol));
-                        if (!$firstcol) {
+                        if (!$firstcol && strlen($text) > 0) {
                             $provURL = $object->getProvenance();
                             $text .= $this->createProvenanceLink($provURL);
                         }
                     } else {
                         $text = $object->getShortText($outputmode,$this->getLinker($firstcol));
-                        if (!$firstcol) {
+                        if (!$firstcol && strlen($text) > 0) {
                             $provURL = $object->getProvenance();
                             $text .= $this->createProvenanceLink($provURL);
                         }
@@ -72,6 +72,7 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
                 $firstcol = false;
             }
             $result .= "\t</tr>\n";
+            
         }
 
         // print further results footer
@@ -89,7 +90,8 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
     
     private function createProvenanceLink($url) {
         if (defined('SMW_UP_RATING_VERSION')) {
-            return "UpRatingCell____lleCgnitaRpU";
+            $url=str_replace('&amp;', '&', $url);
+            return "UpRatingCell___".$url."___lleCgnitaRpU";
         }
     }
 }
