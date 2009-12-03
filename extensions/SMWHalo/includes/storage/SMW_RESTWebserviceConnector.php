@@ -30,7 +30,7 @@ class RESTWebserviceConnector {
 		$in =   "POST $this->path HTTP/1.0\r\n".
                 "Host: $this->host\r\n".
                 "Content-Type: text/xml\r\n".
-                "Content-Length: ".strlen($sparulcommand)."\r\n";
+                "Content-Length: ".strlen($payload)."\r\n";
 
 		if ($this->credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($this->credentials))."\r\n";
 		$in .= "\r\n";
