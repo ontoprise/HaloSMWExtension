@@ -137,6 +137,9 @@ function setupSMWUserManual() {
 
     wfProfileIn('setupSMWUserManual');
 
+    // MW API forwarder 
+    require_once(dirname(__FILE__).'/SMW_MwApiForward.php');
+    
     // add language messages to global message object
     $wgMessageCache->addMessages($umeLang->getTexts(), $wgLanguageCode);
 
