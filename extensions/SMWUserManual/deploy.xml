@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>10</version>
+        <version>100</version>
         <id>smwusermanual</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SMWUserManual</instdir>
@@ -32,10 +32,10 @@
             <require name="upratingdata"
                 file="extensions/SMWUserManual/includes/SMW_UpRating.php" />
             <variable name="uprgWikipediaAPI">
-                <string name="uprgWikipediaAPI" description="API Url for Wikipedia">http://wiking.vulcan.com/wp/api.php</string>
+                <string name="uprgWikipediaAPI" userValueRequired="true" description="API Url for Wikipedia"></string>
             </variable>
             <variable name="uprgUltrapediaAPI">
-                <string name="uprgUltrapediaAPI" description="API Url for Ultrapedia">http://wiking.vulcan.com/up/api.php</string>
+                <string name="uprgUltrapediaAPI" userValueRequired="true" description="API Url for Ultrapedia"></string>
             </variable>
             <function name="enableUpRating">
             </function>
