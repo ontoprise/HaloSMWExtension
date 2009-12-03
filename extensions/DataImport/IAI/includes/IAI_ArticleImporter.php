@@ -804,7 +804,9 @@ class IAIArticleImporter  {
 			$articleSet[] = $t->getDBkey();			
 		}
 		
-		$articleSet = '"'.implode('","', $articleSet).'"';
+		$dbr = wfGetDB( DB_SLAVE );
+		
+		$articleSet = '"'.$dbr->strencode(implode('","', $articleSet)).'"';
 				$sql = <<<SQL
 SELECT DISTINCT tl_title
 FROM templatelinks
@@ -813,7 +815,6 @@ WHERE
 AND
 	tl_title NOT IN (SELECT page_title FROM page WHERE page_namespace=10);
 SQL;
-		$dbr = wfGetDB( DB_SLAVE );
 		
 		$templates = array();
 		$res = $dbr->query($sql, __METHOD__ );
@@ -849,7 +850,8 @@ SQL;
 			$articleSet[] = $t->getDBkey();			
 		}
 		
-		$articleSet = '"'.implode('","', $articleSet).'"';
+		$dbr = wfGetDB( DB_SLAVE );
+		$articleSet = '"'.$dbr->strencode(implode('","', $articleSet)).'"';
 		$sql = <<<SQL
 SELECT DISTINCT il_to
 FROM imagelinks
@@ -858,7 +860,6 @@ WHERE
 AND
 	il_to NOT IN (SELECT img_name FROM image i);
 SQL;
-		$dbr = wfGetDB( DB_SLAVE );
 		
 		$images = array();
 		$res = $dbr->query($sql, __METHOD__ );
