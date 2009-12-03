@@ -16,7 +16,7 @@
 				semanticgardening
 			</dependency>
 		</dependencies>
-		<patchlevel>4</patchlevel>
+		<patchlevel>6</patchlevel>
 	</global>
 	<codefiles>
 
