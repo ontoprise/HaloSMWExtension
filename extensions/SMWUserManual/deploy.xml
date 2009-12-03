@@ -31,6 +31,12 @@
             <!-- the following section is for Ultrapedia rating -->
             <require name="upratingdata"
                 file="extensions/SMWUserManual/includes/SMW_UpRating.php" />
+            <variable name="uprgWikipediaAPI">
+                <string name="uprgWikipediaAPI" description="API Url for Wikipedia">http://wiking.vulcan.com/wp/api.php</string>
+            </variable>
+            <variable name="uprgUltrapediaAPI">
+                <string name="uprgUltrapediaAPI" description="API Url for Ultrapedia">http://wiking.vulcan.com/up/api.php</string>
+            </variable>
             <function name="enableUpRating">
             </function>
         </new>
