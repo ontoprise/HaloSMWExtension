@@ -399,7 +399,12 @@ class IAIArticleImporter  {
 			// Read image from source wiki
 			$contents = Http::get($img, self::HTTP_TIMEOUT);
 			if ($contents === false) {
-				throw new IAIException(IAIException::HTTP_ERROR, $img);
+				// HTTP-Timeout
+				$this->mSkippedImages[] = $base;
+				echo( "HTTP timeout for {$base}; skipping\n" );
+				continue;
+				
+//				throw new IAIException(IAIException::HTTP_ERROR, $img);
 			}
 			
 			$handle = fopen ($base, "wb");
