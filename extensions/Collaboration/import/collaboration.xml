@@ -83,8 +83,8 @@
     <title>Template:ShowComments</title>
     <id>2239</id>
     <revision>
-      <id>10998</id>
-      <timestamp>2009-12-03T14:19:44Z</timestamp>
+      <id>10999</id>
+      <timestamp>2009-12-03T15:11:18Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -113,11 +113,11 @@
   | format=average
   | limit=100
 }}}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.5 |Bad}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; -0.5&lt;!--
-...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt; 0.5 |Ok}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |Bad}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.33&lt;!--
+...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |Ok}}&lt;!--
 --&gt;}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.5 |Good}}&lt;/div&gt;&lt;/div&gt;
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |Good}}&lt;/div&gt;&lt;/div&gt;
 &lt;!-- end average div --&gt;
 {{#ask: [[Belongs to article::{{FULLPAGENAME}}]] &lt;q&gt;[[Comment:+]]&lt;/q&gt;
   | ?Has comment person
