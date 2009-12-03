@@ -16,5 +16,5 @@
 */
 
 var wgCEUserLanguageStrings = {
-		'ce_key'			: 	'value',
+		'ce_key'			: 	'wert',
 };
