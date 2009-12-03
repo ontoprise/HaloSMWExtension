@@ -21,8 +21,8 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		<copy todir="bin/zip/extensions/Collaboration/language">
-			<fileset dir="../language/">
+		<copy todir="bin/zip/extensions/Collaboration/languages">
+			<fileset dir="../languages/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
