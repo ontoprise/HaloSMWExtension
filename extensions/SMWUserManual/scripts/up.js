@@ -10,13 +10,11 @@ UP_RatingPopup.prototype = {
         this.id='up_rating_popup'
         this.height=uprgPopupHeight+'px'
         this.width=uprgPopupWidth+'px'
-        this.Ultrapedia=wgServer+wgScriptPath+'/api.php'
-        //this.Wikipedia='http://wikipedia.org/w/api.php'
-        this.Wikipedia='http://10.0.0.152/mediawiki/api.php'
-        //this.Wikipedia='http://localhost/test_smwlist/api.php'
+        this.Ultrapedia=uprgUltrapediaAPI
+        this.Wikipedia=uprgWikipediaAPI
     },
 
-    cellRating: function(cell) {
+    cellRating: function(cell, uri) {
         // cell is usually the span element, set it to the real <td> element
         this.cell=cell
         while (this.cell.tagName != 'TD')
@@ -31,7 +29,13 @@ UP_RatingPopup.prototype = {
             n=n.parentNode
         if (n.id.indexOf('querytable')!=-1)
             this.tableIdentifier=parseInt(n.id.replace(/querytable/, ''))
-
+        // provenance URI
+        this.provenanceUri=''
+        var uriArgs=uri.split('&');
+        for (var i=0; i<uriArgs.length; i++) {
+            this.provenanceUri+=uriArgs[i]+(i==0 ? '?':'&')
+        }
+        this.provenanceUri+='redirect-after-edit='+(wgServer+wgScriptPath).replace(/:/, '%3A').replace(/\//g, '%2F')
         // set the static html stuff
         this.popup.setHtmlContent(this.cellRatingHtml())
         this.applyCellLabels()
@@ -83,8 +87,9 @@ UP_RatingPopup.prototype = {
         var rh=np.getElementsByTagName('th')
         if (rh.length==0) rh=np.getElementsByTagName('td')
         if (rh.length==0) return
+        var firstColHeader=this.getCellContent(rh[0])
         document.getElementById('up_data_table_row').innerHTML=
-            this.getCellContent(rh[0])+': '+this.cellIdentifier
+            (firstColHeader.length>0 ? firstColHeader+': ':'')+this.cellIdentifier
         if (rh.length > c) {
             document.getElementById('up_data_table_col').innerHTML=this.getCellContent(rh[c])
             this.cellIdentifier=document.getElementById('up_data_table_col').innerHTML
@@ -161,8 +166,11 @@ UP_RatingPopup.prototype = {
             return
         }
         else if (res) {
-            if (this.cellIdentifier)
-                this.cellRating(this.cell)
+            if (this.cellIdentifier) {
+                var origUri=this.provenanceUri.replace(/\?/, '&')
+                origUri=origUri.substring(0, origUri.lastIndexOf('&'))
+                this.cellRating(this.cell, origUri)
+            }
             else
                 this.tableRating(this.tableIdentifier)
         }
@@ -191,19 +199,20 @@ UP_RatingPopup.prototype = {
         if (this.cellIdentifier)
             comment+='[['+uprgPropertyCell+'::'+this.cellIdentifier.replace(/ \| /,',')+'| ]]'
 
-        // create a new rating page in Ultrapedia and reload the popup afterwards   
+        // create a new rating page in Ultrapedia and reload the popup afterwards
         var upapi = new MW_API_Access(this.Ultrapedia)
         var pagename=uprgRatingNamespace+':'+new Date().getTime()
         upapi.createPage(pagename, comment, this.reset.bind(this))
         // add the comment to the talk page in wikipedia
-        var wpapi = new MW_API_Access(this.Wikipedia)
-        var pagename='Talk:'+wgTitle
-        //wpapi.getPageContent(pagename, bluber)
-        commentOnTalkP= UP_RatingPopupLang.rating_on_talkp+': '+
+        if (this.Wikipedia.length > 0) {
+            var wpapi = new MW_API_Access(this.Wikipedia)
+            var pagename='Talk%3A'+wgTitle
+            commentOnTalkP= UP_RatingPopupLang.rating_on_talkp+': '+
                         (rating==2 ? UP_RatingPopupLang.data_invalid : UP_RatingPopupLang.data_correct)+
-                        '\n\n'+commentOnTalkP
-        var section='Second generation' + '; table '+this.tableIdentifier
-        wpapi.addCommentOnTalkpage(pagename, section, this.cellIdentifier, commentOnTalkP)
+                        ', '+commentOnTalkP
+            var section='Rating from Ultrapedia; table '+this.tableIdentifier
+            wpapi.addCommentOnTalkpage(pagename, section, this.cellIdentifier, commentOnTalkP)
+        }
     },
 
     tableRatingHtml: function(){
@@ -229,6 +238,9 @@ UP_RatingPopup.prototype = {
             '</tr><tr><td colspan="2"><hr class="uprSpacer"/></td></tr><tr>'+
             '<td class="uprColLeft">'+UP_RatingPopupLang.source+':</td>'+
             '<td class="uprColRight">'+UP_RatingPopupLang.dbpedia+'  ('+UP_RatingPopupLang.read_only+')</td>'+
+            '</tr><tr><td colspan="2"><hr class="uprSpacer"/></td></tr><tr>'+
+            '<td class="uprColLeft">'+UP_RatingPopupLang.edit+':</td>'+
+            '<td class="uprColRight"><a href="'+this.provenanceUri+'">'+UP_RatingPopupLang.editlink+'</a></td>'+
             '</tr><tr><td colspan="2"><hr class="uprSpacer"/></td></tr><tr>'+
             '<td class="uprColLeft">'+UP_RatingPopupLang.feedback+':</td>'+
             this.tdFeedbackHtml()+

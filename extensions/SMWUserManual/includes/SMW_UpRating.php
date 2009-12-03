@@ -83,7 +83,6 @@ define('SMW_UP_RATING_PROP_RATING', 'Rating');
 $wgUseAjax = true;
 $wgAjaxExportList[] = 'wfUpGetTableRating';
 $wgAjaxExportList[] = 'wfUpGetCellRating';
-$wgAjaxExportList[] = 'wfUprForwardApiCall';
 
 /**
  * enable the user manual extension but here add the setup function to the
@@ -113,7 +112,8 @@ function setupUpRating() {
 
     // language
     require_once(dirname(__FILE__).'/../languages/SMW_UpRating.php');
-
+    // MW API forwarder 
+    require_once(dirname(__FILE__).'/SMW_MwApiForward.php');
     wfProfileOut(__FUNCTION__);
 }
 
@@ -329,25 +329,4 @@ function wfUpFetchRatingData($page, $table, $cell='') {
     }
     return $result;
 }
-
-function wfUprForwardApiCall(){
-    $params = func_get_args();
-    if (count($params) != 2) return;
-    if (!preg_match('/^https?:\/\//i', $params[0])) return;
-    $host= $params[0];
-    $data=str_replace('&amp;', '&', $params[1]);
-    $c = curl_init();
-    curl_setopt($c, CURLOPT_URL, $host);
-    curl_setopt($c, CURLOPT_POST, true);
-    curl_setopt($c, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-    if (isset($_SERVER['HTTP_USER_AGENT']))
-        curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-    $res = curl_exec($c);
-    $httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
-    curl_close($c);
-
-    return $res;
-}
-
 ?>

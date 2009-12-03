@@ -19,6 +19,8 @@ var UP_RatingPopupLang = {
     fieldsempty     : 'Please check a least a rating value before submitting the request.',
     err_comment_up  : 'An error occured when sending your request to Ultrapedia. The error message was "%s".',
     rating_on_talkp : 'Rating',
-    data_correct    : 'Data is correct',
-    data_invalid    : 'Data is invalid'
+    data_correct    : 'data is correct',
+    data_invalid    : 'data is invalid',
+    edit            : 'Edit',
+    editlink        : 'edit data in Wikipedia'
 }
