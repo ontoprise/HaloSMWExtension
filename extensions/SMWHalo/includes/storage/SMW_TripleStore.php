@@ -675,7 +675,7 @@ class SMWTripleStore extends SMWStore {
 				$uris = array();
 
 				foreach($bindingsChildren->uri as $sv) {
-					$uris[] = (string) $sv;
+					$uris[] = array((string) $sv, $sv->attributes()->provenance);
 				}
 				if (!empty($uris)) {
 					
@@ -684,7 +684,7 @@ class SMWTripleStore extends SMWStore {
 					$literals = array();
 					
 					foreach($bindingsChildren->literal as $sv) {
-						$literals[] = array((string) $sv, $sv->attributes()->datatype);
+						$literals[] = array((string) $sv, $sv->attributes()->datatype, $sv->attributes()->provenance);
 					}
 					if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
 				}
@@ -711,8 +711,8 @@ class SMWTripleStore extends SMWStore {
 	 */
 	protected function addURIToResult($uris, $prs, & $allValues) {
 
-		foreach($uris as $sv) {
-			
+		foreach($uris as $uri) {
+			list($sv, $provenance) = $uri;
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
@@ -728,6 +728,7 @@ class SMWTripleStore extends SMWStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+					if (!is_null($provenance)) $v->setProvenance($provenance);
 					$allValues[] = $v;
 				} else {
 					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
@@ -739,12 +740,14 @@ class SMWTripleStore extends SMWStore {
 					$title = Title::newFromText($local, $ns);
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+					if (!is_null($provenance)) $v->setProvenance($provenance);
 					$allValues[] = $v;
 				}
 			} else {
 				// external URI
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
+				if (!is_null($provenance)) $v->setProvenance($provenance);
 				$allValues[] = $v;
 				
 			}
@@ -761,7 +764,7 @@ class SMWTripleStore extends SMWStore {
 	protected function addLiteralToResult($literals, $prs, & $allValues) {
 		foreach($literals as $literal) {
 
-			list($literalValue, $literalType) = $literal;
+			list($literalValue, $literalType, $provenance) = $literal;
 			$property = $prs->getData();
 			if (!empty($literalValue)) {
 
@@ -794,6 +797,7 @@ class SMWTripleStore extends SMWStore {
 				}
 
 			}
+			if (!is_null($provenance)) $value->setProvenance($provenance);
 			$allValues[] = $value;
 		}
 	}
