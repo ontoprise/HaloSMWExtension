@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
-    <sitename>MyWiki</sitename>
-    <base>http://testwiki.ontoprise.com/testwiki/index.php/Main_Page</base>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/trunk/index.php/Main_Page</base>
     <generator>MediaWiki 1.15.1</generator>
     <case>first-letter</case>
     <namespaces>
@@ -11,8 +11,8 @@
       <namespace key="1">Talk</namespace>
       <namespace key="2">User</namespace>
       <namespace key="3">User talk</namespace>
-      <namespace key="4">MyWiki</namespace>
-      <namespace key="5">MyWiki talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
       <namespace key="6">File</namespace>
       <namespace key="7">File talk</namespace>
       <namespace key="8">MediaWiki</namespace>
@@ -43,27 +43,22 @@
       <namespace key="129">ICalendar talk</namespace>
       <namespace key="130">VCard</namespace>
       <namespace key="131">VCard talk</namespace>
-      <namespace key="200">WebService</namespace>
-      <namespace key="201">WebService talk</namespace>
-      <namespace key="202">TermImport</namespace>
-      <namespace key="203">TermImport talk</namespace>
-      <namespace key="220">E-mail</namespace>
-      <namespace key="221">E-mail talk</namespace>
-      <namespace key="300">ACL</namespace>
-      <namespace key="301">ACL talk</namespace>
+      <namespace key="700">Comment</namespace>
+      <namespace key="701">Comment talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Category:Comment</title>
-    <id>2232</id>
+    <id>124</id>
     <revision>
-      <id>10980</id>
-      <timestamp>2009-12-03T13:28:49Z</timestamp>
+      <id>491</id>
+      <timestamp>2009-12-03T15:15:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{Category |PAGENAME=Category:Comment |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Category |rationale=Contains all comm…'</comment>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Category
 |PAGENAME=Category:Comment
 |Has author=User:WikiSysop
@@ -80,69 +75,15 @@
     </revision>
   </page>
   <page>
-    <title>Template:ShowComments</title>
-    <id>2239</id>
-    <revision>
-      <id>10999</id>
-      <timestamp>2009-12-03T15:11:18Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:ShowComments
-|Has author=User:WikiSysop
-|part of=SMWplus Basic Ontology Section
-|rationale=Show all comments incl. form.
-|long description=This templates queries for all existing comments created by the Collaboration Extension. Afterwards it calls a parser function to get the comment form for creating new comment.
-|parameters=&lt;pre&gt;{{ShowComments}}&lt;/pre&gt;
-|Calls template=CommentResult
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;
-&lt;!-- start average div --&gt;
-&lt;div style=&quot;border:1px solid lightgrey;margin:2px 0px;padding:1px;color:grey&quot;&gt;&lt;!--
---&gt;Average rating of this article:&lt;!--
---&gt;&lt;div style=&quot;font-weight:bold;color:black;padding-left:3px;display:inline&quot;&gt;
-{{#vardefine:avgrating|{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] &lt;q&gt;[[Comment:+]]&lt;/q&gt;
-  | ?Has comment rating
-  | format=average
-  | limit=100
-}}}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |Bad}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.33&lt;!--
-...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |Ok}}&lt;!--
---&gt;}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |Good}}&lt;/div&gt;&lt;/div&gt;
-&lt;!-- end average div --&gt;
-{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] &lt;q&gt;[[Comment:+]]&lt;/q&gt;
-  | ?Has comment person
-  | ?Has comment date
-  | ?Has comment text
-  | ?Has comment rating
-  | format=template
-  | template=CommentResult
-  | link=none
-  | limit=100
-}}
-{{#showcommentform:}}&lt;/includeonly&gt;</text>
-    </revision>
-  </page>
-  <page>
     <title>Template:Comment</title>
-    <id>2238</id>
+    <id>5</id>
     <revision>
-      <id>10991</id>
-      <timestamp>2009-12-03T13:56:12Z</timestamp>
+      <id>537</id>
+      <timestamp>2009-12-03T16:47:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '&lt;noinclude&gt;{{Template |PAGENAME=Template:Comment |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |rationale=Creates a comment. |long description=This template …'</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Comment
 |Has author=User:WikiSysop
@@ -163,32 +104,83 @@
 |copyright holder=Ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;br&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; width: 30%&quot;&lt;br&gt;! colspan=&quot;2&quot; style=&quot;background: lightblue; color: black&quot; | ''Comment for {{{CommentRelatedArticle}}}''
-|-
-{{Tablerow|Label=Comment person:|Value={{#if:{{{CommentPerson|}}}|[[Has comment person::{{{CommentPerson|}}}]]}}}}
-|-
-{{Tablerow|Label=Comment for article:|Value={{#if:{{{CommentRelatedArticle|}}}|[[Has related article::{{{CommentRelatedArticle|}}}]]}}}}
-|-
-{{Tablerow|Label=Comment date:|Value={{#if:{{{CommentDatetime|}}}|[[Has comment date::{{{CommentDatetime|}}}]]}}}}
-|-
-{{Tablerow|Label=Rating:|Value={{#if:{{{CommentRelatedArticle|}}}|[[Has comment rating::{{{CommentRating|}}}]]}}}}
-|-
-{{Tablerow|Label=Comment:|Value={{#if:{{{CommentContent|}}}|[[Has comment content::{{{CommentContent|}}}]]}}}}
-|}[[Category:Comment]]&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+&lt;/noinclude&gt;&lt;includeonly&gt;
+''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''
+&lt;div style=&quot;display:inline;min-height:50px;border:1px solid lightgrey;margin:5px 0px;padding:3px&quot;&gt;
+&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom:5px;&quot;&gt;
+&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;ce_result_user&quot; style=&quot;display:inline;color:grey;padding-left:5px&quot;&gt;{{#show: User:{{{CommentPerson|}}} | ?User_image}}Author: &lt;div style=&quot;display:inline;color:blue&quot;&gt;{{#if: {{{CommentPerson|}}} | [[Has comment person::{{{CommentPerson|}}}]] | }}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;
+&lt;!-- comment date--&gt;&lt;div style=&quot;display:inline;color:grey&quot;&gt;{{#if: {{{CommentDatetime|}}} | [[Has comment date::{{{CommentDatetime|}}}]]}}
+&lt;/div&gt;&lt;!-- end comment date--&gt;
+&lt;!-- start rating --&gt;
+&lt;div style=&quot;display:inline;float:right;text-align:right;color:grey;&quot;&gt;
+{{#if:{{{CommentRating|}}}| Article quality rated:&lt;div style=&quot;display:inline;margin-left:3px;font-weight:bold;color:black&quot;&gt;[[Has comment rating::{{{CommentRating|}}}]]}}&lt;/div&gt;
+&lt;/div&gt;&lt;!-- end rating --&gt;
+&lt;/div&gt;&lt;!-- End comment headline --&gt;
+&lt;!-- start comment content--&gt;&lt;div style=&quot;display:inline;;font-weight:bold;&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;
+&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;[[Category:Comment]]&lt;/noinclude&gt;</text>
     </revision>
   </page>
   <page>
-    <title>Template:CommentResult</title>
-    <id>2240</id>
+    <title>Template:ShowComments</title>
+    <id>190</id>
     <revision>
-      <id>10994</id>
-      <timestamp>2009-12-03T14:06:43Z</timestamp>
+      <id>538</id>
+      <timestamp>2009-12-03T17:00:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '&lt;noinclude&gt;{{Template |PAGENAME=Template:CommentResult |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |rationale=Used as result printer template. |long descri…'</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+|PAGENAME=Template:RMListInnerTable
+|Has author=WikiSysop
+|part of=SMWplus Basic Ontology Section,
+|rationale=This template can be used to show comments for an article and display a form (via parserfunction) to comment.
+|long description=__NOTITLE__
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=ontoprise GmbH
+|year=2009
+}}
+&lt;/noinclude&gt;&lt;includeonly&gt;
+&lt;!-- start average div --&gt;
+&lt;div style=&quot;border:1px solid lightgrey;margin:2px 0px;padding:1px;color:grey&quot;&gt;&lt;!--
+--&gt;Average rating of this article:&lt;!--
+--&gt;&lt;div style=&quot;font-weight:bold;color:black;padding-left:3px;display:inline&quot;&gt;
+{{#vardefine:avgrating|{{#ask: [[Related to::{{FULLPAGENAME}}]] &lt;q&gt;[[Comment:+]]&lt;/q&gt;
+  | ?Has rating
+  | format=average
+  | limit=100
+}}}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.3 |Bad}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.3&lt;!--
+...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.3 |Ok}}&lt;!--
+--&gt;}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.3 |Good}}&lt;/div&gt;&lt;/div&gt;
+&lt;!-- end average div --&gt;
+{{#ask: [[Belongs to article::{{FULLPAGENAME}}]] &lt;q&gt;[[Comment:+]]&lt;/q&gt;
+  | ?Has commenter
+  | ?Has comment date
+  | ?Has content
+  | ?Has rating
+  | format=template
+  | template=CommentResult
+  | link=none
+  | limit=100
+}}
+{{#showcommentform:}}&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:CommentResult</title>
+    <id>187</id>
+    <revision>
+      <id>526</id>
+      <timestamp>2009-12-03T16:02:38Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:CommentResult
 |Has author=User:WikiSysop
@@ -207,12 +199,14 @@
 &lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;ce_result_user&quot; style=&quot;display:inline;color:grey;padding-left:5px&quot;&gt;{{#show: User:{{{2}}} | ?User_image}}Author: &lt;div style=&quot;display:inline;color:blue&quot;&gt;{{{2}}}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;
 &lt;!-- comment date--&gt;&lt;div style=&quot;display:inline;color:grey&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;
 &lt;div style=&quot;display:inline;color:grey&quot;&gt; | [{{fullurl:{{{1}}}|action=edit}} Edit]&lt;/div&gt;
-&lt;!-- comment rating --&gt;&lt;div style=&quot;display:inline;float:right;text-align:right;color:grey;&quot;&gt;
-{{#ifexpr: {{{5}}} &lt; 2 &lt;!--
+{{#if:{{{5}}}|&lt;!-- comment rating
+--&gt;&lt;div style=&quot;display:inline;float:right;text-align:right;color:grey;&quot;&gt;&lt;!--
+--&gt;{{#ifexpr: {{{5}}} &lt; 2 &lt;!--
    --&gt;| {{#ifexpr: {{{5}}} &gt; -2 &lt;!--
       --&gt;| Article quality rated:&lt;div style=&quot;display:inline;margin-left:3px;font-weight:bold;color:black&quot;&gt;{{#ifexpr: {{{5}}} = -1 | Bad }}{{#ifexpr: {{{5}}} = 0 | Ok }}{{#ifexpr: {{{5}}} = 1 | Good }}&lt;/div&gt;&lt;!--
-   --&gt;| }}
-| }}&lt;/div&gt;&lt;!-- end comment rating --&gt;
+   --&gt;| }}&lt;!--
+--&gt;| }}&lt;/div&gt;&lt;!-- end comment rating 
+--&gt;| }}
 &lt;/div&gt;&lt;!-- End comment headline --&gt;
 &lt;!-- start comment content--&gt;
 &lt;div style=&quot;display:inline;padding:7px;font-weight:bold;&quot;&gt;{{{4}}}&lt;/div&gt;
@@ -223,10 +217,10 @@
   </page>
   <page>
     <title>Property:Has comment person</title>
-    <id>2236</id>
+    <id>240</id>
     <revision>
-      <id>10996</id>
-      <timestamp>2009-12-03T14:15:22Z</timestamp>
+      <id>536</id>
+      <timestamp>2009-12-03T16:46:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -243,21 +237,22 @@
 |own work=True
 |copyright holder=Ontoprise GmbH
 |year=2009
-}}</text>
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:String| ]]</text>
     </revision>
   </page>
   <page>
     <title>Property:Has comment rating</title>
-    <id>2233</id>
+    <id>241</id>
     <revision>
-      <id>10989</id>
-      <timestamp>2009-12-03T13:49:17Z</timestamp>
+      <id>501</id>
+      <timestamp>2009-12-03T15:15:49Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>moved [[Property:Has rating]] to [[Property:Has comment rating]]</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has rating
 |Has author=User:WikiSysop
@@ -275,41 +270,17 @@
     </revision>
   </page>
   <page>
-    <title>Property:Has comment text</title>
-    <id>2235</id>
-    <revision>
-      <id>10986</id>
-      <timestamp>2009-12-03T13:44:57Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
-      <text xml:space="preserve">{{Property
-|PAGENAME=Property:Has comment text
-|Has author=User:WikiSysop
-|part of=SMWplus Basic Ontology Section
-|Has default form=Form:Add and edit Property
-|rationale=Contains a comment text.
-|long description=This porperty contains the comment text of a comment created by the Collaboration Extension.
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    </revision>
-  </page>
-  <page>
     <title>Property:Has comment date</title>
-    <id>2234</id>
+    <id>123</id>
     <revision>
-      <id>10984</id>
-      <timestamp>2009-12-03T13:42:25Z</timestamp>
+      <id>505</id>
+      <timestamp>2009-12-03T15:15:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has comment date
 |Has author=User:WikiSysop
@@ -327,16 +298,45 @@
     </revision>
   </page>
   <page>
-    <title>Property:Belongs to article</title>
-    <id>2241</id>
+    <title>Property:Has comment text</title>
+    <id>242</id>
     <revision>
-      <id>10997</id>
-      <timestamp>2009-12-03T14:18:18Z</timestamp>
+      <id>503</id>
+      <timestamp>2009-12-03T15:15:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{Property |PAGENAME=Property:Belongs to article |Has author=User:WikiSysop |part of=SMWplus Basic Ontology Section |Has default form=Form:Add and edit Property |rationale=Used t…'</comment>
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">{{Property
+|PAGENAME=Property:Has comment text
+|Has author=User:WikiSysop
+|part of=SMWplus Basic Ontology Section
+|Has default form=Form:Add and edit Property
+|rationale=Contains a comment text.
+|long description=This porperty contains the comment text of a comment created by the Collaboration Extension.
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+}}
+[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Belongs to article</title>
+    <id>243</id>
+    <revision>
+      <id>507</id>
+      <timestamp>2009-12-03T15:16:03Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Belongs to article
 |Has author=User:WikiSysop
@@ -354,10 +354,10 @@
   </page>
   <page>
     <title>Template:!</title>
-    <id>323</id>
+    <id>20</id>
     <revision>
-      <id>2834</id>
-      <timestamp>2009-05-28T13:26:04Z</timestamp>
+      <id>39</id>
+      <timestamp>2009-11-19T09:05:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -373,14 +373,16 @@ helper template for pipe symbol, which can e.g. not be used directly in template
   </page>
   <page>
     <title>Template:Category</title>
-    <id>318</id>
+    <id>30</id>
     <revision>
-      <id>10262</id>
-      <timestamp>2009-09-30T07:44:52Z</timestamp>
+      <id>59</id>
+      <timestamp>2009-11-19T09:05:11Z</timestamp>
       <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Category
 |Has author=User:WikiSysop
@@ -437,14 +439,16 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:Copyright of article</title>
-    <id>321</id>
+    <id>22</id>
     <revision>
-      <id>6145</id>
-      <timestamp>2009-08-31T13:31:42Z</timestamp>
+      <id>43</id>
+      <timestamp>2009-11-19T09:05:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Template
 |PAGENAME=Template:Copyright of article
 |Has author=User:WikiSysop
@@ -485,12 +489,13 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:GNU Free Documentation License</title>
-    <id>324</id>
+    <id>23</id>
     <revision>
-      <id>9985</id>
-      <timestamp>2009-07-20T11:29:15Z</timestamp>
+      <id>45</id>
+      <timestamp>2009-11-19T09:05:08Z</timestamp>
       <contributor>
-        <ip>Benjamin</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
       <minor/>
       <comment>1 revision</comment>
@@ -522,14 +527,16 @@ GNU Free Documentation License
   </page>
   <page>
     <title>Template:Header for wiki parts</title>
-    <id>319</id>
+    <id>24</id>
     <revision>
-      <id>3475</id>
-      <timestamp>2009-06-08T12:13:56Z</timestamp>
+      <id>47</id>
+      <timestamp>2009-11-19T09:05:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Header for wiki parts
 |Has author=Daniel
@@ -794,10 +801,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablelongrow</title>
-    <id>165</id>
+    <id>26</id>
     <revision>
-      <id>2886</id>
-      <timestamp>2009-06-02T09:01:18Z</timestamp>
+      <id>51</id>
+      <timestamp>2009-11-19T09:05:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -824,14 +831,16 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablerow</title>
-    <id>164</id>
+    <id>27</id>
     <revision>
-      <id>6832</id>
-      <timestamp>2009-09-08T11:56:42Z</timestamp>
+      <id>53</id>
+      <timestamp>2009-11-19T09:05:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablerow
 |part of=SMWplus Basic Ontology Section
@@ -850,14 +859,16 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Template</title>
-    <id>332</id>
+    <id>28</id>
     <revision>
-      <id>10254</id>
-      <timestamp>2009-09-29T22:19:45Z</timestamp>
+      <id>55</id>
+      <timestamp>2009-11-19T09:05:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
 |Has author=User:WikiSysop
@@ -930,14 +941,16 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
   </page>
   <page>
     <title>Template:Property</title>
-    <id>331</id>
+    <id>29</id>
     <revision>
-      <id>10252</id>
-      <timestamp>2009-09-29T22:10:12Z</timestamp>
+      <id>57</id>
+      <timestamp>2009-11-19T09:05:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Property
 |Has author=User:WikiSysop
