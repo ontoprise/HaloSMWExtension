@@ -261,6 +261,7 @@ class CECommentParserFunctions {
 			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'ce-cf-message')) .
 			XML::closeElement('div') .
+			XML::closeElement('div') .
 			XML::closeElement('form');
 
 		self::$mInstance->mCommentFormDisplayed = true;
