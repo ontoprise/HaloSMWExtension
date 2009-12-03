@@ -82,6 +82,8 @@ function wfUmeAjaxGetArticleHtml($page){
     $result = array();
 	// fetch main HTML content of page
 	$result['content'] = $out->getText();
+    // add target blank to all links in the text
+    $result['content'] = preg_replace('/(<a [^>]*)>/', '$1 target="_blank">', $result['content']);
     // set title of help page
     $result['title'] = '<img src="'.SMW_UME_PATH.'skins/help.png" style="vertical-align:middle"/> '.$title->getText();
     // fetch the link to further information from property
