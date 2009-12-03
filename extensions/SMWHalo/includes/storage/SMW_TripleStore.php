@@ -782,7 +782,7 @@ class SMWTripleStore extends SMWStore {
 						}
 						$value->setXSDValue(str_replace("-","/",$literalValue));
 					}
-				} if ($value->getTypeID() == '_ema') { // exception for email
+				} else if ($value->getTypeID() == '_ema') { // exception for email
 					$value->setXSDValue($literalValue);
 				} else {
 					$value->setUserValue($literalValue);
