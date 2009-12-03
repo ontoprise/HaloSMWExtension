@@ -10,7 +10,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 +    private $m_provenance = NULL;
 +    
 +    public function setProvenance($provURI) {
-+       $this->m_provenance = $prov;
++       $this->m_provenance = $provURI;
 +    }
 +   
 +    public function getProvenance() {
