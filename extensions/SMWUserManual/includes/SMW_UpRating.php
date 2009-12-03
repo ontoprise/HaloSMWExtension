@@ -19,6 +19,8 @@ $wgExtensionCredits['other'][] = array(
         'and Wikipedia for improvements'
 );
 
+global $wgServer, $wgScriptPath;
+
 /**
  * Set here the namespace index from where the two additional namespaces will
  * be added to your wiki. If you don't set any value here, the next available
@@ -38,6 +40,23 @@ $uprgNamespaceIndex = null;
 $uprgPopupWidth = 400;
 $uprgPopupHeight = 460;
 
+/**
+ * Define here the Ultrapedia URL for the API access. This is usually the
+ * server where this wiki is running on. Therefore it's set to the variables
+ * of $wgServer and $wgScriptPath. However this can be changed in the
+ * LocalSettings.php if the ultrpedia server is not this wiki. 
+ */
+$uprgUltrapediaAPI=$wgServer.$wgScriptPath.'/api.php';
+
+/**
+ * Define here the Wikipedia URL for the API access. This is not set by
+ * default and and must be defined in the LocalSettings.php. For testing
+ * purposes you can define a separate URL. All comments that usually will be
+ * added to the articles talk page will then be stored in this testwiki and
+ * not in Wikipedia itself. 
+ */
+$uprgWikipediaAPI='';
+
 // SMW is needed, check if it's installed and quit, if this is not the case
 if (!defined("SMW_VERSION")) {
 	trigger_error("Semantic MediaWiki is required but not installed.");
@@ -45,7 +64,6 @@ if (!defined("SMW_VERSION")) {
 }
 
 // webserver path to extension
-global $wgScriptPath;
 $dir = str_replace('\\', '/', dirname(__FILE__));
 if (strrpos($dir, '/') !== false)
     $dir = substr($dir, 0, strrpos($dir, '/'));
@@ -95,8 +113,6 @@ function setupUpRating() {
 
     // language
     require_once(dirname(__FILE__).'/../languages/SMW_UpRating.php');
-    // MW api forwarder
-    //require_once(dirname(__FILE__).'/SMW_MwApi.php');
 
     wfProfileOut(__FUNCTION__);
 }
@@ -145,13 +161,16 @@ function initUpRatingNamespaces() {
  * with help message appears.
  */
 function uprfAddHtml2Page(&$out) {
-    global $uprgPopupWidth, $uprgPopupHeight, $wgLanguageCode;
+    global $uprgPopupWidth, $uprgPopupHeight, $wgLanguageCode, 
+           $uprgUltrapediaAPI, $uprgWikipediaAPI;
 
     // dimension of popup
     $out->addScript('
         <script type="text/javascript">/*<![CDATA[*/
             var uprgPopupWidth = '.$uprgPopupWidth.'
             var uprgPopupHeight = '.$uprgPopupHeight.'
+            var uprgUltrapediaAPI= "'.$uprgUltrapediaAPI.'"
+            var uprgWikipediaAPI = "'.$uprgWikipediaAPI.'"
             var uprgRatingNamespace = "'.SMW_UP_RATING_NSNAME.'"
             var uprgPropertyReferingPage = "'.SMW_UP_RATING_PROP_REFPAGE.'"
             var uprgPropertyReferingSection = "'.SMW_UP_RATING_PROP_REFSEC.'"
@@ -188,10 +207,10 @@ function uprfAddHtml2Page(&$out) {
 }
 
 function uprfCreateLinks(&$parser, &$text) {
-    $img = ' <img src="'.SMW_UP_RATING_PATH.'/skins/note_green.png" onclick="uprgPopup.cellRating(this)" />';
-    $text = str_replace('UpRatingCell____lleCgnitaRpU', $img, $text);
+    $img = ' <img src="'.SMW_UP_RATING_PATH.'/skins/note_green.png" onclick="uprgPopup.cellRating(this, \'$1\')" />';
+    $text = preg_replace('/UpRatingCell___(.*?)___lleCgnitaRpU/', $img, $text);
     $link = '<a href="#" onclick="uprgPopup.tableRating($1); return false">'.wfMsg('smw_upr_rate_table_link')."</a>";
-    $text = preg_replace('/UpRatingTable__(\d+)__elbaTgnitaRpU/', $link, $text);
+    $text = preg_replace('/UpRatingTable___(\d+)___elbaTgnitaRpU/', $link, $text);
 
     return true;
 }
@@ -324,10 +343,10 @@ function wfUprForwardApiCall(){
     curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
     if (isset($_SERVER['HTTP_USER_AGENT']))
         curl_setopt($c, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
-
     $res = curl_exec($c);
     $httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
     curl_close($c);
+
     return $res;
 }
 
