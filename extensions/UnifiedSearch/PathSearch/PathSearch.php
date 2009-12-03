@@ -41,7 +41,8 @@ function wfUSPathSearchAddHeader(& $out) {
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/pathsearch.css'
                  )
     );
-    $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/pathsearch.js"></script>');
+    $out->addScript('<script type="text/javascript" src="'.$usPath . '/../scripts/pathsearch.js"></script>'."\n");
+    $out->addScript('<script type="text/javascript">var US_PATHSEARCH_DIR="'.$usPath.'";</script>'."\n");
     return true;
 }
 
