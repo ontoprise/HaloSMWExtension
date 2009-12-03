@@ -1,11 +1,15 @@
-Installation instructions for Collaboration extension v0.9
+Installation instructions for Collaboration extension v1.0
 ---------------------------------------------------------------
 
 Requirements: 
 =============
 
 	MediaWiki 1.15.1
-	DataAPI (SMWHalo) on "target" wiki
+	Semantic Mediawiki 1.4.x
+	SMW Halo 1.4.x
+	ParserFunctions
+	SemanticResultFormats (especially "Math")
+
 
 Installation:
 =============
@@ -20,24 +24,37 @@ For a manual installation, you have to copy the folder Collaboration into
 the extensions folder of MediaWiki. Collaboration will then already work, if you 
 activate it in LocalSetting.php (see below). 
 
-
-Converting existing comments
----------------------
-
-Convert script:
- cd /folder_to_mediawiki/extension/Collaboration/maintenance
- php CE_Setup.php
-
-
 Activating Collaboration
-------------------
+------------------------
 
 The extension is activated by adding the following lines to LocalSettings.php:
 
 include_once('extensions/Collaboration/includes/CE_Initialize.php');
 enableCollaborationExtension();
 
+Import of the ontology
+----------------------
+
+The Collaboration extension comes with an own small onotlogy to provide functionality
+for displaying and querying existing comments.
+
+For that go to Special:Import, select and upload '/extensions/Collaboration/import/collaboration.xml'
+
+Now you can enter {{ShowComments}} to any article where you want to get a
+list of all 'related comments' and a form that allows you to enter new comments. 
+
+
 Options:
 ========
 
 All configuration options are defined and described in /includes/CE_Initialize.php.
+
+To reformat the comment form, use the provided Cascading Style Sheet in '/skins' directory.
+To reformat the display of existing comments take a look at 'Template:CommentResult'.
+
+
+Notice
+======
+It's highly recommended that you do not change the css definitions 'height' and 'width'
+for 'div.ce_result_user'. It's used to downscale the user icon. Changing or deleting
+these values could lead to unintended GUI results.
