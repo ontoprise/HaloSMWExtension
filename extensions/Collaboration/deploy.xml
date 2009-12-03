@@ -2,40 +2,36 @@
 <deploydescriptor>
 	<global>
 		<version>100</version>
-		<id>Collaboration</id>
+		<id>collaboration</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/Collaboration</instdir>
 		<description>
 			Add fancy collaboration stuff to your wiki.
 		</description>
 		<dependencies>
-			<dependency from="1151">MW</dependency>
+			<dependency from="1151">mw</dependency>
+			<dependency from="143">smw</dependency>
+			<dependency from="146">SMWHalo</dependency>
+			<dependency from="100">applicationprogramming</dependency>
+			<dependency from="145">semanticresultformats</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
 		<file loc="extensions/Collaboration/deploy.xml" />
-
 		<!-- TODO: add others -->
 	</codefiles>
 	<wikidumps>
-		<!-- <file loc="extensions/Collaboration/dump.xml"/> -->
+		<file loc="extensions/Collaboration/import/collaboration.xml"/>
 	</wikidumps>
 	<resources>
-		<!-- empty -->
+		<file loc="/extensions/Collaboration/skins/Comment/icons/defaultuser.gif" />
 	</resources>
 	<configs>
-		<!-- <precedes ext="smw" /> -->
-
 		<new>
-			<patch file="extensions/Collaboration/patch.txt" />
-			<require name="ce"
+			<require name="ce_init"
 				file="extensions/Collaboration/includes/CE_Initialize.php" />
-			<script file="extensions/Collaboration/maintenance/CE_Setup.php" />
+			<function name="enableCollaborationExtension">
+			</function>
 		</new>
-		<uninstall>
-			<patch file="extensions/Collaboration/patch.txt" />
-			<script file="extensions/SMWHalo/maintenance/CE_Setup.php"
-				params="--delete" />
-		</uninstall>
 	</configs>
 </deploydescriptor>

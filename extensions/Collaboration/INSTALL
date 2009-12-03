@@ -8,6 +8,7 @@ Requirements:
 	Semantic Mediawiki 1.4.x
 	SMW Halo 1.4.x
 	ParserFunctions
+	Variables
 	SemanticResultFormats (especially "Math")
 
 
@@ -50,7 +51,7 @@ Options:
 All configuration options are defined and described in /includes/CE_Initialize.php.
 
 To reformat the comment form, use the provided Cascading Style Sheet in '/skins' directory.
-To reformat the display of existing comments take a look at 'Template:CommentResult'.
+To reformat the style of existing comments take a look at 'Template:CommentResult'.
 
 
 Notice
