@@ -1,4 +1,4 @@
-Installation instructions for Semantic Gardening extension v1.0
+Installation instructions for Semantic Gardening extension v1.30
 ---------------------------------------------------------------
 
 Requirements: 
@@ -19,6 +19,10 @@ Then add to your LocalSettings.php after you initialized SMWHalo:
 $phpInterpreter="<path to php executable>";
 require_once("extensions/SemanticGardening/includes/SGA_GardeningInitialize.php");
 
+OPTIONAL: If you want to use the 'ExportOntologyBot' you have to create a directory
+    'wikiexport' in the directory $IP/extensions/SemanticGardening/. The directory must have write access for
+    the user which runs Apache (or simply for all if possible).
+    
 Options:
 ========
 
