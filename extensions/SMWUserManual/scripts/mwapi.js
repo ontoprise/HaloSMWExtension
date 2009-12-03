@@ -101,53 +101,53 @@ MW_API_Access.prototype = {
      * call return function */
     mergeSections: function(response){
         var node=this.getDomFromResponse(response)
-        var text = node.getElementsByTagName('rev')[0].firstChild.nodeValue
+        var text = ''
+        if (node.getElementsByTagName('rev').length>0)
+            text=node.getElementsByTagName('rev')[0].firstChild.nodeValue
         this.editToken = node.getElementsByTagName('page')[0].getAttribute('edittoken')
         
-        if (text) {
-            var sections=new Array()
-            var sectionText=new Array()
-            sectionText.push('')
-            var lines=text.split('\n')
-            for (var i=0; i<lines.length; i++) {
-                var currentSection=sectionText.length-1
-                if (lines[i].match(/^\s*(={1,})[^=]*\1\s*$/)) {
-                    var n= lines[i].replace(/=/g,'')
-                    var l= (lines[i].length - n.length)/2
-                    // [trimed text, position of section/cell]
-                    sections.push([this.trim(n), l])
-                    sectionText.push(lines[i])
-                }
-                else
-                    sectionText[currentSection]+=lines[i]+'\n'
+        var sections=new Array()
+        var sectionText=new Array()
+        sectionText.push('')
+        var lines=text.split('\n')
+        for (var i=0; i<lines.length; i++) {
+            var currentSection=sectionText.length-1
+            if (lines[i].match(/^\s*(={1,})[^=]*\1\s*$/)) {
+                var n= lines[i].replace(/=/g,'')
+                var l= (lines[i].length - n.length)/2
+                // [trimed text, position of section/cell]
+                sections.push([this.trim(n), l])
+                sectionText.push(lines[i])
             }
-            // init variables
-            var pSection // number of matching section
-            var pCell    // number of matching subsection (cell)
-            var insertIn // line where to insert text before it
-            for (var i=0; i<sections.length; i++) {
-                if (sections[i][0]==this.section && sections[i][1]==2)
-                    pSection= i+1
-                if (sections[i][0]==this.cell && sections[i][1]==3)
-                    pCell= i+1
-            }
-            if (this.cell) { // comment on data, must be a section (level 3)
-                if (pCell != null && pSection != null) { // section for cell already exists
-                    insertIn=pCell
-                } else { // subsection doesn't exist, add new subsection headline
-                    this.text = '\n=== '+this.cell+' ===\n'+this.text
-                }
-            }
-            if (pSection != null) { // section for current table already exists
-                if (!insertIn && !this.cell) insertIn=pSection
-            } else { // section for table doesn't exist, add new section for table
-                this.text='\n== '+this.section+' ==\n'+this.text
-            }
-            if (insertIn != null) // there are elements after the comment that will be inserted
-                this.editPage(this.page, insertIn, sectionText[insertIn]+this.text, this.returnFunction)
-            else // add new comment at the end of the page
-                this.editPage(this.page, 'new', this.text, this.returnFunction)
+            else
+                sectionText[currentSection]+=lines[i]+'\n'
         }
+        // init variables
+        var pSection // number of matching section
+        var pCell    // number of matching subsection (cell)
+        var insertIn // line where to insert text before it
+        for (var i=0; i<sections.length; i++) {
+            if (sections[i][0]==this.section && sections[i][1]==2)
+                pSection= i+1
+            if (sections[i][0]==this.cell && sections[i][1]==3)
+                pCell= i+1
+        }
+        if (this.cell) { // comment on data, must be a section (level 3)
+            if (pCell != null && pSection != null) { // section for cell already exists
+                insertIn=pCell
+            } else { // subsection doesn't exist, add new subsection headline
+                this.text = '\n=== '+this.cell+' ===\n'+this.text
+            }
+        }
+        if (pSection != null) { // section for current table already exists
+            if (!insertIn && !this.cell) insertIn=pSection
+        } else { // section for table doesn't exist, add new section for table
+            this.text='\n== '+this.section+' ==\n'+this.text
+        }
+        if (insertIn != null) // there are elements after the comment that will be inserted
+            this.editPage(this.page, insertIn, sectionText[insertIn]+this.text, this.returnFunction)
+        else // add new comment at the end of the page
+            this.editPage(this.page, 'new', this.text, this.returnFunction)
     },
 
     /* parse response from createPage(), editPage() and call return function */
