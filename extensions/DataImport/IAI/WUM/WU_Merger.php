@@ -121,7 +121,7 @@ class WUMerger {
 		
 		$result = "\n==Merge Result==";
 		$result .= "\n* Merged article was: [[merged article was::".$this->title."]]";
-		$result .= "\n* Has merge date: [[has merge dat::".$dateString."]]";
+		$result .= "\n* Has merge date: [[has merge date::".$dateString."]]";
 		$result .= "\n* Was merged successfully: [[was merged successfully::";
 		if(count($this->unresolvedTableReplacements) == 0){
 			$result .= "true]]";
