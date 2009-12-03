@@ -80,12 +80,9 @@ class CECommentParserFunctions {
 	// bool: Is the form already displayed?
 	private $mCommentFormDisplayed = false;
 
-	// bool: Are the related comments already displayed?
-	private $mCommentsDisplayed = false;
-
 	// bool: list of related comment titles
 	private $mRelCommentTitles = array();
-		
+
 	// bool: true if all parser functions of an article are valid
 	private $mDefinitionValid = true;
 
@@ -106,7 +103,7 @@ class CECommentParserFunctions {
 		}
 		return self::$mInstance;
 	}
-	
+
 	/**
 	 * Callback for parser function "#showcommentform:".
 	 * This parser function displays the commentform.
@@ -121,7 +118,7 @@ class CECommentParserFunctions {
 	 *
 	 * @throws
 	 * 		CEException(CEException::INTERNAL_ERROR)
-	 * 			... if there's sthg wrong
+	 * 			... if there's sthg wrong, that can not be caught by CE itself
 	 */
 	public static function showcommentform(&$parser) {
 		global $cegContLang, $wgUser, $cegScriptPath;
@@ -166,7 +163,7 @@ class CECommentParserFunctions {
 		$currentUser = $wgUser->getName();
 
 		if($wgUser->isAnon()) {
-				$userImageTitle = Title::newFromText('defaultuser.gif', NS_IMAGE);
+				$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
 				if($userImageTitle->exists()){
 					$image = Image::newFromTitle($userImageTitle);
 					$userImgSrc = $image->getURL();
@@ -178,26 +175,27 @@ class CECommentParserFunctions {
 			$queryResult = explode("|",
 				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 				$printouts, SMW_OUTPUT_WIKI));
-				
+
 			unset($queryResult[0]);
-			
+
 			//just get the first property value and use this
 			if(isset($queryResult[1])) {
-				$userImageTitle = Title::newFromText($queryResult[1], NS_IMAGE);
+				$userImageTitle = Title::newFromText($queryResult[1], NS_FILE);
 				if($userImageTitle->exists()){
 					$image = Image::newFromTitle($userImageTitle);
 					$userImgSrc = $image->getURL();
 				}
 			}
 			if(!isset($userImgSrc) || !$userImgSrc)
-				$userImgSrc = $cegScriptPath. '/skins/Comment/defaultuser.gif';
+				// We provide own icon, if there non in the wiki
+				$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
 		}
 
 		//TODO: use script.aclo.us(?) for fading in.
-		
+
 		$html = XML::openElement( 'div', array( 'id' => 'ce-c-header' )) .
 			XML::Element( 'img', array( 'id' => 'ce-c-header-img',
-				'src' => $cegScriptPath . '/skins/Comment/Comment_icon_crystal.png' )) .
+				'src' => $cegScriptPath . '/skins/Comment/icons/Comment_icon_crystal.png' )) .
 			XML::openElement('span', array( 'id' => 'ce-c-header-text',
 				'onClick' => '$(\'ce-cf\').toggle();')) .
 			wfMsgForContent('ce_cf_header_text') .
@@ -287,7 +285,7 @@ class CECommentParserFunctions {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * This method is called, when an article is undeleted. 
 	 * Well, wee need a DB Table that stores the article - comment - relation
@@ -303,11 +301,10 @@ class CECommentParserFunctions {
 
 		return true;
 	}
-	
-	
-	
+
+
 	### Private Functions ###
-	
+
 	/**
 	 * Returns the parser function parameters that were passed to the parser-function
 	 * callback.
@@ -331,7 +328,7 @@ class CECommentParserFunctions {
 
 		return $parameters;
 	}
-	
+
 	/**
 	 * does all the checks.
 	 *
@@ -379,7 +376,6 @@ class CECommentParserFunctions {
 		return self::SUCCESS;
 	}
 
-	
 	/**
 	 * There's something wrong with the comment function.
 	 *
@@ -395,6 +391,5 @@ class CECommentParserFunctions {
 		
 		return $html;
 	}
-	
-	
+
 } //end class CECommentParserFunctions
