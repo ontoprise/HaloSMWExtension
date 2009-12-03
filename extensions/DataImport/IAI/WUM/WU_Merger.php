@@ -23,47 +23,64 @@ function wum_doTabPF( &$parser, $frame, $args) {
 	$tableCode = null;
 	$tabCount = 0;
 	foreach($args as $key => $arg){
-		if(strpos(trim($arg), "tab") === 0){
+		$argt = explode("=", $arg, 2);
+		$argt[0] = explode(".", $argt[0], 2);
+		if(count($argt[0]) > 1 && strtolower(trim($argt[0][1])) == "body"){
 			$tabCount += 1;
-			
 			if($tabCount == 2){
-				$tableCode = ltrim(substr($arg, strpos($arg, "\n")+1));
-				$text .= "\n|".ltrim(substr($arg, 0, strpos($arg, "\n")))
-					."\n###replace###";
-				//$text .= "\n| _content=\n###replace###";
-			} else {
-				$text .= "\n|".trim($arg);
-			}
-		} else {
-			$text .= "\n|".trim($arg);
-		}
+				if(!preg_match('/^\[\[([^\[\]\|]+)(\|([^\[\]]+))?\]\]$/', $argt[1], $matches)) {
+					$tableCode = explode("\n", $argt[1], 2);
+					$text .= "\n|".implode(".", $argt[0])."=".$tableCode[0].
+						"\n<embedwiki>###replace###</embedwiki>";
+					$tableCode = $tableCode[1];
+					continue;
+				}
+			} 
+		} 
+		$text .= "\n|".trim($arg);
 	}
-	$text .= "\n}}";
+	$text .= "}}";
 	
 	if(!is_null($tableCode)){
 		$wumTabParserFunctions[] = array($text, $tableCode);
 	}
-	
 	return true;
 }
 
 function wum_preprocessArgs($frame, $args){
+	//remove first arg after the colon
+	array_shift($args);
+	
 	$preprocessedArgs = array();
 	$lastPreprocessedArg = null;
 	foreach($args as $arg){
 		$arg = $frame->expand($arg);
-		
-		if(strpos(trim($arg), "name") === 0
-			|| strpos(trim($arg), "tab") === 0
-			|| strpos(trim($arg), "options") === 0){
+		$argt = explode("=", $arg, 2);
+		if(strtolower(trim($argt[0])) == "options"
+				|| strtolower(trim($argt[0])) == "name"){
+
 			if(!is_null($lastPreprocessedArg)){
 				$preprocessedArgs[] = $lastPreprocessedArg;
 			}
-			
-			$lastPreprocessedArg = ltrim($arg);
-		} else if(!is_null($lastPreprocessedArg)){
-			$lastPreprocessedArg .= "|".$arg;
+			$lastPreprocessedArg = ltrim(implode("=", $argt));
+			continue;
 		}
+		
+		$argt[0] = explode(".", trim($argt[0]), 2);
+		if(count($argt[0]) > 1){
+			if(strtolower($argt[0][1]) == "body"
+					|| strtolower($argt[0][1]) == "option"){
+				
+				if(!is_null($lastPreprocessedArg)){
+					$preprocessedArgs[] = $lastPreprocessedArg;
+				}
+				$argt[0] = implode(".", $argt[0]);
+				$lastPreprocessedArg = ltrim(implode("=", $argt));
+				continue;		
+			}
+		}
+		
+		$lastPreprocessedArg .= "|".$arg;
 	}
 	
 	if(!is_null($lastPreprocessedArg)){
@@ -76,8 +93,7 @@ function wum_preprocessArgs($frame, $args){
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
 	$title = $editPage->mArticle->getTitle()->getFullText();
 	$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
-	$editPage->textbox1 = $wum->getMergedText()
-		."\n\n".print_r($wum->getUnresolvedTableReplacements(), true);
+	$editPage->textbox1 = $wum->getMergedText();
 	$wum->createMergeResultArticle();
 	return true;
 }
@@ -138,7 +154,9 @@ class WUMerger {
 	
 	private function getTableReplacements(){
 		$text = str_replace("{{#tab:", "{{subst:#wumtab:", $this->ultrapediaText);
-	
+		$text = str_replace("<embedwiki>", "", $text);
+		$text = str_replace("</embedwiki>", "", $text);
+		
 		global $wgParser;
 		$t = Title::newFromText("XYZ");
 		$popts = new ParserOptions();
@@ -316,7 +334,4 @@ class WUTableReplacement {
 	public function getOriginalText(){
 		return str_replace("###replace###", $this->originalTableCode, $this->replacement);
 	}
-	
-	
-
 }

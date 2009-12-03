@@ -1,0 +1,27 @@
+===Profits===
+Porsches 2006/2007 fiscal years net profit was [[euro sign|€]]4.2&nbsp;billion.  Out of this €3.6&nbsp;billion was from stock option transactions, most presumably from Volkswagen AG and its dividends.
+
+Table of profits in millions of euros:
+
+{| class="wikitable" border="1" 
+|- 
+! Year ending
+! Revenue 
+! Pre tax profit
+|-
+| 31 July 2004
+| €6,147.73m
+| €1,137m
+|-
+| 31 July 2005
+| €6,573.97m
+| €1,238m
+|-
+| 31 July 2006
+| €7,122.67m
+| €2,028.2m
+|-
+| 31 July 2007
+| €7,367.88m
+| €5,857.m
+|}

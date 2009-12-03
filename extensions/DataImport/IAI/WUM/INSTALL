@@ -1,0 +1,3 @@
+Add the following line to your LocalSettings.php after the IAI has been installed:
+
+enableWUM();

@@ -102,6 +102,9 @@ function iaifSetupExtension() {
 }
 
 
+//call this funtion in LocalSettings.php
+//in order to initialize the Wikipedia
+//Ultrapedia Merger
 function enableWUM(){
 	global $iaigIP;
 	require_once($iaigIP."/WUM/WU_Merger.php");
