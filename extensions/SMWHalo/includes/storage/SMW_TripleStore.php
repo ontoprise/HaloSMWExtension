@@ -206,7 +206,7 @@ class SMWTripleStore extends SMWStore {
 			foreach($propertyValueArray as $value) {
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
-						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^xsd:string");
+						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg') {
 						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
@@ -225,7 +225,7 @@ class SMWTripleStore extends SMWStore {
 								if ($value->getXSDValue() != NULL) {
 									// attribute with textual value
 									$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
-									$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeQuotes($value->getXSDValue())."\"^^$xsdType");
+									$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^$xsdType");
 								} else if ($value->getNumericValue() != NULL) {
 									// attribute with numeric value
 									$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:double");
@@ -316,7 +316,7 @@ class SMWTripleStore extends SMWStore {
 					list($ruleID, $ruleText, $native) = $rule;
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
-					$sparulCommands[] = "INSERT $nativeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeQuotes($ruleText)."\"";
+					$sparulCommands[] = "INSERT $nativeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeForStringLiteral($ruleText)."\"";
 				}
 			}
 			$con->connect();
@@ -509,13 +509,13 @@ class SMWTripleStore extends SMWStore {
 
 
 	/**
-	 * Escapes double quotes
+	 * Escapes double quotes, backslash and line feeds for a SPARUL string literal.
 	 *
 	 * @param string $literal
 	 * @return string
 	 */
-	protected function escapeQuotes($literal) {
-		return str_replace("\"", "\\\"", $literal);
+	protected function escapeForStringLiteral($literal) {
+		return str_replace(array("\\", "\"", "\n", "\r"), array("\\\\", "\\\"", "\\n" ,"\\r"), $literal);
 	}
 
 	/**
@@ -581,6 +581,37 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
+		
+		// rewrite printrequests in case of property chains
+        $rewritten_prs = array();
+        $toUnset = array();
+        foreach($print_requests as $id => $pr) {
+            $data = $pr->getData();
+            if ($data instanceof Title) { // property chain appear as Title
+                $titleText = $data->getText();
+                $chain = explode(".",$titleText);
+                if (count($chain) > 1) {
+                    $newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
+                    if ($newtitle->exists()) {
+                    	$newlabel = $newtitle->getText();
+                    	$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
+                    } else {
+                    	$newlabel = $newtitle->getText();
+                        $newData = $newtitle;
+                    }
+                    $newid = str_replace($titleText, $newtitle->getText(), $id); 
+                    $rewritten_prs[$newid] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $newlabel, $newData, $pr->getOutputFormat());
+                    $rewritten_prs[$newid]->getHash();
+                    $toUnset[] = $id;
+                }
+            }
+        }
+        foreach($toUnset as $tu) {
+        	unset($print_requests[$tu]);
+        }
+        $print_requests = array_merge($print_requests, $rewritten_prs);
+        // rewriting end
+		
 		$hasMainColumn = false;
 		$index = 0;
 		if ($query->fromASK) {
