@@ -215,7 +215,7 @@ class FCKeditor_MediaWiki
 			$extedit->edit();
 		}
 
-		return true;
+		return false;
 	}
 
 	public function onEditPageBeforePreviewText(&$editPage, $previewOnOpen)
