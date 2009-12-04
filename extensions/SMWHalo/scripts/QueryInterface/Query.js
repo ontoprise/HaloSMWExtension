@@ -178,7 +178,7 @@ Query.prototype = {
                                     (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
                             ? vals[j][1]
                             : vals[j][1].substring(0,1);
-					asktext += vals[j][2].unescapeHTML();
+                    asktext += (vals[j][2] == '*') ? '' : vals[j][2].unescapeHTML();
 				}
 			} else { //binary property
 				var vals = this.properties[i].getValues();
@@ -259,7 +259,7 @@ Query.prototype = {
                                     (vals[j][1].charAt(0) == '>' || vals[j][1].charAt(0) == '<') )
                             ? vals[j][1]
                             : vals[j][1].substring(0,1);
-					asktext += vals[j][2].unescapeHTML();
+					asktext += (vals[j][2] == '*') ? '' : vals[j][2].unescapeHTML();
 				}
 				asktext += "]]";
 			} else { //binary property
