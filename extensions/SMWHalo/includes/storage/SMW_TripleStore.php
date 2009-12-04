@@ -707,7 +707,7 @@ class SMWTripleStore extends SMWStore {
 				$uris = array();
 
 				foreach($bindingsChildren->uri as $sv) {
-					$uris[] = array((string) $sv, $sv->attributes()->provenance);
+					$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
 				}
 				if (!empty($uris)) {
 					
@@ -716,7 +716,7 @@ class SMWTripleStore extends SMWStore {
 					$literals = array();
 					
 					foreach($bindingsChildren->literal as $sv) {
-						$literals[] = array((string) $sv, $sv->attributes()->datatype, $sv->attributes()->provenance);
+						$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
 					}
 					if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
 				}
