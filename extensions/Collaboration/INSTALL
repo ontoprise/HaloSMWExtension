@@ -31,7 +31,7 @@ Activating Collaboration
 The extension is activated by adding the following lines to LocalSettings.php:
 
 include_once('extensions/Collaboration/includes/CE_Initialize.php');
-enableCollaborationExtension();
+enableCollaboration();
 
 Import of the ontology
 ----------------------
