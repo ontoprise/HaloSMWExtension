@@ -98,7 +98,9 @@ function getHACLToolbar($articleTitle) {
     global $haclgContLang;
     $ns = $haclgContLang->getNamespaces();
     $ns = $ns[HACL_NS_ACL];
-
+    $pagePrefix = $haclgContLang->getPetPrefix(HACLSecurityDescriptor::PET_PAGE);
+    $templatePrefix = $haclgContLang->getSDTemplateName();
+    
     $isPageProtected = false;
     $toolbarEnabled = true;
     $newArticle = true;
@@ -120,13 +122,14 @@ function getHACLToolbar($articleTitle) {
     #$array = array();
     $quickacls = HACLQuickacl::newForUserId($wgUser->getId());
     $tpllist = array();
+    $validTmpl = array();
     $protectedWith = "";
 
     // is it a new article?
     if(!$newArticle) {
     // trying to get assigned right
         try {
-            $SD = HACLSecurityDescriptor::newFromName("$ns:Page/".$articleTitle);
+            $SD = HACLSecurityDescriptor::newFromName("$ns:$pagePrefix/".$articleTitle);
             $protectedWith = $SD->getSDName();
             $isPageProtected = true;
             if(!$SD->userCanModify($wgUser->getName())) {
@@ -142,21 +145,29 @@ function getHACLToolbar($articleTitle) {
     foreach($quickacls->getSD_IDs() as $sdid) {
         $sd = HACLSecurityDescriptor::nameForID($sdid);
         $tpllist[] = $sd;
+        
+        // Check if the template is valid or corrupted by missing groups, user,...
+        try {
+        	$sd = HACLSecurityDescriptor::newFromID($sdid);
+	        $validTmpl[] = $sd->checkIntegrity() === true ? 'true' : 'false';
+        } catch (HACLException $e) {
+	        $validTmpl[] = false;
+        }
     }
 
 
     // does a default template exist?
+    $defaultSD = null;
     try {
 
-        $defaultSD = HACLSecurityDescriptor::newFromName("$ns:Template/".$wgUser->getName());
+        $defaultSD = HACLSecurityDescriptor::newFromName("$ns:$templatePrefix/".$wgUser->getName());
         $defaultSDExists = true;
         // if no other right is assigned to that article the default will be used
         if(!$isPageProtected) {
-            $protectedWith = "Template/".$wgUser->getName();
+            $protectedWith = "$templatePrefix/".$wgUser->getName();
             $isPageProtected = true;
         }
-    }
-    catch(Exception $e) {
+    } catch(Exception $e) {
         $defaultSDExists = false;
     }
 
@@ -166,6 +177,8 @@ function getHACLToolbar($articleTitle) {
 
     if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
         $tpllist[] = $protectedWith;
+        // Check if the template is valid or corrupted by missing groups, user,...
+        $validTmpl[] = $defaultSD->checkIntegrity() === true ? 'true' : 'false';
     }
 
     global $haclgIP;
@@ -176,7 +189,7 @@ function getHACLToolbar($articleTitle) {
 	    </script>
 
 
-        <div id="hacl_toolbarcontainer" class="yui-skin-sam">
+        <div id="hacl_toolbarcontainer" class="yui-skin-sam hacl_toolbar_validAcl">
 
         <div id="hacl_toolbarcontainer_section1">
             Page state:&nbsp;
@@ -195,10 +208,9 @@ HTML;
     if($isPageProtected) {
         $html .= "   <option value='unprotected'>$hacl_unprotected_label</option>
                      <option selected='selected' value='protected'>$hacl_protected_label</option>
-                     </select>
-";
+                     </select>";
         $html .="</select>";
-    }elseif(sizeof($tpllist) > 0) {
+    } elseif (sizeof($tpllist) > 0) {
         $html .= "   <option selected='selected' value='unprotected'>$hacl_unprotected_label</option>
                      <option value='protected'>$hacl_protected_label</option>
                      </select>";
@@ -211,20 +223,21 @@ HTML;
     //    if(sizeof($tpllist) > 0) {
     $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
     if($toolbarEnabled) {
-        $html .= "<select id='haloacl_template_protectedwith'>";
+        $html .= "<select id='haloacl_template_protectedwith' onChange='YAHOO.haloacl.toolbar_templateChanged();'>";
     }else {
         $html .= "<select disabled id='haloacl_template_protectedwith'>";
     }
-    foreach($tpllist as $tpl) {
+    foreach($tpllist as $idx => $tpl) {
+    	$validAttr = ' valid="'.$validTmpl[$idx].'" ';
         if($tpl == $protectedWith) {
-            $html .= "<option selected='selected'>$tpl</option>";
+            $html .= "<option selected='selected' $validAttr>$tpl</option>";
         }else {
-            $html .= "<option>$tpl</option>";
+            $html .= "<option $validAttr>$tpl</option>";
         }
     }
     $html .= "</select>";
     $html .= <<<HTML
-        <div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
+<div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
 	<div id="anchorPopup_toolbar" 
 	     class="haloacl_infobutton" 
 	     onclick="javascript:

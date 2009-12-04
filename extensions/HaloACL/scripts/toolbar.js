@@ -159,6 +159,7 @@ YAHOO.haloacl.toolbar_initToolbar = function(){
 //        $('wpSave').writeAttribute("type","button");
     $('wpSaveReplacement').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
     YAHOO.haloacl.toolbar_updateToolbar();
+    YAHOO.haloacl.toolbar_templateChanged();
 
 }
 
@@ -169,7 +170,7 @@ YAHOO.haloacl.toolbar_initToolbar = function(){
 YAHOO.haloacl.toolbar_updateToolbar = function(){
 	var selection = $('haloacl_toolbar_pagestate');
 	var state = selection[selection.selectedIndex].value;
-    if(state == "protected"){
+    if (state == "protected") {
         try{
      	   $('haloacl_template_protectedwith').show();
         }catch(e){}
@@ -179,11 +180,44 @@ YAHOO.haloacl.toolbar_updateToolbar = function(){
         try{
       	  $('haloacl_toolbar_popuplink').show();
         }catch(e){}
-    }else{
+		YAHOO.haloacl.toolbar_templateChanged();     
+    } else {
         $('haloacl_template_protectedwith').hide();
         $('haloacl_template_protectedwith_desc').hide();
         $('haloacl_toolbar_popuplink').hide();
+		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
+		$('hacl_toolbarcontainer').addClassName('hacl_toolbar_validAcl');
+		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
     }
+};
+
+var gHACLToolbarTooltip = null;
+
+YAHOO.haloacl.toolbar_templateChanged = function(){
+	var selection = $('haloacl_template_protectedwith');
+	var option = selection.down('option', selection.selectedIndex);
+	var valid = option.readAttribute('valid');
+	var addClass = (valid == "false") ? 'haloacl_warningbutton' : 'haloacl_infobutton';
+	$('anchorPopup_toolbar').removeClassName('haloacl_warningbutton');
+	$('anchorPopup_toolbar').removeClassName('haloacl_infobutton');
+	$('anchorPopup_toolbar').addClassName(addClass);
+	
+	var tooltiptext = gHACLLanguage.getMessage(valid == "true" ? 'aclinfotooltip' : 'aclwarningtooltip');
+	if (gHACLToolbarTooltip == null) {
+    	gHACLToolbarTooltip = new YAHOO.widget.Tooltip("anchorPopup_toolbar_tooltip", {
+									        context:"anchorPopup_toolbar",
+									        text: tooltiptext,
+									        zIndex :10
+   										 });
+	} else {
+		gHACLToolbarTooltip.cfg.setProperty("text", tooltiptext);
+	}
+	
+	addClass = (valid == "true") ? 'hacl_toolbar_validAcl' : 'hacl_toolbar_invalidAcl';
+	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
+	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
+	$('hacl_toolbarcontainer').addClassName(addClass);
+
 };
 
 /**

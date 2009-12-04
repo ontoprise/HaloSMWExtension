@@ -4330,6 +4330,7 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
             $groups = $subgroupsToCall;
         }
         foreach( $groups as $key => $value) {
+        	$valid = $value->checkIntegrity();
             if ($recursive) {
 
                 $parent = HACLGroup::newFromName($value->getGroupName());
@@ -4340,9 +4341,18 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
                 if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
                     if(!$search || stripos($value->getGroupName(),$search) !== false || (isset($subgroups) && (sizeof($subgroups) > 0))) {
                         if(isset($subgroups)) {
-                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false', 'children'=>$subgroups,'description'=>$value->getGroupDescription());
-                        }else {
-                            $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','description'=>$value->getGroupDescription());
+                            $tempgroup = array('name'=>$value->getGroupName(),
+                                               'id'=>$value->getGroupId(),
+                                               'checked'=>'false', 
+                                               'children'=>$subgroups,
+                                               'description'=>$value->getGroupDescription(),
+                            				   'valid' => $valid);
+                        } else {
+                            $tempgroup = array('name' => $value->getGroupName(),
+                            				   'id'=>$value->getGroupId(),
+                            				   'checked'=>'false',
+                            				   'description'=>$value->getGroupDescription(),
+                            				   'valid' => $valid);
                         }
                         $array[] = $tempgroup;
                     }
@@ -4358,11 +4368,24 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
                             $subparent = HACLGroup::newFromName($value->getGroupName());
                             $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
                             if(sizeof($subgroups) > 0) {
-                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','description'=>$value->getGroupDescription());
+                                $tempgroup = array('name'=>$value->getGroupName(),
+                                				   'id'=>$value->getGroupId(),
+                                				   'checked'=>'false',
+                                				   'description'=>$value->getGroupDescription(),
+                            				   	   'valid' => $valid);
                             }elseif(!$search) {
-                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'','description'=>$value->getGroupDescription());
+                                $tempgroup = array('name'=>$value->getGroupName(),
+                                				   'id'=>$value->getGroupId(),
+                                				   'checked'=>'false',
+                                				   'children'=>'',
+                                				   'description'=>$value->getGroupDescription(),
+                            				       'valid' => $valid);
                             }else {
-                                $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','description'=>$value->getGroupDescription());
+                                $tempgroup = array('name'=>$value->getGroupName(),
+                                				   'id'=>$value->getGroupId(),
+                                				   'checked'=>'false',
+                                				   'description'=>$value->getGroupDescription(),
+                            				       'valid' => $valid);
                             }
                             $array[] = $tempgroup;
                         } catch (HACLGroupException $e) { }
@@ -4378,13 +4401,23 @@ function getGroupsForManageUser($clickedGroup,$search=null, $recursive=false,$le
         $groups = $parent->getGroups(HACLGroup::OBJECT);
         foreach( $groups as $key => $value ) {
             if($value->userCanModify($wgUser->getName()) || array_intersect_key($haclCrossTemplateAccess, $wgUser->getGroups()) != null ) {
-
+        		$valid = $value->checkIntegrity();
+            	
                 $subparent = HACLGroup::newFromName($value->getGroupName());
                 $subgroups = $subparent->getGroups(HACLGroup::OBJECT);
                 if(sizeof($subgroups) > 0) {
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','description'=>$value->getGroupDescription());
+                    $tempgroup = array('name'=>$value->getGroupName(),
+                    				   'id'=>$value->getGroupId(),
+                    				   'checked'=>'false',
+                    				   'description'=>$value->getGroupDescription(),
+                            		   'valid' => $valid);
                 }else {
-                    $tempgroup = array('name'=>$value->getGroupName(),'id'=>$value->getGroupId(),'checked'=>'false','children'=>'','description'=>$value->getGroupDescription());
+                    $tempgroup = array('name'=>$value->getGroupName(),
+                    				   'id'=>$value->getGroupId(),
+                    				   'checked'=>'false',
+                    				   'children'=>'',
+                    				   'description'=>$value->getGroupDescription(),
+                            		   'valid' => $valid);
                 }
                 $array[] = $tempgroup;
             }
@@ -4457,7 +4490,10 @@ function getACLs($typeXML, $filter = null) {
     $SDs = HACLStorage::getDatabase()->getSDs($types);
 
     foreach( $SDs as $key => $SD) {
-    // processing default user templates
+ 		// check integrity of SD
+ 		$valid = $SD->checkIntegrity();
+ 		   	
+	    // processing default user templates
         if(preg_match("/$template\//is",$SD->getSDName())) {
             if(($SD->getSDName() == "$template/$username") ||$dontCheckForCanMod || (array_intersect($wgUser->getGroups(), $haclCrossTemplateAccess) != null)) {
                 $tempRights = array();
@@ -4473,7 +4509,10 @@ function getACLs($typeXML, $filter = null) {
                         $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
                     }catch(Exception $e ) {}
                 }
-                $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+                $tempSD = array('id'=>$SD->getSDID(), 
+                				'name'=>$SD->getSDName(), 
+                				'rights'=>$tempRights, 
+                				'valid' => $valid);
                 $array[] = $tempSD;
             }
 
@@ -4492,7 +4531,10 @@ function getACLs($typeXML, $filter = null) {
                     $tempRights[] = array('id'=>$subSdId, 'description'=>"Template - ".$tempright->getSDName());
                 }catch(Exception $e ) {}
             }
-            $tempSD = array('id'=>$SD->getSDID(), 'name'=>$SD->getSDName(), 'rights'=>$tempRights);
+            $tempSD = array('id'=>$SD->getSDID(), 
+            				'name'=>$SD->getSDName(), 
+            				'rights'=>$tempRights, 
+                			'valid' => $valid);
             $array[] = $tempSD;
         }
     }

@@ -214,9 +214,8 @@ class HACLParserFunctions {
                 "The parser functions are called for different articles.");
 		}
 
-
 		// handle the parameter "assigned to".
-		list($users, $groups, $em1) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
 
 		// handle the parameter 'action'
 		list($actions, $em2) = self::$mInstance->actions($params);
@@ -225,13 +224,13 @@ class HACLParserFunctions {
 		global $haclgContLang;
 		$descPN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_DESCRIPTION);
 		$description = array_key_exists($descPN, $params)
-		? $params[$descPN]
-		: "";
+						? $params[$descPN]
+						: "";
 		// handle the (optional) parameter 'name'
 		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
 		$name = array_key_exists($namePN, $params)
-		? $params[$namePN]
-		: "";
+					? $params[$namePN]
+					: "";
 
 		$errMsgs = $em1 + $em2;
 
@@ -257,7 +256,8 @@ class HACLParserFunctions {
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 
 	}
@@ -300,7 +300,7 @@ class HACLParserFunctions {
 		}
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $em1) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
 
 		// handle the parameter 'action'
 		list($actions, $em2) = self::$mInstance->actions($params);
@@ -309,13 +309,13 @@ class HACLParserFunctions {
 		global $haclgContLang;
 		$descPN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_DESCRIPTION);
 		$description = array_key_exists($descPN, $params)
-		? $params[$descPN]
-		: "";
+			? $params[$descPN]
+			: "";
 		// handle the (optional) parameter 'name'
 		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
 		$name = array_key_exists($namePN, $params)
-		? $params[$namePN]
-		: "";
+			? $params[$namePN]
+			: "";
 
 		$errMsgs = $em1 + $em2;
 
@@ -334,14 +334,15 @@ class HACLParserFunctions {
 		// Format the defined right in Wikitext
 		if (!empty($name)) {
 			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
-			.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
+					.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
 		} else {
 			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
 		}
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showDescription($description);
 		$text .= self::$mInstance->showErrors($errMsgs);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 	}
 
@@ -377,7 +378,7 @@ class HACLParserFunctions {
 		$fingerprint = self::$mInstance->makeFingerprint("predefinedRight", $params);
 
 		// handle the parameter 'rights'
-		list($rights, $em) = self::$mInstance->rights($params);
+		list($rights, $em, $warnings) = self::$mInstance->rights($params);
 
 		if (count($em) == 0) {
 			// no errors
@@ -404,7 +405,8 @@ class HACLParserFunctions {
 		$text = wfMsgForContent('hacl_pf_predefined_rights_title');
 		$text .= self::$mInstance->showRights($rights);
 		$text .= self::$mInstance->showErrors($em);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 
 	}
@@ -509,7 +511,7 @@ class HACLParserFunctions {
 		}
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -527,7 +529,8 @@ class HACLParserFunctions {
 		$text = wfMsgForContent('hacl_pf_right_managers_title');
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showErrors($errMsgs);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 	}
 
@@ -560,7 +563,7 @@ class HACLParserFunctions {
 		}
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs) = self::$mInstance->assignedTo($params, false);
+		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params, false);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -579,7 +582,8 @@ class HACLParserFunctions {
 		$text = wfMsgForContent('hacl_pf_group_members_title');
 		$text .= self::$mInstance->showAssignees($users, $groups, false);
 		$text .= self::$mInstance->showErrors($errMsgs);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 	}
 
@@ -614,7 +618,7 @@ class HACLParserFunctions {
 		}
 
 		// handle the parameter "assigned to".
-		list($users, $groups, $errMsgs) = self::$mInstance->assignedTo($params);
+		list($users, $groups, $errMsgs, $warnings) = self::$mInstance->assignedTo($params);
 
 		if (count($errMsgs) == 0) {
 			// no errors
@@ -632,7 +636,8 @@ class HACLParserFunctions {
 		$text = wfMsgForContent('hacl_pf_group_managers_title');
 		$text .= self::$mInstance->showAssignees($users, $groups);
 		$text .= self::$mInstance->showErrors($errMsgs);
-
+		$text .= self::$mInstance->showWarnings($warnings);
+		
 		return $text;
 	}
 
@@ -883,7 +888,7 @@ class HACLParserFunctions {
 
 		// Check if all definitions for ACL are consistent.
 		if (self::$mInstance->checkConsistency() !== true ||
-		!$this->mDefinitionValid) {
+			!$this->mDefinitionValid) {
 			return false;
 		}
 
@@ -1057,7 +1062,7 @@ class HACLParserFunctions {
 		}
 
 		if (count($belongsToCat) > 1 ||
-		(count($belongsToCat) == 1 && $isWhitelist) ) {
+			(count($belongsToCat) == 1 && $isWhitelist) ) {
 			$msg[] = wfMsgForContent('hacl_too_many_categories',
 			implode(', ', $belongsToCat));
 			$this->mType = 'invalid';
@@ -1086,13 +1091,13 @@ class HACLParserFunctions {
 		if ($isRight || $isSD) {
 			// check for inline or predefined rights
 			if (count($this->mInlineRights) == 0 &&
-			count($this->mPredefinedRights) == 0 &&
-			count($this->mPropertyRights) == 0) {
+				count($this->mPredefinedRights) == 0 &&
+				count($this->mPropertyRights) == 0) {
 				$msg[] = wfMsgForContent('hacl_right_must_have_rights');
 			}
 			// check for managers
 			if (count($this->mRightManagerGroups) == 0 &&
-			count($this->mRightManagerUsers) == 0) {
+				count($this->mRightManagerUsers) == 0) {
 				$msg[] = wfMsgForContent('hacl_right_must_have_managers');
 			}
 		}
@@ -1260,18 +1265,20 @@ class HACLParserFunctions {
 	 * @param bool $isAssignedTo
 	 * 		true  => parse the parameter "assignedTo"
 	 * 		false => parse the parameter "members"
-	 * @return array(users:array(string), groups:array(string), error messages:array(string))
+	 * @return array(users:array(string), groups:array(string), 
+	 *               error messages:array(string), warnings: array(string))
 	 */
 	private function assignedTo($params, $isAssignedTo = true) {
 		global $wgContLang, $haclgContLang;
 		$userNs = $wgContLang->getNsText(NS_USER);
 		$errMsgs = array();
+		$warnings = array();
 		$users = array();
 		$groups = array();
 
 		$assignedToPN = $isAssignedTo
-		? $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_ASSIGNED_TO)
-		: $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_MEMBERS);
+						? $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_ASSIGNED_TO)
+						: $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_MEMBERS);
 		if (!array_key_exists($assignedToPN, $params)) {
 			// The parameter "assigned to" is missing.
 			$errMsgs[] = wfMsgForContent('hacl_missing_parameter', $assignedToPN);
@@ -1286,16 +1293,17 @@ class HACLParserFunctions {
 		foreach ($assignedTo as $assignee) {
 			$assignee = trim($assignee);
 			if (strpos($assignee, $userNs) === 0 ||
-			$assignee == '*' || $assignee == '#') {
+				$assignee == '*' || $assignee == '#') {
 				// user found
 				if ($assignee != '*' && $assignee != '#') {
 					$user = substr($assignee, strlen($userNs)+1);
 					// Check if the user exists
 					if (User::idFromName($user) == 0) {
-						// User does not exist => add an error message
-						$errMsgs[] = wfMsgForContent("hacl_unknown_user", $user);
+						// User does not exist => add a warning
+						$warnings[] = wfMsgForContent("hacl_unknown_user", $user);
+					} else {
+						$users[] = $user;
 					}
-					$users[] = $user;
 				} else {
 					$users[] = $assignee;
 				}
@@ -1303,17 +1311,20 @@ class HACLParserFunctions {
 				// group found
 				// Check if the group exists
 				if (HACLGroup::idForGroup($assignee) == null) {
-					$errMsgs[] = wfMsgForContent("hacl_unknown_group", $assignee);
+					// Group does not exist => add a warning 
+					$warnings[] = wfMsgForContent("hacl_unknown_group", $assignee);
+				} else {
+					$groups[] = $assignee;
 				}
-				$groups[] = $assignee;
 			}
 		}
 		if (count($users) == 0 && count($groups) == 0) {
+			// No users/groups specified at all => add error message
 			$errMsgs[] = wfMsgForContent('hacl_missing_parameter_values', $assignedToPN);
 		}
 		haclfRestoreTitlePatch($etc);
 
-		return array($users, $groups, $errMsgs);
+		return array($users, $groups, $errMsgs, $warnings);
 	}
 
 	/**
@@ -1366,11 +1377,12 @@ class HACLParserFunctions {
 	 * 		that were passed to the parser function as returned by the method
 	 * 		getParameters().
 	 *
-	 * @return array(rights:array(string), error messages:array(string))
+	 * @return array(rights:array(string), error messages:array(string), warnings:array(string))
 	 */
 	private function rights($params) {
 		global $wgContLang, $haclgContLang;
 		$errMsgs = array();
+		$warnings = array();
 		$rights = array();
 
 		$rightsPN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_RIGHTS);
@@ -1388,14 +1400,18 @@ class HACLParserFunctions {
 			// Check if the right exists
 			if (HACLSecurityDescriptor::idForSD($rights[$i]) == 0) {
 				// The right does not exist
-				$errMsgs[] = wfMsgForContent('hacl_invalid_predefined_right', $rights[$i]);
+				$warnings[] = wfMsgForContent('hacl_invalid_predefined_right', $rights[$i]);
+				unset($rights[$i]);
 			}
 		}
 		if (count($rights) == 0) {
 			$errMsgs[] = wfMsgForContent('hacl_missing_parameter_values', $rightsPN);
+		} else {
+			// Create new indices in the array (in case invalid rights have been removed)
+			$rights = array_values($rights);
 		}
 
-		return array($rights, $errMsgs);
+		return array($rights, $errMsgs, $warnings);
 	}
 
 	/**
@@ -1517,6 +1533,27 @@ class HACLParserFunctions {
 			$text .= ":*".implode("\n:*", $messages);
 		}
 		return $text;
+	}
+	
+	/**
+	 * Formats the wikitext for displaying the warnings of a parser function.
+	 *
+	 * @param array(string) $messages
+	 * 		An array of warnings. May be empty.
+	 *
+	 * @return string
+	 * 		A formatted wikitext with all warnings.
+	 */
+	private function showWarnings($messages) {
+		$text = "";
+		if (!empty($messages)) {
+			$text .= "\n:;".wfMsgForContent('hacl_warning').
+			wfMsgForContent('hacl_will_not_work_as_expected').
+                "\n";
+			$text .= ":*".implode("\n:*", $messages);
+		}
+		return $text;
+		
 	}
 
 	/**

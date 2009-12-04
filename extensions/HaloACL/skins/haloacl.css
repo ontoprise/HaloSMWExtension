@@ -684,6 +684,7 @@ abbr,acronym { border:0;
     background:url(images/info.png) no-repeat 0 2px;
     float:left;
 }
+
 .haloacl_infobutton_groupdesc {
     width:20px;
     height:20px;
@@ -694,6 +695,13 @@ abbr,acronym { border:0;
     width:20px;
     height:20px;
     background:url(images/rd_icon.png) no-repeat;
+    float:left;
+}
+
+.haloacl_warningbutton {
+    width:20px;
+    height:20px;
+    background:url(images/warning.png) no-repeat 0 2px;
     float:left;
 }
 

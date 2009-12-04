@@ -612,6 +612,82 @@ class  HACLSecurityDescriptor  {
 	}
 	
 	/**
+	 * This method checks the integrity of this SD. The integrity can be violated
+	 * by missing groups, users or predefined rights.
+	 * 
+	 * return mixed bool / array
+	 * 	<true> if the SD is valid,
+	 *  array(string=>bool) otherwise
+	 * 		The array has the keys "groups", "users" and "rights" with boolean values.
+	 * 		If the value is <true>, at least one of the corresponding entities 
+	 * 		is missing.
+	 */
+	public function checkIntegrity() {
+		$missingGroups = false;
+		$missingUsers = false;
+		$missingPR = false;
+		$db = HACLStorage::getDatabase();
+		
+		//== Check integrity of group managers ==
+		 
+		// Check for missing groups
+		foreach ($this->mManageGroups as $gid) {
+			if (!$db->groupExists($gid)) {
+				$missingGroups = true;
+				break;
+			}
+		}
+		
+		// Check for missing users
+		foreach ($this->mManageUsers as $uid) {
+			if (User::whoIs($uid) === false) {
+				$missingUsers = true;
+				break;
+			}
+		}
+		
+		
+		//== Check integrity of inline rights ==
+		
+		$irIDs = $this->getInlineRights(false);
+		foreach ($irIDs as $irID) {
+			$ir = $db->getRightByID($irID);
+			$groupIDs = $ir->getGroups();
+			// Check for missing groups
+			foreach ($groupIDs as $gid) {
+				if (!$db->groupExists($gid)) {
+					$missingGroups = true;
+					break;
+				}
+			}
+			// Check for missing users
+			$userIDs = $ir->getUsers();
+			foreach ($userIDs as $uid) {
+				if (User::whoIs($uid) === false) {
+					$missingUsers = true;
+					break;
+				}
+			}
+		}
+		
+		// Check for missing predefined rights
+		$prIDs = $this->getPredefinedRights(false);
+		foreach ($prIDs as $prid) {
+			if (!$db->sdExists($prid)) {
+				$missingPR = true;
+				break;
+			}
+		}
+		
+		if (!$missingGroups && !$missingPR && !$missingUsers) {
+			return true;
+		}
+		return array('groups' => $missingGroups,
+		             'users'  => $missingUsers,
+					 'rights' => $missingPR);
+	}
+	
+	/**
 	 * Checks if the given user can modify this SD.
 	 *
 	 * @param User/string/int $user

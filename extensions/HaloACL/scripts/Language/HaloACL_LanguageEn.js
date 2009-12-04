@@ -53,10 +53,11 @@ var gHACLUserLanguageStrings = {
 
     'discardChanges' : "Discard changes",
     'discardChangesMessage': "All changes will be lost",
-    'createStdACLTooltip' : "Create standard ACL, Create ACL template and Create ACL default user template",
-    'namelessright': 'nameless right',
-    'selectDeselectUser':'Explicit select user',
-    'aclinfotooltip':'Click here to show more infos about this ACL'
+    'createStdACLTooltip'  : "Create standard ACL, Create ACL template and Create ACL default user template",
+    'namelessright'     : 'nameless right',
+    'selectDeselectUser': 'Explicit select user',
+    'aclinfotooltip'    : 'Click here to show more infos about this ACL',
+    'aclwarningtooltip' : 'This right is no longer valid. A contained group, user or template has been deleted.',
 
 
 }

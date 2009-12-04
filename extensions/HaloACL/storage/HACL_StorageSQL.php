@@ -999,7 +999,7 @@ class HACLStorageSQL {
 	 * @param int $SDID
 	 * 		ID of the requested SD.
 	 *
-	 * @return HACLGroup
+	 * @return HACLSecurityDescriptor
 	 * 		A new SD object or <null> if there is no such SD in the
 	 * 		database.
 	 *

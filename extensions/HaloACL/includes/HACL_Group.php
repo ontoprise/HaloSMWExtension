@@ -205,6 +205,66 @@ class  HACLGroup {
         return HACLStorage::getDatabase()->groupExists($groupID);
     }
 
+	/**
+	 * This method checks the integrity of this group. The integrity can be violated
+	 * by missing groups and users.
+	 * 
+	 * return mixed bool / array
+	 * 	<true> if the group is valid,
+	 *  array(string=>bool) otherwise
+	 * 		The array has the keys "groups", "users" with boolean values.
+	 * 		If the value is <true>, at least one of the corresponding entities 
+	 * 		is missing.
+	 */
+	public function checkIntegrity() {
+		$missingGroups = false;
+		$missingUsers = false;
+		$db = HACLStorage::getDatabase();
+		
+		//== Check integrity of group managers ==
+		 
+		// Check for missing managing groups
+		foreach ($this->mManageGroups as $gid) {
+			if (!$db->groupExists($gid)) {
+				$missingGroups = true;
+				break;
+			}
+		}
+		
+		// Check for missing managing users
+		foreach ($this->mManageUsers as $uid) {
+			if (User::whoIs($uid) === false) {
+				$missingUsers = true;
+				break;
+			}
+		}
+		
+		//== Check integrity of group's content  ==
+		$groupIDs = $this->getGroups(self::ID);
+		// Check for missing groups
+		foreach ($groupIDs as $gid) {
+			if (!$db->groupExists($gid)) {
+				$missingGroups = true;
+				break;
+			}
+		}
+		
+		// Check for missing users
+		$userIDs = $this->getUsers(self::ID);
+		foreach ($userIDs as $uid) {
+			if (User::whoIs($uid) === false) {
+				$missingUsers = true;
+				break;
+			}
+		}
+		
+		if (!$missingGroups && !$missingUsers) {
+			return true;
+		}
+		return array('groups' => $missingGroups,
+		             'users'  => $missingUsers);
+	}
+    
     /**
      * Checks if the given user can modify this group.
      *
