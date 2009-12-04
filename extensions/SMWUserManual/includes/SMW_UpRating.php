@@ -204,7 +204,7 @@ function uprfAddHtml2Page(&$out) {
 }
 
 function uprfCreateLinks(&$parser, &$text) {
-    $img = ' <img src="'.SMW_UP_RATING_PATH.'/skins/note_green.png" onclick="uprgPopup.cellRating(this, \'$1\')" />';
+    $img = ' <img src="'.SMW_UP_RATING_PATH.'/skins/note_green.png" style="cursor: pointer;" onclick="uprgPopup.cellRating(this, \'$1\')" />';
     $text = preg_replace('/UpRatingCell___(.*?)___lleCgnitaRpU/', $img, $text);
     $link = '<a href="#" onclick="uprgPopup.tableRating($1); return false">'.wfMsg('smw_upr_rate_table_link')."</a>";
     $text = preg_replace('/UpRatingTable___(\d+)___elbaTgnitaRpU/', $link, $text);
