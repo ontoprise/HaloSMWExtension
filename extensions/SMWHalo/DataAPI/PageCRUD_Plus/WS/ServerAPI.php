@@ -74,11 +74,6 @@ class PCPServerWS_API extends ApiBase {
 		}else{
 			$__md5_hash = NULL;
 		}
-		if (array_key_exists('fromTitle', $params)){
-			$__fromTitle = $params['fromTitle'];
-		}else{
-			$__fromTitle = NULL;
-		}
 		if (array_key_exists('toTitle', $params)){
 			$__toTitle = $params['toTitle'];
 		}else{
@@ -113,7 +108,7 @@ class PCPServerWS_API extends ApiBase {
 		}elseif ($__method == "deletePage") {
 			$data = $this->deletePage($__username, $__pwd, $__uid, $__loginToken, $__title);
 		}elseif ($__method == "movePage") {
-			$data = $this->movePage($__username, $__pwd, $__uid, $__loginToken, $__fromTitle, $__toTitle, $__moveTalk, $__noredirect);
+			$data = $this->movePage($__username, $__pwd, $__uid, $__loginToken, $__title, $__toTitle, $__moveTalk, $__noredirect);
 		}else {
 			$date = array();
 		}
@@ -140,10 +135,11 @@ class PCPServerWS_API extends ApiBase {
 			'summary' => null,
 			'bt' => null,
 			'md5_hash' => null,
-			'fromTitle' => null,
+			//'fromTitle' => null,
 			'toTitle' => null,
 			'moveTalk' => null,
 			'noredirect' => null,
+			'summary' => null,
 			'limit' => array (
 		ApiBase :: PARAM_TYPE => 'limit',
 		ApiBase :: PARAM_DFLT => 10,
@@ -167,10 +163,11 @@ class PCPServerWS_API extends ApiBase {
 			'summary' => 'The summary',
 			'bt' => 'The base timestamp',
 			'md5_hash' => 'The MD5 hash',
-			'fromTitle' => 'The "from" title when moving a page',
+			//'fromTitle' => 'The "from" title when moving a page',
 			'toTitle' => 'The "to" title when moving a page',
 			'moveTalk' => 'The movetalk when moving a page',
-			'noredirect' => 'The redirect when moving a page',		
+			'noredirect' => 'The redirect when moving a page',
+			'summary' => 'Summary text edit actions.',		
 
 		);
 	}

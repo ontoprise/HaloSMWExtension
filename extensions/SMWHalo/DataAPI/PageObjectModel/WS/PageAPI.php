@@ -114,11 +114,13 @@ class POMPageWS_API extends ApiBase {
 			$data = $this->getSimpleTexts($__username, $__pwd, $__uid, $__loginToken, $__editToken, $__title, $__revisionID);
 		}
 		else {
-			$date = array();
+			$data = array();
 		}
 		if (count($data)<=0) {
 			return;
 		}
+		
+		$data = $this->postProcessData($data);
 
 		// Set top-level elements
 		$result = $this->getResult();
@@ -134,8 +136,8 @@ class POMPageWS_API extends ApiBase {
 			'pwd' => null,
 			'uid' => null,
 			'lt' => null,
-			'et' => null,
-			'text' => null,
+			//'et' => null,
+			//'text' => null,
 			'rid' => null,
 			'ttitle' => null,
 			'limit' => array (
@@ -151,17 +153,18 @@ class POMPageWS_API extends ApiBase {
 	protected function getParamDescription() {
 		return array (
 			'title' => 'The page title',			
-			'method' => 'The method to be called. Supported methods: getElements|getTemplates|getTemplateByTitle|getProperties|getPropertyByName|getCategories|getCategoryByName|getSimpleTexts',
+			'method' => 'The method to be called. Supported methods: getElements|getTemplates|getTemplateByTitle|getSimpleTexts',
+			//'method' => 'The method to be called. Supported methods: getElements|getTemplates|getTemplateByTitle|getProperties|getPropertyByName|getCategories|getCategoryByName|getSimpleTexts',
 			'un' => 'The username',
 			'pwd' => 'The password',
 			'uid' => 'The user ID',
 			'lt' => 'The login token',
-			'et' => 'The edit token',
-			'text' => 'The text of the page if updating or creating',
+			//'et' => 'The edit token',
+			//'text' => 'The text of the page if updating or creating',
 			'rid' => 'The page revision ID',
 			'ttitle' => 'The template title',
-			'pname' => 'The property name',
-			'cname' => 'The category name',
+			//'pname' => 'The property name',
+			//'cname' => 'The category name',
 
 		);
 	}
@@ -318,7 +321,7 @@ class POMPageWS_API extends ApiBase {
 				while($__elementsIterator->hasNext()){
 					$__element = &$__elementsIterator->getNextNodeValueByReference();
 					$__array = $this->toArray($__element);
-					$__result["page"][get_class($__element)][$__cnt] = $__array;
+					$__result["page"][get_class($__element)][get_class($__element).$__cnt] = $__array;
 					$__cnt++;
 				}
 				return $__result;
@@ -330,6 +333,19 @@ class POMPageWS_API extends ApiBase {
 				$__result[$__key] = $this->toArray($__value);
 			}
 			return $__result;
+		}
+		return $data;
+	}
+	
+	private function postProcessData($data, $fatherKey = ""){
+		if(is_array($data)){
+			foreach($data as $key => $value){
+				if(is_int($key)){
+					unset($data[$key]);
+					$key = $fatherKey.$key;
+				}
+				$data[$key] = $this->postProcessData($value, $key);
+			}
 		}
 		return $data;
 	}

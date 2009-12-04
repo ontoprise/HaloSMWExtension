@@ -66,12 +66,12 @@ class SFDataAPI extends ApiBase {
 
 			if ($__serializedData != NULL){
 				$__data = $this->setSerializedForm($__serializedData, $__methodType, $__username, $__userId, $__loginToken);
-			}elseif ($__serializedJsonData != NULL){
+			}else if ($__serializedJsonData != NULL){
 				$__data = $this->setSerializedJsonForm($__serializedJsonData, $__methodType, $__username, $__userId, $__loginToken);
 			}
 		}
 
-		if (count($__data)<=0) {
+		if (count($__data)<=0 || !$__data) {
 			return;
 		}
 
@@ -326,6 +326,7 @@ class SFDataAPI extends ApiBase {
 		if(stristr($methodType,"u")){ // the requested method is update
 			if($__page->pageid != NULL && $__page->pageid != ""){ // the page exists
 				// create the POM object for the requested page
+				
 				$__pom = new POMPage(
 					$__pageTitle,
 					$__page->text,
@@ -339,28 +340,32 @@ class SFDataAPI extends ApiBase {
 					$__sf = $__xmlData['sfdata']['page'][$__sfName];
 					unset($__sf['@attributes']);
 					foreach($__sf as $template){
-					$__iterator = $__pom->getTemplateByTitle(
-						utf8_decode($template['@attributes']['tmpl_name']))->listIterator();
+						$t = $template['@attributes']['tmpl_name'];
+						$__iterator = $__pom->getTemplateByTitle(
+							utf8_decode($template['@attributes']['tmpl_name']))->listIterator();
 					
-					if (isset($__sf['@attributes']) && isset($__sf['@attributes']['mfi'])){
-						// todo: does this work any longer?
-						// multiple SF instances detected
-						// TODO: implement
-					}else{
-						$__template = &$__iterator->getNextNodeValueByReference(); # get reference for direct changes
+						if (isset($__sf['@attributes']) && isset($__sf['@attributes']['mfi'])){
+							// todo: does this work any longer?
+							// 	multiple SF instances detected
+							// TODO: implement
+						}else{
+							$__template = &$__iterator->getNextNodeValueByReference(); # get reference for direct changes
+							if(!$__template){
+								continue;
+							}
 						
-						// since @array will be read together with the SF field elements unset it
-						//unset($__sf['@attributes']);
-						unset($template['@attributes']);
-
-						foreach ($template as $__field){ // in the SF element are listed all SF fields
-							if($__template->getParameter(utf8_decode($__field['template_field']['@attributes']['field_name']))!== NULL){
-								$__paramValue = &$__template->getParameterValue(utf8_decode($__field["template_field"]['@attributes']['field_name']));
-								$__paramValue = new POMSimpleText(utf8_decode($__field['@attributes']['cur_value']));
+							// since @array will be read together with the SF field elements unset it
+							//unset($__sf['@attributes']);
+							unset($template['@attributes']);
+	
+							foreach ($template as $__field){ // in the SF element are listed all SF fields
+								if($__template->getParameter(utf8_decode($__field['template_field']['@attributes']['field_name']))!== NULL){
+									$__paramValue = &$__template->getParameterValue(utf8_decode($__field["template_field"]['@attributes']['field_name']));
+									$__paramValue = new POMSimpleText(utf8_decode($__field['@attributes']['cur_value']));
+								}
 							}
 						}
 					}
-				}
 				}
 				$__pom->sync();
 
@@ -946,7 +951,6 @@ class SFDataAPI extends ApiBase {
 					SMWQueryProcessor::createQuery("[[Has default form::$__tmpSF]]", array());
 				$__queryobj->querymode = SMWQuery::MODE_INSTANCES;
 				$__res = smwfGetStore()->getQueryResult($__queryobj);
-				file_put_contents("d:\zz-sf2.txt", print_r($__res, true));
 				$__resCount = $__res->getCount();
 
 				for($__i=0; $__i<$__resCount;$__i++){
@@ -991,7 +995,6 @@ class SFDataAPI extends ApiBase {
 
 			// now determine the pages using the found categories / properties
 
-			file_put_contents("d:\zz-sf.txt", print_r($__referencingAnnotations, true));
 			
 			foreach(array_keys($__referencingAnnotations) as $__sformName){
 				$__sfCategories = $__referencingAnnotations[$__sformName][NS_CATEGORY];

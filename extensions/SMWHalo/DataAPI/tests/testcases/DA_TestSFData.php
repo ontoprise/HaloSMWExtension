@@ -1,4 +1,6 @@
 <?php
+global $url, $userName, $pw;
+
 $url = "http://localhost/mediawiki/api.php";
 //$url = "http://dms:3d25dh5v@testwiki.ontoprise.com/testwiki/api.php";
 $userName = "WikiSysop";
@@ -8,6 +10,139 @@ $lt = pcpLogin($url, $userName, $pw);
 $uid = $lt[1];
 $lt = $lt[0];
 echo "\n".$lt."\n".$uid."\n";
+
+//todo: testwiki dump zu tests hinzufuegen
+
+$res = checkPCPLogin();
+//$res &= checkPCPDeleteAndRead();
+//$res &= checkPCPCreateAndRead();
+//$res &= checkPCPUpdate();
+//$res &= checkPCPMove();
+
+//$res &= checkPOMGetElements();
+//$res &= checkPOMGetTemplates(); 
+
+function checkPCPLogin(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	if(strlen($lt) > 0){
+		return true;
+	}
+	return false;
+}
+
+function checkPCPDeleteAndRead(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	//pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	$res = pcpReadArticle($url, "Template:Project");
+	if(strlen($res) == 0){
+		return true;
+	}
+	return false;
+}
+
+function checkPCPCreateAndRead(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	$res = pcpReadArticle($url, "Template:Project");
+	if(strpos($res, "{{Tablelongrow|Align=left|Value=") !== false){
+		return true;
+	}
+	return false;
+}
+
+function checkPCPMove(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	pcpDeleteArticle($url, "Template:Project2", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	pcpMoveArticle($url, "Template:Project", "Template:Project2", $userName, $pw, $lt, $uid);
+	$res = pcpReadArticle($url, "Template:Project2");
+	$res = strpos($res, "{{Tablelongrow|Align=left|Value=") !== false ? true : false;
+	
+	//cleanup
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	pcpDeleteArticle($url, "Template:Project2", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	
+	return $res;
+}
+
+function checkPCPUpdate(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	pcpUpdateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, "this is the update");
+	$res = pcpReadArticle($url, "Template:Project");
+	$res = strpos($res, "this is the update") !== false ? true : false;
+	
+	//cleanup
+	pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
+	
+	return $res;
+}
+
+function checkPOMGetElements(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	$res = pomGetElements($url, "Template:Project");
+	
+	if(strpos($res, "Teamwork section&#10;|rationale=This templa") !== false){
+		return true;
+	}
+	return false;
+}
+
+function checkPOMGetTemplates(){
+	global $url, $userName, $pw;
+	
+	$lt = pcpLogin($url, $userName, $pw);
+	$uid = $lt[1];
+	$lt = $lt[0];
+	
+	pcpDeleteArticle($url, "A_complex_project", $userName, $pw, $lt, $uid);
+	pcpCreateArticle($url, "A_complex_project", $userName, $pw, $lt, $uid, 
+		getAComplexProjectText("A complex project", "True"));
+	
+	$response = pomGetTemplates($url, "A_complex_project");
+	$res = strpos($response, '<title leading_space="" trimmed="Project"') !== false ? true : false;
+	
+	$response = pomGetTemplates($url, "A_complex_project", "RMList");
+	$res &= strpos($response, 'leading_space="" trimmed="RMList" trailing_space=') !== false ? true : false;
+	
+	return $res;
+}
 
 //pcpDeleteArticle($url, "Template:Project", $userName, $pw, $lt, $uid);
 //pcpCreateArticle($url, "Template:Project", $userName, $pw, $lt, $uid, getProjectTemplateText());
@@ -37,6 +172,7 @@ echo "\n".$lt."\n".$uid."\n";
 //pcpDeleteArticle($url, urlencode("A_complex_project"), $userName, $pw, $lt, $uid);
 //$xmldata = getAComplexProjectSFData("sf-created", "False");
 //sfCreateForm($url, $userName, $lt, $uid, $xmldata);
+
 //
 //pcpDeleteArticle($url, urlencode("A_complex_project2"), $userName, $pw, $lt, $uid);
 //pcpMoveArticle($url, "A_complex_project", "A_complex_project2", $userName, $pw, $lt, $uid);
@@ -51,12 +187,16 @@ echo "\n".$lt."\n".$uid."\n";
 //sfGetPageList($url, "Project");
 //sfGetPageList($url, "Project", "complex");
 
-sfGetCatTree($url, "root");
-sfGetCatTree($url, "root", "1");
-sfGetCatTree($url, "Content");
-sfGetCatTree($url, "Content", "2");
+//sfGetCatTree($url, "root");
+//sfGetCatTree($url, "root", "1");
+//sfGetCatTree($url, "Content");
+//sfGetCatTree($url, "Content", "2");
 
 //sfGetForm($url, urlencode("Project"), true);
+
+//pomGetElements($url, "A_complex_project");
+
+//sfUpdateForm($url, $userName, $lt, $uid, getSFWriteTestText());
 
 function pcpLogin($url, $userName, $pw){
 	$params = array('http' => array('method' => 'GET'));
@@ -72,6 +212,7 @@ function pcpLogin($url, $userName, $pw){
 	$uid = $uid[0];
 	return array($lt, $uid);
 }
+
 
 function sfGetFormsList($url, $title, $substr = ""){
 	if(strlen($substr) > 0){
@@ -115,22 +256,22 @@ function sfGetPageList($url, $title, $substr = ""){
 	echo("\n\n".$response);
 }
 
-function pcpReadArticle($url, $title, $userName, $pw, $lt, $uid){
-	$dataArray = array("action" => "wspcp");
-	$dataArray["method"] = "readPage";
-	$dataArray["title"] = $title;
-	$dataArray["un"] = $userName;
-	$dataArray["pwd"] = $pw;
-	$dataArray["lt"] = $lt;
-	$dataArray["uid"] = $uid;
-	$dataArray["format"] = "xml";
-	
-	$ctx = getPostContext($dataArray);
-	
+function pcpReadArticle($url, $title){
+	$params = array('http' => array('method' => 'GET'));
+	$ctx = stream_context_create($params);
 	$response = stream_get_contents(
-		fopen($url,'rb', true, $ctx));
-	echo("\n\n".$response);
+		fopen($url."?action=wspcp&method=readPage&format=xml&title=".$title,
+		'rb', true, $ctx));
+	
+		echo("\n\n".$response);
+	
+	$response = new SimpleXMLElement($response);
+	$res = $response->xpath("//readPage/@text");
+	$res = $res[0];
+	
+	return $res;
 }
+
 
 function pcpDeleteArticle($url, $title, $userName, $pw, $lt, $uid){
 	$dataArray = array("action" => "wspcp");
@@ -208,6 +349,34 @@ function pcpCreateArticle($url, $title, $userName, $pw, $lt, $uid, $text){
 	echo("\n\n".$response);
 }
 
+function pomGetTemplates($url, $title, $name = ""){
+	$params = array('http' => array('method' => 'GET'));
+	$ctx = stream_context_create($params);
+	
+	$method = "getTemplates";
+	if(strlen($name) > 0){
+		$name = "&ttitle=".$name;
+		$method = "getTemplateByTitle";
+	}
+	
+	$response = stream_get_contents(
+		fopen($url."?action=wspom&format=xml&method=".$method."&title=".$title.$name,'rb', true, $ctx));
+	echo("\n\n".$response);
+
+	return $response;
+}
+
+function pomGetElements($url, $title){
+	$params = array('http' => array('method' => 'GET'));
+	$ctx = stream_context_create($params);
+	
+	$response = stream_get_contents(
+		fopen($url."?action=wspom&format=xml&method=getElements&title=".$title,'rb', true, $ctx));
+	echo("\n\n".$response);
+
+	return $response;
+}
+
 function sfGetForm($url, $title, $direct = false){
 	$params = array('http' => array('method' => 'GET'));
 	$ctx = stream_context_create($params);
@@ -219,7 +388,6 @@ function sfGetForm($url, $title, $direct = false){
 	$response = stream_get_contents(
 		fopen($url."?action=sfdata&format=xml&".$direct."=".$title,'rb', true, $ctx));
 	echo("\n\n".$response);
-	//file_put_contents("d:\zz-zz.txt", $response);
 }
 
 function sfUpdateForm($url, $userName, $lt, $uid, $xmldata){
@@ -665,6 +833,117 @@ function getAComplexProjectSFData($title, $show){
 					</field1>
 				</template2>
 			</Project>
+		</page>
+	</sfdata>
+</api>';
+}
+
+function getSFWriteTestText(){
+	return '<?xml version="1.0" encoding="utf-8"?>
+<api>
+	<sfdata>
+		<page title="A_complex_project" ns="0">
+			<Project>
+				<template0 tmpl_name="Project">
+					<field1 num="" input_type="text" is_mandatory="1" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="'.$title.'">
+						<template_field field_name="Title" label="Title"
+							semantic_property="Title" field_type="String" is_list=""
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field1>
+					<field2 num="" input_type="" is_mandatory="" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="This project is complex project, involving a bunch of people and a lot of milestones and tasks.">
+						<template_field field_name="Description" label="Description"
+							semantic_property="Description" field_type="Text" is_list=""
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field2>
+					<field3 num="" input_type="date" is_mandatory="" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="2008/06/10">
+						<template_field field_name="Start date" label="Start date"
+							semantic_property="start date" field_type="Date" is_list=""
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field3>
+					<field4 num="" input_type="date" is_mandatory="" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="2009/07/10">
+						<template_field field_name="End date" label="End date"
+							semantic_property="end date" field_type="Date" is_list=""
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field4>
+					<field5 num="" input_type="" is_mandatory="" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="http://complex-project.eu">
+						<template_field field_name="Homepage" label="Homepage"
+							semantic_property="homepage" field_type="URL" is_list=""
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field5>
+					<field6 num="" input_type="" is_mandatory="" is_hidden=""
+						is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list=""
+						cur_value="Green">
+						<template_field field_name="Status" label="Status"
+							semantic_property="Status" field_type="enumeration" is_list=""
+							input_type="">
+							<possible_values value0="Green" value1="Yellow"
+								value2="Red" />
+						</template_field>
+						<possible_values />
+					</field6>
+					<field7 num="" input_type="haloACtextarea" is_mandatory=""
+						is_hidden="" is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list="1"
+						cur_value="Fred, Dian, Daniel, Joe Mystery, Regina">
+						<template_field field_name="Members" label="Members"
+							semantic_property="Project member" field_type="Page" is_list="1"
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field7>
+					<field8 num="" input_type="haloACtext" is_mandatory=""
+						is_hidden="" is_restricted="" is_uploadable="" field_args=""
+						autocomplete_source="" autocomplete_field_type="" no_autocomplete=""
+						part_of_multiple="" input_name="" is_disabled="" is_list="1"
+						cur_value="Accenture, Evri">
+						<template_field field_name="Sponsors" label="Sponsors"
+							semantic_property="Sponsored by" field_type="Page" is_list="1"
+							input_type="">
+							<possible_values />
+						</template_field>
+						<possible_values />
+					</field8>
+				</template0>
+			</Project>	
 		</page>
 	</sfdata>
 </api>';
