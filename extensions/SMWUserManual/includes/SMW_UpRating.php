@@ -64,10 +64,7 @@ if (!defined("SMW_VERSION")) {
 }
 
 // webserver path to extension
-$dir = str_replace('\\', '/', dirname(__FILE__));
-if (strrpos($dir, '/') !== false)
-    $dir = substr($dir, 0, strrpos($dir, '/'));
-define('SMW_UP_RATING_PATH', substr($dir, strpos($dir, $wgScriptPath)));
+define('SMW_UP_RATING_PATH', $wgScriptPath.'/extensions/SMWUserManual');
 
 // namespace name for user rating articles
 define('SMW_UP_RATING_NSNAME', 'Rating');
