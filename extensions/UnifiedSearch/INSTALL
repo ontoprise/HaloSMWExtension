@@ -29,11 +29,11 @@ The following is optional:
 
 If you like to use query expansion based on synonym sets from WordNet/OpenThesaurus, also add:
 ---
+require_once("extensions/UnifiedSearch/synsets/SMW_Synsets.php");
 $usgSynsetExpansion = true;
 ---
 
 If you like to use the path search for a graphical representation of the search results, also add:
-
 $wgUSPathSearch = true;
 
 This line must be inserted before the line with the require_once command. 
