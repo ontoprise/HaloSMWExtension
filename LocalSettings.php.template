@@ -238,11 +238,16 @@ enableDataImportExtension(/*param-start-enableDataImportExtension*//*param-end-e
 $wgAllowExternalImages=/*start-variable-wgAllowExternalImages*/true;/*end-variable-wgAllowExternalImages*/
 
 #IAI
-include_once('extensions/DataImport/IAI/includes/IAI_Initialize.php');
-enableIAI(/*param-start-enableIAI*//*param-end-enableIAI*/);
+# Uncomment this if you want to import external wikis 
+# with the TermImport framework.
+#include_once('extensions/DataImport/IAI/includes/IAI_Initialize.php');
+#enableIAI(/*param-start-enableIAI*//*param-end-enableIAI*/);
 /*end-dataimport*/
 
 include("extensions/DynamicPageList/DynamicPageList.php");
+
+# SemanticFormsInputs
+require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
 
 #MIME-Type
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
