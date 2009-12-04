@@ -98,11 +98,7 @@ define('SMW_UME_PROPERTY_DISCOURSE_STATE', 'UME discourse state');
 // Property for link to real help article
 define('SMW_UME_PROPERTY_LINK', 'UME link');
 // webserver path to extension
-global $wgScriptPath;
-$dir = str_replace('\\', '/', dirname(__FILE__));
-if (strrpos($dir, '/') !== false)
-    $dir = substr($dir, 0, strrpos($dir, '/'));
-define('SMW_UME_PATH', substr($dir, strpos($dir, $wgScriptPath)));
+define('SMW_UME_PATH', $wgScriptPath.'/extensions/SMWUserManual');
 
 // require additional files beloning to this extension
 require_once(dirname(__FILE__).'/SMW_AjaxAccess.php');
@@ -217,8 +213,9 @@ function umefAddHtml2Page(&$out) {
             <script type="text/javascript">/*<![CDATA[*/
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
             /*]]>*/</script>
-            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/mwapi.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
     ');
 
     if ($umegSendFeedbackToSMWplus) {
@@ -292,14 +289,17 @@ function umefGetHelpArticlePageCount() {
 }
 
 function umefDivBox() {
-    global $umegPopupWidth, $umegPopupHeight;
+    global $umegPopupWidth, $umegPopupHeight, $umegSendFeedbackToSMWplus;
     $closeImage = SMW_UME_PATH.'/skins/close.gif';
     $loadImage= SMW_UME_PATH.'/skins/load.gif';
     return '<div id="smw_csh_rendered_boxcontent" style="display:none;">
             <table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">
             <tr>
-            <td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabActive" onclick="smwCsh.switchTab(this);">'.wfMsg('smw_ume_tab_help').'</td>
-            <td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabInactive" onclick="smwCsh.switchTab(this);">'.wfMsg('smw_ume_tab_feedback').'</td>
+            <td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabActive"'.(($umegSendFeedbackToSMWplus) ?' onclick="smwCsh.switchTab(this);"' : '').'>'.wfMsg('smw_ume_tab_help').'</td>
+            '.(($umegSendFeedbackToSMWplus)
+                ? '<td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabInactive" onclick="smwCsh.switchTab(this);">'.wfMsg('smw_ume_tab_feedback').'</td>'
+                : ''
+            ).'
             <td class="cshTabSpacer" width="100%"></td>
             </tr>
             <tr><td colspan="5" style="width:100%; height:100%" class="cshTabCont">
