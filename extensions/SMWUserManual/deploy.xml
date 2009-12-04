@@ -28,17 +28,7 @@
             <function name="enableSMWUserManual">
             </function>
             <script file="extensions/SMWUserManual/maintenance/SMW_setup.php" />
-            <!-- the following section is for Ultrapedia rating -->
-            <require name="upratingdata"
-                file="extensions/SMWUserManual/includes/SMW_UpRating.php" />
-            <variable name="uprgWikipediaAPI">
-                <string name="uprgWikipediaAPI" userValueRequired="true" description="API Url for Wikipedia"></string>
-            </variable>
-            <variable name="uprgUltrapediaAPI">
-                <string name="uprgUltrapediaAPI" userValueRequired="true" description="API Url for Ultrapedia"></string>
-            </variable>
-            <function name="enableUpRating">
-            </function>
+      
         </new>
         <uninstall>
         </uninstall>
