@@ -247,9 +247,12 @@ class  HACLQueryRewriter  {
 			$this->pruneProtectedPropertiesFromSparql($q);
 			
 			$qs = $this->serializeSparqlQuery($q);
-			if ($qs == 'SELECT WHERE') {
+			if ($qs == 'SELECT WHERE' ||
+				strpos($qs, "WHERE") == strlen($qs) - 5) {
 				// No triples remained after pruning
 				$query->addErrors(array(wfMsgForContent('hacl_sp_empty_query')));
+				$query->setQueryString("");
+				return;
 			}
 			
 			// replace IRIs in prefixes
