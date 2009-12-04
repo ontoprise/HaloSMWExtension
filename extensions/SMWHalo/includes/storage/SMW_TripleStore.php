@@ -367,10 +367,13 @@ class SMWTripleStore extends SMWStore {
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
-			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('RewriteSparqlQuery', array(&$query) );
-			/*op-patch|TS|2009-06-19|end*/
 
+			if ($query->getQueryString() == "") {
+				$sqr = new SMWHaloQueryResult(array(), $query, false);
+				$sqr->addErrors(array(wfMsgForContent('hacl_sp_empty_query')));
+				return $sqr;
+			}
 			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 			if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
 			$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
@@ -405,9 +408,7 @@ class SMWTripleStore extends SMWStore {
 				return $sqr;
 			}
 
-			/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
 			wfRunHooks('FilterQueryResults', array(&$queryResult) );
-			/*op-patch|TS|2009-06-19|end*/
 
 			switch ($query->querymode) {
 
