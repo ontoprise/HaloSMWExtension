@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>146</version>
-		<patchlevel>4</patchlevel>
+		<patchlevel>5</patchlevel>
 		<id>SMWHalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
