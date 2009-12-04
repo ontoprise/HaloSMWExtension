@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <version>100</version>
+        <patchlevel>1</patchlevel>
         <id>smwusermanual</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SMWUserManual</instdir>
