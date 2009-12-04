@@ -59,7 +59,9 @@ function wfUSAddHeader(& $out) {
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
                     
                      // add SimplePopup
-                    $dir= str_replace("\\","/", substr(dirname(__FILE__), strpos(dirname(__FILE__), $wgScriptPath)));
+                    $dir = str_replace("\\","/", dirname(__FILE__));
+                    $dir= substr($dir, strpos($dir, $wgScriptPath));
+                    $dir= substr($dir, 0, strrpos($dir, '/'));
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
@@ -68,7 +70,7 @@ function wfUSAddHeader(& $out) {
                     ));
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/SimplePopup/SimplePopup.js"></script>');
                     $out->addScript('<script type="text/javascript">/*<![CDATA[*/
-                        var SIMPLE_POPUP_DIR = "'.$dir.'/../scripts/SimplePopup/";
+                        var SIMPLE_POPUP_DIR = "'.$dir.'/scripts/SimplePopup/";
                     /*]]>*/</script>');
                     
                     // add GreyBox
