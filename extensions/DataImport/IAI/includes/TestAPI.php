@@ -107,5 +107,3 @@ $param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$text&toke
 //$param = "action=edit&title=Talk:Main_Page&section=new&summary=Hello%20World&text=$text& watch&token=$et";
 $editArticle = $cc->post("http://localhost/develwiki/api.php", $param);
 echo $editArticle;
-
-?>
