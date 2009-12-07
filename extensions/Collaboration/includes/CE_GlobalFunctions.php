@@ -117,7 +117,7 @@ function cefSetupExtension() {
 
 
 	### Register autocompletion icon ###
-	# $wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
+	$wgHooks['smwhACNamespaceMappings'][] = 'cefRegisterACIcon';
 	wfProfileOut('cefSetupExtension');
 
 	return true;
@@ -142,13 +142,13 @@ function cefAddNonSpecialPageHeader(&$out) {
 	//TODO:script.acoul.us
 
 	$out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $cegScriptPath. '/skins/Comment/CE_Comment.css'
-        ));
+		'rel'   => 'stylesheet',
+		'type'  => 'text/css',
+		'media' => 'screen, projection',
+		'href'  => $cegScriptPath. '/skins/Comment/CE_Comment.css'
+	));
 
-       return true;
+return true;
 }
 
 /**
@@ -180,8 +180,8 @@ function cefInitNamespaces() {
 	}
 
 	define('CE_COMMENT_NS', $cegCommentNamespaceIndex);
-	define('CE_COMMENT_NS_TALK', $cegCommentNamespaceIndex + 1);
-
+	define('CE_COMMENT_NS_TALK', $cegCommentNamespaceIndex+1);
+	
 	cefInitContentLanguage($wgLanguageCode);
 
 	// Register namespace identifiers
@@ -321,12 +321,8 @@ function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages 
 	return true;
 }
 
-function cefRegisterACIcon(& $namespaceMappings) {
-	global $cegIP;
-	$namespaceMappings[CE_COMMENT_NS] = $cegIP . '/skins/images/CE_Comment_AutoCompletion.gif';
+function cefRegisterACIcon( &$namespaceMappings) {
+	global $cegScriptPath;
+	$namespaceMappings[CE_COMMENT_NS] = $cegScriptPath . '/skins/Comment/icons/smw_plus_comment_icon_16x16.gif';
 	return true;
 }
-
-
-#$wgHooks['ParserBeforeStrip'][] = 'ArticleComment::addCommentTag';
-#-> into DislpayParserFunction

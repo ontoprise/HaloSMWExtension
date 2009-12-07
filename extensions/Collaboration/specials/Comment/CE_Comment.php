@@ -1,10 +1,32 @@
 <?php
-/*
- * Created on 11.11.2009
+/*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the Collaboration-Extension.
  *
- * To change the template for this generated file go to
- * Window - Preferences - PHPeclipse - PHP - Code Templates
+ *   The Collaboration-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The Collaboration-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * This file contains the implementation of comment creation for Collaboration.
+ *
+ * @author Benjamin Langguth
+ * Date: 07.12.2009
+ *
+ */
+
+if ( !defined( 'MEDIAWIKI' ) ) {
+	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
+}
 
 
 class CEComment {
@@ -16,27 +38,40 @@ class CEComment {
 	
 	
 	public static function createLocalComment($pageName, $pageContent) {
-		global $wgUser;
+		global $wgUser, $cegEnableComment, $cegEnableCommentFor;
 		
 		$title = Title::newFromText($pageName);
 		$titleNSfixed = Title::makeTitle(CE_COMMENT_NS, $title);
 		
 		$article = new Article($titleNSfixed);
 		
-		if ($article->exists())
-			return CECommentUtils::createXMLResponse(wfMsg('ce_comment_exists', $pageName), self::COMMENT_ALREADY_EXISTS);
+		# check if comments are enabled #
+		if ( !isset($cegEnableComment) || !$cegEnableComment )
+			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR);
 		
-		if(!$title->userCan('edit'))
-			return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
-		else {
-			$summary = wfMsg('ce_com_edit_sum');
-			//$pageContent = str_replace('|}}','|CommentDateTime='+ '' +'}}', $pageContent);
-			$article->doEdit($pageContent, $summary );
-				
-			if($article->exists())
-				return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS);
-			else
+		# check authorization #
+		if ( !isset($cegEnableCommentFor)
+			|| ($cegEnableCommentFor == CE_COMMENT_NOBODY )
+			|| ( ($cegEnableCommentFor == CE_COMMENT_AUTH_ONLY) && !($wgUser->isAnon()) ) )
+		{
+			return CECommentUtils::createXMLResponse(wfMsg('ce_cf_disabled'), self::PERMISSION_ERROR);
+		} else {
+			//user is allowed
+			if ($article->exists()) {
+				return CECommentUtils::createXMLResponse(wfMsg('ce_comment_exists', $pageName), self::COMMENT_ALREADY_EXISTS);
+			}
+			if(!$title->userCan('edit')) {
 				return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
+			} else {
+				$summary = wfMsg('ce_com_edit_sum');
+				$article->doEdit( $pageContent, $summary );
+
+				if($article->exists()) {
+					return CECommentUtils::createXMLResponse(wfMsg('ce_com_created'/*, $pageName*/), self::SUCCESS);
+				} else {
+					return CECommentUtils::createXMLResponse(wfMsg('ce_com_cannot_create'), self::PERMISSION_ERROR);
+				}
+			}
 		}
 	}
 	
@@ -46,30 +81,7 @@ class CEComment {
 
 		return CECommentUtils::createXMLResponse('everything ok', '1');
 	}
-	
 
-	
-
-	//TODO: think about return types!
-	
-	/**
-	 * Update a list of comment articles
-	 * 
-	 * @param $oldName
-	 * @param $newName
-	 * @return boolean
-	 * 		false: one or more comment articles could not updated
-	 * 		true: everythiny is fine
-	 */
-	function updateRelatedCommentArticles($relCommentArticleList, $oldName, $newName) {
-		
-		//get a list with all related comments
-		
-		//change value of property "is related to"
-		
-		return true;
-	}
-	
 	/**
 	 * Delete a list of comment articles
 	 * 
