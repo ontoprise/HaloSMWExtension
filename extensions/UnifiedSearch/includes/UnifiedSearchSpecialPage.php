@@ -332,10 +332,11 @@ class USSpecialPage extends SpecialPage {
          * @param &string $newLink
          */
         private function createNewPageLink( $newpage, &$newLink) {
+        	  
                 $createNewPage = Title::newFromText('Create_new_page');
                 if ($createNewPage->exists()) {
-                    $newLink = str_replace('index.php?title='.$newpage->getPrefixedText()."&amp;action=edit",
-                                           'index.php/Create_new_page?target='.$newpage->getPrefixedText(),
+                    $newLink = str_replace('index.php?title='.urlencode($newpage->getPrefixedDBkey())."&amp;action=edit",
+                                           'index.php/Create_new_page?target='.urlencode($newpage->getPrefixedDBkey()),
                                            $newLink);
                 }
         }
