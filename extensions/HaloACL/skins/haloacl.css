@@ -701,7 +701,7 @@ abbr,acronym { border:0;
 .haloacl_warningbutton {
     width:20px;
     height:20px;
-    background:url(images/warning.png) no-repeat 0 2px;
+    background:url(images/warning.png) no-repeat 0 1px;
     float:left;
 }
 
