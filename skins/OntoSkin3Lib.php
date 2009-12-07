@@ -54,6 +54,11 @@ class SMWH_Skin {
      */
     public function buildMenuHtml() {
         $rawmenu = $this->getMenuItems();
+
+        if(count($rawmenu) <= 0){
+           return "<p>no menu defined, see smwforum.ontoprise.com for details<p>";
+        }
+
         $index = 0;
         $menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
         foreach($rawmenu as $menuName => $menuItems) {

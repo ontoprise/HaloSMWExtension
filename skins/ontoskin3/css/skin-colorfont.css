@@ -144,6 +144,10 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     color: #000;
 }
 
+#smwh_tabs {
+    font-size: small;
+}
+
 #tabsright .righttabelements {
     border-color: #cacac4;
 }
