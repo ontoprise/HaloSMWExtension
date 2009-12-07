@@ -35,5 +35,3 @@ if ($delete) {
 	WSStorage::getDatabase()->initDatabaseTables();
 	SMWMaterializationStorageAccess::getDatabase()->setup(true);
 }
-
-?>

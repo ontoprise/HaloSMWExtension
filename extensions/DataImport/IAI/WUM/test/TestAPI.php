@@ -110,5 +110,3 @@ $param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$wikipedia
 $editArticle = $cc->post($url."api.php", $param);
 
 echo $editArticle;
-
-?>

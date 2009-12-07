@@ -73,4 +73,3 @@ class HACLQuickacl {
         return HACLStorage::getDatabase()->deleteQuickaclForSD($sdid);
     }
 }
-?>
