@@ -83,7 +83,7 @@ function Smwh_Skin() {
             
             //get width from the left side to the page
             
-            var contentoffset = $jq("#shadows").offset().left - 5;
+            var contentoffset = $jq("#shadows").offset().left - 20;
 
             //if the calculated width is too small don't show tree
             if( contentoffset < 200) return;

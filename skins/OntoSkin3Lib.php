@@ -56,7 +56,7 @@ class SMWH_Skin {
         $rawmenu = $this->getMenuItems();
 
         if(count($rawmenu) <= 0){
-           return "<p>no menu defined, see smwforum.ontoprise.com for details<p>";
+           return "<p style=\"margin-left: 30px;\">no menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
         }
 
         $index = 0;
@@ -227,10 +227,15 @@ class SMWH_Skin {
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration</p></div>";
         $content = wfMsgForContent( 'haloadministration' );
-        if($content!=null){
+        if($content!=null && $content!="&lt;haloadministration&gt;"){
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
             $menu.= "<div class=\"smwh_menubody_visible\">";
             $menu.=  $this->parseWikiText($content);
+            $menu.= "</div></div>";
+        } else {
+            $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
+            $menu.= "<div class=\"smwh_menubody_visible\">";
+            $menu.= "<p>no administration menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
             $menu.= "</div></div>";
         }
         $menu.= "</li>";
@@ -386,10 +391,12 @@ class SMWH_Skin {
         $ql = "<!-- HaloQuickLinks -->";
         $ql.= "<div id=\"smwh_quicklinks\">";
         $content = wfMsgForContent( 'haloquicklinks' );
-        if($content!=null){
+        if($content!=null && $content!="&lt;haloquicklinks&gt;"){
 
             $ql.=  $this->parseWikiText($content);
 
+        } else {
+            $ql.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
         }
         $ql.="</div>";
         return $ql;
@@ -440,11 +447,13 @@ class SMWH_Skin {
         if($tree!=null && $tree!=""){
 
             $treeview =  '<div id="smwh_treeviewtoggleleft">';
-            $treeview .= '<img id="smwh_treeviewtoggleleftimg" src="'.$wgStylePath.$this->imagepath.'/arrow_left.gif" alt="tools"/>';
+            //TODO: replace with proper language support
+            $treeview .= '<img title="show treeview on the left" id="smwh_treeviewtoggleleftimg" src="'.$wgStylePath.$this->imagepath.'/tree_left.png" alt="tools"/>';
+            $treeview .= '<img id="smwh_treeviewtogglecenterimg" src="'.$wgStylePath.$this->imagepath.'/tree_center.png" alt="tools"/>';
             $treeview .= '</div>';
 
             $treeview .=  '<div id="smwh_treeviewtoggleright">';
-            $treeview .= '<img id="smwh_treeviewtogglerightimg" src="'.$wgStylePath.$this->imagepath.'/arrow_right.gif" alt="tools"/>';
+            $treeview .= '<img title="show treeview on the right" id="smwh_treeviewtogglerightimg" src="'.$wgStylePath.$this->imagepath.'/tree_right.png" alt="tools"/>';
             $treeview .= '</div>';
             
             //$treeview .= '<div id="smwh_treeview_shell">';
