@@ -32,6 +32,7 @@ CECommentForm.prototype = {
 		// save the current comment for beaing able to repost on failure
 		this.textareaIsDefault = true;
 		this.usernameIsDefault = true;
+		this.ratingValue = null;
 		this.internalCall = null;
 		this.runCount = 0;
 		this.XMLResult = null;
@@ -64,33 +65,30 @@ CECommentForm.prototype = {
 		}
 		this.pendingIndicatorCF.show();
 
-		//form params
+		/* form params */
+		//date
 		var now = new Date();
 		Element.extend(now);
 		var nowJSON = now.toJSON();
 		
-		var pageName = wgPageName + "_" + now.getTime();
+		var pageName = wgPageName + '_' + now.getTime();
 		
-		//rating things
-		var ratingValue = '';
-		var ratingGrp = document['forms']['ce-cf']['rating'];
-		for( i = 0; i < ratingGrp.length; i++){
-			if (ratingGrp[i].checked == true) {
-				ratingValue = ratingGrp[i].value;
-			}
+		//rating
+		var ratingString = '';
+
+		if ( this.ratingValue != null) {
+			ratingString = '|CommentRating=' + this.ratingValue;
 		}
 		
 		//textarea
-
 		var textArea = ($('ce-cf-textarea').value)? $('ce-cf-textarea').value: '';
 		//remove leading and trailing whitespaces
 		textArea = textArea.strip();
 		if(textArea.blank() || this.textareaIsDefault) {
 			this.pendingIndicatorCF.hide();
-			$('ce-cf-message').setAttribute("class", "ce-cf-success-message");
+			$('ce-cf-message').setAttribute('class', 'ce-cf-failure-message');
 			$('ce-cf-message').innerHTML = 'You didn\'t enter a valid comment.';
-			//reset and enable form again
-			//$('ce-cf').reset();
+			//enable form again
 			$('ce-cf').enable();
 			return false;
 		}
@@ -100,12 +98,16 @@ CECommentForm.prototype = {
 		textArea = textArea.escapeHTML();
 
 		//TODO: wgUserName is null, when not logged in!
-		
-		var pageContent = "{{Comment|CommentPerson=" + wgUserName+ 
-			"|CommentRelatedArticle=" + wgPageName +
-			"|CommentRating=" + ratingValue +
-			"|CommentDatetime=" + nowJSON.substring(1, nowJSON.length-2) +
-			"|CommentContent=" + textArea + "|}}";
+		var userNameString = '';
+		if( wgUserName != null && ceUserNS != null )
+			userNameString = 'CommentPerson=' + ceUserNS + ':' + wgUserName;
+
+		var pageContent = '{{Comment|' +
+			userNameString +
+			'|CommentRelatedArticle=' + wgPageName +
+			ratingString  +
+			'|CommentDatetime=' + nowJSON.substring(1, nowJSON.length-2) +
+			'|CommentContent=' + textArea + '|}}';
 
 		this.currentPageName = escape(pageName);
 		this.currentPageContent = escape(pageContent);
@@ -129,7 +131,8 @@ CECommentForm.prototype = {
 	 * @param domain
 	 * @return from callback
 	 */
-	createNewPage: function(wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain) {
+	createNewPage: function(wikiurl, wikipath, pageName, pageContent,
+			userName, userPassword, domain) {
 
 		if(this.internalCall) {
 			sajax_do_call('cef_comment_createNewPage', 
@@ -140,6 +143,7 @@ CECommentForm.prototype = {
 				[wikiurl, wikipath, pageName, pageContent, userName, userPassword, domain],
 				this.createNewPageCallback.bind(this));
 		}
+		this.runCount++;
 	},
 	
 	/**
@@ -160,41 +164,45 @@ CECommentForm.prototype = {
 		var resultDOM = this.XMLResult = GeneralXMLTools.createDocumentFromString(request.responseText);	
 		//alert(resultDOM);
 		
-		var valueEl = resultDOM.getElementsByTagName("value")[0];
+		var valueEl = resultDOM.getElementsByTagName('value')[0];
 		
-		var htmlmsg = resultDOM.getElementsByTagName("message")[0].firstChild.nodeValue;
+		var htmlmsg = resultDOM.getElementsByTagName('message')[0].firstChild.nodeValue;
 		
 		if(valueEl.nodeType == 1) {
 			var valueCode = valueEl.firstChild.nodeValue
 			if(valueCode == 0){
 				//fine.
 				this.pendingIndicatorCF.hide();
-				$('ce-cf-message').setAttribute("class", "ce-cf-success-message");
-				$('ce-cf-message').innerHTML = htmlmsg;
-				//reset and enable form again
+				$('ce-cf-message').setAttribute('class', 'ce-cf-success-message');
+				$('ce-cf-message').innerHTML = htmlmsg + 'Page is reloading...';
+				var pending = new OBPendingIndicator($('ce-cf-message'));
+				pending.show();
+				$('ce-cf-message').show();
+				//reset and hide form again
 				$('ce-cf').reset();
-				$('ce-cf').enable();
-			}else if(valueCode == 1) {
-				//error!
-				//following doesn't work. He's running and running and running...:
-				if(this.runCount <=1) {
-					//run once again with new time
-					var now = new Date();
-					var newPageName = wgPageName + "_" + now.getTime();
-					this.currentPageName = newPageName;
-
-					this.createNewPage(this.currentWikiurl, this.currentWikiPath,
-						this.currentPageName, this.currentPageContent, this.currentUserName,
-						this.currentUserPassword, this.currentDomain);					
-				}else{
-					//second run and failure again. so show message
-					this.pendingIndicatorCF.hide();
-					$('ce-cf-message').setAttribute("class", "ce-cf-failure-message");
-					$('ce-cf-message').innerHTML = htmlmsg;
-					//reset and enable form again
-					$('ce-cf').reset();
-					$('ce-cf').enable();
+				$('ce-cf').hide();
+				//maybe better to do a page reload with action=purge!?!
+				var winSearch = window.location.search; 
+				if ( winSearch.indexOf('action=purge') ) {
+					window.location.href=window.location.href;
+				} else {
+					if ( winSearch.indexOf('?') ) {
+						window.location.href = window.location.href.concat('&action=purge');
+					} else {
+						window.location.href = window.location.href.concat('?action=purge');
+					}
 				}
+			} else if( valueCode == 1 || valueCode == 2 ) {
+				//error, article already exists or permisson denied.
+				this.pendingIndicatorCF.hide();
+				$('ce-cf-message').setAttribute('class', 'ce-cf-failure-message');
+				$('ce-cf-message').innerHTML = htmlmsg;
+				$('ce-cf-message').show();
+				//reset and enable form again
+				//$('ce-cf').reset();
+				$('ce-cf').enable();
+			} else {
+				//sthg's really gone wrong
 			}
 		}
 
@@ -241,6 +249,34 @@ CECommentForm.prototype = {
 	usernameInputKeyPressed:function() {
 		this.usernameIsDefault = false;
 	},
+	
+	/**
+	 * switch for rating
+	 */
+	switchRating: function( htmlid, ratingValue ) {
+		
+		var ratingHTML = $(htmlid);
+		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
+		
+		if ( this.ratingValue == ratingValue )
+			return true;
+		
+		if ( this.ratingValue != null ) {
+			// sthg has been selected before. reset icon.
+			// ce-cf-ratingX with X = ratingValue +2;
+			var oldhtmlid = 'ce-cf-rating' + String(this.ratingValue + 2);
+			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
+		}
+		switch (ratingValue) {
+			case -1 : ratingHTML.src = ratingImg + 'bad_active.png';
+				break;
+			case 0 : ratingHTML.src = ratingImg + 'neutral_active.png';
+				break;
+			case 1 : ratingHTML.src = ratingImg + 'good_active.png';
+				break;
+		}
+		this.ratingValue = ratingValue;
+	}
 }
 
 // Singleton of this class
