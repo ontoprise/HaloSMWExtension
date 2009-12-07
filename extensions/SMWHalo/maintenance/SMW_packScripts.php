@@ -165,7 +165,7 @@ if ($build == 'General' || $buildAll) { // scripts which are loaded always
 	// scripts which will be packed in one JS file (in this order!)
 	$scripts = array('ajaxhalo.js' => GPL_LICENSE_ONTOPRISE,
  					 'generalTools.js' => GPL_LICENSE_ONTOPRISE,
- 	                 'breadcrump.js' => GPL_LICENSE_ONTOPRISE,
+ 	                 'breadcrumb.js' => GPL_LICENSE_ONTOPRISE,
  	                 'generalGUI.js' => GPL_LICENSE_ONTOPRISE,
  	                 'contentSlider.js' => GPL_LICENSE_ONTOPRISE,
  					 'smw_logger.js' => GPL_LICENSE_ONTOPRISE,
