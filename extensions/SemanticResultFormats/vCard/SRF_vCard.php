@@ -303,7 +303,7 @@ class SRFvCard extends SMWResultPrinter {
 						break;
 					}
 				}
-				$pagetitle = $wikipage->getTitle();
+				$pagetitle = $wikipage instanceof SMWWikiPageValue ? $wikipage->getTitle() : Title::newFromText($wikipage->getXSDValue());
 				if ($workaddress) $addresses[] = new SRFvCardAddress ('WORK', $workpostofficebox, $workextendedaddress, $workstreet, $worklocality, $workregion, $workpostalcode, $workcountry);
 				if ($homeaddress) $addresses[] = new SRFvCardAddress ('HOME', $homepostofficebox, $homeextendedaddress, $homestreet, $homelocality, $homeregion, $homepostalcode, $homecountry);
 				$items[] = new SRFvCardEntry($pagetitle, $prefix, $firstname, $lastname, $additionalname, $suffix, $fullname, $tels, $addresses, $emails, $birthday, $jobtitle, $role, $organization, $department, $category, $url, $note);
