@@ -19,4 +19,3 @@ abstract class SR_Language {
     	return $this->srContentMessages;
     }
 }
-?>

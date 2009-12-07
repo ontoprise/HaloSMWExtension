@@ -40,4 +40,4 @@ class SMWExplanationLiteral {
         $this->_isConceptLiteral = $isConceptLiteral;
     }
 }
-?>
+

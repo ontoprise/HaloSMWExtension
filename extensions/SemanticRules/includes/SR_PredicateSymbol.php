@@ -63,4 +63,4 @@ class SMWPredicateSymbol extends SMWPredicate {
 	}
 }
 
-?>
+

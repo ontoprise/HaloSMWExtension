@@ -57,4 +57,4 @@ function srfDropSRTables($verbose) {
 	require($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
 	SMWRuleStore::getInstance()->drop($verbose);
 }
-?>
+

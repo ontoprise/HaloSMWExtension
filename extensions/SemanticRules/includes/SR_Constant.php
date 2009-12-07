@@ -60,4 +60,3 @@ class SMWConstant extends SMWTerm {
 	}
 }
 
-?>

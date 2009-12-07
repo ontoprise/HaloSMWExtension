@@ -32,4 +32,4 @@ if (!defined('MEDIAWIKI')) die();
 
 }
 
-?>
+

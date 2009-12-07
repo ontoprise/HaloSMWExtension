@@ -319,4 +319,3 @@ class PSC_Path {
 		}
 	}
 } 
-?>

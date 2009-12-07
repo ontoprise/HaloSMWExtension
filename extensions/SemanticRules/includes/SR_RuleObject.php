@@ -424,4 +424,4 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 	}
 
 }
-?>
+

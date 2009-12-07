@@ -277,4 +277,3 @@ function smwhCreateRuleXML($literals) {
 	
 	return $xml;
 }
-?>

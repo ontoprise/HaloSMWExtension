@@ -34,4 +34,3 @@ class SR_LanguageEn extends SR_Language {
     
     protected $srUserMessages = array();
 }
-?>

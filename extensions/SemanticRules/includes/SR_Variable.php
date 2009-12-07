@@ -42,4 +42,3 @@ class SMWVariable extends SMWTerm {
 
 }
 
-?>

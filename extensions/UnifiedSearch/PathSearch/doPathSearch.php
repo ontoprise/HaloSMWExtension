@@ -119,4 +119,3 @@ function USPathSearchEvalQueryParams($query) {
 		}
 		return $queryArr;		
 	}
-?>

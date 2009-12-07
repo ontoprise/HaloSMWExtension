@@ -46,4 +46,3 @@ class SMWHaloQueryResult extends SMWQueryResult {
 		return $result;
 	}
 }
-?>

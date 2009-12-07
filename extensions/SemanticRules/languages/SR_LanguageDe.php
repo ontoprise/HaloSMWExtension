@@ -35,4 +35,3 @@ class SR_LanguageDe extends SR_Language {
     
     protected $srUserMessages = array();
 }
-?>

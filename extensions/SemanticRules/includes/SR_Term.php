@@ -129,4 +129,4 @@ if (!defined('MEDIAWIKI')) die();
 
 }
 
-?>
+

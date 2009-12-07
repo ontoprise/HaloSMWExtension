@@ -210,4 +210,3 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 	SMWTripleStore::$fullSemanticData->setRules($rules);
 	return true;
 }
-?>

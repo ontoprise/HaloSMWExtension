@@ -28,4 +28,3 @@ function srf_ws_getWSDL($wsdlID) {
     }
 }   
 
-?>
