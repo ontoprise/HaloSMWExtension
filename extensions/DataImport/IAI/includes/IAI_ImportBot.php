@@ -181,5 +181,3 @@ class IAIImportBotFilter extends GardeningIssueFilter {
 		return $gic;
 	}
 }
-
-?>
