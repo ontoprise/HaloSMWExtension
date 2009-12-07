@@ -231,4 +231,3 @@ function testfunc3($arr) {
 	$port = $arr['port'];
 	$protocol = $arr['protocol'];
 }
-?>

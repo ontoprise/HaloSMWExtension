@@ -109,4 +109,3 @@ class TestDeployDescriptor extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(count($configs) > 0);
 	}
 }
-?>

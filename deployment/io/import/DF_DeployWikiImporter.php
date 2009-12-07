@@ -307,4 +307,3 @@ class DeployWikiRevision extends WikiRevision {
 	}
 }
 
-?>

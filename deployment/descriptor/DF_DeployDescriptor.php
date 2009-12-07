@@ -51,7 +51,7 @@ class DeployDescriptor {
 	var $resources_xml;
 	var $resources_onlycopyxml;
 
-	function __construct($xml, $fromVersion = NULL) {
+	function __construct($xml, $fromVersion = NULL, $fromPatchlevel = NULL) {
 
 		// parse xml results
 		$this->dom = simplexml_load_string($xml);
@@ -64,7 +64,7 @@ class DeployDescriptor {
 		$this->wikidumps_xml = $this->dom->xpath('/deploydescriptor/wikidumps/file');
 		$this->resources_xml = $this->dom->xpath('/deploydescriptor/resources/file[not(@dest)]');
 		$this->resources_onlycopyxml = $this->dom->xpath('/deploydescriptor/resources/file[@dest]');
-		$this->createConfigElements($fromVersion); // assume new config, not update
+		$this->createConfigElements($fromVersion, $fromPatchlevel); // assume new config, not update
 	}
 
 
@@ -93,7 +93,7 @@ class DeployDescriptor {
 	 *
 	 * @param int $from Version to update from (if NULL the new config is assumed)
 	 */
-	public function createConfigElements($from = NULL) {
+	public function createConfigElements($from = NULL, $fromPatchlevel = NULL) {
 
 		// initialize (or reset) config data
 		$this->configs = array();
@@ -109,8 +109,16 @@ class DeployDescriptor {
 		if ($from == NULL) {
 			$path = "/deploydescriptor/configs/new";
 		} else {
-
-			$path = "//update[@from='$from']";
+			if ($fromPatchlevel == NULL || $fromPatchlevel == 0) {
+			 $path = "//update[@from='$from']";
+			} else {
+				$path = "//update[@from='$from' and @patchlevel='$fromPatchlevel']";
+				$update = $this->dom->xpath($path);
+				if (count($update) === 0) {
+					// if not appropriate patchlevel update exists, try without patchlevel constraint
+					$path = "//update[@from='$from']";
+				}
+			}
 
 			$update = $this->dom->xpath($path);
 			if (count($update) === 0) {
@@ -213,7 +221,7 @@ class DeployDescriptor {
 	function getVersion() {
 		return trim((string) $this->globalElement[0]->version);
 	}
-	
+
 	function getPatchlevel() {
 		$patchlevel = trim((string) $this->globalElement[0]->patchlevel);
 		return empty($patchlevel) ? 0 : intval($patchlevel);
@@ -280,19 +288,19 @@ class DeployDescriptor {
 					$patches[] = $pf;
 					continue;
 				}
-			    if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
-                    $patches[] = $pf;
-                }
+				if ($lp->getID() == $ext_id && $from <= $lp->getVersion() && $to >= $lp->getVersion()) {
+					$patches[] = $pf;
+				}
 			}
 		}
 		return $patches;
 	}
-    
+
 	/**
 	 * Returns patches which are suitable for the given local packages.
-     *
-     * @param array of DeployDescriptor $localPackages
-     * @return array of string (patch file paths)
+	 *
+	 * @param array of DeployDescriptor $localPackages
+	 * @return array of string (patch file paths)
 	 */
 	function getUninstallPatches($localPackages) {
 

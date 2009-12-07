@@ -19,4 +19,3 @@ class DeployTests
         return $suite;
     }
 }
-?>

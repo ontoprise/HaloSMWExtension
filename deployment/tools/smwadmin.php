@@ -268,7 +268,7 @@ function handleRollback() {
 function handleGlobalUpdate($dfgCheckDep) {
 	global $installer;
 	try {
-		list($extensions_to_update, $updated) = $installer->updateAll($dfgCheckDep);
+		list($extensions_to_update, $contradictions, $updated) = $installer->updateAll($dfgCheckDep);
 		if ($dfgCheckDep) {
 			if (count($extensions_to_update) > 0) {
 
@@ -276,6 +276,15 @@ function handleGlobalUpdate($dfgCheckDep) {
 				foreach($extensions_to_update as $id => $etu) {
 					list($desc, $min, $max) = $etu;
 					print "\n\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel()));
+				}
+
+
+			}
+			if (count($contradictions) > 0) {
+				print "\nThe following extensions can not be installed/updated due to conflicts:";
+				foreach($contradictions as $etu) {
+					list($dd, $min, $max) = $etu;
+					print "\n- ".$dd->getID();
 				}
 			}
 			print "\n\n";
