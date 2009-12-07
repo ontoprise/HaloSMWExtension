@@ -186,8 +186,17 @@ YAHOO.haloacl.toolbar_updateToolbar = function(){
         $('haloacl_template_protectedwith_desc').hide();
         $('haloacl_toolbar_popuplink').hide();
 		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
-		$('hacl_toolbarcontainer').addClassName('hacl_toolbar_validAcl');
 		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
+		$('hacl_toolbarcontainer').addClassName('hacl_toolbar_validAcl');
+		
+		$('hacl_page_state').removeClassName('hacl_toolbar_invalidAclText');
+		$('hacl_page_state').removeClassName('hacl_toolbar_validAclText');
+		$('hacl_page_state').addClassName('hacl_toolbar_validAclText');
+	
+		$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_invalidAclText');
+		$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_validAclText');
+		$('haloacl_template_protectedwith_desc').addClassName('hacl_toolbar_validAclText');
+
     }
 };
 
