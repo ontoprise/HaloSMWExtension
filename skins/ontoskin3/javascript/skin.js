@@ -50,6 +50,11 @@ function Smwh_Skin() {
         $jq("#smwh_treeview").removeClass("smwh_treeviewright");
         $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
         $jq("#smwh_treeview").removeAttr("style");
+
+        //store state in a cookie
+        if(GeneralBrowserTools!=undefined){
+            GeneralBrowserTools.setCookieObject("smwSkinTree", "none");
+        }
     };
     
     this.showTreeViewLeftSide = function(){
@@ -70,6 +75,11 @@ function Smwh_Skin() {
             
             //Set tree as shown
             this.treeviewhidden = false;
+
+            //store state in a cookie
+            if(GeneralBrowserTools!=undefined){
+                GeneralBrowserTools.setCookieObject("smwSkinTree", "left");
+            }
         }
     };
 
@@ -88,10 +98,17 @@ function Smwh_Skin() {
             //if the calculated width is too small don't show tree
             if( contentoffset < 200) return;
             
-            this.treeviewhidden = false;
             $jq("#smwh_treeview").css("width", contentoffset+"px");
             $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
             $jq("#smwh_treeview").addClass("smwh_treeviewright");
+
+            //Set tree as shown
+            this.treeviewhidden = false;
+
+            //store state in a cookie
+            if(GeneralBrowserTools!=undefined){
+                GeneralBrowserTools.setCookieObject("smwSkinTree", "right");
+            }
         }
     };
 
@@ -128,6 +145,15 @@ function Smwh_Skin() {
             this.expandPage();
             
         }
+        var state = GeneralBrowserTools.getCookieObject("smwSkinTree");
+        if (state == "left" && this.treeviewhidden == true){
+            this.showTreeViewLeftSide();
+
+        } else if (state == "right" && this.treeviewhidden == true){
+            this.showTreeViewRightSide()
+
+        }
+
 
     }
         
