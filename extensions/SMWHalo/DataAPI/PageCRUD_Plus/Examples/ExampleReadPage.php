@@ -12,4 +12,3 @@ if ($readTest->login($uc)){
 	print ("ERROR: Testing failed!");
 }
 
-?>

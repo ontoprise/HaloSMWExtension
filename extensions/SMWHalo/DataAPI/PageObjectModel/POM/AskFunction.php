@@ -29,4 +29,3 @@ class POMAskFunction extends POMExtensionParserFunction
 		return $this->nodeText;
 	}
 }
-?>

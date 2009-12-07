@@ -35,4 +35,3 @@ while($iterator->hasNext()){
 $pom->sync();
 print ($pom->text);
 
-?>

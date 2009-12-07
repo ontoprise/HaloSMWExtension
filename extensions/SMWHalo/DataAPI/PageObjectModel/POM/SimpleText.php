@@ -29,4 +29,3 @@ class POMSimpleText extends POMElement {
 		return $this->nodeText;
 	}
 }
-?>

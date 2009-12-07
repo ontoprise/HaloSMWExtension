@@ -725,4 +725,3 @@ class POMExtendedParser extends POMParser{
 	}
 
 }
-?>

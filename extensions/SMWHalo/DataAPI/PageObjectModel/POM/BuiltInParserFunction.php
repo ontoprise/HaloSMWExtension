@@ -27,4 +27,3 @@ class POMBuiltInParserFunction extends POMParserFunction
 		return $this->nodeText;
 	}
 }
-?>

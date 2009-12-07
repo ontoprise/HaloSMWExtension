@@ -21,4 +21,3 @@ if ($updateTest->login()){
 	print ("ERROR: Testing failed!");
 }
 
-?>

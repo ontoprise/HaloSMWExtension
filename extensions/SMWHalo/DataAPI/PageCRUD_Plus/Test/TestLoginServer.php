@@ -11,4 +11,3 @@ var_dump($loginTest->login($uc));
 //$loginTest->logout($uc);
 
 
-?>

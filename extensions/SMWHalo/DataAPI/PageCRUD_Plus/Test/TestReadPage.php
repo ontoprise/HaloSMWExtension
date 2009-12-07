@@ -18,4 +18,3 @@ $uc;// = new PCP_UserCredentials("WikiSysop", "!>ontoprise?");
 #}
 var_dump(readPage(NULL, NULL,NULL, NULL, NULL, "Main Page",NULL));
 
-?>

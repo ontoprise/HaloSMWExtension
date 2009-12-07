@@ -43,4 +43,3 @@ $pom->sync();
 var_dump($pom->getPropertyByName(NULL)->listIterator()->getNextNodeValueByReference());
 //print ($pom->text);
 
-?>

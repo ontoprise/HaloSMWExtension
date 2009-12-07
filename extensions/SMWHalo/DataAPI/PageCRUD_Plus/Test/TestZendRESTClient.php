@@ -17,4 +17,3 @@ var_dump($result->wspcp()->text);
 //var_dump($client->readPage("WikiSysop", NULL, NULL, NULL, NULL, "Main Page")->get());
 //echo $client->login("WikiSysop", "!>ontoprise?")->get(); 
 //var_dump($client->sayHello("Tester", "now")->get());
-?>

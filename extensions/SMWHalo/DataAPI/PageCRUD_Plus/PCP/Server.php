@@ -363,4 +363,3 @@ class PCPServer extends PCPAny{
 		return $__pages;
 	}
 }
-?>

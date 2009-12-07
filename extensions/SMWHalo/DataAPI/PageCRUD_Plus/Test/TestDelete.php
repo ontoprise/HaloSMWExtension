@@ -11,4 +11,3 @@ if ($deleteTest->login($uc)){
 	print ("ERROR: Testing failed!".__FILE__);
 }
 
-?>

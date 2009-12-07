@@ -254,4 +254,3 @@ class POMProperty extends POMAnnotation {
 	}
 
 }
-?>

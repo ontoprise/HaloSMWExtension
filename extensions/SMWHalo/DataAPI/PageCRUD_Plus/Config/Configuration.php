@@ -39,4 +39,3 @@ class PCPConfiguration{
 	 * TODO: Create a function that read a configuration file
 	 */
 }
-?>

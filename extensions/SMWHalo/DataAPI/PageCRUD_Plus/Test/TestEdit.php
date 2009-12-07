@@ -32,4 +32,3 @@ $uc = new PCP_UserCredentials("tester1", "!>ontoprise?");
 //	print ("ERROR: Testing failed!".__FILE__);
 //}
 
-?>

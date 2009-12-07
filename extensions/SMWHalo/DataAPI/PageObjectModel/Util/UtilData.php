@@ -658,4 +658,3 @@ class POMDataUtil{
 		return array_map('POMDataUtil::toArray', $data);
 	}
 }
-?>

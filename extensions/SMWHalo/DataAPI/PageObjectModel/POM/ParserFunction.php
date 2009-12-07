@@ -6,4 +6,3 @@
 abstract class POMParserFunction extends POMDcbElement
 {
 }
-?>

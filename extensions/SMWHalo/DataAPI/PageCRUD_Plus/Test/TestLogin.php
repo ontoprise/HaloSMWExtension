@@ -12,4 +12,3 @@ if ($loginTest->login($uc)){
 }
 
 
-?>

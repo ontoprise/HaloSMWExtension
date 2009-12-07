@@ -14,4 +14,3 @@ $uc=$editTest->login(new PCPUserCredentials("WikiSysop", "!>ontoprise?"));
 //	print ("ERROR: Testing failed!".__FILE__);
 //}
 
-?>

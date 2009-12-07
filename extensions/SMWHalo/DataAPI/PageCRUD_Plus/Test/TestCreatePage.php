@@ -14,4 +14,3 @@ $uc = new PCPUserCredentials("WikiSysop", "", 1, "93f49f1cb77a00ae03b3eb90069d76
 //	print ("ERROR: Testing failed!".__FILE__);
 //}
 
-?>

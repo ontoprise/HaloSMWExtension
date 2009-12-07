@@ -12,4 +12,3 @@ if ($createTest->login($uc)){
 	print ("ERROR: Testing failed!");
 }
 
-?>

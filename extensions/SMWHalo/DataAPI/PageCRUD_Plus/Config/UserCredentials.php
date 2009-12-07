@@ -102,4 +102,3 @@ class PCPUserCredentials{
 		return $__hmUc;
 	}
 }
-?>

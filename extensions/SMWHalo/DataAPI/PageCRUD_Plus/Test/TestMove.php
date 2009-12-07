@@ -12,4 +12,3 @@ if ($editTest->login($uc)){
 	print ("ERROR: Testing failed!".__FILE__);
 }
 
-?>

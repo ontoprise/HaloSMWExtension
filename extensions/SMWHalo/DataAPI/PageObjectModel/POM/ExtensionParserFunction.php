@@ -26,4 +26,3 @@ class POMExtensionParserFunction extends POMParserFunction
 		return $this->nodeText;
 	}
 }
-?>
