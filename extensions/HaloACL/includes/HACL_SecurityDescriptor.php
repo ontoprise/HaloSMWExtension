@@ -640,7 +640,7 @@ class  HACLSecurityDescriptor  {
 		
 		// Check for missing users
 		foreach ($this->mManageUsers as $uid) {
-			if (User::whoIs($uid) === false) {
+			if ($uid > 0 && User::whoIs($uid) === false) {
 				$missingUsers = true;
 				break;
 			}
@@ -663,7 +663,7 @@ class  HACLSecurityDescriptor  {
 			// Check for missing users
 			$userIDs = $ir->getUsers();
 			foreach ($userIDs as $uid) {
-				if (User::whoIs($uid) === false) {
+				if ($uid > 0 && User::whoIs($uid) === false) {
 					$missingUsers = true;
 					break;
 				}
