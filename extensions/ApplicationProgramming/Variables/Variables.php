@@ -45,4 +45,3 @@ function wfVariablesLanguageGetMagic( &$magicWords, $langCode ) {
         return true;
 }
  
-?>

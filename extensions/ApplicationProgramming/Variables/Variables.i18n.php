@@ -24,4 +24,3 @@ function efVariablesWords( $lang ) {
                 : array_merge( $words['en'], $words[$lang] );
 }
 
-?>
