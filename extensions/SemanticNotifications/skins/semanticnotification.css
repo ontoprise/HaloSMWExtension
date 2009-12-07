@@ -1,24 +1,5 @@
 @CHARSET "ISO-8859-1";
 
-* {
-	-moz-background-clip: padding;
-	z-index: 0
-}
-
-a {
-	cursor: pointer
-}
-
-body,iframe {
-	margin: 0px;
-	padding: 0px
-}
-
-div,span,img,a,form,body,label {
-	border-width: 1px;
-	border-color: black
-}
-
 .sn-my-notificationstitle {
 	background-color: #74dc83;
 	color: White;
