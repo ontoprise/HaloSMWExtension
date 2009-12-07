@@ -121,8 +121,12 @@ class CECommentParserFunctions {
 	 * 			... if there's sthg wrong, that can not be caught by CE itself
 	 */
 	public static function showcommentform(&$parser) {
-		global $cegContLang, $wgUser, $cegScriptPath;
+		global $cegContLang, $wgUser, $cegScriptPath, $wgJsMimeType;
 
+		$jsText = <<<END
+<script type="{$wgJsMimeType}">/* <![CDATA[ */ var cegScriptPath = '{$cegScriptPath}';
+END;
+		
 		# do checks #
 		$status = self::$mInstance->doInitialChecks($parser);
 
@@ -161,19 +165,21 @@ class CECommentParserFunctions {
 		
 		#user#
 		$currentUser = $wgUser->getName();
+		$ns = MWNamespace::getCanonicalName(NS_USER);
+		$jsText .= "var ceUserNS = '$ns';";
 
 		if($wgUser->isAnon()) {
-				$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
-				if($userImageTitle->exists()){
-					$image = Image::newFromTitle($userImageTitle);
-					$userImgSrc = $image->getURL();
-				}
-		}
-		else {
-			SMWQueryProcessor::processFunctionParams(array("[[User:".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
+			$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
+			if($userImageTitle->exists()){
+				$image = Image::newFromTitle($userImageTitle);
+				$userImgSrc = $image->getURL();
+			}
+		} else {
+			//user should be saved with Namespace!
+			SMWQueryProcessor::processFunctionParams(array("[[".$ns.":".$wgUser->getName()."]]", "[[User_image::+]]", "?User_image=")
 				,$querystring,$params,$printouts);
 			$queryResult = explode("|",
-				SMWQueryProcessor::getResultFromQueryString($querystring,$params,
+			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 				$printouts, SMW_OUTPUT_WIKI));
 
 			unset($queryResult[0]);
@@ -186,9 +192,17 @@ class CECommentParserFunctions {
 					$userImgSrc = $image->getURL();
 				}
 			}
-			if(!isset($userImgSrc) || !$userImgSrc)
+			if(!isset($userImgSrc) || !$userImgSrc) {
 				// We provide own icon, if there non in the wiki
 				$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
+			}
+			// Get users groups and check for Sysop-Rights
+			$groups = $wgUser->getEffectiveGroups();
+			$isAllowed = false;
+			if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) {
+				//provide delete link for every existing comment
+				//$jsText .= "$$('')";
+			}
 		}
 
 		//TODO: use script.aclo.us(?) for fading in.
@@ -218,20 +232,20 @@ class CECommentParserFunctions {
 					'<span class="ce-cf-grey">' . '&nbsp;' . 
 						wfMsgForContent('ce_cf_article_rating2') . 
 					'</span>' . ":" .
-					XML::openElement('div', array('id' => 'ce-cf-radiobuttons')) .
-						XML::element('input', array( 'type' => 'radio',
-							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '1')) .
-						$ratingValues[0] .
-						XML::element('input', array( 'type' => 'radio',
-							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '0')) .
-						$ratingValues[1] .
-						XML::element('input', array( 'type' => 'radio',
-							'class' => 'ce-cf-rating-radio', 'name' => 'rating',
-							'value' => '-1')) .
-						$ratingValues[2] .
-					XML::closeElement('div') .
+					XML::openElement('span', array( 'id' => 'ce-cf-radiobuttons' )) .
+						XML::Element('img', array( 'id' => 'ce-cf-rating1',
+							'class' => 'ce-cf-rating-img',
+							'src' => $cegScriptPath . '/skins/Comment/icons/bad_inactive.png',
+							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating1\',-1);' )) .
+						XML::Element('img', array( 'id' => 'ce-cf-rating2',
+							'class' => 'ce-cf-rating-img',
+							'src' => $cegScriptPath . '/skins/Comment/icons/neutral_inactive.png',
+							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating2\',0);' )) .
+						XML::Element('img', array( 'id' => 'ce-cf-rating3',
+							'class' => 'ce-cf-rating-img',
+							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
+							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating3\',1);' )) .
+					XML::closeElement('span') .
 				XML::closeElement('div') .
 					'<div class="mw-editTools\">' .
 				XML::openElement('div', array( 'id' => 'ce-cf-commenthelp')) .
@@ -257,13 +271,16 @@ class CECommentParserFunctions {
 			XML::element( 'input', array( 'type' => 'reset', 
 				'value' => wfMsg( 'ce_cf_reset_button_name' ),
 				'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
+			XML::closeElement('div') . //end ce-cf-rightside
+			XML::closeElement('form') .
+			XML::openElement('div', array('id' => 'ce-cf-message', 
+				'style' => 'display:none')) .
+			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'ce-cf-pending' )) .
-			XML::closeElement('div') .
-			XML::openElement('div', array('id' => 'ce-cf-message')) .
-			XML::closeElement('div') .
-			XML::closeElement('div') .
-			XML::closeElement('form');
+			XML::closeElement('div');
 
+		$html .= $jsText . '</script>';
+			
 		self::$mInstance->mCommentFormDisplayed = true;
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}

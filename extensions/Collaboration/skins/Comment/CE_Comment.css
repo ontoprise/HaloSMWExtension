@@ -2,10 +2,7 @@
 
 /* Comment Results */
 
-/* This is to downsale the user image for better formating*/
-div.ce_result_user img{
-	width: 48px;
-	height: 48px;
+div.ce-result-user img{
 	float: left;
 }
 /* Comment form */
@@ -14,7 +11,7 @@ div.ce_result_user img{
 
 div#ce-c-header {
 	width: 100%;
-	margin-top: 5px;
+	margin: 5px 0;
 	padding-top: 5px;
 	border-top: 2px solid lightgrey;
 }
@@ -43,7 +40,7 @@ div#ce-cf-user-icon {
 }
 img#ce-cf-user-img {
 	width: 48px;
-	height: 48px;
+	/*height: 48px;*/
 }
 div#ce-cf-rightside {
 	float: left;
@@ -65,14 +62,17 @@ div#ce-cf-user span.uservalue {
 }
 div#ce-cf-rating {
 	padding: 5px;
+	heigth: 32px;
 	border: 1px solid lightgrey;
 }
-div#ce-cf-radiobuttons{
-	float:right;
-	display: inline;
+span#ce-cf-radiobuttons{
+	/*float:right;*/
+	padding-left:10px;
 }
-.ce-cf-rating-radio {
-	padding: 10px 2px;
+.ce-cf-rating-img {
+	padding: 0 5px;
+	cursor: pointer;
+	vertical-align: middle;
 }
 
 /* the textarea (comment content) */
@@ -88,8 +88,6 @@ div#ce-cf-commenthelp span{
 }
 #ce-cf-textarea {
 	margin: 5px 0;
-	width: 100%;
-	overflow: hidden;
 }
 
 /*the two buttons in the form*/
@@ -106,16 +104,21 @@ div#ce-cf-commenthelp span{
 
 /* normal status messages from AJAX response */
 #ce-cf-message {
-	
+	border: 1px dashed grey;
+	padding: 5px 2px;;
+}
+#ce-cf-message.ce-cf-success-message {
+	color: green;
 }
 
 /* failure messages from AJAX response */
-#ce-cf-failure-message {
-
+#ce-cf-message.ce-cf-failure-message {
+	color: orange;
 }
 
 /* warnings created by parser function*/
 .ce-warning{
+	color: orange;
 }
 .ce-cf-grey{
 	color: grey;
