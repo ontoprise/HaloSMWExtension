@@ -26,7 +26,12 @@
 		<new>
 			<require name="smwhalo"
 				file="extensions/SemanticRules/includes/SR_Initialize.php" />
-
+			<variable name="smwgEnableFlogicRules">
+				<boolean name="smwgEnableFlogicRules"
+					description="Activates rules in the wiki">
+					true
+				</boolean>
+			</variable>
 			<script
 				file="extensions/SemanticRules/maintenance/setup.php" />
 		</new>
