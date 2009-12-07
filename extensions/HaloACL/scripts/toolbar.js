@@ -196,6 +196,9 @@ var gHACLToolbarTooltip = null;
 YAHOO.haloacl.toolbar_templateChanged = function(){
 	var selection = $('haloacl_template_protectedwith');
 	var option = selection.down('option', selection.selectedIndex);
+	if (!option) {
+		return;
+	}
 	var valid = option.readAttribute('valid');
 	var addClass = (valid == "false") ? 'haloacl_warningbutton' : 'haloacl_infobutton';
 	$('anchorPopup_toolbar').removeClassName('haloacl_warningbutton');
@@ -217,6 +220,15 @@ YAHOO.haloacl.toolbar_templateChanged = function(){
 	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
 	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
 	$('hacl_toolbarcontainer').addClassName(addClass);
+	
+	addClass = (valid == "true") ? 'hacl_toolbar_validAclText' : 'hacl_toolbar_invalidAclText';
+	$('hacl_page_state').removeClassName('hacl_toolbar_invalidAclText');
+	$('hacl_page_state').removeClassName('hacl_toolbar_validAclText');
+	$('hacl_page_state').addClassName(addClass);
+
+	$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_invalidAclText');
+	$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_validAclText');
+	$('haloacl_template_protectedwith_desc').addClassName(addClass);
 
 };
 

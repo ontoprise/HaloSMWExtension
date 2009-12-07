@@ -178,7 +178,8 @@ function getHACLToolbar($articleTitle) {
     if($protectedWith != "" && !in_array($protectedWith, $tpllist)) {
         $tpllist[] = $protectedWith;
         // Check if the template is valid or corrupted by missing groups, user,...
-        $validTmpl[] = $defaultSD->checkIntegrity() === true ? 'true' : 'false';
+        $validTmpl[] = (is_null($defaultSD) || $defaultSD->checkIntegrity() === true) 
+        				? 'true' : 'false';
     }
 
     global $haclgIP;
@@ -192,13 +193,13 @@ function getHACLToolbar($articleTitle) {
         <div id="hacl_toolbarcontainer" class="yui-skin-sam hacl_toolbar_validAcl">
 
         <div id="hacl_toolbarcontainer_section1">
-            Page state:&nbsp;
+            <span id="hacl_page_state" class="hacl_toolbar_validAclText"> Page state:&nbsp</span>
 HTML;
 
     if($toolbarEnabled) {
-        $html .=       '<select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
+        $html .= '<select id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
     }else {
-        $html .=       '<select disabled id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
+        $html .= '<select disabled id="haloacl_toolbar_pagestate" onChange="YAHOO.haloacl.toolbar_updateToolbar();">';
     }
     // bulding protected state indicator
 
@@ -221,7 +222,7 @@ HTML;
 
 
     //    if(sizeof($tpllist) > 0) {
-    $html .= "<span id='haloacl_template_protectedwith_desc'>&nbsp;with:&nbsp;</span>";
+    $html .= "<span id='haloacl_template_protectedwith_desc' class='hacl_toolbar_validAclText'>&nbsp;with:&nbsp;</span>";
     if($toolbarEnabled) {
         $html .= "<select id='haloacl_template_protectedwith' onChange='YAHOO.haloacl.toolbar_templateChanged();'>";
     }else {
