@@ -77,7 +77,10 @@ function wfUmeAjaxGetArticleHtml($page){
     if (!$title) return wfMsg('smw_ume_no_help_article');
     $article = new Article($title);
     if (!$article) return wfMsg('smw_ume_no_help_article');
-	$out = $psr->parse($article->getRawText(),$wgTitle,$opt,true,true);
+    // remove Images and Media links
+    $wikitext= preg_replace('/\[\[(Image|Media):[^\]]*\]\]/', '', $article->getRawText());
+    // parse wikitext
+	$out = $psr->parse($wikitext,$wgTitle,$opt,true,true);
     // initialize the result array
     $result = array();
 	// fetch main HTML content of page
@@ -85,7 +88,7 @@ function wfUmeAjaxGetArticleHtml($page){
     // add target blank to all links in the text
     $result['content'] = preg_replace('/(<a [^>]*)>/', '$1 target="_blank">', $result['content']);
     // set title of help page
-    $result['title'] = '<img src="'.SMW_UME_PATH.'skins/help.png" style="vertical-align:middle"/> '.$title->getText();
+    $result['title'] = '<img src="'.SMW_UME_PATH.'/skins/help.png" style="vertical-align:middle"/> '.$title->getText().'?';
     // fetch the link to further information from property
    	$pname = Title::newFromText(SMW_UME_PROPERTY_LINK, SMW_NS_PROPERTY);
     $prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
