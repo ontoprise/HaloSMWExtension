@@ -59,7 +59,8 @@ $wgWebDAVRichMediaMapping[NS_VIDEO] = $wgWebDAVRichMediaMappingParameters;
 global $wdGrantAnonymousAccess;
 $wdGrantAnonymousAccess = true;
 
-
+global $wgWebDAVRichMediaRelationshipPropertyName;
+$wgWebDAVRichMediaRelationshipPropertyName = "HasRelatedArticle";
 
 
 
