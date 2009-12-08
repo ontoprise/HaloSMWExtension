@@ -204,6 +204,9 @@ var gHACLToolbarTooltip = null;
 
 YAHOO.haloacl.toolbar_templateChanged = function(){
 	var selection = $('haloacl_template_protectedwith');
+	if (!selection || !selection.visible()) {
+		return;
+	}
 	var option = selection.down('option', selection.selectedIndex);
 	if (!option) {
 		return;
