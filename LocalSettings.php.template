@@ -252,6 +252,9 @@ require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
 #MIME-Type
 include_once('extensions/RichMedia/includes/RM_Initialize.php');
 
+#Enable WebDAV server
+include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
+
 #Semantic Results formats
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
 $srfgFormats[] = 'googlepie';
