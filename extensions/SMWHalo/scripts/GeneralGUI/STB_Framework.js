@@ -89,8 +89,10 @@ ToolbarFramework.prototype = {
 		this.contarray = new Array();
 		// tab array - how many tabs are there and which one is active?
 		this.tabarray = new Array();
-		this.tabnames = new Array("Tools", "Links to Other Pages", "Facts about this Article");
-                this.closeFunction;
+		this.tabnames = new Array(gLanguage.getMessage('STB_TOOLS'), 
+								  gLanguage.getMessage('STB_LINKS'),
+								  gLanguage.getMessage('STB_FACTS'));
+		this.closeFunction;
 	},
 
 	// create a new div container
@@ -216,7 +218,19 @@ ToolbarFramework.prototype = {
 
 	createForcedHeader : function() {
 		// force to show a header - for use in annotation mode
-		tabHeader = "<div id=\"expandable\" style=\"cursor:pointer;cursor:hand;\" onclick=stb_control.collapse()><img src=\"" + wgScriptPath + "/extensions/SMWHalo/skins/expandable.gif\" onmouseover=\"(src='" + wgScriptPath + "/extensions/SMWHalo/skins/expandable-act.gif')\" onmouseout=\"(src='" + wgScriptPath + "/extension/SMWHalo/skins/expandable.gif')\"></div><div id=\"tab_0\" onclick=stb_control.collapse() style=\"cursor:pointer;cursor:hand;\" style=\"cursor:pointer;cursor:hand;\">Annotations & Help</div>";
+		tabHeader = '<div id="expandable" ' +
+						 'style="cursor:pointer;cursor:hand;" ' +
+						 'onclick=stb_control.collapse()>' +
+						 '<img src="' + wgScriptPath + '/extensions/SMWHalo/skins/expandable.gif" ' +
+						      'onmouseover="(src=\'' + wgScriptPath + '/extensions/SMWHalo/skins/expandable-act.gif\')" ' +
+						      'onmouseout="(src=\'' + wgScriptPath + '/extension/SMWHalo/skins/expandable.gif\')">' +
+					'</div>' +
+					'<div id="tab_0" ' +
+					     'onclick=stb_control.collapse() ' +
+					     'style="cursor:pointer;cursor:hand;" ' +
+					     'style="cursor:pointer;cursor:hand;">' +
+					     gLanguage.getMessage('STB_ANNOTATION_HELP') +
+					'</div>';
 		$("tabcontainer").update(tabHeader);
 	},
 

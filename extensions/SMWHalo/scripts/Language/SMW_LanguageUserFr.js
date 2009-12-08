@@ -331,5 +331,12 @@ var wgUserLanguageStrings = {
     'PC_headline'       : 'La valeur de la propriété $1 de $2 est $3, si',
     'PC_DERIVE_BY'      : 'Dériver la propriété $1 par une règle liant les propriétés',
     
-    'smw_wwsu_addwscall'            :   'Ajouter un appel de service web'
+    'smw_wwsu_addwscall'            :   'Ajouter un appel de service web',
+
+	// Semantic Toolbar General
+	'STB_LINKS'		: 'Links to other pages',
+	'STB_TOOLS'		: 'Tools', 
+	'STB_FACTS'		: 'Facts about this Article',
+	'STB_ANNOTATION_HELP' 	: 'Annotations & Help' 
+    
 };

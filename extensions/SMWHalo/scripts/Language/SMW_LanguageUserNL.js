@@ -286,5 +286,12 @@ var wgUserLanguageStrings = {
 	'WTP_NOT_IN_PREFORMATTED'	  : "'$1' is deel van een voorgeformatteerde tekst.\nEr kunnen geen aantekeningen gemaakt worden.",
 	'WTP_SELECTION_OVER_FORMATS'  : "De selectie omvat verschillende formaten:\n$1",
 
-	'smw_wwsu_addwscall'			:	'Add web service call'
+	'smw_wwsu_addwscall'			:	'Add web service call',
+
+	// Semantic Toolbar General
+	'STB_LINKS'		: 'Links to other pages',
+	'STB_TOOLS'		: 'Tools', 
+	'STB_FACTS'		: 'Facts about this Article',
+	'STB_ANNOTATION_HELP' 	: 'Annotations & Help' 
+	
 };

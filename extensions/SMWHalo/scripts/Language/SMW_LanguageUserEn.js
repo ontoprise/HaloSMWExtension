@@ -274,5 +274,11 @@ var wgUserLanguageStrings = {
 	'Help'			:	'Help',
 	
 	// Derived facts
-	'DF_REQUEST_FAILED' : 'Error! Could not retrieve derived facts.'
+	'DF_REQUEST_FAILED' : 'Error! Could not retrieve derived facts.',
+	
+	// Semantic Toolbar General
+	'STB_LINKS'				: 'Links to other pages',
+	'STB_TOOLS'				: 'Tools', 
+	'STB_FACTS'				: 'Facts about this Article',
+	'STB_ANNOTATION_HELP' 	: 'Annotations & Help' 
 };

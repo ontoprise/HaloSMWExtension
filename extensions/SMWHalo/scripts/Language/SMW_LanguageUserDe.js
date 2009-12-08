@@ -73,7 +73,7 @@ var wgUserLanguageStrings = {
 	'OBJECT'                  : 'Objekt:',
 	'RENAME_ALL_IN_ARTICLE'   : 'Alle im Artikel umbenennen.',
 	'CHANGE_PROPERTY'         : 'Ändern Sie ein Attribut.',
-	'PROPERTIES'              : 'Properties',
+	'PROPERTIES'              : 'Attribute',
 	'NO_OBJECT_FOR_POR'       : 'Kein Objekt für die Teil-von Relation gegeben.',
 	'RETRIEVE_SCHEMA_DATA'    : 'Die Schema-Daten konnten nicht ermittelt werden!',
 
@@ -145,7 +145,7 @@ var wgUserLanguageStrings = {
 	'AAM_DELETE_ANNOTATIONS'  : 'Möchten Sie diese Annotation wirklich löschen?',
 	
 	// Save annotations
-	'SA_SAVE_ANNOTATION_HINTS': "Vergessen Sie nicht Ihre Arbeit zu speichern!",
+	'SA_SAVE_ANNOTATION_HINTS': "Vergessen Sie nicht, Ihre Arbeit zu speichern!",
 	'SA_SAVE_ANNOTATIONS'	  : 'Speichere Annotationen',
 	'SA_SAVE_ANNOTATIONS_AND_EXIT' : 'Speichern & verlassen',
 	'SA_ANNOTATIONS_SAVED'	  : '(i) Die Annotationen wurden gespeichert.',
@@ -271,6 +271,12 @@ var wgUserLanguageStrings = {
 	'Help'			:	'Hilfe',
 	
 	// Derived facts
-	'DF_REQUEST_FAILED' : 'Fehler! Die abgeleiteten Fakten konnten nicht ermittelt werden.'
+	'DF_REQUEST_FAILED' : 'Fehler! Die abgeleiteten Fakten konnten nicht ermittelt werden.',
+
+	// Semantic Toolbar General
+	'STB_LINKS'		: 'Links zu anderen Seiten',
+	'STB_TOOLS'		: 'Tools', 
+	'STB_FACTS'		: 'Fakten zu diesem Artikel',
+	'STB_ANNOTATION_HELP' 	: 'Annotationen & Hilfe' 
 	
 };
