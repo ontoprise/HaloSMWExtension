@@ -39,25 +39,27 @@ $umegNamespace = null;
 $umegNamespaceIndex = null;
 
 /**
- * When a help text pops up, the user can send a rating. This rating will be send
- * annonymously back to the SMW+ forum (http://smwforum.ontoprise.com) together
- * with some information about your wiki. All data is treated anonymously and
- * there will be no chance to track back the rating to your wiki. We collect this
- * information to know where the help is used and what users think about the help
- * text. Also bugreports can be send to SMW+.
+ * When a help text pops up, the user can send any feedback or bugreports to the
+ * SMW+ forum (http://smwforum.ontoprise.com) together with some information about
+ * your wiki. All data is treated anonymously and there will be no chance to trace
+ * it back to your wiki. We collect this information to know where the help is used
+ * and what users think about the help text. Also bugreports can be send to SMW+.
  * If you not wish, that your wiki sends back any information to the SMW+ forum
  * please set this variable to false. This also makes sence, if you running a
  * cooperate wiki which has no access to the Internet.
- * The default value will be true, i.e. send user rating and bug reports to SMW+
+ * All data that is send this way, will not be publicated on the SMW+ forum but
+ * used internally by the SMW+ staff only.
+ * The default value will be true, i.e. send user comments and bug reports to SMW+
  */
 $umegSendFeedbackToSMWplus = true;
 
 /**
  * Trigger here the comment function for the help articles. Feedback from the
- * users helps us to improve the content of the articles. When sending comments
- * these will be stored in the SMW forum (http://smwforum.ontoprise.com) and can
- * be viewed by any visitor of the page. Each comment is flagged with the IP
- * address of the commiter and the time stamp when the comment was send.
+ * users helps us to improve the content of the articles. When sending a rating 
+ * and comments these will be stored in the SMW forum
+ * (http://smwforum.ontoprise.com) and can be viewed by any visitor of the page.
+ * Each comment is flagged with the IP address of the person submitting the comment
+ * and rating. Also the time stamp is stored when the comment was send.
  * If you want your users to participate in the community, set the value to true.
  * The default is false, so that no comments will be send.
  */
@@ -91,6 +93,8 @@ if (!defined("SMW_VERSION")) {
 define('SMW_FORUM_API', 'http://smwforum.ontoprise.com/smwforum/api.php');
 // define the SMW forum URL to get a normal page (needed to fetch the CSH article list)
 define('SMW_FORUM_URL', 'http://smwforum.ontoprise.com/smwforum/index.php');
+// define the Bugzilla URL where new bugs can be subitted
+define('SMW_BUGZILLA_URL', 'http://smwforum.ontoprise.com/smwbugs/enter_bug.cgi');
 // Context sensitive help articles are fetched from the SMW forum by this query
 define('SMW_FORUM_QUERY_CSH', '[[Category:Context sensitive help article]]');
 // Porperty for discourse state
@@ -208,7 +212,7 @@ function initSMWUserManualNamespaces() {
  */
 function umefAddHtml2Page(&$out) {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
-           $umegPopupWidth, $umegPopupHeight;
+           $umegPopupWidth, $umegPopupHeight, $umegNamespace;
     $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
@@ -216,15 +220,21 @@ function umefAddHtml2Page(&$out) {
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/mwapi.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
+            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/md5.js"></script>
     ');
 
     if ($umegSendFeedbackToSMWplus) {
         $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
+                var umegNamespace = "'.$umegNamespace.'";
                 var umegSmwForumUrl = "'.SMW_FORUM_URL.'";
-                var umegSendCommentsToSMWplus = '.($umegSendCommentsToSMWplus ? 'true' : 'false').'
-                var umegPopupWidth = '.$umegPopupWidth.'
-                var umegPopupHeight = '.$umegPopupHeight.'
+                var umegSmwForumApi = "'.SMW_FORUM_API.'";
+                var umegSmwBugzillaUrl = "'.SMW_BUGZILLA_URL.'";
+                var umegSendCommentsToSMWplus = '.($umegSendCommentsToSMWplus ? 'true' : 'false').';
+                var umegPopupWidth = '.$umegPopupWidth.';
+                var umegPopupHeight = '.$umegPopupHeight.';
+                var umegSMWplusVersion = "'.(defined('SMW_HALO_VERSION')?SMW_HALO_VERSION:'').'";
+                var umegUMEVersion = "'.SMW_USER_MANUAL_VERSION.'";
             /*]]>*/</script>
         ');
         $out->addLink(array(
@@ -321,7 +331,7 @@ function umefDivBox() {
 }
 function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
-    if (!$umegSendFeedbackToSMWplus) return '';
+    if (!$umegSendCommentsToSMWplus) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
     return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox()" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_did_it_help').'</span>
@@ -337,9 +347,9 @@ function umefDivBoxRating() {
 }
 
 function umefDivBoxFeedback() {
-    global $umegSendCommentsToSMWplus;
+    global $umegSendFeedbackToSMWplus;
     $imgPath = SMW_UME_PATH.'/skins/';
-    if (!$umegSendCommentsToSMWplus) return '';
+    if (!$umegSendFeedbackToSMWplus) return '';
     return '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
             <table class="cshFeedbackFrame">
