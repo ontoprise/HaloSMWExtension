@@ -8,6 +8,8 @@
 var SMW_UserManual_CSH = Class.create();
 SMW_UserManual_CSH.prototype = {
     initialize: function(label) {
+        // current csh page
+        this.cshPage=null
         // get the container <div id="smw_csh"></div>
         var div = document.getElementById('smw_csh');
         if (! div) { // it's not in the skin. Create it
@@ -29,10 +31,51 @@ SMW_UserManual_CSH.prototype = {
             }
         }
         // set the link inside the div container
-        div.innerHTML = '<a href="#" onclick="javascipt: smwCsh.loadPopup();">'
+        div.innerHTML = '<a href="#" onclick="javascipt: smwCsh.loadPopup(); return false">'
             + label + '</a>';
+            
+        // predefined tempolate calls that will be inserted when creating a new page
+        // in the smw+ forum, these are comments (public and internal) send by the users
+        this.txtCommentCsh = '{{Comment|CommentPerson=%%%1%%%'
+            +'|CommentRelatedArticle=%%%2%%%|CommentRating=%%%3%%%'
+            +'|CommentDatetime=%%%4%%%|CommentContent=%%%5%%%|CommentFromWiki=%%%6%%%'
+            +'|CommentOnPage=%%%7%%%|CommentAtAction=%%%8%%%|}}'
+        this.txtAskYourQuestion= '{{AskYourOwnHelpQuestion|CommentPerson=%%%1%%%'
+            +'|CommentDiscourseState=%%%2%%%|CommentRating=%%%3%%%'
+            +'|CommentDatetime=%%%4%%%|CommentContent=%%%5%%%|CommentFromWiki=%%%6%%%'
+            +'|CommentOnPage=%%%7%%%|CommentAtAction=%%%8%%%|}}'
+        this.txtCommentComponent= '{{LeaveCommentForComponent|CommentPerson=%%%1%%%'
+            +'|CommentRelatedComponent=%%%2%%%|CommentRating=%%%3%%%'
+            +'|CommentDatetime=%%%4%%%|CommentContent=%%%5%%%|CommentFromWiki=%%%6%%%'
+            +'|CommentOnPage=%%%7%%%|CommentAtAction=%%%8%%%|}}'
+        // bugzilla data for reporting bugs to SMW+
+        this.txtBugReport= 'product=SemanticWiki&cf_issuetype=Bug&bug_serverity=normal&'
+            +'short_desc=automatic+bug+report+from+UserManual+Extension&'
+            +'comment=%%%1%%%&browser=%%%2%%%&operatingsystem=%%%3%%%&'
+            +'rep_platform=Other&bug_file_loc=&fingerprint=&'
+            +'version=%%%4%%%&component=%%%5%%%'
+        // mapping discourse state to component
+        this.component= {
+            'edit' : 'Miscellaneous',
+            'SemanticForms' : 'Semantic Forms Extension Core',
+            'wysiwyg' : 'FCK-Editor Extension Core',
+            'preview' : 'Miscellaneous',
+            'OntologyBrowser' : 'Ontology Browser',
+            'QueryInterface' : 'Query Interface',
+            'SemanticNotification' : 'Semantic Notifications',
+            'UnifiedSearch' : 'Combined Search',
+            'SemanticToolbar' : 'Semantic Toolbar',
+            'HaloAutoCompletion' : 'Autocompletion',
+            'HaloACL' : 'HaloACL',
+            'Webservice' : 'Web Services',
+            'Gardening' : 'Gardening',
+            'ImportVocabulary' : 'DataAPI',
+            'annotate' : 'Annotations'
+        },
+        // namespace in the SMW forum for comments and feedback entries
+        this.smwCommentNs = "Comment" 
     },
-
+    
     /**
      * fills the content box of the popup with some html received by an ajax call
      *
@@ -121,6 +164,7 @@ SMW_UserManual_CSH.prototype = {
      * @param string page name
      */
     getPageContent: function(page) {
+        this.cshPage=page
         sajax_do_call('wfUmeAjaxGetArticleHtml', [page], this.setContent.bind(this))
     },
 
@@ -161,7 +205,15 @@ SMW_UserManual_CSH.prototype = {
      * send the rating text inlcuding the rating itself to the smw Forum
      */
     sendRating: function(){
-        this.hideRatingBox()
+        var comment = document.getElementById('smw_csh_rating_box').getElementsByTagName('textarea')[0].value
+        var rating;
+        if (document.getElementsByName('smw_csh_did_it_help')[0].checked) rating = 1
+        if (document.getElementsByName('smw_csh_did_it_help')[1].checked) rating = -1
+        if (this.cshPage != null && rating != null) {  
+            var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
+            this.sendCommentToSmwplus(txt)
+            this.hideRatingBox()
+        }
     },
 
     /**
@@ -262,10 +314,21 @@ SMW_UserManual_CSH.prototype = {
         var eL = e.srcElement ? e.srcElement : e.target ? e.target : e.currentTarget
         if (eL.name=='cshsend') {
             var tbody=eL.parentNode.parentNode.parentNode
-            var type=tbody.firstChild.firstChild.getElementsByTagName('img')[1].src
-            type=type.substr(type.lastIndexOf('/')+1)
+            var img=tbody.firstChild.firstChild.getElementsByTagName('img')[1].src
+            img=img.substr(img.lastIndexOf('/')+1)
             var txt=tbody.getElementsByTagName('textarea')[0].value
-            alert('send ' + type + ' and text ' + txt)
+            if (img=='question.png') {
+                var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
+                this.sendCommentToSmwplus(tmpStr)
+            }
+            else if (img=='comment.png') {
+                var tmpStr=this.getTemplateStr(this.txtCommentComponent, '', txt, this.getSingleDiscourseState())
+                this.sendCommentToSmwplus(tmpStr)
+            }
+            else if (img=='bug.png') {
+                var tmpStr=this.getBugreportStr(txt)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwBugzillaUrl, tmpStr], null)
+            }
         }
         this.closeCommentBox(eL)
     },
@@ -290,6 +353,25 @@ SMW_UserManual_CSH.prototype = {
     },
     /* function for the feedback tab end here */
 
+    /* general functions for the CSH help */
+    getSingleDiscourseState: function(all) {
+        var ds = this.getDiscourseState()
+        // drop unimportand states
+        for (i=0; i<ds.length; i++) {
+            if (ds.length > 1 && 
+                (ds[i]=='SemanticForms' || ds[i]=='HaloAutoCompletion' || ds[i]=='edit' || ds[i]=='preview'))
+                ds.splice(i, 1)
+        }
+        if (!all) return ds[0]
+        return ds
+    },
+    
+    sendCommentToSmwplus: function(txt) {
+        var api = new MW_API_Access(umegSmwForumApi)
+        var pagename=this.smwCommentNs+':'+new Date().getTime()
+        api.createPage(pagename, txt)
+    },
+    
     /**
      * check pages, elements and variables in the current page to guess
      * the current discourse states. All which apply will be returned in an
@@ -299,18 +381,13 @@ SMW_UserManual_CSH.prototype = {
     getDiscourseState: function(){
         // available disource states: http://dmwiki.ontoprise.com:8888/dmwiki/index.php/Help_articles_structure
         var ds = new Array()
-        // check the action parameter
-        switch (wgAction) {
-            case 'edit': ds.push('edit'); break
-            case 'formedit': ds.push('SemanticForms'); break
-        }
         // check any special page that we know of
         switch (wgCanonicalSpecialPageName) {
             case 'OntologyBrowser': ds.push('OntologyBrowser'); break
             case 'QueryInterface': ds.push('QueryInterface'); break
             case 'AddData':
-            case 'EditData': ds.push('QueryInterface'); break
-            case 'DataImportRepository':
+            case 'EditData': ds.push('SemanticForms'); break
+            case 'DataImportRepository': ds.push('ImportVocabulary'); break
             case 'DefineWebService':
             case 'UseWebService': ds.push('Webservice'); break
             case 'Gardening':
@@ -328,6 +405,13 @@ SMW_UserManual_CSH.prototype = {
         if (document.getElementById('semtoolbar')) ds.push('SemanticToolbar')
         // any input element with class wick (ignore the search field)
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
+        // check the action parameter
+        switch (wgAction) {
+            case 'edit': 
+            case 'annotate': ds.push(wgAction); break
+            case 'submit' : ds.push('preview'); break
+            case 'formedit': ds.push('SemanticForms'); break
+        }
 
         return this.uniqueDs(ds)
     },
@@ -372,6 +456,74 @@ SMW_UserManual_CSH.prototype = {
             if (cn && cn.indexOf('wickEnabled:MWFloater') != -1) return true
         }
         return false
+    },
+    
+    /**
+     * Get Iso date of a given timestamp (optional) or of the current time
+     * @param Date object (optional)
+     * @return string iso_time
+     */
+    getIsoDate: function(now) {
+        if (!now) now = new Date()
+        return now.getFullYear()+'-'+(now.getMonth()<9?'0':'')+(now.getMonth()+1)+'-'
+            +(now.getDate()<10?'0':'')+now.getDate()+'T'
+            +(now.getHours()<10?'0':'')+now.getHours()+':'
+            +(now.getMinutes()<10?'0':'')+now.getMinutes()+':'
+            +(now.getSeconds()<10?'0':'')+now.getSeconds()
+    },
+    
+    /**
+     * build template string for comment page in the SMW+ Forum
+     * @param string txt raw template str
+     * @param int rating 1 or -1
+     * @param string comment text with user comment
+     * @param string referer cshPage name or component where the entry refers to
+     * @return composed string for wiki page
+     */
+    getTemplateStr: function(txt, rating, comment, referer) {
+        var user = wgUserName? MD5(wgUserName) : ''
+        var wiki = MD5(wgServer+wgScriptPath)
+        var page = wgNamespaceNumber == -1 ? wgPageName : MD5(wgPageName)
+        txt=txt.replace(/%%%1%%%/, user)
+        txt=txt.replace(/%%%2%%%/, referer)
+        txt=txt.replace(/%%%3%%%/, rating)
+        txt=txt.replace(/%%%4%%%/, this.getIsoDate())
+        txt=txt.replace(/%%%5%%%/, comment)
+        txt=txt.replace(/%%%6%%%/, wiki)
+        txt=txt.replace(/%%%7%%%/, page)
+        txt=txt.replace(/%%%8%%%/, wgAction) 
+        return txt
+    },
+    
+    /**
+     * build parameter string for a new bug report in the SMW+ Forum
+     * @param string comment text with user comment
+     * @return composed string for wiki page
+     */
+    getBugreportStr: function(comment) {
+        var txt=this.txtBugReport
+        var wiki = wgServer+wgScriptPath
+        var ds = this.getSingleDiscourseState()
+        var browser= (navigator.userAgent.indexOf('Firefox') > -1)
+            ?'Firefox'
+            :(navigator.userAgent.indexOf('MSIE') > -1)
+            ?'Internet+Explorer'
+            :(navigator.userAgent.indexOf('Safari') > -1)
+            ?'Safari'
+            :'Other'        
+        var os= (navigator.userAgent.indexOf('Windows NT') > -1)
+            ?'Windows'
+            :(navigator.userAgent.indexOf('Linux') > -1)
+            ?'Linux'
+            :'Other'
+        var smwVersion = umegSMWplusVersion
+            ?'SMW%2B+v'+umegSMWplusVersion.replace(/(^\d+\.\d+(\.\d+)?).*/, '$1')
+            :'User+Manual+Extension+v'+umegUMEVersion
+        txt=txt.replace(/%%%1%%%/, escape(comment))
+        txt=txt.replace(/%%%2%%%/, browser)
+        txt=txt.replace(/%%%3%%%/, os)
+        txt=txt.replace(/%%%4%%%/, smwVersion)
+        txt=txt.replace(/%%%5%%%/, escape(this.component[ds]))
+        return txt        
     }
-
 }
