@@ -21,7 +21,16 @@ function wfUprForwardApiCall(){
     $res = curl_exec($c);
     $httpErr = curl_getinfo($c, CURLINFO_HTTP_CODE);
     curl_close($c);
-
+    /* uncomment the following lines for debug */
+    /*
+    $fp = fopen(dirname(__FILE__).'/debug.log', "a+");
+    if ($fp) {
+        fputs($fp, "new request: http result $httpErr\n");
+        fputs($fp, print_r($data."\n", true));
+        fputs($fp, print_r($res."\n", true));
+        fclose($fp);
+    }
+    */
     return $res;
 }
 
