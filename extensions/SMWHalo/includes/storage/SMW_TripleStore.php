@@ -590,13 +590,14 @@ class SMWTripleStore extends SMWStore {
             if ($data instanceof Title) { // property chain appear as Title
                 $titleText = $data->getText();
                 $chain = explode(".",$titleText);
+               
                 if (count($chain) > 1) {
                     $newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
                     if ($newtitle->exists()) {
-                    	$newlabel = $newtitle->getText();
+                    	$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
                     	$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
                     } else {
-                    	$newlabel = $newtitle->getText();
+                    	$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
                         $newData = $newtitle;
                     }
                     $newid = str_replace($titleText, $newtitle->getText(), $id); 
