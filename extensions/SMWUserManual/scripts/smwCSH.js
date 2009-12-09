@@ -191,14 +191,14 @@ SMW_UserManual_CSH.prototype = {
      * if a radio input type is clicked for rating, a textbox automatically
      * appears below the radio inputs. This is done here
      */
-    openRatingBox: function(){
+    openRatingBox: function(el){
         var obj=document.getElementById('smw_csh_rating_box')
         if (obj && obj.style.display=='none') {
             obj.style.display=null
             var arrow=document.getElementById('smw_csh_rating').getElementsByTagName('img')[0]
             arrow.src=arrow.src.replace(/right\.png/,'down.png')
         }
-        else this.hideRatingBox()
+        else if (el.tagName == 'SPAN') this.hideRatingBox()
     },
 
     /**
@@ -212,7 +212,7 @@ SMW_UserManual_CSH.prototype = {
         if (this.cshPage != null && rating != null) {  
             var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
             this.sendCommentToSmwplus(txt)
-            this.hideRatingBox()
+            this.resetRating()
         }
     },
 

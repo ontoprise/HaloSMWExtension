@@ -333,10 +333,10 @@ function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
     if (!$umegSendCommentsToSMWplus) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
-    return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox()" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
+    return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox(this)" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_did_it_help').'</span>
-            <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_yes').'
-            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_no').'
+            <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_yes').'
+            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_no').'
             <div id="smw_csh_rating_box" style="display:none">
             <textarea width="100%" rows="3"></textarea>
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">
