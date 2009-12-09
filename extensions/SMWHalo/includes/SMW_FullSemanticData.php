@@ -96,7 +96,12 @@ class SMWFullSemanticData {
 				// There may be several properties with the same values
 				$p = $row[0];
 				while ( ($object = $p->getNextObject()) !== false ) {
-					$properties[] = $object->getDBkey();
+					if ($object instanceof SMWURIValue) {
+						$keys = $object->getDBkeys();
+						$properties[] = $keys[0];
+					} else {
+						$properties[] = $object->getDBkey();
+					}
 				}
 				// Retrieve the values of the properties
 				$v = $row[1];
