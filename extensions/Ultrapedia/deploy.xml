@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>100</version>
+        <id>ultrapedia</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/Ultrapedia</instdir>
+        <description>
+            Provides a tab function and a dynamic ask query
+        </description>
+        <dependencies>
+            <dependency from="142" to="143">smw</dependency>
+        </dependencies>
+    </global>
+    <codefiles>
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+
+    <configs>
+        <new>
+            <require name="ultrapedia"
+                file="extensions/UltraPedia/includes/UP_Initialize.php" />
+        </new>
+    </configs>
+</deploydescriptor>
