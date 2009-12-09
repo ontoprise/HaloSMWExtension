@@ -13,7 +13,9 @@ div#ce-c-header {
 	width: 100%;
 	margin: 5px 0;
 	padding-top: 5px;
-	border-top: 2px solid lightgrey;
+	clear:both;
+	float:left;
+	overflow:hidden;
 }
 img#ce-c-header-img {
 	width: 25px;
@@ -24,12 +26,16 @@ span#ce-c-header-text {
 	margin-left:10px;
 	font-size: larger;
 	font-weight: bold;
-	color: blue;
+	color: #116988;
 	cursor: pointer;
 }
+span#ce-c-header-text:hover {
+	text-decoration: underline;
+}
 form#ce-cf {
-	border: 1px solid lightgrey;
-	width: 100%-2px;
+	border-bottom: 1px solid grey;
+	border-collapse:collapse;
+	width: 100%;
 	overflow: hidden;
 }
 div#ce-cf-user-icon {
@@ -64,6 +70,7 @@ div#ce-cf-rating {
 	padding: 5px;
 	heigth: 32px;
 	border: 1px solid lightgrey;
+	background-color: #f7f3f7;
 }
 span#ce-cf-radiobuttons{
 	/*float:right;*/
@@ -105,7 +112,9 @@ div#ce-cf-commenthelp span{
 /* normal status messages from AJAX response */
 #ce-cf-message {
 	border: 1px dashed grey;
-	padding: 5px 2px;;
+	padding: 5px 2px;
+	float:left;
+	clear:both;
 }
 #ce-cf-message.ce-cf-success-message {
 	color: green;
@@ -122,4 +131,9 @@ div#ce-cf-commenthelp span{
 }
 .ce-cf-grey{
 	color: grey;
+}
+
+/* for comment result template */
+div.ce-rating-icon img {
+	vertical-align:middle;
 }
