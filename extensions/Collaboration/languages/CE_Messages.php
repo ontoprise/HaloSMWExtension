@@ -40,7 +40,8 @@ $messages['en'] = array(
 	'ce_cf_you_not_allowed'			=> 'You are actually not allowed to enter comments.',
 
 	/*header*/
-	'ce_cf_header_text'				=> 'Add Comment',
+	'ce_cf_header_text'				=> 'add a comment',
+	'ce_cf_header_tooltip'			=> 'You can open the comment form by clicking this text.',
 	/* author */
 	'ce_cf_author'					=> 'Author:',
 	/* rating */
@@ -49,6 +50,9 @@ $messages['en'] = array(
 	'ce_ce_rating_0'				=> 'good',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'bad',
+	'ce_cf_rating_title_b'			=> 'You can add a bad rating to your comment by clicking this icon.',
+	'ce_cf_rating_title_n'			=> 'You can add a neutral rating to your comment by clicking this icon.',
+	'ce_cf_rating_title_g'			=> 'You can add a good rating to your comment by clicking this icon.',
 	
 	/*comments*/
 	'ce_cf_comment'					=> 'Comment',
@@ -68,7 +72,7 @@ $messages['en'] = array(
  */
 $messages['de'] = array(
 	/* general/maintenance messages */
-    'ce_collaboration'				=> 'Collaboration',
+	'ce_collaboration'				=> 'Collaboration',
 	'ce_allowed'					=> 'Gratulation! CE funktioniert wie erwartet.',
 	'ce_warning'					=> 'Collaboration Extension Warnung',
 	'ce_var_undef'					=> 'Folgende Variable wurde nicht richtig gesetzt: "$1". <br/> Bitte prüfen Sie ihre Einstellungen',
@@ -81,7 +85,8 @@ $messages['de'] = array(
 	'ce_cf_you_not_allowed'			=> 'Sie dürfen aktuell keine Kommentare eingeben.',
  
 	/*header*/
-	'ce_cf_header_text'				=> 'Add Comment',
+	'ce_cf_header_text'				=> 'Einen Kommentar hinzuf&uuml;gen',
+	'ce_cf_header_tooltip'			=> 'Sie können das Kommentarformular durch klicken öffnen.', 
 	/* author */
 	'ce_cf_author'					=> 'Autor:',
 
@@ -91,6 +96,10 @@ $messages['de'] = array(
 	'ce_ce_rating_0'				=> 'gut',
 	'ce_ce_rating_1'				=> 'ok',
 	'ce_ce_rating_2'				=> 'schlecht',
+	'ce_cf_rating_title_b'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine schlechte Bewertung hinzufügen.',
+	'ce_cf_rating_title_n'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine neutrale Bewertung hinzufügen.',
+	'ce_cf_rating_title_g'			=> 'Sie können Ihrem Kommentar durch Klicken dieses Bildes eine gute Bewertung hinzufügen.',
+
 
 	/*comments*/
 	'ce_cf_comment'					=> 'Kommentar',

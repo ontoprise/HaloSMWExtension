@@ -80,13 +80,10 @@ require_once('CE_GlobalFunctions.php');
 cefInitNamespaces();
 
 ###
-# Comments are searched by default. Remove these lines if you not wanted.
+# Comments are searched by default. Remove these lines if not wanted.
 ###
 global $wgNamespacesToBeSearchedDefault;
 if( isset($wgNamespacesToBeSearchedDefault) && is_array($wgNamespacesToBeSearchedDefault))
 	array_push($wgNamespacesToBeSearchedDefault, array(CE_COMMENT_NS => true) );
 else
 	$wgNamespacesToBeSearchedDefault = array(CE_COMMENT_NS => true);
-
-#include the ajax access
-#require_once('/specials/Comment/CE_CommentAjaxAccess.php');

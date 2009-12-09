@@ -157,11 +157,15 @@ END;
 		
 		$encPreComment = htmlspecialchars(wfMsgForContentNoTrans('ce_cf_predef'));
 		$comment_disabled = '';
+		$cfHeaderToolTip = wfMsgForContent('ce_cf_header_tooltip');
 
 		#rating#
 		$ratingValues = array( 0 => wfMsgForContent('ce_ce_rating_0'),
 			1 => wfMsgForContent('ce_ce_rating_1'),
 			2 => wfMsgForContent('ce_ce_rating_2'));
+		$ratingTitleBad = wfMsgForContent('ce_cf_rating_title_b');
+		$ratingTitleNeutral = wfMsgForContent('ce_cf_rating_title_n');
+		$ratingTitleGood = wfMsgForContent('ce_cf_rating_title_g');
 		
 		#user#
 		$currentUser = $wgUser->getName();
@@ -205,15 +209,17 @@ END;
 			}
 		}
 
+		$submitButtonID = 'ce-cf-submitbuttonID';
+		$resetButtonID = 'ce-cf-resetbuttonID'; 
+		
 		//TODO: use script.aclo.us(?) for fading in.
 
 		$html = XML::openElement( 'div', array( 'id' => 'ce-c-header' )) .
-			XML::Element( 'img', array( 'id' => 'ce-c-header-img',
-				'src' => $cegScriptPath . '/skins/Comment/icons/Comment_icon_crystal.png' )) .
 			XML::openElement('span', array( 'id' => 'ce-c-header-text',
+				'title' => $cfHeaderToolTip,
 				'onClick' => '$(\'ce-cf\').toggle();')) .
 			wfMsgForContent('ce_cf_header_text') .
-			XML::closeElement('div');
+			XML::closeElement('span');
 
 		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'ce-cf',
 			'style' => 'display:none',		
@@ -236,13 +242,16 @@ END;
 						XML::Element('img', array( 'id' => 'ce-cf-rating1',
 							'class' => 'ce-cf-rating-img',
 							'src' => $cegScriptPath . '/skins/Comment/icons/bad_inactive.png',
+							'title' => $ratingTitleBad,
 							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating1\',-1);' )) .
 						XML::Element('img', array( 'id' => 'ce-cf-rating2',
 							'class' => 'ce-cf-rating-img',
 							'src' => $cegScriptPath . '/skins/Comment/icons/neutral_inactive.png',
+							'title' => $ratingTitleNeutral,
 							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating2\',0);' )) .
 						XML::Element('img', array( 'id' => 'ce-cf-rating3',
 							'class' => 'ce-cf-rating-img',
+							'title' => $ratingTitleGood,
 							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
 							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating3\',1);' )) .
 					XML::closeElement('span') .
@@ -261,13 +270,9 @@ END;
 					'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
 				$encPreComment .
 				XML::closeElement('textarea') .
-				XML::closeElement('div');
-
-		$submitButtonID = 'ce-cf-submitbuttonID';
-		$resetButtonID = 'ce-cf-resetbuttonID';  
-		
-		$html .= XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
-						array ( 'id' => $submitButtonID) ) .
+			XML::closeElement('div') .
+			XML::submitButton( wfMsg( 'ce_cf_submit_button_name' ), 
+				array ( 'id' => $submitButtonID) ) .
 			XML::element( 'input', array( 'type' => 'reset', 
 				'value' => wfMsg( 'ce_cf_reset_button_name' ),
 				'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
@@ -277,6 +282,7 @@ END;
 				'style' => 'display:none')) .
 			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'ce-cf-pending' )) .
+			XML::closeElement('div') .
 			XML::closeElement('div');
 
 		$html .= $jsText . '</script>';
