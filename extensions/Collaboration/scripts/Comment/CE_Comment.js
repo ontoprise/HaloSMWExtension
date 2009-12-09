@@ -31,7 +31,6 @@ CECommentForm.prototype = {
 	initialize: function() {
 		// save the current comment for beaing able to repost on failure
 		this.textareaIsDefault = true;
-		this.usernameIsDefault = true;
 		this.ratingValue = null;
 		this.internalCall = null;
 		this.runCount = 0;
@@ -96,7 +95,14 @@ CECommentForm.prototype = {
 		textArea = textArea.stripScripts();
 		//escape html chars
 		textArea = textArea.escapeHTML();
-
+		//property & template cleaning:
+		textArea = textArea.replace(/::/g, '_');
+		textArea = textArea.replace(/\[/g, '_');
+		textArea = textArea.replace(/\]/g, '_');
+		textArea = textArea.replace(/\{/g, '_');
+		textArea = textArea.replace(/\}/g, ':');
+		
+		
 		//TODO: wgUserName is null, when not logged in!
 		var userNameString = '';
 		if( wgUserName != null && ceUserNS != null )
@@ -174,7 +180,7 @@ CECommentForm.prototype = {
 				//fine.
 				this.pendingIndicatorCF.hide();
 				$('ce-cf-message').setAttribute('class', 'ce-cf-success-message');
-				$('ce-cf-message').innerHTML = htmlmsg + 'Page is reloading...';
+				$('ce-cf-message').innerHTML = htmlmsg + ' Page is reloading...';
 				var pending = new OBPendingIndicator($('ce-cf-message'));
 				pending.show();
 				$('ce-cf-message').show();
@@ -213,7 +219,13 @@ CECommentForm.prototype = {
 	
 	formReset:function() {
 		this.textareaIsDefault = true;
-		this.usernameIsDefault = true;
+		
+		if (this.ratingValue != null) {
+			var oldhtmlid = 'ce-cf-rating' + String(this.ratingValue + 2);
+			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
+			this.ratingValue = null;
+		}
+		$('ce-cf').reset();
 	},
 	
 	/**
@@ -231,23 +243,6 @@ CECommentForm.prototype = {
 	 */
 	textareaKeyPressed:function() {
 		this.textareaIsDefault = false;
-	},
-	
-	/**
-	 * onClick event function for username input
-	 */
-	selectUsernameInput: function() {
-		//check if we still have the form default in here
-		if (this.usernameIsDefault) {
-			$('ce-cf-user-field').activate();
-		}
-	},
-	
-	/**
-	 * Disable the onClick function for username input
-	 */
-	usernameInputKeyPressed:function() {
-		this.usernameIsDefault = false;
 	},
 	
 	/**
