@@ -74,7 +74,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      $edittime = $page_article->getTimestamp();
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 5564)
+--- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 6032)
 +++ extensions/SemanticForms/specials/SF_UploadWindow.php	(working copy)
 @@ -20,7 +20,7 @@
  	 * Constructor
@@ -232,7 +232,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  				htmlspecialchars( $finalExt ), implode ( ', ', $wgFileExtensions ) ) );
  		}
  
-@@ -540,48 +607,99 @@
+@@ -540,48 +607,106 @@
  				$wgUser->addWatch( $this->mLocalFile->getTitle() );
  				
  			}
@@ -260,14 +260,6 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			global $wgRequest;
 +			// set Filename
 +			$wgRequest->data["$rMUploadFormName"]['Filename'] = $target;
-+			// use default=now again!
-+			/*$uploadDateString = $this->mLocalFile->getTimestamp();
-+			$uploadYear = substr($uploadDateString, 0, 4);
-+			$uploadMonth = substr($uploadDateString, 4, 2);
-+			$uploadDay = substr($uploadDateString, 6, 2);
-+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['year'] = $uploadYear;
-+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['month'] = $uploadMonth;
-+			$wgRequest->data["$rMUploadFormName"]['UploadDate']['day'] = $uploadDay;*/
 +			//Mime-type as property
 +			$wgRequest->data["$rMUploadFormName"]['Format'] = $this->mLocalFile->getMimeType();
 +			// set anything else?
@@ -287,7 +279,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 +			// and this ID is not correct now (always 0). So do an ID update once.
 +			$testID = $target_title->getArticleID(GAID_FOR_UPDATE);
 +			// Add or Edit?
-+			if (! $target_title || ! $target_title->exists() ) {
++			if ( !$target_title || !$target_title->exists() ) {
 +				$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
 +				$form_add= new SFAddData();
  			} else {
@@ -306,9 +298,24 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 -				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
 -			} else {
 -				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
-+				//do not overwrite the WebRequest data
-+				$wgRequest->data["$rMDestFormName"]['Filename'] = $target;
-+				$wgRequest->data["$rMDestFormName"]['Format'] = $this->mLocalFile->getMimeType();
++					if ( !is_array($wgRequest->data["$rMDestFormName"])) {
++						// dest form not set -> copy all!
++						$wgRequest->data["$rMDestFormName"] = &$wgRequest->data["$rMUploadFormName"];
++					} else {
++						//overwrite only specific values.
++						foreach ( $wgRequest->data["$rMUploadFormName"] as $newKey => $newVal ) {
++							if ( $newKey && !(array_key_exists($newKey, $wgRequest->data["$rMDestFormName"])) ) {
++								// overwrite
++								$wgRequest->data["$rMDestFormName"][$newKey] = $newVal;
++							}
++							if ( $newKey == 'Filename') {
++								// always overwrite the dest filename and the new MimeType
++								$wgRequest->data["$rMDestFormName"]['Filename'] = $newVal;
++							} elseif ($newKey = 'Format') {
++								$wgRequest->data["$rMDestFormName"]['Format'] = $newVal;
++							}
++						}
++					}
 +				$form_add = new SFEditData();
  			}
 -		}
@@ -362,7 +369,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  	}
  
-@@ -630,7 +748,7 @@
+@@ -630,7 +755,7 @@
  				$dlink2 = '';
  			}
  
@@ -371,7 +378,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		} elseif ( $file_lc && $file_lc->exists() ) {
  			# Check if image with lowercase extension exists.
-@@ -802,9 +920,56 @@
+@@ -802,9 +927,56 @@
  	 * @access private
  	 */
  	function uploadError( $error ) {
@@ -430,7 +437,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -824,15 +989,22 @@
+@@ -824,15 +996,22 @@
  			# Couldn't save file; an error has been displayed so let's go.
  			return;
  		}
@@ -455,7 +462,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$action = $titleObj->escapeLocalURL( 'action=submit' );
  		$align1 = $wgContLang->isRTL() ? 'left' : 'right';
  		$align2 = $wgContLang->isRTL() ? 'right' : 'left';
-@@ -856,24 +1028,38 @@
+@@ -856,24 +1035,38 @@
  		<input type='hidden' name='wpDestFile' value=\"" . htmlspecialchars( $this->mDesiredDestName ) . "\" />
  		<input type='hidden' name='wpWatchthis' value=\"" . htmlspecialchars( intval( $this->mWatchthis ) ) . "\" />
  		<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -498,7 +505,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/**
-@@ -895,6 +1081,10 @@
+@@ -895,6 +1088,10 @@
  		$adc = wfBoolToStr( $useAjaxDestCheck );
  		$alp = wfBoolToStr( $useAjaxLicensePreview );
  		
@@ -509,7 +516,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$wgOut->addScript( "<script type=\"text/javascript\">
  wgAjaxUploadDestCheck = {$adc};
  wgAjaxLicensePreview = {$alp};
-@@ -929,15 +1119,105 @@
+@@ -929,15 +1126,105 @@
  		if ( $ew ) $ew = " style=\"width:100%\"";
  		else $ew = '';
  
@@ -622,7 +629,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		$sourcefilename = wfMsgHtml( 'sourcefilename' );
  		$destfilename = wfMsgHtml( 'destfilename' );
  		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
-@@ -960,7 +1240,7 @@
+@@ -960,7 +1247,7 @@
  				( $wgUser->getOption( 'watchcreations' ) && $this->mDesiredDestName == '' ) )
  			? 'checked="checked"'
  			: '';
@@ -631,7 +638,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  
  		// Prepare form for upload or upload/copy
  		if( $wgAllowCopyUploads && $wgUser->isAllowed( 'upload_by_url' ) ) {
-@@ -982,41 +1262,82 @@
+@@ -982,41 +1269,82 @@
  				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFileURL\")' ") . "size='40' DISABLED />" .
  				wfMsgHtml( 'upload_source_url' ) ;
  		} else {
@@ -728,7 +735,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  			<td align='$align1'><label for='wpUploadDescription'>{$summary}</label></td>
  			<td align='$align2'>
-@@ -1024,7 +1345,7 @@
+@@ -1024,7 +1352,7 @@
  					cols='{$cols}'{$ew}>$encComment</textarea>
  		{$this->uploadFormTextAfterSummary}
  			</td>
@@ -737,7 +744,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<tr>
  EOT
  		);
-@@ -1032,7 +1353,7 @@
+@@ -1032,7 +1360,7 @@
  		if ( $licenseshtml != '' ) {
  			global $wgStylePath;
  			$wgOut->addHTML( "
@@ -746,7 +753,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  			<td align='$align2'>
  				<select name='wpLicense' id='wpLicense' tabindex='4'
  					onchange='licenseSelectorCheck()'>
-@@ -1042,13 +1363,13 @@
+@@ -1042,13 +1370,13 @@
  			</td>
  			</tr>
  			<tr>" );
@@ -762,7 +769,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		}
  
  		if ( $wgUseCopyrightUpload ) {
-@@ -1067,21 +1388,21 @@
+@@ -1067,21 +1395,21 @@
  					<td><input tabindex='6' type='text' name='wpUploadSource' id='wpUploadCopyStatus' 
  					  value=\"$uploadsource\" size='40' /></td>
  			</tr>
@@ -790,7 +797,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  		<td></td>
  		<td align='$align2'><input tabindex='9' type='submit' name='wpUpload' value=\"{$ulb}\"" . $wgUser->getSkin()->tooltipAndAccesskey( 'upload' ) . " /></td>
  	</tr>
-@@ -1097,8 +1418,59 @@
+@@ -1097,8 +1425,59 @@
  	</table>
  	<input type='hidden' name='wpDestFileWarningAck' id='wpDestFileWarningAck' value=''/>
  	<input type='hidden' name='sfInputID' value=\"" . htmlspecialchars( $this->mInputID ) . "\" />
@@ -852,7 +859,7 @@ Index: extensions/SemanticForms/specials/SF_UploadWindow.php
  	}
  
  	/* -------------------------------------------------------------- */
-@@ -1562,4 +1934,60 @@
+@@ -1562,4 +1941,60 @@
  		}
  		return $pageText;
  	}
