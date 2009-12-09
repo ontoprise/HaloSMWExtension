@@ -131,6 +131,14 @@ class SMWTripleStore extends SMWStore {
 		$triples = array();
 
 		$subject = $data->getSubject();
+		
+		// check for selective updates, ie. update only certain namespaces
+		global $smwgUpdateTSOnNamespaces;
+		if (isset($smwgUpdateTSOnNamespaces) && is_array($smwgUpdateTSOnNamespaces)) {
+			if (!array_key_exists($subject->getNamespace(), $smwgUpdateTSOnNamespaces)) {
+				return;
+			}
+		}
 
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 		$unknownNSPrefixes = "";
