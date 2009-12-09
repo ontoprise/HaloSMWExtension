@@ -62,7 +62,8 @@ class FileData {
 	}
 
 	public function getFolderName(){
-		return $this->folderName;
+		$fN = urldecode($this->decodeFileName($this->folderName));
+		return $fN;
 	}
 	
 	public function getPrefixedFolderName(){
@@ -71,7 +72,8 @@ class FileData {
 
 	public function getFileName(){
 		if($this->isWikiArticle()){
-			return urldecode($this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6)));
+			$fN = urldecode($this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6)));
+			return $fN; 
 		} else {
 			return urldecode($this->decodeFileName($this->fileName));
 		}
@@ -274,7 +276,8 @@ class FileData {
 						return "namespace";
 					} else if(count($path) == 2 && !$this->isDirectory()){
 						$nsId = $this->getNamespaceId(true, $path[0]);
-						$title = Title::newFromText($path[1], $nsId);
+						$title = Title::newFromText(
+							$this->getFolderName(), $nsId);
 						if($title->exists()){
 							return "article";
 						}
@@ -323,9 +326,10 @@ class FileData {
 		if($folderPathType == "invalid"){
 			return false;
 		} else if($folderPathType == "root"
-				|| $folderPathType == "files"){
+				|| $folderPathType == "files"
+				|| $folderPathType == "namespace"){
 					return false;
-		} 
+		}  
 		return true;
 	}
 }

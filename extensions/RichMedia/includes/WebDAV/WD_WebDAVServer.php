@@ -325,18 +325,23 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$ns = $ns[count($ns)-2];
 		$ns = ($ns == "Main") ? "" : $ns.":";
 		
-		//todo: make this query configurable in the settings
-		SMWQueryProcessor::processFunctionParams(array("[[Category:Media]] [[HasRelatedArticle::"
+		global $wgWebDAVRichMediaRelationshipPropertyName;
+		SMWQueryProcessor::processFunctionParams(array("[["
+			.$wgWebDAVRichMediaRelationshipPropertyName."::"
 			.$ns.$fileData->getFolderName()."]]")
 			,$querystring,$params,$printouts);
-		$queryResult = explode("|",
+		$queryResult = explode("]]",
 			SMWQueryProcessor::getResultFromQueryString($querystring,$params,
 			$printouts, SMW_OUTPUT_WIKI));
 		
-		unset($queryResult[0]);
-		
 		foreach($queryResult as $fileName){
-			$fileName = substr($fileName, 0, strpos($fileName, "]]"));
+			if(strlen($fileName) == 0){
+				continue;
+			}
+			$fileName = substr($fileName, strpos($fileName, "|")+1);
+			if(strpos($fileName, "|") > 0){
+				$fileName = substr($fileName, 0, strpos($fileName, "|"));
+			}
 			$file = RepoGroup::singleton()->findFile($fileName);
 			if($file){
 				$status[] = $this->createFileResponse(
@@ -508,16 +513,15 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		if ( !$this->userIsAllowed()){
 			return "401 Unauthorized";
 		}
-
 		$fileData = new FileData($pathComponents);
 		if (!$fileData->isValidDeletePath()) {
 			return "400 Bad Request";
 		}
-
 		$isArticleFolder = $fileData->isArticleFolder();
 		if(!$fileData->isDirectory() && 
 				($fileData->isFileNamespaceFolder()
 				|| $isArticleFolder)){
+			
 			if($fileData->isTempFile()){
 				if(file_exists("./extensions/RichMedia/includes/WebDAV/tmp/"
 						.$fileData->getFileName())){
@@ -527,6 +531,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				return true;
 			} else {
 				$title = Title::newFromText( $fileData->getFileName());
+				
 				$file = RepoGroup::singleton()->findFile($title);
 				if($file){
 					if(!$fileData->isFileNamespaceFolder()){
@@ -559,7 +564,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				}
 			}
 		}
-
+		
 		$nsId = $fileData->getNamespaceId(false);
 		$title = "";
 		if($fileData->isDirectory()){
