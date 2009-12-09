@@ -93,7 +93,7 @@ if (!defined("SMW_VERSION")) {
 define('SMW_FORUM_API', 'http://smwforum.ontoprise.com/smwforum/api.php');
 // define the SMW forum URL to get a normal page (needed to fetch the CSH article list)
 define('SMW_FORUM_URL', 'http://smwforum.ontoprise.com/smwforum/index.php');
-// define the Bugzilla URL where new bugs can be subitted
+// define the Bugzilla URL where new bugs can be submited
 define('SMW_BUGZILLA_URL', 'http://smwforum.ontoprise.com/smwbugs/enter_bug.cgi');
 // Context sensitive help articles are fetched from the SMW forum by this query
 define('SMW_FORUM_QUERY_CSH', '[[Category:Context sensitive help article]]');
@@ -373,5 +373,3 @@ function umefDivBoxFeedback() {
             </div>
     ';
 }
-
-?>

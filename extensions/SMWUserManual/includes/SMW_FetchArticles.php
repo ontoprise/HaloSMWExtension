@@ -164,4 +164,3 @@ class UME_FetchArticles {
         return $cont;
     }
 }
-?>

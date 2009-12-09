@@ -95,5 +95,3 @@ class UME_CshArticle {
     }
 
 }
-
-?>

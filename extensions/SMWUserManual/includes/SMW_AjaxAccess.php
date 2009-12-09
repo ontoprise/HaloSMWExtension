@@ -104,5 +104,3 @@ function wfUmeAjaxGetArticleHtml($page){
 	}
 	return json_encode($result);
 }
-
-?>
