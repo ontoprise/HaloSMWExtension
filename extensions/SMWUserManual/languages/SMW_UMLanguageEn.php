@@ -12,7 +12,7 @@ class SMW_UMLanguageEn {
         'smw_ume_cpt_headline_1'  => 'Context sensitive help',
         'smw_ume_cpt_headline_2'  => 'Choose feedback type',
         'smw_ume_select_topic'    => 'Select help topic:',
-        'smw_ume_link_to_smwforum'=> '»Visit SMW<sup>+</sup> Userforum for more help',
+        'smw_ume_link_to_smwforum'=> 'Visit SMW<sup>+</sup> Userforum for more help',
         'smw_ume_did_it_help'     => 'Was this help content useful?',
         'smw_ume_ask_your_own_q'  => 'Ask your own help question',
         'smw_ume_add_comment'     => 'Leave a comment for this component',
