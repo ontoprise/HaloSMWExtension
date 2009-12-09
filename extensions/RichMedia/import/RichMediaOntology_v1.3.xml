@@ -2874,7 +2874,7 @@ Denotes a content item as subsection of another content item.
     </revision>
   </page>
   <page>
-    <title>Template:RMICalData</title>
+    <title>Template:DataRMICal</title>
     <id>2153</id>
     <revision>
       <id>10734</id>
@@ -2922,7 +2922,7 @@ Denotes a content item as subsection of another content item.
     </revision>
   </page>
   <page>
-    <title>Template:RMVCardData</title>
+    <title>Template:DataRMVCard</title>
     <id>2157</id>
     <revision>
       <id>10739</id>

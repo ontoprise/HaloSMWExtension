@@ -66,7 +66,7 @@ $wgAutoloadClasses['UCICalConverter'] =
 global $wgUploadConverterTemplateMapping;
 $wgUploadConverterTemplateMapping = array();
 $wgUploadConverterTemplateMapping['application/vcard'] = array();
-$wgUploadConverterTemplateMapping['application/vcard']['TemplateName'] = "RMVCardData";
+$wgUploadConverterTemplateMapping['application/vcard']['TemplateName'] = "DataRMVCard";
 $wgUploadConverterTemplateMapping['application/vcard']['N'] = 'name';
 $wgUploadConverterTemplateMapping['application/vcard']['FN'] ='fullName';
 $wgUploadConverterTemplateMapping['application/vcard']['TITLE'] = 'title';
@@ -81,7 +81,7 @@ $wgUploadConverterTemplateMapping['application/vcard']['NOTE'] = 'note';
 $wgUploadConverterTemplateMapping['application/vcard']['CATEGORIES'] = 'categories';
 
 $wgUploadConverterTemplateMapping['application/icalendar'] = array();
-$wgUploadConverterTemplateMapping['application/icalendar']['TemplateName'] = "RMICalData";
+$wgUploadConverterTemplateMapping['application/icalendar']['TemplateName'] = "DataRMICal";
 $wgUploadConverterTemplateMapping['application/icalendar']['categories'] = 'categories';
 $wgUploadConverterTemplateMapping['application/icalendar']['start'] = 'start';
 $wgUploadConverterTemplateMapping['application/icalendar']['end'] = 'end';
