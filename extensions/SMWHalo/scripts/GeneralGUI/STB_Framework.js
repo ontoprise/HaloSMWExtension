@@ -33,6 +33,9 @@ var SAVEANNOTATIONSCONTAINER = 13; // save annotations in AAM
 var DBGCONTAINER = 14; // contains debug information
 var LASTCONTAINERIDX = 14;
 
+var STBIMGMINUS = '/extensions/SMWHalo/skins/Annotation/images/minus.gif'
+var STBIMGPLUS = '/extensions/SMWHalo/skins/Annotation/images/plus.gif'
+
 ToolbarFramework.prototype = {
 
 	/**
@@ -136,12 +139,15 @@ ToolbarFramework.prototype = {
 				if (this.contarray[container].headline != null) {
 					$("stb_cont"+container+"-headline").show();
 					document.getElementById("stb_cont" + container + "-link").className='minusplus';
+					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGMINUS;
 				}
 				if (this.contarray[container].isVisible()) {
 					$("stb_cont"+container+"-content").show();
+					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGMINUS;
 				} else {
 					$("stb_cont"+container+"-content").hide();
 					document.getElementById("stb_cont" + container + "-link").className='plusminus';
+					$("stb_cont" + container + "-icon").src=wgScriptPath+STBIMGPLUS;
 				}
 			}
 		} else {

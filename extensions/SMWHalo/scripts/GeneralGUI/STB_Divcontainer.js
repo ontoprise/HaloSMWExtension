@@ -26,6 +26,7 @@ DivContainer.prototype = {
 	 */
 	initialize: function() {
 		this.visibility = true;
+		this.plusminus = STBIMGMINUS;
 	},
 
 	createContainer: function(contnum, tabnr) {
@@ -77,7 +78,8 @@ DivContainer.prototype = {
 
 	setHeadline : function(headline) {
 		this.headline = headline;
-		$("stb_cont"+this.getContainerNr()+"-headline").update("<div style=\"cursor:pointer;cursor:hand;\" onclick=\"stb_control.contarray["+this.getContainerNr()+"].switchVisibility()\"><a id=\"stb_cont" + this.getContainerNr() + "-link\" class=\"minusplus\" href=\"javascript:void(0)\">&nbsp;</a>" + headline);
+		var imgsrc = wgScriptPath + (this.visibility ? STBIMGMINUS : STBIMGPLUS)  
+		$("stb_cont"+this.getContainerNr()+"-headline").update("<div style=\"cursor:pointer;cursor:hand;\" onclick=\"stb_control.contarray["+this.getContainerNr()+"].switchVisibility()\"><a id=\"stb_cont" + this.getContainerNr() + "-link\" class=\"minusplus\" href=\"javascript:void(0)\"><img id=\"stb_cont" + this.getContainerNr() + "-icon\" src=\""+imgsrc+"\" border=\"0\"/></a>" + headline);
 	},
 
 	setContent : function(content) {
