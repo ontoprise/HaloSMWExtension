@@ -34,7 +34,7 @@ END:VCARD';
  * property names to one or more property values associated with that name.
  * A name is the unique property identifier such as N, ADR, and TEL.
  */
-class VCard
+class VCardForPOP3
 {
     /**
      * An associative array where each key is the property name and each value
@@ -50,7 +50,7 @@ class VCard
     function parse(&$lines)
     {
         $this->_map = null;
-        $property = new VCardProperty();
+        $property = new VCardPropertyForPOP3();
         while ($property->parse($lines)) {
             if (is_null($this->_map)) {
                 if ($property->name == 'BEGIN') {
@@ -65,7 +65,7 @@ class VCard
             }
             // MDH: Create new property to prevent overwriting previous one
             // (PHP5)
-            $property = new VCardProperty();
+            $property = new VCardPropertyForPOP3();
         }
         return $this->_map != null;
     }
@@ -131,7 +131,7 @@ class VCard
  * The parameters are stored as an associative array where each key is the
  * parameter name and each value is an array of parameter values.
  */
-class VCardProperty
+class VCardPropertyForPOP3
 {
     var $name;          // string
     var $params;        // params[PARAM_NAME] => value[,value...]

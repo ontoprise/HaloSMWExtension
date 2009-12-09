@@ -694,7 +694,7 @@ class DALReadPOP3 implements IDAL {
 
 	private function serialiseVCard($vCardString){
 		require_once('SMW_VCardParser.php');
-		$vCardParser = new VCard();
+		$vCardParser = new VCardForPOP3();
 		$vCardParser->parse(explode("\n", $vCardString));
 
 		$values = $vCardParser->getProperties("N");
@@ -706,7 +706,7 @@ class DALReadPOP3 implements IDAL {
 
 	private function serializeICal($iCalString){
 		require_once('SMW_ICalParser.php');
-		$iCalParser = new ICalParser();
+		$iCalParser = new ICalParserForPOP3();
 		$uid = $iCalParser->getUID($iCalString);
 		if(!is_null($uid)){
 			return $this->createAttachmentTerm($iCalString, $uid.".ics");

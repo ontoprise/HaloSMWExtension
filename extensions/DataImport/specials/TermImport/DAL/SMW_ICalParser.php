@@ -8,7 +8,7 @@
  *
  */
 
-class ICalParser {
+class ICalParserForPOP3 {
 
 	public function getUID($iCalString){
 		$lines = nl2br($iCalString);
