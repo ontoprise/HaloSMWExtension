@@ -42,7 +42,7 @@ function fckHttpRequestWithoutCurl($server, $file, $params = "") {
     if (!$fp) return array(-1, false);
     $com = "GET $file".((strlen($params) > 0) ? '?'.$params : '')." HTTP/1.1\r\nAccept: */*\r\n".
            "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n".
-           "Host: $server:$port\r\n".
+           "Host: $server:".$SERVER['SERVER_PORT']."\r\n".
            "Connection: Keep-Alive\r\n";
     if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW']))
         $com .= "Authorization: Basic ".base64_encode($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW'])."\r\n";
