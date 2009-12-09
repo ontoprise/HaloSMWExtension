@@ -77,8 +77,10 @@ function wfUmeAjaxGetArticleHtml($page){
     if (!$title) return wfMsg('smw_ume_no_help_article');
     $article = new Article($title);
     if (!$article) return wfMsg('smw_ume_no_help_article');
-    // remove Images and Media links
-    $wikitext= preg_replace('/\[\[(Image|Media):[^\]]*\]\]/', '', $article->getRawText());
+    // remove img tags but extract the content of the alt attribute and leave it in the text solemnly
+    $wikitext= preg_replace('/\[\[Image:.*?alt=([^\]\|]*)[^\]]*\]\]/', '$1', $article->getRawText());
+    // remove all remaining image tags that didn't have an alt parameter:
+    $wikitext= preg_replace('/\[\[Image:[^\]]*\]\]/', '', $wikitext);
     // parse wikitext
 	$out = $psr->parse($wikitext,$wgTitle,$opt,true,true);
     // initialize the result array
