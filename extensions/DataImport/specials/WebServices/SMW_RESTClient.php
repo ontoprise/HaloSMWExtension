@@ -77,9 +77,19 @@ class SMWRestClient implements IWebServiceClient {
 		} else {
 			$userAgent = "smw data import extension";
 		}
+		
+		if(array_key_exists("__rest__accept", $parameters)){
+			$accept = $parameters["__rest__user_agent"][0];
+			unset($parameters["__rest__accept"]);
+		} else {
+			$accept = "";
+		}
 			
 		if(strtolower($operationName) == "get"){
 			$params = array('http' => array('method' => 'GET', 'user_agent' => $userAgent,));
+			if(strlen($accept) > 0){
+				$params["accept"] = $accept;
+			}
 			$first = true;
 
 			foreach($parameters as $key => $values){
@@ -118,6 +128,9 @@ class SMWRestClient implements IWebServiceClient {
 				'user_agent' => $userAgent,
 				'content' => $data
 			));
+			if(strlen($accept) > 0){
+				$params["accept"] = $accept;
+			}
 		} else {
 			return "unknown method name";
 		}
