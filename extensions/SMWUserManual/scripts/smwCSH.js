@@ -407,8 +407,8 @@ SMW_UserManual_CSH.prototype = {
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
         // check the action parameter
         switch (wgAction) {
-            case 'edit': 
-            case 'annotate': ds.push(wgAction); break
+            case 'edit': if (typeof FCKeditor == "undefined") ds.push('edit'); break
+            case 'annotate': ds.push('annotate'); break
             case 'submit' : ds.push('preview'); break
             case 'formedit': ds.push('SemanticForms'); break
         }
