@@ -1,0 +1,66 @@
+== Requirements ==
+
+* SemanticResultFormats
+
+== Installation ==
+
+	require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php");
+
+Or
+	add 'ofc' support to '$IP/extensions/SemanticResultFormats/SRF_Settings.php'
+<pre><nowiki>
+	$srfgFormats = array('icalendar', 'vcard', 'calendar', 'eventline', 'timeline', 'sum', 'average', 'min', 'max', 'ofc');
+
+		case 'ofc':
+			$class = 'SRFOFC';
+			$file = $srfgIP . '/ofc/SRF_OFC.php';
+		break;
+</nowiki></pre>
+
+== Usage ==
+In ask query parameter syntax.
+<pre>
+| format=ofc
+| chart type=group chart settings
+</pre>
+
+* chart type, reserved keywords for different chart
+** pie chart: pie
+** bar chart: bar
+** 3d bar chart: bar_3d
+** line chart: line
+** scatter line chart: scatter_line
+
+* group settings, a group of chart settings in specified chart type
+** each chart is separated by semicolon ';'
+
+* chart setting is separated by a comma ','
+** pie
+*** pie slice, data field column name in query
+*** area data, value field column name in query
+*** whether to show this chart when page load (show or hide), default is hide
+** bar, 3d bar, line, scatter line
+*** data field (x-axis)
+*** multiple value fields (y-axis) separate by '/'
+*** show / hide
+
+Auto axis scaler and resize (may cause flash crash :( ) is implemented for OFC SRF.
+
+E.g.
+
+<pre><nowiki>
+{{#ask: [[Category:Science fiction films]]
+[[budget::<10000000]][[Gross::+]]
+|?Release date
+|?Budget
+|?Gross
+|?Runtime
+|limit=10
+|mainlabel=Sci-Fi Films
+|format=ofc
+|pie=Sci-Fi Films,Budget;Sci-Fi Films,Gross
+|bar_3d=Sci-Fi Films,Runtime;Sci-Fi Films,Budget/Gross
+|line=Sci-Fi Films,Budget/Gross
+|scatter_line=Budget,Gross
+}}
+</nowiki></pre>

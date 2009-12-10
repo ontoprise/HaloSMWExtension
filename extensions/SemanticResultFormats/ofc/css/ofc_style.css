@@ -1,0 +1,53 @@
+/*generic icon style for the links */
+/*this is the container div */
+.show_hide_container{
+	border-top:3px solid #000033;
+	width:100%;
+	height:20px;
+	background-color:#E2E2E2;
+	text-align:right;
+	padding-top:6px;
+}
+
+/* this is the style of the chart show link */
+.ofc_pie_link{
+	background: url(images/pie.png) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_bar_link{
+	background: url(images/bar.gif) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_bar_3d_link{
+	background: url(images/bar_3d.png) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_line_link{
+	background: url(images/line.png) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_scatter_line_link{
+	background: url(images/line.png) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_table_link{
+	background: url(images/table.gif) top left no-repeat;
+	padding:0px 0px 6px 20px;
+	border-bottom:0px solid #000033;
+	margin-right:10px;
+}
+.ofc_title{
+	float:left;
+	font-weight:bold;
+	padding-left:3px;
+}
