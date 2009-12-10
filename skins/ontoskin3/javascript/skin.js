@@ -19,6 +19,7 @@ function Smwh_Skin() {
             $jq("#shadows").css("width", "100%");
             $jq("#personal_expand").removeClass("limited");
             $jq("#personal_expand").addClass("expanded");
+            $jq("#smwh_treeviewtoggleleft,#smwh_treeviewtoggleright,#smwh_treeview").addClass("expanded");
             this.expanded = true;
 
             //Hide treeview (necessary if shown on the left side)
@@ -32,6 +33,7 @@ function Smwh_Skin() {
             //show layout, which is optimized for 1024x768
             $jq("#shadows").css("width", "960px");
             $jq("#personal_expand").removeClass("expanded");
+            $jq("#smwh_treeviewtoggleleft,#smwh_treeviewtoggleright,#smwh_treeviewtogglecenter,#smwh_treeview").removeClass("expanded");
             $jq("#personal_expand").addClass("limited");
             this.expanded = false;
 
@@ -68,7 +70,16 @@ function Smwh_Skin() {
             var toggleoffset = $jq("#shadow_right").offset().left;
             var windowwidth  = $jq(window).width()
             var rightspace = windowwidth - toggleoffset;
-            $jq('#smwh_treeview').css('right', rightspace + 'px');
+            if( this.expanded )
+                {
+                    $jq('#smwh_treeview').css('right', null);
+
+                }
+            else
+                {
+                    $jq('#smwh_treeview').css('right', rightspace + 'px');
+                }
+
             $jq("#smwh_treeview").css("width", "500px");
             $jq("#smwh_treeview").addClass("smwh_treeviewleft");
             

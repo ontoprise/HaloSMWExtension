@@ -375,29 +375,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
   border-spacing: 0px;
 }
 
-/* Treeview */
-
-#smwh_treeview_head{
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    padding: 5px;
-}
-
-#smwh_treeview_close{
-    position: absolute;
-    right: 5px;
-    top: 7px;
-}
-
-.treeviewtd{
-  padding: 0px;
-}
-
-#treeviewtoggletext{
-    margin-top: 2.5em;
-    margin-bottom: 300px;
-}
-
 /* Page content */
 
 #column-content{
@@ -433,6 +410,32 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 /* Treeview */
+
+/* Treeview */
+
+
+#smwh_treeview_head{
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 5px;
+}
+
+#smwh_treeview_close{
+    position: absolute;
+    right: 5px;
+    top: 7px;
+}
+
+.treeviewtd{
+  padding: 0px;
+}
+
+#smwh_treeviewtoggleleft.expanded, #smwh_treeviewtoggleright.expanded{
+    right: 0px;
+}
+#smwh_treeview.expanded {
+    right: 20px;
+}
 
 #smwh_treeview{
     z-index: 100;
