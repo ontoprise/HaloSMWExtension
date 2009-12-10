@@ -217,11 +217,11 @@ MW_API_Access.prototype = {
         if (action == "createPage" || action == "editPage")
             params+='&token='+this.URLEncode(this.editToken)
 
-        // check if we are accessing the local wiki. If this is not the case
-        // we must send the request to localhost, which then forwards it to the
-        // original server via php curl
+        // Javascript calls can be done to the local domain only. If this is not
+        // the case we must reformulate the request, send it to localhost, which
+        // then forwards it to the original server via php curl
         var url=this.url
-        if (this.url.indexOf(wgServer+wgScriptPath) != 0) {
+        if (this.url.indexOf(wgServer) != 0) {
             var newparams='action=ajax&rs=wfUprForwardApiCall&rsargs[]='+this.URLEncode(url)+'&rsargs[]='+this.URLEncode(params)
             params=newparams
             url=wgServer+wgScript
