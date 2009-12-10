@@ -89,8 +89,12 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
     }
     
     private function createProvenanceLink($url) {
+        global $uprgWikipediaAPI;
         if (defined('SMW_UP_RATING_VERSION')) {
             $url=str_replace('&amp;', '&', $url);
+            // hack for Wikipedia clone
+            if (strpos($uprgWikipediaAPI, 'vulcan.com'))
+                $url=str_replace('http://en.wikipedia.org/', 'http://wiking.vulcan.com/wp/', $url);
             return "UpRatingCell___".$url."___lleCgnitaRpU";
         }
     }
