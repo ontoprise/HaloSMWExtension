@@ -190,7 +190,7 @@ class FileData {
 		$fileName = str_replace("-slash-", '/', $fileName);
 		$fileName = str_replace("-quote-", '"', $fileName);
 		$fileName = str_replace("-ampersize-", "&", $fileName);
-		$fileName = str_replace("-apostroph-", "'", $fileName);
+		$fileName = str_replace("-q-mark-", "?", $fileName);
 		$fileName = str_replace("-percent-", "%", $fileName);
 		return $fileName;
 	}
@@ -202,7 +202,7 @@ class FileData {
 		$fileName = str_replace('"', "-quote-", $fileName);
 		$fileName = str_replace('&', "-ampersize-", $fileName);
 		$fileName = str_replace('%', "-percent-", $fileName);
-		$fileName = str_replace("'", "-apostroph-", $fileName);
+		$fileName = str_replace("?", "-q-mark-", $fileName);
 		return urlencode($fileName);
 	}
 	
