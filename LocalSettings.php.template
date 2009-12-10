@@ -259,6 +259,7 @@ include_once('extensions/RichMedia/includes/WebDAV/WD_Initialize.php');
 require_once("extensions/SemanticResultFormats/SRF_Settings.php");
 $srfgFormats[] = 'googlepie';
 $srfgFormats[] = 'googlebar';
+$srfgFormats[] = 'math';
 
 // Obtain a key and uncomment the following two lines to enable exhibit 
 $srfgFormats[] = 'exhibit';
@@ -308,13 +309,6 @@ require_once $IP . "/extensions/FCKeditor/FCKeditor.php";
 
 require_once("$IP/extensions/ImageMap/ImageMap.php");
 
-#Collaboration extension
-include_once('extensions/Collaboration/includes/CE_Initialize.php');
-enableCollaboration();
-
-#User Manual extension
-include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
-enableSMWUserManual();
 
 #Enable semantic annotations for pages in the following namespaces
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
@@ -326,3 +320,25 @@ $smwgNamespacesWithSemanticLinks[NS_HELP] = true;
 $smwgNamespacesWithSemanticLinks[NS_HELP_TALK] = true;
 $smwgNamespacesWithSemanticLinks[NS_TEMPLATE] = true;
 $smwgNamespacesWithSemanticLinks[SF_NS_FORM] = true;
+
+# Data-API
+$wgEnableWriteAPI = true;
+$pcpWSServer = true;
+require_once('extensions/SMWHalo/DataAPI/PageCRUD_Plus/PCP.php');
+$pomWSServer = true;
+require_once('extensions/SMWHalo/DataAPI/PageObjectModel/POM.php');
+require_once('extensions/SMWHalo/DataAPI/SemanticFormsAPI/SemanticFormsAPI.php');
+
+#SemanticInputForms
+require_once('extensions/SemanticFormsInputs/SemanticFormsInputs.php');
+
+#Collaboration extension
+include_once('extensions/Collaboration/includes/CE_Initialize.php');
+enableCollaboration();
+
+#User Manual extension
+include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
+enableSMWUserManual();
+
+# Ultrapedia features
+require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
