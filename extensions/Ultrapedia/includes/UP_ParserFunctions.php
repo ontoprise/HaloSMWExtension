@@ -9,6 +9,7 @@ class UPParserFunctions {
 			default:
 				$magicWords['tab'] = array ( 0, 'tab' );
 				$magicWords['ajaxask']	= array ( 0, 'ajaxask' );
+				$magicWords['ajaxsparql']  = array ( 0, 'ajaxsparql' );
 		}
 		return true;
 	}
@@ -16,6 +17,7 @@ class UPParserFunctions {
 	static function registerFunctions( &$parser ) {
 		$parser->setFunctionHook('tab', array('UPParserFunctions', 'renderTabWidget'), SFH_OBJECT_ARGS);
 		$parser->setFunctionHook('ajaxask', array('UPParserFunctions', 'doAjaxAsk'));
+		$parser->setFunctionHook('ajaxsparql', array('UPParserFunctions', 'doAjaxSparql'));
 		
 		$parser->setHook( "embedwiki", array('UPParserFunctions', 'embedWiki') );
 		
@@ -55,6 +57,7 @@ class UPParserFunctions {
 			if(!UPParserFunctions::$ajaxAskHeaderRendered) {
 				UPParserFunctions::$ajaxAskHeaderRendered = true;
 				UPParserFunctions::setupAjaxAskHeader();
+				SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
 			}
 			
 			$smwgIQRunningNumber++;
@@ -74,6 +77,33 @@ class UPParserFunctions {
 		}
 		return array($result, 'noparse' => true, 'isHTML' => true);
 	}
+	
+    static public function doAjaxSparql(&$parser) {
+        global $smwgQEnabled, $smwgIQRunningNumber;
+        if ($smwgQEnabled) {
+            if(!UPParserFunctions::$ajaxAskHeaderRendered) {
+                UPParserFunctions::$ajaxAskHeaderRendered = true;
+                UPParserFunctions::setupAjaxAskHeader();
+                SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
+            }
+            
+            $smwgIQRunningNumber++;
+            $params = func_get_args();
+            array_shift( $params ); // we already know the $parser ...
+            
+            global $smwgUltraPediaScriptPath, $wgOut;
+            $id = 'AjaxAsk' . $smwgIQRunningNumber;
+            // have to enable script and css, tbd
+            $wgOut->addScript('<script type="text/javascript">
+                AjaxSparql.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
+            </script>');
+            $result = '<div id="' . $id . '"><img src="' . $smwgUltraPediaScriptPath . '/ajax-loader.gif"></div>';  
+        } else {
+            wfLoadExtensionMessages('SemanticMediaWiki');
+            $result = smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
+        }
+        return array($result, 'noparse' => true, 'isHTML' => true);
+    }
 
 	static $tabHeaderRendered = false;
 	static $tabWidgetId = 0;
