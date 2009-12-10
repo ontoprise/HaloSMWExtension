@@ -81,22 +81,18 @@ DndPopup.prototype = {
         div.style.width=this.width
         div.style.left=this.left
         div.style.top=this.top
-        div.innerHTML='<table border="0" style="width:100%; height:100%" bgcolor="'+this.headerBgColor+'" cellspacing="0" cellpadding="2">'
-            +'<tr><td width="100%">'
-            +'<table style="border:0px; width:100%; height:100%;" cellspacing="0" cellpadding="0">'
+        div.innerHTML=''
+            +'<table style="border: solid 2px '+this.headerBgColor+';" width="100%" height="100%" cellspacing="0" cellpadding="0">'
             +'<tr>'
-            +'<td id="'+this.id+'_dragbar"'+(this.dnd?' style="cursor:move"':'')+' width="100%">'
-            +'<ilayer width="100%" onSelectStart="return false">'
-            +'<layer width="100%">'
-            +'<font color="'+this.headerColor+'">'+this.headline+'</font>'
-            +'</layer></ilayer></td>'
+            +'<td id="'+this.id+'_dragbar" bgcolor="'+this.headerBgColor+'"'
+            +(this.dnd?' style="cursor:move"':'')+' color="'+this.headerColor+'" width="'+(parseInt(this.width)-30)+'px">'
+            +(this.headline?this.headline:'&nbsp;')+'</td>'
             +'<td style="cursor:hand; cursor:pointer; vertical-align:middle">'
             +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+this.closeImage+'" border="0"></a></td>'
             +'</tr>'
-            +'<tr style="width:100%; height:100%;">'
+            +'<tr width="100%" height="100%">'
             +'<td bgcolor="'+this.boxBgColor+'" style="width:100%; height:100%; padding:4px; vertical-align:top; color:'+this.boxColor+';" colspan="2">'
-            +'<div id="'+this.id+'_content"></div>'
-            +'</td></tr></table>'
+            +'<div id="'+this.id+'_content"></div></td></tr></table>'
         if (this.attachTo)
             this.attachTo.appendChild(div)
         else {
