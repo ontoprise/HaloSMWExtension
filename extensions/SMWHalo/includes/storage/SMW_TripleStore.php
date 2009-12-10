@@ -134,8 +134,9 @@ class SMWTripleStore extends SMWStore {
 		
 		// check for selective updates, ie. update only certain namespaces
 		global $smwgUpdateTSOnNamespaces;
+		
 		if (isset($smwgUpdateTSOnNamespaces) && is_array($smwgUpdateTSOnNamespaces)) {
-			if (!array_key_exists($subject->getNamespace(), $smwgUpdateTSOnNamespaces)) {
+			if (!in_array($subject->getNamespace(), $smwgUpdateTSOnNamespaces)) {
 				return;
 			}
 		}
