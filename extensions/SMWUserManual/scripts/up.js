@@ -105,13 +105,15 @@ UP_RatingPopup.prototype = {
                 return this.trim(a[i].innerHTML)
         }
         var res=''
-        var c=cell.childNodes
+        var c=new Array()
+        for (var i=0; i<cell.childNodes.length; i++)
+           c.push(cell.childNodes[i])
         var cl=c.length
         for (var i=0; i<cl; i++) {
             if (c[i].nodeType==3 && c[i].parentNode.className.indexOf('sort')==-1)
                 res+=c[i].nodeValue
             for(var j=0; j<c[i].childNodes.length; j++) {
-                c[cl]=c[i].childNodes[j]
+                c.push(c[i].childNodes[j])
                 cl++
             }
         }
