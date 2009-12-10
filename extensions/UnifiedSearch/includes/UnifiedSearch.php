@@ -138,6 +138,8 @@ function wfUSSetupExtension() {
 		if (defined("NS_VIDEO")) $usgAllNamespaces[NS_VIDEO] = "smw_plus_video_icon_16x16.png";
 		if (defined("NS_PDF")) $usgAllNamespaces[NS_PDF] = "smw_plus_pdf_icon_16x16.png";
 		if (defined("NS_DOCUMENT")) $usgAllNamespaces[NS_DOCUMENT] = "smw_plus_document_icon_16x16.png";
+		if (defined("CE_COMMENT_NS")) $usgAllNamespaces[CE_COMMENT_NS] = "smw_plus_comment_icon_16x16.png";
+		
 	}
 	return true;
 }

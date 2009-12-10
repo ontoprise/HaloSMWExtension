@@ -170,11 +170,11 @@ class USSpecialPage extends SpecialPage {
 		$c = 0;
 
 		foreach($usgAllNamespaces as $ns => $img) {
-			if ($c > 0 && $c % 5 == 0) {
+			if ($c > 0 && $c % 6 == 0) {
 				$refineResultsHtml .= '<tr>'.$row.'</tr>';
 				$row = "";
 			}
-			if ($c >= 5) $style="style=\"border-top: 1px solid;\""; else $style="";
+			if ($c >= 6) $style="style=\"border-top: 1px solid;\""; else $style="";
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
 			$textcolor = $this->highlight($ns, $restrictNS) ? 'color: white;"' : ""; // overwrite text color, if it is set by the skin
@@ -186,7 +186,7 @@ class USSpecialPage extends SpecialPage {
 		}
 
 		// fill complete line of refinement links
-		while ($c % 5 > 0) { $row .= '<td '.$style.'></td><td '.$style.'></td>'; $c++; }
+		while ($c % 6 > 0) { $row .= '<td '.$style.'></td><td '.$style.'></td>'; $c++; }
 		$refineResultsHtml .= '<tr>'.$row.'</tr>';
 		$refineResultsHtml .= '</table></div>';
 
