@@ -343,7 +343,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #tabsright ul.smwh_menulist div.smwh_menubody {
     width: auto;
     position: absolute;
-    top: 1.1em;
+    top: 15px;
     padding: 5px;
     line-height:1.5em;
     z-index: 20;

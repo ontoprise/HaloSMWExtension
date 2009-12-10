@@ -72,6 +72,7 @@ class SkinOntoSkin3 extends SkinTemplate {
         $out->addStyle( 'ontoskin3/IE55Fixes.css', 'screen', 'IE 5.5000' );
         $out->addStyle( 'ontoskin3/IE60Fixes.css', 'screen', 'IE 6' );
         $out->addStyle( 'ontoskin3/IE70Fixes.css', 'screen', 'IE 7' );
+        $out->addStyle( 'ontoskin3/IE70Fixes.css', 'screen', 'IE 8' );
 
         $out->addStyle( 'ontoskin3/rtl.css', 'screen', '', 'rtl' );
 
