@@ -5,13 +5,13 @@
  * @author: Kai K�hn
  */
 class UnifiedSearchResult {
-	
+
 	// wrapped luceneResult
 	private $luceneResult;
-	
+
 	// clean terms to highlight (i.e. no syntax elements)
-    private $terms;
-    
+	private $terms;
+
 	private $description;
 	private $examples;
 
@@ -32,8 +32,8 @@ class UnifiedSearchResult {
 	}
 
 	public function getSnippet() {
-		return !$this->luceneResult->isMissingRevision() ? 
-		      $this->luceneResult->getTextSnippet($this->terms) : NULL;
+		return !$this->luceneResult->isMissingRevision() ?
+		$this->luceneResult->getTextSnippet($this->terms) : NULL;
 	}
 
 	public function getWordCount() {
@@ -68,7 +68,7 @@ class UnifiedSearchResult {
 }
 
 class UnifiedSearchResultPrinter {
-	
+
 	/**
 	 * Creates a result table
 	 *
@@ -91,12 +91,12 @@ class UnifiedSearchResultPrinter {
 			$html .= '<div class="us_search_result">';
 			// Categories
 			$categories = USStore::getStore()->getCategories($e->getTitle());
-	
-			$html .= self::addPreview($e, $args, $args_prev);			
+
+			$html .= self::addPreview($e, $args, $args_prev);
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
-			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());                      
-            $html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
-			
+			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());
+			$html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
+				
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
 				for($i = 0, $n = count($categories); $i < $n; $i++) {
@@ -107,7 +107,7 @@ class UnifiedSearchResultPrinter {
 			}
 			if ($e->getSnippet() !== NULL) $html .= '<div class="snippet">'.$e->getSnippet().'</div>';
 			if ($e->getTimeStamp() > 0) $html .= '<div class="metadata">'.wfMsg('us_lastchanged').': '.self::formatdate($e->getTimeStamp()).'</div>';
-				
+
 			$html .= '</td></tr>';
 		}
 		$html .= '</table>';
@@ -123,43 +123,49 @@ class UnifiedSearchResultPrinter {
 		return $imagePath;
 	}
 
-    // adds preview to result depending on namespace
-    private static function addPreview($e, $args, $args_prev) { 
-        global $wgServer, $wgScript;  
-        
-        return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
-                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.urlencode($e->getTitle()->getPrefixedText()) .
-                               $args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';           
-    }
+	// adds preview to result depending on namespace
+	private static function addPreview($e, $args, $args_prev) {
+		global $wgServer, $wgScript;
 
-    private static function getImageFromNamespace($result) {
-        $image = "";  
-        switch($result->getTitle()->getNamespace()) {
-            case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
-            case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
-            case NS_TEMPLATE: { $image = "smw_plus_template_icon_16x16.png"; break; }
-            case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
-            case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
-            case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
-            case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
-        }
-        // if MIME type extension is installed
-        if (defined("SMW_RM_VERSION")) {
-            switch($result->getTitle()->getNamespace()) {
-                case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
-                case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
-                case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
-                case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
-            }
-        }
-        // if SemanticForms is installed
-        if (defined("SF_NS_FORM")) {
-            if ($result->getTitle()->getNamespace() == SF_NS_FORM) {
-                $image = "smw_plus_form_icon_16x16.png";
-            }
-        }
-        return $image;
-    }
+		return $html = '<li><span class="searchprev"><a rel="gb_pageset_halo[search_set, '.$args_prev.
+                             ', '.$e->getTitle()->getFullURL().']" href="'.$wgServer.$wgScript.'?action=ajax&rs=smwf_ca_GetHTMLBody&rsargs[]='.urlencode($e->getTitle()->getPrefixedText()) .
+		$args .'" title="'. $e->getTitle() .'">&nbsp;</a></span>';
+	}
+
+	private static function getImageFromNamespace($result) {
+		$image = "";
+		switch($result->getTitle()->getNamespace()) {
+			case NS_MAIN: { $image = "smw_plus_instances_icon_16x16.png"; break; }
+			case NS_CATEGORY: { $image = "smw_plus_category_icon_16x16.png"; break; }
+			case NS_TEMPLATE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+			case SMW_NS_PROPERTY: { $image = "smw_plus_property_icon_16x16.png"; break; }
+			case SMW_NS_TYPE: { $image = "smw_plus_template_icon_16x16.png"; break; }
+			case NS_HELP: { $image = "smw_plus_help_icon_16x16.png"; break; }
+			case NS_IMAGE: { $image = "smw_plus_image_icon_16x16.png"; break; }
+		}
+		// if MIME type extension is installed
+		if (defined("SMW_RM_VERSION")) {
+			switch($result->getTitle()->getNamespace()) {
+				case NS_DOCUMENT: { $image = "smw_plus_document_icon_16x16.png"; break; }
+				case NS_PDF: { $image = "smw_plus_pdf_icon_16x16.png"; break; }
+				case NS_AUDIO: { $image = "smw_plus_music_icon_16x16.png"; break; }
+				case NS_VIDEO: { $image = "smw_plus_video_icon_16x16.png"; break; }
+			}
+		}
+		// if collaboration extension is installed
+		if (defined("CE_VERSION")) {
+			switch($result->getTitle()->getNamespace()) {
+				case CE_COMMENT_NS: { $image = "smw_plus_comment_icon_16x16.png"; break; }
+			}
+		}
+		// if SemanticForms is installed
+		if (defined("SF_NS_FORM")) {
+			if ($result->getTitle()->getNamespace() == SF_NS_FORM) {
+				$image = "smw_plus_form_icon_16x16.png";
+			}
+		}
+		return $image;
+	}
 
 	private static function formatdate($timestamp) {
 		$year = substr($timestamp,0,4);
