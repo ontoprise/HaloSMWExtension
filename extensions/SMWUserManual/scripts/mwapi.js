@@ -129,7 +129,7 @@ MW_API_Access.prototype = {
         for (var i=0; i<sections.length; i++) {
             if (sections[i][0]==this.section && sections[i][1]==2)
                 pSection= i+1
-            if (sections[i][0]==this.cell && sections[i][1]==3)
+            if (pSection && sections[i][0]==this.cell && sections[i][1]==3)
                 pCell= i+1
         }
         if (this.cell) { // comment on data, must be a section (level 3)
