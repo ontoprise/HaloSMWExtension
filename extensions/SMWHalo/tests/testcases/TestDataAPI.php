@@ -49,6 +49,53 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals(strlen($lt) > 0, true);
 	}
+	
+	function testSFGetJSON(){
+		$lt = $this->pcpLogin($this->url, $this->userName, $this->pw);
+		$uid = $lt[1];
+		$lt = $lt[0];
+
+		$this->pcpDeleteArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid);
+		$this->pcpCreateArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid, $this->getAComplexProjectText("pcp_create", "True"));
+		$response = $this->sfGetForm($this->url, "A_complex_project", false, "json");
+		
+		$this->assertEquals(strpos($response, '"tmpl_name":"Project"') !== false, true);
+		$this->assertEquals(strpos($response, '"tmpl_name":"ShowAttachedContent"') !== false, true);
+		$this->assertEquals(strpos($response, '"tmpl_name":"RMList"') !== false, true);
+
+		$this->pcpDeleteArticle($this->url, "Form:Project", $this->userName, $this->pw, $lt, $uid);
+		$this->pcpCreateArticle($this->url, "Form:Project", $this->userName, $this->pw, $lt, $uid, $this->getProjectFormText());
+		$response = $this->sfGetForm($this->url, "Form:Project", true, "json");
+
+		$this->assertEquals(strpos($response, '"tmpl_name":"Project"') !== false, true);
+		$this->assertEquals(strpos($response, '"tmpl_name":"ShowAttachedContent"') !== false, true);
+		$this->assertEquals(strpos($response, '"tmpl_name":"RMList"') !== false, true);
+	}
+	
+	function testSFCreateJSON(){
+		$lt = $this->pcpLogin($this->url, $this->userName, $this->pw);
+		$uid = $lt[1];
+		$lt = $lt[0];
+
+		$this->pcpDeleteArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid);
+		$this->sfCreateForm($this->url, $this->userName, $lt, $uid, $this->getAComplexProjectSFJSONData("sf-create-json"), "json");
+		$response = $this->sfGetForm($this->url, "A_complex_project", false, "json");
+		
+		$this->assertEquals(strpos($response, '"cur_value":"sf-create-json"') !== false, true);
+	}
+
+	function testSFUpdateJSON(){
+		$lt = $this->pcpLogin($this->url, $this->userName, $this->pw);
+		$uid = $lt[1];
+		$lt = $lt[0];
+
+		$this->pcpDeleteArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid);
+		$this->pcpCreateArticle($this->url, "A_complex_project", $this->userName, $this->pw, $lt, $uid, $this->getAComplexProjectText("pcp_create", "True"));
+		$this->sfUpdateForm($this->url, $this->userName, $lt, $uid, $this->getAComplexProjectSFJSONData("sf-update-json"), "json");
+		$response = $this->sfGetForm($this->url, "A_complex_project");
+
+		$this->assertEquals(strpos($response, 'cur_value="sf-update-json"') !== false, true);
+	}
 
 	function testPCPDeleteAndRead(){
 		$lt = $this->pcpLogin($this->url, $this->userName, $this->pw);
@@ -416,7 +463,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		return $response;
 	}
 
-	function sfGetForm($url, $title, $direct = false){
+	function sfGetForm($url, $title, $direct = false, $format = "xml"){
 		$params = array('http' => array('method' => 'GET'));
 		$ctx = stream_context_create($params);
 		if($direct){
@@ -425,18 +472,22 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 			$direct = "title";
 		}
 		$response = stream_get_contents(
-		fopen($this->url."?action=sfdata&format=xml&".$direct."=".$title,'rb', true, $ctx));
+		fopen($this->url."?action=sfdata&format=".$format."&".$direct."=".$title,'rb', true, $ctx));
 		//echo("\n\n".$response);
 		return $response;
 	}
 
-	function sfUpdateForm($url, $userName, $lt, $uid, $xmldata){
+	function sfUpdateForm($url, $userName, $lt, $uid, $xmldata, $format = "xml"){
 		$dataArray = array("action" => "sfdata");
 		$dataArray["mt"] = "update";
 		$dataArray["un"] = $this->userName;
 		$dataArray["lt"] = $lt;
 		$dataArray["uid"] = $uid;
-		$dataArray["xmldata"] = $xmldata;
+		if($format == "xml"){
+			$dataArray["xmldata"] = $xmldata;
+		} else {
+			$dataArray["jsondata"] = $xmldata;
+		}
 		$dataArray["format"] = "xml";
 
 		$ctx = $this->getPostContext($dataArray);
@@ -446,13 +497,17 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 		//echo("\n\n".$response);
 	}
 
-	function sfCreateForm($url, $userName, $lt, $uid, $xmldata){
+	function sfCreateForm($url, $userName, $lt, $uid, $xmldata, $format = "xml"){
 		$dataArray = array("action" => "sfdata");
 		$dataArray["mt"] = "create";
 		$dataArray["un"] = $this->userName;
 		$dataArray["lt"] = $lt;
 		$dataArray["uid"] = $uid;
-		$dataArray["xmldata"] = $xmldata;
+		if($format == "xml"){
+			$dataArray["xmldata"] = $xmldata;
+		} else {
+			$dataArray["jsondata"] = $xmldata;
+		}
 		$dataArray["format"] = "xml";
 
 		$ctx = $this->getPostContext($dataArray);
@@ -949,4 +1004,9 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
 </noinclude>
 	';
 	}
+	
+	private function getAComplexProjectSFJSONData($title){
+		return '{"sfdata":{"page":{"title":"A_complex_project","ns":0,"Project":{"template0":{"tmpl_name":"Project","field1":{"num":null,"template_field":{"field_name":"Title","label":"Title","semantic_property":"Title","field_type":"String","possible_values":[],"is_list":null,"input_type":null},"input_type":"text","is_mandatory":true,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"'.$title.'"},"field2":{"num":null,"template_field":{"field_name":"Description","label":"Description","semantic_property":"Description","field_type":"Text","possible_values":[],"is_list":null,"input_type":null},"input_type":null,"is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"This project is complex project, involving a bunch of people and a lot of milestones and tasks."},"field3":{"num":null,"template_field":{"field_name":"Start date","label":"Start date","semantic_property":"start date","field_type":"Date","possible_values":[],"is_list":null,"input_type":null},"input_type":"date","is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"2008\/06\/10"},"field4":{"num":null,"template_field":{"field_name":"End date","label":"End date","semantic_property":"end date","field_type":"Date","possible_values":[],"is_list":null,"input_type":null},"input_type":"date","is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"2009\/07\/10"},"field5":{"num":null,"template_field":{"field_name":"Homepage","label":"Homepage","semantic_property":"homepage","field_type":"URL","possible_values":[],"is_list":null,"input_type":null},"input_type":null,"is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"http:\/\/complex-project.eu"},"field6":{"num":null,"template_field":{"field_name":"Status","label":"Status","semantic_property":"Status","field_type":"enumeration","possible_values":{"value0":"Green","value1":"Yellow","value2":"Red"},"is_list":null,"input_type":null},"input_type":null,"is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"Green"},"field7":{"num":null,"template_field":{"field_name":"Members","label":"Members","semantic_property":"Project member","field_type":"Page","possible_values":[],"is_list":true,"input_type":null},"input_type":"haloACtextarea","is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":true,"cur_value":"Fred, Dian, Daniel, Joe Mystery, Regina"},"field8":{"num":null,"template_field":{"field_name":"Sponsors","label":"Sponsors","semantic_property":"Sponsored by","field_type":"Page","possible_values":[],"is_list":true,"input_type":null},"input_type":"haloACtext","is_mandatory":false,"is_hidden":false,"is_restricted":null,"possible_values":{"_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":true,"cur_value":"Accenture, Evri"}},"template1":{"tmpl_name":"ShowAttachedContent","field1":{"num":null,"template_field":{"field_name":"show","label":"Show","semantic_property":null,"field_type":null,"possible_values":[],"is_list":null,"input_type":null},"input_type":"radiobutton","is_mandatory":true,"is_hidden":false,"is_restricted":null,"possible_values":{"0":"True","1":"False","_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"True"}},"template2":{"tmpl_name":"RMList","field1":{"num":null,"template_field":{"field_name":"show","label":"Show","semantic_property":null,"field_type":null,"possible_values":[],"is_list":null,"input_type":null},"input_type":"radiobutton","is_mandatory":true,"is_hidden":false,"is_restricted":null,"possible_values":{"0":"True","1":"False","_element":"value"},"is_uploadable":false,"field_args":null,"autocomplete_source":null,"autocomplete_field_type":null,"no_autocomplete":null,"part_of_multiple":false,"input_name":null,"is_disabled":false,"is_list":false,"cur_value":"False"}}}}}}';
+	}
 }
+
