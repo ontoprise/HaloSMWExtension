@@ -1,19 +1,32 @@
 var AjaxAsk = {
-	queries : [], 
-	helper : {
-		getResultPrinter:function(id, qno, query){
-			sajax_do_call('smwf_up_Access', ["ajaxAsk", "" + qno + "," + query], document.getElementById(id));
-		}
-	}
+	 queries : [], 
+    helper : {
+        getResultPrinter:function(id, qno, query){
+             var target = function(x) {
+                var node = document.getElementById(id);
+                if (x.status == 200) node.innerHTML = x.responseText;
+                else node.innerHTML= "<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>";
+                smw_tooltipInit();
+             }
+            sajax_do_call('smwf_up_Access', ["ajaxAsk", "" + qno + "," + query], target);
+        }
+    }
 };
 
 var AjaxSparql = {
     queries : [], 
     helper : {
         getResultPrinter:function(id, qno, query){
-            sajax_do_call('smwf_up_Access', ["ajaxSparql", "" + qno + "," + query], document.getElementById(id));
+        	 var target = function(x) {
+        	 	var node = document.getElementById(id);
+                if (x.status == 200) node.innerHTML = x.responseText;
+                else node.innerHTML= "<div class='error'>Error: " + x.status + " " + x.statusText + " (" + x.responseText + ")</div>";
+                smw_tooltipInit();
+             }
+            sajax_do_call('smwf_up_Access', ["ajaxSparql", "" + qno + "," + query], target);
         }
     }
+   
 };
 
 function initialize_ajaxqueries(){
