@@ -603,8 +603,10 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
         if(n.hasChildren(false) == true){
             var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
             if(recfound != null){
-                YAHOO.haloacl.manageUser_parentGroup = n.label;
-                return n;
+// Bugfix 11320               YAHOO.haloacl.manageUser_parentGroup = n.label;
+// Bugfix 11320               return n;
+                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
+                return recfound;
             }
         }
 
