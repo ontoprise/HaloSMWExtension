@@ -75,4 +75,3 @@ if (array_key_exists('action', $_REQUEST) && $_REQUEST['action'] == 'wspcp' ) {
 }
 
 
-?>
