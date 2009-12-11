@@ -111,23 +111,25 @@
     border-collapse:collapse;
     margin:5px;
     padding: 5px;
+    background: #ffffff url(../skins/bg_radient.png) scroll repeat-x left;
 }
 .cshFeedbackFrame td {
     padding: 5px;
-	font-size: smaller;
     vertical-align: middle;
-    border: solid thin;
-	border-color: #e9e9e4;
-    border-collapse:collapse;
     width:100%;
     cursor: pointer; cursor: hand;
 }
 
-.cshFeedbackFrameHeader {
-	background: #ffffff url(../skins/bg_radient.png) scroll repeat-x left;
+.cshFeedbackFrameActive {
+    background-color: #e9e9e4;
+    width:98%;
+    border-collapse:collapse;
+    margin:5px;
+    padding: 5px;
+    background: #ffffff url(../skins/bg_radientHov.png) scroll repeat-x left;
 }
 
-.cshFeedbackFrameHeader:hover {
+.cshFeedbackFrame:hover {
 	background: #ffffff url(../skins/bg_radientHov.png) scroll repeat-x left;
 }
 
