@@ -134,6 +134,8 @@ class WUMerger {
 				$result .= "\n<pre>".$utr->getOriginalText()."</pre>";
 			}
 		}
+		
+		$result .= "\n\n[[Category:WUMergeReport]]";
 
 		smwf_om_EditArticle($title, 'WUM', $result, '');
 	}
