@@ -262,7 +262,10 @@ SMW_UserManual_CSH.prototype = {
             // now open the box that we want
             arrow.src=arrow.src.replace(/right\.png/, 'down.png')
             el.getElementsByTagName('td')[0].style.fontWeight='bold'
-            el.parentNode.style.backgroundColor='#EFEFEF'
+            var table=el
+            while (table.tagName != 'TABLE')
+               table=table.parentNode
+            table.className='cshFeedbackFrameActive'
             this.getCommentBox(el)
         }
         else
@@ -349,7 +352,10 @@ SMW_UserManual_CSH.prototype = {
         n.getElementsByTagName('img')[0].src=
             n.getElementsByTagName('img')[0].src.replace(/down\.png/, 'right.png')
         n.getElementsByTagName('td')[0].style.fontWeight=null
-        n.style.backgroundColor=null
+        var table=n
+        while (table.tagName != 'TABLE')
+            table=table.parentNode
+        table.className='cshFeedbackFrame'
     },
     /* function for the feedback tab end here */
 

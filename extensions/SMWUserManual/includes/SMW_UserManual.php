@@ -1,4 +1,4 @@
-smwCsh.openCommentBox(this)<?php
+<?php
 /**
  * SMW context sensitive help
  *
@@ -352,19 +352,19 @@ function umefDivBoxFeedback() {
     return '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
             <table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td class="cshFeedbackFrameHeader">
+            <tr onclick="smwCsh.openCommentBox(this)"><td>
             <img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_ask_your_own_q').'
             <img src="'.$imgPath.'question.png" align="right"/>
             </td></tr></table>
             <table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td class="cshFeedbackFrameHeader">
+            <tr onclick="smwCsh.openCommentBox(this)"><td>
             <img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_add_comment').'
             <img src="'.$imgPath.'comment.png" align="right"/>
             </td></tr></table>
             <table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td class="cshFeedbackFrameHeader">
+            <tr onclick="smwCsh.openCommentBox(this)"><td>
             <img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_bug_discovered').'
             <img src="'.$imgPath.'bug.png" align="right"/>
