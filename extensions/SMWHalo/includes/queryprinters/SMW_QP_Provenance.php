@@ -93,8 +93,15 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
         if (defined('SMW_UP_RATING_VERSION')) {
             $url=str_replace('&amp;', '&', $url);
             // hack for Wikipedia clone
-            if (strpos($uprgWikipediaAPI, 'vulcan.com'))
-                $url=str_replace('http://en.wikipedia.org/', 'http://wiking.vulcan.com/wp/', $url);
+            if (strpos($uprgWikipediaAPI, 'vulcan.com')) {
+              $url = str_replace('en.wikipedia.org/wiki/', 'wiking.vulcan.com/wp/index.php,title=', $url);
+              $url = preg_replace('/relative-line=\d+/', '', $url);
+              $url = preg_replace('/absolute-line=(\d+)/', 'line=$1', $url);
+              $url = preg_replace('/#[^\?&]*(\?|&){1}/', '', $url);
+              $url = str_replace('#', '&', $url);
+              $url = str_replace('?', '&', $url);
+              $url = str_replace('index.php,title=', 'index.php?title=', $url);
+            }
             return "UpRatingCell___".$url."___lleCgnitaRpU";
         }
     }
