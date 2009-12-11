@@ -87,7 +87,7 @@ DndPopup.prototype = {
             +'<td id="'+this.id+'_dragbar" bgcolor="'+this.headerBgColor+'"'
             +(this.dnd?' style="cursor:move"':'')+' color="'+this.headerColor+'" width="'+(parseInt(this.width)-15)+'px">'
             +(this.headline?this.headline:'&nbsp;')+'</td>'
-            +'<td style="cursor:hand; cursor:pointer; vertical-align:middle" bgcolor="'+this.headerBgColor+'"'>'
+            +'<td style="cursor:hand; cursor:pointer; vertical-align:middle" bgcolor="'+this.headerBgColor+'">'
             +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+this.closeImage+'" border="0"></a></td>'
             +'</tr>'
             +'<tr width="100%" height="100%">'
