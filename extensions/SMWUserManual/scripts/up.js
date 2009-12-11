@@ -30,12 +30,8 @@ UP_RatingPopup.prototype = {
         if (n.id.indexOf('querytable')!=-1)
             this.tableIdentifier=parseInt(n.id.replace(/querytable/, ''))
         // provenance URI
-        this.provenanceUri=''
-        var uriArgs=uri.split('&');
-        for (var i=0; i<uriArgs.length; i++) {
-            this.provenanceUri+=uriArgs[i]+(i==0 ? '?':'&')
-        }
-        this.provenanceUri+='redirect-after-edit='+(wgServer+wgScriptPath).replace(/:/, '%3A').replace(/\//g, '%2F')
+        this.provenanceUri=uri
+        this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScriptPath).replace(/:/, '%3A').replace(/\//g, '%2F')
         // set the static html stuff
         this.popup.setHtmlContent(this.cellRatingHtml())
         this.applyCellLabels()
