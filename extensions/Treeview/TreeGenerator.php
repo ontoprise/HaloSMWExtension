@@ -501,6 +501,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            	foreach (array_keys($fids) as $id) {
 	            		unset($this->elementProperties[$id]);
 	            		if (isset($this->sIds[$id])) unset($this->sIds[$id]);
+	            		$pk = array_search($id, $this->rootNodes);
+	            		if ($proot !== false) unset($this->rootNodes[$pk]);
 	            	}
 	            }
 	            // if we have already that many elements processed as are in sIds
@@ -816,8 +818,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 
 		// if parameter condition is set, but object is not in the
 		// allowed page list and s_id is not yet set, create a node without parent
-		if (($this->condition) &&
-			!in_array($o_id, $this->smw_condition_ids)) {
+		if (($this->condition && !in_array($o_id, $this->smw_condition_ids)) ||
+		    ($this->smw_start_id && $this->smw_start_id == $o_id)) {
 			// if node doesn't exist yet, create it without parents
 			if (!isset($this->sIds[$s_id])) $this->sIds[$s_id]= array();
 			$o_id = null;
