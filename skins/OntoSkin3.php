@@ -128,6 +128,7 @@ class OntoSkin3Template extends QuickTemplate {
                  <?php print Skin::makeGlobalVariablesScript( $this->data ); ?>
 
                  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/common/wikibits.js?<?php echo $GLOBALS['wgStyleVersion'] ?>"><!-- wikibits js --></script>
+                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
                  <!-- Head Scripts -->
                  <?php $this->html('headscripts') ?>
                  <?php	if($this->data['jsvarurl']) { ?>
@@ -148,7 +149,7 @@ class OntoSkin3Template extends QuickTemplate {
                  if($this->data['trackbackhtml']) print $this->data['trackbackhtml']; ?>
 
                  <!-- Ontoskin3 javascripts -->
-                 <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/jquery.js"><!-- jquery.js --></script>
+                 
                  <script type="<?php $this->text('jsmimetype') ?>" src="<?php $this->text('stylepath' ) ?>/<?php $this->text('stylename') ?>/javascript/skin.js"><!-- skin.js --></script>
     </head>
     <body<?php if($this->data['body_ondblclick']) { ?> ondblclick="<?php $this->text('body_ondblclick') ?>"<?php } ?>
