@@ -171,7 +171,7 @@ QIHelper.prototype = {
 				paramStr += first ? p.mParam : sep + " " + p.mParam;
 			} else {
 				if (element.value != "" && element.value != p.mDefault) {
-					paramStr += first ? p.mParam + "=" + element.value : sep + " " + p.mParam + "=" + element.value;
+					paramStr += first ? p.mParam + "=" + element.value.replace(/,/g,"%2C") : sep + " " + p.mParam + "=" + element.value;
 				}
 			}
 			first = false;
@@ -408,7 +408,29 @@ QIHelper.prototype = {
 	 */
 	openResultPreview : function(request) {
 		this.pendingElement.hide();
-		$('previewcontent').innerHTML = request.responseText;
+		
+		// pre-processing
+		var resultHTML;
+		var resultCode;
+		switch ($('layout_format').value) {
+            
+            case 'ofc-pie':
+            case 'ofc-bar':
+            case 'ofc-bar_3d':
+            case 'ofc-line':
+            case 'ofc-scatterline': 
+            var tuple =  request.responseText.split("|||");
+            resultHTML = tuple[0];
+            resultCode = tuple[1];
+            
+            break;
+        default:
+            resultHTML = request.responseText;
+            resultCode = null;
+		}
+        
+		$('previewcontent').innerHTML = resultHTML;
+		
 		smw_tooltipInit();
 
 		// post processing of javascript for resultprinters:
@@ -421,6 +443,14 @@ QIHelper.prototype = {
 		case "exhibit":
 			if (typeof createExhibit == 'function') createExhibit();
 			break;
+	    case 'ofc-pie':
+        case 'ofc-bar':
+        case 'ofc-bar_3d':
+        case 'ofc-line':
+        case 'ofc-scatterline':
+	        if (resultCode != null) eval(resultCode);
+            resetOfc();
+            break;
 		}
 	},
 	/**

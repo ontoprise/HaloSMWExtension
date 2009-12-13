@@ -1,6 +1,6 @@
 <?php
 
- if (!defined('MEDIAWIKI')) die();
+if (!defined('MEDIAWIKI')) die();
 
 
 
@@ -15,17 +15,37 @@ class SMWQueryInterface extends SpecialPage {
 	public function __construct() {
 		parent::__construct('QueryInterface');
 	}
-/*
- * Overloaded function that is responsible for the creation of the Special Page
- */
+	/*
+	 * Overloaded function that is responsible for the creation of the Special Page
+	 */
 	public function execute() {
 
 		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
-				
+
 		$wgOut->setPageTitle(wfMsg('smw_queryinterface'));
-		  
+
+		global $smwgResultFormats;
+		if (isset($smwgResultFormats)) {
+			foreach($smwgResultFormats as $format => $formatclass) {
+				
+				 try {
+				 $rc = new ReflectionClass($formatclass);
+				 if ($rc->hasMethod("getScripts")) {
+					 $qp = new $formatclass($format, false);
+				    foreach($qp->getScripts() as $script) $wgOut->addScript($script);
+				 }
+				  if ($rc->hasMethod("getStylesheets")) {
+                     $qp = new $formatclass($format, false);
+                    foreach($qp->getStylesheets() as $css) $wgOut->addLink($css);
+                 }
+				 } catch(ReflectionException $e) {
+				 	// igore
+				 }
+			}
+		}
+		
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
@@ -38,18 +58,18 @@ class SMWQueryInterface extends SpecialPage {
 				'</div>';
 
 		$html .= $this->addDragbox();
-		
+
 		$html .= $this->addPreviewResults();
-		
+
 		$html .= $this->addQueryLayout();
-		
+
 		$html .= $this->addAdditionalStuff();
 
 		$html .= '<script type="text/javascript" src="' . $smwgHaloScriptPath .  '/scripts/QueryInterface/qi_tooltip.js"></script>';
 		$html .= '</div>';
 		$wgOut->addHTML($html);
 	}
-	
+
 	private function addTreeView() {
 		return '<div id="treeview">' .
 				'<div id="treeviewheader" class="qiboxheader">' .
@@ -59,10 +79,10 @@ class SMWQueryInterface extends SpecialPage {
 				'<div id="treeanchor"><div id="qitreedummy"></div></div>' .
 				'</div>';		
 	}
-	
+
 	private function addDragbox() {
 		global $smwgHaloScriptPath;
-		
+
 		return '<div id="dragbox" class="dragbox">' .
 					'<div id="boxcontent" class="boxcontent">' .
 						'<table><tbody id="dialoguecontent"></tbody></table>' .
@@ -80,24 +100,25 @@ class SMWQueryInterface extends SpecialPage {
 						'</table></div>' .
 					'</div>' .
 				'</div>';
-		
+
 	}
-	
+
 	private function addQueryLayout() {
-		
+
 		global $smwgResultFormats;
-		
-		$blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar");
-		
+
+		$blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar","ofc");
+
 		$resultoptionshtml = "";
-		
+        
+		reset($smwgResultFormats);
 		while (current($smwgResultFormats)) {
 			if (!in_array(key($smwgResultFormats), $blacklist)) {
 				$resultoptionshtml .= '<option value="'.key($smwgResultFormats).'">'.key($smwgResultFormats).'</option>';
 			}
-		    next($smwgResultFormats);
+			next($smwgResultFormats);
 		}
-		
+
 		return '<div id="querylayout">
 					<div id="layouttitle" onclick="qihelper.switchlayout()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</div>
 					<div id="layoutcontent" style="display:none">
@@ -126,33 +147,33 @@ class SMWQueryInterface extends SpecialPage {
 				<div id="queryprinteroptions" style="display:block">
 		</div>';
 	}
-	
+
 	private function addPreviewResults() {
 		return '<div id="previewlayout">
 					<div id="previewtitle" onclick="qihelper.switchpreview()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_prp') . '\')"><a id="previewtitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_preview_result') . '</div>
 					<div id="previewcontent">
 				</div>
 			</div>';
-	}	
-	
+	}
+
 	private function addAdditionalStuff() {
 		global $smwgHaloScriptPath, $smwgWebserviceEndpoint;
 		wfRunHooks("QI_AddButtons", array (&$buttons));
-		
+
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
-		$useTS = "";		
+		$useTS = "";
 		if (isset($smwgWebserviceEndpoint)) {
 			$useTS = '<input class="btn" type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
-		} 
+		}
 		return '<div id="qimenubar" style="position: relative;">' .
-						//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-						//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
-						//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
+		//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+		//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
+		//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 						'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_preview') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
 						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
-						$buttons.
+		$buttons.
 						'<button class="btn" onclick="qihelper.showFullAsk(\'parser\', true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
-						$useTS.
+		$useTS.
 						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>'.
 
@@ -160,18 +181,18 @@ class SMWQueryInterface extends SpecialPage {
 				'<div id="fullpreview"></div>'.
 				'<span class="qibutton" onclick="$(\'fullpreviewbox\', \'shade\').invoke(\'toggle\')"><img src="'. $imagepath. 'delete.png"/>' . wfMsg('smw_qi_close_preview') . '</span></div>'.
 				'</div>'.
-		
+
 				'<div id="resetdialogue" class="topDialogue" style="display:none">' .
 						'Do you really want to reset your query?<br/>' .
 						'<span class="qibutton" onclick="qihelper.doReset()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'resetdialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
 						'</div>'.
-		
+
 				'<div id="showAsk" class="topDialogue" style="display:none; width:350px">' .
 						'<span id="showParserAskButton" class="qibutton" style="font-weight: bold; text-decoration: none; cursor: default;">' . wfMsg('smw_qi_parserask') . '</span><br/><hr/>' .
 						'<div><textarea id="fullAskText" style="width:95%" rows="10" readonly></textarea></div>' .
 						'<span class="qibutton" onclick="$(\'showAsk\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_close') . '</span>' .
 						'</div>'.
-		
+
 				'<div id="savedialogue" class="topDialogue" style="display:none">' .
 						'Please enter a query name:<br/>' .
 						'<input type="text" id="saveName"/><br/>' .

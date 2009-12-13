@@ -15,6 +15,52 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_charts = array();
 	protected $m_label = '';
 	protected $m_hidetable = false;
+	protected $m_singlechart = false;
+
+	protected $m_isAjax = false;
+	public function __construct($format, $inline) {
+		parent::__construct($format, $inline);
+		$width = new SMWQPParameter('width', 'Width', '<number>', NULL, "Width of graphic");
+		$height = new SMWQPParameter('height', 'Height', '<number>', NULL, "Height of graphic");
+		$mainlabel = new SMWQPParameter('mainlabel', 'Mainlabel', '<string>', NULL, "Mainlabel");
+
+		$this->mParameters[] = $width;
+		$this->mParameters[] = $height;
+		$this->mParameters[] = $mainlabel;
+	}
+
+	function getScripts() {
+		global $srfgScriptPath;
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n";
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n";
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n";
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n";
+		$scripts [] = '<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n";
+		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n";
+		return $scripts;
+	}
+
+	function getStylesheets() {
+		global $srfgScriptPath;
+		$css = array();
+		$css[] = array(
+            'rel' => 'stylesheet',
+            'type' => 'text/css',
+            'media' => "screen, projection",
+            'href' => $srfgScriptPath . '/ofc/css/ofc_style.css'
+            );
+            $css[] = array(
+            'rel' => 'stylesheet',
+            'type' => 'text/css',
+            'media' => "screen, projection",
+            'href' => $srfgScriptPath . '/ofc/css/ui-lightness/jquery-ui-1.7.2.custom.css'
+            );
+            return $css;
+	}
+
+	function getSupportedParameters() {
+		return $this->mParameters;
+	}
 
 	protected function readParameters($params,$outputmode) {
 		SMWResultPrinter::readParameters($params,$outputmode);
@@ -29,6 +75,15 @@ class SRFOFC extends SMWResultPrinter {
 		if (array_key_exists('mainlabel', $this->m_params)) {
 			$this->m_label = $this->m_params['mainlabel'];
 		}
+		if (array_key_exists('ajaxcall', $this->m_params)) {
+			$this->m_isAjax = true;
+		}
+
+		if(strpos(strtolower($this->mFormat), 'ofc-') === 0) {
+			$this->m_singlechart = strtolower(substr($this->mFormat, 4));
+			return;
+		}
+
 		if (array_key_exists('hidetable', $this->m_params)) {
 			$this->m_hidetable = $this->m_params['hidetable'];
 		}
@@ -39,8 +94,10 @@ class SRFOFC extends SMWResultPrinter {
 		$this->parseChartSettings('scatter_line');
 	}
 	private function parseChartSettings($type) {
+
 		if(!array_key_exists($type, $this->m_params)) return;
 		$ofc = explode(';', $this->m_params[$type]);
+
 		foreach ($ofc as $c) {
 			$arr = explode(',', $c);
 			$width = $this->m_width;
@@ -51,15 +108,15 @@ class SRFOFC extends SMWResultPrinter {
 					$width = $m[1];
 					$height = $m[2];
 				} else if(strtolower(trim($arr[$i]))=='show') {
-					$show = true;					
+					$show = true;
 				}
 			}
-			$this->m_charts[] = array('show'=>$show, 'type'=>$type, 'width'=>$width, 'height'=>$height, 'xlabel'=>trim($arr[0]), 'ylabel'=>trim($arr[1]), 'x'=>strtolower(trim($arr[0])), 'y'=>explode('§', strtolower(trim($arr[1]))));
+			$this->m_charts[] = array('show'=>$show, 'type'=>$type, 'width'=>$width, 'height'=>$height, 'xlabel'=>trim($arr[0]), 'ylabel'=>trim($arr[1]), 'x'=>strtolower(trim($arr[0])), 'y'=>explode('/', strtolower(trim($arr[1]))));
 		}
 	}
 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
 	static $ofc_enabled = false;
-	
+
 	private function setupOFCHeader() {
 		global $wgOut, $srfgScriptPath;
 		$wgOut->addLink( array(
@@ -68,33 +125,34 @@ class SRFOFC extends SMWResultPrinter {
 			'media' => "screen, projection",
 			'href' => $srfgScriptPath . '/ofc/css/ofc_style.css'
 			));
-		$wgOut->addLink( array(
+			$wgOut->addLink( array(
 			'rel' => 'stylesheet',
 			'type' => 'text/css',
 			'media' => "screen, projection",
 			'href' => $srfgScriptPath . '/ofc/css/ui-lightness/jquery-ui-1.7.2.custom.css'
 			));
-		$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n");
-		$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n");
-		$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n");
-		$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n");
-		$wgOut->addScript('<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n");
-		$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n");
-		
+			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n");
+			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n");
+			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n");
+			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n");
+			$wgOut->addScript('<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n");
+			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n");
 	}
 
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		$outputmode = SMW_OUTPUT_HTML;
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
-		
-		if(!SRFOFC::$ofc_enabled) {
-			SRFOFC::$ofc_enabled = true;
-			
-			SRFOFC::setupOFCHeader();
-		}
 
-		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+		if (!$this->m_isAjax) {
+			if(!SRFOFC::$ofc_enabled) {
+				SRFOFC::$ofc_enabled = true;
+
+				SRFOFC::setupOFCHeader();
+			}
+
+			SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+		}
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
 		// print header
@@ -109,9 +167,20 @@ class SRFOFC extends SMWResultPrinter {
 			}
 			$table .= "\t</tr>\n";
 		}
-		$labels = array();
+		$labels = array(); $headers = array();
 		foreach ($res->getPrintRequests() as $pr) {
+			$headers[] = $pr->getText(SMW_OUTPUT_HTML);
 			$labels[] = strtolower($pr->getText(SMW_OUTPUT_HTML));
+		}
+		if($this->m_singlechart !== FALSE) {
+			$l = $labels;
+			if($this->m_singlechart == 'scatter_line') {
+				$headers = array_slice($headers, 1);
+				$l = array_slice($l, 1);
+			}
+			$this->m_charts[] = array('show'=>true, 'type'=>$this->m_singlechart, 'width'=>$this->m_width, 'height'=>$this->m_height,
+				'xlabel'=>$headers[0], 'ylabel'=>(($this->m_singlechart == 'pie')?$headers[1]:implode(' / ', array_slice($headers, 1))), 
+				'x'=>$l[0], 'y'=>array_slice($l, 1));
 		}
 
 		// print all result rows
@@ -188,8 +257,6 @@ class SRFOFC extends SMWResultPrinter {
 			$table .= "\t</tr>\n";
 			$idx ++;
 		}
-		
-		//echo print_r($this->m_charts, true);die();
 		// print further results footer
 		if ( $this->linkFurtherResults($res) ) {
 			$link = $res->getQueryLink();
@@ -203,11 +270,11 @@ class SRFOFC extends SMWResultPrinter {
 		$ofc_data_objs = array();
 		for($i=0;$i<count($this->m_charts);++$i) {
 			$chart = $this->m_charts[$i];
-				
+
 			$id = "ofc" . $smwgIQRunningNumber . "_" . $i;
 			$this->m_charts[$i]['id'] = $id;
 			$ofc_data_objs[$i] = $id . ":{show:" . ($this->m_charts[$i]['show']?"true":"false") . ", data:{";
-				
+
 			if($chart['type'] == 'pie') {
 				$ofc_data_objs[$i] .= '
 		"elements":[
@@ -221,8 +288,7 @@ class SRFOFC extends SMWResultPrinter {
 					} else {
 						$first = false;
 					}
-					$label = isset($d['label']) ? $d['label'] : "";
-					$ofc_data_objs[$i] .= '{"value":' . str_replace(',','',$d['value']) . ',"label":"' . str_replace('"','\"',$label). ':' . $d['value'] . '"}';
+					$ofc_data_objs[$i] .= '{"value":' . str_replace(',','',$d['value']) . ',"label":"' . str_replace('"','\"',$d['label']). ':' . $d['value'] . '"}';
 				}
 				$ofc_data_objs[$i] .= '
 				],
@@ -281,21 +347,24 @@ class SRFOFC extends SMWResultPrinter {
 			}
 			$ofc_data_objs[$i] .= '"bg_colour":"#ffffff"}}';
 		}
-
-		$html = '<div class="show_hide_container"><div class="ofc_title">' . $this->m_label . '</div>';
-		foreach($this->m_charts as $chart) {
-			if($chart['x'] != $labels[0]) {
-				$label = $chart['xlabel'] . ' - ' . $chart['ylabel'];
-			} else {
-				$label = $chart['ylabel'];
-			}
-			$html .= '<a href="##" id="show_hide_flash_div_' . $chart['id'] . '" class="ofc_' . $chart['type'] . '_link">' . 
+		$html = "";
+		if($this->m_singlechart === FALSE) {
+			$html = '<div class="show_hide_container"><div class="ofc_title">' . $this->m_label . '</div>';
+			foreach($this->m_charts as $chart) {
+				if($chart['x'] != $labels[0]) {
+					$label = $chart['xlabel'] . ' - ' . $chart['ylabel'];
+				} else {
+					$label = $chart['ylabel'];
+				}
+				$html .= '<a href="##" id="show_hide_flash_div_' . $chart['id'] . '" class="ofc_' . $chart['type'] . '_link">' .
 				($chart['show']?('<b>' . $label . '</b>'):$label) . '</a>';
+			}
+			$html .= '<a href="##" id="show_hide_table_' . $table_id . '" class="ofc_table_link">' . ($this->m_hidetable?'Show':'Hide') . ' table</a>
+				</div>';
+			$html .= $table;
 		}
-		$html .= '<a href="##" id="show_hide_table_' . $table_id . '" class="ofc_table_link">' . ($this->m_hidetable?'Show':'Hide') . ' table</a>
-			</div>';
-		$html .= $table;
 		$first = true;
+
 		foreach($this->m_charts as $chart) {
 			$html .= '<div id="div_' . $chart['id'] . '" class="ui-widget-content" style="width:' . $chart['width'] . 'px;height:' . $chart['height'] . 'px"><div id="' . $chart['id'] . '">';
 			if($chart['show'] && $first) {
@@ -305,9 +374,12 @@ class SRFOFC extends SMWResultPrinter {
 			$html .= '</div></div>';
 		}
 
-		global $wgOut;
-		$wgOut->addScript('<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
-		return $html;
+		if (!$this->m_isAjax) {
+			global $wgOut;
+			$wgOut->addScript('<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
+		}
+		return !$this->m_isAjax ? $html : $html . '|||ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});' ;
+		//return !$this->m_isAjax ? "kai1" : "kai2";
 	}
 	private function getLabelText($chart) {
 		$first = true;

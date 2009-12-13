@@ -64,3 +64,359 @@ E.g.
 |scatter_line=Budget,Gross
 }}
 </nowiki></pre>
+
+
+
+=== upgrade ===
+Syntax
+
+<format> ::= ※|format=§ <ofc>|<ofc-pie>|<ofc-bar_3d>|<ofc-line>|<ofc-scatter_line>
+
+<ofc> ::= ofc <! The current implementation remains unchanged and uses the parameters: pie, bar_3d, line scatter_line >
+
+<ofc-pie> ::= ofc-pie <! Displays a pie-chart containing exactly one data value per instance >
+
+<ofc-bar_3d> ::= ofc-bar_3d <! Displays a 3d bar graph containing one or more data values per instance >
+
+<ofc-line> ::= ofc-line <! Displays a line graph containing one or more data values per instance >
+
+<ofc-scatter_line> ::= ofc-scatter_line <! Displays a scatter line graph containing one or more data values per instance; the instances are not arranged on an axis. >
+
+<printout statement> ::= ※|?§ <property> <! Specify from which properties to take the data values >
+
+<printout statement with alternative label> ::= <printout statement> ※=§ <property label> <! Specify from which properties to take the data values and the name of the labels to display>
+
+<limit> ::= ※|limit=§ <number> <! As implemented >
+
+<offset> ::= ※|offset=§ <number> <! First instance to start with; according to the order of the instances >
+
+<sort> ::= ※|sort=§ <property> <!sorts the instances according to <order> >
+
+<order> ::= ※|order=§ asc|desc <! Specifies how to sort >
+
+<headers> ::= ※|headers=show§ <! Displays the property labels in the graph >|§|headers=hide§ <!hides property labels in the graph>
+
+<mainlabel> ::= ※|mainlabel=§ <string> <! label of the chart (e.g. Sci-Fi Films - Gross) >
+
+<show no links> ::= ※|link=none§ <! No label in the graph is printed as hyperlink >
+
+<show only links for subjects> ::= ※|link=subject§ <! Only the labels for instances are printed as hyperlinks >
+
+<show links where possible> ::= ※|link=all§ <! Display all labels as hyperlinks if suitable, i.e. for instances and relations>
+
+<default> ::= ※|default=§ <string> <! Display the string in the graph if the query yields no result >
+
+<height> ::= ※height=§ <number> <! Height of the graph in pixels >
+
+<width> ::= ※width=§ <number> <! width of the graph in pixels >
+
+<query> ::= <string> <! A query > 
+
+<Pie chart> ::=
+
+※{{#ask:§ <query>
+
+<printout statement>|<printout statement with alternative label>
+
+[<limit>]
+
+[<mainlabel>]
+
+[<offset>]
+
+[<sort>]
+
+[<order>]
+
+※format=ofc-pie§
+
+[<height>]
+
+[<width>]
+
+[<headers>]
+
+[<show no links>|<show only links for subjects>]
+
+[<default>] 
+<Bar 3d> ::=
+
+※{{#ask:§ <query>
+
+<printout statement>|<printout statement with alternative label>
+
+{<printout statement>|<printout statement with alternative label>}
+
+[<limit>]
+
+[<mainlabel>]
+
+[<offset>]
+
+[<sort>]
+
+[<order>]
+
+※format=ofc-bar_3d§
+
+[<height>]
+
+[<width>]
+
+[<headers>]
+
+[<show no links>|<show only links for subjects>]
+
+[<default>] 
+<Line> ::=
+
+※{{#ask:§ <query>
+
+<printout statement>|<printout statement with alternative label>
+
+{<printout statement>|<printout statement with alternative label>}
+
+[<limit>]
+
+[<mainlabel>]
+
+[<offset>]
+
+[<sort>]
+
+[<order>]
+
+※format=ofc-line§
+
+[<height>]
+
+[<width>]
+
+[<headers>]
+
+[<show no links>|<show only links for subjects>]
+
+[<default>] 
+<Scatter Line> ::=
+
+※{{#ask:§ <query>
+
+<printout statement>|<printout statement with alternative label>
+
+{<printout statement>|<printout statement with alternative label>}
+
+[<limit>]
+
+[<mainlabel>]
+
+[<offset>]
+
+[<sort>]
+
+[<order>]
+
+※format=ofc-scatter_line§
+
+[<height>]
+
+[<width>]
+
+[<headers>]
+
+[<show no links>|<show only links for subjects>]
+
+[<default>] 
+Note:
+
+with scatter lines, the subjects are never arranged at an axis (just the two printout statements are arranged at the x- and y-axis respectively)
+ 
+ 
+
+
+Example
+
+ 
+(taken from http://wiking.vulcan.com/demo/index.php?title=Grosses&action=edit) 
+
+{{#ask: [[Category:Science fiction films]]
+
+[[budget::<10000000]][[Gross::+]]
+
+|?Release date=Date
+
+|?Budget
+
+|?Gross
+
+|?Runtime
+
+|limit=10
+
+|mainlabel=Sci-Fi Films
+
+|format=ofc
+
+|pie=Sci-Fi Films,Gross,700x300,show
+
+|bar_3d=Sci-Fi Films,Runtime;Sci-Fi Films,Budget/Gross
+
+|line=Sci-Fi Films,Budget/Gross
+
+|scatter_line=Budget,Gross
+
+}} 
+
+Translates into:
+
+PIE (Sci-Fi Films,Gross,700x300,show)
+
+{{#ask: [[Category:Science fiction films]][[budget::<10000000]][[Gross::+]]
+
+|?Gross=Gross
+
+|limit=10
+
+|offset=0
+
+|sort=
+
+|order=
+
+|mainlabel=Sci-Fi Films 每 Gross
+
+|format=ofc-pie
+
+|height=300
+
+|width=700
+
+|headers=show
+
+|link=none
+
+|default=no results＃
+
+}}
+
+Note:
+
+only 1 printout statement (here:?Gross) is accepted for pie-charts; more than 1 are ignored.
+An alternative label for data values  can be specified (here: ?Gross=Gross)
+With ※headers=show§ the labels for data values are displayed (or hidden)
+With ※link=all§ the labels are displayed as hyperlinks (in this example ※Southland Tales§ would become a hyperlink pointing to the ※Southland Tales§-article (link=subject works similar)
+ 
+BAR 3d 1 (Sci-Fi Films,Runtime)
+
+{{#ask: [[Category:Science fiction films]][[budget::<10000000]][[Gross::+]]
+
+|?Runtime=Runtime
+
+|limit=10
+
+|offset=0
+
+|sort=
+
+|order=
+
+|mainlabel=Sci-Fi Films 每 Runtime
+
+|format=ofc-bar_3d
+
+|height=300
+
+|width=700
+
+}} 
+
+BAR 3d 2 (Sci-Fi Films,Budget/Gross)
+
+{{#ask: [[Category:Science fiction films]][[budget::<10000000]][[Gross::+]]
+
+|?Gross=Gross
+
+|?budget=Budget
+
+|limit=10
+
+|offset=0
+
+|sort=
+
+|order=
+
+|mainlabel=Sci-Fi Films 每 Budget/Gross
+
+|format=ofc-bar_3d
+
+|height=300
+
+|width=700
+
+}}
+
+Note:
+
+multiple printout properties (here: ?Gross and ?budget) result in multiple data-rows
+ 
+LINE (Sci-Fi Films,Budget/Gross)
+
+{{#ask: [[Category:Science fiction films]][[budget::<10000000]][[Gross::+]]
+
+|?Gross=Gross
+
+|?budget=Budget
+
+|limit=10
+
+|offset=0
+
+|sort=
+
+|order=
+
+|mainlabel=Sci-Fi Films 每 Budget/Gross
+
+|format=ofc-line
+
+|height=300
+
+|width=700
+
+}}
+
+Note:
+
+multiple printout properties (here: ?Gross and ?budget) result in multiple data-rows
+ 
+ 
+ 
+SCATTER LINE (Budget,Gross)
+
+{{#ask: [[Category:Science fiction films]][[budget::<10000000]][[Gross::+]]
+
+|?Gross=Gross
+
+|?budget=Budget
+
+|limit=10
+
+|offset=0
+
+|sort=
+
+|order=
+
+|mainlabel=Sci-Fi Films 每 Budget - Gross
+
+|format=ofc-scatter_line
+
+|height=300
+
+|width=700
+
+}}
+
+Note:
+
+with scatter lines, the subjects are never arranged at an axis (just the two printout statements are arranged at the x- and y-axis respecitvely)

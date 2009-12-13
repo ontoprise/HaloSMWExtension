@@ -45,10 +45,12 @@ function smwf_qi_QIAccess($method, $params) {
              foreach($params as $p) {
                  if (strlen($p) > 0 && strpos($p, "=") !== false) {
                     list($key, $value) = explode("=", $p);
-                     $fixparams[$key] = $value;
+                     $fixparams[$key] = str_replace('%2C', ',', $value);
                  }
              }
-
+             // indicate that it comes from an ajax call
+            $fixparams['ajaxCall'] = true;
+            
             // fix bug 10812: if query string contains a ,
             $p_array[0] = str_replace('%2C', ',', $p_array[0]);
 
@@ -72,7 +74,7 @@ function smwf_qi_QIAccess($method, $params) {
 	            } // no single pipe found, no params specified in query
 	            else $rawparams[] = trim($p_array[0]);
             }    
-            
+         
             $rawparams = array_merge($rawparams, $fixparams);
             // set some default values, if params are not set
             if (! in_array('reasoner', array_keys($fixparams))) $fixparams['reasoner'] = 'ask';
@@ -103,10 +105,18 @@ function smwf_qi_QIAccess($method, $params) {
             		break;            		
             	case 'exhibit':
             		return $result;
-            		
             		break;
+            		
+            		case 'ofc-pie':
+            		case 'ofc-bar':
+            		case 'ofc-bar_3d':
+            		case 'ofc-line':
+            	    case 'ofc-scatterline':			
+                    return $result[0];
+                    break;   
             	default:            		
             }
+          
             $result = parseWikiText($result);
 			// add target="_new" for all links
 			$pattern = "|<a|i";

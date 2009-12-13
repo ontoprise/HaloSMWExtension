@@ -70,3 +70,39 @@ function ofc_data(passed_string){
 	}
 	return (typeof(Prototype)=='undefined') ? JSON.stringify(obj.data) : Object.toJSON(obj.data);
 }
+
+function resetOfc() {
+    for(var i=0;i<ofc_data_objs.length;++i) {
+        var ofc_data_obj = ofc_data_objs[i];
+        for(var ofc_id in ofc_data_obj) {
+            var pass_string=ofc_id;
+            var flashvars = {"get-data":"ofc_data","id":pass_string};
+            var params = false;
+            var attributes = {wmode: "Opaque",salign: "l",AllowScriptAccess:"always"};
+            var div = jQuery("#div_" + ofc_id);
+            div.resizable();
+            if(!ofc_data_obj[ofc_id].show)
+                div.hide();
+            swfobject.embedSWF(flash_chart_path, ofc_id, ofc_w,ofc_h, "9.0.0", "expressInstall.swf", flashvars, params, attributes );
+        }
+    }
+    
+    jQuery("a.ofc_pie_link").click(showHideChart);
+    jQuery("a.ofc_bar_link").click(showHideChart);
+    jQuery("a.ofc_bar_3d_link").click(showHideChart);
+    jQuery("a.ofc_line_link").click(showHideChart);
+    jQuery("a.ofc_scatter_line_link").click(showHideChart);
+    
+    jQuery("a.ofc_table_link").click(function(event){
+        event.preventDefault();
+        var the_id=jQuery(this).attr("id").substr(16);
+        var html_table=jQuery('#'+the_id);
+        if (html_table.is(":hidden")) {
+            html_table.show();
+            jQuery(this).text("Hide table");
+        }else{
+            html_table.hide();
+            jQuery(this).text("Show table");
+        }
+    });
+}
