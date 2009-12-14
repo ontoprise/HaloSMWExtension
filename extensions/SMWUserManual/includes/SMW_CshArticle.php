@@ -36,6 +36,7 @@ class UME_CshArticle {
 
     public function initByArray($arr) {
         $this->title = $arr['title'];
+        if (!isset($arr['revisions'])) return;
         $this->content = $arr['revisions'][0]['*'];
         $this->processRawSmwforumContent();
     }
@@ -55,7 +56,7 @@ class UME_CshArticle {
         // the easy way, template name is prefixed by {{
         $p = strpos($this->content, '{{'.$tname);
         if ($p === false) {
-            // it's also a valid temlate call when there are whitespaces
+            // it's also a valid template call when there are whitespaces
             // between the {{ and the template name, check this now.
             $trans = array('?' => '\?', '*' => '\*', '+' => '\+', '-' => '\-');
             $pattern = '/\{\{\s+'.strtr($tname, $trans).'/';
