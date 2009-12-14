@@ -448,7 +448,7 @@ class SRFOFC extends SMWResultPrinter {
 		return $text;
 	}
 	private function getScale(&$min, &$max, &$step) {
-		if($min > 0) {
+		if($min >= 0) {
 			$min = 0;
 			if($max > 1) {
 				$step = 1;
@@ -462,7 +462,7 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			}
 			$max = (intval($max / $step) + 1) * $step;
-		} else if($max < 0) {
+		} else if($max <= 0) {
 			$max = 0;
 			if($min < -1) {
 				$step = 1;
