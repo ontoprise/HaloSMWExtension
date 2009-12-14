@@ -390,7 +390,7 @@ class SMWH_Skin {
     private function buildHelpTab(){
         global $wgStylePath;
         $tab ='<div id="helptab" class="tab">';
-        $tab.= '<div id="smwh_csh"><img id="helpimage" src="'.$wgStylePath.$this->imagepath.'/help_icon.png" alt="edit"/></div>';
+        $tab.= '<div id="smw_csh"><img id="helpimage" src="'.$wgStylePath.$this->imagepath.'/help_icon.png" alt="edit"/></div>';
         $tab.= "</div>";
         return $tab;
 
