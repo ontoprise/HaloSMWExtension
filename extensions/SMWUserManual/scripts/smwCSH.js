@@ -29,11 +29,20 @@ SMW_UserManual_CSH.prototype = {
                         document.getElementById('content').insertBefore(div, child)
                 }
             }
+            // set the link inside the div container
+            div.innerHTML = '<a href="#" onclick="javascript: smwCsh.loadPopup(); return false">'
+                          + label + '</a>';
         }
-        // set the link inside the div container
-        div.innerHTML = '<a href="#" onclick="javascipt: smwCsh.loadPopup(); return false">'
-            + label + '</a>';
-            
+        else {
+            // any link inside the div
+            var a = div.getElementsByTagName('a')
+            if (a.length == 0) // no link inside the div, then sourround one
+                div.innerHTML='<a href="#" onclick="javascript: smwCsh.loadPopup(); return false">'+
+                    div.innerHTML+'</a>'
+            else // add onclick attribute for the link
+                a[0].onclick = 'javascript: smwCsh.loadPopup(); return false'
+        }
+        
         // predefined tempolate calls that will be inserted when creating a new page
         // in the smw+ forum, these are comments (public and internal) send by the users
         this.txtCommentCsh = '{{Comment|CommentPerson=%%%1%%%'
