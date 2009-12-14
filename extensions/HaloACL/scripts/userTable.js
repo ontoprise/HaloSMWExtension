@@ -140,7 +140,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
         var filter = $('datatable_filter_'+myDataTable.panelid).value;
         
-        return "rs=getUsersForUserTable&rsargs[]="
+        return "rs=haclGetUsersForUserTable&rsargs[]="
         +myDataTable.query+"&rsargs[]="+sort
         +"&rsargs[]="+dir
         +"&rsargs[]="+startIndex
@@ -204,7 +204,7 @@ YAHOO.haloacl.userDataTable = function(divid,panelid) {
 
     // userdatatable configuration
     var myConfigs = {
-        initialRequest: "rs=getUsersForUserTable&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
+        initialRequest: "rs=haclGetUsersForUserTable&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
             key:"name",
@@ -412,7 +412,7 @@ YAHOO.haloacl.ROuserDataTableV2 = function(divid,panelid, noDelete){
     };
 
 
-    var action = "getUsersForGroups";
+    var action = "haclGetUsersForGroups";
     var querystring = "rs="+action+"&rsargs[]="+groupstring;
 
     new Ajax.Request("?action=ajax",{

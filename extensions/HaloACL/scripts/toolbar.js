@@ -132,11 +132,11 @@ YAHOO.haloacl.toolbar_handleSaveClick = function(element){
         var tpw = $('haloacl_template_protectedwith');
         var tmpvalue  = tpw[tpw.selectedIndex].text;
         //textbox.value = textbox.value + "{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}";
-        YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:tmpvalue});
+        YAHOO.haloacl.toolbar.callAction('haclSetToolbarChoose',{tpl:tmpvalue});
 
     }else{
         //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
-        YAHOO.haloacl.toolbar.callAction('setToolbarChoose',{tpl:'unprotected'},function(result){
+        YAHOO.haloacl.toolbar.callAction('haclSetToolbarChoose',{tpl:'unprotected'},function(result){
            
         });
     }

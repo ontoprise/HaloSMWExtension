@@ -394,7 +394,7 @@ YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
 		   			'$(\'ManageACLDetail\').scrollTo();' +
 		   		'} catch(e) {};' +
 		   		'YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',' +
-		   									   '\'getSDRightsPanelContainer\',' +
+		   									   '\'haclGetSDRightsPanelContainer\',' +
 		   									   '{' +
 		   									   		'sdId:\''+this.groupId+'\',' +
 		   									    	'sdName:\''+this.label+'\',' +
@@ -859,7 +859,7 @@ YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
         },
         timeout: 7000
     };
-    YAHOO.haloaclrights.treeviewDataConnect('getGroupsForRightPanel',{
+    YAHOO.haloaclrights.treeviewDataConnect('haclGetGroupsForRightPanel',{
         query:nodeLabel
     },callback);
 
@@ -986,7 +986,7 @@ YAHOO.haloaclrights.buildUserTree = function(tree,data,dontusefilter) {
             },
             timeout: 7000
         };
-        YAHOO.haloaclrights.treeviewDataConnect('getGroupsForRightPanel',{
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetGroupsForRightPanel',{
             query:nodeLabel
         },callback,dontusefilter);
 
@@ -1051,17 +1051,17 @@ YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefil
         }
     };
     if(dontusefilter && (dontusefilter == "true"||dontusefilter ==true )){
-        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
             query:query
         },callback,dontusefilter);
 
     }else if(tree.treeType != null && tree.treeType != "readonly"){
-        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
             query:query
         },callback);
     }else{
         var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate_nofilter</type></types>');
-        YAHOO.haloaclrights.treeviewDataConnect('getACLs',{
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
             query:temp
         },callback);
     }
@@ -1153,7 +1153,7 @@ YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter)
         if(foundType){
             query = escape(xml);
         }
-        YAHOO.haloacl.treeviewDataConnect('getACLs',{
+        YAHOO.haloacl.treeviewDataConnect('haclGetACLs',{
             query:query,
             filtervalue:filtervalue
         },callback);

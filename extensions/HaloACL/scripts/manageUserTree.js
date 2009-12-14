@@ -411,7 +411,7 @@ YAHOO.haloacl.manageUser.loadNodeData = function(node, fnLoadComplete)  {
         },
         timeout: 7000
     };
-    YAHOO.haloacl.manageUser.treeviewDataConnect('getGroupsForManageUser',{
+    YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
         query:nodeLabel
     },callback);
 
@@ -446,7 +446,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
             },
             timeout: 7000
         };
-        YAHOO.haloacl.manageUser.treeviewDataConnect('getGroupsForManageUser',{
+        YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
             query:nodeLabel
         },callback);
 
@@ -541,7 +541,7 @@ YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
             },
             timeout: 7000
         };
-        YAHOO.haloacl.manageUser.treeviewDataConnect('getGroupsForManageUser',{
+        YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
             query:nodeLabel
         },callback);
 
@@ -570,7 +570,7 @@ YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson = function(tree){
         failure: function(oResponse) {
         }
     };
-    YAHOO.haloacl.manageUser.treeviewDataConnect('getGroupsForManageUser',{
+    YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
         query:'all'
     },callback);
 };
@@ -748,7 +748,7 @@ YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
             failure: function(oResponse) {
             }
         };
-        YAHOO.haloacl.treeviewDataConnect('getGroupsForManageUser',{
+        YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForManageUser',{
             query:'all',
             filtervalue:filtervalue
         },callback);

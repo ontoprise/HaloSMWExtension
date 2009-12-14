@@ -115,7 +115,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
         var filter = $('datatable_filter_'+myDataTable.panelid).value;
         
-        return "rs=getUsersForUserTable&rsargs[]="
+        return "rs=haclGetUsersForUserTable&rsargs[]="
         +myDataTable.query+"&rsargs[]="+sort
         +"&rsargs[]="+dir
         +"&rsargs[]="+startIndex
@@ -127,7 +127,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
     // whitelisttable configuration
     var myConfigs = {
-        initialRequest: "rs=getWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
+        initialRequest: "rs=haclGetWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
             key:"name",
@@ -163,7 +163,7 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
             argument : myDataTable.getState()
         };
         if(YAHOO.haloacl.debug) console.log("sending request");
-        myDataSource.sendRequest('rs=getWhitelistPages&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        myDataSource.sendRequest('rs=haclGetWhitelistPages&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
     }
 

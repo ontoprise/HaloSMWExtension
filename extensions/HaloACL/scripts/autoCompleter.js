@@ -71,7 +71,7 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
             }
         });
 
-        return "rs=getAutocompleteDocuments&rsargs[]=" + sQuery+"&rsargs[]="+protect;
+        return "rs=haclGetAutocompleteDocuments&rsargs[]=" + sQuery+"&rsargs[]="+protect;
     };
     var itemFocusHandler = function(sType, args){
         oAC.sendQuery("");

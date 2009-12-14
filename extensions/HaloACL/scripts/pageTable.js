@@ -86,7 +86,7 @@ YAHOO.haloacl.pageDataTable = function(divid) {
             myPageTable.query = '';
         }
 
-        return "rs=getWhitelistPages&rsargs[]="
+        return "rs=haclGetWhitelistPages&rsargs[]="
         +myPageTable.query+"&rsargs[]="+sort
         +"&rsargs[]="+dir
         +"&rsargs[]="+startIndex
@@ -97,7 +97,7 @@ YAHOO.haloacl.pageDataTable = function(divid) {
 
     // userdatatable configuration
     var myConfigs = {
-        initialRequest: "rs=getWhitelistPages&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
+        initialRequest: "rs=haclGetWhitelistPages&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
             key:"id",

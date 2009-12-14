@@ -27,17 +27,10 @@
 
 global $wgAjaxExportList;
 
-$wgAjaxExportList[] = "getHACLToolbar";
-$wgAjaxExportList[] = "setToolbarChoose";
+$wgAjaxExportList[] = "haclGetHACLToolbar";
+$wgAjaxExportList[] = "haclSetToolbarChoose";
 
-
-global $wgHooks;
-$wgHooks['EditPageBeforeEditButtons'][] = 'AddHaclToolbarForEditPage';
-$wgHooks['sfEditPageBeforeForm'][] = 'AddHaclToolbarForSemanticForms';
-
-
-
-function setToolbarChoose($templateToUse) {
+function haclSetToolbarChoose($templateToUse) {
     global $wgUser;
 
     $_SESSION['haloacl_toolbar'][$wgUser->getName()] = $templateToUse;
@@ -46,54 +39,7 @@ function setToolbarChoose($templateToUse) {
 
 }
 
-/**
- Adds
- TODO: document
- */
-function AddHaclToolbarForEditPage ($content_actions) {
-
-    if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
-        return $content_actions;
-    }
-    global $haclgIP;
-    $html = <<<HTML
-    	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
-        <script>
-            YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
-            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'{$content_actions->mTitle}'});
-        </script>
-HTML;
-    #$content_actions->editFormPageTop = 'editFormPageTop';
-    #$content_actions->editFormTextTop = 'editFormTextTop';
-    $content_actions->editFormTextBeforeContent = $html;
-    #$content_actions->editFormTextAfterWarn = 'editFormTextAfterWarn';
-    #$content_actions->editFormTextAfterTools = 'editFormTextAfterTools';
-    #$content_actions->editFormTextBottom = "editFormTextBottom";
-    #$content_actions = array_merge($content_actions, $main_action);   //add a new action
-
-    return true;
-}
-
-/**
- Adds
- TODO: document
- */
-function AddHaclToolbarForSemanticForms($pageTitle, $html) {
-    global $haclgIP;
-    $html = <<<HTML
-    		<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
-    		<script>
-	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
-	            YAHOO.haloacl.toolbar.loadContentToDiv('content','getHACLToolbar',{title:'$pageTitle'});
-	        </script>
-HTML;
-
-    return true;
-}
-
-
-
-function getHACLToolbar($articleTitle) {
+function haclGetHACLToolbar($articleTitle) {
     global $wgUser;
     global $haclgContLang;
     $ns = $haclgContLang->getNamespaces();

@@ -64,6 +64,10 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
     $wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
     $wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
+    
+    // UI
+    $wgAutoloadClasses['HACL_GenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';
+    $wgAutoloadClasses['HACL_helpPopup'] = $haclgIP . '/includes/HACL_helpPopup.php';
 
     //--- Autoloading for exception classes ---
     $wgAutoloadClasses['HACLException']        = $haclgIP . '/exceptions/HACL_Exception.php';
@@ -71,7 +75,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLGroupException']   = $haclgIP . '/exceptions/HACL_GroupException.php';
     $wgAutoloadClasses['HACLSDException']      = $haclgIP . '/exceptions/HACL_SDException.php';
     $wgAutoloadClasses['HACLRightException']   = $haclgIP . '/exceptions/HACL_RightException.php';
-    $wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';
+    $wgAutoloadClasses['HACLWhitelistException'] = $haclgIP . '/exceptions/HACL_WhitelistException.php';    
 
     return true;
 }
@@ -147,7 +151,24 @@ function haclfSetupExtension() {
         $wgHooks['BeforePageDisplay'][]='addNonSpecialPageHeader';
 
     }
-
+    
+    //-- Hooks for ACL toolbar--
+	$wgHooks['EditPageBeforeEditButtons'][] = 'haclfAddToolbarForEditPage';
+	$wgHooks['sfEditPageBeforeForm'][]      = 'haclfAddToolbarForSemanticForms';
+    
+    
+    //-- includes for Ajax calls --
+    global $wgUseAjax, $wgRequest;
+    if ($wgUseAjax && $wgRequest->getVal('action') == 'ajax' ) {
+		$funcName = isset( $_POST["rs"] ) 
+						? $_POST["rs"] 
+						: (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
+    	if (strpos($funcName, 'hacl') === 0) {
+			require_once('HACL_Toolbar.php');
+			require_once('HACL_AjaxConnector.php');
+    	}
+    }
+    
     //--- credits (see "Special:Version") ---
     $wgExtensionCredits['other'][]= array(
         'name'=>'HaloACL',
@@ -652,6 +673,51 @@ function haclAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages
 
 }
 
+/**
+* This function is called from the hook 'EditPageBeforeEditButtons'. It adds the
+* ACL toolbar to edited pages.
+*  
+*/
+function haclfAddToolbarForEditPage ($content_actions) {
+
+    if ($content_actions->mArticle->mTitle->mNamespace == HACL_NS_ACL) {
+        return $content_actions;
+    }
+    global $haclgIP;
+    $html = <<<HTML
+    	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
+        <script>
+            YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
+            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'{$content_actions->mTitle}'});
+        </script>
+HTML;
+    $content_actions->editFormTextBeforeContent = $html;
+
+    return true;
+}
+
+/**
+* This function is called from the hook 'EditPageBeforeEditButtons'. It adds the
+* ACL toolbar to a semantic form.
+*  
+*/
+function haclfAddToolbarForSemanticForms($pageTitle, $html) {
+    global $haclgIP;
+    $html = <<<HTML
+    		<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
+    		<script>
+	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
+	            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'$pageTitle'});
+	        </script>
+HTML;
+
+    return true;
+}
+
+
+
+
+
 function haclfRegisterACIcon(& $namespaceMappings) {
     global $haclgIP;
     $namespaceMappings[HACL_NS_ACL]="/extensions/HaloACL/skins/images/ACL_AutoCompletion.gif";
@@ -708,3 +774,4 @@ function haclfHandleFormField($form_field, $cur_value, $form_submitted) {
     }
     return true;
 }
+

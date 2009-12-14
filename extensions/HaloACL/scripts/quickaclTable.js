@@ -124,7 +124,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
         var filter = $('datatable_filter_'+myDataTable.panelid).value;
         
-        return "rs=getQuickACLData&rsargs[]="
+        return "rs=haclGetQuickACLData&rsargs[]="
         +myDataTable.query+"&rsargs[]="+sort
         +"&rsargs[]="+dir
         +"&rsargs[]="+startIndex
@@ -138,7 +138,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
 
     // whitelisttable configuration
     var myConfigs = {
-        initialRequest: "rs=getQuickACLData&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
+        initialRequest: "rs=haclGetQuickACLData&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
         dynamicData: true, // Enables dynamic server-driven data
         sortedBy : {
             key:"name",
@@ -180,7 +180,7 @@ YAHOO.haloacl.quickaclTable = function(divid,panelid) {
             argument : myDataTable.getState()
         };
         if(YAHOO.haloacl.debug) console.log("sending request");
-        myDataSource.sendRequest('rs=getQuickACLData&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        myDataSource.sendRequest('rs=haclGetQuickACLData&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
         if(YAHOO.haloacl.debug) console.log("reqeust sent");
         
     }

@@ -103,7 +103,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     YAHOO.haloacl.haloaclTabs = new YAHOO.widget.TabView(containerName);
     var tab1 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('createACL'),
-        dataSrc:'createACLPanels',
+        dataSrc:'haclCreateACLPanels',
         cacheData:false,
         active:createACLActive,
         id:'createACLPanel_button'
@@ -130,7 +130,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 
     var tab2 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('manageACLs'),
-        dataSrc:'createManageACLPanels',
+        dataSrc:'haclCreateManageACLPanels',
         cacheData:false,
         active:manageACLActive,
         id:"manageACLPanel_button"
@@ -156,7 +156,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
 
     var tab3 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('manageUser'),
-        dataSrc:'manageUserContent',
+        dataSrc:'haclManageUserContent',
         cacheData:false,
         active:manageUserActive,
         id:"manageUserContent_button"
@@ -182,7 +182,7 @@ YAHOO.haloacl.buildMainTabView = function(containerName,requestedTitle,showWhite
     if(showWhitelistTab == "true"){
         var tab4 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('whitelists'),
-            dataSrc:'whitelistsContent',
+            dataSrc:'haclWhitelistsContent',
             cacheData:false,
             active:whitelistActive,
             id:"whitelist_button"
@@ -226,7 +226,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
     if (containerName == "haloaclsubViewManageACL") {
         var tab1 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('manageExistingACLs'),
-            dataSrc:'createManageExistingACLContent',
+            dataSrc:'haclCreateManageExistingACLContent',
             cacheData:false,
             active:manageAclActive,
             id:"createStdAclTab"
@@ -240,7 +240,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab2 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('manageDefaultUserTemplate'),
-            dataSrc:'createManageUserTemplateContent',
+            dataSrc:'haclCreateManageUserTemplateContent',
             cacheData:false,
             active:manageDefaultTemplateActive,
             id:"createTmpAclTab"
@@ -254,7 +254,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab3 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('manageQuickAccess'),
-            dataSrc:'createQuickAclTab',
+            dataSrc:'haclCreateQuickAclTab',
             cacheData:false,
             active:createQuickActive,
             id:"createQuickAclTab"
@@ -281,7 +281,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab1 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('createStandardACL'),
-            dataSrc:'createAclContent',
+            dataSrc:'haclCreateAclContent',
             cacheData:false,
             active:createAclACtive,
             id:"createStdAclTab"
@@ -299,7 +299,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab2 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('createACLTemplate'),
-            dataSrc:'createAclTemplateContent',
+            dataSrc:'haclCreateAclTemplateContent',
             cacheData:false,
             active:createTplActive,
             id:"createTmpAclTab"
@@ -318,7 +318,7 @@ YAHOO.haloacl.buildSubTabView = function(containerName){
 
         var tab3 = new YAHOO.widget.Tab({
             label: gHACLLanguage.getMessage('createDefaultUserTemplate'),
-            dataSrc:'createAclUserTemplateContent',
+            dataSrc:'haclCreateAclUserTemplateContent',
             cacheData:false,
             active:createDefUserActive,
             id:"createUserAclTab"
@@ -505,7 +505,7 @@ YAHOO.haloacl.removePanel = function(panelid,callback){
             if(callback != null){
                 callback();
             }
-            YAHOO.haloacl.callAction("removePanelForTemparray",{
+            YAHOO.haloacl.callAction("haclRemovePanelForTemparray",{
                 panelid:panelid
             },function(){});
 
@@ -564,7 +564,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
     if(!readOnly){
         var tab1 = new YAHOO.widget.Tab({
             label: myLabel,
-            dataSrc:'rightPanelSelectDeselectTab',
+            dataSrc:'haclRightPanelSelectDeselectTab',
             cacheData:false,
             active:selectActive,
             disabled:selectDisabled,
@@ -582,7 +582,7 @@ YAHOO.haloacl.buildRightPanelTabView = function(containerName, predefine, readOn
     
     var tab2 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('assigned'),
-        dataSrc:'rightPanelAssignedTab',
+        dataSrc:'haclRightPanelAssignedTab',
         cacheData:false,
         active:assActive,
         //id:"rightPanelAssignedTab"+containerName,
@@ -833,7 +833,7 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
 
     var tab1 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('selectDeselect'),
-        dataSrc:'rightPanelSelectDeselectTab',
+        dataSrc:'haclRightPanelSelectDeselectTab',
         cacheData:false,
         active:true,
         postData:parameterlist
@@ -849,7 +849,7 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
 
     var tab2 = new YAHOO.widget.Tab({
         label: gHACLLanguage.getMessage('assigned'),
-        dataSrc:'rightPanelAssignedTab',
+        dataSrc:'haclRightPanelAssignedTab',
         cacheData:false,
         active:false,
         postData:parameterlist
@@ -875,7 +875,7 @@ YAHOO.haloacl.buildGroupPanelTabView = function(containerName, predefine, readOn
  *
  */
 YAHOO.haloacl.deleteSD = function(sdId){
-    YAHOO.haloacl.callAction('deleteSecurityDescriptor', {
+    YAHOO.haloacl.callAction('haclDeleteSecurityDescriptor', {
         sdId:sdId
     }, function(result){
         YAHOO.haloacl.notification.createDialogOk("content","ManageACL",gHACLLanguage.getMessage('rightHasBeenDeleted'),{
@@ -956,7 +956,7 @@ YAHOO.haloaclrights.popup = function(id, label, anchorId){
     myPopup.setBody('<div id="popup_content_'+id+'">');
     myPopup.render();
     myPopup.show();
-    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'getSDRightsPanel',{
+    YAHOO.haloacl.loadContentToDiv('popup_content_'+id,'haclGetSDRightsPanel',{
         sdId:id,
         readOnly:'true'
     });

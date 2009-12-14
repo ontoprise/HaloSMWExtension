@@ -450,7 +450,7 @@ YAHOO.haloacl.loadNodeData = function(node, fnLoadComplete)  {
         },
         timeout: 7000
     };
-    YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+    YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
         query:nodeLabel
     },callback);
 
@@ -484,7 +484,7 @@ YAHOO.haloacl.buildNodesFromData = function(parentNode,data,panelid){
             },
             timeout: 7000
         };
-        YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+        YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
             query:nodeLabel
         },callback);
 
@@ -587,7 +587,7 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
             },
             timeout: 7000
         };
-        YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+        YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
             query:nodeLabel
         },callback);
 
@@ -670,7 +670,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
         failure: function(oResponse) {
         }
     };
-    YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+    YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
         query:'all'
     },callback);
 
@@ -712,7 +712,7 @@ YAHOO.haloacl.buildTreeFirstLevelFromJson = function(tree){
         failure: function(oResponse) {
         }
     };
-    YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+    YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
         query:'all'
     },callback);
 };
@@ -771,7 +771,7 @@ YAHOO.haloacl.applyFilterOnTree = function(tree,filtervalue){
             failure: function(oResponse) {
             }
         };
-        YAHOO.haloacl.treeviewDataConnect('getGroupsForRightPanel',{
+        YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForRightPanel',{
             query:'all',
             filtervalue:filtervalue
         },callback);
