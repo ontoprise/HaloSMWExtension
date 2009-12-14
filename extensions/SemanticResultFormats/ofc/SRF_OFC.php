@@ -118,25 +118,19 @@ class SRFOFC extends SMWResultPrinter {
 	static $ofc_enabled = false;
 
 	private function setupOFCHeader() {
-		global $wgOut, $srfgScriptPath;
-		$wgOut->addLink( array(
-			'rel' => 'stylesheet',
-			'type' => 'text/css',
-			'media' => "screen, projection",
-			'href' => $srfgScriptPath . '/ofc/css/ofc_style.css'
-			));
-			$wgOut->addLink( array(
-			'rel' => 'stylesheet',
-			'type' => 'text/css',
-			'media' => "screen, projection",
-			'href' => $srfgScriptPath . '/ofc/css/ui-lightness/jquery-ui-1.7.2.custom.css'
-			));
-			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n");
-			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n");
-			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n");
-			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n");
-			$wgOut->addScript('<script type="text/javascript"> var flash_chart_path="' . $srfgScriptPath . '/ofc/open-flash-chart.swf";</script>' . "\n");
-			$wgOut->addScript('<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/ofc_render.js"></script>' . "\n");
+			
+			$i=0;
+			foreach($this->getStylesheets() as $css) {
+				SMWOutputs::requireHeadItem("ofc_css$i",'<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
+				
+				$i++;
+			}
+			$i=0;
+			foreach($this->getScripts() as $script) {
+				SMWOutputs::requireHeadItem("ofc-s$i", $script);	
+				$i++;
+			}
+			SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 	}
 
 	protected function getResultText($res, $outputmode) {
@@ -147,11 +141,9 @@ class SRFOFC extends SMWResultPrinter {
 		if (!$this->m_isAjax) {
 			if(!SRFOFC::$ofc_enabled) {
 				SRFOFC::$ofc_enabled = true;
-
 				SRFOFC::setupOFCHeader();
+				
 			}
-
-			SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 		}
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
@@ -376,10 +368,11 @@ class SRFOFC extends SMWResultPrinter {
 
 		if (!$this->m_isAjax) {
 			global $wgOut;
-			$wgOut->addScript('<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
+			SMWOutputs::requireHeadItem("ofc-start",'<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
+		
 		}
 		return !$this->m_isAjax ? $html : $html . '|||ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});' ;
-		//return !$this->m_isAjax ? "kai1" : "kai2";
+		
 	}
 	private function getLabelText($chart) {
 		$first = true;
