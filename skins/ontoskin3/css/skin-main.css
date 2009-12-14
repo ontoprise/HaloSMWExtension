@@ -307,6 +307,11 @@ ul.smwh_menulist div.smwh_menubody_visible {
     vertical-align: middle;
 }
 
+#helpimage{
+    margin-top: 2px;
+}
+
+
 /* aggregated functions in tab */
 
 #aggregated {

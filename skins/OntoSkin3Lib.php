@@ -249,7 +249,7 @@ class SMWH_Skin {
         //right tab elements
         $functionsright = "";
         $functionsaggregated ="";
-
+        $functionsright .= $this->buildHelpTab();
         foreach($this->skintemplate->data['content_actions'] as $key => $tab) {
 
 
@@ -387,6 +387,14 @@ class SMWH_Skin {
          return $tabsleft.$tabright;
     }
 
+    private function buildHelpTab(){
+        global $wgStylePath;
+        $tab ='<div id="helptab" class="tab">';
+        $tab.= '<div id="smwh_csh"><img id="helpimage" src="'.$wgStylePath.$this->imagepath.'/help_icon.png" alt="edit"/></div>';
+        $tab.= "</div>";
+        return $tab;
+
+    }
     public function buildQuickLinks(){
         $ql = "<!-- HaloQuickLinks -->";
         $ql.= "<div id=\"smwh_quicklinks\">";
