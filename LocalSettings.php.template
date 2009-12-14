@@ -264,6 +264,7 @@ $srfgFormats[] = 'math';
 // Obtain a key and uncomment the following two lines to enable exhibit 
 $srfgFormats[] = 'exhibit';
 $wgGoogleMapsKey='ABQIAAAALfJSGT7KuTRZWj3WNooD8xT2yXp_ZAY8_ufC3CFXhHIE1NvwkxSF9PCXcXEIe6Uenfr3x-G8L-rVKw';
+require_once("$IP/extensions/SemanticResultFormats/ofc/SRF_OFC_Init.php"); 
 
 #Glossary
 require_once( "$IP/extensions/Glossary/Glossary.php" );
@@ -340,5 +341,3 @@ enableCollaboration();
 include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
 enableSMWUserManual();
 
-# Ultrapedia features
-require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
