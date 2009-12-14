@@ -28,10 +28,11 @@
                 file="extensions/SMWUserManual/includes/SMW_UserManual.php" />
             <function name="enableSMWUserManual">
             </function>
-            <script file="extensions/SMWUserManual/maintenance/SMW_setup.php" />
+            <script file="extensions/SMWUserManual/maintenance/SMW_setup.php" params="-o" />
       
         </new>
         <uninstall>
+            <script file="extensions/SMWUserManual/maintenance/SMW_setup.php" params="-d" />
         </uninstall>
     </configs>
 </deploydescriptor>
