@@ -395,9 +395,19 @@ QIHelper.prototype = {
 	 *            Request of AJAX call
 	 */
 	openPreview : function(request) {
-		this.pendingElement.hide();
-		$('fullpreview').innerHTML = request.responseText;
-		smw_tooltipInit();
+		 switch ($('layout_format').value) {
+            
+            // for certain query printer it is
+            // necessary to clear content of preview
+            case 'ofc-pie':
+            case 'ofc-bar':
+            case 'ofc-bar_3d':
+            case 'ofc-line':
+            case 'ofc-scatterline': 
+		       $('previewcontent').innerHTML = '';
+		       break;
+		 }
+		this.pastePreview(request, $('fullpreview'));
 	},
 
 	/**
@@ -407,12 +417,16 @@ QIHelper.prototype = {
 	 *            Request of AJAX call
 	 */
 	openResultPreview : function(request) {
+		this.pastePreview(request, $('previewcontent'));
+	},
+	
+	pastePreview: function(request, preview) {
 		this.pendingElement.hide();
-		
-		// pre-processing
-		var resultHTML;
-		var resultCode;
-		switch ($('layout_format').value) {
+        
+        // pre-processing
+        var resultHTML;
+        var resultCode;
+        switch ($('layout_format').value) {
             
             case 'ofc-pie':
             case 'ofc-bar':
@@ -427,31 +441,32 @@ QIHelper.prototype = {
         default:
             resultHTML = request.responseText;
             resultCode = null;
-		}
+        }
         
-		$('previewcontent').innerHTML = resultHTML;
-		
-		smw_tooltipInit();
+        preview.innerHTML = resultHTML;
+        
+        smw_tooltipInit();
 
-		// post processing of javascript for resultprinters:
-		switch ($('layout_format').value) {
-		case "timeline":
-		case "eventline":
-			this.parseWikilinks2Html();
-			smw_timeline_init();
-			break;
-		case "exhibit":
-			if (typeof createExhibit == 'function') createExhibit();
-			break;
-	    case 'ofc-pie':
+        // post processing of javascript for resultprinters:
+        switch ($('layout_format').value) {
+        case "timeline":
+        case "eventline":
+            this.parseWikilinks2Html();
+            smw_timeline_init();
+            break;
+        case "exhibit":
+            if (typeof createExhibit == 'function') createExhibit();
+            break;
+        case 'ofc-pie':
         case 'ofc-bar':
         case 'ofc-bar_3d':
         case 'ofc-line':
         case 'ofc-scatterline':
-	        if (resultCode != null) eval(resultCode);
+            ofc_data_objs = [];
+            if (resultCode != null) eval(resultCode);
             resetOfc();
             break;
-		}
+        }
 	},
 	/**
 	 * Creates valid links for Wiki Links in Preview div for elements like in
