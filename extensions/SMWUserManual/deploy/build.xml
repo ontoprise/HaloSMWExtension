@@ -42,11 +42,8 @@
             </fileset>
         </copy>
 
-    	<exec executable="php">
-            <arg value="maintenance/SMW_setup.php"/>
-            <arg value="-e"/>
-            <arg value="--file=bin/zip/maintenance/cshpages.xml"/>
-        </exec>
+    	<get src="http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/maintenance/cshPages.xml"
+    		dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml"/>
     	
         <zip destfile="bin/smwhalo-usermanual-${version}.zip" basedir="bin/zip" />
         <delete dir="bin/zip" />
