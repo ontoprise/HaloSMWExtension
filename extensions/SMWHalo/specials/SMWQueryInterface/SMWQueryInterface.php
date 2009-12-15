@@ -107,7 +107,7 @@ class SMWQueryInterface extends SpecialPage {
 
 		global $smwgResultFormats;
 
-		$blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar","ofc");
+		$blacklist = array("rss", "json", "exceltable", "icalendar", "vcard", "calendar", "ofc", "exhibit", "debug", "template", "aggregation");
 
 		$resultoptionshtml = "";
         
