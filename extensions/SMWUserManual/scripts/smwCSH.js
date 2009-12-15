@@ -66,13 +66,13 @@ SMW_UserManual_CSH.prototype = {
             +'version=%%%4%%%&component=%%%5%%%'
         // mapping discourse state to component
         this.component= {
-            'edit' : 'Miscellaneous',
+            'EditWikisyntax' : 'Miscellaneous',
             'SemanticForms' : 'Semantic Forms Extension Core',
-            'wysiwyg' : 'FCK-Editor Extension Core',
+            'EditWYSIWYG' : 'FCK-Editor Extension Core',
             'preview' : 'Miscellaneous',
             'OntologyBrowser' : 'Ontology Browser',
             'QueryInterface' : 'Query Interface',
-            'SemanticNotification' : 'Semantic Notifications',
+            'SemanticNotifications' : 'Semantic Notifications',
             'UnifiedSearch' : 'Combined Search',
             'SemanticToolbar' : 'Semantic Toolbar',
             'HaloAutoCompletion' : 'Autocompletion',
@@ -80,7 +80,7 @@ SMW_UserManual_CSH.prototype = {
             'Webservice' : 'Web Services',
             'Gardening' : 'Gardening',
             'ImportVocabulary' : 'DataAPI',
-            'annotate' : 'Annotations'
+            'Annotate' : 'Annotations'
         },
         // namespace in the SMW forum for comments and feedback entries
         this.smwCommentNs = "Comment" 
@@ -106,18 +106,26 @@ SMW_UserManual_CSH.prototype = {
             var dim = this.getContentSize()
             document.getElementById('smw_csh_answer').style.width = dim[0]+'px'
             document.getElementById('smw_csh_answer').style.height = dim[1]+'px'
-            document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=dim[0]+'px'
+            if (document.getElementById('smw_csh_selection').getElementsByTagName('select').length > 0)
+                document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=dim[0]+'px'
         }
     },
 
     switchTab: function(td){
         if (td && td.className == "cshTabInactive") {
-            if (td.parentNode.childNodes[5] == td) {
-                td.parentNode.childNodes[2].className = "cshTabInactive"
+            var idxL=2
+            var idxR=5
+            // IE doesn't count whitespace children
+            if (td.parentNode.childNodes.length == 5) {
+               idxL=1
+               idxR=3
+            }
+            if (td.parentNode.childNodes[idxR] == td) {
+                td.parentNode.childNodes[idxL].className = "cshTabInactive"
                 document.getElementById('smw_csh_answer').parentNode.style.display='none'
                 document.getElementById('smw_csh_feedback').parentNode.style.display='block'
             } else {
-                td.parentNode.childNodes[5].className = "cshTabInactive"
+                td.parentNode.childNodes[idxR].className = "cshTabInactive"
                 document.getElementById('smw_csh_answer').parentNode.style.display='block'
                 document.getElementById('smw_csh_feedback').parentNode.style.display='none'
             }
@@ -303,7 +311,11 @@ SMW_UserManual_CSH.prototype = {
         button.type='submit'
         button.name='cshreset'
         button.value='Reset'
-        button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        try {
+            button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        } catch (e) {
+            button.attachEvent('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        }
         td.appendChild(button)
         
         var button=document.createElement('input');
@@ -311,7 +323,11 @@ SMW_UserManual_CSH.prototype = {
         button.name='cshsend'
         button.value='Submit feedback'
         button.style.textAlign="right"
-        button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        try {
+            button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        } catch (e) {
+            button.attachEvent('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
+        }
         td.appendChild(button)
         tr.appendChild(td)
         el.parentNode.appendChild(tr)
@@ -403,12 +419,14 @@ SMW_UserManual_CSH.prototype = {
             case 'QueryInterface': ds.push('QueryInterface'); break
             case 'AddData':
             case 'EditData': ds.push('SemanticForms'); break
+            case 'Export': ds.push('Export'); break
+            case 'Watchlist': ds.push('Watchlist'); break
             case 'DataImportRepository': ds.push('ImportVocabulary'); break
             case 'DefineWebService':
             case 'UseWebService': ds.push('Webservice'); break
             case 'Gardening':
             case 'GardeningLog': ds.push('Gardening'); break
-            case 'SemanticNotifications': ds.push('SemanticNotification'); break
+            case 'SemanticNotifications': ds.push('SemanticNotifications'); break
             case 'Search': if (document.getElementById('us_searchform') &&
                                document.getElementById('us_searchfield'))
                                ds.push('UnifiedSearch');
@@ -416,19 +434,26 @@ SMW_UserManual_CSH.prototype = {
 
         }
         // FCKeditor object exists?
-        if (typeof FCKeditor != "undefined") ds.push('wysiwyg')
+        if (typeof FCKeditor != "undefined") ds.push('EditWYSIWYG')
         // Semantic Toolbar div exists?
         if (document.getElementById('semtoolbar')) ds.push('SemanticToolbar')
         // any input element with class wick (ignore the search field)
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
         // check the action parameter
         switch (wgAction) {
-            case 'edit': if (typeof FCKeditor == "undefined") ds.push('edit'); break
-            case 'annotate': ds.push('annotate'); break
+            case 'edit': if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax'); break
+            case 'annotate': ds.push('Annotate'); break
             case 'submit' : ds.push('preview'); break
             case 'formedit': ds.push('SemanticForms'); break
         }
-
+        // check namespace
+        switch (wgNamespaceNumber) {
+            case 14: ds.push('Category'); break
+            case 10: ds.push('Template'); break
+            case 102: ds.push('Property'); break 
+            case -1: ds.push('SpecialPages'); break
+        }
+        ds.push('General')
         return this.uniqueDs(ds)
     },
 
