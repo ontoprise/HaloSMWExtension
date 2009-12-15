@@ -239,7 +239,8 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		// attribute/relation
 		$tmp = "";		 	
 		for ($i = 0; $i < sizeof($args); $i++) {
-			$tmp .= ucfirst($args[$i]->getName());		
+			
+			$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());		
 			if ($i == 0) {				
 				$tmp .= "[prop#";
 			} else if ($i == 1) {
