@@ -592,7 +592,7 @@ AutoCompleter.prototype = {
                         this.siw.floater.style.top = y + "px";
                     } else { // Otherwise use standard position: Left bottom corner.
                         this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
-                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160) + "px";
+                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160 - (this.siw.inputBox.clientHeight/2)) + "px";
                     }
                 }
             }
