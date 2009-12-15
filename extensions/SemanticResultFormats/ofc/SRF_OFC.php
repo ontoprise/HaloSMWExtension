@@ -118,16 +118,16 @@ class SRFOFC extends SMWResultPrinter {
 	static $ofc_enabled = false;
 
 	private function setupOFCHeader() {
-			
+			global $wgParser;
 			$i=0;
 			foreach($this->getStylesheets() as $css) {
-				SMWOutputs::requireHeadItem("ofc_css$i",'<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
+				$wgParser->getOutput()->addHeadItem('<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
 				
 				$i++;
 			}
 			$i=0;
 			foreach($this->getScripts() as $script) {
-				SMWOutputs::requireHeadItem("ofc-s$i", $script);	
+				$wgParser->getOutput()->addHeadItem($script);	
 				$i++;
 			}
 			SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
@@ -367,8 +367,8 @@ class SRFOFC extends SMWResultPrinter {
 		}
 
 		if (!$this->m_isAjax) {
-			global $wgOut;
-			SMWOutputs::requireHeadItem("ofc-start",'<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
+			global $wgParser;
+			$wgParser->getOutput()->addHeadItem('<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
 		
 		}
 		return !$this->m_isAjax ? $html : $html . '|||ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});' ;
