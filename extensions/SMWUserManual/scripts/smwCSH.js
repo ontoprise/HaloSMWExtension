@@ -5,6 +5,7 @@
  * available the DIV will be created as the first child of the 'innercontent'
  * div, which means, it appears between the tab section and the main head line.
  */
+
 var SMW_UserManual_CSH = Class.create();
 SMW_UserManual_CSH.prototype = {
     initialize: function(label) {
