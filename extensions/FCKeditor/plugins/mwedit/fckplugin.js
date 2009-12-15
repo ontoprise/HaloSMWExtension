@@ -6,7 +6,14 @@ FCKToolbarItems.RegisterItem( 'MW_Edit', tbButton );
 var StartStandardMwEditCommand = window.parent.Class.create();
 StartStandardMwEditCommand.prototype = {
     initialize: function() {
-        this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + window.parent.wgPageName + "&action=edit";
+        // possibly Semantic forms are working
+        if (window.parent.wgNamespaceNumber == -1) {
+            var pagename = window.parent.location.href
+            pagename = pagename.substr(pagename.lastIndexOf('/')+1)
+            this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + pagename + "&action=edit";
+        } else {
+            this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + window.parent.wgPageName + "&action=edit";
+        }
         this.ContextMenu = null;
     },
 
