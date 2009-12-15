@@ -341,3 +341,4 @@ enableCollaboration();
 include_once('extensions/SMWUserManual/includes/SMW_UserManual.php');
 enableSMWUserManual();
 
+require_once("extensions/Ultrapedia/includes/UP_Initialize.php");
