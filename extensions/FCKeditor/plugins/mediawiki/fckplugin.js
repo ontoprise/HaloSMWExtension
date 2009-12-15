@@ -30,11 +30,25 @@
 
 // if an option is not enabled then we show a transparente "toolbar" button
 // that does nothing.
-function EmptyTbButton() {
+function FCKemptyTbButton() {
     this.GetState = function() { return FCK_TRISTATE_OFF; }
     this.Execute = function() {}
 }
-var emptyToolbarOption = new EmptyTbButton();
+var emptyToolbarOption = new FCKemptyTbButton();
+
+// add here all parser specific stuff that does depend on content lang and not userlang
+function smwContentLangForFCK(key) {
+    if (window.parent.wgContentLanguage == 'de') {
+        switch(key) {
+            case 'Category' : return 'Kategorie';
+        }
+    }
+    // default
+    switch(key) {
+        case 'Category' : return 'Category';
+    }
+    return '';
+}
 
 // Rename the "Source" buttom to "Wikitext".
 FCKToolbarItems.RegisterItem( 'Source', new FCKToolbarButton( 'Source', 'Wikitext', null, null, true, true, 1 ) ) ;
@@ -820,10 +834,10 @@ FCK.DataProcessor =
 				var sort = htmlNode.getAttribute('sort');
 				if (sort) {
 					if (emptyVal.exec(sort)) return '';
-					return '[[' + window.parent.gLanguage.getMessage('CATEGORY') + text + '|' + sort + ']]';
+					return '[[' + smwContentLangForFCK('Category') + ':' + text + '|' + sort + ']]';
 				}
 				if (emptyVal.exec(text)) return '';
-				return '[[' + window.parent.gLanguage.getMessage('CATEGORY')+ text + ']]'
+				return '[[' + smwContentLangForFCK('Category') + ':' + text + ']]'
 		}
 	}
 
