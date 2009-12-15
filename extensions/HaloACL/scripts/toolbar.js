@@ -264,7 +264,7 @@ YAHOO.haloacl.callbackSDpopupByName = function(result){
  *  @param sdname
  */
 YAHOO.haloacl.sDpopupByName = function(sdName){
-    YAHOO.haloacl.callAction('sDpopupByName', {
+    YAHOO.haloacl.callAction('haclSDpopupByName', {
         sdName:sdName
     }, YAHOO.haloacl.callbackSDpopupByName);
 
