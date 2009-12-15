@@ -235,6 +235,7 @@ class OB_StorageTS extends OB_Storage {
 		 	$b = $children->binding[0]; // instance
 		 	 
 		 	$sv = $b->children()->uri[0];
+		 	$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
 		 	$instance = $this->getTitleFromURI((string) $sv);
 
 		 	$categories = array();
@@ -334,7 +335,7 @@ class OB_StorageTS extends OB_Storage {
 
 			$instanceName = $p_array[0];
 			$instance = Title::newFromText($instanceName);
-			$instanceName = $instance->getDBkey();
+			$instanceName = str_replace("//","__",$instance->getDBkey()); //XXX: hack for ultrapedia
 
 			$limit =  isset($p_array[1]) ? intval($p_array[1]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 			$partition =   isset($p_array[2]) ? intval($p_array[2]) : 0;
@@ -431,6 +432,7 @@ class OB_StorageTS extends OB_Storage {
 				$b = $children->binding[0]; // instance
 				 
 				$sv = $b->children()->uri[0];
+				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
 				$instance = $this->getTitleFromURI((string) $sv);
 
 				$categories = array();
@@ -466,7 +468,7 @@ class OB_StorageTS extends OB_Storage {
 			global $smwgTripleStoreGraph;
 
 			$instanceName = substr($p_array[0],1); // remove leading colon
-			 
+			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
 			// query
 			$response = $client->query("[[$instanceName]]", $smwgTripleStoreGraph, "?Category");
 
@@ -562,6 +564,7 @@ class OB_StorageTS extends OB_Storage {
 				$b = $children->binding[0]; // instance
 				 
 				$sv = $b->children()->uri[0];
+				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
 				$instance = $this->getTitleFromURI((string) $sv);
 				 
 				foreach($b->children()->uri as $sv) {
