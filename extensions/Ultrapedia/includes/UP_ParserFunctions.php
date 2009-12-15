@@ -64,9 +64,9 @@ class UPParserFunctions {
 			global $smwgUltraPediaScriptPath;
 			$id = 'AjaxAsk' . $smwgIQRunningNumber;
 			// have to enable script and css, tbd
-			$parser->getOutput()->addHeadItem('<script type="text/javascript">
-				AjaxAsk.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
-			</script>');
+			$parser->getOutput()->addHeadItem('<script type="text/javascript">/*<![CDATA[*/
+			AjaxAsk.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
+			/*]]>*/</script>');
 			$result = '<div id="' . $id . '"><img src="' . $smwgUltraPediaScriptPath . '/ajax-loader.gif"></div>';  
 		} else {
 			wfLoadExtensionMessages('SemanticMediaWiki');
@@ -87,9 +87,9 @@ class UPParserFunctions {
             global $smwgUltraPediaScriptPath;
             $id = 'AjaxAsk' . $smwgIQRunningNumber;
             // have to enable script and css, tbd
-            $parser->getOutput()->addHeadItem('<script type="text/javascript">
-                AjaxSparql.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
-            </script>');
+            $parser->getOutput()->addHeadItem('<script type="text/javascript">/*<![CDATA[*/
+            AjaxSparql.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
+            /*]]>*/</script>');
             $result = '<div id="' . $id . '"><img src="' . $smwgUltraPediaScriptPath . '/ajax-loader.gif"></div>';  
         } else {
             wfLoadExtensionMessages('SemanticMediaWiki');
