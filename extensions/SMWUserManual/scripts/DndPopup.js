@@ -15,9 +15,9 @@ DndPopup.prototype = {
     left:           '250px',        // left offset where popup starts
     top:            '150px',        // top offset where popup starts
     headerColor:    '#FFFFFF',      // font color for headline
-    headerBgColor:  '#000080',      // background color for headline
+    headerBgColor:  '#228C9E',      // background color for headline
     boxColor:       '#000000',      // font color for content
-    boxBgColor:     '#CBCBCB',      // bckground color for content
+    boxBgColor:     '#e9e9e4',      // bckground color for content
     zIndex:         100,            // zIndex for popup being in foreground
     // DOM node where the popup is embedded in, if not set, it's embedded in <body>
     attachTo:       null,
