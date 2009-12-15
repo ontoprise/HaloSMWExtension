@@ -48,7 +48,7 @@ function wfUmeAjaxGetArticleList(){
         return json_encode(array('selection' => wfMsg('smw_ume_no_csh_articles')));
     $pages = explode(', '.$wgContLang->getNsText(SMW_NS_USER_MANUAL).':', $result);
     $result= wfMsg('smw_ume_select_topic').'<br/>'.
-        '<select onchange="smwCsh.getPageContent(this.value)" size="7" style="overflow:hidden">';
+        '<select onchange="smwCsh.getPageContent(this[selectedIndex].text)" size="7" style="overflow:hidden">';
     for ($i = 0; $i < count($pages); $i++) {
         if ($i == 0) // the first values still has the namespace prefix
             $page = substr($pages[$i], strlen($wgContLang->getNsText(SMW_NS_USER_MANUAL)) + 1);
