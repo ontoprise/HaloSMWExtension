@@ -115,23 +115,23 @@ class SRFOFC extends SMWResultPrinter {
 		}
 	}
 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
-	static $ofc_enabled = false;
+	
 
-	private function setupOFCHeader() {
-			global $wgParser;
-			$i=0;
-			foreach($this->getStylesheets() as $css) {
-				$wgParser->getOutput()->addHeadItem('<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
-				
-				$i++;
-			}
-			$i=0;
-			foreach($this->getScripts() as $script) {
-				$wgParser->getOutput()->addHeadItem($script);	
-				$i++;
-			}
-			SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
-	}
+    private function setupOFCHeader() {
+            global $wgParser;
+            $i=0;
+            foreach($this->getStylesheets() as $css) {
+                $wgParser->getOutput()->addHeadItem('<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />', "ofc-css$i");
+                
+                $i++;
+            }
+            $i=0;
+            foreach($this->getScripts() as $script) {
+                $wgParser->getOutput()->addHeadItem($script,"ofc-script$i");    
+                $i++;
+            }
+            SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+    }
 
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
@@ -139,7 +139,7 @@ class SRFOFC extends SMWResultPrinter {
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
 		if (!$this->m_isAjax) {
-			SRFOFC::setupOFCHeader();
+			$this->setupOFCHeader();
 		}
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
