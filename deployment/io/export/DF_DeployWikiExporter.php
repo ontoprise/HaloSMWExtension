@@ -1,6 +1,6 @@
 <?php
 #
-# @author: Kai Kühn Ontoprise 2009
+# @author: Kai Kï¿½hn Ontoprise 2009
 #
 # derived from
 # Copyright (C) 2003, 2005, 2006 Brion Vibber <brion@pobox.com>
@@ -259,10 +259,10 @@ class DeployWikiExporter extends WikiExporter {
 
 		$result = $this->db->query( $sql, $fname );
 		$wrapper = $this->db->resultObject( $result );
-		$this->outputStream( $wrapper );
+		$this->outputPageStream( $wrapper );
 
 		if ( $this->list_authors ) {
-			$this->outputStream( $wrapper );
+			$this->outputPageStream( $wrapper );
 		}
 
 		if( $this->buffer == WikiExporter::STREAM ) {
