@@ -269,7 +269,7 @@ class  HACLDefaultSD  {
 	 * If $haclgNewUserTemplate is set, a default access rights template for new
 	 * articles is created, if it does not already exist. 
 	 * Furthermore, the quick access list of the user is filled with all right 
-	 * templates given in $haclgDefaultQuickAccessRights. 
+	 * templates given in $haclgDefaultQuickAccessRightMasterTemplates. 
 	 *
 	 * @param User $newUser
 	 * 		User, whose default rights template is set.
@@ -278,85 +278,15 @@ class  HACLDefaultSD  {
 	public static function newUser(User &$newUser, &$injectHTML) {
 		
 		// Get the content of the article with the master template in $haclgNewUserTemplate
-		global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
+		global $haclgNewUserTemplate, $haclgDefaultQuickAccessRightMasterTemplates;
 		if (isset($haclgNewUserTemplate)) {
 			// master template specified
 			self::createUserDefaultTemplate($newUser);
 		}
-		if (isset($haclgDefaultQuickAccessRights)) {
+		if (isset($haclgDefaultQuickAccessRightMasterTemplates)) {
 			self::setQuickAccessRights($newUser);
 		}
 		return true;
-	}
-	
-	/**
-	 * If $haclgNewUserTemplate is set, a default access rights template for new
-	 * articles is created, if it does not already exist. 
-	 *
-	 * @param User $newUser
-	 * 		User, whose default rights template is set.
-	 */
-	private static function createUserDefaultTemplate(User &$newUser) {
-		// Check if the user already has a default template
-		global $haclgContLang, $haclgNewUserTemplate;
-		$ns = $haclgContLang->getNamespaces();
-		$ns = $ns[HACL_NS_ACL];
-		$template = $haclgContLang->getSDTemplateName();
-		$defaultTemplateName = "$ns:$template/{$newUser->getName()}";
-		$etc = haclfDisableTitlePatch();
-		$defaultTemplate = Title::newFromText($defaultTemplateName);
-		haclfRestoreTitlePatch($etc);
-		if ($defaultTemplate->exists()) {
-			// A default template already exists
-			return;
-		}
-
-		// Create the default template for the new user
-		// Get the content of the master template
-		$etc = haclfDisableTitlePatch();
-		$defaultTemplateTitle = Title::newFromText($haclgNewUserTemplate);
-		haclfRestoreTitlePatch($etc);
-		$masterTemplateArticle = new Article($defaultTemplateTitle);
-		if (!$masterTemplateArticle->exists()) {
-			// The master template does not exist
-			return;
-		}
-		$content = $masterTemplateArticle->getContent();
-		
-		// Replace the variable {{{user}}} by the actual name of the user
-		global $wgContLang;
-		$userNs = $wgContLang->getNsText(NS_USER);
-		$content = str_replace('{{{user}}}', $userNs.':'.$newUser->getName(), $content);
-		
-		// Create the new default template for the new user
-		$newTemplateArticle = new Article($defaultTemplate);
-		$newTemplateArticle->doEdit($content, "Default access control template.", EDIT_NEW);
-		
-	}
-	
-	/**
-	 * Sets the right templates that are given in the array 
-	 * $haclgDefaultQuickAccessRights for the given user.
-	 *
-	 * @param User $newUser
-	 * 	User, whose quick access rights are set.
-	 */
-	private static function setQuickAccessRights(User &$newUser) {
-		global $haclgDefaultQuickAccessRights;
-		$uid = $newUser->getId();
-		
-		$quickACL = HACLQuickacl::newForUserId($uid);
-		$sdAdded = false;
-		foreach ($haclgDefaultQuickAccessRights as $right) {
-			$sdID = HACLSecurityDescriptor::idForSD($right);
-			if ($sdID) {
-				$quickACL->addSD_ID($sdID);
-				$sdAdded = true;
-			}
-		}
-		if ($sdAdded) {
-			$quickACL->save();
-		}
 	}
 	
 	/**
@@ -416,4 +346,119 @@ class  HACLDefaultSD  {
 	}
 	
 	//--- Private methods ---
+
+	/**
+	 * If $haclgNewUserTemplate is set, a default access rights template for new
+	 * articles is created, if it does not already exist. 
+	 *
+	 * @param User $newUser
+	 * 		User, whose default rights template is set.
+	 */
+	private static function createUserDefaultTemplate(User &$newUser) {
+		// Check if the user already has a default template
+		global $haclgContLang, $haclgNewUserTemplate;
+		$ns = $haclgContLang->getNamespaces();
+		$ns = $ns[HACL_NS_ACL];
+		$template = $haclgContLang->getSDTemplateName();
+		$defaultTemplateName = "$ns:$template/{$newUser->getName()}";
+		self::copyTemplate($haclgNewUserTemplate, $defaultTemplateName, $newUser->getName());
+	}
+	
+	/**
+	 * Copies the quick access right master templates for the current user and
+	 * adds them to his quick access list.
+	 *
+	 * @param User $newUser
+	 * 	User, whose quick access rights are set.
+	 */
+	private static function setQuickAccessRights(User &$newUser) {
+		global $haclgContLang, $haclgDefaultQuickAccessRightMasterTemplates;
+
+		$ns = $haclgContLang->getNamespaces();
+		$ns = $ns[HACL_NS_ACL];
+		$template = $haclgContLang->getSDTemplateName();
+		$r = $haclgContLang->getPredefinedRightName();
+		$rightPrefix = "$ns:$template/QARMT/";
+		$userRightPrefix = "$ns:$r/";
+		
+		$uid = $newUser->getId();
+		$quickACL = HACLQuickacl::newForUserId($uid);
+		$sdAdded = false;
+		foreach ($haclgDefaultQuickAccessRightMasterTemplates as $right) {
+			// assemble the name of the right for the user
+			if (strpos($right, $rightPrefix) !== 0) {
+				// Rights must have a name like "ACL:Template/QARMT/<right name>"
+				continue;
+			}
+			$destRight = $userRightPrefix
+						 .$newUser->getName().'/'
+						 .substr($right, strlen($rightPrefix));
+			self::copyTemplate($right, $destRight, $newUser->getName());
+			
+			$sdID = HACLSecurityDescriptor::idForSD($destRight);
+			if ($sdID) {
+				$quickACL->addSD_ID($sdID);
+				$sdAdded = true;
+			}
+		}
+		if ($sdAdded) {
+			$quickACL->save();
+		}
+	}
+	
+	/**
+	 * Copies the content of the right template with the name $source into the
+	 * article with the name $dest. If $source does not exist or if $dest already
+	 * exists, the operation is aborted. The source template may contain the 
+	 * variable {{{user}}}. It will be replace with the given $username.
+	 *
+	 * @param string $source
+	 * 		Name of the article that will be copied.
+	 * @param string $dest
+	 * 		Name of the article that will be created as copy of $source.
+	 * @param string $username
+	 * 		Name of the user that is inserted as {{{user}}}. The namespace
+	 * 		for users (e.g. User:) will be prepended.
+	 * 
+	 * @return bool
+	 * 		<true> if the operation was successful or
+	 * 		<false> if copying the articles failed
+	 */
+	private static function copyTemplate($source, $dest, $username) {
+		
+		// Check if destination article already exists
+		$etc = haclfDisableTitlePatch();
+		$destTitle = Title::newFromText($dest);
+		haclfRestoreTitlePatch($etc);
+		if ($destTitle->exists()) {
+			// The destination article already exists
+			return true;
+		}
+
+		//-- Copy the content of the source article --
+		// Get the content of the source article
+		$etc = haclfDisableTitlePatch();
+		$sourceTitle = Title::newFromText($source);
+		haclfRestoreTitlePatch($etc);
+		$sourceArticle = new Article($sourceTitle);
+		if (!$sourceTitle->exists()) {
+			// The source article does not exist
+			return false;
+		}
+		$content = $sourceArticle->getContent();
+		
+		// Replace the variable {{{user}}} by the actual name of the user
+		global $wgContLang;
+		$userNs = $wgContLang->getNsText(NS_USER);
+		$content = str_replace('{{{user}}}', $userNs.':'.$username, $content);
+		
+		HACLParserFunctions::getInstance()->reset();
+		// Create the destination article
+		$newArticle = new Article($destTitle);
+		$newArticle->doEdit($content, "Default access control template.", EDIT_NEW);
+		
+		return true;
+	}
+	
+	
 }

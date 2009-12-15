@@ -124,7 +124,8 @@ function haclfSetupExtension() {
     }
 
     global $haclgNewUserTemplate, $haclgDefaultQuickAccessRights;
-    if (isset($haclgNewUserTemplate) || isset($haclgDefaultQuickAccessRights)) {
+    if (isset($haclgNewUserTemplate) || 
+    	isset($haclgDefaultQuickAccessRightMasterTemplates)) {
         $wgHooks['UserLoginComplete'][] = 'HACLDefaultSD::newUser';
     }
 
