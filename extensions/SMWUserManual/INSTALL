@@ -1,0 +1,70 @@
+Installation instructions for SMWUserManual Extension
+-----------------------------------------------------
+
+Requirements: 
+=============
+
+    MediaWiki 1.15.x
+    SMWHalo 1.4.6
+
+Installation:
+=============
+
+After unpacking the zip file in the extension directory
+you should have the following structure:
+
+/mediawiki_dir/extensions/SMWUserManual/
+  +--includes
+  +--languages
+  +--maintenance
+  +--scripts
+  | +--languages
+  +--skins
+  
+Edit your LocalSettings.php and add the following:
+require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php");
+enableSMWUserManual();
+
+This enables the SMWUserManual in your wiki and you will see a question
+mark on the right tab section (Ontoskin 3) or a help link below the tab
+section on the right side (all other skins).
+
+Before being able to see any help articles, you must import these. Go into
+the maintenance directory of this extensions. There must be two files:
+ SMW_setup.php
+ cshPages.xml
+ 
+Execute now the following command. This will read the articles from the
+XML file and import them into your wiki:
+ php SMW_setup.php -i --file=cshPages.xml
+
+
+Updating the help articles:
+===========================
+
+The help articles are audited in the SMW+ Forum. We change them as new
+requirements come up and features change. Also user feedback is included.
+With the setup script in the maintenance directory you can always fetch
+a new version of all help articles that are available. The setup script
+know the following options:
+ no option given: fetch all help articles from the SMW+ forum and install
+                  these in your wiki.
+ -d delete all help articles from your wiki
+ -e fetch articles from the SMW+ forum and write them to a local xml file
+ -i read a local xml file and import all help articles into your wiki
+ -o overwrite must be set to overwrite existing help articles in your
+    wiki with a new version. Also use this to overwrite and existing
+    xml file when exporting the help articles
+ --file=<filename> this is needed by the -e and -i switch, when the xml
+                   file is used to export or import help articles.
+
+Configuration for the extension:
+================================
+
+The functionality of the SMWUserManual extension can be affected by
+several options that can be set as variables. These must be put in the
+LocalSettings.php after the require_once statement and before the
+enableSMWUserManual() function call.
+
+A detailed description of all variables and their meaning can be found
+in the file SMW_UserManual.php in the includes directory.
