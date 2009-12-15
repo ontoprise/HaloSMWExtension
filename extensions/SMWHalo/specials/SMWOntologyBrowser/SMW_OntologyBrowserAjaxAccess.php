@@ -216,7 +216,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset");
+			$response = $client->query("[[Category:$categoryName]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset|merge=false");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -242,9 +242,9 @@ class OB_StorageTS extends OB_Storage {
 		 	 
 		 	foreach($b->children()->uri as $sv) {
 		 		$category = $this->getTitleFromURI((string) $sv);
-		 		if (!is_null($category)) {
+		 		if (!is_null($instance) && !is_null($category)) {
 		 			$titles[] = array($instance, $this->getTitleFromURI((string) $sv));
-		 		} else {
+		 		} else  {
 		 			$titles[] = $instance;
 		 		}
 		 	}
@@ -295,7 +295,7 @@ class OB_StorageTS extends OB_Storage {
 	private function getLiteral($literal, $predicate) {
 		list($literalValue, $literalType) = $literal;
 		if (!empty($literalValue)) {
-           
+			 
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
 			if ($predicate instanceof SMWPropertyValue ) {
 				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $literalValue);
@@ -310,7 +310,7 @@ class OB_StorageTS extends OB_Storage {
 				$value->setUserValue($literalValue);
 			}
 		} else {
-			
+				
 			if ($predicate instanceof SMWPropertyValue ) {
 				$value = SMWDataValueFactory::newPropertyObjectValue($predicate);
 			} else {
@@ -335,7 +335,7 @@ class OB_StorageTS extends OB_Storage {
 			$instanceName = $p_array[0];
 			$instance = Title::newFromText($instanceName);
 			$instanceName = $instance->getDBkey();
-				
+
 			$limit =  isset($p_array[1]) ? intval($p_array[1]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
 			$partition =   isset($p_array[2]) ? intval($p_array[2]) : 0;
 			$offset = $partition * $limit;
@@ -343,7 +343,7 @@ class OB_StorageTS extends OB_Storage {
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-			    $response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }", $smwgTripleStoreGraph, "limit=$limit|offset=$offset");
+				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }", $smwgTripleStoreGraph, "limit=$limit|offset=$offset");
 			} else {
 				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }", $smwgTripleStoreGraph, "limit=$limit|offset=$offset");
 			}
@@ -396,124 +396,198 @@ class OB_StorageTS extends OB_Storage {
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsAnnotationList($annotations, $instance);
 
 	}
-	
+
 	public function getInstancesUsingProperty($p_array) {
-       global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-        if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-        $client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 
-        try {
-            global $smwgTripleStoreGraph;
+		try {
+			global $smwgTripleStoreGraph;
 
-            $propertyName = $p_array[0];
-            $limit =  intval($p_array[1]);
-            $partition =  intval($p_array[2]);
-            $offset = $partition * $limit;
+			$propertyName = $p_array[0];
+			$limit =  intval($p_array[1]);
+			$partition =  intval($p_array[2]);
+			$offset = $partition * $limit;
 
-            // query
-            $response = $client->query("[[$propertyName::+]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset");
+			// query
+			$response = $client->query("[[$propertyName::+]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset");
 
-            global $smwgSPARQLResultEncoding;
-            // PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
-            // another charset.
-            if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
-                $response = utf8_decode($response);
-            }
+			global $smwgSPARQLResultEncoding;
+			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
+			// another charset.
+			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
+				$response = utf8_decode($response);
+			}
 
-         $dom = simplexml_load_string($response);
+			$dom = simplexml_load_string($response);
 
-         $titles = array();
-         $results = $dom->xpath('//result');
-         foreach ($results as $r) {
+			$titles = array();
+			$results = $dom->xpath('//result');
+			foreach ($results as $r) {
 
-            $children = $r->children(); // binding nodes
-            $b = $children->binding[0]; // instance
-             
-            $sv = $b->children()->uri[0];
-            $instance = $this->getTitleFromURI((string) $sv);
+				$children = $r->children(); // binding nodes
+				$b = $children->binding[0]; // instance
+				 
+				$sv = $b->children()->uri[0];
+				$instance = $this->getTitleFromURI((string) $sv);
 
-            $categories = array();
-            $b = $children->binding[1]; // categories
-             
-            foreach($b->children()->uri as $sv) {
-                $category = $this->getTitleFromURI((string) $sv);
-                if (!is_null($category)) {
-                    $titles[] = array($instance, $this->getTitleFromURI((string) $sv));
-                } else {
-                    $titles[] = $instance;
-                }
-            }
+				$categories = array();
+				$b = $children->binding[1]; // categories
+				 
+				foreach($b->children()->uri as $sv) {
+					$category = $this->getTitleFromURI((string) $sv);
+					if (!is_null($instance) && !is_null($category)) {
+						$titles[] = array($instance, $this->getTitleFromURI((string) $sv));
+					} else if (!is_null($instance)) {
+						$titles[] = $instance;
+					}
+				}
 
-             
-         }
-
-
-        } catch(Exception $e) {
-            return "Internal error: ".$e->getMessage();
-        }
-
-        return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
-    }
-    
-    public function getCategoryForInstance($p_array) {
-        global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-        if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-        $client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
-        try {
-            global $smwgTripleStoreGraph;
-
-            $instanceName = substr($p_array[0],1); // remove leading colon
-           
-            // query
-            $response = $client->query("[[$instanceName]]", $smwgTripleStoreGraph, "?Category");
-
-            global $smwgSPARQLResultEncoding;
-            // PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
-            // another charset.
-            if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
-                $response = utf8_decode($response);
-            }
-
-         $dom = simplexml_load_string($response);
-
-         $titles = array();
-         $results = $dom->xpath('//result');
-         
-         $categories = array();
-         foreach ($results as $r) {
-
-            //$children = $r->children(); // binding nodes
-            $b = $r->binding[0]; // categories
-             
-            foreach($b->children()->uri as $sv) {
-                $category = $this->getTitleFromURI((string) $sv);
-                if (!is_null($category)) {
-               
-                    $categories[] = $category;
-                }
-            }
-
-             
-         }
+				 
+			}
 
 
-        } catch(Exception $e) {
-            return "Internal error: ".$e->getMessage();
-        }
-       
-    	$browserFilter = new SMWOntologyBrowserFilter();
-        return $browserFilter->getCategoryTree($categories);
-    }
-	
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
+
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
+	}
+
+	public function getCategoryForInstance($p_array) {
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+
+		try {
+			global $smwgTripleStoreGraph;
+
+			$instanceName = substr($p_array[0],1); // remove leading colon
+			 
+			// query
+			$response = $client->query("[[$instanceName]]", $smwgTripleStoreGraph, "?Category");
+
+			global $smwgSPARQLResultEncoding;
+			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
+			// another charset.
+			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
+				$response = utf8_decode($response);
+			}
+
+			$dom = simplexml_load_string($response);
+
+			$titles = array();
+			$results = $dom->xpath('//result');
+			 
+			$categories = array();
+			foreach ($results as $r) {
+
+				//$children = $r->children(); // binding nodes
+				$b = $r->binding[0]; // categories
+				 
+				foreach($b->children()->uri as $sv) {
+					$category = $this->getTitleFromURI((string) $sv);
+					if (!is_null($category)) {
+						 
+						$categories[] = $category;
+					}
+				}
+
+				 
+			}
+
+
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
+		 
+		$browserFilter = new SMWOntologyBrowserFilter();
+		return $browserFilter->getCategoryTree($categories);
+	}
+
+	public function filterBrowse($p_array) {
+		 
+		$browserFilter = new SMWOntologyBrowserFilter();
+		$type = $p_array[0];
+		$hint = explode(" ", $p_array[1]);
+		$hint = smwfEliminateStopWords($hint);
+		if ($type != 'instance') return parent::filterBrowse($p_array);
+
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+
+		try {
+			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+
+			//query
+			for ($i = 0; $i < count($hint); $i++) {
+				$hint[$i] = preg_quote($hint[$i]);
+				$hint[$i] = str_replace("\\", "\\\\", $hint[$i]);
+			}
+			$filter = "";
+			if (count($hint) > 0) {
+				$filter = "FILTER (";
+				for ($i = 0; $i < count($hint); $i++) {
+					if ($i > 0) $filter .= " && ";
+					$filter .= "regex(str(?s), \"$hint[$i]\", \"i\")";
+				}
+				$filter .= ")";
+			}
+			 
+			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }", $smwgTripleStoreGraph, "limit=1000");
+			} else {
+				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }", $smwgTripleStoreGraph, "limit=1000");
+			}
+
+			global $smwgSPARQLResultEncoding;
+			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
+			// another charset.
+			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
+				$response = utf8_decode($response);
+			}
+
+			$dom = simplexml_load_string($response);
+
+			$titles = array();
+			$results = $dom->xpath('//result');
+			foreach ($results as $r) {
+
+				$children = $r->children(); // binding nodes
+				$b = $children->binding[0]; // instance
+				 
+				$sv = $b->children()->uri[0];
+				$instance = $this->getTitleFromURI((string) $sv);
+				 
+				foreach($b->children()->uri as $sv) {
+					if (!is_null($instance)) {
+						$titles[] = $instance;
+					}
+				}
+
+				 
+			}
+
+
+		} catch(Exception $e) {
+			return "Internal error: ".$e->getMessage();
+		}
+
+		// do not show partitions. 1000 instances is maximum here.
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
+	}
+
 }
 
 function smwf_ob_OntologyBrowserAccess($method, $params) {
 	global $smwgOBInstanceDataFromTriplestore;
 	$storage = isset($smwgOBInstanceDataFromTriplestore) && $smwgOBInstanceDataFromTriplestore === true ?
-	    new OB_StorageTS() : new OB_Storage();
+	new OB_StorageTS() : new OB_Storage();
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array);

@@ -171,6 +171,7 @@ clicking the big arrows between the columns.',
 	'smw_ob_hasnumofpropusages' => 'Property is annotated $1 times',
 	'smw_ob_hasnumoftargets' => 'Instance is linked $1 times.',
 	'smw_ob_hasnumoftempuages' => 'Template is used $1 times',
+    'smw_ob_invalidtitle' => '!!!invalid title!!!',
 
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Add subcategory',
@@ -182,7 +183,6 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
-
 
 	
 

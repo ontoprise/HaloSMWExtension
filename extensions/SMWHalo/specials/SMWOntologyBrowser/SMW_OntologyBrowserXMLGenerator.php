@@ -88,6 +88,11 @@ public static function encapsulateAsInstancePartition(array & $instances, $limit
 		if ($instanceTitle instanceof SMWWikiPageValue) { // also accept SMW datavalue here
 			$instanceTitle = $instanceTitle->getTitle();
 		}
+		if (is_null($instanceTitle)) {
+			$invalidTitleText = wfMsg('smw_ob_invalidtitle');
+			$result = $result."<instance title_url=\"$invalidTitleText\" title=\"$invalidTitleText\" namespace=\"0\" img=\"instance.gif\" id=\"ID_INVALID_$count\"></instance>";
+		    continue;
+		}
 		$titleEscaped = htmlspecialchars($instanceTitle->getDBkey()); 
 		$namespace = $instanceTitle->getNsText();
 		$titleURLEscaped = htmlspecialchars(self::urlescape($instanceTitle->getDBkey()));

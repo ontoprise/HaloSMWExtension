@@ -169,6 +169,7 @@ protected $smwUserMessages = array(
 	'smw_ob_hasnumofpropusages' => 'Attribut wurd $1-mal annotiert.',
 	'smw_ob_hasnumoftargets' => 'Instanz wurde $1-mal verlinkt.',
 	'smw_ob_hasnumoftempuages' => 'Template wurde $1-mal benutzt.',
+	'smw_ob_invalidtitle' => '!!!fehlerhafter Titel!!!',
 	
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subkategorie hinzufügen',
@@ -180,7 +181,6 @@ protected $smwUserMessages = array(
 	'smw_ob_cmd_renameinstance' => 'Instanz umbenennen',
 	'smw_ob_cmd_deleteinstance' => 'Instanz löschen',
 	'smw_ob_cmd_addpropertytodomain' => 'Attribut hinzufügen zur Kategorie: ',
-	
 	
 	
 	

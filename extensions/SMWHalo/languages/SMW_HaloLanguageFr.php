@@ -171,7 +171,8 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_hasnumofpropusages' => 'La propriété est annotée $1 fois',
     'smw_ob_hasnumoftargets' => 'L\'instance est reliée $1 fois.',
     'smw_ob_hasnumoftempuages' => 'Le modà¨le est utilisé $1 fois',
-
+    'smw_ob_invalidtitle' => '!!!invalid title!!!',
+    
     /* Commands for ontology browser */
     'smw_ob_cmd_createsubcategory' => 'Ajouter une sous-catégorie',
     'smw_ob_cmd_createsubcategorysamelevel' => 'Ajouter une catégorie au même niveau',

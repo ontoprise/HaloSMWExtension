@@ -166,7 +166,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_ob_hasnumofpropusages' => 'Deze eigenschap is $1 maal geannoteerd',
 	'smw_ob_hasnumoftargets' => 'Deze entiteit is $1 maal gelinkt.',
 	'smw_ob_hasnumoftempuages' => 'Deze template is $1 maal gebruikt',
-	
+	'smw_ob_invalidtitle' => '!!!invalid title!!!',
+
 	/* Commands for ontology browser */
 	'smw_ob_cmd_createsubcategory' => 'Subcategorie toevoegen',
 	'smw_ob_cmd_createsubcategorysamelevel' => 'Categorie op hetzelfde niveau toevoegen',
