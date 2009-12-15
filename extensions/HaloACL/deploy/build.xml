@@ -68,6 +68,8 @@
 				<include name="deploy.xml" />
 				<include name="patch_for_MW_1.13.2.txt" />
 				<include name="patch_for_SMW_1.4.2.txt" />
+				<include name="patch_for_MW_1.15.1.txt" />
+				<include name="patch_for_SMW_1.4.3.txt" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/HaloACL-${version}.zip" basedir="bin/zip" />
