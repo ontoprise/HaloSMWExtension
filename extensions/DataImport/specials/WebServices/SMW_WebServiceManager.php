@@ -461,7 +461,7 @@ function wwsdParserHook($input, $args, $parser) {
 	} else {
 		$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
 	}
-	$linkToDefGui .= '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
+	$linkToDefGui = '<h4><span class="mw-headline"><a href="'.$url.'">'.wfMsg('smw_wws_edit_in_gui').'</a></h4>';
 	
 	return  '<h4><span class="mw-headline">Web Service Definition</span></h4>'
 			."<pre>\n".htmlspecialchars($completeWWSD)."\n</pre>".$notice.$msg.$linkToDefGui;

@@ -71,6 +71,7 @@ function smwf_ws_processStep2($uri, $methodName){
 	
 	$rawParameters = $wsClient->getOperation($methodName);
 	$parameters = array();
+	
 	$numParam = count($rawParameters);
 	if($numParam == 1){
 		if($rawParameters[0][0] == 0){
@@ -89,6 +90,7 @@ function smwf_ws_processStep2($uri, $methodName){
 		}
 		$parameters = array_merge($parameters , $tempFlat);
 	}
+	
 	return "##handle exceptions##;".implode(";", $parameters);
 }
 

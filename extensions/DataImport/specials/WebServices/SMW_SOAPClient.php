@@ -173,12 +173,16 @@ class SMWSoapClient implements IWebServiceClient {
 		} else {
 			$this->mClient = new SoapClient($this->mURI);
 		}
-
+		
 		try {
 			if($parameters == null){
 				$response = $this->mClient->$operationName();
-			} else {
-				$response = $this->mClient->$operationName($parameters);
+			} else {	
+				$client = $this->mClient; //$perationName
+				$response = call_user_func_array(array(&$client, $operationName), $parameters);
+				if(!is_array($response) && !is_object($response)){
+					return array($response);
+				}
 			}
 		} catch(Exception $e) {
 			return print_r($e, true) . $this->mClient->__getLastResponse();
@@ -212,12 +216,13 @@ class SMWSoapClient implements IWebServiceClient {
 
 		try {
 			$functions = $this->mClient->__getFunctions();
+			
 			$types = $this->mClient->__getTypes();
 		} catch (Exception $e) {
 			print_r($e);
 			return false;
 		}
-			
+		
 		foreach ($functions as $f) {
 			if (preg_match("/\s*(.+?)\s(.+?)\s*\((.*?)\)/", $f, $matches)) {
 				$retType = $matches[1];
@@ -234,7 +239,7 @@ class SMWSoapClient implements IWebServiceClient {
 				}
 			}
 		}
-
+		
 		$this->mTypes = array();
 
 		foreach ($types as $t) {
@@ -513,3 +518,4 @@ class SMWSoapClient implements IWebServiceClient {
 		return false;
 	}
 }
+

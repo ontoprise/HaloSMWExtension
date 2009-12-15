@@ -207,9 +207,10 @@ DefineWebServiceSpecial.prototype = {
 
 		var duplicate = false;
 		
+		
 		var steps = wsParameters[1].split("/");
 		var startK = 1;
-		if(steps.length > 1){
+		if(steps.length > 1 && steps.length > 2){
 			this.firstParameterPathStep = steps[1];
 			startK = 2;
 		}
@@ -663,6 +664,7 @@ DefineWebServiceSpecial.prototype = {
 		this.preparedRPathSteps = new Array();
 
 		var duplicate = false;
+		
 		for ( var i = 1; i < wsResults.length; i++) {
 			if (wsResults[i].length > 0) {
 				wsResults[i] = wsResults[i];
@@ -1136,7 +1138,7 @@ DefineWebServiceSpecial.prototype = {
 					for ( var k = 0; k < this.preparedPathSteps[i].length; k++) {
 						var pathStep = "/";
 
-						if (k == 0){
+						if (k == 0 && this.firstParameterPathStep.length > 0){
 							pathStep = "/" + this.firstParameterPathStep + "/";
 						}
 						

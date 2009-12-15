@@ -570,10 +570,10 @@ class WebService {
 	private function getResults($response, $resultDef, $alias) {
 		$path = $this->getPathForAlias($alias, $resultDef);
 
-		if (empty($path)) {
+		if (empty($path) || $path == "//") {
 			return array($response);
 		}
-
+		
 		$xpathProcessor = new XPathProcessor($response);
 
 		$xpR = $xpathProcessor->evaluateQuery($path);
@@ -602,8 +602,15 @@ class WebService {
 	public function initializeCallParameters($specParameters){
 		//init call-parameters with respect to default values
 		$this->mCallParameters	= array();
+		//this flag is necessary so that the SOAPClient later 
+		//can call the ws method with array_call_user_func
+		$embedInArray = false;
+		
 		if($this->mParsedParameters != null){
 			foreach($this->mParsedParameters->children() as $child){
+				if(strrpos("".$child["path"], "/") > 0){
+					$embedInArray = true;
+				}
 				$value = "".$child["defaultValue"];
 				if(array_key_exists("".$child["name"], $specParameters)){
 					$value = $specParameters["".$child["name"]];
@@ -616,16 +623,17 @@ class WebService {
 							$this->mCallParameters["".$child["path"]] = array($value);
 						}
 					}
-				} else if("".$child["optional"] != "true"){
-					if(strtolower($this->mProtocol) == "soap"){
-						$this->getPathStepsSoap("".$child["path"], $value);
-					} else {
-						$this->mCallParameters["".$child["path"]] = array($value);
-					}
+				} else if (strtolower($this->mProtocol) == "soap") {
+					$this->getPathStepsSoap("".$child["path"], $value);
+				}else if("".$child["optional"] != "true"){
+					$this->mCallParameters["".$child["path"]] = array($value);
 				}
 			}
 		}
 
+		if($embedInArray && strtolower($this->mProtocol) == "soap"){
+			$this->mCallParameters = array($this->mCallParameters);
+		}
 		return $this->mCallParameters;
 	}
 
