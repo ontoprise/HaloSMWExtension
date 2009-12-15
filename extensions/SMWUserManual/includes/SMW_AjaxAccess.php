@@ -28,7 +28,7 @@ function wfUmeAjaxGetArticleList(){
     $params = func_get_args();
     while ($e = array_shift($params)) {
         if (preg_match('/^[\w ]+$/i', $e))
-            $discourseStates[] = 'All:'.$e;
+            $discourseStates[] = $e;
     }
     // if there are no parameters, return right away
     if (count($discourseStates) == 0)
