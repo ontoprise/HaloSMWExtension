@@ -139,11 +139,7 @@ class SRFOFC extends SMWResultPrinter {
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
 		if (!$this->m_isAjax) {
-			if(!SRFOFC::$ofc_enabled) {
-				SRFOFC::$ofc_enabled = true;
-				SRFOFC::setupOFCHeader();
-				
-			}
+			SRFOFC::setupOFCHeader();
 		}
 		$table_id = "querytable" . $smwgIQRunningNumber;
 
