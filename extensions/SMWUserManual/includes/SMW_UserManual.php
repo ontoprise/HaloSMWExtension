@@ -21,11 +21,17 @@ $wgExtensionCredits['other'][] = array(
 );
 
 /**
+ * User options start here, if you want to change the behavior of the
+ * SMW UserManuals extensions, put the variable with the appropriate
+ * value into your LocalSettings.php
+ */ 
+
+/**
  * Here you can define a custom namespace name for the context sensitive
  * help articles. This is done, so that no interference with any existing
  * articles might occur.
  * If you don't define anything, the default "UserManual" is used, which
- * is lso language dependent.
+ * is also language dependent.
  */
 $umegNamespace = null;
 
@@ -83,9 +89,11 @@ $umegCheckArticlesOnStartup = false;
 $umegPopupWidth = 400;
 $umegPopupHeight = 460;
 
-// SMW is needed, check if it's installed and quit, if this is not the case
-if (!defined("SMW_VERSION")) {
-	trigger_error("Semantic MediaWiki is required but not installed.");
+/* User options end here */
+
+// SMWHalo is needed, check if it's installed and quit, if this is not the case
+if (!defined("SMW_HALO_VERSION")) {
+	trigger_error("SMWHalo extension is required but not installed.");
 	die();
 }
 
