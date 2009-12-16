@@ -192,6 +192,7 @@ class FileData {
 		$fileName = str_replace("-ampersize-", "&", $fileName);
 		$fileName = str_replace("-q-mark-", "?", $fileName);
 		$fileName = str_replace("-percent-", "%", $fileName);
+		$fileName = str_replace("-plus-", "+", $fileName);
 		return $fileName;
 	}
 	
@@ -203,6 +204,7 @@ class FileData {
 		$fileName = str_replace('&', "-ampersize-", $fileName);
 		$fileName = str_replace('%', "-percent-", $fileName);
 		$fileName = str_replace("?", "-q-mark-", $fileName);
+		$fileName = str_replace("+", "-plus-", $fileName);
 		return urlencode($fileName);
 	}
 	
