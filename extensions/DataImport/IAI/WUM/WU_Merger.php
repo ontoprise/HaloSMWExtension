@@ -39,7 +39,7 @@ function wum_doTabPF( &$parser, $frame, $args) {
 		} 
 		$text .= "\n|".trim($arg);
 	}
-	$text .= "}}";
+	$text .= "\n}}";
 	
 	if(!is_null($tableCode)){
 		$wumTabParserFunctions[] = array($text, $tableCode);
@@ -92,6 +92,7 @@ function wum_preprocessArgs($frame, $args){
 
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
 	$title = $editPage->mArticle->getTitle()->getFullText();
+	file_put_contents("d:\zzzzzzzzzzzzzzzz.txt", $editPage->mArticle->getContent());
 	$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
 	$editPage->textbox1 = $wum->getMergedText();
 	$wum->createMergeResultArticle();
