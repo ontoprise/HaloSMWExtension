@@ -9,7 +9,9 @@ initialize: function() {
                         // Context menu is supposed to overlap Semantic toolbar
                         var zindex = ($('ontomenuanchor').getStyle('z-index'))
                                     ? parseInt($('ontomenuanchor').getStyle('z-index')) + 1
-                                    : 10;
+                                    : 30;
+                        // because of Ontoskin3 set zIndex at least to 30
+                        if (zindex < 30) zindex = 30;
 			var menu = '<div id="contextmenu" style="z-index: '+ zindex +'"></div>';
 //			new Insertion.Top($('innercontent'), menu );
 			new Insertion.After($('content'), menu );
