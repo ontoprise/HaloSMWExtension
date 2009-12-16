@@ -25,6 +25,34 @@
     }
  }
 
+// this is a replacement for fckHttpRequestWithoutCurl_old() whih was previously at this place.
+// Some weird Windows installations suddenly produce special characters in the output which
+// destroys the whole page.
+function fckHttpRequestWithoutCurl($server, $file, $params="") {
+    if ($file{0} != "/") $file = "/".$file;
+    if (strlen($params) > 0) $file.= '?'.$params;
+    $cont = "";
+    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+        $host = preg_replace('/^http(s)?:\/\//i', '', $server);
+        $protocol = substr($server, 0, strlen($server)-strlen($host));
+        $target=$protocol.$_SERVER['PHP_AUTH_USER'].':'.$_SERVER['PHP_AUTH_PW'].'@'.$host.$file;
+    }
+    else
+        $target= $server.$file;
+    $fp = fopen($target, "rb");
+    if (! $fp) return array(-1, false);
+    while (!feof($fp)) {
+        $cont .= fread($fp, 1024);
+        $stream_meta_data = stream_get_meta_data($fp);
+        if($stream_meta_data['unread_bytes'] <= 0) break; 
+    }
+    fclose($fp);
+    if (strlen($cont) > 0)
+      return array(200, $cont);    
+    return array(-1, false);
+}
+ 
+ 
 /**
  * If no curl is available, the page must retrieved manually
  *
@@ -33,7 +61,7 @@
  * @param string params i.e. param1=val1&param2=val2
  * @return array(int, string) with httpCode, page
  */
-function fckHttpRequestWithoutCurl($server, $file, $params = "") {
+function fckHttpRequestWithoutCurl_old($server, $file, $params = "") {
     if ($file{0} != "/") $file = "/".$file;
     $server = preg_replace('/^http(s)?:\/\//i', '', $server);
     $cont = "";

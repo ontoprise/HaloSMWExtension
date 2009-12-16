@@ -343,6 +343,33 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
 	$page = substr($page, $pos -1); 
 }
 
+// this is a replacement for doHttpRequestWithFsockuopen() whih was previously at this place.
+// Some weird Windows installations suddenly produce special characters in the output which
+// destroys the whole page.
+function doHttpRequest($server, $port, $file) {
+    if ($file{0} != "/") $file = "/".$file;
+    $cont = "";
+    if (isset($_SERVER['AUTH_TYPE']) && isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
+        $host = preg_replace('/^http(s)?:\/\//i', '', $server);
+        $protocol = substr($server, 0, strlen($server)-strlen($host));
+        $target=$protocol.$_SERVER['PHP_AUTH_USER'].':'.$_SERVER['PHP_AUTH_PW'].'@'.$host.$file;
+    }
+    else
+        $target= $server.$file;
+    $fp = fopen($target, "rb");
+    if (! $fp) return array(-1, false);
+    while (!feof($fp)) {
+        $cont .= fread($fp, 1024);
+        $stream_meta_data = stream_get_meta_data($fp);
+        if($stream_meta_data['unread_bytes'] <= 0) break; 
+    }
+    fclose($fp);
+    if (strlen($cont) > 0)
+      return array(200, $cont);    
+    return array(-1, false);
+}
+
+
 /**
  * If no curl is available, the page must retrieved manually
  * 
@@ -351,7 +378,7 @@ function mvDataFromPage(&$page, &$newPage, $pattern, $copy= true) {
  * @param string file	i.e. /path/to/script.cgi or /some/file.html
  * @return array(int, string) with httpCode, page
  */ 
-function doHttpRequest($server, $port, $file) {
+function doHttpRequestWithFsockuopen($server, $port, $file) {
 	if ($file{0} != "/") $file = "/".$file;
 	$server = preg_replace('/^http(s)?:\/\//i', '', $server);
     $cont = "";
