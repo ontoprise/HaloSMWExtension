@@ -1116,9 +1116,11 @@ SMW_Annotate.prototype = {
         // webservice toolbar, only available if DataImport extension is included
         if (window.parent.wsToolBar)
             window.parent.wsToolBar.callme();
+        /* doesn't work yet fully
         // rule toolbar, only available if SemanticRuls extension is included
         if (window.parent.ruleToolBar)
             window.parent.ruleToolBar.callme();
+        */
         // Annotations toolbar, only if SemanticGardening extension is included
         if (window.parent.smwhgGardeningHints)
             window.parent.smwhgGardeningHints.createContainer();
