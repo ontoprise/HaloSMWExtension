@@ -134,8 +134,9 @@ function cefAddNonSpecialPageHeader(&$out) {
 	global $cegScriptPath;
 
 	#cefAddJSLanguageScripts($out);
-
-	$out->addScript("<script type=\"text/javascript\" src=\"". "extensions/SMWHalo/scripts/prototype.js\"></script>");
+	if (!defined('SMW_HALO_VERSION')) {
+	   $out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/prototype.js\"></script>");
+	}
 
 	$out->addScript("<script type=\"text/javascript\" src=\"". $cegScriptPath .  "/scripts/Comment/CE_Comment.js\"></script>");
 
