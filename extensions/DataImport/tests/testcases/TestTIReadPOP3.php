@@ -145,7 +145,7 @@ class TestTIReadPOP3 extends PHPUnit_Framework_TestCase {
 		foreach($queryResult as $qr){
 			$addedArticles[] = "E-mail:".substr($qr, 0, strpos($qr, "]"));
 		}
-		$this->assertEquals(count($addedArticles), 3);
+		$this->assertEquals(count($addedArticles), 11);
 		
 		$articleWikiText = array();
 		$articleWikiText[] = smwf_om_GetWikiText($addedArticles[0]); 
