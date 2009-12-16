@@ -131,10 +131,10 @@ class SMWTripleStore extends SMWStore {
 		$triples = array();
 
 		$subject = $data->getSubject();
-		
+
 		// check for selective updates, ie. update only certain namespaces
 		global $smwgUpdateTSOnNamespaces;
-		
+
 		if (isset($smwgUpdateTSOnNamespaces) && is_array($smwgUpdateTSOnNamespaces)) {
 			if (!in_array($subject->getNamespace(), $smwgUpdateTSOnNamespaces)) {
 				return;
@@ -565,7 +565,7 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
-      
+
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$variables = $dom->xpath('//variable');
 		$results = $dom->xpath('//result');
@@ -590,38 +590,38 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-		
+
 		// rewrite printrequests in case of property chains
-        $rewritten_prs = array();
-        $toUnset = array();
-        foreach($print_requests as $id => $pr) {
-            $data = $pr->getData();
-            if ($data instanceof Title) { // property chain appear as Title
-                $titleText = $data->getText();
-                $chain = explode(".",$titleText);
-               
-                if (count($chain) > 1) {
-                    $newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
-                    if ($newtitle->exists()) {
-                    	$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-                    	$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
-                    } else {
-                    	$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-                        $newData = $newtitle;
-                    }
-                    $newid = str_replace($titleText, $newtitle->getText(), $id); 
-                    $rewritten_prs[$newid] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $newlabel, $newData, $pr->getOutputFormat());
-                    $rewritten_prs[$newid]->getHash();
-                    $toUnset[] = $id;
-                }
-            }
-        }
-        foreach($toUnset as $tu) {
-        	unset($print_requests[$tu]);
-        }
-        $print_requests = array_merge($print_requests, $rewritten_prs);
-        // rewriting end
-		
+		$rewritten_prs = array();
+		$toUnset = array();
+		foreach($print_requests as $id => $pr) {
+			$data = $pr->getData();
+			if ($data instanceof Title) { // property chain appear as Title
+				$titleText = $data->getText();
+				$chain = explode(".",$titleText);
+				 
+				if (count($chain) > 1) {
+					$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
+					if ($newtitle->exists()) {
+						$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+						$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
+					} else {
+						$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+						$newData = $newtitle;
+					}
+					$newid = str_replace($titleText, $newtitle->getText(), $id);
+					$rewritten_prs[$newid] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $newlabel, $newData, $pr->getOutputFormat());
+					$rewritten_prs[$newid]->getHash();
+					$toUnset[] = $id;
+				}
+			}
+		}
+		foreach($toUnset as $tu) {
+			unset($print_requests[$tu]);
+		}
+		$print_requests = array_merge($print_requests, $rewritten_prs);
+		// rewriting end
+
 		$hasMainColumn = false;
 		$index = 0;
 		if ($query->fromASK) {
@@ -691,8 +691,8 @@ class SMWTripleStore extends SMWStore {
 
 		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
-        
-		
+
+
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
 
@@ -720,11 +720,11 @@ class SMWTripleStore extends SMWStore {
 					$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
 				}
 				if (!empty($uris)) {
-					
+						
 					$this->addURIToResult($uris, $prs[$resultColumn], $allValues);
 				} else {
 					$literals = array();
-					
+						
 					foreach($bindingsChildren->literal as $sv) {
 						$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
 					}
@@ -738,9 +738,9 @@ class SMWTripleStore extends SMWStore {
 
 			ksort($row);
 			$queryResult->addRow($row);
-			 
+
 		}
-        
+
 		return $queryResult;
 	}
 
@@ -780,6 +780,9 @@ class SMWTripleStore extends SMWStore {
 					$local = substr($sv, strpos($sv, "#")+1);
 
 					$title = Title::newFromText($local, $ns);
+					if (is_null($title)) {
+						$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
+					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
 					if (!is_null($provenance)) $v->setProvenance($provenance);
@@ -791,7 +794,7 @@ class SMWTripleStore extends SMWStore {
 				$v->setXSDValue($sv);
 				if (!is_null($provenance)) $v->setProvenance($provenance);
 				$allValues[] = $v;
-				
+
 			}
 		}
 	}
@@ -856,6 +859,9 @@ class SMWTripleStore extends SMWStore {
 
 		$local = substr($sv, strlen($nsFragment));
 		$title = Title::newFromText($local, $ns);
+		if (is_null($title)) {
+			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
+		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
 		return $v;
