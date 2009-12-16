@@ -12,7 +12,7 @@ FCKConfig.ToolbarSets['WikiEnhanced'] = [
         [/*'Print',*/ 'Rule', '-','TextColor', 'BGColor'],
         ['Find','Replace'],
 	['MW_Special',/* 'MW_Ref',*/ 'MW_Math'],
-        ['MW_Edit', 'Fullscreen'],
+        ['MW_Edit', 'FitWindow'],
 	'/',
         ['Bold','Italic','Underline'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
@@ -34,7 +34,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['UnorderedList', 'SpecialChar', 'Subscript','Superscript', '-','Blockquote', 'Anchor', 'Rule'],
 	['Cut','Copy','Paste'],
-	['Fullscreen', 'About'],
+	['FitWindow', 'About'],
 	'/',
 	['FontFormat', '-','Source'],
         ['OrderedList', 'TextColor','BGColor'],
@@ -46,7 +46,7 @@ FCKConfig.ToolbarSets['Wiki'] = [
 FCKConfig.ToolbarSets['WikiSource'] = [
 	['Source', '-', 'SelectAll'],
         ['SMW_QueryInterface', 'SMW_UseWebService'],
-        ['SMW_Annotate', 'Fullscreen', 'About']
+        ['SMW_Annotate', 'FitWindow', 'About']
 ] ;
 
 
@@ -55,7 +55,6 @@ FCKConfig.PluginsPath = FCKConfig.EditorPath + '../plugins/' ;
 FCKConfig.Plugins.Add( 'mediawiki', 'en,de' ) ;
 FCKConfig.Plugins.Add( 'mediaupload' ) ;
 FCKConfig.Plugins.Add( 'mwedit' ) ;
-FCKConfig.Plugins.Add( 'fullscreen' ) ;
 FCKConfig.Plugins.Add( 'toolbarswitch' ) ;
 
 FCKConfig.ForcePasteAsPlainText = true ;
