@@ -451,7 +451,7 @@
      */
     public static function grantAccess($text, $ns = 0) {
         $t = Title::newFromText(str_replace('_', ' ', $text), $ns);
-        //if ($text == "joe Mystery")
+        if ($t == null) return false;
         if ($ns == SMW_NS_PROPERTY &&
             in_array('propertyread', User::getAllRights()) &&
             !$t->userCan('propertyread'))

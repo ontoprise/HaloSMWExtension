@@ -287,7 +287,7 @@ class USSpecialPage extends SpecialPage {
 				$pathResults = '<div id="us_pathsearch_results" style="display: none;"></div>';
 				$html .= sprintf($tabBarSearchResults, 'font-weight: bold; color: black; border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-top: #FF8C00 solid;',
     	                                              'font-weight: normal; border: 2px solid #AAA;',
-													  ' javascript:doPathSearch(\''.$psTerms.'\');',
+													  ' javascript:doPathSearch(\''.str_replace('"', '&quot;', $psTerms).'\');',
 				$fulltextResults . $pathResults);
 			}
 		}
