@@ -92,7 +92,6 @@ function wum_preprocessArgs($frame, $args){
 
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
 	$title = $editPage->mArticle->getTitle()->getFullText();
-	file_put_contents("d:\zzzzzzzzzzzzzzzz.txt", $editPage->mArticle->getContent());
 	$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
 	$editPage->textbox1 = $wum->getMergedText();
 	$wum->createMergeResultArticle();
