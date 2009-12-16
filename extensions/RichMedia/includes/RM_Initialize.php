@@ -79,7 +79,7 @@ function enableRichMediaExtension() {
 	//Add a hook to initialise the magic word for the additional image attribute preview
 	$wgHooks['LanguageGetMagic'][] = 'RMImagePreviewUsage_Magic';
 	// workaround: because the necessary scripts has been only loaded by the parser function, when action=purge.
-	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';
+	
 	
 	//Change the image links
 	$wgHooks['LinkBegin'][] = 'RMLinkBegin';
@@ -104,7 +104,7 @@ function smwfRMSetupExtension() {
 	smwfRMInitMessages();
 
 	$wgAutoloadClasses['RMForm'] = $smwgRMIP . '/includes/RM_Form.php';	
-		
+	$wgHooks['BeforePageDisplay'][] = 'smwRMFormAddHTMLHeader';	
 	// Register Credits
 	$wgExtensionCredits['parserhook'][]=array('name'=>'Rich&nbsp;Media&nbsp;Extension', 'version'=>SMW_RM_VERSION,
 		'author'=>"Benjamin&nbsp;Langguth, Sascha&nbsp;Wagner and Daniel&nbsp;Hansch. Maintained by [http://www.ontoprise.de Ontoprise].", 
@@ -244,22 +244,31 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
 }
 
 function smwRMFormAddHTMLHeader(&$out){
-	global $smwgRMScriptPath, $smwgHaloScriptPath, $sfgScriptPath;
+	global $smwgRMScriptPath, $sfgScriptPath;
 	
 	static $rmScriptLoaded = false;
 	
 	if(!$rmScriptLoaded){
-		$jsm = SMWResourceManager::SINGLETON();
+		
 		# Prototype needed!
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-		$jsm->addScriptIf($smwgRMScriptPath. '/scripts/richmedia.js');
+		if (!defined('SMW_HALO_VERSION')) {
+		  $out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath .  '/scripts/prototype.js"/>');
+		}
+		
+		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"/>');
 		# Floatbox needed!
-		$jsm->addScriptIf($sfgScriptPath .  '/libs/floatbox.js');
-		$jsm->serializeScripts($out);
+		$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"/>');
+		
 	
 		#Floatbox css file:
-		$jsm->addCSSIf($sfgScriptPath . '/skins/floatbox.css');
-		$jsm->serializeCSS($out);
+		 $out->addLink(array(
+                    'rel'   => 'stylesheet',
+                    'type'  => 'text/css',
+                    'media' => 'screen, projection',
+                    'href'  => $sfgScriptPath . '/skins/floatbox.css'
+                    ));
+		
+		
 		$rmScriptLoaded = true;
 	}
 	return true;
