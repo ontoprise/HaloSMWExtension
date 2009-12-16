@@ -688,7 +688,6 @@ function haclfAddToolbarForEditPage ($content_actions) {
     }
     global $haclgIP;
     $html = <<<HTML
-    	<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
         <script>
             YAHOO.haloacl.toolbar.actualTitle = '{$content_actions->mTitle}';
             YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'{$content_actions->mTitle}'});
@@ -707,7 +706,6 @@ HTML;
 function haclfAddToolbarForSemanticForms($pageTitle, $html) {
     global $haclgIP;
     $html = <<<HTML
-    		<script type="text/javascript" src="$haclgIP/scripts/toolbar.js"></script>
     		<script>
 	            YAHOO.haloacl.toolbar.actualTitle = '$pageTitle';
 	            YAHOO.haloacl.toolbar.loadContentToDiv('content','haclGetHACLToolbar',{title:'$pageTitle'});
