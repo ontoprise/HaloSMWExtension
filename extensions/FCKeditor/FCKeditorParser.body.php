@@ -414,6 +414,8 @@ class FCKeditorParser extends Parser
 		    $this->fck_allTagsCurrentTagReplaced = $tag;
 		    $text = StringUtils::delimiterReplaceCallback( "<$tag>", "</$tag>", array($this, 'fck_allTags'), $text );
 		}
+		// Rule tags on Property pages
+		$text = $this->replaceRules($text);
 		
         // __TOC__ etc. must be replaced
         $text = $this->stripToc( $text );
@@ -971,7 +973,25 @@ class FCKeditorParser extends Parser
 		wfProfileOut( __METHOD__ );
 		return $text;
 	}
-	
+	private function replaceRules($text) {
+	    global $wgTitle;
+	    // rules exist in poperty pages only.
+	    if (defined('SMW_NS_PROPERTY') && $wgTitle->getNamespace() == SMW_NS_PROPERTY) {
+	        if (preg_match_all('/<rule[^>]*>.*?<\/rule>/s', $text, $matches)) {
+	             for ($i= 0; $i<count($matches[0]); $i++) {
+	                 $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw']=
+	                     '<span class="fck_mw_rule">'.$matches[0][$i].'</span>';
+	                 $this->fck_mw_strtr_span['href="Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw"']=
+	                     'href="'.$matches[0][$i].'"';
+                     $key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
+                     $this->fck_mw_strtr_span_counter++;
+                     $cnt=1;
+	                 $text = str_replace($matches[0][$i], $key, $text, $cnt);
+	             }
+	        }
+	    }
+	    return $text;
+	}
 	/**
 	 * The old parser generation creates a link [[SomePage|SomePage]] by just translating
 	 * it to <a href="SomePage">SomePage</a> while the new parser always adds $wgScript before

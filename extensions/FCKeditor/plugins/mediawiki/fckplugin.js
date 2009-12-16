@@ -577,6 +577,7 @@ FCK.DataProcessor =
 
 								case 'fck_mw_property' :
 								case 'fck_mw_category' :
+								case 'fck_mw_rule' :
 									stringBuilder.push( this._formatSemanticValues(htmlNode) ) ;
 									return ;
 
@@ -838,6 +839,11 @@ FCK.DataProcessor =
 				}
 				if (emptyVal.exec(text)) return '';
 				return '[[' + smwContentLangForFCK('Category') + ':' + text + ']]'
+		    case 'fck_mw_rule' :
+		        var rule = htmlNode.innerHTML;
+		        rule = rule.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+		        htmlNode.innerHTML = '';
+		        return rule;
 		}
 	}
 
@@ -942,6 +948,9 @@ FCKDocumentProcessor.AppendNew().ProcessDocument = function( document )
 			case 'fck_mw_askquery' :
 				if ( className == null )
 					className = 'FCK__SMWask' ;
+		    case 'fck_mw_rule' :
+		        if ( className == null )
+		            className = 'FCK_SMWrule' ;
 			case 'fck_mw_magic' :
 				if ( className == null )
 					className = 'FCK__MWMagicWord' ;

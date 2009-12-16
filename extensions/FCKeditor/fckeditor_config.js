@@ -86,6 +86,12 @@ FCKConfig.EditorAreaStyles = '\
 	width: 16px; \
 	height: 16px; \
 } \
+.FCK__SMWrule \
+{ \
+    background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_rule.gif); \
+    width: 16px; \
+    height: 16px; \
+} \
 .FCK__MWRef \
 { \
 	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/icon_ref.gif); \
