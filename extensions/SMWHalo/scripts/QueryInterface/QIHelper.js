@@ -582,11 +582,9 @@ QIHelper.prototype = {
 		fullQuery += $('layout_sort').value == gLanguage
 		.getMessage('QI_ARTICLE_TITLE') ? ""
 				: (' | sort=' + $('layout_sort').value);
-		
-		fullQuery += "| " + this.serializeSpecialQPParameters("|");
-		
-
-		fullQuery += "|merge=false|}}";
+		var qParams = this.serializeSpecialQPParameters("|");
+		if (qParams.length > 0) fullQuery += "| " + qParams
+		fullQuery += "| merge=false|}}";
 
 		return fullQuery;
 	},
