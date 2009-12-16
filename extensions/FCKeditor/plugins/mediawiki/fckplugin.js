@@ -885,7 +885,6 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
-
                         // Simple toolbar for Wiki source mode
                         FCK.ToolbarSet.Load('WikiSource');
                     
@@ -900,6 +899,10 @@ FCK.DataProcessor =
                         // add autocompletion, first add a div around the textarea
                         var div = document.createElement('div');
                         div.setAttribute('id', 'acWrapperForWikitext');
+                        // fix for IE that doesn't preserve the height
+                        if (FCKBrowserInfo.IsIE && FCK.EditingArea.Textarea.style) {
+                            div.style= FCK.EditingArea.Textarea.style;
+                        }
                         // make a link element to load the css, because the parent cannot be accessed
                         var link = document.createElement('link');
                         link.setAttribute('rel', 'stylesheet');
