@@ -16,10 +16,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require_once("SR_Literal.php");
-require_once("SR_PredicateSymbol.php");
-require_once("SR_Variable.php");
-require_once("SR_Constant.php");
+
 
 if (!defined('MEDIAWIKI')) die();
 

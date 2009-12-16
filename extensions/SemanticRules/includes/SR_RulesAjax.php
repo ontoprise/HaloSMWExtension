@@ -52,7 +52,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 	}
 	
 	global $srgSRIP, $smwgTripleStoreGraph;
-	require_once "$srgSRIP/includes/SR_RuleObject.php";
+	
 	
 	if ($xml->formula) {
 		// create a calculation rule
@@ -165,11 +165,11 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
  */
 function smwf_sr_ParseRule($ruleName, $ruleText) {
 	
-	require_once 'SR_FlogicParser.php';
 	
 	$fp = SMWFlogicParser::getInstance();
 	
 	$ruleObject = $fp->parseFloRule($ruleName, $ruleText);
+	
 	if ($ruleObject == null) {
 		return 'false';
 	}
@@ -204,7 +204,7 @@ function smwf_sr_ParseRule($ruleName, $ruleText) {
  *
  */
 function smwf_sr_ParseFormula($formula) {
-	require_once 'SR_FormulaParser.php';
+	
 	
 	$fp = new SMWFormulaParser($formula);
 	if ($fp->isFormulaValid()) {

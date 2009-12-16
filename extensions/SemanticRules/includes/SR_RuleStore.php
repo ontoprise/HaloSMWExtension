@@ -5,8 +5,7 @@
  * @author: Kai Kühn / ontoprise / 2009
  *
  */
-global $smwgHaloIP;
-require_once($smwgHaloIP.'/includes/storage/SMW_RuleStore.php');
+
 
 class SRRuleStore extends SMWRuleStore {
 

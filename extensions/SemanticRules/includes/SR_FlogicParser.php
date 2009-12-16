@@ -17,7 +17,7 @@
  */
 
 
-require_once( "SR_RuleObject.php");
+
 
 if (!defined('MEDIAWIKI')) die();
 

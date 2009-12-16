@@ -31,10 +31,30 @@ function srfSetupExtension() {
 
 	
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
-	require_once($srgSRIP . '/includes/SR_RulesAjax.php');
-    require_once($srgSRIP . '/includes/SR_WebInterfaces.php');
-    
+	
+	
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
+	
+	$wgAutoloadClasses['SMWAbstractRuleObject'] = $srgSRIP . '/includes/SR_AbstractRuleObject.php';
+	$wgAutoloadClasses['SMWConstant'] = $srgSRIP . '/includes/SR_Constant.php';
+	$wgAutoloadClasses['SMWExplanationLiteral'] = $srgSRIP . '/includes/SR_ExplanationLiteral.php';
+	$wgAutoloadClasses['SMWFlogicParser'] = $srgSRIP . '/includes/SR_FlogicParser.php';
+	$wgAutoloadClasses['SMWFormulaParser'] = $srgSRIP . '/includes/SR_FormulaParser.php';
+	$wgAutoloadClasses['SMWLiteral'] = $srgSRIP . '/includes/SR_Literal.php';
+	$wgAutoloadClasses['SMWPredicate'] = $srgSRIP . '/includes/SR_Predicate.php';
+	$wgAutoloadClasses['SMWPredicateSymbol'] = $srgSRIP . '/includes/SR_PredicateSymbol.php';
+	$wgAutoloadClasses['SMWRuleObject'] = $srgSRIP . '/includes/SR_RuleObject.php';
+	$wgAutoloadClasses['SMWTerm'] = $srgSRIP . '/includes/SR_Term.php';
+	$wgAutoloadClasses['SMWVariable'] = $srgSRIP . '/includes/SR_Variable.php';
+	
+	global $wgRequest;
+	$action = $wgRequest->getVal('action');
+    if ($action == 'ajax') {
+    	
+        require_once($srgSRIP . '/includes/SR_RulesAjax.php');
+        require_once($srgSRIP . '/includes/SR_WebInterfaces.php');
+    }
+    
 	/*$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
 	$wgSpecialPages['Explanations'] = array('SRExplanations');
 	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
