@@ -351,7 +351,7 @@ class SMWH_Skin {
                                             } else {
                                                 $tabs.= $this->skintemplate->skin->tooltipAndAccesskey( "ca-$key" );
                                             }
-                                            $tabs.= ">".htmlspecialchars($tab['text'])."</a></div>";
+                                            $tabs.= ">".htmlspecialchars(ucfirst($tab['text']))."</a></div>";
                                        $functionsaggregated .= $tabs;
                                     }
 
