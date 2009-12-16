@@ -223,7 +223,12 @@ abstract class GardeningIssue {
 	 */ 
 	public static function createIssue($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified) {
 		global $registeredBots;
-		$issueClassName = get_class($registeredBots[$bot_id])."Issue";
+        $botclass = get_class($registeredBots[$bot_id]);
+        if ($botclass == '' && is_string($registeredBots[$bot_id])) {
+        	// if botclass not registered
+        	$botclass = $registeredBots[$bot_id];
+        }
+		$issueClassName = $botclass."Issue";
 		return new $issueClassName($bot_id, $gi_type, $t1_ns, $t1, $t2_ns, $t2, $value, $isModified);
 	}
 	

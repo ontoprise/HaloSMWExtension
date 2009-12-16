@@ -33,7 +33,8 @@ function sgagGardeningSetupExtension() {
 	$wgAutoloadClasses['SMWSuggestStatistics'] = $sgagIP . '/specials/FindWork/SGA_SuggestStatistics.php';
 	$wgAutoloadClasses['SGAGardening'] = $sgagIP . '/specials/Gardening/SGA_Gardening.php';
 	$wgAutoloadClasses['SGAGardeningTableResultPrinter'] = $sgagIP . '/includes/SGA_QP_GardeningTable.php';
-
+   
+    
 	global $smwgResultFormats;
 	$smwgResultFormats['table'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
 	$smwgResultFormats['broadtable'] = 'SGAGardeningTableResultPrinter'; // overwrite SMW printer
@@ -42,7 +43,8 @@ function sgagGardeningSetupExtension() {
 
 
 	global $sgagLocalGardening, $wgJobClasses;
-	$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
+	//XXX: deactivated because of Performance
+	//$wgJobClasses['SMW_LocalGardeningJob'] = 'SMW_LocalGardeningJob';
 
 	global $wgRequest;
 	$action = $wgRequest->getVal('action');
@@ -74,7 +76,8 @@ function sgagGardeningSetupExtension() {
 		$wgSpecialPageGroups['FindWork'] = 'smwplus_group';
 
 	}
-	require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
+	//XXX: deactivated because of Performance
+	//require_once($sgagIP . '/includes/jobs/SGA_LocalGardeningJob.php');
 	return true;
 }
 

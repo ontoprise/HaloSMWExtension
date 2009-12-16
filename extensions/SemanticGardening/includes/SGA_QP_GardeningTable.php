@@ -39,9 +39,15 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		global $smwgIQRunningNumber;
 		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
 
+		
 		global $sgagIP;
+		
+		// import ConsistencyIssue class and make sure ConsistencyIssue class can be instantiated
 		require_once( $sgagIP . "/includes/SGA_GardeningIssues.php");
-		require_once( $sgagIP . "/includes/bots/consistency_bot/SGA_ConsistencyBot.php");
+		require_once( $sgagIP . "/includes/bots/consistency_bot/SGA_ConsistencyIssue.php");
+	    global $registeredBots;
+	    $registeredBots['smw_consistencybot'] = 'ConsistencyBot';
+	    
         wfGAInitUserMessages();
 		$cols = array(); //Names of columns
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
@@ -139,6 +145,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 
 	protected function addTooltip($title){
 		$tt = '';
+		
 		if($title instanceof Title){
 			$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 			$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, NULL, $title, NULL, NULL);
