@@ -209,17 +209,9 @@ function addNonSpecialPageHeader(&$out) {
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath. '/yui/container.css'
-    ));
-
-
-    $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
         'href'  => $haclgHaloScriptPath . '/skins/haloacl.css'
     ));
-
+    
     $out->addLink(array(
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
@@ -370,6 +362,7 @@ function haclAddHTMLHeader(&$out) {
             'media' => 'screen, projection',
             'href'  => $haclgHaloScriptPath. '/yui/container.css'
         ));
+
         $out->addLink(array(
             'rel'   => 'stylesheet',
             'type'  => 'text/css',
