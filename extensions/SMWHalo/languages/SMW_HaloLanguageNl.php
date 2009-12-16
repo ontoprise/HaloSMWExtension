@@ -357,7 +357,10 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	"___cfsi" => array('_siu', 'Komt overeen met SI')
+	"___cfsi" => array('_siu', 'Komt overeen met SI'),
+	"___CREA" => array('_wpg', 'Creator'),
+	"___CREADT" => array('_dat', 'Creation date'),
+	"___MOD" => array('_wpg', 'Last modified by')
 );
 
 

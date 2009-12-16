@@ -343,8 +343,11 @@ clicking the big arrows between the columns.',
 
 
 	protected $smwSpecialProperties = array(
-	//always start upper-case
-	"___cfsi" => array('_siu', 'Corresponds to SI')
+		//always start upper-case
+		"___cfsi" => array('_siu', 'Corresponds to SI'),
+		"___CREA" => array('_wpg', 'Creator'),
+		"___CREADT" => array('_dat', 'Creation date'),
+		"___MOD" => array('_wpg', 'Last modified by')
 	);
 
 

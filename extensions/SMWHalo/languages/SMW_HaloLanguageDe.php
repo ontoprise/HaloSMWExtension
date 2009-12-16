@@ -336,7 +336,10 @@ protected $smwUserMessages = array(
 
 protected $smwSpecialProperties = array(
 	//always start upper-case
-	"___cfsi" => array('_siu', 'Entspricht SI')
+	"___cfsi" => array('_siu', 'Entspricht SI'),
+	"___CREA" => array('_wpg', 'Erzeuger'),
+	"___CREADT" => array('_dat', 'Erzeugt am'),
+	"___MOD" => array('_wpg', 'Zuletzt modifiziert von')
 );
 
 

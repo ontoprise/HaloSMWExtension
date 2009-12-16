@@ -378,7 +378,10 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
 
     protected $smwSpecialProperties = array(
     //always start upper-case
-    "___cfsi" => array('_siu', 'Correspond au SI')
+    "___cfsi" => array('_siu', 'Correspond au SI'),
+		"___CREA" => array('_wpg', 'Creator'),
+		"___CREADT" => array('_dat', 'Creation date'),
+		"___MOD" => array('_wpg', 'Last modified by')
     );
 
 
