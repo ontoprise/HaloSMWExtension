@@ -45,20 +45,25 @@ if (isset($wgUSPathSearch) && $wgUSPathSearch) {
  * @return unknown
  */
 function wfUSAddHeader(& $out) {
-	global $wgScriptPath, $wgServer;
-
-    $out->addLink(array(
+	global $wgScriptPath, $wgServer, $wgTitle, $wgRequest, $wgContLang;
+	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
+   
+    $pagetitle = $wgRequest->getVal("title");
+    $spec_ns = $wgContLang->getNsText(NS_SPECIAL);
+    if ($pagetitle != "$spec_ns:Search") return true;
+    
+	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
                     'href'  => $wgScriptPath . '/extensions/UnifiedSearch/skin/unified_search.css'
                     ));
                     if (!defined("SMW_HALO_VERSION")) {
-                        $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
+                    	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/prototype.js"></script>');
                     }
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/unified_search.js"></script>');
-                    
-                     // add SimplePopup
+
+                    // add SimplePopup
                     $dir = str_replace("\\","/", dirname(__FILE__));
                     $dir= substr($dir, strpos($dir, $wgScriptPath));
                     $dir= substr($dir, 0, strrpos($dir, '/'));
@@ -72,7 +77,7 @@ function wfUSAddHeader(& $out) {
                     $out->addScript('<script type="text/javascript">/*<![CDATA[*/
                         var SIMPLE_POPUP_DIR = "'.$dir.'/scripts/SimplePopup/";
                     /*]]>*/</script>');
-                    
+
                     // add GreyBox
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
@@ -84,7 +89,7 @@ function wfUSAddHeader(& $out) {
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS.js"></script>');
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/AJS_fx.js"></script>');
                     $out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/UnifiedSearch/scripts/GreyBox/gb_scripts.js"></script>');
-                    
+
                     return true;
 }
 
@@ -139,7 +144,7 @@ function wfUSSetupExtension() {
 		if (defined("NS_PDF")) $usgAllNamespaces[NS_PDF] = "smw_plus_pdf_icon_16x16.png";
 		if (defined("NS_DOCUMENT")) $usgAllNamespaces[NS_DOCUMENT] = "smw_plus_document_icon_16x16.png";
 		if (defined("CE_COMMENT_NS")) $usgAllNamespaces[CE_COMMENT_NS] = "smw_plus_comment_icon_16x16.png";
-		
+
 	}
 	return true;
 }
@@ -254,7 +259,7 @@ function smwf_us_retrieveMimeType($func, & $mimeType) {
  * Ajax callback function
  */
 function smwf_ca_GetHTMLBody($page) {
-	
+
 	global $smwgHaloScriptPath, $wgStylePath, $wgUser, $wgDefaultSkin;
 	global $wgServer, $wgTitle, $wgParser;
 
@@ -319,11 +324,11 @@ function smwfSynsetsInitializeTables() {
 
 function smwfSynsetsDeInitializeTables() {
 
-    global $IP;
-    require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
-    $s = new Synsets();
-    $s->drop();
+	global $IP;
+	require_once($IP."/extensions/UnifiedSearch/synsets/SMW_Synsets.php");
+	$s = new Synsets();
+	$s->drop();
 
-    return true;
-} 
+	return true;
+}
 
