@@ -97,8 +97,7 @@ $oFCKeditorExtension->registerHooks();
 // or action=formedit). The files below are used in the template picker of the
 // FCKeditor but run in an iframe without the FCKeditor instance itself. Therefore
 // these are not included here.
-global $sfgFormPrinter;
-if ($sfgFormPrinter) {
+if (defined('SF_VERSION')) {
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "specials" . DIRECTORY_SEPARATOR . "SF_AddDataEmbedded.php";
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "specials" . DIRECTORY_SEPARATOR . "SF_EditDataEmbedded.php";
 }
