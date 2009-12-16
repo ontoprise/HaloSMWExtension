@@ -45,7 +45,7 @@ triggered by the nested floats. It should not be removed
 
     #wpTextbox1{
         word-break: break-all;
-        width: 100%;
+        width: 99%;
     }
 
 /*  Slider
