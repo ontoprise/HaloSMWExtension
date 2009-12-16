@@ -238,7 +238,7 @@ function Ok()
 	}
 	
 	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR')).replace( /"/g, '&quot;' ) ;
-        var tooltip = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim());
+    var tooltip = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim()).replace( /"/g, '&quot;' );
 	
 	if ( !( /^{{[\s\S]+}}$/.test( templateData ) ) )
 	{
