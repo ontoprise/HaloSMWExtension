@@ -16,8 +16,9 @@ $wgGroupPermissions['sysop']['gardening']=true;
 
 require_once( "$IP/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" );
 
-include_once('extensions/RichMedia/includes/RM_Initialize.php');
 $smwgEnableUploadConverter = true;
+include_once('extensions/RichMedia/includes/RM_Initialize.php');
+
 //enableRichMediaExtension();
 
 $wgAllowExternalImagesFrom = $wgServer;

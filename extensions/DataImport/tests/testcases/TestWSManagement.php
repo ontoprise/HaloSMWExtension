@@ -131,7 +131,10 @@ class TestWSManagement extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(count(WSStorage::getDatabase()->getWSUsages($wsId)), 1);
 		$this->assertEquals(count(WSStorage::getDatabase()->getResultsFromCache($wsId)), 1);
 
-		smwf_om_DeleteArticle("WebService:TimeTestWSDelete", "phpunit", "phpunit");
+		try {
+			smwf_om_DeleteArticle("WebService:TimeTestWSDelete", "phpunit", "phpunit");
+		} catch (exception $e){
+		}
 
 		$ws = WebService::newFromID($wsId);
 

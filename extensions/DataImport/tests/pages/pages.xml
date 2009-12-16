@@ -2,9 +2,9 @@
   <siteinfo>
     <sitename>TestDBWiki</sitename>
     <base>http://localhost/TestDBWiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.13.2</generator>
+    <generator>MediaWiki 1.15.1</generator>
     <case>first-letter</case>
-      <namespaces>
+    <namespaces>
       <namespace key="-2">Media</namespace>
       <namespace key="-1">Special</namespace>
       <namespace key="0" />
@@ -13,8 +13,8 @@
       <namespace key="3">User talk</namespace>
       <namespace key="4">TestDBWiki</namespace>
       <namespace key="5">TestDBWiki talk</namespace>
-      <namespace key="6">Image</namespace>
-      <namespace key="7">Image talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
       <namespace key="8">MediaWiki</namespace>
       <namespace key="9">MediaWiki talk</namespace>
       <namespace key="10">Template</namespace>
@@ -33,6 +33,10 @@
       <namespace key="109">Concept talk</namespace>
       <namespace key="200">WebService</namespace>
       <namespace key="201">WebService talk</namespace>
+      <namespace key="202">TermImport</namespace>
+      <namespace key="203">TermImport talk</namespace>
+      <namespace key="220">E-mail</namespace>
+      <namespace key="221">E-mail talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
@@ -892,7 +896,7 @@ Jump to: navigation, search
     </revision>
   </page>
   <page>
-    <title>Image:Semantic web.pdf</title>
+    <title>File:Semantic web.pdf</title>
     <id>41</id>
     <revision>
       <id>65</id>
@@ -946,7 +950,7 @@ Jump to: navigation, search
     </revision>
   </page>
   <page>
-    <title>Image:Invite.ics</title>
+    <title>File:Invite.ics</title>
     <id>46</id>
     <revision>
       <id>70</id>
@@ -972,7 +976,7 @@ Jump to: navigation, search
     </revision>
   </page>
   <page>
-    <title>Image:Image001.jpg</title>
+    <title>File:Image001.jpg</title>
     <id>48</id>
     <revision>
       <id>72</id>
@@ -985,7 +989,7 @@ Jump to: navigation, search
     </revision>
   </page>
   <page>
-    <title>Image:Jürgen Angele.vcf</title>
+    <title>File:Jürgen Angele.vcf</title>
     <id>49</id>
     <revision>
       <id>73</id>
@@ -1105,6 +1109,119 @@ Jump to: navigation, search
       <text xml:space="preserve">&lt;mapping properties=&quot;abstract&quot;&gt;
 {{{abstract}}}
 &lt;/mapping&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>FormTestNoForm</title>
+    <id>58</id>
+    <revision>
+      <id>102</id>
+      <timestamp>2009-10-08T15:54:43Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'no form associated'</comment>
+      <text xml:space="preserve">no form associated</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:FormTest</title>
+    <id>59</id>
+    <revision>
+      <id>103</id>
+      <timestamp>2009-10-08T15:55:52Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '&lt;noinclude&gt; Do not include this. &lt;/noinclude&gt; &lt;includeonly&gt; * uri: {{{hasURI|}}} * feeduri: {{{hasFeedURI|}}} * works for: {{{worksFor|}}} [[Category:FormTest]] &lt;/includeonly&gt;'</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+Do not include this.
+&lt;/noinclude&gt;
+&lt;includeonly&gt;
+* uri: {{{hasURI|}}}
+* feeduri: {{{hasFeedURI|}}}
+* works for: {{{worksFor|}}}
+[[Category:FormTest]]
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:FormTest</title>
+    <id>60</id>
+    <revision>
+      <id>104</id>
+      <timestamp>2009-10-08T15:56:27Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '[[Has default form::FormTest]]'</comment>
+      <text xml:space="preserve">[[Has default form::FormTest]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Form:FormTest</title>
+    <id>61</id>
+    <revision>
+      <id>105</id>
+      <timestamp>2009-10-08T15:56:59Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '&lt;noinclude&gt; this is a test form &lt;/noinclude&gt; &lt;includeonly&gt; {{{info |add title=FormTest form add title |edit title=FormTest form edit title }}}  {{{for template|FormTest}}} ==== F…'</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;
+this is a test form
+&lt;/noinclude&gt;
+&lt;includeonly&gt;
+{{{info
+|add title=FormTest form add title
+|edit title=FormTest form edit title
+}}}
+
+{{{for template|FormTest}}}
+==== FormTest data ====
+&lt;table style=&quot;background-color:lightgrey&quot;&gt;&lt;tr&gt;&lt;td&gt;
+'''URI(s):''' &lt;/td&gt;&lt;td&gt;
+{{{field
+|hasURI
+|input type=textarea
+|rows=1
+}}}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;
+'''Feed URI(s):''' &lt;/td&gt;&lt;td&gt;
+{{{field
+|hasFeedURI
+|input type=textarea
+|rows=1
+}}}&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;
+'''Works for:''' &lt;/td&gt;&lt;td&gt;
+{{{field
+|worksFor
+|input type=textarea
+|rows=2
+|autocomplete on namespace=
+|autocomplete
+|list
+}}}&lt;/td&gt;&lt;tr&gt;&lt;/table&gt;
+{{{end template}}}
+
+&lt;/includeonly&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>FormTestArticle</title>
+    <id>62</id>
+    <revision>
+      <id>106</id>
+      <timestamp>2009-10-08T15:57:35Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '{{FormTest |hasURI=this is the uri |hasFeedURI=this is the feed uri |worksFor=this is the company }} [[Category:FormTest]]'</comment>
+      <text xml:space="preserve">{{FormTest
+|hasURI=this is the uri
+|hasFeedURI=this is the feed uri
+|worksFor=this is the company
+}}
+[[Category:FormTest]]</text>
     </revision>
   </page>
 </mediawiki>

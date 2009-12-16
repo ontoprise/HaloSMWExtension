@@ -788,9 +788,9 @@ class DALReadPOP3 implements IDAL {
 			echo wfMsg('smw_ti_articleNotUpdated', $fileArticleTitle->getFullText())."\n";
 			$article = new Article($fileArticleTitle);
 			$article->doEdit(
-			$article->getContent()
-			."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]",
-			wfMsg('smw_ti_creationComment'));
+				$article->getContent()
+				."\n[[WasIgnoredDuringTermImport::".$termImportName."| ]]",
+				wfMsg('smw_ti_creationComment'));
 			return $this->createCallBackResult(true,
 			array(array('id' => SMW_GARDISSUE_UPDATE_SKIPPED,
 				'title' => $fileArticleTitle->getFullText())));
@@ -866,7 +866,8 @@ class DALReadPOP3 implements IDAL {
 		global $smwgEnableUploadConverter;
 		if($smwgEnableUploadConverter){
 			$fileContent = UploadConverter::getFileContent($local);
-			if(trim($fileContent) != ""){
+			//echo("\n\n####\n".substr($fileContent,0,200));
+			if(strlen($fileContent) > 0){
 				$term["CONTENT"] = array();
 				$term["CONTENT"][] = array("value" => $fileContent);
 			}
@@ -874,12 +875,18 @@ class DALReadPOP3 implements IDAL {
 
 		$content = $tiBot->createContent($term, $mappingPolicy);
 			
+		//echo("\n\n###title\n".$fileArticleTitle->getFullText());
+		//echo("\n\n###content\n".substr($content,0,300));
+		
+		$fileArticleTitle = Title::newFromText($fileArticleTitle->getText(), $fileArticleTitle->getNamespace());
 		$article = new Article($fileArticleTitle);
 		$result = $article->doEdit(
-			$content.$termAnnotations, wfMsg('smw_ti_creationComment'));
+			ltrim($content.$termAnnotations), wfMsg('smw_ti_creationComment'));
 
+		echo("\n\n###result\n".print_r($result, true));
+					
 		echo "Article ".$fileArticleTitle->getFullText();
-		echo $updated==true ? " updated\n" : " created.\n";
+		//echo $updated==true ? " updated\n" : " created.\n";
 
 		if($updated){
 			return $this->createCallBackResult(true,
