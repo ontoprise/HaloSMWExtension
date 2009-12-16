@@ -276,8 +276,10 @@ function addNonSpecialPageHeader(&$out) {
     #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
 
 
-
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+	if (!defined('SMW_HALO_VERSION')) {
+		// don't include prototype.js if SMWHalo is present
+    	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+	}
 
     return true;
 }
