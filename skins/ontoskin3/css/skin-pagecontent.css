@@ -141,3 +141,6 @@ img.thumbborder {
         border: 1px solid #4B595C;
 }
 
+#mw-data-after-content {
+    margin-left: 1px;
+}
