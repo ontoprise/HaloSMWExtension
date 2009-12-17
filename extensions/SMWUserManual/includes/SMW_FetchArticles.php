@@ -37,10 +37,11 @@ class UME_FetchArticles {
             }
             $data = self::getPages($chunk);
             while ($o = array_shift($data)) {
+                $newTitle = preg_replace('/^Help:/', '', $o->getTitle());
                 $text = $o->getContent().
                     self::makeDiscourseStatesProperty($o->getDiscourseState()).
                     "\n[[UME link::".$o->getLink()."| ]]";
-                self::createPage(SMW_NS_USER_MANUAL, $o->getTitle(), $text);
+                self::createPage(SMW_NS_USER_MANUAL, $newTitle, $text);
             }
         }
         self::installTemplates();
@@ -213,7 +214,6 @@ class UME_FetchArticles {
         // trim whitspaces from page names
         for ($i = 0; $i < $is; $i++) {
             $pages[$i] = trim($pages[$i]);
-            $pages[$i] = preg_replace('/^Help:/', '', $pages[$i]);
         }
         return $pages;
     }
