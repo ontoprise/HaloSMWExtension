@@ -84,9 +84,12 @@ SMW_UserManual_CSH.prototype = {
         },
         // namespace in the SMW forum for comments and feedback entries
         this.smwCommentNs = "Comment" 
-        this.msgYourCommentHasBeenSend = 'Your comment has been filed in the SMWforum\nThank you!'
-        this.msgYourCommentHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
+        this.msgYourRatingHasBeenSend = 'Your comment has been filed in the SMWforum.\nThank you!'
+        this.msgYourRatingHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
             '<a href="'+umegSmwForumUrl+'?title=Help:%%%s%%%"><br>Thank you!'
+        this.msgYourQuestionHasBeenSend = 'Your question has been send to the SMW+ team.\nThank you!'
+        this.msgYourCommentHasBeenSend = 'Your comment has been send to the SMW+ team.\nThank you!'
+        this.msgYourBugHasBeenSend = 'Your bug has been filed in the SMW+ Bugzilla.\nThank you!'
     },
     
     /**
@@ -233,8 +236,8 @@ SMW_UserManual_CSH.prototype = {
         if (this.cshPage != null && rating != null) {  
             var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
             this.sendCommentToSmwplus(txt)
-            //alert(this.msgYourCommentHasBeenSendWithLink.replace(/%%%s%%%/, escape(this.cshPage.replace(/ /g, '_'))))
-            alert(this.msgYourCommentHasBeenSend)
+            //alert(this.msgYourRatingHasBeenSendWithLink.replace(/%%%s%%%/, escape(this.cshPage.replace(/ /g, '_'))))
+            alert(this.msgYourRatingHasBeenSend)
             this.resetRating()
         }
     },
@@ -316,11 +319,7 @@ SMW_UserManual_CSH.prototype = {
         button.type='submit'
         button.name='cshreset'
         button.value='Reset'
-        try {
-            button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
-        } catch (e) {
-            button.attachEvent('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
-        }
+        Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
         td.appendChild(button)
         
         var button=document.createElement('input');
@@ -328,11 +327,7 @@ SMW_UserManual_CSH.prototype = {
         button.name='cshsend'
         button.value='Submit feedback'
         button.style.textAlign="right"
-        try {
-            button.addEventListener('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
-        } catch (e) {
-            button.attachEvent('click', smwCsh.sendCommentBox.bindAsEventListener(this), false)
-        }
+        Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
         td.appendChild(button)
         tr.appendChild(td)
         el.parentNode.appendChild(tr)
@@ -348,20 +343,27 @@ SMW_UserManual_CSH.prototype = {
         var eL = e.srcElement ? e.srcElement : e.target ? e.target : e.currentTarget
         if (eL.name=='cshsend') {
             var tbody=eL.parentNode.parentNode.parentNode
+            var txt=tbody.getElementsByTagName('textarea')[0].value
+            if (txt.replace(/ $/g,'').replace(/^ /, '').length==0) {
+                this.closeCommentBox(eL)
+                return
+            }
             var img=tbody.firstChild.firstChild.getElementsByTagName('img')[1].src
             img=img.substr(img.lastIndexOf('/')+1)
-            var txt=tbody.getElementsByTagName('textarea')[0].value
             if (img=='question.png') {
                 var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
                 this.sendCommentToSmwplus(tmpStr)
+                alert(this.msgYourQuestionHasBeenSend)
             }
             else if (img=='comment.png') {
                 var tmpStr=this.getTemplateStr(this.txtCommentComponent, '', txt, this.getSingleDiscourseState())
                 this.sendCommentToSmwplus(tmpStr)
+                alert(this.msgYourCommentHasBeenSend)
             }
             else if (img=='bug.png') {
                 var tmpStr=this.getBugreportStr(txt)
                 sajax_do_call('wfUprForwardApiCall', [umegSmwBugzillaUrl, tmpStr], null)
+                alert(this.msgYourBugHasBeenSend)
             }
         }
         this.closeCommentBox(eL)
@@ -382,7 +384,7 @@ SMW_UserManual_CSH.prototype = {
         n.removeChild(n.lastChild)
         n.getElementsByTagName('img')[0].src=
             n.getElementsByTagName('img')[0].src.replace(/down\.png/, 'right.png')
-        n.getElementsByTagName('td')[0].style.fontWeight=null
+        n.getElementsByTagName('td')[0].style.fontWeight=''
         var table=n
         while (table.tagName != 'TABLE')
             table=table.parentNode
