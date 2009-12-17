@@ -4,7 +4,7 @@ class TestDataAPI extends PHPUnit_Framework_TestCase {
 
 	private $url = "http://localhost/mediawiki/api.php";
 	private $userName = "WikiSysop";
-	private $pw = "m8nix";
+	private $pw = "root";
 	private static $isInitialized = false;	
 	
 	function setUp() {
