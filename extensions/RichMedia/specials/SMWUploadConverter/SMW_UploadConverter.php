@@ -157,6 +157,7 @@ class UploadConverter {
 			return $text;
 		} else if(array_key_exists($mimeType, $smwgUploadConverterInternal)){
 			global $wgUploadConverterTemplateMapping;
+			$tmp = $wgUploadConverterTemplateMapping;
 			$wgUploadConverterTemplateMapping = $wgUploadConverterTemplateMapping[$mimeType];
 			foreach($wgUploadConverterTemplateMapping as $key => $value){
 				if(is_null($value)){
@@ -167,10 +168,11 @@ class UploadConverter {
 			$text = file_get_contents($path);
 			$class = $smwgUploadConverterInternal[$mimeType];
 			$converter = new $class($text);
-			return $converter->getConvertedText();
+			$text = $converter->getConvertedText();
+			$wgUploadConverterTemplateMapping = $tmp;
+			return $text;
 			  
 		} else {
-			return $mimeType;
 			// no converter specified for the mime type
 			return "";
 		}
