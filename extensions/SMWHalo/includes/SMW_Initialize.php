@@ -660,7 +660,14 @@ function smwfHaloAddHTMLHeader(&$out) {
 	 *
 	 * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 * */
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+	//XXX: don't use deploy version for the query interface since there are issue with MS ExcelBridge
+	global $wgRequest,$wgContLang;
+	$pagetitle = $wgRequest->getVal("title");
+    $spec_ns = $wgContLang->getNsText(NS_SPECIAL);
+    $isQIF = ($pagetitle == "$spec_ns:QueryInterface");
+    // end of hack
+    
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
@@ -1171,7 +1178,8 @@ function smwfQIAddHTMLHeader(&$out){
 
 	$jsm = SMWResourceManager::SINGLETON();
 
-	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+	// deactivate deploy version for QI temporarily
+	//if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1183,7 +1191,7 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
 				
-	} else {
+	/*} else {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1200,7 +1208,7 @@ function smwfQIAddHTMLHeader(&$out){
 			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
 			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));
 		}
-	}
+	}*/
 	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");
