@@ -35,6 +35,12 @@ FullscreenCommand.prototype = {
 	        }
 	        else
                 this.fckiframe.setAttribute('style', this.origStyle);
+           	// hide menubar of ontokin 3
+			var osMenuBar = window.parent.document.getElementById("smwh_menu");
+			if (osMenuBar) {
+				osMenuBar.style.display = "";
+			}
+                
         }
         else {
             this.fckiframe.style.left = '0px';
@@ -44,6 +50,11 @@ FullscreenCommand.prototype = {
             this.fckiframe.style.position = 'fixed';
             // needed to suppress the message of the ac
             this.fckiframe.style.zIndex = 2;
+			var osMenuBar = window.parent.document.getElementById("smwh_menu");
+			if (osMenuBar) {
+				osMenuBar.style.display = "none";
+			}
+            
         }
         this.fullscreen = 1 - this.fullscreen;
     }
