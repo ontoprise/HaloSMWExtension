@@ -1502,6 +1502,7 @@ FCKeditInterface.prototype = {
                 oSpan.setAttribute( 'property',  match[1] );
                 oSpan.innerHTML = match[2];
             }
+            if (oSpan.innerHTML.length == 0) oSpan.innerHTML = '&nbsp;'
         // no match for property, check category next
         } else {
             regex = new RegExp('^\\[\\[' + window.parent.gLanguage.getMessage('CATEGORY') + '(.*?)(\\|(.*?))?\\]\\]$');
