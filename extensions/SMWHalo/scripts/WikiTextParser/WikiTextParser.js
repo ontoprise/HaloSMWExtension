@@ -409,7 +409,7 @@ WikiTextParser.prototype = {
 	 		anno += "|" + representation;
 	 	}
 	 	else if (typeof FCKeditor != "undefined")
-	 	    anno += "| ";
+	 	    anno += "|"+(value? value : ' ');
 	 	anno += "]]";
 	 	var posInfo = this.addAnnotation(anno, append);
 	 	for (var i = 0; i < this.relationAddedHooks.size(); ++i) {
