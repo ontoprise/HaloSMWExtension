@@ -252,12 +252,12 @@ function smwRMFormAddHTMLHeader(&$out){
 		
 		# Prototype needed!
 		if (!defined('SMW_HALO_VERSION')) {
-		  $out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath .  '/scripts/prototype.js"/>');
+		  $out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath .  '/scripts/prototype.js"></script>');
 		}
 		
-		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"/>');
+		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		# Floatbox needed!
-		$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"/>');
+		$out->addScript('<script type="text/javascript" src="'.$sfgScriptPath .  '/libs/floatbox.js"></script>');
 		
 	
 		#Floatbox css file:
