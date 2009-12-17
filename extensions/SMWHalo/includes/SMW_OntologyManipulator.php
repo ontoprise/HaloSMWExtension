@@ -839,9 +839,10 @@ function smwf_om_GetDerivedFacts($titleName) {
 			} else {
 				$propRep = $propvalue->getLongWikiText();
 			}
+/* Don't show link to explanation while they are still not functional			
 			$propRep .= '&nbsp;'.
 				  '<span class="smwexplanation">'.$link.'</span>';
-
+*/
 			$text .= $propRep;
 
 		}
