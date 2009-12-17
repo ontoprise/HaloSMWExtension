@@ -608,9 +608,14 @@ AutoCompleter.prototype = {
      */
     resetCursorinIE: function() {
         if (!OB_bd.isIE) return;
-        this.currentIESelection.scrollIntoView(true);
-        this.currentIESelection.collapse(false);
-        this.currentIESelection.select();
+        var id = this.siw.inputBox ? this.siw.inputBox.getAttribute("id") : null;
+        // ignore search field, because it deletes
+        // its content when it gains the focus.
+        if (id != 'searchInput') { 
+	        this.currentIESelection.scrollIntoView(true);
+	        this.currentIESelection.collapse(false);
+	        this.currentIESelection.select();
+        }
     },
      /**
      * Shows small graphic indicating an AJAX call.
