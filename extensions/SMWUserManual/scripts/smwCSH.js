@@ -84,6 +84,9 @@ SMW_UserManual_CSH.prototype = {
         },
         // namespace in the SMW forum for comments and feedback entries
         this.smwCommentNs = "Comment" 
+        this.msgYourCommentHasBeenSend = 'Your comment has been filed in the SMWforum\nThank you!'
+        this.msgYourCommentHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
+            '<a href="'+umegSmwForumUrl+'?title=Help:%%%s%%%"><br>Thank you!'
     },
     
     /**
@@ -230,6 +233,8 @@ SMW_UserManual_CSH.prototype = {
         if (this.cshPage != null && rating != null) {  
             var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
             this.sendCommentToSmwplus(txt)
+            //alert(this.msgYourCommentHasBeenSendWithLink.replace(/%%%s%%%/, escape(this.cshPage.replace(/ /g, '_'))))
+            alert(this.msgYourCommentHasBeenSend)
             this.resetRating()
         }
     },
