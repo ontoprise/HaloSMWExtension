@@ -63,7 +63,6 @@ class FileData {
 
 	public function getFolderName(){
 		$fN = $this->decodeFileName($this->folderName);
-		file_put_contents("d:\zzz.txt", $fN);
 		return $fN;
 	}
 	
@@ -195,7 +194,6 @@ class FileData {
 		$fileName = str_replace("-percent-", "%", $fileName);
 		$fileName = urldecode($fileName);
 		$fileName = str_replace("-plus-", "+", $fileName);
-		file_put_contents("d:\zz.txt", $fileName);
 		return $fileName;
 	}
 	
