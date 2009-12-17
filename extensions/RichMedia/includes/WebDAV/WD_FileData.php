@@ -62,7 +62,8 @@ class FileData {
 	}
 
 	public function getFolderName(){
-		$fN = urldecode($this->decodeFileName($this->folderName));
+		$fN = $this->decodeFileName($this->folderName);
+		file_put_contents("d:\zzz.txt", $fN);
 		return $fN;
 	}
 	
@@ -72,10 +73,10 @@ class FileData {
 
 	public function getFileName(){
 		if($this->isWikiArticle()){
-			$fN = urldecode($this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6)));
+			$fN = $this->decodeFileName(substr($this->fileName, 0, strlen($this->fileName)-6));
 			return $fN; 
 		} else {
-			return urldecode($this->decodeFileName($this->fileName));
+			return $this->decodeFileName($this->fileName);
 		}
 	}
 
@@ -192,7 +193,9 @@ class FileData {
 		$fileName = str_replace("-ampersize-", "&", $fileName);
 		$fileName = str_replace("-q-mark-", "?", $fileName);
 		$fileName = str_replace("-percent-", "%", $fileName);
+		$fileName = urldecode($fileName);
 		$fileName = str_replace("-plus-", "+", $fileName);
+		file_put_contents("d:\zz.txt", $fileName);
 		return $fileName;
 	}
 	
