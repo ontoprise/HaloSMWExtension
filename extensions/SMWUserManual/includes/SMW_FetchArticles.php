@@ -37,11 +37,10 @@ class UME_FetchArticles {
             }
             $data = self::getPages($chunk);
             while ($o = array_shift($data)) {
-                $newTitle = substr($o->getTitle(), 5);
                 $text = $o->getContent().
                     self::makeDiscourseStatesProperty($o->getDiscourseState()).
                     "\n[[UME link::".$o->getLink()."| ]]";
-                self::createPage(SMW_NS_USER_MANUAL, $newTitle, $text);
+                self::createPage(SMW_NS_USER_MANUAL, $o->getTitle(), $text);
             }
         }
         self::installTemplates();
@@ -197,7 +196,8 @@ class UME_FetchArticles {
         $params = 'action=ajax&'.
             'rs=smwf_qi_QIAccess&'.
             'rsargs[]=getQueryResult&'.
-            'rsargs[]='.urlencode(SMW_FORUM_QUERY_CSH.',list,none,,,500,,ascending,,show');
+            'rsargs[]='.urlencode(SMW_FORUM_QUERY_CSH).
+            '%2Creasoner%3Dask%7Cformat%3Dlist%7Clink%3Dnone%7Climit%3D500';
         $pageList = self::callWiki(SMW_FORUM_URL, $params);
         if (self::$error != 0) {
             echo wfMsg('smw_ume_no_article_list')."\n";
@@ -213,8 +213,7 @@ class UME_FetchArticles {
         // trim whitspaces from page names
         for ($i = 0; $i < $is; $i++) {
             $pages[$i] = trim($pages[$i]);
-            if ( substr($pages[$i], 0, 5) != 'Help:') 
-                unset($pages[$i]);
+            $pages[$i] = preg_replace('/^Help:/', '', $pages[$i]);
         }
         return $pages;
     }

@@ -31,7 +31,8 @@ $wgExtensionCredits['other'][] = array(
  * help articles. This is done, so that no interference with any existing
  * articles might occur.
  * If you don't define anything, the default "UserManual" is used, which
- * is also language dependent.
+ * is also language dependent. Do not use any existing namespace, this
+ * will cause problems.
  */
 $umegNamespace = null;
 
