@@ -974,9 +974,11 @@ class FCKeditorParser extends Parser
 		return $text;
 	}
 	private function replaceRules($text) {
-	    global $wgTitle;
+	    global $wgTitle, $wgRequest;
 	    // rules exist in poperty pages only.
-	    if (defined('SMW_NS_PROPERTY') && $wgTitle->getNamespace() == SMW_NS_PROPERTY) {
+	    // if it's an ajax call we don't know the page name, so do it always
+	    if (($wgRequest->getVal('action') == 'ajax') || 
+	        (defined('SMW_NS_PROPERTY') && $wgTitle->getNamespace() == SMW_NS_PROPERTY)) {
 	        if (preg_match_all('/<rule[^>]*>.*?<\/rule>/s', $text, $matches)) {
 	             for ($i= 0; $i<count($matches[0]); $i++) {
 	                 $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw']=
