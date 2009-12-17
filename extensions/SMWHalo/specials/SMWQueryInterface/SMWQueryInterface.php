@@ -28,17 +28,21 @@ class SMWQueryInterface extends SpecialPage {
 
 		global $smwgResultFormats;
 		if (isset($smwgResultFormats)) {
-			foreach($smwgResultFormats as $format => $formatclass) {
+			$resultFormatsUnique = array_unique($smwgResultFormats);
+			
+			foreach($resultFormatsUnique as $format => $formatclass) {
 				
 				 try {
 				 $rc = new ReflectionClass($formatclass);
 				 if ($rc->hasMethod("getScripts")) {
 					 $qp = new $formatclass($format, false);
-				    foreach($qp->getScripts() as $script) $wgOut->addScript($script);
+					 $scriptsToLoad = $qp->getScripts();
+				    foreach($scriptsToLoad as $script) $wgOut->addScript($script);
 				 }
 				  if ($rc->hasMethod("getStylesheets")) {
                      $qp = new $formatclass($format, false);
-                    foreach($qp->getStylesheets() as $css) $wgOut->addLink($css);
+                     $styleSheetsToLoad = $qp->getStylesheets();
+                    foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
                  }
 				 } catch(ReflectionException $e) {
 				 	// igore
