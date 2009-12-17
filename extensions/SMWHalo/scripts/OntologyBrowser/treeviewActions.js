@@ -1143,9 +1143,9 @@ OBGlobalActionListener.prototype = {
 		
 		// make sure that OntologyBrowser Filter search gets focus if a key is pressed
 		Event.observe(document, 'keydown', function(event) { 
-			if (event.target.id == 'searchInput' || event.target.id.indexOf('ontologytools') != -1) return;
-			if (event.target.parentNode != document && $(event.target.parentNode).hasClassName('OB-filters')) return;
-			$('FilterBrowserInput').focus() 
+			if (event.target && event.target.localName == 'HTML') { // that means, no other element has the focus
+    			$('FilterBrowserInput').focus() 
+			}
 		});
 		
 		selectionProvider.addListener(this, OB_REFRESHLISTENER);
