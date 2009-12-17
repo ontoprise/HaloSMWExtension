@@ -10,6 +10,7 @@ div.ce-result-user img{
 /* the ID of the Collaboration Extension Comment Form (CE_CF)*/
 
 div#ce-c-header {
+	background-color:#F2F2F2;
 	width: 100%;
 	margin: 5px 0;
 	padding-top: 5px;
