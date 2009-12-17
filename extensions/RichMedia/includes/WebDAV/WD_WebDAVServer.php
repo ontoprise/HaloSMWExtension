@@ -589,7 +589,16 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$article = $mediaWiki->articleFromTitle( $title );
 
 		$articleId = $title->getArticleID( GAID_FOR_UPDATE );
-		$article->doDeleteArticle("Deleted via WebDAV", true, $articleId);
+		
+		global $wgUser;
+		
+		$error = '';
+		if(wfRunHooks('ArticleDelete', array(&$article, &$wgUser, 
+				"Deleted via WebDAV", &$error))) {
+			$article->doDeleteArticle("Deleted via WebDAV", true, $articleId);
+			wfRunHooks('ArticleDeleteComplete', array(&$article, &$wgUser, 
+				"Deleted via WebDAV", $articleId));
+		}
 
 		return true;
 	}
