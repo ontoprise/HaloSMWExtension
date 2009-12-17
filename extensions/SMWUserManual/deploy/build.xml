@@ -43,7 +43,9 @@
         </copy>
 
     	<get src="http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/maintenance/cshPages.xml"
-    		dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml"/>
+    		dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml"
+    		ignoreerrors="true"
+    	/>
     	
         <zip destfile="bin/smwhalo-usermanual-${version}.zip" basedir="bin/zip" />
         <delete dir="bin/zip" />
