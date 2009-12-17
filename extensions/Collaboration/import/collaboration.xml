@@ -121,8 +121,8 @@
     <title>Template:CommentResult</title>
     <id>2240</id>
     <revision>
-      <id>11560</id>
-      <timestamp>2009-12-14T10:56:55Z</timestamp>
+      <id>12668</id>
+      <timestamp>2009-12-17T15:03:38Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -141,7 +141,7 @@
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment --&gt;
 &lt;div style=&quot;border: 1px solid lightgrey; background-color: #F2F2F2; margin: 5px 0px; padding: 3px; min-height: 50px;clear:both;&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom: 5px;&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div style=&quot;display: inline; color: grey; padding-left: 5px;&quot; class=&quot;ce-result-user&quot;&gt;{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}
-&lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#ifexist:{{{2|}}}|[[{{{2|}}}]]|{{{2|}}}}}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- comment date--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;
+&lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#ifexist:{{{2|}}}|[[{{{2|}}}]]|{{{2|}}}}}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- comment date--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment link--&gt;&lt;div style=&quot;display:inline&quot;&gt;&amp;nbsp;[[{{{1}}}|show comment]]&lt;/div&gt;&lt;!-- end comment link --&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;
 &lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div style=&quot;padding: 7px; display: inline; font-weight: bold;&quot;&gt;{{{4}}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>
@@ -178,8 +178,8 @@
     <title>Template:ShowCommentsIntern</title>
     <id>2256</id>
     <revision>
-      <id>12391</id>
-      <timestamp>2009-12-17T12:01:26Z</timestamp>
+      <id>12399</id>
+      <timestamp>2009-12-17T12:12:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -208,13 +208,13 @@
   | format=count
 }}}}
 &lt;!--start surrounding div --&gt;&lt;div style=&quot;clear:both;border:1px solid white;&quot;&gt;{{#if:{{#var:avgrating}}|&lt;!-- start average div --&gt;&lt;div style=&quot;font-weight:bold;background-color:#EDF4FC;float:left;width:100%;color:black;border-bottom:1px solid grey;&quot;&gt;&lt;!--
---&gt;[[File:Comment_icon_crystal.png|middle|nopreview|25px]]&amp;nbsp;&lt;span style=&quot;font-size:larger&quot;&gt;Comments&amp;nbsp;&lt;/span&gt;({{#var:countrating}} people rated this &lt;!--
+--&gt;[[File:Comment_icon_crystal.png|middle|nopreview|25px|link=]]&amp;nbsp;&lt;span style=&quot;font-size:larger&quot;&gt;Comments&amp;nbsp;&lt;/span&gt;({{#var:countrating}} people rated this &lt;!--
 --&gt;&lt;div class=&quot;ce-rating-icon&quot; style=&quot;color:black;padding-left:3px;display:inline&quot;&gt;&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |[[File:Bad_active.png|nopreview|middle]]}}&lt;!--
+--&gt;{{#ifexpr:{{#var:avgrating}} &lt; -0.33 |[[File:Bad_active.png|nopreview|middle|link=]]}}&lt;!--
 --&gt;{{#ifexpr:{{#var:avgrating}} &gt;= -0.33&lt;!--
-...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |[[File:Neutral_active.png|nopreview|middle]]}}&lt;!--
+...--&gt;| {{#ifexpr:{{#var:avgrating}} &lt;= 0.33 |[[File:Neutral_active.png|nopreview|middle|link=]]}}&lt;!--
 --&gt;}}&lt;!--
---&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |[[File:Good_active.png|nopreview|middle]]}})&lt;/div&gt;&lt;/div&gt;&lt;!-- end average div --&gt;|}}
+--&gt;{{#ifexpr:{{#var:avgrating}} &gt; 0.33 |[[File:Good_active.png|nopreview|middle|link=]]}})&lt;/div&gt;&lt;/div&gt;&lt;!-- end average div --&gt;|}}
 {{#showcommentform:}}
 {{#ask: [[Belongs to article::{{FULLPAGENAME}}]] [[Comment:+]]
   | ?Has comment person
@@ -881,17 +881,15 @@ case: All content sections END
     <title>Template:Tablelongrow</title>
     <id>165</id>
     <revision>
-      <id>11029</id>
-      <timestamp>2009-12-03T17:08:54Z</timestamp>
+      <id>12663</id>
+      <timestamp>2009-12-17T14:46:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablelongrow
-|part of=SMWforum User Manuals Section
+|part of=SMWplus Basic Ontology Section
 |rationale=This is a helper template to display a table row spanning 2 columns.
 |parameters=&lt;pre&gt;
 {{Tablelongrow
