@@ -269,7 +269,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_EmbeddedFormField.inc	(revision 0)
 +++ extensions/SemanticForms/includes/SF_EmbeddedFormField.inc	(revision 0)
-@@ -0,0 +1,646 @@
+@@ -0,0 +1,645 @@
 +<?php
 +/*
 + * This class is distinct from SFTemplateField in that it represents a
@@ -487,7 +487,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 +}
 +
 +
-+  function countRange($property) {
++function countRange($property) {
 +    $domrange = $this->getDomainAndRanges($property);
 +    $j=0;
 +    foreach ($domrange as $i) {
@@ -918,7 +918,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 5626)
+--- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_FormPrinter.inc	(working copy)
 @@ -9,6 +9,14 @@
   * @author Daniel Hansch
@@ -1135,6 +1135,26 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            }
            $section = substr_replace($section, '', $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
          // =====================================================
+@@ -1038,15 +1143,15 @@
+           // doing a replace
+           if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
+             $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
+-              preg_replace('/\}\}/m', '}²',
+-                preg_replace('/\{\{/m', '²{', $template_text)) .
++              preg_replace('/\}\}/m', '}ï¿½',
++                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+               "\n{{{insertionpoint}}}",
+               $existing_page_content);
+           // otherwise, if it's a partial form, we have to add the new
+           // text somewhere
+           } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
+-            $existing_page_content = preg_replace('/\}\}/m', '}²',
+-              preg_replace('/\{\{/m', '²{', $template_text)) .
++            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
++              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
+                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
+           }
+         }
 @@ -1095,7 +1200,11 @@
        } else {
          $form_text .= $section;
@@ -1148,6 +1168,15 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      } // end for
  
      // if it wasn't included in the form definition, add the
+@@ -1115,7 +1224,7 @@
+          $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
+        } else {
+          $free_text = null;
+-         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
++         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
+          $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
+          $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
+        }
 @@ -1135,24 +1244,54 @@
      } else {
        $free_text = null;
@@ -1220,7 +1249,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        }
 Index: extensions/SemanticForms/includes/SF_FormUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 5626)
+--- extensions/SemanticForms/includes/SF_FormUtils.inc	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_FormUtils.inc	(working copy)
 @@ -689,13 +689,16 @@
  		global $wgUser, $wgDefaultUserOptions;
@@ -1309,7 +1338,7 @@ Index: extensions/SemanticForms/includes/SF_FormUtils.inc
  		FCKeditorInsertTags = function (tagOpen, tagClose, sampleText, oDoc)
 Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
 ===================================================================
---- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 5626)
+--- extensions/SemanticForms/includes/SF_GlobalFunctions.php	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_GlobalFunctions.php	(working copy)
 @@ -49,6 +49,17 @@
  $wgSpecialPages['CreateForm'] = 'SFCreateForm';
@@ -1331,7 +1360,7 @@ Index: extensions/SemanticForms/includes/SF_GlobalFunctions.php
  $wgSpecialPageGroups['Templates'] = 'pages';
 Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 5626)
+--- extensions/SemanticForms/includes/SF_LinkUtils.inc	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_LinkUtils.inc	(working copy)
 @@ -5,6 +5,13 @@
   * @author Yaron Koren
@@ -1381,7 +1410,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  		if (NS_MAIN === $namespace) {
 Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 5626)
+--- extensions/SemanticForms/includes/SF_TemplateField.inc	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_TemplateField.inc	(working copy)
 @@ -7,6 +7,8 @@
   * @author Yaron Koren
@@ -1496,7 +1525,7 @@ Index: extensions/SemanticForms/includes/SF_TemplateField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_Utils.inc
 ===================================================================
---- extensions/SemanticForms/includes/SF_Utils.inc	(revision 5626)
+--- extensions/SemanticForms/includes/SF_Utils.inc	(revision 6321)
 +++ extensions/SemanticForms/includes/SF_Utils.inc	(working copy)
 @@ -66,7 +66,11 @@
  			$action = "wpPreview";
@@ -1526,7 +1555,7 @@ Index: extensions/SemanticForms/includes/SF_Utils.inc
  		if ($wgFCKEditorDir)
 Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
---- extensions/SemanticForms/languages/SF_Messages.php	(revision 5626)
+--- extensions/SemanticForms/languages/SF_Messages.php	(revision 6321)
 +++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
 @@ -15,6 +15,12 @@
   */
@@ -1543,7 +1572,7 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
  	'createproperty'                     => 'Create a property',
 Index: extensions/SemanticForms/specials/SF_AddData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_AddData.php	(revision 5626)
+--- extensions/SemanticForms/specials/SF_AddData.php	(revision 6321)
 +++ extensions/SemanticForms/specials/SF_AddData.php	(working copy)
 @@ -28,6 +28,19 @@
  			$queryparts = explode('/', $query, 2);
@@ -1809,7 +1838,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 5626)
+--- extensions/SemanticForms/specials/SF_CreateTemplate.php	(revision 6321)
 +++ extensions/SemanticForms/specials/SF_CreateTemplate.php	(working copy)
 @@ -10,6 +10,9 @@
   * Protect against register_globals vulnerabilities.
@@ -1956,7 +1985,7 @@ Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 \ No newline at end of file
 Index: extensions/SemanticForms/specials/SF_EditData.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_EditData.php	(revision 5626)
+--- extensions/SemanticForms/specials/SF_EditData.php	(revision 6321)
 +++ extensions/SemanticForms/specials/SF_EditData.php	(working copy)
 @@ -111,7 +111,12 @@
  	<input type="hidden" name="query" value="true" />
