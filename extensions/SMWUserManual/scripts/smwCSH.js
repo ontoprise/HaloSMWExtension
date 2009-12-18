@@ -18,7 +18,9 @@ SMW_UserManual_CSH.prototype = {
             div.id = 'smw_csh'
             div.style.textAlign = 'right'
             // and insert it below the <div id="content">
-            var child = document.getElementById('content').firstChild
+            var contentDiv = document.getElementById('content')
+            if (!contentDiv) return 
+            var child = contentDiv.firstChild
             if (child.nodeType == 1)
                 document.getElementById('content').insertBefore(div, child)
             // we can't insert it before a text node, therefore look for the
@@ -64,12 +66,11 @@ SMW_UserManual_CSH.prototype = {
             +'comment=%%%1%%%&browser=%%%2%%%&operatingsystem=%%%3%%%&'
             +'rep_platform=Other&bug_file_loc=&fingerprint=&'
             +'version=%%%4%%%&component=%%%5%%%'
-        // mapping discourse state to component
+        // mapping discourse state to component,
+        // if a discourse state is not listed here, component will be Miscellaneous
         this.component= {
-            'EditWikisyntax' : 'Miscellaneous',
             'SemanticForms' : 'Semantic Forms Extension Core',
             'EditWYSIWYG' : 'FCK-Editor Extension Core',
-            'preview' : 'Miscellaneous',
             'OntologyBrowser' : 'Ontology Browser',
             'QueryInterface' : 'Query Interface',
             'SemanticNotifications' : 'Semantic Notifications',
@@ -403,9 +404,10 @@ SMW_UserManual_CSH.prototype = {
         // drop unimportand states
         for (i=0; i<ds.length; i++) {
             if (ds.length > 1 && 
-                (ds[i]=='SemanticForms' || ds[i]=='HaloAutoCompletion' || ds[i]=='edit' || ds[i]=='preview'))
+                (ds[i]=='SemanticForms' || ds[i]=='HaloAutoCompletion' || ds[i]=='EditWikisyntax' || ds[i]=='preview'))
                 ds.splice(i, 1)
         }
+        // the first one is the most important one
         if (!all) return ds[0]
         return ds
     },
@@ -445,19 +447,19 @@ SMW_UserManual_CSH.prototype = {
         if (document.getElementById('semtoolbar')) ds.push('SemanticToolbar')
         // any input element with class wick (ignore the search field)
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
-        // check the action parameter
-        switch (wgAction) {
-            case 'edit': if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax'); break
-            case 'annotate': ds.push('Annotate'); break
-            case 'submit' : ds.push('preview'); break
-            case 'formedit': ds.push('SemanticForms'); break
-        }
         // check namespace
         switch (wgNamespaceNumber) {
             case 14: ds.push('Category'); break
             case 10: ds.push('Template'); break
             case 102: ds.push('Property'); break 
             case -1: ds.push('SpecialPages'); break
+        }
+        // check the action parameter
+        switch (wgAction) {
+            case 'edit': if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax'); break
+            case 'annotate': ds.push('Annotate'); break
+            case 'submit' : ds.push('preview'); break
+            case 'formedit': ds.push('SemanticForms'); break
         }
         ds.push('General')
         return this.uniqueDs(ds)
@@ -551,6 +553,7 @@ SMW_UserManual_CSH.prototype = {
         var txt=this.txtBugReport
         var wiki = wgServer+wgScriptPath
         var ds = this.getSingleDiscourseState()
+        var component = (this.component[ds]) ? this.component[ds] : 'Miscellaneous'
         var browser= (navigator.userAgent.indexOf('Firefox') > -1)
             ?'Firefox'
             :(navigator.userAgent.indexOf('MSIE') > -1)
@@ -570,7 +573,7 @@ SMW_UserManual_CSH.prototype = {
         txt=txt.replace(/%%%2%%%/, browser)
         txt=txt.replace(/%%%3%%%/, os)
         txt=txt.replace(/%%%4%%%/, smwVersion)
-        txt=txt.replace(/%%%5%%%/, escape(this.component[ds]))
+        txt=txt.replace(/%%%5%%%/, escape(component))
         return txt        
     }
 }
