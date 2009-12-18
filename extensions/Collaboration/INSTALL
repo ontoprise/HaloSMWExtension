@@ -36,12 +36,21 @@ enableCollaboration();
 Import of the ontology
 ----------------------
 
-The Collaboration extension comes with an own small onotlogy to provide functionality
-for displaying and querying existing comments.
+The Collaboration extension comes with an own small ontology to provide functionality
+for displaying and querying existing comments and some icons.
 
 For that go to Special:Import, select and upload '/extensions/Collaboration/import/collaboration.xml'
 
-Now you can enter {{ShowComments}} to any article where you want to get a
+To use the delivered icons you need to upload the following files in your wiki:
+'/extensions/Collaboration/skins/icons/bad_active.png'
+'/extensions/Collaboration/skins/icons/neutral_active.png'
+'/extensions/Collaboration/skins/icons/good_active.png'
+'/extensions/Collaboration/skins/icons/defaultuser.gif'
+'/extensions/Collaboration/skins/icons/smw_plus_delete_icon_16x16.png'
+'/extensions/Collaboration/skins/icons/Comment_icon_crystal.png'
+Please be sure that you keep the original file names.
+
+Now you can enter {{ShowComments|show=True}} to any article where you want to get a
 list of all 'related comments' and a form that allows you to enter new comments. 
 
 
@@ -56,6 +65,6 @@ To reformat the style of existing comments take a look at 'Template:CommentResul
 
 Notice
 ======
-It's highly recommended that you do not change the css definitions 'height' and 'width'
-for 'div.ce_result_user'. It's used to downscale the user icon. Changing or deleting
+It's highly recommended that you do not change the css definitions for 'div.ce_result_user'
+and img#ce-cf-user-img. They are among others used to downscale the user icon. Changing or deleting
 these values could lead to unintended GUI results.
