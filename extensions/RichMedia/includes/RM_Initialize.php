@@ -199,12 +199,15 @@ function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	RMNamespace::isImage( $target->getNamespace(), $rMresult );
 	if ( $rMresult ) {
 		if ( $wgRMImagePreview ) {
+			$linkID = $target->getPrefixedText() . rand(0, 1024);
 			$queryString = "target=".urlencode($target->getPrefixedText());
 			$embedWindowPage = SpecialPage::getPage('EmbedWindow');
 			$embedWindowUrl = $embedWindowPage->getTitle()->getFullURL($queryString);
 			$attribs['rev'] = 'height:500 width:700';
 			$attribs['rel'] = 'iframe';
+			$attribs['id'] = $linkID;
 			$attribs['href'] = $embedWindowUrl;
+			$attribs['onclick'] = "fb.loadAnchor($('$linkID'));return false;";
 		}
 	}
 	//Change Special:Upload to Special:UploadWindow
