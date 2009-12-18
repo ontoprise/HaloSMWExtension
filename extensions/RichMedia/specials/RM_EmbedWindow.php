@@ -122,7 +122,7 @@ class EmbedWindowForm {
 			if (!$imageToSmall) {
 				# fullResSize and FitToWindow links for images
 				$embedWindowPage = SpecialPage::getPage('EmbedWindow');
-				$targetString = "target=$this->mTarget";
+				$targetString = "target=".urlencode($this->mTarget);
 				$fullResSizeString = "&fullRes=true";
 				$fullResSizeURL = $embedWindowPage->getTitle()->getFullURL($targetString.$fullResSizeString);
 				$fitToWindowURL = $embedWindowPage->getTitle()->getFullURL($targetString);
@@ -177,11 +177,11 @@ END;
 					</td>
 					{$fullRes_fit_section}
 					<td>&nbsp;</td>
-					<td style="border-right:1px dotted black;border-left:1px dotted black;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;width:60px;text-align:right">
+					<!--<td style="border-right:1px dotted black;border-left:1px dotted black;padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;color:white;font-weight:bold;width:60px;text-align:right">
 						<a href="{$imagePath}" title="{$saveLinkAlt}" style="color:white">{$saveLinkText}
 							<img title="{$saveLinkAlt}" src="{$wgServer}{$smwgRMScriptPath}/skins/save_icon.png" style="vertical-align:middle;border-width:0px;padding-bottom:3px;"></img>
 						</a>
-					</td>
+					</td>-->
 					<td style="padding-top:0px;padding-bottom:0px;padding-left:10px;padding-right:10px;color:white;font-weight:bold;text-align:right;width:135px;;">
 						<a href="{$nt->getFullURL()}" title="{$descLinkAlt}" target="_top" style="color:white">>>&nbsp;{$descText}
 						</a>
