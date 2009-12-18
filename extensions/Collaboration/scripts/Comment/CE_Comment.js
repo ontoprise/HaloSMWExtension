@@ -303,7 +303,16 @@ Event.observe(window, 'load', function() {
 
 				aEl.appendChild(imgEl);
 				divEl.appendChild(aEl);
-				resCom.nextElementSibling.appendChild(divEl);
+
+				// Firefox considers the whitespace between element nodes
+				// to be text nodes (whereas IE does not)
+				resComSiblings = resCom.nextSiblings();
+				var i = 0;
+				do {
+					resComSib = resComSiblings[i++];
+				} while( resComSib && resComSib.nodeType !== 1 ); // 1 == Node.ELEMENT_NODE
+				if( resComSib )
+					resComSib.appendChild(divEl);
 			});
 		}
 	}
