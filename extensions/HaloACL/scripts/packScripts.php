@@ -23,7 +23,7 @@
  *
  * Used to pack javascript files to one big file.
  * 
- *Usage: php packScripts -o hacl-packed.js -l scriptList.txt
+ *Usage: php packScripts.php -o hacl-packed.js -l scriptList.txt
  *  scriptList.txt enthält alle skripte die gepackt werden in der gegeb. Reihenfolge. Eines pro Zeile
  
  */

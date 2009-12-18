@@ -10,290 +10,6 @@ Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
 version: 2.7.0
 */
-YAHOO.util.CustomEvent=function(D,C,B,A){this.type=D;this.scope=C||window;this.silent=B;this.signature=A||YAHOO.util.CustomEvent.LIST;this.subscribers=[];if(!this.silent){}var E="_YUICEOnSubscribe";if(D!==E){this.subscribeEvent=new YAHOO.util.CustomEvent(E,this,true);}this.lastError=null;};YAHOO.util.CustomEvent.LIST=0;YAHOO.util.CustomEvent.FLAT=1;YAHOO.util.CustomEvent.prototype={subscribe:function(A,B,C){if(!A){throw new Error("Invalid callback for subscriber to '"+this.type+"'");}if(this.subscribeEvent){this.subscribeEvent.fire(A,B,C);}this.subscribers.push(new YAHOO.util.Subscriber(A,B,C));},unsubscribe:function(D,F){if(!D){return this.unsubscribeAll();}var E=false;for(var B=0,A=this.subscribers.length;B<A;++B){var C=this.subscribers[B];if(C&&C.contains(D,F)){this._delete(B);E=true;}}return E;},fire:function(){this.lastError=null;var K=[],E=this.subscribers.length;if(!E&&this.silent){return true;}var I=[].slice.call(arguments,0),G=true,D,J=false;if(!this.silent){}var C=this.subscribers.slice(),A=YAHOO.util.Event.throwErrors;for(D=0;D<E;++D){var M=C[D];if(!M){J=true;}else{if(!this.silent){}var L=M.getScope(this.scope);if(this.signature==YAHOO.util.CustomEvent.FLAT){var B=null;if(I.length>0){B=I[0];}try{G=M.fn.call(L,B,M.obj);}catch(F){this.lastError=F;if(A){throw F;}}}else{try{G=M.fn.call(L,this.type,I,M.obj);}catch(H){this.lastError=H;if(A){throw H;}}}if(false===G){if(!this.silent){}break;}}}return(G!==false);},unsubscribeAll:function(){var A=this.subscribers.length,B;for(B=A-1;B>-1;B--){this._delete(B);}this.subscribers=[];return A;},_delete:function(A){var B=this.subscribers[A];if(B){delete B.fn;delete B.obj;}this.subscribers.splice(A,1);},toString:function(){return"CustomEvent: "+"'"+this.type+"', "+"context: "+this.scope;}};YAHOO.util.Subscriber=function(A,B,C){this.fn=A;this.obj=YAHOO.lang.isUndefined(B)?null:B;this.overrideContext=C;};YAHOO.util.Subscriber.prototype.getScope=function(A){if(this.overrideContext){if(this.overrideContext===true){return this.obj;}else{return this.overrideContext;}}return A;};YAHOO.util.Subscriber.prototype.contains=function(A,B){if(B){return(this.fn==A&&this.obj==B);}else{return(this.fn==A);}};YAHOO.util.Subscriber.prototype.toString=function(){return"Subscriber { obj: "+this.obj+", overrideContext: "+(this.overrideContext||"no")+" }";};if(!YAHOO.util.Event){YAHOO.util.Event=function(){var H=false;var I=[];var J=[];var G=[];var E=[];var C=0;var F=[];var B=[];var A=0;var D={63232:38,63233:40,63234:37,63235:39,63276:33,63277:34,25:9};var K=YAHOO.env.ua.ie?"focusin":"focus";var L=YAHOO.env.ua.ie?"focusout":"blur";return{POLL_RETRYS:2000,POLL_INTERVAL:20,EL:0,TYPE:1,FN:2,WFN:3,UNLOAD_OBJ:3,ADJ_SCOPE:4,OBJ:5,OVERRIDE:6,lastError:null,isSafari:YAHOO.env.ua.webkit,webkit:YAHOO.env.ua.webkit,isIE:YAHOO.env.ua.ie,_interval:null,_dri:null,DOMReady:false,throwErrors:false,startInterval:function(){if(!this._interval){var M=this;var N=function(){M._tryPreloadAttach();};this._interval=setInterval(N,this.POLL_INTERVAL);}},onAvailable:function(S,O,Q,R,P){var M=(YAHOO.lang.isString(S))?[S]:S;for(var N=0;N<M.length;N=N+1){F.push({id:M[N],fn:O,obj:Q,overrideContext:R,checkReady:P});}C=this.POLL_RETRYS;this.startInterval();},onContentReady:function(P,M,N,O){this.onAvailable(P,M,N,O,true);},onDOMReady:function(M,N,O){if(this.DOMReady){setTimeout(function(){var P=window;if(O){if(O===true){P=N;}else{P=O;}}M.call(P,"DOMReady",[],N);},0);}else{this.DOMReadyEvent.subscribe(M,N,O);}},_addListener:function(O,M,Y,S,W,b){if(!Y||!Y.call){return false;}if(this._isValidCollection(O)){var Z=true;for(var T=0,V=O.length;T<V;++T){Z=this.on(O[T],M,Y,S,W)&&Z;}return Z;}else{if(YAHOO.lang.isString(O)){var R=this.getEl(O);if(R){O=R;}else{this.onAvailable(O,function(){YAHOO.util.Event.on(O,M,Y,S,W);});return true;}}}if(!O){return false;}if("unload"==M&&S!==this){J[J.length]=[O,M,Y,S,W];return true;}var N=O;if(W){if(W===true){N=S;}else{N=W;}}var P=function(c){return Y.call(N,YAHOO.util.Event.getEvent(c,O),S);};var a=[O,M,Y,P,N,S,W];var U=I.length;I[U]=a;if(this.useLegacyEvent(O,M)){var Q=this.getLegacyIndex(O,M);if(Q==-1||O!=G[Q][0]){Q=G.length;B[O.id+M]=Q;G[Q]=[O,M,O["on"+M]];E[Q]=[];O["on"+M]=function(c){YAHOO.util.Event.fireLegacyEvent(YAHOO.util.Event.getEvent(c),Q);};}E[Q].push(a);}else{try{this._simpleAdd(O,M,P,b);}catch(X){this.lastError=X;this.removeListener(O,M,Y);return false;}}return true;},addListener:function(N,Q,M,O,P){return this._addListener(N,Q,M,O,P,false);},addFocusListener:function(N,M,O,P){return this._addListener(N,K,M,O,P,true);},removeFocusListener:function(N,M){return this.removeListener(N,K,M);},addBlurListener:function(N,M,O,P){return this._addListener(N,L,M,O,P,true);},removeBlurListener:function(N,M){return this.removeListener(N,L,M);},fireLegacyEvent:function(R,P){var T=true,M,V,U,N,S;V=E[P].slice();for(var O=0,Q=V.length;O<Q;++O){U=V[O];if(U&&U[this.WFN]){N=U[this.ADJ_SCOPE];S=U[this.WFN].call(N,R);T=(T&&S);}}M=G[P];if(M&&M[2]){M[2](R);}return T;},getLegacyIndex:function(N,O){var M=this.generateId(N)+O;if(typeof B[M]=="undefined"){return -1;}else{return B[M];}},useLegacyEvent:function(M,N){return(this.webkit&&this.webkit<419&&("click"==N||"dblclick"==N));},removeListener:function(N,M,V){var Q,T,X;if(typeof N=="string"){N=this.getEl(N);}else{if(this._isValidCollection(N)){var W=true;for(Q=N.length-1;Q>-1;Q--){W=(this.removeListener(N[Q],M,V)&&W);}return W;}}if(!V||!V.call){return this.purgeElement(N,false,M);}if("unload"==M){for(Q=J.length-1;Q>-1;Q--){X=J[Q];if(X&&X[0]==N&&X[1]==M&&X[2]==V){J.splice(Q,1);return true;}}return false;}var R=null;var S=arguments[3];if("undefined"===typeof S){S=this._getCacheIndex(N,M,V);}if(S>=0){R=I[S];}if(!N||!R){return false;}if(this.useLegacyEvent(N,M)){var P=this.getLegacyIndex(N,M);var O=E[P];if(O){for(Q=0,T=O.length;Q<T;++Q){X=O[Q];if(X&&X[this.EL]==N&&X[this.TYPE]==M&&X[this.FN]==V){O.splice(Q,1);break;}}}}else{try{this._simpleRemove(N,M,R[this.WFN],false);}catch(U){this.lastError=U;return false;}}delete I[S][this.WFN];delete I[S][this.FN];
-I.splice(S,1);return true;},getTarget:function(O,N){var M=O.target||O.srcElement;return this.resolveTextNode(M);},resolveTextNode:function(N){try{if(N&&3==N.nodeType){return N.parentNode;}}catch(M){}return N;},getPageX:function(N){var M=N.pageX;if(!M&&0!==M){M=N.clientX||0;if(this.isIE){M+=this._getScrollLeft();}}return M;},getPageY:function(M){var N=M.pageY;if(!N&&0!==N){N=M.clientY||0;if(this.isIE){N+=this._getScrollTop();}}return N;},getXY:function(M){return[this.getPageX(M),this.getPageY(M)];},getRelatedTarget:function(N){var M=N.relatedTarget;if(!M){if(N.type=="mouseout"){M=N.toElement;}else{if(N.type=="mouseover"){M=N.fromElement;}}}return this.resolveTextNode(M);},getTime:function(O){if(!O.time){var N=new Date().getTime();try{O.time=N;}catch(M){this.lastError=M;return N;}}return O.time;},stopEvent:function(M){this.stopPropagation(M);this.preventDefault(M);},stopPropagation:function(M){if(M.stopPropagation){M.stopPropagation();}else{M.cancelBubble=true;}},preventDefault:function(M){if(M.preventDefault){M.preventDefault();}else{M.returnValue=false;}},getEvent:function(O,M){var N=O||window.event;if(!N){var P=this.getEvent.caller;while(P){N=P.arguments[0];if(N&&Event==N.constructor){break;}P=P.caller;}}return N;},getCharCode:function(N){var M=N.keyCode||N.charCode||0;if(YAHOO.env.ua.webkit&&(M in D)){M=D[M];}return M;},_getCacheIndex:function(Q,R,P){for(var O=0,N=I.length;O<N;O=O+1){var M=I[O];if(M&&M[this.FN]==P&&M[this.EL]==Q&&M[this.TYPE]==R){return O;}}return -1;},generateId:function(M){var N=M.id;if(!N){N="yuievtautoid-"+A;++A;M.id=N;}return N;},_isValidCollection:function(N){try{return(N&&typeof N!=="string"&&N.length&&!N.tagName&&!N.alert&&typeof N[0]!=="undefined");}catch(M){return false;}},elCache:{},getEl:function(M){return(typeof M==="string")?document.getElementById(M):M;},clearCache:function(){},DOMReadyEvent:new YAHOO.util.CustomEvent("DOMReady",this),_load:function(N){if(!H){H=true;var M=YAHOO.util.Event;M._ready();M._tryPreloadAttach();}},_ready:function(N){var M=YAHOO.util.Event;if(!M.DOMReady){M.DOMReady=true;M.DOMReadyEvent.fire();M._simpleRemove(document,"DOMContentLoaded",M._ready);}},_tryPreloadAttach:function(){if(F.length===0){C=0;if(this._interval){clearInterval(this._interval);this._interval=null;}return;}if(this.locked){return;}if(this.isIE){if(!this.DOMReady){this.startInterval();return;}}this.locked=true;var S=!H;if(!S){S=(C>0&&F.length>0);}var R=[];var T=function(V,W){var U=V;if(W.overrideContext){if(W.overrideContext===true){U=W.obj;}else{U=W.overrideContext;}}W.fn.call(U,W.obj);};var N,M,Q,P,O=[];for(N=0,M=F.length;N<M;N=N+1){Q=F[N];if(Q){P=this.getEl(Q.id);if(P){if(Q.checkReady){if(H||P.nextSibling||!S){O.push(Q);F[N]=null;}}else{T(P,Q);F[N]=null;}}else{R.push(Q);}}}for(N=0,M=O.length;N<M;N=N+1){Q=O[N];T(this.getEl(Q.id),Q);}C--;if(S){for(N=F.length-1;N>-1;N--){Q=F[N];if(!Q||!Q.id){F.splice(N,1);}}this.startInterval();}else{if(this._interval){clearInterval(this._interval);this._interval=null;}}this.locked=false;},purgeElement:function(Q,R,T){var O=(YAHOO.lang.isString(Q))?this.getEl(Q):Q;var S=this.getListeners(O,T),P,M;if(S){for(P=S.length-1;P>-1;P--){var N=S[P];this.removeListener(O,N.type,N.fn);}}if(R&&O&&O.childNodes){for(P=0,M=O.childNodes.length;P<M;++P){this.purgeElement(O.childNodes[P],R,T);}}},getListeners:function(O,M){var R=[],N;if(!M){N=[I,J];}else{if(M==="unload"){N=[J];}else{N=[I];}}var T=(YAHOO.lang.isString(O))?this.getEl(O):O;for(var Q=0;Q<N.length;Q=Q+1){var V=N[Q];if(V){for(var S=0,U=V.length;S<U;++S){var P=V[S];if(P&&P[this.EL]===T&&(!M||M===P[this.TYPE])){R.push({type:P[this.TYPE],fn:P[this.FN],obj:P[this.OBJ],adjust:P[this.OVERRIDE],scope:P[this.ADJ_SCOPE],index:S});}}}}return(R.length)?R:null;},_unload:function(T){var N=YAHOO.util.Event,Q,P,O,S,R,U=J.slice(),M;for(Q=0,S=J.length;Q<S;++Q){O=U[Q];if(O){M=window;if(O[N.ADJ_SCOPE]){if(O[N.ADJ_SCOPE]===true){M=O[N.UNLOAD_OBJ];}else{M=O[N.ADJ_SCOPE];}}O[N.FN].call(M,N.getEvent(T,O[N.EL]),O[N.UNLOAD_OBJ]);U[Q]=null;}}O=null;M=null;J=null;if(I){for(P=I.length-1;P>-1;P--){O=I[P];if(O){N.removeListener(O[N.EL],O[N.TYPE],O[N.FN],P);}}O=null;}G=null;N._simpleRemove(window,"unload",N._unload);},_getScrollLeft:function(){return this._getScroll()[1];},_getScrollTop:function(){return this._getScroll()[0];},_getScroll:function(){var M=document.documentElement,N=document.body;if(M&&(M.scrollTop||M.scrollLeft)){return[M.scrollTop,M.scrollLeft];}else{if(N){return[N.scrollTop,N.scrollLeft];}else{return[0,0];}}},regCE:function(){},_simpleAdd:function(){if(window.addEventListener){return function(O,P,N,M){O.addEventListener(P,N,(M));};}else{if(window.attachEvent){return function(O,P,N,M){O.attachEvent("on"+P,N);};}else{return function(){};}}}(),_simpleRemove:function(){if(window.removeEventListener){return function(O,P,N,M){O.removeEventListener(P,N,(M));};}else{if(window.detachEvent){return function(N,O,M){N.detachEvent("on"+O,M);};}else{return function(){};}}}()};}();(function(){var EU=YAHOO.util.Event;EU.on=EU.addListener;EU.onFocus=EU.addFocusListener;EU.onBlur=EU.addBlurListener;
-/* DOMReady: based on work by: Dean Edwards/John Resig/Matthias Miller */
-if(EU.isIE){YAHOO.util.Event.onDOMReady(YAHOO.util.Event._tryPreloadAttach,YAHOO.util.Event,true);var n=document.createElement("p");EU._dri=setInterval(function(){try{n.doScroll("left");clearInterval(EU._dri);EU._dri=null;EU._ready();n=null;}catch(ex){}},EU.POLL_INTERVAL);}else{if(EU.webkit&&EU.webkit<525){EU._dri=setInterval(function(){var rs=document.readyState;if("loaded"==rs||"complete"==rs){clearInterval(EU._dri);EU._dri=null;EU._ready();}},EU.POLL_INTERVAL);}else{EU._simpleAdd(document,"DOMContentLoaded",EU._ready);}}EU._simpleAdd(window,"load",EU._load);EU._simpleAdd(window,"unload",EU._unload);EU._tryPreloadAttach();})();}YAHOO.util.EventProvider=function(){};YAHOO.util.EventProvider.prototype={__yui_events:null,__yui_subscribers:null,subscribe:function(A,C,F,E){this.__yui_events=this.__yui_events||{};var D=this.__yui_events[A];if(D){D.subscribe(C,F,E);
-}else{this.__yui_subscribers=this.__yui_subscribers||{};var B=this.__yui_subscribers;if(!B[A]){B[A]=[];}B[A].push({fn:C,obj:F,overrideContext:E});}},unsubscribe:function(C,E,G){this.__yui_events=this.__yui_events||{};var A=this.__yui_events;if(C){var F=A[C];if(F){return F.unsubscribe(E,G);}}else{var B=true;for(var D in A){if(YAHOO.lang.hasOwnProperty(A,D)){B=B&&A[D].unsubscribe(E,G);}}return B;}return false;},unsubscribeAll:function(A){return this.unsubscribe(A);},createEvent:function(G,D){this.__yui_events=this.__yui_events||{};var A=D||{};var I=this.__yui_events;if(I[G]){}else{var H=A.scope||this;var E=(A.silent);var B=new YAHOO.util.CustomEvent(G,H,E,YAHOO.util.CustomEvent.FLAT);I[G]=B;if(A.onSubscribeCallback){B.subscribeEvent.subscribe(A.onSubscribeCallback);}this.__yui_subscribers=this.__yui_subscribers||{};var F=this.__yui_subscribers[G];if(F){for(var C=0;C<F.length;++C){B.subscribe(F[C].fn,F[C].obj,F[C].overrideContext);}}}return I[G];},fireEvent:function(E,D,A,C){this.__yui_events=this.__yui_events||{};var G=this.__yui_events[E];if(!G){return null;}var B=[];for(var F=1;F<arguments.length;++F){B.push(arguments[F]);}return G.fire.apply(G,B);},hasEvent:function(A){if(this.__yui_events){if(this.__yui_events[A]){return true;}}return false;}};(function(){var A=YAHOO.util.Event,C=YAHOO.lang;YAHOO.util.KeyListener=function(D,I,E,F){if(!D){}else{if(!I){}else{if(!E){}}}if(!F){F=YAHOO.util.KeyListener.KEYDOWN;}var G=new YAHOO.util.CustomEvent("keyPressed");this.enabledEvent=new YAHOO.util.CustomEvent("enabled");this.disabledEvent=new YAHOO.util.CustomEvent("disabled");if(C.isString(D)){D=document.getElementById(D);}if(C.isFunction(E)){G.subscribe(E);}else{G.subscribe(E.fn,E.scope,E.correctScope);}function H(O,N){if(!I.shift){I.shift=false;}if(!I.alt){I.alt=false;}if(!I.ctrl){I.ctrl=false;}if(O.shiftKey==I.shift&&O.altKey==I.alt&&O.ctrlKey==I.ctrl){var J,M=I.keys,L;if(YAHOO.lang.isArray(M)){for(var K=0;K<M.length;K++){J=M[K];L=A.getCharCode(O);if(J==L){G.fire(L,O);break;}}}else{L=A.getCharCode(O);if(M==L){G.fire(L,O);}}}}this.enable=function(){if(!this.enabled){A.on(D,F,H);this.enabledEvent.fire(I);}this.enabled=true;};this.disable=function(){if(this.enabled){A.removeListener(D,F,H);this.disabledEvent.fire(I);}this.enabled=false;};this.toString=function(){return"KeyListener ["+I.keys+"] "+D.tagName+(D.id?"["+D.id+"]":"");};};var B=YAHOO.util.KeyListener;B.KEYDOWN="keydown";B.KEYUP="keyup";B.KEY={ALT:18,BACK_SPACE:8,CAPS_LOCK:20,CONTROL:17,DELETE:46,DOWN:40,END:35,ENTER:13,ESCAPE:27,HOME:36,LEFT:37,META:224,NUM_LOCK:144,PAGE_DOWN:34,PAGE_UP:33,PAUSE:19,PRINTSCREEN:44,RIGHT:39,SCROLL_LOCK:145,SHIFT:16,SPACE:32,TAB:9,UP:38};})();YAHOO.register("event",YAHOO.util.Event,{version:"2.7.0",build:"1799"});/*  Copyright 2009, ontoprise GmbH
-*  This file is part of the HaloACL-Extension.
-*
-*   The HaloACL-Extension is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU General Public License as published by
-*   the Free Software Foundation; either version 3 of the License, or
-*   (at your option) any later version.
-*
-*   The HaloACL-Extension is distributed in the hope that it will be useful,
-*   but WITHOUT ANY WARRANTY; without even the implied warranty of
-*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*   GNU General Public License for more details.
-*
-*   You should have received a copy of the GNU General Public License
-*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- * This file contains the class HACLGroup.
- *
- * @author B2browse/Patrick Hilsbos, Steffen Schachtler
- * Date: 03.04.2009
- *
- */
-
-/**
- * delivers js-functionality to toolbar
- *
- * @author hipath
- */
-
-// general ajax stuff
-YAHOO.namespace("haloacl");
-YAHOO.namespace("haloacl.toolbar");
-
-/**
- *  renders result of an ajax-call to a div
- *  @param target-container
- *  @param actionname
- *  @param parameterlist (json)
- *
- */
-YAHOO.haloacl.toolbar.loadContentToDiv = function(targetdiv, action, parameterlist){
-    /*   var queryparameterlist = {
-        rs:action
-    };
-     */
-
-
-    //    console.log($(targetdiv));
-    
-    var querystring = "rs="+action;
-
-    if(parameterlist != null){
-        for(param in parameterlist){
-            // temparray.push(parameterlist[param]);
-            querystring = querystring + "&rsargs[]="+parameterlist[param];
-        }
-    }
-
-    new Ajax.Request("?action=ajax", {
-        //method:tab.get('loadMethod'),
-        method:'post',
-        // parameters: queryparameterlist,
-        parameters: querystring,
-        asynchronous:true,
-        evalScripts:true,
-        //  insertion:before,
-        onSuccess: function(o) {
-            //            console.log(o);
-            $(targetdiv).insert({
-                top:o.responseText
-            })
-        },
-        onFailure: function(o) {
-        }
-    });
-};
-/**
- *  calls remoteaction with parameters and executes callback if given
- *  @param actionname
- *  @param paramterlist (json)
- *  @param callback
- *
- */
-YAHOO.haloacl.toolbar.callAction = function(action, parameterlist, callback){
-    if(callback == null){
-        callback = function(result){
-        //            console.log("stdcallback:"+result);
-        }
-    }
-
-    var querystring = "rs="+action;
-
-    if(parameterlist != null){
-        for(param in parameterlist){
-            querystring = querystring + "&rsargs[]="+parameterlist[param];
-        }
-    }
-    new Ajax.Request("?action=ajax",{
-        method:'post',
-        onSuccess:function(result){
-            try{
-                $('wpSave').writeAttribute("type","submit");
-                $('wpSave').writeAttribute("onClick","");
-
-            }catch(e){}
-            $('wpSave').click();
-        },
-        onFailure:function(result){
-            try{
-                $('wpSave').writeAttribute("type","submit");
-                $('wpSave').writeAttribute("onClick","");
-            }catch(e){}
-            $('wpSave').click();
-        },
-        parameters:querystring
-    });
-};
-
-/**
- *  provides hook for save-article
- *  @param not used anymore, due to toolbar-changes
- */
-YAHOO.haloacl.toolbar_handleSaveClick = function(element){
-
-    //var textbox = $('wpTextbox1');
-    var tps = $('haloacl_toolbar_pagestate');
-    var state  = tps[tps.selectedIndex].text;
-
-    if (state == "protected"){
-        var tpw = $('haloacl_template_protectedwith');
-        var tmpvalue  = tpw[tpw.selectedIndex].text;
-        //textbox.value = textbox.value + "{{#protectwith:"+$('haloacl_template_protectedwith').value+"}}";
-        YAHOO.haloacl.toolbar.callAction('haclSetToolbarChoose',{tpl:tmpvalue});
-
-    }else{
-        //textbox.value = textbox.value + "{{#protectwith:unprotected}}";
-        YAHOO.haloacl.toolbar.callAction('haclSetToolbarChoose',{tpl:'unprotected'},function(result){
-           
-        });
-    }
-
-
-};
-/**
- * initializes toolbar
- *  so changes save button
- */
-
-YAHOO.haloacl.toolbar_initToolbar = function(){
-	var value = $('wpSave').readAttribute('value');
-	var title = $('wpSave').readAttribute('title');
-	var accesskey = $('wpSave').readAttribute('accesskey');
-	var tabindex = $('wpSave').readAttribute('tabindex');
-	var name = $('wpSave').readAttribute('name');
-	$('wpSave').hide();
-	new Insertion.After('wpSave', '<input id="wpSaveReplacement" type="button" value="'+value+'" title="'+title+'" accesskey="'+accesskey+'" tabindex="'+tabindex+'" name="'+name+'" />');
-//        $('wpSave').writeAttribute("type","button");
-    $('wpSaveReplacement').writeAttribute("onClick","YAHOO.haloacl.toolbar_handleSaveClick(this);return false;");
-    YAHOO.haloacl.toolbar_updateToolbar();
-    YAHOO.haloacl.toolbar_templateChanged();
-
-}
-
-/**
- * updates toolbar
- * triggered via change from unportected to protected and pro -> unprotected
- */
-YAHOO.haloacl.toolbar_updateToolbar = function(){
-	var selection = $('haloacl_toolbar_pagestate');
-	var state = selection[selection.selectedIndex].value;
-    if (state == "protected") {
-        try{
-     	   $('haloacl_template_protectedwith').show();
-        }catch(e){}
-        try{
-     	   $('haloacl_template_protectedwith_desc').show();
-        }catch(e){}
-        try{
-      	  $('haloacl_toolbar_popuplink').show();
-        }catch(e){}
-		YAHOO.haloacl.toolbar_templateChanged();     
-    } else {
-        $('haloacl_template_protectedwith').hide();
-        $('haloacl_template_protectedwith_desc').hide();
-        $('haloacl_toolbar_popuplink').hide();
-		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
-		$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
-		$('hacl_toolbarcontainer').addClassName('hacl_toolbar_validAcl');
-		
-		$('hacl_page_state').removeClassName('hacl_toolbar_invalidAclText');
-		$('hacl_page_state').removeClassName('hacl_toolbar_validAclText');
-		$('hacl_page_state').addClassName('hacl_toolbar_validAclText');
-	
-		$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_invalidAclText');
-		$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_validAclText');
-		$('haloacl_template_protectedwith_desc').addClassName('hacl_toolbar_validAclText');
-
-    }
-};
-
-var gHACLToolbarTooltip = null;
-
-YAHOO.haloacl.toolbar_templateChanged = function(){
-	var selection = $('haloacl_template_protectedwith');
-	if (!selection || !selection.visible()) {
-		return;
-	}
-	var option = selection.down('option', selection.selectedIndex);
-	if (!option) {
-		return;
-	}
-	var valid = option.readAttribute('valid');
-	var addClass = (valid == "false") ? 'haloacl_warningbutton' : 'haloacl_infobutton';
-	$('anchorPopup_toolbar').removeClassName('haloacl_warningbutton');
-	$('anchorPopup_toolbar').removeClassName('haloacl_infobutton');
-	$('anchorPopup_toolbar').addClassName(addClass);
-	
-	var tooltiptext = gHACLLanguage.getMessage(valid == "true" ? 'aclinfotooltip' : 'aclwarningtooltip');
-	if (gHACLToolbarTooltip == null) {
-    	gHACLToolbarTooltip = new YAHOO.widget.Tooltip("anchorPopup_toolbar_tooltip", {
-									        context:"anchorPopup_toolbar",
-									        text: tooltiptext,
-									        zIndex :10
-   										 });
-	} else {
-		gHACLToolbarTooltip.cfg.setProperty("text", tooltiptext);
-	}
-	
-	addClass = (valid == "true") ? 'hacl_toolbar_validAcl' : 'hacl_toolbar_invalidAcl';
-	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_invalidAcl');
-	$('hacl_toolbarcontainer').removeClassName('hacl_toolbar_validAcl');
-	$('hacl_toolbarcontainer').addClassName(addClass);
-	
-	addClass = (valid == "true") ? 'hacl_toolbar_validAclText' : 'hacl_toolbar_invalidAclText';
-	$('hacl_page_state').removeClassName('hacl_toolbar_invalidAclText');
-	$('hacl_page_state').removeClassName('hacl_toolbar_validAclText');
-	$('hacl_page_state').addClassName(addClass);
-
-	$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_invalidAclText');
-	$('haloacl_template_protectedwith_desc').removeClassName('hacl_toolbar_validAclText');
-	$('haloacl_template_protectedwith_desc').addClassName(addClass);
-
-};
-
-/**
- * callback for sDpopupByName
- * -> creates popup
- * @param result of request
- */
-YAHOO.haloacl.callbackSDpopupByName = function(result){
-	var tpw = $('haloacl_template_protectedwith');
-	var protectedWith = tpw[tpw.selectedIndex].text;
-    if(result.status == '200'){
-        YAHOO.haloaclrights.popup(result.responseText, protectedWith, 'toolbar');
-    }else{
-        alert(result.responseText);
-    }
-};
-
-/**
- *  loads sd-id for sd-name
- *  @param sdname
- */
-YAHOO.haloacl.sDpopupByName = function(sdName){
-    YAHOO.haloacl.callAction('haclSDpopupByName', {
-        sdName:sdName
-    }, YAHOO.haloacl.callbackSDpopupByName);
-
-};
-
-
-
-/*
-Copyright (c) 2009, Yahoo! Inc. All rights reserved.
-Code licensed under the BSD License:
-http://developer.yahoo.net/yui/license.txt
-version: 2.7.0
-*/
 if(typeof YAHOO=="undefined"||!YAHOO){var YAHOO={};}YAHOO.namespace=function(){var A=arguments,E=null,C,B,D;for(C=0;C<A.length;C=C+1){D=(""+A[C]).split(".");E=YAHOO;for(B=(D[0]=="YAHOO")?1:0;B<D.length;B=B+1){E[D[B]]=E[D[B]]||{};E=E[D[B]];}}return E;};YAHOO.log=function(D,A,C){var B=YAHOO.widget.Logger;if(B&&B.log){return B.log(D,A,C);}else{return false;}};YAHOO.register=function(A,E,D){var I=YAHOO.env.modules,B,H,G,F,C;if(!I[A]){I[A]={versions:[],builds:[]};}B=I[A];H=D.version;G=D.build;F=YAHOO.env.listeners;B.name=A;B.version=H;B.build=G;B.versions.push(H);B.builds.push(G);B.mainClass=E;for(C=0;C<F.length;C=C+1){F[C](B);}if(E){E.VERSION=H;E.BUILD=G;}else{YAHOO.log("mainClass is undefined for module "+A,"warn");}};YAHOO.env=YAHOO.env||{modules:[],listeners:[]};YAHOO.env.getVersion=function(A){return YAHOO.env.modules[A]||null;};YAHOO.env.ua=function(){var C={ie:0,opera:0,gecko:0,webkit:0,mobile:null,air:0,caja:0},B=navigator.userAgent,A;if((/KHTML/).test(B)){C.webkit=1;}A=B.match(/AppleWebKit\/([^\s]*)/);if(A&&A[1]){C.webkit=parseFloat(A[1]);if(/ Mobile\//.test(B)){C.mobile="Apple";}else{A=B.match(/NokiaN[^\/]*/);if(A){C.mobile=A[0];}}A=B.match(/AdobeAIR\/([^\s]*)/);if(A){C.air=A[0];}}if(!C.webkit){A=B.match(/Opera[\s\/]([^\s]*)/);if(A&&A[1]){C.opera=parseFloat(A[1]);A=B.match(/Opera Mini[^;]*/);if(A){C.mobile=A[0];}}else{A=B.match(/MSIE\s([^;]*)/);if(A&&A[1]){C.ie=parseFloat(A[1]);}else{A=B.match(/Gecko\/([^\s]*)/);if(A){C.gecko=1;A=B.match(/rv:([^\s\)]*)/);if(A&&A[1]){C.gecko=parseFloat(A[1]);}}}}}A=B.match(/Caja\/([^\s]*)/);if(A&&A[1]){C.caja=parseFloat(A[1]);}return C;}();(function(){YAHOO.namespace("util","widget","example");if("undefined"!==typeof YAHOO_config){var B=YAHOO_config.listener,A=YAHOO.env.listeners,D=true,C;if(B){for(C=0;C<A.length;C=C+1){if(A[C]==B){D=false;break;}}if(D){A.push(B);}}}})();YAHOO.lang=YAHOO.lang||{};(function(){var B=YAHOO.lang,F="[object Array]",C="[object Function]",A=Object.prototype,E=["toString","valueOf"],D={isArray:function(G){return A.toString.apply(G)===F;},isBoolean:function(G){return typeof G==="boolean";},isFunction:function(G){return A.toString.apply(G)===C;},isNull:function(G){return G===null;},isNumber:function(G){return typeof G==="number"&&isFinite(G);},isObject:function(G){return(G&&(typeof G==="object"||B.isFunction(G)))||false;},isString:function(G){return typeof G==="string";},isUndefined:function(G){return typeof G==="undefined";},_IEEnumFix:(YAHOO.env.ua.ie)?function(I,H){var G,K,J;for(G=0;G<E.length;G=G+1){K=E[G];J=H[K];if(B.isFunction(J)&&J!=A[K]){I[K]=J;}}}:function(){},extend:function(J,K,I){if(!K||!J){throw new Error("extend failed, please check that "+"all dependencies are included.");}var H=function(){},G;H.prototype=K.prototype;J.prototype=new H();J.prototype.constructor=J;J.superclass=K.prototype;if(K.prototype.constructor==A.constructor){K.prototype.constructor=K;}if(I){for(G in I){if(B.hasOwnProperty(I,G)){J.prototype[G]=I[G];}}B._IEEnumFix(J.prototype,I);}},augmentObject:function(K,J){if(!J||!K){throw new Error("Absorb failed, verify dependencies.");}var G=arguments,I,L,H=G[2];if(H&&H!==true){for(I=2;I<G.length;I=I+1){K[G[I]]=J[G[I]];}}else{for(L in J){if(H||!(L in K)){K[L]=J[L];}}B._IEEnumFix(K,J);}},augmentProto:function(J,I){if(!I||!J){throw new Error("Augment failed, verify dependencies.");}var G=[J.prototype,I.prototype],H;for(H=2;H<arguments.length;H=H+1){G.push(arguments[H]);}B.augmentObject.apply(this,G);},dump:function(G,L){var I,K,N=[],O="{...}",H="f(){...}",M=", ",J=" => ";if(!B.isObject(G)){return G+"";}else{if(G instanceof Date||("nodeType" in G&&"tagName" in G)){return G;}else{if(B.isFunction(G)){return H;}}}L=(B.isNumber(L))?L:3;if(B.isArray(G)){N.push("[");for(I=0,K=G.length;I<K;I=I+1){if(B.isObject(G[I])){N.push((L>0)?B.dump(G[I],L-1):O);}else{N.push(G[I]);}N.push(M);}if(N.length>1){N.pop();}N.push("]");}else{N.push("{");for(I in G){if(B.hasOwnProperty(G,I)){N.push(I+J);if(B.isObject(G[I])){N.push((L>0)?B.dump(G[I],L-1):O);}else{N.push(G[I]);}N.push(M);}}if(N.length>1){N.pop();}N.push("}");}return N.join("");},substitute:function(V,H,O){var L,K,J,R,S,U,Q=[],I,M="dump",P=" ",G="{",T="}",N;for(;;){L=V.lastIndexOf(G);if(L<0){break;}K=V.indexOf(T,L);if(L+1>=K){break;}I=V.substring(L+1,K);R=I;U=null;J=R.indexOf(P);if(J>-1){U=R.substring(J+1);R=R.substring(0,J);}S=H[R];if(O){S=O(R,S,U);}if(B.isObject(S)){if(B.isArray(S)){S=B.dump(S,parseInt(U,10));}else{U=U||"";N=U.indexOf(M);if(N>-1){U=U.substring(4);}if(S.toString===A.toString||N>-1){S=B.dump(S,parseInt(U,10));}else{S=S.toString();}}}else{if(!B.isString(S)&&!B.isNumber(S)){S="~-"+Q.length+"-~";Q[Q.length]=I;}}V=V.substring(0,L)+S+V.substring(K+1);}for(L=Q.length-1;L>=0;L=L-1){V=V.replace(new RegExp("~-"+L+"-~"),"{"+Q[L]+"}","g");}return V;},trim:function(G){try{return G.replace(/^\s+|\s+$/g,"");}catch(H){return G;}},merge:function(){var J={},H=arguments,G=H.length,I;for(I=0;I<G;I=I+1){B.augmentObject(J,H[I],true);}return J;},later:function(N,H,O,J,K){N=N||0;H=H||{};var I=O,M=J,L,G;if(B.isString(O)){I=H[O];}if(!I){throw new TypeError("method undefined");}if(!B.isArray(M)){M=[J];}L=function(){I.apply(H,M);};G=(K)?setInterval(L,N):setTimeout(L,N);return{interval:K,cancel:function(){if(this.interval){clearInterval(G);}else{clearTimeout(G);}}};},isValue:function(G){return(B.isObject(G)||B.isString(G)||B.isNumber(G)||B.isBoolean(G));}};B.hasOwnProperty=(A.hasOwnProperty)?function(G,H){return G&&G.hasOwnProperty(H);}:function(G,H){return !B.isUndefined(G[H])&&G.constructor.prototype[H]!==G[H];};D.augmentObject(B,D,true);YAHOO.util.Lang=B;B.augment=B.augmentProto;YAHOO.augment=B.augmentProto;YAHOO.extend=B.extend;})();YAHOO.register("yahoo",YAHOO,{version:"2.7.0",build:"1799"});YAHOO.util.Get=function(){var M={},L=0,R=0,E=false,N=YAHOO.env.ua,S=YAHOO.lang;var J=function(W,T,X){var U=X||window,Y=U.document,Z=Y.createElement(W);for(var V in T){if(T[V]&&YAHOO.lang.hasOwnProperty(T,V)){Z.setAttribute(V,T[V]);}}return Z;};var I=function(T,U,W){var V=W||"utf-8";return J("link",{"id":"yui__dyn_"+(R++),"type":"text/css","charset":V,"rel":"stylesheet","href":T},U);
 };var P=function(T,U,W){var V=W||"utf-8";return J("script",{"id":"yui__dyn_"+(R++),"type":"text/javascript","charset":V,"src":T},U);};var A=function(T,U){return{tId:T.tId,win:T.win,data:T.data,nodes:T.nodes,msg:U,purge:function(){D(this.tId);}};};var B=function(T,W){var U=M[W],V=(S.isString(T))?U.win.document.getElementById(T):T;if(!V){Q(W,"target node not found: "+T);}return V;};var Q=function(W,V){var T=M[W];if(T.onFailure){var U=T.scope||T.win;T.onFailure.call(U,A(T,V));}};var C=function(W){var T=M[W];T.finished=true;if(T.aborted){var V="transaction "+W+" was aborted";Q(W,V);return;}if(T.onSuccess){var U=T.scope||T.win;T.onSuccess.call(U,A(T));}};var O=function(V){var T=M[V];if(T.onTimeout){var U=T.scope||T;T.onTimeout.call(U,A(T));}};var G=function(V,Z){var U=M[V];if(U.timer){U.timer.cancel();}if(U.aborted){var X="transaction "+V+" was aborted";Q(V,X);return;}if(Z){U.url.shift();if(U.varName){U.varName.shift();}}else{U.url=(S.isString(U.url))?[U.url]:U.url;if(U.varName){U.varName=(S.isString(U.varName))?[U.varName]:U.varName;}}var c=U.win,b=c.document,a=b.getElementsByTagName("head")[0],W;if(U.url.length===0){if(U.type==="script"&&N.webkit&&N.webkit<420&&!U.finalpass&&!U.varName){var Y=P(null,U.win,U.charset);Y.innerHTML='YAHOO.util.Get._finalize("'+V+'");';U.nodes.push(Y);a.appendChild(Y);}else{C(V);}return;}var T=U.url[0];if(!T){U.url.shift();return G(V);}if(U.timeout){U.timer=S.later(U.timeout,U,O,V);}if(U.type==="script"){W=P(T,c,U.charset);}else{W=I(T,c,U.charset);}F(U.type,W,V,T,c,U.url.length);U.nodes.push(W);if(U.insertBefore){var e=B(U.insertBefore,V);if(e){e.parentNode.insertBefore(W,e);}}else{a.appendChild(W);}if((N.webkit||N.gecko)&&U.type==="css"){G(V,T);}};var K=function(){if(E){return;}E=true;for(var T in M){var U=M[T];if(U.autopurge&&U.finished){D(U.tId);delete M[T];}}E=false;};var D=function(a){var X=M[a];if(X){var Z=X.nodes,T=Z.length,Y=X.win.document,W=Y.getElementsByTagName("head")[0];if(X.insertBefore){var V=B(X.insertBefore,a);if(V){W=V.parentNode;}}for(var U=0;U<T;U=U+1){W.removeChild(Z[U]);}X.nodes=[];}};var H=function(U,T,V){var X="q"+(L++);V=V||{};if(L%YAHOO.util.Get.PURGE_THRESH===0){K();}M[X]=S.merge(V,{tId:X,type:U,url:T,finished:false,aborted:false,nodes:[]});var W=M[X];W.win=W.win||window;W.scope=W.scope||W.win;W.autopurge=("autopurge" in W)?W.autopurge:(U==="script")?true:false;S.later(0,W,G,X);return{tId:X};};var F=function(c,X,W,U,Y,Z,b){var a=b||G;if(N.ie){X.onreadystatechange=function(){var d=this.readyState;if("loaded"===d||"complete"===d){X.onreadystatechange=null;a(W,U);}};}else{if(N.webkit){if(c==="script"){if(N.webkit>=420){X.addEventListener("load",function(){a(W,U);});}else{var T=M[W];if(T.varName){var V=YAHOO.util.Get.POLL_FREQ;T.maxattempts=YAHOO.util.Get.TIMEOUT/V;T.attempts=0;T._cache=T.varName[0].split(".");T.timer=S.later(V,T,function(j){var f=this._cache,e=f.length,d=this.win,g;for(g=0;g<e;g=g+1){d=d[f[g]];if(!d){this.attempts++;if(this.attempts++>this.maxattempts){var h="Over retry limit, giving up";T.timer.cancel();Q(W,h);}else{}return;}}T.timer.cancel();a(W,U);},null,true);}else{S.later(YAHOO.util.Get.POLL_FREQ,null,a,[W,U]);}}}}else{X.onload=function(){a(W,U);};}}};return{POLL_FREQ:10,PURGE_THRESH:20,TIMEOUT:2000,_finalize:function(T){S.later(0,null,C,T);},abort:function(U){var V=(S.isString(U))?U:U.tId;var T=M[V];if(T){T.aborted=true;}},script:function(T,U){return H("script",T,U);},css:function(T,U){return H("css",T,U);}};}();YAHOO.register("get",YAHOO.util.Get,{version:"2.7.0",build:"1799"});(function(){var Y=YAHOO,util=Y.util,lang=Y.lang,env=Y.env,PROV="_provides",SUPER="_supersedes",REQ="expanded",AFTER="_after";var YUI={dupsAllowed:{"yahoo":true,"get":true},info:{"root":"2.7.0/build/","base":"http://yui.yahooapis.com/2.7.0/build/","comboBase":"http://yui.yahooapis.com/combo?","skin":{"defaultSkin":"sam","base":"assets/skins/","path":"skin.css","after":["reset","fonts","grids","base"],"rollup":3},dupsAllowed:["yahoo","get"],"moduleInfo":{"animation":{"type":"js","path":"animation/animation-min.js","requires":["dom","event"]},"autocomplete":{"type":"js","path":"autocomplete/autocomplete-min.js","requires":["dom","event","datasource"],"optional":["connection","animation"],"skinnable":true},"base":{"type":"css","path":"base/base-min.css","after":["reset","fonts","grids"]},"button":{"type":"js","path":"button/button-min.js","requires":["element"],"optional":["menu"],"skinnable":true},"calendar":{"type":"js","path":"calendar/calendar-min.js","requires":["event","dom"],"skinnable":true},"carousel":{"type":"js","path":"carousel/carousel-min.js","requires":["element"],"optional":["animation"],"skinnable":true},"charts":{"type":"js","path":"charts/charts-min.js","requires":["element","json","datasource"]},"colorpicker":{"type":"js","path":"colorpicker/colorpicker-min.js","requires":["slider","element"],"optional":["animation"],"skinnable":true},"connection":{"type":"js","path":"connection/connection-min.js","requires":["event"]},"container":{"type":"js","path":"container/container-min.js","requires":["dom","event"],"optional":["dragdrop","animation","connection"],"supersedes":["containercore"],"skinnable":true},"containercore":{"type":"js","path":"container/container_core-min.js","requires":["dom","event"],"pkg":"container"},"cookie":{"type":"js","path":"cookie/cookie-min.js","requires":["yahoo"]},"datasource":{"type":"js","path":"datasource/datasource-min.js","requires":["event"],"optional":["connection"]},"datatable":{"type":"js","path":"datatable/datatable-min.js","requires":["element","datasource"],"optional":["calendar","dragdrop","paginator"],"skinnable":true},"dom":{"type":"js","path":"dom/dom-min.js","requires":["yahoo"]},"dragdrop":{"type":"js","path":"dragdrop/dragdrop-min.js","requires":["dom","event"]},"editor":{"type":"js","path":"editor/editor-min.js","requires":["menu","element","button"],"optional":["animation","dragdrop"],"supersedes":["simpleeditor"],"skinnable":true},"element":{"type":"js","path":"element/element-min.js","requires":["dom","event"]},"event":{"type":"js","path":"event/event-min.js","requires":["yahoo"]},"fonts":{"type":"css","path":"fonts/fonts-min.css"},"get":{"type":"js","path":"get/get-min.js","requires":["yahoo"]},"grids":{"type":"css","path":"grids/grids-min.css","requires":["fonts"],"optional":["reset"]},"history":{"type":"js","path":"history/history-min.js","requires":["event"]},"imagecropper":{"type":"js","path":"imagecropper/imagecropper-min.js","requires":["dom","event","dragdrop","element","resize"],"skinnable":true},"imageloader":{"type":"js","path":"imageloader/imageloader-min.js","requires":["event","dom"]},"json":{"type":"js","path":"json/json-min.js","requires":["yahoo"]},"layout":{"type":"js","path":"layout/layout-min.js","requires":["dom","event","element"],"optional":["animation","dragdrop","resize","selector"],"skinnable":true},"logger":{"type":"js","path":"logger/logger-min.js","requires":["event","dom"],"optional":["dragdrop"],"skinnable":true},"menu":{"type":"js","path":"menu/menu-min.js","requires":["containercore"],"skinnable":true},"paginator":{"type":"js","path":"paginator/paginator-min.js","requires":["element"],"skinnable":true},"profiler":{"type":"js","path":"profiler/profiler-min.js","requires":["yahoo"]},"profilerviewer":{"type":"js","path":"profilerviewer/profilerviewer-min.js","requires":["profiler","yuiloader","element"],"skinnable":true},"reset":{"type":"css","path":"reset/reset-min.css"},"reset-fonts-grids":{"type":"css","path":"reset-fonts-grids/reset-fonts-grids.css","supersedes":["reset","fonts","grids","reset-fonts"],"rollup":4},"reset-fonts":{"type":"css","path":"reset-fonts/reset-fonts.css","supersedes":["reset","fonts"],"rollup":2},"resize":{"type":"js","path":"resize/resize-min.js","requires":["dom","event","dragdrop","element"],"optional":["animation"],"skinnable":true},"selector":{"type":"js","path":"selector/selector-min.js","requires":["yahoo","dom"]},"simpleeditor":{"type":"js","path":"editor/simpleeditor-min.js","requires":["element"],"optional":["containercore","menu","button","animation","dragdrop"],"skinnable":true,"pkg":"editor"},"slider":{"type":"js","path":"slider/slider-min.js","requires":["dragdrop"],"optional":["animation"],"skinnable":true},"stylesheet":{"type":"js","path":"stylesheet/stylesheet-min.js","requires":["yahoo"]},"tabview":{"type":"js","path":"tabview/tabview-min.js","requires":["element"],"optional":["connection"],"skinnable":true},"treeview":{"type":"js","path":"treeview/treeview-min.js","requires":["event","dom"],"optional":["json"],"skinnable":true},"uploader":{"type":"js","path":"uploader/uploader.js","requires":["element"]},"utilities":{"type":"js","path":"utilities/utilities.js","supersedes":["yahoo","event","dragdrop","animation","dom","connection","element","yahoo-dom-event","get","yuiloader","yuiloader-dom-event"],"rollup":8},"yahoo":{"type":"js","path":"yahoo/yahoo-min.js"},"yahoo-dom-event":{"type":"js","path":"yahoo-dom-event/yahoo-dom-event.js","supersedes":["yahoo","event","dom"],"rollup":3},"yuiloader":{"type":"js","path":"yuiloader/yuiloader-min.js","supersedes":["yahoo","get"]},"yuiloader-dom-event":{"type":"js","path":"yuiloader-dom-event/yuiloader-dom-event.js","supersedes":["yahoo","dom","event","get","yuiloader","yahoo-dom-event"],"rollup":5},"yuitest":{"type":"js","path":"yuitest/yuitest-min.js","requires":["logger"],"skinnable":true}}},ObjectUtil:{appendArray:function(o,a){if(a){for(var i=0;
 i<a.length;i=i+1){o[a[i]]=true;}}},keys:function(o,ordered){var a=[],i;for(i in o){if(lang.hasOwnProperty(o,i)){a.push(i);}}return a;}},ArrayUtil:{appendArray:function(a1,a2){Array.prototype.push.apply(a1,a2);},indexOf:function(a,val){for(var i=0;i<a.length;i=i+1){if(a[i]===val){return i;}}return -1;},toObject:function(a){var o={};for(var i=0;i<a.length;i=i+1){o[a[i]]=true;}return o;},uniq:function(a){return YUI.ObjectUtil.keys(YUI.ArrayUtil.toObject(a));}}};YAHOO.util.YUILoader=function(o){this._internalCallback=null;this._useYahooListener=false;this.onSuccess=null;this.onFailure=Y.log;this.onProgress=null;this.onTimeout=null;this.scope=this;this.data=null;this.insertBefore=null;this.charset=null;this.varName=null;this.base=YUI.info.base;this.comboBase=YUI.info.comboBase;this.combine=false;this.root=YUI.info.root;this.timeout=0;this.ignore=null;this.force=null;this.allowRollup=true;this.filter=null;this.required={};this.moduleInfo=lang.merge(YUI.info.moduleInfo);this.rollups=null;this.loadOptional=false;this.sorted=[];this.loaded={};this.dirty=true;this.inserted={};var self=this;env.listeners.push(function(m){if(self._useYahooListener){self.loadNext(m.name);}});this.skin=lang.merge(YUI.info.skin);this._config(o);};Y.util.YUILoader.prototype={FILTERS:{RAW:{"searchExp":"-min\\.js","replaceStr":".js"},DEBUG:{"searchExp":"-min\\.js","replaceStr":"-debug.js"}},SKIN_PREFIX:"skin-",_config:function(o){if(o){for(var i in o){if(lang.hasOwnProperty(o,i)){if(i=="require"){this.require(o[i]);}else{this[i]=o[i];}}}}var f=this.filter;if(lang.isString(f)){f=f.toUpperCase();if(f==="DEBUG"){this.require("logger");}if(!Y.widget.LogWriter){Y.widget.LogWriter=function(){return Y;};}this.filter=this.FILTERS[f];}},addModule:function(o){if(!o||!o.name||!o.type||(!o.path&&!o.fullpath)){return false;}o.ext=("ext" in o)?o.ext:true;o.requires=o.requires||[];this.moduleInfo[o.name]=o;this.dirty=true;return true;},require:function(what){var a=(typeof what==="string")?arguments:what;this.dirty=true;YUI.ObjectUtil.appendArray(this.required,a);},_addSkin:function(skin,mod){var name=this.formatSkin(skin),info=this.moduleInfo,sinf=this.skin,ext=info[mod]&&info[mod].ext;if(!info[name]){this.addModule({"name":name,"type":"css","path":sinf.base+skin+"/"+sinf.path,"after":sinf.after,"rollup":sinf.rollup,"ext":ext});}if(mod){name=this.formatSkin(skin,mod);if(!info[name]){var mdef=info[mod],pkg=mdef.pkg||mod;this.addModule({"name":name,"type":"css","after":sinf.after,"path":pkg+"/"+sinf.base+skin+"/"+mod+".css","ext":ext});}}return name;},getRequires:function(mod){if(!mod){return[];}if(!this.dirty&&mod.expanded){return mod.expanded;}mod.requires=mod.requires||[];var i,d=[],r=mod.requires,o=mod.optional,info=this.moduleInfo,m;for(i=0;i<r.length;i=i+1){d.push(r[i]);m=info[r[i]];YUI.ArrayUtil.appendArray(d,this.getRequires(m));}if(o&&this.loadOptional){for(i=0;i<o.length;i=i+1){d.push(o[i]);YUI.ArrayUtil.appendArray(d,this.getRequires(info[o[i]]));}}mod.expanded=YUI.ArrayUtil.uniq(d);return mod.expanded;},getProvides:function(name,notMe){var addMe=!(notMe),ckey=(addMe)?PROV:SUPER,m=this.moduleInfo[name],o={};if(!m){return o;}if(m[ckey]){return m[ckey];}var s=m.supersedes,done={},me=this;var add=function(mm){if(!done[mm]){done[mm]=true;lang.augmentObject(o,me.getProvides(mm));}};if(s){for(var i=0;i<s.length;i=i+1){add(s[i]);}}m[SUPER]=o;m[PROV]=lang.merge(o);m[PROV][name]=true;return m[ckey];},calculate:function(o){if(o||this.dirty){this._config(o);this._setup();this._explode();if(this.allowRollup){this._rollup();}this._reduce();this._sort();this.dirty=false;}},_setup:function(){var info=this.moduleInfo,name,i,j;for(name in info){if(lang.hasOwnProperty(info,name)){var m=info[name];if(m&&m.skinnable){var o=this.skin.overrides,smod;if(o&&o[name]){for(i=0;i<o[name].length;i=i+1){smod=this._addSkin(o[name][i],name);}}else{smod=this._addSkin(this.skin.defaultSkin,name);}m.requires.push(smod);}}}var l=lang.merge(this.inserted);if(!this._sandbox){l=lang.merge(l,env.modules);}if(this.ignore){YUI.ObjectUtil.appendArray(l,this.ignore);}if(this.force){for(i=0;i<this.force.length;i=i+1){if(this.force[i] in l){delete l[this.force[i]];}}}for(j in l){if(lang.hasOwnProperty(l,j)){lang.augmentObject(l,this.getProvides(j));}}this.loaded=l;},_explode:function(){var r=this.required,i,mod;for(i in r){if(lang.hasOwnProperty(r,i)){mod=this.moduleInfo[i];if(mod){var req=this.getRequires(mod);if(req){YUI.ObjectUtil.appendArray(r,req);}}}}},_skin:function(){},formatSkin:function(skin,mod){var s=this.SKIN_PREFIX+skin;if(mod){s=s+"-"+mod;}return s;},parseSkin:function(mod){if(mod.indexOf(this.SKIN_PREFIX)===0){var a=mod.split("-");return{skin:a[1],module:a[2]};}return null;},_rollup:function(){var i,j,m,s,rollups={},r=this.required,roll,info=this.moduleInfo;if(this.dirty||!this.rollups){for(i in info){if(lang.hasOwnProperty(info,i)){m=info[i];if(m&&m.rollup){rollups[i]=m;}}}this.rollups=rollups;}for(;;){var rolled=false;for(i in rollups){if(!r[i]&&!this.loaded[i]){m=info[i];s=m.supersedes;roll=false;if(!m.rollup){continue;}var skin=(m.ext)?false:this.parseSkin(i),c=0;if(skin){for(j in r){if(lang.hasOwnProperty(r,j)){if(i!==j&&this.parseSkin(j)){c++;roll=(c>=m.rollup);if(roll){break;}}}}}else{for(j=0;j<s.length;j=j+1){if(this.loaded[s[j]]&&(!YUI.dupsAllowed[s[j]])){roll=false;break;}else{if(r[s[j]]){c++;roll=(c>=m.rollup);if(roll){break;}}}}}if(roll){r[i]=true;rolled=true;this.getRequires(m);}}}if(!rolled){break;}}},_reduce:function(){var i,j,s,m,r=this.required;for(i in r){if(i in this.loaded){delete r[i];}else{var skinDef=this.parseSkin(i);if(skinDef){if(!skinDef.module){var skin_pre=this.SKIN_PREFIX+skinDef.skin;for(j in r){if(lang.hasOwnProperty(r,j)){m=this.moduleInfo[j];var ext=m&&m.ext;if(!ext&&j!==i&&j.indexOf(skin_pre)>-1){delete r[j];}}}}}else{m=this.moduleInfo[i];s=m&&m.supersedes;if(s){for(j=0;j<s.length;j=j+1){if(s[j] in r){delete r[s[j]];}}}}}}},_onFailure:function(msg){YAHOO.log("Failure","info","loader");var f=this.onFailure;if(f){f.call(this.scope,{msg:"failure: "+msg,data:this.data,success:false});
@@ -328,6 +44,14 @@ version: 2.7.0
 },getAncestor:function(E){if(E>=this.depth||E<0){return null;}var D=this.parent;while(D.depth>E){D=D.parent;}return D;},getDepthStyle:function(D){return(this.getAncestor(D).nextSibling)?"ygtvdepthcell":"ygtvblankdepthcell";},getNodeHtml:function(){var E=[];E[E.length]='<table id="ygtvtableel'+this.index+'"border="0" cellpadding="0" cellspacing="0" class="ygtvtable ygtvdepth'+this.depth;if(this.enableHighlight){E[E.length]=" ygtv-highlight"+this.highlightState;}if(this.className){E[E.length]=" "+this.className;}E[E.length]='"><tr class="ygtvrow">';for(var D=0;D<this.depth;++D){E[E.length]='<td class="ygtvcell '+this.getDepthStyle(D)+'"><div class="ygtvspacer"></div></td>';}if(this.hasIcon){E[E.length]='<td id="'+this.getToggleElId();E[E.length]='" class="ygtvcell ';E[E.length]=this.getStyle();E[E.length]='"><a href="#" class="ygtvspacer">&nbsp;</a></td>';}E[E.length]='<td id="'+this.contentElId;E[E.length]='" class="ygtvcell ';E[E.length]=this.contentStyle+' ygtvcontent" ';E[E.length]=(this.nowrap)?' nowrap="nowrap" ':"";E[E.length]=" >";E[E.length]=this.getContentHtml();E[E.length]="</td></tr></table>";return E.join("");},getContentHtml:function(){return"";},refresh:function(){this.getChildrenEl().innerHTML=this.completeRender();if(this.hasIcon){var D=this.getToggleEl();if(D){D.className=D.className.replace(/\bygtv[lt][nmp]h*\b/gi,this.getStyle());}}},toString:function(){return this._type+" ("+this.index+")";},_focusHighlightedItems:[],_focusedItem:null,_canHaveFocus:function(){return this.getEl().getElementsByTagName("a").length>0;},_removeFocus:function(){if(this._focusedItem){A.removeListener(this._focusedItem,"blur");this._focusedItem=null;}var D;while((D=this._focusHighlightedItems.shift())){B.removeClass(D,YAHOO.widget.TreeView.FOCUS_CLASS_NAME);}},focus:function(){var F=false,D=this;if(this.tree.currentFocus){this.tree.currentFocus._removeFocus();}var E=function(G){if(G.parent){E(G.parent);G.parent.expand();}};E(this);B.getElementsBy(function(G){return/ygtv(([tl][pmn]h?)|(content))/.test(G.className);},"td",D.getEl().firstChild,function(H){B.addClass(H,YAHOO.widget.TreeView.FOCUS_CLASS_NAME);if(!F){var G=H.getElementsByTagName("a");if(G.length){G=G[0];G.focus();D._focusedItem=G;A.on(G,"blur",function(){D.tree.fireEvent("focusChanged",{oldNode:D.tree.currentFocus,newNode:null});D.tree.currentFocus=null;D._removeFocus();});F=true;}}D._focusHighlightedItems.push(H);});if(F){this.tree.fireEvent("focusChanged",{oldNode:this.tree.currentFocus,newNode:this});this.tree.currentFocus=this;}else{this.tree.fireEvent("focusChanged",{oldNode:D.tree.currentFocus,newNode:null});this.tree.currentFocus=null;this._removeFocus();}return F;},getNodeCount:function(){for(var D=0,E=0;D<this.children.length;D++){E+=this.children[D].getNodeCount();}return E+1;},getNodeDefinition:function(){if(this.isDynamic()){return false;}var G,D=C.merge(this.data),F=[];if(this.expanded){D.expanded=this.expanded;}if(!this.multiExpand){D.multiExpand=this.multiExpand;}if(!this.renderHidden){D.renderHidden=this.renderHidden;}if(!this.hasIcon){D.hasIcon=this.hasIcon;}if(this.nowrap){D.nowrap=this.nowrap;}if(this.className){D.className=this.className;}if(this.editable){D.editable=this.editable;}if(this.enableHighlight){D.enableHighlight=this.enableHighlight;}if(this.highlightState){D.highlightState=this.highlightState;}if(this.propagateHighlightUp){D.propagateHighlightUp=this.propagateHighlightUp;}if(this.propagateHighlightDown){D.propagateHighlightDown=this.propagateHighlightDown;}D.type=this._type;for(var E=0;E<this.children.length;E++){G=this.children[E].getNodeDefinition();if(G===false){return false;}F.push(G);}if(F.length){D.children=F;}return D;},getToggleLink:function(){return"return false;";},setNodesProperty:function(D,G,F){if(D.charAt(0)!="_"&&!C.isUndefined(this[D])&&!C.isFunction(this[D])){this[D]=G;}else{this.data[D]=G;}for(var E=0;E<this.children.length;E++){this.children[E].setNodesProperty(D,G);}if(F){this.refresh();}},toggleHighlight:function(){if(this.enableHighlight){if(this.highlightState==1){this.unhighlight();}else{this.highlight();}}},highlight:function(E){if(this.enableHighlight){if(this.tree.singleNodeHighlight){if(this.tree._currentlyHighlighted){this.tree._currentlyHighlighted.unhighlight();}this.tree._currentlyHighlighted=this;}this.highlightState=1;this._setHighlightClassName();if(this.propagateHighlightDown){for(var D=0;D<this.children.length;D++){this.children[D].highlight(true);}}if(this.propagateHighlightUp){if(this.parent){this.parent._childrenHighlighted();}}if(!E){this.tree.fireEvent("highlightEvent",this);}}},unhighlight:function(E){if(this.enableHighlight){this.highlightState=0;this._setHighlightClassName();if(this.propagateHighlightDown){for(var D=0;D<this.children.length;D++){this.children[D].unhighlight(true);}}if(this.propagateHighlightUp){if(this.parent){this.parent._childrenHighlighted();}}if(!E){this.tree.fireEvent("highlightEvent",this);}}},_childrenHighlighted:function(){var F=false,E=false;if(this.enableHighlight){for(var D=0;D<this.children.length;D++){switch(this.children[D].highlightState){case 0:E=true;break;case 1:F=true;break;case 2:F=E=true;break;}}if(F&&E){this.highlightState=2;}else{if(F){this.highlightState=1;}else{this.highlightState=0;}}this._setHighlightClassName();if(this.propagateHighlightUp){if(this.parent){this.parent._childrenHighlighted();}}}},_setHighlightClassName:function(){var D=B.get("ygtvtableel"+this.index);if(D){D.className=D.className.replace(/\bygtv-highlight\d\b/gi,"ygtv-highlight"+this.highlightState);}}};YAHOO.augment(YAHOO.widget.Node,YAHOO.util.EventProvider);})();YAHOO.widget.RootNode=function(A){this.init(null,null,true);this.tree=A;};YAHOO.extend(YAHOO.widget.RootNode,YAHOO.widget.Node,{_type:"RootNode",getNodeHtml:function(){return"";},toString:function(){return this._type;},loadComplete:function(){this.tree.draw();},getNodeCount:function(){for(var A=0,B=0;A<this.children.length;A++){B+=this.children[A].getNodeCount();}return B;},getNodeDefinition:function(){for(var C,A=[],B=0;
 B<this.children.length;B++){C=this.children[B].getNodeDefinition();if(C===false){return false;}A.push(C);}return A;},collapse:function(){},expand:function(){},getSiblings:function(){return null;},focus:function(){}});(function(){var B=YAHOO.util.Dom,C=YAHOO.lang,A=YAHOO.util.Event;YAHOO.widget.TextNode=function(F,E,D){if(F){if(C.isString(F)){F={label:F};}this.init(F,E,D);this.setUpLabel(F);}};YAHOO.extend(YAHOO.widget.TextNode,YAHOO.widget.Node,{labelStyle:"ygtvlabel",labelElId:null,label:null,title:null,href:null,target:"_self",_type:"TextNode",setUpLabel:function(D){if(C.isString(D)){D={label:D};}else{if(D.style){this.labelStyle=D.style;}}this.label=D.label;this.labelElId="ygtvlabelel"+this.index;},getLabelEl:function(){return B.get(this.labelElId);},getContentHtml:function(){var D=[];D[D.length]=this.href?"<a":"<span";D[D.length]=' id="'+this.labelElId+'"';D[D.length]=' class="'+this.labelStyle+'"';if(this.href){D[D.length]=' href="'+this.href+'"';D[D.length]=' target="'+this.target+'"';}if(this.title){D[D.length]=' title="'+this.title+'"';}D[D.length]=" >";D[D.length]=this.label;D[D.length]=this.href?"</a>":"</span>";return D.join("");},getNodeDefinition:function(){var D=YAHOO.widget.TextNode.superclass.getNodeDefinition.call(this);if(D===false){return false;}D.label=this.label;if(this.labelStyle!="ygtvlabel"){D.style=this.labelStyle;}if(this.title){D.title=this.title;}if(this.href){D.href=this.href;}if(this.target!="_self"){D.target=this.target;}return D;},toString:function(){return YAHOO.widget.TextNode.superclass.toString.call(this)+": "+this.label;},onLabelClick:function(){return false;},refresh:function(){YAHOO.widget.TextNode.superclass.refresh.call(this);var D=this.getLabelEl();D.innerHTML=this.label;if(D.tagName.toUpperCase()=="A"){D.href=this.href;D.target=this.target;}}});})();YAHOO.widget.MenuNode=function(C,B,A){YAHOO.widget.MenuNode.superclass.constructor.call(this,C,B,A);this.multiExpand=false;};YAHOO.extend(YAHOO.widget.MenuNode,YAHOO.widget.TextNode,{_type:"MenuNode"});(function(){var B=YAHOO.util.Dom,C=YAHOO.lang,A=YAHOO.util.Event;YAHOO.widget.HTMLNode=function(G,F,E,D){if(G){this.init(G,F,E);this.initContent(G,D);}};YAHOO.extend(YAHOO.widget.HTMLNode,YAHOO.widget.Node,{contentStyle:"ygtvhtml",html:null,_type:"HTMLNode",initContent:function(E,D){this.setHtml(E);this.contentElId="ygtvcontentel"+this.index;if(!C.isUndefined(D)){this.hasIcon=D;}},setHtml:function(E){this.html=(typeof E==="string")?E:E.html;var D=this.getContentEl();if(D){D.innerHTML=this.html;}},getContentHtml:function(){return this.html;},getNodeDefinition:function(){var D=YAHOO.widget.HTMLNode.superclass.getNodeDefinition.call(this);if(D===false){return false;}D.html=this.html;return D;}});})();(function(){var B=YAHOO.util.Dom,C=YAHOO.lang,A=YAHOO.util.Event,D=YAHOO.widget.Calendar;YAHOO.widget.DateNode=function(G,F,E){YAHOO.widget.DateNode.superclass.constructor.call(this,G,F,E);};YAHOO.extend(YAHOO.widget.DateNode,YAHOO.widget.TextNode,{_type:"DateNode",calendarConfig:null,fillEditorContainer:function(G){var H,F=G.inputContainer;if(C.isUndefined(D)){B.replaceClass(G.editorPanel,"ygtv-edit-DateNode","ygtv-edit-TextNode");YAHOO.widget.DateNode.superclass.fillEditorContainer.call(this,G);return;}if(G.nodeType!=this._type){G.nodeType=this._type;G.saveOnEnter=false;G.node.destroyEditorContents(G);G.inputObject=H=new D(F.appendChild(document.createElement("div")));if(this.calendarConfig){H.cfg.applyConfig(this.calendarConfig,true);H.cfg.fireQueue();}H.selectEvent.subscribe(function(){this.tree._closeEditor(true);},this,true);}else{H=G.inputObject;}H.cfg.setProperty("selected",this.label,false);var I=H.cfg.getProperty("DATE_FIELD_DELIMITER");var E=this.label.split(I);H.cfg.setProperty("pagedate",E[H.cfg.getProperty("MDY_MONTH_POSITION")-1]+I+E[H.cfg.getProperty("MDY_YEAR_POSITION")-1]);H.cfg.fireQueue();H.render();H.oDomContainer.focus();},saveEditorValue:function(F){var I=F.node,H=I.tree.validator,J;if(C.isUndefined(D)){J=F.inputElement.value;}else{var K=F.inputObject,G=K.getSelectedDates()[0],E=[];E[K.cfg.getProperty("MDY_DAY_POSITION")-1]=G.getDate();E[K.cfg.getProperty("MDY_MONTH_POSITION")-1]=G.getMonth()+1;E[K.cfg.getProperty("MDY_YEAR_POSITION")-1]=G.getFullYear();J=E.join(K.cfg.getProperty("DATE_FIELD_DELIMITER"));}if(C.isFunction(H)){J=H(J,I.label,I);if(C.isUndefined(J)){return false;}}I.label=J;I.getLabelEl().innerHTML=J;},getNodeDefinition:function(){var E=YAHOO.widget.DateNode.superclass.getNodeDefinition.call(this);if(E===false){return false;}if(this.calendarConfig){E.calendarConfig=this.calendarConfig;}return E;}});})();(function(){var E=YAHOO.util.Dom,F=YAHOO.lang,B=YAHOO.util.Event,D=YAHOO.widget.TreeView,C=D.prototype;D.editorData={active:false,whoHasIt:null,nodeType:null,editorPanel:null,inputContainer:null,buttonsContainer:null,node:null,saveOnEnter:true};C.validator=null;C._nodeEditing=function(M){if(M.fillEditorContainer&&M.editable){var I,K,L,J,H=D.editorData;H.active=true;H.whoHasIt=this;if(!H.nodeType){H.editorPanel=I=document.body.appendChild(document.createElement("div"));E.addClass(I,"ygtv-label-editor");L=H.buttonsContainer=I.appendChild(document.createElement("div"));E.addClass(L,"ygtv-button-container");J=L.appendChild(document.createElement("button"));E.addClass(J,"ygtvok");J.innerHTML=" ";J=L.appendChild(document.createElement("button"));E.addClass(J,"ygtvcancel");J.innerHTML=" ";B.on(L,"click",function(O){var P=B.getTarget(O);var N=D.editorData.node;if(E.hasClass(P,"ygtvok")){B.stopEvent(O);this._closeEditor(true);}if(E.hasClass(P,"ygtvcancel")){B.stopEvent(O);this._closeEditor(false);}},this,true);H.inputContainer=I.appendChild(document.createElement("div"));E.addClass(H.inputContainer,"ygtv-input");B.on(I,"keydown",function(P){var O=D.editorData,N=YAHOO.util.KeyListener.KEY;switch(P.keyCode){case N.ENTER:B.stopEvent(P);if(O.saveOnEnter){this._closeEditor(true);}break;case N.ESCAPE:B.stopEvent(P);this._closeEditor(false);break;}},this,true);}else{I=H.editorPanel;}H.node=M;
 if(H.nodeType){E.removeClass(I,"ygtv-edit-"+H.nodeType);}E.addClass(I," ygtv-edit-"+M._type);K=E.getXY(M.getContentEl());E.setStyle(I,"left",K[0]+"px");E.setStyle(I,"top",K[1]+"px");E.setStyle(I,"display","block");I.focus();M.fillEditorContainer(H);return true;}};C.onEventEditNode=function(H){if(H instanceof YAHOO.widget.Node){H.editNode();}else{if(H.node instanceof YAHOO.widget.Node){H.node.editNode();}}};C._closeEditor=function(J){var H=D.editorData,I=H.node,K=true;if(J){K=H.node.saveEditorValue(H)!==false;}if(K){E.setStyle(H.editorPanel,"display","none");H.active=false;I.focus();}};C._destroyEditor=function(){var H=D.editorData;if(H&&H.nodeType&&(!H.active||H.whoHasIt===this)){B.removeListener(H.editorPanel,"keydown");B.removeListener(H.buttonContainer,"click");H.node.destroyEditorContents(H);document.body.removeChild(H.editorPanel);H.nodeType=H.editorPanel=H.inputContainer=H.buttonsContainer=H.whoHasIt=H.node=null;H.active=false;}};var G=YAHOO.widget.Node.prototype;G.editable=false;G.editNode=function(){this.tree._nodeEditing(this);};G.fillEditorContainer=null;G.destroyEditorContents=function(H){B.purgeElement(H.inputContainer,true);H.inputContainer.innerHTML="";};G.saveEditorValue=function(H){};var A=YAHOO.widget.TextNode.prototype;A.fillEditorContainer=function(I){var H;if(I.nodeType!=this._type){I.nodeType=this._type;I.saveOnEnter=true;I.node.destroyEditorContents(I);I.inputElement=H=I.inputContainer.appendChild(document.createElement("input"));}else{H=I.inputElement;}H.value=this.label;H.focus();H.select();};A.saveEditorValue=function(H){var J=H.node,K=H.inputElement.value,I=J.tree.validator;if(F.isFunction(I)){K=I(K,J.label,J);if(F.isUndefined(K)){return false;}}J.label=K;J.getLabelEl().innerHTML=K;};A.destroyEditorContents=function(H){H.inputContainer.innerHTML="";};})();YAHOO.register("treeview",YAHOO.widget.TreeView,{version:"2.7.0",build:"1799"});/*
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.8.0r4
+*/
+YAHOO.widget.LogMsg=function(A){this.msg=this.time=this.category=this.source=this.sourceDetail=null;if(A&&(A.constructor==Object)){for(var B in A){if(A.hasOwnProperty(B)){this[B]=A[B];}}}};YAHOO.widget.LogWriter=function(A){if(!A){YAHOO.log("Could not instantiate LogWriter due to invalid source.","error","LogWriter");return;}this._source=A;};YAHOO.widget.LogWriter.prototype.toString=function(){return"LogWriter "+this._sSource;};YAHOO.widget.LogWriter.prototype.log=function(A,B){YAHOO.widget.Logger.log(A,B,this._source);};YAHOO.widget.LogWriter.prototype.getSource=function(){return this._source;};YAHOO.widget.LogWriter.prototype.setSource=function(A){if(!A){YAHOO.log("Could not set source due to invalid source.","error",this.toString());return;}else{this._source=A;}};YAHOO.widget.LogWriter.prototype._source=null;if(!YAHOO.widget.Logger){YAHOO.widget.Logger={loggerEnabled:true,_browserConsoleEnabled:false,categories:["info","warn","error","time","window"],sources:["global"],_stack:[],maxStackEntries:2500,_startTime:new Date().getTime(),_lastTime:null,_windowErrorsHandled:false,_origOnWindowError:null};YAHOO.widget.Logger.log=function(B,F,G){if(this.loggerEnabled){if(!F){F="info";}else{F=F.toLocaleLowerCase();if(this._isNewCategory(F)){this._createNewCategory(F);}}var C="global";var A=null;if(G){var D=G.indexOf(" ");if(D>0){C=G.substring(0,D);A=G.substring(D,G.length);}else{C=G;}if(this._isNewSource(C)){this._createNewSource(C);}}var H=new Date();var J=new YAHOO.widget.LogMsg({msg:B,time:H,category:F,source:C,sourceDetail:A});var I=this._stack;var E=this.maxStackEntries;if(E&&!isNaN(E)&&(I.length>=E)){I.shift();}I.push(J);this.newLogEvent.fire(J);if(this._browserConsoleEnabled){this._printToBrowserConsole(J);}return true;}else{return false;}};YAHOO.widget.Logger.reset=function(){this._stack=[];this._startTime=new Date().getTime();this.loggerEnabled=true;this.log("Logger reset");this.logResetEvent.fire();};YAHOO.widget.Logger.getStack=function(){return this._stack;};YAHOO.widget.Logger.getStartTime=function(){return this._startTime;};YAHOO.widget.Logger.disableBrowserConsole=function(){YAHOO.log("Logger output to the function console.log() has been disabled.");this._browserConsoleEnabled=false;};YAHOO.widget.Logger.enableBrowserConsole=function(){this._browserConsoleEnabled=true;YAHOO.log("Logger output to the function console.log() has been enabled.");};YAHOO.widget.Logger.handleWindowErrors=function(){if(!YAHOO.widget.Logger._windowErrorsHandled){if(window.error){YAHOO.widget.Logger._origOnWindowError=window.onerror;}window.onerror=YAHOO.widget.Logger._onWindowError;YAHOO.widget.Logger._windowErrorsHandled=true;YAHOO.log("Logger handling of window.onerror has been enabled.");}else{YAHOO.log("Logger handling of window.onerror had already been enabled.");}};YAHOO.widget.Logger.unhandleWindowErrors=function(){if(YAHOO.widget.Logger._windowErrorsHandled){if(YAHOO.widget.Logger._origOnWindowError){window.onerror=YAHOO.widget.Logger._origOnWindowError;YAHOO.widget.Logger._origOnWindowError=null;}else{window.onerror=null;}YAHOO.widget.Logger._windowErrorsHandled=false;YAHOO.log("Logger handling of window.onerror has been disabled.");}else{YAHOO.log("Logger handling of window.onerror had already been disabled.");}};YAHOO.widget.Logger.categoryCreateEvent=new YAHOO.util.CustomEvent("categoryCreate",this,true);YAHOO.widget.Logger.sourceCreateEvent=new YAHOO.util.CustomEvent("sourceCreate",this,true);YAHOO.widget.Logger.newLogEvent=new YAHOO.util.CustomEvent("newLog",this,true);YAHOO.widget.Logger.logResetEvent=new YAHOO.util.CustomEvent("logReset",this,true);YAHOO.widget.Logger._createNewCategory=function(A){this.categories.push(A);this.categoryCreateEvent.fire(A);};YAHOO.widget.Logger._isNewCategory=function(B){for(var A=0;A<this.categories.length;A++){if(B==this.categories[A]){return false;}}return true;};YAHOO.widget.Logger._createNewSource=function(A){this.sources.push(A);this.sourceCreateEvent.fire(A);};YAHOO.widget.Logger._isNewSource=function(A){if(A){for(var B=0;B<this.sources.length;B++){if(A==this.sources[B]){return false;}}return true;}};YAHOO.widget.Logger._printToBrowserConsole=function(C){if(window.console&&console.log){var E=C.category;var D=C.category.substring(0,4).toUpperCase();var G=C.time;var F;if(G.toLocaleTimeString){F=G.toLocaleTimeString();}else{F=G.toString();}var H=G.getTime();var B=(YAHOO.widget.Logger._lastTime)?(H-YAHOO.widget.Logger._lastTime):0;YAHOO.widget.Logger._lastTime=H;var A=F+" ("+B+"ms): "+C.source+": ";if(YAHOO.env.ua.webkit){A+=C.msg;}console.log(A,C.msg);}};YAHOO.widget.Logger._onWindowError=function(A,C,B){try{YAHOO.widget.Logger.log(A+" ("+C+", line "+B+")","window");if(YAHOO.widget.Logger._origOnWindowError){YAHOO.widget.Logger._origOnWindowError();}}catch(D){return false;}};YAHOO.widget.Logger.log("Logger initialized");}(function(){var C=YAHOO.widget.Logger,D=YAHOO.util,E=D.Dom,A=D.Event,G=document;function B(I,H){I=G.createElement(I);if(H){for(var J in H){if(H.hasOwnProperty(J)){I[J]=H[J];}}}return I;}function F(I,H){this._sName=F._index;F._index++;this._init.apply(this,arguments);if(this.autoRender!==false){this.render();}}YAHOO.lang.augmentObject(F,{_index:0,ENTRY_TEMPLATE:(function(){return B("pre",{className:"yui-log-entry"});})(),VERBOSE_TEMPLATE:"<p><span class='{category}'>{label}</span> {totalTime}ms (+{elapsedTime}) {localTime}:</p><p>{sourceAndDetail}</p><p>{message}</p>",BASIC_TEMPLATE:"<p><span class='{category}'>{label}</span> {totalTime}ms (+{elapsedTime}) {localTime}: {sourceAndDetail}: {message}</p>"});F.prototype={logReaderEnabled:true,width:null,height:null,top:null,left:null,right:null,bottom:null,fontSize:null,footerEnabled:true,verboseOutput:true,entryFormat:null,newestOnTop:true,outputBuffer:100,thresholdMax:500,thresholdMin:100,isCollapsed:false,isPaused:false,draggable:true,toString:function(){return"LogReader instance"+this._sName;},pause:function(){this.isPaused=true;this._timeout=null;this.logReaderEnabled=false;if(this._btnPause){this._btnPause.value="Resume";
+}},resume:function(){this.isPaused=false;this.logReaderEnabled=true;this._printBuffer();if(this._btnPause){this._btnPause.value="Pause";}},render:function(){if(this.rendered){return;}this._initContainerEl();this._initHeaderEl();this._initConsoleEl();this._initFooterEl();this._initCategories();this._initSources();this._initDragDrop();C.newLogEvent.subscribe(this._onNewLog,this);C.logResetEvent.subscribe(this._onReset,this);C.categoryCreateEvent.subscribe(this._onCategoryCreate,this);C.sourceCreateEvent.subscribe(this._onSourceCreate,this);this.rendered=true;this._filterLogs();},destroy:function(){A.purgeElement(this._elContainer,true);this._elContainer.innerHTML="";this._elContainer.parentNode.removeChild(this._elContainer);this.rendered=false;},hide:function(){this._elContainer.style.display="none";},show:function(){this._elContainer.style.display="block";},collapse:function(){this._elConsole.style.display="none";if(this._elFt){this._elFt.style.display="none";}this._btnCollapse.value="Expand";this.isCollapsed=true;},expand:function(){this._elConsole.style.display="block";if(this._elFt){this._elFt.style.display="block";}this._btnCollapse.value="Collapse";this.isCollapsed=false;},getCheckbox:function(H){return this._filterCheckboxes[H];},getCategories:function(){return this._categoryFilters;},showCategory:function(I){var K=this._categoryFilters;if(K.indexOf){if(K.indexOf(I)>-1){return;}}else{for(var H=0;H<K.length;H++){if(K[H]===I){return;}}}this._categoryFilters.push(I);this._filterLogs();var J=this.getCheckbox(I);if(J){J.checked=true;}},hideCategory:function(I){var K=this._categoryFilters;for(var H=0;H<K.length;H++){if(I==K[H]){K.splice(H,1);break;}}this._filterLogs();var J=this.getCheckbox(I);if(J){J.checked=false;}},getSources:function(){return this._sourceFilters;},showSource:function(H){var K=this._sourceFilters;if(K.indexOf){if(K.indexOf(H)>-1){return;}}else{for(var I=0;I<K.length;I++){if(H==K[I]){return;}}}K.push(H);this._filterLogs();var J=this.getCheckbox(H);if(J){J.checked=true;}},hideSource:function(H){var K=this._sourceFilters;for(var I=0;I<K.length;I++){if(H==K[I]){K.splice(I,1);break;}}this._filterLogs();var J=this.getCheckbox(H);if(J){J.checked=false;}},clearConsole:function(){this._timeout=null;this._buffer=[];this._consoleMsgCount=0;var H=this._elConsole;H.innerHTML="";},setTitle:function(H){this._title.innerHTML=this.html2Text(H);},getLastTime:function(){return this._lastTime;},formatMsg:function(I){var H=this.entryFormat||(this.verboseOutput?F.VERBOSE_TEMPLATE:F.BASIC_TEMPLATE),J={category:I.category,label:I.category.substring(0,4).toUpperCase(),sourceAndDetail:I.sourceDetail?I.source+" "+I.sourceDetail:I.source,message:this.html2Text(I.msg||I.message||"")};if(I.time&&I.time.getTime){J.localTime=I.time.toLocaleTimeString?I.time.toLocaleTimeString():I.time.toString();J.elapsedTime=I.time.getTime()-this.getLastTime();J.totalTime=I.time.getTime()-C.getStartTime();}var K=F.ENTRY_TEMPLATE.cloneNode(true);if(this.verboseOutput){K.className+=" yui-log-verbose";}K.innerHTML=H.replace(/\{(\w+)\}/g,function(L,M){return(M in J)?J[M]:"";});return K;},html2Text:function(H){if(H){H+="";return H.replace(/&/g,"&#38;").replace(/</g,"&#60;").replace(/>/g,"&#62;");}return"";},_sName:null,_buffer:null,_consoleMsgCount:0,_lastTime:null,_timeout:null,_filterCheckboxes:null,_categoryFilters:null,_sourceFilters:null,_elContainer:null,_elHd:null,_elCollapse:null,_btnCollapse:null,_title:null,_elConsole:null,_elFt:null,_elBtns:null,_elCategoryFilters:null,_elSourceFilters:null,_btnPause:null,_btnClear:null,_init:function(H,I){this._buffer=[];this._filterCheckboxes={};this._lastTime=C.getStartTime();if(I&&(I.constructor==Object)){for(var J in I){if(I.hasOwnProperty(J)){this[J]=I[J];}}}this._elContainer=E.get(H);YAHOO.log("LogReader initialized",null,this.toString());},_initContainerEl:function(){if(!this._elContainer||!/div$/i.test(this._elContainer.tagName)){this._elContainer=G.body.insertBefore(B("div"),G.body.firstChild);E.addClass(this._elContainer,"yui-log-container");}E.addClass(this._elContainer,"yui-log");var J=this._elContainer.style,H=["width","right","top","fontSize"],K,I;for(I=H.length-1;I>=0;--I){K=H[I];if(this[K]){J[K]=this[K];}}if(this.left){J.left=this.left;J.right="auto";}if(this.bottom){J.bottom=this.bottom;J.top="auto";}if(YAHOO.env.ua.opera){G.body.style+="";}},_initHeaderEl:function(){if(this._elHd){A.purgeElement(this._elHd,true);this._elHd.innerHTML="";}this._elHd=B("div",{id:"yui-log-hd"+this._sName,className:"yui-log-hd"});this._elCollapse=B("div",{className:"yui-log-btns"});this._btnCollapse=B("input",{type:"button",className:"yui-log-button",value:"Collapse"});A.on(this._btnCollapse,"click",this._onClickCollapseBtn,this);this._title=B("h4",{innerHTML:"Logger Console"});this._elCollapse.appendChild(this._btnCollapse);this._elHd.appendChild(this._elCollapse);this._elHd.appendChild(this._title);this._elContainer.appendChild(this._elHd);},_initConsoleEl:function(){if(this._elConsole){A.purgeElement(this._elConsole,true);this._elConsole.innerHTML="";}this._elConsole=B("div",{className:"yui-log-bd"});if(this.height){this._elConsole.style.height=this.height;}this._elContainer.appendChild(this._elConsole);},_initFooterEl:function(){if(this.footerEnabled){if(this._elFt){A.purgeElement(this._elFt,true);this._elFt.innerHTML="";}this._elFt=B("div",{className:"yui-log-ft"});this._elBtns=B("div",{className:"yui-log-btns"});this._btnPause=B("input",{type:"button",className:"yui-log-button",value:"Pause"});A.on(this._btnPause,"click",this._onClickPauseBtn,this);this._btnClear=B("input",{type:"button",className:"yui-log-button",value:"Clear"});A.on(this._btnClear,"click",this._onClickClearBtn,this);this._elCategoryFilters=B("div",{className:"yui-log-categoryfilters"});this._elSourceFilters=B("div",{className:"yui-log-sourcefilters"});this._elBtns.appendChild(this._btnPause);this._elBtns.appendChild(this._btnClear);this._elFt.appendChild(this._elBtns);this._elFt.appendChild(this._elCategoryFilters);
+this._elFt.appendChild(this._elSourceFilters);this._elContainer.appendChild(this._elFt);}},_initDragDrop:function(){if(D.DD&&this.draggable&&this._elHd){var H=new D.DD(this._elContainer);H.setHandleElId(this._elHd.id);this._elHd.style.cursor="move";}},_initCategories:function(){this._categoryFilters=[];var J=C.categories;for(var H=0;H<J.length;H++){var I=J[H];this._categoryFilters.push(I);if(this._elCategoryFilters){this._createCategoryCheckbox(I);}}},_initSources:function(){this._sourceFilters=[];var J=C.sources;for(var I=0;I<J.length;I++){var H=J[I];this._sourceFilters.push(H);if(this._elSourceFilters){this._createSourceCheckbox(H);}}},_createCategoryCheckbox:function(K){if(this._elFt){var J=B("span",{className:"yui-log-filtergrp"}),H=B("input",{id:"yui-log-filter-"+K+this._sName,className:"yui-log-filter-"+K,type:"checkbox",category:K}),I=B("label",{htmlFor:H.id,className:K,innerHTML:K});A.on(H,"click",this._onCheckCategory,this);this._filterCheckboxes[K]=H;J.appendChild(H);J.appendChild(I);this._elCategoryFilters.appendChild(J);H.checked=true;}},_createSourceCheckbox:function(H){if(this._elFt){var K=B("span",{className:"yui-log-filtergrp"}),I=B("input",{id:"yui-log-filter-"+H+this._sName,className:"yui-log-filter-"+H,type:"checkbox",source:H}),J=B("label",{htmlFor:I.id,className:H,innerHTML:H});A.on(I,"click",this._onCheckSource,this);this._filterCheckboxes[H]=I;K.appendChild(I);K.appendChild(J);this._elSourceFilters.appendChild(K);I.checked=true;}},_filterLogs:function(){if(this._elConsole!==null){this.clearConsole();this._printToConsole(C.getStack());}},_printBuffer:function(){this._timeout=null;if(this._elConsole!==null){var I=this.thresholdMax;I=(I&&!isNaN(I))?I:500;if(this._consoleMsgCount<I){var H=[];for(var J=0;J<this._buffer.length;J++){H[J]=this._buffer[J];}this._buffer=[];this._printToConsole(H);}else{this._filterLogs();}if(!this.newestOnTop){this._elConsole.scrollTop=this._elConsole.scrollHeight;}}},_printToConsole:function(P){var I=P.length,T=G.createDocumentFragment(),W=[],X=this.thresholdMin,J=this._sourceFilters.length,U=this._categoryFilters.length,R,O,N,M,S;if(isNaN(X)||(X>this.thresholdMax)){X=0;}R=(I>X)?(I-X):0;for(O=R;O<I;O++){var L=false,Q=false,V=P[O],H=V.source,K=V.category;for(N=0;N<J;N++){if(H==this._sourceFilters[N]){Q=true;break;}}if(Q){for(N=0;N<U;N++){if(K==this._categoryFilters[N]){L=true;break;}}}if(L){if(this._consoleMsgCount===0){this._lastTime=V.time.getTime();}M=this.formatMsg(V);if(typeof M==="string"){W[W.length]=M;}else{T.insertBefore(M,this.newestOnTop?T.firstChild||null:null);}this._consoleMsgCount++;this._lastTime=V.time.getTime();}}if(W.length){W.splice(0,0,this._elConsole.innerHTML);this._elConsole.innerHTML=this.newestOnTop?W.reverse().join(""):W.join("");}else{if(T.firstChild){this._elConsole.insertBefore(T,this.newestOnTop?this._elConsole.firstChild||null:null);}}},_onCategoryCreate:function(K,J,H){var I=J[0];H._categoryFilters.push(I);if(H._elFt){H._createCategoryCheckbox(I);}},_onSourceCreate:function(K,J,H){var I=J[0];H._sourceFilters.push(I);if(H._elFt){H._createSourceCheckbox(I);}},_onCheckCategory:function(H,I){var J=this.category;if(!this.checked){I.hideCategory(J);}else{I.showCategory(J);}},_onCheckSource:function(H,I){var J=this.source;if(!this.checked){I.hideSource(J);}else{I.showSource(J);}},_onClickCollapseBtn:function(H,I){if(!I.isCollapsed){I.collapse();}else{I.expand();}},_onClickPauseBtn:function(H,I){if(!I.isPaused){I.pause();}else{I.resume();}},_onClickClearBtn:function(H,I){I.clearConsole();},_onNewLog:function(K,J,H){var I=J[0];H._buffer.push(I);if(H.logReaderEnabled===true&&H._timeout===null){H._timeout=setTimeout(function(){H._printBuffer();},H.outputBuffer);}},_onReset:function(J,I,H){H._filterLogs();}};YAHOO.widget.LogReader=F;})();YAHOO.register("logger",YAHOO.widget.Logger,{version:"2.8.0r4",build:"2449"});/*
 Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
@@ -474,7 +198,18 @@ version: 2.7.0
 if(!YAHOO.util.DragDropMgr){YAHOO.util.DragDropMgr=function(){var A=YAHOO.util.Event,B=YAHOO.util.Dom;return{useShim:false,_shimActive:false,_shimState:false,_debugShim:false,_createShim:function(){var C=document.createElement("div");C.id="yui-ddm-shim";if(document.body.firstChild){document.body.insertBefore(C,document.body.firstChild);}else{document.body.appendChild(C);}C.style.display="none";C.style.backgroundColor="red";C.style.position="absolute";C.style.zIndex="99999";B.setStyle(C,"opacity","0");this._shim=C;A.on(C,"mouseup",this.handleMouseUp,this,true);A.on(C,"mousemove",this.handleMouseMove,this,true);A.on(window,"scroll",this._sizeShim,this,true);},_sizeShim:function(){if(this._shimActive){var C=this._shim;C.style.height=B.getDocumentHeight()+"px";C.style.width=B.getDocumentWidth()+"px";C.style.top="0";C.style.left="0";}},_activateShim:function(){if(this.useShim){if(!this._shim){this._createShim();}this._shimActive=true;var C=this._shim,D="0";if(this._debugShim){D=".5";}B.setStyle(C,"opacity",D);this._sizeShim();C.style.display="block";}},_deactivateShim:function(){this._shim.style.display="none";this._shimActive=false;},_shim:null,ids:{},handleIds:{},dragCurrent:null,dragOvers:{},deltaX:0,deltaY:0,preventDefault:true,stopPropagation:true,initialized:false,locked:false,interactionInfo:null,init:function(){this.initialized=true;},POINT:0,INTERSECT:1,STRICT_INTERSECT:2,mode:0,_execOnAll:function(E,D){for(var F in this.ids){for(var C in this.ids[F]){var G=this.ids[F][C];if(!this.isTypeOfDD(G)){continue;}G[E].apply(G,D);}}},_onLoad:function(){this.init();A.on(document,"mouseup",this.handleMouseUp,this,true);A.on(document,"mousemove",this.handleMouseMove,this,true);A.on(window,"unload",this._onUnload,this,true);A.on(window,"resize",this._onResize,this,true);},_onResize:function(C){this._execOnAll("resetConstraints",[]);},lock:function(){this.locked=true;},unlock:function(){this.locked=false;},isLocked:function(){return this.locked;},locationCache:{},useCache:true,clickPixelThresh:3,clickTimeThresh:1000,dragThreshMet:false,clickTimeout:null,startX:0,startY:0,fromTimeout:false,regDragDrop:function(D,C){if(!this.initialized){this.init();}if(!this.ids[C]){this.ids[C]={};}this.ids[C][D.id]=D;},removeDDFromGroup:function(E,C){if(!this.ids[C]){this.ids[C]={};}var D=this.ids[C];if(D&&D[E.id]){delete D[E.id];}},_remove:function(E){for(var D in E.groups){if(D){var C=this.ids[D];if(C&&C[E.id]){delete C[E.id];}}}delete this.handleIds[E.id];},regHandle:function(D,C){if(!this.handleIds[D]){this.handleIds[D]={};}this.handleIds[D][C]=C;},isDragDrop:function(C){return(this.getDDById(C))?true:false;},getRelated:function(H,D){var G=[];for(var F in H.groups){for(var E in this.ids[F]){var C=this.ids[F][E];if(!this.isTypeOfDD(C)){continue;}if(!D||C.isTarget){G[G.length]=C;}}}return G;},isLegalTarget:function(G,F){var D=this.getRelated(G,true);for(var E=0,C=D.length;E<C;++E){if(D[E].id==F.id){return true;}}return false;},isTypeOfDD:function(C){return(C&&C.__ygDragDrop);},isHandle:function(D,C){return(this.handleIds[D]&&this.handleIds[D][C]);},getDDById:function(D){for(var C in this.ids){if(this.ids[C][D]){return this.ids[C][D];}}return null;},handleMouseDown:function(E,D){this.currentTarget=YAHOO.util.Event.getTarget(E);this.dragCurrent=D;var C=D.getEl();this.startX=YAHOO.util.Event.getPageX(E);this.startY=YAHOO.util.Event.getPageY(E);this.deltaX=this.startX-C.offsetLeft;this.deltaY=this.startY-C.offsetTop;this.dragThreshMet=false;this.clickTimeout=setTimeout(function(){var F=YAHOO.util.DDM;F.startDrag(F.startX,F.startY);F.fromTimeout=true;},this.clickTimeThresh);},startDrag:function(C,E){if(this.dragCurrent&&this.dragCurrent.useShim){this._shimState=this.useShim;this.useShim=true;}this._activateShim();clearTimeout(this.clickTimeout);var D=this.dragCurrent;if(D&&D.events.b4StartDrag){D.b4StartDrag(C,E);D.fireEvent("b4StartDragEvent",{x:C,y:E});}if(D&&D.events.startDrag){D.startDrag(C,E);D.fireEvent("startDragEvent",{x:C,y:E});}this.dragThreshMet=true;},handleMouseUp:function(C){if(this.dragCurrent){clearTimeout(this.clickTimeout);if(this.dragThreshMet){if(this.fromTimeout){this.fromTimeout=false;this.handleMouseMove(C);}this.fromTimeout=false;this.fireEvents(C,true);}else{}this.stopDrag(C);this.stopEvent(C);}},stopEvent:function(C){if(this.stopPropagation){YAHOO.util.Event.stopPropagation(C);}if(this.preventDefault){YAHOO.util.Event.preventDefault(C);}},stopDrag:function(E,D){var C=this.dragCurrent;if(C&&!D){if(this.dragThreshMet){if(C.events.b4EndDrag){C.b4EndDrag(E);C.fireEvent("b4EndDragEvent",{e:E});}if(C.events.endDrag){C.endDrag(E);C.fireEvent("endDragEvent",{e:E});}}if(C.events.mouseUp){C.onMouseUp(E);C.fireEvent("mouseUpEvent",{e:E});}}if(this._shimActive){this._deactivateShim();if(this.dragCurrent&&this.dragCurrent.useShim){this.useShim=this._shimState;this._shimState=false;}}this.dragCurrent=null;this.dragOvers={};},handleMouseMove:function(F){var C=this.dragCurrent;if(C){if(YAHOO.util.Event.isIE&&!F.button){this.stopEvent(F);return this.handleMouseUp(F);}else{if(F.clientX<0||F.clientY<0){}}if(!this.dragThreshMet){var E=Math.abs(this.startX-YAHOO.util.Event.getPageX(F));var D=Math.abs(this.startY-YAHOO.util.Event.getPageY(F));if(E>this.clickPixelThresh||D>this.clickPixelThresh){this.startDrag(this.startX,this.startY);}}if(this.dragThreshMet){if(C&&C.events.b4Drag){C.b4Drag(F);C.fireEvent("b4DragEvent",{e:F});}if(C&&C.events.drag){C.onDrag(F);C.fireEvent("dragEvent",{e:F});}if(C){this.fireEvents(F,false);}}this.stopEvent(F);}},fireEvents:function(V,L){var a=this.dragCurrent;if(!a||a.isLocked()||a.dragOnly){return;}var N=YAHOO.util.Event.getPageX(V),M=YAHOO.util.Event.getPageY(V),P=new YAHOO.util.Point(N,M),K=a.getTargetCoord(P.x,P.y),F=a.getDragEl(),E=["out","over","drop","enter"],U=new YAHOO.util.Region(K.y,K.x+F.offsetWidth,K.y+F.offsetHeight,K.x),I=[],D={},Q=[],c={outEvts:[],overEvts:[],dropEvts:[],enterEvts:[]};for(var S in this.dragOvers){var d=this.dragOvers[S];if(!this.isTypeOfDD(d)){continue;
 }if(!this.isOverTarget(P,d,this.mode,U)){c.outEvts.push(d);}I[S]=true;delete this.dragOvers[S];}for(var R in a.groups){if("string"!=typeof R){continue;}for(S in this.ids[R]){var G=this.ids[R][S];if(!this.isTypeOfDD(G)){continue;}if(G.isTarget&&!G.isLocked()&&G!=a){if(this.isOverTarget(P,G,this.mode,U)){D[R]=true;if(L){c.dropEvts.push(G);}else{if(!I[G.id]){c.enterEvts.push(G);}else{c.overEvts.push(G);}this.dragOvers[G.id]=G;}}}}}this.interactionInfo={out:c.outEvts,enter:c.enterEvts,over:c.overEvts,drop:c.dropEvts,point:P,draggedRegion:U,sourceRegion:this.locationCache[a.id],validDrop:L};for(var C in D){Q.push(C);}if(L&&!c.dropEvts.length){this.interactionInfo.validDrop=false;if(a.events.invalidDrop){a.onInvalidDrop(V);a.fireEvent("invalidDropEvent",{e:V});}}for(S=0;S<E.length;S++){var Y=null;if(c[E[S]+"Evts"]){Y=c[E[S]+"Evts"];}if(Y&&Y.length){var H=E[S].charAt(0).toUpperCase()+E[S].substr(1),X="onDrag"+H,J="b4Drag"+H,O="drag"+H+"Event",W="drag"+H;if(this.mode){if(a.events[J]){a[J](V,Y,Q);a.fireEvent(J+"Event",{event:V,info:Y,group:Q});}if(a.events[W]){a[X](V,Y,Q);a.fireEvent(O,{event:V,info:Y,group:Q});}}else{for(var Z=0,T=Y.length;Z<T;++Z){if(a.events[J]){a[J](V,Y[Z].id,Q[0]);a.fireEvent(J+"Event",{event:V,info:Y[Z].id,group:Q[0]});}if(a.events[W]){a[X](V,Y[Z].id,Q[0]);a.fireEvent(O,{event:V,info:Y[Z].id,group:Q[0]});}}}}}},getBestMatch:function(E){var G=null;var D=E.length;if(D==1){G=E[0];}else{for(var F=0;F<D;++F){var C=E[F];if(this.mode==this.INTERSECT&&C.cursorIsOver){G=C;break;}else{if(!G||!G.overlap||(C.overlap&&G.overlap.getArea()<C.overlap.getArea())){G=C;}}}}return G;},refreshCache:function(D){var F=D||this.ids;for(var C in F){if("string"!=typeof C){continue;}for(var E in this.ids[C]){var G=this.ids[C][E];if(this.isTypeOfDD(G)){var H=this.getLocation(G);if(H){this.locationCache[G.id]=H;}else{delete this.locationCache[G.id];}}}}},verifyEl:function(D){try{if(D){var C=D.offsetParent;if(C){return true;}}}catch(E){}return false;},getLocation:function(H){if(!this.isTypeOfDD(H)){return null;}var F=H.getEl(),K,E,D,M,L,N,C,J,G;try{K=YAHOO.util.Dom.getXY(F);}catch(I){}if(!K){return null;}E=K[0];D=E+F.offsetWidth;M=K[1];L=M+F.offsetHeight;N=M-H.padding[0];C=D+H.padding[1];J=L+H.padding[2];G=E-H.padding[3];return new YAHOO.util.Region(N,C,J,G);},isOverTarget:function(K,C,E,F){var G=this.locationCache[C.id];if(!G||!this.useCache){G=this.getLocation(C);this.locationCache[C.id]=G;}if(!G){return false;}C.cursorIsOver=G.contains(K);var J=this.dragCurrent;if(!J||(!E&&!J.constrainX&&!J.constrainY)){return C.cursorIsOver;}C.overlap=null;if(!F){var H=J.getTargetCoord(K.x,K.y);var D=J.getDragEl();F=new YAHOO.util.Region(H.y,H.x+D.offsetWidth,H.y+D.offsetHeight,H.x);}var I=F.intersect(G);if(I){C.overlap=I;return(E)?true:C.cursorIsOver;}else{return false;}},_onUnload:function(D,C){this.unregAll();},unregAll:function(){if(this.dragCurrent){this.stopDrag();this.dragCurrent=null;}this._execOnAll("unreg",[]);this.ids={};},elementCache:{},getElWrapper:function(D){var C=this.elementCache[D];if(!C||!C.el){C=this.elementCache[D]=new this.ElementWrapper(YAHOO.util.Dom.get(D));}return C;},getElement:function(C){return YAHOO.util.Dom.get(C);},getCss:function(D){var C=YAHOO.util.Dom.get(D);return(C)?C.style:null;},ElementWrapper:function(C){this.el=C||null;this.id=this.el&&C.id;this.css=this.el&&C.style;},getPosX:function(C){return YAHOO.util.Dom.getX(C);},getPosY:function(C){return YAHOO.util.Dom.getY(C);},swapNode:function(E,C){if(E.swapNode){E.swapNode(C);}else{var F=C.parentNode;var D=C.nextSibling;if(D==E){F.insertBefore(E,C);}else{if(C==E.nextSibling){F.insertBefore(C,E);}else{E.parentNode.replaceChild(C,E);F.insertBefore(E,D);}}}},getScroll:function(){var E,C,F=document.documentElement,D=document.body;if(F&&(F.scrollTop||F.scrollLeft)){E=F.scrollTop;C=F.scrollLeft;}else{if(D){E=D.scrollTop;C=D.scrollLeft;}else{}}return{top:E,left:C};},getStyle:function(D,C){return YAHOO.util.Dom.getStyle(D,C);},getScrollTop:function(){return this.getScroll().top;},getScrollLeft:function(){return this.getScroll().left;},moveToEl:function(C,E){var D=YAHOO.util.Dom.getXY(E);YAHOO.util.Dom.setXY(C,D);},getClientHeight:function(){return YAHOO.util.Dom.getViewportHeight();},getClientWidth:function(){return YAHOO.util.Dom.getViewportWidth();},numericSort:function(D,C){return(D-C);},_timeoutCount:0,_addListeners:function(){var C=YAHOO.util.DDM;if(YAHOO.util.Event&&document){C._onLoad();}else{if(C._timeoutCount>2000){}else{setTimeout(C._addListeners,10);if(document&&document.body){C._timeoutCount+=1;}}}},handleWasClicked:function(C,E){if(this.isHandle(E,C.id)){return true;}else{var D=C.parentNode;while(D){if(this.isHandle(E,D.id)){return true;}else{D=D.parentNode;}}}return false;}};}();YAHOO.util.DDM=YAHOO.util.DragDropMgr;YAHOO.util.DDM._addListeners();}(function(){var A=YAHOO.util.Event;var B=YAHOO.util.Dom;YAHOO.util.DragDrop=function(E,C,D){if(E){this.init(E,C,D);}};YAHOO.util.DragDrop.prototype={events:null,on:function(){this.subscribe.apply(this,arguments);},id:null,config:null,dragElId:null,handleElId:null,invalidHandleTypes:null,invalidHandleIds:null,invalidHandleClasses:null,startPageX:0,startPageY:0,groups:null,locked:false,lock:function(){this.locked=true;},unlock:function(){this.locked=false;},isTarget:true,padding:null,dragOnly:false,useShim:false,_domRef:null,__ygDragDrop:true,constrainX:false,constrainY:false,minX:0,maxX:0,minY:0,maxY:0,deltaX:0,deltaY:0,maintainOffset:false,xTicks:null,yTicks:null,primaryButtonOnly:true,available:false,hasOuterHandles:false,cursorIsOver:false,overlap:null,b4StartDrag:function(C,D){},startDrag:function(C,D){},b4Drag:function(C){},onDrag:function(C){},onDragEnter:function(C,D){},b4DragOver:function(C){},onDragOver:function(C,D){},b4DragOut:function(C){},onDragOut:function(C,D){},b4DragDrop:function(C){},onDragDrop:function(C,D){},onInvalidDrop:function(C){},b4EndDrag:function(C){},endDrag:function(C){},b4MouseDown:function(C){},onMouseDown:function(C){},onMouseUp:function(C){},onAvailable:function(){},getEl:function(){if(!this._domRef){this._domRef=B.get(this.id);
 }return this._domRef;},getDragEl:function(){return B.get(this.dragElId);},init:function(F,C,D){this.initTarget(F,C,D);A.on(this._domRef||this.id,"mousedown",this.handleMouseDown,this,true);for(var E in this.events){this.createEvent(E+"Event");}},initTarget:function(E,C,D){this.config=D||{};this.events={};this.DDM=YAHOO.util.DDM;this.groups={};if(typeof E!=="string"){this._domRef=E;E=B.generateId(E);}this.id=E;this.addToGroup((C)?C:"default");this.handleElId=E;A.onAvailable(E,this.handleOnAvailable,this,true);this.setDragElId(E);this.invalidHandleTypes={A:"A"};this.invalidHandleIds={};this.invalidHandleClasses=[];this.applyConfig();},applyConfig:function(){this.events={mouseDown:true,b4MouseDown:true,mouseUp:true,b4StartDrag:true,startDrag:true,b4EndDrag:true,endDrag:true,drag:true,b4Drag:true,invalidDrop:true,b4DragOut:true,dragOut:true,dragEnter:true,b4DragOver:true,dragOver:true,b4DragDrop:true,dragDrop:true};if(this.config.events){for(var C in this.config.events){if(this.config.events[C]===false){this.events[C]=false;}}}this.padding=this.config.padding||[0,0,0,0];this.isTarget=(this.config.isTarget!==false);this.maintainOffset=(this.config.maintainOffset);this.primaryButtonOnly=(this.config.primaryButtonOnly!==false);this.dragOnly=((this.config.dragOnly===true)?true:false);this.useShim=((this.config.useShim===true)?true:false);},handleOnAvailable:function(){this.available=true;this.resetConstraints();this.onAvailable();},setPadding:function(E,C,F,D){if(!C&&0!==C){this.padding=[E,E,E,E];}else{if(!F&&0!==F){this.padding=[E,C,E,C];}else{this.padding=[E,C,F,D];}}},setInitPosition:function(F,E){var G=this.getEl();if(!this.DDM.verifyEl(G)){if(G&&G.style&&(G.style.display=="none")){}else{}return;}var D=F||0;var C=E||0;var H=B.getXY(G);this.initPageX=H[0]-D;this.initPageY=H[1]-C;this.lastPageX=H[0];this.lastPageY=H[1];this.setStartPosition(H);},setStartPosition:function(D){var C=D||B.getXY(this.getEl());this.deltaSetXY=null;this.startPageX=C[0];this.startPageY=C[1];},addToGroup:function(C){this.groups[C]=true;this.DDM.regDragDrop(this,C);},removeFromGroup:function(C){if(this.groups[C]){delete this.groups[C];}this.DDM.removeDDFromGroup(this,C);},setDragElId:function(C){this.dragElId=C;},setHandleElId:function(C){if(typeof C!=="string"){C=B.generateId(C);}this.handleElId=C;this.DDM.regHandle(this.id,C);},setOuterHandleElId:function(C){if(typeof C!=="string"){C=B.generateId(C);}A.on(C,"mousedown",this.handleMouseDown,this,true);this.setHandleElId(C);this.hasOuterHandles=true;},unreg:function(){A.removeListener(this.id,"mousedown",this.handleMouseDown);this._domRef=null;this.DDM._remove(this);},isLocked:function(){return(this.DDM.isLocked()||this.locked);},handleMouseDown:function(J,I){var D=J.which||J.button;if(this.primaryButtonOnly&&D>1){return;}if(this.isLocked()){return;}var C=this.b4MouseDown(J),F=true;if(this.events.b4MouseDown){F=this.fireEvent("b4MouseDownEvent",J);}var E=this.onMouseDown(J),H=true;if(this.events.mouseDown){H=this.fireEvent("mouseDownEvent",J);}if((C===false)||(E===false)||(F===false)||(H===false)){return;}this.DDM.refreshCache(this.groups);var G=new YAHOO.util.Point(A.getPageX(J),A.getPageY(J));if(!this.hasOuterHandles&&!this.DDM.isOverTarget(G,this)){}else{if(this.clickValidator(J)){this.setStartPosition();this.DDM.handleMouseDown(J,this);this.DDM.stopEvent(J);}else{}}},clickValidator:function(D){var C=YAHOO.util.Event.getTarget(D);return(this.isValidHandleChild(C)&&(this.id==this.handleElId||this.DDM.handleWasClicked(C,this.id)));},getTargetCoord:function(E,D){var C=E-this.deltaX;var F=D-this.deltaY;if(this.constrainX){if(C<this.minX){C=this.minX;}if(C>this.maxX){C=this.maxX;}}if(this.constrainY){if(F<this.minY){F=this.minY;}if(F>this.maxY){F=this.maxY;}}C=this.getTick(C,this.xTicks);F=this.getTick(F,this.yTicks);return{x:C,y:F};},addInvalidHandleType:function(C){var D=C.toUpperCase();this.invalidHandleTypes[D]=D;},addInvalidHandleId:function(C){if(typeof C!=="string"){C=B.generateId(C);}this.invalidHandleIds[C]=C;},addInvalidHandleClass:function(C){this.invalidHandleClasses.push(C);},removeInvalidHandleType:function(C){var D=C.toUpperCase();delete this.invalidHandleTypes[D];},removeInvalidHandleId:function(C){if(typeof C!=="string"){C=B.generateId(C);}delete this.invalidHandleIds[C];},removeInvalidHandleClass:function(D){for(var E=0,C=this.invalidHandleClasses.length;E<C;++E){if(this.invalidHandleClasses[E]==D){delete this.invalidHandleClasses[E];}}},isValidHandleChild:function(F){var E=true;var H;try{H=F.nodeName.toUpperCase();}catch(G){H=F.nodeName;}E=E&&!this.invalidHandleTypes[H];E=E&&!this.invalidHandleIds[F.id];for(var D=0,C=this.invalidHandleClasses.length;E&&D<C;++D){E=!B.hasClass(F,this.invalidHandleClasses[D]);}return E;},setXTicks:function(F,C){this.xTicks=[];this.xTickSize=C;var E={};for(var D=this.initPageX;D>=this.minX;D=D-C){if(!E[D]){this.xTicks[this.xTicks.length]=D;E[D]=true;}}for(D=this.initPageX;D<=this.maxX;D=D+C){if(!E[D]){this.xTicks[this.xTicks.length]=D;E[D]=true;}}this.xTicks.sort(this.DDM.numericSort);},setYTicks:function(F,C){this.yTicks=[];this.yTickSize=C;var E={};for(var D=this.initPageY;D>=this.minY;D=D-C){if(!E[D]){this.yTicks[this.yTicks.length]=D;E[D]=true;}}for(D=this.initPageY;D<=this.maxY;D=D+C){if(!E[D]){this.yTicks[this.yTicks.length]=D;E[D]=true;}}this.yTicks.sort(this.DDM.numericSort);},setXConstraint:function(E,D,C){this.leftConstraint=parseInt(E,10);this.rightConstraint=parseInt(D,10);this.minX=this.initPageX-this.leftConstraint;this.maxX=this.initPageX+this.rightConstraint;if(C){this.setXTicks(this.initPageX,C);}this.constrainX=true;},clearConstraints:function(){this.constrainX=false;this.constrainY=false;this.clearTicks();},clearTicks:function(){this.xTicks=null;this.yTicks=null;this.xTickSize=0;this.yTickSize=0;},setYConstraint:function(C,E,D){this.topConstraint=parseInt(C,10);this.bottomConstraint=parseInt(E,10);this.minY=this.initPageY-this.topConstraint;this.maxY=this.initPageY+this.bottomConstraint;if(D){this.setYTicks(this.initPageY,D);
-}this.constrainY=true;},resetConstraints:function(){if(this.initPageX||this.initPageX===0){var D=(this.maintainOffset)?this.lastPageX-this.initPageX:0;var C=(this.maintainOffset)?this.lastPageY-this.initPageY:0;this.setInitPosition(D,C);}else{this.setInitPosition();}if(this.constrainX){this.setXConstraint(this.leftConstraint,this.rightConstraint,this.xTickSize);}if(this.constrainY){this.setYConstraint(this.topConstraint,this.bottomConstraint,this.yTickSize);}},getTick:function(I,F){if(!F){return I;}else{if(F[0]>=I){return F[0];}else{for(var D=0,C=F.length;D<C;++D){var E=D+1;if(F[E]&&F[E]>=I){var H=I-F[D];var G=F[E]-I;return(G>H)?F[D]:F[E];}}return F[F.length-1];}}},toString:function(){return("DragDrop "+this.id);}};YAHOO.augment(YAHOO.util.DragDrop,YAHOO.util.EventProvider);})();YAHOO.util.DD=function(C,A,B){if(C){this.init(C,A,B);}};YAHOO.extend(YAHOO.util.DD,YAHOO.util.DragDrop,{scroll:true,autoOffset:function(C,B){var A=C-this.startPageX;var D=B-this.startPageY;this.setDelta(A,D);},setDelta:function(B,A){this.deltaX=B;this.deltaY=A;},setDragElPos:function(C,B){var A=this.getDragEl();this.alignElWithMouse(A,C,B);},alignElWithMouse:function(C,G,F){var E=this.getTargetCoord(G,F);if(!this.deltaSetXY){var H=[E.x,E.y];YAHOO.util.Dom.setXY(C,H);var D=parseInt(YAHOO.util.Dom.getStyle(C,"left"),10);var B=parseInt(YAHOO.util.Dom.getStyle(C,"top"),10);this.deltaSetXY=[D-E.x,B-E.y];}else{YAHOO.util.Dom.setStyle(C,"left",(E.x+this.deltaSetXY[0])+"px");YAHOO.util.Dom.setStyle(C,"top",(E.y+this.deltaSetXY[1])+"px");}this.cachePosition(E.x,E.y);var A=this;setTimeout(function(){A.autoScroll.call(A,E.x,E.y,C.offsetHeight,C.offsetWidth);},0);},cachePosition:function(B,A){if(B){this.lastPageX=B;this.lastPageY=A;}else{var C=YAHOO.util.Dom.getXY(this.getEl());this.lastPageX=C[0];this.lastPageY=C[1];}},autoScroll:function(J,I,E,K){if(this.scroll){var L=this.DDM.getClientHeight();var B=this.DDM.getClientWidth();var N=this.DDM.getScrollTop();var D=this.DDM.getScrollLeft();var H=E+I;var M=K+J;var G=(L+N-I-this.deltaY);var F=(B+D-J-this.deltaX);var C=40;var A=(document.all)?80:30;if(H>L&&G<C){window.scrollTo(D,N+A);}if(I<N&&N>0&&I-N<C){window.scrollTo(D,N-A);}if(M>B&&F<C){window.scrollTo(D+A,N);}if(J<D&&D>0&&J-D<C){window.scrollTo(D-A,N);}}},applyConfig:function(){YAHOO.util.DD.superclass.applyConfig.call(this);this.scroll=(this.config.scroll!==false);},b4MouseDown:function(A){this.setStartPosition();this.autoOffset(YAHOO.util.Event.getPageX(A),YAHOO.util.Event.getPageY(A));},b4Drag:function(A){this.setDragElPos(YAHOO.util.Event.getPageX(A),YAHOO.util.Event.getPageY(A));},toString:function(){return("DD "+this.id);}});YAHOO.util.DDProxy=function(C,A,B){if(C){this.init(C,A,B);this.initFrame();}};YAHOO.util.DDProxy.dragElId="ygddfdiv";YAHOO.extend(YAHOO.util.DDProxy,YAHOO.util.DD,{resizeFrame:true,centerFrame:false,createFrame:function(){var B=this,A=document.body;if(!A||!A.firstChild){setTimeout(function(){B.createFrame();},50);return;}var F=this.getDragEl(),E=YAHOO.util.Dom;if(!F){F=document.createElement("div");F.id=this.dragElId;var D=F.style;D.position="absolute";D.visibility="hidden";D.cursor="move";D.border="2px solid #aaa";D.zIndex=999;D.height="25px";D.width="25px";var C=document.createElement("div");E.setStyle(C,"height","100%");E.setStyle(C,"width","100%");E.setStyle(C,"background-color","#ccc");E.setStyle(C,"opacity","0");F.appendChild(C);A.insertBefore(F,A.firstChild);}},initFrame:function(){this.createFrame();},applyConfig:function(){YAHOO.util.DDProxy.superclass.applyConfig.call(this);this.resizeFrame=(this.config.resizeFrame!==false);this.centerFrame=(this.config.centerFrame);this.setDragElId(this.config.dragElId||YAHOO.util.DDProxy.dragElId);},showFrame:function(E,D){var C=this.getEl();var A=this.getDragEl();var B=A.style;this._resizeProxy();if(this.centerFrame){this.setDelta(Math.round(parseInt(B.width,10)/2),Math.round(parseInt(B.height,10)/2));}this.setDragElPos(E,D);YAHOO.util.Dom.setStyle(A,"visibility","visible");},_resizeProxy:function(){if(this.resizeFrame){var H=YAHOO.util.Dom;var B=this.getEl();var C=this.getDragEl();var G=parseInt(H.getStyle(C,"borderTopWidth"),10);var I=parseInt(H.getStyle(C,"borderRightWidth"),10);var F=parseInt(H.getStyle(C,"borderBottomWidth"),10);var D=parseInt(H.getStyle(C,"borderLeftWidth"),10);if(isNaN(G)){G=0;}if(isNaN(I)){I=0;}if(isNaN(F)){F=0;}if(isNaN(D)){D=0;}var E=Math.max(0,B.offsetWidth-I-D);var A=Math.max(0,B.offsetHeight-G-F);H.setStyle(C,"width",E+"px");H.setStyle(C,"height",A+"px");}},b4MouseDown:function(B){this.setStartPosition();var A=YAHOO.util.Event.getPageX(B);var C=YAHOO.util.Event.getPageY(B);this.autoOffset(A,C);},b4StartDrag:function(A,B){this.showFrame(A,B);},b4EndDrag:function(A){YAHOO.util.Dom.setStyle(this.getDragEl(),"visibility","hidden");},endDrag:function(D){var C=YAHOO.util.Dom;var B=this.getEl();var A=this.getDragEl();C.setStyle(A,"visibility","");C.setStyle(B,"visibility","hidden");YAHOO.util.DDM.moveToEl(B,A);C.setStyle(A,"visibility","hidden");C.setStyle(B,"visibility","");},toString:function(){return("DDProxy "+this.id);}});YAHOO.util.DDTarget=function(C,A,B){if(C){this.initTarget(C,A,B);}};YAHOO.extend(YAHOO.util.DDTarget,YAHOO.util.DragDrop,{toString:function(){return("DDTarget "+this.id);}});YAHOO.register("dragdrop",YAHOO.util.DragDropMgr,{version:"2.7.0",build:"1799"});/*  Copyright 2009, ontoprise GmbH
+}this.constrainY=true;},resetConstraints:function(){if(this.initPageX||this.initPageX===0){var D=(this.maintainOffset)?this.lastPageX-this.initPageX:0;var C=(this.maintainOffset)?this.lastPageY-this.initPageY:0;this.setInitPosition(D,C);}else{this.setInitPosition();}if(this.constrainX){this.setXConstraint(this.leftConstraint,this.rightConstraint,this.xTickSize);}if(this.constrainY){this.setYConstraint(this.topConstraint,this.bottomConstraint,this.yTickSize);}},getTick:function(I,F){if(!F){return I;}else{if(F[0]>=I){return F[0];}else{for(var D=0,C=F.length;D<C;++D){var E=D+1;if(F[E]&&F[E]>=I){var H=I-F[D];var G=F[E]-I;return(G>H)?F[D]:F[E];}}return F[F.length-1];}}},toString:function(){return("DragDrop "+this.id);}};YAHOO.augment(YAHOO.util.DragDrop,YAHOO.util.EventProvider);})();YAHOO.util.DD=function(C,A,B){if(C){this.init(C,A,B);}};YAHOO.extend(YAHOO.util.DD,YAHOO.util.DragDrop,{scroll:true,autoOffset:function(C,B){var A=C-this.startPageX;var D=B-this.startPageY;this.setDelta(A,D);},setDelta:function(B,A){this.deltaX=B;this.deltaY=A;},setDragElPos:function(C,B){var A=this.getDragEl();this.alignElWithMouse(A,C,B);},alignElWithMouse:function(C,G,F){var E=this.getTargetCoord(G,F);if(!this.deltaSetXY){var H=[E.x,E.y];YAHOO.util.Dom.setXY(C,H);var D=parseInt(YAHOO.util.Dom.getStyle(C,"left"),10);var B=parseInt(YAHOO.util.Dom.getStyle(C,"top"),10);this.deltaSetXY=[D-E.x,B-E.y];}else{YAHOO.util.Dom.setStyle(C,"left",(E.x+this.deltaSetXY[0])+"px");YAHOO.util.Dom.setStyle(C,"top",(E.y+this.deltaSetXY[1])+"px");}this.cachePosition(E.x,E.y);var A=this;setTimeout(function(){A.autoScroll.call(A,E.x,E.y,C.offsetHeight,C.offsetWidth);},0);},cachePosition:function(B,A){if(B){this.lastPageX=B;this.lastPageY=A;}else{var C=YAHOO.util.Dom.getXY(this.getEl());this.lastPageX=C[0];this.lastPageY=C[1];}},autoScroll:function(J,I,E,K){if(this.scroll){var L=this.DDM.getClientHeight();var B=this.DDM.getClientWidth();var N=this.DDM.getScrollTop();var D=this.DDM.getScrollLeft();var H=E+I;var M=K+J;var G=(L+N-I-this.deltaY);var F=(B+D-J-this.deltaX);var C=40;var A=(document.all)?80:30;if(H>L&&G<C){window.scrollTo(D,N+A);}if(I<N&&N>0&&I-N<C){window.scrollTo(D,N-A);}if(M>B&&F<C){window.scrollTo(D+A,N);}if(J<D&&D>0&&J-D<C){window.scrollTo(D-A,N);}}},applyConfig:function(){YAHOO.util.DD.superclass.applyConfig.call(this);this.scroll=(this.config.scroll!==false);},b4MouseDown:function(A){this.setStartPosition();this.autoOffset(YAHOO.util.Event.getPageX(A),YAHOO.util.Event.getPageY(A));},b4Drag:function(A){this.setDragElPos(YAHOO.util.Event.getPageX(A),YAHOO.util.Event.getPageY(A));},toString:function(){return("DD "+this.id);}});YAHOO.util.DDProxy=function(C,A,B){if(C){this.init(C,A,B);this.initFrame();}};YAHOO.util.DDProxy.dragElId="ygddfdiv";YAHOO.extend(YAHOO.util.DDProxy,YAHOO.util.DD,{resizeFrame:true,centerFrame:false,createFrame:function(){var B=this,A=document.body;if(!A||!A.firstChild){setTimeout(function(){B.createFrame();},50);return;}var F=this.getDragEl(),E=YAHOO.util.Dom;if(!F){F=document.createElement("div");F.id=this.dragElId;var D=F.style;D.position="absolute";D.visibility="hidden";D.cursor="move";D.border="2px solid #aaa";D.zIndex=999;D.height="25px";D.width="25px";var C=document.createElement("div");E.setStyle(C,"height","100%");E.setStyle(C,"width","100%");E.setStyle(C,"background-color","#ccc");E.setStyle(C,"opacity","0");F.appendChild(C);A.insertBefore(F,A.firstChild);}},initFrame:function(){this.createFrame();},applyConfig:function(){YAHOO.util.DDProxy.superclass.applyConfig.call(this);this.resizeFrame=(this.config.resizeFrame!==false);this.centerFrame=(this.config.centerFrame);this.setDragElId(this.config.dragElId||YAHOO.util.DDProxy.dragElId);},showFrame:function(E,D){var C=this.getEl();var A=this.getDragEl();var B=A.style;this._resizeProxy();if(this.centerFrame){this.setDelta(Math.round(parseInt(B.width,10)/2),Math.round(parseInt(B.height,10)/2));}this.setDragElPos(E,D);YAHOO.util.Dom.setStyle(A,"visibility","visible");},_resizeProxy:function(){if(this.resizeFrame){var H=YAHOO.util.Dom;var B=this.getEl();var C=this.getDragEl();var G=parseInt(H.getStyle(C,"borderTopWidth"),10);var I=parseInt(H.getStyle(C,"borderRightWidth"),10);var F=parseInt(H.getStyle(C,"borderBottomWidth"),10);var D=parseInt(H.getStyle(C,"borderLeftWidth"),10);if(isNaN(G)){G=0;}if(isNaN(I)){I=0;}if(isNaN(F)){F=0;}if(isNaN(D)){D=0;}var E=Math.max(0,B.offsetWidth-I-D);var A=Math.max(0,B.offsetHeight-G-F);H.setStyle(C,"width",E+"px");H.setStyle(C,"height",A+"px");}},b4MouseDown:function(B){this.setStartPosition();var A=YAHOO.util.Event.getPageX(B);var C=YAHOO.util.Event.getPageY(B);this.autoOffset(A,C);},b4StartDrag:function(A,B){this.showFrame(A,B);},b4EndDrag:function(A){YAHOO.util.Dom.setStyle(this.getDragEl(),"visibility","hidden");},endDrag:function(D){var C=YAHOO.util.Dom;var B=this.getEl();var A=this.getDragEl();C.setStyle(A,"visibility","");C.setStyle(B,"visibility","hidden");YAHOO.util.DDM.moveToEl(B,A);C.setStyle(A,"visibility","hidden");C.setStyle(B,"visibility","");},toString:function(){return("DDProxy "+this.id);}});YAHOO.util.DDTarget=function(C,A,B){if(C){this.initTarget(C,A,B);}};YAHOO.extend(YAHOO.util.DDTarget,YAHOO.util.DragDrop,{toString:function(){return("DDTarget "+this.id);}});YAHOO.register("dragdrop",YAHOO.util.DragDropMgr,{version:"2.7.0",build:"1799"});/*
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.7.0
+*/
+YAHOO.widget.DS_JSArray=YAHOO.util.LocalDataSource;YAHOO.widget.DS_JSFunction=YAHOO.util.FunctionDataSource;YAHOO.widget.DS_XHR=function(B,A,D){var C=new YAHOO.util.XHRDataSource(B,D);C._aDeprecatedSchema=A;return C;};YAHOO.widget.DS_ScriptNode=function(B,A,D){var C=new YAHOO.util.ScriptNodeDataSource(B,D);C._aDeprecatedSchema=A;return C;};YAHOO.widget.DS_XHR.TYPE_JSON=YAHOO.util.DataSourceBase.TYPE_JSON;YAHOO.widget.DS_XHR.TYPE_XML=YAHOO.util.DataSourceBase.TYPE_XML;YAHOO.widget.DS_XHR.TYPE_FLAT=YAHOO.util.DataSourceBase.TYPE_TEXT;YAHOO.widget.AutoComplete=function(G,B,J,C){if(G&&B&&J){if(J instanceof YAHOO.util.DataSourceBase){this.dataSource=J;}else{return;}this.key=0;var D=J.responseSchema;if(J._aDeprecatedSchema){var K=J._aDeprecatedSchema;if(YAHOO.lang.isArray(K)){if((J.responseType===YAHOO.util.DataSourceBase.TYPE_JSON)||(J.responseType===YAHOO.util.DataSourceBase.TYPE_UNKNOWN)){D.resultsList=K[0];this.key=K[1];D.fields=(K.length<3)?null:K.slice(1);}else{if(J.responseType===YAHOO.util.DataSourceBase.TYPE_XML){D.resultNode=K[0];this.key=K[1];D.fields=K.slice(1);}else{if(J.responseType===YAHOO.util.DataSourceBase.TYPE_TEXT){D.recordDelim=K[0];D.fieldDelim=K[1];}}}J.responseSchema=D;}}if(YAHOO.util.Dom.inDocument(G)){if(YAHOO.lang.isString(G)){this._sName="instance"+YAHOO.widget.AutoComplete._nIndex+" "+G;this._elTextbox=document.getElementById(G);}else{this._sName=(G.id)?"instance"+YAHOO.widget.AutoComplete._nIndex+" "+G.id:"instance"+YAHOO.widget.AutoComplete._nIndex;this._elTextbox=G;}YAHOO.util.Dom.addClass(this._elTextbox,"yui-ac-input");}else{return;}if(YAHOO.util.Dom.inDocument(B)){if(YAHOO.lang.isString(B)){this._elContainer=document.getElementById(B);}else{this._elContainer=B;}if(this._elContainer.style.display=="none"){}var E=this._elContainer.parentNode;var A=E.tagName.toLowerCase();if(A=="div"){YAHOO.util.Dom.addClass(E,"yui-ac");}else{}}else{return;}if(this.dataSource.dataType===YAHOO.util.DataSourceBase.TYPE_LOCAL){this.applyLocalFilter=true;}if(C&&(C.constructor==Object)){for(var I in C){if(I){this[I]=C[I];}}}this._initContainerEl();this._initProps();this._initListEl();this._initContainerHelperEls();var H=this;var F=this._elTextbox;YAHOO.util.Event.addListener(F,"keyup",H._onTextboxKeyUp,H);YAHOO.util.Event.addListener(F,"keydown",H._onTextboxKeyDown,H);YAHOO.util.Event.addListener(F,"focus",H._onTextboxFocus,H);YAHOO.util.Event.addListener(F,"blur",H._onTextboxBlur,H);YAHOO.util.Event.addListener(B,"mouseover",H._onContainerMouseover,H);YAHOO.util.Event.addListener(B,"mouseout",H._onContainerMouseout,H);YAHOO.util.Event.addListener(B,"click",H._onContainerClick,H);YAHOO.util.Event.addListener(B,"scroll",H._onContainerScroll,H);YAHOO.util.Event.addListener(B,"resize",H._onContainerResize,H);YAHOO.util.Event.addListener(F,"keypress",H._onTextboxKeyPress,H);YAHOO.util.Event.addListener(window,"unload",H._onWindowUnload,H);this.textboxFocusEvent=new YAHOO.util.CustomEvent("textboxFocus",this);this.textboxKeyEvent=new YAHOO.util.CustomEvent("textboxKey",this);this.dataRequestEvent=new YAHOO.util.CustomEvent("dataRequest",this);this.dataReturnEvent=new YAHOO.util.CustomEvent("dataReturn",this);this.dataErrorEvent=new YAHOO.util.CustomEvent("dataError",this);this.containerPopulateEvent=new YAHOO.util.CustomEvent("containerPopulate",this);this.containerExpandEvent=new YAHOO.util.CustomEvent("containerExpand",this);this.typeAheadEvent=new YAHOO.util.CustomEvent("typeAhead",this);this.itemMouseOverEvent=new YAHOO.util.CustomEvent("itemMouseOver",this);this.itemMouseOutEvent=new YAHOO.util.CustomEvent("itemMouseOut",this);this.itemArrowToEvent=new YAHOO.util.CustomEvent("itemArrowTo",this);this.itemArrowFromEvent=new YAHOO.util.CustomEvent("itemArrowFrom",this);this.itemSelectEvent=new YAHOO.util.CustomEvent("itemSelect",this);this.unmatchedItemSelectEvent=new YAHOO.util.CustomEvent("unmatchedItemSelect",this);this.selectionEnforceEvent=new YAHOO.util.CustomEvent("selectionEnforce",this);this.containerCollapseEvent=new YAHOO.util.CustomEvent("containerCollapse",this);this.textboxBlurEvent=new YAHOO.util.CustomEvent("textboxBlur",this);this.textboxChangeEvent=new YAHOO.util.CustomEvent("textboxChange",this);F.setAttribute("autocomplete","off");YAHOO.widget.AutoComplete._nIndex++;}else{}};YAHOO.widget.AutoComplete.prototype.dataSource=null;YAHOO.widget.AutoComplete.prototype.applyLocalFilter=null;YAHOO.widget.AutoComplete.prototype.queryMatchCase=false;YAHOO.widget.AutoComplete.prototype.queryMatchContains=false;YAHOO.widget.AutoComplete.prototype.queryMatchSubset=false;YAHOO.widget.AutoComplete.prototype.minQueryLength=1;YAHOO.widget.AutoComplete.prototype.maxResultsDisplayed=10;YAHOO.widget.AutoComplete.prototype.queryDelay=0.2;YAHOO.widget.AutoComplete.prototype.typeAheadDelay=0.5;YAHOO.widget.AutoComplete.prototype.queryInterval=500;YAHOO.widget.AutoComplete.prototype.highlightClassName="yui-ac-highlight";YAHOO.widget.AutoComplete.prototype.prehighlightClassName=null;YAHOO.widget.AutoComplete.prototype.delimChar=null;YAHOO.widget.AutoComplete.prototype.autoHighlight=true;YAHOO.widget.AutoComplete.prototype.typeAhead=false;YAHOO.widget.AutoComplete.prototype.animHoriz=false;YAHOO.widget.AutoComplete.prototype.animVert=true;YAHOO.widget.AutoComplete.prototype.animSpeed=0.3;YAHOO.widget.AutoComplete.prototype.forceSelection=false;YAHOO.widget.AutoComplete.prototype.allowBrowserAutocomplete=true;YAHOO.widget.AutoComplete.prototype.alwaysShowContainer=false;YAHOO.widget.AutoComplete.prototype.useIFrame=false;YAHOO.widget.AutoComplete.prototype.useShadow=false;YAHOO.widget.AutoComplete.prototype.suppressInputUpdate=false;YAHOO.widget.AutoComplete.prototype.resultTypeList=true;YAHOO.widget.AutoComplete.prototype.queryQuestionMark=true;YAHOO.widget.AutoComplete.prototype.toString=function(){return"AutoComplete "+this._sName;};YAHOO.widget.AutoComplete.prototype.getInputEl=function(){return this._elTextbox;};YAHOO.widget.AutoComplete.prototype.getContainerEl=function(){return this._elContainer;
+};YAHOO.widget.AutoComplete.prototype.isFocused=function(){return(this._bFocused===null)?false:this._bFocused;};YAHOO.widget.AutoComplete.prototype.isContainerOpen=function(){return this._bContainerOpen;};YAHOO.widget.AutoComplete.prototype.getListEl=function(){return this._elList;};YAHOO.widget.AutoComplete.prototype.getListItemMatch=function(A){if(A._sResultMatch){return A._sResultMatch;}else{return null;}};YAHOO.widget.AutoComplete.prototype.getListItemData=function(A){if(A._oResultData){return A._oResultData;}else{return null;}};YAHOO.widget.AutoComplete.prototype.getListItemIndex=function(A){if(YAHOO.lang.isNumber(A._nItemIndex)){return A._nItemIndex;}else{return null;}};YAHOO.widget.AutoComplete.prototype.setHeader=function(B){if(this._elHeader){var A=this._elHeader;if(B){A.innerHTML=B;A.style.display="block";}else{A.innerHTML="";A.style.display="none";}}};YAHOO.widget.AutoComplete.prototype.setFooter=function(B){if(this._elFooter){var A=this._elFooter;if(B){A.innerHTML=B;A.style.display="block";}else{A.innerHTML="";A.style.display="none";}}};YAHOO.widget.AutoComplete.prototype.setBody=function(A){if(this._elBody){var B=this._elBody;YAHOO.util.Event.purgeElement(B,true);if(A){B.innerHTML=A;B.style.display="block";}else{B.innerHTML="";B.style.display="none";}this._elList=null;}};YAHOO.widget.AutoComplete.prototype.generateRequest=function(B){var A=this.dataSource.dataType;if(A===YAHOO.util.DataSourceBase.TYPE_XHR){if(!this.dataSource.connMethodPost){B=(this.queryQuestionMark?"?":"")+(this.dataSource.scriptQueryParam||"query")+"="+B+(this.dataSource.scriptQueryAppend?("&"+this.dataSource.scriptQueryAppend):"");}else{B=(this.dataSource.scriptQueryParam||"query")+"="+B+(this.dataSource.scriptQueryAppend?("&"+this.dataSource.scriptQueryAppend):"");}}else{if(A===YAHOO.util.DataSourceBase.TYPE_SCRIPTNODE){B="&"+(this.dataSource.scriptQueryParam||"query")+"="+B+(this.dataSource.scriptQueryAppend?("&"+this.dataSource.scriptQueryAppend):"");}}return B;};YAHOO.widget.AutoComplete.prototype.sendQuery=function(B){this._bFocused=null;var A=(this.delimChar)?this._elTextbox.value+B:B;this._sendQuery(A);};YAHOO.widget.AutoComplete.prototype.collapseContainer=function(){this._toggleContainer(false);};YAHOO.widget.AutoComplete.prototype.getSubsetMatches=function(E){var D,C,A;for(var B=E.length;B>=this.minQueryLength;B--){A=this.generateRequest(E.substr(0,B));this.dataRequestEvent.fire(this,D,A);C=this.dataSource.getCachedResponse(A);if(C){return this.filterResults.apply(this.dataSource,[E,C,C,{scope:this}]);}}return null;};YAHOO.widget.AutoComplete.prototype.preparseRawResponse=function(C,B,A){var D=((this.responseStripAfter!=="")&&(B.indexOf))?B.indexOf(this.responseStripAfter):-1;if(D!=-1){B=B.substring(0,D);}return B;};YAHOO.widget.AutoComplete.prototype.filterResults=function(J,L,P,K){if(K&&K.argument&&K.argument.query){J=K.argument.query;}if(J&&J!==""){P=YAHOO.widget.AutoComplete._cloneObject(P);var H=K.scope,O=this,B=P.results,M=[],D=false,I=(O.queryMatchCase||H.queryMatchCase),A=(O.queryMatchContains||H.queryMatchContains);for(var C=B.length-1;C>=0;C--){var F=B[C];var E=null;if(YAHOO.lang.isString(F)){E=F;}else{if(YAHOO.lang.isArray(F)){E=F[0];}else{if(this.responseSchema.fields){var N=this.responseSchema.fields[0].key||this.responseSchema.fields[0];E=F[N];}else{if(this.key){E=F[this.key];}}}}if(YAHOO.lang.isString(E)){var G=(I)?E.indexOf(decodeURIComponent(J)):E.toLowerCase().indexOf(decodeURIComponent(J).toLowerCase());if((!A&&(G===0))||(A&&(G>-1))){M.unshift(F);}}}P.results=M;}else{}return P;};YAHOO.widget.AutoComplete.prototype.handleResponse=function(C,A,B){if((this instanceof YAHOO.widget.AutoComplete)&&this._sName){this._populateList(C,A,B);}};YAHOO.widget.AutoComplete.prototype.doBeforeLoadData=function(C,A,B){return true;};YAHOO.widget.AutoComplete.prototype.formatResult=function(B,D,A){var C=(A)?A:"";return C;};YAHOO.widget.AutoComplete.prototype.doBeforeExpandContainer=function(D,A,C,B){return true;};YAHOO.widget.AutoComplete.prototype.destroy=function(){var B=this.toString();var A=this._elTextbox;var D=this._elContainer;this.textboxFocusEvent.unsubscribeAll();this.textboxKeyEvent.unsubscribeAll();this.dataRequestEvent.unsubscribeAll();this.dataReturnEvent.unsubscribeAll();this.dataErrorEvent.unsubscribeAll();this.containerPopulateEvent.unsubscribeAll();this.containerExpandEvent.unsubscribeAll();this.typeAheadEvent.unsubscribeAll();this.itemMouseOverEvent.unsubscribeAll();this.itemMouseOutEvent.unsubscribeAll();this.itemArrowToEvent.unsubscribeAll();this.itemArrowFromEvent.unsubscribeAll();this.itemSelectEvent.unsubscribeAll();this.unmatchedItemSelectEvent.unsubscribeAll();this.selectionEnforceEvent.unsubscribeAll();this.containerCollapseEvent.unsubscribeAll();this.textboxBlurEvent.unsubscribeAll();this.textboxChangeEvent.unsubscribeAll();YAHOO.util.Event.purgeElement(A,true);YAHOO.util.Event.purgeElement(D,true);D.innerHTML="";for(var C in this){if(YAHOO.lang.hasOwnProperty(this,C)){this[C]=null;}}};YAHOO.widget.AutoComplete.prototype.textboxFocusEvent=null;YAHOO.widget.AutoComplete.prototype.textboxKeyEvent=null;YAHOO.widget.AutoComplete.prototype.dataRequestEvent=null;YAHOO.widget.AutoComplete.prototype.dataReturnEvent=null;YAHOO.widget.AutoComplete.prototype.dataErrorEvent=null;YAHOO.widget.AutoComplete.prototype.containerPopulateEvent=null;YAHOO.widget.AutoComplete.prototype.containerExpandEvent=null;YAHOO.widget.AutoComplete.prototype.typeAheadEvent=null;YAHOO.widget.AutoComplete.prototype.itemMouseOverEvent=null;YAHOO.widget.AutoComplete.prototype.itemMouseOutEvent=null;YAHOO.widget.AutoComplete.prototype.itemArrowToEvent=null;YAHOO.widget.AutoComplete.prototype.itemArrowFromEvent=null;YAHOO.widget.AutoComplete.prototype.itemSelectEvent=null;YAHOO.widget.AutoComplete.prototype.unmatchedItemSelectEvent=null;YAHOO.widget.AutoComplete.prototype.selectionEnforceEvent=null;YAHOO.widget.AutoComplete.prototype.containerCollapseEvent=null;YAHOO.widget.AutoComplete.prototype.textboxBlurEvent=null;
+YAHOO.widget.AutoComplete.prototype.textboxChangeEvent=null;YAHOO.widget.AutoComplete._nIndex=0;YAHOO.widget.AutoComplete.prototype._sName=null;YAHOO.widget.AutoComplete.prototype._elTextbox=null;YAHOO.widget.AutoComplete.prototype._elContainer=null;YAHOO.widget.AutoComplete.prototype._elContent=null;YAHOO.widget.AutoComplete.prototype._elHeader=null;YAHOO.widget.AutoComplete.prototype._elBody=null;YAHOO.widget.AutoComplete.prototype._elFooter=null;YAHOO.widget.AutoComplete.prototype._elShadow=null;YAHOO.widget.AutoComplete.prototype._elIFrame=null;YAHOO.widget.AutoComplete.prototype._bFocused=null;YAHOO.widget.AutoComplete.prototype._oAnim=null;YAHOO.widget.AutoComplete.prototype._bContainerOpen=false;YAHOO.widget.AutoComplete.prototype._bOverContainer=false;YAHOO.widget.AutoComplete.prototype._elList=null;YAHOO.widget.AutoComplete.prototype._nDisplayedItems=0;YAHOO.widget.AutoComplete.prototype._sCurQuery=null;YAHOO.widget.AutoComplete.prototype._sPastSelections="";YAHOO.widget.AutoComplete.prototype._sInitInputValue=null;YAHOO.widget.AutoComplete.prototype._elCurListItem=null;YAHOO.widget.AutoComplete.prototype._bItemSelected=false;YAHOO.widget.AutoComplete.prototype._nKeyCode=null;YAHOO.widget.AutoComplete.prototype._nDelayID=-1;YAHOO.widget.AutoComplete.prototype._nTypeAheadDelayID=-1;YAHOO.widget.AutoComplete.prototype._iFrameSrc="javascript:false;";YAHOO.widget.AutoComplete.prototype._queryInterval=null;YAHOO.widget.AutoComplete.prototype._sLastTextboxValue=null;YAHOO.widget.AutoComplete.prototype._initProps=function(){var B=this.minQueryLength;if(!YAHOO.lang.isNumber(B)){this.minQueryLength=1;}var E=this.maxResultsDisplayed;if(!YAHOO.lang.isNumber(E)||(E<1)){this.maxResultsDisplayed=10;}var F=this.queryDelay;if(!YAHOO.lang.isNumber(F)||(F<0)){this.queryDelay=0.2;}var C=this.typeAheadDelay;if(!YAHOO.lang.isNumber(C)||(C<0)){this.typeAheadDelay=0.2;}var A=this.delimChar;if(YAHOO.lang.isString(A)&&(A.length>0)){this.delimChar=[A];}else{if(!YAHOO.lang.isArray(A)){this.delimChar=null;}}var D=this.animSpeed;if((this.animHoriz||this.animVert)&&YAHOO.util.Anim){if(!YAHOO.lang.isNumber(D)||(D<0)){this.animSpeed=0.3;}if(!this._oAnim){this._oAnim=new YAHOO.util.Anim(this._elContent,{},this.animSpeed);}else{this._oAnim.duration=this.animSpeed;}}if(this.forceSelection&&A){}};YAHOO.widget.AutoComplete.prototype._initContainerHelperEls=function(){if(this.useShadow&&!this._elShadow){var A=document.createElement("div");A.className="yui-ac-shadow";A.style.width=0;A.style.height=0;this._elShadow=this._elContainer.appendChild(A);}if(this.useIFrame&&!this._elIFrame){var B=document.createElement("iframe");B.src=this._iFrameSrc;B.frameBorder=0;B.scrolling="no";B.style.position="absolute";B.style.width=0;B.style.height=0;B.tabIndex=-1;B.style.padding=0;this._elIFrame=this._elContainer.appendChild(B);}};YAHOO.widget.AutoComplete.prototype._initContainerEl=function(){YAHOO.util.Dom.addClass(this._elContainer,"yui-ac-container");if(!this._elContent){var C=document.createElement("div");C.className="yui-ac-content";C.style.display="none";this._elContent=this._elContainer.appendChild(C);var B=document.createElement("div");B.className="yui-ac-hd";B.style.display="none";this._elHeader=this._elContent.appendChild(B);var D=document.createElement("div");D.className="yui-ac-bd";this._elBody=this._elContent.appendChild(D);var A=document.createElement("div");A.className="yui-ac-ft";A.style.display="none";this._elFooter=this._elContent.appendChild(A);}else{}};YAHOO.widget.AutoComplete.prototype._initListEl=function(){var C=this.maxResultsDisplayed;var A=this._elList||document.createElement("ul");var B;while(A.childNodes.length<C){B=document.createElement("li");B.style.display="none";B._nItemIndex=A.childNodes.length;A.appendChild(B);}if(!this._elList){var D=this._elBody;YAHOO.util.Event.purgeElement(D,true);D.innerHTML="";this._elList=D.appendChild(A);}};YAHOO.widget.AutoComplete.prototype._focus=function(){var A=this;setTimeout(function(){try{A._elTextbox.focus();}catch(B){}},0);};YAHOO.widget.AutoComplete.prototype._enableIntervalDetection=function(){var A=this;if(!A._queryInterval&&A.queryInterval){A._queryInterval=setInterval(function(){A._onInterval();},A.queryInterval);}};YAHOO.widget.AutoComplete.prototype._onInterval=function(){var A=this._elTextbox.value;var B=this._sLastTextboxValue;if(A!=B){this._sLastTextboxValue=A;this._sendQuery(A);}};YAHOO.widget.AutoComplete.prototype._clearInterval=function(){if(this._queryInterval){clearInterval(this._queryInterval);this._queryInterval=null;}};YAHOO.widget.AutoComplete.prototype._isIgnoreKey=function(A){if((A==9)||(A==13)||(A==16)||(A==17)||(A>=18&&A<=20)||(A==27)||(A>=33&&A<=35)||(A>=36&&A<=40)||(A>=44&&A<=45)||(A==229)){return true;}return false;};YAHOO.widget.AutoComplete.prototype._sendQuery=function(D){if(this.minQueryLength<0){this._toggleContainer(false);return;}if(this.delimChar){var A=this._extractQuery(D);D=A.query;this._sPastSelections=A.previous;}if((D&&(D.length<this.minQueryLength))||(!D&&this.minQueryLength>0)){if(this._nDelayID!=-1){clearTimeout(this._nDelayID);}this._toggleContainer(false);return;}D=encodeURIComponent(D);this._nDelayID=-1;if(this.dataSource.queryMatchSubset||this.queryMatchSubset){var C=this.getSubsetMatches(D);if(C){this.handleResponse(D,C,{query:D});return;}}if(this.responseStripAfter){this.dataSource.doBeforeParseData=this.preparseRawResponse;}if(this.applyLocalFilter){this.dataSource.doBeforeCallback=this.filterResults;}var B=this.generateRequest(D);this.dataRequestEvent.fire(this,D,B);this.dataSource.sendRequest(B,{success:this.handleResponse,failure:this.handleResponse,scope:this,argument:{query:D}});};YAHOO.widget.AutoComplete.prototype._populateList=function(K,F,C){if(this._nTypeAheadDelayID!=-1){clearTimeout(this._nTypeAheadDelayID);}K=(C&&C.query)?C.query:K;var H=this.doBeforeLoadData(K,F,C);if(H&&!F.error){this.dataReturnEvent.fire(this,K,F.results);if(this._bFocused||(this._bFocused===null)){var M=decodeURIComponent(K);this._sCurQuery=M;
+this._bItemSelected=false;var R=F.results,A=Math.min(R.length,this.maxResultsDisplayed),J=(this.dataSource.responseSchema.fields)?(this.dataSource.responseSchema.fields[0].key||this.dataSource.responseSchema.fields[0]):0;if(A>0){if(!this._elList||(this._elList.childNodes.length<A)){this._initListEl();}this._initContainerHelperEls();var I=this._elList.childNodes;for(var Q=A-1;Q>=0;Q--){var P=I[Q],E=R[Q];if(this.resultTypeList){var B=[];B[0]=(YAHOO.lang.isString(E))?E:E[J]||E[this.key];var L=this.dataSource.responseSchema.fields;if(YAHOO.lang.isArray(L)&&(L.length>1)){for(var N=1,S=L.length;N<S;N++){B[B.length]=E[L[N].key||L[N]];}}else{if(YAHOO.lang.isArray(E)){B=E;}else{if(YAHOO.lang.isString(E)){B=[E];}else{B[1]=E;}}}E=B;}P._sResultMatch=(YAHOO.lang.isString(E))?E:(YAHOO.lang.isArray(E))?E[0]:(E[J]||"");P._oResultData=E;P.innerHTML=this.formatResult(E,M,P._sResultMatch);P.style.display="";}if(A<I.length){var G;for(var O=I.length-1;O>=A;O--){G=I[O];G.style.display="none";}}this._nDisplayedItems=A;this.containerPopulateEvent.fire(this,K,R);if(this.autoHighlight){var D=this._elList.firstChild;this._toggleHighlight(D,"to");this.itemArrowToEvent.fire(this,D);this._typeAhead(D,K);}else{this._toggleHighlight(this._elCurListItem,"from");}H=this.doBeforeExpandContainer(this._elTextbox,this._elContainer,K,R);this._toggleContainer(H);}else{this._toggleContainer(false);}return;}}else{this.dataErrorEvent.fire(this,K);}};YAHOO.widget.AutoComplete.prototype._clearSelection=function(){var A=(this.delimChar)?this._extractQuery(this._elTextbox.value):{previous:"",query:this._elTextbox.value};this._elTextbox.value=A.previous;this.selectionEnforceEvent.fire(this,A.query);};YAHOO.widget.AutoComplete.prototype._textMatchesOption=function(){var A=null;for(var B=0;B<this._nDisplayedItems;B++){var C=this._elList.childNodes[B];var D=(""+C._sResultMatch).toLowerCase();if(D==this._sCurQuery.toLowerCase()){A=C;break;}}return(A);};YAHOO.widget.AutoComplete.prototype._typeAhead=function(B,D){if(!this.typeAhead||(this._nKeyCode==8)){return;}var A=this,C=this._elTextbox;if(C.setSelectionRange||C.createTextRange){this._nTypeAheadDelayID=setTimeout(function(){var F=C.value.length;A._updateValue(B);var G=C.value.length;A._selectText(C,F,G);var E=C.value.substr(F,G);A.typeAheadEvent.fire(A,D,E);},(this.typeAheadDelay*1000));}};YAHOO.widget.AutoComplete.prototype._selectText=function(D,A,B){if(D.setSelectionRange){D.setSelectionRange(A,B);}else{if(D.createTextRange){var C=D.createTextRange();C.moveStart("character",A);C.moveEnd("character",B-D.value.length);C.select();}else{D.select();}}};YAHOO.widget.AutoComplete.prototype._extractQuery=function(H){var C=this.delimChar,F=-1,G,E,B=C.length-1,D;for(;B>=0;B--){G=H.lastIndexOf(C[B]);if(G>F){F=G;}}if(C[B]==" "){for(var A=C.length-1;A>=0;A--){if(H[F-1]==C[A]){F--;break;}}}if(F>-1){E=F+1;while(H.charAt(E)==" "){E+=1;}D=H.substring(0,E);H=H.substr(E);}else{D="";}return{previous:D,query:H};};YAHOO.widget.AutoComplete.prototype._toggleContainerHelpers=function(D){var E=this._elContent.offsetWidth+"px";var B=this._elContent.offsetHeight+"px";if(this.useIFrame&&this._elIFrame){var C=this._elIFrame;if(D){C.style.width=E;C.style.height=B;C.style.padding="";}else{C.style.width=0;C.style.height=0;C.style.padding=0;}}if(this.useShadow&&this._elShadow){var A=this._elShadow;if(D){A.style.width=E;A.style.height=B;}else{A.style.width=0;A.style.height=0;}}};YAHOO.widget.AutoComplete.prototype._toggleContainer=function(I){var D=this._elContainer;if(this.alwaysShowContainer&&this._bContainerOpen){return;}if(!I){this._toggleHighlight(this._elCurListItem,"from");this._nDisplayedItems=0;this._sCurQuery=null;if(this._elContent.style.display=="none"){return;}}var A=this._oAnim;if(A&&A.getEl()&&(this.animHoriz||this.animVert)){if(A.isAnimated()){A.stop(true);}var G=this._elContent.cloneNode(true);D.appendChild(G);G.style.top="-9000px";G.style.width="";G.style.height="";G.style.display="";var F=G.offsetWidth;var C=G.offsetHeight;var B=(this.animHoriz)?0:F;var E=(this.animVert)?0:C;A.attributes=(I)?{width:{to:F},height:{to:C}}:{width:{to:B},height:{to:E}};if(I&&!this._bContainerOpen){this._elContent.style.width=B+"px";this._elContent.style.height=E+"px";}else{this._elContent.style.width=F+"px";this._elContent.style.height=C+"px";}D.removeChild(G);G=null;var H=this;var J=function(){A.onComplete.unsubscribeAll();if(I){H._toggleContainerHelpers(true);H._bContainerOpen=I;H.containerExpandEvent.fire(H);}else{H._elContent.style.display="none";H._bContainerOpen=I;H.containerCollapseEvent.fire(H);}};this._toggleContainerHelpers(false);this._elContent.style.display="";A.onComplete.subscribe(J);A.animate();}else{if(I){this._elContent.style.display="";this._toggleContainerHelpers(true);this._bContainerOpen=I;this.containerExpandEvent.fire(this);}else{this._toggleContainerHelpers(false);this._elContent.style.display="none";this._bContainerOpen=I;this.containerCollapseEvent.fire(this);}}};YAHOO.widget.AutoComplete.prototype._toggleHighlight=function(A,C){if(A){var B=this.highlightClassName;if(this._elCurListItem){YAHOO.util.Dom.removeClass(this._elCurListItem,B);this._elCurListItem=null;}if((C=="to")&&B){YAHOO.util.Dom.addClass(A,B);this._elCurListItem=A;}}};YAHOO.widget.AutoComplete.prototype._togglePrehighlight=function(B,C){if(B==this._elCurListItem){return;}var A=this.prehighlightClassName;if((C=="mouseover")&&A){YAHOO.util.Dom.addClass(B,A);}else{YAHOO.util.Dom.removeClass(B,A);}};YAHOO.widget.AutoComplete.prototype._updateValue=function(C){if(!this.suppressInputUpdate){var F=this._elTextbox;var E=(this.delimChar)?(this.delimChar[0]||this.delimChar):null;var B=C._sResultMatch;var D="";if(E){D=this._sPastSelections;D+=B+E;if(E!=" "){D+=" ";}}else{D=B;}F.value=D;if(F.type=="textarea"){F.scrollTop=F.scrollHeight;}var A=F.value.length;this._selectText(F,A,A);this._elCurListItem=C;}};YAHOO.widget.AutoComplete.prototype._selectItem=function(A){this._bItemSelected=true;this._updateValue(A);this._sPastSelections=this._elTextbox.value;
+this._clearInterval();this.itemSelectEvent.fire(this,A,A._oResultData);this._toggleContainer(false);};YAHOO.widget.AutoComplete.prototype._jumpSelection=function(){if(this._elCurListItem){this._selectItem(this._elCurListItem);}else{this._toggleContainer(false);}};YAHOO.widget.AutoComplete.prototype._moveSelection=function(G){if(this._bContainerOpen){var H=this._elCurListItem,D=-1;if(H){D=H._nItemIndex;}var E=(G==40)?(D+1):(D-1);if(E<-2||E>=this._nDisplayedItems){return;}if(H){this._toggleHighlight(H,"from");this.itemArrowFromEvent.fire(this,H);}if(E==-1){if(this.delimChar){this._elTextbox.value=this._sPastSelections+this._sCurQuery;}else{this._elTextbox.value=this._sCurQuery;}return;}if(E==-2){this._toggleContainer(false);return;}var F=this._elList.childNodes[E],B=this._elContent,C=YAHOO.util.Dom.getStyle(B,"overflow"),I=YAHOO.util.Dom.getStyle(B,"overflowY"),A=((C=="auto")||(C=="scroll")||(I=="auto")||(I=="scroll"));if(A&&(E>-1)&&(E<this._nDisplayedItems)){if(G==40){if((F.offsetTop+F.offsetHeight)>(B.scrollTop+B.offsetHeight)){B.scrollTop=(F.offsetTop+F.offsetHeight)-B.offsetHeight;}else{if((F.offsetTop+F.offsetHeight)<B.scrollTop){B.scrollTop=F.offsetTop;}}}else{if(F.offsetTop<B.scrollTop){this._elContent.scrollTop=F.offsetTop;}else{if(F.offsetTop>(B.scrollTop+B.offsetHeight)){this._elContent.scrollTop=(F.offsetTop+F.offsetHeight)-B.offsetHeight;}}}}this._toggleHighlight(F,"to");this.itemArrowToEvent.fire(this,F);if(this.typeAhead){this._updateValue(F);}}};YAHOO.widget.AutoComplete.prototype._onContainerMouseover=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":if(C.prehighlightClassName){C._togglePrehighlight(D,"mouseover");}else{C._toggleHighlight(D,"to");}C.itemMouseOverEvent.fire(C,D);break;case"div":if(YAHOO.util.Dom.hasClass(D,"yui-ac-container")){C._bOverContainer=true;return;}break;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerMouseout=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":if(C.prehighlightClassName){C._togglePrehighlight(D,"mouseout");}else{C._toggleHighlight(D,"from");}C.itemMouseOutEvent.fire(C,D);break;case"ul":C._toggleHighlight(C._elCurListItem,"to");break;case"div":if(YAHOO.util.Dom.hasClass(D,"yui-ac-container")){C._bOverContainer=false;return;}break;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerClick=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":C._toggleHighlight(D,"to");C._selectItem(D);return;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerScroll=function(A,B){B._focus();};YAHOO.widget.AutoComplete.prototype._onContainerResize=function(A,B){B._toggleContainerHelpers(B._bContainerOpen);};YAHOO.widget.AutoComplete.prototype._onTextboxKeyDown=function(A,B){var C=A.keyCode;if(B._nTypeAheadDelayID!=-1){clearTimeout(B._nTypeAheadDelayID);}switch(C){case 9:if(!YAHOO.env.ua.opera&&(navigator.userAgent.toLowerCase().indexOf("mac")==-1)||(YAHOO.env.ua.webkit>420)){if(B._elCurListItem){if(B.delimChar&&(B._nKeyCode!=C)){if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);}}B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 13:if(!YAHOO.env.ua.opera&&(navigator.userAgent.toLowerCase().indexOf("mac")==-1)||(YAHOO.env.ua.webkit>420)){if(B._elCurListItem){if(B._nKeyCode!=C){if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);}}B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 27:B._toggleContainer(false);return;case 39:B._jumpSelection();break;case 38:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);B._moveSelection(C);}break;case 40:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);B._moveSelection(C);}break;default:B._bItemSelected=false;B._toggleHighlight(B._elCurListItem,"from");B.textboxKeyEvent.fire(B,C);break;}if(C===18){B._enableIntervalDetection();}B._nKeyCode=C;};YAHOO.widget.AutoComplete.prototype._onTextboxKeyPress=function(A,B){var C=A.keyCode;if(YAHOO.env.ua.opera||(navigator.userAgent.toLowerCase().indexOf("mac")!=-1)&&(YAHOO.env.ua.webkit<420)){switch(C){case 9:if(B._bContainerOpen){if(B.delimChar){YAHOO.util.Event.stopEvent(A);}if(B._elCurListItem){B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 13:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);if(B._elCurListItem){B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;default:break;}}else{if(C==229){B._enableIntervalDetection();}}};YAHOO.widget.AutoComplete.prototype._onTextboxKeyUp=function(A,C){var B=this.value;C._initProps();var D=A.keyCode;if(C._isIgnoreKey(D)){return;}if(C._nDelayID!=-1){clearTimeout(C._nDelayID);}C._nDelayID=setTimeout(function(){C._sendQuery(B);},(C.queryDelay*1000));};YAHOO.widget.AutoComplete.prototype._onTextboxFocus=function(A,B){if(!B._bFocused){B._elTextbox.setAttribute("autocomplete","off");B._bFocused=true;B._sInitInputValue=B._elTextbox.value;B.textboxFocusEvent.fire(B);}};YAHOO.widget.AutoComplete.prototype._onTextboxBlur=function(A,C){if(!C._bOverContainer||(C._nKeyCode==9)){if(!C._bItemSelected){var B=C._textMatchesOption();if(!C._bContainerOpen||(C._bContainerOpen&&(B===null))){if(C.forceSelection){C._clearSelection();}else{C.unmatchedItemSelectEvent.fire(C,C._sCurQuery);}}else{if(C.forceSelection){C._selectItem(B);}}}C._clearInterval();C._bFocused=false;if(C._sInitInputValue!==C._elTextbox.value){C.textboxChangeEvent.fire(C);}C.textboxBlurEvent.fire(C);C._toggleContainer(false);}else{C._focus();}};YAHOO.widget.AutoComplete.prototype._onWindowUnload=function(A,B){if(B&&B._elTextbox&&B.allowBrowserAutocomplete){B._elTextbox.setAttribute("autocomplete","on");}};YAHOO.widget.AutoComplete.prototype.doBeforeSendQuery=function(A){return this.generateRequest(A);
+};YAHOO.widget.AutoComplete.prototype.getListItems=function(){var C=[],B=this._elList.childNodes;for(var A=B.length-1;A>=0;A--){C[A]=B[A];}return C;};YAHOO.widget.AutoComplete._cloneObject=function(D){if(!YAHOO.lang.isValue(D)){return D;}var F={};if(YAHOO.lang.isFunction(D)){F=D;}else{if(YAHOO.lang.isArray(D)){var E=[];for(var C=0,B=D.length;C<B;C++){E[C]=YAHOO.widget.AutoComplete._cloneObject(D[C]);}F=E;}else{if(YAHOO.lang.isObject(D)){for(var A in D){if(YAHOO.lang.hasOwnProperty(D,A)){if(YAHOO.lang.isValue(D[A])&&YAHOO.lang.isObject(D[A])||YAHOO.lang.isArray(D[A])){F[A]=YAHOO.widget.AutoComplete._cloneObject(D[A]);}else{F[A]=D[A];}}}}else{F=D;}}}return F;};YAHOO.register("autocomplete",YAHOO.widget.AutoComplete,{version:"2.7.0",build:"1799"});/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -2278,6 +2013,1190 @@ YAHOO.haloacl.getNewTreeview = function(divname,panelid){
 
 
 /*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This file contains javascript for the manageacl-tree
+ * also used for template-selection
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+
+
+
+
+// defining ACLNode
+YAHOO.widget.ACLNode = function(oData, oParent, expanded, checked, valid) {
+    YAHOO.widget.ACLNode.superclass.constructor.call(this,oData,oParent,expanded);
+    this.setUpCheck(checked || oData.checked);
+    if (valid != undefined) {
+    	this.valid = valid;
+    }
+
+};
+
+// impl of customnode; extending textnode
+YAHOO.extend(YAHOO.widget.ACLNode, YAHOO.widget.TextNode, {
+
+    /**
+     * True if checkstate is 1 (some children checked) or 2 (all children checked),
+     * false if 0.
+     * @type boolean
+     */
+    checked: false,
+    b2bChecked :false,
+
+    /**
+     * checkState
+     * 0=unchecked, 1=some children checked, 2=all children checked
+     * @type int
+     */
+    checkState: 0,
+
+    /**
+     * id of contained acl group
+     * @type int
+     */
+    groupId: 0,
+
+
+    /**
+     * tree type
+     * rw=read/write, r=read
+     * @type string
+     */
+    treeType: "rw",
+
+    /**
+     * The node type
+     * @property _type
+     * @private
+     * @type string
+     * @default "TextNode"
+     */
+    _type: "ACLNode",
+    
+    valid: true,
+
+    customNodeParentChange: function() {
+    //this.updateParent();
+    },
+
+    // function called from constructor
+    //  -> creates/registers events
+    setUpCheck: function(checked) {
+        // if this node is checked by default, run the check code to update
+        // the parent's display state
+        if (checked && checked === true) {
+            this.check();
+            this.b2bChecked = true;
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
+        } else if (this.parent && 2 === this.parent.checkState) {
+            this.updateParent();
+        }
+
+        // set up the custom event on the tree for checkClick
+
+        if (this.tree && !this.tree.hasEvent("checkClick")) {
+            this.tree.createEvent("checkClick", this.tree);
+        }
+        this.tree.subscribe('clickEvent',this.checkClick);
+
+        this.subscribe("parentChange", this.customNodeParentChange);
+
+    },
+
+
+    /**
+     * set group id
+     * @newGroupId int
+     */
+    setGroupId: function(newGroupId) {
+        this.groupId = newGroupId;
+    },
+
+    /**
+     * get group id
+     */
+    getGroupId: function() {
+        return this.groupId;
+    },
+
+    /**
+     * The id of the check element
+     * @for YAHOO.widget.CustomNode
+     * @type string
+     */
+    getCheckElId: function() {
+        return "ygtvcheck" + this.index;
+    },
+
+    /**
+     * Returns the check box element
+     * @return the check html element (img)
+     */
+    getCheckEl: function() {
+        return document.getElementById(this.getCheckElId());
+    },
+
+    /**
+     * The style of the check element, derived from its current state
+     * @return {string} the css style for the current check state
+     */
+    getCheckStyle: function() {
+        return "ygtvcheck" + this.checkState;
+    },
+
+
+    /**
+     * Invoked when the user clicks the check box
+     */
+    checkClick: function(oArgs) {
+        if(YAHOO.haloacl.debug) console.log(oArgs);
+        var node = oArgs.node;
+        var target = YAHOO.util.Event.getTarget(oArgs.event);
+        if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
+            if (node.checkState === 0) {
+                node.check();
+                if(YAHOO.haloacl.checkedInRightstree == null){
+                    YAHOO.haloacl.checkedInRightstree = new Array();
+                }
+                YAHOO.haloacl.checkedInRightstree.push(node.label);
+
+            } else {
+                node.uncheck();
+            }
+
+            node.onCheckClick(node);
+            this.fireEvent("checkClick", node);
+            return false;
+        }
+
+    },
+
+
+    /**
+     * Override to get the check click event
+     */
+    onCheckClick: function() {
+    },
+
+    /**
+     * Refresh the state of this node's parent, and cascade up.
+     */
+    updateParent: function() {
+        var p = this.parent;
+
+        if (!p || !p.updateParent) {
+            return;
+        }
+
+        var somethingChecked = false;
+        var somethingNotChecked = false;
+
+        for (var i=0, l=p.children.length;i<l;i=i+1) {
+
+            var n = p.children[i];
+
+            if ("checked" in n) {
+                if (n.checked) {
+                    somethingChecked = true;
+                    // checkState will be 1 if the child node has unchecked children
+                    if (n.checkState === 1) {
+                        somethingNotChecked = true;
+                    }
+                } else {
+                    somethingNotChecked = true;
+                }
+            }
+        }
+
+        if (somethingChecked) {
+            p.setCheckState( (somethingNotChecked) ? 1 : 2 );
+        } else {
+            p.setCheckState(0);
+        }
+
+        p.updateCheckHtml();
+        p.updateParent();
+    },
+
+    /**
+     * If the node has been rendered, update the html to reflect the current
+     * state of the node.
+     */
+    updateCheckHtml: function() {
+        if (this.parent && this.parent.childrenRendered) {
+            this.getCheckEl().className = this.getCheckStyle();
+        }
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    setCheckState: function(state) {
+        this.checkState = state;
+        this.checked = (state > 0);
+    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+    // this.tree.clickedHandler.add(this.groupId);
+    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+    /*
+       if(this.checked){
+            YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
+        }else{
+            YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
+        }
+         */
+    // update usertable
+    // YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
+
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    getLabelElId: function() {
+        return this.labelElId;
+    },
+
+    /**
+     * Check this node
+     */
+    check: function() {
+        this.setCheckState(2);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.check) {
+                c.check();
+            }
+        }
+         */
+        this.updateCheckHtml();
+    //this.updateParent();
+    },
+
+    /**
+     * Uncheck this node
+     */
+    uncheck: function() {
+        this.setCheckState(0);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.uncheck) {
+                c.uncheck();
+            }
+        }
+         */
+        this.updateCheckHtml();
+    //this.updateParent();
+    },
+
+    setTreeType: function(newTreeType) {
+        this.treeType = newTreeType
+    },
+
+
+    // Overrides YAHOO.widget.TextNode
+    getContentHtml: function() {
+        var sb = [];
+        var localLabel = this.label;
+        if(this.b2bChecked){
+            this.check();
+        }
+
+        if (this.treeType=="readOnly") {
+            sb[sb.length] = 
+'<td>' +
+	'<span id="' + this.labelElId + '"' +
+	     ' class="haloacl_manageuser_list_title ' + this.labelStyle  + '"' +
+         (this.title ? ' title="' + this.title + '"' : '')+
+		 ' class="' + this.labelStyle  + '" >' +
+		"<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'>"+localLabel+"</a>" +
+	'</span>' +
+'</td>' +
+'<td>' +
+	'<span class="haloacl_readonly_right_firstspacing">'+
+	'</span>' +
+'</td>' +
+'<td>' +
+	'<div id="anchorPopup_'+this.groupId+'" ' +
+		 'class="' +
+		   (this.valid == true ? 'haloacl_infobutton' 
+		                      : 'haloacl_warningbutton') +
+		 '" ' +
+		 'onclick="javascript:' +
+		 	'YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');' +
+		 	'return false;">' +
+	'</div>' +
+	'<div id="popup_'+this.groupId+'"></div>'+
+'</td>'+
+'<td>' +
+	'<span class="haloacl_readonly_right_secondspacing">'+
+	'</span>' +
+'</td>'+
+'<td id="' + this.getCheckElId() + '"'+
+	' class="' + this.getCheckStyle() + '" >'+
+	'<div style="width:18px!important" class="ygtvspacer"></div>' +
+'</td>';
+
+			var tt = this.valid == true ? 'aclinfotooltip' : 'aclwarningtooltip'; 
+            new YAHOO.widget.Tooltip('anchorPopup_'+this.groupId+'tooltip', {
+                context:'anchorPopup_'+this.groupId,
+                text:gHACLLanguage.getMessage(tt),
+                zIndex :10
+            });
+
+        } else {
+            sb[sb.length] = 
+'<td>' +
+	'<span id="manageUserRow_' + localLabel + '"' +
+    		(this.title ? ' title="' + this.title + '"' : '') +
+            ' class="haloacl_manageuser_list_title_modified ' + this.labelStyle  + '" >'+
+		"<a href='javascript:"+this.tree.labelClickAction+"(\""+localLabel+"\");'>"+localLabel+"</a>"+
+	'</span>' +
+'</td>'+
+'<td>'+
+	'<span class="haloacl_manageacl_list_information_modified">'+
+		'<div id="anchorPopup_'+this.groupId+
+		   '" class="' +
+		   (this.valid == true ? 'haloacl_infobutton' 
+		                      : 'haloacl_warningbutton') +
+		   '"'+
+		   ' onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\',\''+this.groupId+'\');return false;">'+
+	    '</div>'+
+	'</span>'+
+	'<div id="popup_'+this.groupId+'"></div>'+
+'</td>'+
+'<td>' +
+	'<div id="anchorPopup_'+this.groupId+'" ' +
+	     'class="haloacl_manageright_list_edit" ' +
+	     'onclick="javascript:YAHOO.haloaclrights.popup(\''+this.groupId+'\',\''+this.label+'\');return false;">' +
+	'</div>' +
+	'<div id="popup_'+this.groupId+'"></div>' +
+'</td>'+
+'<td>' +
+	'<span class="">' +
+		'<a id="haloacl_manageacl_edit_'+localLabel+'" ' +
+		   'class="haloacl_manageuser_list_edit" ' +
+		   'href="javascript:' +
+		   		'try { ' +
+		   			'YAHOO.haloacl.manageACL_handleClick(\''+this.label+'\');' +
+		   		'} catch(e) {}; ' +
+		   		'try {' +
+		   			'$(\'ManageACLDetail\').scrollTo();' +
+		   		'} catch(e) {};' +
+		   		'YAHOO.haloacl.loadContentToDiv(\'ManageACLDetail\',' +
+		   									   '\'haclGetSDRightsPanelContainer\',' +
+		   									   '{' +
+		   									   		'sdId:\''+this.groupId+'\',' +
+		   									    	'sdName:\''+this.label+'\',' +
+		   									    	'readOnly:\'false\'' +
+		   									    '});">&nbsp;' +
+		'</a>' +
+	'</span>' +
+'</td>'+
+'<td id="' + this.getCheckElId() + '"'+
+	' class="' + this.getCheckStyle() + '">'+
+	'<div class="ygtvspacer"></div>' +
+'</td>';
+
+			var tt = this.valid == true ? 'aclinfotooltip' : 'aclwarningtooltip'; 
+            new YAHOO.widget.Tooltip('anchorPopup_'+this.groupId+'tooltip', {
+                context: 'anchorPopup_' + this.groupId,
+                text:    gHACLLanguage.getMessage(tt),
+                zIndex:  10
+            });
+        }
+
+
+        return sb.join("");
+    }
+});
+
+
+
+
+// defining RightNode
+YAHOO.widget.RightNode = function(oData, oParent, expanded, checked) {
+    YAHOO.widget.RightNode.superclass.constructor.call(this,oData,oParent,expanded);
+    this.setUpCheck(checked || oData.checked);
+
+};
+
+// impl of customnode; extending textnode
+YAHOO.extend(YAHOO.widget.RightNode, YAHOO.widget.TextNode, {
+
+    /**
+     * True if checkstate is 1 (some children checked) or 2 (all children checked),
+     * false if 0.
+     * @type boolean
+     */
+    checked: false,
+
+    /**
+     * checkState
+     * 0=unchecked, 1=some children checked, 2=all children checked
+     * @type int
+     */
+    checkState: 0,
+
+    /**
+     * id of contained acl group
+     * @type int
+     */
+    groupId: 0,
+    title:'',
+
+
+    /**
+     * tree type
+     * rw=read/write, r=read
+     * @type string
+     */
+    treeType: "rw",
+
+    /**
+     * The node type
+     * @property _type
+     * @private
+     * @type string
+     * @default "TextNode"
+     */
+    _type: "CustomNode",
+    tt1:YAHOO.widget.Tooltip,
+
+    customNodeParentChange: function() {
+    //this.updateParent();
+    },
+
+    // function called from constructor
+    //  -> creates/registers events
+    setUpCheck: function(checked) {
+        // if this node is checked by default, run the check code to update
+        // the parent's display state
+        if (checked && checked === true) {
+            this.check();
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
+        } else if (this.parent && 2 === this.parent.checkState) {
+            this.updateParent();
+        }
+
+        // set up the custom event on the tree for checkClick
+
+        if (this.tree && !this.tree.hasEvent("checkClick")) {
+            this.tree.createEvent("checkClick", this.tree);
+        }
+        this.tree.subscribe('clickEvent',this.checkClick);
+
+        this.subscribe("parentChange", this.customNodeParentChange);
+
+    },
+
+
+    /**
+     * set group id
+     * @newGroupId int
+     */
+    setGroupId: function(newGroupId) {
+        this.groupId = newGroupId;
+    },
+
+    /**
+     * get group id
+     */
+    getGroupId: function() {
+        return this.groupId;
+    },
+
+    /**
+     * The id of the check element
+     * @for YAHOO.widget.CustomNode
+     * @type string
+     */
+    getCheckElId: function() {
+        return "ygtvcheck" + this.index;
+    },
+
+    /**
+     * Returns the check box element
+     * @return the check html element (img)
+     */
+    getCheckEl: function() {
+        return document.getElementById(this.getCheckElId());
+    },
+
+    /**
+     * The style of the check element, derived from its current state
+     * @return {string} the css style for the current check state
+     */
+    getCheckStyle: function() {
+        return "ygtvcheck" + this.checkState;
+    },
+
+
+    /**
+     * Invoked when the user clicks the check box
+     */
+    checkClick: function(oArgs) {
+        var node = oArgs.node;
+        var target = YAHOO.util.Event.getTarget(oArgs.event);
+        if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
+            if (node.checkState === 0) {
+                node.check();
+            } else {
+                node.uncheck();
+            }
+
+            node.onCheckClick(node);
+            this.fireEvent("checkClick", node);
+            return false;
+        }
+
+    },
+
+
+
+
+    /**
+     * Override to get the check click event
+     */
+    onCheckClick: function() {
+    },
+
+    /**
+     * Refresh the state of this node's parent, and cascade up.
+     */
+    updateParent: function() {
+        var p = this.parent;
+
+        if (!p || !p.updateParent) {
+            return;
+        }
+
+        var somethingChecked = false;
+        var somethingNotChecked = false;
+
+        for (var i=0, l=p.children.length;i<l;i=i+1) {
+
+            var n = p.children[i];
+
+            if ("checked" in n) {
+                if (n.checked) {
+                    somethingChecked = true;
+                    // checkState will be 1 if the child node has unchecked children
+                    if (n.checkState === 1) {
+                        somethingNotChecked = true;
+                    }
+                } else {
+                    somethingNotChecked = true;
+                }
+            }
+        }
+
+        if (somethingChecked) {
+            p.setCheckState( (somethingNotChecked) ? 1 : 2 );
+        } else {
+            p.setCheckState(0);
+        }
+
+        p.updateCheckHtml();
+        p.updateParent();
+    },
+
+    /**
+     * If the node has been rendered, update the html to reflect the current
+     * state of the node.
+     */
+    updateCheckHtml: function() {
+        if (this.parent && this.parent.childrenRendered) {
+            this.getCheckEl().className = this.getCheckStyle();
+        }
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    setCheckState: function(state) {
+        this.checkState = state;
+        this.checked = (state > 0);
+    //this.tree.clickedTreeNodes[this.groupId] = this.checked;
+    // this.tree.clickedHandler.add(this.groupId);
+    //YAHOO.haloacl.clickedArrayGroups[this.tree.panelid][this.groupId] = this.checked;
+    /*        if(this.checked){
+            YAHOO.haloacl.addGroupToGroupArray(this.tree.panelid, this.groupId);
+        }else{
+            YAHOO.haloacl.removeGroupFromGroupArray(this.tree.panelid, this.groupId);
+        }
+        // update usertable
+        YAHOO.haloacl.highlightAlreadySelectedUsersInDatatable(this.tree.panelid);
+         */
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    getLabelElId: function() {
+        return this.labelElId;
+    },
+
+    /**
+     * Check this node
+     */
+    check: function() {
+        this.setCheckState(2);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.check) {
+                c.check();
+            }
+        }
+         */
+        this.updateCheckHtml();
+    //this.updateParent();
+    },
+
+    /**
+     * Uncheck this node
+     */
+    uncheck: function() {
+        this.setCheckState(0);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.uncheck) {
+                c.uncheck();
+            }
+        }
+        this.updateParent();
+         */
+        this.updateCheckHtml();
+
+    },
+
+    setTreeType: function(newTreeType) {
+        this.treeType = newTreeType
+    },
+
+
+    // Overrides YAHOO.widget.TextNode
+    getContentHtml: function() {
+        var localTitle = this.title;
+        if(localTitle == null || localTitle == "undefined"){
+            localTitle = gHACLLanguage.getMessage('namelessright');
+        }
+        var sb = [];
+
+        var shortLabel = "";
+        if (this.label.length > 25) {
+            shortLabel = "..."+this.label.substring(this.label.length-25,this.label.length);
+        } else {
+            shortLabel = this.label;
+        }
+
+        if (this.treeType=="rw" || this.treeType == "edit") {
+
+            sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title">'+localTitle+'</span></td>';
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="' + this.labelElId + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + localTitle + '"';
+            }
+            sb[sb.length] = ' class="haloacl_manageACL_right_description"';
+            sb[sb.length] = ' >';
+            //sb[sb.length] = shortLabel;
+            sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton_rightdesc" style="float:right!important" ></div>';
+            this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, {
+                context:this.labelElId,
+                text:this.label,
+                zIndex :10
+            });
+
+
+            sb[sb.length] = '</span></td>';
+
+
+        } else {
+            /*           sb[sb.length] = '<td>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="' + this.labelElId + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + localTitle + '"';
+            }
+            sb[sb.length] = ' class="' + this.labelStyle  + '"';
+            sb[sb.length] = ' >';
+            sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+            sb[sb.length] = '</span></td>';
+
+            sb[sb.length] = '<td';
+            sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+            sb[sb.length] = ' class="ygtvcheck3"';
+            sb[sb.length] = '>';
+            sb[sb.length] = '<div class="ygtvspacer"></div></td>';
+             */
+            sb[sb.length] = '<td><div class="ygtvspacer"></div></td>';
+
+            sb[sb.length] = '<td><span class="haloacl_manageACL_right_title_readonly">'+localTitle+'</span></td>';
+
+            sb[sb.length] = '<td><span';
+            sb[sb.length] = ' id="' + this.labelElId + '"';
+            if (this.title) {
+                sb[sb.length] = ' title="' + localTitle + '"';
+            }
+            sb[sb.length] = ' class="haloacl_manageACL_right_description"';
+            sb[sb.length] = ' >';
+            //sb[sb.length] = shortLabel;
+            sb[sb.length] = '<div id="tt1'+this.labelElId+'" class="haloacl_infobutton_rightdesc" style="float:right!important" ></div>';
+            this.tt1 = new YAHOO.widget.Tooltip("tt1"+this.labelElId, {
+                context:this.labelElId,
+                text:this.label,
+                zIndex :10
+            });
+
+
+            sb[sb.length] = '</span></td>';
+
+        }
+
+
+        return sb.join("");
+    }
+});
+
+
+
+
+
+
+/*
+ * treeview-dataconnect
+ * @param mediawiki / rs-action
+ * @param list (object) of parameters to be added
+ * @param callback for asyncRequest
+ */
+YAHOO.haloaclrights.treeviewDataConnect = function(action,parameterlist,callback,dontusefilter){
+    var url= "?action=ajax";
+    var appendedParams = '';
+    appendedParams = '&rs='+action;
+    var temparray = new Array();
+    for(param in parameterlist){
+        temparray.push(parameterlist[param]);
+    }
+    appendedParams = appendedParams + "&rsargs[]="+ temparray;
+
+
+    var filterControl = $('haloacl_manageuser_contentmenu');
+
+    if(filterControl != null){
+        var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+        xml+="<types>";
+        $$('.haloacl_manageacl_filter').each(function(item){
+            if(item.checked){
+                xml += "<type>"+item.name+"</type>";
+            }
+        });
+        xml+="</types>";
+        
+        appendedParams = '&rs='+action+"&rsargs[]="+escape(xml);
+    }
+    if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
+        var xml2 = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
+        xml2+="<types>";
+        xml2 += "<type>acltemplate_nofilter</type>";
+        xml2+="</types>";
+        appendedParams = '&rs='+action+"&rsargs[]="+escape(xml2);
+    }
+
+    YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
+};
+
+/*
+ * function for dynamic node-loading
+ * @param node
+ * @parm callback on complete
+ */
+YAHOO.haloaclrights.loadNodeData = function(node, fnLoadComplete)  {
+
+    var nodeLabel = encodeURI(node.label);
+
+
+    //prepare our callback object
+    var callback = {
+        panelid:"",
+
+        //if our XHR call is successful, we want to make use
+        //of the returned data and create child nodes.
+        success: function(oResponse) {
+            YAHOO.haloaclrights.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
+            oResponse.argument.fnLoadComplete();
+        },
+
+        failure: function(oResponse) {
+            oResponse.argument.fnLoadComplete();
+        },
+        argument: {
+            "node": node,
+            "fnLoadComplete": fnLoadComplete
+        },
+        timeout: 7000
+    };
+    YAHOO.haloaclrights.treeviewDataConnect('haclGetGroupsForRightPanel',{
+        query:nodeLabel
+    },callback);
+
+};
+
+
+
+
+
+/*
+ * function to build nodes from data
+ * @param parent node / root
+ * @param data
+ */
+YAHOO.haloaclrights.buildNodesFromData = function(parentNode,data,panelid){
+
+    var rightsExisting = false;
+    //build ACL nodes
+
+    for(var i= 0, len = data.length; i<len; ++i){
+        rightsExisting = true;
+        var element = data[i];
+
+        if (!element.name) element.name = gHACLLanguage.getMessage('NoName');
+
+        var tmpNode;
+        if (YAHOO.haloacl.checkedInRightstree 
+            && YAHOO.haloacl.checkedInRightstree.indexOf(element.name) != -1){
+            tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false, true, element.valid);
+        } else {
+            tmpNode = new YAHOO.widget.ACLNode(element.name, parentNode, false, false, element.valid);
+        }
+        tmpNode.setGroupId(element.id);
+        
+        var treetype = tmpNode.tree.type;
+        tmpNode.setTreeType(treetype);
+
+        //build right subnodes
+        if(YAHOO.haloacl.debug) console.log("rights array:"+element.rights.length+element.rights);
+        if (element.rights.length > 0) {
+            for(var i2= 0, len2 = element.rights.length; i2<len2; ++i2){
+                var element2 = element.rights[i2];
+                if (!element2.description) element2.description = gHACLLanguage.getMessage('NoName');
+                var tmpNode2 = new YAHOO.widget.RightNode(element2.description, tmpNode, false);
+                tmpNode2.title = element2.name;
+                tmpNode2.setTreeType(treetype);
+                tmpNode2.setGroupId(element2.id);
+            }
+        }
+
+    }
+
+    if(!rightsExisting){
+        new YAHOO.widget.TextNode("no ACLs available", parentNode,false);
+    }else{
+        if($('haloacl_rightstree_count') != null){
+            $('haloacl_rightstree_count').innerHTML = data.length;
+        }
+    }
+
+};
+
+
+/*
+ * filter tree
+ * @param parent node / root
+ * @param filter String
+ */
+YAHOO.haloaclrights.filterNodes = function(parentNode,filter){
+
+    var nodes;
+    nodes = parentNode.children;
+
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+
+        if (n.label.indexOf(filter) < 0) {
+            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "none";
+        } else {
+            document.getElementById(n.getLabelElId()).parentNode.parentNode.style.display = "inline";
+        }
+
+    /*
+        if (n.checkState > 0) {
+            var tmpNode = new YAHOO.widget.ACLNode(n.label, rwTree.getRoot(),false);
+            tmpNode.setCheckState(n.checkState);
+            tmpNode.setTreeType("r");
+        }
+         */
+
+    }
+
+};
+
+/*
+ * function to build user tree and add labelClickAction
+ * @param tree
+ * @param data
+ * @param labelClickAction (name)
+ */
+YAHOO.haloaclrights.buildUserTree = function(tree,data,dontusefilter) {
+    if($('haloacl_rightstree_count') != null){
+        $('haloacl_rightstree_count').innerHTML = data.length;
+    }
+
+    YAHOO.haloaclrights.buildNodesFromData(tree.getRoot(),data,tree.panelid);
+
+    //using custom loadNodeDataHandler
+    var loadNodeData = function(node, fnLoadComplete)  {
+        var nodeLabel = encodeURI(node.label);
+        //prepare our callback object
+        var callback = {
+            panelid:"",
+            success: function(oResponse) {
+                YAHOO.haloaclrights.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,tree.panelid));
+                oResponse.argument.fnLoadComplete();
+            },
+            failure: function(oResponse) {
+                oResponse.argument.fnLoadComplete();
+            },
+            argument: {
+                "node": node,
+                "fnLoadComplete": fnLoadComplete
+            },
+            timeout: 7000
+        };
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetGroupsForRightPanel',{
+            query:nodeLabel
+        },callback,dontusefilter);
+
+    };
+
+
+
+    //tree.setDynamicLoad(loadNodeData);
+    tree.draw();
+
+};
+
+
+/*
+ * builds mirrored, read only user tree for "assigned" panel from existing r/w user tree in "select" panel
+ * @param tree
+ * @param rwTree
+ */
+YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
+    var rightsExisting = false;
+    var nodes;
+    nodes = tree.getRoot().children;
+
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+        rightsExisting = true;
+        if (n.checkState > 0) {
+            var tmpNode = new YAHOO.widget.ACLNode(n.label, rwTree.getRoot(), false);
+            tmpNode.setCheckState(n.checkState);
+            tmpNode.setTreeType("rw");
+        }
+
+    }
+
+    if(!rightsExisting){
+        new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+    }
+
+    rwTree.draw();
+
+};
+
+
+/*
+ * function to be called from outside to init a tree
+ * @param tree-instance
+ * @param query on that tree
+ * @param dont use canModify-Filter
+ */
+YAHOO.haloaclrights.buildTreeFirstLevelFromJson = function(tree,query,dontusefilter){
+    
+    if(query == null){
+        query = "all";
+    }
+
+    var callback = {
+        success: function(oResponse) {
+            var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+            YAHOO.haloaclrights.buildUserTree(tree,data);
+        },
+        failure: function(oResponse) {
+        }
+    };
+    if(dontusefilter && (dontusefilter == "true"||dontusefilter ==true )){
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
+            query:query
+        },callback,dontusefilter);
+
+    }else if(tree.treeType != null && tree.treeType != "readonly"){
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
+            query:query
+        },callback);
+    }else{
+        var temp = escape('<?xml version="1.0" encoding="UTF-8"?><types><type>acltemplate_nofilter</type></types>');
+        YAHOO.haloaclrights.treeviewDataConnect('haclGetACLs',{
+            query:temp
+        },callback);
+    }
+};
+
+/*
+ * returns checked nodes
+ * USE ONE OF BOTH PARAMS, so ONE HAS TO BE NULL
+ *
+ * @param tree
+ * @param nodes
+ */
+YAHOO.haloaclrights.getCheckedNodesFromRightsTree = function(tree, nodes){
+    if(nodes == null){
+        nodes = tree.getRoot().children;
+    }
+    checkedNodes = [];
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+        //if (n.checkState > 0) { // if we were interested in the nodes that have some but not all children checked
+        if (n.checkState === 2) {
+            checkedNodes.push(n.label); // just using label for simplicity
+        }
+
+        if (n.hasChildren()) {
+    // checkedNodes = checkedNodes.concat(YAHOO.haloaclrights.getCheckedNodesFromTree(null, n.children));
+    }
+    }
+
+    return checkedNodes;
+};
+
+/**
+ *  applies filter on tree
+ *  @param tree-instance
+ *  @param query
+ *  @param dont use canModify-filter
+ *
+ */
+YAHOO.haloaclrights.applyFilterOnTree = function(tree,filtervalue,dontusefilter){
+    if(dontusefilter && (dontusefilter == true || dontusefilter == "true")){
+        dontusefilter = true;
+    }else{
+        dontusefilter = false;
+    }
+
+
+    if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
+        tree.lastFilterStart = 0;
+    }
+    var now = new Date();
+    now = now.getTime();
+    if(filtervalue == "" || tree.lastFilterStart + YAHOO.haloacl.filterQueryDelay <= now){
+        tree.lastFilterStart = now;
+        tree = tree.tree;
+
+        //tree.removeChildren();
+        //tree.removeChildren();
+        var callback = {
+            success: function(oResponse) {
+                tree.removeChildren(tree.getRoot());
+
+                var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+                YAHOO.haloaclrights.buildUserTree(tree,data);
+            },
+            failure: function(oResponse) {
+            }
+        };
+        
+        var query = "all";
+        var foundType = false;
+        if(!dontusefilter){
+            var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
+            $$('.haloacl_manageacl_filter').each(function(item){
+                if(item.checked){
+                    xml += "<type>"+item.name+"</type>";
+                    foundType = true;
+                }
+            });
+            xml += '</types>';
+        }else{
+            var xml = '<?xml version="1.0" encoding="UTF-8"?><types>';
+            xml += "<type>acltemplate_nofilter</type>";
+            xml += '</types>';
+            foundType = true;
+        }
+
+
+        if(foundType){
+            query = escape(xml);
+        }
+        YAHOO.haloacl.treeviewDataConnect('haclGetACLs',{
+            query:query,
+            filtervalue:filtervalue
+        },callback);
+
+        //tree.setDynamicLoad(loadNodeData);
+        tree.draw();
+    }
+}
+
+
+/**
+ * returns a new treeinstance
+ * @param rendered to
+ * @param panelid / identifier
+ * @param type (rw|readonly)
+ */
+YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
+
+
+    var instance = new YAHOO.widget.TreeView(divname);
+    instance.panelid = panelid;
+    instance.type = type;
+    if(!YAHOO.haloaclrights.clickedArrayGroups[panelid]){
+        YAHOO.haloaclrights.clickedArrayGroups[panelid] = new Array();
+    }
+    return instance;
+};
+
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -3034,6 +3953,1202 @@ YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
 */
 
 /**
+ * This file contains a template for datatables
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+YAHOO.haloacl.pageDataTable = function(divid) {
+
+    // custom defined formatter
+    this.myCustomFormatter = function(elLiner, oRecord, oColumn, oData) {
+        if(oData == true){
+            elLiner.innerHTML = "<input type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }else{
+            elLiner.innerHTML = "<input type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }
+            
+    };
+
+    // building shortcut for custom formatter
+    YAHOO.widget.DataTable.Formatter.myCustom = this.myCustomFormatter;
+
+    var myColumnDefs = [ // sortable:true enables sorting
+    {
+        key:"name",
+        label:gHACLLanguage.getMessage('name'),
+        sortable:true
+    },
+    {
+        key:"checked",
+        label:gHACLLanguage.getMessage('selected')
+      //  formatter:"myCustom"
+    }
+    ];
+
+    // datasource for this userdatatable
+    var myDataSource = new YAHOO.util.DataSource("?action=ajax");
+    myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+    myDataSource.connMethodPost = true;
+    myDataSource.responseSchema = {
+        resultsList: "records",
+        fields: [
+ 
+        {
+            key:"name"
+        },
+        {
+            key:"checked"
+        }
+        ],
+        metaFields: {
+            totalRecords: "totalRecords" // Access to value in the server response
+        }
+    };
+
+    // our customrequestbuilder (attached to the datasource)
+    // this requestbuilder, builds a valid mediawiki-ajax-request
+    var customRequestBuilder = function(oState, oSelf) {
+        // Get states or use defaults
+        oState = oState;
+        var totalRecords = oState.pagination.totalRecords;
+        var sort = (oState.sortedBy) ? oState.sortedBy.key : null;
+        var dir = (oState.sortedBy && oState.sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+        var startIndex = oState.pagination.recordOffset;
+        var results = oState.pagination.rowsPerPage;
+        /* make the initial cache of the form data */
+
+        if(myPageTable.query == null){
+            myPageTable.query = '';
+        }
+
+        return "rs=haclGetWhitelistPages&rsargs[]="
+        +myPageTable.query+"&rsargs[]="+sort
+        +"&rsargs[]="+dir
+        +"&rsargs[]="+startIndex
+        +"&rsargs[]="+results;
+
+
+    };
+
+    // userdatatable configuration
+    var myConfigs = {
+        initialRequest: "rs=haclGetWhitelistPages&rsargs[]=test&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=25", // Initial request for first page of data
+        dynamicData: true, // Enables dynamic server-driven data
+        sortedBy : {
+            key:"id",
+            dir:YAHOO.widget.DataTable.CLASS_ASC
+        }, // Sets UI initial sort arrow
+        paginator: new YAHOO.widget.Paginator({
+            rowsPerPage:25,
+            containers:'datatablepaging_whitelistDatatableDiv'
+        }),
+        generateRequest:customRequestBuilder
+    };
+
+    // instanciating datatable
+    var myPageTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
+
+    // Update totalRecords on the fly with value from server
+    myPageTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
+        oPayload.totalRecords = oResponse.meta.totalRecords;
+        return oPayload;
+    }
+    myPageTable.query = "";
+
+    // function called from grouptree to update userdatatable on GroupTreeClick
+    myPageTable.executeQuery = function(query){
+        myPageTable.query = query;
+        var oCallback = {
+            success : myPageTable.onDataReturnInitializeTable,
+            failure : myPageTable.onDataReturnInitializeTable,
+            scope : myPageTable,
+            argument : myPageTable.getState()
+        };
+        myDataSource.sendRequest(customRequestBuilder(myPageTable.getState(),null), oCallback);
+    }
+
+    return myPageTable;
+
+};
+
+/*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This class provides javascript for the manageGroups tree
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+
+
+// defining customnode
+YAHOO.widget.ManageUserNode = function(oData, oParent, expanded, checked) {
+    YAHOO.widget.ManageUserNode.superclass.constructor.call(this,oData,oParent,expanded);
+    this.setUpCheck(checked || oData.checked);
+
+};
+
+// impl of customnode; extending textnode
+YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
+
+    /**
+     * True if checkstate is 1 (some children checked) or 2 (all children checked),
+     * false if 0.
+     * @type boolean
+     */
+    checked: false,
+
+    /**
+     * checkState
+     * 0=unchecked, 1=some children checked, 2=all children checked
+     * @type int
+     */
+    checkState: 0,
+
+    b2bChecked:false,
+
+    /**
+     * id of contained acl group
+     * @type int
+     */
+    groupId: 0,
+
+
+    information:"",
+
+    description:"",
+
+
+    /**
+     * tree type
+     * rw=read/write, r=read
+     * @type string
+     */
+    treeType: "rw",
+
+    /**
+     * The node type
+     * @property _type
+     * @private
+     * @type string
+     * @default "TextNode"
+     */
+    _type: "CustomNode",
+
+    textWidth: 0,
+
+    customNodeParentChange: function() {
+    //this.updateParent();
+    },
+
+    // function called from constructor
+    //  -> creates/registers events
+    setUpCheck: function(checked) {
+        // if this node is checked by default, run the check code to update
+        // the parent's display state
+        if (checked && checked === true) {
+            this.check();
+            this.b2bChecked = true;
+        // otherwise the parent needs to be updated only if its checkstate
+        // needs to change from fully selected to partially selected
+        } else if (this.parent && 2 === this.parent.checkState) {
+            this.updateParent();
+        }
+
+        // set up the custom event on the tree for checkClick
+
+        if (this.tree && !this.tree.hasEvent("checkClick")) {
+            this.tree.createEvent("checkClick", this.tree);
+        }
+        this.tree.subscribe('clickEvent',this.checkClick);
+				
+        this.subscribe("parentChange", this.customNodeParentChange);
+       
+    },
+
+
+    /**
+     * set group id
+     * @newGroupId int
+     */
+    setGroupId: function(newGroupId) {
+        this.groupId = newGroupId;
+    },
+    setTextWidth: function(tw) {
+        this.textWidth = tw;
+    },
+    getTextWidth:function() {
+        return this.textWidth;
+    },
+
+    setInformation: function(info){
+        this.information = info;
+    },
+
+    setDescription:function(desc){
+        this.description = desc
+    },
+
+    /**
+     * get group id
+     */
+    getGroupId: function() {
+        return this.groupId;
+    },
+
+    /**
+     * The id of the check element
+     * @for YAHOO.widget.CustomNode
+     * @type string
+     */
+    getCheckElId: function() { 
+        return "ygtvcheck" + this.index; 
+    },
+
+    /**
+     * Returns the check box element
+     * @return the check html element (img)
+     */
+    getCheckEl: function() { 
+        return document.getElementById(this.getCheckElId()); 
+    },
+
+    /**
+     * The style of the check element, derived from its current state
+     * @return {string} the css style for the current check state
+     */
+    getCheckStyle: function() { 
+        return "ygtvcheck" + this.checkState;
+    },
+
+
+    /**
+     * Invoked when the user clicks the check box
+     */
+    checkClick: function(oArgs) {
+        var node = oArgs.node;
+        var target = YAHOO.util.Event.getTarget(oArgs.event);
+        if (YAHOO.util.Dom.hasClass(target,'ygtvspacer')) {
+            if (node.checkState === 0) {
+                node.check();
+            } else {
+                node.uncheck();
+            }
+
+            node.onCheckClick(node);
+            this.fireEvent("checkClick", node);
+            return false;
+        }
+
+    },
+
+    
+
+
+    /**
+     * Override to get the check click event
+     */
+    onCheckClick: function() { 
+    },
+
+    /**
+     * Refresh the state of this node's parent, and cascade up.
+     */
+    updateParent: function() {
+
+    // NO update parent here
+    /*
+        var p = this.parent;
+
+        if (!p || !p.updateParent) {
+            return;
+        }
+
+        var somethingChecked = false;
+        var somethingNotChecked = false;
+
+        for (var i=0, l=p.children.length;i<l;i=i+1) {
+
+            var n = p.children[i];
+
+            if ("checked" in n) {
+                if (n.checked) {
+                    somethingChecked = true;
+                    // checkState will be 1 if the child node has unchecked children
+                    if (n.checkState === 1) {
+                        somethingNotChecked = true;
+                    }
+                } else {
+                    somethingNotChecked = true;
+                }
+            }
+        }
+
+        if (somethingChecked) {
+            p.setCheckState( (somethingNotChecked) ? 1 : 2 );
+        } else {
+            p.setCheckState(0);
+        }
+
+        p.updateCheckHtml();
+        p.updateParent();
+         */
+    },
+
+    /**
+     * If the node has been rendered, update the html to reflect the current
+     * state of the node.
+     */
+    updateCheckHtml: function() { 
+        if (this.parent && this.parent.childrenRendered) {
+            this.getCheckEl().className = this.getCheckStyle();
+        }
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     * 
+     * @param the new check state
+     */
+    setCheckState: function(state) { 
+        this.checkState = state;
+        this.checked = (state > 0);
+             
+    },
+
+    /**
+     * Updates the state.  The checked property is true if the state is 1 or 2
+     *
+     * @param the new check state
+     */
+    getLabelElId: function() {
+        return this.labelElId;
+    },
+
+    /**
+     * Check this node
+     */
+    check: function() {
+        this.setCheckState(2);
+        if(YAHOO.haloacl.checkedInGroupstree == null){
+            YAHOO.haloacl.checkedInGroupstree = new Array();
+        }
+        YAHOO.haloacl.checkedInGroupstree.push(this.label);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.check) {
+                c.check();
+            }
+        }
+         */
+        this.updateCheckHtml();
+    //this.updateParent();
+    },
+
+    /**
+     * Uncheck this node
+     */
+    uncheck: function() { 
+        this.setCheckState(0);
+        /*
+        for (var i=0, l=this.children.length; i<l; i=i+1) {
+            var c = this.children[i];
+            if (c.uncheck) {
+                c.uncheck();
+            }
+        }
+         */
+        this.updateCheckHtml();
+    //this.updateParent();
+    },
+    
+    setTreeType: function(newTreeType) { 
+        this.treeType = newTreeType
+    },
+
+
+    // Overrides YAHOO.widget.TextNode
+    getContentHtml: function() {                                                                                                                                           
+        var sb = [];
+        if(this.b2bChecked){
+            this.check();
+        }
+
+
+        sb[sb.length] = '<td><span';
+        sb[sb.length] = ' id="manageUserRow_' + this.label + '"';
+        if (this.title) {
+            sb[sb.length] = ' title="' + this.title + '"';
+        }
+        sb[sb.length] = ' class="haloacl_manageuser_list_title_modified_group ' + this.labelStyle  + '"';
+        sb[sb.length] = ' style="width:'+this.textWidth+'px" ';
+        //console.log("textWidth: "+this.getTextWidth());
+        sb[sb.length] = ' >';
+        sb[sb.length] = "<a href='javascript:"+this.tree.labelClickAction+"(\""+this.label+"\");'>"+this.label+"</a>";
+
+        if(this.description != ""){
+            sb[sb.length] = "&nbsp;&nbsp;"+this.description;
+        }
+
+        sb[sb.length] = '</span></td>';
+        sb[sb.length] = '<td><span';
+        sb[sb.length] = ' id="' + this.labelElId + '"';
+        sb[sb.length] = ' class="haloacl_manageuser_list_information_modified_group">';
+        sb[sb.length] = '<div id="tt1_group'+this.labelElId+this.label+'" class="haloacl_infobutton_groupdesc"  ></div>';
+        this.tt1 = new YAHOO.widget.Tooltip("tt1_group"+this.labelElId, {
+            context:this.labelElId,
+            text:this.information,
+            zIndex :10
+        });
+        sb[sb.length] = '</span></td>';
+
+        sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
+        // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
+        sb[sb.length] = '<td';
+        sb[sb.length] = ' id="' + this.getCheckElId() + '"';
+        sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
+        sb[sb.length] = '>';
+        sb[sb.length] = '<div class="ygtvspacer haloacl_manageuser_checkbox"></div></td>';
+
+
+
+        
+        return sb.join("");                                                                                                                                                
+    }  
+});
+
+
+
+/*
+ * treeview-dataconnect
+ * @param mediawiki / rs-action
+ * @param list (object) of parameters to be added
+ * @param callback for asyncRequest
+ */
+YAHOO.haloacl.manageUser.treeviewDataConnect = function(action,parameterlist,callback){
+    var url= "?action=ajax";
+    var appendedParams = '';
+    appendedParams = '&rs='+action;
+    var temparray = new Array();
+    for(param in parameterlist){
+        temparray.push(parameterlist[param]);
+    }
+    appendedParams = appendedParams + "&rsargs="+ temparray;
+    YAHOO.util.Connect.asyncRequest('POST', url, callback,appendedParams);
+};
+
+/*
+ * function for dynamic node-loading
+ * @param node
+ * @parm callback on complete
+ */
+YAHOO.haloacl.manageUser.loadNodeData = function(node, fnLoadComplete)  {
+
+    var nodeLabel = encodeURI(node.label);
+
+
+    //prepare our callback object
+    var callback = {
+        panelid:"",
+
+        //if our XHR call is successful, we want to make use
+        //of the returned data and create child nodes.
+        success: function(oResponse) {
+            YAHOO.haloacl.manageUser.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
+            oResponse.argument.fnLoadComplete();
+        },
+
+        failure: function(oResponse) {
+            oResponse.argument.fnLoadComplete();
+        },
+        argument: {
+            "node": node,
+            "fnLoadComplete": fnLoadComplete
+        },
+        timeout: 7000
+    };
+    YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
+        query:nodeLabel
+    },callback);
+
+};
+
+
+
+
+
+/*
+ * function to build nodes from data
+ * @param parent node / root
+ * @param data
+ */
+YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
+
+    var loadNodeData = function(node, fnLoadComplete)  {
+        var nodeLabel = encodeURI(node.label);
+        //prepare our callback object
+        var callback = {
+            panelid:"",
+            success: function(oResponse) {
+                YAHOO.haloacl.manageUser.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,panelid));
+                oResponse.argument.fnLoadComplete();
+            },
+            failure: function(oResponse) {
+                oResponse.argument.fnLoadComplete();
+            },
+            argument: {
+                "node": node,
+                "fnLoadComplete": fnLoadComplete
+            },
+            timeout: 7000
+        };
+        YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
+            query:nodeLabel
+        },callback);
+
+    };
+
+    var groupsInTree = false;
+    for(var i= 0, len = data.length; i<len; ++i){
+        var element = data[i];
+
+        var elementWidth = 399;
+        //console.log(parentNode);
+        try{
+            if(parentNode.getTextWidth() != 0){
+                elementWidth = parentNode.getTextWidth() - 18;
+            }
+        }catch(e){}
+
+        var tmpNode;
+        if(YAHOO.haloacl.checkedInGroupstree && YAHOO.haloacl.checkedInGroupstree.indexOf(element.name) != -1){
+            tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false,true);
+        }else{
+            tmpNode = new YAHOO.widget.ManageUserNode(element.name, parentNode,false);
+        }
+        tmpNode.setGroupId(element.name);
+        tmpNode.setInformation(element.description);
+
+        tmpNode.setTextWidth(elementWidth);
+        
+        // recursive part, if children were supplied
+        if(element.children != null){
+            YAHOO.haloacl.buildNodesFromData(tmpNode,element.children,panelid);
+            tmpNode.expand();
+        }else{
+            tmpNode.setDynamicLoad(loadNodeData);
+        }
+
+        groupsInTree = true;
+        
+    };
+    if(!groupsInTree){
+        if(parentNode.label == "Groups"){
+            var tmpNode =  new YAHOO.widget.TextNode(
+            {
+                label:"no groups available"
+            },
+            parentNode,
+            false);
+        //$(tmpNode.contentElId).setAttribute("id", "haloacl_nogroup_info_node");
+        }
+    //tmpNode.setDynamicLoad();
+    }else{
+        if($('haloacl_manageuser_count') != null){
+            $('haloacl_manageuser_count').innerHTML = parentNode.tree.getRoot().getNodeCount()*1-1;
+        }
+    }
+   
+
+};
+
+
+
+
+/*
+ * function to build user tree and add labelClickAction
+ * @param tree
+ * @param data
+ * @param labelClickAction (name)
+ */
+YAHOO.haloacl.manageUser.buildUserTree = function(tree,data) {
+
+    var tmpNode = new YAHOO.widget.TextNode(gHACLLanguage.getMessage('groups'), tree.getRoot(),false);
+    tmpNode.expand();
+
+    YAHOO.haloacl.manageUser.buildNodesFromData(tmpNode,data,tree.panelid);
+
+    //using custom loadNodeDataHandler
+    var loadNodeData = function(node, fnLoadComplete)  {
+        var nodeLabel = encodeURI(node.label);
+        //prepare our callback object
+        var callback = {
+            panelid:"",
+            success: function(oResponse) {
+                YAHOO.haloacl.manageUser.buildNodesFromData(node,YAHOO.lang.JSON.parse(oResponse.responseText,tree.panelid));
+                oResponse.argument.fnLoadComplete();
+            },
+            failure: function(oResponse) {
+                oResponse.argument.fnLoadComplete();
+            },
+            argument: {
+                "node": node,
+                "fnLoadComplete": fnLoadComplete
+            },
+            timeout: 7000
+        };
+        YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
+            query:nodeLabel
+        },callback);
+
+    };
+
+
+
+    //tree.setDynamicLoad(loadNodeData);
+    tree.draw();
+
+};
+
+
+
+
+/*
+ * function to be called from outside to init a tree
+ * @param tree-instance
+ */
+YAHOO.haloacl.manageUser.buildTreeFirstLevelFromJson = function(tree){
+    var callback = {
+        success: function(oResponse) {
+            var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+            YAHOO.haloacl.manageUser.buildUserTree(tree,data);
+        },
+        failure: function(oResponse) {
+        }
+    };
+    YAHOO.haloacl.manageUser.treeviewDataConnect('haclGetGroupsForManageUser',{
+        query:'all'
+    },callback);
+};
+
+
+
+/**
+ * returns a new treeinstance
+ */
+YAHOO.haloacl.getNewManageUserTree = function(divname,panelid){
+    var instance = new YAHOO.widget.TreeView(divname);
+    instance.panelid = panelid;
+   
+    return instance;
+};
+
+// GROUP ADDING
+YAHOO.haloacl.addingGroupCounter  = 1;
+
+YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
+    var nodes;
+    nodes = parentNode.children;
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+        var temp = n.label;
+        if (temp.indexOf(query) >= 0) {
+            YAHOO.haloacl.manageUser_parentGroup = parentNode.label;
+            return parentNode;
+        }
+        if(n.hasChildren(false) == true){
+            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
+            if(recfound != null){
+// Bugfix 11320               YAHOO.haloacl.manageUser_parentGroup = n.label;
+// Bugfix 11320               return n;
+                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
+                return recfound;
+            }
+        }
+
+    }
+}
+
+
+/**
+ *  adds subgroup on same level
+ *  @param tree-instance
+ *  @param groupname
+ *
+ */
+YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+
+    var elementWidth = 399;
+    try{
+        if(nodeToAttachTo.getTextWidth() != 0){
+            elementWidth = nodeToAttachTo.getTextWidth();
+        }
+    }catch(e){
+        
+    }
+
+    if(nodeToAttachTo._type != "RootNode"){
+        if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
+        var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+        YAHOO.haloacl.addingGroupCounter++;
+        tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
+
+        tmpNode.setTextWidth(elementWidth);
+        
+        nodeToAttachTo.collapse();
+        nodeToAttachTo.expand();
+        nodeToAttachTo.refresh();
+    }
+
+};
+
+/**
+ *  finds group to append to
+ *  @param parentNode (of tree)
+ *  @param groupname
+ *
+ */
+
+YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
+    var nodes;
+    nodes = parentNode.children;
+    for(var i=0, l=nodes.length; i<l; i=i+1) {
+        var n = nodes[i];
+        var temp = n.label;
+        if (temp.indexOf(query) >= 0) {
+            YAHOO.haloacl.manageUser_parentGroup = n.label;
+            return n;
+        }
+        if(n.hasChildren(false) == true){
+            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
+            if(recfound != null){
+                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
+                return recfound;
+            }
+        }
+
+    }
+}
+
+/**
+ *  adds subgroup (real subgroup; not same level)
+ *  @param tree-instance
+ *  @param groupname
+ *
+ */
+YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
+    // removing no-group-available-node if existing
+    try{
+        var nodes = tree.children[0].children;
+        for(var i=0, l=nodes.length; i<l; i=i+1) {
+            var n = nodes[i];
+            var temp = n.label;
+            if (temp.indexOf("no groups available") >= 0) {
+                tree.tree.removeNode(n);
+            }
+        }
+    }catch(e){}
+    // ---------
+
+
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
+
+    var elementWidth = 399;
+    try{
+        if(nodeToAttachTo.getTextWidth() != 0){
+            elementWidth = nodeToAttachTo.getTextWidth() - 18;
+        }
+    }catch(e){}
+
+    if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
+    var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
+    YAHOO.haloacl.addingGroupCounter++;
+    // turn of dynamic load on that node
+    tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
+
+    tmpNode.setTextWidth(elementWidth);
+    
+    tmpNode.setDynamicLoad();
+    nodeToAttachTo.collapse();
+    nodeToAttachTo.expand();
+// nodeToAttachTo.refresh();
+ 
+};
+
+/**
+ *  applies filter on tree
+ *  @param tree-instance
+ *  @param query
+ *
+ */
+YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
+    if(tree.lastFilterStart == null || tree.lastFilterStart == "undefined"){
+        tree.lastFilterStart = 0;
+    }
+    var now = new Date();
+    now = now.getTime();
+    if(filtervalue == "" || tree.lastFilterStart + YAHOO.haloacl.filterQueryDelay <= now){
+        tree.lastFilterStart = now;
+        tree = tree.tree;
+
+        //tree.removeChildren();
+        //tree.removeChildren();
+        var callback = {
+            success: function(oResponse) {
+                tree.removeChildren(tree.getRoot());
+
+                var data = YAHOO.lang.JSON.parse(oResponse.responseText);
+                YAHOO.haloacl.manageUser.buildUserTree(tree,data);
+            },
+            failure: function(oResponse) {
+            }
+        };
+        YAHOO.haloacl.treeviewDataConnect('haclGetGroupsForManageUser',{
+            query:'all',
+            filtervalue:filtervalue
+        },callback);
+
+        //tree.setDynamicLoad(loadNodeData);
+        tree.draw();
+    }
+}/*  Copyright 2009, ontoprise GmbH
+*  This file is part of the HaloACL-Extension.
+*
+*   The HaloACL-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The HaloACL-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * This file contains javascript used for the whitelist datatable
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+/**
+ * Description of HACL_AjaxConnector
+ *
+ * @author hipath
+ */
+
+/**
+ *  creates whitelist datatable
+ *  @param  target-div-id
+ *  @param  panelid / identifier
+ *
+ */
+
+YAHOO.haloacl.whitelistTable = function(divid,panelid) {
+
+    // custom defined formatter
+    this.mySelectFormatter = function(elLiner, oRecord, oColumn, oData) {
+        var checkedFromTree = false;
+        if(YAHOO.haloacl.whitelistClicks.indexOf(oRecord._oData.name) != -1){
+            checkedFromTree = true;
+        }
+
+        if(oData == true || checkedFromTree == true){
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.whitelistCheck(this);' type='checkbox' checked='' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }else{
+            elLiner.innerHTML = "<input onClick='YAHOO.haloacl.whitelistCheck(this);' type='checkbox' class='"+divid+"_users' name='"+oRecord._oData.name+"' />";
+        }
+    };
+    
+
+    this.myNameFormatter = function(elLiner, oRecord, oColumn, oData) {
+        elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+    };
+
+    // building shortcut for custom formatter
+    //YAHOO.widget.DataTable.Formatter.mySelect = this.mySelectFormatter;
+    //YAHOO.widget.DataTable.Formatter.myName = this.myNameFormatter;
+
+    var myColumnDefs = [ // sortable:true enables sorting
+    {
+        key:"name",
+        label:gHACLLanguage.getMessage('name'),
+        sortable:false,
+        formatter:this.myNameFormatter
+    },
+    {
+        key:"checked",
+        label:gHACLLanguage.getMessage('delete'),
+        formatter:this.mySelectFormatter
+    }
+    ];
+
+    // datasource for this userdatatable
+    var myDataSource = new YAHOO.util.DataSource("?action=ajax");
+    myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+    myDataSource.connMethodPost = true;
+    myDataSource.responseSchema = {
+        resultsList: "records",
+        fields: [
+        {
+            key:"id",
+            parser:"number"
+        },
+        {
+            key:"name"
+        },
+        {
+            key:"checked"
+        }
+        ],
+        metaFields: {
+            totalRecords: "totalRecords" // Access to value in the server response
+        }
+    };
+
+    // our customrequestbuilder (attached to the datasource)
+    // this requestbuilder, builds a valid mediawiki-ajax-request
+    var customRequestBuilder = function(oState, oSelf) {
+        // Get states or use defaults
+        oState = oState;
+        var totalRecords = oState.pagination.totalRecords;
+        var sort = (oState.sortedBy) ? oState.sortedBy.key : null;
+        var dir = (oState.sortedBy && oState.sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+        var startIndex = oState.pagination.recordOffset;
+        var results = oState.pagination.rowsPerPage;
+        /* make the initial cache of the form data */
+
+        if(myDataTable.query == null){
+            myDataTable.query = '';
+        }
+
+        var filter = $('datatable_filter_'+myDataTable.panelid).value;
+        
+        return "rs=haclGetUsersForUserTable&rsargs[]="
+        +myDataTable.query+"&rsargs[]="+sort
+        +"&rsargs[]="+dir
+        +"&rsargs[]="+startIndex
+        +"&rsargs[]="+results
+        +"&rsargs[]="+filter;
+    };
+
+
+
+    // whitelisttable configuration
+    var myConfigs = {
+        initialRequest: "rs=haclGetWhitelistPages&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
+        dynamicData: true, // Enables dynamic server-driven data
+        sortedBy : {
+            key:"name",
+            dir:YAHOO.widget.DataTable.CLASS_ASC
+        }, // Sets UI initial sort arrow
+        //    paginator: myPaginator,
+        generateRequest:customRequestBuilder
+    };
+
+    // instanciating datatable
+    var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
+
+    // Update totalRecords on the fly with value from server
+    myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
+        oPayload.totalRecords = oResponse.meta.totalRecords;
+        if($('haloacl_whitelist_count') != null){
+            $('haloacl_whitelist_count').innerHTML = oPayload.totalRecords;
+        }
+        return oPayload;
+    }
+    myDataTable.query = "";
+
+    
+
+    //YAHOO.util.Event.addListener(myDataTable,"initEvent",myDataTable.checkAllSelectedUsers());
+
+    // function called from grouptree to update userdatatable on GroupTreeClick
+    myDataTable.executeQuery = function(query){
+        var oCallback = {
+            success : myDataTable.onDataReturnInitializeTable,
+            failure : myDataTable.onDataReturnInitializeTable,
+            scope : myDataTable,
+            argument : myDataTable.getState()
+        };
+        if(YAHOO.haloacl.debug) console.log("sending request");
+        myDataSource.sendRequest('rs=haclGetWhitelistPages&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        if(YAHOO.haloacl.debug) console.log("reqeust sent");
+    }
+
+    myDataTable.subscribe("postRenderEvent",function(){
+        handlePagination();
+        
+        
+    });
+    // setting up clickevent-handling
+    return myDataTable;
+
+
+   
+};
+
+// --------------------
+// --------------------
+// --------------------
+
+
+
+/*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This file contains the AutoCompleter which is used in whitelist and createacl
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 03.04.2009
+ *
+ */
+
+
+/**
+ *  creates autocompleter
+ *  @param name of ac
+ *  @param target-div-id
+ *
+ */
+YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
+
+    // datasource for this userdatatable
+    var myDataSource = new YAHOO.util.DataSource("?action=ajax");
+    myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+    myDataSource.connMethodPost = true;
+    myDataSource.responseSchema = {
+        resultsList: "records",
+        fields : ["name", "name"]
+    };
+ 
+
+    // Enable caching
+   /// myDataSource.maxCacheEntries = 5;
+
+    // Instantiate the AutoComplete
+   
+
+    var oAC = new YAHOO.widget.AutoComplete(fieldName, containerName, myDataSource);
+
+    var fnCallback = function(e, args) {
+        YAHOO.util.Dom.get(fieldName).value = args[2][1];
+
+    }
+  /*  oAC.itemSelectEvent.subscribe(function(e, args) {
+        YAHOO.util.Dom.get(fieldName).value = args[2][1];
+
+    });
+    */
+
+    oAC.forceSelection = false;
+
+    oAC.generateRequest = function(sQuery) {
+        // trying to add select protect
+        var protect = null;
+        $$('.create_acl_general_protect').each(function(item){
+            if(item.checked){
+                protect = item.value;
+            }
+        });
+
+        return "rs=haclGetAutocompleteDocuments&rsargs[]=" + sQuery+"&rsargs[]="+protect;
+    };
+    var itemFocusHandler = function(sType, args){
+        oAC.sendQuery("");
+    }
+    oAC.textboxFocusEvent.subscribe(itemFocusHandler);
+          
+  // Custom formatter to highlight the matching letters
+    oAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+
+        var query = sQuery.toLowerCase(),
+            name = oResultData[1],
+            nameMatchIndex = name.toLowerCase().indexOf(query),
+            displayname;
+
+        if(nameMatchIndex > -1) {
+            displayname = highlightMatch(name, query, nameMatchIndex);
+        }
+        else {
+            displayname = name;
+        }
+
+        return displayname;
+
+    };
+
+    // Helper function for the formatter
+    var highlightMatch = function(full, snippet, matchindex) {
+        return full.substring(0, matchindex) +
+                "<span class='match'>" +
+                full.substr(matchindex, snippet.length) +
+                "</span>" +
+                full.substring(matchindex + snippet.length);
+    };
+
+
+    return {
+        oDS: myDataSource,
+        oAC: oAC
+    };
+};/*  Copyright 2009, ontoprise GmbH
+*  This file is part of the HaloACL-Extension.
+*
+*   The HaloACL-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The HaloACL-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
  * this file provides the notificationhandling system
  * for the haloacl-extension
  *
@@ -3210,4 +5325,203 @@ YAHOO.haloacl.notification.clearAllNotification = function(){
     $$('.haloacl_inline_notification').each(function(item){
        item.innerHTML = "";
     });
-}
+}/*  Copyright 2009, ontoprise GmbH
+ *  This file is part of the HaloACL-Extension.
+ *
+ *   The HaloACL-Extension is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   The HaloACL-Extension is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * This file contains javasript used in manageQuickacl
+ *
+ * @author B2browse/Patrick Hilsbos, Steffen Schachtler
+ * Date: 07.10.2009
+ *
+ */
+
+
+/**
+ *  creates qucikacltable
+ *  @param  target-div-id
+ *  @param  panelid
+ *
+ */
+
+YAHOO.haloacl.quickaclTable = function(divid,panelid) {
+
+    // custom defined formatter
+    this.myQuickSelectFormatter = function(elLiner, oRecord, oColumn, oData) {
+        var checkedFromJS = false;
+
+        if(YAHOO.haloacl.quickAclClicks.indexOf(""+oRecord._oData.id) != -1){
+            checkedFromJS = true;
+        }
+
+        if(oData == true || checkedFromJS == true){
+            elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input  onclick='YAHOO.haloacl.updateQuickaclCount(this);YAHOO.haloacl.quickACLCheck(this);' type='checkbox'  checked='' class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
+        //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+
+        }else{
+            elLiner.innerHTML = '<div id="anchorPopup_'+oRecord._oData.id+'" class="haloacl_infobutton" onclick="javascript:YAHOO.haloaclrights.popup(\''+oRecord._oData.id+'\',\''+oRecord._oData.name+'\',\''+oRecord._oData.id+'\');return false;"></div>';
+            elLiner.innerHTML += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id=\""+oRecord._oData.name+"\"><input onclick='YAHOO.haloacl.updateQuickaclCount(this);YAHOO.haloacl.quickACLCheck(this);' type='checkbox'  class='"+divid+"_template' name='"+oRecord._oData.id+"' /></span>";
+        //elLiner.innerHTML += '<div id="popup_'+oRecord._oData.id+'"></div>';
+
+        }
+            
+    };
+    
+
+    this.myQuickNameFormatter = function(elLiner, oRecord, oColumn, oData) {
+        elLiner.innerHTML = "<span class='"+divid+"_usersgroups' groups=\""+oRecord._oData.groups+"\">"+oRecord._oData.name+"</span>";
+
+    };
+
+    // building shortcut for custom formatter
+    //YAHOO.widget.DataTable.Formatter.myQuickSelect = this.myQuickSelectFormatter;
+    //YAHOO.widget.DataTable.Formatter.myQuickName = this.myQuickNameFormatter;
+
+    var myColumnDefs = [ // sortable:true enables sorting
+
+    {
+        key:"name",
+        label:gHACLLanguage.getMessage('name'),
+        sortable:false,
+        formatter:this.myQuickNameFormatter
+    },
+   
+    {
+        key:"checked",
+        label:gHACLLanguage.getMessage('delete'),
+        formatter:this.myQuickSelectFormatter
+    }
+
+    ];
+
+    // datasource for this userdatatable
+    var myDataSource = new YAHOO.util.DataSource("?action=ajax");
+    myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+    myDataSource.connMethodPost = true;
+    myDataSource.responseSchema = {
+        resultsList: "records",
+        fields: [
+        {
+            key:"id",
+            parser:"number"
+        },
+        {
+            key:"name"
+        },
+        
+        {
+            key:"checked"
+        }
+        ],
+        metaFields: {
+            totalRecords: "totalRecords" // Access to value in the server response
+        }
+    };
+
+    // our customrequestbuilder (attached to the datasource)
+    // this requestbuilder, builds a valid mediawiki-ajax-request
+    var customRequestBuilder = function(oState, oSelf) {
+        // Get states or use defaults
+        oState = oState;
+        var totalRecords = oState.pagination.totalRecords;
+        var sort = (oState.sortedBy) ? oState.sortedBy.key : null;
+        var dir = (oState.sortedBy && oState.sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) ? "desc" : "asc";
+        var startIndex = oState.pagination.recordOffset;
+        var results = oState.pagination.rowsPerPage;
+        /* make the initial cache of the form data */
+
+        if(myDataTable.query == null){
+            myDataTable.query = '';
+        }
+
+        var filter = $('datatable_filter_'+myDataTable.panelid).value;
+        
+        return "rs=haclGetQuickACLData&rsargs[]="
+        +myDataTable.query+"&rsargs[]="+sort
+        +"&rsargs[]="+dir
+        +"&rsargs[]="+startIndex
+        +"&rsargs[]="+results
+        +"&rsargs[]="+filter;
+
+
+    };
+
+
+
+    // whitelisttable configuration
+    var myConfigs = {
+        initialRequest: "rs=haclGetQuickACLData&rsargs[]=all&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]=", // Initial request for first page of data
+        dynamicData: true, // Enables dynamic server-driven data
+        sortedBy : {
+            key:"name",
+            dir:YAHOO.widget.DataTable.CLASS_ASC
+        }, // Sets UI initial sort arrow
+        //    paginator: myPaginator,
+        generateRequest:customRequestBuilder
+    };
+
+    // instanciating datatable
+    var myDataTable = new YAHOO.widget.DataTable(divid, myColumnDefs, myDataSource, myConfigs);
+
+    // Update totalRecords on the fly with value from server
+    myDataTable.handleDataReturnPayload = function(oRequest, oResponse, oPayload) {
+        oPayload.totalRecords = oResponse.meta.totalRecords;
+        if($('haloacl_quickacl_count') != null){
+            $('haloacl_quickacl_count').innerHTML = oPayload.totalRecords;
+        }
+        return oPayload;
+    }
+    myDataTable.query = "";
+
+
+
+    myDataTable.subscribe("postRenderEvent",function(){
+        YAHOO.haloacl.updateQuickaclCount();
+    });
+
+
+    //YAHOO.util.Event.addListener(myDataTable,"initEvent",myDataTable.checkAllSelectedUsers());
+
+    // function called from grouptree to update userdatatable on GroupTreeClick
+    myDataTable.executeQuery = function(query){
+
+        var oCallback = {
+            success : myDataTable.onDataReturnInitializeTable,
+            failure : myDataTable.onDataReturnInitializeTable,
+            scope : myDataTable,
+            argument : myDataTable.getState()
+        };
+        if(YAHOO.haloacl.debug) console.log("sending request");
+        myDataSource.sendRequest('rs=haclGetQuickACLData&rsargs[]='+query+'&rsargs[]=name&rsargs[]=asc&rsargs[]=0&rsargs[]=5&rsargs[]="', oCallback);
+        if(YAHOO.haloacl.debug) console.log("reqeust sent");
+        
+    }
+
+
+    // setting up clickevent-handling
+    return myDataTable;
+
+   
+};
+
+    // --------------------
+    // --------------------
+    // --------------------
+
+
+
