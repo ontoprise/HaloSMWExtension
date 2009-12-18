@@ -60,6 +60,7 @@ if (isset($scriptList)) {
 	$scriptFiles = explode("\n", str_replace("\r", "", file_get_contents($scriptList)));
 	foreach($scriptFiles as $f) {
 		$scripts[] = file_get_contents(trim($f));
+		echo trim($f)."\n";
 	}
 } else {
 	collectScripts($scriptDir, $scripts, array($outputFile));
