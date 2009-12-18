@@ -198,20 +198,11 @@ function haclfSetupExtension() {
  */
 function addNonSpecialPageHeader(&$out) {
     global $haclgHaloScriptPath, $smwgDeployVersion;
-
     haclAddJSLanguageScripts($out);
     if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
         $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/toolbar.js\"></script>");
-
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
-
 
         $out->addLink(array(
         'rel'   => 'stylesheet',
@@ -257,15 +248,21 @@ function addNonSpecialPageHeader(&$out) {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
         #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
+        #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+
     } else {
         $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/scripts/hacl-packed.js"></script>');
-        $out->addLink(array(
-        'rel'   => 'stylesheet',
-        'type'  => 'text/css',
-        'media' => 'screen, projection',
-        'href'  => $haclgHaloScriptPath. '/yui/container.css'
-        ));
-
 
         $out->addLink(array(
         'rel'   => 'stylesheet',
@@ -289,22 +286,6 @@ function addNonSpecialPageHeader(&$out) {
         ));
     }
     // -------------------
-    // -------------------
-
-
-
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-    $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-    #$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
-
 
     if (!defined('SMW_HALO_VERSION')) {
         // don't include prototype.js if SMWHalo is present
@@ -324,75 +305,70 @@ function haclAddHTMLHeader(&$out) {
 
     global $wgTitle,$wgUser;
 
-    global $haclgHaloScriptPath;
+    global $haclgHaloScriptPath, $smwgDeployVersion;
 
     if ($wgTitle->getNamespace() != NS_SPECIAL) {
         return true;
-    }else {
+    } else {
 
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+	    if (!defined('SMW_HALO_VERSION')) {
+	        // don't include prototype.js if SMWHalo is present
+	    	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
+	    }
         haclAddJSLanguageScripts($out);
 
-        // ---- SPECIAL-PAGE related stuff ---
-
-        # $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/scriptaculous.js\"></script>");
-        # $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/effects.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/builders.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/controls.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/dragdrop.js\"></script>");
-        //$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/slider.js\"></script>");
-
-        // -------------------
-        // YAHOO Part
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
-
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
-
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
-
-        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
-
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
-        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
-
-        // -------------------
-        // -------------------
-
-
-
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
-
-
+		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+			// ---- SPECIAL-PAGE related stuff ---
+	
+	
+	        // -------------------
+	        // YAHOO Part
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yuiloader-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/event-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dom-min.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-min.js"></script>');
+	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/treeview-debug.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/logger-min.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/element-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/button-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/connection-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/json-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/yahoo-dom-event.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/animation-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/tabview-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-min.js"></script>');
+	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datasource-debug.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-min.js"></script>');
+	        #$out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/datatable-debug.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/paginator-min.js"></script>');
+	
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/container-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/dragdrop-min.js"></script>');
+	        $out->addScript('<script type="text/javascript" src="'. $haclgHaloScriptPath .  '/yui/autocomplete-min.js"></script>');
+	
+	        // -------------------
+	        // -------------------
+	
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/haloacl.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/groupuserTree.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/rightsTree.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/userTable.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/pageTable.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/manageUserTree.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/whitelistTable.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/autoCompleter.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/notification.js\"></script>");
+	        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/quickaclTable.js\"></script>");
+		} else {
+			$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/specialhacl-packed.js\"></script>");
+		}
 
         $out->addLink(array(
             'rel'   => 'stylesheet',
