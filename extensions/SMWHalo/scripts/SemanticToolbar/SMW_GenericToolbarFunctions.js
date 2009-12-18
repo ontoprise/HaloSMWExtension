@@ -1097,7 +1097,9 @@ STBEventActions.prototype = Object.extend(new EventActions(),{
 				}
 				break;
 			case 'call':
-				eval(parameter+'("'+element.id+'")');
+				if (element) {
+					eval(parameter+'("'+element.id+'")');
+				}
 				break;
 			case 'showmessage':
 				if (element) {
