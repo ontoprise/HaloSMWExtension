@@ -1,37 +1,24 @@
-  yahoo-min.js">
-      event-min.js
-     toolbar.js
-
-   
-
-
-      yuiloader-min.js
-      event-min.js
-      dom-min.js
-      treeview-min.js
-      element-min.js
-      button-min.js
-      connection-min.js
-      json-min.js
-      yahoo-dom-event.js
-      animation-min.js
-      tabview-min.js
-      datasource-min.js
-  
-
-   
-      datatable-min.js
-
-      paginator-min.js
-
-      container-min.js
-      dragdrop-min.js
-  
-  haloacl.js
-
-      groupuserTree.js
-  
-      userTable.js
-  
-      notification.js
+yahoo-min.js
+event-min.js
+toolbar.js
+yuiloader-min.js
+event-min.js
+dom-min.js
+treeview-min.js
+element-min.js
+button-min.js
+connection-min.js
+json-min.js
+yahoo-dom-event.js
+animation-min.js
+tabview-min.js
+datasource-min.js
+datatable-min.js
+paginator-min.js
+container-min.js
+dragdrop-min.js
+haloacl.js
+groupuserTree.js
+userTable.js
+notification.js
   
