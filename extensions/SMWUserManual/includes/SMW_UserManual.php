@@ -104,6 +104,8 @@ define('SMW_FORUM_API', 'http://smwforum.ontoprise.com/smwforum/api.php');
 define('SMW_FORUM_URL', 'http://smwforum.ontoprise.com/smwforum/index.php');
 // define the Bugzilla URL where new bugs can be submited
 define('SMW_BUGZILLA_URL', 'http://smwforum.ontoprise.com/smwbugs/enter_bug.cgi');
+// define the URL of the script that handles all requests send to the SMW+ Forum by feedback etc.
+define('SMW_FORUM_COMMENT_URL', 'http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/comment.php');
 // Context sensitive help articles are fetched from the SMW forum by this query
 define('SMW_FORUM_QUERY_CSH', '[[Category:Context sensitive help article]]');
 // Porperty for discourse state
@@ -236,7 +238,6 @@ function umefAddHtml2Page(&$out) {
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
             /*]]>*/</script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
-            <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/mwapi.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/md5.js"></script>
     ');
@@ -247,6 +248,7 @@ function umefAddHtml2Page(&$out) {
                 var umegNamespace = "'.$umegNamespace.'";
                 var umegSmwForumUrl = "'.SMW_FORUM_URL.'";
                 var umegSmwForumApi = "'.SMW_FORUM_API.'";
+                var umegSmwForumCommentUrl = "'.SMW_FORUM_COMMENT_URL.'";
                 var umegSmwBugzillaUrl = "'.SMW_BUGZILLA_URL.'";
                 var umegSendCommentsToSMWplus = '.($umegSendCommentsToSMWplus ? 'true' : 'false').';
                 var umegPopupWidth = '.$umegPopupWidth.';

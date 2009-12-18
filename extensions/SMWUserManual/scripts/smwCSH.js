@@ -235,7 +235,8 @@ SMW_UserManual_CSH.prototype = {
         if (document.getElementsByName('smw_csh_did_it_help')[1].checked) rating = -1
         if (this.cshPage != null && rating != null) {  
             var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
-            this.sendCommentToSmwplus(txt)
+            txt='action=r&text='+escape(txt)
+            sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, txt], null)
             //alert(this.msgYourRatingHasBeenSendWithLink.replace(/%%%s%%%/, escape(this.cshPage.replace(/ /g, '_'))))
             alert(this.msgYourRatingHasBeenSend)
             this.resetRating()
@@ -352,17 +353,21 @@ SMW_UserManual_CSH.prototype = {
             img=img.substr(img.lastIndexOf('/')+1)
             if (img=='question.png') {
                 var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
-                this.sendCommentToSmwplus(tmpStr)
+                tmpStr='action=q&text='+escape(tmpStr)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
                 alert(this.msgYourQuestionHasBeenSend)
             }
             else if (img=='comment.png') {
                 var tmpStr=this.getTemplateStr(this.txtCommentComponent, '', txt, this.getSingleDiscourseState())
-                this.sendCommentToSmwplus(tmpStr)
+                tmpStr='action=c&text='+escape(tmpStr)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
                 alert(this.msgYourCommentHasBeenSend)
             }
             else if (img=='bug.png') {
                 var tmpStr=this.getBugreportStr(txt)
-                sajax_do_call('wfUprForwardApiCall', [umegSmwBugzillaUrl, tmpStr], null)
+                tmpStr='action=b&text='+escape(tmpStr)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
+                //sajax_do_call('wfUprForwardApiCall', [umegSmwBugzillaUrl, tmpStr], null)
                 alert(this.msgYourBugHasBeenSend)
             }
         }
@@ -403,12 +408,6 @@ SMW_UserManual_CSH.prototype = {
         }
         if (!all) return ds[0]
         return ds
-    },
-    
-    sendCommentToSmwplus: function(txt) {
-        var api = new MW_API_Access(umegSmwForumApi)
-        var pagename=this.smwCommentNs+':'+new Date().getTime()
-        api.createPage(pagename, txt)
     },
     
     /**
