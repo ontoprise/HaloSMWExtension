@@ -51,6 +51,8 @@
       <namespace key="221">E-mail talk</namespace>
       <namespace key="300">ACL</namespace>
       <namespace key="301">ACL talk</namespace>
+      <namespace key="400">IAI</namespace>
+      <namespace key="401">IAI talk</namespace>
       <namespace key="700">Comment</namespace>
       <namespace key="701">Comment talk</namespace>
       <namespace key="702">UserManual</namespace>
@@ -121,8 +123,8 @@
     <title>Template:CommentResult</title>
     <id>2240</id>
     <revision>
-      <id>12670</id>
-      <timestamp>2009-12-17T15:16:44Z</timestamp>
+      <id>13068</id>
+      <timestamp>2009-12-18T15:01:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -139,9 +141,9 @@
 |copyright holder=Ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment --&gt;
-&lt;div style=&quot;border: 1px solid lightgrey; background-color: #F2F2F2; margin: 5px 0px; padding: 3px; min-height: 50px;clear:both;&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom: 5px;&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div style=&quot;display: inline; color: grey; padding-left: 5px;&quot; class=&quot;ce-result-user&quot;&gt;{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}
-&lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#ifexist:{{{2|}}}|[[{{{2|}}}]]|{{{2|}}}}}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- comment date--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment link--&gt;&lt;div style=&quot;display:inline&quot;&gt;{{#ifexist:{{{1|}}}|,&amp;nbsp;[[{{{1}}}|show comment]]|}}&lt;/div&gt;&lt;!-- end comment link --&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;
+&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)--&gt;
+&lt;div style=&quot;border: 1px solid lightgrey; background-color: #F2F2F2; margin: 5px 0px; padding: 3px; min-height: 50px;clear:both;&quot;&gt;&lt;!-- start comment information --&gt;&lt;div style=&quot;display:none;&quot; class=&quot;ce-result-info&quot;&gt;{{{1}}}&lt;/div&gt;&lt;!-- end comment information --&gt;&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom: 5px;&quot;&gt;&lt;!-- start comment person --&gt;&lt;div style=&quot;display: inline; color: grey; padding-left: 5px;&quot; class=&quot;ce-result-user&quot;&gt;{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}
+&lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#ifexist:{{{2|}}}|[[{{{2|}}}]]|{{{2|}}}}}&lt;/div&gt;, &lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- comment date--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment link--&gt;&lt;div style=&quot;display:inline&quot;&gt;{{#ifexist:{{{1|}}}|,&amp;nbsp;[[{{{1}}}|go to comment]]|}}&lt;/div&gt;&lt;!-- end comment link --&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;
 &lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div style=&quot;padding: 7px; display: inline; font-weight: bold;&quot;&gt;{{{4}}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
 &lt;/noinclude&gt;</text>
     </revision>

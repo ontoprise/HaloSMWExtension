@@ -174,6 +174,7 @@ END;
 
 		if($wgUser->isAnon()) {
 			$userImageTitle = Title::newFromText('defaultuser.gif', NS_FILE);
+			$userIsSysopJSText = 'var cegUserIsSysop = false;';
 			if($userImageTitle->exists()){
 				$image = Image::newFromTitle($userImageTitle);
 				$userImgSrc = $image->getURL();
@@ -205,7 +206,9 @@ END;
 			$isAllowed = false;
 			if (in_array( 'sysop', $wgUser->getEffectiveGroups() ) == 1) {
 				//provide delete link for every existing comment
-				//$jsText .= "$$('')";
+				$userIsSysopJSText = 'var cegUserIsSysop = true;';
+			} else {
+				$userIsSysopJSText = 'var cegUserIsSysop = false;';
 			}
 		}
 
@@ -285,8 +288,8 @@ END;
 			XML::closeElement('div') .
 			XML::closeElement('div');
 
-		$html .= $jsText . '</script>';
-			
+		$html .= $jsText . ($userIsSysopJSText? $userIsSysopJSText : '') . '/* ]]> */ </script>';
+
 		self::$mInstance->mCommentFormDisplayed = true;
 		return $parser->insertStripItem( $html, $parser->mStripState );
 	}

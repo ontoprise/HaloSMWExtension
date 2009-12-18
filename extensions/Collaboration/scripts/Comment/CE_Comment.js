@@ -253,9 +253,10 @@ CECommentForm.prototype = {
 		var ratingHTML = $(htmlid);
 		var ratingImg = cegScriptPath + '/skins/Comment/icons/';
 		
-		if ( this.ratingValue == ratingValue )
+		if ( this.ratingValue == ratingValue ) {
 			return true;
-		
+		}
+
 		if ( this.ratingValue != null ) {
 			// sthg has been selected before. reset icon.
 			// ce-cf-ratingX with X = ratingValue +2;
@@ -271,8 +272,42 @@ CECommentForm.prototype = {
 				break;
 		}
 		this.ratingValue = ratingValue;
-	}
+	},
 }
+
+Event.observe(window, 'load', function() {
+	if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
+
+		var resultComments = $$('.ce-result-info');
+
+		if ( resultComments != null ) {
+			resultComments.each( function( resCom, index ){
+
+				var resComName = resCom.innerHTML;
+
+				var imgEl = new Element('img', {
+					'src' : cegScriptPath + '/skins/Comment/icons/smw_plus_delete_icon_16x16.png',
+					'style' : 'float:none;padding-left:5px;vertical-align:bottom'
+				} );
+				var aEl = new Element('a', {
+					'rel' : 'nofollow',
+					'title' : 'Delete this comment',
+					'class' : 'external text',
+					'href' : wgServer + wgScript + '/' + escape(resComName) + '?action=delete'
+				} );
+				var divEl = new Element('div', {
+					'style' : 'display:inline',
+					'title' : 'Delete this comment',
+					'class' : 'plainlinks',
+				} );
+
+				aEl.appendChild(imgEl);
+				divEl.appendChild(aEl);
+				resCom.nextElementSibling.appendChild(divEl);
+			});
+		}
+	}
+});
 
 // Singleton of this class
 
