@@ -956,7 +956,7 @@ AutoCompleter.prototype = {
     scrollToSelectedItem: function() {
         for (i = 0; i < this.siw.matchCollection.length; i++) {
             if (this.siw.matchCollection[i].isSelected) {
-                var selElement = document.getElementById('wpTextbox1___Frame')
+                var selElement = document.getElementById('wpTextbox1___Frame') || document.getElementById('free_text___Frame') 
                     ? window.frames[0].document.getElementById("selected" + i)
                     : document.getElementById("selected" + i);
                 selElement.scrollIntoView(false);
