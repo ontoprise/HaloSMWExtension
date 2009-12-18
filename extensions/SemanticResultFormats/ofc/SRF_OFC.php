@@ -128,6 +128,8 @@ class SRFOFC extends SMWResultPrinter {
             }
             $i=0;
             foreach($this->getScripts() as $script) {
+            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
+            	
                 $wgParser->getOutput()->addHeadItem($script,"ofc-script$i");    
                 $i++;
             }

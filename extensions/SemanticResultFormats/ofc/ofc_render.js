@@ -1,4 +1,4 @@
- jQuery.noConflict();
+ //jQuery.noConflict(); EVIL!!!
 
 	var ofc_data_objs = [];
 	
@@ -23,6 +23,7 @@ function showHideChart(event){
     	jQuery(this).html(jQuery(this).text());
     }
 }
+
 jQuery(function() {
 	for(var i=0;i<ofc_data_objs.length;++i) {
 		var ofc_data_obj = ofc_data_objs[i];
