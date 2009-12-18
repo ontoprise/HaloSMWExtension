@@ -599,7 +599,7 @@ class SMWTripleStore extends SMWStore {
 			if ($data instanceof Title) { // property chain appear as Title
 				$titleText = $data->getText();
 				$chain = explode(".",$titleText);
-				 
+				
 				if (count($chain) > 1) {
 					$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
 					if ($newtitle->exists()) {
@@ -720,11 +720,9 @@ class SMWTripleStore extends SMWStore {
 					$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
 				}
 				if (!empty($uris)) {
-						
 					$this->addURIToResult($uris, $prs[$resultColumn], $allValues);
 				} else {
 					$literals = array();
-						
 					foreach($bindingsChildren->literal as $sv) {
 						$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
 					}
@@ -755,10 +753,11 @@ class SMWTripleStore extends SMWStore {
 
 		foreach($uris as $uri) {
 			list($sv, $provenance) = $uri;
+
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $ns, $nsIndsex);
+					$allValues[] = $this->createSMWDataValue($sv, $provenance, $ns, $nsIndsex);
 					$nsFound = true;
 				}
 			}
@@ -770,7 +769,9 @@ class SMWTripleStore extends SMWStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					if (!is_null($provenance)) $v->setProvenance($provenance);
+					if (!is_null($provenance) ){
+						$v->setProvenance($provenance);
+					}
 					$allValues[] = $v;
 				} else {
 					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
@@ -785,18 +786,24 @@ class SMWTripleStore extends SMWStore {
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-					if (!is_null($provenance)) $v->setProvenance($provenance);
+					if (!is_null($provenance) ) {
+						$v->setProvenance($provenance);
+					}
 					$allValues[] = $v;
 				}
 			} else {
 				// external URI
+
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
-				if (!is_null($provenance)) $v->setProvenance($provenance);
+				if (!is_null($provenance)) {
+					$v->setProvenance($provenance);
+				}
 				$allValues[] = $v;
 
 			}
 		}
+
 	}
 
 	/**
@@ -855,7 +862,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param int $ns
 	 * @return SMWDataValue
 	 */
-	protected function createSMWDataValue($sv, $nsFragment, $ns) {
+	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns) {
 
 		$local = substr($sv, strlen($nsFragment));
 		$title = Title::newFromText($local, $ns);
@@ -864,6 +871,9 @@ class SMWTripleStore extends SMWStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+		if (!is_null($provenance) ){
+			$v->setProvenance($provenance);
+		}
 		return $v;
 
 	}
