@@ -393,11 +393,12 @@ END;
 			return self::USER_NOT_ALLOWED_TO_COMMENT;
 		} else {
 			//user is allowed
+			/* leads to strange errors in IE. check that again.
 			if( self::$mInstance->mCommentFormDisplayed ) {
 				return self::FORM_ALREADY_SHOWN;
-			} else {
+			} else {*/
 				return self::SUCCESS;
-			}
+			/*}*/
 		}
 
 		return self::SUCCESS;
