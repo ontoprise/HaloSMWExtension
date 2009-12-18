@@ -28,7 +28,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
 }
 
-define('CE_VERSION', '0.9');
+define('CE_VERSION', '1.0');
 
 define('CE_COMMENT_ALL', 0);
 define('CE_COMMENT_AUTH_ONLY', 1);
@@ -40,7 +40,7 @@ global $cegIP, $cegScriptPath, $cegEnableComment, $cegEnableCommentFor, $cegEnab
 # This is the path to your installation of Collaboration as seen on your
 # local filesystem. Used against some PHP file path issues.
 ##
-$cegIP = $IP . '/extensions/Collaboration';;
+$cegIP = $IP . '/extensions/Collaboration';
 
 ###
 # This is the path to your installation of CollaborationExtension as seen from the
