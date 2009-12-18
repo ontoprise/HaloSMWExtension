@@ -403,7 +403,11 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 		$nsId = $fileData->getNamespaceId(false);
 
-		$title = Title::newFromText( $fileData->getFileName(), $nsId);
+		$title = $fileData->getFileName();
+		if(strlen($title) == 0){
+			$title = $fileData->getFolderName();
+		}
+		$title = Title::newFromText($title, $nsId);
 		if (!isset( $title )) {
 			//todo: handle this
 			return;
@@ -423,7 +427,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 
 		$text = "";
 		$fileData = new FileData($pathComponents);
-		if($fileData->isWikiArticle()){
+		if($fileData->isWikiArticle() || ($fileData->isArticleFolder() && !$echo)){
 			$rawPage = $this->getRawPage();
 			if ( !isset( $rawPage ) ) {
 				$this->setResponseStatus("404 Not found", false );
@@ -483,7 +487,6 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	
 	
 	function head_wrapper() {
-		//todo: implement that method
 		$temp = implode("/",$this->pathComponents);
 		$this->writeLog("head ".$temp);
 		
@@ -779,7 +782,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		return;
 
 		$text = $this->doGet($this->pathComponents, false);
-
+		
 		$destination = $serverOptions["destinationUrlComponents"]["pathComponents"];
 		array_shift($destination);
 		array_shift($destination);
@@ -787,6 +790,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		array_shift($destination);
 		array_shift($destination);
 
+		
 		return $this->doPut($serverOptions, $destination, $text);
 	}
 
@@ -819,7 +823,8 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 				$text = "";
 			}
 		}
-
+		
+		
 		$isArticleFolder = $fileData->isArticleFolder();
 		if(!$fileData->isDirectory() && 
 			($fileData->isFileNamespaceFolder()
@@ -862,7 +867,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 		$mediaWiki = new MediaWiki();
 		$article = $mediaWiki->articleFromTitle( $title );
 
-		$article->doEdit( $text, "Uploaded via WebDAV" );
+		$result = $article->doEdit( $text, "Uploaded via WebDAV" );
 		return true;
 	}
 

@@ -317,8 +317,9 @@ class FileData {
 				|| $folderPathType == "files"){
 					return false;
 		} else if($folderPathType == "article" && $this->isWikiArticle()){
-			return $this->folderName.".mwiki" == $this->fileName;
-		} else if($folderPathType == "article" && $this->isDirectory()){
+			return true;
+			//return $this->folderName.".mwiki" == $this->fileName;
+		} else if($folderPathType == "article"){
 			return true;
 		}
 		return true;
