@@ -489,13 +489,12 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 +
 +  function countRange($property) {
 +    $domrange = $this->getDomainAndRanges($property);
-+    $ranges = array();
 +    $j=0;
 +    foreach ($domrange as $i) {
 +      list ($domain,$range)=$i;
-+      $ranges[$j++]=$range->getText();            
++      if (!is_null($range)) $j++;          
 +    }
-+    return count($ranges);
++    return $j;
 +  }
 +
 +
