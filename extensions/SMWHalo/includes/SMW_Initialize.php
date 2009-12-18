@@ -420,10 +420,6 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
-	$wgAutoloadClasses['SMWSIUnitTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_SI.php';
-	SMWDataValueFactory::registerDatatype('_siu', 'SMWSIUnitTypeHandler',
-	$smwgHaloContLang->getSpecialPropertyLabel("___cfsi"));
-
 	return true;
 }
 
