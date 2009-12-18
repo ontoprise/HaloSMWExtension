@@ -49,7 +49,7 @@ SMW_UserManual_CSH.prototype = {
         // predefined tempolate calls that will be inserted when creating a new page
         // in the smw+ forum, these are comments (public and internal) send by the users
         this.txtCommentCsh = '{{Comment|CommentPerson=%%%1%%%'
-            +'|CommentRelatedArticle=%%%2%%%|CommentRating=%%%3%%%'
+            +'|CommentRelatedArticle=Help:%%%2%%%|CommentRating=%%%3%%%'
             +'|CommentDatetime=%%%4%%%|CommentContent=%%%5%%%|CommentFromWiki=%%%6%%%'
             +'|CommentOnPage=%%%7%%%|CommentAtAction=%%%8%%%|}}'
         this.txtAskYourQuestion= '{{AskYourOwnHelpQuestion|CommentPerson=%%%1%%%'
@@ -235,15 +235,14 @@ SMW_UserManual_CSH.prototype = {
         if (document.getElementsByName('smw_csh_did_it_help')[0].checked) rating = 1
         if (document.getElementsByName('smw_csh_did_it_help')[1].checked) rating = -1
         if (this.cshPage != null && rating != null) {  
-            var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
-            txt='action=r&text='+escape(txt)
+            var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage.replace(/ /g, '_'))
+            txt='action=r&user='+escape(umegSmwforumUser)+'&pass='+escape(umegSmwforumPass)+'&text='+escape(txt)
             sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, txt], null)
-            //alert(this.msgYourRatingHasBeenSendWithLink.replace(/%%%s%%%/, escape(this.cshPage.replace(/ /g, '_'))))
             alert(this.msgYourRatingHasBeenSend)
             this.resetRating()
         }
     },
-
+    
     /**
      * uncheck any value in the radio input and empty any comment in the rating
      * textarea
@@ -354,21 +353,20 @@ SMW_UserManual_CSH.prototype = {
             img=img.substr(img.lastIndexOf('/')+1)
             if (img=='question.png') {
                 var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
-                tmpStr='action=q&text='+escape(tmpStr)
+                tmpStr='action=q&user=u&pass=p&text='+escape(tmpStr)
                 sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
                 alert(this.msgYourQuestionHasBeenSend)
             }
             else if (img=='comment.png') {
                 var tmpStr=this.getTemplateStr(this.txtCommentComponent, '', txt, this.getSingleDiscourseState())
-                tmpStr='action=c&text='+escape(tmpStr)
+                tmpStr='action=c&user=u&pass=p&text='+escape(tmpStr)
                 sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
                 alert(this.msgYourCommentHasBeenSend)
             }
             else if (img=='bug.png') {
                 var tmpStr=this.getBugreportStr(txt)
-                tmpStr='action=b&text='+escape(tmpStr)
+                tmpStr='action=b&user='+escape(umegSmwforumUser)+'&pass='+escape(umegSmwforumPass)+'&text='+escape(tmpStr)
                 sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
-                //sajax_do_call('wfUprForwardApiCall', [umegSmwBugzillaUrl, tmpStr], null)
                 alert(this.msgYourBugHasBeenSend)
             }
         }
@@ -537,9 +535,9 @@ SMW_UserManual_CSH.prototype = {
         txt=txt.replace(/%%%2%%%/, referer)
         txt=txt.replace(/%%%3%%%/, rating)
         txt=txt.replace(/%%%4%%%/, this.getIsoDate())
-        txt=txt.replace(/%%%5%%%/, comment)
+        txt=txt.replace(/%%%5%%%/, escape(comment))
         txt=txt.replace(/%%%6%%%/, wiki)
-        txt=txt.replace(/%%%7%%%/, page)
+        txt=txt.replace(/%%%7%%%/, escape(page))
         txt=txt.replace(/%%%8%%%/, wgAction) 
         return txt
     },

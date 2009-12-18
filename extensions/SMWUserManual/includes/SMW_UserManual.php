@@ -90,6 +90,16 @@ $umegCheckArticlesOnStartup = false;
 $umegPopupWidth = 400;
 $umegPopupHeight = 460;
 
+/**
+ * Credentials for the SMW forum. This is neccessary to send ratings and feedback
+ * from your wiki to the SMW Forum as well as sending bug reports. If you do not have
+ * an account yet, please visit the SMW+ forum at:
+ * http://smwforum.ontoprise.com/smwforum/
+ * and sign up for an account.
+ */
+$umegSmwforumUser = '';
+$umegSmwforumPass = '';
+
 /* User options end here */
 
 // SMWHalo is needed, check if it's installed and quit, if this is not the case
@@ -232,7 +242,7 @@ function initSMWUserManualNamespaces() {
  */
 function umefAddHtml2Page(&$out) {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus,
-           $umegPopupWidth, $umegPopupHeight, $umegNamespace;
+           $umegPopupWidth, $umegPopupHeight, $umegNamespace, $umegSmwforumUser, $umegSmwforumPass;
     $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
                 var DND_POPUP_DIR = "'.SMW_UME_PATH.'";
@@ -250,6 +260,8 @@ function umefAddHtml2Page(&$out) {
                 var umegSmwForumApi = "'.SMW_FORUM_API.'";
                 var umegSmwForumCommentUrl = "'.SMW_FORUM_COMMENT_URL.'";
                 var umegSmwBugzillaUrl = "'.SMW_BUGZILLA_URL.'";
+                var umegSmwforumUser = "'.$umegSmwforumUser.'";
+                var umegSmwforumPass = "'.$umegSmwforumPass.'";
                 var umegSendCommentsToSMWplus = '.($umegSendCommentsToSMWplus ? 'true' : 'false').';
                 var umegPopupWidth = '.$umegPopupWidth.';
                 var umegPopupHeight = '.$umegPopupHeight.';
@@ -349,8 +361,8 @@ function umefDivBox() {
             </td></tr></table></div>';
 }
 function umefDivBoxRating() {
-    global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus;
-    if (!$umegSendCommentsToSMWplus) return '';
+    global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus, $umegSmwforumUser, $umegSmwforumPass;
+    if (!$umegSendCommentsToSMWplus || strlen($umegSmwforumUser) == 0 || strlen($umegSmwforumPass) == 0) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
     return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox(this)" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_did_it_help').'</span>
@@ -366,10 +378,10 @@ function umefDivBoxRating() {
 }
 
 function umefDivBoxFeedback() {
-    global $umegSendFeedbackToSMWplus;
+    global $umegSendFeedbackToSMWplus, $umegSmwforumUser, $umegSmwforumPass;
     $imgPath = SMW_UME_PATH.'/skins/';
     if (!$umegSendFeedbackToSMWplus) return '';
-    return '<div id="smw_csh_feedback">
+    $html = '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
             <table class="cshFeedbackFrame">
             <tr onclick="smwCsh.openCommentBox(this)"><td>
@@ -382,13 +394,14 @@ function umefDivBoxFeedback() {
             <img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_add_comment').'
             <img src="'.$imgPath.'comment.png" align="right"/>
-            </td></tr></table>
-            <table class="cshFeedbackFrame">
+            </td></tr></table>';
+    if (strlen($umegSmwforumUser) > 0 && strlen($umegSmwforumPass) > 0)
+        $html .= '<table class="cshFeedbackFrame">
             <tr onclick="smwCsh.openCommentBox(this)"><td>
             <img src="'.$imgPath.'right.png"/>
             '.wfMsg('smw_ume_bug_discovered').'
             <img src="'.$imgPath.'bug.png" align="right"/>
             </td></tr></table>
-            </div>
-    ';
+            </div>';
+    return $html;
 }

@@ -68,3 +68,6 @@ enableSMWUserManual() function call.
 
 A detailed description of all variables and their meaning can be found
 in the file SMW_UserManual.php in the includes directory.
+
+Note: please look at the SMW_UserManual.php and setup your SMW+ account
+if you want to submit rating and bug reports for your site.
