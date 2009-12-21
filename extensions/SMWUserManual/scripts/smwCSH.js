@@ -235,7 +235,7 @@ SMW_UserManual_CSH.prototype = {
         if (document.getElementsByName('smw_csh_did_it_help')[0].checked) rating = 1
         if (document.getElementsByName('smw_csh_did_it_help')[1].checked) rating = -1
         if (this.cshPage != null && rating != null) {  
-            var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage.replace(/ /g, '_'))
+            var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
             txt='action=r&user='+escape(umegSmwforumUser)+'&pass='+escape(umegSmwforumPass)+'&text='+escape(txt)
             sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, txt], null)
             alert(this.msgYourRatingHasBeenSend)
