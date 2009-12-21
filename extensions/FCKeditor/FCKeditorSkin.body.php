@@ -199,9 +199,12 @@ class FCKeditorSkin
 			$class .= ($class?" ":"") . "fck_mw_notfound";
 		}
 
-		if (isset($fp['alt']) && !empty($fp['alt']) && false !== strpos(FCKeditorParser::$fkc_mw_makeImage_options, $fp['alt']) && $fp['alt'] != "Image:" . $orginal) {
+		if (isset($fp['alt']) && !empty($fp['alt']) && false !== strpos(FCKeditorParser::$fck_mw_makeImage_options, $fp['alt']) && $fp['alt'] != "Image:" . $orginal) {
 			$ret .= "alt=\"".htmlspecialchars($fp['alt'])."\" ";
 		}
+        else if (isset($fp['caption']) && !empty($fp['caption']) && false !== strpos(FCKeditorParser::$fck_mw_makeImage_options, $fp['caption']) && $fp['caption'] != "Image:" . $orginal) {
+            $ret .= "alt=\"".htmlspecialchars($fp['caption'])."\" ";
+        }
 		else {
 			$ret .= "alt=\"\" ";
 		}

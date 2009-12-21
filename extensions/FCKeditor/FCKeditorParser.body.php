@@ -2,7 +2,7 @@
 
 class FCKeditorParser extends Parser
 {
-	public static $fkc_mw_makeImage_options;
+	public static $fck_mw_makeImage_options;
 	protected $fck_mw_strtr_span;
 	protected $fck_mw_strtr_span_counter=1;
 	protected $fck_mw_taghook;
@@ -252,7 +252,7 @@ class FCKeditorParser extends Parser
 	}
 
 	function makeImage( $nt, $options ) {
-		FCKeditorParser::$fkc_mw_makeImage_options = $options;
+		FCKeditorParser::$fck_mw_makeImage_options = $options;
 		return parent::makeImage( $nt, $options );
 	}
 
