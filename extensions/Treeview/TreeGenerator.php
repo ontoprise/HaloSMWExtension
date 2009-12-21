@@ -142,6 +142,7 @@ class TreeGenerator {
     }
     private function getValidTitle($text, $ns = 0) {
         $t = Title::newFromText($text, $ns);
+        if ($t == null) return;
         if ($ns == SMW_NS_PROPERTY &&
             in_array('propertyread', User::getAllRights()) &&
             !$t->userCan('propertyread'))
