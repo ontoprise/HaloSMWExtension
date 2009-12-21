@@ -31,7 +31,7 @@ UP_RatingPopup.prototype = {
             this.tableIdentifier=parseInt(n.id.replace(/querytable/, ''))
         // provenance URI
         this.provenanceUri=uri
-        this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScriptPath).replace(/:/, '%3A').replace(/\//g, '%2F')
+        this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScript).replace(/:/, '%3A').replace(/\//g, '%2F')+'/'+wgPageName
         // set the static html stuff
         this.popup.setHtmlContent(this.cellRatingHtml())
         this.applyCellLabels()
