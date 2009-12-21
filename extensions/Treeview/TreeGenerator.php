@@ -489,7 +489,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            $res = $this->db->query(sprintf($query, $query_add));
 	            while ($row = $this->db->fetchObject($res)) {
                     $t = Title::newFromText($row->title, $row->ns);
-                    if (! $t->userCanRead()) continue;
+                    if (!$t || ! $t->userCanRead()) continue;
                     $this->elementProperties[$row->smw_id]= new ElementProperty($row->title, $row->ns);
                     $this->postProcessingForElement($row);
                		unset($fids[$row->smw_id]);
@@ -612,7 +612,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 */
 	private function fetchPropertyValue($name, $ns, $property) {
         $title = Title::newFromText($name, $ns);
-        if (! $title->userCanRead()) return;
+        if (!$title || !$title->userCanRead()) return;
        	$pname = Title::newFromText($property, SMW_NS_PROPERTY);
        	$prop = SMWPropertyValue::makeUserProperty($pname->getDBkey());
 		$smwValues = smwfGetStore()->getPropertyValues($title, $prop);
