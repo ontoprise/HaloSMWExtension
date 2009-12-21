@@ -16,7 +16,7 @@ StartStandardMwEditCommand.prototype = {
                 pagename=pagename.replace(/.*?target=([^&]*)(&.*)?/, '$1');
             } 
         }
-        this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + pagename + "&action=edit";
+        this.uri = window.parent.wgServer + window.parent.wgScriptPath + "/index.php?title=" + encodeURIComponent(pagename) + "&action=edit";
         this.ContextMenu = null;
     },
 
