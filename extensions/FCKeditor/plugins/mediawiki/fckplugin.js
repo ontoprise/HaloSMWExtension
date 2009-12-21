@@ -891,37 +891,47 @@ FCK.DataProcessor =
 		}
 		else
 			original.apply( FCK, args ) ;
-                        // Simple toolbar for Wiki source mode
-                        FCK.ToolbarSet.Load('WikiSource');
-                    
-                        // if Semantic Toolbar is present, change the Event handlers when switching
-                        // between wikitext <-> wysiwyg, also hide the context popup because the user
-                        // must reselect the text that he wants to annotate
-                        if (fckSemanticToolbar.GetState()) {
-                            HideContextPopup();
-                            ClearEventHandler4AnnotationBox();
-                            SetEventHandler4AnnotationBox();
-                        }
-                        // add autocompletion, first add a div around the textarea
-                        var div = document.createElement('div');
-                        div.setAttribute('id', 'acWrapperForWikitext');
-                        // fix for IE that doesn't preserve the height
-                        if (FCKBrowserInfo.IsIE && FCK.EditingArea.Textarea.style) {
-                            div.style= FCK.EditingArea.Textarea.style;
-                        }
-                        // make a link element to load the css, because the parent cannot be accessed
-                        var link = document.createElement('link');
-                        link.setAttribute('rel', 'stylesheet');
-                        link.setAttribute('type', "text/css");
-                        link.setAttribute('media', "screen, projection");
-                        link.setAttribute('href', window.parent.wgScriptPath + '/extensions/SMWHalo/skins/Autocompletion/wick.css');
-                        div.appendChild(link);
-                        var parent = FCK.EditingArea.Textarea.parentNode;
-                        var f = parent.replaceChild(div, FCK.EditingArea.Textarea);
-                        div.appendChild(f);
-                        FCK.EditingArea.Textarea.setAttribute('id', 'source_wikitext');
-                        window.parent.autoCompleter.registerTextArea('source_wikitext', window.parent.frames[0]);
-                }
+            // Simple toolbar for Wiki source mode
+            FCK.ToolbarSet.Load('WikiSource');
+        
+            // if Semantic Toolbar is present, change the Event handlers when switching
+            // between wikitext <-> wysiwyg, also hide the context popup because the user
+            // must reselect the text that he wants to annotate
+            if (fckSemanticToolbar.GetState()) {
+                HideContextPopup();
+                ClearEventHandler4AnnotationBox();
+                SetEventHandler4AnnotationBox();
+            }
+            // add autocompletion, first add a div around the textarea
+            var div = document.createElement('div');
+            div.setAttribute('id', 'acWrapperForWikitext');
+ 
+            var parent = FCK.EditingArea.Textarea.parentNode;
+            var f = parent.replaceChild(div, FCK.EditingArea.Textarea);
+            div.appendChild(f);
+            FCK.EditingArea.Textarea.setAttribute('id', 'source_wikitext');
+            var numFrames = window.parent.frames.length;
+            for (var i = 0; i < numFrames; ++i) {
+            	var ta = window.parent.frames[i].document.getElementById('source_wikitext');
+            	if (ta) {
+					var frm = window.parent.frames[i].document;
+                    window.parent.autoCompleter.registerTextArea('source_wikitext', window.parent.frames[i]);
+                    if (FCKBrowserInfo.IsIE) {
+                        div = frm.getElementById('acWrapperForWikitext');
+                        div.style.height = "88%";
+                    }
+		            // make a link element to load the css, because the parent cannot be accessed
+					var frmhead = frm.getElementsByTagName("head")[0];
+					var link = frm.createElement("link");
+					link.setAttribute("rel", "stylesheet");
+					link.setAttribute("type", "text/css");
+					link.setAttribute("href", window.parent.wgScriptPath + '/extensions/SMWHalo/skins/Autocompletion/wick.css');
+					frmhead.appendChild(link);
+
+                    break;
+            	}
+            }
+    }
 })() ;
 
 // MediaWiki document processor.
