@@ -174,31 +174,41 @@ CECommentForm.prototype = {
 		
 		var htmlmsg = resultDOM.getElementsByTagName('message')[0].firstChild.nodeValue;
 		
-		if(valueEl.nodeType == 1) {
+		if ( valueEl.nodeType == 1 ) {
 			var valueCode = valueEl.firstChild.nodeValue
-			if(valueCode == 0){
+			if ( valueCode == 0 ){
 				//fine.
+				//reset, hide and enable form again
 				this.pendingIndicatorCF.hide();
-				$('ce-cf-message').setAttribute('class', 'ce-cf-success-message');
-				$('ce-cf-message').innerHTML = htmlmsg + ' Page is reloading...';
-				var pending = new OBPendingIndicator($('ce-cf-message'));
-				pending.show();
-				$('ce-cf-message').show();
-				//reset and hide form again
 				$('ce-cf').reset();
 				$('ce-cf').hide();
-				//maybe better to do a page reload with action=purge!?!
+				$('ce-cf').enable();
+
+				$('ce-cf-message').show();
+				$('ce-cf-message').setAttribute('class', 'ce-cf-success-message');
+				$('ce-cf-message').innerHTML = htmlmsg + ' Page is reloading...';
+				//add pending span
+				var pendingSpan = new Element('span', {
+					'id' : 'ce-cf-pending',
+				} );
+				$('ce-cf-message').appendChild(pendingSpan);
+				if (this.pendingIndicatorMsg == null) {
+					this.pendingIndicatorMsg = new OBPendingIndicator($('ce-cf-pending'));
+				}
+				this.pendingIndicatorMsg.show();
+				//to do a page reload with action=purge
 				var winSearch = window.location.search; 
-				if ( winSearch.indexOf('action=purge') ) {
-					window.location.href=window.location.href;
+				if ( winSearch.indexOf('action=purge') != -1 ) {
+					window.location.reload();
 				} else {
-					if ( winSearch.indexOf('?') ) {
+					if ( winSearch.indexOf('?') != -1 ) {
 						window.location.href = window.location.href.concat('&action=purge');
 					} else {
 						window.location.href = window.location.href.concat('?action=purge');
 					}
 				}
-			} else if( valueCode == 1 || valueCode == 2 ) {
+				return true;
+			} else if ( valueCode == 1 || valueCode == 2 ) {
 				//error, article already exists or permisson denied.
 				this.pendingIndicatorCF.hide();
 				$('ce-cf-message').setAttribute('class', 'ce-cf-failure-message');

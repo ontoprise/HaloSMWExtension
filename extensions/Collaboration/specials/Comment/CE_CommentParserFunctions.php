@@ -284,8 +284,6 @@ END;
 			XML::openElement('div', array('id' => 'ce-cf-message', 
 				'style' => 'display:none')) .
 			XML::closeElement('div') .
-			XML::openElement('div', array('id' => 'ce-cf-pending' )) .
-			XML::closeElement('div') .
 			XML::closeElement('div');
 
 		$html .= $jsText . ($userIsSysopJSText? $userIsSysopJSText : '') . '/* ]]> */ </script>';
