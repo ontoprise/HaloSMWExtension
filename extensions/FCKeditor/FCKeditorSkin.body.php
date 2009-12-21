@@ -48,10 +48,10 @@ class FCKeditorSkin
 		}
 		if (!empty($params)) {
 			if (isset($params['width'])) {
-				$ret .= "_fck_mw_width=\"".$params['width']."\" ";
+				$ret .= "_fck_mw_width=\"".$params['width']."\" width=\"".$params['width']."\" ";
 			}
 			if (isset($params['height'])) {
-				$ret .= "_fck_mw_height=\"".$params['height']."\" ";
+				$ret .= "_fck_mw_height=\"".$params['height']."\" height=\"".$params['height']."\" ";
 			}
 		}
 		$class = "";
@@ -162,10 +162,10 @@ class FCKeditorSkin
 		}
 		if (!empty($hp)) {
 			if (isset($hp['width'])) {
-				$ret .= "_fck_mw_width=\"".$hp['width']."\" ";
+				$ret .= "_fck_mw_width=\"".$hp['width']."\" width=\"".$hp['width']."\" ";
 			}
 			if (isset($hp['height'])) {
-				$ret .= "_fck_mw_height=\"".$hp['height']."\" ";
+				$ret .= "_fck_mw_height=\"".$hp['height']."\" height=\"".$hp['height']."\" ";
 			}
 		}
 		$class = "";

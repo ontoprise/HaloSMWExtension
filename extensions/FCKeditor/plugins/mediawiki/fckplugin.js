@@ -511,8 +511,8 @@ FCK.DataProcessor =
 							var imgCaption	= htmlNode.getAttribute( 'alt' ) || '' ;
 							var imgType		= htmlNode.getAttribute( '_fck_mw_type' ) || '' ;
 							var imgLocation	= htmlNode.getAttribute( '_fck_mw_location' ) || '' ;
-							var imgWidth	= htmlNode.getAttribute( '_fck_mw_width' ) || '' ;
-							var imgHeight	= htmlNode.getAttribute( '_fck_mw_height' ) || '' ;
+							var imgWidth	= htmlNode.style.width || htmlNode.getAttribute( '_fck_mw_width' ) || '' ;
+							var imgHeight	= htmlNode.style.height || htmlNode.getAttribute( '_fck_mw_height' ) || '' ;
 
 							stringBuilder.push( '[[Image:' )
 							stringBuilder.push( imgName )
@@ -525,10 +525,10 @@ FCK.DataProcessor =
 
 							if ( imgWidth.length > 0 )
 							{
-								stringBuilder.push( '|' + imgWidth ) ;
+								stringBuilder.push( '|' + parseInt(imgWidth) ) ;
 
 								if ( imgHeight.length > 0 )
-									stringBuilder.push( 'x' + imgHeight ) ;
+									stringBuilder.push( 'x' + parseInt(imgHeight) ) ;
 
 								stringBuilder.push( 'px' ) ;
 							}
