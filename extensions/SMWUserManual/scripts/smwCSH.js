@@ -535,9 +535,9 @@ SMW_UserManual_CSH.prototype = {
         txt=txt.replace(/%%%2%%%/, referer)
         txt=txt.replace(/%%%3%%%/, rating)
         txt=txt.replace(/%%%4%%%/, this.getIsoDate())
-        txt=txt.replace(/%%%5%%%/, escape(comment))
+        txt=txt.replace(/%%%5%%%/, comment)
         txt=txt.replace(/%%%6%%%/, wiki)
-        txt=txt.replace(/%%%7%%%/, escape(page))
+        txt=txt.replace(/%%%7%%%/, page)
         txt=txt.replace(/%%%8%%%/, wgAction) 
         return txt
     },
