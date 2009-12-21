@@ -2,6 +2,7 @@
 <deploydescriptor>
     <global>
         <version>145</version>
+        <patchlevel>1</patchlevel>
         <id>semanticresultformats</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SemanticResultFormats</instdir>
