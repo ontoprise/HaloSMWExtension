@@ -590,12 +590,9 @@ AutoCompleter.prototype = {
                     if (x != null && y != null) { // If position cookie defined, use it. 
                         this.siw.floater.style.left = x + "px";
                         this.siw.floater.style.top = y + "px";
-                    } else { // Otherwise use standard position: Left bottom corner.
-                        //XXX: hack for IE in WYSIWYG edit mode
-                        var deviance = OB_bd.isIE && this.siw.inputBox.getAttribute("id") == "wpTextbox1" ? 0 : 400;
-                        //end of hack
-                        this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360 ) +"px";
-                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160 - deviance - (this.siw.inputBox.clientHeight/2)) +"px";
+                    } else { // Otherwise use standard position: Left top corner.
+                       this.siw.floater.style.left = 0;
+                       this.siw.floater.style.top = 0;
                     }
                 }
             }
@@ -959,9 +956,7 @@ AutoCompleter.prototype = {
     scrollToSelectedItem: function() {
         for (i = 0; i < this.siw.matchCollection.length; i++) {
             if (this.siw.matchCollection[i].isSelected) {
-                var selElement = document.getElementById('wpTextbox1___Frame') || document.getElementById('free_text___Frame') 
-                    ? window.frames[0].document.getElementById("selected" + i)
-                    : document.getElementById("selected" + i);
+                var selElement = document.getElementById("selected" + i);
                 selElement.scrollIntoView(false);
                 return;
             }
@@ -1312,7 +1307,7 @@ AutoCompleter.prototype = {
      * creates the embedding container for textareas
      */
     createEmbeddingContainer: function(textarea, iframe) {
-        var container = (!iframe) ? document.createElement("div") : iframe.document.getElementById('acWrapperForWikitext');
+        var container =  document.createElement("div") ;//: iframe.document.getElementById('acWrapperForWikitext');
         container.setAttribute("style", "position:relative;text-align:left");
 
         var mwFloater = document.createElement("div");
@@ -1349,23 +1344,27 @@ AutoCompleter.prototype = {
         container.appendChild(mwFloater);
         mwFloater.appendChild(mwContent);
 
-        var parent = textarea.parentNode;
-        if (! iframe) {
-            var f = parent.replaceChild(container, textarea);
+        var parent = document.body;
+     
+        var f = container;//parent.replaceChild(container, textarea);
 
-            Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
-            container.appendChild(f);
-        }
-        else {
-            Element.addClassName(textarea, 'wickEnabled:MWFloater' + this.AC_idCounter);
-        }
+        Element.addClassName(f, "wickEnabled:MWFloater" + this.AC_idCounter);
+        Element.addClassName(textarea, 'wickEnabled:MWFloater' + this.AC_idCounter);
+        parent.appendChild(f);
+     
         
         var acMessage = document.createElement("div");
         Element.addClassName(acMessage, "acMessage");
         acMessage.innerHTML = gLanguage.getMessage('AUTOCOMPLETION_HINT');
         if (GeneralBrowserTools.getURLParameter("mode") == 'wysiwyg')
             acMessage.innerHTML += ' ' + gLanguage.getMessage('WW_AUTOCOMPLETION_HINT');
-        container.appendChild(acMessage);
+        acMessage.setAttribute("id", "smwhalo_acHint");
+	    var copywarn = !iframe ? $('editpage-copywarn'): iframe.document.getElementById('editpage-copywarn');
+	    var oldACHint = $('smwhalo_acHint');
+        if (!oldACHint)  {
+            textarea.parentNode.insertBefore(acMessage,  copywarn);
+        }
+       
         this.AC_idCounter++;
     },
 

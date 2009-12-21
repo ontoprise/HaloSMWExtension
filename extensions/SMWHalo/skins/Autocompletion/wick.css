@@ -72,16 +72,17 @@ margin:0;padding:0;margin-top:10px;font-size:0.7em;color:black;
 }
 
 .MWFloater {
-position:absolute;
+position:fixed;
 top:0px;
 left:0;
 width:350px;
-height:150px;
+height:350px;
 
 border-style:groove;
 background-color:#FBFBBA;
 display:none;
 visibility:hidden;
+z-index: 1000;
 }
 
 .MWFloaterContent {
@@ -89,7 +90,7 @@ position:relative;
 overflow:scroll;
 left:0;
 width:350px;
-height:130px;
+height:330px;
 
 }
 
