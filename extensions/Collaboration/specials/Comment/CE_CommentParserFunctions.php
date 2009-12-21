@@ -155,17 +155,17 @@ END;
 		// handle the (optional) parameter "ratingstyle".
 		#list($style) = self::$mInstance->mStyle($params);
 		
-		$encPreComment = htmlspecialchars(wfMsgForContentNoTrans('ce_cf_predef'));
+		$encPreComment = htmlspecialchars(wfMsg('ce_cf_predef'));
 		$comment_disabled = '';
 		$cfHeaderToolTip = wfMsgForContent('ce_cf_header_tooltip');
 
 		#rating#
-		$ratingValues = array( 0 => wfMsgForContent('ce_ce_rating_0'),
-			1 => wfMsgForContent('ce_ce_rating_1'),
-			2 => wfMsgForContent('ce_ce_rating_2'));
-		$ratingTitleBad = wfMsgForContent('ce_cf_rating_title_b');
-		$ratingTitleNeutral = wfMsgForContent('ce_cf_rating_title_n');
-		$ratingTitleGood = wfMsgForContent('ce_cf_rating_title_g');
+		$ratingValues = array( 0 => wfMsg('ce_ce_rating_0'),
+			1 => wfMsg('ce_ce_rating_1'),
+			2 => wfMsg('ce_ce_rating_2'));
+		$ratingTitleBad = wfMsg('ce_cf_rating_title_b');
+		$ratingTitleNeutral = wfMsg('ce_cf_rating_title_n');
+		$ratingTitleGood = wfMsg('ce_cf_rating_title_g');
 		
 		#user#
 		$currentUser = $wgUser->getName();
@@ -221,7 +221,7 @@ END;
 			XML::openElement('span', array( 'id' => 'ce-c-header-text',
 				'title' => $cfHeaderToolTip,
 				'onClick' => '$(\'ce-cf\').toggle();')) .
-			wfMsgForContent('ce_cf_header_text') .
+			wfMsg('ce_cf_header_text') .
 			XML::closeElement('span');
 
 		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'ce-cf',
@@ -233,13 +233,13 @@ END;
 			XML::closeElement('div') .
 			XML::openElement('div', array('id' => 'ce-cf-rightside')) .
 				XML::openElement( 'div', array( 'id' => 'ce-cf-user') ) .
-					'<span class="userkey">' .wfMsgForContent('ce_cf_author') . '</span>' . 
+					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
 					'<span class="uservalue">' . $currentUser . '</span>' .
 				XML::closeElement('div') .
 				XML::openElement('div', array( 'id' => 'ce-cf-rating')) .
-					wfMsgForContent('ce_cf_article_rating') .
+					wfMsg('ce_cf_article_rating') .
 					'<span class="ce-cf-grey">' . '&nbsp;' . 
-						wfMsgForContent('ce_cf_article_rating2') . 
+						wfMsg('ce_cf_article_rating2') . 
 					'</span>' . ":" .
 					XML::openElement('span', array( 'id' => 'ce-cf-radiobuttons' )) .
 						XML::Element('img', array( 'id' => 'ce-cf-rating1',
@@ -261,7 +261,7 @@ END;
 				XML::closeElement('div') .
 					'<div class="mw-editTools\">' .
 				XML::openElement('div', array( 'id' => 'ce-cf-commenthelp')) .
-					wfMsgForContent('ce_cf_comment') .
+					wfMsg('ce_cf_comment') .
 					XML::openElement('span', array('class' => 'red')) .
 						'*' .
 					XML::closeElement('span') . 

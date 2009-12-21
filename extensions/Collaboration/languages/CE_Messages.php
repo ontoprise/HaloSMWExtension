@@ -86,12 +86,12 @@ $messages['de'] = array(
  
 	/*header*/
 	'ce_cf_header_text'				=> 'Einen Kommentar hinzuf&uuml;gen',
-	'ce_cf_header_tooltip'			=> 'Sie können das Kommentarformular durch klicken öffnen.', 
+	'ce_cf_header_tooltip'			=> 'Sie können das Kommentarformular durch Klicken öffnen.', 
 	/* author */
 	'ce_cf_author'					=> 'Autor:',
 
 	/* rating */
-	'ce_cf_article_rating'			=> 'Bewerte die Qulit&umla;t dieses Artikels',
+	'ce_cf_article_rating'			=> 'Bewerten Sie die Qualit&auml;t dieses Artikels',
 	'ce_cf_article_rating2'			=> '(optional)',
 	'ce_ce_rating_0'				=> 'gut',
 	'ce_ce_rating_1'				=> 'ok',
@@ -103,8 +103,8 @@ $messages['de'] = array(
 
 	/*comments*/
 	'ce_cf_comment'					=> 'Kommentar',
-	'ce_cf_predef'					=> 'Gib hier deinen Kommentar ein...',
-	'ce_cf_submit_button_name'		=> 'Kommentar hinzuf&uuml;gen',
+	'ce_cf_predef'					=> 'Geben Sie hier Ihren Kommentar ein...',
+	'ce_cf_submit_button_name'		=> 'Kommentar hinzufügen',
 	'ce_cf_reset_button_name'		=> 'Abbrechen',
 
 	/* comment processing */
