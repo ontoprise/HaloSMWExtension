@@ -591,8 +591,11 @@ AutoCompleter.prototype = {
                         this.siw.floater.style.left = x + "px";
                         this.siw.floater.style.top = y + "px";
                     } else { // Otherwise use standard position: Left bottom corner.
-                        this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360) + "px";
-                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160 - (this.siw.inputBox.clientHeight/2)) + "px";
+                        //XXX: hack for IE in WYSIWYG edit mode
+                        var deviance = OB_bd.isIE && this.siw.inputBox.getAttribute("id") == "wpTextbox1" ? 0 : 400;
+                        //end of hack
+                        this.siw.floater.style.left = (this.siw.inputBox.offsetWidth - 360 ) +"px";
+                        this.siw.floater.style.top = (this.siw.inputBox.offsetHeight - 160 - deviance - (this.siw.inputBox.clientHeight/2)) +"px";
                     }
                 }
             }
@@ -608,7 +611,7 @@ AutoCompleter.prototype = {
      */
     resetCursorinIE: function() {
         if (!OB_bd.isIE) return;
-        var id = this.siw.inputBox ? this.siw.inputBox.getAttribute("id") : null;
+        var id = this.siw && this.siw.inputBox ? this.siw.inputBox.getAttribute("id") : null;
         // ignore search field, because it deletes
         // its content when it gains the focus.
         if (id != 'searchInput') { 
