@@ -65,7 +65,7 @@ Breadcrumb.prototype = {
             }
             //add current page as normal text
             else {
-               html += '<p id="smwh_breadcrumb_currentpage">'+show+'<p>';
+               html += '<p id="smwh_breadcrumb_currentpage">'+show+'</p>';
             }
             
         };
