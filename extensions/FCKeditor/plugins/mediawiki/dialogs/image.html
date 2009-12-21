@@ -140,6 +140,9 @@ function Ok()
 
 function UpdateImageFromAjax( response )
 {
+    window.parent.document.getElementById( 'btnOk' ).disabled = false ;
+    window.parent.document.getElementById( 'btnCancel' ).disabled = false ;
+
 	var bHasImage = ( oImage != null ) ;
 
 	if ( !bHasImage )
