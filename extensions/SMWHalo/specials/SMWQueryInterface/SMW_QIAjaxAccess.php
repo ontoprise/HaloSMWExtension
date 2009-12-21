@@ -252,11 +252,11 @@ function smwf_qi_getPage($args= "") {
 	// keep the header (because of all css and javascripts) and the main content part only
 	$newPage = "";
 	mvDataFromPage($page, $newPage, '<body');
-	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper">';
+	$newPage.= '<body style="background-image:none; background-color: #ffffff;"><div id="globalWrapper"><div id="content">';
 	
 	mvDataFromPage($page, $newPage, "<!-- start content -->", false);
 	mvDataFromPage($page, $newPage, "<!-- end content -->");
-	$newPage.="</div></body></html>";
+	$newPage.="</div></div></body></html>";
 
 	// remove the Switch to Semantic Notification button, incase it's there
 	$newPage= preg_replace('/<button id="qi-insert-notification-btn"([^>]*)>(.*?)<\/button>/m', '', $newPage);
