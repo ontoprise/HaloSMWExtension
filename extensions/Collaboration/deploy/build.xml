@@ -12,7 +12,7 @@
 			</fileset>
 		</copy>
 		<copy todir="bin/zip/extensions/Collaboration/import">
-			<fileset dir="../includes/">
+			<fileset dir="../import/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
@@ -23,11 +23,6 @@
 		</copy>
 		<copy todir="bin/zip/extensions/Collaboration/languages">
 			<fileset dir="../languages/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip/extensions/Collaboration/maintenance">
-			<fileset dir="../maintenance/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
@@ -43,11 +38,6 @@
 		</copy>
 		<copy todir="bin/zip/extensions/Collaboration/specials">
 			<fileset dir="../specials/">
-				<exclude name="**/.svn, **/CVS" />
-			</fileset>
-		</copy>
-		<copy todir="bin/zip/extensions/Collaboration/storage">
-			<fileset dir="../storage/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
