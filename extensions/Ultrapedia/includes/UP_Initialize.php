@@ -8,8 +8,8 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 define('SMW_ULTRAPEDIA_VERSION', '0.5');
 
-$smwgUltraPediaIP = $IP . '/extensions/UltraPedia';
-$smwgUltraPediaScriptPath = $wgScriptPath . '/extensions/UltraPedia';
+$smwgUltraPediaIP = $IP . '/extensions/Ultrapedia';
+$smwgUltraPediaScriptPath = $wgScriptPath . '/extensions/Ultrapedia';
 $smwgUltraPediaEnabled = true;
 
 global $wgExtensionFunctions, $wgHooks, $wgAutoloadClasses;
