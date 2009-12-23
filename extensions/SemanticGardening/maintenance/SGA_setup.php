@@ -32,6 +32,9 @@ if ($onlyTables) {
 }
 
 if ($predefpages) {
+	global $sgagIP;
+    require_once("$sgagIP/includes/SGA_GardeningInitialize.php");
+    require_once("$sgagIP/specials/Gardening/SGA_Gardening.php");
 	SGAGardeningLog::getGardeningLogAccess()->createPredefinedPages(true);
 }
 
