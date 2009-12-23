@@ -9,9 +9,11 @@ if( !defined( 'MEDIAWIKI' ) ) {
 	die( 'Not an entry point.' );
 }
 
+define('OFC_DEFAULT_WIDTH', 500);
+define('OFC_MAX_WIDTH', 900);
 class SRFOFC extends SMWResultPrinter {
-	protected $m_width = 500;
-	protected $m_height = 300;
+	protected $m_width = 0;
+	protected $m_height = 0;
 	protected $m_charts = array();
 	protected $m_label = '';
 	protected $m_hidetable = false;
@@ -211,7 +213,7 @@ class SRFOFC extends SMWResultPrinter {
 						if($chart['x'] == $label) {
 							$this->m_charts[$i]['data'][$idx]['label'] = $data;
 						} else if($chart['y'][0] == $label) {
-							$v = intval(str_replace(',', '', $data));
+							$v = floatval(str_replace(',', '', $data));
 							if(!isset($this->m_charts[$i]['min']) || $v<$this->m_charts[$i]['min']) {
 								$this->m_charts[$i]['min'] = $v;
 							}
@@ -227,7 +229,7 @@ class SRFOFC extends SMWResultPrinter {
 						}
 						for($yIdx = 0;$yIdx<count($chart['y']);++$yIdx) {
 							if($chart['y'][$yIdx] == $label) {
-								$v = intval(str_replace(',', '', $data));
+								$v = floatval(str_replace(',', '', $data));
 								if(!isset($this->m_charts[$i]['min']) || $v<$this->m_charts[$i]['min']) {
 									$this->m_charts[$i]['min'] = $v;
 								}
@@ -290,8 +292,8 @@ class SRFOFC extends SMWResultPrinter {
 		],
 		"title":{"text":"' . str_replace('"', '\"', $chart['xlabel'] . ' - ' . $chart['ylabel']) . '"},';
 			} else {
-				$max = intval($chart['max']);
-				$min = intval($chart['min']);
+				$max = floatval($chart['max']);
+				$min = floatval($chart['min']);
 				$this->getScale($min, $max, $step);
 
 				$ofc_data_objs[$i] .= '
@@ -301,7 +303,7 @@ class SRFOFC extends SMWResultPrinter {
 				if($chart['type'] == 'scatter_line') {
 					$first = true;
 					foreach($chart['data'] as $data) {
-						$v = intval(str_replace(',', '', $data['label']));
+						$v = floatval(str_replace(',', '', $data['label']));
 						if($first) {
 							$maxx = $v;
 							$minx = $v;
@@ -357,6 +359,11 @@ class SRFOFC extends SMWResultPrinter {
 		$first = true;
 
 		foreach($this->m_charts as $chart) {
+			if ($chart['width']==0) {
+				$chart['width'] = (($idx * 50 < OFC_DEFAULT_WIDTH) ? OFC_DEFAULT_WIDTH : $idx * 50);
+				if($chart['width'] > OFC_MAX_WIDTH) $chart['width'] = OFC_MAX_WIDTH;
+			}
+			if ($chart['height']==0) $chart['height'] = $chart['width'] * 0.6;
 			$html .= '<div id="div_' . $chart['id'] . '" class="ui-widget-content" style="width:' . $chart['width'] . 'px;height:' . $chart['height'] . 'px"><div id="' . $chart['id'] . '">';
 			if($chart['show'] && $first) {
 				$html .= 'You do not have flash installed - please go to: <a href="http://get.adobe.com/flashplayer/">http://get.adobe.com/flashplayer/</a> to install it';
@@ -449,11 +456,11 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			} else {
 				$step = 0.1;
-				while(intval($max / $step) < 1) {
+				while(floatval($max / $step) < 1) {
 					$step /= 10;
 				}
 			}
-			$max = (intval($max / $step) + 1) * $step;
+			$max = (floatval($max / $step) + 1) * $step;
 		} else if($max <= 0) {
 			$max = 0;
 			if($min < -1) {
@@ -463,11 +470,11 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			} else {
 				$step = 0.1;
-				while(intval($min / $step) > -1) {
+				while(floatval($min / $step) > -1) {
 					$step /= 10;
 				}
 			}
-			$min = (intval($min / $step) - 1) * $step;
+			$min = (floatval($min / $step) - 1) * $step;
 		} else {
 			if($min < -1) {
 				$step1 = 1;
@@ -476,7 +483,7 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			} else {
 				$step1 = 0.1;
-				while(intval($min / $step1) > -1) {
+				while(floatval($min / $step1) > -1) {
 					$step1 /= 10;
 				}
 			}
@@ -487,7 +494,7 @@ class SRFOFC extends SMWResultPrinter {
 				}
 			} else {
 				$step2 = 0.1;
-				while(intval($max / $step2) < 1) {
+				while(floatval($max / $step2) < 1) {
 					$step2 /= 10;
 				}
 			}
