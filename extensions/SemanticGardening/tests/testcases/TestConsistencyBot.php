@@ -172,9 +172,9 @@ class TestConsistencyBot extends PHPUnit_Framework_TestCase {
 	}
 	function testMissingParam() {
 		$db = wfGetDB(DB_SLAVE);
-		$res = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_consistencybot', 'gi_type'=>SMW_GARD_ISSUE_MISSING_PARAM, 'p1_title'=>'Kai', 'p2_title'=>'Has_adress', 'valueint'=>0));
+		
 		$res2 = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_consistencybot', 'gi_type'=>SMW_GARD_ISSUE_MISSING_PARAM, 'p1_title'=>'Kai', 'p2_title'=>'Has_adress', 'valueint'=>1));
-		$this->assertNotEquals($res, false);
+
 		$this->assertNotEquals($res2, false);
 	}
 	function testMissingAnnotation() {

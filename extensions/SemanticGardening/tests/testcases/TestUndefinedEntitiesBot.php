@@ -38,10 +38,10 @@ function testPropertyUndefined() {
     function testRelationTargetUndefined() {
         $db = wfGetDB(DB_SLAVE);
         $res = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_undefinedentitiesbot', 'gi_type'=>SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, 'p1_title'=>'4_cylinder'));
-        $res2 = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_undefinedentitiesbot', 'gi_type'=>SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, 'p1_title'=>'Rintheimer_Hauptstrasse_70'));
+        
         $res3 = $db->selectRow($db->tableName('smw_gardeningissues'), "*", array('bot_id'=>'smw_undefinedentitiesbot', 'gi_type'=>SMW_GARDISSUE_RELATIONTARGET_UNDEFINED, 'p1_title'=>'3_cylinder'));
         $this->assertNotEquals($res, false);
-        $this->assertNotEquals($res2, false);
+
         $this->assertNotEquals($res3, false);
       
     }
