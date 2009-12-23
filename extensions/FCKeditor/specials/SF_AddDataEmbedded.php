@@ -16,7 +16,7 @@ class SFAddDataEmbedded extends UnlistedSpecialPage {
 	 * Constructor
 	 */
 	function __construct() {
-		SpecialPage::SpecialPage('AddDataEmbedded');
+		UnlistedSpecialPage::UnlistedSpecialPage('AddDataEmbedded');
 		wfLoadExtensionMessages('SemanticForms');
 	}
 
