@@ -100,15 +100,14 @@ function wfSajaxSearchSpecialTagFCKeditor($title)
 function wfSajaxSearchImageFCKeditor( $term )
 {
 	global $wgContLang, $wgOut;
-	$limit = 10;
+	$limit = 50;
 
 	$term = $wgContLang->checkTitleEncoding( $wgContLang->recodeInput( js_unescape( $term ) ) );
 	$term1 = str_replace( ' ', '_', $wgContLang->ucfirst( $term ) );
 	$term2 = str_replace( ' ', '_', $wgContLang->lc( $term ) );
-	$term3 = str_replace( ' ', '_', $wgContLang->uc( $term ) );
 	$term = $term1;
 
-	if ( strlen( str_replace( '_', '', $term ) )<3 )
+	if ( strlen( str_replace( '_', '', $term ) )<1 )
 	return "";
 
 	$db =& wfGetDB( DB_SLAVE );
@@ -151,7 +150,6 @@ function wfSajaxSearchArticleFCKeditor( $term )
 
 	$term1 = str_replace( ' ', '_', $wgContLang->ucfirst( $term ) );
 	$term2 = str_replace( ' ', '_', $wgContLang->lc( $term ) );
-	$term3 = str_replace( ' ', '_', $wgContLang->uc( $term ) );
 	$term = $term1;
 
 	if ( strlen( str_replace( '_', '', $term ) )<3 ) {

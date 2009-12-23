@@ -202,7 +202,7 @@ function OnUrlChange()
 	if ( searchTimer )
 		window.clearTimeout( searchTimer ) ;
 
-	if ( link.length < 3  )
+	if ( link.length < 1  )
 	{
 		ClearSearch() ;
 
@@ -221,7 +221,7 @@ function StartSearch()
 {
 	var link = GetE('txtUrl').value.Trim() ;
 
-	if ( link.length < 3  )
+	if ( link.length < 1  )
 		return ;
 
 	SetSearchMessage( 'searching...' ) ;
