@@ -624,27 +624,13 @@ AutoCompleter.prototype = {
         var pending = $("pendingAjaxIndicator");
 
         if (!this.siw) this.siw = new SmartInputWindow();
-        var iFrameOfAdvEditor = document.getElementById('wpTextbox1___Frame');
+      
 
          // Browser dependant! only IE ------------------------
         if (OB_bd.isIE && inputBox.tagName == 'TEXTAREA') {
              // put floater at cursor position
-            var posXY = this.findElementPosXY(inputBox);
-
-            inputBox.focus();
-            var textScrollTop = inputBox.scrollTop;
-            var documentScrollPos = document.documentElement.scrollTop;
-            var selection_range = document.selection.createRange().duplicate();
-            selection_range.collapse(true);
-            
-            if (iFrameOfAdvEditor) {
-                var posAdvEditorXY = this.findElementPosXY(iFrameOfAdvEditor);
-                pending.style.left = (posAdvEditorXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                pending.style.top = (posAdvEditorXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-            } else {
-                pending.style.left = selection_range.boundingLeft - posXY[0]
-                pending.style.top = selection_range.boundingTop + documentScrollPos + textScrollTop - 20;
-            }
+            pending.style.left = "0px";
+            pending.style.top = "0px";
          // only IE -------------------------
 
         }
@@ -655,20 +641,12 @@ AutoCompleter.prototype = {
             var y = GeneralBrowserTools.getCookie("this.AC_userDefinedY");
 
             if (x != null && y != null) {
-                
-                var posXY = this.findElementPosXY(iFrameOfAdvEditor ? iFrameOfAdvEditor : inputBox);
-
-                pending.style.left = (parseInt(x) + posXY[0]) + "px";
-                pending.style.top = (parseInt(y) + posXY[1]) + "px";
+                pending.style.left = parseInt(x) + "px";
+                pending.style.top = parseInt(y) + "px";
             } else {
-                var posXY = this.findElementPosXY(iFrameOfAdvEditor ? iFrameOfAdvEditor : inputBox);
-                if (iFrameOfAdvEditor) {
-                    pending.style.left = (posXY[0] + parseInt(iFrameOfAdvEditor.style.width) - 360) + "px";
-                    pending.style.top = (posXY[1] + parseInt(iFrameOfAdvEditor.style.height) - 160) + "px";
-                } else {
-                    pending.style.left = (posXY[0] + inputBox.offsetWidth - 360) + "px";
-                    pending.style.top = (posXY[1] + inputBox.offsetHeight - 160) + "px";
-                }
+               
+                pending.style.left = "0px";
+                pending.style.top = "0px";
             }
         }
         
