@@ -153,12 +153,14 @@ $wgShowExceptionDetails = true;
 $smwgIQEnabled=true;
 $smwgOWLFullExport = true;
 
+
 // SMWHalo options
 $smwgDefaultCollation="latin1_bin";
 $smwgAllowNewHelpQuestions=true;
-$smwgDeployVersion=false;
+$smwgDeployVersion=true;
 $smwgEnableUploadConverter = true;
 $smwgUseEditDistance = false;
+$smwgShowDerivedFacts = true;
 
 // SemanticGardening options
 $sgagKeepGardeningConsole=false;
@@ -204,6 +206,7 @@ include_once('extensions/ApplicationProgramming/URLArguments/URLArguments.php');
 #SMW
 /*start-smw*/
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
+$smwgShowFactbox = SMW_FACTBOX_SHOWN; 
 enableSemantics(/*param-start-enableSemantics*/'localhost:8080'/*param-end-enableSemantics*/);
 /*end-smw*/
 
@@ -271,7 +274,7 @@ require_once( "$IP/extensions/Glossary/Glossary.php" );
 
 #ACL
 include_once('extensions/HaloACL/includes/HACL_Initialize.php');
-$haclgProtectProperties = true;
+$haclgProtectProperties = false;
 enableHaloACL(); 
 
 #Semantic Notifications
