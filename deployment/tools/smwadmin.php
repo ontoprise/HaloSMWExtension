@@ -325,7 +325,7 @@ function handleInstallOrUpdate($packageID, $version) {
 			$id = $desc->getID();
 			print "\n\t*$id-".Tools::addVersionSeparators(array($min, $desc->getPatchlevel()));
 		}
-		print "\n\t*".$new_package->getID()."-".Tools::addVersionSeparators(array($new_package->getVersion(), $new_package->getPatchlevel()));
+
 
 		print "\n\n";
 	} else {
