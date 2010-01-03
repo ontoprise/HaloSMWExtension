@@ -13,7 +13,7 @@
 		<copy todir="bin/zip/extensions/Treeview/">
 			<fileset file="../*">
 				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
+			
 			</fileset>
 		</copy>
 		<zip destfile="bin/smwhalo-treeview-${version}.zip" basedir="bin/zip" />

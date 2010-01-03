@@ -21,7 +21,7 @@
 		<!-- empty -->
 	</resources>
 	<configs>
-	    <successor>smw</successor>
+	    <successor ext="smw"/>
 		<new>
 			<require name="pf"
 				file="extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php" />

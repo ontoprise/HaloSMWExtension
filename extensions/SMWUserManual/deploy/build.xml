@@ -9,7 +9,6 @@
             <fileset file="../*">
             	<include name="**/*" />
                 <exclude name="**/.svn, **/CVS" />
-                <exclude name="**/*deploy*" />
             	<exclude name="**/deploy/" />
             	<exclude name="**/comment.php" />
             	<exclude name="**/commentdata/" />

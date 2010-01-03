@@ -34,7 +34,7 @@
 		<new>
 			<require name="ce_init"
 				file="extensions/Collaboration/includes/CE_Initialize.php" />
-			<function name="enableCollaborationExtension">
+			<function name="enableCollaboration">
 			</function>
 		</new>
 	</configs>

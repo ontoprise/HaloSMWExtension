@@ -349,7 +349,8 @@ class Installer {
 		// 7. calculate version which matches all depdencies of an extension.
 		print "\nFilter incompatible packages";
 		$this->filterIncompatiblePackages($updatesNeeded, $extensions_to_update, $contradictions);
-
+        $extensions_to_update = array_unique($extensions_to_update);
+        
 		return array($new_package, $old_package, $extensions_to_update, $contradictions);
 	}
 

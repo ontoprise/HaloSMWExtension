@@ -141,7 +141,7 @@ class DeployDescriptor {
 		// successors, ie. all the extensions which must succeed this one.
 		if (count($successors) > 0 && $successors != '') {
 			foreach($successors as $p) {
-				$this->successors[] = (string) $p;
+				$this->successors[] = (string) $p->attributes()->ext;
 			}
 		}
 
@@ -252,6 +252,7 @@ class DeployDescriptor {
 			$depID = strtolower(trim((string) $dep[0]));
 			$depFrom = intval((string) $dep->attributes()->from);
 			$depTo = intval((string) $dep->attributes()->to);
+			if ($depTo == 0) $depTo = 9999; // if to attribute is missing
 			$this->dependencies[] = array($depID, $depFrom, $depTo);
 		}
 		return $this->dependencies;
