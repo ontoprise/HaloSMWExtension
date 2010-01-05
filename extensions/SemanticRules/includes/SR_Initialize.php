@@ -13,6 +13,12 @@ if (!defined("SMW_HALO_VERSION")) {
 	die();
 }
 
+global $smwgDefaultStore;
+if($smwgDefaultStore != 'SMWTripleStore') {
+    trigger_error("Triplestore not active. See manual how to activate.");
+    die();
+}
+
 $wgExtensionFunctions[] = 'srfSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
 
