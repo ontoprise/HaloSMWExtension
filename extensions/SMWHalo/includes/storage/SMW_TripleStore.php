@@ -769,7 +769,7 @@ class SMWTripleStore extends SMWStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					if (!is_null($provenance) ){
+					if (!is_null($provenance) && $provenance != '' ){
 						$v->setProvenance($provenance);
 					}
 					$allValues[] = $v;
@@ -786,7 +786,7 @@ class SMWTripleStore extends SMWStore {
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-					if (!is_null($provenance) ) {
+					if (!is_null($provenance) && $provenance != '' ) {
 						$v->setProvenance($provenance);
 					}
 					$allValues[] = $v;
@@ -796,7 +796,7 @@ class SMWTripleStore extends SMWStore {
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
-				if (!is_null($provenance)) {
+				if (!is_null($provenance) && $provenance != '') {
 					$v->setProvenance($provenance);
 				}
 				$allValues[] = $v;
@@ -849,7 +849,7 @@ class SMWTripleStore extends SMWStore {
 				}
 
 			}
-			if (!is_null($provenance)) $value->setProvenance($provenance);
+			if (!is_null($provenance) && $provenance != '') $value->setProvenance($provenance);
 			$allValues[] = $value;
 		}
 	}
@@ -871,7 +871,7 @@ class SMWTripleStore extends SMWStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-		if (!is_null($provenance) ){
+		if (!is_null($provenance) && $provenance != '' ){
 			$v->setProvenance($provenance);
 		}
 		return $v;

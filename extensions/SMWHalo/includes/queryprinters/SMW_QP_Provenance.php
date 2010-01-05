@@ -48,21 +48,21 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
 						
 						$provURL = $object->getProvenance();
-						if ($firstcol && !is_null($provURL) && $provURL != '') {
+						if ($firstcol && !is_null($provURL)) {
 							
 							$text = $this->createArticleLinkFromProvenance($provURL, $this->getLinker($firstcol));
 						} else {
 							$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
-							if (!$firstcol && strlen($text) > 0) {
+							if (strlen($text) > 0 && !is_null($provURL)) {
 								$text .= $this->createProvenanceLink($provURL);
 							}
 						}
 						
 					} else {
 						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
-						if (!$firstcol && strlen($text) > 0) {
+						if (strlen($text) > 0) {
 							$provURL = $object->getProvenance();
-							$text .= $this->createProvenanceLink($provURL);
+							if (!is_null($provURL)) $text .= $this->createProvenanceLink($provURL);
 						}
 					}
 					if ($first) {
