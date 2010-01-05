@@ -33,9 +33,10 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->limit =  intval($p_array[0]);
 		$reqfilter->sort = true;
-		$reqfilter->offset = intval($p_array[1])*$reqfilter->limit;
+		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $p_array[0] + 0, $p_array[1] + 0, true);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $reqfilter->limit, $partitionNum, true);
 	}
 
 	public function getSubCategory($p_array) {
@@ -45,11 +46,12 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->limit =  intval($p_array[1]);
 		$reqfilter->sort = true;
-		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
+		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $p_array[1] + 0, $p_array[2] + 0, false);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $reqfilter->limit, $partitionNum, false);
 
 	}
 
@@ -60,11 +62,12 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
 		$reqfilter->limit =  intval($p_array[1]);
-		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
+		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $p_array[1] + 0, $p_array[2] + 0);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $reqfilter->limit, $partitionNum);
 
 	}
 
@@ -107,10 +110,11 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
 		$reqfilter->limit =  isset($p_array[0]) ? intval($p_array[0]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
-		$reqfilter->offset = isset($p_array[1]) ? intval($p_array[1])*$reqfilter->limit : 0;
+		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $reqfilter->limit, $reqfilter->offset, true);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $reqfilter->limit, $partitionNum, true);
 	}
 
 	public function getSubProperties($p_array) {
@@ -120,11 +124,12 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
 		$reqfilter->limit =  intval($p_array[1]);
-		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
+		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $p_array[1] + 0, $p_array[2] + 0, false);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $reqfilter->limit, $partitionNum, false);
 
 	}
 
@@ -135,7 +140,8 @@ class OB_Storage {
 		$reqfilter = new SMWRequestOptions();
 		$reqfilter->sort = true;
 		$reqfilter->limit =  intval($p_array[1]);
-		$reqfilter->offset = intval($p_array[2])*$reqfilter->limit;
+		$partitionNum = isset($p_array[2]) ? intval($p_array[2]) : 0;
+		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$prop = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 
 		if (smwf_om_userCan($p_array[0], 'propertyread', SMW_NS_PROPERTY) === "true") {
@@ -144,7 +150,7 @@ class OB_Storage {
 			$attinstances = array();
 		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $p_array[1] + 0, $p_array[2] + 0);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $reqfilter->limit, $partitionNum);
 	}
 
 	public function getCategoryForInstance($p_array) {
