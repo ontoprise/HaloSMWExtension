@@ -166,7 +166,7 @@ initializeRootCategories: function(partition, force) {
 initializeRootProperties: function(partition, force) {
 	 if (!this.OB_attributesInitialized || force) {
 	 	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+","+partition], this.initializeRootPropertyCallback.bind(this));
+		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getRootProperties',OB_partitionSize+"##"+partition], this.initializeRootPropertyCallback.bind(this));
 	 } else {
   		// copy from cache
   		this.OB_currentlyDisplayedTree = GeneralXMLTools.createDocumentFromString("<result/>");
