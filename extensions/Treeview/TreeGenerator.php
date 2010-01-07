@@ -503,7 +503,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	            		unset($this->elementProperties[$id]);
 	            		if (isset($this->sIds[$id])) unset($this->sIds[$id]);
 	            		$pk = array_search($id, $this->rootNodes);
-	            		if ($proot !== false) unset($this->rootNodes[$pk]);
+	            		if ($pk !== false) unset($this->rootNodes[$pk]);
 	            	}
 	            }
 	            // if we have already that many elements processed as are in sIds
