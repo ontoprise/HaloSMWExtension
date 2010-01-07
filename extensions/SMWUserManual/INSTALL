@@ -6,6 +6,7 @@ Requirements:
 
     MediaWiki 1.15.x
     SMWHalo 1.4.6
+    ParserFunctions (optional)
 
 Installation:
 =============
@@ -38,6 +39,11 @@ Execute now the following command. This will read the articles from the
 XML file and import them into your wiki:
  php SMW_setup.php -i --file=cshPages.xml
 
+If you have not installed the ParserFunctions extension [1] modify the page
+Template:Copyright_of_article that makes use of parser functions that come with
+this extension.
+
+[1] http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
 
 Updating the help articles:
 ===========================
