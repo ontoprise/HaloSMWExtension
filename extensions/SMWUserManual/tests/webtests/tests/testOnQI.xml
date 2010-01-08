@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<target name="test">
+
+		<webtest name="call CSH on Query Interface">
+			<invoke url="${wgScript}/Special:QueryInterface" description="Go to QI"/>
+			<verifyTitle text="Query Interface - ${wgSitename}" />
+
+            <openCshCountQuestions number="10"/>
+
+            <selectQuestion option="5" text="How can I organize Templates" link="1"/>
+            <selectQuestion option="8" text="How can I see all pages that link to a page" link="1"/>
+            <selectQuestion option="2" text="How can I ask for pages in a category" link="1"/>
+
+            <closeCsh/>
+
+		</webtest>
+
+	</target>
+</project>

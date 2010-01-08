@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<project default="test">
+	<target name="test" description="runs all the tests">
+		<ant antfile="testOnMainPage.xml"/>
+        <ant antfile="testOnQI.xml"/>
+        <ant antfile="testInEditMode.xml"/>
+        <ant antfile="testOnCategoryPage.xml"/>
+        <ant antfile="testOnPropertyPage.xml"/>
+	</target>
+</project>

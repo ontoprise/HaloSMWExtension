@@ -1,0 +1,937 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
+  <siteinfo>
+    <sitename>Halo3wiki</sitename>
+    <base>http://ernie/treeview/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.1</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-2">Media</namespace>
+      <namespace key="-1">Special</namespace>
+      <namespace key="0" />
+      <namespace key="1">Talk</namespace>
+      <namespace key="2">User</namespace>
+      <namespace key="3">User talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki talk</namespace>
+      <namespace key="10">Template</namespace>
+      <namespace key="11">Template talk</namespace>
+      <namespace key="12">Help</namespace>
+      <namespace key="13">Help talk</namespace>
+      <namespace key="14">Category</namespace>
+      <namespace key="15">Category talk</namespace>
+      <namespace key="102">Property</namespace>
+      <namespace key="103">Property talk</namespace>
+      <namespace key="104">Type</namespace>
+      <namespace key="105">Type talk</namespace>
+      <namespace key="108">Concept</namespace>
+      <namespace key="109">Concept talk</namespace>
+      <namespace key="110">UserManual</namespace>
+      <namespace key="111">UserManual talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Main Page</title>
+    <id>1</id>
+    <revision>
+      <id>1</id>
+      <timestamp>2009-10-16T10:39:23Z</timestamp>
+      <contributor>
+        <ip>MediaWiki default</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;big&gt;'''MediaWiki has been successfully installed.'''&lt;/big&gt;
+
+Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
+
+== Getting started ==
+* [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
+* [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
+* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has domain and range</title>
+    <id>2</id>
+    <revision>
+      <id>3</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
+
+[[Has type::Type:Page; Type:Page]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has max cardinality</title>
+    <id>3</id>
+    <revision>
+      <id>4</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has max cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has max cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has min cardinality</title>
+    <id>4</id>
+    <revision>
+      <id>5</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Has min cardinality&quot;  [[Has type::Type:Number]]</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Has min cardinality&quot;
+
+[[Has type::Type:Number]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Is equal to</title>
+    <id>6</id>
+    <revision>
+      <id>7</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined property &quot;Is equal to&quot;</comment>
+      <text xml:space="preserve">This is the predefined property &quot;Is equal to&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Transitive properties</title>
+    <id>7</id>
+    <revision>
+      <id>8</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Transitive properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Symmetrical properties</title>
+    <id>8</id>
+    <revision>
+      <id>9</id>
+      <timestamp>2009-07-23T07:27:57Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: This is the predefined category &quot;Symmetrical properties&quot;</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Person</title>
+    <id>30</id>
+    <revision>
+      <id>64</id>
+      <timestamp>2010-01-07T14:40:39Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">This is the Person category.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Wikimaster</title>
+    <id>31</id>
+    <revision>
+      <id>65</id>
+      <timestamp>2010-01-07T14:43:40Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <minor/>
+      <comment>moved [[Help:Wikimaster]] to [[Wikimaster]]</comment>
+      <text xml:space="preserve">The Wikimaster is the person that controls the Wiki and it's contents.
+
+[[Category:Person]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:UME discourse state</title>
+    <id>40</id>
+    <revision>
+      <id>41</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has domain and range::Page| ]][[Has type::Type:String| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:UME link</title>
+    <id>41</id>
+    <revision>
+      <id>42</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">[[Has domain and range::Page| ]][[Has type::Type:URL| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:Delete or change a restriction in a query</title>
+    <id>42</id>
+    <revision>
+      <id>43</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+[[UME discourse state::| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:Help:How can I create a new category</title>
+    <id>43</id>
+    <revision>
+      <id>44</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+As '''sysop''' or '''gardener user groups''', you can:
+
+*Add subcategory: An input field will display, the user may then enter a title and if it is does not exist yet, a '''create''' button shall display.
+*Add category on same level: An input field appears.The user enters a title and if it is does not exist yet, a '''create''' button shall display.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/12/10
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::OntologyBrowser| ]]
+[[UME link::Help:Modifying the ontology using the Ontology Browser| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I add links to a page</title>
+    <id>44</id>
+    <revision>
+      <id>45</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+There are four sorts of [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_to_link_table links] in MediaWiki:
+
+#internal links to other pages in the wiki
+#external links to websites
+#[http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_add_interwiki_links_to_other_languages%3F inter-wiki links] (links to other wikis)
+#inter-language links to other language versions of the same wiki
+
+To add an internal link, enclose the name of the page you want to link to in double square brackets.
+
+When you save the page,you'll see the new link pointing to your page.
+
+*the page exists already, it is displayed in blue.
+*empty pages are displayed in red.
+
+Selflinks to the current page are not transformed in URLs but displayed in bold.
+
+&lt;br&gt;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|answer=A simple text or surrounded by wiki markup
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::General| ]]
+[[UME link::Help:Using_Links| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I annotate a n-ary property</title>
+    <id>45</id>
+    <revision>
+      <id>46</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+N-ary properties are annotated in the same way as normal ones.
+
+'''Writing wiki text:'''
+
+*Switch to edit mode.
+*Write &lt;code&gt;&lt;nowiki&gt;[[has propriety:=value0; value1; value2]]&lt;/nowiki&gt;&lt;/code&gt;&lt;br&gt;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|answer=N-ary properties are annotated in the same way as normal ones
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::Annotate| ]]
+[[UME link::Help:Annotating a n-ary property| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I ask for pages in a category</title>
+    <id>46</id>
+    <revision>
+      <id>47</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+First of all, we have to define what we look for and according to this choose a category. Of course, this choice always depends on the content and structure of the wiki.In every input field of the QI you can use auto completion in order to find appropriate inputs.
+
+After clicking '''Add''', the category will appear in the query tree.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/12/10
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::QueryInterface| ]]
+[[UME link::Help:Complete example of query formulation| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I print format</title>
+    <id>47</id>
+    <revision>
+      <id>48</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+Many printout statements can be further customised by giving a ''printout format'' which can be given after a property name, separated by the symbol &lt;tt&gt;#&lt;/tt&gt;.
+
+For [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_properties properties] that support [[Help:Custom units|units]], queries can thus determine which unit should be used for the output. To print the height in cm, e.g., one would use the following:
+
+ ?height#cm
+
+This assumes that the property height is aware of the unit «cm». Datatypes other than [[Type:Number|Type:Number]] may have different printout formats. See the types documentation for details.
+
+For printouts of the form &lt;tt&gt;?Category:Actor&lt;/tt&gt;, the display format can be used to modify what SMW will display for cases where a page is (or is not) in the [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_categories category]. The following is an example:
+
+ ?Category:Actor#an actor, not an actor
+
+This will show the text «an actor» for all pages that are actors, and the text «not an actor» otherwise. This can, for example, also be used in combination with small images to display icons for certain categories.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/18
+|answer=
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::Property| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I debug Mediawiki</title>
+    <id>48</id>
+    <revision>
+      <id>49</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+#'''Create '''new PHP-Project, but '''deselec'''t the '''''Use default location''''' and '''choose''' your wikipath (e.g. C:\xampp\htdocs\wiki
+#'''Start''' the debugging session with the index.php file (e.g. [http://127.0.0.1/wiki/index.php?DBGSESSID=1@localhost:10001 http://127.0.0.1/wiki/index.php?DBGSESSID=1@localhost:10001]). Breakpoints in other php-files used in Mediawiki will be recognized.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/25
+|answer=A tree structure of pages is established by using forward slashes in pagenames
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::General| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I move a category</title>
+    <id>49</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+Categories cannot be easily [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_move_(rename)_a_page%3F moved like other pages]. For this reason, category names should be chosen carefully.
+
+The easiest way (for those with admin privileges) is to create the new page, delete the old one, and then change the tags in each member of the category (manually or with a bot). However, this loses the page history - not a huge problem when categories are used only for navigation, but when a wiki is structured differently and the category pages contain significant amounts of text, this is undesirable.
+
+===  ===
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/10
+|answer=Create the new page, delete the old one and then change the tags in each member of the category
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::Category| ]]
+[[UME link::Help:Moving and renaming a page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I name a page</title>
+    <id>50</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+The canonical form of a full page name is shown in large font as the page header. Another type of canonical form is what is in URLs generated by the system, for this page &quot;Help:Page_name&quot; with an underscore.
+
+*The following characters (the configuration is made in &quot;''$wgLegalTitleChars''&quot;) are not allowed in page titles:
+
+   # &lt; &gt; [ ] | { }
+
+*The non-printable characters with values 0 through 31, and the &quot;delete&quot; character 127 in ASCII are also not allowed.
+
+*The reasons for disallowing these characters include:
+
+'''[''', ''']''', '''{''', '''}''', and '''|''' have special meaning within MediaWiki's syntax, which are processed ''before'' the pagename is determined. For example, &lt;nowiki&gt;[[{{CURRENTYEAR}}]]&lt;/nowiki&gt; points at {{CURRENTYEAR}}, not a page called ''&lt;nowiki&gt;{{CURRENTYEAR}}&lt;/nowiki&gt;''.
+
+*The backslash (\) gives problems: depending on where the pagename is used, the backslash may or may not be converted to a slash (/).
+{{Copyright of article
+|own work=False
+|copyright holder=Semantic MediaWiki
+|year=2009
+|date retrieved=2009/12/02
+|answer=The non-printable characters with values 0 through 31, and the
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::General| ]]
+[[UME link::Help:Naming a page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I organize Templates</title>
+    <id>51</id>
+    <revision>
+      <id>52</id>
+      <timestamp>2010-01-07T14:37:29Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+For [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_templates templates] to be effective users need to find them and be able to use them. A simple technique is to include an example on the [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_use_Templates template page].
+
+For example:
+&lt;div style=&quot;display:table; width:auto;&quot;&gt;&lt;pre&gt;&lt;noinclude&gt;
+==Usage==
+Allows to establish a link to a subject:
+{{NameOfTemplate|Term1+Term2+Term3}}
+&lt;/noinclude&gt;
+&lt;/pre&gt;&lt;/div&gt;
+Then, an editor can simply copy and paste the example to create a similar page.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/01
+|answer=A simple technique is to include an example on the template page
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::Template| ]]
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::SpecialPages| ]]
+[[UME link::Help:Using templates to simplify annotations| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I perform export and export the full history</title>
+    <id>52</id>
+    <revision>
+      <id>53</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+'''To perform export''':
+
+*'''Go to''' [[Special:Export|Special:Export]] and '''paste''' all your page names into the textbox, '''making sure''' there are no empty lines.
+*'''Click'''&amp;nbsp;'''''Submit query'''''.
+*'''Save''' the resulting XML to a file using your browser's save facility.
+*'''Open''' the XML file in a text editor.
+*'''Scroll''' to the bottom to '''''check for error messages'''''.
+
+&amp;nbsp;&amp;nbsp; &amp;nbsp;Now you can use this XML file to [[Help:How can I export articles?|perform an import]].&lt;br&gt;
+
+'''To export the full history''':&amp;nbsp;
+
+A checkbox in the [[Special:Export|Special:Export]] interface selects whether to export the full history (all versions of an article) or the most recent version of articles. A maximum of 100 revisions are returned.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/25
+|answer=There are at least four ways to export pages
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::Export| ]]
+[[UME discourse state::SpecialPages| ]]
+[[UME link::Help:History-mode| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I prevent conflicts</title>
+    <id>53</id>
+    <revision>
+      <id>54</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+Because edit conflicts are irritating and time-consuming, you may choose to alter your editing habits to render them less frequent: aiming to make more edits to pages that have not been edited recently, such as those listed on [[Special:Ancientpages|ancient pages]], for example.
+
+Another means of avoiding edit conflicts is to make a single larger change, rather than frequent smaller changes: this makes it more likely that you will get an edit conflict, but less likely that you will cause others to get an edit conflict. Using the &quot;[[Help:How can I see a preview?|Show preview]]&quot; button helps here.
+
+To reduce the chance of edit conflicts, Wikipedia has an &quot;In Use&quot; notice in its [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_use_Templates Template] namespace that people may use when editing a page over a long period of time. Simply put &lt;tt&gt;&lt;nowiki&gt;{{inuse}}&lt;/nowiki&gt;&lt;/tt&gt; on an article before proceeding with a major edit, and remove the template when the editing is complete.
+{{Copyright of article
+|own work=False
+|copyright holder=Semantic MediaWiki
+|year=2009
+|date retrieved=2009/11/25
+|answer=This page discusses '''edit conflicts''', and how to deal with them
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME link::Help:Solving edit conflicts| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I print a wiki page</title>
+    <id>54</id>
+    <revision>
+      <id>55</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+If you use the default [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_change_my_wiki_skin skin] '''MonoBook''', MediaWiki uses Cascading Style Sheets in order to specify the style and layout of the printable version of a page.&amp;nbsp;
+
+If you are using other, older skins such as the '''Standard''' skin, you can get a printable version of a page using the '''Printable version'''&amp;nbsp;link, or by adding the text '''&amp;printable=yes'''&amp;nbsp;to the URL.
+
+You create a URL to the printable version of the current page with:
+
+&lt;nowiki&gt;{{fullurl:{{FULLPAGENAME}}|printable=yes}}&lt;/nowiki&gt;
+
+&lt;br&gt;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|date retrieved=2009/11/10
+|answer=In modern browsers, the print function of the browser should automatically select this style sheet when you print an article
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::General| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I print category</title>
+    <id>55</id>
+    <revision>
+      <id>56</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+There are two ways to print [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_categories category] information:
+
+*SMW prints all categories assigned to some page.
+&lt;pre&gt;?Category
+&lt;/pre&gt;
+*SMW checks for one particular category.&lt;br&gt;
+
+ ?Category:Actor
+
+&lt;br&gt;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/18
+|answer=There are two ways to print category information.
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::Category| ]]
+[[UME discourse state::EditWikisyntax| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I print property values</title>
+    <id>56</id>
+    <revision>
+      <id>57</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+These are written simply as a question mark followed by the property name.
+
+Example
+&lt;pre&gt;?population&lt;/pre&gt;
+prints the values for Â«populationÂ» of all query results. On [[Special:Ask|Special:Ask]], the result of each printout is shown in a table column that is labelled by the name of the property. It is possible to change that label for a printout, and this will be very useful when using queries on wiki pages (it is not really relevant on [[Special:Ask|Special:Ask]] of course). The equality symbol is used to change the label:
+&lt;pre&gt;?population = Number of inhabitants&lt;/pre&gt;
+The above still prints population, but with the modified label in the table header. As mentioned above, property printouts may have an empty result for some pages, e.g. if something does not have any population. Property conditions with wildcards (see above) can be used to ensure that all elements in a query result have some value for the printed property, if this is desired.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/18
+|answer=These are written simply as a question mark followed by the property name.
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::Property| ]]
+[[UME link::| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I query data with forms</title>
+    <id>57</id>
+    <revision>
+      <id>58</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+In order to query data with forms, use the '''Special:RunQuery''' page, which displays a form in a manner similar to&amp;nbsp;'''Special:AddData&amp;nbsp;'''and&amp;nbsp;'''Special:EditData''', but with no associated '''''target page'''''.
+
+Instead, when the user submits the form by hitting the '''Run query&amp;nbsp;'''button, they see what the [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_templates template] looks like when displayed with the values they entered. The template that the form uses should contain one or more Semantic MediaWiki [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_is_an_inline_query inline queries], to query data using values the user entered.&amp;nbsp;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/12/03
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::SemanticForms| ]]
+[[UME link::Help:Querying data with forms| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I relate my type to the correct SI unit</title>
+    <id>58</id>
+    <revision>
+      <id>59</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+The unit expression is a division of products of SI base units with an optional exponent.
+
+There must be at least the enumerator and an optional denominator.&amp;nbsp;
+
+The SI base units are:
+
+*'''&lt;code&gt;m&lt;/code&gt;''' - Meter
+*'''&lt;code&gt;kg&lt;/code&gt;''' - kilograms
+*'''&lt;code&gt;s&lt;/code&gt;''' - Second
+*'''&lt;code&gt;A&lt;/code&gt;''' - Ampere
+*'''&lt;code&gt;K&lt;/code&gt;''' - Kelvin
+*'''&lt;code&gt;mol&lt;/code&gt;''' - Mole
+*'''&lt;code&gt;cd&lt;/code&gt;''' - Candela
+
+Products are written with '''*''' or blank. Exponents are introduced by '''^''', followed by a positive or negative integer.&lt;br&gt;
+
+&lt;br&gt;
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/10
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::Property| ]]
+[[UME discourse state::SemanticToolbar| ]]
+[[UME link::Help:Relating my type to the correct SI unit| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I revert an edit</title>
+    <id>59</id>
+    <revision>
+      <id>60</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+'''Reverting''' involves returning a page to a previous version of its&amp;nbsp;[http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_see_the_history_of_a_page history], as documented in the corresponding tab. In the context of the English Wikipedia three revert rule, a revert is defined more broadly as the undoing of another editor's work by returning ''any part of a page'' to an older version. Latest versions of MediaWiki allow editors to revert a single edit from the history of a page without simultaneously undoing all constructive changes that have been made since. To do this, view the [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_see_the_differences_in_history diff] for the edit, and '''click''' on '''''undo''''' above the newer version. The software will attempt to&amp;nbsp;[http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_edit_pages create an edit page] with a version of the article in which the undesirable edit has been removed but all later edits are retained. There is a default edit summary, but it can be changed. It is also possible to make further modifications before saving.
+
+This feature removes the need to manually redo useful changes that were made after the edit which is being reverted. However, it will fail if undoing the edit would [http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_conflicts conflict] with later edits. For example, if edit 1000 adds a paragraph and edit 1005 modifies that paragraph, it will be impossible to automatically undo edit 1000. In this case, you must determine how to resolve the problem manually.
+
+{{Copyright of article
+|own work=False
+|copyright holder=Semantic MediaWiki
+|year=2009
+|date retrieved=2009/12/02
+|answer=
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME link::Help:Reverting an edit| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I see a preview</title>
+    <id>60</id>
+    <revision>
+      <id>61</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+Below the edit box is a '''Show preview''' button. Pressing this will show you what the article will look like without actually saving it. It is strongly recommended that you use this prior to saving. This allows you to check what the page will look like first and to check that you haven't made any errors. It also prevents the need for multiple saves. Saving the same article a large number of times in quick succession makes it harder for people to check what changes have been made, and clogs up the [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_see_the_history_of_a_page page history].
+
+It is helpful, however, to save the page before moving, breaking apart, or combining sections of the article, if you have been making small edits to the article. The difference display is not good at showing paragraph moves, and will not display the small edits clearly if sections are then moved around.
+
+Saving only once is also a way of avoiding edit conflicts, as people will not see the article on [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_keep_track_of_what_is_going_on_in_the_wiki recent changes], and therefore they are less likely to try editing it at the same time as you.
+
+If you are [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_log_in logged in], you can set [http://smwforum.ontoprise.com/smwforum/index.php/Help:How_can_I_change_my_user_preferences your preferences] to show the preview positioned before the edit box instead of after it. If you select this option, the preview will be displayed above the edit box when you click the '''Show preview''' button while editing a page.
+
+
+{{Copyright of article
+|own work=False
+|copyright holder=Semantic MediaWiki
+|year=2009
+|date retrieved=2009/12/02
+|answer=Below the edit box is a '''Show preview''' button
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::Preview| ]]
+[[UME link::Help:Seeing a preview| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I see all pages that link to a page</title>
+    <id>61</id>
+    <revision>
+      <id>62</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+In the toolbox of every page there is link labeled '''What links here''', also called '''backlink'''.
+
+*The backlinks feature shows which backlinks are&amp;nbsp;[http://smwforum.ontoprise.com/smwforum/index.php/Help:What_are_redirects redirects].
+*The backlinks of the redirect are also shown, and if they include a redirect, the backlinks of that also (not more).
+
+
+{{Copyright of article
+|own work=False
+|copyright holder=Semantic MediaWiki
+|year=2009
+|date retrieved=2009/12/02
+|answer=In the toolbox of every page there is link labeled
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::EditWikisyntax| ]]
+[[UME discourse state::General| ]]
+[[UME link::Help:Finding all pages which link to a page| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:How can I see the contributions of a user</title>
+    <id>62</id>
+    <revision>
+      <id>63</id>
+      <timestamp>2010-01-07T14:37:30Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+If the user has an account (username): bring up the user page and click ''User '''''&lt;i&gt;contributions&lt;/i&gt;'''&amp;nbsp;:
+
+If the user has no login name, two methods are:
+
+*Click on the IP address in '''Recent Changes''' or '''Page History'''.
+*Put the IP address in the search box and press&amp;nbsp;'''Go'''.
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/10
+|answer=''User contributions pages''' list the edits that a particular user has made
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::SpecialPages| ]]
+[[UME link::Help:Detecting_user_contributions| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Has type</title>
+    <id>64</id>
+    <revision>
+      <id>72</id>
+      <timestamp>2010-01-07T14:56:12Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Replaced content with 'This is the predefined Porperty &quot;Has domain and range&quot;
+[[Has domain and range::Category:Property; | ]]'</comment>
+      <text xml:space="preserve">This is the predefined Porperty &quot;Has domain and range&quot;
+[[Has domain and range::Category:Property; | ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>UserManual:What simple semantic search interfaces are there</title>
+    <id>65</id>
+    <revision>
+      <id>68</id>
+      <timestamp>2010-01-07T14:49:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">
+&lt;br&gt; Semantic MediaWiki provides a number of very simple search forms that allow users to find specific information. These search features are accessed in various special pages:
+
+*[[Special:SearchByProperty|Special:SearchByProperty]] has a simple search form for finding ''semantic backlinks''. You enter a property name and target value. The search returns a list of all pages that have that property with that value. This service is directly accessible through the [[Image:Search icon.png|Image:search_icon.png|alt=search button]] link within the Factbox.
+*[[Special:PageProperty|Special:PageProperty]] displays all values some page has for some property. You enter a page and a property name. The search displays a list of all values of the property on that page. If [http://smwforum.ontoprise.com/smwforum/index.php/What_is_the_Factbox%3F Factboxes] are enabled in the wiki, the same information can also be read off the Factbox of the page.
+
+{{
+Cite web in help
+|wiki=Semantic MediaWiki
+|url=http://semantic-mediawiki.org/wiki/Help:Browsing_interfaces#Simple_search_interfaces
+|title=Help:Browsing interfaces. Simple search interfaces
+|retrieved=2008-04-07
+|lastmodified=2008-03-27
+|publisher=Semantic MediaWiki
+}}
+{{Copyright of article
+|own work=True
+|copyright holder=Ontoprise GmbH
+|year=2009
+|date retrieved=2009/11/10
+|answer=The special pages
+|for_releases=all
+}}&lt;noinclude&gt;{{ShowComments|show=True}}&lt;/noinclude&gt;
+[[UME discourse state::SpecialPages| ]]
+[[UME link::http://semantic-mediawiki.org/wiki/Help:Browsing_interfaces#Simple_search_interfaces| ]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Cite web in help</title>
+    <id>66</id>
+    <revision>
+      <id>69</id>
+      <timestamp>2010-01-07T14:49:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240);
+margin-bottom: 15px;
+padding-left: 10px;
+font-family: tahoma, sans-serif;
+font-size:x-small;&quot;&gt;
+;References &lt;br/&gt;
+The content of this page uses material from the article [{{{url}}} {{{title}}}] published by {{{publisher}}} (retrieved on {{{retrieved}}}).&lt;br/&gt;
+This article is licensed under the [[GNU Free Documentation License]].
+&lt;/div&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Copyright of article</title>
+    <id>67</id>
+    <revision>
+      <id>70</id>
+      <timestamp>2010-01-07T14:49:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">{{#ifeq:{{{own work|}}}|True|{{GNU Free Documentation License
+|year={{{year|}}}
+|copyright holder={{{copyright holder|}}} }}
+|{{Cite web in help
+|url={{{url|}}}
+|title={{{title|}}}
+|retrieved={{{date retrieved|}}}
+|publisher={{{copyright holder|}}} }}
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:GNU Free Documentation License</title>
+    <id>68</id>
+    <revision>
+      <id>71</id>
+      <timestamp>2010-01-07T14:49:40Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240);
+margin-bottom: 15px;
+padding-left: 10px;
+font-family: tahoma, sans-serif;
+font-size:x-small;&quot;&gt;
+;Copyright &amp;copy; {{{year}}} {{{copyright holder}}}.&lt;br/&gt;
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+A copy of the license is included in the article &quot;[[GNU_Free_Documentation_License|GNU
+Free Documentation License]]&quot;.
+&lt;/div&gt;
+
+&lt;noinclude&gt;
+&lt;pre&gt;
+{{
+GNU Free Documentation License
+|year=
+|copyright holder=
+}}
+&lt;/pre&gt;
+&lt;/noinclude&gt;</text>
+    </revision>
+  </page>
+</mediawiki>

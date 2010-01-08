@@ -1,0 +1,28 @@
+<!--
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="openCshCountQuestions" description="open help and count questions">
+	<attribute name="number"/>
+    <sequential>
+        <clickLink
+            xpath="//div[@id='smw_csh']/a"
+            description="click help link"
+        />
+
+        <verifyXPath xpath="//td[@id='smw_csh_popup_dragbar']" />
+
+        <checkAjaxResponse>
+       		<verifyXPath
+     		   description="there must be some help topics"
+               xpath="count(//div[@id='smw_csh_selection']/select/option)"
+      		   text="@{number}" />
+     	</checkAjaxResponse>
+
+        <verifyXPath
+            description="text box empty"
+            xpath="//div[@id='smw_csh_answer_head']"
+            text=""
+        />
+    </sequential>
+</macrodef>

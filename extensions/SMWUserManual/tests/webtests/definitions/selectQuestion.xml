@@ -1,0 +1,35 @@
+<!--
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="selectQuestion" description="click on question">
+	<attribute name="option"/>
+    <attribute name="text"/>
+    <attribute name="link"/>
+    <sequential>
+        <storeXPath
+            property="cshQuestion"
+            xpath="//div[@id='smw_csh_selection']/select/option[@{option}]"
+        />
+        <setSelectField
+            description="click option @{option}"
+            xpath="//div[@id='smw_csh_selection']/select"
+            value="#{cshQuestion}"
+        />
+
+        <checkAjaxResponse>
+            <verifyElementText
+                description="text box filled - check header"
+                htmlId="smw_csh_answer_head"
+                text="@{text}?"
+            />
+        </checkAjaxResponse>
+
+        <verifyXPath
+            description="No link to smw available"
+            xpath="count(//div[@id='smw_csh_link_to_smw']/*)"
+            text="@{link}"
+        />
+
+    </sequential>
+</macrodef>

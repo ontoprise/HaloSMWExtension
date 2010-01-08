@@ -1,0 +1,18 @@
+<!--
+Like all files of this folder, this content will be executed in target wt.defineMacros
+and therefore made be available for the tests (here the macro <fillParticipantData .../>)
+-->
+<macrodef name="closeCsh" description="close help">
+    <sequential>
+        <click
+            xpath="//td[@id='smw_csh_popup_dragbar']/following-sibling::*/a"
+            description="Click popup"
+        />
+        <verifyXPath
+            description="Popup invisible"
+            xpath="//div[@id='smw_csh_popup']/@style"
+            regex="true"
+            text="visibility: hidden;"
+        />
+    </sequential>
+</macrodef>

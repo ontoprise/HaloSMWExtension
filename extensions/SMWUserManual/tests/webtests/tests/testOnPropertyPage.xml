@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<target name="test">
+
+		<webtest name="call CSH on a Property page">
+			<invoke url="${wgScript}/Property:Has_domain_and_range" description="Go to Property:Has domain and range"/>
+			<verifyTitle text="Property:Has domain and range - ${wgSitename}" />
+
+            <openCshCountQuestions number="8"/>
+
+            <selectQuestion option="7" text="How can I relate my type to the correct SI unit" link="1"/>
+            <selectQuestion option="1" text="How can I add links to a page" link="1"/>
+
+            <closeCsh/>
+
+		</webtest>
+
+	</target>
+</project>

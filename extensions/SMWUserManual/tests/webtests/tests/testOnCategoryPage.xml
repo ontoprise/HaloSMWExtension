@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<target name="test">
+
+		<webtest name="call CSH on a Category page">
+			<invoke url="${wgScript}/Category:Person" description="Go to Category:Person"/>
+			<verifyTitle text="Category:Person - ${wgSitename}" />
+
+            <openCshCountQuestions number="7"/>
+
+            <selectQuestion option="6" text="How can I print category" link="0"/>
+            <selectQuestion option="1" text="How can I add links to a page" link="1"/>
+
+            <closeCsh/>
+
+		</webtest>
+
+	</target>
+</project>

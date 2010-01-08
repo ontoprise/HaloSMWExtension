@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="test">
+
+	<target name="test">
+
+		<webtest name="call CSH on Main Page">
+			<invoke url="${wgScript}/Main_Page" description="Go to Main page"/>
+			<verifyTitle text="${wgSitename}" />
+
+            <openCshCountQuestions number="5"/>
+
+            <selectQuestion option="2" text="How can I debug Mediawiki" link="0"/>
+            <selectQuestion option="4" text="How can I print a wiki page" link="0"/>
+
+            <click
+                xpath="//div[@id='smw_csh_popup_content']//td[4]"
+                description="Click Feedback tab"
+            />
+            <verifyXPath
+                description="Feedback tab shown"
+                xpath="//div[@id='smw_csh_popup_content']//td[@class='cshTabCont']/span[2]/@style"
+                text="display: block;"
+            />
+            <verifyXPath
+                description="Help tab hidden"
+                xpath="//div[@id='smw_csh_popup_content']//td[@class='cshTabCont']/span[1]/@style"
+                text="display: none;"
+            />
+            <verifyXPath
+                description="1st box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table/@class"
+                text="cshFeedbackFrame"
+            />
+            <verifyXPath
+                description="2nd box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table[2]/@class"
+                text="cshFeedbackFrame"
+            />
+
+            <click
+                xpath="//div[@id='smw_csh_feedback']/table//tr"
+                description="Click 1st box"
+            />
+            <verifyXPath
+                description="1st box active"
+                xpath="//div[@id='smw_csh_feedback']/table/@class"
+                text="cshFeedbackFrameActive"
+            />
+            <verifyXPath
+                description="2nd box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table[2]/@class"
+                text="cshFeedbackFrame"
+            />
+
+            <click
+                xpath="//div[@id='smw_csh_feedback']/table[2]//tr"
+                description="Click 2nd box"
+            />
+            <verifyXPath
+                description="1st box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table/@class"
+                text="cshFeedbackFrame"
+            />
+            <verifyXPath
+                description="2nd box active"
+                xpath="//div[@id='smw_csh_feedback']/table[2]/@class"
+                text="cshFeedbackFrameActive"
+            />
+
+            <click
+                xpath="//div[@id='smw_csh_feedback']/table[2]//tr"
+                description="Click 2nd box again"
+            />
+            <verifyXPath
+                description="1st box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table/@class"
+                text="cshFeedbackFrame"
+            />
+            <verifyXPath
+                description="2nd box inactive"
+                xpath="//div[@id='smw_csh_feedback']/table[2]/@class"
+                text="cshFeedbackFrame"
+            />
+
+            <click
+                xpath="//td[@id='smw_csh_popup_dragbar']/following-sibling::*/a"
+                description="Click popup"
+            />
+            <verifyXPath
+                description="Popup invisible"
+                xpath="//div[@id='smw_csh_popup']/@style"
+                regex="true"
+                text="visibility: hidden;"
+            />
+
+            <click
+                xpath="//div[@id='smw_csh_popup_content']//td[2]"
+                description="Click Help tab"
+            />
+            <verifyXPath
+                description="Feedback tab hidden"
+                xpath="//div[@id='smw_csh_popup_content']//td[@class='cshTabCont']/span[2]/@style"
+                text="display: none;"
+            />
+            <verifyXPath
+                description="Help tab shown"
+                xpath="//div[@id='smw_csh_popup_content']//td[@class='cshTabCont']/span[1]/@style"
+                text="display: block;"
+            />
+
+            <closeCsh/>
+            
+		</webtest>
+
+	</target>
+</project>
