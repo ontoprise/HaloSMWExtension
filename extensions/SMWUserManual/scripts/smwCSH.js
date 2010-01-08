@@ -91,6 +91,9 @@ SMW_UserManual_CSH.prototype = {
         this.msgYourQuestionHasBeenSend = 'Your question has been send to the SMW+ team.\nThank you!'
         this.msgYourCommentHasBeenSend = 'Your comment has been send to the SMW+ team.\nThank you!'
         this.msgYourBugHasBeenSend = 'Your bug has been filed in the SMW+ Bugzilla.\nThank you!'
+        // initialize headline of popup and alt text for close button
+        this.headline=''
+        this.closeLabel=''
     },
     
     /**
@@ -144,6 +147,10 @@ SMW_UserManual_CSH.prototype = {
         this.headline = label
     },
 
+    setCloseLabel: function(label) {
+        this.closeLabel = label
+    },
+
     /**
      * calls the popup, makes it visible to the user. Also two event handlers
      * mousedown and mouseup are registered, which toggle the dragging (i.e. after
@@ -158,6 +165,7 @@ SMW_UserManual_CSH.prototype = {
         }
         this.popup.preserveContent=1
         this.popup.closeImage=DND_POPUP_DIR+'/skins/close.gif'
+        this.popup.closeImageAlt=this.closeLabel
         this.popup.actionOnClose="smwCsh.closeBox();"
         this.popup.attachTo=document.getElementById('content')
 

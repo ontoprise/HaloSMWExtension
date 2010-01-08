@@ -21,6 +21,7 @@ class SMW_UMLanguageEn {
         'smw_ume_reset'           => 'Reset',
         'smw_ume_yes'             => 'yes',
         'smw_ume_no'              => 'no',
+        'smw_ume_close_label'     => 'Click here to close the UserManualExtension',
         // all these texts are for install only
         'smw_ume_create_page'     => 'Create wiki page: %s',
         'smw_ume_warning_page'    => 'Warning, page already exists',

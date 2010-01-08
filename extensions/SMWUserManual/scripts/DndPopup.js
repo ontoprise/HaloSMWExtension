@@ -25,6 +25,7 @@ DndPopup.prototype = {
     actionOnClose:  'DndPopup.close();',
     // image of the close button which is displayed in the upper right corner
     closeImage:     DND_POPUP_DIR+'/close.gif',
+    closeImageAlt:  '',
 
     initialize: function(divid, headline, width, height){
         if (divid) this.id=divid
@@ -88,7 +89,8 @@ DndPopup.prototype = {
             +(this.dnd?' style="cursor:move"':'')+' color="'+this.headerColor+'" width="'+(parseInt(this.width)-15)+'px">'
             +(this.headline?this.headline:'&nbsp;')+'</td>'
             +'<td style="cursor:hand; cursor:pointer; vertical-align:middle" bgcolor="'+this.headerBgColor+'">'
-            +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+this.closeImage+'" border="0"></a></td>'
+            +'<a onclick="'+this.actionOnClose+'return false" href="#"><img src="'+this.closeImage+'" '
+            +(this.closeImageAlt ? ' alt="'+this.closeImageAlt+'" title="'+this.closeImageAlt+'"' :'')+' border="0"></a></td>'
             +'</tr>'
             +'<tr width="100%" height="100%">'
             +'<td bgcolor="'+this.boxBgColor+'" style="width:100%; height:100%; padding:4px; vertical-align:top; color:'+this.boxColor+';" colspan="2">'
