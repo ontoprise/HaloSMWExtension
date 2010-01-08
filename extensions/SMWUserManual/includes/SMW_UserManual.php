@@ -370,9 +370,10 @@ function umefDivBoxRating() {
             <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_yes').'
             <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_no').'
             <div id="smw_csh_rating_box" style="display:none">
+            <hr style="width: 100%;"/>'.wfMsg('smw_ume_tip_rating').'<br/>
             <textarea width="100%" rows="3"></textarea>
+            <input type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()" style="font-weight: bold">
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">
-            <input type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()" style="text-align:right">
             </div>
             </div>
     ';

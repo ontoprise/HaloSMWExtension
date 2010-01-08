@@ -326,16 +326,16 @@ SMW_UserManual_CSH.prototype = {
         td=document.createElement('td');
         var button=document.createElement('input');
         button.type='submit'
-        button.name='cshreset'
-        button.value='Reset'
-        Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
-        td.appendChild(button)
-        
-        var button=document.createElement('input');
-        button.type='submit'
         button.name='cshsend'
         button.value='Submit feedback'
-        button.style.textAlign="right"
+        button.style.fontWeight="bold"
+        Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
+        td.appendChild(button)
+
+        var button=document.createElement('input');
+        button.type='submit'
+        button.name='cshreset'
+        button.value='Reset'
         Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
         td.appendChild(button)
         tr.appendChild(td)
