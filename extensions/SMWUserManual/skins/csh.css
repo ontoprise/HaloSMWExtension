@@ -6,10 +6,11 @@
 */
 
 .cshTabActive {
-	font-size: 11px;
+	font-size: 12px;
     cursor:pointer;cursor:hand;
     font-weight: bold;
-    padding: 0.1em 5px;
+    padding: 0.1em 6px;
+    padding-top: 3px;
     background-color:#FFFFFF;
 	border-color: #cacac4;
 	border-left-width: 1px;
@@ -24,7 +25,8 @@
 .cshTabInactive {
 	font-size: 11px;
     cursor:pointer;cursor:hand;
-    padding: 0.1em 5px;
+    padding: 0.1em 6px;
+    padding-top: 3px;
 	background-color:#FFFFFF;
 	border-color: #cacac4;
 	border-left-width: 1px;
@@ -38,7 +40,7 @@
 }
 
 .cshTabSpacer {
-    padding: 3px;
+    padding: 2px;
     border-bottom-width: thin;
     border-bottom-color: #cacac4;
     border-bottom-style: solid;
@@ -63,53 +65,75 @@
 .cshHeadline {
     color: rgb(38, 159, 178); 
 	display: block;
-    background-color: #e9e9e4;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    background-color: #f2f2f2;
+    margin-top: 5px;
+    margin-bottom: 5px;
     font-weight: bold;
  	padding-top: 5px;
 	padding-bottom: 5px;
-	padding-left:5px;
+	text-align: center;
+}
+
+.cshFeedbackBoxHeader {
+	font-weight: bold;
+}
+
+.cshSpacerLine {
+	border: #000000 dotted thin;
 }
 
 #smw_csh_answer_head {
     font-weight: bold;
-    margin-left: 5px;
-    margin-right: 5px;
+    margin: 7px;
+    margin-bottom: 0px;
+    overflow:auto;
+    border: solid thin;
+    border-color: #cacac4; 
 }
 
 #smw_csh_answer {
     border: solid thin;
-	border-color: #cacac4;
-	overflow:auto;
-
+    border-color: rgb(38, 159, 178); 
+    margin: 7px;
+    margin-bottom: 0px;
+    overflow:auto;
 }
 
 #smw_csh_rating {
-    border: none;
-	font-size:smaller;
-    margin: 5px;
+    font-size:12px;
+    margin: 7px;
+    margin-bottom: 10px;
+    margin-top: 5px;
     overflow:auto;
+    border: solid thin;
+    border-color: rgb(38, 159, 178); 
+    background: #f2f2f2;
+}
+
+#smw_csh_rating .cshFootnote {
+    font-size: smaller;
+    color: #777777;
 }
 
 #smw_csh_link_to_smw {
     text-align: right;
     margin-left: 5px;
-    margin-right: 5px;
+    margin-right: 6px;
+    margin-bottom: 7px;
 }
 
 #smw_csh_selection {
-    margin-left: 5px;
-	margin-bottom: 10px;
+    margin-left: 7px;
+	margin-bottom: 20px;
     cursor: pointer; cursor: hand;
 	font-size: smaller;
 }
 
 .cshFeedbackFrame {
 	background-color: #e9e9e4;
-    width:98%;
+    width:96%;
     border-collapse:collapse;
-    margin:5px;
+    margin:7px;
     padding: 5px;
     background: #ffffff url(../skins/bg_radient.png) scroll repeat-x left;
 }
@@ -121,12 +145,13 @@
 }
 
 .cshFeedbackFrameActive {
-    background-color: #e9e9e4;
-    width:98%;
+    width:96%;
     border-collapse:collapse;
-    margin:5px;
+    margin:7px;
     padding: 5px;
-    background: #ffffff url(../skins/bg_radientHov.png) scroll repeat-x left;
+    background: #f2f2f2;
+    border: solid thin;
+    border-color: rgb(38, 159, 178);
 }
 
 .cshFeedbackFrame:hover {
@@ -135,13 +160,13 @@
 
 
 #smw_csh_popup {
-    left:250px;
-    top:150px;
+    left:450px;
+    top:500px;
 }
 
 #smw_csh_popup_dragbar {
 	color: fff;
 	font-size: 14pt;
 	font-weight: bold;
-	padding: 3px 10px; 
+	padding: 3px 3px; 
 }

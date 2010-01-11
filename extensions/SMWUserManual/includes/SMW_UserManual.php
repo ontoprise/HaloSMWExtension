@@ -372,6 +372,7 @@ function umefDivBoxRating() {
             <div id="smw_csh_rating_box" style="display:none">
             <hr style="width: 100%;"/>'.wfMsg('smw_ume_tip_rating').'<br/>
             <textarea width="100%" rows="3"></textarea>
+            <span class="cshFootnote">'.wfMsg('smw_ume_tip_rating_note').'</span><br/>
             <input type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()" style="font-weight: bold">
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">
             </div>
@@ -385,25 +386,34 @@ function umefDivBoxFeedback() {
     if (!$umegSendFeedbackToSMWplus) return '';
     $html = '<div id="smw_csh_feedback">
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_2').'</span>
+            '.wfMsg('smw_ume_cpt_headline_2_1').'
             <table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td>
+            <tr onclick="smwCsh.openCommentBox(this)"><td width="100%">
             <img src="'.$imgPath.'right.png"/>
-            '.wfMsg('smw_ume_ask_your_own_q').'
+            <span class="cshFeedbackBoxHeader">'.wfMsg('smw_ume_ask_your_own_q').'</span>
+            <br/>'.wfMsg('smw_ume_ask_your_own_q_n').'
+            </td><td>
             <img src="'.$imgPath.'question.png" align="right"/>
             </td></tr></table>
+            <hr class="cshSpacerLine"/>
+            '.wfMsg('smw_ume_cpt_headline_2_2').'
             <table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td>
+            <tr onclick="smwCsh.openCommentBox(this)"><td width="100%">
             <img src="'.$imgPath.'right.png"/>
-            '.wfMsg('smw_ume_add_comment').'
+            <span class="cshFeedbackBoxHeader">'.wfMsg('smw_ume_add_comment').'</span>
+            <br/>'.wfMsg('smw_ume_add_comment_n').'
+            </td><td>
             <img src="'.$imgPath.'comment.png" align="right"/>
             </td></tr></table>';
     if (strlen($umegSmwforumUser) > 0 && strlen($umegSmwforumPass) > 0)
         $html .= '<table class="cshFeedbackFrame">
-            <tr onclick="smwCsh.openCommentBox(this)"><td>
+            <tr onclick="smwCsh.openCommentBox(this)"><td width="100%">
             <img src="'.$imgPath.'right.png"/>
-            '.wfMsg('smw_ume_bug_discovered').'
+            <span class="cshFeedbackBoxHeader">'.wfMsg('smw_ume_bug_discovered').'</span>
+            <br/>'.wfMsg('smw_ume_bug_discovered_n').'
+            </td><td>
             <img src="'.$imgPath.'bug.png" align="right"/>
-            </td></tr></table>
-            </div>';
+            </td></tr></table>';
+    $html.='</div>';
     return $html;
 }

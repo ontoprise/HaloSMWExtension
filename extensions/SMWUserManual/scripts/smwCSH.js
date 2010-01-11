@@ -296,7 +296,6 @@ SMW_UserManual_CSH.prototype = {
                 this.closeCommentBox(boxes[i].getElementsByTagName('tr')[0])
             // now open the box that we want
             arrow.src=arrow.src.replace(/right\.png/, 'down.png')
-            el.getElementsByTagName('td')[0].style.fontWeight='bold'
             var table=el
             while (table.tagName != 'TABLE')
                table=table.parentNode
@@ -313,18 +312,20 @@ SMW_UserManual_CSH.prototype = {
      * @param DomNode tr of the current comment box
      */
     getCommentBox: function(el){
-        var tr=document.createElement('tr');
-        var td=document.createElement('td');
-        var textarea=document.createElement('textarea');
+        var tr=document.createElement('tr')
+        var td=document.createElement('td')
+        td.setAttribute('colspan', '2')
+        var textarea=document.createElement('textarea')
         textarea.rows=3
         textarea.style.width='98%'
         td.appendChild(textarea)
         tr.appendChild(td)
         el.parentNode.appendChild(tr)
 
-        tr=document.createElement('tr');
-        td=document.createElement('td');
-        var button=document.createElement('input');
+        tr=document.createElement('tr')
+        td=document.createElement('td')
+        td.setAttribute('colspan', '2')
+        var button=document.createElement('input')
         button.type='submit'
         button.name='cshsend'
         button.value='Submit feedback'
@@ -332,7 +333,7 @@ SMW_UserManual_CSH.prototype = {
         Event.observe(button, 'click', smwCsh.sendCommentBox.bindAsEventListener(this))
         td.appendChild(button)
 
-        var button=document.createElement('input');
+        var button=document.createElement('input')
         button.type='submit'
         button.name='cshreset'
         button.value='Reset'
@@ -357,7 +358,7 @@ SMW_UserManual_CSH.prototype = {
                 this.closeCommentBox(eL)
                 return
             }
-            var img=tbody.firstChild.firstChild.getElementsByTagName('img')[1].src
+            var img=tbody.getElementsByTagName('img')[1].src
             img=img.substr(img.lastIndexOf('/')+1)
             if (img=='question.png') {
                 var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
