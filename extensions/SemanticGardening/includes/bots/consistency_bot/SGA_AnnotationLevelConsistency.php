@@ -240,7 +240,7 @@ class AnnotationLevelConsistency {
 
 	}
 
-	public function checkAnnotationCardinalities($a, $restrictToCategories) {
+	public function checkAnnotationCardinalities($a, $restrictToCategories = array()) {
 		// get minimum cardinality
 
 		$minCardArray = smwfGetStore()->getPropertyValues($a, smwfGetSemanticStore()->minCardProp);
