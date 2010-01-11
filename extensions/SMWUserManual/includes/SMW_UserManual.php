@@ -365,12 +365,15 @@ function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus, $umegSmwforumUser, $umegSmwforumPass;
     if (!$umegSendCommentsToSMWplus || strlen($umegSmwforumUser) == 0 || strlen($umegSmwforumPass) == 0) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
-    return '<div id="smw_csh_rating"><img src="'.$imgPath.'right.png"/>'.wfMsg('smw_ume_did_it_help').'
-            <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_yes').'
-            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_no').'
-            <div id="smw_csh_rating_box" style="display:none">
+    $ie = preg_match('/MSIE \d\.\d/', $_SERVER['HTTP_USER_AGENT']);
+    return '<div id="smw_csh_rating"><img src="'.$imgPath.'right.png"/>'.wfMsg('smw_ume_did_it_help').
+            (($ie) ? '<span onclick="smwCsh.openRatingBox()">' : '').
+            '<input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_yes').'
+            <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_no').
+            (($ie) ? '</span>' : '').
+            '<div id="smw_csh_rating_box" style="display:none">
             <hr style="width: 100%;"/>'.wfMsg('smw_ume_tip_rating').'<br/>
-            <textarea width="100%" rows="3"></textarea>
+            <textarea width="100%" rows="3"></textarea><br/>
             <span class="cshFootnote">'.wfMsg('smw_ume_tip_rating_note').'</span><br/>
             <input type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()" style="font-weight: bold">
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">

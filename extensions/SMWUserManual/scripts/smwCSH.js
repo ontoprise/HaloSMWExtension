@@ -114,10 +114,10 @@ SMW_UserManual_CSH.prototype = {
         // resize the smw_csh_content div if visible
         if (document.getElementById('smw_csh_answer').style.display != 'none') {
             var dim = this.getContentSize()
-            document.getElementById('smw_csh_answer').style.width = dim[0]+'px'
+            document.getElementById('smw_csh_answer').style.width = (dim[0]-5)+'px'
             document.getElementById('smw_csh_answer').style.height = dim[1]+'px'
             if (document.getElementById('smw_csh_selection').getElementsByTagName('select').length > 0)
-                document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=dim[0]+'px'
+                document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=(dim[0]-3)+'px'
         }
     },
 
@@ -224,14 +224,13 @@ SMW_UserManual_CSH.prototype = {
      * if a radio input type is clicked for rating, a textbox automatically
      * appears below the radio inputs. This is done here
      */
-    openRatingBox: function(el){
+    openRatingBox: function(){
         var obj=document.getElementById('smw_csh_rating_box')
         if (obj && obj.style.display=='none') {
-            obj.style.display=null
+            obj.style.display=''
             var arrow=document.getElementById('smw_csh_rating').getElementsByTagName('img')[0]
             arrow.src=arrow.src.replace(/right\.png/,'down.png')
         }
-        else if (el.tagName == 'SPAN') this.hideRatingBox()
     },
 
     /**
@@ -257,8 +256,8 @@ SMW_UserManual_CSH.prototype = {
      */
     resetRating: function(){
         document.getElementById('smw_csh_rating_box').getElementsByTagName('textarea')[0].value='';
-        document.getElementsByName('smw_csh_did_it_help')[0].checked=null;
-        document.getElementsByName('smw_csh_did_it_help')[1].checked=null;
+        document.getElementsByName('smw_csh_did_it_help')[0].checked='';
+        document.getElementsByName('smw_csh_did_it_help')[1].checked='';
         this.hideRatingBox()
     },
 

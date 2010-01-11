@@ -40,7 +40,8 @@ function wfUmeAjaxGetArticleList(){
     // run the query now
 	$fixparams = array(
             "format" => "list",
-            "link" => "none"
+            "link" => "none",
+	        "limit" => 500,
 	);
     // set query output to html, so we can use it for the output directly
     $result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, array(), SMW_OUTPUT_WIKI);
@@ -53,7 +54,7 @@ function wfUmeAjaxGetArticleList(){
         if ($i == 0) // the first values still has the namespace prefix
             $page = substr($pages[$i], strlen($wgContLang->getNsText(SMW_NS_USER_MANUAL)) + 1);
         else $page = $pages[$i];
-        $result.='<option>'.$page.'</option>';
+        $result.='<option>'.htmlspecialchars($page).'</option>';
     }
     $result.='</select>';
     return json_encode(array('selection' => $result));
