@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="smwhalo_build" name="SMWHalo">
+
+
 	<target name="smwhalo_build">
 		<delete dir="bin/zip" />
 		<delete file="bin/smwhalo-${version}.zip" />
@@ -62,11 +64,11 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-        <copy todir="bin/zip/skins/ontoskin3">
-            <fileset dir="../../../skins/ontoskin3">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
+		<copy todir="bin/zip/skins/ontoskin3">
+			<fileset dir="../../../skins/ontoskin3">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
 		<copy todir="bin/zip/extensions/SMWHalo">
 			<fileset dir="../">
@@ -76,6 +78,56 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
+
+		<concat destfile="bin/zip/extensions/SMWHalo/deployGeneralTools.js">
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts" includes="ajaxhalo.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/OntologyBrowser" includes="generalTools.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/GeneralGUI" includes="breadcrumb.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/GeneralGUI" includes="generalGUI.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/GeneralGUI" includes="contentSlider.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/Logger" includes="smw_logger.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/Language" includes="SMW_Language.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo" includes="SMW_DerivedFactsTab.js" />
+		</concat>
+
+		<concat destfile="bin/zip/extensions/SMWHalo/deployGeneralScripts.js">
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/scriptaculous" includes="effects.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/scriptaculous" includes="slider.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/scriptaculous" includes="dragdrop.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/Autocompletion" includes="wick.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Links.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/WikiTextParser" includes="Annotation.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/WikiTextParser" includes="WikiTextParser.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Ontology.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_DataTypes.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_GenericToolbarFunctions.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Container.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Marker.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Relation.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Properties.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_Refresh.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_DragAndResize.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/SemanticToolbar" includes="SMW_ContextMenu.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AdvancedAnnotation.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AnnotationHints.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/AdvancedAnnotation" includes="SMW_GardeningHints.js" />
+			<fileset dir="bin/zip/extensions/SMWHalo/scripts/AdvancedAnnotation" includes="SMW_SaveAnnotations.js" />
+		</concat>
+		
+		<concat destfile="bin/zip/extensions/SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js">
+			<filelist dir="bin/zip/extensions/SMWHalo/scripts/scriptaculous" files="effects.js" />
+			<filelist dir="bin/zip/extensions/SMWHalo/scripts/OntologyBrowser" files="ontologytools.js, treeview.js, treeviewActions.js, treeviewData.js" />
+			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
+		</concat>
+
+		<concat destfile="bin/zip/extensions/SMWHalo/scripts/QueryInterface/deployQueryInterface.js">
+			<filelist dir="bin/zip/extensions/SMWHalo/scripts/QueryInterface" files="treeviewQI.js, queryTree.js, Query.js, QIHelper.js, qi_tooltip.js" />
+			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
+		</concat>
+
+
 		<zip destfile="bin/smwhalo-${version}.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 	</target>
@@ -84,7 +136,7 @@
 		<delete dir="bin/zip_ext" />
 		<delete file="bin/smwhalo-ext-${version}.zip" />
 		<mkdir dir="bin/zip_ext" />
-		
+
 		<copy todir="bin/zip_ext/extensions/DynamicPageList">
 			<fileset dir="../../DynamicPageList/">
 				<exclude name="**/.svn, **/CVS" />
@@ -100,13 +152,13 @@
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="bin/zip_ext/extensions/DebugTemplate">
 			<fileset dir="../../DebugTemplate/">
 				<exclude name="**/.svn, **/CVS" />
 			</fileset>
 		</copy>
-		
+
 
 		<copy todir="bin/zip_ext/extensions">
 			<fileset file="../../LdapAuthentication.php/" />
