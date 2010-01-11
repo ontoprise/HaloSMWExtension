@@ -365,8 +365,7 @@ function umefDivBoxRating() {
     global $umegSendFeedbackToSMWplus, $umegSendCommentsToSMWplus, $umegSmwforumUser, $umegSmwforumPass;
     if (!$umegSendCommentsToSMWplus || strlen($umegSmwforumUser) == 0 || strlen($umegSmwforumPass) == 0) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
-    return '<div id="smw_csh_rating"><span onclick="smwCsh.openRatingBox(this)" style="cursor:pointer;cursor:hand"><img src="'.$imgPath.'right.png"/>
-            '.wfMsg('smw_ume_did_it_help').'</span>
+    return '<div id="smw_csh_rating"><img src="'.$imgPath.'right.png"/>'.wfMsg('smw_ume_did_it_help').'
             <input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_yes').'
             <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox(this)"/>'.wfMsg('smw_ume_no').'
             <div id="smw_csh_rating_box" style="display:none">
