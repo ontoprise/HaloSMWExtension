@@ -64,8 +64,9 @@ class SMW_HaloLanguageEn extends SMW_HaloLanguage {
 	'smw_help_askownttip' => 'Add your own question to the wiki helppages where it can be answered by other users',
 	'smw_help_pageexists' => "This question is already in our helpsystem.\nClick 'more' to see all questions.",
 	'smw_help_error' => "Oops. An error seems to have occured.\nYour question could not be added to the system. Sorry.",
-	'smw_help_question_added' => "Your question has been added to our help system\nand can now be answered by other wiki users."
-
+	'smw_help_question_added' => "Your question has been added to our help system\nand can now be answered by other wiki users.",
+    // Messages for CSH
+	'smw_csh_icon_tooltip' => 'Click here if you need help or if you want to send feeback to the SMW+ developers.'
 	);
 
 

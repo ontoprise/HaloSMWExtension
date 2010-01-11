@@ -62,8 +62,9 @@ protected $smwContentMessages = array(
 	'smw_help_askownttip' => 'Voeg je eigen vragen toe aan de wiki help-pagina´s waar ze beantwoord kunnen worden door andere gebruikers',
 	'smw_help_pageexists' => "Deze vraag is reeds in ons helpsysteem.\nKies 'more' om alle vragen te zien.",
 	'smw_help_error' => "Oeps. Er blijkt een fout gebeurd te zijn.\nJe vraag kon niet toegevoegd worden aan het systeem. Sorry.",
-	'smw_help_question_added' => "Je vraag werd toegevoegd aan ons helpsysteem\nen kan nu beantwoord worden door andere wiki gebruikers."
-
+	'smw_help_question_added' => "Je vraag werd toegevoegd aan ons helpsysteem\nen kan nu beantwoord worden door andere wiki gebruikers.",
+    // Messages for CSH
+    'smw_csh_icon_tooltip' => 'Click here if you need help or if you want to send feeback to the SMW+ developers.'
 );
 
 
