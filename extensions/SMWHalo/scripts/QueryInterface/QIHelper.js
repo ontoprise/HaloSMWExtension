@@ -444,6 +444,7 @@ QIHelper.prototype = {
         }
         
         preview.innerHTML = resultHTML;
+        $('fullpreviewbox').width = ''; // clear fixed width if we had a timeline
         
         smw_tooltipInit();
 
@@ -453,6 +454,7 @@ QIHelper.prototype = {
         case "eventline":
             this.parseWikilinks2Html();
             smw_timeline_init();
+            $('fullpreviewbox').width = '500px';
             break;
         case "exhibit":
             if (typeof createExhibit == 'function') createExhibit();
