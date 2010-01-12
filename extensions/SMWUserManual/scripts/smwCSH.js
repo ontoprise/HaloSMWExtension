@@ -119,6 +119,10 @@ SMW_UserManual_CSH.prototype = {
             if (document.getElementById('smw_csh_selection').getElementsByTagName('select').length > 0)
                 document.getElementById('smw_csh_selection').getElementsByTagName('select')[0].style.width=(dim[0]-3)+'px'
         }
+        // make rating viewable when a help topic is selected
+        var divRating = document.getElementById('smw_csh_rating')
+        if (!resObj.selection && divRating && divRating.style.display == 'none')
+            divRating.style.display=''
     },
 
     switchTab: function(td){

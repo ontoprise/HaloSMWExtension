@@ -366,7 +366,7 @@ function umefDivBoxRating() {
     if (!$umegSendCommentsToSMWplus || strlen($umegSmwforumUser) == 0 || strlen($umegSmwforumPass) == 0) return '';
     $imgPath = SMW_UME_PATH.'/skins/';
     $ie = preg_match('/MSIE \d\.\d/', $_SERVER['HTTP_USER_AGENT']);
-    return '<div id="smw_csh_rating"><img src="'.$imgPath.'right.png"/>'.wfMsg('smw_ume_did_it_help').
+    return '<div id="smw_csh_rating" style="display: none"><img src="'.$imgPath.'right.png"/>'.wfMsg('smw_ume_did_it_help').
             (($ie) ? '<span onclick="smwCsh.openRatingBox()">' : '').
             '<input type="radio" name="smw_csh_did_it_help" value="1" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_yes').'
             <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_no').
