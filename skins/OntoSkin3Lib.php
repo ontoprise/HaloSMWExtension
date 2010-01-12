@@ -150,8 +150,13 @@ class SMWH_Skin {
         /** mw 1.15 only */
         $title = Title::newFromText(trim($menuItem))->getArticleId();
         if(!$title) return;
-        //echo $title;
         $menuPage = Article::newFromId($title);
+
+        //This is an workaround to prevent mediawiki using OldId
+        //when doing a diff in the pagehistory. OldId would cause a
+        //false content for page rendering
+        $menuPage->mOldId = 0;
+        
 	if(!isset($menuPage)) return;
 	return $this->parseWikiText($menuPage->getContent());
         /**/
