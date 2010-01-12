@@ -162,6 +162,7 @@
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AnnotationHints.js" />
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_GardeningHints.js" />
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_SaveAnnotations.js" />
+			<fileset dir="../../SMWHalo/scripts" includes="SMW_DerivedFacts.js" />
 		</concat>
 
 		<concat destfile="../../SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js">

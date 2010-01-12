@@ -17,6 +17,9 @@ $srfgFormats[] = 'ofc-bar_3d';
 $srfgFormats[] = 'ofc-line';
 //$srfgFormats[] = 'ofc-scatter_line';
 
+// include jquery
+global $smgJSLibs; $smgJSLibs[] = 'jquery';
+
 global $smwgResultFormats, $wgAutoloadClasses, $srfgIP;
 $smwgResultFormats['ofc'] = 'SRFOFC';
 $wgAutoloadClasses['SRFOFC'] = $srfgIP . '/ofc/SRF_OFC.php';

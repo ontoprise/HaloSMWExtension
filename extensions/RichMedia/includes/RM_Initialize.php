@@ -91,6 +91,8 @@ function enableRichMediaExtension() {
 	
 	// register AC icons
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
+	
+	global $smgJSLibs; $smgJSLibs[] = 'prototype';
 }
 
 /**
@@ -254,9 +256,7 @@ function smwRMFormAddHTMLHeader(&$out){
 	if(!$rmScriptLoaded){
 		
 		# Prototype needed!
-		if (!defined('SMW_HALO_VERSION')) {
-		  $out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath .  '/scripts/prototype.js"></script>');
-		}
+		
 		
 		$out->addScript('<script type="text/javascript" src="'.$smwgRMScriptPath. '/scripts/richmedia.js"></script>');
 		# Floatbox needed!

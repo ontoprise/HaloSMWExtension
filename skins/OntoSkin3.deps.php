@@ -7,6 +7,6 @@
 
 if ( ! defined( 'MEDIAWIKI' ) )
 	die( 1 );
-
+global $smgJSLibs; $smgJSLibs[] = 'jquery';
 require_once( dirname( dirname( __FILE__ ) ) . '/includes/SkinTemplate.php');
 

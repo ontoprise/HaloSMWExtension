@@ -143,6 +143,9 @@ $wgJobRunRate = 0;
 
 $smwghHaloTests=true;
 
+// load script manager for all tests
+require_once('extensions/ScriptManager/SM_Initialize.php');
+
 /*USERDEFINED*/
 
 ?>

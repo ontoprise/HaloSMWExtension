@@ -62,6 +62,10 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
 	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
 	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
+	
+	global $smgJSLibs;
+	$smgJSLibs[] = 'prototype';
+	
 }
 
 /**
@@ -666,8 +670,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+		//$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js');
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/slider.js');
@@ -809,8 +813,8 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
                 
 	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
-		$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
+		//$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
 
 		smwfHaloAddJSLanguageScripts($jsm);
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js');
@@ -1113,7 +1117,7 @@ function smwOBAddHTMLHeader(&$out) {
 
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/effects.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/scriptaculous/dragdrop.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/generalTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
@@ -1128,7 +1132,7 @@ function smwOBAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/deployOntologyBrowser.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
@@ -1151,7 +1155,7 @@ function smwPRAddHTMLHeader(&$out) {
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":Properties");
 	} else {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Properties");
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":Properties");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":Properties");
 
 	}
@@ -1174,9 +1178,8 @@ function smwfQIAddHTMLHeader(&$out){
 
 	$jsm = SMWResourceManager::SINGLETON();
 
-	// deactivate deploy version for QI temporarily
-	//if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
+	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/Language/SMW_Language.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/Logger/smw_logger.js', "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1186,25 +1189,16 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
-				
-	/*} else {
+		
+	} else {
 
-		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
+		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		smwfHaloAddJSLanguageScripts($jsm, "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
 
-		// add result format javascripts for query interface
-		if ($srfgScriptPath != null || $srfgScriptPath != "") {
-			// timeline
-			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SRF_timeline.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
-			$jsm->addScriptIf($srfgScriptPath .  '/Timeline/SimileTimeline/timeline-api.js', "all", -1, array(NS_SPECIAL.":QueryInterface"));
-
-			// exhibit
-			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/includes/src/webapp/api/exhibit-api.js?autoCreate=false&safe=true', "all", -1, array("-1:QueryInterface"));
-			//      $jsm->addScriptIf($srfgScriptPath .  '/Exhibit/SRF_Exhibit.js', "all", -1, array("-1:QueryInterface"));
-		}
-	}*/
+		
+	}
 	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/qi.css', "all", -1, NS_SPECIAL.":QueryInterface");

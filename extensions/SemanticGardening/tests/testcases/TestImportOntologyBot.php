@@ -29,7 +29,7 @@ class TestImportOntologyBot extends PHPUnit_Framework_TestCase {
 
 		$this->bot->testOntologyImport("testcases/resources/pizza_latest.owl");
 		$ws = $this->bot->getWikiStatements();
-		$this->assertEquals(306, count($this->bot->getWikiStatements()));
+		$this->assertEquals(308, count($this->bot->getWikiStatements()));
 
 	}
 
