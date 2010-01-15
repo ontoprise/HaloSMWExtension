@@ -610,7 +610,7 @@ class SMWTripleStore extends SMWStore {
 						$newData = $newtitle;
 					}
 					$newid = str_replace($titleText, $newtitle->getText(), $id);
-					$rewritten_prs[$newid] = new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, $newlabel, $newData, $pr->getOutputFormat());
+					$rewritten_prs[$newid] = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
 					$rewritten_prs[$newid]->getHash();
 					$toUnset[] = $id;
 				}
