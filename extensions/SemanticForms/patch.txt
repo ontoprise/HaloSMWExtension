@@ -916,6 +916,35 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 +}
 +/*op-patch|DH|2009-09-17|SF|Embedded forms|end*/
 \ No newline at end of file
+Index: extensions/SemanticForms/includes/SF_FormEditTab.php
+===================================================================
+--- extensions/SemanticForms/specials/SF_EditData.php	(revision 4617)
++++ extensions/SemanticForms/specials/SF_EditData.php	(working copy)
+@@ -116,7 +116,7 @@
+         * special pages)
+         */
+        static function displayForm($action, $article) {
+-               global $sfgIP, $sfgUseFormEditPage;
++               global $sfgIP, $sfgUseFormEditPage, $wgContLang;
+
+                // return "true" if the call failed (meaning, pass on handling
+                // of the hook to others), and "false" otherwise
+@@ -133,9 +133,14 @@
+                }
+                if (count($form_names) > 1) {
+                        wfLoadExtensionMessages('SemanticForms');
+-                       $warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
++                        $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(SF_NS_FORM).":'+this[selectedIndex].text+'/'+wgPageName; return false";
++                        $selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
++                        for ($i =0, $is=count($form_names); $i < $is; $i++)
++                                $selection .= "<option>".$form_names[$i]."</option>\n";
++                        $selection.="</select>\n";
++
+                        global $wgOut;
+-                       $wgOut->addHTML($warning_text);
++                       $wgOut->addHTML($selection);
+                }
+                $form_name = $form_names[0];
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 6321)
@@ -1139,8 +1168,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            // doing a replace
            if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
              $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
--              preg_replace('/\}\}/m', '}²',
--                preg_replace('/\{\{/m', '²{', $template_text)) .
+-              preg_replace('/\}\}/m', '}ï¿½',
+-                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
 +              preg_replace('/\}\}/m', '}ï¿½',
 +                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
                "\n{{{insertionpoint}}}",
@@ -1148,8 +1177,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
            // otherwise, if it's a partial form, we have to add the new
            // text somewhere
            } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
--            $existing_page_content = preg_replace('/\}\}/m', '}²',
--              preg_replace('/\{\{/m', '²{', $template_text)) .
+-            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
+-              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
 +            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
 +              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
                  "\n{{{insertionpoint}}}\n" . $existing_page_content;
@@ -1172,7 +1201,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
           $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
         } else {
           $free_text = null;
--         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
+-         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
 +         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
           $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
           $existing_page_content = Sanitizer::safeEncodeAttribute($existing_page_content);
@@ -1557,7 +1586,7 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
 ===================================================================
 --- extensions/SemanticForms/languages/SF_Messages.php	(revision 6321)
 +++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
-@@ -15,6 +15,12 @@
+@@ -15,6 +15,16 @@
   */
  $messages['en'] = array(
  	// user messages
@@ -1567,6 +1596,10 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
 +        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|start*/
 +        'sf_fck_NORICHEDITOR'                => 'The WYSIWYG editor cannot be used for this article. You can either edit the form fields now or load the article into the standard wikitext editor (open here: $1).',
 +        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
++        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++        'sf_several_forms_notice'            => 'More than one default form is defined for this page.',
++        'sf_several_forms_label'             => 'Choose form for editing the page',
++        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
