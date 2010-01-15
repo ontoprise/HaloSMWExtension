@@ -56,6 +56,11 @@ $sngIP = $IP . '/extensions/SemanticNotifications';
 ##
 $sngScriptPath = $wgScriptPath . '/extensions/SemanticNotifications';
 
+
+// Tell the script manager, that we need prototype
+global $smgJSLibs; 
+$smgJSLibs[] = 'prototype'; 
+
 /**
  * Switch on SemanticNotifications. This function must be called in 
  * LocalSettings.php after SN_Initialize.php was included and default values
