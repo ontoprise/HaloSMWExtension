@@ -455,7 +455,8 @@ HTML;
 				
 		$r = $this->getCompareAction($oldXML, $newXML);
 		if ($r == self::RESULT_EQUAL) {
-			return false;
+			$false = false;
+			return $false;
 		} else if ($r == self::COMPARE_HASHES) {
 			return $this->compareHashes($oldXML, $newXML);
 		} else if ($r == self::COMPARE_RESULT) {
