@@ -76,6 +76,62 @@
 		<delete dir="bin/zip" />
 	</target>
 
-
+	<target name="deployscripts">
+		<concat destfile="../../HaloACL/scripts/specialhacl-packed.js">
+			<fileset dir="../../HaloACL/yui" includes="yahoo-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="yuiloader-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="event-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="dom-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="treeview-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="logger-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="element-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="button-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="connection-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="json-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="yahoo-dom-event.js" />
+			<fileset dir="../../HaloACL/yui" includes="animation-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="tabview-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="datasource-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="datatable-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="paginator-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="container-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="autocomplete-min.js" />
+			<fileset dir="../../HaloACL/scripts" includes="haloacl.js" />
+			<fileset dir="../../HaloACL/scripts" includes="groupuserTree.js" />
+			<fileset dir="../../HaloACL/scripts" includes="rightsTree.js" />
+			<fileset dir="../../HaloACL/scripts" includes="userTable.js" />
+			<fileset dir="../../HaloACL/scripts" includes="pageTable.js" />
+			<fileset dir="../../HaloACL/scripts" includes="manageUserTree.js" />
+			<fileset dir="../../HaloACL/scripts" includes="whitelistTable.js" />
+			<fileset dir="../../HaloACL/scripts" includes="autoCompleter.js" />
+			<fileset dir="../../HaloACL/scripts" includes="notification.js" />
+			<fileset dir="../../HaloACL/scripts" includes="quickaclTable.js" />
+		</concat>
+		<concat destfile="../../HaloACL/scripts/hacl-packed.js">
+			<fileset dir="../../HaloACL/yui" includes="yahoo-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="yuiloader-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="event-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="dom-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="treeview-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="element-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="button-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="connection-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="json-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="yahoo-dom-event.js" />
+			<fileset dir="../../HaloACL/yui" includes="animation-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="tabview-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="datasource-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="datatable-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="paginator-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="container-min.js" />
+			<fileset dir="../../HaloACL/yui" includes="dragdrop-min.js" />
+			<fileset dir="../../HaloACL/scripts" includes="toolbar.js" />
+			<fileset dir="../../HaloACL/scripts" includes="haloacl.js" />
+			<fileset dir="../../HaloACL/scripts" includes="groupuserTree.js" />
+			<fileset dir="../../HaloACL/scripts" includes="userTable.js" />
+			<fileset dir="../../HaloACL/scripts" includes="notification.js" />
+		</concat>			
+	</target>
 
 </project>
