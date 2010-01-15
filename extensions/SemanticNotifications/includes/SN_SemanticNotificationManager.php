@@ -143,7 +143,6 @@ class SemanticNotificationManager {
 		$jsm = SMWResourceManager::SINGLETON();
 		$specialpagename = ':'.wfMsg('sn_special_url_name');
 	
-		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/prototype.js', "all", -1, NS_SPECIAL.$specialpagename);
 		$jsm->addScriptIf($sngScriptPath . '/scripts/SN_SemanticNotifications.js', "view", -1, NS_SPECIAL.$specialpagename);
 
 		$jsm->addCSSIf($smwgScriptPath . '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.$specialpagename);
