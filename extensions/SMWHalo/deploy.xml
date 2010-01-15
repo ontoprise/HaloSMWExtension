@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>146</version>
-		<patchlevel>9</patchlevel>
+		<version>147</version>
+		<patchlevel>0</patchlevel>
 		<id>SMWHalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
