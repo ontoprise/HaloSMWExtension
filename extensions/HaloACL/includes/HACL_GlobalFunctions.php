@@ -287,11 +287,6 @@ function addNonSpecialPageHeader(&$out) {
     }
     // -------------------
 
-    if (!defined('SMW_HALO_VERSION')) {
-        // don't include prototype.js if SMWHalo is present
-        $out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-    }
-
     return true;
 }
 
@@ -310,11 +305,6 @@ function haclAddHTMLHeader(&$out) {
     if ($wgTitle->getNamespace() != NS_SPECIAL) {
         return true;
     } else {
-
-	    if (!defined('SMW_HALO_VERSION')) {
-	        // don't include prototype.js if SMWHalo is present
-	    	$out->addScript("<script type=\"text/javascript\" src=\"". $haclgHaloScriptPath .  "/scripts/prototype.js\"></script>");
-	    }
         haclAddJSLanguageScripts($out);
 
 		if (!isset($smwgDeployVersion) || $smwgDeployVersion === false) {
