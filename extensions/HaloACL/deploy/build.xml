@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="HaloACL_build" name="HaloACL">
-	<target name="HaloACL_build">
+	<target name="HaloACL_build" depends="deployscripts">
 		<delete dir="bin/zip" />
 		<delete file="bin/HaloACL-${version}.zip" />
 		<mkdir dir="bin/zip" />
