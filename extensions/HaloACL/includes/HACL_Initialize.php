@@ -190,3 +190,6 @@ $wgAvailableRights[] = 'propertyread';
 $wgAvailableRights[] = 'propertyformedit';
 $wgAvailableRights[] = 'propertyedit';
 
+// Tell the script manager, that we need prototype
+global $smgJSLibs; 
+$smgJSLibs[] = 'prototype'; 
