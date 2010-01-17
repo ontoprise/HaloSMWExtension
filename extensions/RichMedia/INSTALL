@@ -5,34 +5,51 @@ Installation instructions
 #Requirements:
 # 
 
-    MediaWiki 1.13.2
-    SMW 1.4.2
-    Halo extension 1.4.4
-    Semantic Forms 1.8.3
-    Parser Functions 
-    String Functions 2.0 or higher
+	MediaWiki 1.13.2
+	SMW 1.4.2
+	Halo extension 1.4.4
+	Semantic Forms 1.8.3
+	Parser Functions 
+	String Functions 2.0 or higher
 	
 #
 # Installation
 #
 
-1. Add to your LocalSettings.php:
+1. Patch process:
+	1.1 The RichMedia extension comes with two different patch files.
+	- '/extensions/RichMedia/patch.txt': This file provides the necessary patches for Semantic Forms.
+	- '/extensions/RichMedia/RichMediaPatchForMW1_15_1.txt': This is needed to patch MediaWiki in version 1.15.1
+		Note: We can not ensure that this patch works properly for other versions of MediaWiki.
+	These are Eclipse patch files which can be installed 
+	using the tool patch.php from the deploy framework (smwhalo-deploy-1.0) which
+	itself uses GNU patch.
+
+		php patch.php -p <patch-file> -d <mw-dir> --onlypatch
+
+	1.2 The RichMedia extension contains several new files which need to be copied.
+	All these files are located in subdirectories of '/extensions/RichMedia/patches'.
+	- Copy the folder 'SemanticForms' to your '/extensions' folder to make sure, that
+	  among others a new version of the FloatBox is now used by SemanticForms.
+	- Copy the folder 'skins' to your <mw-dir> to make sure, that all needed icons are available.
+	
+2. Add to your LocalSettings.php:
 	(if you want pdf and doc files to be converted, set this line before RM_Initialize.php is included)
 	---
 	$smwgEnableUploadConverter = true;
 	--- 
 
-2. Add to your LocalSettings.php:
+3. Add to your LocalSettings.php:
 	(After the Halo and the Semantic Forms extensions were included)
-   
-    ---
-    include_once('extensions/RichMedia/includes/RM_Initialize.php');
-    enableRichMediaExtension();
-    
-    $wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
-    ---
 
-3. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.1.xml'
+	---
+	include_once('extensions/RichMedia/includes/RM_Initialize.php');
+	enableRichMediaExtension();
+
+	$wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
+	---
+
+4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.1.xml'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 
@@ -51,6 +68,12 @@ make sure that you merge them with the new ones delivered in this version.
 
 If you are running on Unix and want to use the UploadConverter make sure that you have installed the right packages
 of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/).
+If you're using Debian the commands for installing these packages are:
+apt-get install xpdf
+apt-get install antiword
+
+The conversion of office documents (.doc) may fail on Unix systems due to MIME type detection problems of PHP.
+You may want to see https://bugzilla.wikimedia.org/show_bug.cgi?id=20924 for futher details. 
 
 #
 # Installation of the WebDAV server
