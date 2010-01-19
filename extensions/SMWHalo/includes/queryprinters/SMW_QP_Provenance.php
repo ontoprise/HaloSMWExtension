@@ -97,7 +97,8 @@ class SMWProvenanceResultPrinter extends SMWResultPrinter {
 
 	private function createProvenanceLink($url) {
 		global $uprgWikipediaAPI;
-		if (defined('SMW_UP_RATING_VERSION')) {
+        // no provenance link, if there is "novalue" placeholder from OB and if UP rating is not installed
+		if ($url != 'http://novalue#0' && defined('SMW_UP_RATING_VERSION')) {
 			$url=str_replace('&amp;', '&', $url);
 			// hack for Wikipedia clone
 			if (strpos($uprgWikipediaAPI, 'vulcan.com')) {
