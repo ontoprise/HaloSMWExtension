@@ -739,7 +739,7 @@ OBInstanceActionListener.prototype = {
 	  		if (OB_bd.isGecko) {
 	  			// FF needs repasting for chemical formulas and equations because FF's XSLT processor does not know 'disable-output-encoding' switch. IE does.
 	  			// thus, repaste markup on all elements marked with a 'chemFoEq' attribute
-	  			GeneralBrowserTools.repasteMarkup("chemFoEq");
+	  			GeneralBrowserTools.repasteMarkup("needRepaste");
 	  		}
 	  		selectionProvider.fireRefresh();
 	  		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
@@ -1332,7 +1332,7 @@ OBGlobalActionListener.prototype = {
 		transformer.transformXMLToHTML(nodesFound, $("relattributes"), true); 
 		selectionProvider.fireRefresh();
 		selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
-		GeneralBrowserTools.repasteMarkup("chemFoEq");
+		GeneralBrowserTools.repasteMarkup("needRepaste");
 	},
 	
 	/**

@@ -313,7 +313,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 				$isLink = $params instanceof SMWWikiPageValue ? "isLink=\"true\"" : "";
 				$parameters .= "<param $isLink>$value</param>";
 			}
-			$repasteMarker = $isFormula || $needRepaste ? "chemFoEq=\"true\"" : "";
+			$repasteMarker = $isFormula || $needRepaste ? "needRepaste=\"true\"" : "";
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 			$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
@@ -351,6 +351,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 				
 				if ($smwValue->getTypeID() == '__typ') {
 					$value = implode(",",$smwValue->getTypeLabels());
+					$value = strip_tags($value, "<sub><sup><b><i>");
 					$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 				} else {
 					// small hack for datetime type. It may occur that there is a T at the end.
@@ -359,12 +360,13 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 	                } else {
 	                	$xsdValue = $smwValue->getXSDValue();
 	                }
-				    $value = "<![CDATA[".html_entity_decode($xsdValue)." ".$smwValue->getUnit()."]]>";
+	                $value = strip_tags($xsdValue, "<sub><sup><b><i>");
+				    $value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 				}
 			    
 			}
 			//special attribute mark for all things needed to get re-pasted in FF.
-			$repasteMarker = $isFormula || html_entity_decode($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "chemFoEq=\"true\"" : "";
+			$repasteMarker = $isFormula || strip_tags($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
 		
 			$title = htmlspecialchars($annotationTitle->getDBkey()); 
 			$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
@@ -372,6 +374,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
  	 		SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
  	 		
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+			
 			$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
 		}
 		$count++;

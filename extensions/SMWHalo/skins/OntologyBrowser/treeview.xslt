@@ -350,8 +350,8 @@
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:if test="@chemFoEq">
-							<xsl:attribute name="chemFoEq">true</xsl:attribute>
+						<xsl:if test="@needRepaste">
+							<xsl:attribute name="needRepaste">true</xsl:attribute>
 						</xsl:if>
 						<xsl:value-of disable-output-escaping="yes" select="child::param[1]"/>
 					</xsl:otherwise>
@@ -383,8 +383,8 @@
 								</a>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:if test="../@chemFoEq">
-									<xsl:attribute name="chemFoEq">true</xsl:attribute>
+								<xsl:if test="../@needRepaste">
+									<xsl:attribute name="needRepaste">true</xsl:attribute>
 								</xsl:if>
 								<xsl:value-of disable-output-escaping="yes" select="."/>
 							</xsl:otherwise>
