@@ -762,6 +762,7 @@
 				<xsl:if test="not (@hidePreviousArrow)">
 				<a>
 					<xsl:attribute name="partitionNum"><xsl:value-of select="@partitionNum"/></xsl:attribute>
+					<xsl:attribute name="dataSrc"><xsl:value-of select="@dataSrc"/></xsl:attribute>
 					<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 					<xsl:attribute name="length"><xsl:value-of select="@length"/></xsl:attribute>
 					<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.selectPreviousPartition(event, this)</xsl:attribute>
@@ -777,6 +778,7 @@
 				<xsl:if test="not (@hideNextArrow)">
 				<a>
 					<xsl:attribute name="partitionNum"><xsl:value-of select="@partitionNum"/></xsl:attribute>
+					<xsl:attribute name="dataSrc"><xsl:value-of select="@dataSrc"/></xsl:attribute>
 					<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 					<xsl:attribute name="length"><xsl:value-of select="@length"/></xsl:attribute>
 					<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.selectNextPartition(event, this)</xsl:attribute> 

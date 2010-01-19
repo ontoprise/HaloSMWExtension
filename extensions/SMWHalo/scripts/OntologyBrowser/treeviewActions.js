@@ -775,8 +775,18 @@ OBInstanceActionListener.prototype = {
 	selectNextPartition: function (e, htmlNode) {
 			
 		var partition = htmlNode.getAttribute("partitionnum");
+		var dataSrc = htmlNode.getAttribute("dataSrc");
 		partition++;
 		OB_instance_pendingIndicator.show();
+		if (dataSrc) {
+			var params = dataSrc.split(",");
+			var method = params.shift();
+			if (method == 'getInstancesUsingProperty') {
+				dataAccess.getInstancesUsingProperty(params[0], partition, this.selectPartitionCallback.bind(this));
+				return;
+			}
+		}
+		//TODO: refactor this to use dataSrc
 		if (globalActionListener.activeTreeName == 'categoryTree') {
 			dataAccess.getInstances(categoryActionListener.selectedCategory, partition, this.selectPartitionCallback.bind(this));
 		} else if (globalActionListener.activeTreeName == 'propertyTree') {

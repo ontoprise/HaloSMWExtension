@@ -490,7 +490,9 @@ class SMWTripleStore extends SMWStore {
 		return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
 	}
 
-
+    public function cacheSMWPageID($id, $title, $namespace, $iw) {
+        return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw);
+    }
 
 	// Helper methods
 
@@ -569,7 +571,6 @@ class SMWTripleStore extends SMWStore {
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$variables = $dom->xpath('//variable');
 		$results = $dom->xpath('//result');
-
 		// if no results return empty result object
 		if (count($results) == 0) return new SMWHaloQueryResult(array(), $query);
 
@@ -621,7 +622,8 @@ class SMWTripleStore extends SMWStore {
 		}
 		$print_requests = array_merge($print_requests, $rewritten_prs);
 		// rewriting end
-
+        
+		
 		$hasMainColumn = false;
 		$index = 0;
 		if ($query->fromASK) {
@@ -888,13 +890,14 @@ class SMWTripleStore extends SMWStore {
 	protected function serializeParams($query) {
 		$result = "";
 		$first = true;
-
+        
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
 				$result .= "?=".$printout->getLabel();
 			} else if ($printout->getData() instanceof Title) {
-				$result .= "?".$printout->getData()->getDBkey()."=".$printout->getLabel();
+				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
+				$result .= "?".$printout->getData()->getDBkey().$outputFormat."=".$printout->getLabel();
 			} else if ($printout->getData() instanceof SMWPropertyValue ) {
 				$outputFormat = $printout->getOutputFormat() !== NULL ? "#".$printout->getOutputFormat() : "";
 				$result .= "?".$printout->getData()->getXSDValue().$outputFormat."=".$printout->getLabel();

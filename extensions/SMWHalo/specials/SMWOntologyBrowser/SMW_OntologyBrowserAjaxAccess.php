@@ -149,8 +149,9 @@ class OB_Storage {
 		} else {
 			$attinstances = array();
 		}
-
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $reqfilter->limit, $partitionNum);
+        
+		$propertyName_xml = str_replace( array('"'),array('&quot;'),$prop->getDBkey());
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
 	public function getCategoryForInstance($p_array) {
@@ -460,8 +461,9 @@ class OB_StorageTS extends OB_Storage {
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition);
+        
+		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
 	public function getCategoryForInstance($p_array) {
