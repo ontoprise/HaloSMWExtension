@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+    <global>
+        <version>100</version>
+        <patchlevel>0</patchlevel>
+        <id>ScriptManager</id>
+        <vendor>Ontoprise GmbH</vendor>
+        <instdir>extensions/ScriptManager</instdir>
+        <description>
+           Javascript managing component. Basis for all Halo plugins.
+        </description>
+        <dependencies>
+           
+        </dependencies>
+    </global>
+    <codefiles>
+    
+    </codefiles>
+    <wikidumps>
+        <!-- empty -->
+    </wikidumps>
+    <resources>
+        <!-- empty -->
+    </resources>
+    <configs>
+
+        <new>
+        
+            <require name="scriptmanager"
+                file="extensions/ScriptManager/SM_Initialize.php" />
+          
+        </new>
+      
+    </configs>
+</deploydescriptor>
