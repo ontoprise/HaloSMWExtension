@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>120</version>
+		<version>140</version>
 		<id>WYSIWYG</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/FCKeditor</instdir>
@@ -9,7 +9,7 @@
 			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.
 		</description>
 		<dependencies>
-			<dependency from="145" to="145">SMWHalo</dependency>
+			<dependency from="145" to="146">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
