@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>130</version>
+		<version>140</version>
 		<id>Treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/Treeview</instdir>
