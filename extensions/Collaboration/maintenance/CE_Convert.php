@@ -53,7 +53,13 @@ while ($comrow = $dbr->fetchObject($res)) {
 	$comment_date = str_replace('', 'T', $comrow->msg_date);
 	$comment_date_for_page_name = str_replace(array('T', ':', '-', ' '), '', $comrow->msg_date);
 	$comment_user = $comrow->msg_user;
-
+	// wikiusers are stored in following format:
+	// {<Username<}
+	// so remove these special chars
+	$comment_user = str_replace(array('{','<','>','}'), '', $comment_user, $found);
+	if ($found && $found > 0)
+		$comment_user = 'User:' . $comment_user;
+	
 	$page_name = $comment_title . '_' . $comment_date_for_page_name; 
 	$page_content = '{{Comment|' .
 		'CommentPerson=' . $comment_user .
@@ -72,9 +78,11 @@ while ($comrow = $dbr->fetchObject($res)) {
 	echo "Creating comment article: " . $titleNSfixed->getFullText() . "\n";
 	if (!$article->exists()) {
 		echo "Creating comment article: " . $titleNSfixed->getFullText() . "\n";
-		$article->doEdit( $page_content, 'Comment created via Collaboration Extension convert script.' );
+		$return = $article->doEdit( $page_content, 'Comment created via Collaboration Extension convert script.' );
+		if ($return->isGood())
+			echo " => Comment article successfully created. \n";
 	} else {
-		echo "Comment article already exists. \n";
+		echo " => Comment article already exists. \n";
 	}
 }
 
