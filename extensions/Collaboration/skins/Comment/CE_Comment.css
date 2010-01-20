@@ -41,7 +41,6 @@ form#ce-cf {
 }
 div#ce-cf-user-icon {
 	float: left;
-	width: 6%;
 	margin-top: 5px;
 	padding: 5px;
 }
@@ -57,7 +56,6 @@ div#ce-cf-rightside {
 }
 div#ce-cf-user {
 	padding: 5px 0;
-	color: ;
 	margin-top: 5px;
 }
 div#ce-cf-user span.userkey{
