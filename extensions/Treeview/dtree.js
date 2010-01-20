@@ -16,10 +16,10 @@
 // $Id$
 
 
-var http = createRequestObject();
-var inCall = false;
-var callToArray = new Array();
-var returnToArray = new Array();
+var dtreeHttp = dtreeCreateRequestObject();
+var dtreeInCall = false;
+var dtreeCallToArray = new Array();
+var dtreeReturnToArray = new Array();
 
 var cachedData = [];
 var refreshOpenNodes = [];
@@ -396,7 +396,7 @@ dTree.prototype.refresh = function() {
 		'<img src="' + wgServer + wgScriptPath + '/extensions/Treeview/img/ajax-loader.gif" alt="Updating tree, please wait"/>';
 	
 	// now start with the first dynamic root node, the rest follows
-	// in handleResponseRefresh() triggered by the http requests.
+	// in dtreeHandleResponseRefresh() triggered by the http requests.
 	// set refreshDtree to true, later the dtree object is stored there
 	// this variable is used for locking.
 	drn = refreshRootNodes.shift();
@@ -650,7 +650,7 @@ dTree.prototype.loadNextLevel = function(id, callBackMethod) {
 	var params = this.getSmwData(id);
 	params += 's%3D' + this.aNodes[id].getPageName();
 	params += this.getTokenAndWriteCache(id);
-	sendCall(this.smwAjaxUrl + params, callBackMethod); 
+	dtreeSendCall(this.smwAjaxUrl + params, callBackMethod);
 };
 
 // load first level (needed for refresh)
@@ -658,7 +658,7 @@ dTree.prototype.loadFirstLevel = function(id) {
 	var params = this.getSmwData(id);
 	params += 'r%3D1%26';
 	params += this.getTokenAndWriteCache(id);
-	sendCall(this.smwAjaxUrl + params, 'r');
+	dtreeSendCall(this.smwAjaxUrl + params, 'r');
 }
 
 // load the tree via Ajax when the Wiki page is loaded and parsed already
@@ -703,9 +703,9 @@ dTree.prototype.initOnload = function(id, arg) {
 	// clear cookie with saved nodes that where loaded as this causes trouble otherwise
 	this.setCookie('ca'+this.obj, '');
 	
-	sendCall(this.smwAjaxUrl + params, 'r');
+	dtreeSendCall(this.smwAjaxUrl + params, 'r');
 	if (opento)
-	    sendCall(this.obj + '.openToName(\'' + opento +'\');', '0');
+	    dtreeSendCall(this.obj + '.openToName(\'' + opento +'\');', '0');
 };
 
 // create token and add current dTree to cache
@@ -959,14 +959,14 @@ if (!Array.prototype.pop) {
 
 // parse reponse of Ajax call when fetching
 // children of a certain node
-parseHttpResponse = function() {
+dtreeParseHttpResponse = function() {
 	var result;
 	var resObj;
 	var dTree;
 
-	if (http.readyState == 4 && http.status == 200) { 
-    	result = http.responseText;
-    	inCall = false;
+	if (dtreeHttp.readyState == 4 && dtreeHttp.status == 200) {
+    	result = dtreeHttp.responseText;
+    	dtreeInCall = false;
     }
     else return;
 
@@ -997,8 +997,8 @@ parseHttpResponse = function() {
     return new Array (parentId, dTree, resObj.treelist, noc, url, params);    
 }
 
-handleResponseOpen = function() {
-	var responseArr = parseHttpResponse();
+dtreeHandleResponseOpen = function() {
+	var responseArr = dtreeParseHttpResponse();
 	if (!responseArr) return;
 
 	var parentId = responseArr[0];		
@@ -1023,9 +1023,9 @@ handleResponseOpen = function() {
     dTree.saveCookiesAndDisplay(newSerialData);
 }
 
-handleResponseRefresh = function() {
+dtreeHandleResponseRefresh = function() {
 
-	var responseArr = parseHttpResponse();
+	var responseArr = dtreeParseHttpResponse();
 	if (!responseArr) return;
 	
 	var parentId = responseArr[0];		
@@ -1129,7 +1129,7 @@ handleResponseRefresh = function() {
 }
 
 // http request Object
-function createRequestObject() {
+function dtreeCreateRequestObject() {
 	var reqObj;
 	// Mozilla, Safari and other browsers
 	if (window.XMLHttpRequest)
@@ -1149,24 +1149,24 @@ function createRequestObject() {
 	return reqObj;
 }
 
-function sendCall(whereTo, returnTo){
+function dtreeSendCall(whereTo, returnTo){
 	// add the next call to the queue 
-	callToArray.push(whereTo);
-	returnToArray.push(returnTo);
+	dtreeCallToArray.push(whereTo);
+	dtreeReturnToArray.push(returnTo);
 }
 
-function callQueue(){
+function dtreeCallQueue(){
 	// check the queue and send next call in line
-	if(!inCall && callToArray.length > 0) {
+	if(!dtreeInCall && dtreeCallToArray.length > 0) {
 		// do we have anything in the queue?
-		if(callToArray.length > 0) {
+		if(dtreeCallToArray.length > 0) {
 			//yes, so take the first item from the whereTo and returnTo array
-			whereTo = callToArray.shift();
-			returnTo = returnToArray.shift();
+			whereTo = dtreeCallToArray.shift();
+			returnTo = dtreeReturnToArray.shift();
 			// check, if the whereTo starts with http(s)://
 			if (whereTo.match(/^https?:\/\//i))
 				// and send that call
-				doCall(whereTo, returnTo);
+				dtreeDoCall(whereTo, returnTo);
 			else
 				// if whereTo starts not with http then this is a normal function call
 				eval(whereTo);
@@ -1174,24 +1174,18 @@ function callQueue(){
 	}
 }
 
-function doCall(whereTo, returnTo){
-	inCall = true;
+function dtreeDoCall(whereTo, returnTo){
+	dtreeInCall = true;
 	document.body.style.cursor='wait';
-	http.open('get', whereTo);
+	dtreeHttp.open('get', whereTo);
 	if(returnTo == "r")
-		http.onreadystatechange = handleResponseRefresh;
+		dtreeHttp.onreadystatechange = dtreeHandleResponseRefresh;
 	else
-		http.onreadystatechange = handleResponseOpen;
-	http.send(null);
+		dtreeHttp.onreadystatechange = dtreeHandleResponseOpen;
+	dtreeHttp.send(null);
 }
 
-function hr_inCall(){
-	if(http.readyState == 4) {
-		inCall = false;
-	}
-}
-
-var queueWatcher = setInterval(callQueue, 100);
+var dtreeQueueWatcher = setInterval(dtreeCallQueue, 100);
 
 function URLEncode( str ) {
     // version: 904.1412
