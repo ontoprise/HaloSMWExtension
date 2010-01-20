@@ -11,6 +11,7 @@ Installation instructions
 	Semantic Forms 1.8.3
 	Parser Functions 
 	String Functions 2.0 or higher
+	Deployment Framework
 	
 #
 # Installation
@@ -57,14 +58,15 @@ list of all 'related documents and media' which also allows you to directly uplo
 #
 # Notice 
 #
-The Rich Media extension now fully includes the MIME-Type extension.
-If you already used a version of the MIME-Type extension, then be sure, 
-that you have deleted '/extensions/SMWHalo/includes/SMW_MIME_settings.php' and no longer include this file in your LocalSettings.php.
+    *  The Rich Media extension now fully includes the MIME-Type extension. If you already used a version of the MIME-Type extension, then be sure, that you have deleted '/extensions/SMWHalo/includes/SMW_MIME_settings.php' and no longer include this file in your LocalSettings.php. 
 
-The template call has changed since version 1.0. Please make sure that you are using the right call now.
+    * The template call has changed since version 1.0. Please make sure that you are using the right call now. {{RMList|show=True}}
 
-If you have already used a prior version of RichMedia extension and you have done changes to your templates,
-make sure that you merge them with the new ones delivered in this version.
+    * If you have already used a prior version of RichMedia extension and you have done changes to your templates, make sure that you merge them with the new ones delivered in this version. 
+
+    * If you update your Semantic Forms extension after installing the RichMedia extension, be sure to overwrite the floatbox.js file in /extensions/SemanticForms/libs again with the one delivered by RichMedia and run the patch for Semantic Forms again (this may cause errors with Semantic Form versions other than 1.8.3). Otherwise the overlay window for uploading files would not open. 
+
+    * If you are running Semantic Wiki on Unix and want to use the UploadConverter make sure that you have installed the right packages of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/). 
 
 If you are running on Unix and want to use the UploadConverter make sure that you have installed the right packages
 of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/).
