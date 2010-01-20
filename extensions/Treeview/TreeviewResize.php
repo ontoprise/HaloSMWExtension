@@ -25,6 +25,9 @@ EOT;
         exit( 1 );
 }
 
+// script manager from the Halo project
+global $smgJSLibs; $smgJSLibs[] = 'prototype';
+
 //Register Specialpage
 //$wgExtensionCredits['specialpage'][] = array(
 //	'name' => 'Comment',
@@ -33,7 +36,7 @@ EOT;
 //	'description' => 'Extension to dynamically resize the treeview in the menu',
 //	'version' => '0.0.1'
 //);
- 
+
 //
 $wgHooks['UserToggles'][] = 'smwhg_TreeviewResizeAddPreferences';
 function smwhg_TreeviewResizeAddPreferences(&$extraToggles) {
