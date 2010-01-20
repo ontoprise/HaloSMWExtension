@@ -9,7 +9,7 @@
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 // Version number of the extension
-define('SMW_UP_RATING_VERSION', '1.0');
+define('SMW_UP_RATING_VERSION', '1.1');
 
 $wgExtensionCredits['other'][] = array(
     'name' => 'SMW Ultrapedia Rating v'.SMW_UP_RATING_VERSION,
