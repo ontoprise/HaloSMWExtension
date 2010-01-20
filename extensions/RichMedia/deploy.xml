@@ -11,6 +11,7 @@
 		<dependencies>
 			<dependency from="1151" to="1151">MW</dependency>
 			<dependency from="183" to="183">semanticforms</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>

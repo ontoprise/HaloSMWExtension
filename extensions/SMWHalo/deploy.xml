@@ -11,7 +11,8 @@
 			Mediawiki
 		</description>
 		<dependencies>
-			<dependency from="143" to="143">SMW</dependency>
+			<dependency from="143" to="143">smw</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
