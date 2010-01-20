@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>110</version>
+		<id>SemanticNotifications</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/SemanticNotifications</instdir>
+		<description>
+			Sends notifications when values of semantic properties change.
+		</description>
+		<dependencies>
+			<dependency from="1132" to="1159">MW</dependency>
+			<dependency from="140" to="145">SMW</dependency>
+			<dependency from="142" to="146">smwhalo</dependency>
+			<dependency from="100" to="130">SemanticGardening</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
+		</dependencies>
+		<patchlevel>0</patchlevel>
+	</global>
+	<codefiles>
+	</codefiles>
+	<wikidumps>
+		<!-- empty -->
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="SemanticGardening" />
+
+		<new>
+			<require name="semnot"
+				file="extensions/SemanticNotifications/includes/SN_Initialize.php" />
+			<function name="enableSemanticNotifications">
+			</function>
+		</new>
+		<uninstall>
+		</uninstall>
+	</configs>
+</deploydescriptor>
