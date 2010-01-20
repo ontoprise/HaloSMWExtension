@@ -142,8 +142,27 @@ pre {
 	color: black;
 	background-color: #f9f9f9;
 	line-height: 1.1em;
+
+        /*TODO: find a better solution for linebreaks*/
+        width: 870px;                          /* specify width  */
+        white-space: pre-wrap;                 /* CSS3 browsers  */
+        white-space: -moz-pre-wrap !important; /* 1999+ Mozilla  */
+        white-space: -pre-wrap;                /* Opera 4 thru 6 */
+        white-space: -o-pre-wrap;              /* Opera 7 and up */
+        word-wrap: break-word;                 /* IE 5.5+ and up */
+        /* overflow-x: auto; */                /* Firefox 2 only */
+        /*width: 99%; /*/         /* only if needed */
 }
 
+.content hr {
+    background-color:#FFFFFF;
+    border-color:#FFFFFF #FFFFFF #999999;
+    border-style:none none dotted;
+    border-width:medium medium 1px;
+    clear:both;
+    height:1px;
+    margin-bottom:12px;
+}
 
 /* TOC */
 
@@ -154,4 +173,14 @@ pre {
 
 #mw-data-after-content {
     margin-left: 1px;
+}
+
+/* emulate center */
+.center {
+	width: 100%;
+	text-align: center;
+}
+*.center * {
+	margin-left: auto;
+	margin-right: auto;
 }
