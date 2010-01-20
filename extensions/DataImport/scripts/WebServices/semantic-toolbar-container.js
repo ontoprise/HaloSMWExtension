@@ -113,4 +113,7 @@ WebServiceToolBar.prototype = {
 if (typeof FCKeditor == 'undefined'){
 	var wsToolBar = new WebServiceToolBar();
 	Event.observe(window, 'load', wsToolBar.callme.bindAsEventListener(wsToolBar));
+} else {
+	var useWSSpecial = true;
 }
+
