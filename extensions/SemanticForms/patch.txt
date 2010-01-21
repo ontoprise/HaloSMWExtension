@@ -918,33 +918,42 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_EditData.php	(revision 4617)
-+++ extensions/SemanticForms/specials/SF_EditData.php	(working copy)
-@@ -116,7 +116,7 @@
-         * special pages)
-         */
-        static function displayForm($action, $article) {
--               global $sfgIP, $sfgUseFormEditPage;
-+               global $sfgIP, $sfgUseFormEditPage, $wgContLang;
+--- extensions/SemanticForms/specials/SF_EditTab.php	(revision 4617)
++++ extensions/SemanticForms/specials/SF_EditTab.php	(working copy)
+@@ -116,9 +116,11 @@
+ 	 * special pages)
+ 	 */
+ 	static function displayForm($action, $article) {
+-		global $sfgIP, $sfgUseFormEditPage;
++        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++        global $sfgIP, $sfgUseFormEditPage, $wgContLang;
++        /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
 
-                // return "true" if the call failed (meaning, pass on handling
-                // of the hook to others), and "false" otherwise
-@@ -133,9 +133,14 @@
-                }
-                if (count($form_names) > 1) {
-                        wfLoadExtensionMessages('SemanticForms');
--                       $warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
-+                        $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(SF_NS_FORM).":'+this[selectedIndex].text+'/'+wgPageName; return false";
-+                        $selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
-+                        for ($i =0, $is=count($form_names); $i < $is; $i++)
-+                                $selection .= "<option>".$form_names[$i]."</option>\n";
-+                        $selection.="</select>\n";
+-		// return "true" if the call failed (meaning, pass on handling
++        // return "true" if the call failed (meaning, pass on handling
+ 		// of the hook to others), and "false" otherwise
+ 		if ($action != 'formedit') {
+ 			return true;
+@@ -133,9 +135,16 @@
+ 		}
+ 		if (count($form_names) > 1) {
+ 			wfLoadExtensionMessages('SemanticForms');
+-			$warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
++            /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++            $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(SF_NS_FORM).":'+this[selectedIndex].text+'/'+wgPageName; return false";
++            $selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
++            for ($i =0, $is=count($form_names); $i < $is; $i++)
++                $selection .= "<option>".$form_names[$i]."</option>\n";
++            $selection.="</select>\n";
 +
-                        global $wgOut;
--                       $wgOut->addHTML($warning_text);
-+                       $wgOut->addHTML($selection);
-                }
-                $form_name = $form_names[0];
+ 			global $wgOut;
+-			$wgOut->addHTML($warning_text);
++			$wgOut->addHTML($selection);
++            /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
+ 		}
+ 		$form_name = $form_names[0];
+
+
 Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormPrinter.inc	(revision 6321)
@@ -1599,7 +1608,7 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
 +        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
 +        'sf_several_forms_notice'            => 'More than one default form is defined for this page.',
 +        'sf_several_forms_label'             => 'Choose form for editing the page',
-+        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++        /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
