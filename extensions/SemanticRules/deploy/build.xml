@@ -1,51 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="semanticrules" name="Semantic Rules">
-    <target name="semanticrules">
-        <delete dir="bin/zip" />
-        <delete file="bin/smwhalo-rules-${version}.zip" />
-        <mkdir dir="bin/zip" />
+	<target name="semanticrules" depends="versionhint">
+		<delete dir="bin/zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-rules*.zip" />
+		</delete>
+		<mkdir dir="bin/zip" />
 
-        <copy todir="bin/zip/extensions/SemanticRules/includes">
-            <fileset dir="../includes/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-         <copy todir="bin/zip/extensions/SemanticRules/languages">
-            <fileset dir="../languages/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-         <copy todir="bin/zip/extensions/SemanticRules/maintenance">
-            <fileset dir="../maintenance/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-        <copy todir="bin/zip/extensions/SemanticRules/scripts">
-            <fileset dir="../scripts/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-        <copy todir="bin/zip/extensions/SemanticRules/skins">
-            <fileset dir="../skins/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-        <copy todir="bin/zip/extensions/SemanticRules/specials">
-            <fileset dir="../specials/">
-                <exclude name="**/.svn, **/CVS" />
-            </fileset>
-        </copy>
-        
-        <copy todir="bin/zip/extensions/SemanticRules/">
-            <fileset dir="../">
-                <include name="COPYING" />
-                <include name="INSTALL" />
-            	<include name="deploy.xml" />
-           </fileset>
-        
-        </copy>
-        <zip destfile="bin/smwhalo-rules-${version}.zip" basedir="bin/zip" />
-        <delete dir="bin/zip" />
-    </target>
+		<copy todir="bin/zip/extensions/SemanticRules/includes">
+			<fileset dir="../includes/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticRules/languages">
+			<fileset dir="../languages/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticRules/maintenance">
+			<fileset dir="../maintenance/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticRules/scripts">
+			<fileset dir="../scripts/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticRules/skins">
+			<fileset dir="../skins/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
+		<copy todir="bin/zip/extensions/SemanticRules/specials">
+			<fileset dir="../specials/">
+				<exclude name="**/.svn, **/CVS" />
+			</fileset>
+		</copy>
 
+		<copy todir="bin/zip/extensions/SemanticRules/">
+			<fileset dir="../">
+				<include name="COPYING" />
+				<include name="INSTALL" />
+				<include name="deploy.xml" />
+			</fileset>
+
+		</copy>
+		<zip destfile="bin/smwhalo-rules.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-rules.zip" />
+		</exec>
+	</target>
+
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/SR_Initialize.php" />
+		</exec>
+	</target>
 </project>

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="SMWHalo">
-	<target name="build">
+<project basedir="." default="unifiedsearch" name="UnifiedSearch">
+	<target name="unifiedsearch" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-search-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-search*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/UnifiedSearch/includes">
@@ -58,8 +60,19 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-search-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/smwhalo-search.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-search.zip" />
+		</exec>
 	</target>
-
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/UnifiedSearch.php" />
+		</exec>
+	</target>
 </project>
