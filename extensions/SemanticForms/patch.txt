@@ -920,26 +920,13 @@ Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
 --- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 4617)
 +++ extensions/SemanticForms/includes/SF_FormEditTab.php	(working copy)
-@@ -116,9 +116,11 @@
- 	 * special pages)
- 	 */
- 	static function displayForm($action, $article) {
--		global $sfgIP, $sfgUseFormEditPage;
-+        /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
-+        global $sfgIP, $sfgUseFormEditPage, $wgContLang;
-+        /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
-
--		// return "true" if the call failed (meaning, pass on handling
-+        // return "true" if the call failed (meaning, pass on handling
- 		// of the hook to others), and "false" otherwise
- 		if ($action != 'formedit') {
- 			return true;
-@@ -133,9 +135,16 @@
+@@ -133,9 +133,17 @@
  		}
  		if (count($form_names) > 1) {
  			wfLoadExtensionMessages('SemanticForms');
 -			$warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
 +            /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++            global $wgContLang;
 +            $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(SF_NS_FORM).":'+this[selectedIndex].text+'/'+wgPageName; return false";
 +            $selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
 +            for ($i =0, $is=count($form_names); $i < $is; $i++)
