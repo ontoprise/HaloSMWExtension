@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="smw_build" name="SMW">
-	<target name="smw_build">
+	<target name="smw_build" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete file="bin/smw-${version}.zip" />
+		  <delete>
+		            <fileset dir="bin" includes="smw*.zip" />
+		        </delete>
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/SemanticMediaWiki/includes">
@@ -46,9 +48,21 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smw-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/smw.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+		            <arg value="../../../buildtools/renameDeployable.php" />
+		            <arg value="../deploy.xml" />
+		            <arg value="bin/smw.zip" />
+		        </exec>
 	</target>
+    <target name="versionhint">
+        <exec executable="php">
+            <arg value="../../../buildtools/replaceVersionHint.php" />
+            <arg value="../deploy.xml" />
+            <arg value="../includes/SMW_GlobalFunctions.php" />
+        </exec>
+    </target>
 
 
 

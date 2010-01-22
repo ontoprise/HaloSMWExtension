@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="Richmedia">
-	<target name="build">
+	<target name="build" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-richmedia-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-richmedia*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 		<copy todir="bin/zip/extensions/RichMedia/bin">
 			<fileset dir="../bin/">
@@ -61,10 +63,23 @@
 			</fileset>
 		</copy>
 
-		<zip destfile="bin/smwhalo-richmedia-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/smwhalo-richmedia.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
-	</target>
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-richmedia.zip" />
+		</exec>
 
+	</target>
+	
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/RM_Initialize.php" />
+		</exec>
+	</target>
 	<target name="install">
 
 		<copy todir="../../SemanticForms/" overwrite="true">

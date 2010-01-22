@@ -30,7 +30,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
-define('HACL_HALOACL_VERSION', '1.0');
+define('HACL_HALOACL_VERSION', '{{$VERSION}}');
 
 define('HACL_STORE_SQL', 'HaclStoreSQL');
 // constant for special schema properties

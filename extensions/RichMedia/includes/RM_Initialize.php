@@ -12,7 +12,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 if ( !defined( 'SMW_HALO_VERSION' ) )
     die("The RichMedia extension requires the Halo extension, which seems not to be installed.");
 
-define('SMW_RM_VERSION', '1.4-for-SMW-1.4.x');
+define('SMW_RM_VERSION', '{{$VERSION}}-for-SMW-1.4.x');
 
 global $smwgRMIP, $wgHooks; 
 $smwgRMIP = $IP . '/extensions/RichMedia';

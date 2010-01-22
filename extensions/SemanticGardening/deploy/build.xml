@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="SMWHalo">
-	<target name="build">
+<project basedir="." default="semanticgardening" name="SemanticGardening">
+	<target name="semanticgardening" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-gardening-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-gardening*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/SemanticGardening/includes">
@@ -49,8 +51,20 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-gardening-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/smwhalo-gardening.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-gardening.zip" />
+		</exec>
 	</target>
 
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/SGA_GardeningInitialize.php" />
+		</exec>
+	</target>
 </project>

@@ -2,19 +2,27 @@
 <project basedir="." default="build" name="wysiwyg">
 	<target name="build">
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-wysiwyg-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-wysiwyg*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/FCKeditor/">
 			<fileset file="../**">
 				<exclude name="**/.svn, **/CVS" />
 				<exclude name="**/deploy**" />
-                                <exclude name="**/tests/**" />
+				<exclude name="**/tests/**" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-wysiwyg-${version}.zip"
-                     basedir="bin/zip"
-                />
+		<zip destfile="bin/smwhalo-wysiwyg.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-wysiwyg.zip" />
+		</exec>
 	</target>
+
+
+
 </project>

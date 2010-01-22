@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>183</version>
+        <version>184</version>
         <id>SemanticForms</id>
         <vendor>Ontoprise GmbH / Yaron Kohan</vendor>
         <instdir>extensions/SemanticForms</instdir>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="scriptmanager_build" name="ScriptManager">
 
-	<target name="scriptmanager_build">
+	<target name="scriptmanager_build" depends="versionhint">
 		<delete dir="bin/zip" />
-		<delete file="bin/scriptmanager-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-scriptmanager*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 		<copy todir="bin/zip/extensions/ScriptManager/scripts">
 			<fileset dir="../scripts/">
@@ -16,7 +18,20 @@
 
 			</fileset>
 		</copy>
-		<zip destfile="bin/scriptmanager-${version}.zip" basedir="bin/zip" />
-        <delete dir="bin/zip" />
+		<zip destfile="bin/scriptmanager.zip" basedir="bin/zip" />
+		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/scriptmanager.zip" />
+		</exec>
+	</target>
+
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../SM_Initialize.php" />
+		</exec>
 	</target>
 </project>

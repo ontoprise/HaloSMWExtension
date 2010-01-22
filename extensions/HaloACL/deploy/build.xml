@@ -2,7 +2,9 @@
 <project basedir="." default="HaloACL_build" name="HaloACL">
 	<target name="HaloACL_build" depends="deployscripts">
 		<delete dir="bin/zip" />
-		<delete file="bin/HaloACL-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-HaloACL*.zip" />
+		</delete>
 		<mkdir dir="bin/zip" />
 
 		<copy todir="bin/zip/extensions/HaloACL/arc">
@@ -72,11 +74,24 @@
 				<include name="patch_for_SMW_1.4.3.txt" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/HaloACL-${version}.zip" basedir="bin/zip" />
+		<zip destfile="bin/HaloACL.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/HaloACL.zip" />
+		</exec>
 	</target>
 
-	<target name="deployscripts">
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/HACL_Initialize.php" />
+		</exec>
+	</target>
+
+	<target name="deployscripts" depends="versionhint">
 		<concat destfile="../../HaloACL/scripts/specialhacl-packed.js">
 			<fileset dir="../../HaloACL/yui" includes="yahoo-min.js" />
 			<fileset dir="../../HaloACL/yui" includes="yuiloader-min.js" />
@@ -131,7 +146,7 @@
 			<fileset dir="../../HaloACL/scripts" includes="groupuserTree.js" />
 			<fileset dir="../../HaloACL/scripts" includes="userTable.js" />
 			<fileset dir="../../HaloACL/scripts" includes="notification.js" />
-		</concat>			
+		</concat>
 	</target>
 
 </project>
