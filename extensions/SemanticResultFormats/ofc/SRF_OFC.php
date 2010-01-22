@@ -34,7 +34,7 @@ class SRFOFC extends SMWResultPrinter {
 	function getScripts() {
 	    global $srfgScriptPath;
 	    $scripts=array();
-		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n";
+	    // jquery mainlib is loaded by ScriptManager
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/json2.js"></script>' . "\n";
