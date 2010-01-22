@@ -918,8 +918,8 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormField.inc
 \ No newline at end of file
 Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 ===================================================================
---- extensions/SemanticForms/specials/SF_FormEditTab.php	(revision 4617)
-+++ extensions/SemanticForms/specials/SF_FormEditTab.php	(working copy)
+--- extensions/SemanticForms/includes/SF_FormEditTab.php	(revision 4617)
++++ extensions/SemanticForms/includes/SF_FormEditTab.php	(working copy)
 @@ -116,9 +116,11 @@
  	 * special pages)
  	 */
