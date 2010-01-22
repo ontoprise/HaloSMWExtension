@@ -4,7 +4,11 @@
 
 	<target name="smwhalo_build" depends="deployscripts">
 		<delete dir="bin/zip" />
-		<delete file="bin/smwhalo-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-*.zip" />
+		</delete>
+
+
 		<mkdir dir="bin/zip" />
 		<copy todir="bin/zip/extensions/SMWHalo/config">
 			<fileset dir="../config/">
@@ -79,15 +83,23 @@
 			</fileset>
 		</copy>
 
-		
 
-		<zip destfile="bin/smwhalo-${version}.zip" basedir="bin/zip" />
+
+		<zip destfile="bin/smwhalo.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo.zip" />
+		</exec>
+
 	</target>
 
 	<target name="smwhalo_ext_build">
 		<delete dir="bin/zip_ext" />
-		<delete file="bin/smwhalo-ext-${version}.zip" />
+		<delete>
+			<fileset dir="bin" includes="smwhalo-ext*.zip" />
+		</delete>
 		<mkdir dir="bin/zip_ext" />
 
 		<copy todir="bin/zip_ext/extensions/DynamicPageList">
@@ -122,11 +134,16 @@
 
 
 
-		<zip destfile="bin/smwhalo-ext-${version}.zip" basedir="bin/zip_ext" />
+		<zip destfile="bin/smwhalo-ext.zip" basedir="bin/zip_ext" />
 		<delete dir="bin/zip_ext" />
+		<exec executable="php">
+			<arg value="../../../buildtools/renameDeployable.php" />
+			<arg value="../deploy.xml" />
+			<arg value="bin/smwhalo-ext.zip" />
+		</exec>
 	</target>
 
-	<target name="deployscripts">
+	<target name="deployscripts" depends="versionhint">
 		<concat destfile="../../SMWHalo/scripts/deployGeneralTools.js">
 			<fileset dir="../../SMWHalo/scripts" includes="ajaxhalo.js" />
 			<fileset dir="../../SMWHalo/scripts/OntologyBrowser" includes="generalTools.js" />
@@ -175,6 +192,14 @@
 			<filelist dir="../../SMWHalo/scripts/QueryInterface" files="treeviewQI.js, queryTree.js, Query.js, QIHelper.js, qi_tooltip.js" />
 			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
 		</concat>
+	</target>
+
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../includes/SMW_Initialize.php" />
+		</exec>
 	</target>
 
 </project>
