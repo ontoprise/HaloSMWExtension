@@ -1,17 +1,23 @@
 <?php
+/*  Copyright 2007, ontoprise GmbH
+*  This file is part of the halo-Extension.
+*
+*   The halo-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The halo-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**    This skin is based on Monobook from Mediawiki 1.15
  *     changes making this compatible to Mediawiki 1.13 have been marked
- */
-
-/**
- * OntoSkin3 nouveau
- *
- * Translated from gwicke's previous TAL template version to remove
- * dependency on PHPTAL.
- *
- * @todo document
- * @file
- * @ingroup Skins
  */
 
 if( !defined( 'MEDIAWIKI' ) )
@@ -104,7 +110,7 @@ class OntoSkin3Template extends QuickTemplate {
         $action = $wgRequest->getText( 'action' );
 
         //Load skinlib providing additional feature like halomenu quicklinks etc.
-        require_once("OntoSkin3Lib.php");
+        require_once("ontoskin3/include/OntoSkin3Lib.php");
         //create smwh_Skin Object, which provides functions for menu, quicklings, tabs
         $this->smwh_Skin = new SMWH_Skin($this,$action);
         
