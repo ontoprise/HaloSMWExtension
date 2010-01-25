@@ -2,7 +2,7 @@
 <deploydescriptor>
     <global>
         <version>184</version>
-        <id>SemanticForms</id>
+        <id>semanticforms</id>
         <vendor>Ontoprise GmbH / Yaron Kohan</vendor>
         <instdir>extensions/SemanticForms</instdir>
         <description>

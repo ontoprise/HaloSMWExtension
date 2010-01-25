@@ -56,12 +56,12 @@
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-dataimport.zip" basedir="bin/zip" />
+		<zip destfile="bin/dataimport.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/smwhalo-dataimport.zip" />
+			<arg value="bin/dataimport.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">

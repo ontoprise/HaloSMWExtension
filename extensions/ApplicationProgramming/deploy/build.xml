@@ -34,12 +34,12 @@
 			</fileset>
 		</copy>
 
-		<zip destfile="bin/application-programming.zip" basedir="bin/zip" />
+		<zip destfile="bin/applicationprogramming.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/application-programming.zip" />
+			<arg value="bin/applicationprogramming.zip" />
 		</exec>
 	</target>
 

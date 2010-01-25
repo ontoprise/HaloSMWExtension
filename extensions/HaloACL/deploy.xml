@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>110</version>
-		<id>HaloACL</id>
+		<id>haloacl</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/HaloACL</instdir>
 		<description>

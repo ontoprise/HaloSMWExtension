@@ -3,7 +3,7 @@
     <global>
         <version>100</version>
         <patchlevel>0</patchlevel>
-        <id>ScriptManager</id>
+        <id>scriptmanager</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/ScriptManager</instdir>
         <description>
