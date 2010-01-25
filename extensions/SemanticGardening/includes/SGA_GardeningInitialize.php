@@ -3,7 +3,7 @@
 if ( !defined( 'SMW_HALO_VERSION' ) )
     die("The Semantic Gardening extension requires the Halo extension to be installed.");
 
-define('SGA_GARDENING_EXTENSION_VERSION', "{{$VERSION}}");
+define('SGA_GARDENING_EXTENSION_VERSION', '{{$VERSION}}');
 
 // register initialize function
 global $wgExtensionFunctions, $sgagIP, $IP;
