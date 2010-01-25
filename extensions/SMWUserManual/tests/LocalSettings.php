@@ -1,5 +1,8 @@
 <?php
 
+# Scriptmanager needed for Halo extensions
+include_once('extensions/ScriptManager/SM_Initialize.php');
+
 #Import SMW, SMWHalo
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('http://wiki', true);
