@@ -38,12 +38,12 @@
 				<exclude name="**/*deploy*" />
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-semnot.zip" basedir="bin/zip" />
+		<zip destfile="bin/semanticnotifications.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/smwhalo-semnot.zip" />
+			<arg value="bin/semanticnotifications.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">

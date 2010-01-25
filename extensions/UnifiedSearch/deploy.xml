@@ -2,7 +2,7 @@
 <deploydescriptor>
     <global>
         <version>140</version>
-        <id>UnifiedSearch</id>
+        <id>unifiedsearch</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/UnifiedSearch</instdir>
         <description>A client for the lucene wiki server</description>

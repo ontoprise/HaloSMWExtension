@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>120</version>
-		<id>SemanticNotifications</id>
+		<id>semanticnotifications</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SemanticNotifications</instdir>
 		<description>

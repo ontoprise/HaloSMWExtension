@@ -2,7 +2,7 @@
 <deploydescriptor>
 	<global>
 		<version>140</version>
-		<id>Treeview</id>
+		<id>treeview</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/Treeview</instdir>
 		<description>

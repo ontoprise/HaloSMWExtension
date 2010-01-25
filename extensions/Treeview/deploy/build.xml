@@ -18,12 +18,12 @@
 
 			</fileset>
 		</copy>
-		<zip destfile="bin/smwhalo-treeview.zip" basedir="bin/zip" />
+		<zip destfile="bin/treeview.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/smwhalo-treeview.zip" />
+			<arg value="bin/treeview.zip" />
 		</exec>
 	</target>
 	<target name="versionhint">

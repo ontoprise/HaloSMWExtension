@@ -19,12 +19,12 @@
 
 		<get src="http://smwforum.ontoprise.com/smwforum/extensions/SMWUserManual/maintenance/cshPages.xml" dest="bin/zip/extensions/SMWUserManual/maintenance/cshPages.xml" ignoreerrors="true" />
 
-		<zip destfile="bin/smwhalo-usermanual.zip" basedir="bin/zip" />
+		<zip destfile="bin/smwusermanual.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/smwhalo-usermanual.zip" />
+			<arg value="bin/smwusermanual.zip" />
 		</exec>
 	</target>
 

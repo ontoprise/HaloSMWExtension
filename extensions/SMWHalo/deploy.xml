@@ -3,7 +3,7 @@
 	<global>
 		<version>147</version>
 		<patchlevel>0</patchlevel>
-		<id>SMWHalo</id>
+		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
 		<description>

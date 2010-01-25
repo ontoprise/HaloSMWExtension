@@ -46,12 +46,12 @@
 			</fileset>
 
 		</copy>
-		<zip destfile="bin/smwhalo-rules.zip" basedir="bin/zip" />
+		<zip destfile="bin/semanticrules.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
 		<exec executable="php">
 			<arg value="../../../buildtools/renameDeployable.php" />
 			<arg value="../deploy.xml" />
-			<arg value="bin/smwhalo-rules.zip" />
+			<arg value="bin/semanticrules.zip" />
 		</exec>
 	</target>
 
