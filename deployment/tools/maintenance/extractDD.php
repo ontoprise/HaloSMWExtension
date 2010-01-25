@@ -4,8 +4,8 @@
  * 
  * @author: Kai Kühn / ontoprise / 2009
  */
-require_once("../deployment/descriptor/DF_DeployDescriptor.php");
-require_once("../deployment/tools/smwadmin/DF_Tools.php");
+require_once("../../descriptor/DF_DeployDescriptor.php");
+require_once("../../tools/smwadmin/DF_Tools.php");
 
 function getLocalPackages($ext_dir) {
 
@@ -71,9 +71,10 @@ if (Tools::isWindows() && $latest) {
 $outputDir = str_replace("\\", "/", $outputDir);
 if (substr($outputDir, -1) != "/") $outputDir .= "/";
 
-$rootDir = dirname(__FILE__);
+$rootDir = realpath(dirname(__FILE__)."/../../../extensions");
 $rootDir = str_replace("\\", "/", $rootDir);
 if (substr($rootDir, -1) != "/") $rootDir .= "/";
+
 
 $localPackages = getLocalPackages($rootDir);
 foreach($localPackages as $dd_file => $dd) {
