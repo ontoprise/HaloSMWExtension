@@ -2,8 +2,8 @@ function Smwh_Skin() {
 
     //this.addMenuFunctions = function
     
-        this.expanded = false;
-        this.treeviewhidden = true;
+    this.expanded = false;
+    this.treeviewhidden = true;
   
     this.showMenu = function(){
         $jq(this).addClass("hovering");
@@ -65,24 +65,12 @@ function Smwh_Skin() {
         } else {
             //Hide tree
             this.hideTree();
-
-            //Calculate css style left
-            var toggleoffset = $jq("#shadow_right").offset().left;
-            var windowwidth  = $jq(window).width()
-            var rightspace = windowwidth - toggleoffset;
-            if( this.expanded )
-                {
-                    $jq('#smwh_treeview').css('right', null);
-
-                }
-            else
-                {
-                    $jq('#smwh_treeview').css('right', rightspace + 'px');
-                }
-
-            $jq("#smwh_treeview").css("width", "500px");
-            $jq("#smwh_treeview").addClass("smwh_treeviewleft");
             
+            $jq("#smwh_treeview").css("width", "500px");
+            $jq("#smwh_treeview").removeClass("smwh_treeviewright");
+            $jq("#smwh_treeview").addClass("smwh_treeviewleft");
+
+            this.setRightDistance();
             
             //Set tree as shown
             this.treeviewhidden = false;
@@ -98,20 +86,16 @@ function Smwh_Skin() {
         if( this.treeviewhidden == false ){
             this.hideTree();
         } else {
+            this.hideTree()
             //Show tree
             //if page uses full screen width don't show tree on the right
             if(this.expanded == true) return;
             
-            //get width from the left side to the page
-            
-            var contentoffset = $jq("#shadows").offset().left - 20;
-
-            //if the calculated width is too small don't show tree
-            if( contentoffset < 200) return;
-            
-            $jq("#smwh_treeview").css("width", contentoffset+"px");
             $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
             $jq("#smwh_treeview").addClass("smwh_treeviewright");
+
+            //if the calculated width is too small don't show tree
+            if( this.setRightWidth() < 200) return;
 
             //Set tree as shown
             this.treeviewhidden = false;
@@ -123,25 +107,50 @@ function Smwh_Skin() {
         }
     };
 
-    this.resizeControl = function(){
-        //set minimum height, so page always reachs to the bottom of the browser screen
-        var windowheight = $jq(window).height()
-        $jq("#smwh_HeightShell").css("min-height", windowheight+"px");
 
-        //Calculate css style right and apply to treeview if shown on the leftside
+    //Calculate distance to the right browser border and apply to treeview if shown on the leftside
+    this.setRightDistance = function(){
         var toggleoffset = $jq("#shadow_right").offset().left;
-        var windowwidth  = $jq(window).width()
+        var windowwidth  = $jq(window).width();
         var rightspace = windowwidth - toggleoffset;
         $jq('.smwh_treeviewleft').css('right', rightspace + 'px');
 
-        //Calculate css style right and apply to treeview if shown on the leftside
-        var contentoffset = $jq("#shadows").offset().left - 5;
-        //if the calculated width is too small don't show tree
-        if( contentoffset < 200) this.hideTree();
+        if( this.expanded )
+        {
+            $jq('.smwh_treeviewleft').css('right', null);
+
+        }
+        else
+        {
+            $jq('.smwh_treeviewleft').css('right', rightspace + 'px');
+        }
+        
+        return rightspace;
+    }
+
+    //Calculate gap between page and right browser border and apply to treeview if shown on the rightside
+    this.setRightWidth = function(){
+        var contentoffset = $jq("#shadows").offset().left - 20;
         $jq(".smwh_treeviewright").css("width", contentoffset+"px");
+        return contentoffset;
+    }
+
+    this.resizeControl = function(){
+
+        //set minimum height, so page always reachs to the bottom of the browser screen
+        var windowheight = $jq(window).height();
+        $jq("#smwh_HeightShell").css("min-height", windowheight+"px");
+
+        //Adjust css for left and right viewed treeview
+        this.setRightDistance();
+        //hide tree if shown on the right side and not enough space is given.
+        if( this.setRightWidth() < 200 && $jq(".smwh_treeviewright").length > 0 ){
+            this.hideTree();
+        }
+        
 
         //Check if there is enough space on the left side to show the treeview otherwise remove button
-        var contentoffset = $jq("#shadows").offset().left - 5;
+        contentoffset = $jq("#shadows").offset().left - 20;
         if( this.expanded == true || contentoffset < 200 ){
             $jq("#smwh_treeviewtoggleright").css("display","none");
         } else {
@@ -149,14 +158,16 @@ function Smwh_Skin() {
         }
 
     }
-    
+
+
+
     if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
         if (state == true && this.expanded == false){
             this.expandPage();
             
         }
-        var state = GeneralBrowserTools.getCookieObject("smwSkinTree");
+        state = GeneralBrowserTools.getCookieObject("smwSkinTree");
         if (state == "left" && this.treeviewhidden == true){
             this.showTreeViewLeftSide();
 
@@ -167,11 +178,18 @@ function Smwh_Skin() {
 
 
     }
-        
-    $jq(".smwh_menulistitem").hover(this.showMenu, this.hideMenu);
-    $jq("#smwh_treeviewtoggleright").click(this.showTreeViewRightSide.bind(this));
-    $jq("#smwh_treeviewtoggleleft").click(this.showTreeViewLeftSide.bind(this));
-    $jq(window).resize(this.resizeControl.bind(this));
+
+    //Constructor
+    this.constructor = function(){
+        $jq(".smwh_menulistitem").hover(this.showMenu, this.hideMenu);
+        $jq("#smwh_treeviewtoggleright").click(this.showTreeViewRightSide.bind(this));
+        $jq("#smwh_treeviewtoggleleft").click(this.showTreeViewLeftSide.bind(this));
+        $jq(window).resize(this.resizeControl.bind(this));
+    }
+
+    //Execute constructor on object creation
+    this.constructor();
+    
 }
 
 var smwh_Skin;
