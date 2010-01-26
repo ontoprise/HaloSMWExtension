@@ -133,7 +133,7 @@ Node.prototype.getPageName = function() {
 }
 
 // SMW Data object (for all setup related to smw, when doing Ajax calls)
-function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode) {
+function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
@@ -144,6 +144,7 @@ function SmwData(id, relation, category, display, start, maxDepth, condition, ur
 	this.urlparams = urlparams;
 	this.orderbyProperty = orderbyProperty;
 	this.checkNode = checkNode;
+    this.useTsc = useTsc;
 }
 
 SmwData.prototype.getParamsForAjaxRequest = function() {
@@ -154,6 +155,7 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
 	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
 	if (this.checkNode) str += '%26n%3D1';
+    if (this.useTsc) str += '%26u%3D1';
 	str += '%26';
 	return str;
 }
@@ -258,8 +260,8 @@ dTree.prototype.setLeaf = function(id) {
 }
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode);
+dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc);
 };
 
 // Get Smw url params to make an Ajax request for a specific node 
@@ -674,6 +676,7 @@ dTree.prototype.initOnload = function(id, arg) {
 	// most of the keys have a mapping to their first letter (see getTree.php
 	// for details), exceptions are handled in the if clauses
 	for (var i = 0; i < args.length; i++) {
+        if (args[i].indexOf('=') == -1) continue;
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
 		if (key == 'condition')
@@ -697,8 +700,7 @@ dTree.prototype.initOnload = function(id, arg) {
 		}
 	}
 	if (! dynamic) params += '%26z%3D1';
-	var token = this.getTokenAndWriteCache(id);
-	params += '%26t%3D' + token;
+	params += this.getTokenAndWriteCache(id);
 	
 	// clear cookie with saved nodes that where loaded as this causes trouble otherwise
 	this.setCookie('ca'+this.obj, '');
