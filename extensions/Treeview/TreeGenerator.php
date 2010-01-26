@@ -11,6 +11,7 @@ define ('GENERATE_TREE_PF', 'generateTree');
 class TreeGenerator {
     private $json;
     private $loadNextLevel;
+    private $useTsc;
 
 	/**
 	 * Register parser function for tree generation
@@ -53,7 +54,9 @@ class TreeGenerator {
 				$params .= 'checkNode=1&';
 			return "\x7finitOnload('$params')\x7f*";
 		}
-		
+		// most important, check this first
+        if (is_null($this->useTsc)) $this->useTsc = array_key_exists('useTsc', $genTreeParameters);
+
 		// check property, this is the only mandatory parameter, without it we stop right away
 		if (!array_key_exists('property', $genTreeParameters)) return "";
 		$relationName = $this->getValidTitle($genTreeParameters['property'], SMW_NS_PROPERTY);
@@ -75,8 +78,7 @@ class TreeGenerator {
 		// parameter urlparams
 		$urlparams = array_key_exists('urlparams', $genTreeParameters) ? $genTreeParameters['urlparams'] : NULL;
 		// parameter check
-		
-		$tv_store = TreeviewStorage::getTreeviewStorage();
+		$tv_store = TreeviewStorage::getTreeviewStorage($this->useTsc);
 		if (is_null($tv_store)) return "";
 
 		// setup some settings
@@ -89,7 +91,7 @@ class TreeGenerator {
 		if ($this->loadNextLevel)
 			$ajaxExpansion = 2;
 		else
-			$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) &&
+			$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) && !$this->useTsc &&
 							 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
 
 		$checkNode = ($ajaxExpansion > 0 && array_key_exists('checkNode', $genTreeParameters)) ? true : false;
@@ -124,11 +126,13 @@ class TreeGenerator {
 		    	if (isset($genTreeParameters['checkNode'])) $returnPrefix .= "checkNode=1&";
 			}
 			if ($tv_store->openToFound() != null) {
-				$arg = $openTo->getPartialURL();
-				$returnPrefix .= "opento=".urlencode($openTo->getPrefixedDBkey())."&";
+				$arg = ($openTo instanceof Title) ? $openTo->getPrefixedDBkey() : $openTo;
+				$returnPrefix .= "opento=".urlencode($arg)."&";
 			}
 			if ($urlparams)
 				$returnPrefix .= "urlparams=".urlencode($urlparams)."&";
+            if ($this->useTsc)
+                $returnPrefix .= "useTsc=1&";
 		    return $returnPrefix."\x7f".$tree;
 		}
 		return $tree;
@@ -140,9 +144,13 @@ class TreeGenerator {
     public function setLoadNextLevel() {
         $this->loadNextLevel = true;
     }
+    public function setUseTsc() {
+        $this->useTsc = true;
+    }
     private function getValidTitle($text, $ns = 0) {
         $t = Title::newFromText($text, $ns);
         if ($t == null) return;
+        if (!$t->exists() && $this->useTsc) return $t;
         if ($ns == SMW_NS_PROPERTY &&
             in_array('propertyread', User::getAllRights()) &&
             !$t->userCan('propertyread'))
@@ -154,6 +162,34 @@ class TreeGenerator {
 abstract class TreeviewStorage {
     
 	private static $store;
+
+    // parameter setup from parser function call in wikitext
+	public $ajaxExpansion;
+    public $maxDepth;
+    public $redirectPage;
+    public $displayProperty;
+    public $hchar;
+    public $json;
+    public $condition;
+    public $openTo;
+    public $checkNode;
+
+	// sorting options
+	public $orderByProperty;
+	public $orderSequence;
+
+    // information about the tree is stored here
+   	public $elementProperties;
+   	public $sIds;
+    public $treeList;
+    public $rootNodes;
+    public $leafNodes;
+    public $openToPath;
+
+    // internal ids
+    public $smw_start_id;
+    public $smw_category_ids;
+
 	/**
 	 * Returns hierrachy of Titles connected by given relation.
 	 *
@@ -164,7 +200,7 @@ abstract class TreeviewStorage {
 	 */
 	public abstract function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL);
 	
-    public static function getTreeviewStorage() {
+    public static function getTreeviewStorage($tsc= false) {
         global $smwgHaloIP;
         if (self::$store == NULL) {
             global $smwgDefaultStore;
@@ -178,51 +214,20 @@ abstract class TreeviewStorage {
                     trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
                     break;
                 default:
-                    self::$store = new TreeviewStorageSQL2();
+                    if ($tsc /*&& $smwgDefaultStore == 'SMWTripleStore'*/)
+                        self::$store = new TreeviewTriplestore();
+                    else
+                        self::$store = new TreeviewStorageSQL2();
                     break;
             }
         }
         return self::$store;
     }
-}
-
-class TreeviewStorageSQL2 extends TreeviewStorage {
-
-	private $ajaxExpansion;
-    private $maxDepth;
-    private $redirectPage;
-    private $displayProperty;
-    private $hchar;
-    private $json;
-    private $condition;
-    private $openTo;
-    private $checkNode;
-
-	// sorting options
-	private $orderByProperty;
-	private $orderSequence;
-
-    // for the conditions and limitations that can be used for generating the
-    // tree, the smw_ids will be fetched and stored here
-    private $smw_relation_id;
-    private $smw_category_ids;
-    private $smw_start_id;
-    private $smw_condition_ids;
-    private $openToPath;
-    
-    // information about the tree is stored here
-   	private $elementProperties;
-   	private $sIds;
-    private $treeList;
-    private $rootNodes;
-    private $leafNodes;
-    
-    private $db;
 
     public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo, $checkNode) {
-    	// here the options are stored, that can be set in the generateTree parser function
+        // here the options are stored, that can be set in the generateTree parser function
 		$this->ajaxExpansion = $ajaxExpansion;
-        $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth 
+        $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth
         $this->redirectPage = $redirectPage;
         $this->displayProperty = $displayProperty;
         $this->hchar = $hchar;
@@ -230,49 +235,41 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
         $this->condition = $condition;
         $this->openTo = $openTo;
         $this->checkNode = $checkNode;
-        
+
         // flush sorting options, these will be set by functions setOrderByProperty() and setOrderDescending()
         $this->orderByProperty = null;
         $this->orderSequence = null;
-        
-        // for some of the options, the smw_ids of the elements will be stored here to use them in db queries
-        $this->smw_relation_id = NULL;
-     	$this->smw_category_ids = NULL;
-		$this->smw_start_id = NULL;
-		$this->smw_condition_ids = NULL;
-		$this->openToPath = array();
-		$this->leafNodes = array();
-		
-		// empty class variables, that will store information about this generated tree and also general information
+
+        // empty class variables, that will store information about this generated tree and also general information
 		$this->elementProperties= array();
 		$this->sIds = array();
 		$this->treeList = new ChainedList(); // store each element array(0=>id, 1=>depth) in a chained list
 		$this->rootNodes = array();
-		$this->leafNodes = array();
-		
-		$this->db =& wfGetDB( DB_SLAVE );
+        $this->leafNodes = array();
+        $this->openToPath = array();
+
     }
 
-	/**
+    /**
 	 * Set a property name, if nodes are supposed to be sorted by values of this
 	 * property.
-	 * 
+	 *
 	 * @access public
 	 * @param  string $property name of property
 	 */
 	public function setOrderByProperty($property) {
 		$this->orderByProperty = $property;
 	}
-    
+
     /**
      * Set order descending
-     * 
+     *
      * @access public
      */
     public function setOrderDescending() {
     	$this->orderSequence = -1;
     }
-    
+
     /**
      * Returns true or false depending on the fact if the node down to where the tree is
      * supposed to be opened. If this is set in the parameter openTo in the parser function
@@ -280,13 +277,426 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
      * Later from that name the smw_id is evaluated and checked wether the node is in the
      * result nodes. If this is not the case, the member variable openTo is set to null.
      * Based on that fact here we know if the node was found.
-     * 
+     *
      * @access public
-     * @return Boolean found true if node is found, false otherwise  
+     * @return Boolean found true if node is found, false otherwise
      */
     public function openToFound() {
     	return ($this->openTo != null);
     }
+
+	/**
+	 * Get all root nodes. These do not have any parents, hence
+	 * are not defined as keys in the sIds array. The result is an
+	 * array of the smw_id of root element(s).
+	 * If search was narrowed by a category, maybe the parent in
+	 * elementProperties has been deleted already because the parent
+	 * didn't belong to the desired category. Therefore we also have
+	 * to check the sIds array, to look for elements that have a parents
+	 * which are not in the elementProperties anymore. Then this element
+	 * is a root node as well.
+	 *
+	 * @return array $rootCats list of element ids of the root category
+	 */
+	public function getRootNodes() {
+		// start is set, root nodes must have been filled alreads in
+		// function addTuple2Result()
+		if ($this->smw_start_id) {
+			$this->rootNodes = $this->sortElements($this->rootNodes);
+			return;
+		}
+
+        // add all nodes, that are are no keys of sIds array -> then these
+		// exist as object in the triple and therefore have no parents
+   		foreach (array_keys($this->elementProperties) as $id) {
+    		if (!isset($this->sIds[$id]))
+	       		$this->rootNodes[]= $id;
+	    }
+
+		// if the node set was narrowed by a category or condition, then some
+		// parents might not exist anymore and it's children are the new roots
+	    if (isset($this->smw_category_ids) || isset($this->condition)) {
+	    	foreach (array_keys($this->sIds) as $id) {
+	    		$parentNotFound = true;
+	    		foreach ($this->sIds[$id] as $item) {
+	    			// if parent exists, current node can't be a root
+	    			if (isset($this->sIds[$item])) {
+	    				$parentNotFound = false;
+	    				break;
+	    			}
+	    		}
+	    		if ($parentNotFound &&						// no parent found
+	    			isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
+	    			count(array_intersect($this->rootNodes, $this->sIds[$id])) == 0 && // no parent is a root yet
+	    			!in_array($id, $this->rootNodes)) {		// node itself is not yet a root
+	    			$this->rootNodes[]= $id;
+	    		}
+	    	}
+	    }
+	    $this->rootNodes = $this->sortElements($this->rootNodes);
+	}
+
+	/**
+	 * Create a list of elements ordered hierarchical. This list ist stored in an
+	 * array. Each element represents one item. The item has an id (smw_ids.smw_id)
+	 * and a depth (level in hierarchy).
+	 * An element proceding another is either a parent (depth is one number less) or
+	 * a sibling (same depth). The input is taken from the function getHierarchyByRelation
+	 * that fetches a list of relations from the db.
+	 * While traversing the list of fetched elements from the db, this list is reduced by
+	 * each element which has been processed. This reduces memory usage and runing time
+	 * when iterating over the array.
+	 *
+	 * @access public
+	 */
+	public function generateTreeDeepFirstSearch() {
+	    // stack for elements that have several parents. key is the smw_id of the node
+	    // value is the number of remaining parents, after the node has been added below
+	    // his first parent. Everytime the node is traversed again, the subtree of the
+	    // node is copied at the new position and the number of children is decreased by 1.
+	    $findSubTree = array();
+
+		// build or complete array with root nodes.
+        $this->getRootNodes();
+
+        // now search for all elements below a root category and create
+	    // one list of entries in hierarchic order
+	    foreach ($this->rootNodes as $id) {
+		    $depth = 1;                    // current depth of element, start by one (root)
+
+		    $e = array($id, $depth);
+		    $this->treeList->insertTail($e);  // add current root to tree
+
+        	$parents[] = $id;              // add current root as parent to stack
+
+        	// get last parent of stack to look for it's children
+	        while ($currParent = end($parents)) {
+                
+	            foreach (array_keys($this->sIds) as $s_id) {
+                    // check all elements to look for nodes that have the current parent
+       		    	foreach (array_keys($this->sIds[$s_id]) as $item) {
+
+       		    	    // add redirect page if it is set and maxdepth is reached
+       		    	    if ($this->redirectPage && $this->maxDepth &&
+       		    	        $this->maxDepth == $depth) {
+       		    	        // make sure to add only one redirect page for all children
+       		    	        // of the current node
+       		    	        $last = $this->treeList->getLast();
+       		    	        if ($last[0] != -1) {
+       		    	            $e = array(-1, $depth + 1);
+                                $this->treeList->insertTail($e);
+       		    	        }
+                            continue 2;
+                        }
+
+       		    	    if ($this->sIds[$s_id][$item] == $currParent) {
+                            // stop descending any further in this subtree IF:
+	                        // - maxDepth is set and already reached
+	                        // - ajax is used and depth = 2 is reached
+	                        // - current node or parent are not in the opento path
+	                        //   (while using ajax expansion, and exceding depth beyond 2)
+             		    	if ($this->maxDepth && $this->maxDepth == $depth)
+             		    		continue 2;
+             		    	if ($this->ajaxExpansion > 0 && $depth == 2 && $this->openTo == null)
+             		    	    continue 2;
+             		    	if ($this->ajaxExpansion > 0 && $depth > 1 && !in_array($s_id, $this->openToPath) && !in_array($currParent, $this->openToPath))
+             		    		continue 2;
+
+             		    	// increase depth by one and add element to tree
+           				    $depth++;
+           				    $e = array($s_id, $depth);
+    		            	$this->treeList->insertTail($e);
+
+    		            	// If this element was already processed but exists several
+	    	            	// times, findSubTree contains the number of additional parents.
+               				// The subtree was created at the first time of occurence
+           	    			// The children must now be copied to the current position.
+           		    		// Then continue with next sibling.
+    		            	if (isset($findSubTree[$s_id])) {
+           				        $this->addSubTree();
+           				        $depth--;
+               				    if ($findSubTree[$s_id] == 1)
+    		                		unset($findSubTree[$s_id]);
+	    		                else
+		    		                $findSubTree[$s_id]--;
+			                    continue 2;
+			                }
+
+               				// The element is traversed the first time, remember current id
+    		            	// as parent and look for children. Also if this element has
+	    		            // several parents itself, add the id and number of occurences
+		    	            // (besides this one) to the list findSubTree. If the element is
+			                // traversed again as a child of another parent, then the subtree
+			                // which will be composed now can be copied at the new position.
+   				            // Then continue with next iteration one level down.
+    			            else {
+   	    			            $parents[] = $s_id;
+		    	                unset($this->sIds[$s_id][$item]);
+			                    if (count($this->sIds[$s_id]) == 0) {
+				                    unset($this->sIds[$s_id]);
+			                    } else {
+			                        $findSubTree[$s_id]= count($this->sIds[$s_id]);
+   				                }
+    			                continue 3;
+	    		            }
+		                }
+		            }
+	            }
+       		    // all children of the current parent have been traversed.
+        	    // Continue now one level above (with the sibling of the current parent)
+	            array_pop($parents);
+	            $depth--;
+   		    }
+	    }
+	}
+
+	/**
+	 * Takes the tree created by function getTreeFirstDepthSearch. The last element
+	 * might be already in the tree with another parent. It's children must be copied
+	 * to the end below the second instance of that element, ad children must be ajusted
+	 * to the current depth.
+	 *
+	 */
+	public function addSubTree() {
+        $subtree = new ChainedList();
+	    $last= $this->treeList->getLast();
+	    if (! $last) return;
+	    $this->treeList->rewind();
+	    while ($item = $this->treeList->getCurrent()) {
+	        $this->treeList->next();
+    		if ($item[0] == $last[0]) {
+	    	    $depth = $item[1];          // remember depth found element
+		        $diff= $last[1] - $depth;   // calulate difference to current depth
+		        while ($item = $this->treeList->getCurrent()) {
+		            $this->treeList->next();
+			        if ($item[1] > $depth) {
+			            $e = array($item[0], $item[1] + $diff);
+			            $subtree->insertTail($e);
+			        }
+        			else {
+        			    $this->treeList->forward();
+        			    $this->treeList->insertTreeBehind($subtree);
+	        		    return;
+        			}
+		        }
+		    }
+	    }
+	}
+
+	/**
+     * Formats the list of elements from an array to the final ascii output
+     * that can be used by the wiki parser. Input is the previously generated
+     * tree as elements of an array. To save memory the tree array is reduced
+     * by it's elements as soon as they are converted to an ascii string.
+     *
+     * @return string	  $tree that can be used by the parser function #tree
+     */
+	public function formatTreeToText() {
+		$tree = '';
+	    if ($this->redirectPage)
+	        $this->elementProperties[-1] =
+	            new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
+	    $fillchar = $this->hchar{0};
+	    $prefix = substr($this->hchar, 1);
+	    $this->treeList->rewind();
+	    while ($item = $this->treeList->getCurrent()) {
+	    	$this->treeList->next();
+		    $tree.= $prefix.str_repeat($fillchar, $item[1]).$this->elementProperties[$item[0]]->getWikitext();
+		    if (in_array($item[0], $this->leafNodes)) $tree.= "\x7f";
+		    $tree .= "\n";
+	    }
+	    $this->treeList = NULL;
+	    return $tree;
+	}
+
+    /**
+     * works the same as function formatTreeToText() except that no string
+     * is returned but an array of elements as associative arrays. This is
+     * later used to be converted into a json compatible string that can be
+     * easily parsed by javascript.
+     *
+     * @return array	  $tree of elements as an asoc array (name, link)
+     */
+	public function formatTreeToJson() {
+	    $tree = array();
+	    if ($this->redirectPage)
+	        $this->elementProperties[-1] =
+	        	new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
+	    $this->treeList->rewind();
+	    while ($item = $this->treeList->getCurrent()) {
+	        $this->treeList->next();
+
+		    $node= array(
+		      'name' => $this->elementProperties[$item[0]]->getDisplayName(),
+		      'link' => urlencode($this->elementProperties[$item[0]]->getLink()),
+		      'depth' => $item[1],
+		    );
+		    if (in_array($item[0], $this->leafNodes)) $node['leaf'] = 1;
+		    $tree[] = $node;
+		    unset($item);
+	    }
+	    $this->treeList = NULL;
+	    return $tree;
+	}
+
+	/**
+	 * Sorts an array by some search criteria. The array to sort can be an array
+	 * with smw_ids as done for root nodes -> see: getRootNodes() as
+	 * well for the member variable $sIds in general.
+	 * The values to sort for are used by reading the appropriate fields of the
+	 * member variable $elementProperties.
+	 * Sorting is possible by the following criteria:
+	 * - alphabetically by the node name
+	 *
+	 * @access private
+	 * @param  array $values (optional) array with smw_ids
+	 * @return mixed if $values is given, it's ids are returned in sort order
+	 * 				 otherwise true is returned and $sIds are sorted afterwards
+	 */
+	public function sortElements($values = NULL) {
+
+		// build the array for sorting, keys must be strings so that the do not get new assigned
+		$sortArr = array();
+		$sortIds = is_array($values) ? $values : array_keys($this->elementProperties);
+		foreach ($sortIds as $id) {
+			// fetch sort values for new item
+			$sortArr[$id] = strtoupper($this->elementProperties[$id]->getSortName());
+		}
+		// sort the array now
+		if ($this->orderSequence == -1) // descending
+			arsort($sortArr, SORT_STRING);
+		else  // ascending (default)
+			asort($sortArr, SORT_STRING);
+
+		// if we had an array to sort in parameter, return the keys of the sorted array
+		if (is_array($values))
+			return array_keys($sortArr);
+
+		// otherwise rebuild the sIds array with the sorted keys
+		$oldSids = $this->sIds;
+		$this->sIds = array();
+		foreach (array_keys($sortArr) as $id) {
+			if (isset($oldSids[$id])) $this->sIds[$id]= $oldSids[$id];
+		}
+		return true;
+	}
+
+    public function checkLeafHc() {
+		$currentDepth = 1;			// current depth of node that's being investigated
+		$nodesToCheck = array();	// filled with ids of children, that must be checked
+	    $this->treeList->rewind();
+	    while ($item = $this->treeList->getCurrent()) {
+	    	$this->treeList->next();
+	    	// depth of current node is higher than previous node -> previous node has children
+	    	if ($item[1] > $currentDepth) {
+	    		array_pop($nodesToCheck);
+	    		$nodesToCheck[] = $item[0];
+	    	}
+    		$nodesToCheck[] = $item[0];
+    		$currentDepth = $item[1];
+	    }
+	    // walk through the $nodesToCheck array and see if there already some nodes that know
+	    // that they have children
+	    for ($i = 0, $is = count($nodesToCheck); $i < $is; $i++) {
+			foreach ($this->sIds as $child) {
+				foreach ($child as $parent) {
+					if ($parent == $nodesToCheck[$i]) {
+						unset($nodesToCheck[$i]);
+						continue 3;
+					}
+				}
+			}
+		}
+        return $nodesToCheck;
+    }
+
+}
+
+class TreeviewTriplestore extends TreeviewStorage {
+
+	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
+        global $smwgDefaultStore, $smwgQMaxInlineLimit;
+
+        $query = "[[".$relation->getText()."::+]]";
+        if ($category) {
+            $query = "[[Category:".$category->getText()."]]".$query;
+            // not needed here but must be set so that rootNodes will be examined correctly
+            $this->smw_category_ids = array(1);
+        }
+
+		$fixparams = array(
+			"format" => "table",
+			"limit" => $smwgQMaxInlineLimit,
+            "link" => "none",
+            "merge" => "false"
+		);
+        // printouts
+        $printout= array(
+            new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, "", SMWPropertyValue::makeUserProperty($relation->getText())),
+        );
+        
+        $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, $printout, SMW_OUTPUT_HTML);
+		if (stripos($result, "Could not connect to host") !== false)
+			$result = SMWQueryProcessor::getResultFromQueryString($query, $fixparams, $printout, SMW_OUTPUT_HTML);
+
+		$doc = new DomDocument();
+        $doc->loadHTML($result);
+        $rows = $doc->getElementsByTagName('tr');
+        $nodeNames= array();
+        foreach ($rows as $row) {
+            $tds = $row->getElementsByTagName('td');
+            if ($tds->length == 0) continue;
+            if ($tds->item(0)->nodeValue == '!!!invalid title!!!') continue;
+            $s_id = array_search($tds->item(0)->nodeValue, $nodeNames);
+            if ($s_id === false) {
+                $s_id = count($nodeNames);
+                $nodeNames[] = $tds->item(0)->nodeValue;
+            }
+            $o_id = array_search($tds->item(1)->nodeValue, $nodeNames);
+            if ($o_id === false) {
+                $o_id = count($nodeNames);
+                $nodeNames[] = $tds->item(1)->nodeValue;
+            }
+            $s_id+=1;
+            $o_id+=1;
+            if (!isset($this->sIds[$s_id]))
+                $this->sIds[$s_id] = array($o_id);
+            else
+                $this->sIds[$s_id][] = $o_id;
+        }
+
+        // if we have a start node given, check if this was in the result triples
+        if ($start) $this->smw_start_id = array_search($start, $nodeNames);
+        if ($start && $this->smw_start_id === false) return "";
+
+        // build elementsProperty array
+        $id = 1;
+        while ($name = array_shift($nodeNames)) {
+            $name=iconv("UTF-8", "ISO-8859-1", $name);
+            $this->elementProperties[$id] = new ElementProperty($name, 0);
+            $id++;
+        }
+
+        // sorting the nodes (so that the member variable sIds is in correct order) before building the tree
+		$this->sortElements();
+
+		$this->generateTreeDeepFirstSearch();
+
+        if ($this->json)
+            return $this->formatTreeToJson();
+		return $this->formatTreeToText();
+
+    }
+}
+
+class TreeviewStorageSQL2 extends TreeviewStorage {
+
+    // for the conditions and limitations that can be used for generating the
+    // tree, the smw_ids will be fetched and stored here
+    private $smw_relation_id;
+    private $smw_condition_ids;
+        
+    private $db;
 
 	/**
 	 * Starts to fetch the triples based on a relation for creating the tree. All internal
@@ -300,13 +710,14 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	 * @return string $tree wikitext that will be parsed by the tree function.
 	 */
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
+		$this->db =& wfGetDB( DB_SLAVE );
 
 		$smw_rels2 = $this->db->tableName('smw_rels2');
 		$smw_inst2 = $this->db->tableName('smw_inst2');
 
 		$query ="";
 
-	    // relation must be set -> we fetch here the smw_id of the requested relation
+        // relation must be set -> we fetch here the smw_id of the requested relation
 		if (! ($this->smw_relation_id = $this->getSmwIdByTitle($relation))) return ($this->json) ? array() : "";
 		
 		// if category is set, we will fetch the id of the category
@@ -379,9 +790,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		}
 
 		$this->generateTreeDeepFirstSearch();
-		
+
 		// check if leaf nodes have children
-		if ($this->checkNode) $this->checkLeafHc();
+		if ($this->checkNode) $this->leafNodes = $this->checkLeafHc();
 
         if ($this->json)
             return $this->formatTreeToJson();
@@ -842,328 +1253,8 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 		return true;	
 	}
 	
-	/**
-	 * Get all root nodes. These do not have any parents, hence
-	 * are not defined as keys in the sIds array. The result is an
-	 * array of the smw_id of root element(s).
-	 * If search was narrowed by a category, maybe the parent in
-	 * elementProperties has been deleted already because the parent
-	 * didn't belong to the desired category. Therefore we also have
-	 * to check the sIds array, to look for elements that have a parents
-	 * which are not in the elementProperties anymore. Then this element
-	 * is a root node as well.
-	 *
-	 * @return array $rootCats list of element ids of the root category
-	 */
-	private function getRootNodes() {
-		// start is set, root nodes must have been filled alreads in
-		// function addTuple2Result()
-		if ($this->smw_start_id) {
-			$this->rootNodes = $this->sortElements($this->rootNodes);
-			return;
-		}
-
-		// add all nodes, that are are no keys of sIds array -> then these
-		// exist as object in the triple and therefore have no parents
-   		foreach (array_keys($this->elementProperties) as $id) {
-    		if (!isset($this->sIds[$id]))
-	       		$this->rootNodes[]= $id;
-	    }
-
-		// if the node set was narrowed by a category or condition, then some
-		// parents might not exist anymore and it's children are the new roots
-	    if (!is_null($this->smw_category_ids) || !is_null($this->condition)) {
-	    	foreach (array_keys($this->sIds) as $id) {
-	    		$parentNotFound = true;
-	    		foreach ($this->sIds[$id] as $item) {
-	    			// if parent exists, current node can't be a root
-	    			if (isset($this->sIds[$item])) {
-	    				$parentNotFound = false;
-	    				break;
-	    			}
-	    		}
-	    		if ($parentNotFound &&						// no parent found
-	    			isset($this->elementProperties[$id]) &&	// node exists in props -> correct cat
-	    			count(array_intersect($this->rootNodes, $this->sIds[$id])) == 0 && // no parent is a root yet
-	    			!in_array($id, $this->rootNodes)) {		// node itself is not yet a root
-	    			$this->rootNodes[]= $id;
-	    		}
-	    	}
-	    }
-	    $this->rootNodes = $this->sortElements($this->rootNodes);
-	}
-	
-	/**
-	 * Create a list of elements ordered hierarchical. This list ist stored in an
-	 * array. Each element represents one item. The item has an id (smw_ids.smw_id)
-	 * and a depth (level in hierarchy).
-	 * An element proceding another is either a parent (depth is one number less) or
-	 * a sibling (same depth). The input is taken from the function getHierarchyByRelation
-	 * that fetches a list of relations from the db.
-	 * While traversing the list of fetched elements from the db, this list is reduced by
-	 * each element which has been processed. This reduces memory usage and runing time
-	 * when iterating over the array.
-	 * 
-	 * @access private
-	 */
-	private function generateTreeDeepFirstSearch() {
-	    // stack for elements that have several parents. key is the smw_id of the node
-	    // value is the number of remaining parents, after the node has been added below
-	    // his first parent. Everytime the node is traversed again, the subtree of the
-	    // node is copied at the new position and the number of children is decreased by 1. 
-	    $findSubTree = array();
-
-		// build or complete array with root nodes.
-        $this->getRootNodes();	
-
-	    // now search for all elements below a root category and create
-	    // one list of entries in hierarchic order
-	    foreach ($this->rootNodes as $id) {
-		    $depth = 1;                    // current depth of element, start by one (root)            
-    		
-		    $e = array($id, $depth);
-		    $this->treeList->insertTail($e);  // add current root to tree
-    		
-        	$parents[] = $id;              // add current root as parent to stack 
-
-        	// get last parent of stack to look for it's children
-	        while ($currParent = end($parents)) {
-	            foreach (array_keys($this->sIds) as $s_id) {
-                    // check all elements to look for nodes that have the current parent
-       		    	foreach (array_keys($this->sIds[$s_id]) as $item) {
-
-       		    	    // add redirect page if it is set and maxdepth is reached
-       		    	    if ($this->redirectPage && $this->maxDepth && 
-       		    	        $this->maxDepth == $depth) {
-       		    	        // make sure to add only one redirect page for all children
-       		    	        // of the current node
-       		    	        $last = $this->treeList->getLast();
-       		    	        if ($last[0] != -1) {
-       		    	            $e = array(-1, $depth + 1);
-                                $this->treeList->insertTail($e);
-       		    	        }
-                            continue 2;
-                        }
-       		    	  
-       		    	    if ($this->sIds[$s_id][$item] == $currParent) {
-
-       		    	        // stop descending any further in this subtree IF:
-	                        // - maxDepth is set and already reached
-	                        // - ajax is used and depth = 2 is reached
-	                        // - current node or parent are not in the opento path
-	                        //   (while using ajax expansion, and exceding depth beyond 2)
-             		    	if ($this->maxDepth && $this->maxDepth == $depth)
-             		    		continue 2;
-             		    	if ($this->ajaxExpansion > 0 && $depth == 2 && $this->openTo == null)
-             		    	    continue 2;
-             		    	if ($this->ajaxExpansion > 0 && $depth > 1 && !in_array($s_id, $this->openToPath) && !in_array($currParent, $this->openToPath))
-             		    		continue 2;  
-             		    	
-             		    	// increase depth by one and add element to tree
-           				    $depth++;
-           				    $e = array($s_id, $depth);
-    		            	$this->treeList->insertTail($e);
-
-    		            	// If this element was already processed but exists several
-	    	            	// times, findSubTree contains the number of additional parents.
-               				// The subtree was created at the first time of occurence
-           	    			// The children must now be copied to the current position.
-           		    		// Then continue with next sibling.
-    		            	if (isset($findSubTree[$s_id])) {
-           				        $this->addSubTree();
-           				        $depth--;
-               				    if ($findSubTree[$s_id] == 1)
-    		                		unset($findSubTree[$s_id]);
-	    		                else
-		    		                $findSubTree[$s_id]--;
-			                    continue 2;
-			                }
-
-               				// The element is traversed the first time, remember current id
-    		            	// as parent and look for children. Also if this element has
-	    		            // several parents itself, add the id and number of occurences
-		    	            // (besides this one) to the list findSubTree. If the element is
-			                // traversed again as a child of another parent, then the subtree
-			                // which will be composed now can be copied at the new position.
-   				            // Then continue with next iteration one level down. 
-    			            else { 
-   	    			            $parents[] = $s_id;
-		    	                unset($this->sIds[$s_id][$item]);
-			                    if (count($this->sIds[$s_id]) == 0) {
-				                    unset($this->sIds[$s_id]);
-			                    } else {
-			                        $findSubTree[$s_id]= count($this->sIds[$s_id]);
-   				                }
-    			                continue 3; 
-	    		            }
-		                }
-		            }
-	            }
-       		    // all children of the current parent have been traversed.
-        	    // Continue now one level above (with the sibling of the current parent)
-	            array_pop($parents);
-	            $depth--;
-   		    }
-	    }
-	}
-	
-	/**
-	 * Takes the tree created by function getTreeFirstDepthSearch. The last element
-	 * might be already in the tree with another parent. It's children must be copied
-	 * to the end below the second instance of that element, ad children must be ajusted
-	 * to the current depth.
-	 *
-	 */
-	private function addSubTree() {
-        $subtree = new ChainedList();
-	    $last= $this->treeList->getLast();
-	    if (! $last) return;
-	    $this->treeList->rewind();
-	    while ($item = $this->treeList->getCurrent()) {
-	        $this->treeList->next();
-    		if ($item[0] == $last[0]) {
-	    	    $depth = $item[1];          // remember depth found element
-		        $diff= $last[1] - $depth;   // calulate difference to current depth
-		        while ($item = $this->treeList->getCurrent()) {
-		            $this->treeList->next();
-			        if ($item[1] > $depth) {
-			            $e = array($item[0], $item[1] + $diff);
-			            $subtree->insertTail($e);
-			        }
-        			else {
-        			    $this->treeList->forward();
-        			    $this->treeList->insertTreeBehind($subtree);
-	        		    return;
-        			}
-		        }
-		    }
-	    }
-	}
-
-	/**
-     * Formats the list of elements from an array to the final ascii output
-     * that can be used by the wiki parser. Input is the previously generated
-     * tree as elements of an array. To save memory the tree array is reduced
-     * by it's elements as soon as they are converted to an ascii string.
-     *
-     * @return string	  $tree that can be used by the parser function #tree 
-     */
-	private function formatTreeToText() {
-		$tree = '';
-	    if ($this->redirectPage)
-	        $this->elementProperties[-1] = 
-	            new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
-	    $fillchar = $this->hchar{0};
-	    $prefix = substr($this->hchar, 1);
-	    $this->treeList->rewind();
-	    while ($item = $this->treeList->getCurrent()) {
-	    	$this->treeList->next();
-		    $tree.= $prefix.str_repeat($fillchar, $item[1]).$this->elementProperties[$item[0]]->getWikitext();
-		    if (in_array($item[0], $this->leafNodes)) $tree.= "\x7f";
-		    $tree .= "\n";
-	    }
-	    $this->treeList = NULL;
-	    return $tree;
-	}
-	
-    /**
-     * works the same as function formatTreeToText() except that no string
-     * is returned but an array of elements as associative arrays. This is
-     * later used to be converted into a json compatible string that can be
-     * easily parsed by javascript.
-     *
-     * @return array	  $tree of elements as an asoc array (name, link) 
-     */
-	private function formatTreeToJson() {
-	    $tree = array();
-	    if ($this->redirectPage)
-	        $this->elementProperties[-1] = 
-	        	new ElementProperty($this->redirectPage->getText(), $this->redirectPage->getNamespace(), "...");
-	    $this->treeList->rewind();
-	    while ($item = $this->treeList->getCurrent()) {
-	        $this->treeList->next();
-	        
-		    $node= array(
-		      'name' => $this->elementProperties[$item[0]]->getDisplayName(),
-		      'link' => urlencode($this->elementProperties[$item[0]]->getLink()),
-		      'depth' => $item[1],
-		    );
-		    if (in_array($item[0], $this->leafNodes)) $node['leaf'] = 1;
-		    $tree[] = $node;
-		    unset($item);
-	    }
-	    $this->treeList = NULL;
-	    return $tree;
-	}
-	
-	/**
-	 * Sorts an array by some search criteria. The array to sort can be an array
-	 * with smw_ids as done for root nodes -> see: getRootNodes() as
-	 * well for the member variable $sIds in general.
-	 * The values to sort for are used by reading the appropriate fields of the
-	 * member variable $elementProperties.
-	 * Sorting is possible by the following criteria:
-	 * - alphabetically by the node name
-	 * 
-	 * @access private
-	 * @param  array $values (optional) array with smw_ids
-	 * @return mixed if $values is given, it's ids are returned in sort order
-	 * 				 otherwise true is returned and $sIds are sorted afterwards
-	 */
-	private function sortElements($values = NULL) {
-
-		// build the array for sorting, keys must be strings so that the do not get new assigned 
-		$sortArr = array();
-		$sortIds = is_array($values) ? $values : array_keys($this->elementProperties);
-		foreach ($sortIds as $id) {
-			// fetch sort values for new item
-			$sortArr[$id] = strtoupper($this->elementProperties[$id]->getSortName());
-		}
-		// sort the array now
-		if ($this->orderSequence == -1) // descending
-			arsort($sortArr, SORT_STRING);
-		else  // ascending (default)
-			asort($sortArr, SORT_STRING);
-		
-		// if we had an array to sort in parameter, return the keys of the sorted array
-		if (is_array($values))
-			return array_keys($sortArr);
-		
-		// otherwise rebuild the sIds array with the sorted keys
-		$oldSids = $this->sIds;
-		$this->sIds = array();	
-		foreach (array_keys($sortArr) as $id) {
-			if (isset($oldSids[$id])) $this->sIds[$id]= $oldSids[$id];
-		}
-		return true;					   
-	}
-	
-	private function checkLeafHc() {
-		$currentDepth = 1;			// current depth of node that's being investigated
-		$nodesToCheck = array();	// filled with ids of children, that must be checked
-	    $this->treeList->rewind();
-	    while ($item = $this->treeList->getCurrent()) {
-	    	$this->treeList->next();
-	    	// depth of current node is higher than previous node -> previous node has children
-	    	if ($item[1] > $currentDepth) {
-	    		array_pop($nodesToCheck);
-	    		$nodesToCheck[] = $item[0];
-	    	}
-    		$nodesToCheck[] = $item[0];
-    		$currentDepth = $item[1];
-	    }	    		
-	    // walk through the $nodesToCheck array and see if there already some nodes that know
-	    // that they have children
-	    for ($i = 0, $is = count($nodesToCheck); $i < $is; $i++) {
-			foreach ($this->sIds as $child) {
-				foreach ($child as $parent) {
-					if ($parent == $nodesToCheck[$i]) {
-						unset($nodesToCheck[$i]);
-						continue 3;
-					}
-				}
-			}
-		}
+	public function checkLeafHc() {
+        $nodesToCheck = parent::checkLeafHc();
 		if (count($nodesToCheck) == 0) return;
 		// all remaining nodes need to be checked in the DB now		
 		$smw_inst2 = $this->db->tableName('smw_inst2');		
@@ -1180,7 +1271,7 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 			}
 		}
 		$this->db->freeResult($res);
-		$this->leafNodes = array_flip($nodesToCheck);
+		return array_flip($nodesToCheck);
 	}
 	
 }
@@ -1363,7 +1454,7 @@ class ChainedList {
     } 
 } 
 
-class elementProperty {
+class ElementProperty {
 	private $title;
 	private $ns;
 	private $displayProperty;
