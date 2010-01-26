@@ -18,7 +18,7 @@
             </not>
             <verifyText
                 description="Check for addSmwData"
-                text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, 'Märchen', null, null, null, null, null);"
+                text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, 'Märchen', null, null, null, null, null, null);"
             />
             <verifyText
                 description="Check node exists: Grimm"

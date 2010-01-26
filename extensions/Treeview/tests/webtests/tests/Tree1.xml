@@ -11,7 +11,7 @@
 
         	<verifyText
                 description="Check for addSmwData"
-                text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, null, null, null, null, null, 1);"
+                text="tv#{treeId}.addSmwData(0, 'Subsection of',null, null, null, null, null, null, null, 1, null);"
             />
         	<verifyText
                 description="Check node exists: Contents"
