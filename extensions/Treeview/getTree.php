@@ -20,7 +20,7 @@ function smw_treeview_getTree($input) {
   	$kv = explode('=', $tuple);
   	if (count($kv) == 2) $req[$kv[0]] = $kv[1];
   }
-
+  
   $initOnload = (isset($req['i'])) ? true : false;
   $relation = (isset($req['p'])) ? 'property='.$req['p'] : NULL;
   $category = (isset($req['c'])) ? 'category='.$req['c'] : NULL;
@@ -44,10 +44,11 @@ function smw_treeview_getTree($input) {
   $level = ($initOnload && isset($req['l'])) ? 'level='.$req['l'] : NULL;
   $opento = ($initOnload && isset($req['o'])) ? 'opento='.$req['o'] : NULL;
   $iolStatic = ($initOnload && isset($req['z'])) ? 'iolStatic=1' : NULL;
-  
+
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   if (!$initOnload) $treeGenerator->setLoadNextLevel();
+  if (isset($req['u'])) $treeGenerator->setUseTsc();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage,
                                      $level, $condition, $urlparams, $opento,
