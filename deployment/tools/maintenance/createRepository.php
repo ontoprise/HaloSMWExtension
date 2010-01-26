@@ -56,14 +56,20 @@ for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
         continue;
     }
     
+    //-head => release num
+    if ($arg == '--head') {
+        $head = true;
+        continue;
+    }
+    
 }
 
 if (!isset($outputDir)) {
     echo "\nSet output dir by using -o <directory>\n";
     die();
 }
-if (!isset($release)) {
-    echo "\nSet release by using -r <releasenum>\n";
+if (!isset($release) && !isset($head)) {
+    echo "\nSet release by using -r <releasenum> or use --head\n";
     die();
 }
 
@@ -87,8 +93,8 @@ foreach($localPackages as $lp) {
     $id = $lp->getID();
     $installdir = $lp->getInstallationDirectory();
     $new_ser .= "<extension id=\"$id\">";
-    
-        $url = "http://dailywikibuilds.ontoprise.com:8080/job/smwhalo_".addSeparators($release,"_")."_release/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".addSeparators($lp->getVersion(),".").".zip";
+        $branch = isset($head) ? "smwhalo" : "smwhalo_".addSeparators($release,"_")."_release";
+        $url = "http://dailywikibuilds.ontoprise.com:8080/job/$branch/lastSuccessfulBuild/artifact/SMWHaloTrunk/$installdir/deploy/bin/$id-".addSeparators($lp->getVersion(),".")."_".$lp->getPatchlevel().".zip";
         $ver = $lp->getVersion();
         $newPatchlevel = $lp->getPatchlevel();
         if ($newPatchlevel == '') $newPatchlevel = 0;
