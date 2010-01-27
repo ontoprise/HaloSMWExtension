@@ -657,6 +657,7 @@ class TreeviewTriplestore extends TreeviewStorage {
                 $o_id = count($nodeNames);
                 $nodeNames[] = $tds->item(1)->nodeValue;
             }
+            // hack to make firstDeepSearch working, increase indices by 1
             $s_id+=1;
             $o_id+=1;
             if (!isset($this->sIds[$s_id]))
@@ -666,8 +667,17 @@ class TreeviewTriplestore extends TreeviewStorage {
         }
 
         // if we have a start node given, check if this was in the result triples
-        if ($start) $this->smw_start_id = array_search($start, $nodeNames);
-        if ($start && $this->smw_start_id === false) return "";
+        if ($start) {
+            $this->smw_start_id = array_search($start->getText(), $nodeNames);
+            if ($this->smw_start_id === false) return "";
+            $this->smw_start_id++;
+            // all nodes that have "start" node as parent, are root nodes
+            foreach (array_keys($this->sIds) as $id) {
+                if (in_array($this->smw_start_id, $this->sIds[$id]) &&
+                    !in_array($id, $this->rootNodes))
+                    $this->rootNodes[]= $id;
+            }
+        }
 
         // build elementsProperty array
         $id = 1;
