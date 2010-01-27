@@ -1062,15 +1062,17 @@ dtreeHandleResponseRefresh = function() {
    		if (foundParents.indexOf(cParent) == -1) foundParents.push(cParent);
    		lastDepth = cn.depth;
    		
-   		// search if this node already exists
+   		// search if this node already exists, only needed on refresh
    		found = null;
-   		for (var k = 0; k < dTree.aNodes.length; k++) {
-   			var cName = dTree.aNodes[k].getPageName();
-   			if (dTree.aNodes[k].pid == cParent && cName == cn.link.replace('%3A', ':') &&
-   			   (dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
-   				found = k;
-   				dTree.aNodes[k]._refresh = 0;
-   			}
+        if (!dTree.initOnload) {
+            for (var k = 0; k < dTree.aNodes.length; k++) {
+                var cName = dTree.aNodes[k].getPageName();
+                if (dTree.aNodes[k].pid == cParent && cName == cn.link.replace('%3A', ':') &&
+                    (dTree.aNodes[k]._refresh == 1 || dTree.aNodes[k]._refresh == -1)) {
+                    found = k;
+                    dTree.aNodes[k]._refresh = 0;
+                }
+            }
    		}
    		if (found == null) {
    			found = dTree.aNodes.length;
@@ -1087,13 +1089,15 @@ dtreeHandleResponseRefresh = function() {
     	
     }
 	
-	// search for old nodes that are not there anymore
-	for (var j = 0; j < foundParents.length; j++) {
-		for (var k = 0; k < dTree.aNodes.length; k++) {
-			if (dTree.aNodes[k].pid == foundParents[j] && dTree.aNodes[k]._refresh == 1) {
-				dTree.removeNode(k);
-				k--;
-			}
+	// search for old nodes that are not there anymore, only needed on refresh
+    if (!dTree.initOnload) {
+        for (var j = 0; j < foundParents.length; j++) {
+            for (var k = 0; k < dTree.aNodes.length; k++) {
+    			if (dTree.aNodes[k].pid == foundParents[j] && dTree.aNodes[k]._refresh == 1) {
+        			dTree.removeNode(k);
+            		k--;
+                }
+            }
 		}
 	}
 
