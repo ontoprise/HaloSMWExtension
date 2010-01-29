@@ -935,11 +935,20 @@ dTree.prototype.saveCookiesAndDisplay = function(newSerialData) {
 dTree.prototype.getHtml4Node = function(cn, url, params) {
 	var str;
 	var link = cn.link.replace('%3A', ':');
+    if (params) params = URLDecode(params);
     if (URLDecode(cn.link) == wgPageName)
     	str = '<strong class="selflink">' + cn.name + '</strong>';
-    else
-		str = '<a href=\"' + url + link + URLDecode(params) +'\" title=\"'
+    else {
+        // if there is a / in the pagename, add name as URL param and not as path
+        if (link.indexOf('%2F') != -1) {
+            url = url.substr(0, url.length-1);
+            if (params) params += '&title='+link;
+            else params = '?title='+link;
+            link = ''
+        }
+		str = '<a href=\"' + url + link + params +'\" title=\"'
     		+ cn.name + '\">' + cn.name + '</a>';
+    }
 	return str;
 }
 
