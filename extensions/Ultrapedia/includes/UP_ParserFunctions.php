@@ -50,7 +50,7 @@ class UPParserFunctions {
 		SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
 		// add ajax ask header
 		global $smwgUltraPediaScriptPath;
-		$parser->getOutput()->addHeadItem('<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/ajaxasks.js"></script>', "ajaxask-header");
+		SMWOutputs::requireHeadItem("ajaxask-header", '<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/ajaxasks.js"></script>');
 	}
 	static public function doAjaxAsk(&$parser) {
 		global $smwgQEnabled, $smwgIQRunningNumber;
@@ -64,7 +64,7 @@ class UPParserFunctions {
 			global $smwgUltraPediaScriptPath;
 			$id = 'AjaxAsk' . $smwgIQRunningNumber;
 			// have to enable script and css, tbd
-			$parser->getOutput()->addHeadItem('<script type="text/javascript">/*<![CDATA[*/
+			SMWOutputs::requireHeadItem($id, '<script type="text/javascript">/*<![CDATA[*/
 			AjaxAsk.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
 			/*]]>*/</script>');
 			$result = '<div id="' . $id . '"><img src="' . $smwgUltraPediaScriptPath . '/ajax-loader.gif"></div>';  
@@ -87,7 +87,7 @@ class UPParserFunctions {
             global $smwgUltraPediaScriptPath;
             $id = 'AjaxAsk' . $smwgIQRunningNumber;
             // have to enable script and css, tbd
-            $parser->getOutput()->addHeadItem('<script type="text/javascript">/*<![CDATA[*/
+            SMWOutputs::requireHeadItem($id, '<script type="text/javascript">/*<![CDATA[*/
             AjaxSparql.queries.push({id:"'.$id.'",qno:'.$smwgIQRunningNumber.',query:"' . str_replace("\n", '', str_replace('"', '\"', implode(' | ', $params))) . '"});
             /*]]>*/</script>');
             $result = '<div id="' . $id . '"><img src="' . $smwgUltraPediaScriptPath . '/ajax-loader.gif"></div>';  
@@ -101,10 +101,10 @@ class UPParserFunctions {
 	static $tabWidgetId = 0;
 	static function renderTabWidget ($parser, $frame, $args) {
 		global $smwgUltraPediaScriptPath, $wgTitle;
-		$parser->getOutput()->addHeadItem('<link rel="stylesheet" type="text/css" href="' . $smwgUltraPediaScriptPath . '/scripts/extjs/resources/css/ext-all.css" />', "tab_css");
-		$parser->getOutput()->addHeadItem('<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>', "tab_js1");
-		$parser->getOutput()->addHeadItem('<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/extjs/ext-all.js"></script>', "tab_js2");
-		$parser->getOutput()->addHeadItem('<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/tabwidgets.js"></script>', "tab_js3");
+		SMWOutputs::requireHeadItem("tab_css", '<link rel="stylesheet" type="text/css" href="' . $smwgUltraPediaScriptPath . '/scripts/extjs/resources/css/ext-all.css" />');
+		SMWOutputs::requireHeadItem("tab_js1", '<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
+		SMWOutputs::requireHeadItem("tab_js2", '<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/extjs/ext-all.js"></script>');
+		SMWOutputs::requireHeadItem("tab_js3", '<script type="text/javascript" src="' . $smwgUltraPediaScriptPath . '/scripts/tabwidgets.js"></script>');
 		
 		$tabs = array();
 		$htmls = array();
@@ -167,7 +167,7 @@ class UPParserFunctions {
 			$tabItems[] = $txt;
 		}
 		
-		$parser->getOutput()->addHeadItem('<script type="text/javascript">
+		SMWOutputs::requireHeadItem("uptabwidget$smwgIQRunningNumber", '<script type="text/javascript">
 			UltraPedia.tabWidgets.push({
 				id:"tabs' . $id . '",' . 
 				(isset($widget_options['height'])?('height:' . intval($widget_options['height']) . ','):'') . 

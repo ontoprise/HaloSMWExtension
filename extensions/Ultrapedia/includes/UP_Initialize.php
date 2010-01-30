@@ -15,8 +15,53 @@ $smwgUltraPediaEnabled = true;
 global $wgExtensionFunctions, $wgHooks, $wgAutoloadClasses;
 $wgExtensionFunctions[] = 'smwgUltraPediaSetupExtension';
 $wgHooks['LanguageGetMagic'][] = 'UPParserFunctions::languageGetMagic';
+$wgHooks['BeforePageDisplay'][]='smwfUltraPediaAddHTMLHeader';
+
 $wgAutoloadClasses['UPParserFunctions'] = $smwgUltraPediaIP . '/includes/UP_ParserFunctions.php';
 
+$wgHooks['SkinTemplateTabs'][] = 'smwfUPWPCloneEditTab';
+function smwfUPWPCloneEditTab($obj, $content_actions) {
+		// make sure that this is not a special page, and
+		// that the user is allowed to edit it
+		if (isset($obj->mTitle) && ($obj->mTitle->getNamespace() != NS_SPECIAL)) {
+			global $wgRequest, $wgUser;
+			$wp_edit_tab_text = wfMsg('edit');
+			$user_can_edit = $wgUser->isAllowed('edit') && $obj->mTitle->userCan('edit');
+			if (array_key_exists('edit', $content_actions)) {
+				$content_actions['edit']['text'] = $user_can_edit ? 'Local Edit' : wfMsg('viewsource');
+			}
+			$wp_edit_tab = array(
+				'class' => '',
+				'text' => $wp_edit_tab_text,
+				'href' => str_replace('/up/index.php', '/wp/index.php', $obj->mTitle->getLocalURL('action=edit'))
+			);
+			$tab_keys = array_keys($content_actions);
+			$tab_values = array_values($content_actions);
+			$edit_tab_location = array_search('edit', $tab_keys);
+			// if there's no 'edit' tab, look for the
+			// 'view source' tab instead
+			if ($edit_tab_location == NULL)
+				$edit_tab_location = array_search('viewsource', $tab_keys);
+			// this should rarely happen, but if there was
+			// no edit *or* view source tab, set the
+			// location index to -1, so the tab shows up
+			// near the end
+			if ($edit_tab_location == NULL)
+				$edit_tab_location = -1;
+			array_splice($tab_keys, $edit_tab_location, 0, 'wp_edit');
+			array_splice($tab_values, $edit_tab_location, 0, array($wp_edit_tab));
+			$content_actions = array();
+			for ($i = 0; $i < count($tab_keys); $i++)
+				$content_actions[$tab_keys[$i]] = $tab_values[$i];
+//			global $wgUser;
+//			if (! $wgUser->isAllowed('viewedittab')) {
+//				// the tab can have either of those two actions
+//				unset($content_actions['edit']);
+//				unset($content_actions['viewsource']);
+//			}
+	}
+	return true; // always return true, in order not to stop MW's hook processing!
+}
 function smwfUltraPediaInitMessages() {
 	global $smwgUltraPediaMessagesInitialized;
 	if (isset($smwgUltraPediaMessagesInitialized)) return; // prevent double init
@@ -145,4 +190,24 @@ function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
 		$userpathlng = $smwgUltraPediaScriptPath . '/scripts/Language/UP_LanguageUserEn.js';
 	}
 }
+
+function smwfUltraPediaAddHTMLHeader(& $out) {
+	// add Ultrapedia abstract tooltip
+	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath;
+	$out->addLink( array(
+		'rel' => 'stylesheet',
+		'type' => 'text/css',
+		'media' => "screen, projection",
+		'href' => $wgStylePath . '/common/extjs/resources/css/ext-all.css'
+	));
+	$out->addScript("<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/adapter/prototype/ext-prototype-adapter.js\"></script>
+	<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/ext-all.js\"></script>
+	<script type=\"text/javascript\" src=\"{$smwgUltraPediaScriptPath}/scripts/abstractilink.js\"></script>
+	<script type=\"{$wgJsMimeType}\">
+		AjaxInternalLinks.baseUrl = \"{$wgScriptPath}\";
+	</script>\n");
+	
+	return true;
+}
+
 ?>
