@@ -1,0 +1,13 @@
+--- C:/DOCUME~1/dch/LOCALS~1/Temp/SkinTemplate.ph-revBASE.svn001.tmp.php	星期五 一月 29 16:39:43 2010
++++ D:/projects/php/svn/halodev.trunk/includes/SkinTemplate.php	星期五 一月 29 16:39:33 2010
+@@ -240,8 +240,8 @@
+ 		$tpl->setRef( 'mimetype', $wgMimeType );
+ 		$tpl->setRef( 'jsmimetype', $wgJsMimeType );
+ 		$tpl->setRef( 'charset', $wgOutputEncoding );
+-		$tpl->set( 'headlinks', $out->getHeadLinks() );
+-		$tpl->set( 'headscripts', $out->getScript() );
++		$tpl->set( 'headlinks', smfMergeHeadLinks($out->getHeadLinks()) );
++		$tpl->set('headscripts', smfMergeHeadScripts($out->getScript()) );
+ 		$tpl->set( 'csslinks', $out->buildCssLinks() );
+ 		$tpl->setRef( 'wgScript', $wgScript );
+ 		$tpl->setRef( 'skinname', $this->skinname );
