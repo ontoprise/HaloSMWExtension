@@ -490,9 +490,9 @@ class SMWTripleStore extends SMWStore {
 		return $this->smwstore->getSMWPageID($title, $namespace, $iw, $canonical);
 	}
 
-    public function cacheSMWPageID($id, $title, $namespace, $iw) {
-        return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw);
-    }
+	public function cacheSMWPageID($id, $title, $namespace, $iw) {
+		return $this->smwstore->cacheSMWPageID($id, $title, $namespace, $iw);
+	}
 
 	// Helper methods
 
@@ -591,39 +591,8 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-
-		// rewrite printrequests in case of property chains
-		$rewritten_prs = array();
-		$toUnset = array();
-		foreach($print_requests as $id => $pr) {
-			$data = $pr->getData();
-			if ($data instanceof Title) { // property chain appear as Title
-				$titleText = $data->getText();
-				$chain = explode(".",$titleText);
-				
-				if (count($chain) > 1) {
-					$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
-					if ($newtitle->exists()) {
-						$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-						$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
-					} else {
-						$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
-						$newData = $newtitle;
-					}
-					$newid = str_replace($titleText, $newtitle->getText(), $id);
-					$rewritten_prs[$newid] = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
-					$rewritten_prs[$newid]->getHash();
-					$toUnset[] = $id;
-				}
-			}
-		}
-		foreach($toUnset as $tu) {
-			unset($print_requests[$tu]);
-		}
-		$print_requests = array_merge($print_requests, $rewritten_prs);
-		// rewriting end
-        
 		
+		// _X_ is used for the main variable.
 		$hasMainColumn = false;
 		$index = 0;
 		if ($query->fromASK) {
@@ -642,56 +611,62 @@ class SMWTripleStore extends SMWStore {
 					}
 
 				} else  {
-					// make sure that variables get truncated for SPARQL compatibility when used with ASK.
+
 					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
-					//preg_match("/[A-Z][\\w_]*/", $label, $matches);
 					$mapPRTOColumns[$label] = $index;
-					$prs[] = $pr;
+					$rewritten_pr = $this->rewritePrintrequest($pr);
+                    $prs[] = $rewritten_pr;
 					$index++;
 				}
 
 			}
 		} else {
 
-			// native SPARQL query
+			// native SPARQL query, no main variable
 			foreach($print_requests as $pr) {
 
 				$data = $pr->getData();
 				if ($data != NULL) {
 					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
 					$mapPRTOColumns[$label] = $index;
-					$prs[] = $pr;
+					$rewritten_pr = $this->rewritePrintrequest($pr);
+					$prs[] = $rewritten_pr;
 					$index++;
 				}
 
 			}
 		}
 
-
+	
+   
 		// generate PrintRequests for all bindings (if they do not exist already)
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
 		foreach ($bindings as $b) {
 			$var_name = ucfirst((string) $variables[$var_index]->attributes()->name);
+
 			$var_index++;
 
 			// if no mainlabel, do not create a printrequest for _X_ (instance variable for ASK-converted queries)
 			if ($query->mainLabelMissing && $var_name == "_X_") {
 				continue;
 			}
-			// do not generate new PrintRequest if already given
+			// do not generate new printRequest if already given
 			if ($this->containsPrintRequest($var_name, $print_requests, $query)) continue;
 
 			// otherwise create one
-			$data = SMWPropertyValue::makeUserProperty($var_name);
-			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$var_name), $data);
+			$var_path = explode(".", $var_name);
+			$sel_var = ucfirst($var_path[count($var_path)-1]);
+			$data = SMWPropertyValue::makeUserProperty($sel_var);
+			$prs[] = new SMWPrintRequest(SMWPrintRequest::PRINT_THIS, str_replace("_"," ",$sel_var), $data);
+
 
 
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
-
-		// Query result object
+ 
+		// Query result object;
 		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
 
 
@@ -706,8 +681,9 @@ class SMWTripleStore extends SMWStore {
 			foreach ($children->binding as $b) {
 
 				$var_name = ucfirst((string) $children[$columnIndex]->attributes()->name);
-				if (!$hasMainColumn && $var_name == '_X_') {
 
+				// ignore main variable if not displayed
+				if (!$hasMainColumn && $var_name == '_X_') {
 					$columnIndex++;
 					continue;
 				}
@@ -742,6 +718,36 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		return $queryResult;
+	}
+    
+	/**
+	 * Rewrite printrequests in the way that subselection are cut down to normal property selections
+	 * in order to display them properly.
+	 * 
+	 * @param rewritten printrequest $pr
+	 */
+	private function rewritePrintrequest($pr) {
+	 $data = $pr->getData();
+	 if ($data instanceof Title) { // property chain appear as Title
+	 	$titleText = $data->getText();
+	 	$chain = explode(".",$titleText);
+
+	 	if (count($chain) > 1) {
+	 		$newtitle = Title::newFromText($chain[count($chain)-1], SMW_NS_PROPERTY);
+	 		if ($newtitle->exists()) {
+	 			$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+	 			$newData = SMWPropertyValue::makeUserProperty($newtitle->getText());
+	 		} else {
+	 			$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
+	 			$newData = $newtitle;
+	 		}
+	 		
+	 		$rewritten_prs = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
+	 		$rewritten_prs->getHash();
+	 		
+	 	}
+	 }
+	 return $rewritten_prs;
 	}
 
 	/**
@@ -890,7 +896,7 @@ class SMWTripleStore extends SMWStore {
 	protected function serializeParams($query) {
 		$result = "";
 		$first = true;
-        
+
 		foreach ($query->getExtraPrintouts() as $printout) {
 			if (!$first) $result .= "|";
 			if ($printout->getData() == NULL) {
