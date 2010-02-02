@@ -263,8 +263,11 @@ class SemanticTreeview {
                     $parent = $parents[$depth];
                     $last   = $depth;
                     if (isset($this->args[$id."urlparams"]) &&
-                    	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths))
-                        $item = str_replace($paths[1], $paths[1].'?'.$this->args[$id."urlparams"], $item); 
+                    	preg_match('@(href=\\\"[^\\\]*)\\\@', $item, $paths)) {
+                        $urlparams = (strpos($paths[1], '?') === false) ? '?' : '&';
+                        $urlparams.= $this->args[$id."urlparams"];
+                        $item = str_replace($paths[1], $paths[1].$urlparams, $item);
+                    }
                     $nodes .= "{$this->uniqname}$id.add($node,$parent,'$item');\n";
                     if ($isLeaf) $nodes .= "{$this->uniqname}$id.setLeaf($node);\n";
                 }
