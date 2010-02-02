@@ -691,6 +691,7 @@ class TreeviewTriplestore extends TreeviewStorage {
 		$this->sortElements();
 
 		$this->generateTreeDeepFirstSearch();
+        $this->leafNodes = $this->checkLeafHc();
 
         if ($this->json)
             return $this->formatTreeToJson();
