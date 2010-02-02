@@ -48,7 +48,7 @@ function smw_treeview_getTree($input) {
   $treeGenerator = new TreeGenerator;
   $treeGenerator->setJson();
   if (!$initOnload) $treeGenerator->setLoadNextLevel();
-  if (isset($req['u'])) $treeGenerator->setUseTsc();
+  if (isset($req['j'])) $treeGenerator->setUseTsc();
   $res= $treeGenerator->generateTree($wgParser, $relation, $category,
                                      $start, $display, $maxDepth, $redirectPage,
                                      $level, $condition, $urlparams, $opento,
