@@ -670,6 +670,7 @@ dTree.prototype.initOnload = function(id, arg) {
 	var args = arg.split('&amp;');
 	var dynamic;
 	var opento;
+    var kv = [];
 	// walk through the key value pairs and map each key
 	// to the corresponding key in the ajax call
 	// this is one letter only, to save space in the URI length
@@ -679,26 +680,44 @@ dTree.prototype.initOnload = function(id, arg) {
         if (args[i].indexOf('=') == -1) continue;
 		var key = args[i].substring(0, args[i].indexOf('='));
 		var value = args[i].substring(key.length + 1);
+        var p;
 		if (key == 'condition')
-			params += 'q';
+			p = 'q';
 		else if (key == 'refresh')
-			params += 'f';
+			p = 'f';
 		else if (key == 'orderbyProperty')
-			params += 'b';
+			p = 'b';
 		else if (key == 'checkNode')
-			params += 'n';
+			p = 'n';
+        else if (key == 'useTsc')
+            p = 'j';
 		else if (key == 'dynamic') {
 			dynamic = 1;
 			continue;
 		}
 		else
-			params += key.substring(0, 1);
-		params += '%3D' + value + '%26';
+			p = key.substring(0, 1);
+        kv[p] = value;
+		params += p + '%3D' + value + '%26';
 		if (key == 'opento') {
 			opento = value.replace(/\+/g, '_');
 			opento = opento.replace('%3A', ':');
 		}
 	}
+    // set configuration
+    this.aSmw[this.aSmw.length] = new SmwData(
+        id,
+        (kv.r ? kv.r : null), // relation
+        (kv.c ? kv.c : null), // category
+        (kv.d ? kv.d : null), // display
+        (kv.s ? kv.s : null), // start
+        (kv.m ? kv.m : null), // maxDepth
+        (kv.q ? kv.q : null), // condition
+        (kv.u ? kv.u : null), // urlparams
+        (kv.b ? kv.b : null), // orderbyProperty
+        (kv.n ? kv.n : null), // checkNode
+        (kv.j ? kv.j : null)  // useTsc
+    );
 	if (! dynamic) params += '%26z%3D1';
 	params += this.getTokenAndWriteCache(id);
 
