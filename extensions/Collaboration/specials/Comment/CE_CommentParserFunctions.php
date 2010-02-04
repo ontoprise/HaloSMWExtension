@@ -370,11 +370,13 @@ END;
 		$title = $parser->getTitle();
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
-		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-			throw new CEException(CEException::INTERNAL_ERROR,
-                "The parser functions " . $pfContLangName .
-                "are called for different articles.");
 		}
+		// disabled to due problems when importing or updateing articles.
+//		 else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
+//			throw new CEException(CEException::INTERNAL_ERROR,
+//                "The parser functions " . $pfContLangName .
+//                "are called for different articles.");
+//		}
 
 		global $cegEnableComment, $cegEnableCommentFor;
 		# check if comments enabled #
