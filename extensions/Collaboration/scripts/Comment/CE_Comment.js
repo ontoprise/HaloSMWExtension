@@ -96,12 +96,9 @@ CECommentForm.prototype = {
 		//escape html chars
 		textArea = textArea.escapeHTML();
 		//property & template cleaning:
-		textArea = textArea.replace(/::/g, '_');
-		textArea = textArea.replace(/\[/g, '_');
-		textArea = textArea.replace(/\]/g, '_');
-		textArea = textArea.replace(/\{/g, '_');
-		textArea = textArea.replace(/\}/g, ':');
-		
+		textArea = textArea.replace(/:/g, '&#58;');
+		textArea = textArea.replace(/\{/g, '&#123;');
+		textArea = textArea.replace(/\}/g, '&#125;');
 		
 		//TODO: wgUserName is null, when not logged in!
 		var userNameString = '';
