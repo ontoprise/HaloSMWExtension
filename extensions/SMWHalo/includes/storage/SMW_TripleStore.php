@@ -94,8 +94,7 @@ class SMWTripleStore extends SMWStore {
 		$this->smwstore->deleteSubject($subject);
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 
-		$unknownNSPrefixes = $this->tsNamespace->getUnknownNamespacePrefixes($subj_ns);
-
+		
 
 		// clear rules
 		global $smwgEnableFlogicRules;
@@ -107,9 +106,9 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> WHERE { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
-				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
 			}
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -142,11 +141,11 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
-		$unknownNSPrefixes = "";
-		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($subj_ns);
+		
 
 
 		//properties
+		global $smwgTripleStoreGraph;
 		foreach($data->getProperties() as $key => $property) {
 			$propertyValueArray = $data->getPropertyValues($property);
 			$triplesFromHook = array();
@@ -176,13 +175,13 @@ class SMWTripleStore extends SMWStore {
 						if ($indexOfWhitespace === false) continue; // not a valid measure, ignore
 						$factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
 						$unit = trim(substr($firstMeasure, $indexOfWhitespace));
-						$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor $unit\"");
+						$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph#/property#".$conversionPropertyLabel.">", "\"$factor $unit\"");
 
 						// add all aliases for this conversion factor using the same factor
 						$nextMeasure = next($measures);
 						while($nextMeasure !== false) {
 							$nextMeasure = str_replace('"', '\"', $nextMeasure);
-							$triples[] = array("type:".$subject->getDBkey(), "prop:".$conversionPropertyLabel, "\"$factor ".trim($nextMeasure)."\"");
+							$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph#/property#".$conversionPropertyLabel.">", "\"$factor ".trim($nextMeasure)."\"");
 							$nextMeasure = next($measures);
 						}
 
@@ -203,7 +202,7 @@ class SMWTripleStore extends SMWStore {
 			} elseif ($property->getPropertyID() == "_SUBP") {
 				if ( $subject->getNamespace() == SMW_NS_PROPERTY ) {
 					foreach($propertyValueArray as $value) {
-						$triples[] = array("prop:".$subject->getDBkey(), "rdfs:subPropertyOf", "prop:".$value->getDBkey());
+						$triples[] = array("<$smwgTripleStoreGraph/property#".$subject->getDBkey().">", "rdfs:subPropertyOf", "<$smwgTripleStoreGraph/property#".$value->getDBkey().">");
 					}
 
 				}
@@ -215,12 +214,12 @@ class SMWTripleStore extends SMWStore {
 			foreach($propertyValueArray as $value) {
 				if ($value->isValid()) {
 					if ($value->getTypeID() == '_txt') {
-						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^xsd:string");
+						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^xsd:string");
 
 					} elseif ($value->getTypeID() == '_wpg') {
 						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
-						$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($obj_ns);
-						$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), $obj_ns.":".$value->getDBkey());
+						
+						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "<$smwgTripleStoreGraph/$obj_ns#".$value->getDBkey().">");
 
 					} elseif ($value->getTypeID() == '__nry') {
 						continue; // do not add nary properties
@@ -228,16 +227,16 @@ class SMWTripleStore extends SMWStore {
 
 						if ($value->getUnit() != '') {
 							// attribute with unit value
-							$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
+							$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getXSDValue()." ".$value->getUnit()."\"^^xsd:unit");
 						} else {
 							if (!is_null($property->getWikiPageValue())) {
 								if ($value->getXSDValue() != NULL) {
 									// attribute with textual value
 									$xsdType = WikiTypeToXSD::getXSDType($property->getPropertyTypeID());
-									$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^$xsdType");
+									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$this->escapeForStringLiteral($value->getXSDValue())."\"^^$xsdType");
 								} else if ($value->getNumericValue() != NULL) {
 									// attribute with numeric value
-									$triples[] = array($subj_ns.":".$subject->getDBkey(), "prop:".$property->getWikiPageValue()->getDBkey(), "\"".$value->getNumericValue()."\"^^xsd:double");
+									$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "\"".$value->getNumericValue()."\"^^xsd:double");
 								}
 							}
 						}
@@ -261,7 +260,7 @@ class SMWTripleStore extends SMWStore {
 					$triples = is_array($triplesFromHook) ? array_merge($triples, $triplesFromHook) : $triples;
 					continue;
 				}
-				$triples[] = array("cat:".$subject->getDBkey(), "rdfs:subClassOf", "cat:".$c->getDBkey());
+				$triples[] = array("<$smwgTripleStoreGraph/category#".$subject->getDBkey().">", "rdfs:subClassOf", "<$smwgTripleStoreGraph/category#".$c->getDBkey().">");
 			}
 		} else {
 
@@ -273,7 +272,7 @@ class SMWTripleStore extends SMWStore {
 					$triples = is_array($triplesFromHook) ? array_merge($triples, $triplesFromHook) : $triples;
 					continue;
 				}
-				$triples[] = array($subj_ns.":".$subject->getDBkey(), "rdf:type", "cat:".$c->getDBkey());
+				$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "rdf:type", "<$smwgTripleStoreGraph/category#".$c->getDBkey().">");
 			}
 		}
 
@@ -297,8 +296,8 @@ class SMWTripleStore extends SMWStore {
 				default: continue;
 			}
 			$r_ns = $this->tsNamespace->getNSPrefix($r->getNamespace());
-			$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($r_ns);
-			$triples[] = array($subj_ns.":".$subject->getDBkey(), $prop, $r_ns.":".$r->getDBkey());
+			
+			$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", $prop, "<$smwgTripleStoreGraph/$r_ns#".$r->getDBkey().">");
 		}
 
 		// connect to MessageBroker and send commands
@@ -306,12 +305,12 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { $subj_ns:".$subject->getDBkey()." ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> WHERE { <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey()."> ?p ?o. }";
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				// delete all property constraints too
-				$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty ".$subj_ns.":".$subject->getDBkey().". }";
+				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> WHERE { ?s owl:onProperty <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">. }";
 			}
-			$sparulCommands[] =  TSNamespaces::getAllPrefixes().$unknownNSPrefixes."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
+			$sparulCommands[] =  TSNamespaces::getW3CPrefixes()."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
 			if (isset($smwgEnableFlogicRules)) {
 				// delete old rules...
@@ -339,12 +338,12 @@ class SMWTripleStore extends SMWStore {
 
 	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
 		$this->smwstore->changeTitle($oldtitle, $newtitle, $pageid, $redirid);
-		$unknownNSPrefixes = "";
+		
 		$old_ns = $this->tsNamespace->getNSPrefix($oldtitle->getNamespace());
-		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($old_ns);
+		
 
 		$new_ns = $this->tsNamespace->getNSPrefix($newtitle->getNamespace());
-		$unknownNSPrefixes .= $this->tsNamespace->getUnknownNamespacePrefixes($new_ns);
+		
 
 		// update local rule store
 		global $smwgEnableFlogicRules;
@@ -358,9 +357,9 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { $old_ns:".$oldtitle->getDBkey()." ?p ?o. } INSERT { $new_ns:".$newtitle->getDBkey()." ?p ?o. }";
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s $old_ns:".$oldtitle->getDBkey()." ?o. } INSERT { ?s $new_ns:".$newtitle->getDBkey()." ?o. }";
-			$sparulCommands[] = TSNamespaces::getAllPrefixes().$unknownNSPrefixes."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s ?p $old_ns:".$oldtitle->getDBkey().". } INSERT { ?s ?p $new_ns:".$newtitle->getDBkey().". }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?p ?o. } INSERT { <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?o. } INSERT { ?s <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s ?p <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey().">. } INSERT { ?s ?p <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey().">. }";
 			$con->connect();
 			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
@@ -391,7 +390,7 @@ class SMWTripleStore extends SMWStore {
 				global $smwgTripleStoreGraph;
 				if (stripos(trim($query->getQueryString()), 'SELECT') === 0 || stripos(trim($query->getQueryString()), 'PREFIX') === 0) {
 					// SPARQL, attach common prefixes
-					$response = $client->query(TSNamespaces::getAllPrefixes().$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
+					$response = $client->query(TSNamespaces::getW3CPrefixes().$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
 				} else {
 
 					// do not attach anything

@@ -13,7 +13,7 @@
  * Otherwise normal processing goes on.
  */
 function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArray, & $triplesFromHook) {
-
+    global $smwgTripleStoreGraph;
 	if (!($property instanceof SMWPropertyValue)) {
 		// error. should not happen
 		trigger_error("Triple store update: property is not SMWPropertyValue");
@@ -29,7 +29,8 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 	if (smwfGetSemanticStore()->inverseOf->getDBkey() == $property->getXSDValue()) {
         foreach($propertyValueArray as $inverseProps) {
             if (count($propertyValueArray) == 1) {
-                $triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "owl:inverseOf", "prop:".$inverseProps->getDBkey());
+            	
+                $triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "owl:inverseOf", "<$smwgTripleStoreGraph/property#".$inverseProps->getDBkey().">");
             }
         }
     } elseif ($property->getPropertyID() == "_TYPE") {
@@ -39,7 +40,7 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
 		foreach($propertyValueArray as $value) {
 			$typeID = $value->getXSDValue();
 			if ($typeID != '_wpg') {
-				$triplesFromHook[] = array("prop:".$data->getSubject()->getDBkey(), "prop:Has_type", WikiTypeToXSD::getXSDType($typeID));
+				$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$data->getSubject()->getDBkey().">", "<$smwgTripleStoreGraph/property#Has_type>", WikiTypeToXSD::getXSDType($typeID));
 			}
 
 		}
@@ -58,11 +59,13 @@ function smwfTripleStorePropertyUpdate(& $data, & $property, & $propertyValueArr
  * @return Array of triples or false
  */
 function smwfTripleStoreCategoryUpdate(& $subject, & $c, & $triplesFromHook) {
+	global $smwgTripleStoreGraph;
 	// serialize transitive or symetric property triples
 	if ($subject->getNamespace() == SMW_NS_PROPERTY && smwfGetSemanticStore()->transitiveCat->equals($c)) {
-		$triplesFromHook[] = array("prop:".$subject->getDBkey(), "rdf:type", "owl:TransitiveProperty");
+		
+		$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$subject->getDBkey().">", "rdf:type", "owl:TransitiveProperty");
 	} elseif ($subject->getNamespace() == SMW_NS_PROPERTY && smwfGetSemanticStore()->symetricalCat->equals($c)) {
-		$triplesFromHook[] = array("prop:".$subject->getDBkey(), "rdf:type", "owl:SymmetricProperty");
+		$triplesFromHook[] = array("<$smwgTripleStoreGraph/property#".$subject->getDBkey().">", "rdf:type", "owl:SymmetricProperty");
 	}
 	return true;
 }

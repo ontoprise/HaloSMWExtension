@@ -90,6 +90,8 @@ class TSNamespaces {
     public static function getAllNamespaces() { return self::$ALL_NAMESPACES; }
     public static $ALL_PREFIXES;
     public static function getAllPrefixes() { return self::$ALL_PREFIXES; }
+    public static $W3C_PREFIXES;
+    public static function getW3CPrefixes() { return self::$W3C_PREFIXES; }
 
     // general namespace suffixes for different namespaces
     public static $CAT_NS_SUFFIX = "/category#";
@@ -124,7 +126,9 @@ class TSNamespaces {
         self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> PREFIX cat:<'.self::$CAT_NS.'> PREFIX prop:<'.
         self::$PROP_NS.'> PREFIX a:<'.self::$INST_NS.'> PREFIX type:<'.self::$TYPE_NS.'> PREFIX image:<'.
         self::$IMAGE_NS.'> PREFIX help:<'.self::$HELP_NS.'> PREFIX template:<'.self::$TEMPLATE_NS.'> PREFIX user: <'.self::$USER_NS.'> ';
-
+        
+        self::$W3C_PREFIXES = 'PREFIX xsd:<'.self::$XSD_NS.'> PREFIX owl:<'.self::$OWL_NS.'> PREFIX rdfs:<'.
+        self::$RDFS_NS.'> PREFIX rdf:<'.self::$RDF_NS.'> ';
         // declare all other namespaces using ns_$index as prefix
         $extraNamespaces = array_diff(array_keys($wgExtraNamespaces), array(NS_CATEGORY, SMW_NS_PROPERTY, SMW_NS_TYPE, NS_IMAGE, NS_HELP, NS_MAIN));
         foreach($extraNamespaces as $nsIndex) {
@@ -140,8 +144,8 @@ class TSNamespaces {
      * @return string
      */
     public function getNSPrefix($namespace) {
-        if ($namespace == SMW_NS_PROPERTY) return "prop";
-        elseif ($namespace == NS_CATEGORY) return "cat";
+        if ($namespace == SMW_NS_PROPERTY) return "property";
+        elseif ($namespace == NS_CATEGORY) return "category";
         elseif ($namespace == NS_MAIN) return "a";
         elseif ($namespace == SMW_NS_TYPE) return "type";
         elseif ($namespace == NS_IMAGE) return "image";
