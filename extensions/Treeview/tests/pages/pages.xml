@@ -774,4 +774,26 @@ display=hasTitle,
 }}</text>
     </revision>
   </page>
+  <page>
+    <title>Tree6</title>
+    <id>40</id>
+    <revision>
+      <id>50</id>
+      <timestamp>2010-02-05T16:23:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">== Testpage for Webtest of Tree6 ==
+
+Options are:
+property=Subsection of, 
+category=Content,
+initOnload=1,
+urlparams=par%3Dval
+
+{{#tree:
+{{#generateTree:property=Subsection of|category=Content|initOnload=1|urlparams=par%3Dval}}
+}}</text>
+    </revision>
+  </page>
 </mediawiki>
