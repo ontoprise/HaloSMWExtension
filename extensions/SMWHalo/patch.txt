@@ -1,6 +1,6 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 5893)
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6418)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
 @@ -55,7 +55,15 @@
  
@@ -19,9 +19,25 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
  
  	public function __construct($typeid) {
  		$this->m_typeid = $typeid;
+Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
+===================================================================
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 6418)
++++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
+@@ -85,9 +85,9 @@
+ 	for (var i=0;i<spans.length;i++) {
+ 	    if(spans[i].className=="smwsortkey") return spans[i].innerHTML;
+ 	}
+-    }else{
+-	return el.innerHTML;	
+     }
++	return el.innerHTML;	
++    
+ 
+ }
+ 
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 5714)
+--- includes/Article.php	(revision 6000)
 +++ includes/Article.php	(working copy)
 @@ -3552,9 +3552,15 @@
  
@@ -43,7 +59,7 @@ Index: includes/Article.php
  		if( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 5714)
+--- includes/Namespace.php	(revision 6000)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,11 @@
  	 */
@@ -60,7 +76,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php	(revision 5714)
+--- includes/parser/ParserOptions.php	(revision 6000)
 +++ includes/parser/ParserOptions.php	(working copy)
 @@ -30,6 +30,9 @@
  	var $mTemplateCallback;          # Callback for template fetching
