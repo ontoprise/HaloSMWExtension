@@ -332,7 +332,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 			if (!is_null($smwValue->getTitle())) {
 			 $targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-			 $singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists>".$smwValue->getTitle()->getPrefixedDBkey()."</param>$gi_issues</annotation>";
+			 $singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>$gi_issues</annotation>";
 			}
 			
 		} else if ($smwValue != NULL){ // normal attribute
