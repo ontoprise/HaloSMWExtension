@@ -93,8 +93,9 @@ class TreeGenerator {
 		else
 			$ajaxExpansion = (!array_key_exists('iolStatic', $genTreeParameters) && !$this->useTsc &&
 							 (array_key_exists('dynamic', $genTreeParameters) || $this->json)) ? 1 : 0;
-
-		$checkNode = ($ajaxExpansion > 0 && array_key_exists('checkNode', $genTreeParameters)) ? true : false;
+        // checkNode is useful only if dynamic expansion is used, to check if the expanded node has further branches or leafs
+		$checkNode = ($ajaxExpansion > 0 && array_key_exists('checkNode', $genTreeParameters) ||
+                      array_key_exists('iolStatic', $genTreeParameters)) ? true : false;
 
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
@@ -691,9 +692,10 @@ class TreeviewTriplestore extends TreeviewStorage {
 		$this->sortElements();
 
 		$this->generateTreeDeepFirstSearch();
+        // because we get all nodes at once, there is no dynamic expansion and we know the leafs
         $this->leafNodes = $this->checkLeafHc();
 
-        if ($this->json)
+        if ($this->json) // when initOnload was used
             return $this->formatTreeToJson();
 		return $this->formatTreeToText();
 
