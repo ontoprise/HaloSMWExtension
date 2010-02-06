@@ -94,7 +94,7 @@ class SMWTripleStore extends SMWStore {
 		$this->smwstore->deleteSubject($subject);
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 
-		
+
 
 		// clear rules
 		global $smwgEnableFlogicRules;
@@ -117,7 +117,7 @@ class SMWTripleStore extends SMWStore {
 				}
 			}
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
+			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -141,7 +141,7 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		$subj_ns = $this->tsNamespace->getNSPrefix($subject->getNamespace());
-		
+
 
 
 		//properties
@@ -218,7 +218,7 @@ class SMWTripleStore extends SMWStore {
 
 					} elseif ($value->getTypeID() == '_wpg') {
 						$obj_ns = $this->tsNamespace->getNSPrefix($value->getNamespace());
-						
+
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "<$smwgTripleStoreGraph/$obj_ns#".$value->getDBkey().">");
 
 					} elseif ($value->getTypeID() == '__nry') {
@@ -296,7 +296,7 @@ class SMWTripleStore extends SMWStore {
 				default: continue;
 			}
 			$r_ns = $this->tsNamespace->getNSPrefix($r->getNamespace());
-			
+
 			$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", $prop, "<$smwgTripleStoreGraph/$r_ns#".$r->getDBkey().">");
 		}
 
@@ -328,7 +328,7 @@ class SMWTripleStore extends SMWStore {
 				}
 			}
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
+			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 			// print something??
@@ -338,12 +338,12 @@ class SMWTripleStore extends SMWStore {
 
 	function changeTitle(Title $oldtitle, Title $newtitle, $pageid, $redirid=0) {
 		$this->smwstore->changeTitle($oldtitle, $newtitle, $pageid, $redirid);
-		
+
 		$old_ns = $this->tsNamespace->getNSPrefix($oldtitle->getNamespace());
-		
+
 
 		$new_ns = $this->tsNamespace->getNSPrefix($newtitle->getNamespace());
-		
+
 
 		// update local rule store
 		global $smwgEnableFlogicRules;
@@ -361,7 +361,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?o. } INSERT { ?s <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?o. }";
 			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s ?p <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey().">. } INSERT { ?s ?p <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey().">. }";
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
+			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -382,22 +382,10 @@ class SMWTripleStore extends SMWStore {
 				$sqr->addErrors(array(wfMsgForContent('hacl_sp_empty_query')));
 				return $sqr;
 			}
-			if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-			if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-			$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
 			try {
-				global $smwgTripleStoreGraph;
-				if (stripos(trim($query->getQueryString()), 'SELECT') === 0 || stripos(trim($query->getQueryString()), 'PREFIX') === 0) {
-					// SPARQL, attach common prefixes
-					$response = $client->query(TSNamespaces::getW3CPrefixes().$query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
-				} else {
-
-					// do not attach anything
-					$response = $client->query($query->getQueryString(), $smwgTripleStoreGraph, $this->serializeParams($query));
-
-				}
-
+				$con = TSConnection::getConnector();
+				$con->connect();
+				$response = $con->query($query->getQueryString(), $this->serializeParams($query));
 					
 				global $smwgSPARQLResultEncoding;
 				// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -469,7 +457,7 @@ class SMWTripleStore extends SMWStore {
 			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
 			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
 			$con->connect();
-			$con->send("/topic/WIKI.TS.UPDATE", $sparulCommands);
+			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();
 		} catch(Exception $e) {
 
@@ -590,7 +578,7 @@ class SMWTripleStore extends SMWStore {
 
 		// use user-given PrintRequests if possible
 		$print_requests = $query->getDescription()->getPrintRequests();
-		
+
 		// _X_ is used for the main variable.
 		$hasMainColumn = false;
 		$index = 0;
@@ -614,7 +602,7 @@ class SMWTripleStore extends SMWStore {
 					$label = $data instanceof Title ? $data->getDBkey() : $data->getXSDValue();
 					$mapPRTOColumns[$label] = $index;
 					$rewritten_pr = $this->rewritePrintrequest($pr);
-                    $prs[] = $rewritten_pr;
+					$prs[] = $rewritten_pr;
 					$index++;
 				}
 
@@ -636,8 +624,8 @@ class SMWTripleStore extends SMWStore {
 			}
 		}
 
-	
-   
+
+			
 		// generate PrintRequests for all bindings (if they do not exist already)
 		$var_index = 0;
 		$bindings = $results[0]->children()->binding;
@@ -664,7 +652,7 @@ class SMWTripleStore extends SMWStore {
 			$mapPRTOColumns[$var_name] = $index;
 			$index++;
 		}
- 
+
 		// Query result object;
 		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
 
@@ -718,11 +706,11 @@ class SMWTripleStore extends SMWStore {
 
 		return $queryResult;
 	}
-    
+
 	/**
 	 * Rewrite printrequests in the way that subselection are cut down to normal property selections
 	 * in order to display them properly.
-	 * 
+	 *
 	 * @param rewritten printrequest $pr
 	 */
 	private function rewritePrintrequest($pr) {
@@ -740,10 +728,10 @@ class SMWTripleStore extends SMWStore {
 	 			$newlabel = $pr->getLabel() != $titleText ? $pr->getLabel() : $newtitle->getText();
 	 			$newData = $newtitle;
 	 		}
-	 		
+
 	 		$rewritten_prs = new SMWPrintRequest($newtitle->exists() ? SMWPrintRequest::PRINT_PROP : SMWPrintRequest::PRINT_THIS, $newlabel, $newData, $pr->getOutputFormat());
 	 		$rewritten_prs->getHash();
-	 		
+
 	 	}
 	 }
 	 return $rewritten_prs;
@@ -973,15 +961,18 @@ class SMWTripleStore extends SMWStore {
 
 /**
  * Provides an abstraction for the connection to the triple store.
- * Currently, 3 connector types are supported:
+ * Currently, 4 connector types are supported:
  *
- *  1. MessageBroker
- *  2. REST webservice
- *  3. SOAP webservice
+ *  1. MessageBroker for SPARUL
+ *      *with SOAP SPARQL webservice
+ *      *with REST SPARQL webservice
+ *  2. REST webservice for SPARUL/SPARQL
+ *  3. SOAP webservice for SPARUL/SPARQL
  *
  */
 abstract class TSConnection {
-	protected $con;
+	protected $updateClient;
+	protected $queryClient;
 
 	protected static $_instance;
 	/**
@@ -1002,14 +993,27 @@ abstract class TSConnection {
 	 * @param string $topic only relevant for a messagebroker.
 	 * @param string or array of strings $commands
 	 */
-	public abstract function send($topic, $commands);
+	public abstract function update($topic, $commands);
+
+	/**
+	 * Sends query
+	 *
+	 * @param string $query text
+	 * @param string query parameters
+	 * @return string SPARQL-XML result
+	 */
+	public abstract function query($query, $params);
 
 	public static function getConnector() {
 		if (is_null(self::$_instance)) {
 			global $smwgMessageBroker, $smwgWebserviceProtocol;
 
 			if (isset($smwgMessageBroker)) {
-				self::$_instance = new TSConnectorMessageBroker();
+				if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+					self::$_instance = new TSConnectorMessageBrokerAndRESTWebservice();
+				} else {
+					self::$_instance = new TSConnectorMessageBrokerAndSOAPWebservice();
+				}
 			} else if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 				self::$_instance = new TSConnectorRESTWebservice();
 
@@ -1023,34 +1027,81 @@ abstract class TSConnection {
 }
 
 /**
- * MessageBroker connector implementation.
+ * MessageBroker connector implementation for updates (SPARUL).
+ * SOAP webservice for SPARQL queries.
  *
  */
-class TSConnectorMessageBroker extends TSConnection {
+class TSConnectorMessageBrokerAndSOAPWebservice extends TSConnectorSOAPWebservice {
 
 
 	public function connect() {
 		global $smwgMessageBroker;
-		$this->con = new StompConnection("tcp://$smwgMessageBroker:61613");
-		$this->con->connect();
+		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
+		$this->updateClient->connect();
+		
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+        if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+        $this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	}
 
 
 	public function disconnect() {
-		$this->con->disconnect();
+		$this->updateClient->disconnect();
 	}
 
 
-	public function send($topic, $commands) {
+	public function update($topic, $commands) {
 		global $smwgSPARULUpdateEncoding;
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-			$this->con->send($topic, $enc_commands);
+			$this->updateClient->send($topic, $enc_commands);
 			return;
 		}
 		$commandStr = implode("|||",$commands);
 		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
-		$this->con->send($topic, $enc_commands);
+		$this->updateClient->send($topic, $enc_commands);
+	}
+
+
+
+}
+
+/**
+ * MessageBroker connector implementation for updates (SPARUL).
+ * REST webservice for SPARQL queries.
+ *
+ */
+class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservice {
+
+
+	public function connect() {
+		global $smwgMessageBroker;
+		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
+		$this->updateClient->connect();
+		
+		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
+        list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+        $credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+		$this->queryClient = new RESTWebserviceConnector($host, $port, "/sparql", $credentials);
+	}
+
+
+	public function disconnect() {
+		$this->updateClient->disconnect();
+	}
+
+
+	public function update($topic, $commands) {
+		global $smwgSPARULUpdateEncoding;
+		if (!is_array($commands)) {
+			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
+			$this->updateClient->send($topic, $enc_commands);
+			return;
+		}
+		$commandStr = implode("|||",$commands);
+		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
+		$this->updateClient->send($topic, $enc_commands);
 	}
 
 
@@ -1067,18 +1118,19 @@ class TSConnectorRESTWebservice extends TSConnection {
 		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
 		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-		$this->con = new RESTWebserviceConnector($host, $port, "/sparul", $credentials);
+		$this->updateClient = new RESTWebserviceConnector($host, $port, "/sparul", $credentials);
+		$this->queryClient = new RESTWebserviceConnector($host, $port, "/sparql", $credentials);
 	}
 
 	public function disconnect() {
 		// do nothing. webservice calls use stateless HTTP protocol.
 	}
 
-	public function send($topic, $commands) {
+	public function update($topic, $commands) {
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
 			$enc_commands = '<sparul><command><![CDATA['.$enc_commands.']]></command></sparul>';
-			$this->con->update($enc_commands);
+			$this->updateClient->update($enc_commands);
 			return;
 		}
 		$enc_commands = "<sparul>";
@@ -1087,8 +1139,24 @@ class TSConnectorRESTWebservice extends TSConnection {
 			$enc_commands .= "<command><![CDATA[$enc_command]]></command>";
 		}
 		$enc_commands .= "</sparul>";
+		$this->updateClient->send($enc_commands);
 
-		$this->con->update($enc_commands);
+	}
+
+	public function query($query, $params) {
+	   global $smwgTripleStoreGraph;
+        if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
+            // SPARQL, attach common prefixes
+            $query = TSNamespaces::getAllPrefixes().$query;
+        } 
+		$queryRequest = "<query>";
+		$queryRequest .= "<text><![CDATA[".$query."]]></text>";
+		$queryRequest .= "<params><![CDATA[".$params."]]></params>";
+		$queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
+		$queryRequest .= "</query>";
+		
+		list($header, $result) = $this->queryClient->send($queryRequest);
+		return $result;
 	}
 }
 
@@ -1102,21 +1170,42 @@ class TSConnectorSOAPWebservice extends TSConnection {
 		global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript, $smwgUseLocalhostForWSDL;
 		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$this->con = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+		$this->updateClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	}
 
 	public function disconnect() {
 		// do nothing. webservice calls use stateless HTTP protocol.
 	}
 
-	public function send($topic, $commands) {
+	public function update($topic, $commands) {
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-			$this->con->update($enc_commands);
+			$this->updateClient->update($enc_commands);
 			return;
 		}
 		$commandStr = implode("|||",$commands);
 		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
-		$this->con->update($enc_commands);
+		$this->updateClient->update($enc_commands);
+	}
+
+	public function query($query, $params) {
+
+
+		global $smwgTripleStoreGraph;
+		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
+			// SPARQL, attach common prefixes
+			$response = $this->queryClient->query(TSNamespaces::getAllPrefixes().$query, $smwgTripleStoreGraph, $params);
+		} else {
+
+			// do not attach anything
+			$response = $this->queryClient->query($query, $smwgTripleStoreGraph, $params);
+
+		}
+		return $response;
 	}
 }

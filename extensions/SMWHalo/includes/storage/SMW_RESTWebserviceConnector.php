@@ -20,7 +20,7 @@ class RESTWebserviceConnector {
 		$this->credentials = $credentials;
 	}
 
-	public function update($payload) {
+	public function send($payload) {
 
 		$address = gethostbyname($this->host);
 		$res = "";
@@ -37,45 +37,23 @@ class RESTWebserviceConnector {
 		$in .= $payload;
 
 		socket_write($socket, $in, strlen($in));
-		$headerFound = false;
+		
 		$header = "";
 
 		$out = socket_read($socket, 2048, PHP_BINARY_READ);
-		$payload = false;
+        $res .= $out;
 		do {
-			$read = strlen($out);
-
-			if (! $headerFound) {
-				$header .= $out;
-				$index = strpos($header, "\r\n\r\n");
-
-				if ($index !== false) {
-
-					$out = substr($header, $index+4);
-
-					$header = substr($header, 0, $index);
-					$contentLength = $this->getContentLength($header);
-
-					$headerFound = true;
-
-
-				} else {
-					if ($read == 0) throw new RESTHttpError("No header found", 0, $header);
-					continue;
-				}
-			} else {
-				$payload = true;
-			}
-
+			if ($out === false);break;
 			$res .= $out;
-
-			if ($read < 2048 && $payload) break;
-
-
-		} while ($out = socket_read($socket, 2048));
-
+			 
+		} while ($out = socket_read($socket, 2048, PHP_BINARY_READ));
+        
+		$headerIndex = strpos($res, "\r\n\r\n");
+		$header = substr($res, 0, $headerIndex);
+		$result = substr($res, $headerIndex+4);
+		
 		socket_close($socket);
-		return array($header, $res);
+		return array($header, $result);
 	}
 
 
