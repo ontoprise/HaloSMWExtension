@@ -3,7 +3,7 @@
 # Not a valid entry point, skip unless MEDIAWIKI is defined
 if (!defined('MEDIAWIKI')) {
 	echo <<<HEREDOC
-To install my extension, put the following line in LocalSettings.php:
+To install the WYSIWYG extension, put the following line in LocalSettings.php:
 require_once( "\$IP/extensions/FCKeditor/FCKeditor.php" );
 HEREDOC;
 	exit( 1 );
@@ -78,7 +78,7 @@ $wgAjaxExportList[] = 'wfSajaxFormForTemplateFCKeditor';
 $wgExtensionCredits['other'][] = array(
 "name" => "WYSIWYG extension",
 "author" => "[http://ckeditor.com FCKeditor] (inspired by the code written by Mafs [http://www.mediawiki.org/wiki/Extension:FCKeditor_%28by_Mafs%29]) extended by [http://www.ontoprise.de Ontoprise]",
-"version" => '1.4, FCK 2.6.4 Build 21629',
+"version" => '{{$VERSION}}, FCK 2.6.4 Build 21629',
 "url" => "http://smwforum.ontoprise.com/smwforum/index.php/Help%3AWYSIWYG_Extension",
 "description" => "FCKeditor for Semantic MediaWiki"
 );
