@@ -16,6 +16,12 @@ $dryRun = "";
 $onlypatch = false;
 $returnCode = 0;
 
+// prevent that the script can be started from the webserver
+ if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
+    echo "Run this script from the command line only";
+    exit();
+}
+
 // get parameters
 for( $arg = reset( $argv ); $arg !== false; $arg = next( $argv ) ) {
 	//-d => absolute path to extend relative
