@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="wysiwyg">
-	<target name="build">
+	<target name="build" depends="versionhint">
 		<delete dir="bin/zip" />
 		<delete>
 			<fileset dir="bin" includes="smwhalo-wysiwyg*.zip" />
@@ -23,6 +23,13 @@
 		</exec>
 	</target>
 
+	<target name="versionhint">
+		<exec executable="php">
+			<arg value="../../../buildtools/replaceVersionHint.php" />
+			<arg value="../deploy.xml" />
+			<arg value="../FCKeditor.php" />
+		</exec>
+	</target>
 
 
 </project>
