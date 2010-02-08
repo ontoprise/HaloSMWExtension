@@ -81,6 +81,10 @@
 				<include name="patch.txt" />
 				<include name="deploy.xml" />
 			</fileset>
+   			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
+
 		</copy>
 
 
