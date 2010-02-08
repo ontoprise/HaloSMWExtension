@@ -69,7 +69,7 @@ remarks in the section "Notes on Upgrading" below.
     itself uses GNU patch. The patch.php is also included in this extension. Go into
     the root directory of the extension. Run the following command:
     
-       php patch.php -p <patch-file> -d <mw-dir> --onlypatch
+       php patch.php -p <patch-file> -d <mediawiki-dir> --onlypatch
     
 
 
