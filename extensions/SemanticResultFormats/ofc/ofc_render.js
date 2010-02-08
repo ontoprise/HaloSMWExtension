@@ -11,16 +11,39 @@
 	var	ofc_x_axis='#F65327';
 	var	ofc_x_grid='#E2E2E2';
 
+function showHide(ofclnk, ofc, isShow){
+    if (ofc.is(":hidden") && isShow) {
+    	ofc.show();
+    	jQuery(ofclnk).html("<b>"+jQuery(ofclnk).text()+"</b>");
+    } else if (!ofc.is(":hidden") && !isShow) {
+    	ofc.hide();
+    	jQuery(ofclnk).html(jQuery(ofclnk).text());
+    }
+}
 function showHideChart(event){
   	event.preventDefault();
     var the_id=jQuery(this).attr("id").substr(16);
     var ofc=jQuery('#'+the_id);
-    if (ofc.is(":hidden")) {
-    	ofc.show();
-    	jQuery(this).html("<b>"+jQuery(this).text()+"</b>");
-    }else{
-    	ofc.hide();
-    	jQuery(this).html(jQuery(this).text());
+   	showHide(this, ofc, ofc.is(":hidden"));
+}
+function tabChart(event){
+  	event.preventDefault();
+  	var lnk_id = jQuery(this).attr("id");
+    var lnk_pre = "show_hide_flash_div_ofc";
+    var div_pre = "div_ofc";
+    var chartset = lnk_id.substr(23);
+    chartset = chartset.substr(0, chartset.indexOf("_"));
+    lnk_pre += chartset + "_";
+    div_pre += chartset + "_";
+    var i=0;
+    while((lnk = jQuery('#'+lnk_pre+i)).length != 0) {
+	    var ofc=jQuery('#'+div_pre+i);
+    	if(lnk_id==(lnk_pre+i)) {
+		   	showHide(lnk, ofc, true);
+    	} else {
+		   	showHide(lnk, ofc, false);
+    	}
+    	i++;
     }
 }
 
@@ -39,12 +62,6 @@ jQuery(function() {
 			swfobject.embedSWF(flash_chart_path, ofc_id, ofc_w,ofc_h, "9.0.0", "expressInstall.swf", flashvars, params, attributes );
 		}
 	}
-	
-	jQuery("a.ofc_pie_link").click(showHideChart);
-	jQuery("a.ofc_bar_link").click(showHideChart);
-	jQuery("a.ofc_bar_3d_link").click(showHideChart);
-	jQuery("a.ofc_line_link").click(showHideChart);
-	jQuery("a.ofc_scatter_line_link").click(showHideChart);
 	
 	jQuery("a.ofc_table_link").click(function(event){
 	  	event.preventDefault();
@@ -88,11 +105,11 @@ function resetOfc() {
         }
     }
     
-    jQuery("a.ofc_pie_link").click(showHideChart);
-    jQuery("a.ofc_bar_link").click(showHideChart);
-    jQuery("a.ofc_bar_3d_link").click(showHideChart);
-    jQuery("a.ofc_line_link").click(showHideChart);
-    jQuery("a.ofc_scatter_line_link").click(showHideChart);
+	jQuery("a.ofc_pie_link").click(showHideChart);
+	jQuery("a.ofc_bar_link").click(showHideChart);
+	jQuery("a.ofc_bar_3d_link").click(showHideChart);
+	jQuery("a.ofc_line_link").click(showHideChart);
+	jQuery("a.ofc_scatter_line_link").click(showHideChart);
     
     jQuery("a.ofc_table_link").click(function(event){
         event.preventDefault();
@@ -107,3 +124,21 @@ function resetOfc() {
         }
     });
 }
+
+// derive from SMWUserManual/scripts/up.js, it is called with MW BeforePageDisplay hook, here we just use the instance 
+uprgPopup.cellDataRating = function(tableIdentifier, row, col, value, cellIdent, uri) {
+        this.initPopup()
+        
+        // provenance URI
+        this.provenanceUri=uri
+        this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScript).replace(/:/, '%3A').replace(/\//g, '%2F')+'%2F'+wgPageName
+        // set the static html stuff
+        this.popup.setHtmlContent(this.cellRatingHtml())
+
+        document.getElementById('up_data_table_row').innerHTML = row;
+        document.getElementById('up_data_table_col').innerHTML = col;
+        document.getElementById('up_data_table_value').value = value;
+        
+        this.tableIdentifier = tableIdentifier;
+        sajax_do_call('wfUpGetCellRating', [wgPageName, this.tableIdentifier, cellIdent], this.setComments.bind(this))
+    };

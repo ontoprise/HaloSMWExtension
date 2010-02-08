@@ -1,6 +1,6 @@
 <?php
 /**
- * A query printer for pie charts using the Google Chart API
+ * A query printer for multiple charts using the Open Flash Chart
  *
  * @note AUTOLOADED
  */
@@ -18,6 +18,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_label = '';
 	protected $m_hidetable = false;
 	protected $m_singlechart = false;
+	protected $m_tabview = false;
 
 	protected $m_isAjax = false;
 	public function __construct($format, $inline) {
@@ -87,8 +88,16 @@ class SRFOFC extends SMWResultPrinter {
 			return;
 		}
 
-		if (array_key_exists('hidetable', $this->m_params)) {
-			$this->m_hidetable = $this->m_params['hidetable'];
+		if (array_key_exists('options', $this->m_params)) {
+			$ops = explode(';', $this->m_params['options']);
+			foreach($ops as $op) {
+				$op = strtolower(trim($op));
+				if('hidetable' == $op) {
+					$this->m_hidetable = true;					
+				} else if('tabview' == $op) {
+					$this->m_tabview = true;					
+				}
+			}
 		}
 		$this->parseChartSettings('pie');
 		$this->parseChartSettings('bar');
@@ -106,33 +115,66 @@ class SRFOFC extends SMWResultPrinter {
 			$width = $this->m_width;
 			$height = $this->m_height;
 			$show = false;
+			$autoratio = false;
 			for($i=2;$i<count($arr);++$i) {
 				if(preg_match('/^(\d+)x(\d+)$/i', trim($arr[$i]), $m)) {
 					$width = $m[1];
 					$height = $m[2];
 				} else if(strtolower(trim($arr[$i]))=='show') {
 					$show = true;
+				} else if(strtolower(trim($arr[$i]))=='autoratio') {
+					$autoratio = true;
 				}
 			}
-			$this->m_charts[] = array('show'=>$show, 'type'=>$type, 'width'=>$width, 'height'=>$height, 'xlabel'=>trim($arr[0]), 'ylabel'=>trim($arr[1]), 'x'=>strtolower(trim($arr[0])), 'y'=>explode('/', strtolower(trim($arr[1]))));
+			$ys = explode('/', strtolower($arr[1]));
+			$ratios = array();
+			$yaxis = array();
+			$ylabel = '';
+			foreach($ys as $yIdx=>$y) {
+				if($yIdx>0) $ylabel .= ' / ';
+				$p = strrpos($y, '*');
+				if($p>0 && !$autoratio) {
+					$ratios[$yIdx] = floatval(substr($y, $p+1));
+				} else {
+					$ratios[$yIdx] = 1;
+				}
+				if($p!==false) {
+					$s = trim(substr($y, 0, $p));
+				} else {
+					$s = trim($y);
+				}
+				$yaxis[$yIdx] = strtolower($s);
+				$ylabel .= $s;
+			}
+			$this->m_charts[] = array(
+				'show'=>$show, 
+				'autoratio'=>$autoratio, 
+				'type'=>$type, 
+				'width'=>$width, 
+				'height'=>$height, 
+				'xlabel'=>trim($arr[0]), 
+				'ylabel'=>$ylabel, 
+				'x'=>strtolower(trim($arr[0])), 
+				'y'=>$yaxis,
+				'ratio'=>$ratios
+			);
 		}
 	}
 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
 	
 
     private function setupOFCHeader() {
-            global $wgParser;
             $i=0;
             foreach($this->getStylesheets() as $css) {
-                $wgParser->getOutput()->addHeadItem('<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />', "ofc-css$i");
+                SMWOutputs::requireHeadItem("ofc-css$i", '<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
                 
                 $i++;
             }
             $i=0;
             foreach($this->getScripts() as $script) {
-            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
+//            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
             	
-                $wgParser->getOutput()->addHeadItem($script,"ofc-script$i");    
+                SMWOutputs::requireHeadItem("ofc-script$i", $script);    
                 $i++;
             }
             SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
@@ -143,6 +185,8 @@ class SRFOFC extends SMWResultPrinter {
 		$outputmode = SMW_OUTPUT_HTML;
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
+		if (defined('SMW_UP_RATING_VERSION')) $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
+		
 		if (!$this->m_isAjax) {
 			$this->setupOFCHeader();
 		}
@@ -171,9 +215,23 @@ class SRFOFC extends SMWResultPrinter {
 				$headers = array_slice($headers, 1);
 				$l = array_slice($l, 1);
 			}
-			$this->m_charts[] = array('show'=>true, 'type'=>$this->m_singlechart, 'width'=>$this->m_width, 'height'=>$this->m_height,
-				'xlabel'=>$headers[0], 'ylabel'=>(($this->m_singlechart == 'pie')?$headers[1]:implode(' / ', array_slice($headers, 1))), 
-				'x'=>$l[0], 'y'=>array_slice($l, 1));
+			
+			$ratios = array();
+			foreach($l as $yIdx=>$y) {
+				$ratios[$yIdx] = 1;
+			}
+			
+			$this->m_charts[] = array(
+				'show'=>true,
+				'autoratio'=>false,			
+				'type'=>$this->m_singlechart, 
+				'width'=>$this->m_width, 
+				'height'=>$this->m_height,
+				'xlabel'=>$headers[0], 
+				'ylabel'=>(($this->m_singlechart == 'pie')?$headers[1]:implode(' / ', array_slice($headers, 1))), 
+				'x'=>$l[0], 
+				'y'=>array_slice($l, 1),
+				'ratio'=>array_slice($ratios,1));
 		}
 
 		// print all result rows
@@ -184,6 +242,7 @@ class SRFOFC extends SMWResultPrinter {
 			$firstcol = true;
 			$index = 0;
 			$tp = '';
+			$provURL = '';
 			foreach ($row as $field) {
 				$table .= "\t\t<td>";
 				$first = true;
@@ -193,6 +252,15 @@ class SRFOFC extends SMWResultPrinter {
 						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 					} else {
 						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
+					}
+					if ($firstcol) {$rowname = $object->getShortText();}
+					if (strlen($text) > 0) {
+						$provURL = $object->getProvenance();
+						if (!is_null($provURL)) {
+							$provURL = $this->createProvenanceLink($provURL, $headers[0] . ':' . $rowname, $headers[$index], $text, $headers[$index].",".$rowname);
+						} else {
+							$provURL = '';
+						}
 					}
 					if ($first) {
 						if ($object->isNumeric()) { // use numeric sortkey
@@ -214,13 +282,8 @@ class SRFOFC extends SMWResultPrinter {
 							$this->m_charts[$i]['data'][$idx]['label'] = $data;
 						} else if($chart['y'][0] == $label) {
 							$v = floatval(str_replace(',', '', $data));
-							if(!isset($this->m_charts[$i]['min']) || $v<$this->m_charts[$i]['min']) {
-								$this->m_charts[$i]['min'] = $v;
-							}
-							if(!isset($this->m_charts[$i]['max']) || $v>$this->m_charts[$i]['max']) {
-								$this->m_charts[$i]['max'] = $v;
-							}
 							$this->m_charts[$i]['data'][$idx]['value'] = $v;
+							$this->m_charts[$i]['data'][$idx]['prov'] = $provURL;
 						}
 					} else {
 						if($chart['x'] == $label) {
@@ -230,20 +293,33 @@ class SRFOFC extends SMWResultPrinter {
 						for($yIdx = 0;$yIdx<count($chart['y']);++$yIdx) {
 							if($chart['y'][$yIdx] == $label) {
 								$v = floatval(str_replace(',', '', $data));
-								if(!isset($this->m_charts[$i]['min']) || $v<$this->m_charts[$i]['min']) {
-									$this->m_charts[$i]['min'] = $v;
-								}
-								if(!isset($this->m_charts[$i]['max']) || $v>$this->m_charts[$i]['max']) {
-									$this->m_charts[$i]['max'] = $v;
-								}
+//								if($chart['autoratio']) {
+									if(!isset($this->m_charts[$i]['minmax'][$yIdx])) {
+										$this->m_charts[$i]['minmax'][$yIdx] = array( 'min'=>$v, 'max'=>$v);
+									} else if($v<$this->m_charts[$i]['minmax'][$yIdx]['min']) {
+										$this->m_charts[$i]['minmax'][$yIdx]['min'] = $v;
+									} else if($v>$this->m_charts[$i]['minmax'][$yIdx]['max']) {
+										$this->m_charts[$i]['minmax'][$yIdx]['max'] = $v;
+									}
+//								} else {
+//									if(!isset($this->m_charts[$i]['min'])) {
+//										$this->m_charts[$i]['min'] = $v;
+//										$this->m_charts[$i]['max'] = $v;
+//									} else if($v<$this->m_charts[$i]['min']) {
+//										$this->m_charts[$i]['min'] = $v;
+//									} else if($v>$this->m_charts[$i]['max']) {
+//										$this->m_charts[$i]['max'] = $v;
+//									}
+//								}
 								$this->m_charts[$i]['data'][$idx]['value'][$yIdx] = $v;
+								$this->m_charts[$i]['data'][$idx]['prov'][$yIdx] = $provURL;
 							}
 						}
 					}
 				}
 				$table .= "</td>\n";
 				$firstcol = false;
-				$tp .= $labels[$index] . ' : ' . $text . '<br>';
+				$tp .= $labels[$index] . ' : ' . implode(' ', preg_split('/<script>(.*?)<\/script>/i', $text)) . '<br>';
 				$index ++;
 			}
 			$tooltip[] = $tp;
@@ -260,6 +336,9 @@ class SRFOFC extends SMWResultPrinter {
 		}
 		$table .= "</table>\n"; // print footer
 
+		$this->getAutoRatio();
+		$this->enableRatio();
+		
 		$ofc_data_objs = array();
 		for($i=0;$i<count($this->m_charts);++$i) {
 			$chart = $this->m_charts[$i];
@@ -281,7 +360,11 @@ class SRFOFC extends SMWResultPrinter {
 					} else {
 						$first = false;
 					}
-					$ofc_data_objs[$i] .= '{"value":' . str_replace(',','',$d['value']) . ',"label":"' . str_replace('"','\"',$d['label']). ':' . $d['value'] . '"}';
+					$ofc_data_objs[$i] .= '{
+						"value":' . str_replace(',','',$d['value']) . ',
+						"label":"' . str_replace('"','\"',$d['label']). ':' . $d['value'] . '",
+						"on-click": "' . $d['prov'] . '"
+					}';
 				}
 				$ofc_data_objs[$i] .= '
 				],
@@ -294,7 +377,8 @@ class SRFOFC extends SMWResultPrinter {
 			} else {
 				$max = floatval($chart['max']);
 				$min = floatval($chart['min']);
-				$this->getScale($min, $max, $step);
+				$step = floatval($chart['step']);
+//				$this->getScale($min, $max, $step);
 
 				$ofc_data_objs[$i] .= '
 		"elements":[' . $this->getElementText($chart, $chart['type'], $tooltip) . '],
@@ -372,12 +456,26 @@ class SRFOFC extends SMWResultPrinter {
 			$html .= '</div></div>';
 		}
 
-		if (!$this->m_isAjax) {
-			global $wgParser;
-			$wgParser->getOutput()->addHeadItem('<script type="text/javascript">ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});</script>' . "\n");
-		
+		$js = 'ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});';
+		if($this->m_singlechart === FALSE) {
+			if($this->m_tabview) {
+				$js .= 'jQuery(function() {';
+				foreach($this->m_charts as $chart) {
+					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(tabChart);';
+				}
+				$js .= '});';
+			} else {
+				$js .= 'jQuery(function() {';
+				foreach($this->m_charts as $chart) {
+					$js .= 'jQuery("#show_hide_flash_div_' . $chart['id'] . '").click(showHideChart);';
+				}
+				$js .= '});';
+			}
 		}
-		return !$this->m_isAjax ? $html : $html . '|||ofc_data_objs.push({' . implode(',', $ofc_data_objs) . '});' ;
+		if (!$this->m_isAjax) {
+			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", '<script type="text/javascript">' . $js . '</script>' . "\n");
+		}
+		return !$this->m_isAjax ? $html : $html . '|||' . $js;
 		
 	}
 	private function getLabelText($chart) {
@@ -413,8 +511,12 @@ class SRFOFC extends SMWResultPrinter {
 				$scatter = array();
 				$i = 0;
 				foreach($chart['data'] as $d) {
-					$x = str_replace(',','',$d['label']);
-					$scatter[floatval($x)][] = '{"x": ' . $x . ', "y": ' . str_replace(',','',$d['value'][$yIdx]) . ', "tip": "' . str_replace('"','\"',$tooltip[$i++]) . '"}';
+					$x = floatval(str_replace(',','',$d['label']));
+					$scatter[floatval($x)][] = '{
+						"x": ' . $x . ', 
+						"y": ' . str_replace(',','',$d['value'][$yIdx]) . ', 
+						"tip": "' . str_replace('"','\"',$tooltip[$i++]) . '"
+					}';
 				}
 				ksort($scatter);
 				$f = true;
@@ -435,12 +537,16 @@ class SRFOFC extends SMWResultPrinter {
 					} else {
 						$f = false;
 					}
-					$text .= '{"' . ($type=='line'?'y':'top') . '": ' . str_replace(',','',$d['value'][$yIdx]) . ', "tip": "' . str_replace('"','\"',$tooltip[$i++]) . '"}';
+					$text .= '{
+						"' . ($type=='line'?'y':'top') . '": ' . str_replace(',','',$d['value'][$yIdx]) . ', 
+						"tip": "' . str_replace('"','\"',$tooltip[$i++]) . '",
+						"on-click": "' . $d['prov'][$yIdx] . '"
+					}';
 				}
 			}
 			$text .= '],
 				"colour":"' . SRFOFC::$ofc_color[$yIdx%4] . '",
-				"text":"' . $chart['y'][$yIdx] . '",
+				"text":"' . $chart['y'][$yIdx] . (($chart['ratio'][$yIdx]!=1 && $chart['ratio'][$yIdx]>0)?(' (*' . $chart['ratio'][$yIdx] . ')'):'') . '",
 				"fill":"transparent"
 			}';
 		}
@@ -460,7 +566,7 @@ class SRFOFC extends SMWResultPrinter {
 					$step /= 10;
 				}
 			}
-			$max = (floatval($max / $step) + 1) * $step;
+			$max = (intval($max / $step) + 1) * $step;
 		} else if($max <= 0) {
 			$max = 0;
 			if($min < -1) {
@@ -474,7 +580,7 @@ class SRFOFC extends SMWResultPrinter {
 					$step /= 10;
 				}
 			}
-			$min = (floatval($min / $step) - 1) * $step;
+			$min = (intval($min / $step) - 1) * $step;
 		} else {
 			if($min < -1) {
 				$step1 = 1;
@@ -501,6 +607,86 @@ class SRFOFC extends SMWResultPrinter {
 			if($step2>$step1) $step = $step2; else $step = $step1;
 			$max = (intval($max / $step) + 1) * $step;
 			$min = (intval($min / $step) - 1) * $step;
+		}
+	}
+	private function getAutoRatio() {
+		// get auto ratio data
+		for($i=0;$i<count($this->m_charts);++$i) {
+			$chart = $this->m_charts[$i];
+			if($chart['type'] == 'pie') continue;
+			foreach($chart['minmax'] as $yIdx=>$v) {
+				$max = floatval($v['max']);
+				$min = floatval($v['min']);
+				$this->getScale($min, $max, $step);
+				$this->m_charts[$i]['minmax'][$yIdx]['min'] = $min;
+				$this->m_charts[$i]['minmax'][$yIdx]['max'] = $max;
+				$chart['minmax'][$yIdx]['step'] = $step;
+			}
+			if(!$chart['autoratio']) continue;
+			$maxstep = 0;
+			foreach($chart['minmax'] as $yIdx=>$v) {
+				if($v['step']>$maxstep) $maxstep = $v['step'];
+			}
+			foreach($chart['minmax'] as $yIdx=>$v) {
+				$ratio = intval($maxstep / $v['step']);
+				$this->m_charts[$i]['ratio'][$yIdx] = $ratio;
+			}
+		}
+	}
+	private function enableRatio() {
+		// enable ratio to ofc data
+		for($i=0;$i<count($this->m_charts);++$i) {
+			$chart = $this->m_charts[$i];
+			if($chart['type'] == 'pie') continue;
+			foreach($chart['ratio'] as $yIdx=>$ratio) {
+				$max = $chart['minmax'][$yIdx]['max'];
+				$min = $chart['minmax'][$yIdx]['min'];
+				if($ratio != 1 && $ratio>0) {
+					foreach($chart['data'] as $did=>$val) {
+						$this->m_charts[$i]['data'][$did]['value'][$yIdx] *= $ratio;
+					}
+					$min = $min * $ratio;
+					$max = $max * $ratio;
+				}
+				if(!isset($this->m_charts[$i]['min'])) {
+					$this->m_charts[$i]['min'] = $min;
+					$this->m_charts[$i]['max'] = $max;
+				} else {
+					if($min<$this->m_charts[$i]['min']) {
+						$this->m_charts[$i]['min'] = $min;
+					}
+					if($max>$this->m_charts[$i]['max']) {
+						$this->m_charts[$i]['max'] = $max;
+					}
+				}
+			}
+			$min = $this->m_charts[$i]['min'];
+			$max = $this->m_charts[$i]['max'];
+			$this->getScale($min, $max, $step);
+			if($min+$step == $this->m_charts[$i]['min']) $min = $this->m_charts[$i]['min'];
+			if($max-$step == $this->m_charts[$i]['max']) $max = $this->m_charts[$i]['max'];
+			$this->m_charts[$i]['min'] = $min;
+			$this->m_charts[$i]['max'] = $max;
+			$this->m_charts[$i]['step'] = $step;
+		}
+	}
+	private function createProvenanceLink($url, $row, $col, $value, $cellIdent) {
+		global $uprgWikipediaAPI;
+        // no provenance link, if there is "novalue" placeholder from OB and if UP rating is not installed
+		if ($url != 'http://novalue#0' && defined('SMW_UP_RATING_VERSION')) {
+			$url=str_replace('&amp;', '&', $url);
+			// hack for Wikipedia clone
+			if (strpos($uprgWikipediaAPI, 'vulcan.com')) {
+				$url = str_replace('en.wikipedia.org/wiki/', 'wiking.vulcan.com/wp/index.php,title=', $url);
+				$url = preg_replace('/relative-line=\d+/', '', $url);
+				$url = preg_replace('/absolute-line=(\d+)/', 'line=$1', $url);
+				$url = preg_replace('/#[^\?&]*(\?|&){1}/', '', $url);
+				$url = str_replace('#', '&', $url);
+				$url = str_replace('?', '&', $url);
+				$url = str_replace('index.php,title=', 'index.php?title=', $url);
+			}
+			global $smwgIQRunningNumber;
+			return "uprgPopup.cellDataRating({$smwgIQRunningNumber}, '{$row}','{$col}','{$value}','{$cellIdent}', \'$url\')";
 		}
 	}
 }
