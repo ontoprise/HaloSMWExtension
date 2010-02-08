@@ -2,14 +2,14 @@
 <deploydescriptor>
 	<global>
 		<version>140</version>
-		<id>WYSIWYG</id>
+		<id>wysiwyg</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/FCKeditor</instdir>
 		<description>
 			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.
 		</description>
 		<dependencies>
-			<dependency from="145" to="146">SMWHalo</dependency>
+            <dependency from="1132" to="1151">MW</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
