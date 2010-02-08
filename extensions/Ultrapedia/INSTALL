@@ -8,7 +8,7 @@
 
 Edit $IP/LocalSettings.php and add:
 
-    include_once('extensions/UltraPedia/includes/UP_Initialize.php');
+    include_once('extensions/Ultrapedia/includes/UP_Initialize.php');
 
 == Usage ==
 
