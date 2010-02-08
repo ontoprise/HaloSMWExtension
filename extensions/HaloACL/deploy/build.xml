@@ -73,6 +73,10 @@
 				<include name="patch_for_MW_1.15.1.txt" />
 				<include name="patch_for_SMW_1.4.3.txt" />
 			</fileset>
+   			<fileset dir="../../../patches/">
+				<include name="patch.php" />
+			</fileset>
+
 		</copy>
 		<zip destfile="bin/haloacl.zip" basedir="bin/zip" />
 		<delete dir="bin/zip" />
