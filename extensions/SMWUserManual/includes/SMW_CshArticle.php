@@ -39,6 +39,7 @@ class UME_CshArticle {
         if (!isset($arr['revisions'])) return;
         $this->content = $arr['revisions'][0]['*'];
         $this->processRawSmwforumContent();
+        $this->removeTag('noinclude');
     }
 
     private function processRawSmwforumContent() {
@@ -93,6 +94,17 @@ class UME_CshArticle {
                 $template[$val] = '';
         }
         return $template;
+    }
+
+    private function removeTag($tag) {
+        $p = strpos($this->content, "<$tag>");
+        var_dump($p);
+        if ($p === false) return;
+        $s = strpos($this->content, "</$tag>", $p);
+        if ($s === false) return;
+        $before = substr($this->content, 0, $p);
+        $after = substr($this->content, $s + strlen($tag) + 5);
+        $this->content = $before . $after;
     }
 
 }
