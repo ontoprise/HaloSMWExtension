@@ -28,7 +28,11 @@ However, you can apply two patches:
 * patch_for_SMW_1.4.2.txt: 
 	This patch for SMW 1.4.2 is mandatory, if you want to protect the values of 
 	semantic properties.
-
+These patch files were created in Eclipse. They can be installed using the tool
+patch.php from the deploy framework (smwhalo-deploy-1.0) which itself uses GNU
+patch. The patch.php is also included in this extension. Go into the root
+directory of the extension and run the following command:
+ php patch.php -p <patch-file> -d <mediawiki-dir> --onlypatch
 
 Updating the database
 ---------------------
