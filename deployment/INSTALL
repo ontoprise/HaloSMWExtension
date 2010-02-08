@@ -1,1 +1,44 @@
-TODO: write install instructions
+#
+# Installation
+#
+
+1. Unzip smwhalo-deploy-1.1.zip in the MediaWiki root folder.
+2. Goto directory deployment/tools
+3. On Linux: make smwadmin.sh executable (chmod +x smwadmin.sh)
+
+#
+# HowTo use the deployment framework
+#
+
+
+smwhalo admin utility v0.1, Ontoprise 2009
+
+Usage: smwadmin [ -i | -d ] <package>[-<version>]
+       smwadmin -u [ <package>[-<version>] ]
+
+        -i <package>: Install
+        -d <package> ]: De-Install
+        -u <package>: Update
+        --dep : Check only dependencies but do not install.
+        --checkdump <package>: Check only dumps for changes but do not install.
+        -l [ pattern ] : List installed packages.
+        -r : Rollback last installation.
+
+Examples:
+
+        smwadmin -i smwhalo-1.4.4: Installs the given packages
+        smwadmin -i smwhalo: Installs latest version of smwhalo.
+        smwadmin -u smw-142: Updates the given package to the specified version. (if possible)
+        smwadmin -u: Updates complete installation
+        smwadmin -u --dep: Shows what would be updated.
+        smwadmin -d smw: Removes the package smw.
+        smwadmin -l: List all installed/available packages 
+
+#
+# Adding new repositories
+#
+        
+File for repository links:
+/deployment/tools/repositories
+
+You may add new repositories here, the Ontoprise repo is already configured.
