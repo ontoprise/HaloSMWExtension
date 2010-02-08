@@ -193,7 +193,7 @@ function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
 
 function smwfUltraPediaAddHTMLHeader(& $out) {
 	// add Ultrapedia abstract tooltip
-	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath;
+	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath, $upAbstractSparql;
 	$out->addLink( array(
 		'rel' => 'stylesheet',
 		'type' => 'text/css',
@@ -205,6 +205,7 @@ function smwfUltraPediaAddHTMLHeader(& $out) {
 	<script type=\"text/javascript\" src=\"{$smwgUltraPediaScriptPath}/scripts/abstractilink.js\"></script>
 	<script type=\"{$wgJsMimeType}\">
 		AjaxInternalLinks.baseUrl = \"{$wgScriptPath}\";
+		AjaxInternalLinks.sparql = \"{$upAbstractSparql}\";
 	</script>\n");
 	
 	return true;

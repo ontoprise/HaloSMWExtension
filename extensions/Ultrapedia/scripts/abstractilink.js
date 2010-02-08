@@ -1,4 +1,4 @@
-var AjaxInternalLinks = {baseUrl:'', data:[]};
+var AjaxInternalLinks = {baseUrl:'', data:[], sparql:''};
 Ext.onReady(function(){
 	var links = document.getElementsByTagName('a');
 	var idx=0;
@@ -15,11 +15,13 @@ Ext.onReady(function(){
 	        target: AjaxInternalLinks.data[i].id,
 	        width: 200,
 	        autoLoad: {
-	        	url: AjaxInternalLinks.baseUrl + '/index.php?action=ajax&rs=smwf_up_Access&rsargs[]=ajaxSparql&rsargs[]=' + i + ',[[' +AjaxInternalLinks.data[i].page + ']] | ?Abstract | format=list | headers=hide',
+	        	pagename: AjaxInternalLinks.data[i].page.replace(/_/g, ' '),
+	        	url: AjaxInternalLinks.baseUrl + '/index.php?action=ajax&rs=smwf_up_Access&rsargs[]=ajaxSparql&rsargs[]=' + i + ',' + (AjaxInternalLinks.sparql.replace(/\{\{PAGENAME\}\}/mg, AjaxInternalLinks.data[i].page)),
 	        	callback: function(el, success, response, options){
-	        		var html = el.dom.innerHTML.replace(/\<[^\>]*\>/mg, '');
-	        		if(html.replace(/(&nbsp;)/mg, '').trim() == '') {
-	        			html = 'There is no abstract in this article ...';
+	        		var html = el.dom.innerHTML.replace(/\n/mg, ' ').replace(/\<\s*br[^\>]*\>/mgi, '\n').replace(/\<[^\>]*\>/mg, '').replace(/\n/mg, '<br/>')
+	        		if(html.replace(/(&nbsp;)/mgi, '').trim() == '') {
+	        			html = options.pagename;
+//	        			html = 'There is no abstract in this article ...';
 	        		} 
 		        	el.dom.innerHTML = html;
 	        	}
