@@ -50,7 +50,7 @@ class SMW_UMLanguageEn {
 	    'smw_ume_missing_fparam'  => 'Error: parameter with file name missing.',
 	    'smw_ume_import_fmissing' => 'Error: file for article import does not exist.',
 	    'smw_ume_export_fexists'  => 'Error: file for article export exists already, use overwrite or change file name',
-	    'smw_ume_setup_usage'     => "Usage: php UME_setup.php [-deio [-file=<file_name>] ]\nSee README file for further details.\n",
+	    'smw_ume_setup_usage'     => "Usage: php UME_setup.php [-deio [--file=<file_name>] ]\nSee README file for further details.\n",
     );
 
     protected $umeNamespaces = array(
