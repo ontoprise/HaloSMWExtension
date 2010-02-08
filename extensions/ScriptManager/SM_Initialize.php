@@ -171,7 +171,7 @@ function smfSortScripts($smgJSLibs) {
 		if($js_frameworks['jquery']) {
 			// jquery with noConflict flag
 			$frameworks .= "<script type=\"{$wgJsMimeType}\" src=\"{$smgSMPath}/scripts/jquery-1.3.2.min.js\"></script>\n";
-			$frameworks .= "<script type=\"{$wgJsMimeType}\">jQuery.noConflict();</script>\n";
+			$frameworks .= "<script type=\"{$wgJsMimeType}\">jQuery.noConflict();jQuery.noConflict=function( deep ) {return jQuery;};</script>\n";
 		}
 		if($js_frameworks['jqueryui']) {
 			// jquery ui
