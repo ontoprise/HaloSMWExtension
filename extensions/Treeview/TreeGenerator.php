@@ -122,7 +122,7 @@ class TreeGenerator {
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
 		    	if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
 		    	if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
-                if ($linkTo) $returnPrefix .= "linkto=".$linkto."&";
+                if ($linkTo) $returnPrefix .= "linkto=".$linkTo."&";
 				if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
 		    	if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
 		    	if ($condition) $returnPrefix .= "condition=".$condition."&";
