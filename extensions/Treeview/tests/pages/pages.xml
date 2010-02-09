@@ -796,4 +796,26 @@ urlparams=par%3Dval
 }}</text>
     </revision>
   </page>
+  <page>
+    <title>Tree7</title>
+    <id>41</id>
+    <revision>
+      <id>51</id>
+      <timestamp>2010-02-09T17:46:08Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <text xml:space="preserve">== Testpage for Webtest of Tree7 ==
+
+Options are:
+property=Subsection of,
+linkto=hasTitle,
+dynamic=1,
+urlparams=par%3Dval
+
+{{#tree:
+{{#generateTree:property=Subsection of|linkto=hasTitle|dynamic=1|urlparams=par%3Dval}}
+}}</text>
+    </revision>
+  </page>
 </mediawiki>

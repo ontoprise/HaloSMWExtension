@@ -8,5 +8,6 @@
 		<ant antfile="Tree3.xml"/>
 	    <ant antfile="Tree4.xml"/>
 		<ant antfile="Tree5.xml"/>
+        <ant antfile="Tree7.xml"/>
 	</target>
 </project>
