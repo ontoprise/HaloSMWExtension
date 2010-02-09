@@ -133,11 +133,12 @@ Node.prototype.getPageName = function() {
 }
 
 // SMW Data object (for all setup related to smw, when doing Ajax calls)
-function SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
+function SmwData(id, relation, category, display, linkto, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
 	this.id = id;
 	this.relation = relation;
 	this.category = category;
 	this.display = display;
+    this.linkto = linkto;
 	this.start = start;
 	this.maxDepth = maxDepth;
 	this.condition = condition;
@@ -151,6 +152,7 @@ SmwData.prototype.getParamsForAjaxRequest = function() {
 	var str = 'p%3D' + URLEncode(this.relation);
 	if (this.category) str += '%26c%3D' + URLEncode(this.category);
 	if (this.display) str += '%26d%3D' + URLEncode(this.display);
+    if (this.linkto) str += '%26l%3D' + URLEncode(this.linkto);
 	if (this.condition) str += '%26q%3D' + this.condition; 
 	if (this.urlparams) str += '%26u%3D' + URLEncode(this.urlparams);
 	if (this.orderbyProperty) str += '%26b%3D' + URLEncode(this.orderbyProperty);
@@ -260,8 +262,8 @@ dTree.prototype.setLeaf = function(id) {
 }
 
 // Add a smw setup for a specific node
-dTree.prototype.addSmwData = function(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
-	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc);
+dTree.prototype.addSmwData = function(id, relation, category, display, linkto, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc) {
+	this.aSmw[this.aSmw.length] = new SmwData(id, relation, category, display, linkto, start, maxDepth, condition, urlparams, orderbyProperty, checkNode, useTsc);
 };
 
 // Get Smw url params to make an Ajax request for a specific node 
@@ -710,6 +712,7 @@ dTree.prototype.initOnload = function(id, arg) {
         (kv.r ? kv.r : null), // relation
         (kv.c ? kv.c : null), // category
         (kv.d ? kv.d : null), // display
+        (kv.l ? kv.l : null), // linkto
         (kv.s ? kv.s : null), // start
         (kv.m ? kv.m : null), // maxDepth
         (kv.q ? kv.q : null), // condition

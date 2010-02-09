@@ -73,6 +73,9 @@ class TreeGenerator {
 		// parameter display, that must be the name of a property, which value is displayed instead of the default pagename
 		$displayProperty = array_key_exists('display', $genTreeParameters) && $this->getValidTitle($genTreeParameters['display'], SMW_NS_PROPERTY)
             ? $genTreeParameters['display'] : NULL;
+        // parameter linkto, if set the links will be linked to this property value
+        $linkTo = array_key_exists('linkto', $genTreeParameters) && $this->getValidTitle($genTreeParameters['linkto'], SMW_NS_PROPERTY)
+            ? $genTreeParameters['linkto'] : NULL;
 		// parameter opento, must contain a pagename down to where the tree is opened
 		$openTo = array_key_exists('opento', $genTreeParameters) ? $this->getValidTitle($genTreeParameters['opento']) : NULL;
 		// parameter urlparams
@@ -100,7 +103,7 @@ class TreeGenerator {
 	    // start level of tree
 		$hchar = array_key_exists('level', $genTreeParameters) && ($genTreeParameters['level'] > 0)
 		         ? str_repeat("*", $genTreeParameters['level']) : "*";
-		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $this->json, $condition, $openTo, $checkNode);
+		$tv_store->setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $linkTo, $hchar, $this->json, $condition, $openTo, $checkNode);
 		
 		// order by property
 		if (array_key_exists('orderbyProperty', $genTreeParameters) &&
@@ -119,6 +122,7 @@ class TreeGenerator {
 				$returnPrefix.= "dynamic=1&property=".$genTreeParameters['property']."&";
 		    	if ($categoryName) $returnPrefix .= "category=".$genTreeParameters['category']."&";
 		    	if ($displayProperty) $returnPrefix .= "display=".$displayProperty."&";
+                if ($linkTo) $returnPrefix .= "linkto=".$linkto."&";
 				if ($start) $returnPrefix .= "start=".$genTreeParameters['start']."&";
 		    	if ($maxDepth) $returnPrefix .= "maxDepth=".$maxDepth."&";
 		    	if ($condition) $returnPrefix .= "condition=".$condition."&";
@@ -169,6 +173,7 @@ abstract class TreeviewStorage {
     public $maxDepth;
     public $redirectPage;
     public $displayProperty;
+    public $linkTo;
     public $hchar;
     public $json;
     public $condition;
@@ -225,12 +230,13 @@ abstract class TreeviewStorage {
         return self::$store;
     }
 
-    public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $hchar, $jsonOutput, $condition, $openTo, $checkNode) {
+    public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $linkTo, $hchar, $jsonOutput, $condition, $openTo, $checkNode) {
         // here the options are stored, that can be set in the generateTree parser function
 		$this->ajaxExpansion = $ajaxExpansion;
         $this->maxDepth = ($maxDepth) ? $maxDepth + 1 : NULL; // use absolute depth
         $this->redirectPage = $redirectPage;
         $this->displayProperty = $displayProperty;
+        $this->linkTo = $linkTo;
         $this->hchar = $hchar;
         $this->json = $jsonOutput;
         $this->condition = $condition;
@@ -635,6 +641,12 @@ class TreeviewTriplestore extends TreeviewStorage {
         $printout= array(
             new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, "", SMWPropertyValue::makeUserProperty($relation->getText())),
         );
+        if ($this->displayProperty)
+            $printout[]= new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, "", SMWPropertyValue::makeUserProperty($this->displayProperty));
+        if ($this->orderByProperty)
+            $printout[]= new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, "", SMWPropertyValue::makeUserProperty($this->orderByProperty));
+        if ($this->linkTo)
+            $printout[]= new SMWPrintRequest(SMWPrintRequest::PRINT_PROP, "", SMWPropertyValue::makeUserProperty($this->linkTo));
         
         $result = SMWSPARQLQueryProcessor::getResultFromQueryString($query, $fixparams, $printout, SMW_OUTPUT_HTML);
 		if (stripos($result, "Could not connect to host") !== false)
@@ -643,7 +655,13 @@ class TreeviewTriplestore extends TreeviewStorage {
 		$doc = new DomDocument();
         $doc->loadHTML($result);
         $rows = $doc->getElementsByTagName('tr');
-        $nodeNames= array();
+        $nodeNames= array();    // node names of elements
+        // the following arrays will be filled with the property value of the current s_id
+        $displayNames= array();
+        $sortNames = array();
+        $linkNames = array();
+        // iterate over all table rows of the TSC result, col 0 and 1 contain s_id and o_id
+        // col > 1 are available only if other property values have been requested
         foreach ($rows as $row) {
             $tds = $row->getElementsByTagName('td');
             if ($tds->length == 0) continue;
@@ -665,6 +683,22 @@ class TreeviewTriplestore extends TreeviewStorage {
                 $this->sIds[$s_id] = array($o_id);
             else
                 $this->sIds[$s_id][] = $o_id;
+            // additional printouts, if there are more than two colums
+            if ($tds->item(2)) {
+                if (strlen($tds->item(2)->nodeValue) > 0) {
+                    if ($this->displayProperty) $displayNames[$s_id] = $tds->item(2)->nodeValue;
+                    elseif ($this->orderByProperty) $sortNames[$s_id] = $tds->item(2)->nodeValue;
+                    elseif ($this->linkTo) $linkNames[$s_id] = $tds->item(2)->nodeValue;
+                }
+                if ($tds->item(3)) {
+                    if (strlen($tds->item(3)->nodeValue) > 0) {
+                        if ($this->orderByProperty) $sortNames[$s_id] = $tds->item(3)->nodeValue;
+                        elseif ($this->linkTo) $linkNames[$s_id] = $tds->item(3)->nodeValue;
+                    }
+                    if ($tds->item(4) && (strlen($tds->item(4)->nodeValue) > 0) && $this->linkTo)
+                        $linkNames[$s_id] = $tds->item(4)->nodeValue;
+                }
+            }
         }
 
         // if we have a start node given, check if this was in the result triples
@@ -684,7 +718,26 @@ class TreeviewTriplestore extends TreeviewStorage {
         $id = 1;
         while ($name = array_shift($nodeNames)) {
             $name=iconv("UTF-8", "ISO-8859-1", $name);
-            $this->elementProperties[$id] = new ElementProperty($name, 0);
+            $d = null;
+            if (isset($displayNames[$id])) {
+                $d = $displayNames[$id];
+                unset($displayNames[$id]);
+            }
+            $s = null;
+            if (isset($sortNames[$id])) {
+                $s = $sortNames[$id];
+                unset($sortNames[$id]);
+            }
+            $l = null;
+            if (isset($linkNames[$id])) {
+                $l = $linkNames[$id];
+                unset($linkNames[$id]);
+            }
+            // Ultrapedia hack, if a link property exists compose the link: linkto#subject
+            global $wgServer, $wgScriptPath;
+            if ($l && strpos($wgServer.$wgScriptPath, "vulcan.com/up")) $l.= '#'.$name;
+            
+            $this->elementProperties[$id] = new ElementProperty($name, 0, $d, $s, $l);
             $id++;
         }
 
@@ -1018,7 +1071,11 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
 	    // add property value for display    
 	    if ($this->displayProperty) {
 	    	$this->elementProperties[$row->smw_id]->setDisplayProperty($this->fetchPropertyValue($row->title, $row->ns, $this->displayProperty));
-	    } 	
+	    }
+        // add property value for link
+        if ($this->linkTo) {
+	    	$this->elementProperties[$row->smw_id]->setLinkValue($this->fetchPropertyValue($row->title, $row->ns, $this->linkTo));
+	    }
 	    // add property value for sorting	
 	    if ($this->orderByProperty) {
 	    	$this->elementProperties[$row->smw_id]->setSortProperty($this->fetchPropertyValue($row->title, $row->ns, $this->orderByProperty));
@@ -1472,27 +1529,29 @@ class ElementProperty {
 	private $ns;
 	private $displayProperty;
 	private $sortProperty;
+    private $linkValue;
 	
-	public function __construct($title = null, $ns = null, $displayProperty = null, $sortProperty = null) {
+	public function __construct($title = null, $ns = null, $displayProperty = null, $sortProperty = null, $linkValue = null) {
 		$this->title = $title;
 		$this->ns = $ns;
 		$this->displayProperty = $displayProperty;
 		$this->sortProperty = $sortProperty;
+        $this->linkValue = $linkValue;
 	}
 	
 	public function getTitle() { return $this->title; }
 	public function getNs() { return $this->ns; }
-	public function getDisplayProperty() { return $this->displayProperty; }
-	public function getSortProperty() { return $this->sortProperty; }
 
 	public function setTitle($v) { $this->title = $v; }
 	public function setNs($v) { $this->ns = $v; }
 	public function setDisplayProperty($v) { $this->displayProperty = $v; }
 	public function setSortProperty($v) { $this->sortProperty = $v; }
+    public function setLinkValue($v) { $this->linkValue = $v; }
 
 	public function getLink() {
 		global $wgContLang;
-		
+
+        if ($this->linkValue != null) return str_replace(' ', '_', $this->linkValue);
 		$link = str_replace(' ', '_', $this->title);
 		// prefix link with namespace text
 		if ($this->ns != NS_MAIN)
@@ -1512,9 +1571,12 @@ class ElementProperty {
 
 	public function getWikitext() {
 		$link = $this->getLink();
+        // set ns to -1 if linkValue is set
+        $ns = ($this->linkValue != null) ? -1 : $this->ns;
 		// parameter display was set to use some property value for node name and link it with the page
 		if ($this->displayProperty != null) {
-			switch($this->ns) {
+
+			switch($ns) {
 				// add a colon before NS_CATEGORY and NS_IMAGE
 				// otherwise they are rendered as category annotations or images.
 				case NS_CATEGORY:
@@ -1527,7 +1589,7 @@ class ElementProperty {
 	    // just the page name is used for the node
 		// if the page is in the main namespace it's sufficient to display [[page name]] and the
 		// wiki rendering will do the rest. Otherwise display [[Prefix:page_name|page name]]
-		switch($this->ns) {
+		switch($ns) {
 			// add a colon before NS_CATEGORY and NS_IMAGE
             // otherwise they are rendered as category annotations or images.
 			case NS_CATEGORY:
