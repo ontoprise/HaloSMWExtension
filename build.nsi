@@ -3,7 +3,7 @@
 *
 *    This script builds an installer for SMW+
 *
-* Author: Kai Kühn
+* Author: Kai Kï¿½hn
 *
 * Needs NSIS 2.35 or higher
 * additional extensions: (see extension folder) 
@@ -358,7 +358,7 @@ Section "WYSIWYG" wysiwyg
 SectionEnd
 
 Section "Lucene search" lucene
-    SectionIn 1 2 RO
+    SectionIn 1 RO
     SectionGetFlags ${xampp} $0
     IntOp $0 $0 & ${SF_SELECTED}
     
