@@ -19,6 +19,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_hidetable = false;
 	protected $m_singlechart = false;
 	protected $m_tabview = false;
+	protected $m_notoolbar = false;
 
 	protected $m_isAjax = false;
 	public function __construct($format, $inline) {
@@ -95,7 +96,9 @@ class SRFOFC extends SMWResultPrinter {
 				if('hidetable' == $op) {
 					$this->m_hidetable = true;					
 				} else if('tabview' == $op) {
-					$this->m_tabview = true;					
+					$this->m_tabview = true;	
+				} else if('notoolbar' == $op) {
+					$this->m_notoolbar = true;	
 				}
 			}
 		}
@@ -425,7 +428,7 @@ class SRFOFC extends SMWResultPrinter {
 			$ofc_data_objs[$i] .= '"bg_colour":"#ffffff"}}';
 		}
 		$html = "";
-		if($this->m_singlechart === FALSE) {
+		if($this->m_singlechart === FALSE && !$this->m_notoolbar) {
 			$html = '<div class="show_hide_container"><div class="ofc_title">' . $this->m_label . '</div>';
 			foreach($this->m_charts as $chart) {
 				if($chart['x'] != $labels[0]) {
