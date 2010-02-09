@@ -4,6 +4,7 @@
  */
 
 class UPParserFunctions {
+	static $upgTabId = 0;
 	static function languageGetMagic( &$magicWords, $langCode = "en" ) {
 		switch ( $langCode ) {
 			default:
@@ -167,7 +168,7 @@ class UPParserFunctions {
 			$tabItems[] = $txt;
 		}
 		
-		SMWOutputs::requireHeadItem("uptabwidget$smwgIQRunningNumber", '<script type="text/javascript">
+		SMWOutputs::requireHeadItem("uptabwidget".UPParserFunctions::$upgTabId++, '<script type="text/javascript">
 			UltraPedia.tabWidgets.push({
 				id:"tabs' . $id . '",' . 
 				(isset($widget_options['height'])?('height:' . intval($widget_options['height']) . ','):'') . 
