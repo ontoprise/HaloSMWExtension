@@ -14,7 +14,7 @@ UP_RatingPopup.prototype = {
         this.Wikipedia=uprgWikipediaAPI
     },
 
-    cellRating: function(cell, uri) {
+    cellRating: function(cell, uri, uriOk) {
         // cell is usually the span element, set it to the real <td> element
         this.cell=cell
         while (this.cell.tagName != 'TD')
@@ -31,7 +31,8 @@ UP_RatingPopup.prototype = {
             this.tableIdentifier=parseInt(n.id.replace(/querytable/, ''))
         // provenance URI
         this.provenanceUri=uri
-        this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScript).replace(/:/, '%3A').replace(/\//g, '%2F')+'%2F'+wgPageName
+        if (!uriOk) // the provenance Uri must be completed for the edit link into wikipedia, if the comment was send, the uri is ok already
+            this.provenanceUri+='&action=edit&redirect-after-edit='+(wgServer+wgScript).replace(/:/, '%3A').replace(/\//g, '%2F')+'%2F'+wgPageName
         // set the static html stuff
         this.popup.setHtmlContent(this.cellRatingHtml())
         this.applyCellLabels()
@@ -165,9 +166,7 @@ UP_RatingPopup.prototype = {
         }
         else if (res) {
             if (this.cellIdentifier) {
-                var origUri=this.provenanceUri.replace(/\?/, '&')
-                origUri=origUri.substring(0, origUri.lastIndexOf('&'))
-                this.cellRating(this.cell, origUri)
+                this.cellRating(this.cell, this.provenanceUri, 1)
             }
             else
                 this.tableRating(this.tableIdentifier)
