@@ -297,10 +297,12 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
             
       !endif  
-  ;Create uninstaller
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
-  CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  ;Create uninstaller (only when newly installed)
+  ${If} $INSTALLTYPE == 0 
+      WriteUninstaller "$INSTDIR\Uninstall.exe"
+      CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+  ${EndIf}
     
   ;configure:
       ${If} $INSTALLTYPE == 0 
