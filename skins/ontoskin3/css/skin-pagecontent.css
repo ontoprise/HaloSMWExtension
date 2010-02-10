@@ -77,6 +77,34 @@ background-color:#FFF;
 background-color:#cde6ea;
 }
 
+/* images */
+div.floatright, table.floatright {
+	clear: right;
+	float: right;
+	position: relative;
+	margin: 0 0 .5em .5em;
+	border: 0;
+/*
+	border: .5em solid white;
+	border-width: .5em 0 .8em 1.4em;
+*/
+}
+div.floatright p { font-style: italic; }
+
+div.floatleft, table.floatleft {
+	float: left;
+	clear: left;
+	position: relative;
+	margin: 0 .5em .5em 0;
+	border: 0;
+/*
+	margin: .3em .5em .5em 0;
+	border: .5em solid white;
+	border-width: .5em 1.4em .8em 0;
+*/
+}
+div.floatleft p { font-style: italic; }
+
 /* thumbnails */
 div.thumb {
 	margin-bottom: .5em;
@@ -133,6 +161,19 @@ img.thumbborder {
 #content .smwtable th {
         vertical-align: bottom;
 }
+
+
+/* emulate center */
+.center {
+        width: 100%;
+                text-align: center;
+}
+    *.center * {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
 
 /* Pre */
 

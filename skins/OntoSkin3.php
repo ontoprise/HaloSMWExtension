@@ -110,7 +110,7 @@ class OntoSkin3Template extends QuickTemplate {
         $action = $wgRequest->getText( 'action' );
 
         //Load skinlib providing additional feature like halomenu quicklinks etc.
-        require_once("ontoskin3/include/OntoSkin3Lib.php");
+        require_once("ontoskin3/includes/OntoSkin3Lib.php");
         //create smwh_Skin Object, which provides functions for menu, quicklings, tabs
         $this->smwh_Skin = new SMWH_Skin($this,$action);
         
