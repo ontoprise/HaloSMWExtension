@@ -554,7 +554,7 @@ class SMWTripleStore extends SMWStore {
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
 
 		// parse xml results
-
+		// echo print_r($sparqlXMLResult, true);die();
 		$dom = simplexml_load_string($sparqlXMLResult);
 		$variables = $dom->xpath('//variable');
 		$results = $dom->xpath('//result');
@@ -715,6 +715,7 @@ class SMWTripleStore extends SMWStore {
 	 */
 	private function rewritePrintrequest($pr) {
 	 $data = $pr->getData();
+	 $rewritten_prs = $pr;
 	 if ($data instanceof Title) { // property chain appear as Title
 	 	$titleText = $data->getText();
 	 	$chain = explode(".",$titleText);
@@ -773,14 +774,29 @@ class SMWTripleStore extends SMWStore {
 					$length = strpos($sv, "#") - $startNS;
 					$ns = intval(substr($sv, $startNS, $length));
 
-					$local = substr($sv, strpos($sv, "#")+1);
 
-					$title = Title::newFromText($local, $ns);
+					if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
+						// UP special behaviour: if provenance contains section, use it as fragment identifier
+						$uri_parts = explode("#", $provenance);
+						$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);
+
+						$sectionIndex = strpos($uri_parts[1], "section=");
+						$section = substr($uri_parts[1], $sectionIndex, strpos($uri_parts[1], "&", $sectionIndex));
+
+						$sections_parts = explode("=", $section);
+						$section_name = urldecode($sections_parts[1]);
+						$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
+						$section_name = str_replace("'","",$section_name);
+						$title = Title::makeTitle(0, $local, $section_name);
+					} else {
+						$local = substr($sv, strpos($sv, "#")+1);
+						$title = Title::newFromText($local, $ns);
+					}
 					if (is_null($title)) {
 						$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+					$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
 					if (!is_null($provenance) && $provenance != '' ) {
 						$v->setProvenance($provenance);
 					}
@@ -859,13 +875,28 @@ class SMWTripleStore extends SMWStore {
 	 */
 	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns) {
 
-		$local = substr($sv, strlen($nsFragment));
-		$title = Title::newFromText($local, $ns);
+		if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
+			// UP special behaviour: if provenance contains section, use it as fragment identifier
+			$uri_parts = explode("#", $provenance);
+			$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);
+
+			$sectionIndex = strpos($uri_parts[1], "section=");
+			$section = substr($uri_parts[1], $sectionIndex, strpos($uri_parts[1], "&", $sectionIndex));
+
+			$sections_parts = explode("=", $section);
+			$section_name = urldecode($sections_parts[1]);
+			$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
+			$section_name = str_replace("'","",$section_name);
+			$title = Title::makeTitle(0, $local, $section_name);
+		} else {
+			$local = substr($sv, strlen($nsFragment));
+			$title = Title::newFromText($local, $ns);
+		}
 		if (is_null($title)) {
 			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
+		$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
 		if (!is_null($provenance) && $provenance != '' ){
 			$v->setProvenance($provenance);
 		}
@@ -1038,11 +1069,11 @@ class TSConnectorMessageBrokerAndSOAPWebservice extends TSConnectorSOAPWebservic
 		global $smwgMessageBroker;
 		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
 		$this->updateClient->connect();
-		
+
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-        if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-        $this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+		$this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
 	}
 
 
@@ -1079,10 +1110,10 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
 		global $smwgMessageBroker;
 		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
 		$this->updateClient->connect();
-		
+
 		global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
-        list($host, $port) = explode(":", $smwgWebserviceEndpoint);
-        $credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+		list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "/sparql", $credentials);
 	}
 
@@ -1144,17 +1175,17 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 
 	public function query($query, $params) {
-	   global $smwgTripleStoreGraph;
-        if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
-            // SPARQL, attach common prefixes
-            $query = TSNamespaces::getAllPrefixes().$query;
-        } 
+		global $smwgTripleStoreGraph;
+		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
+			// SPARQL, attach common prefixes
+			$query = TSNamespaces::getAllPrefixes().$query;
+		}
 		$queryRequest = "<query>";
 		$queryRequest .= "<text><![CDATA[".$query."]]></text>";
 		$queryRequest .= "<params><![CDATA[".$params."]]></params>";
 		$queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
 		$queryRequest .= "</query>";
-		
+
 		list($header, $result) = $this->queryClient->send($queryRequest);
 		return $result;
 	}
