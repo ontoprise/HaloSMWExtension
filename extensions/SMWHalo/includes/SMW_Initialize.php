@@ -55,6 +55,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store;
+	
 	$smwgBaseStore = $store;
 	$smwgSemanticDataClass = $tripleStore !== NULL ? 'SMWFullSemanticData' : 'SMWSemanticData';
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
@@ -87,7 +88,9 @@ function smwgHaloSetupExtension() {
 
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
 
+	$wgAutoloadClasses['TSConnection']            = $smwgHaloIP . '/includes/storage/SMW_TSConnection.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
+	$wgAutoloadClasses['SMWTripleStoreQuad']            = $smwgHaloIP . '/includes/storage/SMW_TripleStoreQuad.php';
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
 	$wgAutoloadClasses['SMWSPARQLQueryParser']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryParser.php';
 	$wgAutoloadClasses['SMWFullSemanticData']            = $smwgHaloIP . '/includes/SMW_FullSemanticData.php';

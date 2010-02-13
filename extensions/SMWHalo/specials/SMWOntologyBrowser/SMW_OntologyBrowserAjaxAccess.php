@@ -210,10 +210,9 @@ class OB_StorageTS extends OB_Storage {
 
 	public function getInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
+		$client = TSConnection::getConnector();
+        $client->connect();
+        
 		try {
 			global $smwgTripleStoreGraph;
 
@@ -223,7 +222,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[Category:$categoryName]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset|merge=false");
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -333,10 +332,8 @@ class OB_StorageTS extends OB_Storage {
 
 	public function getAnnotations($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
+		$client = TSConnection::getConnector();
+        $client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
 
@@ -351,9 +348,9 @@ class OB_StorageTS extends OB_Storage {
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }", $smwgTripleStoreGraph, "limit=$limit|offset=$offset");
+				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset");
 			} else {
-				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }", $smwgTripleStoreGraph, "limit=$limit|offset=$offset");
+				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset");
 			}
 
 			global $smwgSPARQLResultEncoding;
@@ -362,7 +359,7 @@ class OB_StorageTS extends OB_Storage {
 			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 				$response = utf8_decode($response);
 			}
-			//echo print_r($response, true);die();
+			
 			$dom = simplexml_load_string($response);
 
 			$annotations = array();
@@ -407,10 +404,8 @@ class OB_StorageTS extends OB_Storage {
 
 	public function getInstancesUsingProperty($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
+		$client = TSConnection::getConnector();
+        $client->connect();
 		try {
 			global $smwgTripleStoreGraph;
 
@@ -420,7 +415,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 
 			// query
-			$response = $client->query("[[$propertyName::+]]", $smwgTripleStoreGraph, "?Category|limit=$limit|offset=$offset");
+			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -468,17 +463,15 @@ class OB_StorageTS extends OB_Storage {
 
 	public function getCategoryForInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
+		$client = TSConnection::getConnector();
+        $client->connect();
 		try {
 			global $smwgTripleStoreGraph;
 
 			$instanceName = substr($p_array[0],1); // remove leading colon
 			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
 			// query
-			$response = $client->query("[[$instanceName]]", $smwgTripleStoreGraph, "?Category");
+			$response = $client->query("[[$instanceName]]", "?Category");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -527,10 +520,8 @@ class OB_StorageTS extends OB_Storage {
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
+		$client = TSConnection::getConnector();
+        $client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
 
@@ -550,9 +541,9 @@ class OB_StorageTS extends OB_Storage {
 			}
 			 
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }", $smwgTripleStoreGraph, "limit=1000");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }",  "limit=1000");
 			} else {
-				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }", $smwgTripleStoreGraph, "limit=1000");
+				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000");
 			}
 
 			global $smwgSPARQLResultEncoding;
