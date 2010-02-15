@@ -98,7 +98,6 @@ class UME_CshArticle {
 
     private function removeTag($tag) {
         $p = strpos($this->content, "<$tag>");
-        var_dump($p);
         if ($p === false) return;
         $s = strpos($this->content, "</$tag>", $p);
         if ($s === false) return;
