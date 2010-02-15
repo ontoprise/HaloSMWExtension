@@ -32,12 +32,16 @@ section on the right side (all other skins).
 
 Before being able to see any help articles, you must import these. Go into
 the maintenance directory of this extensions. There must be two files:
- SMW_setup.php
+ UME_setup.php
  cshPages.xml
  
 Execute now the following command. This will read the articles from the
 XML file and import them into your wiki:
- php SMW_setup.php -i --file=cshPages.xml
+ php UME_setup.php -i --file=cshPages.xml
+
+You can also download the lastest version from the help articles from the SMW+
+forum. Then run simply the following command:
+ php UME_setup.php
 
 If you have not installed the ParserFunctions extension [1] modify the page
 Template:Copyright_of_article that makes use of parser functions that come with
