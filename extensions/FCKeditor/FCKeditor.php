@@ -11,7 +11,7 @@ HEREDOC;
 
 # quit when comming from the command line,
 # special case, to make Halo webtests run (here we don't have a browser)
-if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL &&
+if ((!array_key_exists('SERVER_NAME', $_SERVER) || $_SERVER['SERVER_NAME'] == NULL) &&
     (strpos($_SERVER['PHP_SELF'], 'run-test.php') === false) )
 	return;
 
