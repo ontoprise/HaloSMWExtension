@@ -12,10 +12,12 @@ define('SMW_FORUM_API', 'http://smwforum.ontoprise.com/smwforum/api.php');
 // Recipient email address where to send general requests for a component or own question  
 define('SMW_EMAIL_ADDRESS', 'smw_support@ontoprise.de');
 // cookies dir where to store temporary cookies that are needed by the login process
-// into the SMW forum or bugzilla
+// into the SMW forum or bugzilla and also where the log file is located
 define('COOKIES_DIR', 'commentdata');
 // Bugzilla URL
 define('BUGZILLA_URL', 'http://smwforum.ontoprise.com/smwbugs');
+// log file -> in same diretory as cookies
+define('LOG_FILE', 'comment.log');
 
 // check if there are any POST parameter, if not print 1 and quit
 if (!isset($_POST) || count($_POST) == 0) { echo '1'; exit(); }
@@ -25,7 +27,7 @@ $user=(in_array('user', array_keys($_POST))) ? $_POST['user'] : "";
 $pass=(in_array('pass', array_keys($_POST))) ? $_POST['pass'] : "";
 $action=(in_array('action', array_keys($_POST))) ? $_POST['action'] : "";
 $text=(in_array('text', array_keys($_POST))) ? $_POST['text'] : "";
-if (!user || !$pass || !$action || !$text) { echo '1'; exit(); }
+if (!$user || !$pass || !$action || !$text) { echo '1'; exit(); }
 
 // depending on the action parameter do the following.
 if ($action == "c" || $action == "q") {
@@ -55,8 +57,10 @@ function sendMailToSmw($action, $text) {
     $text = str_replace('|', "\n", $text);
     $text.="\n\n\n".$comment;
     $res= mail(SMW_EMAIL_ADDRESS, $subject, $text);
-    echo "Mail send: ".(($res) ? 'yes' : 'no')."\n";
-    echo '0';
+    $logtext = "Mail send: ".(($res) ? 'yes' : 'no');
+    $logres = (($res) ? '0' : '1');
+    logLine($subject, $logtext, $logres);
+    echo $logres;
     exit();
 }
 
@@ -78,16 +82,24 @@ function sendBugReport($user, $pass, $text) {
     $cc->post(BUGZILLA_URL.'/index.cgi', 'Bugzilla_login='.urlencode($user).'&Bugzilla_password='.urlencode($pass).'&Bugzilla_restrictlogin=1&GoAheadAndLogIn=Login');
 
     $res= $cc->post(BUGZILLA_URL.'/post_bug.cgi', $text);
-    if (preg_match('/<title>(.*?)<\/title>/', $res, $matches))
-        echo $matches[1]."\n";
-    else echo "Error while submitting bug\n";
+    if (preg_match('/<title>(.*?)<\/title>/', $res, $matches)) {
+        $logres = "0";
+        $logtext= $matches[1];
+    }
+    else {
+        $logtext= "Error while submitting bug";
+        $logres= "1";
+    }
+    logLine('send bug report', $logtext, $logres);
+    echo $logres;
     @unlink($cookiefile);
 
 }
 function sendRating($user, $pass, $text) {
     $newpage='Comment%3A'.date('YmdHis', time());
     $cookiefile = COOKIES_DIR.'/cookies.txt.'.date('YmdHis', time());
-    echo "New page: $newpage\n";
+    $logtext="New page: $newpage  - ";
+    $logres="0";
     $cc = new cURL(true, $cookiefile);
     $cc->post(SMW_FORUM_API, "action=login&lgname=".urlencode($user)."&lgpassword=".urlencode($pass)."&lgdomain=smwforum&format=xml");
     $editToken = $cc->post(SMW_FORUM_API, "action=query&prop=info|revisions&intoken=edit&titles=".$newpage."&format=xml");
@@ -105,10 +117,50 @@ function sendRating($user, $pass, $text) {
         $et = $node->nodeValue;
     }
     $et = urlencode($et);
-    echo "Edit token: ".$et."\n";
+    if (strlen($et) > 0 ) {
+        $logtext.="Edit token: ".$et;
+        $res = $cc->post(SMW_FORUM_API, "action=edit&title=".$newpage."&createonly=1&text=".urlencode($text)."&token=".$et."&format=xml");
+        $domDocument->loadXML($res);
+        $domXPath = new DOMXPath($domDocument);
+        $nodes = $domXPath->query('//error/@code');
+        $ec = "";
+        foreach ($nodes AS $node) {
+            $ec = $node->nodeValue;
+        }
+        if (strlen($ec) > 0) {
+            $logtext.= " - Error $ec";
+            $logres = '1';
+        }
+    }
+    else {
+        $logtext.= "Error: no edit token";
+        $logres= '1';
+    }
+    logLine('send rating', $logtext, $logres);
+    echo $logres;
 
-    $cc->post(SMW_FORUM_API, "action=edit&title=".$newpage."&createonly=1&text=".urlencode($text)."&token=".$et."&format=xml");
     @unlink($cookiefile);
+}
+
+function logLine($action, $text, $result) {
+    $text = str_replace("\n", "<br> ", $text);
+    $line = date("Y-m-d H:i:s", time()).'|'.$_SERVER['REMOTE_ADDR']."|$result|$action|$text|\n";
+    $cnt = 3;
+    while ($cnt > 0) {
+        $lock = fopen(COOKIES_DIR.'/'.LOG_FILE.'.lck', "x");
+        if ($lock) {
+            $fp = fopen(COOKIES_DIR.'/'.LOG_FILE, "a+");
+            if ($fp) {
+                fputs($fp, $line, strlen($line));
+                fclose($fp);
+            }
+            fclose($lock);
+            @unlink(COOKIES_DIR.'/'.LOG_FILE.'.lck');
+            return;
+        }
+        usleep(5000); // half second
+        $cnt--;
+    }
 }
 
 // class with CURL that makes also handling with cookies easy.
