@@ -230,13 +230,14 @@ function parseWikiText($text) {
  */
 function smwf_qi_getPage($args= "") {
 	global $wgServer, $wgScript, $wgLang;
-        $qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
+        //$qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
+        $qiScript = '/dmwiki/index.php/Special:QueryInterface';
 
         // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $qiScript);
+		list($httpErr, $page) = doHttpRequestWithCurl('http://dmwiki.ontoprise.com:8888', $qiScript);
 	}
 	else {
 	  if (strtolower(substr($wgServer, 0, 5)) == "https")
@@ -381,6 +382,11 @@ function doHttpRequest($server, $port, $file) {
 function doHttpRequestWithFsockuopen($server, $port, $file) {
 	if ($file{0} != "/") $file = "/".$file;
 	$server = preg_replace('/^http(s)?:\/\//i', '', $server);
+    $p = strpos($server, ':', 7);
+    if ($p !== false) {
+       $port = substr($server,$p+1);
+       $server = substr($server, 0, $p);
+    }
     $cont = "";
     $ip = gethostbyname($server);
     $fp = fsockopen($ip, $port);
