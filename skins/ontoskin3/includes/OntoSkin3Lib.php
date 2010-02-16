@@ -370,10 +370,13 @@ class SMWH_Skin {
          //and don't add the more tab if empty
          if($functionsaggregated != "") {
          //all functions which are aggregated in the right of the right tab
-             $tabmore = "<div id=\"aggregated\" class=\"righttabelements\"><ul class=\"smwh_menulist\"><li class=\"smwh_menulistitem\">";
+             
+             $tabmore = "<ul id=\"more\" class=\"tab smwh_menulist\"><li class=\"smwh_menulistitem\">";
              $tabmore .= "<div id=\"smwh_menuhead_more\" class=\"smwh_menuhead\">".wfMsg("more_functions")."</div>";
              $tabmore .= "<div id=\"smwh_menubody_more\" class=\"smwh_menubody\">";
-             $tabmore .= $functionsaggregated."</div></li></ul></div>";
+             $tabmore .= "<div class=\"smwh_menubody_visible\">";
+             $tabmore .= $functionsaggregated."</div></div></li></ul>";
+             
          } else {
              $tabmore = "";
          }
@@ -384,6 +387,8 @@ class SMWH_Skin {
          //right tab holding all functions other than page/talk
              $tabright = "<div id=\"tabsright\"><div id=\"more\" class=\"tab\">";
              $tabright .=  $tabmore."</div>".$functionsright."</div>";
+             $tabright = "<div id=\"tabsright\">";
+             $tabright .=  $tabmore.$functionsright."</div>";
          } else {
              $tabright = "";
          }

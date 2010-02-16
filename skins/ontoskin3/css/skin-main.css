@@ -138,7 +138,7 @@ margin-top: 3px
     display: none;
 }
 
-ul.smwh_menulist{
+#smwh_menu ul.smwh_menulist{
     padding: 0px;
     margin: 0em;
 }
@@ -168,9 +168,22 @@ ul.smwh_menulist div.smwh_menubody {
     display: none;
 }
 
+
+/*
+* Show Menus when mouse is over the proper item
+*/
 ul.smwh_menulist .hovering div.smwh_menubody {
     display: block;
 }
+
+/*
+* Show the more menu when mouse is over the more tab
+*/
+#more.hovering div.smwh_menubody {
+    display: block !important;
+}
+
+
 
 ul.smwh_menulist div.smwh_menubody {
     width: auto;
@@ -230,7 +243,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     clear: both;
     margin-top: 12px;
     margin-bottom: 10px;
-	margin-left: 12px;
+    margin-left: 12px;
 }
 
 #smwh_breadcrumb_currentpage{
@@ -312,12 +325,6 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 
-/* aggregated functions in tab */
-
-#aggregated {
-    border-right: none !important;
-}
-
 #tabsright ul.smwh_menulist{
     -moz-padding-start: 0px;
     margin: 0em;
@@ -346,19 +353,19 @@ ul.smwh_menulist div.smwh_menubody_visible {
 }
 
 #tabsright ul.smwh_menulist div.smwh_menubody {
-    width: auto;
-    position: absolute;
-    top: 15px;
-    padding: 5px;
-    line-height:1.5em;
-    z-index: 20;
+    line-height: 1.5em;
     right: 0em;
-    border-width: 1px;
-    border-style: solid;
-    -moz-border-radius: 5px;
-    -khtml-border-radius: 5px;
-    -webkit-border-radius: 5px;
 }
+
+#tabsright div.smwh_menubody_visible {
+    margin-top: 5px;
+}
+
+#more{
+    padding-left:  0px;
+    padding-right: 0px;
+}
+
 
 #smwh_halopageoptions p{
     margin: 0px;

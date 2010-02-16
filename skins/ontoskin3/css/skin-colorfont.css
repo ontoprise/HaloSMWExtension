@@ -85,7 +85,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     border-color: #dfdfdc;
 }
 
-ul.smwh_menulist div.smwh_menubody_visible a{
+#smwh_menu ul.smwh_menulist div.smwh_menubody_visible a{
     color: #116988;
 	vertical-align: middle;
 	font-size: smaller;
@@ -156,10 +156,10 @@ ul.smwh_menulist div.smwh_menubody td:hover {
     background: url(../img/menu_arrow.gif) right no-repeat;
 }
 
-#tabsright ul.smwh_menulist div.smwh_menubody {
+/*#tabsright ul.smwh_menulist div.smwh_menubody {
     background-color: #fbfbfb;
     border-color: #dfdfdc;
-}
+}*/
 
 #smwh_menuhead_more  {
     

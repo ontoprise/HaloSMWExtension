@@ -181,7 +181,11 @@ function Smwh_Skin() {
 
     //Constructor
     this.constructor = function(){
-        $jq(".smwh_menulistitem").hover(this.showMenu, this.hideMenu);
+        //register Eventhandler for the menubar itself
+        $jq("#smwh_menu * .smwh_menulistitem").hover(this.showMenu, this.hideMenu);
+        //register Eventhandler for the more tab
+        $jq("#more").hover(this.showMenu, this.hideMenu);
+
         $jq("#smwh_treeviewtoggleright").click(this.showTreeViewRightSide.bind(this));
         $jq("#smwh_treeviewtoggleleft").click(this.showTreeViewLeftSide.bind(this));
         $jq(window).resize(this.resizeControl.bind(this));
