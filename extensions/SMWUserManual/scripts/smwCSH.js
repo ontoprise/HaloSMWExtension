@@ -471,7 +471,8 @@ SMW_UserManual_CSH.prototype = {
             case 'submit' : ds.push('preview'); break
             case 'formedit': ds.push('SemanticForms'); break
         }
-        ds.push('General')
+        // add general help topics only if the user is browsing an ordinary page, i.e. not
+        if (ds.length == 0) ds.push('General')
         return this.uniqueDs(ds)
     },
 
@@ -505,7 +506,7 @@ SMW_UserManual_CSH.prototype = {
     elementsWithHaloAc: function() {
         var input = document.getElementsByTagName('input')
         for (i = 0; i < input.length; i++) {
-            if (input.id == 'searchInput') continue
+            if (input.item(i).id == 'searchInput') continue
             var cn=input.item(i).className
             if (cn && cn.indexOf('wickEnabled') != -1) return true
         }
