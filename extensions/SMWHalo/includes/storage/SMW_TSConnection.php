@@ -42,7 +42,7 @@ abstract class TSConnection {
      * @param string query parameters
      * @return string SPARQL-XML result
      */
-    public abstract function query($query, $params);
+    public abstract function query($query, $params = "");
 
     public static function getConnector() {
         if (is_null(self::$_instance)) {
@@ -183,7 +183,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 
     }
 
-    public function query($query, $params) {
+    public function query($query, $params = "") {
        global $smwgTripleStoreGraph;
         if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
             // SPARQL, attach common prefixes
@@ -233,7 +233,7 @@ class TSConnectorSOAPWebservice extends TSConnection {
         $this->updateClient->update($enc_commands);
     }
 
-    public function query($query, $params) {
+    public function query($query, $params = "") {
 
 
         global $smwgTripleStoreGraph;
