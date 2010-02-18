@@ -20,7 +20,7 @@ class RESTWebserviceConnector {
 		$this->credentials = $credentials;
 	}
 
-	public function send($payload) {
+	public function send($payload, $isQuery = true) {
 
 		$address = gethostbyname($this->host);
 		$res = "";
@@ -37,23 +37,26 @@ class RESTWebserviceConnector {
 		$in .= $payload;
 
 		socket_write($socket, $in, strlen($in));
-		
+		$headerFound = false;
 		$header = "";
 
-		$out = socket_read($socket, 2048, PHP_BINARY_READ);
-        $res .= $out;
-		do {
-			if ($out === false);break;
-			$res .= $out;
-			 
-		} while ($out = socket_read($socket, 2048, PHP_BINARY_READ));
-        
-		$headerIndex = strpos($res, "\r\n\r\n");
-		$header = substr($res, 0, $headerIndex);
-		$result = substr($res, $headerIndex+4);
-		
+        //FIXME: this implementation is crap, but it does work on UP
+		if ($isQuery) {
+			do {
+				$out = socket_read($socket, 2048, PHP_BINARY_READ);
+				if ($out !== false && $out != NULL) $res .= $out;
+				if (strpos($res, "</sparql>") !== false) break; else continue;
+
+			} while (true);
+		} else {
+			//FIXME: header could be longer
+			$res = socket_read($socket, 2048, PHP_BINARY_READ);
+			
+		}
+
 		socket_close($socket);
-		return array($header, $result);
+		list($header, $res) = explode("\r\n\r\n", $res);
+		return array($header, $res);
 	}
 
 

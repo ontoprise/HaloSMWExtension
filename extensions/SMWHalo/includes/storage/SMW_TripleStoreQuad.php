@@ -16,20 +16,13 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TripleStore.php" );
 class SMWTripleStoreQuad extends SMWTripleStore {
 
 
-
-	public static $fullSemanticData;
-	private $tsNamespace;
-
-
 	/**
 	 * Creates and initializes Triple store connector.
 	 *
 	 * @param SMWStore $smwstore All calls are delegated to this implementation.
 	 */
 	function __construct() {
-		global $smwgBaseStore;
-		$this->smwstore = new $smwgBaseStore;
-		$this->tsNamespace = new TSNamespaces();
+		parent::__construct();
 	}
 
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {

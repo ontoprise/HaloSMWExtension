@@ -1,4 +1,6 @@
 <?php
+
+require_once 'SMW_RESTWebserviceConnector.php';
 /**
  * Provides an abstraction for the connection to the triple store.
  * Currently, 4 connector types are supported:
@@ -179,7 +181,7 @@ class TSConnectorRESTWebservice extends TSConnection {
             $enc_commands .= "<command><![CDATA[$enc_command]]></command>";
         }
         $enc_commands .= "</sparul>";
-        $this->updateClient->send($enc_commands);
+        $this->updateClient->send($enc_commands, false);
 
     }
 

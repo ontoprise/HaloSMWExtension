@@ -40,7 +40,7 @@ class SMWTripleStore extends SMWStore {
 
 
 	public static $fullSemanticData;
-	private $tsNamespace;
+	protected $tsNamespace;
 
 
 	/**
