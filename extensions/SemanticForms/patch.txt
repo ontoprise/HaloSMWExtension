@@ -927,7 +927,7 @@ Index: extensions/SemanticForms/includes/SF_FormEditTab.php
 -			$warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
 +            /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
 +            global $wgContLang;
-+            $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(SF_NS_FORM).":'+this[selectedIndex].text+'/'+wgPageName; return false";
++            $jsCode = "javascript:top.location.href=wgScript+'/".$wgContLang->getNsText(NS_SPECIAL).":EditData/'+this[selectedIndex].text+'/'+wgPageName; return false";
 +            $selection = '<b>'.wfMsg('sf_several_forms_notice').'</b><br/>'.wfMsg('sf_several_forms_label').'<select onchange="'.$jsCode.'">'."\n";
 +            for ($i =0, $is=count($form_names); $i < $is; $i++)
 +                $selection .= "<option>".$form_names[$i]."</option>\n";
