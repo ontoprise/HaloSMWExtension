@@ -76,7 +76,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$sv = $b->children()->uri[0];
 			$provenance = $sv->attributes()->provenance;
 			$title = $this->getTitleFromURI((string) $sv, $provenance);
-			$title_dv = SMWDataValueFactory::newPropertyObjectValue($property, $title);
+			$title_dv = SMWDataValueFactory::newTypeIDValue('_wpg');
+            $title_dv->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
+			
 
 			$b = $children->binding[1];
 			foreach($b->children()->uri as $sv) {

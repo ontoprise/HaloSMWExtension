@@ -103,7 +103,7 @@ protected function getNavigationLinks($query = array()) {
         	list($article, $values) = $a;
         	$this->articles[] = $article;
         }
-
+       
         if ($reverse) {
             $this->annotations = array_reverse($this->annotations);
              $this->articles = array_reverse($this->articles);
