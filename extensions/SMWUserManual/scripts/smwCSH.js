@@ -86,12 +86,16 @@ SMW_UserManual_CSH.prototype = {
         // namespace in the SMW forum for comments and feedback entries
         this.smwCommentNs = "Comment" 
         this.msgYourRatingHasBeenSend = 'Your comment has been filed in the SMWforum.\nThank you!'
+        this.msgYourRatingHasBeenSendNot = 'An error occurred when sending your comment to the SMWforum.'
         this.msgYourRatingHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
             '<a href="'+umegSmwForumUrl+'?title=Help:%%%s%%%"><br>Thank you!'
         this.msgYourQuestionHasBeenSend = 'Your question has been send to the SMW+ team.\nThank you!'
+        this.msgYourQuestionHasBeenSendNot = 'An error occurred when sending your question to the SMW+ team.'
         this.msgYourCommentHasBeenSend = 'Your comment has been send to the SMW+ team.\nThank you!'
-        this.msgYourBugHasBeenSend = 'Your bug has been filed in the SMW+ Bugzilla.\nThank you!'
-        // initialize headline of popup and alt text for close button
+        this.msgYourCommentHasBeenSendNot = 'An error occurred when sending your comment to the SMW+ team.'
+        this.msgYourBugHasBeenSend = 'Your bug has been filled in the SMW+ Bugzilla.\nThank you!'
+        this.msgYourBugHasBeenSendNot = 'An error occurred when filling your bug report in the SMW+ Bugzilla.'
+        // initialize headline of popup and alt text for close button and send message for alert box
         this.headline=''
         this.closeLabel=''
     },
@@ -248,9 +252,8 @@ SMW_UserManual_CSH.prototype = {
         if (this.cshPage != null && rating != null) {  
             var txt = this.getTemplateStr(this.txtCommentCsh, rating, comment, this.cshPage)
             txt='action=r&user='+escape(umegSmwforumUser)+'&pass='+escape(umegSmwforumPass)+'&text='+escape(txt)
-            sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, txt], null)
-            alert(this.msgYourRatingHasBeenSend)
-            this.resetRating()
+            this.sendMessage=1
+            sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, txt], this.alertUserMessage.bind(this))
         }
     },
     
@@ -361,28 +364,29 @@ SMW_UserManual_CSH.prototype = {
                 this.closeCommentBox(eL)
                 return
             }
+            this.boxElement=eL
             var img=tbody.getElementsByTagName('img')[1].src
             img=img.substr(img.lastIndexOf('/')+1)
             if (img=='question.png') {
+                this.sendMessage=2
                 var tmpStr=this.getTemplateStr(this.txtAskYourQuestion, '', txt, this.getSingleDiscourseState())
                 tmpStr='action=q&user=u&pass=p&text='+escape(tmpStr)
-                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
-                alert(this.msgYourQuestionHasBeenSend)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], this.alertUserMessage.bind(this))
             }
             else if (img=='comment.png') {
+                this.sendMessage=3
                 var tmpStr=this.getTemplateStr(this.txtCommentComponent, '', txt, this.getSingleDiscourseState())
                 tmpStr='action=c&user=u&pass=p&text='+escape(tmpStr)
-                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
-                alert(this.msgYourCommentHasBeenSend)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], this.alertUserMessage.bind(this))
             }
             else if (img=='bug.png') {
+                this.sendMessage=4
                 var tmpStr=this.getBugreportStr(txt)
                 tmpStr='action=b&user='+escape(umegSmwforumUser)+'&pass='+escape(umegSmwforumPass)+'&text='+escape(tmpStr)
-                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], null)
-                alert(this.msgYourBugHasBeenSend)
+                sajax_do_call('wfUprForwardApiCall', [umegSmwForumCommentUrl, tmpStr], this.alertUserMessage.bind(this))
             }
         }
-        this.closeCommentBox(eL)
+        else this.closeCommentBox(eL)
     },
 
     /**
@@ -409,6 +413,24 @@ SMW_UserManual_CSH.prototype = {
     /* function for the feedback tab end here */
 
     /* general functions for the CSH help */
+    alertUserMessage: function(res) {
+        var msg;
+        if (this.sendMessage==1) {
+            msg = (res=='0')?this.msgYourRatingHasBeenSend:this.msgYourRatingHasBeenSendNot;
+            if (res=='0') this.resetRating()
+        }
+        else if (this.sendMessage==2)
+            msg = (res=='0')?this.msgYourQuestionHasBeenSend:this.msgYourQuestionHasBeenSendNot;
+        else if (this.sendMessage==3)
+            msg = (res=='0')?this.msgYourCommentHasBeenSend:this.msgYourCommentHasBeenSendNot;
+        else if (this.sendMessage==4)
+            msg = (res=='0')?this.msgYourBugHasBeenSend:this.msgYourBugHasBeenSendNot;
+        if (this.boxElement && res=='0')
+            this.closeCommentBox(this.boxElement)
+        alert(msg)
+        this.sendMessage=null
+        this.boxElement=null
+    },
     getSingleDiscourseState: function(all) {
         var ds = this.getDiscourseState()
         // drop unimportand states
@@ -433,19 +455,19 @@ SMW_UserManual_CSH.prototype = {
         var ds = new Array()
         // check any special page that we know of
         switch (wgCanonicalSpecialPageName) {
-            case 'OntologyBrowser': ds.push('OntologyBrowser'); break
-            case 'QueryInterface': ds.push('QueryInterface'); break
+            case 'OntologyBrowser':ds.push('OntologyBrowser');break
+            case 'QueryInterface':ds.push('QueryInterface');break
             case 'AddData':
-            case 'EditData': ds.push('SemanticForms'); break
-            case 'Export': ds.push('Export'); break
-            case 'Watchlist': ds.push('Watchlist'); break
-            case 'DataImportRepository': ds.push('ImportVocabulary'); break
+            case 'EditData':ds.push('SemanticForms');break
+            case 'Export':ds.push('Export');break
+            case 'Watchlist':ds.push('Watchlist');break
+            case 'DataImportRepository':ds.push('ImportVocabulary');break
             case 'DefineWebService':
-            case 'UseWebService': ds.push('Webservice'); break
+            case 'UseWebService':ds.push('Webservice');break
             case 'Gardening':
-            case 'GardeningLog': ds.push('Gardening'); break
-            case 'SemanticNotifications': ds.push('SemanticNotifications'); break
-            case 'Search': if (document.getElementById('us_searchform') &&
+            case 'GardeningLog':ds.push('Gardening');break
+            case 'SemanticNotifications':ds.push('SemanticNotifications');break
+            case 'Search':if (document.getElementById('us_searchform') &&
                                document.getElementById('us_searchfield'))
                                ds.push('UnifiedSearch');
                            break
@@ -459,17 +481,17 @@ SMW_UserManual_CSH.prototype = {
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
         // check namespace
         switch (wgNamespaceNumber) {
-            case 14: ds.push('Category'); break
-            case 10: ds.push('Template'); break
-            case 102: ds.push('Property'); break 
-            case -1: ds.push('SpecialPages'); break
+            case 14:ds.push('Category');break
+            case 10:ds.push('Template');break
+            case 102:ds.push('Property');break 
+            case -1:ds.push('SpecialPages');break
         }
         // check the action parameter
         switch (wgAction) {
-            case 'edit': if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax'); break
-            case 'annotate': ds.push('Annotate'); break
-            case 'submit' : ds.push('preview'); break
-            case 'formedit': ds.push('SemanticForms'); break
+            case 'edit':if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax');break
+            case 'annotate':ds.push('Annotate');break
+            case 'submit' :ds.push('preview');break
+            case 'formedit':ds.push('SemanticForms');break
         }
         // add general help topics only if the user is browsing an ordinary page, i.e. not
         if (ds.length == 0) ds.push('General')
