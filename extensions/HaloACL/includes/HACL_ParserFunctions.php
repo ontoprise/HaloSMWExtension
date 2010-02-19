@@ -40,32 +40,32 @@ function haclfInitParserfunctions() {
 
 	HACLParserFunctions::getInstance();
 
-	$wgParser->setFunctionHook('haclaccess', 'HACLParserFunctions::access');
-	$wgParser->setFunctionHook('haclpropertyaccess', 'HACLParserFunctions::propertyAccess');
-	$wgParser->setFunctionHook('haclpredefinedright', 'HACLParserFunctions::predefinedRight');
-	$wgParser->setFunctionHook('haclwhitelist', 'HACLParserFunctions::whitelist');
-	$wgParser->setFunctionHook('haclmanagerights', 'HACLParserFunctions::manageRights');
-	$wgParser->setFunctionHook('haclmember', 'HACLParserFunctions::addMember');
-	$wgParser->setFunctionHook('haclmanagegroup', 'HACLParserFunctions::manageGroup');
+	$wgParser->setFunctionHook('haclaccess', array('HACLParserFunctions', 'access'));
+	$wgParser->setFunctionHook('haclpropertyaccess', array('HACLParserFunctions', 'propertyAccess'));
+	$wgParser->setFunctionHook('haclpredefinedright', array('HACLParserFunctions', 'predefinedRight'));
+	$wgParser->setFunctionHook('haclwhitelist', array('HACLParserFunctions', 'whitelist'));
+	$wgParser->setFunctionHook('haclmanagerights', array('HACLParserFunctions', 'manageRights'));
+	$wgParser->setFunctionHook('haclmember', array('HACLParserFunctions', 'addMember'));
+	$wgParser->setFunctionHook('haclmanagegroup', array('HACLParserFunctions', 'manageGroup'));
 
 }
 
 function haclfLanguageGetMagic( &$magicWords, $langCode ) {
 	global $haclgContLang;
 	$magicWords['haclaccess']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_ACCESS));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_ACCESS));
 	$magicWords['haclpropertyaccess']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_PROPERTY_ACCESS));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_PROPERTY_ACCESS));
 	$magicWords['haclpredefinedright']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_PREDEFINED_RIGHT));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_PREDEFINED_RIGHT));
 	$magicWords['haclwhitelist']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_WHITELIST));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_WHITELIST));
 	$magicWords['haclmanagerights']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MANAGE_RIGHTS));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MANAGE_RIGHTS));
 	$magicWords['haclmember']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MEMBER));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MEMBER));
 	$magicWords['haclmanagegroup']
-	= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MANAGE_GROUP));
+		= array( 0, $haclgContLang->getParserFunction(HACLLanguage::PF_MANAGE_GROUP));
 
 	return true;
 }
