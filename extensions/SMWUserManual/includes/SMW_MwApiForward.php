@@ -43,7 +43,6 @@ function wfUprSendApiCallViaFsock($server, $data) {
        "Content-Type: application/x-www-form-urlencoded\r\n".
        "Content-Length: ".strlen($data)."\r\n".
        "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n".
-       "X-Binford: 6100\r\n".
        "Host: $host:$port\r\n".
        "\r\n".
        "$data\r\n";
@@ -78,6 +77,7 @@ function wfUprSendApiCallViaCurl($host, $data) {
     /*
     $fp = fopen(dirname(__FILE__).'/debug.log', "a+");
     if ($fp) {
+        fputs($fp, "Host: $host\n");
         fputs($fp, "new request: http result $httpErr, curl errno $curlErr\n");
         fputs($fp, print_r($data."\n", true));
         fputs($fp, print_r($res."\n", true));
