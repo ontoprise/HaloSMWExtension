@@ -301,8 +301,8 @@ class HACLStorageSQL {
 		$gt = $db->tableName('halo_acl_groups');
 		$gmt = $db->tableName('halo_acl_group_members');
 		$sql = "SELECT user_id, group_id, group_name
-		FROM user
-		LEFT JOIN  $gmt ON  $gmt.child_id = user.user_id
+		FROM $ut
+		LEFT JOIN  $gmt ON  $gmt.child_id = $ut.user_id
 		LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
             ";
 
@@ -538,31 +538,23 @@ class HACLStorageSQL {
 	 */
 	public function getGroupsOfMember($userID) {
 
-
-
 		$db =& wfGetDB( DB_SLAVE );
 		$ut = $db->tableName('user');
 		$gt = $db->tableName('halo_acl_groups');
 		$gmt = $db->tableName('halo_acl_group_members');
 		$sql = "SELECT DISTINCT user_id, group_id, group_name
-		FROM user
-		LEFT JOIN  $gmt ON  $gmt.child_id = user.user_id
+		FROM $ut
+		LEFT JOIN  $gmt ON  $gmt.child_id = $ut.user_id
 		LEFT JOIN $gt ON $gt.group_id = $gmt.parent_group_id
-		WHERE user.user_id = $userID
+		WHERE $ut.user_id = $userID
             ";
-
-
 
 		$res = $db->query($sql);
 
 		$curGroupArray = array();
 
-
 		while ($row = $db->fetchObject($res)) {
-
-
 			$curGroupArray[] = array("id"=>$row->group_id, "name"=>$row->group_name);
-
 		}
 
 		$db->freeResult($res);
@@ -709,7 +701,7 @@ class HACLStorageSQL {
 		$db =& wfGetDB( DB_SLAVE );
 
 		$obj = $db->selectRow($db->tableName('halo_acl_groups'),
-		array("group_id"), array("group_id" => $groupID));
+								array("group_id"), array("group_id" => $groupID));
 		return ($obj !== false);
 	}
 
@@ -834,7 +826,7 @@ class HACLStorageSQL {
 		foreach ($securityDescriptors as $sd) {
 			// retrieve the protected element and its type
 			$obj = $db->selectRow($db->tableName('halo_acl_security_descriptors'),
-			array("pe_id","type"), array("sd_id" => $sd));
+									array("pe_id","type"), array("sd_id" => $sd));
 			if (!$obj) {
 				continue;
 			}
