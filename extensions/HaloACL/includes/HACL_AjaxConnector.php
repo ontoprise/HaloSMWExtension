@@ -3705,13 +3705,15 @@ HTML;
 function haclSaveGroup($manageRightsXml,$parentgroup = null) {
     global $haclgContLang;
     global $wgUser;
+	
+    $userNS = $wgContLang->getNsText(NS_USER);
     $template = $haclgContLang->getSDTemplateName();
     $predefinedRightName = $haclgContLang->getPredefinedRightName();
     $ns = $haclgContLang->getNamespaces();
     $ns = $ns[HACL_NS_ACL];
+    $groupPrefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP);
 
-
-    if($parentgroup == "Groups" || $parentgroup == "undefined") {
+    if ($parentgroup == wfMsg('hacl_root_group') || $parentgroup == "undefined") {
         $parentgroup = null;
     }
 
@@ -3745,9 +3747,9 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
         foreach($groupXml->xpath('//user') as $user) {
             if(trim($user)!="") {
                 if($users == '') {
-                    $users = 'User:'.unescape((string)$user);
+                    $users = $userNS.':'.unescape((string)$user);
                 }else {
-                    $users .= ",".'User:'.unescape((string)$user);
+                    $users .= ",".$userNS.':'.unescape((string)$user);
                 }
             }
         }
@@ -3767,9 +3769,9 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
         foreach($manageRightsXml->xpath('//user') as $user) {
             if(trim($user) !="") {
                 if($mrusers == '') {
-                    $mrusers = 'User:'.unescape((string)$user);
+                    $mrusers = $userNS.':'.unescape((string)$user);
                 }else {
-                    $mrusers .= ",".'User:'.unescape((string)$user);
+                    $mrusers .= ",".$userNS.':'.unescape((string)$user);
                 }
             }
         }
@@ -3777,10 +3779,12 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
         $groupName = unescape($groupXml->name);
 
         // create article for security descriptor
-        $sdarticle = new Article(Title::newFromText("$ns:".'Group'.'/'.$groupName));
+        $sdarticle = new Article(Title::newFromText("$ns:".
+        											$groupPrefix.
+        											'/'.
+        											$groupName));
 
-
-        if($users == "") {
+        if ($users == "") {
             $inline = '
 {{#member:members='.$groups.'}}';
         }elseif($groups == "") {
@@ -3805,7 +3809,7 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
         [[Category:ACL/Group]]';
         }else {
             $inline .= '
-{{#manage group:assigned to=User:'.$wgUser->getName().'}}
+{{#manage group:assigned to='.$userNS.':'.$wgUser->getName().'}}
         [[Category:ACL/Group]]';
         }
 
@@ -3828,7 +3832,7 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
             // building new arent inline
             $parent_memuser = "";
             // setting the new group as first member
-            $parent_memgroup = 'Group'.'/'.$groupName;
+            $parent_memgroup = "$groupPrefix/$groupName";
             $parent_user = "";
             $parent_group = "";
             if(isset($parentGroupArray['members']['group'])) {
@@ -3846,9 +3850,9 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
                 foreach($parentGroupArray['members']['user'] as $user) {
                     if(trim($user) !="") {
                         if($parent_memuser == '') {
-                            $parent_memuser = 'User:'.(string)$user;
+                            $parent_memuser = $userNS.':'.(string)$user;
                         }else {
-                            $parent_memuser .= ",".'User:'.(string)$user;
+                            $parent_memuser .= ",".$userNS.':'.(string)$user;
                         }
                     }
                 }
@@ -3858,9 +3862,9 @@ function haclSaveGroup($manageRightsXml,$parentgroup = null) {
                 foreach($parentGroupArray['members']['user'] as $user) {
                     if(trim($user)) {
                         if($parent_user == '') {
-                            $parent_user = 'User:'.(string)$user;
+                            $parent_user = $userNS.':'.(string)$user;
                         }else {
-                            $parent_user .= ",".'User:'.(string)$user;
+                            $parent_user .= ",".$userNS.':'.(string)$user;
                         }
                     }
                 }
@@ -3944,7 +3948,7 @@ function readGroupDefinition($groupName) {
     foreach($temp as $item) {
         $db =& wfGetDB( DB_SLAVE );
         $gt = $db->tableName('user');
-        $sql = "SELECT * FROM user where user_id = ".$item;
+        $sql = "SELECT * FROM $gt where user_id = ".$item;
         $res = $db->query($sql);
         $row = $db->fetchObject($res);
         $result['manage']['user'][] = $row->user_name;
@@ -4229,10 +4233,13 @@ function haclGetUsersForGroups($groupsstring) {
  */
 function haclGetGroupsForRightPanel($clickedGroup, $search=null, $recursive=false, $level=0,$subgroupsToCall = null) {
     $array = array();
-    if($search)$recursive = true;
+    if ($search) 
+    	$recursive = true;
 
     // return first level
-    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
+    global $haclgContLang;
+	$rootGroup = wfMsg('hacl_root_group');   
+    if ($clickedGroup == 'all' || $clickedGroup == $rootGroup) {
     //get level 0 groups
         if($level == 0) {
             $groups = HACLStorage::getDatabase()->getGroups();
@@ -4322,7 +4329,7 @@ function haclGetGroupsForManageUser($clickedGroup,$search=null, $recursive=false
     if($search)$recursive = true;
 
     // return first level
-    if($clickedGroup == 'all' || $clickedGroup == "Groups") {
+    if ($clickedGroup == 'all' || $clickedGroup == wfMsg('hacl_root_group')) {
     //get level 0 groups
         if($level == 0) {
             $groups = HACLStorage::getDatabase()->getGroups();
