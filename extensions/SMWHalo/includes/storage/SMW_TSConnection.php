@@ -181,7 +181,7 @@ class TSConnectorRESTWebservice extends TSConnection {
             $enc_commands .= "<command><![CDATA[$enc_command]]></command>";
         }
         $enc_commands .= "</sparul>";
-        $this->updateClient->send($enc_commands, false);
+        $this->updateClient->send($enc_commands, "sparul");
 
     }
 
@@ -197,7 +197,7 @@ class TSConnectorRESTWebservice extends TSConnection {
         $queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
         $queryRequest .= "</query>";
         
-        list($header, $result) = $this->queryClient->send($queryRequest);
+        list($header, $result) = $this->queryClient->send($queryRequest, "sparql");
         return $result;
     }
 }

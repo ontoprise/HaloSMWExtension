@@ -20,43 +20,33 @@ class RESTWebserviceConnector {
 		$this->credentials = $credentials;
 	}
 
-	public function send($payload, $isQuery = true) {
+	public function send($payload, $service) {
 
-		$address = gethostbyname($this->host);
+
 		$res = "";
-		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-		socket_connect($socket, $address, $this->port);
-
-		$in =   "POST $this->path HTTP/1.0\r\n".
-                "Host: $this->host\r\n".
-                "Content-Type: text/xml\r\n".
-                "Content-Length: ".strlen($payload)."\r\n";
-
-		if ($this->credentials != '') $in .= "Authorization: Basic ".base64_encode(trim($this->credentials))."\r\n";
-		$in .= "\r\n";
-		$in .= $payload;
-
-		socket_write($socket, $in, strlen($in));
-		$headerFound = false;
 		$header = "";
 
-        //FIXME: this implementation is crap, but it does work on UP
-		if ($isQuery) {
-			do {
-				$out = socket_read($socket, 2048, PHP_BINARY_READ);
-				if ($out !== false && $out != NULL) $res .= $out;
-				if (strpos($res, "</sparql>") !== false) break; else continue;
+		// Create a curl handle to a non-existing location
+		$ch = curl_init("http://".$this->host.":".$this->port."/$service");
+		curl_setopt($ch,CURLOPT_POST,true);
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
+		curl_setopt($ch,CURLOPT_HTTPHEADER,array (
+        "Content-Type: text/xml; charset=utf-8",
+        "Expect: "
+        ));
+        if ($this->credentials != '') curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
+        // Execute
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
-			} while (true);
-		} else {
-			//FIXME: header could be longer
-			$res = socket_read($socket, 2048, PHP_BINARY_READ);
-			
-		}
-
-		socket_close($socket);
-		list($header, $res) = explode("\r\n\r\n", $res);
-		return array($header, $res);
+        $res = curl_exec($ch);
+       
+        $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
+        curl_close($ch);
+       
+        list($header, $res) = explode("\r\n\r\n", $res);
+        return array($header, $res);
 	}
 
 
