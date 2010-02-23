@@ -20,6 +20,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_singlechart = false;
 	protected $m_tabview = false;
 	protected $m_notoolbar = false;
+	protected $m_disableprov = false;
 
 	protected $m_isAjax = false;
 	public function __construct($format, $inline) {
@@ -34,8 +35,8 @@ class SRFOFC extends SMWResultPrinter {
 	}
 
 	function getScripts() {
-	    global $srfgScriptPath;
-	    $scripts=array();
+		global $srfgScriptPath;
+		$scripts=array();
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/jquery-ui-1.7.2.custom.min.js"></script>' . "\n";
 		$scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath . '/ofc/js/swfobject.js"></script>' . "\n";
@@ -60,7 +61,7 @@ class SRFOFC extends SMWResultPrinter {
             'media' => "screen, projection",
             'href' => $srfgScriptPath . '/ofc/css/ui-lightness/jquery-ui-1.7.2.custom.css'
             );
-        return $css;
+            return $css;
 	}
 
 	function getSupportedParameters() {
@@ -94,11 +95,13 @@ class SRFOFC extends SMWResultPrinter {
 			foreach($ops as $op) {
 				$op = strtolower(trim($op));
 				if('hidetable' == $op) {
-					$this->m_hidetable = true;					
+					$this->m_hidetable = true;
 				} else if('tabview' == $op) {
-					$this->m_tabview = true;	
+					$this->m_tabview = true;
 				} else if('notoolbar' == $op) {
-					$this->m_notoolbar = true;	
+					$this->m_notoolbar = true;
+				} else if('disableprov' == $op) {
+					$this->m_disableprov = true;
 				}
 			}
 		}
@@ -164,24 +167,24 @@ class SRFOFC extends SMWResultPrinter {
 		}
 	}
 	static $ofc_color = array("#F65327","#000066","#428BC7","#EE1C2F");
-	
 
-    private function setupOFCHeader() {
-            $i=0;
-            foreach($this->getStylesheets() as $css) {
-                SMWOutputs::requireHeadItem("ofc-css$i", '<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
-                
-                $i++;
-            }
-            $i=0;
-            foreach($this->getScripts() as $script) {
-//            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
-            	
-                SMWOutputs::requireHeadItem("ofc-script$i", $script);    
-                $i++;
-            }
-            SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
-    }
+
+	private function setupOFCHeader() {
+		$i=0;
+		foreach($this->getStylesheets() as $css) {
+			SMWOutputs::requireHeadItem("ofc-css$i", '<link rel="stylesheet" type="text/css" href="' . $css['href'] . '" />');
+
+			$i++;
+		}
+		$i=0;
+		foreach($this->getScripts() as $script) {
+			//            	if (defined('SMW_HALO_VERSION') && strpos($script, "jquery.js") !== false) continue; // don't include query twice
+
+			SMWOutputs::requireHeadItem("ofc-script$i", $script);
+			$i++;
+		}
+		SMWOutputs::requireHeadItem(SMW_HEADER_SORTTABLE);
+	}
 
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
@@ -189,7 +192,7 @@ class SRFOFC extends SMWResultPrinter {
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
 		if (defined('SMW_UP_RATING_VERSION')) $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
-		
+
 		if (!$this->m_isAjax) {
 			$this->setupOFCHeader();
 		}
@@ -199,14 +202,18 @@ class SRFOFC extends SMWResultPrinter {
 		if ('broadtable' == $this->mFormat)
 		$widthpara = ' width="100%"';
 		else $widthpara = '';
-		$table = "<table class=\"smwtable\"$widthpara id=\"$table_id\" " . ($this->m_hidetable?'style="display:none"':'') . ">\n";
-		if ($this->mShowHeaders) { // building headers
+		$table="";
+		if (defined('SMW_UP_RATING_VERSION'))
+		$table .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
+		$table .= "<table class=\"smwtable\"$widthpara id=\"$table_id\" " . ($this->m_hidetable?'style="display:none"':'') . ">\n";
+		if ($this->mShowHeaders != SMW_HEADERS_HIDE) { // building headers
 			$table .= "\t<tr>\n";
 			foreach ($res->getPrintRequests() as $pr) {
-				$table .= "\t\t<th>" . $pr->getText($outputmode, $this->mLinker) . "</th>\n";
+				$table .= "\t\t<th>" . $pr->getText($outputmode, ($this->mShowHeaders == SMW_HEADERS_PLAIN?NULL:$this->mLinker) ) . "</th>\n";
 			}
 			$table .= "\t</tr>\n";
 		}
+
 		$labels = array(); $headers = array();
 		foreach ($res->getPrintRequests() as $pr) {
 			$headers[] = $pr->getText(SMW_OUTPUT_HTML);
@@ -218,12 +225,12 @@ class SRFOFC extends SMWResultPrinter {
 				$headers = array_slice($headers, 1);
 				$l = array_slice($l, 1);
 			}
-			
+
 			$ratios = array();
 			foreach($l as $yIdx=>$y) {
 				$ratios[$yIdx] = 1;
 			}
-			
+
 			$this->m_charts[] = array(
 				'show'=>true,
 				'autoratio'=>false,			
@@ -250,19 +257,44 @@ class SRFOFC extends SMWResultPrinter {
 				$table .= "\t\t<td>";
 				$first = true;
 				$data = '';
+
 				while ( ($object = $field->getNextObject()) !== false ) {
 					if ($object->getTypeID() == '_wpg') { // use shorter "LongText" for wikipage
-						$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
+						$provURL = $object->getProvenance();
+						if($this->m_disableprov) {
+							$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
+						} else {
+							if ($firstcol && !is_null($provURL)) {
+								$text = $this->createArticleLinkFromProvenance($provURL, $this->getLinker($firstcol));
+							} else {
+								$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
+								if (strlen($text) > 0 && !is_null($provURL)) {
+									$text .= $this->createProvenanceLink2($provURL);
+								}
+							}
+						}
+						$ofc_text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 					} else {
 						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
+						if(!$this->m_disableprov){
+							if (strlen($text) > 0) {
+								$provURL = $object->getProvenance();
+								if (!is_null($provURL)) $text .= $this->createProvenanceLink2($provURL);
+							}
+						}
+						$ofc_text = $object->getShortText($outputmode,$this->getLinker($firstcol));
 					}
 					if ($firstcol) {$rowname = $object->getShortText();}
-					if (strlen($text) > 0) {
-						$provURL = $object->getProvenance();
-						if (!is_null($provURL)) {
-							$provURL = $this->createProvenanceLink($provURL, $headers[0] . ':' . $rowname, $headers[$index], $text, $headers[$index].",".$rowname);
-						} else {
-							$provURL = '';
+					if($this->m_disableprov) {
+						$provURL = '';
+					} else {
+						if (strlen($ofc_text) > 0) {
+							$provURL = $object->getProvenance();
+							if (!is_null($provURL)) {
+								$provURL = $this->createProvenanceLink($provURL, $headers[0] . ':' . $rowname, $headers[$index], $ofc_text, $headers[$index].",".$rowname);
+							} else {
+								$provURL = '';
+							}
 						}
 					}
 					if ($first) {
@@ -296,24 +328,24 @@ class SRFOFC extends SMWResultPrinter {
 						for($yIdx = 0;$yIdx<count($chart['y']);++$yIdx) {
 							if($chart['y'][$yIdx] == $label) {
 								$v = floatval(str_replace(',', '', $data));
-//								if($chart['autoratio']) {
-									if(!isset($this->m_charts[$i]['minmax'][$yIdx])) {
-										$this->m_charts[$i]['minmax'][$yIdx] = array( 'min'=>$v, 'max'=>$v);
-									} else if($v<$this->m_charts[$i]['minmax'][$yIdx]['min']) {
-										$this->m_charts[$i]['minmax'][$yIdx]['min'] = $v;
-									} else if($v>$this->m_charts[$i]['minmax'][$yIdx]['max']) {
-										$this->m_charts[$i]['minmax'][$yIdx]['max'] = $v;
-									}
-//								} else {
-//									if(!isset($this->m_charts[$i]['min'])) {
-//										$this->m_charts[$i]['min'] = $v;
-//										$this->m_charts[$i]['max'] = $v;
-//									} else if($v<$this->m_charts[$i]['min']) {
-//										$this->m_charts[$i]['min'] = $v;
-//									} else if($v>$this->m_charts[$i]['max']) {
-//										$this->m_charts[$i]['max'] = $v;
-//									}
-//								}
+								//								if($chart['autoratio']) {
+								if(!isset($this->m_charts[$i]['minmax'][$yIdx])) {
+									$this->m_charts[$i]['minmax'][$yIdx] = array( 'min'=>$v, 'max'=>$v);
+								} else if($v<$this->m_charts[$i]['minmax'][$yIdx]['min']) {
+									$this->m_charts[$i]['minmax'][$yIdx]['min'] = $v;
+								} else if($v>$this->m_charts[$i]['minmax'][$yIdx]['max']) {
+									$this->m_charts[$i]['minmax'][$yIdx]['max'] = $v;
+								}
+								//								} else {
+								//									if(!isset($this->m_charts[$i]['min'])) {
+								//										$this->m_charts[$i]['min'] = $v;
+								//										$this->m_charts[$i]['max'] = $v;
+								//									} else if($v<$this->m_charts[$i]['min']) {
+								//										$this->m_charts[$i]['min'] = $v;
+								//									} else if($v>$this->m_charts[$i]['max']) {
+								//										$this->m_charts[$i]['max'] = $v;
+								//									}
+								//								}
 								$this->m_charts[$i]['data'][$idx]['value'][$yIdx] = $v;
 								$this->m_charts[$i]['data'][$idx]['prov'][$yIdx] = $provURL;
 							}
@@ -322,7 +354,7 @@ class SRFOFC extends SMWResultPrinter {
 				}
 				$table .= "</td>\n";
 				$firstcol = false;
-				$tp .= $labels[$index] . ' : ' . implode(' ', preg_split('/<script>(.*?)<\/script>/i', $text)) . '<br>';
+				$tp .= $labels[$index] . ' : ' . implode(' ', preg_split('/<script>(.*?)<\/script>/i', $ofc_text)) . '<br>';
 				$index ++;
 			}
 			$tooltip[] = $tp;
@@ -341,7 +373,7 @@ class SRFOFC extends SMWResultPrinter {
 
 		$this->getAutoRatio();
 		$this->enableRatio();
-		
+
 		$ofc_data_objs = array();
 		for($i=0;$i<count($this->m_charts);++$i) {
 			$chart = $this->m_charts[$i];
@@ -381,7 +413,7 @@ class SRFOFC extends SMWResultPrinter {
 				$max = floatval($chart['max']);
 				$min = floatval($chart['min']);
 				$step = floatval($chart['step']);
-//				$this->getScale($min, $max, $step);
+				//				$this->getScale($min, $max, $step);
 
 				$ofc_data_objs[$i] .= '
 		"elements":[' . $this->getElementText($chart, $chart['type'], $tooltip) . '],
@@ -479,7 +511,7 @@ class SRFOFC extends SMWResultPrinter {
 			SMWOutputs::requireHeadItem("srfofc$smwgIQRunningNumber", '<script type="text/javascript">' . $js . '</script>' . "\n");
 		}
 		return !$this->m_isAjax ? $html : $html . '|||' . $js;
-		
+
 	}
 	private function getLabelText($chart) {
 		$first = true;
@@ -561,18 +593,18 @@ class SRFOFC extends SMWResultPrinter {
 			if($max == 0) {
 				$step = 0;
 			} else {
-			if($max > 1) {
-				$step = 1;
-				while(intval($max / $step) > 10) {
-					$step *= 10;
+				if($max > 1) {
+					$step = 1;
+					while(intval($max / $step) > 10) {
+						$step *= 10;
+					}
+				} else {
+					$step = 0.1;
+					while(floatval($max / $step) < 1) {
+						$step /= 10;
+					}
 				}
-			} else {
-				$step = 0.1;
-				while(floatval($max / $step) < 1) {
-					$step /= 10;
-				}
-			}
-			$max = (intval($max / $step) + 1) * $step;
+				$max = (intval($max / $step) + 1) * $step;
 			}
 		} else if($max <= 0) {
 			$max = 0;
@@ -679,7 +711,7 @@ class SRFOFC extends SMWResultPrinter {
 	}
 	private function createProvenanceLink($url, $row, $col, $value, $cellIdent) {
 		global $uprgWikipediaAPI;
-        // no provenance link, if there is "novalue" placeholder from OB and if UP rating is not installed
+		// no provenance link, if there is "novalue" placeholder from OB and if UP rating is not installed
 		if ($url != 'http://novalue#0' && defined('SMW_UP_RATING_VERSION')) {
 			$url=str_replace('&amp;', '&', $url);
 			// hack for Wikipedia clone
@@ -695,5 +727,40 @@ class SRFOFC extends SMWResultPrinter {
 			global $smwgIQRunningNumber;
 			return "uprgPopup.cellDataRating({$smwgIQRunningNumber}, '{$row}','{$col}','{$value}','{$cellIdent}', \'$url\')";
 		}
+	}
+	private function createProvenanceLink2($url) {
+		global $uprgWikipediaAPI;
+		// no provenance link, if there is "novalue" placeholder from OB and if UP rating is not installed
+		if ($url != 'http://novalue#0' && defined('SMW_UP_RATING_VERSION')) {
+			$url=str_replace('&amp;', '&', $url);
+			// hack for Wikipedia clone
+			if (strpos($uprgWikipediaAPI, 'vulcan.com')) {
+				$url = str_replace('en.wikipedia.org/wiki/', 'wiking.vulcan.com/wp/index.php,title=', $url);
+				$url = preg_replace('/relative-line=\d+/', '', $url);
+				$url = preg_replace('/absolute-line=(\d+)/', 'line=$1', $url);
+				$url = preg_replace('/#[^\?&]*(\?|&){1}/', '', $url);
+				$url = str_replace('#', '&', $url);
+				$url = str_replace('?', '&', $url);
+				$url = str_replace('index.php,title=', 'index.php?title=', $url);
+			}
+			return "UpRatingCell___".$url."___lleCgnitaRpU";
+		}
+	}
+
+	/**
+	 * Creates article link for instances of first column by using provenance data.
+	 *
+	 * @param string $url Provenance URL
+	 * @param Linker $linker
+	 * @return string (wiki markup)
+	 */
+	private function createArticleLinkFromProvenance($url, $linker) {
+		$url_parts = parse_url($url);
+		$desturl = $url_parts['path'];
+		$title = substr($desturl, strrpos($desturl, "/")+1);
+		$title = str_replace("_", " ", $title);
+		$wpurl = str_replace('en.wikipedia.org/wiki/', 'wiking.vulcan.com/wp/index.php?title=', $url);
+		return '['.$wpurl.' '.$title.']';
+
 	}
 }
