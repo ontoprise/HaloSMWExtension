@@ -56,7 +56,7 @@ function wfUprSendApiCallViaFsock($server, $data) {
     list($protocol, $httpErr, $message) = explode(' ', $httpHeaders[0]);
     $cont = substr($cont, strpos($cont, "\r\n\r\n") );
     if ($httpErr == '200') return $cont;
-    return '';
+    echo $cont;
 }
 
 function wfUprSendApiCallViaCurl($host, $data) {
@@ -85,6 +85,6 @@ function wfUprSendApiCallViaCurl($host, $data) {
     }
     */
     if ($curlErr != 0 && $httpErr != 200) $res='';
-    return $res;
+    echo $res;
 }
 ?>
