@@ -316,28 +316,29 @@ class SRFExhibit extends SMWResultPrinter {
 
 		$items = '';
 		$index = 0;
+		$locations = array();
+
 		// print all result rows
 		while ( $row = $res->getNext() ) {
 			$col = 0;
 			$textstack = array();
 			foreach ($row as $field) {
 				while ( ($object = $field->getNextObject()) !== false ) {
-					if($col==0) $l = str_replace('"', '\"', $object->getText($outputmode,$this->getLinker(0)));
 					switch($object->getTypeID()){
 						case '_wpg':
-							$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $object->getText($outputmode,$this->getLinker(0))) . '"';
+							$tmp = $object->getText($outputmode,$this->getLinker(0));
 							break;
 						case '_geo':
-							$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $object->getXSDValue($outputmode,$this->getLinker(0))) . '"';
+							$tmp = $object->getXSDValue($outputmode,$this->getLinker(0));
 							break;
 						case '_num':
-							$textstack[] = $colstack[$col] . ': ' . $object->getNumericValue($outputmode,$this->getLinker(0));
+							$tmp = $object->getNumericValue($outputmode,$this->getLinker(0));
 							break;
 						case '_dat':
-							$textstack[] = $colstack[$col] . ': "' . $object->getYear()."-".str_pad($object->getMonth(),2,'0',STR_PAD_LEFT)."-".str_pad($object->getDay(),2,'0',STR_PAD_LEFT)." ".$object->getTimeString() . '"';
+							$tmp = $object->getYear()."-".str_pad($object->getMonth(),2,'0',STR_PAD_LEFT)."-".str_pad($object->getDay(),2,'0',STR_PAD_LEFT)." ".$object->getTimeString();
 							break;
 						case '_uri':
-							$textstack[] = $colstack[$col] . ': "' . $object->getXSDValue($outputmode,$this->getLinker(0)) . '"';
+							$tmp = $object->getXSDValue($outputmode,$this->getLinker(0));
 							break;
 						case '__sin':
 							$tmp = $object->getShortText($outputmode,null);
@@ -345,11 +346,17 @@ class SRFExhibit extends SMWResultPrinter {
 								$tmp = explode(":",$tmp,2);
 								$tmp = $tmp[1];
 							}
-							$textstack[] = $colstack[$col] . ': "' . $tmp . '"';
 							break;
 						default:
-							$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $object->getLongHTMLText($outputmode,$this->getLinker(0))) . '"';
+							$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
 					}
+					if($object->getTypeID() == '_num') {
+						$textstack[] = $colstack[$col] . ': ' . str_replace('"', '\"', $tmp);
+					} else {
+						$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $tmp) . '"';
+					}
+					if(array_key_exists($colstack[$col], $gmaps)){$locations[$tmp] = $tmp;}
+					if($col==0) $l = str_replace('"', '\"', $tmp);
 				}
 				$col ++;
 			}
@@ -357,8 +364,19 @@ class SRFExhibit extends SMWResultPrinter {
 			$index ++;
 		}
 
+		$locationstr = '';
+		if(count($locations) > 0) {
+			global $srfgIP ;
+			require_once( $srfgIP . '/includes/SRF_Storage.php' );
+			$srfStore = SRFStorage::getDatabase();
+			$locs = $srfStore->lookupLatLngs($locations);
+			foreach ($locs as $loc) {
+				$locationstr[] = 'smwExhibitJSON.latlngs.push({location:"' . str_replace('"', '\"', $loc['location']) . '", latlng: "' . $loc['latlng'] . '"});';
+			}
+		}
 		SMWOutputs::requireHeadItem('ExhibitData' . SRFExhibit::$exhibitRunningNumber, '<script type="text/javascript">
 		' . implode("\n", $gmaps) . '
+		' . implode("\n", $locationstr) . '
 		' . $properties . '
 		' . $items .'
 		</script>');

@@ -76,7 +76,7 @@ function srffInitFormat( $format ) {
 		break;
 		case 'exhibit':
 			$class = 'SRFExhibit';
-			$file = $srfgIP . '/Exhibit/SRF_Exhibit.php';
+			$file = $srfgIP . '/Exhibit/SRF_Exhibit2.php';
 		break;
 		case 'googlebar':
 			$class = 'SRFGoogleBar';
@@ -122,5 +122,31 @@ function srffAddToAdminLinks(&$admin_links_tree) {
 	wfLoadExtensionMessages('SemanticResultFormats');
 	$srf_docu_label = wfMsg('adminlinks_documentation', wfMsg('srf-name'));
 	$smw_docu_row->addItem(AlItem::newFromExternalLink("http://www.mediawiki.org/wiki/Extension:Semantic_Result_Formats", $srf_docu_label));
+	return true;
+}
+
+
+global $wgExtensionFunctions;
+$wgExtensionFunctions[] = 'SRFSetupExtension';
+function SRFSetupExtension() {
+	global $wgHooks, $wgRequest, $srfgIP;
+	$wgHooks['smwInitializeTables'][] = 'srfGMapInitializeTables';
+
+	$action = $wgRequest->getVal('action');
+	// add some AJAX calls
+	if ($action == 'ajax') {
+		$func_name = isset( $_POST["rs"] ) ? $_POST["rs"] : (isset( $_GET["rs"] ) ? $_GET["rs"] : NULL);
+		if ($func_name == NULL) return NULL;
+		if (substr( $func_name, 0, strlen( 'srf_' ) ) === 'srf_' ) {
+			require_once($srfgIP . '/includes/SRF_AjaxAccess.php');
+		}
+	}
+	return true;
+}
+function srfGMapInitializeTables() {
+	global $srfgIP;
+	require_once( $srfgIP . '/includes/SRF_Storage.php' );
+	SRFStorage::getDatabase()->setup(true);
+	
 	return true;
 }

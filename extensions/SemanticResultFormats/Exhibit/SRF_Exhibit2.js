@@ -1,4 +1,4 @@
-var smwExhibitJSON = { types: {}, properties: {}, gmaps: [], items: [] };
+var smwExhibitJSON = { types: {}, properties: {}, gmaps: [], items: [], latlngs: [] };
 var exhibit_map_items = [];
 var exhibit_map_sum = 0;
 SMWExhibit_checkFill = function() {
@@ -12,9 +12,13 @@ SMWExhibit_checkFill = function() {
 }
 SMWExhibit_lookupLatLng = function(set, addressExpressionString, outputProperty, database, accuracy) {
     if (accuracy == undefined) {
-        accuracy = 4;
+    	// http://www.google.com/apis/maps/documentation/reference.html#GGeoAddressAccuracy
+        // accuracy = 4;
+        accuracy = 0;
     }
     
+    var results = [];
+
     var expression = Exhibit.ExpressionParser.parse(addressExpressionString);
     var jobs = [];
     set.visit(function(item) {
@@ -25,11 +29,29 @@ SMWExhibit_lookupLatLng = function(set, addressExpressionString, outputProperty,
             database
         ).value
         if (address != null) {
-            jobs.push({ item: item, address: address });
+        	var found = false;
+        	for(var i=0;i<smwExhibitJSON.latlngs.length;++i){
+        		if(smwExhibitJSON.latlngs[i].location == address) {
+        			results.push("{ id: '" + item + "', " + outputProperty + ": '" + smwExhibitJSON.latlngs[i].latlng + "' }");
+        			found = true;
+        			break;
+        		}
+        	}
+        	if(!found) {
+        		found = false;
+        		for(var i=0;i<jobs.length;++i){
+        			if(jobs[i].address == address) {
+        				jobs[i].items.push(item);
+        				found = true;
+        				break;
+        			}
+        		}
+        		if(!found)
+        			jobs.push({ items: [item], address: address });
+        	}
         }
     });
     
-    var results = [];
     var geocoder = new GClientGeocoder();
     var cont = function() {
         if (jobs.length > 0) {
@@ -50,7 +72,10 @@ SMWExhibit_lookupLatLng = function(set, addressExpressionString, outputProperty,
                         var coords = json.Placemark[0].Point.coordinates;
                         var lat = coords[1];
                         var lng = coords[0];
-                        results.push("{ id: '" + job.item + "', " + outputProperty + ": '" + lat + "," + lng + "' }");
+                        sajax_do_call('srf_AjaxAccess', ["addGeo", job.address + '|' + lat + ',' + lng], function(x){});
+                        for(var i=0;i<job.items.length;++i){
+                        	results.push("{ id: '" + job.items[i] + "', " + outputProperty + ": '" + lat + "," + lng + "' }");
+                        }
                     } else {
                         var segments = job.address.split(",");
                         if (segments.length == 1) {
