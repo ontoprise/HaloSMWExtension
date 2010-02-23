@@ -79,11 +79,21 @@ function sendBugReport($user, $pass, $text) {
     $cookiefile = COOKIES_DIR.'/cookies.txt.'.date('YmdHis', time());
     $cc = new cURL(true, $cookiefile);
 
-    $cc->post(BUGZILLA_URL.'/index.cgi', 'Bugzilla_login='.urlencode($user).'&Bugzilla_password='.urlencode($pass).'&Bugzilla_restrictlogin=1&GoAheadAndLogIn=Login');
+    $res = $cc->post(BUGZILLA_URL.'/index.cgi', 'Bugzilla_login='.urlencode($user).'&Bugzilla_password='.urlencode($pass).'&Bugzilla_restrictlogin=1&GoAheadAndLogIn=Login');
 
+    if (strpos($res, "I need a legitimate login and password to continue") ||
+        strpos($res, "<title>Invalid Username Or Password</title>")) {
+        $logres= "1";
+        logLine('send bug report', 'login to Bugzilla failed', $logres);
+        echo $logres;
+        @unlink($cookiefile);
+        return;
+    }
+    
     $res= $cc->post(BUGZILLA_URL.'/post_bug.cgi', $text);
+    echo $res;
     if (preg_match('/<title>(.*?)<\/title>/', $res, $matches)) {
-        $logres = "0";
+        $logres = ($matches[1] == "Internal Error") ? "1" : "0";
         $logtext= $matches[1];
     }
     else {
@@ -120,6 +130,7 @@ function sendRating($user, $pass, $text) {
     if (strlen($et) > 0 ) {
         $logtext.="Edit token: ".$et;
         $res = $cc->post(SMW_FORUM_API, "action=edit&title=".$newpage."&createonly=1&text=".urlencode($text)."&token=".$et."&format=xml");
+        $res = substr($res, strpos($res, "<?xml"));
         $domDocument->loadXML($res);
         $domXPath = new DOMXPath($domDocument);
         $nodes = $domXPath->query('//error/@code');
