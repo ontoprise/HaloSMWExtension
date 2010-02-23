@@ -90,7 +90,7 @@ class SRFExhibit extends SMWResultPrinter {
 			$colstack[] = $key;
 		}
 		array_shift($colstack);
-		array_unshift($colstack, 'label');
+		array_unshift($colstack, 'labeltext');
 
 		//prepare facets
 		$facetstack = array();
@@ -137,7 +137,7 @@ class SRFExhibit extends SMWResultPrinter {
 						$thstack[] = ".".$this->encodePropertyName($pr->getLabel());
 					}
 					array_shift($thstack);
-					array_unshift($thstack, '.label');
+					array_unshift($thstack, '.labeltext');
 					$viewstack[] = '
 <div ex:role="view" ex:viewClass="Thumbnail" ex:label="Thumbnails" ex:collectionID="' . $collection . '" ex:showSummary="false" ></div>'; 
 					break;
@@ -147,14 +147,14 @@ class SRFExhibit extends SMWResultPrinter {
 						$thstack[] = ".".$this->encodePropertyName($pr->getLabel());
 					}
 					array_shift($thstack);
-					array_unshift($thstack, '.label');
+					array_unshift($thstack, '.labeltext');
 					$viewstack[] = '
 <div ex:role="view" ex:viewClass="Tabular" ex:label="Table" ex:collectionID="' . $collection . '" ex:showSummary="false" ex:sortAscending="true" ex:columns="'.implode(',',$thstack).'" ></div>'; 
 					break;
 				case 'timeline'://timeline view
 					$timeline = true;
 					$exparams = array('start','end', 'proxy', 'colorkey'); //parameters expecting an Exhibit graph expression
-					$usparams = array('timelineheight','topbandheight','bottombandheight','bottombandunit','topbandunit'); //parametes expecting a textual or numeric value
+					$usparams = array('timelineheight','topbandheight','bottombandheight','bottombandunit','topbandunit','topbandpixelsperunit'); //parametes expecting a textual or numeric value
 					$tlparams = array();
 					foreach($exparams as $param){
 						if(array_key_exists($param, $this->m_params)) $tlparams[] = 'ex:'.$param.'=\'.'.$this->encodePropertyName($this->m_params[$param]).'\' ';
@@ -280,7 +280,7 @@ class SRFExhibit extends SMWResultPrinter {
 					if($pr->getLabel()=='Category') $prefix = "Category:";
 					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'">
 					<td width="20%">'.$pr->getText(0, $this->mLinker).'</td>
-					<td width="80%"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$prefix.'{{.'.$this->encodePropertyName($pr->getLabel()).'}}" ex:content=".'.$this->encodePropertyName($pr->getLabel()).'"></a></td>
+					<td width="80%"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$prefix.'<<.'.$this->encodePropertyName($pr->getLabel()).'>>" ex:content=".'.$this->encodePropertyName($pr->getLabel()).'"></a></td>
 					</tr>';
 				}
 				else{
@@ -294,7 +294,7 @@ class SRFExhibit extends SMWResultPrinter {
 			$lenssrc = '
 <table width=100% cellpadding=3>
 	<tr>
-		<th class="head" align=left bgcolor="#DDDDDD"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$this->determineNamespace(clone $res).'{{.label}}" class="linkhead" ex:content=".label"></a></th>
+		<th class="head" align=left bgcolor="#DDDDDD"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$this->determineNamespace(clone $res).'<<.labeltext>>" class="linkhead" ex:content=".labeltext"></a></th>
 	</tr>
 </table>
 <table width="100%" cellpadding=3>'.implode("", $lensstack).'</table>';
@@ -315,12 +315,14 @@ class SRFExhibit extends SMWResultPrinter {
 		SMWOutputs::requireHeadItem('EXHIBIT2', $ExhibitScriptSrc2); //includes javascript overwriting the Exhibit start-up functions
 
 		$items = '';
+		$index = 0;
 		// print all result rows
 		while ( $row = $res->getNext() ) {
 			$col = 0;
 			$textstack = array();
 			foreach ($row as $field) {
 				while ( ($object = $field->getNextObject()) !== false ) {
+					if($col==0) $l = str_replace('"', '\"', $object->getText($outputmode,$this->getLinker(0)));
 					switch($object->getTypeID()){
 						case '_wpg':
 							$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $object->getText($outputmode,$this->getLinker(0))) . '"';
@@ -351,7 +353,8 @@ class SRFExhibit extends SMWResultPrinter {
 				}
 				$col ++;
 			}
-			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", ' . implode(', ', $textstack). '});';
+			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $index . '.' . $l .'", ' . implode(', ', $textstack). '});';
+			$index ++;
 		}
 
 		SMWOutputs::requireHeadItem('ExhibitData' . SRFExhibit::$exhibitRunningNumber, '<script type="text/javascript">
