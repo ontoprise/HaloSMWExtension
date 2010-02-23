@@ -448,8 +448,8 @@ Exhibit.Lens._parseSubcontentAttribute = function(value) {
     var fragments = [];
     var current = 0;
     var open;
-    while (current < value.length && (open = value.indexOf("{{", current)) >= 0) {
-        var close = value.indexOf("}}", open);
+    while (current < value.length && (open = value.indexOf("<<", current)) >= 0) {
+        var close = value.indexOf(">>", open);
         if (close < 0) {
             break;
         }

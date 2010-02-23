@@ -3884,7 +3884,7 @@ E++){B+=D[E].substr(0,1).toUpperCase()+D[E].substr(1);
 Exhibit.Lens._parseSubcontentAttribute=function(C){var A=[];
 var D=0;
 var B;
-while(D<C.length&&(B=C.indexOf("{{",D))>=0){var E=C.indexOf("}}",B);
+while(D<C.length&&(B=C.indexOf("<<",D))>=0){var E=C.indexOf(">>",B);
 if(E<0){break;
 }A.push(C.substring(D,B));
 A.push(Exhibit.ExpressionParser.parse(C.substring(B+2,E)));
