@@ -413,7 +413,8 @@ SMW_UserManual_CSH.prototype = {
     /* function for the feedback tab end here */
 
     /* general functions for the CSH help */
-    alertUserMessage: function(res) {
+    alertUserMessage: function(response) {
+        var res = response.responseText
         var msg;
         if (this.sendMessage==1) {
             msg = (res=='0')?this.msgYourRatingHasBeenSend:this.msgYourRatingHasBeenSendNot;
