@@ -1496,7 +1496,8 @@ class HACLStorageSQL {
                     $sql = "SELECT DISTINCT page_id, page_title FROM $ut WHERE lower(page_title) LIKE lower('%$subName%')";
                 }
                 if($noACLs){
-                    $sql .= " and page_namespace != '300'";
+                	global $haclgNamespaceIndex;
+                    $sql .= " and page_namespace != '$haclgNamespaceIndex'";
                 }
                 $sql .= " ORDER BY page_title";
 
