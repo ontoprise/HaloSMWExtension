@@ -242,7 +242,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	 * @param PrintRequest prs
 	 * @param array & $allValues
 	 */
-	protected function addURIToResult($uris, $prs, & $allValues) {
+	protected function addURIToResult($uris, $prs, & $allValues, $outputformat) {
 			
 		foreach($uris as $uri) {
 			list($sv, $provenance) = $uri;
@@ -250,7 +250,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $provenance, $ns, $nsIndsex);
+					$allValues[] = $this->createSMWDataValue($sv, $provenance, $ns, $nsIndsex, $outputformat);
 					$nsFound = true;
 				}
 			}
@@ -271,8 +271,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$length = strpos($sv, "#") - $startNS;
 					$ns = intval(substr($sv, $startNS, $length));
 
-
-					if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
+                    $nosection = strpos($outputformat,"nosection");
+					if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
 							
 						// UP special behaviour: if provenance contains section, use it as fragment identifier
 						$uri_parts = explode("#", $provenance);
@@ -332,9 +332,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	 * @param int $ns
 	 * @return SMWDataValue
 	 */
-	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns) {
-
-		if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
+	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns, $outputformat) {
+        $nosection = strpos($outputformat,"nosection");
+		if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
 			// UP special behaviour: if provenance contains section, use it as fragment identifier
 			$uri_parts = explode("#", $provenance);
 			$local = substr($uri_parts[0], strrpos($uri_parts[0], "/")+1);

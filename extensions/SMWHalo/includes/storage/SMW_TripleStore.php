@@ -552,7 +552,7 @@ class SMWTripleStore extends SMWStore {
 	 * @return SMWHaloQueryResult
 	 */
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
-
+        		
 		// parse xml results
 
 		$dom = simplexml_load_string($sparqlXMLResult);
@@ -685,7 +685,7 @@ class SMWTripleStore extends SMWStore {
 					$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
 				}
 				if (!empty($uris)) {
-					$this->addURIToResult($uris, $prs[$resultColumn], $allValues);
+					$this->addURIToResult($uris, $prs[$resultColumn], $allValues, $prs[$resultColumn]->getOutputFormat());
 				} else {
 					$literals = array();
 					foreach($bindingsChildren->literal as $sv) {
@@ -744,8 +744,9 @@ class SMWTripleStore extends SMWStore {
 	 * @param string $sv A single value
 	 * @param PrintRequest prs
 	 * @param array & $allValues
+	 * @param string outputformat
 	 */
-	protected function addURIToResult($uris, $prs, & $allValues) {
+	protected function addURIToResult($uris, $prs, & $allValues, $outputformat) {
 
 		foreach($uris as $uri) {
 			list($sv, $provenance) = $uri;
