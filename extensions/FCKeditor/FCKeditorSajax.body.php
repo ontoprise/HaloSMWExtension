@@ -237,15 +237,15 @@ function wfSajaxTemplateListFCKeditor($page)
         }
         // now build the query for fetching the template names
         // a valid template for the current article is:
-        // - property template.showInTemplatePicker is set to true
-        // - property template.isApplicableForAnyArticle is set
-        // - property template.isApplicabelForCategory contains a
+        // - property "Show in template picker" is set to true
+        // - property "For use in any article" is set
+        // - property "For use in category" contains a
         //   category which is also the category of the current article
         $query = '[['.$wgContLang->getNsText(NS_CATEGORY).':'.$wgContLang->getNsText(NS_TEMPLATE).']]'
-                .'[[template.showInTemplatePicker::true]]'
-                .'[[template.isApplicableForAnyArticle::true]]';
+                .'[[Show in template picker::true]]'
+                .'[[For use in any article::true]]';
         if (count($cats) > 0)
-            $query.= 'OR [[template.isApplicableForCategory::'.implode('||',$cats).']]';
+            $query.= 'OR [[For use in category::'.implode('||',$cats).']]';
         // run the query now
 	$fixparams = array(
             "format" => "ul",
