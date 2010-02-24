@@ -245,7 +245,7 @@ function wfSajaxTemplateListFCKeditor($page)
                 .'[[template.showInTemplatePicker::true]]'
                 .'[[template.isApplicableForAnyArticle::true]]';
         if (count($cats) > 0)
-            $query.= 'OR [[template.isApplicabelForCategory::'.implode('||',$cats).']]';
+            $query.= 'OR [[template.isApplicableForCategory::'.implode('||',$cats).']]';
         // run the query now
 	$fixparams = array(
             "format" => "ul",
