@@ -2,7 +2,7 @@
 /**
  * Semantic rules extension entry point
  *
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -19,7 +19,7 @@ if($smwgDefaultStore != 'SMWTripleStore') {
     die();
 }
 
-$wgExtensionFunctions[] = 'srfSetupExtension';
+$wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
 
 /**
@@ -27,7 +27,7 @@ $srgSRIP = $IP . '/extensions/SemanticRules';
  *
  * @return boolean (MW Hook)
  */
-function srfSetupExtension() {
+function ruleSetupExtension() {
 	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
 
