@@ -265,7 +265,8 @@ class SRFOFC extends SMWResultPrinter {
 							$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 						} else {
 							if ($firstcol && !is_null($provURL)) {
-								$text = $this->createArticleLinkFromProvenance($provURL, $this->getLinker($firstcol));
+								//$text = $this->createArticleLinkFromProvenance($provURL, $this->getLinker($firstcol));
+								$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 							} else {
 								$text = $object->getLongText($outputmode,$this->getLinker($firstcol));
 								if (strlen($text) > 0 && !is_null($provURL)) {
@@ -302,7 +303,7 @@ class SRFOFC extends SMWResultPrinter {
 							$table .= '<span class="smwsortkey">' . $object->getNumericValue() . '</span>';
 						}
 						// get first data only
-						$data .= $object->getShortText($outputmode);
+						$data .= $object->getShortText(SMW_OUTPUT_WIKI);
 						$first = false;
 					} else {
 						$table .= '<br />';
