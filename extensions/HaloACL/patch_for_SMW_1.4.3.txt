@@ -779,34 +779,6 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
  }
  
  
-Index: extensions/SemanticMediaWiki/includes/SMW_GlobalFunctions.php
-===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_GlobalFunctions.php	(revision 5624)
-+++ extensions/SemanticMediaWiki/includes/SMW_GlobalFunctions.php	(working copy)
-@@ -352,8 +352,8 @@
- 		define('SMW_NS_TYPE',           $smwgNamespaceIndex+4);
- 		define('SMW_NS_TYPE_TALK',      $smwgNamespaceIndex+5);
- 		// 106 and 107 are occupied by the Semantic Forms, we define them here to offer some (easy but useful) support to SF
--		define('SF_NS_FORM',            $smwgNamespaceIndex+6);
--		define('SF_NS_FORM_TALK',       $smwgNamespaceIndex+7);
-+//		define('SF_NS_FORM',            $smwgNamespaceIndex+6);
-+//		define('SF_NS_FORM_TALK',       $smwgNamespaceIndex+7);
- 		define('SMW_NS_CONCEPT',        $smwgNamespaceIndex+8);
- 		define('SMW_NS_CONCEPT_TALK',   $smwgNamespaceIndex+9);
- 
-Index: extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php
-===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(revision 5624)
-+++ extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(working copy)
-@@ -317,7 +317,7 @@
- 			$store = smwfGetStore(); // default store
- 		}
- 		$res = $store->getQueryResult($query);
--
-+		
- 		if ( ($query->querymode == SMWQuery::MODE_INSTANCES) || ($query->querymode == SMWQuery::MODE_NONE) ) {
- 			wfProfileIn('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
- 			if ($format == '') {
 Index: extensions/SemanticMediaWiki/languages/SMW_Messages.php
 ===================================================================
 --- extensions/SemanticMediaWiki/languages/SMW_Messages.php	(revision 5624)
