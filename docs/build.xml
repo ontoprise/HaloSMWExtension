@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="documentation" name="SMWHalo Documentation"
+	xmlns:doxygen="antlib:org.doxygen.tools">
+
+	<target name="documentation" >
+		<doxygen:doxygen configFilename="d:\documentation\smwhalo-doxygen" doxygenPath="C:\Programme\doxygen\bin\doxygen"/>
+	</target>
+
+</project>
