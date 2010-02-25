@@ -478,7 +478,7 @@ Exhibit.MapView.prototype._reconstruct = function() {
                 shape, 
                 color, 
                 iconSize,
-                itemCount == 1 ? "" : itemCount.toString(),
+                /*itemCount == 1 ? "" : */itemCount.toString(),
                 icon,
                 self._settings
             );

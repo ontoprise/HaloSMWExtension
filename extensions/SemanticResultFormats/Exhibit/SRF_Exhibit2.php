@@ -279,25 +279,25 @@ class SRFExhibit extends SMWResultPrinter {
 					$prefix='';
 					if($pr->getLabel()=='Category') $prefix = "Category:";
 					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'">
-					<td width="20%">'.$pr->getText(0, $this->mLinker).'</td>
+					<td width="20%" style="white-space:nowrap;">'.$pr->getText(0, $this->mLinker).'</td>
 					<td width="80%"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$prefix.'<<.'.$this->encodePropertyName($pr->getLabel()).'>>" ex:content=".'.$this->encodePropertyName($pr->getLabel()).'"></a></td>
 					</tr>';
 				}
 				else{
 					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'">
-					<td width="20%">'.$pr->getText(0, $this->mLinker).'</td>
+					<td width="20%" style="white-space:nowrap;">'.$pr->getText(0, $this->mLinker).'</td>
 					<td width="80%"><div ex:content=".'.$this->encodePropertyName($pr->getLabel()).'" class="name"></div></td>
 					</tr>';
 				}
 			}
 			array_shift($lensstack);
 			$lenssrc = '
-<table width=100% cellpadding=3>
+<table width="350px" cellpadding=3>
 	<tr>
 		<th class="head" align=left bgcolor="#DDDDDD"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$this->determineNamespace(clone $res).'<<.labeltext>>" class="linkhead" ex:content=".labeltext"></a></th>
 	</tr>
 </table>
-<table width="100%" cellpadding=3>'.implode("", $lensstack).'</table>';
+<table width="350px" cellpadding=3>'.implode("", $lensstack).'</table>';
 		}
 
 
@@ -360,7 +360,9 @@ class SRFExhibit extends SMWResultPrinter {
 				}
 				$col ++;
 			}
-			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $index . '.' . $l .'", ' . implode(', ', $textstack). '});';
+			$idl = $index . '.' . $l;
+			if(strlen($idl)>30) $idl = substr($idl, 0, 27) . '...';
+			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $idl .'", ' . implode(', ', $textstack). '});';
 			$index ++;
 		}
 

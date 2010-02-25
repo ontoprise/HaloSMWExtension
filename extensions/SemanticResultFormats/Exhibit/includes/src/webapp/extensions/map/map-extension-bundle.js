@@ -195,7 +195,7 @@ if(O){p=G._sizeCoder.translateSet(n.sizeKeys,T);
 if(i==1){if(l){j.getIcon(n.items[0],Z,function(t){q=t;
 });
 }}if(C){q=G._iconCoder.translateSet(n.iconKeys,F);
-}var q=Exhibit.MapView._makeIcon(o,k,p,i==1?"":i.toString(),q,G._settings);
+}var q=Exhibit.MapView._makeIcon(o,k,p,/*i==1?"":*/i.toString(),q,G._settings);
 var s=new GLatLng(n.latlng.lat,n.latlng.lng);
 var m=new GMarker(s,q);
 if(P>n.latlng.maxAutoZoom){P=n.latlng.maxAutoZoom;
