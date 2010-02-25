@@ -276,12 +276,6 @@ function smwgHaloSetupExtension() {
 		$wgSpecialPageGroups['OntologyBrowser'] = 'smwplus_group';
 
 
-
-
-		$wgAutoloadClasses['SMWHelpSpecial'] = $smwgHaloIP . '/specials/SMWHelpSpecial/SMWHelpSpecial.php';
-		$wgSpecialPages['ContextSensitiveHelp'] = array('SMWHelpSpecial');
-		$wgSpecialPageGroups['ContextSensitiveHelp'] = 'smwplus_group';
-
 		$wgAutoloadClasses['SMWQueryInterface'] = $smwgHaloIP . '/specials/SMWQueryInterface/SMWQueryInterface.php';
 		$wgSpecialPages['QueryInterface'] = array('SMWQueryInterface');
 		$wgSpecialPageGroups['QueryInterface'] = 'smwplus_group';
