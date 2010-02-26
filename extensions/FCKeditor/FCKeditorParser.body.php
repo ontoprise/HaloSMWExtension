@@ -155,6 +155,7 @@ class FCKeditorParser extends Parser
      * wiki text, because the argument is not a seperate element that can
      * be edited.
      *
+     * @access private
      * @param string $text for wysiwyg mode
      * @param string $inner original wiki text
      * @param bool $replaceLineBreaks optional default is true
@@ -175,10 +176,11 @@ class FCKeditorParser extends Parser
 
 	/**
 	 * Handle link to subpage if necessary
+     * 
 	 * @param string $target the source of the link
 	 * @param string &$text the link text, modified as necessary
 	 * @return string the full name of the link
-	 * @private
+	 * @access private
 	 */
 	function maybeDoSubpageLink($target, &$text) {
 		return $target;
@@ -215,9 +217,10 @@ class FCKeditorParser extends Parser
 		return $replacement;
 	}
 
-	/** Replace HTML comments with unique text using fck_addToStrtr function
+	/**
+     * Replace HTML comments with unique text using fck_addToStrtr function
 	 *
-	 * @private
+	 * @access private
 	 * @param string $text
 	 * @return string
 	 */
@@ -985,6 +988,15 @@ class FCKeditorParser extends Parser
 		wfProfileOut( __METHOD__ );
 		return $text;
 	}
+
+    /**
+     * Replace wikitext for rules with place holder FckmwXfckmw
+     *
+     * @global Title $wgTitle
+     * @global Request $wgRequest
+     * @param  String $text
+     * @return String
+     */
 	private function replaceRules($text) {
 	    global $wgTitle, $wgRequest;
 	    // rules exist in poperty and category pages only.

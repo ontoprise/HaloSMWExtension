@@ -5,6 +5,11 @@
  * @ingroup WYSIWYG
  */
 
+/**
+ * FCKeditor for Semantic MediaWiki
+ * @defgroup WYSIWYG WYSIWYG extension
+ */
+
 # Not a valid entry point, skip unless MEDIAWIKI is defined
 if (!defined('MEDIAWIKI')) {
 	echo <<<HEREDOC
