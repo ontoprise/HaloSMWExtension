@@ -1,15 +1,22 @@
 <?php
 
 /**
+ * @file
+ * @ingroup Treeview
+ */
+$wgAjaxExportList[] = 'smw_treeview_getTree';
+
+/**
  * Provides functionality to get partial trees in treeview
  * by an ajax request. One level only starting at a certain
  * node (given in parameter start) is fetched. Therefore
  * some of the parameters for the generic generateTree()
- * function are not needed or can be set to a certain value. 
+ * function are not needed or can be set to a certain value.
+ *
+ * @global Parser $wgParser
+ * @param string $input parameter string i.e. p=propname&c=catname
+ * @return string $value (empty)
  */
-
-$wgAjaxExportList[] = 'smw_treeview_getTree';
-
 function smw_treeview_getTree($input) {
   global $wgParser;
 

@@ -5,7 +5,10 @@
 * - Licenced under LGPL (http://www.gnu.org/copyleft/lesser.html)
 * - Author:  based on Treeview5 by http://www.organicdesign.co.nz/nad
 *            improved by Ontoprise
-* - Started: (Version 1.0) $Id$
+* - Started: $Id$
+*
+* @file
+* @ingroup Treeview
 */
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');

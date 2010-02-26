@@ -14,6 +14,9 @@
 *
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*  @file
+*  @ingroup Treeview
 */
 
 # Alert the user that this is not a valid entry point to MediaWiki if they try to access the special pages file directly.

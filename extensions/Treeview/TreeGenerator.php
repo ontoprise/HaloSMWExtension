@@ -1,6 +1,9 @@
 <?php
 
-// $Id$
+/**
+ * @file
+ * @ingroup Treeview
+ */
 
 global $wgHooks;
 $wgHooks['LanguageGetMagic'][] = 'wfTreeGeneratorLanguageGetMagic';
@@ -8,6 +11,11 @@ $wgHooks['LanguageGetMagic'][] = 'wfTreeGeneratorLanguageGetMagic';
 // name of tree generator parser function
 define ('GENERATE_TREE_PF', 'generateTree');
 
+/**
+ * Class for the parser funtion #generateTree
+ *
+ * @ingroup Treeview
+ */
 class TreeGenerator {
     private $json;
     private $loadNextLevel;
