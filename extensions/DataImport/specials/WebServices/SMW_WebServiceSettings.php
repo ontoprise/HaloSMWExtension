@@ -17,6 +17,8 @@
 */
 
 /**
+ * @file
+ * @ingroup DIWebServices
  * This file contains the settings that configure the wiki web service extension.
  * 
  * @author Thomas Schweitzer

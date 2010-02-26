@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
 global $smwgWWSNamespaceIndex;
 
 if (!defined('NS_TI_EMAIL')) define('NS_TI_EMAIL', $smwgWWSNamespaceIndex+20);

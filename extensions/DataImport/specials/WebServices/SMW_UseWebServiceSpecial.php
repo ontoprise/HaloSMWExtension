@@ -18,6 +18,13 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
  * This class is responsible for the special page use webservice
  *
  * @author Ingo Steinbauer

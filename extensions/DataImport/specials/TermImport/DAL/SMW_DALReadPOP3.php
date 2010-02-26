@@ -17,6 +17,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DITIDataAccessLayer
  * Implementation of the Data Access Layer (DAL) that is part of the term import feature.
  * This implementation reads mails from a POP3 mailbox
  * an returns its content in a form

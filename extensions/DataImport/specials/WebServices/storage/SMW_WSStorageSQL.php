@@ -17,10 +17,13 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
  * This file provides the access to the MediaWiki SQL database tables that are
  * used by the web service extension.
  *
- * @author Thomas Schweitzer
+ * @author Thomas Schweitzer, Ingo Steinbauer
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

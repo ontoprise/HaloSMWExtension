@@ -14,8 +14,15 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *  @author: Ingo Steinbauer
  */
+
+/**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $sgagIP;
 require_once("$sgagIP/includes/SGA_GardeningBot.php");

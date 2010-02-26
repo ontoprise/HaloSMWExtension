@@ -19,6 +19,13 @@ global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
  * Class for the access of RESTful web services. It implements the interface
  * <IWebServiceClient>.
  *

@@ -17,6 +17,10 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
  * This file provides the WebServiceCache class which
  * provides some utillity methods for cache access
  * @author Ingo Steinbauer

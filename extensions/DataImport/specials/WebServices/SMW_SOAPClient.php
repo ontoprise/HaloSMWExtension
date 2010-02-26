@@ -15,6 +15,14 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Thomas Schweitzer
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");

@@ -17,6 +17,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
  * This file is responsible for detecting and processing
  * the usage of web services in an article and in semantic properties.
  *

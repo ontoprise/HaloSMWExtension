@@ -17,6 +17,13 @@
 */
 
 /**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
+/**
  * Interface of the Transport Layer (TL) that is part of the term import feature.
  * The TL receives terms in an XML format from the data access layer (DAL) and 
  * passes them to the Wiki Import Layer (WIL).

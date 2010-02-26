@@ -17,8 +17,10 @@
  */
 
 /**
- * @author Ingo Steinbauer
- *
+ * @file
+  * @ingroup DIWSMaterialization
+  * 
+  * @author Ingo Steinbauer
  */
 
 global $smwgDIIP;

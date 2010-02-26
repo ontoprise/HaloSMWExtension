@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @file
+ * @ingroup DITIDataAccessLayer
  * This file is based on code from the PHP iCalendar project (http://phpicalendar.net/)
  * which is licenced under GNU General Public License, version 2.
  *

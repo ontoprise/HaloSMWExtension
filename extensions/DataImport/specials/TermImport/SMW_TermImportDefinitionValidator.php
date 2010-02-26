@@ -18,6 +18,13 @@
  *  Author: Ingo Steinbauer
  */
 
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Ingo Steinbauer
+ */
+
 
 /*
  * This class is responsible for validating Term Import definitions

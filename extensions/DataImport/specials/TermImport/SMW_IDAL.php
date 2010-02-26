@@ -17,6 +17,19 @@
 */
 
 /**
+ * @file
+ * @ingroup DITIDataAccessLayer
+ * 
+ * @author Thomas Schweitzer
+ */
+
+/**
+ * This group contains all parts of the Term Import component that deal with the Data Access Layer (DAL)
+ * @defgroup DITIDataAccessLayer
+ * @ingroup DITermImport
+ */
+
+/**
  * Interface of the Data Access Layer (DAL) that is part of the term import feature.
  * The DAL access a data source and creates terms in an XML format. These are 
  * returned to a module of the Transport layer.

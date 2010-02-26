@@ -1,6 +1,13 @@
 <?php
 // register ajax calls
 
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
 global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_ti_connectTL';
 

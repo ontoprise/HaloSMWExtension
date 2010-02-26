@@ -17,7 +17,9 @@
  */
 
 /**
- * Pages in the namespace WebService are enhanced with additional lists:
+ * @file
+ * @ingroup DIWebServices
+  * Pages in the namespace WebService are enhanced with additional lists:
  *  - An alphabetical list of all articles that use the web service.
  *  - An alphabetical list of all semantic properties that get their value from
  *    the web service.

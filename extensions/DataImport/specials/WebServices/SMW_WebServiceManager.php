@@ -17,9 +17,12 @@
  */
 
 /**
- * This is the main entry file for the semantic Wiki Web Service extension.
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * This is the main entry file for the web service component.
  *
- * @author Thomas Schweitzer
+ * @author Thomas Schweitzer, Ingo Steinbauer
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

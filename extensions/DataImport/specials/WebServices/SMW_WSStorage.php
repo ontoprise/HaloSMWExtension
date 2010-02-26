@@ -17,6 +17,8 @@
 */
 
 /**
+ * @file
+ * @ingroup DIWebServices
  * This file provides the access to the database tables that are
  * used by the web service extension.
  * 

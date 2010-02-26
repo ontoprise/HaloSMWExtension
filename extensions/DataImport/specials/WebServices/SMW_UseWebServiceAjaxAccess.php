@@ -17,6 +17,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
  * This file provides methods that are accessed by ajax-calls from
  * the special page for defining a wwsd.
  *

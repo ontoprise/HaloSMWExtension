@@ -17,6 +17,13 @@
 */
 
 /**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
+/**
  * Interface of the Wiki Import Layer (WIL) that is part of the term import feature.
  * The WIL receives terms in an XML format from the transport layer and generates 
  * articles for the terms.

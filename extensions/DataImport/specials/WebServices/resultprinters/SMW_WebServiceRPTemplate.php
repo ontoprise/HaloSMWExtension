@@ -17,7 +17,9 @@
  */
 
 /**
- * This file provides an class which represents a printer
+ * @file
+ * @ingroup DIWSResultPrinters
+ * This file provides a class which represents a printer
  * for webservice usage results in the template format
  *
  * @author Ingo Steinbauer

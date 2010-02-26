@@ -19,6 +19,13 @@ require_once("SMW_XPathProcessor.php");
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
  * This class allows process subparameters of parameter templates
  *
  * @author Ingo Steinbauer

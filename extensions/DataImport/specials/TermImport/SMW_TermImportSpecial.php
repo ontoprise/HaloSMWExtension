@@ -17,6 +17,8 @@
 */
 
 /**
+ * @file
+ * @ingroup DITermImport
  * A special page for the import of terms into the wiki.
  *
  *

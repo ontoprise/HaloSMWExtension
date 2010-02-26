@@ -17,6 +17,14 @@
  *
  *  Author: Thomas Schweitzer
  */
+
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $sgagIP;
 require_once("$sgagIP/includes/SGA_GardeningBot.php");

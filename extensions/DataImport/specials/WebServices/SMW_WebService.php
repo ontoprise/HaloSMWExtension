@@ -15,6 +15,22 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Thomas Schweitzer, Ingo Steinbauer
+ */
+
+/**
+ * This group contains all parts of the Data Import extension that deal with calling external web services.
+ * @defgroup DIWebServices
+ * @ingroup DataImport
+ */
+
+
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");

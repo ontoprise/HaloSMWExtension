@@ -18,6 +18,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
  * This is responsible for the special page define webservice
  *
  * @author Ingo Steinbauer

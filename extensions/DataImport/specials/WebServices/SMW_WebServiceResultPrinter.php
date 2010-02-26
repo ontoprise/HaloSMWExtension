@@ -25,6 +25,18 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWSResultPrinters
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
+ * This group contains all result printers for web service results.
+ * @defgroup DIWSResultPrinters
+ */
+
+/**
  * an abstract class which represents a printer for web service usage results
  *
  */

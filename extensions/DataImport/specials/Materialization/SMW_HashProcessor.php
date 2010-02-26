@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DIWSMaterialization
+  * 
+  * @author Ingo Steinbauer
+ */
+
 class SMWHashProcessor {
 	
 	public static function generateHashValue($message){

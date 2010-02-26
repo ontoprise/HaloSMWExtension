@@ -17,7 +17,9 @@
 */
 
 /**
- * This file provides the access to the database tables that are
+ * @file
+  * @ingroup DIWSMaterialization
+  * This file provides the access to the database tables that are
  * used by the materialization parser function.
  * 
  * @author Ingo Steinbauer

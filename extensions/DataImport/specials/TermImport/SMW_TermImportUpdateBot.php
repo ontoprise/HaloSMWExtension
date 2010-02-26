@@ -17,6 +17,14 @@
  *
  *  Author: Ingo Steinbauer
  */
+
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Ingo Steinbauer
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 global $sgagIP;
 require_once("$sgagIP/includes/SGA_GardeningBot.php");
@@ -27,8 +35,6 @@ require_once("$sgagIP/includes/SGA_ParameterObjects.php");
  * This bot checks if Term Imports need updates and triggers them.
  *
  */
-
-
 class TermImportUpdateBot extends GardeningBot {
 
 

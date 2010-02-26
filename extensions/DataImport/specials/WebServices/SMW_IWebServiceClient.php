@@ -16,8 +16,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 /**
+ * @file
+ * @ingroup DIWebServices
  * Interface for the access to web services.
  * 
  * @author Thomas Schweitzer

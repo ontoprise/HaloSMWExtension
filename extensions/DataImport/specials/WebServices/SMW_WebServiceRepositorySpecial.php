@@ -17,6 +17,13 @@
  */
 
 
+/**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 define('SMW_WS_SYSOP' , 'sysop');
 

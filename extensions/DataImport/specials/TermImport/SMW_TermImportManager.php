@@ -14,11 +14,22 @@
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * @author Ingo Steinbauer
- *
  */
-if ( !defined( 'MEDIAWIKI' ) ) die;
+
+/**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
+ * This group contains all parts of the Data Import extension that deal with term imports.
+ * @defgroup DITermImport
+ * @ingroup DataImport
+ */
+ 
+ if ( !defined( 'MEDIAWIKI' ) ) die;
 
 ###
 # If you already have custom namespaces on your site, insert

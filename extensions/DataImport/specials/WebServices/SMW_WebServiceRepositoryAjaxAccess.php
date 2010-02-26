@@ -21,8 +21,11 @@ $wgAjaxExportList[] = 'smwf_ws_updateCache';
 $wgAjaxExportList[] = 'smwf_ws_confirmWWSD';
 $wgAjaxExportList[] = 'smwf_ti_update';
 
+
 /**
- * This provides some methods for the special page webservice repository, that are
+ * @file
+ * @ingroup DIWebServices
+ * Thisfile provides some methods for the special page webservice repository, that are
  * accessed by ajax-calls
  *
  * @author Ingo Steinbauer

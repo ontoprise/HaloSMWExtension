@@ -18,6 +18,13 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWebServices
+ * 
+ * @author Ingo Steinbauer
+ */
+
+/**
  * This class allows to evaluate xpath statements on xml strings
  *
  * @author Ingo Steinbauer

@@ -17,11 +17,19 @@
  */
 
 /**
- * This file is responsible for detecting and processing
+ * @file
+  * @ingroup DIWSMaterialization
+  * This file is responsible for detecting and processing
  * the usage of the materialization parser function.
  *
  * @author Ingo Steinbauer
  *
+ */
+
+/**
+ * This group contains all parts of the Data Import extension that deal with materializing web service results.
+ * @defgroup DIWSMaterialization
+ * @ingroup DataImport
  */
 
 global $wgExtensionFunctions, $wgHooks;

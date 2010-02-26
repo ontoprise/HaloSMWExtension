@@ -15,8 +15,9 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 /**
+ * @file
+ * @ingroup DIWebServices
  * This file provides methods that are accessed by ajax-calls from
  * the special page for defining a wwsd.
  *

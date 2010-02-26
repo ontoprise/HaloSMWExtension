@@ -17,6 +17,13 @@
 */
 
 /**
+ * @file
+ * @ingroup DITermImport
+ * 
+ * @author Thomas Schweitzer
+ */
+
+/**
  * A class to process XML structures comfortably.
  * 
  * @author Thomas Schweitzer

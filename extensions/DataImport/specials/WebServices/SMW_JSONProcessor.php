@@ -18,6 +18,13 @@
  */
 
 /**
+ * @file
+ * Thsi file contains a JSON to XML converter.
+ * @ingroup DIWebServices
+ * @author Ingo Steinbauer
+ */
+
+/**
  * This class allows to convert json to xml so that it can be evaluated
  * via XPath
  *

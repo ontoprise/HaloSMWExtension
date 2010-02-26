@@ -18,6 +18,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DIWSResultPrinters
  * This file provides an class which represents a printer
  * for webservice usage results in the ul format
  *

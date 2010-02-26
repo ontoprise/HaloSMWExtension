@@ -15,6 +15,12 @@
  *              http://host/path/vcard.php
  */
 
+/**
+ * @file
+ * vCard PHP <http://vcardphp.sourceforge.net>
+ * @ingroup DITIDataAccessLayer
+ */
+
 $lines = 'BEGIN:VCARD
 N:Smith;Jim;Alvin;Mr.
 FN:Jim A. Smith

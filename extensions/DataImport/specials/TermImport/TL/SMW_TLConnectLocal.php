@@ -17,6 +17,8 @@
 */
 
 /**
+ * @file
+ * @ingroup DITermImport
  * Implementation of the Transport Layer (TL) that is part of the term import feature.
  * This TL receives terms in an XML format from a local the data access layer 
  * module (DAL) and passes them to the Wiki Import Layer (WIL).

@@ -17,6 +17,8 @@
  */
 
 /**
+ * @file
+ * @ingroup DITermImport
  * Implementation of the Wiki Import Layer (WIL) that is part of the term import
  * feature.
  * The WIL receives terms in an XML format from the transport layer and generates

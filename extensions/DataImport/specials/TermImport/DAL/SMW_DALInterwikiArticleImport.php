@@ -16,7 +16,8 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
+/* @file
+ * @ingroup DITIDataAccessLayer
  * Implementation of the Data Access Layer (DAL) that is part of the term import feature.
  * The DAL access a data source and creates terms in an XML format. These are 
  * returned to a module of the Transport layer.

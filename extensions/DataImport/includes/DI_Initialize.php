@@ -1,8 +1,14 @@
 <?php
-/*
- * Created on 10.02.2009
- *
- * Author: ingo
+/**
+ * @file
+  * @ingroup DataImport
+  * This file contains methods for initializing the Data Import extension.
+  * @author Ingo Steinbauer
+ */
+
+/**
+ * This group contains all parts of the Data Import extension.
+ * @defgroup DataImport
  */
 
 //this extension does only work if the Halo extension is enabled
