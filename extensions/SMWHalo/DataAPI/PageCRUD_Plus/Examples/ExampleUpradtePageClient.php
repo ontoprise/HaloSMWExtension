@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DAPCPExample
+  *
+  * @author Dian
+ */
+
 require_once('.../extensions/DataAPI/PageCRUD_Plus/PCP.php');
 
 // create the target system object

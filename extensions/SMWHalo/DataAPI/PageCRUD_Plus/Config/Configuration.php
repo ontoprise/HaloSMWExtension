@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 require_once("UserCredentials.php");
 require_once("WikiSystem.php");
 

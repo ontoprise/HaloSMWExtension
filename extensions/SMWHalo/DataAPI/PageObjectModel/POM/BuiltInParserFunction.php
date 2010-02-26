@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /**
  * Represents a built-in parser function in the POM of a page.
  *

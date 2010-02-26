@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /**
  * <p>
  * Page class reprersents a wiki page. The wiki page consists of elements, which

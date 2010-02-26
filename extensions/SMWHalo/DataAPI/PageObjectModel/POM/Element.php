@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /**
  * This class is used as an abstract representation for elements of a page.
  * All element types should extend this class.

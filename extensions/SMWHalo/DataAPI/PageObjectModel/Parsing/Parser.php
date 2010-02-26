@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
+/**
  * Parser is an abstract class for various parsers that will post-process a page.
  * All parsers must subclass this class.
  *

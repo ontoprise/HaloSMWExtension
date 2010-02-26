@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 /**
  * The user credentials class is used for authentification in order to execute actions over the API.
  *

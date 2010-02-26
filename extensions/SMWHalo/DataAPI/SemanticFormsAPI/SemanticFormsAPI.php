@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DASemanticForms
+  * 
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI that deal with the SemanticForms component
+ * @defgroup DASemanticForms
+ * @ingroup DataAPI
+ */
+
 if ( !defined( 'SF_VERSION' ) ){ 
 	die("The Semantic Forms Data API requires the Semantic Forms extension");
 }

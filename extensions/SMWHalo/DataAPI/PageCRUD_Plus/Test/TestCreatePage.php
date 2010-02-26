@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPTest
+  * 
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI that deal with tests for the PCP component
+ * @defgroup DAPCPTest
+ * @ingroup DAPCP
+ */
+
 chdir('F:\xampp\htdocs\mw');
 require_once('F:/xampp/htdocs/mw/includes/Webstart.php');
 

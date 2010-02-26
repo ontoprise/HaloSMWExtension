@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPTest
+  * 
+  * @author Dian
+ */
+
 chdir('C:\xampp\htdocs\mw');
 require_once('C:/xampp/htdocs/mw/includes/Webstart.php');
 

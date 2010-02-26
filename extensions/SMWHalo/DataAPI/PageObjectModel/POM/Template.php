@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
+/**
  * Represents a template abstraction in the POM of a page.
  *
  */

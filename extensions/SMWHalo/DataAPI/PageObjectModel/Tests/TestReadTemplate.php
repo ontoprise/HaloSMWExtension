@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOMTest
+  * 
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI that deal with tests for the POM component
+ * @defgroup DAPOMTest
+ * @ingroup DAPOM
+ */
+
 //$__curdir = getcwd();
 //chdir('C:/xampp/htdocs/mw');
 //require_once('C:/xampp/htdocs/mw/includes/Webstart.php');

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 //require_once('C:/xampp/htdocs/mw/includes/StubObject.php');
 
 /**

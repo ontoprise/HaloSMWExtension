@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /**
  * Set of classes representing various types of template parameters.
  * PLEASE NOTE: Parameter values are represented as {@link POMPage} objects and can be 

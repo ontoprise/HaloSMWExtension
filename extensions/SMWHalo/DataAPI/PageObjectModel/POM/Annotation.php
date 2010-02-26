@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /**
  * The abstract class representing an annotation.
  *

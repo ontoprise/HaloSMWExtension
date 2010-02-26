@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
 /*  Copyright 2007, ontoprise GmbH
  *  This file is part of the halo-Extension.
  *

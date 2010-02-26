@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 /**
  * Adds and handles the 'wspcp' action to the MediaWiki API.
  *

@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPTest
+  * 
+  * @author Dian
+ */
+
 require_once('../PCP.php');
 
 $deleteTest = new PCP_Server();

@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPExample
+  *
+  * @author Dian
+ */
+
 // the path to your wiki installation home
 chdir('/xampp/htdocs/wiki');
 require_once('/xampp/htdocs/wiki/includes/Webstart.php');

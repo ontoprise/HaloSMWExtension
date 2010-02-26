@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOMExample
+  * 
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI that provide examples for the POM component
+ * @defgroup DAPOMExample
+ * @ingroup DAPOM
+ */
+
 chdir('C:\xampp\htdocs\wiki');
 require_once('C:/xampp/htdocs/wiki/includes/Webstart.php');
 

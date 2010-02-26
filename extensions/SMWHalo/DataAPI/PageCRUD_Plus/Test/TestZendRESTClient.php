@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPTest
+  * 
+  * @author Dian
+ */
+
 require_once('Zend/Rest/Client.php');
 
 $client = new Zend_Rest_Client('http://localhost/mw/api.php?action=wspcp&format=xml');

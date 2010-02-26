@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 /**
  * @deprecated Use the ServerAPI instead.
  */

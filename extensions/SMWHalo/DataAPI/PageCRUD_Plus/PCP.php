@@ -1,6 +1,9 @@
 <?php
+
 /**
- * This file is the starting point for using the PageCRUD_Plus functions.
+ * @file
+  * @ingroup DAPCP
+  * This file is the starting point for using the PageCRUD_Plus functions.
  *
  * @author Dian
  * @version 0.1

@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCPTest
+  * 
+  * @author Dian
+ */
+
 require_once('../PCP.php');
 
 $editTest = new PCP_Server();

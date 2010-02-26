@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 /**
  * Represents a MW system being accessed remote.
  * <b>NOT USED IN THE CURRENT VERSION.</b>

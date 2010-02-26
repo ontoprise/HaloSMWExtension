@@ -1,4 +1,18 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPOM
+  * 
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI that deal with the POM component
+ * @defgroup DAPOM
+ * @ingroup DataAPI
+ */
+
 /**
  * In order to use the POM functions, the following line must be added to the 
  * LocalSettings.php file of the wiki system:<br/>

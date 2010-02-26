@@ -1,7 +1,26 @@
 <?php
 
 /**
- * The class represent a page in a wiki system. It has most of the attributes
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
+/**
+ * This group contains all parts of the DataAPI
+ * @defgroup DataAPI
+ * @ingroup SMWHalo
+ */
+
+/**
+ * This group contains all parts of the DataAPI that deal with the Page Crud Plus component.
+ * @defgroup DAPCP
+ * @ingroup DataAPI
+ */
+
+/**
+  * The class represent a page in a wiki system. It has most of the attributes
  * as described in the MediaWiki API.
  * If the page ID is equal to '-1', the page is not existing.
  * 

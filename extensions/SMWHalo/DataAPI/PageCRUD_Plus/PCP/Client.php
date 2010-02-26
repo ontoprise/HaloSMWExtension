@@ -1,4 +1,12 @@
 <?php
+
+/**
+ * @file
+  * @ingroup DAPCP
+  *
+  * @author Dian
+ */
+
 /**
  * This is an abstract class used for creating API functions for the client side.
  * <b>NOT USED IN THE CURRENT VERSION.</b>
