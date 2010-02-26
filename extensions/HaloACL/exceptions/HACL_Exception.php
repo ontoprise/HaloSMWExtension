@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * @ingroup HaloACL_Exception
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
