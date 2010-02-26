@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Tests
+ */
+
 require_once 'PHPUnit/Framework.php';
 
 class TestUserCanHookSuite extends PHPUnit_Framework_TestSuite

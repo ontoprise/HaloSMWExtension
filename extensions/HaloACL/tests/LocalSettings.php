@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup HaloACL_Tests
+ */
+
 #Import SMW, SMWHalo and the Gardening extension
 include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
 enableSemantics('http://wiki', true);

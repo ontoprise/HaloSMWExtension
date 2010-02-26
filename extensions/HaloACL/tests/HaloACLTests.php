@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Tests
+ */
+
 require_once 'PHPUnit/Framework.php';
  
 require_once 'testcases/TestDatabase.php';
