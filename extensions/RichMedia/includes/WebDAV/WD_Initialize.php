@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  * 
+  * @author Ingo Steinbauer
+    */
+
 require_once( 'WD_TemplateParser.php' );
 require_once( 'WD_WebDAVServer.php' );
 require_once( 'WD_Settings.php' );

@@ -13,6 +13,11 @@
  * This modified version was implemented by Ingo Steinbauer @ontoprise GmbH
  */
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  */
+
 /*
  *   This file is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

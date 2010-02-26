@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  * 
+  * @author Ingo Steinbauer
+  */
+
 global $wgExtensionFunctions, $wgHooks;
 $wgExtensionFunctions[] = 'wd_templatePF_Setup';
 $wgHooks['LanguageGetMagic'][] = 'wd_templatePF_Magic';

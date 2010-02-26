@@ -38,6 +38,11 @@
  * Slightly modified by Ingo Steinbauer @ ontoprise GmbH
  */
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  */
+
 define('HTTP_WEBDAV_SERVER_DATATYPE_NAMESPACE',
     'urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882');
 

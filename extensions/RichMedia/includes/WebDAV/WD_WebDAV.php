@@ -24,6 +24,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  */
+
+/**
+ * This group contains all parts of the RichMedia extension that deal with WebDAV access..
+ * @defgroup RMWebDAV
+ */
 
 
 # Initialise common code

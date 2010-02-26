@@ -1,7 +1,10 @@
 <?php
 
-/*
- * @author Ingo Steinbauer
+/**
+ * @file
+  * @ingroup RMWebDAV
+  *
+  * @author Ingo Steinbauer
  */
 
 class FileData {

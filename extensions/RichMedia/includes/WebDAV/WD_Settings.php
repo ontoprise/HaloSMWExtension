@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup RMWebDAV
+  * 
+  * @author Ingo Steinbauer
+  */
+
 //use this flag to configure wheter to display talk namespaces
 global $wgWebDAVDisplayTalkNamespaces;
 $wgWebDAVDisplayTalkNamespaces = false;
