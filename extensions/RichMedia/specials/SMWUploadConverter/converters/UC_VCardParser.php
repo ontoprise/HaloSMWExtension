@@ -15,6 +15,11 @@
  *              http://host/path/vcard.php
  */
 
+/**
+ * @file
+  * @ingroup RMUploadConverter
+  */
+
 $lines = 'BEGIN:VCARD
 N:Smith;Jim;Alvin;Mr.
 FN:Jim A. Smith

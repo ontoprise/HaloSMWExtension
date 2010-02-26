@@ -1,7 +1,10 @@
 <?php
 
 /**
- * This file is based on code from the PHP iCalendar project (http://phpicalendar.net/)
+ * @file
+  * @ingroup RMUploadConverter
+  * 
+  * This file is based on code from the PHP iCalendar project (http://phpicalendar.net/)
  * which is licenced under GNU General Public License, version 2.
  *
  * @author Ingo Steinbauer

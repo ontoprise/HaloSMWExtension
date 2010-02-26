@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup RMUploadConverter
+  * 
+  * @author Ingo Steinbauer
+ */
+
 require_once('UC_ICalParser.php');
 
 class UCICalConverter {

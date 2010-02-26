@@ -17,7 +17,10 @@
 */
 
 /**
- * This class handles the conversion of PDF and MS Word documents to text.
+ * @file
+  * @ingroup RMUploadConverter
+  * 
+  * This class handles the conversion of PDF and MS Word documents to text.
  * When these files are uploaded as files in the wiki (similar to images), their
  * content is converted to text and inserted in the article that hosts the file.
  * Thus the content is made available for search operations.
@@ -25,6 +28,13 @@
  * @author Thomas Schweitzer
  * 
  */
+
+/**
+ * This group contains all parts of the RichMedia extension that deal with Upload Converters.
+ * @defgroup RMUploadConverter
+ * @ingroup RichMedia
+ */
+
 class UploadConverter {
 
 	/**

@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+  * @ingroup RichMedia
+  */
+
 class RMForm {
 
 	/**

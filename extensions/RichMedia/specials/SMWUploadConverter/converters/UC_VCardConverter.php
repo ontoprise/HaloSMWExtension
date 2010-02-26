@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @file
+  * @ingroup RMUploadConverter
+  * 
+  */
+
 require_once('UC_VCardParser.php');
 
 class UCVCardConverter {

@@ -1,6 +1,10 @@
 <?php
+
 /**
- * RM_EmbedWindow - used for displaying various types of files inline.
+ * @file
+  * @ingroup RichMedia
+  * 
+  * RM_EmbedWindow - used for displaying various types of files inline.
  *
  * @addtogroup SpecialPage
  *
