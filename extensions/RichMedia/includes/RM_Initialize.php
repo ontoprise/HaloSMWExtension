@@ -1,9 +1,17 @@
 <?php
-/*
- * Created on 24.03.2009
- *
- * Author: Benjamin
+/**
+ * @file
+  * @ingroup RichMedia
+  * This file contains methods for initializing the Rich Media extension.
+  * @author Benjamin Langguth
  */
+
+/**
+ * This group contains all parts of the Rich Media extension.
+ * @defgroup RichMedia
+ */
+
+
 
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'MEDIAWIKI' ) ) {
