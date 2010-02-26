@@ -17,6 +17,9 @@
 */
 
 /**
+ * @file
+  * @ingroup DIInterWikiArticleImport
+  * 
  * This file contatins the class IAIArticleImporter for importing articles
  * from other Mediawikis.
  * 
@@ -24,6 +27,13 @@
  * Date: 30.10.2009
  * 
  */
+
+/**
+ * This group contains all parts of the Data Import extension.that deal with the Interwiki Article Import
+ * @defgroup DIInterWikiArticleImport
+ * @ingroup DataImport
+ */
+
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the IAI module. It is not a valid entry point.\n" );
 }

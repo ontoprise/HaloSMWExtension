@@ -18,7 +18,10 @@
 */
 
 /**
- * This file contains global functions that are called from the IAI-module.
+ * @file
+  * @ingroup DIInterWikiArticleImport
+  * 
+  * This file contains global functions that are called from the IAI-module.
  *
  * @author Thomas Schweitzer
  *

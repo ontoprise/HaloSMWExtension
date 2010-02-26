@@ -17,7 +17,10 @@
 */
 
 /**
- * This file contains the command line interface of the Interwiki Article Importer.
+ * @file
+  * @ingroup DIInterWikiArticleImport
+  * 
+  * This file contains the command line interface of the Interwiki Article Importer.
  * 
  * @author Thomas Schweitzer
  * Date: 30.10.2009

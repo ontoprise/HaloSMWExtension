@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DIInterWikiArticleImport
+  * 
+  * @author Thomas Schweitzer
+ */
+
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
     echo "Invalid access! A commandline script MUST NOT accessed from remote.";
     return;

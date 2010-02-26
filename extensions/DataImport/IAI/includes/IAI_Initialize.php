@@ -18,7 +18,10 @@
 */
 
 /**
- * This is the main entry file for the Interwiki-Article-Import module.
+ * @file
+  * @ingroup DIInterWikiArticleImport
+  * 
+  * This is the main entry file for the Interwiki-Article-Import module.
  * It contains mainly constants for the configuration of the extension. This 
  * file has to be included in LocalSettings.php to enable the module. The 
  * constants defined here can be overwritten in LocalSettings.php. After that

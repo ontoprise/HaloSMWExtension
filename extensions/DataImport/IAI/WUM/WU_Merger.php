@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * @file
+  * @ingroup DIWUM
+  * 
+  * @author Ingo Steinbauer
+ */
+
+/**
+ * This group contains all parts of the Data Import extension.that deal with the Wikipedia Ultrapedia Merger
+ * @defgroup DIWUM
+ * @defgroup DIInterWikiArticleImport
+ */
+
 global $wgExtensionFunctions, $wgHooks;
 $wgExtensionFunctions[] ='wum_tabPF_Setup';
 $wgHooks['LanguageGetMagic'][] = 'wum_tabPF_Magic';
