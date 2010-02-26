@@ -1,8 +1,12 @@
 <?php
+
 /**
- * SMW context sensitive help
+ * SMWHalo context sensitive help extension
  *
+ * @file
  * @author: Stephan Robotta / ontoprise / 2009
+ * @ingroup SMWUserManual
+ * @defgroup SMWUserManual SMWUserManual extension
  */
 
 // no valid entry point for the extension

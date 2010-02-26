@@ -1,10 +1,30 @@
 <?php
+/**
+ * Functions that forward a mediawiki API call via Ajax from the local wiki
+ * to an external url. Ajax requests to URLs, other than the URL that served the
+ * javascript, are prohibited. Therefore the requests from the javascript go to
+ * the local server which then uses curl to forward the call to the remote
+ * server.
+ *
+ * @file
+ * @ingroup SMWUserManual
+ */
 
 global $wgUseAjax, $wgAjaxExportList;
 // register Ajax functions (these are below in this file)
 $wgUseAjax = true;
 $wgAjaxExportList[] = 'wfUprForwardApiCall';
 
+/**
+ * The ajax function that forwards the call to the remote server. This function
+ * calls either wfUprSendApiCallViaFsock() or wfUprSendApiCallViaCurl() to send
+ * the request.
+ *
+ * @param string $url
+ * @param string $urlparams
+ * @return void
+ * @ingroup SMWUserManual
+ */
 function wfUprForwardApiCall(){
     $params = func_get_args();
     if (count($params) != 2) return;
@@ -16,6 +36,14 @@ function wfUprForwardApiCall(){
     return wfUprSendApiCallViaFsock($host, $data); 
 }
 
+/**
+ * Use fsockopen to connect to the remote host and send the data.
+ *
+ * @param string $url
+ * @param string $urlparams
+ * @return void
+ * @ingroup SMWUserManual
+ */
 function wfUprSendApiCallViaFsock($server, $data) {
     // remove the "http://" protocol from host name
     $host = substr($server, strpos($server, ':') + 3);
@@ -59,6 +87,14 @@ function wfUprSendApiCallViaFsock($server, $data) {
     echo $cont;
 }
 
+/**
+ * Use curl to connect to the remote host and send the data.
+ *
+ * @param string $url
+ * @param string $urlparams
+ * @return void
+ * @ingroup SMWUserManual
+ */
 function wfUprSendApiCallViaCurl($host, $data) {
     $c = curl_init();
     curl_setopt($c, CURLOPT_URL, $host);

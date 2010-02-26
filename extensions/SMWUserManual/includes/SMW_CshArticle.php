@@ -1,8 +1,15 @@
 <?php
-/*
- * This file is part of the SMW User Manual Extension
+/**
+ * @file
+ * @ingroup SMWUserManual
  */
 
+/**
+ * Class to read a CSH article from the SMW forum when importing CSH articles
+ * into the local wiki
+ *
+ * @ingroup SMWUserManual
+ */
 class UME_CshArticle {
 
     private $title;

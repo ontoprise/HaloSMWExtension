@@ -1,7 +1,9 @@
 <?php
 /*
- *
  * Ajax functions for retrieving CSH articles for the Popup window.
+ *
+ * @file
+ * @ingroup SMWUserManual
  */
 
 /**

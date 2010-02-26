@@ -1,7 +1,9 @@
 <?php
 /**
- * SMW context sensitive help
+ * Ultrapedia provenance rating
  *
+ * @file
+ * @ingroup Ultrapedia
  * @author: Stephan Robotta / ontoprise / 2009
  */
 

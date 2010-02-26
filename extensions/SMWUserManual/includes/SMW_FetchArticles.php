@@ -1,9 +1,15 @@
 <?php
-/* 
- * This file is part of the SMW User Manual Extension
+/**
+ * @file
+ * @ingroup SMWUserManual
  */
 
-
+/**
+ * Class to access the SMW forum to fetch all current CSH articles so that these
+ * can be installed in the local wiki
+ *
+ * @ingroup SMWUserManual
+ */
 class UME_FetchArticles {
 
     // int error code which is 0 when no error occured
