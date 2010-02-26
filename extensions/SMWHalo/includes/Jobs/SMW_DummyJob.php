@@ -1,6 +1,11 @@
 <?php
 
-
+/**
+ * @file
+ * @ingroup SMWHaloJobs
+ *  
+ * @author Kai Kühn
+ */
 /* The DummyJob Class
  * - SemanticMediaWiki Extension -
  *

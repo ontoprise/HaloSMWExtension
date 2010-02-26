@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloWebservices
+ * 
+ */
 // import WS functions
 require_once 'SMW_EQI.php';
 global $smwgDeployVersion;

@@ -3,8 +3,12 @@ global $smwgHaloIP;
 require_once($smwgHaloIP.'/includes/SMW_Autocomplete.php');
 
 /**
- * Tests the auto-completion storage layer
  *
+ * @file
+ * @ingroup SMWHaloTests 
+ * 
+ * Tests the auto-completion storage layer
+ * @author Kai Kühn
  */
 class TestAutocompletionStore extends PHPUnit_Framework_TestCase {
 

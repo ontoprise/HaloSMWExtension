@@ -14,7 +14,6 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * 
-* @author Thomas Schweitzer
 */
 //Constants
 var AA_RELATION = 0;
@@ -23,6 +22,10 @@ var AA_CATEGORY = 1;
 var AdvancedAnnotation = Class.create();
 
 /**
+ * @file
+ * @ingroup SMWHaloAAM
+ * @author Thomas Schweitzer
+ * 
  * This class handles selections in the rendered wiki page. It loads the 
  * corresponding wiki text from the server and tries to match HTML and wiki text.
  * Annotations can be added to the wiki text and are highlighted in the rendered

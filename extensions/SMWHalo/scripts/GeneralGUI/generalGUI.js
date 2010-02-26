@@ -16,6 +16,13 @@
 * 
 *   Contains general GUI functions
 */
+/**
+ * @file
+ * @ingroup SMWHaloMiscellaneous
+ * 
+ * @author Kai Kühn
+ * 
+ */
 var GeneralGUI = Class.create();
 GeneralGUI.prototype = {
     initialize: function() {

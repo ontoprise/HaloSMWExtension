@@ -1,3 +1,4 @@
+
 /*  Copyright 2007, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
@@ -15,6 +16,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * 
 * SMW_DataTypes.js
 * 
 * Helper functions for retrieving the data types that are currently provided

@@ -1,12 +1,16 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * Extends SemanticData for semantic data needed for a triple store.
  *
  *  1. categories
  *  2. rules (optional)
  *  3. redirects
- *
+ * 
+ * @author Kai Kühn
  */
 class SMWFullSemanticData {
 

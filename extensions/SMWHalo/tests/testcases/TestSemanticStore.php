@@ -1,8 +1,12 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHaloTests 
+ * 
  * Tests the semantic storage layer of HALO.
- *
+ * @author Kai Kühn
+ * 
  */
 class TestSemanticStore extends PHPUnit_Framework_TestCase {
 

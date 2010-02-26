@@ -1,5 +1,10 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloWebservices
+ * 
+ * @author:Kai
+ * @deprecated not supported anymore
  * This converter is EXPERIMENTAL! 
  * 
  * TODO: change old ASK syntax to new.

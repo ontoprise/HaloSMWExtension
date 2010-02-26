@@ -1,10 +1,14 @@
 <?php
-/*
+/**
  * Created on 08.11.2007
  *
  * Converts GardeningIssues to XML in order to display it in OntologyBrowser
  *
- * Author: kai
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
  */
  
  class SMWOntologyBrowserErrorHighlighting {

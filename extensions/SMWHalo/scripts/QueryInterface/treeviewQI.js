@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
+ * @author Markus Nitsche
+ */
 
 /***************************************************************
 *  Copyright notice

@@ -1,7 +1,9 @@
 <?php
 /**
  * Displays a pre-defined form for editing a page's data.
- *
+ * @file
+ * @ingroup SMWHaloSpecials
+ * 
  * @author Yaron Koren
  */
 

@@ -17,6 +17,11 @@
  */
 
 /**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloQueryPrinters
+ * @defgroup SMWHaloQueryPrinters SMWHalo QueryPrinters
+ * 
  * This file provides a class which represents a 
  * a query result printer for aggregating query results
  * @author Ingo Steinbauer

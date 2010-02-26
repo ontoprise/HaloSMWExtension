@@ -1,7 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SMWHalo
+
  * Created on 13.09.2007
  *
+ * @defgroup SMWHalo Halo extension
+ * @defgroup SMWHaloSpecials Halo special pages
+ * 
  * Author: kai
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

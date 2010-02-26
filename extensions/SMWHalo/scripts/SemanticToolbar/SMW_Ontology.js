@@ -19,6 +19,8 @@
 * 
 * Helper functions for the creation/modification of ontologies.
 * 
+* @file
+* @ingroup SMWHaloSemanticToolbar
 * @author Thomas Schweitzer
 *
 */

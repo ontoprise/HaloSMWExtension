@@ -15,6 +15,12 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author Thomas Schweitzer
+ */
+
 var REFRESH_DELAY = 0.5; // Refresh delay is 500 ms
 var RefreshSemanticToolBar = Class.create();
 

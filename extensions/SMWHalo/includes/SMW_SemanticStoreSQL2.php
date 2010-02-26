@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloSemanticStorage
+ * 
+ * @author: Kai
+ */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $smwgHaloIP;

@@ -15,6 +15,11 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+*  @ingroup SMWHaloLanguage
+ */
+
 var wgContLanguageStrings = {
 	'PROPERTY_NS_WOC'         : 'Attribut', // Property namespace without colon
 	'RELATION_NS_WOC'         : 'Relation', // Relation namespace without colon

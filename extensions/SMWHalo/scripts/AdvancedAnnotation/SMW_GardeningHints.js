@@ -13,11 +13,15 @@
 *
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
-* @author Thomas Schweitzer
+*
 */
 
 /**
+ * @file
+ * @ingroup SMWHaloAAM
+ * 
+ * @author Thomas Schweitzer
+ * 
  * @class GardeningHints
  * This class provides a container for gardening hints in semantic toolbar 
  * (in the Advanced Annotation and Edit Mode).

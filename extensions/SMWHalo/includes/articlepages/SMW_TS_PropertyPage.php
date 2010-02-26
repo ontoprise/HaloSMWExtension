@@ -1,14 +1,16 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloDeviations
+ * @ingroup SMWHaloArticlepages
+ * 
  * Special handling for property description pages when connected to a triplestore.
  * Some code based on CategoryPage.php
  * 
  * When connected to a triplestore, the code requesting the database 
  * in the original implementation was too slow. 
  *
- * @author: Markus KrÃ¶tzsch / Kai Kühn
- * @file
- * @ingroup SMW
+ * @author: Markus Krötzsch / Kai Kühn
  */
 
 /**

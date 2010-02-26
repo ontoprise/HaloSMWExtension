@@ -21,6 +21,12 @@
 	MIT license
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloAAM
+ * @author Thomas Schweitzer
+ */
+
 var nativeSplit = nativeSplit || String.prototype.split;
 
 String.prototype.split = function (s /* separator */, limit) {

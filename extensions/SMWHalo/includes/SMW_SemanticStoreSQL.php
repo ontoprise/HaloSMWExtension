@@ -1,5 +1,8 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SMWHaloSemanticStorage
+ * 
  * Created on 17.04.2007
  * Author: kai
  *

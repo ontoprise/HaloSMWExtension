@@ -1,7 +1,11 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloSemanticToolbar
  * Basic functions which provide content for the semantic toolbar
+ * 
  * @author Markus Nitsche
  */
 global $wgAjaxExportList;

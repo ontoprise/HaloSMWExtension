@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloQueryPrinters
+ * 
  * Print query results in tables.
  * @author Kai
  */

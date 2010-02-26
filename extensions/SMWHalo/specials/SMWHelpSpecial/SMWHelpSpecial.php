@@ -11,7 +11,9 @@
  * Users can also add their own new help questions. The discourse state will then be generated
  * automatically. This function is integrated in the Semantic Toolbar and
  * SMW_ToolbarFunctions.php and is only availabe if the 'ontoskin'-skin is enabled.
- *
+ * 
+ * @file
+ * @ingroup SMWHaloSpecials
  * @author Markus Nitsche
  */
 

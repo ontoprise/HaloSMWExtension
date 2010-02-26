@@ -1,8 +1,12 @@
 <?php
-/*
+/**
  * Created on 12.03.2007
- *
- * Author: kai
+ * 
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloTriplestore
+ * 
+ * @author Kai Kühn
  */
  if (!defined('MEDIAWIKI')) die();
 

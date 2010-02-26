@@ -4,6 +4,9 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TripleStore.php" );
 
 
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * Triple store connector class for QuadDriver.
  *
  * Specials:

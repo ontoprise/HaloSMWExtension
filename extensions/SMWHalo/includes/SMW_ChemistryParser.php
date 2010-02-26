@@ -17,6 +17,9 @@
 */
 
 /**
+ * @file
+ * @ingroup SMWHaloDataValues
+ * 
  * Parser for chemical equations and formulas.
  * 
  * @author Thomas Schweitzer

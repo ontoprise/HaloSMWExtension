@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * Simple contributor only updates the 'has type' annotations.
  *
  * Called when property annotations get updated in a triple store.

@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * REST webservice connector.
  *
  * @author: Kai Kühn / ontoprise / 2009

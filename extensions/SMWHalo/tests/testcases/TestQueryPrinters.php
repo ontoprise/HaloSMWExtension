@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloTests 
+ * 
+ * @author Kai Kühn
+ *
+ */
 class TestQueryPrinters extends PHPUnit_Framework_TestCase {
 
 

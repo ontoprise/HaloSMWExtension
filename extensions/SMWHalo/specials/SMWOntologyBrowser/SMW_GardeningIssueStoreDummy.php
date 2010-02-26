@@ -2,7 +2,12 @@
 /**
  * Dummy for GardeningIssue access component for running the OntologyBrowser 
  * without gardening extension. 
- *
+ * 
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
  */
 
 // define the consistency bot constants, because the ontology browser uses them.

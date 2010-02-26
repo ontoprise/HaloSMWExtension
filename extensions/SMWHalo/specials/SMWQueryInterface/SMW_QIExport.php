@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
+ * @author Markus Nitsche
+ */
 global $request_query;
 
 if(isset($request_query) && $request_query == true){

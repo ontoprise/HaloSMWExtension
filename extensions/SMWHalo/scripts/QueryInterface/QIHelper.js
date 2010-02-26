@@ -1,4 +1,8 @@
-/*
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
  *  Query Interface for Semantic MediaWiki
  *  Developed by Markus Nitsche <fitsch@gmail.com>
  *
@@ -7,6 +11,7 @@
  *  @author Markus Nitsche [fitsch@gmail.com]
  *  @author Joerg Heizmann
  */
+
 
 var qihelper = null;
 

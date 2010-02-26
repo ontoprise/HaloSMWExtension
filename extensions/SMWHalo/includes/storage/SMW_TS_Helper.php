@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
+ * @author kai
+ *
+ */
 class WikiTypeToXSD {
 
     /**

@@ -15,7 +15,10 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
+/**
+ * @file
+ * @ingroup SMWHaloDataValues
+ * 
  * Created on 19.04.2007
  *
  * This class handles parsing of SI units of measurement.

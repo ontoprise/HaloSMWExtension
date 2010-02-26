@@ -1,3 +1,9 @@
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author Thomas Schweitzer
+ */
+
 //Second implementation of marking Templates in Mediawiki
 var Marker = Class.create();
 Marker.prototype = {

@@ -2,7 +2,11 @@
 /**
  * The semantic toolbar will only work with "ontoskin", the special MediaWiki
  * skin provided in the skin folder of this extension.
- *
+ * 
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloSemanticToolbar
+ * 
  * @author Robert Ulrich, ontoprise
  */
 

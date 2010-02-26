@@ -16,6 +16,14 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+ * 
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloArticlepages
+ * @defgroup SMWHaloArticlepages SMWHalo Articlepages
+ *  
+ * @author Kai Kühn
+ * 
  * Extended handling for category description pages. 
  * 
  * The original category page is augmented by additional information:

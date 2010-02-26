@@ -16,7 +16,9 @@
 * 
 */
 /**
- * @author Markus Krötzsch
+ * @file
+*  @ingroup SMWHaloLanguage
+ * @author Ontoprise
  */
 
 global $smwgHaloIP;

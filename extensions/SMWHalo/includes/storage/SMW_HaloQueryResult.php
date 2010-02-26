@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHaloSMWDeviations 
+ * 
  * Derived version of SMWQueryResult to provide user-defined link
  * to Special:Ask page. Necessary for other storages. 
  *

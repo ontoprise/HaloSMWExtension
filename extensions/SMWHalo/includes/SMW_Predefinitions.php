@@ -2,6 +2,9 @@
 
 
 /**
+ * @file
+ * @ingroup SMWHaloMiscellaneous
+ * 
  * Provides predefined text for different kinds of pages.
  * 
  * @author: Kai Kühn

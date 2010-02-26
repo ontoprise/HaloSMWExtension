@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloWebservices
+ * @author: Kai
+ */
 /**
  * Returns query results in the SPARQL XML format.
  *

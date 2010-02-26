@@ -18,6 +18,9 @@
 require_once( $smwgHaloIP . "/includes/SMW_OntologyManipulator.php");
 
 /**
+ * @file
+ * @ingroup SMWHaloAutocompletion
+ * 
  * @author Kai K�hn
  *
  */

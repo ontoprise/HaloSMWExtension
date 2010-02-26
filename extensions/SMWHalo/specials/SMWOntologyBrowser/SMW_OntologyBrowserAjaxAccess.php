@@ -1,8 +1,13 @@
 <?php
-/*
+/**
  * Created on 26.02.2007
- * Author: KK
- *
+ * 
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
+ * 
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side.
  */

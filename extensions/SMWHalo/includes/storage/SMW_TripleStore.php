@@ -8,6 +8,10 @@ require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 /**
+ * @file
+ * @ingroup SMWHalo
+ * @defgroup SMWHaloTriplestore SMWHalo Triplestore
+ * 
  * Triple store connector class.
  *
  * This class is a wrapper around the default SMWStore class. It delegates all

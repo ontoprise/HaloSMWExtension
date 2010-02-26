@@ -1,8 +1,12 @@
 <?php
-/*
+/**
  * Created on 23.04.2007
  *
- * Author: kai
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
  *
  * SMWOntologyBrowserFilter provides advanced filtering methods for OntologyBrowser
  *

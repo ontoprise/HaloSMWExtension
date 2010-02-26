@@ -15,6 +15,12 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author Thomas Schweitzer
+ */
+
 var SMW_PRP_ALL_VALID =	
 	'smwAllValid="allValid ' +
  		'? (show:prop-confirm, hide:prop-invalid) ' +

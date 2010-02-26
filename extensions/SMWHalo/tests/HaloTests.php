@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @defgroup SMWHaloTests SMWHalo unit tests
+ * 
+ * @author Kai Kühn
+ */
 require_once 'PHPUnit/Framework.php';
 
 require_once 'testcases/TestSemanticStore.php';

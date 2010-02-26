@@ -1,16 +1,14 @@
 <?php
 /**
  * @file
- * @ingroup SpecialPage
- */
-
-/**
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloTriplestore
+ *
  * @author Kai Kühn
  *
  * This special page for MediaWiki implements a customisable form for
  * executing queries to TSC outside of articles.
  *
- * @ingroup SpecialPage
  */
 class SMWAskTSCPage extends SpecialPage {
 

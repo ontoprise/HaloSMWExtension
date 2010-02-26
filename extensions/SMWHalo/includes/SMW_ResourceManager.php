@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SMWHaloMiscellaneous
+ * 
  * Created on 09.07.2007
  *
- * Author: kai
+ * @author: Kai Kühn
  */
  
  /**

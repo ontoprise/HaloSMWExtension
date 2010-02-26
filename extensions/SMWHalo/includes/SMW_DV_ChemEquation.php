@@ -16,8 +16,13 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloDataValues
+ * 
  * Typehandler class for chemical equations.
- *
+ *  
+ * @defgroup SMWHaloDataValues SMWHaloDataValues
  * @author Thomas Schweitzer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

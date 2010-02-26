@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup SMWHaloMiscellaneous
+ * 
  * Include this script for WYSIWYG support
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

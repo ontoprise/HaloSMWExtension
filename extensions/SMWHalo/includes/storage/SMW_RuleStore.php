@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * SMWRuleStore is an abstraction for a rule store. This dummy implementation
  * does nothing. It has to be implemented by other extensions.
  *

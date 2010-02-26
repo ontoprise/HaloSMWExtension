@@ -1,5 +1,13 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloJobs
+ * 
+ * @defgroup SMWHaloJobs SMWHalo jobs
+ * 
+ * @author Kai Kühn
+ */
 
 /* The SMW_UpdateCategoriesAfterMoveJob
  *

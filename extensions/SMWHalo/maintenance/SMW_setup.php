@@ -1,7 +1,11 @@
 <?php
 /**
  * Setup database for SMWHalo extension.
- *
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloMaintenance
+ * @defgroup SMWHaloMaintenance SMWHalo maintenance scripts
+ * 
  * @author: Kai Kühn
  *
  * Created on: 3.07.2009

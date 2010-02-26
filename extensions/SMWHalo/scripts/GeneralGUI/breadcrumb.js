@@ -1,4 +1,11 @@
 /**
+ * 
+ * @file
+ * @ingroup SMWHaloMiscellaneous
+ * @defgroup SMWHaloMiscellaneous SMWHalo miscellaneous components
+ * 
+ * @author Kai Kühn
+ * 
  * Breadcrumb is a tool which displays the last 5 (default) visited pages as a queue.
  * 
  * It uses a DIV element with id 'breadcrumb' to add its list content. If this is not

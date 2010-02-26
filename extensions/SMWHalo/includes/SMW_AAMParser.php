@@ -18,10 +18,15 @@
 
 
 /**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloAAM 
+ * 
  * Parser for advanced annotation mode.
  * This parser augments the generated HTML in order to create mapping
  * from HTML to the original wiki text on the client side.
  * 
+ * @defgroup SMWHaloAAM SMWHalo Advanced Annotation mode
  * @author Thomas Schweitzer
  */
 class SMWH_AAMParser {

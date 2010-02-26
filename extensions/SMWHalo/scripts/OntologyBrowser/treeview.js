@@ -23,6 +23,15 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * Heaviliy modified by Ontoprise 2007
+ * @author Kai Kühn
+ */
+
 // ---------------------------------------------------------------------------
 
 // --- Name:    Easy DHTML Treeview                                         --
@@ -33,10 +42,7 @@
 
 // ---------------------------------------------------------------------------
 
-/*
- * Heaviliy modified by Ontoprise 2007
- * Updated by KK
- */
+
  
 
 var TreeTransformer = Class.create();

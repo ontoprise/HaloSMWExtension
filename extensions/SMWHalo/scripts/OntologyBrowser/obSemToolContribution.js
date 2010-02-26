@@ -15,10 +15,13 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
+/**
  * obSemToolContribution.js
- * Author: KK
- * Ontoprise 2007
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
  *
  * Contributions from OntologyBrowser for Semantic Toolbar
  */

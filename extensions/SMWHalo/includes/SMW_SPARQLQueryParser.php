@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloSMWDeviations
+ * 
+ * @defgroup SMWHaloSMWDeviations SMWHalo SMW Deviations
+ */
 if (!defined('MEDIAWIKI')) die();
  
 global $smwgIP;

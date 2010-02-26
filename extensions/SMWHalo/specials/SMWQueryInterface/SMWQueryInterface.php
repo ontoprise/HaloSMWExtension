@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * @defgroup SMWHaloQueryInterface SMWHalo Query Interface
+ * 
+ * @author Markus Nitsche
+ */
 if (!defined('MEDIAWIKI')) die();
 
 

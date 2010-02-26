@@ -16,7 +16,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @author Markus Krötzsch
+ * @file
+*  @ingroup SMWHaloLanguage
+ * @author Ontoprise
  */
 
 global $smwgHaloIP;

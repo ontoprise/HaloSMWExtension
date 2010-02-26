@@ -16,7 +16,11 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
  * TreeView actions 
  *  
  * One listener object for each type entity in each container.

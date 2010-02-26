@@ -1,4 +1,9 @@
-/*
+/**
+* @file
+* @ingroup SMWHaloSpecials
+* @ingroup SMWHaloQueryInterface
+* 
+* 
 * Query.js
 * Query object representing a single query. Subqueries are
 * seperate objects which are referenced by an ID.

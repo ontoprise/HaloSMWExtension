@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloMiscellaneous
  * Created on 20.09.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
  
 if (!defined('MEDIAWIKI')) die();

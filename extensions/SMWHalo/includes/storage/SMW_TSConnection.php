@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * @author: Kai
+ */
 require_once 'SMW_RESTWebserviceConnector.php';
 /**
  * Provides an abstraction for the connection to the triple store.

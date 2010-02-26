@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloJobs
+ *  
+ * @author Kai Kühn
+ */
 
 /* The SMW_UpdateLinksAfterMoveJob
  *

@@ -15,6 +15,13 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author: Thomas Schweitzer
+ */
+
+
 var SMW_CAT_VALID_CATEGORY_NAME =
 	'smwValidValue="^[^<>\|!&$%&\/=\?]{1,255}$: valid ' +
 		'? (color: white, hideMessage, valid:true) ' +

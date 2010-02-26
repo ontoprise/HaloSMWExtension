@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloQueryPrinters
+ * 
  * Print query results in tables for use in Excel.
  * @author Kai (derived from SMWTableResultPrint of Markus Krötzsch)
  */

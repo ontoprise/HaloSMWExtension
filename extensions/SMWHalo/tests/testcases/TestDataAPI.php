@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SMWHaloTests 
+ * 
+ * @author Kai Kühn
+ *
+ */
 class TestDataAPI extends PHPUnit_Framework_TestCase {
 
 	private $url = "http://localhost/mediawiki/api.php";

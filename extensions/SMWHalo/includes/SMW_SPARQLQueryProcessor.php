@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloSMWDeviations 
+ * @author kai
+ *
+ */
 class SMWSPARQLQueryProcessor extends SMWQueryProcessor {
 
 	/**

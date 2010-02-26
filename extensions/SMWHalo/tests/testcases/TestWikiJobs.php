@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloTests 
+ * 
+ * @author Kai Kühn
+ * 
+ */
 class TestWikiJobs extends PHPUnit_Framework_TestCase {
 
 

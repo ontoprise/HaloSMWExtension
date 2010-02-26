@@ -1,4 +1,12 @@
-/* Resizing Content window slider using scriptacolus slider */
+/**
+ *  @file
+ *  @ingroup SMWHaloMiscellaneous
+ *  @author Kai Kühn
+ *  
+ *  Resizing Content window slider using scriptacolus slider 
+ *	
+ *  
+ */
 var ContentSlider = Class.create();
 ContentSlider.prototype = {
 

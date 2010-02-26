@@ -15,7 +15,11 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-/*
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloSemanticToolbar
+ * @defgroup SMWHaloSemanticToolbar SMWHalo SemanticToolbar 
  * Created on 22.05.2007
  *
  * This file contains methods that modify the ontology.

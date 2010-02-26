@@ -12,6 +12,13 @@
  * 	SMW_HaloLanguageEn but not in SMW_HaloLanguageDe 
  */
  
+/**
+ *  @file
+ *  @ingroup SMWHaloMaintenance
+ *  
+ *  @author Kai Kühn
+ */
+
 if ($_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;

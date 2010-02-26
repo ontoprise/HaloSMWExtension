@@ -13,11 +13,15 @@
 *
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-* 
-* @author Thomas Schweitzer
+*  
 */
 
+
 /**
+ * @file
+ * @ingroup SMWHaloAAM
+ * @author Thomas Schweitzer
+ *  
  * @class SaveAnnotations
  * This class provides a container for the save hint ("Don't forget to save your
  * work") in semantic toolbar (in the Advanced Annotation Mode).

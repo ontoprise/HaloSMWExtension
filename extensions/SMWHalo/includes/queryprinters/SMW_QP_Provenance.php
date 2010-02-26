@@ -1,7 +1,10 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloQueryPrinters
+ * 
  * Print query results in tables.
- * @author Kai Kï¿½hn
+ * @author Kai Kühn
  * @file
  * @ingroup SMWQuery
  */

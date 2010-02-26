@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author: Thomas Schweitzer
+ */
 //Lightweight Framework for displaying context menu in aam
 var ContextMenuFramework = Class.create();
 ContextMenuFramework.prototype = {

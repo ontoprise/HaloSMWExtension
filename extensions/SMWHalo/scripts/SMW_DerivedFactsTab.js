@@ -1,4 +1,8 @@
 /**
+ * @file
+ * @ingroup SMWHaloTripleStore
+ * @author Kai Kühn
+ * 
  * Context sensitive help for SMW+
  *
  * It uses a DIV element with id 'smw_csh' to add a help label. If this is not

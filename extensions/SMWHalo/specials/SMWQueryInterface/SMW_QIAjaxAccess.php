@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
+ * @author Markus Nitsche
+ */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgAjaxExportList;

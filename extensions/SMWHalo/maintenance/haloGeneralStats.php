@@ -15,11 +15,15 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-/*
- * Create CSV file with gardening issue statistics
- * @author Markus Nitsche
+/**
+ *  @file
+ *  @ingroup SMWHaloMaintenance
+ *  
+ *  Create CSV file with gardening issue statistics
+ *  
+ *  @author Markus Nitsche
  */
+
 if ($_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
 	return;

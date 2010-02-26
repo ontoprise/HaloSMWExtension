@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
+ * @author Markus Nitsche
+ */
 var xslStylesheet;
 var myDOM;
 var xmldoc;

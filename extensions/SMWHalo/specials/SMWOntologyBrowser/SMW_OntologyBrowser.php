@@ -1,8 +1,13 @@
 <?php
-/*
+/**
  * Created on 01.03.2007
- * Author: KK
  * 
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * @defgroup SMWHaloOntologyBrowser SMWHalo Ontology Browser
+ * 
+ * @author Kai Kühn
  */
  if (!defined('MEDIAWIKI')) die();
 

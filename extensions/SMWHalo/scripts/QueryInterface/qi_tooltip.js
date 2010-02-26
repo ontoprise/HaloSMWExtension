@@ -38,6 +38,13 @@ For more details on the GNU Lesser General Public License,
 see http://www.gnu.org/copyleft/lesser.html
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloQueryInterface
+ * 
+ * @author Markus Nitsche
+ */
 var config = new Object();
 
 

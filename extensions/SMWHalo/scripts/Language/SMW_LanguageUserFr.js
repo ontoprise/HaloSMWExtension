@@ -14,6 +14,11 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+/**
+*  @file
+* 
+*  @ingroup SMWHaloLanguage
+*/
 
 var wgUserLanguageStrings = {
     'MUST_NOT_BE_EMPTY'       : '(e)Ce champ ne doit pas être vide.',

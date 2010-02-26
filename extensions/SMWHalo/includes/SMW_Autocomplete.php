@@ -16,10 +16,16 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloAutocompletion
+ * 
  * Created on 21.02.2007
  * Author: KK
  * AutoCompletion Dispatcher
+ * 
+ * @defgroup SMWHaloAutocompletion SMWHalo Autocompletion
  */
 
 // Register AJAX functions

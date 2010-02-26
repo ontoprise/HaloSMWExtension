@@ -8,6 +8,11 @@
 * @author Markus Nitsche, 2007
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author Markus Nitsche
+ */
 
 var editAreaName = "wpTextbox1";
 

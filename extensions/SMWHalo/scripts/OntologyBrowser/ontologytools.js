@@ -16,6 +16,14 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * @ingroup SMWHaloSpecials
+ * @ingroup SMWHaloOntologyBrowser
+ * 
+ * @author Kai Kühn
+ */
+
 
 // commandIDs
 var SMW_OB_COMMAND_ADDSUBCATEGORY = 1;

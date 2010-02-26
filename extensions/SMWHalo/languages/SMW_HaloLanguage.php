@@ -16,7 +16,12 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
- * @author Markus Krötzsch
+ * @file
+*  @ingroup SMWHalo
+*  @ingroup SMWHaloLanguage
+*  @defgroup SMWHaloLanguage SMWHalo Language files
+*  
+ * @author Ontoprise
  */
 
 /**

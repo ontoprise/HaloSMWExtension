@@ -1,4 +1,11 @@
 <?php
+/**
+ * @file
+ * @ingroup SMWHalo
+ * @ingroup SMWHaloWebservices
+ * 
+ * @defgroup SMWHaloWebservices SMWHalo Webservices
+ */
 # Provides WSDLs for external interfaces
 
 $wgAjaxExportList[] = 'smwf_ws_callEQI';

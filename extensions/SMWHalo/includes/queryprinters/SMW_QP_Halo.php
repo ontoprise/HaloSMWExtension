@@ -9,8 +9,10 @@ require_once "$smwgIP/includes/SMW_QP_Template.php";
 
 
 /**
+ * @file
+ * @ingroup SMWHaloQueryPrinters
+ * 
  * Describes a QP parameter.
- *
  * @author: Kai Kühn / ontoprise / 2009
  *
  */

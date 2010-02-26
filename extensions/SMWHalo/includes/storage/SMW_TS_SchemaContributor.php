@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SMWHaloTriplestore
+ * 
  * Schema contributor tries to add all schema information from the wiki
  * Warning: may created complex models.
  * 

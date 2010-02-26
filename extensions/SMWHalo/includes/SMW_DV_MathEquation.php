@@ -16,6 +16,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+ * @file
+ * @ingroup SMWHaloDataValues
+ * 
  * Typehandler class for mathematical equations.
  *
  * @author Thomas Schweitzer

@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup SMWHaloSemanticToolbar
+ * @author Thomas Schweitzer
+ */
 //Class which holds functionality to make the toolbar draggable and resizeable
 var DragResizeHandler = Class.create();
 DragResizeHandler.prototype = {
