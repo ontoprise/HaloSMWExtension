@@ -65,6 +65,8 @@ Exhibit.MapView._settingSpecs = {
     "showHeader":       { type: "boolean",  defaultValue: true      },
     "showSummary":      { type: "boolean",  defaultValue: true      },
     "showFooter":       { type: "boolean",  defaultValue: true      }
+    // dch
+    ,"listKey":         { type: "text",     defaultValue: null   }
 };
 
 Exhibit.MapView._accessorSpecs = [
@@ -290,6 +292,11 @@ Exhibit.MapView.prototype._initializeUI = function() {
     var self = this;
     var settings = this._settings;
     var legendWidgetSettings = {};
+    
+    // dch
+    if (settings.listKey != null) {
+    	this._uiContext.putSetting("format/item/title",Exhibit.ExpressionParser.parse(settings.listKey));
+    }
     
     legendWidgetSettings.colorGradient = (this._colorCoder != null && "_gradientPoints" in this._colorCoder);
     legendWidgetSettings.colorMarkerGenerator = function(color) {

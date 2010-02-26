@@ -5,6 +5,9 @@
 div.exhibit-mapView-map {
     border: 1px solid #738699;
 }
+div.exhibit-views-bubbleWithItems {
+	width: 330px
+}
 div.exhibit-views-bubbleWithItems ul {
     line-height: 1em;
     white-space: nowrap;

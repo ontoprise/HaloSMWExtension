@@ -16,7 +16,10 @@ this._listener={onItemsChanged:function(){A._reconstruct();
 }};
 B.getCollection().addListener(this._listener);
 };
-Exhibit.MapView._settingSpecs={"center":{type:"float",defaultValue:[20,0],dimensions:2},"zoom":{type:"float",defaultValue:2},"size":{type:"text",defaultValue:"small"},"scaleControl":{type:"boolean",defaultValue:true},"overviewControl":{type:"boolean",defaultValue:false},"type":{type:"enum",defaultValue:"normal",choices:["normal","satellite","hybrid"]},"bubbleTip":{type:"enum",defaultValue:"top",choices:["top","bottom"]},"mapHeight":{type:"int",defaultValue:400},"mapConstructor":{type:"function",defaultValue:null},"color":{type:"text",defaultValue:"#FF9000"},"colorCoder":{type:"text",defaultValue:null},"sizeCoder":{type:"text",defaultValue:null},"iconCoder":{type:"text",defaultValue:null},"selectCoordinator":{type:"text",defaultValue:null},"iconSize":{type:"int",defaultValue:0},"iconFit":{type:"text",defaultValue:"smaller"},"iconScale":{type:"float",defaultValue:1},"iconOffsetX":{type:"float",defaultValue:0},"iconOffsetY":{type:"float",defaultValue:0},"shape":{type:"text",defaultValue:"circle"},"shapeWidth":{type:"int",defaultValue:24},"shapeHeight":{type:"int",defaultValue:24},"shapeAlpha":{type:"float",defaultValue:0.7},"pin":{type:"boolean",defaultValue:true},"pinHeight":{type:"int",defaultValue:6},"pinWidth":{type:"int",defaultValue:6},"sizeLegendLabel":{type:"text",defaultValue:null},"colorLegendLabel":{type:"text",defaultValue:null},"iconLegendLabel":{type:"text",defaultValue:null},"markerScale":{type:"text",defaultValue:null},"showHeader":{type:"boolean",defaultValue:true},"showSummary":{type:"boolean",defaultValue:true},"showFooter":{type:"boolean",defaultValue:true}};
+Exhibit.MapView._settingSpecs={"center":{type:"float",defaultValue:[20,0],dimensions:2},"zoom":{type:"float",defaultValue:2},"size":{type:"text",defaultValue:"small"},"scaleControl":{type:"boolean",defaultValue:true},"overviewControl":{type:"boolean",defaultValue:false},"type":{type:"enum",defaultValue:"normal",choices:["normal","satellite","hybrid"]},"bubbleTip":{type:"enum",defaultValue:"top",choices:["top","bottom"]},"mapHeight":{type:"int",defaultValue:400},"mapConstructor":{type:"function",defaultValue:null},"color":{type:"text",defaultValue:"#FF9000"},"colorCoder":{type:"text",defaultValue:null},"sizeCoder":{type:"text",defaultValue:null},"iconCoder":{type:"text",defaultValue:null},"selectCoordinator":{type:"text",defaultValue:null},"iconSize":{type:"int",defaultValue:0},"iconFit":{type:"text",defaultValue:"smaller"},"iconScale":{type:"float",defaultValue:1},"iconOffsetX":{type:"float",defaultValue:0},"iconOffsetY":{type:"float",defaultValue:0},"shape":{type:"text",defaultValue:"circle"},"shapeWidth":{type:"int",defaultValue:24},"shapeHeight":{type:"int",defaultValue:24},"shapeAlpha":{type:"float",defaultValue:0.7},"pin":{type:"boolean",defaultValue:true},"pinHeight":{type:"int",defaultValue:6},"pinWidth":{type:"int",defaultValue:6},"sizeLegendLabel":{type:"text",defaultValue:null},"colorLegendLabel":{type:"text",defaultValue:null},"iconLegendLabel":{type:"text",defaultValue:null},"markerScale":{type:"text",defaultValue:null},"showHeader":{type:"boolean",defaultValue:true},"showSummary":{type:"boolean",defaultValue:true},"showFooter":{type:"boolean",defaultValue:true}
+// dch
+,"listKey":         { type: "text",     defaultValue: null   }
+};
 Exhibit.MapView._accessorSpecs=[{accessorName:"getProxy",attributeName:"proxy"},{accessorName:"getLatlng",alternatives:[{bindings:[{attributeName:"latlng",types:["float","float"],bindingNames:["lat","lng"]},{attributeName:"maxAutoZoom",type:"float",bindingName:"maxAutoZoom",optional:true}]},{bindings:[{attributeName:"lat",type:"float",bindingName:"lat"},{attributeName:"lng",type:"float",bindingName:"lng"},{attributeName:"maxAutoZoom",type:"float",bindingName:"maxAutoZoom",optional:true}]}]},{accessorName:"getColorKey",attributeName:"marker",type:"text"},{accessorName:"getColorKey",attributeName:"colorKey",type:"text"},{accessorName:"getSizeKey",attributeName:"sizeKey",type:"text"},{accessorName:"getIconKey",attributeName:"iconKey",type:"text"},{accessorName:"getIcon",attributeName:"icon",type:"url"}];
 Exhibit.MapView.create=function(D,C,B){var A=new Exhibit.MapView(C,Exhibit.UIContext.create(D,B));
 Exhibit.MapView._configure(A,D);
@@ -93,6 +96,8 @@ this._selectListener=C.addListener(function(D){A._select(D);
 }}};
 Exhibit.MapView.prototype._initializeUI=function(){var B=this;
 var C=this._settings;
+// dch
+if (C.listKey!=null)this._uiContext.putSetting("format/item/title",Exhibit.ExpressionParser.parse(C.listKey));
 var D={};
 D.colorGradient=(this._colorCoder!=null&&"_gradientPoints" in this._colorCoder);
 D.colorMarkerGenerator=function(F){var E=C.shape;
@@ -200,7 +205,8 @@ var s=new GLatLng(n.latlng.lat,n.latlng.lng);
 var m=new GMarker(s,q);
 if(P>n.latlng.maxAutoZoom){P=n.latlng.maxAutoZoom;
 }U.extend(s);
-GEvent.addListener(m,"click",function(){m.openInfoWindow(G._createInfoWindow(n.items));
+GEvent.addListener(m,"click",function(){
+m.openInfoWindow(G._createInfoWindow(n.items));
 if(G._selectListener!=null){G._selectListener.fire({itemIDs:n.items});
 }});
 G._map.addOverlay(m);
@@ -268,7 +274,8 @@ Exhibit.MapView.prototype._select=function(B){var C=B.itemIDs[0];
 var A=this._itemIDToMarker[C];
 if(A){A.openInfoWindow(this._createInfoWindow([C]));
 }};
-Exhibit.MapView.prototype._createInfoWindow=function(A){return Exhibit.ViewUtilities.fillBubbleWithItems(null,A,this._uiContext);
+Exhibit.MapView.prototype._createInfoWindow=function(A){
+return Exhibit.ViewUtilities.fillBubbleWithItems(null,A,this._uiContext);
 };
 Exhibit.MapView._iconData=null;
 Exhibit.MapView._markerUrlPrefix="http://simile.mit.edu/painter/painter?";

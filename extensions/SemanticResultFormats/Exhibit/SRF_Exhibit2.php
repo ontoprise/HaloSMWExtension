@@ -205,14 +205,14 @@ class SRFExhibit extends SMWResultPrinter {
 										$gmaps[$key] = 'smwExhibitJSON.gmaps.push({ types: "' . $itemTypes . '", label: "' . $label . '", latlng: "' . $latlng . '" });';
 									}
 									$viewstack[] = '
-<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . trim($loc) . '" ex:collectionID="' . $collection . '" ex:showSummary="false" ex:latlng=".'.$latlng.'" ' . implode(" ", $mapparams) . ' > </div>';
+<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . trim($loc) . '" ex:listKey=".labeltext" ex:collectionID="' . $collection . '" ex:showSummary="false" ex:latlng=".'.$latlng.'" ' . implode(" ", $mapparams) . ' > </div>';
 								}
 							} else { //find out if a geographic coordinate is available
 								foreach ($res->getPrintRequests() as $pr){
 									if($pr->getTypeID() == '_geo') {
 										$mapparams[] = 'ex:latlng=\'.'.$this->encodePropertyName($pr->getLabel()).'\' ';
 										$viewstack[] = '
-<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . $pr->getLabel() . '" ex:collectionID="' . $collection . '" ex:showSummary="false" '.implode(" ", $mapparams) . ' ></div>';
+<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . $pr->getLabel() . '" ex:listKey=".labeltext" ex:collectionID="' . $collection . '" ex:showSummary="false" '.implode(" ", $mapparams) . ' ></div>';
 										break;
 									}
 								}
@@ -226,7 +226,7 @@ class SRFExhibit extends SMWResultPrinter {
 								$gmaps[$key] = 'smwExhibitJSON.gmaps.push({ types: "' . $itemTypes . '", label: "' . $label . '", latlng: "' . $latlng . '" });';
 							}
 							$viewstack[] = '
-<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . $this->m_params['latlng'] . '" ex:collectionID="' . $collection . '" ex:showSummary="false" ex:latlng=".'.$latlng.'" '.implode(" ", $mapparams) . ' > </div>';
+<div ex:role="view" ex:viewClass="Map" ex:label="Map of ' . $this->m_params['latlng'] . '" ex:listKey=".labeltext" ex:collectionID="' . $collection . '" ex:showSummary="false" ex:latlng=".'.$latlng.'" '.implode(" ", $mapparams) . ' > </div>';
 						}
 					}
 					break;
@@ -360,9 +360,9 @@ class SRFExhibit extends SMWResultPrinter {
 				}
 				$col ++;
 			}
-			$idl = $index . '.' . $l;
-			if(strlen($idl)>30) $idl = substr($idl, 0, 27) . '...';
-			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $idl .'", ' . implode(', ', $textstack). '});';
+//			$idl = $index . '.' . $l;
+//			if(strlen($idl)>30) $idl = substr($idl, 0, 27) . '...';
+			$items .= 'smwExhibitJSON.items.push({type:"' .$itemTypes . '", label: "' . $index .'", ' . implode(', ', $textstack). '});';
 			$index ++;
 		}
 
