@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup Glossary
+ */
+
 /*
  * Copyright (C) 2007  BarkerJr
  * Modified by Thomas Schweitzer for using SMW's tooltips.
