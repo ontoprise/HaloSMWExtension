@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Storage
+ */
+
 /*  Copyright 2009, ontoprise GmbH
  *   This file is part of the HaloACL-Extension.
  *
