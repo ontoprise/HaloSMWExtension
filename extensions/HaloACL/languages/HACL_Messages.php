@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Language
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
@@ -320,6 +325,7 @@ $messages['en'] = array(
     'hacl_tooltip_clickto_save_modright'=> "Click here to save the modificationright",
 
     'hacl_editing_group' => "Editing Group",
+	'hacl_root_group' => "Groups",
 
     'hacl_delete_selected' => "Delete selected",
     'hacl_select' => "Select",
@@ -638,6 +644,7 @@ $messages['de'] = array(
     'hacl_tooltip_clickto_save_modright'=> "Hier klicken um das Modifikationsrecht zu speichern",
 
     'hacl_editing_group' => "Editiere Gruppe",
+	'hacl_root_group' => "Gruppen",
 
     'hacl_delete_selected' => "Ausgew&auml;hlte l&ouml;schen",
     'hacl_select' => "<span style='margin-right:0px'>Ausw.</span>",

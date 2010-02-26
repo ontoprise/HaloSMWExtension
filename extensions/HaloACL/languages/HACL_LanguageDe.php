@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Language
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
@@ -93,6 +98,10 @@ class HACLLanguageDe extends HACLLanguage {
 	
 	protected $mSDTemplateName = "Vorlage";
 	protected $mPredefinedRightName = "Recht";
+	
+	protected $mNamingConvention = array(
+		HACLLanguage::NC_GROUP => 'Gruppen'
+	);
 	
 }
 

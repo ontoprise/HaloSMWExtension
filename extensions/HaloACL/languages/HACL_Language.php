@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup HaloACL_Language
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
@@ -46,6 +51,9 @@ abstract class HACLLanguage {
 	const CAT_GROUP					= 14;
 	const CAT_RIGHT					= 15;
 	const CAT_SECURITY_DESCRIPTOR	= 16;
+	
+	//--- IDs for strings of the naming convention ---
+	const NC_GROUP = 17;
 			
 	
 	// the special message arrays ...
@@ -60,13 +68,13 @@ abstract class HACLLanguage {
 	protected $mWhitelist = "";
 	protected $mPetPrefixes = array();
 	protected $mSDTemplateName;			// Part of the name of default SDs for users
-	protected $mPredefinedRightName;			// Part of the name of default SDs for users
+	protected $mPredefinedRightName;	// Part of the name of a predefined right
+	protected $mNamingConvention = array();
 
 
-
-        public function getPredefinedRightName() {
-            return $this->mPredefinedRightName;
-        }
+	public function getPredefinedRightName() {
+		return $this->mPredefinedRightName;
+	}
 
 
 	/**
@@ -209,6 +217,19 @@ abstract class HACLLanguage {
 	 */
 	public function getPetPrefix($peType) {
 		return $this->mPetPrefixes[$peType];
+	}
+	
+	/**
+	 * Elements of the protections system often follow a naming convention.
+	 * This method returns strings for certain parts that are used in the names
+	 * of these elements.
+	 *
+	 * @param int $ncID
+	 * 		ID of a name that is part an element's name which is one of:
+	 * 		NC_GROUP
+	 */
+	public function getNamingConvention($ncID) {
+		return $this->mNamingConvention[$ncID];
 	}
 }
 
