@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup SemanticNotifications_Language_Script
+ */
+
 /*  Copyright 2008, ontoprise GmbH
 *  This file is part of the halo-Extension.
 *
