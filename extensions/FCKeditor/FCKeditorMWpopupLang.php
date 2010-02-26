@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
 $messages_special['en'] = array(
 
 'noinclude' => 'Anything between &lt;noinclude&gt; and &lt;/noinclude&gt; will be processed and displayed only when the page is being viewed directly; it will not be included or substituted.',

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Ajax function for the WYSIWYG editor
+ * 
+ * @file
+ * @ingroup WYSIWYG
+ */
 
 function wfSajaxGetMathUrl( $term )
 {

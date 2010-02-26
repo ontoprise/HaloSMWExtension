@@ -1,5 +1,17 @@
 <?php
+/**
+ * @file
+ * @ingroup WYSIWYG
+ * @ingroup Parser
+ */
 
+/**
+ * The parser to convert wiki text into HTML for the use in WYSIWYG editor
+ * when a wiki page is loaded into the editor.
+ *
+ * @ingroup WYSIWYG
+ * @ingroup Parser
+ */
 class FCKeditorParser extends Parser
 {
 	public static $fck_mw_makeImage_options;

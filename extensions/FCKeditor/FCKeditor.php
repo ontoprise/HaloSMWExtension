@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
 # Not a valid entry point, skip unless MEDIAWIKI is defined
 if (!defined('MEDIAWIKI')) {
 	echo <<<HEREDOC

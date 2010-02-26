@@ -1,5 +1,10 @@
 <?php
 /**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
+/**
  * Options for FCKeditor
  * [start with FCKeditor]
  */
@@ -15,6 +20,11 @@ define('RTE_TOGGLE_LINK', 2);
  */
 define('RTE_POPUP', 4);
 
+/**
+ * This is the base class for the WYSIWYG extension
+ *
+ * @ingroup WYSIWYG
+ */
 class FCKeditor_MediaWiki
 {
 	private $count = array();

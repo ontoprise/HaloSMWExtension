@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
+/**
+ * Class for creating image links in the WYSIWYG editor window
+ *
+ * @ingroup WYSIWYG
+ */
 class FCKeditorSkin
 {
 	private $skin;

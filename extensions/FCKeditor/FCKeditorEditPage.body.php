@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
+/**
+ * Extends the EditPage class of Mediawiki to have the WYSIWG editor used#
+ * in the edit page.
+ *
+ * @ingroup WYSIWYG
+ */
 class FCKeditorEditPage extends EditPage
 {
 	/**

@@ -1,9 +1,13 @@
 <?php
-/* 
+/**
+ * @file
+ * @ingroup WYSIWYG
+ */
+
+/**
  * Two functions for doing a http request. This is needed for the mediawiki
  * plugin to load the Query Interface and the WebService Popup.
  */
-
 
 /**
  * Do http request depending if curl is active or not

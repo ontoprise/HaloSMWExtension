@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * @file
+ * @ingroup WYSIWYG
+ * @ingroup Parser
+ */
+
+/**
+ * The parser options for the FCKeditorParser.
+ *
+ * @ingroup WYSIWYG
+ * @ingroup Parser
+ */
 class FCKeditorParserOptions extends ParserOptions
 {
 	function getNumberHeadings() {return false;}
