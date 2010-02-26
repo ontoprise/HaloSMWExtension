@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
 /*  Copyright 2009, ontoprise GmbH
  *  This file is part of the HaloACL-Extension.
  *
@@ -487,7 +492,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
         
     };
     if(!groupsInTree){
-        if(parentNode.label == "Groups"){
+        if(parentNode.label == gHACLLanguage.getMessage('groups')){
             var tmpNode =  new YAHOO.widget.TextNode(
             {
                 label:"no groups available"
@@ -621,7 +626,7 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
  *
  */
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
 
     var elementWidth = 399;
     try{
@@ -696,7 +701,7 @@ YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
     // ---------
 
 
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
 
     var elementWidth = 399;
     try{

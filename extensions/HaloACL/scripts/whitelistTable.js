@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
