@@ -1,6 +1,15 @@
 <?php
 /* 
  * Language file for the SMW User Manual extension
+ *
+ * @file
+ * @ingroup SMWUserManual
+ */
+
+/**
+ * Class for the english messages of the SMWUserManual extension
+ *
+ * @ingroup SMWUserManual
  */
 class SMW_UMLanguageEn {
 

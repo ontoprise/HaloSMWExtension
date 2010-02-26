@@ -1,6 +1,15 @@
 <?php
 /*
- * Language file for the SMW UP rating extension
+ * Language file for the Ultrapedia provenance rating
+ *
+ * @file
+ * @ingroup Ultrapedia
+ */
+
+/**
+ * Class for the english messages of the Ultrapedia provenance rating
+ *
+ * @ingroup Ultrapedia
  */
 class SMW_UpRatingLanguage {
 

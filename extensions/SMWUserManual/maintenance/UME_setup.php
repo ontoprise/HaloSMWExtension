@@ -22,7 +22,8 @@
  * See README file on how to use this script.
  *
  * @author Stephan Robotta
- * Date: 10.12.2009
+ * @file
+ * @ingroup SMWUserManual
  *
  */
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
