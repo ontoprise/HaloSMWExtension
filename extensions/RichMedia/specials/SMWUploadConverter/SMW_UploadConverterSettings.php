@@ -17,7 +17,10 @@
 */
 
 /**
- * This file contains the settings that configure the upload converter extension.
+ * @file
+  * @ingroup RMUploadConverter
+  * 
+  * This file contains the settings that configure the upload converter extension.
  * It can convert uploaded PDF and MS Word documents to text.
  * 
  * @author Thomas Schweitzer
