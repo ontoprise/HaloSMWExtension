@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup SemanticNotifications_Special
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 * 
 *   This file is part of the SemanticNotifications-Extension.
