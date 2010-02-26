@@ -15,6 +15,9 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /**
+* @file
+* @ingroup SRLanguage
+* 
 * SMW_Language.js
 * 
 * A class that reads language strings from the server by an ajax call.

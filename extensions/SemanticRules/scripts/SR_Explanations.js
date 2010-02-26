@@ -1,3 +1,12 @@
+/**
+ * @file
+ * @ingroup SRRuleTypes
+ *  
+ * @author: Kai Kühn / ontoprise / 2009
+ *
+ */
+ 
+
 var explanation = null;
 
 var Explanations = Class.create();

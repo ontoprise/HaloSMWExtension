@@ -1,3 +1,10 @@
+/**
+ * @file
+ * @ingroup SRRuleTypes
+ * 
+ * @author: Kai Kühn / ontoprise / 2009
+ *
+ */
 var PropertyChain = Class.create();
 
 //todo: pending indicator

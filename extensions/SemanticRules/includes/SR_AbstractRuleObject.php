@@ -16,7 +16,15 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+ * @file
+ * @ingroup SemanticRules
+ * @ingroup SRRuleObject
+ * 
+ * @defgroup SRRuleObject Abstract semantic rule object
+ * 
+ * @author Kai Kühn
+ */
 
 if (!defined('MEDIAWIKI')) die();
 

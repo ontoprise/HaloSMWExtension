@@ -17,6 +17,10 @@
  */
 
 /**
+ * @file
+ * @ingroup SemanticRules
+ * @ingroup SRWebservices
+ * 
  * Ajax functions for simple rules.
  *
  *

@@ -16,6 +16,12 @@
 */
 var CategoryRule = Class.create();
 
+/**
+ * @file
+ * @ingroup SRRuleTypes
+ * 
+ * @author Kai Kühn
+ */
  		
 
 CategoryRule.prototype = {

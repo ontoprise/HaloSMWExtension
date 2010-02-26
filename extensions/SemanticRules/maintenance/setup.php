@@ -1,7 +1,11 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticRules
+ * @ingroup SemanticRulesMaintenance
+ * @defgroup SemanticRulesMaintenance Semantic rules maintenance scripts
+ * 
  * Setup database for SemanticRules extension.
- *
  * @author: Kai Kühn / ontoprise / 2009
  *
  */

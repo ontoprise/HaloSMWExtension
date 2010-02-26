@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SRLanguage
+ * 
  * Language file En
  * 
  * @author: Kai Kühn / ontoprise / 2009

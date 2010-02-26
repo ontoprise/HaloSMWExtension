@@ -14,6 +14,17 @@
 *   You should have received a copy of the GNU General Public License
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+/**
+ * @file
+ * @ingroup SemanticRules
+ * 
+ * @defgroup SRRuleTypes Semantic rule types
+ *  
+ * @author: Kai Kühn / ontoprise / 2009
+ *
+ */
+
 var RuleToolBar = Class.create();
 
 var SMW_RULE_VALID_RULE_NAME =

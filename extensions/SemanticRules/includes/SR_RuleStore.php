@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticRules
+ * 
  * Provides access to local rule store.
  *
  * @author: Kai Kühn / ontoprise / 2009

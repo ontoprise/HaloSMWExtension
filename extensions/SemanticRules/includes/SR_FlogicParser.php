@@ -16,7 +16,12 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/**
+ * @file
+ * @ingroup SemanticRules
+ * 
+ * @author Kai Kühn
+ */
 
 
 if (!defined('MEDIAWIKI')) die();

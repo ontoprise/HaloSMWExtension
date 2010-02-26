@@ -1,4 +1,12 @@
 <?php
+/**
+ * @file
+ * @ingroup SRWebservices
+ * 
+ * @defgroup SRWebservices Semantic rules webservices
+ * 
+ * @author Kai Kühn
+ */
 # Provides WSDLs for external interfaces
 
 $wgAjaxExportList[] = 'srf_ws_getWSDL';

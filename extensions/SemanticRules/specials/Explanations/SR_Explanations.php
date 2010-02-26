@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SemanticRules
+ * @ingroup SemanticRulesSpecials
+ * @defgroup SemanticRulesSpecials Semantic rules special pages
+ * 
+ * @author Kai Kühn
+ */
  if (!defined('MEDIAWIKI')) die();
 
 global $IP;

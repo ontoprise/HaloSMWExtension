@@ -17,6 +17,9 @@
  */
 
 /**
+ * @file
+ * @ingroup SemanticRules
+ * 
  * A parser for simple formulas.
  *
  *

@@ -1,8 +1,12 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticRules
+ * @defgroup SemanticRules Semantic Rules extension
+ * 
  * Semantic rules extension entry point
- *
- * @author: Kai Kï¿½hn / ontoprise / 2009
+ * 
+ * @author: Kai Kühn / ontoprise / 2009
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;

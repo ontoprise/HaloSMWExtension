@@ -1,5 +1,10 @@
 <?php
 /**
+ * @file
+ * @ingroup SRLanguage
+ * 
+ * @defgroup SRLanguage Semantic rules language files
+ * 
  * Abstract Language class for SemanticRules extension
  * 
  * @author: Kai Kühn / ontoprise / 2009
