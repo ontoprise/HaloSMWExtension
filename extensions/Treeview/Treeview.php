@@ -9,6 +9,7 @@
 *
 * @file
 * @ingroup Treeview
+* @defgroup Treeview Semantic Treeview extension
 */
  
 if (!defined('MEDIAWIKI')) die('Not an entry point.');

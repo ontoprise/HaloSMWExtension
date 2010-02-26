@@ -34,8 +34,8 @@ class TreeGenerator {
 	/**
 	 * Entry point for parser function
 	 *
-	 * @param unknown_type $parser
-	 * @return String Wiki-Tree
+	 * @param Parser $parser
+	 * @return String tree in wiki text or json
 	 */
 	public function generateTree(&$parser) {
 		global $wgUser;
@@ -150,16 +150,42 @@ class TreeGenerator {
 		}
 		return $tree;
 	}
-	
+
+    /**
+     * Set that the generated tree is returned as a jason string. This is set
+     * in the file getTree.php when the ajax expansion of a tree node is done or
+     * when the ajax function initOnload() is called.
+     *
+     * @access public
+     */
     public function setJson() {
         $this->json = true;
     }
+
+    /**
+     * Set option to load the children of a node.
+     * @access public
+     */
     public function setLoadNextLevel() {
         $this->loadNextLevel = true;
     }
+
+    /**
+     * Set to use the triple store
+     * @access public
+     */
     public function setUseTsc() {
         $this->useTsc = true;
     }
+
+    /**
+     * Check if the given string is a valid title and also check if the
+     * title exists that it can be accessed (HaloACL)
+     *
+     * @param string $text name of the element
+     * @param int $ns namespace
+     * @return Title mediawiki Title object
+     */
     private function getValidTitle($text, $ns = 0) {
         $t = Title::newFromText($text, $ns);
         if ($t == null) return;
@@ -172,6 +198,12 @@ class TreeGenerator {
     }
 }
 
+/**
+ * Class to access the semantic data.
+ * 
+ * @abstract
+ * @ingroup Treeview
+ */
 abstract class TreeviewStorage {
     
 	private static $store;
@@ -213,7 +245,14 @@ abstract class TreeviewStorage {
 	 * @return Tree of TreeNode objects
 	 */
 	public abstract function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL);
-	
+
+    /**
+	 * Get the method on how data is fetched. Default is to use the local mysql.
+     * If the variabe tsc is set, then fetch data from the triple store.
+	 *
+	 * @param bool $tsc use triple store (optional)
+	 * @return mixed TreeviewTriplestore or TreeviewStorageSQL2
+	 */
     public static function getTreeviewStorage($tsc= false) {
         global $smwgHaloIP;
         if (self::$store == NULL) {
@@ -238,6 +277,21 @@ abstract class TreeviewStorage {
         return self::$store;
     }
 
+    /**
+     * Setup most conditions how the tree will be generated and which data will be used.
+     *
+     * @access public
+     * @param int $ajaxExpansion 1 use it, 0 don't use it
+     * @param int $maxDepth maximum depth of the tree (default is 9999 i.e. show all)
+     * @param Title $redirectPage page name where to redirect if max depth is exeeded
+     * @param string $displayProperty name of property for which the values is used as the node name, NULL by default
+     * @param string $linkTo property name that is used as a link target (makes sense with properties of type page only), NULL by default
+     * @param string $hchar character for wiki text to express the node depth, default is '*'
+     * @param bool $jsonOutput true if the returned string is returned in json format, otherwise wiki text is returned
+     * @param string $condition query syntax, default NULL
+     * @param Title $openTo name of the node up to which the tree will unfolded, default NULL
+     * @param bool $checkNode if true and ajax expansion is set, a returned node is displayed as a node if it doesn't have children
+     */
     public function setup($ajaxExpansion, $maxDepth, $redirectPage, $displayProperty, $linkTo, $hchar, $jsonOutput, $condition, $openTo, $checkNode) {
         // here the options are stored, that can be set in the generateTree parser function
 		$this->ajaxExpansion = $ajaxExpansion;
@@ -627,6 +681,11 @@ abstract class TreeviewStorage {
 
 }
 
+/**
+ * Class to access the semantic data via a Triplestore connector.
+ *
+ * @ingroup Treeview
+ */
 class TreeviewTriplestore extends TreeviewStorage {
 
 	public function getHierarchyByRelation(Title $relation, $category = NULL, $start = NULL) {
@@ -763,6 +822,11 @@ class TreeviewTriplestore extends TreeviewStorage {
     }
 }
 
+/**
+ * Class to access the semantic data via a mysql store (version 2).
+ *
+ * @ingroup Treeview
+ */
 class TreeviewStorageSQL2 extends TreeviewStorage {
 
     // for the conditions and limitations that can be used for generating the
@@ -1360,8 +1424,9 @@ class TreeviewStorageSQL2 extends TreeviewStorage {
  * Each element has a pointer to the predecessor
  * and the successor and another pointer to
  * the element data itself
+ *
+ * @ingroup Treeview
  */
-
 class ListItem { 
     public $_data; 
     public $_prev; 
@@ -1376,7 +1441,9 @@ class ListItem {
  * Class for storing a list of elements. List
  * elements are of the type ListItem. This
  * class provides access to the elements stored
- * in the list. 
+ * in the list.
+ *
+ * @ingroup Treeview
  */
 class ChainedList { 
  
@@ -1530,8 +1597,18 @@ class ChainedList {
         $this->_current = $this->_tail; 
         return $this->insertBehind($item); 
     } 
-} 
+}
 
+/**
+ * Class to store a treenode, which contains:
+ * - title
+ * - namespace
+ * - property name that is used for displaying the values
+ * - property name that is used for sorting the nodes at the same level
+ * - property name that is used for the link target
+ *
+ * @ingroup Treeview
+ */
 class ElementProperty {
 	private $title;
 	private $ns;
