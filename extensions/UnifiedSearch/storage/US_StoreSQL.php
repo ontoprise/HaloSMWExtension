@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchStorage 
+ * 
+ * @author Kai Kühn
+ */
 require_once('US_Store.php');
 
 /**

@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchOAI
+ * @defgroup UnifiedSearchOAI UnifiedSearch incremental updater
+ */
 
 /**
  * @return string

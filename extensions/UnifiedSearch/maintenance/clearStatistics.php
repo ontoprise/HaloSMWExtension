@@ -1,5 +1,9 @@
 <?php
 /**
+ * @file
+ * @ingroup UnifiedSearchMaintenance
+ * @defgroup UnifiedSearchMaintenance Unified search maintenance scripts
+ * 
  * Clear the search statistics table.
  *
  * @author: Kai Kühn

@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchSynsets
+ * 
+ * @author Ingo Steinbauer
+ */
 global $wgExtensionFunctions, $wgHooks;  
 // Define a setup function for the {{ ws:}} Syntax Parser
 $wgExtensionFunctions[] ='synsetPF_Setup';

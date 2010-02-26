@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
  * Prints a set of LuceneResults and a WikiTitleResults
  *
  * @author: Kai K�hn

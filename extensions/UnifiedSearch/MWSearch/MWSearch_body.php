@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchMWSearch
+ */
 class LuceneSearch extends SearchEngine {
 	/**
 	 * Perform a full text search query and return a result set.

@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearchOAI
+ * 
  * OAI-PMH repository extension for MediaWiki 1.4+
  *
  * Copyright (C) 2005 Brion Vibber <brion@pobox.com>

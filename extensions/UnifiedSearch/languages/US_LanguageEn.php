@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup UnifiedSearchLanguages
+ * 
  * @author: Kai K�hn
  * 
  * Created on: 27.01.2009

@@ -1,8 +1,11 @@
 <?php
 /**
+ * @file
+ * @ingroup UnifiedSearchMaintenance
+ * 
  * Setup database for Unified search extension.
  * 
- * @author: Kai Kï¿½hn
+ * @author: Kai Kühn
  * 
  * Created on: 27.01.2009
  */

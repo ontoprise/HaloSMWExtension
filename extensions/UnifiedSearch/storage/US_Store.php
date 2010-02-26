@@ -1,6 +1,10 @@
 <?php
 /**
- * @author: Kai Kühn
+ * @file
+ * @ingroup UnifiedSearchStorage 
+ * @defgroup UnifiedSearchStorage UnifiedSearch storage layer
+ * 
+ * @author Kai Kühn
  * 
  * Created on: 27.01.2009
  *

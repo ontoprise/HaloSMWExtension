@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup UnifiedSearchMWSearch
+ */
 /*
  * Copyright 2004, 2005 Kate Turner, Brion Vibber.
  * 

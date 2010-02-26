@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
+ * @author Kai Kühn
+ */
 
 function smwfDoSpecialUSSearch() {
 	global $wgOut;

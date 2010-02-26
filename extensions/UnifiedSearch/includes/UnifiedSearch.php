@@ -1,6 +1,9 @@
 <?php
 /**
- * @author: Kai Kï¿½hn
+ * @file
+ * @ingroup UnifiedSearch
+ * @defgroup UnifiedSearch Unified search
+ * @author: Kai Kühn
  *
  * Created on: 27.01.2009
  */

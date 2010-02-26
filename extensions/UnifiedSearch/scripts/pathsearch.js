@@ -1,3 +1,8 @@
+/**
+ * @file
+ * @ingroup UnifiedSearchPathSearch
+ */
+
 var us_psc_done;
 var httpRequest;
 

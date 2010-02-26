@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearchPathSearch
+ * 
  * Receives the Ajax call from the javascript when clicking on
  * PathSearch at the Special Page search, of the Unified Search
  * extension. 

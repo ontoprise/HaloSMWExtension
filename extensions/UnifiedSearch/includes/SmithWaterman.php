@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
  * Implementation of Smith-Waterman algorithm.
  * Calculates the best matching sequence of two strings.
  * 

@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearchOAI
+ * 
  * OAI-PMH update harvester extension for MediaWiki 1.6+
  *
  * Copyright (C) 2005-2006 Brion Vibber <brion@pobox.com>

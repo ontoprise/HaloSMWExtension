@@ -1,8 +1,12 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup UnifiedSearchSynsetLanguage
+ * @defgroup UnifiedSearchSynsetLanguage UnifiedSearchSynset language files
+ * 
  * Created on 18.02.2009
  *
- * Author: ingo
+ * @author Ingo Steinbauer
  */
 
 global $IP;

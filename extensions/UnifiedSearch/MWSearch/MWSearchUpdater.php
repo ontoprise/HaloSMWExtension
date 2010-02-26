@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchMWSearch
+ */
 // Requires PEAR XML_RPC module
 
 require_once( 'PEAR.php' );

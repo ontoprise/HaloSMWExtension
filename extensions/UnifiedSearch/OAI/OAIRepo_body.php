@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * @ingroup UnifiedSearchOAI
+ */
 if( !defined( 'MEDIAWIKI' ) ) {
 	die();
 }

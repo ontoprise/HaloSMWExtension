@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
  * Query Expander augments search terms according to a given (SKOS-)ontology. It
  * uses synonyms, shortcuts, broader or narrower, subproperties or subcategories
  * to enrich a full-text query string.

@@ -1,6 +1,9 @@
 <?php
 
-/*
+/**
+ * @file
+ * @ingroup UnifiedSearchPathSearch
+ * 
  * Holds functionality to exmine a path trough the existing Ontology of a wiki. 
  */
 

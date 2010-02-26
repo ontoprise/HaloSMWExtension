@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup UnifiedSearchStorage 
+ * 
  * Created on 19.10.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
 
 class USDBHelper {

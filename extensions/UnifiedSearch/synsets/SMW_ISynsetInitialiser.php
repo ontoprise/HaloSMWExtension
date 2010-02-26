@@ -1,8 +1,9 @@
 <?php
-/*
- * Created on 18.02.2009
- *
- * Author: ingo
+/**
+ * @file
+ * @ingroup UnifiedSearchSynsets
+ * 
+ * @author Ingo Steinbauer
  */
 
 /*

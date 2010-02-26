@@ -1,5 +1,9 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchPathSearch
+ * @defgroup UnifiedSearchPathSearch Unified search path search
+ */
 // Setup for PathSearch (part or the Unified Search extension) 
  
 

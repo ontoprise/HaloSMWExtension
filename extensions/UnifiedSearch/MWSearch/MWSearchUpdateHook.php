@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchMWSearch
+ */
 require_once( 'MWSearchUpdater.php' );
 
 $wgExtensionFunctions[] = 'mwSearchUpdateHookSetup';

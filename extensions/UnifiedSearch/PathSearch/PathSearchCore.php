@@ -1,6 +1,9 @@
 <?php
 
-/*
+/**
+ * @file
+ * @ingroup UnifiedSearchPathSearch
+ * 
  * Core functionality for path search
  */
  

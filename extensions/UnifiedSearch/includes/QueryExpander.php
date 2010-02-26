@@ -1,6 +1,9 @@
 <?php
 
 /**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
  * Query Expander augments search terms.
  *
  * @author: Kai Kühn

@@ -1,4 +1,8 @@
-
+/**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
+ */
  
 // deactivate combined search if necessary
 var csLoadObserver;

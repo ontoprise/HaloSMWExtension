@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup UnifiedSearch
+ * 
  * @author: Kai Kühn
  * 
  * Created on: 27.01.2009

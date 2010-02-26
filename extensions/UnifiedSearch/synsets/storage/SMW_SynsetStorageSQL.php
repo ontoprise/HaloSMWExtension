@@ -1,8 +1,10 @@
 <?php
-/*
- * Created on 18.02.2009
- *
- * Author: ingo
+/**
+ * @file
+ * @ingroup UnifiedSearchSynsetsStorage
+ * @defgroup UnifiedSearchSynsetsStorage UnifiedSearchSynsets storage layer
+ * 
+ * @author Ingo Steinbauer
  */
 
 global $IP;

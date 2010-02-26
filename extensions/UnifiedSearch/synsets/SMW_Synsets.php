@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup UnifiedSearchSynsets
+ * @defgroup UnifiedSearchSynsets UnifiedSearch Synonyms 
  * Created on 18.02.2009
  *
- * Author: ingo
+ * @author Ingo Steinbauer
  */
 
 global $IP;

@@ -1,6 +1,9 @@
 <?php
 
- /*
+ /**
+  * @file
+  * @ingroup UnifiedSearchPathSearch
+  * 
   * This object reads the appropriate tables of a wiki to find all existing categories and
   * properties. Also a structure is created that can tell whether a page of a certain category 
   * might have a certain property. Also the property types (domain, range) are considered when

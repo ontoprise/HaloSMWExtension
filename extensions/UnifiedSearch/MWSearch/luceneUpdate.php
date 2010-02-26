@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchMWSearch
+ */
 // symlink me into maintenance/
 
 $options = array( 'skip' );

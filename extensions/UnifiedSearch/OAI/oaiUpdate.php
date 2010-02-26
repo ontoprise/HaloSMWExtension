@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * @ingroup UnifiedSearchOAI
+ */
 if( !class_exists( 'DOMAttr' ) ) {
 	echo
 		"Requires PHP 5 with the DOM module enabled.\n" .
