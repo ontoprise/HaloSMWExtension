@@ -2,9 +2,10 @@
 /**
  * Setup database for SMWHalo extension.
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloMaintenance
+ * 
  * @defgroup SMWHaloMaintenance SMWHalo maintenance scripts
+ * @ingroup SMWHalo
  * 
  * @author: Kai Kühn
  *

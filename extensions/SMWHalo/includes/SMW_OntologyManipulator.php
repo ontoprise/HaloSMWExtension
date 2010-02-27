@@ -17,9 +17,10 @@
 */
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloSemanticToolbar
- * @defgroup SMWHaloSemanticToolbar SMWHalo SemanticToolbar 
+ * 
+ * @defgroup SMWHaloSemanticToolbar SMWHalo SemanticToolbar
+ * @ingroup SMWHalo 
  * Created on 22.05.2007
  *
  * This file contains methods that modify the ontology.

@@ -1,8 +1,14 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup ConsistencyBot
+ * 
+ * @defgroup ConsistencyBot
+ * @ingroup SemanticGardeningBots
+ * 
  * Created on 13.03.2007
  *
- * Author: KK
+ * @author Kai Kühn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 

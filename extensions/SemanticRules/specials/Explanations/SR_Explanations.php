@@ -1,10 +1,11 @@
 <?php
 /**
  * @file
- * @ingroup SemanticRules
  * @ingroup SemanticRulesSpecials
- * @defgroup SemanticRulesSpecials Semantic rules special pages
  * 
+ * @defgroup SemanticRulesSpecials Semantic rules special pages
+ * @ingroup SemanticRules
+ *  
  * @author Kai Kühn
  */
  if (!defined('MEDIAWIKI')) die();

@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchSynsetLanguage
+ * 
  * @defgroup UnifiedSearchSynsetLanguage UnifiedSearchSynset language files
+ * @ingroup UnifiedSearchSynsets
  * 
  * Created on 18.02.2009
  *

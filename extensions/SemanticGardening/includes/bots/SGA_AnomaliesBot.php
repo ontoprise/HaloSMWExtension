@@ -1,5 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup AnomaliesBot
+ * 
+ * @defgroup AnomaliesBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 18.06.2007
  *
  * Author: kai

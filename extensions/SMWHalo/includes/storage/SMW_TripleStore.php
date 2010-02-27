@@ -9,8 +9,10 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 /**
  * @file
- * @ingroup SMWHalo
+ * @ingroup SMWHaloTriplestore
+ * 
  * @defgroup SMWHaloTriplestore SMWHalo Triplestore
+ * @ingroup SMWHalo
  * 
  * Triple store connector class.
  *

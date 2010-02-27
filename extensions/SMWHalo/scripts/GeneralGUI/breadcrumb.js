@@ -2,7 +2,9 @@
  * 
  * @file
  * @ingroup SMWHaloMiscellaneous
+ * 
  * @defgroup SMWHaloMiscellaneous SMWHalo miscellaneous components
+ * @ingroup SMWHalo
  * 
  * @author Kai Kühn
  * 

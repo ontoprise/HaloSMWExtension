@@ -1,5 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup UndefinedEntitiesBot
+ * 
+ * @defgroup UndefinedEntitiesBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 13.06.2007
  *
  * Author: kai

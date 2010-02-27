@@ -1,4 +1,9 @@
 <?php
+/**
+ * @file
+ * @ingroup SemanticGardeningStorage
+ * 
+ */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $sgagIP;

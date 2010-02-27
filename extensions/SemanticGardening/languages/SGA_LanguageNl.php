@@ -1,5 +1,8 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticGardeningLanguages
+ * 
  * @author: Kai Kühn
  * 
  * Created on: 17.04.2009

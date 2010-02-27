@@ -17,12 +17,12 @@
 */
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloDataValues
  * 
  * Typehandler class for chemical equations.
  *  
  * @defgroup SMWHaloDataValues SMWHaloDataValues
+ * @ingroup SMWHalo
  * @author Thomas Schweitzer
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;

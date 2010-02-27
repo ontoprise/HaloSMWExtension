@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchStorage 
+ * 
  * @defgroup UnifiedSearchStorage UnifiedSearch storage layer
+ * @ingroup UnifiedSearch
  * 
  * @author Kai Kühn
  * 

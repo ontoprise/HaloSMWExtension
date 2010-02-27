@@ -1,9 +1,14 @@
 <?php
-/*
- * Created on 04.02.2008
+/**
+ * @file
+ * @ingroup SemanticGardening
  *
- * Author: kai
+ * Created on 04.02.2008
+ * 
+ * @author Kai Kühn
+ * 
  */
+
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
 global $wgAjaxExportList;

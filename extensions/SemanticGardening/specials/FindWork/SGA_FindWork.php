@@ -1,8 +1,14 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardeningSpecials
+ * 
+ * @defgroup SemanticGardeningSpecials 
+ * @ingroup SemanticGardening
+ * 
  * Created on 26.11.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
  
 if (!defined('MEDIAWIKI')) die();

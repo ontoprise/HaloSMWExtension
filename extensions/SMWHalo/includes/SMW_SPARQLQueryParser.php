@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloSMWDeviations
  * 
  * @defgroup SMWHaloSMWDeviations SMWHalo SMW Deviations
+ * @ingroup SMWHalo
  */
 if (!defined('MEDIAWIKI')) die();
  

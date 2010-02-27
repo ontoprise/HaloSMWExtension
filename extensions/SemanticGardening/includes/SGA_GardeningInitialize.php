@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
+ * @defgroup SemanticGardening Semantic Gardening extension
+ * 
+ * @defgroup SemanticGardeningBots
+ * @ingroup SemanticGardening
+ * 
+ * @author Kai Kühn
+ * 
+ */
 if ( !defined( 'SMW_HALO_VERSION' ) )
     die("The Semantic Gardening extension requires the Halo extension to be installed.");
 

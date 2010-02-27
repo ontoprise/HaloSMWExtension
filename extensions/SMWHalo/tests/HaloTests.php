@@ -1,8 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup SMWHalo
+ * @ingroup SMWHaloTests
+ * 
  * @defgroup SMWHaloTests SMWHalo unit tests
+ * @ingroup SMWHalo
  * 
  * @author Kai Kühn
  */

@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchLanguages
+ * 
  * @defgroup UnifiedSearchLanguages
+ * @ingroup UnifiedSearch
  * @author: Kai K�hn
  * 
  * Created on: 27.01.2009

@@ -1,8 +1,12 @@
 <?php
-/*
- * Created on 19.10.2007
+/**
+ * @file
+ * @ingroup SemanticGardening
  *
- * Author: kai
+ * Created on 19.10.2007
+ * 
+ * @author Kai Kühn
+ * 
  */
 
 

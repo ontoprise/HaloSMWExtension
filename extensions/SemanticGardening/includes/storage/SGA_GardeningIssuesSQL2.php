@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * @file
+ * @ingroup SemanticGardeningStorage
+ * 
+ * @author Kai Kühn
+ *
+ */
 class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
     public function generatePropagationIssuesForCategories($botID, $propagationType) {
         $this->clearGardeningIssues($botID, $propagationType);

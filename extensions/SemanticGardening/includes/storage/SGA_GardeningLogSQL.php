@@ -1,10 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardeningStorage
+ * 
  * Created on 18.10.2007
  *
  * Implementation of Gardening Log interface in SQL.
  *
- * Author: kai
+ * @author Kai Kühn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 

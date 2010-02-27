@@ -1,8 +1,12 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup ConsistencyBot
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 14.05.2007
- *
- * Author: kai
+ * 
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 

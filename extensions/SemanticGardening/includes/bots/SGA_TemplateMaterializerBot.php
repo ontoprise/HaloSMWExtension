@@ -1,5 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup TemplateMaterializerBot
+ * 
+ * @defgroup TemplateMaterializerBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 13.04.2007
  *
  * Author: KK

@@ -1,5 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup GardeningJobs
+ * 
+ * @defgroup GardeningJobs
+ * @ingroup SemanticGardening
+ * 
  * SMW_LocalGardeningJob.php
  * 
  * This job is triggered whenever a page was saved or removed. 

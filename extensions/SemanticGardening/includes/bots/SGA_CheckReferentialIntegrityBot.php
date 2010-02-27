@@ -16,10 +16,15 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*
+/**
+ * @file
+ * @ingroup CheckRefIntegrityBot
+ * 
+ * @defgroup CheckRefIntegrityBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
  * Created on 21.05.2008
- *
- * Author: kai
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 

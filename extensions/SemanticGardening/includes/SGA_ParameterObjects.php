@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
  * Created on 28.03.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
  define('SMW_GARD_PARAM_REQUIRED', 1);
  define('SMW_GARD_PARAM_OPTIONAL' , 2);

@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloWebservices
  * 
  * @defgroup SMWHaloWebservices SMWHalo Webservices
+ * @ingroup SMWHalo
  */
 # Provides WSDLs for external interfaces
 

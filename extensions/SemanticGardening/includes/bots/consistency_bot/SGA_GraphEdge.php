@@ -1,8 +1,12 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup ConsistencyBot
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 23.05.2007
  *
- * Author: kai
  */
  
  /**

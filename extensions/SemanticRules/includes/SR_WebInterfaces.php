@@ -4,6 +4,7 @@
  * @ingroup SRWebservices
  * 
  * @defgroup SRWebservices Semantic rules webservices
+ * @ingroup SemanticRules
  * 
  * @author Kai Kühn
  */

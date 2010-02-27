@@ -4,6 +4,7 @@
  * @ingroup SRLanguage
  * 
  * @defgroup SRLanguage Semantic rules language files
+ * @ingroup SemanticRules
  * 
  * Abstract Language class for SemanticRules extension
  * 

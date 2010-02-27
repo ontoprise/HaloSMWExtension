@@ -1,7 +1,6 @@
 <?php
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloSemanticStorage
  * 
  * Created on 19.09.2007
@@ -9,6 +8,7 @@
  * Author: kai
  * 
  * @defgroup SMWHaloSemanticStorage SMWHalo Semantic storage layer
+ * @ingroup SMWHalo
  */
  
  abstract class SMWSemanticStore {

@@ -1,8 +1,12 @@
 <?php
-/*
- * Created on 12.03.2007
+/**
+ * @file
+ * @ingroup SemanticGardening
  *
- * Author: kai
+ * Created on 12.03.2007
+ * 
+ * @author Kai Kühn
+ * 
  */
 
  if ( !defined( 'MEDIAWIKI' ) ) die;

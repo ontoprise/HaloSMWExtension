@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardeningSpecials
+ * 
  * Created on 19.10.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
 if (!defined('MEDIAWIKI')) die();
 global $sgagIP;

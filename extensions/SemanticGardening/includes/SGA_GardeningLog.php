@@ -1,10 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
  * Created on 16.03.2007
  *
  * Abstract SGAGardeningLog interface.
  * 
- * Author: kai
+ * @author Kai Kühn
  */
  abstract class SGAGardeningLog {
  	

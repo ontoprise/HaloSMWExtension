@@ -19,7 +19,6 @@
 
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloAAM 
  * 
  * Parser for advanced annotation mode.
@@ -27,6 +26,7 @@
  * from HTML to the original wiki text on the client side.
  * 
  * @defgroup SMWHaloAAM SMWHalo Advanced Annotation mode
+ * @ingroup SMWHalo
  * @author Thomas Schweitzer
  */
 class SMWH_AAMParser {

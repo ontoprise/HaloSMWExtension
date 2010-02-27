@@ -1,10 +1,10 @@
 <?php
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloJobs
  * 
  * @defgroup SMWHaloJobs SMWHalo jobs
+ * @ingroup SMWHalo
  * 
  * @author Kai Kühn
  */

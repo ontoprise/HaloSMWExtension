@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * @ingroup ConsistencyBot
+ * 
+ * @author Kai Kühn
+ */
 define('SMW_CONSISTENCY_BOT_BASE', 100);
 // covariance issues
 define('SMW_GARDISSUE_DOMAINS_NOT_COVARIANT', SMW_CONSISTENCY_BOT_BASE * 100 + 1);

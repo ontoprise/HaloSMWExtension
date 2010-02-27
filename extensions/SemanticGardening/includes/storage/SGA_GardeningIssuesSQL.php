@@ -1,10 +1,16 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardeningStorage
+ * 
+ * @defgroup SemanticGardeningStorage
+ * @ingroup SemanticGardening
+ * 
  * Created on 18.10.2007
  *
  * GardeningIssues interface implementation for SQL.
  *
- * Author: kai
+ * @author Kai Kühn
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 

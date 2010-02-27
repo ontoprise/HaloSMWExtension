@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchOAI
+ * 
  * @defgroup UnifiedSearchOAI UnifiedSearch incremental updater
+ * @ingroup UnifiedSearch
  */
 
 /**

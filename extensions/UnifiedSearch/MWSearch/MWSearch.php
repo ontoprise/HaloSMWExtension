@@ -2,6 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchMWSearch
+ * 
+ * @defgroup UnifiedSearchMWSearch MW Search extension
+ * @ingroup UnifiedSearch
  */
 /*
  * Copyright 2004, 2005 Kate Turner, Brion Vibber.

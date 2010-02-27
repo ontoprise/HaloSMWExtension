@@ -1,5 +1,12 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup ImportOntologyBot
+ * 
+ * @defgroup ImportOntologyBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
  * Created on 03.07.2007
  *
  * Author: kai

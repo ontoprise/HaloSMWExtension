@@ -18,7 +18,6 @@
 
 /**
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloAutocompletion
  * 
  * Created on 21.02.2007
@@ -26,6 +25,7 @@
  * AutoCompletion Dispatcher
  * 
  * @defgroup SMWHaloAutocompletion SMWHalo Autocompletion
+ * @ingroup SMWHalo
  */
 
 // Register AJAX functions

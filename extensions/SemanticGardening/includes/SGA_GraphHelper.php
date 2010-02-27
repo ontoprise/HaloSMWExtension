@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
  * Created on 23.05.2007
  *
- * Author: kai
+ * @author Kai Kühn
  */
  
  class GraphHelper {

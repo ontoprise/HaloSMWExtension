@@ -1,8 +1,11 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
  * Created on 18.10.2007
  *
- * Author: kai
+ * @author Kai Kühn
  * 
  * Provide access to Gardening issue table. Gardening issues can be categorized
  * by bot, type and class. A GardeningIssue is can be about one or two titles and an optional 

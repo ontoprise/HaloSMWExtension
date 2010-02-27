@@ -1,5 +1,13 @@
 <?php
-/*
+/**
+ * @file
+ * @ingroup SimilarityBot
+ * 
+ * @defgroup SimilarityBot
+ * @ingroup SemanticGardeningBots
+ * 
+ * @author Kai Kühn
+ * 
  * Created on 16.03.2007
  *
  * Author: kai

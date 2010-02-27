@@ -2,6 +2,7 @@
 /**
  * @file
  * @ingroup SemanticRules
+ * 
  * @defgroup SemanticRules Semantic Rules extension
  * 
  * Semantic rules extension entry point

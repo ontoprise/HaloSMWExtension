@@ -18,10 +18,10 @@
 
 /**
  * @file
- * @ingroup SemanticRules
  * @ingroup SRRuleObject
  * 
  * @defgroup SRRuleObject Abstract semantic rule object
+ * @ingroup SemanticRules
  * 
  * @author Kai Kühn
  */

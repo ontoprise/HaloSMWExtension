@@ -16,6 +16,13 @@
 *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @file
+ * @ingroup SemanticGardening
+ * 
+ * @author Kai Kühn
+ */
+
 var SMW_AJAX_GARDLOG = 2;
 
 var GardeningPage = Class.create();

@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchMaintenance
+ * 
  * @defgroup UnifiedSearchMaintenance Unified search maintenance scripts
+ * @ingroup UnifiedSearch
  * 
  * Clear the search statistics table.
  *

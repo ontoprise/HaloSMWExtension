@@ -30,9 +30,15 @@
 *   Note:
 *      Apostroph char '"' is escaped by {{apos}}
 * 
-*   Author: kai
+*   
 */
 
+/**
+ * @file
+ * @ingroup SemanticGardeningMaintenance
+ * 
+ * @author Kai Kühn
+ */
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
     echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
     return;

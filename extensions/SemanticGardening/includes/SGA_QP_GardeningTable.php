@@ -1,7 +1,10 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticGardening
+ * 
  * Print query results in tables.
- * @author Markus KrÃ¶tzsch
+ * @author Markus Krötzsch
  * @author Ontoprise
  */
 

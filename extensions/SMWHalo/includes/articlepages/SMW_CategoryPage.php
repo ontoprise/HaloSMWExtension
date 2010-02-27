@@ -18,9 +18,10 @@
 /**
  * 
  * @file
- * @ingroup SMWHalo
  * @ingroup SMWHaloArticlepages
+ * 
  * @defgroup SMWHaloArticlepages SMWHalo Articlepages
+ * @ingroup SMWHalo
  *  
  * @author Kai Kühn
  * 

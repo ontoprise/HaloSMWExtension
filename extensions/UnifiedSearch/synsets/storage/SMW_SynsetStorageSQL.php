@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchSynsetsStorage
+ * 
  * @defgroup UnifiedSearchSynsetsStorage UnifiedSearchSynsets storage layer
+ * @ingroup UnifiedSearchSynsets
  * 
  * @author Ingo Steinbauer
  */

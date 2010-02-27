@@ -1,5 +1,11 @@
 <?php
 /**
+ * @file
+ * @ingroup SemanticGardeningMaintenance
+ * 
+ * @defgroup SemanticGardeningMaintenance 
+ * @ingroup SemanticGardening
+ * 
  * Setup database for Semantic Gardening extension.
  *
  * @author: Kai Kühn

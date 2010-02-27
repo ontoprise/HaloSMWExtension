@@ -17,9 +17,10 @@
 
 /**
  * @file
- * @ingroup SemanticRules
+ * @ingroup SRRuleTypes
  * 
  * @defgroup SRRuleTypes Semantic rule types
+ * @ingroup SemanticRules
  *  
  * @author: Kai Kühn / ontoprise / 2009
  *

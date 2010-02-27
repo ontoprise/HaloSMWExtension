@@ -3,9 +3,10 @@
  * Created on 01.03.2007
  * 
  * @file
- * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
+ * 
  * @defgroup SMWHaloOntologyBrowser SMWHalo Ontology Browser
+ * @ingroup SMWHaloSpecials
  * 
  * @author Kai Kühn
  */

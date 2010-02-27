@@ -2,7 +2,9 @@
 /**
  * @file
  * @ingroup UnifiedSearchSynsets
+ * 
  * @defgroup UnifiedSearchSynsets UnifiedSearch Synonyms 
+ * @ingroup UnifiedSearch
  * Created on 18.02.2009
  *
  * @author Ingo Steinbauer

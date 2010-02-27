@@ -17,9 +17,10 @@
 */
 /**
  * @file
-*  @ingroup SMWHalo
 *  @ingroup SMWHaloLanguage
+*  
 *  @defgroup SMWHaloLanguage SMWHalo Language files
+*  @ingroup SMWHalo
 *  
  * @author Ontoprise
  */
