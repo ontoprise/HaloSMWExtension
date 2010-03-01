@@ -201,10 +201,7 @@ END;
 					$userImgSrc = $image->getURL();
 				}
 			}
-			if(!isset($userImgSrc) || !$userImgSrc) {
-				// We provide own icon, if there non in the wiki
-				$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
-			}
+
 			// Get users groups and check for Sysop-Rights
 			$groups = $wgUser->getEffectiveGroups();
 			$isAllowed = false;
@@ -214,6 +211,10 @@ END;
 			} else {
 				$userIsSysopJSText = 'var cegUserIsSysop = false;';
 			}
+		}
+		if(!isset($userImgSrc) || !$userImgSrc) {
+			// We provide own icon, if there non in the wiki
+			$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
 		}
 
 		$submitButtonID = 'ce-cf-submitbuttonID';
