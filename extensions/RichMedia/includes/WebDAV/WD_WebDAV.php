@@ -32,6 +32,7 @@
 /**
  * This group contains all parts of the RichMedia extension that deal with WebDAV access..
  * @defgroup RMWebDAV
+ * @ingroup RichMedia
  */
 
 
