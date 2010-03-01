@@ -100,7 +100,7 @@ CECommentForm.prototype = {
 		textArea = textArea.replace(/\{/g, '&#123;');
 		textArea = textArea.replace(/\{/g, '&#123;');
 		textArea = textArea.replace(/\[/g, '&#91;');
-		textArea = textArea.replace(/\]/g, '&#93;;');
+		textArea = textArea.replace(/\]/g, '&#93;');
 		textArea = textArea.replace(/\//g, '&#47;');
 		textArea = textArea.replace(/\\/g, '&#92;');
 		//TODO: wgUserName is null, when not logged in!
