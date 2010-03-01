@@ -10,7 +10,7 @@
 /**
  * This group contains all parts of the Data Import extension.that deal with the Wikipedia Ultrapedia Merger
  * @defgroup DIWUM
- * @defgroup DIInterWikiArticleImport
+ * @ingroup DIInterWikiArticleImport
  */
 
 global $wgExtensionFunctions, $wgHooks;
