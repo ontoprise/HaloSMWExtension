@@ -98,8 +98,11 @@ CECommentForm.prototype = {
 		//property & template cleaning:
 		textArea = textArea.replace(/:/g, '&#58;');
 		textArea = textArea.replace(/\{/g, '&#123;');
-		textArea = textArea.replace(/\}/g, '&#125;');
-		
+		textArea = textArea.replace(/\{/g, '&#123;');
+		textArea = textArea.replace(/\[/g, '&#91;');
+		textArea = textArea.replace(/\]/g, '&#93;;');
+		textArea = textArea.replace(/\//g, '&#47;');
+		textArea = textArea.replace(/\\/g, '&#92;');
 		//TODO: wgUserName is null, when not logged in!
 		var userNameString = '';
 		if( wgUserName != null && ceUserNS != null )
