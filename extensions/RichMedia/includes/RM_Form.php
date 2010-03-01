@@ -57,31 +57,33 @@ END;
 
 		if ( array_key_exists( 1, $parameters ) && isset( $parameters[1] ) )
 			$linkTitle = $parameters[1];
-		else
+			else
 			$linkTitle = wfMsgNoTrans('smw_rm_uploadheadline');
-		
-		
-		$queryString = "";
-		
-		$queryParameters = explode('&', $parameters[2]);
-		#cylce throuh other paramters and check if no preview value is blank!
-		for ($i = 0; $i < count($queryParameters); $i++) {
-			$queryParameter = $queryParameters[$i];
-			
-			if ( $queryString != "" ) {
-				$combine = "&";
-			}
-			else {
-				$combine ="";
-			}
-			$querySubParameter = explode('=', $queryParameter);
-			if ( count ($querySubParameter) == 2) {
-				if ( $querySubParameter[1] != "" ) {
-					$queryString .= $combine.$querySubParameter[0]."=".urlencode($querySubParameter[1]);
+
+
+			$queryString = "";
+
+			if( array_key_exists( 2, $parameters ) && isset( $parameters[2] ) ) {
+			$queryParameters = explode('&', $parameters[2]);
+			#cylce throuh other paramters and check if no preview value is blank!
+			for ($i = 0; $i < count($queryParameters); $i++) {
+				$queryParameter = $queryParameters[$i];
+					
+				if ( $queryString != "" ) {
+					$combine = "&";
+				}
+				else {
+					$combine ="";
+				}
+				$querySubParameter = explode('=', $queryParameter);
+				if ( count ($querySubParameter) == 2) {
+					if ( $querySubParameter[1] != "" ) {
+						$queryString .= $combine.$querySubParameter[0]."=".urlencode($querySubParameter[1]);
+					}
 				}
 			}
 		}
-		
+
 		$rev = 'width:600 height:660';
 		$queryString .= "&wpIgnoreWarning=true";
 		$uploadWindowPage = SpecialPage::getPage('UploadWindow');
