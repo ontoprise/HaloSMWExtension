@@ -110,7 +110,7 @@ class USSpecialPage extends SpecialPage {
 
 		// -- search form --
 		if ($restrict != '') $restrictInput = '<input type="hidden" name="restrict" value="'.$restrict.'">'; else $restrictInput="";
-		$html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr><tr><td><input id="us_searchfield" type="text" size="30" name="search"></td>'.
+		$html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr><tr><td><input id="us_searchfield" type="text" size="30" name="search" value="'.$search.'"></td>'.
             '<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()"><option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
             '<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
             '<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
