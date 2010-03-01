@@ -31,7 +31,7 @@
 /**
  * This group contains all parts of the Data Import extension.that deal with the Interwiki Article Import
  * @defgroup DIInterWikiArticleImport
- * @ingroup DataImport
+ * @ingroup DITermImport
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
