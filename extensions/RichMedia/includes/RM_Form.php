@@ -1,14 +1,33 @@
 <?php
+/*  Copyright 2008, ontoprise GmbH
+*  This file is part of the RichMedia-Extension.
+*
+*   The RichMedia-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The RichMedia-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * @file
-  * @ingroup RichMedia
-  */
-
+ * @ingroup RichMedia
+ * 
+ * This class handles all Parser functions created and used by the Rich Media extension.
+ * 
+ * @author Benjamin Langguth
+ */
 class RMForm {
 
 	/**
-	 * Paser function that creates the HTML form for the media list
+	 * Parser function that creates the HTML form for the media list
 	 *
 	 * @param array $parameter
 	 * @return HTML
@@ -98,22 +117,27 @@ END;
 		return $marker;
 	}
 	
+	/**
+	 * Parser functions that finds the markers created by function createRichMediaLink
+	 * in $text and replaces them with the actual output.
+	 * 
+	 * @param Parser $parser
+	 * @param $text
+	 * @return bool
+	 */
 	function createRichMediaLinkAfterTidy(&$parser, &$text) {
-	// find markers in $text
-	// replace markers with actual output
-	global $smwgRMMarkerList;
-	$keys = array();
-	$marker_count = count($smwgRMMarkerList);
- 
-	for ($i = 0; $i < $marker_count; $i++) {
-		$keys[] = 'x-richmedialink-x' . $i . '-x-richmedialink-x';
+		global $smwgRMMarkerList;
+		$keys = array();
+		$marker_count = count($smwgRMMarkerList);
+
+		for ($i = 0; $i < $marker_count; $i++) {
+			$keys[] = 'x-richmedialink-x' . $i . '-x-richmedialink-x';
+		}
+
+		$text = str_replace($keys, $smwgRMMarkerList, $text);
+		return true;
 	}
- 
-	$text = str_replace($keys, $smwgRMMarkerList, $text);
-	return true;
-}
-	
-	
+
 	/**
 	 * Parser function that creates a link to the EmbedWindow
 	 *

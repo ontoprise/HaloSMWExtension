@@ -1,9 +1,38 @@
 <?php
+/*  Copyright 2010, ontoprise GmbH
+*  This file is part of the RichMedia-Extension.
+*
+*   The RichMedia-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The RichMedia-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
  * @file
-  * @ingroup RichMedia
-  */
+ * @ingroup RMAdditionalMIMETypes
+ * 
+ * This file takes care about the additional file extensions and namespaces.
+ * It also provides a function that determines if an article is contained 
+ * in one of the newly defined "image" namespaces.
+ * At least the namespace with semantic data are defined.
+ * 
+ * @author Benjamin Langguth
+ */
+
+/**
+ * This group contains all parts of the RichMedia extension that deal with additional MIME types.
+ * @defgroup RMAdditionalMIMETypes
+ * @ingroup RichMedia
+ */
 
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',

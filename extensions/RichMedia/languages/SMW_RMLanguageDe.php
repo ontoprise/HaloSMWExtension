@@ -1,21 +1,24 @@
 <?php
 /*  Copyright 2007, ontoprise GmbH
- *  This file is part of the Data Import-Extension.
- *
- *   The Data Import-Extension is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   The Data Import-Extension is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*  This file is part of the RichMedia-Extension.
+*
+*   The RichMedia-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The RichMedia-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
+ * @file
+ * @ingroup RichMedia
  * @author Markus KrÃ¶tzsch
  */
 
@@ -25,8 +28,6 @@ include_once($smwgRMIP . '/languages/SMW_RMLanguage.php');
 class SMW_RMLanguageDe extends SMW_RMLanguage {
 	
 	protected $smwUserMessages = array(
-		//'specialpages-group-di_group' => 'Data Import',
-	
 		/* Messages of the Document and Media Ontology */
 		
 		
@@ -61,11 +62,11 @@ class SMW_RMLanguageDe extends SMW_RMLanguage {
 		'smw_rm_uploadsuccess_closewindow' => 'Sie kÃ¶nnen jetzt dieses Fenster schlieÃŸen.',
 
 		'smw_rm_embed_desc_link' => 'Klicken Sie um zur Beschreibungsseite von $1 im Hauptfenster zu gelangen.',
-		'smw_rm_noembed' => 'Ihr Browser unterstützt keine eingebetteten Objekte.<br>Klicken Sie <a href="$1">hier</a> um die Datei herunterzuladen.',
-		'smw_rm_embed_notarget' => 'Dies ist der FileViewer. Sie müssen ein Zeilseite in der URL angeben;<br/>z.B. \'Special:EmbedWindow?target=Image:File.ext\'.',
+		'smw_rm_noembed' => 'Ihr Browser unterstï¿½tzt keine eingebetteten Objekte.<br>Klicken Sie <a href="$1">hier</a> um die Datei herunterzuladen.',
+		'smw_rm_embed_notarget' => 'Dies ist der FileViewer. Sie mï¿½ssen ein Zeilseite in der URL angeben;<br/>z.B. \'Special:EmbedWindow?target=Image:File.ext\'.',
 		'smw_rm_embed_save' => '$1 speichern.',
 		'smw_rm_embed_view' => 'Ansicht',
-		'smw_rm_embed_fullres'=> 'Volle Auflösung',
+		'smw_rm_embed_fullres'=> 'Volle Auflï¿½sung',
 		'smw_rm_embed_fittowindow' => 'An Fenster anpassen',
 		'smw_rm_embed_desctext' => 'Beschreibungsseite',
 		'smw_rm_embed_savetext' => 'Speichern',

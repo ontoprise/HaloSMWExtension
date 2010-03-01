@@ -1,17 +1,33 @@
 <?php
+/*  Copyright 2010, ontoprise GmbH
+*  This file is part of the RichMedia-Extension.
+*
+*   The RichMedia-Extension is free software; you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation; either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   The RichMedia-Extension is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  * @file
-  * @ingroup RichMedia
-  * This file contains methods for initializing the Rich Media extension.
-  * @author Benjamin Langguth
+ * @ingroup RichMedia
+ * This file contains methods for initializing the Rich Media extension.
+ * 
+ * @author Benjamin Langguth
  */
 
 /**
  * This group contains all parts of the Rich Media extension.
  * @defgroup RichMedia
  */
-
-
 
 //this extension does only work if the Halo extension is enabled
 if ( !defined( 'MEDIAWIKI' ) ) {
@@ -54,6 +70,8 @@ if ($smwgEnableUploadConverter) {
 /**
  * Configures Rich Media Extension for initialization.
  * (Must be called *AFTER* SMWHalo is intialized.)
+ * 
+ * @return bool
  */
 function enableRichMediaExtension() {
 	
@@ -101,11 +119,15 @@ function enableRichMediaExtension() {
 	$wgHooks['smwhACNamespaceMappings'][] = 'smwfRMRegisterAutocompletionIcons';
 	
 	global $smgJSLibs; $smgJSLibs[] = 'prototype';
+
+	return true;
 }
 
 /**
  * Intializes Rich Media Extension.
  * Called from SMW during initialization.
+ * 
+ * @return bool
  */
 function smwfRMSetupExtension() {
 	global $wgHooks, $wgExtensionCredits, $wgAutoloadClasses, $wgSpecialPages; 
@@ -124,13 +146,13 @@ function smwfRMSetupExtension() {
 	return true;
 }
 
-
 function smwfRegisterRMForm( &$parser ) {
 	
 	$parser->setFunctionHook( 'RMFormUsage', 'smwfProcessRMFormParserFunction' );
 
 	return true; // always return true, in order not to stop MW's hook processing!	
 }
+
 function smwfRegisterRMLink( &$parser ) {
 	
 	$parser->setFunctionHook( 'RMLinkUsage', 'smwfProcessRMLinkParserFunction' );
@@ -143,8 +165,6 @@ function smwfRegisterRMEmbedWindowLink( &$parser ) {
 
 	return true; // always return true, in order not to stop MW's hook processing!	
 }
-
-
 
 /**
  * The {{#rmf }} parser function processing part.
@@ -175,6 +195,18 @@ function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
 	return RMForm::createRichMediaEmbedWindowLink($parser, $params);
 }
 
+/**
+ * Hookfunction that changes the Namespace for the appropriate image links.
+ * Called by Hook 'LinkBegin'.
+ * @param $this
+ * @param $target
+ * @param $text
+ * @param $customAttribs
+ * @param $query
+ * @param $options
+ * @param $ret
+ * @return unknown_type
+ */
 function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
 
 	global $wgNamespaceByExtension,$wgCanonicalNamespaceNames;
@@ -203,6 +235,19 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
 	return true;
 }
 
+/**
+ * Hook function that changes all links that point to Special:Upload with Special:UploadWindow
+ * and uses an overlay window for the upload process.
+ * Called by 'LinkEnd'.
+ * 
+ * @param $skin
+ * @param $target
+ * @param $options
+ * @param $text
+ * @param $attribs
+ * @param $ret
+ * @return unknown_type
+ */
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	
 	global $wgRMImagePreview;
@@ -256,6 +301,12 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
 	return true;
 }
 
+/**
+ * Extends the HTML header with the required css and javascript files.
+ * 
+ * @param OutputPage $out
+ * @return bool
+ */
 function smwRMFormAddHTMLHeader(&$out){
 	global $smwgRMScriptPath, $sfgScriptPath;
 	
@@ -272,7 +323,7 @@ function smwRMFormAddHTMLHeader(&$out){
 		
 	
 		#Floatbox css file:
-		 $out->addLink(array(
+		$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
                     'media' => 'screen, projection',
@@ -378,6 +429,13 @@ function smwfRMAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
 		$jsm->addScriptIf($smwgRMScriptPath . '/scripts/Language/SMWRM_LanguageUserEn.js', $mode, $namespace, $pages);
 	}
 }
+
+/**
+ * Registers the autocompletion icons of the Rich Media namespace for the SMWHaloAutocompletion.
+ * 
+ * @param array $namespaceMappings
+ * @return bool
+ */
 function smwfRMRegisterAutocompletionIcons(& $namespaceMappings) {
 
 	$namespaceMappings[NS_PDF]="/extensions/RichMedia/skins/pdf.gif";
@@ -386,7 +444,6 @@ function smwfRMRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[NS_VIDEO]="/extensions/RichMedia/skins/video.gif";
 	$namespaceMappings[NS_VCARD]= "/extensions/RichMedia/skins/vcard.gif";
 	$namespaceMappings[NS_ICAL]= "/extensions/RichMedia/skins/icalendar.gif";
-	//$namespaceMappings[NS_IMAGE]= "/skins/common/images/icons/smw_plus_icalendar_icon_16x16.gif.gif";
 	return true;
 }
 
