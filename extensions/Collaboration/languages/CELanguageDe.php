@@ -17,8 +17,10 @@
  */
 
 /**
- * @author Benjamin Langguth
+ * @file
+ * @ingroup Collaboration
  * 
+ * @author Benjamin Langguth
  */
 
 /*

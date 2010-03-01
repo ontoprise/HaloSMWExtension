@@ -17,7 +17,11 @@
  */
 
 /**
- * This file contains the implementation of parser functions for Collaboration.
+ * @file
+ * @ingroup CEComment
+ * 
+ * This file contains takes care about parser functions 
+ * for comment component of Collaboration extension.
  *
  * @author Benjamin Langguth
  * Date: 16.11.2009
@@ -371,7 +375,7 @@ END;
 		if (self::$mInstance->mTitle == null) {
 			self::$mInstance->mTitle = $title;
 		}
-		// disabled to due problems when importing or updateing articles.
+		// disabled to due problems when importing or updating articles.
 //		 else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
 //			throw new CEException(CEException::INTERNAL_ERROR,
 //                "The parser functions " . $pfContLangName .

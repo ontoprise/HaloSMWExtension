@@ -21,11 +21,8 @@
  * 
  * @author Benjamin Langguth
  * Date: 2009-10-16
- * 
  */
- 
- //TODO: add script to convert local comments created by old Comment extension to new ones.
- 
+
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
     echo "Invalid access! A maintenance script MUST NOT accessed from remote.";
     return;

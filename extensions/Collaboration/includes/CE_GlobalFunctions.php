@@ -17,10 +17,12 @@
  */
 
 /**
+ * @file
+ * @ingroup Collaboration
+ * 
  * This file contains global functions that are called from the Collaboration extension.
  *
  * @author Benjamin Langguth
- *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
@@ -322,6 +324,12 @@ function cefAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pages 
 	return true;
 }
 
+/**
+ * Registers the autocompletion icons of the Comment namespace for the SMWHaloAutocompletion.
+ * 
+ * @param array $namespaceMappings
+ * @return bool
+ */
 function cefRegisterACIcon( &$namespaceMappings) {
 	global $cegScriptPath;
 	$namespaceMappings[CE_COMMENT_NS] = $cegScriptPath . '/skins/Comment/icons/smw_plus_comment_icon_16x16.gif';

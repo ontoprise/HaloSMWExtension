@@ -17,11 +17,18 @@
  */
 
 /**
+ * @file
+ * @ingroup CEComment
+ * 
  * This file contains the implementation of comment creation for Collaboration.
  *
  * @author Benjamin Langguth
  * Date: 07.12.2009
- *
+ */
+
+/**
+ * @defgroup CEComment
+ * @ingroup Collaboration
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {

@@ -17,12 +17,19 @@
 */
 
 /**
+ * @file
+ * @ingroup Collaboration 
+ * 
  * This is the main entry file for the Collaboration extension.
  * It contains mainly constants for the configuration of the extension.
  * This file has to be included in LocalSettings.php to enable the extension.
  * 
  * @author Benjamin Langguth
- * 
+ */
+
+/**
+ * This group contains all parts of the Collaboration extension.
+ * @defgroup Collaboration
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
@@ -65,6 +72,11 @@ $cegEnableCommentFor = CE_COMMENT_ALL;
 # Enable CurrentUsers
 ###
 $cegEnableCurrentUsers = false;
+
+###
+# Use ScriptManager
+###
+$smgJSLibs; $smgJSLibs[] = 'prototype'; 
 
 # load global functions
 require_once('CE_GlobalFunctions.php');

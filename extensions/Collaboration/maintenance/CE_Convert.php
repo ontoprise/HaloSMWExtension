@@ -17,14 +17,14 @@
 */
 
 /**
+ * @file
+ * @ingroup Collaboration
  * Maintenance script for converting existing comments
  * created by Extension:Comment to Collaboration Extension comments.
  * 
  * @author Benjamin Langguth
  * Date: 2010-01-13
- * 
  */
-
 
 if (array_key_exists('SERVER_NAME', $_SERVER) && $_SERVER['SERVER_NAME'] != NULL) {
 	echo "Invalid access! A maintenance script MUST NOT accessed from remote.";

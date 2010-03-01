@@ -17,11 +17,12 @@
 */
 
 /**
+ * @file
+ * @ingroup Collaboration
+ * 
  * Collaboration Exeption Helper Class
  * 
  * @author Benjamin Langguth
- * Date: 16.11.2009
- * 
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Collaboration extension. It is not a valid entry point.\n" );
