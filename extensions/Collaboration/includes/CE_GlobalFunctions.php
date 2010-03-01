@@ -56,7 +56,6 @@ function enableCollaboration() {
 
 	//--- Comment classes ---
 	//$wgAutoloadClasses['CECommentStorage'] = $cegIP . '/specials/Comment/CE_CommentStorage.php';
-	$wgAutoloadClasses['CECommentQuery'] = $cegIP . '/specials/Comment/CE_CommentQuery.php';
 	$wgAutoloadClasses['CEComment'] = $cegIP . '/specials/Comment/CE_Comment.php';
 	$wgAutoloadClasses['CECommentUtils'] = $cegIP . '/specials/Comment/CE_CommentUtils.php';
 
