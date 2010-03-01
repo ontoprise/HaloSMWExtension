@@ -29,7 +29,7 @@
 /**
  * This group contains all parts of the Data Import extension that deal with materializing web service results.
  * @defgroup DIWSMaterialization
- * @ingroup DataImport
+ * @ingroup DIWebServices
  */
 
 global $wgExtensionFunctions, $wgHooks;

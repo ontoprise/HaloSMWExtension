@@ -34,6 +34,7 @@
 /**
  * This group contains all result printers for web service results.
  * @defgroup DIWSResultPrinters
+ * @ingroup DIWebServices
  */
 
 /**
