@@ -76,7 +76,8 @@ $cegEnableCurrentUsers = false;
 ###
 # Use ScriptManager
 ###
-$smgJSLibs; $smgJSLibs[] = 'prototype'; 
+global $smgJSLibs;
+$smgJSLibs[] = 'prototype'; 
 
 # load global functions
 require_once('CE_GlobalFunctions.php');
