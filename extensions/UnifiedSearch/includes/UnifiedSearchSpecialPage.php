@@ -29,6 +29,7 @@ class USSpecialPage extends SpecialPage {
 		global $wgRequest, $wgOut, $wgPermissionACL, $wgContLang, $wgLang, $wgWhitelistRead, $wgPermissionACL_Superuser, $wgExtensionCredits, $wgUSPathSearch;
 		$search = str_replace( "\n", " ", $wgRequest->getText( 'search', '' ) );
 		$restrict = $wgRequest->getText( 'restrict', '' );
+		$specialPageTitle = $wgRequest->getText( 'title', '' );
 		$t = Title::newFromText( $search );
 
 		$fulltext = $wgRequest->getVal( 'fulltext', '' );
@@ -109,15 +110,17 @@ class USSpecialPage extends SpecialPage {
 		}
 
 		// -- search form --
-		if ($restrict != '') $restrictInput = '<input type="hidden" name="restrict" value="'.$restrict.'">'; else $restrictInput="";
-		$html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr><tr><td><input id="us_searchfield" type="text" size="30" name="search" value="'.$search.'"></td>'.
-            '<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()"><option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
-            '<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
-            '<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
-            '<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'">'.$restrictInput.'<input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="'.$doPathSearch.'"/></td></tr></table>'.
-		
-
-        '</form>';
+		if ($restrict != '') $restrictInput = '<input type="hidden" name="restrict" value="'.$restrict.'"/>'; else $restrictInput="";
+		$html = '<form id="us_searchform"><table><tr><td>'.wfMsg('us_searchfield').'</td><td>'.wfMsg('us_tolerance').'</td><td></td></tr>'.
+			'<tr><td><input id="us_searchfield" type="text" size="30" name="search" value="'.$search.'"/></td>'.
+			'<td><select id="toleranceSelector" name="tolerance" onchange="smwhg_toleranceselector.onChange()">'.
+			'<option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
+			'<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
+			'<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
+			'<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"/>'.$restrictInput.
+			'<input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="'.$doPathSearch.'"/>'.
+			'<input type="hidden" name="title" value="'.$specialPageTitle.'"/></td></tr></table>'.
+		'</form>';
 
 		// -- new page link --
 		$colonIndex = strpos($search, ":");
