@@ -49,7 +49,7 @@ class RESTWebserviceConnector {
         curl_close($ch);
        
         list($header, $res) = explode("\r\n\r\n", $res);
-        return array($header, $res);
+        return array($header, $status, $res);
 	}
 
 

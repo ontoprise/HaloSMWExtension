@@ -201,7 +201,10 @@ class TSConnectorRESTWebservice extends TSConnection {
         $queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
         $queryRequest .= "</query>";
         
-        list($header, $result) = $this->queryClient->send($queryRequest, "sparql");
+        list($header, $status, $result) = $this->queryClient->send($queryRequest, "sparql");
+        if ($status != 200) {
+        	throw new Exception(strip_tags($result), $status);
+        }
         return $result;
     }
 }
