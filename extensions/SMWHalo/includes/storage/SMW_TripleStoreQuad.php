@@ -288,7 +288,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 						$section_name = urldecode($sections_parts[1]);
 						$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
 						$section_name = str_replace("'","",$section_name);
-						$title = Title::makeTitle(0, $local, $section_name);
+						$localToDisplay = str_replace("_", " ", $localToDisplay);
+						$title = Title::makeTitle($ns, $local, $localToDisplay."##".$section_name);
 					} else {
 						$local = substr($sv, strpos($sv, "#")+1);
 						$title = Title::newFromText($local, $ns);
@@ -349,7 +350,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$section_name = urldecode($sections_parts[1]);
 			$section_name = preg_replace('/\{\{[^}]*\}\}/', '', $section_name);
 			$section_name = str_replace("'","",$section_name);
-			$title = Title::makeTitle(0, $local, $section_name);
+			$localToDisplay = substr($sv, strlen($nsFragment));
+			$localToDisplay = str_replace("_", " ", $localToDisplay);
+			$title = Title::makeTitle($ns, $local, $localToDisplay."##".$section_name);
 		} else {
 			$local = substr($sv, strlen($nsFragment));
 			$title = Title::newFromText($local, $ns);
