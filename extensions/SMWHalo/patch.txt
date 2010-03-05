@@ -1,6 +1,6 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 6418)
+--- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 6646)
 +++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(working copy)
 @@ -113,6 +113,7 @@
  		$this->m_namespace = array_key_exists(1,$args)?$args[1]:$this->m_fixNamespace;
@@ -18,14 +18,29 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
  		$this->unstub();
  		if (!$this->isValid()) {
  			return $this->getErrorText();
-@@ -163,11 +165,13 @@
+@@ -163,11 +165,27 @@
  		} elseif ($this->m_namespace == NS_IMAGE) { // embed images instead of linking to their page
  			 return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
  		} else { // this takes care of all other cases, esp. it is right for Media:
 -			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . ']]';
-+			$fragment = $this->m_fragment != NULL ? str_replace("'", '&#x0027;', $this->m_fragment) : "";
-+			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . ($this->m_fragment != NULL ? "#".$fragment : "") . '|' . $this->m_textform . " " . $fragment . ']]';
- 		}
+-		}
++            if ( $this->m_fragment != NULL) {
++                if (strpos($this->m_fragment, "##") === false) {
++                    // only fragment set
++                    $fragment = $this->m_fragment;  
++                    $label = $this->m_textform;
++                } else {
++                    // fragment set with alternative label encoded
++                    list($label, $fragment) = explode("##",$this->m_fragment);
++                }
++            } else {
++                // no fragment at all set
++             $label = $this->m_textform;
++             $fragment = "";
++            }
++            $fragment = str_replace("'", '&#x0027;', $fragment);
++            return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . ($this->m_fragment != NULL ? "#".$fragment : "") . '|' . $label  . ']]';
++        }
  	}
  
  	public function getLongHTMLText($linker = NULL) {
@@ -33,7 +48,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
  		$this->unstub();
  		if ( ($linker !== NULL) && ($this->m_outformat != '-') ) { $this->getTitle(); } // init the Title object, may reveal hitherto unnoticed errors
  		if (!$this->isValid()) {
-@@ -367,8 +371,8 @@
+@@ -367,8 +385,8 @@
  	/**
  	 * @deprecated Use setDBkeys()
  	 */
@@ -46,7 +61,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
  }
 Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6418)
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6546)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
 @@ -55,7 +55,15 @@
  
@@ -67,7 +82,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
  		$this->m_typeid = $typeid;
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
---- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 6418)
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 6546)
 +++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
 @@ -85,9 +85,9 @@
  	for (var i=0;i<spans.length;i++) {
@@ -83,7 +98,7 @@ Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
  
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 6000)
+--- includes/Article.php	(revision 6546)
 +++ includes/Article.php	(working copy)
 @@ -3552,9 +3552,15 @@
  
@@ -105,7 +120,7 @@ Index: includes/Article.php
  		if( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
 Index: includes/Namespace.php
 ===================================================================
---- includes/Namespace.php	(revision 6000)
+--- includes/Namespace.php	(revision 6546)
 +++ includes/Namespace.php	(working copy)
 @@ -53,7 +53,11 @@
  	 */
@@ -122,7 +137,7 @@ Index: includes/Namespace.php
  	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php	(revision 6000)
+--- includes/parser/ParserOptions.php	(revision 6546)
 +++ includes/parser/ParserOptions.php	(working copy)
 @@ -30,6 +30,9 @@
  	var $mTemplateCallback;          # Callback for template fetching
