@@ -244,14 +244,14 @@ class SRFExhibit extends SMWResultPrinter {
 				if($pr->getTypeID() == '_wpg') {
 					$prefix='';
 					if($pr->getLabel()=='Category') $prefix = "Category:";
-					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'"><td width="20%">'.$pr->getText(0, $this->mLinker).'</td><td width="80%" ex:content=".'.$this->encodePropertyName($pr->getLabel()).'"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$prefix.'{{value}}"><div ex:content="value" class="name"></div></a></td></tr>';
+					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'"><td width="20%">'.$pr->getText(0, $this->mLinker).'</td><td width="80%" ex:content=".'.$this->encodePropertyName($pr->getLabel()).'"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$prefix.'<<value>>"><div ex:content="value" class="name"></div></a></td></tr>';
 				}
 				else{
 					$lensstack[] = '<tr ex:if-exists=".'.$this->encodePropertyName($pr->getLabel()).'"><td width="20%">'.$pr->getText(0, $this->mLinker).'</td><td width="80%"><div ex:content=".'.$this->encodePropertyName($pr->getLabel()).'" class="name"></div></td></tr>';
 				}
 			}
 			array_shift($lensstack);
-			$lenssrc = 'var lens = \'<table width=100% cellpadding=3><tr><th class="head" align=left bgcolor="#DDDDDD"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$this->determineNamespace(clone $res).'{{.label}}" class="linkhead"><div ex:content=".label" class="name"></div></a></th></tr></table><table width="100%" cellpadding=3>'.implode("", $lensstack).'</table>\'; lenscounter = 0; linkcounter=0;';
+			$lenssrc = 'var lens = \'<table width=100% cellpadding=3><tr><th class="head" align=left bgcolor="#DDDDDD"><a ex:href-subcontent="'.$wgScriptPath.'/index.php?title='.$this->determineNamespace(clone $res).'<<.label>>" class="linkhead"><div ex:content=".label" class="name"></div></a></th></tr></table><table width="100%" cellpadding=3>'.implode("", $lensstack).'</table>\'; lenscounter = 0; linkcounter=0;';
 		}
 
 		
