@@ -179,7 +179,7 @@ class SRFExhibit extends SMWResultPrinter {
 						}
 					}
 					$viewstack[] = '
-<div ex:role="view" ex:viewClass="Timeline" ex:label="Timeline" ex:collectionID="' . $collection . '" ex:showSummary="false" '.implode(" ",$tlparams) . ' ></div>';
+<div ex:role="view" ex:viewClass="Timeline" ex:label="Timeline" ex:eventLabel=".labeltext" ex:collectionID="' . $collection . '" ex:showSummary="false" '.implode(" ",$tlparams) . ' ></div>';
 					break;
 				case 'map'://map view
 					if(isset($wgGoogleMapsKey)){
@@ -351,9 +351,9 @@ class SRFExhibit extends SMWResultPrinter {
 							$tmp = $object->getLongHTMLText($outputmode,$this->getLinker(0));
 					}
 					if($object->getTypeID() == '_num') {
-						$textstack[] = $colstack[$col] . ': ' . str_replace('"', '\"', $tmp);
+						$textstack[] = '"' . $colstack[$col] . '": ' . str_replace('"', '\"', $tmp);
 					} else {
-						$textstack[] = $colstack[$col] . ': "' . str_replace('"', '\"', $tmp) . '"';
+						$textstack[] = '"' . $colstack[$col] . '": "' . str_replace('"', '\"', $tmp) . '"';
 					}
 					if(array_key_exists($colstack[$col], $gmaps)){$locations[$tmp] = $tmp;}
 					if($col==0) $l = str_replace('"', '\"', $tmp);
