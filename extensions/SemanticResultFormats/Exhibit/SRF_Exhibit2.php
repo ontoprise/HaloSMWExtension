@@ -366,7 +366,7 @@ class SRFExhibit extends SMWResultPrinter {
 			$index ++;
 		}
 
-		$locationstr = '';
+		$locationstr = array();
 		if(count($locations) > 0) {
 			global $srfgIP ;
 			require_once( $srfgIP . '/includes/SRF_Storage.php' );

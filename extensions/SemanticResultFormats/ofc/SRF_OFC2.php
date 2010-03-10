@@ -285,7 +285,7 @@ class SRFOFC extends SMWResultPrinter {
 						}
 						$ofc_text = $object->getShortText($outputmode,$this->getLinker($firstcol));
 					}
-					if ($firstcol) {$rowname = $object->getShortText();}
+					if ($firstcol) {$rowname = $object->getShortText(SMW_OUTPUT_WIKI);}
 					if($this->m_disableprov) {
 						$provURL = '';
 					} else {
