@@ -1518,3 +1518,73 @@ Index: includes/specials/SpecialUndelete.php
  		} else {
  			// Revision couldn't be created. This is very weird
  			return self::UNDELETE_UNKNOWNERR;
+Index: includes/mime.info
+===================================================================
+--- includes/mime.info	(revision 6656)
++++ includes/mime.info	(working copy)
+@@ -77,3 +77,21 @@
+ application/vnd.ms-powerpoint	[OFFICE]
+ application/x-director		[OFFICE]
+ text/rtf			[OFFICE]
++application/vnd.oasis.opendocument.text			[OFFICE]
++application/vnd.oasis.opendocument.text-template	[OFFICE]
++application/vnd.oasis.opendocument.graphics		[OFFICE]
++application/vnd.oasis.opendocument.graphics-template	[OFFICE]
++application/vnd.oasis.opendocument.presentation	[OFFICE]
++application/vnd.oasis.opendocument.presentation-template	[OFFICE]
++application/vnd.oasis.opendocument.spreadsheet	[OFFICE]
++application/vnd.oasis.opendocument.spreadsheet-template	[OFFICE]
++application/vnd.oasis.opendocument.chart	[OFFICE]
++application/vnd.oasis.opendocument.chart-template	[OFFICE]
++application/vnd.oasis.opendocument.image	[OFFICE]
++application/vnd.oasis.opendocument.image-template	[OFFICE]
++application/vnd.oasis.opendocument.formula	[OFFICE]
++application/vnd.oasis.opendocument.formula-template	[OFFICE]
++application/vnd.oasis.opendocument.text-master	[OFFICE]
++application/vnd.oasis.opendocument.text-web	[OFFICE]
++application/vnd.openxmlformats-officedocument.wordprocessingml.document	[OFFICE]
++application/vnd.sun.xml.writer	[OFFICE]
+\ No newline at end of file
+Index: includes/mime.types
+===================================================================
+--- includes/mime.types	(revision 6656)
++++ includes/mime.types	(working copy)
+@@ -2,7 +2,7 @@
+ application/mac-binhex40 hqx
+ application/mac-compactpro cpt
+ application/mathml+xml mathml
+-application/msword doc
++application/msword doc docx docm dot dotx dotm
+ application/octet-stream bin dms lha lzh exe class so dll
+ application/oda oda
+ application/ogg ogg ogm
+@@ -13,8 +13,8 @@
+ application/srgs gram
+ application/srgs+xml grxml
+ application/vnd.mif mif
+-application/vnd.ms-excel xls
+-application/vnd.ms-powerpoint ppt
++application/vnd.ms-excel xls xlsx xlsb xlam xltx xltm
++application/vnd.ms-powerpoint ppt pptm pptx pot potx potm ppsm ppam
+ application/vnd.wap.wbxml wbxml
+ application/vnd.wap.wmlc wmlc
+ application/vnd.wap.wmlscriptc wmlsc
+@@ -58,7 +58,7 @@
+ application/xslt+xml xslt
+ application/xml xml xsl xsd
+ application/xml-dtd dtd
+-application/zip zip jar xpi  sxc stc  sxd std   sxi sti   sxm stm   sxw stw
++application/zip zip jar xpi  sxc stc  sxd std   sxi sti   sxm stm   stw
+ application/x-rar rar
+ audio/basic au snd
+ audio/midi mid midi kar
+@@ -133,4 +133,6 @@
+ application/vnd.oasis.opendocument.formula odf
+ application/vnd.oasis.opendocument.formula-template otf
+ application/vnd.oasis.opendocument.text-master odm
+-application/vnd.oasis.opendocument.text-web oth
+\ No newline at end of file
++application/vnd.oasis.opendocument.text-web oth
++application/vnd.sun.xml.writer sxw
++application/abiword abw
+\ No newline at end of file
