@@ -30,26 +30,43 @@ global $smwgRMIP;
 // Definition of converters for various mime types.
 
 //define upload converters that are executed as external tools
-global $smwgUploadConverterExternal;
+global $smwgUploadConverterExternal, $smwgRMUseAbiWord;
 // check OS is windows?
 if (strpos(strtolower(php_uname('s')), "win") !== false) {
+
+	// AbiWord instead of AntiWord
 	$smwgUploadConverterExternal = array(
-		'application/pdf' => "$smwgRMIP/bin/xpdf/pdftotext.exe -enc UTF-8 -layout {infile} {outfile}",
-		'application/msword' => $smwgRMIP.'/bin/antiword/antiword.exe -m UTF-8.txt "{infile}" > "{outfile}"'
-	);
-}
-// some Unix flavour
-else {
+			'application/msword' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'application/vnd.ms-office' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'application/vnd.oasis.opendocument.text' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'application/vnd.sun.xml.writer' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'text/rtf' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			'application/abiword' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"'
+			);
+	// and xpdf
+	$smwgUploadConverterExternal['application/pdf'] =  '"'.$smwgRMIP.'/bin/xpdf/pdftotext.exe" -enc UTF-8 -layout "{infile}" "{outfile}"';
+} else { // some Unix flavour
 	$smwgUploadConverterExternal = array();
-	// check for antiword
-	$exe = @exec('which antiword');
+
+	// AbiWord instead of AntiWord
+	// check for abiword
+	$exe = wfShellExec('which abiword');
 	if (strlen($exe) > 0) {
-		$smwgUploadConverterExternal['application/msword'] = $exe.' -m '.$smwgRMIP.'/bin/antiword/UTF-8.txt "{infile}" > "{outfile}"';
+		$smwgUploadConverterExternal['application/msword'] = $exe.' --to="{outfile}" "{infile}"';
+		$smwgUploadConverterExternal['application/vnd.ms-office'] = $exe.' --to="{outfile}" "{infile}"';
+		$smwgUploadConverterExternal['application/vnd.openxmlformats-officedocument.wordprocessingml.document'] = $exe.' --to="{outfile}" "{infile}"';
+		$smwgUploadConverterExternal['application/vnd.oasis.opendocument.text'] = $exe.' --to="{outfile}" "{infile}"';
+		// AntiWord crashes when processing sxw files...
+		//$smwgUploadConverterExternal['application/vnd.sun.xml.writer'] = $exe.' --to="{outfile}" "{infile}"';
+		$smwgUploadConverterExternal['text/rtf'] = $exe.' --to="{outfile}" "{infile}"';
+		$smwgUploadConverterExternal['application/abiword'] = $exe.' --to="{outfile}" "{infile}"';
 	}
-	$exe = @exec('which pdftotext');
+
+	$exe = wfShellExec('which pdftotext');
 	if (strlen($exe) > 0) {
 		$smwgUploadConverterExternal['application/pdf'] = $exe.' -enc UTF-8 -layout "{infile}" "{outfile}"';
-	}	
+	}
 }
 
 //define upload converters that are executed as internal PHP scripts
@@ -97,8 +114,3 @@ $wgUploadConverterTemplateMapping['application/icalendar']['organizer-name'] = '
 $wgUploadConverterTemplateMapping['application/icalendar']['url'] = 'url';
 $wgUploadConverterTemplateMapping['application/icalendar']['uid'] = 'uid';
 $wgUploadConverterTemplateMapping['application/icalendar']['location'] = 'location';
-
-
-
-
-

@@ -37,7 +37,7 @@
 $wgFileExtensions = array_merge($wgFileExtensions, array(
 	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',
  	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
- 	'rar', 'xls', 'docx', 'xlsx', 'pptx', 'ics', 'vcf'));
+ 	'rar', 'xls', 'docx', 'xlsx', 'pptx', 'ics', 'vcf', 'rtf', 'abw'));
 // other possible extensions: ('pwz', 'ppz', 'pot' (draft))(Powerpoint)
 // 'rtf', 'mp2', 'ott' + 'stw' (OpenOffice drafts)
 // odt, ods, odp, odg, odf, sxw are OpenOffice-extensions 
@@ -123,7 +123,9 @@ $wgNamespaceByExtension = array(
 	'xlsx' => NS_DOCUMENT,
 	'pptx' => NS_DOCUMENT,
 	'ics' => NS_ICAL,
-	'vcf' => NS_VCARD
+	'vcf' => NS_VCARD,
+	'rtf' => NS_DOCUMENT,
+	'abw' => NS_DOCUMENT
 );
 	
 //We want semantic data in this namespaces!

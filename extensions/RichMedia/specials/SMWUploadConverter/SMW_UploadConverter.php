@@ -72,19 +72,20 @@ class UploadConverter {
 			$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
 			$converterApp = str_replace('{infile}', $path, $converterApp);
 			$converterApp = str_replace('{outfile}', $textFile, $converterApp);
-			$ret = exec($converterApp, $output, $retVar);
-			
+			$retvar = 0;
+			$output = wfShellExec($converterApp, $retvar);
+
 			$text = "";
 			if (file_exists($textFile)) {
 				// a temporary file has been written 
 				// => add its content into the article 
-	//			$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
+				//$text = '<pre>'.file_get_contents($textFile, FILE_USE_INCLUDE_PATH).'</pre>';
 				$text = file_get_contents($textFile, FILE_USE_INCLUDE_PATH);
 				// delete temp. file
 				unlink($textFile);
 			} else {
 				$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
-			}			
+			}
 			$title = $file->getTitle();
 			$article = new Article($title);
 	
@@ -141,19 +142,20 @@ class UploadConverter {
 		} else if ($ext == "ics"){
 			$mimeType = "application/icalendar";
 		}
-		
+
 		if (isset($smwgUploadConverterExternal[$mimeType])){
 			$converterApp = $smwgUploadConverterExternal[$mimeType];
-			
+
 			wfLoadExtensionMessages('UploadConverter');
-		
+
 			$path = $file->getFullPath();
 			$ext  = $file->getExtension();
 			$textFile = substr($path,0,strlen($path)-strlen($ext)).'txt';
 			$converterApp = str_replace('{infile}', $path, $converterApp);
 			$converterApp = str_replace('{outfile}', $textFile, $converterApp);
-			$ret = exec($converterApp, $output, $retVar);
-			
+			$retvar = 0;
+			$output = wfShellExec($converterApp, $retvar);
+
 			$text = "";
 			if (file_exists($textFile)) {
 				// a temporary file has been written 
@@ -163,7 +165,7 @@ class UploadConverter {
 				unlink($textFile);
 			} else {
 				$text = wfMsg('uc_not_converted', $mimeType, $converterApp);
-			}			
+			}
 			return $text;
 		} else if(array_key_exists($mimeType, $smwgUploadConverterInternal)){
 			global $wgUploadConverterTemplateMapping;

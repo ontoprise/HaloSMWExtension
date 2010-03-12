@@ -83,7 +83,7 @@ function enableRichMediaExtension() {
 	//tell SMW to call this function during initialization
 	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
 
-	//TODO: clean possibility to disable the extension without any warning/errors
+	// clean possibility to disable the extension without any warning/errors
 	$smwgEnableRichMedia = true;
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
 	
@@ -205,7 +205,7 @@ function smwfProcessRMEmbedWindowLinkParserFunction(&$parser) {
  * @param $query
  * @param $options
  * @param $ret
- * @return unknown_type
+ * @return boolean
  */
 function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
 
@@ -246,7 +246,7 @@ function RMLinkBegin($this, $target, &$text, &$customAttribs, &$query, &$options
  * @param $text
  * @param $attribs
  * @param $ret
- * @return unknown_type
+ * @return boolean
  */
 function RMLinkEnd($skin, $target, $options, &$text, &$attribs, &$ret) {
 	
@@ -305,7 +305,7 @@ function RMImagePreviewUsage_Magic(&$magicWords, $langCode){
  * Extends the HTML header with the required css and javascript files.
  * 
  * @param OutputPage $out
- * @return bool
+ * @return boolean
  */
 function smwRMFormAddHTMLHeader(&$out){
 	global $smwgRMScriptPath, $sfgScriptPath;
@@ -434,7 +434,7 @@ function smwfRMAddJSLanguageScripts(& $jsm, $mode = "all", $namespace = -1, $pag
  * Registers the autocompletion icons of the Rich Media namespace for the SMWHaloAutocompletion.
  * 
  * @param array $namespaceMappings
- * @return bool
+ * @return boolean
  */
 function smwfRMRegisterAutocompletionIcons(& $namespaceMappings) {
 
