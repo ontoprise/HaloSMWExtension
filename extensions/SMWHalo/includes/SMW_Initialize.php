@@ -517,7 +517,7 @@ function smwfHaloShowListPage(&$title, &$article){
 		$article = new SMWCategoryPage($title);
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
 		global $smwgTripleStoreQuadMode;
-		if (!isset($smwgTripleStoreQuadMode) || $smwgTripleStoreQuadMode === false) return;
+		if (!isset($smwgTripleStoreQuadMode) || $smwgTripleStoreQuadMode === false) return true;
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_TS_PropertyPage.php');
         $article = new SMWTSPropertyPage($title);
     } 
