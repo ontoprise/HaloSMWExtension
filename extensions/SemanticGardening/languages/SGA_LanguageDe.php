@@ -158,6 +158,7 @@ class SGA_LanguageDe {
     'smw_gard_export_docu' => 'Dieser Bot exportiert die Wiki-Ontologie im OWL-Format.',
     'smw_gard_export_enterpath' => 'Exportdatei/-pfad',
     'smw_gard_export_onlyschema' => 'Exportiere nur das Schema',
+    'smw_gard_rdfs_semantics' => 'Benutze RDFS-Semantik für Domain und Range',
     'smw_gard_export_ns' => 'Exportiere in Namensraum',
     'smw_gard_export_download' => 'Der Export war erfolgreich! Klicke $1 um den Wiki-Export als OWL-Datei herunterzuladen.',
     'smw_gard_export_here' => 'hier',
