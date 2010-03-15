@@ -63,17 +63,21 @@ class SMWH_Skin {
         $menu = "<ul id=\"menuleft\" class=\"smwh_menulist\">";
         foreach($rawmenu as $menuName => $menuItems) {
             $menu.= "<li class=\"smwh_menulistitem\">";
-            $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">".$this->parseWikiText($menuName)."</div>";
 
             //Check if submenu exists
             if ( count($menuItems) > 0)
             {
+                //If it's a dropdown menu with items in it, add specific css class for traingle as visualization
+                $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead smwh_menudropdown\">".$this->parseWikiText($menuName)."</div>";
                 $menu.= "<div id=\"smwh_menubody_$index\" class=\"smwh_menubody\">";
                 $menu.= "<div class=\"smwh_menubody_visible\">";
                 foreach($menuItems as $menuItem) {
                     $menu.= "<div class=\"smwh_menuitem\">".$this->buildMenuItemHtml($menuItem)."</div>";
                 }
                 $menu.= "</div></div>";
+            } else {
+                //Don't show "dropdowntraingle" when it's only a simple entry without dropdown and subitems
+                $menu.= "<div id=\"smwh_menuhead_$index\" class=\"smwh_menuhead\">".$this->parseWikiText($menuName)."</div>";
             }
             $menu.= "</li>";
             $index++;
@@ -121,12 +125,16 @@ class SMWH_Skin {
         $lines = explode( "\n", wfMsgForContent( 'halomenu' ) );
         $heading = '';
         foreach ($lines as $line) {
+
+            //Lines starting with * but not **
             if (strpos($line, '*') === 0 && strpos($line, '**') === false) {
                 $heading = trim($line, '*');
                 $heading = trim($heading);
                 if( !array_key_exists($heading, $bar) ) $bar[$heading] = array();
                 continue;
             }
+
+            //Lines starting with **
             if (strpos($line, '**') === 0) {
                 $link = trim($line, '**');
                 $link = trim($link);

@@ -69,7 +69,6 @@ dt {
 }
 
 .smwh_menuhead  {
-    background: url(../img/menu_arrow.gif) right no-repeat;
 	margin-left: 3px;
 	margin-right: 3px;
 }
@@ -79,6 +78,11 @@ dt {
 	margin-left: 3px;
 	margin-right: 3px;
 }
+
+.smwh_menudropdown{
+    background: url(../img/menu_arrow.gif) right no-repeat;
+}
+
 
 ul.smwh_menulist div.smwh_menubody_visible {
     background-color: #fbfbfb;
