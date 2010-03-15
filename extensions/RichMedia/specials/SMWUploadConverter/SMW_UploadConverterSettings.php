@@ -40,7 +40,8 @@ if (strpos(strtolower(php_uname('s')), "win") !== false) {
 			'application/vnd.ms-office' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
 			'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
 			'application/vnd.oasis.opendocument.text' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
-			'application/vnd.sun.xml.writer' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
+			// AntiWord crashes when processing sxw files...
+//			'application/vnd.sun.xml.writer' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
 			'text/rtf' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"',
 			'application/abiword' => '"'.$smwgRMIP.'/bin/AbiWord/bin/AbiWord.exe" --to="{outfile}" "{infile}"'
 			);
@@ -58,7 +59,7 @@ if (strpos(strtolower(php_uname('s')), "win") !== false) {
 		$smwgUploadConverterExternal['application/vnd.openxmlformats-officedocument.wordprocessingml.document'] = $exe.' --to="{outfile}" "{infile}"';
 		$smwgUploadConverterExternal['application/vnd.oasis.opendocument.text'] = $exe.' --to="{outfile}" "{infile}"';
 		// AntiWord crashes when processing sxw files...
-		//$smwgUploadConverterExternal['application/vnd.sun.xml.writer'] = $exe.' --to="{outfile}" "{infile}"';
+//		$smwgUploadConverterExternal['application/vnd.sun.xml.writer'] = $exe.' --to="{outfile}" "{infile}"';
 		$smwgUploadConverterExternal['text/rtf'] = $exe.' --to="{outfile}" "{infile}"';
 		$smwgUploadConverterExternal['application/abiword'] = $exe.' --to="{outfile}" "{infile}"';
 	}
