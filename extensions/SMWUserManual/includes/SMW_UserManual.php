@@ -125,11 +125,11 @@ define('SMW_FORUM_QUERY_CSH', '[[Category:Context sensitive help article]]');
 // Porperty for discourse state
 define('SMW_UME_PROPERTY_DISCOURSE_STATE', 'UME discourse state');
 // text for this property page
-define('SMW_UME_PROPERTYTEXT_DISCOURSE_STATE', '[[Has domain and range::Page| ]][[Has type::Type:String| ]]');
+define('SMW_UME_PROPERTYTEXT_DISCOURSE_STATE', '[[Has type::Type:String| ]]');
 // Property for link to real help article
 define('SMW_UME_PROPERTY_LINK', 'UME link');
 // text for this property page
-define('SMW_UME_PROPERTYTEXT_LINK', '[[Has domain and range::Page| ]][[Has type::Type:URL| ]]');
+define('SMW_UME_PROPERTYTEXT_LINK', '[[Has type::Type:URL| ]]');
 // Templates used in the SMW Forum that are required for this extension
 define('SMW_TEMPLATES_USED', 'Copyright of article,GNU Free Documentation License,Cite web in help');
 // prefix for SMW forum template pages
