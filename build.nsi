@@ -292,7 +292,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             
             File /r /x .svn /x CVS /x *.zip /x *.exe /x *.cache /x *.settings /x LocalSettings.php /x ACLs.php /x *.nsi /x SKOSExpander.php * 
             File /oname=extensions\RichMedia\bin\xpdf\pdftotext.exe extensions\RichMedia\bin\xpdf\pdftotext.exe
-            File /oname=extensions\RichMedia\bin\antiword\antiword.exe extensions\RichMedia\bin\antiword\antiword.exe
+            File /oname=extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe extensions\RichMedia\bin\AbiWord\bin\AbiWord.exe
             File /oname=AdminSettings.php AdminSettingsTemplate.php            
             CopyFiles $INSTDIR\htdocs\mediawiki\patches\patch.php $INSTDIR\htdocs\mediawiki\deployment\tools
             
