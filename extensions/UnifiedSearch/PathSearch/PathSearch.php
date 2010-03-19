@@ -39,8 +39,6 @@ function wfUSPathSearchSetup() {
  */
 function wfUSPathSearchAddHeader(& $out) {
 	global $wgScriptPath;
-	$dir = str_replace('\\', '/', dirname(__FILE__));
-    $usPath = substr($dir, strpos($dir, $wgScriptPath));
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',
