@@ -472,22 +472,22 @@ class SMWH_Skin {
 
         if($tree!=null && $tree!=""){
 
-            $treeview =  '<div id="smwh_treeviewtoggleleft">';
+            $treeview =  '<div id="smwh_treeviewtoggleleft" title="left">';
             //TODO: replace with proper language support
-            $treeview .= '<img title="show treeview on the left" id="smwh_treeviewtoggleleftimg" src="'.$wgStylePath.$this->imagepath.'/tree_left.png" alt="tools"/>';
-            $treeview .= '<img id="smwh_treeviewtogglecenterimg" src="'.$wgStylePath.$this->imagepath.'/tree_center.png" alt="tools"/>';
+            //$treeview .= '<div title="show treeview on the left" id="smwh_treeviewtoggleleftimg"></div>';
             $treeview .= '</div>';
 
-            $treeview .=  '<div id="smwh_treeviewtoggleright">';
-            $treeview .= '<img title="show treeview on the right" id="smwh_treeviewtogglerightimg" src="'.$wgStylePath.$this->imagepath.'/tree_right.png" alt="tools"/>';
+            $treeview .=  '<div id="smwh_treeviewtoggleright" title="right">';
+            //$treeview .= '<div title="show treeview on the right" id="smwh_treeviewtogglerightimg"></div>';
             $treeview .= '</div>';
             
-            //$treeview .= '<div id="smwh_treeview_shell">';
-            $treeview .=    '<div id="smwh_treeview">';
-            $treeview .=    '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" alt="close tree"/></a></div>';
-            $treeview .=        $tree;
+            
+            $treeview .= '<div id="smwh_treeview">';
+            $treeview .=    '<div id="smwh_treeview_content">';
+            $treeview .=            '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" title="close" alt="close tree"/></a></div>';
+            $treeview .=            $tree;
             $treeview .=    "</div>";
-            //$treeview .= "</div>";
+            $treeview .= "</div>";
             return $treeview;
         } else {
            return "";

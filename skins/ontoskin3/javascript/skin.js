@@ -51,6 +51,8 @@ function Smwh_Skin() {
         this.treeviewhidden = true;
         $jq("#smwh_treeview").removeClass("smwh_treeviewright");
         $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
+        $jq("#smwh_treeviewtoggleleft").removeClass("active");
+        $jq("#smwh_treeviewtoggleright").removeClass("active");
         $jq("#smwh_treeview").removeAttr("style");
 
         //store state in a cookie
@@ -69,7 +71,7 @@ function Smwh_Skin() {
             $jq("#smwh_treeview").css("width", "500px");
             $jq("#smwh_treeview").removeClass("smwh_treeviewright");
             $jq("#smwh_treeview").addClass("smwh_treeviewleft");
-
+            $jq("#smwh_treeviewtoggleleft").addClass("active");
             this.setRightDistance();
             
             //Set tree as shown
@@ -93,6 +95,7 @@ function Smwh_Skin() {
             
             $jq("#smwh_treeview").removeClass("smwh_treeviewleft");
             $jq("#smwh_treeview").addClass("smwh_treeviewright");
+            $jq("#smwh_treeviewtoggleright").addClass("active");
 
             //if the calculated width is too small don't show tree
             if( this.setRightWidth() < 200) return;
@@ -130,7 +133,7 @@ function Smwh_Skin() {
 
     //Calculate gap between page and right browser border and apply to treeview if shown on the rightside
     this.setRightWidth = function(){
-        var contentoffset = $jq("#shadows").offset().left - 20;
+        var contentoffset = $jq("#shadows").offset().left - 40;
         $jq(".smwh_treeviewright").css("width", contentoffset+"px");
         return contentoffset;
     }

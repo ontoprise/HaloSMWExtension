@@ -457,16 +457,29 @@ ul.smwh_menulist div.smwh_menubody_visible {
     top: 1%;
     height: 98%;
     display: none;
+    padding: 5px;
     overflow: auto;
     -moz-border-radius: 5px;
     -khtml-border-radius: 5px;
     -webkit-border-radius: 5px;
+    -moz-box-shadow:2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
+    -khtml-box-shadow:2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
+    -webkit-box-shadow:2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
 }
+
+/*#smwh_treeview_content {
+    
+    height: 98%;
+    border-width: 1px;
+    border-style: solid;
+}*/
 
 
 #smwh_treeviewtoggleright{
     position: fixed;
-    margin-top: 40px;
+    margin-top: 37px;
+    width: 35px;
+    height: 37px;
     top: 50%;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -476,7 +489,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_treeviewtoggleleft{
     position: fixed;
     top: 50%;
-    width: 20px;
+    width: 35px;
+    height: 37px;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
@@ -491,3 +505,5 @@ ul.smwh_menulist div.smwh_menubody_visible {
     display: block !important;
     right: 3px;
 }
+
+
