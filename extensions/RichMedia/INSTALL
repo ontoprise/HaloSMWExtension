@@ -66,16 +66,14 @@ list of all 'related documents and media' which also allows you to directly uplo
 
     * If you update your Semantic Forms extension after installing the RichMedia extension, be sure to overwrite the floatbox.js file in /extensions/SemanticForms/libs again with the one delivered by RichMedia and run the patch for Semantic Forms again (this may cause errors with Semantic Form versions other than 1.8.3). Otherwise the overlay window for uploading files would not open. 
 
-    * If you are running Semantic Wiki on Unix and want to use the UploadConverter make sure that you have installed the right packages of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/). 
+    * If you are running Semantic Wiki on Unix and want to use the UploadConverter make sure that you have installed the right packages of AbiWord (http://www.abisource.com/) and xpdf (http://www.foolabs.com/xpdf/). 
 
-If you are running on Unix and want to use the UploadConverter make sure that you have installed the right packages
-of Antiword (http://www.winfield.demon.nl/) and xpdf (http://www.foolabs.com/xpdf/).
 If you're using Debian the commands for installing these packages are:
 apt-get install xpdf
-apt-get install antiword
+apt-get install abiword
 
 The conversion of office documents (.doc) may fail on Unix systems due to MIME type detection problems of PHP.
-You may want to see https://bugzilla.wikimedia.org/show_bug.cgi?id=20924 for futher details. 
+You may want to see https://bugzilla.wikimedia.org/show_bug.cgi?id=20924 for futher details.
 
 #
 # Installation of the WebDAV server
