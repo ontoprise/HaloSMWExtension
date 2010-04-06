@@ -511,6 +511,7 @@ function sgagImportBots($botDir) {
  			foreach($processes as $p) {
  				$matches = array();
  				preg_match('/(\s*\d+)(.*)/', $p, $matches);
+ 				if (count($matches) < 3) continue;
  				if (strpos($matches[2], "-t $taskID") !== false 
  					&& strpos($matches[2], "SGA_AsyncBotStarter.php") !== false) {
  						return $matches[1] + 0; // return processID as number
