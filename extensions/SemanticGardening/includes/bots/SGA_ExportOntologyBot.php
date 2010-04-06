@@ -155,9 +155,11 @@ class ExportOntologyBot extends GardeningBot {
 		$header = '<?xml version="1.0" encoding="UTF-8"?>'.LINE_FEED;
 		$header .= '<!DOCTYPE owl ['.LINE_FEED;
 		$header .=	'<!ENTITY xsd  "http://www.w3.org/2001/XMLSchema#" >'.LINE_FEED;
+		$header .=  '<!ENTITY owl  "http://www.w3.org/2002/07/owl#" >'.LINE_FEED;
 		$header .=	'<!ENTITY a  "'.$this->namespace.'#" >'.LINE_FEED;
 		$header .=	'<!ENTITY prop  "'.$this->namespace.'/property#" >'.LINE_FEED;
 		$header .=	'<!ENTITY cat  "'.$this->namespace.'/category#" > ]>'.LINE_FEED;
+
 		$header .=	'<rdf:RDF'.LINE_FEED;
 		$header .=	'xmlns:a   ="&a;"'.LINE_FEED;
 		$header .=	'xmlns:cat ="&cat;"'.LINE_FEED;
@@ -609,6 +611,16 @@ class ExportOntologyBot extends GardeningBot {
 						$owl .= '     <rdfs:range rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED;
 					} else {
 						$owl .= '     <rdfs:range rdf:resource="&owl;Thing" />'.LINE_FEED;
+					}
+					if ($maxCard != NULL || $minCard != NULL) {
+						$owl .= '  <owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+						if ($maxCard != NULL) {
+							$owl .= $this->exportMaxCard($rp, $maxCard);
+						}
+						if ($minCard != NULL) {
+							$owl .= $this->exportMinCard($rp, $minCard);
+						}
+						$owl .= '</owl:Class>'.LINE_FEED;
 					}
 				}
 			}
