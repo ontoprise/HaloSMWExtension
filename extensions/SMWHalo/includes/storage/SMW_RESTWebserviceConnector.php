@@ -16,21 +16,36 @@ class RESTWebserviceConnector {
 	private $path;
 	private $credentials;
 
+	/**
+	 * Creates a connection to http://$host:$port/path
+	 * 
+	 * @param string $host
+	 * @param int $port
+	 * @param string $path
+	 * @param string $credentials (format user:pass)
+	 */
 	public function __construct($host, $port, $path, $credentials = '') {
 		$this->host = $host;
 		$this->port = $port;
 		$this->path = $path;
 		$this->credentials = $credentials;
 	}
-
-	public function send($payload, $service) {
+    
+	/**
+	 * Sends a HTTP request with the given payload.
+	 * 
+	 * @param $payload
+	 * 
+	 * @returns array(HTTP header, HTTP status code, Message body)
+	 */
+	public function send($payload) {
 
 
 		$res = "";
 		$header = "";
 
 		// Create a curl handle to a non-existing location
-		$ch = curl_init("http://".$this->host.":".$this->port."/$service");
+		$ch = curl_init("http://".$this->host.":".$this->port."/".$this->path);
 		curl_setopt($ch,CURLOPT_POST,true);
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
 		curl_setopt($ch,CURLOPT_HTTPHEADER,array (
@@ -48,7 +63,7 @@ class RESTWebserviceConnector {
         $status = curl_getinfo($ch,CURLINFO_HTTP_CODE);
         curl_close($ch);
        
-        list($header, $res) = explode("\r\n\r\n", $res);
+        list($header, $res) = strpos($res, "\r\n\r\n") !== false ? explode("\r\n\r\n", $res) : array($res, "");
         return array($header, $status, $res);
 	}
 

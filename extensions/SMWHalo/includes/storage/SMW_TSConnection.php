@@ -129,7 +129,7 @@ class TSConnectorMessageBrokerAndRESTWebservice extends TSConnectorRESTWebservic
         global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
         list($host, $port) = explode(":", $smwgWebserviceEndpoint);
         $credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-        $this->queryClient = new RESTWebserviceConnector($host, $port, "/sparql", $credentials);
+        $this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
     }
 
 
@@ -164,8 +164,8 @@ class TSConnectorRESTWebservice extends TSConnection {
         global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
         list($host, $port) = explode(":", $smwgWebserviceEndpoint);
         $credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
-        $this->updateClient = new RESTWebserviceConnector($host, $port, "/sparul", $credentials);
-        $this->queryClient = new RESTWebserviceConnector($host, $port, "/sparql", $credentials);
+        $this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
+        $this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
     }
 
     public function disconnect() {
@@ -185,7 +185,7 @@ class TSConnectorRESTWebservice extends TSConnection {
             $enc_commands .= "<command><![CDATA[$enc_command]]></command>";
         }
         $enc_commands .= "</sparul>";
-        $this->updateClient->send($enc_commands, "sparul");
+        $this->updateClient->send($enc_commands);
 
     }
 
@@ -201,7 +201,7 @@ class TSConnectorRESTWebservice extends TSConnection {
         $queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
         $queryRequest .= "</query>";
         
-        list($header, $status, $result) = $this->queryClient->send($queryRequest, "sparql");
+        list($header, $status, $result) = $this->queryClient->send($queryRequest);
         if ($status != 200) {
         	throw new Exception(strip_tags($result), $status);
         }
