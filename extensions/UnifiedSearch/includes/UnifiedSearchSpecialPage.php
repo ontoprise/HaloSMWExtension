@@ -350,7 +350,7 @@ class USSpecialPage extends SpecialPage {
         }
 
 	private function doSearch($limit, $offset) {
-		global $wgRequest, $usgAllNamespaces, $wgExtraNamespaces;
+		global $wgRequest, $usgAllNamespaces, $wgExtraNamespaces, $wgNamespacesToBeSearchedDefault;
 
 		// initialize vars
 		$search = $wgRequest->getVal('search');
@@ -371,7 +371,16 @@ class USSpecialPage extends SpecialPage {
         
         $allExtraNamespaces = array_diff(array_keys($wgExtraNamespaces), array_keys($usgAllNamespaces));
 		$namespacesToSearch = $restrictNS !== NULL ? array($restrictNS) : array_merge(array_keys($usgAllNamespaces), $allExtraNamespaces);
-		
+        // check default namespaces that should be searched
+		if ($restrictNS === NULL && isset($wgNamespacesToBeSearchedDefault)) {
+            foreach (array_keys($wgNamespacesToBeSearchedDefault) as $ns ) {
+                if ($wgNamespacesToBeSearchedDefault[$ns]) {
+                    if (!is_int($ns)) $ns = constant($ns);
+                    $namespacesToSearch = array_merge($namespacesToSearch, array($ns));
+                }
+            }
+        }
+
 		if (!self::userDefinedSearch($terms, $search)) {
 			// non user-defined
 			$contentTitleSearchPattern = 'contents:($1$4$5) OR title:($2$3$6)';
