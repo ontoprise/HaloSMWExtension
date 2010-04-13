@@ -255,10 +255,7 @@ abstract class SMWToolbarStorage {
 		global $smwgBaseStore;
 		if (self::$INSTANCE == NULL) {
 			switch ($smwgBaseStore) {
-				case (SMW_STORE_TESTING):
-					self::$INSTANCE = NULL; // not implemented yet
-					trigger_error('Testing stores not implemented for HALO extension.');
-					break;
+				
 				case ('SMWHaloStore2'): default:
 					self::$INSTANCE = new SMWToolbarStorageSQL2();
 					break;

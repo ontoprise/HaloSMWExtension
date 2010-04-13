@@ -71,11 +71,8 @@
         if (SGAGardeningLog::$g_interface == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_TESTING):
-                    SGAGardeningLog::$g_interface = null; // not implemented yet
-                    trigger_error('Testing store not implemented for HALO extension.');
-                break;
-                case (SMW_STORE_MWDB): default:
+              
+                case ('SMWHaloStore2'): default:
                     require_once($sgagIP . '/includes/storage/SGA_GardeningLogSQL.php');
                     SGAGardeningLog::$g_interface = new SGAGardeningLogSQL();
                 break;

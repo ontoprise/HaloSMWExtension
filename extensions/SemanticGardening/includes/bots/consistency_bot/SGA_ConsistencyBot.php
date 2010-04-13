@@ -351,10 +351,7 @@ abstract class ConsitencyBotStorage {
 		if (self::$store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
-				case (SMW_STORE_TESTING):
-					self::$store = null; // not implemented yet
-					trigger_error('Testing store not implemented for HALO extension.');
-					break;
+				
 				case ('SMWHaloStore2'): default:
 
 					self::$store = new ConsistencyBotStorageSQL2();

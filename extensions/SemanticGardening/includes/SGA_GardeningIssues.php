@@ -171,10 +171,7 @@ global $wgAjaxExportList;
         if (SGAGardeningIssuesAccess::$gi_interface == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_TESTING):
-                    SGAGardeningIssuesAccess::$gi_interface = null; // not implemented yet
-                    trigger_error('Testing store not implemented for HALO extension.');
-                break;
+              
                 case ('SMWHaloStore2'): default:
                 	require_once($sgagIP . '/includes/storage/SGA_GardeningIssuesSQL.php');
                     require_once($sgagIP . '/includes/storage/SGA_GardeningIssuesSQL2.php');

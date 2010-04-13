@@ -91,10 +91,7 @@ class MissingAnnotationsBot extends GardeningBot {
 		if ($this->store == NULL) {
 			global $smwgBaseStore;
 			switch ($smwgBaseStore) {
-				case (SMW_STORE_TESTING):
-					$this->store = null; // not implemented yet
-					trigger_error('Testing store not implemented for HALO extension.');
-					break;
+				
 				case ('SMWHaloStore2'): default:
 
 					$this->store = new MissingAnnotationStorageSQL2();

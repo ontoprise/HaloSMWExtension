@@ -63,10 +63,7 @@ abstract class SMWSuggestStatistics {
 		global $smwgBaseStore, $sgagIP, $wgUser;
 		if (self::$store == NULL) {
 			switch ($smwgBaseStore) {
-				case (SMW_STORE_TESTING):
-					self::$store = null; // not implemented yet
-					trigger_error('Testing stores not implemented for HALO extension.');
-					break;
+				
 				case ('SMWHaloStore2'): default:
 					require_once($sgagIP . '/specials/FindWork/SGA_SuggestStatisticsSQL2.php');
 					self::$store = new SMWSuggestStatisticsSQL2();
