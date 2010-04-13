@@ -1522,81 +1522,74 @@ HTML;
     // --------------------------------
 
     $content .= <<<HTML
+        // tickbox handling
+        updateRights$panelid = function(element) {
+            //console.log(element);
 
+            var name = $(element).readAttribute("name");
+            //element = $(element.id);
+            //console.log(element);
 
-                            // tickbox handling
-                            updateRights$panelid = function(element) {
-                                //console.log(element);
+                var includedrights = "";
+                if(name == "fullaccess"){
+                    includedrights = ",create,read,edit,annotate,wysiwyg,formedit,delete,move";
+                }else if(name == "read"){
+                    includedrights = "";
+                }else if(name == "formedit"){
+                    includedrights = ",read";
+                }else if(name == "annotate"){
+                    includedrights = ",read";
+                }else if(name == "wysiwyg"){
+                    includedrights = "read";
+                }else if(name == "edit"){
+                    includedrights = ",read,formedit,annotate,wysiwyg";
+                }else if(name == "create"){
+                    includedrights = ",read,edit,formedit,annotate,wysiwyg";
+                }else if(name == "move"){
+                    includedrights = ",read,edit,formedit,annotate,wysiwyg";
+                }else if(name == "delete"){
+                    includedrights = ",read,edit,formedit,annotate,wysiwyg";
+                }
 
-                                var name = $(element).readAttribute("name");
-                                //element = $(element.id);
-                                //console.log(element);
+                var excluderight = "";
+                if(name == "fullaccess"){
+                    excluderight = ",fullaccess,create,read,edit,annotate,wysiwyg,formedit,delete,move";
+                }else if(name == "read"){
+                    excluderight = ",fullaccess,create,read,edit,annotate,wysiwyg,formedit,delete,move";
+                }else if(name == "formedit"){
+                    excluderight = ",fullaccess,create,edit,formedit,delete,move";
+                }else if(name == "annotate"){
+                    excluderight = ",fullaccess,create,edit,annotate,delete,move";
+                }else if(name == "wysiwyg"){
+                excluderight = ",fullaccess,create,edit,wysiwyg,delete,move";
+                }else if(name == "edit"){
+                    excluderight = ",fullaccess,edit,create,delete,move";
+                }else if(name == "create"){
+                    excluderight = ",fullaccess,create";
+                }else if(name == "move"){
+                    excluderight = ",fullaccess,move";
+                }else if(name == "delete"){
+                    excluderight = ",fullaccess,delete";
+                }
+            if(element.checked){
 
-                                    var includedrights = "";
-                                    if(name == "fullaccess"){
-                                        includedrights = "create,read,write,edit,annotate,wysiwyg,formedit,delete,move";
-                                    }else if(name == "read"){
-                                        includedrights = "";
-                                    }else if(name == "formedit"){
-                                        includedrights = "read";
-                                    }else if(name == "annotate"){
-                                        includedrights = "read";
-                                    }else if(name == "wysiwyg"){
-                                        includedrights = "read";
-                                    }else if(name == "edit"){
-                                        includedrights = "read,formedit,annotate,wysiwyg";
-                                    }else if(name == "create"){
-                                        includedrights = "read,formedit,annotate,wysiwyg";
-                                    }else if(name == "move"){
-                                        includedrights = "read,formedit,annotate,wysiwyg";
-                                    }else if(name == "delete"){
-                                        includedrights = "read,formedit,annotate,wysiwyg";
-                                    }
-
-
-
-                                    var excluderight = "";
-                                    if(name == "fullaccess"){
-                                        excluderight = "fullaccess,create,read,write,edit,annotate,wysiwyg,formedit,delete,move";
-                                    }else if(name == "read"){
-                                        excluderight = "fullaccess,create,read,write,edit,annotate,wysiwyg,formedit,delete,move";
-                                    }else if(name == "formedit"){
-                                        excluderight = "fullaccess,create,write,formedit,delete,move";
-                                    }else if(name == "annotate"){
-                                        excluderight = "fullaccess,create,write,annotate,delete,move";
-                                    }else if(name == "wysiwyg"){
-                                        excluderight = "fullaccess,create,write,wysiwyg,delete,move";
-                                    }else if(name == "edit"){
-                                        excluderight = "fullaccess,create,delete,move";
-                                    }else if(name == "create"){
-                                        excluderight = "fullaccess,create";
-                                    }else if(name == "move"){
-                                        excluderight = "fullaccess,move";
-                                    }else if(name == "delete"){
-                                        excluderight = "fullaccess,delete";
-                                    }
-                                if(element.checked){
-
-                                    $$('.right_rights_$panelid').each(function(item){
-                                        if(includedrights.indexOf($(item).readAttribute("name")) >= 0){
-                                            item.checked = true;
-                                        }
-                                    });
-                                    
-                                }else{
-                                    // remove all lower rights when this right is removed
-                                    $$('.right_rights_$panelid').each(function(item){
-                                        if(excluderight.indexOf($(item).readAttribute("name")) >= 0){
-                                            item.checked = false;
-                                        }
-                                    });
-                                }
-                            }
-                        </script>
-
-                        
-
-                    </div>
+                $$('.right_rights_$panelid').each(function(item){
+                    if(includedrights.indexOf(','+$(item).readAttribute("name")) >= 0){
+                        item.checked = true;
+                    }
+                });
+                
+            }else{
+                // remove all lower rights when this right is removed
+                $$('.right_rights_$panelid').each(function(item){
+                if(excluderight.indexOf(','+$(item).readAttribute("name")) >= 0){
+                        item.checked = false;
+                    }
+                });
+            }
+        }
+    </script>
+</div>
 HTML;
 
     /*
@@ -3356,9 +3349,11 @@ function haclSaveTempGroupToSession($groupxml) {
     global $haclgContLang;
     $ns = $haclgContLang->getNamespaces();
     $ns = $ns[HACL_NS_ACL];
+    $groupPrefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP);
+    
     // checking if action is valid
     $xml = new SimpleXMLElement($groupxml);
-    $groupname = (String)$xml->name;
+    $groupname = urldecode((String)$xml->name);
     if($groupname == "") {
         $response = new AjaxResponse();
         $response->setResponseCode(400);
@@ -3367,7 +3362,7 @@ function haclSaveTempGroupToSession($groupxml) {
     }
     $newGroup = (String)$xml->newgroup;
     if($newGroup == "true") {
-        $article = new Article(Title::newFromText("$ns:Group/$groupname"));
+        $article = new Article(Title::newFromText("$ns:$groupPrefix/$groupname"));
         if($article->exists()) {
             $response = new AjaxResponse();
             $response->setResponseCode(400);
@@ -3708,7 +3703,7 @@ HTML;
  * @return <AjaxResponse> success message | error-message
  */
 function haclSaveGroup($manageRightsXml,$parentgroup = null) {
-    global $haclgContLang;
+    global $haclgContLang, $wgContLang;
     global $wgUser;
 	
     $userNS = $wgContLang->getNsText(NS_USER);
