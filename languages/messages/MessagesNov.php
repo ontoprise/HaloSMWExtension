@@ -145,6 +145,7 @@ $messages = array(
 'editsection'             => 'modifika',
 'editold'                 => 'modifika',
 'restorelink'             => '{{PLURAL:$1|unu ekartati modifiko|$1 ekartati modifikos}}',
+'red-link-title'          => '$1 (pagine non exista)',
 
 # Short words for each namespace, by default used in the namespace tab in monobook
 'nstab-main'      => 'Artikle',
@@ -163,9 +164,9 @@ $messages = array(
 
 # Login and logout pages
 'logouttitle'                => 'Useren eksignato',
-'logouttext'                 => "'''Vu es nun eksignatat.'''<br />
-Vu pove kontinua usa {{SITENAME}} anonimim, o vu pove riensignata
-kom li sami o altri usere.",
+'logouttext'                 => "'''Vu es nun eksignatat.'''
+
+Vu pove kontinua usa {{SITENAME}} anonimim, o vu pove riensignata kom li sami o altri usere.",
 'loginpagetitle'             => 'Useren ensignato',
 'yourname'                   => 'Usere-nome:',
 'yourpassword'               => 'Pasa-vorde:',
@@ -176,7 +177,7 @@ kom li sami o altri usere.",
 'logout'                     => 'Eksignata',
 'userlogout'                 => 'Eksignata',
 'notloggedin'                => 'Non ensignatat',
-'nologin'                    => 'Ob vu non have registre? $1.',
+'nologin'                    => "Ob vu non have registre? '''$1'''.",
 'nologinlink'                => 'Krea usere-registre',
 'gotaccountlink'             => 'Ensignata',
 'loginerror'                 => 'Erore de ensignato',

@@ -76,9 +76,9 @@ class SMWNumberValue extends SMWDataValue {
 
 	protected function parseDBkeys($args) {
 		$this->m_value = $args[0];
-		$this->m_unit = array_key_exists(1,$args)?$args[1]:'';
+		$this->m_unit = array_key_exists(2,$args)?$args[2]:'';
+		$this->m_caption = false;
 		$this->m_unitin = false;
-		$this->m_stubdata = false;
 		$this->makeUserValue();
 		$this->m_unitvalues = false;
 	}
@@ -88,13 +88,13 @@ class SMWNumberValue extends SMWDataValue {
 		$this->m_outformat = $formatstring;
 		if ( ($formatstring != $oldformat) && $this->isValid() ) {
 			// recompute conversion if outputformat is changed after initialisation
-			$this->m_stubdata = array($this->m_value, $this->m_unit);
+			$this->m_stubvalues = array($this->m_value, $this->m_value, $this->m_unit);
 		}
 	}
 
-	public function getShortWikiText($linked = NULL) {
+	public function getShortWikiText($linked = null) {
 		$this->unstub();
-		if (($linked === NULL) || ($linked === false) || ($this->m_outformat == '-') ) {
+		if (($linked === null) || ($linked === false) || ($this->m_outformat == '-') ) {
 			return $this->m_caption;
 		}
 		$this->makeConversionValues();
@@ -122,11 +122,11 @@ class SMWNumberValue extends SMWDataValue {
 		}
 	}
 
-	public function getShortHTMLText($linker = NULL) {
+	public function getShortHTMLText($linker = null) {
 		return $this->getShortWikiText($linker);
 	}
 
-	public function getLongWikiText($linked = NULL) {
+	public function getLongWikiText($linked = null) {
 		$this->unstub();
 		if (!$this->isValid()) {
 			return $this->getErrorText();
@@ -156,14 +156,26 @@ class SMWNumberValue extends SMWDataValue {
 		}
 	}
 
-	public function getLongHTMLText($linker = NULL) {
+	public function getLongHTMLText($linker = null) {
 		return $this->getLongWikiText($linker);
 	}
 
 	public function getDBkeys() {
 		$this->unstub();
 		$this->convertToMainUnit();
-		return array($this->m_value, $this->m_unit);
+		return array($this->m_value, floatval($this->m_value), $this->m_unit);
+	}
+
+	public function getSignature() {
+		return 'tfu';
+	}
+
+	public function getValueIndex() {
+		return 1;
+	}
+
+	public function getLabelIndex() {
+		return 0;
 	}
 
 	public function getWikiValue(){
@@ -171,15 +183,9 @@ class SMWNumberValue extends SMWDataValue {
 		return $this->m_wikivalue;
 	}
 
-	public function getNumericValue() {
-		$this->unstub();
-		$this->convertToMainUnit();
-		return $this->m_value;
-	}
-
 	public function getUnit() {
 		$values = $this->getDBkeys();
-		return $values[1];
+		return $values[2];
 	}
 
 	public function getHash() {
@@ -188,7 +194,7 @@ class SMWNumberValue extends SMWDataValue {
 			$this->convertToMainUnit();
 			return $this->m_value . $this->m_unit;
 		} else {
-			return implode("\t", $this->m_errors);
+			return implode("\t", $this->getErrors());
 		}
 	}
 
@@ -202,17 +208,13 @@ class SMWNumberValue extends SMWDataValue {
 		return array((string)$this->m_value, (string)round($this->m_value), $this->m_unit);
 	}
 
-	public function isNumeric() {
-		return true;
-	}
-
 	public function getExportData() {
 		$this->unstub();
 		if ($this->isValid()) {
 			$lit = new SMWExpLiteral($this->m_value, $this, 'http://www.w3.org/2001/XMLSchema#double');
 			return new SMWExpData($lit);
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 

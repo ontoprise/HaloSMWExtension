@@ -53,7 +53,9 @@ protected $m_DatatypeLabels = array(
 	'_dat' => 'Data',  // name of the datetime (calendar) type
 	'_ema' => 'Email',  // name of the email type
 	'_uri' => 'URL',  // name of the URL type
-	'_anu' => 'URI adnotacji'  // name of the annotation URI type (OWL annotation property)
+	'_anu' => 'URI adnotacji',  // name of the annotation URI type (OWL annotation property)
+	'_tel' => 'Telephone number',  // name of the telephone (URI) type //TODO: translate
+	'_rec' => 'Record', // name of record data type //TODO: translate
 );
 
 protected $m_DatatypeAliases = array(
@@ -61,21 +63,6 @@ protected $m_DatatypeAliases = array(
 	'Liczba zmiennoprzecinkowa' => '_num',
 	'Liczba całkowita'      => '_num',
 	'Wyliczenie'            => '_str',
-	// support English aliases:
-	'URI'                   => '_uri',
-	'Float'                 => '_num',
-	'Integer'               => '_num',
-	'Enumeration'           => '_str',
-	'Page'                  => '_wpg',
-	'String'                => '_str',
-	'Text'                  => '_txt',
-	'Boolean'               => '_boo',
-	'Number'                => '_num',
-	'Geographic coordinate' => '_geo',
-	'Temperature'           => '_tem',
-	'Date'                  => '_dat',
-	'Email'                 => '_ema',
-	'Annotation URI'        => '_anu'
 );
 
 protected $m_SpecialProperties = array(
@@ -83,52 +70,29 @@ protected $m_SpecialProperties = array(
 	'_TYPE' => 'Ma typ',
 	'_URI'  => 'Równoważne URI',
 	'_SUBP' => 'Jest podwłasnością',
+	'_SUBC' => 'Subcategory of', // TODO: translate
 	'_UNIT' => 'Wyświetlane jednostki',
 	'_IMPO' => 'Zaimportowane z',
 	'_CONV' => 'Odpowiada',
 	'_SERV' => 'Zapewnia usługę',
 	'_PVAL' => 'Dopuszcza wartość',
 	'_MDAT' => 'Modification date',  // TODO: translate
-	'_ERRP' => 'Has improper value for' // TODO: translate
+	'_ERRP' => 'Has improper value for', // TODO: translate
+	'_LIST' => 'Has fields', // TODO: translate
 );
 
 protected $m_SpecialPropertyAliases = array(
 	'Wyświetlana jednostka' => '_UNIT',
-	// support English aliases for special properties
-	'Has type'          => '_TYPE',
-	'Equivalent URI'    => '_URI',
-	'Subproperty of'    => '_SUBP',
-	'Display units'     => '_UNIT',
-	'Imported from'     => '_IMPO',
-	'Corresponds to'    => '_CONV',
-	'Provides service'  => '_SERV',
-	'Allows value'      => '_PVAL',
-	'Modification date' => '_MDAT',
-	'Has improper value for' => '_ERRP'
 );
 
 
 protected $m_Namespaces = array(
-	SMW_NS_RELATION       => 'Relacja',
-	SMW_NS_RELATION_TALK  => 'Dyskusja_relacji',
 	SMW_NS_PROPERTY       => 'Atrybut',
 	SMW_NS_PROPERTY_TALK  => 'Dyskusja_atrybutu',
 	SMW_NS_TYPE           => 'Typ',
 	SMW_NS_TYPE_TALK      => 'Dyskusja_typu',
 	SMW_NS_CONCEPT        => 'Pojęcie',
 	SMW_NS_CONCEPT_TALK   => 'Dyskusja pojęcia'
-);
-
-protected $m_NamespaceAliases = array(
-	// support English aliases for namespaces
-	'Relation'      => SMW_NS_RELATION,
-	'Relation_talk' => SMW_NS_RELATION_TALK,
-	'Property'      => SMW_NS_PROPERTY,
-	'Property_talk' => SMW_NS_PROPERTY_TALK,
-	'Type'          => SMW_NS_TYPE,
-	'Type_talk'     => SMW_NS_TYPE_TALK,
-	'Concept'       => SMW_NS_CONCEPT,
-	'Concept_talk'  => SMW_NS_CONCEPT_TALK
 );
 
 protected $m_dateformats = array(array(SMW_Y), array(SMW_MY,SMW_YM), array(SMW_MDY,SMW_DMY,SMW_YMD,SMW_YDM));

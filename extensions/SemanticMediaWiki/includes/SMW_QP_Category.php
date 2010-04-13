@@ -16,7 +16,6 @@
  */
 class SMWCategoryResultPrinter extends SMWResultPrinter {
 
-	protected $mSep = '';
 	protected $mDelim = ',';
 	protected $mTemplate = '';
 	protected $mUserParam = '';
@@ -25,9 +24,6 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 	protected function readParameters($params,$outputmode) {
 		SMWResultPrinter::readParameters($params,$outputmode);
 
-		if (array_key_exists('sep', $params)) {
-			$this->mSep = str_replace('_',' ',$params['sep']);
-		}
 		if (array_key_exists('delim', $params)) {
 			$this->mDelim = str_replace('_',' ',$params['delim']);
 		}
@@ -51,6 +47,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 	}
 
 	protected function getResultText($res,$outputmode) {
+		global $wgContLang;
 
 		// <H3> will generate TOC entries otherwise.  Probably need another way
 		// to accomplish this -- user might still want TOC for other page content.
@@ -71,7 +68,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 
 			$content = $row[0]->getContent();
 			$sortkey = $content[0]->getSortkey();
-			$cur_first_char = $sortkey{0};
+			$cur_first_char = $wgContLang->firstChar($sortkey);
 			if ($rowindex % $rows_per_column == 0) {
 				$result .= "\n			<div style=\"float: left; width: $column_width%;\">\n";
 				if ($cur_first_char == $prev_first_char)
@@ -101,6 +98,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 					}
 					$first_col = false;
 				}
+				$wikitext .= "|#=$rowindex";
 				$result .= '{{' . $this->mTemplate . $wikitext . '}}';
 				//str_replace('|', '&#x007C;', // encode '|' for use in templates (templates fail otherwise) -- this is not the place for doing this, since even DV-Wikitexts contain proper "|"!
 			} else {  // build simple list
@@ -113,7 +111,7 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 							$result .= ' (';
 							$found_values = true;
 						} elseif ($found_values || !$first_value) {
-						// any value after '(' or non-first values on first column
+							// any value after '(' or non-first values on first column
 							$result .= ', ';
 						}
 						if ($first_value) { // first value in any column, print header
@@ -145,22 +143,28 @@ class SMWCategoryResultPrinter extends SMWResultPrinter {
 			if ($this->getSearchLabel(SMW_OUTPUT_WIKI)) {
 				$link->setCaption($this->getSearchLabel(SMW_OUTPUT_WIKI));
 			}
-			/// NOTE: passing the parameter sep is not needed, since we use format=ul
-
-			$link->setParameter('ul','format'); // always use ul, other formats hardly work as search page output
+			$link->setParameter('category','format');
+			if ($this->mNumColumns != 3) $link->setParameter($this->mNumColumns,'columns');
 			if ($this->mTemplate != '') {
 				$link->setParameter($this->mTemplate,'template');
 				if (array_key_exists('link', $this->m_params)) { // linking may interfere with templates
 					$link->setParameter($this->m_params['link'],'link');
 				}
 			}
-			$result .= '<br/><li>' . $link->getText(SMW_OUTPUT_WIKI,$this->mLinker) . '</li>';
+			$result .= '<br /><li>' . $link->getText(SMW_OUTPUT_WIKI,$this->mLinker) . '</li>';
 		}
 
 		$result .= "				</ul>\n			</div> <!-- end column -->";
 		// clear all the CSS floats
 		$result .= "\n" . '<br style="clear: both;"/>';
 		return $result;
+	}
+
+	public function getParameters() {
+		$params = parent::getParameters();
+		$params = array_merge($params, parent::textDisplayParameters());
+		$params[] = array('name' => 'columns', 'type' => 'int', 'description' => wfMsg('smw_paramdesc_columns', 3));
+		return $params;
 	}
 
 }

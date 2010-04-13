@@ -20,7 +20,7 @@
 class SMWParseData {
 
 	/// ParserOutput last used. See documentation to SMWParseData.
-	static public $mPrevOutput = NULL;
+	static public $mPrevOutput = null;
 
 	/**
 	 * Remove relevant SMW magic words from the given text and return
@@ -50,7 +50,7 @@ class SMWParseData {
 	static public function getSMWdata($parser) {
 		$output = SMWParseData::getOutput($parser);
 		$title = $parser->getTitle();
-		if (!isset($output) || !isset($title)) return NULL; // no parsing, create error
+		if (!isset($output) || !isset($title)) return null; // no parsing, create error
 		if (!isset($output->mSMWData)) { // no data container yet
 			$output->mSMWData = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($title));
 		}
@@ -79,7 +79,10 @@ class SMWParseData {
 		// See if this property is a special one, such as e.g. "has type"
 		$property = SMWPropertyValue::makeUserProperty($propertyname);
 		$result = SMWDataValueFactory::newPropertyObjectValue($property,$value,$caption);
-		if ($storeannotation && (SMWParseData::getSMWData($parser) !== NULL)) {
+		if ($property->isInverse()) {
+			wfLoadExtensionMessages('SemanticMediaWiki');
+			$result->addError(wfMsgForContent('smw_noinvannot'));
+		} elseif ($storeannotation && (SMWParseData::getSMWData($parser) !== null)) {
 			SMWParseData::getSMWData($parser)->addPropertyObjectValue($property,$result);
 			if (!$result->isValid()) { // take note of the error for storage (do this here and not in storage, thus avoiding duplicates)
 				SMWParseData::getSMWData($parser)->addPropertyObjectValue(SMWPropertyValue::makeProperty('_ERRP'),$property->getWikiPageValue());
@@ -111,7 +114,7 @@ class SMWParseData {
 	 *  @bug Some job generations here might create too many jobs at once on a large wiki. Use incremental jobs instead.
 	 */
 	static public function storeData($parseroutput, Title $title, $makejobs = true) {
-		global $smwgEnableUpdateJobs, $wgContLang, $smwgMW_1_14;
+		global $smwgEnableUpdateJobs, $wgContLang, $smwgMW_1_14, $smwgDeclarationProperties;
 		$semdata = $parseroutput->mSMWData;
 		$namespace = $title->getNamespace();
 		$processSemantics = smwfIsSemanticsProcessed($namespace);
@@ -145,10 +148,12 @@ class SMWParseData {
 			if (!SMWParseData::equalDatavalues($oldtype, $newtype)) {
 				$updatejobflag = true;
 			} else {
-				$ppval = SMWPropertyValue::makeProperty('_PVAL');
-				$oldvalues = smwfGetStore()->getPropertyValues($semdata->getSubject(), $ppval);
-				$newvalues = $semdata->getPropertyValues($ppval);
-				$updatejobflag = !SMWParseData::equalDatavalues($oldvalues, $newvalues);
+				foreach ($smwgDeclarationProperties as $prop) {
+					$pv = SMWPropertyValue::makeProperty($prop);
+					$oldvalues = smwfGetStore()->getPropertyValues($semdata->getSubject(), $pv);
+					$newvalues = $semdata->getPropertyValues($pv);
+					$updatejobflag = !SMWParseData::equalDatavalues($oldvalues, $newvalues);
+				}
 			}
 
 			if ($updatejobflag) {
@@ -157,6 +162,7 @@ class SMWParseData {
 				foreach ($subjects as $subject) {
 					$jobs[] = new SMWUpdateJob($subject->getTitle());
 				}
+				wfRunHooks('smwUpdatePropertySubjects', array(&$jobs));
 				$subjects = smwfGetStore()->getPropertySubjects(SMWPropertyValue::makeProperty('_ERRP'), $prop->getWikiPageValue());
 				foreach ($subjects as $subject) {
 					$jobs[] = new SMWUpdateJob($subject->getTitle());
@@ -241,14 +247,17 @@ class SMWParseData {
 	 * so that they are also replicated in SMW for more efficient querying.
 	 */
 	static public function onParserAfterTidy(&$parser, &$text) {
-		if (SMWParseData::getSMWData($parser) === NULL) return true;
+		global $smwgUseCategoryHierarchy,$smwgCategoriesAsInstances;
+		if (SMWParseData::getSMWData($parser) === null) return true;
 		$categories = $parser->mOutput->getCategoryLinks();
 		foreach ($categories as $name) {
-			$pinst = SMWPropertyValue::makeProperty('_INST');
-			$dv = SMWDataValueFactory::newPropertyObjectValue($pinst);
-			$dv->setValues($name,NS_CATEGORY);
-			SMWParseData::getSMWData($parser)->addPropertyObjectValue($pinst,$dv);
-			if (SMWParseData::getSMWData($parser)->getSubject()->getNamespace() == NS_CATEGORY) {
+			if ($smwgCategoriesAsInstances && (SMWParseData::getSMWData($parser)->getSubject()->getNamespace() != NS_CATEGORY) ) {
+				$pinst = SMWPropertyValue::makeProperty('_INST');
+				$dv = SMWDataValueFactory::newPropertyObjectValue($pinst);
+				$dv->setValues($name,NS_CATEGORY);
+				SMWParseData::getSMWData($parser)->addPropertyObjectValue($pinst,$dv);
+			}
+			if ($smwgUseCategoryHierarchy && (SMWParseData::getSMWData($parser)->getSubject()->getNamespace() == NS_CATEGORY) ) {
 				$psubc = SMWPropertyValue::makeProperty('_SUBC');
 				$dv = SMWDataValueFactory::newPropertyObjectValue($psubc);
 				$dv->setValues($name,NS_CATEGORY);
@@ -272,7 +281,7 @@ class SMWParseData {
 	 * LinksUpdate.
 	 */
 	static public function onNewRevisionFromEditComplete($article, $rev, $baseID) {
-		global $wgContLang;
+		global $wgContLang, $smwgContLang;
 		if ( ($article->mPreparedEdit) && ($article->mPreparedEdit->output instanceof ParserOutput)) {
 			$output = $article->mPreparedEdit->output;
 			$title = $article->getTitle();
@@ -285,7 +294,12 @@ class SMWParseData {
 			return true;
 		}
 		$pmdat = SMWPropertyValue::makeProperty('_MDAT');
-		$dv = SMWDataValueFactory::newPropertyObjectValue($pmdat,  $wgContLang->sprintfDate('d M Y G:i:s',$article->getTimestamp()));
+		// create a date string that is certainly parsable in the current language:
+		$timestamp = $article->getTimestamp();
+		$date = $wgContLang->sprintfDate('d ',$timestamp) . $smwgContLang->getMonthLabel(($wgContLang->sprintfDate('m',$timestamp) + 0)) . $wgContLang->sprintfDate(' Y G:i:s',$timestamp);
+		$dv = SMWDataValueFactory::newPropertyObjectValue($pmdat, $date);
+		// The below method is not safe, since "M" as used in MW may not be the month label as used in SMW if SMW falls back to some other language:
+		//   $dv = SMWDataValueFactory::newPropertyObjectValue($pmdat,  $wgContLang->sprintfDate('d M Y G:i:s',$article->getTimestamp()));
 		$semdata->addPropertyObjectValue($pmdat,$dv);
 		return true;
 	}

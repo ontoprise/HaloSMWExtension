@@ -47,7 +47,9 @@ class SMWPropertyValue extends SMWDataValue {
 	/// If the property is predefined, its internal key is stored here. Otherwise FALSE.
 	protected $m_propertyid;
 	/// If the property is associated with a wikipage, it is stored here. Otherwise NULL.
-	protected $m_wikipage = NULL;
+	protected $m_wikipage = null;
+	/// Store if this property is an inverse
+	protected $m_inv = false;
 
 	private $prop_typevalue; // once calculated, remember the type of this property
 	private $prop_typeid; // once calculated, remember the type of this property
@@ -81,17 +83,31 @@ class SMWPropertyValue extends SMWDataValue {
 	}
 
 	/**
+	 * We use the internal wikipage object to store some of this objects data.
+	 * Clone it to make sure that data can be modified independelty from the
+	 * original object's content.
+	 */
+	public function __clone() {
+		if ($this->m_wikipage !== null) $this->m_wikipage = clone $this->m_wikipage;
+	}
+
+	/**
 	 * Extended parsing function to first check whether value refers to pre-defined
 	 * property, resolve aliases, and set internal property id accordingly.
 	 * @todo Accept/enforce property namespace.
 	 */
 	protected function parseUserValue($value) {
-		$this->prop_typevalue = NULL;
-		$this->prop_typeid = NULL;
+		$this->prop_typevalue = null;
+		$this->prop_typeid = null;
+		$this->m_inv = false;
 		if ($this->m_caption === false) { // always use this as caption
 			$this->m_caption = $value;
 		}
 		$value = smwfNormalTitleText(ltrim(rtrim($value,' ]'),' [')); //slightly normalise label
+		if ( ($value !== '') && ($value{0} == '-') ) { // check if this property refers to an inverse
+			$value = substr($value,1);
+			$this->m_inv = true;
+		}
 		$this->m_propertyid = SMWPropertyValue::findPropertyID($value);
 		if ($this->m_propertyid !== false) {
 			$value = SMWPropertyValue::findPropertyLabel($this->m_propertyid);
@@ -101,7 +117,7 @@ class SMWPropertyValue extends SMWDataValue {
 			$this->m_wikipage->setUserValue($value, $this->m_caption);
 			$this->addError($this->m_wikipage->getErrors());
 		} else { // should rarely happen ($value is only changed if the input $value really was a label for a predefined prop)
-			$this->m_wikipage = NULL;
+			$this->m_wikipage = null;
 		}
 	}
 
@@ -111,8 +127,13 @@ class SMWPropertyValue extends SMWDataValue {
 	 * internal property id accordingly.
 	 */
 	protected function parseDBkeys($args) {
-		$this->prop_typevalue = NULL;
-		$this->prop_typeid = NULL;
+		$this->prop_typevalue = null;
+		$this->prop_typeid = null;
+		$this->m_inv = false;
+		if ( $args[0]{0} == '-' ) { // check if this property refers to an inverse
+			$args[0] = substr($args[0],1);
+			$this->m_inv = true;
+		}
 		SMWPropertyValue::initProperties();
 		if ($args[0]{0} == '_') { // internal id, use as is (and hope it is still known)
 			$this->m_propertyid = $args[0];
@@ -127,7 +148,7 @@ class SMWPropertyValue extends SMWDataValue {
 			$this->m_caption = $label;
 			$this->addError($this->m_wikipage->getErrors()); // NOTE: this unstubs the wikipage, should we rather ignore errors here to prevent this?
 		} else { // predefined property without label
-			$this->m_wikipage = NULL;
+			$this->m_wikipage = null;
 			$this->m_caption = $this->m_propertyid;
 		}
 	}
@@ -137,6 +158,12 @@ class SMWPropertyValue extends SMWDataValue {
 		if ($this->m_wikipage instanceof SMWDataValue) { // pass caption to embedded datavalue (used for printout)
 			$this->m_wikipage->setCaption($caption);
 		}
+	}
+
+
+	public function setInverse($isinverse) {
+		$this->unstub(); // make sure later unstubbing does not overwrite this
+		return $this->m_inv = ($isinverse == true);
 	}
 
 	/**
@@ -155,17 +182,18 @@ class SMWPropertyValue extends SMWDataValue {
 	 */
 	public function isVisible() {
 		$this->unstub();
-		return ($this->m_wikipage !== NULL);
+		return ($this->m_wikipage !== null);
 	}
 
 	/**
-	 * Specifies whether values of this property should be shown in typical browsing
-	 * interfaces. A property may wish to prevent this if either (1) its information is
-	 * really dull, e.g. being a mere copy of information that is obvious from other
-	 * things that are shown, or (2) the property is set in a hook after parsing, so that
-	 * it is not reliably available when Factboxes are displayed. Properties that are
-	 * internal so that they should never be observed by users, then it is better to just
-	 * not associate any translated label with them, so they never appear anywhere.
+	 * Specifies whether values of this property should be shown in typical
+	 * browsing interfaces. A property may wish to prevent this if either
+	 * (1) its information is really dull, e.g. being a mere copy of
+	 * information that is obvious from other things that are shown, or (2) the
+	 * property is set in a hook after parsing, so that it is not reliably
+	 * available when Factboxes are displayed. If a property is internal so it
+	 * should never be observed by users, then it is better to just not
+	 * associate any translated label with it, so it never appears anywhere.
 	 */
 	public function isShown() {
 		$this->unstub();
@@ -174,26 +202,34 @@ class SMWPropertyValue extends SMWDataValue {
 		         SMWPropertyvalue::$m_propertytypes[$this->m_propertyid][1]) );
 	}
 
+	/**
+	 * Return TRUE if this property is an inverse.
+	 */
+	public function isInverse() {
+		$this->unstub();
+		return $this->m_inv;
+	}
+
 	public function setOutputFormat($formatstring) {
 		$this->m_outformat = $formatstring;
-		if ($this->m_wikipage !== NULL) { // do not unstub if not needed
+		if ($this->m_wikipage !== null) { // do not unstub if not needed
 			$this->m_wikipage->setOutputFormat($formatstring);
 		}
 	}
 
-	public function getShortWikiText($linked = NULL) {
+	public function getShortWikiText($linked = null) {
 		return $this->isVisible()?$this->highlightText($this->m_wikipage->getShortWikiText($linked)):'';
 	}
 
-	public function getShortHTMLText($linker = NULL) {
+	public function getShortHTMLText($linker = null) {
 		return $this->isVisible()?$this->highlightText($this->m_wikipage->getShortHTMLText($linker)):'';
 	}
 
-	public function getLongWikiText($linked = NULL) {
+	public function getLongWikiText($linked = null) {
 		return $this->isVisible()?$this->highlightText($this->m_wikipage->getLongWikiText($linked)):'';
 	}
 
-	public function getLongHTMLText($linker = NULL) {
+	public function getLongHTMLText($linker = null) {
 		return $this->isVisible()?$this->highlightText($this->m_wikipage->getLongHTMLText($linker)):'';
 	}
 
@@ -205,8 +241,20 @@ class SMWPropertyValue extends SMWDataValue {
  		return $this->isVisible()?array($this->m_wikipage->getDBkey()):array($this->m_propertyid);
 	}
 
+	public function getSignature() {
+		return 't';
+	}
+
+	public function getValueIndex() {
+		return 0;
+	}
+
+	public function getLabelIndex() {
+		return 0;
+	}
+
 	public function getWikiValue() {
-		return $this->isVisible()?$this->m_wikipage->getWikiValue():'';
+		return $this->isVisible()?(($this->isInverse()?'-':'') . $this->m_wikipage->getWikiValue()):'';
 	}
 
 	/**
@@ -232,7 +280,7 @@ class SMWPropertyValue extends SMWDataValue {
 	 */
 	public function getTypesValue() {
 		global $smwgPDefaultType;
-		if ($this->prop_typevalue !== NULL) return $this->prop_typevalue;
+		if ($this->prop_typevalue !== null) return $this->prop_typevalue;
 		if (!$this->isValid()) { // errors in property, return invalid types value with same errors
 			$result = SMWDataValueFactory::newTypeIDValue('__typ');
 			$result->setDBkeys(array('__err'));
@@ -254,8 +302,8 @@ class SMWPropertyValue extends SMWDataValue {
 			$result = SMWDataValueFactory::newTypeIDValue('__typ');
 			if (array_key_exists($this->m_propertyid, SMWPropertyValue::$m_propertytypes)) {
 				$result->setDBkeys(array(SMWPropertyValue::$m_propertytypes[$this->m_propertyid][0]));
-			} else { // fixed default for special properties
-				$result->setDBkeys(array('_str'));
+			} else { // unknown type; it may still be that the property is "type-polymorphic" (like _1, _2, ... for Records)
+				$result->setDBkeys(array('__err')); // use "__err" to make sure that it gets noticed if this information is really used to create values
 			}
 		}
 		$this->prop_typevalue = $result;
@@ -263,14 +311,18 @@ class SMWPropertyValue extends SMWDataValue {
 	}
 
 	/**
-	 * Quickly get the type id of some property without necessarily making another datavalue.
-	 * Note that this is not the same as getTypeID(), which returns the id of this property
-	 * datavalue.
+	 * Quickly get the type id of some property without necessarily making
+	 * another datavalue. Note that this is not the same as getTypeID(), which
+	 * returns the id of this property datavalue.
 	 */
 	public function getPropertyTypeID() {
-		if ($this->prop_typeid === NULL) {
+		if ($this->prop_typeid === null) {
 			$type = $this->getTypesValue();
-			$this->prop_typeid = $type->isUnary()?$type->getDBkey():'__nry';
+			if ($type instanceof SMWTypesValue) {
+				$this->prop_typeid = $type->getDBkey();
+			} else {
+				$this->prop_typeid = '__err';
+			}
 		}
 		return $this->prop_typeid;
 	}
@@ -282,6 +334,10 @@ class SMWPropertyValue extends SMWDataValue {
 	 */
 	public function getDBkey() {
 		return $this->isVisible()?$this->m_wikipage->getDBkey():$this->m_propertyid;
+	}
+
+	public function getText() {
+		return $this->isVisible()?$this->m_wikipage->getWikiValue():'';
 	}
 
 	/**
@@ -341,7 +397,7 @@ class SMWPropertyValue extends SMWDataValue {
 			return; //init happened before
 		}
 
-		global $smwgContLang;
+		global $smwgContLang,$smwgUseCategoryHierarchy;
 		SMWPropertyValue::$m_propertylabels = $smwgContLang->getPropertyLabels();
 		SMWPropertyValue::$m_propertyaliases = $smwgContLang->getPropertyAliases();
 		// Setup built-in predefined properties.
@@ -359,10 +415,17 @@ class SMWPropertyValue extends SMWDataValue {
 				'_PVAL'  =>  array('__sps',true),
 				'_REDI'  =>  array('__red',true),
 				'_SUBP'  =>  array('__sup',true),
-				'_SUBC'  =>  array('__suc',false),
+				'_SUBC'  =>  array('__suc',!$smwgUseCategoryHierarchy),
 				'_CONC'  =>  array('__con',false),
 				'_MDAT'  =>  array('_dat',false),
 				'_ERRP'  =>  array('_wpp',false),
+				'_LIST'  =>  array('__tls',true),
+				// "virtual" properties for encoding lists in n-ary datatypes (their type must never be used, hence use __err)
+// 				'_1'     =>  array('__err',false),
+// 				'_2'     =>  array('__err',false),
+// 				'_3'     =>  array('__err',false),
+// 				'_4'     =>  array('__err',false),
+// 				'_5'     =>  array('__err',false),
 			);
 		wfRunHooks( 'smwInitProperties' );
 	}

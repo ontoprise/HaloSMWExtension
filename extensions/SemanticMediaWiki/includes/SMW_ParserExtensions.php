@@ -36,7 +36,7 @@ class SMWParserExtensions {
 		// process redirects, if any
 		// (it seems that there is indeed no more direct way of getting this info from MW)
 		$rt = Title::newFromRedirect($text);
-		if ($rt !== NULL) {
+		if ($rt !== null) {
 			$p = SMWPropertyValue::makeProperty('_REDI');
 			$dv = SMWDataValueFactory::newPropertyObjectValue($p,$rt->getPrefixedText());
 			if ($smwgStoreAnnotations) {
@@ -189,19 +189,12 @@ class SMWParserExtensions {
 
 	/**
 	 * The \<ask\> parser hook processing part. This has been replaced by the
-	 * parser function \#ask and should no longer be used.
+	 * parser function \#ask and is no longer supported.
+	 * @todo Remove this function entirely, one could have an extension for those who
+	 * wish to have some intelligent behaviour here.
 	 */
-	static public function doAskHook($querytext, $params, &$parser) {
-		global $smwgQEnabled, $smwgIQRunningNumber;
-		if ($smwgQEnabled) {
-			$smwgIQRunningNumber++;
-			$result = SMWQueryProcessor::getResultFromHookParams($querytext,$params,SMW_OUTPUT_HTML);
-		} else {
-			wfLoadExtensionMessages('SemanticMediaWiki');
-			$result = smwfEncodeMessages(array(wfMsgForContent('smw_iq_disabled')));
-		}
-		SMWOutputs::commitToParser($parser);
-		return $result;
+	static public function doAskHook($querytext, $params, $parser) {
+		return '&lt;ask&gt; no longer supported. See SMW documentation on how to do inline queries now.';
 	}
 
 	/**
@@ -253,7 +246,7 @@ class SMWParserExtensions {
 
 		$dv = SMWDataValueFactory::newPropertyObjectValue($pconc);
 		$dv->setValues($concept_text, $concept_docu, $query->getDescription()->getQueryFeatures(), $query->getDescription()->getSize(), $query->getDescription()->getDepth());
-		if (SMWParseData::getSMWData($parser) !== NULL) {
+		if (SMWParseData::getSMWData($parser) !== null) {
 			SMWParseData::getSMWData($parser)->addPropertyObjectValue($pconc,$dv);
 		}
 
@@ -305,12 +298,12 @@ class SMWParserExtensions {
 		array_shift( $params ); // we already know the $parser ...
 		foreach ($params as $p)
 			if (trim($p) != "") {
-				$parts = explode("=", trim($p));
+				$parts = explode("=", trim($p), 2);
 				if (count($parts)==2) {
 					$property = $parts[0];
 					$object = $parts[1];
 					SMWParseData::addProperty( $property, $object, false, $parser, true );
-				}
+				} // else: no "=" given, ignore
 			}
 		SMWOutputs::commitToParser($parser); // not obviously required, but let us be sure
 		return '';
@@ -368,7 +361,7 @@ class SMWParserExtensions {
 						$excluded_dates = explode(';', $value);
 						foreach ($excluded_dates as $date_str) {
 							$date = SMWDataValueFactory::newTypeIDValue('_dat', $date_str);
-							$excluded_dates_jd[] = $date->getNumericValue();
+							$excluded_dates_jd[] = $date->getValueKey();
 						}
 					}
 				}
@@ -383,11 +376,11 @@ class SMWParserExtensions {
 		if (is_null($period) || $period < 1 || $period > 500)
 			$period = 1;
 		// get the Julian day value for both the start and end date
-		$start_date_jd = $start_date->getNumericValue();
+		$start_date_jd = $start_date->getValueKey();
 		if (! is_null($end_date))
-			$end_date_jd = $end_date->getNumericValue();
+			$end_date_jd = $end_date->getValueKey();
 		$cur_date = $start_date;
-		$cur_date_jd = $start_date->getNumericValue();
+		$cur_date_jd = $start_date->getValueKey();
 		$i = 0;
 		$reached_end_date = false;
 		do {
@@ -415,7 +408,7 @@ class SMWParserExtensions {
 				}
 				$date_str = "$cur_year-$cur_month-$cur_day $cur_time";
 				$cur_date = SMWDataValueFactory::newTypeIDValue('_dat', $date_str);
-				$cur_date_jd = $cur_date->getNumericValue();
+				$cur_date_jd = $cur_date->getValueKey();
 			} else { // $unit == 'day' or 'week'
 				// assume 'day' if it's none of the above
 				$cur_date_jd += ($unit === 'week') ? 7 * $period : $period;
@@ -443,7 +436,7 @@ class SMWParserExtensions {
 	 * that should automagically be annotated when the template is used.
 	 *
 	 * Usage:
-	 * {{\#declare:Author=Author\#list|Publisher=editor}}
+	 * {{\#declare:Author|Publisher=editor}}
 	 */
 	static public function doDeclare( &$parser, PPFrame $frame, $args ) {
 		if ($frame->isTemplate()) {

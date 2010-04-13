@@ -33,7 +33,7 @@ abstract class SMWResultPrinter {
 	/** Text to use for link to further results, or empty if link should not be shown.
 	 *  Unescaped! Use SMWResultPrinter::getSearchLabel() and SMWResultPrinter::linkFurtherResults()
 	 *  instead of accessing this directly. */
-	protected $mSearchlabel = NULL;
+	protected $mSearchlabel = null;
 
 	/** Default return value for empty queries. Unescaped. Normally not used in sub-classes! */
 	protected $mDefault = '';
@@ -122,7 +122,7 @@ abstract class SMWResultPrinter {
 				return $this->escapeText($this->mDefault,$outputmode) . $this->getErrorString($results);
 			} elseif ($this->mInline) {
 				$label = $this->mSearchlabel;
-				if ($label === NULL) { //apply defaults
+				if ($label === null) { //apply defaults
 					wfLoadExtensionMessages('SemanticMediaWiki');
 					$label = wfMsgForContent('smw_iq_moreresults');
 				}
@@ -263,7 +263,7 @@ abstract class SMWResultPrinter {
 		if ( ($firstcol && $this->mLinkFirst) || (!$firstcol && $this->mLinkOthers) ) {
 			return $this->mLinker;
 		} else {
-			return NULL;
+			return null;
 		}
 	}
 
@@ -361,6 +361,46 @@ abstract class SMWResultPrinter {
 	 */
 	protected function linkFurtherResults($results) {
 		return ($this->mInline && $results->hasFurtherResults() && ($this->mSearchlabel !== ''));
+	}
+
+	/**
+	 * Return an array describing the parameters of specifically text-based
+	 * formats, like 'list' and 'table', for use in their getParameters()
+	 * functions
+	 */
+	protected function textDisplayParameters() {
+		return array(
+			array('name' => 'intro', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_intro')),
+			array('name' => 'outro', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_outro')),
+			array('name' => 'default', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_default')),
+		);
+	}
+
+	/**
+	 * Return an array describing the parameters of the export formats
+	 * like 'rss' and 'csv', for use in their getParameters() functions
+	 */
+	protected function exportFormatParameters() {
+		return array(
+			array('name' => 'limit', 'type' => 'int', 'description' => wfMsg('smw_paramdesc_limit')),
+			array('name' => 'headers', 'type' => 'enumeration', 'description' => wfMsg('smw_paramdesc_headers'), 'values' => array('show', 'hide', 'plain')),
+			array('name' => 'mainlabel', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_mainlabel')),
+			array('name' => 'searchlabel', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_searchlabel')),
+		);
+	}
+
+	/**
+	 * A function to describe the allowed parameters of a query using
+	 * any specific format - most query printers should override this
+	 * function
+	 */
+	public function getParameters() {
+		return array(
+			array('name' => 'limit', 'type' => 'int', 'description' => wfMsg('smw_paramdesc_limit')),
+			array('name' => 'headers', 'type' => 'enumeration', 'description' => wfMsg('smw_paramdesc_headers'), 'values' => array('show', 'hide', 'plain')),
+			array('name' => 'mainlabel', 'type' => 'string', 'description' => wfMsg('smw_paramdesc_mainlabel')),
+			array('name' => 'link', 'type' => 'enumeration', 'description' => wfMsg('smw_paramdesc_link'), 'values' => array('all', 'subject', 'none')),
+		);
 	}
 
 }
