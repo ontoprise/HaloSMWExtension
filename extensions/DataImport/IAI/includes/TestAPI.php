@@ -106,7 +106,7 @@ $et = urlencode($et);
 echo "Edit token: ".$et."\n";
 
 $text = <<<TEXT
-Some text
+Some text {{TestTemplate1}} '''fett'''
 TEXT;
 
 $text = urlencode($text);

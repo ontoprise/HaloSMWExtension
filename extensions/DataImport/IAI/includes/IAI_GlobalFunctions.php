@@ -33,6 +33,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 require_once('IAI_ImportBot.php');
 
 $iaigUpdateWithBot = array();
+$iaigLog = null;
+$iaigStartTime = 0;
+
 
 /**
  * Switch on Interwiki-Article-Import. This function must be called in
@@ -45,6 +48,8 @@ $iaigUpdateWithBot = array();
  * etc.
  */
 function enableIAI() {
+iaifStartLog("enableIAI");
+
     global $iaigIP, $wgExtensionFunctions, $wgAutoloadClasses, $wgSpecialPages, 
            $wgSpecialPageGroups, $wgHooks, $wgExtensionMessagesFiles, 
            $wgJobClasses, $wgExtensionAliasesFiles;
@@ -61,6 +66,7 @@ function enableIAI() {
     //--- Autoloading for exception classes ---
     $wgAutoloadClasses['IAIException']        = $iaigIP . '/exceptions/IAI_Exception.php';
 
+iaifEndLog("enableIAI");
     return true;
 }
 
@@ -72,7 +78,9 @@ function enableIAI() {
  * credits, and init some globals that are not for configuration settings.
  */
 function iaifSetupExtension() {
-    wfProfileIn('iaifSetupExtension');
+iaifStartLog("enableIAI");
+	
+	wfProfileIn('iaifSetupExtension');
     global $iaigIP, $wgHooks, $wgParser, $wgExtensionCredits,
     $wgLanguageCode, $wgVersion, $wgRequest, $wgContLang;
 
@@ -101,7 +109,9 @@ function iaifSetupExtension() {
         'description' => 'Import articles from other Mediawikis.');
 
     wfProfileOut('iaifSetupExtension');
+iaifEndLog("enableIAI");
     return true;
+    
 }
 
 
@@ -109,8 +119,11 @@ function iaifSetupExtension() {
 //in order to initialize the Wikipedia
 //Ultrapedia Merger
 function enableWUM(){
+iaifStartLog("enableWUM");
 	global $iaigIP;
 	require_once($iaigIP."/WUM/WU_Merger.php");
+iaifEndLog("enableWUM");
+	
 }
 
 /**********************************************/
@@ -123,6 +136,8 @@ function enableWUM(){
  * greater or equal to 100.
  */
 function iaifInitNamespaces() {
+iaifStartLog("iaifInitNamespaces");
+	
     wfProfileIn('iaifInitNamespaces');
 	global $iaigNamespaceIndex, $wgExtraNamespaces, $wgNamespaceAliases,
     $wgNamespacesWithSubpages, $wgLanguageCode, $iaigContLang;
@@ -146,6 +161,8 @@ function iaifInitNamespaces() {
     $wgNamespaceAliases = $wgNamespaceAliases + $namespacealiases;
 
     wfProfileOut('iaifInitNamespaces');
+iaifEndLog("iaifInitNamespaces");
+    
 }
 
 
@@ -160,6 +177,8 @@ function iaifInitNamespaces() {
  * can be initialised much later when they are actually needed.
  */
 function iaifInitContentLanguage($langcode) {
+iaifStartLog("iaifInitContentLanguage");
+	
     global $iaigIP, $iaigContLang;
     if (!empty($iaigContLang)) {
         return;
@@ -180,6 +199,8 @@ function iaifInitContentLanguage($langcode) {
     $iaigContLang = new $iaiContLangClass();
 
     wfProfileOut('iaifInitContentLanguage');
+iaifEndLog("iaifInitContentLanguage");
+    
 }
 
 /**
@@ -193,11 +214,18 @@ function iaifInitContentLanguage($langcode) {
  * @return bool true
  */
 function iaifAPIEditBeforeSave(&$editPage, $text, &$resultArr) {
-
+iaifStartLog("iaifAPIEditBeforeSave");
+	
+	global $iaigIP;
+	
 	global $iaigUpdateWithBot;
 
 	$t = $editPage->getArticle()->getTitle()->getFullText();
 	$iaigUpdateWithBot[] = $t;
+	
+	global $iaigLog, $iaigStartTime;
+	fprintf($iaigLog, "iaifAPIEditBeforeSave: %f (ms)\n", (microtime(true) - $iaigStartTime)/1000);
+iaifEndLog("iaifAPIEditBeforeSave");
 	
 	return true;
 }
@@ -212,7 +240,9 @@ function iaifAPIEditBeforeSave(&$editPage, $text, &$resultArr) {
  * @return true
  */
 function iaifArticleSaveComplete(&$article, &$user, $text) {
-	global $iaigUpdateWithBot;
+iaifStartLog("iaifArticleSaveComplete");
+	
+	global $iaigUpdateWithBot, $iaigIP;
 	
 	$t = $article->getTitle()->getFullText();
 	$k = array_search($t, $iaigUpdateWithBot);
@@ -221,5 +251,32 @@ function iaifArticleSaveComplete(&$article, &$user, $text) {
 		unset($iaigUpdateWithBot[$k]);
 	}
 
+	global $iaigLog, $iaigStartTime;
+	fprintf($iaigLog, "iaifArticleSaveComplete: %f (ms)\n", (microtime(true) - $iaigStartTime)/1000);
+iaifEndLog("iaifArticleSaveComplete");
+	
 	return true;
 }
+
+function iaifStartLog($function) {
+	global $iaigIP, $iaigLog, $iaigStartTime;
+	if ($iaigLog == null) {
+		$iaigLog = fopen("$iaigIP/IAI.log", "a");
+		$iaigStartTime = microtime(true);
+	}
+	fprintf($iaigLog, "(%f) Entering function $function.\n", (microtime(true)-$iaigStartTime)/1000);
+}
+
+function iaifLog($msg) {
+	global $iaigLog, $iaigStartTime;
+	fprintf($iaigLog, "(%f) %s\n", (microtime(true)-$iaigStartTime)/1000, $msg);
+	fflush($iaigLog);
+	
+}
+
+function iaifEndLog($function) {
+	global $iaigLog, $iaigStartTime;
+	fprintf($iaigLog, "(%f) Leaving function $function.\n", (microtime(true)-$iaigStartTime)/1000);
+	fflush($iaigLog);
+}
+

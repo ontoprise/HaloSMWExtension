@@ -372,7 +372,7 @@ class IAIArticleImporter  {
 	 */
 	public function importImages($images) {
 		// Add namespace if necessary
-		global $wgContLang;
+		global $wgContLang, $iaigTempDir;
 		$imgNs = $wgContLang->getNsText(NS_IMAGE).":";
 		
 		foreach ($images as $k => $i) {
@@ -417,14 +417,15 @@ class IAIArticleImporter  {
 //				throw new IAIException(IAIException::HTTP_ERROR, $img);
 			}
 			
-			$handle = fopen ($base, "wb");
+			
+			$handle = fopen ($iaigTempDir.$base, "wb");
 			fwrite($handle, $contents);
 			fclose($handle);
 			
 			
 			$this->mImportedImages[] = $base;
 			
-			$archive = $image->publish( $base );
+			$archive = $image->publish( $iaigTempDir.$base );
 			if( WikiError::isError( $archive ) || !$archive->isGood() ) {
 				echo( "failed.\n" );
 				continue;
@@ -432,7 +433,7 @@ class IAIArticleImporter  {
 				echo "success.\n";
 			}
 			$image->recordUpload($archive->value, "Imported with IAI Article Importer", "No license information" );
-			unlink($base);
+			unlink($iaigTempDir.$base);
 		}
 	
 	}

@@ -70,7 +70,8 @@ iaifInitNamespaces();
 # articles are updated.
 #
 ##
-$iaigWikiApi = "http://en.wikipedia.org/w/";
+//$iaigWikiApi = "http://en.wikipedia.org/w/";
+$iaigWikiApi = "http://localhost/develwiki/";
 
 ###
 # If an article is changed with a Mediawiki API call, IAI can update the dependencies
@@ -79,4 +80,10 @@ $iaigWikiApi = "http://en.wikipedia.org/w/";
 #
 ##
 $iaigUpdateDependenciesAfterAPIedit = true;
+
+###
+# IAI needs a folder for writing temporary files when importing images. 
+# In this variable, you can specify a folder with write access.
+#
+$iaigTempDir = "";
 

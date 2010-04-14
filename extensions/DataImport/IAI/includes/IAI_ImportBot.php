@@ -70,10 +70,14 @@ class IAIImportBot extends GardeningBot {
 	 */
 	public function run($paramArray, $isAsync, $delay) {
 		echo "...started!\n";
-		
+
 		var_dump($paramArray);
 		$result = "";
 
+global $iaigIP;
+$iaigLog = fopen("$iaigIP/IAIBot.log", "a");
+fprintf($iaigLog, "Import Bot started.\n");
+		
 		$log = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 				
 		$this->setNumberOfTasks(1);
@@ -83,6 +87,8 @@ class IAIImportBot extends GardeningBot {
 		global $iaigWikiApi;
 		$ai = new IAIArticleImporter($iaigWikiApi);
 		try {
+			echo "Importing from $iaigWikiApi\n";
+			
 			// Import templates of article
 			$article = $paramArray["article"];
 			
@@ -118,7 +124,8 @@ class IAIImportBot extends GardeningBot {
 				Title::newFromText($report));
 		
 		echo "...done.\n";
-			
+
+fclose($iaigLog);		
 		return $result;
 
 	}
