@@ -100,7 +100,7 @@ class HACLLanguageEn extends HACLLanguage {
 	protected $mSDTemplateName = "Template";
     protected $mPredefinedRightName = "Right";
     protected $mNamingConvention = array(
-		HACLLanguage::NC_GROUP => 'Groups'
+		HACLLanguage::NC_GROUP => 'Group'
 	);
     
 	

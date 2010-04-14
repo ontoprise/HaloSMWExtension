@@ -100,7 +100,7 @@ class HACLLanguageDe extends HACLLanguage {
 	protected $mPredefinedRightName = "Recht";
 	
 	protected $mNamingConvention = array(
-		HACLLanguage::NC_GROUP => 'Gruppen'
+		HACLLanguage::NC_GROUP => 'Gruppe'
 	);
 	
 }
