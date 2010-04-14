@@ -91,6 +91,7 @@ function smwgHaloSetupExtension() {
 	// Autoloading. Use it for everything! No include_once or require_once please!
 
 	$wgAutoloadClasses['SMWHaloStore2'] = $smwgHaloIP . '/includes/storage/SMW_HaloStore2.php';
+	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_AdvRequestOptions.php';
 
 	$wgAutoloadClasses['TSConnection']            = $smwgHaloIP . '/includes/storage/SMW_TSConnection.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';

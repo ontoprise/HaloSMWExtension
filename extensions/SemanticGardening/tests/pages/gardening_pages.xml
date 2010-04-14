@@ -1,10 +1,10 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://localhost/develwiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.13.2</generator>
+    <base>http://localhost/mediawiki/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.3</generator>
     <case>first-letter</case>
-      <namespaces>
+    <namespaces>
       <namespace key="-2">Media</namespace>
       <namespace key="-1">Special</namespace>
       <namespace key="0" />
@@ -13,8 +13,8 @@
       <namespace key="3">User talk</namespace>
       <namespace key="4">Halo3wiki</namespace>
       <namespace key="5">Halo3wiki talk</namespace>
-      <namespace key="6">Image</namespace>
-      <namespace key="7">Image talk</namespace>
+      <namespace key="6">File</namespace>
+      <namespace key="7">File talk</namespace>
       <namespace key="8">MediaWiki</namespace>
       <namespace key="9">MediaWiki talk</namespace>
       <namespace key="10">Template</namespace>
@@ -27,31 +27,18 @@
       <namespace key="103">Property talk</namespace>
       <namespace key="104">Type</namespace>
       <namespace key="105">Type talk</namespace>
-      <namespace key="106">Form</namespace>
-      <namespace key="107">Form talk</namespace>
       <namespace key="108">Concept</namespace>
       <namespace key="109">Concept talk</namespace>
+      <namespace key="110">Rating</namespace>
+      <namespace key="111">Rating talk</namespace>
     </namespaces>
   </siteinfo>
-  <page>
-    <title>NoAnnotation</title>
-    <id>1390</id>
-    <revision>
-      <id>3773</id>
-      <timestamp>2009-04-21T13:48:10Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: No annotations on it</comment>
-      <text xml:space="preserve">No annotations on it</text>
-    </revision>
-  </page>
   <page>
     <title>Main Page</title>
     <id>1</id>
     <revision>
       <id>1</id>
-      <timestamp>2008-08-18T12:25:32Z</timestamp>
+      <timestamp>2010-04-13T13:32:58Z</timestamp>
       <contributor>
         <ip>MediaWiki default</ip>
       </contributor>
@@ -60,10 +47,9 @@
 Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for information on using the wiki software.
 
 == Getting started ==
-
 * [http://www.mediawiki.org/wiki/Manual:Configuration_settings Configuration settings list]
 * [http://www.mediawiki.org/wiki/Manual:FAQ MediaWiki FAQ]
-* [http://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
+* [https://lists.wikimedia.org/mailman/listinfo/mediawiki-announce MediaWiki release mailing list]</text>
     </revision>
   </page>
   <page>
@@ -71,7 +57,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>2</id>
     <revision>
       <id>2</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:38:57Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
@@ -84,14 +70,16 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>3</id>
     <revision>
       <id>3</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:39:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[has type::Type:Page; Type:Page]]</comment>
-      <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
+      <comment>Created page with '  [[Has type::Type:Record]]This is the predefined property &quot;Has domain and range&quot;  [[Has fields::Type:Page; Type:Page]]'</comment>
+      <text xml:space="preserve">
 
-[[has type::Type:Page; Type:Page]]</text>
+[[Has type::Type:Record]]This is the predefined property &quot;Has domain and range&quot;
+
+[[Has fields::Type:Page; Type:Page]]</text>
     </revision>
   </page>
   <page>
@@ -99,14 +87,14 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>4</id>
     <revision>
       <id>4</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:39:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Has max cardinality&quot;  [[has type::Type:Number]]</comment>
+      <comment>Created page with 'This is the predefined property &quot;Has max cardinality&quot;  [[Has type::Type:Number]]'</comment>
       <text xml:space="preserve">This is the predefined property &quot;Has max cardinality&quot;
 
-[[has type::Type:Number]]</text>
+[[Has type::Type:Number]]</text>
     </revision>
   </page>
   <page>
@@ -114,14 +102,14 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>5</id>
     <revision>
       <id>5</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:39:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Has min cardinality&quot;  [[has type::Type:Number]]</comment>
+      <comment>Created page with 'This is the predefined property &quot;Has min cardinality&quot;  [[Has type::Type:Number]]'</comment>
       <text xml:space="preserve">This is the predefined property &quot;Has min cardinality&quot;
 
-[[has type::Type:Number]]</text>
+[[Has type::Type:Number]]</text>
     </revision>
   </page>
   <page>
@@ -129,11 +117,11 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>6</id>
     <revision>
       <id>6</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:39:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Is inverse of&quot;</comment>
+      <comment>Created page with 'This is the predefined property &quot;Is inverse of&quot;'</comment>
       <text xml:space="preserve">This is the predefined property &quot;Is inverse of&quot;</text>
     </revision>
   </page>
@@ -142,19 +130,97 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <id>7</id>
     <revision>
       <id>7</id>
-      <timestamp>2008-08-18T12:27:05Z</timestamp>
+      <timestamp>2010-04-13T13:39:10Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
       </contributor>
-      <comment>New page: This is the predefined property &quot;Is equal to&quot;</comment>
+      <comment>Created page with 'This is the predefined property &quot;Is equal to&quot;'</comment>
       <text xml:space="preserve">This is the predefined property &quot;Is equal to&quot;</text>
     </revision>
   </page>
   <page>
-    <title>Property:Glossary</title>
+    <title>Category:Transitive properties</title>
     <id>8</id>
     <revision>
       <id>8</id>
+      <timestamp>2010-04-13T13:39:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'This is the predefined category &quot;Transitive properties&quot;'</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Category:Symmetrical properties</title>
+    <id>9</id>
+    <revision>
+      <id>9</id>
+      <timestamp>2010-04-13T13:39:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with 'This is the predefined category &quot;Symmetrical properties&quot;'</comment>
+      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Question</title>
+    <id>10</id>
+    <revision>
+      <id>10</id>
+      <timestamp>2010-04-13T13:39:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Description</title>
+    <id>11</id>
+    <revision>
+      <id>11</id>
+      <timestamp>2010-04-13T13:39:11Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:Text]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:DiscourseState</title>
+    <id>12</id>
+    <revision>
+      <id>12</id>
+      <timestamp>2010-04-13T13:39:12Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New attribute added</comment>
+      <text xml:space="preserve">[[Has type::Type:String]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>NoAnnotation</title>
+    <id>13</id>
+    <revision>
+      <id>13</id>
+      <timestamp>2009-04-21T13:48:10Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>New page: No annotations on it</comment>
+      <text xml:space="preserve">No annotations on it</text>
+    </revision>
+  </page>
+  <page>
+    <title>Property:Glossary</title>
+    <id>14</id>
+    <revision>
+      <id>21</id>
       <timestamp>2008-08-18T12:27:05Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -166,75 +232,10 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     </revision>
   </page>
   <page>
-    <title>Category:Transitive properties</title>
-    <id>9</id>
-    <revision>
-      <id>9</id>
-      <timestamp>2008-08-18T12:27:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined category &quot;Transitive properties&quot;</comment>
-      <text xml:space="preserve">This is the predefined category &quot;Transitive properties&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Category:Symmetrical properties</title>
-    <id>10</id>
-    <revision>
-      <id>10</id>
-      <timestamp>2008-08-18T12:27:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New page: This is the predefined category &quot;Symmetrical properties&quot;</comment>
-      <text xml:space="preserve">This is the predefined category &quot;Symmetrical properties&quot;</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Question</title>
-    <id>11</id>
-    <revision>
-      <id>11</id>
-      <timestamp>2008-08-18T12:27:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[has type::Type:String]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Description</title>
-    <id>12</id>
-    <revision>
-      <id>12</id>
-      <timestamp>2008-08-18T12:27:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[has type::Type:Text]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:DiscourseState</title>
-    <id>13</id>
-    <revision>
-      <id>13</id>
-      <timestamp>2008-08-18T12:27:06Z</timestamp>
-      <contributor>
-        <ip>127.0.0.1</ip>
-      </contributor>
-      <comment>New attribute added</comment>
-      <text xml:space="preserve">[[has type::Type:String]]</text>
-    </revision>
-  </page>
-  <page>
     <title>Category:Car</title>
-    <id>14</id>
+    <id>15</id>
     <revision>
-      <id>14</id>
+      <id>27</id>
       <timestamp>2008-09-05T09:48:28Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -245,9 +246,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:Sports car</title>
-    <id>15</id>
+    <id>16</id>
     <revision>
-      <id>15</id>
+      <id>28</id>
       <timestamp>2008-09-05T09:49:00Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -258,9 +259,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:Electric car</title>
-    <id>16</id>
+    <id>17</id>
     <revision>
-      <id>16</id>
+      <id>29</id>
       <timestamp>2008-09-05T09:49:22Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -271,9 +272,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:Engine</title>
-    <id>17</id>
+    <id>18</id>
     <revision>
-      <id>17</id>
+      <id>30</id>
       <timestamp>2008-09-05T09:49:39Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -284,9 +285,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Category:Person</title>
-    <id>18</id>
+    <id>19</id>
     <revision>
-      <id>38</id>
+      <id>31</id>
       <timestamp>2008-09-05T10:22:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -298,9 +299,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Has Engine</title>
-    <id>19</id>
+    <id>20</id>
     <revision>
-      <id>19</id>
+      <id>32</id>
       <timestamp>2008-09-05T09:50:24Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -313,7 +314,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Gears</title>
     <id>21</id>
     <revision>
-      <id>21</id>
+      <id>33</id>
       <timestamp>2008-09-05T09:51:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -327,7 +328,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Body Form</title>
     <id>22</id>
     <revision>
-      <id>123</id>
+      <id>34</id>
       <timestamp>2008-11-14T14:43:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -340,7 +341,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Electric engine</title>
     <id>23</id>
     <revision>
-      <id>39</id>
+      <id>35</id>
       <timestamp>2008-09-05T10:27:51Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -353,7 +354,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Child</title>
     <id>24</id>
     <revision>
-      <id>25</id>
+      <id>36</id>
       <timestamp>2008-09-05T09:54:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -367,7 +368,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Son</title>
     <id>25</id>
     <revision>
-      <id>26</id>
+      <id>37</id>
       <timestamp>2008-09-05T09:54:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -381,7 +382,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has Daughter</title>
     <id>26</id>
     <revision>
-      <id>27</id>
+      <id>38</id>
       <timestamp>2008-09-05T09:55:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -395,7 +396,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Kai</title>
     <id>27</id>
     <revision>
-      <id>50</id>
+      <id>39</id>
       <timestamp>2008-09-05T15:42:36Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -409,7 +410,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Audi TT</title>
     <id>28</id>
     <revision>
-      <id>58</id>
+      <id>40</id>
       <timestamp>2008-10-02T13:37:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -425,7 +426,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Peugeot</title>
     <id>29</id>
     <revision>
-      <id>35</id>
+      <id>41</id>
       <timestamp>2008-09-05T09:59:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -439,7 +440,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has name</title>
     <id>30</id>
     <revision>
-      <id>126</id>
+      <id>42</id>
       <timestamp>2008-11-24T09:05:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -452,7 +453,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Man</title>
     <id>31</id>
     <revision>
-      <id>36</id>
+      <id>43</id>
       <timestamp>2008-09-05T10:21:14Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -466,7 +467,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Category:Young man</title>
     <id>32</id>
     <revision>
-      <id>37</id>
+      <id>44</id>
       <timestamp>2008-09-05T10:21:40Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -480,7 +481,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Type:Force</title>
     <id>33</id>
     <revision>
-      <id>40</id>
+      <id>45</id>
       <timestamp>2008-09-05T12:38:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -494,7 +495,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>Property:Has torsional moment</title>
     <id>34</id>
     <revision>
-      <id>47</id>
+      <id>46</id>
       <timestamp>2008-09-05T12:47:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -507,7 +508,7 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
     <title>5 cylinder</title>
     <id>35</id>
     <revision>
-      <id>48</id>
+      <id>47</id>
       <timestamp>2008-09-05T12:47:45Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -519,22 +520,23 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Has adress</title>
-    <id>40</id>
+    <id>36</id>
     <revision>
-      <id>49</id>
-      <timestamp>2008-09-05T15:41:50Z</timestamp>
+      <id>54</id>
+      <timestamp>2010-04-14T09:20:50Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>New page: [[Has type::Type:String;Type:String]]</comment>
-      <text xml:space="preserve">[[Has type::Type:String;Type:String]]</text>
+      <text xml:space="preserve">[[has type::Type:Record]]
+[[Has fields::Type:String;Type:String]]</text>
     </revision>
   </page>
   <page>
     <title>Property:Is parent of</title>
-    <id>41</id>
+    <id>37</id>
     <revision>
-      <id>51</id>
+      <id>49</id>
       <timestamp>2008-09-05T16:31:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -546,9 +548,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Parent of</title>
-    <id>42</id>
+    <id>38</id>
     <revision>
-      <id>52</id>
+      <id>50</id>
       <timestamp>2008-09-05T16:35:44Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
@@ -560,9 +562,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Has Ancestor</title>
-    <id>44</id>
+    <id>39</id>
     <revision>
-      <id>55</id>
+      <id>51</id>
       <timestamp>2008-09-26T12:14:17Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -573,9 +575,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Property:Has Father</title>
-    <id>45</id>
+    <id>40</id>
     <revision>
-      <id>56</id>
+      <id>52</id>
       <timestamp>2008-09-26T12:14:41Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>
@@ -587,9 +589,9 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
   </page>
   <page>
     <title>Smw exportontologybot at 2009 2 26 12 49 45</title>
-    <id>72</id>
+    <id>41</id>
     <revision>
-      <id>128</id>
+      <id>53</id>
       <timestamp>2009-02-26T11:49:45Z</timestamp>
       <contributor>
         <ip>127.0.0.1</ip>

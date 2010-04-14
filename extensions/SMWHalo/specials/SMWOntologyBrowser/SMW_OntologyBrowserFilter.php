@@ -18,16 +18,7 @@
  */
 require_once("SMW_OntologyBrowserXMLGenerator.php");
 
-class SMWAdvRequestOptions extends SMWRequestOptions {
 
-	/**
-	 * If true, all string constraints will be OR'ed instead of AND'ed.
-	 * Default is false.
-	 *
-	 * @var boolean
-	 */
-	public $disjunctiveStrings = false;
-}
 /**
  * SMWOntologyBrowserFilter provides global search mechanisms to access the semantic model.
  * It returns XML data which can directly be displayed in the OntologyBrowser.

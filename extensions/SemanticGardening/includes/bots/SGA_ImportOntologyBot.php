@@ -373,9 +373,9 @@ class ImportOntologyBot extends GardeningBot {
 		$oLabel = $object->getLabel();
 		
 		// special case for dateTime/date property value
-		if (preg_match('\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}', $oLabel, $matches) > 0) {
+		if (preg_match('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/', $oLabel, $matches) > 0) {
 			$oLabel = $matches[0];
-		} else if (preg_match('\d{4}-\d{2}-\d{2}', $oLabel, $matches) > 0) {
+		} else if (preg_match('/\d{4}-\d{2}-\d{2}/', $oLabel, $matches) > 0) {
             $oLabel = $matches[0];
         }
 		

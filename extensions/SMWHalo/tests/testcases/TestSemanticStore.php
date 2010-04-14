@@ -140,7 +140,7 @@ class TestSemanticStore extends PHPUnit_Framework_TestCase {
 	public function testPropertiesWithSchemaByName() {
 		$exp_properties = array("Is parent of");
 		$exp_schema = array("Is parent of" => array(0,2147483647,'_wpg',NULL,NULL,'Car', false));
-		$requestoptions = new SMWRequestOptions();
+		$requestoptions = new SMWAdvRequestOptions();
 		$requestoptions->addStringCondition("parent", SMWStringCondition::STRCOND_MID);
 		$properties = smwfGetSemanticStore()->getPropertiesWithSchemaByName($requestoptions);
 		foreach ($properties as $prop) {

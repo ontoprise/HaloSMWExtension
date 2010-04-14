@@ -28,7 +28,7 @@ class SMWExcelResultPrinter extends SMWResultPrinter {
 		if ($this->mShowHeaders) { // building headers
 			$result .= "\t<tr>\n";
 			foreach ($res->getPrintRequests() as $pr) {
-				$title = $pr->getTitle();
+				$title = $pr->getData();
 				if($title instanceof Title)
 					array_push($cols, $title);
 				else
