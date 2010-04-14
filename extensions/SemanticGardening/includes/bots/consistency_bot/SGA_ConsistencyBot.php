@@ -74,7 +74,8 @@ class ConsistencyBot extends GardeningBot {
 		// get inheritance graphs
 		$categoryGraph = $this->store->getCategoryInheritanceGraph();
 		$propertyGraph = $this->store->getPropertyInheritanceGraph();
-
+        
+		
 		// Replace redirect annotations
 		//if (array_key_exists('CONSISTENCY_BOT_REPLACE_REDIRECTS', $paramArray)) {
 		smwfGetSemanticStore()->replaceRedirectAnnotations(true);
@@ -815,7 +816,7 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		$namespaces = $smwgContLang->getNamespaces();
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 		$smw_ids = $db->tableName('smw_ids');
 		$page = $db->tableName('page');
 		$res = $db->query('SELECT p1.page_id AS sub, p2.page_id AS sup '.
@@ -870,7 +871,7 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_atts2 = $db->tableName('smw_atts2');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
@@ -952,7 +953,7 @@ class ConsistencyBotStorageSQL2 extends ConsistencyBotStorageSQL {
 		$smw_ids = $db->tableName('smw_ids');
 		$smw_rels2 = $db->tableName('smw_rels2');
 		$smw_atts2 = $db->tableName('smw_atts2');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';

@@ -45,7 +45,7 @@ class SGAGardeningIssuesAccessSQL2 extends SGAGardeningIssuesAccessSQL {
         $db->query('INSERT INTO smw_prop_gardissues (SELECT DISTINCT page_id AS id FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id'. 
                                                     ' JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
                                                     ' JOIN '.$page.' ON page_title = r.smw_title AND page_namespace = '.NS_CATEGORY.
-                                                    ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 0 '.
+                                                    ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "_1" '.
                                                         ' AND n.s_id IN (SELECT smw_id FROM '.$smw_ids.' JOIN '.$page.' ON page_title = smw_title AND page_namespace = smw_namespace JOIN '.$smw_gardeningissues.' ON page_id = p1_id AND page_namespace = '.SMW_NS_PROPERTY.
                                                                         ' WHERE bot_id = '.$db->addQuotes($botID).'))');
         

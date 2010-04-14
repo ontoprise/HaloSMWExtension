@@ -219,7 +219,8 @@ class SMWCategoryViewer extends CategoryViewer {
 		$sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 		
 		$relationDV = SMWPropertyValue::makeProperty($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
-		$hastypeDV = SMWPropertyValue::makeProperty("_TYPE");                                         
+		$hastypeDV = SMWPropertyValue::makeProperty("_TYPE");          
+		                              
 		foreach ($properties as $prop) {
 			if (!$prop) {
 				// $prop may be undefined
@@ -265,13 +266,16 @@ class SMWCategoryViewer extends CategoryViewer {
 						$range = $type;
 					}
 				}
-				if ($range == null) {
 					
+				if ($range == null) {
 					$range = $store->getPropertyValues($prop, $relationDV);
 					$rangePageContainers = array();
 					foreach($range as $c) {
 						$h = $c->getDVs();
-						if ($h[1] != NULL) $rangePageContainers[] = $h[1];
+						 
+						$domainCatValue = reset($h);
+						$rangeCatValue = next($h);
+						if ($rangeCatValue != NULL) $rangePageContainers[] = $rangeCatValue;
 					}
 					$range = $rangePageContainers;
 				}

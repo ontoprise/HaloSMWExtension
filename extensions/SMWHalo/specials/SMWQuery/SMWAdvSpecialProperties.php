@@ -381,7 +381,7 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
                             LEFT JOIN $smw_rels2 o ON m.o_id = o.s_id AND m.p_id = $domainAndRangeID
                             LEFT JOIN $smw_ids s ON o.o_id = s.smw_id
                             LEFT JOIN $smw_ids t ON o.p_id = t.smw_id
-                            WHERE q.smw_namespace = 102 AND q.smw_iw != \":smw\" AND t.smw_sortkey = 1
+                            WHERE q.smw_namespace = 102 AND q.smw_iw != \":smw\" AND t.smw_sortkey = \"_2\"
                             GROUP BY title) 
                         UNION DISTINCT
                             (SELECT 'Relations' as type,

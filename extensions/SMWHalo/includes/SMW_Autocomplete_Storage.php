@@ -265,7 +265,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
 		$smw_ids = $db->tableName('smw_ids');
 		 
 
-		$nary_pos = $matchDomainOrRange ? 0 : 1;
+		$nary_pos = $matchDomainOrRange ? '"_1"' : '"_2"';
 
 		if (!isset($smwgDefaultCollation)) {
 			$collation = '';
@@ -348,7 +348,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $smw_ids = $db->tableName('smw_ids');
          
 
-        $nary_pos = 0;
+        $nary_pos = '"_1"';
 
         if (!isset($smwgDefaultCollation)) {
             $collation = '';
@@ -519,7 +519,7 @@ class AutoCompletionStorageSQL2 extends AutoCompletionStorage {
         $smw_ids = $db->tableName('smw_ids');
         $smw_rels2 = $db->tableName('smw_rels2');
         $smw_atts2 = $db->tableName('smw_atts2');
-        $smw_subs2 = $db->tableName('smw_subs2');
+        $smw_subs2 = $db->tableName('smw_subp2');
         $smw_spec2 = $db->tableName('smw_spec2');
         
         if (!isset($smwgDefaultCollation)) {

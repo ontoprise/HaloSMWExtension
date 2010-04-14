@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup ConsistencyBot
- * 
+ *
  * Created on 23.05.2007
  *
  * @author Kai Kühn
@@ -93,8 +93,9 @@ class AnnotationLevelConsistency {
 					};
 				} else {
 					$subjects = $this->cc_store->getInstancesUsingProperty($p_DV, $restrictToCategories);
-						
+
 				}
+
 				$this->checkPropertyAnnotations($subjects, $p);
 
 			}
@@ -157,11 +158,11 @@ class AnnotationLevelConsistency {
 						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARDISSUE_WRONG_TARGET_VALUE, $subject, $property, $rd_target != NULL ? $rd_target->getDBkey() : NULL);
 					}
 
-				} else if ($target instanceof SMWNAryValue) { // n-ary relation
+				} else if ($target instanceof SMWRecordValue) { // n-ary relation
 
 					$explodedValues = $target->getDVs();
 					$explodedTypes = explode(";", $target->getDVTypeIDs());
-
+					 
 					//get all range instances and check if their categories are subcategories of the range categories.
 					for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
 						if ($explodedValues[$i] == NULL) {
@@ -325,8 +326,8 @@ class AnnotationLevelConsistency {
 			$domainCategory = $domain->getTitle();
 			if (count($restrictToCategories) > 0) {
 				// check if domain categories appear in the categories to restrict.
-				if (count(array_filter($restrictToCategories, 
-				    create_function('$e', '$e->getText()=="'.$domainCategory->getText().'";'))) == 0) continue;
+				if (count(array_filter($restrictToCategories,
+				create_function('$e', '$e->getText()=="'.$domainCategory->getText().'";'))) == 0) continue;
 			}
 			$instances = smwfGetSemanticStore()->getInstances($domainCategory);
 
@@ -617,26 +618,36 @@ class AnnotationLevelConsistency {
 	 * @param $property n-ary property
 	 */
 	private function checkForMissingParams(array & $subjects, $property) {
-		$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+
+		$hasTypeDV = SMWPropertyValue::makeProperty("_LIST");
 		$type = smwfGetStore()->getPropertyValues($property, $hasTypeDV);
 		$firstType = reset($type);
-		if (count($type) == 0 || $firstType->isUnary()) return;
+		if (count($type) == 0 || !($firstType instanceof SMWTypeListValue)) return;
 		foreach($subjects as $subject) {
 			$propertyDV = SMWPropertyValue::makeUserProperty($property->getDBkey());
 			$values = smwfGetStore()->getPropertyValues($subject, $propertyDV);
+				
 			foreach($values as $v) {
-				if ($v instanceof SMWNAryValue) { // n-ary relation
+				if ($v instanceof SMWRecordValue) { // n-ary relation
 
 					$explodedValues = $v->getDVs();
-					$explodedTypes = explode(";", $v->getDVTypeIDs());
-
-					//get all range instances and check if their categories are subcategories of the range categories.
-					for($i = 0, $n = count($explodedTypes); $i < $n; $i++) {
-						if ($explodedValues[$i] == NULL) {
-							$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
-
+					$explodedTypes = $v->getTypeValues();
+					$eType = reset($explodedTypes);
+					$i=0;
+					foreach($explodedValues as $dv) {
+						$typeID = $dv->getTypeID();
+						 
+						if ($eType === false || $eType->getDBkey() != $typeID) {
+							break;
 						}
+						$i++;
+						$eType = next($explodedTypes);
 					}
+					if (count($explodedTypes) > count($explodedValues)) {
+						$this->gi_store->addGardeningIssueAboutArticles($this->bot->getBotID(), SMW_GARD_ISSUE_MISSING_PARAM, $subject, $property, $i);
+
+					}
+						
 				}
 			}
 		}

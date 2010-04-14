@@ -18,7 +18,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions, 'page_title');
 		$res = $db->query('(SELECT page_title, "true" AS has_subproperties FROM '.$page.' JOIN '.$smw_ids.' t ON page_title=smw_title AND page_namespace = '.SMW_NS_PROPERTY.
@@ -49,7 +49,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$result = array();
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
 
@@ -78,7 +78,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
 		$sqlOptions = DBHelper::getSQLOptionsAsString($requestoptions);
 
@@ -98,7 +98,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		return $result;
 	}
 
-	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $dIndex = 0) {
+	protected function createVirtualTableWithPropertiesByCategory(Title $categoryTitle, & $db, $onlyDirect = false, $dIndex = '_1') {
 		global $smwgDefaultCollation;
         
 		$page = $db->tableName('page');
@@ -219,7 +219,7 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 		$resTransCats = $db->query('SELECT property FROM smw_ob_properties  JOIN '.$db->tableName('categorylinks').
                              ' ON cl_from = id WHERE cl_to = '.$db->addQuotes($this->transitiveCat->getDBKey()). ' GROUP BY property ORDER BY property');
 		$resRanges = $db->query('SELECT property, r.smw_title AS rangeinst FROM smw_ob_properties JOIN '.$smw_rels2.' n ON id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id
-                     WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = 1 GROUP BY property ORDER BY property');
+                     WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "_2" GROUP BY property ORDER BY property');
 			
 		// rewrite result as array
 		$result = array();
@@ -325,9 +325,10 @@ class SMWSemanticStoreSQL2 extends SMWSemanticStoreSQL {
 			$domainAndRangeID = $domainAndRange->smw_id;
 		}
 		$results = array();
-
+        
+		$pos = "_".($pos+1); // FIX: SMW update 1.5
 		$res = $db->query('SELECT q.smw_title AS subject_title, q.smw_namespace AS subject_namespace FROM '.$smw_ids.' q JOIN '.$smw_rels2.' n ON q.smw_id = n.s_id JOIN '.$smw_rels2.' m ON n.o_id = m.s_id JOIN '.$smw_ids.' r ON m.o_id = r.smw_id JOIN '.$smw_ids.' s ON m.p_id = s.smw_id'.
-                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = '.mysql_real_escape_string($pos).' AND r.smw_title = '.$db->addQuotes($object->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY);
+                     ' WHERE n.p_id = '.$domainAndRangeID.' AND s.smw_sortkey = "'.mysql_real_escape_string($pos).'" AND r.smw_title = '.$db->addQuotes($object->getDBkey()).' AND r.smw_namespace = '.NS_CATEGORY);
 
 
 		if($db->numRows( $res ) > 0) {

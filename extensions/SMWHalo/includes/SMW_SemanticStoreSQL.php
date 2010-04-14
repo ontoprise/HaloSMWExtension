@@ -1006,8 +1006,10 @@ class SMWSemanticStoreSQL extends SMWSemanticStore {
 			$article = new Article($t);
 			if (!$t->exists()) {
 				if (strtolower($ssp[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]) == strtolower($t->getText())) {
-					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
-					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]", "", false, false);
+					$text = "\n\n[[".$propertyLabels['_TYPE']."::Type:Record]]";
+					$text .= wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_LIST']."::".
+                    $namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."; ".$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_wpg"]."]]";
+					$article->insertNewArticle($text, "", false, false);
 				} else if (strtolower($ssp[SMW_SSP_HAS_MAX_CARD]) == strtolower($t->getText())) { // special handling for SMW_SSP_HAS_MAX_CARD.
 					$article->insertNewArticle(wfMsg('smw_predefined_props', $t->getText())."\n\n[[".$propertyLabels['_TYPE']."::".
 					$namespaces[SMW_NS_TYPE].":".$datatypeLabels["_num"]."]]", "", false, false);
