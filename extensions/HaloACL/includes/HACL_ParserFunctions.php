@@ -766,7 +766,7 @@ class HACLParserFunctions {
 		} else {
 			// If a protected article is deleted, its SD will be deleted as well
 			$sd = HACLSecurityDescriptor::getSDForPE($article->getTitle()->getArticleID(),
-			HACLSecurityDescriptor::PET_PAGE);
+			                                         HACLSecurityDescriptor::PET_PAGE);
 			if ($sd) {
 				$t = Title::newFromID($sd);
 				$a = new Article($t);
