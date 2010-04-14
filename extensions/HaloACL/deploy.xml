@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>110</version>
+		<version>111</version>
 		<id>haloacl</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/HaloACL</instdir>
@@ -12,7 +12,7 @@
 			<dependency from="1132" to="1159">MW</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
-		<patchlevel>1</patchlevel>
+		<patchlevel>0</patchlevel>
 	</global>
 	<codefiles>
 		<file loc="extensions/HaloACL/deploy.xml" />
