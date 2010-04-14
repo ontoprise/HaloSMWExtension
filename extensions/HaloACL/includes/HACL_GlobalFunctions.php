@@ -161,7 +161,8 @@ function haclfSetupExtension() {
     //-- Hooks for ACL toolbar--
 	$wgHooks['EditPageBeforeEditButtons'][] = 'haclfAddToolbarForEditPage';
 	$wgHooks['sfEditPageBeforeForm'][]      = 'haclfAddToolbarForSemanticForms';
-    
+	$wgHooks['sfAddData'][]                 = 'haclfOnSfAddData';
+	
     
     //-- includes for Ajax calls --
     global $wgUseAjax, $wgRequest;
@@ -717,7 +718,28 @@ HTML;
     return true;
 }
 
-
+/**
+* This function is called from the hook 'sfAddData' in SemanticForms. It adds a
+* JavaScript line that initializes a variable with the namespace number of the
+* current title.
+* 
+* @param string $titleName
+* 	Name of the article that is edited with Semantic Forms
+*  
+*/
+function haclfOnSfAddData($titleName) {
+	global $wgOut, $wgJsMimeType;
+	if (!empty($titleName)) {
+		$t = Title::newFromText($titleName);
+		$namespace = $t->getNamespace();
+		$script = "<script type= \"$wgJsMimeType\">/*<![CDATA[*/\n";
+		$script .= "sfgTargetNamespaceNumber = $namespace;";
+		$script .= "\n/*]]>*/</script>\n";
+			
+		$wgOut->addScript($script);
+	}
+	return true;
+}
 
 
 
