@@ -42,7 +42,7 @@ class USStoreSQL extends USStore {
 		$result = "";
 		$db =& wfGetDB( DB_SLAVE );
 		$smw_ids = $db->tableName('smw_ids');
-		$smw_subs2 = $db->tableName('smw_subs2');
+		$smw_subs2 = $db->tableName('smw_subp2');
 		$page = $db->tableName('page');
 		$sqlOptions = USDBHelper::getSQLOptionsAsString($requestoptions);
 
