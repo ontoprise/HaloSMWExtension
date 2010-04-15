@@ -269,6 +269,7 @@ class ExportOntologyBot extends GardeningBot {
 
 	 		// export property values (aka annotations)
 	 		foreach($properties as $p) {
+	 			if (!$p->isUserDefined()) continue;
 	 			// create valid xml export ID for property. If no exists, skip it.
 	 			$propertyLocal = ExportOntologyBot::makeXMLExportId($p->getXSDValue());
 	 			if ($propertyLocal == NULL) continue;
@@ -451,7 +452,8 @@ class ExportOntologyBot extends GardeningBot {
 	private function exportDatatypeProperty($rp, $firstType, $directSuperProperties, $maxCard, $minCard) {
 		$wikiType = array_key_exists($firstType, $this->mapWikiTypeToXSD) ? $firstType : "_str";
 		$xsdType = $this->mapWikiTypeToXSD[$wikiType] == NULL ? 'string' : $this->mapWikiTypeToXSD[$wikiType];
-			
+		$redirectedPropertiesToCreate = array();
+
 		// export as subproperty
 		$owl = '<owl:DatatypeProperty rdf:about="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'">'.LINE_FEED;
 		$owl .= '	<rdfs:label xml:lang="en">'.smwfXMLContentEncode($rp->getText()).'</rdfs:label>'.LINE_FEED;
@@ -462,6 +464,7 @@ class ExportOntologyBot extends GardeningBot {
 		$redirects = smwfGetSemanticStore()->getRedirectPages($rp);
 		foreach($redirects as $r) {
 			$owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL()).'"/>'.LINE_FEED;
+			$redirectedPropertiesToCreate[] = ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL());
 		}
 		if (!$this->rdfsSemantics) $owl .= '</owl:DatatypeProperty>'.LINE_FEED;
 			
@@ -471,13 +474,13 @@ class ExportOntologyBot extends GardeningBot {
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			if (!$this->rdfsSemantics) {
-				$owl .= '	<owl:Class rdf:about="&owl;Thing">'.LINE_FEED;
-				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
-				$owl .= '			<owl:Restriction>'.LINE_FEED;
-				$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
-				$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
-				$owl .= '			</owl:Restriction>'.LINE_FEED;
-				$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '<owl:Class rdf:about="&owl;Thing">'.LINE_FEED;
+				$owl .= '	<rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '		<owl:Restriction>'.LINE_FEED;
+				$owl .= '			<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
+				$owl .= '			<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
+				$owl .= '		</owl:Restriction>'.LINE_FEED;
+				$owl .= '	</rdfs:subClassOf>'.LINE_FEED;
 				if ($maxCard != NULL) {
 					$owl .= $this->exportMaxCard($rp, $maxCard);
 				}
@@ -494,17 +497,17 @@ class ExportOntologyBot extends GardeningBot {
 
 			foreach($domainRange as $dr) {
 				$dvs = $dr->getDVs();
-				$domain = $dvs[0] != NULL ? $dvs[0]->getTitle()->getPartialURL() : "";
+				$domain = array_key_exists(0, $dvs) ? $dvs[0]->getTitle()->getPartialURL() : "";
 				if ($domain == NULL) continue;
-				$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getPartialURL() : "";
+				$range = array_key_exists(1, $dvs) ? $dvs[1]->getTitle()->getPartialURL() : "";
 				if (!$this->rdfsSemantics) {
-					$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
-					$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
-					$owl .= '			<owl:Restriction>'.LINE_FEED;
-					$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
-					$owl .= '				<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
-					$owl .= '			</owl:Restriction>'.LINE_FEED;
-					$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+					$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+					$owl .= '	<rdfs:subClassOf>'.LINE_FEED;
+					$owl .= '		<owl:Restriction>'.LINE_FEED;
+					$owl .= '			<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
+					$owl .= '			<owl:allValuesFrom rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
+					$owl .= '		</owl:Restriction>'.LINE_FEED;
+					$owl .= '	</rdfs:subClassOf>'.LINE_FEED;
 					if ($maxCard != NULL) {
 						$owl .= $this->exportMaxCard($rp, $maxCard);
 					}
@@ -515,16 +518,32 @@ class ExportOntologyBot extends GardeningBot {
 				} else {
 					$owl .= '      <rdfs:domain rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'" />'.LINE_FEED;
 					$owl .= '      <rdfs:range rdf:resource="&xsd;'.$xsdType.'" />'.LINE_FEED;
+					if ($this->rdfsSemantics) $owl .= '</owl:DatatypeProperty>'.LINE_FEED;
+					if ($maxCard != NULL || $minCard != NULL) {
+						$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+						if ($maxCard != NULL) {
+							$owl .= $this->exportMaxCard($rp, $maxCard);
+						}
+						if ($minCard != NULL) {
+							$owl .= $this->exportMinCard($rp, $minCard);
+						}
+						$owl .= '</owl:Class>'.LINE_FEED;
+					}
 				}
 			}
 
 		}
-		if ($this->rdfsSemantics) $owl .= '</owl:DatatypeProperty>'.LINE_FEED;
+		
+
+		foreach($redirectedPropertiesToCreate as $r) {
+			$owl = '<owl:DatatypeProperty rdf:about="&prop;'.$r.'">'.LINE_FEED;
+			$owl .= '</owl:DatatypeProperty>'.LINE_FEED;
+		}
 		return $owl;
 	}
 
 	private function exportObjectProperty($rp, $directSuperProperties, $maxCard, $minCard) {
-
+		$redirectedPropertiesToCreate = array();
 		$inverseRelations = smwfGetStore()->getPropertyValues($rp, smwfGetSemanticStore()->inverseOfProp);
 			
 		// export as symmetrical property
@@ -553,6 +572,7 @@ class ExportOntologyBot extends GardeningBot {
 		$redirects = smwfGetSemanticStore()->getRedirectPages($rp);
 		foreach($redirects as $r) {
 			$owl .= "\t".'<owl:equivalentProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL()).'"/>'.LINE_FEED;
+			$redirectedPropertiesToCreate[] = ExportOntologyBot::makeXMLAttributeContent($r->getPartialURL());
 		}
 		if (!$this->rdfsSemantics) $owl .= '</owl:ObjectProperty>'.LINE_FEED;
 
@@ -560,13 +580,13 @@ class ExportOntologyBot extends GardeningBot {
 		if ($domainRange == NULL || count($domainRange) == 0) {
 			// if no domainRange annotation exists, export as property of DefaultRootConcept
 			if (!$this->rdfsSemantics) {
-				$owl .= '	<owl:Class rdf:about="&owl;Thing">'.LINE_FEED;
-				$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
-				$owl .= '			<owl:Restriction>'.LINE_FEED;
-				$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
-				$owl .= '               <owl:allValuesFrom rdf:resource="&owl;Thing" />'.LINE_FEED;
-				$owl .= '			</owl:Restriction>'.LINE_FEED;
-				$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '<owl:Class rdf:about="&owl;Thing">'.LINE_FEED;
+				$owl .= '	<rdfs:subClassOf>'.LINE_FEED;
+				$owl .= '		<owl:Restriction>'.LINE_FEED;
+				$owl .= '			<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
+				$owl .= '              <owl:allValuesFrom rdf:resource="&owl;Thing" />'.LINE_FEED;
+				$owl .= '		</owl:Restriction>'.LINE_FEED;
+				$owl .= '	</rdfs:subClassOf>'.LINE_FEED;
 				if ($maxCard != NULL) {
 					$owl .= $this->exportMaxCard($rp, $maxCard);
 				}
@@ -583,21 +603,21 @@ class ExportOntologyBot extends GardeningBot {
 
 			foreach($domainRange as $dr) {
 				$dvs = $dr->getDVs();
-				$domain = $dvs[0] != NULL ? $dvs[0]->getTitle()->getPartialURL() : "";
+				$domain = array_key_exists(0, $dvs) ? $dvs[0]->getTitle()->getPartialURL() : "";
 				if ($domain == NULL) continue;
-				$range = $dvs[1] != NULL ? $dvs[1]->getTitle()->getPartialURL() : "";
+				$range = array_key_exists(1, $dvs) ? $dvs[1]->getTitle()->getPartialURL() : "";
 				if (!$this->rdfsSemantics) {
-					$owl .= '	<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
-					$owl .= '		<rdfs:subClassOf>'.LINE_FEED;
-					$owl .= '			<owl:Restriction>'.LINE_FEED;
-					$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
+					$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+					$owl .= '	<rdfs:subClassOf>'.LINE_FEED;
+					$owl .= '		<owl:Restriction>'.LINE_FEED;
+					$owl .= '			<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($rp->getPartialURL()).'" />'.LINE_FEED;
 					if ($range != '') {
-						$owl .= '				<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED;
+						$owl .= '			<owl:allValuesFrom rdf:resource="&cat;'.ExportOntologyBot::makeXMLAttributeContent($range).'" />'.LINE_FEED;
 					} else {
-						$owl .= '               <owl:allValuesFrom rdf:resource="&owl;Thing" />'.LINE_FEED;
+						$owl .= '           <owl:allValuesFrom rdf:resource="&owl;Thing" />'.LINE_FEED;
 					}
-					$owl .= '			</owl:Restriction>'.LINE_FEED;
-					$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
+					$owl .= '		</owl:Restriction>'.LINE_FEED;
+					$owl .= '	</rdfs:subClassOf>'.LINE_FEED;
 					if ($maxCard != NULL) {
 						$owl .= $this->exportMaxCard($rp, $maxCard);
 					}
@@ -612,8 +632,9 @@ class ExportOntologyBot extends GardeningBot {
 					} else {
 						$owl .= '     <rdfs:range rdf:resource="&owl;Thing" />'.LINE_FEED;
 					}
+					if ($this->rdfsSemantics) $owl .= '</owl:ObjectProperty>'.LINE_FEED;
 					if ($maxCard != NULL || $minCard != NULL) {
-						$owl .= '  <owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
+						$owl .= '<owl:Class rdf:about="&cat;'.ExportOntologyBot::makeXMLAttributeContent($domain).'">'.LINE_FEED;
 						if ($maxCard != NULL) {
 							$owl .= $this->exportMaxCard($rp, $maxCard);
 						}
@@ -626,7 +647,13 @@ class ExportOntologyBot extends GardeningBot {
 			}
 
 		}
-		if ($this->rdfsSemantics) $owl .= '</owl:ObjectProperty>'.LINE_FEED;
+
+
+		foreach($redirectedPropertiesToCreate as $r) {
+			$owl = '<owl:ObjectProperty rdf:about="&prop;'.$r.'">'.LINE_FEED;
+			$owl .= '</owl:ObjectProperty>'.LINE_FEED;
+		}
+
 		return $owl;
 	}
 
@@ -634,7 +661,7 @@ class ExportOntologyBot extends GardeningBot {
 		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
 		$owl .= '			<owl:Restriction>'.LINE_FEED;
 		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getPartialURL()).'" />'.LINE_FEED;
-		$owl .= '				 <owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.LINE_FEED;
+		$owl .= '				<owl:minCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$minCard.'</owl:minCardinality>'.LINE_FEED;
 		$owl .= '			</owl:Restriction>'.LINE_FEED;
 		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 		return $owl;
@@ -644,7 +671,7 @@ class ExportOntologyBot extends GardeningBot {
 		$owl = '		<rdfs:subClassOf>'.LINE_FEED;
 		$owl .= '			<owl:Restriction>'.LINE_FEED;
 		$owl .= '				<owl:onProperty rdf:resource="&prop;'.ExportOntologyBot::makeXMLAttributeContent($property->getPartialURL()).'" />'.LINE_FEED;
-		$owl .= '				 <owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.LINE_FEED;
+		$owl .= '				<owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">'.$maxCard.'</owl:maxCardinality>'.LINE_FEED;
 		$owl .= '			</owl:Restriction>'.LINE_FEED;
 		$owl .= '		</rdfs:subClassOf>'.LINE_FEED;
 		return $owl;
