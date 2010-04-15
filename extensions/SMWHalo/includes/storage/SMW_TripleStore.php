@@ -10,10 +10,10 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 /**
  * @file
  * @ingroup SMWHaloTriplestore
- * 
+ *
  * @defgroup SMWHaloTriplestore SMWHalo Triplestore
  * @ingroup SMWHalo
- * 
+ *
  * Triple store connector class.
  *
  * This class is a wrapper around the default SMWStore class. It delegates all
@@ -558,7 +558,7 @@ class SMWTripleStore extends SMWStore {
 	 * @return SMWHaloQueryResult
 	 */
 	protected function parseSPARQLXMLResult(& $query, & $sparqlXMLResult) {
-        		
+
 		// parse xml results
 
 		$dom = simplexml_load_string($sparqlXMLResult);
@@ -660,13 +660,14 @@ class SMWTripleStore extends SMWStore {
 			$index++;
 		}
 
-		// Query result object;
-		$queryResult = new SMWHaloQueryResult($prs, $query, (count($results) > $query->getLimit()));
 
+		// get resultpage, ie. the pages which "define" a result row.
+		$resultPages = $this->getResultPages($results, $prs, $mapPRTOColumns);
 
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
-
+		$qresults = array();
+		$rowIndex = 0;
 		foreach ($results as $r) {
 			$row = array();
 			$columnIndex = 0; // column = n-th XML binding node
@@ -684,33 +685,21 @@ class SMWTripleStore extends SMWStore {
 				$resultColumn = $mapPRTOColumns[$var_name];
 
 				$allValues = array();
+                $this->parseBindungs($b, $prs[$resultColumn], $allValues);
 
-				$bindingsChildren = $b->children();
-				$uris = array();
-
-				foreach($bindingsChildren->uri as $sv) {
-					$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
-				}
-				if (!empty($uris)) {
-					$this->addURIToResult($uris, $prs[$resultColumn], $allValues, $prs[$resultColumn]->getOutputFormat());
-				} else {
-					$literals = array();
-					foreach($bindingsChildren->literal as $sv) {
-						$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
-					}
-					if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
-				}
 				// note: ignore bnodes
 
 				$columnIndex++;
-				$row[$resultColumn] = new SMWResultArray($allValues, $prs[$resultColumn]);
+				$row[$resultColumn] = new SMWHaloResultArray($resultPages[$rowIndex], $prs[$resultColumn], $this, $allValues);
 			}
-
+			$rowIndex++;
 			ksort($row);
-			$queryResult->addRow($row);
+			$qresults[] = $row;
 
 		}
-
+		// Query result object;
+		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
+		//echo print_r($queryResult,true);die();
 		return $queryResult;
 	}
 
@@ -743,6 +732,66 @@ class SMWTripleStore extends SMWStore {
 	 	}
 	 }
 	 return $rewritten_prs;
+	}
+    
+	/**
+	 * Parse bindungs from the binding node $b using the given query printer $pr.
+	 * 
+	 * @param $b
+	 * @param $pr
+	 * @param $allValues results 
+	 */
+	protected function parseBindungs($b, $pr, & $allValues) {
+		$bindingsChildren = $b->children();
+		$uris = array();
+
+		foreach($bindingsChildren->uri as $sv) {
+			$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
+		}
+		if (!empty($uris)) {
+			$this->addURIToResult($uris, $pr, $allValues, $pr->getOutputFormat());
+		} else {
+			$literals = array();
+			foreach($bindingsChildren->literal as $sv) {
+				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
+			}
+			if (!empty($literals)) $this->addLiteralToResult($literals, $pr, $allValues);
+		}
+	}
+	/**
+	 * Return result pages, ie. the elements of the first column.
+	 *
+	 * @param $results XML result nodes
+	 * @param $prs Print requests
+	 * @param $mapPRTOColumns Maps print requests to columns.
+	 * @return array of SMWWikiPageValue
+	 */
+	protected function getResultPages($results, $prs, $mapPRTOColumns) {
+	 $resultPages = array();
+	 foreach ($results as $r) {
+	 	$children = $r->children();
+
+	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
+	 	$resultColumn = $mapPRTOColumns[$var_name];
+	 	$allValues = array();
+	 	$bindingsChildren = $children->binding[0];
+	 	$uris = array();
+	 	foreach($bindingsChildren->uri as $sv) {
+	 		$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
+	 	}
+	 	if (!empty($uris)) {
+	 		$this->addURIToResult($uris, $prs[$resultColumn], $allValues, $prs[$resultColumn]->getOutputFormat());
+	 	} else {
+	 		$literals = array();
+	 		foreach($bindingsChildren->literal as $sv) {
+	 			$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
+	 		}
+	 		if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
+	 	}
+	 	$resultPages[] = $allValues[0];
+
+	 }
+	 return $resultPages;
 	}
 
 	/**

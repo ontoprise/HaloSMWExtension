@@ -2,20 +2,33 @@
 
 /**
  * @file
- * @ingroup SMWHaloSMWDeviations 
- * 
+ * @ingroup SMWHaloSMWDeviations
+ *
  * Derived version of SMWQueryResult to provide user-defined link
- * to Special:Ask page. Necessary for other storages. 
+ * to Special:Ask page. Necessary for other storages.
  *
  */
-class SMWHaloQueryResult extends SMWQueryResult {
-	
-	public function SMWHaloQueryResult($printrequests, $query, $furtherres=false) {
-		parent::__construct($printrequests, $query, $furtherres);
-	}
 
+class SMWHaloQueryResult extends SMWQueryResult {
+
+	public function SMWHaloQueryResult($printrequests, $query, $results, $store, $furtherres=false) {
+		parent::__construct($printrequests, $query, $results, $store, $furtherres);
+	}
+    
+    /**
+     * Return the next result row as an array of SMWResultArray objects, and
+     * advance the internal pointer.
+     */
+    public function getNext() {
+        $row = current($this->m_results);
+    	next($this->m_results);
+        if ($row === false) return false;
+       
+        return $row;
+    }
+    
 	public function getQueryLink($caption = false) {
-		
+
 		$params = array(trim($this->m_querystring));
 		foreach ($this->m_extraprintouts as $printout) {
 			$params[] = $printout->getSerialisation();
@@ -48,4 +61,13 @@ class SMWHaloQueryResult extends SMWQueryResult {
 		// Note: the initial : prevents SMW from reparsing :: in the query string
 		return $result;
 	}
+}
+
+class SMWHaloResultArray extends SMWResultArray {
+    public function SMWHaloResultArray(SMWWikiPageValue $resultpage, SMWPrintRequest $printrequest, SMWStore $store, $results) {
+        parent::__construct($resultpage, $printrequest, $store);
+        $this->m_content = $results; // do not reload
+    }
+    
+    
 }
