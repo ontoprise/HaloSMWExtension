@@ -63,7 +63,8 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 		if ($this->mShowHeaders) { // building headers
 			$result .= "\t<tr>\n";
 			foreach ($res->getPrintRequests() as $pr) {
-				$title = $pr->getTitle();
+				$title = $pr->getData();
+				
 				if($title instanceof Title)
 				array_push($cols, $title);
 				else
@@ -83,6 +84,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 
 		// print all result rows
 		while ( $row = $res->getNext() ) {
+			
 			$result .= "\t<tr>\n";
 			$firstcol = true;
 			$gIssues = null;
@@ -103,7 +105,9 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 						}
 					}
 				}
+				
 				while ( ($object = $field->getNextObject()) !== false ) {
+					
 					if ($firstcol && $object instanceof SMWWikiPageValue) { //save gardening issues for the article of the current row
 						$gIssues = $gi_store->getGardeningIssues("smw_consistencybot", NULL, SMW_CONSISTENCY_BOT_BASE + 3, $object->getTitle(), NULL, NULL);
 					}
