@@ -156,9 +156,12 @@ class SMWH_Skin {
      */
     private function buildMenuItemHtml( $menuItem ){
         /** mw 1.15 only */
-        $title = Title::newFromText(trim($menuItem))->getArticleId();
-        if(!$title) return;
-        $menuPage = Article::newFromId($title);
+        if ($menuItem instanceof Title)
+            $titleId= $menuItem->getArticleID();
+        else
+            $titleId = Title::newFromText(trim($menuItem))->getArticleId();
+        if(!$titleId) return;
+        $menuPage = Article::newFromId($titleId);
 
         //This is an workaround to prevent mediawiki using OldId
         //when doing a diff in the pagehistory. OldId would cause a
