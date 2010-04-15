@@ -436,7 +436,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_Property.php
  		return (($this->m_propertyid == '') ||
  		        (array_key_exists($this->m_propertyid, SMWPropertyvalue::$m_propertytypes) &&
  		         SMWPropertyvalue::$m_propertytypes[$this->m_propertyid][1]) );
-@@ -335,6 +340,38 @@
+@@ -335,6 +340,34 @@
  	public function getDBkey() {
  		return $this->isVisible()?$this->m_wikipage->getDBkey():$this->m_propertyid;
  	}
@@ -468,10 +468,6 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_Property.php
 +	}
 +/*op-patch|TS|2009-07-10|end*/
 +	
-+
-+	public function getText() {
-+		return $this->isVisible()?$this->m_wikipage->getWikiValue():'';
-+	}
  
  	public function getText() {
  		return $this->isVisible()?$this->m_wikipage->getWikiValue():'';
