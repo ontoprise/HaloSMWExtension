@@ -311,7 +311,8 @@ protected $smwUserMessages = array(
     'smw_tsa_addtoconfig' => 'Bitte fügen Sie folgende Zeilen in die LocalSettings.php ein und prüfen Sie ob der Triple store connector läuft.',
     'smw_tsa_addtoconfig2' => 'Stellen Sie sicher, dass der Triplestore-Treiber aktiviert ist. Wenn nötig, ändern Sie den Aufruf von enableSMWHalo zu: ',
     'smw_tsa_addtoconfig3' => 'Stellen Sie ebenso sicher, dass die Graph-URL (letzter Parameter von enableSMWHalo) valide ist. Sie darf außerdem kein Hash (#) enthalten.',
-    
+    'smw_tsa_addtoconfig4' => 'Falls das nicht funktioniert, schauen Sie hier: $1.',
+
     'smw_tsa_driverinfo' => 'Treiberinformation',
     'smw_tsa_status' => 'Status',
     'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableFlogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',

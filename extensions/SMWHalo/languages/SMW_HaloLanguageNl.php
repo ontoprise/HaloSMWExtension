@@ -342,6 +342,7 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
     'smw_tsa_addtoconfig' => 'Please add the following lines in your LocalSettings.php and check if the triplestore connector is running.',
     'smw_tsa_addtoconfig2' => 'Make sure that the triplestore driver is activated. If necessary change enableSMWHalo to',
     'smw_tsa_addtoconfig3' => 'Also make sure that the graph URL (last parameter of enableSMWHalo) is a valid one and it does not contain a hash (#).',
+	'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
     'smw_tsa_driverinfo' => 'Driver information',
     'smw_tsa_status' => 'Status',
     'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableFlogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
