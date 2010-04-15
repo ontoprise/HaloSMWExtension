@@ -384,7 +384,7 @@ class SMWTripleStore extends SMWStore {
 			wfRunHooks('RewriteSparqlQuery', array(&$query) );
 
 			if ($query->getQueryString() == "") {
-				$sqr = new SMWHaloQueryResult(array(), $query, false);
+				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this, false);
 				$sqr->addErrors(array(wfMsgForContent('hacl_sp_empty_query')));
 				return $sqr;
 			}
