@@ -1,73 +1,142 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 6646)
+--- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 6679)
 +++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(working copy)
-@@ -113,6 +113,7 @@
+@@ -61,16 +61,16 @@
+ 		switch ($typeid) {
+ 			case '__typ':
+ 				$this->m_fixNamespace = SMW_NS_TYPE;
+-			break;
++				break;
+ 			case '_wpp' : case '__sup':
+ 				$this->m_fixNamespace = SMW_NS_PROPERTY;
+-			break;
++				break;
+ 			case '_wpc' : case '__suc': case '__sin':
+ 				$this->m_fixNamespace = NS_CATEGORY;
+-			break;
++				break;
+ 			case '_wpf' : case '__spf':
+ 				$this->m_fixNamespace = SF_NS_FORM;
+-			break;
++				break;
+ 			default: //case '_wpg':
+ 				$this->m_fixNamespace = NS_MAIN;
+ 		}
+@@ -86,7 +86,7 @@
+ 				wfLoadExtensionMessages('SemanticMediaWiki');
+ 				$this->addError(wfMsgForContent('smw_notitle', $value));
+ 			} elseif ( ($this->m_fixNamespace != NS_MAIN) &&
+-				 ($this->m_fixNamespace != $this->m_title->getNamespace()) ) {
++			($this->m_fixNamespace != $this->m_title->getNamespace()) ) {
+ 				wfLoadExtensionMessages('SemanticMediaWiki');
+ 				$this->addError(wfMsgForContent('smw_wrong_namespace', $wgContLang->getNsText($this->m_fixNamespace)));
+ 			}
+@@ -116,6 +116,7 @@
  		$this->m_namespace = array_key_exists(1,$args)?$args[1]:$this->m_fixNamespace;
  		$this->m_interwiki = array_key_exists(2,$args)?$args[2]:'';
  		$this->m_sortkey   = array_key_exists(3,$args)?$args[3]:'';
 +		$this->m_fragment   = array_key_exists(4,$args)?$args[4]:'';
  		$this->m_textform = str_replace('_', ' ', $this->m_dbkeyform);
  		$this->m_id = false;
- 		$this->m_title = NULL;
-@@ -154,6 +155,7 @@
- 	 * In all other uses, values come from the store and do not have fragments anyway.
- 	 */
- 	public function getLongWikiText($linked = NULL) {
-+		
- 		$this->unstub();
- 		if (!$this->isValid()) {
- 			return $this->getErrorText();
-@@ -163,11 +165,27 @@
+ 		$this->m_title = null;
+@@ -133,7 +134,7 @@
+ 			return $this->getCaption();
+ 		} else {
+ 			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) .
+-			        ($this->m_fragment?"#$this->m_fragment":'') . '|' . $this->getCaption() . ']]';
++			($this->m_fragment?"#$this->m_fragment":'') . '|' . $this->getCaption() . ']]';
+ 		}
+ 	}
+ 
+@@ -162,9 +163,24 @@
+ 		if ( ($linked === null) || ($linked === false) || ($this->m_outformat == '-') ) {
+ 			return $this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText();
  		} elseif ($this->m_namespace == NS_IMAGE) { // embed images instead of linking to their page
- 			 return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
+-			 return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
++			return '[[' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . '|frameless|border|text-top]]';
  		} else { // this takes care of all other cases, esp. it is right for Media:
 -			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . '|' . $this->m_textform . ']]';
--		}
-+            if ( $this->m_fragment != NULL) {
-+                if (strpos($this->m_fragment, "##") === false) {
-+                    // only fragment set
-+                    $fragment = $this->m_fragment;  
-+                    $label = $this->m_textform;
-+                } else {
-+                    // fragment set with alternative label encoded
-+                    list($label, $fragment) = explode("##",$this->m_fragment);
-+                }
-+            } else {
-+                // no fragment at all set
-+             $label = $this->m_textform;
-+             $fragment = "";
-+            }
-+            $fragment = str_replace("'", '&#x0027;', $fragment);
-+            return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . ($this->m_fragment != NULL ? "#".$fragment : "") . '|' . $label  . ']]';
-+        }
++			if ( $this->m_fragment != NULL) {
++				if (strpos($this->m_fragment, "##") === false) {
++					// only fragment set
++					$fragment = $this->m_fragment;
++					$label = $this->m_textform;
++				} else {
++					// fragment set with alternative label encoded
++					list($label, $fragment) = explode("##",$this->m_fragment);
++				}
++			} else {
++				// no fragment at all set
++				$label = $this->m_textform;
++				$fragment = "";
++			}
++			$fragment = str_replace("'", '&#x0027;', $fragment);
++			return '[[:' . str_replace("'", '&#x0027;', $this->getPrefixedText()) . ($this->m_fragment != NULL ? "#".$fragment : "") . '|' . $label  . ']]';
+ 		}
  	}
  
- 	public function getLongHTMLText($linker = NULL) {
-+		
- 		$this->unstub();
- 		if ( ($linker !== NULL) && ($this->m_outformat != '-') ) { $this->getTitle(); } // init the Title object, may reveal hitherto unnoticed errors
- 		if (!$this->isValid()) {
-@@ -367,8 +385,8 @@
+@@ -241,14 +257,14 @@
+ 				} else { // Medialink to non-existing file :-/
+ 					return null;
+ 				}
+-			break;
++				break;
+ 			default: // some true wiki page
+ 				return new SMWExpData(SMWExporter::getResourceElement($this));
+-			break;
++				break;
+ 		}
+ 	}
+ 
+-///// special interface for wiki page values
++	///// special interface for wiki page values
+ 
  	/**
- 	 * @deprecated Use setDBkeys()
+ 	 * Return according Title object or NULL if no valid value was set.
+@@ -318,7 +334,7 @@
+ 		if ($this->m_prefixedtext === false) {
+ 			$nstext = $wgContLang->getNSText($this->m_namespace);
+ 			$this->m_prefixedtext = $this->m_interwiki . ($this->m_interwiki != ''?':':'') .
+-									$nstext . ($nstext != ''?':':'') . $this->m_textform;
++			$nstext . ($nstext != ''?':':'') . $this->m_textform;
+ 		}
+ 		return $this->m_prefixedtext;
+ 	}
+@@ -361,15 +377,16 @@
  	 */
+ 	protected function getCaption() {
+ 		return $this->m_caption !== false?$this->m_caption:
+-		       ($this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText());
++		($this->m_fixNamespace == NS_MAIN?$this->getPrefixedText():$this->getText());
+ 	}
+ 
+ 	/**
+-	 * @deprecated Use setDBkeys()
+-	 */
 -	public function setValues($dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '') {
 -		$this->setDBkeys(array($dbkey,$namespace,$interwiki,$sortkey));
-+	public function setValues($dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '', $fragment = '') {
-+		$this->setDBkeys(array($dbkey,$namespace,$interwiki,$sortkey, $fragment));
- 	}
+-	}
++     * @deprecated Use setDBkeys()
++     */
++
++    public function setValues($dbkey, $namespace, $id = false, $interwiki = '', $sortkey = '', $fragment = '') {
++        $this->setDBkeys(array($dbkey,$namespace,$interwiki,$sortkey, $fragment));
++    }
  
  }
+ 
 Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6546)
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6679)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
-@@ -55,7 +55,15 @@
- 
- 	private $m_hasssearchlink;        /// used to control the addition of the standard search link
- 	private $m_hasservicelinks;       /// used to control service link creation
+@@ -67,7 +67,19 @@
+ 	private $m_errors = array();
+ 	/// True if there were any errors
+ 	private $m_haserrors = false;
 -
++    
++	/// Patch:KK|Provenance data|Start
 +    private $m_provenance = NULL;
 +    
 +    public function setProvenance($provURI) {
@@ -77,9 +146,11 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 +    public function getProvenance() {
 +       return $this->m_provenance;
 +    }
- 
++    /// Patch:KK|Provenance data|End
++    
  	public function __construct($typeid) {
  		$this->m_typeid = $typeid;
+ 	}
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
 --- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 6546)
