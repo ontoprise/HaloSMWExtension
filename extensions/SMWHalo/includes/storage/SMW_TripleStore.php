@@ -685,7 +685,7 @@ class SMWTripleStore extends SMWStore {
 				$resultColumn = $mapPRTOColumns[$var_name];
 
 				$allValues = array();
-                $this->parseBindungs($b, $prs[$resultColumn], $allValues);
+				$this->parseBindungs($b, $prs[$resultColumn], $allValues);
 
 				// note: ignore bnodes
 
@@ -733,13 +733,40 @@ class SMWTripleStore extends SMWStore {
 	 }
 	 return $rewritten_prs;
 	}
-    
+
 	/**
-	 * Parse bindungs from the binding node $b using the given query printer $pr.
-	 * 
+	 * Return result pages, ie. the elements of the first column (may be hidden).
+	 *
+	 * @param $results XML result nodes
+	 * @param $prs Print requests
+	 * @param $mapPRTOColumns Maps print requests to columns.
+	 * @return array of SMWWikiPageValue
+	 */
+	protected function getResultPages($results, $prs, $mapPRTOColumns) {
+
+	 $resultPages = array();
+	 foreach ($results as $r) {
+	 	$children = $r->children();
+
+	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
+	 	$resultColumn = array_key_exists($var_name, $mapPRTOColumns) ? $mapPRTOColumns[$var_name]: NULL;
+	 	
+	 	$allValues = array();
+	 	$this->parseBindungs($children, !is_null($resultColumn) ? $prs[$resultColumn] : NULL, $allValues);
+	 	$resultPages[] = $allValues[0];
+	 	 
+	 }
+	 return $resultPages;
+	}
+	
+	/**
+	 * Parse bindungs from the SPARQL-XML binding node $b.
+	 * Creates SMWWikiPageValue objects from <uri> SPARQL-XML nodes. 
+	 * Creates SMWDataValue objects from a <literal> SPARQL-XML nodes.
+	 *
 	 * @param $b
-	 * @param $pr
-	 * @param $allValues results 
+	 * @param $pr QueryPrinter contains property and thus denotes type (optional)
+	 * @param $allValues results
 	 */
 	protected function parseBindungs($b, $pr, & $allValues) {
 		$bindingsChildren = $b->children();
@@ -749,7 +776,7 @@ class SMWTripleStore extends SMWStore {
 			$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
 		}
 		if (!empty($uris)) {
-			$this->addURIToResult($uris, $pr, $allValues, $pr->getOutputFormat());
+			$this->addURIToResult($uris, $allValues);
 		} else {
 			$literals = array();
 			foreach($bindingsChildren->literal as $sv) {
@@ -758,51 +785,14 @@ class SMWTripleStore extends SMWStore {
 			if (!empty($literals)) $this->addLiteralToResult($literals, $pr, $allValues);
 		}
 	}
+	
 	/**
-	 * Return result pages, ie. the elements of the first column.
+	 * Gets an array of tuples (URI, provenance-uri) and creates SMWWikiPageValue objects.
 	 *
-	 * @param $results XML result nodes
-	 * @param $prs Print requests
-	 * @param $mapPRTOColumns Maps print requests to columns.
-	 * @return array of SMWWikiPageValue
+	 * @param array $uris Array of tuples (uri, provenance-uri)
+	 * @param array (out) & $allValues
 	 */
-	protected function getResultPages($results, $prs, $mapPRTOColumns) {
-	 $resultPages = array();
-	 foreach ($results as $r) {
-	 	$children = $r->children();
-
-	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
-	 	$resultColumn = $mapPRTOColumns[$var_name];
-	 	$allValues = array();
-	 	$bindingsChildren = $children->binding[0];
-	 	$uris = array();
-	 	foreach($bindingsChildren->uri as $sv) {
-	 		$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
-	 	}
-	 	if (!empty($uris)) {
-	 		$this->addURIToResult($uris, $prs[$resultColumn], $allValues, $prs[$resultColumn]->getOutputFormat());
-	 	} else {
-	 		$literals = array();
-	 		foreach($bindingsChildren->literal as $sv) {
-	 			$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
-	 		}
-	 		if (!empty($literals)) $this->addLiteralToResult($literals, $prs[$resultColumn], $allValues);
-	 	}
-	 	$resultPages[] = $allValues[0];
-
-	 }
-	 return $resultPages;
-	}
-
-	/**
-	 * Add an URI to an array of results
-	 *
-	 * @param string $sv A single value
-	 * @param PrintRequest prs
-	 * @param array & $allValues
-	 * @param string outputformat
-	 */
-	protected function addURIToResult($uris, $prs, & $allValues, $outputformat) {
+	protected function addURIToResult($uris, & $allValues) {
 
 		foreach($uris as $uri) {
 			list($sv, $provenance) = $uri;
@@ -860,22 +850,23 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	/**
-	 * Add a literal to an array of results
+	 * Gets an array of literal tuples (value, type, provenance-uri) and creates according 
+	 * SMWDataValue objects.
 	 *
-	 * @param string $sv A single value
-	 * @param PrintRequest prs
-	 * @param array & $allValues
+	 * @param array $literals Tuple (value, type, provenance)
+	 * @param PrintRequest $pr QueryPrinter contains property and thus denotes type (optional)
+	 * @param array (out) & $allValues
 	 */
-	protected function addLiteralToResult($literals, $prs, & $allValues) {
+	protected function addLiteralToResult($literals, $pr, & $allValues) {
 		foreach($literals as $literal) {
 
 			list($literalValue, $literalType, $provenance) = $literal;
-			$property = $prs->getData();
+			$property = !is_null($pr) ? $pr->getData() : NULL;
 			if (!empty($literalValue)) {
 
 				// create SMWDataValue either by property or if that is not possible by the given XSD type
 				if ($property instanceof SMWPropertyValue ) {
-					$value = SMWDataValueFactory::newPropertyObjectValue($prs->getData(), $literalValue);
+					$value = SMWDataValueFactory::newPropertyObjectValue($pr->getData(), $literalValue);
 				} else {
 					$value = SMWDataValueFactory::newTypeIDValue(WikiTypeToXSD::getWikiType($literalType));
 				}
@@ -908,16 +899,16 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	/**
-	 * Creates  SWMDataValue object from a (possibly) merged result.
+	 * Creates SMWWikiPageValue object from a (possibly) merged result.
 	 *
-	 * @param string $sv
-	 * @param string $nsFragment
-	 * @param int $ns
-	 * @return SMWDataValue
+	 * @param string $uri Full URI
+	 * @param string $nsFragment NS-prefix
+	 * @param int $ns Namespace index
+	 * @return SMWWikiPageValue
 	 */
-	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns) {
+	protected function createSMWDataValue($uri, $provenance, $nsFragment, $ns) {
 
-		$local = substr($sv, strlen($nsFragment));
+		$local = substr($uri, strlen($nsFragment));
 		$title = Title::newFromText($local, $ns);
 		if (is_null($title)) {
 			$title = Title::newFromText(wfMsg('smw_ob_invalidtitle'), $ns);
