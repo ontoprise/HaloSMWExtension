@@ -10,7 +10,7 @@
 
 		<webtest name="LoadMainPage">
 			<invoke url="http://localhost/${wikipath}/index.php/Main_Page" description="Tests if wiki responds at all by loading the main page" />
-			<verifyTitle text="Main Page - Halo3wiki" />
+			<verifyTitle text="Halo3wiki" />
 			<!--<setInputField name="search" value="WebTest" />
 			<clickButton label="Search" />
 			<verifyTitle text="Search results - Halo3wiki" />-->
