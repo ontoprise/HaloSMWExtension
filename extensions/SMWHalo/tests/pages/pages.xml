@@ -62,7 +62,8 @@ Consult the [http://meta.wikimedia.org/wiki/Help:Contents User's Guide] for info
       <comment>New page: This is the predefined property &quot;Has domain and range&quot;  [[Has type::Type:Page; Type:Page]]</comment>
       <text xml:space="preserve">This is the predefined property &quot;Has domain and range&quot;
 
-[[Has type::Type:Page; Type:Page]]</text>
+[[Has type::Type:Record]]
+[[Has fields::Type:Page; Type:Page]]</text>
     </revision>
   </page>
   <page>
