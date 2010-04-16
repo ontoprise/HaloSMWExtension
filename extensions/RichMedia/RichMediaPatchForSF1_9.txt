@@ -36,48 +36,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
                if (in_array('edittools', $free_text_components)) {
                  // borrowed from EditPage::showEditTools()
                  $options[] = 'parse';
-@@ -984,7 +996,11 @@
-           $attr = array();
-           
-           // if it's a query, ignore all standard inputs except run query
--          if (($is_query && $input_name != 'run query') || (!$is_query && $input_name == 'run query')) {
-+          /*op-patch|BL|2009-10-12|RichMedia|HideStandardInputsInUploadWindow|start*/
-+          global $smwgEnableRichMedia, $smwgRMHideStandardInputs;
-+          if (($is_query && $input_name != 'run query') || (!$is_query && $input_name == 'run query') ||
-+          ($smwgEnableRichMedia && $smwgRMHideStandardInputs) ) {
-+            /*op-patch|BL|2009-10-12|end*/
-             $new_text = "";
-             $section = substr_replace($section, $new_text, $brackets_loc, $brackets_end_loc + 3 - $brackets_loc);
-             continue;
-@@ -1095,15 +1111,15 @@
-           // doing a replace
-           if ($existing_page_content && strpos($existing_page_content, '{{{insertionpoint}}}', 0) !== false) {
-             $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}(\r?\n?)/', 
--              preg_replace('/\}\}/m', '}²',
--                preg_replace('/\{\{/m', '²{', $template_text)) .
-+              preg_replace('/\}\}/m', '}ï¿½',
-+                preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
-               "\n{{{insertionpoint}}}",
-               $existing_page_content);
-           // otherwise, if it's a partial form, we have to add the new
-           // text somewhere
-           } elseif ($form_is_partial && $wgRequest->getCheck('partial') ) {
--            $existing_page_content = preg_replace('/\}\}/m', '}²',
--              preg_replace('/\{\{/m', '²{', $template_text)) .
-+            $existing_page_content = preg_replace('/\}\}/m', '}ï¿½',
-+              preg_replace('/\{\{/m', 'ï¿½{', $template_text)) .
-                 "\n{{{insertionpoint}}}\n" . $existing_page_content;
-           }
-         }
-@@ -1172,7 +1188,7 @@
-          $form_text .= SFFormUtils::hiddenFieldHTML('partial', 1);
-        } else {
-          $free_text = null;
--         $existing_page_content = preg_replace('/²\{(.*?)\}²/s', '{{\1}}', $existing_page_content);
-+         $existing_page_content = preg_replace('/ï¿½\{(.*?)\}ï¿½/s', '{{\1}}', $existing_page_content);
-          $existing_page_content = preg_replace('/\{\{\{insertionpoint\}\}\}/', '', $existing_page_content);
-        }
-     } elseif ($source_is_page) {
 @@ -1300,10 +1316,19 @@
  
      // add form bottom, if no custom "standard inputs" have been defined
