@@ -23,16 +23,15 @@ class SRFOFC extends SMWResultPrinter {
 	protected $m_disableprov = false;
 
 	protected $m_isAjax = false;
-	public function __construct($format, $inline) {
-		parent::__construct($format, $inline);
-		$width = new SMWQPParameter('width', 'Width', '<number>', NULL, "Width of graphic");
-		$height = new SMWQPParameter('height', 'Height', '<number>', NULL, "Height of graphic");
-		$mainlabel = new SMWQPParameter('mainlabel', 'Mainlabel', '<string>', NULL, "Mainlabel");
-
-		$this->mParameters[] = $width;
-		$this->mParameters[] = $height;
-		$this->mParameters[] = $mainlabel;
-	}
+	
+	function getParameters() {
+        return array(
+			array('name' => 'width', 'type' => 'int', 'description' => "Width of graphic"),
+			array('name' => 'height', 'type' => 'int', 'description' => "Height of graphic"),
+			array('name' => 'mainlabel', 'type' => 'string', 'description' => "Mainlabel")
+			
+		);
+    }
 
 	function getScripts() {
 		global $srfgScriptPath;
