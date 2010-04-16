@@ -17,7 +17,7 @@ $sfgScriptPath = $wgScriptPath . '/extensions/SemanticForms';
 # seen on your local filesystem. Used against some PHP file path
 # issues.
 ##
-$sfgIP = $IP . '/extensions/SemanticForms';
+$sfgIP = dirname(__FILE__) . '/..';
 ##
 
 
@@ -27,19 +27,7 @@ $sfgIP = $IP . '/extensions/SemanticForms';
 // load global functions
 require_once('SF_GlobalFunctions.php');
 
-###
-# If you already have custom namespaces on your site, insert
-# $sfgNamespaceIndex = ???;
-# into your LocalSettings.php *before* including this file.
-# The number ??? must be the smallest even namespace number
-# that is not in use yet. However, it must not be smaller
-# than 150.
-##
-if (!isset($sfgNamespaceIndex)) {
-	sffInitNamespaces(150);
-} else {
-	sffInitNamespaces();
-}
+sffInitNamespaces();
 
 ###
 # The number of allowed values per autocomplete - too many might
@@ -71,6 +59,12 @@ $wgGroupPermissions['sysop']['editrestrictedfields'] = true;
 $wgAvailableRights[] = 'editrestrictedfields';
 
 ###
+# Permission to view, and create pages with, Special:CreateClass
+###
+$wgGroupPermissions['user']['createclass'] = true;
+$wgAvailableRights[] = 'createclass';
+
+###
 # List separator character
 ###
 $sfgListSeparator = ",";
@@ -95,3 +89,9 @@ $sfgUseFormEditPage = false;//method_exists('EditPage', 'showFooter');
 # Use 24-hour time format in forms, e.g. 15:30 instead of 3:30 PM
 ###
 $sfg24HourTime = false;
+
+###
+# Cache parsed form definitions in the page_props table, to improve loading
+# speed
+###
+$sfgCacheFormDefinitions = false;

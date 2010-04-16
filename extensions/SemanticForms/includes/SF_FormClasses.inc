@@ -27,13 +27,14 @@ class SFForm {
 
 	function createMarkup() {
 		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
-		$ad = SpecialPage::getPage('AddPage');
-		$add_data_url = SFLinkUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
-		$form_description = wfMsgForContent('sf_form_docu', $this->form_name, $add_data_url);
-		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
+		$fs = SpecialPage::getPage('FormStart');
+		$form_start_url = SFLinkUtils::titleURLString($fs->getTitle()) . "/" . $title->getPartialURL();
+		$form_description = wfMsgForContent('sf_form_docu', $this->form_name, $form_start_url);
+		$form_input = "{{#forminput:form=" . $this->form_name . "}}\n";
 		$text =<<<END
 <noinclude>
 $form_description
+
 
 $form_input
 </noinclude><includeonly>
@@ -47,7 +48,7 @@ END;
 		$text .=<<<END
 '''$free_text_label:'''
 
-{{{standard input|free text}}}
+{{{standard input|free text|rows=10}}}
 
 
 {{{standard input|summary}}}

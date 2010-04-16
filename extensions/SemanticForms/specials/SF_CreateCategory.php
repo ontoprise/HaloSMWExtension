@@ -31,15 +31,7 @@ class SFCreateCategory extends SpecialPage {
 		} else {
 			global $sfgContLang;
 			$specprops = $sfgContLang->getPropertyLabels();
-			// a simpler call is possible in SMW 1.4 and higher
-			if (class_exists('SMWPropertyValue')) {
-				$form_tag = "[[" . $specprops[SF_SP_HAS_DEFAULT_FORM] . "::$default_form]]";
-			} else {
-				$namespace_labels = $sfgContLang->getNamespaces();
-				$form_label = $namespace_labels[SF_NS_FORM];
-				$form_tag = "[[" . $specprops[SF_SP_HAS_DEFAULT_FORM] .
-					"::$form_label:$default_form|$default_form]]";
-			}
+			$form_tag = "[[" . $specprops[SF_SP_HAS_DEFAULT_FORM] . "::$default_form]]";
 			$text = wfMsgForContent('sf_category_hasdefaultform', $form_tag);
 		}
 		if ($parent_category != '') {
@@ -74,11 +66,8 @@ function doSpecialCreateCategory() {
 		} else {
 			# redirect to wiki interface
 			$wgOut->setArticleBodyOnly(true);
-			$namespace = NS_CATEGORY;
-			$title = Title::makeTitleSafe($namespace, $category_name);
+			$title = Title::makeTitleSafe(NS_CATEGORY, $category_name);
 			$full_text = SFCreateCategory::createCategoryText($default_form, $category_name, $parent_category);
-			// HTML-encode
-			$full_text = str_replace('"', '&quot;', $full_text);
 			$text = SFUtils::printRedirectForm($title, $full_text, "", $save_page, $preview_page, false, false, false, null, null);
 			$wgOut->addHTML($text);
 			return;
@@ -121,20 +110,19 @@ END;
 END;
 	foreach ($categories as $category) {
 		$category = str_replace('_', ' ', $category);
-		$text .= "	<option>$category</option>\n";
+		$text .= "	" . Xml::element('option', null, $category) . "\n";
 	}
 	$text .=<<<END
 	</select>
-	</p>
 	<div class="editButtons">
-	<input type="submit" id="wpSave" name="wpSave" value="$save_button_text"></p>
-	<input type="submit" id="wpPreview" name="wpPreview" value="$preview_button_text"></p>
+	<input type="submit" id="wpSave" name="wpSave" value="$save_button_text">
+	<input type="submit" id="wpPreview" name="wpPreview" value="$preview_button_text">
 	</div>
 	<br /><hr /<br />
-	<p>$create_form_link.</p>
 
 END;
 
+	$text .= "	" . Xml::tags('p', null, $create_form_link . '.') . "\n";
 	$text .= "	</form>\n";
 
 	$wgOut->addLink( array(

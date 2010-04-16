@@ -12,7 +12,6 @@ class SFFormEditTab {
 	 * a form
 	 */
 	static function displayTab($obj, &$content_actions) {
-		$fname = 'SFFormEditTab::displayTab';
 		// make sure that this is not a special page, and
 		// that the user is allowed to edit it
 		// - this function is almost never called on special pages,
@@ -39,7 +38,7 @@ class SFFormEditTab {
 					}
 				} else {
 					if ($user_can_edit)
-						$form_edit_tab_text = $obj->mTitle->exists() ? wfMsg('sf_formedit') : wfMsg('sf_formcreate');
+						$form_edit_tab_text = $obj->mTitle->exists() ? wfMsg('formedit') : wfMsg('sf_formcreate');
 					else
 						$form_edit_tab_text = wfMsg('sf_viewform');
 					// check for renaming of main edit tab
@@ -71,13 +70,13 @@ class SFFormEditTab {
 				$edit_tab_location = array_search('edit', $tab_keys);
 				// if there's no 'edit' tab, look for the
 				// 'view source' tab instead
-				if ($edit_tab_location == NULL)
+				if ($edit_tab_location == null)
 					$edit_tab_location = array_search('viewsource', $tab_keys);
 				// this should rarely happen, but if there was
 				// no edit *or* view source tab, set the
 				// location index to -1, so the tab shows up
 				// near the end
-				if ($edit_tab_location == NULL)
+				if ($edit_tab_location == null)
 					$edit_tab_location = -1;
 				array_splice($tab_keys, $edit_tab_location, 0, 'form_edit');
 				array_splice($tab_values, $edit_tab_location, 0, array($form_edit_tab));
@@ -133,7 +132,7 @@ class SFFormEditTab {
 		}
 		if (count($form_names) > 1) {
 			wfLoadExtensionMessages('SemanticForms');
-			$warning_text = '    <div class="warningMessage">' . wfMsg('sf_editdata_morethanoneform') . "</div>\n";
+			$warning_text = '    <div class="warningMessage">' . wfMsg('sf_formedit_morethanoneform') . "</div>\n";
 			global $wgOut;
 			$wgOut->addHTML($warning_text);
 		}
@@ -142,18 +141,14 @@ class SFFormEditTab {
 		if( $sfgUseFormEditPage ) {
 			# Experimental new feature extending from the internal
 			# EditPage class
-			$editor = new FormEditPage( $article, $form_name );
+			$editor = new SFFormEditPage( $article, $form_name );
 			$editor->submit();
 			return false;
 		}
 
 		$target_title = $article->getTitle();
 		$target_name = SFLinkUtils::titleString($target_title);
-		if ($target_title->exists()) {
-			SFEditData::printEditForm($form_name, $target_name);
-		} else {
-			SFAddData::printAddForm($form_name, $target_name, array());
-		}
+		SFFormEdit::printForm($form_name, $target_name);
 		return false;
 	}
 

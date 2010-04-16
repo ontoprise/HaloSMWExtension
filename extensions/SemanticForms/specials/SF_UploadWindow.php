@@ -1,9 +1,11 @@
 <?php
 /**
- * SF_UploadWindow - used for uploading files from within a form
- * This class is nearly identical to MediaWiki's SpecialUpload class, with
- * a few changes to remove skin CSS and HTML, and to populate the relevant
- * field in the form with the name of the uploaded form.
+ * SF_UploadWindow - used for uploading files from within a form, for
+ * versions of MediaWiki below 1.16.
+ * This class is nearly identical to the pre-1.16 version of MediaWiki's
+ * SpecialUpload class, but with a few changes to remove skin CSS and
+ * HTML, and to populate the relevant field in the form with the name
+ * of the uploaded form.
  *
  * This class is based almost entirely on the upload functionality
  * developed by the Chickipedia.com team.
@@ -417,7 +419,7 @@ class UploadWindowForm {
 		 * Filter out illegal characters, and try to make a legible name
 		 * out of it. We'll strip some silently that Title would die on.
 		 */
-		$filtered = preg_replace ( "/[^".Title::legalChars()."]|:/", '-', $filtered );
+		$filtered = wfStripIllegalFilenameChars ( $filtered );
 		$nt = Title::makeTitleSafe( NS_IMAGE, $filtered );
 		if( is_null( $nt ) ) {
 			$this->uploadError( wfMsgWikiHtml( 'illegalfilename', htmlspecialchars( $filtered ) ) );
@@ -550,7 +552,7 @@ class UploadWindowForm {
 			$output = '	<script type="text/javascript">' . "\n";
 			if ($this->mDelimiter == null) {
 				$output .=<<<END
-		parent.document.getElementById("{$this->mInputID}").value = '$basename';
+		parent.document.getElementById("{$this->mInputID}").value = "$basename";
 
 END;
 			} else {
@@ -562,13 +564,13 @@ END;
 		// at the end in any case
 		var cur_value = parent.document.getElementById("{$this->mInputID}").value;
 		if (cur_value == '') {
-			parent.document.getElementById("{$this->mInputID}").value = '$basename' + '{$this->mDelimiter} ';
+			parent.document.getElementById("{$this->mInputID}").value = "$basename{$this->mDelimiter} ";
 		} else {
 			var last_char = cur_value.charAt(cur_value.length - 1);
 			if (last_char == '{$this->mDelimiter}' || last_char == ' ') {
-				parent.document.getElementById("{$this->mInputID}").value += '$basename' + '{$this->mDelimiter} ';
+				parent.document.getElementById("{$this->mInputID}").value += "$basename{$this->mDelimiter} ";
 			} else {
-				parent.document.getElementById("{$this->mInputID}").value += '{$this->mDelimiter} $basename{$this->mDelimiter} ';
+				parent.document.getElementById("{$this->mInputID}").value += "{$this->mDelimiter} $basename{$this->mDelimiter} ";
 			}
 		}
 
@@ -630,7 +632,7 @@ END;
 				$dlink2 = '';
 			}
 
-			$warning .= '<li>' . wfMsgExt( 'fileexists', 'parseline', $dlink ) . '</li>' . $dlink2;
+			$warning .= '<li>' . wfMsgExt( 'fileexists', 'parseinline', $dlink ) . '</li>' . $dlink2;
 
 		} elseif ( $file_lc && $file_lc->exists() ) {
 			# Check if image with lowercase extension exists.
@@ -683,7 +685,7 @@ END;
 			# If the file existed before and was deleted, warn the user of this
 			# Don't bother doing so if the image exists now, however
 			$ltitle = SpecialPage::getTitleFor( 'Log' );
-			$llink = $sk->makeKnownLinkObj( $ltitle, wfMsgHtml( 'deletionlog' ), 
+			$llink = $sk->makeKnownLinkObj( $ltitle, wfMsgHtml( 'sf_deletionlog' ), 
 				'type=delete&page=' . $file->getTitle()->getPrefixedUrl() );
 			$warning .= '<li>' . wfMsgWikiHtml( 'filewasdeleted', $llink ) . '</li>';
 		}
@@ -934,18 +936,29 @@ wgAjaxLicensePreview = {$alp};
 			$wgOut->addHTML( "<h2>{$sub}</h2>\n" .
 			  "<span class='error'>{$msg}</span>\n" );
 		}
-		$wgOut->addHTML( '<div id="uploadtext">' );
-		$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
-		$wgOut->addHTML( '</div>' );
+		// the 'uploadtext' message is not displayed in this window,
+		// because most of it is irrelevant to a form-based upload
+		//$wgOut->addHTML( '<div id="uploadtext">' );
+		//$wgOut->addWikiText( wfMsgNoTrans( 'uploadtext', $this->mDesiredDestName ) );
+		//$wgOut->addHTML( '</div>' );
 
 		$sourcefilename = wfMsgHtml( 'sourcefilename' );
 		$destfilename = wfMsgHtml( 'destfilename' );
 		$summary = wfMsgExt( 'fileuploadsummary', 'parseinline' );
 
-		$licenses = new Licenses();
 		$license = wfMsgExt( 'license', array( 'parseinline' ) );
 		$nolicense = wfMsgHtml( 'nolicense' );
-		$licenseshtml = $licenses->getHtml();
+		// class changed in MW 1.16
+		/*
+		if (method_exists('Licenses', 'getInputHtml')) {
+			$licenses = new Licenses( array() );
+			$licenseshtml = $licenses->getInputHtml( null );
+		} else {
+			$licenses = new Licenses();
+			$licenseshtml = $licenses->getHtml();
+		}
+		*/
+		$licenseshtml = '';
 
 		$ulb = wfMsgHtml( 'uploadbtn' );
 
@@ -972,7 +985,7 @@ wgAjaxLicensePreview = {$alp};
 				     "toggle_element_activation(\"wpUploadFileURL\",\"wpUploadFile\");" .
 				     "toggle_element_check(\"wpSourceTypeFile\",\"wpSourceTypeURL\")'" .
 				($this->mDesiredDestName?"":"onchange='fillDestFilename(\"wpUploadFile\")' ") . "size='40' />" .
-				wfMsgHTML( 'upload_source_file' ) . "<br/>" .
+				wfMsgHTML( 'upload_source_file' ) . "<br />" .
 				"<input type='radio' id='wpSourceTypeURL' name='wpSourceType' value='web' " .
 				  "onchange='toggle_element_activation(\"wpUploadFile\",\"wpUploadFileURL\")' />" .
 				"<input tabindex='1' type='text' name='wpUploadFileURL' id='wpUploadFileURL' " .
@@ -1216,7 +1229,7 @@ EOT
 
 		$match= $magic->isMatchingExtension($extension,$mime);
 
-		if ($match===NULL) {
+		if ($match===null) {
 			wfDebug( __METHOD__.": no file extension known for mime type $mime, passing file\n" );
 			return true;
 		} elseif ($match===true) {
@@ -1261,7 +1274,7 @@ EOT
 		#decode from UTF-16 if needed (could be used for obfuscation).
 		if (substr($chunk,0,2)=="\xfe\xff") $enc= "UTF-16BE";
 		elseif (substr($chunk,0,2)=="\xff\xfe") $enc= "UTF-16LE";
-		else $enc= NULL;
+		else $enc= null;
 
 		if ($enc) $chunk= iconv($enc,"ASCII//IGNORE",$chunk);
 
@@ -1344,7 +1357,7 @@ EOT
 
 		if ( !$wgAntivirus ) {
 			wfDebug( __METHOD__.": virus scanner disabled\n");
-			return NULL;
+			return null;
 		}
 
 		if ( !$wgAntivirusSetup[$wgAntivirus] ) {
@@ -1400,12 +1413,12 @@ EOT
 			if ( $wgAntivirusRequired ) { 
 				return "scan failed (code $exitCode)"; 
 			} else { 
-				return NULL; 
+				return null; 
 			}
 		} else if ( $mappedCode === AV_SCAN_ABORTED ) { 
 			# scan failed because filetype is unknown (probably imune)
 			wfDebug( __METHOD__.": unsupported file type $file (code $exitCode).\n" );
-			return NULL;
+			return null;
 		} else if ( $mappedCode === AV_NO_VIRUS ) {
 			# no virus found
 			wfDebug( __METHOD__.": file passed virus scan.\n" );

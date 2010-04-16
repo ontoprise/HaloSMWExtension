@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>184</version>
+        <version>190</version>
         <id>semanticforms</id>
         <vendor>Ontoprise GmbH / Yaron Kohan</vendor>
         <instdir>extensions/SemanticForms</instdir>
@@ -9,8 +9,8 @@
             Store richmedia files in our your wiki
         </description>
         <dependencies>
-            <dependency from="1120" to="1159">MW</dependency>
-            <dependency from="142" to="142">smw</dependency>
+            <dependency from="1120" to="1169">MW</dependency>
+            <dependency from="142" to="150">smw</dependency>
         </dependencies>
     </global>
     <codefiles>
