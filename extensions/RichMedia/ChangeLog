@@ -2,15 +2,16 @@ RichMedia extension ChangeLog
 =============================
 
 
-VERSION XXXX
+VERSION 1.4
 
 
   FEATURES:
 
 
-
   CHANGES:
-
+	* Replaced AntiWord (outdated since 2005) with AbiWord (regularly maintained and available under the terms of the GPL)
+	  because this tool is able to convert additional doc types to text.
+	* Provided new patches to let Rich Media extension be compatible with MediaWiki 1.15.3 and Semantic Forms 1.9.
 
 
   BUGFIXES:

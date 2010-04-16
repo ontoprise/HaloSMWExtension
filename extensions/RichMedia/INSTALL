@@ -5,10 +5,10 @@ Installation instructions
 #Requirements:
 # 
 
-	MediaWiki 1.15.1
-	SMW 1.4.x
-	Halo extension 1.4.x
-	Semantic Forms 1.8.3
+	MediaWiki 1.15.3
+	SMW 1.4.x or higher
+	Halo extension 1.4.x or higher
+	Semantic Forms 1.9
 	Parser Functions
 	String Functions 2.0 or higher
 	Deployment Framework
@@ -19,8 +19,8 @@ Installation instructions
 
 1. Patch process:
 	1.1 The RichMedia extension comes with two different patch files.
-	- '/extensions/RichMedia/patch.txt': This file provides the necessary patches for Semantic Forms.
-	- '/extensions/RichMedia/RichMediaPatchForMW1_15_1.txt': This is needed to patch MediaWiki in version 1.15.1
+	- '/extensions/RichMediaRichMediaPatchForSF1_9.txt': This file provides the necessary patches for Semantic Forms.
+	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
 		Note: We can not ensure that this patch works properly for other versions of MediaWiki.
 	These are Eclipse patch files which can be installed 
 	using the tool patch.php from the deploy framework (smwhalo-deploy-1.0) which
@@ -35,7 +35,7 @@ Installation instructions
 	- Copy the folder 'skins' to your <mw-dir> to make sure, that all needed icons are available.
 	
 2. Add to your LocalSettings.php:
-	(if you want pdf and doc files to be converted, set this line before RM_Initialize.php is included)
+	(if you want pdf, doc and some other document format files to be converted, set this line before RM_Initialize.php is included)
 	---
 	$smwgEnableUploadConverter = true;
 	--- 
@@ -50,7 +50,7 @@ Installation instructions
 	$wgAllowExternalImagesFrom=$wgServer;   //This need to be set to allow the templates creating image links.
 	---
 
-4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.3.xml'
+4. Go to Special:Import, select and upload '/extensions/RichMedia/import/RichMediaOntology_v1.4.xml'
 
 Now you can enter {{RMList|show=True}} to any article where you want to get a
 list of all 'related documents and media' which also allows you to directly upload new files. 

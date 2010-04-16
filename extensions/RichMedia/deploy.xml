@@ -9,8 +9,8 @@
 			Store richmedia files in our your wiki
 		</description>
 		<dependencies>
-			<dependency from="1151" to="1151">MW</dependency>
-			<dependency from="183" to="183">semanticforms</dependency>
+			<dependency from="1153" to="1153">MW</dependency>
+			<dependency from="19" to="19">semanticforms</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
@@ -41,14 +41,16 @@
 			<require name="webdav_init"
 				file="extensions/RichMedia/includes/WebDAV/WD_Initialize.php" />
 			
-			<patch file="extensions/RichMedia/patch.txt" />
 			<patch
-				file="extensions/RichMedia/RichMediaPatchForMW1_15_1.txt" />
+				file="extensions/RichMedia/RichMediaPatchForSF1_9.txt" />
+			<patch
+				file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
 		</new>
 		<uninstall>
-			<patch file="extensions/RichMedia/patch.txt" />
 			<patch
-				file="extensions/RichMedia/RichMediaPatchForMW1_15_1.txt" />
+				file="extensions/RichMedia/RichMediaPatchForSF1_9.txt" />
+			<patch
+				file="extensions/RichMedia/RichMediaPatchForMW1_15_3.txt" />
 		</uninstall>
 	</configs>
 </deploydescriptor>

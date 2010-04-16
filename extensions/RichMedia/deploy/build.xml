@@ -45,8 +45,8 @@
 			<fileset dir="../">
 				<include name="COPYING" />
 				<include name="INSTALL" />
-				<include name="patch.txt" />
-				<include name="RichMediaPatchForMW1_15_1.txt" />
+				<include name="RichMediaPatchForSF1_9.txt" />
+				<include name="RichMediaPatchForMW1_15_3.txt" />
 				<include name="deploy.xml" />
 			</fileset>
 		</copy>
