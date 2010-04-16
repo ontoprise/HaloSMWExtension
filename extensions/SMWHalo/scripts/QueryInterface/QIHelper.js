@@ -111,16 +111,16 @@ QIHelper.prototype = {
 			qpParameters.each(function(e) {
 				if (i % columns == 0)
 					html += "<tr>"
-				html += '<td onmouseover="Tip(\'' + e.mParamDescription
-						+ '\');">' + e.mParamName + "</td>";
-				if (e.mValues instanceof Array) {
-					html += '<td>' + createSelectionBox(e.mParam, e.mValues)
+				html += '<td onmouseover="Tip(\'' + e.description
+						+ '\');">' + e.name + "</td>";
+				if (e.values instanceof Array) {
+					html += '<td>' + createSelectionBox(e.name, e.values)
 							+ "</td>";
-				} else if (e.mValues == '<string>' || e.mValues == '<number>') {
-					html += '<td>' + createInputBox(e.mParam, e.mValues, e.mConstraints)
+				} else if (e.type == 'string' || e.type == 'int') {
+					html += '<td>' + createInputBox(e.name, e.values, e.constraints)
 							+ "</td>";
-				} else if (e.mValues == '<boolean>') {
-					html += '<td>' + createCheckBox(e.mParam, e.mDefault)
+				} else if (e.type == 'boolean') {
+					html += '<td>' + createCheckBox(e.name, e.defaultValue)
 							+ "</td>";
 				}
 
@@ -171,12 +171,12 @@ QIHelper.prototype = {
 		var paramStr = "";
 		var first = true;
 		this.specialQPParameters.each(function(p) {
-			var element = $('qp_param_' + p.mParam);
-			if (p.mValues == '<boolean>' && element.checked) {
-				paramStr += first ? p.mParam : sep + " " + p.mParam;
+			var element = $('qp_param_' + p.name);
+			if (p.type == 'boolean' && element.checked) {
+				paramStr += first ? p.name : sep + " " + p.name;
 			} else {
-				if (element.value != "" && element.value != p.mDefault) {
-					paramStr += first ? p.mParam + "=" + element.value.replace(/,/g,"%2C") : sep + " " + p.mParam + "=" + element.value;
+				if (element.value != "" && element.value != p.defaultValue) {
+					paramStr += first ? p.name + "=" + element.value.replace(/,/g,"%2C") : sep + " " + p.name + "=" + element.value;
 				}
 			}
 			first = false;

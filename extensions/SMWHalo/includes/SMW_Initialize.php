@@ -115,14 +115,6 @@ function smwgHaloSetupExtension() {
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
-	$smwgResultFormats['embedded'] = 'SMWHaloEmbeddedResultPrinter';
-	$smwgResultFormats['list'] = 'SMWHaloListResultPrinter';
-	$smwgResultFormats['ol'] = 'SMWHaloListResultPrinter';
-	$smwgResultFormats['ul'] = 'SMWHaloListResultPrinter';
-	$smwgResultFormats['template'] = 'SMWHaloTemplateResultPrinter';
-	$smwgResultFormats['count'] = 'SMWHaloCountResultPrinter';
-	$smwgResultFormats['debug'] = 'SMWHaloListResultPrinter';
-	$smwgResultFormats['rss'] = 'SMWHaloRSSResultPrinter';
 	
 	$smwgResultFormats['ul_table'] = 'SMWProvenanceResultPrinter';
 

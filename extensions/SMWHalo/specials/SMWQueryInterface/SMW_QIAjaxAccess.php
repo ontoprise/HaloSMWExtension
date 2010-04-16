@@ -148,7 +148,8 @@ function smwf_qi_QIAccess($method, $params) {
 		return $result;
 	} else if ($method == "getSupportedParameters") {
 		global $smwgResultFormats;
-		
+		wfLoadExtensionMessages('SemanticMediaWiki');
+	
 		$format = $p_array[0];
         if (array_key_exists($format, $smwgResultFormats))
             $formatclass = $smwgResultFormats[$format];
@@ -157,7 +158,8 @@ function smwf_qi_QIAccess($method, $params) {
         $qp = new $formatclass($format, false);
        
         $jsonEnc = new Services_JSON();
-        return $jsonEnc->encode($qp->getSupportedParameters());
+       
+        return $jsonEnc->encode($qp->getParameters());
 	}
 	//TODO: Save Query functionality
 	/*
