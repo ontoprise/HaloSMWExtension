@@ -186,6 +186,7 @@ class SRFOFC extends SMWResultPrinter {
 	protected function getResultText($res, $outputmode) {
 		global $smwgIQRunningNumber;
 		$outputmode = SMW_OUTPUT_HTML;
+		$result = "";
 		$this->isHTML = ($outputmode == SMW_OUTPUT_HTML); // yes, our code can be viewed as HTML if requested, no more parsing needed
 
 		if (defined('SMW_UP_RATING_VERSION')) $result .= "UpRatingTable___".$smwgIQRunningNumber."___elbaTgnitaRpU";
@@ -256,7 +257,7 @@ class SRFOFC extends SMWResultPrinter {
 					} else {
 						$text = $object->getShortText($outputmode,$this->getLinker($firstcol));
 					}
-					if ($firstcol) {$rowname = $object->getShortText();}
+					if ($firstcol) {$rowname = $object->getShortText($outputmode);}
 					if (strlen($text) > 0) {
 						$provURL = $object->getProvenance();
 						if (!is_null($provURL)) {

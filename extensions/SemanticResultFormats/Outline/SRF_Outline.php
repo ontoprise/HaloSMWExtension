@@ -107,7 +107,7 @@ class SRFOutline extends SMWResultPrinter {
 		foreach ($item->mRow as $orig_ra) {
 			// make a new copy of this, so that the call to
 			// getNextText() will work again
-			$ra = new SMWResultArray($orig_ra->getContent(), $orig_ra->getPrintRequest());
+			$ra = clone $orig_ra;
 			$val = $ra->getPrintRequest()->getText(SMW_OUTPUT_WIKI, null);
 			if (in_array($val, $this->mOutlineProperties)) {
 				continue;
