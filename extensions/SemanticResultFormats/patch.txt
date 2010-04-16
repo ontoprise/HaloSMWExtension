@@ -1,24 +1,18 @@
 Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
 ===================================================================
---- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(revision 5798)
+--- extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(revision 6699)
 +++ extensions/SemanticResultFormats/Calendar/SRF_Calendar.php	(working copy)
-@@ -13,7 +13,21 @@
+@@ -13,7 +13,14 @@
  
  	protected $mTemplate = '';
  	protected $mUserParam = '';
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+      $template = new SMWQPParameter('template', 'Template', '<string>', NULL, "Template used to display");
-+        $userparam = new SMWQPParameter('userparam', 'User param', '<string>', NULL, "User param");
-+         
-+        $this->mParameters[] = $template;
-+        $this->mParameters[] = $userparam;
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++ 
++    function getParameters() {
++        return array(
++			array('name' => 'template', 'type' => 'string', 'description' => "Template used to display"),
++			array('name' => 'userparam', 'type' => 'string', 'description' => "User param")
++		);
 +    }
 +   
  	protected function readParameters($params,$outputmode) {
@@ -26,54 +20,42 @@ Index: extensions/SemanticResultFormats/Calendar/SRF_Calendar.php
  
 Index: extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php
 ===================================================================
---- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 5798)
+--- extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(revision 6703)
 +++ extensions/SemanticResultFormats/Exhibit/SRF_Exhibit.php	(working copy)
-@@ -14,7 +14,23 @@
- class SRFExhibit extends SMWResultPrinter {
- 	///mapping between SMW's and Exhibit's the data types
+@@ -16,7 +16,17 @@
  	protected $m_types = array("_wpg" => "text", "_num" => "number", "_dat" => "date", "_geo" => "text", "_uri" => "url");
-+    protected $mParameters;
-+
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $views = new SMWQPParameter('views', 'Views', '<string>', NULL, "tiles, tabular, timeline, maps. MULTIPLE separated by comma)");
-+        $facets = new SMWQPParameter('facets', 'Factes', '<string>', NULL, "List of properties to be used as facets, separated by commas");
-+        $facets->setConstraints("namespace: "+SMW_NS_PROPERTY);
-+        $order = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
-+        $link = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
-+        $limit = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-+        $this->mParameters = array($order, $link, $limit, $views, $facets);
-+    }
  
-+    function getSupportedParameters() {
-+        return $this->mParameters;
-+    }
-+    
  	protected static $exhibitRunningNumber = 0; //not sufficient since there might be multiple pages rendered within one PHP run; but good enough now
- 
+-
++	
++	function getParameters() {
++		return array(
++		array('name' => 'views', 'type' => 'string', 'description' => "tiles, tabular, timeline, maps. MULTIPLE separated by comma)"),
++		array('name' => 'facets', 'type' => 'string', 'description' => "List of properties to be used as facets, separated by commas", 'constraints' => "namespace: "+SMW_NS_PROPERTY),
++		array('name' => 'order', 'type' => 'enumeration', 'values' => array('ascending','descending'),  'description' => "Sort order"),
++		array('name' => 'link', 'type' => 'enumeration', 'values' => array('all','subject', 'none'),  'description' => "Show everything as link, only subjects or nothing at all."),
++		array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit")
++		);
++	}
++	
  	///overwrite function to allow execution of result printer even if no results are available (in case remote query yields no results in local wiki)
+ 	public function getResult($results, $params, $outputmode) {
+ 		$this->readParameters($params,$outputmode);
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 5798)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(revision 6699)
 +++ extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php	(working copy)
-@@ -9,9 +9,22 @@
- 	die( 'Not an entry point.' );
- }
+@@ -11,7 +11,14 @@
  
-+
  class SRFGoogleBar extends SMWResultPrinter {
  	protected $m_width = '250';
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $width = new SMWQPParameter('width', 'Width', '<number>', NULL, "Width of bar");
-+        $height = new SMWQPParameter('height', 'Height', '<number>', NULL, "Height of bar");
-+        $this->mParameters = array($width, $height);
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++    
++	function getParameters() {
++        return array(
++			array('name' => 'width', 'type' => 'int', 'description' => "Width of bar"),
++			array('name' => 'height', 'type' => 'int', 'description' => "Height of bar")
++		);
 +    }
 +   
  	protected function readParameters($params,$outputmode) {
@@ -81,23 +63,18 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GoogleBar.php
  		if (array_key_exists('width', $this->m_params)) {
 Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
 ===================================================================
---- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 5798)
+--- extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(revision 6699)
 +++ extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php	(working copy)
-@@ -12,6 +12,19 @@
+@@ -12,6 +12,14 @@
  class SRFGooglePie extends SMWResultPrinter {
  	protected $m_width = 250;
  	protected $m_heighth = 250;
-+    protected $mParameters;
-+
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $width = new SMWQPParameter('width', 'Width', '<number>', NULL, "Width of pie");
-+        $height = new SMWQPParameter('height', 'Height', '<number>', NULL, "Height of pie");
-+        $this->mParameters = array($width, $height);
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
++	
++	function getParameters() {
++        return array(
++			array('name' => 'width', 'type' => 'int', 'description' => "Width of pie"),
++			array('name' => 'height', 'type' => 'int', 'description' => "Height of pie")
++		);
 +    }
 +   
  
@@ -105,27 +82,26 @@ Index: extensions/SemanticResultFormats/GoogleCharts/SRF_GooglePie.php
  		SMWResultPrinter::readParameters($params,$outputmode);
 Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
 ===================================================================
---- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 5798)
+--- extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(revision 6699)
 +++ extensions/SemanticResultFormats/GraphViz/SRF_Graph.php	(working copy)
-@@ -25,7 +25,23 @@
+@@ -25,7 +25,21 @@
  	protected $m_graphSize="";
  	protected $m_labelArray = array();
  	protected $m_graphColors = array("black","red","green","blue","darkviolet","gold","deeppink","brown","bisque","darkgreen","yellow","darkblue","magenta","steelblue2");
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('graphname', 'Graph name', '<string>', NULL, "Title");
-+        $this->mParameters[] = new SMWQPParameter('graphsize', 'Graph size (in px)', '<number>', NULL, "Graph size (in px)");
-+        $this->mParameters[] = new SMWQPParameter('graphlegend', 'Graph legend', array('yes', 'no'), NULL, "Show graph legend or not.");
-+        $this->mParameters[] = new SMWQPParameter('graphlabel', 'Graph label', array('yes', 'no'), NULL, "Graph label");
-+        $this->mParameters[] = new SMWQPParameter('rankdir', 'Rank dir', '<string>', NULL, "Rank dir");
-+        $this->mParameters[] = new SMWQPParameter('graphlink', 'Graph link', array('yes', 'no'), NULL, "Graph link");
-+        $this->mParameters[] = new SMWQPParameter('graphcolor', 'Graph color', array('yes', 'no'), NULL, "Graph color");
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++    
++	function getParameters() {
++        return array(
++			array('name' => 'graphname', 'type' => 'string', 'description' => "Title"),
++			array('name' => 'graphsize', 'type' => 'int', 'description' => "Graph size (in px)"),
++			array('name' => 'graphlegend', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Show graph legend or not."),
++			array('name' => 'graphlabel', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph label"),
++			array('name' => 'rankdir', 'type' => 'string', 'description' => "Rank dir"),
++			array('name' => 'graphlink', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph link"),
++			array('name' => 'graphcolor', 'type' => 'enumeration', 'values'=>array('yes', 'no'), 'description' => "Graph color"),
++			
++			
++		);
 +    }
 +       
  	protected function readParameters($params,$outputmode) {
@@ -133,21 +109,18 @@ Index: extensions/SemanticResultFormats/GraphViz/SRF_Graph.php
  		SMWResultPrinter::readParameters($params,$outputmode);
 Index: extensions/SemanticResultFormats/Math/SRF_Math.php
 ===================================================================
---- extensions/SemanticResultFormats/Math/SRF_Math.php	(revision 5798)
+--- extensions/SemanticResultFormats/Math/SRF_Math.php	(revision 6699)
 +++ extensions/SemanticResultFormats/Math/SRF_Math.php	(working copy)
-@@ -12,7 +12,17 @@
+@@ -12,7 +12,13 @@
  if (!defined('MEDIAWIKI')) die();
  
  class SRFMath extends SMWResultPrinter {
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++    
++	function getParameters() {
++        return array(
++			array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit")
++		);
 +    }
 +    
  	public function getName() {
@@ -155,26 +128,20 @@ Index: extensions/SemanticResultFormats/Math/SRF_Math.php
  		return wfMsg('srf_printername_' . $this->mFormat);
 Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
 ===================================================================
---- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 5798)
+--- extensions/SemanticResultFormats/Outline/SRF_Outline.php	(revision 6703)
 +++ extensions/SemanticResultFormats/Outline/SRF_Outline.php	(working copy)
-@@ -84,7 +84,22 @@
+@@ -84,7 +84,15 @@
  
  	protected $mOutlineProperties = array();
  	protected $mInnerFormat = '';
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('order', 'Order', array('ascending','descending'), NULL, "Sort order");
-+        $this->mParameters[] = new SMWQPParameter('link', 'Link', array('all','subject', 'none'), NULL, "Show everything as link, only subjects or nothing at all.");
-+        $this->mParameters[] = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-+        $outlineproperties = new SMWQPParameter('outlineproperties', 'Outline properties', '<string>', NULL, "The list of properties to be used as outline headers, separated by commas.");
-+        $outlineproperties->setConstraints("namespace: "+SMW_NS_PROPERTY);
-+        $this->mParameters[] = $outlineproperties;
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++  
++	function getParameters() {
++        $params = array(
++			array('name' => 'outlineproperties', 'type' => 'string', 'description' => "The list of properties to be used as outline headers, separated by commas.", 'constraints' => "namespace: ".SMW_NS_PROPERTY),
++			
++		); 
++		return array_merge($params, parent::getParameters());
 +    }
 +       
  	protected function readParameters($params,$outputmode) {
@@ -182,38 +149,35 @@ Index: extensions/SemanticResultFormats/Outline/SRF_Outline.php
  
 Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
 ===================================================================
---- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 5798)
+--- extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(revision 6699)
 +++ extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php	(working copy)
-@@ -36,7 +36,34 @@
+@@ -36,7 +36,30 @@
  	protected $m_tblheight = '';
  	protected $m_width = '';
  	protected $m_height = '';
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('ploticusmode', 'Ploticus mode', array('preftab', 'script'), 'preftab');
-+        $this->mParameters[] = new SMWQPParameter('ploticusparams', 'Ploticus parameters', '<string>');
-+        $this->mParameters[] = new SMWQPParameter('imageformat', 'Image format', array('png', ' gif', 'jpeg', 'svg', 'svgz', 'swf', 'eps', 'ps', 'drawdump', 'drawdumpa'), 'png');
-+        $this->mParameters[] = new SMWQPParameter('titletext', 'Title text', '<string>');
-+        $this->mParameters[] = new SMWQPParameter('showcsv', 'Show CSV', '<boolean>');
-+        $this->mParameters[] = new SMWQPParameter('ploticusmode', 'Ploticus mode', '<string>');
-+        $this->mParameters[] = new SMWQPParameter('debug', 'Debug', '<boolean>');
-+        $this->mParameters[] = new SMWQPParameter('liveupdating', 'Live updateing', '<boolean>');
-+        $this->mParameters[] = new SMWQPParameter('updatefrequency', 'Update frequency', '<number>');
-+        $this->mParameters[] = new SMWQPParameter('showtimestamp', 'Show timestamp', '<boolean>');
-+        $this->mParameters[] = new SMWQPParameter('showimagelink', 'Show image link', '<boolean>');
-+        $this->mParameters[] = new SMWQPParameter('showrefresh', 'Show refresh', '<boolean>');
-+        
-+        $this->mParameters[] = new SMWQPParameter('drawdumpoutput', 'Draw dump output text', '<string>');
-+        $this->mParameters[] = new SMWQPParameter('tblwidth', 'Table width', '<number>');
-+        $this->mParameters[] = new SMWQPParameter('tblheight', 'Table height', '<number>');
-+        $this->mParameters[]= new SMWQPParameter('width', 'Width', '<number>');
-+        $this->mParameters[] = new SMWQPParameter('height', 'Height', '<number>');
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++    
++	function getParameters() {
++        return array(
++			array('name' => 'ploticusmode', 'type' => 'enumeration', 'values' => array('preftab', 'script')),
++			array('name' => 'ploticusparams', 'type' => 'string'),
++			array('name' => 'imageformat', 'type' => 'enumeration', 'values' => array('png', ' gif', 'jpeg', 'svg', 'svgz', 'swf', 'eps', 'ps', 'drawdump', 'drawdumpa'), 'defaultValue'=>"png"),
++			array('name' => 'titletext', 'type' => 'string'),
++			array('name' => 'showcsv', 'type' => 'boolean'),
++			array('name' => 'ploticusmode', 'type' => 'string'),
++			array('name' => 'debug', 'type' => 'boolean'),
++			array('name' => 'liveupdating', 'type' => 'boolean'),
++			array('name' => 'updatefrequency', 'type' => 'int'),
++			array('name' => 'showtimestamp', 'type' => 'boolean'),
++			array('name' => 'showimagelink', 'type' => 'boolean'),
++			array('name' => 'showrefresh', 'type' => 'boolean'),
++			array('name' => 'drawdumpoutput', 'type' => 'string'),
++			array('name' => 'tblwidth', 'type' => 'int'),
++			array('name' => 'tblheight', 'type' => 'int'),
++			array('name' => 'width', 'type' => 'int'),
++			array('name' => 'height', 'type' => 'int')
++			
++		);
 +    }
 +    
  	protected function readParameters($params, $outputmode) {
@@ -221,28 +185,24 @@ Index: extensions/SemanticResultFormats/Ploticus/SRF_Ploticus.php
  		if (array_key_exists('ploticusparams', $this->m_params)) {
 Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
 ===================================================================
---- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 5798)
+--- extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(revision 6699)
 +++ extensions/SemanticResultFormats/Timeline/SRF_Timeline.php	(working copy)
-@@ -17,7 +17,29 @@
+@@ -17,7 +17,25 @@
  	protected $m_tlsize = ''; // CSS-compatible size (such as 400px)
  	protected $m_tlbands = ''; // array of band IDs (MONTH, YEAR, ...)
  	protected $m_tlpos = ''; // position identifier (start, end, today, middle)
-+    protected $mParameters;
-+
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $this->mParameters[] = new SMWQPParameter('limit', 'Limit', '<number>', NULL, "Instance display limit");
-+        $this->mParameters[] = new SMWQPParameter('timelinestart', 'Timeline start', '<string>', NULL, "Can be used to define a specific printout (property) name to use as a first timepoint in timeline. ");
-+        $this->mParameters[] = new SMWQPParameter('timelineend', 'Timeline end', '<string>', NULL, "Can be used to define a specific printout (property) name to use as second timepoint in timeline. ");
-+        $this->mParameters[] = new SMWQPParameter('timelinesize', 'Timeline size (in px)', '<number>', '300', "Can be used to give the height of the timeline. The default value is 300px.");
-+        $this->mParameters[] = new SMWQPParameter('timelinebands', 'Timeline bands', '<string>', NULL, "Defines which bands are displayed in the result. Available bands are DECADE, YEAR, MONTH, WEEK, and DAY. Bands should be given from finer to coarser, and be separated by commas as in the above example. ");
-+        $this->mParameters[] = new SMWQPParameter('timelineposition', 'Timeline position', array('middle', 'start', 'end'), "middle", "Defines where the timeline initially focusses at. Possible values are start (earliest entry), middle (middle entry), end (latest entry).");
++   
++	function getParameters() {
++        return array(
++			array('name' => 'limit', 'type' => 'int', 'description' => "Instance display limit"),
++			array('name' => 'timelinestart', 'type' => 'string', 'description' => "Can be used to define a specific printout (property) name to use as a first timepoint in timeline. "),
++			array('name' => 'timelineend', 'type' => 'string', 'description' => "Can be used to define a specific printout (property) name to use as second timepoint in timeline. "),
++			array('name' => 'timelinesize', 'type' => 'int', 'defaultValue'=> "300", 'description' => "Can be used to give the height of the timeline. The default value is 300px."),
++			array('name' => 'timelinebands', 'type' => 'string', 'description' => "Defines which bands are displayed in the result. Available bands are DECADE, YEAR, MONTH, WEEK, and DAY. Bands should be given from finer to coarser, and be separated by commas as in the above example. "),
++			array('name' => 'timelineposition', 'type' => 'enumeration', 'values' => array('middle', 'start', 'end'), 'defaultValue'=>"middle", 'description' => "Defines where the timeline initially focusses at. Possible values are start (earliest entry), middle (middle entry), end (latest entry).")
++		);
 +    }
  
-+    function getSupportedParameters() {
-+        return $this->mParameters;
-+    }
-+
 +    function getScripts() {
 +        global $srfgScriptPath;
 +        $scripts [] = '<script type="text/javascript" src="' . $srfgScriptPath .  '/Timeline/SRF_timeline.js"></script>' . "\n";
@@ -253,7 +213,7 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  	protected function readParameters($params,$outputmode) {
  		SMWResultPrinter::readParameters($params,$outputmode);
  
-@@ -109,6 +131,7 @@
+@@ -109,6 +127,7 @@
  							$objectlabel = $object->getLongText($outputmode,$l);
  						} else {
  							$objectlabel = $object->getShortText($outputmode,$l);
@@ -263,24 +223,19 @@ Index: extensions/SemanticResultFormats/Timeline/SRF_Timeline.php
  						$header = '';
 Index: extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php
 ===================================================================
---- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(revision 5798)
+--- extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(revision 6699)
 +++ extensions/SemanticResultFormats/iCalendar/SRF_iCalendar.php	(working copy)
-@@ -14,7 +14,21 @@
+@@ -14,7 +14,15 @@
  class SRFiCalendar extends SMWResultPrinter {
  	protected $m_title = '';
  	protected $m_description = '';
-+    protected $mParameters;
- 
-+    public function __construct($format, $inline) {
-+        parent::__construct($format, $inline);
-+        $iCalendarTitle = new SMWQPParameter('icalendartitle', 'iCalendar title', '<string>', NULL, "iCalendar title");
-+        $iCalendarDescription = new SMWQPParameter('icalendardescription', 'iCalendar description', '<string>', NULL, "iCalendar description");
-+        $this->mParameters[] = $iCalendarTitle;
-+        $this->mParameters[] = $iCalendarDescription;
-+    }
-+
-+    function getSupportedParameters() {
-+        return $this->mParameters;
+-
++    
++	function getParameters() {
++        return array(
++			array('name' => 'icalendartitle', 'type' => 'string', 'description' => "iCalendar title"),
++			array('name' => 'icalendardescription', 'type' => 'string', 'description' => "iCalendar description")
++		); 
 +    }
 +   
 +    
