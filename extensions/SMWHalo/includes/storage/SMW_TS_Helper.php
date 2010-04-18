@@ -26,10 +26,12 @@ class WikiTypeToXSD {
 
             // not supported by TS. Take xsd:string
             case '_geo' :
-            case '_cod' :
+            case '_cod' : return 'xsd:string';
+            
+            case '_tel' :
             case '_ema' :
             case '_uri' :
-            case '_anu' : return 'xsd:string';
+            case '_anu' : return 'xsd:anyURI';
 
             // single unit type in SMW
             case '_tem' : return 'xsd:unit';
@@ -68,6 +70,7 @@ class WikiTypeToXSD {
             case 'double': return "_num";
             case 'boolean': return "_boo";
             case 'dateTime': return "_dat";
+            case 'anyURI': return "_uri";
             default: return "_str";
 
         }
