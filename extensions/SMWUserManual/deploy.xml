@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>110</version>
+        <version>101</version>
         <patchlevel>0</patchlevel>
         <id>smwusermanual</id>
         <vendor>Ontoprise GmbH</vendor>
@@ -10,7 +10,7 @@
             Context sensitive help and feedback for Semantic MediaWiki extentions.
         </description>
         <dependencies>
-            <dependency from="146" to="146">SMWHalo</dependency>
+            <dependency from="146" to="150">SMWHalo</dependency>
         </dependencies>
     </global>
     <codefiles>
