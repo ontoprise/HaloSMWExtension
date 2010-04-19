@@ -108,10 +108,7 @@ function smwgHaloSetupExtension() {
 
 	global $smwgResultFormats;
 
-	if (!defined('SGA_GARDENING_EXTENSION_VERSION')) {
-		$smwgResultFormats['table'] = 'SMWHaloTableResultPrinter';
-		$smwgResultFormats['broadtable'] = 'SMWHaloTableResultPrinter';
-	}
+	
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
