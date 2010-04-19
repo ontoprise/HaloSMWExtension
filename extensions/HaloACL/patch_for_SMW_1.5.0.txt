@@ -75,30 +75,11 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 ===================================================================
 --- extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(revision 6679)
 +++ extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php	(working copy)
-@@ -162,6 +162,55 @@
+@@ -162,6 +162,41 @@
  		return $result;
  	}
  
 +	/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
-+	/**
-+	 * Resets the iterators of this query result.
-+	 *
-+	 */
-+	public function resetIterator() {
-+		reset($this->m_content);
-+		reset($this->m_printrequests);
-+
-+		foreach ($this->m_content as $row) {
-+			foreach ($row as $field) {
-+				if ($field instanceof SMWResultArray) {
-+					$field->resetIterator();
-+				}
-+			}
-+			reset($row);
-+		}
-+		reset($this->m_content);
-+
-+	}
 +
 +	/**
 +	 * Creates a new query result based on $this query result. Everything
@@ -111,41 +92,104 @@ Index: extensions/SemanticMediaWiki/includes/storage/SMW_QueryResult.php
 +	 * 		- query, querystring
 +	 * 	 	- furtherres
 +	 * 	 	- extra printouts
++	 * @param array
++	 * 		An array of results e.g. the set of filtered results of the original query.
++	 * 		If the new q.r. should have no results then pass an empty array.
 +	 *
 +	 * @return SMWQueryResult
 +	 * 		A partly copied $queryResult
 +	 */
-+	public function newFromQueryResult() {
++	public function newFromQueryResult($results) {
 +		$classname = get_class($this);
++		
 +		$qr = new $classname($this->m_printrequests,
 +							 $this->m_query,
++							 $results,
++							 $this->m_store,
 +							 $this->m_furtherres);
 +		$qr->m_querystring = $this->m_querystring;
 +		$qr->m_extraprintouts = $this->m_extraprintouts;
 +
 +		return $qr;
 +	}
-+
 +	/*op-patch|TS|2009-06-19|end*/
 +
  }
  
  /**
-@@ -331,5 +380,16 @@
+@@ -175,6 +210,14 @@
+ 	protected $m_result;
+ 	protected $m_store;
+ 	protected $m_content;
++	
++	/*op-patch|TS|2010-04-19|HaloACL|Semantic protection|start*/
++	protected $m_isFiltered = false;  // true, if the result has already been
++									  // filtered by semantic protection
++	protected $m_valuesRemoved = false;  // true, if values were removed by 
++										 // semantic protection 
++	/*op-patch|TS|2010-04-19|end*/
++	
+ 
+ 	static protected $catcacheobj = false;
+ 	static protected $catcache = false;
+@@ -201,6 +244,9 @@
+ 	 */
+ 	public function getContent() {
+ 		$this->loadContent();
++/*op-patch|TS|2010-04-19|HaloACL|Semantic protection|start*/
++		$this->filterContent();
++/*op-patch|TS|2010-04-19|end*/
+ 		return $this->m_content;
+ 	}
+ 
+@@ -217,6 +263,9 @@
+ 	 */
+ 	public function getNextObject() {
+ 		$this->loadContent();
++/*op-patch|TS|2010-04-19|HaloACL|Semantic protection|start*/
++		$this->filterContent();
++/*op-patch|TS|2010-04-19|end*/
+ 		$result = current($this->m_content);
+ 		next($this->m_content);
+ 		return $result;
+@@ -331,5 +380,39 @@
  		return $options;
  	}
  
 +
-+	/*op-patch|TS|2009-06-19|HaloACL|Semantic protection|start*/
-+
++	/*op-patch|TS|2010-04-19|HaloACL|Semantic protection|start*/
++	
 +	/**
-+	 * Resets the iterators of this result array.
-+	 *
++	 * Filters the content of this result array. All protected pages are removed
++	 * from the result.
++	 * 
 +	 */
-+	public function resetIterator() {
-+		reset($this->content);
++	protected function filterContent() {
++		if ($this->m_isFiltered) {
++			return;
++		}
++		$this->m_isFiltered = true;
++		// Iterate over the complete content, but not with "foreach" as this moves
++		// the current pointer to the end of the array
++		for ($i = 0, $l = count($this->m_content); $i < $l; ++$i) {
++			$object = $this->m_content[$i];
++			$allowed = true;
++			if ($object->getTypeID() == '_wpg') {
++				// Link to another page which might be protected
++				global $wgUser;
++				wfRunHooks('userCan', array($object->getTitle(), &$wgUser, 
++				                            "read", &$allowed));
++			}
++			if (!$allowed) {
++				unset($this->m_content[$i]);
++				$this->m_valuesRemoved = true;
++			}
++		}
++		if ($this->m_valuesRemoved) {
++			$this->m_content = array_values($this->m_content);
++		}
 +	}
-+	/*op-patch|TS|2009-06-19|end*/
++	/*op-patch|TS|2010-04-19|end*/
  }
  
 Index: extensions/SemanticMediaWiki/includes/storage/SMW_SQLStore2.php
@@ -436,7 +480,7 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_Property.php
  		return (($this->m_propertyid == '') ||
  		        (array_key_exists($this->m_propertyid, SMWPropertyvalue::$m_propertytypes) &&
  		         SMWPropertyvalue::$m_propertytypes[$this->m_propertyid][1]) );
-@@ -335,6 +340,34 @@
+@@ -335,6 +340,33 @@
  	public function getDBkey() {
  		return $this->isVisible()?$this->m_wikipage->getDBkey():$this->m_propertyid;
  	}
@@ -467,7 +511,6 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_Property.php
 +		return true;
 +	}
 +/*op-patch|TS|2009-07-10|end*/
-+	
  
  	public function getText() {
  		return $this->isVisible()?$this->m_wikipage->getWikiValue():'';
