@@ -246,3 +246,18 @@ Index: includes/parser/ParserOptions.php
  	function __construct( $user = null ) {
  		$this->initialiseFromUser( $user );
  	}
+Index: includes/Linker.php
+===================================================================
+--- includes/Linker.php (revision 5486)
++++ includes/Linker.php (working copy)
+@@ -243,6 +243,10 @@
+ 		and $target->getNamespace() != NS_SPECIAL ) {
+ 			$query['action'] = 'edit';
+ 			$query['redlink'] = '1';
++            global $IP;
++            if (file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') &&
++                empty( $query['mode']))
++                $query['mode']= 'wysiwyg';
+ 		}
+ 		$ret = $target->getLinkUrl( $query );
+ 		wfProfileOut( __METHOD__ );
