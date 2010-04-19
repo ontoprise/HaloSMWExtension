@@ -1097,21 +1097,21 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 @@ -9,6 +9,11 @@
   * @author Daniel Hansch
   */
- 
+
 +// patches included:
 +// 1. WYSIWYG parameter in info tag
 +//    tag of patch: op-patch|DH|2009-04-22|"WYSIWYG" in info tag
 +//    usage: {{{info|WYSIWYG}}} switches on the FCKeditor, if available
 +
  class SFFormPrinter {
- 
+
    var $mSemanticTypeHooks;
 @@ -129,8 +134,12 @@
      global $sfgTabIndex; // used to represent the current tab index in the form
      global $sfgFieldNum; // used for setting various HTML IDs
      global $sfgJSValidationCalls; // array of Javascript calls to determine if page can be saved
 +    global $wgContLang;
- 
+
      // initialize some variables
 +    /*op-patch|KK|2009-11-04|FCKeditor|use separate variable for FCK Options|start*/
 +    $fck_options = array();
@@ -1122,20 +1122,20 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 @@ -146,6 +155,19 @@
      // flag for placing "<onlyinclude>" tags in form output
      $onlyinclude_free_text = false;
-     
+
 +    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
 +    $includeonly_free_text = false;
 +    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
-+    
++
 +    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|start*/
 +    $show_FCKEditor = false;
 +    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
 +
-+    /*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/  
++    /*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
 +    $namespace_labels = $wgContLang->getNamespaces();
 +    $user_namespace = $namespace_labels[NS_USER];
-+    /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/  
-+	
++    /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
++
      // if we have existing content and we're not in an active replacement
      // situation, preserve the original content. We do this because we want
      // to pass the original content on IF this is a partial form
@@ -1145,8 +1145,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
        $this->showDeletionLog($wgOut);
 -    if (($wgUser->isAllowed('edit') && $this->mPageTitle->userCan('edit')) || $is_query) {
 +    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start*/
-+    if (($wgUser->isAllowed('edit') && 
-+        ($this->mPageTitle->userCan('formedit') || 
++    if (($wgUser->isAllowed('edit') &&
++        ($this->mPageTitle->userCan('formedit') ||
 +         $this->mPageTitle->userCan('edit') )) ||
 +       $is_query) {
 +    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|end*/
@@ -1225,8 +1225,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +                $section_visibility = 'none';
 +                $img = 'plus';
 +              }
-+              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\" 
-+                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\" 
++              $form_text .= "<legend tabindex=\"$sfgTabIndex\" style=\"cursor: pointer;font-weight:bold;\"
++                onKeyDown=\"javascript:if (event.keyCode == 32){ smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');}\"
 +                onClick=\"smwCollapsingForm.switchVisibilityWithImg('{$smwgRMActFormName}_sec_{$section_num}');\">
 +                <img id=\"{$smwgRMActFormName}_sec_{$section_num}_img\" onmouseout=\"(src='$sfgScriptPath/skins/$img.gif')\"
 +                onmouseover=\"(src='$sfgScriptPath/skins/$img-act.gif')\" src=\"$sfgScriptPath/skins/$img.gif\"/>&nbsp;$template_label</legend>\n";
@@ -1270,7 +1270,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 -              if ($input_type == 'text' || $input_type == '') {
 -                $cur_value_in_template = $wgUser->getName();
 +              /*op-patch|DH|2009-09-18|SF|include namespace for current user|start*/
-+              if ($input_type == 'text' || $input_type == '' || 
++              if ($input_type == 'text' || $input_type == '' ||
 +                  $input_type == 'haloACtext' || $input_type == 'haloACtextarea') {
 +                $cur_value_in_template = $user_namespace.":".$wgUser->getName();
                  $cur_value = $cur_value_in_template;
@@ -1278,12 +1278,12 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +              /*op-patch|DH|2009-09-18|SF|include namespace for current user|end*/
              }
              list($new_text, $new_javascript_text) = $this->formFieldHTML($form_field, $cur_value);
- 
+
 @@ -1062,9 +1153,19 @@
                // replacement pages may have minimal matches...
                $source_page_matches_this_form = true;
              }
--            elseif($tag == 'includeonly free text' || $tag == 'onlyinclude free text') {           		
+-            elseif($tag == 'includeonly free text' || $tag == 'onlyinclude free text') {
 +            /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|start*/
 +            elseif($tag == 'includeonly free text') {
 +              $includeonly_free_text = true;
@@ -1310,7 +1310,7 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +        $form_text .= "</div>"; //closing div for collapsing
 +      /*op-patch|BL|2009-08-14|end*/
      } // end for
- 
+
      // if it wasn't included in the form definition, add the
 @@ -1191,6 +1295,17 @@
      } else {
@@ -1324,13 +1324,13 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +     $free_text = str_replace("</includeonly>",'', $free_text);
 +     $free_text = trim ($free_text);
 +     $data_text = str_replace('!free_text!','</noinclude><includeonly>!free_text!</includeonly><noinclude>', $data_text);
-+     $data_text = "<noinclude>".$data_text."</noinclude>"; 
++     $data_text = "<noinclude>".$data_text."</noinclude>";
 +    }
 +    /*op-patch|DH|2009-26-08|SF|free text in includeonly tags and rest in noinclude tags|end*/
      if ($onlyinclude_free_text) {
        // modify free text and data text to insert <onlyinclude> tags
        $free_text = str_replace("<onlyinclude>",'', $free_text);
-@@ -1200,7 +1315,9 @@
+@@ -1200,9 +1315,10 @@
      }
      // if the FCKeditor extension is installed, use that for the free text input
      global $wgFCKEditorDir;
@@ -1339,9 +1339,11 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +    if ($wgFCKEditorDir && $show_FCKEditor) {
 +    /*op-patch|DH|2009-04-22|"WYSIWYG" in info tag|end*/
        $showFCKEditor = SFFormUtils::getShowFCKEditor();
-       $free_text = str_replace( '"', '&quot;', $free_text );
+-      $free_text = str_replace( '"', '&quot;', $free_text );
        if(!$form_submitted && ($showFCKEditor & RTE_VISIBLE)) {
-@@ -1211,6 +1328,16 @@
+         $free_text = SFFormUtils::prepareTextForFCK($free_text);
+       }
+@@ -1211,6 +1327,16 @@
      }
      // now that we have it, substitute free text into the form and page
      $escaped_free_text = Sanitizer::safeEncodeAttribute( $free_text );
@@ -1357,8 +1359,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +    /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
      $form_text = str_replace('!free_text!', $escaped_free_text, $form_text);
      $data_text = str_replace('!free_text!', $free_text, $data_text);
- 
-@@ -1324,7 +1451,10 @@
+
+@@ -1324,7 +1450,10 @@
      $javascript_text .= SFFormUtils::instancesJavascript($using_choosers);
      $javascript_text .= SFFormUtils::autocompletionJavascript();
      if ($free_text_was_included && $showFCKEditor > 0) {
