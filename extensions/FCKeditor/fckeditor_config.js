@@ -11,7 +11,7 @@ FCKConfig.ToolbarSets['WikiEnhanced'] = [
 	['Cut','Copy','Paste', /*'PasteText','PasteWord',*/ '-', 'Undo','Redo', '-', 'SelectAll','RemoveFormat'],
         [/*'Print',*/ 'Rule', '-','TextColor', 'BGColor'],
         ['Find','Replace'],
-	['MW_Special',/* 'MW_Ref',*/ 'MW_Math'],
+	['MW_Special', 'MW_Ref', 'MW_Math'],
         ['MW_Edit', 'Fullscreen'],
 	'/',
         ['Bold','Italic','Underline'],
@@ -94,7 +94,7 @@ FCKConfig.EditorAreaStyles = '\
 } \
 .FCK__MWRef \
 { \
-	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/icon_ref.gif); \
+	background-image: url(' + FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ref.gif); \
 	width: 18px; \
 	height: 15px; \
 } \
