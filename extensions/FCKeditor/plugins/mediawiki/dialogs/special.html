@@ -307,9 +307,9 @@ function Ok()
 		SetAttribute( oTemplateSpan, '_fck_mw_customtag', 'true' ) ;
 	}
 	
-	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR' )).replace( /"/g, '&quot;' ) ;
+	var templateData = FCKTools.HTMLEncode(GetE('xTemplateRaw').value.Trim().replace(/(\r\n|\n)/g, 'fckLR' )) ;
 	
-	oTemplateSpan.innerHTML = templateData ;
+	oTemplateSpan.innerHTML = templateData.replace( /"/g, '&quot;' );
     var tagName = GetE('xSelectTag').value;
     var tagType = oSpecialTagList.getTypeByName(GetE('xSelectTag').value );
 	SetAttribute( oTemplateSpan, '_fck_mw_tagname', tagName ) ;
