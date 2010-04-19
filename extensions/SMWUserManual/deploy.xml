@@ -7,7 +7,7 @@
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SMWUserManual</instdir>
         <description>
-            Context sensitive help and feedback for Semantic MediaWiki extentions.
+            Context sensitive help and feedback for Semantic MediaWiki and SMW based extentions.
         </description>
         <dependencies>
             <dependency from="146" to="150">SMWHalo</dependency>
