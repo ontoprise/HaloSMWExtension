@@ -6,8 +6,8 @@ Installation instructions
 # 
 
 	MediaWiki 1.15.3
-	SMW 1.4.x or higher
-	Halo extension 1.4.x or higher
+	Semantic MediaWiki 1.4.x or higher
+	Halo Extension 1.4.x or higher
 	Semantic Forms 1.9
 	Parser Functions
 	String Functions 2.0 or higher
@@ -21,10 +21,10 @@ Installation instructions
 	1.1 The RichMedia extension comes with two different patch files.
 	- '/extensions/RichMediaRichMediaPatchForSF1_9.txt': This file provides the necessary patches for Semantic Forms.
 	- '/extensions/RichMedia/RichMediaPatchForMW1_15_3.txt': This is needed to patch MediaWiki in version 1.15.3
-		Note: We can not ensure that this patch works properly for other versions of MediaWiki.
-	These are Eclipse patch files which can be installed 
-	using the tool patch.php from the deploy framework (smwhalo-deploy-1.0) which
-	itself uses GNU patch.
+	
+	Note: We can not ensure that this patch works properly for other versions of MediaWiki.
+	These are Eclipse patch files which can be installed using the tool patch.php from the 
+	deploy framework (smwhalo-deploy-1.0) which itself uses GNU patch.
 
 		php patch.php -p <patch-file> -d <mw-dir> --onlypatch
 
@@ -90,4 +90,11 @@ require_once("$IP/extensions/RichMedia/includes/WebDAV/WD_Initialize.php");
 
 * The file {WikiPath}/extensions/RichMedia/includes/WebDAV/WD_Settings.php contains
 a configurable namespace blacklist. Namespaces in that blacklist will not be displayed
-in the WebDAV folder. The settings file also allows to configure wheter talk namespaces should be displayed.
+in the WebDAV folder. The settings file also allows to configure whether talk namespaces should be displayed.
+
+
+#
+# Read online help
+#
+
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Rich_Media_Extension
