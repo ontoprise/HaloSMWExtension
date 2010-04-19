@@ -195,7 +195,7 @@ class FCKeditorParser extends Parser
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
-	    $class = in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery"))
+	    $class = in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery", "ref"))
                ? $tagName
                : "special";
 		if (empty($argv))
