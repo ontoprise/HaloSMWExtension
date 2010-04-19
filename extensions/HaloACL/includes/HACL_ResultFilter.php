@@ -78,48 +78,27 @@ class  HACLResultFilter  {
 	 * 		The query result that is modified
 	 */
 	public static function filterResult(SMWQueryResult &$qr) {
-		$msgAdded = false;
-		$newqr = $qr->newFromQueryResult();
-        while ( $row = $qr->getNext() ) {
-			$newRow = array();
-			$firstField = true;
-            foreach ($row as $field) {
-                $pr = $field->getPrintRequest();
-                $values = array();
-                $fieldEmpty = true;
-                while ( ($object = $field->getNextObject()) !== false ) {
-                	$allowed = true;
-                	if ($object->getTypeID() == '_wpg') {
-	                	// Link to another page which might be protected
-	                	global $wgUser;
-	                	wfRunHooks('userCan',
-				                	array($object->getTitle(),
-				                		  &$wgUser, "read", &$allowed));
-	                }
-	                if ($allowed) {
-	                	$values[] = $object;
-	                	$fieldEmpty = false;
-	                } else {
-	                	if (!$msgAdded) {
-	                		$newqr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
-	                		$msgAdded = true;
-	                	}
-	                }
-                }
-                if ($fieldEmpty && $firstField) {
-                	// The first field (subject) of the row is empty 
-                	// => skip the complete row
-                	break;
-                }
-	            $newRow[] = new SMWResultArray($values, $pr);
-				$firstField = false;
-            }
-            if (!empty($newRow)) {
-            	$newqr->addRow($newRow);
-            }
-        }
-        $qr = $newqr;
-                	
+		// Retrieve all subjects of a query result
+		$results = $qr->getResults();
+		$valuesRemoved = false;
+		
+		global $wgUser;
+		
+		// Filter all subjects that are protected
+		foreach ($results as $k => $r) {
+			$t = $r->getTitle();
+			wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
+			if (!$allowed) {
+				unset($results[$k]);
+				$valuesRemoved = true;
+			}
+		}
+		if ($valuesRemoved) {
+			// Some subject were removed => create a new query result.
+			$qr = $qr->newFromQueryResult($results);
+			$qr->addErrors(array(wfMsgForContent('hacl_sp_results_removed')));
+		}
+
 		return true;
 	}
 	//--- Private methods ---
