@@ -257,21 +257,19 @@ abstract class TreeviewStorage {
         global $smwgHaloIP;
         if (self::$store == NULL) {
             global $smwgDefaultStore;
-            switch ($smwgDefaultStore) {
-                case (SMW_STORE_TESTING):
-                    self::$store = null; // not implemented yet
-                    trigger_error('Testing store not implemented for HALO extension.');
-                    break;
-                case ('SMWHaloStore'):
-                	self::$store = null; // not supported anymore
-                    trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
-                    break;
-                default:
-                    if ($tsc /*&& $smwgDefaultStore == 'SMWTripleStore'*/)
-                        self::$store = new TreeviewTriplestore();
-                    else
-                        self::$store = new TreeviewStorageSQL2();
-                    break;
+            if (defined('SMW_STORE_TESTING') && $smwgDefaultStore == SMW_STORE_TESTING) {
+                self::$store = null; // not implemented yet
+                trigger_error('Testing store not implemented for HALO extension.');
+            }
+            elseif ($smwgDefaultStore == 'SMWHaloStore') {
+                self::$store = null; // not supported anymore
+                trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
+            }
+            else {
+                if ($tsc /*&& $smwgDefaultStore == 'SMWTripleStore'*/)
+                    self::$store = new TreeviewTriplestore();
+                else
+                    self::$store = new TreeviewStorageSQL2();
             }
         }
         return self::$store;
