@@ -293,6 +293,7 @@ class HACLEvaluator {
 				// Wiki is open for HaloACL but other extensions can still 
 				// prohibit access.
 				self::finishLog("No security descriptor for article found. HaloACL is configured to Open Wiki Access.", true, true);
+				$result = true;
 				return true;
 			}
 		}
