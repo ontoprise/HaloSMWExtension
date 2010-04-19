@@ -192,6 +192,8 @@ $wgGroupPermissions['sysop']['ontologyediting'] = true;
 
 
 // extensions
+#ScriptManager
+require_once('extensions/ScriptManager/SM_Initialize.php');
 
 #Misc
 require_once( "{$IP}/extensions/Cite.php" );
