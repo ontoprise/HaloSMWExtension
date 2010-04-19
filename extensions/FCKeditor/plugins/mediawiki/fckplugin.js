@@ -605,7 +605,16 @@ FCK.DataProcessor =
 								    var tagType = htmlNode.getAttribute( '_fck_mw_tagtype' );
 								    switch (tagType) {
 								        case 't' :
-								            stringBuilder.push( '<' + tagName + '>' + FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n') + '</' + tagName + '>');
+                                            var attribs = this._GetAttributesStr( htmlNode ) ;
+                							stringBuilder.push( '<' + tagName ) ;
+
+                                            if ( attribs.length > 0 )
+                                                stringBuilder.push( attribs ) ;
+
+                							stringBuilder.push( '>' ) ;
+                                			stringBuilder.push(FCKTools.HTMLDecode(htmlNode.innerHTML).replace(/fckLR/g,'\r\n'));
+                                            stringBuilder.push( '<\/' + tagName + '>' ) ;
+
 								            break;
 								        case 'c' :
 								            stringBuilder.push( '__' + tagName + '__' );
