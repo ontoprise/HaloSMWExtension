@@ -108,7 +108,7 @@ class FCKeditorParser extends Parser
     public function __construct() {
         global $wgParser;
         parent::__construct();
-
+        $wgParser->firstCallInit();
         // add custom tags from extensions to list
         foreach ($wgParser->getTags() as $h) {
             if (! in_array($h, $this->FCKeditorWikiTags))
@@ -212,7 +212,7 @@ class FCKeditorParser extends Parser
 		else
 			$ret .= htmlspecialchars($str)."</span>";
 
-		$replacement = $this->fck_addToStrtr($ret, '<'.$tagName.'>');
+		$replacement = $this->fck_addToStrtr($ret, '<'.$tagName);
 
 		return $replacement;
 	}
@@ -427,7 +427,7 @@ class FCKeditorParser extends Parser
 		foreach ($this->FCKeditorWikiTags as $tag) {
 		    $tag = $this->guessCaseSensitiveTag($tag, $text);
 		    $this->fck_allTagsCurrentTagReplaced = $tag;
-		    $text = StringUtils::delimiterReplaceCallback( "<$tag>", "</$tag>", array($this, 'fck_allTags'), $text );
+		    $text = StringUtils::delimiterReplaceCallback( "<$tag", "</$tag>", array($this, 'fck_allTags'), $text );
 		}
 		// Rule tags on Property pages
 		$text = $this->replaceRules($text);
@@ -446,7 +446,19 @@ class FCKeditorParser extends Parser
 		return $finalString;
 	}
 	function fck_allTags( $matches ) {
-        return $this->fck_wikiTag($this->fck_allTagsCurrentTagReplaced, $matches[1]);
+        // check for tag attributes
+        $attr = array();
+        if ($matches[1]{0} != ">") {
+            $f = strpos($matches[1], '>');
+            $t = explode(' ', substr($matches[1], 0, $f));
+            foreach ($t as $x) {
+                if (strlen($x) > 0 && ($g = strpos($x, '=')) !== false) {
+                    $attr[substr($x, 0, $g)] = str_replace("'", "", str_replace('"', '', substr($x, $g+1)));
+                }
+            }
+            $matches[1] = substr($matches[1], $f);
+        }
+        return $this->fck_wikiTag($this->fck_allTagsCurrentTagReplaced, substr($matches[1], 1), $attr);
     }
 	function fck_leaveTemplatesAlone( $matches ) {
 		return "<!--FCK_SKIP_START-->".$matches['text']."<!--FCK_SKIP_END-->";
