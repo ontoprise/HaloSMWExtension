@@ -205,7 +205,7 @@ class FCKeditor_MediaWiki
 		}
 	}
 
-	public function onCustomEditor(&$article, &$user)
+	public function onCustomEditor($article, $user)
 	{
 		global $wgRequest, $mediaWiki;
 
