@@ -227,8 +227,8 @@ class SMWTripleStore extends SMWStore {
 
 						$triples[] = array("<$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$property->getWikiPageValue()->getDBkey().">", "<$smwgTripleStoreGraph/$obj_ns#".$value->getDBkey().">");
 
-					} elseif ($value->getTypeID() == '__nry') {
-						continue; // do not add nary properties
+					} elseif ($value->getTypeID() == '_rec') {
+						continue; // do not add records (aka nary properties)
 					} else {
 
 						if ($value->getUnit() != '') {
