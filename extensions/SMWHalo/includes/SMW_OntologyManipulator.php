@@ -122,10 +122,13 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
                                     "SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT",
                                     "SMW_SSP_HAS_MAX_CARD",
                                     "SMW_SSP_HAS_MIN_CARD",
-                                    "_TYPE");
+                                    "_TYPE",
+									"_rec",
+									"_LIST");
 
 		// Some optional text is given
-		$sp = $smwgContLang->getPropertyLabels();
+		$sp = $smwgContLang->getPropertyLabels()
+			  + $smwgContLang->getDatatypeLabels();
 		$ssp = $smwgHaloContLang->getSpecialSchemaPropertyArray();
 
 		$num = count($supportedConstants);
