@@ -662,7 +662,15 @@ class SMWTripleStore extends SMWStore {
 
 
 		// get resultpage, ie. the pages which "define" a result row.
-		$resultPages = $this->getResultPages($results, $prs, $mapPRTOColumns);
+		if ($query->fromASK) {
+			// ASK queries always have a result column
+			$resultPages = $this->getResultPages($results, $prs, $mapPRTOColumns);
+		} else {
+			foreach ($results as $r) {
+				// SPARQL queries do not, so just set a dummy
+				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
+			}
+		}
 
 		// create and add result rows
 		// iterate result rows and add an SMWResultArray object for each field
@@ -697,9 +705,9 @@ class SMWTripleStore extends SMWStore {
 			$qresults[] = $row;
 
 		}
-		// Query result object;
+		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
-		//echo print_r($queryResult,true);die();
+		
 		return $queryResult;
 	}
 
@@ -750,18 +758,18 @@ class SMWTripleStore extends SMWStore {
 
 	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
 	 	$resultColumn = array_key_exists($var_name, $mapPRTOColumns) ? $mapPRTOColumns[$var_name]: NULL;
-	 	
+	 	 
 	 	$allValues = array();
 	 	$this->parseBindungs($children, !is_null($resultColumn) ? $prs[$resultColumn] : NULL, $allValues);
 	 	$resultPages[] = $allValues[0];
-	 	 
+
 	 }
 	 return $resultPages;
 	}
-	
+
 	/**
 	 * Parse bindungs from the SPARQL-XML binding node $b.
-	 * Creates SMWWikiPageValue objects from <uri> SPARQL-XML nodes. 
+	 * Creates SMWWikiPageValue objects from <uri> SPARQL-XML nodes.
 	 * Creates SMWDataValue objects from a <literal> SPARQL-XML nodes.
 	 *
 	 * @param $b
@@ -785,7 +793,7 @@ class SMWTripleStore extends SMWStore {
 			if (!empty($literals)) $this->addLiteralToResult($literals, $pr, $allValues);
 		}
 	}
-	
+
 	/**
 	 * Gets an array of tuples (URI, provenance-uri) and creates SMWWikiPageValue objects.
 	 *
@@ -850,7 +858,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	/**
-	 * Gets an array of literal tuples (value, type, provenance-uri) and creates according 
+	 * Gets an array of literal tuples (value, type, provenance-uri) and creates according
 	 * SMWDataValue objects.
 	 *
 	 * @param array $literals Tuple (value, type, provenance)
