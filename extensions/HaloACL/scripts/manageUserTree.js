@@ -495,7 +495,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
         if(parentNode.label == gHACLLanguage.getMessage('groups')){
             var tmpNode =  new YAHOO.widget.TextNode(
             {
-                label:"no groups available"
+                label:gHACLLanguage.getMessage("noGroupsAvailable")
             },
             parentNode,
             false);
@@ -595,27 +595,38 @@ YAHOO.haloacl.getNewManageUserTree = function(divname,panelid){
 // GROUP ADDING
 YAHOO.haloacl.addingGroupCounter  = 1;
 
-YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
-    var nodes;
+/**
+ * Find a group by its label starting at <parentNode>.
+ * @param Object parentNode
+ * 		The group node where the search for the group starts
+ * @param string query
+ * 		The name of the searched group.
+ * @return
+ * 	<null> if the requested group does not exits or
+ *  the node of the requested group.
+ */
+YAHOO.haloacl.manageUser.findGroup = function(parentNode, query){
+	
+	// Is parentNode the requested node?	
+	if (parentNode.label == query) {
+		YAHOO.haloacl.manageUser_parentGroup = parentNode.parent.label;
+		return parentNode;
+	}
+	
+	// Check recursively if one of parentNode's children is the requested node
+	var nodes;
     nodes = parentNode.children;
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-        var temp = n.label;
-        if (temp.indexOf(query) >= 0) {
-            YAHOO.haloacl.manageUser_parentGroup = parentNode.label;
-            return parentNode;
+    for (var i=0, l=nodes.length; i<l; ++i) {
+        var child = nodes[i];
+        var requestedNode = YAHOO.haloacl.manageUser.findGroup(child, query);
+        if (requestedNode != null) {
+        	return requestedNode;
         }
-        if(n.hasChildren(false) == true){
-            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
-            if(recfound != null){
-// Bugfix 11320               YAHOO.haloacl.manageUser_parentGroup = n.label;
-// Bugfix 11320               return n;
-                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
-                return recfound;
-            }
-        }
-
     }
+	
+	// Nothing found => return null
+	return null;
+
 }
 
 
@@ -626,59 +637,16 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
  *
  */
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
-
-    var elementWidth = 399;
-    try{
-        if(nodeToAttachTo.getTextWidth() != 0){
-            elementWidth = nodeToAttachTo.getTextWidth();
-        }
-    }catch(e){
-        
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+    if (nodeToAttachTo == null) {
+    	// Group not found
+    	return;
     }
-
-    if(nodeToAttachTo._type != "RootNode"){
-        if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-        var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
-        YAHOO.haloacl.addingGroupCounter++;
-        tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
-
-        tmpNode.setTextWidth(elementWidth);
-        
-        nodeToAttachTo.collapse();
-        nodeToAttachTo.expand();
-        nodeToAttachTo.refresh();
-    }
-
+    // Attach the new node to the parent of the found node.
+	YAHOO.haloacl.manageUser.addSubgroup(tree, nodeToAttachTo.parent);                                     
 };
 
-/**
- *  finds group to append to
- *  @param parentNode (of tree)
- *  @param groupname
- *
- */
 
-YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
-    var nodes;
-    nodes = parentNode.children;
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-        var temp = n.label;
-        if (temp.indexOf(query) >= 0) {
-            YAHOO.haloacl.manageUser_parentGroup = n.label;
-            return n;
-        }
-        if(n.hasChildren(false) == true){
-            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
-            if(recfound != null){
-                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
-                return recfound;
-            }
-        }
-
-    }
-}
 
 /**
  *  adds subgroup (real subgroup; not same level)
@@ -687,43 +655,58 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
  *
  */
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
-    // removing no-group-available-node if existing
-    try{
-        var nodes = tree.children[0].children;
-        for(var i=0, l=nodes.length; i<l; i=i+1) {
-            var n = nodes[i];
-            var temp = n.label;
-            if (temp.indexOf("no groups available") >= 0) {
-                tree.tree.removeNode(n);
-            }
-        }
-    }catch(e){}
-    // ---------
-
-
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
-
-    var elementWidth = 399;
-    try{
-        if(nodeToAttachTo.getTextWidth() != 0){
-            elementWidth = nodeToAttachTo.getTextWidth() - 18;
-        }
-    }catch(e){}
-
-    if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
-    YAHOO.haloacl.addingGroupCounter++;
-    // turn of dynamic load on that node
-    tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
-
-    tmpNode.setTextWidth(elementWidth);
-    
-    tmpNode.setDynamicLoad();
-    nodeToAttachTo.collapse();
-    nodeToAttachTo.expand();
-// nodeToAttachTo.refresh();
- 
+    var nodeToAttachTo = groupname == "" ? tree.children[0]  // add to root node
+                                         : YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+	YAHOO.haloacl.manageUser.addSubgroup(tree, nodeToAttachTo);                                     
 };
+
+/**
+ * Adds a new sub-group to the <groupNode>.
+ * @param Object tree
+ * 		The tree that contains the hierarchy of groups
+ * 
+ * @param Object groupNode
+ * 		The group node in the group tree that gets a new node.
+ * 
+ */
+YAHOO.haloacl.manageUser.addSubgroup = function(tree, groupNode) {
+	if (tree == undefined || groupNode == undefined) {
+		return;
+	}
+	
+	// removing no-group-available-node if existing
+	try {
+		var nodes = tree.children[0].children;
+		for (var i = 0, l = nodes.length; i < l; i = i + 1) {
+			var n = nodes[i];
+			var temp = n.label;
+			if (temp.indexOf(gHACLLanguage.getMessage("noGroupsAvailable")) >= 0) {
+				tree.tree.removeNode(n);
+			}
+		}
+	} catch (e) {}
+		
+	var elementWidth = 399;
+	try {
+		if (groupNode.getTextWidth() != 0) {
+			elementWidth = groupNode.getTextWidth() - 18;
+		}
+	} catch (e) {}
+	
+	if (YAHOO.haloacl.debug) console.log(groupNode);
+	
+	var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup') 
+	                                              + YAHOO.haloacl.addingGroupCounter, 
+	                                              groupNode, false);
+	YAHOO.haloacl.addingGroupCounter++;
+
+	tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
+	tmpNode.setTextWidth(elementWidth);
+	
+	groupNode.collapse();
+	groupNode.expand();
+}
+
 
 /**
  *  applies filter on tree
