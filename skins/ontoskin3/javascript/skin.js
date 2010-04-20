@@ -1,21 +1,44 @@
+/**
+* Skin class - Javascript functionality of Ontoskin3
+*
+* @author Robert Ulrich
+*/
 function Smwh_Skin() {
 
-    //this.addMenuFunctions = function
-    
-    this.expanded = false;
-    this.treeviewhidden = true;
-  
+    //Variables
+    this.expanded = false; //stores if skin is expanded or not
+    this.treeviewhidden = true; //stores if treeview is hidden or not
+
+
+    /**
+     * @brief function showMenu
+     *        This functions sets the hovering class so the menu is shown.
+     *        It's bound to hover events
+     *
+     */
     this.showMenu = function(){
         $jq(this).addClass("hovering");
     };
 
+     /**
+     * @brief function hideMenu
+     *        This functions removes the hovering class so the menu is hidden.
+     *        It's bound to mouseout events
+     *
+     */
     this.hideMenu = function(){
         $jq(this).removeClass("hovering");
     };
 
-    this.expandPage = function (){
+
+     /**
+     * @brief function resizePage
+     *        This functions resizes the skin between a fixed width and full width.
+     *
+     */
+    this.resizePage = function (){
         if( this.expanded == false){
-            //use full browser window size
+            //show layout, which uses full browser window size
             $jq("#shadows").css("width", "100%");
             $jq("#personal_expand").removeClass("limited");
             $jq("#personal_expand").addClass("expanded");
@@ -167,7 +190,7 @@ function Smwh_Skin() {
     if(typeof GeneralBrowserTools != 'undefined'){
         var state = GeneralBrowserTools.getCookieObject("smwSkinExpanded");
         if (state == true && this.expanded == false){
-            this.expandPage();
+            this.resizePage();
             
         }
         state = GeneralBrowserTools.getCookieObject("smwSkinTree");

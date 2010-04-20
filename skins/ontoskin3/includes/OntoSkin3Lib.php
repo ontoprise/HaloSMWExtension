@@ -475,19 +475,19 @@ class SMWH_Skin {
 
         if($tree!=null && $tree!=""){
 
-            $treeview =  '<div id="smwh_treeviewtoggleleft" title="left">';
+            $treeview =  '<div id="smwh_treeviewtoggleleft" title="'.wfMsg('smw_treeviewleft').'">';
             //TODO: replace with proper language support
             //$treeview .= '<div title="show treeview on the left" id="smwh_treeviewtoggleleftimg"></div>';
             $treeview .= '</div>';
 
-            $treeview .=  '<div id="smwh_treeviewtoggleright" title="right">';
+            $treeview .=  '<div id="smwh_treeviewtoggleright" title="'.wfMsg('smw_treeviewright').'">';
             //$treeview .= '<div title="show treeview on the right" id="smwh_treeviewtogglerightimg"></div>';
             $treeview .= '</div>';
             
             
-            $treeview .= '<div id="smwh_treeview">';
-            $treeview .=    '<div id="smwh_treeview_content">';
+            $treeview .= '<div id="smwh_treeview">';            
             $treeview .=            '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" title="close" alt="close tree"/></a></div>';
+            $treeview .=    '<div id="smwh_treeview_content">';
             $treeview .=            $tree;
             $treeview .=    "</div>";
             $treeview .= "</div>";

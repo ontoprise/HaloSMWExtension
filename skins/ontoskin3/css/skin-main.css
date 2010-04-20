@@ -426,17 +426,8 @@ ul.smwh_menulist div.smwh_menubody_visible {
 /* Treeview */
 
 
-#smwh_treeview_head{
-    border-bottom-style: solid;
-    border-bottom-width: 1px;
-    padding: 5px;
-}
 
-#smwh_treeview_close{
-    position: absolute;
-    right: 5px;
-    top: 7px;
-}
+
 
 .treeviewtd{
   padding: 0px;
@@ -458,7 +449,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     height: 98%;
     display: none;
     padding: 5px;
-    overflow: auto;
+    
     -moz-border-radius: 5px;
     -khtml-border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -467,19 +458,27 @@ ul.smwh_menulist div.smwh_menubody_visible {
     -webkit-box-shadow:2px 2px 0 #D8D8D8, 2px 2px 15px rgba(0, 0, 0,0.3);
 }
 
-/*#smwh_treeview_content {
-    
-    height: 98%;
-    border-width: 1px;
-    border-style: solid;
-}*/
+#smwh_treeview_content {
+    overflow: auto;
+    height: 95%;
+}
 
+#smwh_treeview_head{
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    padding: 5px;
+}
+#smwh_treeview_close{
+    position: absolute;
+    right: 5px;
+    top: 7px;
+}
 
 #smwh_treeviewtoggleright{
     position: fixed;
-    margin-top: 37px;
+    margin-top: 33px;
     width: 35px;
-    height: 37px;
+    height: 33px;
     top: 50%;
     -moz-user-select: none;
     -khtml-user-select: none;
@@ -490,7 +489,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
     position: fixed;
     top: 50%;
     width: 35px;
-    height: 37px;
+    height: 33px;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;

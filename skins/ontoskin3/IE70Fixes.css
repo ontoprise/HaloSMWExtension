@@ -9,6 +9,10 @@ ul.smwh_menulist div.smwh_menubody {
     /*top: 0.2em;*/
 }
 
+il.smwh_menulistitem {
+    float: left;
+}
+
 #tabsright ul.smwh_menulist div.smwh_menubody {
     top: 3px;
 }
