@@ -1027,7 +1027,7 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
     }
 
     if(!rightsExisting){
-        new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+        new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
     }
 
     rwTree.draw();
