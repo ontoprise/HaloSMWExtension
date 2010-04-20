@@ -59,9 +59,6 @@ class SNStorage {
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_TESTING):
-                    trigger_error('Testing store not implemented for HALO extension.');
-                	break;
                 case (SMW_STORE_MWDB): 
                 default:
                     require_once("$sngIP/storage/SN_StorageSQL.php");
