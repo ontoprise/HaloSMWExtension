@@ -10,9 +10,9 @@
 		</description>
 		<dependencies>
 			<dependency from="1150" to="1159">MW</dependency>
-			<dependency from="143" to="143">smw</dependency>
-			<dependency from="146" to="147">smwhalo</dependency>
-			<dependency from="130" to="140">
+			<dependency from="143" to="150">smw</dependency>
+			<dependency from="146" to="150">smwhalo</dependency>
+			<dependency from="130" to="131">
 				semanticgardening
 			</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
