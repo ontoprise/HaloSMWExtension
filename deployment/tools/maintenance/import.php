@@ -24,9 +24,16 @@
 
 $optionsWithArgs = array( 'report' );
 
-require_once( '../../maintenance/commandLine.inc' );
-require_once('../io/import/DF_DeployWikiImporter.php');
-require_once('../io/import/DF_BackupReader.php');
+require_once( '../../../maintenance/commandLine.inc' );
+require_once('../../io/import/DF_DeployWikiImporter.php');
+require_once('../../io/import/DF_BackupReader.php');
+
+$langClass = "DF_Language_$wgLanguageCode";
+if (!file_exists("../../languages/$langClass.php")) {
+    $langClass = "DF_Language_En";
+}
+require_once("../../languages/$langClass.php");
+$dfgLang = new $langClass();
 
 if( wfReadOnly() ) {
 	wfDie( "Wiki is in read-only mode; you'll need to disable it for import to work.\n" );
