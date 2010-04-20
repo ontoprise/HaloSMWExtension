@@ -42,11 +42,7 @@ class Tools {
 		preg_match('!\nSystem(.*?)\n!is',strip_tags($info),$ma);
 		//Check if it consists 'windows' as string
 		preg_match('/[Ww]indows/',$ma[1],$os);
-		if($os[0]=='' && $os[0]==null ) {
-			$thisBoxRunsWindows= false;
-		} else {
-			$thisBoxRunsWindows = true;
-		}
+		$thisBoxRunsWindows= count($os) > 0;
 		return $thisBoxRunsWindows;
 	}
 
@@ -206,7 +202,7 @@ class Tools {
 			return true; // assume root priviledge. FIXME: Howto find out?
 		} else {
 			exec('who am i', $out);
-			if (count($out) > 0 && strpos($out, "root") !== false) return true; // is root
+			if (count($out) > 0 && strpos(reset($out), "root") !== false) return true; // is root
 				
 			// try to create and delete a file.
 			$success = touch("testpriv");
