@@ -165,17 +165,12 @@
               regex="\sList of all cities\s"
             />
 
-            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\|\}\}" />
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| order=descending\s*\| mainlabel=Cities\s*\|\}\}" />
             <clickElement
               description="Close full ask query popup"
               xpath="//div/span[text()='Close']"
             />
 
-            <setSelectField
-              description="change order to descending"
-              xpath="//select[@id='qp_param_order']"
-              value="descending"
-            />
             <checkAjaxResponseXpathText
               description="Preview must contain table, 10th row (+1) is Baltimore"
               xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"

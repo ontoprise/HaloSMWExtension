@@ -41,7 +41,7 @@
 			<verifyXPath description="Check if the element exists" xpath="//div[@id='instanceList']/table/tbody/tr/td/a" text="Audi TT" />
 			<clickLink xpath="//div[@id='instanceList']/table/tbody/tr/td/a" />
 			<sleep description="4s pause" seconds="4" />
-			<verifyXPath description="Check if the element exists" xpath="//div[@id='relattributes']/table/tbody/tr/td/a" text="Has Engine" />
+			<verifyXPath description="Check if the element exists" xpath="//div[@id='relattributes']/table/tbody/tr/td/a" text="Has owner" />
 		</webtest>
 
 		<webtest name="Select category and check for schema property">
