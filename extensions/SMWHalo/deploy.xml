@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
 	<global>
-		<version>147</version>
-		<patchlevel>1</patchlevel>
+		<version>150</version>
+		<patchlevel>0</patchlevel>
 		<id>smwhalo</id>
 		<vendor>Ontoprise GmbH</vendor>
 		<instdir>extensions/SMWHalo</instdir>
@@ -11,21 +11,17 @@
 			Mediawiki
 		</description>
 		<dependencies>
-			<dependency from="143" to="143">smw</dependency>
+			<dependency from="150">smw</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
 	   <!-- external codefile -->
-		
-		<file loc="skins/ontoskin2" />
-		<file loc="skins/OntoSkin2.deps.php" />
-        <file loc="skins/OntoSkin2.php" />
-        
+
 		<file loc="skins/ontoskin3" />
 		<file loc="skins/OntoSkin3.deps.php" />
         <file loc="skins/OntoSkin3.php" />
-		<file loc="skins/OntoSkin3Lib.php" />
+		<file loc="skins/ontoskin3/includes/OntoSkin3Lib.php" />
 	</codefiles>
 	<wikidumps>
 		<!-- empty -->
