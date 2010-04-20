@@ -160,8 +160,8 @@ function haclfSetupExtension() {
     
     //-- Hooks for ACL toolbar--
 	$wgHooks['EditPageBeforeEditButtons'][] = 'haclfAddToolbarForEditPage';
-	$wgHooks['sfEditPageBeforeForm'][]      = 'haclfAddToolbarForSemanticForms';
-	$wgHooks['sfAddData'][]                 = 'haclfOnSfAddData';
+	$wgHooks['sfHTMLBeforeForm'][]     		= 'haclfAddToolbarForSemanticForms';
+	$wgHooks['sfSetTargetName'][]           = 'haclfOnSfSetTargetName';
 	
     
     //-- includes for Ajax calls --
@@ -719,7 +719,7 @@ HTML;
 }
 
 /**
-* This function is called from the hook 'sfAddData' in SemanticForms. It adds a
+* This function is called from the hook 'sfSetTargetName' in SemanticForms. It adds a
 * JavaScript line that initializes a variable with the namespace number of the
 * current title.
 * 
@@ -727,7 +727,7 @@ HTML;
 * 	Name of the article that is edited with Semantic Forms
 *  
 */
-function haclfOnSfAddData($titleName) {
+function haclfOnSfSetTargetName($titleName) {
 	global $wgOut, $wgJsMimeType;
 	if (!empty($titleName)) {
 		$t = Title::newFromText($titleName);
