@@ -2,17 +2,18 @@ Treeview extension ChangeLog
 ============================
 
 
-VERSION XXXX
+VERSION 1.4
 
 
   FEATURES:
-
+    * A connected triple store can be used to retrieve the relations to build
+      the tree.
+    * A link target (taken from a property value) can be specified instead of
+      linking to the page directly.
 
 
   CHANGES:
 
 
-
   BUGFIXES:
-
 
