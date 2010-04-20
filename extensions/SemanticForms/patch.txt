@@ -1139,20 +1139,6 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
      // if we have existing content and we're not in an active replacement
      // situation, preserve the original content. We do this because we want
      // to pass the original content on IF this is a partial form
-@@ -178,7 +200,12 @@
-     // show previous set of deletions for this page, if it's been deleted before
-     if (! $form_submitted && ! $this->mPageTitle->exists())
-       $this->showDeletionLog($wgOut);
--    if (($wgUser->isAllowed('edit') && $this->mPageTitle->userCan('edit')) || $is_query) {
-+    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|start*/
-+    if (($wgUser->isAllowed('edit') &&
-+        ($this->mPageTitle->userCan('formedit') ||
-+         $this->mPageTitle->userCan('edit') )) ||
-+       $is_query) {
-+    /*op-patch|TS|2009-09-11|HaloACL|Protect properties in Semantic Forms|end*/
-       $form_is_disabled = false;
-       $form_text = "";
-       // show "Your IP address will be recorded" warning if user is
 @@ -284,6 +311,9 @@
        $tif = new SFTemplateInForm();
        $start_position = 0;
@@ -1376,25 +1362,6 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_FormEdit.php	2010-03-10 16:16:57.000000000 +0100
 +++ extensions/SemanticForms/specials/SF_FormEdit.php	2010-04-16 14:08:27.000000000 +0200
-@@ -29,6 +29,18 @@
- 			$queryparts = explode('/', $query, 2);
- 			$form_name = isset($queryparts[0]) ? $queryparts[0] : '';
- 			$target_name = isset($queryparts[1]) ? $queryparts[1] : '';
-+			/*op-patch|TS|2009-09-29|SMWHalo|Store the name of the new page in a javascript variable|start*/
-+			global $wgOut, $wgJsMimeType;
-+			if (!empty($target_name)) {
-+				$t = Title::newFromText($target_name);
-+				$namespace = $t->getNamespace();
-+				$script = "<script type= \"$wgJsMimeType\">/*<![CDATA[*/\n";
-+				$script .= "sfgTargetNamespaceNumber = $namespace;";
-+				$script .= "\n/*]]>*/</script>\n";
-+						
-+				$wgOut->addScript($script);
-+			}
-+			/*op-patch|TS|2009-09-29|SMWHalo|Store the name of the new page in a javascript variable|end*/
- 		}
- 
- 		$alt_forms = $wgRequest->getArray('alt_form');
 @@ -144,6 +156,10 @@
  			$page_is_source = false;
  			$page_contents = null;
@@ -1406,20 +1373,6 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula);
  		if ($form_submitted) {
-@@ -229,7 +245,12 @@
- 				<form name="createbox" onsubmit="return validate_all()" action="" method="post" class="createbox">
- 
- END;
--			$text .= $form_text;
-+			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|start*/
-+			//Original code: $text .= $form_text;
-+			$html = '';
-+			wfRunHooks('sfEditPageBeforeForm', array(&$page_title, &$html));
-+			$text .= $html.$form_text;
-+			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|end*/
- 		}
- 	}
- 	SFUtils::addJavascriptAndCSS();
 Index: extensions/SemanticForms/specials/SF_CreateTemplate.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_CreateTemplate.php	2010-03-01 04:48:13.000000000 +0100
