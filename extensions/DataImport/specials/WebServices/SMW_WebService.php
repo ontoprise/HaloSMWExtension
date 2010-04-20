@@ -480,7 +480,7 @@ class WebService {
 				if($this->mWSClient){
 					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 				} else {
-					$response = "strange error";
+					$response = "Could not connect to Web Service. Please check your Wiki Web Service Definition.";
 				}
 
 				if(is_string($response)){
