@@ -26,6 +26,7 @@ var gHACLUserLanguageStrings = {
     
     'NoName'                : '(no name)',
     'groups'                : 'Groups',
+    'noGroupsAvailable'		: 'No groups are defined yet.',
     'createACL'             : 'Create ACL',
     'manageACLs'            : 'Manage ACLs',
     'manageACLTooltip'      : 'Manage existing ACLs, Manage own default user template and Manage quick access ACLs',
