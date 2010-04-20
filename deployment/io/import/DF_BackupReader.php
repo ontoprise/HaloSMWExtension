@@ -108,7 +108,15 @@ class BackupReader {
         return $importer->doImport();
     }
 
-    function modifiedPage($deployRevision, $mode, & $result) {
+    /**
+     * Callback method which decides what to do on a modified page.
+     * Contains out parameters which is declared by the call_user_func()
+     * 
+     * @param DeployWikiRevision $deployRevision
+     * @param int $mode
+     * @param out boolean $result
+     */
+    function modifiedPage($deployRevision, $mode, $result) {
         static $overwrite = false;
         switch ($mode) {
             case DEPLOYWIKIREVISION_FORCE:
