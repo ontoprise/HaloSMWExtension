@@ -75,6 +75,16 @@ class PCPServer extends PCPAny{
 		$__api->execute();
 		$__result =& $__api->GetResultData();
 		
+		$__request = new FauxRequest( array(
+			"action" => "login",
+			"lgname"=> $userCredentials->un,
+			"lgpassword"=> $userCredentials->pwd,
+			"lgtoken"=>	 $__result['login']['token']));
+		
+		$__api = new ApiMain($__request);
+		$__api->execute();
+		$__result =& $__api->GetResultData();
+		
 		if ($__result['login']['result']!=="Success"){
 			return $__result;
 		}else{
