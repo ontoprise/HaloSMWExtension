@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <deploydescriptor>
     <global>
-        <version>110</version>
+        <version>111</version>
         <id>ultrapedia</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/Ultrapedia</instdir>
@@ -9,7 +9,7 @@
             Provides a tab function and a dynamic ask query
         </description>
         <dependencies>
-            <dependency from="142" to="143">smw</dependency>
+            <dependency from="142" to="150">smw</dependency>
         </dependencies>
     </global>
     <codefiles>
