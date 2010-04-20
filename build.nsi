@@ -129,7 +129,7 @@ Page custom showWikiCustomize checkWikiCustomize
 
 !ifndef NOINSTTYPES ; only if not defined
   InstType "New"
-  InstType "Update"
+  ;InstType "Update"
   InstType /COMPONENTSONLYONCUSTOM 
 !endif
 
