@@ -56,9 +56,6 @@ class WSStorage {
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_TESTING):
-                    trigger_error('Testing store not implemented for Data Import extension.');
-                	break;
                 case (SMW_STORE_MWDB): 
                 default:
                     global $smwgDIIP;
