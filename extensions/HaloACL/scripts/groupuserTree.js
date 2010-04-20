@@ -601,7 +601,7 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
     //tmpNode.setDynamicLoad(loadNodeData);
     YAHOO.haloacl.buildNodesFromData(tmpNode,data,tree.panelid);
     if(data.length == 0){
-        new YAHOO.widget.TextNode("no groups available", tmpNode,false);
+        new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tmpNode,false);
     }
 
     tmpNode.expand();
@@ -640,7 +640,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
             }
             if(!groupsInTree){
-                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+                var tmpNode =  new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
             }
 
             if(tree != null){
@@ -664,7 +664,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
                 }
             }
             if(!groupsInTree){
-                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+                var tmpNode =  new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
             }
 
             if(tree != null){
