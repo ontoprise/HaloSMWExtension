@@ -116,6 +116,7 @@ var wgUserLanguageStrings = {
     'SPECIFY_PROPERTY'        : "Spécifier cette porpriété.",
     'PC_DUPLICATE'            : "Au moins une propriété est spécifiée plusieurs fois. Veuillez supprimer les doublons.",
     'PC_HAS_TYPE'             : "A pour type", 
+	'PC_HAS_FIELDS'			  : "has fields", //TODO: translate
     'PC_MAX_CARD'             : "A pour cardinalité max",
     'PC_MIN_CARD'             : "A pour cardinalité min",
     'PC_INVERSE_OF'           : "Est l\'inverse de", 

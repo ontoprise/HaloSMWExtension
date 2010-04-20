@@ -118,6 +118,7 @@ var wgUserLanguageStrings = {
 	'SPECIFY_PROPERTY'		  : "Specifieer deze eigenschap.",
 	'PC_DUPLICATE'			  : "Minstens één eigenschap werd verschillende keren gespecifieerd. Verwijder de duplicaten.",
 	'PC_HAS_TYPE'			  : "heeft type", 
+	'PC_HAS_FIELDS'			  : "has fields", // TODO: translate
 	'PC_MAX_CARD'			  : "Heeft max kardinaliteit",
 	'PC_MIN_CARD'			  : "Heeft min kardinaliteit",
 	'PC_INVERSE_OF'			  : "Is het omgekeerde van", 

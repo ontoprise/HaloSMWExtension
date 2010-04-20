@@ -114,6 +114,7 @@ var wgUserLanguageStrings = {
 	'SPECIFY_PROPERTY'		  : "Spezifizieren Sie dieses Attribut.",
 	'PC_DUPLICATE'			  : "Mindestens ein Attribut wird mehrfach spezifiziert. Entfernen Sie bitte die Duplikate.",
 	'PC_HAS_TYPE'			  : "Hat Datentyp", 
+	'PC_HAS_FIELDS'			  : "Hat Komponenten",
 	'PC_MAX_CARD'			  : "hat max Kardinalität",
 	'PC_MIN_CARD'			  : "hat min Kardinalität",
 	'PC_INVERSE_OF'			  : "ist invers zu", 

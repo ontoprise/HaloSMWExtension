@@ -116,6 +116,7 @@ var wgUserLanguageStrings = {
 	'SPECIFY_PROPERTY'		  : "Specify this property.",
 	'PC_DUPLICATE'			  : "At least one property is specified several times. Please remove the duplicates.",
 	'PC_HAS_TYPE'			  : "has type", 
+	'PC_HAS_FIELDS'			  : "has fields", 
 	'PC_MAX_CARD'			  : "Has max cardinality",
 	'PC_MIN_CARD'			  : "Has min cardinality",
 	'PC_INVERSE_OF'			  : "Is inverse of", 

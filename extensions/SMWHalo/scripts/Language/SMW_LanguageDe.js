@@ -31,8 +31,10 @@ var wgContLanguageStrings = {
 	'TYPE_NS'                 : 'Datentyp:', 	// namespace identifier with colon
 	'TYPE_PAGE'               : "Datentyp:Seite",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Seite",			// type identifier without namespace
+	'TYPE_RECORD'			  : 'Verbund',
 	
 	'HAS_TYPE'				  : "Hat Datentyp",		// Special property for definition of data type
+	'HAS_FIELDS'			  : "Hat Komponenten",
 	'DOMAIN_HINT'			  : "Hat Domain und Range",
 	'RANGE_HINT'			  : "Hat Domain und Range",
 	'MAX_CARDINALITY'		  : "Hat max Kardinalität",

@@ -32,8 +32,10 @@ var wgContLanguageStrings = {
 	'TYPE_NS'                 : 'Type:', 		//namespace identifier with colon
 	'TYPE_PAGE'               : "Type:Pagina",	// type identifier
 	'TYPE_PAGE_WONS'		  : "Pagina",			// type identifier without namespace
+	'TYPE_RECORD'			  : 'Record',
 	
 	'HAS_TYPE'				  : "Heeft type",	// Special property for definition of data type
+	'HAS_FIELDS'			  : "has fields",
 	'DOMAIN_HINT'			  : "has domain and range",
 	'RANGE_HINT'			  : "has domain and range",
 	'MAX_CARDINALITY'		  : "Has max cardinality",
