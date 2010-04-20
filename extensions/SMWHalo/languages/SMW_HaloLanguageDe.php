@@ -335,7 +335,9 @@ protected $smwUserMessages = array(
 
         //skin
         'smw_search_this_wiki' => 'Wiki durchsuchen',
-        'more_functions' => 'Mehr'
+        'more_functions' => 'Mehr',
+        'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
+        'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen'
 	
 );
 
