@@ -139,6 +139,7 @@ createContent: function() {
 	this.wtp.initialize();
 	
 	var type    = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
+	var fields    = this.wtp.getRelation(gLanguage.getMessage('HAS_FIELDS'));
 	var domain  = this.wtp.getRelation(gLanguage.getMessage('DOMAIN_HINT'));
 	var range   = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
 	var maxCard = this.wtp.getRelation(gLanguage.getMessage('MAX_CARDINALITY'));
@@ -154,6 +155,10 @@ createContent: function() {
 	
 	if (type && type.size() > 1) {
 		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_HAS_TYPE')+"<tt></li>";
+		duplicatesFound = true;
+	}
+	if (fields && fields.size() > 1) {
+		doubleDefinition += "<li><tt>"+gLanguage.getMessage('PC_HAS_FIELDS')+"<tt></li>";
 		duplicatesFound = true;
 	}
 	if (maxCard && maxCard.size() > 1) {
@@ -183,7 +188,7 @@ createContent: function() {
 	}
 	
 	var changed = this.hasAnnotationChanged(
-						[type, domain, range, maxCard, minCard, inverse], 
+						[type, fields, domain, range, maxCard, minCard, inverse], 
 	                    [transitive, symmetric]);
 	                    
 	changed |= this.hasDuplicates; // Duplicates have been removed
@@ -280,6 +285,13 @@ createContent: function() {
 	} else {
 		// no type definition given => default is Type:Page
 		types = [gLanguage.getMessage("TYPE_PAGE")];
+	}
+	
+	// Check if types are given in the new form of SMW 1.5 with [[has type::Record]]
+	// and [[has fields::x;y;z]]
+	if (fields) {
+		types = fields[0];
+		types = types.getSplitValues();
 	}
 
 	var ranges = this.wtp.getRelation(gLanguage.getMessage('RANGE_HINT'));
@@ -829,17 +841,34 @@ apply: function() {
 	}
 	
 	// add the (n-ary) type definition
-	attrTypeAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
+	recordTypeAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_TYPE'));
+	hasFieldsAnno = this.wtp.getRelation(gLanguage.getMessage('HAS_FIELDS'));
 	if (typeString != "") {
 		// remove final semi-colon
 		typeString = typeString.substring(0, typeString.length-1);
-		if (attrTypeAnno != null) {
-			attrTypeAnno[0].changeValue(typeString);
+		var type = (this.prpNAry > 1) ? gLanguage.getMessage('TYPE_RECORD')
+		                              : typeString;
+		if (recordTypeAnno != null) {
+			recordTypeAnno[0].changeValue(type);
 		} else {			
-			this.wtp.addRelation(gLanguage.getMessage('HAS_TYPE'), typeString, " ", true);
+			this.wtp.addRelation(gLanguage.getMessage('HAS_TYPE'), 
+			                     type, " ", true);
+		}
+		if (this.prpNAry > 1) {
+			if (hasFieldsAnno != null) {
+				hasFieldsAnno[0].changeValue(typeString);
+			} else {			
+				this.wtp.addRelation(gLanguage.getMessage('HAS_FIELDS'), 
+				                     typeString, " ", true);
+			}
+		} else if (hasFieldsAnno != null) {
+			hasFieldsAnno[0].remove("");
 		}
 	} else {
-		attrTypeAnno[0].remove("");
+		recordTypeAnno[0].remove("");
+		if (hasFieldsAnno != null) {
+			hasFieldsAnno[0].remove("");
+		}
 	}
 
        	// if we are in the FCKeditor, we now flush the outputbuffer

@@ -301,7 +301,9 @@ OntologyModifier.prototype = {
 		var domainHintWritten = false;
 		if (ranges != null) {
 			if (ranges.length >= 1) {
-				var rangeStr = "\n[[_TYPE::"
+				var rangeStr = (ranges.length > 1)
+									? "\n[[_TYPE::_rec]]\n[[_LIST::"
+									: "\n[[_TYPE::";
 				for(var i = 0, n = ranges.length; i < n; i++) {
 					if (ranges[i].indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
 						rangeStr += ranges[i];
