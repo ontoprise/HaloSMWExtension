@@ -37,9 +37,6 @@ class SRFStorage {
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
             switch ($smwgBaseStore) {
-                case (SMW_STORE_TESTING):
-                    trigger_error('Testing store not implemented for Srf extension.');
-                	break;
                 case (SMW_STORE_MWDB): 
                 default:
                     global $srfgIP;
