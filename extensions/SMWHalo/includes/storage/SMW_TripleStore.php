@@ -181,13 +181,13 @@ class SMWTripleStore extends SMWStore {
 						if ($indexOfWhitespace === false) continue; // not a valid measure, ignore
 						$factor = trim(substr($firstMeasure, 0, $indexOfWhitespace));
 						$unit = trim(substr($firstMeasure, $indexOfWhitespace));
-						$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph#/property#".$conversionPropertyLabel.">", "\"$factor $unit\"");
+						$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$conversionPropertyLabel.">", "\"$factor $unit\"");
 
 						// add all aliases for this conversion factor using the same factor
 						$nextMeasure = next($measures);
 						while($nextMeasure !== false) {
 							$nextMeasure = str_replace('"', '\"', $nextMeasure);
-							$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph#/property#".$conversionPropertyLabel.">", "\"$factor ".trim($nextMeasure)."\"");
+							$triples[] = array("<$smwgTripleStoreGraph/type#".$subject->getDBkey().">", "<$smwgTripleStoreGraph/property#".$conversionPropertyLabel.">", "\"$factor ".trim($nextMeasure)."\"");
 							$nextMeasure = next($measures);
 						}
 
@@ -878,7 +878,7 @@ class SMWTripleStore extends SMWStore {
 						}
 						$value->setXSDValue(str_replace("-","/",$literalValue));
 					}
-				} else if ($value->getTypeID() == '_ema') { // exception for email
+				} else if ($value->getTypeID() == '_ema' || $value->getTypeID() == '_tel') { // exception for email
 					$value->setXSDValue($literalValue);
 				} else {
 					$value->setUserValue($literalValue);
