@@ -49,13 +49,13 @@ class HACLLanguageDe extends HACLLanguage {
 	protected $mPermissionDeniedPageContent = "Sie dürfen die gewünschte Aktion auf dieser Seite nicht durchführen.\n\nZurück zur [[Hauptseite]].";
 	
 	protected $mParserFunctions = array(
-		HACLLanguage::PF_ACCESS			=> 'Zugriff', 
+		HACLLanguage::PF_ACCESS				=> 'Zugriff', 
 		HACLLanguage::PF_MANAGE_RIGHTS		=> 'Rechte verwalten',
 		HACLLanguage::PF_MANAGE_GROUP		=> 'Gruppe verwalten',
 		HACLLanguage::PF_PREDEFINED_RIGHT	=> 'vordefiniertes Recht',
 		HACLLanguage::PF_PROPERTY_ACCESS	=> 'Attributzugriff',
 		HACLLanguage::PF_WHITELIST			=> 'Whitelist',
-		HACLLanguage::PF_MEMBER			=> 'Mitglied'
+		HACLLanguage::PF_MEMBER				=> 'Mitglied'
 	);
 
 	protected $mParserFunctionsParameters = array(
