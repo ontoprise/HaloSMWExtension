@@ -3,9 +3,10 @@ Installation instructions
 
 Requirements: 
     MediaWiki 1.13 or higher
-    SMW 1.4.2 
-    Halo extension 1.4.3
-    Semantic Gardening extension 1.0
+    SMW 1.4.3 or higher
+    Halo extension 1.4.3 or higher
+    Semantic Gardening extension 1.3 or higher
+    Script Manager 1.0 or higher
 	
 
 1) Add to your LocalSettings.php: (After the Halo and the 
@@ -23,5 +24,20 @@ run the "Initialise or update tables" script.
 Notice: If you already used a prior version of the Web Service extension, 
 then you have to replace the dots in the path-attributes of your existing
 WWSDs by slashes, so that the paths are conform to the XPath syntax.
+
+
+=== Install the Inter Wiki Article Importer ===
+Add the following two lines to your LocalSettings.php
+include_once('extensions/DataImport/IAI/includes/IAI_GlobalFunctions.php');
+enableIAI();
+
+
+Go to extensions/DataImport/specials/TermImport/TL/ConnectLocal.cfg and add the following:
+<Module>
+	    <id>Interwiki Article Import</id>
+	    <class>DALInterwikiArticleImport</class>
+	    <file>DAL/SMW_DALInterwikiArticleImport</file>
+	    <desc>Imports articles from an external Mediawiki.</desc>
+</Module>
 
 
