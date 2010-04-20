@@ -31,6 +31,7 @@ class SMWPredefinitions {
         self::$title = $title;
 		// parse template parameters
 		$rev = Revision::newFromTitle(Title::newFromText($template, NS_TEMPLATE));
+		if (is_null($rev)) return "";
 		$text = $rev->getText();
 		preg_match_all('/\{\{\{([^}]+)\}\}\}/', $text, $matches);
 

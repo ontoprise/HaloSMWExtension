@@ -594,7 +594,8 @@ OBOntologyModifier.prototype = {
                 rangeCategories.push(rangeOrTypes[i]);
             }
         }
-        content += "\n[[_TYPE::"+rangeTypeStr+"]]";
+        content += "\n[[_TYPE::_rec]]";
+        content += "\n[[_LIST::"+rangeTypeStr+"]]";
         rangeCategories.each(function(c) { content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"; "+gLanguage.getMessage('CATEGORY_NS')+c+"]]" });
         if (rangeCategories.length == 0) {
             content += "\n[[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT::"+gLanguage.getMessage('CATEGORY_NS')+domainCategoryTitle+"]]";

@@ -627,7 +627,7 @@ select: function (event, node, categoryID, categoryName) {
 	 if (OB_RIGHT_ARROW == 0) {
 	 	OB_relatt_pendingIndicator.show();
 	 	var onlyDirect = $('directPropertySwitch').checked;
-	 	var dIndex = $('showForRange').checked ? '"_2"' : '"_1"';
+	 	var dIndex = $('showForRange').checked ? '_2' : '_1';
 	 	dataAccess.getProperties(categoryName, onlyDirect, dIndex, callbackOnCategorySelect2);
 	 }
 	
