@@ -10,7 +10,7 @@
 		<copy todir="bin/zip/extensions/FCKeditor/">
 			<fileset file="../**">
 				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/deploy**" />
+				<exclude name="**/deploy/**" />
 				<exclude name="**/tests/**" />
 			</fileset>
 		</copy>
