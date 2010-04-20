@@ -167,7 +167,7 @@ a.plusminus:hover{
     margin-top: 10px;
     max-height: 80%;
     width: 100%;
-    z-index: 10;
+    z-index: 25;
     /*overflow: auto;*/
     position: relative;
 }
