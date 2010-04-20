@@ -9,7 +9,7 @@
 			Treeview which gets populated by semantic data.
 		</description>
 		<dependencies>
-			<dependency from="146" to="146">SMWHalo</dependency>
+			<dependency from="146">SMWHalo</dependency>
 		</dependencies>
 	</global>
 	<codefiles>
