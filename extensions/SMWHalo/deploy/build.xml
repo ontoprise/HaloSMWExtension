@@ -156,7 +156,7 @@
 			<fileset dir="../../SMWHalo/scripts/GeneralGUI" includes="contentSlider.js" />
 			<fileset dir="../../SMWHalo/scripts/Logger" includes="smw_logger.js" />
 			<fileset dir="../../SMWHalo/scripts/Language" includes="SMW_Language.js" />
-			<fileset dir="../../SMWHalo" includes="SMW_DerivedFactsTab.js" />
+			<fileset dir="../../SMWHalo/scripts" includes="SMW_DerivedFactsTab.js" />
 		</concat>
 
 		<concat destfile="../../SMWHalo/scripts/deployGeneralScripts.js">

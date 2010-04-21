@@ -10,7 +10,7 @@
 		</description>
 		<dependencies>
 			<dependency from="1153" to="1153">MW</dependency>
-			<dependency from="19" to="19">semanticforms</dependency>
+			<dependency from="190" to="190">semanticforms</dependency>
 			<dependency from="100" to="100">scriptmanager</dependency>
 		</dependencies>
 	</global>
