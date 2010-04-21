@@ -108,7 +108,7 @@ abstract class AutoCompletionStorage {
 	 * Returns instances which are member of the given range(s) and which match $userInputToMatch.
 	 *
 	 * @param string $userInputToMatch
-	 * @param Array of SMWNaryValue $domainRangeAnnotations
+	 * @param Array of SMWRecordValue $domainRangeAnnotations
 	 *
 	 * @return array of (Title instance)
 	 */

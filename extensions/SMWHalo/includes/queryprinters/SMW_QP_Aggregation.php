@@ -104,7 +104,7 @@ class SMWAggregationResultPrinter extends SMWResultPrinter {
 						$nextField = $dvs[$colCount]["next"];
 						while($nextDV = $field->getNextObject()){
 							$dv = $nextDV;
-							if($dv instanceof SMWNAryValue){
+							if($dv instanceof SMWRecordValue){
 								$dv = $dv->getDVs();
 								if(array_key_exists($dvs[$colCount]["nary"], $dv)){
 									$dv = $dv[$dvs[$colCount]["nary"]];

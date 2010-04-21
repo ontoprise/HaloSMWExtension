@@ -81,7 +81,7 @@
  					break;
  				}
  				case SMW_GARDISSUE_WRONG_TARGET_VALUE: { // highlight if wrong target matches the GI
- 					if ($value instanceof SMWNAryValue) {
+ 					if ($value instanceof SMWRecordValue) {
  					  $dvs = $value->getDVs();
  					  foreach($dvs as $dv) {
  					  	if ($dv instanceof SMWWikiPageValue) {

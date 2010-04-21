@@ -286,7 +286,7 @@ private static function encapsulateAsAnnotation(Title $instance, Title $annotati
 	$chemistryParser = new ChemEqParser();
 	$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 	foreach($smwValues as $smwValue) {
-		if ($smwValue instanceof SMWNAryValue) { // n-ary property
+		if ($smwValue instanceof SMWRecordValue) { // n-ary property
 		
 			$needRepaste = false;
 			$parameters = "";
