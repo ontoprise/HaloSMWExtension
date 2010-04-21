@@ -2,7 +2,7 @@
 <deploydescriptor>
     <global>
         <version>145</version>
-        <patchlevel>1</patchlevel>
+        <patchlevel>2</patchlevel>
         <id>semanticresultformats</id>
         <vendor>Ontoprise GmbH</vendor>
         <instdir>extensions/SemanticResultFormats</instdir>
@@ -10,7 +10,7 @@
             Semantic Result Formats provides several new result printer for ASK (and SPARQL)
         </description>
         <dependencies>
-            <dependency from="140" to="149">smw</dependency>
+            <dependency from="140" to="150">smw</dependency>
         </dependencies>
     </global>
     <codefiles></codefiles>
