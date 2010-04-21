@@ -495,19 +495,21 @@ function qiGetPropertyInformation($relationName) {
 								'<param name="Page" type="_wpg"/>'.
 		           	  		 '</relationSchema>';
 			} else {
-				$typeLabels = $type[0]->getTypeLabels();
 				$typeValues = $type[0]->getTypeValues();
 				if ($type[0] instanceof SMWTypesValue) {
-	
+                    // check if the type is a Record
+                    if ($typeValues[0]->getXSDValue() == "_rec") {
+                        $record = smwfGetStore()->getPropertyValues($relationTitle, SMWPropertyValue::makeProperty("_LIST"));
+                        if (count($record) > 0)
+                            $typeValues= $record[0]->getTypeValues();
+                    }
 					// get arity
-					$arity = count($typeLabels) + 1;  // +1 because of subject
+					$arity = count($typeValues) + 1;  // +1 because of subject
 			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	
 			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
-			   			//$th = SMWTypeHandlerFactory::getTypeHandlerByLabel($typeLabels[$i]);
-			   			// change from KK: $isNum = $th->isNumeric()?"true":"false";
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeLabels[$i].'" type="'.$typeValues[$i]->getXSDValue().'">';
+			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getXSDValue().'">';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
 			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
 			   			}
@@ -530,4 +532,3 @@ function qiGetPropertyInformation($relationName) {
 			return $relSchema;
 		}
 	}
-
