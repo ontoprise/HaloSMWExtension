@@ -343,7 +343,17 @@ clicking the big arrows between the columns.',
     'smw_search_this_wiki' => 'Search this wiki',
     'more_functions' => 'More',
     'smw_treeviewleft' => 'Open treeview to the left side',
-    'smw_treeviewright' => 'Open treeview to the right side'
+    'smw_treeviewright' => 'Open treeview to the right side',
+	
+	// Geo coord data type
+	'semanticmaps_lonely_unit'     => 'No number found before the symbol "$1".', // $1 is something like Â°
+	'semanticmaps_bad_latlong'     => 'Latitude and longitude must be given only once, and with valid coordinates.',
+	'semanticmaps_abb_north'       => 'N',
+	'semanticmaps_abb_east'        => 'E',
+	'semanticmaps_abb_south'       => 'S',
+	'semanticmaps_abb_west'        => 'W',
+	'semanticmaps_label_latitude'  => 'Latitude:',
+	'semanticmaps_label_longitude' => 'Longitude:'
 
 	);
 

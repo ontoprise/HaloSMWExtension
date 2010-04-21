@@ -337,7 +337,17 @@ protected $smwUserMessages = array(
         'smw_search_this_wiki' => 'Wiki durchsuchen',
         'more_functions' => 'Mehr',
         'smw_treeviewleft' => 'Treeview auf der linken Seite anzeigen',
-        'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen'
+        'smw_treeviewright' => 'Treeview auf der rechten Seite anzeigen',
+
+// Geo coord data type
+	'semanticmaps_lonely_unit'     => 'Keine Nummer vor dem "$1" Symbol gefunden.', // $1 is something like Â°
+	'semanticmaps_bad_latlong'     => 'Breitengrad und L&auml;ngengrad d&uuml;rfen nur einmal und mit korrekten Koordinaten angegeben werden',
+	'semanticmaps_abb_north'       => 'N',
+	'semanticmaps_abb_east'        => 'O',
+	'semanticmaps_abb_south'       => 'S',
+	'semanticmaps_abb_west'        => 'W',
+	'semanticmaps_label_latitude'  => 'Latitude:',
+	'semanticmaps_label_longitude' => 'Longitude:'
 	
 );
 
