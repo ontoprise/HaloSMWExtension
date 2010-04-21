@@ -1,9 +1,10 @@
 <?php
 /**
- * Reads repository and updates patchlevels.
+ * Creates a repository XML file. Must be done once a new release available
  * 
- * Usage: php updatePatchlevels.php -o <repository path>
- * 
+ * Usage:   php createRepsoitory -o <repository path>  -r release-num 
+ *          php createRepsoitory -o <repository path>  --head 
+ *          
  * @author: Kai Kühn / ontoprise / 2009
  */
 require_once("../../descriptor/DF_DeployDescriptor.php");
