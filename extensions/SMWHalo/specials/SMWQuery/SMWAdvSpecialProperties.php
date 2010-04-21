@@ -5,7 +5,7 @@
  * @ingroup SMWHaloMiscellaneous
  * Created on 20.09.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  
 if (!defined('MEDIAWIKI')) die();
@@ -410,7 +410,7 @@ class AdvPropertySearchStorageSQL2 extends AdvPropertySearchStorageSQL {
         $smw_spec2 = $db->tableName('smw_spec2');
         $smw_rels2 = $db->tableName('smw_rels2');     
         $page = $db->tableName('page');
-        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_TYPE"));
+        $hasTypePropertyID = smwfGetStore()->getSMWPropertyID(SMWPropertyValue::makeProperty("_LIST"));
         // REGEXP '_[a-z]{1,3}(;_[a-z]{1,3})+' matches all n-ary properties in special property table. Is there a better way?
         return "SELECT 'Relations' as type, {$NSatt} as namespace, s.value_string as value, 
                         i.smw_title as title, COUNT(*) as count, '-1' as obns FROM $smw_rels2 a 
