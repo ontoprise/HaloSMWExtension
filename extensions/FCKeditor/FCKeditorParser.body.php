@@ -161,7 +161,7 @@ class FCKeditorParser extends Parser
      * @param bool $replaceLineBreaks optional default is true
      * @return string key of the replaced text i.e. Fckmw12fckmw
      */
-        private function fck_addToStrtr($text, $inner, $replaceLineBreaks = true) {
+    private function fck_addToStrtr($text, $inner, $replaceLineBreaks = true) {
 		$key = 'Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw';
 		$this->fck_mw_strtr_span_counter++;
 		if ($replaceLineBreaks) {
@@ -435,7 +435,7 @@ class FCKeditorParser extends Parser
         // __TOC__ etc. must be replaced
         $text = $this->stripToc( $text );
 		//html comments shouldn't be stripped
-		$text = $this->fck_replaceHTMLcomments( $text );
+        $text = $this->fck_replaceHTMLcomments( $text );
 		//as well as templates
 		$text = $this->fck_replaceTemplates( $text );
 		// as well as properties
@@ -481,7 +481,7 @@ class FCKeditorParser extends Parser
 	}
     /**
      * Replace a former encoded FckmwXXfckmw with it's actual value. Things
-     * are replaces sequencially and if the same part has a replacement
+     * are replaced sequencially and if the same part has a replacement
      * already and the outer part will replaced by itself, then the inner
      * content must be the original string, without any replacements.
      *
@@ -490,6 +490,16 @@ class FCKeditorParser extends Parser
      * comment. Things are replaces sequencially and if the same part has
      * a replacement already but is replaced as well then we are in trouble.
      *
+     * Replacements are saved in the member variable $fck_mw_strtr_span which
+     * is an array with the key containing the replacement string FckmwXXfckmw
+     * and the value the original text. For each replacement there are two keys:
+     *   1) FckmwXXfckmw
+     *   2) href="FckmwXXfckmw"
+     * Presumabely these are historical reasons. We must replace the content of
+     * the href key, except for html comments.
+     * In the future this replacement strategy should be checked whether not to
+     * use one variable for each replacement only.
+     *
      * @access private
      * @param string text
      * @return string text
@@ -497,7 +507,15 @@ class FCKeditorParser extends Parser
     private function revertEncapsulatedString($text) {
         if (preg_match_all('/Fckmw\d+fckmw/', $text, $matches)) {
 	        for ($i = 0, $is = count($matches[0]); $i < $is; $i++ ) {
-	           if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'])) {
+               // comments are directly in the main key FckmwXfckmw
+               if (isset($this->fck_mw_strtr_span[$matches[0][$i]]) &&
+                   substr($this->fck_mw_strtr_span[$matches[0][$i]], 0, 4) == '<!--') {
+                   $text = str_replace(
+                           $matches[0][$i],
+                           $this->fck_mw_strtr_span[$matches[0][$i]],
+	                       $text);
+               }
+   	           else if (isset($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'])) {
 	               $text = str_replace(
                            $matches[0][$i],
                            substr($this->fck_mw_strtr_span['href="'.$matches[0][$i].'"'], 6, -1),
