@@ -35,7 +35,7 @@
 		<copy todir="bin/zip/extensions/SemanticNotifications/">
 			<fileset file="../*">
 				<exclude name="**/.svn, **/CVS" />
-				<exclude name="**/*deploy*" />
+				<include name="deploy.xml" />
 			</fileset>
 		</copy>
 		<zip destfile="bin/semanticnotifications.zip" basedir="bin/zip" />
