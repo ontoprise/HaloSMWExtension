@@ -1,12 +1,12 @@
-Installation instructions for Collaboration extension v1.0
+Installation instructions for Collaboration extension v1.1
 ---------------------------------------------------------------
 
 Requirements: 
 =============
 
-	MediaWiki 1.15.1
-	Semantic Mediawiki 1.4.x
-	SMW Halo 1.4.x
+	MediaWiki 1.15.1 or higher
+	Semantic Mediawiki 1.5 
+	SMW Halo 1.5.0
 	ParserFunctions
 	Variables
 	SemanticResultFormats (especially "Math")
