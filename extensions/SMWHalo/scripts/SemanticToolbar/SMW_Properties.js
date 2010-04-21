@@ -299,7 +299,7 @@ createContent: function() {
 	var rc = 0;
 	for (var i = 0, num = types.length; i < num; ++i) {
 		
-		var t = types[i];
+		var t = types[i].replace(/^ +/, '').replace(/ +$/, '');
 		if (t.indexOf(gLanguage.getMessage('TYPE_NS')) == 0) {
 			t = t.substring(gLanguage.getMessage('TYPE_NS').length);
 		}	
