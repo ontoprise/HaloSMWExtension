@@ -790,7 +790,21 @@ FCK.DataProcessor =
 						continue ;
 				}
 				else if ( sAttName == 'style' && FCKBrowserInfo.IsIE ) {
-					sAttValue = htmlNode.style.cssText.toLowerCase() ;
+                        sAttValue = htmlNode.style.cssText.toLowerCase() ;
+                }
+                else if ( sAttName == 'style' && FCKBrowserInfo.IsGecko ) {
+                    for (var i in htmlNode.style) {
+                        if (! i.match(/^\d+$/)) continue;
+                        var s=htmlNode.style[i];
+                        if (s.indexOf('-moz') == 0) continue;
+                            
+                        while (s.indexOf('-') != -1)
+                            s=s.replace(/-(\w)/, s.match(/-(\w)/)[1].toUpperCase());
+                        if (typeof (htmlNode.style[s]) != "undefined" ) {
+                            if (! sAttValue) sAttValue ="";
+                            sAttValue += htmlNode.style[i] + ': ' + htmlNode.style[s] + '; '
+                        }
+                    }
 				}
 				// XHTML doens't support attribute minimization like "CHECKED". It must be trasformed to cheched="checked".
 				else if ( oAttribute.nodeValue === true )
