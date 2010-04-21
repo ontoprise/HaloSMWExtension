@@ -375,7 +375,7 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
 
     //skin
     'smw_search_this_wiki' => 'Search this wiki',
-    'more_functions' => 'more'
+    'more_functions' => 'more',
     'smw_treeviewleft' => 'Open treeview to the left side',
     'smw_treeviewright' => 'Open treeview to the right side'
 
