@@ -4,22 +4,16 @@ require_once "$smwgIP/includes/SMW_QP_CSV.php";
 
 /**
  * Contains SMW QPs which needs to get overridden for some reason.
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 class SMWHaloCsvResultPrinter extends SMWCsvResultPrinter {
-	protected $mParameters;
 
-	public function __construct($format, $inline) {
-		parent::__construct($format, $inline);
-		$this->mParameters = smwfhCreateDefaultParameters();
-		$sep = new SMWQPParameter('sep', 'Separator', '<string>', ',', "Separator used");
-		$this->mParameters[] = $sep;
-	}
-
-	function getSupportedParameters() {
-		return $this->mParameters;
-	}
+    public function getParameters() {
+        $params = parent::getParameters();
+        $params[]= array('name' => 'sep', 'type' => 'string', 'description' => 'Separator used');
+        return $params;
+    }
 
 	protected function getResultText($res, $outputmode) {
 		$result = '';
