@@ -195,6 +195,8 @@ class FCKeditorParser extends Parser
 	* @return string
 	*/
 	function fck_wikiTag( $tagName, $str, $argv = array()) {
+	    // fix weird bug that presumably appears on windows only
+        if ($tagName == "pre") return '<pre>'.$str.'</pre>';
 	    $class = in_array($tagName, array("nowiki", "includeonly", "onlyinclude", "noinclude", "gallery", "ref"))
                ? $tagName
                : "special";
