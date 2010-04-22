@@ -1,33 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<deploydescriptor>
-	<global>
-		<version>131</version>
-		<id>wysiwyg</id>
-		<vendor>Ontoprise GmbH</vendor>
-		<instdir>extensions/FCKeditor</instdir>
-		<description>
-			Use the popular FCKeditor for editing Wiki pages in WYSIWYYG mode.
-		</description>
-		<dependencies>
-            <dependency from="1132" to="1159">MW</dependency>
-		</dependencies>
-	</global>
-	<codefiles>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="wysiwyg">
+    <target name="build" depends="versionhint">
+        <delete dir="bin/zip" />
+        <delete>
+            <fileset dir="bin" includes="wysiwyg*.zip" />
+        </delete>
+        <mkdir dir="bin/zip" />
 
-		<file loc="extensions/FCKeditor/deploy.xml" />
-		<!-- TODO: add all others -->
-	</codefiles>
-	<wikidumps>
-		<!-- empty -->
-	</wikidumps>
-	<resources>
-		<!-- empty -->
-	</resources>
+        <copy todir="bin/zip/extensions/FCKeditor/">
+            <fileset file="../**">
+                <exclude name="**/.svn, **/CVS" />
+                <exclude name="**/deploy/**" />
+                <exclude name="**/tests/**" />
+            </fileset>
+        </copy>
+        <zip destfile="bin/wysiwyg.zip" basedir="bin/zip" />
+        <delete dir="bin/zip" />
+        <exec executable="php">
+            <arg value="../../../buildtools/renameDeployable.php" />
+            <arg value="../deploy.xml" />
+            <arg value="bin/wysiwyg.zip" />
+        </exec>
+    </target>
 
-	<configs>
-		<new>
-			<require name="wysiwyg"
-				file="extensions/FCKeditor/FCKeditor.php" />
-		</new>
-	</configs>
-</deploydescriptor>
+    <target name="versionhint">
+        <exec executable="php">
+            <arg value="../../../buildtools/replaceVersionHint.php" />
+            <arg value="../deploy.xml" />
+            <arg value="../FCKeditor.php" />
+        </exec>
+    </target>
+
+
+</project>
