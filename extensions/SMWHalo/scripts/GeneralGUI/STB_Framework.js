@@ -394,6 +394,11 @@ ToolbarFramework.prototype = {
 		this.numOfVisibleContainers = d;
 	},
 
+    isVisible : function () {
+        this.countNumOfDisplayedContainers()
+        return this.numOfVisibleContainers;
+    },
+
 	getWindowHeight : function() {
 	    if (window.innerHeight) {
 	        return window.innerHeight;
