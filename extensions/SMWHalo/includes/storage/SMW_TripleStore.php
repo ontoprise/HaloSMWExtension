@@ -562,11 +562,11 @@ class SMWTripleStore extends SMWStore {
 		// parse xml results
 
 		$dom = simplexml_load_string($sparqlXMLResult);
-		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query);
+		if($dom === FALSE) return new SMWHaloQueryResult(array(), $query, array(), $this);
 		$variables = $dom->xpath('//variable');
 		$results = $dom->xpath('//result');
 		// if no results return empty result object
-		if (count($results) == 0) return new SMWHaloQueryResult(array(), $query);
+		if (count($results) == 0) return new SMWHaloQueryResult(array(), $query, array(), $this);
 
 		$variableSet = array();
 		foreach($variables as $var) {
