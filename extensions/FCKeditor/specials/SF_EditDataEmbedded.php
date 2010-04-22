@@ -222,8 +222,8 @@ END;
                 for (var i = 0; i < inputs.length; i++) {
                     // if input field is a radiobutton or checkbox and not checked skip it
                     if (inputs[i].type &&
-                        (inputs[i].type == "radio" || inputs[i].type == "checkbox") &&
-                        !inputs[i].checked)
+                        (inputs[i].type == "radio" && !inputs[i].checked ||
+                        inputs[i].type == "checkbox" ))
                         continue;
                     var inputName = inputs[i].name;
                     // check input name which must look like template_name[field_name]
@@ -231,6 +231,12 @@ END;
                         // do we have a date? (i.e. template_name[field_name][day])
                         if (inputName.match(/\]\[(day|month|year)\]$/))
                             newData = addDateToResult(newData, inputName, inputs[i].value);
+                        // checkbox value that is in a hidden field
+                        else if (inputs[i].type &&
+                            inputs[i].type == "hidden" &&
+                            inputs[i].name.indexOf('[is_checkbox]') > 0 ) 
+                            newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -15),
+                                            (inputs[i].value) ? inputs[i].value : '' ]);
                         else
                             // normal value
                             newData.push( [ inputName.substr(tName.length + 1, inputName.length - tName.length -2),
