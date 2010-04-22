@@ -32,8 +32,9 @@ function wfUprForwardApiCall(){
     $host= $params[0];
     $data=str_replace('&amp;', '&', $params[1]);
     if (function_exists('curl_init'))
-         return wfUprSendApiCallViaCurl($host, $data);
-    return wfUprSendApiCallViaFsock($host, $data); 
+         $res = wfUprSendApiCallViaCurl($host, $data);
+    else $res = wfUprSendApiCallViaFsock($host, $data);
+    return $res; 
 }
 
 /**
@@ -83,8 +84,8 @@ function wfUprSendApiCallViaFsock($server, $data) {
     $httpHeaders= explode("\r\n", substr($cont, 0, strpos($cont, "\r\n\r\n")));
     list($protocol, $httpErr, $message) = explode(' ', $httpHeaders[0]);
     $cont = substr($cont, strpos($cont, "\r\n\r\n") );
-    if ($httpErr == '200') return $cont;
-    echo $cont;
+    if ($httpErr != '200') $cont = '';
+    return $cont;
 }
 
 /**
@@ -121,6 +122,6 @@ function wfUprSendApiCallViaCurl($host, $data) {
     }
     */
     if ($curlErr != 0 && $httpErr != 200) $res='';
-    echo $res;
+    return $res;
 }
 ?>
