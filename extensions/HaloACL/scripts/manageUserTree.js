@@ -350,17 +350,22 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
             zIndex :10
         });
         sb[sb.length] = '</span></td>';
-
-        sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
+        
+        sb[sb.length] = 
+        	'<td>' +
+        		'<span class="">' +
+        			'<a id="haloacl_group_edit_'+escape(this.label)+'" ' +
+        			   'class="haloacl_manageuser_list_edit" ' +
+        			   'href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;' +
+        			'</a>' +
+        		'</span>' +
+        	'</td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
         sb[sb.length] = ' id="' + this.getCheckElId() + '"';
         sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
         sb[sb.length] = '>';
         sb[sb.length] = '<div class="ygtvspacer haloacl_manageuser_checkbox"></div></td>';
-
-
-
         
         return sb.join("");                                                                                                                                                
     }  
@@ -609,7 +614,6 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode, query){
 	
 	// Is parentNode the requested node?	
 	if (parentNode.label == query) {
-		YAHOO.haloacl.manageUser_parentGroup = parentNode.parent.label;
 		return parentNode;
 	}
 	
@@ -744,4 +748,97 @@ YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
         //tree.setDynamicLoad(loadNodeData);
         tree.draw();
     }
+}
+
+YAHOO.haloacl.manageUsers_handleEdit = function (groupname) {
+	YAHOO.haloacl.manageUser_handleGroupSelect(groupname);
+	// Find the parent group
+	var group = YAHOO.haloacl.manageUser.findGroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(), groupname);
+	if (group) {
+		YAHOO.haloacl.manageUser_parentGroup = group.parent.label;
+	}
+	var label = gHACLLanguage.getMessage('haclEditingGroup');
+	$('haloacl_panel_name_manageUserGroupsettings').innerHTML = "[ "+label+":" + groupname + " ]"
+	if (YAHOO.haloacl.debug) console.log("handle edit called for groupname:" + groupname);
+	new Ajax.Request('index.php?action=ajax&rs=haclGetGroupDetails&rsargs[]=' + groupname, {
+		method: 'post',
+		onSuccess: function (o) {
+			var magic = YAHOO.lang.JSON.parse(o.responseText);
+
+			// getting modificationrights
+			YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight', 'haclGetRightsPanel', {
+				panelid: 'manageUserGroupSettingsModificationRight',
+				predefine: 'modification'
+			});
+			// reloading modificationrights
+			//$('right_tabview_manageUserGroupSettingsModificationRight').firstChild.fristChild.firstChild.click();
+
+			if (YAHOO.haloacl.debug) console.log(magic);
+			YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight', 'haclGetManageUserGroupPanel', {
+				panelid: 'manageUserGroupSettingsRight',
+				name: magic['name'],
+				description: magic['description'],
+				users: magic['memberUsers'],
+				groups: magic['memberGroups'],
+				manageUsers: magic['manageUsers'],
+				manageGroups: magic['manageGroups']
+			});
+			$('haloacl_manageUser_editing_container').show();
+			$('ManageACLDetail').scrollTo();
+
+		}
+	});
+
+
+	if (groupname.indexOf("new subgroup") > 0) {
+		null;
+	} else {
+		//                 YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','haclGetRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+		YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight', 'haclGetManageUserGroupPanel', {
+			panelid: 'manageUserGroupSettingsRight'
+		});
+		$('haloacl_manageUser_editing_container').show();
+		$('manageUserGroupSettingsModificationRight').scrollTo();
+
+	}
+}
+
+YAHOO.haloacl.manageUsers_saveGroup = function () {
+	if (YAHOO.haloacl.debug) console.log("modificationxml:");
+	if (typeof YAHOO.haloacl.buildRightPanelXML_manageUserGroupSettingsModificationRight != "function") {
+		// The function is defined after group settings have been saved. 
+		YAHOO.haloacl.notification.createDialogOk("content", "Groups", gHACLLanguage.getMessage('saveGroupSettingsFirst'), {
+			yes: function () {}
+		});
+		return;
+	}
+	var modxml = YAHOO.haloacl.buildRightPanelXML_manageUserGroupSettingsModificationRight(true);
+	if (YAHOO.haloacl.debug) console.log(modxml);
+	var callback = function (result) {
+		if (result.status == '200') {
+			//parse result
+			//YAHOO.lang.JSON.parse(result.responseText);
+			try {
+				genericPanelSetSaved_manageUsersPanel(true);
+				genericPanelSetName_manageUsersPanel("saved");
+				genericPanelSetDescr_manageUsersPanel(result.responseText);
+			} catch (e) {}
+			YAHOO.haloacl.notification.createDialogOk("content", "Groups", gHACLLanguage.getMessage("groupSaved"), {
+				yes: function () {
+					window.location.href = YAHOO.haloacl.specialPageUrl + '?activetab=manageUsers';
+					//YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','haclGetRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
+				}
+			});
+
+
+		} else {
+			YAHOO.haloacl.notification.createDialogOk("content", "Groups", result.responseText, {
+				yes: function () {}
+			});
+		}
+	};
+	var parentgroup = YAHOO.haloacl.manageUser_parentGroup;
+
+	YAHOO.haloacl.sendXmlToAction(modxml, 'haclSaveGroup', callback, parentgroup);
+
 }

@@ -66,7 +66,9 @@ $messages['en'] = array(
     'hacl_pf_group_members_title'	=> "===Group members===\n",
     'hacl_assigned_user'			=> 'Assigned users: ',
     'hacl_assigned_groups'			=> 'Assigned groups:',
-    'hacl_user_member'				=> 'Users who are member of this group:',
+	'hacl_save_group_settings'		=> 'Save group settings',
+	'hacl_save_group_settings_first'=> 'Please save the group settings first!',
+	'hacl_user_member'				=> 'Users who are member of this group:',
     'hacl_group_member'				=> 'Groups who are member of this group:',
     'hacl_description'				=> 'Description:',
     'hacl_error'					=> 'Errors:',
@@ -84,7 +86,7 @@ $messages['en'] = array(
 	/* Messages for semantic protection (properties etc.) */
 
     'hacl_sp_query_modified'		=> "- The query was modified because it contains protected properties.\n",
-    'hacl_sp_empty_query'			=> "- Your query consists only of protected properties. It was not executed.\n",
+    'hacl_sp_empty_query'			=> '- Your query consists only of protected properties or has variables at property position. It was not executed. The system administrator can disable the protetction of properties by setting $haclgProtectProperties = false; in the LocalSettings.php'."\n",
     'hacl_sp_results_removed'		=> "- Some results were removed due to access restrictions.\n",
     'hacl_sp_cant_save_article'		=> "'''The article contains the following protected properties:'''\n$1'''You do not have the permission to set their values. Please remove these properties and save again.'''",
 
@@ -160,10 +162,11 @@ $messages['en'] = array(
 	/* Messages for 'Manage Whitelist' tab */
     'hacl_whitelist_headline' => 'Manage Whitelist',
     'hacl_whitelist_info' => 'You may edit and create the Whitelist in this tab',
-    'hacl_whitelist_filter' => 'Filter:',
+    'hacl_whitelist_filter' => 'Filter',
     'hacl_whitelist_pageset_header' => 'Page',
     'hacl_whitelist_pagename' => 'Page-Name:',
-    'hacl_whitelist_addbutton' => 'Add Page',
+    'hacl_whitelist_addbutton' => 'Add page',
+    'hacl_whitelist_pageremoved' => 'Page removed from whitelist.',
 
 
     'hacl_createRightContent_help' => 'Click on <strong>&quot;Create right&quot;</strong> if you want to create a new right.<br /><br />Note: <br />You may create multiple rights e.g.:<br /> Right1 = Read only for User1 + Right 2 = Full access for User2 etc.<br /><br /> Choose <strong>&quot;Add right template&quot;</strong> if you wish to select a predefined ACL.',
@@ -324,7 +327,6 @@ $messages['en'] = array(
     'hacl_tooltip_clickto_save_right'=> "Click here to save the right",
     'hacl_tooltip_clickto_save_modright'=> "Click here to save the modificationright",
 
-    'hacl_editing_group' => "Editing Group",
 	'hacl_root_group' => "Groups",
 
     'hacl_delete_selected' => "Delete selected",
@@ -389,7 +391,9 @@ $messages['de'] = array(
     'hacl_pf_group_members_title'	=> "===Gruppenmitglieder===\n",
     'hacl_assigned_user'			=> 'Zugewiesene Benutzer: ',
     'hacl_assigned_groups'			=> 'Zugewiesene Gruppen:',
-    'hacl_user_member'				=> 'Benutzer, die Mitglied dieser Gruppe sind:',
+	'hacl_save_group_settings'		=> 'Gruppeneinstellungen zwischenspeichern',
+	'hacl_save_group_settings_first'=> 'Bitte speichern Sie zuerst die Gruppeneinstellungen!',
+	'hacl_user_member'				=> 'Benutzer, die Mitglied dieser Gruppe sind:',
     'hacl_group_member'				=> 'Gruppen, die Mitglied dieser Gruppe sind:',
     'hacl_description'				=> 'Beschreibung:',
     'hacl_error'					=> 'Fehler:',
@@ -407,7 +411,7 @@ $messages['de'] = array(
 	/* Messages for semantic protection (properties etc.) */
 
     'hacl_sp_query_modified'		=> "- Ihre Anfrage wurde modifiziert, das sie geschützte Attribute enthält.\n",
-    'hacl_sp_empty_query'			=> "- Ihre Anfrage besteht nur aus geschützten Attributen und konnte deshalb nicht ausgeführt werden.of protected properties.\n",
+    'hacl_sp_empty_query'			=> '- Ihre Anfrage besteht nur aus geschützten Attributen oder hat Variablen an Attributpositionen und konnte deshalb nicht ausgeführt werden. Systemadministratoren können geschützte Attribute abschalten, indem sie $haclgProtectProperties = false; in LocalSettings.php setzen.'."\n",
     'hacl_sp_results_removed'		=> "- Wegen Zugriffbeschränkungen wurden einige Resultate entfernt.\n",
     'hacl_sp_cant_save_article'		=> "'''Der Artikel enthält die folgenden geschützten Attribute:'''\n$1'''Sie haben nicht die Berechtigung, deren Werte zu setzen. Bitte entfernen Sie die Attribute und speichern Sie erneut.'''",
 
@@ -478,12 +482,13 @@ $messages['de'] = array(
 	/* Messages for 'Manage ACLs' tab */
 	/* Messages for 'Manage User' tab */
 	/* Messages for 'Manage Whitelists' tab */
-    'hacl_whitelists_headline' => 'Positivliste verwalten',
-    'hacl_whitelists_info' => 'Auf dieser Seite können Sie die Positivliste erzeugen und bearbeiten.',
-    'hacl_whitelists_filter' => 'Filter:',
-    'hacl_whitelists_addlink' => 'Seite:',
-    'hacl_whitelists_pagename' => 'Seitenname',
-    'hacl_whitelists_addbutton' => 'Seite hinzufügen',
+    'hacl_whitelist_headline' => 'Positivliste verwalten',
+    'hacl_whitelist_info' => 'Auf dieser Seite können Sie die Positivliste erzeugen und bearbeiten.',
+    'hacl_whitelist_filter' => 'Filter',
+    'hacl_whitelist_pageset_header' => 'Seite',
+    'hacl_whitelist_pagename' => 'Seitenname',
+    'hacl_whitelist_addbutton' => 'Seite hinzufügen',
+    'hacl_whitelist_pageremoved' => 'Die Seite wurde aus der Positivliste entfernt.',
 
 
     'hacl_createRightContent_help' => 'Klicken Sie auf <strong>Recht erstellen</strong> um ein neues Recht zu erstellen. Sie können beliebige viele Rechte erstellen (bspw.: ein Recht welches Vollzugriff für bestimmte Nutzer erlaubt sowie ein Recht welches lediglich Lesezugriff für alle Nutzer realisiert).<br /><br />Wählen Sie <strong>Template hinzufügen</strong> wenn Sie vordefinierte ACL templates in in Ihre Rechtedefinition einbinden möchten.',
@@ -557,7 +562,7 @@ $messages['de'] = array(
     'hacl_rightsPanel_right_create' => 'Erzeugen',
     'hacl_rightsPanel_right_move' => 'Verschieben',
     'hacl_rightsPanel_right_delete' => 'Löschen',
-    'hacl_rightsPanel_right_annotate' => 'Kommentieren',
+    'hacl_rightsPanel_right_annotate' => 'Annotieren',
 
     'hacl_rightsPanel_allUsersRegistered' => 'alle registrierten Nutzer',
     'hacl_rightsPanel_allAnonymousUsers' => 'alle anonymen Nutzer',
@@ -604,10 +609,10 @@ $messages['de'] = array(
     'hacl_manageUser_9' => 'Editieren',
     'hacl_manageUser_10' => 'Gruppe speichern',
 
-    'hacl_whitelist_1' => 'Whitelist Einträge verwalten',
-    'hacl_whitelist_2' => 'Hier können Whitelist Einträge angelegt und gelöscht werden.',
-    'hacl_whitelist_3' => 'Whitelisted Einträge',
-    'hacl_whitelist_4' => 'Eintrag zu Whitelist hinzufügen:',
+    'hacl_whitelist_1' => 'Positivliste verwalten',
+    'hacl_whitelist_2' => 'Hier können Artikel zur Positivliste hinzugefügt und gelöscht werden.',
+    'hacl_whitelist_3' => 'Positivliste',
+    'hacl_whitelist_4' => 'Artikel zur Positivliste hinzufügen:',
 
     'hacl_deleteGroup_1' => 'Die markierten Einträge wurden erfolgreich gelöscht',
 
@@ -643,7 +648,6 @@ $messages['de'] = array(
     'hacl_tooltip_clickto_save_right'=> "Hier klicken um das Recht zu speichern",
     'hacl_tooltip_clickto_save_modright'=> "Hier klicken um das Modifikationsrecht zu speichern",
 
-    'hacl_editing_group' => "Editiere Gruppe",
 	'hacl_root_group' => "Gruppen",
 
     'hacl_delete_selected' => "Ausgew&auml;hlte l&ouml;schen",

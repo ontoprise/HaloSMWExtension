@@ -69,6 +69,7 @@ function enableHaloACL() {
     $wgAutoloadClasses['HACLResultFilter'] = $haclgIP . '/includes/HACL_ResultFilter.php';
     $wgAutoloadClasses['HACLQueryRewriter'] = $haclgIP . '/includes/HACL_QueryRewriter.php';
     $wgAutoloadClasses['HACLQuickacl'] = $haclgIP . '/includes/HACL_Quickacl.php';
+    $wgAutoloadClasses['HACLLanguageEn'] = $haclgIP . '/languages/HACL_LanguageEn.php';
     
     // UI
     $wgAutoloadClasses['HACL_GenericPanel'] = $haclgIP . '/includes/HACL_GenericPanel.php';

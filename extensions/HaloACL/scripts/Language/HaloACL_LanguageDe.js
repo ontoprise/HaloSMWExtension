@@ -31,8 +31,8 @@ var gHACLUserLanguageStrings = {
     'manageACLTooltip'      : 'ACLs verwalten, eigenes Standard Template verwalten und ACL Favoriten verwalten',
     'manageUser'            : 'Nutzer verwalten',
     'manageUserTooltip'     : 'Hier können ACL Gruppen angelegt, editiert und gelöscht werden',
-    'whitelists'            : 'Whitelist',
-    'manageWhitelistTooltip': 'Hier können Whitelist Einträge angelegt und gelöscht werden ',
+    'whitelists'            : 'Positivliste',
+    'manageWhitelistTooltip': 'Hier können Artikel in die Positivliste aufgenommen und gelöscht werden ',
     'manageExistingACLs'    : 'ACLs verwalten',
     'manageDefaultUserTemplate' : 'Standard Nutzer Template verwalten',
     'manageQuickAccess'     : 'ACL Favoriten verwalten',
@@ -42,7 +42,7 @@ var gHACLUserLanguageStrings = {
     'selectDeselect'        : 'Auswählen',
     'assigned'              : 'Zugeordnet',
     'newSubgroup'           : 'Neue Untergruppe',
-    'clickEditToCreate'     : 'Zum anlegen Edit anklicken',
+    'clickEditToCreate'     : 'Zum Anlegen Edit anklicken',
     'ok'                    : 'OK',
     'cancel'                : 'Abbrechen',
     'name'                  : 'Name',
@@ -51,6 +51,8 @@ var gHACLUserLanguageStrings = {
     'to'                    : 'bis',
     'from'                  : 'von',
     'remove'                : 'Löschen',
+	'saveGroupSettingsFirst' : 'Bitte speichern Sie zuerst die Gruppeneinstellungen!',
+	'groupSaved'			: 'Die Gruppe wurde gespeichert.',
 
     'confirmDeleteReset' : "Reset/L&ouml;schen ebst&auml;tigen",
     'confirmDeleteMessage': "Die eingegebenen Daten werden verworfen",
@@ -61,7 +63,8 @@ var gHACLUserLanguageStrings = {
     'discardChangesMessage': "Die eingegebenen Daten werden verworfen",
     'selectDeselectUser':'Benutzer explizit hinzuf&uuml;gen',
     'aclinfotooltip':'Hier klicken um erweiterte Informationen des ACLs zu zeigen',
-    'aclwarningtooltip' : 'Dieses Recht ist nicht mehr gültig. Enthaltene Gruppen, Benutzer oder Rechtevorlagen wurden gelöscht.'
+    'aclwarningtooltip' : 'Dieses Recht ist nicht mehr gültig. Enthaltene Gruppen, Benutzer oder Rechtevorlagen wurden gelöscht.',
+    'haclEditingGroup'  : 'Editiere Gruppe'
 	
 }
 

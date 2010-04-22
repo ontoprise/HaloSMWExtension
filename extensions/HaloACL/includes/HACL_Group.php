@@ -716,23 +716,31 @@ class  HACLGroup {
      * @return <string>
      */
     public function getGroupDescription() {
-        $result = "";
-        foreach($this->getUsers(HACLGroup::NAME) as $i) {
-            if($result == "") {
-                $result = "U:$i";
-            }else {
-                $result .= ", U:$i";
-            }
-        }
-        foreach($this->getGroups(HACLGroup::NAME) as $i) {
-            if($result == "") {
-                $result = "G:$i";
-            }else {
-                $result .= ", G:$i";
-            }
-        }
-        return $result;
+    	$result = "";
+    	foreach($this->getUsers(HACLGroup::NAME) as $i) {
+    		if ($result == "") {
+    			$result = "U:$i";
+    		} else {
+    			$result .= ", U:$i";
+    		}
+    	}
+
+    	global $haclgContLang;
+    	$prefix = $haclgContLang->getNamingConvention(HACLLanguage::NC_GROUP)."/";
+
+    	foreach($this->getGroups(HACLGroup::NAME) as $groupName) {
+    		if (strpos($groupName, $prefix) === 0) {
+    			// Remove the prefix of the naming convention e.g. "Group/"
+    			$groupName = substr($groupName, strlen($prefix));
+    		}
+    		if ($result == "") {
+    			$result = "G:$groupName";
+    		} else {
+    			$result .= ", G:$groupName";
+    		}
+    	}
+    	return $result;
     }
-//--- Private methods ---
+    //--- Private methods ---
 
 }

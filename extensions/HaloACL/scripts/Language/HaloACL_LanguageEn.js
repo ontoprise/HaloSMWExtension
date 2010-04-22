@@ -52,6 +52,9 @@ var gHACLUserLanguageStrings = {
     'to'                    : 'to',
     'from'                  : 'from',
     'remove'                : 'Remove',
+	'saveGroupSettingsFirst' : 'Please save the group settings first!',
+	'groupSaved'			: 'Group has been saved.',
+    
 
     'confirmDeleteReset' : "Confirm delete/reset",
     'confirmDeleteMessage': "All entered data in this right will get lost",
@@ -64,8 +67,8 @@ var gHACLUserLanguageStrings = {
     'namelessright'     : 'nameless right',
     'selectDeselectUser': 'Explicit select user',
     'aclinfotooltip'    : 'Click here to show more infos about this ACL',
-    'aclwarningtooltip' : 'This right is no longer valid. A contained group, user or template has been deleted.'
-
+    'aclwarningtooltip' : 'This right is no longer valid. A contained group, user or template has been deleted.',
+    'haclEditingGroup'  : 'Editing group'
 
 }
 
