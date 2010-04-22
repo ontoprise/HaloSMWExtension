@@ -476,8 +476,10 @@ SMW_UserManual_CSH.prototype = {
         }
         // FCKeditor object exists?
         if (typeof FCKeditor != "undefined") ds.push('EditWYSIWYG')
-        // Semantic Toolbar div exists?
-        if (document.getElementById('semtoolbar')) ds.push('SemanticToolbar')
+        // Semantic Toolbar div exists, and toolbar is visible?
+        if (document.getElementById('semtoolbar') &&
+            typeof stb_control != "undefined" && 
+            stb_control.isVisible()) ds.push('SemanticToolbar')
         // any input element with class wick (ignore the search field)
         if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
         // check namespace
