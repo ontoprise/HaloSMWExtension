@@ -1,12 +1,12 @@
-Installation instructions for Semantic Rules extension v1.0
+Installation instructions for Semantic Rules extension v1.01
 ---------------------------------------------------------------
 
 Requirements: 
 =============
 
     MediaWiki 1.15 or higher
-    SMW 1.4.3
-    SMWHalo 1.4.6 
+    SMW 1.5
+    SMWHalo 1.5 
 
 Installation:
 =============

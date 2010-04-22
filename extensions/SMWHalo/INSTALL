@@ -1,8 +1,8 @@
-[[SMWHalo 1.4.6]]
+[[SMWHalo 1.5]]
 
 Install instructions for the latest version of SMWHalo are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.4.6
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5
 
 For further customizing your installation, take a look at:
 
@@ -40,7 +40,7 @@ the authors.
  * MySQL higher than 4.0.14 (Recommended MySQL 5.x)
  * PHP 5.2.x (PHP 5.3.x is not supported yet)
  * MediaWiki 1.15.x (see installation guide)
- * Semantic MediaWiki 1.4.3 (Please make reference to the installation instructions)
+ * Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
  * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers) 
 
 
@@ -53,7 +53,7 @@ If you upgrade an existing installation of SMW+, also read the remarks in the
 section "Notes on Upgrading" below.
 
 (1) Extract the SMWHalo ZIP archive
-    Extract the archive smwhalo-1.4.6.zip to obtain the directory "extensions" which contains all relevant 
+    Extract the archive smwhalo-1.5.zip to obtain the directory "extensions" which contains all relevant 
     files. Copy this directory to the root directory of your MediaWiki installation or extract/download it 
     to this location.
 

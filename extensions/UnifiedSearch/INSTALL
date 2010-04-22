@@ -1,9 +1,9 @@
-Installation instructions
--------------------------
+Installation instructions - Enhanced Retrieval v1.35 -
+------------------------------------------------------
 
 Requirements: 
     MediaWiki 1.13 or higher
-    SMW 1.4.2 
+    SMW 1.5 
     Lucene server 2.0 or 2.1 (the version deployed on SMWHalo's page on sourceforge runs on Windows too!)
 
 1. Add to your LocalSettings.php:
@@ -21,6 +21,10 @@ php {wiki-path}/extensions/UnifiedSearch/maintenance/setup.php
 
 ---
 3. Run the LuceneServer
+
+Documentation on how to configure the Lucene server is available here:
+
+http://www.mediawiki.org/wiki/Extension:Lucene-search
 
 That's it.
 

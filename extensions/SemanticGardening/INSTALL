@@ -1,12 +1,12 @@
-Installation instructions for Semantic Gardening extension v1.30
+Installation instructions for Semantic Gardening extension v1.31
 ---------------------------------------------------------------
 
 Requirements: 
 =============
 
-    MediaWiki 1.13 or higher
-    SMW 1.4.2
-    SMWHalo 1.4.3 
+    MediaWiki 1.15 or higher
+    SMW 1.5
+    SMWHalo 1.5 
 
 Installation:
 =============
