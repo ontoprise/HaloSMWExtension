@@ -20,7 +20,7 @@
 		<!-- TODO: add others in skins/commons/images/icons-->
 	</codefiles>
 	<wikidumps>
-		<file loc="extensions/RichMedia/deploy/dump.xml" />
+		<file loc="extensions/RichMedia/import/RichMediaOntology_v1.4.xml" />
 	</wikidumps>
 	<resources>
 		<!-- empty -->
