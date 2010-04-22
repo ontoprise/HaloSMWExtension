@@ -198,10 +198,10 @@ function smwfUltraPediaAddHTMLHeader(& $out) {
 		'rel' => 'stylesheet',
 		'type' => 'text/css',
 		'media' => "screen, projection",
-		'href' => $wgStylePath . '/common/extjs/resources/css/ext-all.css'
+        'href' => $smwgUltraPediaScriptPath. '/scripts/extjs/resources/css/ext-all.css'
 	));
 	$out->addScript("<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/adapter/prototype/ext-prototype-adapter.js\"></script>
-	<script type=\"{$wgJsMimeType}\" src=\"{$wgStylePath}/common/extjs/ext-all.js\"></script>
+    <script type=\"{$wgJsMimeType}\" src=\"{$smwgUltraPediaScriptPath}/scripts/extjs/ext-all.js\"></script>
 	<script type=\"text/javascript\" src=\"{$smwgUltraPediaScriptPath}/scripts/abstractilink.js\"></script>
 	<script type=\"{$wgJsMimeType}\">
 		AjaxInternalLinks.baseUrl = \"{$wgScriptPath}\";
