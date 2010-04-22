@@ -477,7 +477,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_treeviewtoggleright{
     position: fixed;
     margin-top: 33px;
-    width: 35px;
+    width: 29px;
     height: 33px;
     top: 50%;
     -moz-user-select: none;
@@ -488,7 +488,7 @@ ul.smwh_menulist div.smwh_menubody_visible {
 #smwh_treeviewtoggleleft{
     position: fixed;
     top: 50%;
-    width: 35px;
+    width: 29px;
     height: 33px;
     -moz-user-select: none;
     -khtml-user-select: none;

@@ -85,7 +85,6 @@ class SMWH_Skin {
 
 
         $menu.= "</ul>";
-
         $menu.= "<ul id=\"menuright\" class=\"smwh_menulist\">";
         $menu.= $this->buildMenuMediaWiki();
         $menu.= $this->buildTools();
@@ -96,15 +95,14 @@ class SMWH_Skin {
     
     
     /**
-     * Gets the menu items from MediaWiki:Halomenu
+     * Gets the configured menu elements from MediaWiki:Halomenu
      *
-     * @global <type> $parserMemc
-     * @global <type> $wgEnableSidebarCache
-     * @global <type> $wgSidebarCacheExpiry
-     * @global <type> $wgLang
+     * @global $parserMemc
+     * @global $wgEnableSidebarCache
+     * @global $wgSidebarCacheExpiry
+     * @global $wgLang
      * @return array
      */
-
      private function getMenuItems() {
 
         global $parserMemc, $wgEnableSidebarCache, $wgSidebarCacheExpiry;
@@ -151,11 +149,14 @@ class SMWH_Skin {
 
     /**
      *
-     * @param <type> $menuItem
-     * @return <type>
+     * Generates the specific content shown under the menu entries
+     *
+     * @param  $menuItem
+     * @return string
      */
     private function buildMenuItemHtml( $menuItem ){
-        /** mw 1.15 only */
+
+        //TODO: Check if this can be unified to work with PHP > 5.2 and PHP < 5.1
         if ($menuItem instanceof Title)
             $titleId= $menuItem->getArticleID();
         else
@@ -170,26 +171,20 @@ class SMWH_Skin {
         
 	if(!isset($menuPage)) return;
 	return $this->parseWikiText($menuPage->getContent());
-        /**/
-
-        /** mw 1.13 could work with 1.15 */
-        /*
-        $title = Title::newFromText(trim($menuItem));
-        if(!$title) return;
-        //echo $title->getFullURL();
-        $menuPage = new Article($title, 0);
-        //echo $menuPage->getContent();
-        if ($menuPage->exists()) {
-            return $this->parseWikiText($menuPage->getContent());
-        }/**/
-
     }
 
+    /**
+     * Generates the mediawiki menu similar to the menu boxes in monobook and returns the html snippet
+     *
+     * @global $wgStylePath
+     * @return string
+     */
     private function buildMenuMediaWiki() {
         global $wgStylePath;
 
+        //Check if config of ontoskin3 is set to show the mediawiki menu
+        //by default it's disabled
         $content = wfMsgForContent( 'halomenuconfig' );
-
         if(strpos($content,"showmediawikimenu=true")===false){
             return "";
         }
@@ -197,13 +192,12 @@ class SMWH_Skin {
         $menu = "<!-- Standardmediawiki Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_mediawiki\" class=\"smwh_menuhead\"><p>MediaWiki";
-        //$menu.= "<img id=\"toolsimage\" src=\"".$wgStylePath.$imagepath."/button_mediawiki.gif\" alt=\"tools\"/>";
         $menu.= "</p></div>";
         $menu.= "<div id=\"smwh_menubody_mediwiki\" class=\"smwh_menubody\">";
         $menu.= "<div class=\"smwh_menubody_visible\">";
-        //catch echos from mediawik -skin
+        
+        //catch echos from mediawik-skin into a variable
         ob_start();
-
         $sidebar = $this->data['sidebar'];
         if ( !isset( $sidebar['TOOLBOX'] ) ) $sidebar['TOOLBOX'] = true;
         if ( !isset( $sidebar['LANGUAGES'] ) ) $sidebar['LANGUAGES'] = true;
@@ -229,8 +223,14 @@ class SMWH_Skin {
         return $menu;
     }
 
+    /**
+     * Generates the administrator menu shown for WikiSysops and returns the html snippet
+     *
+     * @global $wgStylePath
+     * @global $wgUser
+     * @return string
+     */
     private function buildTools() {
-
         global $wgStylePath, $wgUser;
 
         //Get users groups and check for Sysop-Rights
@@ -242,13 +242,18 @@ class SMWH_Skin {
         $menu = "<!-- Tools Menu -->";
         $menu.= "<li class=\"smwh_menulistitem\">";
         $menu.= "<div id=\"smwh_menuhead_toolbar\" class=\"smwh_menuhead\"><p>Administration</p></div>";
+               
+        //Get the content for the administration menu from MediaWiki:haloadministrator
         $content = wfMsgForContent( 'haloadministration' );
+
         if($content!=null && $content!="&lt;haloadministration&gt;"){
+            //parse wiki text and insert the returned html
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
             $menu.= "<div class=\"smwh_menubody_visible\">";
             $menu.=  $this->parseWikiText($content);
             $menu.= "</div></div>";
         } else {
+            //if the administration menu is not defined, return a link to the help section in smwforum describing how to configure it
             $menu.= "<div id=\"smwh_menubody_toolbar\" class=\"smwh_menubody\">";
             $menu.= "<div class=\"smwh_menubody_visible\">";
             $menu.= "<p>no administration menu defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details</p>";
@@ -258,6 +263,16 @@ class SMWH_Skin {
         return $menu;
     }
 
+
+    /**
+     *  Generates the page tabs and returns the html snippet
+     *
+     * @global $IP
+     * @global $wgTitle
+     * @global $wgScriptPath
+     * @global $wgStylePath
+     * @return string
+     */
     public function buildTabs() {
         global $IP, $wgTitle, $wgScriptPath, $wgStylePath;
         $tabs  = "<!-- Tabs -->";
@@ -408,6 +423,11 @@ class SMWH_Skin {
          return $tabsleft.$tabright;
     }
 
+    /**
+     * Generates the Help Icon in the tab bar for the context sensitive help
+     * 
+     * @return string
+     */
     private function buildHelpTab(){
         global $wgStylePath;
         $tab ='<div id="helptab" class="tab">';
@@ -416,75 +436,100 @@ class SMWH_Skin {
         return $tab;
 
     }
-    public function buildQuickLinks(){
-        $ql = "<!-- HaloQuickLinks -->";
-        $ql.= "<div id=\"smwh_quicklinks\">";
-        $content = wfMsgForContent( 'haloquicklinks' );
-        if($content!=null && $content!="&lt;haloquicklinks&gt;"){
 
-            $ql.=  $this->parseWikiText($content);
+    /**
+     * Generates the quicklinks/footer add the page bottom
+     *
+     * @return string
+     */
+    public function buildQuickLinks(){
+        $quicklinks  = "<!-- HaloQuickLinks -->";
+        $quicklinks .= "<div id=\"smwh_quicklinks\">";
+
+        //Get the content for the page options from MediaWiki:halopageoptions
+        $content = wfMsgForContent( 'haloquicklinks' );
+
+        //TODO: Make if clause consistent with buildPageOptions
+        if($content!=null && $content!="&lt;haloquicklinks&gt;"){
+            //parse wiki text and insert the returned html
+            $quicklinks .=  $this->parseWikiText($content);
 
         } else {
-            $ql.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
+            //if the footer is not defined, return a link to the help section in smwforum describing how to configure it
+            $quicklinks.= "<p style=\"margin-left: 30px;\">no quicklinks defined, see <a href=\"http://smwforum.ontoprise.com/smwforum/index.php/Help:Configuring_the_menu_structure_%28Ontoskin3%29\">smwforum.ontoprise.com</a> for details<p>";
         }
-        $ql.="</div>";
-        return $ql;
+        $quicklinks .="</div>";
+        //return the html snippet
+        return $quicklinks;
     }
 
+    /**
+     * Generates the page options shown in the 'more'-tab below the aggregated mediawiki tabs
+     *
+     * @return string
+     */
     private function buildPageOptions(){
-        $ql = "<!-- HaloPageOptions -->";
-        $ql.= "<div id=\"smwh_halopageoptions\">";
+        $pageoptions  = "<!-- HaloPageOptions -->";
+        $pageoptions .= "<div id=\"smwh_halopageoptions\">";
+
+        //Get the content for the page options from MediaWiki:halopageoptions
         $content = wfMsgForContent( 'halopageoptions' );
 
         if(strpos($content,"halopageoptions")==false){
-            $ql.=  $this->parseWikiText($content);
+            //parse wiki text and insert the returned html
+            $pageoptions .=  $this->parseWikiText($content);
         } else {
+            //return nothing if the page options are not defined
             return "";
         }
-        $ql.="</div>";
-        return $ql;
+        $pageoptions .="</div>";
+        //return the html snippet
+        return $pageoptions;
     }
     /**
      * Parses Wikitext and returns html
      *
-     * @global <type> $wgParser
-     * @param <type> $text
-     * @return <type>
+     * @global object $wgParser
+     * @param  string $text
+     * @return string
      */
     private function parseWikiText($text){
-        //mw1.15
         global $wgParser, $wgTitle;
-        $output = $wgParser->parse($text,$wgTitle, new ParserOptions());
-        //mw1.13
-        //global $wgParser;
-        //$output = $wgParser->parse($text,$this->skin->mTitle, new ParserOptions());
+        $output = $wgParser->parse($text,$wgTitle, new ParserOptions());        
         return $output->getText();
 
     }
 
-
+    /**
+     * Gets the treeview and returns the html code of it.
+     *
+     * @global $wgStylePath
+     * @return string
+     */
     public function treeview() {
         global $wgStylePath;
-        //catch echo
+        //catch echo of the tree view extension, which consists of the tree
         ob_start();
+            //Run the hook, where treeview extension is registered
             wfRunHooks( 'OntoSkinInsertTreeNavigation', array( &$treeview ) );
         //add output to menu
         $tree.= ob_get_contents();
         //stop catching echos
         ob_end_clean();
 
+        //Generate the necessary surrounding html if the return of the treeview
+        //extension is not empty otherwise return an empty string
         if($tree!=null && $tree!=""){
 
+            //Add the left treeview button
             $treeview =  '<div id="smwh_treeviewtoggleleft" title="'.wfMsg('smw_treeviewleft').'">';
-            //TODO: replace with proper language support
-            //$treeview .= '<div title="show treeview on the left" id="smwh_treeviewtoggleleftimg"></div>';
             $treeview .= '</div>';
 
+            //Add the right treeview button
             $treeview .=  '<div id="smwh_treeviewtoggleright" title="'.wfMsg('smw_treeviewright').'">';
-            //$treeview .= '<div title="show treeview on the right" id="smwh_treeviewtogglerightimg"></div>';
             $treeview .= '</div>';
             
-            
+            //Add the treeview itself
             $treeview .= '<div id="smwh_treeview">';            
             $treeview .=            '<div id="smwh_treeview_head">SemanticTreeview <a id="smwh_treeview_close" href="javascript:smwh_Skin.hideTree()"><img src="'.$wgStylePath.$this->imagepath.'/button_close.png" title="close" alt="close tree"/></a></div>';
             $treeview .=    '<div id="smwh_treeview_content">';
@@ -493,23 +538,32 @@ class SMWH_Skin {
             $treeview .= "</div>";
             return $treeview;
         } else {
+           //return empty string, so nothing tree related is added to the skin html
            return "";
         }
     }
-
+    
+    /**
+    * Generate the information about last modification time, views and watching users
+    *
+    * @return string
+    */
     public function showPageStats(){
-    		// Generate additional footer links
+    		//Select footer links
 		$footerlinks = array(
 			'lastmod', 'viewcount', 'numberofwatchingusers'
 		);
 
                 $pstats ="";
+
+                //Get footer links html
 		foreach( $footerlinks as $aLink ) {
 			if( isset( $this->skintemplate->data[$aLink] ) && $this->skintemplate->data[$aLink] ) {
 				$pstats .= $this->skintemplate->html($aLink);
 
 			}
 		}
+                //Return html
                 return $pstats;
     }
 
