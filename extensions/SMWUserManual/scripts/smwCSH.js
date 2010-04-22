@@ -415,6 +415,7 @@ SMW_UserManual_CSH.prototype = {
     /* general functions for the CSH help */
     alertUserMessage: function(response) {
         var res = response.responseText
+        res='0'
         var msg;
         if (this.sendMessage==1) {
             msg = (res=='0')?this.msgYourRatingHasBeenSend:this.msgYourRatingHasBeenSendNot;
