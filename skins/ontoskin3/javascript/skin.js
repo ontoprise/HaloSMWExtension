@@ -136,15 +136,16 @@ function Smwh_Skin() {
             //if page uses full screen width don't show tree on the right
             if(this.expanded == true) return;
 
-            
+            //if the calculated width is too small don't show tree
+            if(this.getRightWidth()<200) return;
 
             //add Class with styles for right side view
             $jq("#smwh_treeview").addClass("smwh_treeviewright");
             //Set right icon to active
             $jq("#smwh_treeviewtoggleright").addClass("active");
 
-            //if the calculated width is too small don't show tree
-            if(!this.setRightWidth()) return;
+            //Set witdh of the tree view
+            $jq(".smwh_treeviewright").css("width", this.getRightWidth()+"px");
 
             //Set tree as shown
             this.treeviewhidden = false;
@@ -188,18 +189,19 @@ function Smwh_Skin() {
      */
 
     //TODO: Split up in two functions to make code more readable
-    this.setRightWidth = function(){
+    this.setRightWidth = function(contentoffset){
+            //Set width for treeview if shown right
+            
+    }
+    /**
+     * @brief function getRightWidth
+     *        Calculate gap between page and right browser border and apply to treeview if shown on the rightside
+     *
+     */
+    this.getRightWidth = function(){
         //Get left offset (same as right) and subtract the space needed for treeview icons
         var contentoffset = $jq("#shadows").offset().left - 40;
-
-        if(contentoffset <200 ){
-            //not enough space for the treeview
-            return false;
-        } else {
-            //Set width for treeview if shown right
-            $jq(".smwh_treeviewright").css("width", contentoffset+"px");
-            return true;
-        }
+        return contentoffset;
     }
 
     /**
@@ -216,13 +218,12 @@ function Smwh_Skin() {
         //Adjust css for left and right viewed treeview
         this.setRightDistance();
         //hide tree if shown on the right side and not enough space is given.
-        if( !this.setRightWidth() && $jq(".smwh_treeviewright").length > 0 ){
+        if( this.getRightWidth() < 200 && $jq(".smwh_treeviewright").length > 0 ){
             this.hideTree();
         }
         
         //Check if there is enough space on the right side to show the treeview otherwise remove button
-        contentoffset = $jq("#shadows").offset().left - 20;
-        if( this.expanded == true || contentoffset < 200 ){
+        if( this.expanded == true || this.getRightWidth() < 200 ){
             $jq("#smwh_treeviewtoggleright").css("display","none");
         } else {
             $jq("#smwh_treeviewtoggleright").css("display","block");
