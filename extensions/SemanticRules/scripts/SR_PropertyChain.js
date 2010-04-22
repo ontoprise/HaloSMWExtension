@@ -26,7 +26,7 @@ PropertyChain.prototype = {
 	},
 	
 	getCreateChainHtml : function() {
-		var bodyContent = $('bodyContent');
+		var bodyContent = $('content');
 		bodyContent.hide();
 
 		var headHtml = this.getHeadHtml(2);
@@ -189,7 +189,7 @@ PropertyChain.prototype = {
 			 	
 			$("pc-content").remove();
 			
-			$("bodyContent").show();
+			$("content").show();
 			
 			if (this.annotation) {
 				// update an existing annotation
@@ -239,7 +239,7 @@ PropertyChain.prototype = {
 	 */
 	cancel: function() {
 		
-		$('bodyContent').show();
+		$('content').show();
 		if ($('pc-content')) {
 			$('pc-content').remove();
 		}
@@ -255,7 +255,7 @@ PropertyChain.prototype = {
 			
 		var headName = head[0].childNodes[1].firstChild.nodeValue;
 		
-		var bodyContent = $('bodyContent');
+		var bodyContent = $('content');
 		bodyContent.hide();
 
 		var headHtml = this.getHeadHtml(2);

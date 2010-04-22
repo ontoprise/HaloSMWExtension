@@ -103,7 +103,7 @@ editRule: function(ruleAnnotation) {
  */
 cancel: function() {
 	
-	$('bodyContent').show();
+	$('content').show();
 	if ($('createRuleContent')) {
 		$('createRuleContent').remove();
 	}
@@ -124,7 +124,7 @@ cancel: function() {
  */
 createUI: function(parsedRule) {
 	// hide the wiki text editor
-	var bodyContent = $('bodyContent');
+	var bodyContent = $('content');
 	bodyContent.hide();
 	var html;
 					
@@ -663,7 +663,7 @@ saveRule: function(event) {
 			$('createRuleContent').remove();
 			
 			// show normal wiki text editor GUI
-			$('bodyContent').show();
+			$('content').show();
 			
 			if (this.annotation) {
 				// update an existing annotation

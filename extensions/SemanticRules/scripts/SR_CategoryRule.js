@@ -50,7 +50,7 @@ initialize: function(ruleName, ruleType) {
  */
 createRule: function() {
 	// hide the wiki text editor
-	var bodyContent = $('bodyContent');
+	var bodyContent = $('content');
 	bodyContent.hide();
 	var html;
 	
@@ -209,7 +209,7 @@ editRule: function(ruleAnnotation) {
  */
 cancel: function() {
 	
-	$('bodyContent').show();
+	$('content').show();
 	if ($('createRuleContent')) {
 		$('createRuleContent').remove();
 	}
@@ -224,7 +224,7 @@ cancel: function() {
  */
 createUIForRule: function(ruleXML) {
 	// hide the wiki text editor
-	var bodyContent = $('bodyContent');
+	var bodyContent = $('content');
 	bodyContent.hide();
 	
 	var rule = GeneralXMLTools.createDocumentFromString(ruleXML);
@@ -829,7 +829,7 @@ saveRule: function(event) {
 			$('createRuleContent').remove();
 			
 			// show normal wiki text editor GUI
-			$('bodyContent').show();
+			$('content').show();
 			
 			if (this.annotation) {
 				// update an existing annotation
