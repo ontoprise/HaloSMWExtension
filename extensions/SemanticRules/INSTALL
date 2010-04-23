@@ -1,21 +1,35 @@
 Installation instructions for Semantic Rules extension v1.01
 ---------------------------------------------------------------
 
+Install instructions for the latest version of the Semantic Rules Extension are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Rule_Knowledge_Extension
+ 
+For the full manual of the Semantic Rules Extension have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Rule_Knowledge_Extension_1.1.0
+ 
+Install instructions for the latest version of SMWHalo are online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
+
 Requirements: 
 =============
 
-    MediaWiki 1.15 or higher
-    SMW 1.5
-    SMWHalo 1.5 
+	MediaWiki 1.15.x 
+	Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
+	Halo Extension 1.5
+	Basic Triple Store 
+
 
 Installation:
 =============
-   
-Run:
-php {wiki-path}/extensions/SemanticRules/maintenance/setup.php
 
-Then add to your LocalSettings.php after you initialized SMWHalo:
+(1) Run:
+    php {wiki-path}/extensions/SemanticRules/maintenance/setup.php
 
-require_once("extensions/SemanticRules/includes/SR_Initialize.php");
+(2) Add to your LocalSettings.php after you initialized SMWHalo: 
+    require_once("extensions/SemanticRules/includes/SR_Initialize.php");
 
 
+Now the Rules Extension is installed and ready to use.
