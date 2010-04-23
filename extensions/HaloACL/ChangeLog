@@ -2,17 +2,18 @@ HaloACL extension ChangeLog
 ===========================
 
 
-VERSION XXXX
+VERSION 1.1.1
 
 
   FEATURES:
-
+	No new features.
 
 
   CHANGES:
-
+	* The extension was adapted to Semantic MediaWiki 1.5.0 and Semantic Forms 1.9.
 
 
   BUGFIXES:
-
+	* The german language is now fully supported.
+	* Bugs in managing hierarchies of groups in Special:HaloACL were fixed. 
 
