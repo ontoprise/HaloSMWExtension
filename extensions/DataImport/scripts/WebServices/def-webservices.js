@@ -1190,8 +1190,12 @@ DefineWebServiceSpecial.prototype = {
 						if (rPath == "") {
 							if (manualResultPart) {
 								rPath = this.resultContainer.firstChild.childNodes[i - 1].firstChild.firstChild.value;
+								rPath = rPath.replace(/>/g, "&gt;");
+								rPath = rPath.replace(/</g, "&lt;");
 							} else {
 								rPath = this.getRPath(i - 2 - offset);
+								rPath = rPath.replace(/>/g, "&gt;");
+								rPath = rPath.replace(/</g, "&lt;");
 							}
 						}
 						result += " path=\"" + rPath + "\"";
@@ -1219,8 +1223,12 @@ DefineWebServiceSpecial.prototype = {
 
 				if (manualResultPart) {
 					rPath = this.resultContainer.firstChild.childNodes[i].firstChild.firstChild.value;
+					rPath = rPath.replace(/>/g, "&gt;");
+					rPath = rPath.replace(/</g, "&lt;");
 				} else {
 					rPath = this.getRPath(i - 1 - offset);
+					rPath = rPath.replace(/>/g, "&gt;");
+					rPath = rPath.replace(/</g, "&lt;");
 				}
 
 				var name = this.resultContainer.firstChild.childNodes[i].childNodes[2].firstChild.value;
