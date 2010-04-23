@@ -179,7 +179,9 @@ class DeployDescriptionProcessor {
 				continue;
 			}
 			// do dry-run at first to check for rejected patches
+			print "\n\nTest patch: ".$rootDir."/".$patch." ...";
 			exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --dry-run --onlypatch", $out, $ret);
+			print "done.";
 			$patchFailed = false;
 			foreach($out as $line) {
 				if (strpos($line, "FAILED") !== false) {
@@ -198,8 +200,9 @@ class DeployDescriptionProcessor {
 			switch($result) {
 
 				case 'y': // apply the patches
-			 	print "\n\nApply patch:\nphp ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir;
+			 	print "\n\nApply patch...";
 			 	exec("php ".$rootDir."/deployment/tools/patch.php -p ".$rootDir."/".$patch." -d ".$rootDir." --onlypatch", $out, $ret);
+			 	print "done.";
 			 	break;
 				case 'r': throw new RollbackInstallation();
 				case 'n': break; // just ignore the patches completely

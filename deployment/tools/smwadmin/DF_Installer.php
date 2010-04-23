@@ -122,7 +122,7 @@ class Installer {
 		print "\nThe following packages need to be installed";
 		foreach($extensions_to_update as $etu) {
 			list($dd, $min, $max) = $etu;
-			print "\n- ".$dd->getID()."-".$min;
+			print "\n- ".$dd->getID()."-".$dd->getVersion();
 		}
 
 		if (count($contradictions) > 0) {
@@ -380,12 +380,12 @@ class Installer {
 			}
 
 
-			list($url,$repo_url) = PackageRepository::getVersion($id, $min);
+			list($url,$repo_url) = PackageRepository::getVersion($id, $desc->getVersion());
 			$credentials = PackageRepository::getCredentials($repo_url);
-			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-$min.zip", $credentials);
+			$d->downloadAsFileByURL($url, $this->tmpFolder."/$id-".$desc->getVersion().".zip", $credentials);
 
 			// unzip
-			$this->unzip($id, $min);
+			$this->unzip($id, $desc->getVersion());
 
 			if (!$this->noRollback) {
 				if (count($desc->getConfigs()) > 0) $this->rollback->saveLocalSettings();
@@ -579,7 +579,7 @@ class Installer {
 					throw new InstallationError(DEPLOY_FRAMEWORK_WRONG_MW_VERSION, "Wrong mediawiki version $mwVersion. ".$dd->getID()." requires $minVersion - $maxVersion");
 				}
 			}
-			$desc_min = PackageRepository::getDeployDescriptor($id, $minVersion);
+			$desc_min = PackageRepository::getDeployDescriptorFromRange($id, $minVersion, $maxVersion);
 
 			$packagesToUpdate[] = array($desc_min, $minVersion, $maxVersion);
 			$this->collectDependingExtensions($desc_min, $packagesToUpdate, $localPackages);

@@ -41,45 +41,46 @@ class DeployWikiImporter extends WikiImporter {
 		$this->callback = $callback;
 	}
 
-	function in_page( $parser, $name, $attribs ) {
-		$this->debug( "in_page $name" );
-		switch( $name ) {
-			case "id":
-			case "title":
-			case "restrictions":
-				$this->appendfield = $name;
-				$this->appenddata = "";
-				xml_set_element_handler( $parser, "in_nothing", "out_append" );
-				xml_set_character_data_handler( $parser, "char_append" );
-				break;
-			case "revision":
-				$this->push( "revision" );
-				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
-					$this->workRevision->setTitle( $this->pageTitle );
-					$this->workRevisionCount++;
-				} else {
-					// Skipping items due to invalid page title
-					$this->workRevision = null;
-				}
-				xml_set_element_handler( $parser, "in_revision", "out_revision" );
-				break;
-			case "upload":
-				$this->push( "upload" );
-				if( is_object( $this->pageTitle ) ) {
-					$this->workRevision = new DeployWikiRevision($this->mode, $this->callback);
-					$this->workRevision->setTitle( $this->pageTitle );
-					$this->uploadCount++;
-				} else {
-					// Skipping items due to invalid page title
-					$this->workRevision = null;
-				}
-				xml_set_element_handler( $parser, "in_upload", "out_upload" );
-				break;
-			default:
-				return $this->throwXMLerror( "Element <$name> not allowed in a <page>." );
-		}
-	}
+function in_page( $parser, $name, $attribs ) {
+            $name = $this->stripXmlNamespace($name);
+        $this->debug( "in_page $name" );
+        switch( $name ) {
+        case "id":
+        case "title":
+        case "restrictions":
+            $this->appendfield = $name;
+            $this->appenddata = "";
+            xml_set_element_handler( $parser, "in_nothing", "out_append" );
+            xml_set_character_data_handler( $parser, "char_append" );
+            break;
+        case "revision":
+            $this->push( "revision" );
+            if( is_object( $this->pageTitle ) ) {
+                $this->workRevision = new DeployWikiRevision;
+                $this->workRevision->setTitle( $this->pageTitle );
+                $this->workRevisionCount++;
+            } else {
+                // Skipping items due to invalid page title
+                $this->workRevision = null;
+            }
+            xml_set_element_handler( $parser, "in_revision", "out_revision" );
+            break;
+        case "upload":
+            $this->push( "upload" );
+            if( is_object( $this->pageTitle ) ) {
+                $this->workRevision = new DeployWikiRevision;
+                $this->workRevision->setTitle( $this->pageTitle );
+                $this->uploadCount++;
+            } else {
+                // Skipping items due to invalid page title
+                $this->workRevision = null;
+            }
+            xml_set_element_handler( $parser, "in_upload", "out_upload" );
+            break;
+        default:
+            return $this->throwXMLerror( "Element <$name> not allowed in a <page>." );
+        }
+    }
 
 
 	function in_revision( $parser, $name, $attribs ) {
@@ -137,6 +138,7 @@ class DeployWikiImporter extends WikiImporter {
 				break;
 			default:
 				parent::out_append($parser, $name);
+				return;
 		}
 		$this->appendfield = "";
 		$this->appenddata = "";
