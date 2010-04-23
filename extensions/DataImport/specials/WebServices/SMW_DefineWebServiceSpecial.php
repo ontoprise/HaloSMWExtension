@@ -175,9 +175,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			
 		$html .= "<span id=\"step1-auth-box\" style=\"".$authVisibility."\">";
 		$html .= wfMsg('smw_wws_username');
-		$html .= "<input id=\"step1-username\" type=\"text\" size=\"30\" maxlength=\"100\" value=\"\"/>";
+		$html .= "<input id=\"step1-username\" type=\"text\" size=\"30\" maxlength=\"100\" value=\"".$username."\"/>";
 		$html .= wfMsg('smw_wws_password');
-		$html .= "<input id=\"step1-password\" type=\"password\" size=\"30\" maxlength=\"100\" value=\"\"/>";
+		$html .= "<input id=\"step1-password\" type=\"password\" size=\"30\" maxlength=\"100\" value=\"".$password."\"/>";
 		$html .= "</span>";
 			
 		$html .= "<div id=\"step1-help\" style=\"display:none\">".wfMsg("smw_wws_s1-help")."</div>";
