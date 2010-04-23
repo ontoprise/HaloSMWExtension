@@ -92,7 +92,8 @@ initialize: function() {
 showToolbar: function(){
 	this.categorycontainer.setHeadline(gLanguage.getMessage('CATEGORIES'));
 	if (wgAction == 'edit' || wgAction == 'formedit' || wgAction == 'submit' ||
-            wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData') {
+            wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
+            wgCanonicalSpecialPageName == 'FormEdit' ) {
 		// Create a wiki text parser for the edit mode. In annotation mode,
 		// the mode's own parser is used.
 		this.wtp = new WikiTextParser();
@@ -103,7 +104,8 @@ showToolbar: function(){
 
 callme: function(event){
 	if ((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit' ||
-             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData')
+             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
+             wgCanonicalSpecialPageName == 'FormEdit' )
 	    && stb_control.isToolbarAvailable()){
 		this.categorycontainer = stb_control.createDivContainer(CATEGORYCONTAINER,0);
 		this.showToolbar();

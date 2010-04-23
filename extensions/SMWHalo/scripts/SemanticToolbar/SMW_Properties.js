@@ -118,7 +118,8 @@ showToolbar: function(request){
 callme: function(event){
 	
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
-             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' )
+             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
+             wgCanonicalSpecialPageName == 'FormEdit' )
 	   && (wgNamespaceNumber == 100 || wgNamespaceNumber == 102
 	       || (typeof sfgTargetNamespaceNumber != 'undefined' && sfgTargetNamespaceNumber == 102))
 	   && stb_control.isToolbarAvailable()){

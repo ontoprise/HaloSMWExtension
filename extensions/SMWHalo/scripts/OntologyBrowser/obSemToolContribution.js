@@ -46,7 +46,8 @@ OBSemanticToolbarContributor.prototype = {
 	registerContributor: function() {
 		if (!stb_control.isToolbarAvailable() || 
                     (wgAction != 'edit' && wgAction != 'formedit' && wgAction != 'submit' &&
-                     wgCanonicalSpecialPageName != 'AddData' && wgCanonicalSpecialPageName != 'EditData') ) return;
+                     wgCanonicalSpecialPageName != 'AddData' && wgCanonicalSpecialPageName != 'EditData' &&
+                     wgCanonicalSpecialPageName != 'FormEdit') ) return;
 		this.comsrchontainer = stb_control.createDivContainer(CBSRCHCONTAINER, 0);
 		this.comsrchontainer.setHeadline(gLanguage.getMessage('ONTOLOGY_BROWSER'));
 

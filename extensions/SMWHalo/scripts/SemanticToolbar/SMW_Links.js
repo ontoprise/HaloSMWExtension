@@ -33,7 +33,8 @@ var createLinkList = function() {
     
 function smw_links_callme(){
 	if( (wgAction == "edit" || wgAction == 'formedit' || wgAction == 'submit' ||
-             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData')
+             wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
+             wgCanonicalSpecialPageName == 'FormEdit')
 	   && stb_control.isToolbarAvailable()){
 		var _linksHaveBeenAdded = false;
 		editcontainer = stb_control.createDivContainer(EDITCONTAINER, 1);
