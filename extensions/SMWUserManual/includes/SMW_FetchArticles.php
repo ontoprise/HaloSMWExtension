@@ -158,6 +158,7 @@ class UME_FetchArticles {
     
     private function createPage($ns, $title, $text) {
         global $wgLang;
+        if (in_array($title, explode(',', SMW_SKIP_CSH_ARTICLE))) return;
         echo sprintf(wfMsg('smw_ume_create_page'),
                      $wgLang->getNsText($ns).':'.$title).'  ';
         // not writing to local wiki, but into a file
@@ -173,6 +174,8 @@ class UME_FetchArticles {
             return;
         }
         $t = Title::makeTitle($ns, $title);
+        global $wgTitle;
+        $wgTitle= $t;
         if ($t->exists()){
             if (!self::$overwrite) {
                 echo wfMsg('smw_ume_warning_page')."\n";
