@@ -2783,14 +2783,14 @@ HTML;
 
 
     YAHOO.haloacl.manageACLdeleteCheckedGroups = function(){
-        var checkedgroups = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloaclrights.treeInstance$panelid, null);
+        var checkedSDs = YAHOO.haloacl.getCheckedNodesFromTree(YAHOO.haloaclrights.treeInstance$panelid, null);
 
         var xml = "<?xml version=\"1.0\"  encoding=\"UTF-8\"?>";
-        xml += "<groupstodelete>";
-        for(i=0;i<checkedgroups.length;i++){
-            xml += "<group>"+escape(checkedgroups[i])+"</group>";
+        xml += "<sdstodelete>";
+        for(i=0;i<checkedSDs.length;i++){
+            xml += "<sd>"+escape(checkedSDs[i])+"</sd>";
         }
-        xml += "</groupstodelete>";
+        xml += "</sdstodelete>";
         if (YAHOO.haloacl.debug) console.log(xml);
 
         var callback5 = function(result){
@@ -2801,7 +2801,7 @@ HTML;
             });
         };
 
-        YAHOO.haloacl.sendXmlToAction(xml,'haclDeleteGroups',callback5);
+        YAHOO.haloacl.sendXmlToAction(xml,'haclDeleteSecurityDescriptor',callback5);
 
     };
 
@@ -3480,24 +3480,37 @@ function haclSDpopupByName($sdName) {
  * @param <string> $sdId
  * @return <AjaxResponse>200: ok | 400: failure with error-message
  */
-function haclDeleteSecurityDescriptor($sdId) {
+function haclDeleteSecurityDescriptor($sdIds) {
+	global $haclgContLang;
+    $ns = $haclgContLang->getNamespaces();
+    $ns = $ns[HACL_NS_ACL];
 
-    $ajaxResponse = new AjaxResponse();
-    try {
-
-        HACLSecurityDescriptor::newFromID($sdId)->delete();
-
-        $ajaxResponse->setContentType("json");
-        $ajaxResponse->setResponseCode(200);
-        $ajaxResponse->addText(wfMsg('hacl_deleteSecurityDescriptor_1'));
-
-    } catch (Exception  $e) {
-        $ajaxResponse = new AjaxResponse();
-        $ajaxResponse->setResponseCode(400);
-        $ajaxResponse->addText($e->getMessage());
+    $xml = new SimpleXMLElement($sdIds);
+    $result = wfMsg("hacl_nothing_deleted");
+    $success = true;
+    foreach ($xml->xpath('//sd') as $sd) {
+        $sd = unescape($sd);
+        if ($sd != null) {
+            try {
+                $sdarticle = new Article(Title::newFromText("$ns:$sd"));
+                $sdarticle->doDelete("gui-deletion");
+                if ($success) {
+                	$result = wfMsg('hacl_deleteSecurityDescriptor_1');
+                }
+            } catch(Exception $e ) {
+                $result .= "Error while deleting $ns:$sd. ";
+                $success = false;
+            }
+        }
     }
-    return $ajaxResponse;
+    
+    $ajaxResponse = new AjaxResponse();
 
+	$ajaxResponse->setContentType("json");
+	$ajaxResponse->setResponseCode($success ? 200 : 400);
+	$ajaxResponse->addText($result);
+
+	return $ajaxResponse;
 }
 
 
