@@ -1,43 +1,63 @@
 Installation instructions
 -------------------------
 
+Install instructions for the latest version of the Data Import Extension are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Enabling_the_Data_Import_Extension
+ 
+For the full manual of the Data Import Extension have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Data_Import_Extension
+
+Install instructions for the latest version of SMWHalo are online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
+ 
+For install instructions and further information on Semantic MediaWiki, please visit
+ 
+ http://semantic-mediawiki.org/wiki/Help:Administrator_manual
+
 Requirements: 
-    MediaWiki 1.13 or higher
-    SMW 1.4.3 or higher
-    Halo extension 1.4.3 or higher
-    Semantic Gardening extension 1.3 or higher
+
+ 	Apache HTTP Server
+ 	MySQL higher than 4.0.14 (Recommended MySQL 5.x)
+ 	PHP 5.2.x (PHP 5.3.x is not supported yet)
+ 	MediaWiki 1.15.x (see installation guide)
+	Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
+    Halo extension 1.5.0 or higher
+    Semantic Gardening extension 1.4 or higher
     Script Manager 1.0 or higher
 	
 
-1) Add to your LocalSettings.php: (After the Halo and the 
-Semantic Gardening extensions were initialised)
----
-include_once('extensions/DataImport/includes/DI_Initialize.php');
-enableDataImportExtension();
----
+(1) Add to your LocalSettings.php: (After the Halo and the 
+    Semantic Gardening extensions were initialized)
+	---
+	include_once('extensions/DataImport/includes/DI_Initialize.php');
+	enableDataImportExtension();
+	---
 
-2) Login as WikiSysop, go to the special page "Special:SMWAdmin" and 
-run the "Initialise or update tables" script.
+(2) Login as WikiSysop, go to the special page "Special:SMWAdmin" and 
+	run the "Initialize or update tables" script.
 
 3) That's it.
 
-Notice: If you already used a prior version of the Web Service extension, 
+Note: If you already used a prior version of the Web Service extension, 
 then you have to replace the dots in the path-attributes of your existing
 WWSDs by slashes, so that the paths are conform to the XPath syntax.
 
 
 === Install the Inter Wiki Article Importer ===
-Add the following two lines to your LocalSettings.php
-include_once('extensions/DataImport/IAI/includes/IAI_GlobalFunctions.php');
-enableIAI();
 
+(1) Add the following two lines to your LocalSettings.php
+	include_once('extensions/DataImport/IAI/includes/IAI_GlobalFunctions.php');
+	enableIAI();
 
-Go to extensions/DataImport/specials/TermImport/TL/ConnectLocal.cfg and add the following:
-<Module>
+(2) Go to extensions/DataImport/specials/TermImport/TL/ConnectLocal.cfg and add the following:
+	<Module>
 	    <id>Interwiki Article Import</id>
 	    <class>DALInterwikiArticleImport</class>
 	    <file>DAL/SMW_DALInterwikiArticleImport</file>
 	    <desc>Imports articles from an external Mediawiki.</desc>
-</Module>
+	</Module>
 
 
