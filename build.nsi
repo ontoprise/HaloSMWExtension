@@ -50,9 +50,17 @@
 ;!define MUI_FINISHPAGE_RUN_TEXT "Start Lucene as Windows service"
 ;!define MUI_FINISHPAGE_RUN_FUNCTION "startLucene"
 
-
-!define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You got some new shortcuts in the startmenu. \
-The main page can be opened by clicking on '${PRODUCT} ${VERSION} Main Page'."
+!define MUI_FINISHPAGE_SHOWREADME 
+!define MUI_FINISHPAGE_SHOWREADME_FUNCTION showReadme
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
+!define MUI_FINISHPAGE_SHOWREADME_CHECKED
+!define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You are advised to study the README-SMWPLUS.txt file (readme file) \ 
+located in the zip-file containing this installer. The readme file contains important information about: $\n \
+* how to access the Wiki after the installation process is finished $\n \
+* default access credentials for administrators $\n \
+* where to find documentation for administrators and end users $\n \
+* trouble shooting hints and $\n \
+* know issues."
 !define MUI_FINISHPAGE_LINK "Visit the ontoprise website for the latest news"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://wiki.ontoprise.com/"
 
@@ -605,7 +613,7 @@ Function changeConfigForFullXAMPP
     
     ; Activate php_gd2.dll for thumbnails and php_openssl.dll for SSL 
     DetailPrint "Update php.ini"
-    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\apache\bin\php.ini" on=php_gd2,php_openssl'
+    nsExec::ExecToLog '"$INSTDIR\php\php.exe" "$INSTDIR\htdocs\mediawiki\installer\activateExtension.php" ini="$INSTDIR\apache\bin\php.ini" on=php_gd2,php_openssl,php_curl'
     
     
     ; Make halowiki directory accessible by Apache  
@@ -1146,4 +1154,8 @@ Function DumpLog
     Pop $1
     Pop $0
     Exch $5
+FunctionEnd
+
+Function showReadme
+    Exec '"notepad.exe" "$INSTDIR\README-SMWPLUS.txt"'
 FunctionEnd
