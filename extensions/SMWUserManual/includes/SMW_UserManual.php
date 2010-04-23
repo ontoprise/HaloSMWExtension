@@ -134,6 +134,8 @@ define('SMW_UME_PROPERTYTEXT_LINK', '[[Has type::Type:URL| ]]');
 define('SMW_TEMPLATES_USED', 'Copyright of article,GNU Free Documentation License,Cite web in help');
 // prefix for SMW forum template pages
 define('SMW_TEMPLATE_PREFIX', 'Template');
+// broken articles that sholuld be skiped
+define('SMW_SKIP_CSH_ARTICLE', '');
 
 // webserver path to extension
 define('SMW_UME_PATH', $wgScriptPath.'/extensions/SMWUserManual');
