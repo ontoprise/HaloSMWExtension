@@ -239,14 +239,13 @@ function parseWikiText($text) {
  */
 function smwf_qi_getPage($args= "") {
 	global $wgServer, $wgScript, $wgLang;
-        //$qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
-        $qiScript = '/dmwiki/index.php/Special:QueryInterface';
+        $qiScript = $wgScript.'/'.$wgLang->getNsText(NS_SPECIAL).':QueryInterface';
 
         // fetch the Query Interface by calling the URL http://host/wiki/index.php/Special:QueryInterface
 	// save the source code of the above URL in $page 
 	$page = "";
 	if (function_exists('curl_init')) {
-		list($httpErr, $page) = doHttpRequestWithCurl('http://dmwiki.ontoprise.com:8888', $qiScript);
+		list($httpErr, $page) = doHttpRequestWithCurl($wgServer, $qiScript);
 	}
 	else {
 	  if (strtolower(substr($wgServer, 0, 5)) == "https")
