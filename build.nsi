@@ -25,6 +25,7 @@
 !define PRODUCTPATH "SMWPLUS"
 !define PRODUCT "SMW+"
 !define PRODUCT_CAPTION "SMW+"
+!define PRODUCT_YEAR "2010"
 #!define VERSION "1.4.3" set by hudson
 #!define BUILD_ID "431" set by hudson
 !define REQUIRED_JAVA_VERSION 16
@@ -51,7 +52,7 @@
 
 
 !define MUI_FINISHPAGE_TEXT "Installation of ${PRODUCT} ${VERSION} is completed. You got some new shortcuts in the startmenu. \
-If you made an update you already have some of the shortcuts on the desktop and you may move them to the startmenu. The main page can be opened by clicking on '${PRODUCT} ${VERSION} Main Page'."
+The main page can be opened by clicking on '${PRODUCT} ${VERSION} Main Page'."
 !define MUI_FINISHPAGE_LINK "Visit the ontoprise website for the latest news"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://wiki.ontoprise.com/"
 
@@ -84,7 +85,7 @@ ComponentText "" "" " "
 InstallDir "$PROGRAMFILES\Ontoprise\${PRODUCTPATH}\"
 DirText $CHOOSEDIRTEXT "" "" "" 
 CheckBitmap "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\images\classic-cross.bmp"
-BrandingText "ontoprise GmbH 2009 - wiki.ontoprise.de - Build: ${BUILD_ID}"
+BrandingText "ontoprise GmbH ${PRODUCT_YEAR} - wiki.ontoprise.de - Build: ${BUILD_ID}"
 LicenseText "GPL-License"
 LicenseData "..\..\..\SMWHalo Installer Tools\workspace\SMWPlusInstaller\gpl.txt"
 ComponentText "Choose type of installation"
@@ -298,7 +299,7 @@ Section "${PRODUCT} ${VERSION} core" smwplus
             
       !endif  
   ;Create uninstaller (only when newly installed)
-  ${If} $INSTALLTYPE == 0 
+  ${If} $INSTALLTYPE == 1 
       WriteUninstaller "$INSTDIR\Uninstall.exe"
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
