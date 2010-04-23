@@ -192,6 +192,8 @@ function smwfUltraPediaGetJSLanguageScripts(&$pathlng, &$userpathlng) {
 }
 
 function smwfUltraPediaAddHTMLHeader(& $out) {
+    // ext library causes problems with the Halo extension.
+    return true;
 	// add Ultrapedia abstract tooltip
 	global $wgJsMimeType, $wgStylePath, $wgScriptPath, $smwgUltraPediaScriptPath, $upAbstractSparql;
 	$out->addLink( array(
