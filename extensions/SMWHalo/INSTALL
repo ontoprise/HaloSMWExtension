@@ -2,11 +2,15 @@
 
 Install instructions for the latest version of SMWHalo are also online:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
+ 
+For the full manual of the Halo Extension have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_1.5.0
 
 For further customizing your installation, take a look at:
 
- http://smwforum.ontoprise.com/smwforum/index.php/Customizing_SMW%2B
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
  
 For install instructions and further information on Semantic MediaWiki, please visit
  
@@ -189,7 +193,7 @@ in your LocalSetting.php. For example, one can write
 to allow users to add new help questions to the system. There are various settings
 which are documented here:
 
-http://smwforum.ontoprise.com/smwforum/index.php/Customizing_SMW%2B
+http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
 
 == Notes on Upgrading ==
 
