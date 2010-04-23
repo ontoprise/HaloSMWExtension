@@ -36,7 +36,9 @@ class SMWTripleStoreAdmin extends SpecialPage {
             return;
         }
         $html .= "<div style=\"margin-bottom:10px;\">".wfMsg('smw_tsa_welcome')."</div>";
-        $status = $this->getStatus();
+        global $smwgTripleStoreGraph;
+        TSConnection::getConnector()->connect();
+        $status = TSConnection::getConnector()->getStatus($smwgTripleStoreGraph);
         if ($status === false) {
         	// if no connection could be created
         	$html .= "<div style=\"color:red;font-weight:bold;\">".wfMsg('smw_tsa_couldnotconnect')."</div>".wfMsg('smw_tsa_addtoconfig').
@@ -74,26 +76,6 @@ class SMWTripleStoreAdmin extends SpecialPage {
         $wgOut->addHTML($html);
     }
     
-    /**
-     * Calls the webservice which gives status information about the triple store connector.
-     *
-     * @return String (HTML)
-     */
-    private function getStatus() {
-    	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-        if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-        if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-        $client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-          try {
-                global $smwgTripleStoreGraph;
-                $statusJSON = $client->getTripleStoreStatus($smwgTripleStoreGraph);
-                $json = new Services_JSON();
-                $status = $json->decode($statusJSON);
-
-            } catch(Exception $e) {
-                return false;
-            }
-        return $status;
-    }
+   
 }
 
