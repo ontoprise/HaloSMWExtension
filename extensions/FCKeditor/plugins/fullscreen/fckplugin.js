@@ -40,7 +40,10 @@ FullscreenCommand.prototype = {
 			if (osMenuBar) {
 				osMenuBar.style.display = "";
 			}
-                
+			var osMenuTabs = window.parent.document.getElementById("tabsright");
+            if (osMenuTabs) {
+                osMenuTabs.style.display = "";
+            }    
         }
         else {
             this.fckiframe.style.left = '0px';
@@ -54,7 +57,10 @@ FullscreenCommand.prototype = {
 			if (osMenuBar) {
 				osMenuBar.style.display = "none";
 			}
-            
+            var osMenuTabs = window.parent.document.getElementById("tabsright");
+            if (osMenuTabs) {
+                osMenuTabs.style.display = "none";
+            }
         }
         this.fullscreen = 1 - this.fullscreen;
     }
