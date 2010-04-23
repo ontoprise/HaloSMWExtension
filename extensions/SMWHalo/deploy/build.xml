@@ -165,19 +165,19 @@
 			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
 			<fileset dir="../../SMWHalo/scripts/WikiTextParser" includes="Annotation.js" />
 			<fileset dir="../../SMWHalo/scripts/WikiTextParser" includes="WikiTextParser.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Category.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Container.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_ContextMenu.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Ontology.js" />
 			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_DataTypes.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_DragAndResize.js" />
 			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_GenericToolbarFunctions.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Container.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Marker.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Relation.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Properties.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Refresh.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_DragAndResize.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_ContextMenu.js" />
+			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Category.js" />
 			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Help.js" />
 			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Links.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Marker.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Ontology.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Properties.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Relation.js" />
-			<fileset dir="../../SMWHalo/scripts/SemanticToolbar" includes="SMW_Refresh.js" />
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AdvancedAnnotation.js" />
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_AnnotationHints.js" />
 			<fileset dir="../../SMWHalo/scripts/AdvancedAnnotation" includes="SMW_GardeningHints.js" />
