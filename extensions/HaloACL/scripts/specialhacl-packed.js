@@ -209,7 +209,12 @@ YAHOO.widget.DS_JSArray=YAHOO.util.LocalDataSource;YAHOO.widget.DS_JSFunction=YA
 YAHOO.widget.AutoComplete.prototype.textboxChangeEvent=null;YAHOO.widget.AutoComplete._nIndex=0;YAHOO.widget.AutoComplete.prototype._sName=null;YAHOO.widget.AutoComplete.prototype._elTextbox=null;YAHOO.widget.AutoComplete.prototype._elContainer=null;YAHOO.widget.AutoComplete.prototype._elContent=null;YAHOO.widget.AutoComplete.prototype._elHeader=null;YAHOO.widget.AutoComplete.prototype._elBody=null;YAHOO.widget.AutoComplete.prototype._elFooter=null;YAHOO.widget.AutoComplete.prototype._elShadow=null;YAHOO.widget.AutoComplete.prototype._elIFrame=null;YAHOO.widget.AutoComplete.prototype._bFocused=null;YAHOO.widget.AutoComplete.prototype._oAnim=null;YAHOO.widget.AutoComplete.prototype._bContainerOpen=false;YAHOO.widget.AutoComplete.prototype._bOverContainer=false;YAHOO.widget.AutoComplete.prototype._elList=null;YAHOO.widget.AutoComplete.prototype._nDisplayedItems=0;YAHOO.widget.AutoComplete.prototype._sCurQuery=null;YAHOO.widget.AutoComplete.prototype._sPastSelections="";YAHOO.widget.AutoComplete.prototype._sInitInputValue=null;YAHOO.widget.AutoComplete.prototype._elCurListItem=null;YAHOO.widget.AutoComplete.prototype._bItemSelected=false;YAHOO.widget.AutoComplete.prototype._nKeyCode=null;YAHOO.widget.AutoComplete.prototype._nDelayID=-1;YAHOO.widget.AutoComplete.prototype._nTypeAheadDelayID=-1;YAHOO.widget.AutoComplete.prototype._iFrameSrc="javascript:false;";YAHOO.widget.AutoComplete.prototype._queryInterval=null;YAHOO.widget.AutoComplete.prototype._sLastTextboxValue=null;YAHOO.widget.AutoComplete.prototype._initProps=function(){var B=this.minQueryLength;if(!YAHOO.lang.isNumber(B)){this.minQueryLength=1;}var E=this.maxResultsDisplayed;if(!YAHOO.lang.isNumber(E)||(E<1)){this.maxResultsDisplayed=10;}var F=this.queryDelay;if(!YAHOO.lang.isNumber(F)||(F<0)){this.queryDelay=0.2;}var C=this.typeAheadDelay;if(!YAHOO.lang.isNumber(C)||(C<0)){this.typeAheadDelay=0.2;}var A=this.delimChar;if(YAHOO.lang.isString(A)&&(A.length>0)){this.delimChar=[A];}else{if(!YAHOO.lang.isArray(A)){this.delimChar=null;}}var D=this.animSpeed;if((this.animHoriz||this.animVert)&&YAHOO.util.Anim){if(!YAHOO.lang.isNumber(D)||(D<0)){this.animSpeed=0.3;}if(!this._oAnim){this._oAnim=new YAHOO.util.Anim(this._elContent,{},this.animSpeed);}else{this._oAnim.duration=this.animSpeed;}}if(this.forceSelection&&A){}};YAHOO.widget.AutoComplete.prototype._initContainerHelperEls=function(){if(this.useShadow&&!this._elShadow){var A=document.createElement("div");A.className="yui-ac-shadow";A.style.width=0;A.style.height=0;this._elShadow=this._elContainer.appendChild(A);}if(this.useIFrame&&!this._elIFrame){var B=document.createElement("iframe");B.src=this._iFrameSrc;B.frameBorder=0;B.scrolling="no";B.style.position="absolute";B.style.width=0;B.style.height=0;B.tabIndex=-1;B.style.padding=0;this._elIFrame=this._elContainer.appendChild(B);}};YAHOO.widget.AutoComplete.prototype._initContainerEl=function(){YAHOO.util.Dom.addClass(this._elContainer,"yui-ac-container");if(!this._elContent){var C=document.createElement("div");C.className="yui-ac-content";C.style.display="none";this._elContent=this._elContainer.appendChild(C);var B=document.createElement("div");B.className="yui-ac-hd";B.style.display="none";this._elHeader=this._elContent.appendChild(B);var D=document.createElement("div");D.className="yui-ac-bd";this._elBody=this._elContent.appendChild(D);var A=document.createElement("div");A.className="yui-ac-ft";A.style.display="none";this._elFooter=this._elContent.appendChild(A);}else{}};YAHOO.widget.AutoComplete.prototype._initListEl=function(){var C=this.maxResultsDisplayed;var A=this._elList||document.createElement("ul");var B;while(A.childNodes.length<C){B=document.createElement("li");B.style.display="none";B._nItemIndex=A.childNodes.length;A.appendChild(B);}if(!this._elList){var D=this._elBody;YAHOO.util.Event.purgeElement(D,true);D.innerHTML="";this._elList=D.appendChild(A);}};YAHOO.widget.AutoComplete.prototype._focus=function(){var A=this;setTimeout(function(){try{A._elTextbox.focus();}catch(B){}},0);};YAHOO.widget.AutoComplete.prototype._enableIntervalDetection=function(){var A=this;if(!A._queryInterval&&A.queryInterval){A._queryInterval=setInterval(function(){A._onInterval();},A.queryInterval);}};YAHOO.widget.AutoComplete.prototype._onInterval=function(){var A=this._elTextbox.value;var B=this._sLastTextboxValue;if(A!=B){this._sLastTextboxValue=A;this._sendQuery(A);}};YAHOO.widget.AutoComplete.prototype._clearInterval=function(){if(this._queryInterval){clearInterval(this._queryInterval);this._queryInterval=null;}};YAHOO.widget.AutoComplete.prototype._isIgnoreKey=function(A){if((A==9)||(A==13)||(A==16)||(A==17)||(A>=18&&A<=20)||(A==27)||(A>=33&&A<=35)||(A>=36&&A<=40)||(A>=44&&A<=45)||(A==229)){return true;}return false;};YAHOO.widget.AutoComplete.prototype._sendQuery=function(D){if(this.minQueryLength<0){this._toggleContainer(false);return;}if(this.delimChar){var A=this._extractQuery(D);D=A.query;this._sPastSelections=A.previous;}if((D&&(D.length<this.minQueryLength))||(!D&&this.minQueryLength>0)){if(this._nDelayID!=-1){clearTimeout(this._nDelayID);}this._toggleContainer(false);return;}D=encodeURIComponent(D);this._nDelayID=-1;if(this.dataSource.queryMatchSubset||this.queryMatchSubset){var C=this.getSubsetMatches(D);if(C){this.handleResponse(D,C,{query:D});return;}}if(this.responseStripAfter){this.dataSource.doBeforeParseData=this.preparseRawResponse;}if(this.applyLocalFilter){this.dataSource.doBeforeCallback=this.filterResults;}var B=this.generateRequest(D);this.dataRequestEvent.fire(this,D,B);this.dataSource.sendRequest(B,{success:this.handleResponse,failure:this.handleResponse,scope:this,argument:{query:D}});};YAHOO.widget.AutoComplete.prototype._populateList=function(K,F,C){if(this._nTypeAheadDelayID!=-1){clearTimeout(this._nTypeAheadDelayID);}K=(C&&C.query)?C.query:K;var H=this.doBeforeLoadData(K,F,C);if(H&&!F.error){this.dataReturnEvent.fire(this,K,F.results);if(this._bFocused||(this._bFocused===null)){var M=decodeURIComponent(K);this._sCurQuery=M;
 this._bItemSelected=false;var R=F.results,A=Math.min(R.length,this.maxResultsDisplayed),J=(this.dataSource.responseSchema.fields)?(this.dataSource.responseSchema.fields[0].key||this.dataSource.responseSchema.fields[0]):0;if(A>0){if(!this._elList||(this._elList.childNodes.length<A)){this._initListEl();}this._initContainerHelperEls();var I=this._elList.childNodes;for(var Q=A-1;Q>=0;Q--){var P=I[Q],E=R[Q];if(this.resultTypeList){var B=[];B[0]=(YAHOO.lang.isString(E))?E:E[J]||E[this.key];var L=this.dataSource.responseSchema.fields;if(YAHOO.lang.isArray(L)&&(L.length>1)){for(var N=1,S=L.length;N<S;N++){B[B.length]=E[L[N].key||L[N]];}}else{if(YAHOO.lang.isArray(E)){B=E;}else{if(YAHOO.lang.isString(E)){B=[E];}else{B[1]=E;}}}E=B;}P._sResultMatch=(YAHOO.lang.isString(E))?E:(YAHOO.lang.isArray(E))?E[0]:(E[J]||"");P._oResultData=E;P.innerHTML=this.formatResult(E,M,P._sResultMatch);P.style.display="";}if(A<I.length){var G;for(var O=I.length-1;O>=A;O--){G=I[O];G.style.display="none";}}this._nDisplayedItems=A;this.containerPopulateEvent.fire(this,K,R);if(this.autoHighlight){var D=this._elList.firstChild;this._toggleHighlight(D,"to");this.itemArrowToEvent.fire(this,D);this._typeAhead(D,K);}else{this._toggleHighlight(this._elCurListItem,"from");}H=this.doBeforeExpandContainer(this._elTextbox,this._elContainer,K,R);this._toggleContainer(H);}else{this._toggleContainer(false);}return;}}else{this.dataErrorEvent.fire(this,K);}};YAHOO.widget.AutoComplete.prototype._clearSelection=function(){var A=(this.delimChar)?this._extractQuery(this._elTextbox.value):{previous:"",query:this._elTextbox.value};this._elTextbox.value=A.previous;this.selectionEnforceEvent.fire(this,A.query);};YAHOO.widget.AutoComplete.prototype._textMatchesOption=function(){var A=null;for(var B=0;B<this._nDisplayedItems;B++){var C=this._elList.childNodes[B];var D=(""+C._sResultMatch).toLowerCase();if(D==this._sCurQuery.toLowerCase()){A=C;break;}}return(A);};YAHOO.widget.AutoComplete.prototype._typeAhead=function(B,D){if(!this.typeAhead||(this._nKeyCode==8)){return;}var A=this,C=this._elTextbox;if(C.setSelectionRange||C.createTextRange){this._nTypeAheadDelayID=setTimeout(function(){var F=C.value.length;A._updateValue(B);var G=C.value.length;A._selectText(C,F,G);var E=C.value.substr(F,G);A.typeAheadEvent.fire(A,D,E);},(this.typeAheadDelay*1000));}};YAHOO.widget.AutoComplete.prototype._selectText=function(D,A,B){if(D.setSelectionRange){D.setSelectionRange(A,B);}else{if(D.createTextRange){var C=D.createTextRange();C.moveStart("character",A);C.moveEnd("character",B-D.value.length);C.select();}else{D.select();}}};YAHOO.widget.AutoComplete.prototype._extractQuery=function(H){var C=this.delimChar,F=-1,G,E,B=C.length-1,D;for(;B>=0;B--){G=H.lastIndexOf(C[B]);if(G>F){F=G;}}if(C[B]==" "){for(var A=C.length-1;A>=0;A--){if(H[F-1]==C[A]){F--;break;}}}if(F>-1){E=F+1;while(H.charAt(E)==" "){E+=1;}D=H.substring(0,E);H=H.substr(E);}else{D="";}return{previous:D,query:H};};YAHOO.widget.AutoComplete.prototype._toggleContainerHelpers=function(D){var E=this._elContent.offsetWidth+"px";var B=this._elContent.offsetHeight+"px";if(this.useIFrame&&this._elIFrame){var C=this._elIFrame;if(D){C.style.width=E;C.style.height=B;C.style.padding="";}else{C.style.width=0;C.style.height=0;C.style.padding=0;}}if(this.useShadow&&this._elShadow){var A=this._elShadow;if(D){A.style.width=E;A.style.height=B;}else{A.style.width=0;A.style.height=0;}}};YAHOO.widget.AutoComplete.prototype._toggleContainer=function(I){var D=this._elContainer;if(this.alwaysShowContainer&&this._bContainerOpen){return;}if(!I){this._toggleHighlight(this._elCurListItem,"from");this._nDisplayedItems=0;this._sCurQuery=null;if(this._elContent.style.display=="none"){return;}}var A=this._oAnim;if(A&&A.getEl()&&(this.animHoriz||this.animVert)){if(A.isAnimated()){A.stop(true);}var G=this._elContent.cloneNode(true);D.appendChild(G);G.style.top="-9000px";G.style.width="";G.style.height="";G.style.display="";var F=G.offsetWidth;var C=G.offsetHeight;var B=(this.animHoriz)?0:F;var E=(this.animVert)?0:C;A.attributes=(I)?{width:{to:F},height:{to:C}}:{width:{to:B},height:{to:E}};if(I&&!this._bContainerOpen){this._elContent.style.width=B+"px";this._elContent.style.height=E+"px";}else{this._elContent.style.width=F+"px";this._elContent.style.height=C+"px";}D.removeChild(G);G=null;var H=this;var J=function(){A.onComplete.unsubscribeAll();if(I){H._toggleContainerHelpers(true);H._bContainerOpen=I;H.containerExpandEvent.fire(H);}else{H._elContent.style.display="none";H._bContainerOpen=I;H.containerCollapseEvent.fire(H);}};this._toggleContainerHelpers(false);this._elContent.style.display="";A.onComplete.subscribe(J);A.animate();}else{if(I){this._elContent.style.display="";this._toggleContainerHelpers(true);this._bContainerOpen=I;this.containerExpandEvent.fire(this);}else{this._toggleContainerHelpers(false);this._elContent.style.display="none";this._bContainerOpen=I;this.containerCollapseEvent.fire(this);}}};YAHOO.widget.AutoComplete.prototype._toggleHighlight=function(A,C){if(A){var B=this.highlightClassName;if(this._elCurListItem){YAHOO.util.Dom.removeClass(this._elCurListItem,B);this._elCurListItem=null;}if((C=="to")&&B){YAHOO.util.Dom.addClass(A,B);this._elCurListItem=A;}}};YAHOO.widget.AutoComplete.prototype._togglePrehighlight=function(B,C){if(B==this._elCurListItem){return;}var A=this.prehighlightClassName;if((C=="mouseover")&&A){YAHOO.util.Dom.addClass(B,A);}else{YAHOO.util.Dom.removeClass(B,A);}};YAHOO.widget.AutoComplete.prototype._updateValue=function(C){if(!this.suppressInputUpdate){var F=this._elTextbox;var E=(this.delimChar)?(this.delimChar[0]||this.delimChar):null;var B=C._sResultMatch;var D="";if(E){D=this._sPastSelections;D+=B+E;if(E!=" "){D+=" ";}}else{D=B;}F.value=D;if(F.type=="textarea"){F.scrollTop=F.scrollHeight;}var A=F.value.length;this._selectText(F,A,A);this._elCurListItem=C;}};YAHOO.widget.AutoComplete.prototype._selectItem=function(A){this._bItemSelected=true;this._updateValue(A);this._sPastSelections=this._elTextbox.value;
 this._clearInterval();this.itemSelectEvent.fire(this,A,A._oResultData);this._toggleContainer(false);};YAHOO.widget.AutoComplete.prototype._jumpSelection=function(){if(this._elCurListItem){this._selectItem(this._elCurListItem);}else{this._toggleContainer(false);}};YAHOO.widget.AutoComplete.prototype._moveSelection=function(G){if(this._bContainerOpen){var H=this._elCurListItem,D=-1;if(H){D=H._nItemIndex;}var E=(G==40)?(D+1):(D-1);if(E<-2||E>=this._nDisplayedItems){return;}if(H){this._toggleHighlight(H,"from");this.itemArrowFromEvent.fire(this,H);}if(E==-1){if(this.delimChar){this._elTextbox.value=this._sPastSelections+this._sCurQuery;}else{this._elTextbox.value=this._sCurQuery;}return;}if(E==-2){this._toggleContainer(false);return;}var F=this._elList.childNodes[E],B=this._elContent,C=YAHOO.util.Dom.getStyle(B,"overflow"),I=YAHOO.util.Dom.getStyle(B,"overflowY"),A=((C=="auto")||(C=="scroll")||(I=="auto")||(I=="scroll"));if(A&&(E>-1)&&(E<this._nDisplayedItems)){if(G==40){if((F.offsetTop+F.offsetHeight)>(B.scrollTop+B.offsetHeight)){B.scrollTop=(F.offsetTop+F.offsetHeight)-B.offsetHeight;}else{if((F.offsetTop+F.offsetHeight)<B.scrollTop){B.scrollTop=F.offsetTop;}}}else{if(F.offsetTop<B.scrollTop){this._elContent.scrollTop=F.offsetTop;}else{if(F.offsetTop>(B.scrollTop+B.offsetHeight)){this._elContent.scrollTop=(F.offsetTop+F.offsetHeight)-B.offsetHeight;}}}}this._toggleHighlight(F,"to");this.itemArrowToEvent.fire(this,F);if(this.typeAhead){this._updateValue(F);}}};YAHOO.widget.AutoComplete.prototype._onContainerMouseover=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":if(C.prehighlightClassName){C._togglePrehighlight(D,"mouseover");}else{C._toggleHighlight(D,"to");}C.itemMouseOverEvent.fire(C,D);break;case"div":if(YAHOO.util.Dom.hasClass(D,"yui-ac-container")){C._bOverContainer=true;return;}break;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerMouseout=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":if(C.prehighlightClassName){C._togglePrehighlight(D,"mouseout");}else{C._toggleHighlight(D,"from");}C.itemMouseOutEvent.fire(C,D);break;case"ul":C._toggleHighlight(C._elCurListItem,"to");break;case"div":if(YAHOO.util.Dom.hasClass(D,"yui-ac-container")){C._bOverContainer=false;return;}break;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerClick=function(A,C){var D=YAHOO.util.Event.getTarget(A);var B=D.nodeName.toLowerCase();while(D&&(B!="table")){switch(B){case"body":return;case"li":C._toggleHighlight(D,"to");C._selectItem(D);return;default:break;}D=D.parentNode;if(D){B=D.nodeName.toLowerCase();}}};YAHOO.widget.AutoComplete.prototype._onContainerScroll=function(A,B){B._focus();};YAHOO.widget.AutoComplete.prototype._onContainerResize=function(A,B){B._toggleContainerHelpers(B._bContainerOpen);};YAHOO.widget.AutoComplete.prototype._onTextboxKeyDown=function(A,B){var C=A.keyCode;if(B._nTypeAheadDelayID!=-1){clearTimeout(B._nTypeAheadDelayID);}switch(C){case 9:if(!YAHOO.env.ua.opera&&(navigator.userAgent.toLowerCase().indexOf("mac")==-1)||(YAHOO.env.ua.webkit>420)){if(B._elCurListItem){if(B.delimChar&&(B._nKeyCode!=C)){if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);}}B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 13:if(!YAHOO.env.ua.opera&&(navigator.userAgent.toLowerCase().indexOf("mac")==-1)||(YAHOO.env.ua.webkit>420)){if(B._elCurListItem){if(B._nKeyCode!=C){if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);}}B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 27:B._toggleContainer(false);return;case 39:B._jumpSelection();break;case 38:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);B._moveSelection(C);}break;case 40:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);B._moveSelection(C);}break;default:B._bItemSelected=false;B._toggleHighlight(B._elCurListItem,"from");B.textboxKeyEvent.fire(B,C);break;}if(C===18){B._enableIntervalDetection();}B._nKeyCode=C;};YAHOO.widget.AutoComplete.prototype._onTextboxKeyPress=function(A,B){var C=A.keyCode;if(YAHOO.env.ua.opera||(navigator.userAgent.toLowerCase().indexOf("mac")!=-1)&&(YAHOO.env.ua.webkit<420)){switch(C){case 9:if(B._bContainerOpen){if(B.delimChar){YAHOO.util.Event.stopEvent(A);}if(B._elCurListItem){B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;case 13:if(B._bContainerOpen){YAHOO.util.Event.stopEvent(A);if(B._elCurListItem){B._selectItem(B._elCurListItem);}else{B._toggleContainer(false);}}break;default:break;}}else{if(C==229){B._enableIntervalDetection();}}};YAHOO.widget.AutoComplete.prototype._onTextboxKeyUp=function(A,C){var B=this.value;C._initProps();var D=A.keyCode;if(C._isIgnoreKey(D)){return;}if(C._nDelayID!=-1){clearTimeout(C._nDelayID);}C._nDelayID=setTimeout(function(){C._sendQuery(B);},(C.queryDelay*1000));};YAHOO.widget.AutoComplete.prototype._onTextboxFocus=function(A,B){if(!B._bFocused){B._elTextbox.setAttribute("autocomplete","off");B._bFocused=true;B._sInitInputValue=B._elTextbox.value;B.textboxFocusEvent.fire(B);}};YAHOO.widget.AutoComplete.prototype._onTextboxBlur=function(A,C){if(!C._bOverContainer||(C._nKeyCode==9)){if(!C._bItemSelected){var B=C._textMatchesOption();if(!C._bContainerOpen||(C._bContainerOpen&&(B===null))){if(C.forceSelection){C._clearSelection();}else{C.unmatchedItemSelectEvent.fire(C,C._sCurQuery);}}else{if(C.forceSelection){C._selectItem(B);}}}C._clearInterval();C._bFocused=false;if(C._sInitInputValue!==C._elTextbox.value){C.textboxChangeEvent.fire(C);}C.textboxBlurEvent.fire(C);C._toggleContainer(false);}else{C._focus();}};YAHOO.widget.AutoComplete.prototype._onWindowUnload=function(A,B){if(B&&B._elTextbox&&B.allowBrowserAutocomplete){B._elTextbox.setAttribute("autocomplete","on");}};YAHOO.widget.AutoComplete.prototype.doBeforeSendQuery=function(A){return this.generateRequest(A);
-};YAHOO.widget.AutoComplete.prototype.getListItems=function(){var C=[],B=this._elList.childNodes;for(var A=B.length-1;A>=0;A--){C[A]=B[A];}return C;};YAHOO.widget.AutoComplete._cloneObject=function(D){if(!YAHOO.lang.isValue(D)){return D;}var F={};if(YAHOO.lang.isFunction(D)){F=D;}else{if(YAHOO.lang.isArray(D)){var E=[];for(var C=0,B=D.length;C<B;C++){E[C]=YAHOO.widget.AutoComplete._cloneObject(D[C]);}F=E;}else{if(YAHOO.lang.isObject(D)){for(var A in D){if(YAHOO.lang.hasOwnProperty(D,A)){if(YAHOO.lang.isValue(D[A])&&YAHOO.lang.isObject(D[A])||YAHOO.lang.isArray(D[A])){F[A]=YAHOO.widget.AutoComplete._cloneObject(D[A]);}else{F[A]=D[A];}}}}else{F=D;}}}return F;};YAHOO.register("autocomplete",YAHOO.widget.AutoComplete,{version:"2.7.0",build:"1799"});/*  Copyright 2009, ontoprise GmbH
+};YAHOO.widget.AutoComplete.prototype.getListItems=function(){var C=[],B=this._elList.childNodes;for(var A=B.length-1;A>=0;A--){C[A]=B[A];}return C;};YAHOO.widget.AutoComplete._cloneObject=function(D){if(!YAHOO.lang.isValue(D)){return D;}var F={};if(YAHOO.lang.isFunction(D)){F=D;}else{if(YAHOO.lang.isArray(D)){var E=[];for(var C=0,B=D.length;C<B;C++){E[C]=YAHOO.widget.AutoComplete._cloneObject(D[C]);}F=E;}else{if(YAHOO.lang.isObject(D)){for(var A in D){if(YAHOO.lang.hasOwnProperty(D,A)){if(YAHOO.lang.isValue(D[A])&&YAHOO.lang.isObject(D[A])||YAHOO.lang.isArray(D[A])){F[A]=YAHOO.widget.AutoComplete._cloneObject(D[A]);}else{F[A]=D[A];}}}}else{F=D;}}}return F;};YAHOO.register("autocomplete",YAHOO.widget.AutoComplete,{version:"2.7.0",build:"1799"});/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -872,7 +877,7 @@ YAHOO.haloacl.removeUserFromUserArray = function(panelid,name,deletable){
  *
  */
 YAHOO.haloacl.addUserToUserArray = function(panelid, name){
-    if(name.length > 2){
+//    if(name.length > 2){
 
         if (!YAHOO.haloacl.clickedArrayUsers[panelid]){
             YAHOO.haloacl.clickedArrayUsers[panelid] = new Array();
@@ -888,9 +893,9 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
         if(!alreadyContained){
             YAHOO.haloacl.clickedArrayUsers[panelid].push(name);
         }
-    }else{
-        if(YAHOO.haloacl.debug) console.log("to short username added - skipping");
-    }
+//    }else{
+//        if(YAHOO.haloacl.debug) console.log("to short username added - skipping");
+//    }
 
     if(YAHOO.haloacl.debug) console.log(":::"+YAHOO.haloacl.clickedArrayUsers[panelid]);
 
@@ -904,7 +909,7 @@ YAHOO.haloacl.addUserToUserArray = function(panelid, name){
  *
  */
 YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
-    if(name.length > 2){
+//    if(name.length > 2){
         if(!YAHOO.haloacl.clickedArrayGroups[panelid]){
             YAHOO.haloacl.clickedArrayGroups[panelid] = new Array();
         }
@@ -919,9 +924,9 @@ YAHOO.haloacl.addGroupToGroupArray = function(panelid, name){
         if(!alreadyContained){
             YAHOO.haloacl.clickedArrayGroups[panelid].push(name);
         }
-    }else{
-        if(YAHOO.haloacl.debug) console.log("to short groupname added - skipping");
-    }
+//    }else{
+//        if(YAHOO.haloacl.debug) console.log("to short groupname added - skipping");
+//    }
 };
 
 YAHOO.haloacl.getGroupsArray = function (panelid){
@@ -1214,7 +1219,12 @@ YAHOO.haloacl.discardChanges_users = function(){
         },
         no:function(){}
     },"Ok","Cancel");
-}/*  Copyright 2009, ontoprise GmbH
+}/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -1812,7 +1822,7 @@ YAHOO.haloacl.buildUserTree = function(tree,data) {
     //tmpNode.setDynamicLoad(loadNodeData);
     YAHOO.haloacl.buildNodesFromData(tmpNode,data,tree.panelid);
     if(data.length == 0){
-        new YAHOO.widget.TextNode("no groups available", tmpNode,false);
+        new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tmpNode,false);
     }
 
     tmpNode.expand();
@@ -1851,7 +1861,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
 
             }
             if(!groupsInTree){
-                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+                var tmpNode =  new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
             }
 
             if(tree != null){
@@ -1875,7 +1885,7 @@ YAHOO.haloacl.buildUserTreeRO = function(rwTree,tree) {
                 }
             }
             if(!groupsInTree){
-                var tmpNode =  new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+                var tmpNode =  new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
             }
 
             if(tree != null){
@@ -2011,6 +2021,11 @@ YAHOO.haloacl.getNewTreeview = function(divname,panelid){
     return instance;
 };
 
+
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
 
 /*  Copyright 2009, ontoprise GmbH
  *  This file is part of the HaloACL-Extension.
@@ -3036,7 +3051,7 @@ YAHOO.haloaclrights.buildUserTreeRO = function(tree,rwTree) {
     }
 
     if(!rightsExisting){
-        new YAHOO.widget.TextNode("no groups available", tree.getRoot(),false);
+        new YAHOO.widget.TextNode(gHACLLanguage.getMessage("noGroupsAvailable"), tree.getRoot(),false);
     }
 
     rwTree.draw();
@@ -3195,6 +3210,11 @@ YAHOO.haloaclrights.getNewRightsTreeview = function(divname, panelid, type){
     }
     return instance;
 };
+
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
 
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
@@ -3935,6 +3955,11 @@ YAHOO.haloacl.filterUserDatatableJS = function(classname,filter){
 
 
 
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
 /*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
@@ -4072,6 +4097,11 @@ YAHOO.haloacl.pageDataTable = function(divid) {
     return myPageTable;
 
 };
+
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
 
 /*  Copyright 2009, ontoprise GmbH
  *  This file is part of the HaloACL-Extension.
@@ -4420,17 +4450,22 @@ YAHOO.extend(YAHOO.widget.ManageUserNode, YAHOO.widget.TextNode, {
             zIndex :10
         });
         sb[sb.length] = '</span></td>';
-
-        sb[sb.length] = '<td><span class=""><a id="haloacl_group_edit_'+escape(this.label)+'" class="haloacl_manageuser_list_edit" href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;</a></span></td>';
+        
+        sb[sb.length] = 
+        	'<td>' +
+        		'<span class="">' +
+        			'<a id="haloacl_group_edit_'+escape(this.label)+'" ' +
+        			   'class="haloacl_manageuser_list_edit" ' +
+        			   'href="javascript:YAHOO.haloacl.manageUsers_handleEdit(\''+this.label+'\');">&nbsp;' +
+        			'</a>' +
+        		'</span>' +
+        	'</td>';
         // sb[sb.length] = '<td><span class="haloacl_manageuser_list_delete">delete</span></td>';
         sb[sb.length] = '<td';
         sb[sb.length] = ' id="' + this.getCheckElId() + '"';
         sb[sb.length] = ' class="' + this.getCheckStyle() + '"';
         sb[sb.length] = '>';
         sb[sb.length] = '<div class="ygtvspacer haloacl_manageuser_checkbox"></div></td>';
-
-
-
         
         return sb.join("");                                                                                                                                                
     }  
@@ -4565,7 +4600,7 @@ YAHOO.haloacl.manageUser.buildNodesFromData = function(parentNode,data,panelid){
         if(parentNode.label == gHACLLanguage.getMessage('groups')){
             var tmpNode =  new YAHOO.widget.TextNode(
             {
-                label:"no groups available"
+                label:gHACLLanguage.getMessage("noGroupsAvailable")
             },
             parentNode,
             false);
@@ -4665,27 +4700,37 @@ YAHOO.haloacl.getNewManageUserTree = function(divname,panelid){
 // GROUP ADDING
 YAHOO.haloacl.addingGroupCounter  = 1;
 
-YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
-    var nodes;
+/**
+ * Find a group by its label starting at <parentNode>.
+ * @param Object parentNode
+ * 		The group node where the search for the group starts
+ * @param string query
+ * 		The name of the searched group.
+ * @return
+ * 	<null> if the requested group does not exits or
+ *  the node of the requested group.
+ */
+YAHOO.haloacl.manageUser.findGroup = function(parentNode, query){
+	
+	// Is parentNode the requested node?	
+	if (parentNode.label == query) {
+		return parentNode;
+	}
+	
+	// Check recursively if one of parentNode's children is the requested node
+	var nodes;
     nodes = parentNode.children;
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-        var temp = n.label;
-        if (temp.indexOf(query) >= 0) {
-            YAHOO.haloacl.manageUser_parentGroup = parentNode.label;
-            return parentNode;
+    for (var i=0, l=nodes.length; i<l; ++i) {
+        var child = nodes[i];
+        var requestedNode = YAHOO.haloacl.manageUser.findGroup(child, query);
+        if (requestedNode != null) {
+        	return requestedNode;
         }
-        if(n.hasChildren(false) == true){
-            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
-            if(recfound != null){
-// Bugfix 11320               YAHOO.haloacl.manageUser_parentGroup = n.label;
-// Bugfix 11320               return n;
-                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
-                return recfound;
-            }
-        }
-
     }
+	
+	// Nothing found => return null
+	return null;
+
 }
 
 
@@ -4696,59 +4741,16 @@ YAHOO.haloacl.manageUser.findGroup = function(parentNode,query){
  *
  */
 YAHOO.haloacl.manageUser.addNewSubgroupOnSameLevel = function(tree,groupname){
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroupAndReturnParent(tree,groupname);
-
-    var elementWidth = 399;
-    try{
-        if(nodeToAttachTo.getTextWidth() != 0){
-            elementWidth = nodeToAttachTo.getTextWidth();
-        }
-    }catch(e){
-        
+    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+    if (nodeToAttachTo == null) {
+    	// Group not found
+    	return;
     }
-
-    if(nodeToAttachTo._type != "RootNode"){
-        if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-        var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
-        YAHOO.haloacl.addingGroupCounter++;
-        tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
-
-        tmpNode.setTextWidth(elementWidth);
-        
-        nodeToAttachTo.collapse();
-        nodeToAttachTo.expand();
-        nodeToAttachTo.refresh();
-    }
-
+    // Attach the new node to the parent of the found node.
+	YAHOO.haloacl.manageUser.addSubgroup(tree, nodeToAttachTo.parent);                                     
 };
 
-/**
- *  finds group to append to
- *  @param parentNode (of tree)
- *  @param groupname
- *
- */
 
-YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
-    var nodes;
-    nodes = parentNode.children;
-    for(var i=0, l=nodes.length; i<l; i=i+1) {
-        var n = nodes[i];
-        var temp = n.label;
-        if (temp.indexOf(query) >= 0) {
-            YAHOO.haloacl.manageUser_parentGroup = n.label;
-            return n;
-        }
-        if(n.hasChildren(false) == true){
-            var recfound = YAHOO.haloacl.manageUser.findGroupAndReturnParent(n,query);
-            if(recfound != null){
-                YAHOO.haloacl.manageUser_parentGroup = recfound.label;
-                return recfound;
-            }
-        }
-
-    }
-}
 
 /**
  *  adds subgroup (real subgroup; not same level)
@@ -4757,43 +4759,58 @@ YAHOO.haloacl.manageUser.findGroupAndReturnParent = function(parentNode,query){
  *
  */
 YAHOO.haloacl.manageUser.addNewSubgroup = function(tree,groupname){
-    // removing no-group-available-node if existing
-    try{
-        var nodes = tree.children[0].children;
-        for(var i=0, l=nodes.length; i<l; i=i+1) {
-            var n = nodes[i];
-            var temp = n.label;
-            if (temp.indexOf("no groups available") >= 0) {
-                tree.tree.removeNode(n);
-            }
-        }
-    }catch(e){}
-    // ---------
-
-
-    var nodeToAttachTo = YAHOO.haloacl.manageUser.findGroup(tree,groupname);
-
-    var elementWidth = 399;
-    try{
-        if(nodeToAttachTo.getTextWidth() != 0){
-            elementWidth = nodeToAttachTo.getTextWidth() - 18;
-        }
-    }catch(e){}
-
-    if(YAHOO.haloacl.debug) console.log(nodeToAttachTo);
-    var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup')+YAHOO.haloacl.addingGroupCounter, nodeToAttachTo,false);
-    YAHOO.haloacl.addingGroupCounter++;
-    // turn of dynamic load on that node
-    tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
-
-    tmpNode.setTextWidth(elementWidth);
-    
-    tmpNode.setDynamicLoad();
-    nodeToAttachTo.collapse();
-    nodeToAttachTo.expand();
-// nodeToAttachTo.refresh();
- 
+    var nodeToAttachTo = groupname == "" ? tree.children[0]  // add to root node
+                                         : YAHOO.haloacl.manageUser.findGroup(tree,groupname);
+	YAHOO.haloacl.manageUser.addSubgroup(tree, nodeToAttachTo);                                     
 };
+
+/**
+ * Adds a new sub-group to the <groupNode>.
+ * @param Object tree
+ * 		The tree that contains the hierarchy of groups
+ * 
+ * @param Object groupNode
+ * 		The group node in the group tree that gets a new node.
+ * 
+ */
+YAHOO.haloacl.manageUser.addSubgroup = function(tree, groupNode) {
+	if (tree == undefined || groupNode == undefined) {
+		return;
+	}
+	
+	// removing no-group-available-node if existing
+	try {
+		var nodes = tree.children[0].children;
+		for (var i = 0, l = nodes.length; i < l; i = i + 1) {
+			var n = nodes[i];
+			var temp = n.label;
+			if (temp.indexOf(gHACLLanguage.getMessage("noGroupsAvailable")) >= 0) {
+				tree.tree.removeNode(n);
+			}
+		}
+	} catch (e) {}
+		
+	var elementWidth = 399;
+	try {
+		if (groupNode.getTextWidth() != 0) {
+			elementWidth = groupNode.getTextWidth() - 18;
+		}
+	} catch (e) {}
+	
+	if (YAHOO.haloacl.debug) console.log(groupNode);
+	
+	var tmpNode = new YAHOO.widget.ManageUserNode(gHACLLanguage.getMessage('newSubgroup') 
+	                                              + YAHOO.haloacl.addingGroupCounter, 
+	                                              groupNode, false);
+	YAHOO.haloacl.addingGroupCounter++;
+
+	tmpNode.description = gHACLLanguage.getMessage('clickEditToCreate');
+	tmpNode.setTextWidth(elementWidth);
+	
+	groupNode.collapse();
+	groupNode.expand();
+}
+
 
 /**
  *  applies filter on tree
@@ -4831,7 +4848,106 @@ YAHOO.haloacl.manageUser.applyFilterOnTree = function(tree,filtervalue){
         //tree.setDynamicLoad(loadNodeData);
         tree.draw();
     }
-}/*  Copyright 2009, ontoprise GmbH
+}
+
+YAHOO.haloacl.manageUsers_handleEdit = function (groupname) {
+	YAHOO.haloacl.manageUser_handleGroupSelect(groupname);
+	// Find the parent group
+	var group = YAHOO.haloacl.manageUser.findGroup(YAHOO.haloacl.treeInstancemanageuser_grouplisting.getRoot(), groupname);
+	if (group) {
+		YAHOO.haloacl.manageUser_parentGroup = group.parent.label;
+	}
+	var label = gHACLLanguage.getMessage('haclEditingGroup');
+	$('haloacl_panel_name_manageUserGroupsettings').innerHTML = "[ "+label+":" + groupname + " ]"
+	if (YAHOO.haloacl.debug) console.log("handle edit called for groupname:" + groupname);
+	new Ajax.Request('index.php?action=ajax&rs=haclGetGroupDetails&rsargs[]=' + groupname, {
+		method: 'post',
+		onSuccess: function (o) {
+			var magic = YAHOO.lang.JSON.parse(o.responseText);
+
+			// getting modificationrights
+			YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight', 'haclGetRightsPanel', {
+				panelid: 'manageUserGroupSettingsModificationRight',
+				predefine: 'modification'
+			});
+			// reloading modificationrights
+			//$('right_tabview_manageUserGroupSettingsModificationRight').firstChild.fristChild.firstChild.click();
+
+			if (YAHOO.haloacl.debug) console.log(magic);
+			YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight', 'haclGetManageUserGroupPanel', {
+				panelid: 'manageUserGroupSettingsRight',
+				name: magic['name'],
+				description: magic['description'],
+				users: magic['memberUsers'],
+				groups: magic['memberGroups'],
+				manageUsers: magic['manageUsers'],
+				manageGroups: magic['manageGroups']
+			});
+			$('haloacl_manageUser_editing_container').show();
+			$('ManageACLDetail').scrollTo();
+
+		}
+	});
+
+
+	if (groupname.indexOf("new subgroup") > 0) {
+		null;
+	} else {
+		//                 YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','haclGetRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification'});
+		YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsRight', 'haclGetManageUserGroupPanel', {
+			panelid: 'manageUserGroupSettingsRight'
+		});
+		$('haloacl_manageUser_editing_container').show();
+		$('manageUserGroupSettingsModificationRight').scrollTo();
+
+	}
+}
+
+YAHOO.haloacl.manageUsers_saveGroup = function () {
+	if (YAHOO.haloacl.debug) console.log("modificationxml:");
+	if (typeof YAHOO.haloacl.buildRightPanelXML_manageUserGroupSettingsModificationRight != "function") {
+		// The function is defined after group settings have been saved. 
+		YAHOO.haloacl.notification.createDialogOk("content", "Groups", gHACLLanguage.getMessage('saveGroupSettingsFirst'), {
+			yes: function () {}
+		});
+		return;
+	}
+	var modxml = YAHOO.haloacl.buildRightPanelXML_manageUserGroupSettingsModificationRight(true);
+	if (YAHOO.haloacl.debug) console.log(modxml);
+	var callback = function (result) {
+		if (result.status == '200') {
+			//parse result
+			//YAHOO.lang.JSON.parse(result.responseText);
+			try {
+				genericPanelSetSaved_manageUsersPanel(true);
+				genericPanelSetName_manageUsersPanel("saved");
+				genericPanelSetDescr_manageUsersPanel(result.responseText);
+			} catch (e) {}
+			YAHOO.haloacl.notification.createDialogOk("content", "Groups", gHACLLanguage.getMessage("groupSaved"), {
+				yes: function () {
+					window.location.href = YAHOO.haloacl.specialPageUrl + '?activetab=manageUsers';
+					//YAHOO.haloacl.loadContentToDiv('manageUserGroupSettingsModificationRight','haclGetRightsPanel',{panelid:'manageUserGroupSettingsModificationRight',predefine:'modification',readOnly:'true'});
+				}
+			});
+
+
+		} else {
+			YAHOO.haloacl.notification.createDialogOk("content", "Groups", result.responseText, {
+				yes: function () {}
+			});
+		}
+	};
+	var parentgroup = YAHOO.haloacl.manageUser_parentGroup;
+
+	YAHOO.haloacl.sendXmlToAction(modxml, 'haclSaveGroup', callback, parentgroup);
+
+}
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -5018,6 +5134,11 @@ YAHOO.haloacl.whitelistTable = function(divid,panelid) {
 
 
 
+/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
 /*  Copyright 2009, ontoprise GmbH
  *  This file is part of the HaloACL-Extension.
  *
@@ -5131,7 +5252,12 @@ YAHOO.haloacl.AutoCompleter = function(fieldName, containerName) {
         oDS: myDataSource,
         oAC: oAC
     };
-};/*  Copyright 2009, ontoprise GmbH
+};/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
+/*  Copyright 2009, ontoprise GmbH
 *  This file is part of the HaloACL-Extension.
 *
 *   The HaloACL-Extension is free software; you can redistribute it and/or modify
@@ -5325,7 +5451,12 @@ YAHOO.haloacl.notification.clearAllNotification = function(){
     $$('.haloacl_inline_notification').each(function(item){
        item.innerHTML = "";
     });
-}/*  Copyright 2009, ontoprise GmbH
+}/**
+ * @file
+ * @ingroup HaloACL_UI_Script
+ */
+
+/*  Copyright 2009, ontoprise GmbH
  *  This file is part of the HaloACL-Extension.
  *
  *   The HaloACL-Extension is free software; you can redistribute it and/or modify
