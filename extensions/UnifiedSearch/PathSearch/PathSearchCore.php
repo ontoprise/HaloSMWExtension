@@ -1307,7 +1307,7 @@
  	    if (($type == NULL) || PSC_WikiData::ignoreNs($type))
  			$types = array(NS_MAIN, SMW_NS_PROPERTY, NS_CATEGORY);
  		else
- 			$types = array($type);
+ 			$types = array(intval($type));
  		foreach ($types as $t) {
  			$res = $this->getData4Term($term, $t);
  			if (is_array($res)) {
@@ -1368,25 +1368,25 @@
             return;
         }
 
-		$titleQuery = strtoupper($title->getDbkey());
+		$titleQuery = $title->getDbkey();
 		$db =& wfGetDB(DB_SLAVE);
 		$smw_ids = $db->tableName('smw_ids');
-		
-		// search first for exact match and we would get one result
-		$query = "SELECT smw_id, smw_sortkey, smw_namespace FROM $smw_ids ".
-                 "WHERE $whereNameSpace AND UPPER(smw_title) = ".$db->addQuotes($titleQuery);
-		$res = $db->query($query);
-		if ($row = $db->fetchObject($res)) {
-			$result[] = array($row->smw_id, $row->smw_sortkey, $row->smw_namespace);
-			$db->freeResult($res);
-			return $result;
-		}
-		
-		// if there was no match, use the submited name as partial string and search for several entries matching the search term 
-		$titleQuery = "%".$titleQuery."%";
-		$query = "SELECT smw_id, smw_sortkey, smw_namespace FROM $smw_ids ".
-                 "WHERE $whereNameSpace AND UPPER(smw_title) LIKE ".$db->addQuotes($titleQuery);
-		$res = $db->query($query);
+
+        // search first for exact match and we would get one result
+        $query = "SELECT smw_id, smw_sortkey, smw_namespace FROM $smw_ids ".
+                 "WHERE $whereNameSpace AND smw_title = ".$db->addQuotes($titleQuery);
+        $res = $db->query($query);
+        if ($row = $db->fetchObject($res)) {
+            $result[] = array($row->smw_id, $row->smw_sortkey, $row->smw_namespace);
+            $db->freeResult($res);
+            return $result;
+        }
+
+        // if there was no match, use the submited name as partial string and search for several entries matching the search term 
+        $titleQuery = "%".strtoupper($titleQuery)."%";
+        $query = "SELECT smw_id, smw_sortkey, smw_namespace FROM $smw_ids ".
+                 "WHERE $whereNameSpace AND UPPER(CAST(smw_title as char)) LIKE ".$db->addQuotes($titleQuery);
+        $res = $db->query($query);
 		
 		// return possibly several results
 		if ($db->numRows($res) > 0) {
