@@ -1511,7 +1511,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +	 * Constructor
 +	 */
 +	function SFCreateEmbeddedForm() {
-+		UnlistedSpecialPage::UnlistedSpecialPage('CreateEmbeddedForm');
++       SpecialPage::SpecialPage('CreateEmbeddedForm', '', false, 'default');
 +		wfLoadExtensionMessages('SemanticForms');
 +	}
 +
