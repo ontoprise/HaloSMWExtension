@@ -729,6 +729,9 @@ class HACLStorageSQL {
 	 *
 	 */
 	public function getSDs($types) {
+		global $haclgContLang;
+		$defTemplatePrefix = $haclgContLang->getSDTemplateName();
+		
 		$db =& wfGetDB( DB_SLAVE );
 		$sdt = $db->tableName('halo_acl_security_descriptors');
 		$p = $db->tableName('page');
@@ -739,14 +742,30 @@ class HACLStorageSQL {
 
 		foreach ($types as $type) {
 			switch($type) {
-				case "all": $sql .= " OR 1" ; break;
-				case "page": $sql .= " OR type='page'" ; break;
-				case "category": $sql .= " OR type='category'" ; break;
-				case "property": $sql .= " OR type='property'" ; break;
-				case "namespace": $sql .= " OR type='namespace'" ; break;
-				case "standardacl": $sql .= " OR (type='namespace' OR type='property' OR type='category' OR type='page')" ; break;
-				case "acltemplate": $sql .= " OR (pe_id='0' AND NOT (SUBSTRING($p.page_title FROM 10) IN (SELECT user_name FROM $u)))" ; break;
-				case "defusertemplate": $sql .= " OR (pe_id='0' AND (SUBSTRING($p.page_title FROM 10) IN (SELECT user_name FROM $u)))" ; break;
+				case "all": 
+					$sql .= " OR 1" ; 
+					break;
+				case "page": 
+					$sql .= " OR type='page'" ; 
+					break;
+				case "category": 
+					$sql .= " OR type='category'" ; 
+					break;
+				case "property": 
+					$sql .= " OR type='property'" ; 
+					break;
+				case "namespace": 
+					$sql .= " OR type='namespace'" ; 
+					break;
+				case "standardacl": 
+					$sql .= " OR (type='namespace' OR type='property' OR type='category' OR type='page')" ; 
+					break;
+				case "acltemplate": 
+					$sql .= " OR (pe_id='0' AND NOT ($p.page_title IN (SELECT CONCAT(\"$defTemplatePrefix/\", user_name) FROM $u)))" ; 
+					break;
+				case "defusertemplate": 
+					$sql .= " OR (pe_id='0' AND ($p.page_title IN (SELECT CONCAT(\"$defTemplatePrefix/\", user_name) FROM $u)))" ; 
+					break;
 			}
 		}
 
