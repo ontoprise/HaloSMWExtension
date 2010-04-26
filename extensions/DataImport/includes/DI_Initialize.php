@@ -320,8 +320,15 @@ function smwDITIAddHTMLHeader(&$out){
 function smwDITBAddHTMLHeader(&$out){
 	global $smwgDIScriptPath, $wgRequest, $wgTitle;
 	
+	$ns = "";
+	$text = "";
+	if($wgTitle != null){
+		$ns = $wgTitle->getNamespace();
+		$text = $wgTitle->getText();
+	}
+	
 	$action = $wgRequest->getVal('action');
-	if ($action == 'edit' || $action == 'formedit' || $wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == "FormEdit") {
+	if ($action == 'edit' || $action == 'formedit' || $ns == NS_SPECIAL && $text == "FormEdit") {
 		$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath .  "/scripts/WebServices/semantic-toolbar-container.js\"></script>");
 		//$out->addScript("<script type=\"text/javascript\" src=\"".$smwgDIScriptPath."/scripts/WebServices/use-webservice.js\"></script>");
 	}
