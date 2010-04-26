@@ -1,14 +1,30 @@
-#
-# Installation
-#
+Installation instructions for Deployment Framework
+------------------------------------------------------
 
-1. Unzip smwhalo-deploy-1.1.zip in the MediaWiki root folder.
-2. Goto directory deployment/tools
-3. On Linux: make smwadmin.sh executable (chmod +x smwadmin.sh)
+Install instructions for the latest version of the Deployment Framework are also online:
 
-#
-# HowTo use the deployment framework
-#
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Deployment_Framework_Extension
+ 
+For the full manual of the Deployment Framework have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Deployment_Framework_1.2
+ 
+Requirements: 
+=============
+    MediaWiki 1.13.2 or 1.15.1 - 1.15.3
+    
+    
+Installation:
+=============
+
+(1) Unzip smwhalo-deploy-1.1.zip in the MediaWiki root folder.
+(2) Goto directory deployment/tools
+(3) On Linux: make smwadmin.sh executable (chmod +x smwadmin.sh)
+
+
+
+HowTo use the deployment framework
+==================================
 
 
 smwhalo admin utility v0.1, Ontoprise 2009
@@ -34,9 +50,9 @@ Examples:
         smwadmin -d smw: Removes the package smw.
         smwadmin -l: List all installed/available packages 
 
-#
-# Adding new repositories
-#
+
+Adding new repositories
+=========================
         
 File for repository links:
 /deployment/tools/repositories
