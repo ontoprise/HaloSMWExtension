@@ -63,8 +63,8 @@ Index: extensions/SemanticForms/includes/SF_FormPrinter.inc
 +        // get the upload form name and do not display standard inputs for that
 +        // code was:
 +        // $form_text .= SFFormUtils::formBottom($form_is_disabled);
-+        global $smwgRMFormByNamespace, $smwgRMDisplayStandardInputs;
-+        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] && $smwgRMHideStandardInputs) {
++        global $smwgRMFormByNamespace, $smwgRMHideStandardInputs;
++        if ( $query_template_name != $smwgRMFormByNamespace['RMUpload'] && !$smwgRMHideStandardInputs) {
 +          $form_text .= SFFormUtils::formBottom($form_is_disabled);
 +        }
 +        /*op-patch|BL|2009-06-05|RichMedia|HideStandardInputs|end*/
