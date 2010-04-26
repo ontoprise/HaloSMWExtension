@@ -69,9 +69,12 @@
 				<include name="INSTALL" />
 				<include name="deploy.xml" />
 				<include name="patch_for_MW_1.13.2.txt" />
-				<include name="patch_for_SMW_1.4.2.txt" />
 				<include name="patch_for_MW_1.15.1.txt" />
+				<include name="patch_for_MW_1.15.3.txt" />
+				<include name="patch_for_SMW_1.4.2.txt" />
 				<include name="patch_for_SMW_1.4.3.txt" />
+				<include name="patch_for_SMW_1.5.0.txt" />
+				<include name="patch_for_SF_1.9.txt" />
 			</fileset>
    			<fileset dir="../../../patches/">
 				<include name="patch.php" />
