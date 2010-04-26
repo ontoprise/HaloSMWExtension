@@ -99,15 +99,6 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
  		}
  		list ($form_text, $javascript_text, $data_text, $form_page_title, $generated_page_name) =
  			$sfgFormPrinter->formHTML($form_definition, $form_submitted, $page_is_source, $form_article->getID(), $page_contents, $target_name, $page_name_formula);
-@@ -245,6 +261,8 @@
-    $wgOut->addHTML($text);
-    if (! empty($javascript_text))
-        $wgOut->addHTML('       <script type="text/javascript">' . "\n" . $javascript_text . '</script>' . "\n");
-+   global $sfgScriptPath, $wgJsMimeType;
-+   $wgOut->addHTML("<script type=\"{$wgJsMimeType}\" src=\"{$sfgScriptPath}/libs/collapse.js\"></script>");
- }
- 
- }
 Index: extensions/SemanticForms/specials/SF_UploadWindow.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_UploadWindow.php	(revision 6708)
