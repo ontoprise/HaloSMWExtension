@@ -1,5 +1,14 @@
 Installation instructions for HaloACL extension v1.1.1
----------------------------------------------------------------
+------------------------------------------------------
+
+Install instructions for the latest version of HaloACL are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_HaloACL_1.0
+ 
+For the full manual of the HaloACL have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:HaloAccessControlList
+
 
 Requirements: 
 =============
@@ -7,21 +16,51 @@ Requirements:
     MediaWiki 1.13.2 or 1.15.1 - 1.15.3
     SMW 1.5.0 (optional)
     Semantic Forms 1.9 (optional)
+    Deployment Framework (optional, but recommended for a fast and easy installation)
 
 Installation:
 =============
 
-The easiest way to install HaloACL is using the deployment framework:
+How to install with deployment framework:
 
- smwadmin -i haloacl
+(1) Extract the HaloACL ZIP archive
+(2) Download the Deployment Framework
+(3) Extract the Deplyoment Framework zip-file into the MediaWiki roots folder
+(4) Open the SMWAdministration tool
+(5) Type 'smwadmin -i haloacl'
+    This installs the extension and patches MediaWiki and SMW.
 
-This installs the extension and patches MediaWiki and SMW.
+How to install manually:
 
-For a manual installation, you have to copy the folder HaloACL into 
-the extensions folder of MediaWiki. HaloACL will then already work, if you 
-activate it in LocalSetting.php (see below). 
+(1) Copy the folder 'HaloACL' into the extensions folder of MediaWiki. 
+(2) Activate the HaloACL by adding the following lines to LocalSettings.php: 
+	include_once('extensions/HaloACL/includes/HACL_Initialize.php');
+	enableHaloACL(); 
+(3) Open a command prompt
+(4) Go to the directory of HaloACL
+(5) Choose the command depending on your MediaWiki installation to patch MediaWiki:
+		- MediaWiki 1.13.2
+		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.13.2.txt
+		- MediaWiki 1.15.1 and 1.15.2 
+		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.1.txt
+		- MediaWiki 1.15.3 
+		   php patch.php -d <mediawiki-dir> -p patch_for_MW_1.15.3.txt
+	
+(6) Choose the command depending on your Semantic MediaWiki installation to patch SMW 
+	(skip this step if you don't have SMW installed):
+		- SMW 1.4.2 
+		   php patch.php -d <smw-dir> -p patch_for_SMW_1.4.2.txt
+		- SMW 1.4.3
+		   php patch.php -d <smw-dir> -p patch_for_SMW_1.4.3.txt
+		- SMW 1.5.0 
+		   php patch.php -d <smw-dir> -p patch_for_SMW_1.5.0.txt
+	
+(7) Execute the following command to patch Semantic Forms (skip this step if you don't 
+	have the Semantic Forms extension installed):
+		php patch.php -d <SemanticForms-dir> -p patch_for_SF_1.9.txt
+		
+	
 
-However, you can apply two patches:
 * patch_for_MW_1.13.2.txt or patch_for_MW_1.15.1.txt or patch_for_MW_1.15.3.txt: 
 	This patch for MediaWiki removes all links to protected pages from 
 	the rendered articles and listings. If a link can not be removed, it is 
