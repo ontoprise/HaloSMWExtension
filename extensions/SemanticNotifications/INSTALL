@@ -1,24 +1,51 @@
-Installation instructions for Semantic Notification extension v1.0
----------------------------------------------------------------
+Installation instructions for Semantic Notification extension v1.1
+------------------------------------------------------------------
+
+Install instructions for the latest version of HaloACL are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_the_Semantic_Notifications_Extension_1.0
+ 
+For the full manual of the HaloACL have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Semantic_Notifications_1.1
 
 Requirements: 
 =============
 
-    MediaWiki 1.13 or higher
-    SMW 1.4.2
-    SMWHalo 1.4.3
-    Semantic Gardening 1.0
+    MediaWiki 1.13.2 or 1.15.1 - 1.15.3
+    SMW 1.4.2 or SMW 1.5.0
+    SMWHalo 1.4.3 or SMWHalo 1.5.0
+    Semantic Gardening 1.0 or higher
 
 Installation:
 =============
 
-Copy the folder "SemanticNotifications" into the folder "extensions" of your 
-MediaWiki installation.
-Then add to your LocalSettings.php after you initialized SMWHalo and 
-Semantic Gardening:
+   (1) Open the file LocalSettings.php
+   (2) Add the following lines to be the LocalSettings.php:
+       include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
+       enableSemanticNotifications(); 
 
-include_once('extensions/SemanticNotifications/includes/SN_Initialize.php');
-enableSemanticNotifications(); 
+   (3) Make sure you the include statement for the gardening extension
+       include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
+       appears before, otherwise you might get the error
+
+      "The extension 'Semantic Notifications' requires the extension 'Semantic Gardening'. 
+      Please read 'extensions/SemanticNotifications/INSTALL' for further information."
+   
+   (4) Change the default settings of SN_Initialize.php before enableSemanticNotifications() is called.
+
+       Now the implementation files are located in extensions/SemanticNotifications. The files are only included, 
+       if semantic notifications are enabled.
+   
+   (5) The Semantic Notification extension is enabled in LocalSettings.php. Set the variable 
+       $smwgEnableSemanticNotifications to true.
+       
+   (6) Call the enableSMWHalo():
+       $smwgEnableSemanticNotifications = true;
+
+
+Settings for sending e-mails:
+=============================
 
 Specify your email settings for sending the notification mails:
 
@@ -31,7 +58,6 @@ $wgSMTP = array(
  'password' => "your password"
 );
 
-Options:
-========
+
 
 
