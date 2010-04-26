@@ -1,51 +1,70 @@
 Installation instructions for SMWUserManual Extension
 -----------------------------------------------------
 
+Install instructions for the latest version of User Manual Extension are also online:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_User_Manual_Extension
+ 
+For the full manual of the User Manual Extension have a look at:
+
+ http://smwforum.ontoprise.com/smwforum/index.php/Help:User_Manual_Extension_1.0.1
+
+
 Requirements: 
 =============
 
     MediaWiki 1.15.x
-    SMWHalo 1.4.6
+    SMWHalo 1.4.6 or higher
     ParserFunctions (optional)
 
 Installation:
 =============
 
-After unpacking the zip file in the extension directory
-you should have the following structure:
+   (1) Unpack the zip file in the extension directory: /mediawiki_dir/extensions
 
-/mediawiki_dir/extensions/SMWUserManual/
-  +--includes
-  +--languages
-  +--maintenance
-  +--scripts
-  | +--languages
-  +--skins
-  
-Edit your LocalSettings.php and add the following:
-require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php");
-enableSMWUserManual();
+	You should have the following structure:
 
-This enables the SMWUserManual in your wiki and you will see a question
-mark on the right tab section (Ontoskin 3) or a help link below the tab
-section on the right side (all other skins).
+      /mediawiki_dir/extensions/SMWUserManual/
 
-Before being able to see any help articles, you must import these. Go into
-the maintenance directory of this extensions. There must be two files:
- UME_setup.php
- cshPages.xml
- 
-Execute now the following command. This will read the articles from the
-XML file and import them into your wiki:
- php UME_setup.php -i --file=cshPages.xml
+       /includes
+       /languages
+       /maintenance
+       /scripts
+           /languages
+      /skins
 
-You can also download the lastest version from the help articles from the SMW+
-forum. Then run simply the following command:
- php UME_setup.php
+   (2) Edit your LocalSettings.php and add the following: 
+   	   require_once("$IP/extensions/SMWUserManual/includes/SMW_UserManual.php"); enableSMWUserManual(); 
 
-If you have not installed the ParserFunctions extension [1] modify the page
-Template:Copyright_of_article that makes use of parser functions that come with
-this extension.
+	This enables the SMWUserManual in your wiki and you will see a question mark on the right tab section 
+	(Ontoskin 3) or a help link below the tab section on the right side (all other skins). 
+
+
+
+Importing help articles:
+========================
+
+Before you are able to see any help articles, you have to import these.
+
+   (1) Go into the maintenance directory of this extensions. There are two files:
+          - SMW_setup.php
+          - cshPages.xml 
+   (2) Execute now the following command. This will read the articles from the XML file and import 
+   	   them into your wiki: 
+   	   
+   	   php SMW_setup.php -i --file=cshPages.xml
+
+	After the import, you can find the articles in Namespace:UserManual. All articles got the properties 
+	"UME discourse state" and "UME link". 
+	
+	You can also download the latest version from the help articles 
+	from the SMW+ forum. Then run simply the following command:
+
+	php UME_setup.php
+
+If you do not have the Parser Functions extension installed, modify the page Template:Copyright_of_article 
+that makes use of parser functions [1] that come with this extension. 
+
 
 [1] http://www.mediawiki.org/wiki/Help:Extension:ParserFunctions
 
