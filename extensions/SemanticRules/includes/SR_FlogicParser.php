@@ -19,65 +19,74 @@
 /**
  * @file
  * @ingroup SemanticRules
- * 
+ *
  * @author Kai Kühn
  */
 
 
 if (!defined('MEDIAWIKI')) die();
-
+global $smwgIP, $smwgHaloIP;
+require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
 class SMWFlogicParser {
 
 	static private $_client;
-	static private $_clientport = "8080";
-	static private $_clientwsdl = "/flogic?wsdl";
 
-    static private $instance = NULL;
+	static private $instance = NULL;
 
 	// implicitly set localhost if no messagebroker was defined.
-    static public function getInstance() {
-    	global $wgServer, $wgScript,$smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
+	static public function getInstance() {
+		global $wgServer, $wgScript, $smwgWebserviceEndpoint, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgWebserviceProtocol;
 
-        if (self::$instance === NULL) {
-            self::$instance = new self;
+		if (self::$instance === NULL) {
+			self::$instance = new self;
+			if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+				list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+				$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+				self::$_client = new RESTWebserviceConnector($host, $port, "ruleparsing", $credentials);
+			} else {
+				if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
+				self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=srf_ws_getWSDL&rsargs[]=get_flogic", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+			}
+		}
+		return self::$instance;
+	}
 
-            if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-            self::$_client = new SoapClient("$wgServer$wgScript?action=ajax&rs=srf_ws_getWSDL&rsargs[]=get_flogic", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-        }
-        return self::$instance;
-    }
+	private function __construct(){}
+	private function __clone(){}
 
-    private function __construct(){}
-    private function __clone(){}
-
-    /**
-     * Parses an FLogic rule and returns the corresponding RuleObject.
-     *
-     * @param string $ruleid
-     * 		The id of the rule. If it is <null>, $flogicrule must contain the
-     * 		id in for of: RULE #id:flogic text
-     * @param string $flogicrule
-     * 		The text of the rule.
-     * @return SMWRuleObject
-     * 		The rule object contains the parsed literals of the rule.
-     */
+	/**
+	 * Parses an FLogic rule and returns the corresponding RuleObject.
+	 *
+	 * @param string $ruleid
+	 * 		The id of the rule. If it is <null>, $flogicrule must contain the
+	 * 		id in for of: RULE #id:flogic text
+	 * @param string $flogicrule
+	 * 		The text of the rule.
+	 * @return SMWRuleObject
+	 * 		The rule object contains the parsed literals of the rule.
+	 */
 	static public function parseFloRule($ruleid, $flogicrule) {
 		$_flogicstring = $flogicrule;
 
 		// initFlogic returns the sessionId
 		$parseflogicinput=array();
-//		$parseflogicinput['flogicString'] =
+		//		$parseflogicinput['flogicString'] =
 		$parseflogicinput =
-			(($ruleid == null)
-				? ''
-				: "RULE #" . $ruleid . ": ")
-			. $_flogicstring;
-		
-		
-			
-		$_parsedstring = self::$_client->parseRule($parseflogicinput);
-		
-        $_ruleObject = new SMWRuleObject();
+		(($ruleid == null)
+		? ''
+		: "RULE #" . $ruleid . ": ")
+		. $_flogicstring;
+
+		global $smwgWebserviceProtocol;
+		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+			$payload = "<method><name>parseRule</name><ruletext><![CDATA[".$parseflogicinput."]]></ruletext></method>";
+			list($header, $status, $res) = self::$_client->send($payload);
+			$_parsedstring = $res;
+		} else {
+			$_parsedstring = self::$_client->parseRule($parseflogicinput);
+		}
+
+		$_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);
 		return $_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring));
 	}

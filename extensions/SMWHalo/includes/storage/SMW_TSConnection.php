@@ -98,7 +98,7 @@ class TSConnectorMessageBrokerAndSOAPWebservice extends TSConnectorSOAPWebservic
 		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
 		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
 		$this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-		
+
 	}
 
 
@@ -225,7 +225,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		global $smwgTripleStoreGraph;
 
 		$request = "<method>";
-		$request .= "<name>getTripleStoreStatus</text>";
+		$request .= "<name>getTripleStoreStatus</name>";
 		$request .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
 		$request .= "</method>";
 
@@ -233,9 +233,14 @@ class TSConnectorRESTWebservice extends TSConnection {
 		if ($status != 200) {
 			throw new Exception(strip_tags($result), $status);
 		}
-		$json = new Services_JSON();
-		$status = $json->decode($result);
-		return $status;
+		$xmlDoc = simplexml_load_string($result);
+		$resultMap = array();
+		$resultMap['tscversion'] = (string) $xmlDoc->tscversion;
+		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
+		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
+		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
+
+		return $resultMap;
 
 	}
 }
@@ -291,16 +296,14 @@ class TSConnectorSOAPWebservice extends TSConnection {
 	}
 
 	public function getStatus($graph) {
-
-		try {
-
-			$statusJSON = $this->manageClient->getTripleStoreStatus($graph);
-			$json = new Services_JSON();
-			$status = $json->decode($statusJSON);
-
-		} catch(Exception $e) {
-			return false;
-		}
-		return $status;
+        // getTripleStoreStatus throws a SOAP exception if necessary
+		$result = $this->manageClient->getTripleStoreStatus($graph);
+		$xmlDoc = simplexml_load_string($result);
+		$resultMap = array();
+		$resultMap['tscversion'] = (string) $xmlDoc->tscversion;
+		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
+		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
+		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
+		return $resultMap;
 	}
 }
