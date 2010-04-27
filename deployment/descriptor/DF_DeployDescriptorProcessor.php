@@ -274,6 +274,7 @@ class DeployDescriptionProcessor {
 		if ($pos === false) {
 			foreach($this->dd_parser->getSuccessors() as $extensionID) {
 				$pos = strpos($this->localSettingsContent, "/*start-$extensionID*/");
+				if ($pos === false) continue;
 				$maximumInsert = $pos < $maximumInsert ? $pos : $maximumInsert;
 			}
 			$ext_found = false;
