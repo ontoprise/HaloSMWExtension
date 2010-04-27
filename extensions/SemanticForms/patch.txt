@@ -1722,7 +1722,7 @@ Index: extensions/SemanticForms/languages/SF_Messages.php
 +       /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
 +       'sf_several_forms_notice'             => 'There is more than one form defined for this page. You can select another form to edit the page.',
 +       'sf_several_forms_label'              => 'Select form: ',
-+       /*op-patch|SR|2010-01-15|selection when several default forms exist|start*/
++       /*op-patch|SR|2010-01-15|selection when several default forms exist|end*/
  	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
  	'specialpages-group-sf_group'        => 'Semantic Forms',
  	'createproperty'                     => 'Create a property',
