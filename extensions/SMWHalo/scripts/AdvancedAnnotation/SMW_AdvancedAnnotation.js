@@ -1522,7 +1522,8 @@ AdvancedAnnotation.prototype = {
 	 */
 	saveAnnotations: function(exit) {
 		this.om.editArticle(wgPageName, this.wikiTextParser.getWikiText(),
-							gLanguage.getMessage('AH_SAVE_COMMENT'), false);
+							gLanguage.getMessage('AH_SAVE_COMMENT'), false, 
+							'annotate');
 		smwhgSaveAnnotations.savingAnnotations(exit);
 	},
 	

@@ -174,14 +174,19 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
  * Replaces the complete content of an article in the wiki. If the article
  * does not exist, it will be created.
  * 
- * @param string title 
+ * @param string $title 
  * 			Title of the article.
  * @param string $user
  * 			The name of the user
- * @param string content 
+ * @param string $content 
  * 			New content of the article.
- * @param string editComment
+ * @param string $editComment
  * 			This text describes why the article has been edited. 
+ * @param string $action
+ * 			The way how the article is edited. This is important for checking the
+ * 			access rights. Possible values are: edit (default), annotate, 
+ * 			formedit, wysiwyg
+ * 
  * 
  * @return string Comma separated list:
  * 			bool success
@@ -194,7 +199,7 @@ function smwf_om_CreateArticle($title, $user, $content, $optionalText, $creation
  * 				Title of the (new) article
  *
  */
-function smwf_om_EditArticle($title, $user, $content, $editComment) {
+function smwf_om_EditArticle($title, $user, $content, $editComment, $action = 'edit') {
 
 	global $smwgContLang, $smwgHaloContLang;
 
@@ -204,7 +209,7 @@ function smwf_om_EditArticle($title, $user, $content, $editComment) {
 	$title = strip_tags($title);
 	if ($title == '') return "false";
 
-	if (smwf_om_userCan($title, 'edit') === "false") {
+	if (smwf_om_userCan($title, $action) === "false") {
 		return "false,denied,$title";
 	}	
 	

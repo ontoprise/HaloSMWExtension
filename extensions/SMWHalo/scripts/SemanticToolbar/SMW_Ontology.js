@@ -225,11 +225,18 @@ OntologyModifier.prototype = {
 	 * 			This text describes why the article has been edited. 
 	 * @param bool redirect If <true>, the system asks the user, if he he wants 
 	 * 			to be redirected to the new article after its creation.
+	 * @param string action
+	 * 			The way how the article is edited. This is important for checking the
+	 * 			access rights. Possible values are: edit (default), annotate, 
+	 * 			formedit, wysiwyg
 	 */
-	editArticle : function(title, content, editComment, redirect) {
+	editArticle : function(title, content, editComment, redirect, action) {
+		if (typeof action == "undefined") {
+			action = "edit";
+		}
 		this.redirect = redirect;
 		sajax_do_call('smwf_om_EditArticle', 
-		              [title, wgUserName, content, editComment], 
+		              [title, wgUserName, content, editComment, action], 
 		              this.ajaxResponseEditArticle.bind(this));
 	},
 

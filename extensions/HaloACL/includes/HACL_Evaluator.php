@@ -104,7 +104,8 @@ class HACLEvaluator {
 
 		self::startLog($title, $user, $action);
 		
-//		echo $title->getFullText().":".$action."\n";
+//		echo $title->getFullText().":".$action." (Request:".$wgRequest->getText('action').")\n";
+
 		if ($title == null) {
 			$result = true;
 			self::finishLog("Title is <null>.", $result, true);
@@ -246,6 +247,16 @@ class HACLEvaluator {
 			
 			$r = self::hasRight($articleID, HACLSecurityDescriptor::PET_PAGE,
 			                    $userID, $actionID);
+			                    
+			if (!$r && $submit && sameTitle) {
+				// The article is submitted but the right 'edit' is not granted 
+				// => check if the article has one of the rights 'formedit',
+				//    'wysiwyg' or 'annotate'
+				$r = self::checkAllowSubmit($articleID, HACLSecurityDescriptor::PET_PAGE,
+				                            $userID, $actionID);
+				
+			}
+			                    
 			if ($r) {
 				haclfRestoreTitlePatch($etc);
 				$result = true;
@@ -257,6 +268,14 @@ class HACLEvaluator {
 		// check namespace rights
 		list($r, $sd) = self::checkNamespaceRight($title, $userID, $actionID);
 		$hasSD = $hasSD ? true : $sd;
+		if (!$r && hasSD && $submit && sameTitle) {
+			// The article is submitted but the right 'edit' is not granted 
+			// => check if the article has one of the rights 'formedit',
+			//    'wysiwyg' or 'annotate'
+			$r = self::checkAllowSubmit($title->getNamespace(), 
+										HACLSecurityDescriptor::PET_NAMESPACE,
+			                            $userID, $actionID);
+		}
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
 			$result = true;
@@ -267,6 +286,15 @@ class HACLEvaluator {
 		// check category rights
 		list($r, $sd) = self::hasCategoryRight($title->getFullText(), $userID, $actionID);
 		$hasSD = $hasSD ? true : $sd;
+		if (!$r && hasSD && $submit && sameTitle) {
+			// The article is submitted but the right 'edit' is not granted 
+			// => check if the article has one of the rights 'formedit',
+			//    'wysiwyg' or 'annotate'
+			$r = self::checkAllowSubmit($title->getFullText(), 
+										HACLSecurityDescriptor::PET_CATEGORY,
+			                            $userID, $actionID);
+		}
+		
 		if ($sd && $r) {
 			haclfRestoreTitlePatch($etc);
 			$result = true;
@@ -1005,6 +1033,47 @@ class HACLEvaluator {
 	}
 	
 	/**
+	 * This function checks if an article may be submitted even if the 'edit' right
+	 * is not given. This is the case when 'formedit', 'wysiwyg' or 'annotate'
+	 * are granted. 
+	 *
+	 * @param int $articleID
+	 * 		ID of the protected object (which is the namespace index if the type
+	 * 		is PET_NAMESPACE)
+	 * @param string $peType
+	 * 		The type of the protection to check for the title. One of
+	 * 		HACLSecurityDescriptor::PET_PAGE
+	 * 		HACLSecurityDescriptor::PET_CATEGORY
+	 * 		HACLSecurityDescriptor::PET_NAMESPACE
+	 * 		HACLSecurityDescriptor::PET_PROPERTY
+	 * @param int $userID
+	 * 		ID of the user who wants to perform an action
+	 * @param int $actionID
+	 * 		Must be HACLRight::EDIT, otherwise 'false' is returned.
+	 * @return bool
+	 * 		<true>, if the user has the right to perform the action
+	 * 		<false>, otherwise
+	 * 	 */
+	private static function checkAllowSubmit($articleID, $peType, $userID, $actionID) {
+		if ($actionID != HACLRight::EDIT) {
+			return false;
+		}
+		
+		// Check if one of the edit rights is granted for articles
+		if ($peType == HACLSecurityDescriptor::PET_PAGE ||
+		    $peType == HACLSecurityDescriptor::PET_NAMESPACE) {
+			$r = self::hasRight($articleID, $peType, $userID, HACLRight::FORMEDIT) ||
+				 self::hasRight($articleID, $peType, $userID, HACLRight::ANNOTATE) ||
+				 self::hasRight($articleID, $peType, $userID, HACLRight::WYSIWYG);
+		} else if ($peType == HACLSecurityDescriptor::PET_CATEGORY) {
+			$r = self::hasCategoryRight($articleID, $userID, HACLRight::FORMEDIT) ||
+				 self::hasCategoryRight($articleID, $userID, HACLRight::ANNOTATE) ||
+				 self::hasCategoryRight($articleID, $userID, HACLRight::WYSIWYG);
+		}
+		return $r;
+	}
+	
+	/**
 	 * This function checks if the values of the property $property have changed
 	 * in the comparison of the semantic database ($oldValues) and the wiki text
 	 * that is about to be stored ($newValues). 
@@ -1077,6 +1146,8 @@ class HACLEvaluator {
 		
 		self::$mLogEnabled = $haclgEvaluatorLog 
 		                     && $wgRequest->getVal('hacllog', 'false') == 'true';
+
+//self::$mLogEnabled = true;		                     
 		
 		if (!self::$mLogEnabled) {
 			// Logging is disabled
@@ -1086,9 +1157,11 @@ class HACLEvaluator {
 		
 		self::$mLog .= "HaloACL Evaluation Log\n";
 		self::$mLog .= "======================\n\n";
-		self::$mLog .= "Article: ". (is_null($title) ? "null" : $title->getFullText()). "\n"; 
+		self::$mLog .= "Article: ". (is_null($title) ? "null" 
+		                                             : $title->getFullText()). 
+		                                               " (Request: ".$wgRequest->getText('title').")\n"; 
 		self::$mLog .= "User: ". $user->getName(). "\n";
-		self::$mLog .= "Action: $action\n"; 
+		self::$mLog .= "Action: $action (Request: ".$wgRequest->getText('action').")\n"; 
 
 	}
 	
