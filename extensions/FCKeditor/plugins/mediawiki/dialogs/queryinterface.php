@@ -66,8 +66,13 @@ else {
 	// add the FCK specific Javascript above the body tag
 	$newPage= str_replace('<body', jsData()."\n<body", $page);
 
+	// QI content font is too big in IE
+	$ie_style = (isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], "MSIE 8."))
+        ? ' style="font-size: 70%;"'
+        : '';
+
 	// suround QI code by div with id = divQiGui for managing the tabs
-	$newPage= preg_replace('/<body[^>]*>/', '$0<div id="divQiGui">', $newPage);
+	$newPage= preg_replace('/<body[^>]*>/', '$0<div id="divQiGui"'.$ie_style.'>', $newPage);
 	$newPage= str_replace('</body>', "</div>\n</body>", $newPage);
 
 	// add div container for raw query source code at the end

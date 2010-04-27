@@ -76,7 +76,8 @@ if (typeof window.parent.AdvancedAnnotation != "undefined") {
     tbButton.IconPath = FCKConfig.PluginsPath + 'mediawiki/images/tb_icon_ask.gif' ;
     FCKToolbarItems.RegisterItem( 'SMW_QueryInterface', tbButton );
     var outerHeight = window.outerHeight == undefined ? 850 : window.outerHeight;
-    FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'Query Interface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, outerHeight * 0.7 ) ) ;
+    outerHeight = outerHeight * ((FCKBrowserInfo.IsIE) ? 0.8 : 0.7);
+    FCKCommands.RegisterCommand( 'SMW_QueryInterface', new FCKDialogCommand( 'SMW_QueryInterface', 'Query Interface', FCKConfig.PluginsPath + 'mediawiki/dialogs/queryinterface.php', 1000, outerHeight ) ) ;
 }
 else {
     var tbButton = new FCKToolbarButton( 'SMW_QueryInterface', ' ', ' ');
