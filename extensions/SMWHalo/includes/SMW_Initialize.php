@@ -1,11 +1,11 @@
 <?php
 /**
- * 
+ *
  * Created on 13.09.2007
  *
  * @defgroup SMWHalo Halo extension
- * @defgroup SMWHaloSpecials Halo special pages 
- * 
+ * @defgroup SMWHaloSpecials Halo special pages
+ *
  * Author: kai
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -59,7 +59,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store;
-	
+
 	$smwgBaseStore = $store;
 	$smwgSemanticDataClass = $tripleStore !== NULL ? 'SMWFullSemanticData' : 'SMWSemanticData';
 	$wgHooks['MagicWordMagicWords'][]          = 'wfAddCustomVariable';
@@ -67,10 +67,10 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 	$wgHooks['LanguageGetMagic'][]             = 'wfAddCustomVariableLang';
 	$wgHooks['LanguageGetMagic'][]             = 'smwfAddHaloMagicWords';
 	$wgHooks['ParserGetVariableValueSwitch'][] = 'wfGetCustomVariable';
-	
+
 	global $smgJSLibs;
 	$smgJSLibs[] = 'prototype';
-	
+
 }
 
 /**
@@ -108,11 +108,11 @@ function smwgHaloSetupExtension() {
 
 	global $smwgResultFormats;
 
-	
+
 	$smwgResultFormats['exceltable'] = 'SMWExcelResultPrinter';
 	$smwgResultFormats['aggregation'] = 'SMWAggregationResultPrinter';
 	$smwgResultFormats['csv'] = 'SMWHaloCsvResultPrinter';
-	
+
 	$smwgResultFormats['ul_table'] = 'SMWProvenanceResultPrinter';
 
 
@@ -134,10 +134,10 @@ function smwgHaloSetupExtension() {
 
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
-	
+
 	//Iclude the Geo Coordinates data type, which was taken from the Semantic Maps extension
 	require_once( $smwgHaloIP . '/includes/DV_GEOCoordinates/SM_GeoCoords.php' );
-	
+
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
@@ -155,7 +155,7 @@ function smwgHaloSetupExtension() {
 
 
 	global $wgRequest;
-	
+
 	// register AddHTMLHeader functions for special pages
 	// to include javascript and css files (only on special page requests).
 	$title = Title::newFromText($wgRequest->getVal('title'));
@@ -180,7 +180,7 @@ function smwgHaloSetupExtension() {
 	$wgHooks['UnknownAction'][] = 'smwfAnnotateAction';
 	// Allow annotating by default for all
 	$wgGroupPermissions['*']['annotate'] = true;
-	
+
 	// autocompletion option registration
 	$wgHooks['UserToggles'][] = 'smwfAutoCompletionToggles';
 	$wgHooks['UserSaveSettings'][] = 'smwfSetUserDefinedCookies';
@@ -288,10 +288,10 @@ function smwgHaloSetupExtension() {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-			
+				
 			$wgAutoloadClasses['SMWAskTSCPage'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_AskTSC.php';
-            $wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
-            $wgSpecialPageGroups['AskTSC'] = 'smwplus_group';
+			$wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
+			$wgSpecialPageGroups['AskTSC'] = 'smwplus_group';
 		}
 
 
@@ -314,9 +314,9 @@ function smwgHaloSetupExtension() {
 
 	// Register Annotate-Tab
 	$wgHooks['SkinTemplateContentActions'][] = 'smwfAnnotateTab';
-    // new right for annotation mode
-    global $wgAvailableRights;
-    $wgAvailableRights[] = 'annotate';
+	// new right for annotation mode
+	global $wgAvailableRights;
+	$wgAvailableRights[] = 'annotate';
 
 
 	// Register Credits
@@ -357,7 +357,7 @@ function smwfRegisterAutocompletionIcons(& $namespaceMappings) {
 	$namespaceMappings[NS_HELP]= "/extensions/SMWHalo/skins/help.gif";
 	$namespaceMappings[NS_IMAGE]= "/extensions/SMWHalo/skins/image.gif";
 	$namespaceMappings[NS_USER]= "/extensions/SMWHalo/skins/user.gif";
-	
+
 	// special value 500 for enums
 	$namespaceMappings[500]= "/extensions/SMWHalo/skins/enum.gif";
 
@@ -419,7 +419,7 @@ function smwfHaloInitDatatypes() {
 	$wgAutoloadClasses['SMWMathematicalEquationTypeHandler'] = $smwgHaloIP . '/includes/SMW_DV_MathEquation.php';
 	SMWDataValueFactory::registerDatatype('_meq', 'SMWMathematicalEquationTypeHandler',
 	$smwgHaloContLang->getHaloDatatype('smw_hdt_mathematical_equation'));
-	
+
 	return true;
 }
 
@@ -514,8 +514,8 @@ function smwfHaloShowListPage(&$title, &$article){
 		global $smwgTripleStoreQuadMode;
 		if (!isset($smwgTripleStoreQuadMode) || $smwgTripleStoreQuadMode === false) return true;
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_TS_PropertyPage.php');
-        $article = new SMWTSPropertyPage($title);
-    } 
+		$article = new SMWTSPropertyPage($title);
+	}
 	return true;
 }
 
@@ -635,19 +635,19 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "edit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "formedit");
-        $jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "submit");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "submit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
 	$jsm->addCSSIf($wgStylePath .'/'.$skin->getSkinName().'/lightbulb.css');
-	
+
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "annotate");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "edit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "formedit");
-        $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "submit");
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "submit");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Annotation/annotation.css', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData'));
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/derivedFactsTab.css');
-	
+
 	//    $jsm->addCSSIf($smwgHaloScriptPath . '/skins/Glossary/glossary.css');
 
 	// serialize the css
@@ -664,10 +664,10 @@ function smwfHaloAddHTMLHeader(&$out) {
 	//XXX: don't use deploy version for the query interface since there are issue with MS ExcelBridge
 	global $wgRequest,$wgContLang;
 	$pagetitle = $wgRequest->getVal("title");
-    $spec_ns = $wgContLang->getNsText(NS_SPECIAL);
-    $isQIF = ($pagetitle == "$spec_ns:QueryInterface");
-    // end of hack
-    
+	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
+	$isQIF = ($pagetitle == "$spec_ns:QueryInterface");
+	// end of hack
+
 	if (!isset($smwgDeployVersion) || $smwgDeployVersion === false || $isQIF) {
 
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
@@ -699,7 +699,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Framework.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 
 
@@ -707,7 +707,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/GeneralGUI/STB_Divcontainer.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 
 
@@ -717,7 +717,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Links.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/WikiTextParser/Annotation.js', "formedit");
@@ -732,87 +732,87 @@ function smwfHaloAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Ontology.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DataTypes.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_GenericToolbarFunctions.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Container.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Marker.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Category.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AnnotationHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_GardeningHints.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_SaveAnnotations.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Relation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Properties.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_Refresh.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_DragAndResize.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMW_ContextMenu.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/SemanticToolbar/SMWEditInterface.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/OntologyBrowser/obSemToolContribution.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
 
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "edit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "annotate");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "formedit");
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "submit");
-        $jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
-                
+		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/AdvancedAnnotation/SMW_AdvancedAnnotation.js', "all", NS_SPECIAL, array(NS_SPECIAL.':AddData', NS_SPECIAL.':EditData', NS_SPECIAL.':FormEdit'));
+
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/SMW_DerivedFactsTab.js');
-                
+
 	} else {
 		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js');
 		//$jsm->setScriptID($smwgHaloScriptPath .  '/scripts/prototype.js', 'Prototype_script_inclusion');
@@ -1190,7 +1190,7 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/Query.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/QIHelper.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":QueryInterface");
-		
+
 	} else {
 
 		//$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/prototype.js', "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1198,7 +1198,32 @@ function smwfQIAddHTMLHeader(&$out){
 		$jsm->addScriptIf($smwgHaloScriptPath . '/scripts/deployGeneralTools.js', "all", -1, NS_SPECIAL.":QueryInterface");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/QueryInterface/deployQueryInterface.js', "all", -1, NS_SPECIAL.":QueryInterface");
 
-		
+
+	}
+    
+	// add scripts required by query printers
+	global $smwgResultFormats, $wgOut;
+	if (isset($smwgResultFormats)) {
+		$resultFormatsUnique = array_unique($smwgResultFormats);
+
+		foreach($resultFormatsUnique as $format => $formatclass) {
+
+			try {
+				$rc = new ReflectionClass($formatclass);
+				if ($rc->hasMethod("getScripts")) {
+					$qp = new $formatclass($format, false);
+					$scriptsToLoad = $qp->getScripts();
+					foreach($scriptsToLoad as $script) $wgOut->addScript($script);
+				}
+				if ($rc->hasMethod("getStylesheets")) {
+					$qp = new $formatclass($format, false);
+					$styleSheetsToLoad = $qp->getStylesheets();
+					foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
+				}
+			} catch(ReflectionException $e) {
+				// igore
+			}
+		}
 	}
 	$jsm->addCSSIf($smwgScriptPath .  '/skins/SMW_custom.css', "all", -1, NS_SPECIAL.":QueryInterface");
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/QueryInterface/treeview.css', "all", -1, NS_SPECIAL.":QueryInterface");
@@ -1226,15 +1251,15 @@ function smwfAutoCompletionToggles(&$extraToggles) {
 
 function smwfSetUserDefinedCookies(& $user) {
 	global $wgScriptPath;
-	
-    $autoTriggering = $user->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
-    $namespaceMappings = array();
-    wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
-    $serializedMappings = "";
-    $first = true;
-    foreach($namespaceMappings as $nsIndex => $imgPath) {
-        $serializedMappings .= ",$nsIndex=$imgPath";
-    }
+
+	$autoTriggering = $user->getOption( "autotriggering" ) == 1 ? "autotriggering=auto" : "autotriggering=manual";
+	$namespaceMappings = array();
+	wfRunHooks('smwhACNamespaceMappings', array (&$namespaceMappings));
+	$serializedMappings = "";
+	$first = true;
+	foreach($namespaceMappings as $nsIndex => $imgPath) {
+		$serializedMappings .= ",$nsIndex=$imgPath";
+	}
 	setcookie("AC_options", $autoTriggering.$serializedMappings, 0, "$wgScriptPath/"); // cookie gets invalid at session-end.
 	return true;
 }
@@ -1388,9 +1413,9 @@ function wfGetCustomVariable(&$parser,&$cache,&$index,&$ret) {
 			$ret = $GLOBALS['wgContLang']->getNsText(NS_USER).":".$GLOBALS['wgUser']->mName;
 			break;
 		case MAG_CURRENTUSER:
-            $parser->disableCache(); # Mark this content as uncacheable
-            $ret = $GLOBALS['wgUser']->mName;
-            break;	
+			$parser->disableCache(); # Mark this content as uncacheable
+			$ret = $GLOBALS['wgUser']->mName;
+			break;
 		case MAG_NOW:
 			$parser->disableCache(); # Mark this content as uncacheable
 			$ret = date("Y-m-d\\TH:i:s");
@@ -1461,7 +1486,7 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 /**
  * Callback function for the hook 'smwShowFactbox'. It is called when SMW creates
  * the factbox for an article.
- * This method replaces the whole factbox with a tabbed version that contains 
+ * This method replaces the whole factbox with a tabbed version that contains
  * the original factbox in one tab and the derived facts in another.
  *
  * @param string $text
@@ -1473,65 +1498,65 @@ function smwfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
  */
 function smwfAddDerivedFacts(& $text, $semdata) {
 	global $smwgHaloScriptPath, $wgContLang;
-	
-    wfLoadExtensionMessages('SemanticMediaWiki');
-    SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
-    $rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getWikiValue(), 'rdflink');
 
-    $browselink = SMWInfolink::newBrowsingLink($semdata->getSubject()->getText(), $semdata->getSubject()->getWikiValue(), 'swmfactboxheadbrowse');
-    $fbText = '<div class="smwfact">' .
+	wfLoadExtensionMessages('SemanticMediaWiki');
+	SMWOutputs::requireHeadItem(SMW_HEADER_STYLE);
+	$rdflink = SMWInfolink::newInternalLink(wfMsgForContent('smw_viewasrdf'), $wgContLang->getNsText(NS_SPECIAL) . ':ExportRDF/' . $semdata->getSubject()->getWikiValue(), 'rdflink');
+
+	$browselink = SMWInfolink::newBrowsingLink($semdata->getSubject()->getText(), $semdata->getSubject()->getWikiValue(), 'swmfactboxheadbrowse');
+	$fbText = '<div class="smwfact">' .
 						'<span class="smwfactboxhead">' . wfMsgForContent('smw_factbox_head', $browselink->getWikiText() ) . '</span>' .
 					'<span class="smwrdflink">' . $rdflink->getWikiText() . '</span>' .
 					'<table class="smwfacttable">' . "\n";
-    foreach($semdata->getProperties() as $property) {
-    	if (!$property->isShown()) { // showing this is not desired, hide
-    		continue;
-    	} elseif ($property->isUserDefined()) { // user defined property
-    		$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
-    		/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
-    		$fbText .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
-    	} elseif ($property->isVisible()) { // predefined property
-    		$fbText .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
-    	} else { // predefined, internal property
-    		continue;
-    	}
+	foreach($semdata->getProperties() as $property) {
+		if (!$property->isShown()) { // showing this is not desired, hide
+			continue;
+		} elseif ($property->isUserDefined()) { // user defined property
+			$property->setCaption(preg_replace('/[ ]/u','&nbsp;',$property->getWikiValue(),2));
+			/// NOTE: the preg_replace is a slight hack to ensure that the left column does not get too narrow
+			$fbText .= '<tr><td class="smwpropname">' . $property->getLongWikiText(true) . '</td><td class="smwprops">';
+		} elseif ($property->isVisible()) { // predefined property
+			$fbText .= '<tr><td class="smwspecname">' . $property->getLongWikiText(true) . '</td><td class="smwspecs">';
+		} else { // predefined, internal property
+			continue;
+		}
 
-    	$propvalues = $semdata->getPropertyValues($property);
-    	$l = count($propvalues);
-    	$i=0;
-    	foreach ($propvalues as $propvalue) {
-    		if ($i!=0) {
-    			if ($i>$l-2) {
-    				$fbText .= wfMsgForContent('smw_finallistconjunct') . ' ';
-    			} else {
-    				$fbText .= ', ';
-    			}
-    		}
-    		$i+=1;
-    		$fbText .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
-    	}
-    	$fbText .= '</td></tr>';
-    }
-    $fbText .= '</table></div>';
+		$propvalues = $semdata->getPropertyValues($property);
+		$l = count($propvalues);
+		$i=0;
+		foreach ($propvalues as $propvalue) {
+			if ($i!=0) {
+				if ($i>$l-2) {
+					$fbText .= wfMsgForContent('smw_finallistconjunct') . ' ';
+				} else {
+					$fbText .= ', ';
+				}
+			}
+			$i+=1;
+			$fbText .= $propvalue->getLongWikiText(true) . $propvalue->getInfolinkText(SMW_OUTPUT_WIKI);
+		}
+		$fbText .= '</td></tr>';
+	}
+	$fbText .= '</table></div>';
 
 
-	$text = 
+	$text =
 '<div id="smw_dft_rendered_boxcontent"> <br />'.
 	'<table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">'.
 		'<tr>'.
 			'<td id="dftTab1" class="dftTabActive">'.
-				str_replace(' ', '&nbsp;', wfMsg('smw_df_static_tab')).
+	str_replace(' ', '&nbsp;', wfMsg('smw_df_static_tab')).
 			'</td>'.
 			'<td class="dftTabSpacer">&nbsp;</td>'.
 			'<td id="dftTab2" class="dftTabInactive">'.
-				str_replace(' ', '&nbsp;', wfMsg('smw_df_derived_tab')).
+	str_replace(' ', '&nbsp;', wfMsg('smw_df_derived_tab')).
 			'</td>'.
 			'<td class="dftTabSpacer" width="100%"></td>'.
 		'</tr>'.
 		'<tr>'.
 			'<td colspan="4" style="width:100%; height:100%" class="dftTabCont">'.
 				'<div id="dftTab1Content" >'.
-					$fbText.
+	$fbText.
 				'</div>'.
 				'<div id="dftTab2Content" style="display:none">'.
 					'<div id="dftTab2ContentInnerDiv">'.wfMsg('smw_df_loading_df').'</div>'.
@@ -1540,7 +1565,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 		'</tr>'.
 	'</table>'.
 '</div>';
-	
+
 	return false;
 }
 

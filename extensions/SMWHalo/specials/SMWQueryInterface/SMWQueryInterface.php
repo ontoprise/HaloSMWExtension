@@ -33,30 +33,6 @@ class SMWQueryInterface extends SpecialPage {
 
 		$wgOut->setPageTitle(wfMsg('smw_queryinterface'));
 
-		global $smwgResultFormats;
-		if (isset($smwgResultFormats)) {
-			$resultFormatsUnique = array_unique($smwgResultFormats);
-			
-			foreach($resultFormatsUnique as $format => $formatclass) {
-				
-				 try {
-				 $rc = new ReflectionClass($formatclass);
-				 if ($rc->hasMethod("getScripts")) {
-					 $qp = new $formatclass($format, false);
-					 $scriptsToLoad = $qp->getScripts();
-				    foreach($scriptsToLoad as $script) $wgOut->addScript($script);
-				 }
-				  if ($rc->hasMethod("getStylesheets")) {
-                     $qp = new $formatclass($format, false);
-                     $styleSheetsToLoad = $qp->getStylesheets();
-                    foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
-                 }
-				 } catch(ReflectionException $e) {
-				 	// igore
-				 }
-			}
-		}
-		
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
