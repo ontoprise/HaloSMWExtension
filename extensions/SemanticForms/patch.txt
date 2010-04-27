@@ -1704,3 +1704,20 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +	$wgOut->addHTML($text);
 +}
 +/*op-patch|DH|2009-09-17|SF|Embedded forms|end*/
+Index: extensions/SemanticForms/languages/SF_Messages.php
+===================================================================
+--- extensions/SemanticForms/languages/SF_Messages.php	(revision 6321)
++++ extensions/SemanticForms/languages/SF_Messages.php	(working copy)
+@@ -15,6 +15,12 @@
+  */
+ $messages['en'] = array(
+ 	// user messages
++        /*op-patch|DH|2009-09-17|Embedded Forms|start*/
++        'createembeddedform'                 => 'Create an embedded form',
++        /*op-patch|DH|2009-09-17|Embedded Forms|end*/
++        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|start*/
++        'sf_fck_NORICHEDITOR'                => 'The WYSIWYG editor cannot be used for this article. You can either edit the form fields now or load the article into the standard wikitext editor (open here: $1).',
++        /*op-patch|SR|2009-09-21|magic word __NORICHEDITOR__ was not checked by SF|end*/
+ 	'semanticforms-desc'                 => 'Forms for adding and editing semantic data',
+ 	'specialpages-group-sf_group'        => 'Semantic Forms',
+ 	'createproperty'                     => 'Create a property',
