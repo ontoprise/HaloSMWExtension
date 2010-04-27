@@ -887,7 +887,7 @@ createVariableSelector: function(id, option, select) {
 	for (var i = 1; i <= this.variables + 1; ++i) {
 		var variable = 'X'+i;
 		if (select == variable) {
-			variable = 'selected="selected">' + variable;
+			variable = 'selected="selected" value="'+variable+'">' + variable;
 		} else {
 			variable = '>' + variable;
 		}
@@ -895,8 +895,8 @@ createVariableSelector: function(id, option, select) {
 	}
 	if (option != undefined && option != null) {
 		html += (select == option) 
-					? '<option selected="selected">' + option + '</option>'
-					: '<option>' + option + '</option>';
+					? '<option selected="selected" value="'+option+'">' + option + '</option>'
+					: '<option value="'+option+'">' + option + '</option>';
 	}	
 	html +=		
 		'</select>';
