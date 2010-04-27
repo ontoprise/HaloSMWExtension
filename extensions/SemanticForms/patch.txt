@@ -46,7 +46,7 @@ Index: extensions/SemanticForms/includes/SF_EmbeddedFormClasses.inc
 +		$namespace_labels = $wgContLang->getNamespaces();
 +		$template_namespace = $namespace_labels[NS_TEMPLATE];
 +		$title = Title::makeTitle( SF_NS_FORM, $this->form_name );
-+		$ad = SpecialPage::getPage('AddPage');
++		$ad = SpecialPage::getPage('FormEdit');
 +		$add_data_url = SFLinkUtils::titleURLString($ad->getTitle()) . "/" . $title->getPartialURL();
 +		$form_description = wfMsgForContent('sf_form_docu', $this->form_name, $add_data_url);
 +		$form_input = "{{#forminput:" . $this->form_name . "}}\n";
@@ -1492,7 +1492,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 ===================================================================
 --- extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
 +++ extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php	(revision 0)
-@@ -0,0 +1,211 @@
+@@ -0,0 +1,212 @@
 +<?php
 +/**
 + * A special page holding a form that allows the user to create a data-entry
@@ -1622,6 +1622,7 @@ Index: extensions/SemanticForms/specials/SF_CreateEmbeddedForm.php
 +	# if submit button was pressed, create the form definitions file, then redirect
 +	$save_page = $wgRequest->getCheck('wpSave');
 +	$preview_page = $wgRequest->getCheck('wpPreview');
++   $form_name_error_str = "";
 +	if ($save_page || $preview_page) {
 +		# validate form name
 +		if ($form->form_name == "") {
