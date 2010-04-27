@@ -131,7 +131,7 @@ YAHOO.haloacl.toolbar_handleSaveClick = function(element){
 
     //var textbox = $('wpTextbox1');
     var tps = $('haloacl_toolbar_pagestate');
-    var state  = tps[tps.selectedIndex].text;
+    var state  = tps[tps.selectedIndex].value;
 
     if (state == "protected"){
         var tpw = $('haloacl_template_protectedwith');
