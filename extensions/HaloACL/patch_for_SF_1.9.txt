@@ -39,7 +39,7 @@ Index: extensions/SemanticForms/specials/SF_FormEdit.php
 +			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|start*/
 +			//Original code: $text .= $form_text;
 +			$html = '';
-+			wfRunHooks('sfHTMLBeforeForm', array(&$page_title, &$html));
++			wfRunHooks('sfHTMLBeforeForm', array(&$target_name, &$html));
 +			$text .= $html.$form_text;
 +			/*op-patch|TS|2009-09-18|HaloACL|Semantic protection|end*/
  		}
