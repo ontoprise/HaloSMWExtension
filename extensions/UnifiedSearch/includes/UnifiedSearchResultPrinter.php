@@ -2,7 +2,7 @@
 /**
  * @file
  * @ingroup UnifiedSearch
- * 
+ *
  * Prints a set of LuceneResults and a WikiTitleResults
  *
  * @author: Kai K�hn
@@ -99,7 +99,7 @@ class UnifiedSearchResultPrinter {
 			$html .= '<a class="us_search_result_link" href="'.$e->getTitle()->getFullURL().'">'.$e->getTitle()->getText().'</a>';
 			$nsName = $e->getTitle()->getNamespace() == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($e->getTitle()->getNamespace());
 			$html .= '<img alt="'.$nsName.'" title="'.$nsName.'" src="'.self::getImageURI(self::getImageFromNamespace($e)).'"/>';
-				
+
 			if (count($categories) > 0) {
 				$html .= '<div class="category">'.wfMsg('us_isincat').': ';
 				for($i = 0, $n = count($categories); $i < $n; $i++) {
@@ -165,6 +165,12 @@ class UnifiedSearchResultPrinter {
 		if (defined("SF_NS_FORM")) {
 			if ($result->getTitle()->getNamespace() == SF_NS_FORM) {
 				$image = "smw_plus_form_icon_16x16.png";
+			}
+		}
+		// SMWUserManual is installed
+		if (defined("SMW_NS_USER_MANUAL")) {
+			switch($result->getTitle()->getNamespace()) {
+				case SMW_NS_USER_MANUAL: { $image = "smw_plus_help_icon_16x16.png"; break; }
 			}
 		}
 		return $image;
