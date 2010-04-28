@@ -288,7 +288,7 @@ function smwgHaloSetupExtension() {
 			$wgAutoloadClasses['SMWTripleStoreAdmin'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_TripleStoreAdmin.php';
 			$wgSpecialPages['TSA'] = array('SMWTripleStoreAdmin');
 			$wgSpecialPageGroups['TSA'] = 'smwplus_group';
-				
+
 			$wgAutoloadClasses['SMWAskTSCPage'] = $smwgHaloIP . '/specials/SMWTripleStoreAdmin/SMW_AskTSC.php';
 			$wgSpecialPages['AskTSC'] = array('SMWAskTSCPage');
 			$wgSpecialPageGroups['AskTSC'] = 'smwplus_group';
@@ -1200,28 +1200,32 @@ function smwfQIAddHTMLHeader(&$out){
 
 
 	}
-    
+
 	// add scripts required by query printers
-	global $smwgResultFormats, $wgOut;
-	if (isset($smwgResultFormats)) {
-		$resultFormatsUnique = array_unique($smwgResultFormats);
+	$canonicalName = SpecialPage::resolveAlias( $wgTitle->getDBkey() );
+	if ($canonicalName == 'QueryInterface') {
 
-		foreach($resultFormatsUnique as $format => $formatclass) {
+		global $smwgResultFormats, $wgOut;
+		if (isset($smwgResultFormats)) {
+			$resultFormatsUnique = array_unique($smwgResultFormats);
 
-			try {
-				$rc = new ReflectionClass($formatclass);
-				if ($rc->hasMethod("getScripts")) {
-					$qp = new $formatclass($format, false);
-					$scriptsToLoad = $qp->getScripts();
-					foreach($scriptsToLoad as $script) $wgOut->addScript($script);
+			foreach($resultFormatsUnique as $format => $formatclass) {
+
+				try {
+					$rc = new ReflectionClass($formatclass);
+					if ($rc->hasMethod("getScripts")) {
+						$qp = new $formatclass($format, false);
+						$scriptsToLoad = $qp->getScripts();
+						foreach($scriptsToLoad as $script) $wgOut->addScript($script);
+					}
+					if ($rc->hasMethod("getStylesheets")) {
+						$qp = new $formatclass($format, false);
+						$styleSheetsToLoad = $qp->getStylesheets();
+						foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
+					}
+				} catch(ReflectionException $e) {
+					// igore
 				}
-				if ($rc->hasMethod("getStylesheets")) {
-					$qp = new $formatclass($format, false);
-					$styleSheetsToLoad = $qp->getStylesheets();
-					foreach($styleSheetsToLoad as $css) $wgOut->addLink($css);
-				}
-			} catch(ReflectionException $e) {
-				// igore
 			}
 		}
 	}
