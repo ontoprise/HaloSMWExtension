@@ -4,61 +4,45 @@
  * @ingroup SMWHaloWebservices
  * @author: Kai
  */
+
 /**
  * Returns query results in the SPARQL XML format.
- *
+ *  
+ * Serves as entry point for the wiki SOAP server as well as for answering 
+ * queries via ajax interface.
+ * 
  * @param string $queryString in ASK or SPARQL syntax
  * @return XML string
  */
 function query($rawQuery, $format = "xml") {
 	$mediaWikiLocation = dirname(__FILE__) . '/../../..';
 
-	//TODO: import a triple store config file
+	global $smwgHaloIP;
+    require_once $smwgHaloIP.'/includes/storage/SMW_RESTWebserviceConnector.php';
 	require_once "$mediaWikiLocation/SemanticMediaWiki/includes/SMW_QueryProcessor.php";
 	require_once "$mediaWikiLocation/SMWHalo/includes/queryprinters/SMW_QP_XML.php";
 
 	global $smwgWebserviceEndpoint;
 	$eqi = new ExternalQueryInterface();
-	// use heuristic to optimize parsing order
-	if (stripos($rawQuery, "SELECT") !== false) {
-		// parse possible SPARQL query text before ASK
-		$smwgRAPPath = $mediaWikiLocation . "/SemanticMediaWiki/libs/rdfapi-php";
-		$Rdfapi_includes= $smwgRAPPath . '/api/';
-		define("RDFAPI_INCLUDE_DIR", $Rdfapi_includes); // not sure if the constant is needed within RAP
-		include(RDFAPI_INCLUDE_DIR . "RdfAPI.php");
-		include( RDFAPI_INCLUDE_DIR . 'vocabulary/RDF_C.php');
-		include( RDFAPI_INCLUDE_DIR . 'vocabulary/OWL_C.php');
-		include( RDFAPI_INCLUDE_DIR . 'vocabulary/RDFS_C.php');
-		include( RDFAPI_INCLUDE_DIR . 'sparql/SparqlParser.php');
 
-		$parser = new SparqlParser();
-		try {
-						
-			
-			if (isset($smwgWebserviceEndpoint)) {
-				return $eqi->answerSPARQL($rawQuery);
-			} else {
-				// try to convert to ASK
-				try {
-                    $query = $parser->parse($rawQuery);
-					$ask = $eqi->transformSPARQLToASK($query);
-					return $eqi->answerASK($ask);
-				} catch(Exception $e) {
-					return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
-				}
-			}
-		} catch(SparqlParserException $e) {
-			$query = SMWQueryProcessor::createQuery($rawQuery, false, "xml");
-			if (count($query->getErrors()) > 0) {
-				// probably SPARQL query, so return SPARQL parser error
-				return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$e->getMessage());
-			} else {
-				return $eqi->answerASK($rawQuery, $format);
-			}
+	// source == null means default (SMW reasoner)
+	$params = $eqi->parseParameters($rawQuery);
+	$source = array_key_exists("source", $params) ? $params['source'] : NULL;
+	$query = $params['query'];
+
+	// check if source other than default or smw
+	if (!is_null($source) && $source != 'smw') {
+		// TSC
+		// if webservice endpoint is set, sent to TSC
+		if (isset($smwgWebserviceEndpoint)) {
+			return $eqi->answerSPARQL($query, $eqi->serializeParams($params));
+		} else {
+			// fallback, redirect to SMW
+			return $eqi->answerASK($rawQuery, $format);
 		}
 			
 	} else {
-		// the other way round
+		// SMW
 
 		// truncate any parameters or printouts, before parsing
 		$paramPos = strpos($rawQuery, "|");
@@ -67,28 +51,11 @@ function query($rawQuery, $format = "xml") {
 		} else {
 			$queryString = substr($rawQuery, 0, $paramPos);
 		}
-			
+
+		// answer query
 		$query = SMWQueryProcessor::createQuery($queryString, array(), false);
 		if (count($query->getErrors()) > 0) {
-			$smwgRAPPath = $mediaWikiLocation . "/SemanticMediaWiki/libs/rdfapi-php";
-			$Rdfapi_includes= $smwgRAPPath . '/api/';
-			define("RDFAPI_INCLUDE_DIR", $Rdfapi_includes); // not sure if the constant is needed within RAP
-			include(RDFAPI_INCLUDE_DIR . "RdfAPI.php");
-			include( RDFAPI_INCLUDE_DIR . 'vocabulary/RDF_C.php');
-			include( RDFAPI_INCLUDE_DIR . 'vocabulary/OWL_C.php');
-			include( RDFAPI_INCLUDE_DIR . 'vocabulary/RDFS_C.php');
-			include( RDFAPI_INCLUDE_DIR . 'sparql/SparqlParser.php');
-
-			$parser = new SparqlParser();
-			try {
-				$query = $parser->parse($rawQuery);
-				return $eqi->answerSPARQL($rawQuery);
-			} catch(SparqlParserException $e) {
-				$errors = implode(",",$query->getErrors());
-				// probably ASK query, so return SMWProcessor error
-				return new SoapFault("error_mf_query","Malformed Query","SMWPlus",$errors);
-			}
-
+			throw new Exception($query->getErrors());
 		} else {
 			return $eqi->answerASK($rawQuery, $format);
 		}
@@ -98,38 +65,95 @@ function query($rawQuery, $format = "xml") {
 class ExternalQueryInterface {
 
 	/**
+	 * Extracts query a parameters. Can handle SPARQL queries
+	 *
+	 * @param $rawQuery
+	 * @return map of parameters with 'query' as special key for the query.
+	 */
+	function parseParameters($rawQuery) {
+		$fragments = explode("|", $rawQuery);
+		$params = array();
+		$j=0;
+
+		// make sure that || is not split (it may be the logical OR in SPARQL)
+		for($i=0; $i < count($fragments);$i++) {
+			if ($fragments[$i] == '') {
+				$params[$j-1] .= "||".$fragments[$i+1];
+				$i++;
+			} else {
+				$j++;
+				$params[$j-1] = $fragments[$i];
+
+			}
+		}
+		$map = array();
+		// always assume that query is the first parameter
+		$map['query'] = array_shift($params);
+
+		// put all other parameters in a map
+		foreach($params as $p) {
+			$fragments = explode("|", $p); // again to split double ||
+			foreach($fragments as $f) {
+				if (trim($f) == '') continue;
+				$keyValue = explode("=", $f);
+				if (count($keyValue) == 1) $map[$keyValue[0]] = true;
+				if (count($keyValue) == 2) $map[$keyValue[0]] = $keyValue[1];
+			}
+		}
+		return $map;
+	}
+    
+	/**
+	 * Serializes parameters. Ignores query.
+	 * 
+	 * @param $paramMap
+	 * return string. 
+	 */
+	function serializeParams($paramMap) {
+		$result = "";
+		foreach($paramMap as $key => $value) {
+			if ($key == 'query') continue;
+			if ($value === true) {
+				$result .= "|$key";
+			} else {
+				$result .= "|$key=$value";
+			}
+		}
+		return strlen($result) > 0 ? substr($result, 1) : "";
+	}
+	/**
 	 * Answers a ASK query.
 	 *
 	 * @param string $rawQuery
 	 * @return SPARQL XML string
 	 */
 	function answerASK($rawquery, $format = "xml") {
-        
+
 		// add desired query printer (SPARQL-XML)
-         if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
-            SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter'; // overwrite SMW printer
-          
-        } else { // registration since SMW 1.3.*
-            global $smwgResultFormats;
-            $smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
-        }
-        
-        // add query as first rawparam
-        $paramPos = strpos($rawquery, "|");
-        $rawparams[] = $paramPos === false ? $rawquery : substr($rawquery, 0, $paramPos);
-        if ($paramPos !== false) {
-            // add other params
-            $ps = explode("|", substr($rawquery, $paramPos + 1));
-            foreach ($ps as $param) {
-                $param = trim($param);
-                $rawparams[] = $param;
-            }
-        }
-    
-        // parse params and answer query
-        SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
-        $params['format'] = $format;
-        return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
+		if (property_exists('SMWQueryProcessor','formats')) { // registration up to SMW 1.2.*
+			SMWQueryProcessor::$formats['xml'] = 'SMWXMLResultPrinter'; // overwrite SMW printer
+
+		} else { // registration since SMW 1.3.*
+			global $smwgResultFormats;
+			$smwgResultFormats['xml'] = 'SMWXMLResultPrinter';
+		}
+
+		// add query as first rawparam
+		$paramPos = strpos($rawquery, "|");
+		$rawparams[] = $paramPos === false ? $rawquery : substr($rawquery, 0, $paramPos);
+		if ($paramPos !== false) {
+			// add other params
+			$ps = explode("|", substr($rawquery, $paramPos + 1));
+			foreach ($ps as $param) {
+				$param = trim($param);
+				$rawparams[] = $param;
+			}
+		}
+
+		// parse params and answer query
+		SMWQueryProcessor::processFunctionParams($rawparams,$querystring,$params,$printouts);
+		$params['format'] = $format;
+		return SMWQueryProcessor::getResultFromQueryString($querystring,$params,$printouts, SMW_OUTPUT_FILE);
 
 			
 	}
@@ -139,37 +163,45 @@ class ExternalQueryInterface {
 	 *
 	 * @param string $rawQuery
 	 * @return SPARQL XML string
+	 * @throws Exception, SOAPExeption
 	 */
-	function answerSPARQL($rawQuery) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgUseLocalhostForWSDL;
-		
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+	function answerSPARQL($query, $params) {
+		global $wgServer, $wgScript, $smwgWebserviceProtocol, $smwgWebserviceUser, $smwgWebservicePassword, $smwgUseLocalhostForWSDL;
 
-		try {
+		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
+
 			global $smwgTripleStoreGraph;
-			$response = $client->query($rawQuery, $smwgTripleStoreGraph);
-			return $response;
+			if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
+				// SPARQL, attach common prefixes
+				$query = TSNamespaces::getAllPrefixes().$query;
+			}
+			$queryRequest = "<query>";
+			$queryRequest .= "<text><![CDATA[$query]]></text>";
+			$queryRequest .= "<params><![CDATA[$params]]></params>";
+			$queryRequest .= "<graph><![CDATA[$smwgTripleStoreGraph]]></graph>";
+			$queryRequest .= "</query>";
 
-		} catch(Exception $e) {
-			return ""; // What to return here?
+			global $smwgWebserviceUser, $smwgWebservicePassword, $smwgWebserviceEndpoint;
+			list($host, $port) = explode(":", $smwgWebserviceEndpoint);
+			$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
+			$queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
+
+			list($header, $status, $result) = $queryClient->send($queryRequest);
+			if ($status != 200) {
+				throw new Exception(strip_tags($result), $status);
+			}
+			return $result;
+		} else {
+			if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
+			$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+
+
+			global $smwgTripleStoreGraph;
+			$response = $client->query($query, $smwgTripleStoreGraph, $params);
+			return $response;
 		}
 	}
 
-	/**
-	 * Converts a SPARQL query to ASK syntax
-	 *
-	 * @param Query $query (object from SPARQLParser)
-	 */
-	function transformSPARQLToASK($query) {
-		require_once 'SMW_SPARQLTransformer.php';
-		$st = new SMWSPARQLTransformer($query);
-		return $st->transform();
-
-	}
-}
-
-class MalformedQueryException extends Exception {
 
 }
 
