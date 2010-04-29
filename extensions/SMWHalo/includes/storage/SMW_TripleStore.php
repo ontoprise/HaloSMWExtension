@@ -405,7 +405,7 @@ class SMWTripleStore extends SMWStore {
 
 			} catch(Exception $e) {
 				//              var_dump($e);
-				$sqr = new SMWHaloQueryResult(array(), $query, false);
+				$sqr = new SMWHaloQueryResult(array(), $query, array(), $this);
 				$sqr->addErrors(array($e->getMessage()));
 				return $sqr;
 			}
