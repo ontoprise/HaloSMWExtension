@@ -11,7 +11,7 @@
 		<dependencies>
 			<dependency from="1151">mw</dependency>
 			<dependency from="143">smw</dependency>
-			<dependency from="146">SMWHalo</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
 			<dependency from="100">applicationprogramming</dependency>
 			<dependency from="145">semanticresultformats</dependency>
 		</dependencies>

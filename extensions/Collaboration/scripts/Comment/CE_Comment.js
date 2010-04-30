@@ -60,7 +60,7 @@ CECommentForm.prototype = {
 		//2. and add pending indicator
 		
 		if (this.pendingIndicatorCF == null) {
-			this.pendingIndicatorCF = new OBPendingIndicator($('ce-cf-textarea'));
+			this.pendingIndicatorCF = new CPendingIndicator($('ce-cf-textarea'));
 		}
 		this.pendingIndicatorCF.show();
 
@@ -193,7 +193,7 @@ CECommentForm.prototype = {
 				} );
 				$('ce-cf-message').appendChild(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
-					this.pendingIndicatorMsg = new OBPendingIndicator($('ce-cf-pending'));
+					this.pendingIndicatorMsg = new CPendingIndicator($('ce-cf-pending'));
 				}
 				this.pendingIndicatorMsg.show();
 				//to do a page reload with action=purge
@@ -283,6 +283,92 @@ CECommentForm.prototype = {
 		}
 		this.ratingValue = ratingValue;
 	},
+}
+
+
+/**
+ * This class has been ported from the generalTools.js of SMWHalo
+ * to remove the dependency.
+ */
+var CPendingIndicator = Class.create();
+CPendingIndicator.prototype = {
+	initialize: function(container) {
+		this.container = container;
+		this.pendingIndicator = document.createElement("img");
+		Element.addClassName(this.pendingIndicator, "obpendingElement");
+		this.pendingIndicator.setAttribute("src", 
+			wgServer + wgScriptPath + "/extensions/Collaboration/skins/Comment/icons/ajax-loader.gif");
+		this.contentElement = null;
+	},
+	
+	/**
+	 * Shows pending indicator relative to given container or relative to initial container
+	 * if container is not specified.
+	 */
+	show: function(container, alignment) {
+		
+		//check if the content element is there
+		if($("content") == null){
+			return;
+		}
+		
+		var alignOffset = 0;
+		if (alignment != undefined) {
+			switch(alignment) {
+				case "right": { 
+					if (!container) { 
+						alignOffset = $(this.container).offsetWidth - 16;
+					} else {
+						alignOffset = $(container).offsetWidth - 16;
+					}
+					
+					break;
+				}
+				case "left": break;
+			}
+		}
+			
+		//if not already done, append the indicator to the content element so it can become visible
+		if(this.contentElement == null) {
+				this.contentElement = $("content");
+				this.contentElement.appendChild(this.pendingIndicator);
+		}
+		if (!container) {
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset(this.container)[0]-Position.realOffset(this.container)[0])+"px";
+			this.pendingIndicator.style.top = (Position.cumulativeOffset(this.container)[1]-Position.realOffset(this.container)[1]+this.container.scrollTop)+"px";
+		} else {
+			this.pendingIndicator.style.left = (alignOffset + Position.cumulativeOffset($(container))[0]-Position.realOffset($(container))[0])+"px";
+			this.pendingIndicator.style.top = (Position.cumulativeOffset($(container))[1]-Position.realOffset($(container))[1]+$(container).scrollTop)+"px";
+		}
+		// hmm, why does Element.show(...) not work here?
+		this.pendingIndicator.style.display="block";
+		this.pendingIndicator.style.visibility="visible";
+
+	},
+	
+	/**
+	 * Shows the pending indicator on the specified <element>. This works also
+	 * in popup panels with a defined z-index.
+	 */
+	showOn: function(element) {
+		container = element.offsetParent;
+		$(container).insert({top: this.pendingIndicator});
+		var pOff = $(element).positionedOffset();
+		this.pendingIndicator.style.left = pOff[0]+"px";
+		this.pendingIndicator.style.top  = pOff[1]+"px";
+		this.pendingIndicator.style.display="block";
+		this.pendingIndicator.style.visibility="visible";
+		this.pendingIndicator.style.position = "absolute";
+		
+	},
+	
+	hide: function() {
+		Element.hide(this.pendingIndicator);
+	},
+
+	remove: function() {
+		Element.remove(this.pendingIndicator);
+	}
 }
 
 Event.observe(window, 'load', function() {

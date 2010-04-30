@@ -2,7 +2,7 @@ Collaboration extension ChangeLog
 =================================
 
 
-VERSION XXXX
+VERSION 1.20
 
 
   FEATURES:
@@ -10,7 +10,7 @@ VERSION XXXX
 
 
   CHANGES:
-
+    Removed the dependency on SMWHalo.
 
 
   BUGFIXES:
