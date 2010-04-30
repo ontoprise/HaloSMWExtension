@@ -31,7 +31,7 @@ class RMEmbedWindow extends UnlistedSpecialPage {
  * Entry point
  */
 function doSpecialEmbedWindow() {
-	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgStyleVersion;
+	global $wgRequest, $wgOut, $wgUser, $wgServer, $wgStyleVersion, $smwgRMScriptPath;
 
 	// disable $wgOut - we'll print out the page manually, taking the
 	// body created by the form, plus the necessary Javascript files,
@@ -39,8 +39,7 @@ function doSpecialEmbedWindow() {
 	$wgOut->disable();
 	$form = new EmbedWindowForm( $wgRequest );
 	$form->execute();
-	global $smwgHaloScriptPath, $smwgRMScriptPath;
-	$prototype_include = "<script type=\"text/javascript\" src=\"{$smwgHaloScriptPath}/scripts/prototype.js?$wgStyleVersion\"></script>";
+
 	$text = <<<END
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -54,7 +53,6 @@ a {
 }
 </style>
 {$wgOut->getScript()}
-$prototype_include
 </head>
 <body>
 {$wgOut->getHTML()}

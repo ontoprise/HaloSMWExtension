@@ -29,12 +29,9 @@
  * @defgroup RichMedia
  */
 
-//this extension does only work if the Halo extension is enabled
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the RichMedia extension. It is not a valid entry point.\n" );
 }
-if ( !defined( 'SMW_HALO_VERSION' ) )
-    die("The RichMedia extension requires the Halo extension, which seems not to be installed.");
 
 define('SMW_RM_VERSION', '{{$VERSION}}-for-SMW-1.4.x');
 
@@ -69,7 +66,8 @@ if ($smwgEnableUploadConverter) {
 
 /**
  * Configures Rich Media Extension for initialization.
- * (Must be called *AFTER* SMWHalo is intialized.)
+ *   If you have installed SMWHalo and want to use its autocompletion features 
+ *   in the provided forms then this function must be called *AFTER* SMWHalo is intialized.
  * 
  * @return bool
  */
@@ -84,12 +82,13 @@ function enableRichMediaExtension() {
 	global $wgExtensionFunctions, $smwgRMIP, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $smwgEnableRichMedia;
 
 	// clean possibility to disable the extension without any warning/errors
+	// and let other extensions know about Rich Media
 	$smwgEnableRichMedia = true;
 	$wgExtensionFunctions[] = 'smwfRMSetupExtension';
-	
+
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMForm';
-	
-	//that#s a tricky workaround.
+
+	//that's a tricky workaround.
 	// see: http://www.mediawiki.org/wiki/Manual:Tag_extensions#How_can_I_avoid_modification_of_my_extension.27s_HTML_output.3F for more infos
 	$wgHooks['ParserBeforeStrip'][] = 'smwfRegisterRMLink';
 	$wgHooks['ParserAfterTidy'][] = 'RMForm::createRichMediaLinkAfterTidy';
@@ -324,13 +323,12 @@ function smwRMFormAddHTMLHeader(&$out){
 	
 		#Floatbox css file:
 		$out->addLink(array(
-                    'rel'   => 'stylesheet',
-                    'type'  => 'text/css',
-                    'media' => 'screen, projection',
-                    'href'  => $sfgScriptPath . '/skins/floatbox.css'
-                    ));
-		
-		
+			'rel'   => 'stylesheet',
+			'type'  => 'text/css',
+			'media' => 'screen, projection',
+			'href'  => $sfgScriptPath . '/skins/floatbox.css'
+		));
+
 		$rmScriptLoaded = true;
 	}
 	return true;

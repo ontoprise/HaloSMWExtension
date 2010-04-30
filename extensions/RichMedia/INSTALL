@@ -7,7 +7,6 @@ Installation instructions
 
 	MediaWiki 1.15.3
 	Semantic MediaWiki 1.4.x or higher
-	Halo Extension 1.4.x or higher
 	Semantic Forms 1.9
 	Parser Functions
 	String Functions 2.0 or higher
@@ -41,7 +40,7 @@ Installation instructions
 	--- 
 
 3. Add to your LocalSettings.php:
-	(After the Halo and the Semantic Forms extensions were included)
+	(After the Semantic Forms extension is included)
 
 	---
 	include_once('extensions/RichMedia/includes/RM_Initialize.php');
