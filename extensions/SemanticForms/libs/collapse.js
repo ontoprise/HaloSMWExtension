@@ -18,33 +18,73 @@
 */
 var CollapsingForm = Class.create();
 CollapsingForm.prototype = {
-    initialize: function() {
-        this.closedContainers = GeneralBrowserTools.getCookieObject("CollapsingForm");
-        if (this.closedContainers == null) this.closedContainers = new Object();
-    },
-    
-    switchVisibilityWithImg: function(id) {
-    	if ($(id).visible()) {
-    		this.closedContainers[id] = false;
-                closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif\"/>";
-                $(id+"_img").replace(closedimg);
-    	} else {
-    		this.closedContainers[id] = true;
-                openedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='" + wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif\"/>";
-                $(id+"_img").replace(openedimg)
-    	}
-    	GeneralBrowserTools.setCookieObject("CollapsingForm", this.closedContainers);
-    	this.switchVisibility(id);
-    },
+	initialize: function() {
+		this.closedContainers = GeneralCookieTools.getCookieObject("CollapsingForm");
+		if (this.closedContainers == null) this.closedContainers = new Object();
+	},
 
-    switchVisibility: function(container) {
-        var visible = $(container).visible();
-        if ( visible ) {    
-            $(container).hide();
-        } else {
-            $(container).show();
-        }
-    }
-   
+	switchVisibilityWithImg: function(id) {
+		if ($(id).visible()) {
+			this.closedContainers[id] = false;
+			closedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/plus.gif\"/>";
+			$(id+"_img").replace(closedimg);
+		} else {
+			this.closedContainers[id] = true;
+			openedimg = "<img id=\"" + id + "_img\" onmouseout=\"(src='" + wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif')\" onmouseover=\"(src='"+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus-act.gif')\" src=\""+ wgScriptPath + "/extensions/SemanticForms/skins" + "/minus.gif\"/>";
+			$(id+"_img").replace(openedimg)
+		}
+		GeneralCookieTools.setCookieObject("CollapsingForm", this.closedContainers);
+		this.switchVisibility(id);
+	},
+
+	switchVisibility: function(container) {
+		var visible = $(container).visible();
+		if ( visible ) {    
+			$(container).hide();
+		} else {
+			$(container).show();
+		}
+	}
 }
+
+//-- cookie functions for collapsing forms -- //
+// taken out of the generalTools.js from SMWHalo 
+
+GeneralCookieTools = new Object();
+
+/**
+ * Returns the cookie value for the given key
+ */
+GeneralCookieTools.getCookie = function (name) {
+	var value=null;
+	if(document.cookie != "") {
+		var kk=document.cookie.indexOf(name+"=");
+		if(kk >= 0) {
+			kk=kk+name.length+1;
+			var ll=document.cookie.indexOf(";", kk);
+			if(ll < 0)ll=document.cookie.length;
+			value=document.cookie.substring(kk, ll);
+			value=unescape(value); 
+		}
+	}
+	return value;
+}
+
+GeneralCookieTools.setCookieObject = function(key, object) {
+	var json = Object.toJSON(object);
+	document.cookie = key+"="+json; 
+}
+
+GeneralCookieTools.getCookieObject = function(key) {
+	var json = GeneralCookieTools.getCookie(key);
+	var res;
+	try {
+		res = json.evalJSON(false);
+	}
+	catch (e) {
+		return null;
+	}
+	return res;
+}
+
 var smwCollapsingForm = new CollapsingForm();
