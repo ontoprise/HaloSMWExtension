@@ -52,7 +52,7 @@ if (strpos(strtolower(php_uname('s')), "win") !== false) {
 
 	// AbiWord instead of AntiWord
 	// check for abiword
-	$exe = wfShellExec('which abiword');
+	$exe = trim(wfShellExec('which abiword'));
 	if (strlen($exe) > 0) {
 		$smwgUploadConverterExternal['application/msword'] = $exe.' --to="{outfile}" "{infile}"';
 		$smwgUploadConverterExternal['application/vnd.ms-office'] = $exe.' --to="{outfile}" "{infile}"';
@@ -64,7 +64,7 @@ if (strpos(strtolower(php_uname('s')), "win") !== false) {
 		$smwgUploadConverterExternal['application/abiword'] = $exe.' --to="{outfile}" "{infile}"';
 	}
 
-	$exe = wfShellExec('which pdftotext');
+	$exe = trim(wfShellExec('which pdftotext'));
 	if (strlen($exe) > 0) {
 		$smwgUploadConverterExternal['application/pdf'] = $exe.' -enc UTF-8 -layout "{infile}" "{outfile}"';
 	}
