@@ -23,7 +23,7 @@
 */
 
 /**
- * Insert description here
+ * This file defines the class LODAdministrationStore.
  * 
  * @author Thomas Schweitzer
  * Date: 28.04.2010
