@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploydescriptor>
+	<global>
+		<version>100</version>
+		<id>LinkedData</id>
+		<vendor>Ontoprise GmbH</vendor>
+		<instdir>extensions/LinkedData</instdir>
+		<description>
+			Use Linked Data in your wiki.
+		</description>
+		<dependencies>
+			<dependency from="1500" to="1159">MW</dependency>
+			<dependency from="100" to="100">scriptmanager</dependency>
+		</dependencies>
+		<patchlevel>0</patchlevel>
+	</global>
+	<codefiles>
+		<file loc="extensions/LinkedData/deploy.xml" />
+
+		<!-- TODO: add others -->
+	</codefiles>
+	<wikidumps>
+	</wikidumps>
+	<resources>
+		<!-- empty -->
+	</resources>
+	<configs>
+		<precedes ext="smw" />
+
+		<new>
+			<function name="enableLinkedData">
+			</function>
+			<script file="extensions/LinkedData/maintenance/LOD_Setup.php" />
+		</new>
+		<uninstall>
+			<script file="extensions/LinkedData/maintenance/LOD_Setup.php"
+				params="--delete" />
+		</uninstall>
+	</configs>
+</deploydescriptor>
