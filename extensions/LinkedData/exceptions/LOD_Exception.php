@@ -33,6 +33,7 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the HaloACL extension. It is not a valid entry point.\n" );
 }
 
+
 /**
  * This is the base class for all exceptions of the Linked Data Extension.
  *
