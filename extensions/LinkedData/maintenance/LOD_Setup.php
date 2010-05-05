@@ -22,7 +22,7 @@
 */
 
 /**
- * Maintenance script for setting up the database tables for LinkedData
+ * Maintenance script for setting up and deleting the database tables for LinkedData
  * 
  * @author Thomas Schweitzer
  * Date: 26.04.2010
@@ -38,19 +38,18 @@ require_once "$mediaWikiLocation/maintenance/commandLine.inc";
 $dir = dirname(__FILE__);
 $lodgIP = "$dir/../../LinkedData";
 
-/*
-require_once("$haclgIP/includes/LOD_Storage.php");
-require_once("$haclgIP/includes/LOD_GlobalFunctions.php");
+
+require_once("$lodgIP/includes/LOD_Storage.php");
+require_once("$lodgIP/includes/LOD_GlobalFunctions.php");
 
 $delete = array_key_exists('delete', $options);
 
 if ($delete) {
-	echo "Deleting database tables for LinkedData...";
+	echo "Deleting database tables for LinkedData...\n";
 	LODStorage::getDatabase()->dropDatabaseTables();
 	echo "done.\n";
 } else {
-	echo "Setting up database tables for LinkedData...";
+	echo "Setting up database tables for LinkedData...\n";
 	LODStorage::getDatabase()->initDatabaseTables();
 	echo "done.\n";
 }
-*/
