@@ -36,6 +36,9 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 
 define('LOD_LINKEDDATA_VERSION', '{{$VERSION}}');
 
+define('LOD_STORE_SQL', 'LODStoreSQL');
+
+
 ###
 # This is the path to your installation of LinkedData as seen on your
 # local filesystem. Used against some PHP file path issues.
@@ -49,6 +52,19 @@ $lodgIP = $IP . '/extensions/LinkedData';
 # of your wiki). No final slash.
 ##
 $lodgScriptPath = $wgScriptPath . '/extensions/LinkedData';
+
+###
+# By design several databases can be connected to the LDE. (However, in the first
+# version there is only an implementation for MySQL.) With this variable you can
+# specify which store will actually be used.
+# Possible values:
+# - LOD_STORE_SQL
+##
+$lodgBaseStore = LOD_STORE_SQL;
+
+
+
+
 
 # load global functions
 require_once('LOD_GlobalFunctions.php');
