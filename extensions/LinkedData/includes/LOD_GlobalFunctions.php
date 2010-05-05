@@ -62,9 +62,9 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODSourceDefinition'] = $lodgIP . '/includes/LODAdministration/LOD_SourceDefinition.php';
 	$wgAutoloadClasses['LODAdministrationStore'] = $lodgIP . '/includes/LODAdministration/LOD_AdministrationStore.php';
 
-	$wgAutoloadClasses['LODSparqlQueryResult'] = $lodgIP . '/storage/LOD_SparqlQueryResult.php';
-	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/LOD_Triple.php';
-	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/LOD_TripleStoreAccess.php';
+	$wgAutoloadClasses['LODSparqlQueryResult'] = $lodgIP . '/storage/TripleStore/LOD_SparqlQueryResult.php';
+	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
+	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
 	
     //--- Autoloading for exception classes ---
 //   	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
@@ -120,8 +120,6 @@ function lodfSetupExtension() {
 
     wfProfileOut('lodfSetupExtension');
     
-    // only for testing purposes
-    LODtest();
     return true;
 }
 
@@ -210,35 +208,4 @@ function lodfRegisterACIcon(& $namespaceMappings) {
 //    global $lodgIP;
 //    $namespaceMappings[LOD_NS_LOD]="/extensions/LinkedData/skins/images/LOD_AutoCompletion.gif";
     return true;
-}
-
-function LODtest() {
-//	return;
-	
-	global $wgRequest;
-	$action = $wgRequest->getVal( 'action', 'view' );
-	if ($action == "ajax") {
-		return;
-	}
-	$store = LODAdministrationStore::getInstance();
-	$sd = new LODSourceDefinition("dbpedia");
-	$sd->setChangeFreq("daily");
-	$sd->setDataDumpLocations(array("http://deepblue.rkbexplorer.com/datadDump", "http://deepblue.rkbexplorer.com/datadDump2"));
-	$sd->setDescription("This repository contains data supplied from Deep Blue.");
-	$sd->setHomepage("http://deepblue.rkbexplorer.com/");
-	$sd->setImportanceIndex(42);
-	$sd->setLabel("deepblue.rkbexplorer.com Linked Data Repository");
-	$sd->setLastMod("2007-11-21T14:41:09+00:00");
-	$sd->setMappingID("deepbule-mapping");
-	$sd->setLinkedDataPrefix("http://dbpedia.org/resource/");
-	$sd->setSampleURIs(array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"));
-	$sd->setSparqlEndpointLocation("http://deepblue.rkbexplorer.com/sparql/");
-	$sd->setSparqlGraphName("deepblue");
-	$sd->setUriRegexPattern("^http://deepblue.rkbexplorer.com/id/.+");
-	$sd->setVocabularies(array("dc", "foaf", "rdfs"));
-	$store->storeSourceDefinition($sd);
-
-//	$store->deleteSourceDefinition("dbpedia");
-
-	$store->loadSourceDefinition("dbpedia");
 }
