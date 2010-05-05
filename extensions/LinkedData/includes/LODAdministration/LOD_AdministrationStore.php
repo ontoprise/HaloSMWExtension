@@ -138,7 +138,6 @@ class  LODAdministrationStore  {
 	public function storeSourceDefinition(LODSourceDefinition $sd) {
 		
 		// create the triples for the source definition
-		$triples = array();
 		$subjectNS = "sd:";
 		$subject = $sd->getID();
 		if (!isset($subject)) {
@@ -191,6 +190,8 @@ class  LODAdministrationStore  {
 		$tsa->deleteTriples($graph, "$subject ?p ?o", "$subject ?p ?o");
 		$tsa->insertTriples($graph, $triples);
 		$tsa->flushCommands();
+		
+		return true;
 	}
 	
 	/**
@@ -215,7 +216,7 @@ class  LODAdministrationStore  {
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		
-		if (!$result) {
+		if (!$result || count($result->getRows()) == 0) {
 			return null;
 		}
 		$result = $result->toTable();
@@ -274,6 +275,8 @@ class  LODAdministrationStore  {
 		if (array_key_exists("{$propNS}vocabulary", $properties)) {
 			$sd->setVocabularies($properties["{$propNS}vocabulary"]);
 		}
+		
+		return $sd;
 	}
 	
 	/**
@@ -294,7 +297,40 @@ class  LODAdministrationStore  {
 		$tsa->flushCommands();
 	}
 	
-
+	/**
+	 * Deletes the complete graph for source definitions with all its content.
+	 * This method should only be called for maintenance purposes. 
+	 *
+	 */
+	public function deleteAllSourceDefinitions() {
+		$tsa = new LODTripleStoreAccess();
+		$tsa->dropGraph(self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH);
+		$tsa->flushCommands();
+	}
+	
+	/**
+	 * Every LOD source definition has an ID. This method returns all IDs of 
+	 * definitions that are stored in the triple store.
+	 *
+	 * @return array<string>
+	 * 		An array of all IDs. If no ID is available, the array is empty.
+	 */
+	public function getAllSourceDefinitionIDs() {
+		$graph = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH;
+		$id    = "sdprop:id";
+		$prefixes = self::getSourceDefinitionPrefixes();
+		
+		$query = $prefixes."SELECT ?s ?id WHERE { ?s $id  ?id . }";
+		
+		$tsa = new LODTripleStoreAccess();
+		$qr = $tsa->queryTripleStore($query, $graph);
+		
+		$result = array();
+		foreach ($qr->getRows() as $row) {
+			$result[] = $row->getResult("id")->getValue();
+		}
+		return $result;
+	}
 	
 	//--- Private methods ---
 	
