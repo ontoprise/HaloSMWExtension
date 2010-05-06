@@ -42,12 +42,14 @@ var smw_help_getNamespace = function() {
     return ns;
 }
 var initHelp = function(){
+    return; // disable the help container always, it's obsolete
 	var ns = smw_help_getNamespace();
 	sajax_do_call('smwf_tb_GetHelp', [ns , wgAction], displayHelp.bind(this));
 	
 }
 
 function smw_help_callme(){
+    return; // disable the help container always, it's obsolete
 	var ns = smw_help_getNamespace();
 	if((wgAction == "edit" || wgAction == "annotate" || wgAction == 'formedit' || wgAction == 'submit'
 	    || wgCanonicalSpecialPageName == "Search" || wgCanonicalSpecialPageName == 'AddData'
