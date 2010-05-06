@@ -1036,7 +1036,7 @@ class FCKeditorParser extends Parser
 	    if (($wgRequest->getVal('action') == 'ajax') || 
 	        ($wgTitle && (defined('SMW_NS_PROPERTY') && $wgTitle->getNamespace() == SMW_NS_PROPERTY) ||
              $wgTitle->getNamespace() == NS_CATEGORY )) {
-	        if (preg_match_all('/<rule[^>]*>.*?<\/rule>/s', $text, $matches)) {
+	        if (preg_match_all('/<rule[^>]*>.*?<\/rule>/is', $text, $matches)) {
 	             for ($i= 0; $i<count($matches[0]); $i++) {
 	                 $this->fck_mw_strtr_span['Fckmw'.$this->fck_mw_strtr_span_counter.'fckmw']=
 	                     '<span class="fck_mw_rule">'.$matches[0][$i].'</span>';
