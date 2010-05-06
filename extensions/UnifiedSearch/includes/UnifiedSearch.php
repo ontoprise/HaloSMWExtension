@@ -273,6 +273,7 @@ function smwf_ca_GetHTMLBody($page) {
 	// fetch MediaWiki page
 	if (is_object($wgParser)) $psr =& $wgParser; else $psr = new Parser;
 	$opt = ParserOptions::newFromUser($wgUser);
+	$opt->setEditSection(false);
 	$title = Title::newFromText($page);
 	$revision = Revision::newFromTitle($title );
 	if ($revision) {
