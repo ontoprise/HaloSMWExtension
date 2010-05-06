@@ -7,29 +7,28 @@
 FCKConfig.mwScriptPath = '' ;     
 
 // Setup the editor toolbar.
-FCKConfig.ToolbarSets['WikiEnhanced'] = [
+FCKConfig.ToolbarSets['Wiki'] = [
 	['Cut','Copy','Paste', /*'PasteText','PasteWord',*/ '-', 'Undo','Redo', '-', 'SelectAll','RemoveFormat'],
         [/*'Print',*/ 'Rule', '-','TextColor', 'BGColor'],
+        ['StrikeThrough','Subscript','Superscript'],
+        ['Link','Unlink','Anchor'],
         ['Find','Replace'],
-	['MW_Special', 'MW_Ref', 'MW_Math'],
+	['MW_Special', 'MW_Ref'],
+    ['MW_Template','SMW_QueryInterface'],
         ['MW_Edit', 'Fullscreen'],
 	'/',
+    ['FontFormat', '-', 'Source'],
         ['Bold','Italic','Underline'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['OrderedList','UnorderedList', 'Blockquote'],
-        ['SpecialChar','Table','Image'],
+        ['SpecialChar','Table'],
+        ['Image', 'MW_Math'],
         ['MW_MediaUpload', 'SMW_UseWebService'],
-        ['SMW_Annotate', 'ToolbarSwitch'],
-        '/',
-	['FontFormat', '-', 'Source'],
-        ['StrikeThrough','Subscript','Superscript'],
-	['Link','Unlink','Anchor'],
-	['MW_Template','SMW_QueryInterface'],
-        ['About']
+        ['SMW_Annotate', 'About']
 
 ] ;
 
-FCKConfig.ToolbarSets['Wiki'] = [
+FCKConfig.ToolbarSets['WikiShort'] = [
 	['Bold','Italic','Underline'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
         ['UnorderedList', 'SpecialChar', 'Subscript','Superscript', '-','Blockquote', 'Anchor', 'Rule'],
