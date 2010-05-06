@@ -128,7 +128,8 @@ initialize: function() {
 showToolbar: function(){
 	this.relationcontainer.setHeadline(gLanguage.getMessage('PROPERTIES'));
 	if (wgAction == 'edit' || wgAction == 'formedit' || wgAction == 'submit' ||
-            wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData') {
+            wgCanonicalSpecialPageName == 'AddData' || wgCanonicalSpecialPageName == 'EditData' ||
+            wgCanonicalSpecialPageName == 'FormEdit' ) {
             // Create a wiki text parser for the edit mode. In annotation mode,
             // the mode's own parser is used.
             this.wtp = new WikiTextParser();
