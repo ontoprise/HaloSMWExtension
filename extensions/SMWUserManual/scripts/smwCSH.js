@@ -87,8 +87,9 @@ SMW_UserManual_CSH.prototype = {
         this.smwCommentNs = "Comment" 
         this.msgYourRatingHasBeenSend = 'Your comment has been filed in the SMWforum.\nThank you!'
         this.msgYourRatingHasBeenSendNot = 'An error occurred when sending your comment to the SMWforum.'
-        this.msgYourRatingHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
-            '<a href="'+umegSmwForumUrl+'?title=Help:%%%s%%%"><br>Thank you!'
+        if (typeof umegSmwForumUrl != "undefined")
+            this.msgYourRatingHasBeenSendWithLink = 'Your comment has been filed in the SMWforum (click here to open it: '+
+                '<a href="'+umegSmwForumUrl+'?title=Help:%%%s%%%"><br>Thank you!'
         this.msgYourQuestionHasBeenSend = 'Your question has been send to the SMW+ team.\nThank you!'
         this.msgYourQuestionHasBeenSendNot = 'An error occurred when sending your question to the SMW+ team.'
         this.msgYourCommentHasBeenSend = 'Your comment has been send to the SMW+ team.\nThank you!'

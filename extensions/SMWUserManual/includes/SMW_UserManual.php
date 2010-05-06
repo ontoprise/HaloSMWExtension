@@ -256,12 +256,16 @@ function umefAddHtml2Page(&$out) {
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/DndPopup.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/smwCSH.js"></script>
             <script type="text/javascript" src="'. SMW_UME_PATH . '/scripts/md5.js"></script>
+            <script type="text/javascript">/*<![CDATA[*/
+                var umegNamespace = "'.$umegNamespace.'";
+                var umegPopupWidth = '.$umegPopupWidth.';
+                var umegPopupHeight = '.$umegPopupHeight.';
+            /*]]>*/</script>
     ');
 
     if ($umegSendFeedbackToSMWplus) {
         $out->addScript('
             <script type="text/javascript">/*<![CDATA[*/
-                var umegNamespace = "'.$umegNamespace.'";
                 var umegSmwForumUrl = "'.SMW_FORUM_URL.'";
                 var umegSmwForumApi = "'.SMW_FORUM_API.'";
                 var umegSmwForumCommentUrl = "'.SMW_FORUM_COMMENT_URL.'";
@@ -269,20 +273,18 @@ function umefAddHtml2Page(&$out) {
                 var umegSmwforumUser = "'.$umegSmwforumUser.'";
                 var umegSmwforumPass = "'.$umegSmwforumPass.'";
                 var umegSendCommentsToSMWplus = '.($umegSendCommentsToSMWplus ? 'true' : 'false').';
-                var umegPopupWidth = '.$umegPopupWidth.';
-                var umegPopupHeight = '.$umegPopupHeight.';
                 var umegSMWplusVersion = "'.(defined('SMW_HALO_VERSION')?SMW_HALO_VERSION:'').'";
                 var umegUMEVersion = "'.SMW_USER_MANUAL_VERSION.'";
             /*]]>*/</script>
         ');
-        $out->addLink(array(
-            'rel'   => 'stylesheet',
-            'type'  => 'text/css',
-            'media' => 'screen, projection',
-            'href'  => SMW_UME_PATH . '/skins/csh.css'
-        ));
-
     }
+    $out->addLink(array(
+        'rel'   => 'stylesheet',
+        'type'  => 'text/css',
+        'media' => 'screen, projection',
+        'href'  => SMW_UME_PATH . '/skins/csh.css'
+    ));
+
     $out->addHTML(umefDivBox().'
         <script type="text/javascript">/*<![CDATA[*/
         var smwCsh = new SMW_UserManual_CSH("'.wfMsg('smw_ume_help_link').'");
