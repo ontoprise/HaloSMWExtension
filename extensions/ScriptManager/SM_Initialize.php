@@ -20,14 +20,14 @@
 /**
  * Script extension which manages the including of common JS script libraries.
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  */
 if ( !defined( 'MEDIAWIKI' ) ) {
 	die( "This file is part of the Script Manager extension. It is not a valid entry point.\n" );
 }
 
-define('SM_VERSION', '{{$VERSION}}');
+define('SCM_VERSION', '{{$VERSION}}');
 
 global $wgExtensionFunctions, $wgScriptPath;;
 $smgSMPath = $wgScriptPath . '/extensions/ScriptManager';
