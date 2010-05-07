@@ -105,10 +105,13 @@ CECommentForm.prototype = {
 		textArea = textArea.replace(/\\/g, '&#92;');
 		//TODO: wgUserName is null, when not logged in!
 		var userNameString = '';
-		if( wgUserName != null && ceUserNS != null )
-			userNameString = 'CommentPerson=' + ceUserNS + ':' + wgUserName;
+		if( wgUserName != null && ceUserNS != null ) {
+			userNameString = '|CommentPerson=' + ceUserNS + ':' + wgUserName;
+		} else {
+			userNameString = '|CommentPerson=';
+		}
 
-		var pageContent = '{{Comment|' +
+		var pageContent = '{{Comment' +
 			userNameString +
 			'|CommentRelatedArticle=' + wgPageName +
 			ratingString  +
@@ -167,7 +170,7 @@ CECommentForm.prototype = {
 	processFormCallback: function(request){
 
 		//alert(request.responseText);
-		var resultDOM = this.XMLResult = GeneralXMLTools.createDocumentFromString(request.responseText);	
+		var resultDOM = this.XMLResult = CollaborationXMLTools.createDocumentFromString(request.responseText);	
 		//alert(resultDOM);
 		
 		var valueEl = resultDOM.getElementsByTagName('value')[0];
@@ -286,6 +289,10 @@ CECommentForm.prototype = {
 }
 
 
+//Singleton of this class
+
+var ceCommentForm = new CECommentForm();
+
 /**
  * This class has been ported from the generalTools.js of SMWHalo
  * to remove the dependency.
@@ -371,6 +378,52 @@ CPendingIndicator.prototype = {
 	}
 }
 
+/*
+ * Browser tools
+ */
+function CollaborationBrowserDetectLite() {
+
+	var ua = navigator.userAgent.toLowerCase();
+
+	// browser name
+	this.isGecko     = (ua.indexOf('gecko') != -1) || (ua.indexOf("safari") != -1); // include Safari in isGecko
+	this.isMozilla   = (this.isGecko && ua.indexOf("gecko/") + 14 == ua.length);
+	this.isNS        = ( (this.isGecko) ? (ua.indexOf('netscape') != -1) : ( (ua.indexOf('mozilla') != -1) && (ua.indexOf('spoofer') == -1) && (ua.indexOf('compatible') == -1) && (ua.indexOf('opera') == -1) && (ua.indexOf('webtv') == -1) && (ua.indexOf('hotjava') == -1) ) );
+	this.isIE        = ( (ua.indexOf("msie") != -1) && (ua.indexOf("opera") == -1) && (ua.indexOf("webtv") == -1) );
+	this.isOpera     = (ua.indexOf("opera") != -1);
+	this.isSafari    = (ua.indexOf("safari") != -1);
+	this.isKonqueror = (ua.indexOf("konqueror") != -1);
+	this.isIcab      = (ua.indexOf("icab") != -1);
+	this.isAol       = (ua.indexOf("aol") != -1);
+	this.isWebtv     = (ua.indexOf("webtv") != -1);
+	this.isGeckoOrOpera = this.isGecko || this.isOpera;
+	this.isGeckoOrSafari = this.isGecko || this.isSafari;
+}
+//one global instance of Collaboration Browser detector 
+var C_bd = new CollaborationBrowserDetectLite();
+
+/*
+ * XML Tools
+ */
+CollaborationXMLTools = new Object();
+
+/**
+ * Creates an XML document from string
+ */
+CollaborationXMLTools.createDocumentFromString = function (xmlText) {
+	 // create empty treeview
+   if (C_bd.isGeckoOrOpera) {
+   	 var parser=new DOMParser();
+     var xmlDoc=parser.parseFromString(xmlText,"text/xml");
+   } else if (C_bd.isIE) {
+   	 var xmlDoc = new ActiveXObject("Microsoft.XMLDOM") 
+     xmlDoc.async="false"; 
+     xmlDoc.loadXML(xmlText);   
+   }
+   return xmlDoc;
+}
+
+
 Event.observe(window, 'load', function() {
 	if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
 
@@ -413,7 +466,3 @@ Event.observe(window, 'load', function() {
 		}
 	}
 });
-
-// Singleton of this class
-
-var ceCommentForm = new CECommentForm();
