@@ -55,7 +55,7 @@ class SGAGardeningTableResultPrinter extends SMWResultPrinter {
 			$result .= "\t</tr>\n";
 		} else {
 			foreach ($res->getPrintRequests() as $pr) {
-				$title = $pr->getTitle();
+				$title = $pr->getData();
 				if($title instanceof Title)
 				array_push($cols, $title);
 				else
