@@ -13,7 +13,7 @@ Index: includes/Article.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia )  {
-+				RMNamespace::isImage( $this->getTitle()->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $this->getTitle()->getNamespace(), $rMresult );
 +				if ( $rMresult )
 +					RepoGroup::singleton()->getLocalRepo()->invalidateImageRedirect( $this->getTitle() );
 +			} else {
@@ -37,7 +37,7 @@ Index: includes/Article.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +			if ($rMresult) {
 +				$update = new HTMLCacheUpdate( $title, 'imagelinks' );
 +				$update->doUpdate();
@@ -68,7 +68,7 @@ Index: includes/Article.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $ns, &$rMresult );
++			RMNamespace::isImage( $ns, $rMresult );
 +			if( $ns == NS_CATEGORY ) {
 +				$addFields[]    = 'cat_subcats = cat_subcats + 1';
 +				$removeFields[] = 'cat_subcats = cat_subcats - 1';
@@ -108,7 +108,7 @@ Index: includes/CategoryPage.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +				if( $title->getNamespace() == NS_CATEGORY ) {
 +					$cat = Category::newFromRow( $x, $title );
 +					$this->addSubcategoryObject( $cat, $x->cl_sortkey, $x->page_len );
@@ -146,7 +146,7 @@ Index: includes/EditPage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
 +			if ( $rMresult &&
 +			Title::newFromRedirect( $this->textbox1 ) instanceof Title &&
 +			!$wgUser->isAllowed( 'upload' ) ) {
@@ -190,7 +190,7 @@ Index: includes/Export.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $row->page_namespace, &$rMresult );
++			RMNamespace::isImage( $row->page_namespace, $rMresult );
 +			if ( $rMresult ) {
 +				$img = wfFindFile( $row->page_title );
 +				if( $img ) {
@@ -238,7 +238,7 @@ Index: includes/ImageGallery.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $nt->getNamespace(), $rMresult );
 +				if ( !$rMresult  || !$img ) {
 +					# We're dealing with a non-image, spit out the name and be done with it.
 +					$thumbhtml = "\n\t\t\t".'<div style="height: '.($this->mHeights*1.25+2).'px;">'
@@ -362,7 +362,7 @@ Index: includes/ImagePage.php
 +					return;
 +				} //otherwise the no file warning with upload link is displayed
 +			}
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
 +			if ( $rMresult && $this->img->getRedirected() ) {
 +				if( $this->mTitle->getDBkey() == $this->img->getName() ) {
 +					// mTitle is the same as the redirect target so ask Article
@@ -410,7 +410,7 @@ Index: includes/ImagePage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->mTitle->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->mTitle->getNamespace(), $rMresult );
 +			if ( !$rMresult || ( isset( $diff ) && $diffOnly ) )
 +				return Article::view();
 +		} else {
@@ -493,7 +493,7 @@ Index: includes/ImageQueryPage.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +			return ( $title instanceof Title && $rMresult )
 +			? wfFindFile( $title )
 +			: null;
@@ -546,7 +546,7 @@ Index: includes/MediaTransformOutput.php
 +		global $wgRequest, $smwgEnableRichMedia, $wgRMImagePreview;
 +		$loc = $wgRequest->getText('title');
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +			if ($rMresult && $wgRMImagePreview && $loc != 'Special:EmbedWindow') {
 +				$queryString = "target=".urlencode($title->getPrefixedText());
 +				$uploadWindowPage = SpecialPage::getPage('EmbedWindow');
@@ -591,7 +591,7 @@ Index: includes/Namespace.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $index, &$rMresult );
++			RMNamespace::isImage( $index, $rMresult );
 +			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
 +		} else {
 +			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
@@ -623,7 +623,7 @@ Index: includes/Title.php
 +			if ( isset( $finalExt ) ) {
 +				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
 +					// Just change it for FILE namespace... not for specialpages etc
-+					RMNamespace::isImage( $ns, &$rMresult );
++					RMNamespace::isImage( $ns, $rMresult );
 +					if ( $rMresult ) {
 +						$ns = $wgNamespaceByExtension[$finalExt];
 +					}
@@ -652,7 +652,7 @@ Index: includes/Title.php
 +			if ( isset( $finalExt ) ) {
 +				if ( isset( $wgNamespaceByExtension[$finalExt] ) ) {
 +					// Just change it for FILE namespace... not for specialpages etc
-+					RMNamespace::isImage( $ns, &$rMresult );
++					RMNamespace::isImage( $ns, $rMresult );
 +					if ( $rMresult ) {
 +						$ns = $wgNamespaceByExtension[$finalExt];
 +					}
@@ -674,7 +674,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $ns, &$rMresult );
++			RMNamespace::isImage( $ns, $rMresult );
 +			if ( $rMresult ) {
 +				$t = preg_replace( "/ (png|gif|jpg|jpeg|ogg)$/", "", $t );
 +			}
@@ -698,7 +698,7 @@ Index: includes/Title.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +				if ( $rMresult && !$user->isAllowed( 'movefile' ) ) {
 +					$errors[] = array( 'movenotallowedfile' );
 +				}
@@ -723,7 +723,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +			if ( $rMresult ) {
 +				$tables = array ('imagelinks', 'page_restrictions');
 +				$where_clauses = array(
@@ -771,7 +771,7 @@ Index: includes/Title.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +				if ( $rMresult ) {
 +					$n += $dbr->selectField( 'filearchive', 'COUNT(*)',
 +					array( 'fa_name' => $this->getDBkey() ),
@@ -802,7 +802,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +			if( !$deleted && $rMresult ) {
 +				$deleted = (bool)$dbr->selectField( 'filearchive', '1',
  				array( 'fa_name' => $this->getDBkey() ),
@@ -836,11 +836,11 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +			if ( $rMresult  ) {
 +				$file = wfLocalFile( $this );
 +				if( $file->exists() ) {
-+					RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
++					RMNamespace::isImage( $nt->getNamespace(), $rMresult );
 +					if( !$rMresult ) {
 +						$errors[] = array('imagenocrossnamespace');
 +					}
@@ -893,7 +893,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +			if ( $rMresult ) {
 +				$file = wfLocalFile( $this );
 +				if( $file->exists() ) {
@@ -936,7 +936,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->getNamespace(), $rMresult );
 +			if ( $rMresult ) {
 +				$file = wfLocalFile( $this );
 +				if( $file->exists() ) {
@@ -977,7 +977,7 @@ Index: includes/Title.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $nt->getNamespace(), $rMresult );
 +			if ( $rMresult ) {
 +				$file = wfLocalFile( $nt );
 +				if( $file->exists() ) {
@@ -1085,7 +1085,7 @@ Index: includes/Wiki.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +			$file = ($rMresult) ? $article->getFile() : null;
 +		} else {
 +			$file = ($title->getNamespace() == NS_FILE) ? $article->getFile() : null;
@@ -1109,7 +1109,7 @@ Index: includes/filerepo/ArchivedFile.php
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
 +			if ( $this->title )
-+				RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $this->title->getNamespace(), $rMresult );
 +			else
 +				$rMresult = false;
 +		} else {
@@ -1140,7 +1140,7 @@ Index: includes/filerepo/FileRepo.php
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
 +			if ( $redir ) {
-+				RMNamespace::isImage( $redir->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $redir->getNamespace(), $rMresult );
 +				if( $rMresult ) {
 +					$img = $this->newFile( $redir );
 +					if( !$img ) {
@@ -1192,7 +1192,7 @@ Index: includes/parser/Parser.php
 +				// original content is located in else statement.
 +				global $smwgEnableRichMedia;
 +				if( $smwgEnableRichMedia ) {
-+					RMNamespace::isImage( $ns, &$rMresult );
++					RMNamespace::isImage( $ns, $rMresult );
 +					if ( $rMresult ) {
 +						wfProfileIn( __METHOD__."-image" );
 +						if ( !wfIsBadImage( $nt->getDBkey(), $this->mTitle ) ) {
@@ -1249,7 +1249,7 @@ Index: includes/parser/Parser.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $nt->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $nt->getNamespace(), $rMresult );
 +				if ( $rMresult ) {
 +					$this->mOutput->addImage( $nt->getDBkey() );
 +				}
@@ -1334,7 +1334,7 @@ Index: includes/specials/SpecialFilepath.php
 +	// content was: if ( ! $title instanceof Title || $title->getNamespace() != NS_FILE ) {
 +	global $smwgEnableRichMedia;
 +	if( $smwgEnableRichMedia && $title instanceof Title ) {
-+		RMNamespace::isImage( $title->getNamespace(), &$rMresult );
++		RMNamespace::isImage( $title->getNamespace(), $rMresult );
 +	} else {
 +		$rMresult = false;
 +	}
@@ -1357,7 +1357,7 @@ Index: includes/specials/SpecialSearch.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( title-ding, &$rMresult );
++			RMNamespace::isImage( title-ding, $rMresult );
 +		} else {
 +			$rMresult = false;
 +		}
@@ -1382,7 +1382,7 @@ Index: includes/specials/SpecialUndelete.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->title->getNamespace(), $rMresult );
 +			if ( $rMresult ) {
 +				$dbr = wfGetDB( DB_SLAVE );
 +				$res = $dbr->select( 'filearchive',
@@ -1445,7 +1445,7 @@ Index: includes/specials/SpecialUndelete.php
 +		// original content is located in else statement.
 +		global $smwgEnableRichMedia;
 +		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++			RMNamespace::isImage( $this->title->getNamespace(), $rMresult );
 +			if( $restoreFiles &&  $rMresult ) {
 +				$img = wfLocalFile( $this->title );
 +				$this->fileStatus = $img->restore( $fileVersions, $unsuppress );
@@ -1479,7 +1479,7 @@ Index: includes/specials/SpecialUndelete.php
 +			// original content is located in else statement.
 +			global $smwgEnableRichMedia;
 +			if( $smwgEnableRichMedia ) {
-+				RMNamespace::isImage( $this->title->getNamespace(), &$rMresult );
++				RMNamespace::isImage( $this->title->getNamespace(), $rMresult );
 +				if ( $rMresult ) {
 +					$update = new HTMLCacheUpdate( $this->title, 'imagelinks' );
 +					$update->doUpdate();
