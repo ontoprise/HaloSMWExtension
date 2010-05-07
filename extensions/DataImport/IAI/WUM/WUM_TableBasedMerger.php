@@ -16,7 +16,6 @@
 global $wgExtensionFunctions, $wgHooks;
 $wgExtensionFunctions[] ='wum_tabPF_Setup';
 $wgHooks['LanguageGetMagic'][] = 'wum_tabPF_Magic';
-$wgHooks['APIEditBeforeSave'][] = 'wum_doAPIEdit';
 
 function wum_tabPF_Setup() {
 	global $wgParser;
@@ -103,15 +102,21 @@ function wum_preprocessArgs($frame, $args){
 	return $preprocessedArgs;
 }
 
-function wum_doAPIEdit(&$editPage, $text, &$resultArr){
-	$title = $editPage->mArticle->getTitle()->getFullText();
-	$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
-	$editPage->textbox1 = $wum->getMergedText();
-	$wum->createMergeResultArticle();
-	return true;
-}
+class WUMTableBasedMerger {
+	
+	static private $instance = null;
 
-class WUMerger {
+	/**
+	 * singleton
+	 * 
+	 * @return WUMTableBasedMerger
+	 */
+	public static function getInstance(){
+		if(self::$instance == null){
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}	
 	
 	private $unresolvedTableReplacements = array();
 	private $wikipediaText = "";
@@ -119,13 +124,18 @@ class WUMerger {
 	private $mergedText = "";
 	private $title = "";
 	
-	function __construct($title, $wikipediaText, $ultrapediaText){
+	function merge($title, $wikipediaText, $ultrapediaText){
 		$this->title = $title;
 		$this->wikipediaText = $wikipediaText;
 		$this->ultrapediaText = $ultrapediaText;
 		$this->getTableReplacements();
 		$this->replaceStaticTables();
-		return $this;
+		
+		$text = $this->getMergedText();
+		
+		$this->createMergeResultArticle();
+		
+		return $text;		
 	}
 	
 	public function createMergeResultArticle(){
