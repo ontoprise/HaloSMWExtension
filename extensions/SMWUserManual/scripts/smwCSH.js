@@ -466,7 +466,7 @@ SMW_UserManual_CSH.prototype = {
             case 'Watchlist':ds.push('Watchlist');break
             case 'DataImportRepository':ds.push('ImportVocabulary');break
             case 'DefineWebService':
-            case 'UseWebService':ds.push('Webservice');break
+            case 'UseWebService':ds.push('WebService');break
             case 'Gardening':
             case 'GardeningLog':ds.push('Gardening');break
             case 'SemanticNotifications':ds.push('SemanticNotifications');break
@@ -483,7 +483,7 @@ SMW_UserManual_CSH.prototype = {
             typeof stb_control != "undefined" && 
             stb_control.isVisible()) ds.push('SemanticToolbar')
         // any input element with class wick (ignore the search field)
-        if (this.elementsWithHaloAc()) ds.push('HaloAutoCompletion')
+        if (this.elementsWithHaloAc()) ds.push('HaloAutocompletion')
         // check namespace
         switch (wgNamespaceNumber) {
             case 14:ds.push('Category');break
@@ -495,11 +495,14 @@ SMW_UserManual_CSH.prototype = {
         switch (wgAction) {
             case 'edit':if (typeof FCKeditor == "undefined") ds.push('EditWikisyntax');break
             case 'annotate':ds.push('Annotate');break
-            case 'submit' :ds.push('preview');break
+            case 'submit' :ds.push('Preview');break
             case 'formedit':ds.push('SemanticForms');break
+            case 'history':ds.push('History');break
         }
         // add general help topics only if the user is browsing an ordinary page, i.e. not
         if (ds.length == 0) ds.push('General')
+        // if WikiSyop is logged in, add this discurse state now
+        if (wgUserName == 'WikiSysop') ds.push('WikiSysop')
         return this.uniqueDs(ds)
     },
 
