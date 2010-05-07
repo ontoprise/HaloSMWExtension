@@ -109,7 +109,7 @@ class UME_CshArticle {
         $s = strpos($this->content, "</$tag>", $p);
         if ($s === false) return;
         $before = substr($this->content, 0, $p);
-        $after = substr($this->content, $s + strlen($tag) + 5);
+        $after = substr($this->content, $s + strlen($tag) + 3);
         $this->content = $before . $after;
     }
 
