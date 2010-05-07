@@ -921,15 +921,26 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
 @@ -5,6 +5,10 @@
   * @author Yaron Koren
   */
- 
+
 +// patches included:
 +// 1. "edit with form"-tab for Categories. DH Apr 22 09
 +//    tag of patch: op-patch|DH|2009-04-22|"edit with form"-tab for Categories
 +
  if ( !defined( 'MEDIAWIKI' ) ) die();
- 
+
  class SFLinkUtils {
-@@ -273,7 +277,9 @@
+@@ -158,7 +162,9 @@
+ 		// links, even if they've since been recreated. The same might
+ 		// hold true for other special pages.
+ 		global $wgTitle;
+-		if ($wgTitle->getNamespace() == NS_SPECIAL)
++		/* op-patch|SR|2010-05-07|fix bug #11831|start */
++		if (is_object($wgTitle) && $wgTitle->getNamespace() == NS_SPECIAL)
++		/* op-patch|SR|2010-05-07|fix bug #11831|end */
+ 			return false;
+
+ 		$store = smwfGetStore();
+@@ -273,7 +279,9 @@
  		// if this is not a category page, look for a default form
  		// for its parent categories
  		$namespace = $obj->mTitle->getNamespace();
@@ -940,7 +951,7 @@ Index: extensions/SemanticForms/includes/SF_LinkUtils.inc
  			$default_forms = array();
  			$categories = self::getCategoriesForArticle($obj);
  			foreach ($categories as $category) {
-@@ -281,7 +287,9 @@
+@@ -281,7 +289,9 @@
  			}
  			if (count($default_forms) > 0)
  				return $default_forms;
