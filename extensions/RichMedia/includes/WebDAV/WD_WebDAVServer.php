@@ -9,10 +9,6 @@
  * This modified version was implemented by Ingo Steinbauer @ontoprise GmbH
  */
 
-/*
- * This modified version was implemented by Ingo Steinbauer @ontoprise GmbH
- */
-
 /**
  * @file
   * @ingroup RMWebDAV
@@ -56,7 +52,7 @@ class WebDAVServer extends HTTP_WebDAV_Server {
 	}
 
 	function options( &$serverOptions ) {
-		parent::options( &$serverOptions );
+		parent::options( $serverOptions );
 
 		if ( $serverOptions['xpath']->evaluate( 'boolean(/D:options/D:activity-collection-set)' ) ) {
 			$this->setResponseHeader( 'Content-Type: text/xml; charset="utf-8"' );
