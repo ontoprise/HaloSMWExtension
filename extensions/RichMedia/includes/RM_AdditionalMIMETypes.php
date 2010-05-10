@@ -35,7 +35,7 @@
  */
 
 $wgFileExtensions = array_merge($wgFileExtensions, array(
-	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg',
+	'pdf', 'doc', 'ac3', 'avi', 'mp3', 'ogg', 'mpg', 'mpeg', 'mpp',
  	'mov', 'wmv', 'ppt', 'pps', 'odt', 'ods', 'odp', 'odg', 'odf', 'sxw', 'zip',
  	'rar', 'xls', 'docx', 'xlsx', 'pptx', 'ics', 'vcf', 'rtf', 'abw'));
 // other possible extensions: ('pwz', 'ppz', 'pot' (draft))(Powerpoint)
@@ -104,6 +104,7 @@ $wgNamespaceByExtension = array(
 	'ogg' => NS_AUDIO,
 	'mpg' => NS_VIDEO,
 	'mpeg' => NS_VIDEO,
+	'mpp' => NS_DOCUMENT,
 	'mov' => NS_VIDEO,
 	'wmv' => NS_VIDEO,
 	'ppt' => NS_DOCUMENT,
