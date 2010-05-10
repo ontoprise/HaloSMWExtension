@@ -135,9 +135,6 @@ function smwgHaloSetupExtension() {
 	$wgHooks['smwNewSpecialValue'][] = 'smwfHaloSpecialValues';
 	$wgHooks['smwInitDatatypes'][] = 'smwfHaloInitDatatypes';
 
-	//Iclude the Geo Coordinates data type, which was taken from the Semantic Maps extension
-	require_once( $smwgHaloIP . '/includes/DV_GEOCoordinates/SM_GeoCoords.php' );
-
 	$wgHooks['smwInitProperties'][] = 'smwfInitSpecialPropertyOfSMWHalo';
 
 	global $smwgWebserviceEndpoint, $smwgShowDerivedFacts, $wgRequest;
