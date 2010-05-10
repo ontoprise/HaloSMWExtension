@@ -157,7 +157,7 @@ class SMWPropertiesPage extends SMWQueryPage {
             $attrlink = $skin->makeLinkObj( $attrtitle, $attrtitle->getText() );
             
             $store = smwfGetStore();
-            $hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
+            $hasTypeDV = SMWPropertyValue::makeProperty("_LIST");
             $typeValues = $store->getPropertyValues($attrtitle, $hasTypeDV);
             
             $typelink = array();            
