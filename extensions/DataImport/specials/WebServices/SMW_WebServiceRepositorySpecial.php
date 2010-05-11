@@ -102,53 +102,58 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 			$html .= "<table id=\"webservicetable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
 		}
 		foreach($webServices as $ws){
-			$wsUrl = Title::newFromID($ws->getArticleID())->getFullURL();
-			$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
-			$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
+			echo("<br/>".$ws->getArticleID());
+			$title = Title::newFromID($ws->getArticleID());
+			if(!is_null($title)){
+				$wsUrl = $title->getFullURL();
+				$wsName = substr($ws->getName(), 11, strlen($ws->getName()));
+				$html .= "<tr><td><a href=\"".$wsUrl."\">".$wsName."</a></td>";
 
-			$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
-			$oldestUpdate = "";
-			if(count($cacheResults) >0){
-				$oldestUpdate = $cacheResults[0]["lastUpdate"];
-				if(strlen($oldestUpdate) > 0){
-					$oldestUpdate = wfTimestamp(TS_DB, $oldestUpdate);
-				}
-			}
-
-			$latestUpdate = "";
-			if(sizeof($cacheResults) > 1){
-				$latestUpdate = $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"];
-				if(strlen($latestUpdate) > 0){
-					$latestUpdate = wfTimestamp(TS_DB, $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"]);
+				$cacheResults = WSStorage::getDatabase()->getResultsFromCache($ws->getArticleID());
+				$oldestUpdate = "";
+				if(count($cacheResults) >0){
+					$oldestUpdate = $cacheResults[0]["lastUpdate"];
 					if(strlen($oldestUpdate) > 0){
-						$latestUpdate = " - ".$latestUpdate;
+						$oldestUpdate = wfTimestamp(TS_DB, $oldestUpdate);
 					}
 				}
-			}
-
-			$html .= "<td>".$oldestUpdate.$latestUpdate."</td>";
-
-			if($allowed){
-				$wsUpdateBot = new WSUpdateBot();
-				$html .= "<td style=\"text-align: center\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\" alt=\"".wfMsg('smw_wwsr_update')."\" title=\"".wfMsg('smw_wwsr_update_tooltip')."\">".wfMsg('smw_wwsr_update')."</button>";
-				$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\"><a href=\"".$gardeningURL."\">".wfMsg('smw_wwsr_updating')."</a></div></td>";
-			}
-			global $wgArticlePath;
-			if(strpos($wgArticlePath, "?") > 0){
-				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
-			} else {
-				$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
-			}
-			$html .= "<td style=\"text-align: center\"><button id=\"edit".$ws->getArticleID()."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\" alt=\"".wfMsg('smw_wwsr_rep_edit')."\" title=\"".wfMsg('smw_wwsr_rep_edit_tooltip')."\">".wfMsg('smw_wwsr_rep_edit')."</button>";
-
-			if($allowed){
-				if($ws->getConfirmationStatus() != "true"){
-					$html .= "<td style=\"text-align: center\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\" alt=\"".wfMsg('smw_wwsr_confirm')."\" title=\"".wfMsg('smw_wwsr_confirm_tooltip')."\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
-				} else {
-					$html .= "<td style=\"text-align: center\" alt=\"".wfMsg('smw_wwsr_confirm')."\" title=\"".wfMsg('smw_wwsr_confirm_tooltip')."\">".wfMsg('smw_wwsr_confirmed')."</td></tr>";
+			
+				$latestUpdate = "";
+				if(sizeof($cacheResults) > 1){
+					$latestUpdate = $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"];
+					if(strlen($latestUpdate) > 0){
+						$latestUpdate = wfTimestamp(TS_DB, $cacheResults[(sizeof($cacheResults)-1)]["lastUpdate"]);
+						if(strlen($oldestUpdate) > 0){
+							$latestUpdate = " - ".$latestUpdate;
+						}
+					}
 				}
-			} else {
-				$html .= "</tr>";
+			
+
+				$html .= "<td>".$oldestUpdate.$latestUpdate."</td>";
+	
+				if($allowed){
+					$wsUpdateBot = new WSUpdateBot();
+					$html .= "<td style=\"text-align: center\"><button id=\"update".$ws->getArticleID()."\" type=\"button\" name=\"update\" onclick=\"webServiceRepSpecial.updateCache('".$wsUpdateBot->getBotID()."', 'WS_WSID=".$ws->getArticleID()."')\" alt=\"".wfMsg('smw_wwsr_update')."\" title=\"".wfMsg('smw_wwsr_update_tooltip')."\">".wfMsg('smw_wwsr_update')."</button>";
+					$html .= "<div id=\"updating".$ws->getArticleID()."\" style=\"display: none; text-align: center\"><a href=\"".$gardeningURL."\">".wfMsg('smw_wwsr_updating')."</a></div></td>";
+				}
+				global $wgArticlePath;
+				if(strpos($wgArticlePath, "?") > 0){
+					$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."&wwsdId=".$ws->getArticleID();
+				} else {
+					$url = Title::makeTitleSafe(NS_SPECIAL, "DefineWebService")->getFullURL()."?wwsdId=".$ws->getArticleID();
+				}
+				$html .= "<td style=\"text-align: center\"><button id=\"edit".$ws->getArticleID()."\" type=\"button\" name=\"edit\" onclick=\"window.location.href = '".$url."';\" alt=\"".wfMsg('smw_wwsr_rep_edit')."\" title=\"".wfMsg('smw_wwsr_rep_edit_tooltip')."\">".wfMsg('smw_wwsr_rep_edit')."</button>";
+	
+				if($allowed){
+					if($ws->getConfirmationStatus() != "true"){
+						$html .= "<td style=\"text-align: center\" id=\"confirmText".$ws->getArticleID()."\">  <button type=\"button\" id=\"confirmButton".$ws->getArticleID()."\" onclick=\"webServiceRepSpecial.confirmWWSD(".$ws->getArticleID().")\" alt=\"".wfMsg('smw_wwsr_confirm')."\" title=\"".wfMsg('smw_wwsr_confirm_tooltip')."\">".wfMsg('smw_wwsr_confirm')."</button></td></tr>";
+					} else {
+						$html .= "<td style=\"text-align: center\" alt=\"".wfMsg('smw_wwsr_confirm')."\" title=\"".wfMsg('smw_wwsr_confirm_tooltip')."\">".wfMsg('smw_wwsr_confirmed')."</td></tr>";
+					}
+				} else {
+					$html .= "</tr>";
+				}
 			}
 		}
 
