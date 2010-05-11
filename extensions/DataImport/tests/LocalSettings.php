@@ -24,3 +24,6 @@ include_once('extensions/RichMedia/includes/RM_Initialize.php');
 //enableRichMediaExtension();
 
 $wgAllowExternalImagesFrom = $wgServer;
+
+require_once("$IP/extensions/DataImport/IAI/includes/IAI_Initialize.php");
+enableWUM();

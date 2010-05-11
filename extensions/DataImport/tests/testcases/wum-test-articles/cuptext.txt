@@ -1,0 +1,26 @@
+﻿
+==Introduction==
+===Motivation===
+Those are some - not really many - motivating sentences, which will give a motivation for the thing this section talks about.
+===Overview===
+Those are some - not really many - overview sentences, which will give an overview about the thing this section talks about.
+<upc>===== Additional Query Results 1 =====</upc>
+==Use Cases==
+===Use Case 1===
+Some text
+<upc>===== Additional Query Results 2 =====</upc>
+some text.
+====Overview====
+====Summary====
+===Use Case 2===
+Some text
+====Overview====
+<upc>===== Additional Query Results 3 =====</upc>
+some text.
+====Summary====
+==Architecture==
+===Overview===
+===Details===
+====Diagrams====
+<upc>===== Additional Query Results 4 =====</upc>
+====Summary====__WUM_Overwrite__

@@ -1,0 +1,20 @@
+﻿
+==Introduction==
+===Motivation===
+Those are some - not really many - motivating sentences, which will give a motivation for the thing this section talks about.
+===Overview===
+Those are some - not really many - overview sentences, which will give an overview about the thing this section talks about.
+==Use Cases==
+n===Use Case 1===
+Some text
+====Overview====
+====Summary====
+===Use Case 2===
+Some text
+====Overview====
+====Summary====
+==Architecture==
+===Overview===
+===Details===
+====Diagrams====
+====Summary====__WUM_Overwrite__
