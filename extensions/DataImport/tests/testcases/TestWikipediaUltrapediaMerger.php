@@ -90,6 +90,21 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 			strpos($result,'3 =====</upc>##<upc>===== Additional Query Results 4 =====</upc>'));
 	}
 	
+	function testTableBasedMerger(){
+		return;
+		
+		$wumUseTableBasedMerger = true;
+		
+		$et = $this->getEditToken();
+		list($currentUPText, $newWPText) = $this->getArticleContentForTBM();
+		$this->writeArticles(array($currentUPText."__WUM_Overwrite__", $newWPText), $et);
+		
+		$result = $this->getWikiArticleContent("Talk:Main_Page");
+		
+		$this->assertGreaterThan(0, 
+			strpos($result,'{{#tab'));
+	}
+	
 	
 	private function writeArticles($texts, $et){
 		$cc = new cURL();
@@ -97,7 +112,7 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		foreach($texts as $text){
 			$param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$text&token=$et";
 			$editArticle = $cc->post($this->url."api.php", $param);
-			//print_r($editArticle);
+			print_r($editArticle);
 		}
 	}
 	
@@ -109,6 +124,17 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/owptext.txt"));
 		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/nwptext.txt"));
 		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/cuptext.txt"));
+		
+		return $text;
+	}
+	
+	private function getArticleContentForTBM(){
+		$text = array();
+		
+		$cd = isWindows() ? "" : "./";
+		
+		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/uptexttbm.txt"));
+		$text[] = urlencode(file_get_contents($cd."testcases/wum-test-articles/wptexttbm.txt"));
 		
 		return $text;
 	}
