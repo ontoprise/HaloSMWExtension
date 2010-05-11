@@ -55,14 +55,9 @@ class WSStorage {
         global $smwgHaloIP;
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
-            switch ($smwgBaseStore) {
-                case (SMW_STORE_MWDB): 
-                default:
-                    global $smwgDIIP;
-                	require_once($smwgDIIP . '/specials/WebServices/storage/SMW_WSStorageSQL.php');
-                    self::$mDatabase = new WSStorageSQL();
-                break;
-            }
+            global $smwgDIIP;
+            require_once($smwgDIIP . '/specials/WebServices/storage/SMW_WSStorageSQL.php');
+            self::$mDatabase = new WSStorageSQL();
         }
 		
 	}
