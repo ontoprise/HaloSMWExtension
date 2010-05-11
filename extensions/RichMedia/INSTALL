@@ -91,7 +91,7 @@ require_once("$IP/extensions/RichMedia/includes/WebDAV/WD_Initialize.php");
 a configurable namespace blacklist. Namespaces in that blacklist will not be displayed
 in the WebDAV folder. The settings file also allows to configure whether talk namespaces should be displayed.
 
-
+* Write and read access rights must be granted for the directory /extensions/RichMedia/includes/WebDAV/tmp.
 #
 # Read online help
 #
