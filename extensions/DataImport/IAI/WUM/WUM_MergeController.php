@@ -7,6 +7,13 @@
  * @author Ingo Steinbauer
  */
 
+global $smwgDIIP;
+require_once ("$smwgDIIP/IAI/WUM/WUM_ThreeWayBasedMerger.php");
+require_once ("$smwgDIIP/IAI/WUM/WUM_SectionBasedMerger.php");
+require_once ("$smwgDIIP/IAI/WUM/WUM_TableBasedMerger.php");
+require_once ("$smwgDIIP/IAI/WUM/WUM_Settings.php");
+
+
 global $wgExtensionFunctions;
 $wgExtensionFunctions[] = 'wumInitExtension';
 
@@ -14,12 +21,6 @@ define('WUM_TAG_OPEN', '<upc>');
 define('WUM_TAG_CLOSE', '</upc>');
 
 function wumInitExtension(){
-	global $smwgDIIP;
-	require_once ("$smwgDIIP/IAI/WUM/WUM_ThreeWayBasedMerger.php");
-	require_once ("$smwgDIIP/IAI/WUM/WUM_SectionBasedMerger.php");
-	require_once ("$smwgDIIP/IAI/WUM/WUM_TableBasedMerger.php");
-	require_once ("$smwgDIIP/IAI/WUM/WUM_Settings.php");
-
 	global $wgHooks;
 	$wgHooks['APIEditBeforeSave'][] = 'wum_doAPIEdit';
 	$wgHooks['ParserBeforeInternalParse'][] = 'wumUPParserHook';
@@ -83,9 +84,7 @@ class WUMMergeController{
 	 */
 	public function merge($title, $newWPText, $currentUPText){
 		wfProfileIn('WUMMergeController->merge');
-		//$tbm = WUMTableBasedMerger::getInstance();
-		//return $tbm->merge($title, $newWPText, $currentUPText);
-
+		
 		if($this->checkIgnoreNewWPVersion($currentUPText)){
 			return $currentUPText;
 		}
@@ -93,6 +92,14 @@ class WUMMergeController{
 		$overwrite = $this->checkOverwriteUPVersion($newWPText);
 		if($overwrite !== false){
 			return $overwrite;
+		}
+		
+		//check whether to use the table based merger
+		global $wumUseTableBasedMerger;
+		if($wumUseTableBasedMerger){
+			$tbm = WUMTableBasedMerger::getInstance();
+			wfProfileOut('WUMMergeController->merge');
+			return $tbm->merge($title, $newWPText, $currentUPText);
 		}
 
 		//get the last WP version
@@ -196,13 +203,8 @@ class WUMMergeController{
 	 */
 	private function checkOverwriteUPVersion($text){
 		$text = trim($text);
-		echo("\n1-".$text);
-		echo("\n1-".strlen($text));
-		echo("\n1-".strlen('##__WUM_Overwrite__'));
-		echo("\n1-".strpos($text, '_WUM_Overwrite__'));
 		if(strpos($text, "_WUM_Overwrite__") !== false){
 			if(strlen("##__WUM_Overwrite__") == strlen($text)){
-				echo("\nfound");
 				return "";
 			} else {
 				return str_replace("__WUM_Overwrite__", "", $text);
