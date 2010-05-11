@@ -70,18 +70,19 @@ class WUMDiffMatchPatchWrapper {
 
 		$explicitContributions = array();
 		$offset = 0;
-		while(strpos($text, "<up>") !== false){
-			$ec['start'] = $offset = strpos($text, "<up>") + $offset;
-			$text = substr($text, strpos($text, "<up>") + 4);
-			if(strpos($text, "</up>") !== false){
-				$ec['end'] = $offset = strpos($text, "</up>") + 9 + $offset;
-				$text = substr($text, strpos($text, "</up>") + 5);
+		while(strpos($text, WUM_TAG_OPEN) !== false){
+			$ec['start'] = $offset = strpos($text, WUM_TAG_OPEN) + $offset;
+			$text = substr($text, strpos($text, WUM_TAG_OPEN) + strlen(WUM_TAG_OPEN));
+			if(strpos($text, WUM_TAG_CLOSE) !== false){
+				$ec['end'] = 
+					$offset = strpos($text, WUM_TAG_CLOSE) + strlen(WUM_TAG_CLOSE) + strlen(WUM_TAG_OPEN) + $offset;
+				$text = substr($text, strpos($text, WUM_TAG_CLOSE) + strlen(WUM_TAG_CLOSE));
 				$explicitContributions[] = $ec;
 			} else {
 				break;
 			}
 		}
-
+		
 		//create initial patches and make sure that each patch starts and ends with an equality diff where possible
 		//equality diffs are shortened to the patch_margin where possible
 		//we do not yet deal with too short equality diffs
@@ -138,7 +139,7 @@ class WUMDiffMatchPatchWrapper {
 				$patches[] = $patch;
 			}
 		}
-
+		
 		foreach($explicitContributions as $ec){
 			$combinePatches = array();
 			$processedPatchesPrefix = array();
@@ -157,6 +158,7 @@ class WUMDiffMatchPatchWrapper {
 				
 			$patch = new patch_obj();
 			$insert = $delete = '';
+			
 			for($k = 0; $k < count($combinePatches); $k++){
 				for($j=0; $j<count($combinePatches[$k]->diffs); $j++){
 					if($combinePatches[$k]->diffs[$j][0] == DIFF_INSERT){
@@ -193,7 +195,7 @@ class WUMDiffMatchPatchWrapper {
 				$patches[] = $processedPatchesSuffix[$k];
 			}
 		}
-
+		
 		$processedPatches = array();
 		for($i=0; $i < count($patches); $i++){
 			$patch = $this->patch_deep_copy($patches[$i]);

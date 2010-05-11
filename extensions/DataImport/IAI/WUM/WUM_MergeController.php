@@ -7,8 +7,11 @@
   * @author Ingo Steinbauer
  */
 
-global $wgextensionFunctions;
+global $wgExtensionFunctions;
 $wgExtensionFunctions[] = 'wumInitExtension';
+
+define('WUM_TAG_OPEN', '<upc>');
+define('WUM_TAG_CLOSE', '</upc>');
 
 function wumInitExtension(){
 	global $smwgDIIP;
@@ -19,9 +22,8 @@ function wumInitExtension(){
 
 	global $wgHooks;
 	$wgHooks['APIEditBeforeSave'][] = 'wum_doAPIEdit';
-
-	global $wgParser;
-	$wgParser->setHook('up', 'wumUPParserHook');
+	$wgHooks['ParserBeforeInternalParse'][] = 'wumUPParserHook';
+	
 }
 
 /**
@@ -35,17 +37,15 @@ function wumInitExtension(){
  */
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
 	$title = $editPage->mArticle->getTitle()->getFullText();
-	//$wum = new WUMerger($title, $text, $editPage->mArticle->getContent());
 	$editPage->textbox1 =
 		WUMMergeController::getInstance()->merge($title, $text, $editPage->mArticle->getContent());
-	//$wum->createMergeResultArticle();
 	return true;
 }
 
-function wumUPParserHook($input, $args, $parser) {
-	$input = $parser->internalParse($input);
-	$input = $parser->doBlockLevels($input, true);
-	return $input;
+function wumUPParserHook(&$parser, &$text, &$strip_state) {
+	$text = str_replace(WUM_TAG_OPEN,'',$text);
+	$text = str_replace(WUM_TAG_CLOSE,'',$text);
+	return true;
 }
 
 /**
@@ -82,13 +82,18 @@ class WUMMergeController{
 	 * @return unknown_type
 	 */
 	public function merge($title, $newWPText, $currentUPText){
+		wfProfileIn('WUMMergeController->merge');
 		//$tbm = WUMTableBasedMerger::getInstance();
 		 //return $tbm->merge($title, $newWPText, $currentUPText);		
 		
 		if($this->checkIgnoreNewWPVersion($currentUPText)){
 			return $currentUPText;
 		}
-
+		
+		if($overwrite = $this->checkOverwriteUPVersion($newWPText)){
+			return $overwrite;
+		}
+		
 		//get the last WP version
 		$originalWPText = $this->getOriginalWPText($title);
 		
@@ -110,6 +115,8 @@ class WUMMergeController{
 
 		//finalize merge result, i.e. replace temporary characters
 		$text = WUMThreeWayBasedMerger::getInstance()->finalizeMergeResult($text);
+		
+		wfProfileOut('WUMMergeController->merge');
 		return $text;
 	}
 
@@ -121,6 +128,7 @@ class WUMMergeController{
 	 * @return string|unknown
 	 */
 	private function getOriginalWPText($title){
+		wfProfileIn('WUMMergeController->getOriginalWPText');
 		$text= '';
 		
 		global $wumWPURL;
@@ -152,7 +160,9 @@ class WUMMergeController{
 		$response = new SimpleXMLElement($response);
 		$content = $response->xpath("//rev[1]");
 		$text = $content[0];
-
+		
+		wfProfileOut('WUMMergeController->getOriginalWPText');
+		
 		return $text;
 	}
 	
@@ -172,9 +182,23 @@ class WUMMergeController{
 		}
 	}
 	
+	/**
+	 * Check whether to overwrite the UP article. Indicated by the
+	 * '__WUM_Overwrite__ keyword.
+	 * 
+	 * @param unknown_type $text
+	 * @return unknown_type
+	 */
+	private function checkOverwriteUPVersion($text){
+		if(strpos($text, "__WUM_Overwrite__") > 0){
+			return str_replace("__WUM_Overwrite__", "", $text);
+		} else {
+			return false;
+		}
+	}
+	
 	private function prepareText($text){
 		return str_replace("\r\n","\n", $text);				
 	}
 
-		
 }

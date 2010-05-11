@@ -44,6 +44,9 @@ class WUMSectionBasedMerger {
 	public function merge($originalWPText, $newWPText, $currentUPText, 
 			$alreadyMergedText, $mergeFaults){
 		
+		
+		wfProfileIn('WUMSectionBasedMerger->merge');
+				
 		//compute the section tree for all three text versions
 		$originalWPSections = $this->getSectionTree($originalWPText);
 		$newWPSections = $this->getSectionTree($newWPText);
@@ -68,6 +71,8 @@ class WUMSectionBasedMerger {
 		//finally append merge faults to the corresponding sections
 		$alreadyMergedText = $this->appendPatchesToSections($alreadyMergedText, $mergeFaults);
 
+		wfProfileOut('WUMSectionBasedMerger->merge');
+		
 		return $alreadyMergedText;
 	}
 	

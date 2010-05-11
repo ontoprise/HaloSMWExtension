@@ -1,3 +1,5 @@
 Add the following line to your LocalSettings.php after the IAI has been installed:
 
 enableWUM();
+
+Please note, that the Inter Wiki Article Importer must be initialized before the Wikipedia Ultrapedia Merger.

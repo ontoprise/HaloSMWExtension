@@ -125,6 +125,7 @@ class WUMTableBasedMerger {
 	private $title = "";
 	
 	function merge($title, $wikipediaText, $ultrapediaText){
+		wfProfileIn('WUMTableBasedMerger->merge');
 		$this->title = $title;
 		$this->wikipediaText = $wikipediaText;
 		$this->ultrapediaText = $ultrapediaText;
@@ -135,6 +136,7 @@ class WUMTableBasedMerger {
 		
 		$this->createMergeResultArticle();
 		
+		wfProfileOut('WUMTableBasedMerger->merge');
 		return $text;		
 	}
 	

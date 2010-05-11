@@ -94,15 +94,15 @@ return array ( array ( DIFF_EQUAL, $text1) );
 
 // Trim off common prefix (speedup)
 $commonlength = $this->diff_commonPrefix($text1, $text2);
-$commonprefix = mb_substr($text1, 0, $commonlength);
-$text1 = mb_substr($text1, $commonlength);
-$text2 = mb_substr($text2, $commonlength);
+$commonprefix = substr($text1, 0, $commonlength);
+$text1 = substr($text1, $commonlength);
+$text2 = substr($text2, $commonlength);
 
 // Trim off common suffix (speedup)
 $commonlength = $this->diff_commonSuffix($text1, $text2);
-$commonsuffix = mb_substr($text1, mb_strlen($text1) - $commonlength);
-$text1 = mb_substr($text1, 0, mb_strlen($text1) - $commonlength);
-$text2 = mb_substr($text2, 0, mb_strlen($text2) - $commonlength);
+$commonsuffix = substr($text1, strlen($text1) - $commonlength);
+$text1 = substr($text1, 0, strlen($text1) - $commonlength);
+$text2 = substr($text2, 0, strlen($text2) - $commonlength);
 
 // Compute the diff on the middle block
 $diffs = $this->diff_compute($text1, $text2, $checklines);
@@ -141,19 +141,19 @@ if (!$text2) {
 return array ( array ( DIFF_DELETE, $text1 ) );
 }
 
-$longtext = mb_strlen($text1) > mb_strlen($text2) ? $text1 : $text2;
-$shorttext = mb_strlen($text1) > mb_strlen($text2) ? $text2 : $text1;
-$i = mb_strpos($longtext, $shorttext);
+$longtext = strlen($text1) > strlen($text2) ? $text1 : $text2;
+$shorttext = strlen($text1) > strlen($text2) ? $text2 : $text1;
+$i = strpos($longtext, $shorttext);
 if ($i !== false) {
 // Shorter text is inside the longer text (speedup)
 $diffs = array (
-array ( DIFF_INSERT, mb_substr($longtext, 0, $i) ),
+array ( DIFF_INSERT, substr($longtext, 0, $i) ),
 array ( DIFF_EQUAL, $shorttext ),
-array ( DIFF_INSERT, mb_substr($longtext, $i +mb_strlen($shorttext)) )
+array ( DIFF_INSERT, substr($longtext, $i +strlen($shorttext)) )
 );
 
 // Swap insertions for deletions if diff is reversed.
-if (mb_strlen($text1) > mb_strlen($text2)) {
+if (strlen($text1) > strlen($text2)) {
 $diffs[0][0] = $diffs[2][0] = DIFF_DELETE;
 }
 return $diffs;
@@ -182,7 +182,7 @@ $mid_common
 }
 
 // Perform a real diff.
-if ($checklines && (mb_strlen($text1) < 100 || mb_strlen($text2) < 100)) {
+if ($checklines && (strlen($text1) < 100 || strlen($text2) < 100)) {
 // Too trivial for the overhead.
 $checklines = false;
 }
@@ -298,25 +298,25 @@ $lineArray
 */
 function diff_linesToCharsMunge($text, &$lineArray, &$lineHash) {
 $chars = '';
-// Walk the text, pulling out a mb_substring for each line.
+// Walk the text, pulling out a substring for each line.
 // text.split('\n') would would temporarily double our memory footprint.
 // Modifying text would create many large strings to garbage collect.
 $lineStart = 0;
 $lineEnd = -1;
 // Keeping our own length variable is faster than looking it up.
 $lineArrayLength = count($lineArray);
-while ($lineEnd < mb_strlen($text) - 1) {
-$lineEnd = mb_strpos($text, "\n", $lineStart);
+while ($lineEnd < strlen($text) - 1) {
+$lineEnd = strpos($text, "\n", $lineStart);
 if ($lineEnd === false) {
-$lineEnd = mb_strlen($text) - 1;
+$lineEnd = strlen($text) - 1;
 }
-$line = mb_substr($text, $lineStart, $lineEnd +1 -$lineStart);
+$line = substr($text, $lineStart, $lineEnd +1 -$lineStart);
 $lineStart = $lineEnd +1;
 
 if ( isset($lineHash[$line]) ) {
-$chars .= mb_chr($lineHash[$line]);
+$chars .= chr($lineHash[$line]);
 } else {
-$chars .= mb_chr($lineArrayLength);
+$chars .= chr($lineArrayLength);
 $lineHash[$line] = $lineArrayLength;
 $lineArray[$lineArrayLength++] = $line;
 }
@@ -334,7 +334,7 @@ function diff_charsToLines(&$diffs, $lineArray) {
 for ($x = 0; $x < count($diffs); $x++) {
 $chars = $diffs[$x][1];
 $text = array ();
-for ($y = 0; $y < mb_strlen($chars); $y++) {
+for ($y = 0; $y < strlen($chars); $y++) {
 $text[$y] = $lineArray[charCodeAt($chars, $y)];
 }
 $diffs[$x][1] = implode('',$text);
@@ -353,8 +353,8 @@ function diff_map($text1, $text2) {
 // Don't run for too long.
 $ms_end = microtime(true)*1000 + $this->Diff_Timeout*1000;
 // Cache the text lengths to prevent multiple calls.
-$text1_length = mb_strlen($text1);
-$text2_length = mb_strlen($text2);
+$text1_length = strlen($text1);
+$text2_length = strlen($text2);
 $max_d = $text1_length + $text2_length -1;
 $doubleEnd = $this->Diff_DualThreshold * 2 < $max_d;
 $v_map1 = array();
@@ -420,9 +420,9 @@ elseif ($done) {
 // Front path ran over reverse path.
 
 $v_map2 = array_slice($v_map2, 0, $footsteps[$footstep] + 1);
-$a = $this->diff_path1($v_map1, mb_substr($text1, 0, $x), mb_substr($text2, 0, $y));
+$a = $this->diff_path1($v_map1, substr($text1, 0, $x), substr($text2, 0, $y));
 
-return array_merge($a, $this->diff_path2($v_map2, mb_substr($text1, $x), mb_substr($text2, $y)));
+return array_merge($a, $this->diff_path2($v_map2, substr($text1, $x), substr($text2, $y)));
 }
 }
 
@@ -459,8 +459,8 @@ $v_map2[$d][$x . ',' . $y] = true;
 if ($done) {
 // Reverse path ran over front path.
 $v_map1 = array_slice($v_map1, 0, $footsteps[$footstep] + 1);
-$a = $this->diff_path1($v_map1, mb_substr($text1, 0, $text1_length - $x), mb_substr($text2, 0, $text2_length - $y));
-return array_merge($a, $this->diff_path2($v_map2, mb_substr($text1, $text1_length - $x), mb_substr($text2, $text2_length - $y)));
+$a = $this->diff_path1($v_map1, substr($text1, 0, $text1_length - $x), substr($text2, 0, $text2_length - $y));
+return array_merge($a, $this->diff_path2($v_map2, substr($text1, $text1_length - $x), substr($text2, $text2_length - $y)));
 }
 }
 }
@@ -479,8 +479,8 @@ return null;
 */
 function diff_path1($v_map, $text1, $text2) {
 $path = array ();
-$x = mb_strlen($text1);
-$y = mb_strlen($text2);
+$x = strlen($text1);
+$y = strlen($text2);
 /** @type {number?} */
 $last_op = null;
 for ($d = count($v_map) - 2; $d >= 0; $d--) {
@@ -541,8 +541,8 @@ return $path;
 function diff_path2($v_map, $text1, $text2) {
 $path = array ();
 $pathLength = 0;
-$x = mb_strlen($text1);
-$y = mb_strlen($text2);
+$x = strlen($text1);
+$y = strlen($text2);
 /** @type {number?} */
 $last_op = null;
 for ($d = count($v_map) - 2; $d >= 0; $d--) {
@@ -550,11 +550,11 @@ while (1) {
 if (isset ($v_map[$d][($x -1) . ',' . $y])) {
 $x--;
 if ($last_op === DIFF_DELETE) {
-$path[$pathLength -1][1] .= $text1[mb_strlen($text1) - $x -1];
+$path[$pathLength -1][1] .= $text1[strlen($text1) - $x -1];
 } else {
 $path[$pathLength++] = array (
 DIFF_DELETE,
-$text1[mb_strlen($text1) - $x -1]
+$text1[strlen($text1) - $x -1]
 );
 }
 $last_op = DIFF_DELETE;
@@ -563,11 +563,11 @@ break;
 elseif (isset ($v_map[$d][$x . ',' . ($y -1)])) {
 $y--;
 if ($last_op === DIFF_INSERT) {
-$path[$pathLength -1][1] .= $text2[mb_strlen($text2) - $y -1];
+$path[$pathLength -1][1] .= $text2[strlen($text2) - $y -1];
 } else {
 $path[$pathLength++] = array (
 DIFF_INSERT,
-$text2[mb_strlen($text2) - $y -1]
+$text2[strlen($text2) - $y -1]
 );
 }
 $last_op = DIFF_INSERT;
@@ -580,11 +580,11 @@ $y--;
 // throw new Error('No diagonal. Can\'t happen. (diff_path2)');
 //}
 if ($last_op === DIFF_EQUAL) {
-$path[$pathLength -1][1] .= $text1[mb_strlen($text1) - $x -1];
+$path[$pathLength -1][1] .= $text1[strlen($text1) - $x -1];
 } else {
 $path[$pathLength++] = array (
 DIFF_EQUAL,
-$text1[mb_strlen($text1) - $x -1]
+$text1[strlen($text1) - $x -1]
 );
 }
 $last_op = DIFF_EQUAL;
@@ -620,7 +620,7 @@ return $this->diff_commonPrefix( strrev($text1), strrev($text2) );
 }
 
 /**
-* Do the two texts share a mb_substring which is at least half the length of the
+* Do the two texts share a substring which is at least half the length of the
 * longer text?
 * @param {string} text1 First string.
 * @param {string} text2 Second string.
@@ -629,16 +629,16 @@ return $this->diff_commonPrefix( strrev($text1), strrev($text2) );
 * text2 and the common middle. Or null if there was no match.
 */
 function diff_halfMatch($text1, $text2) {
-$longtext = mb_strlen($text1) > mb_strlen($text2) ? $text1 : $text2;
-$shorttext = mb_strlen($text1) > mb_strlen($text2) ? $text2 : $text1;
-if (mb_strlen($longtext) < 10 || mb_strlen($shorttext) < 1) {
+$longtext = strlen($text1) > strlen($text2) ? $text1 : $text2;
+$shorttext = strlen($text1) > strlen($text2) ? $text2 : $text1;
+if (strlen($longtext) < 10 || strlen($shorttext) < 1) {
 return null; // Pointless.
 }
 
 // First check if the second quarter is the seed for a half-match.
-$hm1 = $this->diff_halfMatchI($longtext, $shorttext, ceil(mb_strlen($longtext) / 4));
+$hm1 = $this->diff_halfMatchI($longtext, $shorttext, ceil(strlen($longtext) / 4));
 // Check again based on the third quarter.
-$hm2 = $this->diff_halfMatchI($longtext, $shorttext, ceil(mb_strlen($longtext) / 2));
+$hm2 = $this->diff_halfMatchI($longtext, $shorttext, ceil(strlen($longtext) / 2));
 
 if (!$hm1 && !$hm2) {
 return null;
@@ -648,11 +648,11 @@ $hm = $hm1;
 $hm = $hm2;
 } else {
 // Both matched. Select the longest.
-$hm = mb_strlen($hm1[4]) > mb_strlen($hm2[4]) ? $hm1 : $hm2;
+$hm = strlen($hm1[4]) > strlen($hm2[4]) ? $hm1 : $hm2;
 }
 
 // A half-match was found, sort out the return data.
-if (mb_strlen($text1) > mb_strlen($text2)) {
+if (strlen($text1) > strlen($text2)) {
 $text1_a = $hm[0];
 $text1_b = $hm[1];
 $text2_a = $hm[2];
@@ -668,20 +668,20 @@ return array( $text1_a, $text1_b, $text2_a, $text2_b, $mid_common );
 }
 
 /**
-* Does a mb_substring of shorttext exist within longtext such that the mb_substring
+* Does a substring of shorttext exist within longtext such that the substring
 * is at least half the length of longtext?
 * Closure, but does not reference any external variables.
 * @param {string} longtext Longer string.
 * @param {string} shorttext Shorter string.
-* @param {number} i Start index of quarter length mb_substring within longtext
+* @param {number} i Start index of quarter length substring within longtext
 * @return {Array.<string>?} Five element Array, containing the prefix of
 * longtext, the suffix of longtext, the prefix of shorttext, the suffix
 * of shorttext and the common middle. Or null if there was no match.
 * @private
 */
 function diff_halfMatchI($longtext, $shorttext, $i) {
-// Start with a 1/4 length mb_substring at position i as a seed.
-$seed = mb_substr($longtext, $i, floor(mb_strlen($longtext) / 4));
+// Start with a 1/4 length substring at position i as a seed.
+$seed = substr($longtext, $i, floor(strlen($longtext) / 4));
 
 $j = -1;
 $best_common = '';
@@ -689,18 +689,18 @@ $best_longtext_a = null;
 $best_longtext_b = null;
 $best_shorttext_a = null;
 $best_shorttext_b = null;
-while ( ($j = mb_strpos($shorttext, $seed, $j + 1)) !== false ) {
-$prefixLength = $this->diff_commonPrefix(mb_substr($longtext, $i), mb_substr($shorttext, $j));
-$suffixLength = $this->diff_commonSuffix(mb_substr($longtext, 0, $i), mb_substr($shorttext, 0, $j));
-if (mb_strlen($best_common) < $suffixLength + $prefixLength) {
-$best_common = mb_substr($shorttext, $j - $suffixLength, $suffixLength) . mb_substr($shorttext, $j, $prefixLength);
-$best_longtext_a = mb_substr($longtext, 0, $i - $suffixLength);
-$best_longtext_b = mb_substr($longtext, $i + $prefixLength);
-$best_shorttext_a = mb_substr($shorttext, 0, $j - $suffixLength);
-$best_shorttext_b = mb_substr($shorttext, $j + $prefixLength);
+while ( ($j = strpos($shorttext, $seed, $j + 1)) !== false ) {
+$prefixLength = $this->diff_commonPrefix(substr($longtext, $i), substr($shorttext, $j));
+$suffixLength = $this->diff_commonSuffix(substr($longtext, 0, $i), substr($shorttext, 0, $j));
+if (strlen($best_common) < $suffixLength + $prefixLength) {
+$best_common = substr($shorttext, $j - $suffixLength, $suffixLength) . substr($shorttext, $j, $prefixLength);
+$best_longtext_a = substr($longtext, 0, $i - $suffixLength);
+$best_longtext_b = substr($longtext, $i + $prefixLength);
+$best_shorttext_a = substr($shorttext, 0, $j - $suffixLength);
+$best_shorttext_b = substr($shorttext, $j + $prefixLength);
 }
 }
-if (mb_strlen($best_common) >= mb_strlen($longtext) / 2) {
+if (strlen($best_common) >= strlen($longtext) / 2) {
 return array (
 $best_longtext_a,
 $best_longtext_b,
@@ -734,8 +734,8 @@ $length_changes1 = $length_changes2;
 $length_changes2 = 0;
 $lastequality = $diffs[$pointer][1];
 } else { // an insertion or deletion
-$length_changes2 += mb_strlen($diffs[$pointer][1]);
-if ($lastequality !== null && (mb_strlen($lastequality) <= $length_changes1) && (mb_strlen($lastequality) <= $length_changes2)) {
+$length_changes2 += strlen($diffs[$pointer][1]);
+if ($lastequality !== null && (strlen($lastequality) <= $length_changes1) && (strlen($lastequality) <= $length_changes2)) {
 // Duplicate record
 $zzz_diffs = array_splice($diffs, $equalities[$equalitiesLength -1], 0, array(array (
 DIFF_DELETE,
@@ -782,9 +782,9 @@ $equality2 = $diffs[$pointer +1][1];
 // First, shift the edit as far left as possible.
 $commonOffset = $this->diff_commonSuffix($equality1, $edit);
 if ($commonOffset) {
-$commonString = mb_substr($edit, mb_strlen($edit) - $commonOffset);
-$equality1 = mb_substr($equality1, 0, mb_strlen($equality1) - $commonOffset);
-$edit = $commonString . mb_substr($edit, 0, mb_strlen($edit) - $commonOffset);
+$commonString = substr($edit, strlen($edit) - $commonOffset);
+$equality1 = substr($equality1, 0, strlen($equality1) - $commonOffset);
+$edit = $commonString . substr($edit, 0, strlen($edit) - $commonOffset);
 $equality2 = $commonString . $equality2;
 }
 
@@ -795,8 +795,8 @@ $bestEquality2 = $equality2;
 $bestScore = $this->diff_cleanupSemanticScore($equality1, $edit) + $this->diff_cleanupSemanticScore($edit, $equality2);
 while ($edit[0] === $equality2[0]) {
 $equality1 .= $edit[0];
-$edit = mb_substr($edit, 1) . $equality2[0];
-$equality2 = mb_substr($equality2, 1);
+$edit = substr($edit, 1) . $equality2[0];
+$equality2 = substr($equality2, 1);
 $score = $this->diff_cleanupSemanticScore($equality1, $edit) + $this->diff_cleanupSemanticScore($edit, $equality2);
 // The >= encourages trailing rather than leading whitespace on edits.
 if ($score >= $bestScore) {
@@ -857,13 +857,13 @@ return 5;
 // rather than force total conformity.
 $score = 0;
 // One point for non-alphanumeric.
-if (preg_match($punctuation, $one[mb_strlen($one) - 1]) || preg_match($punctuation, $two[0])) {
+if (preg_match($punctuation, $one[strlen($one) - 1]) || preg_match($punctuation, $two[0])) {
 $score++;
 // Two points for whitespace.
-if (preg_match($whitespace, $one[mb_strlen($one) - 1] ) || preg_match($whitespace, $two[0])) {
+if (preg_match($whitespace, $one[strlen($one) - 1] ) || preg_match($whitespace, $two[0])) {
 $score++;
 // Three points for line breaks.
-if (preg_match($linebreak, $one[mb_strlen($one) - 1]) || preg_match($linebreak, $two[0])) {
+if (preg_match($linebreak, $one[strlen($one) - 1]) || preg_match($linebreak, $two[0])) {
 $score++;
 // Four points for blank lines.
 if (preg_match($blanklineEnd, $one) || preg_match($blanklineStart, $two)) {
@@ -895,7 +895,7 @@ $post_ins = false;
 $post_del = false;
 while ($pointer < count($diffs)) {
 if ($diffs[$pointer][0] == DIFF_EQUAL) { // equality found
-if (mb_strlen($diffs[$pointer][1]) < $this->Diff_EditCost && ($post_ins || $post_del)) {
+if (strlen($diffs[$pointer][1]) < $this->Diff_EditCost && ($post_ins || $post_del)) {
 // Candidate found.
 $equalities[$equalitiesLength++] = $pointer;
 $pre_ins = $post_ins;
@@ -921,7 +921,7 @@ $post_ins = true;
 * <ins>A</del>X<ins>C</ins><del>D</del>
 * <ins>A</ins><del>B</del>X<del>C</del>
 */
-if ($lastequality && (($pre_ins && $pre_del && $post_ins && $post_del) || ((mb_strlen($lastequality) < $this->Diff_EditCost / 2) && ($pre_ins + $pre_del + $post_ins + $post_del) == 3))) {
+if ($lastequality && (($pre_ins && $pre_del && $post_ins && $post_del) || ((strlen($lastequality) < $this->Diff_EditCost / 2) && ($pre_ins + $pre_del + $post_ins + $post_del) == 3))) {
 // Duplicate record
 $zzz_diffs = array_splice($diffs, $equalities[$equalitiesLength -1], 0, array(array (
 DIFF_DELETE,
@@ -984,23 +984,23 @@ if ($count_delete !== 0 && $count_insert !== 0) {
 $commonlength = $this->diff_commonPrefix($text_insert, $text_delete);
 if ($commonlength !== 0) {
 if (($pointer - $count_delete - $count_insert) > 0 && $diffs[$pointer - $count_delete - $count_insert -1][0] == DIFF_EQUAL) {
-$diffs[$pointer - $count_delete - $count_insert -1][1] .= mb_substr($text_insert, 0, $commonlength);
+$diffs[$pointer - $count_delete - $count_insert -1][1] .= substr($text_insert, 0, $commonlength);
 } else {
 array_splice($diffs, 0, 0, array(array (
 DIFF_EQUAL,
-mb_substr($text_insert, 0, $commonlength)
+substr($text_insert, 0, $commonlength)
 )));
 $pointer++;
 }
-$text_insert = mb_substr($text_insert, $commonlength);
-$text_delete = mb_substr($text_delete, $commonlength);
+$text_insert = substr($text_insert, $commonlength);
+$text_delete = substr($text_delete, $commonlength);
 }
 // Factor out any common suffixies.
 $commonlength = $this->diff_commonSuffix($text_insert, $text_delete);
 if ($commonlength !== 0) {
-$diffs[$pointer][1] = mb_substr($text_insert, mb_strlen($text_insert) - $commonlength) . $diffs[$pointer][1];
-$text_insert = mb_substr($text_insert, 0, mb_strlen($text_insert) - $commonlength);
-$text_delete = mb_substr($text_delete, 0, mb_strlen($text_delete) - $commonlength);
+$diffs[$pointer][1] = substr($text_insert, strlen($text_insert) - $commonlength) . $diffs[$pointer][1];
+$text_insert = substr($text_insert, 0, strlen($text_insert) - $commonlength);
+$text_delete = substr($text_delete, 0, strlen($text_delete) - $commonlength);
 }
 }
 // Delete the offending records and add the merged ones.
@@ -1051,17 +1051,17 @@ $pointer = 1;
 while ($pointer < count($diffs) - 1) {
 if ($diffs[$pointer-1][0] == DIFF_EQUAL && $diffs[$pointer+1][0] == DIFF_EQUAL) {
 // This is a single edit surrounded by equalities.
-if ( mb_substr($diffs[$pointer][1], mb_strlen($diffs[$pointer][1]) - mb_strlen($diffs[$pointer -1][1])) == $diffs[$pointer -1][1]) {
+if ( substr($diffs[$pointer][1], strlen($diffs[$pointer][1]) - strlen($diffs[$pointer -1][1])) == $diffs[$pointer -1][1]) {
 // Shift the edit over the previous equality.
-$diffs[$pointer][1] = $diffs[$pointer -1][1] . mb_substr($diffs[$pointer][1], 0, mb_strlen($diffs[$pointer][1]) - mb_strlen($diffs[$pointer -1][1]));
+$diffs[$pointer][1] = $diffs[$pointer -1][1] . substr($diffs[$pointer][1], 0, strlen($diffs[$pointer][1]) - strlen($diffs[$pointer -1][1]));
 $diffs[$pointer +1][1] = $diffs[$pointer -1][1] . $diffs[$pointer +1][1];
 array_splice($diffs, $pointer -1, 1);
 $changes = true;
-} elseif (mb_substr($diffs[$pointer][1], 0, mb_strlen($diffs[$pointer +1][1])) == $diffs[$pointer +1][1]) {
+} elseif (substr($diffs[$pointer][1], 0, strlen($diffs[$pointer +1][1])) == $diffs[$pointer +1][1]) {
 // Shift the edit over the next equality.
 $diffs[$pointer -1][1] .= $diffs[$pointer +1][1];
 
-$diffs[$pointer][1] = mb_substr($diffs[$pointer][1], mb_strlen($diffs[$pointer +1][1])) . $diffs[$pointer +1][1];
+$diffs[$pointer][1] = substr($diffs[$pointer][1], strlen($diffs[$pointer +1][1])) . $diffs[$pointer +1][1];
 array_splice($diffs, $pointer +1, 1);
 $changes = true;
 }
@@ -1089,10 +1089,10 @@ $last_chars1 = 0;
 $last_chars2 = 0;
 for ($x = 0; $x < count($diffs); $x++) {
 if ($diffs[$x][0] !== DIFF_INSERT) { // Equality or deletion.
-$chars1 += mb_strlen($diffs[$x][1]);
+$chars1 += strlen($diffs[$x][1]);
 }
 if ($diffs[$x][0] !== DIFF_DELETE) { // Equality or insertion.
-$chars2 += mb_strlen($diffs[$x][1]);
+$chars2 += strlen($diffs[$x][1]);
 }
 if ($chars1 > $loc) { // Overshot the location.
 break;
@@ -1143,7 +1143,7 @@ $html[$x] = '<SPAN TITLE="i=' . $i . '">' . $text . '</SPAN>';
 break;
 }
 if ($op !== DIFF_DELETE) {
-$i += mb_strlen($data);
+$i += strlen($data);
 }
 }
 return implode('',$html);
@@ -1194,10 +1194,10 @@ $op = $diffs[$x][0];
 $data = $diffs[$x][1];
 switch ($op) {
 case DIFF_INSERT :
-$insertions += mb_strlen($data);
+$insertions += strlen($data);
 break;
 case DIFF_DELETE :
-$deletions += mb_strlen($data);
+$deletions += strlen($data);
 break;
 case DIFF_EQUAL :
 // A deletion and an insertion is one substitution.
@@ -1227,10 +1227,10 @@ case DIFF_INSERT :
 $text[$x] = '+' .encodeURI($diffs[$x][1]);
 break;
 case DIFF_DELETE :
-$text[$x] = '-' .mb_strlen($diffs[$x][1]);
+$text[$x] = '-' .strlen($diffs[$x][1]);
 break;
 case DIFF_EQUAL :
-$text[$x] = '=' .mb_strlen($diffs[$x][1]);
+$text[$x] = '=' .strlen($diffs[$x][1]);
 break;
 }
 }
@@ -1254,7 +1254,7 @@ $tokens = preg_split("/\t/", $delta);
 for ($x = 0; $x < count($tokens); $x++) {
 // Each token begins with a one character parameter which specifies the
 // operation of this token (delete, insert, equality).
-$param = mb_substr($tokens[$x], 1);
+$param = substr($tokens[$x], 1);
 switch ($tokens[$x][0]) {
 case '+' :
 try {
@@ -1274,7 +1274,7 @@ $n = (int) $param;
 if ($n < 0) {
 echo_Exception('Invalid number in diff_fromDelta: ' . $param);
 }
-$text = mb_substr($text1, $pointer, $n);
+$text = substr($text1, $pointer, $n);
 $pointer += $n;
 if ($tokens[$x][0] == '=') {
 $diffs[$diffsLength++] = array (
@@ -1296,9 +1296,9 @@ echo_Exception('Invalid diff operation in diff_fromDelta: ' . $tokens[$x]);
 }
 }
 }
-if ($pointer != mb_strlen($text1)) {
-// throw new Exception('Delta length (' . $pointer . ') does not equal source text length (' . mb_strlen($text1) . ').');
-echo_Exception('Delta length (' . $pointer . ') does not equal source text length (' . mb_strlen($text1) . ').');
+if ($pointer != strlen($text1)) {
+// throw new Exception('Delta length (' . $pointer . ') does not equal source text length (' . strlen($text1) . ').');
+echo_Exception('Delta length (' . $pointer . ') does not equal source text length (' . strlen($text1) . ').');
 }
 return $diffs;
 }
@@ -1313,16 +1313,16 @@ return $diffs;
 * @return {number} Best match index or -1.
 */
 function match_main($text, $pattern, $loc) {
-$loc = max(0, min($loc, mb_strlen($text)));
+$loc = max(0, min($loc, strlen($text)));
 if ($text == $pattern) {
 // Shortcut (potentially not guaranteed by the algorithm)
 return 0;
 }
-elseif (!mb_strlen($text)) {
+elseif (!strlen($text)) {
 // Nothing to match.
 return -1;
 }
-elseif (mb_substr($text, $loc, mb_strlen($pattern)) == $pattern) {
+elseif (substr($text, $loc, strlen($pattern)) == $pattern) {
 // Perfect match at the perfect spot! (Includes case of null pattern)
 return $loc;
 } else {
@@ -1341,7 +1341,7 @@ return $this->match_bitap($text, $pattern, $loc);
 * @private
 */
 function match_bitap($text, $pattern, $loc) {
-if (mb_strlen($pattern) > Match_MaxBits) {
+if (strlen($pattern) > Match_MaxBits) {
 echo_Exception('Pattern too long for this browser.');
 }
 
@@ -1352,26 +1352,26 @@ $s = $this->match_alphabet($pattern);
 $score_threshold = $this->Match_Threshold;
 
 // Is there a nearby exact match? (speedup)
-$best_loc = mb_strpos($text, $pattern, $loc);
+$best_loc = strpos($text, $pattern, $loc);
 if ($best_loc !== false) {
 $score_threshold = min($this->match_bitapScore(0, $best_loc, $pattern, $loc), $score_threshold);
 }
 
 // What about in the other direction? (speedup)
-$best_loc = mb_strrpos( $text, $pattern, $loc + mb_strlen($pattern) );
+$best_loc = strrpos( $text, $pattern, $loc + strlen($pattern) );
 if ($best_loc !== false) {
 $score_threshold = min($this->match_bitapScore(0, $best_loc, $pattern, $loc), $score_threshold);
 }
 
 // Initialise the bit arrays.
-$matchmask = 1 << (mb_strlen($pattern) - 1);
+$matchmask = 1 << (strlen($pattern) - 1);
 $best_loc = -1;
 
 $bin_min = null;
 $bin_mid = null;
-$bin_max = mb_strlen($pattern) + mb_strlen($text);
+$bin_max = strlen($pattern) + strlen($text);
 $last_rd = null;
-for ($d = 0; $d < mb_strlen($pattern); $d++) {
+for ($d = 0; $d < strlen($pattern); $d++) {
 // Scan for the best match; each iteration allows for one more error.
 // Run a binary search to determine how far from 'loc' we can stray at this
 // error level.
@@ -1388,7 +1388,7 @@ $bin_mid = floor(($bin_max - $bin_min) / 2 + $bin_min);
 // Use the result from this iteration as the maximum for the next.
 $bin_max = $bin_mid;
 $start = max(1, $loc - $bin_mid +1);
-$finish = min($loc + $bin_mid, mb_strlen($text)) + mb_strlen($pattern);
+$finish = min($loc + $bin_mid, strlen($text)) + strlen($pattern);
 
 $rd = Array (
 $finish +2
@@ -1439,7 +1439,7 @@ return (int)$best_loc;
 * @private
 */
 function match_bitapScore($e, $x, $pattern, $loc) {
-$accuracy = $e / mb_strlen($pattern);
+$accuracy = $e / strlen($pattern);
 $proximity = abs($loc - $x);
 if (!$this->Match_Distance) {
 // Dodge divide by zero error.
@@ -1456,11 +1456,11 @@ return $accuracy + ($proximity / $this->Match_Distance);
 */
 function match_alphabet($pattern) {
 $s = array ();
-for ($i = 0; $i < mb_strlen($pattern); $i++) {
+for ($i = 0; $i < strlen($pattern); $i++) {
 $s[ $pattern[$i] ] = 0;
 }
-for ($i = 0; $i < mb_strlen($pattern); $i++) {
-$s[ $pattern[$i] ] |= 1 << (mb_strlen($pattern) - $i - 1);
+for ($i = 0; $i < strlen($pattern); $i++) {
+$s[ $pattern[$i] ] |= 1 << (strlen($pattern) - $i - 1);
 }
 return $s;
 }
@@ -1475,16 +1475,16 @@ return $s;
 * @private
 */
 function patch_addContext($patch, $text) {
-$pattern = mb_substr($text, $patch->start2, ($patch->start2 + $patch->length1) - $patch->start2 );
+$pattern = substr($text, $patch->start2, ($patch->start2 + $patch->length1) - $patch->start2 );
 $padding = 0;
-while (mb_strpos($text, $pattern) !== mb_strrpos($text, $pattern) && mb_strlen($pattern) < Match_MaxBits - $this->Patch_Margin - $this->Patch_Margin ) {
+while (strpos($text, $pattern) !== strrpos($text, $pattern) && strlen($pattern) < Match_MaxBits - $this->Patch_Margin - $this->Patch_Margin ) {
 $padding += $this->Patch_Margin;
-$pattern = mb_substr($text, max($patch->start2 - $padding,0), ($patch->start2 + $patch->length1 + $padding) - max($patch->start2 - $padding,0) );
+$pattern = substr($text, max($patch->start2 - $padding,0), ($patch->start2 + $patch->length1 + $padding) - max($patch->start2 - $padding,0) );
 }
 // Add one chunk for good luck.
 $padding += $this->Patch_Margin;
 // Add the prefix.
-$prefix = mb_substr($text, max($patch->start2 - $padding,0), $patch->start2 - max($patch->start2 - $padding,0) );
+$prefix = substr($text, max($patch->start2 - $padding,0), $patch->start2 - max($patch->start2 - $padding,0) );
 if ($prefix!=='') {
 array_unshift($patch->diffs, array (
 DIFF_EQUAL,
@@ -1492,7 +1492,7 @@ $prefix
 ));
 }
 // Add the suffix.
-   $suffix = mb_substr($text, $patch->start2 + $patch->length1, ($patch->start2 + $patch->length1 + $padding) - ($patch->start2 + $patch->length1) );
+   $suffix = substr($text, $patch->start2 + $patch->length1, ($patch->start2 + $patch->length1 + $padding) - ($patch->start2 + $patch->length1) );
 if ($suffix!=='') {
 array_push($patch->diffs, array (
 DIFF_EQUAL,
@@ -1501,11 +1501,11 @@ $suffix
 }
 
 // Roll back the start points.
-$patch->start1 -= mb_strlen($prefix);
-$patch->start2 -= mb_strlen($prefix);
+$patch->start1 -= strlen($prefix);
+$patch->start2 -= strlen($prefix);
 // Extend the lengths.
-$patch->length1 += mb_strlen($prefix) + mb_strlen($suffix);
-$patch->length2 += mb_strlen($prefix) + mb_strlen($suffix);
+$patch->length1 += strlen($prefix) + strlen($suffix);
+$patch->length2 += strlen($prefix) + strlen($suffix);
 }
 
 /**
@@ -1584,21 +1584,21 @@ $patch->start2 = $char_count2;
 switch ($diff_type) {
 case DIFF_INSERT :
 $patch->diffs[$patchDiffLength++] = $diffs[$x];
-$patch->length2 += mb_strlen($diff_text);
-$postpatch_text = mb_substr($postpatch_text, 0, $char_count2) . $diff_text . mb_substr($postpatch_text,$char_count2);
+$patch->length2 += strlen($diff_text);
+$postpatch_text = substr($postpatch_text, 0, $char_count2) . $diff_text . substr($postpatch_text,$char_count2);
 break;
 case DIFF_DELETE :
-$patch->length1 += mb_strlen($diff_text);
+$patch->length1 += strlen($diff_text);
 $patch->diffs[$patchDiffLength++] = $diffs[$x];
-$postpatch_text = mb_substr($postpatch_text, 0, $char_count2) . mb_substr($postpatch_text, $char_count2 + mb_strlen($diff_text) );
+$postpatch_text = substr($postpatch_text, 0, $char_count2) . substr($postpatch_text, $char_count2 + strlen($diff_text) );
 break;
 case DIFF_EQUAL :
-if ( mb_strlen($diff_text) <= 2 * $this->Patch_Margin && $patchDiffLength && count($diffs) != $x + 1) {
+if ( strlen($diff_text) <= 2 * $this->Patch_Margin && $patchDiffLength && count($diffs) != $x + 1) {
 // Small equality inside a patch.
 $patch->diffs[$patchDiffLength++] = $diffs[$x];
-$patch->length1 += mb_strlen($diff_text);
-$patch->length2 += mb_strlen($diff_text);
-} elseif ( mb_strlen($diff_text) >= 2 * $this->Patch_Margin ) {
+$patch->length1 += strlen($diff_text);
+$patch->length2 += strlen($diff_text);
+} elseif ( strlen($diff_text) >= 2 * $this->Patch_Margin ) {
 // Time for a new patch.
 if ($patchDiffLength) {
 $this->patch_addContext($patch, $prepatch_text);
@@ -1618,10 +1618,10 @@ break;
 
 // Update the current character count.
 if ($diff_type !== DIFF_INSERT) {
-$char_count1 += mb_strlen($diff_text);
+$char_count1 += strlen($diff_text);
 }
 if ($diff_type !== DIFF_DELETE) {
-$char_count2 += mb_strlen($diff_text);
+$char_count2 += strlen($diff_text);
 }
 }
 // Pick up the leftover patch if not empty.
@@ -1687,12 +1687,12 @@ $expected_loc = $patches[$x]->start2 + $delta;
 $text1 = $this->diff_text1($patches[$x]->diffs);
 $start_loc = null;
 $end_loc = -1;
-if (mb_strlen($text1) > Match_MaxBits) {
+if (strlen($text1) > Match_MaxBits) {
 // patch_splitMax will only provide an oversized pattern in the case of
 // a monster delete.
-$start_loc = $this->match_main($text, mb_substr($text1, 0, Match_MaxBits ), $expected_loc);
+$start_loc = $this->match_main($text, substr($text1, 0, Match_MaxBits ), $expected_loc);
 if ($start_loc != -1) {
-$end_loc = $this->match_main($text, mb_substr($text1,mb_strlen($text1) - Match_MaxBits), $expected_loc + mb_strlen($text1) - Match_MaxBits);
+$end_loc = $this->match_main($text, substr($text1,strlen($text1) - Match_MaxBits), $expected_loc + strlen($text1) - Match_MaxBits);
 if ($end_loc == -1 || $start_loc >= $end_loc) {
 // Can't find valid trailing context. Drop this patch.
 $start_loc = -1;
@@ -1712,18 +1712,18 @@ $results[$x] = true;
 $delta = $start_loc - $expected_loc;
 $text2 = null;
 if ($end_loc == -1) {
-$text2 = mb_substr($text, $start_loc, mb_strlen($text1) );
+$text2 = substr($text, $start_loc, strlen($text1) );
 } else {
-$text2 = mb_substr($text, $start_loc, $end_loc + Match_MaxBits - $start_loc);
+$text2 = substr($text, $start_loc, $end_loc + Match_MaxBits - $start_loc);
 }
 if ($text1 == $text2) {
 // Perfect match, just shove the replacement text in.
-$text = mb_substr($text, 0, $start_loc) . $this->diff_text2($patches[$x]->diffs) . mb_substr($text,$start_loc + mb_strlen($text1) );
+$text = substr($text, 0, $start_loc) . $this->diff_text2($patches[$x]->diffs) . substr($text,$start_loc + strlen($text1) );
 } else {
 // Imperfect match. Run a diff to get a framework of equivalent
 // indices.
 $diffs = $this->diff_main($text1, $text2, false);
-if ( mb_strlen($text1) > Match_MaxBits && $this->diff_levenshtein($diffs) / mb_strlen($text1) > $this->Patch_DeleteThreshold) {
+if ( strlen($text1) > Match_MaxBits && $this->diff_levenshtein($diffs) / strlen($text1) > $this->Patch_DeleteThreshold) {
 // The end points match, but the content is unacceptably bad.
 $results[$x] = false;
 } else {
@@ -1736,12 +1736,12 @@ if ($mod[0] !== DIFF_EQUAL) {
 $index2 = $this->diff_xIndex($diffs, $index1);
 }
 if ($mod[0] === DIFF_INSERT) { // Insertion
-$text = mb_substr($text, 0, $start_loc + $index2) . $mod[1] . mb_substr($text, $start_loc + $index2);
+$text = substr($text, 0, $start_loc + $index2) . $mod[1] . substr($text, $start_loc + $index2);
 } elseif ($mod[0] === DIFF_DELETE) { // Deletion
-$text = mb_substr($text, 0, $start_loc + $index2) . mb_substr($text,$start_loc + $this->diff_xIndex($diffs, $index1 + mb_strlen($mod[1]) ));
+$text = substr($text, 0, $start_loc + $index2) . substr($text,$start_loc + $this->diff_xIndex($diffs, $index1 + strlen($mod[1]) ));
 }
 if ($mod[0] !== DIFF_DELETE) {
-$index1 += mb_strlen($mod[1]);
+$index1 += strlen($mod[1]);
 }
 }
 }
@@ -1749,7 +1749,7 @@ $index1 += mb_strlen($mod[1]);
 }
 }
 // Strip the padding off.
-$text = mb_substr($text, mb_strlen($nullPadding), mb_strlen($text) - 2*mb_strlen($nullPadding) );
+$text = substr($text, strlen($nullPadding), strlen($text) - 2*strlen($nullPadding) );
 return array($text, $results);
 }
 
@@ -1763,7 +1763,7 @@ function patch_addPadding(&$patches){
 $paddingLength = $this->Patch_Margin;
 $nullPadding = '';
 for ($x = 1; $x <= $paddingLength; $x++) {
-$nullPadding .= mb_chr($x);
+$nullPadding .= chr($x);
 }
 
 // Bump all the patches forward.
@@ -1782,10 +1782,10 @@ $patch->start1 -= $paddingLength; // Should be 0.
 $patch->start2 -= $paddingLength; // Should be 0.
 $patch->length1 += $paddingLength;
 $patch->length2 += $paddingLength;
-} elseif ($paddingLength > mb_strlen($diffs[0][1]) ) {
+} elseif ($paddingLength > strlen($diffs[0][1]) ) {
 // Grow first equality.
-$extraLength = $paddingLength - mb_strlen($diffs[0][1]);
-$diffs[0][1] = mb_substr( $nullPadding , mb_strlen($diffs[0][1]) ) . $diffs[0][1];
+$extraLength = $paddingLength - strlen($diffs[0][1]);
+$diffs[0][1] = substr( $nullPadding , strlen($diffs[0][1]) ) . $diffs[0][1];
 $patch->start1 -= $extraLength;
 $patch->start2 -= $extraLength;
 $patch->length1 += $extraLength;
@@ -1800,10 +1800,10 @@ if ( count($diffs) == 0 || $diffs[ count($diffs) - 1][0] != DIFF_EQUAL) {
 array_push($diffs, array(DIFF_EQUAL, $nullPadding) );
 $patch->length1 += $paddingLength;
 $patch->length2 += $paddingLength;
-} elseif ($paddingLength > mb_strlen( $diffs[count($diffs)-1][1] ) ) {
+} elseif ($paddingLength > strlen( $diffs[count($diffs)-1][1] ) ) {
 // Grow last equality.
-$extraLength = $paddingLength - mb_strlen( $diffs[count($diffs)-1][1] );
-$diffs[ count($diffs)-1][1] .= mb_substr($nullPadding,0,$extraLength);
+$extraLength = $paddingLength - strlen( $diffs[count($diffs)-1][1] );
+$diffs[ count($diffs)-1][1] .= substr($nullPadding,0,$extraLength);
 $patch->length1 += $extraLength;
 $patch->length2 += $extraLength;
 }
@@ -1830,10 +1830,10 @@ while ( count($bigpatch->diffs) !== 0) {
 // Create one of several smaller patches.
 $patch = new patch_obj();
 $empty = true;
-$patch->start1 = $start1 - mb_strlen($precontext);
-$patch->start2 = $start2 - mb_strlen($precontext);
+$patch->start1 = $start1 - strlen($precontext);
+$patch->start2 = $start2 - strlen($precontext);
 if ($precontext !== '') {
-$patch->length1 = $patch->length2 = mb_strlen($precontext);
+$patch->length1 = $patch->length2 = strlen($precontext);
 array_push($patch->diffs, array(DIFF_EQUAL, $precontext) );
 }
 while ( count($bigpatch->diffs) !== 0 && $patch->length1 < $patch_size - $this->Patch_Margin) {
@@ -1841,26 +1841,26 @@ $diff_type = $bigpatch->diffs[0][0];
 $diff_text = $bigpatch->diffs[0][1];
 if ($diff_type === DIFF_INSERT) {
 // Insertions are harmless.
-$patch->length2 += mb_strlen($diff_text);
-$start2 += mb_strlen($diff_text);
+$patch->length2 += strlen($diff_text);
+$start2 += strlen($diff_text);
 array_push($patch->diffs, array_shift($bigpatch->diffs) );
 $empty = false;
 } else
-if ($diff_type === DIFF_DELETE && count($patch->diffs) == 1 && $patch->diffs[0][0] == DIFF_EQUAL && (mb_strlen($diff_text) > 2 * $patch_size) ) {
+if ($diff_type === DIFF_DELETE && count($patch->diffs) == 1 && $patch->diffs[0][0] == DIFF_EQUAL && (strlen($diff_text) > 2 * $patch_size) ) {
 // This is a large deletion. Let it pass in one chunk.
-$patch->length1 += mb_strlen($diff_text);
-$start1 += mb_strlen($diff_text);
+$patch->length1 += strlen($diff_text);
+$start1 += strlen($diff_text);
 $empty = false;
 array_push( $patch->diffs, array($diff_type, $diff_text) );
 array_shift($bigpatch->diffs);
 } else {
 // Deletion or equality. Only take as much as we can stomach.
-$diff_text = mb_substr($diff_text, 0, $patch_size - $patch->length1 - $this->Patch_Margin);
-$patch->length1 += mb_strlen($diff_text);
-$start1 += mb_strlen($diff_text);
+$diff_text = substr($diff_text, 0, $patch_size - $patch->length1 - $this->Patch_Margin);
+$patch->length1 += strlen($diff_text);
+$start1 += strlen($diff_text);
 if ($diff_type === DIFF_EQUAL) {
-$patch->length2 += mb_strlen($diff_text);
-$start2 += mb_strlen($diff_text);
+$patch->length2 += strlen($diff_text);
+$start2 += strlen($diff_text);
 } else {
 $empty = false;
 }
@@ -1868,18 +1868,18 @@ array_push($patch->diffs, array($diff_type, $diff_text) );
 if ($diff_text == $bigpatch->diffs[0][1]) {
 array_shift($bigpatch->diffs);
 } else {
-$bigpatch->diffs[0][1] = mb_substr( $bigpatch->diffs[0][1],mb_strlen($diff_text) );
+$bigpatch->diffs[0][1] = substr( $bigpatch->diffs[0][1],strlen($diff_text) );
 }
 }
 }
 // Compute the head context for the next patch.
 $precontext = $this->diff_text2($patch->diffs);
-$precontext = mb_substr($precontext, mb_strlen($precontext)-$this->Patch_Margin);
+$precontext = substr($precontext, strlen($precontext)-$this->Patch_Margin);
 // Append the end context for this patch.
-$postcontext = mb_substr( $this->diff_text1($bigpatch->diffs), 0, $this->Patch_Margin );
+$postcontext = substr( $this->diff_text1($bigpatch->diffs), 0, $this->Patch_Margin );
 if ($postcontext !== '') {
-$patch->length1 += mb_strlen($postcontext);
-$patch->length2 += mb_strlen($postcontext);
+$patch->length1 += strlen($postcontext);
+$patch->length2 += strlen($postcontext);
 if ( count($patch->diffs) !== 0 && $patch->diffs[ count($patch->diffs) - 1][0] === DIFF_EQUAL) {
 $patch->diffs[ count($patch->diffs) - 1][1] .= $postcontext;
 } else {
@@ -1955,7 +1955,7 @@ $textPointer++;
 while ($textPointer < count($text) ) {
 $sign = $text[$textPointer][0];
 try {
-$line = decodeURI( mb_substr($text[$textPointer],1) );
+$line = decodeURI( substr($text[$textPointer],1) );
 } catch (Exeption $ex) {
 // Malformed URI sequence.
 throw new Exception('Illegal escape in patch_fromText: ' . $line);
@@ -2054,14 +2054,14 @@ define('Match_MaxBits', PHP_INT_MAX * 8);
 
 
 function charCodeAt($str, $pos) {
-return mb_ord($str[$pos]);
+return ord($str[$pos]);
 }
-function mb_ord($v){
-return ord($v);
-}
-function mb_chr($num){
-    return chr($num);
-}
+//function ord($v){
+//return ord($v);
+//}
+//function chr($num){
+//    return chr($num);
+//}
 
 function encodeURI($v) {
 // return $v;
@@ -2084,4 +2084,4 @@ global $lastExeption;
 $lastExeption = $str;
 echo $str;
 }
-//mb_internal_encoding("UTF-8");
+//internal_encoding("UTF-8");

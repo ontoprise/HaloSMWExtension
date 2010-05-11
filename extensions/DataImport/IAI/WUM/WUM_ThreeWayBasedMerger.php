@@ -32,7 +32,7 @@ class WUMThreeWayBasedMerger {
 		return self::$instance;
 	}
 
-	private $textMargin = "%%&&$$%%&&$$%%&&$$";
+	private $textMargin = "%%&&##%%&&##%%&&##";
 
 	/**
 	 * Creates patches between the originalWPText and the currentUPText and applies them
@@ -45,6 +45,7 @@ class WUMThreeWayBasedMerger {
 	 * @return array
 	 */
 	public function merge($originalWPText, $newWPText, $currentUPText){
+		wfProfileIn('WUMThreewayBasedMerger->merge');
 		$originalWPText = $this->appendTextMargins($originalWPText);
 		$newWPText = $this->appendTextMargins($newWPText);
 		$currentUPText = $this->appendTextMargins($currentUPText);
@@ -54,6 +55,8 @@ class WUMThreeWayBasedMerger {
 		$result = $this->applyPatches($patches, $newWPText);
 
 		$result['mergedText'] = $this->removetextMargins($result['mergedText']);
+		
+		wfProfileOut('WUMThreewayBasedMerger->merge');
 		return $result;
 	}
 
@@ -80,7 +83,7 @@ class WUMThreeWayBasedMerger {
 
 
 		$patches = $dmp->patch_make($diffs, $modified);
-
+		
 		return $patches;
 	}
 
@@ -134,8 +137,9 @@ class WUMThreeWayBasedMerger {
 			} else if($patch->diffs[$i][0] == DIFF_INSERT){
 				$insert = $patch->diffs[$i][1];
 
-				if(strpos($insert, "<up>") !== false && strpos($insert, "</up>") !== false){
-					$insert = substr($insert, strpos($insert, "<up>"), strpos($insert, "</up>") - strpos($insert, "<up>") + 5);
+				if(strpos($insert, WUM_TAG_OPEN) !== false && strpos($insert, WUM_TAG_CLOSE) !== false){
+					$insert = substr($insert, strpos($insert, WUM_TAG_OPEN), strpos($insert, WUM_TAG_CLOSE) 
+						- strpos($insert, WUM_TAG_OPEN) + strlen(WUM_TAG_CLOSE));
 				} else if(substr($insert, 0,1) != "\n"){
 					if(substr($insert, strlen($insert)-1) == substr($equal, strlen($equal)-1)){
 						$insertTemp = $insert;
