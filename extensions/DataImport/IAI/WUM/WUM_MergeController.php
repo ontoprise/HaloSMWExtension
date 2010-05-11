@@ -2,9 +2,9 @@
 
 /**
  * @file
-  * @ingroup DIWUM
-  * 
-  * @author Ingo Steinbauer
+ * @ingroup DIWUM
+ *
+ * @author Ingo Steinbauer
  */
 
 global $wgExtensionFunctions;
@@ -23,13 +23,13 @@ function wumInitExtension(){
 	global $wgHooks;
 	$wgHooks['APIEditBeforeSave'][] = 'wum_doAPIEdit';
 	$wgHooks['ParserBeforeInternalParse'][] = 'wumUPParserHook';
-	
+
 }
 
 /**
  * This method is the main entry point for merging WP and UP articles.
  * It is called by WP if one edits an article there.
- * 
+ *
  * @param unknown_type $editPage
  * @param unknown_type $text
  * @param unknown_type $resultArr
@@ -38,7 +38,7 @@ function wumInitExtension(){
 function wum_doAPIEdit(&$editPage, $text, &$resultArr){
 	$title = $editPage->mArticle->getTitle()->getFullText();
 	$editPage->textbox1 =
-		WUMMergeController::getInstance()->merge($title, $text, $editPage->mArticle->getContent());
+	WUMMergeController::getInstance()->merge($title, $text, $editPage->mArticle->getContent());
 	return true;
 }
 
@@ -49,9 +49,9 @@ function wumUPParserHook(&$parser, &$text, &$strip_state) {
 }
 
 /**
- * This class controls the flow between the ThreeWayBased-, the SectionBased-, 
+ * This class controls the flow between the ThreeWayBased-, the SectionBased-,
  * and the TableBasedMerger.
- * 
+ *
  * @author Ingo Steinbauer
  *
  */
@@ -73,9 +73,9 @@ class WUMMergeController{
 
 	/**
 	 * This method is indirectly called by WP if one edits
-	 * an article in the WP clone. It starts and controls the 
+	 * an article in the WP clone. It starts and controls the
 	 * merge process and returns its result.
-	 * 
+	 *
 	 * @param $title
 	 * @param $newWPText
 	 * @param $currentUPText
@@ -84,22 +84,27 @@ class WUMMergeController{
 	public function merge($title, $newWPText, $currentUPText){
 		wfProfileIn('WUMMergeController->merge');
 		//$tbm = WUMTableBasedMerger::getInstance();
-		 //return $tbm->merge($title, $newWPText, $currentUPText);		
-		
+		//return $tbm->merge($title, $newWPText, $currentUPText);
+
 		if($this->checkIgnoreNewWPVersion($currentUPText)){
 			return $currentUPText;
 		}
-		
-		if($overwrite = $this->checkOverwriteUPVersion($newWPText)){
+
+		$overwrite = $this->checkOverwriteUPVersion($newWPText);
+		if($overwrite !== false){
 			return $overwrite;
 		}
-		
+
 		//get the last WP version
 		$originalWPText = $this->getOriginalWPText($title);
-		
+
 		$newWPText = $this->prepareText($newWPText);
 		$originalWPText = $this->prepareText($originalWPText);
 		$currentUPText = $this->prepareText($currentUPText);
+
+		if(strlen($originalWPText) == 0){
+			return $newWPText."\n".$currentUPText;
+		}
 		
 		//do three way merge
 		$twmResult = WUMThreeWayBasedMerger::getInstance()
@@ -115,7 +120,7 @@ class WUMMergeController{
 
 		//finalize merge result, i.e. replace temporary characters
 		$text = WUMThreeWayBasedMerger::getInstance()->finalizeMergeResult($text);
-		
+
 		wfProfileOut('WUMMergeController->merge');
 		return $text;
 	}
@@ -123,31 +128,31 @@ class WUMMergeController{
 	/**
 	 * This method gets the predecessor of the WP article
 	 * from the WP clone via a MediaWiki API call.
-	 * 
+	 *
 	 * @param unknown_type $title
 	 * @return string|unknown
 	 */
 	private function getOriginalWPText($title){
 		wfProfileIn('WUMMergeController->getOriginalWPText');
 		$text= '';
-		
+
 		global $wumWPURL;
 		$url = $wumWPURL."api.php";
 		$title = urlencode($title);
 
 		$params = array('http' => array('method' => 'GET'));
 		$ctx = stream_context_create($params);
-		
+
 		//ask the wp clone for the last revision of the article
 		$response = stream_get_contents(
-			fopen($url."?action=query&titles=".$title."&prop=revisions&rvprop=ids&rvlimit=2&format=xml",
+		fopen($url."?action=query&titles=".$title."&prop=revisions&rvprop=ids&rvlimit=2&format=xml",
 			'rb', true, $ctx));
 		$response = new SimpleXMLElement($response);
 		$crid = $response->xpath("//rev[1]/@revid");
 		$crid = $crid[0];
 		$lrid = $response->xpath("//rev[2]/@revid");
 		$lrid = $lrid[0];
-		
+
 		if(!$lrid){
 			// a previous version of this article should not exist
 			return $text;
@@ -155,22 +160,22 @@ class WUMMergeController{
 
 		//ask the mw clone for the content of the last revision
 		$response = stream_get_contents(
-			fopen($url."?action=query&revids=".$lrid."&prop=revisions&rvprop=content&format=xml",
+		fopen($url."?action=query&revids=".$lrid."&prop=revisions&rvprop=content&format=xml",
 			'rb', true, $ctx));
 		$response = new SimpleXMLElement($response);
 		$content = $response->xpath("//rev[1]");
 		$text = $content[0];
-		
+
 		wfProfileOut('WUMMergeController->getOriginalWPText');
-		
+
 		return $text;
 	}
-	
+
 	/**
 	 * This method checks, wheter a merge process should be started.
-	 * UP articles that contain a special keyword will ignore new 
+	 * UP articles that contain a special keyword will ignore new
 	 * versions of WP articles.
-	 * 
+	 *
 	 * @param $text
 	 * @return unknown_type
 	 */
@@ -181,24 +186,34 @@ class WUMMergeController{
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Check whether to overwrite the UP article. Indicated by the
 	 * '__WUM_Overwrite__ keyword.
-	 * 
+	 *
 	 * @param unknown_type $text
 	 * @return unknown_type
 	 */
 	private function checkOverwriteUPVersion($text){
-		if(strpos($text, "__WUM_Overwrite__") > 0){
-			return str_replace("__WUM_Overwrite__", "", $text);
+		$text = trim($text);
+		echo("\n1-".$text);
+		echo("\n1-".strlen($text));
+		echo("\n1-".strlen('##__WUM_Overwrite__'));
+		echo("\n1-".strpos($text, '_WUM_Overwrite__'));
+		if(strpos($text, "_WUM_Overwrite__") !== false){
+			if(strlen("##__WUM_Overwrite__") == strlen($text)){
+				echo("\nfound");
+				return "";
+			} else {
+				return str_replace("__WUM_Overwrite__", "", $text);
+			}
 		} else {
 			return false;
 		}
 	}
-	
+
 	private function prepareText($text){
-		return str_replace("\r\n","\n", $text);				
+		return str_replace("\r\n","\n", $text);
 	}
 
 }

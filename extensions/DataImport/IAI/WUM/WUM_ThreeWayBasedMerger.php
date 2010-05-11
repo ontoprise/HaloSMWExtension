@@ -51,7 +51,7 @@ class WUMThreeWayBasedMerger {
 		$currentUPText = $this->appendTextMargins($currentUPText);
 
 		$patches = $this->createPatches($originalWPText, $currentUPText);
-
+		
 		$result = $this->applyPatches($patches, $newWPText);
 
 		$result['mergedText'] = $this->removetextMargins($result['mergedText']);
