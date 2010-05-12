@@ -245,6 +245,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_reset_confirm' => 'Ben je zeker dat je de query terug wil zetten?',
 	'smw_qi_querytree_heading' => 'Queryboom navigatie',
 	'smw_qi_main_query_name' => 'Main',
+    'smw_qi_section_definition' => 'Query Definition',
+    'smw_qi_section_result' => 'Result',
 	'smw_qi_preview_result' => 'Result Preview',
 	'smw_qi_layout_manager' => 'Querylayout manager',
 	'smw_qi_table_column_preview' => 'Tabelkolom preview',
@@ -257,6 +259,9 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_showAsk' => 'Volledige query tonen',
 	'smw_qi_ask' => '&lt;ask&gt; syntax',
 	'smw_qi_parserask' => '{{#ask syntax',
+    'smw_qi_queryastree' => 'Query as tree',
+    'smw_qi_queryastext' => 'Query as text',
+    'smw_qi_querysource' => 'Query source',
 
 	/*Tooltips for Query Interface*/
 	'smw_qi_tt_addCategory' => 'Bij het toevoegen van een categorie, worden enkel artikels van deze categorie toegevoegd',
@@ -278,6 +283,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_qi_tt_order' => 'Stijgende of dalende volgorde',
 	'smw_qi_tt_headers' => 'De kop van de tabel tonen of niet',
 	'smw_qi_tt_default' => 'Tekst die getoond wordt indien er geen resultaten zijn',
+    'smw_qi_tt_treeview' => 'Display your query in a tree',
+    'smw_qi_tt_textview' => 'Describe the query in stylized English',
 	
 	/* Annotation */
  	'smw_annotation_tab' => 'aantekeningen maken',

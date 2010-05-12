@@ -50,17 +50,17 @@ vertical-align: text-top;
 }
 
 #treeview{
-border:1px solid #AAAAAA;
+border: none;
 float:left;
 margin-top: 10px;
 margin-right: 10px;
-width: 25%;
-height:300px;
+width: 100%;
+height:100%;
 }
 
 #treeanchor{
 overflow:auto;
-height:260px;
+height:100%;
 }
 
 #treeviewbreadcrumbs{
@@ -68,16 +68,15 @@ overflow:auto;
 }
 
 .dragbox{
-float:left;
-width:73%;
-max-width:73%;
+    float:left;
+    width:59%;
+    height: 300px;
+    margin-bottom: 10px;
 }
-
 .boxcontent {
 border: 1px solid #AAAAAA;
-min-width: 70%;
 width:100%;
-height: 209px;
+height: 100%;
 float:left;
 overflow:auto;
 }
@@ -195,19 +194,13 @@ height: 25px;
 
 #querylayout{
 width:100%;
-border: 1px solid #AAAAAA;
 float:left;
 margin-top: 10px;
 }
 
-#layouttitle{
-background: #DDDDDD;
-cursor:pointer;
-font-weight: bold;
-}
 
-#layoutcontent{
-border-top:1px solid #AAAAAA;
+#layoutcontent, #queryprinteroptions {
+border:1px solid #AAAAAA;
 background: #FFFFFF;
 }
 
@@ -217,25 +210,22 @@ background: #FFFFFF;
 
 #previewlayout{
 width:100%;
-border: 1px solid #AAAAAA;
 float:left;
 margin-top: 10px;
 }
 
-#previewtitle{
-background: #DDDDDD;
+#definitiontitle, #qiresulttitle, #layouttitle, #previewtitle{
 cursor:pointer;
 font-weight: bold;
+border: none;
 }
 
 #previewcontent{
-border-top:1px solid #AAAAAA;
+border:1px solid #AAAAAA;
 background: #FFFFFF;
 height: 160px;
 overflow: scroll;
 }
-
-
 
 .qlm_input{
 /*width:94%;*/
@@ -259,29 +249,23 @@ padding:5px;
 }
 
 a.minusplus{
-	background-image:url(images/minus-pas.gif);
+	background-image:url(images/down.png);
 	float:left;
-	height:12px;
+	height:16px;
 	margin-right:4px;
-	margin-top:3px;
+	margin-top:1px;
 	overflow:hidden;
-	width:12px;
-}
-a.minusplus:hover{
-	background-image:url(images/minus-act.gif);
+	width:16px;
 }
 
 a.plusminus{
-	background-image:url(images/plus-pas.gif);
+	background-image:url(images/right.png);
 	float:left;
-	height:12px;
+	height:16px;
 	margin-right:4px;
-	margin-top:3px;
+	margin-top:1px;
 	overflow:hidden;
-	width:12px;
-}
-a.plusminus:hover{
-	background-image:url(images/plus-act.gif);
+	width:16px;
 }
 
 #fullpreviewbox{
@@ -359,4 +343,60 @@ cursor: pointer;
 
 #queryprinteroptions td[onmouseover] + td {
     width: 400px;                        
+}
+
+#qiresultcontent, #qiquerydefinition {
+    padding-left: 10px;
+}
+
+#qiDefTab {
+    height: 300px;
+    float:right;
+    width: 40%;
+    padding-top: 1px;
+    margin-bottom: 10px;
+}
+.qiDefTabActive {
+    font-family:'trebuchet ms',helvetica,sans-serif;
+    font-size:84%;
+    font-weight: bold;
+    white-space:nowrap;
+    cursor:pointer;cursor:hand;
+    padding: 0.1em 6px;
+    padding-top: 3px;
+	border-color: #AAAAAA;
+	border-left-width: 1px;
+    border-left-style: solid;
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-top-width: 1px;
+    border-top-style: solid;
+}
+.qiDefTabInactive {
+    font-family:'trebuchet ms',helvetica,sans-serif;
+    font-size:84%;
+    white-space:nowrap;
+    cursor:pointer;cursor:hand;
+    padding: 0.1em 6px;
+    padding-top: 3px;
+	background-color:#fafafa;
+	border-color: #AAAAAA;
+	border-width: 1px;
+    border-style: solid;
+}
+.qiDefTabSpacer {
+    padding: 2px;
+    border-bottom-width: thin;
+    border-bottom-color: #cacac4;
+    border-bottom-style: solid;
+}
+.qiDefTabContent {
+    border-color: #AAAAAA;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+	border-left-width: 1px;
+    border-left-style: solid;
+    border-right-width: 1px;
+    border-right-style: solid;
+    height: 100%;
 }

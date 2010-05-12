@@ -232,6 +232,10 @@ var wgUserLanguageStrings = {
     'QI_SAVE_ERROR'           : "Une erreur inconnue est survenue. Votre requête ne peut pas être enregistrée.",
     'QI_EMPTY_TEMPLATE'       : "Afin d'utiliser le format 'template', vous devez saisir un nom de template.",
     'QI_SPECIAL_QP_PARAMS'    : 'Special parameters of',
+    'QI_START_CREATING_QUERY' : 'Click on<ul><li>Add Category</li><li>Add Property</li><li>Add Instance</li></ul>to create a new query.',
+    'QI_BC_ADD_CATEGORY'      : 'Add category',
+    'QI_BC_ADD_PROPERTY'      : 'Add property',
+    'QI_BC_ADD_INSTANCE'      : 'Add instance',
     
     // Find work
     'FW_SEND_ANNOTATIONS'     : 'Merci d\'évaluer les annotations, ',

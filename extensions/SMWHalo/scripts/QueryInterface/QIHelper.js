@@ -42,9 +42,11 @@ QIHelper.prototype = {
 		this.pendingElement = null;
 		this.queryPartsFromInitByAsk = Array();
 		this.propertyTypesList = new PropertyList();
-
 		this.specialQPParameters = new Array();
-
+        
+        $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
+        this.switchTab(1, true);
+        this.sourceChanged = 0;
                 // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
                 if ($('usetriplestore'))
                     Event.observe($('usetriplestore'),'click', this.updatePreview.bind(this));
@@ -55,21 +57,6 @@ QIHelper.prototype = {
 	 */
 	setExcelBridge : function() {
 		this.isExcelBridge = 1;
-	},
-
-	/**
-	 * Called whenever table column preview is minimized or maximized
-	 */
-	switchtcp : function() {
-		if ($("tcp_boxcontent").style.display == "none") {
-			$("tcp_boxcontent").style.display = "";
-			$("tcptitle-link").removeClassName("plusminus");
-			$("tcptitle-link").addClassName("minusplus");
-		} else {
-			$("tcp_boxcontent").style.display = "none";
-			$("tcptitle-link").removeClassName("minusplus");
-			$("tcptitle-link").addClassName("plusminus");
-		}
 	},
 
 	/**
@@ -90,15 +77,49 @@ QIHelper.prototype = {
 		}
 	},
 
+    switchDefinition : function() {
+        if ($('qiquerydefinition').style.display == "none") {
+            $('qiquerydefinition').style.display = "";
+            $('definitiontitle-link').removeClassName("plusminus");
+            $('definitiontitle-link').addClassName("minusplus");
+        } else {
+            $('qiquerydefinition').style.display = "none";
+            $('definitiontitle-link').removeClassName("minusplus");
+            $('definitiontitle-link').addClassName("plusminus");
+        }
+    },
+
+    switchResult : function() {
+        if ($('qiresultcontent').style.display == "none") {
+            $('qiresultcontent').style.display = "";
+            $('qiresulttitle-link').removeClassName("plusminus");
+            $('qiresulttitle-link').addClassName("minusplus");
+            this.updatePreview();
+        }else {
+            $('qiresultcontent').style.display = "none";
+            $('qiresulttitle-link').removeClassName("minusplus");
+            $('qiresulttitle-link').addClassName("plusminus");
+        }
+    },
+
+
 	/**
-	 * Called whenever preview result printer needs to be updated
+	 * Called whenever preview result printer needs to be updated.
+     * This is only done, if the results are visible.
 	 */
 	updatePreview : function() {
 		// update result preview
-		if ($("previewcontent").style.display == "") {
+		if ($("previewcontent").style.display == "" &&
+            $("qiresultcontent").style.display == "") {
 			this.previewResultPrinter();
 		}
 	},
+
+    updateQuerySource : function() {
+        // if query source tab is active
+        if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1)
+            this.showFullAsk('parser', false);
+    },
 
 	getSpecialQPParameters : function(qp, callWhenFinished) {
 		var callback = function(request) {
@@ -408,7 +429,7 @@ QIHelper.prototype = {
             case 'ofc-bar':
             case 'ofc-bar_3d':
             case 'ofc-line':
-            case 'ofc-scatterline': 
+            case 'ofc-scatterline':
 		       $('previewcontent').innerHTML = '';
 		       break;
 		 }
@@ -437,7 +458,7 @@ QIHelper.prototype = {
             case 'ofc-bar':
             case 'ofc-bar_3d':
             case 'ofc-line':
-            case 'ofc-scatterline': 
+            case 'ofc-scatterline':
             var tuple =  request.responseText.split("|||");
             resultHTML = tuple[0];
             resultCode = tuple[1];
@@ -520,7 +541,7 @@ QIHelper.prototype = {
 	 * @param id
 	 *            ID of the active query
 	 */
-	updateBreadcrumbs : function(id) {
+	updateBreadcrumbs : function(id, action) {
 		var nav = Array();
 		while (this.queries[id].getParent() != null) { // null = root query
 			nav.unshift(id);
@@ -534,6 +555,7 @@ QIHelper.prototype = {
 			html += '<span class="qibutton" onclick="qihelper.setActiveQuery(' + nav[i] + ')">';
 			html += this.queries[nav[i]].getName() + '</span>';
 		}
+        if (action) html += ': ' + action;
 		html += "<hr/>";
 		var breadcrumpDIV = $('treeviewbreadcrumbs');
  		if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
@@ -561,19 +583,11 @@ QIHelper.prototype = {
 				columns.push(tmparr[i].getName());
 			}
 		}
-		var tcp_html = '<table id="tcp" summary="Preview of table columns"><tr>'; // html
-																					// for
-																					// table
-																					// column
-																					// preview
 		$('layout_sort').innerHTML = "";
 		for ( var i = 0; i < columns.length; i++) {
-			tcp_html += "<td>" + columns[i] + "</td>";
 			$('layout_sort').options[$('layout_sort').length] = new Option(
 					columns[i], columns[i]); // add options to optionbox
 		}
-		tcp_html += "</tr></table>";
-		$('tcpcontent').innerHTML = tcp_html;
 	},
 
 	getFullParserAsk : function() {
@@ -667,6 +681,9 @@ QIHelper.prototype = {
 	newCategoryDialogue : function(reset) {
 		$('qidelete').style.display = "none"; // New dialogue, no delete
 												// button
+        $('qistatus').innerHTML= '';            // empty status message
+        // add current action to breadcrumbs path
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_CATEGORY') );
 		autoCompleter.deregisterAllInputs();
 		if (reset)
 			this.loadedFromId = null;
@@ -709,6 +726,8 @@ QIHelper.prototype = {
 	 */
 	newInstanceDialogue : function(reset) {
 		$('qidelete').style.display = "none";
+        $('qistatus').innerHTML= '';            // empty status message
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_INSTANCE') );
 		autoCompleter.deregisterAllInputs();
 		if (reset)
 			this.loadedFromId = null;
@@ -738,6 +757,8 @@ QIHelper.prototype = {
 	 */
 	newPropertyDialogue : function(reset) {
 		$('qidelete').style.display = "none";
+        $('qistatus').innerHTML= '';            // empty status message
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_PROPERTY') );
 		autoCompleter.deregisterAllInputs();
 		if (reset)
 			this.loadedFromId = null;
@@ -841,6 +862,7 @@ QIHelper.prototype = {
 		$('qistatus').innerHTML = "";
 		$('qidelete').style.display = "none";
 		this.activeInputs = 0;
+        this.updateBreadcrumbs(this.activeQueryId);
 	},
 
 	/**
@@ -1423,6 +1445,8 @@ QIHelper.prototype = {
 		this.emptyDialogue();
 		this.activeQuery.updateTreeXML();
 		this.updateColumnPreview();
+        this.updateBreadcrumbs(this.activeQueryId);
+        this.updateQuerySource();
 
 		// update result preview
 		this.updatePreview();
@@ -1508,6 +1532,8 @@ QIHelper.prototype = {
 		}
 		this.activeQuery.updateTreeXML();
 		this.updatePreview();
+        this.updateQuerySource();
+        this.updateBreadcrumbs(this.activeQueryId);
 		this.loadedFromID = null;
 	},
 
@@ -1650,6 +1676,26 @@ QIHelper.prototype = {
 		}
 	},
 
+    switchTab : function(id, flush) {
+        var divcontainer = ['treeview', 'qitextview', 'qisource'];
+        if (!flush) {
+            // if the last tab is selected, convert the source code
+            if (id == 3)
+                this.showFullAsk('parser', false);
+            else // otherwise load from source if the tab was active
+                this.loadFromSource()
+        }
+        for (var i = 1; i < 4; i++) {
+            if (id == i) {
+                $('qiDefTab' + i).className='qiDefTabActive';
+                $(divcontainer[i-1]).style.display='';
+            } else {
+                $('qiDefTab' + i).className='qiDefTabInactive';
+                $(divcontainer[i-1]).style.display='none';
+            }
+        }
+    },
+
 	/**
 	 * copies the full query text to the clients clipboard. Works on IE and FF
 	 * depending on the users security settings.
@@ -1720,11 +1766,13 @@ QIHelper.prototype = {
 		}
 		if (this.queries[0].isEmpty()) {
 			//if (!this.isExcelBridge)
-				$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_QUERY');
+				$('fullAskText').value = '';
+                alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
 			return;
 		} else if (($('layout_format').value == "template")
 				&& ($('template_name').value == "")) {
-			$('fullAskText').value = gLanguage.getMessage('QI_EMPTY_TEMPLATE');
+			$('fullAskText').value = '';
+            alert(gLanguage.getMessage('QI_EMPTY_TEMPLATE'));
 			return;
 		}
 		var ask = this.getFullParserAsk();
@@ -1837,6 +1885,16 @@ QIHelper.prototype = {
 		this.updatePreview();
 
 	},
+
+    /**
+     * called when the Query Tree tab is clicked and the Query source tab is still active
+     */
+    loadFromSource : function() {
+        if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1 &&
+            $('fullAskText').value.length > 0 &&
+            this.sourceChanged)
+            this.initFromQueryString($('fullAskText').value);
+    },
 
 	initFromQueryString : function(ask) {
 		this.doReset();

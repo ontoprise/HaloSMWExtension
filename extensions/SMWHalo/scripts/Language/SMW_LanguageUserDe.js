@@ -233,6 +233,10 @@ var wgUserLanguageStrings = {
 	'QI_SAVE_ERROR'		  	  : "Ein unbekannter Fehler ist aufgetreten. Ihr Query konnte nicht gespeichert werden.",
 	'QI_EMPTY_TEMPLATE'		  : "Um das Ausgabeformat 'template' benutzen zu können, müssen Sie einen Templatenamen angeben.",
 	'QI_SPECIAL_QP_PARAMS'    : 'Spezielle Parameter für',
+    'QI_START_CREATING_QUERY' : 'Klicke auf<ul><li>Kategorie hinzuf&uuml;gen</li><li>Attribut hinzuf&uuml;gen</li><li>Instanz hinzuf&uuml;gen</li></ul>um eine neue Query zu bauen.',
+    'QI_BC_ADD_CATEGORY'      : 'Kategorie hinzuf&uuml;gen',
+    'QI_BC_ADD_PROPERTY'      : 'Attribut hinzuf&uuml;gen',
+    'QI_BC_ADD_INSTANCE'      : 'Instanz hinzuf&uuml;gen',
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

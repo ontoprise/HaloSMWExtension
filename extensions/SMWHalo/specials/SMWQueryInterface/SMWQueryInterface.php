@@ -19,6 +19,8 @@ require_once( "SMW_QIAjaxAccess.php" );
  * Standard class that is resopnsible for the creation of the Special Page
  */
 class SMWQueryInterface extends SpecialPage {
+    private $imagepath;     // image path for all QI icons
+    
 	public function __construct() {
 		parent::__construct('QueryInterface');
 	}
@@ -29,26 +31,16 @@ class SMWQueryInterface extends SpecialPage {
 
 		global $wgRequest, $wgOut, $smwgHaloScriptPath;
 
-		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
+		$this->imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 
 		$wgOut->setPageTitle(wfMsg('smw_queryinterface'));
 
 		$html = '<div id="qicontent">' .
 				'<div id="shade" style="display:none"></div>';
 
-		$html .= $this->addTreeView();
+		$html .= $this->addQueryDefinition();
 
-		$html .= '<div id="qiaddbuttons" class="qiaddbuttons">' .
-					'<button class="btn" onclick="qihelper.newCategoryDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addCategory') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'category.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_category') . '</button>'.
-					'<button class="btn" onclick="qihelper.newInstanceDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addInstance') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'instance.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_instance') . '</button>'.
-					'<button class="btn" onclick="qihelper.newPropertyDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addProperty') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $imagepath . 'property.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_property') . '</button>'.
-				'</div>';
-
-		$html .= $this->addDragbox();
-
-		$html .= $this->addPreviewResults();
-
-		$html .= $this->addQueryLayout();
+        $html .= $this->addResultPart();
 
 		$html .= $this->addAdditionalStuff();
 
@@ -57,13 +49,55 @@ class SMWQueryInterface extends SpecialPage {
 		$wgOut->addHTML($html);
 	}
 
+    private function addQueryDefinition() {
+        /*
+         * <span class="'.(($collapsed) ? 'qiSectionClosed' : 'qiSectionOpen').'"
+                      onclick="qihelper.sectionCollapse(\'querylayout\')>'.wfMsg('smw_qi_layout_manager').'</span>
+         */
+		$html = '<div id="definitiontitle" onclick="qihelper.switchDefinition()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="definitiontitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_definition') . '</div>
+                 <div id="qiquerydefinition">
+                 <div id="qiaddbuttons" class="qiaddbuttons">' .
+					'<button class="btn" onclick="qihelper.newCategoryDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addCategory') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $this->imagepath . 'category.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_category') . '</button>'.
+					'<button class="btn" onclick="qihelper.newPropertyDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addProperty') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $this->imagepath . 'property.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_property') . '</button>'.
+                    '<button class="btn" onclick="qihelper.newInstanceDialogue(true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_addInstance') . '\')" onmouseout="this.className=\'btn\'"><img src="' . $this->imagepath . 'instance.gif" alt="category" />&nbsp;' . wfMsg('smw_qi_add_instance') . '</button>'.
+                '</div><br/<br/>'.
+                $this->addDragbox().
+                $this->addTabHeaderForQIDefinition().
+                '</div>';
+        return $html;
+    }
+
+    private function addTabHeaderForQIDefinition() {
+        $html = '<div id="qiDefTab"><table style="border-collapse:collapse;empty-cells:show;width:100%;height:100%;">
+                 <tr>
+                 <td id="qiDefTab1" class="qiDefTabActive" onclick="qihelper.switchTab(1);"
+                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_treeview') . '\')">'.wfMsg('smw_qi_queryastree').'</td>
+                 <td class="qiDefTabSpacer"> </td>
+                 <td id="qiDefTab2" class="qiDefTabInactive" onclick="qihelper.switchTab(2);"
+                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_textview') . '\')">'.wfMsg('smw_qi_queryastext').'</td>
+                 <td class="qiDefTabSpacer" width="100%">&nbsp;</td>
+                 <td id="qiDefTab3" class="qiDefTabInactive" onclick="qihelper.switchTab(3);"
+                     onmouseover="Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')">'.wfMsg('smw_qi_querysource').'</td>
+                 </tr>
+                 <tr>
+                 <td class="qiDefTabContent" colspan="5" style="width:100%;height:100%">'.
+                 $this->addTreeView().
+                '<div id="qitextview" style="display: none;height:100%">Query as text</div>
+                 <div id="qisource" style="display: none;height:100%"><textarea id="fullAskText" style="height:98%" onchange="qihelper.sourceChanged=1"></textarea></div>
+                 </td></tr></table></div>
+        ';
+        return $html;
+    }
+    /**
+     * Return html code for treeview of query.
+     * 
+     * @return string html
+     */
 	private function addTreeView() {
 		return '<div id="treeview">' .
-				'<div id="treeviewheader" class="qiboxheader">' .
-				'&nbsp;' . wfMsg('smw_qi_querytree_heading') .
-				'</div>' .
-				'<div id="treeviewbreadcrumbs"></div>' .
-				'<div id="treeanchor"><div id="qitreedummy"></div></div>' .
+                    '<div id="treeanchor">' .
+                        '<div id="qitreedummy"></div>' .
+                    '</div>' .
 				'</div>';		
 	}
 
@@ -72,23 +106,26 @@ class SMWQueryInterface extends SpecialPage {
 
 		return '<div id="dragbox" class="dragbox">' .
 					'<div id="boxcontent" class="boxcontent">' .
+                        '<div id="treeviewbreadcrumbs"></div>' .
 						'<table><tbody id="dialoguecontent"></tbody></table>' .
 						'<div id="dialoguebuttons" style="display:none">' .
-							'<span class="qibutton" onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</span>&nbsp;<span class="qibutton" onclick="qihelper.emptyDialogue()">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
+							'<span class="qibutton" onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</span>&nbsp;' .
+                            '<span class="qibutton" onclick="qihelper.emptyDialogue()">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;' .
+                            '<span id="qidelete" style="display:none" class="qibutton" onclick="qihelper.deleteActivePart()">' . wfMsg('smw_qi_delete') . '</span>' .
 						'</div>' .
 						'<div id="qistatus"></div>' .
 					'</div>' .
-				'</div>' .
-				'<div id="tablecolumnpreview">' .
-					'<div class="tcp_boxheader" onclick="qihelper.switchtcp()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_tcp') . '\')"><a id="tcptitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_table_column_preview') . '</div>' .
-					'<div id="tcp_boxcontent" class="tcp_boxcontent">' .
-						'<div id="tcpcontent"><table id="tcp" summary="Preview of table columns">' .
-							'<tr><td>' . wfMsg('smw_qi_no_preview') . '</td></tr>' .
-						'</table></div>' .
-					'</div>' .
 				'</div>';
-
 	}
+
+    private function addResultPart() {
+        $html = '<div id="qiresulttitle" onclick="qihelper.switchResult()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="qiresulttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_result') . '</div>'.
+                '<div id="qiresultcontent" style="display: none;">'.
+                $this->addPreviewResults().
+                $this->addQueryLayout().
+                '</div>';
+        return $html;
+    }
 
 	private function addQueryLayout() {
 
@@ -109,30 +146,26 @@ class SMWQueryInterface extends SpecialPage {
 		return '<div id="querylayout">
 					<div id="layouttitle" onclick="qihelper.switchlayout()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="layouttitle-link" class="plusminus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_layout_manager') . '</div>
 					<div id="layoutcontent" style="display:none">
-					<table summary="Layout Manager for query" style="width:100%">
-					<tr>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
-							Format:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
-							<select id="layout_format" onchange="qihelper.checkFormat()">
-							'. $resultoptionshtml .'
-							</select>
-						</td>
-						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\') ">
-							Sort by:
-						</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\')">
-							<select id="layout_sort" onchange="qihelper.updatePreview()">
-							</select>
-						</td>
-						
-					</tr>
-					
-					
-					
-				</table>
-			</div>
-				<div id="queryprinteroptions" style="display:block">
-		</div>';
+                        <table summary="Layout Manager for query" style="width:100%">
+                            <tr>
+        						<td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
+                					Format:
+                        		</td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_format') . '\')">
+                                	<select id="layout_format" onchange="qihelper.checkFormat()">
+                                    '. $resultoptionshtml .'
+                                    </select>
+                                </td>
+                                <td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\') ">
+                                    Sort by:
+                                </td><td onmouseover="Tip(\'' . wfMsg('smw_qi_tt_sort') . '\')">
+                                    <select id="layout_sort" onchange="qihelper.updatePreview()">
+                                    </select>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="queryprinteroptions" style="display:block"></div>
+                </div>';
 	}
 
 	private function addPreviewResults() {
@@ -159,7 +192,6 @@ class SMWQueryInterface extends SpecialPage {
 						'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_preview') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
 						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
 		$buttons.
-						'<button class="btn" onclick="qihelper.showFullAsk(\'parser\', true)" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_showAsk') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_showAsk') . '</button>'.
 		$useTS.
 						'<span style="position:absolute; right:13px;"><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>'.
@@ -176,7 +208,7 @@ class SMWQueryInterface extends SpecialPage {
 
 				'<div id="showAsk" class="topDialogue" style="display:none; width:350px">' .
 						'<span id="showParserAskButton" class="qibutton" style="font-weight: bold; text-decoration: none; cursor: default;">' . wfMsg('smw_qi_parserask') . '</span><br/><hr/>' .
-						'<div><textarea id="fullAskText" style="width:95%" rows="10" readonly></textarea></div>' .
+						'<div><textarea id="fullAskTextOld" style="width:95%" rows="10" readonly></textarea></div>' .
 						'<span class="qibutton" onclick="$(\'showAsk\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_close') . '</span>' .
 						'</div>'.
 
