@@ -50,14 +50,9 @@ class SMWMaterializationStorageAccess {
         global $smwgHaloIP;
         if (self::$mDatabase == NULL) {
             global $smwgBaseStore;
-            switch ($smwgBaseStore) {
-                case (SMW_STORE_MWDB): 
-                default:
-                    global $smwgDIIP;
-                	require_once($smwgDIIP . '/specials/Materialization/storage/SMW_MaterializationStorageSQL.php');
-                    self::$mDatabase = new SMWMaterializationStorageSQL();
-                break;
-            }
+            global $smwgDIIP;
+            require_once($smwgDIIP . '/specials/Materialization/storage/SMW_MaterializationStorageSQL.php');
+            self::$mDatabase = new SMWMaterializationStorageSQL();
         }
 		
 	}
