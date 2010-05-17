@@ -31,10 +31,15 @@ $messages = array();
  * English
  */
 $messages['en'] = array(
+    'lod_mapping_tag_ns'	 => 'The tag <mapping> is only evaluated in the namespace "Mapping".',
+    'lod_no_mapping_in_ns'   => 'Articles in the namespace "Mapping" are supposed to contain mappings for linked data sources. You can add mapping descriptions in the tag &lt;mapping&gt;.',
+
 );
 
 /** 
  * German
  */
 $messages['de'] = array(
+    'lod_mapping_tag_ns'	 => 'Das Tag <zuordnung> wird nur im Namensraum "Mapping" ausgewertet.',
+    'lod_no_mapping_in_ns'   => 'Artikel im Namensraum "Mapping" sollten Mappings für Linked Data Quellen beinhalten. Sie können Mapping-Beschreibungen im Tag &lt;zuordnung&gt; einfügen.',
 );
