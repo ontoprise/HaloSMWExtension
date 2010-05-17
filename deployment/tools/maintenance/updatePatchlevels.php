@@ -95,6 +95,7 @@ foreach($extensions as $e) {
             $newPatchlevel = $localPackages[$id]->getPatchlevel();
         	echo "\nUpdating patchlevel of '$id' to $newPatchlevel";
         }
+        $url = preg_replace("/($id-".addSeparators($ver)."_)\\d+/", "\${1}".$newPatchlevel, $url);
         $new_ser .= "<version ver=\"$ver\" url=\"$url\" patchlevel=\"$newPatchlevel\"/>";
     }
     $new_ser .= "</extension>\n";
@@ -105,3 +106,12 @@ echo "\nWrite new repository to ".$outputDir."repository.xml";
 $handle = fopen($outputDir."repository.xml", "w");
 fwrite($handle, $new_ser);
 fclose($handle);
+
+function addSeparators($version, $sep = ".") {
+    $sep_version = "";
+    for($i = 0; $i < strlen($version); $i++) {
+        if ($i>0) $sep_version .= $sep;
+        $sep_version .= $version[$i];
+    }
+    return $sep_version;
+}
