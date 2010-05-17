@@ -40,8 +40,10 @@ class LODLanguageEn extends LODLanguage {
 
 	protected $mNamespaces = array(
 		LOD_NS_LOD       => 'LOD',
-		LOD_NS_LOD_TALK  => 'LOD_talk'
-	);
+		LOD_NS_LOD_TALK  => 'LOD_talk',
+		LOD_NS_MAPPING       => 'Mapping',
+		LOD_NS_MAPPING_TALK  => 'Mapping_talk'
+		);
 
 	protected $mParserFunctions = array(
 		LODLanguage::PF_MAPPING				=> 'mapping', 

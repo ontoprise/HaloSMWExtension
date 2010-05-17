@@ -40,7 +40,9 @@ class LODLanguageDe extends LODLanguage {
 
 	protected $mNamespaces = array(
 		LOD_NS_LOD       => 'LOD',
-		LOD_NS_LOD_TALK  => 'LOD_Diskussion'
+		LOD_NS_LOD_TALK  => 'LOD_Diskussion',
+		LOD_NS_MAPPING       => 'Mapping',
+		LOD_NS_MAPPING_TALK  => 'Mapping_Diskussion'
 	);
 
 	protected $mParserFunctions = array(
