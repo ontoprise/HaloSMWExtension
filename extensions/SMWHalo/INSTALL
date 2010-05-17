@@ -3,7 +3,7 @@
 Install instructions for the latest version of SMWHalo are also online:
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Installing_Halo_Extension_1.5.0
- 
+
 For the full manual of the Halo Extension have a look at:
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Halo_Extension_1.5.0
@@ -11,13 +11,13 @@ For the full manual of the Halo Extension have a look at:
 For further customizing your installation, take a look at:
 
  http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
- 
+
 For install instructions and further information on Semantic MediaWiki, please visit
- 
+
  http://semantic-mediawiki.org/wiki/Help:Administrator_manual
 
 
-Contents: 
+Contents:
 * Disclaimer
 * Requirements
 * Installation
@@ -34,8 +34,8 @@ For a proper legal disclaimer, see the file "COPYING".
 In general, the extension can be installed into a working wiki without
 making any irreversible changes to the source code or database, so you
 can try out the software without much risk (though no dedicated uninstall
-mechanism is provided). Every serious wiki should be subject to regular 
-database backups! If you have any specific questions, please contact 
+mechanism is provided). Every serious wiki should be subject to regular
+database backups! If you have any specific questions, please contact
 the authors.
 
 == Requirements ==
@@ -44,28 +44,31 @@ the authors.
  * MySQL higher than 4.0.14 (Recommended MySQL 5.x)
  * PHP 5.2.x (PHP 5.3.x is not supported yet)
  * MediaWiki 1.15.x (see installation guide)
+ * ScriptManager 1.x (see installation guide)
  * Semantic MediaWiki 1.5 (Please make reference to the installation instructions)
- * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers) 
+ * Web browser (for clients, recommended Firefox 3.x or Internet Explorer 8. There might be glitches with other browsers)
 
 
 == Installation ==
 
-We recommend to install the Halo Extension using the SMW+ Administration tool 
-which is part of the Deployment Framework Extension. It empowers the convenient 
-administration and automatic setup of extensions for MediaWiki and Semantic MediaWiki. 
-If you upgrade an existing installation of SMW+, also read the remarks in the 
+We recommend to install the Halo Extension using the SMW+ Administration tool
+which is part of the Deployment Framework Extension. It empowers the convenient
+administration and automatic setup of extensions for MediaWiki and Semantic MediaWiki.
+If you upgrade an existing installation of SMW+, also read the remarks in the
 section "Notes on Upgrading" below.
 
-(1) Extract the SMWHalo ZIP archive
-    Extract the archive smwhalo-1.5.zip to obtain the directory "extensions" which contains all relevant 
-    files. Copy this directory to the root directory of your MediaWiki installation or extract/download it 
+(1) Download and install the ScriptManager extension into your Mediawiki installation.
+
+(2) Extract the SMWHalo ZIP archive
+    Extract the archive smwhalo-1.5.zip to obtain the directory "extensions" which contains all relevant
+    files. Copy this directory to the root directory of your MediaWiki installation or extract/download it
     to this location.
 
-(2) Edit the configuration file $IP/LocalSettings.php and add following lines
+(3) Edit the configuration file $IP/LocalSettings.php and add following lines
 
-(3) Adjust the path to the PHP interpreter accordingly
+(4) Adjust the path to the PHP interpreter accordingly
 
-(4) Change $wgDefaultSkin='ontoskin3';
+(5) Change $wgDefaultSkin='ontoskin3';
 
 	Note: Optionally check if Semantic MediaWiki is initialized correctly:
 
@@ -75,26 +78,25 @@ section "Notes on Upgrading" below.
     include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
     enableSMWHalo('SMWHaloStore2');
 
-(5) Open a command-line interface
+(6) Open a command-line interface
 
-(6) Navigate to the directory
+(7) Navigate to the directory
     $IP/extensions/SemanticMediaWiki/maintenance/
-  
-(7) Run the script SMW_setup.php to initialize the database tables
-   
-(8) Download the Deployment Framework
 
-(9) Extract the zip-file into the MediaWiki roots folder
+(8) Run the script SMW_setup.php to initialize the database tables
 
-(10) Open a command-line interface to install the patch file
-    The file patch.txt is an Eclipse patch file which can be installed using the tool patch.php from 
-    the deploy framework which itself uses GNU patch. The file is located in the 
-    directory 'extensions\SMWHalo'.
+(9) Download the Deployment Framework
 
-(11) Type 'cd deployment/tools' (Windows) or 'ls deployment/tools' (Linux)
+(10) Extract the zip-file into the MediaWiki roots folder
+
+(11) Open a command-line interface to install the patch file
+     The file patch.txt is an Eclipse patch file which can be installed using the
+     tool patch.php from the deploy framework which itself uses GNU patch. The
+     file is located in the directory 'extensions\SMWHalo'.
 
 (12) Enter the following command:
-     php patch.php -p <patch.txt> -d <mw-dir> --onlypatch
+     php patch.php -p patch.txt -d <mw-dir> --onlypatch
+     replace <mw-dir> with the absolute path of your Mediawiki installation.
 
 -----------------------------------------------------------------------------------------------
 
@@ -106,7 +108,7 @@ Note: 	If you are using Linux, make the smwadmin.sh executable (chmod +x smwadmi
 
 -----------------------------------------------------------------------------------------------
 
-  
+
 
 
 === Testing your Installation ===
@@ -120,9 +122,9 @@ listed as a Parser Hook.
 Create a regular wiki page named "TestSMW", and in it enter the wiki text
   Property test:  [[testproperty::Dummypage]]
   [[Category:Test]]
- 
+
 Then, create the page "Category:Test" and insert some dummy text.
- 
+
 Go to Special:OntologyBrowser. As soon as the interface is loaded, you should see
 "Test" in the category tree. Click on it and you should see "TestSMW" in the
 instance view. Click on it, and you should see "testproperty   Dummypage" in the
@@ -139,47 +141,47 @@ the FAQ section, then contact the user support list (see the Contact section).
 2.  Default collation for SMWHalo database tables
     $smwgDefaultCollation="latin1_bin";
 
-3.  Uses EDITDISTANCE function for near matching. 
+3.  Uses EDITDISTANCE function for near matching.
     Take a look in libs/mysqlUDFs/INSTALL.TXT for more information.
     $smwgUseEditDistance = true;
-    
+
 4.  Show derived facts in a tab next to explicit facts. Makes only sense when a TSC is connected.
-    Note that the factbox must be switch on. Refer to SemanticMediaWiki/includes/Settings.php 
+    Note that the factbox must be switch on. Refer to SemanticMediaWiki/includes/Settings.php
     $smwgShowDerivedFacts=true;
 
 5.  Enables F-logic rules (the default wiki rule language). Makes only sense when a TSC is connected.
-    In case that SemanticRules extension is installed, it activates the rule editor too.    
+    In case that SemanticRules extension is installed, it activates the rule editor too.
      $smwgEnableFlogicRules=true;
 
 6.  OntologyBrower uses Triplestore to display instances/annotations.
     Makes only sense when a TSC is connected.
-    $smwgOBInstanceDataFromTriplestore=true;     
-     
-7.  Special mode, if TSC runs as a quad store: in case that driver=ontobroker-quad     
+    $smwgOBInstanceDataFromTriplestore=true;
+
+7.  Special mode, if TSC runs as a quad store: in case that driver=ontobroker-quad
     $smwgTripleStoreQuadMode=true;
 
 8.  Allows to enter new help questions for context-sensitive help.
-    $smwgAllowNewHelpQuestions = true;   
-    
+    $smwgAllowNewHelpQuestions = true;
+
 === Configuring a triplestore ===
 Change the line with 'enableSMWHalo' to:
 
  enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'graph-uri');
- 
+
 graph-uri is an arbitrary URI which works as an identifier for the wiki in the TSC. Every URI
 is possible as long as it does not contain a hash character (#).
 
 Then add:
     $smwgMessageBroker="localhost";
     $smwgWebserviceEndpoint="localhost:8080";
-    
+
 If the webserver requires HTTP authorization, add:
     $smwgWebserviceUser = "username";
     $smwgWebservicePassword = "password";
-    
+
 You may now initialize the TSC on the page Special:TSA. Refer to the triplestore documentation for a better
 way of initialization.
-     
+
 === Customizing Semantic MediaWiki+ ===
 
 Semantic MediaWiki can be customized by a number of settings. To do so, you
@@ -199,11 +201,20 @@ http://smwforum.ontoprise.com/smwforum/index.php/Help:Customizing_SMW%2B
 
 === Upgrading from earlier versions ===
 
-In order to create new tables and update old ones, open a command-line interface and navigate to 
-the directory $IP/extensions/SemanticMediaWiki/maintenance/. Then run the script SMW_setup.php 
+In order to create new tables and update old ones, open a command-line interface and navigate to
+the directory $IP/extensions/SemanticMediaWiki/maintenance/. Then run the script SMW_setup.php
 to update the database tables.
 
 In addition, run the script SMW_refreshData.php, which is located in the same directory.
+
+Since SMWHalo 1.5.x the ScripManager extension is required. This is a small
+extension that handles the include of some general Javascript libraries such as
+Prototype or jQuery. These libraries are needed within the SMWHalo extension and
+other extensions of the Halo project. If these libraries are not included in the
+correct order on the webpage, the javascripts that are used on this page might
+not work correctly or do not work at all. The ScriptManager eliminates the fact
+that each extension must include it's own version of these libraries and that
+each of these libraries is included only once.
 
 == Contact ==
 
