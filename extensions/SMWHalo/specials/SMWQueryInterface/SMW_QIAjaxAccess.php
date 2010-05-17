@@ -8,10 +8,16 @@
  */
 if ( !defined( 'MEDIAWIKI' ) ) die;
 
-global $wgAjaxExportList;
+global $wgAjaxExportList, $wgHooks;
 $wgAjaxExportList[] = 'smwf_qi_QIAccess';
 $wgAjaxExportList[] = 'smwf_qi_getPage';
 
+$wgHooks['ajaxMIMEtype'][] = 'smwf_qi_getPageMimeType';
+
+function smwf_qi_getPageMimeType($func, & $mimeType) {
+    if ($func == 'smwf_qi_getPage') $mimeType = 'text/html; charset=utf-8';
+   return true;
+}
 
 function smwf_qi_QIAccess($method, $params) {
 	$p_array = explode(",", $params);
