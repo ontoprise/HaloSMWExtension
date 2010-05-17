@@ -76,6 +76,8 @@
 				<include name="INSTALL" />
 				<include name="patch.txt" />
 				<include name="deploy.xml" />
+                <include name="patch_for_builtin_properties.txt" />
+                <include name="patch_for_mimetype.txt" />
 			</fileset>
    			<fileset dir="../../../patches/">
 				<include name="patch.php" />
