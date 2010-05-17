@@ -69,6 +69,7 @@ $lodgBaseStore = LOD_STORE_SQL;
 # load global functions
 require_once('LOD_GlobalFunctions.php');
 
+
 ###
 # If you already have custom namespaces on your site, insert
 #    $lodgNamespaceIndex = ???;
@@ -77,6 +78,25 @@ require_once('LOD_GlobalFunctions.php');
 # must not be smaller than 100.
 ##
 lodfInitNamespaces();
+
+/**
+ * This function is called during the initialization of the extension. The stores
+ * of the extension are configured.
+ *
+ */
+function lodfInitStores() {
+//--- Only for testing purposes. Add the correct IO strategy when it is implemented.	
+	global $lodgIP;
+require_once("$lodgIP/tests/testcases/TestMapping.php");
+	
+	###
+	# Mappings for different LOD sources are stored with the LODMappingStore. The
+	# actual store for this data can be set with setIOStrategy().
+	##
+	LODMappingStore::setIOStrategy(new MockMappingIOStrategy());
+//--- End of test configuration	
+	
+}
 
 
 // Tell the script manager, that we need prototype
