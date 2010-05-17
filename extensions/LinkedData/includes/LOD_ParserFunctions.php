@@ -41,18 +41,21 @@ $wgHooks['LanguageGetMagic'][] = 'lodfLanguageGetMagic';
 
 
 function lodfInitParserfunctions() {
-	global $wgParser;
+	global $wgParser, $lodgContLang;
+	
+	LODParserFunctions::getInstance();
 
-//	LODParserFunctions::getInstance();
-
+	$wgParser->setHook($lodgContLang->getParserFunction(LODLanguage::PF_MAPPING), 
+	                   array('LODParserFunctions', 'mapping'));
+	
 //	$wgParser->setFunctionHook('haclaccess', 'HACLParserFunctions::access');
 
 }
 
 function lodfLanguageGetMagic( &$magicWords, $langCode ) {
-//	global $lodgContLang;
-//	$magicWords['haclaccess']
-//		= array( 0, $lodgContLang->getParserFunction(LODLanguage::PF_ACCESS));
+	global $lodgContLang;
+//	$magicWords['lodmapping']
+//		= array( 0, $lodgContLang->getParserFunction(LODLanguage::PF_MAPPING));
 	return true;
 }
 
@@ -60,7 +63,7 @@ function lodfLanguageGetMagic( &$magicWords, $langCode ) {
 /**
  * The class LODParserFunctions contains all parser functions of the LinkedData
  * extension. The following functions are parsed:
- * - ...
+ * - mapping (as tag i.e. <mapping>
  *
  * @author Thomas Schweitzer
  *
@@ -73,8 +76,11 @@ class LODParserFunctions {
 
 	// LODParserFunctions: The only instance of this class
 	private static $mInstance = null;
-
-
+	
+	// String
+	// An article may contain several mapping tags. Their content is concatenated.
+	private static $mMappings = "";
+	
 	/**
 	 * Constructor for HACLParserFunctions. This object is a singleton.
 	 */
@@ -92,6 +98,105 @@ class LODParserFunctions {
 	}
 
 	/**
+	 * Parses the mapping tag <mapping>
+	 *
+	 * @param string $text
+	 * 		The content of the <mapping> tag
+	 * @param array $params
+	 * 		Parameters
+	 * @param Parser $parser
+	 * 		The parser
+	 */
+	public static function mapping($text, $params, &$parser)  {
+		// The mapping function is only allowed in namespace "Mapping".
+		$title = $parser->getTitle();
+		$ns = $title->getNamespace();
+		$msg = "";
+		if ($ns != LOD_NS_MAPPING) {
+			// Wrong namespace => add a warning
+			$msg = wfMsg('lod_mapping_tag_ns');
+		} else {
+			// Collect all mappings. They are finally saved in articleSaveComplete().
+			self::$mMappings .= $text;
+		}
+		return "$msg\n\n<pre>$text</pre>";
+	}
+	
+	/**
+	 * This method is called, when an article is deleted. If the article
+	 * belongs to the namespace "Mapping", the LOD mappings for the article are
+	 * deleted.
+	 *
+	 * @param Article $article
+	 * 		The article that will be deleted.
+	 * @param User $user
+	 * 		The user who deletes the article.
+	 * @param string $reason
+	 * 		The reason, why the article is deleted.
+	 */
+	public static function articleDelete(&$article, &$user, &$reason) {
+		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
+			// The article is in the "Mapping" namespace. 
+			// => delete the mappings that are defined in the article.
+			$mappingID = $article->getTitle()->getText();
+			$store = LODMappingStore::getInstance();
+			$store->deleteMapping($mappingID);
+		}
+		return true;
+	}
+	
+	/**
+	 * This method is called, after an article has been saved. If the article
+	 * belongs to the namespace "Mapping", the mappings that are contained in
+	 * the article are saved.
+	 *
+	 * @param Article $article
+	 * @param User $user
+	 * @param string $text
+	 * @return true
+	 */
+	public static function articleSaveComplete(&$article, &$user, $text) {
+		$title = $article->getTitle();
+		if ($title->getNamespace() == LOD_NS_MAPPING
+		    && !empty(self::$mMappings)) {
+			// The article is in the "Mapping" namespace and it contains mappings.
+			// => save all LOD mappings
+			// store the text of the mapping
+			$store = LODMappingStore::getInstance();
+			$mapping = new LODMapping($title->getText(), self::$mMappings);
+			$success = true;
+			try {
+				$success = $store->saveMapping($mapping);
+			} catch (Exception $e) {
+				$success = false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * This function checks for articles in the namespace "Mapping", if the 
+	 * database contains a corresponding mapping. If not, an error message is 
+	 * displayed on the page.
+	 *
+	 * @param OutputPage $out
+	 * @param string $text
+	 * @return bool true
+	 */
+	public static function outputPageBeforeHTML(&$out, &$text) {
+		global $wgTitle;
+		$title = $wgTitle;
+		if (isset($title) && $title->getNamespace() == LOD_NS_MAPPING) {
+			$store = LODMappingStore::getInstance();
+			if (!$store->existsMapping($title->getText())) {
+				$msg = wfMsg("lod_no_mapping_in_ns");
+				$out->addHTML("<div><b>$msg</b></div>");
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * Resets the singleton instance of this class. Normally this instance is
 	 * only used for parsing ONE article. If several articles are parsed in
 	 * one invokation of the wiki system, this singleton has to be reset (e.g.
@@ -99,93 +204,8 @@ class LODParserFunctions {
 	 *
 	 */
 	public function reset() {
+		self::$mMappings = "";
 	}
-
-
-//	/**
-//	 * Callback for parser function "#access:".
-//	 * This parser function defines an access control entry (ACE) in form of an
-//	 * inline right definition. It can appear several times in an article and
-//	 * has the following parameters:
-//	 * assigned to: This is a comma separated list of user groups and users whose
-//	 *              access rights are defined. The special value stands for all
-//	 *              anonymous users. The special value user stands for all
-//	 *              registered users.
-//	 * actions: This is the comma separated list of actions that are permitted.
-//	 *          The allowed values are read, edit, formedit, create, move,
-//	 *          annotate and delete. The special value comprises all of these actions.
-//	 * description:This description in prose explains the meaning of this ACE.
-//	 * name: (optional) A short name for this inline right
-//	 *
-//	 * @param Parser $parser
-//	 * 		The parser object
-//	 *
-//	 * @return string
-//	 * 		Wikitext
-//	 *
-//	 * @throws
-//	 * 		HACLException(HACLException::INTERNAL_ERROR)
-//	 * 			... if the parser function is called for different articles
-//	 */
-//	public static function access(&$parser) {
-//		$params = self::$mInstance->getParameters(func_get_args());
-//		$fingerprint = self::$mInstance->makeFingerprint("access", $params);
-//		$title = $parser->getTitle();
-//		if (self::$mInstance->mTitle == null) {
-//			self::$mInstance->mTitle = $title;
-//		} else if ($title->getArticleID() != self::$mInstance->mTitle->getArticleID()) {
-//			throw new HACLException(HACLException::INTERNAL_ERROR,
-//                "The parser functions are called for different articles.");
-//		}
-//
-//		// handle the parameter "assigned to".
-//		list($users, $groups, $em1, $warnings) = self::$mInstance->assignedTo($params);
-//
-//		// handle the parameter 'action'
-//		list($actions, $em2) = self::$mInstance->actions($params);
-//
-//		// handle the (optional) parameter 'description'
-//		global $haclgContLang;
-//		$descPN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_DESCRIPTION);
-//		$description = array_key_exists($descPN, $params)
-//						? $params[$descPN]
-//						: "";
-//		// handle the (optional) parameter 'name'
-//		$namePN = $haclgContLang->getParserFunctionParameter(HACLLanguage::PFP_NAME);
-//		$name = array_key_exists($namePN, $params)
-//					? $params[$namePN]
-//					: "";
-//
-//		$errMsgs = $em1 + $em2;
-//
-//		if (count($errMsgs) == 0) {
-//			// no errors
-//			// => create and store the new right for later use.
-//			if (!in_array($fingerprint, self::$mInstance->mFingerprints)) {
-//				$ir = new HACLRight(self::$mInstance->actionNamesToIDs($actions), $groups, $users, $description, $name);
-//				self::$mInstance->mInlineRights[] = $ir;
-//				self::$mInstance->mFingerprints[] = $fingerprint;
-//			}
-//		} else {
-//			self::$mInstance->mDefinitionValid = false;
-//		}
-//
-//		// Format the defined right in Wikitext
-//		if (!empty($name)) {
-//			$text = wfMsgForContent('hacl_pf_rightname_title', $name)
-//			.wfMsgForContent('hacl_pf_rights', implode(' ,', $actions));
-//		} else {
-//			$text = wfMsgForContent('hacl_pf_rights_title', implode(' ,', $actions));
-//		}
-//		$text .= self::$mInstance->showAssignees($users, $groups);
-//		$text .= self::$mInstance->showDescription($description);
-//		$text .= self::$mInstance->showErrors($errMsgs);
-//		$text .= self::$mInstance->showWarnings($warnings);
-//		
-//		return $text;
-//
-//	}
-
 
 
 	//--- Private methods ---
