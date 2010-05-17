@@ -12,8 +12,10 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 	// get FCK editor instance
 	var inFormEdit = false;
 	try {
-		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData
-		if (window.top.wgAction == "formedit" || window.parent.wgPageName == 'Special:AddData' || window.top.wgPageName == 'Special:EditData') {
+		// Semantic Forms: either we are in formedit or we add/edit a page via Special:AddData/EditData/CreateForm/FormEdit
+		if (window.top.wgAction == "formedit" || window.parent.wgPageName == 'Special:AddData' 
+			|| window.top.wgPageName == 'Special:EditData' || window.top.wgPageName == 'Special:FormEdit'
+			|| window.top.wgPageName == 'Special:CreateForm') {
 			inFormEdit = true;
 			oEditor = window.parent.FCKeditorAPI.GetInstance('free_text');
 		}
@@ -22,19 +24,19 @@ function saveRichMediaData(mediaTitle, mediaLink) {
 	}
 	// no instance found, we didn't came from the FCK Editor, reload the main page and quit.
 	catch(err) {
-		// just reload if we're not in using a form
-		if (!inFormEdit)
+		// just reload if we're not using a form or doing an edit
+		if (!inFormEdit && window.top.wgAction != "edit") {
 			parent.fb.loadPageOnClose ='self';
+		}
 		return;
 	}
-			
 	document.write( '<script src="' + oEditor.Config['BasePath'] + 'dialog/common/fck_dialog_common.js" type="text/javascript"><\/script>' ) ;
 
 	var oElement;	// selected element, if any
 	var oNew;		// new created element by upload
 
-    // check if an image is selected
-    oElement = oEditor.Selection.GetSelectedElement();
+	// check if an image is selected
+	oElement = oEditor.Selection.GetSelectedElement();
 	if ( oElement && oElement.tagName == 'IMG' && oElement.getAttribute('alt').substring(0, 6) == "Image:") {
 		// ok
 	}

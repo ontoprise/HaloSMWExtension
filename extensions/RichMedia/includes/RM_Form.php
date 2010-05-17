@@ -69,20 +69,22 @@ END;
 		global $wgOut, $wgRequest, $smwgRMFormByNamespace;
 		$rMUploadFormName = $smwgRMFormByNamespace['RMUpload'];
 
-		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) )
+		if ( array_key_exists( 0, $parameters ) && isset( $parameters[0] ) ) {
 			$linkText = $parameters[0];
-		else
+		} else {
 			$linkText = 'Link';
+		}
 
-		if ( array_key_exists( 1, $parameters ) && isset( $parameters[1] ) )
+		if ( array_key_exists( 1, $parameters ) && isset( $parameters[1] ) ) {
 			$linkTitle = $parameters[1];
-			else
+		} else {
 			$linkTitle = wfMsgNoTrans('smw_rm_uploadheadline');
+		}
 
 
-			$queryString = "";
+		$queryString = "";
 
-			if( array_key_exists( 2, $parameters ) && isset( $parameters[2] ) ) {
+		if( array_key_exists( 2, $parameters ) && isset( $parameters[2] ) ) {
 			$queryParameters = explode('&', $parameters[2]);
 			#cylce throuh other paramters and check if no preview value is blank!
 			for ($i = 0; $i < count($queryParameters); $i++) {
