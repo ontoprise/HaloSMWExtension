@@ -1,0 +1,14 @@
+Index: includes/AjaxDispatcher.php
+===================================================================
+--- includes/AjaxDispatcher.php	(revision 5893)
++++ includes/AjaxDispatcher.php	(working copy)
+@@ -112,6 +112,9 @@
+ 				else {
+ 					if ( is_string( $result ) ) {
+ 						$result= new AjaxResponse( $result );
++						$mimeType = NULL;
++						wfRunHooks('ajaxMIMEtype', array($func, & $mimeType));
++						if (!is_null($mimeType)) $result->setContentType($mimeType);
+ 					}
+
+ 					$result->sendHeaders();
