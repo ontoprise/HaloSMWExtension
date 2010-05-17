@@ -66,9 +66,14 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
 	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
 	
+	$wgAutoloadClasses['ILODMappingIOStrategy']	= $lodgIP . '/includes/LODMapping/ILOD_MappingIOStrategy.php';
+	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
+	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
+	
     //--- Autoloading for exception classes ---
-//   	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
-
+   	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
+   	$wgAutoloadClasses['LODMappingException'] = $lodgIP . '/exceptions/LOD_MappingException.php';
+   	
     return true;
 }
 
@@ -86,6 +91,11 @@ function lodfSetupExtension() {
 
     //--- Register hooks ---
     global $wgHooks;
+    
+    $wgHooks['ArticleDelete'][]        = 'LODParserFunctions::articleDelete';
+    $wgHooks['ArticleSaveComplete'][]  = 'LODParserFunctions::articleSaveComplete';
+    $wgHooks['OutputPageBeforeHTML'][] = 'LODParserFunctions::outputPageBeforeHTML';
+    
 
     //--- Load messages---
     wfLoadExtensionMessages('LinkedData');
@@ -120,6 +130,9 @@ function lodfSetupExtension() {
 
     wfProfileOut('lodfSetupExtension');
     
+    // Configure the store(s) for this extension
+    lodfInitStores();
+    
     return true;
 }
 
@@ -141,8 +154,13 @@ function lodfInitNamespaces() {
         $lodgNamespaceIndex = 500;
     }
 
+    // Constants for namespace "LOD"
     define('LOD_NS_LOD',       $lodgNamespaceIndex);
     define('LOD_NS_LOD_TALK',  $lodgNamespaceIndex+1);
+    
+    // Constants for namespace "Mapping"
+    define('LOD_NS_MAPPING',       $lodgNamespaceIndex+2);
+    define('LOD_NS_MAPPING_TALK',  $lodgNamespaceIndex+3);
 
     lodfInitContentLanguage($wgLanguageCode);
 
