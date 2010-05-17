@@ -63,9 +63,6 @@ class  LODAdministrationStore  {
 	
 	/**
 	 * Constructor for  LODAdministrationStore
-	 *
-	 * @param type $param
-	 * 		Name of the notification
 	 */		
 	protected function __construct() {
 		self::$mInstance = $this;
