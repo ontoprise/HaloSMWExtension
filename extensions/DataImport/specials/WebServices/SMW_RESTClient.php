@@ -21,7 +21,7 @@ require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 /**
  * @file
  * @ingroup DIWebServices
- * 
+ *
  * @author Ingo Steinbauer
  */
 
@@ -71,12 +71,14 @@ class SMWRestClient implements IWebServiceClient {
 	 * @param string [] $parameters : parameters for the web service call
 	 */
 	public function call($operationName, $parameters) {
-		$uri = $this->mURI;
+		$this->mURI;
 
 		if(array_key_exists("__rest__uri", $parameters)){
-			$uri .= trim(strip_tags($parameters["__rest__uri"][0]));
+			$this->mURI .= trim(strip_tags($parameters["__rest__uri"][0]));
 			unset($parameters["__rest__uri"]);
 		}
+		
+		$uri = $this->mURI;
 
 		if(array_key_exists("__rest__user_agent", $parameters)){
 			$userAgent = $parameters["__rest__user_agent"][0];
@@ -84,12 +86,16 @@ class SMWRestClient implements IWebServiceClient {
 		} else {
 			$userAgent = "smw data import extension";
 		}
-		
+
 		if(array_key_exists("__rest__accept", $parameters)){
 			$accept = $parameters["__rest__user_agent"][0];
 			unset($parameters["__rest__accept"]);
 		} else {
 			$accept = "";
+		}
+		
+		if(array_key_exists("_subject", $parameters)){
+			unset($parameters["_subject"]);
 		}
 			
 		if(strtolower($operationName) == "get"){
@@ -156,5 +162,9 @@ class SMWRestClient implements IWebServiceClient {
 		}
 
 		return array($response);
+	}
+	
+	public function getURI(){
+		return $this->mURI;
 	}
 }

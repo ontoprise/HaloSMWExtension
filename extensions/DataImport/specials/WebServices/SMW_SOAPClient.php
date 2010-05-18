@@ -525,5 +525,9 @@ class SMWSoapClient implements IWebServiceClient {
 		}
 		return false;
 	}
+	
+	public function getURI(){
+		return $this->mURI;
+	}
 }
 

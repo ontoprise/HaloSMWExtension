@@ -92,4 +92,10 @@ interface IWebServiceClient {
 	 */
 	public function call($operationName, $parameters);
 	
+	/**
+	 * Return the URI of the WS
+	 *
+	 */
+	public function getURI();
+	
 }

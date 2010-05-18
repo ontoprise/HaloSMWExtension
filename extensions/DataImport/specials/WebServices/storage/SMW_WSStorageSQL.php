@@ -58,7 +58,7 @@ class WSStorageSQL {
 		DBHelper::setupTable($wwsdTable, array(
 				  'web_service_id'		 =>  'INT(8) UNSIGNED NOT NULL PRIMARY KEY',
 				  'uri'  	             =>  'VARCHAR(1024) NOT NULL' ,
-				  'protocol'             =>  'VARCHAR(8) NOT NULL' ,
+				  'protocol'             =>  'VARCHAR(20) NOT NULL' ,
 				  'method'               =>  'VARCHAR(64) NOT NULL' ,
 				  'parameters'           =>  'MEDIUMTEXT NOT NULL' ,
 				  'result'               =>  'MEDIUMTEXT NOT NULL' ,
@@ -69,11 +69,20 @@ class WSStorageSQL {
 				  'expires_after_update' =>  'ENUM(\'true\', \'false\') DEFAULT \'false\' NOT NULL' ,
 				  'confirmed'            =>  'ENUM(\'true\', \'false\', \'once\') DEFAULT \'false\' NOT NULL',
 		 		 'authentication_type'       =>  'VARCHAR(10) NOT NULL' ,
-				'authentication_login'       =>  'VARCHAR(20) NOT NULL' ,
-				'authentication_password'    =>  'VARCHAR(20) NOT NULL' ),
+				'authentication_login'       =>  'VARCHAR(50) NOT NULL' ,
+				'authentication_password'    =>  'VARCHAR(50) NOT NULL' ),
 		$db, $verbose);
 		
 		$query = "ALTER TABLE ".$wwsdTable." ENGINE=MyISAM; ";
+		$db->query($query);
+		
+		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN protocol VARCHAR(20) NOT NULL; ";
+		$db->query($query);
+		
+		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN authentication_login VARCHAR(50) NOT NULL; ";
+		$db->query($query);
+		
+		$query = "ALTER TABLE ".$wwsdTable." MODIFY COLUMN authentication_password VARCHAR(60) NOT NULL; ";
 		$db->query($query);
 
 		DBHelper::reportProgress("   ... done!\n",$verbose);

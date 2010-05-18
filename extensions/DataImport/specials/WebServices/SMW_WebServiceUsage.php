@@ -365,9 +365,6 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 		}
 	}
 	
-	$temp = print_r($wsParameters, true);
-	//$temp();
-
 	if(count($mSP) == 0){
 		$mSP = array();
 	}
