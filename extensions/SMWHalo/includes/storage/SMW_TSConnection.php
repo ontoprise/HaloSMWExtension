@@ -4,7 +4,11 @@
  * @ingroup SMWHaloTriplestore
  * @author: Kai
  */
+
 require_once 'SMW_RESTWebserviceConnector.php';
+require_once( "stompclient/Stomp.php" );
+require_once( "SMW_TS_Helper.php" );
+
 /**
  * Provides an abstraction for the connection to the triple store.
  * Currently, 4 connector types are supported:
@@ -22,6 +26,12 @@ abstract class TSConnection {
 	protected $manageClient;
 
 	protected static $_instance;
+	
+	protected function __construct() {
+		// Initialize namespaces
+		new TSNamespaces();
+	}
+	
 	/**
 	 * Connects to the triplestore
 	 *
@@ -47,9 +57,12 @@ abstract class TSConnection {
 	 *
 	 * @param string $query text
 	 * @param string query parameters
+	 * @param string $graph
+	 * 		The graph to query. If not set, the graph stored in the global variable
+	 * 		$smwgTripleStoreGraph is queried.
 	 * @return string SPARQL-XML result
 	 */
-	public abstract function query($query, $params = "");
+	public abstract function query($query, $params = "", $graph = "");
 
 	/**
 	 * Calls the webservice which gives status information about the triple store connector.
@@ -202,16 +215,19 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	}
 
-	public function query($query, $params = "") {
+	public function query($query, $params = "", $graph = "") {
 		global $smwgTripleStoreGraph;
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
 		}
+		if (empty($graph)) {
+			$graph = $smwgTripleStoreGraph;
+		}
 		$queryRequest = "<query>";
 		$queryRequest .= "<text><![CDATA[".$query."]]></text>";
 		$queryRequest .= "<params><![CDATA[".$params."]]></params>";
-		$queryRequest .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
+		$queryRequest .= "<graph><![CDATA[".$graph."]]></graph>";
 		$queryRequest .= "</query>";
 
 		list($header, $status, $result) = $this->queryClient->send($queryRequest);
@@ -223,10 +239,13 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	public function getStatus($graph) {
 		global $smwgTripleStoreGraph;
-
+		if (empty($graph)) {
+			$graph = $smwgTripleStoreGraph;
+		}
+		
 		$request = "<method>";
 		$request .= "<name>getTripleStoreStatus</name>";
-		$request .= "<graph><![CDATA[".$smwgTripleStoreGraph."]]></graph>";
+		$request .= "<graph><![CDATA[".$graph."]]></graph>";
 		$request .= "</method>";
 
 		list($header, $status, $result) = $this->manageClient->send($request);
@@ -279,17 +298,21 @@ class TSConnectorSOAPWebservice extends TSConnection {
 		$this->updateClient->update($enc_commands);
 	}
 
-	public function query($query, $params = "") {
+	public function query($query, $params = "", $graph = "") {
 
 
 		global $smwgTripleStoreGraph;
+		if (empty($graph)) {
+			$graph = $smwgTripleStoreGraph;
+		}
+		
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
-			$response = $this->queryClient->query(TSNamespaces::getAllPrefixes().$query, $smwgTripleStoreGraph, $params);
+			$response = $this->queryClient->query(TSNamespaces::getAllPrefixes().$query, $graph, $params);
 		} else {
 
 			// do not attach anything
-			$response = $this->queryClient->query($query, $smwgTripleStoreGraph, $params);
+			$response = $this->queryClient->query($query, $graph, $params);
 
 		}
 		return $response;
