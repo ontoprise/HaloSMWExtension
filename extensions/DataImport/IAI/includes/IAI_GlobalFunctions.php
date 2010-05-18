@@ -121,7 +121,7 @@ iaifEndLog("enableIAI");
 function enableWUM(){
 iaifStartLog("enableWUM");
 	global $iaigIP;
-	require_once($iaigIP."/WUM/WU_Merger.php");
+	require_once($iaigIP."/WUM/WUM_MergeController.php");
 iaifEndLog("enableWUM");
 	
 }
