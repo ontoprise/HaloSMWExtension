@@ -2,7 +2,6 @@
 global $smwgIP, $smwgHaloIP;
 require_once( "$smwgIP/includes/storage/SMW_Store.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
-require_once( "$smwgHaloIP/includes/storage/stompclient/Stomp.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
