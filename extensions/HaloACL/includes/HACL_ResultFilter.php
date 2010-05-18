@@ -86,7 +86,6 @@ class  HACLResultFilter  {
 		
 		// Filter all subjects that are protected
 		foreach ($results as $k => $r) {
-            if ( ! is_object($t) ) continue;
 			$t = $r->getTitle();
 			wfRunHooks('userCan', array(&$t, &$wgUser, "read", &$allowed));
 			if (!$allowed) {
