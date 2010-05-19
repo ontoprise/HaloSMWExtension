@@ -18,6 +18,7 @@
 global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_IWebServiceClient.php");
 
+
 /**
  * @file
  * @ingroup DIWebServices
@@ -79,9 +80,9 @@ class SMWRestClient implements IWebServiceClient {
 			unset($parameters["__rest__uri"]);
 		}
 		
-		if(array_key_exists("_url-suffix", $parameters)){
-			$this->mURI .= trim(strip_tags($parameters["_url-suffix"][0]));
-			unset($parameters["_url-suffix"]);
+		if(array_key_exists(DI_URL_SUFFIX, $parameters)){
+			$this->mURI .= trim(strip_tags($parameters[DI_URL_SUFFIX][0]));
+			unset($parameters[DI_URL_SUFFIX]);
 		}
 		
 		$uri = $this->mURI;
@@ -96,9 +97,9 @@ class SMWRestClient implements IWebServiceClient {
 			$header .= "user_agent: smw data import extension\r\n";
 		}
 
-		if(array_key_exists("__rest__accept", $parameters)){
-			$header .= "accept: ".$parameters["__rest__accept"][0]."\r\n";
-			unset($parameters["__rest__accept"]);
+		if(array_key_exists(DI_ACCEPT, $parameters)){
+			$header .= "accept: ".$parameters[DI_ACCEPT][0]."\r\n";
+			unset($parameters[DI_ACCEPT]);
 		}
 		
 		//the subject parameter is used for RDF extraction, it must not
@@ -122,9 +123,9 @@ class SMWRestClient implements IWebServiceClient {
 				}
 			}
 		} else if (strtolower($operationName) == "post"){
-			if(array_key_exists("__post__separator", $parameters)){
-				$separator = $parameters["__post__separator"][0];
-				unset($parameters["__post__separator"]);
+			if(array_key_exists(DI_POST_SEPARATOR, $parameters)){
+				$separator = $parameters[DI_POST_SEPARATOR][0];
+				unset($parameters[DI_POST_SEPARATOR]);
 			} else {
 				$separator = "&";
 			}

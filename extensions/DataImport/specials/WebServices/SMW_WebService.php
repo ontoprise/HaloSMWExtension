@@ -40,6 +40,18 @@ require_once("$smwgDIIP/specials/WebServices/SMW_JSONProcessor.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_RDFProcessor.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_SubParameterProcessor.php");
 
+
+//some special parameters and result parts
+define('DI_URL_SUFFIX', '__url__suffix');
+define('DI_ACCEPT', '__accept__content');
+define('DI_POST_SEPARATOR', '__post__separator');
+define('DI_SUBJECT', '__subject');
+define('DI_SUBJECT_ALIAS', 'subject');
+define('DI_URL_SUFFIX_ALIAS', 'url-suffix');
+
+
+
+
 /**
  * Instances of this class describe a web service.
  *
@@ -132,8 +144,8 @@ class WebService {
 		//Please note, the same is done in newFromWWSD
 		if(strtolower($this->mProtocol) == "linkeddata"){
 			//todo: use constants
-			$parameters .= '<parameter name="_url-suffix" path="_url-suffix" optional="true"/>';
-			$parameters .= '<parameter name="_subject" path="_subject" optional="true"/>';
+			$parameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
+			$parameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
 		}
 		
 		$this->mParameters = $parameters;
@@ -312,8 +324,8 @@ class WebService {
 		}
 		//Please note, the same is done in construct
 		if(strtolower($ws->mProtocol) == "linkeddata"){
-			$ws->mParameters .= '<parameter name="_url-suffix" path="_url-suffix" optional="true"/>';
-			$ws->mParameters .= '<parameter name="_subject" path="_subject" optional="true"/>';
+			$ws->mParameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
+			$ws->mParameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
 		}
 
 		// check if indexes used in parameter-paths that contain arrays
@@ -630,8 +642,8 @@ class WebService {
 		if($this->isLinkedDataResource()){
 			$subject = "";
 			
-			if(array_key_exists("_subject", $this->mCallParameters)){
-				$subject = $this->mCallParameters["_subject"][0];
+			if(array_key_exists(DI_SUBJECT, $this->mCallParameters)){
+				$subject = $this->mCallParameters[DI_SUBJECT][0];
 			}
 			
 			//parse WS result via the ARC2 library

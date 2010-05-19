@@ -10,9 +10,9 @@ global $smwgDIIP;
 require_once("$smwgDIIP/libs/arc/ARC2.php");
 
 //define some special predicates, which can be used in result part definitions
-define("ALL_SUBJECTS", "__triple_subjects");
-define("ALL_PREDICATES", "__triple_predicates");
-define("ALL_OBJECTS", "__triple_objects");
+define("ALL_SUBJECTS", "__triple__subjects");
+define("ALL_PREDICATES", "__triple__predicates");
+define("ALL_OBJECTS", "__triple__objects");
 define("RDF_POSTPROCESS_REQUIRED", "postprocess required");
 
 
@@ -198,15 +198,14 @@ class SMWRDFProcessor {
 						$processedObjects = array();
 						foreach($subject[$predicate] as $object){
 							if(array_key_exists('lang', $object)){ 
-								if($object['lang'] == $lang || strlen($lang) == 0 ){
+								if($object['lang'] == $lang || strlen($lang) == 0){
 									$processedObjects[] = $object['value']; 
 								}
 							} else {
 								$processedObjects[] = $object['value'];
 							}
 						}
-						$result = array_merge($result, $processedObjects);
-						$this->processedIndex[$subjectId][$predicate] = $subject[$predicate]; 
+						$this->processedIndex[$subjectId][$predicate] = $processedObjects; 
 					} 
 				}
 			}
