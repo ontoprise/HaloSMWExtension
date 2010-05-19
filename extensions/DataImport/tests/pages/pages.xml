@@ -1224,4 +1224,101 @@ this is a test form
 [[Category:FormTest]]</text>
     </revision>
   </page>
+  <page>
+    <title>WebService:LDTest</title>
+    <id>63</id>
+    <revision>
+      <id>107</id>
+      <timestamp>2010-05-19T15:44:09Z</timestamp>
+      <contributor>
+        <ip>127.0.0.1</ip>
+      </contributor>
+      <comment>Created page with '&lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt; &lt;protocol&gt;LinkedData&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;res…'</comment>
+      <text xml:space="preserve">&lt;WebService&gt;
+&lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
+&lt;protocol&gt;LinkedData&lt;/protocol&gt;
+&lt;method name=&quot;get&quot; /&gt;
+&lt;result name=&quot;result&quot;&gt;
+&lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
+&lt;namespace prefix=&quot;rdf&quot; uri=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;/&gt;
+&lt;part name=&quot;subjects&quot; predicate=&quot;__triple__subjects&quot;/&gt;
+&lt;part name=&quot;predicates&quot; predicate=&quot;__triple__predicates&quot;/&gt;
+&lt;part name=&quot;objects&quot; predicate=&quot;__triple__objects@en&quot;/&gt;
+&lt;part name=&quot;abstract&quot; predicate=&quot;wiki:Property:HasAbstract@en&quot;/&gt;
+&lt;part name=&quot;product&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
+&lt;part name=&quot;type&quot; predicate=&quot;rdf:type&quot;/&gt;
+&lt;/result&gt;
+&lt;displayPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;/displayPolicy&gt;
+&lt;queryPolicy&gt;
+&lt;maxAge value=&quot;1&quot;&gt;&lt;/maxAge&gt;
+&lt;delay value=&quot;0&quot;/&gt;
+&lt;/queryPolicy&gt;
+&lt;spanOfLife value=&quot;1&quot; expiresAfterUpdate=&quot;true&quot; /&gt;
+&lt;/WebService&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestLD1</title>
+    <id>64</id>
+    <revision>
+      <id>108</id>
+      <timestamp>2010-05-19T15:50:56Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | ?result.subjects | ?result.predicates | ?result.objects | _format=table }}'</comment>
+      <text xml:space="preserve">{{#ws:LDTest
+| url-suffix=rdfa.html
+| ?result.subjects
+| ?result.predicates
+| ?result.objects
+| _format=table
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestLD2</title>
+    <id>65</id>
+    <revision>
+      <id>109</id>
+      <timestamp>2010-05-19T15:51:48Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | subject=wiki:OtherCompany | ?result.subjects | ?result.predicates | ?result.objects | _format=table }}'</comment>
+      <text xml:space="preserve">{{#ws:LDTest
+| url-suffix=rdfa.html
+| subject=wiki:OtherCompany
+| ?result.subjects
+| ?result.predicates
+| ?result.objects
+| _format=table
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestLD3</title>
+    <id>66</id>
+    <revision>
+      <id>110</id>
+      <timestamp>2010-05-19T15:52:36Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | ?result.subjects | ?result.abstract | ?result.type | ?result.product | _format=table }}'</comment>
+      <text xml:space="preserve">{{#ws:LDTest
+| url-suffix=rdfa.html
+| ?result.subjects
+| ?result.abstract
+| ?result.type
+| ?result.product
+| _format=table
+}}</text>
+    </revision>
+  </page>
 </mediawiki>

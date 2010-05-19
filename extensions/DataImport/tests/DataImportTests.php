@@ -8,6 +8,7 @@ require_once 'testcases/TestWSUsage.php';
 require_once 'testcases/TestJSONProcessor.php';
 require_once 'testcases/TestTIReadPOP3.php';
 require_once 'testcases/TestWikipediaUltrapediaMerger.php';
+require_once 'testcases/TestLDConnector.php';
 
 
 class DataImportTests
@@ -23,6 +24,7 @@ class DataImportTests
 		$suite->addTestSuite("TestJSONProcessor");
 		$suite->addTestSuite("TestTIReadPOP3");
 		$suite->addTestSuite("TestWikipediaUltrapediaMerger");
+		$suite->addTestSuite("TestLDConnector");
 
 		return $suite;
 	}
