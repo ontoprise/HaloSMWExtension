@@ -39,6 +39,7 @@ class SMWRestClient implements IWebServiceClient {
 	private $mAuthenticationType;
 	private $mAuthenticationLogin;
 	private $mAuthenticationPassword;
+	private $contentType = false;
 
 	/**
 	 * Constructor
@@ -78,33 +79,38 @@ class SMWRestClient implements IWebServiceClient {
 			unset($parameters["__rest__uri"]);
 		}
 		
+		if(array_key_exists("_url-suffix", $parameters)){
+			$this->mURI .= trim(strip_tags($parameters["_url-suffix"][0]));
+			unset($parameters["_url-suffix"]);
+		}
+		
 		$uri = $this->mURI;
 
+		//todo define constants
+		//create http request header if appropriaste parameters exist
+		$header = "";
 		if(array_key_exists("__rest__user_agent", $parameters)){
-			$userAgent = $parameters["__rest__user_agent"][0];
+			$header .= "user_agent: ".$parameters["__rest__user_agent"][0]."\r\n";
 			unset($parameters["__rest__user_agent"]);
 		} else {
-			$userAgent = "smw data import extension";
+			$header .= "user_agent: smw data import extension\r\n";
 		}
 
 		if(array_key_exists("__rest__accept", $parameters)){
-			$accept = $parameters["__rest__user_agent"][0];
+			$header .= "accept: ".$parameters["__rest__accept"][0]."\r\n";
 			unset($parameters["__rest__accept"]);
-		} else {
-			$accept = "";
 		}
 		
+		//the subject parameter is used for RDF extraction, it must not
+		//be passed to the web service
 		if(array_key_exists("_subject", $parameters)){
 			unset($parameters["_subject"]);
 		}
 			
 		if(strtolower($operationName) == "get"){
-			$params = array('http' => array('method' => 'GET', 'user_agent' => $userAgent,));
-			if(strlen($accept) > 0){
-				$params["accept"] = $accept;
-			}
+			$params = array('http' => array('method' => 'GET', 'header' => $header));
+			
 			$first = true;
-
 			foreach($parameters as $key => $values){
 				foreach($values as $value){
 					if($first){
@@ -137,13 +143,10 @@ class SMWRestClient implements IWebServiceClient {
 
 			$params = array('http' => array(
     			'method' => 'POST',
-    			'content-length' =>strlen($data),
-				'user_agent' => $userAgent,
+    			'header' => $header,
+				'content-length' =>strlen($data),
 				'content' => $data
 			));
-			if(strlen($accept) > 0){
-				$params["accept"] = $accept;
-			}
 		} else {
 			return "unknown method name";
 		}
@@ -160,11 +163,26 @@ class SMWRestClient implements IWebServiceClient {
 		if ($response === false) {
 			return wfMsg('smw_wws_client_connect_failure').$uri;
 		}
-
+		
+		foreach($http_response_header as $field){
+			if(strpos(strtolower($field), "content-type") !== false){
+				$r = false;
+				$this->contentType = (!$this->contentType && preg_match('/\/atom\+xml/', $field)) ? 'atom' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+xml/', $field)) ? 'rdfxml' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/(x\-)?turtle/', $field)) ? 'turtle' : $this->contentType;
+  				$this->contentType = (!$this->contentType && preg_match('/\/rdf\+n3/', $field)) ? 'n3' : $this->contentType;
+  				if($this->contentType) break;
+  			}
+		}
+		
 		return array($response);
 	}
 	
 	public function getURI(){
 		return $this->mURI;
+	}
+	
+	public function getContentType(){
+		return $this->contentType;		
 	}
 }

@@ -44,10 +44,21 @@ class SMWLinkeddataClient implements IWebServiceClient {
 	 * @param string [] $parameters : parameters for the web service call
 	 */
 	public function call($operationName, $parameters) {
-		return $this->mRESTClient->call($operationName, $parameters); 
+		if(!array_key_exists("__rest__accept", $parameters)){
+			$parameters["__rest__accept"][0] = "application/rdf+xml";
+		}
+		$response = $this->mRESTClient->call($operationName, $parameters); 
+		return  $response;
 	}
 	
 	public function getURI(){
 		return $this->mRESTClient->getURI();
+	}
+	
+	/*
+	 * get content-type wich was returned in the HTTP response header
+	 */
+	public function getContentType(){
+		return $this->mRESTClient->getContentType();		
 	}
 }

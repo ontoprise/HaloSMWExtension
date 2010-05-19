@@ -131,6 +131,7 @@ class WebService {
 		//specified in the WWSD
 		//Please note, the same is done in newFromWWSD
 		if(strtolower($this->mProtocol) == "linkeddata"){
+			//todo: use constants
 			$parameters .= '<parameter name="_url-suffix" path="_url-suffix" optional="true"/>';
 			$parameters .= '<parameter name="_subject" path="_subject" optional="true"/>';
 		}
@@ -634,7 +635,8 @@ class WebService {
 			}
 			
 			//parse WS result via the ARC2 library
-			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse);
+			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse, 
+				$this->getWSClient()->getContentType());
 			
 			//setup namespace prefixes
 			SMWRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);

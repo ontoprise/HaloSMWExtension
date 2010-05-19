@@ -55,10 +55,12 @@ class SMWRDFProcessor {
 	 * @param unknown_type $content
 	 * @return unknown_type
 	 */
-	public function parse($uri, $subject, $content = null){
-		$parser = ARC2::getRDFParser();
+	public function parse($uri, $subject, $content = null, $format){
+		$parserName = !$format ? "RDF" : strtoupper($format);
+		$parserName = "get".$parserName."Parser";
+		$parser = ARC2::$parserName();
 		$parser->parse($uri, $content);
-		$this->index = $parser->getSimpleIndex();
+		$this->index = $parser->getSimpleIndex(false);
 		$this->subject = $subject;
 	}
 	
@@ -87,6 +89,15 @@ class SMWRDFProcessor {
 		}
 		return $uri;
 	}
+	
+	private function getRequestedLanguage($predicate){
+		$lang = "";
+		if(strpos($predicate, "@") > 0){
+			$lang = substr($predicate, strpos($predicate, "@")+1);
+			$predicate = substr($predicate, 0, strpos($predicate, "@"));
+		}
+		return array($lang, $predicate);
+	}
 		
 	/**
 	 * This method is called by SMWWebService
@@ -99,6 +110,7 @@ class SMWRDFProcessor {
 	 * @return unknown_type
 	 */
 	public function preprocessPredicate($predicate){
+		list($lang, $predicate) = $this->getRequestedLanguage($predicate);
 		$predicate = $this->resolveNamespacePrefix($predicate);
 		
 		if(strlen($this->subject) > 0){ //user has chosen to retrieve triples for a certain subject
@@ -124,11 +136,30 @@ class SMWRDFProcessor {
 			} else if($predicate == ALL_OBJECTS){
 				$this->allObjectsRequested = true;
 				foreach($this->index[$subject] as $predicateId => $predicate){
-					$this->processedIndex[$subject][$predicateId] = $predicate;
+					$processedObjects = array();
+					foreach($predicate as $object){
+						if(array_key_exists('lang', $object)){ 
+							if($object['lang'] == $lang || strlen($lang) == 0){
+								$processedObjects[] = $object['value']; 
+							}
+						} else {
+							$processedObjects[] = $object['value'];
+						}
+					}
+					$this->processedIndex[$subject][$predicateId] = $processedObjects;
 				}
 			} else {		
-				$result = $this->index[$subject][$predicate];
-				$this->processedIndex[$subject][$predicate] = $this->index[$subject][$predicate];
+				$processedObjects = array();
+				foreach($this->index[$subject][$predicate] as $object){
+					if(array_key_exists('lang', $object)){ 
+						if($object['lang'] == $lang || strlen($lang) == 0){
+							$processedObjects[] = $object['value']; 
+						}
+					} else {
+						$processedObjects[] = $object['value'];
+					}
+				}
+				$this->processedIndex[$subject][$predicate] = $processedObjects;
 			}
 		} else { //user is not interested in a certain subject
 			if($predicate == ALL_SUBJECTS){
@@ -149,10 +180,32 @@ class SMWRDFProcessor {
 					} else if($predicate == ALL_OBJECTS){
 						$this->allObjectsRequested = true;
 						foreach($subject as $predicateId => $objects){
-							$this->processedIndex[$subjectId][$predicateId] = $objects;
+							$processedObjects = array();
+							foreach($objects as $object){
+								if(array_key_exists('lang', $object)){ 
+									if($object['lang'] == $lang || strlen($lang) == 0){
+										$processedObjects[] = $object['value']; 
+									}
+								} else {
+									$processedObjects[] = $object['value'];
+								}
+							}
+							
+							$this->processedIndex[$subjectId][$predicateId] = $processedObjects;
 						}
 					} else if(array_key_exists($predicate, $subject)){
-						$result = array_merge($result, $subject[$predicate]);
+						
+						$processedObjects = array();
+						foreach($subject[$predicate] as $object){
+							if(array_key_exists('lang', $object)){ 
+								if($object['lang'] == $lang || strlen($lang) == 0 ){
+									$processedObjects[] = $object['value']; 
+								}
+							} else {
+								$processedObjects[] = $object['value'];
+							}
+						}
+						$result = array_merge($result, $processedObjects);
 						$this->processedIndex[$subjectId][$predicate] = $subject[$predicate]; 
 					} 
 				}
@@ -171,6 +224,7 @@ class SMWRDFProcessor {
 	 * @return unknown_type
 	 */
 	public function getFinalResult($predicate){
+		list($lang, $predicate) = $this->getRequestedLanguage($predicate);
 		$requestPredicate = $this->resolveNamespacePrefix($predicate);
 		
 		$result = array();
@@ -184,7 +238,7 @@ class SMWRDFProcessor {
 					$result [] = "";
 				}
 			} else { //this subject has associated triples
-				if(!$this->allPredficatesRequested && !$this->allObjectsRequested){ //all predicates was not requested => do not add spacers for them
+				if(!$this->allPredicatesRequested && !$this->allObjectsRequested){ //all predicates was not requested => do not add spacers for them
 					//add spacers if some predicates have several values
 					$maxObjects = 1;
 					$objects = array();							
