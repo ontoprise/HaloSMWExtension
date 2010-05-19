@@ -67,7 +67,8 @@ function wfUSAddHeader(& $out) {
 
                     // add SimplePopup
                     $dir = str_replace("\\","/", dirname(__FILE__));
-                    $dir= substr($dir, strpos($dir, $wgScriptPath));
+                    $scriptIndex = !empty($wgScriptPath) ? strpos($dir, $wgScriptPath) : false;
+                    $dir= substr($dir, $scriptIndex);
                     $dir= substr($dir, 0, strrpos($dir, '/'));
                     $out->addLink(array(
                     'rel'   => 'stylesheet',
