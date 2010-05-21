@@ -113,10 +113,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$visible = "";
 			$showButton = "display: none";
 
-			if($wwsd->getProtocol() == "SOAP"){
+			if(strtolower($wwsd->getProtocol()) == "soap"){
 				$soap = " checked=\"true\" ";
 				$rest = "";
-			}
+			} else if(strtolower($wwsd->getProtocol()) == "linkeddata"){
+				$ld = " checked=\"true\" ";
+				$rest = "";
+			} 
 			$uri = $wwsd->getURI();
 			$username = $wwsd->getAuthenticationLogin();
 			if(strlen($username) > 0){
@@ -236,7 +239,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</div>";
 
 		$html .= "</div>";
-
+		
 		// 4. Define Results
 		$html .= "<div id=\"step4\" class=\"StepDiv\" style=\"".$visible."\">";
 
@@ -361,12 +364,15 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</div>";
 
 		if($editwwsd){
-			if($wwsd->getProtocol() == "SOAP"){
+			if(strtolower($wwsd->getProtocol()) == "soap"){
 				$html .= $this->getMergedParameters($wwsd, false);
 				$html .= $this->getMergedParameters($wwsd, true);
-			} else if($wwsd->getProtocol() == "REST"){
-				$html .= $this->getRESTMergedParameters($wwsd, false);
-				$html .= $this->getRESTMergedParameters($wwsd, true);
+			} else if(strtolower($wwsd->getProtocol()) == "rest"){
+				$html .= $this->getRESTMergedParameters($wwsd, false, "rest");
+				$html .= $this->getRESTMergedParameters($wwsd, true, "rest");
+			} else if(strtolower($wwsd->getProtocol()) == "linkeddata"){
+				$html .= $this->getRESTMergedParameters($wwsd, false, "ld");
+				$html .= $this->getRESTMergedParameters($wwsd, true, "ld");
 			}
 		}
 
@@ -596,7 +602,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		return $html;
 	}
 
-	private function getRESTMergedParameters($wwsd, $result){
+	private function getRESTMergedParameters($wwsd, $result, $protocol){
 		if($result){
 			$wwsdParameters = new SimpleXMLElement($wwsd->getResult());
 		} else {
@@ -607,12 +613,16 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		if($result){
-			$html .= "<span id=\"editresults\" style=\"display:none\">";
+			$html .= "<span id=\"editresults\">"; // style=\"display:none\">";
 		} else {
 			$html .= "<span id=\"editparameters\" style=\"display:none\">";
 		}
 
-		$html .= "rest;";
+		if($protocol == "rest"){
+			$html .= "rest;";
+		} else {
+			$html .= "ld;";
+		}
 		foreach($wwsdParameters as $key => $wwsdParameter){
 			if(!$result){
 				$html .= $wwsdParameter["path"].";";

@@ -2643,8 +2643,10 @@ DefineWebServiceSpecial.prototype = {
 				o["subParameter"] = unescape(editParameters[i + 4]);
 				parametersUpdate.push(o);
 			}
-			this.processStep2REST();
-			this.updateParametersREST(parametersUpdate);
+			if(protocol == "rest" ){
+				this.processStep2REST();
+				this.updateParametersREST(parametersUpdate);
+			}
 		}
 
 		var editResults = "";
@@ -2686,8 +2688,8 @@ DefineWebServiceSpecial.prototype = {
 				o["path"] = editResults[i + 2];
 				resultsUpdate.push(o);
 			}
-			this.processStep3REST();
-			this.updateResultsREST(resultsUpdate);
+			this.processStep1LD();
+			this.updateResultsREST(resultsUpdate, protocol);
 		}
 
 		if (protocol == "soap") {
@@ -2699,12 +2701,23 @@ DefineWebServiceSpecial.prototype = {
 					"webServiceSpecial.confirmStep1Change(\"soap\")");
 			$("step2-methods").setAttribute("onclick",
 					"webServiceSpecial.confirmStep2Change()");
-		} else {
+		} else if (protocol == "rest"){
 			$("step1-protocol-soap").setAttribute("onclick",
 					"webServiceSpecial.confirmStep1Change(\"rest\")");
 			$("step1-protocol-ld").setAttribute("onclick",
 				"webServiceSpecial.confirmStep1Change(\"rest\")");
+		} else if (protocol == "ld"){
+			$("step1-protocol-soap").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"ld\")");
+			$("step1-protocol-rest").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"ld\")");
+		} 
+		
+		if (protocol == "ld"){
+			$("step2").style.display = "none";
+			$("step3").style.display = "none";
 		}
+		
 	},
 
 	updateParameters : function(updates) {
@@ -3353,7 +3366,12 @@ DefineWebServiceSpecial.prototype = {
 
 	processRESTResultPartButton : function(event) {
 		var id = Event.element(event).clickEventId;
-		var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
+		if ($("step1-protocol-rest").checked) {
+			var select = $("step4-results").childNodes[0].childNodes[id].childNodes[3].childNodes[0];
+		} else if ($("step1-protocol-ld").checked) {
+			var select = $("step4-results").childNodes[0].childNodes[id].childNodes[2].childNodes[0];
+		}
+		
 		var action = select.value;
 
 		if (action == diLanguage.getMessage('smw_wws_add_resultpart')) {
@@ -3441,50 +3459,52 @@ DefineWebServiceSpecial.prototype = {
 				result += "<method name=\"GET\" />\n";
 			}
 			
-			var parameterTable = $("step3-parameters").childNodes[0];
-			for ( var i = 1; i < parameterTable.childNodes.length; i++) {
-				if (parameterTable.childNodes[i].removed == true) {
-					continue;
-				}
-
-				if (parameterTable.childNodes[i].childNodes[0].childNodes[0].value == "") {
-					continue;
-				}
-				
-				var hasSubParameter = false;
-				if(parameterTable.childNodes[i].hasSubParameter){
-					hasSubParameter = true;
-				}
-
-				var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
-				if (alias == "") {
-					alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
-				}
-				result += "<parameter name=\"" + alias + "\" ";
-
-				wsSyntax += "| " + alias + " = [Please enter a value here]\n";
-
-				var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
-				result += " optional=\"" + optional + "\" ";
-
-				var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
-				if (defaultValue != "") {
-					result += " defaultValue=\"" + defaultValue + "\" ";
-				}
-				result += " path=\""
-						+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
-						
-				// process subparameters
-				if(hasSubParameter){
-					result += "\">\n";
-					result += parameterTable.childNodes[i+1].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].value;
-					result += "\n</parameter>\n";
-					i += 1;
-				} else {
-					result += "\"/>\n";
+			if ($("step1-protocol-rest").checked) {
+				var parameterTable = $("step3-parameters").childNodes[0];
+				for ( var i = 1; i < parameterTable.childNodes.length; i++) {
+					if (parameterTable.childNodes[i].removed == true) {
+						continue;
+					}
+	
+					if (parameterTable.childNodes[i].childNodes[0].childNodes[0].value == "") {
+						continue;
+					}
+					
+					var hasSubParameter = false;
+					if(parameterTable.childNodes[i].hasSubParameter){
+						hasSubParameter = true;
+					}
+	
+					var alias = parameterTable.childNodes[i].childNodes[1].childNodes[0].value;
+					if (alias == "") {
+						alias = parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+					}
+					result += "<parameter name=\"" + alias + "\" ";
+	
+					wsSyntax += "| " + alias + " = [Please enter a value here]\n";
+	
+					var optional = parameterTable.childNodes[i].childNodes[2].firstChild.checked;
+					result += " optional=\"" + optional + "\" ";
+	
+					var defaultValue = parameterTable.childNodes[i].childNodes[3].firstChild.value;
+					if (defaultValue != "") {
+						result += " defaultValue=\"" + defaultValue + "\" ";
+					}
+					result += " path=\""
+							+ parameterTable.childNodes[i].childNodes[0].childNodes[0].value;
+							
+					// process subparameters
+					if(hasSubParameter){
+						result += "\">\n";
+						result += parameterTable.childNodes[i+1].childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].value;
+						result += "\n</parameter>\n";
+						i += 1;
+					} else {
+						result += "\"/>\n";
+					}
 				}
 			}
-			
+				
 			result += "<result name=\"result\" >\n";
 
 			//for alias generation
@@ -3641,7 +3661,7 @@ DefineWebServiceSpecial.prototype = {
 		}
 	},
 
-	updateResultsREST : function(updates) {
+	updateResultsREST : function(updates, protocol) {
 		if (updates.length > 0) {
 			this.displayRestResultsTable(false);
 			$("step4-results").firstChild
@@ -3655,7 +3675,11 @@ DefineWebServiceSpecial.prototype = {
 				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[0].firstChild.value = updates[i]["alias"];
 				$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = updates[i]["format"];
 				if (updates[i]["path"] != "##") {
-					$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = updates[i]["path"];
+					if(protocol == "rest"){
+						$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[2].firstChild.value = updates[i]["path"];
+					} else if (protocol == "ld"){
+						$("step4-results").firstChild.childNodes[i + 1 - offset].childNodes[1].firstChild.value = updates[i]["path"];
+					}
 				}
 				pathAdded = true;
 			} else {
