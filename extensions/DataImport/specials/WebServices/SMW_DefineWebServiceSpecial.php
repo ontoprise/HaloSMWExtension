@@ -84,6 +84,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$soap = "";
 		$rest = " checked=\"true\" ";
+		$ld = "";
 
 		$uri = "";
 
@@ -163,9 +164,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 			
 		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_spec_protocol");
-		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input>";
-		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input></div>";
-			
+		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input>";
+		$html .= "<input id=\"step1-protocol-ld\" ".$ld." type=\"radio\" name=\"step1-protocol\" value=\"ld\">LinkedData</input>";
+		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input></div>";
+		
 		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_s1-uri");
 		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></div>";
 			
@@ -639,6 +641,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 				} else if(strlen($wwsdParameter["json"]."") > 0){
 					$html .= "json;";
 					$html .= $wwsdParameter["json"].";";
+				} else if(strlen($wwsdParameter["predicate"]."") > 0){
+					$html .= "predicate;";
+					$html .= $wwsdParameter["predicate"].";";
 				} else {
 					$html .= "##;";
 					$html .= "##;";

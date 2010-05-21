@@ -39,6 +39,9 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-rest").checked) {
 			this.processStep1REST();
 			return;
+		} else if ($("step1-protocol-ld").checked) {
+			this.processStep1LD();
+			return;
 		}
 
 		this.showPendingIndicator("step1-go");
@@ -68,9 +71,11 @@ DefineWebServiceSpecial.prototype = {
 			$("errors").style.display = "";
 		} else {
 			$("step1-protocol-rest").setAttribute("onclick",
-					"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
+			$("step1-protocol-ld").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"soap\")");
 			$("step1-uri").setAttribute("onclick",
-					"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
 			if (!this.editMode) {
 				$("step1-go-img").style.display = "none";
 				$("step2-go-img").style.display = "";
@@ -142,6 +147,8 @@ DefineWebServiceSpecial.prototype = {
 	processStep2 : function() {
 		if ($("step1-protocol-rest").checked) {
 			this.processStep2REST();
+			return;
+		} else if ($("step1-protocol-ld").checked) {
 			return;
 		}
 
@@ -627,6 +634,9 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-rest").checked) {
 			this.processStep3REST();
 			return;
+		} else if ($("step1-protocol-ld").checked) {
+			this.processStep1LD();
+			return;
 		}
 
 		this.generateParameterAliases();
@@ -1014,6 +1024,9 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-rest").checked) {
 			this.processStep4REST();
 			return;
+		} else if ($("step1-protocol-ld").checked) {
+			this.processStep4REST();
+			return;
 		}
 
 		$("step4-go-img").style.display = "none";
@@ -1076,6 +1089,9 @@ DefineWebServiceSpecial.prototype = {
 	 */
 	processStep6 : function() {
 		if ($("step1-protocol-rest").checked) {
+			this.processStep6REST();
+			return;
+		} else if ($("step1-protocol-ld").checked) {
 			this.processStep6REST();
 			return;
 		}
@@ -1358,7 +1374,7 @@ DefineWebServiceSpecial.prototype = {
 		$("step1").style.display = "";
 		$("step1-uri").value = "";
 		$("step1-uri").value = "";
-		$("step1-protocol-rest").checked = "true";
+		//$("step1-protocol-rest").checked = "true";
 		$("step1-auth-no").checked = "true";
 		$("step1-username").value = "";
 		$("step1-password").value = "";
@@ -1366,6 +1382,7 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step1-protocol-soap").removeAttribute("onclick");
 		$("step1-protocol-rest").removeAttribute("onclick");
+		$("step1-protocol-ld").removeAttribute("onclick");
 		$("step1-uri").removeAttribute("onclick");
 
 		$("step2").style.display = "none";
@@ -2675,14 +2692,18 @@ DefineWebServiceSpecial.prototype = {
 
 		if (protocol == "soap") {
 			$("step1-protocol-rest").setAttribute("onclick",
-					"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
+			$("step1-protocol-ld").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"soap\")");
 			$("step1-uri").setAttribute("onclick",
-					"webServiceSpecial.confirmStep1Change(\"rest\")");
+					"webServiceSpecial.confirmStep1Change(\"soap\")");
 			$("step2-methods").setAttribute("onclick",
 					"webServiceSpecial.confirmStep2Change()");
 		} else {
 			$("step1-protocol-soap").setAttribute("onclick",
-					"webServiceSpecial.confirmStep1Change(\"soap\")");
+					"webServiceSpecial.confirmStep1Change(\"rest\")");
+			$("step1-protocol-ld").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
 		}
 	},
 
@@ -2911,7 +2932,9 @@ DefineWebServiceSpecial.prototype = {
 		$("step6c-error").style.display = "none";
 
 		$("step1-protocol-soap").setAttribute("onclick",
-				"webServiceSpecial.confirmStep1Change(\"soap\")");
+				"webServiceSpecial.confirmStep1Change(\"rest\")");
+		$("step1-protocol-ld").setAttribute("onclick",
+			"webServiceSpecial.confirmStep1Change(\"rest\")");
 
 		$("step2").style.display = "";
 		$("menue-step1").className = "DoneMenueStep";
@@ -3177,24 +3200,32 @@ DefineWebServiceSpecial.prototype = {
 		row.appendChild(td);
 
 		// add format-input
-		td = document.createElement("td");
-		var select = document.createElement("select");
-
-		var option = document.createElement("option");
-		text = document.createTextNode("xpath");
-		option.appendChild(text);
-		option.value = "xpath";
-		select.appendChild(option);
-
-		option = document.createElement("option");
-		text = document.createTextNode("json");
-		option.appendChild(text);
-		option.value = "json";
-		select.appendChild(option);
-
-		td.appendChild(select);
-		row.appendChild(td);
-
+		if ($("step1-protocol-rest").checked){
+			td = document.createElement("td");
+			var select = document.createElement("select");
+	
+			var option = document.createElement("option");
+			text = document.createTextNode("xpath");
+			option.appendChild(text);
+			option.value = "xpath";
+			select.appendChild(option);
+	
+			option = document.createElement("option");
+			text = document.createTextNode("json");
+			option.appendChild(text);
+			option.value = "json";
+			select.appendChild(option);
+			
+			option = document.createElement("option");
+			text = document.createTextNode("predicate");
+			option.appendChild(text);
+			option.value = "predicate";
+			select.appendChild(option);
+	
+			td.appendChild(select);
+			row.appendChild(td);
+		}
+			
 		// add subpath-input
 		td = document.createElement("td");
 		input = document.createElement("input");
@@ -3252,6 +3283,7 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step4-duplicates").style.display = "none";
 
+		//xxzz
 		$("step4-rest-intro").style.display = "";
 		if ($("step4-rest-intro").childNodes.length <= 0) {
 			var span = document.createElement("span");
@@ -3391,7 +3423,11 @@ DefineWebServiceSpecial.prototype = {
 			var wsSyntax = "\n<pre>{{#ws: " + $("step6-name").value + "\n";
 			result += "<uri name=\"" + $("step1-uri").value + "\" />\n";
 
-			result += "<protocol>REST</protocol>\n";
+			if ($("step1-protocol-rest").checked) {
+				result += "<protocol>REST</protocol>\n";
+			} else {
+				result += "<protocol>LinkedData</protocol>\n";
+			}
 
 			if ($("step1-auth-yes").checked) {
 				result += "<authentication type=\"http\" login=\""
@@ -3399,8 +3435,12 @@ DefineWebServiceSpecial.prototype = {
 						+ $("step1-password").value + "\"/>\n";
 			}
 
-			result += "<method name=\"" + $("step2-methods").value + "\" />\n";
-
+			if ($("step1-protocol-rest").checked) {
+				result += "<method name=\"" + $("step2-methods").value + "\" />\n";
+			} else {
+				result += "<method name=\"GET\" />\n";
+			}
+			
 			var parameterTable = $("step3-parameters").childNodes[0];
 			for ( var i = 1; i < parameterTable.childNodes.length; i++) {
 				if (parameterTable.childNodes[i].removed == true) {
@@ -3458,7 +3498,7 @@ DefineWebServiceSpecial.prototype = {
 			}
 
 			var resultTable = $("step4-results").childNodes[0];
-			
+						
 			for (i = 1; i < resultTable.childNodes.length; i++) {
 				if (resultTable.childNodes[i].removed) {
 					continue;
@@ -3486,9 +3526,15 @@ DefineWebServiceSpecial.prototype = {
 
 				wsSyntax += "| ?result." + name + "\n";
 
-				result += resultTable.childNodes[i].childNodes[1].firstChild.value
-						+ "=\"";
-				var subPathString = resultTable.childNodes[i].childNodes[2].firstChild.value;
+				
+				if ($("step1-protocol-rest").checked) {
+					result += resultTable.childNodes[i].childNodes[1].firstChild.value 	+ "=\"";
+					var column = 2;
+				} else {
+					result += "predicate=\"";
+					var column = 1;
+				}
+				var subPathString = resultTable.childNodes[i].childNodes[column].firstChild.value;
 				subPathString = subPathString.replace(/>/g, "&gt;");
 				subPathString = subPathString.replace(/</g, "&lt;");
 				result += subPathString + "\"/>\n";
@@ -3631,9 +3677,11 @@ DefineWebServiceSpecial.prototype = {
 		check = confirm(diLanguage.getMessage('smw_wws_proceed'));
 		if (check == false) {
 			if (protocol == "soap") {
+				$("step1-protocol-soap").checked = true;
+			} else if (protocol == "rest") {
 				$("step1-protocol-rest").checked = true;
 			} else {
-				$("step1-protocol-soap").checked = true;
+				$("step1-protocol-ld").checked = true;
 			}
 
 			$("step1-uri").blur();
@@ -3672,6 +3720,10 @@ DefineWebServiceSpecial.prototype = {
 		$("step3-parameters").childNodes[0].childNodes[1].removed = false;
 	},
 
+	/**
+	 * Displays the result parts for the rest and the ld protocol
+	 * 
+	 */
 	displayRestResultsTable : function() {
 		$("step4-rest-intro").childNodes[6].style.display = "none";
 		if ($("step4-results").childNodes[0].childNodes[1] == null) {
@@ -3680,6 +3732,15 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-results").style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].removed = false;
+		
+		//todo: use languag fiele
+		if ($("step1-protocol-ld").checked){
+			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = "Predicate:";
+		} else {
+			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = "Path:";
+		}
 	},
 
 	useParameters : function() {
@@ -4225,6 +4286,109 @@ DefineWebServiceSpecial.prototype = {
 		if(!node.parentNode.previousSibling.firstChild.checked){
 				node.parentNode.previousSibling.firstChild.click();
 		}
+	}, 
+	
+	processStep1LD : function() {
+		if (!this.editMode) {
+			$("step4").style.display = "";
+			$("menue-step1").className = "DoneMenueStep";
+			$("menue-step2").className = "DoneMenueStep";
+			$("menue-step3").className = "DoneMenueStep";
+			$("menue-step4").className = "ActualMenueStep";
+			this.hideHelp(3);
+			$("step1-go-img").style.display = "none";
+			$("step4-go-img").style.display = "";
+		}
+		$("errors").style.display = "none";
+		$("step1-error").style.display = "none";
+		$("step2a-error").style.display = "none";
+		$("step2b-error").style.display = "none";
+		$("step3-error").style.display = "none";
+		$("step4-error").style.display = "none";
+		$("step5-error").style.display = "none";
+		$("step6-error").style.display = "none";
+		$("step6b-error").style.display = "none";
+		$("step6c-error").style.display = "none";
+
+		$("step1-protocol-soap").setAttribute("onclick",
+				"webServiceSpecial.confirmStep1Change(\"ld\")");
+		$("step1-protocol-rest").setAttribute("onclick",
+			"webServiceSpecial.confirmStep1Change(\"ld\")");
+		
+		$("step4-rest-intro").style.display = "";
+		if ($("step4-rest-intro").childNodes.length <= 0) {
+			var span = document.createElement("span");
+			var text = document.createTextNode(diLanguage
+					.getMessage('smw_wws_use_complete'));
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+
+			var input = document.createElement("input");
+			input.type = "checkbox";
+			input.style.marginLeft = "5px";
+			input.style.marginRight = "20px";
+			$("step4-rest-intro").appendChild(input);
+
+			span = document.createElement("span");
+			text = document.createTextNode(diLanguage
+					.getMessage('smw_wws_alias'));
+			span.appendChild(text);
+			$("step4-rest-intro").appendChild(span);
+
+			var input = document.createElement("input");
+			input.width = 25;
+			input.value = "complete";
+			$("step4-rest-intro").appendChild(input);
+
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+			var br = document.createElement("br");
+			$("step4-rest-intro").appendChild(br);
+
+			var button = document.createElement("input");
+			button.setAttribute("type", "button");
+			button.setAttribute("value", diLanguage
+					.getMessage('smw_wws_add_resultparts'));
+			if(window.addEventListener){
+				button.addEventListener("click", webServiceSpecial.displayRestResultsTable, false);
+			} else {
+				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
+			}
+			
+			$("step4-rest-intro").appendChild(button);
+		} else {
+		}
+
+		//todo: display them in processStep3REST
+		//hide element, which are not required for ld
+		$("step4-rest-intro").childNodes[0].style.display = "none";
+		$("step4-rest-intro").childNodes[1].style.display = "none";
+		$("step4-rest-intro").childNodes[2].style.display = "none";
+		$("step4-rest-intro").childNodes[3].style.display = "none";
+		$("step4-rest-intro").childNodes[4].style.display = "none";
+		$("step4-rest-intro").childNodes[5].style.display = "none";
+		$("step4-rest-intro").childNodes[1].checked = false;
+		
+		
+		$("step4-rest-intro").childNodes[6].style.display = "";
+
+		$("step4-results").style.display = "none";
+		var tempHead = $("step4-results").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step4-results").childNodes[0].cloneNode(false);
+		$("step4-results").removeChild($("step4-results").childNodes[0]);
+		$("step4-results").appendChild(tempTable);
+		$("step4-results").childNodes[0].appendChild(tempHead);
+
+		// prepare table for rest result parts
+		$("step4-results").childNodes[0].childNodes[0].childNodes[0].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[2].childNodes[1].style.display = "none";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
+		$("step4-results").childNodes[0].childNodes[0].childNodes[4].style.display = "";
+
+		this.appendRESTResultPart();
+		$("step4-results").childNodes[0].childNodes[1].removed = true;
 	}
 		
 }
