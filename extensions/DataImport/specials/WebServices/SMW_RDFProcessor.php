@@ -62,6 +62,10 @@ class SMWRDFProcessor {
 		$parser->parse($uri, $content);
 		$this->index = $parser->getSimpleIndex(false);
 		$this->subject = $subject;
+		
+		$this->processedIndex = array();
+		$this->allPredicatesRequested = false;
+		$this->allObjectsRequested = false;
 	}
 	
 	/**
