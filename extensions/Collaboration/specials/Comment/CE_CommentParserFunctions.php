@@ -217,62 +217,62 @@ END;
 			$userImgSrc = $cegScriptPath. '/skins/Comment/icons/defaultuser.gif';
 		}
 
-		$submitButtonID = 'ce-cf-submitbuttonID';
-		$resetButtonID = 'ce-cf-resetbuttonID'; 
+		$submitButtonID = 'collabComFormSubmitbuttonID';
+		$resetButtonID = 'collabComFormResetbuttonID'; 
 		
 		//TODO: use script.aclo.us(?) for fading in.
 
-		$html = XML::openElement( 'div', array( 'id' => 'ce-c-header' )) .
-			XML::openElement('span', array( 'id' => 'ce-c-header-text',
+		$html = XML::openElement( 'div', array( 'id' => 'collabComFormHeader' )) .
+			XML::openElement('span', array( 'id' => 'collabComFormHeaderText',
 				'title' => $cfHeaderToolTip,
-				'onClick' => '$(\'ce-cf\').toggle();')) .
+				'onClick' => '$(\'collabComForm\').toggle();')) .
 			wfMsg('ce_cf_header_text') .
 			XML::closeElement('span');
 
-		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'ce-cf',
+		$html .= XML::openElement( 'form', array( 'method' => 'post', 'id' => 'collabComForm',
 			'style' => 'display:none',		
 			'onSubmit' => 'return ceCommentForm.processForm()' ) ) . 
-			XML::openElement('div', array('id' => 'ce-cf-user-icon')) .
-			XML::Element( 'img', array( 'id' => 'ce-cf-user-img',
+			XML::openElement('div', array('id' => 'collabComFormUserIcon')) .
+			XML::Element( 'img', array( 'id' => 'collabComFormUserImg',
 				'src' => $userImgSrc? $userImgSrc : '' )) .
 			XML::closeElement('div') .
-			XML::openElement('div', array('id' => 'ce-cf-rightside')) .
-				XML::openElement( 'div', array( 'id' => 'ce-cf-user') ) .
+			XML::openElement('div', array('id' => 'collabComFormRight')) .
+				XML::openElement( 'div', array( 'id' => 'collabComFormUser') ) .
 					'<span class="userkey">' .wfMsg('ce_cf_author') . '</span>' . 
 					'<span class="uservalue">' . $currentUser . '</span>' .
 				XML::closeElement('div') .
-				XML::openElement('div', array( 'id' => 'ce-cf-rating')) .
+				XML::openElement('div', array( 'id' => 'collabComFormRating')) .
 					wfMsg('ce_cf_article_rating') .
-					'<span class="ce-cf-grey">' . '&nbsp;' . 
+					'<span class="collabComFormGrey">' . '&nbsp;' . 
 						wfMsg('ce_cf_article_rating2') . 
 					'</span>' . ":" .
-					XML::openElement('span', array( 'id' => 'ce-cf-radiobuttons' )) .
-						XML::Element('img', array( 'id' => 'ce-cf-rating1',
-							'class' => 'ce-cf-rating-img',
+					XML::openElement('span', array( 'id' => 'collabComFormRadiobuttons' )) .
+						XML::Element('img', array( 'id' => 'collabComFormRating1',
+							'class' => 'collabComFormRatingImg',
 							'src' => $cegScriptPath . '/skins/Comment/icons/bad_inactive.png',
 							'title' => $ratingTitleBad,
-							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating1\',-1);' )) .
-						XML::Element('img', array( 'id' => 'ce-cf-rating2',
-							'class' => 'ce-cf-rating-img',
+							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating1\',-1);' )) .
+						XML::Element('img', array( 'id' => 'collabComFormRating2',
+							'class' => 'collabComFormRatingImg',
 							'src' => $cegScriptPath . '/skins/Comment/icons/neutral_inactive.png',
 							'title' => $ratingTitleNeutral,
-							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating2\',0);' )) .
-						XML::Element('img', array( 'id' => 'ce-cf-rating3',
-							'class' => 'ce-cf-rating-img',
+							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating2\',0);' )) .
+						XML::Element('img', array( 'id' => 'collabComFormRating3',
+							'class' => 'collabComFormRatingImg',
 							'title' => $ratingTitleGood,
 							'src' => $cegScriptPath . '/skins/Comment/icons/good_inactive.png',
-							'onClick' => 'ceCommentForm.switchRating(\'ce-cf-rating3\',1);' )) .
+							'onClick' => 'ceCommentForm.switchRating(\'collabComFormRating3\',1);' )) .
 					XML::closeElement('span') .
 				XML::closeElement('div') .
 					'<div class="mw-editTools\">' .
-				XML::openElement('div', array( 'id' => 'ce-cf-commenthelp')) .
+				XML::openElement('div', array( 'id' => 'collabComFormHelp')) .
 					wfMsg('ce_cf_comment') .
 					XML::openElement('span', array('class' => 'red')) .
 						'*' .
 					XML::closeElement('span') . 
 					XML::openElement('span') . ':' . XML::closeElement('span') .
 				XML::closeElement('div') .
-				XML::openElement('textarea', array( 'id' => 'ce-cf-textarea',
+				XML::openElement('textarea', array( 'id' => 'collabComFormTextarea',
 					'rows' => '5', 'defaultValue' => $encPreComment,
 					'onClick' => 'ceCommentForm.selectTextarea();',
 					'onKeyDown' => 'ceCommentForm.textareaKeyPressed();')) .
@@ -284,9 +284,9 @@ END;
 			XML::element( 'input', array( 'type' => 'reset', 
 				'value' => wfMsg( 'ce_cf_reset_button_name' ),
 				'id' => $resetButtonID, 'onClick' => 'ceCommentForm.formReset();')) .
-			XML::closeElement('div') . //end ce-cf-rightside
+			XML::closeElement('div') . //end collabComFormRight
 			XML::closeElement('form') .
-			XML::openElement('div', array('id' => 'ce-cf-message', 
+			XML::openElement('div', array('id' => 'collabComFormMessage', 
 				'style' => 'display:none')) .
 			XML::closeElement('div') .
 			XML::closeElement('div');
@@ -420,7 +420,7 @@ END;
 		//TODO: reformat!
 		
 		$html = '<h2>' . wfMsgHtml( 'ce_warning' ) . "</h2>\n";
-		$html .= '<ul class="ce_warning">' . $warning . "</ul>\n";
+		$html .= '<ul class="collabComWarning">' . $warning . "</ul>\n";
 		
 		return $html;
 	}

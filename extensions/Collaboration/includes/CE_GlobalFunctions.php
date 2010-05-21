@@ -147,7 +147,7 @@ function cefAddNonSpecialPageHeader(&$out) {
 		'rel'   => 'stylesheet',
 		'type'  => 'text/css',
 		'media' => 'screen, projection',
-		'href'  => $cegScriptPath. '/skins/Comment/CE_Comment.css'
+		'href'  => $cegScriptPath. '/skins/Comment/collaboration-comment.css'
 	));
 
 return true;

@@ -1,8 +1,8 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
-    <sitename>MyWiki</sitename>
-    <base>http://testwiki.ontoprise.com/testwiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.15.1</generator>
+    <sitename>Halo3wiki</sitename>
+    <base>http://localhost/trunk/index.php/Main_Page</base>
+    <generator>MediaWiki 1.15.3</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2">Media</namespace>
@@ -11,8 +11,8 @@
       <namespace key="1">Talk</namespace>
       <namespace key="2">User</namespace>
       <namespace key="3">User talk</namespace>
-      <namespace key="4">MyWiki</namespace>
-      <namespace key="5">MyWiki talk</namespace>
+      <namespace key="4">Halo3wiki</namespace>
+      <namespace key="5">Halo3wiki talk</namespace>
       <namespace key="6">File</namespace>
       <namespace key="7">File talk</namespace>
       <namespace key="8">MediaWiki</namespace>
@@ -43,32 +43,22 @@
       <namespace key="129">ICalendar talk</namespace>
       <namespace key="130">VCard</namespace>
       <namespace key="131">VCard talk</namespace>
-      <namespace key="200">WebService</namespace>
-      <namespace key="201">WebService talk</namespace>
-      <namespace key="202">TermImport</namespace>
-      <namespace key="203">TermImport talk</namespace>
-      <namespace key="220">E-mail</namespace>
-      <namespace key="221">E-mail talk</namespace>
-      <namespace key="300">ACL</namespace>
-      <namespace key="301">ACL talk</namespace>
-      <namespace key="400">IAI</namespace>
-      <namespace key="401">IAI talk</namespace>
       <namespace key="700">Comment</namespace>
       <namespace key="701">Comment talk</namespace>
-      <namespace key="702">UserManual</namespace>
-      <namespace key="703">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Category:Comment</title>
-    <id>2232</id>
+    <id>511</id>
     <revision>
-      <id>11574</id>
-      <timestamp>2009-12-14T15:05:32Z</timestamp>
+      <id>1149</id>
+      <timestamp>2010-05-07T13:58:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Category
 |PAGENAME=Category:Comment
 |Has author=User:WikiSysop
@@ -85,13 +75,12 @@
   </page>
   <page>
     <title>Template:Comment</title>
-    <id>2238</id>
+    <id>512</id>
     <revision>
-      <id>11561</id>
-      <timestamp>2009-12-14T10:58:08Z</timestamp>
+      <id>1351</id>
+      <timestamp>2010-05-21T10:56:45Z</timestamp>
       <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
+        <ip>127.0.0.1</ip>
       </contributor>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Comment
@@ -111,20 +100,17 @@
 {{Copyright of article
 |own work=True
 |copyright holder=Ontoprise GmbH
-|year=2009
+|year=2010
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''&lt;div style=&quot;border: 1px solid lightgrey;padding: 3px; display: block; min-height: 50px;&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom: 5px;&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div style=&quot;display: inline; color: grey; padding-left: 5px;&quot; class=&quot;ce_comment_user&quot;&gt;{{#if: {{{CommentPerson|}}} | {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px]] | [[File:Defaultuser.gif|frameless|48px]] }} &lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#if: {{{CommentPerson|}}} |{{#ifexist:{{{CommentPerson}}}|[[{{{CommentPerson|}}}]], |{{{CommentPerson|}}}}}[[Has comment person::{{{CommentPerson|}}}| ]]|}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt; &lt;!-- comment date--&gt;{{#if: {{{CommentDatetime|}}} | &lt;div style=&quot;display: inline; color: grey;&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;}}&lt;!-- end comment date--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{CommentRating|}}}|[[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div style=&quot;display: inline; font-weight: bold;&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;
-&lt;/div&gt;&lt;!-- end comment --&gt;
-[[Category:Comment]]&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+&lt;/noinclude&gt;&lt;includeonly&gt;''Comment for {{#if: {{{CommentRelatedArticle|}}} | [[Belongs to article::{{{CommentRelatedArticle|}}}]] | nothing}}''&lt;!-- start comment (do not change css-classes)--&gt;&lt;div class=&quot;collabCom&quot;&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComHeadline&quot;&gt;&lt;!-- start comment person (do not change css-class.) --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{CommentPerson|}}} | {{#vardefine:userimage|{{#ask: [[{{{CommentPerson}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{CommentPerson}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview|link=]] }}&lt;div class=&quot;collabComUser&quot;&gt;&lt;div class=&quot;collabComUserName&quot;&gt;{{#if: {{{CommentPerson|}}} |{{#ifexist:{{{CommentPerson}}}|[[{{{CommentPerson|}}}]], |{{{CommentPerson|}}},&amp;nbsp; }}[[Has comment person::{{{CommentPerson|}}}| ]]|}}&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;{{#if: {{{CommentDatetime|}}} | &lt;div class=&quot;collabComDate&quot;&gt;[[Has comment date::{{{CommentDatetime|}}}]]&lt;/div&gt;}}&lt;!-- end comment date--&gt;&lt;!-- start comment rating --&gt;{{#if:{{{CommentRating|}}}|[[Has comment rating::{{{CommentRating|}}}|]]&lt;div class =&quot;collabComRating&quot;&gt;{{#ifexpr: {{{CommentRating|}}} &lt; 2 | {{#ifexpr: {{{CommentRating|}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComRatingIcon&quot;&gt;{{#ifexpr: {{{CommentRating|}}} = -1 | [[File:Bad_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 0 | [[File:Neutral_active.png]] }}{{#ifexpr: {{{CommentRating|}}} = 1 | [[File:Good_active.png]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;!-- end comment headline --&gt;&lt;/div&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComText&quot;&gt;{{#if:{{{CommentContent|}}}|[[Has comment text::{{{CommentContent|}}}]]}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;[[Category:Comment]]&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:CommentResult</title>
-    <id>2240</id>
+    <id>513</id>
     <revision>
-      <id>13068</id>
-      <timestamp>2009-12-18T15:01:47Z</timestamp>
+      <id>1330</id>
+      <timestamp>2010-05-17T15:12:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -142,22 +128,23 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;&lt;!-- start comment (do not change css-classes)--&gt;
-&lt;div style=&quot;border: 1px solid lightgrey; background-color: #F2F2F2; margin: 5px 0px; padding: 3px; min-height: 50px;clear:both;&quot;&gt;&lt;!-- start comment information --&gt;&lt;div style=&quot;display:none;&quot; class=&quot;ce-result-info&quot;&gt;{{{1}}}&lt;/div&gt;&lt;!-- end comment information --&gt;&lt;!-- start comment headline --&gt;&lt;div style=&quot;padding-bottom: 5px;&quot;&gt;&lt;!-- start comment person --&gt;&lt;div style=&quot;display: inline; color: grey; padding-left: 5px;&quot; class=&quot;ce-result-user&quot;&gt;{{#if: {{{2|}}} |{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}
-&lt;div style=&quot;display: inline; color: blue;&quot;&gt;{{#ifexist:{{{2|}}}|[[{{{2|}}}]], |{{{2|}}}}}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- comment date--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div style=&quot;display: inline; color: grey;&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment link--&gt;&lt;div style=&quot;display:inline&quot;&gt;{{#ifexist:{{{1|}}}|,&amp;nbsp;[[{{{1}}}|go to comment]]|}}&lt;/div&gt;&lt;!-- end comment link --&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;ce-rating-icon&quot; style=&quot;display: inline; float: right; text-align: right; color: grey;&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div style=&quot;display: inline; margin-left: 3px; font-weight: bold; color: black;&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;
-&lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div style=&quot;padding: 7px; display: inline; font-weight: bold;&quot;&gt;{{{4}}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
+&lt;div class=&quot;collabComRes&quot;&gt;&lt;!-- start comment information --&gt;&lt;div class=&quot;collabComResInfo&quot;&gt;{{{1}}}&lt;/div&gt;
+&lt;!-- end comment information --&gt;&lt;!-- start comment headline --&gt;&lt;div class=&quot;collabComResHeadline&quot;&gt;
+&lt;!-- start comment person --&gt;&lt;div class=&quot;collabComResPerson&quot;&gt;{{#if: {{{2|}}} |{{#vardefine:userimage|{{#ask: [[{{{2}}}]] | ?User_image = | link=none}} }} }}{{#if:{{#var:userimage}}| [[{{#var:userimage}}|frameless|48x48px|nopreview|link={{{2}}}]] | [[File:Defaultuser.gif|frameless|48px|nopreview]] }}&lt;div class=&quot;collabComResUsername&quot;&gt;{{#if:{{{2|}}}|[[{{{2|}}}]], | }}&lt;/div&gt;&lt;/div&gt;&lt;!-- end comment person --&gt;&lt;!-- start comment date--&gt;&lt;div class=&quot;collabComResDate&quot;&gt;{{{3}}}&lt;/div&gt;&lt;!-- end comment date--&gt;&lt;!-- start belonging article--&gt;&lt;div class=&quot;collabComResBelongsTo&quot;&gt;{{#if:{{{6|}}}|, for article: [[{{{6}}}]]|}}&lt;/div&gt;&lt;!-- end belonging article--&gt;&lt;!-- start comment link--&gt;&lt;div class=&quot;collabComResLink&quot;&gt;{{#ifexist:{{{1|}}}|,&amp;nbsp;[[{{{1}}}|go to comment]]|}}&lt;/div&gt;&lt;!-- end comment link --&gt;&lt;!-- start comment rating --&gt;{{#if:{{{5}}}|&lt;div class =&quot;collabComResRating&quot;&gt;{{#ifexpr: {{{5}}} &lt; 2 | {{#ifexpr: {{{5}}} &gt; -2 | Article quality rated:&lt;div class=&quot;collabComResRatingIcon&quot;&gt;{{#ifexpr: {{{5}}} = -1 | [[File:Bad_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 0 | [[File:Neutral_active.png|nopreview]] }}{{#ifexpr: {{{5}}} = 1 | [[File:Good_active.png|nopreview]] }}&lt;/div&gt;| }}| }}&lt;/div&gt;| }}&lt;!-- end comment rating --&gt;&lt;/div&gt;&lt;!-- End comment headline --&gt;&lt;!-- start comment content--&gt;&lt;div class=&quot;collabComResText&quot;&gt;{{{4}}}&lt;/div&gt;&lt;!-- end comment content--&gt;&lt;/div&gt;&lt;!-- end comment --&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:ShowComments</title>
-    <id>2239</id>
+    <id>514</id>
     <revision>
-      <id>11084</id>
-      <timestamp>2009-12-07T13:17:27Z</timestamp>
+      <id>1155</id>
+      <timestamp>2010-05-07T13:58:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowComments
 |Has author=User:WikiSysop
@@ -178,14 +165,16 @@
   </page>
   <page>
     <title>Template:ShowCommentsIntern</title>
-    <id>2256</id>
+    <id>515</id>
     <revision>
-      <id>12399</id>
-      <timestamp>2009-12-17T12:12:59Z</timestamp>
+      <id>1157</id>
+      <timestamp>2010-05-07T13:58:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:ShowCommentsIntern
 |Has author=User:WikiSysop
@@ -233,16 +222,16 @@
   </page>
   <page>
     <title>Property:Has comment person</title>
-    <id>2236</id>
+    <id>516</id>
     <revision>
-      <id>11009</id>
-      <timestamp>2009-12-03T17:08:41Z</timestamp>
+      <id>1159</id>
+      <timestamp>2010-05-07T13:59:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has comment person
 |Has author=User:WikiSysop
@@ -260,43 +249,17 @@
     </revision>
   </page>
   <page>
-    <title>Property:Has comment text</title>
-    <id>2235</id>
+    <title>Property:Has comment rating</title>
+    <id>517</id>
     <revision>
-      <id>11013</id>
-      <timestamp>2009-12-03T17:08:43Z</timestamp>
+      <id>1161</id>
+      <timestamp>2010-05-07T13:59:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">{{Property
-|PAGENAME=Property:Has comment text
-|Has author=User:WikiSysop
-|part of=SMWplus Basic Ontology Section
-|Has default form=Form:Add and edit Property
-|rationale=Contains a comment text.
-|long description=This porperty contains the comment text of a comment created by the Collaboration Extension.
-}}
-{{Copyright of article
-|own work=True
-|copyright holder=Ontoprise GmbH
-|year=2009
-}}
-[[has domain and range::Category:Comment; | ]][[has type::Type:Text| ]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Property:Has comment rating</title>
-    <id>2233</id>
-    <revision>
-      <id>11197</id>
-      <timestamp>2009-12-09T10:38:25Z</timestamp>
-      <contributor>
-        <username>WikiSysop</username>
-        <id>1</id>
-      </contributor>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has rating
 |Has author=User:WikiSysop
@@ -316,16 +279,16 @@
   </page>
   <page>
     <title>Property:Has comment date</title>
-    <id>2234</id>
+    <id>518</id>
     <revision>
-      <id>11015</id>
-      <timestamp>2009-12-03T17:08:44Z</timestamp>
+      <id>1163</id>
+      <timestamp>2010-05-07T13:59:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Has comment date
 |Has author=User:WikiSysop
@@ -344,14 +307,16 @@
   </page>
   <page>
     <title>Property:Belongs to article</title>
-    <id>2241</id>
+    <id>519</id>
     <revision>
-      <id>11039</id>
-      <timestamp>2009-12-03T17:15:59Z</timestamp>
+      <id>1165</id>
+      <timestamp>2010-05-07T13:59:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
+      <minor/>
+      <comment>1 revision</comment>
       <text xml:space="preserve">{{Property
 |PAGENAME=Property:Belongs to article
 |Has author=User:WikiSysop
@@ -370,17 +335,17 @@
   </page>
   <page>
     <title>Template:!</title>
-    <id>323</id>
+    <id>554</id>
     <revision>
-      <id>11019</id>
-      <timestamp>2009-12-03T17:08:47Z</timestamp>
+      <id>1251</id>
+      <timestamp>2010-05-17T10:22:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">|&lt;noinclude&gt;
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;|&lt;noinclude&gt;
 {{documentation}}
 &lt;!-- Add cats and interwikis to the /doc subpage, not here! --&gt;
 helper template for pipe symbol, which can e.g. not be used directly in template parameter calls.
@@ -389,17 +354,17 @@ helper template for pipe symbol, which can e.g. not be used directly in template
   </page>
   <page>
     <title>Template:Category</title>
-    <id>318</id>
+    <id>561</id>
     <revision>
-      <id>11021</id>
-      <timestamp>2009-12-03T17:08:48Z</timestamp>
+      <id>1265</id>
+      <timestamp>2010-05-17T10:22:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Category
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -455,17 +420,17 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:Copyright of article</title>
-    <id>321</id>
+    <id>556</id>
     <revision>
-      <id>11023</id>
-      <timestamp>2009-12-03T17:08:50Z</timestamp>
+      <id>1255</id>
+      <timestamp>2010-05-17T10:22:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Template
 |PAGENAME=Template:Copyright of article
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section, 
@@ -505,17 +470,17 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:GNU Free Documentation License</title>
-    <id>324</id>
+    <id>557</id>
     <revision>
-      <id>11025</id>
-      <timestamp>2009-12-03T17:08:51Z</timestamp>
+      <id>1257</id>
+      <timestamp>2010-05-17T10:22:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;div style=&quot;border: 1px solid rgb(240, 240, 240); 
 margin-bottom: 15px; 
 padding-left: 10px;
 font-family: tahoma, sans-serif; 
@@ -542,57 +507,18 @@ GNU Free Documentation License
     </revision>
   </page>
   <page>
-    <title>Template:Get value from list</title>
-    <id>1523</id>
-    <revision>
-      <id>8814</id>
-      <timestamp>2009-09-20T11:47:55Z</timestamp>
-      <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Get value from list
-|Has author=WikiSysop2
-|part of=SMWplus Basic Ontology Section
-|rationale=This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
-|long description=__NOTITLE__
-This template is useful if you have a list of values separated by an arbitrary delimiter (e.g. &quot;,&quot;) and you need a value at a particular position in the list.
-|parameters=&lt;pre&gt;
-{{Get value from list
-|list=a,b,c,d
-|deliminiter=,
-|pos=3
-}}
-&lt;/pre&gt;
-}}
-Test:
-{{Get value from list|list=Template:A template|delimiter=:|pos=2}}
-Test2:
-{{Get value from list|list=Template:A template|delimiter=:|pos=1}}
-test3:
-{{#titleparts:{{#arraymap:Template:A template|:|x|x|/}}|1|1 }}
-
-{{Copyright of article
-|own work=True
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;{{#titleparts:{{#arraymap:{{{list}}}|{{{delimiter}}}|x|x|/}}|1|{{{pos}}} }}&lt;/includeonly&gt;&lt;noinclude&gt;
-&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
     <title>Template:Header for wiki parts</title>
-    <id>319</id>
+    <id>558</id>
     <revision>
-      <id>11027</id>
-      <timestamp>2009-12-03T17:08:52Z</timestamp>
+      <id>1259</id>
+      <timestamp>2010-05-17T10:22:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Header for wiki parts
 |Has author=Daniel
 |part of=SMWplus Basic Ontology Section
@@ -855,43 +781,20 @@ case: All content sections END
     </revision>
   </page>
   <page>
-    <title>Template:Show defining template</title>
-    <id>1498</id>
-    <revision>
-      <id>8823</id>
-      <timestamp>2009-09-20T12:23:45Z</timestamp>
-      <contributor>
-        <username>WikiSysop2</username>
-        <id>24</id>
-      </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
-|PAGENAME=Template:Show defining template
-|Has author=WikiSysop2
-|part of=SMWplus Basic Ontology Section
-}}
-{{Copyright of article
-|own work=True
-}}
-&lt;/noinclude&gt;&lt;includeonly&gt;&lt;!--
-
---&gt;&lt;li&gt;[[{{{1|}}}]] ''(you can replace this template by clicking here: &lt;span class=&quot;plainlinks&quot;&gt;[{{SERVER}}{{SCRIPTPATH}}/index.php/Special:CreateTemplate?category={{urlencode:{{PAGENAME}}}}&amp;template+name={{urlencode:{{Get value from list|list={{{1|}}}|delimiter=:|pos=2}}}} create new template]&lt;/span&gt;)''&lt;!--
-
---&gt;&lt;/includeonly&gt;&lt;noinclude&gt;&lt;/noinclude&gt;</text>
-    </revision>
-  </page>
-  <page>
     <title>Template:Tablelongrow</title>
-    <id>165</id>
+    <id>463</id>
     <revision>
-      <id>12663</id>
-      <timestamp>2009-12-17T14:46:06Z</timestamp>
+      <id>1177</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <minor/>
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablelongrow
-|part of=SMWplus Basic Ontology Section
+|part of=SMWforum User Manuals Section
 |rationale=This is a helper template to display a table row spanning 2 columns.
 |parameters=&lt;pre&gt;
 {{Tablelongrow
@@ -909,17 +812,17 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablerow</title>
-    <id>164</id>
+    <id>464</id>
     <revision>
-      <id>11031</id>
-      <timestamp>2009-12-03T17:08:55Z</timestamp>
+      <id>1179</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Tablerow
 |part of=SMWplus Basic Ontology Section
 |rationale=This is helper template to display a table row containing two columns.
@@ -937,17 +840,17 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Template</title>
-    <id>332</id>
+    <id>465</id>
     <revision>
-      <id>11033</id>
-      <timestamp>2009-12-03T17:08:56Z</timestamp>
+      <id>1181</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Template
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -1019,17 +922,17 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
   </page>
   <page>
     <title>Template:Property</title>
-    <id>331</id>
+    <id>560</id>
     <revision>
-      <id>11035</id>
-      <timestamp>2009-12-03T17:08:58Z</timestamp>
+      <id>1263</id>
+      <timestamp>2010-05-17T10:22:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;new version of CE ontology</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Template
+      <comment>1 revision</comment>
+      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Property
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section

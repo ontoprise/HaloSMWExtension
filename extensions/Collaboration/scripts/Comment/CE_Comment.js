@@ -54,13 +54,13 @@ CECommentForm.prototype = {
 	processForm: function() {
 
 		//1. disable form
-		var cf = $('ce-cf');
+		var cf = $('collabComForm');
 		cf.disable();
 		
 		//2. and add pending indicator
 		
 		if (this.pendingIndicatorCF == null) {
-			this.pendingIndicatorCF = new CPendingIndicator($('ce-cf-textarea'));
+			this.pendingIndicatorCF = new CPendingIndicator($('collabComFormTextarea'));
 		}
 		this.pendingIndicatorCF.show();
 
@@ -80,15 +80,15 @@ CECommentForm.prototype = {
 		}
 		
 		//textarea
-		var textArea = ($('ce-cf-textarea').value)? $('ce-cf-textarea').value: '';
+		var textArea = ($('collabComFormTextarea').value)? $('collabComFormTextarea').value: '';
 		//remove leading and trailing whitespaces
 		textArea = textArea.strip();
 		if(textArea.blank() || this.textareaIsDefault) {
 			this.pendingIndicatorCF.hide();
-			$('ce-cf-message').setAttribute('class', 'ce-cf-failure-message');
-			$('ce-cf-message').innerHTML = 'You didn\'t enter a valid comment.';
+			$('collabComFormMessage').setAttribute('class', 'failure');
+			$('collabComFormMessage').innerHTML = 'You didn\'t enter a valid comment.';
 			//enable form again
-			$('ce-cf').enable();
+			$('collabComForm').enable();
 			return false;
 		}
 		//remove script tags
@@ -183,20 +183,20 @@ CECommentForm.prototype = {
 				//fine.
 				//reset, hide and enable form again
 				this.pendingIndicatorCF.hide();
-				$('ce-cf').reset();
-				$('ce-cf').hide();
-				$('ce-cf').enable();
+				$('collabComForm').reset();
+				$('collabComForm').hide();
+				$('collabComForm').enable();
 
-				$('ce-cf-message').show();
-				$('ce-cf-message').setAttribute('class', 'ce-cf-success-message');
-				$('ce-cf-message').innerHTML = htmlmsg + ' Page is reloading...';
+				$('collabComFormMessage').show();
+				$('collabComFormMessage').setAttribute('class', 'success');
+				$('collabComFormMessage').innerHTML = htmlmsg + ' Page is reloading...';
 				//add pending span
 				var pendingSpan = new Element('span', {
-					'id' : 'ce-cf-pending',
+					'id' : 'collabComFormPending',
 				} );
-				$('ce-cf-message').appendChild(pendingSpan);
+				$('collabComFormMessage').appendChild(pendingSpan);
 				if (this.pendingIndicatorMsg == null) {
-					this.pendingIndicatorMsg = new CPendingIndicator($('ce-cf-pending'));
+					this.pendingIndicatorMsg = new CPendingIndicator($('collabComFormPending'));
 				}
 				this.pendingIndicatorMsg.show();
 				//to do a page reload with action=purge
@@ -214,12 +214,12 @@ CECommentForm.prototype = {
 			} else if ( valueCode == 1 || valueCode == 2 ) {
 				//error, article already exists or permisson denied.
 				this.pendingIndicatorCF.hide();
-				$('ce-cf-message').setAttribute('class', 'ce-cf-failure-message');
-				$('ce-cf-message').innerHTML = htmlmsg;
-				$('ce-cf-message').show();
+				$('collabComFormMessage').setAttribute('class', 'failure');
+				$('collabComFormMessage').innerHTML = htmlmsg;
+				$('collabComFormMessage').show();
 				//reset and enable form again
-				//$('ce-cf').reset();
-				$('ce-cf').enable();
+				//$('collabComForm').reset();
+				$('collabComForm').enable();
 			} else {
 				//sthg's really gone wrong
 			}
@@ -234,11 +234,11 @@ CECommentForm.prototype = {
 		this.textareaIsDefault = true;
 		
 		if (this.ratingValue != null) {
-			var oldhtmlid = 'ce-cf-rating' + String(this.ratingValue + 2);
+			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
 			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
 			this.ratingValue = null;
 		}
-		$('ce-cf').reset();
+		$('collabComForm').reset();
 	},
 	
 	/**
@@ -247,7 +247,7 @@ CECommentForm.prototype = {
 	selectTextarea: function() {
 		//check if we still have the form default in here
 		if (this.textareaIsDefault) {
-			$('ce-cf-textarea').activate();
+			$('collabComFormTextarea').activate();
 		}
 	},
 	
@@ -272,8 +272,8 @@ CECommentForm.prototype = {
 
 		if ( this.ratingValue != null ) {
 			// sthg has been selected before. reset icon.
-			// ce-cf-ratingX with X = ratingValue +2;
-			var oldhtmlid = 'ce-cf-rating' + String(this.ratingValue + 2);
+			// collabComFormRatingX with X = ratingValue +2;
+			var oldhtmlid = 'collabComFormRating' + String(this.ratingValue + 2);
 			$(oldhtmlid).src = $(oldhtmlid).src.replace(/active/g, 'inactive');
 		}
 		switch (ratingValue) {
@@ -427,7 +427,7 @@ CollaborationXMLTools.createDocumentFromString = function (xmlText) {
 Event.observe(window, 'load', function() {
 	if( typeof( cegUserIsSysop ) != "undefined" && cegUserIsSysop != null && cegUserIsSysop != false) {
 
-		var resultComments = $$('.ce-result-info');
+		var resultComments = $$('.collabComResInfo');
 
 		if ( resultComments != null ) {
 			resultComments.each( function( resCom, index ){
