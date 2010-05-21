@@ -41,7 +41,8 @@ Requirements:
 	---
 
 (2) Login as WikiSysop, go to the special page "Special:SMWAdmin" and 
-	run the "Initialize or update tables" script.
+	run the "Initialize or update tables" script. (please do that also if you are
+	updating the Data Import extension.)
 
 3) That's it.
 
