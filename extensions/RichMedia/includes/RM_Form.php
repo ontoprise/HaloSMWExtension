@@ -49,7 +49,8 @@ END;
 		
 		$uploadLabel = wfMsgNoTrans('smw_rm_uploadheadline');
 		$buttonText = '>> ' . wfMsgNoTrans('smw_rm_formbuttontext');
-		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a><input style=\"font-weight:bold\" type=\"submit\" value=\"$buttonText\"/></form>";
+		$html .= "<a id=\"link_id\" href=\"$uploadWindowUrl\" title=\"$uploadLabel\" rel=\"iframe\" rev=\"width:600 height:660\"></a>
+			<input class=\"rmUploadButton\" type=\"submit\" value=\"$buttonText\"/></form>";
 
 		//return array($html, 'noparse' => true, 'isHTML' => true);
 		return $parser->insertStripItem( $html, $parser->mStripState );

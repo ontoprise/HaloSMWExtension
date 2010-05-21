@@ -1,22 +1,23 @@
 RichMedia extension ChangeLog
 =============================
 
-VERSION 1.5
-
+VERSION 1.5 (not released yet.)
 
   FEATURES:
 	* Added .mpp (MS Project) files to namespace 'Document'.
+	* All style definitions are now collected in one CSS file (collaboration.css).
+	  This is part of preparations for standardization of GUI elements.
 
 
   CHANGES:
 	* Removed dependency on SMWHalo.
+	* 
 
 
   BUGFIXES:
 
 
 VERSION 1.4
-
 
   FEATURES:
 

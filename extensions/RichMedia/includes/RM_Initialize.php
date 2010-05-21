@@ -328,6 +328,12 @@ function smwRMFormAddHTMLHeader(&$out){
 			'media' => 'screen, projection',
 			'href'  => $sfgScriptPath . '/skins/floatbox.css'
 		));
+		$out->addLink(array(
+			'rel'   => 'stylesheet',
+			'type'  => 'text/css',
+			'media' => 'screen, projection',
+			'href'  => $smwgRMScriptPath . '/skins/richmedia.css'
+		));
 
 		$rmScriptLoaded = true;
 	}

@@ -1,0 +1,128 @@
+@CHARSET "UTF-8";
+/* 
+    Document   : rm.css
+    Created on : 17.05.2010
+    Author     : langguth
+    Description:
+        Rich Media overlay style sheet.
+*/
+
+/* Image overlay window (FileViewer) */
+
+a:hover {
+ text-decoration: underline;
+}
+a {
+ text-decoration:none;
+}
+
+#rmEWtdViewText {
+	padding-left:10px;
+	padding-right:5px;
+	padding-top:0px;
+	padding-bottom:0px;
+	color:white;
+	font-weight:bold;
+	width:40px	
+}
+
+#rmEWtdFullRes {
+	padding-left:5px;
+	padding-right:5px;
+	padding-top:0px;
+	padding-bottom:0px;
+	color:white;
+	width:95px;
+}
+
+#rmEWFullResLink {
+	color:white;
+}
+
+#rmEWtdFitTo {
+	border-right:1px dotted black;
+	padding-left:5px;
+	padding-right:10px;
+	padding-top:0px;
+	padding-bottom:0px;
+	color:white;
+	width:90px;
+}
+
+#rmEWEmbedTable {
+	width:100%;
+	height:90%;
+}
+
+#rmEWAlCenter {
+	text-align:center;
+	align: center;
+}
+
+#rmEWEmbeddedObject {
+	margin-top:5px;
+	vertical-align:middle;
+}
+
+#rmEWMainDiv {
+	border:1px solid black;
+	background-color:0091A6
+}
+
+#rmEWMainTable {
+	padding:0px;
+	margin:0px;
+	width:100%
+}
+
+#rmEWtr {
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+	background-color:#0091A6;
+	margin:0px;
+}
+
+.rmEWtd {
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:0px;
+	padding-bottom:0px;
+	font-weight:bold;
+}
+
+#rmEWtdL {
+	left:0px;
+	border-right:1px solid black;
+	background-color:white;
+	font-size:larger;
+	width:80px
+}
+
+#rmEWtdM {
+	border-right:1px dotted black;
+	border-left:1px dotted black;
+	color:white;
+	width:60px;
+	text-align:right 
+}
+#rmEWtdR {
+	color:white;
+	text-align:right;
+	width:135px;
+}
+
+#rmEWSaveIcon {
+	vertical-align:middle;
+	border-width:0px;
+	padding-bottom:3px;
+}
+
+.rmEWWhite {
+	color:white;
+}
+.rmEWSep {
+	color:white;
+	width:5px;
+}

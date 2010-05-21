@@ -1,0 +1,164 @@
+@CHARSET "UTF-8";
+
+/* 
+    Document   : rm.css
+    Created on : 17.05.2010
+    Author     : langguth
+    Description:
+        Rich Media extension style sheet.
+*/
+
+/* for Template:RMMedia */
+.rmMetadataTable {
+	position: relative;
+	margin: 0 0 0.5em 1em;
+	border-collapse: collapse;
+	border: 1px solid #aaa;
+	background: #fff;
+	float: right;
+	clear: right;
+	width: 30%
+}
+
+.rmMetadataTH {
+	background: #996699;
+	color: white
+}
+
+/* for Template:RMListInnerTable */
+.rmListInfoIcon {
+	padding: 0 10px 0 0;
+}
+
+/* for Template:RMListOuterTable */
+.rmListTable {
+	background-color: rgb(255, 255, 255);
+	empty-cells:show;
+	border-spacing:0px;
+}
+.rmListInfoText {
+	padding: 7px 2px;
+	background-color: rgb(17, 105, 136);
+	color: white;
+}
+.rmListHeader {
+	border-top: 1px solid rgb(17, 105, 136);
+	height:1px
+}
+.rmListInnerTable {
+	background-color: rgb(255, 255, 255);
+	border-collapse:collapse;
+}
+.rmListInnerTableHeaderItem {
+	text-align: middle;
+	color: rgb(17, 105, 136);
+	border-bottom: 1px solid rgb(17, 105, 136);
+}
+.rmListRefreshIcon {
+	vertical-align:middle
+}
+.rmListButton {
+	text-align:right;
+	vertical-align: top;
+}
+.rmUploadButton {
+	font-weight: bold;
+}
+.rmListTableEnding {
+	border-top: 1px solid rgb(17, 105, 136);
+}
+
+/* Rich Media forms */
+.rmFormField {
+	font-size:100%;
+	font-weight:bold;
+}
+.rmFormImportant {
+	color:red;
+}
+.rmFormInfo {
+	padding-bottom:5px;
+	font-size:80%;
+	font-style:italic;
+}
+
+/* Rich Media upload form */
+
+#rmUploadHeadline {
+	background-color:#455387;
+	width:100%;
+	padding:0px;
+	margin:0px;
+	text-align:center;
+	font-size:1.2em;
+	color: white
+}
+#rmUploadText {
+	width:100%;
+	text-align:center;
+	padding-top:5px
+}
+.rmUploadHelpImage {
+	padding:5px;
+}
+.rmUploadCollapse {
+	cursor: pointer;
+	font-weight:bold;
+}
+.rmUploadSize {
+	margin:5px 0px;
+}
+#rmUploadPermTypeList {
+	margin-top:0px;
+}
+#rmUploadError {
+	padding:5px 10px 10px 10px;
+	border:1px solid red;
+	color: red;
+}
+#rmUploadErrorHeader {
+	margin-top: 0;
+}
+#rmUploadForm {
+	margin:0px;
+}
+#rmUploadTable {
+	width:100%;
+	margin:0px;
+}
+#rmUploadTableDescColumn {
+	width:30%
+}
+#rmUploadTableInputColumn {
+	width:70%
+}
+.rmUploadDesc {
+	font-weight:bold
+}
+#rmUploadButtonTable {
+	width:100%;
+}
+.rmUploadSuccessText {
+	width:auto;
+	padding:0px;
+	text-align:center;
+}
+#rmUploadSuccessFieldset {
+	border:1px solid lightgrey;
+	line-height:1.5em;
+	margin: 0px 30px;
+	padding-bottom:20px;
+}
+#rmUploadSuccessLegend {
+	font-size:95%;
+	font-weight:bold;
+	padding:0.5em;
+}
+#rmUploadSuccessFilename {
+	text-align:left;
+}
+#rmUploadSuccessCloseText {
+	width:auto;
+	padding:10px;
+	text-align:center;
+}

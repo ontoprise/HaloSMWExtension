@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="en">
   <siteinfo>
     <sitename>Halo3wiki</sitename>
-    <base>http://127.0.0.1/trunk/index.php/Main_Page</base>
+    <base>http://localhost/trunk/index.php/Main_Page</base>
     <generator>MediaWiki 1.15.3</generator>
     <case>first-letter</case>
     <namespaces>
@@ -45,22 +45,20 @@
       <namespace key="131">VCard talk</namespace>
       <namespace key="700">Comment</namespace>
       <namespace key="701">Comment talk</namespace>
-      <namespace key="702">UserManual</namespace>
-      <namespace key="703">UserManual talk</namespace>
     </namespaces>
   </siteinfo>
   <page>
     <title>Template:RMUpload</title>
-    <id>61</id>
+    <id>539</id>
     <revision>
-      <id>157</id>
-      <timestamp>2010-02-10T13:06:57Z</timestamp>
+      <id>1221</id>
+      <timestamp>2010-05-17T10:21:57Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMUpload
 |Has author=WikiSysop
@@ -92,16 +90,16 @@
   </page>
   <page>
     <title>Template:RMImage</title>
-    <id>62</id>
+    <id>540</id>
     <revision>
-      <id>159</id>
-      <timestamp>2010-02-10T13:06:57Z</timestamp>
+      <id>1223</id>
+      <timestamp>2010-05-17T10:21:58Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMImage
 |Has author=WikiSysop
@@ -133,16 +131,16 @@
   </page>
   <page>
     <title>Template:RMPdf</title>
-    <id>63</id>
+    <id>541</id>
     <revision>
-      <id>161</id>
-      <timestamp>2010-02-10T13:06:57Z</timestamp>
+      <id>1225</id>
+      <timestamp>2010-05-17T10:21:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMPdf
 |Has author=WikiSysop
@@ -173,16 +171,16 @@
   </page>
   <page>
     <title>Template:RMDocument</title>
-    <id>64</id>
+    <id>542</id>
     <revision>
-      <id>163</id>
-      <timestamp>2010-02-10T13:06:58Z</timestamp>
+      <id>1227</id>
+      <timestamp>2010-05-17T10:21:59Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMDocument
 |Has author=WikiSysop
@@ -214,16 +212,16 @@
   </page>
   <page>
     <title>Template:RMAudio</title>
-    <id>65</id>
+    <id>543</id>
     <revision>
-      <id>165</id>
-      <timestamp>2010-02-10T13:06:58Z</timestamp>
+      <id>1229</id>
+      <timestamp>2010-05-17T10:22:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMAudio
 |Has author=WikiSysop
@@ -254,10 +252,10 @@
   </page>
   <page>
     <title>Template:RMVideo</title>
-    <id>66</id>
+    <id>446</id>
     <revision>
-      <id>167</id>
-      <timestamp>2010-02-10T13:06:59Z</timestamp>
+      <id>1021</id>
+      <timestamp>2010-04-30T13:42:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -294,16 +292,16 @@
   </page>
   <page>
     <title>Template:RMVCard</title>
-    <id>67</id>
+    <id>544</id>
     <revision>
-      <id>169</id>
-      <timestamp>2010-02-10T13:06:59Z</timestamp>
+      <id>1231</id>
+      <timestamp>2010-05-17T10:22:00Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMVCard
 |Has author=WikiSysop
@@ -335,16 +333,16 @@
   </page>
   <page>
     <title>Template:RMICalendar</title>
-    <id>68</id>
+    <id>545</id>
     <revision>
-      <id>171</id>
-      <timestamp>2010-02-10T13:06:59Z</timestamp>
+      <id>1233</id>
+      <timestamp>2010-05-17T10:22:01Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMICalendar
 |Has author=WikiSysop
@@ -376,16 +374,16 @@
   </page>
   <page>
     <title>Template:RMList</title>
-    <id>69</id>
+    <id>546</id>
     <revision>
-      <id>173</id>
-      <timestamp>2010-02-10T13:07:00Z</timestamp>
+      <id>1235</id>
+      <timestamp>2010-05-17T10:22:02Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMList
 |Has author=WikiSysop
@@ -413,16 +411,14 @@
   </page>
   <page>
     <title>Template:RMListInnerTable</title>
-    <id>70</id>
+    <id>547</id>
     <revision>
-      <id>175</id>
-      <timestamp>2010-02-10T13:07:00Z</timestamp>
+      <id>1357</id>
+      <timestamp>2010-05-21T11:53:54Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMListInnerTable
 |Has author=WikiSysop
@@ -441,22 +437,22 @@
 |&lt;span class=&quot;plainlinks&quot;&gt;{{#rmew:{{{1}}}|{{RMNoNamespace|{{{2}}} }}|700|500}}&lt;/span&gt;
 |[[{{{3}}}]]
 |&lt;span style=&quot;display: none;&quot;&gt;{{#formatdate:{{{4}}}|ISO 8601}}&lt;/span&gt;{{{4}}}
-| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; style=&quot;padding:0px 10px 0px 0px;&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
+| align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; class=&quot;rmListInfoIcon&quot;&gt;[{{fullurl:{{{1}}}}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_info_icon_16x16.png]&lt;/span&gt;&lt;span class=&quot;plainlinks&quot;&gt;[{{fullurl:{{{1}}}|action=formedit}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_edit_with_forms_icon_16x16.gif]&lt;/span&gt;
 | align=&quot;center&quot; |&lt;span class=&quot;plainlinks&quot; title=&quot;delete description&quot;&gt;[{{fullurl:{{{1}}}|action=delete}} {{SERVER}}{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_delete_icon_16x16.png]&lt;/span&gt;&lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:RMCategoryLinkIcon</title>
-    <id>71</id>
+    <id>548</id>
     <revision>
-      <id>177</id>
-      <timestamp>2010-02-10T13:07:00Z</timestamp>
+      <id>1239</id>
+      <timestamp>2010-05-17T10:22:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMCategoryLinkIcon
 |Has author=WikiSysop
@@ -489,31 +485,29 @@
   </page>
   <page>
     <title>Template:RMNoNamespace</title>
-    <id>72</id>
+    <id>549</id>
     <revision>
-      <id>179</id>
-      <timestamp>2010-02-10T13:07:01Z</timestamp>
+      <id>1241</id>
+      <timestamp>2010-05-17T10:22:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{#ifeq: {{#pos:{{{1}}}|:}} | | {{{1}}} | {{#sub:{{{1}}}|{{#expr:{{#pos:{{{1}}}|:}}+1}}|0}} }}</text>
     </revision>
   </page>
   <page>
     <title>Template:RMListOuterTable</title>
-    <id>73</id>
+    <id>550</id>
     <revision>
-      <id>181</id>
-      <timestamp>2010-02-10T13:07:01Z</timestamp>
+      <id>1358</id>
+      <timestamp>2010-05-21T12:05:53Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMListOuterTable
 |Has author=WikiSysop
@@ -527,20 +521,20 @@
 |year=2009
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
-{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);empty-cells:show&quot;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
-! style=&quot;padding: 7px 2px; background-color: rgb(17, 105, 136); color: white;&quot; colspan=&quot;6&quot; |Attached documents, images and media
+! class=&quot;rmListInfoText&quot; colspan=&quot;6&quot; |Attached documents, images and media
 |-
-! style=&quot;border-top: 1px solid rgb(17, 105, 136);height:1px&quot; colspan=&quot;6&quot; |
+! class=&quot;rmListHeader&quot; colspan=&quot;6&quot; |
 |}
-{| class=&quot;wikitable sortable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255); border-collapse:collapse;&quot;
+{| class=&quot;wikitable sortable rmListTable&quot; cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot;
 |-
-! style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Category 
-! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Filename 
-! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Uploaded by 
-! style=&quot;text-align: left; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Creation date 
-! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Metainformation 
-! class=&quot;unsortable&quot; style=&quot;text-align: middle; color: rgb(17, 105, 136);border-bottom: 1px solid rgb(17, 105, 136);&quot; |Delete
+! class=&quot;rmListInnerTableHeaderItem&quot; |Category 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Filename 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Uploaded by 
+! class=&quot;rmListInnerTableHeaderItem&quot; |Creation date 
+! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Metainformation 
+! class=&quot;unsortable rmListInnerTableHeaderItem&quot; |Delete
 |-
 {{#ask: [[Category:Media]][[HasRelatedArticle::{{FULLPAGENAME}}]] &lt;q&gt;[[Image:+]]OR[[Document:+]]OR[[Pdf:+]]OR[[Video:+]]OR[[Audio:+]]OR[[ICalendar:+]]OR[[VCard:+]]&lt;/q&gt;
   | ?HasFilename
@@ -552,28 +546,26 @@
   | limit=250
 }}
 |}
-{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; style=&quot;background-color: rgb(255, 255, 255);empty-cells:show&quot;
+{| cellpadding=&quot;5&quot; border=&quot;0&quot; width=&quot;100%&quot; class=&quot;rmListTable&quot;
 |-
-| colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks&quot; style=&quot;vertical-align:middle&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
-| style=&quot;text-align:right;vertical-align: top;&quot; | {{#rmf: {{FULLPAGENAME}} }}
+| colspan=&quot;2&quot; | Manual refresh list: &lt;span class=&quot;plainlinks rmListRefreshIcon&quot;&gt;[{{fullurl:{{FULLPAGENAME}}|action=purge}} {{SERVER}}/{{SCRIPTPATH}}/skins/common/images/icons/smw_plus_refresh_icon_16x16.gif]&lt;/span&gt; 
+| class=&quot;rmListButton&quot; | {{#rmf: {{FULLPAGENAME}} }}
 |-
-! style=&quot;border-top: 1px solid rgb(17, 105, 136);&quot; colspan=&quot;6&quot; | 
+! class=&quot;rmListTableEnding&quot; colspan=&quot;6&quot; | 
 |}
 &lt;/includeonly&gt;</text>
     </revision>
   </page>
   <page>
     <title>Template:RMMedia</title>
-    <id>74</id>
+    <id>551</id>
     <revision>
-      <id>183</id>
-      <timestamp>2010-02-10T13:07:01Z</timestamp>
+      <id>1356</id>
+      <timestamp>2010-05-21T11:50:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
 |PAGENAME=Template:RMMedia
 |Has author=WikiSysop
@@ -602,8 +594,8 @@
 |copyright holder=ontoprise GmbH
 |year=2009
 }}
-&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; style=&quot;position:relative; margin: 0 0 0.5em 1em; border-collapse: collapse; border: 1px solid #aaa; background: #fff; float: right; clear: right; width: 30%&quot;
-! colspan=&quot;2&quot; style=&quot;background: #996699; color: white&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
+&lt;/noinclude&gt;&lt;includeonly&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;5&quot; class=&quot;rmMetadataTable&quot;
+! colspan=&quot;2&quot; class=&quot;rmMetadataTH&quot; | ''{{{Media subcategory|}}}&amp;nbsp;Metadata''
 |-
 {{Tablerow|Label=Filename:|Value={{#if:{{{Filename|}}}|[[HasFilename::{{{Filename|}}}]]}} }}
 |-
@@ -630,16 +622,16 @@
   </page>
   <page>
     <title>Template:DataRMICal</title>
-    <id>116</id>
+    <id>552</id>
     <revision>
-      <id>275</id>
-      <timestamp>2010-02-10T13:07:29Z</timestamp>
+      <id>1247</id>
+      <timestamp>2010-05-17T10:22:04Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; width=100% style=&quot;background:#aee5db; border:1px solid #aaa; padding-left:5px;&quot;
 ! colspan=&quot;2&quot; | '''''ICalendar Data'''''
 |-
@@ -680,16 +672,16 @@
   </page>
   <page>
     <title>Template:DataRMVCard</title>
-    <id>117</id>
+    <id>553</id>
     <revision>
-      <id>277</id>
-      <timestamp>2010-02-10T13:07:29Z</timestamp>
+      <id>1249</id>
+      <timestamp>2010-05-17T10:22:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{| cellspacing=&quot;0&quot; cellpadding=&quot;3&quot; width=100% style=&quot;background:#aed5db; border:1px solid #aaa; padding-left:5px;&quot;  
 ! colspan=&quot;2&quot; | '''''VCard Data'''''
 |-
@@ -733,10 +725,10 @@
   </page>
   <page>
     <title>Template:!</title>
-    <id>16</id>
+    <id>554</id>
     <revision>
-      <id>493</id>
-      <timestamp>2010-03-31T11:54:08Z</timestamp>
+      <id>1251</id>
+      <timestamp>2010-05-17T10:22:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -752,16 +744,16 @@ helper template for pipe symbol, which can e.g. not be used directly in template
   </page>
   <page>
     <title>Template:Cite web in help</title>
-    <id>17</id>
+    <id>555</id>
     <revision>
-      <id>187</id>
-      <timestamp>2010-02-10T13:07:02Z</timestamp>
+      <id>1253</id>
+      <timestamp>2010-05-17T10:22:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Template
 |PAGENAME=Template:Cite web in help
 |Has author=User:WikiSysop
@@ -798,10 +790,10 @@ The content of this page uses material from the article [{{{url}}} {{{title}}}] 
   </page>
   <page>
     <title>Template:Copyright of article</title>
-    <id>21</id>
+    <id>556</id>
     <revision>
-      <id>497</id>
-      <timestamp>2010-03-31T11:54:09Z</timestamp>
+      <id>1255</id>
+      <timestamp>2010-05-17T10:22:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -848,10 +840,10 @@ The content of this page uses material from the article [{{{url}}} {{{title}}}] 
   </page>
   <page>
     <title>Template:GNU Free Documentation License</title>
-    <id>23</id>
+    <id>557</id>
     <revision>
-      <id>499</id>
-      <timestamp>2010-03-31T11:54:09Z</timestamp>
+      <id>1257</id>
+      <timestamp>2010-05-17T10:22:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -886,10 +878,10 @@ GNU Free Documentation License
   </page>
   <page>
     <title>Template:Header for wiki parts</title>
-    <id>75</id>
+    <id>558</id>
     <revision>
-      <id>501</id>
-      <timestamp>2010-03-31T11:54:09Z</timestamp>
+      <id>1259</id>
+      <timestamp>2010-05-17T10:22:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1160,16 +1152,16 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Note</title>
-    <id>76</id>
+    <id>559</id>
     <revision>
-      <id>195</id>
-      <timestamp>2010-02-10T13:07:03Z</timestamp>
+      <id>1261</id>
+      <timestamp>2010-05-17T10:22:08Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;includeonly&gt;
 &lt;hr&gt;
 '''Note &amp;ndash;''' {{{1}}}
@@ -1184,10 +1176,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablelongrow</title>
-    <id>77</id>
+    <id>463</id>
     <revision>
-      <id>505</id>
-      <timestamp>2010-03-31T11:54:10Z</timestamp>
+      <id>1177</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1214,10 +1206,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Tablerow</title>
-    <id>78</id>
+    <id>464</id>
     <revision>
-      <id>507</id>
-      <timestamp>2010-03-31T11:54:10Z</timestamp>
+      <id>1179</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1242,10 +1234,10 @@ case: All content sections END
   </page>
   <page>
     <title>Template:Template</title>
-    <id>79</id>
+    <id>465</id>
     <revision>
-      <id>509</id>
-      <timestamp>2010-03-31T11:54:11Z</timestamp>
+      <id>1181</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1324,10 +1316,10 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
   </page>
   <page>
     <title>Template:Property</title>
-    <id>80</id>
+    <id>560</id>
     <revision>
-      <id>511</id>
-      <timestamp>2010-03-31T11:54:11Z</timestamp>
+      <id>1263</id>
+      <timestamp>2010-05-17T10:22:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1384,10 +1376,10 @@ This property is modified by the following rules:&lt;br&gt;
   </page>
   <page>
     <title>Template:Category</title>
-    <id>81</id>
+    <id>561</id>
     <revision>
-      <id>495</id>
-      <timestamp>2010-03-31T11:54:08Z</timestamp>
+      <id>1265</id>
+      <timestamp>2010-05-17T10:22:10Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1450,16 +1442,16 @@ This category is modified by the following rules: {{#sparql:[[Category:Rule]][[I
   </page>
   <page>
     <title>Template:Documentation</title>
-    <id>82</id>
+    <id>562</id>
     <revision>
-      <id>207</id>
-      <timestamp>2010-02-10T13:07:07Z</timestamp>
+      <id>1267</id>
+      <timestamp>2010-05-17T10:22:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;div class=&quot;template-documentation&quot;&gt;&lt;!--
 
 These are the literal class definitions in common.css:
@@ -1509,16 +1501,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMUpload</title>
-    <id>83</id>
+    <id>563</id>
     <revision>
-      <id>209</id>
-      <timestamp>2010-02-10T13:07:07Z</timestamp>
+      <id>1368</id>
+      <timestamp>2010-05-21T13:54:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMUpload
 |Has author=User:WikiSysop
@@ -1537,41 +1527,41 @@ These are the literal class definitions in common.css:
 | width=&quot;30%&quot; |
 | width=&quot;70%&quot; |
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;:
 | {{{field|Uploader|mandatory|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user|size=40|maxlength=40}}}
 |- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;| (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot;| Copyright by:
 | {{{field|CopyrightBy|size=40|maxlength=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;|(The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; class=&quot;rmFormField&quot;| Creation date:
 | {{{field|CreationDate|input type=date|default=now}}}
 |- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;|(The date when this file has been created or recently changed)
 |-
 | style=&quot;display:none&quot;| {{{field|UploadDate|input type=date|mandatory|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot;| Short description:
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;| (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot;| Keywords:
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;|(Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot;| Related articles:
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
+| &amp;nbsp; ||class=&quot;rmFormInfo&quot;|(Articles which are attached to this file)
 |-
 | {{{field|Filename|hidden}}}
 |- 
-| colspan=&quot;2&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+| colspan=&quot;2&quot; class=&quot;rmFormImportant&quot; |Fields marked with a &quot;*&quot; are mandatory
 |}
 
 {{{end template}}}
@@ -1580,16 +1570,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMImage</title>
-    <id>84</id>
+    <id>564</id>
     <revision>
-      <id>211</id>
-      <timestamp>2010-02-10T13:07:07Z</timestamp>
+      <id>1370</id>
+      <timestamp>2010-05-21T14:01:47Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMImage
 |Has author=User:WikiSysop
@@ -1602,56 +1590,63 @@ These are the literal class definitions in common.css:
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMImage|label=Meta Information|collapsible}}}
-
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
 {{{standard input|minor edit}}} {{{standard input|watch}}}
@@ -1662,10 +1657,10 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMPdf</title>
-    <id>85</id>
+    <id>565</id>
     <revision>
-      <id>581</id>
-      <timestamp>2010-04-16T12:39:23Z</timestamp>
+      <id>1369</id>
+      <timestamp>2010-05-21T13:58:41Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -1688,58 +1683,58 @@ These are the literal class definitions in common.css:
 | width=&quot;30%&quot; | 
 | width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Filename&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The full name of this file including the namespace and its extension)
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Copyright by: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The name of the person/company who holds the rights of this file)
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Creation date: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The date when this file has been created or recently changed)
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Uploaded by&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The name of the uploader.)
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Upload date&lt;span style=&quot;color: red;&quot;&gt;*&lt;/span&gt;: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Short description: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Here you can enter a short description of this file)
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Keywords: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Here you can tag the file with different keywords)
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Format: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (The MIME type of this file)
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size: 100%; font-weight: bold;&quot; | Related articles: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
 |   
-| style=&quot;padding-bottom: 5px; font-size: 80%; font-style: italic;&quot; | (Articles which are attached to this file)
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
 |-
-| align=&quot;center&quot; style=&quot;color: red;&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 
 {{{end template}}}
@@ -1754,16 +1749,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMDocument</title>
-    <id>86</id>
+    <id>566</id>
     <revision>
-      <id>215</id>
-      <timestamp>2010-02-10T13:07:08Z</timestamp>
+      <id>1375</id>
+      <timestamp>2010-05-21T14:08:03Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMDocument
 |Has author=User:WikiSysop
@@ -1782,64 +1775,62 @@ These are the literal class definitions in common.css:
 | width=&quot;30%&quot; | 
 | width=&quot;70%&quot; | 
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Filename&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Copyright by: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Creation date: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The date when this file has been created or recently changed)
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Uploaded by&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The name of the uploader.)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Upload date&lt;span style=&quot;color: red&quot;&gt;*&lt;/span&gt;: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Short description: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Keywords: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Format: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Related articles: 
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-|   
-| style=&quot;padding-bottom: 5px; font-style: italic; font-size: 80%&quot; | (Articles which are attached to this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
 |-
 | style=&quot;font-size: 100%; font-weight: bold&quot; align=&quot;right&quot; | Sub section of: 
 | {{{field|SubSectionOf|input type=haloACtext|constraints=namespace:120}}}
 |-
-| style=&quot;color: red&quot; colspan=&quot;2&quot; align=&quot;center&quot; | Fields marked with a &quot;*&quot; are mandatory 
-|  
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
-
 {{{end template}}}
 
 {{{standard input|free text}}} 
@@ -1852,16 +1843,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMAudio</title>
-    <id>87</id>
+    <id>567</id>
     <revision>
-      <id>217</id>
-      <timestamp>2010-02-10T13:07:08Z</timestamp>
+      <id>1371</id>
+      <timestamp>2010-05-21T14:02:50Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMAudio
 |Has author=User:WikiSysop
@@ -1874,56 +1863,63 @@ These are the literal class definitions in common.css:
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMAudio|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
 &lt;/includeonly&gt;</text>
@@ -1931,16 +1927,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMVideo</title>
-    <id>88</id>
+    <id>568</id>
     <revision>
-      <id>219</id>
-      <timestamp>2010-02-10T13:07:09Z</timestamp>
+      <id>1372</id>
+      <timestamp>2010-05-21T14:03:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMVideo
 |Has author=User:WikiSysop
@@ -1953,55 +1947,63 @@ These are the literal class definitions in common.css:
 }}
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{for template|RMVideo|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
-| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=ask: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
+| {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
+|-
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
 &lt;/includeonly&gt;</text>
@@ -2009,16 +2011,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMVCard</title>
-    <id>89</id>
+    <id>569</id>
     <revision>
-      <id>221</id>
-      <timestamp>2010-02-10T13:07:09Z</timestamp>
+      <id>1373</id>
+      <timestamp>2010-05-21T14:04:11Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMVCard
 |Has author=User:WikiSysop
@@ -2032,55 +2032,63 @@ These are the literal class definitions in common.css:
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|WYSIWYG}}}
 {{{for template|RMVCard|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
-| {{{field|CreationDate|input type=date|mandatory|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
+| {{{field|CreationDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
 
@@ -2094,16 +2102,14 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Form:RMICalendar</title>
-    <id>90</id>
+    <id>570</id>
     <revision>
-      <id>223</id>
-      <timestamp>2010-02-10T13:07:09Z</timestamp>
+      <id>1374</id>
+      <timestamp>2010-05-21T14:04:46Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Form
 |PAGENAME=Form:RMICalendar
 |Has author=User:WikiSysop
@@ -2117,55 +2123,63 @@ These are the literal class definitions in common.css:
 &lt;/noinclude&gt;&lt;includeonly&gt;
 {{{info|WYSIWYG}}}
 {{{for template|RMICalendar|label=Meta information|collapsible}}}
-{| width=&quot;100%&quot; align=&quot;center&quot;  
+{| width=&quot;100%&quot; align=&quot;center&quot;
 |-
-| width=&quot;30%&quot; |
-| width=&quot;70%&quot; |
+| width=&quot;30%&quot; | 
+| width=&quot;70%&quot; | 
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Filename&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Filename&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Filename|mandatory}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The full name of this file including the namespace and its extension)
+|   
+| class=&quot;rmFormInfo&quot; | (The full name of this file including the namespace and its extension)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Copyright by:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Copyright by: 
 | {{{field|CopyrightBy}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The name of the person/company who holds the rights of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the person/company who holds the rights of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Creation date:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Creation date: 
 | {{{field|CreationDate|input type=date|default=now}}}
-|- 
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The date when this file has been created or recently changed)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Uploaded by&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| class=&quot;rmFormInfo&quot; | (The date when this file has been created or recently changed)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Uploaded by&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|Uploader|mandatory|size=40|input type=haloACtext|constraints=aks: [[Category:Person]]|default=current user}}}
-|- 
-| &amp;nbsp; ||style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot;| (The name of the uploader.)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Upload date&lt;span style=&quot;color:red&quot;&gt;*&lt;/span&gt;:
+|   
+| class=&quot;rmFormInfo&quot; | (The name of the uploader.)
+|-
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Upload date&lt;span class=&quot;rmFormImportant&quot;&gt;*&lt;/span&gt;: 
 | {{{field|UploadDate|input type=date|default=now}}}
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Short description:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Short description: 
 | {{{field|Description|input type=textarea|rows=3|cols=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; | (Here you can enter a short description of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can enter a short description of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Keywords:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Keywords: 
 | {{{field|Keywords|multiple|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Here you can tag the file with different keywords)
+|   
+| class=&quot;rmFormInfo&quot; | (Here you can tag the file with different keywords)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Format:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Format: 
 | {{{field|Format|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(The MIME type of this file)
+|   
+| class=&quot;rmFormInfo&quot; | (The MIME type of this file)
 |-
-| align=&quot;right&quot; style=&quot;font-size:100%;font-weight:bold&quot;| Related articles:
+| align=&quot;right&quot; class=&quot;rmFormField&quot; | Related articles: 
 | {{{field|RelatedArticles|input type=haloACtext|constraints=namespace:0|size=40}}}
 |-
-| &amp;nbsp; || style=&quot;padding-bottom:5px;font-size:80%;font-style:italic&quot; |(Articles which are attached to this file)
-|- 
-| colspan=&quot;2&quot; align=&quot;center&quot; style=&quot;color:red&quot; |Fields marked with a &quot;*&quot; are mandatory
+|   
+| class=&quot;rmFormInfo&quot; | (Articles which are attached to this file)
+|-
+| align=&quot;center&quot; class=&quot;rmFormImportant&quot; colspan=&quot;2&quot; | Fields marked with a &quot;*&quot; are mandatory
 |}
 {{{end template}}}
 
@@ -2179,16 +2193,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasCreationDate</title>
-    <id>91</id>
+    <id>571</id>
     <revision>
-      <id>225</id>
-      <timestamp>2010-02-10T13:07:10Z</timestamp>
+      <id>1285</id>
+      <timestamp>2010-05-17T10:22:20Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasCreationDate
 |Has author=WikiSysop
@@ -2204,16 +2218,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasFilename</title>
-    <id>92</id>
+    <id>572</id>
     <revision>
-      <id>227</id>
-      <timestamp>2010-02-10T13:07:11Z</timestamp>
+      <id>1287</id>
+      <timestamp>2010-05-17T10:22:21Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasFilename
 |Has author=WikiSysop
@@ -2229,16 +2243,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasRelatedArticle</title>
-    <id>93</id>
+    <id>573</id>
     <revision>
-      <id>229</id>
-      <timestamp>2010-02-10T13:07:11Z</timestamp>
+      <id>1289</id>
+      <timestamp>2010-05-17T10:22:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasRelatedArticle
 |Has author=WikiSysop
@@ -2254,16 +2268,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasUploadDate</title>
-    <id>94</id>
+    <id>574</id>
     <revision>
-      <id>231</id>
-      <timestamp>2010-02-10T13:07:12Z</timestamp>
+      <id>1291</id>
+      <timestamp>2010-05-17T10:22:23Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasUploadDate
 |Has author=WikiSysop
@@ -2279,16 +2293,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasUploader</title>
-    <id>95</id>
+    <id>575</id>
     <revision>
-      <id>233</id>
-      <timestamp>2010-02-10T13:07:13Z</timestamp>
+      <id>1293</id>
+      <timestamp>2010-05-17T10:22:24Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasUploader
 |Has author=WikiSysop
@@ -2304,16 +2318,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasCopyrightBy</title>
-    <id>96</id>
+    <id>576</id>
     <revision>
-      <id>235</id>
-      <timestamp>2010-02-10T13:07:13Z</timestamp>
+      <id>1295</id>
+      <timestamp>2010-05-17T10:22:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasCopyrightBy
 |Has author=WikiSysop
@@ -2329,16 +2343,16 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:HasDescription</title>
-    <id>97</id>
+    <id>577</id>
     <revision>
-      <id>237</id>
-      <timestamp>2010-02-10T13:07:14Z</timestamp>
+      <id>1297</id>
+      <timestamp>2010-05-17T10:22:25Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasDescription
 |Has author=WikiSysop
@@ -2354,10 +2368,10 @@ These are the literal class definitions in common.css:
   </page>
   <page>
     <title>Property:Subsection of</title>
-    <id>98</id>
+    <id>484</id>
     <revision>
-      <id>239</id>
-      <timestamp>2010-02-10T13:07:15Z</timestamp>
+      <id>1097</id>
+      <timestamp>2010-04-30T13:42:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2384,16 +2398,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:HasKeywords</title>
-    <id>99</id>
+    <id>578</id>
     <revision>
-      <id>241</id>
-      <timestamp>2010-02-10T13:07:16Z</timestamp>
+      <id>1299</id>
+      <timestamp>2010-05-17T10:22:26Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasKeywords
 |Has author=WikiSysop
@@ -2409,16 +2423,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:HasFormat</title>
-    <id>100</id>
+    <id>579</id>
     <revision>
-      <id>243</id>
-      <timestamp>2010-02-10T13:07:17Z</timestamp>
+      <id>1301</id>
+      <timestamp>2010-05-17T10:22:28Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:HasFormat
 |Has author=WikiSysop
@@ -2434,16 +2448,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Has author</title>
-    <id>101</id>
+    <id>580</id>
     <revision>
-      <id>245</id>
-      <timestamp>2010-02-10T13:07:18Z</timestamp>
+      <id>1303</id>
+      <timestamp>2010-05-17T10:22:29Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Has author
 |Has author=User:WikiSysop
@@ -2462,16 +2476,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Part of</title>
-    <id>102</id>
+    <id>581</id>
     <revision>
-      <id>247</id>
-      <timestamp>2010-02-10T13:07:18Z</timestamp>
+      <id>1305</id>
+      <timestamp>2010-05-17T10:22:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Part of
 |Has author=WikiSysop
@@ -2490,10 +2504,10 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Rationale</title>
-    <id>103</id>
+    <id>489</id>
     <revision>
-      <id>249</id>
-      <timestamp>2010-02-10T13:07:19Z</timestamp>
+      <id>1107</id>
+      <timestamp>2010-04-30T13:42:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2517,16 +2531,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Calls template</title>
-    <id>104</id>
+    <id>582</id>
     <revision>
-      <id>251</id>
-      <timestamp>2010-02-10T13:07:20Z</timestamp>
+      <id>1307</id>
+      <timestamp>2010-05-17T10:22:31Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Calls template
 |Has author=WikiSysop
@@ -2544,16 +2558,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Media</title>
-    <id>105</id>
+    <id>583</id>
     <revision>
-      <id>253</id>
-      <timestamp>2010-02-10T13:07:21Z</timestamp>
+      <id>1309</id>
+      <timestamp>2010-05-17T10:22:32Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:Media
 |Has author=User:WikiSysop
@@ -2570,16 +2584,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Image</title>
-    <id>106</id>
+    <id>584</id>
     <revision>
-      <id>255</id>
-      <timestamp>2010-02-10T13:07:21Z</timestamp>
+      <id>1311</id>
+      <timestamp>2010-05-17T10:22:33Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:Image
 |Has author=User:WikiSysop2
@@ -2596,16 +2610,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Pdf</title>
-    <id>107</id>
+    <id>585</id>
     <revision>
-      <id>257</id>
-      <timestamp>2010-02-10T13:07:22Z</timestamp>
+      <id>1313</id>
+      <timestamp>2010-05-17T10:22:34Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:Pdf
 |Has author=User:WikiSysop2
@@ -2622,16 +2636,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Document</title>
-    <id>108</id>
+    <id>586</id>
     <revision>
-      <id>259</id>
-      <timestamp>2010-02-10T13:07:23Z</timestamp>
+      <id>1315</id>
+      <timestamp>2010-05-17T10:22:35Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:Document
 |Has author=User:WikiSysop
@@ -2646,16 +2660,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Audio</title>
-    <id>109</id>
+    <id>587</id>
     <revision>
-      <id>261</id>
-      <timestamp>2010-02-10T13:07:24Z</timestamp>
+      <id>1317</id>
+      <timestamp>2010-05-17T10:22:36Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:Audio
 |Has author=User:WikiSysop2
@@ -2670,10 +2684,10 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:Video</title>
-    <id>110</id>
+    <id>496</id>
     <revision>
-      <id>263</id>
-      <timestamp>2010-02-10T13:07:25Z</timestamp>
+      <id>1121</id>
+      <timestamp>2010-04-30T13:43:06Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2692,10 +2706,10 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:VCard</title>
-    <id>111</id>
+    <id>497</id>
     <revision>
-      <id>265</id>
-      <timestamp>2010-02-10T13:07:25Z</timestamp>
+      <id>1123</id>
+      <timestamp>2010-04-30T13:43:07Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2714,16 +2728,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Category:ICalendar</title>
-    <id>112</id>
+    <id>588</id>
     <revision>
-      <id>267</id>
-      <timestamp>2010-02-10T13:07:26Z</timestamp>
+      <id>1319</id>
+      <timestamp>2010-05-17T10:22:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Category
 |PAGENAME=Category:ICalendar
 |Has author=User:WikiSysop2
@@ -2737,11 +2751,25 @@ Denotes a content item as subsection of another content item.
     </revision>
   </page>
   <page>
-    <title>Template:Template</title>
-    <id>79</id>
+    <title>Template:Bundle</title>
+    <id>307</id>
     <revision>
-      <id>509</id>
-      <timestamp>2010-03-31T11:54:11Z</timestamp>
+      <id>869</id>
+      <timestamp>2010-04-16T15:43:44Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">Ontology version: [[Ontology version::140]]
+Bundle: [[Part of bundle::Richmedia]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Template:Template</title>
+    <id>465</id>
+    <revision>
+      <id>1181</id>
+      <timestamp>2010-05-07T13:59:05Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2830,7 +2858,7 @@ Edit the page to see the template text.&lt;/includeonly&gt;&lt;noinclude&gt;
       </contributor>
       <minor/>
       <comment>1 revision:&amp;#32;rm onto</comment>
-      <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;&lt;noinclude&gt;{{Template
+      <text xml:space="preserve">&lt;noinclude&gt;{{Template
 |PAGENAME=Template:Form
 |Has author=User:WikiSysop
 |part of=SMWplus Basic Ontology Section
@@ -2937,10 +2965,10 @@ Edit the page to see the form text.&lt;/includeonly&gt;&lt;noinclude&gt;
   </page>
   <page>
     <title>Property:Subsection of</title>
-    <id>98</id>
+    <id>484</id>
     <revision>
-      <id>239</id>
-      <timestamp>2010-02-10T13:07:15Z</timestamp>
+      <id>1097</id>
+      <timestamp>2010-04-30T13:42:48Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
@@ -2967,16 +2995,16 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Part of</title>
-    <id>102</id>
+    <id>581</id>
     <revision>
-      <id>247</id>
-      <timestamp>2010-02-10T13:07:18Z</timestamp>
+      <id>1305</id>
+      <timestamp>2010-05-17T10:22:30Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
       <minor/>
-      <comment>1 revision:&amp;#32;rm onto</comment>
+      <comment>1 revision</comment>
       <text xml:space="preserve">&lt;noinclude&gt;{{Bundle}}&lt;/noinclude&gt;{{Property
 |PAGENAME=Property:Part of
 |Has author=WikiSysop
@@ -2995,10 +3023,10 @@ Denotes a content item as subsection of another content item.
   </page>
   <page>
     <title>Property:Rationale</title>
-    <id>103</id>
+    <id>489</id>
     <revision>
-      <id>249</id>
-      <timestamp>2010-02-10T13:07:19Z</timestamp>
+      <id>1107</id>
+      <timestamp>2010-04-30T13:42:55Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
