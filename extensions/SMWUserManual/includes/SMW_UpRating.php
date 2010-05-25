@@ -199,7 +199,7 @@ function uprfAddHtml2Page(&$out) {
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
-        'href'  => SMW_UP_RATING_PATH . '/skins/up.css'
+        'href'  => SMW_UP_RATING_PATH . '/skins/usermanual_up.css'
     ));
 
     return true;
@@ -323,7 +323,7 @@ function wfUpFetchRatingData($page, $table, $cell='') {
         }
         // build complete comment box
         $result.= '<div class="uprComment"><b>'.$usrAndTime.'</b>'
-                . '<span style="text-align: right; float: right; font-size:smaller; font-style:italic">'.$rating.'</span>'
+                . '<span>'.$rating.'</span>'
                 . '<br/>'.strip_tags($out->getText())."</div>\n";
     }
     return $result;

@@ -282,7 +282,7 @@ function umefAddHtml2Page(&$out) {
         'rel'   => 'stylesheet',
         'type'  => 'text/css',
         'media' => 'screen, projection',
-        'href'  => SMW_UME_PATH . '/skins/csh.css'
+        'href'  => SMW_UME_PATH . '/skins/usermanual_csh.css'
     ));
 
     $out->addHTML(umefDivBox().'
@@ -344,7 +344,7 @@ function umefDivBox() {
     $closeImage = SMW_UME_PATH.'/skins/close.gif';
     $loadImage= SMW_UME_PATH.'/skins/load.gif';
     return '<div id="smw_csh_rendered_boxcontent" style="display:none;">
-            <table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">
+            <table class="cshRenderedBoxContentTable">
             <tr>
             <td class="cshTabSpacer">&nbsp;&nbsp;</td><td class="cshTabActive"'.(($umegSendFeedbackToSMWplus) ?' onclick="smwCsh.switchTab(this);"' : '').'>'.wfMsg('smw_ume_tab_help').'</td>
             '.(($umegSendFeedbackToSMWplus)
@@ -353,11 +353,11 @@ function umefDivBox() {
             ).'
             <td class="cshTabSpacer" width="100%"></td>
             </tr>
-            <tr><td colspan="5" style="width:100%; height:100%" class="cshTabCont">
+            <tr><td colspan="5" class="cshTabCont">
             <span>
             <span class="cshHeadline">'.wfMsg('smw_ume_cpt_headline_1').'</span>
             <div id="smw_csh_selection">
-            <span style="display:block; text-align:center;"><img src="'.$loadImage.'" alt="load"/></span>
+            <span><img src="'.$loadImage.'" alt="load"/></span>
             </div>
             <div id="smw_csh_answer_head"></div>
             <div id="smw_csh_answer"></div>
@@ -380,10 +380,10 @@ function umefDivBoxRating() {
             <input type="radio" name="smw_csh_did_it_help" value="0" onchange="smwCsh.openRatingBox()"/>'.wfMsg('smw_ume_no').
             (($ie) ? '</span>' : '').
             '<div id="smw_csh_rating_box" style="display:none">
-            <hr style="width: 100%;"/>'.wfMsg('smw_ume_tip_rating').'<br/>
-            <textarea width="100%" rows="3"></textarea><br/>
+            <hr/>'.wfMsg('smw_ume_tip_rating').'<br/>
+            <textarea rows="3"></textarea><br/>
             <span class="cshFootnote">'.wfMsg('smw_ume_tip_rating_note').'</span><br/>
-            <input type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()" style="font-weight: bold">
+            <input class="cshSubmitButton" type="submit" value="'.wfMsg('smw_ume_submit_feedback').'" onclick="smwCsh.sendRating()">
             <input type="submit" value="'.wfMsg('smw_ume_reset').'" onclick="smwCsh.resetRating()">
             </div>
             </div>

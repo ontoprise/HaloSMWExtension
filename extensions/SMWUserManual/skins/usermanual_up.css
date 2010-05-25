@@ -1,0 +1,36 @@
+/* 
+    Document   : up
+    Created on : 16.11.2009, 15:35:04
+    Author     : stephan
+    Description:
+        Purpose of the stylesheet follows.
+*/
+.uprSpacer {
+	border: solid thin;
+	width: 100%;
+}
+
+.uprColLeft {
+	text-align: right;
+	vertical-align: top;
+}
+
+.uprColRight {
+	vertical-align: top;
+}
+
+#uprComments {
+	overflow: auto;
+}
+
+.uprComment {
+	background-color: #747474;
+	color: #FFFFFF;
+	margin-bottom: 5px;
+}
+.uprComment > span {
+	text-align: right;
+	float: right;
+	font-size:smaller;
+	font-style:italic;
+}
