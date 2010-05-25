@@ -667,13 +667,13 @@ class SMWTripleStore extends SMWStore {
 
 			// result column is available if first variable is "_X_"
 			$var_name = ucfirst((string) $variables[0]->attributes()->name);
-				
+
 			// not available, so set dummys
 			foreach ($results as $r) {
 				// SPARQL queries do not, so just set a dummy
 				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
 			}
-				
+
 		} else {
 			foreach ($results as $r) {
 				// SPARQL queries do not, so just set a dummy
@@ -702,7 +702,7 @@ class SMWTripleStore extends SMWStore {
 				$resultColumn = $mapPRTOColumns[$var_name];
 
 				$allValues = array();
-				$this->parseBindungs($b, $prs[$resultColumn], $allValues);
+				$this->parseBindungs($b, $var_name, $prs[$resultColumn], $allValues);
 
 				// note: ignore bnodes
 
@@ -751,41 +751,19 @@ class SMWTripleStore extends SMWStore {
 	 return $rewritten_prs;
 	}
 
-	/**
-	 * Return result pages, ie. the elements of the first column (may be hidden).
-	 *
-	 * @param $results XML result nodes
-	 * @param $prs Print requests
-	 * @param $mapPRTOColumns Maps print requests to columns.
-	 * @return array of SMWWikiPageValue
-	 */
-	protected function getResultPages($results, $prs, $mapPRTOColumns) {
 
-	 $resultPages = array();
-	 foreach ($results as $r) {
-	 	$children = $r->children();
-
-	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
-	 	$resultColumn = array_key_exists($var_name, $mapPRTOColumns) ? $mapPRTOColumns[$var_name]: NULL;
-
-	 	$allValues = array();
-	 	$this->parseBindungs($children, !is_null($resultColumn) ? $prs[$resultColumn] : NULL, $allValues);
-	 	$resultPages[] = $allValues[0];
-
-	 }
-	 return $resultPages;
-	}
 
 	/**
 	 * Parse bindungs from the SPARQL-XML binding node $b.
 	 * Creates SMWWikiPageValue objects from <uri> SPARQL-XML nodes.
 	 * Creates SMWDataValue objects from a <literal> SPARQL-XML nodes.
 	 *
-	 * @param $b
+	 * @param $b Binding node
+	 * @param $var_name Binding variable
 	 * @param $pr QueryPrinter contains property and thus denotes type (optional)
-	 * @param $allValues results
+	 * @param array (out) $allValues SMWDataResults
 	 */
-	protected function parseBindungs($b, $pr, & $allValues) {
+	protected function parseBindungs($b, $var_name, $pr, & $allValues) {
 		$bindingsChildren = $b->children();
 		$uris = array();
 
@@ -799,7 +777,21 @@ class SMWTripleStore extends SMWStore {
 			foreach($bindingsChildren->literal as $sv) {
 				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
 			}
-			if (!empty($literals)) $this->addLiteralToResult($literals, $pr, $allValues);
+
+			if (!empty($literals)) {
+				if ($var_name == '_X_') {
+					// force adding as URI even if it is a literal
+					foreach($literals as $l) {
+						list($literalValue, $literalType, $provenance) = $l;
+						$title = Title::newFromText($literalValue, NS_MAIN);
+						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
+						$v->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
+					}
+				} else
+				$this->addLiteralToResult($literals, $pr, $allValues);
+			}
+
+
 		}
 	}
 
@@ -813,7 +805,9 @@ class SMWTripleStore extends SMWStore {
 
 		foreach($uris as $uri) {
 			list($sv, $provenance) = $uri;
-
+			
+			// check if common namespace from MW or SMW
+			// and create SMWDataValue accoringly
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
@@ -825,6 +819,8 @@ class SMWTripleStore extends SMWStore {
 			if ($nsFound) continue;
 
 			// result with unknown namespace
+			// unknown means the namespace has a suffix: /ns_XXX#
+			// where XXX is the namespace index.
 			if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
 
 				if (empty($sv)) {
