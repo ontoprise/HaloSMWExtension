@@ -458,8 +458,8 @@ class SMWTripleStore extends SMWStore {
 		try {
 			$con = TSConnection::getConnector();
 			$sparulCommands = array();
-			$sparulCommands[] = "DROP <$smwgTripleStoreGraph>"; // drop may fail. don't worry
-			$sparulCommands[] = "CREATE <$smwgTripleStoreGraph>";
+			$sparulCommands[] = "DROP SILENT GRAPH <$smwgTripleStoreGraph>"; // drop may fail. don't worry
+			$sparulCommands[] = "CREATE SILENT GRAPH <$smwgTripleStoreGraph>";
 			$sparulCommands[] = "LOAD smw://".urlencode($wgDBuser).":".urlencode($wgDBpassword)."@$wgDBserver:$wgDBport/$wgDBname?lang=$wgLanguageCode&smwstore=$smwgBaseStore&ignoreSchema=$ignoreSchema&smwnsindex=$smwgNamespaceIndex#".urlencode($wgDBprefix)." INTO <$smwgTripleStoreGraph>";
 			$con->connect();
 			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
@@ -662,8 +662,18 @@ class SMWTripleStore extends SMWStore {
 
 		// get resultpage, ie. the pages which "define" a result row.
 		if ($query->fromASK) {
-			// ASK queries always have a result column
-			$resultPages = $this->getResultPages($results, $prs, $mapPRTOColumns);
+			// ASK queries usually always have a result column,
+			// except if a single instance is requested
+
+			// result column is available if first variable is "_X_"
+			$var_name = ucfirst((string) $variables[0]->attributes()->name);
+				
+			// not available, so set dummys
+			foreach ($results as $r) {
+				// SPARQL queries do not, so just set a dummy
+				$resultPages[] = SMWDataValueFactory::newTypeIDValue('_wpg');
+			}
+				
 		} else {
 			foreach ($results as $r) {
 				// SPARQL queries do not, so just set a dummy
@@ -706,7 +716,7 @@ class SMWTripleStore extends SMWStore {
 		}
 		// Query result object
 		$queryResult = new SMWHaloQueryResult($prs, $query, $qresults, $this, (count($results) > $query->getLimit()));
-		
+
 		return $queryResult;
 	}
 
@@ -757,7 +767,7 @@ class SMWTripleStore extends SMWStore {
 
 	 	$var_name = ucfirst((string) $children[0]->attributes()->name);
 	 	$resultColumn = array_key_exists($var_name, $mapPRTOColumns) ? $mapPRTOColumns[$var_name]: NULL;
-	 	 
+
 	 	$allValues = array();
 	 	$this->parseBindungs($children, !is_null($resultColumn) ? $prs[$resultColumn] : NULL, $allValues);
 	 	$resultPages[] = $allValues[0];

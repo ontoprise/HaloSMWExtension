@@ -191,7 +191,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
-		$this->manageClient = new RESTWebserviceConnector($host, $port, "manage_rest", $credentials);
+		$this->manageClient = new RESTWebserviceConnector($host, $port, "management_rest/", $credentials);
 	}
 
 	public function disconnect() {
@@ -201,34 +201,35 @@ class TSConnectorRESTWebservice extends TSConnection {
 	public function update($topic, $commands) {
 		if (!is_array($commands)) {
 			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-			$enc_commands = '<sparul><command><![CDATA['.$enc_commands.']]></command></sparul>';
+			$enc_commands = 'command='.urlencode($enc_commands);
 			$this->updateClient->update($enc_commands);
 			return;
 		}
-		$enc_commands = "<sparul>";
+		$enc_commands = "";
+		$first = true;
 		foreach($commands as $c) {
 			$enc_command = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($c) : $c;
-			$enc_commands .= "<command><![CDATA[$enc_command]]></command>";
+			if ($first) {
+				 $enc_commands .= "command=".urlencode($enc_command);
+				 $first=false;
+			} else {
+				 $enc_commands .= "&command=".urlencode($enc_command);
+			}
 		}
-		$enc_commands .= "</sparul>";
+
 		$this->updateClient->send($enc_commands);
 
 	}
 
-	public function query($query, $params = "", $graph = "") {
+	public function query($query, $params = "") {
 		global $smwgTripleStoreGraph;
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
 		}
-		if (empty($graph)) {
-			$graph = $smwgTripleStoreGraph;
-		}
-		$queryRequest = "<query>";
-		$queryRequest .= "<text><![CDATA[".$query."]]></text>";
-		$queryRequest .= "<params><![CDATA[".$params."]]></params>";
-		$queryRequest .= "<graph><![CDATA[".$graph."]]></graph>";
-		$queryRequest .= "</query>";
+		$queryRequest = "query=".urlencode($query);
+		$queryRequest = "&default-graph-uri=".urlencode($smwgTripleStoreGraph);
+		$queryRequest = "&params=".urlencode($params);
 
 		list($header, $status, $result) = $this->queryClient->send($queryRequest);
 		if ($status != 200) {
@@ -239,16 +240,10 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	public function getStatus($graph) {
 		global $smwgTripleStoreGraph;
-		if (empty($graph)) {
-			$graph = $smwgTripleStoreGraph;
-		}
-		
-		$request = "<method>";
-		$request .= "<name>getTripleStoreStatus</name>";
-		$request .= "<graph><![CDATA[".$graph."]]></graph>";
-		$request .= "</method>";
 
-		list($header, $status, $result) = $this->manageClient->send($request);
+		$request = "graph=".urlencode($smwgTripleStoreGraph);
+		
+		list($header, $status, $result) = $this->manageClient->send($request, "getTripleStoreStatus");
 		if ($status != 200) {
 			throw new Exception(strip_tags($result), $status);
 		}
@@ -298,7 +293,7 @@ class TSConnectorSOAPWebservice extends TSConnection {
 		$this->updateClient->update($enc_commands);
 	}
 
-	public function query($query, $params = "", $graph = "") {
+public function query($query, $params = "", $graph = "") {
 
 
 		global $smwgTripleStoreGraph;
@@ -319,7 +314,7 @@ class TSConnectorSOAPWebservice extends TSConnection {
 	}
 
 	public function getStatus($graph) {
-        // getTripleStoreStatus throws a SOAP exception if necessary
+		// getTripleStoreStatus throws a SOAP exception if necessary
 		$result = $this->manageClient->getTripleStoreStatus($graph);
 		$xmlDoc = simplexml_load_string($result);
 		$resultMap = array();

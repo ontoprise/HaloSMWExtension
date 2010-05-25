@@ -38,18 +38,18 @@ class RESTWebserviceConnector {
 	 * 
 	 * @returns array(HTTP header, HTTP status code, Message body)
 	 */
-	public function send($payload) {
+	public function send($payload, $path = '') {
 
 
 		$res = "";
 		$header = "";
 
 		// Create a curl handle to a non-existing location
-		$ch = curl_init("http://".$this->host.":".$this->port."/".$this->path);
+		$ch = curl_init("http://".$this->host.":".$this->port."/".$this->path.$path);
 		curl_setopt($ch,CURLOPT_POST,true);
 		curl_setopt($ch,CURLOPT_POSTFIELDS,$payload);
 		curl_setopt($ch,CURLOPT_HTTPHEADER,array (
-        "Content-Type: text/xml; charset=utf-8",
+        "Content-Type: application/x-www-form-urlencoded; charset=utf-8",
         "Expect: "
         ));
         if ($this->credentials != '') curl_setopt($ch,CURLOPT_USERPWD,trim($this->credentials));
