@@ -254,6 +254,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
 
 		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img id=\"step-4-alias-generate-button\" title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-resultpart")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
+		
+		//Add button for displaying the namespace prefix table
+		$html .= '<button id="step4-addnss" style="margin-top: 10px; display: none" value="'.wfMsg('smw_wws_add_prefixes').'">'.wfMsg('smw_wws_add_prefixes').'</button>';
+		
+		//Add table for defining namespace prefixes
+		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th style=\"width: 100px\">".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_prefix')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
@@ -613,7 +619,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html = "";
 		if($result){
-			$html .= "<span id=\"editresults\">"; // style=\"display:none\">";
+			$html .= "<span id=\"editresults\" style=\"display:none\">";
+			$prefixes = "<span id=\"editprefixes\" style=\"\">";
 		} else {
 			$html .= "<span id=\"editparameters\" style=\"display:none\">";
 		}
@@ -644,24 +651,34 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					$html .= "##;";
 				}
 			} else {
-				$html .= $wwsdParameter["name"].";";
-				if(strlen($wwsdParameter["xpath"]."") > 0){
-					$html .= "xpath;";
-					$html .= $wwsdParameter["xpath"].";";
-				} else if(strlen($wwsdParameter["json"]."") > 0){
-					$html .= "json;";
-					$html .= $wwsdParameter["json"].";";
-				} else if(strlen($wwsdParameter["predicate"]."") > 0){
-					$html .= "predicate;";
-					$html .= $wwsdParameter["predicate"].";";
-				} else {
-					$html .= "##;";
-					$html .= "##;";
+				if(strlen(''.$wwsdParameter['name']) > 0){
+					$html .= $wwsdParameter["name"].";";
+					if(strlen($wwsdParameter["xpath"]."") > 0){
+						$html .= "xpath;";
+						$html .= $wwsdParameter["xpath"].";";
+					} else if(strlen($wwsdParameter["json"]."") > 0){
+						$html .= "json;";
+						$html .= $wwsdParameter["json"].";";
+					} else if(strlen($wwsdParameter["predicate"]."") > 0){
+						$html .= "predicate;";
+						$html .= $wwsdParameter["predicate"].";";
+					} else {
+						$html .= "##;";
+						$html .= "##;";
+					}
+				} else if (strlen("".$wwsdParameter['prefix']) > 0){
+					$prefixes .= $wwsdParameter['prefix'].";";
+					$prefixes .= $wwsdParameter['uri'].";";
 				}
 			}
 		}
-
+		
 		$html .= "</span>";
+		
+		if($result){
+			 $html .= $prefixes."</span>";
+		}
+		
 		return $html;
 	}
 

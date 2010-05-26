@@ -274,7 +274,6 @@ DefineWebServiceSpecial.prototype = {
 			$("step2a-error").style.display = "none";
 			$("step2b-error").style.display = "none";
 
-			// todo:werden die errors richtig angezeigt?
 			if (overflow) {
 				$("step2b-error").style.display = "";
 			} else {
@@ -662,6 +661,10 @@ DefineWebServiceSpecial.prototype = {
 	 * 
 	 */
 	processStep3Do : function(resultsString, edit) {
+		//hide REST and LD studd
+		$('step4-addnss').style.display = "none";
+		$('step4-nss').style.display = "none";
+		
 		this.numberOfUsedResultParts = 0;
 		
 		var wsResults = resultsString.split(";");
@@ -2691,6 +2694,26 @@ DefineWebServiceSpecial.prototype = {
 			this.processStep1LD();
 			this.updateResultsREST(resultsUpdate, protocol);
 		}
+		
+		//deal with namespace prefixes
+		if (protocol != "soap") {
+			var nsPrefixes = "";
+			for ( var i = 0; i < $("editprefixes").childNodes.length; i++) {
+				nsPrefixes += $("editprefixes").childNodes[i].nodeValue;
+			}
+			nsPrefixes = nsPrefixes.split(";");
+			nsPrefixes.pop();
+			
+			var nspUpdate = new Array();
+			for (i = 0; i < nsPrefixes.length; i += 2) {
+				var o = new Object();
+				o["prefix"] = nsPrefixes[i];
+				o["url"] = nsPrefixes[i + 1];
+				nspUpdate.push(o);
+			}
+			
+			this.updateNSPrefixes(nspUpdate);
+		}
 
 		if (protocol == "soap") {
 			$("step1-protocol-rest").setAttribute("onclick",
@@ -3216,6 +3239,14 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-rest").checked){
 			td = document.createElement("td");
 			var select = document.createElement("select");
+			
+			//add event listener for detecting whether to display add ns or not
+			select.clickEventId = id;
+			if(window.addEventListener){
+				select.addEventListener("change", webServiceSpecial.checkDisplayAssNS, false);
+			} else {
+				select.attachEvent("onchange", webServiceSpecial.checkDisplayAssNS, false);
+			}
 	
 			var option = document.createElement("option");
 			text = document.createTextNode("xpath");
@@ -3283,6 +3314,64 @@ DefineWebServiceSpecial.prototype = {
 
 		$("step4-results").childNodes[0].appendChild(row);
 	},
+	
+	appendNSPrefix : function() {
+		var id = $("step4-nss").childNodes[0].childNodes.length;
+
+		var row = document.createElement("tr");
+
+		// add prefix-input
+		var td = document.createElement("td");
+		var input = document.createElement("input");
+		input.size = "25";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add url-input
+		td = document.createElement("td");
+		input = document.createElement("input");
+		input.size = "70";
+		td.appendChild(input);
+		row.appendChild(td);
+
+		// add additional buttons
+		td = document.createElement("td");
+		select = document.createElement("select");
+		
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_add_prefix'));
+		option.appendChild(text);
+		option.value = diLanguage.getMessage('smw_wws_add_prefix');
+		select.appendChild(option);
+
+		option = document.createElement("option");
+		text = document.createTextNode(diLanguage
+				.getMessage('smw_wws_remove_prefix'));
+		option.appendChild(text);
+		option.value = diLanguage
+			.getMessage('smw_wws_remove_prefix');
+		select.appendChild(option);
+
+		td.appendChild(select);
+
+		input = document.createElement("input");
+		input.type = "button";
+		input.value = "OK";
+		if(window.addEventListener){
+			input.addEventListener("click", webServiceSpecial.processNSButton, false);
+		} else {
+			input.attachEvent("onclick", webServiceSpecial.processNSButton, false);
+		}
+		input.clickEventId = id;
+		
+		input.style.cursor = "pointer";
+		td.appendChild(input);
+
+		row.appendChild(td);
+
+		$("step4-nss").childNodes[0].appendChild(row);
+	},
 
 	processStep3REST : function() {
 		if (!this.editMode) {
@@ -3336,14 +3425,21 @@ DefineWebServiceSpecial.prototype = {
 			} else {
 				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
 			}
-			
 			$("step4-rest-intro").appendChild(button);
+			
+			//add aditional button for defining namespace prefixes
+			if(window.addEventListener){
+				$('step4-addnss').addEventListener("click", webServiceSpecial.displayNSTable, false);
+			} else {
+				$('step4-addnss').attachEvent("onclick", webServiceSpecial.displayNSTable, false);
+			}
 		} else {
 			$("step4-rest-intro").childNodes[1].checked = false;
 			$("step4-rest-intro").childNodes[3].value = "complete";
 		}
 
 		$("step4-rest-intro").childNodes[6].style.display = "";
+		$('step4-addnss').style.display = "none";
 
 		$("step4-results").style.display = "none";
 		var tempHead = $("step4-results").childNodes[0].childNodes[0]
@@ -3362,6 +3458,19 @@ DefineWebServiceSpecial.prototype = {
 
 		this.appendRESTResultPart();
 		$("step4-results").childNodes[0].childNodes[1].removed = true;
+		
+		//prepare namespace prefix table
+		$("step4-results").style.display = "none";
+		var tempHead = $("step4-nss").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step4-nss").childNodes[0].cloneNode(false);
+		$("step4-nss").removeChild($("step4-nss").childNodes[0]);
+		$("step4-nss").appendChild(tempTable);
+		$("step4-nss").childNodes[0].appendChild(tempHead);
+
+		this.appendNSPrefix();
+		$("step4-nss").childNodes[0].childNodes[1].removed = true;
+		$("step4-nss").style.display = "none";
 	},
 
 	processRESTResultPartButton : function(event) {
@@ -3393,6 +3502,33 @@ DefineWebServiceSpecial.prototype = {
 			}
 		}
 	},
+	
+	processNSButton : function(event) {
+		var id = Event.element(event).clickEventId;
+		
+		var select = $("step4-nss").childNodes[0].childNodes[id].childNodes[2].childNodes[0];
+		var action = select.value;
+
+		if (action == diLanguage.getMessage('smw_wws_add_prefix')) {
+			webServiceSpecial.appendNSPrefix();
+		} else {
+			$("step4-nss").childNodes[0].childNodes[id].removed = true;
+			$("step4-nss").childNodes[0].childNodes[id].style.display = "none";
+
+			var remove = true;
+			for ( var i = 1; i < $("step4-nss").childNodes[0].childNodes.length; i++) {
+				if (!$("step4-nss").childNodes[0].childNodes[i].removed) {
+					remove = false;
+				}
+			}
+
+			if (remove) {
+				$("step4-addnss").style.display = "";
+				$("step4-nss").style.display = "none";
+			}
+		}
+	},
+	
 	processStep4REST : function() {
 		$("step5").style.display = "";
 		$("menue-step4").className = "DoneMenueStep";
@@ -3559,6 +3695,24 @@ DefineWebServiceSpecial.prototype = {
 				subPathString = subPathString.replace(/</g, "&lt;");
 				result += subPathString + "\"/>\n";
 			}
+			
+			//process namespace prefixes
+			var nsTable = $("step4-nss").childNodes[0];
+			
+			for (i = 1; i < nsTable.childNodes.length; i++) {
+				if (nsTable.childNodes[i].removed) {
+					continue;
+				}
+
+				var prefix = nsTable.childNodes[i].childNodes[0].firstChild.value;
+				if (name == "") {
+					prefix = "prefix" + i;
+				}
+				
+				result += "<namespace prefix=\"" + prefix + "\" ";
+				result += "uri=\"" + nsTable.childNodes[i].childNodes[1].firstChild.value + "\"/>\n";
+			}
+			
 			result += "</result>\n";
 
 			result += this.createWWSDPolicyPart();
@@ -3757,16 +3911,28 @@ DefineWebServiceSpecial.prototype = {
 		$("step4-results").childNodes[0].childNodes[1].style.display = "";
 		$("step4-results").childNodes[0].childNodes[1].removed = false;
 		
-		//todo: use languag fiele
 		if ($("step1-protocol-ld").checked){
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
-			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = "Predicate:";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
+				diLanguage.getMessage('smw_wws_results_table_prefix');
 		} else {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
-			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = "Path:";
+			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
+				diLanguage.getMessage('smw_wws_results_table_path');
 		}
 	},
 
+	displayNSTable : function() {
+		$("step4-addnss").style.display = "none";
+		
+		if ($("step4-nss").childNodes[0].childNodes[1] == null) {
+			webServiceSpecial.appendNSPrefix();
+		}
+		$("step4-nss").style.display = "";
+		$("step4-nss").childNodes[0].childNodes[1].style.display = "";
+		$("step4-nss").childNodes[0].childNodes[1].removed = false;
+	},
+	
 	useParameters : function() {
 		var checked = false;
 		if ($("step3-use").checked) {
@@ -4378,12 +4544,19 @@ DefineWebServiceSpecial.prototype = {
 			} else {
 				button.attachEvent("onclick", webServiceSpecial.displayRestResultsTable, false);
 			}
-			
 			$("step4-rest-intro").appendChild(button);
+			
+			
+			//add aditional button for defining namespace prefixes
+			if(window.addEventListener){
+				$('step4-addnss').addEventListener("click", webServiceSpecial.displayNSTable, false);
+			} else {
+				$('step4-addnss').attachEvent("onclick", webServiceSpecial.displayNSTable, false);
+			}
 		} else {
+			//nothing to do
 		}
 
-		//todo: display them in processStep3REST
 		//hide element, which are not required for ld
 		$("step4-rest-intro").childNodes[0].style.display = "none";
 		$("step4-rest-intro").childNodes[1].style.display = "none";
@@ -4395,6 +4568,7 @@ DefineWebServiceSpecial.prototype = {
 		
 		
 		$("step4-rest-intro").childNodes[6].style.display = "";
+		$('step4-addnss').style.display = "";
 
 		$("step4-results").style.display = "none";
 		var tempHead = $("step4-results").childNodes[0].childNodes[0]
@@ -4413,8 +4587,43 @@ DefineWebServiceSpecial.prototype = {
 
 		this.appendRESTResultPart();
 		$("step4-results").childNodes[0].childNodes[1].removed = true;
-	}
 		
+		//prepare namespace prefix table
+		$("step4-results").style.display = "none";
+		var tempHead = $("step4-nss").childNodes[0].childNodes[0]
+				.cloneNode(true);
+		var tempTable = $("step4-nss").childNodes[0].cloneNode(false);
+		$("step4-nss").removeChild($("step4-nss").childNodes[0]);
+		$("step4-nss").appendChild(tempTable);
+		$("step4-nss").childNodes[0].appendChild(tempHead);
+
+		this.appendNSPrefix();
+		$("step4-nss").childNodes[0].childNodes[1].removed = true;
+		$("step4-nss").style.display = "none";
+	},
+	
+	checkDisplayAssNS : function(event){
+		var node = Event.element(event);
+		//todo use lang file
+		if(node.value == diLanguage.getMessage('smw_wws_predicate') && $('step4-nss').style.display == "none"){
+			$('step4-addnss').style.display = "";
+		} 
+	},
+	
+	updateNSPrefixes : function(updates) {
+		if (updates.length > 0) {
+			this.displayNSTable(false);
+			$("step4-nss").firstChild
+					.removeChild($("step4-nss").firstChild.childNodes[1]);
+		}
+		var offset = 0;
+		var pathAdded = false;
+		for (i = 0; i < updates.length; i++) {
+			this.appendNSPrefix();
+			$("step4-nss").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["prefix"];
+			$("step4-nss").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["url"];
+		}
+	}
 }
 
 var webServiceSpecial;

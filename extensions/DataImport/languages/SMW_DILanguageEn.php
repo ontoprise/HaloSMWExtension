@@ -286,6 +286,10 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsr_confirm_tooltip' => 'Commit this WWSD so that it can be used in the Wiki.',
 	'smw_wwsr_update_tooltip_ti' => 'Start the update bot for this Term Import.',
 	'smw_wwsr_rep_edit_tooltip_ti' => 'Edit this Term Import in the graphical user interface.',
+	
+	'smw_wws_add_prefixes' => 'Add namespace prefixes',
+	'smw_wws_nss_prefix' => 'Prefix:',
+	'smw_wws_nss_url' => 'URL:',
 	);
 
 	protected $smwDINamespaces = array(

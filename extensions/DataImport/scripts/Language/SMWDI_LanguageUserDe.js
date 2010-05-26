@@ -28,9 +28,11 @@ var wgDIUserLanguageStrings = {
 		'smw_wws_add_parameter'		:	'Parameter hinzufügen',
 		'smw_wws_add_parameters'	:	'Parameter hinzufügen',
 		'smw_wws_remove_parameter'	:	'Entferne Parameter',
-		'smw_wws_add_resultpart'	:	'Result Parts hinzufügen',
+		'smw_wws_add_resultpart'	:	'Result Part hinzufügen',
+		'smw_wws_add_prefix'	:	'Präfix hinzufügen',
 		'smw_wws_add_resultparts'	:	'Result Parts hinzufügen',
-		'smw_wws_remove_resultpart'	:	'Entferne Result Parts',
+		'smw_wws_remove_resultpart'	:	'Entferne Result Part',
+		'smw_wws_remove_prefix'	:	'Entferne Präfix',
 		'smw_wws_proceed'			:	'Wenn Sie fortfahren, gehen alle Eingaben, die Sie in nachfolgenden Schritten schon getätigt haben, wieder verloren!',
 		'smw_wws_use_complete'		:	'Benutze komplettes Ergebnis als Result Part: ',
 		'smw_wws_alias'				:	'Alias: ',
@@ -51,5 +53,9 @@ var wgDIUserLanguageStrings = {
 		
 		'smw_wwsu_clipboard_success'    : 'Die Query wurde in die Zwischenablage kopiert',
 		'smw_wwsu_clipboard_fail'    : 'Ihr Browser erlaubt keinen Zugriff auf die Zwischenablage\nDie #ws-Syntax konnte nicht in die Zwischenablage kopiert werden.\n Bitte verwenden Sie die Funktion "#ws-Syntax anzeigen" und kopieren Sie diese manuell.',
+		
+		'smw_wws_results_table_prefix' : 'Präfix',
+		'smw_wws_results_table_path' : 'Pfad',
+		'smw_wws_predicate' : 'predicate'
 		
 };

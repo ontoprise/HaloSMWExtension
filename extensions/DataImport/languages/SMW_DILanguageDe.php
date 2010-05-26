@@ -284,6 +284,10 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsr_confirm_tooltip' => 'Die Benutzung dieser WWSD erlauben.',
 	'smw_wwsr_update_tooltip_ti' => 'Update Bot für diesen Term Import starten.',
 	'smw_wwsr_rep_edit_tooltip_ti' => 'Diesen Term Import in der GUI editieren.',
+	
+	'smw_wws_add_prefixes' => 'Namensraum Präfixe hinzuf&uuml;gen',
+	'smw_wws_nss_prefix' => 'Pr&auml;fix:',
+	'smw_wws_nss_url' => 'URL:',
 	);
 
 	protected $smwDINamespaces = array(

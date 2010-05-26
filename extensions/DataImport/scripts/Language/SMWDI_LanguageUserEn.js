@@ -28,8 +28,10 @@ var wgDIUserLanguageStrings = {
 		'smw_wws_add_parameters'	:	'Add parameters',
 		'smw_wws_remove_parameter'	:	'Remove parameter',
 		'smw_wws_add_resultpart'	:	'Add result part',
+		'smw_wws_add_prefix'	:	'Add prefix',
 		'smw_wws_add_resultparts'	:	'Add result parts',
 		'smw_wws_remove_resultpart'	:	'Remove result part',
+		'smw_wws_remove_prefix'	:	'Remove prefix',
 		'smw_wws_proceed'			:	'If you proceed, all input you already gave in the subsequent steps will be lost!',
 		'smw_wws_use_complete'		:	'Use complete result as result part: ',
 		'smw_wws_alias'				:	'Alias: ',
@@ -49,7 +51,11 @@ var wgDIUserLanguageStrings = {
 		'smw_wws_subparameters'		:		'Subparameters:',
 		
 		'smw_wwsu_clipboard_success'    : 'The #ws-syntax was successfully copied to the clipboard',
-		'smw_wwsu_clipboard_fail'    	: 'Your browser does not allow clipboard access.\nThe #ws-syntax could not be copied to your clipboard.\nPlease use function "Display #ws-syntax" and copy the #ws-syntax manually.'
+		'smw_wwsu_clipboard_fail'    	: 'Your browser does not allow clipboard access.\nThe #ws-syntax could not be copied to your clipboard.\nPlease use function "Display #ws-syntax" and copy the #ws-syntax manually.',
+		
+		'smw_wws_results_table_prefix' : 'Prefix',
+		'smw_wws_results_table_path' : 'Path',
+		'smw_wws_predicate' : 'predicate'
 		
 		
 };

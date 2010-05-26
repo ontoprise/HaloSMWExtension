@@ -143,9 +143,8 @@ class WebService {
 		//specified in the WWSD
 		//Please note, the same is done in newFromWWSD
 		if(strtolower($this->mProtocol) == "linkeddata"){
-			//todo: use constants
-			$parameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
-			$parameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
+			//$parameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
+			//$parameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
 		}
 		
 		$this->mParameters = $parameters;
