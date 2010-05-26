@@ -20,6 +20,7 @@ a:hover {text-decoration:none; }
 
 #gardening-container{
 	width:850px;
+	margin-top:10px;
 }
 #gardening-container #gardening-tools{
 	font-family: Arial, Helvetica, sans-serif;

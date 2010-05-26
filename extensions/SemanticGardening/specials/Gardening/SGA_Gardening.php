@@ -5,7 +5,7 @@
  * 
  * Created on 12.03.2007
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
  if (!defined('MEDIAWIKI')) die();
 
@@ -43,7 +43,7 @@ class SGAGardening extends SpecialPage {
 		$wgOut->setPageTitle(wfMsg('gardening'));
 		$gardeningLogPage = Title::newFromText(wfMsg('gardeninglog'), NS_SPECIAL);
 		$gardeningLogLink = $wgUser->getSkin()->makeKnownLinkObj($gardeningLogPage);
-		$html = "<div style=\"margin-bottom:10px;\">".wfMsg('smw_gard_welcome', $gardeningLogLink)."</div>";
+		$html = "<div>".wfMsg('smw_gard_welcome', $gardeningLogLink)."</div>";
 		$html .= "<div id=\"gardening-container\">" .
 					"<div id=\"gardening-tools\">" . SGAGardening::getRegisteredBots() .
 					"</div>" .
