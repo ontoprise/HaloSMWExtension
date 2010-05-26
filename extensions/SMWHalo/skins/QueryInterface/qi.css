@@ -29,6 +29,12 @@ background: #DDDDDD;
 width:100%;
 float:left;
 margin-top:10px;
+position:relative;
+}
+
+#qimenubar > span {
+	position:absolute;
+	right:13px;
 }
 
 .qibutton{
@@ -204,6 +210,10 @@ border:1px solid #AAAAAA;
 background: #FFFFFF;
 }
 
+#layoutcontent > table {
+	width:100%;
+}
+
 #layoutcontent select{
 /*width:95%;*/
 }
@@ -299,6 +309,20 @@ border: 1px solid #AAAAAA;
 padding:5px;
 }
 
+#showAsk {
+	width:350px;
+}
+
+#showParserAskButton {
+	font-weight: bold;
+	text-decoration: none;
+	cursor: default;
+}
+
+#fullAskTextOld {
+	width:95%;	
+}
+
 #dialoguecontent tr td{
 text-align:right;
 }
@@ -335,6 +359,7 @@ cursor: pointer;
 
 #queryprinteroptions {
 	border-top:1px solid;
+	display:block;
 }
 
 #queryprinteroptions td[onmouseover] {
@@ -356,6 +381,14 @@ cursor: pointer;
     padding-top: 1px;
     margin-bottom: 10px;
 }
+
+#qiDefTab > table {
+	border-collapse:collapse;
+	empty-cells:show;
+	width:100%;
+	height:100%;
+}
+
 .qiDefTabActive {
     font-family:'trebuchet ms',helvetica,sans-serif;
     font-size:84%;
@@ -399,4 +432,13 @@ cursor: pointer;
     border-right-width: 1px;
     border-right-style: solid;
     height: 100%;
+}
+
+#qitextview , #qisource {
+	display: none;
+	height:100%;
+}
+
+#qisource > textarea {
+	height:98%;
 }
