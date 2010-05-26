@@ -3,7 +3,7 @@
  * @file
  * @ingroup UnifiedSearch
  * @defgroup UnifiedSearch Unified search
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Created on: 27.01.2009
  */
@@ -51,11 +51,11 @@ if (isset($wgUSPathSearch) && $wgUSPathSearch) {
 function wfUSAddHeader(& $out) {
 	global $wgScriptPath, $wgServer, $wgTitle, $wgRequest, $wgContLang;
 	if ($wgTitle->getNamespace() != NS_SPECIAL) return true;
-   
-    $pagetitle = $wgRequest->getVal("title");
-    $spec_ns = $wgContLang->getNsText(NS_SPECIAL);
-    if ($pagetitle != "$spec_ns:Search") return true;
-    
+
+	$pagetitle = $wgRequest->getVal("title");
+	$spec_ns = $wgContLang->getNsText(NS_SPECIAL);
+	if ($pagetitle != "$spec_ns:Search" && $pagetitle != "$spec_ns:UnifiedSearchStatistics") return true;
+
 	$out->addLink(array(
                     'rel'   => 'stylesheet',
                     'type'  => 'text/css',

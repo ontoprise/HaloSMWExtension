@@ -184,8 +184,8 @@ class USSpecialPage extends SpecialPage {
 			$nsName = $ns == NS_MAIN ? wfMsg('us_article') : $wgContLang->getNsText($ns);
 			$highlight = $this->highlight($ns, $restrictNS) ? "us_refinelinks_highlighted" : "us_refinelinks";
 			$textcolor = $this->highlight($ns, $restrictNS) ? 'color: white;"' : ""; // overwrite text color, if it is set by the skin
-			$row .= '<td class="filtercolumn" '.$style.'><div style="margin: 6px;"><img alt="'.wfMsg('us_search_tooltip_refine', $nsName).'" title="'.wfMsg('us_search_tooltip_refine', $nsName).
-                     '" style="vertical-align: baseline;margin-top: 1px;" src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="margin-left: 6px;vertical-align: top;'.$textcolor.'" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
+			$row .= '<td class="filtercolumn" '.$style.'><div><img alt="'.wfMsg('us_search_tooltip_refine', $nsName).'" title="'.wfMsg('us_search_tooltip_refine', $nsName).
+                     '"src="'.UnifiedSearchResultPrinter::getImageURI($img ).'"/><a style="'.$textcolor.'" class="'.$highlight.'" href="'.$nsURL.'">'.$nsName.
                      '</a></div></td><td '.$style.'>|</td>';
 			$nsURL = next($namespaceFilterURLs);
 			$c++;
@@ -219,8 +219,8 @@ class USSpecialPage extends SpecialPage {
 		if (count($searchResults) > 0) {
 			$browsingBarTopHtml = "";
 			$browsingBarTopHtml .= "<tr><td>".wfMsg('us_page')." ".(intval($offset/$limit)+1)." - ".(intval($totalHits/$limit)+1)."</td>";
-			$browsingBarTopHtml .= "<td style=\"text-align: center;color: gray;\">($prevButton) ($nextButton)</td>";
-			$browsingBarTopHtml .= "<td style=\"width: 33%; text-align: right;\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
+			$browsingBarTopHtml .= "<td class=\"us_browsing_middle\">($prevButton) ($nextButton)</td>";
+			$browsingBarTopHtml .= "<td class=\"us_browsing_right\">".wfMsg('us_entries_per_page')." ($limit20 | $limit50 | $limit100 | $limit250 | $limit500)</td></tr></table>";
 			$browsingBarTopHideHtml = "<div id=\"us_browsing_top_hide_div\" $styleHide><table id=\"us_browsing_top_hide\">".preg_replace('/href="[^"].*?"/', '', $browsingBarTopHtml)."</div>";
 			$browsingBarTopHtml = "<div id=\"us_browsing_top_div\" $styleShow><table id=\"us_browsing_top\">".$browsingBarTopHtml."</div>";
 			$html.= $browsingBarTopHtml.$browsingBarTopHideHtml;
@@ -229,7 +229,7 @@ class USSpecialPage extends SpecialPage {
 		// -- show Did you mean --
 		$didyoumeanURL = $searchPage->getFullURL("search=$suggestion");
 		$wgOut->setPageTitle(wfMsg('us_search'));
-		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i style=\"color:red;\">".wfMsg('us_didyoumean').":</i> <a style=\"text-decoration:underline;\" href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
+		$html .= '<div id="us_didyoumean">'.($suggestion !== NULL ? "<i>".wfMsg('us_didyoumean').":</i> <a href=\"$didyoumeanURL\">".$suggestion."</a>" : "").'</div>';
 
 
 

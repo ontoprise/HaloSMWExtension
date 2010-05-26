@@ -3,7 +3,7 @@
  * @file
  * @ingroup UnifiedSearch
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 function smwfDoSpecialUSSearch() {
@@ -21,7 +21,7 @@ function smwfDoSpecialUSSearch() {
  * UnifiedSearchStatistics displays statistical information about
  * search matches and tries.
  *
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  */
 class UnifiedSearchStatistics extends QueryPage {
@@ -89,7 +89,7 @@ class UnifiedSearchStatistics extends QueryPage {
 	}
 
 	function openList($offset) {
-		return "<div id=\"us_statistics_results\"><table border=\"1\" cellspacing=\"0\"><tr><th style=\"background-color: #CCC;\">".wfMsg('us_search_term')."</th><th>".wfMsg('us_search_tries')."</th><th>".wfMsg('us_search_hits')."</th></tr>";
+		return "<div id=\"us_statistics_results\"><table border=\"1\" cellspacing=\"0\"><tr><th>".wfMsg('us_search_term')."</th><th>".wfMsg('us_search_tries')."</th><th>".wfMsg('us_search_hits')."</th></tr>";
 	}
 
 	function closeList() {

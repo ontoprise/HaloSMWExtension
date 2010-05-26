@@ -1,17 +1,3 @@
-#us_searchresults_tab {
-    list-style-type: none;
-    padding: 0;
-    margin: 2px;
-    width: 98%;
-}
-
-#us_searchresults_tab .us_tab_label {
-	white-space: nowrap;
-    padding: 5px;
-    cursor: pointer;
-    color: #666;
-}
-
 #pathsearchresult {
 	padding-left: 9px;
 	padding-top: 5px;
