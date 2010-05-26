@@ -189,6 +189,14 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	float: left;
 	/*border: 1px solid #AAAAAA;*/	
 }
+
+#policy-input img {
+	cursor: pointer;
+}
+#policy-input div.input-field-heading img {
+	cursor: auto; /*overwrite help img again*/
+}
+	
 #bottom-container #extras #extras-left #policy #policy-input #policy-input-field{
 	border: 1px solid #AAAAAA;
 }
@@ -285,7 +293,7 @@ a:hover {text-decoration:underline; cursor: pointer; cursor: hand;}
 	padding-bottom: 5px;
 }
 
-
-
-
-
+.TIHelpMessage > span:first-child {
+	color: blue;
+	font-weight: bold;
+}
