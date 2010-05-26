@@ -221,15 +221,19 @@ class TSConnectorRESTWebservice extends TSConnection {
 
 	}
 
-	public function query($query, $params = "") {
+	public function query($query, $params = "", $graph = "") {
 		global $smwgTripleStoreGraph;
+		if (empty($graph)) {
+			$graph = $smwgTripleStoreGraph;
+		}
+		
 		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
 			// SPARQL, attach common prefixes
 			$query = TSNamespaces::getAllPrefixes().$query;
 		}
 		$queryRequest = "query=".urlencode($query);
-		$queryRequest = "&default-graph-uri=".urlencode($smwgTripleStoreGraph);
-		$queryRequest = "&params=".urlencode($params);
+		$queryRequest .= "&default-graph-uri=".urlencode($graph);
+		$queryRequest .= "&params=".urlencode($params);
 
 		list($header, $status, $result) = $this->queryClient->send($queryRequest);
 		if ($status != 200) {
