@@ -1543,7 +1543,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 
 	$text =
 '<div id="smw_dft_rendered_boxcontent"> <br />'.
-	'<table style="width:100%; height:100%; border-collapse:collapse;empty-cells:show">'.
+	'<table>'.
 		'<tr>'.
 			'<td id="dftTab1" class="dftTabActive">'.
 	str_replace(' ', '&nbsp;', wfMsg('smw_df_static_tab')).
@@ -1555,7 +1555,7 @@ function smwfAddDerivedFacts(& $text, $semdata) {
 			'<td class="dftTabSpacer" width="100%"></td>'.
 		'</tr>'.
 		'<tr>'.
-			'<td colspan="4" style="width:100%; height:100%" class="dftTabCont">'.
+			'<td colspan="4" class="dftTabCont">'.
 				'<div id="dftTab1Content" >'.
 	$fbText.
 				'</div>'.

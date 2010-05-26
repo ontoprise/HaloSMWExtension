@@ -5,6 +5,12 @@
     Description: styles for the derived facts tabs
 */
 
+#smw_dft_rendered_boxcontent >table {
+	width:100%; height:100%;
+	border-collapse:collapse;
+	empty-cells:show;
+}
+
 .dftTabActive {
     cursor:pointer;cursor:hand;
     font-weight: bold;
