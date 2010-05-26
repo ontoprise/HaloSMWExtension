@@ -80,9 +80,9 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 		$html .= "<table id=\"menue\" class=\"TabContainer\"><tr>";
 		$html .= "<td id=\"web-service-tab\" class=\"ActiveTab\" onclick=\"webServiceRepSpecial.displayWebServiceTab()\">Web Service definitions</td>";
-		$html .= "<td style=\"padding-left:10px\"></td>";
+		$html .= "<td></td>";
 		$html .= "<td id=\"term-import-tab\" class=\"InactiveTab\" onclick=\"webServiceRepSpecial.displayTermImportTab()\" onmouseover=\"webServiceRepSpecial.highlightTab(event)\">Term Import definitions</td>";
-		$html .= "<td style=\"width: 100%\"></td></tr></table>";
+		$html .= "<td></td></tr></table>";
 
 		global $smwgDIIP;
 		
@@ -97,9 +97,9 @@ class SMWWebServiceRepositorySpecial extends SpecialPage {
 
 		$html .= "<p>".wfMsg('smw_wwsr_rep_intro')."</p>";
 		if($allowed){
-			$html .= "<table id=\"webservicetable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
+			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_update_manual')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_confirm')."</th></tr>";
 		} else {
-			$html .= "<table id=\"webservicetable\" width=\"100%\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
+			$html .= "<table id=\"webservicetable\" class=\"smwtable\"><tr><th>".wfMsg('smw_wwsr_name')."</th><th>".wfMsg('smw_wwsr_lastupdate')."</th><th style=\"text-align: center\">".wfMsg('smw_wwsr_rep_edit')."</th></tr>";
 		}
 		foreach($webServices as $ws){
 			$title = Title::newFromID($ws->getArticleID());

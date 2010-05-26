@@ -166,12 +166,12 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<img id=\"step1-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"webServiceSpecial.displayHelp(1)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 		$html .= "</p>";
 			
-		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_spec_protocol");
+		$html .= "<div>".wfMsg("smw_wws_spec_protocol");
 		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input>";
 		$html .= "<input id=\"step1-protocol-ld\" ".$ld." type=\"radio\" name=\"step1-protocol\" value=\"ld\">LinkedData</input>";
 		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input></div>";
 		
-		$html .= "<div style=\"margin-bottom: 3px\">".wfMsg("smw_wws_s1-uri");
+		$html .= "<div>".wfMsg("smw_wws_s1-uri");
 		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></div>";
 			
 		$html .= "<div>".wfMsg('smw_wws_spec_auth');
@@ -229,7 +229,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step3-rest-intro\" style=\"display:none\"></div>";
 
-		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-parameter")."\" id=\"step-3-alias-generate-button\" style=\"text-align: right\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
+		$html .= "<table id=\"step3-parameters\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" id=\"step3-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span class=\"alias-generate\"><img title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-parameter")."\" id=\"step-3-alias-generate-button\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_optional')."</th><th>".wfMsg('smw_wws_defaultvalue')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step3-help\" style=\"display:none\">".wfMsg("smw_wws_s3-help", $smwgDIScriptPath."/skins/webservices/Pencil_go.png")."</div>";
 		$html .= "<div id=\"step3-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s3-REST-help")."</div>";
@@ -253,13 +253,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step4-rest-intro\" style=\"display:none\"></div>";
 
-		$html .= "<table id=\"step4-results\"><tr><th style=\"min-width: 400px\">".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" style=\"text-align: right\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span style=\"padding-left: 20px\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img id=\"step-4-alias-generate-button\" title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-resultpart")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
+		$html .= "<table id=\"step4-results\"><tr><th>".wfMsg('smw_wws_path')."</th><th>".wfMsg('smw_wws_use')."<span onclick=\"webServiceSpecial.useResults()\"><input title=\"".wfMsg("smw_wws_selectall-tooltip")."\" type=\"checkbox\" id=\"step4-use\"/></span></th><th>".wfMsg('smw_wws_alias')."<span class=\"alias-generate\" onclick=\"webServiceSpecial.generateResultAliases(true)\"><img id=\"step-4-alias-generate-button\" title=\"".wfMsg("smw_wws_autogenerate-alias-tooltip-resultpart")."\" src=\"".$smwgDIScriptPath."/skins/webservices/Pencil_grey.png\"></img></span></th><th>".wfMsg('smw_wws_format')."</th><th>".wfMsg('smw_wws_path')."</th><th></th></tr></table>";
 		
 		//Add button for displaying the namespace prefix table
-		$html .= '<button id="step4-addnss" style="margin-top: 10px; display: none" value="'.wfMsg('smw_wws_add_prefixes').'">'.wfMsg('smw_wws_add_prefixes').'</button>';
+		$html .= '<button id="step4-addnss" style="display: none" value="'.wfMsg('smw_wws_add_prefixes').'">'.wfMsg('smw_wws_add_prefixes').'</button>';
 		
 		//Add table for defining namespace prefixes
-		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th style=\"width: 100px\">".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_prefix')."</th><th></th></tr></table>";
+		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_prefix')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
@@ -356,8 +356,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 
 		//errors
-		$html .= "<div id=\"errors\" class=\"StepDiv\" style=\"display: none; border-width: 1px; border-color: red; border-style: solid; padding-left: 5px; padding-right: 5px\">";
-		$html .= "<h2 style=\"color: red\">".wfMsg('smw_wws_error_headline')."</h2>";
+		$html .= "<div id=\"errors\" class=\"StepDiv\" style=\"display: none;\">";
+		$html .= "<h2>".wfMsg('smw_wws_error_headline')."</h2>";
 		$html .= "<div id=\"step1-error\" style=\"display: none\">".wfMsg("smw_wws_s1-error")."</div>";
 		$html .= "<div id=\"step2a-error\" style=\"display: none\">".wfMsg("smw_wws_s2a-error")."</div>";
 		$html .= "<div id=\"step2b-error\" style=\"display: none\">".wfMsg("smw_wws_s2b-error")."</div>";

@@ -37,6 +37,59 @@
 	padding-top: 75px;
 }
 
+
+.step-headline{
+	font-weight: bold;
+}
+
+.help-image{
+	cursor: pointer;
+}
+
+#step1-head + div, #step1-head + div + div{
+	margin-bottom: 3px; /*the first two divs need some space here*/
+}
+
+#step3-use {
+	text-align: right;
+}
+
+span.alias-generate {
+	text-align: right;
+	padding-left: 20px;
+}
+
+#step-3-alias-generate-button {
+	text-align: right;
+}
+#step4-use {
+	text-align: right;
+}
+
+#step4-addnss {
+	margin-top: 10px; 
+}
+
+#step4-nss th:first-child {
+	width: 100px;
+}
+
+#step4-results th:firstchild {
+	min-width: 400px;
+}
+#errors {
+	border-width: 1px;
+	border-color: red;
+	border-style: solid;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+#errors h2 {
+	color: red;
+}
+
+/* Webservice repository special page */
+
 .TabContainer {
 	line-height: 3em;
 	display: table; 
@@ -102,7 +155,19 @@
 	margin-right: 30px;
 	cursor: pointer;
 }
-	
+
+#web-service-tab + td {
+	padding-left:10px;
+}
+
+#term-import-tab + td {
+	width: 100%;
+}
+
+#webservicetable {
+	width:100%;
+}
+
 .ActualMenueStep{
 	color: white;
 	font-weight: bold;
@@ -119,12 +184,4 @@
 .DoneMenueStep{
 	color: white;
 	line-height: 3em;
-}
-
-.step-headline{
-	font-weight: bold;
-}
-
-.help-image{
-	cursor: pointer;
 }
