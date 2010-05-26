@@ -70,8 +70,8 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		}
 		$html .= "<div id=\"breadcrumb-menue\" class=\"BreadCrumpContainer\">";
 		$html .= "<span id=\"menue-step1\" ".$fClass.">".wfMsg("smw_wws_s1-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
-		$html .= "<span id=\"menue-step2\" ".$rClass.">".wfMsg("smw_wws_s2-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
-		$html .= "<span id=\"menue-step3\" ".$rClass.">".wfMsg("smw_wws_s3-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
+		$html .= "<span id=\"menue-step2\" ".$rClass.">".wfMsg("smw_wws_s2-menue")."</span><span class=\"HeadlineDelimiter\" id=\"menue-step2-delimiter\"></span>";
+		$html .= "<span id=\"menue-step3\" ".$rClass.">".wfMsg("smw_wws_s3-menue")."</span><span class=\"HeadlineDelimiter\" id=\"menue-step3-delimiter\"></span>";
 		$html .= "<span id=\"menue-step4\"".$rClass.">".wfMsg("smw_wws_s4-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step5\"".$rClass.">".wfMsg("smw_wws_s5-menue")."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step6\"".$rClass.">".wfMsg("smw_wws_s6-menue")."</span>";
@@ -167,9 +167,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 			
 		$html .= "<div>".wfMsg("smw_wws_spec_protocol");
-		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\">REST</input>";
-		$html .= "<input id=\"step1-protocol-ld\" ".$ld." type=\"radio\" name=\"step1-protocol\" value=\"ld\">LinkedData</input>";
-		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\">SOAP</input></div>";
+		$html .= "<input id=\"step1-protocol-rest\" ".$rest." type=\"radio\" name=\"step1-protocol\" value=\"rest\" onclick=\"webServiceSpecial.updateBreadCrump(event)\">REST</input>";
+		$html .= "<input id=\"step1-protocol-ld\" ".$ld." type=\"radio\" name=\"step1-protocol\" value=\"ld\" onclick=\"webServiceSpecial.updateBreadCrump(event)\">LinkedData</input>";
+		$html .= "<input id=\"step1-protocol-soap\" ".$soap."type=\"radio\" name=\"step1-protocol\" value=\"soap\" onclick=\"webServiceSpecial.updateBreadCrump(event)\">SOAP</input></div>";
 		
 		$html .= "<div>".wfMsg("smw_wws_s1-uri");
 		$html .= "<input id=\"step1-uri\" type=\"text\" onkeypress=\"webServiceSpecial.checkEnterKey(event, 'step1')\" size=\"100\" maxlength=\"500\" value=\"".$uri."\"/></div>";

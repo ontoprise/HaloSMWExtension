@@ -1386,6 +1386,16 @@ DefineWebServiceSpecial.prototype = {
 		$("step1-protocol-soap").removeAttribute("onclick");
 		$("step1-protocol-rest").removeAttribute("onclick");
 		$("step1-protocol-ld").removeAttribute("onclick");
+		
+		$("step1-protocol-soap").setAttribute("onclick", "webServiceSpecial.updateBreadCrump(event)");
+		$("step1-protocol-rest").setAttribute("onclick", "webServiceSpecial.updateBreadCrump(event)");
+		$("step1-protocol-ld").setAttribute("onclick", "webServiceSpecial.updateBreadCrump(event)");
+		if($("step1-protocol-ld").checked){
+			this.doUpdateBreadCrump("ld");
+		} else {
+			this.doUpdateBreadCrump("other");
+		}
+		
 		$("step1-uri").removeAttribute("onclick");
 
 		$("step2").style.display = "none";
@@ -2734,6 +2744,7 @@ DefineWebServiceSpecial.prototype = {
 				"webServiceSpecial.confirmStep1Change(\"ld\")");
 			$("step1-protocol-rest").setAttribute("onclick",
 				"webServiceSpecial.confirmStep1Change(\"ld\")");
+			webServiceSpecial.doUpdateBreadCrump("ld");
 		} 
 		
 		if (protocol == "ld"){
@@ -4622,6 +4633,42 @@ DefineWebServiceSpecial.prototype = {
 			this.appendNSPrefix();
 			$("step4-nss").firstChild.childNodes[i + 1].childNodes[0].firstChild.value = updates[i]["prefix"];
 			$("step4-nss").firstChild.childNodes[i + 1].childNodes[1].firstChild.value = updates[i]["url"];
+		}
+	},
+	
+	updateBreadCrump : function(event){
+		if(Event.element(event).value == 'ld'){
+			webServiceSpecial.doUpdateBreadCrump("ld");
+		} else {
+			webServiceSpecial.doUpdateBreadCrump("other");
+		}
+	},
+	
+	doUpdateBreadCrump : function($protocol){
+		if($protocol == 'ld'){
+			$("menue-step2-delimiter").style.display = "none";
+			$("menue-step3-delimiter").style.display = "none";
+			$("menue-step2").style.display = "none";
+			$("menue-step3").style.display = "none";
+			$("menue-step4").firstChild.nodeValue = $("menue-step4").firstChild.nodeValue.replace(/4./g, "2.");
+			$("menue-step5").firstChild.nodeValue = $("menue-step5").firstChild.nodeValue.replace(/5./g, "3.");
+			$("menue-step6").firstChild.nodeValue = $("menue-step6").firstChild.nodeValue.replace(/6./g, "4.");
+			
+			$('step4').firstChild.firstChild.nodeValue = $('step4').firstChild.firstChild.nodeValue.replace(/4./g, "2.");
+			$('step5').firstChild.firstChild.nodeValue = $('step5').firstChild.firstChild.nodeValue.replace(/5./g, "3.");
+			$('step6').firstChild.firstChild.nodeValue = $('step6').firstChild.firstChild.nodeValue.replace(/6./g, "4.");
+		} else {
+			$("menue-step2-delimiter").style.display = "";
+			$("menue-step3-delimiter").style.display = "";
+			$("menue-step2").style.display = "";
+			$("menue-step3").style.display = "";
+			$("menue-step4").firstChild.nodeValue = $("menue-step4").firstChild.nodeValue.replace(/2./g, "4.");
+			$("menue-step5").firstChild.nodeValue = $("menue-step5").firstChild.nodeValue.replace(/3./g, "5.");
+			$("menue-step6").firstChild.nodeValue = $("menue-step6").firstChild.nodeValue.replace(/4./g, "6.");
+			
+			$('step4').firstChild.firstChild.nodeValue = $('step4').firstChild.firstChild.nodeValue.replace(/2./g, "4.");
+			$('step5').firstChild.firstChild.nodeValue = $('step5').firstChild.firstChild.nodeValue.replace(/3./g, "5.");
+			$('step6').firstChild.firstChild.nodeValue = $('step6').firstChild.firstChild.nodeValue.replace(/4./g, "6.");
 		}
 	}
 }
