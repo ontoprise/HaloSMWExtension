@@ -59,7 +59,21 @@ a.navigationLink {
 }
 
 #OBHelp {
- 	background-color:#FFFFFF;
+	background-color:#FFFFFF;
+}
+#OBHint {
+	background-color:#F8FAAA;
+}
+#hideInstancesButton {
+	margin-left:10px;
+}
+
+#propertyRangeSpan {
+	font-size:10px;
+}
+
+#directPropertySwitch {
+	margin-left: 160px;
 }
 
 #categoryTree, #relattributes, #propertyTree {
@@ -89,8 +103,10 @@ a.navigationLink {
 	font-size: 12px;
 	float: left;
 	width: 30%;
+}
 
-	
+#categoryTreeSwitch , #propertyTreeSwitch {
+	margin-left:2px;
 }
 
 #instanceContainer {
@@ -140,12 +156,21 @@ a.selectedSwitch {
 	width: 80px;
 }
 
+#relattValues, #relattRangeType {
+	float:right;
+	text-align:right;
+}
+
 .pfeil{
 	float: left;
 	margin-left: 3px;
 	margin-right: 3px;
 	margin-top: 22px;
 	visibility: visible;
+}
+
+.pfeil > img {
+	cursor: pointer;
 }
 
 .OB-header{
@@ -157,12 +182,10 @@ a.selectedSwitch {
 	width: 100%;
 }
 
-
 .menuBar {
 	float: left;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 11px;
-
 	color: #747474;
 	width: 100%;
 	border: 1px solid #AAAAAA;
@@ -172,6 +195,9 @@ a.selectedSwitch {
 	background-color: #99AABB;
 }
 
+#menuBarConceptTree a:first-child {
+	margin-left: 5px;
+}
 
 .menuBarConceptTree {
 	background-color: #BBCCDD;
@@ -185,6 +211,10 @@ a.selectedSwitch {
 	background-color: #BB9999;
 }
 
+#menuBarInstance a:first-child {
+	margin-left: 5px;
+}
+
 .menuBarProperties {
 	background-color: #DDBB88;
 }
@@ -193,6 +223,9 @@ a.selectedSwitch {
 	background-color: #BB9966;
 }
 
+#menuBarProperties a:first-child {
+	margin-left: 5px;
+}
 
 .menuBarPropertyTree{
 	background-color: #DDBB88;
@@ -202,16 +235,36 @@ a.selectedSwitch {
 	background-color: #BB9966;
 }
 
+#menuBarPropertyTree a:first-child {
+	margin-left:5px;
+}
+
 .gardeningissue {
 	color: #FF7700;
 	font-weight: bold;
 }
 
-.OB-filters{
-
+.OB-filters {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10px;
 	color: #747474;
+	margin-top:5px 0 0 5px;
+}
+
+.OB-filters > span{
+	float:left;
+	margin-right:5px;
+	margin-top:5px;
+}
+
+.OB-filters > input {
+	display: block;
+	width: 60%;
+	float:left;
+	margin-top:5px;
+}
+
+.OB-filters > button {
 	margin-top:5px;
 }
 
