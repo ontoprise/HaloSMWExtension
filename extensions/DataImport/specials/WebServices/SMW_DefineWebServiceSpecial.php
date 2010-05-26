@@ -651,24 +651,30 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 					$html .= "##;";
 				}
 			} else {
-				if(strlen(''.$wwsdParameter['name']) > 0){
-					$html .= $wwsdParameter["name"].";";
-					if(strlen($wwsdParameter["xpath"]."") > 0){
-						$html .= "xpath;";
-						$html .= $wwsdParameter["xpath"].";";
-					} else if(strlen($wwsdParameter["json"]."") > 0){
-						$html .= "json;";
-						$html .= $wwsdParameter["json"].";";
-					} else if(strlen($wwsdParameter["predicate"]."") > 0){
-						$html .= "predicate;";
-						$html .= $wwsdParameter["predicate"].";";
-					} else {
-						$html .= "##;";
-						$html .= "##;";
+				//ignore special purpose result parts for ld wss
+				if($protocol != 'ld' || 
+						((''.$wwsdParameter["predicate"] != DI_ALL_SUBJECTS || ''.$wwsdParameter["name"] != DI_ALL_SUBJECTS_ALIAS)
+						&& ($protocol != 'ld' || ''.$wwsdParameter["predicate"] != DI_ALL_PREDICATES || ''.$wwsdParameter["name"] != DI_ALL_PREDICATES_ALIAS)
+						&& ($protocol != 'ld' || ''.$wwsdParameter["predicate"] != DI_ALL_OBJECTS || ''.$wwsdParameter["name"] != DI_ALL_OBJECTS_ALIAS))){
+					if(strlen(''.$wwsdParameter['name']) > 0){
+						$html .= $wwsdParameter["name"].";";
+						if(strlen($wwsdParameter["xpath"]."") > 0){
+							$html .= "xpath;";
+							$html .= $wwsdParameter["xpath"].";";
+						} else if(strlen($wwsdParameter["json"]."") > 0){
+							$html .= "json;";
+							$html .= $wwsdParameter["json"].";";
+						} else if(strlen($wwsdParameter["predicate"]."") > 0){
+							$html .= "predicate;";
+							$html .= $wwsdParameter["predicate"].";";
+						} else {
+							$html .= "##;";
+							$html .= "##;";
+						}
+					} else if (strlen("".$wwsdParameter['prefix']) > 0){
+						$prefixes .= $wwsdParameter['prefix'].";";
+						$prefixes .= $wwsdParameter['uri'].";";
 					}
-				} else if (strlen("".$wwsdParameter['prefix']) > 0){
-					$prefixes .= $wwsdParameter['prefix'].";";
-					$prefixes .= $wwsdParameter['uri'].";";
 				}
 			}
 		}
@@ -676,7 +682,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "</span>";
 		
 		if($result){
-			 $html .= $prefixes."</span>";
+			$html .= $prefixes."</span>";
 		}
 		
 		return $html;

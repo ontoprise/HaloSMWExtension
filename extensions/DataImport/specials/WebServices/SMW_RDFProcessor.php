@@ -9,13 +9,6 @@
 global $smwgDIIP;
 require_once("$smwgDIIP/libs/arc/ARC2.php");
 
-//define some special predicates, which can be used in result part definitions
-define("ALL_SUBJECTS", "__triple__subjects");
-define("ALL_PREDICATES", "__triple__predicates");
-define("ALL_OBJECTS", "__triple__objects");
-define("RDF_POSTPROCESS_REQUIRED", "postprocess required");
-
-
 /**
  * This class provides a wrapper for the ARC2 library
  * which is used by SMWWebService to extract result parts
@@ -42,8 +35,9 @@ class SMWRDFProcessor {
 	private $processedIndex = array();
 	private $subject;
 	private $namespacePrefixes = array();
-	private $allPredicatesRequested = false; //user has used the ALL_PREDICATES predicate
-	private $allObjectsRequested = false; //user has used the ALL_OBJECTS predicate
+	private $allPredicatesRequested = false; //user has used the DI_ALL_PREDICATES predicate
+	private $allObjectsRequested = false; //user has used the DI_ALL_OBJECTS predicate
+	private $language;
 	
 	
 	
@@ -55,13 +49,15 @@ class SMWRDFProcessor {
 	 * @param unknown_type $content
 	 * @return unknown_type
 	 */
-	public function parse($uri, $subject, $content = null, $format){
+	public function parse($uri, $subject, $content = null, $format, $language){
 		$parserName = !$format ? "RDF" : strtoupper($format);
 		$parserName = "get".$parserName."Parser";
 		$parser = ARC2::$parserName();
 		$parser->parse($uri, $content);
 		$this->index = $parser->getSimpleIndex(false);
+		
 		$this->subject = $subject;
+		$this->language = $language;
 		
 		$this->processedIndex = array();
 		$this->allPredicatesRequested = false;
@@ -95,7 +91,7 @@ class SMWRDFProcessor {
 	}
 	
 	private function getRequestedLanguage($predicate){
-		$lang = "";
+		$lang = $this->language;
 		if(strpos($predicate, "@") > 0){
 			$lang = substr($predicate, strpos($predicate, "@")+1);
 			$predicate = substr($predicate, 0, strpos($predicate, "@"));
@@ -120,14 +116,14 @@ class SMWRDFProcessor {
 		if(strlen($this->subject) > 0){ //user has chosen to retrieve triples for a certain subject
 			$subject = $this->resolveNamespacePrefix($this->subject);
 			
-			if($predicate == ALL_SUBJECTS){
+			if($predicate == DI_ALL_SUBJECTS){
 				if(array_key_exists($subject, $this->index)){
 					$result = array($this->subject);
 					if(!array_key_exists($subject, $this->processedIndex)){
 						$this->processedIndex[$subject] = array();
 					}
 				}
-			} else if($predicate == ALL_PREDICATES){
+			} else if($predicate == DI_ALL_PREDICATES){
 				$this->allPredicatesRequested = true;;
 				if(!array_key_exists($subject, $this->processedIndex)){
 					$this->processedIndex[$subject] = array();
@@ -137,7 +133,7 @@ class SMWRDFProcessor {
 						$this->processedIndex[$subject][$predicate] = array();
 					}	
 				}
-			} else if($predicate == ALL_OBJECTS){
+			} else if($predicate == DI_ALL_OBJECTS){
 				$this->allObjectsRequested = true;
 				foreach($this->index[$subject] as $predicateId => $predicate){
 					$processedObjects = array();
@@ -166,22 +162,22 @@ class SMWRDFProcessor {
 				$this->processedIndex[$subject][$predicate] = $processedObjects;
 			}
 		} else { //user is not interested in a certain subject
-			if($predicate == ALL_SUBJECTS){
+			if($predicate == DI_ALL_SUBJECTS){
 				foreach(array_keys($this->index) as $subjectId){ //add all subject ids to the processed index
 					if(!array_key_exists($subjectId, $this->processedIndex)){
 						$this->processedIndex[$subjectId] = array();
 					}
 				}		
-			} else { // predicate != ALL_SUBJECTS
+			} else { // predicate != DI_ALL_SUBJECTS
 				foreach($this->index as $subjectId => $subject){
-					if($predicate == ALL_PREDICATES){
+					if($predicate == DI_ALL_PREDICATES){
 						$this->allPredicatesRequested = true;
 						foreach(array_keys($subject) as $predicateId){
 							if(!array_key_exists($predicateId, $this->processedIndex[$subjectId])){
 								$this->processedIndex[$subjectId][$predicateId] = array();
 							}
 						}
-					} else if($predicate == ALL_OBJECTS){
+					} else if($predicate == DI_ALL_OBJECTS){
 						$this->allObjectsRequested = true;
 						foreach($subject as $predicateId => $objects){
 							$processedObjects = array();
@@ -215,7 +211,7 @@ class SMWRDFProcessor {
 			}
 		}
 		
-		return RDF_POSTPROCESS_REQUIRED;
+		return DI_RDF_POSTPROCESS_REQUIRED;
 	}
 	
 	/**
@@ -233,9 +229,9 @@ class SMWRDFProcessor {
 		$result = array();
 		foreach($this->processedIndex as $subjectId => $subject){
 			if(count($subject) == 0){ //a subject with no associated triples
-				if($requestPredicate == ALL_SUBJECTS){
+				if($requestPredicate == DI_ALL_SUBJECTS){
 					$result[] = $subjectId;
-				} else if($requestPredicate == ALL_PREDICATES){
+				} else if($requestPredicate == DI_ALL_PREDICATES){
 					$result[] = ""; //this should never happen
 				} else {
 					$result [] = "";
@@ -252,7 +248,7 @@ class SMWRDFProcessor {
 						}
 					}
 					
-					if($requestPredicate == ALL_SUBJECTS){
+					if($requestPredicate == DI_ALL_SUBJECTS){
 						for($i=0; $i < $maxObjects; $i++){
 							$result[] = $subjectId;
 						}
@@ -268,20 +264,20 @@ class SMWRDFProcessor {
 				} else { //all predicates were requested	
 					foreach($subject as $predicateId => $predicate){
 						if(count($predicate) == 0){ //no values for that predicate exist
-							if($requestPredicate == ALL_SUBJECTS){
+							if($requestPredicate == DI_ALL_SUBJECTS){
 								$result[] = $subjectId;
-							} else if($requestPredicate == ALL_PREDICATES){
+							} else if($requestPredicate == DI_ALL_PREDICATES){
 								$result[] = $predicateId;
 							} else {
 								$result [] = "";
 							}
 						} else { //values for the current predicate are available
 							foreach($predicate as $object){
-								if($requestPredicate == ALL_SUBJECTS){
+								if($requestPredicate == DI_ALL_SUBJECTS){
 									$result[] = $subjectId;
-								} else if($requestPredicate == ALL_PREDICATES){
+								} else if($requestPredicate == DI_ALL_PREDICATES){
 									$result[] = $predicateId;
-								} else if($requestPredicate == ALL_OBJECTS){
+								} else if($requestPredicate == DI_ALL_OBJECTS){
 									$result[] = $object;
 								} else {
 									if($predicateId == $requestPredicate){

@@ -107,9 +107,11 @@ function smwf_wsu_processStep2($name){
 	$response = "";
 	foreach($results->children() as $result){
 		foreach($result->children() as $part){
-			$response .= $result->attributes()->name;
-			$response .= ".".$part->attributes()->name;
-			$response .= ";";
+			if(strlen(''.$part->attributes()->name) > 0){ //this is for ignoring namespace definitions
+				$response .= $result->attributes()->name;
+				$response .= ".".$part->attributes()->name;
+				$response .= ";";
+			}
 		}
 	}
 	return $response;

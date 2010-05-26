@@ -48,6 +48,17 @@ define('DI_POST_SEPARATOR', '__post__separator');
 define('DI_SUBJECT', '__subject');
 define('DI_SUBJECT_ALIAS', 'subject');
 define('DI_URL_SUFFIX_ALIAS', 'url-suffix');
+define("DI_ALL_SUBJECTS", "__triple__subjects");
+define("DI_ALL_PREDICATES", "__triple__predicates");
+define("DI_ALL_OBJECTS", "__triple__objects");
+define("DI_ALL_SUBJECTS_ALIAS", "allSubjects");
+define("DI_ALL_PREDICATES_ALIAS", "allPredicates");
+define("DI_ALL_OBJECTS_ALIAS", "allObjects");
+define("DI_RDF_POSTPROCESS_REQUIRED", "postprocess required");
+define("DI_PREDICATES", "__predicates");
+define("DI_PREDICATES_ALIAS", "predicates");
+define("DI_LANGUAGE", "__language");
+define("DI_LANGUAGE_ALIAS", "language");
 
 
 
@@ -321,10 +332,12 @@ class WebService {
 		} else {
 			$ws->mParsedParameters = '';
 		}
-		//Please note, the same is done in construct
+		//add special purpose parameters for ld protocol
 		if(strtolower($ws->mProtocol) == "linkeddata"){
 			$ws->mParameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
 			$ws->mParameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
+			$ws->mParameters .= '<parameter name="'.DI_PREDICATES_ALIAS.'" path="'.DI_PREDICATES.'" optional="true"/>';
+			$ws->mParameters .= '<parameter name="'.DI_LANGUAGE_ALIAS.'" path="'.DI_LANGUAGE.'" optional="true"/>';
 		}
 
 		// check if indexes used in parameter-paths that contain arrays
@@ -348,7 +361,16 @@ class WebService {
 				$ws->mResult .= $p->asXML()."\n";
 			}
 		}
-
+		
+		//Add special purpose result parts for ld protocol
+		if(strtolower($ws->mProtocol) == "linkeddata"){
+			$ws->mResult = str_replace("</result>", "", $ws->mResult);
+			$ws->mResult .= '<part name="'.DI_ALL_SUBJECTS_ALIAS.'" predicate="'.DI_ALL_SUBJECTS.'"/>';
+			$ws->mResult .= '<part name="'.DI_ALL_PREDICATES_ALIAS.'" predicate="'.DI_ALL_PREDICATES.'"/>';
+			$ws->mResult .= '<part name="'.DI_ALL_OBJECTS_ALIAS.'" predicate="'.DI_ALL_OBJECTS.'"/>';
+			$ws->mResult .= "</result>";
+		}
+		
 		$tmpMsg = array();
 		$v = self::getWWSDElement($parser, '/WebService/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
@@ -599,7 +621,7 @@ class WebService {
 					$results[$part] = $this->getResults($response, $rdef, $part);
 					$tmpResult = $this->evaluateAdditionalPathAttribute(
 						$rdef, $part, $results[$part]);
-					if($tmpResult = RDF_POSTPROCESS_REQUIRED){
+					if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
 						$postProcess[$part] = $this->getPredicateForAlias($part, $rdef); 
 					} else {
 						$results[$part] = $tmpResult; 
@@ -610,11 +632,24 @@ class WebService {
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
 					$rdef, $parts[1], $results[$parts[1]]);
 				
-				if($tmpResult = RDF_POSTPROCESS_REQUIRED){
+				if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
 					$postProcess[$parts[1]] = $this->getPredicateForAlias($parts[1], $rdef); 
 				} else {
 					$results[$parts[1]] = $tmpResult; 
 				}
+			}
+		}
+		
+		//deal with the predicates special purpose parameter
+		if(array_key_exists(DI_PREDICATES, $this->mCallParameters)){
+			$this->initializeLinkedDataResultPartExtraction($response, $rdef);
+			$predicates = explode(";", $this->mCallParameters[DI_PREDICATES][0]);
+			foreach($predicates as $p){
+				$p = explode("=", $p, 2);
+				$alias = $p[0];
+				$predicate = $p[1];
+				SMWRDFProcessor::getInstance()->preprocessPredicate($predicate);
+				$postProcess[$alias] = $predicate;
 			}
 		}
 		
@@ -640,14 +675,18 @@ class WebService {
 	private function initializeLinkedDataResultPartExtraction($wsResponse, $resultDef){
 		if($this->isLinkedDataResource()){
 			$subject = "";
-			
 			if(array_key_exists(DI_SUBJECT, $this->mCallParameters)){
 				$subject = $this->mCallParameters[DI_SUBJECT][0];
 			}
 			
+			$language = "";
+			if(array_key_exists(DI_LANGUAGE, $this->mCallParameters)){
+				$language = $this->mCallParameters[DI_LANGUAGE][0];
+			}
+			
 			//parse WS result via the ARC2 library
 			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse, 
-				$this->getWSClient()->getContentType());
+				$this->getWSClient()->getContentType(), $language);
 			
 			//setup namespace prefixes
 			SMWRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);
