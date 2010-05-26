@@ -627,6 +627,7 @@ function smwfHaloAddHTMLHeader(&$out) {
 	$skin = $wgUser->getSkin();
 	$skinName = $wgUser !== NULL ? $wgUser->getSkin()->getSkinName() : $wgDefaultSkin;
 	$jsm = SMWResourceManager::SINGLETON();
+	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/smwhalo.css');
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/Autocompletion/wick.css');
 
 	$jsm->addCSSIf($smwgHaloScriptPath . '/skins/semantictoolbar.css', "edit");

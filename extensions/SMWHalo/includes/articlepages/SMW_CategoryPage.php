@@ -23,7 +23,7 @@
  * @defgroup SMWHaloArticlepages SMWHalo Articlepages
  * @ingroup SMWHalo
  *  
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  * 
  * Extended handling for category description pages. 
  * 
@@ -312,7 +312,7 @@ class SMWCategoryViewer extends CategoryViewer {
 		
 		$r .= "</div>";
 		
-		$r .= '<table style="width: 100%;"  border = "1px" class="smw-category-schema-table">';
+		$r .= '<table style="width: 100%;" class="smw-category-schema-table smwtable">';
 		if ($ns == SMW_NS_PROPERTY) {
 			$r .= '<tr><th>Property</th><th>Range/Type</th></tr>';
 		} 

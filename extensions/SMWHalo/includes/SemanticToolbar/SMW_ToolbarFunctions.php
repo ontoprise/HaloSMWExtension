@@ -66,7 +66,7 @@ function smwf_tb_GetHelp($namespace, $action){
 	if ($smwgAllowNewHelpQuestions){
 		$html .= '<a href="javascript:void(0)" onclick="$(\'askHelp\').show()">Ask your own question</a><br/>';
 		$html .= '<div id="askHelp" style="display:none"><input id="question" name="question" type="text" size="20" onKeyPress="return submitenter(this,event)"/>';
-		$html .= '<img id="questionLoaderIcon" style="display:none; margin-bottom:3px; margin-left:3px;" src="' . $smwgHaloScriptPath . '/skins/ajax-loader.gif"/><br/>';
+		$html .= '<img id="questionLoaderIcon" src="' . $smwgHaloScriptPath . '/skins/ajax-loader.gif"/><br/>';
 		$html .= '<a href="javascript:void(0)" onclick="askQuestion()">Send</a>&nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="$(\'askHelp\').hide()">Cancel</a></div>';
 	}
 	return $html;

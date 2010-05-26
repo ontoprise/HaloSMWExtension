@@ -254,6 +254,11 @@ a.plusminus:hover{
     text-align: right;
     font-size: 10px;
 }
+#questionLoaderIcon {
+	display:none;
+	margin-bottom:3px;
+	margin-left:3px;
+}
 #stb_cont8-headline{
     background-color: #74DD82;
     border: 1px solid #74DD82;
