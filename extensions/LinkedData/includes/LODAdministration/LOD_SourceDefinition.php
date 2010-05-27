@@ -52,7 +52,8 @@ class LODSourceDefinition  {
 	
 	// string: 	
 	// A short name like "dbpedia" for the source (to be precise: the dataset of
-	// a source). The ID will later be referenced in other places e.g. queries. 
+	// a source). The ID will later be referenced in other places e.g. queries and
+	// mappings. 
 	private $mID;
 
 	// int:
