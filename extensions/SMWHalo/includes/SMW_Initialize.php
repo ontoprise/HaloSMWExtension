@@ -86,6 +86,8 @@ function smwgHaloSetupExtension() {
 		trigger_error("Multiple webservice endpoints require a messagebroker to handle triplestore updates.");
 		die();
 	}
+	global $smwgWebserviceProtocol;
+	$smwgWebserviceProtocol="rest";
 	$smwgMasterGeneralStore = NULL;
 
 	// Autoloading. Use it for everything! No include_once or require_once please!
