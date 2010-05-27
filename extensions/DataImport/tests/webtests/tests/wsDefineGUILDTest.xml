@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSDefineGUI">
+	
+	&goToLogin;
+	&createWebTestWS;
+
+	<target name="testWSDefineGUI">
+
+		<webtest name="WSDefineLDPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
+
+			<setRadioButton description="Check radio button step1-protocol-ld"
+				htmlId="step1-protocol-ld" />
+			
+			<clickButton description="go to step2" htmlId="step1-go-img" />
+			
+			<clickButton xpath="//div[@id='step4-rest-intro']/input[3]" />
+
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"
+				value="alias" />
+			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input"
+				value="rdf:type" />
+			
+			<clickButton description="display namespace prefix table" htmlId="step4-addnss" />
+			
+			<setInputField xpath="//table[@id='step4-nss']/tbody/tr[2]/td[1]/input"
+				value="xml" />
+			<setInputField xpath="//table[@id='step4-nss']/tbody/tr[2]/td[2]/input"
+				value="rsomething" />
+				
+			<clickButton description="go to step5" htmlId="step4-go-img" />
+
+			<clickButton description="go to step6" htmlId="step5-go-img" />
+
+			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSLD" />
+			
+			<clickButton description="go to step7" htmlId="step6-go-img" />
+			
+			<!--   <verifyText text='4. Save WWSD'/>
+			<verifyText text='2. Choose result part'/> -->
+			
+			<sleep seconds ="10" description="wait until the web service is created completely"/> 
+
+		</webtest>
+
+		<webtest name="WSDefineLDPart2">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSLD" />
+				
+			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*predicate=.*rdf.*namespace.*prefix=.*xml.*uri.*something.*WebService' 
+			regex="true"/>
+			
+		</webtest>
+		
+		<webtest name="WSDefineRESTPart3">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			<invoke
+				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
+				
+			<verifyText text='NewWebTestWSLD'/>
+		</webtest>
+	</target>
+</project>
