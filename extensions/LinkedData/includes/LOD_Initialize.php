@@ -63,7 +63,11 @@ $lodgScriptPath = $wgScriptPath . '/extensions/LinkedData';
 $lodgBaseStore = LOD_STORE_SQL;
 
 
-
+####
+# Mappings for a data source always have a source and a target. Mappings are 
+# stored in wiki articles, where the target should be specified. If the targets
+# are omitted, the default mapping target is set.
+$lodgDefaultMappingTarget = "wiki";
 
 
 # load global functions
@@ -93,7 +97,7 @@ require_once("$lodgIP/tests/testcases/TestMapping.php");
 	# Mappings for different LOD sources are stored with the LODMappingStore. The
 	# actual store for this data can be set with setIOStrategy().
 	##
-	LODMappingStore::setIOStrategy(new MockMappingIOStrategy());
+	LODMappingStore::setStore(new MockMappingStore());
 //--- End of test configuration	
 	
 }

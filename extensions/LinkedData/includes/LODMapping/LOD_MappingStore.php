@@ -39,10 +39,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 //require_once("$lodgIP/...");
 
 /**
- * This class handles the storage of mappings for Linked Data content. 
- * Mappings can be saved, loaded and delete from the store. The store must be
- * configured with an I/O strategy that determines where the mapping is stored 
- * and from where it is loaded.
+ * This class provides access to the storage object for mappings for Linked Data content. 
+ * Mappings can be saved, loaded and delete with the storage object. 
  * 
  * @author Thomas Schweitzer
  * 
@@ -50,136 +48,52 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class  LODMappingStore  {
 	
 	//--- Constants ---
-	const LOD_SOURCE_DEFINITION_GRAPH = "LODSourceDefinitionGraph";
-	const LOD_BASE_URI = "http://www.ontoprise.de/";
-	const LOD_SOURCE_DEFINITION_URI_SUFFIX = "sd#";
-	const LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX = "sdprop#";
 	
 	//--- Private fields ---
 	
-	// LODMappingStore
-	// Points to the singleton instance of the LODMappingStore store.
-	private static $mInstance;
 	
-	// ILODMappingIOStrategy
+	// ILODMappingStore
 	// This object handles the actual input and output operations
-	private static $mIOStrategy;
+	private static $mStore;
 
 	
 	/**
-	 * Constructor for LODMappingStore
+	 * No instance of LODMappingStore can be created
 	 *
 	 */		
-	protected function __construct() {
-		self::$mInstance = $this;
+	private function __construct() {
 	}
 	
 
-	//--- getter/setter ---
-//	public function getXY()           {return $this->mXY;}
-
 	/**
-	 * Sets the IO strategy that stores and retrieves mappings from a store.
-	 * This function must be called before any other IO operation of this class.
+	 * Sets the actual implementation of the store that stores and retrieves mappings from a store.
+	 * This function must be called before getStore().
 	 *
-	 * @param ILODMappingIOStrategy $ioStrategy
-	 * 		An implementation of the interface ILODMappingIOStrategy that handles the
+	 * @param ILODMappingStore $store
+	 * 		An implementation of the interface ILODMappingStore that handles the
 	 * 		actual IO operations for mappings.
 	 */
-	public static function setIOStrategy($ioStrategy) { self::$mIOStrategy = $ioStrategy; }
+	public static function setStore($store) { self::$mStore = $store; }
+	
+	/**
+	 * Returns the actual implementation of the store that stores and retrieves mappings from a store.
+	 * The function setStore() must be called before this one.
+	 *
+	 * @return ILODMappingStore
+	 * 		An implementation of the interface ILODMappingStore that handles the
+	 * 		actual IO operations for mappings.
+	 * @throws LODMappingException(LODMappingException::NO_STORE_SET)
+	 * 		if no store is set
+	 */
+	public static function getStore() {
+		if (!isset(self::$mStore)) {
+			throw new LODMappingException(LODMappingException::NO_STORE_SET);
+		}
+		return self::$mStore;
+	}
 	
 	//--- Public methods ---
 	
-	/**
-	 * Returns the singleton instance of this class.
-	 * 
-	 * @return LODMappingStore
-	 * 		The only instance of this class.
-	 *
-	 */
-	public static function getInstance() {
-		if (!self::$mInstance) {
-			$c = __CLASS__;
-			new $c;
-		}
-		return self::$mInstance;
-	}
-
-	/**
-	 * Checks if the mapping with the given ID exists in the store for mappings.
-	 *
-	 * @param string $mappingID
-	 * 		ID of the mapping
-	 * 
-	 * @return bool
-	 * 	<true>, if the mapping exists
-	 * 	<false> otherwise
-	 * 
-	 * @throws LODMappingException(LODMappingException::NO_IO_STRATEGY_SET)
-	 * 		if no IO strategy is set
-	 *  
-	 */
-	public function existsMapping($mappingID) {
-		if (!isset(self::$mIOStrategy)) {
-			throw new LODMappingException(LODMappingException::NO_IO_STRATEGY_SET);
-		}
-		return self::$mIOStrategy->existsMapping($mappingID);
-		
-	}
-	
-	/**
-	 * Stores the given mapping with the IO strategy
-	 * 
-	 * @param LODMapping $mapping
-	 * 		This object defines a mapping for a linked data source.
-	 * 
-	 * @return bool 
-	 * 		<true> if the mapping was stored successfully or
-	 * 		<false> otherwise
-	 * @throws LODMappingException(LODMappingException::NO_IO_STRATEGY_SET)
-	 * 		if no IO strategy is set
-	 * 	
-	 */
-	public function saveMapping(LODMapping $mapping) {
-		if (!isset(self::$mIOStrategy)) {
-			throw new LODMappingException(LODMappingException::NO_IO_STRATEGY_SET);
-		}
-		return self::$mIOStrategy->saveMapping($mapping);
-	}
-	
-	/**
-	 * Loads the definition of the mapping with the given ID. The IO strategy
-	 * must be set before this method is called.
-	 *
-	 * @param string $mappingID
-	 * 		ID of the mapping
-	 * 
-	 * @return LODMapping
-	 * 		The definition of the mapping or <null>, if there is no such mapping
-	 * 		with the given ID.
-	 * @throws LODMappingException(LODMappingException::NO_IO_STRATEGY_SET)
-	 * 		if no IO strategy is set
-	 */
-	public function loadMapping($mappingID) {
-		if (!isset(self::$mIOStrategy)) {
-			throw new LODMappingException(LODMappingException::NO_IO_STRATEGY_SET);
-		}
-		return self::$mIOStrategy->loadMapping($mappingID);
-	}
-	
-	/**
-	 * Deletes the mapping with the ID $mappingID.
-	 * The IO strategy must be set before this method is called.
-	 *
-	 * @param string $mappingID
-	 * 		ID of the mapping.
-	 */
-	public function deleteMapping($mappingID) {
-		if (!isset(self::$mIOStrategy)) {
-			throw new LODMappingException(LODMappingException::NO_IO_STRATEGY_SET);
-		}
-		return self::$mIOStrategy->deleteMapping($mappingID);
-	}
 	
 	
 	//--- Private methods ---

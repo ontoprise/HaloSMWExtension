@@ -33,7 +33,7 @@ abstract class LODLanguage {
 	const PF_MAPPING = 1;
 
 	//---IDs of parser function parameters ---
-//	const PFP_...	= ...;
+	const PFP_MAPPING_TARGET	= 100;
 	
 	
 	// the special message arrays ...

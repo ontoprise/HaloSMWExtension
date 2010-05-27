@@ -20,7 +20,8 @@ class TestMapping extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 	
-	private $mMappingID = "TestMapping";
+	private $mMappingSource = "dbpedia";
+	private $mMappingTarget = "wikipedia";
     private $mMappingText1;
     private $mMappingText2;
 		
@@ -75,46 +76,112 @@ text;
      */
     function testLODMapping() {
     	
-    	$mapping = new LODMapping($this->mMappingID, $this->mMappingText1);
+    	$mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki");
+    	$this->assertNotNull($mapping);
+    	
+    	// Test mapping with default target.
+    	$mapping = new LODMapping($this->mMappingText1, "dbpedia");
     	$this->assertNotNull($mapping);
     	
     	$this->assertEquals($this->mMappingText1, $mapping->getMappingText());    	
+    	$this->assertEquals("dbpedia", $mapping->getSource());    
+    	global $lodgDefaultMappingTarget;	
+    	$this->assertEquals($lodgDefaultMappingTarget, $mapping->getTarget());    	
     	
     }
+    
+    function testLODMappingsStore() {
+    	$this->doTestLODMappingStore(new MockMappingStore());
+//    	$this->doTestLODMappingStore(...);
+    }
+    
+    function testMappingsInArticles() {
+    	$this->doTestMappingsInArticles(new MockMappingStore());
+//    	$this->doTestMappingsInArticles(...);
+    }
+    
     
     /**
      * Tests the class LODMappingStore which stores, loads and deletes mappings
      *
      */
-    function testLODMappingStore() {
+    function doTestLODMappingStore($theStore) {
     	
-    	$mapping = new LODMapping($this->mMappingID, $this->mMappingText1);
-        // Get the mapping store and configure its I/O strategy.
+        // Get the mapping store and configure the actual store.
         // The store is used when the article with a mapping is saved.
-        LODMappingStore::setIOStrategy(new MockMappingIOStrategy());
+        LODMappingStore::setStore($theStore);
         // Get the mapping store
-        $store = LODMappingStore::getInstance();
+        $store = LODMappingStore::getStore();
         $this->assertNotNull($store);
         
-        // Store a mapping
-        $r = $store->saveMapping($mapping);
+        // Store mappings
+    	$mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki");
+        $r = $store->addMapping($mapping);
+        $this->assertTrue($r);
+    	$mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki1");
+        $r = $store->addMapping($mapping);
+        $this->assertTrue($r);
+    	$mapping = new LODMapping($this->mMappingText1, "dbpedia1", "wiki");
+        $r = $store->addMapping($mapping);
         $this->assertTrue($r);
         
-        // Load the mapping with the ID of the mapping that was saved.
-        $mapping = $store->loadMapping($this->mMappingID);
-        $this->assertNotNull($mapping);
+        // Load the mapping with the saved source and target.
+        $mappings = $store->getAllMappings("dbpedia", "wiki");
+        $this->assertNotNull($mappings);
+        $mapping = $mappings[0];
         
         // Make sure that the correct mapping text was saved and loaded.
         $this->assertEquals($this->mMappingText1, $mapping->getMappingText());
-    	
-    	// Delete the mapping
-    	$store->deleteMapping($this->mMappingID);
+
+        // Load all mappings for a source.
+        $mappings = $store->getAllMappings("dbpedia");
+        $this->assertNotNull($mappings);
+        $this->assertEquals(2, count($mappings));
+        $this->assertEquals("dbpedia", $mappings[0]->getSource());
+        $this->assertEquals("dbpedia", $mappings[1]->getSource());
+        
+        // Load all mappings for a target.
+        $mappings = $store->getAllMappings(null, "wiki");
+        $this->assertNotNull($mappings);
+        $this->assertEquals(2, count($mappings));
+        $this->assertEquals("wiki", $mappings[0]->getTarget());
+        $this->assertEquals("wiki", $mappings[1]->getTarget());
+
+        // Load all existing mappings.
+        $mappings = $store->getAllMappings();
+        $this->assertNotNull($mappings);
+        $this->assertEquals(3, count($mappings));
+        
+        // Delete a specific mapping
+    	$store->removeAllMappings("dbpedia", "wiki");
     	
         // Try to load the deleted mapping and make sure it no longer exists.
-        $mapping = $store->loadMapping($this->mMappingID);
-        $this->assertEquals(null, $mapping);
+        $mappings = $store->getAllMappings("dbpedia", "wiki");
+        $this->assertEquals(0, count($mappings));
         
-    }
+        // Delete mappings with source wildcard
+        $mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki");
+        $r = $store->addMapping($mapping);
+        
+    	$store->removeAllMappings("dbpedia");
+    	
+        // Try to load the deleted mapping and make sure it no longer exists.
+        $mappings = $store->getAllMappings("dbpedia");
+        $this->assertEquals(0, count($mappings));
+
+        // Delete mappings with target wildcard
+        $mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki");
+        $r = $store->addMapping($mapping);
+        $mapping = new LODMapping($this->mMappingText1, "dbpedia", "wiki1");
+        $r = $store->addMapping($mapping);
+        
+    	$store->removeAllMappings(null, "wiki");
+    	
+        // Try to load the deleted mapping and make sure it no longer exists.
+        $mappings = $store->getAllMappings(null, "wiki");
+        $this->assertEquals(0, count($mappings));
+        
+    } 
     
     
     /**
@@ -122,48 +189,77 @@ text;
      * tag must be stored, retrieved and deleted.
      *
      */
-    function testMappingsInArticles() {
-    	$articleName = "Mapping:{$this->mMappingID}";
-        // Get the mapping store and configure its I/O strategy.
+    function doTestMappingsInArticles($theStore) {
+		global $lodgDefaultMappingTarget;
+    	
+    	$articleName = "Mapping:{$this->mMappingSource}";
+        // Get the mapping store and configure the actual store.
         // The store is used when the article with a mapping is saved.
-        LODMappingStore::setIOStrategy(new MockMappingIOStrategy());
+        LODMappingStore::setStore($theStore);
         
         // Get the mapping store
-        $store = LODMappingStore::getInstance();
+        $store = LODMappingStore::getStore();
         $this->assertNotNull($store);
         
+        // Make sure there are no sources and targets in the store
+        $sources = $store->getAllSources();
+        $this->assertEquals(0, count($sources));
+        $targets = $store->getAllTargets();
+        $this->assertEquals(0, count($targets));
+        
         // Make sure the mapping is not stored yet
-        $this->assertFalse($store->existsMapping($this->mMappingID));
+        $this->assertFalse($store->existsMapping($this->mMappingSource, $this->mMappingTarget));
     	
     	// Create article with <mapping> tags and make sure its content is stored
     	// with the LODMappingStore
     	$article = new Article(Title::newFromText($articleName));
     	$text = <<<text
 This is the first mapping:
-<mapping>{$this->mMappingText1}</mapping>
+<mapping target = "{$this->mMappingTarget}">
+	{$this->mMappingText1}
+</mapping>
 
-And this is the second mapping:
-<mapping>{$this->mMappingText2}</mapping>
+And this is the second mapping with default target:
+<mapping>
+	{$this->mMappingText2}
+</mapping>
 text;
         $article->doEdit($text, "");
                 
-        // Make sure the mapping exists
-        $this->assertTrue($store->existsMapping($this->mMappingID));
+        // Make sure the mappings exist
+        $this->assertTrue($store->existsMapping($this->mMappingSource, $this->mMappingTarget));
+        $this->assertTrue($store->existsMapping($this->mMappingSource, $lodgDefaultMappingTarget));
         
-        // Load the mapping with the ID of the mapping that was saved as an
-        // article.
-        $mapping = $store->loadMapping($this->mMappingID);
+        // Load the mappings with the for the saved source and targets.
+        $mapping = $store->getAllMappings($this->mMappingSource, $this->mMappingTarget);
         $this->assertNotNull($mapping);
         
         // Remove linefeeds from the mappings for comparison
-        $mt = str_replace("\n", "", $this->mMappingText1.$this->mMappingText2);
-        $mt = str_replace("\r", "", $mt);
-        $mmt = str_replace("\n", "", $mapping->getMappingText());
-        $mmt = str_replace("\r", "", $mmt);
+        $mt = preg_replace("/\s/","", $this->mMappingText1);
+        $mmt = preg_replace("/\s/","", $mapping[0]->getMappingText());
         
         // Make sure that the correct mapping text was saved and loaded.
         $this->assertEquals($mt, $mmt);
-    	
+        
+        $mapping = $store->getAllMappings($this->mMappingSource, $lodgDefaultMappingTarget);
+        $this->assertNotNull($mapping);
+        
+        // Remove linefeeds from the mappings for comparison
+        $mt = preg_replace("/\s/","", $this->mMappingText2);
+        $mmt = preg_replace("/\s/","", $mapping[0]->getMappingText());
+        
+        // Make sure that the correct mapping text was saved and loaded.
+        $this->assertEquals($mt, $mmt);
+        
+        // Make sure that all sources and targets can be retrieved
+        $sources = $store->getAllSources();
+        $this->assertContains($this->mMappingSource, $sources);
+        $targets = $store->getAllTargets();
+        $this->assertContains($this->mMappingTarget, $targets);
+        $this->assertContains($lodgDefaultMappingTarget, $targets);
+        $this->assertEquals(1, count($sources));
+        $this->assertEquals(2, count($targets));
+        
     	// Delete the article and make sure its content is removed from the triple
     	// store.
     	try {
@@ -172,17 +268,23 @@ text;
     		// Due to the calling environment an exception is thrown.	
     	}
     	
-        // Load the mapping with the ID of the mapping that was saved as an
-        // article.
-        $mapping = $store->loadMapping($this->mMappingID);
-        $this->assertEquals(null, $mapping);
+        // Load the mapping with the source and target of the mapping that was 
+        // saved as an article.
+        $mappings = $store->getAllMappings($this->mMappingSource, $this->mMappingTarget);
+        $this->assertEquals(0, count($mappings));
+        
+        // Make sure there are no sources and targets in the store
+        $sources = $store->getAllSources();
+        $this->assertEquals(0, count($sources));
+        $targets = $store->getAllTargets();
+        $this->assertEquals(0, count($targets));
     	
     }
     
         
 }
 
-class MockMappingIOStrategy implements ILODMappingIOStrategy {
+class MockMappingStore implements ILODMappingStore {
 	
 	// array(string=>string)
 	// Maps from a mapping ID to the mapping text
@@ -192,24 +294,91 @@ class MockMappingIOStrategy implements ILODMappingIOStrategy {
 		self::$mMapping = array();
 	}
 
-	public function existsMapping($mappingID) {
-		return array_key_exists($mappingID, self::$mMapping);
+	public function existsMapping($source, $target) {
+		return array_key_exists(strtolower($source).'---'.strtolower($target), self::$mMapping);
 	}
 	
-	public function saveMapping(LODMapping $mapping) {
-		self::$mMapping[$mapping->getID()] = $mapping->getMappingText();
+	public function addMapping(LODMapping $mapping) {
+		$key = strtolower($mapping->getSource()).'---'.strtolower($mapping->getTarget());
+		if (array_key_exists($key, self::$mMapping)) {
+			self::$mMapping[$key] = self::$mMapping[$key]."\n".$mapping->getMappingText();
+		} else {
+			self::$mMapping[$key] = $mapping->getMappingText();
+		}
 		return true;
 	}
 
-	public function loadMapping($mappingID) {
-		if (array_key_exists($mappingID, self::$mMapping)) {
-			return new LODMapping($mappingID, self::$mMapping[$mappingID]);
+	public function getAllMappings($source = null, $target = null) {
+		$mappings = array();
+		foreach (self::$mMapping as $key => $mapping) {
+			$addMapping = false;
+			$s = substr($key, 0, strpos($key, "---"));
+			$t = substr($key, strpos($key, "---")+3);
+				
+			if ($source == null && $target == null) {
+				$addMapping = true;
+			} else if ($source == null && $target != null) {
+				$addMapping = $t == strtolower($target);
+			} else if ($source !== null && $target == null) {
+				$addMapping = $s == strtolower($source);
+			} else {
+				$source = strtolower($source);
+				$target = strtolower($target);
+				$addMapping = ($key == "$source---$target");
+			}
+			if ($addMapping) {
+				$mappings[] = new LODMapping(self::$mMapping[$key], $s, $t);
+			}
 		}
-		return  null;
+		return $mappings;
 	}
 	
-	public function deleteMapping($mappingID) {
-		unset(self::$mMapping[$mappingID]);
+	public function removeAllMappings($source = null, $target = null) {
+		foreach (self::$mMapping as $key => $mapping) {
+			$delMapping = false;
+			$s = substr($key, 0, strpos($key, "---"));
+			$t = substr($key, strpos($key, "---")+3);
+			if ($source == null && $target == null) {
+				$delMapping = true;
+			} else if ($source == null && $target != null) {
+				$delMapping = $t == strtolower($target);
+			} else if ($source !== null && $target == null) {
+				$delMapping = $s == strtolower($source);
+			} else {
+				$source = strtolower($source);
+				$target = strtolower($target);
+				
+				$delMapping = ($key == "$source---$target");
+			}
+			if ($delMapping) {
+				unset(self::$mMapping[$key]);
+			}
+		}
+		
 	}
+	
+	public function getAllSources() {
+		$sources = array();
+		foreach (self::$mMapping as $key => $m) {
+			$s = substr($key, 0, strpos($key, "---"));
+			if (!in_array($s, $sources)) {
+				$sources[] = $s;
+			}
+		}
+		return $sources;
+	}
+	
+	public function getAllTargets() {
+		$targets = array();
+		foreach (self::$mMapping as $key => $m) {
+			$t = substr($key, strpos($key, "---")+3);
+			if (!in_array($t, $targets)) {
+				$targets[] = $t;
+			}
+		}
+		return $targets;
+	}
+	
+	
 	
 }

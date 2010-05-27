@@ -50,7 +50,7 @@ class LODLanguageEn extends LODLanguage {
 	);
 	
 	protected $mParserFunctionsParameters = array(
-//		LODLanguage::...	=> '...', 
+		LODLanguage::PFP_MAPPING_TARGET		=> 'target', 
 	);
 		
 }

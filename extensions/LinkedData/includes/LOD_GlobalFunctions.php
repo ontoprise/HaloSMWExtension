@@ -66,7 +66,7 @@ function enableLinkedData() {
 	$wgAutoloadClasses['LODTriple']            = $lodgIP . '/storage/TripleStore/LOD_Triple.php';
 	$wgAutoloadClasses['LODTripleStoreAccess'] = $lodgIP . '/storage/TripleStore/LOD_TripleStoreAccess.php';
 	
-	$wgAutoloadClasses['ILODMappingIOStrategy']	= $lodgIP . '/includes/LODMapping/ILOD_MappingIOStrategy.php';
+	$wgAutoloadClasses['ILODMappingStore']	= $lodgIP . '/includes/LODMapping/ILOD_MappingStore.php';
 	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
 	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
 	
@@ -93,7 +93,6 @@ function lodfSetupExtension() {
     global $wgHooks;
     
     $wgHooks['ArticleDelete'][]        = 'LODParserFunctions::articleDelete';
-    $wgHooks['ArticleSaveComplete'][]  = 'LODParserFunctions::articleSaveComplete';
     $wgHooks['OutputPageBeforeHTML'][] = 'LODParserFunctions::outputPageBeforeHTML';
     
 

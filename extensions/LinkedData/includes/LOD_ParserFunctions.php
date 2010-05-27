@@ -77,9 +77,8 @@ class LODParserFunctions {
 	// LODParserFunctions: The only instance of this class
 	private static $mInstance = null;
 	
-	// String
-	// An article may contain several mapping tags. Their content is concatenated.
-	private static $mMappings = "";
+	// bool: <true>, if the first mapping on a page is parsed
+	private static $mFirstMapping = true;
 	
 	/**
 	 * Constructor for HACLParserFunctions. This object is a singleton.
@@ -116,8 +115,33 @@ class LODParserFunctions {
 			// Wrong namespace => add a warning
 			$msg = wfMsg('lod_mapping_tag_ns');
 		} else {
-			// Collect all mappings. They are finally saved in articleSaveComplete().
-			self::$mMappings .= $text;
+			// If this is the first mapping on the page, all mappings for the page
+			// must be deleted.
+			$store = LODMappingStore::getStore();
+			if (self::$mFirstMapping) {
+				$store->removeAllMappings($title->getText());
+				self::$mFirstMapping = false;
+			}
+			
+			// Get the "target" parameter
+			global $lodgContLang;
+			$targetName = $lodgContLang->getParserFunctionParameter(LODLanguage::PFP_MAPPING_TARGET);
+			$target = null;
+			if (array_key_exists($targetName, $params)) {
+				$target = strtolower($params[$targetName]);
+			}
+			// Store this mapping.
+			$mapping = new LODMapping($text, $title->getText(), $target);
+			$success = true;
+			try {
+				$success = $store->addMapping($mapping);
+			} catch (Exception $e) {
+				$success = false;
+			}
+			if (!$success) {
+				$msg = wfMsg("lod_saving_mapping_failed.");
+			}
+			
 		}
 		return "$msg\n\n<pre>$text</pre>";
 	}
@@ -138,41 +162,13 @@ class LODParserFunctions {
 		if ($article->getTitle()->getNamespace() == LOD_NS_MAPPING) {
 			// The article is in the "Mapping" namespace. 
 			// => delete the mappings that are defined in the article.
-			$mappingID = $article->getTitle()->getText();
-			$store = LODMappingStore::getInstance();
-			$store->deleteMapping($mappingID);
+			$source = $article->getTitle()->getText();
+			$store = LODMappingStore::getStore();
+			$store->removeAllMappings($source);
 		}
 		return true;
 	}
 	
-	/**
-	 * This method is called, after an article has been saved. If the article
-	 * belongs to the namespace "Mapping", the mappings that are contained in
-	 * the article are saved.
-	 *
-	 * @param Article $article
-	 * @param User $user
-	 * @param string $text
-	 * @return true
-	 */
-	public static function articleSaveComplete(&$article, &$user, $text) {
-		$title = $article->getTitle();
-		if ($title->getNamespace() == LOD_NS_MAPPING
-		    && !empty(self::$mMappings)) {
-			// The article is in the "Mapping" namespace and it contains mappings.
-			// => save all LOD mappings
-			// store the text of the mapping
-			$store = LODMappingStore::getInstance();
-			$mapping = new LODMapping($title->getText(), self::$mMappings);
-			$success = true;
-			try {
-				$success = $store->saveMapping($mapping);
-			} catch (Exception $e) {
-				$success = false;
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * This function checks for articles in the namespace "Mapping", if the 
@@ -187,7 +183,7 @@ class LODParserFunctions {
 		global $wgTitle;
 		$title = $wgTitle;
 		if (isset($title) && $title->getNamespace() == LOD_NS_MAPPING) {
-			$store = LODMappingStore::getInstance();
+			$store = LODMappingStore::getStore();
 			if (!$store->existsMapping($title->getText())) {
 				$msg = wfMsg("lod_no_mapping_in_ns");
 				$out->addHTML("<div><b>$msg</b></div>");
@@ -204,7 +200,7 @@ class LODParserFunctions {
 	 *
 	 */
 	public function reset() {
-		self::$mMappings = "";
+		self::$mFirstMapping = true;
 	}
 
 

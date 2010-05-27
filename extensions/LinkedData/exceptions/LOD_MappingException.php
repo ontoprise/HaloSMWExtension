@@ -41,10 +41,10 @@ class LODMappingException extends LODException {
 
 	//--- Constants ---
 	
-	// No IO strategy is set in the LODMappingStore.
+	// No store is set in the LODMappingStore.
 	// Parameters:
 	// 	No parameter
-	const NO_IO_STRATEGY_SET = 1;	
+	const NO_STORE_SET = 1;	
 	
 	
 	/**
@@ -62,8 +62,8 @@ class LODMappingException extends LODException {
     protected function createMessage($args) {
     	$msg = "";
     	switch ($args[0]) {
-    		case self::NO_IO_STRATEGY_SET:
-    			$msg = "Internal error. No IO strategy is set in class LODMappingStore.";
+    		case self::NO_STORE_SET:
+    			$msg = "Internal error. No store is set in class LODMappingStore.";
     			break;
     	}
     	return $msg;

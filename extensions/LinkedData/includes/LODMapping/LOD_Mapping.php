@@ -42,15 +42,24 @@ if ( !defined( 'MEDIAWIKI' ) ) {
  * @author Thomas Schweitzer
  * 
  */
-class  LODMapping  {
+class LODMapping  {
 	
 	//--- Constants ---
 //	const XY= 0;		// the result has been added since the last time
 		
 	//--- Private fields ---
+	
 	// string
-	// Every mapping has an ID
-	private $mID;
+	// This is the ID of the source of the mapping (see the ID of class 
+	// LODSourceDefinition). By convention, the name of the article that defines
+	// the mapping is also the source. 
+	private $mSource;
+	
+	// string
+	// This is the ID of the target of the mapping, which is typically the wiki.
+	// The default value can be configured with the global variable 
+	// $lodgDefaultMappingTarget. 
+	private $mTarget;
 	
 	// string
 	// The "source code" of the mapping.
@@ -59,23 +68,31 @@ class  LODMapping  {
 	/**
 	 * Constructor for  LODMapping
 	 *
-	 * @param string $id
-	 * 		The ID of the mapping 
 	 * @param string $mappingText
 	 * 		The text of the mapping 
+	 * @param string $source
+	 * 		The ID of the mapping's source
+	 * @param string $target
+	 * 		The ID of the mapping's target. If not set, the default mapping 
+	 * 		target that is defined in the global variable $lodgDefaultMappingTarget
+	 * 		is used.
 	 * 
 	 */		
-	function __construct($id, $mappingText) {
-		$this->mID = $id;
+	function __construct($mappingText, $source, $target = null) {
+		global $lodgDefaultMappingTarget;
+		$this->mSource = $source;
+		$this->mTarget = isset($target) ? $target : $lodgDefaultMappingTarget;
 		$this->mMappingText = $mappingText;
 	}
 	
 
 	//--- getter/setter ---
-	public function getID()           {return $this->mID;}
-	public function getMappingText()  {return $this->mMappingText;}
+	public function getSource()			{return $this->mSource;}
+	public function getTarget()			{return $this->mTarget;}
+	public function getMappingText()	{return $this->mMappingText;}
 	
-	public function setID($id)        				{$this->mID = $id;}
+	public function setSource($s) 				{$this->mSource = $s;}
+	public function setTarget($t)  				{$this->mTarget = $t;}
 	public function setMappingText($mappingText)	{$this->mMappingText = $mappingText;}
 	
 	//--- Public methods ---
