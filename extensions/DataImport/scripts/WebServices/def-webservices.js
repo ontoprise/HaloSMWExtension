@@ -2831,6 +2831,8 @@ DefineWebServiceSpecial.prototype = {
 	displayHelp : function(id) {
 		if ($("step1-protocol-rest").checked && 2 <= id && id <= 4) {
 			$("step" + id + "-rest-help").style.display = "";
+		} else if ($("step1-protocol-ld").checked && id == 4) {
+			$("step" + id + "-ld-help").style.display = "";
 		} else {
 			$("step" + id + "-help").style.display = "";
 		}
@@ -2842,6 +2844,10 @@ DefineWebServiceSpecial.prototype = {
 	hideHelp : function(id) {
 		if ($("step1-protocol-rest").checked && 2 <= id && id <= 4) {
 			$("step" + id + "-rest-help").style.display = "none";
+		} 
+		
+		if (id == 4) {
+			$("step" + id + "-ld-help").style.display = "none";
 		}
 
 		$("step" + id + "-help").style.display = "none";
@@ -3448,6 +3454,13 @@ DefineWebServiceSpecial.prototype = {
 			$("step4-rest-intro").childNodes[1].checked = false;
 			$("step4-rest-intro").childNodes[3].value = "complete";
 		}
+		
+		$("step4-rest-intro").childNodes[0].style.display = "";
+		$("step4-rest-intro").childNodes[1].style.display = "";
+		$("step4-rest-intro").childNodes[2].style.display = "";
+		$("step4-rest-intro").childNodes[3].style.display = "";
+		$("step4-rest-intro").childNodes[4].style.display = "";
+		$("step4-rest-intro").childNodes[5].style.display = "";
 
 		$("step4-rest-intro").childNodes[6].style.display = "";
 		$('step4-addnss').style.display = "none";

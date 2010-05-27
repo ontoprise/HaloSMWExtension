@@ -263,6 +263,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
+		$html .= "<div id=\"step4-ld-help\" style=\"display:none\">".wfMsg("smw_wws_s4-LD-help")."</div>";
 
 		$html .= "<div id=\"step4-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep4()\">";

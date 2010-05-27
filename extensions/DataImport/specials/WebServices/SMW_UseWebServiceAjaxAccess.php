@@ -52,6 +52,9 @@ function smwf_wsu_processStep1($name){
 	$parameters = new SimpleXMLElement("<p>".$webService->getParameters()."</p>");
 
 	$response = "";
+	
+	$response .= $webService->getProtocol().";";
+	
 	foreach($parameters->children() as $param){
 		$response .= $param->attributes()->name;
 		$response .= ";";

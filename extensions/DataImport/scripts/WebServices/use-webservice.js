@@ -23,7 +23,7 @@
 var UseWebService = Class.create();
 
 UseWebService.prototype = {
-
+		
 	initialize : function() {
 	},
 
@@ -41,6 +41,9 @@ UseWebService.prototype = {
 		this.webService = $("step1-webservice").value; 
 		$("step1-webservice").setAttribute("onchange" , "useWSSpecial.confirmWSChange()");
 		
+		this.protocol = parameters[0];
+		
+		parameters.shift();
 		parameters.pop();
 		
 		$("step1-go-img").style.display = "none";
@@ -140,6 +143,10 @@ UseWebService.prototype = {
 			$("step2-noparameters").style.display = "none";
 			$("step2-parameters").style.display = "";
 		}
+		
+		if(this.protocol == "LinkedData"){
+			$("step2-ld-help").style.display = "";
+		}
 	},
 
 	processStep2 : function() {
@@ -202,6 +209,10 @@ UseWebService.prototype = {
 		} else {
 			$("step3-results").style.display = "";
 			$("step3-noresults").style.display = "none";
+		}
+		
+		if(this.protocol == "LinkedData"){
+			$("step3-ld-help").style.display = "";
 		}
 	},
 
