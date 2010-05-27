@@ -112,7 +112,7 @@ class TestWikipediaUltrapediaMerger extends PHPUnit_Framework_TestCase {
 		foreach($texts as $text){
 			$param = "action=edit&title=Talk:Main_Page&summary=Hello%20World&text=$text&token=$et";
 			$editArticle = $cc->post($this->url."api.php", $param);
-			print_r($editArticle);
+			//print_r($editArticle);
 		}
 	}
 	

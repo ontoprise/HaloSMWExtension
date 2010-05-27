@@ -2,7 +2,7 @@
   <siteinfo>
     <sitename>TestDBWiki</sitename>
     <base>http://localhost/TestDBWiki/index.php/Main_Page</base>
-    <generator>MediaWiki 1.15.1</generator>
+    <generator>MediaWiki 1.15.3</generator>
     <case>first-letter</case>
     <namespaces>
       <namespace key="-2">Media</namespace>
@@ -1228,12 +1228,12 @@ this is a test form
     <title>WebService:LDTest</title>
     <id>63</id>
     <revision>
-      <id>107</id>
-      <timestamp>2010-05-19T15:44:09Z</timestamp>
+      <id>111</id>
+      <timestamp>2010-05-27T10:47:01Z</timestamp>
       <contributor>
-        <ip>127.0.0.1</ip>
+        <username>WikiSysop</username>
+        <id>1</id>
       </contributor>
-      <comment>Created page with '&lt;WebService&gt; &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt; &lt;protocol&gt;LinkedData&lt;/protocol&gt; &lt;method name=&quot;get&quot; /&gt; &lt;result name=&quot;res…'</comment>
       <text xml:space="preserve">&lt;WebService&gt;
 &lt;uri name=&quot;http://localhost/mediawiki/extensions/DataImport/tests/testcases/ld_resources/&quot; /&gt;
 &lt;protocol&gt;LinkedData&lt;/protocol&gt;
@@ -1241,9 +1241,6 @@ this is a test form
 &lt;result name=&quot;result&quot;&gt;
 &lt;namespace prefix=&quot;wiki&quot; uri=&quot;http://localhost/mediawiki/index.php/&quot;/&gt;
 &lt;namespace prefix=&quot;rdf&quot; uri=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;/&gt;
-&lt;part name=&quot;subjects&quot; predicate=&quot;__triple__subjects&quot;/&gt;
-&lt;part name=&quot;predicates&quot; predicate=&quot;__triple__predicates&quot;/&gt;
-&lt;part name=&quot;objects&quot; predicate=&quot;__triple__objects@en&quot;/&gt;
 &lt;part name=&quot;abstract&quot; predicate=&quot;wiki:Property:HasAbstract@en&quot;/&gt;
 &lt;part name=&quot;product&quot; predicate=&quot;wiki:Property:HasProduct&quot;/&gt;
 &lt;part name=&quot;type&quot; predicate=&quot;rdf:type&quot;/&gt;
@@ -1263,18 +1260,18 @@ this is a test form
     <title>TestLD1</title>
     <id>64</id>
     <revision>
-      <id>108</id>
-      <timestamp>2010-05-19T15:50:56Z</timestamp>
+      <id>117</id>
+      <timestamp>2010-05-27T11:44:37Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | ?result.subjects | ?result.predicates | ?result.objects | _format=table }}'</comment>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
-| ?result.subjects
-| ?result.predicates
-| ?result.objects
+| language=en
+| ?result.allSubjects
+| ?result.allPredicates
+| ?result.allObjects
 | _format=table
 }}</text>
     </revision>
@@ -1283,19 +1280,19 @@ this is a test form
     <title>TestLD2</title>
     <id>65</id>
     <revision>
-      <id>109</id>
-      <timestamp>2010-05-19T15:51:48Z</timestamp>
+      <id>118</id>
+      <timestamp>2010-05-27T11:45:09Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | subject=wiki:OtherCompany | ?result.subjects | ?result.predicates | ?result.objects | _format=table }}'</comment>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
 | subject=wiki:OtherCompany
-| ?result.subjects
-| ?result.predicates
-| ?result.objects
+| language=en
+| ?result.allSubjects
+| ?result.allPredicates
+| ?result.allObjects
 | _format=table
 }}</text>
     </revision>
@@ -1304,19 +1301,37 @@ this is a test form
     <title>TestLD3</title>
     <id>66</id>
     <revision>
-      <id>110</id>
-      <timestamp>2010-05-19T15:52:36Z</timestamp>
+      <id>114</id>
+      <timestamp>2010-05-27T11:01:22Z</timestamp>
       <contributor>
         <username>WikiSysop</username>
         <id>1</id>
       </contributor>
-      <comment>Created page with '{{#ws:LDTest | url-suffix=rdfa.html | ?result.subjects | ?result.abstract | ?result.type | ?result.product | _format=table }}'</comment>
       <text xml:space="preserve">{{#ws:LDTest
 | url-suffix=rdfa.html
-| ?result.subjects
+| ?result.allSubjects
 | ?result.abstract
 | ?result.type
 | ?result.product
+| _format=table
+}}</text>
+    </revision>
+  </page>
+  <page>
+    <title>TestLD4</title>
+    <id>67</id>
+    <revision>
+      <id>116</id>
+      <timestamp>2010-05-27T11:06:14Z</timestamp>
+      <contributor>
+        <username>WikiSysop</username>
+        <id>1</id>
+      </contributor>
+      <text xml:space="preserve">{{#ws:LDTest
+| url-suffix=rdfa.html
+| predicates = abstract=wiki:Property:HasAbstract; type=rdf:type; product=wiki:Property:HasProduct
+| language=en
+| ?result.allSubjects
 | _format=table
 }}</text>
     </revision>

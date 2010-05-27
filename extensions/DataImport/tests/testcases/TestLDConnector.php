@@ -1,8 +1,11 @@
 <?php
 
+require_once 'Util.php';
+require_once 'DI_Utils.php';
+
 class TestLDConnector extends PHPUnit_Framework_TestCase {
 
-	protected $backupGlobals = false;
+	//protected $backupGlobals = false;
 	
 	private $hasTypeLink = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
 	private $hasProductLink = 'http://localhost/mediawiki/index.php/Property:HasProduct';
@@ -20,7 +23,19 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 	private $subjectTypeProductRow = '<tr><td><a href="http://localhost/mediawiki/index.php/OtherCompany" class="external free" title="http://localhost/mediawiki/index.php/OtherCompany" rel="nofollow">http://localhost/mediawiki/index.php/OtherCompany</a></td><td></td><td><a href="http://localhost/mediawiki/index.php/Category:Company" class="external free" title="http://localhost/mediawiki/index.php/Category:Company" rel="nofollow">http://localhost/mediawiki/index.php/Category:Company</a></td><td><a href="http://localhost/mediawiki/index.php/Product3" class="external free" title="http://localhost/mediawiki/index.php/Product3" rel="nofollow">http://localhost/mediawiki/index.php/Product3</a></td></tr></table>'; 
 
 	
+	
+	function setUp(){
+		$titles = array('LDTest');
+		di_utils_setupWebServices($titles);
+	}
+	
+	function tearDown() {
+		di_utils_truncateWSTables();
+	}
+	
 	function testAllSubjectsAllPredicatesAllObjects(){
+		$titles = array('TestLD1');
+		di_utils_setupWSUsages($titles);
 		$html = $this->getHTML("TestLD1");
 		
 		$this->assertGreaterThan(0, strpos($html, $this->germanAbstractRow));
@@ -36,6 +51,9 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testAllSubjectsAllPredicatesAllObjectsSpecialSubject(){
+		$titles = array('TestLD2');
+		di_utils_setupWSUsages($titles);
+		
 		$html = $this->getHTML("TestLD2");
 		
 		$this->assertGreaterThan(0, strpos($html, $this->germanAbstractRow));
@@ -51,8 +69,22 @@ class TestLDConnector extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, strpos($html, $this->germanAbstract));
 	}
 	
-function testAllSubjectsAbstractTypeProduct(){
+	function testAllSubjectsAbstractTypeProduct(){
+		$titles = array('TestLD3');
+		di_utils_setupWSUsages($titles);
+	
 		$html = $this->getHTML("TestLD3");
+		
+		$this->assertGreaterThan(0, strpos($html, $this->subjectAbstractTypeProductRow));
+		$this->assertGreaterThan(0, strpos($html, $this->subjectProductRow));
+		$this->assertGreaterThan(0, strpos($html, $this->subjectTypeProductRow));
+	}
+	
+	function testPredicatesAndLanguageParams(){
+		$titles = array('TestLD4');
+		di_utils_setupWSUsages($titles);
+	
+		$html = $this->getHTML("TestLD4");
 		
 		$this->assertGreaterThan(0, strpos($html, $this->subjectAbstractTypeProductRow));
 		$this->assertGreaterThan(0, strpos($html, $this->subjectProductRow));
