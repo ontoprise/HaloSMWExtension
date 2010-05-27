@@ -41,12 +41,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
      */
     function testTripleStore() {
 		
-    	// BUG:  A # is added to URIs in triples 
-    	//       (http://smwforum.ontoprise.com/smwbugs/show_bug.cgi?id=11838)
-    	// $namespace should be like this: 
-    	//      $namespace = "http://example.com/";
-    	// Fix this test case when the bug is fixed.
-    	$namespace = "http://example.com/#";
+    	$namespace = "http://example.com/";
     	$prefixes = "PREFIX ex:<$namespace> ".
     			  TSNamespaces::getW3CPrefixes();
     	$triples = array();
