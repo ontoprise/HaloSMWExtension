@@ -184,7 +184,7 @@ class LODParserFunctions {
 		$title = $wgTitle;
 		if (isset($title) && $title->getNamespace() == LOD_NS_MAPPING) {
 			$store = LODMappingStore::getStore();
-			if (!$store->existsMapping($title->getText())) {
+			if (count($store->getAllMappings($title->getText())) == 0) {
 				$msg = wfMsg("lod_no_mapping_in_ns");
 				$out->addHTML("<div><b>$msg</b></div>");
 			}
