@@ -112,7 +112,7 @@ class  LODTripleStoreAccess  {
 	 * 		Name of the new graph.
 	 */
 	public function createGraph($graph) {
-		$this->mCommands[] = $this->mPrefixes."\nCREATE SILENT <$graph>";
+		$this->mCommands[] = $this->mPrefixes."\nCREATE SILENT GRAPH <$graph>";
 	}
 
 	/**
@@ -128,7 +128,7 @@ class  LODTripleStoreAccess  {
 	 * 		Name of the graph to drop.
 	 */
 	public function dropGraph($graph) {
-		$this->mCommands[] = $this->mPrefixes."\nDROP SILENT <$graph>";
+		$this->mCommands[] = $this->mPrefixes."\nDROP SILENT GRAPH <$graph>";
 	}
 
 	/**
@@ -231,8 +231,8 @@ class  LODTripleStoreAccess  {
 			$con->connect();
 			$result = $con->query($query, "merge=false", $graph);
 			$con->disconnect();
-		} catch (SoapFault $e) {
-			// A soap fault exception occurred => no result
+		} catch (Exception $e) {
+			// An exception occurred => no result
 			return null;
 		}
 		
