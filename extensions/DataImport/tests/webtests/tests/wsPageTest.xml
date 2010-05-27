@@ -12,6 +12,7 @@
 		<webtest name="WSManualCreate">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<antcall target="createWebTestWS" />
 
@@ -23,6 +24,7 @@
 		<webtest name="WSPageCheckEditButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" /> 
 				<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a" description="Click edit button" />
@@ -32,6 +34,7 @@
 		<webtest name="WSPageWSUsageAddPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit" description="Create new ws usage" />
 			<setInputField description="Enter new ws usage." xpath="//textarea[@id='wpTextbox1']">
@@ -47,6 +50,7 @@
 		<webtest name="WSPageWSUsageAddPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" description="Open wwsd" />
 			<verifyText text="Showing 1 pages using this web service." description="Is number of usages updated?" />
@@ -56,6 +60,7 @@
 		<webtest name="WSPageCheckEditButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
 			<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a" description="Click edit button" />
@@ -65,6 +70,7 @@
 		<webtest name="WSPageWSUsageRemove">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit" description="Remove ws usage" />
 			<setInputField description="Remove ws usage."
@@ -86,6 +92,7 @@
 		<webtest name="WSCreateFailure">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit" description="Open new ws for editing" />
 			<setInputField description="Enter wrong wwsd."

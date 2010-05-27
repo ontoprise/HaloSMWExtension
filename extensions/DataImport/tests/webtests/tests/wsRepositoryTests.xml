@@ -11,6 +11,7 @@
 		<webtest name="WSRepositoryLoggedOut">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="createWebTestWS" />
@@ -26,6 +27,7 @@
 		<webtest name="WSRepositoryLoggedIn">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 	
 			<antcall target="goToLogin" />
@@ -54,6 +56,7 @@
 		<webtest name="WSRepositoryCheckConfirmButtonPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />
@@ -64,6 +67,7 @@
 		<webtest name="WSRepositoryCheckConfirmButtonPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />
@@ -77,6 +81,7 @@
 		<webtest name="WSRepositoryCheckUpdateButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />
@@ -97,18 +102,19 @@
 		<webtest name="WSRepositoryCheckEditButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />
 
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
 			
-			<!-- this one does not work due to a strange javascript error
+			 <!-- this one does not work due to a strange javascript error--> <!--  
 			<clickButton xpath="//table[@id='webservicetable']/tbody/tr[2]/td[4]/button" description="Click edit button"/>
 			<sleep seconds="5" />
 
-			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>
-					-->
+			<verifyTitle text="Define Web Service - Halo3wiki" description="Was define ws gui opened"/>-->
+					 
 		</webtest>
 
 

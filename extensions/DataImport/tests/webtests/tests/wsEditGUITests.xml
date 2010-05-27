@@ -12,6 +12,7 @@
 		<webtest name="WSEditRESTPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<antcall target="createWebTestWS" />
 		</webtest>
@@ -19,6 +20,7 @@
 		<webtest name="WSEditRESTPart2a">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 						
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS?action=edit" />
@@ -30,6 +32,7 @@
 		<webtest name="WSEditRESTPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWS" />
@@ -150,6 +153,7 @@
 		<webtest name="WSEditSOAPPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2?action=edit" description="Open new ws for editing" />
 			<setInputField description="Enter new wwsd." xpath="//textarea[@id='wpTextbox1']">
@@ -187,6 +191,7 @@
 		<webtest name="WSEditSOAPPart2a">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 								
 			<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2?action=edit" />
@@ -197,6 +202,7 @@
 	<webtest name="WSEditSOAPPart2">
 		<config host="localhost">
 			<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+			<option name="ThrowExceptionOnScriptError" value="false"/>
 		</config>
 		
 		<invoke url="http://localhost/${wikipath}/index.php/WebService:WebTestWSSOAP2" />

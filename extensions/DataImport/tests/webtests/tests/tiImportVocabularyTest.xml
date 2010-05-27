@@ -10,6 +10,7 @@
 		<webtest name="TIImportVocabularyGUI">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 
 			<antcall target="goToLogin" />
@@ -132,6 +133,7 @@
 		<webtest name="TICheckTermImportArticle">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke url="http://localhost/${wikipath}/index.php/TermImport:TestTIXML" />
@@ -144,6 +146,7 @@
 		<webtest name="TICheckTermImportArticle">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke url="http://localhost/${wikipath}/index.php/Term1" />

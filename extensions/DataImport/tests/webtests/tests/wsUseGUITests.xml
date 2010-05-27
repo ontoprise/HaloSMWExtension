@@ -13,6 +13,7 @@
 		<webtest name="WSUseGUINoWSErrorPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="invalidateWebTestWS" />
@@ -23,6 +24,7 @@
 		<webtest name="WSUseGUINoWSErrorPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke
@@ -40,6 +42,7 @@
 		<webtest name="WSUseGUIContentLoadedPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="createWebTestWS" />
@@ -50,6 +53,7 @@
 		<webtest name="WSUseGUIContentLoadedPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
@@ -159,6 +163,7 @@
 		<webtest name="WSUseGUIClickthrough">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
@@ -200,11 +205,11 @@
 			<clickButton xpath="//input[@id='step5-preview-button-img']"
 				description="display preview" />
 			<sleep seconds="5"/>				
-			<verifyElementText htmlId="step5-preview"
+			<!-- <verifyElementText htmlId="step5-preview"
 				description="is preview displayed" 
 				text='.*200.*' regex="true"/>
 				
-			<!-- <clickButton xpath="//div[@id='step5']/p[2]/input[3]"
+			<clickButton xpath="//div[@id='step5']/p[2]/input[3]"
 				description="add ws call to article" />
 			<sleep seconds="5"/>
 			<verifyElementText htmlId="wpTextbox1" 

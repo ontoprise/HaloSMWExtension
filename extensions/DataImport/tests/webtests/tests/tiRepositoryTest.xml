@@ -10,6 +10,7 @@
 		<webtest name="TIRepositoryLoggedOut">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
@@ -27,6 +28,7 @@
 		<webtest name="TIRepositoryLoggedIn">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 	
 			<antcall target="goToLogin" />
@@ -53,6 +55,7 @@
 		<webtest name="WSRepositoryCheckUpdateButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />
@@ -77,6 +80,7 @@
 		<webtest name="WSRepositoryCheckEditButton">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false"/>
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<antcall target="goToLogin" />

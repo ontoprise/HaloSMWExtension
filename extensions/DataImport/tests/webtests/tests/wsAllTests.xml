@@ -9,8 +9,8 @@
 		<ant antfile="wsUseGUITests.xml"/>
 		<ant antfile="wsEditGUITests.xml"/>
 		<ant antfile="wsDefineGUITest.xml"/>
-		<ant antfile="tiImportVocabularyTest.xml"/>
-		<ant antfile="tiRepositoryTest.xml"/>
+		<ant antfile="tiImportVocabularyTest.xml"/> 
+		<ant antfile="tiRepositoryTest.xml"/> 
 		
 		
 	</target>

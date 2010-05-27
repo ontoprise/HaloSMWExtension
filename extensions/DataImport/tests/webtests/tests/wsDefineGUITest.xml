@@ -12,6 +12,7 @@
 		<webtest name="WSDefineRESTPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			
 			<invoke
@@ -150,6 +151,7 @@
 		<webtest name="WSDefineRESTPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSREST" />
@@ -162,6 +164,7 @@
 		<webtest name="WSDefineRESTPart3">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
@@ -172,6 +175,7 @@
 		<webtest name="WSDefineSOAPPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke url="http://localhost/${wikipath}/index.php/Special:DefineWebService" />
 
@@ -240,6 +244,7 @@
 		<webtest name="WSDefineSOAPPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 						url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSSOAP" />
@@ -252,6 +257,7 @@
 		<webtest name="WSDefineSOAPPart3">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
 				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
