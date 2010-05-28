@@ -7,7 +7,7 @@
 	&goToLogin;
 	&createWebTestWS;
 
-	<target name="testWSDefineGUI">
+	<target name="testWSDefineGUILD">
 
 		<webtest name="WSDefineLDPart1">
 			<config host="localhost">
@@ -43,10 +43,11 @@
 
 			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSLD" />
 			
-			<clickButton description="go to step7" htmlId="step6-go-img" />
+			<verifyElementText htmlid='menue-step6'  text='4. Save WWSD'/>
 			
-			<!--   <verifyText text='4. Save WWSD'/>
-			<verifyText text='2. Choose result part'/> -->
+			<verifyElementText htmlid='step4'  text='2. Choose result part-*' regex='true'/>
+			
+			<clickButton description="go to step7" htmlId="step6-go-img" />
 			
 			<sleep seconds ="10" description="wait until the web service is created completely"/> 
 
@@ -65,7 +66,7 @@
 			
 		</webtest>
 		
-		<webtest name="WSDefineRESTPart3">
+		<webtest name="WSDefineLDPart3">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
 				<option name="ThrowExceptionOnScriptError" value="false"/>

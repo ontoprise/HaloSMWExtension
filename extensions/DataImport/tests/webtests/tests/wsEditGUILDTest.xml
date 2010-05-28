@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSEditGUILD">
+	
+	&goToLogin;
+	&createWebTestWS;
+
+	<target name="testWSEditGUILD">
+
+		<webtest name="WSEditLD">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSLD" />
+			<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a"
+				description="Click edit button" />
+			<sleep seconds="10" />
+
+			<verifyTitle text="Define Web Service - Halo3wiki"
+				description="Was define ws gui opened" />
+
+			<verifyRadioButton htmlId="step1-protocol-ld"
+				checked="true" description="check if protocol is ld" />
+			<verifyRadioButton htmlId="step1-auth-no" checked="true"
+				description="check that authentication is not required" />
+
+			<verifyInputField description="verify that result alias is loaded correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input" value="alias" />
+
+			<verifyInputField description="verify that predicate is set correctly"
+				xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input" value="rdf:type" />
+
+			<verifyInputField description="verify that prefix is loaded correctly"
+				xpath="//table[@id='step4-nss']/tbody/tr[2]/td[1]/input" value="xml" />
+
+			<verifyInputField description="verify that prefix url is set correctly"
+				xpath="//table[@id='step4-nss']/tbody/tr[2]/td[2]/input" value="rsomething" />
+				
+			<verifyElementText htmlid='menue-step6'  text='4. Save WWSD'/>
+			
+			<verifyElementText htmlid='step4'  text='2. Choose result part-*' regex='true'/>
+
+			<clickButton htmlId="step6-go-img" description="save wwsd" />
+			<sleep seconds="10" />
+
+			<verifyText text="Now you can use that web service in an article"
+				description="check if step7 is displayed" />
+		</webtest>
+	</target>
+</project>
