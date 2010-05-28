@@ -191,7 +191,7 @@ class TSConnectorRESTWebservice extends TSConnection {
 		$credentials = isset($smwgWebserviceUser) ? $smwgWebserviceUser.":".$smwgWebservicePassword : "";
 		$this->updateClient = new RESTWebserviceConnector($host, $port, "sparul", $credentials);
 		$this->queryClient = new RESTWebserviceConnector($host, $port, "sparql", $credentials);
-		$this->manageClient = new RESTWebserviceConnector($host, $port, "management_rest/", $credentials);
+		$this->manageClient = new RESTWebserviceConnector($host, $port, "management/", $credentials);
 	}
 
 	public function disconnect() {
