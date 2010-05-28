@@ -92,12 +92,12 @@ text;
     
     function testLODMappingsStore() {
     	$this->doTestLODMappingStore(new MockMappingStore());
-//    	$this->doTestLODMappingStore(...);
+    	$this->doTestLODMappingStore(new LODMappingTripleStore());
     }
     
     function testMappingsInArticles() {
     	$this->doTestMappingsInArticles(new MockMappingStore());
-//    	$this->doTestMappingsInArticles(...);
+    	$this->doTestMappingsInArticles(new LODMappingTripleStore());
     }
     
     
