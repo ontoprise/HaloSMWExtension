@@ -69,6 +69,7 @@ function enableLinkedData() {
 	$wgAutoloadClasses['ILODMappingStore']	= $lodgIP . '/includes/LODMapping/ILOD_MappingStore.php';
 	$wgAutoloadClasses['LODMapping'] 		= $lodgIP . '/includes/LODMapping/LOD_Mapping.php';
 	$wgAutoloadClasses['LODMappingStore'] 	= $lodgIP . '/includes/LODMapping/LOD_MappingStore.php';
+	$wgAutoloadClasses['LODMappingTripleStore'] = $lodgIP . '/includes/LODMapping/LOD_MappingTripleStore.php';
 	
     //--- Autoloading for exception classes ---
    	$wgAutoloadClasses['LODException']        = $lodgIP . '/exceptions/LOD_Exception.php';
