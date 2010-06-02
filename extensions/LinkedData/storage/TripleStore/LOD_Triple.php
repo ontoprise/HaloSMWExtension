@@ -86,8 +86,9 @@ class  LODTriple  {
 	 * 		line breaks) are escaped. 
 	 * 		The special value "__objectURI" indicates that the object is the URI
 	 * 		of another subject in the graph. 
+	 * 		If not type is given, the object is a simple literal
  	 */		
-	public function __construct($subject, $predicate, $object, $type) {
+	public function __construct($subject, $predicate, $object, $type = null) {
 		if (!isset($subject) || !isset($predicate) || !isset($object)) {
 			// missing parameter values => throw exception
 //TODO: Throw an exception
@@ -142,9 +143,9 @@ class  LODTriple  {
 	 * 		The base value of the literal that is transformed in a correct
 	 * 		literal for SPARUL.
 	 * @param string $type
-	 * 		The type of the literal (e.g. xsd:string).
+	 * 		The type of the literal (e.g. xsd:string) or <null>.
 	 * @return string
-	 * 		The quoted literal with appended type.
+	 * 		The quoted literal with appended type, if a type is defined.
 	 */
 	private function makeLiteral($literal, $type) {
 		if ($type == 'xsd:string') {
@@ -152,7 +153,10 @@ class  LODTriple  {
 			$literal = str_replace(array("\\",   "\"",   "\n",  "\r"), 
 								   array("\\\\", "\\\"", "\\n", "\\r"), $literal);
 		}
-		$literal = '"'.$literal.'"'."^^$type";
+		$literal = '"'.$literal.'"';
+		if ($type) {
+			$literal .= "^^$type";
+		}
 		return $literal;
 	}
 		
