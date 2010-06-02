@@ -124,7 +124,7 @@ class  LODTriple  {
 		    return "";
 		}
 		
-		$obj = ($this->type == '__objectURI') 
+		$obj = ($this->mType == '__objectURI') 
 						? $this->mObject
 						: self::makeLiteral($this->mObject, $this->mType);
 		
