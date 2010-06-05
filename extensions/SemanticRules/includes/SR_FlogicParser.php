@@ -79,8 +79,8 @@ class SMWFlogicParser {
 
 		global $smwgWebserviceProtocol;
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
-			$payload = "<method><name>parseRule</name><ruletext><![CDATA[".$parseflogicinput."]]></ruletext></method>";
-			list($header, $status, $res) = self::$_client->send($payload);
+			$payload = "ruleText=".urlencode($parseflogicinput);
+			list($header, $status, $res) = self::$_client->send($payload, "/parseRule");
 			$_parsedstring = $res;
 		} else {
 			$_parsedstring = self::$_client->parseRule($parseflogicinput);
