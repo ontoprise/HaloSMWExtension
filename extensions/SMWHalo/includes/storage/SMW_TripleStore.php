@@ -102,8 +102,8 @@ class SMWTripleStore extends SMWStore {
 
 
 		// clear rules
-		global $smwgEnableFlogicRules;
-		if (isset($smwgEnableFlogicRules)) {
+		global $smwgEnableObjectLogicRules;
+		if (isset($smwgEnableObjectLogicRules)) {
 			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
 		}
@@ -115,7 +115,7 @@ class SMWTripleStore extends SMWStore {
 			if ($subject->getNamespace() == SMW_NS_PROPERTY) {
 				$sparulCommands[] = TSNamespaces::getW3CPrefixes()."DELETE FROM <$smwgTripleStoreGraph> { ?s owl:onProperty <$smwgTripleStoreGraph/$subj_ns#".$subject->getDBkey().">. }";
 			}
-			if (isset($smwgEnableFlogicRules)) {
+			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
 					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
@@ -282,8 +282,8 @@ class SMWTripleStore extends SMWStore {
 		}
 
 		// rules
-		global $smwgEnableFlogicRules;
-		if (isset($smwgEnableFlogicRules)) {
+		global $smwgEnableObjectLogicRules;
+		if (isset($smwgEnableObjectLogicRules)) {
 			$new_rules = self::$fullSemanticData->getRules();
 			$old_rules = SMWRuleStore::getInstance()->getRules($subject->getArticleId());
 			SMWRuleStore::getInstance()->clearRules($subject->getArticleId());
@@ -317,7 +317,7 @@ class SMWTripleStore extends SMWStore {
 			}
 			$sparulCommands[] =  TSNamespaces::getW3CPrefixes()."INSERT INTO <$smwgTripleStoreGraph> { ".$this->implodeTriples($triples)." }";
 
-			if (isset($smwgEnableFlogicRules)) {
+			if (isset($smwgEnableObjectLogicRules)) {
 				// delete old rules...
 				foreach($old_rules as $ruleID) {
 					$sparulCommands[] = "DELETE RULE $ruleID FROM <$smwgTripleStoreGraph>";
@@ -326,10 +326,11 @@ class SMWTripleStore extends SMWStore {
 				foreach($new_rules as $rule) {
 					// The F-Logic parser does not accept linebreaks
 					// => remove them
-					list($ruleID, $ruleText, $native) = $rule;
+					list($ruleID, $ruleText, $native, $active, $type) = $rule;
 					$ruleText = preg_replace("/[\n\r]/", " ", $ruleText);
 					$nativeText = $native ? "NATIVE" : "";
-					$sparulCommands[] = "INSERT $nativeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeForStringLiteral($ruleText)."\"";
+					$activeText = !$active ? "INACTIVE" : "";
+					$sparulCommands[] = "INSERT $nativeText $activeText RULE $ruleID INTO <$smwgTripleStoreGraph> : \"".$this->escapeForStringLiteral($ruleText)."\" TYPE \"$type\"";
 				}
 			}
 			$con->connect();
@@ -351,8 +352,8 @@ class SMWTripleStore extends SMWStore {
 
 
 		// update local rule store
-		global $smwgEnableFlogicRules;
-		if (isset($smwgEnableFlogicRules)) {
+		global $smwgEnableObjectLogicRules;
+		if (isset($smwgEnableObjectLogicRules)) {
 			SMWRuleStore::getInstance()->updateRules($redirid, $pageid);
 		}
 
@@ -362,9 +363,9 @@ class SMWTripleStore extends SMWStore {
 			$con = TSConnection::getConnector();
 
 			$sparulCommands = array();
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?p ?o. } INSERT { <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?p ?o. }";
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?o. } INSERT { ?s <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?o. }";
-			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE WHERE { ?s ?p <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey().">. } INSERT { ?s ?p <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey().">. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?p ?o. } INSERT { <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?p ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey()."> ?o. } INSERT { ?s <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey()."> ?o. }";
+			$sparulCommands[] = TSNamespaces::getW3CPrefixes()."MODIFY <$smwgTripleStoreGraph> DELETE  { ?s ?p <$smwgTripleStoreGraph/$old_ns#".$oldtitle->getDBkey().">. } INSERT { ?s ?p <$smwgTripleStoreGraph/$new_ns#".$newtitle->getDBkey().">. }";
 			$con->connect();
 			$con->update("/topic/WIKI.TS.UPDATE", $sparulCommands);
 			$con->disconnect();

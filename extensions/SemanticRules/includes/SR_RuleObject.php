@@ -19,7 +19,7 @@
  * @file
  * @ingroup SRRuleObject
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 if (!defined('MEDIAWIKI')) die();
@@ -144,22 +144,12 @@ class SMWRuleObject extends SMWAbstractRuleObject {
         
 	private function getPureFlogic() {
 		global $smwgTripleStoreGraph;
-		$flogicstring = "FORALL ";
+		$flogicstring = "";
 
-		// fetch bound variables
-		$boundvars = "";
-		$boundvariables = $this->getBoundVariables();
-		for ($i = 0; $i < sizeof($boundvariables); $i++) {
-			if ($i > 0) {
-				$boundvars .= ", ";
-			}
-			$boundvars .= $boundvariables[$i]->getVariableName();
-		}
-		$flogicstring .= $boundvars;
-
+		
 		// fetch rule head
 		$head = $this->argtostring($this->getHead()->getPreditcatesymbol(), $this->getHead()->getArguments());
-		$flogicstring .= " " . $head . " <- ";
+		$flogicstring .= " " . $head . " :- ";
 
 		// fetch array of rule body and concatenate arguments
 		$body = "";
@@ -178,41 +168,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		return $flogicstring;
 	}
 
-	/*
-	 *  Method to generate explanation rule from a Rule Object.
-	 */
-
-	public function getExplanationRule() {
-		global $smwgTripleStoreGraph;
-        // we will insert the header later
-    	$queryId = "0"; //$NON-NLS-1$
-        $header = "FORALL I, "; //$NON-NLS-1$
-		$result = "";
-
-		$result .= "explain_(" . $queryId . ", I, S) <- I:Instantiation[ruleid->>" . $smwgTripleStoreGraph . '#"#' . $this->getAxiomId() . "; variables ->> {";
-
-		// build variable declarations for bound variables
-		$_usedvars = $this->getBoundVariables();
-		for ($i=0; $i<sizeof($_usedvars); $i++) {
-			if ($this->strStartsWith($_usedvars[$i]->getVariableName(), "?")) {
-				$_usedvars[$i]->setVariableName(substr($_usedvars[$i]->getVariableName(), 1));
-			}
-
-			$_varValue = "var_" . $_usedvars[$i]->getVariableName();
-			$header .= $_varValue . ", ";
-			$result .= "i(" . $_usedvars[$i]->getVariableName() . ", " . $_varValue . "),";
-		}
-
-		if (!$this->strEndsWith($result, "{")) {
-			$result = substr_replace($result ,"",-1);
-		}
-
-		$result .= "}]@prooftreefacts_(" . $this->getAxiomId() . ") AND (S is ";
-		$header .= "S ";
-		// generate rule by concatenating header with vars and the generated template.
-		$explanationrule = $header . $result . $this->buildExplanationTemplate();
-		return $explanationrule;
-	}
+	
 
 	// f-logic helper functions
 	
@@ -275,66 +231,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		return $tmp;
 	}
 
-	private function buildExplanationTemplate() {
-		$head = $this->getHead();
-		$body = $this->getBody();
-
-		$template = "";
-		$bodytemplate = "";
-		// do we have a property defining head?
-		if ($head->getPreditcatesymbol()->getPredicateName() == P_ATTRIBUTE || $head->getPreditcatesymbol()->getPredicateName() == P_RELATION) {
-			$template .= $this->getPropertyExplanationPart($head->getArguments());
-		}
-
-		$template .= ' + " BECAUSE " + ';
-
-		// for each body statement
-		for ($i = 0; $i < sizeof($body); $i++) {
-			if ($i > 0) {
-				$bodytemplate .= ' AND " + ';
-			}
-			if ($body[$i]->getPreditcatesymbol()->getPredicateName() == P_ATTRIBUTE || $body[$i]->getPreditcatesymbol()->getPredicateName() == P_RELATION) {
-				$bodytemplate .= $this->getPropertyExplanationPart($body[$i]->getArguments());
-				if ($i < sizeof($body)) {
-					$bodytemplate .= ' + " ';
-				}
-			} else if ($body[$i]->getPreditcatesymbol()->getPredicateName() == P_ISA) {
-				$bodytemplate .= $this->getIsaExplanationPart($body[$i]->getArguments());
-			} else {
-				$bodytemplate .= $this->getOperatorExplanationPart($body[$i]->getArguments());
-			}
-		}
-
-		$allinone = $template . $bodytemplate . '. ").';
-
-		return $allinone;
-	}
-
-	private function getPropertyExplanationPart($triplearray) {
-		$template = "";
-		if ($triplearray[2] instanceof SMWConstant) {
-			$template .= '"' . $triplearray[1]->getName() . ' of " + ';
-			$template .= "var_" . $triplearray[0]->getArgument() . " + ";
-			$template .= '" equal ' . $triplearray[2]->getValue() . '"';
-		} else {
-			$template .= "var_" . $triplearray[0]->getArgument() . " + ";
-			$template .= '"' . $triplearray[1]->getName() . '" + ';
-			$template .= "var_" . $triplearray[2]->getArgument();
-		}
-		return $template;
-	}
-
-	private function getIsaExplanationPart($tuplearray) {
-		$template .= "var_" . $tuplearray[0]->getArgument() . " + ";
-		$template .= '"is a ' . $tuplearray[1]->getName();
-		return $template;
-	}
-
-	private function getOperatorExplanationPart($tuplearray) {
-		$template .= "var_" . $tuplearray[0]->getArgument() . " + ";
-		$template .= '"op is a ' . $tuplearray[1]->getName();
-		return $template;
-	}
+	
 	
 	// flogic-mathematic functions helpers	
 	private function parseMathRuleArray($stack) {

@@ -20,7 +20,7 @@
  * @file
  * @ingroup SemanticRules
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 
@@ -71,21 +71,17 @@ class SMWFlogicParser {
 		// initFlogic returns the sessionId
 		$parseflogicinput=array();
 		//		$parseflogicinput['flogicString'] =
-		$parseflogicinput =
-		(($ruleid == null)
-		? ''
-		: "RULE #" . $ruleid . ": ")
-		. $_flogicstring;
+		$parseflogicinput = $_flogicstring;
 
 		global $smwgWebserviceProtocol;
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 			$payload = "ruleText=".urlencode($parseflogicinput);
-			list($header, $status, $res) = self::$_client->send($payload, "/parseRule");
+			list($header, $status, $res) = self::$_client->send($payload, "/parserule");
 			$_parsedstring = $res;
 		} else {
 			$_parsedstring = self::$_client->parseRule($parseflogicinput);
 		}
-
+		
 		$_ruleObject = new SMWRuleObject();
 		$_ruleObject->setAxiomId($ruleid);
 		return $_ruleObject->parseRuleObject(simplexml_load_string($_parsedstring));

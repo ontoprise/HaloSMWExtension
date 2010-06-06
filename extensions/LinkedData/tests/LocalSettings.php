@@ -7,7 +7,7 @@ $smwgDeployVersion = false;
 
 //$smwgMessageBroker='localhost';
 $smwgWebserviceEndpoint='localhost:8060';
-$smwgEnableFlogicRules=true;
+$smwgEnableObjectLogicRules=true;
 $smwgWebserviceProtocol="rest";
 
 #Import SMW, SMWHalo and the Gardening extension

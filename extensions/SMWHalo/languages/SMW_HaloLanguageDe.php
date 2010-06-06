@@ -322,8 +322,8 @@ protected $smwUserMessages = array(
 
     'smw_tsa_driverinfo' => 'Treiberinformation',
     'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableFlogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
-    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgEnableFlogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
+    'smw_tsa_rulesupport'=> 'Der Triplestore-Treiber unterstützt Regeln, deshalb sollten Sie <pre>$smwgEnableObjectLogicRules=true;</pre> in ihrer LocalSettings.php aktivieren. Andernfalls werden Regeln nicht funktionieren.',
+    'smw_tsa_norulesupport'=> 'Der Triplestore-Treiber unterstützt keine Regeln, obwohl sie im Wiki aktiviert sind. Bitte entfernen Sie <pre>$smwgEnableObjectLogicRules=true;</pre> aus ihrer LocalSettings.php. Andernfalls könnten Sie seltsame Fehlermeldungen erhalten.',
 
 	'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',

@@ -23,7 +23,7 @@
  * @defgroup SRRuleObject Abstract semantic rule object
  * @ingroup SemanticRules
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 if (!defined('MEDIAWIKI')) die();
@@ -64,7 +64,7 @@ abstract class SMWAbstractRuleObject {
 	}
 
 	public function setRule($rule) {
-
+		
 		// set axiomId
 		if (isset($rule->_axiomId)) {
 			$this->_axiomId = $rule->_axiomId;

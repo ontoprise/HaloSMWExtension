@@ -6,7 +6,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloTriplestore
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if (!defined('MEDIAWIKI')) die();
 
@@ -25,7 +25,7 @@ class SMWTripleStoreAdmin extends SpecialPage {
 	}
 
 	public function execute() {
-		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableFlogicRules;
+		global $wgRequest, $wgOut, $smwgMessageBroker, $smwgWebserviceEndpoint, $wgUser, $smwgEnableObjectLogicRules;
 		$wgOut->setPageTitle(wfMsg('tsa'));
 		$html = "";
 		if ($wgRequest->getVal('init') != NULL) {
@@ -61,9 +61,9 @@ class SMWTripleStoreAdmin extends SpecialPage {
 		$html .= "<h2>".wfMsg('smw_tsa_tscinfo')."</h2>";
 		$html .= wfMsg('smw_tsa_tscversion').": ".$status['tscversion'];
 		// show warning when rule support is missing or defined although it is not available.
-		if (in_array('RULES', $status['features']) && (!isset($smwgEnableFlogicRules) || $smwgEnableFlogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
+		if (in_array('RULES', $status['features']) && (!isset($smwgEnableObjectLogicRules) || $smwgEnableObjectLogicRules === false)) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_rulesupport')."</div>";
-		if (!in_array('RULES', $status['features']) && $smwgEnableFlogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
+		if (!in_array('RULES', $status['features']) && $smwgEnableObjectLogicRules === true) $html .= "<div style=\"color:red;font-weight:bold;\">".
 		wfMsg('smw_tsa_norulesupport')."</div>";
 
 		$html .= "<h2>".wfMsg('smw_tsa_status')."</h2>";

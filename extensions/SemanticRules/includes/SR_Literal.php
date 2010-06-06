@@ -19,7 +19,7 @@
  * @file
  * @ingroup SRRuleObject
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 if (!defined('MEDIAWIKI')) die();
 

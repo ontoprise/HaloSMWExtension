@@ -73,6 +73,7 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 		}
 		$rule = SMWRuleObject::newFromFormula($property, $expr, $variables);
 		if (is_a($rule, 'SMWRuleObject')) {
+			
 			return $rule->getWikiFlogicString();
 		} else {
 			// return the error message

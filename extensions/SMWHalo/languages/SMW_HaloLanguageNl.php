@@ -352,8 +352,8 @@ Druk de rechter knop om resultaten te verkrijgen. Enkel <i>Return</i> drukken ge
 	'smw_tsa_addtoconfig4' => 'If this does not help, please check out the online-help in the $1.',
     'smw_tsa_driverinfo' => 'Driver information',
     'smw_tsa_status' => 'Status',
-    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableFlogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
-    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableFlogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
+    'smw_tsa_rulesupport'=> 'The triplestore driver supports rules, so you should add <pre>$smwgEnableObjectLogicRules=true;</pre> to your LocalSettings.php. Otherwise rules will not work.',
+    'smw_tsa_norulesupport'=> 'The triplestore driver does not supports rules, although they are activated in the wiki. Please remove <pre>$smwgEnableObjectLogicRules=true;</pre> from your LocalSettings.php. Otherwise you may get obscure errors.',
     'smw_tsa_tscinfo' => 'Triplestore Connector information',
     'smw_tsa_tscversion' => 'TSC Version',
 

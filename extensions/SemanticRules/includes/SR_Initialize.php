@@ -7,7 +7,7 @@
  * 
  * Semantic rules extension entry point
  * 
- * @author: Kai Kühn / ontoprise / 2009
+ * @author: Kai Kï¿½hn / ontoprise / 2009
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -26,7 +26,7 @@ if($smwgDefaultStore != 'SMWTripleStore') {
 
 $wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
-
+$smwgEnableObjectLogicRules=true;
 /**
  * Setups rule extension
  *
@@ -150,8 +150,8 @@ function srfAddJSLanguageScripts(& $out) {
  * @return boolean (MW hook)
  */
 function srfAddHTMLHeader(& $out) {
-	global $srgSRIP, $wgScriptPath, $smwgEnableFlogicRules, $wgRequest, $wgTitle;
-
+	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
+   
     $SF = ($wgTitle->getNamespace() == -1 &&
            in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
 	$action = $wgRequest->getVal('action');
@@ -159,8 +159,8 @@ function srfAddHTMLHeader(& $out) {
 
     srfAddJSLanguageScripts($out);
 
-	$rulesEnabled = isset($smwgEnableFlogicRules)
-	? (($smwgEnableFlogicRules) ? 'true' : 'false')
+	$rulesEnabled = isset($smwgEnableObjectLogicRules)
+	? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
 	: 'false';
 	$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
 
@@ -187,13 +187,13 @@ function srfAddHTMLHeader(& $out) {
  * @return boolean (SMWHalo hook)
  */
 function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
-	global $smwgEnableFlogicRules, $smwgTripleStoreGraph;
+	global $smwgEnableObjectLogicRules, $smwgTripleStoreGraph;
 	// rules
 	// meant to be a hash map $ruleID => $ruleText,
 	// where $ruleID has to be a URI (i.e. containing at least one colon)
 
 	$rules = array();
-	if (isset($smwgEnableFlogicRules)) {
+	if (isset($smwgEnableObjectLogicRules)) {
 
 		// search rule tags
 		$ruleTagPattern = '/&lt;rule(.*?&gt;)(.*?.)&lt;\/rule&gt;/ixus';
@@ -209,12 +209,20 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			preg_match_all($ruleparamterPattern, $header, $matchesheader);
 
 			$native = false;
+			$active = true;
+			$type="UNDEFINED";
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'native') {
 					$native = true;
 				}
-				
+				if (trim($matchesheader[1][$j]) == 'active') {
+						$active = trim($matchesheader[2][$j]) == 'true';
+				}
+				if (trim($matchesheader[1][$j]) == 'type') {
+						$type = $matchesheader[2][$j];
+				}
 			}
+		
 			// fetch name of rule (ruleid) and put into rulearray
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
@@ -222,14 +230,14 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$is_url = strpos($name, ":");
 					if ($is_url === false) {
 						// no valid URL given, so build one
-						$url = $smwgTripleStoreGraph . "#" . urlencode(str_replace(' ', '_', $name));
+						$url = $smwgTripleStoreGraph . "/rule#" . urlencode(str_replace(' ', '_', $name));
 					} else {
 						$url = $name;
 					}
 					
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
-					$rules[] = array($url, $ruletext, $native);
+					$rules[] = array($url, $ruletext, $native, $active, $type);
 				}
 			}
 		}

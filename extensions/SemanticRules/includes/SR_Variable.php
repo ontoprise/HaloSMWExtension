@@ -20,7 +20,7 @@
  * @file
  * @ingroup SRRuleObject
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 if (!defined('MEDIAWIKI')) die();
@@ -45,5 +45,8 @@ class SMWVariable extends SMWTerm {
 		$this->_variableName = $name;
 	}
 
+	public function getName() {
+		return "?".$this->_variableName;
+	}
 }
 
