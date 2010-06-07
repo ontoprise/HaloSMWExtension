@@ -145,7 +145,22 @@ abbr,acronym { border:0;
 }
 */
 
-/* customizing yui-tabview-apperance */
+#haloaclmainView{
+    min-height:300px;
+}
+
+/*NOTE: tab view customization for all tabs and sub tabs */
+.yui-skin-sam .yui-navset .yui-nav .selected a,
+.yui-skin-sam .yui-navset .yui-nav .selected a:visited,
+.yui-skin-sam .yui-navset .yui-nav .selected a:hover {
+    background:url(images/tab_bg_active.png) repeat-x!important;
+    color:#000!important;
+    height:24px!important;
+}
+
+.yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav{
+    border:0px solid #000!important;
+}
 .yui-nav li a em{
     max-height:24px;
 }
@@ -154,20 +169,30 @@ abbr,acronym { border:0;
 }
 #manageaclmainTab .yui-nav li,#haloaclsubView .yui-nav li{
     float:left;
-    height:24px;
+}
+/* the sub menu entries differ from the main menu entries.
+ So overwrite the style for them (normal and selected) */
+#createStdAclTab a, #createTmpAclTab a, #createQuickAclTab a, #createUserAclTab a,
+#createStdAclTab em, #createTmpAclTab em, #createQuickAclTab em, #createUserAclTab em
+{
+    background:none!important;
+    border:none!important;
+    font-weight:normal;
+    height:16px!important;
 }
 #createStdAclTab a em, #createTmpAclTab a em, #createQuickAclTab a em,#createUserAclTab a em{
     padding-top:4px!important;
 }
-/*
-#manageaclmainTab .yui-nav li a em,#haloaclsubView .yui-nav li a em{
-    padding-top:3px;
+#createStdAclTab.selected a, #createTmpAclTab.selected a, #createQuickAclTab.selected a, #createUserAclTab.selected a,
+#createStdAclTab.selected em, #createTmpAclTab.selected em, #createQuickAclTab.seelcted em, #createUserAclTab.selected em
+{
+    background:none!important;
+    border:none!important;
+    font-weight:bold;
+    height:16px!important;
 }
 
-#manageaclmainTab .yui-nav li.selected a em,#haloaclsubView .yui-nav li.selected a em{
-    padding-top:5px;
-}
-*/
+/* BEN: Where is this located? */
 .haloacl_rightPanelTab a em{
     padding-top:3px!important;
 }
@@ -176,134 +201,57 @@ abbr,acronym { border:0;
 }
 /* ------- */
 
-#haloaclmainView{
-    min-height:300px;
-}
 /* custom stuff */
-
-
-
-#content{
-}
 
 #p-search, #p-logo{
     z-index:1!important;
 }
-
 .yui-content{
     background:#FFF!important;
     margin:0px!important;
     padding:0px!important;
-    /*float:left;
-    */
-}
-.yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav{
-    border:0px solid #000!important;
+    /*float:left;*/
 }
 .first-child button:hover{
-
     background:none!important;
     border:0px solid!important;
-
 }
-
-/* tab related styles */
-
-.haloacl_tab_content{
-    padding:5px;
-}
-.haloacl_tab_content_description_header{
-    font-family:Arial;
-    font-size:16px;
-    font-weight:bold;
-    text-decoration:underline;
-    margin-bottom:10px;
-}
-.haloacl_tab_content_description{
-    margin:0 0 0 10px;
-
-}
-.haloacl_helpbutton{
-    float:left;
-    width:16px;
-    height:16px;
-    margin-top:4px;
-    margin-left:10px;
-    background:url(images/helpbutton.png) no-repeat;
-}
-.haloacl_tab_section_container{
-    float:left;
-    /*    clear:both;
-    */
-}
-
-.haloacl_tab_section_header{
-
-    width:900px;
-    height:25px;
-    background:url(images/tab_section_header_bg.png);
-    border:1px solid #000;
-    margin:10px 0 10px 0;
-
-    font-family:Arial;
-    font-size:13px;
-    font-weight:bold;
-
-}
-.haloacl_tab_section_header_count{
-    display:inline;
-    width:23px;
-    height:20px;
-    border:1px solid #000;
-    border-style:none solid none none;
-    float:left;
-    padding:5px 0 0 10px;
-
-}
-.haloacl_tab_section_header_title{
-    display:inline;
-    height:20px;
-    float:left;
-    padding:5px 0 0 10px;
-}
-
-.haloacl_tab_section_content{
-    margin:10px 0 0 0px;
-    /*
-    padding:0 0 0 32px;
-    */
-    min-width:850px;
-    float:left;
-    clear:both;
-}
-
-.haloacl_tab_section_content_row{
-    float:left;
+.haloacl_greyline{
+    border:1px solid #AAA;
+    border-style:none  none solid none;
+    height:2px;
     clear:both;
     margin:0 0 10px 0;
 }
-.haloacl_tab_section_content_row_descr{
-    font-weight:bold;
-    float:left;
-    display:inline;
-    width:80px;
-    padding:0 0 0 35px;
+
+.haloacl_discard_button {
+	color:red;
 }
-
-.haloacl_tab_section_content_row_content{
-    float:left;
-    display:inline;
-
+.haloacl_three_buttons div:first-child { /*left*/
+	width:33%;
+	float:left;
+	text-align:left;
 }
-
-.haloacl_tab_section_content_row_content_element{
-    float:left;
-    display:inline;
-    /* width was 120px */
-    width:150px;
-
+.haloacl_three_buttons div:first-child + div { /*middle*/
+	width:33%;
+	float:left;
+	text-align:center;
 }
-
+.haloacl_three_buttons div:first-child + div + div { /*right*/
+	width:33%;
+	float:left;
+	text-align:right;
+}
+.haloacl_two_buttons div:first-child, .haloacl_buttons_under_panel div_first-child {
+	width:50%;
+	float:left;
+	text-align:left;
+}
+.haloacl_two_buttons div:first-child + div, .haloacl_buttons_under_panel div:first-child + div {
+	width:50%;
+	float:left;
+	text-align:right;
+}
 /* panel's general styles */
 .panel{
     font-family:Arial;
@@ -321,11 +269,25 @@ abbr,acronym { border:0;
     background-color:#FFF;
     height:19px;
     padding:0px 0 0 8px;
-
     border:1px solid #000;
     border-style:none none solid  none;
 }
-
+.haloacl_panel_button_collapse{
+    background:url(images/panel_collapse.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:5px 4px 0 0;
+}
+.haloacl_panel_button_expand{
+    background:url(images/panel_expand.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:5px 4px 0 0;
+}
 .haloacl_panel_nameDescr{
     float:left;
     width:693px;
@@ -336,10 +298,17 @@ abbr,acronym { border:0;
 .haloacl_panel_name{
     font-weight:bold;
 }
+.haloacl_panel_button_close{
+    background:url(images/panel_close.png);
+    display:inline;
+    float:left;
+    height:9px;
+    width:9px;
+    margin:3px 3px 0 0;
+}
 .haloacl_panel_statusContainer{
     float:left;
     width:128px;
-
     overflow:hidden;
     border:1px solid #000;
     border-style:none solid;
@@ -361,13 +330,11 @@ abbr,acronym { border:0;
     width:50px;
     background:url(images/panel_notsaved.png) no-repeat right;
 }
-
 .haloacl_panel_status_saved{
     padding:0px 27px 0px 0px ;
     width:50px;
     background:url(images/panel_saved.png) no-repeat right;
 }
-
 .haloacl_panel_close{
     float:right;
     padding:2px 3px 0 0;
@@ -375,7 +342,6 @@ abbr,acronym { border:0;
 .haloacl_panel_close img{
     border:0px solid;
 }
-
 /* panel content */
 .haloacl_panel_content{
     padding:13px 4px;
@@ -389,7 +355,6 @@ abbr,acronym { border:0;
     padding:0 0 0px 20px;
     */
 }
-
 .halocal_panel_content_row{
     float:left;
     clear:both;
@@ -410,7 +375,6 @@ abbr,acronym { border:0;
     display:inline;
     min-width:100px;
 }
-
 .haloacl_panel_rights{
     float:left;
     display:inline;
@@ -418,7 +382,6 @@ abbr,acronym { border:0;
     height:50px;
     overflow:visible;
 }
-
 .haloacl_panel_rights .right_fullaccess {
     position:absolute;
     left:0px;
@@ -474,48 +437,115 @@ abbr,acronym { border:0;
     width:150px;
 }
 
-.haloacl_panel_button_collapse{
-    background:url(images/panel_collapse.png);
-    display:inline;
-    float:left;
-    height:9px;
-    width:9px;
-    margin:5px 4px 0 0;
-
+/* ----Individual settings of each tab---- */
+/* Content of the first tab "Create ACL" */
+.haloacl_tab_content{
+    padding:5px;
 }
-
-.haloacl_panel_button_expand{
-    background:url(images/panel_expand.png);
-    display:inline;
-    float:left;
-    height:9px;
-    width:9px;
-    margin:5px 4px 0 0;
-
+/* NOTE: never used! This had been the first version of haloacl_manageusers_title!?!*/
+.haloacl_tab_content_description_header{
+    text-decoration:underline;
+    font-weight:bold;
+    font-size:16px;
 }
-.haloacl_panel_button_close{
-    background:url(images/panel_close.png);
-    display:inline;
-    float:left;
-    height:9px;
-    width:9px;
-    margin:3px 3px 0 0;
-
+.haloacl_tab_content_description{
+    margin:0 0 0 10px;
 }
-
-
-/* general stuff */
-.haloacl_greyline{
-    border:1px solid #AAA;
-    border-style:none  none solid none;
-    height:2px;
+.haloacl_tab_section_container{
+    float:left;
+    /*    clear:both;*/
+}
+.haloacl_tab_section_header{
+    width:900px;
+    height:25px;
+    background:url(images/tab_section_header_bg.png);
+    border:1px solid #000;
+    margin:10px 0 10px 0;
+    font-family:Arial;
+    font-size:13px;
+    font-weight:bold;
+}
+.haloacl_tab_section_header_count{
+    display:inline;
+    width:23px;
+    height:20px;
+    border:1px solid #000;
+    border-style:none solid none none;
+    float:left;
+    padding:5px 0 0 10px;
+}
+.haloacl_tab_section_header_title{
+    display:inline;
+    height:20px;
+    float:left;
+    padding:5px 0 0 10px;
+}
+.haloacl_helpbutton{
+    float:left;
+    width:16px;
+    height:16px;
+    margin-top:4px;
+    margin-left:10px;
+    background:url(images/helpbutton.png) no-repeat;
+}
+.haloacl_tab_section_content{
+    margin:10px 0 0 0px;
+    /*
+    padding:0 0 0 32px;
+    */
+    min-width:850px;
+    float:left;
+    clear:both;
+}
+#haloacl_tab_createacl_modificationrightsection > .haloacl_tab_section_content_row:first-child {
+	margin-left:35px;
+}
+#haloacl_save_modificationrights {
+	margin-left: 30px; /* this button is located 5px more to the right than the others!?! */
+}
+.haloacl_tab_section_container input[id^="step2_button"] {
+	margin-left: 35px;
+	margin-top:9px;
+}
+#step2_button2 > input[id^="haloacl_create_right_"] {
+	margin-left: 35px;
+}
+.haloacl_tab_section_content_row{
+    float:left;
     clear:both;
     margin:0 0 10px 0;
 }
+.haloacl_tab_section_content_row_descr{
+    font-weight:bold;
+    float:left;
+    display:inline;
+    width:80px;
+    padding:0 0 0 35px;
+}
+.haloacl_tab_section_content_row_content{
+    float:left;
+    display:inline;
+}
+.haloacl_tab_section_content_row_content_element{
+    float:left;
+    display:inline;
+    /* width was 120px */
+    width:150px;
+}
+#step3 > input[id^="haloacl_createacl_nextstep_"]{
+	margin-left:30px;
+}
+#step4 .haloacl_tab_section_content_row_descr {
+	padding-top:3px;
+}
+#create_acl_autogenerated_acl_name {
+	width:750px;
+}
+.haloacl_panel_content_row_content input[id^="right_description"]{
+	width:700px; /* description inputs for rights need to be large*/
+}
 
-/* ------------------
-    ------------------
-*/
+/* ------------------------------------*/
 /* rights panel*/
 .haloacl_rightpanel_selecttab_container{
     float:left;
@@ -530,20 +560,20 @@ abbr,acronym { border:0;
     border-style:none none none none;
     padding:0 0 0 0;
 }
-
-
 .haloacl_rightpanel_selecttab_leftpart_filter{
     border:1px solid #000;
     border-style:none none solid none;
     height:24px;
     padding:3px 0 0 3px;
 }
-
 .haloacl_rightpanel_selecttab_leftpart_filter_title{
     font-weight:bold;
-
 }
-
+.haloacl_rightpanel_selecttab_leftpart_filter_title + span {
+	margin-right:29px;
+	float:right;
+	font-weight:bold;
+}
 .haloacl_rightpanel_selecttab_leftpart_treeview_userlink{
     border:0px solid #000;
     border-style:none none none none;
@@ -563,12 +593,10 @@ abbr,acronym { border:0;
     padding:0 0 0 3px;
 }
 
-
 .ygtvcheck0,.ygtvcheck0-ro { background: url(yuipics/check0.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck1,.ygtvcheck1-ro { background: url(yuipics/check1.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2 { background: url(yuipics/check2.gif) 0 0 no-repeat; width:16px; cursor:pointer }
 .ygtvcheck2-ro { background: url(images/remove.png) 0 0 no-repeat; width:16px; cursor:pointer;float:right; }
-
 
 .haloacl_rightpanel_selecttab_leftpart_treeview{
     border:1px #000 solid;
@@ -582,20 +610,15 @@ abbr,acronym { border:0;
     height:267px;
 }
 /* right side */
-
 .haloacl_rightpanel_selecttab_rightpart{
     float:left;
     width:436px;
     border:1px solid #000;
     border-style:none none none solid;
     padding:0 0 0 0;
-}
-.haloacl_rightpanel_selecttab_rightpart{
     float:left;
     min-height:320px;
-
 }
-
 .haloacl_rightpanel_selecttab_rightpart_filter{
     border:1px solid #000;
     border-style:none none solid none;
@@ -603,10 +626,14 @@ abbr,acronym { border:0;
     padding:3px 0 0 3px;
 }
 
-.haloacl_rightpanel_selecttab_rightpart_filter_title{
+.haloacl_rightpanel_selecttab_rightpart_filter_title {
     font-weight:bold;
 }
-
+.haloacl_rightpanel_selecttab_rightpart_filter_title + span {
+	margin-right:12px;
+	float:right;
+	font-weight:bold;
+}
 /* datatable */
 .userdatatable_name{
     width:120px;
@@ -631,7 +658,6 @@ abbr,acronym { border:0;
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-odd,
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-even,
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt-first
-
 {
     background-color:#FFF!important;
 }
@@ -646,7 +672,6 @@ abbr,acronym { border:0;
     width:218px;
     height:13px!important;
 }
-
 .haloacl_grouptree_title{
     width:340px;
     float:left;
@@ -656,11 +681,8 @@ abbr,acronym { border:0;
     font-weight:bold!important;
     text-decoration:none;
 }
-
-
 .datatable-groups-col-div{
 }
-
 .yui-pg-container{
     padding: 0 0 0 5px!important;
 }
@@ -671,8 +693,6 @@ abbr,acronym { border:0;
     cursor:pointer;
     float:right;
 }
-
-
 .haloacl_rightpanel_selecttab_rightpart_datatable thead .yui-dt-first{
     display:none!important;
 }
@@ -682,14 +702,12 @@ abbr,acronym { border:0;
 .haloacl_rightpanel_selecttab_rightpart_datatable .yui-dt tr.yui-dt-first td {
     border-top:0px solid!important;
 }
-
 .haloacl_infobutton {
     width:20px;
     height:20px;
     background:url(images/info.png) no-repeat 0 2px;
     float:left;
 }
-
 .haloacl_infobutton_groupdesc {
     width:20px;
     height:20px;
@@ -702,68 +720,28 @@ abbr,acronym { border:0;
     background:url(images/rd_icon.png) no-repeat;
     float:left;
 }
-
 .haloacl_warningbutton {
     width:20px;
     height:20px;
     background:url(images/warning.png) no-repeat 0 1px;
     float:left;
 }
-
-
 .haloacl_backbutton {
     width:20px;
     height:20px;
     background:url(images/back.png) no-repeat;
     float:left;
 }
-
 .haloacl_editbutton {
     width:20px;
     height:20px;
     background:url(images/edit.png) no-repeat;
 }
 
-/* ----- */
-
-/* tab view customization */
-/* setting custom style */
-.yui-skin-sam .yui-navset .yui-nav .selected a,
-.yui-skin-sam .yui-navset .yui-nav .selected a:visited,
-.yui-skin-sam .yui-navset .yui-nav .selected a:hover {
-    background:url(images/tab_bg_active.png) repeat-x!important;
-    color:#000!important;
-    height:24px!important;
-}
-
-
-/* disable style for subtab-nav */
-#createStdAclTab a, #createTmpAclTab a, #createUserAclTab a,
-#createStdAclTab em, #createTmpAclTab em, #createUserAclTab em
-{
-    background:none!important;
-    border:none!important;
-    font-weight:normal;
-    height:16px!important;
-}
-
-/* disable style for subtab-nav */
-#createStdAclTab.selected a, #createTmpAclTab.selected a, #createUserAclTab.selected a,
-#createStdAclTab.selected em, #createTmpAclTab.selected em, #createUserAclTab.selected em
-{
-    background:none!important;
-    border:none!important;
-    font-weight:bold;
-    height:16px!important;
-
-}
-
-
-
+/* -- overlay panels -- */
 .yui-panel-container{
     position:absolute;
 }
-
 .yui-panel .hd {
     height:16px;
     background:url(images/tab_section_header_bg.png);
@@ -774,14 +752,13 @@ abbr,acronym { border:0;
     color:#000;
 }
 
-
-/* --- MANAGE USERS --- */
-
+/* Content of the third tab "Manage Groups" */
 .haloacl_manageusers_container{
     float:left;
     padding:10px;
 
 }
+/* NOTE: A lot of these selectors are also used in "Manage ACLs" and "Whitelist" tab! */
 .haloacl_manageusers_title{
     text-decoration:underline;
     font-weight:bold;
@@ -795,12 +772,11 @@ abbr,acronym { border:0;
     padding:10px 0 0 10px;
 }
 #haloacl_manageuser_contentmenu{
-    height:200px;
+    min-height:200px;
     width:140px;
     float:left;
     background-color:#FFF;
     border:1px solid;
-
 }
 #haloacl_manageuser_contentmenu_title{
     font-weight:bold;
@@ -808,15 +784,11 @@ abbr,acronym { border:0;
     border-style: none none solid none;
     padding:0 0 0 10px;
     margin: 0 0 5px 0;
-
-
 }
 #haloacl_manageuser_contentmenu_element{
     margin:0 0 0 5px;
     padding:0 0 0 12px;
     background:url(images/add_button.png) no-repeat 0 2px;
-
-
 }
 #haloacl_manageuser_contentlist{
     margin:0 0 0 20px;
@@ -825,21 +797,30 @@ abbr,acronym { border:0;
     float:left;
     background-color:#FFF;
     border:1px solid;
-
 }
 #haloacl_manageuser_contentlist_title{
     font-weight:bold;
     border:1px solid;
     border-style: none none solid none;
     padding:0 0 0 10px;
-
+}
+#haloacl_manageuser_contentlist_title_info {
+	margin-right:29px;
+	float:right;
+}
+#haloacl_manageuser_contentlist_title_edit {
+	margin-right:26px;
+	float:right;
+}
+#haloacl_manageuser_contentlist_title_delete {
+	margin-right:20px;
+	float:right;
 }
 #haloacl_manageuser_contentlist_footer{
     font-weight:bold;
     padding:3px 10px;
     text-align:right!important;
 }
-
 .haloacl_manageuser_list_information{
     float:left;
     width:300px;
@@ -852,7 +833,6 @@ abbr,acronym { border:0;
     float:left;
     width:60px;
     background:url(images/edit_button.png) transparent no-repeat 0 -4px;
-
 }
 .haloacl_manageuser_list_delete{
     float:left;
@@ -878,7 +858,6 @@ abbr,acronym { border:0;
     float:left;
     width:51px;
 }
-
 #treeDiv_manageuser_grouplisting{
     height:257px;
     border:1px solid;
@@ -890,16 +869,13 @@ abbr,acronym { border:0;
     overflow-y: auto!important;
     padding:5px 0 0 5px;
 }
-
 .manageUser_highlighted,.manageUser_highlighted a{
     background-color:#DDD!important;
     font-weight:bold!important;
 }
-
 .ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover {
     background:none!important;
 }
-
 #haloacl_manageUser_editing_container{
     clear:both;
     float:left;
@@ -909,7 +885,7 @@ abbr,acronym { border:0;
     border-style:solid none none none;
 }
 #haloacl_manageUser_editing_title{
-    font-site:16px;
+    font-size:16px;
     font-weight:bold;
 }
 #manageUserGroupsettings{
@@ -926,7 +902,6 @@ abbr,acronym { border:0;
     text-align:center;
     padding:0 0 3px 0;
 }
-
 #haloacl_manageacl_acltree{
     background-color:#FFF;
     border:1px solid;
@@ -941,7 +916,6 @@ abbr,acronym { border:0;
 #SDRightsPanel{
     width:960px;
 }
-
 .content_manageExistingACLRightList{
     margin:10px 0;
 }
@@ -949,12 +923,10 @@ abbr,acronym { border:0;
     margin:10px 10px;
     min-height:350px;
 }
-
 .haloacl_manageacl_contentmenu_element{
     margin:0 0 0 5px;
     padding:0 0 0 12px;
 }
-
 #haloacl_manageacl_contentmenu_title{
     font-weight:bold;
     border:1px solid;
@@ -971,11 +943,9 @@ abbr,acronym { border:0;
 .yui-pg-previous{
     width:70px!important;
 }
-
 .yui-pg-pages{
     width:100px!important;
 }
-
 .yui-pg-next{
     width:70px!important;
 }
@@ -983,12 +953,7 @@ abbr,acronym { border:0;
     width:70px!important;
 }
 
-
-
-
-/* WHITELISTS */
-/* datatable */
-
+/* Content of the fourth tab "Whitelist" */
 .haloacl_whitelist_datatable{
     float:left;
 }
@@ -1003,34 +968,26 @@ abbr,acronym { border:0;
     overflow-y: auto!important;
     padding:5px 0 0 5px;
 }
-
 .haloacl_whitelist_datatable{
     border:0px solid!important;
 }
-
 .haloacl_whitelist_datatable table{
     border:0px solid!important;
 }
 .haloacl_whitelist_datatable .yui-dt-odd,
 .haloacl_whitelist_datatable .yui-dt-even,
-.haloacl_whitelist_datatable .yui-dt-first
-
-{
+.haloacl_whitelist_datatable .yui-dt-first {
     background-color:#FFF!important;
 }
-
-.haloacl_whitelist_datatable thead .yui-dt-first{
+.haloacl_whitelist_datatable thead .yui-dt-first {
     display:none!important;
 }
-
 .haloacl_whitelist_datatable .yui-dt tr.yui-dt-first td {
     border-top:0px solid!important;
 }
-
 #content_haloacl_whitelist_panel{
     padding:10px 0;
 }
-
 .haloacl_whitelist_datatable_usersgroups{
     width:500px;
     float:left;
@@ -1044,39 +1001,39 @@ abbr,acronym { border:0;
     float:left;
     background-color:#FFF;
     border:1px solid;
-
 }
-/* AUTOCPMPLETER */
+#haloacl_whitelist_contentlist_footer {
+	clear:both;
+	border:1px solid;
+	border-style:solid none none none;
+	text-align:right;
+	padding:3px 10px;
+}
+#haloacl_whitelist_contentlist_footer > span:first-child {
+	padding:4px 0 0 6px;
+}
 
+/* AUTOCOMPLETER */
 #myAutoComplete {
     width:25em; /* set width here or else widget will expand to fit its container */
     padding-bottom:2em;
 }
-
 #myAutoComplete li{
     height:20px;
 }
-
 .match {
     font-weight:bold;
 }
 
-
 /* FILTER */
-
 .haloacl_manageacl_contentmenu_element .sub{
     margin-left:20px;
 }
-
-
 .yui-tt .bd {
     z-index:100;
     /* Styles here... */
 }
-
-
 /* Manage ACL Tree */
-
 .haloacl_manageACL_right_title{
     float:left;
     width:200px;
@@ -1089,39 +1046,29 @@ abbr,acronym { border:0;
     float:right;
     width:210px;
 }
-
 .haloacl_manageacl_contenttitle{
     font-weight:bold;
     padding:0 0 0 5px;
     border:1px solid #000;
     border-style:none none solid none;
 }
-
+.haloacl_manageacl_contenttitle > span{
+	float:right;
+	margin-right: 29px;
+}
+.haloacl_manageacl_contenttitle > span:first-child {
+	margin-right: 15px;
+}
 #ManageExistingACLPanel{
     /*
         margin:10px;
     */
 }
+#ManageACLDetail {
+	float:left;
+}
 
 /* quickacltab */
-/* disable style for subtab-nav */
-#createQuickAclTab a, #createQuickAclTab a, #createQuickAclTab a,
-#createQuickAclTab em, #createQuickAclTab em, #createQuickAclTab em
-{
-    background:none!important;
-    border:none!important;
-    font-weight:normal;
-}
-
-/* disable style for subtab-nav */
-#createQuickAclTab.selected a, #createQuickAclTab.selected a, #createQuickAclTab.selected a,
-#createQuickAclTab.selected em, #createQuickAclTab.selected em, #createQuickAclTab.selected em
-{
-    background:none!important;
-    border:none!important;
-    font-weight:bold;
-}
-
 .haloacl_filter_input{
     font-weight:bold;
     color:#F23C21;
@@ -1145,26 +1092,21 @@ abbr,acronym { border:0;
     min-width:500px!important;
     float:left!important;
 }
-
 .haloacl_right_name{
     width:200px;
 }
-
 .haloacl_readonly_right_secondspacing{
     margin-left:41px;
 }
 .haloacl_readonly_right_firstspacing{
     margin-left:321px;
 }
-
 #haloacl_whitelist_pagename{
     width:200px!important;
 }
-
 .haloacl_existing_right_add_buttons{
     padding:10px 10px 0px 10px;
 }
-
 .popup_title{
     color:#000!important;
 }
@@ -1178,7 +1120,8 @@ abbr,acronym { border:0;
 .haloacl_manageuser_name{
     width:200px;
 }
-.haloacl_discard_save_buttons{
+.haloacl_button_box {
+    text-align:center;
     padding:8px 0;
     border:1px solid #A0A0A0;
     background-color:#EEE;
@@ -1186,12 +1129,11 @@ abbr,acronym { border:0;
     margin:0 0 0 10px;
 }
 .haloacl_cont_under_trees{
-    padding:2px 0 0 0;
+    padding:4px 0 0 6px;
     float:left;
     font-weight:normal!important;
 }
-
-.haloacl_buttons_under_panel{
+.haloacl_buttons_under_panel {
     padding:0 5px 5px 5px;
     float:left;
     width:883px;
