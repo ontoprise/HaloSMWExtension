@@ -276,12 +276,23 @@ class WebServiceManager {
 		if($article->getTitle()->getNamespace() != SMW_NS_WEB_SERVICE) {
 			return true;
 		}
+		
+		global $smwgDIIP;
+		require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
+		
 		// check if an wwsd was change and delete the old wwsd and the
 		// related cache entries from the db
 		if(WebServiceManager::detectModifiedWWSD(self::$mNewWebService)){
 			WebServiceCache::removeWS(self::$mOldWebservice->getArticleID());
 			self::$mOldWebservice->removeFromDB();
+			
+			//deal with triplification
+			$articles = WSStorage::getDatabase()->getWSArticles(self::$mNewWebService->getArticleID(), new SMWRequestOptions());
+			WSTriplifier::getInstance()->removeWS(self::$mNewWebService->getArticleID(), $articles);
 		}
+		
+		//handle triplification processing
+		WSTriplifier::getInstance()->addWSAsDataSource(self::$mNewWebService->getArticleID());
 
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
@@ -320,6 +331,13 @@ class WebServiceManager {
 			}
 				
 			$ws->removeFromDB();
+			
+			//triplification processing
+			global $smwgDIIP;
+			require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
+			//deal with triplification
+			$articles = WSStorage::getDatabase()->getWSArticles(self::$mNewWebService->getArticleID(), new SMWRequestOptions());
+			WSTriplifier::getInstance()->removeWS(self::$mNewWebService->getArticleID(), $articles);
 		}
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;

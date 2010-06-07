@@ -36,6 +36,7 @@ global $smwgDIIP;
 require_once("$smwgDIIP/specials/WebServices/SMW_WSStorage.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_WebServiceCache.php");
 require_once("$smwgDIIP/specials/WebServices/SMW_WebService.php");
+require_once("$smwgDIIP/specials/WebServices/SMW_WSTriplifier.php");
 
 
 global $wgExtensionFunctions, $wgHooks;
@@ -116,7 +117,7 @@ function webservice_getPreview($articleName, $parameters){
  * 		the rendered wikitext
  */
 function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
-	global $wgsmwRememberedWSUsages, $purgePage;
+	global $wgsmwRememberedWSUsages, $purgePage, $wgsmwRememberedWSTriplifications;
 	$purgePage = true;
 
 	// the name of the ws must be the first parameter of the parser function
@@ -134,6 +135,21 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 	$wsFormat = "";
 	$wsTemplate = "";
 	$wsStripTags = "false";
+	$wsTriplify = false;
+	// deprecated
+	// $triplificationSubject = "";
+	$displayTripleSubjects = false;
+	
+	//get article id
+	if(!$preview){
+		$articleId = $parser->getTitle()->getArticleID();
+	} else {
+		$articleId = 0;
+		if(strlen($parser) > 0){
+			$t = Title::makeTitleSafe(0, $parser);
+			$articleId = $t->getArticleID();
+		}
+	}
 
 	// determine the kind of the remaining parameters and get
 	// their default value if one is specified
@@ -147,6 +163,19 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			$wsTemplate = getSpecifiedParameterValue($parameter);
 		} else if (substr($parameter,0, 10) == "_striptags"){
 			$wsStripTags = str_replace(",", "", getSpecifiedParameterValue($parameter));
+		} else if (substr($parameter,0, 9) == "_triplify"){
+			$wsTriplify = true;
+		// the subject creation pattern must be specified in the WWSD
+		//} else if (substr($parameter,0, 22) == "_triplificationSubject" && strpos($parameter, "=") > 0){
+		//	$triplificationSubject = explode("=", $parameter, 2);
+		//	$triplificationSubject = trim($triplificationSubject[1]);
+		} else if (substr($parameter,0, 22) == "_displayTripleSubjects"){
+			$displayTripleSubjects = explode("=", $parameter, 2);
+			if(array_key_exists(1, $displayTripleSubjects) && strlen($displayTripleSubjects[1]) > 0){
+				$displayTripleSubjects = $displayTripleSubjects[1];
+			} else {
+				$displayTripleSubjects = "Triple subjects";
+			}
 		} else {
 			$specParam = getSpecifiedParameterValue($parameter);
 			if($specParam){
@@ -154,6 +183,37 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 			}
 		}
 	}
+	
+	//process triplification instructions
+	if($wsTriplify || $displayTripleSubjects){
+		if ( !defined( 'LOD_LINKEDDATA_VERSION') && $wsTriplify){
+			//ld extension not installed
+			return smwfEncodeMessages(array(wfMsg('smw_wsuse_missing_ld_extension')));
+		}
+		
+		//get subject creation pattern from wwsd if necessary
+		$triplificationSubject = $ws->getTriplificationSubject();
+		if(strlen($triplificationSubject) == 0){
+			//no subject creation pattern defind
+			return smwfEncodeMessages(array(wfMsg('smw_wsuse_missing_triplification_subject')));
+		}
+		
+		//add triplification subject aliases to result parts if necessary and
+		//remember those special result parts
+		$allAliases = WebService::newFromID($wsId)->getAllResultPartAliases();
+		
+		$subjectCreationPatternParts = array();
+		foreach($allAliases as $alias => $dc){
+			if(strpos($triplificationSubject, "?".$alias."?") !== false){
+				$alias = explode('.', $alias);
+				if(!array_key_exists($alias[0].".".$alias[1], $wsReturnValues)
+						&& !array_key_exists($alias[0], $wsReturnValues)){
+					$wsReturnValues[$alias[0].".".$alias[1]] = "";
+					$subjectCreationPatternParts[] = $alias[1];
+				}		
+			}
+		}
+	} //eof processing triplification instructions
 	
 	$response = validateWSUsage($wsId, $wsReturnValues, $wsParameters);
 	$messages = $response[0];
@@ -183,7 +243,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		if(count($errorMessages) > 0){
 			//todo:provide a better implementation
 			if(strpos($errorMessages[0],
-			substr(wfMsg('smw_wws_client_connect_failure'),0,10)) === 0){
+					substr(wfMsg('smw_wws_client_connect_failure'),0,10)) === 0){
 				if(!is_array($wsResults)){
 					$wsFormattedResult = $wsResults." ".smwfEncodeMessages($errorMessages);
 				} else {
@@ -194,17 +254,36 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 				$wsFormattedResult = smwfEncodeMessages($errorMessages);
 			}
 		} else {
-			$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
-		}
-
-		if(!$preview){
-			$articleId = $parser->getTitle()->getArticleID();
-		} else {
-			$articleId = 0;
-			if(strlen($parser) > 0){
-				$t = Title::makeTitleSafe(0, $parser);
-				$articleId = $t->getArticleID();
+			//process triplification instructions
+			if($wsTriplify || $displayTripleSubjects){
+				$wsResultsForTriplification = $wsResults;
+				foreach($subjectCreationPatternParts as $p){
+					if(array_key_exists($p, $wsResults)){
+						unset($wsResults[$p]);
+					}
+				}
+				
+				//only triplify if this is not for the preview
+				if (!$preview || $displayTripleSubjects){
+					if(!is_array($wgsmwRememberedWSTriplifications)){
+						$wgsmwRememberedWSTriplifications = array();
+					}
+					$dropGraph = false;
+					if(!array_key_exists($wsId, $wgsmwRememberedWSTriplifications)){
+						$wgsmwRememberedWSTriplifications[$wsId] = null;
+						$dropGraph = true;
+					}
+					$subjects[$displayTripleSubjects] = 
+						WSTriplifier::getInstance()
+							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph);
+				}
 			}
+			
+			if($displayTripleSubjects){
+				$wsResults = array_merge($subjects, $wsResults);
+			} 
+			
+			$wsFormattedResult = formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults, $subst);
 		}
 
 		//handle cache issues for previews
@@ -233,13 +312,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 		$wsFormattedResult = $parser->replaceVariables($wsFormattedResult);
 		
 		
-		//remove <p>-tag around ws-result
-//		if(substr($wsFormattedResult, 0, 3) == "<p>"){
-//			$wsFormattedResult = trim(substr($wsFormattedResult, 3));
-//			$fpos = strpos($wsFormattedResult, "</p>");
-//			$wsFormattedResult = substr($wsFormattedResult, 0 , $fpos).substr($wsFormattedResult, $fpos+4); 
-//			
-//		}
+
 		return $wsFormattedResult;
 	} else {
 		return smwfEncodeMessages($messages);
@@ -305,10 +378,10 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null,
 				}
 			}
 		} else {
-			$wsResult[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true).$key;
+			$wsResults[$key] = smwfEncodeMessages(array(wfMsg('smw_wsuse_type_mismatch'))).print_r($wsResult, true).$key;
 		}
 	}
-
+	
 	if($wsFormat == null){
 		$printer = WebServiceListResultPrinter::getInstance();
 		return $printer->getWikiText($wsTemplate, getReadyToPrintResult($wsResults, $wsStripTags), $subst);
@@ -341,7 +414,7 @@ function formatWSResult($wsFormat, $wsTemplate, $wsStripTags, $wsResults = null,
  */
 function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	$ws = WebService::newFromId($wsId);
-
+	
 	//validate subparameters and construct appropriate parameters
 	$subParameters = array();
 	foreach($wsParameters as $name => $value){
@@ -368,7 +441,7 @@ function validateWSUsage($wsId, $wsReturnValues, $wsParameters){
 	if(count($mSP) == 0){
 		$mSP = array();
 	}
-
+	
 	$mP = $ws->validateSpecifiedParameters($wsParameters);
 	$mR = $ws->validateSpecifiedResults($wsReturnValues);
 
@@ -422,7 +495,7 @@ function detectRemovedWebServiceUsages($articleId){
 	if($rememberedWSUsages != null){
 		foreach($rememberedWSUsages as $rememberedWSUsage){
 			WSStorage::getDatabase()->addWSArticle(
-			$rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
+				$rememberedWSUsage[0], $rememberedWSUsage[1], $articleId);
 		}
 	}
 
@@ -434,7 +507,7 @@ function detectRemovedWebServiceUsages($articleId){
 		if($rememberedWSUsages != null){
 			foreach($rememberedWSUsages as $rememberedWSUsage){
 				if(($rememberedWSUsage[0] == $oldWSUsage[0])
-				&& ($rememberedWSUsage[1] == $oldWSUsage[1])){
+						&& ($rememberedWSUsage[1] == $oldWSUsage[1])){
 					$remove = false;
 				}
 			}
@@ -449,6 +522,20 @@ function detectRemovedWebServiceUsages($articleId){
 		}
 	}
 	$wgsmwRememberedWSUsages = array();
+	
+	//deal with triplifying
+	global $wgsmwRememberedWSTriplifications;
+	if(!is_array($wgsmwRememberedWSTriplifications)){
+		$wgsmwRememberedWSTriplifications = array();
+	}
+	
+	foreach($oldWSUsages as $oldWSUsage){
+		if(!array_key_exists($oldWSUsage[0], $wgsmwRememberedWSTriplifications)){
+			WSTriplifier::getInstance()->removeWSUsage($oldWSUsage[0], $articleId);
+		}
+	}
+	//eof deal with triplification
+	
 	return true;
 }
 

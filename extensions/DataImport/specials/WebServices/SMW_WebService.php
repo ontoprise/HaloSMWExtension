@@ -19,7 +19,7 @@
 /**
  * @file
  * @ingroup DIWebServices
- * 
+ *
  * @author Thomas Schweitzer, Ingo Steinbauer
  */
 
@@ -94,7 +94,7 @@ class WebService {
 	// after an update. Otherwise it starts after the
 	// last access.
 	private $mConfirmationStatus;      //bool: confirmed by sysop (true) or not (false)
-	
+
 	private $mWSClient;		  //IWebServiceClient: the web service client provides
 	//   access to the service
 	private $mCallParameters;
@@ -136,10 +136,10 @@ class WebService {
 	 * 		Confirmed by sysop (true) or not (false)
 	 */
 	function __construct($id = 0, $uri = "", $protcol = "", $method = "",
-			$mAuthenticationType = "", $mAuthenticationLogin = "", $mAuthenticationPassword = "",
-			$parameters = "", $result = "",
-			$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
-			$expiresAfterUpdate = false, $confirmed = false) {
+	$mAuthenticationType = "", $mAuthenticationLogin = "", $mAuthenticationPassword = "",
+	$parameters = "", $result = "",
+	$dp = 0, $qp = 0, $updateDelay = 0, $sol = 0,
+	$expiresAfterUpdate = false, $confirmed = false) {
 		$this->mArticleID = $id;
 		$this->mName = Title::nameOf($id);
 		$this->mURI = $uri;
@@ -148,7 +148,7 @@ class WebService {
 		$this->mAuthenticationType = $mAuthenticationType;
 		$this->mAuthenticationLogin = $mAuthenticationLogin;
 		$this->mAuthenticationPassword = $mAuthenticationPassword;
-		
+
 		//Add special purpose parameters, if the WS is a LD source. Those special
 		//purpose parameters are available to each LD WS. They need not to be
 		//specified in the WWSD
@@ -157,7 +157,7 @@ class WebService {
 			//$parameters .= '<parameter name="'.DI_URL_SUFFIX_ALIAS.'" path="'.DI_URL_SUFFIX.'" optional="true"/>';
 			//$parameters .= '<parameter name="'.DI_SUBJECT_ALIAS.'" path="'.DI_SUBJECT.'" optional="true"/>';
 		}
-		
+
 		$this->mParameters = $parameters;
 		try {
 			if(empty($parameters)){
@@ -165,7 +165,7 @@ class WebService {
 			} else {
 				$this->mParsedParameters = new SimpleXMLElement("<p>".$parameters."</p>");
 			}
-			
+
 			$this->mResult = $result;
 			if (empty($result)) {
 				$this->mParsedResult = null;
@@ -227,11 +227,11 @@ class WebService {
 	 */
 	public static function newFromName($name) {
 		$t = Title::makeTitleSafe(SMW_NS_WEB_SERVICE, $name);
-		
+
 		if($t == null){
 			return null;
 		}
-		
+
 		while($t->isRedirect()){
 			$article = new Article($t);
 			$t = $article->getRedirectTarget();
@@ -300,10 +300,10 @@ class WebService {
 		$ws = new WebService();
 		$ws->mName = $name;
 		$valid &= self::getWWSDElement($parser, '/WebService/protocol', null, $ws->mProtocol, false, 1, 1, $msg);
-		
+
 		//RESTful WSs and Linked Data sources need not define a URI
 		$tempMSG = array();
-		$tempValid = self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $tempMSG); 
+		$tempValid = self::getWWSDElement($parser, '/WebService/uri', 'name', $ws->mURI, false, 1, 1, $tempMSG);
 		if(strtolower($ws->mProtocol) == "rest" || strtolower($ws->mProtocol) == "linkeddata"){
 			if(!$tempValid){
 				$ws->mURI = "";
@@ -319,7 +319,7 @@ class WebService {
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'login', $ws->mAuthenticationLogin, false, 1, 1, $msg);
 			$valid &= self::getWWSDElement($parser, '/WebService/authentication', 'password', $ws->mAuthenticationPassword, false, 1, 1, $msg);
 		}
-		
+
 		$exists = self::getWWSDElement($parser, '/WebService/parameter', null, $ws->mParsedParameters, false, 1, 100, $msg);
 		if($exists){
 			if ($ws->mParsedParameters) {
@@ -348,7 +348,7 @@ class WebService {
 			foreach($ws->mParsedParameters as $child){
 				$aParamPaths[] = "".$child["path"];
 			}
-			//this is deprecated because XPath statements are now used instead 
+			//this is deprecated because XPath statements are now used instead
 			//$valid &= $ws->checkParameterArrayIndexes($aParamPaths, $msg);
 			//$ws->checkParameterArrayIndexes($aParamPaths, $msg);
 		}
@@ -361,7 +361,7 @@ class WebService {
 				$ws->mResult .= $p->asXML()."\n";
 			}
 		}
-		
+
 		//Add special purpose result parts for ld protocol
 		if(strtolower($ws->mProtocol) == "linkeddata"){
 			$ws->mResult = str_replace("</result>", "", $ws->mResult);
@@ -370,7 +370,7 @@ class WebService {
 			$ws->mResult .= '<part name="'.DI_ALL_OBJECTS_ALIAS.'" predicate="'.DI_ALL_OBJECTS.'"/>';
 			$ws->mResult .= "</result>";
 		}
-		
+
 		$tmpMsg = array();
 		$v = self::getWWSDElement($parser, '/WebService/displayPolicy/once', null, $temp, false, 1, 1, $tmpMsg);
 		if ($v) {
@@ -404,7 +404,7 @@ class WebService {
 
 		$ws->mConfirmationStatus = "false";
 		$v = self::getWWSDElement($parser, '/WebService/spanOfLife', 'expiresAfterUpdate', $ws->mExpiresAfterUpdate, false, 1, 1, $msg);
-		
+
 		return ($valid) ? $ws : $msg;
 	}
 
@@ -461,13 +461,6 @@ class WebService {
 			return $msg[0];
 		}
 
-		//no further validation is necessary if this is
-		//a restful web service or a linked data source
-		if(strtolower($this->mProtocol) == "rest" || strtolower($this->mProtocol) == "linkeddata"){
-			//return true;
-		}
-		
-
 		// Check, if a valid method was chosen
 		if(strtolower($this->mProtocol) == "soap"){
 			$op = $this->mWSClient->getOperation($this->mMethod);
@@ -512,7 +505,7 @@ class WebService {
 		foreach($defaultReturnValues as $key => $value){
 			$resultParts[] = $key;
 		}
-		
+
 		//always get parameters although a cached web service result might be used
 		//because some features of the result extraction might want to know about
 		//special parameters like the Linked Data subject and so on.
@@ -544,7 +537,7 @@ class WebService {
 				}
 			} else {
 				$this->createWSClient();
-				
+
 				if($this->mWSClient){
 					$response = $this->mWSClient->call($this->mMethod, $this->mCallParameters);
 				} else {
@@ -602,44 +595,44 @@ class WebService {
 		//needs not to be parsed over and over again for each
 		//result part.
 		$lastRootPart = "";
-		
+
 		foreach ($resultParts as $rp) {
 			$parts = explode(".", $rp);
 			$rdef = $this->getResultDefinition($parts[0]);
-			
-			//the lastRootPart condition is required, so that the web service 
+
+			//the lastRootPart condition is required, so that the web service
 			//result is not parsed for each result part by the RDFProcessor
 			if($lastRootPart != $parts[0]){
 				//parse the web service result with the RDFProcessor
 				$this->initializeLinkedDataResultPartExtraction($response, $rdef);
 				$lastRootPart = $parts[0];
 			}
-			
+
 			if (count($parts) == 1) { //complete result is requested
 				foreach ($rdef->part as $part) {
 					$part = ''.$part['name'];
 					$results[$part] = $this->getResults($response, $rdef, $part);
 					$tmpResult = $this->evaluateAdditionalPathAttribute(
-						$rdef, $part, $results[$part]);
+					$rdef, $part, $results[$part]);
 					if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
-						$postProcess[$part] = $this->getPredicateForAlias($part, $rdef); 
+						$postProcess[$part] = $this->getPredicateForAlias($part, $rdef);
 					} else {
-						$results[$part] = $tmpResult; 
+						$results[$part] = $tmpResult;
 					}
 				}
 			} else {
 				$results[$parts[1]] = $this->getResults($response, $rdef, $parts[1]);
 				$tmpResult = $this->evaluateAdditionalPathAttribute(
-					$rdef, $parts[1], $results[$parts[1]]);
-				
+				$rdef, $parts[1], $results[$parts[1]]);
+
 				if($tmpResult = DI_RDF_POSTPROCESS_REQUIRED){
-					$postProcess[$parts[1]] = $this->getPredicateForAlias($parts[1], $rdef); 
+					$postProcess[$parts[1]] = $this->getPredicateForAlias($parts[1], $rdef);
 				} else {
-					$results[$parts[1]] = $tmpResult; 
+					$results[$parts[1]] = $tmpResult;
 				}
 			}
 		}
-		
+
 		//deal with the predicates special purpose parameter
 		if(array_key_exists(DI_PREDICATES, $this->mCallParameters)){
 			$this->initializeLinkedDataResultPartExtraction($response, $rdef);
@@ -652,22 +645,22 @@ class WebService {
 				$postProcess[$alias] = $predicate;
 			}
 		}
-		
+
 		if(count($postProcess) > 0){
 			foreach ($postProcess as $alias => $predicate){
 				$results[$alias] = SMWRDFProcessor::getInstance()->getFinalResult($predicate);
 			}
 		}
-		
-		
+
+
 		return $results;
 	}
-	
+
 	/**
 	 * This method initializes the RDFParser
 	 * if resulz parts which use predicate subpaths
 	 * must be extracted from the web service result
-	 * 
+	 *
 	 * @param unknown_type $wsResponse
 	 * @param unknown_type $resultDef
 	 * @return unknown_type
@@ -678,23 +671,23 @@ class WebService {
 			if(array_key_exists(DI_SUBJECT, $this->mCallParameters)){
 				$subject = $this->mCallParameters[DI_SUBJECT][0];
 			}
-			
+
 			$language = "";
 			if(array_key_exists(DI_LANGUAGE, $this->mCallParameters)){
 				$language = $this->mCallParameters[DI_LANGUAGE][0];
 			}
-			
+
 			//parse WS result via the ARC2 library
-			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse, 
-				$this->getWSClient()->getContentType(), $language);
-			
+			SMWRDFProcessor::getInstance()->parse($this->getWSClient()->getURI(), $subject, $wsResponse,
+			$this->getWSClient()->getContentType(), $language);
+
 			//setup namespace prefixes
 			SMWRDFProcessor::getInstance()->setNamespacePrefixes($resultDef->namespace);
-			
-			
+
+
 		}
 	}
-	
+
 	/*
 	 * Determine whether this WS connects to a Linked Data resource
 	 */
@@ -703,14 +696,14 @@ class WebService {
 		if(strtolower($this->mProtocol) == 'linkeddata'){
 			return true;
 		}
-		
+
 		//this is a LD resource if the REST protocol was chosen
 		//and if the result part definitions contain predicate subpaths
 		if(strtolower($this->mProtocol) == 'rest'){
 			if(strpos($this->mResult, "predicate=") > 0) return true;
 			if(strpos($this->mResult, "predicate =") > 0) return true;
 		}
-		
+
 		return false;
 	}
 
@@ -756,7 +749,7 @@ class WebService {
 		if (empty($path) || $path == "//") {
 			return array($response);
 		}
-		
+
 		$xpathProcessor = new XPathProcessor($response);
 
 		$xpR = $xpathProcessor->evaluateQuery($path);
@@ -785,10 +778,10 @@ class WebService {
 	public function initializeCallParameters($specParameters){
 		//init call-parameters with respect to default values
 		$this->mCallParameters	= array();
-		//this flag is necessary so that the SOAPClient later 
+		//this flag is necessary so that the SOAPClient later
 		//can call the ws method with array_call_user_func
 		$embedInArray = false;
-		
+
 		if($this->mParsedParameters != null){
 			foreach($this->mParsedParameters->children() as $child){
 				if(strrpos("".$child["path"], "/") > 0){
@@ -863,7 +856,7 @@ class WebService {
 		$temp[$walkedParameters[sizeof($walkedParameters)-1]] = $value;
 
 	}
-	
+
 	//--- Private methods ---
 
 	/**
@@ -946,19 +939,19 @@ class WebService {
 	private function createWSClient() {
 		// include the correct client
 		global $smwgDIIP;
-		
+
 		$protocol = $this->mProtocol;
 		if(!$this->mWSClient){
 			try {
 				include_once($smwgDIIP . "/specials/WebServices/SMW_".
-					$protocol."Client.php");
+				$protocol."Client.php");
 				$classname = "SMW".ucfirst(strtolower($protocol))."Client";
 				if (!class_exists($classname)) {
 					return array(wfMsg("smw_wws_invalid_protocol"));
 				}
 
 				$this->mWSClient = new $classname($this->mURI, $this->mAuthenticationType,
-					$this->mAuthenticationLogin, $this->mAuthenticationPassword);
+				$this->mAuthenticationLogin, $this->mAuthenticationPassword);
 			} catch (Exception $e) {
 				// The wwsd is erroneous
 				$this->mWSClient = null;
@@ -1088,6 +1081,10 @@ class WebService {
 				$msg[] = wfMsg('smw_wws_result_without_name');
 				continue;
 			}
+
+			//fro validating triplification instructions
+			$rememberedSubject = false;
+
 			// Check all parts of a result
 			$pNames = array();
 			foreach ($r->children() as $part) {
@@ -1119,8 +1116,27 @@ class WebService {
 						$msg[] = wfMsg('smw_wws_ns_without_uri');
 						continue;
 					}
+				} else if ($part->getName() == 'triplification') {
+					if($rememberedSubject){
+						//only one triplification instruction is allowed
+						$msg[] = wfMsg('smw_wws_triplification_instruction_twice');
+						continue;
+					}
+					$subject = (string) $part->attributes()->subject;
+					if ($subject == null) {
+						$msg[] = wfMsg('smw_wws_triplification_without_subject');
+						continue;
+					} else {
+						$rememberedSubject = $subject;
+					}
 				}
 			}
+			
+			// no further validation of the subject creation pattern is done
+			//	if($rememberedSubject && !array_key_exists($rememberedSubject, $pNames)){
+			//		$msg[] = wfMsg('smw_wws_wrong_triplification_subject', $rName);
+			//	}
+
 			if (array_key_exists($rName, $rNames)) {
 				if ($rNames[$rName]++ == 1) {
 					$msg[] = wfMsg('smw_wws_duplicate_result', $rName);
@@ -1132,7 +1148,6 @@ class WebService {
 
 		}
 
-		
 		// This is deprecated
 		// Check if there is a result in the WSDL for each alias.
 		//		$wsdlResult = $this->mWSClient->getOperation($this->mMethod);
@@ -1488,7 +1503,7 @@ class WebService {
 		return null;
 
 	}
-	
+
 	/*
 	 * Returns the value of the predicate attribute
 	 * of a result part with a given alias
@@ -1560,7 +1575,7 @@ class WebService {
 			foreach($unavailableSP as $key => $dontCare){
 				$messages[] = wfMsg('smw_wsuse_wrong_parameter', $parameterName.".".$key);
 			}
-				
+
 			$computedParameterValue = $subParameterProcessor->createParameterValue();
 			if(count($subParameterProcessor->getDefaultSubParameters()) > 0
 			|| count($subParameterProcessor->getPassedSubParameters()) > 0){
@@ -1584,13 +1599,13 @@ class WebService {
 	 */
 	private function getResultDefaultValues($resultParts){
 		$response = array();
-		
+
 		foreach ($resultParts as $rp => $defaultValue) {
 			$parts = explode(".", $rp);
-			
+
 			if(count($parts) > 1 && strlen($defaultValue) > 0){
 				$response[$parts[0]] = null;
-				$response[$rp] = $defaultValue;	
+				$response[$rp] = $defaultValue;
 			} else {
 				if(!array_key_exists($parts[0], $response)){
 					$rdef = $this->getResultDefinition($parts[0]);
@@ -1601,14 +1616,41 @@ class WebService {
 				}
 			}
 		}
-		
+
 		foreach($response as $key => $value){
 			if($value == null){
 				unset($response[$key]);
 			}
 		}
-		
+
 		return implode(", ", $response);
 	}
 
+	/**
+	 * Get the triplification subject, which has been defined for that WS
+	 */
+	public function getTriplificationSubject(){
+		$xml = new SimpleXMLElement($this->mResult);
+		$tmp = $xml->xpath("//triplification/@subject");
+		return ''.$tmp[0];
+	}
+
+	/*
+	 * returns an array, which contains the aliases of all result parts
+	 * which have been defined in the WWSD
+	 */
+	public function getAllResultPartAliases(){
+		$aliases = array();
+
+		foreach($this->mParsedResult as $result){
+			$name = ''.$result['name'];
+			foreach($result->children() as $p){
+				if(strlen($p['name']) > 0){
+					$aliases[$name.".".$p['name']] = '';
+				}
+			}
+		}
+
+		return $aliases;
+	}
 }
