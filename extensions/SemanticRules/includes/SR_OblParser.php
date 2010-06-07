@@ -20,14 +20,14 @@
  * @file
  * @ingroup SemanticRules
  *
- * @author Kai K�hn
+ * @author Kai Kuehn
  */
 
 
 if (!defined('MEDIAWIKI')) die();
 global $smwgIP, $smwgHaloIP;
 require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
-class SMWFlogicParser {
+class SMWOblParser {
 
 	static private $_client;
 
@@ -55,7 +55,7 @@ class SMWFlogicParser {
 	private function __clone(){}
 
 	/**
-	 * Parses an FLogic rule and returns the corresponding RuleObject.
+	 * Parses an ObjectLogic rule and returns the corresponding RuleObject.
 	 *
 	 * @param string $ruleid
 	 * 		The id of the rule. If it is <null>, $flogicrule must contain the
@@ -65,7 +65,7 @@ class SMWFlogicParser {
 	 * @return SMWRuleObject
 	 * 		The rule object contains the parsed literals of the rule.
 	 */
-	static public function parseFloRule($ruleid, $flogicrule) {
+	public function parseOblRule($ruleid, $flogicrule) {
 		$_flogicstring = $flogicrule;
 
 		// initFlogic returns the sessionId

@@ -191,15 +191,15 @@ a.selectedSwitch {
 	border: 1px solid #AAAAAA;
 }
 
-#menuBarConceptTree a:hover {
+#menuBarcategoryTree a:hover {
 	background-color: #99AABB;
 }
 
-#menuBarConceptTree a:first-child {
+#menuBarcategoryTree a:first-child {
 	margin-left: 5px;
 }
 
-.menuBarConceptTree {
+.menuBarcategoryTree {
 	background-color: #BBCCDD;
 }
 
@@ -227,15 +227,15 @@ a.selectedSwitch {
 	margin-left: 5px;
 }
 
-.menuBarPropertyTree{
+.menuBarpropertyTree{
 	background-color: #DDBB88;
 }
 
-#menuBarPropertyTree a:hover {
+#menuBarpropertyTree a:hover {
 	background-color: #BB9966;
 }
 
-#menuBarPropertyTree a:first-child {
+#menuBarpropertyTree a:first-child {
 	margin-left:5px;
 }
 

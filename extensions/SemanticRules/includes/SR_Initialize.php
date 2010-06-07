@@ -2,11 +2,11 @@
 /**
  * @file
  * @ingroup SemanticRules
- * 
+ *
  * @defgroup SemanticRules Semantic Rules extension
- * 
+ *
  * Semantic rules extension entry point
- * 
+ *
  * @author: Kai K�hn / ontoprise / 2009
  */
 
@@ -20,8 +20,8 @@ if (!defined("SMW_HALO_VERSION")) {
 
 global $smwgDefaultStore;
 if($smwgDefaultStore != 'SMWTripleStore') {
-    trigger_error("Triplestore not active. See manual how to activate.");
-    die();
+	trigger_error("Triplestore not active. See manual how to activate.");
+	die();
 }
 
 $wgExtensionFunctions[] = 'ruleSetupExtension';
@@ -35,21 +35,24 @@ $smwgEnableObjectLogicRules=true;
 function ruleSetupExtension() {
 	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
+	$wgHooks['BeforePageDisplay'][]='srfAddOBContent';
 
 	$smwgDefaultRuleStore = "SRRuleStore";
 
 	srfSRInitUserMessages();
 
-	
+
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
-	
-	
+	$wgHooks['smw_ob_add'][] = 'srfAddToOntologyBrowser';
+
+
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
-	
+	$wgAutoloadClasses['SRRuleEndpoint'] = $srgSRIP . '/includes/SR_RuleEndpoint.php';
+
 	$wgAutoloadClasses['SMWAbstractRuleObject'] = $srgSRIP . '/includes/SR_AbstractRuleObject.php';
 	$wgAutoloadClasses['SMWConstant'] = $srgSRIP . '/includes/SR_Constant.php';
-	$wgAutoloadClasses['SMWExplanationLiteral'] = $srgSRIP . '/includes/SR_ExplanationLiteral.php';
-	$wgAutoloadClasses['SMWFlogicParser'] = $srgSRIP . '/includes/SR_FlogicParser.php';
+
+	$wgAutoloadClasses['SMWOblParser'] = $srgSRIP . '/includes/SR_OblParser.php';
 	$wgAutoloadClasses['SMWFormulaParser'] = $srgSRIP . '/includes/SR_FormulaParser.php';
 	$wgAutoloadClasses['SMWLiteral'] = $srgSRIP . '/includes/SR_Literal.php';
 	$wgAutoloadClasses['SMWPredicate'] = $srgSRIP . '/includes/SR_Predicate.php';
@@ -57,25 +60,32 @@ function ruleSetupExtension() {
 	$wgAutoloadClasses['SMWRuleObject'] = $srgSRIP . '/includes/SR_RuleObject.php';
 	$wgAutoloadClasses['SMWTerm'] = $srgSRIP . '/includes/SR_Term.php';
 	$wgAutoloadClasses['SMWVariable'] = $srgSRIP . '/includes/SR_Variable.php';
-	
+
 	global $wgRequest;
 	$action = $wgRequest->getVal('action');
-    if ($action == 'ajax') {
-    	
-        require_once($srgSRIP . '/includes/SR_RulesAjax.php');
-        require_once($srgSRIP . '/includes/SR_WebInterfaces.php');
-    }
-    
+	if ($action == 'ajax') {
+			
+		require_once($srgSRIP . '/includes/SR_RulesAjax.php');
+
+	}
+
 	/*$wgAutoloadClasses['SRExplanations'] = $srgSRIP . '/specials/Explanations/SR_Explanations.php';
-	$wgSpecialPages['Explanations'] = array('SRExplanations');
-	$wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
-	
+	 $wgSpecialPages['Explanations'] = array('SRExplanations');
+	 $wgSpecialPageGroups['Explanations'] = 'smwplus_group';*/
+
 	$wgExtensionCredits['parserhook'][]= array('name'=>'SemanticRules&nbsp;Extension', 'version'=>SEMANTIC_RULES_VERSION,
             'author'=>"Thomas&nbsp;Schweitzer, Kai&nbsp;K&uuml;hn. Maintained by [http://www.ontoprise.de Ontoprise].", 
             'url'=>'https://sourceforge.net/projects/halo-extension', 
             'description' => 'Enables the power of rules to SMWHalo');
-	
 
+
+	return true;
+}
+
+function srfAddToOntologyBrowser(& $container, & $menu, & $switch) {
+	global $wgScriptPath;
+	$container .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
+	$switch .= "<img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"srDataAcess.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
 	return true;
 }
 
@@ -151,13 +161,13 @@ function srfAddJSLanguageScripts(& $out) {
  */
 function srfAddHTMLHeader(& $out) {
 	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
-   
-    $SF = ($wgTitle->getNamespace() == -1 &&
-           in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
+
+	$SF = ($wgTitle->getNamespace() == -1 &&
+	in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
 	$action = $wgRequest->getVal('action');
 	if ($action != "edit" && $action != "annotate" && $action != "formedit" && !$SF) return true;
 
-    srfAddJSLanguageScripts($out);
+	srfAddJSLanguageScripts($out);
 
 	$rulesEnabled = isset($smwgEnableObjectLogicRules)
 	? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
@@ -171,14 +181,28 @@ function srfAddHTMLHeader(& $out) {
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js"></script>');
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_PropertyChain.js"></script>');
-    
-	$localname = SpecialPage::getLocalNameFor("Explanations");
-	global $wgTitle;
-	if ($wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == $localname) {
-		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Explanations.js"></script>');
-	}
+
+
 	return true;
 
+}
+
+function srfAddOBContent(& $out) {
+	$localname = SpecialPage::getLocalNameFor("OntologyBrowser");
+
+	global $wgTitle, $smwgEnableObjectLogicRules, $wgScriptPath;
+	if ($wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == $localname) {
+		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_OB_extensions.js"></script>');
+		$rulesEnabled = isset($smwgEnableObjectLogicRules)
+		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')
+		: 'false';
+		$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
+
+		$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
+
+	}
+	return true;
 }
 
 /**
@@ -216,13 +240,13 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$native = true;
 				}
 				if (trim($matchesheader[1][$j]) == 'active') {
-						$active = trim($matchesheader[2][$j]) == 'true';
+					$active = trim($matchesheader[2][$j]) == 'true';
 				}
 				if (trim($matchesheader[1][$j]) == 'type') {
-						$type = $matchesheader[2][$j];
+					$type = $matchesheader[2][$j];
 				}
 			}
-		
+
 			// fetch name of rule (ruleid) and put into rulearray
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
@@ -234,7 +258,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					} else {
 						$url = $name;
 					}
-					
+
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
 					$rules[] = array($url, $ruletext, $native, $active, $type);

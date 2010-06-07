@@ -59,7 +59,7 @@
 
 			<clickLink xpath="//a[@title='Car']" description="Select category car" />
 			<sleep description="4s pause" seconds="4" />
-			<clickLink xpath="//span[@id='menuBarConceptTree']/a" description="Select create subcategory" />
+			<clickLink xpath="//span[@id='menuBarcategoryTree']/a" description="Select create subcategory" />
 			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Racing car" description="Enter: Racing car" />
 			<sleep description="8s pause" seconds="8" />
 			<clickLink xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create" />
@@ -75,7 +75,7 @@
 
 			<clickLink xpath="//a[@title='Car']" description="Select category car" />
 			<sleep description="4s pause" seconds="4" />
-			<clickLink xpath="//span[@id='menuBarConceptTree']/a[2]" description="Select create category on same level" />
+			<clickLink xpath="//span[@id='menuBarcategoryTree']/a[2]" description="Select create category on same level" />
 			<setInputField htmlId="categoryTreeMenu_input_ontologytools" value="Bike" description="Enter: Bike" />
 			<sleep description="8s pause" seconds="8" />
 			<clickLink xpath="//a[@id='categoryTreeMenu_apply_ontologytools']" description="Click on create" />

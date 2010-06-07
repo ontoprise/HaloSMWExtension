@@ -1254,7 +1254,7 @@ OBCatgeorySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
      */
     pastePreview: function(pendingElement, request) {
         pendingElement.hide();
-        var table = '<table border="0" class="menuBarConceptTree">'+request.responseText+'</table>';
+        var table = '<table border="0" class="menuBarcategoryTree">'+request.responseText+'</table>';
         $('preview_category_tree').innerHTML = table;
         this.adjustSize();
     },
@@ -1391,7 +1391,7 @@ OBPropertySubMenu.prototype = Object.extend(new OBOntologySubMenu(), {
     },
     
     pastePreview: function(request) {
-        var table = '<table border="0" class="menuBarPropertyTree">'+request.responseText+'</table>';
+        var table = '<table border="0" class="menuBarpropertyTree">'+request.responseText+'</table>';
         $('preview_property_tree').innerHTML = table;
         this.adjustSize();
     },

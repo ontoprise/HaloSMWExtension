@@ -1176,31 +1176,16 @@ OBGlobalActionListener.prototype = {
 	 * Switches to the given tree.
  	*/
 	switchTreeComponent: function (event, showWhichTree, noInitialize) {
-		if ($("categoryTree").visible() && showWhichTree != 'categoryTree') {
-			$("categoryTree").hide();
-			$(showWhichTree).show();
-			$(showWhichTree+"Switch").addClassName("selectedSwitch");
-			$("categoryTreeSwitch").removeClassName("selectedSwitch");
-			
-			if ($("menuBarConceptTree") != null && $("menuBarPropertyTree")) {
-				// MenuBar may not be visible
-				$("menuBarConceptTree").hide();
-				$("menuBarPropertyTree").show();
-			}
-			
-		} else if ($("propertyTree").visible() && showWhichTree != 'propertyTree') {
-			$("propertyTree").hide();
-			$(showWhichTree).show();
-			$(showWhichTree+"Switch").addClassName("selectedSwitch");
-			$("propertyTreeSwitch").removeClassName("selectedSwitch");
-			
-			if ($("menuBarConceptTree") != null && $("menuBarPropertyTree")) {
-				// MenuBar may not be visible
-				$("menuBarPropertyTree").hide();
-				$("menuBarConceptTree").show();
-			}
-		}
-		
+		$$('.treeContainer').each(function(e) { e.hide() });
+		$(showWhichTree).show();
+		$(showWhichTree+"Switch").addClassName("selectedSwitch");
+		$$('.treeSwitch').each(function(e) { 
+			if (e.id != showWhichTree+"Switch") e.removeClassName("selectedSwitch")
+			});
+		$$('.menuBar').each(function(e) { e.hide() });
+		var menuBarToShow = $("menuBar"+showWhichTree);
+		if (menuBarToShow) menuBarToShow.show(); // menubar is optional
+				
 		this.activeTreeName = showWhichTree;
 		
 		if (!noInitialize) {

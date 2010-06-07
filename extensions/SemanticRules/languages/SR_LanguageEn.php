@@ -21,19 +21,9 @@ class SR_LanguageEn extends SR_Language {
     'smw_srf_expected_parameter' => 'Expected a parameter near $1',
     'smw_srf_missing_operator' => 'Expected an operator near $1',
     
-    // Explanations
-    'smw_explanations' => 'Explanations',
-    'explanations' => 'Explanations',
-    'smw_expl_not_all_inputs' => 'Please provide an input for each field above.',
-    'smw_expl_and' => 'AND',
-    'smw_expl_because' => 'BECAUSE',
-    'smw_expl_value' => 'Value',
-    'smw_expl_img' => 'Trigger explanation',
-    'smw_expl_explain_category' => 'Explain category assignment:',
-    'smw_expl_explain_property' => 'Explain property assignment:',
-    'smw_expl_error' => 'Unfortunately, some error occured during the request for the explanation:'
+    
     
     );
     
-    protected $srUserMessages = array();
+    protected $srUserMessages = array('smw_ob_ruleTree' => 'Rules');
 }

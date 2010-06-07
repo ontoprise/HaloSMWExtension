@@ -54,7 +54,7 @@ class SRRuleStore extends SMWRuleStore {
 					" ".$currentDate["hours"].
 					":".$currentDate["minutes"].
 					":".$currentDate["seconds"];
-			$db->insert($smw_rules, array('subject_id' => $article_id, 
+			$db->insert($smw_rules, array('subject_id' => $article_id,
 										  'rule_id' => $rule_id, 
 										  'rule_text' => $ruleText, 
 										  'is_native' => $native ? "true" : "false", 
@@ -125,3 +125,4 @@ class SRRuleStore extends SMWRuleStore {
 		}
 	}
 }
+

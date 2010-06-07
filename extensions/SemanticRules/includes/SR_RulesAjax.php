@@ -35,6 +35,7 @@ global $wgAjaxExportList;
 $wgAjaxExportList[] = 'smwf_sr_AddRule';
 $wgAjaxExportList[] = 'smwf_sr_ParseRule';
 $wgAjaxExportList[] = 'smwf_sr_ParseFormula';
+$wgAjaxExportList[] = 'srf_sr_AccessRuleEndpoint';
 
 
 
@@ -155,9 +156,9 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 	
 	
 	$rule->setBoundVariables(array_values($boundVars));
-	$flogic = $rule->getWikiFlogicString();
+	$obl = $rule->getWikiOblString();
 	
-	return $flogic;
+	return $obl;
 }
 
 /**
@@ -171,9 +172,9 @@ function smwf_sr_AddRule($ruleName, $ruleXML) {
 function smwf_sr_ParseRule($ruleName, $ruleText) {
 	
 	
-	$fp = SMWFlogicParser::getInstance();
+	$fp = SRRuleEndpoint::getInstance();
 	
-	$ruleObject = $fp->parseFloRule($ruleName, $ruleText);
+	$ruleObject = $fp->parseOblRule($ruleName, $ruleText);
 	
 	if ($ruleObject == null) {
 		return 'false';
@@ -217,6 +218,13 @@ function smwf_sr_ParseFormula($formula) {
 	} else {
 		return 'error,'.$fp->getErrorMsg();
 	}
+}
+
+function srf_sr_AccessRuleEndpoint($method, $params) {
+	$re = SRRuleEndpoint::getInstance();
+    $p_array = explode("##", $params);
+    $method = new ReflectionMethod(get_class($re), $method);
+    return $method->invoke($re, $p_array);
 }
 
 /**
@@ -282,3 +290,5 @@ function smwhCreateRuleXML($literals) {
 	
 	return $xml;
 }
+
+

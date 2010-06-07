@@ -18,78 +18,69 @@
 /**
  * @file
  * @ingroup SRRuleObject
- * 
+ *
  * @author Kai K�hn
  */
 
 if (!defined('MEDIAWIKI')) die();
 
 class SMWRuleObject extends SMWAbstractRuleObject {
-	
+
 	// internally used to parse UPN stack
 	private $numarray = array();
 	// holds bound variables for UPN stack parser.
 	private $bound = array();
 	private $tokentypes = array('const', 'var', 'op', 'func1', 'func2');
-	
+
 	function __construct($value = "") {
 		parent::__construct($value);
-    }
-    
-    // create f-logic rule from formula
-    public static function newFromFormula($resultprop, $function, $bndvars) {
-    	
-    	$formula = array();
-    	// parse formula to get UPN from infix notation
-     	$parsedformula = new SMWFormulaParser($function);
- 		if ($parsedformula->isFormulaValid()) {
-     		$formula = $parsedformula->getUPNStack();
-     		
-	 	} else {
-		    return $parsedformula->getErrorMsg();		    
- 		}
- 		$variables = $parsedformula->getVariables();
+	}
 
- 		$donotaddtoheader = array();
- 		// replace constants in parsed formula
- 		for ($i = 0; $i < sizeof($formula); $i++) {
- 			if ($formula[$i] == "var") {
- 				$i++;
+	// create f-logic rule from formula
+	public static function newFromFormula($resultprop, $function, $bndvars) {
+			
+		$formula = array();
+		// parse formula to get UPN from infix notation
+		$parsedformula = new SMWFormulaParser($function);
+		if ($parsedformula->isFormulaValid()) {
+			$formula = $parsedformula->getUPNStack();
+
+		} else {
+			return $parsedformula->getErrorMsg();
+		}
+		$variables = $parsedformula->getVariables();
+
+		$donotaddtoheader = array();
+		// replace constants in parsed formula
+		for ($i = 0; $i < sizeof($formula); $i++) {
+			if ($formula[$i] == "var") {
+				$i++;
 				for ($j = 0; $j < sizeof($bndvars); $j++) {
 					if (sizeof($bndvars[$j] == 3)) {
 						if ($bndvars[$j][1] == "const" && $bndvars[$j][0] == $formula[$i]) {
 							$formula[$i] = $bndvars[$j][2];
 							$element = array_search($bndvars[$j][0], $variables);
 							if ($element !== FALSE) {
-								unset($variables[$element]);						
+								unset($variables[$element]);
 							}
 						}
 					}
-				}			
+				}
 			}
- 		}
- 		
- 		
-    	$ruleobject = new SMWRuleObject();
-       	// parse formula to get all bound variables
-       	$evalflogic = $ruleobject->parseMathRuleArray($formula);
-    		    	
-    	// create rule head and always include result variable.
-		global $smwgTripleStoreGraph;
-		$flogicstring = "FORALL _XRES, _RESULT";
- 	
-		// fetch bound variables
-		$boundvariables = $ruleobject->bound;
-		$boundvars = "";
-		for ($i = 0; $i < sizeof($boundvariables); $i++) {
-			$boundvars .= ", " . $boundvariables[$i];
-		}		
-		$flogicstring .= $boundvars;
-    	foreach ($variables as $var) {
-			$flogicstring .= ", " . $var;
 		}
-		$resultvar = end($boundvariables);
-		
+			
+			
+		$ruleobject = new SMWRuleObject();
+
+		// serialize formula to be valid ObjectLogic
+		// ie. make the variables to OL variables
+		$ser_formula = $ruleobject->serializeFormula($formula);
+			
+		// create rule head and always include result variable.
+		global $smwgTripleStoreGraph;
+		$oblstring = "";
+		$resultvar = "?_RESULT";
+
 		// build rule body assignments of bound variables
 		$variableassignments = "";
 		$count = 0;
@@ -101,55 +92,39 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 					}
 					$count++;
 					// do not add further instance variable
-//					$internalvar = "_X" . $count;
-//					$flogicstring .= ", " . $internalvar;
+					//					$internalvar = "_X" . $count;
+					//					$oblstring .= ", " . $internalvar;
 					$variableassignments .= $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $bndvars[$j][2], $bndvars[$j][0]));
 				}
-				
+
 			}
 		}
-		
+
 		// add result
-		if (($variableassignments . $evalflogic) !== '') {
-		      $resultMapping = " AND evaluable_(_RESULT, " . $resultvar . ") ";
-		} else {
-			  $resultMapping = " evaluable_(_RESULT, " . $resultvar . ") ";
-		}
-		
-		if ($variableassignments !== '') {
-			$evalflogic  = " AND " . $evalflogic;
-		}
-		
+
+		$resultMapping = " AND $resultvar = $ser_formula";
+			
+
 		// fetch rule head
 		$head = $ruleobject->argtostring(new SMWPredicateSymbol(P_ATTRIBUTE,3), $ruleobject->createPropertyAssignment("_XRES", $resultprop, "_RESULT"));
-		$flogicstring .= " ". $head . " <- ";
-		
+		$oblstring .= " ". $head . " :- ";
+
 		// don't foget the "." :)
-    	return $flogicstring . $variableassignments . $evalflogic . $resultMapping . ".";
-    }
+		return $oblstring . $variableassignments . $resultMapping . ".";
+	}
 
-	/*
-	 * Method to get Flogic string from a Rule Object
+	/**
+	 * Returns the ObjectLogic rule as it is put into the wiki text.
+	 * 
 	 */
-    
-	public function getFlogicString() {
+	public function getWikiOblString() {
 		global $smwgTripleStoreGraph;
-		$flogicstring = 'RULE "' . $smwgTripleStoreGraph . '#"#' . $this->getAxiomId() . ": ";
-		return $flogicstring . $this->getPureFlogic(); 		
-	}
-	
-	public function getWikiFlogicString() {
-		return $this->getPureFlogic();
-	}
-        
-	private function getPureFlogic() {
-		global $smwgTripleStoreGraph;
-		$flogicstring = "";
+		$oblstring = "";
 
-		
+
 		// fetch rule head
 		$head = $this->argtostring($this->getHead()->getPreditcatesymbol(), $this->getHead()->getArguments());
-		$flogicstring .= " " . $head . " :- ";
+		$oblstring .= " " . $head . " :- ";
 
 		// fetch array of rule body and concatenate arguments
 		$body = "";
@@ -161,46 +136,90 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 			$body .= $this->argtostring($bodyarray[$i]->getPreditcatesymbol(), $bodyarray[$i]->getArguments());
 		}
 
-		// don't forget the "." @ end of flogic string ;-)
+		// don't forget the "." @ end of obl string ;-)
 
-		$flogicstring .= $body . ".";
+		$oblstring .= $body . ".";
 
-		return $flogicstring;
+		return $oblstring;
 	}
 
-	
+	/**
+	 * Converts formula from postfix to infix notation and adds OBL variables.
+	 *
+	 * @param Formula as postfix notation (on a stack) $formula
+	 * @return Infix formula
+	 */
+	private function serializeFormula($formula) {
+			
+		$stack = array();
+		$stackpointer = 0;
+		for($i = 0; $i < count($formula); $i=$i+2) {
+			if ($formula[$i] == 'var') {
+				$stack[$stackpointer] = "?".ucfirst($formula[$i+1]);
+				$stackpointer++;
+			} else if ($formula[$i] == 'const') {
+				$stack[$stackpointer] = $formula[$i+1];
+				$stackpointer++;
+			} else if ($formula[$i] == 'op') {
+				$op =  $formula[$i+1];
 
-	// f-logic helper functions
-	
+				// operands
+				$op1 = $stack[$stackpointer-1];
+				$op2 = $stack[$stackpointer-2];
+				$f = "($op1 $op $op2)";
+				$stackpointer -= 2;
+				$stack[$stackpointer] = $f;
+				$stackpointer++;
+
+			} else if (strpos($formula[$i],'func') !== false) {
+
+				// functions
+				$op =  $formula[$i+1];
+				$op1 = $stack[$stackpointer-1];
+				$f = "$op($op1)";
+				$stackpointer -= 1;
+				$stack[$stackpointer] = $f;
+				$stackpointer++;
+			}
+		}
+		return $stack[0];
+	}
+
+
+
+
+
+	// obl-logic helper functions
+
 	private function argtostring($pred, $args) {
 		switch ($pred->getPredicateName()) {
-		case P_ATTRIBUTE:
-			// attribute statement
-			return $this->getFloPropertyPart($args);
-		    break;
-		case P_RELATION:
-			// relation statement
-			return $this->getFloPropertyPart($args);
-		    break;
-		case P_ISA:
-			// isa statement
-			return $this->getFloIsaPart($args);
-			break;
-		default:
-			// custom statement
-			return $this->getFloOperatorPart($pred->getPredicateName(), $args);
-			break;
+			case P_ATTRIBUTE:
+				// attribute statement
+				return $this->getOblPropertyPart($args);
+				break;
+			case P_RELATION:
+				// relation statement
+				return $this->getOblPropertyPart($args);
+				break;
+			case P_ISA:
+				// isa statement
+				return $this->getOblIsaPart($args);
+				break;
+			default:
+				// custom statement
+				return $this->getOblOperatorPart($pred->getPredicateName(), $args);
+				break;
 		}
 	}
 
-	private function getFloPropertyPart($args) {
+	private function getOblPropertyPart($args) {
 		// statement with 3 terms (att/rel)
 		// attribute/relation
-		$tmp = "";		 	
+		$tmp = "";
 		for ($i = 0; $i < sizeof($args); $i++) {
-			
-			$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());		
-			if ($i == 0) {				
+
+			$tmp .= $args[$i] instanceof SMWVariable ? $args[$i]->getName() : ucfirst($args[$i]->getName());
+			if ($i == 0) {
 				$tmp .= "[prop#";
 			} else if ($i == 1) {
 				$tmp .="->";
@@ -209,7 +228,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		return $tmp .= "]";
 	}
 
-	private function getFloOperatorPart($op, $args) {
+	private function getOblOperatorPart($op, $args) {
 		$tmp = $op . "(";
 		for ($i = 0; $i < sizeof($args); $i++) {
 			if ($i > 0) {
@@ -220,7 +239,7 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		return $tmp .= ")";
 	}
 
-	private function getFloIsaPart($args) {
+	private function getOblIsaPart($args) {
 		$tmp = '';
 		for ($i = 0; $i < sizeof($args); $i++) {
 			if ($i > 0) {
@@ -231,98 +250,16 @@ class SMWRuleObject extends SMWAbstractRuleObject {
 		return $tmp;
 	}
 
-	
-	
-	// flogic-mathematic functions helpers	
-	private function parseMathRuleArray($stack) {
-		global $smwgTripleStoreGraph; 
-		$flogic = "";
-		$count = 0;
-		for ($x = 0; $x < sizeof($stack); $x++)
-		{
-			// fetch type token
-		    $typetoken = $stack[$x];
-		    $x++;
-		    // fetch value token
-		    $valuetoken = $stack[$x];
-		    
-			switch ($typetoken) {
-			case $this->tokentypes[0]:
-		    	array_push($this->numarray, $valuetoken);
-			    break;
-			case $this->tokentypes[1]:
-		    	array_push($this->numarray, $valuetoken);
-				break;
-			case $this->tokentypes[2]:
-			    if ($count > 0) {
-			    	$flogic .= " AND ";
-			    }
-			    $count++;
-		    	$var1 = array_pop($this->numarray);
-		    	$var2 = array_pop($this->numarray);
-		    	array_push($this->bound,$boundvar = "t".$x);				    	
-		    	  		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar);
-			    break;
-			case $this->tokentypes[3]:
-			    if ($count > 0) {
-			    	$flogic .= " AND ";
-		    	}
-				$count++;
-				$var1 = array_pop($this->numarray);
-		    	array_push($this->bound,$boundvar = "t".$x);		
-				
-		    	$flogic .= $this->evalUnary($var1, $valuetoken, $boundvar);		
-			    break;
-			case $this->tokentypes[4]:
-			    if ($count > 0) {
-			    	$flogic .= " AND ";
-		    	}
-		    	$count++;				
-		    	$var1 = array_pop($this->numarray);
-		    	$var2 = array_pop($this->numarray);
-		    	array_push($this->bound,$boundvar = "t".$x);		
-		    	$flogic .= $this->evalBinary($var1, $var2, $valuetoken, $boundvar);	
-			    break;
-			}
-		}
-		return $flogic;
-	}
-	
-	// creates binary eval expression in f-logic
-	
-	private function evalBinary($var, $var2, $op, $x) {
-		// put result onto stack
-		array_push($this->numarray, $x);
-		return "evaluable_(".$x.", ".$op."(".$var2.",".$var."))";
-	}
-
-	// creates unary eval expression in f-logic
-	private function evalUnary($var, $op, $x) {		
-		// put result onto stack
-	   	array_push($this->numarray, $x);	
-		return "evaluable_(".$x.", ".$op."(".$var."))";
-	}
-	
 	private function createPropertyAssignment($intvariable, $prop, $variable) {
 		global $smwgTripleStoreGraph;
 		$f = array();
 		array_push($f, new SMWVariable($intvariable));
 		array_push($f, new SMWTerm(array($smwgTripleStoreGraph.'/property', $prop), 2, false));
 		array_push($f, new SMWVariable($variable));
-		return $f;				
+		return $f;
 	}
 
-	// String helper functions
-	private function strStartsWith($source, $prefix)
-	{  
-   		return strncmp($source, $prefix, strlen($prefix)) == 0;
-	}
 
-	private function strEndsWith($haystack, $needle) {
-  		$needle = preg_quote( $needle);
-  		return preg_match( '/(?:$needle)\$/i', $haystack);
-	}
 
 }
 

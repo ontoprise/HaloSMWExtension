@@ -46,7 +46,7 @@ class SMWVariable extends SMWTerm {
 	}
 
 	public function getName() {
-		return "?".$this->_variableName;
+		return "?".ucfirst($this->_variableName);
 	}
 }
 
