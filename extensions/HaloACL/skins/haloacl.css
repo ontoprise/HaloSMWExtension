@@ -184,7 +184,7 @@ abbr,acronym { border:0;
     padding-top:4px!important;
 }
 #createStdAclTab.selected a, #createTmpAclTab.selected a, #createQuickAclTab.selected a, #createUserAclTab.selected a,
-#createStdAclTab.selected em, #createTmpAclTab.selected em, #createQuickAclTab.seelcted em, #createUserAclTab.selected em
+#createStdAclTab.selected em, #createTmpAclTab.selected em, #createQuickAclTab.selected em, #createUserAclTab.selected em
 {
     background:none!important;
     border:none!important;
