@@ -203,15 +203,21 @@ HTML;
     //    }
 
 
+    
     if(!$newArticle) {
+        $sk = $wgUser->getSkin();
+        $haclSP = SpecialPage::getPage('HaloACL');
+        $link = $sk->makeKnownLinkObj($haclSP->getTitle(),
+            "&raquo; Advanced access rights definition",
+            "articletitle=$articleTitle",null,null,
+            "target=\"_blank\" id=\"haloacl_toolbar_advrightlink\"");
         $tooltiptext = wfMsg('hacl_advancedToolbarTooltip');
 
         $html .= <<<HTML
-             
         </div>
 
         <div id="hacl_toolbarcontainer_section3">
-            <a id="haloacl_toolbar_advrightlink" target="_blank" href="index.php?title=Special:HaloACL&articletitle={$articleTitle}">&raquo; Advanced access rights definition</a>
+            $link
         </div>
     </div>
 
