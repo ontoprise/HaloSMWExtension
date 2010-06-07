@@ -60,6 +60,8 @@
 }
 #haloacl_toolbar_popuplink{
     padding: 2px 0 0 10px;
+    display:inline;
+    float:right;
 }
 
 .hacl_toolbar_invalidAcl {

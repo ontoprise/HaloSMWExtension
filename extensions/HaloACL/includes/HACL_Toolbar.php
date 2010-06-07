@@ -189,7 +189,7 @@ HTML;
     }
     $html .= "</select>";
     $html .= <<<HTML
-<div id="haloacl_toolbar_popuplink" style="display:inline;float:right">
+<div id="haloacl_toolbar_popuplink">
 	<div id="anchorPopup_toolbar" 
 	     class="haloacl_infobutton" 
 	     onclick="javascript:
