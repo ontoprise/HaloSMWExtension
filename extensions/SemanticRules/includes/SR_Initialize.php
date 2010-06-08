@@ -82,10 +82,31 @@ function ruleSetupExtension() {
 	return true;
 }
 
-function srfAddToOntologyBrowser(& $container, & $menu, & $switch) {
+/**
+ * Registers extensions for the OntologyBrowser.
+ * 
+ * @param $treeContainer
+ * @param $boxContainer
+ * @param $menu
+ * @param $switch
+ */
+function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $switch) {
 	global $wgScriptPath;
-	$container .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
-	$switch .= "<img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"srDataAcess.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
+	
+	// additional rule tree container
+	$treeContainer .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
+	
+	// additional switch
+	$switch .= "<img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
+	
+	// additional rule box with metadata
+	$boxContainer = "<div id=\"ruleContainer\" style=\"display:none\"> 
+	 <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img> ".wfMsg('smw_ob_rulelist')."</span>
+	 <div id=\"ruleList\" class=\"ruleTreeListColors\"> 
+	 
+	 </div>
+	 </div>";
+          
 	return true;
 }
 
