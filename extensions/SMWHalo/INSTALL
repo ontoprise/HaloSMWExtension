@@ -52,49 +52,53 @@ the authors.
 == Installation ==
 
 We recommend to install the Halo Extension using the SMW+ Administration tool
-which is part of the Deployment Framework Extension. It empowers the convenient
-administration and automatic setup of extensions for MediaWiki and Semantic MediaWiki.
+which is part of the Deployment Framework Extension (Download: 
+https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download). 
+It empowers the convenient administration and automatic setup of extensions for MediaWiki and Semantic MediaWiki.
 If you upgrade an existing installation of SMW+, also read the remarks in the
 section "Notes on Upgrading" below.
 
 (1) Download and install the ScriptManager extension into your Mediawiki installation.
 
-(2) Extract the SMWHalo ZIP archive
-    Extract the archive smwhalo-1.5.zip to obtain the directory "extensions" which contains all relevant
-    files. Copy this directory to the root directory of your MediaWiki installation or extract/download it
-    to this location.
+(2) Extract the SMWHalo ZIP archive to the directory <mw-dir>\htdocs\mediawiki\extensions\
 
-(3) Edit the configuration file $IP/LocalSettings.php and add following lines
+	Note: 	Replace < mw-dir > with the path to root directory of MediaWiki.
 
-(4) Adjust the path to the PHP interpreter accordingly
+(3) Edit the configuration file <mw-dir>\htdocs\mediawiki\LocalSettings.php
 
-(5) Change $wgDefaultSkin='ontoskin3';
+(4)	Add the following code in front of every other extension, this initializes the ScriptManager
 
-	Note: Optionally check if Semantic MediaWiki is initialized correctly:
+	 require_once("extensions/ScriptManager/SM_Initialize.php");
 
-    $wgUseAjax = true;
-    include_once('extensions/SemanticMediaWiki/includes/SMW_Settings.php');
-    enableSemantics('example.org');
-    include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-    enableSMWHalo('SMWHaloStore2');
+(5) Adjust the path to the PHP interpreter accordingly. 
+	Specify the path to the file php.exe: $phpInterpreter="<mw-dir>\php\php.exe";
 
-(6) Open a command-line interface
+(6) Change $wgDefaultSkin='ontoskin3';
 
-(7) Navigate to the directory
-    $IP/extensions/SemanticMediaWiki/maintenance/
+(7) Add following lines to initialize the Halo Extension: 
 
-(8) Run the script SMW_setup.php to initialize the database tables
+	include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
+	enableSMWHalo(/*param-start-enableSMWHalo*/'SMWHaloStore2', NULL, NULL/*param-end-enableSMWHalo*/);
+	$wgUseAjax=true;
 
-(9) Download the Deployment Framework
+(8) Open a command-line interface
 
-(10) Extract the zip-file into the MediaWiki roots folder
+(9) Navigate to the directory
+    <mw-dir>\extensions\SemanticMediaWiki\maintenance\
 
-(11) Open a command-line interface to install the patch file
+(10) Run the script SMW_setup.php to initialize the database tables
+
+(11) Download the Deployment Framework to install the patches: 
+	 https://sourceforge.net/projects/halo-extension/files/smwhalo-deploy-1.2.zip/download
+
+(12) Extract the zip-file into the MediaWiki roots folder
+
+(13) Open a command-line interface to install the patch file
      The file patch.txt is an Eclipse patch file which can be installed using the
      tool patch.php from the deploy framework which itself uses GNU patch. The
      file is located in the directory 'extensions\SMWHalo'.
 
-(12) Enter the following command:
+(14) Enter the following command:
      php patch.php -p patch.txt -d <mw-dir> --onlypatch
      replace <mw-dir> with the absolute path of your Mediawiki installation.
 
