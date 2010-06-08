@@ -6,7 +6,7 @@
  * @defgroup SMWHaloTests SMWHalo unit tests
  * @ingroup SMWHalo
  * 
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 require_once 'PHPUnit/Framework.php';
 
@@ -16,6 +16,7 @@ require_once 'testcases/TestWikiJobs.php';
 require_once 'testcases/TestDataAPI.php';
 
 require_once 'testcases/TestQueryPrinters.php';
+require_once 'testcases/TestQIAjaxAccess.php';
 
 
 class HaloTests
@@ -29,6 +30,7 @@ class HaloTests
 		$suite->addTestSuite("TestQueryPrinters");
 		$suite->addTestSuite("TestWikiJobs");
 		$suite->addTestSuite("TestDataAPI");
+        $suite->addTestSuite("TestQIAjaxAccess");
 		return $suite;
 	}
 }
