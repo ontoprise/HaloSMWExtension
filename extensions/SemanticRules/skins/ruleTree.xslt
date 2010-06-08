@@ -57,6 +57,7 @@
                     <xsl:apply-templates select="ruleTreeElement">
                         <xsl:with-param name="rek_depth" select="1"/>
                     </xsl:apply-templates>
+                    
               
         </xsl:when>
         <xsl:otherwise>
@@ -95,8 +96,8 @@
                 <td>
             
                     <xsl:call-template name="createTreeNode">
-                        <xsl:with-param name="actionListener" select="'categoryActionListener'"/>
-                        <xsl:with-param name="typeOfEntity" select="'concept'"/>
+                        <xsl:with-param name="actionListener" select="'ruleActionListener'"/>
+                        <xsl:with-param name="typeOfEntity" select="'rule'"/>
                         <xsl:with-param name="rek_depth" select="$rek_depth"/>
                     </xsl:call-template>
                     
@@ -107,7 +108,7 @@
                         <xsl:call-template name="setExpansionState"/>           
                             
                         <!-- Thanks to the magic of reccursive calls, all the descendants of the present folder are gonna be built -->
-                        <xsl:apply-templates select="conceptTreeElement">
+                        <xsl:apply-templates select="ruleTreeElement">
                             <xsl:with-param name="rek_depth" select="$rek_depth+1"/>
                         </xsl:apply-templates>
                         
@@ -117,6 +118,17 @@
                 
             </tr>
         </table>
+    </xsl:template>
+    
+    <xsl:template match="ruleMetadata">
+     <span id="ruleList-id">  <xsl:if test="@title">
+                               <xsl:value-of select="@title"/>
+                            </xsl:if> </span>
+     <span id="ruleList-ruletext"/>
+     <span id="ruleList-native"/>
+     <span id="ruleList-active"/>
+     <span id="ruleList-type"/>
+     <span id="ruleList-stylized"/>
     </xsl:template>
     
     <xsl:template name="setExpansionState">
@@ -148,11 +160,14 @@
         <a class="{$typeOfEntity}">
                           
                             <xsl:if test="@id">
-                                        <xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.select(event, this,'<xsl:value-of select="@id"/>','<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
+                                        <xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.select(event, this,'<xsl:value-of select="@id"/>','<xsl:call-template name="replace-string"><xsl:with-param name="text" select="@title_url"/><xsl:with-param name="from" select="$var-simple-quote"/><xsl:with-param name="to" select="$var-slash-quote"/></xsl:call-template>')</xsl:attribute>
                                         <xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
                             </xsl:if>
                             <xsl:if test="@title">
                                 <xsl:attribute name="title"><xsl:value-of select="@title"/></xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="@title_url">
+                                <xsl:attribute name="title"><xsl:value-of select="@title_url"/></xsl:attribute>
                             </xsl:if>
                         <xsl:if test="$rek_depth=1">
                             <xsl:if test="@hidden='true'">

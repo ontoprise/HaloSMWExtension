@@ -62,10 +62,10 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$refactorstatstitle = Title::makeTitle( NS_SPECIAL, "RefactorStatistics" );
 					
 	    // add another container
-	    $container = "";
+	    $treeContainer = "";
 	    $menu = "";
 	    $switch = "";
-		wfRunHooks('smw_ob_add', array(& $container, & $menu, & $switch));
+		wfRunHooks('smw_ob_add', array(& $treeContainer, & $boxContainer, & $menu, & $switch));
 		
 		$html = "<span id=\"OBHelp\">".wfMsg('smw_ob_help')."</span><br>";
 		$html .= "<span id=\"OBHint\">".wfMsg('smw_ac_hint') . "</span>\n";
@@ -97,7 +97,7 @@ class SMW_OntologyBrowser extends SpecialPage {
 		   </div>		
 		   <div id=\"propertyTree\" style=\"display:none\" class=\"propertyTreeListColors treeContainer\">
 		   </div>";
-		$html .= $container;
+		$html .= $treeContainer;
 		
 		$html .= "<span class=\"OB-filters\"><span>".wfMsg('smw_ob_filter')."</span><input type=\"text\" id=\"treeFilter\"><button type=\"button\" name=\"filterCategories\" onclick=\"globalActionListener.filterTree(event)\">".wfMsg('smw_ob_filter')."</button></span>
 		</div>
@@ -106,9 +106,11 @@ class SMW_OntologyBrowser extends SpecialPage {
 				
 		<div id=\"leftArrow\" class=\"pfeil\">
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/OntologyBrowser/images/bigarrow.gif\" onclick=\"globalActionListener.toogleCatInstArrow(event)\" />
-		</div>
-				
-		<!-- Instance List hook -->	
+		</div>";
+
+		$html .= $boxContainer;
+		
+		$html .= "<!-- Instance List hook -->	
 		<div id=\"instanceContainer\">
 		  <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SMWHalo/skins/instance.gif\"></img> ".wfMsg('smw_ob_instanceList')."</span>
 		  ".($showMenuBar ? "<span class=\"menuBar menuBarInstance\" id=\"menuBarInstance\"><a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_RENAME.")\">".wfMsg('smw_ob_cmd_renameinstance')."</a> | <a onclick=\"instanceActionListener.showSubMenu(".SMW_OB_COMMAND_INSTANCE_DELETE.")\">".wfMsg('smw_ob_cmd_deleteinstance')."</a><div id=\"instanceListMenu\"></div></span>" : "")."			

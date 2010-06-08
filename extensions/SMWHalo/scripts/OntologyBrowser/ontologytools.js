@@ -42,6 +42,7 @@ var SMW_OB_COMMAND_ADD_SCHEMAPROPERTY = 9;
 
 // Event types
 var OB_SELECTIONLISTENER = 'selectionChanged';
+var OB_TREETABCHANGELISTENER = 'treeTabChanged'
 var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
 var OB_REFRESHLISTENER = 'refresh';
 
@@ -102,6 +103,21 @@ OBEventProvider.prototype = {
     fireSelectionChanged: function(id, title, ns, node) {
         this.listeners[OB_SELECTIONLISTENER].each(function (l) { 
             l.selectionChanged(id, title, ns, node);
+        });
+    },
+    
+    /**
+     * @public
+     * 
+     * Fires treeTabChanged event. The listener method 
+     * must have the name 'treeTabChanged' with the following
+     * signature:
+     * 
+     * @param tabname
+     */
+    fireTreeTabChanged: function(tabname) {
+    	this.listeners[OB_TREETABCHANGELISTENER].each(function (l) { 
+            l.treeTabChanged(tabname);
         });
     },
     

@@ -1191,13 +1191,19 @@ OBGlobalActionListener.prototype = {
 		if (!noInitialize) {
 			if (showWhichTree == 'categoryTree') {
 				dataAccess.initializeRootCategories(0);
+				$('instanceContainer').show();
+				$('rightArrow').show();
+				$('relattributesContainer').show();
 				
 			} else if (showWhichTree == 'propertyTree') {
 				dataAccess.initializeRootProperties(0);
+				$('instanceContainer').show();
+				$('rightArrow').show();
+				$('relattributesContainer').show();
 				
 			} 
 		}
-		
+		selectionProvider.fireTreeTabChanged(showWhichTree);
 		
 	},
 	

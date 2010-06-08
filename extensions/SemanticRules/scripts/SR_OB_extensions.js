@@ -7,22 +7,30 @@
  * 
  */
 
-var SROntologyBrowserExtensions = Class.create();
-SROntologyBrowserExtensions.prototype = {
-
+var SRRuleActionListener = Class.create();
+SRRuleActionListener.prototype = {
 	initialize : function() {
 		this.OB_rulesInitialized = false;
 		this.OB_cachedRuleTree = null;
+		selectionProvider.addListener(this, OB_TREETABCHANGELISTENER)
 	},
 
-	switchTreeComponent : function(event, showWhichTree, noInitialize) {
-		globalActionListener.switchTreeComponent(event, showWhichTree,
-				noInitialize);
+	treeTabChanged : function(tabname) {
+		if (tabname == 'ruleTree') {
+			// hide instance and property view
+			$('instanceContainer').hide();
+			$('rightArrow').hide();
+			$('relattributesContainer').hide();
 
-		if (!noInitialize) {
-			if (showWhichTree == 'ruleTree') {
-				this.initializeRootRules();
-			}
+			$('ruleContainer').show();
+			this.initializeRootRules();
+		} else {
+			// show instance and property view
+			$('instanceContainer').show();
+			$('rightArrow').show();
+			$('relattributesContainer').show();
+
+			$('ruleContainer').hide();
 		}
 	},
 
@@ -54,9 +62,147 @@ SROntologyBrowserExtensions.prototype = {
 		sr_transformer.transformXMLToHTML(this.OB_cachedRuleTree, rootElement,
 				true);
 		selectionProvider.fireRefresh();
-		//selectionProvider.fireSelectionChanged(null, null, SMW_RULE_NS, null);
+		// selectionProvider.fireSelectionChanged(null, null, SMW_RULE_NS,
+		// null);
+	},
+
+	/**
+	 * @public
+	 * 
+	 * Called when a rule has been selected. Do also expand the rule tree if
+	 * necessary.
+	 * 
+	 * @param event
+	 *            Event
+	 * @param node
+	 *            selected HTML node
+	 * @param ruleID
+	 *            unique ID of rule (in DOM-Tree)
+	 * @param ruleURI
+	 *            URI of the rule (in wiki)
+	 */
+	select : function(event, node, ruleID, ruleURI) {
+		alert("Rule-ID:" + ruleID + " Rule URI:" + ruleURI);
+		var nextDIV = node.nextSibling;
+		
+	 	// find the next DIV
+		while(nextDIV.nodeName != "DIV") {
+			nextDIV = nextDIV.nextSibling;
+		}
+		
+		// check if node is already expanded and expand it if not
+		if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
+			this.toggleExpand(event, node);
+		}
+		
+		var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+			OB_tree_pendingIndicator.hide();
+		
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+
+				return;
+			}
+			selectionProvider.fireBeforeRefresh();
+			var subTree = sr_transformer
+					.transformResultToHTML(request, $('ruleList'));
+			selectionProvider.fireRefresh();
+			
+		}
+		
+		sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule',
+		                                             ruleURI ], callbackOnRuleRequest.bind(this));
+	},
+
+	toggleExpand : function(event, node, tree) {
+		// stop event propagation in Gecko and IE
+	Event.stop(event);
+	// Get the next tag (read the HTML source)
+	var nextDIV = node.nextSibling;
+
+	// find the next DIV
+	while (nextDIV.nodeName != "DIV") {
+		nextDIV = nextDIV.nextSibling;
+	}
+
+	// Unfold the branch if it isn't visible
+	if (nextDIV.style.display == 'none') {
+
+		// Change the image (if there is an image)
+		if (node.childNodes.length > 0) {
+			if (node.childNodes.item(0).nodeName == "IMG") {
+				node.childNodes.item(0).src = GeneralTools
+						.getImgDirectory(node.childNodes.item(0).src)
+						+ "minus.gif";
+			}
+		}
+
+		// get name of category which is about to be expanded
+		var xmlNodeName = node.getAttribute("title");
+		var xmlNodeID = node.getAttribute("id");
+
+		function callbackOnExpandForAjax(request) {
+			OB_tree_pendingIndicator.hide();
+			var parentNode = GeneralXMLTools.getNodeById(
+					this.OB_cachedRuleTree.firstChild, xmlNodeID);
+
+			if (request.responseText.indexOf('error:') != -1) {
+				// hide expand button if category has no subcategories and mark
+				// as leaf
+				node.childNodes.item(0).style.visibility = 'hidden';
+				parentNode.setAttribute("isLeaf", "true");
+
+				return;
+			}
+			selectionProvider.fireBeforeRefresh();
+			var subTree = sr_transformer
+					.transformResultToHTML(request, nextDIV);
+			selectionProvider.fireRefresh();
+			GeneralXMLTools.importSubtree(parentNode, subTree.firstChild);
+
+		}
+
+		// if category has no child nodes, they will be requested
+		if (!nextDIV.hasChildNodes()) {
+			// call subtree hook
+			OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+
+			sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getDependantRules',
+					xmlNodeName ], callbackOnExpandForAjax.bind(this));
+
+		}
+
+		Element.show(nextDIV);
+		var parentNode = GeneralXMLTools.getNodeById(
+				this.OB_cachedRuleTree.firstChild, xmlNodeID);
+		parentNode.setAttribute("expanded", "true");
+
+	}
+
+	// Collapse the branch if it IS visible
+	else {
+
+		Element.hide(nextDIV);
+		// Change the image (if there is an image)
+		if (node.childNodes.length > 0) {
+			if (node.childNodes.item(0).nodeName == "IMG") {
+				node.childNodes.item(0).src = GeneralTools
+						.getImgDirectory(node.childNodes.item(0).src)
+						+ "plus.gif";
+			}
+			var xmlNodeName = node.getAttribute("title");
+			var xmlNodeID = node.getAttribute("id");
+
+			var parentNode = GeneralXMLTools.getNodeById(
+					this.OB_cachedRuleTree.firstChild, xmlNodeID);
+			parentNode.setAttribute("expanded", "false");
+
+		}
+
 	}
 }
+}
 
-var srDataAcess = new SROntologyBrowserExtensions();
-var sr_transformer = new TreeTransformer("/extensions/SemanticRules/skins/ruleTree.xslt");
+var ruleActionListener = new SRRuleActionListener();
+var sr_transformer = new TreeTransformer(
+		"/extensions/SemanticRules/skins/ruleTree.xslt");
