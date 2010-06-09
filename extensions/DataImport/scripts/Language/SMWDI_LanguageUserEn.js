@@ -53,7 +53,7 @@ var wgDIUserLanguageStrings = {
 		'smw_wwsu_clipboard_success'    : 'The #ws-syntax was successfully copied to the clipboard',
 		'smw_wwsu_clipboard_fail'    	: 'Your browser does not allow clipboard access.\nThe #ws-syntax could not be copied to your clipboard.\nPlease use function "Display #ws-syntax" and copy the #ws-syntax manually.',
 		
-		'smw_wws_results_table_prefix' : 'Prefix',
+		'smw_wws_results_table_predicate' : 'Predicate:',
 		'smw_wws_results_table_path' : 'Path',
 		'smw_wws_predicate' : 'predicate'
 		

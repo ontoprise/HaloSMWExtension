@@ -146,6 +146,8 @@ UseWebService.prototype = {
 		
 		if(this.protocol == "LinkedData"){
 			$("step2-ld-help").style.display = "";
+		} else {
+			$("step2-ld-help").style.display = "none";
 		}
 	},
 
@@ -213,6 +215,8 @@ UseWebService.prototype = {
 		
 		if(this.protocol == "LinkedData"){
 			$("step3-ld-help").style.display = "";
+		} else {
+			$("step3-ld-help").style.display = "none";
 		}
 	},
 

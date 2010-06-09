@@ -259,7 +259,7 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= '<button id="step4-addnss" style="display: none" value="'.wfMsg('smw_wws_add_prefixes').'">'.wfMsg('smw_wws_add_prefixes').'</button>';
 		
 		//Add table for defining namespace prefixes
-		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_prefix')."</th><th></th></tr></table>";
+		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_url')."</th><th></th></tr></table>";
 
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
 		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";

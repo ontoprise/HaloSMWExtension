@@ -54,7 +54,7 @@ var wgDIUserLanguageStrings = {
 		'smw_wwsu_clipboard_success'    : 'Die Query wurde in die Zwischenablage kopiert',
 		'smw_wwsu_clipboard_fail'    : 'Ihr Browser erlaubt keinen Zugriff auf die Zwischenablage\nDie #ws-Syntax konnte nicht in die Zwischenablage kopiert werden.\n Bitte verwenden Sie die Funktion "#ws-Syntax anzeigen" und kopieren Sie diese manuell.',
 		
-		'smw_wws_results_table_prefix' : 'Präfix',
+		'smw_wws_results_table_predicate' : 'Prädikat',
 		'smw_wws_results_table_path' : 'Pfad',
 		'smw_wws_predicate' : 'predicate'
 		

@@ -3938,7 +3938,7 @@ DefineWebServiceSpecial.prototype = {
 		if ($("step1-protocol-ld").checked){
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "none";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
-				diLanguage.getMessage('smw_wws_results_table_prefix');
+				diLanguage.getMessage('smw_wws_results_table_predicate');
 		} else {
 			$("step4-results").childNodes[0].childNodes[0].childNodes[3].style.display = "";
 			$("step4-results").childNodes[0].childNodes[0].childNodes[4].childNodes[0].nodeValue = 
