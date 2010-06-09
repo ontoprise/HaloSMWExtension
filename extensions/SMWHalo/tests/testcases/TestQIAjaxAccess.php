@@ -77,6 +77,24 @@ class TestQIAjaxAccess extends PHPUnit_Framework_TestCase {
 		$res = smwf_qi_QIAccess('getPropertyInformation', 'Torsional moment');
         $doc = $this->getDomtree($res);
         $this->checkBasicNodeElements($doc, 'Torsional moment', 2, 'Force', 'Force');
+        $unit = $doc->getElementsByTagName('param')->item(0)->firstChild;
+        $this->assertEquals($unit->nodeName, 'unit');
+        $this->assertEquals($unit->getAttribute('label'), 'N');
+        $unit = $unit->nextSibling;
+        $this->assertEquals($unit->nodeName, 'unit');
+        $this->assertEquals($unit->getAttribute('label'), 'kg*m/s²');
+
+	}
+
+    /**
+     * Test an existent property that has a range defined.
+     * XML result looks like:
+     * <relationSchema name="Has Engine" arity="2"><param name="Page" type="_wpg" range="Category:Engine"/></relationSchema>
+     */
+  	function testGetPropertyWithRange() {
+		$res = smwf_qi_QIAccess('getPropertyInformation', 'Has Engine');
+        $doc = $this->getDomtree($res);
+        $this->checkBasicNodeElements($doc, 'Has Engine', 2, 'Page', '_wpg', 'Category:Engine');
 	}
 
     /**
@@ -152,13 +170,15 @@ class TestQIAjaxAccess extends PHPUnit_Framework_TestCase {
      * @param integer $arity
      * @param string $typeName
      * @param string $typeInt
+     * @param string $range
      */
-    private function checkBasicNodeElements($doc, $propName, $arity, $typeName, $typeInt) {
+    private function checkBasicNodeElements($doc, $propName, $arity, $typeName, $typeInt, $range = "") {
         $relationSchema = $doc->getElementsByTagName('relationSchema')->item(0);
         $this->assertEquals($relationSchema->getAttribute('name'), $propName);
         $this->assertEquals($relationSchema->getAttribute('arity'), "".$arity);
         $this->assertEquals($relationSchema->getElementsByTagName('param')->item(0)->getAttribute('name'), $typeName);
         $this->assertEquals($relationSchema->getElementsByTagName('param')->item(0)->getAttribute('type'), $typeInt);
+        $this->assertEquals($relationSchema->getElementsByTagName('param')->item(0)->getAttribute('range'), $range);
         $this->assertEquals($relationSchema->getElementsByTagName('param')->length, $arity - 1);
     }
 
