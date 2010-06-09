@@ -492,14 +492,16 @@ function qiGetPropertyInformation($relationName) {
 			$hasTypeDV = SMWPropertyValue::makeProperty("_TYPE");
 			$possibleValueDV = SMWPropertyValue::makeProperty("_PVAL");
 			$type = smwfGetStore()->getPropertyValues($relationTitle, $hasTypeDV);
-	
+            $range = qiGetPropertyRangeInformation($relationName);
+
 			// if no 'has type' annotation => normal binary relation
 			if (count($type) == 0) {
 				// return binary schema (arity = 2)
 				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page" type="_wpg"/>'.
+								'<param name="Page" type="_wpg"'.$range.'/>'.
 		           	  		 '</relationSchema>';
 			} else {
+                $units = "";
 				$typeValues = $type[0]->getTypeValues();
 				if ($type[0] instanceof SMWTypesValue) {
                     // check if the type is a Record
@@ -508,23 +510,27 @@ function qiGetPropertyInformation($relationName) {
                         if (count($record) > 0)
                             $typeValues= $record[0]->getTypeValues();
                     }
+                    // check if it's a custom type
+                    else if (! $typeValues[0]->isBuiltIn() ) {
+                        $units= qiGetPropertyCustomTypeInformation($typeValues[0]->getText());
+                    }
 					// get arity
 					$arity = count($typeValues) + 1;  // +1 because of subject
 			   		$relSchema = '<relationSchema name="'.$relationName.'" arity="'.$arity.'">';
 	
 			   		for($i = 0, $n = $arity-1; $i < $n; $i++) {
 			   			$pvalues = smwfGetStore()->getPropertyValues($relationTitle, $possibleValueDV);
-			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getXSDValue().'">';
+			   			$relSchema .= '<param name="'.$typeValues[$i]->getWikiValue().'" type="'.$typeValues[$i]->getXSDValue().'"'.$range.'>';
 			   			for($j = 0; $j < sizeof($pvalues); $j++){
 			   				$relSchema .= '<allowedValue value="' . $pvalues[$j]->getXSDValue() . '"/>';
 			   			}
-						$relSchema .= '</param>';
+						$relSchema .= $units.'</param>';
 					}
 					$relSchema .= '</relationSchema>';
 	
 				} else { // this should never happen, huh?
 				$relSchema = '<relationSchema name="'.$relationName.'" arity="2">'.
-								'<param name="Page" type="_wpg"/>'.
+								'<param name="Page" type="_wpg"'.$range.'/>'.
 		           	  		 '</relationSchema>';
 				}
 			}
@@ -537,3 +543,63 @@ function qiGetPropertyInformation($relationName) {
 			return $relSchema;
 		}
 	}
+
+/**
+ * Get the range annotation of a property if such exist. The special property
+ * "Domain and range" must be defined at the property page.
+ *
+ * @param string $relationName
+ * @return string range attribute i.e. 'range="Category:SomeCat"' or empty
+ */
+function qiGetPropertyRangeInformation($relationName) {
+    global $smwgHaloContLang;
+    $range= "";
+    $title = Title::newFromText($relationName, SMW_NS_PROPERTY);
+    $sspa = $smwgHaloContLang->getSpecialSchemaPropertyArray();
+    $prop = SMWPropertyValue::makeProperty($sspa[SMW_SSP_HAS_DOMAIN_AND_RANGE_HINT]);
+    $smwValues = smwfGetStore()->getPropertyValues($title, $prop);
+    if (count($smwValues) > 0) {
+        $domainAndRange = $smwValues[0]->getDVs();
+        if (count($domainAndRange) > 1) {
+            $range = ' range="'.$domainAndRange[1]->getPrefixedText().'"';
+        }
+    }
+    return $range;
+}
+/**
+ * For custom types, units can be defined. This is done at the page in the type
+ * namespace. The special property 'Corresponds to' contains a constant for the
+ * conversion and one or more labels separated by comma. These labels are
+ * supposed to be displayed in the query interface so that the user may choose
+ * that a specific value is of a certain type and that he also may choose which
+ * unit to display in the results. If a unit has several labels, the first one
+ * is used only.
+ *
+ * @global SMWLanguage $smwgContLang
+ * @param  string $typeName
+ * @return string xml snippet
+ */
+function qiGetPropertyCustomTypeInformation($typeName) {
+    global $smwgContLang;
+    $units = "";
+    $conv = array();
+    $title = Title::newFromText($typeName, SMW_NS_TYPE);
+    $sspa = $smwgContLang->getPropertyLabels();
+    $prop = SMWPropertyValue::makeProperty($sspa['_CONV']);
+    $smwValues = smwfGetStore()->getPropertyValues($title, $prop);
+    if (count($smwValues) > 0) {
+        for ($i= 0, $is = count($smwValues); $i < $is; $i++) {
+            $un = $smwValues[$i]->getDBkeys();
+            if (preg_match('/([\d\.]+)(.*)/', $un[0], $matches)) {
+                $ulist = explode(',', $matches[2]);
+                $conv[$matches[1]]= trim($ulist[0]);
+            }
+        }
+    }
+    if (count($conv) > 0) {
+        foreach (array_keys($conv) as $k) {
+            $units .= '<unit label="'.$conv[$k].'"/>';
+        }
+    }
+    return $units;
+}
