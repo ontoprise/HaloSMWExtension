@@ -52,7 +52,7 @@ function ruleSetupExtension() {
 	$wgAutoloadClasses['SMWAbstractRuleObject'] = $srgSRIP . '/includes/SR_AbstractRuleObject.php';
 	$wgAutoloadClasses['SMWConstant'] = $srgSRIP . '/includes/SR_Constant.php';
 
-	$wgAutoloadClasses['SMWOblParser'] = $srgSRIP . '/includes/SR_OblParser.php';
+	
 	$wgAutoloadClasses['SMWFormulaParser'] = $srgSRIP . '/includes/SR_FormulaParser.php';
 	$wgAutoloadClasses['SMWLiteral'] = $srgSRIP . '/includes/SR_Literal.php';
 	$wgAutoloadClasses['SMWPredicate'] = $srgSRIP . '/includes/SR_Predicate.php';
@@ -84,7 +84,7 @@ function ruleSetupExtension() {
 
 /**
  * Registers extensions for the OntologyBrowser.
- * 
+ *
  * @param $treeContainer
  * @param $boxContainer
  * @param $menu
@@ -92,21 +92,21 @@ function ruleSetupExtension() {
  */
 function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $switch) {
 	global $wgScriptPath;
-	
+
 	// additional rule tree container
 	$treeContainer .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
-	
+
 	// additional switch
 	$switch .= "<img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img><a class=\"treeSwitch\" id=\"ruleTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'ruleTree')\">".wfMsg('smw_ob_ruleTree')."</a>";
-	
+
 	// additional rule box with metadata
-	$boxContainer = "<div id=\"ruleContainer\" style=\"display:none\"> 
+	$boxContainer = "<div id=\"ruleContainer\" style=\"display:none\">
 	 <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img> ".wfMsg('smw_ob_rulelist')."</span>
 	 <div id=\"ruleList\" class=\"ruleTreeListColors\"> 
 	 
 	 </div>
 	 </div>";
-          
+
 	return true;
 }
 
@@ -272,17 +272,18 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
 					$name = $matchesheader[2][$j];
-					$is_url = strpos($name, ":");
-					if ($is_url === false) {
-						// no valid URL given, so build one
-						$url = $smwgTripleStoreGraph . "/rule#" . urlencode(str_replace(' ', '_', $name));
-					} else {
-						$url = $name;
-					}
 
+					// create URI. It denotes on which page the rule is located.
+					global $wgTitle;
+					$ns = $wgTitle->getNamespace();
+					new TSNamespaces(); // assure namespaces are initialized
+					$allNamespaces = TSNamespaces::getAllNamespaces();
+                    
+					$uri = $allNamespaces[$ns] . urlencode($wgTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
+						
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
-					$rules[] = array($url, $ruletext, $native, $active, $type);
+					$rules[] = array($uri, $ruletext, $native, $active, $type);
 				}
 			}
 		}

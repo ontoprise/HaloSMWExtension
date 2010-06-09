@@ -81,7 +81,7 @@ class SRRuleEndpoint {
 		if ($status != 200) {
 			return "error:$status";
 		}
-		 
+			
 		return $this->encapsulateMetadataAsXML($res);
 	}
 
@@ -99,36 +99,90 @@ class SRRuleEndpoint {
 		if($dom === FALSE) return "error:XML-parsing wrong";
 
 		foreach($dom->children() as $rule) {
-			$ruleURL = (string) $rule->attributes()->id;
-			$ruleName = substr($ruleURL, strpos($ruleURL, "#")+1);
-			$title_url = htmlspecialchars($ruleURL);
-			$is_leaf = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
+			$ruleURI = (string) $rule->attributes()->id;
+			$ruleText = (string) $rule[0];
+			// $$ separates page URI containing the rule from rule name
+			$help = explode("$$", $ruleURI); 
+			$pageURI = $help[0];
+			$ruleName = $help[1];
+			$containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
+						
+			$leaf_att = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
+			$dirty_att = ((string) $rule->attributes()->dirty == 'true') ? 'isDirty="true"':'';
 			$uid = $id.($counter++);
-			$xml .= '<ruleTreeElement '.$is_leaf.' title="'.$ruleName.'" title_url="'.$title_url.'" id="'.$uid.'"></ruleTreeElement>';
+			$xml .= '<ruleTreeElement '.$leaf_att.' '.$dirty_att.' title="'.htmlspecialchars($ruleName). // displayed name
+			         '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
+			         '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
+			         '" id="'.$uid.'"><![CDATA['.$ruleText.']]></ruleTreeElement>';
 
 		}
 		$xml .= '</result>';
 		return $xml;
 	}
 
+	private function getPrefixedWikiName($uri) {
+		new TSNamespaces(); // assure namespaces are initialized
+        $allNamespaces = TSNamespaces::getAllNamespaces();
+                    
+		foreach ($allNamespaces as $nsIndsex => $ns) {
+			if (stripos($uri, $ns) === 0) {
+				$help = explode('#', $uri);
+				$local = $help[1];
+				$title = Title::newFromText($local, $nsIndsex);
+				return $title->getPrefixedDBkey();
+			}
+		}
+
+		$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
+		$length = strpos($uri, "#") - $startNS;
+		$ns = intval(substr($uri, $startNS, $length));
+
+		$local = substr($uri, strpos($sv, "#")+1);
+
+		$title = Title::newFromText($local, $ns);
+		return $title->getPrefixedDBkey();
+	}
+
 	private function encapsulateMetadataAsXML($resultXML) {
 		$id = uniqid (rand());
-		$counter=0;
-		$xml = '';
-		$dom = simplexml_load_string($resultXML);
-		if($dom === FALSE) return "error:XML-parsing wrong";
+        $counter=0;
+        $xml = '';
+        $dom = simplexml_load_string($resultXML);
+        if($dom === FALSE) return "error:XML-parsing wrong";
 
-		foreach($dom->children() as $rule) {
-			$ruleURL = (string) $rule->attributes()->id;
-			$ruleName = substr($ruleURL, strpos($ruleURL, "#")+1);
-			$title_url = htmlspecialchars($ruleURL);
-			$is_leaf = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
-			$uid = $id.($counter++);
-			$xml .= '<ruleMetadata title="'.$ruleName.'" title_url="'.$title_url.'"></ruleMetadata>';
+        foreach($dom->children() as $rule) {
+            $ruleURI = (string) $rule->attributes()->id;
+            $is_active = (string) $rule->attributes()->active;
+            $is_native = (string) $rule->attributes()->native;
+            $ruleText = (string) $rule[0];
+            // $$ separates page URI containing the rule from rule name
+            $help = explode("$$", $ruleURI); 
+            $pageURI = $help[0];
+            $ruleName = $help[1];
+            $containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
 
-		}
-		$xml .= '';
-		return $xml;
+            $defines = "";
+            foreach($rule->children()->defining as $defining) {
+            	$d = (string) $defining;
+            	$defines .= "<defining>". $this->getPrefixedWikiName($d)."</defining>";
+            }
+            
+            $uses = "";
+            foreach($rule->children()->using as $using) {
+                $u = (string) $using;
+                $uses .= "<using>". $this->getPrefixedWikiName($u)."</using>";
+            }
+            
+           
+            $uid = $id.($counter++);
+            $xml .= '<ruleMetadata title="'.htmlspecialchars($ruleName). // displayed name
+                     '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
+                     '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
+                     '" id="'.$uid.'" active="'.$is_active.'" native="'.$is_native.'">'.$defines.$uses.'<![CDATA['.$ruleText.']]></ruleMetadata>';
+
+        }
+        $xml .= '';
+        return $xml;
 	}
 
 	/**

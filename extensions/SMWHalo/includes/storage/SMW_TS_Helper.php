@@ -113,10 +113,15 @@ class TSNamespaces {
     public static $TEMPLATE_NS_SUFFIX = "/template#";
     public static $USER_NS_SUFFIX = "/user#";
     public static $UNKNOWN_NS_SUFFIX = "/ns_"; // only fragment. # is missing!
-
+    
+    public static $initialized = false;
+    
     function __construct() {
     	global $smwgTripleStoreGraph, $smwgDefaultStore, $smwgBaseStore, $wgContLang, $wgExtraNamespaces;
-      
+        
+    	// use initialize flag because PHP classes do not have static initializers.
+    	if (self::$initialized) return;
+    	
         self::$CAT_NS = $smwgTripleStoreGraph.self::$CAT_NS_SUFFIX;
         self::$PROP_NS = $smwgTripleStoreGraph.self::$PROP_NS_SUFFIX;
         self::$INST_NS = $smwgTripleStoreGraph.self::$INST_NS_SUFFIX;
