@@ -26,7 +26,7 @@ define('DI_RDF_IRI', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#>');
 define('DI_RDFS_PREFIX', 'rdfs');
 define('DI_RDFS_IRI', '<http://www.w3.org/2000/01/rdf-schema#>');
 define('DI_SHK_PREFIX', 'shk');
-//todo: get shk namespace uri
+//todo: get shk namespace uri ALSO UPDATE TESTCASE!
 define('DI_SHK_IRI', '<http://smw-house-keeping/>');
 
 
@@ -56,9 +56,9 @@ class WSTriplifier {
 	 * 
 	 * This method returns the subjects which have been or would have been created.
 	 */
-	public function triplify($wsResult, $subjectCreationPattern, $wsId, $triplify, $articleId, $createGraph){
+	public function triplify($wsResult, $subjectCreationPattern, $wsId, $triplify, $articleId, $createGraph, $subjectCreationPatternParts){
 		//preprocess triples and subjects
-		list($tripleData, $subjects) = $this->createTriples($wsResult, $subjectCreationPattern, $wsId);
+		list($tripleData, $subjects) = $this->createTriples($wsResult, $subjectCreationPattern, $wsId, $subjectCreationPatternParts);
 		
 		if($triplify && defined( 'LOD_LINKEDDATA_VERSION')){
 			global $IP;
@@ -110,7 +110,7 @@ class WSTriplifier {
 	/*
 	 * Get the base URI of the SMW schema
 	 */
-	private function getWikiNS(){
+	public function getWikiNS(){
 		global $IP, $smwgTripleStoreGraph;
 		$wikiNS = $smwgTripleStoreGraph;
 		$wikiNS .= ($wikiNS[strlen($wikiNS)-1] == "/") ? '' : '/';
@@ -120,7 +120,9 @@ class WSTriplifier {
 	/*
 	 * Creates the preprocessed triples as well as the corresponding subjects
 	 */
-	private function createTriples($wsResult, $subjectCreationPattern, $wsId){
+	private function createTriples($wsResult, $subjectCreationPattern, $wsId, $unwantedPredicates){
+		$unwantedPredicates = array_flip($unwantedPredicates);
+		
 		global $wgParser, $IP;
 		require_once($IP."/extensions/SMWHalo/includes/storage/SMW_TS_Helper.php");
 		
@@ -169,11 +171,14 @@ class WSTriplifier {
 						}
 					}
 					
-					$tempTriples[] = $triple;
+					if(!array_key_exists($predicate, $unwantedPredicates)){
+						$tempTriples[] = $triple;
+					}
 				} else if (array_key_exists($predicate, $subjectCreationPatternParts)){
 					$subject = str_replace("?".$subjectCreationPatternParts[$predicate]."?", '', $subject);
 				}
 			}
+			
 			
 			$subject = urlencode(trim($wgParser->replaceVariables($subject)));
 			
@@ -183,8 +188,8 @@ class WSTriplifier {
 					$triples[] = $triple;
 				}
 			}
-			
-			$subjects[] = "[[".$subject."]]";
+			if(strlen($subject)>0) $subject = "[[".$subject."]]";
+			$subjects[] = $subject;
 		}
 		
 		return array($triples, $subjects);

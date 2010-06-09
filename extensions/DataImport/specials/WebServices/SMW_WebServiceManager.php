@@ -292,8 +292,8 @@ class WebServiceManager {
 		}
 		
 		//handle triplification processing
-		WSTriplifier::getInstance()->addWSAsDataSource(self::$mNewWebService->getArticleID());
-
+		WSTriplifier::getInstance()->addWSAsDataSource($article->getID());
+		
 		if (self::$mNewWebService) {
 			self::$mNewWebService->store();
 		}
@@ -312,8 +312,15 @@ class WebServiceManager {
 		}
 		$ws = WebService::newFromID($article->getID());
 		if ($ws) {
+			//triplification processing
+			global $smwgDIIP;
+			require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
+			//deal with triplification
+			$articles = WSStorage::getDatabase()->getWSArticles($article->getID(), new SMWRequestOptions());
+			WSTriplifier::getInstance()->removeWS($article->getID(), $articles);
+			
 			WebServiceCache::removeWS($ws->getArticleID());
-
+			
 			$options = new SMWRequestOptions();
 			$pageIds = WSStorage::getDatabase()->getWSArticles($ws->getArticleID(), $options);
 			foreach($pageIds as $articleId){
@@ -331,13 +338,6 @@ class WebServiceManager {
 			}
 				
 			$ws->removeFromDB();
-			
-			//triplification processing
-			global $smwgDIIP;
-			require_once($smwgDIIP."/specials/WebServices/SMW_WSTriplifier.php");
-			//deal with triplification
-			$articles = WSStorage::getDatabase()->getWSArticles(self::$mNewWebService->getArticleID(), new SMWRequestOptions());
-			WSTriplifier::getInstance()->removeWS(self::$mNewWebService->getArticleID(), $articles);
 		}
 		self::$mNewWebService = null;
 		self::$mOldWebservice = null;

@@ -135,7 +135,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wws_ns_without_prefix' => 'The attribute "prefix" of one of the namespace definitions is missing.',
 	'smw_wws_triplification_without_subject' => 'The attribute "subject" of one of the triplification tag is missing.',
 	'smw_wws_triplification_instruction_twice' => 'More than one triplification instructions were defined.',
-	'smw_wws_wrong_triplification_subject' => 'The triplification subject is erronious because no result part with that alias exists',
+	//'smw_wws_wrong_triplification_subject' => 'The triplification subject is erronious because no result part with that alias exists',
 	'smw_wws_ns_without_uri' => 'The attribute "uri" of one of the namespace definitions is missing.',
 	'smw_wws_duplicate_select' => 'The select "$1" appears several times in the result "$2".',
 	'smw_wws_need_confirmation' => 'The WWSD for this Web Service has to be confirmed by an administrator before it can be used again',
@@ -294,6 +294,10 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wws_add_prefixes' => 'Add namespace prefixes',
 	'smw_wws_nss_prefix' => 'Prefix:',
 	'smw_wws_nss_url' => 'URL:',
+	
+	'smw_wsuse_missing_triplification_subject' => 'Triplifying the web service result is not possible. You did not pass a triplification subject pattern and the WWSD does not provide a default one.',
+	'smw_wsuse_missing_ld_extension' => 'The triplification feature is only available if you have activated the LinkedData Extension.',
+	
 	);
 
 	protected $smwDINamespaces = array(

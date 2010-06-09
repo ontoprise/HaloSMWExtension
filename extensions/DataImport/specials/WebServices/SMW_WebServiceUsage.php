@@ -275,7 +275,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 					}
 					$subjects[$displayTripleSubjects] = 
 						WSTriplifier::getInstance()
-							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph);
+							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph, $subjectCreationPatternParts);
 				}
 			}
 			
@@ -534,6 +534,9 @@ function detectRemovedWebServiceUsages($articleId){
 			WSTriplifier::getInstance()->removeWSUsage($oldWSUsage[0], $articleId);
 		}
 	}
+	
+	$wgsmwRememberedWSTriplifications = array();
+	
 	//eof deal with triplification
 	
 	return true;

@@ -134,7 +134,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_ns_without_prefix' => 'Das Attribut "prefix" einer Namespace Definition fehlt.',
 	'smw_wws_triplification_without_subject' => 'Das Attribut "subject" des Triplification Tags fehlt.',
 	'smw_wws_triplification_instruction_twice' => 'Mehr als ein Triplification Tag wurde angegeben.',
-	'smw_wws_wrong_triplification_subject' => 'Das Triplification Subjekt ist falsch, da kein Result Part mit diesem Alias existiert.',
+	//'smw_wws_wrong_triplification_subject' => 'Das Triplification Subjekt ist falsch, da kein Result Part mit diesem Alias existiert.',
 	'smw_wws_ns_without_uri' => 'Das Attribut "uri" einer Namespace Definition fehlt.',
 	'smw_wws_duplicate_select' => 'Die Auswahl "$1" kommt mehrmals im Ergebnis "$2" vor.',
 	'smw_wws_need_confirmation' => 'Die WWSD f&uuml;r diesen Web Service muss von einem Administrator freigegeben werden, bevor sie erneut verwendet werden kann.',
@@ -292,6 +292,9 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wws_add_prefixes' => 'Namensraum Präfixe hinzuf&uuml;gen',
 	'smw_wws_nss_prefix' => 'Pr&auml;fix:',
 	'smw_wws_nss_url' => 'URL:',
+	
+	'smw_wsuse_missing_triplification_subject' => 'Das Triplifizieren des Web Service Ergebnisses war nicht m&ouml;glich. Sie haben kein Pattern f&uuml; das Erzeugen der Subjekte angegeben und die WWSD definiert auch keines.',
+	'smw_wsuse_missing_ld_extension' => 'Das Triplifizierungs-Feature ist nur verfügbar, wenn die LinkedData Extension aktiviert ist..',
 	);
 
 	protected $smwDINamespaces = array(

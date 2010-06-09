@@ -8,7 +8,8 @@ enableSemantics('http://wiki', true);
 require_once("$IP/extensions/ScriptManager/SM_Initialize.php");
 
 include_once('extensions/SMWHalo/includes/SMW_Initialize.php');
-enableSMWHalo('SMWHaloStore2');
+enableSMWHalo('SMWHaloStore2', 'SMWTripleStore', 'http://halowiki/ob');
+$smwgWebserviceEndpoint='localhost:8080';
 
 include_once('extensions/SemanticGardening/includes/SGA_GardeningInitialize.php');
 
@@ -27,3 +28,9 @@ $wgAllowExternalImagesFrom = $wgServer;
 
 require_once("$IP/extensions/DataImport/IAI/includes/IAI_Initialize.php");
 enableWUM();
+
+//required for the subject creation pattern tests
+require_once($IP."/extensions/ApplicationProgramming/StringFunctions/StringFunctions.php");
+require_once($IP."/extensions/ApplicationProgramming/ParserFunctions/ParserFunctions.php");
+
+require_once($IP."/extensions/LinkedData/includes/LOD_Initialize.php");
