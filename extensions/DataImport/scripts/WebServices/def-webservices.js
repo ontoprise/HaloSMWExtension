@@ -946,7 +946,7 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.setAttribute("onfocus", "webServiceSpecial.handleAliasInputFocus(event)");
 				
 				//add autocompletion
-				aliasInput = addACFeatureToInput(aliasInput);
+				aliasInput = this.addACFeatureToInput(aliasInput);
 				
 				resultTD2.appendChild(aliasInput);
 
@@ -3255,7 +3255,7 @@ DefineWebServiceSpecial.prototype = {
 		input.size = "25";
 		
 		//add autocompletion
-		input = addACFeatureToInput(input);
+		input = this.addACFeatureToInput(input);
 		
 		
 		td.appendChild(input);
@@ -3343,7 +3343,6 @@ DefineWebServiceSpecial.prototype = {
 	
 	addACFeatureToInput : function(input){
 		input.className = "wickEnabled";
-		alert($('di_ns_id').firstChild.nodeValue);
 		input.setAttribute('constraints' , 'namespace: ' + $('di_ns_id').firstChild.nodeValue);
 		var acIndex = autoCompleter.allInputs.length - 1;
 		autoCompleter.allInputs[acIndex] = new Array();
