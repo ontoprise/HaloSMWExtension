@@ -1234,6 +1234,8 @@ OBGlobalActionListener.prototype = {
 				selectionProvider.fireSelectionChanged(null, null, SMW_CATEGORY_NS, null);
 				return;
 			}	
+			// filter tree
+			actionListener._filterTree(event, tree, this.activeTreeName, filter);
 		} else if (this.activeTreeName == 'propertyTree') {
 			actionListener = propertyActionListener;	
 			tree = dataAccess.OB_cachedPropertyTree;
@@ -1245,9 +1247,12 @@ OBGlobalActionListener.prototype = {
 				selectionProvider.fireSelectionChanged(null, null, SMW_PROPERTY_NS, null);
 				return;
 			}
-		}  
-		// filter tree
-		actionListener._filterTree(event, tree, this.activeTreeName, filter);
+			// filter tree
+			actionListener._filterTree(event, tree, this.activeTreeName, filter);
+		}  else {
+			// may be another tree tab (provided by other extensions)
+			selectionProvider.fireFilterTree(this.activeTreeName, filter);
+		}
 		
 		
 	},
@@ -1427,12 +1432,16 @@ OBGlobalActionListener.prototype = {
 	 }  else if (this.activeTreeName == 'propertyTree') {
 	 	 OB_tree_pendingIndicator.show(this.activeTreeName);
          sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree##"+hint], filterBrowsingAttributeCallback);
-	 } 
+	 } else {
+		 selectionProvider.fireFilterBrowsing(this.activeTreeName, hint);
+	 }
+	 
+	 if (this.activeTreeName == 'categoryTree' || this.activeTreeName == 'propertyTree') {
 	  OB_instance_pendingIndicator.show();
 	  OB_relatt_pendingIndicator.show();
 	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance##"+hint], filterBrowsingInstanceCallback);	
 	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"property##"+hint], filterBrowsingPropertyCallback);
-	 
+	 }
 	},
 	
 	/**
@@ -1445,6 +1454,8 @@ OBGlobalActionListener.prototype = {
 			dataAccess.initializeRootProperties(0, true);
 
 		} 
+		selectionProvider.fireReset(this.activeTreeName);
+		
 		// clear input field
 		var inputs = document.getElementsByTagName("input");
 		inputs[0].value = "";

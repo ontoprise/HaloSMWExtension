@@ -104,7 +104,17 @@
     border: 1px solid #AAAAAA;
     float: left;
     overflow: auto;
-    width: 100%;
+    width: 130%;
     height: 430px;
     
+}
+
+.ruleListLabel {
+	font-weight: bold;
+	padding: 5px;
+	width: 25%;
+}
+
+.ruleListValue {
+	
 }

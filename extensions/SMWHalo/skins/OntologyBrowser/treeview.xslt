@@ -629,7 +629,7 @@
 						<xsl:if test="@expanded='true'">
 							<xsl:choose>
 								<xsl:when test="not (@isLeaf)">
-									<img src="{$param-img-directory}minus.gif">
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
 										<xsl:if test="@id">
 											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
 										</xsl:if>
@@ -637,7 +637,7 @@
 									</img>
 								</xsl:when>
 								<xsl:otherwise>
-									<img src="{$param-img-directory}minus.gif">
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
 										<xsl:if test="@id">
 											<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
 											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
@@ -651,7 +651,7 @@
 							<!-- plus (+) otherwise-->
 							<xsl:choose>
 								<xsl:when test="not (@isLeaf)">
-									<img src="{$param-img-directory}plus.gif">
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
 										<xsl:if test="@id">
 											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
 										</xsl:if>
@@ -659,7 +659,7 @@
 									</img>
 								</xsl:when>
 								<xsl:otherwise>
-									<img src="{$param-img-directory}plus.gif">
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
 										<xsl:if test="@id">
 											<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
 											<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
@@ -672,7 +672,7 @@
 						</xsl:if>
 						<!-- <xsl:if test="not(@expanded)">
 							<xsl:if test="$param-deploy-treeview = 'true'">
-								<img src="{$param-img-directory}minus.gif">
+								<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
 									<xsl:if test="@id">
 										<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
 									</xsl:if>
@@ -680,7 +680,7 @@
 								</img>
 							</xsl:if>
 							<xsl:if test="$param-deploy-treeview = 'false' or not(@expanded)">
-								<img src="{$param-img-directory}plus.gif">
+								<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
 									<xsl:if test="@id">
 										<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.toggleExpand(event, this.parentNode, '<xsl:value-of select="@id"/>')</xsl:attribute>
 									</xsl:if>
@@ -692,20 +692,20 @@
 						<xsl:if test="$rek_depth>1">
 							<xsl:choose>
 								<xsl:when test="position()=last()">
-									<img src="{$param-img-directory}lastlink.gif"/>
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif"/>
 								</xsl:when>
 								<xsl:otherwise>
-									<img src="{$param-img-directory}link.gif"/>
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:if>
 						<xsl:if test="$startDepth>1">
 							<xsl:choose>
 								<xsl:when test="position()=last()">
-									<img src="{$param-img-directory}lastlink.gif"/>
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif"/>
 								</xsl:when>
 								<xsl:otherwise>
-									<img src="{$param-img-directory}link.gif"/>
+									<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:if>
@@ -766,7 +766,7 @@
 					<xsl:attribute name="id"><xsl:value-of select="@id"/></xsl:attribute>
 					<xsl:attribute name="length"><xsl:value-of select="@length"/></xsl:attribute>
 					<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.selectPreviousPartition(event, this)</xsl:attribute>
-					<img src="{$param-img-directory}pfeil_links.gif"/> 
+					<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/pfeil_links.gif"/> 
 					prev
 				</a>
 				</xsl:if>
@@ -783,7 +783,7 @@
 					<xsl:attribute name="length"><xsl:value-of select="@length"/></xsl:attribute>
 					<xsl:attribute name="onclick"><xsl:value-of select="$actionListener"/>.selectNextPartition(event, this)</xsl:attribute> 
 					next
-					<img src="{$param-img-directory}pfeil_rechts.gif"/>
+					<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/pfeil_rechts.gif"/>
 				</a>	
 				</xsl:if>
 				</td>

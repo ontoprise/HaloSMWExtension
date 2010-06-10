@@ -78,7 +78,17 @@ var wgUserSR_LanguageStrings = {
     
     'PC_enter_prop'     : 'Geben Sie ein Property ein.',
     'PC_headline'       : 'Der Wert des Properties $1 von $2 ist $3, falls',
-    'PC_DERIVE_BY'      : 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.'
+    'PC_DERIVE_BY'      : 'Ableitung des Properties $1 durch eine Property-Verkettungsregel.',
+    
+    // OntologyBrowser extension
+    'SR_RULE_ID' : 'Regel-Name',
+    'SR_RULE_HOME' : 'Befindet sich auf Seite',
+    'SR_RULE_TEXT' : 'Regel-Text',
+    'SR_RULE_ISNATIVE' : 'Ist nativ',
+    'SR_RULE_ISACTIVE' : 'Ist aktiv',
+    'SR_RULE_TYPE' : 'Regel-Typ',
+    'SR_RULE_DEFINES' : 'Regel definiert',
+    'SR_RULE_USES' : 'Regel benutzt'
     
 
 };

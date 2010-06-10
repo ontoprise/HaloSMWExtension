@@ -91,8 +91,12 @@ function ruleSetupExtension() {
  * @param $switch
  */
 function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $switch) {
-	global $wgScriptPath;
-
+	global $wgScriptPath, $wgUser;
+    
+	if (is_null($wgUser) || !$wgUser->isAllowed("ontologyediting")) {
+		return true;
+	}
+	
 	// additional rule tree container
 	$treeContainer .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
 
@@ -101,7 +105,7 @@ function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $
 
 	// additional rule box with metadata
 	$boxContainer = "<div id=\"ruleContainer\" style=\"display:none\">
-	 <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img> ".wfMsg('smw_ob_rulelist')."</span>
+	 <span class=\"OB-header\"><img src=\"$wgScriptPath/extensions/SemanticRules/skins/images/rule.gif\"></img> ".wfMsg('sr_ob_rulelist')."</span>
 	 <div id=\"ruleList\" class=\"ruleTreeListColors\"> 
 	 
 	 </div>
@@ -213,6 +217,7 @@ function srfAddOBContent(& $out) {
 
 	global $wgTitle, $smwgEnableObjectLogicRules, $wgScriptPath;
 	if ($wgTitle->getNamespace() == NS_SPECIAL && $wgTitle->getText() == $localname) {
+		srfAddJSLanguageScripts($out);
 		$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_OB_extensions.js"></script>');
 		$rulesEnabled = isset($smwgEnableObjectLogicRules)
 		? (($smwgEnableObjectLogicRules) ? 'true' : 'false')

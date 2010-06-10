@@ -45,6 +45,9 @@ var OB_SELECTIONLISTENER = 'selectionChanged';
 var OB_TREETABCHANGELISTENER = 'treeTabChanged'
 var OB_BEFOREREFRESHLISTENER = 'beforeRefresh';
 var OB_REFRESHLISTENER = 'refresh';
+var OB_FILTERTREE = 'filterTree';
+var OB_FILTERBROWSING = 'filterBrowsing';
+var OB_RESET = 'reset';
 
 /**
  * Event Provider. Supports following events:
@@ -118,6 +121,54 @@ OBEventProvider.prototype = {
     fireTreeTabChanged: function(tabname) {
     	this.listeners[OB_TREETABCHANGELISTENER].each(function (l) { 
             l.treeTabChanged(tabname);
+        });
+    },
+    
+    /**
+     * @public
+     * 
+     * Fires filtertree event. The listener method 
+     * must have the name 'filterTree' with the following
+     * signature:
+     * 
+     * @param treename
+     * @param filter 
+     */
+    fireFilterTree: function(tabname, filter) {
+    	this.listeners[OB_FILTERTREE].each(function (l) { 
+            l.treeFilterTree(tabname, filter);
+        });
+    },
+    
+    /**
+     * @public
+     * 
+     * Fires filterbrowsing event. The listener method 
+     * must have the name 'filterBrowsing' with the following
+     * signature:
+     * 
+     * @param filter 
+     * 
+     */
+    fireFilterBrowsing: function(tabname, filter) {
+    	this.listeners[OB_FILTERBROWSING].each(function (l) { 
+            l.filterBrowsing(tabname, filter);
+        });
+    },
+    
+    /**
+     * @public
+     * 
+     * Fires reset event. The listener method 
+     * must have the name 'reset' with the following
+     * signature:
+     * 
+     * @param tabname 
+     * 
+     */
+    fireReset: function(tabname) {
+    	this.listeners[OB_RESET].each(function (l) { 
+            l.reset(tabname);
         });
     },
     

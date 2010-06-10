@@ -44,6 +44,7 @@ TreeTransformer.prototype = {
 		// initialize root nodes after document has been loaded
 		Event.observe(window, 'load', this.initializeTree
 				.bindAsEventListener(this));
+		this.languageProvider = new Array();
 	},
 	initializeTree : function() {
 
@@ -73,8 +74,7 @@ TreeTransformer.prototype = {
 							null,
 							"param-img-directory",
 							wgServer
-									+ wgScriptPath
-									+ "/extensions/SMWHalo/skins/OntologyBrowser/images/");
+									+ wgScriptPath);
 			this.OB_xsltProcessor_gecko.setParameter(null, "param-wiki-path",
 					wgServer + wgArticlePath);
 			this.OB_xsltProcessor_gecko.setParameter(null, "param-ns-concept",
@@ -98,8 +98,7 @@ TreeTransformer.prototype = {
 					.addParameter(
 							"param-img-directory",
 							wgServer
-									+ wgScriptPath
-									+ "/extensions/SMWHalo/skins/OntologyBrowser/images/");
+									+ wgScriptPath);
 			this.OB_xsltProcessor_ie.addParameter("param-wiki-path", wgServer
 					+ wgArticlePath);
 			this.OB_xsltProcessor_ie.addParameter("param-ns-concept", gLanguage
@@ -108,6 +107,16 @@ TreeTransformer.prototype = {
 					gLanguage.getMessage('PROPERTY_NS_WOC', 'cont'));
 		}
 
+	},
+	
+	/**
+	 * Adds a language providers. It must provide a function with parameter 'id'.
+	 * 
+	 */
+	addLanguageProvider: function(provider) {
+        if (typeof(provider) == 'function') { 
+        	this.languageProvider.push(provider);
+        }
 	},
 
 	/*
@@ -160,12 +169,24 @@ TreeTransformer.prototype = {
 	// translate XSLT output
 	var languageNodes = GeneralXMLTools.getNodeByText(document, '{{');
 	var regex = new RegExp("\{\{(\\w+)\}\}");
+	var lp = this.languageProvider;
 	languageNodes.each(function(n) {
 		var vars;
 		var text = n.textContent;
 		while (vars = regex.exec(text)) {
-			text = text.replace(new RegExp('\{\{' + vars[1] + '\}\}', "g"),
-					gLanguage.getMessage(vars[1]));
+			var reg_exp = new RegExp('\{\{' + vars[1] + '\}\}', "g");
+			
+			// use local language data
+			var msg = gLanguage.getMessage(vars[1])
+			if (msg != vars[1]) text = text.replace(reg_exp,
+					msg);
+			
+			// use other language providers
+			lp.each(function(provider) { 
+				var msg = provider(vars[1]);
+				if (msg) text = text.replace(reg_exp,
+						msg);
+			});
 		}
 		n.textContent = text;
 	});

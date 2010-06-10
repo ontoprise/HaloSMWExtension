@@ -21,7 +21,7 @@ class SR_LanguageEn extends SR_Language {
     'smw_srf_expected_parameter' => 'Expected a parameter near $1',
     'smw_srf_missing_operator' => 'Expected an operator near $1',
     
-    
+    'sr_ob_rulelist' => 'Rule metadata'
     
     );
     

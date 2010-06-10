@@ -22,7 +22,7 @@ class SR_LanguageDe extends SR_Language {
     'smw_srf_expected_parameter' => 'Erwarte einen Parameter bei $1',
     'smw_srf_missing_operator' => 'Erwarte eine Operator bei $1',
     
-   
+   'sr_ob_rulelist' => 'Regel-Metadaten'
     
     );
     

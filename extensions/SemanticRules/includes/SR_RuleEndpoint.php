@@ -84,6 +84,19 @@ class SRRuleEndpoint {
 			
 		return $this->encapsulateMetadataAsXML($res);
 	}
+	
+    public function searchForRulesByFragment($params) {
+        $filter = $params[0];
+        global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+
+        $payload = "graph=$smwgTripleStoreGraph&fragment=$filter";
+        list($header, $status, $res) = self::$_client->send($payload, "/searchForRulesByFragment");
+        if ($status != 200) {
+            return "error:$status";
+        }
+            
+        return $this->encapsulateTreeElementAsXML($res, true);
+    }
 
 	/**
 	 * Transforms XML format coming from TSC rule endpoint to transformable XML format
@@ -91,33 +104,41 @@ class SRRuleEndpoint {
 	 *
 	 * @return string XML
 	 */
-	private function encapsulateTreeElementAsXML($resultXML) {
+	private function encapsulateTreeElementAsXML($resultXML, $expanded = false) {
 		$id = uniqid (rand());
 		$counter=0;
 		$xml = '<result>';
 		$dom = simplexml_load_string($resultXML);
 		if($dom === FALSE) return "error:XML-parsing wrong";
 
-		foreach($dom->children() as $rule) {
-			$ruleURI = (string) $rule->attributes()->id;
-			$ruleText = (string) $rule[0];
-			// $$ separates page URI containing the rule from rule name
-			$help = explode("$$", $ruleURI); 
-			$pageURI = $help[0];
-			$ruleName = $help[1];
-			$containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
-						
-			$leaf_att = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
-			$dirty_att = ((string) $rule->attributes()->dirty == 'true') ? 'isDirty="true"':'';
-			$uid = $id.($counter++);
-			$xml .= '<ruleTreeElement '.$leaf_att.' '.$dirty_att.' title="'.htmlspecialchars($ruleName). // displayed name
-			         '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
-			         '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
-			         '" id="'.$uid.'"><![CDATA['.$ruleText.']]></ruleTreeElement>';
-
-		}
+		$this->_encapsulateTreeElementAsXML($dom, $id, $counter, $expanded, $xml);
 		$xml .= '</result>';
 		return $xml;
+	}
+	
+	private function _encapsulateTreeElementAsXML($node, $id, $counter, $expanded, & $xml) {
+		foreach($node->children() as $rule) {
+			if ($rule->getName() != 'rule') continue;
+            $ruleURI = (string) $rule->attributes()->id;
+            $ruleText = (string) $rule[0];
+            // $$ separates page URI containing the rule from rule name
+            $help = explode("$$", $ruleURI); 
+            $pageURI = $help[0];
+            $ruleName = $help[1];
+            $containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
+                        
+            $leaf_att = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
+            $dirty_att = ((string) $rule->attributes()->dirty == 'true') ? 'isDirty="true"':'';
+            $expanded_att = $expanded ? 'expanded="true"' : "";
+            $uid = $id.($counter++);
+            $xml .= '<ruleTreeElement '.$leaf_att.' '.$expanded_att.' '.$dirty_att.' title="'.htmlspecialchars($ruleName). // displayed name
+                     '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
+                     '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
+                     '" id="'.$uid.'"><![CDATA['.$ruleText.']]>';
+            $this->_encapsulateTreeElementAsXML($rule, $id, $counter, $expanded, $xml);
+            $xml .= '</ruleTreeElement>';
+        }
+        
 	}
 
 	private function getPrefixedWikiName($uri) {
@@ -184,6 +205,8 @@ class SRRuleEndpoint {
         $xml .= '';
         return $xml;
 	}
+	
+	
 
 	/**
 	 * Parses an ObjectLogic rule and returns the corresponding RuleObject.

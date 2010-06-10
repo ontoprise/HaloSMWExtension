@@ -12,7 +12,10 @@ SRRuleActionListener.prototype = {
 	initialize : function() {
 		this.OB_rulesInitialized = false;
 		this.OB_cachedRuleTree = null;
-		selectionProvider.addListener(this, OB_TREETABCHANGELISTENER)
+		selectionProvider.addListener(this, OB_TREETABCHANGELISTENER);
+		selectionProvider.addListener(this, OB_FILTERTREE);
+		selectionProvider.addListener(this, OB_FILTERBROWSING);
+		selectionProvider.addListener(this, OB_RESET);
 	},
 
 	treeTabChanged : function(tabname) {
@@ -21,6 +24,7 @@ SRRuleActionListener.prototype = {
 			$('instanceContainer').hide();
 			$('rightArrow').hide();
 			$('relattributesContainer').hide();
+			$('hideInstancesButton').hide();
 
 			$('ruleContainer').show();
 			this.initializeRootRules();
@@ -29,9 +33,148 @@ SRRuleActionListener.prototype = {
 			$('instanceContainer').show();
 			$('rightArrow').show();
 			$('relattributesContainer').show();
+			$('hideInstancesButton').show();
 
 			$('ruleContainer').hide();
 		}
+	},
+
+	filterBrowsing : function(tabname, filter) {
+
+		var callbackOnSearchRequest = function(request) {
+			OB_tree_pendingIndicator.hide();
+
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+
+				return;
+			}
+			this.OB_cachedRuleTree = GeneralXMLTools
+					.createDocumentFromString(request.responseText);
+			selectionProvider.fireBeforeRefresh();
+			var subTree = sr_transformer.transformResultToHTML(request,
+					$('ruleTree'), true);
+			selectionProvider.fireRefresh();
+
+		}
+		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+		sajax_do_call('srf_sr_AccessRuleEndpoint', [
+				'searchForRulesByFragment', filter ], callbackOnSearchRequest
+				.bind(this));
+	},
+
+	reset : function(treeName) {
+		if (treeName == 'ruleTree') {
+			this.initializeRootRules(true);
+		}
+	},
+
+	treeFilterTree : function(treeName, filter) {
+		if (treeName == 'ruleTree') {
+			this._filterTree(filter);
+		}
+	},
+
+	changeRuleState : function(node, containingPage, ruleName) {
+
+		var callbackOnChangeState = function(request) {
+			OB_tree_pendingIndicator.hide();
+
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+
+				return;
+			}
+			var state = node.getAttribute("state");
+			node.setAttribute("state", state == 'active' ? 'inactive' : 'active');
+			var img = $('ruleChangeSwitch').getAttribute("src");
+			$('ruleChangeSwitch').setAttribute("src", state == 'active' ? img.replace("green-switch", "red-switch") : img.replace("red-switch", "green-switch") );
+		}
+		var state = node.getAttribute("state");
+		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName, !(state == 'active') ], callbackOnChangeState.bind(this));
+	},
+
+	/**
+	 * @protected
+	 * 
+	 * Filter tree to match given term(s)
+	 * 
+	 * @param tree
+	 *            XML Tree to filter
+	 * @param treeName
+	 *            Tree ID
+	 * @param filterStr
+	 *            Whitespace separated filter string.
+	 */
+	_filterTree : function(filterStr) {
+		var xmlDoc = GeneralXMLTools.createTreeViewDocument();
+
+		var nodesFound = new Array();
+
+		// generate filters
+		var regex = new Array();
+		var filterTerms = GeneralTools.splitSearchTerm(filterStr);
+		for ( var i = 0, n = filterTerms.length; i < n; i++) {
+			try {
+				regex[i] = new RegExp(filterTerms[i], "i");
+			} catch (e) {
+				// happens when RegExp is invalid. Just do nothing in this case
+				return;
+			}
+		}
+		this._filterTree_(nodesFound, this.OB_cachedRuleTree.firstChild, 0,
+				regex);
+
+		for ( var i = 0; i < nodesFound.length; i++) {
+			var branch = GeneralXMLTools.getAllParents(nodesFound[i]);
+			GeneralXMLTools.addBranch(xmlDoc.firstChild, branch);
+		}
+		// transform xml and add to category tree DIV
+		var rootElement = document.getElementById("ruleTree");
+		selectionProvider.fireBeforeRefresh();
+		sr_transformer.transformXMLToHTML(xmlDoc, rootElement, true);
+		selectionProvider.fireRefresh();
+
+	},
+
+	/**
+	 * @private
+	 * 
+	 * Selects all nodes whose title attribute match the given regex.
+	 * 
+	 * @param nodesFound
+	 *            Empty array which takes the returned nodes
+	 * @param node
+	 *            Node to start with.
+	 * @param count
+	 *            internal index for node array (starts with 0)
+	 * @param regex
+	 *            The regular expression
+	 */
+	_filterTree_ : function(nodesFound, node, count, regex) {
+
+		if (node.nodeType != 1)
+			return count;
+		var children = node.childNodes;
+
+		if (children) {
+			for ( var i = 0; i < children.length; i++) {
+
+				count = this
+						._filterTree_(nodesFound, children[i], count, regex);
+
+			}
+		}
+
+		var title = node.getAttribute("title");
+		if (title != null && GeneralTools.matchArrayOfRegExp(title, regex)) {
+			nodesFound[count] = node;
+			count++;
+
+		}
+
+		return count;
 	},
 
 	initializeRootRules : function(force) {
@@ -82,40 +225,40 @@ SRRuleActionListener.prototype = {
 	 *            URI of the rule (in wiki)
 	 */
 	select : function(event, node, ruleID, ruleURI) {
-		alert("Rule-ID:" + ruleID + " Rule URI:" + ruleURI);
-		var nextDIV = node.nextSibling;
-		
-	 	// find the next DIV
-		while(nextDIV.nodeName != "DIV") {
-			nextDIV = nextDIV.nextSibling;
-		}
-		
-		// check if node is already expanded and expand it if not
-		if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
-			this.toggleExpand(event, node);
-		}
-		
-		var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
-			OB_tree_pendingIndicator.hide();
-		
-			if (request.responseText.indexOf('error:') != -1) {
-				// TODO: some error occured
+		// alert("Rule-ID:" + ruleID + " Rule URI:" + ruleURI);
+	var nextDIV = node.nextSibling;
 
-				return;
-			}
-			selectionProvider.fireBeforeRefresh();
-			var subTree = sr_transformer
-					.transformResultToHTML(request, $('ruleList'));
-			selectionProvider.fireRefresh();
-			
-		}
-		
-		sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule',
-		                                             ruleURI ], callbackOnRuleRequest.bind(this));
-	},
+	// find the next DIV
+	while (nextDIV.nodeName != "DIV") {
+		nextDIV = nextDIV.nextSibling;
+	}
 
-	toggleExpand : function(event, node, tree) {
-		// stop event propagation in Gecko and IE
+	// check if node is already expanded and expand it if not
+	if (!nextDIV.hasChildNodes() || nextDIV.style.display == 'none') {
+		this.toggleExpand(event, node);
+	}
+
+	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+		OB_tree_pendingIndicator.hide();
+
+		if (request.responseText.indexOf('error:') != -1) {
+			// TODO: some error occured
+
+			return;
+		}
+		selectionProvider.fireBeforeRefresh();
+		var subTree = sr_transformer.transformResultToHTML(request,
+				$('ruleList'));
+		selectionProvider.fireRefresh();
+
+	}
+
+	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
+			callbackOnRuleRequest.bind(this));
+},
+
+toggleExpand : function(event, node, tree) {
+	// stop event propagation in Gecko and IE
 	Event.stop(event);
 	// Get the next tag (read the HTML source)
 	var nextDIV = node.nextSibling;
@@ -206,3 +349,6 @@ SRRuleActionListener.prototype = {
 var ruleActionListener = new SRRuleActionListener();
 var sr_transformer = new TreeTransformer(
 		"/extensions/SemanticRules/skins/ruleTree.xslt");
+sr_transformer.addLanguageProvider(function(id) {
+	return gsrLanguage.getMessage(id, "user");
+});

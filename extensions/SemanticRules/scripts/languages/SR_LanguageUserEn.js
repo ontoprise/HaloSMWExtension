@@ -88,7 +88,19 @@ var wgUserSR_LanguageStrings = {
 
     'PC_enter_prop'     : 'Enter property',
     'PC_headline'       : 'The value of the property $1 of $2 is $3, if',
-    'PC_DERIVE_BY'      : 'Derive property $1 by a property chaining rule'
+    'PC_DERIVE_BY'      : 'Derive property $1 by a property chaining rule',
+    	
+    // OntologyBrowser extension
+    'SR_RULE_ID' : 'Rule name',
+    'SR_RULE_HOME' : 'Located on page',
+    'SR_RULE_TEXT' : 'Rule text',
+    'SR_RULE_ISNATIVE' : 'Is native',
+    'SR_RULE_ISACTIVE' : 'Is active',
+    'SR_RULE_TYPE' : 'Rule type',
+    'SR_RULE_DEFINES' : 'Rule defines',
+    'SR_RULE_USES' : 'Rule uses'
+    
+    	
    
 };
 

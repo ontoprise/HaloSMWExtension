@@ -145,18 +145,18 @@
 	<xsl:template match="ruleMetadata">
 		<table class="ruleTreeColors" border="0" cellspacing="0">
 			<tr>
-				<td id="ruleList-id">Title</td>
-				<td>
+				<td id="ruleList-id" class="ruleListLabel">{{SR_RULE_ID}}</td>
+				<td class="ruleListValue">
 					<xsl:if test="@title">
 						<xsl:value-of select="@title" />
 					</xsl:if>
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-link">Link</td>
-				<td>
+				<td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
+				<td class="ruleListValue">
 
-					<xsl:variable name="title" select="@title" />
+	               <xsl:variable name="title" select="@title" />
 					<xsl:if test="@containing_page">
 						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
@@ -170,38 +170,49 @@
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-ruletext">RuleText</td>
+				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
 					<xsl:value-of select="." />
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-native">Is native</td>
-				<td>
+				<td id="ruleList-native" class="ruleListLabel">{{SR_RULE_ISNATIVE}}</td>
+				<td class="ruleListValue">
 					<xsl:if test="@native">
 						<xsl:value-of select="@native" />
 					</xsl:if>
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-active">Is active</td>
-				<td>
-					<xsl:if test="@active">
-						<xsl:value-of select="@active" />
-					</xsl:if>
+				<td id="ruleList-active" class="ruleListLabel">{{SR_RULE_ISACTIVE}}</td>
+				<td class="ruleListValue">
+				    <xsl:variable name="title" select="@title" />
+				    <xsl:variable name="containingPage" select="@containing_page" />
+					<xsl:value-of select="@active" />
+					<xsl:choose>
+						<xsl:when test="@active='true'">
+							<img id="ruleChangeSwitch" state="active"
+								src="{$param-img-directory}/extensions/SemanticRules/skins/images/green-switch.gif" onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<img id="ruleChangeSwitch" state="inactive"
+								src="{$param-img-directory}/extensions/SemanticRules/skins/images/red-switch.gif" onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')"/>
+						</xsl:otherwise>
+					</xsl:choose>
+
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-type">Type</td>
-				<td>
+				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
+				<td class="ruleListValue">
 					<xsl:if test="@type">
 						<xsl:value-of select="@type" />
 					</xsl:if>
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-defines">Defines</td>
-				<td>
+				<td id="ruleList-defines" class="ruleListLabel">{{SR_RULE_DEFINES}}</td>
+				<td class="ruleListValue">
 					<xsl:for-each select="child::defining">
 						<xsl:variable name="title" select="." />
 						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
@@ -216,8 +227,8 @@
 				</td>
 			</tr>
 			<tr>
-				<td id="ruleList-uses">Uses</td>
-				<td>
+				<td id="ruleList-uses" class="ruleListLabel">{{SR_RULE_USES}}</td>
+				<td class="ruleListValue">
 					<xsl:for-each select="child::using">
 						<xsl:variable name="title" select="." />
 						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
@@ -287,7 +298,8 @@
 			<xsl:if test="@expanded='true'">
 				<xsl:choose>
 					<xsl:when test="not (@isLeaf)">
-						<img src="{$param-img-directory}minus.gif">
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
 							<xsl:if test="@id">
 								<xsl:attribute name="onclick"><xsl:value-of
 									select="$actionListener" />.toggleExpand(event, this.parentNode, '<xsl:value-of
@@ -297,7 +309,8 @@
 						</img>
 					</xsl:when>
 					<xsl:otherwise>
-						<img src="{$param-img-directory}minus.gif">
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/minus.gif">
 							<xsl:if test="@id">
 								<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
 								<xsl:attribute name="onclick"><xsl:value-of
@@ -313,7 +326,8 @@
 				<!-- plus (+) otherwise-->
 				<xsl:choose>
 					<xsl:when test="not (@isLeaf)">
-						<img src="{$param-img-directory}plus.gif">
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
 							<xsl:if test="@id">
 								<xsl:attribute name="onclick"><xsl:value-of
 									select="$actionListener" />.toggleExpand(event, this.parentNode, '<xsl:value-of
@@ -323,7 +337,8 @@
 						</img>
 					</xsl:when>
 					<xsl:otherwise>
-						<img src="{$param-img-directory}plus.gif">
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/plus.gif">
 							<xsl:if test="@id">
 								<xsl:attribute name="style">visibility: hidden;</xsl:attribute>
 								<xsl:attribute name="onclick"><xsl:value-of
@@ -352,41 +367,36 @@
 			<xsl:if test="$rek_depth>1">
 				<xsl:choose>
 					<xsl:when test="position()=last()">
-						<img src="{$param-img-directory}lastlink.gif" />
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif" />
 					</xsl:when>
 					<xsl:otherwise>
-						<img src="{$param-img-directory}link.gif" />
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif" />
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:if>
 			<xsl:if test="$startDepth>1">
 				<xsl:choose>
 					<xsl:when test="position()=last()">
-						<img src="{$param-img-directory}lastlink.gif" />
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/lastlink.gif" />
 					</xsl:when>
 					<xsl:otherwise>
-						<img src="{$param-img-directory}link.gif" />
+						<img
+							src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/link.gif" />
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:if>
 
-			<!--
-				<img src="{$param-img-directory}{@img}"> <xsl:if test="@alt">
 
-				<xsl:if test="$param-is-netscape='true'"> <xsl:attribute
-				name="title"><xsl:value-of select="@alt"/></xsl:attribute> </xsl:if>
-
-				<xsl:if test="$param-is-netscape='false'"> <xsl:attribute
-				name="alt"><xsl:value-of select="@alt"/></xsl:attribute> </xsl:if>
-				</xsl:if> </img>
-			-->
 			<xsl:variable name="titleWithoutUnderscore" select="@title" />
 			<xsl:value-of select="translate($titleWithoutUnderscore, '_', ' ')" />
 		</a>
 
 		<xsl:variable name="title" select="@title" />
 		<xsl:if test="@isDirty">
-			<img src="{$param-img-directory}../../warning.png" />
+			<img src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png" />
 		</xsl:if>
 		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
