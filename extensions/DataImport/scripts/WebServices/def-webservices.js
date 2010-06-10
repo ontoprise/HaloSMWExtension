@@ -944,6 +944,10 @@ DefineWebServiceSpecial.prototype = {
 				aliasInput.maxLength = "40";
 				aliasInput.setAttribute("onblur", "webServiceSpecial.handleAliasInput(event)");
 				aliasInput.setAttribute("onfocus", "webServiceSpecial.handleAliasInputFocus(event)");
+				
+				//add autocompletion
+				aliasInput = addACFeatureToInput(aliasInput);
+				
 				resultTD2.appendChild(aliasInput);
 
 				if (aTreeRoot || treeView) {
@@ -3249,6 +3253,11 @@ DefineWebServiceSpecial.prototype = {
 		var td = document.createElement("td");
 		var input = document.createElement("input");
 		input.size = "25";
+		
+		//add autocompletion
+		input = addACFeatureToInput(input);
+		
+		
 		td.appendChild(input);
 		row.appendChild(td);
 
@@ -3330,6 +3339,20 @@ DefineWebServiceSpecial.prototype = {
 		row.appendChild(td);
 
 		$("step4-results").childNodes[0].appendChild(row);
+	},
+	
+	addACFeatureToInput : function(input){
+		input.className = "wickEnabled";
+		alert($('di_ns_id').firstChild.nodeValue);
+		input.setAttribute('constraints' , 'namespace: ' + $('di_ns_id').firstChild.nodeValue);
+		var acIndex = autoCompleter.allInputs.length - 1;
+		autoCompleter.allInputs[acIndex] = new Array();
+		autoCompleter.allInputs[acIndex][0] = input;
+		autoCompleter.allInputs[acIndex][0].setAttribute("autocomplete", "OFF");
+		autoCompleter.allInputs[acIndex][1] = autoCompleter.handleBlur.bindAsEventListener(autoCompleter);
+        Event.observe(autoCompleter.allInputs[acIndex][0], "blur",  autoCompleter.allInputs[acIndex][1]);
+        
+		return input;
 	},
 	
 	appendNSPrefix : function() {

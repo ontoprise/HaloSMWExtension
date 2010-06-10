@@ -58,6 +58,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		}
 
 		$html = "";
+		
+		//ac needs to know property ns id
+		$html .= '<span style="display: none" id="di_ns_id">'.SMW_NS_PROPERTY.'</span>';
 
 		//0. menue
 		$html .= "<div id=\"menue\">";
