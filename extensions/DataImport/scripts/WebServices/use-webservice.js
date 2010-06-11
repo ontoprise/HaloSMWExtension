@@ -233,10 +233,28 @@ UseWebService.prototype = {
 
 		this.hideHelpAll();
 	},
+	
+	processStep6 : function() {
+		$("step4-go-img").style.display = "none";
+		$("step6-go-img").style.display = "";
+
+		$("step6").style.display = "";
+
+		$("menue-step4").className = "DoneMenueStep";
+		$("menue-step6").className = "ActualMenueStep";
+		
+		this.hideHelpAll();
+	},
 
 	processStep4 : function() {
-		$("step4-go-img").style.display = "none";
+		if($("step6-go-img")){		
+			$("step6-go-img").style.display = "none";
+		} else {
+			$("step4-go-img").style.display = "none";
+		}
+		
 		$("step5-preview").style.display = "none";
+			
 
 		$("step5").style.display = "";
 
@@ -321,13 +339,15 @@ UseWebService.prototype = {
 	},
 
 	hideHelp : function(id) {
-		$("step" + id + "-help").style.display = "none";
-		$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = 
-			"useWSSpecial.displayHelp("+id+")";
+		if($("step" + id + "-help")){
+			$("step" + id + "-help").style.display = "none";
+			$("step" + id + "-help-img").getAttributeNode("onclick").nodeValue = 
+				"useWSSpecial.displayHelp("+id+")";
+		}
 	},
 
 	hideHelpAll : function() {
-		for ( var i = 1; i < 6; i++) {
+		for ( var i = 1; i < 7; i++) {
 			this.hideHelp(i);
 		}
 		if(typeof FCK != 'undefined'){
@@ -476,6 +496,14 @@ UseWebService.prototype = {
 			alert(diLanguage.getMessage('smw_wwsu_clipboard_success'));
 		}
 		
+	},
+	
+	displayTriplificationSubjectAlias : function(){
+		if($('step6-display-subjects').checked){
+			$('step6-subject-alias-container').style.display = "";
+		} else {
+			$('step6-subject-alias-container').style.display = "none";
+		}
 	}
 };
 

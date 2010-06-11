@@ -247,7 +247,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_menue-s2' => '2. Definiere Parameter',
 	'smw_wwsu_menue-s3' => '3. W&auml;hle Result Parts',
 	'smw_wwsu_menue-s4' => '4. Wähle Format',
-	'smw_wwsu_menue-s5' => '5. Ergebnis',
+	'smw_wwsu_menue-s5' => '6. Ergebnis',
 	
 	'smw_wwsu_availablews' => 'Verf&uuml;gbare Web Services: ',
 	'smw_wwsu_noparameters' => 'Dieser Web Service ben&ouml;tigt keine Parameter.',
@@ -298,6 +298,13 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	
 	'smw_wws_enable_triplification' => 'Triplifizierung erm&oum;glichen',
 	'smw_wws_enable_triplification-intro' => 'Pattern zur Subjekt-Erzeugung: ',
+	
+	'smw_wwsu_menue-s6' => '5. Triplifizierungs-Optionen',
+	'smw_wwsu_triplify' => 'Triplifizieren: ',
+	'smw_wwsu_triplify_subject_display' => 'Tripl Subjekte anzeigen:',
+	'smw_wwsu_triplify_subject_alias' => 'Result Part Alias:',
+	'smw_wwsu_triplify_subject_alias_value' => 'Tripl Subjekte',
+	'smw_wwsu_triplify_impossible' => 'Eine Triplifizierung der ergebnisse dieses Web Services ist nicht möglich. Bitte definieren sie zu erst ein <i>Subject Creation Pattern</i> in der zugehörigen Wiki Web Service Definition.',
 	);
 
 	protected $smwDINamespaces = array(

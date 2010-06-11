@@ -77,7 +77,12 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<span id=\"menue-step2\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s2')."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s3')."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s4')."</span><span class=\"HeadlineDelimiter\"></span>";
-		$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s5')."</span>";
+		if(defined( 'LOD_LINKEDDATA_VERSION')){
+			$html .= "<span id=\"menue-step6\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s6')."</span><span class=\"HeadlineDelimiter\"></span>";
+			$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s5')."</span>";
+		} else {
+			$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".str_replace("6.", "5.", wfMsg('smw_wwsu_menue-s5'))."</span>";
+		}
 		$html .= "</div>";
 
 
@@ -165,18 +170,57 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<input id=\"step4-template\"></input> ";
 		$html .= "</p>";
 
-		//todo:separator???
-
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
 
 		$html .= "<br/>";
 		$html .= "<span id=\"step4-go\" class=\"OKButton\">";
-		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"useWSSpecial.processStep4()\">";
+		if(defined( 'LOD_LINKEDDATA_VERSION')){
+			$s4OnClick = 'useWSSpecial.processStep6()';
+		} else {
+			$s4OnClick = 'useWSSpecial.processStep4()';
+		}
+		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"".$s4OnClick."\">";
 		$html .= "</span>";
 
 		$html .= "</div>";
 
+		
+		
+		//step 4.5 aka 6 Triplification
+		if(defined( 'LOD_LINKEDDATA_VERSION')){
+			$html .= "<br>";
+			$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"display: none\">";
+			$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s6');
+			$html .= "<img id=\"step6-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(6)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
+			$html .= "</p>";
+	
+			$html .= '<p id="step6-missing-subjects">'.wfMsg('smw_wwsu_triplify_impossible').'</p>';
+			
+			$html .= '<span id="step6-triplification-container">';
+			
+			$html .= "<p>".wfMsg('smw_wwsu_triplify');
+			$html .= "<input type=\"checkbox\" id=\"step6-triplify\" selected=\"false\"/>";
+			$html .= "</p>";
+	
+			$html .= "<p>".wfMsg('smw_wwsu_triplify_subject_display');
+			$html .= "<input type=\"checkbox\" id=\"step6-display-subjects\" selected=\"false\" onchange=\"useWSSpecial.displayTriplificationSubjectAlias()\"/>";
+			$html .= '<span id="step6-subject-alias-container" style="display: none">';
+			$html .= '<span>'.wfMsg('smw_wwsu_triplify_subject_alias').'</span>';
+			$html .= "<input id=\"step6-subject-alias\" value=\"".wfMsg('smw_wwsu_triplify_subject_alias_value')."\"></input> ";
+			$html .= "</span>";
+			$html .= "</p>";
+			
+			$html .= "</span>";
+	
+			$html .= "<div id=\"step6-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
 
+			$html .= "<br/>";
+			$html .= "<span id=\"step6-go\" class=\"OKButton\">";
+			$html .= "<input type=\"button\" class=\"OKButton\" id=\"step6-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"useWSSpecial.processStep4()\">";
+			$html .= "</span>";
+		}
+		
+		//step 5
 		$html .= "<br>";
 		$html .= "<div id=\"step5\" class=\"StepDiv\" style=\"display: none\">";
 		$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s5');

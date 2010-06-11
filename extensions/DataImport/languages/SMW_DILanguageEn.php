@@ -249,7 +249,7 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsu_menue-s2' => '2. Define parameters',
 	'smw_wwsu_menue-s3' => '3. Choose result parts',
 	'smw_wwsu_menue-s4' => '4. Choose output format',
-	'smw_wwsu_menue-s5' => '5. Result',
+	'smw_wwsu_menue-s5' => '6. Result',
 	
 	'smw_wwsu_availablews' => 'Available web services: ',
 	'smw_wwsu_noparameters' => 'This web service does not require any parameters.',
@@ -300,6 +300,14 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	
 	'smw_wws_enable_triplification' => 'Enable triplification',
 	'smw_wws_enable_triplification-intro' => 'Subject creation pattern: ',
+	
+	'smw_wwsu_menue-s6' => '5. Triplification options',
+	'smw_wwsu_triplify' => 'Triplify: ',
+	'smw_wwsu_availableformats' => 'Triplify: ',
+	'smw_wwsu_triplify_subject_display' => 'Display triple subjects:',
+	'smw_wwsu_triplify_subject_alias' => 'Result part alias:',
+	'smw_wwsu_triplify_subject_alias_value' => 'Triple subjects',
+	'smw_wwsu_triplify_impossible' => 'Triplifying the results of this web service is not possible. Please define a Triplification Subject Pattern in the Wiki Web Service Definition first.',
 	
 	);
 
