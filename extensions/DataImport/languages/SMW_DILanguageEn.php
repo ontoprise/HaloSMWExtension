@@ -298,6 +298,9 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wsuse_missing_triplification_subject' => 'Triplifying the web service result is not possible. You did not pass a triplification subject pattern and the WWSD does not provide a default one.',
 	'smw_wsuse_missing_ld_extension' => 'The triplification feature is only available if you have activated the LinkedData Extension.',
 	
+	'smw_wws_enable_triplification' => 'Enable triplification',
+	'smw_wws_enable_triplification-intro' => 'Subject creation pattern: ',
+	
 	);
 
 	protected $smwDINamespaces = array(

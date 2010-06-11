@@ -4705,8 +4705,71 @@ DefineWebServiceSpecial.prototype = {
 			$('step5').firstChild.firstChild.nodeValue = $('step5').firstChild.firstChild.nodeValue.replace(/3./g, "5.");
 			$('step6').firstChild.firstChild.nodeValue = $('step6').firstChild.firstChild.nodeValue.replace(/4./g, "6.");
 		}
+	},
+	
+	displaySubjectCreationPattern : function(){
+		$('step4-enable-triplification-button').style.display = "none";
+		$('step4-enable-triplification-span').style.display = "";
+	},
+	
+	initSubjectCreationPatternInput : function(){
+		var resultTable = $("step4-results").childNodes[0];
+		for (var i = 1; i < resultTable.childNodes.length; i++) {
+			resultTable.childNodes[i].childNodes[0].firstChild.style.cursor = "pointer";
+			resultTable.childNodes[i].childNodes[0].firstChild.isAlias = true;
+		}
+		
+		$body = document.getElementsByTagName('body');
+		$body[0].setAttribute('onclick', 'webServiceSpecial.addAliasToSubjectCreationPattern(event)');
+		
+		$("step4-enable-triplification-input")
+			.setAttribute('onblur', 'webServiceSpecial.getSubjectCreationPatternCursorPos()');
+	},
+	
+	resetSubjectCreationPatternInput : function(){
+		var resultTable = $("step4-results").childNodes[0];
+		for (var i = 1; i < resultTable.childNodes.length; i++) {
+			resultTable.childNodes[i].childNodes[0].firstChild.style.cursor = "";
+			resultTable.childNodes[i].childNodes[0].firstChild.isAlias = false;
+		}
+		
+		$body = document.getElementsByTagName('body');
+		$body[0].setAttribute('onclick', '');
+		
+		$("step4-enable-triplification-input")
+			.removeAttribute('onblur');
+	},
+	
+	addAliasToSubjectCreationPattern : function(event) {
+		var element = Event.element(event);
+		if(element.id == "step4-enable-triplification-input"){
+			return;
+		} else if(element.isAlias){
+			var alias = element.value;
+			if(alias.length > 0){
+				alias = '?result.' + alias + '?';
+				var startText = $("step4-enable-triplification-input").value.substr(
+					0, $("step4-enable-triplification-input").myCursorStartPos);
+				var endText = $("step4-enable-triplification-input").value.substr(
+						$("step4-enable-triplification-input").myCursorEndPos);
+				$("step4-enable-triplification-input").value = startText + alias + endText;
+			} 
+			$("step4-enable-triplification-input").focus();
+		} else {
+			webServiceSpecial.resetSubjectCreationPatternInput();
+		}
+	},
+	
+	getSubjectCreationPatternCursorPos : function(){
+		$("step4-enable-triplification-input").myCursorStartPos =
+			$("step4-enable-triplification-input").selectionStart;
+			$("step4-enable-triplification-input").myCursorEndPos = 
+			$("step4-enable-triplification-input").selectionEnd;
 	}
 }
+
+
+
 
 var webServiceSpecial;
 if (webServiceSpecial == undefined) {

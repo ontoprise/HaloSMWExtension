@@ -70,6 +70,10 @@ span.alias-generate {
 	margin-top: 10px; 
 }
 
+#step4-enable-triplification {
+	margin-top: 10px; 
+}
+
 #step4-nss th:first-child {
 	width: 100px;
 }
@@ -184,4 +188,9 @@ span.alias-generate {
 .DoneMenueStep{
 	color: white;
 	line-height: 3em;
+}
+
+#step4-enable-triplification-input input {
+	margin-left: 5px;
+	width: 300;
 }
