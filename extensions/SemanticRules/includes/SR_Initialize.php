@@ -263,7 +263,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 			$type="UNDEFINED";
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'native') {
-					$native = true;
+					$native = trim($matchesheader[2][$j]) == 'true';
 				}
 				if (trim($matchesheader[1][$j]) == 'active') {
 					$active = trim($matchesheader[2][$j]) == 'true';
@@ -279,12 +279,17 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$name = $matchesheader[2][$j];
 
 					// create URI. It denotes on which page the rule is located.
+					global $srgStateChangedPage;
 					global $wgTitle;
-					$ns = $wgTitle->getNamespace();
+					$pageTitle = $wgTitle;
+					if (isset($srgStateChangedPage)) {
+						$pageTitle = $srgStateChangedPage;
+					}
+					$ns = $pageTitle->getNamespace();
 					new TSNamespaces(); // assure namespaces are initialized
 					$allNamespaces = TSNamespaces::getAllNamespaces();
                     
-					$uri = $allNamespaces[$ns] . urlencode($wgTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
+					$uri = $allNamespaces[$ns] . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
 						
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);

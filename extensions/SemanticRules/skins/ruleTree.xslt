@@ -156,7 +156,7 @@
 				<td id="ruleList-link" class="ruleListLabel">{{SR_RULE_HOME}}</td>
 				<td class="ruleListValue">
 
-	               <xsl:variable name="title" select="@title" />
+					<xsl:variable name="title" select="@title" />
 					<xsl:if test="@containing_page">
 						<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
@@ -186,17 +186,22 @@
 			<tr>
 				<td id="ruleList-active" class="ruleListLabel">{{SR_RULE_ISACTIVE}}</td>
 				<td class="ruleListValue">
-				    <xsl:variable name="title" select="@title" />
-				    <xsl:variable name="containingPage" select="@containing_page" />
-					<xsl:value-of select="@active" />
+					<span id="ruleList-active-value">
+						<xsl:value-of select="@active" />
+					</span>
+					<xsl:variable name="title" select="@title" />
+					<xsl:variable name="containingPage" select="@containing_page" />
+
 					<xsl:choose>
 						<xsl:when test="@active='true'">
 							<img id="ruleChangeSwitch" state="active"
-								src="{$param-img-directory}/extensions/SemanticRules/skins/images/green-switch.gif" onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')"/>
+								src="{$param-img-directory}/extensions/SemanticRules/skins/images/green-switch.gif"
+								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
 						</xsl:when>
 						<xsl:otherwise>
 							<img id="ruleChangeSwitch" state="inactive"
-								src="{$param-img-directory}/extensions/SemanticRules/skins/images/red-switch.gif" onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')"/>
+								src="{$param-img-directory}/extensions/SemanticRules/skins/images/red-switch.gif"
+								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
 						</xsl:otherwise>
 					</xsl:choose>
 

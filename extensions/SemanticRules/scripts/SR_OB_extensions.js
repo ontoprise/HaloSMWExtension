@@ -89,6 +89,7 @@ SRRuleActionListener.prototype = {
 			node.setAttribute("state", state == 'active' ? 'inactive' : 'active');
 			var img = $('ruleChangeSwitch').getAttribute("src");
 			$('ruleChangeSwitch').setAttribute("src", state == 'active' ? img.replace("green-switch", "red-switch") : img.replace("red-switch", "green-switch") );
+			$('ruleList-active-value').textContent = (state == 'active' ? 'false' : 'true');
 		}
 		var state = node.getAttribute("state");
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);

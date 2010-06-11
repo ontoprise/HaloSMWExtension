@@ -180,11 +180,16 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 	if (smwf_om_userCan($title, "edit") === "false") {
 		return "false,denied,$title";
 	}
-
+    
+	
 	$titleObj = Title::newFromText($title);
 	$rev = Revision::newFromTitle($titleObj);
 	$text = $rev->getText();
 
+	// export title to make it reasible in parser hook
+	global $srgStateChangedPage;
+	$srgStateChangedPage = $titleObj;
+	
 	$article = new Article($titleObj);
 
 	if (!$article->exists()) {
@@ -232,9 +237,9 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 			}
 			if ($name == $ruleName) {
 
-				$activate_att = $activate ? "true" : "false";
+				$activate_att = $activate == 'true' ? "true" : "false";
 
-				if ($active != $activate_att) {
+				if ($active == $activate_att) {
 					return "false, no state change, $ruleName";
 				}
 
@@ -242,7 +247,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 				$newRuleText .=  $ruletext;
 				$newRuleText .= "</rule>";
 				$copyOfText = str_replace($matches[0][$i], $newRuleText, $copyOfText);
-				return $copyOfText;
+				
 			}
 
 		}
@@ -250,7 +255,7 @@ function smwf_sr_ChangeRuleState($title, $ruleName, $activate) {
 	}
 
 	
-	//$article->doEdit($copyOfText, $rev->getComment(), EDIT_UPDATE);
+	$article->doEdit($copyOfText, $rev->getComment(), EDIT_UPDATE);
 	return "true";
 }
 
