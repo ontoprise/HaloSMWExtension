@@ -16,27 +16,43 @@ SRRuleActionListener.prototype = {
 		selectionProvider.addListener(this, OB_FILTERTREE);
 		selectionProvider.addListener(this, OB_FILTERBROWSING);
 		selectionProvider.addListener(this, OB_RESET);
+		selectionProvider.addListener(this, OB_SELECTIONLISTENER);
+		
+	},
+	
+	selectionChanged: function(id, title, ns, node) {
+		if (ns == SMW_PROPERTY_NS || ns == SMW_CATEGORY_NS) {
+			this.hideRuleContainer();
+		}
 	},
 
 	treeTabChanged : function(tabname) {
 		if (tabname == 'ruleTree') {
-			// hide instance and property view
-			$('instanceContainer').hide();
-			$('rightArrow').hide();
-			$('relattributesContainer').hide();
-			$('hideInstancesButton').hide();
-
-			$('ruleContainer').show();
+			this.showRuleContainer();
 			this.initializeRootRules();
 		} else {
-			// show instance and property view
-			$('instanceContainer').show();
-			$('rightArrow').show();
-			$('relattributesContainer').show();
-			$('hideInstancesButton').show();
-
-			$('ruleContainer').hide();
+			this.hideRuleContainer();
 		}
+	},
+	
+	showRuleContainer: function() {
+		// hide instance and property view
+		$('instanceContainer').hide();
+		$('rightArrow').hide();
+		$('relattributesContainer').hide();
+		$('hideInstancesButton').hide();
+
+		$('ruleContainer').show();
+	},
+	
+	hideRuleContainer: function() {
+		// show instance and property view
+		$('instanceContainer').show();
+		$('rightArrow').show();
+		$('relattributesContainer').show();
+		$('hideInstancesButton').show();
+
+		$('ruleContainer').hide();
 	},
 
 	filterBrowsing : function(tabname, filter) {
@@ -253,7 +269,28 @@ SRRuleActionListener.prototype = {
 		selectionProvider.fireRefresh();
 
 	}
+	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
+			callbackOnRuleRequest.bind(this));
+},
 
+selectFromExternal: function(node, ruleURI) {
+	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
+		OB_tree_pendingIndicator.hide();
+
+		if (request.responseText.indexOf('error:') != -1) {
+			// TODO: some error occured
+
+			return;
+		}
+		this.showRuleContainer();
+		selectionProvider.fireBeforeRefresh();
+		var subTree = sr_transformer.transformResultToHTML(request,
+				$('ruleList'));
+		selectionProvider.fireRefresh();
+
+	}
+	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
 	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
 			callbackOnRuleRequest.bind(this));
 },

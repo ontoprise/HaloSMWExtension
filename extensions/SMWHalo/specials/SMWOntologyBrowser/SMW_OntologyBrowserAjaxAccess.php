@@ -1,13 +1,13 @@
 <?php
 /**
  * Created on 26.02.2007
- * 
+ *
  * @file
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
- * 
+ *
  * @author Kai Kühn
- * 
+ *
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side.
  */
@@ -41,7 +41,9 @@ class OB_Storage {
 		$partitionNum = isset($p_array[1]) ? intval($p_array[1]) : 0;
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$rootcats = smwfGetSemanticStore()->getRootCategories($reqfilter);
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $reqfilter->limit, $partitionNum, true);
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($rootcats, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
 	}
 
 	public function getSubCategory($p_array) {
@@ -55,8 +57,9 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
-
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $reqfilter->limit, $partitionNum, false);
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
 
@@ -119,7 +122,10 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$rootatts = smwfGetSemanticStore()->getRootProperties($reqfilter);
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $reqfilter->limit, $partitionNum, true);
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', array($rootatts, & $resourceAttachments, SMW_NS_PROPERTY));
+
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($rootatts, $resourceAttachments, $reqfilter->limit, $partitionNum, true);
 	}
 
 	public function getSubProperties($p_array) {
@@ -133,8 +139,9 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$superatt = Title::newFromText($p_array[0], SMW_NS_PROPERTY);
 		$directsubatts = smwfGetSemanticStore()->getDirectSubProperties($superatt, $reqfilter);
-
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $reqfilter->limit, $partitionNum, false);
+		$resourceAttachments = array();
+		wfRunHooks('smw_ob_attachtoresource', $directsubatts, $resourceAttachments, SMW_NS_PROPERTY);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsPropertyPartition($directsubatts, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
 
@@ -154,7 +161,7 @@ class OB_Storage {
 		} else {
 			$attinstances = array();
 		}
-        
+
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$prop->getDBkey());
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
@@ -216,8 +223,8 @@ class OB_StorageTS extends OB_Storage {
 	public function getInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 		$client = TSConnection::getConnector();
-        $client->connect();
-        
+		$client->connect();
+
 		try {
 			global $smwgTripleStoreGraph;
 
@@ -307,7 +314,7 @@ class OB_StorageTS extends OB_Storage {
 	private function getLiteral($literal, $predicate) {
 		list($literalValue, $literalType) = $literal;
 		if (!empty($literalValue)) {
-			 
+
 			// create SMWDataValue either by property or if that is not possible by the given XSD type
 			if ($predicate instanceof SMWPropertyValue ) {
 				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $literalValue);
@@ -322,7 +329,7 @@ class OB_StorageTS extends OB_Storage {
 				$value->setUserValue($literalValue);
 			}
 		} else {
-				
+
 			if ($predicate instanceof SMWPropertyValue ) {
 				$value = SMWDataValueFactory::newPropertyObjectValue($predicate);
 			} else {
@@ -338,7 +345,7 @@ class OB_StorageTS extends OB_Storage {
 	public function getAnnotations($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 		$client = TSConnection::getConnector();
-        $client->connect();
+		$client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
 
@@ -364,7 +371,7 @@ class OB_StorageTS extends OB_Storage {
 			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 				$response = utf8_decode($response);
 			}
-			
+				
 			$dom = simplexml_load_string($response);
 
 			$annotations = array();
@@ -410,7 +417,7 @@ class OB_StorageTS extends OB_Storage {
 	public function getInstancesUsingProperty($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 		$client = TSConnection::getConnector();
-        $client->connect();
+		$client->connect();
 		try {
 			global $smwgTripleStoreGraph;
 
@@ -437,14 +444,14 @@ class OB_StorageTS extends OB_Storage {
 
 				$children = $r->children(); // binding nodes
 				$b = $children->binding[0]; // instance
-				 
+					
 				$sv = $b->children()->uri[0];
 				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
 				$instance = $this->getTitleFromURI((string) $sv);
 
 				$categories = array();
 				$b = $children->binding[1]; // categories
-				 
+					
 				foreach($b->children()->uri as $sv) {
 					$category = $this->getTitleFromURI((string) $sv);
 					if (!is_null($instance) && !is_null($category)) {
@@ -454,14 +461,14 @@ class OB_StorageTS extends OB_Storage {
 					}
 				}
 
-				 
+					
 			}
 
 
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-        
+
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$propertyName);
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, $limit, $partition, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
@@ -469,7 +476,7 @@ class OB_StorageTS extends OB_Storage {
 	public function getCategoryForInstance($p_array) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 		$client = TSConnection::getConnector();
-        $client->connect();
+		$client->connect();
 		try {
 			global $smwgTripleStoreGraph;
 
@@ -489,35 +496,35 @@ class OB_StorageTS extends OB_Storage {
 
 			$titles = array();
 			$results = $dom->xpath('//result');
-			 
+
 			$categories = array();
 			foreach ($results as $r) {
 
 				//$children = $r->children(); // binding nodes
 				$b = $r->binding[0]; // categories
-				 
+					
 				foreach($b->children()->uri as $sv) {
 					$category = $this->getTitleFromURI((string) $sv);
 					if (!is_null($category)) {
-						 
+							
 						$categories[] = $category;
 					}
 				}
 
-				 
+					
 			}
 
 
 		} catch(Exception $e) {
 			return "Internal error: ".$e->getMessage();
 		}
-		 
+			
 		$browserFilter = new SMWOntologyBrowserFilter();
 		return $browserFilter->getCategoryTree($categories);
 	}
 
 	public function filterBrowse($p_array) {
-		 
+			
 		$browserFilter = new SMWOntologyBrowserFilter();
 		$type = $p_array[0];
 		$hint = explode(" ", $p_array[1]);
@@ -526,7 +533,7 @@ class OB_StorageTS extends OB_Storage {
 
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 		$client = TSConnection::getConnector();
-        $client->connect();
+		$client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
 
@@ -544,7 +551,7 @@ class OB_StorageTS extends OB_Storage {
 				}
 				$filter .= ")";
 			}
-			 
+
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
 				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }",  "limit=1000");
 			} else {
@@ -566,18 +573,18 @@ class OB_StorageTS extends OB_Storage {
 
 				$children = $r->children(); // binding nodes
 				$b = $children->binding[0]; // instance
-				 
+					
 				$sv = $b->children()->uri[0];
 				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
 				$instance = $this->getTitleFromURI((string) $sv);
-				 
+					
 				foreach($b->children()->uri as $sv) {
 					if (!is_null($instance)) {
 						$titles[] = $instance;
 					}
 				}
 
-				 
+					
 			}
 
 

@@ -36,6 +36,8 @@ function ruleSetupExtension() {
 	global $srgSRIP, $smwgDefaultRuleStore, $wgHooks, $wgAutoloadClasses, $wgSpecialPages, $wgSpecialPageGroups, $wgExtensionCredits;
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='srfAddOBContent';
+	$wgHooks['smw_ob_attachtoresource'][] = 'srAttachToResource';
+	
 
 	$smwgDefaultRuleStore = "SRRuleStore";
 
@@ -113,6 +115,23 @@ function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $
 
 	return true;
 }
+
+function srAttachToResource($properties, & $resourceAttachments, $nsIndex) {
+	$ruleEndpoint = SRRuleEndpoint::getInstance();
+	$resources = array();
+	new TSNamespaces(); // assure namespaces are initialized
+    $allNamespaces = TSNamespaces::getAllNamespaces();
+     
+	foreach($properties as $p) {
+		list($name, $hasSubProperty) = $p;
+	   	$resources[] = $allNamespaces[$nsIndex].$name->getDBkey();
+	   	
+	}   
+	$resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
+	return true;	
+}
+
+
 
 /**
  * Registers SR user/content messages.

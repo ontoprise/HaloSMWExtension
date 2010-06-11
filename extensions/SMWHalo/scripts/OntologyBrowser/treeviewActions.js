@@ -548,6 +548,9 @@ OBCategoryTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
  * @param categoryName Title of category
  */
 select: function (event, node, categoryID, categoryName) {
+		
+	
+		
 	if (this.ignoreNextSelection && OB_bd.isGecko) {
 		this.ignoreNextSelection = false;
 		return;
@@ -931,6 +934,8 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	
   select: function (event, node, propertyID, propertyName) {
   		
+		
+		
   		var e = GeneralTools.getEvent(event);
 	
 		// if Ctrl is pressed: navigation mode
