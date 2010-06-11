@@ -1264,6 +1264,9 @@ DefineWebServiceSpecial.prototype = {
 				result += " />\n";
 				// }
 			}
+			
+			result += this.processSubjectCreationPattern();
+			
 			result += "</result>\n";
 			
 			result += this.createWWSDPolicyPart();
@@ -3759,6 +3762,8 @@ DefineWebServiceSpecial.prototype = {
 				result += "uri=\"" + nsTable.childNodes[i].childNodes[1].firstChild.value + "\"/>\n";
 			}
 			
+			result += this.processSubjectCreationPattern();
+			
 			result += "</result>\n";
 
 			result += this.createWWSDPolicyPart();
@@ -4713,10 +4718,17 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	initSubjectCreationPatternInput : function(){
+		var aliasColumn = 0;
+		if($("step1-protocol-soap").checked){
+			aliasColumn = 2;
+		}
+		
 		var resultTable = $("step4-results").childNodes[0];
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
-			resultTable.childNodes[i].childNodes[0].firstChild.style.cursor = "pointer";
-			resultTable.childNodes[i].childNodes[0].firstChild.isAlias = true;
+			if(resultTable.childNodes[i].childNodes[aliasColumn]){
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "pointer";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.isAlias = true;
+			}
 		}
 		
 		$body = document.getElementsByTagName('body');
@@ -4727,10 +4739,17 @@ DefineWebServiceSpecial.prototype = {
 	},
 	
 	resetSubjectCreationPatternInput : function(){
+		var aliasColumn = 0;
+		if($("step1-protocol-soap").checked){
+			aliasColumn = 2;
+		}
+		
 		var resultTable = $("step4-results").childNodes[0];
 		for (var i = 1; i < resultTable.childNodes.length; i++) {
-			resultTable.childNodes[i].childNodes[0].firstChild.style.cursor = "";
-			resultTable.childNodes[i].childNodes[0].firstChild.isAlias = false;
+			if(resultTable.childNodes[i].childNodes[aliasColumn]){
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.style.cursor = "";
+				resultTable.childNodes[i].childNodes[aliasColumn].firstChild.isAlias = false;
+			}
 		}
 		
 		$body = document.getElementsByTagName('body');
@@ -4763,8 +4782,17 @@ DefineWebServiceSpecial.prototype = {
 	getSubjectCreationPatternCursorPos : function(){
 		$("step4-enable-triplification-input").myCursorStartPos =
 			$("step4-enable-triplification-input").selectionStart;
-			$("step4-enable-triplification-input").myCursorEndPos = 
+		$("step4-enable-triplification-input").myCursorEndPos = 
 			$("step4-enable-triplification-input").selectionEnd;
+	},
+	
+	processSubjectCreationPattern : function(){
+		var pattern = $("step4-enable-triplification-input").value;
+		var response = "";
+		if(pattern.length > 0){
+			response = '<triplification subject="' + pattern + '"/>\r\n';
+		}
+		return response;
 	}
 }
 

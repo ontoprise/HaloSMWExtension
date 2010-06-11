@@ -98,6 +98,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$password = "";
 
 		$method = "";
+		
+		$subjectCreationPattern = "";
+		$subjectCreationPatternVisibility = "none";
+		$subjectCreationButtonVisibility = "";
 
 		$displayOnce = "checked=\"true\"";
 		$displayMax = "";
@@ -133,6 +137,13 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$password = $wwsd->getAuthenticationPassword();
 
 			$method = "<option>".$wwsd->getMethod()."</option>";
+			
+			$ts = $wwsd->getTriplificationSubject(); 
+			if(strlen($ts) > 0){
+				$subjectCreationPattern = $ts;
+				$subjectCreationPatternVisibility = "";
+				$subjectCreationButtonVisibility = "none";
+			}
 
 			if($wwsd->getDisplayPolicy() > 0){
 				$displayOnce = "";
@@ -266,9 +277,9 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 
 		//for triplification
 		$html .= '<div id="step4-enable-triplification" style="display: ">';
-		$html .= '<button id="step4-enable-triplification-button" onclick="webServiceSpecial.displaySubjectCreationPattern()" value="'.wfMsg('smw_wws_enable_triplification').'">'.wfMsg('smw_wws_enable_triplification').'</button>'	;
-		$html .= '<span id="step4-enable-triplification-span" style="display: none">'.wfMsg('smw_wws_enable_triplification-intro');
-		$html .= '<input id="step4-enable-triplification-input" type="text" size="80" onfocus="webServiceSpecial.initSubjectCreationPatternInput()"></input>';
+		$html .= '<button id="step4-enable-triplification-button" style="display: '.$subjectCreationButtonVisibility.'" onclick="webServiceSpecial.displaySubjectCreationPattern()" value="'.wfMsg('smw_wws_enable_triplification').'">'.wfMsg('smw_wws_enable_triplification').'</button>'	;
+		$html .= '<span id="step4-enable-triplification-span" style="display: '.$subjectCreationPatternVisibility.'">'.wfMsg('smw_wws_enable_triplification-intro');
+		$html .= '<input id="step4-enable-triplification-input" type="text" size="80" onfocus="webServiceSpecial.initSubjectCreationPatternInput()" value='.$subjectCreationPattern.'></input>';
 		$html .= '</span></div>';
 		
 		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
@@ -437,6 +448,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 			$found = false;
 
 			foreach($wwsdParameters as $key => $wwsdParameter){
+				if(!is_null($wwsdParameter['subject'])){
+					continue;
+				}
+				
 				if(!$result){
 					$matchedPath = "/";
 				} else {
@@ -537,6 +552,10 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		}
 
 		foreach($wwsdParameters as $wsParameter){
+			//do not deal with triplification instruction
+			if(!is_null($wwsdParameter['subject'])){
+					continue;
+			}
 			if(!array_key_exists($wsParameter["path"]."", $unsetwwsdParameters)){
 				$o = array();
 				$o["name"] = $wsParameter["name"]."";
