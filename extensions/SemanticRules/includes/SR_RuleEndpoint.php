@@ -213,6 +213,7 @@ class SRRuleEndpoint {
 			$ruleURI = (string) $rule->attributes()->id;
 			$is_active = (string) $rule->attributes()->active;
 			$is_native = (string) $rule->attributes()->native;
+			$type = (string) $rule->attributes()->type;
 			$ruleText = (string) $rule[0];
 			// $$ separates page URI containing the rule from rule name
 			$help = explode("$$", $ruleURI);
@@ -237,7 +238,8 @@ class SRRuleEndpoint {
 			$xml .= '<ruleMetadata title="'.htmlspecialchars($ruleName). // displayed name
                      '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
                      '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
-                     '" id="'.$uid.'" active="'.$is_active.'" native="'.$is_native.'">'.$defines.$uses.'<![CDATA['.$ruleText.']]></ruleMetadata>';
+                     '" type="'.$type.'" id="'.$uid.'" active="'.$is_active.'" native="'.$is_native.'">'.$defines.$uses.
+                     '<ruletext><![CDATA['.$ruleText.']]></ruletext></ruleMetadata>';
 
 		}
 		$xml .= '';

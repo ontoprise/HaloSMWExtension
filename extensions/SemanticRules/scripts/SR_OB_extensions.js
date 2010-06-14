@@ -20,6 +20,10 @@ SRRuleActionListener.prototype = {
 		
 	},
 	
+	registerPendingIndicator: function() {
+		this.rulePendingIndicator = new OBPendingIndicator($('ruleList'));
+	},
+	
 	selectionChanged: function(id, title, ns, node) {
 		if (ns == SMW_PROPERTY_NS || ns == SMW_CATEGORY_NS) {
 			this.hideRuleContainer();
@@ -256,7 +260,7 @@ SRRuleActionListener.prototype = {
 	}
 
 	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
-		OB_tree_pendingIndicator.hide();
+		this.rulePendingIndicator.hide();
 
 		if (request.responseText.indexOf('error:') != -1) {
 			// TODO: some error occured
@@ -269,28 +273,29 @@ SRRuleActionListener.prototype = {
 		selectionProvider.fireRefresh();
 
 	}
-	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+	this.rulePendingIndicator.show($('ruleList'));
 	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
 			callbackOnRuleRequest.bind(this));
 },
 
 selectFromExternal: function(node, ruleURI) {
 	var callbackOnRuleRequest = function callbackOnRuleRequest(request) {
-		OB_tree_pendingIndicator.hide();
+		this.rulePendingIndicator.hide();
 
 		if (request.responseText.indexOf('error:') != -1) {
 			// TODO: some error occured
 
 			return;
 		}
-		this.showRuleContainer();
+		
 		selectionProvider.fireBeforeRefresh();
 		var subTree = sr_transformer.transformResultToHTML(request,
 				$('ruleList'));
 		selectionProvider.fireRefresh();
 
 	}
-	OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
+	this.showRuleContainer();
+	this.rulePendingIndicator.show($('ruleList'));
 	sajax_do_call('srf_sr_AccessRuleEndpoint', [ 'getRule', ruleURI ],
 			callbackOnRuleRequest.bind(this));
 },
@@ -390,3 +395,5 @@ var sr_transformer = new TreeTransformer(
 sr_transformer.addLanguageProvider(function(id) {
 	return gsrLanguage.getMessage(id, "user");
 });
+
+Event.observe(window, 'load', ruleActionListener.registerPendingIndicator.bind(ruleActionListener));

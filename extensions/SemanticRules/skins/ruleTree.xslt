@@ -172,7 +172,7 @@
 			<tr>
 				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
-					<xsl:value-of select="." />
+					<xsl:value-of select="child::ruletext" />
 				</td>
 			</tr>
 			<tr>
@@ -194,12 +194,12 @@
 
 					<xsl:choose>
 						<xsl:when test="@active='true'">
-							<img id="ruleChangeSwitch" state="active"
+							<img style="padding-left:3px;" id="ruleChangeSwitch" state="active"
 								src="{$param-img-directory}/extensions/SemanticRules/skins/images/green-switch.gif"
 								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
 						</xsl:when>
 						<xsl:otherwise>
-							<img id="ruleChangeSwitch" state="inactive"
+							<img style="padding-left:3px;" id="ruleChangeSwitch" state="inactive"
 								src="{$param-img-directory}/extensions/SemanticRules/skins/images/red-switch.gif"
 								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
 						</xsl:otherwise>
@@ -211,7 +211,7 @@
 				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@type">
-						<xsl:value-of select="@type" />
+						{{RULE_TYPE_<xsl:value-of select="@type" />}}
 					</xsl:if>
 				</td>
 			</tr>

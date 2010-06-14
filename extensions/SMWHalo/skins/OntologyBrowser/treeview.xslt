@@ -624,7 +624,7 @@
 
 	<xsl:template name="definingRule">
 	<xsl:variable name="ruleURI" select="." />
-		<img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/rule.gif" onclick="ruleActionListener.selectFromExternal(this, '{$ruleURI}')"/>
+		<img class="treeviewdecorator" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/rule.gif" onclick="ruleActionListener.selectFromExternal(this, '{$ruleURI}')" title="Show rule {$ruleURI}"/>
 	</xsl:template>
 
 	<xsl:template name="gissues">

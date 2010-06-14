@@ -31,7 +31,7 @@ var instanceActionListener = null;
 var globalActionListener = null;
 
 // standard partition size
-var OB_partitionSize = 40;
+var OB_partitionSize = 80;
 
 // Data for category trees
 

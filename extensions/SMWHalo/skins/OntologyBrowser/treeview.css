@@ -275,3 +275,8 @@ a.selectedSwitch {
 	color: #747474;
 }
 
+.treeviewdecorator {
+	cursor: pointer;
+	padding-left:3px;
+}
+

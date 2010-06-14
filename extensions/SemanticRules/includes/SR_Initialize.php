@@ -37,7 +37,7 @@ function ruleSetupExtension() {
 	$wgHooks['BeforePageDisplay'][]='srfAddHTMLHeader';
 	$wgHooks['BeforePageDisplay'][]='srfAddOBContent';
 	$wgHooks['smw_ob_attachtoresource'][] = 'srAttachToResource';
-	
+
 
 	$smwgDefaultRuleStore = "SRRuleStore";
 
@@ -54,7 +54,7 @@ function ruleSetupExtension() {
 	$wgAutoloadClasses['SMWAbstractRuleObject'] = $srgSRIP . '/includes/SR_AbstractRuleObject.php';
 	$wgAutoloadClasses['SMWConstant'] = $srgSRIP . '/includes/SR_Constant.php';
 
-	
+
 	$wgAutoloadClasses['SMWFormulaParser'] = $srgSRIP . '/includes/SR_FormulaParser.php';
 	$wgAutoloadClasses['SMWLiteral'] = $srgSRIP . '/includes/SR_Literal.php';
 	$wgAutoloadClasses['SMWPredicate'] = $srgSRIP . '/includes/SR_Predicate.php';
@@ -94,11 +94,11 @@ function ruleSetupExtension() {
  */
 function srfAddToOntologyBrowser(& $treeContainer, & $boxContainer, & $menu, & $switch) {
 	global $wgScriptPath, $wgUser;
-    
+
 	if (is_null($wgUser) || !$wgUser->isAllowed("ontologyediting")) {
 		return true;
 	}
-	
+
 	// additional rule tree container
 	$treeContainer .= '<div id="ruleTree" style="display:none" class="ruleTreeListColors treeContainer"></div>';
 
@@ -120,15 +120,15 @@ function srAttachToResource($properties, & $resourceAttachments, $nsIndex) {
 	$ruleEndpoint = SRRuleEndpoint::getInstance();
 	$resources = array();
 	new TSNamespaces(); // assure namespaces are initialized
-    $allNamespaces = TSNamespaces::getAllNamespaces();
-     
+	$allNamespaces = TSNamespaces::getAllNamespaces();
+
 	foreach($properties as $p) {
 		list($name, $hasSubProperty) = $p;
-	   	$resources[] = $allNamespaces[$nsIndex].$name->getDBkey();
-	   	
-	}   
+		$resources[] = $allNamespaces[$nsIndex].$name->getDBkey();
+			
+	}
 	$resourceAttachments = $ruleEndpoint->getDefiningRules($resources);
-	return true;	
+	return true;
 }
 
 
@@ -292,6 +292,18 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 				}
 			}
 
+			// normalize $type which is given in content language to TSC internal constants.
+			$ruleTypesAsContentLang = array(wfMsg('sr_definition_rule'),
+			wfMsg('sr_property_chaining'),
+			wfMsg('sr_calculation'));
+				
+			switch($type) {
+				case $ruleTypesAsContentLang[0]: $type = "DEFINITION";break;
+				case $ruleTypesAsContentLang[1]: $type = "PROP_CHAINING";break;
+				case $ruleTypesAsContentLang[2]: $type = "CALCULATION";break;
+			}
+
+
 			// fetch name of rule (ruleid) and put into rulearray
 			for ($j = 0; $j < count($matchesheader[0]); $j++) {
 				if (trim($matchesheader[1][$j]) == 'name') {
@@ -307,9 +319,9 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$ns = $pageTitle->getNamespace();
 					new TSNamespaces(); // assure namespaces are initialized
 					$allNamespaces = TSNamespaces::getAllNamespaces();
-                    
+
 					$uri = $allNamespaces[$ns] . urlencode($pageTitle->getDBkey()) . "$$" . urlencode(str_replace(' ', '_', $name));
-						
+
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
 					$rules[] = array($uri, $ruletext, $native, $active, $type);
@@ -318,9 +330,10 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 		}
 
 		// remove rule tags from text
-		$text = preg_replace($ruleTagPattern, "", $text);
+		$text = preg_replace($ruleTagPattern, "<nowiki>\${2}</nowiki>", $text);
 	}
 
+	
 	SMWTripleStore::$fullSemanticData->setRules($rules);
 	return true;
 }

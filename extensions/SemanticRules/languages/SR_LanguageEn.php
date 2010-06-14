@@ -21,7 +21,12 @@ class SR_LanguageEn extends SR_Language {
     'smw_srf_expected_parameter' => 'Expected a parameter near $1',
     'smw_srf_missing_operator' => 'Expected an operator near $1',
     
-    'sr_ob_rulelist' => 'Rule metadata'
+    'sr_ob_rulelist' => 'Rule metadata',
+    
+    # These constants map internal TSC rule types to the wiki representation.
+    'sr_definition_rule' => 'Definition',
+    'sr_property_chaining' => 'Property chaining',
+    'sr_calculation' => 'Calculation'
     
     );
     
