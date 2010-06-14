@@ -103,6 +103,10 @@ background-color: #FFFFCC;
 border: 1px solid #E6E600;
 }
 
+hr {
+    border: 1px solid #AAAAAA;
+}
+
 #qi-help-headline{
 	background-color: #E6E600;
 	font-weight: bold;
@@ -413,15 +417,11 @@ cursor: pointer;
     padding: 0.1em 6px;
     padding-top: 3px;
 	background-color:#fafafa;
-	border-color: #AAAAAA;
-	border-width: 1px;
-    border-style: solid;
+	border: 1px solid #AAAAAA;
 }
 .qiDefTabSpacer {
     padding: 2px;
-    border-bottom-width: thin;
-    border-bottom-color: #cacac4;
-    border-bottom-style: solid;
+    border-bottom: 1px solid #cacac4;
 }
 .qiDefTabContent {
     border-color: #AAAAAA;
@@ -432,6 +432,9 @@ cursor: pointer;
     border-right-width: 1px;
     border-right-style: solid;
     height: 100%;
+}
+.qiDisabled {
+    color: #AAAAAA;
 }
 
 #qitextview , #qisource {
