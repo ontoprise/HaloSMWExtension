@@ -61,7 +61,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($tsa->flushCommands(), "***testTripleStore#1*** failed.");
 		
 		// Query inserted triples
-		$query = $prefixes."SELECT ?s ?p ?o WHERE { ?s ?p ?o . }";
+		$query = $prefixes."SELECT ?s ?p ?o FROM <$graph> WHERE { ?s ?p ?o . }";
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		
@@ -75,7 +75,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		//***testTripleStore#3***
 		// Test if all expected triples are present
 		foreach ($this->mTriples as $t) {
-			$prop = str_replace("ex:", $namespace, $t[1]);			
+			$prop = str_replace("ex:", $namespace, $t[1]);
 			$row = $result->getRowsWhere("p", $prop);
 			$this->assertEquals(1, count($row), "***testTripleStore#3.1*** failed");
 			$row = $row[0];
@@ -94,7 +94,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		$tsa->addPrefixes($prefixes);
 		$tsa->deleteTriples($graph, "?s $prop ?o", "?s $prop ?o");
 		$this->assertTrue($tsa->flushCommands(), "***testTripleStore#4.1*** failed.");
-		$query = $prefixes."SELECT ?s ?o WHERE { ?s $prop ?o . }";
+		$query = $prefixes."SELECT ?s ?o FROM <$graph> WHERE { ?s $prop ?o . }";
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		// Make sure the triple is deleted.
@@ -102,7 +102,7 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 
 		// Make sure that another triple is still available
 		$prop = $this->mTriples[1][1];
-		$query = $prefixes."SELECT ?s ?o WHERE { ?s $prop ?o . }";
+		$query = $prefixes."SELECT ?s ?o FROM <$graph> WHERE { ?s $prop ?o . }";
 		$result = $tsa->queryTripleStore($query, $graph);
 		$this->assertNotNull($result, "***testTripleStore#4.3*** failed.");
 		$this->assertEquals(1, count($result->getRows()), "***testTripleStore#4.4*** failed.");
@@ -112,13 +112,11 @@ class TestTripleStoreAccess extends PHPUnit_Framework_TestCase {
 		$tsa->dropGraph($graph);
 		$tsa->flushCommands();
 		
-		$query = $prefixes."SELECT ?s ?p ?o WHERE { ?s ?p ?o . }";
+		$query = $prefixes."SELECT ?s ?p ?o FROM <$graph> WHERE { ?s ?p ?o . }";
 		
 		$result = $tsa->queryTripleStore($query, $graph);
 		// Make sure the graph is deleted.
-		$this->assertEquals(null, $result, "***testTripleStore#5*** failed.");
-		
-		
+		$this->assertTrue($result == null || count($result->getRows()) == 0, "***testTripleStore#5*** failed.");
 		
     }
     
