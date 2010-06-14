@@ -107,7 +107,9 @@ class SMWQueryInterface extends SpecialPage {
 		return '<div id="dragbox" class="dragbox">' .
 					'<div id="boxcontent" class="boxcontent">' .
                         '<div id="treeviewbreadcrumbs"></div>' .
-						'<table><tbody id="dialoguecontent"></tbody></table>' .
+                        '<div>' .
+                            '<table><tbody id="dialoguecontent"></tbody></table>' .
+                        '</div>' .
 						'<div id="dialoguebuttons" style="display:none">' .
 							'<span class="qibutton" onclick="qihelper.add()">' . wfMsg('smw_qi_add') . '</span>&nbsp;' .
                             '<span class="qibutton" onclick="qihelper.emptyDialogue()">' . wfMsg('smw_qi_cancel') . '</span>&nbsp;' .
