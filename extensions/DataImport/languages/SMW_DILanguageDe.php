@@ -305,6 +305,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_triplify_subject_alias' => 'Result Part Alias:',
 	'smw_wwsu_triplify_subject_alias_value' => 'Tripl Subjekte',
 	'smw_wwsu_triplify_impossible' => 'Eine Triplifizierung der ergebnisse dieses Web Services ist nicht möglich. Bitte definieren sie zu erst ein <i>Subject Creation Pattern</i> in der zugehörigen Wiki Web Service Definition.',
+	
+	'smw_wsuse_s6-help' => 'todo',
 	);
 
 	protected $smwDINamespaces = array(

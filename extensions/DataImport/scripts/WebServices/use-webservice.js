@@ -53,12 +53,20 @@ UseWebService.prototype = {
 		$("step3").style.display = "none";
 		$("step4").style.display = "none";
 		$("step5").style.display = "none";
+		
+		if($("step6")){
+			$("step6").style.display = "none";
+		}
 
 		$("menue-step1").className = "DoneMenueStep";
 		$("menue-step2").className = "ActualMenueStep";
 		$("menue-step3").className = "TodoMenueStep";
 		$("menue-step4").className = "TodoMenueStep";
 		$("menue-step5").className = "TodoMenueStep";
+		
+		if($("step6")){
+			$("menue-step5").className = "TodoMenueStep";
+		}
 
 		this.hideHelpAll();
 
@@ -235,30 +243,38 @@ UseWebService.prototype = {
 	},
 	
 	processStep6 : function() {
-		$("step4-go-img").style.display = "none";
-		$("step6-go-img").style.display = "";
-
-		$("step6").style.display = "";
-
-		$("menue-step4").className = "DoneMenueStep";
-		$("menue-step6").className = "ActualMenueStep";
-		
-		this.hideHelpAll();
+		if($('menue-step6').style.display == 'none'){
+			$("step6").style.display = "none";
+			useWSSpecial.processStep4();
+		} else {
+			$("step4-go-img").style.display = "none";
+			$("step6-go-img").style.display = "";
+	
+			$("step6").style.display = "";
+	
+			$("menue-step4").className = "DoneMenueStep";
+			$("menue-step6").className = "ActualMenueStep";
+			
+			this.hideHelpAll();
+		}
 	},
 
 	processStep4 : function() {
+		$("menue-step4").className = "DoneMenueStep";
+		$("step4-go-img").style.display = "none";
+		
 		if($("step6-go-img")){		
 			$("step6-go-img").style.display = "none";
-		} else {
-			$("step4-go-img").style.display = "none";
+			$("menue-step6").className = "DoneMenueStep";
 		}
+		
+		$("step5").firstChild.firstChild.nodeValue = $("menue-step5").firstChild.nodeValue;
 		
 		$("step5-preview").style.display = "none";
 			
 
 		$("step5").style.display = "";
 
-		$("menue-step4").className = "DoneMenueStep";
 		$("menue-step5").className = "ActualMenueStep";
 
 		this.hideHelpAll();
@@ -391,6 +407,17 @@ UseWebService.prototype = {
 			wsSyn += "\n| _template=" + $("step4-template").value;
 		}
 		
+		if($('menue-step6')){
+			if($('menue-step6').style.display != "none"){
+				if($('step6-triplify').checked){
+					wsSyn += "\n| _triplify";
+				}
+				if($('step6-display-subjects').checked){
+					wsSyn += "\n| _displayTripleSubjects=" + $('step6-subject-alias').value;
+				}
+			}
+		}
+		
 		wsSyn += "\n}}\n";
 		
 		return wsSyn;
@@ -416,6 +443,7 @@ UseWebService.prototype = {
 		var checked = confirm(diLanguage.getMessage('smw_wwsu_confirm'));
 		if(checked){
 			useWSSpecial.processStep1();
+			useWSSpecial.displayTriplificationOptions();
 		} else {
 			$("step1-webservice").value = this.webService;
 		}
@@ -495,7 +523,6 @@ UseWebService.prototype = {
 		else{
 			alert(diLanguage.getMessage('smw_wwsu_clipboard_success'));
 		}
-		
 	},
 	
 	displayTriplificationSubjectAlias : function(){
@@ -504,7 +531,18 @@ UseWebService.prototype = {
 		} else {
 			$('step6-subject-alias-container').style.display = "none";
 		}
+	},
+	
+	displayTriplificationOptions : function(){
+		if($("step1-webservice").childNodes[$("step1-webservice").selectedIndex].className == "triplifyable"){
+			$("menue-step6").style.display = "";
+			$("menue-step5").firstChild.nodeValue = $("menue-step5").firstChild.nodeValue.replace(/5./g, "6.");
+		} else {
+			$("menue-step6").style.display = "none";
+			$("menue-step5").firstChild.nodeValue = $("menue-step5").firstChild.nodeValue.replace(/6./g, "5.");
+		}
 	}
 };
 
 var useWSSpecial = new UseWebService();
+

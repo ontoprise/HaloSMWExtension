@@ -309,6 +309,8 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	'smw_wwsu_triplify_subject_alias_value' => 'Triple subjects',
 	'smw_wwsu_triplify_impossible' => 'Triplifying the results of this web service is not possible. Please define a Triplification Subject Pattern in the Wiki Web Service Definition first.',
 	
+	'smw_wsuse_s6-help' => '<h4>Help</h4><p>Click the <b>triplify</b> Checkbox if you want to store the result of this web service call into the Triple Store.</p><p>Click the <b>Display triple subjects</b> checkbox if you want to see the triple subjects, which will be created for each row of the web service result by the Subject Creation Pattern, in the web service result. You can then furthermore define an alias for the triple subjects, which then for example will be used as column name. Displaying triple subjects in the web service result can be useful for debugging your Subject Creation Pattern</p>',
+	
 	);
 
 	protected $smwDINamespaces = array(

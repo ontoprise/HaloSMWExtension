@@ -65,8 +65,21 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 			return;
 		}
 		
+		$first = true;
+		$firstTriplifyable = ' style="display: none" ';
+		$step5BCLabel = str_replace("6.", "5.", wfMsg('smw_wwsu_menue-s5'));
 		foreach($webServices as $w){
-			$ws .= "<option value=\"".substr($w->getName(),11, strlen($w->getName()))."\">".substr($w->getName(),11, strlen($w->getName()))."</option>";
+			if(strlen($w->getTriplificationSubject()) > 0 && defined( 'LOD_LINKEDDATA_VERSION')){
+				$triplifyable = ' class="triplifyable" ' ;
+				if($first){
+					$firstTriplifyable = '';
+					$step5BCLabel = str_replace("5.", "6.", wfMsg('smw_wwsu_menue-s5'));
+				}
+			} else {
+				$triplifyable = ' class="not triplifyable" ' ;
+			}
+			$first = false;
+			$ws .= "<option ".$triplifyable." value=\"".substr($w->getName(),11, strlen($w->getName()))."\">".substr($w->getName(),11, strlen($w->getName()))."</option>";
 		}
 
 		global $smwgDIIP, $smwgDIScriptPath;
@@ -78,8 +91,8 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "<span id=\"menue-step3\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s3')."</span><span class=\"HeadlineDelimiter\"></span>";
 		$html .= "<span id=\"menue-step4\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s4')."</span><span class=\"HeadlineDelimiter\"></span>";
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
-			$html .= "<span id=\"menue-step6\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s6')."</span><span class=\"HeadlineDelimiter\"></span>";
-			$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s5')."</span>";
+			$html .= "<span id=\"menue-step6\" ".$firstTriplifyable." class=\"TodoMenueStep\">".wfMsg('smw_wwsu_menue-s6')."</span><span class=\"HeadlineDelimiter\"></span>";
+			$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".$step5BCLabel."</span>";
 		} else {
 			$html .= "<span id=\"menue-step5\" class=\"TodoMenueStep\">".str_replace("6.", "5.", wfMsg('smw_wwsu_menue-s5'))."</span>";
 		}
@@ -94,7 +107,7 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		$html .= "</p>";
 			
 		$html .= "<p>"	.wfMsg('smw_wwsu_availablews');
-		$html .= "<select id=\"step1-webservice\" size=\"1\">";
+		$html .= "<select id=\"step1-webservice\" size=\"1\" onchange=\"useWSSpecial.displayTriplificationOptions()\">";
 		$html .= $ws."</select>";
 		$html .= "</p>";
 			
@@ -188,13 +201,13 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 		
 		//step 4.5 aka 6 Triplification
 		if(defined( 'LOD_LINKEDDATA_VERSION')){
-			$html .= "<br>";
 			$html .= "<div id=\"step6\" class=\"StepDiv\" style=\"display: none\">";
+			$html .= "<br>";
 			$html .= "<p class=\"step-headline\">".wfMsg('smw_wwsu_menue-s6');
 			$html .= "<img id=\"step6-help-img\" title=\"".wfMsg("smw_wws_help-button-tooltip")."\" class=\"help-image\" onclick=\"useWSSpecial.displayHelp(6)\" src=\"".$smwgDIScriptPath."/skins/webservices/help.gif\"></img>";
 			$html .= "</p>";
 	
-			$html .= '<p id="step6-missing-subjects">'.wfMsg('smw_wwsu_triplify_impossible').'</p>';
+			//$html .= '<p id="step6-missing-subjects">'.wfMsg('smw_wwsu_triplify_impossible').'</p>';
 			
 			$html .= '<span id="step6-triplification-container">';
 			
@@ -212,12 +225,14 @@ class SMWUseWebServiceSpecial extends SpecialPage {
 			
 			$html .= "</span>";
 	
-			$html .= "<div id=\"step6-help\" style=\"display:none\">".wfMsg("smw_wsuse_s4-help")."</div>";
+			$html .= "<div id=\"step6-help\" style=\"display:none\">".wfMsg("smw_wsuse_s6-help")."</div>";
 
 			$html .= "<br/>";
 			$html .= "<span id=\"step6-go\" class=\"OKButton\">";
 			$html .= "<input type=\"button\" class=\"OKButton\" id=\"step6-go-img\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"useWSSpecial.processStep4()\">";
 			$html .= "</span>";
+			
+			$html .= "</div>";
 		}
 		
 		//step 5
