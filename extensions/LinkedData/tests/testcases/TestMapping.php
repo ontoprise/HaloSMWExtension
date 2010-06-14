@@ -34,11 +34,11 @@ r2r:personmapping
 text;
 
 		$this->mMappingText2 = <<<text
-    r2r:classMapping
-        a r2r:ClassMapping ;
-        r2r:sourcePattern "?s rdf:type foaf:Person" ;
-        r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/>" ;
-        r2r:targetPattern "?s rdf:type <http://other/Person>" .
+r2r:classMapping
+	a r2r:ClassMapping ;
+	r2r:sourcePattern "?s rdf:type foaf:Person" ;
+	r2r:prefixDefinitions "foaf: <http://xmlns.com/foaf/0.1/>" ;
+	r2r:targetPattern "?s rdf:type <http://other/Person>" .
 text;
 	}
 
