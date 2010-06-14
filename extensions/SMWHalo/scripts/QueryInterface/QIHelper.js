@@ -770,7 +770,12 @@ QIHelper.prototype = {
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // second table with checkbox for display option and value must be set
         node = document.createElement('table');
-        var tmpHTML = '<tbody><tr><td valign="top">' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td><td>';
+        var row = node.insertRow(-1);
+        var cell = row.insertCell(0);
+        cell.valign="top";
+        cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
+        cell = row.insertCell(1);
+        var tmpHTML='';
         if (this.activeQueryId == 0)
 			tmpHTML += '<input type="checkbox" id="input_c1" onchange="qihelper.toggleShowProperty();"/>';
 		else
@@ -782,8 +787,8 @@ QIHelper.prototype = {
             + '&nbsp;<input type="text" id="input_c3"/></div>'
             + '<br/>'
             + '<input type="checkbox" id="input_c2"/> '
-            + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET') + '</td></tr></tbody>';
-        node.innerHTML = tmpHTML;
+            + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET');
+        cell.innerHTML = tmpHTML;
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
         // hr line
         node = document.createElement('hr');
@@ -792,15 +797,26 @@ QIHelper.prototype = {
         // property restriction table
         node = document.createElement('table');
         node.className = "propertyvalues";
-        node.innerHTML = '<tbody id="dialoguecontent_pvalues"><tr><td colspan="4" style="border-botton: 1px solid #AAAAAA;">'
-            + gLanguage.getMessage('QI_PROP_VALUES_RESTRICT') + '</td></tr><tr><td colspan="4">'
+        node.id = "dialoguecontent_pvalues";
+        row = node.insertRow(-1);
+        cell = row.insertCell(-1);
+        cell.setAttribute('colspan', "4");
+        cell.setAttribute('style', 'border-botton: 1px solid #AAAAAA;');
+        cell.innerHTML = gLanguage.getMessage('QI_PROP_VALUES_RESTRICT');
+        row = node.insertRow(-1);
+        cell = row.insertCell(-1);
+        cell.setAttribute('colspan',"4");
+        cell.innerHTML = ''
             + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE') + '&nbsp;'
             + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE') + '&nbsp;'
             + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" onchange="qihelper.setPropertyRestriction();"/>'
-            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span>&nbsp;'
-            + '</td></tr></tbody></table><div style="display:none;"><table><tbody id="dialoguecontent_pvalues_hidden"></tbody></table></div>';
+            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span>&nbsp;';
         $('dialoguecontent').parentNode.parentNode.appendChild(node);
-
+        node = document.createElement('div');
+        node.style.display="none";
+        node.innerHTML = '<table><tbody id="dialoguecontent_pvalues_hidden"></tbody></table>';
+        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        
 		$('dialoguebuttons').style.display = "";
 		this.proparity = 2;
 		autoCompleter.registerAllInputs();
@@ -1496,7 +1512,8 @@ QIHelper.prototype = {
                 // if arity > 2 then add the first row under the radio buttons without input field
                 if (this.proparity > 2) {
                     var newrow = $('dialoguecontent_pvalues').insertRow(-1);
-                    newrow.innerHTML = '<td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td>';
+                    var cell = newrow.insertCell(-1);
+                    cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
                     rowOffset++;
                 }
                 for (var i = 0, n = vals.length; i < n; i++) {
@@ -1514,9 +1531,9 @@ QIHelper.prototype = {
                         $('dialoguecontent_pvalues').rows[currRow].cells[2].firstChild.className = "";
                     }
                     // add unit selection, do this for all properties, even in subqueries
-                    var propUnits = prop.getUnits();
-                    var uIdx = (this.proparity == 2) ? 0 : i;
-                    if (propUnits && propUnits[uIdx].length > 0) {
+                    try {
+                        var propUnits = prop.getUnits();
+                        var uIdx = (this.proparity == 2) ? 0 : i;
                         var tmpHTML = '';
                         for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
                             tmpHTML += '<option';
@@ -1526,7 +1543,7 @@ QIHelper.prototype = {
                         }
                         $('dialoguecontent_pvalues').rows[currRow].cells[2]
                             .firstChild.nextSibling.innerHTML = tmpHTML;
-                    }
+                    } catch(e) {};
                     if (this.proparity > 2) {
                         $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
                         $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
