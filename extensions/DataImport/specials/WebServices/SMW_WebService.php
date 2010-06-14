@@ -1185,6 +1185,11 @@ class WebService {
 		//				$msg[] = wfMsg('smw_wwsd_undefined_result', $r);
 		//			}
 		//		}
+		
+		if(count($rNames) > 1){
+			$msg[] = wfMsg('smw_wws_too_many_results');
+		}
+		
 		return count($msg) == 0 ? true : $msg;
 	}
 

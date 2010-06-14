@@ -308,6 +308,8 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	
 	'smw_wsuse_s6-help' => 'todo',
 	'smw_wws_s4-help-triplification' => 'todo',
+	
+	'smw_wws_too_many_results' => 'Ihre WWSD enthaelt mehr als eine Result Definition, bzw. Benutzungen des Result Tags. Einige der neuen Feaures der Data Import extension unterstützen dieses Konstrukt nicht mehr. Bitte beschränken Sie sich daher auf eine Result Definition.',
 	);
 
 	protected $smwDINamespaces = array(
