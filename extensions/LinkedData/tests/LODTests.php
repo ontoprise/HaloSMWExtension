@@ -9,6 +9,7 @@ require_once 'PHPUnit/Framework.php';
 require_once 'testcases/TestLODSourceDefinition.php';
 require_once 'testcases/TestTripleStoreAccess.php';
 require_once 'testcases/TestMapping.php';
+require_once 'testcases/TestSparqlDataspaceRewriter.php';
 
 class LODTests
 { 
@@ -19,6 +20,7 @@ class LODTests
         $suite->addTestSuite("TestLODSourceDefinition");
         $suite->addTestSuite("TestTripleStoreAccess");
         $suite->addTestSuite("TestMapping");
+        $suite->addTestSuite("TestSparqlDataspaceRewriter");
         
         return $suite;
     }
