@@ -49,8 +49,8 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class  LODAdministrationStore  {
 	
 	//--- Constants ---
-	const LOD_SOURCE_DEFINITION_GRAPH = "LODSourceDefinitionGraph";
-	const LOD_BASE_URI = "http://www.ontoprise.de/";
+	const LOD_SOURCE_DEFINITION_GRAPH = "DataSourceInformationGraph";
+	const LOD_BASE_URI = "http://smw/";
 	const LOD_SOURCE_DEFINITION_URI_SUFFIX = "sd#";
 	const LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX = "sdprop#";
 	
@@ -112,7 +112,7 @@ class  LODAdministrationStore  {
 	 * sdprop:id 						^^xsd:string 	(1) 
 	 * sdprop:importanceIndex			^^xsd:int 		(1)
 	 * sdprop:description				^^xsd:string 	(0..1) 
-	 * sdprop:label 					^^xsd:string 	(0..1) 
+	 * rdfs:label 						^^xsd:string 	(0..1) 
 	 * sdprop:mappingID 				^^xsd:string 	(1) 
 	 * sdprop:linkedDataPrefix 			^^xsd:string 	(0..1)
 	 * sdprop:uriRegexPattern 			^^xsd:string 	(0..1)
@@ -149,7 +149,7 @@ class  LODAdministrationStore  {
 		$triples[] = new LODTriple($subject, $propNS."id", $sd->getID(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."importanceIndex", $sd->getImportanceIndex(), "xsd:int");
 		$triples[] = new LODTriple($subject, $propNS."description", $sd->getDescription(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."label", $sd->getLabel(), "xsd:string");
+		$triples[] = new LODTriple($subject, "rdfs:label", $sd->getLabel(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."mappingID", $sd->getMappingID(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."linkedDataPrefix", $sd->getLinkedDataPrefix(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."uriRegexPattern", $sd->getUriRegexPattern(), "xsd:string");
@@ -207,7 +207,7 @@ class  LODAdministrationStore  {
 		$subject = $subjectNS.$sourceID;
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
-		$query = $prefixes."SELECT ?p ?o WHERE { $subject ?p ?o . }";
+		$query = $prefixes."SELECT ?p ?o FROM <$graph> WHERE { $subject ?p ?o . }";
 		
 		$tsa = new LODTripleStoreAccess();
 		
@@ -229,6 +229,7 @@ class  LODAdministrationStore  {
 		
 		// Create a source definition object.
 		$propNS = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX;
+		$rdfs = "http://www.w3.org/2000/01/rdf-schema#";
 		$sd = new LODSourceDefinition($properties["{$propNS}id"][0]);
 		if (array_key_exists("{$propNS}importanceIndex", $properties)) {
 			$sd->setImportanceIndex($properties["{$propNS}importanceIndex"][0]+0);
@@ -236,8 +237,8 @@ class  LODAdministrationStore  {
 		if (array_key_exists("{$propNS}description", $properties)) {
 			$sd->setDescription($properties["{$propNS}description"][0]);
 		}
-		if (array_key_exists("{$propNS}label", $properties)) {
-			$sd->setLabel($properties["{$propNS}label"][0]);
+		if (array_key_exists("{$rdfs}label", $properties)) {
+			$sd->setLabel($properties["{$rdfs}label"][0]);
 		}
 		if (array_key_exists("{$propNS}mappingID", $properties)) {
 			$sd->setMappingID($properties["{$propNS}mappingID"][0]);
@@ -317,7 +318,7 @@ class  LODAdministrationStore  {
 		$id    = "sdprop:id";
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
-		$query = $prefixes."SELECT ?s ?id WHERE { ?s $id  ?id . }";
+		$query = $prefixes."SELECT ?s ?id FROM <$graph> WHERE { ?s $id  ?id . }";
 		
 		$tsa = new LODTripleStoreAccess();
 		$qr = $tsa->queryTripleStore($query, $graph);
