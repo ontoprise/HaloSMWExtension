@@ -214,6 +214,7 @@ var wgUserLanguageStrings = {
     'QI_EMPTY_QUERY'          : 'Votre requête est vide.',
     'QI_INSTANCE'             : 'Instance:',
     'QI_PROPERTYNAME'         : 'Nom de la propriété:',
+    'QI_PROPERTYVALUE'        : 'Valeur de la propriété:',
     'QI_SHOW_PROPERTY'        : 'Afficher dans les résultats:',
     'QI_PROPERTY_MUST_BE_SET' : 'La valeur doit être fixée:',
     'QI_USE_SUBQUERY'         : 'Insérer une sous-requête',
@@ -236,6 +237,15 @@ var wgUserLanguageStrings = {
     'QI_BC_ADD_CATEGORY'      : 'Add category',
     'QI_BC_ADD_PROPERTY'      : 'Add property',
     'QI_BC_ADD_INSTANCE'      : 'Add instance',
+    'QI_ADD_PROPERTY_CHAIN'   : 'Add new property to property chain',
+    'QI_PROP_VALUES_RESTRICT' : 'Property values restriction',
+    'QI_SPECIFIC_VALUE'       : 'Specific value',
+    'QI_NONE'                 : 'None',
+    'QI_PROPERTY_TYPE'        : 'Type',
+    'QI_PROPERTY_RANGE'       : 'Range',
+    'QI_RECORD'               : 'Record',
+    'QI_COLUMN_LABEL'         : 'Column label',
+    'QI_SHOWUNIT'             : 'Unit',
     
     // Find work
     'FW_SEND_ANNOTATIONS'     : 'Merci d\'évaluer les annotations, ',

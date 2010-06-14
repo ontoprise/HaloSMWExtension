@@ -215,8 +215,9 @@ var wgUserLanguageStrings = {
 	'QI_EMPTY_QUERY'       	  : 'Ihr Query ist leer.',
 	'QI_INSTANCE'       	  : 'Instanz:',
 	'QI_PROPERTYNAME'         : 'Attributname:',
-	'QI_SHOW_PROPERTY'        : 'In Ergebnissen zeigen:',
-	'QI_PROPERTY_MUST_BE_SET' : 'Wert muss gesetzt sein:',
+    'QI_PROPERTYVALUE'        : 'Attributwert:',
+	'QI_SHOW_PROPERTY'        : 'In Ergebnissen zeigen',
+	'QI_PROPERTY_MUST_BE_SET' : 'Wert muss gesetzt sein',
 	'QI_USE_SUBQUERY'         : 'Subquery einfügen',
 	'QI_PAGE'				  : 'Page', // has to be the same as the Type:Page in your language
 	'QI_OR'        			  : 'oder',
@@ -237,6 +238,15 @@ var wgUserLanguageStrings = {
     'QI_BC_ADD_CATEGORY'      : 'Kategorie hinzuf&uuml;gen',
     'QI_BC_ADD_PROPERTY'      : 'Attribut hinzuf&uuml;gen',
     'QI_BC_ADD_INSTANCE'      : 'Instanz hinzuf&uuml;gen',
+    'QI_ADD_PROPERTY_CHAIN'   : 'neues Attribut zur Attributkette hinzuf&uuml;gen',
+    'QI_PROP_VALUES_RESTRICT' : 'Property values restriction',
+    'QI_SPECIFIC_VALUE'       : 'Specific value',
+    'QI_NONE'                 : 'None',
+    'QI_PROPERTY_TYPE'        : 'Typ',
+    'QI_PROPERTY_RANGE'       : 'Range',
+    'QI_RECORD'               : 'Record',
+    'QI_COLUMN_LABEL'         : 'Spalten&uuml;berschrift',
+    'QI_SHOWUNIT'             : 'Einheit',
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

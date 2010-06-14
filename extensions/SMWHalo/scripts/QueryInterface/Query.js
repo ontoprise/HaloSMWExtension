@@ -244,7 +244,12 @@ Query.prototype = {
 		var displayStatements = new Array();
 		for(var i=0; i<this.properties.length; i++){
 			if(this.properties[i].isShown()){ // "Show in results" checked?
-				displayStatements.push(this.properties[i].getName().unescapeHTML());
+                var prop = this.properties[i].getName().unescapeHTML();
+                if (this.properties[i].getShowUnit())
+                    prop += ' #' + this.properties[i].getShowUnit();
+                if (this.properties[i].getColName())
+                    prop += ' = ' + this.properties[i].getColName();
+                displayStatements.push(prop);
 			}
                         // add this only if there is no special value asked for
 			if(this.properties[i].mustBeSet() && 
@@ -285,6 +290,8 @@ Query.prototype = {
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
 							asktext += vals[j][2].unescapeHTML();
+                        if (vals[j][3])
+                            asktext += vals[j][3].unescapeHTML();
 					}
 					asktext += "]]";
 				}
@@ -296,9 +303,14 @@ Query.prototype = {
 	getDisplayStatements:function(){
 		var displayStatements = new Array();
 		for(var i=0; i<this.properties.length; i++){
-			if(this.properties[i].isShown()){ // "Show in results" checked?
-				displayStatements.push(this.properties[i].getName());
-			}
+			if(this.properties[i].isShown()) { // "Show in results" checked?
+                var prop = this.properties[i].getName();
+                if (this.properties[i].getShowUnit())
+                    prop += ' #' + this.properties[i].getShowUnit();
+                if (this.properties[i].getColName())
+                    prop += ' = ' + this.properties[i].getColName();
+                displayStatements.push(prop);
+            }
 		}
 		return displayStatements;
 	},

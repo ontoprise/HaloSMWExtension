@@ -373,8 +373,6 @@ QIHelper.prototype = {
 		}
 		/* ENDLOG */
 
-		if (this.pendingElement)
-			this.pendingElement.remove();
 		this.pendingElement = new OBPendingIndicator($('previewcontent'));
 		this.pendingElement.show();
 
@@ -604,7 +602,7 @@ QIHelper.prototype = {
 		.getMessage('QI_ARTICLE_TITLE') ? ""
 				: (' | sort=' + $('layout_sort').value);
 		var qParams = this.serializeSpecialQPParameters("|");
-		if (qParams.length > 0) fullQuery += "| " + qParams
+		if (qParams.length > 0) fullQuery += qParams
 		fullQuery += "| merge=false|}}";
 
 		return fullQuery;
@@ -671,6 +669,23 @@ QIHelper.prototype = {
 		}
 	},
 
+    resetDialogueContent : function(reset) {
+        $('qidelete').style.display = "none";   // New dialogue, no delete button
+        $('qistatus').innerHTML= '';            // empty status message
+		autoCompleter.deregisterAllInputs();
+		if (reset)
+			this.loadedFromId = null;
+		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
+            // empty dialogue table
+			$('dialoguecontent').deleteRow(0);
+        // the property dialogue has several tables
+        while (1) {
+            var n = $('dialoguecontent').parentNode.nextSibling;
+            if (!n) break;
+            n.parentNode.removeChild(n);
+        }
+    },
+
 	/**
 	 * Creates a new dialogue for adding categories to the query
 	 * 
@@ -679,19 +694,12 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newCategoryDialogue : function(reset) {
-		$('qidelete').style.display = "none"; // New dialogue, no delete
-												// button
-        $('qistatus').innerHTML= '';            // empty status message
         // add current action to breadcrumbs path
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_CATEGORY') );
-		autoCompleter.deregisterAllInputs();
-		if (reset)
-			this.loadedFromId = null;
 		this.activeDialogue = "category";
-		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
-			// empty dialogue table
-			$('dialoguecontent').deleteRow(0);
-		var newrow = $('dialoguecontent').insertRow(-1); // create the
+        this.resetDialogueContent(reset);
+
+        var newrow = $('dialoguecontent').insertRow(-1); // create the
 															// dialogue
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('CATEGORY');
@@ -725,15 +733,9 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newInstanceDialogue : function(reset) {
-		$('qidelete').style.display = "none";
-        $('qistatus').innerHTML= '';            // empty status message
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_INSTANCE') );
-		autoCompleter.deregisterAllInputs();
-		if (reset)
-			this.loadedFromId = null;
 		this.activeDialogue = "instance";
-		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
-			$('dialoguecontent').deleteRow(0);
+        this.resetDialogueContent(reset);
 		var newrow = $('dialoguecontent').insertRow(-1);
 		var cell = newrow.insertCell(0);
 		cell.innerHTML = gLanguage.getMessage('QI_INSTANCE');
@@ -756,18 +758,58 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newPropertyDialogue : function(reset) {
-		$('qidelete').style.display = "none";
-        $('qistatus').innerHTML= '';            // empty status message
         this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_PROPERTY') );
-		autoCompleter.deregisterAllInputs();
-		if (reset)
-			this.loadedFromId = null;
 		this.activeDialogue = "property";
 		this.propname = "";
-		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
-			$('dialoguecontent').deleteRow(0);
+        this.resetDialogueContent();
+        
+        // first table, with at least one input field for property name
+        this.addPropertyChainInput();
+        // hr line
+        node = document.createElement('hr');
+        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        // second table with checkbox for display option and value must be set
+        node = document.createElement('table');
+        var tmpHTML = '<tbody><tr><td valign="top">' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td><td>';
+        if (this.activeQueryId == 0)
+			tmpHTML += '<input type="checkbox" id="input_c1" onchange="qihelper.toggleShowProperty();"/>';
+		else
+			tmpHTML += '<input type="checkbox" disabled="disabled" id="input_c1"/>';
+        tmpHTML += ' ' + gLanguage.getMessage('QI_SHOW_PROPERTY')
+            + '<div id="input_c4d" style="display:none">&nbsp; &nbsp;' + gLanguage.getMessage('QI_SHOWUNIT')
+            + '<select id="input_c4"></select></div>'
+            + '<div id="input_c3d" style="display:none"><br/>' + gLanguage.getMessage('QI_COLUMN_LABEL')
+            + '&nbsp;<input type="text" id="input_c3"/></div>'
+            + '<br/>'
+            + '<input type="checkbox" id="input_c2"/> '
+            + gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET') + '</td></tr></tbody>';
+        node.innerHTML = tmpHTML;
+        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+        // hr line
+        node = document.createElement('hr');
+        $('dialoguecontent').parentNode.parentNode.appendChild(node);
 
-		var constraintstring = "schema-property-domain: ";
+        // property restriction table
+        node = document.createElement('table');
+        node.className = "propertyvalues";
+        node.innerHTML = '<tbody id="dialoguecontent_pvalues"><tr><td colspan="4" style="border-botton: 1px solid #AAAAAA;">'
+            + gLanguage.getMessage('QI_PROP_VALUES_RESTRICT') + '</td></tr><tr><td colspan="4">'
+            + '<input type="radio" name="input_r0" value="-1" onchange="qihelper.setPropertyRestriction();" checked="checked" />' + gLanguage.getMessage('QI_NONE') + '&nbsp;'
+            + '<input type="radio" name="input_r0" value="-2" onchange="qihelper.setPropertyRestriction();"/>' + gLanguage.getMessage('QI_SPECIFIC_VALUE') + '&nbsp;'
+            + '<input type="radio" name="input_r0" value="'+this.nextQueryId+'" onchange="qihelper.setPropertyRestriction();"/>'
+            + '<span id="usesub">' + gLanguage.getMessage('QI_SUBQUERY') + '</span>&nbsp;'
+            + '</td></tr></tbody></table><div style="display:none;"><table><tbody id="dialoguecontent_pvalues_hidden"></tbody></table></div>';
+        $('dialoguecontent').parentNode.parentNode.appendChild(node);
+
+		$('dialoguebuttons').style.display = "";
+		this.proparity = 2;
+		autoCompleter.registerAllInputs();
+		if (reset)
+			$('input_p0').focus();
+	},
+
+    addPropertyChainInput : function(propName) {
+        autoCompleter.deregisterAllInputs();
 		// fetch category constraints:
 		var cats = this.activeQuery.categories; // get the category group
         var constraintsCategories = "";
@@ -788,62 +830,183 @@ QIHelper.prototype = {
 				}
 			}
 		}
-        constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
-		var newrow = $('dialoguecontent').insertRow(-1); // First row: input
-															// for property name
-		var cell = newrow.insertCell(0);
-		cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
+        var constraintstring = "schema-property-domain: "+constraintsCategories+ "|annotation-property: "+constraintsCategories + "|namespace: 102";
+        var idx = $('dialoguecontent').rows.length;
+        if (idx > 0) idx = (idx - 1) / 2;
+		var newrow = $('dialoguecontent').insertRow(idx*2);
+        // row with input field and remove icon
+        var cell = newrow.insertCell(0);
+        if (idx == 0) cell.innerHTML = gLanguage.getMessage('QI_PROPERTYNAME');
 		cell = newrow.insertCell(1);
-		cell.style.textAlign = "left";
-		cell.setAttribute("colSpan", 2);
-		cell.innerHTML = '<input type="text" id="input0" class="wickEnabled general-forms" constraints="' + constraintstring + '" autocomplete="OFF" onblur="qihelper.getPropertyInformation()"/>';
-              
-		newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox
-														// for display option
-		cell = newrow.insertCell(0);
-		cell.innerHTML = gLanguage.getMessage('QI_SHOW_PROPERTY');
-		cell = newrow.insertCell(1);
-		cell.style.textAlign = "left";
-		cell.setAttribute("colSpan", 2);
-		if (this.activeQueryId == 0)
-			cell.innerHTML = '<input type="checkbox" id="input1">';
-		else
-			cell.innerHTML = '<input type="checkbox" disabled="disabled" id="input1">';
+        cell.style.textAlign="left";
+        cell.style.verticalAlign="middle";
+        var tmpHTML = '<input type="text" id="input_p'+ idx +'" '
+            + 'class="wickEnabled general-forms" constraints="' + constraintstring + '" '
+            + 'autocomplete="OFF" onblur="qihelper.getPropertyInformation()"'
+            + ((propName) ? ' value="'+propName+'"' : '')
+            + '/>';
+        if (idx > 0)
+            tmpHTML += ' <img src="'	+ this.imgpath + 'delete.png" alt="deleteInput" onclick="qihelper.removePropertyChainInput()"/>';
+        cell.innerHTML = tmpHTML;
+        // row with property type
+        newrow = $('dialoguecontent').insertRow(idx*2+1);
+        newrow.style.lineHeight="1";
+        newrow.insertCell(0);
+        cell = newrow.insertCell(1);
+        cell.style.textAlign="left";
+        cell.style.fontSize="60%";
+        cell.style.color="#AAAAAA";
+        cell.innerHTML = gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('QI_PAGE');
+        // link to add property chain
+        if (idx == 0) {
+            newrow = $('dialoguecontent').insertRow(-1);
+            cell = newrow.insertCell(0);
+            cell = newrow.insertCell(1);
+            cell.setAttribute('colspan', 2);
+            cell.innerHTML = '<div id="addchain">'
+                + '<span class="qiDisabled">' + gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN') + '</span></div>';
+        }
+        else {
+            // if there is a remove icon in the previous line, remove it.
+            try {
+                var img = $('dialoguecontent').rows[(idx-1)*2].getElementsByTagName('td')[1].getElementsByTagName('img');
+                if (img.length > 0)
+                    img[0].parentNode.removeChild(img[0]);
+            } catch (e) {};
+        }
+        autoCompleter.registerAllInputs();
+		if (!propName) $('input_p' + idx).focus(); // focus created input
+        this.toggleAddchain(false);
 
-		newrow = $('dialoguecontent').insertRow(-1); // second row: checkbox
-														// for display option
-		cell = newrow.insertCell(0);
-		cell.innerHTML = gLanguage.getMessage('QI_PROPERTY_MUST_BE_SET');
-		cell = newrow.insertCell(1);
-		cell.style.textAlign = "left";
-		cell.setAttribute("colSpan", 2);
-		cell.innerHTML = '<input type="checkbox" id="input2">';
+    },
 
-		newrow = $('dialoguecontent').insertRow(-1); // third row: input for
-														// property value and
-														// subquery
-		cell = newrow.insertCell(0);
-		cell.id = "mainlabel";
-		cell.innerHTML = gLanguage.getMessage('QI_PAGE'); // we assume Page as
-															// type since this
-															// is standard
-		cell = newrow.insertCell(1);
-		cell.id = "restricionSelector";
-		cell.innerHTML = this.createRestrictionSelector("=", false, false);
-		cell = newrow.insertCell(2);
-		cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input3"/>';
-		cell = newrow.insertCell(3);
-		cell.innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
-		cell = newrow.insertCell(4);
-		cell.className = "subquerycell";
-		cell.innerHTML = '&nbsp;' + gLanguage.getMessage('QI_USE_SUBQUERY') + '<input type="checkbox" id="usesub" onclick="qihelper.useSub(this.checked)"/>';
-		this.activeInputs = 4;
-		$('dialoguebuttons').style.display = "";
-		this.proparity = 2;
+    setPropertyRestriction : function () {
+        if (this.oldPropertyRestriction == null) this.oldPropertyRestriction = -1;
+        var table = $('dialoguecontent_pvalues');
+        if (!table) return;
+        var radio = table.getElementsByTagName('input');
+        var oldData= "";
+        for ( var i = 2, n = table.rows.length; i < n; i++) {
+            if (this.oldPropertyRestriction == -2)
+                oldData += '<tr>' + table.rows[2].innerHTML + '</tr>';
+			table.deleteRow(2);
+        }
+        if (radio[1].checked) {
+            if ($('dialoguecontent_pvalues_hidden').rows.length > 0) {
+                for (var i = 0, n = $('dialoguecontent_pvalues_hidden').rows.length; i < n; i++) {
+                    var row = table.insertRow(-1);
+                    row.id = "row_r"+(i+1);
+                    row.innerHTML = $('dialoguecontent_pvalues_hidden').rows[i].innerHTML;
+                    //$('dialoguecontent_pvalues_hidden').rows[i].getElementsByTagName('input')[0].value =
+
+                }
+                $('dialoguecontent_pvalues_hidden').innerHTML = "";
+            }
+            else if (table.rows.length < 3)
+                this.addRestrictionInput();
+        }
+        if (oldData.length > 0)
+            $('dialoguecontent_pvalues_hidden').innerHTML = oldData;
+        for (var i = 0, n = radio.length; i < n; i++) {
+            if (radio[i].checked) {
+                this.oldPropertyRestriction = radio[i].value;
+                break;
+            }
+        }
+    },
+
+    addRestrictionInput : function (el) {
+        if (!el) el = 'dialoguecontent_pvalues';
+        autoCompleter.deregisterAllInputs();
+        var newrow = $('dialoguecontent_pvalues').insertRow(-1);
+        var newRowIndex = $('dialoguecontent_pvalues').rows[newrow.rowIndex-1].id;
+        if (! newRowIndex) newRowIndex = 1;
+        else newRowIndex = parseInt(newRowIndex.substr(5))+1;
+        newrow.id = "row_r" + newRowIndex;
+        var cell = newrow.insertCell(0);
+        if (el == 'dialoguecontent_pvalues') {
+            if (newrow.rowIndex == 2)
+                cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
+            else {
+                cell.innerHTML = gLanguage.getMessage('QI_OR');
+                cell.style.fontWeight="bold";
+                cell.style.textAlign="right";
+            }
+        }
+        else {
+            if (newrow.rowIndex == 1)
+                cell.innerHTML = gLanguage.getMessage('QI_PROPERTYVALUE');
+        }
+        var arity= (this.proparity) ? this.proparity : 2;
+        cell = newrow.insertCell(1);
+        var param = (this.propTypename) ? this.propTypename : gLanguage.getMessage('QI_PAGE');
+		if (param == gLanguage.getMessage('QI_PAGE')) { // property dialogue & type = page
+			cell.innerHTML = this.createRestrictionSelector("=", true, false);
+			cell = newrow.insertCell(2);
+			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input_r' + newRowIndex + '"/>';
+		} else { // property, no page type
+			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
+													// possible
+				cell.innerHTML = this.createRestrictionSelector("=", false, true);
+			else
+				cell.innerHTML = this.createRestrictionSelector("=", false, false);
+			cell = newrow.insertCell(2);
+			if (this.propIsEnum) { // if enumeration, a select box is used
+									// instead of a text input field
+				var tmpHTML = '<select id="input_r' + newRowIndex + '">';
+				for ( var i = 0; i < this.enumValues.length; i++) {
+					tmpHTML += '<option value="' + this.enumValues[i]
+							+ '" style="width:100%">' + this.enumValues[i]
+							+ '</option>';
+				}
+				tmpHTML += '</select>';
+				cell.innerHTML = tmpHTML;
+			} else { // no enumeration, no page type, simple input field
+				var tmpHTML = '<input type="text" id="input_r' + newRowIndex + '"/>';
+                var uIdx = (arity == 2) ? 0 : newRowIndex - 1;
+                if (this.propUnits && this.propUnits[uIdx].length > 0) {
+                    tmpHTML += '<select id="input_ru' + newRowIndex + '">';
+                    for (var i = 0, m = this.propUnits[uIdx].length; i < m; i++)
+                        tmpHTML += '<option>'+ this.propUnits[uIdx][i] + '</option>';
+                    tmpHTML += '</select>';
+                }
+                cell.innerHTML = tmpHTML;
+			}
+		}
+        if (arity == 2) {
+    		cell = newrow.insertCell(-1);
+            if ($('dialoguecontent_pvalues').rows.length > 3)
+                cell.innerHTML = '<img src="'
+                	+ this.imgpath
+                    + 'delete.png" alt="deleteInput" onclick="qihelper.removeRestrictionInput(this)"/>';
+            else
+                cell.innerHTML = '<img src="'
+                    + this.imgpath
+                    + 'add.png" alt="addInput" onclick="qihelper.addRestrictionInput()"/>';
+        }
+        $('input_r' + newRowIndex).focus(); // focus created input
 		autoCompleter.registerAllInputs();
-		if (reset)
-			$('input0').focus();
-	},
+    },
+
+    removeRestrictionInput : function(element) {
+        var id = element.parentNode.parentNode.id;
+        $('dialoguecontent_pvalues').removeChild($(id));
+    },
+
+    removePropertyChainInput : function() {
+        var idx = ($('dialoguecontent').rows.length -1) / 2 -1;
+        if (idx == 0) return;
+        $('dialoguecontent').deleteRow(idx*2+1);
+        $('dialoguecontent').deleteRow(idx*2);
+        if (idx > 1) {
+            var img = document.createElement('img');
+            img.src=this.imgpath + "delete.png";
+            img.alt="deleteInput";
+            img.setAttribute('onclick', "qihelper.removePropertyChainInput()");
+            $('dialoguecontent').rows[idx *2 - 2].getElementsByTagName('td')[1].appendChild(img);
+        }
+        this.toggleAddchain(true);
+    },
 
 	/**
 	 * Empties the current dialogue and resets all relevant variables. Called on
@@ -856,8 +1019,13 @@ QIHelper.prototype = {
 		this.enumValues = null;
 		this.propname = null;
 		this.proparity = null;
+        this.propTypename = null;
+        this.propUnits = null;
 		for ( var i = 0, n = $('dialoguecontent').rows.length; i < n; i++)
 			$('dialoguecontent').deleteRow(0);
+        while (n = $('dialoguecontent').parentNode.nextSibling ) {
+            n.parentNode.removeChild(n);
+        }
 		$('dialoguebuttons').style.display = "none";
 		$('qistatus').innerHTML = "";
 		$('qidelete').style.display = "none";
@@ -884,34 +1052,6 @@ QIHelper.prototype = {
 			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 14" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
 		else if (this.activeDialogue == "instance")
 			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-		else if (param == gLanguage.getMessage('QI_PAGE')) { // property
-																// dialogue &
-																// type = page
-			cell.innerHTML = this.createRestrictionSelector("=", true, false);
-			cell = newrow.insertCell(2);
-			cell.innerHTML = '<input class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
-		} else { // property, no page type
-			if (this.numTypes[param.toLowerCase()]) // numeric type? operators
-													// possible
-				cell.innerHTML = this.createRestrictionSelector("=", false, true);
-			else
-				cell.innerHTML = this.createRestrictionSelector("=", false, false);
-
-			cell = newrow.insertCell(2);
-			if (this.propIsEnum) { // if enumeration, a select box is used
-									// instead of a text input field
-				var tmphtml = '<select id="input' + this.activeInputs + '">';
-				for ( var i = 0; i < this.enumValues.length; i++) {
-					tmphtml += '<option value="' + this.enumValues[i]
-							+ '" style="width:100%">' + this.enumValues[i]
-							+ '</option>';
-				}
-				tmphtml += '</select>';
-				cell.innerHTML = tmphtml;
-			} else { // no enumeration, no page type, simple input field
-				cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '"/>';
-			}
-		}
 		cell = newrow.insertCell(-1);
 		cell.innerHTML = '<img src="'
 				+ this.imgpath
@@ -939,14 +1079,21 @@ QIHelper.prototype = {
 	 * property (if available)
 	 */
 	getPropertyInformation : function() {
-		var propname = $('input0').value;
+        var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+ 		var propname = $('input_p'+idx).value;
 		if (propname != "" && propname != this.propname) { // only if not empty
 															// and name changed
 			this.propname = propname;
 			if (this.pendingElement)
 				this.pendingElement.remove();
-			this.pendingElement = new OBPendingIndicator($('input3'));
-			this.pendingElement.show();
+            // clean hidden table with old data and add pending indicator.
+            /*
+            $('displaycontent_pvalues_hidden').innerHTML = '';
+            var row = $('displaycontent_pvalues_hidden').insertRow(-1);
+            var cell = row.insertCell(-1);
+            this.pendingElement = new OBPendingIndicator(cell);
+            this.pendingElement.show();
+            */
 			sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
 					escapeQueryHTML(propname) ], this.adaptDialogueToProperty
 					.bind(this));
@@ -966,159 +1113,265 @@ QIHelper.prototype = {
 		autoCompleter.deregisterAllInputs();
 		if (this.activeDialogue != null) { // check if user cancelled the
 											// dialogue whilst ajax call
-			var oldval = $('input3').value;
-			var oldcheck = $('usesub') ? $('usesub').checked : false;
-			var oldsubid = $('usesub') ? $('usesub').value : this.nextQueryId;
-			for ( var i = 4, n = $('dialoguecontent').rows.length; i < n; i++) {
-				$('dialoguecontent').deleteRow(4); // delete all rows for value
-													// inputs
-			}
+			var oldsubid = $('input_r0') ? $('input_r0').value : this.nextQueryId;
+            $('dialoguecontent_pvalues_hidden').innerHTML = "";
+            var tmpHTML = "";
 			// create standard values in case request fails
-			var arity = 2;
 			this.proparity = 2;
 			var parameterNames = [ gLanguage.getMessage('QI_PAGE') ];
 			var parameterTypes = [];
 			var possibleValues = new Array();
+            var possibleUnits = new Array();
+            var propertyName= $('dialoguecontent').rows[$('dialoguecontent').rows.length -3]
+                                    .getElementsByTagName('input')[0].value;
 
 			if (request.status == 200) {
 				var schemaData = GeneralXMLTools
 						.createDocumentFromString(request.responseText);
 
 				// read arity
-				arity = parseInt(schemaData.documentElement
+				this.proparity = parseInt(schemaData.documentElement
 						.getAttribute("arity"));
-				this.proparity = arity;
+                propertyName = schemaData.documentElement.getAttribute("name");
 				parameterNames = [];
 				// parse all parameter names
 				for ( var i = 0, n = schemaData.documentElement.childNodes.length; i < n; i++) {
-					parameterNames
-							.push(schemaData.documentElement.childNodes[i]
-									.getAttribute("name"));
-					parameterTypes
-                            .push(schemaData.documentElement.childNodes[i]
-                                    .getAttribute("type"));				
-					for ( var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j < m; j++) {
-						possibleValues
-								.push(schemaData.documentElement.childNodes[i].childNodes[j]
-										.getAttribute("value")); // contains
-																	// allowed
-																	// values
-																	// for
-																	// enumerations
-																	// if
-																	// applicable
+					parameterNames.push(schemaData.documentElement.childNodes[i].getAttribute("name"));
+					parameterTypes.push(schemaData.documentElement.childNodes[i].getAttribute("type"));
+                    var allowedValues = schemaData.documentElement.childNodes[i].getElementsByTagName('allowedValue');
+					for ( var j = 0, m = allowedValues.length; j < m; j++) {
+                        // contains allowed values for enumerations if applicable
+						possibleValues.push(allowedValues[j].getAttribute("value"));
 					}
+                    var units = schemaData.documentElement.childNodes[i].getElementsByTagName('unit');
+                    possibleUnits.push(new Array());
+  					for ( var j = 0, m = units.length; j < m; j++) {
+                        // contains unit label
+     					possibleUnits[i].push(units[j].getAttribute("label"));
+                    }
 				}
+                this.propUnits = possibleUnits;
+                // if this property has units, it's a nummeric type
+                if (possibleUnits.length > 0 && !this.numTypes[parameterNames[0].toLowerCase()])
+                    this.numTypes[parameterNames[0].toLowerCase()] = true;
 			}
-			if (arity == 2) {
+            // remove additional rows, if these had been added before
+            // we got the information that this property is not of the type page
+            var rowCount= origRowCount = $('dialoguecontent').rows.length;
+            while (rowCount > 3 && propertyName.length > 0 &&
+                   $('dialoguecontent').rows[rowCount -3].cells[1].firstChild.value != propertyName) {
+                $('dialoguecontent').deleteRow(rowCount-2);
+                $('dialoguecontent').deleteRow(rowCount-3);
+                rowCount= $('dialoguecontent').rows.length;
+            }
+            if (rowCount < origRowCount) {
+                var img = document.createElement('img');
+                img.src = this.imgpath + 'delete.png';
+                img.alt = "deleteInput"
+                img.setAttribute('onclick',"qihelper.removePropertyChainInput()");
+                $('dialoguecontent').rows[rowCount - 3].cells[1].appendChild(img);
+            }
+            // property name with _ for auto completion
+            var propNameAC = gLanguage.getMessage('PROPERTY_NS')+propertyName.replace(/\s/g, '_');
+			if (this.proparity == 2) {
 				// Special treatment: binary properties support conjunction,
 				// therefore we need an "add" button
-				$('mainlabel').innerHTML = parameterNames[0];
-				var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
 				var ac_constraint = "";
 				if (parameterTypes[0] == '_wpg') {
-					ac_constraint = 'constraints="annotation-value: '+propertyName+'|namespace: 0"';
+					ac_constraint = 'constraints="annotation-value: '+propNameAC+'|namespace: 0"';
+                    // enable subquery and add chain link
+                    this.toggleSubqueryAddchain(true);
 				} else if (parameterTypes[0] == '_dat') {
-					ac_constraint = 'constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"';
+					ac_constraint = 'constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC+'"';
+                    this.toggleSubqueryAddchain(false);
     			} else {
-					ac_constraint = 'constraints="annotation-value: '+propertyName+'"';
+					ac_constraint = 'constraints="annotation-value: '+propNameAC+'"';
+                    this.toggleSubqueryAddchain(false);
 				}
-				$('dialoguecontent').rows[3].cells[2].innerHTML = '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input3"/>';
+                // set property type
+                this.propTypename = parameterNames[0];
+                $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
+                    gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + parameterNames[0];
+                // start to build HTML for restriction values
+				tmpHTML += '<tr><td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td><td>';
+
+                // add units to selection to show property chekbox if there are any
+                if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
+                    var uopts= '';
+                    for (var i = 0; i < possibleUnits[0].length; i++ ) {
+                        uopts += '<option>'+ possibleUnits[0][i] + '</option>';
+                    }
+                    $('input_c4').innerHTML = uopts;
+                    // runtime issue, check if we display hide values at once
+                    $('input_c4d').style.display = $('input_c1').checked ? 'inline' : 'none';
+                }
+                else {
+                    $('input_c4').innerHTML = "";
+                    $('input_c4d').style.display = 'none';
+                }
 				
 				// set restriction selector
 				if (this.numTypes[parameterNames[0].toLowerCase()]) {
-					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false, true);
+					tmpHTML += this.createRestrictionSelector("=", false, true);
 				} else
-					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false, false);
-								
-				// add property input button 
-				$('dialoguecontent').rows[3].cells[3].innerHTML = '<img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addDialogueInput()"/>';
+					tmpHTML += this.createRestrictionSelector("=", false, false);
+                // input field
+				tmpHTML +='</td><td>';
                 
-                // if binary property, make an 'insert subquery' checkbox
-				if (parameterTypes[0] == '_wpg') { 
-					$('dialoguecontent').rows[3].cells[4].innerHTML = '&nbsp;'
-							+ gLanguage.getMessage('QI_USE_SUBQUERY')
-							+ '<input type="checkbox" id="usesub" value="'
-							+ oldsubid
-							+ '" onclick="qihelper.useSub(this.checked)"/>';
-					$('dialoguecontent').rows[3].cells[4].className = "subquerycell";
-					$('usesub').checked = oldcheck;
-					this.activeInputs = 4;
-				} else { // no checkbox for other types
-					$('dialoguecontent').rows[3].cells[4].innerHTML = ""
-					$('dialoguecontent').rows[3].cells[4].className = "";
-					this.activeInputs = 4;
-				}
-				
-				// special input field for enums
+   				// special input field for enums
 				if (possibleValues.length > 0) { // enumeration
 					this.propIsEnum = true;
 					this.enumValues = new Array();
 					
-					var option = '<select id="input3">'; // create html for
-															// option box
-					option += '<option value="" style="width:100%">*</option>';
+					tmpHTML += '<select id="input_r1">' // create html for option box
+                        + '<option value="" style="width:100%">*</option>';
 					for ( var i = 0; i < possibleValues.length; i++) {
 						this.enumValues.push(possibleValues[i]); // save
 																	// enumeration
 																	// values
 																	// for later
 																	// use
-						option += '<option value="' + possibleValues[i]
+						tmpHTML += '<option value="' + possibleValues[i]
 								+ '" style="width:100%">' + possibleValues[i]
 								+ '</option>';
 					}
-					option += "</select>";
-					$('dialoguecontent').rows[3].cells[2].innerHTML = option;
-					
+					tmpHTML += "</select>";
+				}
+                else { // normal input field
+                    tmpHTML += '<input class="wickEnabled general-forms" '+ac_constraint+' autocomplete="OFF" type="text" id="input_r1"/>';
+                    if (possibleUnits.length > 0 && possibleUnits[0].length > 0) {
+                        tmpHTML += '<select id="input_ru1">';
+                        for (var i = 0, m = possibleUnits[0].length; i < m; i++)
+                            tmpHTML += '<option>' + possibleUnits[0][i] + '</option>';
+                        tmpHTML += '</select>';
+                    }
+                }
+
+				// add property input button 
+				tmpHTML += '</td><td><img src="' + this.imgpath + 'add.png" alt="addPropertyInput" onclick="qihelper.addRestrictionInput()"/></td></tr>';
+                
+                // if binary property, make an 'insert subquery' checkbox
+				if (parameterTypes[0] == '_wpg') {
+					$('dialoguecontent_pvalues').getElementsByTagName('input')[2].value = oldsubid;
+                    $('dialoguecontent_pvalues').getElementsByTagName('input')[2].disabled = '';
+				} else { // no checkbox for other types
+   					$('dialoguecontent_pvalues').getElementsByTagName('input')[2].disabled = 'true';
 				}
 			} else {
 				// properties with arity > 2: attributes or n-ary. no conjunction, no subqueries
-				this.activeInputs = 4;
-				$('dialoguecontent').rows[3].cells[3].innerHTML = "";
-				$('dialoguecontent').rows[3].cells[4].innerHTML = "";
-				$('dialoguecontent').rows[3].cells[4].className = "";
-				$('mainlabel').innerHTML = parameterNames[0];
-				if (this.numTypes[parameterNames[0].toLowerCase()]) {
-					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false, true);
-					
-				} else
-					$('restricionSelector').innerHTML = this
-							.createRestrictionSelector("=", false, false);
+                $('dialoguecontent_pvalues').getElementsByTagName('input')[2].disabled = 'true';
+                // set property type
+                $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML=
+                    gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + gLanguage.getMessage('QI_RECORD');
+                this.propTypename = gLanguage.getMessage('QI_RECORD');
+                this.toggleSubqueryAddchain(false);
 
-				for ( var i = 1; i < parameterNames.length; i++) {
-					var newrow = $('dialoguecontent').insertRow(-1);
-					var cell = newrow.insertCell(0);
-					cell.innerHTML = parameterNames[i]; // Label of cell is
-														// parameter name (ex.:
-														// Integer, Date,...)
-					cell = newrow.insertCell(1);
+                tmpHTML += '<tr><td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td></tr>';
+				for ( var i = 0; i < parameterNames.length; i++) {
+                    // Label of cell is parameter name (ex.: Integer, Date,...)
+                    tmpHTML += '<tr><td style="text-align:right">' +  parameterNames[i] + '</td><td style="text-align:right">';
 					if (this.numTypes[parameterNames[i].toLowerCase()])
-						cell.innerHTML = this.createRestrictionSelector("=",
-								false, true);
+						tmpHTML += this.createRestrictionSelector("=", false, true);
 					else
-						cell.innerHTML = this.createRestrictionSelector("=",
-								false, false);
-
-					cell = newrow.insertCell(2);
-					var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+						tmpHTML += this.createRestrictionSelector("=", false, false);
+                    tmpHTML += '</td><td>';
 					if (parameterTypes[i] == '_wpg') {
-                    	cell.innerHTML = '<input class="wickEnabled general-forms" constraints="annotation-value: '+propertyName+'|namespace: 0" autocomplete="OFF" type="text" id="input' + this.activeInputs + '"/>';
+                    	tmpHTML += '<input class="wickEnabled general-forms" constraints="annotation-value: '+propNameAC+'|namespace: 0" autocomplete="OFF" type="text" id="input_r' + (i + 1) + '"/>';
 					} else if (parameterTypes[i] == '_dat') {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propertyName+'"/>';
+						tmpHTML += '<input type="text" id="input_r' + (i + 1) + '" constraints="fixvalues: {{NOW}},{{TODAY}}|annotation-value: '+propNameAC+'"/>';
 					} else {
-						cell.innerHTML = '<input type="text" id="input' + this.activeInputs + '" constraints="annotation-value: '+propertyName+'"/>';
+						tmpHTML += '<input type="text" id="input_r' + (i + 1) + '" constraints="annotation-value: '+propNameAC+'"/>';
+                        if (possibleUnits.length > 0 && possibleUnits[i].length > 0) {
+                            tmpHTML += '<select id="input_ru' + (i + 1) +'">';
+                            for (var j = 0, m = possibleUnits[i].length; j < m; j++)
+                                tmpHTML += '<option>' + possibleUnits[i][j] + '</option>';
+                            tmpHTML += '</select>';
+                        }
 					}
-					this.activeInputs++;
+                    tmpHTML += "</td></tr>";
 				}
 			}
+            // if specific value for property restriction is not active, hide the content
+            if (! $('dialoguecontent_pvalues').getElementsByTagName('input')[1].checked) {
+                $('dialoguecontent_pvalues_hidden').innerHTML = tmpHTML;
+            }
+            else {
+                tmpHTML = '<tr>' + $('dialoguecontent_pvalues').rows[0].innerHTML + '</tr>'
+                    + '<tr>' + $('dialoguecontent_pvalues').rows[1].innerHTML + '</tr>'
+                    + tmpHTML;
+                $('dialoguecontent_pvalues').innerHTML = tmpHTML;
+                // setting of radio button gets lost, set it again
+                if (this.oldPropertyRestriction == null) this.oldPropertyRestriction = -1;
+                if (this.oldPropertyRestriction == -1)
+                    $('dialoguecontent_pvalues').getElementsByTagName('input')[0].checked = true;
+                else if (this.oldPropertyRestriction == -2)
+                    $('dialoguecontent_pvalues').getElementsByTagName('input')[1].checked = true;
+                else
+                    $('dialoguecontent_pvalues').getElementsByTagName('input')[2].checked = true;
+            }
 		}
 		autoCompleter.registerAllInputs();
-		this.pendingElement.hide();
+		//this.pendingElement.hide();
 	},
+
+    /**
+     * depending on the property type, another property can be added to a chain and
+     * a subquery can be used for that property. This is only possible if the
+     * current property is of the type page. Hence we must toggle:
+     * - the link to add another property to a chain
+     * - select the option subquery in the radio button
+     */
+    toggleSubqueryAddchain : function(op) {
+        this.toggleSubquery(op);
+        this.toggleAddchain(op);
+    },
+
+    /**
+     * toggles the subquery radio button
+     */
+    toggleSubquery : function (op) {
+        if (op) {
+            try {
+                $('usesub').className = "";
+                document.getElementsByName('input_r0')[2].disabled = "";
+            } catch (e) {};
+        }
+        else {
+            try {
+                $('usesub').className = "qiDisabled";
+                document.getElementsByName('input_r0')[2].checked = false;
+                document.getElementsByName('input_r0')[2].disabled = true;
+            } catch (e) {};
+        }
+    },
+
+    /**
+     * toggles the add chain link
+     */
+    toggleAddchain : function(op) {
+        if (!$('addchain')) return;
+        if (op) {
+            $('addchain').innerHTML =
+                '<a href="javascript:void(0)" onclick="qihelper.addPropertyChainInput()">'
+                + gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN') + '</a>';
+        }
+        else {
+            $('addchain').innerHTML =
+                '<span class="qiDisabled">'
+                + gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN') + '</span>';
+        }
+    },
+
+    toggleShowProperty : function() {
+        if ($('input_c1').checked) {
+            $('input_c3d').style.display = 'inline';
+            if ($('input_c4').getElementsByTagName('option').length > 0)
+                $('input_c4d').style.display = 'inline';
+        } else {
+            $('input_c3d').style.display = 'none';
+            $('input_c4d').style.display = 'none'
+        }
+    },
 
 	/**
 	 * Loads values of an existing category group. This happens if a users
@@ -1174,165 +1427,130 @@ QIHelper.prototype = {
 		var prop = this.activeQuery.getPropertyGroup(id);
 		var vals = prop.getValues();
 		this.proparity = prop.getArity();
+        var selector = prop.getSelector();
+        this.propUnits = prop.getUnits();
 
-		$('input0').value = unescapeQueryHTML(prop.getName()); // fill input
-																// filed with
-																// name
-		$('input1').checked = prop.isShown(); // check box if appropriate
-		$('input2').checked = prop.mustBeSet();
-		$('mainlabel').innerHTML = (vals[0][0] == "subquery" ? gLanguage
-				.getMessage('QI_PAGE') : vals[0][0]); // subquery means type
-														// is page
+		var propChain = unescapeQueryHTML(prop.getName()).split('.'); // fill input
+                                                                    // filed with
+                                                                    // name
+        $('input_p0').value=propChain[0];
+        for (var i = 1, n = propChain.length; i < n; i++)
+            this.addPropertyChainInput(propChain[i]);
+        this.propname = propChain[propChain.length - 1];
+        // check box value must be set
+        $('input_c2').checked = prop.mustBeSet();
 
-		if ($('mainlabel').innerHTML != gLanguage.getMessage('QI_PAGE')) { // remove
-																			// subquery
-																			// box
-			$('dialoguecontent').rows[3].cells[4].innerHTML = ""; // remove
-																	// subquery
-																	// checkbox
-																	// since no
-																	// subqueries
-																	// are
-																	// possible
-			$('dialoguecontent').rows[3].cells[4].className = ""; // remove
-																	// the
-																	// seperator
-		}
+        // set correct property type under last property input
+        var typeRow = $('dialoguecontent').rows.length-2;
+        if (this.proparity > 2) {
+            $('dialoguecontent').rows[typeRow].cells[1].innerHTML =
+                gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' +
+                gLanguage.getMessage('QI_RECORD') ;
+            this.toggleSubquery(false);
+        } else {
+            // get type of property, if it's a subquery then type is page
+            this.propTypename = (selector >= 0) ? gLanguage.getMessage('QI_PAGE') : vals[0][0];
+            $('dialoguecontent').rows[typeRow].cells[1].innerHTML =
+                    gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ' + this.propTypename;
+            if (this.propTypename != gLanguage.getMessage('QI_PAGE'))
+                this.toggleSubquery(false);
+        }
 
-		var disabled = true;
-		if (this.numTypes[vals[0][0].toLowerCase()]) { // is it a numeric type?
-			disabled = false;
-
-			$('dialoguecontent').rows[3].cells[1].innerHTML = this
-					.createRestrictionSelector(vals[0][1], disabled, true);
-			autoCompleter.deregisterAllInputs();
-			$('dialoguecontent').rows[3].cells[2].firstChild.className = ""; // deactivate
-																				// autocompletion
-			autoCompleter.registerAllInputs();
-		}
-		if (vals[0][0] == "subquery") { // grey out input field and check
-										// checkbox
-			this.useSub(true);
-			$('usesub').checked = true;
-			$('usesub').value = vals[0][2];
-		} else {
-			if (!prop.isEnumeration())
-				$('input3').value = unescapeQueryHTML(vals[0][2]); // enter the
-																	// value
-																	// into the
-																	// input box
-			else { // create option box for enumeration
-				this.propIsEnum = true;
-				var tmphtml = '<select id="input3">';
-				this.enumValues = prop.getEnumValues();
-				// create the options; check which one was selected and add the
-				// 'selected' param then
-				tmphtml += '<option style="width:100%" value="">*</option>'; // empty
-																				// value
-																				// first
-				for ( var i = 0; i < this.enumValues.length; i++) {
-					tmphtml += '<option style="width:100%" value="'
-							+ unescapeQueryHTML(this.enumValues[i])
-							+ '" '
-							+ (this.enumValues[i] == vals[0][2] ? 'selected="selected"'
-									: '') + '>' + this.enumValues[i]
-							+ '</option>';
-				}
-				tmphtml += '</select>';
-				$('dialoguecontent').rows[3].cells[2].innerHTML = tmphtml;
-			}
-		}
-		if (prop.getArity() == 2) { // simply add further inputs if there are
-									// any
-			if (!prop.isEnumeration()) {
-				for ( var i = 1; i < vals.length; i++) {
-					this.addDialogueInput();
-					$('input' + (i + 3)).value = unescapeQueryHTML(vals[i][2]);
-					$('dialoguecontent').rows[i + 3].cells[1].innerHTML = this
-							.createRestrictionSelector(vals[i][1], disabled, true);
-				}
-			} else { // enumeration
-				this.propIsEnum = true;
-				this.enumValues = prop.getEnumValues();
-				for ( var i = 1; i < vals.length; i++) {
-					this.addDialogueInput();
-					var tmphtml = '<select id="input' + (i + 3) + '">';
-					// create the options; check which one was selected and add
-					// the 'selected' param then
-					for ( var j = 0; j < this.enumValues.length; j++) {
-						tmphtml += '<option style="width:100%" value="'
-								+ unescapeQueryHTML(this.enumValues[j])
-								+ '" '
-								+ (this.enumValues[j] == vals[i][2] ? 'selected="selected"'
-										: '') + '>'
-								+ unescapeQueryHTML(this.enumValues[j])
-								+ '</option>';
-					}
-					tmphtml += '</select>';
-					$('dialoguecontent').rows[i + 3].cells[2].innerHTML = tmphtml;
-					$('dialoguecontent').rows[i + 3].cells[1].innerHTML = this
-							.createRestrictionSelector(vals[i][1], disabled, false);
-				}
-			}
-		} else { // property with arity > 2
-			autoCompleter.deregisterAllInputs();
-			$('dialoguecontent').rows[3].cells[3].innerHTML = ""; // remove
-																	// plus icon
-																	// since no
-																	// conjunction
-																	// is
-																	// possible
-			$('dialoguecontent').rows[3].cells[4].innerHTML = ""; // remove
-																	// subquery
-																	// checkbox
-																	// since no
-																	// subqueries
-																	// are
-																	// possible
-			$('dialoguecontent').rows[3].cells[4].className = ""; // remove
-																	// the
-																	// seperator
-			for ( var i = 1; i < vals.length; i++) {
-				var row = $('dialoguecontent').insertRow(-1);
-				var cell = row.insertCell(0);
-				cell.innerHTML = vals[i][0]; // parameter name
-
-				cell = row.insertCell(1); // restriction selector
-				if (this.numTypes[vals[i][0].toLowerCase()])
-					cell.innerHTML = this.createRestrictionSelector(vals[i][1],
-							false, true);
-				else
-					cell.innerHTML = this.createRestrictionSelector(vals[i][1],
-							false, false);
-
-				cell = row.insertCell(2); // input field
-				if (vals[i][0] == gLanguage.getMessage('QI_PAGE')) // autocompletion
-																	// needed?
-					cell.innerHTML = '<input type="text" class="wickEnabled general-forms" constraints="namespace: 0" autocomplete="OFF" id="input'
-							+ (i + 3)
-							+ '" value="'
-							+ unescapeQueryHTML(vals[i][2]) + '"/>';
-				else
-					cell.innerHTML = '<input type="text" id="input' + (i + 3)
-							+ '" value="' + unescapeQueryHTML(vals[i][2])
-							+ '"/>';
-			}
-			autoCompleter.registerAllInputs();
-		}
+        // if we have a subquery set the selector correct and we are done
+        if (selector >= 0) {
+            document.getElementsByName('input_c1').disabled = "disabled";
+            document.getElementsByName('input_r0')[2].checked = true;
+            document.getElementsByName('input_r0')[2].value = selector;
+            this.toggleAddchain(false);
+        }
+        else {
+            if (this.activeQueryId == 0) {
+                $('input_c1').checked = prop.isShown(); // check box if appropriate
+                $('input_c3').value = prop.getColName();
+                $('input_c3d').style.display= prop.isShown() ? 'inline' : 'none';
+                if (prop.supportsUnits() && this.proparity == 2) {
+                    $('input_c4').value = prop.getShowUnit();
+                    var options = "";
+                    for (var i = 0; i < this.propUnits[0].length; i++) {
+                        options += '<option';
+                        if (prop.getShowUnit() == this.propUnits[0][i])
+                            options += ' selected="selected"';
+                        options += '>' + this.propUnits[0][i] + '</option>';
+                    }
+                    $('input_c4').innerHTML=options;
+                    $('input_c4d').style.display= prop.isShown() ? 'inline' : 'none';
+                }
+            } else {
+                $('input_c1').disabled = "disabled";
+            }
+            // some property values have been selected to restict the result set
+            // set radio button and fill the input fiels with the selected values
+            if (selector == -2) {
+                document.getElementsByName('input_r0')[1].checked = true;
+                if (prop.isEnumeration()) {
+                    this.propIsEnum = true;
+                    this.enumValues = prop.getEnumValues();
+                }
+                var acChange=false;
+                var rowOffset = 2;
+                // if arity > 2 then add the first row under the radio buttons without input field
+                if (this.proparity > 2) {
+                    var newrow = $('dialoguecontent_pvalues').insertRow(-1);
+                    newrow.innerHTML = '<td>' + gLanguage.getMessage('QI_PROPERTYVALUE') + '</td>';
+                    rowOffset++;
+                }
+                for (var i = 0, n = vals.length; i < n; i++) {
+                    this.addRestrictionInput();
+                    var disabled = true;
+                    var currRow = i + rowOffset;
+                    if (this.numTypes[vals[0][0].toLowerCase()]) { // is it a numeric type?
+                        disabled = false;
+                        $('dialoguecontent_pvalues').rows[currRow].cells[1].innerHTML = this
+                            .createRestrictionSelector(vals[i][1], disabled, true);
+                        // deactivate autocompletion
+                        if (!acChange)
+                            autoCompleter.deregisterAllInputs();
+                        acChange = true;
+                        $('dialoguecontent_pvalues').rows[currRow].cells[2].firstChild.className = "";
+                    }
+                    // add unit selection, do this for all properties, even in subqueries
+                    var propUnits = prop.getUnits();
+                    var uIdx = (this.proparity == 2) ? 0 : i;
+                    if (propUnits && propUnits[uIdx].length > 0) {
+                        var tmpHTML = '';
+                        for (var k = 0, m = propUnits[uIdx].length; k < m; k++) {
+                            tmpHTML += '<option';
+                            if (propUnits[uIdx][k] == vals[i][3])
+                                tmpHTML += ' selected="selected"';
+                            tmpHTML += '>'+ propUnits[uIdx][k] + '</option>';
+                        }
+                        $('dialoguecontent_pvalues').rows[currRow].cells[2]
+                            .firstChild.nextSibling.innerHTML = tmpHTML;
+                    }
+                    if (this.proparity > 2) {
+                        $('dialoguecontent_pvalues').rows[currRow].cells[0].innerHTML= vals[i][0];
+                        $('dialoguecontent_pvalues').rows[currRow].cells[0].style.fontWeight="normal";
+                    }
+                    $('input_r'+(i+1)).value = vals[i][2];
+                }
+                if (acChange) autoCompleter.registerAllInputs();
+            }
+        }
 		$('qidelete').style.display = "";
 		
 		if (!prop.isEnumeration()) this.restoreAutocompletionConstraints();
 	},
 	
 	 restoreAutocompletionConstraints : function() {
-        var propname = $('input0').value;
-        if (propname != "" && propname != this.propname) { // only if not empty
+         var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+         var propname = $('input_p'+idx).value;
+         if (propname != "" && propname != this.propname) { // only if not empty
                                                             // and name changed
             this.propname = propname;
             if (this.pendingElement)
                 this.pendingElement.remove();
-            this.pendingElement = new OBPendingIndicator($('input3'));
-            this.pendingElement.show();
+            //this.pendingElement = new OBPendingIndicator($('input_r0'));
+            //this.pendingElement.show();
             sajax_do_call('smwf_qi_QIAccess', [ "getPropertyInformation",
                     escapeQueryHTML(propname) ], this.restoreAutocompletionConstraintsCallback
                     .bind(this));
@@ -1359,17 +1577,13 @@ QIHelper.prototype = {
                     parameterTypes
                             .push(schemaData.documentElement.childNodes[i]
                                     .getAttribute("type"));             
-                    for ( var j = 0, m = schemaData.documentElement.childNodes[i].childNodes.length; j < m; j++) {
-                        possibleValues
-                                .push(schemaData.documentElement.childNodes[i].childNodes[j]
-                                        .getAttribute("value")); 
-                    }
                 }
                 
 	                // Special treatment: binary properties support conjunction,
 	                // therefore we need an "add" button
-	                
-	                var propertyName = gLanguage.getMessage('PROPERTY_NS')+$('input0').value.replace(/\s/g, '_');
+	                var idx = ($('dialoguecontent').rows.length -1) / 2 - 1;
+                    var propertyName = $('input_p'+idx).value;
+	                propertyName = gLanguage.getMessage('PROPERTY_NS')+propertyName.replace(/\s/g, '_');
 	                var ac_constraint = "";
 	                if (parameterTypes[0] == '_wpg') {
 	                    ac_constraint = 'annotation-value: '+propertyName+'|namespace: 0';
@@ -1378,17 +1592,17 @@ QIHelper.prototype = {
 	                } else {
 	                    ac_constraint = 'annotation-value: '+propertyName;
 	                }
-	                var i = 3;
-	                while($('input'+i) != null) {
-	                	$('input'+i).addClassName("wickEnabled");
-	                	$('input'+i).setAttribute("constraints", ac_constraint);
+	                var i = 1;
+	                while($('input_r'+i) != null) {
+	                	$('input_r'+i).addClassName("wickEnabled");
+	                	$('input_r'+i).setAttribute("constraints", ac_constraint);
 	                	i++;
 	                }
                 
             }
     
     	autoCompleter.registerAllInputs();
-    	this.pendingElement.hide();
+    	//this.pendingElement.hide();
     },
 
 	/**
@@ -1499,26 +1713,18 @@ QIHelper.prototype = {
 		
 		return html + "</select>";
 	},
-	
-	
 
-	/**
-	 * Activate or deactivate input if subquery checkbox is checked
-	 * 
-	 * @param checked
-	 *            did user check or uncheck?
-	 */
-	useSub : function(checked) {
-		if (checked) {
-			$('input3').value = "";
-			$('input3').disabled = true;
-			$('input3').style.background = "#DDDDDD";
-		} else {
-			$('input3').disabled = false;
-			$('input3').style.background = "#FFFFFF";
-		}
-	},
-
+    /**
+     * get the value of the selector whether to define a property value
+     * or add a subquery to the property
+     */
+    getPropertyValueSelector : function() {
+        var radio = document.getElementsByName('input_r0');
+        if (radio.length == 0) return;
+        for (var i = 0; i < radio.length; i++)
+            if (radio[i].checked) return parseInt(radio[i].value);
+    },
+	
 	/**
 	 * Adds a new Category/Instance/Property Group to the query
 	 */
@@ -1597,52 +1803,40 @@ QIHelper.prototype = {
 	 * Reads the input fields of a property dialogue and adds them to the query
 	 */
 	addPropertyGroup : function() {
-		var pname = $('input0').value;
+		var pname='';
+        var propInputFields = $('dialoguecontent').getElementsByTagName('input');
+        for (var i = 0, n = propInputFields.length; i < n; i++) {
+            pname += propInputFields[i].value + '.';
+        }
+        pname = pname.replace(/\.$/,'');
 		var subqueryIds = Array();
 		if (pname == "") { // no name entered?
 			$('qistatus').innerHTML = gLanguage
 					.getMessage('QI_ENTER_PROPERTY_NAME');
 		} else {
-			var pshow = $('input1').checked; // show in results?
-			var pmust = $('input2').checked;
+			var pshow = $('input_c1').checked; // show in results?
+            // when show in results is checked, add label and unit if they exist
+            var colName = (pshow) ? $('input_c3').value : null;
+            var showUnit = (pshow) ? $('input_c4').value : null;
+			var pmust = $('input_c2').checked; // value must be set?
 			var arity = this.proparity;
+            var selector = this.getPropertyValueSelector();
+            // create propertyGroup
 			var pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
-					pshow, pmust, this.propIsEnum, this.enumValues); // create
-																		// propertyGroup
-			var allValueRows = $('dialoguecontent').rows.length;
-			var cHtmlRow = 3;
-			for ( var i = 3; i < allValueRows; i++) {
-				// for a property several values were selected but if in the
-				// list a value
-				// in the middle has been deleted, the inputX doesn't exist
-				// anymore, so skip this one and
-				// continue with the next one. For example if the 3rd value was
-				// deleted (input5) then:
-				// variable i contains the logical value i.e. input3 = 3, input4
-				// = 4, input6 = 6
-				// variable cHtmlRow is the current html row, i.e. input3 = 3,
-				// input4 = 4, input6 = 5
-				try {
-					var paramvalue = $('input' + i).value;
-				} catch (e) {
-					allValueRows++;
-					continue;
-				}
-				paramvalue = paramvalue == "" ? "*" : paramvalue; // no value
-																	// is
-																	// replaced
-																	// by "*"
-																	// which
-																	// means all
-																	// values
-				var paramname = $('dialoguecontent').rows[cHtmlRow].cells[0].innerHTML;
-				if (paramname == gLanguage.getMessage('QI_PAGE') && arity == 2
-						&& $('usesub').checked) { // Subquery?
-					paramname = "subquery";
-					var cSubQueryId = parseInt($('usesub').value);
-					if (cSubQueryId < this.nextQueryId) // Subquery does exists
+					pshow, pmust, this.propIsEnum, this.enumValues, selector, showUnit, colName);
+            pgroup.setUnits(this.propUnits);
+			var allValueRows = $('dialoguecontent_pvalues').rows.length;
+            // there is no value restriction
+            if (selector != -2) {
+                var paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
+                paramname = paramname.replace(gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ', '');
+                // no subquery, so add a dumy value
+                if (selector == -1)
+                    pgroup.addValue(paramname, '=', '*');
+                else {
+					if (selector < this.nextQueryId) // Subquery does exists
 														// already
-						paramvalue = cSubQueryId;
+						paramvalue = selector;
 					else { // Sub Query does not yet exist
 						paramvalue = this.nextQueryId;
 						subqueryIds.push(this.nextQueryId);
@@ -1654,15 +1848,44 @@ QIHelper.prototype = {
 								+ pname + "'";
 						smwhgLogger.log(logstr, "QI", "query_subquery_added");
 					}
-					/* ENDLOG */
-				}
-
-				var restriction = $('dialoguecontent').rows[cHtmlRow].cells[1].firstChild.value;
-				pgroup.addValue(paramname, restriction,
-						escapeQueryHTML(paramvalue)); // add a value group to
-														// the property group
-				cHtmlRow++;
+                    /* ENDLOG */
+                    pgroup.addValue('subquery', '=', paramvalue);
+                }
+            } else {
+			for ( var i = 2; i < allValueRows; i++) {
+				// for a property several values were selected but if in the
+				// list a value
+				// in the middle has been deleted, the inputX doesn't exist
+				// anymore, so skip this one and
+				// continue with the next one. For example if the 3rd value was
+				// deleted (input5) then:
+				// variable i contains the logical value i.e. input3 = 3, input4
+				// = 4, input6 = 6
+				// variable cHtmlRow is the current html row, i.e. input3 = 3,
+				// input4 = 4, input6 = 5
+				try {
+                    // works on normal input fiels as well as on selection lists
+					var paramvalue = $('dialoguecontent_pvalues').rows[i].cells[2].firstChild.value;
+                } catch (e) {continue;}
+                // no value is replaced by "*" which means all values
+				paramvalue = paramvalue == "" ? "*" : paramvalue; 
+				var paramname;
+                if (arity == 2) {
+                    paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
+                    paramname = paramname.replace(gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ', '');
+                }
+                else {
+                    paramname = $('dialoguecontent_pvalues').rows[i].cells[0].innerHTML;
+                }
+				var restriction = $('dialoguecontent_pvalues').rows[i].cells[1].firstChild.value;
+                var unit = null;
+                try {
+                    unit = $('dialoguecontent_pvalues').rows[i].cells[2].firstChild.nextSibling.value;
+                } catch (e) {};
+                // add a value group to the property group
+				pgroup.addValue(paramname, restriction, escapeQueryHTML(paramvalue), unit);
 			}
+            }
 			/* STARTLOG */
 			if (window.smwhgLogger) {
 				var logstr = "Add property " + pname + " to query";
@@ -1688,7 +1911,7 @@ QIHelper.prototype = {
         for (var i = 1; i < 4; i++) {
             if (id == i) {
                 $('qiDefTab' + i).className='qiDefTabActive';
-                $(divcontainer[i-1]).style.display='';
+                $(divcontainer[i-1]).style.display='inline';
             } else {
                 $('qiDefTab' + i).className='qiDefTabInactive';
                 $(divcontainer[i-1]).style.display='none';
@@ -1939,7 +2162,8 @@ QIHelper.prototype = {
 			if (props[i].match(/^\s*\?/)) {
 				var pname = props[i].substring(props[i].indexOf('?') + 1,
 						props[i].length);
-				pname = escapeQueryHTML(pname.replace(/\s*$/));
+                pname = pname.replace(/^([^#|=]*).*/, "$1");
+				pname = escapeQueryHTML(pname.replace(/\s*$/,''));
 				if (!propertiesInQuery.inArray(pname))
 					propertiesInQuery.push(pname);
 			}
@@ -1964,25 +2188,48 @@ QIHelper.prototype = {
 				var arity = parseInt(prop.item(i).getAttribute('arity'));
 				var ptype = prop.item(i).getElementsByTagName('param')[0]
 						.getAttribute('name');
-				var noval = prop.item(i).getElementsByTagName('allowedValue');
-				var isEnum = noval.length > 0 ? true : false;
-				var enumValues = [];
-				for ( var j = 0; j < noval.length; j++) {
-					enumValues.push(noval.item(j).getAttribute('value'));
-				}
+                var noval = new Array();
+                var enumValues = [];
+                var unitVals = new Array();
+                if (arity == 2) {
+    				noval = prop.item(i).getElementsByTagName('allowedValue');
+                	for ( var j = 0; j < noval.length; j++) {
+                    	enumValues.push(noval.item(j).getAttribute('value'));
+                    }
+                    // fill the units array
+                    var units = prop.item(i).getElementsByTagName('unit');
+                    var uvals = new Array();
+                    for ( var j = 0; j < units.length; j++) {
+                        uvals.push(units.item(j).getAttribute('label'));
+                    }
+                    if (uvals.length > 0) {
+                        unitVals.push(uvals);
+                        if (!this.numTypes[pname.toLowerCase()])
+                            this.numTypes[pname.toLowerCase()]= true;
+                    }
+                }
+                var isEnum = noval.length > 0 ? true : false;
 				var pgroup = new PropertyGroup(pname, arity, false, false,
 						isEnum, enumValues);
                 // Nary property
                 if (arity > 2) {
                     var naryParams = prop.item(i).getElementsByTagName('param');
                     for (k = 0; k < naryParams.length; k++) {
+                        // enumerations
                         var enumValNodes = naryParams.item(k).getElementsByTagName('allowedValue');
                         var enumVals = [];
                         for (m = 0; m < enumValNodes.length; m++ )
                             enumVals[m] = enumValNodes.item(m).getAttribute('value');
                         pgroup.addValue(naryParams.item(k).getAttribute('name'), null, enumVals);
+                        // units
+                        var units = naryParams.item(k).getElementsByTagName('unit');
+                        var uvals = new Array();
+                        for ( var m = 0; m < units.length; m++)
+                            uvals.push(units.item(m).getAttribute('label'));
+                        unitVals.push(uvals);
                     }
                 }
+                pgroup.setUnits(unitVals);
 				this.propertyTypesList.add(pname, pgroup, [], ptype);
 			}
 		}
@@ -2045,20 +2292,34 @@ handleQueryString : function(args, queryId, pMustShow) {
 				var propdef = this.propertyTypesList.getPgroup(pname);
 				// show in results? if queryId == 0 then this is the main query
 				// and we check the params
-				var pshow = (queryId == 0) ? pMustShow.inArray(pname) : false;
+				var pshow = false;
+                var unit = null;
+                var column = null;
+                // in main query, check if property is on the list of props to show
+                if (queryId == 0) {
+                    for (var j = 0; j < pMustShow.length; j++) {
+                        if (pMustShow[j][0] == pname) {
+                            pshow = true;
+                            unit = pMustShow[j][1];
+                            column = pMustShow[j][2];
+                            break;
+                        }
+                    }
+                }
 				// must be set?
 				var pmust = args.inArray(pname + '::+');
 				var arity = propdef ? propdef.getArity() : 2;
 				var isEnum = propdef ? propdef.isEnumeration() : false;
 				var enumValues = propdef ? propdef.getEnumValues() : [];
+                // create propertyGroup
 				pgroup = new PropertyGroup(escapeQueryHTML(pname), arity,
-						pshow, pmust, isEnum, enumValues); // create
-										   // propertyGroup
+						pshow, pmust, isEnum, enumValues, null, unit, column);
                 if (arity > 2) {
                     var naryVals = propdef.getValues();
                     for (e = 0; e < naryVals.length; e++)
                         pgroup.addValue(naryVals[e][0], naryVals[e][1], naryVals[e][2]);
                 }
+                pgroup.setUnits(propdef.getUnits());
 			}
 			var subqueryIds = propList.getSubqueryIds(pname);
 			var paramname = this.propertyTypesList && this.propertyTypesList.getType(pname)
@@ -2075,6 +2336,8 @@ handleQueryString : function(args, queryId, pMustShow) {
 				subqueryIds.push(paramvalue);
                 // add a value group to the property group
 				pgroup.addValue(paramname, restriction, paramvalue);
+                // set the selector to subquery id
+                pgroup.setSelector(paramvalue);
 			} else { // no subquery contained, proceed normaly
 
                 // if the value is + then the property is a "must have a value"
@@ -2090,9 +2353,11 @@ handleQueryString : function(args, queryId, pMustShow) {
                     }
                 }
                 if (skipMustShow) continue;
+                // set selector to special value choosen for property
+                pgroup.setSelector(-2);
                 // special handling for nary properties
                 if (pgroup.getArity() > 2) {
-                    var vals = pval.split(/;/);
+                    var vals = pval.split(/\s*;\s*/);
                     var valsDef = pgroup.getValues();
                     pgroup.setValues();
                     for (j = 0; j < vals.length; j++) {
@@ -2108,10 +2373,20 @@ handleQueryString : function(args, queryId, pMustShow) {
                             paramvalue = vals[j];
                             restriction = '=';
                         }
+                        // check for a unit
+                        var paramunit = null;
+                        if (this.propertyTypesList.supportsUnits(pname)) {
+                            op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
+                            if (op) {
+                                paramvalue = op[1];
+                                paramunit = op[3].replace(/^\s+|\s+$/g, '');
+                            }
+                        }
+                        // add a value group to the property group
                         pgroup.addValue(
                             valsDef.length > j ? valsDef[j][0] : gLanguage.getMessage('QI_PAGE'),
                             restriction,
-                            escapeQueryHTML(paramvalue)
+                            escapeQueryHTML(paramvalue), escapeQueryHTML(paramunit)
                         );
                     }
                 }
@@ -2134,9 +2409,18 @@ handleQueryString : function(args, queryId, pMustShow) {
                         if (paramvalue == "" || paramvalue == '+') paramvalue = "*";
                         // if j > 0 conjunction: page/type = val1 'or' valX
                         if (j > 0) paramname = gLanguage.getMessage('QI_OR');
+                        // check for a unit
+                        var paramunit = null;
+                        if (this.propertyTypesList.supportsUnits(pname)) {
+                            op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
+                            if (op) {
+                                paramvalue = op[1];
+                                paramunit = op[3].replace(/^\s+|\s+$/g, '');
+                            }
+                        }
                         // add a value group to the property group
                         pgroup.addValue(paramname, restriction,
-                            	escapeQueryHTML(paramvalue));
+                            	escapeQueryHTML(paramvalue), escapeQueryHTML(paramunit));
                     }
                 }
 			}
@@ -2150,11 +2434,26 @@ handleQueryString : function(args, queryId, pMustShow) {
 	// properties included
 	if (queryId == 0) { // do this only for the main query, subqueries have no printouts
 		for ( var i = 0; i < pMustShow.length; i++) { // loop over all properties to show
-			if (propList.getPgroup(pMustShow[i]) == null) { // property does not exist yet
-				var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i]),
-						2, true, false); // create propertyGroup
-				pgroup.addValue(gLanguage.getMessage('QI_PAGE'), '=', '*'); // add default values
-				propList.add(pMustShow[i], pgroup, []); // add current property to property list
+			if (propList.getPgroup(pMustShow[i][0]) == null) { // property does not exist yet
+                // create property grou with default values
+                var pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
+						2, true, false, null, null, -1,
+                        pMustShow[i][1], pMustShow[i][2]);
+                var defPgroup = this.propertyTypesList.getPgroup(pMustShow[i][0]);
+                var ptype = gLanguage.getMessage('QI_PAGE');
+                // use the definition, like enum values and arity from the ajax
+                // call when querying the property types
+                if (defPgroup) {
+                    ptype = this.propertyTypesList.getType(pMustShow[i][0]);
+                    pgroup = new PropertyGroup(escapeQueryHTML(pMustShow[i][0]),
+                        defPgroup.getArity(), true, false,
+                        defPgroup.isEnumeration(), defPgroup.getEnumValues(), -1,
+                        pMustShow[i][1], pMustShow[i][2]);
+                    pgroup.setUnits(defPgroup.getUnits);
+                }
+				pgroup.addValue(ptype, '=', '*'); // add default values
+                // add current property to property list
+				propList.add(pMustShow[i][0], pgroup, [], ptype);
 			}
 		}
 	}
@@ -2172,17 +2471,26 @@ handleQueryString : function(args, queryId, pMustShow) {
 
 },
 
+/**
+ * Check the main query and all options for properties that must be shown in
+ * the result. The returned array contains triples of properties with
+ * array(propname, unit, column text)
+ */
 applyOptionParams : function(query) {
 	var options = query.split('|');
 	// parameters to show
-        var mustShow = [];
+    var mustShow = [];
 	// get printout format of query
 	var format = "table"; // default format
 	for ( var i = 1; i < options.length; i++) {
             // check for additionl printouts like |?myProp
-            var m = options[i].match(/^\s*\?(.*?)\s*$/);
+            var m = options[i].match(/^\s*\?/)
             if (m) {
-                mustShow.push(m[1]);
+                m = options[i].replace(/\n/g,'').match(/^([^#|=]*)(#[^=]*)?(=.*?)?$/);
+                var pname = m[1].replace(/^\s*\?/, '').replace(/\s*$/,'');
+                var punit = (m[2]) ? m[2].replace(/#/,'').replace(/\s*$/,'') : null;
+                var col = (m[3]) ? m[3].replace(/=\s*/,'').replace(/\s*$/,'') : null;
+                mustShow.push([pname, punit, col]);
                 continue;
             }
             // check for key value pairs like format=table
@@ -2294,18 +2602,22 @@ splitQueryParts : function(ask) {
 var PropertyGroup = Class.create();
 PropertyGroup.prototype = {
 
-	initialize : function(name, arity, show, must, isEnum, enumValues) {
+	initialize : function(name, arity, show, must, isEnum, enumValues, selector, showUnit, colName) {
 		this.name = name;
 		this.arity = arity;
 		this.show = show;
 		this.must = must;
 		this.isEnum = isEnum;
 		this.enumValues = enumValues;
-		this.values = Array(); // paramName, retriction, paramValue
+        this.selector = selector;
+        this.showUnit = showUnit;
+        this.colName = colName;
+		this.values = Array(); // paramName, retriction, paramValue, unitOfvalue
+        this.units = Array();
 },
 
-addValue : function(name, restriction, value) {
-	this.values[this.values.length] = new Array(name, restriction, value);
+addValue : function(name, restriction, value, unit) {
+	this.values[this.values.length] = new Array(name, restriction, value, unit);
 },
 
 getName : function() {
@@ -2332,12 +2644,35 @@ setValues : function(vals) {
     this.values = (!vals) ? new Array() : vals;
 },
 
+setUnits : function(vals) {
+    this.units = (!vals) ? new Array() : vals;
+},
+setSelector : function(val) {
+    this.selector = val;
+},
+
+supportsUnits : function() {
+    return (this.units.length > 0) ? true : false;
+},
+getUnits : function () {
+    return this.units;
+},
+
 isEnumeration : function() {
 	return this.isEnum;
 },
 
 getEnumValues : function() {
 	return this.enumValues;
+},
+getSelector : function() {
+    return this.selector;
+},
+getShowUnit : function() {
+    return this.showUnit;
+},
+getColName : function() {
+    return this.colName;
 }
 }
 
@@ -2389,6 +2724,13 @@ PropertyList.prototype = {
 				return this.type[i];
 		}
 	},
+
+    supportsUnits : function(name) {
+		for ( var i = 0; i < this.name.length; i++) {
+			if (this.name[i] == name)
+				return this.pgroup[i].supportsUnits();
+		}
+    },
 
 	reset : function() {
 		this.pointer = -1;
