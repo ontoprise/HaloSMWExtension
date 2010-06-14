@@ -27,6 +27,8 @@ if($smwgDefaultStore != 'SMWTripleStore') {
 $wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
 $smwgEnableObjectLogicRules=true;
+global $smgJSLibs;
+$smgJSLibs[]="ext";
 /**
  * Setups rule extension
  *
@@ -206,6 +208,8 @@ function srfAddJSLanguageScripts(& $out) {
 function srfAddHTMLHeader(& $out) {
 	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
 
+	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
+	
 	$SF = ($wgTitle->getNamespace() == -1 &&
 	in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
 	$action = $wgRequest->getVal('action');
@@ -330,7 +334,7 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 		}
 
 		// remove rule tags from text
-		$text = preg_replace($ruleTagPattern, "<nowiki>\${2}</nowiki>", $text);
+		$text = preg_replace($ruleTagPattern, '<div id="rule_content" class="ruleWidget"></div><div id="testrule" class="x-hide-display">Halo</div>', $text);
 	}
 
 	
