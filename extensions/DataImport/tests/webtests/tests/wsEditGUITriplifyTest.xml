@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSEditGUITriplify">
+	
+	&goToLogin;
+	&createWebTestWS;
+
+	<target name="testWSEditGUITriplify">
+
+		<webtest name="WSEditTriplify">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false" />
+			</config>
+
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSTriplify" />
+			<clickLink xpath="//div[@id='bodyContent']/h4[2]/span/a"
+				description="Click edit button" />
+			<sleep seconds="10" />
+
+			<verifyTitle text="Define Web Service - Halo3wiki"
+				description="Was define ws gui opened" />
+
+			<verifyInputField description="verify that the triplification subject pattern is displayed correctly"
+				xpath="//input[@id='step4-enable-triplification-input']" value="subject-" />
+
+			</webtest>
+	</target>
+</project>

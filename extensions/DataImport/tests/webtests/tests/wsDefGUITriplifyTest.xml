@@ -2,14 +2,14 @@
 
 <!DOCTYPE project SYSTEM "../dtd/Project.dtd">
 
-<project default="testWSDefineGUILD">
+<project default="testWSDefineGUITriplify">
 	
 	&goToLogin;
 	&createWebTestWS;
 
-	<target name="testWSDefineGUILD">
+	<target name="testWSDefineGUITriplify">
 
-		<webtest name="WSDefineLDPart1">
+		<webtest name="WSDefineTriplifyPart1">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
 				<option name="ThrowExceptionOnScriptError" value="false"/>
@@ -30,51 +30,39 @@
 			<setInputField xpath="//table[@id='step4-results']/tbody/tr[2]/td[2]/input"
 				value="rdf:type" />
 			
-			<clickButton description="display namespace prefix table" htmlId="step4-addnss" />
+			<clickButton description="add subject creation pattern" htmlId="step4-enable-triplification-button" />
 			
-			<setInputField xpath="//table[@id='step4-nss']/tbody/tr[2]/td[1]/input"
-				value="xml" />
-			<setInputField xpath="//table[@id='step4-nss']/tbody/tr[2]/td[2]/input"
-				value="rsomething" />
+			<setInputField xpath="//input[@id='step4-enable-triplification-input']"
+				value="subject-" />
 				
+			<clickElement htmlid="step4-enable-triplification-input"  description="Select subject creation pattern input field"/>
+			
+			<clickElement xpath="//table[@id='step4-results']/tbody/tr[2]/td[1]/input"  description="Add alias to scp"/>
+			
 			<clickButton description="go to step5" htmlId="step4-go-img" />
 
 			<clickButton description="go to step6" htmlId="step5-go-img" />
 
-			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSLD" />
-			
-			<verifyElementText htmlid='menue-step6'  text='4. Save WWSD'/>
-			
-			<verifyElementText htmlid='step4'  text='2. Choose result part-*' regex='true'/>
+			<setInputField xpath="//input[@id='step6-name']" value="NewWebTestWSTriplify" />
 			
 			<clickButton description="go to step7" htmlId="step6-go-img" />
 			
 			<sleep seconds ="10" description="wait until the web service is created completely"/> 
 
 		</webtest>
-
-		<webtest name="WSDefineLDPart2">
+		
+		<webtest name="WSDefineTriplifyPart2">
 			<config host="localhost">
 				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
 				<option name="ThrowExceptionOnScriptError" value="false"/>
 			</config>
 			<invoke
-				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSLD" />
+				url="http://localhost/${wikipath}/index.php/WebService:NewWebTestWSTriplify" />
 				
-			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*predicate=.*rdf.*namespace.*prefix=.*xml.*uri.*something.*WebService' 
+			<verifyText text='WebService.*protocol.*LinkedData.*result.*part name=.*alias.*predicate=.*rdf.*triplification.*subject=.*subject-.*WebService' 
 			regex="true"/>
 			
 		</webtest>
 		
-		<webtest name="WSDefineLDPart3">
-			<config host="localhost">
-				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
-				<option name="ThrowExceptionOnScriptError" value="false"/>
-			</config>
-			<invoke
-				url="http://localhost/${wikipath}/index.php/Special:DataImportRepository" />
-				
-			<verifyText text='NewWebTestWSLD'/>
-		</webtest>
 	</target>
 </project>

@@ -13,5 +13,8 @@
 		<ant antfile="tiRepositoryTest.xml"/> 
 		<ant antfile="wsDefineGUILDTest.xml"/>
 		<ant antfile="wsEditGUILDTest.xml"/> 
+		<ant antfile="wsDefGUITriplifyTest.xml"/> 
+		<ant antfile="wsEditGUITriplifyTest.xml"/>
+		<ant antfile="wsUseGUITriplifyTest.xml"/> 
 	</target>
 </project>

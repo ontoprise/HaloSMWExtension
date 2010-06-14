@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE project SYSTEM "../dtd/Project.dtd">
+
+<project default="testWSUseGUITriplify">
+	
+	&goToLogin;
+	&createWebTestWS;
+	&invalidateWebTestWS;
+
+	<target name="testWSUseGUITriplify">
+
+		<webtest name="WSUseGUITriplifyPart1">
+			<config host="localhost">
+				<option name="ThrowExceptionOnFailingStatusCode" value="false" />
+				<option name="ThrowExceptionOnScriptError" value="false"/>
+			</config>
+			
+			<invoke
+				url="http://localhost/${wikipath}/index.php/WebTestWSUsage?action=edit"
+				description="Open article for adding ws" />
+
+			<clickLink xpath="//div[@id='stb_cont10-content']/a"
+				description="Click add ws button" />
+			<sleep seconds="10" />
+
+			<verifyText text="Choose web service" description="Was define ws gui opened" />
+
+		<setSelectField value="NewWebTestWSTriplify" htmlId="step1-webservice"/>
+			
+			<clickButton htmlId="step1-go-img" description="go to step2" />
+			<sleep seconds="5" />
+
+			<clickButton htmlId="step2-go-img" description="go to step3" />
+			<sleep seconds="5" />
+			
+			<clickButton htmlId="step3-go-img" description="go to step4" />
+			<sleep seconds="5" />
+			
+			<clickButton htmlId="step4-go-img" description="go to step5" />
+			
+			<setCheckbox xpath="//input[@id='step6-triplify']"/>
+			
+			<setCheckbox xpath="//input[@id='step6-display-subjects']"/>
+						
+			<clickButton htmlId="step6-go-img" description="go to step5" />
+			
+			<clickButton xpath="//input[@id='displayWSButton']" description="display #ws syntax"/>
+			
+			<verifyElementText htmlId="step5-preview"
+				description="Is#ws syntax displayed correctly" 
+				text=".*triplify.*displayTripleSubjects.*Triple subjects.*" regex="true"/>
+		</webtest>
+		
+	</target>
+</project>
