@@ -186,6 +186,17 @@ class  LODTripleStoreAccess  {
 			."\n}";
 	}
 	
+	/**
+	 * Loads a file into a graph of the triple store.
+	 * @param string $file
+	 * 		URI of a file that can be accessed by the triple store e.g. 
+	 * 		"http://somepath/somefile.n3" or "file://absolutePath/someFile.n3"
+	 * @param string $graph
+	 * @param string $format
+	 */
+	public function loadFileIntoGraph($file, $graph, $format) {
+		$this->mCommands[] = "LOAD $file?format=$format INTO <$graph>\n";
+	}
 	
 	/**
 	 * Sends all collected SPARUL commands to the Triple Store. Afterwards all
@@ -221,15 +232,21 @@ class  LODTripleStoreAccess  {
 	 * @param string $graph
 	 * 		The graph to query. If not set, the graph stored in the global variable
 	 * 		$smwgTripleStoreGraph is queried.
+	 * @param string $params
+	 * 		A string with the parameters for the query.
 	 * 
 	 * @return LODSparqlQueryResult
 	 * 		The result of the query encapsulated in an object or <null> on failure.
 	 */
-	public function queryTripleStore($query, $graph = "") {
+	public function queryTripleStore($query, $graph = "", $params = null) {
 		try {
 			$con = TSConnection::getConnector(); 
 			$con->connect();
-			$result = $con->query($query, "merge=false", $graph);
+			$p = "merge=false";
+			if (isset($params)) {
+				$p .= "|$params";
+			}
+			$result = $con->query($query, $p, $graph);
 			$con->disconnect();
 		} catch (Exception $e) {
 			// An exception occurred => no result
@@ -252,8 +269,8 @@ class  LODTripleStoreAccess  {
 	 * 		A Sparql query result as XML string according to 
 	 * 		http://www.w3.org/TR/rdf-sparql-XMLres/
 	 * @return LODSparqlQueryResult
-	 * 		The result in an object oriented structure or 
-	 * 		<null> if there is no or an invalid result. 
+	 * 		The result in an object oriented structure (which may contain zero
+	 * 		result rows or <null> if the result is invalid. 
 	 */	
 	private function parseSparqlXMLResult($sparqlXMLResult) {
 		$dom = simplexml_load_string($sparqlXMLResult);
