@@ -307,6 +307,7 @@ class SMW_DILanguageDe extends SMW_DILanguage {
 	'smw_wwsu_triplify_impossible' => 'Eine Triplifizierung der ergebnisse dieses Web Services ist nicht möglich. Bitte definieren sie zu erst ein <i>Subject Creation Pattern</i> in der zugehörigen Wiki Web Service Definition.',
 	
 	'smw_wsuse_s6-help' => 'todo',
+	'smw_wws_s4-help-triplification' => 'todo',
 	);
 
 	protected $smwDINamespaces = array(

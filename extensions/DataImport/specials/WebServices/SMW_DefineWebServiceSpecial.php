@@ -276,15 +276,24 @@ class SMWDefineWebServiceSpecial extends SpecialPage {
 		$html .= "<table id=\"step4-nss\" style=\"padding-top:20px; display: none\"><tr><th>".wfMsg('smw_wws_nss_prefix')."</th><th>".wfMsg('smw_wws_nss_url')."</th><th></th></tr></table>";
 
 		//for triplification
-		$html .= '<div id="step4-enable-triplification" style="display: ">';
+		$displayTriplificationontainer = ' style="display: none" ';
+		if(defined( 'LOD_LINKEDDATA_VERSION')){
+			$displayTriplificationontainer = ' style="display: " ';
+		}
+		$html .= '<div id="step4-enable-triplification" '.$displayTriplificationontainer.'>';
 		$html .= '<button id="step4-enable-triplification-button" style="display: '.$subjectCreationButtonVisibility.'" onclick="webServiceSpecial.displaySubjectCreationPattern()" value="'.wfMsg('smw_wws_enable_triplification').'">'.wfMsg('smw_wws_enable_triplification').'</button>'	;
 		$html .= '<span id="step4-enable-triplification-span" style="display: '.$subjectCreationPatternVisibility.'">'.wfMsg('smw_wws_enable_triplification-intro');
 		$html .= '<input id="step4-enable-triplification-input" type="text" size="80" onfocus="webServiceSpecial.initSubjectCreationPatternInput()" value='.$subjectCreationPattern.'></input>';
 		$html .= '</span></div>';
 		
-		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help")."</div>";
-		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help")."</div>";
-		$html .= "<div id=\"step4-ld-help\" style=\"display:none\">".wfMsg("smw_wws_s4-LD-help")."</div>";
+		$triplificationHelp = "";
+		if(defined( 'LOD_LINKEDDATA_VERSION')){
+			$triplificationHelp = wfMsg("smw_wws_s4-help-triplification");
+		}
+		
+		$html .= "<div id=\"step4-help\" style=\"display:none\">".wfMsg("smw_wws_s4-help").$triplificationHelp."</div>";
+		$html .= "<div id=\"step4-rest-help\" style=\"display:none\">".wfMsg("smw_wws_s4-REST-help").$triplificationHelp."</div>";
+		$html .= "<div id=\"step4-ld-help\" style=\"display:none\">".wfMsg("smw_wws_s4-LD-help").$triplificationHelp."</div>";
 
 		$html .= "<div id=\"step4-go\" class=\"OKButton\">";
 		$html .= "<input type=\"button\" class=\"OKButton\" id=\"step4-go-img\" style=\"".$showButton."\" value=\"".wfMsg("smw_wsgui_nextbutton")."\" onclick=\"webServiceSpecial.processStep4()\">";
