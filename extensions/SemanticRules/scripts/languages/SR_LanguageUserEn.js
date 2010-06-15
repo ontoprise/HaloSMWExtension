@@ -98,8 +98,9 @@ var wgUserSR_LanguageStrings = {
     'SR_RULE_ISACTIVE' : 'Is active',
     'SR_RULE_TYPE' : 'Rule type',
     'SR_RULE_DEFINES' : 'Rule defines',
-    'SR_RULE_USES' : 'Rule uses'
-    
+    'SR_RULE_USES' : 'Rule uses',
+    'SR_EASYREADIBLE' : 'Easy readible',
+    'SR_STYLIZED_ENGLISH' : 'Stylized english' 
     	
    
 };

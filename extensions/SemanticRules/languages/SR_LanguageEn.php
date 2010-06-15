@@ -26,8 +26,10 @@ class SR_LanguageEn extends SR_Language {
     # These constants map internal TSC rule types to the wiki representation.
     'sr_definition_rule' => 'Definition',
     'sr_property_chaining' => 'Property chaining',
-    'sr_calculation' => 'Calculation'
-    
+    'sr_calculation' => 'Calculation',
+    'sr_ruleselector' => 'Rule format: ',
+    'sr_easyreadible' => 'Easy readible',
+    'sr_stylizedenglish' => 'Stylized english'
     );
     
     protected $srUserMessages = array('smw_ob_ruleTree' => 'Rules');

@@ -15,20 +15,69 @@ SRRuleWidget.prototype = {
 	},
 	
 	renderWidgets: function() {
+		var idlist = "";
+		var isfirst = true;
+		var pendingIndicators = new Array();
 		$$('.ruleWidget').each(function(w) { 
-		    new Ext.TabPanel({
-		        renderTo : "rule_content",
-		        activeTab : 0,
-		        width :  (w.getAttribute("width") != null ?  w.getAttribute("width") : 600),
-		        height : (w.getAttribute("height") != null ?  w.getAttribute("height") : 300),
-		        plain : true,
-		        defaults : {autoScroll: true},
-		        items : [{ title: "Test", contentEl : "testrule"}] 
-		    });
+			var ruleID = w.getAttribute("ruleID");
+			var width =  (w.getAttribute("width") != null ?  w.getAttribute("width") : 600);
+	        var height = (w.getAttribute("height") != null ?  w.getAttribute("height") : 300);
+	        //TODO: set size
+	        
+	        idlist += isfirst ? ruleID : "##"+ruleID;
+	        if (isfirst) isfirst = false;
+	       		    
 		});
-	}
+		
+		var callbackOnRequest = function(request) {
+			pendingIndicators.each(function(pi) { 
+				pi.hide();
+			});
+			if (request.responseText.indexOf('error:') != -1) {
+				// TODO: some error occured
+				alert("Error: " + request.status + " " + request.statusText + ": "
+						+ request.responseText);
+				return;
+			}
+			var xmlDoc = GeneralXMLTools.createDocumentFromString(request.responseText);
+			var ruletextNodes = xmlDoc.getElementsByTagName("ruletext");
+			for(var i = 0; i < ruletextNodes.length; i++) {
+			
+				var id = ruletextNodes[i].getAttribute("id");
+				var type = ruletextNodes[i].getAttribute("type");
+				$$('.ruleWidget').each(function(w) { 
+					var ruleID = w.getAttribute("ruleID");
+					var wID = w.getAttribute("id");
+					if (id == ruleID) {
+						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = ruletextNodes[i].textContent;
+						else if (type == "stylized") $(wID+"_stylized").innerHTML = ruletextNodes[i].textContent;
+					}
+				});
+			}
+		}
+		
+		$$('.ruleWidget').each(function(w) {
+			var pi = new OBPendingIndicator(w);
+			pendingIndicators.push(pi);
+			pi.show(w);
+		});
+		
+			sajax_do_call('srf_sr_AccessRuleEndpoint', [
+					'serializeRules', idlist ], callbackOnRequest
+					.bind(this));
+	},
+	
+	selectMode: function(event) {
+		var selectTag = Event.element(event);
+		var selectedIndex = selectTag.selectedIndex;
+		var ruleContentID = selectTag.parentNode.getAttribute("id");
+		
+		var mode = selectTag.options[selectedIndex].getAttribute("mode");
+		$$('.ruleSerialization').each(function(c) { if (c.getAttribute("id").indexOf(ruleContentID) == 0) c.hide(); });
+		$(ruleContentID+"_"+mode).show();
+	},
 
 }
 
-var sr_rw = new SRRuleWidget();
-Event.observe(window, 'load', sr_rw.renderWidgets.bind(sr_rw));
+var sr_rulewidget = new SRRuleWidget();
+Event.observe(window, 'load', sr_rulewidget.renderWidgets.bind(sr_rulewidget));

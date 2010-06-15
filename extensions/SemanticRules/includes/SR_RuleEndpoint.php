@@ -100,7 +100,7 @@ class SRRuleEndpoint {
 			}
 			$attachMap[$wikiName] = $rules;
 		}
-    
+
 
 		return $attachMap;
 	}
@@ -134,6 +134,19 @@ class SRRuleEndpoint {
 		}
 
 		return $this->encapsulateTreeElementAsXML($res, true);
+	}
+
+	public function serializeRules($params) {
+		$ruleIDs = implode("&ruleID=",$params);
+		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
+
+		$payload = "graph=$smwgTripleStoreGraph&ruleID=$ruleIDs";
+		list($header, $status, $res) = self::$_client->send($payload, "/serializeRules");
+		if ($status != 200) {
+			return "error:$status";
+		}
+
+		return $res;
 	}
 
 	/**
@@ -232,14 +245,22 @@ class SRRuleEndpoint {
 				$u = (string) $using;
 				$uses .= "<using>". $this->getPrefixedWikiName($u)."</using>";
 			}
-
+				
+			$easyreadible = isset($rule->children()->easyreadible) ? (string) $rule->children()->easyreadible[0] : NULL;
+			$stylizedEnglish = isset($rule->children()->easyreadible) ? (string) $rule->children()->stylizedenglish[0] : NULL;
+            
+			$easyreadibleText = !is_null($easyreadible) ? '<easyreadible><![CDATA['.$easyreadible.']]></easyreadible>' : "";
+			$stylizedEnglishText = !is_null($stylizedEnglish) ? '<stylizedenglish><![CDATA['.$stylizedEnglish.']]></stylizedenglish>' : "";
 
 			$uid = $id.($counter++);
 			$xml .= '<ruleMetadata title="'.htmlspecialchars($ruleName). // displayed name
                      '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
                      '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
                      '" type="'.$type.'" id="'.$uid.'" active="'.$is_active.'" native="'.$is_native.'">'.$defines.$uses.
-                     '<ruletext><![CDATA['.$ruleText.']]></ruletext></ruleMetadata>';
+                     '<ruletext><![CDATA['.$ruleText.']]></ruletext>'.
+			         $easyreadibleText.
+			         $stylizedEnglishText.
+			         '</ruleMetadata>';
 
 		}
 		$xml .= '';

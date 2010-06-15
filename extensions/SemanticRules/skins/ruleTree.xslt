@@ -172,7 +172,35 @@
 			<tr>
 				<td id="ruleList-ruletext" class="ruleListLabel">{{SR_RULE_TEXT}}</td>
 				<td>
-					<xsl:value-of select="child::ruletext" />
+					<div id="rule_content_0" ruleID="" class="ruleWidget">
+						<select style="margin-left: 5px;margin-top: 5px;" name="rule_content_selector0"
+							onchange="sr_rulewidget.selectMode(event)">
+							<option mode="easyreadible">{{SR_EASYREADIBLE}}</option>
+							<option mode="stylized">{{SR_STYLIZED_ENGLISH}}</option>
+						</select>
+						<div id="rule_content_0_easyreadible" class="ruleSerialization">
+							<xsl:choose>
+								<xsl:when test="child::easyreadible">
+									<xsl:value-of select="child::easyreadible" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="child::ruletext" />
+								</xsl:otherwise>
+							</xsl:choose>
+						</div>
+						<div id="rule_content_0_stylized" class="ruleSerialization"
+							style="display:none;">
+							<xsl:choose>
+								<xsl:when test="child::easyreadible">
+									<xsl:value-of select="child::stylizedenglish" />
+								</xsl:when>
+								<xsl:otherwise>
+									<xsl:value-of select="child::ruletext" />
+								</xsl:otherwise>
+							</xsl:choose>
+
+						</div>
+					</div>
 				</td>
 			</tr>
 			<tr>
@@ -186,32 +214,32 @@
 			<tr>
 				<td id="ruleList-active" class="ruleListLabel">{{SR_RULE_ISACTIVE}}</td>
 				<td class="ruleListValue">
-					<span id="ruleList-active-value">
-						<xsl:value-of select="@active" />
-					</span>
+
 					<xsl:variable name="title" select="@title" />
 					<xsl:variable name="containingPage" select="@containing_page" />
 
-					<xsl:choose>
-						<xsl:when test="@active='true'">
-							<img style="padding-left:3px;" id="ruleChangeSwitch" state="active"
-								src="{$param-img-directory}/extensions/SemanticRules/skins/images/green-switch.gif"
-								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
-						</xsl:when>
-						<xsl:otherwise>
-							<img style="padding-left:3px;" id="ruleChangeSwitch" state="inactive"
-								src="{$param-img-directory}/extensions/SemanticRules/skins/images/red-switch.gif"
-								onclick="ruleActionListener.changeRuleState(this, '{$containingPage}','{$title}')" />
-						</xsl:otherwise>
-					</xsl:choose>
-
+					<select name="ruleActivitySelector"
+						onchange="ruleActionListener.changeRuleState(event, this, '{$containingPage}','{$title}')">
+						<xsl:choose>
+							<xsl:when test="@active='true'">
+								<option selected="true">True</option>
+								<option>False</option>
+							</xsl:when>
+							<xsl:otherwise>
+								<option>True</option>
+								<option selected="true">False</option>
+							</xsl:otherwise>
+						</xsl:choose>
+					</select>
 				</td>
 			</tr>
 			<tr>
 				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@type">
-						{{RULE_TYPE_<xsl:value-of select="@type" />}}
+						{{RULE_TYPE_
+						<xsl:value-of select="@type" />
+						}}
 					</xsl:if>
 				</td>
 			</tr>

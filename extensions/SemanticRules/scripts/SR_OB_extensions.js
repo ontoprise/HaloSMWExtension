@@ -66,7 +66,8 @@ SRRuleActionListener.prototype = {
 
 			if (request.responseText.indexOf('error:') != -1) {
 				// TODO: some error occured
-
+				alert("Error: " + request.status + " " + request.statusText + ": "
+						+ request.responseText);
 				return;
 			}
 			this.OB_cachedRuleTree = GeneralXMLTools
@@ -95,7 +96,7 @@ SRRuleActionListener.prototype = {
 		}
 	},
 
-	changeRuleState : function(node, containingPage, ruleName) {
+	changeRuleState : function(event, node, containingPage, ruleName) {
 
 		var callbackOnChangeState = function(request) {
 			OB_tree_pendingIndicator.hide();
@@ -105,15 +106,12 @@ SRRuleActionListener.prototype = {
 
 				return;
 			}
-			var state = node.getAttribute("state");
-			node.setAttribute("state", state == 'active' ? 'inactive' : 'active');
-			var img = $('ruleChangeSwitch').getAttribute("src");
-			$('ruleChangeSwitch').setAttribute("src", state == 'active' ? img.replace("green-switch", "red-switch") : img.replace("red-switch", "green-switch") );
-			$('ruleList-active-value').textContent = (state == 'active' ? 'false' : 'true');
+			
 		}
-		var state = node.getAttribute("state");
+		var selectTag = Event.element(event);
+		var selectedIndex = selectTag.selectedIndex;
 		OB_tree_pendingIndicator.show(globalActionListener.activeTreeName);
-		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName, !(state == 'active') ], callbackOnChangeState.bind(this));
+		sajax_do_call('smwf_sr_ChangeRuleState', [ containingPage, ruleName, (selectedIndex == 0) ], callbackOnChangeState.bind(this));
 	},
 
 	/**

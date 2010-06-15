@@ -27,8 +27,7 @@ if($smwgDefaultStore != 'SMWTripleStore') {
 $wgExtensionFunctions[] = 'ruleSetupExtension';
 $srgSRIP = $IP . '/extensions/SemanticRules';
 $smwgEnableObjectLogicRules=true;
-global $smgJSLibs;
-$smgJSLibs[]="ext";
+
 /**
  * Setups rule extension
  *
@@ -208,7 +207,10 @@ function srfAddJSLanguageScripts(& $out) {
 function srfAddHTMLHeader(& $out) {
 	global $srgSRIP, $wgScriptPath, $smwgEnableObjectLogicRules, $wgRequest, $wgTitle;
 
+	// load these two on every page
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rulewidget.js"></script>');
+	$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
+                        'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
 	
 	$SF = ($wgTitle->getNamespace() == -1 &&
 	in_array($wgTitle->getBasetext(), array("AddData", "EditData")));
@@ -222,9 +224,7 @@ function srfAddHTMLHeader(& $out) {
 	: 'false';
 	$out->addScript('<script type= "text/javascript">var smwgEnableFlogicRules='.$rulesEnabled.';</script>'."\n");
 
-	$out->addLink(array('rel'   => 'stylesheet','type'  => 'text/css',
-	                    'media' => 'screen, projection','href'  => $wgScriptPath . '/extensions/SemanticRules/skins/rules.css'));
-
+	
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_Rule.js"></script>');
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CategoryRule.js"></script>');
 	$out->addScript('<script type="text/javascript" src="'.$wgScriptPath . '/extensions/SemanticRules/scripts/SR_CalculationRule.js"></script>');
@@ -331,10 +331,14 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$rules[] = array($uri, $ruletext, $native, $active, $type);
 				}
 			}
+			$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.$name.'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
+			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.$ruletext.'</div>'. // tab 1
+			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
+			             '</div>'; // tab 2
+			
+			$text = str_replace($matches[0][$i], $replaceBy, $text);
 		}
 
-		// remove rule tags from text
-		$text = preg_replace($ruleTagPattern, '<div id="rule_content" class="ruleWidget"></div><div id="testrule" class="x-hide-display">Halo</div>', $text);
 	}
 
 	
