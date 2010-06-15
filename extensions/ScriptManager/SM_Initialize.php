@@ -64,7 +64,6 @@ function smfAddHTMLHeader(& $out) {
 
 					$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/adapter/ext/ext-base.js"></script>');
 					$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/extjs/ext-all.js"></script>');
-					$out->addScript('<script type="text/javascript" src="' . $smgSMPath . '/scripts/tabwidgets.js"></script>');
 
 				break;
 						
