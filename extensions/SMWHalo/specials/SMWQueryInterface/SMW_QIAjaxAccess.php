@@ -161,11 +161,26 @@ function smwf_qi_QIAccess($method, $params) {
             $formatclass = $smwgResultFormats[$format];
         else
             $formatclass = "SMWListResultPrinter";
+
+        // fix for missing parameter order
+        $order_missing = true;
         $qp = new $formatclass($format, false);
-       
+        $params = $qp->getParameters();
+        for ($i =0; $i < count($params); $i++) {
+            if ($params[$i]['name'] == "order")
+                $order_missing = false;
+        }
+        if ($order_missing) {
+            $params[]= array(
+                'name' => 'order',
+                'type' => 'enumeration',
+                'description' => wfMsg('smw_qi_tt_order'),
+                'values' => array('ascending', 'descending'),
+            );
+        }
         $jsonEnc = new Services_JSON();
        
-        return $jsonEnc->encode($qp->getParameters());
+        return $jsonEnc->encode($params);
 	}
 	//TODO: Save Query functionality
 	/*
