@@ -303,7 +303,6 @@ class SMW_DILanguageEn extends SMW_DILanguage {
 	
 	'smw_wwsu_menue-s6' => '5. Triplification options',
 	'smw_wwsu_triplify' => 'Triplify: ',
-	'smw_wwsu_availableformats' => 'Triplify: ',
 	'smw_wwsu_triplify_subject_display' => 'Display triple subjects:',
 	'smw_wwsu_triplify_subject_alias' => 'Result part alias:',
 	'smw_wwsu_triplify_subject_alias_value' => 'Triple subjects',

@@ -275,7 +275,7 @@ function webServiceUsage_processCall(&$parser, $parameters, $preview=false) {
 					}
 					$subjects[$displayTripleSubjects] = 
 						WSTriplifier::getInstance()
-							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph, $subjectCreationPatternParts);
+							->triplify($wsResultsForTriplification, $triplificationSubject, $wsId, $wsTriplify & !$preview, $articleId, $dropGraph, $subjectCreationPatternParts, $parser);
 				}
 			}
 			

@@ -56,9 +56,9 @@ class WSTriplifier {
 	 * 
 	 * This method returns the subjects which have been or would have been created.
 	 */
-	public function triplify($wsResult, $subjectCreationPattern, $wsId, $triplify, $articleId, $createGraph, $subjectCreationPatternParts){
+	public function triplify($wsResult, $subjectCreationPattern, $wsId, $triplify, $articleId, $createGraph, $subjectCreationPatternParts, $previewTitle){
 		//preprocess triples and subjects
-		list($tripleData, $subjects) = $this->createTriples($wsResult, $subjectCreationPattern, $wsId, $subjectCreationPatternParts);
+		list($tripleData, $subjects) = $this->createTriples($wsResult, $subjectCreationPattern, $wsId, $subjectCreationPatternParts, $previewTitle);
 		
 		if($triplify && defined( 'LOD_LINKEDDATA_VERSION')){
 			global $IP;
@@ -120,7 +120,7 @@ class WSTriplifier {
 	/*
 	 * Creates the preprocessed triples as well as the corresponding subjects
 	 */
-	private function createTriples($wsResult, $subjectCreationPattern, $wsId, $unwantedPredicates){
+	private function createTriples($wsResult, $subjectCreationPattern, $wsId, $unwantedPredicates, $previewTitle){
 		$unwantedPredicates = array_flip($unwantedPredicates);
 		
 		global $wgParser, $IP;
@@ -180,7 +180,19 @@ class WSTriplifier {
 			}
 			
 			
-			$subject = urlencode(trim($wgParser->replaceVariables($subject)));
+			
+			if(is_string($previewTitle)){
+				//we are in preview mode
+				$t = Title::makeTitleSafe(0, $previewTitle);
+				$popts = new ParserOptions();
+				$wgParser->startExternalParse($t, $popts, Parser::OT_HTML);
+	
+				$subject = $wgParser->internalParse($subject);
+				$subject = $wgParser->doBlockLevels($subject, true);
+				$subject = urlencode(trim($subject));	
+			} else {
+					$subject = urlencode(trim($wgParser->replaceVariables($subject)));
+			}
 			
 			if(strlen($subject) > 0){
 				foreach($tempTriples as $triple){
@@ -188,7 +200,7 @@ class WSTriplifier {
 					$triples[] = $triple;
 				}
 			}
-			if(strlen($subject)>0) $subject = "[[".$subject."]]";
+			if(strlen($subject)>0 && !is_string($previewTitle)) $subject = "[[".$subject."]]";
 			$subjects[] = $subject;
 		}
 		
