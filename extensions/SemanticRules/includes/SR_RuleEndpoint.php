@@ -177,12 +177,13 @@ class SRRuleEndpoint {
 			$pageURI = $help[0];
 			$ruleName = $help[1];
 			$containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
-
+            
+			$active_att = ((string) $rule->attributes()->active == 'false') ? 'inactive="true"':'';
 			$leaf_att = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
 			$dirty_att = ((string) $rule->attributes()->dirty == 'true') ? 'isDirty="true"':'';
 			$expanded_att = $expanded ? 'expanded="true"' : "";
 			$uid = $id.($counter++);
-			$xml .= '<ruleTreeElement '.$leaf_att.' '.$expanded_att.' '.$dirty_att.' title="'.htmlspecialchars($ruleName). // displayed name
+			$xml .= '<ruleTreeElement '.$leaf_att.' '.$expanded_att.' '.$active_att.' '.$dirty_att.' title="'.htmlspecialchars($ruleName). // displayed name
                      '" title_url="'.htmlspecialchars($ruleURI).                         // full URI of rule
                      '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
                      '" id="'.$uid.'"><![CDATA['.$ruleText.']]>';

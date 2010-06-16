@@ -237,9 +237,7 @@
 				<td id="ruleList-type" class="ruleListLabel">{{SR_RULE_TYPE}}</td>
 				<td class="ruleListValue">
 					<xsl:if test="@type">
-						{{RULE_TYPE_
-						<xsl:value-of select="@type" />
-						}}
+						{{RULE_TYPE_<xsl:value-of select="@type" />}}
 					</xsl:if>
 				</td>
 			</tr>
@@ -431,6 +429,10 @@
 		<xsl:if test="@isDirty">
 			<img src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png" />
 		</xsl:if>
+		<xsl:if test="@inactive">
+		    <!-- FIXME: title attribute should be language independant -->
+            <img title="inactive" src="{$param-img-directory}/extensions/SemanticRules/skins/images/inactive.gif" />
+        </xsl:if>
 		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
 			<xsl:attribute name="href"><xsl:value-of

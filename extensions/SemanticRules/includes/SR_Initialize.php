@@ -328,7 +328,13 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 
 					$ruletext = str_replace("&lt;","<", $ruletext);
 					$ruletext = str_replace("&gt;",">", $ruletext);
-					$rules[] = array($uri, $ruletext, $native, $active, $type);
+					
+					// check if rule already exists. If so, use date of last change to 
+					// indicate that the rule was actually not changed.
+					list($exist, $last_changed) = SMWRuleStore::getInstance()->existsRule(array($uri, $ruletext, $native, $active, $type));
+					$ruleTuple = array($uri, $ruletext, $native, $active, $type, $last_changed);
+					
+					$rules[] = $ruleTuple;
 				}
 			}
 			$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.$name.'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container

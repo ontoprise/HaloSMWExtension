@@ -34,6 +34,34 @@ class SRRuleStore extends SMWRuleStore {
 		$db->freeResult($res);
 		return $results;
 	}
+	
+     /**
+     * Returns true if the rule already exists, false otherwise.
+     * Returns also date of last change.
+     *
+     * @param tuple $rule ($ruleID, $ruletext, $native, $active, $type)
+     * @return tuple (true/false, last_changeDate)
+     */
+    public function existsRule($rule) {
+    	list($ruleID, $ruletext, $native, $active, $type) = $rule;
+    	$native = $native ? "true" : "false";
+    	$active = $active ? "true" : "false";
+    	
+        $db =& wfGetDB( DB_SLAVE );
+
+        $ruleTableName = $db->tableName('smw_rules');
+        $res = $db->select($ruleTableName, array('rule_id', 'rule_text', 'last_changed'), array('rule_id' => $ruleID, 'is_native'=>$native, 'is_active'=>$active, 'type'=>$type));
+        $results = array();
+
+        if($db->numRows( $res ) > 0) {
+            while($row = $db->fetchObject($res)) {
+            	// should be only one, otherwise something is wrong
+                if ($row->rule_text == $ruletext) return array(true, $row->last_changed);
+            }
+        }
+        $db->freeResult($res);
+        return array(false, NULL);
+    }
 
 	/**
 	 * Adds new rules to the local rule store.
@@ -46,14 +74,18 @@ class SRRuleStore extends SMWRuleStore {
 		$db =& wfGetDB( DB_MASTER );
 		$smw_rules = $db->tableName('smw_rules');
 		foreach($new_rules as $rule) {
-			list($rule_id, $ruleText, $native, $active, $type) = $rule;
+			list($rule_id, $ruleText, $native, $active, $type, $changeDate) = $rule;
 			$currentDate = getDate();
+			if (is_null($changeDate)) {
 			$dateAsSQLString = $currentDate["year"].
 					"-".$currentDate["mon"].
 					"-".$currentDate["mday"].
 					" ".$currentDate["hours"].
 					":".$currentDate["minutes"].
 					":".$currentDate["seconds"];
+			} else {
+				$dateAsSQLString = $changeDate;
+			}
 			$db->insert($smw_rules, array('subject_id' => $article_id,
 										  'rule_id' => $rule_id, 
 										  'rule_text' => $ruleText, 
