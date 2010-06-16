@@ -92,7 +92,7 @@ class SRRuleEndpoint {
 		if($dom === FALSE) return "error:XML-parsing wrong";
 		foreach($dom->children() as $resource) {
 			$resourceURI = (string) $resource->attributes()->id;
-			$wikiName = $this->getPrefixedWikiName($resourceURI);
+			$wikiName = $this->getWikiTitleFromURI($resourceURI)->getPrefixedDBkey();
 			$rules = array();
 			foreach($resource->children() as $rule) {
 				$ruleURI = (string) $rule->attributes()->id;
@@ -123,7 +123,7 @@ class SRRuleEndpoint {
 		return $this->encapsulateMetadataAsXML($res);
 	}
 
-	public function searchForRulesByFragment($params) {
+	public function searchForRulesByFragment($params, $resultformat = "xml") {
 		$filter = $params[0];
 		global $smwgWebserviceProtocol, $smwgTripleStoreGraph;
 
@@ -133,7 +133,7 @@ class SRRuleEndpoint {
 			return "error:$status";
 		}
 
-		return $this->encapsulateTreeElementAsXML($res, true);
+		return $resultformat == 'xml' ? $this->encapsulateTreeElementAsXML($res, true) : $this->encapsulateRuleWidget($res);
 	}
 
 	public function serializeRules($params) {
@@ -147,6 +147,32 @@ class SRRuleEndpoint {
 		}
 
 		return $res;
+	}
+
+	private function encapsulateRuleWidget($resultXML) {
+		$i = 0;
+		$html = '';
+		$dom = simplexml_load_string($resultXML);
+		if($dom === FALSE) return "error:XML-parsing wrong";
+
+		foreach($dom->children() as $rule) {
+			if ($rule->getName() != 'rule') continue;
+			$ruleURI = (string) $rule->attributes()->id;
+			$ruleText = (string) $rule[0];
+			$easyreadible = isset($rule->children()->easyreadible) ? (string) $rule->children()->easyreadible[0] : "";
+            $stylizedEnglish = isset($rule->children()->easyreadible) ? (string) $rule->children()->stylizedenglish[0] : "";
+
+            list($containingPageURI, $rulename) = explode("$$", $ruleURI);
+            $containingPageTitle = $this->getWikiTitleFromURI($containingPageURI);
+			$html .= '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($ruleURI).'" class="ruleWidget"><a style="margin-left: 5px;" href="'.htmlspecialchars($containingPageTitle->getFullURL()).'">'.htmlspecialchars($rulename).'</a> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
+                         '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($easyreadible).'</div>'. // tab 1
+                         '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">'.htmlspecialchars($stylizedEnglish).'</div>'.
+                     '</div>'; // tab 2
+			$i++;
+		}
+
+		$html .= '';
+		return $html;
 	}
 
 	/**
@@ -176,8 +202,8 @@ class SRRuleEndpoint {
 			$help = explode("$$", $ruleURI);
 			$pageURI = $help[0];
 			$ruleName = $help[1];
-			$containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
-            
+			$containingPageAsWikiText = $this->getWikiTitleFromURI($pageURI)->getPrefixedDBkey();
+
 			$active_att = ((string) $rule->attributes()->active == 'false') ? 'inactive="true"':'';
 			$leaf_att = ((string) $rule->attributes()->leaf == 'true') ? 'isLeaf="true"':'';
 			$dirty_att = ((string) $rule->attributes()->dirty == 'true') ? 'isDirty="true"':'';
@@ -193,7 +219,7 @@ class SRRuleEndpoint {
 
 	}
 
-	private function getPrefixedWikiName($uri) {
+	private function getWikiTitleFromURI($uri) {
 		new TSNamespaces(); // assure namespaces are initialized
 		$allNamespaces = TSNamespaces::getAllNamespaces();
 
@@ -202,7 +228,7 @@ class SRRuleEndpoint {
 				$help = explode('#', $uri);
 				$local = $help[1];
 				$title = Title::newFromText($local, $nsIndsex);
-				return $title->getPrefixedDBkey();
+				return $title;
 			}
 		}
 
@@ -213,7 +239,7 @@ class SRRuleEndpoint {
 		$local = substr($uri, strpos($sv, "#")+1);
 
 		$title = Title::newFromText($local, $ns);
-		return $title->getPrefixedDBkey();
+		return $title;
 	}
 
 	private function encapsulateMetadataAsXML($resultXML) {
@@ -233,23 +259,23 @@ class SRRuleEndpoint {
 			$help = explode("$$", $ruleURI);
 			$pageURI = $help[0];
 			$ruleName = $help[1];
-			$containingPageAsWikiText = $this->getPrefixedWikiName($pageURI);
+			$containingPageAsWikiText = $this->getWikiTitleFromURI($pageURI)->getPrefixedDBkey();
 
 			$defines = "";
 			foreach($rule->children()->defining as $defining) {
 				$d = (string) $defining;
-				$defines .= "<defining>". $this->getPrefixedWikiName($d)."</defining>";
+				$defines .= "<defining>". $this->getWikiTitleFromURI($d)->getPrefixedDBkey()."</defining>";
 			}
 
 			$uses = "";
 			foreach($rule->children()->using as $using) {
 				$u = (string) $using;
-				$uses .= "<using>". $this->getPrefixedWikiName($u)."</using>";
+				$uses .= "<using>". $this->getWikiTitleFromURI($u)->getPrefixedDBkey()."</using>";
 			}
-				
+
 			$easyreadible = isset($rule->children()->easyreadible) ? (string) $rule->children()->easyreadible[0] : NULL;
 			$stylizedEnglish = isset($rule->children()->easyreadible) ? (string) $rule->children()->stylizedenglish[0] : NULL;
-            
+
 			$easyreadibleText = !is_null($easyreadible) ? '<easyreadible><![CDATA['.$easyreadible.']]></easyreadible>' : "";
 			$stylizedEnglishText = !is_null($stylizedEnglish) ? '<stylizedenglish><![CDATA['.$stylizedEnglish.']]></stylizedenglish>' : "";
 
@@ -259,8 +285,8 @@ class SRRuleEndpoint {
                      '" containing_page="'.htmlspecialchars($containingPageAsWikiText).  // containing page
                      '" type="'.$type.'" id="'.$uid.'" active="'.$is_active.'" native="'.$is_native.'">'.$defines.$uses.
                      '<ruletext><![CDATA['.$ruleText.']]></ruletext>'.
-			         $easyreadibleText.
-			         $stylizedEnglishText.
+			$easyreadibleText.
+			$stylizedEnglishText.
 			         '</ruleMetadata>';
 
 		}

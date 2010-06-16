@@ -65,7 +65,9 @@ class US_LanguageEn {
         'us_go_button' => 'Go',
 	    'us_sort_for'=>'Sort for',
 	    'us_order_for'=>'Order',
-		'us_termsappear' => 'These terms appear in this page'	            
+		'us_termsappear' => 'These terms appear in this page',
+
+        'us_includerules' => 'Include rules'
         
     );
     

@@ -27,9 +27,15 @@ class SR_LanguageEn extends SR_Language {
     'sr_definition_rule' => 'Definition',
     'sr_property_chaining' => 'Property chaining',
     'sr_calculation' => 'Calculation',
+    
+    #rule widget
     'sr_ruleselector' => 'Rule format: ',
     'sr_easyreadible' => 'Easy readible',
-    'sr_stylizedenglish' => 'Stylized english'
+    'sr_stylizedenglish' => 'Stylized english',
+    
+    #Unified search extension
+    'sr_rulesfound' => 'The following rules were found:'
+    
     );
     
     protected $srUserMessages = array('smw_ob_ruleTree' => 'Rules');

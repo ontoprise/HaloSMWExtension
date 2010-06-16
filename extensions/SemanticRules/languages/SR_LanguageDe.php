@@ -22,14 +22,21 @@ class SR_LanguageDe extends SR_Language {
     'smw_srf_expected_parameter' => 'Erwarte einen Parameter bei $1',
     'smw_srf_missing_operator' => 'Erwarte eine Operator bei $1',
     
-   'sr_ob_rulelist' => 'Regel-Metadaten',
+    #Ontology browser extension
+    'sr_ob_rulelist' => 'Regel-Metadaten',
+    
      # These constants map internal TSC rule types to the wiki representation.
     'sr_definition_rule' => 'Definition',
     'sr_property_chaining' => 'Eigenschaftsverkettung',
     'sr_calculation' => 'Berechnung',
+    
+    #Rule widget
     'sr_ruleselector' => 'Regelformat: ',
     'sr_easyreadible' => 'Leicht lesbar',
-    'sr_stylizedenglish' => 'Formales Englisch'
+    'sr_stylizedenglish' => 'Formales Englisch',
+    
+     #Unified search extension
+    'sr_rulesfound' => 'Die folgenden Regeln wurden gefunden:'
     );
     
    protected $srUserMessages = array('smw_ob_ruleTree' => 'Rules');

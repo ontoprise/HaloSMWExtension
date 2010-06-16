@@ -47,6 +47,9 @@ function ruleSetupExtension() {
 
 	$wgHooks['InternalParseBeforeLinks'][] = 'srfTripleStoreParserHook';
 	$wgHooks['smw_ob_add'][] = 'srfAddToOntologyBrowser';
+	$wgHooks['us_extend_search'][] = 'srfAddToUnifiedSearch';
+	
+	
 
 
 	$wgAutoloadClasses['SRRuleStore'] = $srgSRIP . '/includes/SR_RuleStore.php';
@@ -82,6 +85,24 @@ function ruleSetupExtension() {
             'description' => 'Enables the power of rules to SMWHalo');
 
 
+	return true;
+}
+
+/**
+ * Adds additional results to the UnifiedSearch result list.
+ * 
+ * @param array $searchTerms array of search terms (currently only first is regarded)
+ * @param array $receivers array of receivers
+ * @param string & $results HTML result 
+ */
+function srfAddToUnifiedSearch($searchTerms, $receivers, & $results) {
+	if (in_array("SemanticRules", $receivers)) {
+		$html = SRRuleEndpoint::getInstance()->searchForRulesByFragment($searchTerms, "widget");
+		if ($html != '') {
+			$html = "<span style=\"margin: 5px;\">".wfMsg('sr_rulesfound')."</span>".$html;
+		}
+		$results = $html;
+	}
 	return true;
 }
 
@@ -337,8 +358,8 @@ function srfTripleStoreParserHook(&$parser, &$text, &$strip_state = null) {
 					$rules[] = $ruleTuple;
 				}
 			}
-			$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.$name.'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
-			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.$ruletext.'</div>'. // tab 1
+			$replaceBy = '<div id="rule_content_'.$i.'" ruleID="'.htmlspecialchars($uri).'" class="ruleWidget"><span style="margin-left: 5px;">'.htmlspecialchars($name).'</span> | '.wfMsg('sr_ruleselector').'<select style="margin-top: 5px;" name="rule_content_selector'.$i.'" onchange="sr_rulewidget.selectMode(event)"><option mode="easyreadible">'.wfMsg('sr_easyreadible').'</option><option mode="stylized">'.wfMsg('sr_stylizedenglish').'</option></select> '. // tab container
+			             '<div id="rule_content_'.$i.'_easyreadible" class="ruleSerialization">'.htmlspecialchars($ruletext).'</div>'. // tab 1
 			             '<div id="rule_content_'.$i.'_stylized" class="ruleSerialization" style="display:none;">Stylized english</div>'.
 			             '</div>'; // tab 2
 			

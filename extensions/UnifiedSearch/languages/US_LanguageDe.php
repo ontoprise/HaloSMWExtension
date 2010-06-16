@@ -70,7 +70,9 @@ class US_LanguageDe {
 	    'us_go_button' => 'Ok',
 	    'us_sort_for'=>'Sortieren nach',
         'us_order_for'=>'Reihenfolge',
-		'us_termsappear' => 'Diese Suchbegriffe sind markiert'        
+		'us_termsappear' => 'Diese Suchbegriffe sind markiert' ,
+
+	    'us_includerules' => 'Einschließlich Regeln'
         );
 
 	public $us_pathsearchMessages = array(

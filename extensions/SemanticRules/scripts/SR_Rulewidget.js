@@ -49,8 +49,8 @@ SRRuleWidget.prototype = {
 					var ruleID = w.getAttribute("ruleID");
 					var wID = w.getAttribute("id");
 					if (id == ruleID) {
-						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = ruletextNodes[i].textContent;
-						else if (type == "stylized") $(wID+"_stylized").innerHTML = ruletextNodes[i].textContent;
+						if (type == "easyreadible") $(wID+"_easyreadible").innerHTML = this.escapeHTML(ruletextNodes[i].textContent);
+						else if (type == "stylized") $(wID+"_stylized").innerHTML = this.escapeHTML(ruletextNodes[i].textContent);
 					}
 				});
 			}
@@ -76,6 +76,12 @@ SRRuleWidget.prototype = {
 		$$('.ruleSerialization').each(function(c) { if (c.getAttribute("id").indexOf(ruleContentID) == 0) c.hide(); });
 		$(ruleContentID+"_"+mode).show();
 	},
+	
+	escapeHTML: function(html) {
+		html = html.replace(/</g, "&lt;");
+		html = html.replace(/>/g, "&gt;");
+		return html;
+	}
 
 }
 

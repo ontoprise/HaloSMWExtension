@@ -108,6 +108,15 @@ class USSpecialPage extends SpecialPage {
 			$styleShow = 'style="display: block;"';
 			$styleHide = 'style="-ms-filter:\'progid:DXImageTransform.Microsoft.Alpha(Opacity=25)\'; filter: alpha(opacity=25); opacity: .25; display: none;"';
 		}
+		
+		// include rules
+		$ruleCheckBox = '';
+		global $wgUser;
+	    $showIncludeRulesCheckbox = !is_null($wgUser) && $wgUser->isAllowed("ontologyediting");
+		if (defined('SEMANTIC_RULES_VERSION') && $showIncludeRulesCheckbox) {
+			$ruleCheckBox = '<span style="margin-left:15px;"><input type="checkbox" name="includerules">'.wfMsg('us_includerules').'</input></span>';
+		}
+		
 
 		// -- search form --
 		if ($restrict != '') $restrictInput = '<input type="hidden" name="restrict" value="'.$restrict.'"/>'; else $restrictInput="";
@@ -117,7 +126,7 @@ class USSpecialPage extends SpecialPage {
 			'<option id="tolerantOption"  value="0">'.wfMsg('us_tolerantsearch').'</option>'.
 			'<option id="semitolerantOption"  value="1">'.wfMsg('us_semitolerantsearch').'</option>'.
 			'<option id="exactOption"  value="2">'.wfMsg('us_exactsearch').'</option></select></td>'.
-			'<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"/>'.$restrictInput.
+			'<td><input type="submit" name="searchbutton" value="'.wfMsg('us_searchbutton').'"/>'.$restrictInput.$ruleCheckBox.
 			'<input type="hidden" name="fulltext" value="true"><input id="doPathSearch" type="hidden" name="paths" value="'.$doPathSearch.'"/>'.
 			'<input type="hidden" name="title" value="'.$specialPageTitle.'"/></td></tr></table>'.
 		'</form>';
@@ -238,6 +247,16 @@ class USSpecialPage extends SpecialPage {
 		// create tab with fulltext search and path search and display search results as well
 
 		$fulltextResults = '<div id="%%__DIV_NAME__%%"%%__STYLE_DISPLAY__%%>';
+		
+		// include external search hits.
+		$ext_results = "";
+		$includeRules = $wgRequest->getVal( 'includerules', '' );
+		$receivers = array($includeRules != '' ? "SemanticRules" : "");
+		$searchTerms = self::parseTerms($wgRequest->getVal('search'));
+		wfRunHooks('us_extend_search', array($searchTerms, $receivers, & $ext_results));
+		$fulltextResults .= $ext_results;
+		
+		// internal search hits
 		$resultInfo =  wfMsg('us_resultinfo',$offset+1,$offset+$limit > $totalHits ? $totalHits : $offset+$limit, $totalHits, $search);
 		if (count($searchResults) == 0) {
 			$fulltextResults .= '<div style="margin:15px;">'.wfMsg('us_noresults_text', $search).'</div>';
@@ -245,6 +264,7 @@ class USSpecialPage extends SpecialPage {
 			$fulltextResults .= "<div id=\"us_resultinfo\">".wfMsg('us_results').": $resultInfo</div>";
 			$fulltextResults .= UnifiedSearchResultPrinter::serialize($searchResults, $search);
 		}
+		
 		$fulltextResults .= '</div>';
 
 		// path search is enabled
