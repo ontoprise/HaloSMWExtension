@@ -189,7 +189,7 @@
 
 		<concat destfile="../../SMWHalo/scripts/OntologyBrowser/deployOntologyBrowser.js">
 			<filelist dir="../../SMWHalo/scripts/scriptaculous" files="effects.js" />
-			<filelist dir="../../SMWHalo/scripts/OntologyBrowser" files="ontologytools.js, treeview.js, treeviewActions.js, treeviewData.js" />
+			<filelist dir="../../SMWHalo/scripts/OntologyBrowser" files="ontologytools.js, treeview.js, treeviewActions.js, treeviewData.js, advancedOptions.js" />
 			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
 		</concat>
 
