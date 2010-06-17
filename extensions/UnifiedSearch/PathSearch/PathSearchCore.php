@@ -325,6 +325,10 @@
 				unset($this->result[$k]);
 		}
 		$this->numberOfPathsFound = count($this->result);
+        // we never show more than 25 results (limit is hard coded in doPathSearch.php)
+        // so correct the value here
+        if ($this->numberOfPathsFound > $limit)
+            $this->numberOfPathsFound=$limit;
 
 		// now check offset and remove all elements before reaching element number $offset
 		if (($offset != NULL) && count($this->result) > $offset) {
@@ -1374,7 +1378,7 @@
 
         // search first for exact match and we would get one result
         $query = "SELECT smw_id, smw_sortkey, smw_namespace FROM $smw_ids ".
-                 "WHERE $whereNameSpace AND smw_title = ".$db->addQuotes($titleQuery);
+                 "WHERE $whereNameSpace AND UPPER(CAST(smw_title as char)) = ".$db->addQuotes($titleQuery);
         $res = $db->query($query);
         if ($row = $db->fetchObject($res)) {
             $result[] = array($row->smw_id, $row->smw_sortkey, $row->smw_namespace);
