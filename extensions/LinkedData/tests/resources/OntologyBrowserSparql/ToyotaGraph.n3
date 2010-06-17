@@ -1,0 +1,16 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix inst: <http://mywiki/a#> .
+@prefix cat: <http://mywiki/category#> .
+@prefix prop: <http://mywiki/property#> .
+
+
+inst:Prius-II rdf:type cat:Automobile ;
+	rdf:type cat:Hybrid ; 
+	prop:HasPower "113"^^xsd:int .	
+	
+inst:Prius-III rdf:type cat:Automobile ;
+	rdf:type cat:Hybrid ; 
+	prop:HasPower "136"^^xsd:int .

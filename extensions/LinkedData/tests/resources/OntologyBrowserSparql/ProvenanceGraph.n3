@@ -1,0 +1,13 @@
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
+@prefix smw: <http://smw/> .
+
+ smw:ToyotaGraph swp:assertedBy smw:Graph1Warrant.
+ smw:Graph1Warrant swp:authority smw:DataSource1 ;
+ dc:date "2009-11-20T12:40:44"^^xsd:dateTime .
+
+ smw:VolkswagenGraph swp:assertedBy smw:Graph2Warrant.
+ smw:Graph2Warrant swp:authority smw:DataSource2 ;
+ dc:date "2009-11-18T08:41:49"^^xsd:dateTime .
+
