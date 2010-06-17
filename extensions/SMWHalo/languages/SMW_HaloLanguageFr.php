@@ -187,7 +187,12 @@ en cliquant sur les grosses flà¨ches situées entre les colonnes.",
     'smw_ob_cmd_deleteinstance' => 'Supprimer l\'instance',
     'smw_ob_cmd_addpropertytodomain' => 'Ajouter la propriété au domaine: ',
 
-
+//TODO: Translate strings
+	/* Advanced options in the ontology browser */
+	'smw_ob_source_wiki' => "-Wiki-" ,
+	'smw_ob_advanced_options' => "Advanced options" ,
+	'smw_ob_select_datasource' => "Select the data source to browse:" ,
+    
     
 
     /* Combined Search*/

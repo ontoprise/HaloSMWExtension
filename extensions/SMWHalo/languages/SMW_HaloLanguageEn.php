@@ -186,7 +186,11 @@ clicking the big arrows between the columns.',
 	'smw_ob_cmd_renameinstance' => 'Rename instance',
 	'smw_ob_cmd_deleteinstance' => 'Delete instance',
 	'smw_ob_cmd_addpropertytodomain' => 'Add property to domain: ',
-
+	
+	/* Advanced options in the ontology browser */
+	'smw_ob_source_wiki' => "-Wiki-" ,
+	'smw_ob_advanced_options' => "Advanced options" ,
+	'smw_ob_select_datasource' => "Select the data source to browse:" ,
 	
 
 	/* Combined Search*/
