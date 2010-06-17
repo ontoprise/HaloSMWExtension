@@ -269,10 +269,14 @@ class USSpecialPage extends SpecialPage {
 
 		// path search is enabled
 		if (isset($wgUSPathSearch) && $wgUSPathSearch) {
-			if ($searchSet != NULL)
-			$psTerms = $this->initPathSearch($search, $searchSet);
+			if ($searchSet != NULL) {
+                if ($searchSet->hasResults())
+                    $psTerms = $this->initPathSearch($search, $searchSet);
+                else
+                    $psTerms = "";
+            }
 			else
-			$psTerms = $search;
+                $psTerms = $search;
 
 			// start with html which is the same for both cases, paths have been found already or must be still searched
 			$tabBarSearchResults = '
@@ -302,7 +306,7 @@ class USSpecialPage extends SpecialPage {
 			// if we want to do a path search, do it and prepare results as well.
 			// Otherwise this is done via Javascript later when clicking the link
 			if ($doPathSearch == 1) {
-				$psResultHtml = us_doPathSearch(urldecode($psTerms), true);
+				$psResultHtml = (strlen($psTerms) > 0) ? us_doPathSearch(urldecode($psTerms), true) : wfMsg('us_pathsearch_no_results', $search);
 				$pathResults = '<div id="us_pathsearch_results" style="display: inline;">'.$psResultHtml.'</div>';
 				$html .= sprintf($tabBarSearchResults, 'font-weight: normal; border: 2px solid #AAA;',
         	                                          'font-weight: bold; color: black; border-left: 2px solid #AAA; border-right: 2px solid #AAA; border-top: #FF8C00 solid;',
