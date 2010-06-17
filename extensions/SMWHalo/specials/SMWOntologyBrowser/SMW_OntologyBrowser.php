@@ -75,10 +75,34 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$html .= "<button type=\"button\" name=\"refresh\" onclick=\"globalActionListener.reset(event)\">".wfMsg('smw_ob_reset')."</button>";
 		$html .= "<button type=\"button\" id=\"hideInstancesButton\" name=\"hideInstances\" onclick=\"instanceActionListener.toggleInstanceBox(event)\">".wfMsg('smw_ob_hideinstances')."</button>";//  <a href=\"".$refactorstatstitle->getFullURL()."\">".wfMsg('smw_ob_link_stats')."</a>";
 		$html .= "<span id=\"propertyRangeSpan\"><input type=\"checkbox\" id=\"directPropertySwitch\"/>".wfMsg('smw_ob_onlyDirect')."</input><input type=\"checkbox\" id=\"showForRange\"/>".wfMsg('smw_ob_showRange')."</input></span>";
-		$html .= "<div id=\"ontologybrowser\">
-						
+		$html .= "<div id=\"ontologybrowser\">";
+
+//TODO: Add the following code to a hook		
+		if (defined('LOD_LINKEDDATA_VERSION')) {
+			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
+			$sourceOptions = "";
+			foreach ($ids as $sourceID) {
+				$sourceOptions .= "<option>$sourceID</option>";
+			}
+			$advancedOptions  = wfMsg("smw_ob_advanced_options");
+			$fromWiki         = wfMsg("smw_ob_source_wiki");
+			$selectDatasource = wfMsg("smw_ob_select_datasource");
+			$html .= <<<TEXT
+<div id="advancedOptions" class="advancedOptions">
+	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
+	<b>$advancedOptions</b>
+	<div id="aoContent" class="aoContent">
+		<b>$selectDatasource</b>
+		<select id="dataSourceSelector" name="DataSource" size="1">
+			<option>$fromWiki</option>
+			$sourceOptions
+		</select>
+	</div>
+</div>
+TEXT;
+		}
+		$html .= "		
 		<!-- Categore Tree hook -->	" .
-		
 		"<div id=\"treeContainer\"><span class=\"OB-header\">	
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/concept.gif\"></img><a class=\"selectedSwitch treeSwitch\" id=\"categoryTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'categoryTree')\">".wfMsg('smw_ob_categoryTree')."|</a>
 			<img src=\"$wgScriptPath/extensions/SMWHalo/skins/property.gif\"></img><a class=\"treeSwitch\" id=\"propertyTreeSwitch\" onclick=\"globalActionListener.switchTreeComponent(event,'propertyTree')\">".wfMsg('smw_ob_attributeTree')."</a>";
