@@ -275,8 +275,45 @@ a.selectedSwitch {
 	color: #747474;
 }
 
+#OB-footer1{
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	color: #747474;
+}
+
 .treeviewdecorator {
 	cursor: pointer;
 	padding-left:3px;
+}
+
+/*
+**Advanced Options in Ontology Browser
+*/
+
+.advancedOptions {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+	
+.aoFoldClosed {
+    background: url(./images/plus.gif);
+    width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	float: left;
+}
+
+.aoFoldOpen {
+    background: url(./images/minus.gif);
+    width: 16px;
+	height: 16px;
+	background-repeat:no-repeat;
+	float: left;
+}
+
+.aoContent {
+	margin-left: 20px;
+	margin-top:  20px;
 }
 
