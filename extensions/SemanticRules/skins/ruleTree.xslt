@@ -427,11 +427,11 @@
 
 		<xsl:variable name="title" select="@title" />
 		<xsl:if test="@isDirty">
-			<img src="{$param-img-directory}/extensions/SMWHalo/skins/warning.png" />
+			<img src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_dirty.gif" />
 		</xsl:if>
 		<xsl:if test="@inactive">
 		    <!-- FIXME: title attribute should be language independant -->
-            <img title="inactive" src="{$param-img-directory}/extensions/SemanticRules/skins/images/inactive.gif" />
+            <img title="inactive" src="{$param-img-directory}/extensions/SemanticRules/skins/images/rules_inactive.gif" />
         </xsl:if>
 		<a class="navigationLink" title="Goto to {$title}" style="margin-left:5px;">
 
