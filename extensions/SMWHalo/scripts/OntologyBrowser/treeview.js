@@ -28,7 +28,7 @@
  * @ingroup SMWHaloOntologyBrowser
  * 
  * Heaviliy modified by Ontoprise 2007
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  */
 
 // ---------------------------------------------------------------------------
@@ -222,6 +222,13 @@ TreeTransformer.prototype = {
 // one global tree transformer
 var transformer = new TreeTransformer(
 		"/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
+
+function resetOntologyBrowser() {
+	dataAccess = new OBDataAccess();
+	dataAccess.initializeTree(null);
+	$('instanceList').down().remove();
+	$('relattributes').down().remove();
+}
 
 Event.observe(window, 'load', function() { // call initialize hook
 			dataAccess = new OBDataAccess();
