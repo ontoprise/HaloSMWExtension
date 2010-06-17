@@ -216,7 +216,25 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Hybrid" title="Hybrid"') === false);
 		
+	}
+	
+	/**
+	 * This function tests retrieving all categories for a certain instance.
+	 */
+	function testFilterBrowse() {
+		$source = wfMsg("smw_ob_source_wiki");
+		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", $source);
+		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
+
+		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", "Toyota");
+		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
+		
+		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Go", "Volkswagen");
+		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
 		
 	}
+	
 	
 }
