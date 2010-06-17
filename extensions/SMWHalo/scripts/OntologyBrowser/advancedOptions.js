@@ -55,6 +55,9 @@ OBAdvancedOptions.prototype = {
 	 */
 	onLoad: function(event){
 		var dss = $('dataSourceSelector');
+		if (dss == null) {
+			return;
+		}
 		this.dataSource = dss.options[dss.selectedIndex].text;
 		
 		Event.observe('dataSourceSelector', 'change',
