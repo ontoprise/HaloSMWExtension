@@ -577,7 +577,10 @@ class USSpecialPage extends SpecialPage {
 	private function initPathSearch(&$search, &$searchSet) {
 		$sterms = $this->parseTerms($search);
 		$sterms = $this->cleanTerms($sterms);
-		$scoringTerms = array();
+        $psTerms = $this->checkPages4Searchterms($sterms);
+        if (strlen($psTerms) > 0)
+            return $psTerms.'%26'.$search;
+        $scoringTerms = array();
 		foreach ($searchSet->mResults as $res) {
 			list($score, $type, $term) = explode(' ', $res);
 			foreach ($sterms as $s) {
@@ -597,6 +600,31 @@ class USSpecialPage extends SpecialPage {
 		}
 		return $psTerms.'%26'.$search;
 	}
+
+    // check if search terms exist as pages in the wiki
+    private function checkPages4Searchterms($sterms) {
+        $db =& wfGetDB(DB_SLAVE);
+        // exclude namespaces
+        $ns_ignore = array(NS_TEMPLATE, NS_MEDIA, NS_SPECIAL, NS_MEDIAWIKI);
+        $sterms4q = "";
+        for ($i = 0; $i < count($sterms); $i++)
+            $sterms4q .= $db->addQuotes(strtolower($sterms[$i])).",";
+        if (strlen($sterms4q) > 0)
+            $sterms4q = substr($sterms4q, 0, -1);
+
+        // search for an exact match of any of the search terms
+        $query = "SELECT page_namespace, page_title FROM page ".
+                 "WHERE page_namespace not in (".implode(',', $ns_ignore).") AND ".
+                 "lower(page_title) in (".$sterms4q.")";
+        $res = $db->query($query);
+        $result = array();
+        while ($row = $db->fetchObject($res)) {
+            if (MWNamespace::isTalk($row->page_namespace)) continue;
+            $result[] = $row->page_title.",".$row->page_namespace;
+        }
+        $db->freeResult($res);
+        return implode(',',$result);
+    }
 
 }
 
