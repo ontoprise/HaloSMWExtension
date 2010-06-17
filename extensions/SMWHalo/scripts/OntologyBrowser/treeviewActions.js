@@ -1,5 +1,5 @@
 /*  Copyright 2007, ontoprise GmbH
-*   Author: Kai Kühn
+*   Author: Kai Kï¿½hn
 *   This file is part of the halo-Extension.
 *
 *   The halo-Extension is free software; you can redistribute it and/or modify
@@ -708,7 +708,7 @@ OBInstanceActionListener.prototype = {
   		dataAccess.OB_currentlyDisplayedTree = dataAccess.updateTree(request.responseText, categoryDIV);
 	 }
      globalActionListener.switchTreeComponent(null, 'categoryTree', true);
-	 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+categoryName], filterBrowsingCategoryCallback);
+	 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+categoryName,obAdvancedOptions.getDataSource()], filterBrowsingCategoryCallback);
    	
 	},
 	
@@ -769,11 +769,11 @@ OBInstanceActionListener.prototype = {
 	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
-		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceNamespace+":"+instanceName], callbackOnInstanceSelectToRight);
+		 	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceNamespace+":"+instanceName, obAdvancedOptions.getDataSource()], callbackOnInstanceSelectToRight);
 	  	} 
 	  	if (OB_LEFT_ARROW == 1) {
 	  		OB_tree_pendingIndicator.show();
-	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceNamespace+":"+instanceName], callbackOnInstanceSelectToLeft);
+	  		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForInstance',instanceNamespace+":"+instanceName, obAdvancedOptions.getDataSource()], callbackOnInstanceSelectToLeft);
 	  	}
 	
 		}
@@ -997,7 +997,7 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
 	 		OB_relatt_pendingIndicator.show();
-	 		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',gLanguage.getMessage('PROPERTY_NS')+propertyName], callbackOnPropertySelect2);
+	 		sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',gLanguage.getMessage('PROPERTY_NS')+propertyName, obAdvancedOptions.getDataSource()], callbackOnPropertySelect2);
 	 	 }
 		}
 	},
@@ -1130,7 +1130,7 @@ OBSchemaPropertyActionListener.prototype = {
 		} else {
 			if (OB_LEFT_ARROW == 1) {
 				OB_tree_pendingIndicator.show();
-				sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForProperty',attributeName], callbackOnPropertySelectForCategory);
+				sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getCategoryForProperty',attributeName, obAdvancedOptions.getDataSource()], callbackOnPropertySelectForCategory);
 			}
 			if (OB_RIGHT_ARROW == 1) {
 				 OB_instance_pendingIndicator.show();
@@ -1433,10 +1433,10 @@ OBGlobalActionListener.prototype = {
 	 }
 	 if (this.activeTreeName == 'categoryTree') {
 	 	 OB_tree_pendingIndicator.show(this.activeTreeName);
-		 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+hint], filterBrowsingCategoryCallback);
+		 sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"category##"+hint, obAdvancedOptions.getDataSource()], filterBrowsingCategoryCallback);
 	 }  else if (this.activeTreeName == 'propertyTree') {
 	 	 OB_tree_pendingIndicator.show(this.activeTreeName);
-         sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree##"+hint], filterBrowsingAttributeCallback);
+         sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"propertyTree##"+hint, obAdvancedOptions.getDataSource()], filterBrowsingAttributeCallback);
 	 } else {
 		 selectionProvider.fireFilterBrowsing(this.activeTreeName, hint);
 	 }
@@ -1444,9 +1444,9 @@ OBGlobalActionListener.prototype = {
 	 if (this.activeTreeName == 'categoryTree' || this.activeTreeName == 'propertyTree') {
 	  OB_instance_pendingIndicator.show();
 	  OB_relatt_pendingIndicator.show();
-	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance##"+hint], filterBrowsingInstanceCallback);	
-	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"property##"+hint], filterBrowsingPropertyCallback);
-	 }
+	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"instance##"+hint, obAdvancedOptions.getDataSource()], filterBrowsingInstanceCallback);	
+	  sajax_do_call('smwf_ob_OntologyBrowserAccess', ['filterBrowse',"property##"+hint, obAdvancedOptions.getDataSource()], filterBrowsingPropertyCallback);
+	}
 	},
 	
 	/**
