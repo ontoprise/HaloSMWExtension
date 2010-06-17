@@ -52,6 +52,9 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 		die();
 	}
 
+	// Register the triple store as source for a query with the alias "tsc"
+	global $smwgQuerySources;
+	$smwgQuerySources += array("tsc" => "SMWTripleStore");
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 	$smwgTripleStoreGraph = $tripleStoreGraph !== NULL ? $tripleStoreGraph : 'http://mywiki';
@@ -96,6 +99,7 @@ function smwgHaloSetupExtension() {
 	$wgAutoloadClasses['SMWAdvRequestOptions'] = $smwgHaloIP . '/includes/SMW_AdvRequestOptions.php';
 
 	$wgAutoloadClasses['TSConnection']            = $smwgHaloIP . '/includes/storage/SMW_TSConnection.php';
+	$wgAutoloadClasses['TSNamespaces']            = $smwgHaloIP . '/includes/storage/SMW_TS_Helper.php';
 	$wgAutoloadClasses['SMWTripleStore']            = $smwgHaloIP . '/includes/storage/SMW_TripleStore.php';
 	$wgAutoloadClasses['SMWTripleStoreQuad']            = $smwgHaloIP . '/includes/storage/SMW_TripleStoreQuad.php';
 	$wgAutoloadClasses['SMWSPARQLQueryProcessor']            = $smwgHaloIP . '/includes/SMW_SPARQLQueryProcessor.php';
@@ -1130,6 +1134,7 @@ function smwOBAddHTMLHeader(&$out) {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeview.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewActions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/treeviewData.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
+		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/OntologyBrowser/advancedOptions.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 		$jsm->addScriptIf($smwgScriptPath .  '/skins/SMW_tooltip.js', "all", -1, NS_SPECIAL.":OntologyBrowser");
 	} else {
 		$jsm->addScriptIf($smwgHaloScriptPath .  '/scripts/ajaxhalo.js');
