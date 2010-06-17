@@ -223,11 +223,15 @@ TreeTransformer.prototype = {
 var transformer = new TreeTransformer(
 		"/extensions/SMWHalo/skins/OntologyBrowser/treeview.xslt");
 
-function resetOntologyBrowser() {
+function resetOntologyBrowser(){
 	dataAccess = new OBDataAccess();
 	dataAccess.initializeTree(null);
-	$('instanceList').down().remove();
-	$('relattributes').down().remove();
+	if ($('instanceList') != null && $('instanceList').down() != null) {
+		$('instanceList').down().remove();
+	}
+	if ($('relattributes') != null && $('relattributes').down() != null) {
+		$('relattributes').down().remove();
+	}
 }
 
 Event.observe(window, 'load', function() { // call initialize hook
