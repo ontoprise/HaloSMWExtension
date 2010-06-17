@@ -996,6 +996,12 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'merge=false';
 			$first = false;
 		}
+		
+		if (isset($query->params) && isset($query->params['dataspace'])) {
+			if (!$first) $result .= "|";
+			$result .= 'dataspace='.trim($query->params['dataspace']);
+			$first = false;
+		}
 		return $result;
 	}
 
