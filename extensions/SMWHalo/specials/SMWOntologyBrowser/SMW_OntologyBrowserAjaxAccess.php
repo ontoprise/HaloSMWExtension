@@ -6,7 +6,7 @@
  * @ingroup SMWHaloSpecials
  * @ingroup SMWHaloOntologyBrowser
  *
- * @author Kai Kühn
+ * @author Kai Kï¿½hn
  *
  * Delegates AJAX calls to database and encapsulate the results as XML.
  * This allows easy transformation to HTML on client side.
@@ -32,6 +32,14 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 
 class OB_Storage {
+	
+	protected $dataSource;
+	
+	public function __construct($dataSource = null) {
+		$this->dataSource = $dataSource;
+	}
+	
+	
 	public function getRootCategories($p_array) {
 		// param0 : limit
 		// param1 : partitionNum
@@ -216,7 +224,8 @@ class OB_StorageTS extends OB_Storage {
 
 	private $tsNamespaceHelper;
 
-	public function __construct() {
+	public function __construct($dataSource = null) {
+		parent::__construct($dataSource);
 		$this->tsNamespaceHelper = new TSNamespaces(); // initialize namespaces
 	}
 
@@ -233,8 +242,13 @@ class OB_StorageTS extends OB_Storage {
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
 
+			$dataSpace = "";
+			if (isset($this->dataSource)) {
+				$dataSpace = "|dataspace={$this->dataSource}";
+			}
+			
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false");
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -357,12 +371,17 @@ class OB_StorageTS extends OB_Storage {
 			$partition =   isset($p_array[2]) ? intval($p_array[2]) : 0;
 			$offset = $partition * $limit;
 
+			$dataSpace = "";
+			if (isset($this->dataSource)) {
+				$dataSpace = "|dataspace={$this->dataSource}";
+			}
+			
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset");
+				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset$dataSpace");
 			} else {
-				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset");
+				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace");
 			}
 
 			global $smwgSPARQLResultEncoding;
@@ -426,8 +445,13 @@ class OB_StorageTS extends OB_Storage {
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
 
+			$dataSpace = "";
+			if (isset($this->dataSource)) {
+				$dataSpace = "|dataspace={$this->dataSource}";
+			}
+			
 			// query
-			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset");
+			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset$dataSpace|merge=false");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -482,8 +506,14 @@ class OB_StorageTS extends OB_Storage {
 
 			$instanceName = substr($p_array[0],1); // remove leading colon
 			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
+			
+			$dataSpace = "";
+			if (isset($this->dataSource)) {
+				$dataSpace = "|dataspace={$this->dataSource}";
+			}
+			
 			// query
-			$response = $client->query("[[$instanceName]]", "?Category");
+			$response = $client->query("[[$instanceName]]", "?Category$dataSpace");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -536,7 +566,12 @@ class OB_StorageTS extends OB_Storage {
 		$client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
-
+			
+			$dataSpace = "";
+			if (isset($this->dataSource)) {
+				$dataSpace = "|dataspace={$this->dataSource}";
+			}
+			
 			//query
 			for ($i = 0; $i < count($hint); $i++) {
 				$hint[$i] = preg_quote($hint[$i]);
@@ -553,9 +588,9 @@ class OB_StorageTS extends OB_Storage {
 			}
 
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }",  "limit=1000");
+				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }",  "limit=1000$dataSpace");
 			} else {
-				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000");
+				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
 			}
 
 			global $smwgSPARQLResultEncoding;
@@ -598,13 +633,20 @@ class OB_StorageTS extends OB_Storage {
 
 }
 
-function smwf_ob_OntologyBrowserAccess($method, $params) {
+
+function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
 	global $smwgOBInstanceDataFromTriplestore;
-	$storage = isset($smwgOBInstanceDataFromTriplestore) && $smwgOBInstanceDataFromTriplestore === true ?
-	new OB_StorageTS() : new OB_Storage();
+	$browseWiki = wfMsg("smw_ob_source_wiki");
+ 	$storage = (isset($smwgOBInstanceDataFromTriplestore) 
+				 && $smwgOBInstanceDataFromTriplestore === true)
+			   ||
+			   (isset($dataSource) && $dataSource != $browseWiki)
+					? new OB_StorageTS($dataSource) 
+					: new OB_Storage($dataSource);
+					
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
-	return $method->invoke($storage, $p_array);
+	return $method->invoke($storage, $p_array, $dataSource);
 
 }
 
