@@ -20,7 +20,7 @@ function us_doPathSearch($input, $nojason = false) {
 	$params = explode('&', $input);
 	$search = (isset($params[0])) ? $params[0] : "";
 	$origTerms = (isset($params[1])) ? $params[1] : "";
-	$limit = (isset($params[2])) ? $params[2] : 10000;
+	$limit = (isset($params[2])) ? $params[2] : 25; // never show more than 25 results
 	$offset = (isset($params[3])) ? $params[3] : 0;
 	
 	if (strpos($search, ',') !== false) {
