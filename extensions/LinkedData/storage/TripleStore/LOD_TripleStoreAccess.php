@@ -233,7 +233,9 @@ class  LODTripleStoreAccess  {
 	 * 		The graph to query. If not set, the graph stored in the global variable
 	 * 		$smwgTripleStoreGraph is queried.
 	 * @param string $params
-	 * 		A string with the parameters for the query.
+	 * 		A string with the parameters for the query in the following format:
+	 * 		parameterName=parameterValue
+	 * 		Several parameters are separated by |
 	 * 
 	 * @return LODSparqlQueryResult
 	 * 		The result of the query encapsulated in an object or <null> on failure.
