@@ -89,16 +89,12 @@ lodfInitNamespaces();
  *
  */
 function lodfInitStores() {
-//--- Only for testing purposes. Add the correct IO strategy when it is implemented.	
-	global $lodgIP;
-require_once("$lodgIP/tests/testcases/TestMapping.php");
 	
 	###
 	# Mappings for different LOD sources are stored with the LODMappingStore. The
 	# actual store for this data can be set with setIOStrategy().
 	##
 	LODMappingStore::setStore(new LODMappingTripleStore());
-//--- End of test configuration	
 	
 }
 
