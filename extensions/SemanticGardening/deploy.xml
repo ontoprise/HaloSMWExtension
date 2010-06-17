@@ -29,6 +29,10 @@
 		<new>
 			<require name="sga"
 				file="extensions/SemanticGardening/includes/SGA_GardeningInitialize.php" />
+            <php name="GardeningRights">
+    			// Gardening privileges for the WikiSysop
+                $wgGroupPermissions['sysop']['gardening'] = true;
+			</php>
 			<variable name="phpInterpreter">
 				<string name="phpInterpreterPath"
 					userValueRequired="true"
