@@ -1,14 +1,18 @@
 <?php
 
-$wgAjaxExportList[] = 'smwf_qrc_getQueryIds';
-$wgAjaxExportList[] = 'smwf_qrc_updateQuery';
+$wgAjaxExportList[] = 'smwf_qc_getQueryIds';
+$wgAjaxExportList[] = 'smwf_qc_updateQuery';
 
 /*
  * Returns a list of the ids of all cached queries
  */
-public function smwf_qrc_getQueryIds($limit = 0, $offset = 0){
+function smwf_qc_getQueryIds($paramAsJSON){
+	$paramObj = json_decode($paramAsJSON);
+	$limit = $paramObj->limit;
+	$offset = $paramObj->offset;
+	
 	$response = array();
-	$response['queryIds'] = array('12', '34', '56');
+	$response['queryIds'] = array( 12, 34, 56);
 	
 	$response = json_encode($response);
 	$response = new AjaxResponse($response);
@@ -19,7 +23,10 @@ public function smwf_qrc_getQueryIds($limit = 0, $offset = 0){
 /*
  * Updates a query with the given id
  */
-public function smwf_qrc_updateQuery($queryId){
+function smwf_qc_updateQuery($paramAsJSON){
+	$paramObj = json_decode($paramAsJSON);
+    $queryId = $paramObj->queryId;
+    
 	$response = array();
 	$response['success'] = true;
 	
