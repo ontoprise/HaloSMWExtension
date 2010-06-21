@@ -2713,7 +2713,7 @@ setSelector : function(val) {
 },
 
 supportsUnits : function() {
-    return (this.units.length > 0) ? true : false;
+    return (this.units.length > 0 && this.units[0].length > 0) ? true : false;
 },
 getUnits : function () {
     return this.units;
