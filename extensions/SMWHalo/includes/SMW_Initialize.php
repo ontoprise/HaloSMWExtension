@@ -255,6 +255,11 @@ function smwgHaloSetupExtension() {
 			case '_ws_' :  smwfHaloInitMessages();
 			require_once($smwgHaloIP . '/includes/SMW_WebInterfaces.php');
 			break;
+			
+			case '_qc_' :  smwfHaloInitMessages();
+            require_once($smwgHaloIP . '/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php');
+            break;
+			
 
 			default: // default case just imports everything (should be avoided)
 				smwfHaloInitMessages();
@@ -1624,6 +1629,6 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
  */
 function enableQueryResultsCache(){
 	global $smwgHaloIP, $smwgQRCEnabled;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php" );
 	$smwgQRCEnabled = true;
 }
