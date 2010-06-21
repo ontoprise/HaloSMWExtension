@@ -242,10 +242,7 @@ class OB_StorageTS extends OB_Storage {
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
 
-			$dataSpace = "";
-			if (isset($this->dataSource)) {
-				$dataSpace = "|dataspace={$this->dataSource}";
-			}
+			$dataSpace = $this->getDataSourceParameters();
 			
 			// query
 			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace");
@@ -371,11 +368,8 @@ class OB_StorageTS extends OB_Storage {
 			$partition =   isset($p_array[2]) ? intval($p_array[2]) : 0;
 			$offset = $partition * $limit;
 
-			$dataSpace = "";
-			if (isset($this->dataSource)) {
-				$dataSpace = "|dataspace={$this->dataSource}";
-			}
-			
+			$dataSpace = $this->getDataSourceParameters();
+						
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
@@ -445,11 +439,8 @@ class OB_StorageTS extends OB_Storage {
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
 
-			$dataSpace = "";
-			if (isset($this->dataSource)) {
-				$dataSpace = "|dataspace={$this->dataSource}";
-			}
-			
+			$dataSpace = $this->getDataSourceParameters();
+						
 			// query
 			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset$dataSpace|merge=false");
 
@@ -507,11 +498,8 @@ class OB_StorageTS extends OB_Storage {
 			$instanceName = substr($p_array[0],1); // remove leading colon
 			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
 			
-			$dataSpace = "";
-			if (isset($this->dataSource)) {
-				$dataSpace = "|dataspace={$this->dataSource}";
-			}
-			
+			$dataSpace = $this->getDataSourceParameters();
+						
 			// query
 			$response = $client->query("[[$instanceName]]", "?Category$dataSpace");
 
@@ -567,11 +555,8 @@ class OB_StorageTS extends OB_Storage {
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
 			
-			$dataSpace = "";
-			if (isset($this->dataSource)) {
-				$dataSpace = "|dataspace={$this->dataSource}";
-			}
-			
+			$dataSpace = $this->getDataSourceParameters();
+						
 			//query
 			for ($i = 0; $i < count($hint); $i++) {
 				$hint[$i] = preg_quote($hint[$i]);
@@ -630,6 +615,38 @@ class OB_StorageTS extends OB_Storage {
 		// do not show partitions. 1000 instances is maximum here.
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
 	}
+	
+	/**
+	 * Creates the data source parameters for the query. 
+	 * The field $this->dataSource is a comma separated list of data source names.
+	 * A special name for the wiki may be among them. In this case, the graph
+	 * for the wiki is added to the parameters.
+	 * 
+	 * @return string
+	 * 	The data source parameters for the query.
+	 */
+	public function getDataSourceParameters() {
+		if (!isset($this->dataSource)) {
+			// no dataspace parameters
+			return "";
+		}
+		// Check if the wiki is among the data sources
+		$dataSpace = "";
+		$sources = split(',', $this->dataSource);
+		$graph = "";
+		$wikiID = wfMsg("smw_ob_source_wiki");
+		foreach ($sources as $key => $source) {
+			if (trim($source) == $wikiID) {
+				global $smwgTripleStoreGraph;
+				$graph = "|graph=$smwgTripleStoreGraph";
+				unset ($sources[$key]);
+				break;
+			}
+		}
+		$dataSources = implode(',', $sources);
+		$dataSpace = "|dataspace=$dataSources$graph";
+		return $dataSpace;
+	}
 
 }
 
@@ -640,10 +657,9 @@ function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
  	$storage = (isset($smwgOBInstanceDataFromTriplestore) 
 				 && $smwgOBInstanceDataFromTriplestore === true)
 			   ||
-			   (isset($dataSource) && $dataSource != $browseWiki)
+			   (!empty($dataSource) && $dataSource != $browseWiki)
 					? new OB_StorageTS($dataSource) 
 					: new OB_Storage($dataSource);
-					
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array, $dataSource);
