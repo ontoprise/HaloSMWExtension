@@ -46,6 +46,15 @@ padding-right: 5px;
 padding-left: 5px;
 }
 
+.qibuttonEmp {
+font-family: sans-serif;
+text-decoration: underline;
+color: #FF9900;
+cursor: pointer;
+padding-right: 5px;
+padding-left: 5px;
+}
+
 div.qiaddbuttons{
 padding-top: 10px;
 float: left;
@@ -443,5 +452,5 @@ cursor: pointer;
 }
 
 #qisource > textarea {
-	height:98%;
+	height:85%;
 }

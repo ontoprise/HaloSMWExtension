@@ -89,27 +89,31 @@ Query.prototype = {
 */
 	updateTreeXML:function(){
 		var treexml = '<?xml version="1.0" encoding="UTF-8"?>';
-		treexml += '<treeview title=" Query"><folder title=" ' + this.name + '" code="root" expanded="true" img="question.gif">';
+        if (this.id == 0 && this.isEmpty()) {
+            $('treeanchor').innerHTML = gLanguage.getMessage('QI_EMPTY_QUERY');
+            return;
+        }
+		treexml += '<treeview title=" Query"><folder title=" ' + this.name + '" code="root" expanded="true">';
 		for(var i=0; i<this.categories.length; i++){
-			treexml += '<folder title="' + gLanguage.getMessage('QI_CATEGORIES') + '" code="categories' + i +'" expanded="true" img="category.gif">';
-			for(var j=0; j<this.categories[i].length; j++){
+			treexml += '<folder title="' + gLanguage.getMessage('QI_CATEGORIES') + '" code="categories' + i +'" expanded="true" img="../../concept.gif">';
+			for(var j=0; j<this.categories[i].length; j++) {
 					treexml += '<leaf title=" ' + this.categories[i][j] + '" code="category' + i + '-' + j + '" img="blue_ball.gif"/>';
 			}
 			treexml += '</folder>';
 		}
 		for(var i=0; i<this.instances.length; i++){
-			treexml += '<folder title="' + gLanguage.getMessage('QI_INSTANCES') + '" code="instances' + i +'" expanded="true" img="instance.gif">';
+			treexml += '<folder title="' + gLanguage.getMessage('QI_INSTANCES') + '" code="instances' + i +'" expanded="true" img="../../instance.gif">';
 			for(var j=0; j<this.instances[i].length; j++){
 				treexml += '<leaf title=" ' + this.instances[i][j] + '" code="instance' + i + '-' + j + '" img="red_ball.gif"/>';
 			}
 			treexml += '</folder>';
 		}
 		for(var i=0; i<this.properties.length; i++){
-			treexml += '<folder title=" ' + this.properties[i].getName() + '" code="properties' + i +'" expanded="true" img="property.gif">';
+			treexml += '<folder title=" ' + this.properties[i].getName() + '" code="properties' + i +'" expanded="true" img="../../property.gif">';
 			propvalues = this.properties[i].getValues();
 			for(var j=0; j<propvalues.length; j++){
 				if(propvalues[j][0] == "subquery")
-					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="subquery' + propvalues[j][2] + '" img="subquery.png" class="treesub"/>';
+					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="subquery' + propvalues[j][2] + '" img="subquery.png" class="treesub"/>'
 				else {
 					var res = ""; //restriction for numeric values. Encode for HTML display
 					switch(propvalues[j][1]){
@@ -123,7 +127,9 @@ Query.prototype = {
 							res = propvalues[j][1];
 							break;
 					}
-					treexml += '<leaf title=" ' + propvalues[j][0] + " " + res + " " + propvalues[j][2] + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
+                    res = propvalues[j][0] + " " + res + " " + propvalues[j][2];
+                    if (propvalues[j][3]) res += ' ' + propvalues[j][3];
+					treexml += '<leaf title=" ' + res + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
 				}
 			}
 			treexml += '</folder>';
@@ -249,7 +255,10 @@ Query.prototype = {
                     prop += ' #' + this.properties[i].getShowUnit();
                 if (this.properties[i].getColName())
                     prop += ' = ' + this.properties[i].getColName();
-                displayStatements.push(prop);
+                // do not show the same display statement twice
+                if (! displayStatements.inArray(prop)) {
+                    displayStatements.push(prop);
+                }
 			}
                         // add this only if there is no special value asked for
 			if(this.properties[i].mustBeSet() && 
@@ -290,7 +299,7 @@ Query.prototype = {
 							asktext += "Subquery:" + vals[j][2] + ":";
 						else
 							asktext += vals[j][2].unescapeHTML();
-                        if (vals[j][3])
+                        if (vals[j][3] && vals[j][3].length > 0)
                             asktext += vals[j][3].unescapeHTML();
 					}
 					asktext += "]]";
@@ -309,6 +318,8 @@ Query.prototype = {
                     prop += ' #' + this.properties[i].getShowUnit();
                 if (this.properties[i].getColName())
                     prop += ' = ' + this.properties[i].getColName();
+                // do not show the same display statement twice
+                if (displayStatements.inArray(prop)) continue;
                 displayStatements.push(prop);
             }
 		}
