@@ -19,10 +19,11 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
 
+	protected static $mBaseURI = 'http://www.example.org/smw-lde/';
 	protected $mGraph1 = "http://smw/ToyotaGraph";
 	protected $mGraph2 = "http://smw/VolkswagenGraph";
-	protected $mProvGraph = "http://smw/ProvenanceGraph";
-	protected $mDSIGraph = "http://smw/DataSourceInformationGraph";
+	protected $mProvGraph;
+	protected $mDSIGraph;
 
 	protected $mFilePath = "file://D:/MediaWiki/HaloSMWExtension/extensions/LinkedData/tests/resources/OntologyBrowserSparql/";
 	protected $mGraph1N3 = "ToyotaGraph.n3";
@@ -31,6 +32,10 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	protected $mDSIGraphN3 = "DataSourceInformationGraph.n3";
 
 	function setUp() {
+		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
+		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
+				
+		
 		$tsa = new LODTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
@@ -81,7 +86,16 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'superCat="Automobile"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') === false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') === false);
-		 
+
+		$r = smwf_ob_OntologyBrowserAccess("getInstance", "Automobile##80##0", "$wiki,Volkswagen,Toyota");
+		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
+		$this->assertTrue(strpos($r,'superCat="Hybrid"') !== false);
+		$this->assertTrue(strpos($r,'superCat="Automobile"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
+		
 	}
 
 	/**
@@ -171,6 +185,13 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
 		 
+		$r = smwf_ob_OntologyBrowserAccess("getInstancesUsingProperty", "HasPower##80##0", "$wiki,Volkswagen,Toyota");
+		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
+		
 	}
 
 	/**
@@ -219,7 +240,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * This function tests retrieving all categories for a certain instance.
+	 * This function tests retrieving all instances that match a given filter.
 	 */
 	function testFilterBrowse() {
 		$source = wfMsg("smw_ob_source_wiki");
@@ -233,6 +254,20 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Go", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
+
+		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##-I", "$source,Toyota,Volkswagen");
+		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') === false);
+		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
+
+		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", "$source,Toyota,Volkswagen");
+		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
+		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') === false);
+		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
 		
 	}
 	
