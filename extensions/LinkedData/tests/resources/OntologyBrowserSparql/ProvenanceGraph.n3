@@ -1,13 +1,26 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix swp: <http://www.w3.org/2004/03/trix/swp-2/> .
-@prefix smw: <http://smw/> .
+@prefix smw-lde: <http://www.example.org/smw-lde/smw-lde.owl#>.
+@prefix smwGraphs: <http://www.example.org/smw-lde/smwGraphs/>.
+@prefix smwDatasources: <http://www.example.org/smw-lde/smwDatasources/>. 
 
- smw:ToyotaGraph swp:assertedBy smw:Graph1Warrant.
- smw:Graph1Warrant swp:authority smw:DataSource1 ;
- dc:date "2009-11-20T12:40:44"^^xsd:dateTime .
+smwGraphs:ToyotaGraph 
+	a smw-lde:ImportGraph ;
+	smw-lde:created "2010-06-18T13:48:19"^^xsd:dateTime ;
+	swp:assertedBy [
+		a swp:Warrant ;
+		swp:authority smwDatasources:DataSource1 ;
+ 		dc:date "2010-06-18T13:48:19"^^xsd:dateTime ;
+ 	] ;
+. 	
 
- smw:VolkswagenGraph swp:assertedBy smw:Graph2Warrant.
- smw:Graph2Warrant swp:authority smw:DataSource2 ;
- dc:date "2009-11-18T08:41:49"^^xsd:dateTime .
-
+smwGraphs:VolkswagenGraph
+	a smw-lde:ImportGraph ;
+	smw-lde:created "2010-06-18T13:48:19"^^xsd:dateTime ;
+	swp:assertedBy [
+		a swp:Warrant ;
+		swp:authority smwDatasources:DataSource2 ;
+ 		dc:date "2010-06-18T13:48:19"^^xsd:dateTime ;
+ 	] ;
+. 	

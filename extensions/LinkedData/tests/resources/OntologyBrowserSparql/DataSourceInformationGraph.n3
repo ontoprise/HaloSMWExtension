@@ -1,25 +1,19 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix shk: <http://shk/> .
-@prefix smw: <http://smw/> .
-@prefix sdprop: <http://smw/sdprop#> .
-@prefix void: <http://rdfs.org/ns/void#> .
+@prefix smw-lde: <http://www.example.org/smw-lde/smw-lde.owl#>  .
+@prefix smwDatasources: <http://www.example.org/smw-lde/smwDatasources/> .
 
- smw:DataSource1 rdf:type shk:DataSource;
- 	 sdprop:id "Toyota"^^xsd:string ;
-	 rdfs:label "Toyota"^^xsd:string ;
-	 void:sparqlEndpoint <http://sparql.dpedia.org>;
-	 void:dataDumps <http://dumps.dpedia.org>;
-	 shk:refreshInterval "1 month" ;
-	 shk:mapping smw:dbpediaMapping ;
-	 shk:silkIDresolutionRules smw:dbpediaSilkIDResolution .
+smwDatasources:DataSource1
+	rdf:type smw-lde:Datasource ;
+	smw-lde:ID "Toyota"^^xsd:string ;
+	smw-lde:label "Toyota"^^xsd:string ;
+	smw-lde:sparqlEndpointLocation <http://sparql.toyota.org>;
+.
 
- smw:DataSource2 rdf:type shk:DataSource;
- 	 sdprop:id "Volkswagen"^^xsd:string ;
-	 rdfs:label "Volkswagen"^^xsd:string ;
-	 void:sparqlEndpoint <http://sparql.mywiki.org>;
-	 shk:refreshInterval "1 day" ;
-	 shk:mapping smw:mywikiMapping ;
-	 shk:silkIDresolutionRules smw:mywikiSilkIDResolution .
+smwDatasources:DataSource2
+	rdf:type smw-lde:Datasource ;
+	smw-lde:ID "Volkswagen"^^xsd:string ;
+	smw-lde:label "Volkswagen"^^xsd:string ;
+	smw-lde:sparqlEndpointLocation <http://sparql.volkswagen.org>
+.
 
