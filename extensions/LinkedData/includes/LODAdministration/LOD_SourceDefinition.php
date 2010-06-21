@@ -55,13 +55,6 @@ class LODSourceDefinition  {
 	// a source). The ID will later be referenced in other places e.g. queries and
 	// mappings. 
 	private $mID;
-
-	// int:
-	// The integrated sources are sorted by importance. This order appears in 
-	// the user interface and can be considered when search results are presented.
-	// The lowest value is 0. It has the highest priority. Sources with the same
-	// importance index have the same priority.
-	private $mImportanceIndex;
 	
 	// string:
 	// 	A optional textual description of the dataset. 
@@ -70,13 +63,6 @@ class LODSourceDefinition  {
 	// string:
 	// An optional label that provides the name of the dataset. 
 	private $mLabel;
-	
-	// string:
-	// This is the ID of a mapping that is stored in the Mapping API. The 
-	// referenced mapping is used to translate imported triples to the wiki's 
-	// vocabulary or to translate queries from the wiki's vocabulary to the 
-	// source's vocabulary. 
-	private $mMappingID;
 	
 	// string:
 	// A prefix for Linked Data hosted on a server. URIs that begin with this 
@@ -163,10 +149,8 @@ class LODSourceDefinition  {
 
 	//--- getter/setter ---
 	public function getID()						{ return $this->mID; }
-	public function getImportanceIndex()		{ return $this->mImportanceIndex; }
 	public function getDescription()			{ return $this->mDescription; }
 	public function getLabel()					{ return $this->mLabel; }
-	public function getMappingID()				{ return $this->mMappingID; }
 	public function getLinkedDataPrefix()		{ return $this->mLinkedDataPrefix; }
 	public function getUriRegexPattern()		{ return $this->mUriRegexPattern; }
 	public function getHomepage()				{ return $this->mHomepage; }
@@ -179,10 +163,8 @@ class LODSourceDefinition  {
 	public function getVocabularies()			{ return $this->mVocabularies; }
 	
 	public function setID($val)						{ $this->mID = $val; }
-	public function setImportanceIndex($val)		{ $this->mImportanceIndex = $val; }
 	public function setDescription($val)			{ $this->mDescription = $val; }
 	public function setLabel($val)					{ $this->mLabel = $val; }
-	public function setMappingID($val)				{ $this->mMappingID = $val; }
 	public function setLinkedDataPrefix($val)		{ $this->mLinkedDataPrefix = $val; }
 	public function setUriRegexPattern($val)		{ $this->mUriRegexPattern = $val; }
 	public function setHomepage($val)				{ $this->mHomepage = $val; }
