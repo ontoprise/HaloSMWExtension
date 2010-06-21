@@ -1618,3 +1618,12 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
 	$rMresult |= ($index == NS_IMAGE);
 	return true;
 }
+
+/*
+ * Call this method in LocalSettings in order to enable the Query Results Cache 
+ */
+function enableQueryResultsCache(){
+	global $smwgHaloIP, $smwgQRCEnabled;
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php" );
+	$smwgQRCEnabled = true;
+}
