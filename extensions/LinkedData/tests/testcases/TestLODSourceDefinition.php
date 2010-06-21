@@ -16,10 +16,8 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 		"DataDumpLocations" => array("http://deepblue.rkbexplorer.com/datadDump", "http://deepblue.rkbexplorer.com/datadDump2"),
 		"Description" => "This repository contains data supplied from Deep Blue.",
 		"Homepage" => "http://deepblue.rkbexplorer.com/",
-		"ImportanceIndex" => 42,
 		"Label" => "deepblue.rkbexplorer.com Linked Data Repository",
 		"LastMod" => "2007-11-21T14:41:09+12:34",
-		"MappingID" => "deepbule-mapping",
 		"LinkedDataPrefix" => "http://dbpedia.org/resource/",
 		"SampleURIs" => array("http://dbpedia.org/resource/Computer_science", "http://dbpedia.org/resource/Organization"),
 		"SparqlEndpointLocation" => "http://deepblue.rkbexplorer.com/sparql/",
@@ -78,10 +76,8 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($this->mLSD["ChangeFreq"], $lsd->getChangeFreq());
 		$this->assertEquals($this->mLSD["Description"], $lsd->getDescription());
 		$this->assertEquals($this->mLSD["Homepage"], $lsd->getHomepage());
-		$this->assertEquals($this->mLSD["ImportanceIndex"], $lsd->getImportanceIndex());
 		$this->assertEquals($this->mLSD["Label"], $lsd->getLabel());
 		$this->assertEquals($this->mLSD["LastMod"], $lsd->getLastMod());
-		$this->assertEquals($this->mLSD["MappingID"], $lsd->getMappingID());
 		$this->assertEquals($this->mLSD["LinkedDataPrefix"], $lsd->getLinkedDataPrefix());
 		$this->assertEquals($this->mLSD["SparqlEndpointLocation"], $lsd->getSparqlEndpointLocation());
 		$this->assertEquals($this->mLSD["SparqlGraphName"], $lsd->getSparqlGraphName());
@@ -173,10 +169,8 @@ class TestLODSourceDefinition extends PHPUnit_Framework_TestCase {
 		$sd->setDataDumpLocations($this->mLSD["DataDumpLocations"]);
 		$sd->setDescription($this->mLSD["Description"]);
 		$sd->setHomepage($this->mLSD["Homepage"]);
-		$sd->setImportanceIndex($this->mLSD["ImportanceIndex"]);
 		$sd->setLabel($this->mLSD["Label"]);
 		$sd->setLastMod($this->mLSD["LastMod"]);
-		$sd->setMappingID($this->mLSD["MappingID"]);
 		$sd->setLinkedDataPrefix($this->mLSD["LinkedDataPrefix"]);
 		$sd->setSampleURIs($this->mLSD["SampleURIs"]);
 		$sd->setSparqlEndpointLocation($this->mLSD["SparqlEndpointLocation"]);

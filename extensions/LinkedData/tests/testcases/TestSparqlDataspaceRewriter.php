@@ -9,11 +9,12 @@ require_once 'PHPUnit/Framework.php';
 class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 
 	protected $backupGlobals = FALSE;
-	protected $mGraph1 = "http://smw/Graph1";
-	protected $mGraph2 = "http://smw/Graph2";
-	protected $mGraph3 = "http://smw/Graph3";
-	protected $mProvGraph = "http://smw/ProvenanceGraph";
-	protected $mDSIGraph = "http://smw/DataSourceInformationGraph";
+	protected static $mBaseURI = 'http://www.example.org/smw-lde/';
+	protected $mGraph1;
+	protected $mGraph2;
+	protected $mGraph3;
+	protected $mProvGraph;
+	protected $mDSIGraph;
 
 	protected $mFilePath = "file://D:/MediaWiki/SMWTripleStore/resources/sparql_rewriter_tests/";
 	protected $mGraph1N3 = "Graph1.n3";
@@ -23,6 +24,12 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 	protected $mDSIGraphN3 = "DataSourceInformationGraph.n3";
 	
     function setUp() {
+		$this->mGraph1 = self::$mBaseURI."smwGraphs/Graph1";
+		$this->mGraph2 = self::$mBaseURI."smwGraphs/Graph2";
+		$this->mGraph3 = self::$mBaseURI."smwGraphs/Graph3";
+		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
+		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
+	    	
     	$tsa = new LODTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
@@ -69,7 +76,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	$rows = $qr->getRows();
 //    	$this->assertEquals(count($rows), 4);
     	// Verify results of graph 1
-    	$r = $qr->getRowsWhere("g", "http://smw/Graph1");
+    	$r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph1");
     	$this->assertEquals(count($r), 1);
     	$val = $r[0]->getResult("s")->getValue();
     	$this->assertEquals($val,"http://smw/_047897855");
@@ -77,7 +84,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	$this->assertEquals($val,"Intel, Inc");
     	
     	// Verify results of graph 2
-    	$r = $qr->getRowsWhere("g", "http://smw/Graph2");
+    	$r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph2");
     	$this->assertEquals(count($r), 2);
     	
     	$val1 = $r[0]->getResult("s")->getValue();
@@ -94,7 +101,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	}
 
     	// Verify results of graph 3
-    	$r = $qr->getRowsWhere("g", "http://smw/Graph3");
+    	$r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph3");
     	$this->assertEquals(count($r), 1);
     	$val = $r[0]->getResult("s")->getValue();
     	$this->assertEquals($val,"http://smw/_316067164");
