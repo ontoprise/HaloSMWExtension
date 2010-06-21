@@ -5,7 +5,6 @@ require_once( "$smwgHaloIP/includes/storage/SMW_RuleStore.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_RESTWebserviceConnector.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_HaloQueryResult.php" );
 require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
-require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 
 /**
  * @file
@@ -378,8 +377,13 @@ class SMWTripleStore extends SMWStore {
 	///// Query answering /////
 
 	public function getQueryResult(SMWQuery $query){
-		$qrc = new SMWQRCQueryResultsCache();
-		return $qrc->getQueryResult($query);		
+		global $smwgQRCEnabled;
+		if($smwgQRCEnabled){	
+			$qrc = new SMWQRCQueryResultsCache();
+			return $qrc->getQueryResult($query);
+		} else {
+			return $this->doGetQueryResult($query);
+		}		
 	}
 	
 	function doGetQueryResult(SMWQuery $query) {

@@ -1624,6 +1624,6 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
  */
 function enableQueryResultsCache(){
 	global $smwgHaloIP, $smwgQRCEnabled;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php" );
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 	$smwgQRCEnabled = true;
 }
