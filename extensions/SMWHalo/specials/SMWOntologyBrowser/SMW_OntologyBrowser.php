@@ -77,7 +77,9 @@ class SMW_OntologyBrowser extends SpecialPage {
 		$html .= "<span id=\"propertyRangeSpan\"><input type=\"checkbox\" id=\"directPropertySwitch\"/>".wfMsg('smw_ob_onlyDirect')."</input><input type=\"checkbox\" id=\"showForRange\"/>".wfMsg('smw_ob_showRange')."</input></span>";
 		$html .= "<div id=\"ontologybrowser\">";
 
-//TODO: Add the following code to a hook		
+//TODO: Add the following code to a hook. However, the problem is, that 
+// advancedOption.js should also be moved to the Linked Data Extension, but it
+// is used for getting parameters for the ajax calls to smwf_ob_OntologyBrowserAccess().	
 		if (defined('LOD_LINKEDDATA_VERSION')) {
 			$ids = LODAdministrationStore::getInstance()->getAllSourceDefinitionIDs();
 			$sourceOptions = "";
@@ -92,8 +94,8 @@ class SMW_OntologyBrowser extends SpecialPage {
 	<div id="aoFoldIcon" class="aoFoldClosed"> </div>
 	<b>$advancedOptions</b>
 	<div id="aoContent" class="aoContent">
-		<b>$selectDatasource</b>
-		<select id="dataSourceSelector" name="DataSource" size="1">
+		<div><b>$selectDatasource</b></div>
+		<select id="dataSourceSelector" name="DataSource" size="5" multiple="multiple">
 			<option>$fromWiki</option>
 			$sourceOptions
 		</select>
