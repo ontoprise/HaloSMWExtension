@@ -7,7 +7,7 @@
  * @defgroup SMWHaloMaintenance SMWHalo maintenance scripts
  * @ingroup SMWHalo
  * 
- * @author: Kai Kühn
+ * @author: Kai Kï¿½hn
  *
  * Created on: 3.07.2009
  */
@@ -31,10 +31,21 @@ if ($help) {
 if ($delete) {
 	print "\Drop SMWHalo.\n\n";
 	smwfGetSemanticStore()->drop(true);
+	
+	//deal with the query results cache
+	global $smwgHaloIP;
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
+	SMWQRCStore::getInstance()->getDB()->dropTables();
+	
 	die();
 }
 
 print "\nSetup SMWHalo.\n\n";
 smwfGetSemanticStore()->setup(true);
+
+//deal with the query results cache
+global $smwgHaloIP;
+require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
+SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
 
 

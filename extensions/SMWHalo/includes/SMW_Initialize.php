@@ -1632,3 +1632,12 @@ function enableQueryResultsCache(){
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php" );
 	$smwgQRCEnabled = true;
 }
+
+/*
+ * Set up the Query Results Cache Tables
+ */
+function smwfQRCInitializeTables(){
+	global $smwgHaloIP;
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
+	SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
+}
