@@ -10,6 +10,7 @@ require_once 'testcases/TestLODSourceDefinition.php';
 require_once 'testcases/TestTripleStoreAccess.php';
 require_once 'testcases/TestMapping.php';
 require_once 'testcases/TestSparqlDataspaceRewriter.php';
+require_once 'testcases/TestOntologyBrowserSparql.php';
 
 class LODTests
 { 
@@ -21,6 +22,7 @@ class LODTests
         $suite->addTestSuite("TestTripleStoreAccess");
         $suite->addTestSuite("TestMapping");
         $suite->addTestSuite("TestSparqlDataspaceRewriter");
+        $suite->addTestSuite("TestOntologyBrowserSparql");
         
         return $suite;
     }
