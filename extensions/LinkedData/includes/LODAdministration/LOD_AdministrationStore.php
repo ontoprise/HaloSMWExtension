@@ -49,10 +49,11 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 class  LODAdministrationStore  {
 	
 	//--- Constants ---
-	const LOD_SOURCE_DEFINITION_GRAPH = "DataSourceInformationGraph";
-	const LOD_BASE_URI = "http://smw/";
-	const LOD_SOURCE_DEFINITION_URI_SUFFIX = "sd#";
-	const LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX = "sdprop#";
+	const LOD_SD_GRAPH = "DataSourceInformationGraph";
+	const LOD_BASE_URI = "http://www.example.org/smw-lde/";
+	const LOD_SMW_LDE = "smw-lde.owl#";
+	const LOD_SMW_GRAPHS = "smwGraphs/";
+	const LOD_SMW_DATASOURCES = "smwDatasources/";
 	
 	//--- Private fields ---
 	
@@ -95,35 +96,29 @@ class  LODAdministrationStore  {
 	}
 	
 	/**
-	 * Stores the definition of a Linked Data source in the triple store. Two
-	 * new namespaces are used:
-	 * -sd (source definition)
-	 * -sdprop (source definition property)
-	 * The namespaces are a concatenation of the constants LOD_BASE_URI and
-	 * LOD_SOURCE_DEFINITION_URI_SUFFIX or LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX,
-	 * repectively.
+	 * Stores the definition of a Linked Data source in the triple store. The
+	 * new namespace "smw-lde" is used.
+	 * Is is a concatenation of the constants LOD_BASE_URI and LOD_SMW_LDE.
 	 * 
 	 * Data source definitions are stored in a dedicated graph defined by LOD_BASE_URI
-	 * and LOD_SOURCE_DEFINITION_GRAPH.
+	 * and LOD_SD_GRAPH.
 	 * 
 	 * The fields of the data source definition are stored as follows: 
 	 * - The subjects of all triples for a data source are based on its ID.
 	 * - The following properties are used (with given cardinality and type):
-	 * sdprop:id 						^^xsd:string 	(1) 
-	 * sdprop:importanceIndex			^^xsd:int 		(1)
-	 * sdprop:description				^^xsd:string 	(0..1) 
-	 * rdfs:label 						^^xsd:string 	(0..1) 
-	 * sdprop:mappingID 				^^xsd:string 	(1) 
-	 * sdprop:linkedDataPrefix 			^^xsd:string 	(0..1)
-	 * sdprop:uriRegexPattern 			^^xsd:string 	(0..1)
-	 * sdprop:homepage 					^^xsd:anyURI 	(0..1)
-	 * sdprop:sampleURI 				^^xsd:anyURI 	(0..*)
-	 * sdprop:sparqlEndpointLocation 	^^xsd:anyURI 	(0..1)
-	 * sdprop:sparqlGraphName 			^^xsd:anyURI 	(0..1)
-	 * sdprop:dataDumpLocation 			^^xsd:anyURI 	(0..*)
-	 * sdprop:lastMod 					^^xsd:dateTime	(0..1)
-	 * sdprop:changeFreq 				^^xsd:string 	(0..1)
-	 * sdprop:vocabulary 				^^xsd:anyURI 	(0..*)
+	 * smw-lde:ID 						^^xsd:string 	(1) 
+	 * smw-lde:description				^^xsd:string 	(0..1) 
+	 * smw-lde:label 					^^xsd:string 	(0..1) 
+	 * smw-lde:linkedDataPrefix 		^^xsd:string 	(0..1)
+	 * smw-lde:uriRegexPattern 			^^xsd:string 	(0..1)
+	 * smw-lde:homepage 				^^owl:Thing 	(0..1)
+	 * smw-lde:sampleURI 				^^owl:Thing 	(0..*)
+	 * smw-lde:sparqlEndpointLocation 	^^owl:Thing 	(0..1)
+	 * smw-lde:sparqlGraphName 			^^owl:Thing 	(0..1)
+	 * smw-lde:dataDumpLocation 		^^owl:Thing 	(0..*)
+	 * smw-lde:lastmod 					^^xsd:dateTime	(0..1)
+	 * smw-lde:changefreq 				^^xsd:string 	(0..1)
+	 * smw-lde:vocabulary 				^^owl:Thing 	(0..*)
 	 * 
 	 * @param LODSourceDefinition $sd
 	 * 		This object defines a linked data source.
@@ -135,7 +130,7 @@ class  LODAdministrationStore  {
 	public function storeSourceDefinition(LODSourceDefinition $sd) {
 		
 		// create the triples for the source definition
-		$subjectNS = "sd:";
+		$subjectNS = "smwDatasources:";
 		$subject = $sd->getID();
 		if (!isset($subject)) {
 			// The ID of a data source definition is mandatory
@@ -143,42 +138,41 @@ class  LODAdministrationStore  {
 		}
 		$subject = $subjectNS.$subject;
 
-		$propNS = "sdprop:";
+		$propNS = "smw-lde:";
 		$triples = array();
 		
-		$triples[] = new LODTriple($subject, $propNS."id", $sd->getID(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."importanceIndex", $sd->getImportanceIndex(), "xsd:int");
+		$triples[] = new LODTriple($subject, "rdf:type", "smw-lde:Datasource", "owl:Thing");
+		$triples[] = new LODTriple($subject, $propNS."ID", $sd->getID(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."description", $sd->getDescription(), "xsd:string");
-		$triples[] = new LODTriple($subject, "rdfs:label", $sd->getLabel(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."mappingID", $sd->getMappingID(), "xsd:string");
+		$triples[] = new LODTriple($subject, $propNS."label", $sd->getLabel(), "xsd:string");
 		$triples[] = new LODTriple($subject, $propNS."linkedDataPrefix", $sd->getLinkedDataPrefix(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."uriRegexPattern", $sd->getUriRegexPattern(), "xsd:string");
-		$triples[] = new LODTriple($subject, $propNS."homepage", $sd->getHomepage(), "xsd:anyURI");
+		$triples[] = new LODTriple($subject, $propNS."uriRegexPattern", $sd->getUriRegexPattern());
+		$triples[] = new LODTriple($subject, $propNS."homepage", $sd->getHomepage(), "owl:Thing");
 
 		if (is_array($sd->getSampleURIs())) {
 			foreach ($sd->getSampleURIs() as $uri) {
-				$triples[] = new LODTriple($subject, $propNS."sampleURI", $uri, "xsd:anyURI");
+				$triples[] = new LODTriple($subject, $propNS."sampleURI", $uri, "owl:Thing");
 		 	}
 		}
 
-	 	$triples[] = new LODTriple($subject, $propNS."sparqlEndpointLocation", $sd->getSparqlEndpointLocation(), "xsd:anyURI");
-	 	$triples[] = new LODTriple($subject, $propNS."sparqlGraphName", $sd->getSparqlGraphName(), "xsd:anyURI");
+	 	$triples[] = new LODTriple($subject, $propNS."sparqlEndpointLocation", $sd->getSparqlEndpointLocation(), "owl:Thing");
+	 	$triples[] = new LODTriple($subject, $propNS."sparqlGraphName", $sd->getSparqlGraphName(), "owl:Thing");
 		if (is_array($sd->getDataDumpLocations())) {
 		 	foreach ($sd->getDataDumpLocations() as $ddl) {
-		 		$triples[] = new LODTriple($subject, $propNS."dataDumpLocation", $ddl, "xsd:anyURI");
+		 		$triples[] = new LODTriple($subject, $propNS."dataDumpLocation", $ddl, "owl:Thing");
 		 	}
 		}
 
-	 	$triples[] = new LODTriple($subject, $propNS."lastMod", $sd->getLastMod(), "xsd:dateTime");
-	 	$triples[] = new LODTriple($subject, $propNS."changeFreq", $sd->getChangeFreq(), "xsd:string");
+	 	$triples[] = new LODTriple($subject, $propNS."lastmod", $sd->getLastMod(), "xsd:dateTime");
+	 	$triples[] = new LODTriple($subject, $propNS."changefreq", $sd->getChangeFreq(), "xsd:string");
 
 		if (is_array($sd->getVocabularies())) {
 		 	foreach ($sd->getVocabularies() as $voc) {
-		 		$triples[] = new LODTriple($subject, $propNS."vocabulary", $voc, "xsd:anyURI");
+		 		$triples[] = new LODTriple($subject, $propNS."vocabulary", $voc, "owl:Thing");
 		 	}
 		}
 
-		$graph = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH;
+		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
 		
 		$tsa = new LODTripleStoreAccess();
 		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
@@ -202,8 +196,8 @@ class  LODAdministrationStore  {
 	 * 		with the given ID.
 	 */
 	public function loadSourceDefinition($sourceID) {
-		$graph = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH;
-		$subjectNS = "sd:";
+		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$subjectNS = "smwDatasources:";
 		$subject = $subjectNS.$sourceID;
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
@@ -228,20 +222,13 @@ class  LODAdministrationStore  {
 		}
 		
 		// Create a source definition object.
-		$propNS = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX;
-		$rdfs = "http://www.w3.org/2000/01/rdf-schema#";
-		$sd = new LODSourceDefinition($properties["{$propNS}id"][0]);
-		if (array_key_exists("{$propNS}importanceIndex", $properties)) {
-			$sd->setImportanceIndex($properties["{$propNS}importanceIndex"][0]+0);
-		}
+		$propNS = self::LOD_BASE_URI.self::LOD_SMW_LDE;
+		$sd = new LODSourceDefinition($properties["{$propNS}ID"][0]);
 		if (array_key_exists("{$propNS}description", $properties)) {
 			$sd->setDescription($properties["{$propNS}description"][0]);
 		}
-		if (array_key_exists("{$rdfs}label", $properties)) {
-			$sd->setLabel($properties["{$rdfs}label"][0]);
-		}
-		if (array_key_exists("{$propNS}mappingID", $properties)) {
-			$sd->setMappingID($properties["{$propNS}mappingID"][0]);
+		if (array_key_exists("{$propNS}label", $properties)) {
+			$sd->setLabel($properties["{$propNS}label"][0]);
 		}
 		if (array_key_exists("{$propNS}linkedDataPrefix", $properties)) {
 			$sd->setLinkedDataPrefix($properties["{$propNS}linkedDataPrefix"][0]);
@@ -264,11 +251,11 @@ class  LODAdministrationStore  {
 		if (array_key_exists("{$propNS}dataDumpLocation", $properties)) {
 			$sd->setDataDumpLocations($properties["{$propNS}dataDumpLocation"]);
 		}
-		if (array_key_exists("{$propNS}lastMod", $properties)) {
-			$sd->setLastMod($properties["{$propNS}lastMod"][0]);
+		if (array_key_exists("{$propNS}lastmod", $properties)) {
+			$sd->setLastMod($properties["{$propNS}lastmod"][0]);
 		}
-		if (array_key_exists("{$propNS}changeFreq", $properties)) {
-			$sd->setChangeFreq($properties["{$propNS}changeFreq"][0]);
+		if (array_key_exists("{$propNS}changefreq", $properties)) {
+			$sd->setChangeFreq($properties["{$propNS}changefreq"][0]);
 		}
 		if (array_key_exists("{$propNS}vocabulary", $properties)) {
 			$sd->setVocabularies($properties["{$propNS}vocabulary"]);
@@ -284,13 +271,13 @@ class  LODAdministrationStore  {
 	 * 		ID of the source definition.
 	 */
 	public function deleteSourceDefinition($sourceID) {
-		$subjectNS = "sd";
+		$subjectNS = "smwDatasources";
 		$subject   = $subjectNS.":".$sourceID;
 		
 		$tsa = new LODTripleStoreAccess();
 		$tsa->addPrefixes(TSNamespaces::getW3CPrefixes()
 			              .self::getSourceDefinitionPrefixes());
-		$tsa->deleteTriples(self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH, 
+		$tsa->deleteTriples(self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH, 
 							"$subject ?p ?o", "$subject ?p ?o");
 		$tsa->flushCommands();
 	}
@@ -302,7 +289,7 @@ class  LODAdministrationStore  {
 	 */
 	public function deleteAllSourceDefinitions() {
 		$tsa = new LODTripleStoreAccess();
-		$tsa->dropGraph(self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH);
+		$tsa->dropGraph(self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH);
 		$tsa->flushCommands();
 	}
 	
@@ -314,8 +301,8 @@ class  LODAdministrationStore  {
 	 * 		An array of all IDs. If no ID is available, the array is empty.
 	 */
 	public function getAllSourceDefinitionIDs() {
-		$graph = self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_GRAPH;
-		$id    = "sdprop:id";
+		$graph = self::LOD_BASE_URI.self::LOD_SMW_GRAPHS.self::LOD_SD_GRAPH;
+		$id    = "smw-lde:ID";
 		$prefixes = self::getSourceDefinitionPrefixes();
 		
 		$query = $prefixes."SELECT ?s ?id FROM <$graph> WHERE { ?s $id  ?id . }";
@@ -341,9 +328,12 @@ class  LODAdministrationStore  {
 	 *
 	 */
 	private function getSourceDefinitionPrefixes() {
+		
 		return
-			 "PREFIX sd:<".self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_URI_SUFFIX."> \n"
-			."PREFIX sdprop:<".self::LOD_BASE_URI.self::LOD_SOURCE_DEFINITION_PROPERTY_SUFFIX."> \n\n";
+			 "PREFIX smw-lde: <".self::LOD_BASE_URI.self::LOD_SMW_LDE."> \n"
+			."PREFIX smwGraphs: <".self::LOD_BASE_URI.self::LOD_SMW_GRAPHS."> \n"
+			."PREFIX smwDatasources: <".self::LOD_BASE_URI.self::LOD_SMW_DATASOURCES."> \n"
+			."PREFIX owl: <http://www.w3.org/2002/07/owl#> \n\n";
 	}
 }
 
