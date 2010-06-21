@@ -51,6 +51,25 @@ OBAdvancedOptions.prototype = {
 	},
 	
 	/**
+	 * Retrieves the current list of currently selected data sources and stores
+	 * them in <this.dataSource>
+	 */
+	updateDataSources: function() {
+		var dss = $('dataSourceSelector');
+		var value = "";
+		dss.descendants().each(function(opt){
+			if (opt.selected == true) {
+				value += "," + opt.text;
+			}
+		});
+		if (value.length > 0) {
+			value = value.substr(1);
+		}
+		this.dataSource = value;
+
+	},
+	
+	/**
 	 * Initializes the callbacks for the UI after the window was loaded.
 	 */
 	onLoad: function(event){
@@ -58,13 +77,11 @@ OBAdvancedOptions.prototype = {
 		if (dss == null) {
 			return;
 		}
-		this.dataSource = dss.options[dss.selectedIndex].text;
+		obAdvancedOptions.updateDataSources();
 		
 		Event.observe('dataSourceSelector', 'change',
 						function(event) {
-							var obj = $('dataSourceSelector');
-							var value = obj.options[obj.selectedIndex].text;
-							obAdvancedOptions.setDataSource(value);
+							obAdvancedOptions.updateDataSources();
 							resetOntologyBrowser();
 						});
 		
