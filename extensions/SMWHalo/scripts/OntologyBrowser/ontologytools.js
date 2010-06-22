@@ -104,6 +104,7 @@ OBEventProvider.prototype = {
      * @param node in HTML DOM tree.
      */
     fireSelectionChanged: function(id, title, ns, node) {
+    	if (!this.listeners[OB_SELECTIONLISTENER]) return;
         this.listeners[OB_SELECTIONLISTENER].each(function (l) { 
             l.selectionChanged(id, title, ns, node);
         });
@@ -119,6 +120,7 @@ OBEventProvider.prototype = {
      * @param tabname
      */
     fireTreeTabChanged: function(tabname) {
+    	if (!this.listeners[OB_TREETABCHANGELISTENER]) return;
     	this.listeners[OB_TREETABCHANGELISTENER].each(function (l) { 
             l.treeTabChanged(tabname);
         });
@@ -135,6 +137,7 @@ OBEventProvider.prototype = {
      * @param filter 
      */
     fireFilterTree: function(tabname, filter) {
+    	if (!this.listeners[OB_FILTERTREE]) return;
     	this.listeners[OB_FILTERTREE].each(function (l) { 
             l.treeFilterTree(tabname, filter);
         });
@@ -151,6 +154,7 @@ OBEventProvider.prototype = {
      * 
      */
     fireFilterBrowsing: function(tabname, filter) {
+    	if (!this.listeners[OB_FILTERBROWSING]) return;
     	this.listeners[OB_FILTERBROWSING].each(function (l) { 
             l.filterBrowsing(tabname, filter);
         });
@@ -167,6 +171,7 @@ OBEventProvider.prototype = {
      * 
      */
     fireReset: function(tabname) {
+    	if (!this.listeners[OB_RESET]) return;
     	this.listeners[OB_RESET].each(function (l) { 
             l.reset(tabname);
         });
@@ -179,12 +184,14 @@ OBEventProvider.prototype = {
      * must have the name 'refresh'
      */
     fireRefresh: function() {
+    	if (!this.listeners[OB_REFRESHLISTENER]) return;
         this.listeners[OB_REFRESHLISTENER].each(function (l) { 
             l.refresh();
         });
     },
     
     fireBeforeRefresh: function() {
+    	if (!this.listeners[OB_BEFOREREFRESHLISTENER]) return;
         this.listeners[OB_BEFOREREFRESHLISTENER].each(function (l) { 
             l.beforeRefresh();
         });
