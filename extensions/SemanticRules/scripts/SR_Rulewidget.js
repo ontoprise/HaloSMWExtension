@@ -33,10 +33,8 @@ SRRuleWidget.prototype = {
 			pendingIndicators.each(function(pi) { 
 				pi.hide();
 			});
-			if (request.responseText.indexOf('error:') != -1) {
-				// TODO: some error occured
-				alert("Error: " + request.status + " " + request.statusText + ": "
-						+ request.responseText);
+			if (request.status != 200) {
+				// ignore
 				return;
 			}
 			var xmlDoc = GeneralXMLTools.createDocumentFromString(request.responseText);
