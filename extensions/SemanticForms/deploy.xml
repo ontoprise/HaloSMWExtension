@@ -3,7 +3,7 @@
     <global>
         <version>190</version>
         <id>semanticforms</id>
-        <vendor>Ontoprise GmbH / Yaron Kohan</vendor>
+        <vendor>Ontoprise GmbH / Yaron Koren</vendor>
         <instdir>extensions/SemanticForms</instdir>
         <description>
             Store richmedia files in our your wiki
