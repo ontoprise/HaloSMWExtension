@@ -315,7 +315,10 @@
 					</xsl:choose>
 					{{SMW_OB_OPEN}}
 				</a>
-
+               <xsl:if test="count(metadata/property) > 0">
+                    <xsl:variable name="metaid" select="child::metadata/@id" />
+                    <img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                </xsl:if>
 			</td>
 			<td>
 				<xsl:if test="@superCat">
@@ -332,6 +335,9 @@
 				</xsl:if>
 			</td>
 		</tr>
+		<tr>
+        <xsl:call-template name="metadata"/>
+        </tr>
 	</xsl:template>
 
 	<xsl:template match="annotationsList">
@@ -399,6 +405,10 @@
 						select="$param-ns-property" />:<xsl:value-of select="@title_url" /></xsl:attribute>
 					{{SMW_OB_OPEN}}
 				</a>
+				 <xsl:if test="count(metadata/property) > 0"> 
+				    <xsl:variable name="metaid" select="child::metadata/@id" />
+                    <img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                </xsl:if>
 			</td>
 			<td align="right">
 
@@ -472,6 +482,9 @@
 				</tr>
 			</xsl:if>
 		</xsl:for-each>
+		<tr>
+		<xsl:call-template name="metadata"/>
+		</tr>
 	</xsl:template>
 
 
@@ -626,6 +639,16 @@
 	<xsl:variable name="ruleURI" select="." />
 		<img class="treeviewdecorator" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/rule.gif" onclick="ruleActionListener.selectFromExternal(this, '{$ruleURI}')" title="Show rule {$ruleURI}"/>
 	</xsl:template>
+	
+	<xsl:template name="metadata">
+	<xsl:variable name="metaid" select="child::metadata/@id" />
+	<div style="display: none;" id="{$metaid}">
+    <xsl:for-each select="child::metadata/property">
+        <td><xsl:value-of select="@name"/></td>
+        <td><xsl:value-of select="."/></td>
+    </xsl:for-each>
+    </div>
+    </xsl:template>
 
 	<xsl:template name="gissues">
 		<xsl:param name="title" />

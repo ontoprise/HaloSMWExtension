@@ -51,6 +51,14 @@ OBAdvancedOptions.prototype = {
 	},
 	
 	/**
+	 * List of requested metadata properties. Uses same syntax as metadata
+	 * request in ASK queries.
+	 */
+	requestedMetaproperties: function() {
+		return "(AUTHORITY)";
+	},
+	
+	/**
 	 * Retrieves the current list of currently selected data sources and stores
 	 * them in <this.dataSource>
 	 */

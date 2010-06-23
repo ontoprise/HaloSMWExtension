@@ -94,8 +94,10 @@ class SMWOntologyBrowserXMLGenerator {
 		$count++;
 		$gi_store = SGAGardeningIssuesAccess::getGardeningIssuesAccess();
 		foreach($instances as $t) {
-			$instWithCat = is_array($t);
-			$instanceTitle =  $instWithCat ?  $t[0] : $t;
+
+			list($instanceData, $categoryTitle) = $t;
+			list($instanceTitle, $metadata) = $instanceData;
+
 			if ($instanceTitle instanceof SMWWikiPageValue) { // also accept SMW datavalue here
 				$instanceTitle = $instanceTitle->getTitle();
 			}
@@ -109,11 +111,22 @@ class SMWOntologyBrowserXMLGenerator {
 			$titleURLEscaped = htmlspecialchars(self::urlescape($instanceTitle->getDBkey()));
 			$issues = $gi_store->getGardeningIssues('smw_consistencybot', NULL, NULL, $instanceTitle);
 			$gi_issues = SMWOntologyBrowserErrorHighlighting::getGardeningIssuesAsXML($issues);
-			if ($instWithCat && $t[1] != NULL) {
-				$categoryTitle = htmlspecialchars($t[1]->getDBkey());
-				$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues</instance>";
+
+			// metadata
+			$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
+			if (!is_null($metadata)) {
+				// read metadata
+				foreach($metadata as $mdProperty => $mdValue) {
+					$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+				}
+			}
+			$metadataTags .= "</metadata>";
+
+			if (!is_null($categoryTitle)) {
+				$categoryTitle = htmlspecialchars($categoryTitle->getDBkey());
+				$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" superCat=\"$categoryTitle\" img=\"instance.gif\" id=\"ID_$id$count\" inherited=\"true\">$gi_issues$metadataTags</instance>";
 			} else {
-				$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues</instance>";
+				$result = $result."<instance title_url=\"$titleURLEscaped\" title=\"".$titleEscaped."\" namespace=\"$namespace\" img=\"instance.gif\" id=\"ID_$id$count\">$gi_issues$metadataTags</instance>";
 			}
 			$count++;
 		}
@@ -256,8 +269,8 @@ class SMWOntologyBrowserXMLGenerator {
 			foreach($typesOfAttributeAsString as $typeOfAttributeAsString) {
 				$content .= "<rangeType>".$typeOfAttributeAsString."</rangeType>";
 			}
-				
-				
+
+
 		}
 
 		// generate attribute strings
@@ -332,8 +345,10 @@ class SMWOntologyBrowserXMLGenerator {
 				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 				$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
 				SMW_GARD_ISSUE_MISSING_PARAM, SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
-				 
+					
 				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+
+				// no metadata available on n-ary properties
 				$multiProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\" $repasteMarker>".$parameters."$gi_issues</annotation>";
 
 			} else if ($smwValue instanceof SMWWikiPageValue) { // relation
@@ -342,11 +357,26 @@ class SMWOntologyBrowserXMLGenerator {
 				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 				$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
 				SMW_GARDISSUE_WRONG_TARGET_VALUE), NULL, array($instance, $annotationTitle));
-				 
+					
 				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+
+				// metadata
+				// check if metadata patch is applied
+				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
+				if (method_exists($smwValue, "getMetadataMap")) {
+					// read metadata
+					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValue) {
+						$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+					}
+				}
+				$metadataTags .= "</metadata>";
+
 				if (!is_null($smwValue->getTitle())) {
 					$targetNotExists = $smwValue->getTitle()->exists() ?  "" : "notexists=\"true\"";
-					$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\"><param isLink=\"true\" $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>$gi_issues</annotation>";
+					$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_$id$count\">".
+					                     "<param isLink=\"true\" $targetNotExists><![CDATA[".$smwValue->getTitle()->getPrefixedDBkey()."]]></param>".
+					$gi_issues.$metadataTags.
+					                     "</annotation>";
 				}
 					
 			} else if ($smwValue != NULL){ // normal attribute
@@ -377,7 +407,7 @@ class SMWOntologyBrowserXMLGenerator {
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 					}
-					 
+
 				}
 				//special attribute mark for all things needed to get re-pasted in FF.
 				$repasteMarker = $isFormula || strip_tags($smwValue->getXSDValue()) != $smwValue->getXSDValue() || $smwValue->getUnit() != '' ? "needRepaste=\"true\"" : "";
@@ -386,10 +416,26 @@ class SMWOntologyBrowserXMLGenerator {
 				$titleURLEscaped = htmlspecialchars(self::urlescape($annotationTitle->getDBkey()));
 				$issues = $gi_store->getGardeningIssuesForPairs('smw_consistencybot', array(SMW_GARDISSUE_WRONG_DOMAIN_VALUE, SMW_GARDISSUE_TOO_LOW_CARD, SMW_GARDISSUE_TOO_HIGH_CARD,
 				SMW_GARDISSUE_WRONG_UNIT), NULL, array($instance, $annotationTitle));
-				 
-				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
 					
-				$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker><param>".$value."</param>$gi_issues</annotation>";
+				// gardening issues
+				$gi_issues = SMWOntologyBrowserErrorHighlighting::getAnnotationIssuesAsXML($issues, $smwValue);
+
+				// metadata
+				// check if metadata patch is applied
+				$metadataTags = "<metadata id=\"".$id."_meta_".$count."\">";
+				if (method_exists($smwValue, "getMetadataMap")) {
+					// read metadata
+					foreach($smwValue->getMetadataMap() as $mdProperty => $mdValue) {
+						$metadataTags .= "<property name=\"".htmlspecialchars($mdProperty)."\">".htmlspecialchars($mdValue)."</property>";
+					}
+				}
+				$metadataTags .= "</metadata>";
+
+				$singleProperties .= "<annotation title_url=\"$titleURLEscaped\" title=\"".$title."\" id=\"ID_".$id.$count."\" $repasteMarker>".
+				                        "<param>".$value."</param>".
+				$gi_issues.
+				$metadataTags.
+				                      "</annotation>";
 			}
 			$count++;
 		}

@@ -223,7 +223,8 @@ getPropertySubTree: function (attributeID, attributeName, callBackOnAjax, callBa
 
 
 getInstances: function(categoryName, partition, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition, obAdvancedOptions.getDataSource()], callback);
+	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getInstance',categoryName+"##"+OB_partitionSize+"##"+partition+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
 getProperties: function(categoryName, onlyDirect, dIndex, callback) {
@@ -231,7 +232,8 @@ getProperties: function(categoryName, onlyDirect, dIndex, callback) {
 },
 
 getAnnotations: function(instanceName, callback) {
-	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName, obAdvancedOptions.getDataSource()], callback);
+	var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
+	sajax_do_call('smwf_ob_OntologyBrowserAccess', ['getAnnotations',instanceName+"##"+requestMetaproperties, obAdvancedOptions.getDataSource()], callback);
 },
 
 getCategoryPartition: function(isRootLevel, partition, categoryName, selectPartitionCallback) {

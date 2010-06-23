@@ -157,14 +157,10 @@ the FAQ section, then contact the user support list (see the Contact section).
     In case that SemanticRules extension is installed, it activates the rule editor too.
      $smwgEnableFlogicRules=true;
 
-6.  OntologyBrower uses Triplestore to display instances/annotations.
-    Makes only sense when a TSC is connected.
-    $smwgOBInstanceDataFromTriplestore=true;
-
-7.  Special mode, if TSC runs as a quad store: in case that driver=ontobroker-quad
+6.  Special mode, if TSC runs as a quad store: in case that driver=ontobroker-quad
     $smwgTripleStoreQuadMode=true;
 
-8.  Allows to enter new help questions for context-sensitive help.
+7.  Allows to enter new help questions for context-sensitive help.
     $smwgAllowNewHelpQuestions = true;
 
 === Configuring a triplestore ===

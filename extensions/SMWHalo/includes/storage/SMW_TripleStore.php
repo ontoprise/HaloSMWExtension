@@ -385,7 +385,7 @@ class SMWTripleStore extends SMWStore {
 			return $this->doGetQueryResult($query);
 		}		
 	}
-	
+
 	function doGetQueryResult(SMWQuery $query) {
 		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
 
@@ -779,21 +779,21 @@ class SMWTripleStore extends SMWStore {
 		$uris = array();
 
 		foreach($bindingsChildren->uri as $sv) {
-			$uris[] = array((string) $sv, (string) $sv->attributes()->provenance);
+			$uris[] = array((string) $sv, $sv->attributes());
 		}
 		if (!empty($uris)) {
 			$this->addURIToResult($uris, $allValues);
 		} else {
 			$literals = array();
 			foreach($bindingsChildren->literal as $sv) {
-				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, (string) $sv->attributes()->provenance);
+				$literals[] = array((string) $sv, (string) $sv->attributes()->datatype, $sv->attributes());
 			}
 
 			if (!empty($literals)) {
 				if ($var_name == '_X_') {
 					// force adding as URI even if it is a literal
 					foreach($literals as $l) {
-						list($literalValue, $literalType, $provenance) = $l;
+						list($literalValue, $literalType, $metadata) = $l;
 						$title = Title::newFromText($literalValue, NS_MAIN);
 						$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 						$v->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
@@ -807,22 +807,22 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	/**
-	 * Gets an array of tuples (URI, provenance-uri) and creates SMWWikiPageValue objects.
+	 * Gets an array of tuples (URI, metadata-uri) and creates SMWWikiPageValue objects.
 	 *
-	 * @param array $uris Array of tuples (uri, provenance-uri)
+	 * @param array $uris Array of tuples (uri, metadata-uri)
 	 * @param array (out) & $allValues
 	 */
 	protected function addURIToResult($uris, & $allValues) {
 
 		foreach($uris as $uri) {
-			list($sv, $provenance) = $uri;
-			
+			list($sv, $metadata) = $uri;
+
 			// check if common namespace from MW or SMW
 			// and create SMWDataValue accoringly
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $provenance, $ns, $nsIndsex);
+					$allValues[] = $this->createSMWDataValue($sv, $metadata, $ns, $nsIndsex);
 					$nsFound = true;
 				}
 			}
@@ -836,9 +836,12 @@ class SMWTripleStore extends SMWStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					if (!is_null($provenance) && $provenance != '' ){
-						$v->setProvenance($provenance);
+					foreach($metadata as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$v->setMetadata(substr($mdProperty,6), $mdValue);
+						}
 					}
+
 					$allValues[] = $v;
 				} else {
 					$startNS = strlen(TSNamespaces::$UNKNOWN_NS);
@@ -853,8 +856,10 @@ class SMWTripleStore extends SMWStore {
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-					if (!is_null($provenance) && $provenance != '' ) {
-						$v->setProvenance($provenance);
+					foreach($metadata as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$v->setMetadata(substr($mdProperty,6), $mdValue);
+						}
 					}
 					$allValues[] = $v;
 				}
@@ -863,8 +868,10 @@ class SMWTripleStore extends SMWStore {
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
-				if (!is_null($provenance) && $provenance != '') {
-					$v->setProvenance($provenance);
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$v->setMetadata(substr($mdProperty,6), $mdValue);
+					}
 				}
 				$allValues[] = $v;
 
@@ -874,17 +881,17 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	/**
-	 * Gets an array of literal tuples (value, type, provenance-uri) and creates according
+	 * Gets an array of literal tuples (value, type, metadata-uri) and creates according
 	 * SMWDataValue objects.
 	 *
-	 * @param array $literals Tuple (value, type, provenance)
+	 * @param array $literals Tuple (value, type, metadata)
 	 * @param PrintRequest $pr QueryPrinter contains property and thus denotes type (optional)
 	 * @param array (out) & $allValues
 	 */
 	protected function addLiteralToResult($literals, $pr, & $allValues) {
 		foreach($literals as $literal) {
 
-			list($literalValue, $literalType, $provenance) = $literal;
+			list($literalValue, $literalType, $metadata) = $literal;
 			$property = !is_null($pr) ? $pr->getData() : NULL;
 			if (!empty($literalValue)) {
 
@@ -917,7 +924,11 @@ class SMWTripleStore extends SMWStore {
 				}
 
 			}
-			if (!is_null($provenance) && $provenance != '') $value->setProvenance($provenance);
+			foreach($metadata as $mdProperty => $mdValue) {
+				if (strpos($mdProperty, "_meta_") === 0) {
+					$value->setMetadata(substr($mdProperty,6), $mdValue);
+				}
+			}
 			$allValues[] = $value;
 		}
 	}
@@ -930,7 +941,7 @@ class SMWTripleStore extends SMWStore {
 	 * @param int $ns Namespace index
 	 * @return SMWWikiPageValue
 	 */
-	protected function createSMWDataValue($uri, $provenance, $nsFragment, $ns) {
+	protected function createSMWDataValue($uri, $metadata, $nsFragment, $ns) {
 
 		$local = substr($uri, strlen($nsFragment));
 		$title = Title::newFromText($local, $ns);
@@ -939,8 +950,10 @@ class SMWTripleStore extends SMWStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID());
-		if (!is_null($provenance) && $provenance != '' ){
-			$v->setProvenance($provenance);
+		foreach($metadata as $mdProperty => $mdValue) {
+			if (strpos($mdProperty, "_meta_") === 0) {
+				$v->setMetadata(substr($mdProperty,6), $mdValue);
+			}
 		}
 		return $v;
 
@@ -1000,7 +1013,7 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'merge=false';
 			$first = false;
 		}
-		
+
 		if (isset($query->params) && isset($query->params['dataspace'])) {
 			if (!$first) $result .= "|";
 			$result .= 'dataspace='.trim($query->params['dataspace']);

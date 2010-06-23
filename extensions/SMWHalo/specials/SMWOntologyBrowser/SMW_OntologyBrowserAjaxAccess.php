@@ -32,14 +32,14 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TS_Helper.php" );
 
 
 class OB_Storage {
-	
+
 	protected $dataSource;
-	
+
 	public function __construct($dataSource = null) {
 		$this->dataSource = $dataSource;
 	}
-	
-	
+
+
 	public function getRootCategories($p_array) {
 		// param0 : limit
 		// param1 : partitionNum
@@ -66,7 +66,7 @@ class OB_Storage {
 		$supercat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$directsubcats = smwfGetSemanticStore()->getDirectSubCategories($supercat, $reqfilter);
 		$resourceAttachments = array();
-		wfRunHooks('smw_ob_attachtoresource', array($rootcats, & $resourceAttachments, NS_CATEGORY));
+		wfRunHooks('smw_ob_attachtoresource', array($directsubcats, & $resourceAttachments, NS_CATEGORY));
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsConceptPartition($directsubcats, $resourceAttachments, $reqfilter->limit, $partitionNum, false);
 
 	}
@@ -82,8 +82,19 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
+		
+		// encapsulate with metadata dummies
+		//FIXME: create this data structure in the SemanticStore interface
+		$instanceWithMetadata = array();
+		foreach($instances as $i) {
+			if (is_array($i)) {
+				$instanceWithMetadata[] = array(array($i[0], NULL), $i[1]);
+			} else {
+				$instanceWithMetadata[] = array(array($i[0], NULL), NULL);
+			}
+		}
 
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instances, $reqfilter->limit, $partitionNum);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instanceWithMetadata, $reqfilter->limit, $partitionNum);
 
 	}
 
@@ -241,11 +252,13 @@ class OB_StorageTS extends OB_Storage {
 			$limit =  intval($p_array[1]);
 			$partition =  intval($p_array[2]);
 			$offset = $partition * $limit;
+			$metadata = isset($p_array[3]) ? $p_array[3] : false;
+			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 			$dataSpace = $this->getDataSourceParameters();
-			
+
 			// query
-			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace");
+			$response = $client->query("[[Category:$categoryName]]", "?Category|limit=$limit|offset=$offset|merge=false$dataSpace$metadataRequest");
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -264,9 +277,9 @@ class OB_StorageTS extends OB_Storage {
 		 	$b = $children->binding[0]; // instance
 		 	 
 		 	$sv = $b->children()->uri[0];
-		 	$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-		 	$instance = $this->getTitleFromURI((string) $sv);
-
+		 	//$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
+		 	$instance = array($this->getTitleFromURI((string) $sv), $sv->attributes());
+		 		 	
 		 	$categories = array();
 		 	$b = $children->binding[1]; // categories
 		 	 
@@ -275,8 +288,9 @@ class OB_StorageTS extends OB_Storage {
 		 		if (!is_null($instance) && !is_null($category)) {
 		 			$titles[] = array($instance, $this->getTitleFromURI((string) $sv));
 		 		} else  {
-		 			$titles[] = $instance;
+		 			$titles[] = array($instance, NULL);
 		 		}
+		 		 
 		 	}
 
 		 	 
@@ -364,18 +378,20 @@ class OB_StorageTS extends OB_Storage {
 			$instance = Title::newFromText($instanceName);
 			$instanceName = str_replace("//","__",$instance->getDBkey()); //XXX: hack for ultrapedia
 
-			$limit =  isset($p_array[1]) ? intval($p_array[1]) : SMWH_OB_DEFAULT_PARTITION_SIZE;
-			$partition =   isset($p_array[2]) ? intval($p_array[2]) : 0;
-			$offset = $partition * $limit;
+			$limit =  SMWH_OB_DEFAULT_PARTITION_SIZE;
+			$partition =   0;
+			$offset = 0;
+			$metadata = isset($p_array[1]) ? $p_array[1] : false;
+			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 			$dataSpace = $this->getDataSourceParameters();
-						
+
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
 			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset$dataSpace");
+				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 			} else {
-				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace");
+				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
 			}
 
 			global $smwgSPARQLResultEncoding;
@@ -384,7 +400,7 @@ class OB_StorageTS extends OB_Storage {
 			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 				$response = utf8_decode($response);
 			}
-				
+			 
 			$dom = simplexml_load_string($response);
 
 			$annotations = array();
@@ -405,12 +421,29 @@ class OB_StorageTS extends OB_Storage {
 				foreach($b->children()->uri as $sv) {
 					$object = $this->getTitleFromURI((string) $sv);
 					$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+
+					// add metadata
+					$metadata = array();
+					foreach($sv->attributes() as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$value->setMetadata(substr($mdProperty,6), $mdValue);
+						}
+					}
+
 					$values[] = $value;
 
 				}
 				foreach($b->children()->literal as $sv) {
 					$literal = array((string) $sv, $sv->attributes()->datatype);
 					$value = $this->getLiteral($literal, $predicate);
+
+					// add metadata
+					$metadata = array();
+					foreach($sv->attributes() as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$value->setMetadata(substr($mdProperty,6), $mdValue);
+						}
+					}
 					$values[] = $value;
 				}
 
@@ -440,7 +473,7 @@ class OB_StorageTS extends OB_Storage {
 			$offset = $partition * $limit;
 
 			$dataSpace = $this->getDataSourceParameters();
-						
+
 			// query
 			$response = $client->query("[[$propertyName::+]]",  "?Category|limit=$limit|offset=$offset$dataSpace|merge=false");
 
@@ -497,9 +530,9 @@ class OB_StorageTS extends OB_Storage {
 
 			$instanceName = substr($p_array[0],1); // remove leading colon
 			$instanceName = str_replace("//","__",$instanceName); //XXX: hack for ultrapedia
-			
+
 			$dataSpace = $this->getDataSourceParameters();
-						
+
 			// query
 			$response = $client->query("[[$instanceName]]", "?Category$dataSpace");
 
@@ -554,9 +587,9 @@ class OB_StorageTS extends OB_Storage {
 		$client->connect();
 		try {
 			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
-			
+
 			$dataSpace = $this->getDataSourceParameters();
-						
+
 			//query
 			for ($i = 0; $i < count($hint); $i++) {
 				$hint[$i] = preg_quote($hint[$i]);
@@ -615,13 +648,13 @@ class OB_StorageTS extends OB_Storage {
 		// do not show partitions. 1000 instances is maximum here.
 		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($titles, 1001, 0);
 	}
-	
+
 	/**
-	 * Creates the data source parameters for the query. 
+	 * Creates the data source parameters for the query.
 	 * The field $this->dataSource is a comma separated list of data source names.
 	 * A special name for the wiki may be among them. In this case, the graph
 	 * for the wiki is added to the parameters.
-	 * 
+	 *
 	 * @return string
 	 * 	The data source parameters for the query.
 	 */
@@ -652,14 +685,11 @@ class OB_StorageTS extends OB_Storage {
 
 
 function smwf_ob_OntologyBrowserAccess($method, $params, $dataSource) {
-	global $smwgOBInstanceDataFromTriplestore;
+
 	$browseWiki = wfMsg("smw_ob_source_wiki");
- 	$storage = (isset($smwgOBInstanceDataFromTriplestore) 
-				 && $smwgOBInstanceDataFromTriplestore === true)
-			   ||
-			   (!empty($dataSource) && $dataSource != $browseWiki)
-					? new OB_StorageTS($dataSource) 
-					: new OB_Storage($dataSource);
+	$storage = (!empty($dataSource) && $dataSource != $browseWiki)
+	? new OB_StorageTS($dataSource)
+	: new OB_Storage($dataSource);
 	$p_array = explode("##", $params);
 	$method = new ReflectionMethod(get_class($storage), $method);
 	return $method->invoke($storage, $p_array, $dataSource);

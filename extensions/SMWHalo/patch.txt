@@ -1,6 +1,6 @@
 Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 6679)
+--- extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(revision 7243)
 +++ extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php	(working copy)
 @@ -61,16 +61,16 @@
  		switch ($typeid) {
@@ -128,32 +128,36 @@ Index: extensions/SemanticMediaWiki/includes/SMW_DV_WikiPage.php
  
 Index: extensions/SemanticMediaWiki/includes/SMW_DataValue.php
 ===================================================================
---- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 6679)
+--- extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(revision 7243)
 +++ extensions/SemanticMediaWiki/includes/SMW_DataValue.php	(working copy)
-@@ -67,7 +67,19 @@
+@@ -67,7 +67,23 @@
  	private $m_errors = array();
  	/// True if there were any errors
  	private $m_haserrors = false;
 -
 +    
-+	/// Patch:KK|Provenance data|Start
-+    private $m_provenance = NULL;
++	/// Patch:KK|Metadata data|Start
++    private $m_metadata = array();
 +    
-+    public function setProvenance($provURI) {
-+       $this->m_provenance = $provURI;
++    public function setMetadata($mdProperty, $mdValue) {
++       $this->m_metadata[$mdProperty] = $mdValue;
 +    }
 +   
-+    public function getProvenance() {
-+       return $this->m_provenance;
++    public function getMetadata($mdProperty) {
++       return $this->m_metadata[$mdProperty];
 +    }
-+    /// Patch:KK|Provenance data|End
++    
++    public function getMetadataMap() {
++    	return $this->m_metadata; 
++    }
++    /// Patch:KK|Metadata data|End
 +    
  	public function __construct($typeid) {
  		$this->m_typeid = $typeid;
  	}
 Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
 ===================================================================
---- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 6546)
+--- extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(revision 7243)
 +++ extensions/SemanticMediaWiki/skins/SMW_sorttable.js	(working copy)
 @@ -85,9 +85,9 @@
  	for (var i=0;i<spans.length;i++) {
@@ -169,7 +173,7 @@ Index: extensions/SemanticMediaWiki/skins/SMW_sorttable.js
  
 Index: includes/Article.php
 ===================================================================
---- includes/Article.php	(revision 6546)
+--- includes/Article.php	(revision 7264)
 +++ includes/Article.php	(working copy)
 @@ -3552,9 +3552,15 @@
  
@@ -189,9 +193,47 @@ Index: includes/Article.php
  		$popts->setTidy(false);
  		$popts->enableLimitReport( false );
  		if( $wgEnableParserCache && $cache && $this && $parserOutput->getCacheTime() != -1 ) {
+Index: includes/Linker.php
+===================================================================
+--- includes/Linker.php	(revision 7264)
++++ includes/Linker.php	(working copy)
+@@ -243,6 +243,10 @@
+ 		and $target->getNamespace() != NS_SPECIAL ) {
+ 			$query['action'] = 'edit';
+ 			$query['redlink'] = '1';
++            global $IP;
++            if (file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') &&
++                empty( $query['mode']))
++                $query['mode']= 'wysiwyg';
+ 		}
+ 		$ret = $target->getLinkUrl( $query );
+ 		wfProfileOut( __METHOD__ );
+Index: includes/Namespace.php
+===================================================================
+--- includes/Namespace.php	(revision 7264)
++++ includes/Namespace.php	(working copy)
+@@ -53,7 +53,17 @@
+ 	 */
+ 	public static function isMovable( $index ) {
+ 		global $wgAllowImageMoving;
+-		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
++		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
++		// NS_FILE is not the only Namespace now, so check them all
++		// original content is located in else statement.
++		global $smwgEnableRichMedia;
++		if( $smwgEnableRichMedia ) {
++			RMNamespace::isImage( $index, &$rMresult );
++			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
++		} else {
++			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
++		}
++		/*op-patch|BL|2009-10-07|end*/
+ 	}
+ 
+ 	/**
 Index: includes/parser/ParserOptions.php
 ===================================================================
---- includes/parser/ParserOptions.php	(revision 6546)
+--- includes/parser/ParserOptions.php	(revision 7264)
 +++ includes/parser/ParserOptions.php	(working copy)
 @@ -30,6 +30,9 @@
  	var $mTemplateCallback;          # Callback for template fetching
@@ -229,42 +271,3 @@ Index: includes/parser/ParserOptions.php
  	function __construct( $user = null ) {
  		$this->initialiseFromUser( $user );
  	}
-Index: includes/Linker.php
-===================================================================
---- includes/Linker.php (revision 5486)
-+++ includes/Linker.php (working copy)
-@@ -243,6 +243,10 @@
- 		and $target->getNamespace() != NS_SPECIAL ) {
- 			$query['action'] = 'edit';
- 			$query['redlink'] = '1';
-+            global $IP;
-+            if (file_exists($IP.'/extensions/FCKeditor/FCKeditor.php') &&
-+                empty( $query['mode']))
-+                $query['mode']= 'wysiwyg';
- 		}
- 		$ret = $target->getLinkUrl( $query );
- 		wfProfileOut( __METHOD__ );
-
-Index: includes/Namespace.php
-===================================================================
---- includes/Namespace.php	(revision 5543)
-+++ includes/Namespace.php	(working copy)
-@@ -53,7 +53,17 @@
- 	 */
- 	public static function isMovable( $index ) {
- 		global $wgAllowImageMoving;
--		return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving)  || $index == NS_CATEGORY );
-+		/*op-patch|BL|2009-10-07|RichMedia|AdditionalNamespaceCheck|start*/
-+		// NS_FILE is not the only Namespace now, so check them all
-+		// original content is located in else statement.
-+		global $smwgEnableRichMedia;
-+		if( $smwgEnableRichMedia ) {
-+			RMNamespace::isImage( $index, &$rMresult );
-+			return !( $index < NS_MAIN || ($rMresult && !$wgAllowImageMoving) );
-+		} else {
-+			return !( $index < NS_MAIN || ($index == NS_FILE && !$wgAllowImageMoving) );
-+		}
-+		/*op-patch|BL|2009-10-07|end*/
- 	}
- 
- 	/**
