@@ -4,9 +4,9 @@
  * @ingroup SemanticGardening
  *
  * Created on 04.02.2008
- * 
+ *
  * @author Kai Kühn
- * 
+ *
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) die;
@@ -24,10 +24,25 @@ $wgAjaxExportList[] = 'smwf_ga_GetRegisteredBots';
 $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssueClasses';
 $wgAjaxExportList[] = 'smwf_ga_GetGardeningIssues';
 $wgAjaxExportList[] = 'smwf_ga_LaunchDedicatedGardeningBot';
+$wgAjaxExportList[] = 'smwf_ga_readBotLog';
 
 // Gardening ajax calls
 
 
+function smwf_ga_readBotLog($taskid) {
+	global $sgaBotLogDir;
+	$botLogFile = "";
+	if (isset($sgaBotLogDir)) {
+		$normalizedBotDir = substr(trim($sgaBotLogDir), -1) == '/' ? trim($sgaBotLogDir) : trim($sgaBotLogDir)."/";
+		$botLogFile =  "$normalizedBotDir"."log_$taskid";
+	}
+	$botlog = file_get_contents($botLogFile);
+	$botlog = preg_replace("/\x08/","\n",$botlog); // replace backspace by linefeed.
+	$response = new AjaxResponse($botlog);
+	$response->setContentType( "application/html" );
+	$response->setResponseCode(200);
+	return $response;
+}
 /**
  * Runs a gardening bot.
  *
@@ -45,7 +60,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 		global $wgUser;
 		$user = NULL;
 		if ($wgUser !== NULL) {
-		  $user = $wgUser;
+			$user = $wgUser;
 		} else {
 			if ($user_id != NULL) {
 				$passwordBlob = smwfGetPasswordBlob($user_id);
@@ -96,7 +111,7 @@ function smwf_ga_LaunchGardeningBot($botID, $params, $user_id, $user_pass) {
 function smwf_ga_CancelGardeningBot($taskid, $user_id, $user_pass) {
 	global $sgagDedicatedGardeningMachine;
 	if (!isset($sgagDedicatedGardeningMachine) || $sgagDedicatedGardeningMachine == 'localhost' || $sgagDedicatedGardeningMachine == '127.0.0.1') {
-        global $wgUser;
+		global $wgUser;
 		$user = $wgUser;
 		if ($user_id != NULL) {
 			$passwordBlob = smwfGetPasswordBlob($user_id);
@@ -266,7 +281,7 @@ function smwf_ga_GetGardeningIssues($botIDs, $giType, $giClass, $title, $sortfor
 		$issues[$b] = $gardeningAccess->getGardeningIssues($b, $giType, $giClass, $t, $sortfor, NULL);
 	}
 
-	
+
 	$result = '<gardeningIssues title="'.$title.'">';
 	foreach ($issues as $bot => $issueArray) {
 		$botTitle = wfMsg($bot);

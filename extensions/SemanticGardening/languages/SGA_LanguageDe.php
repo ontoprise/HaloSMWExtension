@@ -24,6 +24,7 @@ class SGA_LanguageDe {
     'smw_gard_notools' => 'Wenn Sie hier keine Werkzeuge angezeigt bekommen, sind Sie entweder nicht eingeloggt oder haben nicht das Recht Gardening-Werkzeuge zu benutzen.',
     'smw_no_gard_log' => 'Kein Gardening-Log vorhanden',
     'smw_gard_abortbot' => 'Bot beenden',
+    'smw_gard_consolelog' => 'Konsolenlog',
     'smw_gard_unknown_bot' => 'Unbekannter Gardening-Bot',
     'smw_gard_no_permission' => 'Sie haben nicht das Recht diesen Bot zu benutzen.',
     'smw_gard_missing_parameter' => 'Fehlender Parameter',

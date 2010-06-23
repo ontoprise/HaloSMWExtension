@@ -25,6 +25,7 @@ class SGA_LanguageNl {
     'smw_gard_notools' => 'Indien je hier geen tools ziet, ben je waarschijnlijk niet ingelogd of heb je geen rechten om de gardening tools te gebruiken.',
     'smw_no_gard_log' => 'Geen Gardening log',
     'smw_gard_abortbot' => 'Bot beëindigen',
+    'smw_gard_consolelog' => 'Console log',
     'smw_gard_unknown_bot' => 'Ongekende bot',
     'smw_gard_no_permission' => 'Je hebt geen toelating om deze bot te gebruiken.',
     'smw_gard_missing_parameter' => 'Ontbrekende parameter',

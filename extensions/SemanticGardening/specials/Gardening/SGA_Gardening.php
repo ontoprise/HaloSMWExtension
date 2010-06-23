@@ -84,13 +84,15 @@ class SGAGardening extends SpecialPage {
 					$html .= "<td>".wfMsg($row[$i])."</td>";
 				 } else if ($i == 5) {
 				 	$html .= "<td>".(number_format(($row[$i]+0)*100))."%</td>";
-				 }else { 
+				 } else { 
 					$html .= "<td>".$row[$i]."</td>";
 				}
 			}
 			$runningBot = $row[3] == null;
 			$html .= ($runningBot ? "<td class=\"runningBots\">running</td>" : "<td class=\"finishedBots\">finished</td>");
 			$html .= "<td><button type=\"button\" name=\"abort\" ".($runningBot ? "" : "disabled")." onclick=\"gardeningPage.cancel(event, ".$row[6].")\">".wfMsg('smw_gard_abortbot')."</button></td>";
+			global $sgaBotLogDir;
+			if (isset($sgaBotLogDir)) $html .= "<td><a href=\"$wgServer$wgScript?action=ajax&rs=smwf_ga_readBotLog&rsargs[]=".$row[$i]."\">".wfMsg('smw_gard_consolelog')."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";

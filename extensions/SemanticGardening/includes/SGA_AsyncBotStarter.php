@@ -72,7 +72,8 @@ global $wgServer, $wgScriptPath, $wgScript;
 $wgServer = $servername;
 
 require_once( $sgagIP . '/includes/SGA_GardeningBot.php');
-
+require_once( $sgagIP . '/includes/SGA_GardeningIssues.php');
+require_once("$sgagIP/includes/SGA_ParameterObjects.php");
 // include bots
 sgagImportBots("$sgagIP/includes/bots");
 
