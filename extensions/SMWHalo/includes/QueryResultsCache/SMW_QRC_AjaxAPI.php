@@ -4,15 +4,20 @@ $wgAjaxExportList[] = 'smwf_qc_getQueryIds';
 $wgAjaxExportList[] = 'smwf_qc_updateQuery';
 
 /*
- * Returns a list of the ids of all cached queries
+ * Returns a list of the ids of all cached queries.
+ * Returns an empty query id array if QRC is disabled
  */
 function smwf_qc_getQueryIds($paramAsJSON){
-	$paramObj = json_decode($paramAsJSON);
-	$limit = $paramObj->limit;
-	$offset = $paramObj->offset;
-	
-	$response = array();
-	$response['queryIds'] = array( 12, 34, 56);
+	if(!smwgQRCEnabled){
+		$response['queryIds'] = array(); 
+	} else {
+		$paramObj = json_decode($paramAsJSON);
+		@ $limit = $paramObj->limit;
+		@ $offset = $paramObj->offset;
+		
+		$qrc = new SMWQRCQueryResultsCache();
+		$response['queryIds'] = $qrc->getQueryIds($limit, $offset);
+	}
 	
 	$response = json_encode($response);
 	$response = new AjaxResponse($response);
@@ -22,13 +27,20 @@ function smwf_qc_getQueryIds($paramAsJSON){
 
 /*
  * Updates a query with the given id
+ * Returns success=true if query was updated or if QRC is disabled
  */
 function smwf_qc_updateQuery($paramAsJSON){
-	$paramObj = json_decode($paramAsJSON);
-    $queryId = $paramObj->queryId;
-    
-	$response = array();
-	$response['success'] = true;
+	global $smwgQRCEnabled;
+	if(!$smwgQRCEnabled){
+		error();
+		$response['success'] = true; 
+	} else {
+		$paramObj = json_decode($paramAsJSON);
+	    @ $queryId = $paramObj->queryId;
+	    
+		$qrc = new SMWQRCQueryResultsCache();
+		$response['success'] = $qrc->updateQueryResult($queryId);
+	}
 	
 	$response = json_encode($response);
 	$response = new AjaxResponse($response);

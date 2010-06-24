@@ -1628,9 +1628,13 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
  * Call this method in LocalSettings in order to enable the Query Results Cache 
  */
 function enableQueryResultsCache(){
-	global $smwgHaloIP, $smwgQRCEnabled;
-	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php" );
+	global $smwgHaloIP, $smwgQRCEnabled, $wgHooks;
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
 	$smwgQRCEnabled = true;
+	
+	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';
+	$wgHooks['smwInitDatatypes'][] = 'SMWQRCQueryManagementHandler::initQRCDataTypes';
+	$wgHooks['smwInitProperties'][] = 'SMWQRCQueryManagementHandler::initProperties';
 }
 
 /*
@@ -1640,4 +1644,6 @@ function smwfQRCInitializeTables(){
 	global $smwgHaloIP;
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_Store.php" );
 	SMWQRCStore::getInstance()->getDB()->initDatabaseTables();
+	
+	return true;
 }
