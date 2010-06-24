@@ -125,7 +125,8 @@ function resetOfc() {
     });
 }
 
-// derive from SMWUserManual/scripts/up.js, it is called with MW BeforePageDisplay hook, here we just use the instance 
+// derive from SMWUserManual/scripts/up.js, it is called with MW BeforePageDisplay hook, here we just use the instance
+if (typeof uprgPopup != "undefined") {
 uprgPopup.cellDataRating = function(tableIdentifier, row, col, value, cellIdent, uri) {
         this.initPopup()
         
@@ -142,3 +143,4 @@ uprgPopup.cellDataRating = function(tableIdentifier, row, col, value, cellIdent,
         this.tableIdentifier = tableIdentifier;
         sajax_do_call('wfUpGetCellRating', [wgPageName, this.tableIdentifier, cellIdent], this.setComments.bind(this))
     };
+}
