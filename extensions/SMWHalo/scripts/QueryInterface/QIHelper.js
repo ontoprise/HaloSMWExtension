@@ -906,7 +906,8 @@ QIHelper.prototype = {
 
     addRestrictionInput : function () {
         autoCompleter.deregisterAllInputs();
-        if ($('dialoguecontent_pvalues').rows.length ==  0)
+        var arity= (this.proparity) ? this.proparity : 2;
+        if ($('dialoguecontent_pvalues').rows.length ==  0 || arity > 2)
             var newrow = $('dialoguecontent_pvalues').insertRow(-1);
         else
             var newrow = $('dialoguecontent_pvalues').insertRow($('dialoguecontent_pvalues').rows.length -1);
@@ -924,7 +925,6 @@ QIHelper.prototype = {
             cell.style.fontWeight="bold";
             cell.style.textAlign="right";
         }
-        var arity= (this.proparity) ? this.proparity : 2;
         cell = newrow.insertCell(1);
         var param = (this.propTypename) ? this.propTypename : gLanguage.getMessage('QI_PAGE');
 		if (param == gLanguage.getMessage('QI_PAGE')) { // property dialogue & type = page
