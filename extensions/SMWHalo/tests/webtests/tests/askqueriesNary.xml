@@ -5,7 +5,7 @@
         <webtest name="ask queries with nary property">
             <enableJavaScript description="Disable javascript to avoid bugs" enable="false"/>
 
-            <createPage title="Property:MyNaryProperty" text="[[has type::Page; String; Date; Number]]" />
+            <createPage title="Property:MyNaryProperty" text="[[has type::Record]][[Has fields::Type:String; Type:String; Type:Date; Type:Number]]" />
             <createPage
                 title="Mister_X"
                 text="[[MyNaryProperty::Father; hallo; 1980-08-05; 40]]"

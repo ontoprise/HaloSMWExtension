@@ -5,7 +5,7 @@
             xpath="//div[@id='showAsk']/@style"
             regex="display:\s?none"
         />
-        <clickButton xpath="//button[contains(@onclick, 'qihelper.showFullAsk')]" />
+        <clickElement xpath="//td[@id='qiDefTab3']" />
         <retry maxcount="10">
             <sleep seconds="1"/>
             <verifyXPath

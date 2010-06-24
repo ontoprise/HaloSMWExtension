@@ -19,7 +19,7 @@
 		<ant antfile="queryinterface3.xml"/>
 		<ant antfile="queryinterface4.xml"/>
 		<ant antfile="queryinterface5.xml"/>
-                <ant antfile="askqueries.xml"/>
-                <ant antfile="askqueriesNary.xml"/>
+        <ant antfile="askqueries.xml"/>
+        <ant antfile="askqueriesNary.xml"/>
 	</target>
 </project>

@@ -23,9 +23,9 @@
               htmlId="input0"
               value="City"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview must contain 10 results + header row"
@@ -37,23 +37,28 @@
               description="Click on Add Property"
               xpath="//button[@onclick='qihelper.newPropertyDialogue(true)']"
             />
+
             <setInputField
               description="set property Located In"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Located In"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <sleep description="4s pause" seconds="4" />
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
+            />
             <setCheckbox
               description="click on add show in results"
-              htmlId="input1"
+              htmlId="input_c1"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
 
             <checkAjaxResponseXpathRegex
@@ -78,25 +83,25 @@
             />
             <setInputField
               description="set property Population"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Population"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <checkAjaxResponseXpathText
+            <checkAjaxResponseXpathRegex
               description="field type must change to number"
-              xpath="//tbody[@id='dialoguecontent']//tr/td[@id='mainlabel']"
-              text="Number"
+              xpath="//tbody[@id='dialoguecontent']//tr/td[2]"
+              regex="Type: Number"
             />
             <setCheckbox
               description="click on add show in results"
-              htmlId="input1"
+              htmlId="input_c1"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
 
             <checkAjaxResponseXpathRegex
@@ -131,19 +136,36 @@
             />
             <setCheckbox
               description="click on value must be set"
-              htmlId="input2"
+              htmlId="input_c2"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
-            <verifyXPath
+            <checkAjaxResponseXpathRegex
               description="Preview contains now on result less than before"
               xpath="count(//div[@id='previewcontent']/table/tbody/tr) + 1"
               regex="#{numberOfCities}"
             />
 
-        	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Population::\+\]\]\s*\| \?Located In\s*\| \?Population\s*\| format=table\s*\| link=all\s*\|\}\}" />
+            <clickLink
+              description="Click on property Population in the Navtree"
+              label="Population"
+            />
+            <setInputField
+              description="set column name for Population"
+              htmlId="input_c3"
+              value="Inhabitants"
+            />
+            <clickButton
+              description="and click add"
+              xpath="//button[@onclick='qihelper.add()']"
+            />
+            <checkAjaxResponseXpathRegex
+              description="Column population contains now Inhabitants"
+              xpath="//div[@id='previewcontent']//th[2]/a"
+              regex="Inhabitants"
+            />
         	
         </webtest>
         

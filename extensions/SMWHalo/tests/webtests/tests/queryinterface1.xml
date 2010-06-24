@@ -22,9 +22,9 @@
               htmlId="input0"
               value="City"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview must contain 10 results + header row"
@@ -37,22 +37,30 @@
             />
             <setInputField
               description="set property Located In"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Located In"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <sleep description="4s pause" seconds="4" />
-            <setInputField
-              description="set value to USA"
-              htmlId="input3"
-              value="USA"
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
             />
             <clickElement
+              description="Click radion button to specify value"
+              xpath="//input[@name='input_r0' and position() = 2]"
+            />
+            <setInputField
+              description="set value to USA"
+              htmlId="input_r1"
+              value="USA"
+            />
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview must contain 2 result + header row"
@@ -78,13 +86,13 @@
               label="Located In"
             />
             <setInputField
-              description="set value Germany"
-              htmlId="input3"
+              description="set value Austria"
+              htmlId="input_r1"
               value="Austria"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview has 3 results"

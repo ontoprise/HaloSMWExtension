@@ -15,8 +15,13 @@
                 text="globalWrapper"
             />
        		<verifyXPath
-       		    description="and in the globalWrapper the qicontent follows"
+       		    description="and in the globalWrapper the content follows"
         	    xpath="//body/div[@id='globalWrapper']/div/@id"
+        	    text="content"
+        	/>
+            <verifyXPath
+       		    description="and in the content div the qicontent div follows"
+        	    xpath="//body/div[@id='globalWrapper']/div[@id='content']/div/@id"
         	    text="qicontent"
         	/>
          </sequential>

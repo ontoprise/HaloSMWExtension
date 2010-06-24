@@ -22,10 +22,11 @@
               htmlId="input0"
               value="City"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
+
             <checkAjaxResponseXpathText
               description="Preview must contain 10 results + header row"
               xpath="count(//div[@id='previewcontent']/table/tbody/tr)"
@@ -34,8 +35,8 @@
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
         	<clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <clickLink
@@ -54,9 +55,9 @@
             />  
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ol\s*\| link=all\s*\|\}\}" />
-            <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setSelectField
@@ -71,9 +72,9 @@
             />  
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=ul\s*\| link=all\s*\|\}\}" />
-            <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setSelectField
@@ -94,8 +95,8 @@
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=embedded\s*\| link=all\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setSelectField
@@ -111,8 +112,8 @@
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=count\s*\| link=all\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setSelectField
@@ -133,8 +134,8 @@
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
         	
             <setInputField
@@ -150,8 +151,8 @@
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| mainlabel=Cities\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setInputField
@@ -165,12 +166,17 @@
               regex="\sList of all cities\s"
             />
 
-            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| order=descending\s*\| mainlabel=Cities\s*\|\}\}" />
+            <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
+            <setSelectField
+              description="change order to descending"
+              htmlId="qp_param_order"
+              value="descending"
+            />
             <checkAjaxResponseXpathText
               description="Preview must contain table, 10th row (+1) is Baltimore"
               xpath="//div[@id='previewcontent']/table/tbody/tr[11]/td/a"
@@ -179,12 +185,12 @@
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=all\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setSelectField
-              description="change order to descending"
+              description="no links for elements"
               xpath="//select[@id='qp_param_link']"
               value="none"
             />
@@ -196,8 +202,8 @@
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\| format=broadtable\s*\| link=none\s*\| intro=List of all cities\s*\| mainlabel=Cities\s*\| order=descending\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <setInputField

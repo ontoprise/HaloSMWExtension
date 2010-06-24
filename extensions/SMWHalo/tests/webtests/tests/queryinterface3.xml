@@ -23,9 +23,9 @@
               htmlId="input0"
               value="City"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview must contain 10 results + header row"
@@ -39,21 +39,25 @@
             />
             <setInputField
               description="set property Located In"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Located In"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <sleep description="4s pause" seconds="4" />
-            <setCheckbox
-              description="click on add subquery"
-              htmlId="usesub"
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
             />
             <clickElement
+              description="click on add subquery"
+              xpath="//input[@name='input_r0' and position() = 3]"
+            />
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathRegex
               description="Preview contains a warning now (subquery is still empty)"
@@ -62,9 +66,9 @@
             />  
 
             <showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
-            <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+        	<clickElement
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <!-- in the subquery add now category Country and property Located In -->
@@ -82,9 +86,9 @@
               htmlId="input0"
               value="Country"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
 
             <clickButton 
@@ -93,26 +97,34 @@
             />
             <setInputField
               description="set property Located In"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Located In"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <sleep description="4s pause" seconds="4" />
+            <checkAjaxResponseXpathText
+              description="Check if property dialogue is completed"
+              xpath="count(//table[@id='dialoguecontent_pradio']//tr)"
+              text="2"
+            />
+            <clickElement
+              description="Click radion button to specify value"
+              xpath="//input[@name='input_r0' and position() = 2]"
+            />
             <setInputField
               description="set value America"
-              htmlId="input3"
+              htmlId="input_r1"
               value="America"
             />
             <verifyXPath
               description="Show in results must be disabled"
-              xpath="//input[@id='input1' and @type='checkbox' and @disabled='disabled']"
+              xpath="//input[@id='input_c1' and @type='checkbox' and @disabled='disabled']"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathText
               description="Preview contains now Baltimore"
@@ -127,8 +139,8 @@
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Located In::America\]\]\s*&lt;/q&gt;\]\]\s*| format=table\s*| link=all\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <!-- change the subquery 1 and add another subquery -->
@@ -139,20 +151,20 @@
             />
             <setInputField
               description="set property Has Capital"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Has Capital"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
-            />
-            <setCheckbox
-              description="click on add subquery"
-              htmlId="usesub"
+              htmlId="input_p0"
             />
             <clickElement
+              description="click on add subquery"
+              xpath="//input[@name='input_r0' and position() = 3]"
+            />
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <checkAjaxResponseXpathRegex
               description="Preview contains a warning now (subquery is still empty)"
@@ -162,8 +174,8 @@
             
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Has Capital::&lt;q&gt;&lt;/q&gt;\]\]\s*&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
         	<clickElement
-        	  description="Close full ask query popup"
-        	  xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
         	/>
 
             <!-- fill subquery2 now with conditions -->            
@@ -181,9 +193,9 @@
               htmlId="input0"
               value="City"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
             <clickButton 
               description="Click on Add Property"
@@ -191,35 +203,39 @@
             />
             <setInputField
               description="set property Population"
-              htmlId="input0"
+              htmlId="input_p0"
               value="Population"
             />
             <mouseOut
               description="leave inputfield so that property type is loaded"
-              htmlId="input0"
+              htmlId="input_p0"
             />
-            <checkAjaxResponseXpathText
+            <checkAjaxResponseXpathRegex
               description="field type must change to number"
-              xpath="//tbody[@id='dialoguecontent']//tr/td[@id='mainlabel']"
-              text="Number"
+              xpath="//tbody[@id='dialoguecontent']//tr/td[2]"
+              regex="Type: Number"
+            />
+            <clickElement
+              description="Click radion button to specify value"
+              xpath="//input[@name='input_r0' and position() = 2]"
             />
             <setInputField
               description="set value 1 Mio"
-              htmlId="input3"
+              htmlId="input_r1"
               value="1000000"
             />
         	<setSelectField
         	  description="choose option &lt;="
-        	  xpath="//td[@id='restricionSelector']/select/option[2]"
+        	  xpath="//tr[@id='row_r1']//select/option[2]"
         	  value="&lt;="
         	/>
             <verifyXPath
               description="Show in results must be disabled"
-              xpath="//input[@id='input1' and @type='checkbox' and @disabled='disabled']"
+              xpath="//input[@id='input_c1' and @type='checkbox' and @disabled='disabled']"
             />
-            <clickElement
+            <clickButton
               description="and click add"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.add()']"
+              xpath="//button[@onclick='qihelper.add()']"
             />
         	
             <checkAjaxResponseXpathText
@@ -235,8 +251,8 @@
 
         	<showFullAsk query="\{\{#ask: \[\[Category:City\]\]\s*\[\[Located In::&lt;q&gt;\s*\[\[Category:Country\]\]\s*\[\[Has Capital::&lt;q&gt;\s*\[\[Category:City\]\]\s*\[\[Population::&lt;1000000\]\]\s*&lt;/q&gt;\]\]\s*&lt;/q&gt;\]\]\s*\| format=table\s*\| link=all\s*\|\}\}" />
             <clickElement
-              description="Close full ask query popup"
-              xpath="//div/span[text()='Close']"
+              description="Click on tab query as tree again"
+              xpath="//td[@id='qiDefTab1']"
             />
 
             <!-- check navtree and clicking on it -->
@@ -262,16 +278,7 @@
             />
             <clickElement
               description="Click to choose Subquery 1"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(1)']"
-            />
-            <verifyXPath
-              description="Root node link is Located In"
-              xpath="//div[@id='treeanchor']/table/tbody/tr/td/table/tbody/tr/td/a"
-              regex="\s*Located In\s*"
-            />
-            <clickElement
-              description="Click to choose Subquery 1"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(1)']"
+              xpath="//span[@class='qibuttonEmp' and @onclick='qihelper.setActiveQuery(1)']"
             />
             <verifyXPath
               description="Root node link is Located In"
@@ -286,7 +293,7 @@
 
             <clickElement
               description="Click to choose Main Query"
-              xpath="//span[@class='qibutton' and @onclick='qihelper.setActiveQuery(0)']"
+              xpath="//span[@class='qibuttonEmp' and @onclick='qihelper.setActiveQuery(0)']"
             />
             <verifyXPath
               description="Root node link is Located In"
