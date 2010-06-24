@@ -86,12 +86,13 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
  		$categoryTitles = array();
  				
  		foreach($categories as $c) {
- 			$categoryTitles[] = Title::newFromText($c, NS_CATEGORY);
+ 			$categoryTitle = Title::newFromText($c, NS_CATEGORY);
+ 			if (!is_null($categoryTitle)) $categoryTitles[] = $categoryTitle; 
  		}
  				
  		if (array_key_exists('CATEGORY_LEAF_ANOMALY', $paramArray)) {  
  			echo "Checking for category leafs...\n";
- 			if ($paramArray['CATEGORY_RESTRICTION'] == '') {
+ 			if (count($categoryTitles) == 0) {
        			$categoryLeaves = $this->store->getCategoryLeafs();
        	
        			
@@ -120,7 +121,7 @@ if ( !defined( 'MEDIAWIKI' ) ) die;
        	
        	if (array_key_exists('CATEGORY_NUMBER_ANOMALY', $paramArray)) {  	
        		echo "\nChecking for number anomalies...\n";
-       		if ($paramArray['CATEGORY_RESTRICTION'] == '') {
+       		if (count($categoryTitles) == 0) {
        			
         		$subCatAnomalies = $this->store->getCategoryAnomalies();
        			      			
