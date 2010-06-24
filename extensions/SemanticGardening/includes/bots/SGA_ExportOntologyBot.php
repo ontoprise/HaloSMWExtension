@@ -91,8 +91,15 @@ class ExportOntologyBot extends GardeningBot {
 		echo "\nStart export...";
 			
 		// create output directory and generate output filename
-		$smwhalodir = dirname(__FILE__)."/../..";
-		$wikiexportDir = $smwhalodir."/wikiexport";
+		$writableDir = GardeningBot::getWriteableDir();
+		if (is_null($writableDir)) {
+			// assume SemanticGardening/wikiexport is writable
+			$smwhalodir = dirname(__FILE__)."/../../";
+			$wikiexportDir = $smwhalodir."wikiexport";
+		} else {
+			// use directory configured by $sgaTempDir
+			$wikiexportDir = $writableDir."wikiexport";
+		}
 		if (!file_exists($wikiexportDir)) mkdir($wikiexportDir);
 		$outputFile = "wikiexport_".uniqid(rand()).".owl";
 			

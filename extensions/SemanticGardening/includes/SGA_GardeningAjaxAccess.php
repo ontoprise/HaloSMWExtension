@@ -30,10 +30,10 @@ $wgAjaxExportList[] = 'smwf_ga_readBotLog';
 
 
 function smwf_ga_readBotLog($taskid) {
-	global $sgaBotLogDir;
+	global $sgaTempDir;
 	$botLogFile = "";
-	if (isset($sgaBotLogDir)) {
-		$normalizedBotDir = substr(trim($sgaBotLogDir), -1) == '/' ? trim($sgaBotLogDir) : trim($sgaBotLogDir)."/";
+	if (isset($sgaTempDir)) {
+		$normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
 		$botLogFile =  "$normalizedBotDir"."log_$taskid";
 	}
 	$botlog = file_get_contents($botLogFile);

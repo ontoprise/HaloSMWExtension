@@ -367,7 +367,7 @@ abstract class GardeningBot {
 				//TODO: test async code for linux.
 				//low prio
 				$logRedirect = self::getLogRedirection($taskid, "/dev/null");
-				
+
 				$runCommand .= " -b ".escapeshellarg($botID)." -t $taskid -u $userId -s $serverNameParam ".escapeshellarg(str_replace("%", '{{percentage}}', $params));
 				$nullResult = `$runCommand > $logRedirect &`;
 					
@@ -392,9 +392,9 @@ abstract class GardeningBot {
 			$runCommand = "cmd $clOption ".$runCommand;
 
 			if ($runAsync) { // run async
-				
+
 				$logRedirect = self::getLogRedirection($taskid, NULL);
-				
+
 				// botID is first parameter
 				// taskID is second
 				// user defined parameters follow
@@ -417,21 +417,48 @@ abstract class GardeningBot {
 		}
 		return $taskid;
 	}
-    
+
 	/**
-	 * Returns log direction (shell command output redirection) 
-	 * 
+	 * Returns log direction (shell command output redirection)
+	 *
 	 * @param int $taskid ID of gardening run
 	 * @param string $nullDeviceDefault default nulldevice, if NULL then no default redirection.
 	 */
 	private static function getLogRedirection($taskid, $nullDeviceDefault = NULL) {
-		global $sgaBotLogDir;
+		global $sgaTempDir;
 		$botLogFile = is_null($nullDeviceDefault) ? "" : "> $nullDeviceDefault";
-		if (isset($sgaBotLogDir)) {
-			$normalizedBotDir = substr(trim($sgaBotLogDir), -1) == '/' ? trim($sgaBotLogDir) : trim($sgaBotLogDir)."/";
+		if (isset($sgaTempDir)) {
+			$normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
+			self::mkpath($normalizedBotDir);
 			$botLogFile =  "> $normalizedBotDir"."log_$taskid";
 		}
 		return $botLogFile;
+	}
+	
+	/**
+	 * Returns a writeable dir (assuming $sgaTempDir is configured accrodingly).
+	 * If $sgaTempDir is not set it returns NULL;
+	 * 
+	 */
+	public static function getWriteableDir() {
+		global $sgaTempDir;
+		if (isset($sgaTempDir)) {
+            $normalizedBotDir = substr(trim($sgaTempDir), -1) == '/' ? trim($sgaTempDir) : trim($sgaTempDir)."/";
+            self::mkpath($normalizedBotDir);
+			return $normalizedBotDir;
+		}
+		return NULL;
+	}
+
+	/**
+	 * Creates the given directory.
+	 *
+	 * @param string $path
+	 * @return unknown
+	 */
+	private static function mkpath($path) {
+		if(@mkdir($path) || file_exists($path)) return true;
+		return (self::mkpath(dirname($path)) && @mkdir($path));
 	}
 
 	/**
