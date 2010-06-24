@@ -317,7 +317,7 @@
 				</a>
                <xsl:if test="count(metadata/property) > 0">
                     <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="instanceActionListener.toggleMetadata(event, this,'{$metaid}')"/>
                 </xsl:if>
 			</td>
 			<td>
@@ -407,7 +407,7 @@
 				</a>
 				 <xsl:if test="count(metadata/property) > 0"> 
 				    <xsl:variable name="metaid" select="child::metadata/@id" />
-                    <img src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
+                    <img class="metadataContainerSwitch" src="{$param-img-directory}/extensions/SMWHalo/skins/OntologyBrowser/images/view.gif" onclick="annotationActionListener.toggleMetadata(event, this,'{$metaid}')"/>
                 </xsl:if>
 			</td>
 			<td align="right">
@@ -642,11 +642,17 @@
 	
 	<xsl:template name="metadata">
 	<xsl:variable name="metaid" select="child::metadata/@id" />
-	<div style="display: none;" id="{$metaid}">
+	<div style="display: none;" class="metadataContainer" id="{$metaid}">
+	<table>
+	<th>{{SMW_OB_META_PROPERY</th>
+	<th>Value</th>
     <xsl:for-each select="child::metadata/property">
-        <td><xsl:value-of select="@name"/></td>
+	<tr>
+        <td>{{SMW_OB<xsl:value-of select="@name"/>}}</td>
         <td><xsl:value-of select="."/></td>
+    </tr>
     </xsl:for-each>
+    </table>
     </div>
     </xsl:template>
 

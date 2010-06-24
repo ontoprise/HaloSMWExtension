@@ -842,6 +842,24 @@ OBInstanceActionListener.prototype = {
 			$("hideInstancesButton").innerHTML = gLanguage.getMessage('HIDE_INSTANCES');
 			new Effect.Grow($("leftArrow"));
 		}
+	},
+	
+	toggleMetadata: function(event, node, id) {
+		var metaContainer = $(id);
+		
+		var scrollDiff = $('instanceList').scrollTop;
+		var x = Event.pointerX(event) + 16;
+		var y = Event.pointerY(event) + 16 - scrollDiff;
+		
+		metaContainer.style.top = y+"px";
+		metaContainer.style.left = x+"px";
+		if (metaContainer.visible()) {
+			metaContainer.hide();
+			node.removeClassName("metadataContainerSelected");
+		} else {
+			metaContainer.show();
+			node.addClassName("metadataContainerSelected");
+		}
 	}
 	
 }
@@ -1056,10 +1074,18 @@ OBAnnotationActionListener.prototype = {
 	toggleMetadata: function(event, node, id) {
 		var metaContainer = $(id);
 		
+		var scrollDiff = $('instanceList').scrollTop;
+		var x = Event.pointerX(event) + 16;
+		var y = Event.pointerY(event) + 16 - scrollDiff;
+		
+		metaContainer.style.top = y+"px";
+		metaContainer.style.left = x+"px";
 		if (metaContainer.visible()) {
 			metaContainer.hide();
+			node.removeClassName("metadataContainerSelected");
 		} else {
 			metaContainer.show();
+			node.addClassName("metadataContainerSelected");
 		}
 	}
 	

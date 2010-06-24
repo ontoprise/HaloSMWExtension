@@ -287,6 +287,28 @@ a.selectedSwitch {
 	padding-left:3px;
 }
 
+
+/**
+* Metadata
+*/
+
+.metadataContainer {
+	position: absolute;
+	background-color: #DDBBBB;
+	border: 2px solid;
+}
+
+.metadataContainerSwitch{
+	cursor: pointer;
+	margin: 2px;
+	
+}
+.metadataContainerSelected {
+	background-color: #CCC;
+    border: 1px solid #FFF;
+    margin: 1px;
+}
+
 /*
 **Advanced Options in Ontology Browser
 */

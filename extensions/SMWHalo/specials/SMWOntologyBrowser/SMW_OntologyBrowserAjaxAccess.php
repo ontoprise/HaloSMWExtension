@@ -82,7 +82,7 @@ class OB_Storage {
 		$reqfilter->offset = $partitionNum*$reqfilter->limit;
 		$cat = Title::newFromText($p_array[0], NS_CATEGORY);
 		$instances = smwfGetSemanticStore()->getAllInstances($cat,  $reqfilter);
-		
+
 		// encapsulate with metadata dummies
 		//FIXME: create this data structure in the SemanticStore interface
 		$instanceWithMetadata = array();
@@ -277,9 +277,16 @@ class OB_StorageTS extends OB_Storage {
 		 	$b = $children->binding[0]; // instance
 		 	 
 		 	$sv = $b->children()->uri[0];
-		 	//$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-		 	$instance = array($this->getTitleFromURI((string) $sv), $sv->attributes());
-		 		 	
+		 	
+		 	$metadataMap = array();
+		 	foreach($sv->attributes() as $mdProperty => $mdValue) {
+		 		if (strpos($mdProperty, "_meta_") === 0) {
+		 			$metadataMap[strtoupper($mdProperty)] = $mdValue;
+		 		}
+		 	}
+
+		 	$instance = array($this->getTitleFromURI((string) $sv), $metadataMap);
+		 		
 		 	$categories = array();
 		 	$b = $children->binding[1]; // categories
 		 	 
@@ -290,7 +297,7 @@ class OB_StorageTS extends OB_Storage {
 		 		} else  {
 		 			$titles[] = array($instance, NULL);
 		 		}
-		 		 
+
 		 	}
 
 		 	 
@@ -400,7 +407,7 @@ class OB_StorageTS extends OB_Storage {
 			if (isset($smwgSPARQLResultEncoding) && $smwgSPARQLResultEncoding == 'UTF-8') {
 				$response = utf8_decode($response);
 			}
-			 
+
 			$dom = simplexml_load_string($response);
 
 			$annotations = array();
@@ -426,7 +433,7 @@ class OB_StorageTS extends OB_Storage {
 					$metadata = array();
 					foreach($sv->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$value->setMetadata(substr($mdProperty,6), $mdValue);
+							$value->setMetadata(strtoupper($mdProperty), $mdValue);
 						}
 					}
 
@@ -441,7 +448,7 @@ class OB_StorageTS extends OB_Storage {
 					$metadata = array();
 					foreach($sv->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$value->setMetadata(substr($mdProperty,6), $mdValue);
+							$value->setMetadata(strtoupper($mdProperty), $mdValue);
 						}
 					}
 					$values[] = $value;

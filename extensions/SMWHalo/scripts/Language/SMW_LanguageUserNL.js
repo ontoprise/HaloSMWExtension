@@ -209,7 +209,53 @@ var wgUserLanguageStrings = {
 	'SMW_OB_ADDSOME'		  : '(toevoegen)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Bevat verdere problemen',
 	'SMW_OB_MODIFIED'		  : 'De pagina werd aangepast. De volgende problemen zijn mogelijkerwijze reeds hersteld:',
+	
+	// Ontology Browser metadata
+	'SMW_OB_META_PROPERTY'	  : 'Meta property',
+	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
+	
+	// metaproperties
+	'SMW_OB_META_SWP2_AUTHORITY'   : 'Authority',
+	'SMW_OB_META_SWP2_KEYINFO'   : 'Key info',
+	'SMW_OB_META_SWP2_SIGNATURE'   : 'Signature',
+	'SMW_OB_META_SWP2_SIGNATURE_METHOD'   : 'Signature method',
+	'SMW_OB_META_SWP2_VALID_FROM'   : 'Valid from',
+	'SMW_OB_META_SWP2_VALID_UNTIL'   : 'Valid until',
+	
+	'SMW_OB_META_DATA_DUMP_LOCATION_FROM'   : 'Dump location',
+	'SMW_OB_META_HOMEPAGE_FROM'   : 'Homepage',
+	'SMW_OB_META_SAMPLE_URI_FROM'   : 'Sample URI',
+	'SMW_OB_META_SPARQL_ENDPOINT_LOCATION_FROM'   : 'SPARQL Endpoint',
+	'SMW_OB_META_DATASOURCE_VOCABULARY_FROM'   : 'Vocabulary',
+	'SMW_OB_META_DATASOURCE_ID_FROM'   : 'ID',
+	'SMW_OB_META_DATASOURCE_CHANGEFREQ_FROM'   : 'Change frequency',
+	'SMW_OB_META_DATASOURCE_DESCRIPTION_FROM'   : 'Description',
+	'SMW_OB_META_DATASOURCE_LABEL_FROM'   : 'Label',
+	'SMW_OB_META_DATASOURCE_LASTMOD_FROM'   : 'Last change',
+	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_FROM'   : 'LinkedData prefix',
+	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_FROM'   : 'URI pattern',
 
+	'SMW_OB_META_DATA_DUMP_LOCATION_TO'   : 'Dump location',
+	'SMW_OB_META_HOMEPAGE_TO'   : 'Homepage',
+	'SMW_OB_META_SAMPLE_URI_TO'   : 'Sample URI',
+	'SMW_OB_META_SPARQL_ENDPOINT_LOCATION_TO'   : 'SPARQL Endpoint',
+	'SMW_OB_META_DATASOURCE_VOCABULARY_TO'   : 'Vocabulary',
+	'SMW_OB_META_DATASOURCE_ID_TO'   : 'ID',
+	'SMW_OB_META_DATASOURCE_CHANGEFREQ_TO'   : 'Change frequency',
+	'SMW_OB_META_DATASOURCE_DESCRIPTION_TO'   : 'Description',
+	'SMW_OB_META_DATASOURCE_LABEL_TO'   : 'Label',
+	'SMW_OB_META_DATASOURCE_LASTMOD_TO'   : 'Last change',
+	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_TO'   : 'LinkedData prefix',
+	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_TO'   : 'URI pattern',
+	
+	'SMW_OB_META_IMPORT_GRAPH_CREATED'   : 'Graph was created on',
+	'SMW_OB_META_IMPORT_GRAPH_REVISION_NO'   : 'Revision number',
+	'SMW_OB_META_IMPORT_GRAPH_LAST_CHANGED_BY'   : 'Last change',
+	'SMW_OB_META_RATING_VALUE'   : 'Rating value',
+	'SMW_OB_META_RATING_USER'   : 'Rated from user',
+	'SMW_OB_META_RATING_CREATED'   : 'Rating was created on',
+	'SMW_OB_META_RATING_ASSESSMENT'   : 'Assessment',
+	
 	// Query Interface
 	'QUERY_INTERFACE'         : 'Query interface',
 	'QI_MAIN_QUERY_NAME'	  : 'Hoofdquery',

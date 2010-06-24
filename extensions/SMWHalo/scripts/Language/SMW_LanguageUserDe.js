@@ -203,6 +203,53 @@ var wgUserLanguageStrings = {
 	'SMW_OB_ADDSOME'		  : '(Füge hinzu)',
 	'OB_CONTAINS_FURTHER_PROBLEMS' : 'Contains further problems',
 	'SMW_OB_MODIFIED'		  : 'Artikel wurde gespeichert. Das Problem wurde möglicherweise bereits behoben.',
+	
+	// Ontology Browser metadata
+	'SMW_OB_META_PROPERTY'	  : 'Meta property',
+	'SMW_OB_META_PROPERTY_VALUE' : 'Value',
+	
+	// metaproperties
+	'SMW_OB_META_SWP2_AUTHORITY'   : 'Herausgeber',
+	'SMW_OB_META_SWP2_KEYINFO'   : 'Kurzinfo',
+	'SMW_OB_META_SWP2_SIGNATURE'   : 'Signatur',
+	'SMW_OB_META_SWP2_SIGNATURE_METHOD'   : 'Signaturmethode',
+	'SMW_OB_META_SWP2_VALID_FROM'   : 'Gültig von',
+	'SMW_OB_META_SWP2_VALID_UNTIL'   : 'Gültig bis',
+	
+	'SMW_OB_META_DATA_DUMP_LOCATION_FROM'   : 'Datenbasis von Quelle',
+	'SMW_OB_META_HOMEPAGE_FROM'   : 'Homepage',
+	'SMW_OB_META_SAMPLE_URI_FROM'   : 'Beispiel URI',
+	'SMW_OB_META_SPARQL_ENDPOINT_LOCATION_FROM'   : 'SPARQL Endpunkt',
+	'SMW_OB_META_DATASOURCE_VOCABULARY_FROM'   : 'Vokabular',
+	'SMW_OB_META_DATASOURCE_ID_FROM'   : 'ID',
+	'SMW_OB_META_DATASOURCE_CHANGEFREQ_FROM'   : 'Änderungsfrequenz',
+	'SMW_OB_META_DATASOURCE_DESCRIPTION_FROM'   : 'Beschreibung',
+	'SMW_OB_META_DATASOURCE_LABEL_FROM'   : 'Bezeichnung',
+	'SMW_OB_META_DATASOURCE_LASTMOD_FROM'   : 'Letzte Änderung',
+	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_FROM'   : 'LinkedData Präfix',
+	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_FROM'   : 'URI Pattern',
+
+	'SMW_OB_META_DATA_DUMP_LOCATION_TO'   : 'Datenbasis von Quelle',
+	'SMW_OB_META_HOMEPAGE_TO'   : 'Homepage',
+	'SMW_OB_META_SAMPLE_URI_TO'   : 'Beispiel URI',
+	'SMW_OB_META_SPARQL_ENDPOINT_LOCATION_TO'   : 'SPARQL Endpunkt',
+	'SMW_OB_META_DATASOURCE_VOCABULARY_TO'   : 'Vokabular',
+	'SMW_OB_META_DATASOURCE_ID_TO'   : 'ID',
+	'SMW_OB_META_DATASOURCE_CHANGEFREQ_TO'   : 'Änderungsfrequenz',
+	'SMW_OB_META_DATASOURCE_DESCRIPTION_TO'   : 'Beschreibung',
+	'SMW_OB_META_DATASOURCE_LABEL_TO'   : 'Bezeichnung',
+	'SMW_OB_META_DATASOURCE_LASTMOD_TO'   : 'Letzte Änderung',
+	'SMW_OB_META_DATASOURCE_LINKEDDATA_PREFIX_TO'   : 'LinkedData Präfix',
+	'SMW_OB_META_DATASOURCE_URIREGEXPATTERN_TO'   : 'URI Pattern',
+	
+	'SMW_OB_META_IMPORT_GRAPH_CREATED'   : 'Graph wurde erzeugt am',
+	'SMW_OB_META_IMPORT_GRAPH_REVISION_NO'   : 'Revisionsnummer',
+	'SMW_OB_META_IMPORT_GRAPH_LAST_CHANGED_BY'   : 'Letzte Änderung',
+	'SMW_OB_META_RATING_VALUE'   : 'Bewertung',
+	'SMW_OB_META_RATING_USER'   : 'Rating von Benutzer',
+	'SMW_OB_META_RATING_CREATED'   : 'Rating erzeugt am',
+	'SMW_OB_META_RATING_ASSESSMENT'   : 'Beurteilung',
+	
 
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Danke für das Bewerten der Annotationen, ',
