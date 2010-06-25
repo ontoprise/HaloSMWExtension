@@ -45,7 +45,7 @@ QIHelper.prototype = {
 		this.specialQPParameters = new Array();
         
         $('qistatus').innerHTML = gLanguage.getMessage('QI_START_CREATING_QUERY');
-        this.switchTab(1, true);
+        if (! this.noTabSwitch) this.switchTab(1, true);
         this.sourceChanged = 0;
                 // if triplestore is enabled in wiki, the <input id="usetriplestore"> exists
                 if ($('usetriplestore'))
@@ -107,11 +107,11 @@ QIHelper.prototype = {
 	 * Called whenever preview result printer needs to be updated.
      * This is only done, if the results are visible.
 	 */
-	updatePreview : function(fromSource) {
+	updatePreview : function() {
 		// update result preview
 		if ($("previewcontent").style.display == "" &&
             $("qiresultcontent").style.display == "") {
-			this.previewResultPrinter(fromSource);
+			this.previewResultPrinter();
 		}
 	},
 
@@ -379,7 +379,7 @@ QIHelper.prototype = {
 	 * Gets all display parameters and the full ask syntax to perform an ajax
 	 * call which will create the result preview
 	 */
-	previewResultPrinter : function(fromSource) {
+	previewResultPrinter : function() {
 
 		/* STARTLOG */
 		if (window.smwhgLogger) {
@@ -391,7 +391,7 @@ QIHelper.prototype = {
 		this.pendingElement = new OBPendingIndicator($('previewcontent'));
 		this.pendingElement.show();
 
-        var ask = (fromSource) ? this.getQueryFromSource() : this.getQueryFromTree();
+        var ask = this.getQueryFromTree();
 
         if (ask.length > 0) {
 			sajax_do_call('smwf_qi_QIAccess', [ "getQueryResult", ask ],
@@ -1955,11 +1955,16 @@ QIHelper.prototype = {
     switchTab : function(id, flush) {
         var divcontainer = ['treeview', '', 'qisource'];
         if (!flush) {
-            // if the last tab is selected, convert the source code
-            if (id == 3)
+            // user selected the source tab, convert query to source code
+            if (id == 3) {
                 this.showFullAsk('parser', false);
-            else // otherwise load from source if the tab was active
-                this.loadFromSource()
+                $('query4DiscardChanges').innerHTML = $('fullAskText').value;
+            }
+            // user selected the tree tab, load the query from source
+            else {
+                this.loadFromSource();
+                $('query4DiscardChanges').innerHTML = "";
+            }
         }
         for (var i = 0; i < divcontainer.length; i++) {
             if (divcontainer[i].length == 0) continue;
@@ -1971,6 +1976,12 @@ QIHelper.prototype = {
                 $(divcontainer[i]).style.display='none';
             }
         }
+    },
+
+    discardChangesOfSource : function() {
+        $('fullAskText').value =   $('query4DiscardChanges').innerHTML;
+        this.sourceChanged=1;
+        this.loadFromSource(true);
     },
 
 	/**
@@ -2044,7 +2055,6 @@ QIHelper.prototype = {
 		if (this.queries[0].isEmpty()) {
 			//if (!this.isExcelBridge)
 				$('fullAskText').value = '';
-                alert(gLanguage.getMessage('QI_EMPTY_QUERY'));
 			return;
 		} else if (($('layout_format').value == "template")
 				&& ($('template_name').value == "")) {
@@ -2166,11 +2176,12 @@ QIHelper.prototype = {
     /**
      * called when the Query Tree tab is clicked and the Query source tab is still active
      */
-    loadFromSource : function() {
+    loadFromSource : function(noTabSwitch) {
+        this.noTabSwitch = noTabSwitch;
         if ($('qiDefTab3').className.indexOf('qiDefTabActive') > -1 &&
             $('fullAskText').value.length > 0 &&
             this.sourceChanged)
-            this.initFromQueryString($('fullAskText').value);
+                this.initFromQueryString($('fullAskText').value);
     },
 
 	initFromQueryString : function(ask) {
@@ -2437,7 +2448,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                             restriction = '=';
                         }
                         // check for a unit
-                        var paramunit = null;
+                        var paramunit;
                         if (this.propertyTypesList.supportsUnits(pname)) {
                             op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
                             if (op) {
@@ -2474,7 +2485,7 @@ handleQueryString : function(args, queryId, pMustShow) {
                         // if j > 0 conjunction: page/type = val1 'or' valX
                         if (j > 0) paramname = gLanguage.getMessage('QI_OR');
                         // check for a unit
-                        var paramunit = null;
+                        var paramunit;
                         if (this.propertyTypesList.supportsUnits(pname)) {
                             op = paramvalue.match(/^\s*(\d+(\.\d+)?)(.*?)$/);
                             if (op) {
@@ -2831,12 +2842,14 @@ function initialize_qi_from_excelbridge() {
 }
 
 function escapeQueryHTML(string) {
+    if (! string) return "";
 	string = ("" + string).escapeHTML();
 	string = string.replace(/\"/g, "&quot;");
 	return string;
 }
 
 function unescapeQueryHTML(string) {
+    if (! string) return "";
 	string = ("" + string).unescapeHTML();
 	string = string.replace(/&quot;/g, "\"");
 	return string;

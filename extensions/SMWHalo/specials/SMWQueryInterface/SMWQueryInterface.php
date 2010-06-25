@@ -87,8 +87,8 @@ class SMWQueryInterface extends SpecialPage {
                  $this->addTreeView().
                 '<div id="qitextview">Query as text</div>
                  <div id="qisource"><textarea id="fullAskText" onchange="qihelper.sourceChanged=1"></textarea>'.
-                '<button onclick="qihelper.updatePreview(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>'.
-                '&nbsp;<span class="qibutton" onclick="qihelper.showFullAsk(\'parser\', false);">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
+                '<button onclick="qihelper.loadFromSource(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_update') . '\')">' . wfMsg('smw_qi_update') . '</button>'.
+                '&nbsp;<span class="qibutton" onclick="qihelper.discardChangesOfSource();">' . wfMsg('smw_qi_discard_changes') . '</span>&nbsp;' .
                 '</div>
                  </td></tr></table></div>
         ';
@@ -188,17 +188,17 @@ class SMWQueryInterface extends SpecialPage {
 		$imagepath = $smwgHaloScriptPath . '/skins/QueryInterface/images/';
 		$useTS = "";
 		if (isset($smwgWebserviceEndpoint)) {
-			$useTS = '<input class="btn" type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
+			$useTS = '<input type="checkbox" id="usetriplestore">' . wfMsg('smw_qi_usetriplestore') . '</input>';
 		}
 		return '<div id="qimenubar">' .
 		//'<span class="qibutton" onclick="qihelper.showLoadDialogue()">' . wfMsg('smw_qi_load') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.showSaveDialogue()">' . wfMsg('smw_qi_save') . '</span><span style="color:#C0C0C0">&nbsp;|&nbsp;</span>' .
 		//'<span class="qibutton" onclick="qihelper.exportToXLS()">' . wfMsg('smw_qi_exportXLS') . '</span>' .
 		//'<button class="btn" onclick="qihelper.previewQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_preview') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_preview') . '</button>'.
-						'<button class="btn" onclick="qihelper.copyToClipboard()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_clipboard') . '</button>'.
+						'<button onclick="qihelper.copyToClipboard()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_clipboard') . '\')">' . wfMsg('smw_qi_clipboard') . '</button>'.
 		$buttons.
 		$useTS.
-						'<span><button class="btn" onclick="qihelper.resetQuery()" onmouseover="this.className=\'btn btnhov\'; Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')" onmouseout="this.className=\'btn\'">' . wfMsg('smw_qi_reset') . '</button></span>'.
+						'<span><button onclick="qihelper.resetQuery()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_reset') . '\')">' . wfMsg('smw_qi_reset') . '</button></span>'.
 					'</div>'.
 
 				'<div id="fullpreviewbox" style="display:none">'.
@@ -221,7 +221,8 @@ class SMWQueryInterface extends SpecialPage {
 						'Please enter a query name:<br/>' .
 						'<input type="text" id="saveName"/><br/>' .
 						'<span class="qibutton" onclick="qihelper.doSave()">' . wfMsg('smw_qi_confirm') . '</span>&nbsp;<span class="qibutton" onclick="$(\'savedialogue\', \'shade\').invoke(\'toggle\')">' . wfMsg('smw_qi_cancel') . '</span>' .
-						'</div>';		
+						'</div>' .
+				'<div id="query4DiscardChanges" style="display:none"></div>';
 	}
 
 }
