@@ -63,23 +63,25 @@ AdvancedAnnotation.prototype = {
 	
 	/**
 	 * This method is called, when the mouse button is released. The current
-	 * selection is retrieved and used as annotation. Only events in div#bodyContent 
+	 * selection is retrieved and used as annotation. Only events in div#content 
 	 * are processed
 	 */
 	onMouseUp: function(event) {
 		smwhgAnnotationHints.hideHints();
 		this.hideToolbar();
 		
-		// Check if the event occurred in div#bodyContent
+		// Check if the event occurred in div#content
+		// Better solution would be to offer an individual div to surround
+		// the wikitext. div#content may not be supported by all skins.
 		var target = event.target;
 		while (target) {
-			if (target.id && target.id == 'bodyContent') {
+			if (target.id && target.id == 'content') {
 				break;
 			}
 			target = $(target).up('div');
 		}
 		if (!target) {
-			// event was outside of div#bodyContent
+			// event was outside of div#content
 			return;
 		}
 		var annoSelection = this.getSel();
@@ -993,7 +995,7 @@ AdvancedAnnotation.prototype = {
 			return;
 		}
 		// find the span that marks the start of the selection highlight
-		var wrapper = $('bodyContent').down('span[id="anno'+this.selectionHighlightID+'w"]');
+		var wrapper = $('content').down('span[id="anno'+this.selectionHighlightID+'w"]');
 		if (!wrapper) {
 //			alert("Wrapper for selection highlight not found.")
 			return;
@@ -1146,7 +1148,7 @@ AdvancedAnnotation.prototype = {
 			
 			var offset = len - (end-start);
 			// get all anchors of type "wikiTextOffset"			
-			var anchors = $('bodyContent').getElementsBySelector('a[type="wikiTextOffset"]')
+			var anchors = $('content').getElementsBySelector('a[type="wikiTextOffset"]')
 			for (var i = 0; i < anchors.size(); ++i) {
 				var val = anchors[i].getAttribute('name')*1;
 				if (val > start) {
@@ -1156,7 +1158,7 @@ AdvancedAnnotation.prototype = {
 			
 			// If an annotation has been modified, its highlighting should reflect 
 			// the change i.e. the class of the surrounding span has to be changed.
-			var anchor = $('bodyContent').getElementsBySelector('a[name="'+start+'"]');
+			var anchor = $('content').getElementsBySelector('a[name="'+start+'"]');
 			if (anchor.size() == 1) {
 				// anchor with wiki text offset found. A span follows the anchor
 				var wrapperSpan = anchor[0].next('span');
@@ -1377,7 +1379,7 @@ AdvancedAnnotation.prototype = {
 		var start = annotation.getStart();
 		
 		// find the anchor that marks the start of the annotation
-		var wtoAnchor = $('bodyContent').down('a[name="'+start+'"]');
+		var wtoAnchor = $('content').down('a[name="'+start+'"]');
 		if (!wtoAnchor) {
 			alert("Anchor for annotation not found.")
 			return;
@@ -1465,7 +1467,7 @@ AdvancedAnnotation.prototype = {
 	removeSelectionHighlight: function() {
 		
 		// find the span that marks the start of the selection highlight
-		var wrapper = $('bodyContent').down('span[id="anno'+this.selectionHighlightID+'w"]');
+		var wrapper = $('content').down('span[id="anno'+this.selectionHighlightID+'w"]');
 		if (!wrapper) {
 //			alert("Wrapper for selection highlight not found.")
 			return;
@@ -1560,7 +1562,7 @@ AdvancedAnnotation.create = function() {
 			var content = $('content');
 			Event.observe(content, 'mouseup', 
 			              smwhgAdvancedAnnotation.onMouseUp.bindAsEventListener(smwhgAdvancedAnnotation));
-			Event.observe('globalWrapper', 'keyup', 
+			Event.observe('content', 'keyup', 
 			              smwhgAdvancedAnnotation.onKeyUp.bindAsEventListener(smwhgAdvancedAnnotation));
 						              
 			pe.stop();

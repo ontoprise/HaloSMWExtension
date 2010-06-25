@@ -528,7 +528,7 @@ AutoCompleter.prototype = {
                 var posStyle = this.currentInputBox != null ? this.currentInputBox.getAttribute("position") : null;
                 if (posStyle == null || posStyle == 'absolute') {
                     Element.setStyle(this.siw.floater, { position: 'absolute'});
-                    x = x - Position.page($("globalWrapper"))[0] - Position.realOffset($("globalWrapper"))[0];
+                    x = x - Position.page(document.body)[0] - Position.realOffset(document.body)[0];
                     y = y;
                 } else if (posStyle == 'fixed') {
                     Element.setStyle(this.siw.floater, { position: 'fixed'});
@@ -537,12 +537,12 @@ AutoCompleter.prototype = {
 
                 // read alignment flag and set position accordingly
                 var alignment = this.currentInputBox != null ? this.currentInputBox.getAttribute("alignfloater") : null;
-                var globalWrapper = $("globalWrapper");
+                var content = document.body;//$("content");
                 if (alignment == null || alignment == 'left') {
                     this.siw.floater.style.left = x + "px";
                     this.siw.floater.style.top = y + "px";
                 } else {
-                    this.siw.floater.style.right = (globalWrapper.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
+                    this.siw.floater.style.right = (content.offsetWidth - x - this.currentInputBox.offsetWidth) + "px";
                     this.siw.floater.style.top = y + "px";
                 }
             } else {
@@ -1185,7 +1185,8 @@ AutoCompleter.prototype = {
        
 
          // creates the floater and adds it to content DIV
-        var contentElement = document.getElementById("globalWrapper");
+        //var contentElement = document.getElementById("content");
+        var contentElement = document.body;
         contentElement.appendChild(this.createFloater());
         var pending = this.createPendingAJAXIndicator();
         contentElement.appendChild(pending);
@@ -1217,25 +1218,26 @@ AutoCompleter.prototype = {
         var x = 0;
         var z = 0;
         var c = null;
-         // copy all wickEnabled inputs
+         // copy all wickEnabled inputs and the one with ID="searchInput"
         if (inputs) {
             while (inputs[x]) {
-                if ((c = inputs[x].className) && (c.indexOf("wickEnabled") != -1)) {
+                if (((i = inputs[x].id) && (i.indexOf("searchInput") != -1)) ||
+                        (c = inputs[x].className) && (c.indexOf("wickenabled"))) {
                     this.allInputs[z] = new Array();
                     this.allInputs[z][0] = inputs[x];
+                    this.allInputs[z][0].setAttribute("autocomplete", "OFF");
+                    this.allInputs[z][0].setAttribute("class", "wickEnabled");
+                    if (i.indexOf("searchInput") != -1 ) {
+                        // pasteNS as default for searchInput
+                        this.allInputs[z][0].setAttribute("pasteNS", "true");
+                    }
+                    this.allInputs[z][1] = this.handleBlur.bindAsEventListener(this);
+                    Event.observe(this.allInputs[z][0], "blur",  this.allInputs[z][1]);
                     z++;
                 }
-
                 x++;
-            }  //
-        }
-         for (i = 0; i < this.allInputs.length; i++) {
-            if ((c = this.allInputs[i][0].className) && (c.indexOf("wickEnabled") != -1)) {
-                this.allInputs[i][0].setAttribute("autocomplete", "OFF");
-                this.allInputs[i][1] = this.handleBlur.bindAsEventListener(this);
-                Event.observe(this.allInputs[i][0], "blur",  this.allInputs[i][1]);
             }
-        }  //loop thru inputs
+        }
     },
     
     /**

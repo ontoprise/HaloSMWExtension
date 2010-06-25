@@ -467,11 +467,21 @@ ToolbarFramework.prototype = {
 		a = new Date(a.getTime() +1000*60*60*24*365);
 
 		document.cookie = 'stbprefhelp='+helpshown+'; expires='+a.toGMTString()+';';
+	},
+
+	addOntoMenuAnchor: function(){
+		var ontomenuAnchor = $("ontomenuachor");
+		if (ontomenuAnchor == null) {
+			var ontomenuAnchor = new Element('div', {
+				'id' : 'ontomenuanchor'} )
+			document.body.appendChild(ontomenuAnchor);
+		}
 	}
 }
 
 var stb_control = new ToolbarFramework();
 if (typeof FCKeditor == 'undefined') {
+	Event.observe(window, 'load', stb_control.addOntoMenuAnchor.bind(smwhg_generalGUI));
     Event.observe(window, 'load', stb_control.stbconstructor.bindAsEventListener(stb_control));
     Event.observe(window, 'resize', stb_control.resizeToolbar.bindAsEventListener(stb_control));
 }

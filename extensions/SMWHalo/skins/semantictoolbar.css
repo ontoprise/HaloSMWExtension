@@ -94,6 +94,7 @@ triggered by the nested floats. It should not be removed
 .generic_headline{
     margin-left: 3px;
     margin-right: 3px;
+    min-height: 15px;
 }
 
 #tabcontainer {
@@ -116,7 +117,7 @@ a.minusplus{
     float:left;
     height:12px;
     margin-right:4px;
-    margin-top:3px;
+    margin-top:0.25em;
     overflow:hidden;
     width:12px;
 }
@@ -128,7 +129,7 @@ a.plusminus{
     float:left;
     height:12px;
     margin-right:4px;
-    margin-top:3px;
+    margin-top:0.25em;
     overflow:hidden;
     width:12px;
 }
