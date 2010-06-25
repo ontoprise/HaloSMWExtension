@@ -241,7 +241,7 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	public function getInstance($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -375,11 +375,11 @@ class OB_StorageTS extends OB_Storage {
 
 
 	public function getAnnotations($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
-			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+			global $smwgTripleStoreGraph;
 
 			$instanceName = $p_array[0];
 			$instance = Title::newFromText($instanceName);
@@ -395,11 +395,9 @@ class OB_StorageTS extends OB_Storage {
 
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
-			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?p ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. } }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
-			} else {
-				$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
-			}
+			
+			$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
+			
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -468,7 +466,7 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	public function getInstancesUsingProperty($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
@@ -529,7 +527,7 @@ class OB_StorageTS extends OB_Storage {
 	}
 
 	public function getCategoryForInstance($p_array) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
@@ -589,11 +587,11 @@ class OB_StorageTS extends OB_Storage {
 		$hint = smwfEliminateStopWords($hint);
 		if ($type != 'instance') return parent::filterBrowse($p_array);
 
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 		$client = TSConnection::getConnector();
 		$client->connect();
 		try {
-			global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+			global $smwgTripleStoreGraph;
 
 			$dataSpace = $this->getDataSourceParameters();
 
@@ -612,11 +610,9 @@ class OB_StorageTS extends OB_Storage {
 				$filter .= ")";
 			}
 
-			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s ?p ?o. $filter } }",  "limit=1000$dataSpace");
-			} else {
-				$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
-			}
+			
+		$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
+			
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in

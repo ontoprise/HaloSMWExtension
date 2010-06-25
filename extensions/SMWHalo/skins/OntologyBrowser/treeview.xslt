@@ -644,7 +644,7 @@
 	<xsl:variable name="metaid" select="child::metadata/@id" />
 	<div style="display: none;" class="metadataContainer" id="{$metaid}">
 	<table>
-	<th>{{SMW_OB_META_PROPERY</th>
+	<th>{{SMW_OB_META_PROPERTY}}</th>
 	<th>Value</th>
     <xsl:for-each select="child::metadata/property">
 	<tr>

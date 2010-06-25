@@ -387,7 +387,7 @@ class SMWTripleStore extends SMWStore {
 	}
 
 	function doGetQueryResult(SMWQuery $query) {
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion;
 
 		// handle only SPARQL queries and delegate all others
 		if ($query instanceof SMWSPARQLQuery) {
@@ -735,7 +735,8 @@ class SMWTripleStore extends SMWStore {
 	 * Rewrite printrequests in the way that subselection are cut down to normal property selections
 	 * in order to display them properly.
 	 *
-	 * @param rewritten printrequest $pr
+	 * @param SMWPrintRequest $pr
+	 * @return SMWPrintRequest
 	 */
 	private function rewritePrintrequest($pr) {
 	 $data = $pr->getData();
@@ -809,8 +810,8 @@ class SMWTripleStore extends SMWStore {
 	/**
 	 * Gets an array of tuples (URI, metadata-uri) and creates SMWWikiPageValue objects.
 	 *
-	 * @param array $uris Array of tuples (uri, metadata-uri)
-	 * @param array (out) & $allValues
+	 * @param array of tuples (uri, hash array metadata) $uris 
+	 * @param array SMWDataValue (out) & $allValues
 	 */
 	protected function addURIToResult($uris, & $allValues) {
 
@@ -830,8 +831,8 @@ class SMWTripleStore extends SMWStore {
 			if ($nsFound) continue;
 
 			// result with unknown namespace
-			// unknown means the namespace has a suffix: /ns_XXX#
-			// where XXX is the namespace index.
+			// unknown means the namespace has a suffix: /ns_<index>#
+			// where <index> is the namespace index.
 			if (stripos($sv, TSNamespaces::$UNKNOWN_NS) === 0) {
 
 				if (empty($sv)) {
@@ -884,9 +885,9 @@ class SMWTripleStore extends SMWStore {
 	 * Gets an array of literal tuples (value, type, metadata-uri) and creates according
 	 * SMWDataValue objects.
 	 *
-	 * @param array $literals Tuple (value, type, metadata)
+	 * @param array Tuple (string value, string xsd-type, hash array metadata) $literals 
 	 * @param PrintRequest $pr QueryPrinter contains property and thus denotes type (optional)
-	 * @param array (out) & $allValues
+	 * @param array SMWDataValue (out) & $allValues 
 	 */
 	protected function addLiteralToResult($literals, $pr, & $allValues) {
 		foreach($literals as $literal) {
@@ -937,6 +938,7 @@ class SMWTripleStore extends SMWStore {
 	 * Creates SMWWikiPageValue object from a (possibly) merged result.
 	 *
 	 * @param string $uri Full URI
+	 * @param hash array $metadata (propertyName=>value)
 	 * @param string $nsFragment NS-prefix
 	 * @param int $ns Namespace index
 	 * @return SMWWikiPageValue
@@ -964,7 +966,7 @@ class SMWTripleStore extends SMWStore {
 	 * These informations are needed to generate a correct SPARQL query.
 	 *
 	 * @param SMWQuery $query
-	 * @return String
+	 * @return string
 	 */
 	protected function serializeParams($query) {
 		$result = "";
@@ -1013,7 +1015,8 @@ class SMWTripleStore extends SMWStore {
 			$result .= 'merge=false';
 			$first = false;
 		}
-
+        
+		
 		if (isset($query->params) && isset($query->params['dataspace'])) {
 			if (!$first) $result .= "|";
 			$result .= 'dataspace='.trim($query->params['dataspace']);

@@ -166,7 +166,7 @@ class ExternalQueryInterface {
 	 * @throws Exception, SOAPExeption
 	 */
 	function answerSPARQL($query, $params) {
-		global $wgServer, $wgScript, $smwgWebserviceProtocol, $smwgWebserviceUser, $smwgWebservicePassword, $smwgUseLocalhostForWSDL;
+		global $wgServer, $wgScript, $smwgWebserviceProtocol, $smwgWebserviceUser, $smwgWebservicePassword;
 
 		if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 
@@ -192,13 +192,7 @@ class ExternalQueryInterface {
 			}
 			return $result;
 		} else {
-			if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-			$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
-
-			global $smwgTripleStoreGraph;
-			$response = $client->query($query, $smwgTripleStoreGraph, $params);
-			return $response;
+			trigger_error("SOAP requests to TSC are not supported anymore.");
 		}
 	}
 

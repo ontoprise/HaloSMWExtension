@@ -229,22 +229,19 @@ function smwf_tb_GetUserDatatypes(){
 }
 
 function smwf_tb_getTripleStoreStatus() {
-	global $wgServer,$wgScript,$smwgTripleStoreGraph, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-	global $smwgWebserviceEndpoint;
-	if (!isset($smwgWebserviceEndpoint)) {
-		return 'false';
-	}
-	if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-	if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-	$client = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
+	global $smwgTripleStoreGraph;
+	$con = TSConnection::getConnector();
 	try {
-		global $smwgTripleStoreGraph;
-		$statusJSON = $client->getTripleStoreStatus($smwgTripleStoreGraph);
-		
+		$statusInfo = $con->getStatus($smwgTripleStoreGraph);
+		$response = new AjaxResponse(json_encode($statusInfo));
+        $response->setContentType( "application/json" );
+        $response->setResponseCode(200);
 	} catch(Exception $e) {
-		return "false";
+		$response = new AjaxResponse($e->getMessage());
+        $response->setContentType( "application/text" );
+        $response->setResponseCode(500);
 	}
-	return $statusJSON;
+	return $response;
 }
 
 abstract class SMWToolbarStorage {

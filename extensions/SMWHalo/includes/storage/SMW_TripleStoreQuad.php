@@ -6,7 +6,7 @@ require_once( "$smwgHaloIP/includes/storage/SMW_TripleStore.php" );
 /**
  * @file
  * @ingroup SMWHaloTriplestore
- * 
+ *
  * Triple store connector class for QuadDriver.
  *
  * Specials:
@@ -28,31 +28,29 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		parent::__construct();
 	}
 
+	/**
+     * @see superclass
+     */
 	function getAllPropertyAnnotations(SMWPropertyValue $property, $requestoptions = NULL) {
 
-		global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+		global $smwgTripleStoreGraph;
 
 		$client = TSConnection::getConnector();
 		$client->connect();
 
 		$values = array();
 
-
 		$propertyName = $property->getWikiPageValue()->getTitle()->getDBkey();
 
 		$limit =  isset($requestoptions->limit) ? " LIMIT ".$requestoptions->limit : "";
 		$offset =  isset($requestoptions->offset) ? " OFFSET ".$requestoptions->offset : "";
 
-		 
-
 		// query
 
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
-		if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-			$response = $client->query("SELECT ?_prov_s ?s ?o WHERE { GRAPH ?_prov_s { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
-		} else {
-			$response = $client->query("SELECT ?_prov_s ?s ?o WHERE { ?_prov_s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } ORDER BY ASC(?s) $limit $offset ",  "merge=false");
-		}
+
+		$response = $client->query("SELECT ?s ?o WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } ORDER BY ASC(?s) $limit $offset",  "merge=false");
+
 
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -73,20 +71,32 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$provenance = $sv->attributes()->provenance;
 			$title = $this->getTitleFromURI((string) $sv, $provenance);
 			$title_dv = SMWDataValueFactory::newTypeIDValue('_wpg');
-            $title_dv->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
-			
+			$title_dv->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
+
 
 			$b = $children->binding[1];
 			foreach($b->children()->uri as $sv) {
 				$provenance = $sv->attributes()->provenance;
 				$object = $this->getTitleFromURI((string) $sv, $provenance);
 				$value = SMWDataValueFactory::newPropertyObjectValue($property, $object);
+				$metadata = $sv->attributes();
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$value->setMetadata(substr($mdProperty,6), $mdValue);
+					}
+				}
 				$values[] = $value;
 
 			}
 			foreach($b->children()->literal as $sv) {
 				$literal = array((string) $sv, $sv->attributes()->datatype);
 				$value = $this->getLiteral($literal, $property);
+				$metadata = $sv->attributes();
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$value->setMetadata(substr($mdProperty,6), $mdValue);
+					}
+				}
 				$values[] = $value;
 			}
 			$annotations[] = array($title_dv, $values);
@@ -97,12 +107,15 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		return $annotations;
 	}
 
+	/**
+     * @see superclass
+     */
 	function getPropertyValues($subject, SMWPropertyValue $property, $requestoptions = NULL, $outputformat = '') {
 
 		if (!$property->isUserDefined()) {
 			return parent::getPropertyValues($subject,$property,$requestoptions,$outputformat);
 		}
-		global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+		global $smwgTripleStoreGraph;
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -117,11 +130,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		// query
 		$nsPrefix = $this->tsNamespace->getNSPrefix($subject->getNamespace());
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
-		if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-			$response = $client->query("SELECT ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$subjctName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "");
-		} else {
-			$response = $client->query("SELECT ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$subjctName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } $limit $offset",  "");
-		}
+
+		$response = $client->query("SELECT ?o WHERE { GRAPH ?g { <$smwgTripleStoreGraph/$nsPrefix#$subjctName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "merge=false");
+
 
 		global $smwgSPARQLResultEncoding;
 		// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -144,12 +155,24 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 				$provenance = $sv->attributes()->provenance;
 				$object = $this->getTitleFromURI((string) $sv, $provenance);
 				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+				$metadata = $sv->attributes();
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$value->setMetadata(substr($mdProperty,6), $mdValue);
+					}
+				}
 				$values[] = $value;
 
 			}
 			foreach($b->children()->literal as $sv) {
 				$literal = array((string) $sv, $sv->attributes()->datatype);
 				$value = $this->getLiteral($literal, $predicate);
+				$metadata = $sv->attributes();
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$value->setMetadata(substr($mdProperty,6), $mdValue);
+					}
+				}
 				$values[] = $value;
 			}
 
@@ -159,13 +182,16 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		return $values;
 	}
-
+    
+	/**
+     * @see superclass
+	 */
 	function getPropertySubjects(SMWPropertyValue $property, $value, $requestoptions = NULL) {
 		if (!$property->isUserDefined()) {
 			return parent::getPropertySubjects($property, $value, $requestoptions);
 		}
 
-		global $smwgTripleStoreGraph, $smwgTripleStoreQuadMode;
+		global $smwgTripleStoreGraph;
 		$client = TSConnection::getConnector();
 		$client->connect();
 
@@ -178,27 +204,21 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 		$nsPrefixProp = $this->tsNamespace->getNSPrefix($property->getWikiPageValue()->getTitle()->getNamespace());
 		if (is_null($value)) {
-			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "");
-			} else {
-				$response = $client->query("SELECT ?s WHERE { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } $limit $offset",  "");
-			}
+
+			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> ?o. } } $limit $offset",  "merge=false|graph=$smwgTripleStoreGraph");
+
 		} else if ($value instanceof SMWWikiPageValue) {
 			$objectName = $value->getTitle()->getDBkey();
 			$nsPrefixObj = $this->tsNamespace->getNSPrefix($value->getTitle()->getNamespace());
-			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> <$smwgTripleStoreGraph/$nsPrefixObj#$objectName>. } } $limit $offset",  "");
-			} else {
-				$response = $client->query("SELECT ?s WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> <$smwgTripleStoreGraph/$nsPrefixObj#$objectName>. } $limit $offset",  "");
-			}
+
+			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> <$smwgTripleStoreGraph/$nsPrefixObj#$objectName>. } } $limit $offset",  "merge=false");
+
 		} else {
 			$objectvalue = str_replace('"', '\"', $value->getXSDValue());
 			$objecttype = WikiTypeToXSD::getXSDType($value->getTypeID());
-			if (isset($smwgTripleStoreQuadMode) && $smwgTripleStoreQuadMode == true) {
-				$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> \"$objectvalue\"^^$objecttype. } } $limit $offset",  "");
-			} else {
-				$response = $client->query("SELECT ?s WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> \"$objectvalue\"^^$objecttype. } $limit $offset",  "");
-			}
+
+			$response = $client->query("SELECT ?s WHERE { GRAPH ?g { ?s <$smwgTripleStoreGraph/$nsPrefixProp#$propertyName> \"$objectvalue\"^^$objecttype. } } $limit $offset",  "merge=false");
+
 		}
 
 		// query
@@ -220,9 +240,16 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0]; // predicate
 			$sv = $b->children()->uri[0];
-			$provenance = $sv->attributes()->provenance;
+
 			$title = $this->getTitleFromURI((string) $sv, $provenance);
 			$value = SMWDataValueFactory::newPropertyObjectValue($property, $title);
+
+			$metadata = $sv->attributes();
+			foreach($metadata as $mdProperty => $mdValue) {
+				if (strpos($mdProperty, "_meta_") === 0) {
+					$value->setMetadata(substr($mdProperty,6), $mdValue);
+				}
+			}
 
 			$values[] = $value;
 
@@ -239,16 +266,12 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	/**
-	 * Add an URI to an array of results
-	 *
-	 * @param string $sv A single value
-	 * @param PrintRequest prs
-	 * @param array & $allValues
+	 * @see superclass
 	 */
 	protected function addURIToResult($uris, $prs, & $allValues, $outputformat) {
 			
 		foreach($uris as $uri) {
-			list($sv, $provenance) = $uri;
+			list($sv, $metadata) = $uri;
 
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
@@ -265,8 +288,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 				if (empty($sv)) {
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
-					if (!is_null($provenance) && $provenance != '' ){
-						$v->setProvenance($provenance);
+					foreach($metadata as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$v->setMetadata(substr($mdProperty,6), $mdValue);
+						}
 					}
 					$allValues[] = $v;
 				} else {
@@ -274,7 +299,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					$length = strpos($sv, "#") - $startNS;
 					$ns = intval(substr($sv, $startNS, $length));
 
-                    $nosection = strpos($outputformat,"nosection");
+					$nosection = strpos($outputformat,"nosection");
 					if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
 							
 						// UP special behaviour: if provenance contains section, use it as fragment identifier
@@ -299,8 +324,11 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 					}
 					$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 					$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
-					if (!is_null($provenance) && $provenance != '' ) {
-						$v->setProvenance($provenance);
+
+					foreach($metadata as $mdProperty => $mdValue) {
+						if (strpos($mdProperty, "_meta_") === 0) {
+							$v->setMetadata(substr($mdProperty,6), $mdValue);
+						}
 					}
 					$allValues[] = $v;
 				}
@@ -309,8 +337,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 				$v = SMWDataValueFactory::newTypeIDValue('_uri');
 				$v->setXSDValue($sv);
-				if (!is_null($provenance) && $provenance != '') {
-					$v->setProvenance($provenance);
+				foreach($metadata as $mdProperty => $mdValue) {
+					if (strpos($mdProperty, "_meta_") === 0) {
+						$v->setMetadata(substr($mdProperty,6), $mdValue);
+					}
 				}
 				$allValues[] = $v;
 
@@ -320,24 +350,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	}
 
 	/**
-	 * Add a literal to an array of results
-	 *
-	 * @param string $sv A single value
-	 * @param PrintRequest prs
-	 * @param array & $allValues
+	 * @see superclass
 	 */
-
-
-	/**
-	 * Creates  SWMDataValue object from a (possibly) merged result.
-	 *
-	 * @param string $sv
-	 * @param string $nsFragment
-	 * @param int $ns
-	 * @return SMWDataValue
-	 */
-	protected function createSMWDataValue($sv, $provenance, $nsFragment, $ns, $outputformat) {
-        $nosection = strpos($outputformat,"nosection");
+	protected function createSMWDataValue($sv, $metadata, $nsFragment, $ns, $outputformat) {
+		$nosection = strpos($outputformat,"nosection");
 		if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
 			// UP special behaviour: if provenance contains section, use it as fragment identifier
 			$uri_parts = explode("#", $provenance);
@@ -362,8 +378,10 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 		}
 		$v = SMWDataValueFactory::newTypeIDValue('_wpg');
 		$v->setValues($title->getDBkey(), $ns, $title->getArticleID(), false, '', $title->getFragment());
-		if (!is_null($provenance) && $provenance != '' ){
-			$v->setProvenance($provenance);
+		foreach($metadata as $mdProperty => $mdValue) {
+			if (strpos($mdProperty, "_meta_") === 0) {
+				$v->setMetadata(substr($mdProperty,6), $mdValue);
+			}
 		}
 		return $v;
 

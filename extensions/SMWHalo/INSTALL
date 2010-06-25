@@ -153,14 +153,10 @@ the FAQ section, then contact the user support list (see the Contact section).
     Note that the factbox must be switch on. Refer to SemanticMediaWiki/includes/Settings.php
     $smwgShowDerivedFacts=true;
 
-5.  Enables F-logic rules (the default wiki rule language). Makes only sense when a TSC is connected.
-    In case that SemanticRules extension is installed, it activates the rule editor too.
-     $smwgEnableFlogicRules=true;
+5. $smwgPropertyPageFromTSC: Reads annotations on property pages from the TSC, not from
+    the MySQL store.    
 
-6.  Special mode, if TSC runs as a quad store: in case that driver=ontobroker-quad
-    $smwgTripleStoreQuadMode=true;
-
-7.  Allows to enter new help questions for context-sensitive help.
+6.  Allows to enter new help questions for context-sensitive help.
     $smwgAllowNewHelpQuestions = true;
 
 === Configuring a triplestore ===

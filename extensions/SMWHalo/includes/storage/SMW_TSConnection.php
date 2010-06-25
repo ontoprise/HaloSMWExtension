@@ -80,62 +80,20 @@ abstract class TSConnection {
 				if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 					self::$_instance = new TSConnectorMessageBrokerAndRESTWebservice();
 				} else {
-					self::$_instance = new TSConnectorMessageBrokerAndSOAPWebservice();
+					trigger_error("SOAP requests to TSC are not supported anymore.");
 				}
 			} else if (isset($smwgWebserviceProtocol) && strtolower($smwgWebserviceProtocol) === 'rest') {
 				self::$_instance = new TSConnectorRESTWebservice();
 
 			} else {
 
-				self::$_instance = new TSConnectorSOAPWebservice();
+				trigger_error("SOAP requests to TSC are not supported anymore.");
 			}
 		}
 		return self::$_instance;
 	}
 }
 
-/**
- * MessageBroker connector implementation for updates (SPARUL).
- * SOAP webservice for SPARQL queries.
- *
- */
-class TSConnectorMessageBrokerAndSOAPWebservice extends TSConnectorSOAPWebservice {
-
-
-	public function connect() {
-		global $smwgMessageBroker;
-		$this->updateClient = new StompConnection("tcp://$smwgMessageBroker:61613");
-		$this->updateClient->connect();
-
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
-	}
-
-
-	public function disconnect() {
-		$this->updateClient->disconnect();
-	}
-
-
-	public function update($topic, $commands) {
-		global $smwgSPARULUpdateEncoding;
-		if (!is_array($commands)) {
-			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-			$this->updateClient->send($topic, $enc_commands);
-			return;
-		}
-		$commandStr = implode("|||",$commands);
-		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
-		$this->updateClient->send($topic, $enc_commands);
-	}
-
-
-
-
-}
 
 /**
  * MessageBroker connector implementation for updates (SPARUL).
@@ -263,69 +221,4 @@ class TSConnectorRESTWebservice extends TSConnection {
 	}
 }
 
-/**
- * SOAP webservice connector implementation.
- *
- */
-class TSConnectorSOAPWebservice extends TSConnection {
 
-	public function connect() {
-		global $smwgWebserviceUser, $smwgWebservicePassword, $wgServer, $wgScript, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$this->updateClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparul", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-
-		global $wgServer, $wgScript, $smwgWebserviceUser, $smwgWebservicePassword, $smwgDeployVersion, $smwgUseLocalhostForWSDL;
-		if (!isset($smwgDeployVersion) || !$smwgDeployVersion) ini_set("soap.wsdl_cache_enabled", "0");  //set for debugging
-		if (isset($smwgUseLocalhostForWSDL) && $smwgUseLocalhostForWSDL === true) $host = "http://localhost"; else $host = $wgServer;
-		$this->queryClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_sparql", array('login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-		$this->manageClient = new SoapClient("$host$wgScript?action=ajax&rs=smwf_ws_getWSDL&rsargs[]=get_manage", array('connection_timeout' => 4, 'login'=>$smwgWebserviceUser, 'password'=>$smwgWebservicePassword));
-	}
-
-	public function disconnect() {
-		// do nothing. webservice calls use stateless HTTP protocol.
-	}
-
-	public function update($topic, $commands) {
-		if (!is_array($commands)) {
-			$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commands) : $commands;
-			$this->updateClient->update($enc_commands);
-			return;
-		}
-		$commandStr = implode("|||",$commands);
-		$enc_commands = isset($smwgSPARULUpdateEncoding) && $smwgSPARULUpdateEncoding === "UTF-8" ? utf8_encode($commandStr) : $commandStr;
-		$this->updateClient->update($enc_commands);
-	}
-
-public function query($query, $params = "", $graph = "") {
-
-
-		global $smwgTripleStoreGraph;
-		if (empty($graph)) {
-			$graph = $smwgTripleStoreGraph;
-		}
-		
-		if (stripos(trim($query), 'SELECT') === 0 || stripos(trim($query), 'PREFIX') === 0) {
-			// SPARQL, attach common prefixes
-			$response = $this->queryClient->query(TSNamespaces::getAllPrefixes().$query, $graph, $params);
-		} else {
-
-			// do not attach anything
-			$response = $this->queryClient->query($query, $graph, $params);
-
-		}
-		return $response;
-	}
-
-	public function getStatus($graph) {
-		// getTripleStoreStatus throws a SOAP exception if necessary
-		$result = $this->manageClient->getTripleStoreStatus($graph);
-		$xmlDoc = simplexml_load_string($result);
-		$resultMap = array();
-		$resultMap['tscversion'] = (string) $xmlDoc->tscversion;
-		$resultMap['driverInfo'] = (string) $xmlDoc->driverInfo;
-		$resultMap['isInitialized'] = ((string) $xmlDoc->isInitialized) == 'true';
-		$resultMap['features'] = explode(",", (string) $xmlDoc->features);
-		return $resultMap;
-	}
-}

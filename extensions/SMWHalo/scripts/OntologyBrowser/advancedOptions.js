@@ -55,7 +55,7 @@ OBAdvancedOptions.prototype = {
 	 * request in ASK queries.
 	 */
 	requestedMetaproperties: function() {
-		return "(AUTHORITY)";
+		return "(SWP2_AUTHORITY)";
 	},
 	
 	/**

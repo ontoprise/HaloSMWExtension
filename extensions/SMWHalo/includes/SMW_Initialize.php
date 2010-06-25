@@ -46,7 +46,7 @@ require_once($smwgHaloIP."/includes/SMW_ResourceManager.php");
  */
 function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleStoreGraph = NULL) {
 	global $wgExtensionFunctions, $smwgOWLFullExport, $smwgDefaultStore, $smwgBaseStore,
-	$smwgSemanticDataClass, $wgHooks, $smwgTripleStoreGraph, $smwgIgnoreSchema, $smwgUseLocalhostForWSDL;
+	$smwgSemanticDataClass, $wgHooks, $smwgTripleStoreGraph, $smwgIgnoreSchema;
 	if ($store == 'SMWHaloStore') {
 		trigger_error("Old 'SMWHaloStore' is not supported anymore. Please upgrade to 'SMWHaloStore2'");
 		die();
@@ -58,7 +58,7 @@ function enableSMWHalo($store = 'SMWHaloStore2', $tripleStore = NULL, $tripleSto
 
 	$smwgIgnoreSchema = !isset($smwgIgnoreSchema) ? true : $smwgIgnoreSchema;
 	$smwgTripleStoreGraph = $tripleStoreGraph !== NULL ? $tripleStoreGraph : 'http://mywiki';
-	$smwgUseLocalhostForWSDL=true;
+	
 	$wgExtensionFunctions[] = 'smwgHaloSetupExtension';
 	$smwgOWLFullExport = true;
 	$smwgDefaultStore = $tripleStore !== NULL ? $tripleStore : $store;
@@ -519,8 +519,8 @@ function smwfHaloShowListPage(&$title, &$article){
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_CategoryPage.php');
 		$article = new SMWCategoryPage($title);
 	} elseif ( $title->getNamespace() == SMW_NS_PROPERTY ) {
-		global $smwgTripleStoreQuadMode;
-		if (!isset($smwgTripleStoreQuadMode) || $smwgTripleStoreQuadMode === false) return true;
+		global $smwgPropertyPageFromTSC;
+		if (!isset($smwgPropertyPageFromTSC) || $smwgPropertyPageFromTSC === false) return true;
 		require_once($smwgHaloIP . '/includes/articlepages/SMW_TS_PropertyPage.php');
 		$article = new SMWTSPropertyPage($title);
 	}
