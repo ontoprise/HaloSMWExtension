@@ -1,0 +1,26 @@
+Index: extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php
+===================================================================
+--- extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(revision 6679)
++++ extensions/SemanticMediaWiki/includes/SMW_QueryProcessor.php	(working copy)
+@@ -259,14 +259,18 @@
+ 		// The while feature is experimental and is not properly integrated with most of SMW's architecture. For instance, some query printers just fetch their own store.
+ 		///TODO: case-insensitive
+ 		global $smwgQuerySources;
+-		if ( array_key_exists( "source", $params ) && array_key_exists( $params["source"], $smwgQuerySources ) ) {
+-			$store = new $smwgQuerySources[$params["source"]]();
++		if ( array_key_exists( "source", $params ) && array_key_exists( trim($params["source"]), $smwgQuerySources ) ) {
++			$store = new $smwgQuerySources[trim($params["source"])]();
+ 			$query->params = $params; // this is a hack
+ 		} else {
+ 			$store = smwfGetStore(); // default store
+ 		}
++/*op-patch|TS|2010-05-26|LinkedData|A query might be restricted to a data space.|start*/
++// Original code: $res = $store->getQueryResult($query);
++		$query->params = $params; 
+ 		$res = $store->getQueryResult($query);
+-
++/*op-patch|TS|2010-05-26|end*/
++		
+ 		if ( ($query->querymode == SMWQuery::MODE_INSTANCES) || ($query->querymode == SMWQuery::MODE_NONE) ) {
+ 			wfProfileIn('SMWQueryProcessor::getResultFromQuery-printout (SMW)');
+ 			if ($format == '') {
