@@ -40,17 +40,18 @@ class SMWQRCQueryResultsCache {
 			SMWQRCQueryManagementHandler::getInstance()->storeQueryMetadata($title, $query);
 		}
 		
+		//delegate query processing to the responsible store
+		if ($query instanceof SMWSPARQLQuery) {
+			$store = $defaultStore;
+		} else {
+			global $smwgBaseStore;
+			$store = new $smwgBaseStore();
+		}
+		
 		// execute the query if no valid cache entry is available, if force was 
 		// set to true (e.g. by the update process) or if the query is executed because 
 		// of an edit or a purge action
 		if($force || !$this->isReadAccess() || !$this->hasValidCacheEntry($query)){
-			//delegate query processing to the responsible store
-			if ($query instanceof SMWSPARQLQuery) {
-				$store = $defaultStore;
-			} else {
-				global $smwgBaseStore;
-				$store = new $smwgBaseStore();
-			}
 			
 			$queryResult = $store->doGetQueryResult($query);
 			
@@ -62,9 +63,11 @@ class SMWQRCQueryResultsCache {
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
 			$queryResult = unserialize($qrcStore->getQueryResult(SMWQRCQueryManagementHandler::getInstance()->getQueryId($query)));
-		}
 		
-		error();
+			$query->addErrors($queryResult->getErrors());
+			
+			$queryResult = new SMWQueryResult($query->getDescription()->getPrintRequests(), $query, $queryResult->getResults(), $store, $queryResult->hasFurtherResults());
+		}
 		
 		return $queryResult;
 	}
@@ -118,7 +121,7 @@ class SMWQRCQueryResultsCache {
 		global $wgRequest;
 		$action = $wgRequest->getVal('action');
 		$isReadAccess = true;
-		if($wgRequest->wasposted() || $action == 'purge' || $action == 'submit'){
+		if($wgRequest->wasposted() || $action == 'purge2' || $action == 'submit'){
 			$isReadAccess = false;	
 		}
 		return $isReadAccess;
@@ -136,43 +139,32 @@ class SMWQRCQueryResultsCache {
 	 * called by ajax api to update a query result
 	 */
 	public function updateQueryResult($queryId){
-		SMWQueryProcessor::processFunctionParams(array("[[UsesQueryCall.HasQueryId::".$queryId."]]", "limit=1") 
+		$queryString = SMWQRCQueryManagementHandler::getInstance()->getSearchQueryUsagesQueryString($queryId);
+		
+		SMWQueryProcessor::processFunctionParams(array($queryString, "limit=1") 
 			,$querystring,$params,$printouts);
 		$query = 
 			SMWQueryProcessor::createQuery($querystring,$params);
+		
 		$queryResults = $this->getQueryResult($query, true, false)->getResults();
 		
 		if(count($queryResults) > 0){ //this query is still in use
 			global $smwgDefaultStore;
 			$defaultStore = new $smwgDefaultStore();
-			
 			$title = $queryResults[0]->getTitle();
-			
 			$semanticData = $defaultStore->getsemanticData($title); 
 		
-			$property = SMWPropertyValue::makeUserProperty('UsesQueryCall'); 
+			list($queryString, $limit, $offset) = 
+				SMWQRCQueryManagementHandler::getInstance()->getQueryCallMetadata($$semanticData);
 			
-			$propVal = $semanticData->getPropertyValues($property);
-			$propVal = $propVal[0][0];
-			
-			//todo: deal with the limit parameter and others
-			
-			$queryString = '';
-			foreach($propVal as $pV){
-				if($pV[0] == 'HasQueryString') $queryString = $pV[1];
-			}
-			
-			
-			//echo("<pre>".print_r($queryString, true)."</pre>");
-			
-			SMWQueryProcessor::processFunctionParams(array($queryString) 
-				,$querystring,$params,$printouts);
+			$queryParams = array ($queryString);
+			if($limit) $queryParams[] = 'limit='.$limit;
+			if($offset) $queryParams[] = 'offset='.$offset;
+				
+			SMWQueryProcessor::processFunctionParams($queryParams,$querystring,$params,$printouts);
 			$query = 
 				SMWQueryProcessor::createQuery($querystring,$params);
 			$this->getQueryResult($query, true);
-			
-			
-		
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
 			$qrcStore->deleleteQueryResult($queryId);		

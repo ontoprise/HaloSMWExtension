@@ -1630,6 +1630,7 @@ function smwfRichMediaIsImage( &$index, &$rMresult ) {
 function enableQueryResultsCache(){
 	global $smwgHaloIP, $smwgQRCEnabled, $wgHooks;
 	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_QueryResultsCache.php" );
+	require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_AjaxAPI.php" );
 	$smwgQRCEnabled = true;
 	
 	$wgHooks['smwInitializeTables'][] = 'smwfQRCInitializeTables';

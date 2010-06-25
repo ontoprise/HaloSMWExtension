@@ -14,14 +14,18 @@ function smwf_qc_getQueryIds($paramAsJSON){
 		$paramObj = json_decode($paramAsJSON);
 		@ $limit = $paramObj->limit;
 		@ $offset = $paramObj->offset;
+		@ $debug = $paramObj->debug;
 		
 		$qrc = new SMWQRCQueryResultsCache();
 		$response['queryIds'] = $qrc->getQueryIds($limit, $offset);
 	}
 	
 	$response = json_encode($response);
-	$response = new AjaxResponse($response);
-	$response->setContentType( "application/json" );
+	if(!$debug){
+		$response = new AjaxResponse($response);
+		$response->setContentType( "application/json" );
+	}
+	
 	return $response;
 }
 
