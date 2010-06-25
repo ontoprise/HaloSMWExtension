@@ -49,10 +49,6 @@ class SkinOntoSkin3 extends SkinTemplate {
 	return 'ontoskin3';
     }
 
-    function isSemantic() {
-        return true;
-    }
-
     function setupSkinUserCss( OutputPage $out ) {
         global $wgHandheldStyle;
 
