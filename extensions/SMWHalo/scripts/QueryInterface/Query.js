@@ -84,36 +84,52 @@ Query.prototype = {
 		return this.hasSubquery;
 	},
 /**
-* Creates XML string for the query tree representation. The tree representation is
+* Creates HTML string for the query tree representation. The tree representation is
 * laid out like a file browser with folders and leafs.
 */
-	updateTreeXML:function(){
-		var treexml = '<?xml version="1.0" encoding="UTF-8"?>';
+    updateTree:function(){
         if (this.id == 0 && this.isEmpty()) {
             $('treeanchor').innerHTML = gLanguage.getMessage('QI_EMPTY_QUERY');
             return;
         }
-		treexml += '<treeview title=" Query"><folder title=" ' + this.name + '" code="root" expanded="true">';
-		for(var i=0; i<this.categories.length; i++){
-			treexml += '<folder title="' + gLanguage.getMessage('QI_CATEGORIES') + '" code="categories' + i +'" expanded="true" img="../../concept.gif">';
-			for(var j=0; j<this.categories[i].length; j++) {
-					treexml += '<leaf title=" ' + this.categories[i][j] + '" code="category' + i + '-' + j + '" img="blue_ball.gif"/>';
+        var tree = '<table>';
+        if (this.id == 0)
+            tree += '<tr><td colspan="2">'
+                + '<a href="javascript:void(0);" onclick="qihelper.setActiveQuery(0)">'
+                + gLanguage.getMessage('QI_MAIN_QUERY_NAME') + '</a></td></tr>';
+        tree += '<tr><td width="15"></td><td><table>';
+        for(var i=0; i<this.categories.length; i++){
+			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../concept.gif"/></td><td> ';
+			for(var j=0, js = this.categories[i].length; j < js; j++) {
+					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'category-'+this.id+'-'+i+'\')">'
+                        + this.categories[i][j] + '</a>';
+                    if (j < (js - 1) )
+                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
 			}
-			treexml += '</folder>';
+			tree += '</td></tr>';
 		}
-		for(var i=0; i<this.instances.length; i++){
-			treexml += '<folder title="' + gLanguage.getMessage('QI_INSTANCES') + '" code="instances' + i +'" expanded="true" img="../../instance.gif">';
-			for(var j=0; j<this.instances[i].length; j++){
-				treexml += '<leaf title=" ' + this.instances[i][j] + '" code="instance' + i + '-' + j + '" img="red_ball.gif"/>';
+        for(var i=0; i<this.instances.length; i++){
+			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../instance.gif"/></td><td> ';
+			for(var j=0, js = this.categories[i].length; j < js; j++) {
+					tree += '<a href="javascript:void(0)" onclick="qihelper.selectNode(this, \'instance-'+this.id+'-'+i+'\')">'
+                        + this.instances[i][j] + '</a>';
+                    if (j < (js - 1) )
+                        tree += ' <span style="font-weight:bold">' + gLanguage.getMessage('QI_OR') + '</span> ';
 			}
-			treexml += '</folder>';
+			tree += '</td></tr>';
 		}
 		for(var i=0; i<this.properties.length; i++){
-			treexml += '<folder title=" ' + this.properties[i].getName() + '" code="properties' + i +'" expanded="true" img="../../property.gif">';
+			tree += '<tr><td width="15"><img src="'+qihelper.imgpath+'../../property.gif"/></td><td> '
+                + '<a href="javascript:void(0);" onclick="qihelper.selectNode(this, \'property-'+this.id+'-'+i+'\')">'
+                + this.properties[i].getName() + '</a></td></tr>';
 			propvalues = this.properties[i].getValues();
 			for(var j=0; j<propvalues.length; j++){
+                tree += '<tr><td> </td><td>';
 				if(propvalues[j][0] == "subquery")
-					treexml += '<leaf title=" ' + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2] + '" code="subquery' + propvalues[j][2] + '" img="subquery.png" class="treesub"/>'
+					tree += '<img src="'+qihelper.imgpath+'subquery.png"/> '
+                        + '<a href="javascript:void(0);" onclick="qihelper.setActiveQuery(' + propvalues[j][2] + ')">'
+                        + gLanguage.getMessage('QI_SUBQUERY') + ' ' + propvalues[j][2]
+                        + '</a></td></tr><tr><td></td><td>___SUBQUERY_'+propvalues[j][2]+'___';
 				else {
 					var res = ""; //restriction for numeric values. Encode for HTML display
 					switch(propvalues[j][1]){
@@ -127,16 +143,17 @@ Query.prototype = {
 							res = propvalues[j][1];
 							break;
 					}
-                    res = propvalues[j][0] + " " + res + " " + propvalues[j][2];
+                    res = ((this.properties[i].getArity() > 2 ) ? propvalues[j][0] : "")
+                        + " " + res + " " + propvalues[j][2];
                     if (propvalues[j][3]) res += ' ' + propvalues[j][3];
-					treexml += '<leaf title=" ' + res + '" code="property' + i + '-' + j + '" img="yellow_ball.gif"/>';
+					tree += '<img src="'+qihelper.imgpath+'lastlink.gif"/> ' + res;
 				}
+                tree += '</td></tr>';
 			}
-			treexml += '</folder>';
 		}
-		treexml += '</folder></treeview>';
-		updateQueryTree(treexml);
-	},
+        tree += '</table></td></tr></table>';
+        return tree;
+    },
 
 /**
 * Create the syntax for the ask query of this object. Subqueries are not resolved

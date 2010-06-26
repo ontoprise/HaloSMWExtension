@@ -287,7 +287,7 @@ QIHelper.prototype = {
 	 */
 	setActiveQuery : function(id) {
 		this.activeQuery = this.queries[id];
-        this.activeQuery.updateTreeXML(); // update treeview
+        this.activeQuery.updateTree(); // update treeview
 		this.activeQueryId = id;
 		this.emptyDialogue(); // empty open dialogue
 		this.updateBreadcrumbs(id); // update breadcrumb navigation of treeview
@@ -319,20 +319,21 @@ QIHelper.prototype = {
 		this.updatePreview();
 	},
 
-    updateTreeXML : function() {
+    updateTree : function() {
         var treeXML = "";
         var queryIds = new Array();
         queryIds.push(0);
         for (var i = 0; i < queryIds.length; i++) {
             var activeQuery = this.queries[queryIds[i]];
-            var xml = activeQuery.updateTreeXML(); // update treeview
+            var xml = activeQuery.updateTree(); // update treeview
             if (i == 0) treeXML = xml;
             else
                 treeXML = treeXML.replace('___SUBQUERY_'+i+'___', xml);
             for (var j = 0; j < activeQuery.subqueryIds.length; j++)
                 queryIds.push(activeQuery.subqueryIds[j]);
         }
-        updateQueryTree(treeXML);
+        $('treeanchor').innerHTML = treeXML;
+        //updateQueryTree(treeXML);
     },
 
 	/**
@@ -1150,7 +1151,9 @@ QIHelper.prototype = {
 				}
                 this.propUnits = possibleUnits;
                 // if this property has units, it's a nummeric type
-                if (possibleUnits.length > 0 && !this.numTypes[parameterNames[0].toLowerCase()])
+                if (possibleUnits.length > 0 &&
+                    possibleUnits[0].length > 0 &&
+                    !this.numTypes[parameterNames[0].toLowerCase()])
                     this.numTypes[parameterNames[0].toLowerCase()] = true;
 			}
             this.completePropertyDialogue();
@@ -1713,7 +1716,7 @@ QIHelper.prototype = {
 			break;
 		}
 		this.emptyDialogue();
-		this.activeQuery.updateTreeXML();
+		this.updateTree();
 		this.updateColumnPreview();
         this.updateBreadcrumbs(this.activeQueryId);
         this.updateQuerySource();
@@ -1741,6 +1744,18 @@ QIHelper.prototype = {
 		// update result preview
 		this.updatePreview();
 	},
+
+    selectNode : function(el, label) {
+        el.parentNode.style.backgroundColor='#AAAAAA';
+        var vals = label.split('-');
+        this.setActiveQuery(vals[1]);
+        if (vals[0] == 'category')
+            this.loadCategoryDialogue(vals[2]);
+        else if (vals[0] == 'instance')
+            this.loadInstanceDialogue(vals[2]);
+        else
+            this.loadPropertyDialogue(vals[2]);
+    },
 
 	/**
 	 * Creates an HTML option with the different possible restrictions
@@ -1799,7 +1814,7 @@ QIHelper.prototype = {
             this.addPropertyGroup();
         else
 			this.addCatInstGroup();
-		this.activeQuery.updateTreeXML();
+		this.updateTree();
 		this.updatePreview();
         this.updateQuerySource();
         this.updateBreadcrumbs(this.activeQueryId);
