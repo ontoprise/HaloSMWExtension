@@ -736,7 +736,7 @@ QIHelper.prototype = {
 	 */
 	newCategoryDialogue : function(reset) {
         // add current action to breadcrumbs path
-        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_CATEGORY') );
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_CATEGORY' : 'QI_BC_EDIT_CATEGORY') );
 		this.activeDialogue = "category";
         this.resetDialogueContent(reset);
 
@@ -769,7 +769,7 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newInstanceDialogue : function(reset) {
-        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_INSTANCE') );
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_INSTANCE' : 'QI_BC_EDIT_INSTANCE') );
 		this.activeDialogue = "instance";
         this.resetDialogueContent(reset);
 		var newrow = $('dialoguecontent').insertRow(-1);
@@ -799,7 +799,7 @@ QIHelper.prototype = {
 	 *            the tree
 	 */
 	newPropertyDialogue : function(reset) {
-        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage('QI_BC_ADD_PROPERTY') );
+        this.updateBreadcrumbs(this.activeQueryId, gLanguage.getMessage((reset) ? 'QI_BC_ADD_PROPERTY' : 'QI_BC_EDIT_PROPERTY') );
 		this.activeDialogue = "property";
 		this.propname = "";
         this.resetDialogueContent();
