@@ -756,6 +756,8 @@ QIHelper.prototype = {
 		cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
             + gLanguage.getMessage('QI_BC_ADD_OTHER_CATEGORY') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
+        $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML = 
+            gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input0').focus();
@@ -786,6 +788,8 @@ QIHelper.prototype = {
 		cell.innerHTML = '<a href="javascript:void(0)" onclick="qihelper.addDialogueInput()">'
             + gLanguage.getMessage('QI_BC_ADD_OTHER_INSTANCE') + '</a>';
 		$('dialoguebuttons').style.display = "inline";
+        $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
+            gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		autoCompleter.registerAllInputs();
 		if (reset)
 			$('input0').focus();
@@ -808,6 +812,8 @@ QIHelper.prototype = {
         this.addPropertyChainInput();
        
 		$('dialoguebuttons').style.display = "";
+        $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
+            gLanguage.getMessage((reset) ? 'QI_BUTTON_ADD' : 'QI_BUTTON_UPDATE');
 		this.proparity = 2;
 		autoCompleter.registerAllInputs();
 		if (reset)
@@ -1994,7 +2000,7 @@ QIHelper.prototype = {
     },
 
     discardChangesOfSource : function() {
-        $('fullAskText').value =   $('query4DiscardChanges').innerHTML;
+        $('fullAskText').value =   $('query4DiscardChanges').innerHTML.unescapeHTML();
         this.sourceChanged=1;
         this.loadFromSource(true);
     },
@@ -2338,6 +2344,7 @@ QIHelper.prototype = {
 		this.handleQueryString(args, f, pMustShow);
 	}
 	this.setActiveQuery(0); // set main query to active
+    this.updateTree();      // show new tree
 	this.updatePreview(); // update result preview
 },
 
