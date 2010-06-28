@@ -1,5 +1,13 @@
 <?php
 
+/**
+ *
+  * @ingroup SMWHaloQueryResultsCache
+ *
+ * @author Ingo Steinbauer
+ *
+ */
+
 $wgAjaxExportList[] = 'smwf_qc_getQueryIds';
 $wgAjaxExportList[] = 'smwf_qc_updateQuery';
 
@@ -36,18 +44,20 @@ function smwf_qc_getQueryIds($paramAsJSON){
 function smwf_qc_updateQuery($paramAsJSON){
 	global $smwgQRCEnabled;
 	if(!$smwgQRCEnabled){
-		error();
 		$response['success'] = true; 
 	} else {
 		$paramObj = json_decode($paramAsJSON);
 	    @ $queryId = $paramObj->queryId;
+	    @ $debug = $paramObj->debug;
 	    
 		$qrc = new SMWQRCQueryResultsCache();
 		$response['success'] = $qrc->updateQueryResult($queryId);
 	}
 	
 	$response = json_encode($response);
-	$response = new AjaxResponse($response);
-	$response->setContentType( "application/json" );
+	if(!$debug){
+		$response = new AjaxResponse($response);
+		$response->setContentType( "application/json" );
+	}
 	return $response;
 }

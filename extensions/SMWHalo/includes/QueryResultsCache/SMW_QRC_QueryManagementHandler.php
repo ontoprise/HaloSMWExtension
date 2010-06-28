@@ -1,15 +1,32 @@
 <?php
 
+/**
+ *
+  * @ingroup SMWHaloQueryResultsCache
+ *
+ * @author Ingo Steinbauer
+ *
+ */
+
 define('QRC_UQC_LABEL','QRCUsesQueryCall');
 define('QRC_HQID_LABEL','QRCHasQueryId');
 define('QRC_HQS_LABEL','QRCHasQueryString');
 define('QRC_HQL_LABEL','QRCHasQueryOffset');
 define('QRC_HQO_LABEL','QRCHasQueryLimit');
 
+define('QRC_UQCWID_LABEL','QRCUsesQueryCallWithId');
+
+/*
+ * This class is responsible for the Query Results Cache related
+ * Query Management metadata
+ */
 class SMWQRCQueryManagementHandler {
 	
 	private static $instance;
 	
+	/*
+	 * singleton
+	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
 			self::$instance = new self();
@@ -17,28 +34,39 @@ class SMWQRCQueryManagementHandler {
 		return self::$instance;
 	}
 	
+	
+	
+	/*
+	 * Called by the smwInitProperties Hook. Registers some queries
+	 */
 	public static function initProperties(){
-		SMWPropertyValue::registerProperty('_QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
-		SMWPropertyValue::registerProperty('_QRC_HQID', '_txt', QRC_HQID_LABEL , false);
-		SMWPropertyValue::registerProperty('_QRC_HQS', '_txt', QRC_HQS_LABEL , false);
-		SMWPropertyValue::registerProperty('_QRC_HQL', '_num', QRC_HQL_LABEL , false);
-		SMWPropertyValue::registerProperty('_QRC_HQO', '_num', QRC_HQO_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQID', '_txt', QRC_HQID_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQS', '_txt', QRC_HQS_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
 		
-		$tmp = QRC_UQC_LABEL;
-		//$tmp();
+		SMWPropertyValue::registerProperty('___QRC_UQCWID', '_txt', QRC_UQCWID_LABEL , false);
 		
 		return true;
 	}
 	
+	/*
+	 * Called by the 'smwInitDatatypes' hook. Initializes the Query Management Data Type.
+	 */
 	public static function initQRCDataTypes(){
 		global $wgAutoloadClasses, $smwgHaloIP, $smwgHaloContLang;
 		$wgAutoloadClasses['SMWQueryCallMetadataValue'] = 
 			"$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_DV_QueryCallMetadata.php";
-		SMWDataValueFactory::registerDatatype('__qcm', 'SMWQueryCallMetadataValue');	
+		SMWDataValueFactory::registerDatatype('_qcm', 'SMWQueryCallMetadataValue');	
 	
 		return true;
 	}
 	
+	/*
+	 * This method is called by SMWQRCQueryResultsCache if a query is executed.
+	 * It appends query related metadata to the article which contains the query.
+	 */
 	public function storeQueryMetadata($title, $query){
 		global $wgParser;
 			
@@ -48,15 +76,17 @@ class SMWQRCQueryManagementHandler {
 			$wgParser->getOutput()->mSMWData = new SMWSemanticData(SMWWikiPageValue::makePageFromTitle($title));
 		}
 		$semanticData = $wgParser->getOutput()->mSMWData;
-			
-		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_UQC_LABEL);
-		
-		$dataValue = SMWDataValueFactory::newTypeIDValue('__qcm');
+
+		$propertyValue = SMWPropertyValue::makeProperty('___QRC_UQC');
+		$dataValue = SMWDataValueFactory::newTypeIDValue('_qcm');
 		$dataValue->setQueryId($this->getQueryId($query));
 		$dataValue->setQueryString($query->getQueryString());
 		if($query->getLimit()) $dataValue->setQueryLimit($query->getLimit());
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
+		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		
+		$propertyValue = SMWPropertyValue::makeProperty('___QRC_UQCWID');
+		$dataValue = SMWDataValueFactory::newTypeIDValue('_txt', $this->getQueryId($query));
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		
 		$wgParser->getOutput()->mSMWData = $semanticData;
@@ -66,26 +96,36 @@ class SMWQRCQueryManagementHandler {
 	 * computes the queries hash value
 	 */
 	public function getQueryId($query){
-		return md5($query->getQueryString().' limit='.$query->getLimit().' offset='.$query->getOffset());
+		$rawId = $query->getQueryString().' limit='.$query->getLimit().' offset='.$query->getOffset();
+		$id = md5($rawId);
+		return $id;
 	}
 	
-	public function getSearchQueryUsagesQueryString($queryId){
-		return '[['.QRC_UQC_LABEL.'.'.QRC_HQID_LABEL.'::'.$queryId.']]';	
-	}
-	
-	public function getQueryCallMetadata($semanticData){
-		$property = SMWPropertyValue::makeUserProperty(QRC_UQC_LABEL);
+	/*
+	 * Returns Query Call Metadata
+	 */
+	public function getQueryCallMetadata($semanticData, $queryId){
+		$property = SMWPropertyValue::makeProperty('___QRC_UQC');
+		$propVals = $semanticData->getPropertyValues($property);
 		
-		$propVal = $semanticData->getPropertyValues($property);
-			$propVal = $propVal[0][0];
-			
 		$metadata = array('queryString' => '', 'limit' => '', 'offset' => '');
-		foreach($propVal as $pV){
-			if($pV[0] == QRC_HQS_LABEL) $metadata['queryString'] = $pV[1];
-			if($pV[0] == QRC_HQL_LABEL) $metadata['limit'] = $pV[1];
-			if($pV[0] == QRC_UQO_LABEL) $metadata['offset'] = $pV[1];
+		foreach($propVals as $pVs){
+			$pVs = $pVs->getDBKeys();
+			$pVs = $pVs[0];
+			
+				$break = false;
+			foreach($pVs as $pV){
+				if($pV[0] == QRC_HQID_LABEL && $pV[1][0] == $queryId) $break = true;
+				if($pV[0] == QRC_HQID_LABEL) $metadata['id'] = $pV[1][0];
+				if($pV[0] == QRC_HQS_LABEL) $metadata['queryString'] = $pV[1][0];
+				if($pV[0] == QRC_HQL_LABEL) $metadata['limit'] = $pV[1][0];
+				if($pV[0] == QRC_HQO_LABEL) $metadata['offset'] = $pV[1][0];
+				if($pV[0] == QRC_HQID_LABEL) print_r("\r\n IDDDDDD:",$metadata['offset'] = $pV[1][0]);
+			}
+			
+			if($break) break;
+			$metadata = array('queryString' => '', 'limit' => '', 'offset' => '');
 		}
-		
 		return $metadata;
 	}
 }

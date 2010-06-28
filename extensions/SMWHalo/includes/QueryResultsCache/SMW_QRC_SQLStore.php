@@ -1,8 +1,17 @@
 <?php
 
-//todo: implement the storage interface which is implemented by this class
+/**
+ *
+  * @ingroup SMWHaloQueryResultsCache
+ *
+ * @author Ingo Steinbauer
+ *
+ */
 
-class SMWQRCSQLStore {
+/**
+ * Implementation of the QueryResultsCache storage for MySQL DB's 
+ */
+class SMWQRCSQLStore implements SMWQRCStoreInterface{
 	
 	/*
 	 * Initialize required database tables
@@ -96,6 +105,9 @@ class SMWQRCSQLStore {
 		}
 	}
 	
+	/*
+	 * Get a query result from the cache
+	 */
 	public function getQueryResult($queryId){
 		$db =& wfGetDB( DB_SLAVE );
 		

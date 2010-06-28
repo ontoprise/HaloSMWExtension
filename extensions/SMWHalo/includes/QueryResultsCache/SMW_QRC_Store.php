@@ -1,9 +1,26 @@
 <?php
 
+/**
+ *
+  * @ingroup SMWHaloQueryResultsCache
+ *
+ * @author Ingo Steinbauer
+ *
+ */
+
+/*
+ * Implementations of this class provide access to 
+ * the Query Results Cache DB storage layer.
+ */
 class SMWQRCStore {
 	
 	private static $instance;
 	
+	private static $storeImplementations = array();
+	
+	/*
+	 * singleton
+	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
 			self::$instance = new self();
@@ -11,22 +28,71 @@ class SMWQRCStore {
 		return self::$instance;
 	}
 	
+	/*
+	 * register implementations of the SMWQRCStoreInterface
+	 */
+	public static function registerStoreImplementation($type, $class){
+		self::$storeImplementations[$type] = $class; 
+	}
+	
 	private $mDB;
 	
+	/*
+	 * singleton
+	 */
 	public function __construct(){
+		global $smwgHaloIP;
+		require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_SQLStore.php" );
+		self::registerStoreImplementation('mysql', 'SMWQRCSQLStore');
+		
 		global $wgDBtype;
-		if($wgDBtype == "mysql"){
-			global $smwgHaloIP;
-			require_once( "$smwgHaloIP/includes/QueryResultsCache/SMW_QRC_SQLStore.php" );
-			$this->mDB = new SMWQRCSQLStore();
+		if(array_key_exists($wgDBtype, self::$storeImplementations)){
+			$this->mDB = new self::$storeImplementations[$wgDBtype]();
 		} else {
 			die('The Query Results Cache does not support the '.$wgDBtype.' database type.');
 		}
 			
 		return $this;
 	}
-
+	
+	/*
+	 * get concrete storage implementation
+	 */
 	public function getDB(){
 		return $this->mDB;
 	}
+	
+	
+}
+
+interface SMWQRCStoreInterface {
+	/*
+	 * Initialize required database tables
+	 */
+	public function initDatabaseTables();
+	
+	/*
+	 * drop database tables
+	 */
+	public function dropTables();
+	
+	/*
+	 * get all query ids which are stored in the db
+	 */
+	public function getQueryIds($limit = null, $offset = null);
+		
+	/*
+	 * add or update a query result in the cache
+	 */
+	public function updateQueryResult($queryId, $queryResult);
+	
+	/*
+	 * Get a query result from the cache
+	 */
+	public function getQueryResult($queryId);
+	
+	/*
+	 * Remove a query result with a given query id from the cache
+	 */
+	public function deleteQueryResult($queryId);
 }
