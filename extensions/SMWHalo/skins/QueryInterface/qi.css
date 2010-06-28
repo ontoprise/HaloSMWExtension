@@ -113,7 +113,11 @@ border: 1px solid #E6E600;
 }
 
 hr {
-    border: 1px solid #AAAAAA;
+    color: #AAAAAA;
+    background-color: #AAAAAA;
+    height: 1px;
+    border: none;
+    width: 100%;
 }
 
 #qi-help-headline{
@@ -453,4 +457,11 @@ cursor: pointer;
 
 #qisource > textarea {
 	height:85%;
+}
+
+.qiBoxcontentTable {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
