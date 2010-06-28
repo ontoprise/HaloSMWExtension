@@ -7,7 +7,7 @@ VERSION 1.30
 
 
   CHANGES:
-    All style definitions are now collected in one CSS file (collaboration.css).
+    All style definitions are now collected in one CSS file (collaboration-comment.css).
     This is part of preparations for standardization of GUI elements.
 
 

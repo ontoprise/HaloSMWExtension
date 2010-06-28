@@ -58,8 +58,7 @@ Options:
 
 All configuration options are defined and described in /includes/CE_Initialize.php.
 
-To reformat the comment form, use the provided Cascading Style Sheet in '/skins' directory.
-To reformat the style of existing comments take a look at 'Template:CommentResult'.
+To reformat the style of existing comments or of the comment form, use the provided Cascading Style Sheet in '/skins' directory.
 
 
 Notice
