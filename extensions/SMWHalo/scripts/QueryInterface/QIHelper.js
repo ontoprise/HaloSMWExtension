@@ -23,6 +23,8 @@ QIHelper.prototype = {
 	 */
 	initialize : function() {
 		this.imgpath = wgScriptPath + '/extensions/SMWHalo/skins/QueryInterface/images/';
+        this.divQiDefTabHeight = 300;
+        this.divPreviewcontentHeight = 160;
 		this.numTypes = new Array();
 		this.getNumericDatatypes();
 		this.queries = Array();
@@ -82,10 +84,12 @@ QIHelper.prototype = {
             $('qiquerydefinition').style.display = "";
             $('definitiontitle-link').removeClassName("plusminus");
             $('definitiontitle-link').addClassName("minusplus");
+            $('previewcontent').style.height = this.divPreviewcontentHeight + 'px';
         } else {
             $('qiquerydefinition').style.display = "none";
             $('definitiontitle-link').removeClassName("minusplus");
             $('definitiontitle-link').addClassName("plusminus");
+            $('previewcontent').style.height = (this.divQiDefTabHeight + this.divPreviewcontentHeight) + 'px';
         }
     },
 
@@ -1434,8 +1438,10 @@ QIHelper.prototype = {
 	 * 
 	 * @param id
 	 *            id of the category group (saved with the query tree)
+     * @param focus
+     *            number of input field to set the focus
 	 */
-	loadCategoryDialogue : function(id) {
+	loadCategoryDialogue : function(id, focus) {
 		this.newCategoryDialogue(false);
 		this.loadedFromId = id;
 		var cats = this.activeQuery.getCategoryGroup(id); // get the category
@@ -1445,6 +1451,7 @@ QIHelper.prototype = {
 			this.addDialogueInput();
 			$('input' + i).value = unescapeQueryHTML(cats[i]);
 		}
+        if (focus) $('input' + focus).focus();
 		$('qidelete').style.display = "inline"; // show delete button
 	},
 
@@ -1454,8 +1461,10 @@ QIHelper.prototype = {
 	 * 
 	 * @param id
 	 *            id of the instace group (saved with the query tree)
+     * @param focus
+     *            number of input field to set the focus
 	 */
-	loadInstanceDialogue : function(id) {
+	loadInstanceDialogue : function(id, focus) {
 		this.newInstanceDialogue(false);
 		this.loadedFromId = id;
 		var ins = this.activeQuery.getInstanceGroup(id);
@@ -1464,6 +1473,7 @@ QIHelper.prototype = {
 			this.addDialogueInput();
 			$('input' + i).value = unescapeQueryHTML(ins[i]);
 		}
+        if (focus) $('input' + focus).focus();
 		$('qidelete').style.display = "inline";
 	},
 
@@ -1752,13 +1762,17 @@ QIHelper.prototype = {
 	},
 
     selectNode : function(el, label) {
-        el.parentNode.style.backgroundColor='#AAAAAA';
+        el.parentNode.style.backgroundColor='#1122FF';
+        for (i = 0; i < el.parentNode.childNodes.length; i++) {
+            if (el.parentNode.childNodes[i].style)
+                el.parentNode.childNodes[i].style.color='#FFFFFF';
+        }
         var vals = label.split('-');
         this.setActiveQuery(vals[1]);
         if (vals[0] == 'category')
-            this.loadCategoryDialogue(vals[2]);
+            this.loadCategoryDialogue(vals[2], vals[3]);
         else if (vals[0] == 'instance')
-            this.loadInstanceDialogue(vals[2]);
+            this.loadInstanceDialogue(vals[2], vals[3]);
         else
             this.loadPropertyDialogue(vals[2]);
     },
