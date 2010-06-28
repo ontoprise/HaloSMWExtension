@@ -308,6 +308,8 @@ var wgUserLanguageStrings = {
     'QI_GT'                   : 'gr&ouml;&szlig;er',
     'QI_NOT'                  : 'nicht',
     'QI_LIKE'                 : '&auml;hnlich',
+    'QI BUTTON_ADD'           : 'Hinzuf&uuml;gen',
+    'QI_BUTTON_UPDATE'        : 'Aktualisieren',
 	
 	// Wiki text parser
 	'WTP_TEXT_NOT_FOUND'		  : "Konnte '$1' nicht im Wikitext finden.",

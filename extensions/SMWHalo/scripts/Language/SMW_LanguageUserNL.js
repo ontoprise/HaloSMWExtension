@@ -308,6 +308,8 @@ var wgUserLanguageStrings = {
     'QI_GT'                   : 'greater',
     'QI_NOT'                  : 'not',
     'QI_LIKE'                 : 'like',
+    'QI BUTTON_ADD'           : 'Add',
+    'QI_BUTTON_UPDATE'        : 'Update',
 
 	// Find work
 	'FW_SEND_ANNOTATIONS'	  : 'Dankjewel om aantekeningen te evalueren, ',
