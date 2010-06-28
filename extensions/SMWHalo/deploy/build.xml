@@ -194,7 +194,7 @@
 		</concat>
 
 		<concat destfile="../../SMWHalo/scripts/QueryInterface/deployQueryInterface.js">
-			<filelist dir="../../SMWHalo/scripts/QueryInterface" files="treeviewQI.js, queryTree.js, Query.js, QIHelper.js, qi_tooltip.js" />
+			<filelist dir="../../SMWHalo/scripts/QueryInterface" files="Query.js, QIHelper.js, qi_tooltip.js" />
 			<filelist dir="../../SemanticMediaWiki/skins" files="SMW_tooltip.js" />
 		</concat>
 	</target>
