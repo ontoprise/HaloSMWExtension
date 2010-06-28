@@ -16,7 +16,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 	protected $mProvGraph;
 	protected $mDSIGraph;
 
-	protected $mFilePath = "file://D:/MediaWiki/SMWTripleStore/resources/sparql_rewriter_tests/";
+	protected $mFilePath = "file://resources/sparql_rewriter_tests/";
 	protected $mGraph1N3 = "Graph1.n3";
 	protected $mGraph2N3 = "Graph2.n3";
 	protected $mGraph3N3 = "Graph3.n3";
@@ -73,6 +73,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 		
 		// Ask the query for all graphs
     	$qr = $tsa->queryTripleStore($query, $this->mDSIGraph);
+    	
     	$rows = $qr->getRows();
 //    	$this->assertEquals(count($rows), 4);
     	// Verify results of graph 1
@@ -91,7 +92,8 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	$l1 = $r[0]->getResult("l")->getValue();
     	$val2 = $r[1]->getResult("s")->getValue();
     	$l2 = $r[1]->getResult("l")->getValue();
-    	$this->assertTrue($val1 == "http://smw/_047897855" || $val2 == "http://smw/_316067164");
+    	    	
+    	$this->assertTrue($val1 == "http://smw/_047897855" || $val1 == "http://smw/_316067164");
     	if ($val1 == "http://smw/_047897855") {
     		$this->assertEquals($l1,"Intel Cooperation");
     		$this->assertEquals($l2,"Siemens AG");
@@ -102,6 +104,7 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
 
     	// Verify results of graph 3
     	$r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph3");
+    
     	$this->assertEquals(count($r), 1);
     	$val = $r[0]->getResult("s")->getValue();
     	$this->assertEquals($val,"http://smw/_316067164");
@@ -135,5 +138,43 @@ class TestSparqlDataspaceRewriter extends PHPUnit_Framework_TestCase {
     	$this->assertEquals($val, "Intel, Inc"); 
     	
     }
+    
+    
+    /**
+     * Tests the creation a LODSourceDefinition object.
+     */
+    function testQueryForMetadata() {
+        $tsa = new LODTripleStoreAccess();
+        $query = "
+          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+          SELECT ?s ?l ?g
+          WHERE { 
+                GRAPH ?g {
+                    ?s rdfs:label ?l .
+                } 
+          }
+        ";      
         
+        // Ask the query for all graphs and request metadata
+        $qr = $tsa->queryTripleStore($query, $this->mDSIGraph, "metadata=(SWP2_AUTHORITY)");
+    
+        $rows = $qr->getRows();
+        
+        $r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph1");
+        $this->assertEquals(count($r), 1);
+        $val = $r[0]->getResult("s")->getValue();
+      
+        $this->assertEquals($val,"http://smw/_047897855");
+        $val = $r[0]->getResult("l")->getValue();
+        $this->assertEquals($val,"Intel, Inc");
+       
+        $metadata = $r[0]->getResult("l")->getMetadata();
+        $this->assertEquals($metadata['swp2_authority'],"http://www.example.org/smw-lde/smwDatasources/DataSource1");
+        
+        $r = $qr->getRowsWhere("g", self::$mBaseURI."smwGraphs/Graph2");
+        $metadata = $r[1]->getResult("l")->getMetadata();
+        $this->assertEquals($metadata['swp2_authority'],"http://www.example.org/smw-lde/smwDatasources/DataSource2");
+        
+        
+    }
 }

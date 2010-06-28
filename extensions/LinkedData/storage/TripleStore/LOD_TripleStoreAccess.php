@@ -308,7 +308,7 @@ class  LODTripleStoreAccess  {
 					$metadata = array();
 					foreach($b->uri->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$metadata[substr($mdProperty,6)] = $mdValue;
+							$metadata[substr($mdProperty,6)] = (string) $mdValue;
 						}
 					}
 				
@@ -323,7 +323,7 @@ class  LODTripleStoreAccess  {
 					$metadata = array();
 					foreach($b->literal->attributes() as $mdProperty => $mdValue) {
 						if (strpos($mdProperty, "_meta_") === 0) {
-							$metadata[substr($mdProperty,6)] = $mdValue;
+							$metadata[substr($mdProperty,6)] = (string) $mdValue;
 						}
 					}
 					$row->addResult($name, new LODSparqlResultLiteral($name, (string) $b->literal, $datatype, $lang, $metadata));
