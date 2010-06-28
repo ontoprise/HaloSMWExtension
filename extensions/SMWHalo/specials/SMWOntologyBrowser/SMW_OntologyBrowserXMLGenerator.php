@@ -393,11 +393,14 @@ class SMWOntologyBrowserXMLGenerator {
 				} else {
 					// escape potential HTML in a CDATA section
 
-					if ($smwValue->getTypeID() == '__typ') {
+					if ($smwValue->getTypeID() == '__typ') { //SMW_DV_Types
 						$value = implode(",",$smwValue->getTypeLabels());
 						$value = strip_tags($value, "<sub><sup><b><i>");
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
-					} else {
+					} if ($smwValue->getTypeID() == '__tls') { // SMW_DV_TypeList
+						
+						$value = "<![CDATA[".html_entity_decode($smwValue->getWikiValue())."]]>";
+                    } else {
 						// small hack for datetime type. It may occur that there is a T at the end.
 						if ($smwValue->getTypeID() == '_dat') {
 							$xsdValue = (substr($smwValue->getXSDValue(), -1) == 'T') ? str_replace('T', '', $smwValue->getXSDValue()) : $smwValue->getXSDValue();
@@ -405,6 +408,7 @@ class SMWOntologyBrowserXMLGenerator {
 							$xsdValue = $smwValue->getXSDValue();
 						}
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
+						$value = print_r($smwValue, true);
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 					}
 
