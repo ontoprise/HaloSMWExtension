@@ -180,9 +180,20 @@ class OB_Storage {
 		} else {
 			$attinstances = array();
 		}
+        
+		
+		//FIXME: create this data structure in the SemanticStore interface
+		$instanceWithMetadata = array();
+		foreach($attinstances as $i) {
+			if (is_array($i)) {
+				$instanceWithMetadata[] = array(array($i, NULL), NULL);
+			} else {
+				$instanceWithMetadata[] = array(array($i, NULL), NULL);
+			}
+		}
 
 		$propertyName_xml = str_replace( array('"'),array('&quot;'),$prop->getDBkey());
-		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($attinstances, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
+		return SMWOntologyBrowserXMLGenerator::encapsulateAsInstancePartition($instanceWithMetadata, $reqfilter->limit, $partitionNum, 'getInstancesUsingProperty,'.$propertyName_xml);
 	}
 
 	public function getCategoryForInstance($p_array) {
@@ -277,7 +288,7 @@ class OB_StorageTS extends OB_Storage {
 		 	$b = $children->binding[0]; // instance
 		 	 
 		 	$sv = $b->children()->uri[0];
-		 	
+
 		 	$metadataMap = array();
 		 	foreach($sv->attributes() as $mdProperty => $mdValue) {
 		 		if (strpos($mdProperty, "_meta_") === 0) {
@@ -286,7 +297,7 @@ class OB_StorageTS extends OB_Storage {
 		 	}
 
 		 	$instance = array($this->getTitleFromURI((string) $sv), $metadataMap);
-		 		
+		 	 
 		 	$categories = array();
 		 	$b = $children->binding[1]; // categories
 		 	 
@@ -385,19 +396,20 @@ class OB_StorageTS extends OB_Storage {
 			$instance = Title::newFromText($instanceName);
 			$instanceName = str_replace("//","__",$instance->getDBkey()); //XXX: hack for ultrapedia
 
-			$limit =  SMWH_OB_DEFAULT_PARTITION_SIZE;
-			$partition =   0;
-			$offset = 0;
-			$metadata = isset($p_array[1]) ? $p_array[1] : false;
+			// actually limit and offset is not used 
+			$limit =  isset($p_array[1]) && is_numeric($p_array[1]) ? $p_array[1] : 500;
+            $partition = isset($p_array[2]) && is_numeric($p_array[2]) ? $p_array[2] : 0;
+            $offset = $partition * $limit;
+			$metadata = isset($p_array[3]) ? $p_array[3] : false;
 			$metadataRequest = $metadata != false ? "|metadata=$metadata" : "";
 
 			$dataSpace = $this->getDataSourceParameters();
 
 			// query
 			$nsPrefix = $this->tsNamespaceHelper->getNSPrefix($instance->getNamespace());
-			
+				
 			$response = $client->query("SELECT ?p ?o WHERE { <$smwgTripleStoreGraph/$nsPrefix#$instanceName> ?p ?o. }",  "limit=$limit|offset=$offset$dataSpace$metadataRequest");
-			
+				
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -500,7 +512,7 @@ class OB_StorageTS extends OB_Storage {
 					
 				$sv = $b->children()->uri[0];
 				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-				$instance = $this->getTitleFromURI((string) $sv);
+				$instance = array($this->getTitleFromURI((string) $sv), NULL);
 
 				$categories = array();
 				$b = $children->binding[1]; // categories
@@ -510,7 +522,7 @@ class OB_StorageTS extends OB_Storage {
 					if (!is_null($instance) && !is_null($category)) {
 						$titles[] = array($instance, $this->getTitleFromURI((string) $sv));
 					} else if (!is_null($instance)) {
-						$titles[] = $instance;
+						$titles[] = array($instance, NULL);
 					}
 				}
 
@@ -610,9 +622,9 @@ class OB_StorageTS extends OB_Storage {
 				$filter .= ")";
 			}
 
-			
-		$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
-			
+				
+			$response = $client->query("SELECT ?s WHERE { ?s ?p ?o.  $filter }",  "limit=1000$dataSpace");
+				
 
 			global $smwgSPARQLResultEncoding;
 			// PHP strings are always interpreted in ISO-8859-1 but may be actually encoded in
@@ -632,11 +644,11 @@ class OB_StorageTS extends OB_Storage {
 					
 				$sv = $b->children()->uri[0];
 				$sv = str_replace("__", "//", $sv); // XXX: hack for Ultrapedia
-				$instance = $this->getTitleFromURI((string) $sv);
+				$instance = array($this->getTitleFromURI((string) $sv), NULL);
 					
 				foreach($b->children()->uri as $sv) {
 					if (!is_null($instance)) {
-						$titles[] = $instance;
+						$titles[] = array($instance, NULL);
 					}
 				}
 

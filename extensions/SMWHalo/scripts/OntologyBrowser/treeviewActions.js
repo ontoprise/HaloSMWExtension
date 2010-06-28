@@ -770,8 +770,8 @@ OBInstanceActionListener.prototype = {
 	  	
 	  	if (OB_RIGHT_ARROW == 0) {
 	  		OB_relatt_pendingIndicator.show();
-	  		var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
-	  		dataAccess.getAnnotations(instanceNamespace+":"+instanceName+"##"+requestMetaproperties, callbackOnInstanceSelectToRight);
+
+	  		dataAccess.getAnnotations(instanceNamespace+":"+instanceName, callbackOnInstanceSelectToRight);
 		 	
 	  	} 
 	  	if (OB_LEFT_ARROW == 1) {
@@ -1019,8 +1019,8 @@ OBPropertyTreeActionListener.prototype = Object.extend(new OBTreeActionListener(
 	 	 }
 	 	 if (OB_RIGHT_ARROW == 0) {
 	 		OB_relatt_pendingIndicator.show();
-	 		var requestMetaproperties = obAdvancedOptions.requestedMetaproperties();
-	 		dataAccess.getAnnotations(gLanguage.getMessage('PROPERTY_NS')+propertyName+"##"+requestMetaproperties, callbackOnPropertySelect2);
+	 	
+	 		dataAccess.getAnnotations(gLanguage.getMessage('PROPERTY_NS')+propertyName, callbackOnPropertySelect2);
 	 		
 	 	 }
 		}

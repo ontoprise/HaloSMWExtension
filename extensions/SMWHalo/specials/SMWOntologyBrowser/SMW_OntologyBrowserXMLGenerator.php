@@ -408,7 +408,6 @@ class SMWOntologyBrowserXMLGenerator {
 							$xsdValue = $smwValue->getXSDValue();
 						}
 						$value = strip_tags($xsdValue, "<sub><sup><b><i>");
-						$value = print_r($smwValue, true);
 						$value = "<![CDATA[".html_entity_decode($value)." ".$smwValue->getUnit()."]]>";
 					}
 

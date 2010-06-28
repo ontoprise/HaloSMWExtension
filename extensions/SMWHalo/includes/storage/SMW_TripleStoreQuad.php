@@ -68,16 +68,16 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$children = $r->children(); // binding nodes
 			$b = $children->binding[0];
 			$sv = $b->children()->uri[0];
-			$provenance = $sv->attributes()->provenance;
-			$title = $this->getTitleFromURI((string) $sv, $provenance);
+			
+			$title = $this->getTitleFromURI((string) $sv);
 			$title_dv = SMWDataValueFactory::newTypeIDValue('_wpg');
 			$title_dv->setValues($title->getDBkey(), $title->getNamespace(), $title->getArticleID());
 
 
 			$b = $children->binding[1];
 			foreach($b->children()->uri as $sv) {
-				$provenance = $sv->attributes()->provenance;
-				$object = $this->getTitleFromURI((string) $sv, $provenance);
+				
+				$object = $this->getTitleFromURI((string) $sv);
 				$value = SMWDataValueFactory::newPropertyObjectValue($property, $object);
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
@@ -152,9 +152,9 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 
 			foreach($b->children()->uri as $sv) {
-				$provenance = $sv->attributes()->provenance;
-				$object = $this->getTitleFromURI((string) $sv, $provenance);
-				$value = SMWDataValueFactory::newPropertyObjectValue($predicate, $object);
+				
+				$object = $this->getTitleFromURI((string) $sv);
+				$value = SMWDataValueFactory::newPropertyObjectValue($property, $object);
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
@@ -166,7 +166,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			}
 			foreach($b->children()->literal as $sv) {
 				$literal = array((string) $sv, $sv->attributes()->datatype);
-				$value = $this->getLiteral($literal, $predicate);
+				$value = $this->getLiteral($literal, $property);
 				$metadata = $sv->attributes();
 				foreach($metadata as $mdProperty => $mdValue) {
 					if (strpos($mdProperty, "_meta_") === 0) {
@@ -241,8 +241,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$b = $children->binding[0]; // predicate
 			$sv = $b->children()->uri[0];
 
-			$title = $this->getTitleFromURI((string) $sv, $provenance);
-			$value = SMWDataValueFactory::newPropertyObjectValue($property, $title);
+			$title = $this->getTitleFromURI((string) $sv);
+			$value = SMWWikiPageValue::makePage($title->getDBkey(), $title->getNamespace());
 
 			$metadata = $sv->attributes();
 			foreach($metadata as $mdProperty => $mdValue) {
@@ -276,7 +276,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 			$nsFound = false;
 			foreach (TSNamespaces::getAllNamespaces() as $nsIndsex => $ns) {
 				if (stripos($sv, $ns) === 0) {
-					$allValues[] = $this->createSMWDataValue($sv, $provenance, $ns, $nsIndsex, $outputformat);
+					$allValues[] = $this->createSMWDataValue($sv, $metadata, $ns, $nsIndsex, $outputformat);
 					$nsFound = true;
 				}
 			}
@@ -354,6 +354,7 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 	 */
 	protected function createSMWDataValue($sv, $metadata, $nsFragment, $ns, $outputformat) {
 		$nosection = strpos($outputformat,"nosection");
+		$provenance = NULL; // TODO: where is provenance?
 		if ($nosection === false && !is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {
 			// UP special behaviour: if provenance contains section, use it as fragment identifier
 			$uri_parts = explode("#", $provenance);
@@ -387,8 +388,8 @@ class SMWTripleStoreQuad extends SMWTripleStore {
 
 	}
 
-	private function getTitleFromURI($sv, $provenance = "") {
-
+	private function getTitleFromURI($sv) {
+        $provenance = NULL; // TODO: where is provenance?
 		foreach (TSNamespaces::$ALL_NAMESPACES as $nsIndsex => $ns) {
 			if (stripos($sv, $ns) === 0) {
 				if (!is_null($provenance) && $provenance != '' && strpos($provenance, "section=") !== false) {

@@ -24,8 +24,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	protected $mGraph2 = "http://smw/VolkswagenGraph";
 	protected $mProvGraph;
 	protected $mDSIGraph;
-
-	protected $mFilePath = "file://D:/MediaWiki/HaloSMWExtension/extensions/LinkedData/tests/resources/OntologyBrowserSparql/";
+    
+	// this file is located in the TSC resources directory
+	protected $mFilePath = "file://resources/lod_wiki_tests/OntologyBrowserSparql/";
 	protected $mGraph1N3 = "ToyotaGraph.n3";
 	protected $mGraph2N3 = "VolkswagenGraph.n3";
 	protected $mProvGraphN3 = "ProvenanceGraph.n3";
@@ -34,8 +35,8 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 	function setUp() {
 		$this->mProvGraph = self::$mBaseURI."smwGraphs/ProvenanceGraph";
 		$this->mDSIGraph = self::$mBaseURI."smwGraphs/DataSourceInformationGraph";
-				
-		
+
+
 		$tsa = new LODTripleStoreAccess();
 		$tsa->createGraph($this->mGraph1);
 		$tsa->createGraph($this->mGraph2);
@@ -46,7 +47,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$tsa->loadFileIntoGraph("{$this->mFilePath}ProvenanceGraph.n3", $this->mProvGraph, "n3");
 		$tsa->loadFileIntoGraph("{$this->mFilePath}DataSourceInformationGraph.n3", $this->mDSIGraph, "n3");
 		$tsa->flushCommands();
-		 
+			
 	}
 
 	function tearDown() {
@@ -56,7 +57,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$tsa->dropGraph($this->mProvGraph);
 		$tsa->createGraph($this->mDSIGraph);
 		$tsa->flushCommands();
-		 
+			
 	}
 
 	/**
@@ -69,7 +70,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'superCat="Hybrid"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') === false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getInstance", "Automobile##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
@@ -77,7 +78,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'superCat="Automobile"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') === false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
-		 
+			
 
 		$r = smwf_ob_OntologyBrowserAccess("getInstance", "Automobile##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
@@ -95,7 +96,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
-		
+
 	}
 
 	/**
@@ -114,13 +115,13 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-III##80##0", $wiki);
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-I##80##0", $wiki);
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-VI##80##0", $wiki);
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		// Check the content of source "Toyota"
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
@@ -135,20 +136,20 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-I##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-VI##80##0", "Toyota");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		// Check the content of source "Volkswagen"
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
 
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-III##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'<annotationsList isEmpty="true"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-I##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="HasPower" title="HasPower"') !== false);
 		$this->assertTrue(strpos($r,'<![CDATA[50 ]]>') !== false);
@@ -177,21 +178,21 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') === false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getInstancesUsingProperty", "HasPower##80##0", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') === false);
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') === false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') === false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
-		 
+			
 		$r = smwf_ob_OntologyBrowserAccess("getInstancesUsingProperty", "HasPower##80##0", "$wiki,Volkswagen,Toyota");
 		$this->assertTrue(strpos($r,'title_url="Prius" title="Prius"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
-		
+
 	}
 
 	/**
@@ -210,7 +211,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Golf-I##80##0", $source);
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') === false);
 		$this->assertTrue(strpos($r,'title_url="Hybrid" title="Hybrid"') === false);
-		
+
 		$source = "Toyota";
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Prius##80##0", $source);
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') === false);
@@ -223,7 +224,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Golf-I##80##0", $source);
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') === false);
 		$this->assertTrue(strpos($r,'title_url="Hybrid" title="Hybrid"') === false);
-		
+
 		$source = "Volkswagen";
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Prius##80##0", $source);
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') === false);
@@ -236,9 +237,9 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("getCategoryForInstance", ":Golf-I##80##0", $source);
 		$this->assertTrue(strpos($r,'title_url="Automobile" title="Automobile"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Hybrid" title="Hybrid"') === false);
-		
+
 	}
-	
+
 	/**
 	 * This function tests retrieving all instances that match a given filter.
 	 */
@@ -250,7 +251,7 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Pri", "Toyota");
 		$this->assertTrue(strpos($r,'title_url="Prius-II" title="Prius-II"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
-		
+
 		$r = smwf_ob_OntologyBrowserAccess("filterBrowse", "instance##Go", "Volkswagen");
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') !== false);
@@ -268,8 +269,41 @@ class TestOntologyBrowserSparql extends PHPUnit_Framework_TestCase {
 		$this->assertTrue(strpos($r,'title_url="Prius-III" title="Prius-III"') !== false);
 		$this->assertTrue(strpos($r,'title_url="Golf-I" title="Golf-I"') === false);
 		$this->assertTrue(strpos($r,'title_url="Golf-VI" title="Golf-VI"') === false);
-		
+
 	}
-	
-	
+
+
+	function testMetadata() {
+		$wiki = wfMsg("smw_ob_source_wiki");
+
+        // Check the content of the wiki
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0", $wiki);
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') === false);
+
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0", $wiki);
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') === false);
+
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-III##80##0", $wiki);
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') === false);
+            
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-I##80##0", $wiki);
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') === false);
+            
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-VI##80##0", $wiki);
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') === false);
+            
+        // Check the content of source "Toyota". It must contain metadata
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-II##80##0##(SWP2_AUTHORITY)", "Toyota");
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') !== false);
+      
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Prius-III##80##0##(SWP2_AUTHORITY)", "Toyota");
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') !== false);
+            
+        // Check the content of source "Volkswagen". It must contain metadata
+        $r = smwf_ob_OntologyBrowserAccess("getAnnotations", "Golf-VI##80##0##(SWP2_AUTHORITY)", "Volkswagen");
+        $this->assertTrue(strpos($r,'property name="_META_SWP2_AUTHORITY"') !== false);
+
+	}
+
+
 }
