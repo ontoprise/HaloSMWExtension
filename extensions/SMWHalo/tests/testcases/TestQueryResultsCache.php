@@ -97,7 +97,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1, count($response->queryIds));
 	}
 	
-	public function atestCacheEntryUsed(){
+	public function testCacheEntryUsed(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
@@ -115,7 +115,7 @@ class TestQueryResultsCache extends PHPUnit_Framework_TestCase {
 		
 	}
 	
-	public function atestCacheEntryNotUsed(){
+	public function testCacheEntryNotUsed(){
 		smwf_om_EditArticle('QRCQueryArticle1', 'PHPUnit', $this->queryArticle1, '');
 		
 		smwf_om_DeleteArticle('QRCDataArticle1', 'PHPUnit', '');
