@@ -31,7 +31,6 @@ class SMWQRCQueryResultsCache {
 	 * the cache otherwise.
 	 */
 	public function getQueryResult(SMWQuery $query, $force=false, $cacheThis=true){
-		
 		//get title of article in which query was executed 
 		//or set title to false if query was executed somehow else 
 		global $wgParser;
@@ -142,14 +141,15 @@ class SMWQRCQueryResultsCache {
 	 * called by ajax api to update a query result
 	 */
 	public function updateQueryResult($queryId){
-		global $smwgBaseStore;
-		$store = new $smwgBaseStore();
+		$queryString = SMWQRCQueryManagementHandler::getInstance()->getSearchMetadataQueryString($queryId);
+//		
+		SMWQueryProcessor::processFunctionParams(array($queryString, "limit=1") 
+			,$queryString,$params,$printouts);
+		$query = 
+			SMWQueryProcessor::createQuery($queryString,$params);
+		$queryResults = $this->getQueryResult($query, true, false)->getResults();
 		
-		$property = SMWPropertyValue::makeProperty('___QRC_UQCWID');
-		$dataValue = SMWDataValueFactory::newTypeIDValue('_txt', 'sdfs');
-		$queryResults = $store->getPropertySubjects($property, $dataValue);//, '239ddfde7ff63e389d7c0b0c1ceae174');
-		
-		 if(count($queryResults) > 0){ //this query is still in use
+		if(count($queryResults) > 0){ //this query is still in use
 			global $smwgDefaultStore;
 			$defaultStore = new $smwgDefaultStore();
 			$title = $queryResults[0]->getTitle();
@@ -161,7 +161,7 @@ class SMWQRCQueryResultsCache {
 			$queryParams = array ($metadata['queryString']);
 			if($metadata['limit']) $queryParams[] = 'limit='.$metadata['limit'];
 			if($metadata['offset']) $queryParams[] = 'offset='.$metadata['offset'];
-
+			
 			SMWQueryProcessor::processFunctionParams($queryParams,$querystring,$params,$printouts);
 			$query = 
 				SMWQueryProcessor::createQuery($querystring,$params);
@@ -170,7 +170,6 @@ class SMWQRCQueryResultsCache {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
 			$qrcStore->deleteQueryResult($queryId);		
 		}
-		
 		return true;
 	}
 	

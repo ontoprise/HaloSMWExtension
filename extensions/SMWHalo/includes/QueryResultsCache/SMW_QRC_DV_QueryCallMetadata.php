@@ -24,7 +24,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 * Sets the id of this query call
 	 */
 	public function setQueryId($queryId){
-		$propertyValue = SMWPropertyValue::makeProperty('___QRC_HQID');
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQID_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryId);
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
@@ -33,7 +33,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 * Sets the query string of this query call
 	 */
 	public function setQueryString($queryString){
-		$propertyValue = SMWPropertyValue::makeUserProperty('___QRC_HQS');
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQS_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryString);
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
@@ -42,7 +42,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 * Sets the limit of this query call
 	 */
 	public function setQueryLimit($queryLimit){
-		$propertyValue = SMWPropertyValue::makeProperty('___QRC_HQL');
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQL_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryLimit);
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}
@@ -51,7 +51,7 @@ class SMWQueryCallMetadataValue extends SMWContainerValue {
 	 * Sets the offset of this query call
 	 */
 	public function setQueryOffset($queryOffset){
-		$propertyValue = SMWPropertyValue::makeProperty('___QRC_HQO');
+		$propertyValue = SMWPropertyValue::makeUserProperty(QRC_HQO_LABEL);
 		$dataValue = SMWDataValueFactory::newPropertyObjectValue($propertyValue, $queryOffset);
 		$this->m_data->addPropertyObjectValue($propertyValue, $dataValue);
 	}

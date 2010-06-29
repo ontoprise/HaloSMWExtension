@@ -11,10 +11,8 @@
 define('QRC_UQC_LABEL','QRCUsesQueryCall');
 define('QRC_HQID_LABEL','QRCHasQueryId');
 define('QRC_HQS_LABEL','QRCHasQueryString');
-define('QRC_HQL_LABEL','QRCHasQueryOffset');
-define('QRC_HQO_LABEL','QRCHasQueryLimit');
-
-define('QRC_UQCWID_LABEL','QRCUsesQueryCallWithId');
+define('QRC_HQL_LABEL','QRCHasQueryLimit');
+define('QRC_HQO_LABEL','QRCHasQueryOffset');
 
 /*
  * This class is responsible for the Query Results Cache related
@@ -41,13 +39,10 @@ class SMWQRCQueryManagementHandler {
 	 */
 	public static function initProperties(){
 		SMWPropertyValue::registerProperty('___QRC_UQC', '_wpg', QRC_UQC_LABEL , false);
-		SMWPropertyValue::registerProperty('___QRC_HQID', '_txt', QRC_HQID_LABEL , false);
-		SMWPropertyValue::registerProperty('___QRC_HQS', '_txt', QRC_HQS_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQID', '_str', QRC_HQID_LABEL , false);
+		SMWPropertyValue::registerProperty('___QRC_HQS', '_str', QRC_HQS_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQL', '_num', QRC_HQL_LABEL , false);
 		SMWPropertyValue::registerProperty('___QRC_HQO', '_num', QRC_HQO_LABEL , false);
-		
-		SMWPropertyValue::registerProperty('___QRC_UQCWID', '_txt', QRC_UQCWID_LABEL , false);
-		
 		return true;
 	}
 	
@@ -85,10 +80,6 @@ class SMWQRCQueryManagementHandler {
 		if($query->getOffset()) $dataValue->setQueryOffset($query->getOffset());
 		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
 		
-		$propertyValue = SMWPropertyValue::makeProperty('___QRC_UQCWID');
-		$dataValue = SMWDataValueFactory::newTypeIDValue('_txt', $this->getQueryId($query));
-		$semanticData->addPropertyObjectValue($propertyValue, $dataValue);
-		
 		$wgParser->getOutput()->mSMWData = $semanticData;
 	}
 	
@@ -113,19 +104,25 @@ class SMWQRCQueryManagementHandler {
 			$pVs = $pVs->getDBKeys();
 			$pVs = $pVs[0];
 			
-				$break = false;
+			$break = false;
 			foreach($pVs as $pV){
 				if($pV[0] == QRC_HQID_LABEL && $pV[1][0] == $queryId) $break = true;
 				if($pV[0] == QRC_HQID_LABEL) $metadata['id'] = $pV[1][0];
 				if($pV[0] == QRC_HQS_LABEL) $metadata['queryString'] = $pV[1][0];
 				if($pV[0] == QRC_HQL_LABEL) $metadata['limit'] = $pV[1][0];
 				if($pV[0] == QRC_HQO_LABEL) $metadata['offset'] = $pV[1][0];
-				if($pV[0] == QRC_HQID_LABEL) print_r("\r\n IDDDDDD:",$metadata['offset'] = $pV[1][0]);
 			}
 			
 			if($break) break;
 			$metadata = array('queryString' => '', 'limit' => '', 'offset' => '');
 		}
 		return $metadata;
+	}
+	
+	/*
+	 * Get query string for searching for query metadata
+	 */
+	public function getSearchMetadataQueryString($queryId){
+		return '[['.QRC_UQC_LABEL.'.'.QRC_HQID_LABEL."::".$queryId."]]";
 	}
 }
