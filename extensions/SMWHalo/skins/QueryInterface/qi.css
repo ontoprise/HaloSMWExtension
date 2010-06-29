@@ -241,12 +241,13 @@ float:left;
 margin-top: 10px;
 }
 
-#definitiontitle, #qiresulttitle, #layouttitle, #previewtitle{
-cursor:pointer;
-font-weight: bold;
-border: none;
+#definitiontitle, #qiresulttitle, #layouttitle, #previewtitle {
+    border: none;
 }
-
+#definitiontitle span, #qiresulttitle span, #layouttitle span, #previewtitle span {
+    cursor:pointer;
+    font-weight: bold;
+}
 #previewcontent{
 border:1px solid #AAAAAA;
 background: #FFFFFF;

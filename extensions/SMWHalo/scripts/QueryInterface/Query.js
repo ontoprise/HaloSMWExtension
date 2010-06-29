@@ -184,7 +184,7 @@ Query.prototype = {
 			asktext += "]]";
 		}
 		for(var i=0; i<this.properties.length; i++){
-			if(this.properties[i].isShown()){ // "Show in results" checked?
+			if(this.properties[i].isShown() && this.properties[i].getArity() == 2){ // "Show in results" checked?
 				asktext += "[[" + this.properties[i].getName() + "::*]]"; // Display statement
 			}
                         // add this only if there is no special value asked for

@@ -598,7 +598,7 @@ QIHelper.prototype = {
 			html += '<span class="qibuttonEmp" onclick="qihelper.setActiveQuery(' + nav[i] + ')">';
 			html += this.queries[nav[i]].getName() + '</span>';
 		}
-        if (action) html += ': ' + action;
+        if (action) html += ': <b>' + action + '</b>';
 		html += "<hr/>";
 		var breadcrumpDIV = $('treeviewbreadcrumbs');
  		if (breadcrumpDIV) breadcrumpDIV.innerHTML = html;
@@ -814,6 +814,8 @@ QIHelper.prototype = {
         
         // first table, with at least one input field for property name
         this.addPropertyChainInput();
+
+        this.completePropertyDialogue();
        
 		$('dialoguebuttons').style.display = "";
         $('dialoguebuttons').getElementsByTagName('button').item(0).innerHTML =
@@ -1166,7 +1168,6 @@ QIHelper.prototype = {
                     !this.numTypes[parameterNames[0].toLowerCase()])
                     this.numTypes[parameterNames[0].toLowerCase()] = true;
 			}
-            this.completePropertyDialogue();
             // remove additional rows, if these had been added before
             // we got the information that this property is not of the type page
             var rowCount= origRowCount = $('dialoguecontent').rows.length;
@@ -1320,6 +1321,8 @@ QIHelper.prototype = {
      * After the property name has been entered into the input field, the
      * type is retrieved and the property dialogue is extended with selector
      * for restrition values and printout options.
+     * Without automatic AC the dialogue must be completed before the property
+     * name has been entered.
      */
     completePropertyDialogue: function() {
         // check if the dialogue is already complete
@@ -1412,9 +1415,12 @@ QIHelper.prototype = {
     toggleAddchain : function(op) {
         if (!$('addchain')) return;
         if (op) {
+            var msg = $('dialoguecontent').getElementsByTagName('input').length > 1
+                ? gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN')
+                : gLanguage.getMessage('QI_CREATE_PROPERTY_CHAIN');
             $('addchain').innerHTML =
                 '<a href="javascript:void(0)" onclick="qihelper.addPropertyChainInput()">'
-                + gLanguage.getMessage('QI_ADD_PROPERTY_CHAIN') + '</a>';
+                + msg + '</a>';
         }
         else {
             $('addchain').innerHTML = '';
@@ -1817,13 +1823,22 @@ QIHelper.prototype = {
 
     /**
      * get the value of the selector whether to define a property value
-     * or add a subquery to the property
+     * or add a subquery to the property. If the subproperty option
+     * was disabled but checked, then return -1 (no restriction set)
      */
     getPropertyValueSelector : function() {
         var radio = document.getElementsByName('input_r0');
+        var val;
         if (radio.length == 0) return;
-        for (var i = 0; i < radio.length; i++)
-            if (radio[i].checked) return parseInt(radio[i].value);
+        for (var i = 0; i < radio.length; i++) {
+            if (radio[i].checked) {
+                val = parseInt(radio[i].value);
+                break;
+            }
+        }
+        if (val == null || val > -1 && radio[2].disabled)
+            return -1;
+        return val;
     },
 	
 	/**
@@ -1918,8 +1933,15 @@ QIHelper.prototype = {
                 var paramname = $('dialoguecontent').rows[$('dialoguecontent').rows.length -2].cells[1].innerHTML;
                 paramname = paramname.replace(gLanguage.getMessage('QI_PROPERTY_TYPE') + ': ', '');
                 // no subquery, so add a dumy value
-                if (selector == -1)
-                    pgroup.addValue(paramname, '=', '*');
+                if (selector == -1) {
+                    if (arity == 2)
+                        pgroup.addValue(paramname, '=', '*');
+                    else {
+                        for (s = 1; s < arity; s++) {
+                            pgroup.addValue($('dialoguecontent_pvalues').rows[s].cells[0].innerHTML, '=', '*');
+                        }
+                    }
+                }
                 else {
 					if (selector < this.nextQueryId) // Subquery does exists
 														// already
