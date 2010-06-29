@@ -54,7 +54,7 @@ class SMWQueryInterface extends SpecialPage {
          * <span class="'.(($collapsed) ? 'qiSectionClosed' : 'qiSectionOpen').'"
                       onclick="qihelper.sectionCollapse(\'querylayout\')>'.wfMsg('smw_qi_layout_manager').'</span>
          */
-		$html = '<div id="definitiontitle"><span onclick="qihelper.switchDefinition()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="definitiontitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_definition') . '</span></div>
+		$html = '<div id="definitiontitle"><span onclick="qihelper.switchDefinition()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qdef') . '\')"><a id="definitiontitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_definition') . '</span></div>
                  <div id="qiquerydefinition">
                  <div id="qiaddbuttons" class="qiaddbuttons">' .
 					'<button onclick="qihelper.newCategoryDialogue(true)" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_addCategory') . '\')">' . wfMsg('smw_qi_add_category') . '</button>'.
@@ -132,7 +132,7 @@ class SMWQueryInterface extends SpecialPage {
 	}
 
     private function addResultPart() {
-        $html = '<div id="qiresulttitle"><span onclick="qihelper.switchResult()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_qlm') . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_result') . '</span></div>'.
+        $html = '<div id="qiresulttitle"><span onclick="qihelper.switchResult()" onmouseover="Tip(\'' . wfMsg('smw_qi_tt_previewres') . '\')"><a id="qiresulttitle-link" class="minusplus" href="javascript:void(0)"></a>' . wfMsg('smw_qi_section_result') . '</span></div>'.
                 '<div id="qiresultcontent">'.
                 $this->addQueryLayout().
                 $this->addPreviewResults().
