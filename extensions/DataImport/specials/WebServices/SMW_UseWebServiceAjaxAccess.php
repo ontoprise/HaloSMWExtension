@@ -56,43 +56,45 @@ function smwf_wsu_processStep1($name){
 	$response .= $webService->getProtocol().";";
 	
 	foreach($parameters->children() as $param){
-		$response .= $param->attributes()->name;
-		$response .= ";";
-		$response .= $param->attributes()->optional;
-		$response .= ";";
-		$response .= $param->attributes()->defaultValue;
-		$response .= ";";
+		if($param->attributes()->name != DI_PREDICATES_ALIAS || $param->attributes()->path != DI_PREDICATES){
+			$response .= $param->attributes()->name;
+			$response .= ";";
+			$response .= $param->attributes()->optional;
+			$response .= ";";
+			$response .= $param->attributes()->defaultValue;
+			$response .= ";";
 
-		$subParameterProcessor = new SMWSubParameterProcessor(
-		$param->asXML(), array());
+			$subParameterProcessor = new SMWSubParameterProcessor(
+			$param->asXML(), array());
 
-		$nonOptionalSubParameters = $subParameterProcessor->getMissingSubParameters();
-		foreach($nonOptionalSubParameters as $name => $value){
-			$response .= $param->attributes()->name.".".$name.";";
-			$response .= "false;";
-			if($value == null){
-				$response .= ";";
-			} else {
+			$nonOptionalSubParameters = $subParameterProcessor->getMissingSubParameters();
+			foreach($nonOptionalSubParameters as $name => $value){
+				$response .= $param->attributes()->name.".".$name.";";
+				$response .= "false;";
+				if($value == null){
+					$response .= ";";
+				} else {
+					$response .= $value.";";
+				}
+			}
+
+			$optionalSubParameters = $subParameterProcessor->getOptionalSubParameters();
+			foreach($optionalSubParameters as $name => $value){
+				$response .= $param->attributes()->name.".".$name.";";
+				$response .= "true;";
+				if($value == null){
+					$response .= ";";
+				} else {
+					$response .= $value.";";
+				}
+			}
+
+			$defaultSubParameters = $subParameterProcessor->getDefaultSubParameters();
+			foreach($defaultSubParameters as $name => $value){
+				$response .= $param->attributes()->name.".".$name.";";
+				$response .= "false;";
 				$response .= $value.";";
 			}
-		}
-
-		$optionalSubParameters = $subParameterProcessor->getOptionalSubParameters();
-		foreach($optionalSubParameters as $name => $value){
-			$response .= $param->attributes()->name.".".$name.";";
-			$response .= "true;";
-			if($value == null){
-				$response .= ";";
-			} else {
-				$response .= $value.";";
-			}
-		}
-
-		$defaultSubParameters = $subParameterProcessor->getDefaultSubParameters();
-		foreach($defaultSubParameters as $name => $value){
-			$response .= $param->attributes()->name.".".$name.";";
-			$response .= "false;";
-			$response .= $value.";";
 		}
 	}
 	return $response;
@@ -110,10 +112,14 @@ function smwf_wsu_processStep2($name){
 	$response = "";
 	foreach($results->children() as $result){
 		foreach($result->children() as $part){
-			if(strlen(''.$part->attributes()->name) > 0){ //this is for ignoring namespace definitions
-				$response .= $result->attributes()->name;
-				$response .= ".".$part->attributes()->name;
-				$response .= ";";
+			if(($part->attributes()->predicate != DI_ALL_SUBJECTS || $part->attributes()->name != DI_ALL_SUBJECTS_ALIAS)
+					&& ($part->attributes()->predicate != DI_ALL_PREDICATES || $part->attributes()->name != DI_ALL_PREDICATES_ALIAS)
+					&& ($part->attributes()->predicate != DI_ALL_OBJECTS || $part->attributes()->name != DI_ALL_OBJECTS_ALIAS)){
+				if(strlen(''.$part->attributes()->name) > 0){ //this is for ignoring namespace definitions
+					$response .= $result->attributes()->name;
+					$response .= ".".$part->attributes()->name;
+					$response .= ";";
+				}
 			}
 		}
 	}
