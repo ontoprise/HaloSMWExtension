@@ -126,7 +126,7 @@ class SMWQRCQueryResultsCache {
 		global $wgRequest;
 		$action = $wgRequest->getVal('action');
 		$isReadAccess = true;
-		if($wgRequest->wasposted() || $action == 'purge2' || $action == 'submit'){
+		if($wgRequest->wasposted() || $action == 'purge' || $action == 'submit'){
 			$isReadAccess = false;	
 		}
 		return $isReadAccess;
@@ -146,7 +146,7 @@ class SMWQRCQueryResultsCache {
 	public function updateQueryResult($queryId){
 		$queryString = SMWQRCQueryManagementHandler::getInstance()->getSearchMetadataQueryString($queryId);
 //		
-		SMWQueryProcessor::processFunctionParams(array($queryString, "limit=1") 
+		SMWQueryProcessor::processFunctionParams(array($queryString) 
 			,$queryString,$params,$printouts);
 		$query = 
 			SMWQueryProcessor::createQuery($queryString,$params);
@@ -169,6 +169,14 @@ class SMWQRCQueryResultsCache {
 			$query = 
 				SMWQueryProcessor::createQuery($querystring,$params);
 			$this->getQueryResult($query, true);
+			
+			//invalidate parser caches
+			foreach($queryResults as $qR){
+				$title = $qR->getTitle();
+				$title->invalidateCache();
+				// wfGetParserCacheStorage()->delete(
+				//		ParserCache::singleton()->getKey(Article::newFromID($title->getArticleID()), new ParserOptions()));
+			}
 		} else {
 			$qrcStore = SMWQRCStore::getInstance()->getDB();
 			$qrcStore->deleteQueryResult($queryId);		
